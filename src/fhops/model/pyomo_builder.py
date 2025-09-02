@@ -6,6 +6,20 @@ import pyomo.environ as pyo
 from fhops.core.types import Problem
 
 def build_model(pb: Problem) -> pyo.ConcreteModel:
+    """
+    Builds a Pyomo optimization model based on the given problem instance.
+
+    Args:
+        pb (Problem): An instance of the Problem class containing the necessary
+                      data and scenario information.
+
+    Returns:
+        pyo.ConcreteModel: A Pyomo ConcreteModel representing the optimization
+                           problem which aims to maximize total production
+                           subject to various constraints such as machine
+                           availability, production capacity, block completion,
+                           and landing capacity.
+    """
     sc = pb.scenario
 
     M = [m.id for m in sc.machines]
