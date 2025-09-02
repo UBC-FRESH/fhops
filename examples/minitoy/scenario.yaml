@@ -1,0 +1,9 @@
+name: FHOPS MiniToy
+num_days: 14
+start_date: 2025-01-01
+data:
+  blocks: data/blocks.csv
+  machines: data/machines.csv
+  landings: data/landings.csv
+  calendar: data/calendar.csv
+  prod_rates: data/prod_rates.csv
