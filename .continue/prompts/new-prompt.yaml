@@ -1,0 +1,8 @@
+name: New prompt
+version: 0.0.1
+schema: v1
+prompts:
+  - name: docstring
+    description: Add or improve docstring
+    prompt: Write a thorough and well-formatted docstring for the the highlighted code, 
+      or suggest edits if a docstring exists but is weak or poorly formatted. 
