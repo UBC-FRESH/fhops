@@ -17,6 +17,7 @@ console = Console()
 
 
 def _enable_rich_tracebacks():
+    """Enable rich tracebacks with local variables and customized formatting."""
     try:
         import rich.traceback as _rt
         _rt.install(show_locals=True, width=140, extra_lines=2)
