@@ -9,10 +9,34 @@ from fhops.core.types import Problem
 
 @dataclass
 class Schedule:
-    # schedule[machine][day] = block_id or None
+    """
+    Represents a schedule for machine assignments.
+
+    Attributes:
+        plan (Dict[str, Dict[int, Optional[str]]]):
+            A dictionary where the key is a machine ID (str) and the value is another dictionary.
+            The nested dictionary's key is a day (int) and the value is a block_id (str) that machine is assigned to on that day, or None if no assignment is made.
+    """
     plan: Dict[str, Dict[int, Optional[str]]]
 
 def _init_greedy(pb: Problem) -> Schedule:
+    """
+    Initializes a schedule using a greedy algorithm.
+
+    The algorithm assigns blocks to machines for each day based on availability,
+    production rates, remaining work, and the specified scheduling windows. It
+    prioritizes assignments to the block with the highest production rate that
+    still requires work, ensuring that the assignments are within the permissible
+    scheduling window.
+
+    Args:
+        pb (Problem): The problem instance containing the scenario with blocks,
+                      machines, production rates, and scheduling constraints.
+
+    Returns:
+        Schedule: A Schedule object representing the machine assignment plan
+                  for the given problem instance.
+    """
     sc = pb.scenario
     # remaining work per block
     remaining = {b.id: b.work_required for b in sc.blocks}
@@ -43,6 +67,24 @@ def _init_greedy(pb: Problem) -> Schedule:
     return Schedule(plan=plan)
 
 def _evaluate(pb: Problem, sched: Schedule) -> float:
+    """
+    Evaluates the current scheduling solution by calculating a score based on
+    the given problem instance and schedule.
+
+    The evaluation process considers the landing capacity constraints, scheduling
+    windows for blocks, and the production rates. Assignments that violate
+    these constraints receive penalties, while valid assignments contribute
+    positively to the score.
+
+    Args:
+        pb (Problem): The problem instance containing scenario details such as blocks,
+                      machines, production rates, schedules, landings, and capacity constraints.
+        sched (Schedule): The current scheduling solution, mapping machines to block assignments.
+
+    Returns:
+        float: The score representing the quality of the schedule, where a higher score
+               indicates a better schedule with fewer or no constraint violations.
+    """
     sc = pb.scenario
     remaining = {b.id: b.work_required for b in sc.blocks}
     rate = {(r.machine_id, r.block_id): r.rate for r in sc.production_rates}
@@ -75,6 +117,23 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
     return score
 
 def _neighbors(pb: Problem, sched: Schedule):
+    """
+    Generates neighboring schedule solutions for the given problem and current schedule.
+
+    The function explores the solution space by generating new schedules through
+    small modifications to the current schedule. Two types of modifications are
+    performed:
+    1. Swapping assignments for two machines on the same day.
+    2. Moving a job to a different day for one machine.
+
+    Args:
+        pb (Problem): The problem instance containing scenario details such as blocks,
+                      machines, production rates, schedules, landings, and capacity constraints.
+        sched (Schedule): The current scheduling solution, mapping machines to block assignments.
+
+    Yields:
+        Schedule: A neighboring schedule with a slight modification from the current one.
+    """
     sc = pb.scenario
     machines = [m.id for m in sc.machines]
     days = list(pb.days)
@@ -93,6 +152,29 @@ def _neighbors(pb: Problem, sched: Schedule):
     yield n2
 
 def solve_sa(pb: Problem, iters: int = 2000, seed: int = 42):
+    """
+    Solves the scheduling problem using a simulated annealing approach.
+
+    The function iteratively improves the schedule by exploring neighboring
+    solutions, accepting changes based on a probabilistic criterion related
+    to temperature, which gradually decreases over iterations. The goal is
+    to find a schedule with the best possible score according to the given
+    evaluation function.
+
+    Args:
+        pb (Problem): The problem instance containing the scenario with blocks,
+                      machines, production rates, schedules, landings, and constraints.
+        iters (int): The number of iterations to perform in the annealing process.
+                     Default is 2000.
+        seed (int): A seed for the random number generator to ensure reproducibility
+                    of results. Default is 42.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing the objective score ('objective')
+                        and a DataFrame ('assignments') detailing the machine
+                        assignments with columns for machine ID, block ID, day,
+                        and assignment status.
+    """
     random.seed(seed)
     cur = _init_greedy(pb)
     cur_score = _evaluate(pb, cur)
