@@ -21,7 +21,6 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     avail = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
 
     # Windows: blocks may only be worked between [es, lf]
-    #windows = {b_id: sc.window_for(b_id) for b_id in sc.block_ids()}
     windows = {b_id: sc.window_for(b_id) for b_id in sc.block_ids()}
 
     m = pyo.ConcreteModel()
