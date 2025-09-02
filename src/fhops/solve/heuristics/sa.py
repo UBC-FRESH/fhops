@@ -18,7 +18,8 @@ def _init_greedy(pb: Problem) -> Schedule:
     remaining = {b.id: b.work_required for b in sc.blocks}
     rate = {(r.machine_id, r.block_id): r.rate for r in sc.production_rates}
     avail = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
-    windows = {b.id: sc.window_for(b.id) for b in sc.block_ids()}
+    windows = {b_id: sc.window_for(b_id) for b_id in sc.block_ids()}
+
 
     plan = {m.id: {d: None for d in pb.days} for m in sc.machines}
     for d in pb.days:
@@ -45,7 +46,7 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
     sc = pb.scenario
     remaining = {b.id: b.work_required for b in sc.blocks}
     rate = {(r.machine_id, r.block_id): r.rate for r in sc.production_rates}
-    windows = {b.id: sc.window_for(b.id) for b in sc.block_ids()}
+    windows = {b_id: sc.window_for(b_id) for b_id in sc.block_ids()}
     landing_of = {b.id: b.landing_id for b in sc.blocks}
     landing_cap = {l.id: l.daily_capacity for l in sc.landings}
 
