@@ -36,8 +36,22 @@ def _try_exec_highs():
 
 def _set_appsi_controls(solver, time_limit: int, debug: bool) -> bool:
     """
-    Set APPSI controls in a version-agnostic way.
-    Returns True if any controls were set successfully.
+    Configures the solver settings for APPSI Highs solver in a way
+    that is compatible with multiple versions.
+
+    Parameters
+    ----------
+    solver : object
+        The APPSI Highs solver instance to configure.
+    time_limit : int
+        The maximum time (in seconds) the solver is allowed to run.
+    debug : bool
+        If True, enables streaming of solver logs.
+
+    Returns
+    -------
+    bool
+        True if any settings were successfully applied, False otherwise.
     """
     # Newer APPSI: solver.config
     try:
