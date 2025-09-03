@@ -208,3 +208,6 @@ __marimo__/
 
 # example output files
 examples/minitoy/out/
+
+.vscode
+.continue
