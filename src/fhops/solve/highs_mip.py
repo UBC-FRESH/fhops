@@ -1,25 +1,30 @@
-# src/fhops/solve/highs_mip.py
 from __future__ import annotations
 
 import pandas as pd
 import pyomo.environ as pyo
 
-from fhops.core.types import Problem
 from fhops.model.pyomo_builder import build_model
+from fhops.scenario.contract import Problem
 
 try:
     from rich.console import Console
-    console = Console()
-except Exception:  # rich not installed
-    class _Dummy:
-        def print(self, *a, **k): ...
-    console = _Dummy()
+except Exception:  # pragma: no cover - rich optional
+
+    class Console:  # type: ignore[no-redef]
+        """Fallback console with a no-op print."""
+
+        def print(self, *args, **kwargs) -> None:  # noqa: D401 - simple shim
+            return None
+
+
+console = Console()
 
 
 def _try_appsi_highs():
     """Return APPSI Highs solver if available, else None."""
     try:
         from pyomo.contrib.appsi.solvers.highs import Highs
+
         return Highs()
     except Exception:
         return None
@@ -109,24 +114,27 @@ def solve_mip(pb: Problem, time_limit: int = 60, driver: str = "auto", debug: bo
         _set_appsi_controls(solver, time_limit=time_limit, debug=debug)
         if debug:
             console.print("[bold cyan]FHOPS[/]: using [bold]appsi.highs[/] driver.")
-        res = solver.solve(model)
+        solver.solve(model)
     else:
         opt = _try_exec_highs()
         if opt is None:
             raise RuntimeError("HiGHS solver not available (no 'highs' executable found).")
         # Prefer solver.options; fall back to timelimit kw
-        timelimit_kw = None
-        try:
-            opt.options["time_limit"] = time_limit  # type: ignore[attr-defined]
-        except Exception:
+        timelimit_kw: int | None = None
+        options = getattr(opt, "options", None)
+        if isinstance(options, dict):
+            try:
+                options["time_limit"] = time_limit
+            except Exception:
+                timelimit_kw = time_limit
+        else:
             timelimit_kw = time_limit
         if debug:
             console.print("[bold cyan]FHOPS[/]: using [bold]highs (exec)[/] driver.")
-        res = opt.solve(
-            model,
-            tee=bool(debug),
-            timelimit=timelimit_kw if timelimit_kw is not None else None,
-        )
+        solve_kwargs: dict[str, object] = {"tee": bool(debug)}
+        if timelimit_kw is not None:
+            solve_kwargs["timelimit"] = timelimit_kw
+        opt.solve(model, **solve_kwargs)
 
     # Extract solution
     rows = []

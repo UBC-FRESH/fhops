@@ -1,16 +1,17 @@
-# src/fhops/cli/main.py
 from __future__ import annotations
+
 from pathlib import Path
+
+import pandas as pd
 import typer
 from rich.console import Console
 from rich.table import Table
-import pandas as pd
 
-from fhops.data.loaders import load_scenario
-from fhops.core.types import Problem
-from fhops.solve.highs_mip import solve_mip
-from fhops.solve.heuristics.sa import solve_sa
 from fhops.eval.kpis import compute_kpis
+from fhops.scenario.contract import Problem
+from fhops.scenario.io import load_scenario
+from fhops.solve.heuristics.sa import solve_sa
+from fhops.solve.highs_mip import solve_mip
 
 app = typer.Typer(add_completion=False, no_args_is_help=True)
 console = Console()
@@ -20,6 +21,7 @@ def _enable_rich_tracebacks():
     """Enable rich tracebacks with local variables and customized formatting."""
     try:
         import rich.traceback as _rt
+
         _rt.install(show_locals=True, width=140, extra_lines=2)
     except Exception:
         pass
@@ -47,6 +49,7 @@ def build_mip(scenario: Path):
     pb = Problem.from_scenario(sc)
     try:
         from fhops.model.pyomo_builder import build_model
+
         m = build_model(pb)
         console.print(
             f"Model built with |M|={len(m.M)} |B|={len(m.B)} |D|={len(m.D)}; "
@@ -68,7 +71,9 @@ def solve_mip_cmd(
     """Solve with HiGHS (exact)."""
     if debug:
         _enable_rich_tracebacks()
-        console.print(f"[dim]types → scenario={type(scenario).__name__}, out={type(out).__name__}[/]")
+        console.print(
+            f"[dim]types → scenario={type(scenario).__name__}, out={type(out).__name__}[/]"
+        )
 
     sc = load_scenario(str(scenario))
     pb = Problem.from_scenario(sc)
@@ -92,7 +97,9 @@ def solve_heur_cmd(
     """Solve with Simulated Annealing (heuristic)."""
     if debug:
         _enable_rich_tracebacks()
-        console.print(f"[dim]types → scenario={type(scenario).__name__}, out={type(out).__name__}[/]")
+        console.print(
+            f"[dim]types → scenario={type(scenario).__name__}, out={type(out).__name__}[/]"
+        )
 
     sc = load_scenario(str(scenario))
     pb = Problem.from_scenario(sc)

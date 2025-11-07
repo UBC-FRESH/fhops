@@ -1,11 +1,13 @@
 from __future__ import annotations
+
+import math
 import random
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
-import math
+
 import pandas as pd
 
-from fhops.core.types import Problem
+from fhops.scenario.contract import Problem
+
 
 @dataclass
 class Schedule:
@@ -13,11 +15,13 @@ class Schedule:
     Represents a schedule for machine assignments.
 
     Attributes:
-        plan (Dict[str, Dict[int, Optional[str]]]):
+    plan (dict[str, dict[int, str | None]]):
             A dictionary where the key is a machine ID (str) and the value is another dictionary.
             The nested dictionary's key is a day (int) and the value is a block_id (str) that machine is assigned to on that day, or None if no assignment is made.
     """
-    plan: Dict[str, Dict[int, Optional[str]]]
+
+    plan: dict[str, dict[int, str | None]]
+
 
 def _init_greedy(pb: Problem) -> Schedule:
     """
@@ -44,14 +48,15 @@ def _init_greedy(pb: Problem) -> Schedule:
     avail = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
     windows = {b_id: sc.window_for(b_id) for b_id in sc.block_ids()}
 
-
-    plan = {m.id: {d: None for d in pb.days} for m in sc.machines}
+    plan: dict[str, dict[int, str | None]] = {
+        machine.id: {day: None for day in pb.days} for machine in sc.machines
+    }
     for d in pb.days:
         for m in sc.machines:
             if avail.get((m.id, d), 1) == 0:
                 continue
             # pick best block by highest rate with remaining work and within window
-            cands = []
+            cands: list[tuple[float, str]] = []
             for b in sc.blocks:
                 es, lf = windows[b.id]
                 if d < es or d > lf or remaining[b.id] <= 1e-9:
@@ -65,6 +70,7 @@ def _init_greedy(pb: Problem) -> Schedule:
                 plan[m.id][d] = blk
                 remaining[blk] = max(0.0, remaining[blk] - rate.get((m.id, blk), 0.0))
     return Schedule(plan=plan)
+
 
 def _evaluate(pb: Problem, sched: Schedule) -> float:
     """
@@ -90,12 +96,12 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
     rate = {(r.machine_id, r.block_id): r.rate for r in sc.production_rates}
     windows = {b_id: sc.window_for(b_id) for b_id in sc.block_ids()}
     landing_of = {b.id: b.landing_id for b in sc.blocks}
-    landing_cap = {l.id: l.daily_capacity for l in sc.landings}
+    landing_cap = {landing.id: landing.daily_capacity for landing in sc.landings}
 
     score = 0.0
     for d in pb.days:
         # landing capacity check: penalize violations heavily
-        used = {l.id: 0 for l in sc.landings}
+        used = {landing.id: 0 for landing in sc.landings}
         for m in sc.machines:
             blk = sched.plan[m.id][d]
             if blk is None:
@@ -105,9 +111,9 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
                 continue  # assignment illegal -> contributes nothing
             if remaining[blk] <= 1e-9:
                 continue
-            l = landing_of[blk]
-            used[l] += 1
-            if used[l] > landing_cap[l]:
+            landing_id = landing_of[blk]
+            used[landing_id] += 1
+            if used[landing_id] > landing_cap[landing_id]:
                 score -= 1000.0  # violation
                 continue
             r = rate.get((m.id, blk), 0.0)
@@ -115,6 +121,7 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
             remaining[blk] -= prod
             score += prod
     return score
+
 
 def _neighbors(pb: Problem, sched: Schedule):
     """
@@ -150,6 +157,7 @@ def _neighbors(pb: Problem, sched: Schedule):
     n2.plan[m][d2] = n2.plan[m][d1]
     n2.plan[m][d1] = None
     yield n2
+
 
 def solve_sa(pb: Problem, iters: int = 2000, seed: int = 42):
     """
@@ -194,7 +202,7 @@ def solve_sa(pb: Problem, iters: int = 2000, seed: int = 42):
                 break
         if cur_score > best_score:
             best, best_score = cur, cur_score
-        T = T0 * 0.995 ** k
+        T = T0 * 0.995**k
         if not accepted and k % 100 == 0:
             # random restart
             cur = _init_greedy(pb)
@@ -206,5 +214,5 @@ def solve_sa(pb: Problem, iters: int = 2000, seed: int = 42):
         for d, b in plan.items():
             if b is not None:
                 rows.append({"machine_id": m, "block_id": b, "day": int(d), "assigned": 1})
-    df = pd.DataFrame(rows).sort_values(["day","machine_id","block_id"])
+    df = pd.DataFrame(rows).sort_values(["day", "machine_id", "block_id"])
     return {"objective": float(best_score), "assignments": df}

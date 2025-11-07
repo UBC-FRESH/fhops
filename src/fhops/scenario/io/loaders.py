@@ -11,9 +11,9 @@ from pydantic import TypeAdapter
 from fhops.scenario.contract.models import (
     Block,
     CalendarEntry,
+    Landing,
     Machine,
     ProductionRate,
-    Landing,
     Scenario,
 )
 

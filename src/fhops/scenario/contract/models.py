@@ -82,7 +82,7 @@ class Problem(BaseModel):
     days: list[Day]
 
     @classmethod
-    def from_scenario(cls, scenario: Scenario) -> "Problem":
+    def from_scenario(cls, scenario: Scenario) -> Problem:
         return cls(scenario=scenario, days=list(range(1, scenario.num_days + 1)))
 
 
