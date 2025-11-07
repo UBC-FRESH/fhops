@@ -8,6 +8,7 @@ constructing, solving, and evaluating harvesting schedules. At its core FHOPS su
 - A deterministic MIP builder (Pyomo + HiGHS) for exact optimisation.
 - Metaheuristic solvers for larger instances where MIP alone is insufficient.
 - Evaluation routines to replay schedules, collect KPIs, and explore robustness.
+- Scheduling extensions for shift timelines, mobilisation parameters, and synthetic scenario generation scaffolding.
 
 The roadmap in :doc:`roadmap` and the notes under ``notes/`` guide ongoing development. Refer to
 :doc:`howto/quickstart` for a hands-on example.

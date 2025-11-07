@@ -21,7 +21,7 @@ before proposing new work.
 
 ## Phase 2 — Solver & Heuristic Expansion
 - [ ] Metaheuristic roadmap execution (Simulated Annealing refinements, Tabu/ILS activation).
-- [ ] Mobilisation/setup cost integration in MIP & heuristics (`notes/mobilisation_plan.md`).
+- [ ] Mobilisation/setup cost integration in MIP & heuristics (`notes/mobilisation_plan.md`) — scaffolding in place, cost terms pending.
 - [ ] Harvest system sequencing constraints and machine-to-system mapping (`notes/system_sequencing_plan.md`).
 - [ ] Scenario scaling benchmarks and tuning harness.
 - [ ] CLI ergonomics for solver configuration profiles.
