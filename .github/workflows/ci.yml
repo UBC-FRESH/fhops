@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+  pull_request:
+
+jobs:
+  lint-test-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[dev]
+          pip install -r docs/requirements.txt
+
+      - name: Ruff format check
+        run: ruff format --check src tests
+
+      - name: Ruff lint
+        run: ruff check src tests
+
+      - name: Mypy
+        run: mypy src
+
+      - name: Pytest
+        run: pytest
+
+      - name: Pre-commit hooks
+        run: pre-commit run --all-files
+
+      - name: Build documentation
+        run: sphinx-build -b html docs _build/html -W

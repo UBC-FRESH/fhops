@@ -158,6 +158,14 @@ fhops benchmark examples/med42/scenario.yaml --time_limit 60 --iters 8000
 ### Add a new constraint (MIP)
 - Implement it in `fhops/model/pyomo_builder.py` (or as a function under `model/constraints/`).
 - Use the scenario fields you need (add to data contract if necessary).
+
+## Project Docs & Planning Artefacts
+
+- Roadmap: `FHOPS_ROADMAP.md` (mirrors detailed module notes in `notes/`).
+- Coding agent workflow: `CODING_AGENT.md` with required command cadence.
+- Change log: `CHANGE_LOG.md` tracks daily progress and executed commands.
+- Documentation: Sphinx sources live under `docs/` and publish to Read the Docs.
+- CI/CD: see `.github/workflows/ci.yml` for lint/type/test/doc automation.
 - Add a tiny unit test + one example that tickles the constraint.
 
 ### Add a new operator/neighborhood (heuristics)
