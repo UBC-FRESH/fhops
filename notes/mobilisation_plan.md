@@ -11,12 +11,12 @@ Status: Draft — pending modular reorganisation.
 ## Planned Tasks
 - [x] Extend scenario data contract with distance matrices or geometry hooks for blocks/landings. *(MobilisationConfig + BlockDistance scaffolded.)*
 - [x] Define mobilisation parameters per machine/system (walk cost per metre, setup cost, threshold distance). *(MachineMobilisation added.)*
-- [ ] Implement mobilisation penalty terms in Pyomo (`optimization/mip/constraints/mobilisation.py`).
-- [ ] Add heuristic loss penalties mirroring the MIP logic.
+- [x] Implement mobilisation penalty terms in Pyomo (`optimization/mip/builder.py`). *(Setup-cost deduction wired into objective.)*
+- [x] Add heuristic loss penalties mirroring the MIP logic. *(SA evaluator subtracts setup cost per assignment.)*
 - [ ] Update evaluation metrics to report mobilisation spend.
 
 ## Tests
-- [ ] Fixture scenarios with known mobilisation costs (short vs long moves).
+- [x] Fixture scenarios with known mobilisation costs (short vs long moves). *(See `tests/test_mobilisation.py`.)*
 - [ ] Regression tests confirming solver outputs incorporate mobilisation charges.
 
 ## Documentation

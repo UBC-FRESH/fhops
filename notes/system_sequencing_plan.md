@@ -15,6 +15,10 @@ Status: Draft — supports mobilisation and constraint upgrades.
 - [ ] Teach heuristics to respect sequencing and system-specific constraints.
 - [ ] Update evaluation to check compliance and report violations.
 
+### Immediate next steps
+- [ ] Draft constraint stub under `optimization/mip/constraints/system_sequencing.py` capturing precedence placeholders.
+- [ ] Outline data model sketch for `scheduling/systems` (system id, ordered jobs, machine roles).
+
 ## Tests
 - [ ] Scenarios covering different systems (ground-based, cable, heli) with expected job orderings.
 - [ ] Regression tests verifying sequencing is enforced in solver outputs.

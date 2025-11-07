@@ -1,5 +1,6 @@
+import pyomo.environ as pyo
+
 from fhops.optimization.mip.builder import build_model
-from fhops.scheduling.mobilisation import MachineMobilisation, MobilisationConfig
 from fhops.scenario.contract.models import (
     Block,
     CalendarEntry,
@@ -9,6 +10,7 @@ from fhops.scenario.contract.models import (
     ProductionRate,
     Scenario,
 )
+from fhops.scheduling.mobilisation import MachineMobilisation, MobilisationConfig
 
 
 def build_problem() -> Problem:
@@ -34,9 +36,9 @@ def build_problem() -> Problem:
                 MachineMobilisation(
                     machine_id="M1",
                     walk_cost_per_meter=0.0,
-                    move_cost_flat=5.0,
+                    move_cost_flat=0.0,
                     walk_threshold_m=0.0,
-                    setup_cost=0.0,
+                    setup_cost=5.0,
                 )
             ],
             distances=[],
@@ -50,3 +52,19 @@ def test_build_model_with_mobilisation_config():
     model = build_model(pb)
     assert model is not None
     assert hasattr(model, "mach_one_block")
+
+
+def test_objective_includes_mobilisation_penalty():
+    pb = build_problem()
+    model = build_model(pb)
+
+    for var in model.x.values():
+        var.value = 0
+    for var in model.prod.values():
+        var.value = 0
+
+    model.x["M1", "B1", 1].value = 1
+    model.x["M1", "B2", 2].value = 1
+
+    objective_value = pyo.value(model.obj)
+    assert objective_value == -10.0  # two assignments, each penalised by setup cost 5

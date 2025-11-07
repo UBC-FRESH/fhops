@@ -10,8 +10,8 @@ Status: Draft — align updates with roadmap Phase 1/2 milestones.
 - Benchmark solver performance across scenario scales; document tunings and warm-start strategies.
 
 ## Tasks
-- [ ] Map each constraint/objective to source files (`fhops/model` → future `optimization/mip`).
-- [ ] Define parameterisation for new constraints (e.g., mobilisation thresholds, sequencing dependencies, soft landing caps, priority scores).
+- [x] Map each constraint/objective to source files (`fhops/model` → `optimization/mip`).
+- [x] Define parameterisation for new constraints (e.g., mobilisation thresholds, sequencing dependencies, soft landing caps, priority scores). *(Setup-cost penalties wired; thresholds pending distance integration.)*
 - [ ] Create regression scenario set with expected results for automated comparison.
 - [ ] Evaluate Pyomo-to-HiGHS export time and propose decompositions if needed.
 

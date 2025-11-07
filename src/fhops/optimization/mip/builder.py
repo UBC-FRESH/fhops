@@ -23,6 +23,11 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     work_required = {block.id: block.work_required for block in sc.blocks}
     landing_capacity = {landing.id: landing.daily_capacity for landing in sc.landings}
 
+    mobilisation = sc.mobilisation
+    setup_cost: dict[str, float] = {}
+    if mobilisation is not None:
+        setup_cost = {param.machine_id: param.setup_cost for param in mobilisation.machine_params}
+
     availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
     windows = {block_id: sc.window_for(block_id) for block_id in sc.block_ids()}
 
@@ -38,12 +43,20 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     model.x = pyo.Var(model.M, model.B, model.D, domain=pyo.Binary)
     model.prod = pyo.Var(model.M, model.B, model.D, domain=pyo.NonNegativeReals)
 
-    model.obj = pyo.Objective(
-        expr=sum(
-            model.prod[mach, blk, day] for mach in model.M for blk in model.B for day in model.D
-        ),
-        sense=pyo.maximize,
+    production_expr = sum(
+        model.prod[mach, blk, day] for mach in model.M for blk in model.B for day in model.D
     )
+
+    penalty_expr = 0
+    if setup_cost:
+        penalty_expr = sum(
+            setup_cost.get(mach, 0.0) * model.x[mach, blk, day]
+            for mach in model.M
+            for blk in model.B
+            for day in model.D
+        )
+
+    model.obj = pyo.Objective(expr=production_expr - penalty_expr, sense=pyo.maximize)
 
     def mach_one_block_rule(mdl, mach, day):
         availability_flag = availability.get((mach, int(day)), 1)

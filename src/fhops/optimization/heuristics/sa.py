@@ -10,6 +10,7 @@ from typing import Any
 import pandas as pd
 
 from fhops.scenario.contract import Problem
+from fhops.scheduling.mobilisation import MachineMobilisation
 
 __all__ = ["Schedule", "solve_sa"]
 
@@ -61,6 +62,10 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
     windows = {block_id: sc.window_for(block_id) for block_id in sc.block_ids()}
     landing_of = {block.id: block.landing_id for block in sc.blocks}
     landing_cap = {landing.id: landing.daily_capacity for landing in sc.landings}
+    mobilisation = sc.mobilisation
+    mobil_params: dict[str, MachineMobilisation] = {}
+    if mobilisation is not None:
+        mobil_params = {param.machine_id: param for param in mobilisation.machine_params}
 
     score = 0.0
     for day in pb.days:
@@ -83,6 +88,9 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
             prod = min(r, remaining[block_id])
             remaining[block_id] -= prod
             score += prod
+            params = mobil_params.get(machine.id)
+            if params is not None:
+                score -= params.setup_cost
     return score
 
 
