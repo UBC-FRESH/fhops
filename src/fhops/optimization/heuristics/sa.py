@@ -1,0 +1,146 @@
+"""Simulated annealing heuristic for FHOPS."""
+
+from __future__ import annotations
+
+import math
+import random
+from dataclasses import dataclass
+from typing import Any
+
+import pandas as pd
+
+from fhops.scenario.contract import Problem
+
+__all__ = ["Schedule", "solve_sa"]
+
+
+@dataclass(slots=True)
+class Schedule:
+    """Machine assignment plan keyed by machine/day."""
+
+    plan: dict[str, dict[int, str | None]]
+
+
+def _init_greedy(pb: Problem) -> Schedule:
+    sc = pb.scenario
+    remaining = {block.id: block.work_required for block in sc.blocks}
+    rate = {(r.machine_id, r.block_id): r.rate for r in sc.production_rates}
+    availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
+    windows = {block_id: sc.window_for(block_id) for block_id in sc.block_ids()}
+
+    plan: dict[str, dict[int, str | None]] = {
+        machine.id: {day: None for day in pb.days} for machine in sc.machines
+    }
+
+    for day in pb.days:
+        for machine in sc.machines:
+            if availability.get((machine.id, day), 1) == 0:
+                continue
+            candidates: list[tuple[float, str]] = []
+            for block in sc.blocks:
+                earliest, latest = windows[block.id]
+                if day < earliest or day > latest or remaining[block.id] <= 1e-9:
+                    continue
+                r = rate.get((machine.id, block.id), 0.0)
+                if r > 0:
+                    candidates.append((r, block.id))
+            if candidates:
+                candidates.sort(reverse=True)
+                _, best_block = candidates[0]
+                plan[machine.id][day] = best_block
+                remaining[best_block] = max(
+                    0.0, remaining[best_block] - rate.get((machine.id, best_block), 0.0)
+                )
+    return Schedule(plan=plan)
+
+
+def _evaluate(pb: Problem, sched: Schedule) -> float:
+    sc = pb.scenario
+    remaining = {block.id: block.work_required for block in sc.blocks}
+    rate = {(r.machine_id, r.block_id): r.rate for r in sc.production_rates}
+    windows = {block_id: sc.window_for(block_id) for block_id in sc.block_ids()}
+    landing_of = {block.id: block.landing_id for block in sc.blocks}
+    landing_cap = {landing.id: landing.daily_capacity for landing in sc.landings}
+
+    score = 0.0
+    for day in pb.days:
+        used = {landing.id: 0 for landing in sc.landings}
+        for machine in sc.machines:
+            block_id = sched.plan[machine.id][day]
+            if block_id is None:
+                continue
+            earliest, latest = windows[block_id]
+            if day < earliest or day > latest:
+                continue
+            if remaining[block_id] <= 1e-9:
+                continue
+            landing_id = landing_of[block_id]
+            used[landing_id] += 1
+            if used[landing_id] > landing_cap[landing_id]:
+                score -= 1000.0
+                continue
+            r = rate.get((machine.id, block_id), 0.0)
+            prod = min(r, remaining[block_id])
+            remaining[block_id] -= prod
+            score += prod
+    return score
+
+
+def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
+    sc = pb.scenario
+    machines = [machine.id for machine in sc.machines]
+    days = list(pb.days)
+    if not machines or not days:
+        return []
+    # swap two machines on a day
+    m1, m2 = random.sample(machines, k=2) if len(machines) >= 2 else (machines[0], machines[0])
+    day = random.choice(days)
+    swap_plan = {m: plan.copy() for m, plan in sched.plan.items()}
+    swap_plan[m1][day], swap_plan[m2][day] = swap_plan[m2][day], swap_plan[m1][day]
+    neighbours = [Schedule(plan=swap_plan)]
+    # move assignment within a machine across days
+    machine = random.choice(machines)
+    d1, d2 = random.sample(days, k=2) if len(days) >= 2 else (days[0], days[0])
+    move_plan = {m: plan.copy() for m, plan in sched.plan.items()}
+    move_plan[machine][d2] = move_plan[machine][d1]
+    move_plan[machine][d1] = None
+    neighbours.append(Schedule(plan=move_plan))
+    return neighbours
+
+
+def solve_sa(pb: Problem, iters: int = 2000, seed: int = 42) -> dict[str, Any]:
+    """Run simulated annealing returning objective and assignments DataFrame."""
+    random.seed(seed)
+    current = _init_greedy(pb)
+    current_score = _evaluate(pb, current)
+    best = current
+    best_score = current_score
+
+    temperature0 = max(1.0, best_score / 10.0)
+    temperature = temperature0
+    for step in range(1, iters + 1):
+        accepted = False
+        for neighbor in _neighbors(pb, current):
+            neighbor_score = _evaluate(pb, neighbor)
+            delta = neighbor_score - current_score
+            if delta >= 0 or random.random() < math.exp(delta / max(temperature, 1e-6)):
+                current = neighbor
+                current_score = neighbor_score
+                accepted = True
+                break
+        if current_score > best_score:
+            best, best_score = current, current_score
+        temperature = temperature0 * (0.995**step)
+        if not accepted and step % 100 == 0:
+            current = _init_greedy(pb)
+            current_score = _evaluate(pb, current)
+
+    rows = []
+    for machine_id, plan in best.plan.items():
+        for day, block_id in plan.items():
+            if block_id is not None:
+                rows.append(
+                    {"machine_id": machine_id, "block_id": block_id, "day": int(day), "assigned": 1}
+                )
+    assignments = pd.DataFrame(rows).sort_values(["day", "machine_id", "block_id"])
+    return {"objective": float(best_score), "assignments": assignments}

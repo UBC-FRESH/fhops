@@ -10,3 +10,5 @@ navigate by package. Autodoc stubs will expand as modules are documented.
    fhops
    fhops.scenario
    fhops.scheduling
+   fhops.optimization
+   fhops.evaluation
