@@ -21,7 +21,7 @@ Status: Draft — groundwork for thesis-aligned datasets.
 - [ ] Hook dataset generation into tests/CI where feasible.
 
 ## Tests & Validation
-- [ ] Unit tests ensuring generated datasets satisfy scenario contract validators.
+- [x] Unit tests ensuring generated datasets satisfy scenario contract validators. *(See `tests/test_synthetic.py`.)*
 - [ ] Statistical checks on sampled parameters (distributions, workload constraints).
 
 ## Documentation
