@@ -42,15 +42,15 @@ src/fhops/
    - Create `scheduling/timeline` for shift/day calendars and blackout metadata.
 
 3. **Optimisation Restructure**
-   - Partition Pyomo builder into submodules (`optimization/mip/constraints/*.py`).
-   - Relocate heuristics into `optimization/heuristics` with operator registry.
+   - Partition Pyomo builder into submodules (`optimization/mip/constraints/*.py`). ✅ baseline builder/HiGHS driver migrated.
+   - Relocate heuristics into `optimization/heuristics` with operator registry. ✅ SA ported.
 
 4. **Mobilisation & Systems**
    - Implement mobilisation cost calculators and system sequencing logic in new modules.
    - Update MIP/heuristics to consume the modular pieces.
 
 5. **Evaluation & Reporting**
-   - Move KPI code into `evaluation/metrics`, playback into `evaluation/playback`, docs accordingly.
+   - Move KPI code into `evaluation/metrics`, playback into `evaluation/playback`, docs accordingly. ✅ KPI helper moved; playback still pending.
 
 6. **Docs & CI Refresh**
    - Update Sphinx autosummary entries, CLI docs, and tests to the new imports.

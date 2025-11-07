@@ -9,8 +9,8 @@ Status: Draft — pending modular reorganisation.
 - Surface mobilisation configuration (distance thresholds, per-metre walk costs, setup fees) in the scenario contract and CLI.
 
 ## Planned Tasks
-- [ ] Extend scenario data contract with distance matrices or geometry hooks for blocks/landings.
-- [ ] Define mobilisation parameters per machine/system (walk cost per metre, setup cost, threshold distance).
+- [x] Extend scenario data contract with distance matrices or geometry hooks for blocks/landings. *(MobilisationConfig + BlockDistance scaffolded.)*
+- [x] Define mobilisation parameters per machine/system (walk cost per metre, setup cost, threshold distance). *(MachineMobilisation added.)*
 - [ ] Implement mobilisation penalty terms in Pyomo (`optimization/mip/constraints/mobilisation.py`).
 - [ ] Add heuristic loss penalties mirroring the MIP logic.
 - [ ] Update evaluation metrics to report mobilisation spend.

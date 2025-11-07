@@ -9,6 +9,8 @@
 - Introduced `.pre-commit-config.yaml` to enforce lint/type standards via hooks.
 - Bootstrapped modular package skeletons and migrated scenario contracts/loaders into `fhops.scenario`, leaving shims (`fhops.core.types`, `fhops.data.loaders`) with deprecation warnings.
 - Updated CLI/solver modules to consume the new scenario contract/IO packages, refreshed ruff+mypy pytest configs (stubs, excludes), and brought `ruff format`, `ruff check`, `mypy`, `pytest`, and `pre-commit run --all-files` back to green.
+- Ported the Pyomo builder, HiGHS driver, heuristics, and KPI helpers into the new `optimization/` and `evaluation/` packages with deprecated shims for `fhops.model/solve/eval`.
+- Added shift timeline and mobilisation schemas to the scenario contract (`TimelineConfig`, `MobilisationConfig`) with planning notes/docs updated.
 - Commands executed:
   - `ruff format src tests` (clean run locally; reverted formatting edits to keep scope focused on planning work).
   - `ruff check src tests` *(fails — pre-existing import ordering and typing updates required across legacy modules).*

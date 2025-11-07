@@ -12,9 +12,10 @@ Status: Draft — update as tasks progress.
 
 ## Planned Work
 - [ ] Audit existing `fhops.core` models for missing constraints (e.g., non-negative work, horizon bounds).
-- [ ] Introduce shift calendar models (per-shift durations, blackout dates, weekly rollups).
+- [x] Introduce shift calendar models (per-shift durations, blackout dates, weekly rollups). *(TimelineConfig added; scheduling integration pending usage.)*
+- [x] Introduce mobilisation schema (machine parameters, block distances). *(MobilisationConfig added; needs wiring into optimisation.)*
 - [ ] Add schema-level validators ensuring linked IDs exist across CSV inputs (blocks↔systems↔machines↔workers).
-- [ ] Introduce typed helpers for optional extras (geo metadata, mobilisation parameters, crew assignments).
+- [ ] Introduce typed helpers for optional extras (geo metadata, crew assignments).
 - [ ] Document data contract extensions in Sphinx (`docs/howto/data_contract.rst`).
 
 ## Tests & Tooling

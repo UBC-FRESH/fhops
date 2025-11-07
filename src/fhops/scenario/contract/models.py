@@ -6,6 +6,8 @@ from datetime import date
 
 from pydantic import BaseModel, ValidationInfo, field_validator
 
+from fhops.scheduling import MobilisationConfig, TimelineConfig
+
 Day = int  # 1..D
 
 
@@ -60,6 +62,8 @@ class Scenario(BaseModel):
     landings: list[Landing]
     calendar: list[CalendarEntry]
     production_rates: list[ProductionRate]
+    timeline: TimelineConfig | None = None
+    mobilisation: MobilisationConfig | None = None
 
     def machine_ids(self) -> list[str]:
         return [machine.id for machine in self.machines]
@@ -95,4 +99,6 @@ __all__ = [
     "ProductionRate",
     "Scenario",
     "Problem",
+    "TimelineConfig",
+    "MobilisationConfig",
 ]
