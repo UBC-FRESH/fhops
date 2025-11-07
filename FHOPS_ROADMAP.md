@@ -14,18 +14,22 @@ before proposing new work.
 ## Phase 1 — Core Platform Hardening 🚧 (in progress)
 - [ ] Harden data contract validations and scenario loaders (see `notes/data_contract_enhancements.md`).
 - [ ] Expand Pyomo model coverage for production constraints and objective variants (see `notes/mip_model_plan.md`).
+- [ ] Stand up modular scaffolding (`notes/modular_reorg_plan.md`) and shift-level scheduling groundwork (`scheduling/timeline`).
 - [ ] Establish deterministic regression fixtures for MIP and heuristic solvers.
 - [ ] Document baseline workflows in Sphinx (overview + quickstart).
 - [ ] Stand up CI enforcing the agent workflow command suite on every push and PR.
 
 ## Phase 2 — Solver & Heuristic Expansion
 - [ ] Metaheuristic roadmap execution (Simulated Annealing refinements, Tabu/ILS activation).
+- [ ] Mobilisation/setup cost integration in MIP & heuristics (`notes/mobilisation_plan.md`).
+- [ ] Harvest system sequencing constraints and machine-to-system mapping (`notes/system_sequencing_plan.md`).
 - [ ] Scenario scaling benchmarks and tuning harness.
 - [ ] CLI ergonomics for solver configuration profiles.
 
 ## Phase 3 — Evaluation & Analytics
-- [ ] Robust schedule playback with stochastic extensions (downtime/weather sampling).
-- [ ] KPI expansion (cost, makespan, utilisation) with reporting templates.
+- [ ] Robust schedule playback with stochastic extensions (downtime/weather sampling) and shift/day reporting.
+- [ ] KPI expansion (cost, makespan, utilisation, mobilisation spend) with reporting templates.
+- [ ] Synthetic dataset generator & benchmarking suite (`notes/synthetic_dataset_plan.md`).
 - [ ] Reference analytics notebooks integrated into docs/examples.
 
 ## Phase 4 — Release & Community Readiness
@@ -53,3 +57,4 @@ before proposing new work.
 - [ ] Scenario authoring UI and schema validators for web clients.
 - [ ] Cloud execution harness for large-scale heuristics.
 - [ ] DSS integration hooks (ArcGIS, QGIS) for geo-enabled workflows.
+- [ ] Jaffray MASc thesis alignment checkpoints (`notes/thesis_alignment.md` TBD).

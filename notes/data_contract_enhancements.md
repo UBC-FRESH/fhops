@@ -5,13 +5,16 @@ Status: Draft — update as tasks progress.
 
 ## Objectives
 - Tighten Pydantic models for scenarios, including cross-field validation and informative errors.
+- Add support for shift-level scheduling (per-shift calendars, blackout rules) while retaining day/week reporting hooks.
+- Represent harvest systems, machine capabilities, and worker training matrices in the contract.
 - Expand IO helpers for CSV/YAML consistency, defaults, and schema evolution.
 - Provide fixtures and docs so contributors can craft valid scenarios quickly.
 
 ## Planned Work
 - [ ] Audit existing `fhops.core` models for missing constraints (e.g., non-negative work, horizon bounds).
-- [ ] Add schema-level validators ensuring linked IDs exist across CSV inputs.
-- [ ] Introduce typed helpers for optional extras (geo metadata, crew assignments).
+- [ ] Introduce shift calendar models (per-shift durations, blackout dates, weekly rollups).
+- [ ] Add schema-level validators ensuring linked IDs exist across CSV inputs (blocks↔systems↔machines↔workers).
+- [ ] Introduce typed helpers for optional extras (geo metadata, mobilisation parameters, crew assignments).
 - [ ] Document data contract extensions in Sphinx (`docs/howto/data_contract.rst`).
 
 ## Tests & Tooling

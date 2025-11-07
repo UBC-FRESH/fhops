@@ -6,11 +6,13 @@ Status: Draft — governs user-facing narrative and tooling upgrades.
 ## Objectives
 - Deliver comprehensive Sphinx documentation (overview, tutorials, API, CLI reference).
 - Ensure CLI ergonomics support discoverability (rich help, examples, presets).
-- Align documentation publishing with Read the Docs automation.
+- Document mobilisation, harvest systems, and shift scheduling capabilities as they land.
+- Align documentation publishing with Read the Docs automation and thesis alignment notes.
 
 ## Tasks
 - [ ] Inventory current CLI commands and options; identify missing help text or examples.
 - [ ] Scaffold Sphinx sections (overview, how-to guides, API reference, CLI reference).
+- [ ] Add documentation for modular structure (`notes/modular_reorg_plan.md`) and new feature areas (mobilisation, systems, synthetic datasets).
 - [ ] Integrate `sphinx-click` (or equivalent) for automatic CLI docs generation.
 - [ ] Prepare RTD configuration and badges; test build locally before enabling remote builds.
 
