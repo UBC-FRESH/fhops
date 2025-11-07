@@ -15,7 +15,7 @@ Status: Draft — groundwork for thesis-aligned datasets.
 - Environment: terrain, species mix, prescription type (thinning, clearcut, VR).
 
 ## Planned Tasks
-- [ ] Define configuration schema for synthetic dataset generator (`scenario/synthetic/config.py`).
+- [x] Define configuration schema for synthetic dataset generator (`scenario/synthetic/generator.py`).
 - [ ] Implement randomised and template-driven generators producing YAML/CSV bundles.
 - [ ] Produce reference datasets (small/medium/large) with metadata for benchmarking.
 - [ ] Hook dataset generation into tests/CI where feasible.
