@@ -24,4 +24,18 @@ Dimensions of synthetic dataset attributes that we need to sample from:
 - targetting 12 to 16 week planning horizon for production-grade problem instances (could be shorter for testing and validation and calibration and benchmarking tasks)
 - assume default working 7 days per week, but with possible user-defined "blackout dates" (which could be regular, e.g., no working on Sundays, or irregular e.g., no working for 3 days in the middle of week 7)
 - need to maintain the notion of days and weeks for reporting purposes (and also to connect to "real" world calendar time definition), but the optimization problems will schedule on a PER SHIFT basis (shift is basic unit for scheduling). allow possible differnt shift length definitions inside a given problem instance (e.g., one job-machine combo scheduled on 4 hour shift basis with 6 shifts per day, or another combo scheduled with 8 hour shifts and 3 shifts per day). currently fhops time unit is only DAYS: need to fix that.
--
+
+## Rosalia Jaffray MASc thesis + FHOPS 
+
+FHOPS is directly inspired by and related to (and an integral part of) Rosalia Jaffray's MASc thesis (under my supervision, as PI of the UBC FRESH lab). I have added symlinks to GitHub repo clones of the PROPOSAL and THESIS documents she is currently writing (living documents, WIP).
+
+See `tmp/jaffray-rosalia-masc-proposal`.
+See `tmp/jaffray-rosalia-masc-thesis`.
+
+We may need to reference these documents regularly throughout the FHOPS dev rollout to make sure the two projects stay aligned.
+
+Just to be clear FHOPS != Jaffray thesis (but the Jaffray thesis will contribute to DEFINING, and DESIGNING, and TESTING and USING fhops). 
+
+## Anticipate multi-scenario workflows
+
+- likely use cases for FHOPS (in graduate student research project, or in practice) will require running multiple scenarios (with different parameters) on 

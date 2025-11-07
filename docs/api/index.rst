@@ -8,3 +8,5 @@ navigate by package. Autodoc stubs will expand as modules are documented.
    :maxdepth: 1
 
    fhops
+   fhops.scenario
+   fhops.scheduling

@@ -38,7 +38,7 @@ src/fhops/
    - Seed module-specific notes (`notes/mobilisation_plan.md`, `notes/synthetic_dataset_plan.md`, `notes/system_sequencing_plan.md`).
 
 2. **Scenario & Scheduling Split**
-   - Move existing Pydantic models and loaders into `scenario/contract` and `scenario/io`.
+   - Move existing Pydantic models and loaders into `scenario/contract` and `scenario/io`. ✅ models/loaders migrated with shims.
    - Create `scheduling/timeline` for shift/day calendars and blackout metadata.
 
 3. **Optimisation Restructure**
