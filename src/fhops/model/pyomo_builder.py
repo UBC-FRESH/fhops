@@ -1,9 +1,11 @@
 from __future__ import annotations
-from typing import Dict, Tuple
+
 from collections import defaultdict
 
 import pyomo.environ as pyo
-from fhops.core.types import Problem
+
+from fhops.scenario.contract import Problem
+
 
 def build_model(pb: Problem) -> pyo.ConcreteModel:
     """
@@ -27,9 +29,8 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     D = list(pb.days)
 
     rate = {(r.machine_id, r.block_id): r.rate for r in sc.production_rates}
-    work_required = {b.id: b.work_required for b in sc.blocks}
-    landing_of = {b.id: b.landing_id for b in sc.blocks}
-    landing_capacity = {l.id: l.daily_capacity for l in sc.landings}
+    work_required = {block.id: block.work_required for block in sc.blocks}
+    landing_capacity = {landing.id: landing.daily_capacity for landing in sc.landings}
 
     # Availability: 1 if machine available on day
     avail = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
@@ -60,6 +61,7 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     def mach_one_block_rule(mdl, mach, day):
         a = avail.get((mach, int(day)), 1)
         return sum(mdl.x[mach, blk, day] for blk in mdl.B) <= a
+
     m.mach_one_block = pyo.Constraint(m.M, m.D, rule=mach_one_block_rule)
 
     # Production limited by rate if assigned; zero otherwise or out of window
@@ -67,19 +69,28 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
         r = rate.get((mach, blk), 0.0)
         w = within_window(blk, int(day))
         return mdl.prod[mach, blk, day] <= r * mdl.x[mach, blk, day] * w
+
     m.prod_cap = pyo.Constraint(m.M, m.B, m.D, rule=prod_cap_rule)
 
     # Block completion: cumulative production cannot exceed work_required
     def block_cum_rule(mdl, blk):
         return sum(mdl.prod[mach, blk, day] for mach in m.M for day in m.D) <= work_required[blk]
+
     m.block_cum = pyo.Constraint(m.B, rule=block_cum_rule)
 
     # Landing capacity per day: sum of active assignments at that landing <= capacity
-    blocks_by_landing = defaultdict(list)
-    for b in sc.blocks:
-        blocks_by_landing[b.landing_id].append(b.id)
-    def landing_cap_rule(mdl, landing, day):
-        return sum(mdl.x[mach, blk, day] for mach in m.M for blk in blocks_by_landing[landing]) <= landing_capacity[landing]
-    m.landing_cap = pyo.Constraint(list(blocks_by_landing.keys()), m.D, rule=landing_cap_rule)
+    blocks_by_landing: dict[str, list[str]] = defaultdict(list)
+    for block in sc.blocks:
+        blocks_by_landing[block.landing_id].append(block.id)
+
+    def landing_cap_rule(mdl, landing_id, day):
+        assignments = sum(
+            mdl.x[mach, blk, day] for mach in m.M for blk in blocks_by_landing.get(landing_id, [])
+        )
+        capacity = landing_capacity.get(landing_id, 0)
+        return assignments <= capacity
+
+    m.L = pyo.Set(initialize=list(landing_capacity.keys()))
+    m.landing_cap = pyo.Constraint(m.L, m.D, rule=landing_cap_rule)
 
     return m

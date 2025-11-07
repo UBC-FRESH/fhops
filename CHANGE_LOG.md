@@ -8,6 +8,7 @@
 - Refined `.readthedocs.yaml` using the Nemora template while still installing project extras for doc builds.
 - Introduced `.pre-commit-config.yaml` to enforce lint/type standards via hooks.
 - Bootstrapped modular package skeletons and migrated scenario contracts/loaders into `fhops.scenario`, leaving shims (`fhops.core.types`, `fhops.data.loaders`) with deprecation warnings.
+- Updated CLI/solver modules to consume the new scenario contract/IO packages, refreshed ruff+mypy pytest configs (stubs, excludes), and brought `ruff format`, `ruff check`, `mypy`, `pytest`, and `pre-commit run --all-files` back to green.
 - Commands executed:
   - `ruff format src tests` (clean run locally; reverted formatting edits to keep scope focused on planning work).
   - `ruff check src tests` *(fails — pre-existing import ordering and typing updates required across legacy modules).*

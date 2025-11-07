@@ -24,7 +24,7 @@ autosummary_generate = True
 autodoc_typehints = "description"
 nitpicky = False
 
-intersphinx_mapping = {
+intersphinx_mapping: dict[str, tuple[str, dict[str, str]]] = {
     "python": ("https://docs.python.org/3", {}),
     "pydantic": ("https://docs.pydantic.dev/latest/", {}),
     "pyomo": ("https://pyomo.readthedocs.io/en/stable/", {}),
