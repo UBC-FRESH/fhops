@@ -30,6 +30,7 @@
 - Extended schema validators to reject mobilisation configs referencing unknown machines, closing the linked-ID audit for CSV inputs.
 - Added optional `GeoMetadata` and `CrewAssignment` helpers with validation, enabling typed extras for geospatial references and crew mapping.
 - Authored `docs/howto/data_contract.rst` detailing CSV requirements, optional extras, and validator coverage; cross-linked from overview/quickstart.
+- Documented GeoJSON ingestion expectations (CRS guidance, required IDs) and the `fhops geo distances` workflow for generating mobilisation matrices.
 - Commands executed:
   - `ruff format src tests`
   - `ruff check src tests`

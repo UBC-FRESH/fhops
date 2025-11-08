@@ -55,6 +55,30 @@ Recent helpers enable richer metadata:
 
 Reference `tests/test_contract_validations.py` for examples that exercise these validators.
 
+GeoJSON Ingestion & Distances
+-----------------------------
+
+When supplying block or landing geometries:
+
+- Provide GeoJSON files with a ``FeatureCollection`` containing polygon features.
+- Each feature must include an ``id`` or ``properties.id`` matching the block/landing IDs
+  defined in the CSV tables.
+- Use a projected CRS suitable for distance calculations; FHOPS defaults to
+  ``EPSG:3005`` (BC Albers) but any metre-based CRS is acceptable when specified via
+  ``geo.crs``.
+- Store relative paths in ``GeoMetadata.block_geojson`` / ``landing_geojson`` so the CLI
+  tooling can locate the files.
+
+To generate mobilisation distances from geometries, run:
+
+.. code-block:: bash
+
+   fhops geo distances --blocks blocks.geojson --out mobilisation_distances.csv
+
+The command computes centroid-to-centroid distances (in metres) respecting the CRS. The
+resulting CSV aligns with the ``MobilisationConfig`` distance format and can be referenced
+under ``scenario.data.mobilisation_distances``.
+
 Authoring Checklist
 -------------------
 
