@@ -11,6 +11,7 @@ structure mirrors our roadmap so that implementation status stays transparent.
 
    overview
    howto/quickstart
+   howto/data_contract
 
 .. toctree::
    :maxdepth: 2
