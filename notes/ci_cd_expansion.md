@@ -9,7 +9,7 @@ Status: Draft — immediate actions in Phase 1.
 - Prepare future release automation (version bump, packaging, docs updates).
 
 ## Near-Term Tasks
-- [ ] Author CI workflow invoking `ruff format --check`, `ruff check`, `mypy`, `pytest`, `pre-commit`, and Sphinx builds.
+- [x] Author CI workflow invoking `ruff format --check`, `ruff check`, `mypy`, `pytest`, `pre-commit`, and Sphinx builds. *(`.github/workflows/ci.yml`)*
 - [ ] Configure caching for Python dependencies to keep pipelines fast.
 - [ ] Publish status badges in README once workflows stabilise.
 
