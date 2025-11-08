@@ -17,6 +17,7 @@
 - Scenario contract now provides default harvest system registry linkage for blocks, with validation to ensure IDs align with the seeded BC systems.
 - Added machine-role aware sequencing guardrails: MIP filters assignments by system job roles, SA heuristic honors the same, synthetic generator assigns roles, and new unit tests cover registry constraints and geo distance helpers.
 - Synthetic generator now supports blackout timelines and exports machine roles; accompanying tests verify blackout handling.
+- Added preliminary sequencing constraints (cumulative precedence) and heuristic enforcement, plus system role tests validating constraint activation.
 - Commands executed:
   - `ruff format src tests` (clean run locally; reverted formatting edits to keep scope focused on planning work).
   - `ruff check src tests` *(fails — pre-existing import ordering and typing updates required across legacy modules).*

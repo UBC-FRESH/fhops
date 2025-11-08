@@ -13,16 +13,22 @@ from fhops.scenario.contract import Problem
 from fhops.scheduling.mobilisation import MachineMobilisation, build_distance_lookup
 
 
-def _allowed_roles(scenario) -> dict[str, set[str] | None]:
+def _role_metadata(scenario):
     systems = scenario.harvest_systems or {}
     allowed: dict[str, set[str] | None] = {}
+    prereqs: dict[tuple[str, str], set[str]] = {}
     for block in scenario.blocks:
         system = systems.get(block.harvest_system_id) if block.harvest_system_id else None
         if system:
-            allowed[block.id] = {job.machine_role for job in system.jobs}
+            job_role = {job.name: job.machine_role for job in system.jobs}
+            allowed_roles = {job.machine_role for job in system.jobs}
+            allowed[block.id] = allowed_roles
+            for job in system.jobs:
+                prereq_roles = {job_role[name] for name in job.prerequisites if name in job_role}
+                prereqs[(block.id, job.machine_role)] = prereq_roles
         else:
             allowed[block.id] = None
-    return allowed
+    return allowed, prereqs
 
 
 __all__ = ["Schedule", "solve_sa"]
@@ -41,7 +47,7 @@ def _init_greedy(pb: Problem) -> Schedule:
     rate = {(r.machine_id, r.block_id): r.rate for r in sc.production_rates}
     availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
     windows = {block_id: sc.window_for(block_id) for block_id in sc.block_ids()}
-    allowed_roles = _allowed_roles(sc)
+    allowed_roles, prereq_roles = _role_metadata(sc)
     machine_roles = {machine.id: getattr(machine, "role", None) for machine in sc.machines}
 
     plan: dict[str, dict[int, str | None]] = {
@@ -87,11 +93,12 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
     if mobilisation is not None:
         mobil_params = {param.machine_id: param for param in mobilisation.machine_params}
 
-    allowed_roles = _allowed_roles(sc)
+    allowed_roles, prereq_roles = _role_metadata(sc)
     machine_roles = {machine.id: getattr(machine, "role", None) for machine in sc.machines}
 
     score = 0.0
     previous_block: dict[str, str | None] = {machine.id: None for machine in sc.machines}
+    completed_roles: dict[tuple[str, str], bool] = {}
     for day in sorted(pb.days):
         used = {landing.id: 0 for landing in sc.landings}
         for machine in sc.machines:
@@ -104,6 +111,17 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
                 score -= 1000.0
                 previous_block[machine.id] = None
                 continue
+            prereq_set = prereq_roles.get((block_id, role)) if role else None
+            if prereq_set:
+                unmet = [
+                    prereq
+                    for prereq in prereq_set
+                    if not completed_roles.get((block_id, prereq), False)
+                ]
+                if unmet:
+                    score -= 1000.0
+                    previous_block[machine.id] = block_id
+                    continue
             earliest, latest = windows[block_id]
             if day < earliest or day > latest:
                 continue
@@ -119,6 +137,10 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
             remaining[block_id] -= prod
             score += prod
             params = mobil_params.get(machine.id)
+            prereqs = prereq_roles.get((block_id, machine_roles.get(machine.id)))
+            if prereqs:
+                if any(previous_block[machine.id] is None for _ in [0]):  # placeholder
+                    pass
             prev_blk = previous_block[machine.id]
             if params is not None and prev_blk is not None and block_id is not None:
                 if block_id != prev_blk:
@@ -130,6 +152,8 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
                         cost += params.move_cost_flat
                     score -= cost
             previous_block[machine.id] = block_id
+            if role:
+                completed_roles[(block_id, role)] = True
     return score
 
 
@@ -139,7 +163,7 @@ def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
     days = list(pb.days)
     if not machines or not days:
         return []
-    allowed_roles = _allowed_roles(sc)
+    allowed_roles, _ = _role_metadata(sc)
     machine_roles = {machine.id: getattr(machine, "role", None) for machine in sc.machines}
 
     # swap two machines on a day
