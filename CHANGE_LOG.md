@@ -31,7 +31,7 @@
 - Added optional `GeoMetadata` and `CrewAssignment` helpers with validation, enabling typed extras for geospatial references and crew mapping.
 - Authored `docs/howto/data_contract.rst` detailing CSV requirements, optional extras, and validator coverage; cross-linked from overview/quickstart.
 - Documented GeoJSON ingestion expectations (CRS guidance, required IDs) and the `fhops geo distances` workflow for generating mobilisation matrices.
-- Added parametrised validation tests (`tests/test_contract_edge_cases.py`) to exercise edge-case scenarios across the data contract and introduced `tests/data/*` fixtures with loader coverage.
+- Added parametrised validation tests (`tests/test_contract_edge_cases.py`) to exercise edge-case scenarios across the data contract, introduced `tests/data/*` fixtures with loader coverage, and published authoring guidance in the data-contract how-to.
 - Commands executed:
   - `ruff format src tests`
   - `ruff check src tests`

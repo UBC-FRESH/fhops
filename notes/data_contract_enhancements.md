@@ -29,7 +29,7 @@ Status: Draft — update as tasks progress.
 - [x] Regression fixtures under `tests/data/` representing minimal, typical, and invalid cases. *(Added loader-tested YAML/CSV bundles and documented them in the data-contract guide.)*
 
 ## Documentation
-- [ ] Draft how-to guide(s) for authoring scenarios and validating inputs.
+- [x] Draft how-to guide(s) for authoring scenarios and validating inputs. *(Quickstart + `docs/howto/data_contract.rst` cover authoring/validation workflows.)*
 - [ ] Update README quickstart once new constraints land.
 
 ## Open Questions
