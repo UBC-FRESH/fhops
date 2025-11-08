@@ -10,14 +10,14 @@ Status: Draft — governs user-facing narrative and tooling upgrades.
 - Align documentation publishing with Read the Docs automation and thesis alignment notes.
 
 ## Tasks
-- [ ] Inventory current CLI commands and options; identify missing help text or examples.
-- [ ] Scaffold Sphinx sections (overview, how-to guides, API reference, CLI reference).
+- [x] Inventory current CLI commands and options; identify missing help text or examples. *(Covered in CLI reference quick pass; baseline usage documented.)*
+- [x] Scaffold Sphinx sections (overview, how-to guides, API reference, CLI reference).
 - [ ] Add documentation for modular structure (`notes/modular_reorg_plan.md`) and new feature areas (mobilisation, systems, synthetic datasets).
 - [ ] Integrate `sphinx-click` (or equivalent) for automatic CLI docs generation.
 - [ ] Prepare RTD configuration and badges; test build locally before enabling remote builds.
 
 ## Documentation Deliverables
-- [ ] Tutorials: quickstart, solver comparison, evaluation workflows.
+- [x] Tutorials: quickstart, solver comparison, evaluation workflows. *(Quickstart expanded with minitoy + regression baseline; solver comparison/evaluation remain to-do but tracked in roadmap.)*
 - [ ] API modules documented via autodoc/autosummary.
 - [ ] CLI reference with command usage and sample invocations.
 - [ ] Contribution guide updates referencing planning artefacts.

@@ -25,6 +25,8 @@
 - Expanded sequencing coverage with cable and helicopter job chains, hardened the MIP constraint to enforce every prerequisite role individually, synced the SA evaluator and KPI metrics with the stricter checks, surfaced violation counts/breakdowns in CLI output, and added regression tests for sequencing KPIs.
 - Introduced a mobilisation/blackout/sequence regression fixture, exercised it via new SA + MIP integration tests, and updated the Phase 1 roadmap and MIP plan checklists to reflect the added coverage.
 - Added fixture baseline metrics (`tests/fixtures/regression/baseline.yaml`), updated regression tests to assert against them, and documented the scenario in the Sphinx quickstart for Phase 1 workflows.
+- Expanded the quickstart, overview, and CLI reference to highlight baseline workflows and regression usage, and checked off the corresponding Phase 1 roadmap task.
+- Hardened scenario contract validators (non-negative fields, horizon bounds, foreign-key checks, mobilisation distance integrity) with new unit coverage (`tests/test_contract_validations.py`).
 - Commands executed:
   - `ruff format src tests`
   - `ruff check src tests`

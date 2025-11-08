@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import date
 
-from pydantic import BaseModel, ValidationInfo, field_validator
+from pydantic import BaseModel, ValidationInfo, field_validator, model_validator
 
 from fhops.scheduling import MobilisationConfig, TimelineConfig
 from fhops.scheduling.systems import HarvestSystem, default_system_registry
@@ -22,6 +22,20 @@ class Block(BaseModel):
     latest_finish: Day | None = None
     harvest_system_id: str | None = None
 
+    @field_validator("work_required")
+    @classmethod
+    def _work_positive(cls, value: float) -> float:
+        if value < 0:
+            raise ValueError("Block.work_required must be non-negative")
+        return value
+
+    @field_validator("earliest_start")
+    @classmethod
+    def _earliest_positive(cls, value: Day | None) -> Day | None:
+        if value is not None and value < 1:
+            raise ValueError("Block.earliest_start must be >= 1")
+        return value
+
     @field_validator("latest_finish")
     @classmethod
     def _latest_not_before_earliest(cls, value: Day | None, info: ValidationInfo) -> Day | None:
@@ -38,10 +52,24 @@ class Machine(BaseModel):
     operating_cost: float = 0.0
     role: str | None = None
 
+    @field_validator("daily_hours", "operating_cost")
+    @classmethod
+    def _machine_non_negative(cls, value: float) -> float:
+        if value < 0:
+            raise ValueError("Machine numerical fields must be non-negative")
+        return value
+
 
 class Landing(BaseModel):
     id: str
     daily_capacity: int = 2  # max machines concurrently working
+
+    @field_validator("daily_capacity")
+    @classmethod
+    def _capacity_positive(cls, value: int) -> int:
+        if value < 0:
+            raise ValueError("Landing.daily_capacity must be non-negative")
+        return value
 
 
 class CalendarEntry(BaseModel):
@@ -49,11 +77,32 @@ class CalendarEntry(BaseModel):
     day: Day
     available: int = 1  # 1 available, 0 not available
 
+    @field_validator("day")
+    @classmethod
+    def _day_positive(cls, value: Day) -> Day:
+        if value < 1:
+            raise ValueError("CalendarEntry.day must be >= 1")
+        return value
+
+    @field_validator("available")
+    @classmethod
+    def _availability_flag(cls, value: int) -> int:
+        if value not in (0, 1):
+            raise ValueError("CalendarEntry.available must be 0 or 1")
+        return value
+
 
 class ProductionRate(BaseModel):
     machine_id: str
     block_id: str
     rate: float  # work units per day if assigned (<= work_required/block)
+
+    @field_validator("rate")
+    @classmethod
+    def _rate_non_negative(cls, value: float) -> float:
+        if value < 0:
+            raise ValueError("ProductionRate.rate must be non-negative")
+        return value
 
 
 class Scenario(BaseModel):
@@ -68,6 +117,13 @@ class Scenario(BaseModel):
     timeline: TimelineConfig | None = None
     mobilisation: MobilisationConfig | None = None
     harvest_systems: dict[str, HarvestSystem] | None = None
+
+    @field_validator("num_days")
+    @classmethod
+    def _num_days_positive(cls, value: int) -> int:
+        if value < 1:
+            raise ValueError("Scenario.num_days must be >= 1")
+        return value
 
     def machine_ids(self) -> list[str]:
         return [machine.id for machine in self.machines]
@@ -97,6 +153,49 @@ class Scenario(BaseModel):
                         f"{block.harvest_system_id}"
                     )
         return value
+
+    @model_validator(mode="after")
+    def _cross_validate(self) -> Scenario:
+        block_ids = {block.id for block in self.blocks}
+        landing_ids = {landing.id for landing in self.landings}
+        machine_ids = {machine.id for machine in self.machines}
+
+        for block in self.blocks:
+            if block.landing_id not in landing_ids:
+                raise ValueError(
+                    f"Block {block.id} references unknown landing_id={block.landing_id}"
+                )
+            if block.earliest_start is not None and block.earliest_start > self.num_days:
+                raise ValueError(
+                    f"Block {block.id} earliest_start exceeds num_days={self.num_days}"
+                )
+            if block.latest_finish is not None and block.latest_finish > self.num_days:
+                raise ValueError(f"Block {block.id} latest_finish exceeds num_days={self.num_days}")
+
+        for entry in self.calendar:
+            if entry.machine_id not in machine_ids:
+                raise ValueError(f"Calendar entry references unknown machine_id={entry.machine_id}")
+            if entry.day > self.num_days:
+                raise ValueError(
+                    f"Calendar entry day {entry.day} exceeds scenario horizon num_days={self.num_days}"
+                )
+
+        for rate in self.production_rates:
+            if rate.machine_id not in machine_ids:
+                raise ValueError(f"Production rate references unknown machine_id={rate.machine_id}")
+            if rate.block_id not in block_ids:
+                raise ValueError(f"Production rate references unknown block_id={rate.block_id}")
+
+        mobilisation = self.mobilisation
+        if mobilisation and mobilisation.distances:
+            for dist in mobilisation.distances:
+                if dist.from_block not in block_ids or dist.to_block not in block_ids:
+                    raise ValueError(
+                        "Mobilisation distance references unknown block_id "
+                        f"{dist.from_block}->{dist.to_block}"
+                    )
+
+        return self
 
 
 class Problem(BaseModel):
