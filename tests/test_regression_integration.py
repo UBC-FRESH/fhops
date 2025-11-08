@@ -63,7 +63,10 @@ def regression_problem() -> Problem:
         ],
     )
     scenario = scenario.model_copy(
-        update={"mobilisation": mobilisation, "harvest_systems": {"ground_sequence": harvest_system}}
+        update={
+            "mobilisation": mobilisation,
+            "harvest_systems": {"ground_sequence": harvest_system},
+        }
     )
     return Problem.from_scenario(scenario)
 

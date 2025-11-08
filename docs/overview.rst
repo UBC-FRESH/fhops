@@ -12,3 +12,15 @@ constructing, solving, and evaluating harvesting schedules. At its core FHOPS su
 
 The roadmap in :doc:`roadmap` and the notes under ``notes/`` guide ongoing development. Refer to
 :doc:`howto/quickstart` for a hands-on example.
+
+Baseline Workflows
+------------------
+
+Two canonical scenarios ship with FHOPS:
+
+- ``examples/minitoy`` — minimal CSV/YAML inputs illustrating the scenario contract.
+- ``tests/fixtures/regression`` — deterministic fixture covering mobilisation, machine
+  blackouts, and harvest-system sequencing with baseline KPI/objective values.
+
+Use the quickstart to validate both scenarios locally and compare CLI output against the
+documented baselines before extending the solvers or data contract.
