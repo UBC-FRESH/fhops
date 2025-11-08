@@ -16,8 +16,9 @@ Status: Draft — supports mobilisation and constraint upgrades.
 - [ ] Update evaluation to check compliance and report violations.
 
 ### Immediate next steps
-- [ ] Draft constraint stub under `optimization/mip/constraints/system_sequencing.py` capturing precedence placeholders.
-- [ ] Outline data model sketch for `scheduling/systems` (system id, ordered jobs, machine roles).
+- [x] Draft constraint stub under `optimization/mip/constraints/system_sequencing.py` capturing precedence placeholders.
+- [x] Outline data model sketch for `scheduling/systems` (system id, ordered jobs, machine roles).
+- [ ] Extend scenario contract with optional system linkage once registry stabilises.
 
 ## Tests
 - [ ] Scenarios covering different systems (ground-based, cable, heli) with expected job orderings.
