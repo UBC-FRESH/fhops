@@ -4,6 +4,8 @@ from pydantic import ValidationError
 from fhops.scenario.contract.models import (
     Block,
     CalendarEntry,
+    CrewAssignment,
+    GeoMetadata,
     Landing,
     Machine,
     ProductionRate,
@@ -78,3 +80,25 @@ def test_mobilisation_machine_params_must_reference_known_machine():
         ValidationError, match="Mobilisation config references unknown machine_id=M2"
     ):
         _base_scenario(mobilisation=mobilisation)
+
+
+def test_crew_assignments_validate_machine_links_and_uniqueness():
+    scenario = _base_scenario(
+        geo=GeoMetadata(block_geojson="blocks.geojson", crs="EPSG:3005"),
+        crew_assignments=[
+            CrewAssignment(crew_id="C1", machine_id="M1"),
+        ],
+    )
+    assert scenario.geo is not None
+    assert scenario.crew_assignments is not None
+
+    with pytest.raises(ValidationError, match="Crew assignment references unknown machine_id=M2"):
+        _base_scenario(crew_assignments=[CrewAssignment(crew_id="C1", machine_id="M2")])
+
+    with pytest.raises(ValidationError, match="Duplicate crew_id"):
+        _base_scenario(
+            crew_assignments=[
+                CrewAssignment(crew_id="C1", machine_id="M1"),
+                CrewAssignment(crew_id="C1", machine_id="M1"),
+            ]
+        )

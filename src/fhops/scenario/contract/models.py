@@ -117,6 +117,8 @@ class Scenario(BaseModel):
     timeline: TimelineConfig | None = None
     mobilisation: MobilisationConfig | None = None
     harvest_systems: dict[str, HarvestSystem] | None = None
+    geo: GeoMetadata | None = None
+    crew_assignments: list[CrewAssignment] | None = None
 
     @field_validator("num_days")
     @classmethod
@@ -201,6 +203,17 @@ class Scenario(BaseModel):
                         f"Mobilisation config references unknown machine_id={param.machine_id}"
                     )
 
+        if self.crew_assignments:
+            seen_crews: set[str] = set()
+            for assignment in self.crew_assignments:
+                if assignment.machine_id not in machine_ids:
+                    raise ValueError(
+                        f"Crew assignment references unknown machine_id={assignment.machine_id}"
+                    )
+                if assignment.crew_id in seen_crews:
+                    raise ValueError(f"Duplicate crew_id in assignments: {assignment.crew_id}")
+                seen_crews.add(assignment.crew_id)
+
         return self
 
 
@@ -229,4 +242,24 @@ __all__ = [
     "TimelineConfig",
     "MobilisationConfig",
     "HarvestSystem",
+    "GeoMetadata",
+    "CrewAssignment",
 ]
+
+
+class GeoMetadata(BaseModel):
+    """Optional geospatial metadata locations and metadata."""
+
+    block_geojson: str | None = None
+    landing_geojson: str | None = None
+    crs: str | None = None
+    notes: str | None = None
+
+
+class CrewAssignment(BaseModel):
+    """Optional mapping of crews to machines/roles."""
+
+    crew_id: str
+    machine_id: str
+    primary_role: str | None = None
+    notes: str | None = None
