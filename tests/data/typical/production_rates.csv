@@ -1,0 +1,5 @@
+machine_id,block_id,rate
+M1,B1,3
+M1,B2,3
+M2,B1,2
+M2,B2,2

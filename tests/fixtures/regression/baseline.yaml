@@ -1,0 +1,17 @@
+sa_expected:
+  objective: 4.0
+  total_production: 4.0
+  mobilisation_cost: 0.0
+reference_assignments:
+  - machine_id: F1
+    block_id: B1
+    day: 1
+  - machine_id: P1
+    block_id: B1
+    day: 2
+  - machine_id: F1
+    block_id: B2
+    day: 3
+  - machine_id: P1
+    block_id: B2
+    day: 4

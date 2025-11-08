@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "fhops"
-version = "0.1.0"
+version = "0.0.1"
 description = "Forest Harvesting Operations Planning System"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -28,7 +28,9 @@ dev = [
   "ruff>=0.4.0",
   "black>=24.0.0",
   "mypy>=1.10.0",
-  "pre-commit>=3.7.0"
+  "pre-commit>=3.7.0",
+  "pandas-stubs>=2.2.0",
+  "types-PyYAML>=6.0.12"
 ]
 geo = [
   "geopandas>=0.14.0"
@@ -43,9 +45,15 @@ target-version = ["py311"]
 
 [tool.ruff]
 line-length = 100
-select = ["E","F","I","W","UP"]
-ignore = ["E501"]
 target-version = "py311"
+exclude = [
+  "tmp",
+  "FHOPS_debug_workbench.ipynb",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP"]
+ignore = ["E501"]
 
 [tool.mypy]
 python_version = "3.11"
@@ -53,6 +61,17 @@ strict = false
 warn_unused_ignores = true
 exclude = ["examples"]
 
+[[tool.mypy.overrides]]
+module = [
+  "pandas.*",
+  "pyomo.*",
+  "yaml",
+  "geopandas",
+  "shapely.*",
+]
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
 addopts = "-q"
 pythonpath = ["src"]
+testpaths = ["tests"]

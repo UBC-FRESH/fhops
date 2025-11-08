@@ -1,0 +1,53 @@
+# Development Change Log
+
+## 2025-11-07 — Planning Framework Bootstrap
+- Established structured roadmap (`FHOPS_ROADMAP.md`) with phase tracking and detailed next steps.
+- Authored coding agent runbook (`CODING_AGENT.md`) aligning workflow commands with Nemora practices.
+- Seeded notes directory, backlog tracker, and Sphinx/RTD scaffolding to mirror the Nemora planning stack.
+- Added `.readthedocs.yaml`, `docs/requirements.txt`, and a GitHub Actions workflow executing the full agent command suite.
+- Refined `.readthedocs.yaml` using the Nemora template while still installing project extras for doc builds.
+- Introduced `.pre-commit-config.yaml` to enforce lint/type standards via hooks.
+- Bootstrapped modular package skeletons and migrated scenario contracts/loaders into `fhops.scenario`, leaving shims (`fhops.core.types`, `fhops.data.loaders`) with deprecation warnings.
+- Updated CLI/solver modules to consume the new scenario contract/IO packages, refreshed ruff+mypy pytest configs (stubs, excludes), and brought `ruff format`, `ruff check`, `mypy`, `pytest`, and `pre-commit run --all-files` back to green.
+- Ported the Pyomo builder, HiGHS driver, heuristics, and KPI helpers into the new `optimization/` and `evaluation/` packages with deprecated shims for `fhops.model/solve/eval`.
+- Added shift timeline and mobilisation schemas to the scenario contract (`TimelineConfig`, `MobilisationConfig`) with planning notes/docs updated.
+- Seeded synthetic scenario generator scaffolding (`SyntheticScenarioSpec`, `generate_basic`) and mobilisation unit tests; added scheduling/mobilisation models and updated Sphinx API docs.
+- Implemented mobilisation setup-cost penalties across MIP/SA, added GeoJSON distance tooling (`fhops geo distances`) with example block geometries, and introduced default harvest system registry/notes from Jaffray (2025).
+- Added distance-threshold mobilisation costs (transition binaries, SA evaluation alignment), shifted scenario contract to track harvest-system IDs, and expanded synthetic generator/tests for system-aware scenarios.
+- Scenario contract now provides default harvest system registry linkage for blocks, with validation to ensure IDs align with the seeded BC systems.
+- Added machine-role aware sequencing guardrails: MIP filters assignments by system job roles, SA heuristic honors the same, synthetic generator assigns roles, and new unit tests cover registry constraints and geo distance helpers.
+- Synthetic generator now supports blackout timelines and exports machine roles; accompanying tests verify blackout handling.
+- Added preliminary sequencing constraints (cumulative precedence) and heuristic enforcement, plus system role tests validating constraint activation.
+- Planning updates: roadmap + MIP plan now track schedule-locking functionality for contractual/external commitments.
+- Mobilisation workflow enhancements: auto-load distance matrices, report mobilisation spend in KPIs/CLI, and add tests for mobilisation KPI outputs.
+- Began refactoring harvest-system sequencing into a dedicated constraint module, with builder invoking the shared helper ahead of future precedence logic.
+- Refined harvest-system sequencing to enforce prior-day completion, aligned the SA heuristic evaluator with the stricter precedence logic, added regression coverage for both solvers, and updated the sequencing plan notes to reflect the milestone.
+- Expanded sequencing coverage with cable and helicopter job chains, hardened the MIP constraint to enforce every prerequisite role individually, synced the SA evaluator and KPI metrics with the stricter checks, surfaced violation counts/breakdowns in CLI output, and added regression tests for sequencing KPIs.
+- Introduced a mobilisation/blackout/sequence regression fixture, exercised it via new SA + MIP integration tests, and updated the Phase 1 roadmap and MIP plan checklists to reflect the added coverage.
+- Added fixture baseline metrics (`tests/fixtures/regression/baseline.yaml`), updated regression tests to assert against them, and documented the scenario in the Sphinx quickstart for Phase 1 workflows.
+- Expanded the quickstart, overview, and CLI reference to highlight baseline workflows and regression usage, and checked off the corresponding Phase 1 roadmap task.
+- Hardened scenario contract validators (non-negative fields, horizon bounds, foreign-key checks, mobilisation distance integrity) with new unit coverage (`tests/test_contract_validations.py`).
+- Extended schema validators to reject mobilisation configs referencing unknown machines, closing the linked-ID audit for CSV inputs.
+- Added optional `GeoMetadata` and `CrewAssignment` helpers with validation, enabling typed extras for geospatial references and crew mapping.
+- Authored `docs/howto/data_contract.rst` detailing CSV requirements, optional extras, and validator coverage; cross-linked from overview/quickstart.
+- Documented GeoJSON ingestion expectations (CRS guidance, required IDs) and the `fhops geo distances` workflow for generating mobilisation matrices.
+- Added parametrised validation tests (`tests/test_contract_edge_cases.py`) to exercise edge-case scenarios across the data contract, introduced `tests/data/*` fixtures with loader coverage, published authoring guidance in the data-contract how-to, refreshed the README quickstart, introduced explicit `schema_version` support in scenarios, and extended the loader/docs to ingest timeline configs plus crew/geo metadata.
+- Integrated timeline blackouts across the MIP builder and SA heuristic, expanded fixtures/tests to cover crew/timeline ingestion, and updated the data-contract docs with timeline examples.
+- Validated GeoJSON ingestion via the scenario loader (block/landing paths, CRS/id checks), refreshed fixtures/docs, wired CLI usage into the data contract guidance, and added regression fixtures/tests covering the new metadata.
+- Added schedule-locking support (scenario contract → MIP builder + SA heuristic), objective weight toggles, and regression coverage for the new constraints/workflow documentation.
+- Enabled `.github/workflows/ci.yml` to run the full coding-agent command suite (ruff format/check, mypy, pytest, pre-commit, Sphinx) on pushes and PRs.
+- Recorded the decision to keep invalid references fatal in `notes/data_contract_enhancements.md` to ensure strict validation remains the default.
+- Cleaned up the SA heuristic lock handling, stabilised the schedule-locking regression test by initialising all mobilisation transition binaries, and refreshed the mobilisation regression baseline to reflect the objective-weighted behaviour.
+- Cleared Read the Docs configuration gaps by keeping `.readthedocs.yaml` in sync, eliminated Sphinx duplicate-target warnings (`:noindex:` on package aggregators, corrected RST underlines), switched intersphinx inventories to `None`, and checked in the geo/locked fixtures plus `_static/.gitkeep` used by the validation tests.
+- Mocked heavy runtime dependencies (`geopandas`, `highspy`) while ensuring core libs (`pydantic`, `pyomo`, `pandas`, `pyyaml`, etc.) install via `docs/requirements.txt` so RTD autodoc renders module content with real model definitions.
+- Extended objective handling with transition and landing-slack weights; the Pyomo builder now introduces transition binaries even without mobilisation configs, landing slack variables when penalised, and the SA heuristic mirrors the weighted scoring. Added targeted unit tests covering transition and slack penalties.
+- Bumped package metadata to `v0.0.1` and finalised the Phase 1 release notes, preparing the PR for the GitHub release workflow trigger.
+- Relaxed the `require-changelog-update` hook to support `pre-commit run --all-files` (CI no longer fails when the latest commit already updates `CHANGE_LOG.md`).
+- Add changelog entry for PR #5: major package reorg, roadmap and phase-1 completion; satisfy CI pre-commit check (added by gparadis).
+- Commands executed:
+  - `ruff format src tests`
+  - `ruff check src tests`
+  - `mypy src`
+  - `pytest`
+  - `sphinx-build -b html docs docs/_build/html`
+  - `pre-commit run --all-files`

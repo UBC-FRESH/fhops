@@ -1,0 +1,24 @@
+name: Typical Scenario
+num_days: 5
+schema_version: 1.0.0
+data:
+  blocks: blocks.csv
+  machines: machines.csv
+  landings: landings.csv
+  calendar: calendar.csv
+  prod_rates: production_rates.csv
+  mobilisation_distances: mobilisation_distances.csv
+  crew_assignments: crew_assignments.csv
+timeline:
+  shifts:
+    - name: day
+      hours: 10
+      shifts_per_day: 1
+  blackouts:
+    - start_day: 4
+      end_day: 4
+      reason: maintenance
+  days_per_week: 5
+geo_crs: EPSG:3005
+geo_block_path: ../geo/blocks.geojson
+geo_landing_path: ../geo/landings.geojson
