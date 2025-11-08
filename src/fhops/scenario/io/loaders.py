@@ -16,6 +16,7 @@ from fhops.scenario.contract.models import (
     ProductionRate,
     Scenario,
 )
+from fhops.scenario.io.mobilisation import populate_mobilisation_distances
 
 __all__ = ["load_scenario", "read_csv"]
 
@@ -52,7 +53,7 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
         read_csv(require("prod_rates")).to_dict("records")
     )
 
-    return Scenario(
+    scenario = Scenario(
         name=meta["name"],
         num_days=int(meta["num_days"]),
         start_date=meta.get("start_date"),
@@ -62,3 +63,14 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
         calendar=calendar,
         production_rates=rates,
     )
+
+    mobilisation = populate_mobilisation_distances(
+        root,
+        scenario.name,
+        meta.get("data", {}),
+        scenario.mobilisation,
+    )
+    if mobilisation is not None and mobilisation != scenario.mobilisation:
+        scenario = scenario.model_copy(update={"mobilisation": mobilisation})
+
+    return scenario

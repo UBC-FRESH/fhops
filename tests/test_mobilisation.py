@@ -1,5 +1,7 @@
+import pandas as pd
 import pyomo.environ as pyo
 
+from fhops.evaluation.metrics.kpis import compute_kpis
 from fhops.optimization.mip.builder import build_model
 from fhops.scenario.contract.models import (
     Block,
@@ -82,3 +84,24 @@ def test_objective_includes_mobilisation_penalty():
 
     objective_value = pyo.value(model.obj)
     assert objective_value == -105.0
+
+
+def test_compute_kpis_reports_mobilisation_cost():
+    pb = build_problem()
+    model = build_model(pb)
+
+    for var in model.x.values():
+        var.value = 0
+    model.x["M1", "B1", 1].value = 1
+    model.x["M1", "B2", 2].value = 1
+
+    assignments = []
+    for mach in model.M:
+        for blk in model.B:
+            for day in model.D:
+                if pyo.value(model.x[mach, blk, day]) > 0.5:
+                    assignments.append({"machine_id": mach, "block_id": blk, "day": int(day)})
+
+    df = pd.DataFrame(assignments)
+    kpis = compute_kpis(pb, df)
+    assert kpis.get("mobilisation_cost") == 105.0

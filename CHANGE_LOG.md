@@ -19,6 +19,7 @@
 - Synthetic generator now supports blackout timelines and exports machine roles; accompanying tests verify blackout handling.
 - Added preliminary sequencing constraints (cumulative precedence) and heuristic enforcement, plus system role tests validating constraint activation.
 - Planning updates: roadmap + MIP plan now track schedule-locking functionality for contractual/external commitments.
+- Mobilisation workflow enhancements: auto-load distance matrices, report mobilisation spend in KPIs/CLI, and add tests for mobilisation KPI outputs.
 - Commands executed:
   - `ruff format src tests`
   - `ruff check src tests`
