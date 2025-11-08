@@ -9,6 +9,7 @@ Status: Draft — update as tasks progress.
 - Represent harvest systems, machine capabilities, and worker training matrices in the contract.
 - Expand IO helpers for CSV/YAML consistency, defaults, and schema evolution.
 - Provide fixtures and docs so contributors can craft valid scenarios quickly.
+- Introduce optional geospatial ingest (GeoJSON block footprints) with automatic distance-matrix generation for mobilisation costs.
 
 ## Planned Work
 - [ ] Audit existing `fhops.core` models for missing constraints (e.g., non-negative work, horizon bounds).
@@ -17,6 +18,7 @@ Status: Draft — update as tasks progress.
 - [ ] Add schema-level validators ensuring linked IDs exist across CSV inputs (blocks↔systems↔machines↔workers).
 - [ ] Introduce typed helpers for optional extras (geo metadata, crew assignments).
 - [ ] Document data contract extensions in Sphinx (`docs/howto/data_contract.rst`).
+- [ ] Specify GeoJSON ingestion schema (accepted CRS, required block properties) and distance computation workflow.
 
 ## Tests & Tooling
 - [ ] Property-based or parametrised tests covering edge-case scenarios.

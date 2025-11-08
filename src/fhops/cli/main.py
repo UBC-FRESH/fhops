@@ -14,7 +14,10 @@ from fhops.optimization.mip import solve_mip
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
 
+from fhops.cli.geospatial import geospatial_app
+
 app = typer.Typer(add_completion=False, no_args_is_help=True)
+app.add_typer(geospatial_app, name="geo")
 console = Console()
 
 

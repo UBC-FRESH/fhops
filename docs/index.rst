@@ -25,3 +25,4 @@ structure mirrors our roadmap so that implementation status stays transparent.
 
    contributing
    roadmap
+   howto/mobilisation_geo
