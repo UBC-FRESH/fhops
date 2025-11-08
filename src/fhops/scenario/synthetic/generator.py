@@ -73,12 +73,22 @@ def generate_with_systems(
         raise ValueError("At least one harvest system is required")
 
     base = generate_basic(spec)
+    roles = sorted({job.machine_role for system in systems.values() for job in system.jobs})
+    if roles:
+        machines = [
+            machine.model_copy(update={"role": roles[idx % len(roles)]})
+            for idx, machine in enumerate(base.machines)
+        ]
+    else:
+        machines = base.machines
     blocks = []
     for idx, block in enumerate(base.blocks):
         system_id = system_ids[idx % len(system_ids)]
         blocks.append(block.model_copy(update={"harvest_system_id": system_id}))
 
-    return base.model_copy(update={"blocks": blocks})
+    return base.model_copy(
+        update={"blocks": blocks, "machines": machines, "harvest_systems": systems}
+    )
 
 
 __all__ = ["SyntheticScenarioSpec", "generate_basic", "generate_with_systems"]

@@ -21,3 +21,5 @@ def test_generate_with_systems_assigns_system_ids():
     system_ids = {block.harvest_system_id for block in scenario.blocks}
     assert None not in system_ids
     assert len(system_ids) >= 2
+    machine_roles = {machine.role for machine in scenario.machines}
+    assert None not in machine_roles
