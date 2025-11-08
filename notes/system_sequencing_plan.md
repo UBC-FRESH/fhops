@@ -19,7 +19,7 @@ Status: Draft — supports mobilisation and constraint upgrades.
 ### Immediate next steps
 - [x] Draft constraint stub under `optimization/mip/constraints/system_sequencing.py` capturing precedence placeholders.
 - [x] Outline data model sketch for `scheduling/systems` (system id, ordered jobs, machine roles).
-- [ ] Extend scenario contract with optional system linkage once registry stabilises.
+- [x] Extend scenario contract with optional system linkage once registry stabilises.
 - [ ] Retrofit synthetic generator to emit multi-system scenarios for testing sequencing logic.
 - [ ] Seed default system registry entries:
     - Ground-based (feller-buncher → grapple skidder → roadside processor → loader/trucks)

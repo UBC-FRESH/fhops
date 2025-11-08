@@ -7,6 +7,7 @@ from datetime import date
 from pydantic import BaseModel, ValidationInfo, field_validator
 
 from fhops.scheduling import MobilisationConfig, TimelineConfig
+from fhops.scheduling.systems import HarvestSystem, default_system_registry
 
 Day = int  # 1..D
 
@@ -65,6 +66,7 @@ class Scenario(BaseModel):
     production_rates: list[ProductionRate]
     timeline: TimelineConfig | None = None
     mobilisation: MobilisationConfig | None = None
+    harvest_systems: dict[str, HarvestSystem] | None = None
 
     def machine_ids(self) -> list[str]:
         return [machine.id for machine in self.machines]
@@ -81,6 +83,20 @@ class Scenario(BaseModel):
         latest = block.latest_finish if block.latest_finish is not None else self.num_days
         return earliest, latest
 
+    @field_validator("blocks")
+    @classmethod
+    def _validate_system_ids(cls, value: list[Block], info: ValidationInfo) -> list[Block]:
+        systems: dict[str, HarvestSystem] | None = info.data.get("harvest_systems")
+        if systems:
+            known = set(systems.keys())
+            for block in value:
+                if block.harvest_system_id and block.harvest_system_id not in known:
+                    raise ValueError(
+                        f"Block {block.id} references unknown harvest_system_id="
+                        f"{block.harvest_system_id}"
+                    )
+        return value
+
 
 class Problem(BaseModel):
     scenario: Scenario
@@ -88,6 +104,10 @@ class Problem(BaseModel):
 
     @classmethod
     def from_scenario(cls, scenario: Scenario) -> Problem:
+        if scenario.harvest_systems is None:
+            scenario = scenario.model_copy(
+                update={"harvest_systems": dict(default_system_registry())}
+            )
         return cls(scenario=scenario, days=list(range(1, scenario.num_days + 1)))
 
 
@@ -102,4 +122,5 @@ __all__ = [
     "Problem",
     "TimelineConfig",
     "MobilisationConfig",
+    "HarvestSystem",
 ]
