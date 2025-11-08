@@ -19,7 +19,8 @@ Status: Draft — update as tasks progress.
 - [x] Introduce mobilisation schema (machine parameters, block distances). *(MobilisationConfig added; needs wiring into optimisation.)*
 - [x] Add schema-level validators ensuring linked IDs exist across CSV inputs (blocks↔systems↔machines↔workers).
   - Cross-checks now cover block→landing, production/calendars→machines, harvest-system IDs, mobilisation distances, and mobilisation machine parameters. Crew/worker mapping remains future work.
-- [ ] Introduce typed helpers for optional extras (geo metadata, crew assignments).
+- [x] Introduce typed helpers for optional extras (geo metadata, crew assignments).
+  - Added `GeoMetadata` and `CrewAssignment` models to the scenario contract, with validation ensuring machine linkage and duplicate prevention.
 - [ ] Document data contract extensions in Sphinx (`docs/howto/data_contract.rst`).
 - [ ] Specify GeoJSON ingestion schema (accepted CRS, required block properties) and distance computation workflow.
 
