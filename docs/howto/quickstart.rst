@@ -19,3 +19,21 @@ What the commands do:
 - ``fhops evaluate`` replays the resulting schedule and reports KPIs.
 
 For more examples and advanced options, see the CLI reference (:doc:`../reference/cli`).
+
+Regression Fixture
+------------------
+
+For automated regression checks, the repository ships a deterministic scenario that
+exercises mobilisation penalties, blackout calendars, and harvest-system sequencing:
+``tests/fixtures/regression/regression.yaml``. The companion ``baseline.yaml`` file stores
+expected KPI/objective values that the test suite asserts against. You can experiment
+with it manually:
+
+.. code-block:: bash
+
+   fhops solve-mip tests/fixtures/regression/regression.yaml --out /tmp/regression_mip.csv
+   fhops solve-heur tests/fixtures/regression/regression.yaml --out /tmp/regression_sa.csv
+   fhops evaluate tests/fixtures/regression/regression.yaml /tmp/regression_sa.csv
+
+Use these outputs to validate CLI changes or to understand how mobilisation costs and
+sequencing metrics appear in the KPI report.

@@ -17,6 +17,7 @@ from fhops.scheduling.mobilisation import (
     MachineMobilisation,
     MobilisationConfig,
 )
+from fhops.scheduling.systems import HarvestSystem, SystemJob
 
 
 def build_problem() -> Problem:
@@ -105,3 +106,50 @@ def test_compute_kpis_reports_mobilisation_cost():
     df = pd.DataFrame(assignments)
     kpis = compute_kpis(pb, df)
     assert kpis.get("mobilisation_cost") == 105.0
+
+
+def test_compute_kpis_reports_sequencing_metrics():
+    system = HarvestSystem(
+        system_id="ground_sequence",
+        jobs=[
+            SystemJob(name="felling", machine_role="feller", prerequisites=[]),
+            SystemJob(name="processing", machine_role="processor", prerequisites=["felling"]),
+        ],
+    )
+    scenario = Scenario(
+        name="seq-metrics",
+        num_days=1,
+        blocks=[
+            Block(
+                id="B1",
+                landing_id="L1",
+                work_required=5.0,
+                earliest_start=1,
+                latest_finish=1,
+                harvest_system_id="ground_sequence",
+            )
+        ],
+        machines=[
+            Machine(id="F1", role="feller"),
+            Machine(id="P1", role="processor"),
+        ],
+        landings=[Landing(id="L1", daily_capacity=1)],
+        calendar=[
+            CalendarEntry(machine_id="F1", day=1, available=1),
+            CalendarEntry(machine_id="P1", day=1, available=1),
+        ],
+        production_rates=[
+            ProductionRate(machine_id="F1", block_id="B1", rate=5.0),
+            ProductionRate(machine_id="P1", block_id="B1", rate=5.0),
+        ],
+        mobilisation=None,
+        harvest_systems={"ground_sequence": system},
+    )
+    pb = Problem.from_scenario(scenario)
+    assignments = pd.DataFrame([{"machine_id": "P1", "block_id": "B1", "day": 1}])
+    kpis = compute_kpis(pb, assignments)
+    assert kpis.get("sequencing_violation_count") == 1
+    assert kpis.get("sequencing_violation_blocks") == 1
+    assert kpis.get("sequencing_violation_days") == 1
+    assert kpis.get("sequencing_clean_blocks") == 0
+    assert str(kpis.get("sequencing_violation_breakdown")).startswith("missing_prereq=1")

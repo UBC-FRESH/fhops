@@ -52,31 +52,32 @@ def apply_system_sequencing_constraints(model: pyo.ConcreteModel, pb: Problem) -
 
     model.role_filter = pyo.Constraint(model.M, model.B, model.D, rule=role_constraint_rule)
 
-    cumulative_days = sorted(pb.days)
+    ordered_days = sorted(pb.days)
+    days_up_to = {day: [d for d in ordered_days if d <= day] for day in ordered_days}
+    days_before = {day: [d for d in ordered_days if d < day] for day in ordered_days}
 
-    def sequencing_rule(mdl, blk, role, day):
-        prereqs = prereq_roles.get((blk, role))
-        if not prereqs:
-            return pyo.Constraint.Skip
-        machines_role = machines_by_role.get(role)
-        if not machines_role:
-            return pyo.Constraint.Skip
-        machines_prereq = [machines_by_role.get(pr, []) for pr in prereqs]
-        if not any(machines_prereq):
-            return pyo.Constraint.Skip
-        lhs = sum(
-            mdl.x[mach, blk, d] for mach in machines_role for d in cumulative_days if d <= day
-        )
-        rhs = sum(
-            mdl.x[mach, blk, d]
-            for machine_list in machines_prereq
-            for mach in machine_list
-            for d in cumulative_days
-            if d <= day
-        )
-        return lhs <= rhs
+    prereq_index = [
+        (blk, role, prereq) for (blk, role), prereqs in prereq_roles.items() for prereq in prereqs
+    ]
+    if prereq_index:
+        model.system_sequencing_index = pyo.Set(initialize=prereq_index, dimen=3)
 
-    model.system_sequencing = pyo.Constraint(model.B, model.R, model.D, rule=sequencing_rule)
+        def sequencing_rule(mdl, blk, role, prereq, day):
+            machines_role = machines_by_role.get(role)
+            prereq_machines = machines_by_role.get(prereq)
+            if not machines_role or not prereq_machines:
+                return pyo.Constraint.Skip
+            lhs = sum(
+                mdl.x[mach, blk, d] for mach in machines_role for d in days_up_to.get(day, [])
+            )
+            rhs = sum(
+                mdl.x[mach, blk, d] for mach in prereq_machines for d in days_before.get(day, [])
+            )
+            return lhs <= rhs
+
+        model.system_sequencing = pyo.Constraint(
+            model.system_sequencing_index, model.D, rule=sequencing_rule
+        )
 
 
 __all__ = ["apply_system_sequencing_constraints"]
