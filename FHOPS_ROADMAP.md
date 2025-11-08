@@ -14,7 +14,7 @@ before proposing new work.
 ## Phase 1 — Core Platform Hardening 🚧 (in progress)
 - [x] Harden data contract validations and scenario loaders (see `notes/data_contract_enhancements.md` and `docs/howto/data_contract.rst`).
 - [ ] Expand Pyomo model coverage for production constraints and objective variants (see `notes/mip_model_plan.md`).
-- [ ] Stand up modular scaffolding (`notes/modular_reorg_plan.md`) and shift-level scheduling groundwork (`scheduling/timeline`).
+- [x] Stand up modular scaffolding (`notes/modular_reorg_plan.md`) and shift-level scheduling groundwork (`scheduling/timeline` + timeline-integrated solvers).
 - [x] Establish deterministic regression fixtures for MIP and heuristic solvers.
 - [x] Document baseline workflows in Sphinx (overview + quickstart).
 - [x] Stand up CI enforcing the agent workflow command suite on every push and PR (see `notes/ci_cd_expansion.md`).
