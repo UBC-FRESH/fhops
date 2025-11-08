@@ -9,6 +9,18 @@ from pydantic import BaseModel, ValidationInfo, field_validator, model_validator
 from fhops.scheduling import MobilisationConfig, TimelineConfig
 from fhops.scheduling.systems import HarvestSystem, default_system_registry
 
+
+class ScheduleLock(BaseModel):
+    machine_id: str
+    block_id: str
+    day: Day
+
+
+class ObjectiveWeights(BaseModel):
+    production: float = 1.0
+    mobilisation: float = 1.0
+
+
 Day = int  # 1..D
 
 
@@ -120,6 +132,8 @@ class Scenario(BaseModel):
     harvest_systems: dict[str, HarvestSystem] | None = None
     geo: GeoMetadata | None = None
     crew_assignments: list[CrewAssignment] | None = None
+    locked_assignments: list[ScheduleLock] | None = None
+    objective_weights: ObjectiveWeights | None = None
 
     @field_validator("num_days")
     @classmethod
@@ -225,6 +239,33 @@ class Scenario(BaseModel):
                     raise ValueError(f"Duplicate crew_id in assignments: {assignment.crew_id}")
                 seen_crews.add(assignment.crew_id)
 
+        if self.locked_assignments:
+            seen_locks: set[tuple[str, int]] = set()
+            for lock in self.locked_assignments:
+                if lock.machine_id not in machine_ids:
+                    raise ValueError(
+                        f"Locked assignment references unknown machine_id={lock.machine_id}"
+                    )
+                if lock.block_id not in block_ids:
+                    raise ValueError(
+                        f"Locked assignment references unknown block_id={lock.block_id}"
+                    )
+                if lock.day < 1 or lock.day > self.num_days:
+                    raise ValueError(f"Locked assignment day {lock.day} outside scenario horizon")
+                key = (lock.machine_id, lock.day)
+                if key in seen_locks:
+                    raise ValueError(
+                        f"Multiple locked assignments for machine {lock.machine_id} on day {lock.day}"
+                    )
+                seen_locks.add(key)
+            if self.timeline and self.timeline.blackouts:
+                for lock in self.locked_assignments:
+                    for blackout in self.timeline.blackouts:
+                        if blackout.start_day <= lock.day <= blackout.end_day:
+                            raise ValueError(
+                                f"Locked assignment for machine {lock.machine_id} falls within blackout"
+                            )
+
         return self
 
 
@@ -255,6 +296,8 @@ __all__ = [
     "HarvestSystem",
     "GeoMetadata",
     "CrewAssignment",
+    "ScheduleLock",
+    "ObjectiveWeights",
 ]
 
 

@@ -55,6 +55,8 @@ Recent helpers enable richer metadata:
 - ``GeoMetadata`` — optional GeoJSON paths and CRS tags for blocks/landings.
 - ``CrewAssignment`` — map crew identifiers to machines/roles for downstream planners.
 - ``TimelineConfig`` — shift definitions and blackout windows controlling daily availability.
+- ``ScheduleLock`` — pre-assign specific machine/block/day combinations (enforced in MIP & SA).
+- ``ObjectiveWeights`` — tweak solver objective weighting (production vs mobilisation penalties).
 
 Reference `tests/test_contract_validations.py` for examples that exercise these validators.
 
@@ -77,6 +79,20 @@ Add a top-level ``timeline`` block in your scenario YAML to describe shifts and 
      days_per_week: 5
 
 The loader converts this into a ``TimelineConfig`` instance available via ``scenario.timeline``.
+
+Schedule Locking
+----------------
+
+Lock a machine to a block on a given day by adding ``locked_assignments``:
+
+.. code-block:: yaml
+
+   locked_assignments:
+     - machine_id: YARDER1
+       block_id: B12
+       day: 5
+
+Any attempt to reassign that machine/day is blocked in both the MIP builder and the SA heuristic.
 
 GeoJSON Ingestion & Distances
 -----------------------------

@@ -51,6 +51,13 @@ def _blackout_map(scenario) -> set[tuple[str, int]]:
     return blackout
 
 
+def _locked_map(scenario) -> dict[tuple[str, int], str]:
+    locks = getattr(scenario, "locked_assignments", None)
+    if not locks:
+        return {}
+    return {(lock.machine_id, lock.day): lock.block_id for lock in locks}
+
+
 __all__ = ["Schedule", "solve_sa"]
 
 
@@ -69,6 +76,9 @@ def _init_greedy(pb: Problem) -> Schedule:
     windows = {block_id: sc.window_for(block_id) for block_id in sc.block_ids()}
     allowed_roles, prereq_roles, machine_roles, _ = _role_metadata(sc)
     blackout = _blackout_map(sc)
+    locked = _locked_map(sc)
+    locked = _locked_map(sc)
+    locked = _locked_map(sc)
 
     plan: dict[str, dict[int, str | None]] = {
         machine.id: {day: None for day in pb.days} for machine in sc.machines
@@ -78,7 +88,11 @@ def _init_greedy(pb: Problem) -> Schedule:
         for machine in sc.machines:
             if availability.get((machine.id, day), 1) == 0:
                 continue
-            if (machine.id, day) in blackout:
+            lock_key = (machine.id, day)
+            if lock_key in locked:
+                plan[machine.id][day] = locked[lock_key]
+                continue
+            if lock_key in blackout:
                 continue
             candidates: list[tuple[float, str]] = []
             for block in sc.blocks:
@@ -117,6 +131,7 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
 
     allowed_roles, prereq_roles, machine_roles, _ = _role_metadata(sc)
     blackout = _blackout_map(sc)
+    locked = _locked_map(sc)
 
     score = 0.0
     previous_block: dict[str, str | None] = {machine.id: None for machine in sc.machines}
@@ -127,8 +142,14 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
         for machine in sc.machines:
             block_id = sched.plan[machine.id][day]
             if block_id is None:
+                if (machine.id, day) in locked:
+                    score -= 1000.0
                 continue
             if (machine.id, day) in blackout:
+                score -= 1000.0
+                previous_block[machine.id] = None
+                continue
+            if (machine.id, day) in locked and locked[(machine.id, day)] != block_id:
                 score -= 1000.0
                 previous_block[machine.id] = None
                 continue
@@ -192,16 +213,29 @@ def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
         return []
     allowed_roles, _, machine_roles, _ = _role_metadata(sc)
     blackout = _blackout_map(sc)
+    locked = _locked_map(sc)
 
     # swap two machines on a day
-    m1, m2 = random.sample(machines, k=2) if len(machines) >= 2 else (machines[0], machines[0])
-    day = random.choice(days)
+    eligible_days = [d for d in days if sum((m, d) not in locked for m in machines) >= 2]
+    if eligible_days:
+        day = random.choice(eligible_days)
+        free_machines = [m for m in machines if (m, day) not in locked]
+        m1, m2 = random.sample(free_machines, k=2)
+    else:
+        day = days[0]
+        m1, m2 = (machines[0], machines[0])
     swap_plan = {m: plan.copy() for m, plan in sched.plan.items()}
     swap_plan[m1][day], swap_plan[m2][day] = swap_plan[m2][day], swap_plan[m1][day]
     neighbours = [Schedule(plan=swap_plan)]
     # move assignment within a machine across days
     machine = random.choice(machines)
-    d1, d2 = random.sample(days, k=2) if len(days) >= 2 else (days[0], days[0])
+    free_days = [d for d in days if (machine, d) not in locked]
+    if len(free_days) >= 2:
+        d1, d2 = random.sample(free_days, k=2)
+    elif free_days:
+        d1 = d2 = free_days[0]
+    else:
+        d1 = d2 = days[0]
     move_plan = {m: plan.copy() for m, plan in sched.plan.items()}
     move_plan[machine][d2] = move_plan[machine][d1]
     move_plan[machine][d1] = None
@@ -215,7 +249,9 @@ def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
             plan[mach] = {}
             for day_key, blk in assignments.items():
                 allowed = allowed_roles.get(blk) if blk is not None else None
-                if blk is not None and (
+                if (mach, day_key) in locked:
+                    plan[mach][day_key] = locked[(mach, day_key)]
+                elif blk is not None and (
                     (mach, day_key) in blackout or (allowed is not None and role not in allowed)
                 ):
                     plan[mach][day_key] = None
