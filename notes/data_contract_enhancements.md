@@ -25,7 +25,7 @@ Status: Draft — update as tasks progress.
 - [x] Specify GeoJSON ingestion schema (accepted CRS, required block properties) and distance computation workflow. *(Documented in `docs/howto/data_contract.rst`, referencing `fhops geo distances` workflow and CRS guidance.)*
 
 ## Tests & Tooling
-- [ ] Property-based or parametrised tests covering edge-case scenarios.
+- [x] Property-based or parametrised tests covering edge-case scenarios. *(Added parametrised coverage in `tests/test_contract_edge_cases.py` for negative values, horizon violations, mobilisation/crew mismatches.)*
 - [ ] Regression fixtures under `tests/data/` representing minimal, typical, and invalid cases.
 
 ## Documentation
