@@ -19,6 +19,10 @@ def test_typical_fixture_loads_with_mobilisation_hooks():
     assert scenario.num_days == 5
     assert len(scenario.blocks) == 2
     assert scenario.blocks[0].harvest_system_id is not None
+    assert scenario.timeline is not None
+    assert scenario.timeline.shifts[0].hours > 0
+    assert scenario.crew_assignments is not None
+    assert len(scenario.crew_assignments) == 2
 
 
 def test_invalid_fixture_raises_validation_error():

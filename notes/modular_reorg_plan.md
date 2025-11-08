@@ -39,7 +39,7 @@ src/fhops/
 
 2. **Scenario & Scheduling Split**
    - Move existing Pydantic models and loaders into `scenario/contract` and `scenario/io`. ✅ models/loaders migrated with shims.
-   - Create `scheduling/timeline` for shift/day calendars and blackout metadata.
+- [x] Create `scheduling/timeline` for shift/day calendars and blackout metadata (models + loader support).
 
 3. **Optimisation Restructure**
    - Partition Pyomo builder into submodules (`optimization/mip/constraints/*.py`). ✅ baseline builder/HiGHS driver migrated.

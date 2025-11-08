@@ -11,12 +11,15 @@ from pydantic import TypeAdapter
 from fhops.scenario.contract.models import (
     Block,
     CalendarEntry,
+    CrewAssignment,
+    GeoMetadata,
     Landing,
     Machine,
     ProductionRate,
     Scenario,
 )
 from fhops.scenario.io.mobilisation import populate_mobilisation_distances
+from fhops.scheduling.timeline.models import TimelineConfig
 
 __all__ = ["load_scenario", "read_csv"]
 
@@ -30,9 +33,10 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
     with base_path.open("r", encoding="utf-8") as handle:
         meta = yaml.safe_load(handle)
     root = base_path.parent
+    data_section = meta.get("data", {})
 
     def require(name: str) -> Path:
-        candidate = root / meta["data"][name]
+        candidate = root / data_section[name]
         if not candidate.exists():  # pragma: no cover - defensive
             raise FileNotFoundError(candidate)
         return candidate
@@ -67,10 +71,30 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
     mobilisation = populate_mobilisation_distances(
         root,
         scenario.name,
-        meta.get("data", {}),
+        data_section,
         scenario.mobilisation,
     )
     if mobilisation is not None and mobilisation != scenario.mobilisation:
         scenario = scenario.model_copy(update={"mobilisation": mobilisation})
+
+    if "timeline" in meta:
+        timeline = TypeAdapter(TimelineConfig).validate_python(meta["timeline"])
+        scenario = scenario.model_copy(update={"timeline": timeline})
+
+    if "crew_assignments" in data_section:
+        crew_df = read_csv(require("crew_assignments"))
+        crew_assignments = TypeAdapter(list[CrewAssignment]).validate_python(
+            crew_df.to_dict("records")
+        )
+        scenario = scenario.model_copy(update={"crew_assignments": crew_assignments})
+
+    if "geo" in data_section:
+        geo_path = root / data_section["geo"]
+        try:
+            geo_ref = str(geo_path.relative_to(root))
+        except ValueError:  # pragma: no cover - fallback for absolute paths
+            geo_ref = str(geo_path)
+        geo_metadata = GeoMetadata(block_geojson=geo_ref, crs=meta.get("geo_crs"))
+        scenario = scenario.model_copy(update={"geo": geo_metadata})
 
     return scenario
