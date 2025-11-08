@@ -27,6 +27,7 @@
 - Added fixture baseline metrics (`tests/fixtures/regression/baseline.yaml`), updated regression tests to assert against them, and documented the scenario in the Sphinx quickstart for Phase 1 workflows.
 - Expanded the quickstart, overview, and CLI reference to highlight baseline workflows and regression usage, and checked off the corresponding Phase 1 roadmap task.
 - Hardened scenario contract validators (non-negative fields, horizon bounds, foreign-key checks, mobilisation distance integrity) with new unit coverage (`tests/test_contract_validations.py`).
+- Extended schema validators to reject mobilisation configs referencing unknown machines, closing the linked-ID audit for CSV inputs.
 - Commands executed:
   - `ruff format src tests`
   - `ruff check src tests`

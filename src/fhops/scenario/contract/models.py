@@ -194,6 +194,12 @@ class Scenario(BaseModel):
                         "Mobilisation distance references unknown block_id "
                         f"{dist.from_block}->{dist.to_block}"
                     )
+        if mobilisation and mobilisation.machine_params:
+            for param in mobilisation.machine_params:
+                if param.machine_id not in machine_ids:
+                    raise ValueError(
+                        f"Mobilisation config references unknown machine_id={param.machine_id}"
+                    )
 
         return self
 

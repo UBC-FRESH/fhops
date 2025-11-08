@@ -55,10 +55,26 @@ def test_production_rate_requires_valid_block_and_machine():
 
 def test_mobilisation_distances_must_reference_known_blocks():
     mobilisation = MobilisationConfig(
-        machine_params=[MachineMobilisation(machine_id="M1", walk_cost_per_meter=0.0, move_cost_flat=0.0)],
+        machine_params=[
+            MachineMobilisation(machine_id="M1", walk_cost_per_meter=0.0, move_cost_flat=0.0)
+        ],
         distances=[BlockDistance(from_block="B1", to_block="B2", distance_m=100.0)],
     )
     with pytest.raises(
         ValidationError, match="Mobilisation distance references unknown block_id B1->B2"
+    ):
+        _base_scenario(mobilisation=mobilisation)
+
+
+def test_mobilisation_machine_params_must_reference_known_machine():
+    mobilisation = MobilisationConfig(
+        machine_params=[
+            MachineMobilisation(
+                machine_id="M2", walk_cost_per_meter=0.0, move_cost_flat=0.0, walk_threshold_m=10.0
+            )
+        ]
+    )
+    with pytest.raises(
+        ValidationError, match="Mobilisation config references unknown machine_id=M2"
     ):
         _base_scenario(mobilisation=mobilisation)
