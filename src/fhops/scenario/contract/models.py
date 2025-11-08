@@ -36,6 +36,7 @@ class Machine(BaseModel):
     crew: str | None = None
     daily_hours: float = 10.0
     operating_cost: float = 0.0
+    role: str | None = None
 
 
 class Landing(BaseModel):
