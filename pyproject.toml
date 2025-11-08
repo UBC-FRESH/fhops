@@ -66,6 +66,8 @@ module = [
   "pandas.*",
   "pyomo.*",
   "yaml",
+  "geopandas",
+  "shapely.*",
 ]
 ignore_missing_imports = true
 

@@ -19,6 +19,7 @@ class Block(BaseModel):
     work_required: float  # in 'work units' (e.g., machine-hours) to complete block
     earliest_start: Day | None = 1
     latest_finish: Day | None = None
+    harvest_system_id: str | None = None
 
     @field_validator("latest_finish")
     @classmethod

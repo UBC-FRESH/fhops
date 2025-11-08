@@ -8,13 +8,12 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
+from fhops.cli.geospatial import geospatial_app
 from fhops.evaluation import compute_kpis
 from fhops.optimization.heuristics import solve_sa
 from fhops.optimization.mip import solve_mip
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
-
-from fhops.cli.geospatial import geospatial_app
 
 app = typer.Typer(add_completion=False, no_args_is_help=True)
 app.add_typer(geospatial_app, name="geo")
