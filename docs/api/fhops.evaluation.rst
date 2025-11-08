@@ -1,5 +1,5 @@
 ``fhops.evaluation`` Package
-===========================
+============================
 
 .. automodule:: fhops.evaluation
    :members:
