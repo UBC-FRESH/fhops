@@ -39,6 +39,7 @@
 - Recorded the decision to keep invalid references fatal in `notes/data_contract_enhancements.md` to ensure strict validation remains the default.
 - Cleaned up the SA heuristic lock handling, stabilised the schedule-locking regression test by initialising all mobilisation transition binaries, and refreshed the mobilisation regression baseline to reflect the objective-weighted behaviour.
 - Cleared Read the Docs configuration gaps by keeping `.readthedocs.yaml` in sync, eliminated Sphinx duplicate-target warnings (`:noindex:` on package aggregators, corrected RST underlines), switched intersphinx inventories to `None`, and checked in the geo/locked fixtures plus `_static/.gitkeep` used by the validation tests.
+- Mocked heavy runtime dependencies (`pydantic`, `pyomo`, `pandas`, etc.) via `autodoc_mock_imports` so RTD autodoc renders module content without needing compiled wheels.
 - Commands executed:
   - `ruff format src tests`
   - `ruff check src tests`
