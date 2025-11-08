@@ -40,6 +40,17 @@ def _role_metadata(scenario):
     return allowed, prereqs, machine_roles, machines_by_role
 
 
+def _blackout_map(scenario) -> set[tuple[str, int]]:
+    blackout: set[tuple[str, int]] = set()
+    timeline = getattr(scenario, "timeline", None)
+    if timeline and timeline.blackouts:
+        for blackout_window in timeline.blackouts:
+            for day in range(blackout_window.start_day, blackout_window.end_day + 1):
+                for machine in scenario.machines:
+                    blackout.add((machine.id, day))
+    return blackout
+
+
 __all__ = ["Schedule", "solve_sa"]
 
 
@@ -57,6 +68,7 @@ def _init_greedy(pb: Problem) -> Schedule:
     availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
     windows = {block_id: sc.window_for(block_id) for block_id in sc.block_ids()}
     allowed_roles, prereq_roles, machine_roles, _ = _role_metadata(sc)
+    blackout = _blackout_map(sc)
 
     plan: dict[str, dict[int, str | None]] = {
         machine.id: {day: None for day in pb.days} for machine in sc.machines
@@ -65,6 +77,8 @@ def _init_greedy(pb: Problem) -> Schedule:
     for day in pb.days:
         for machine in sc.machines:
             if availability.get((machine.id, day), 1) == 0:
+                continue
+            if (machine.id, day) in blackout:
                 continue
             candidates: list[tuple[float, str]] = []
             for block in sc.blocks:
@@ -102,6 +116,7 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
         mobil_params = {param.machine_id: param for param in mobilisation.machine_params}
 
     allowed_roles, prereq_roles, machine_roles, _ = _role_metadata(sc)
+    blackout = _blackout_map(sc)
 
     score = 0.0
     previous_block: dict[str, str | None] = {machine.id: None for machine in sc.machines}
@@ -112,6 +127,10 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
         for machine in sc.machines:
             block_id = sched.plan[machine.id][day]
             if block_id is None:
+                continue
+            if (machine.id, day) in blackout:
+                score -= 1000.0
+                previous_block[machine.id] = None
                 continue
             allowed = allowed_roles.get(block_id)
             role: str | None = machine_roles.get(machine.id)
@@ -172,6 +191,7 @@ def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
     if not machines or not days:
         return []
     allowed_roles, _, machine_roles, _ = _role_metadata(sc)
+    blackout = _blackout_map(sc)
 
     # swap two machines on a day
     m1, m2 = random.sample(machines, k=2) if len(machines) >= 2 else (machines[0], machines[0])
@@ -195,7 +215,9 @@ def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
             plan[mach] = {}
             for day_key, blk in assignments.items():
                 allowed = allowed_roles.get(blk) if blk is not None else None
-                if blk is not None and allowed is not None and role not in allowed:
+                if blk is not None and (
+                    (mach, day_key) in blackout or (allowed is not None and role not in allowed)
+                ):
                     plan[mach][day_key] = None
                 else:
                     plan[mach][day_key] = blk

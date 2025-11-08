@@ -1,16 +1,20 @@
 import pytest
 from pydantic import ValidationError
 
+from fhops.optimization.heuristics import solve_sa
+from fhops.optimization.mip.builder import build_model
 from fhops.scenario.contract.models import (
     Block,
     CalendarEntry,
     CrewAssignment,
     Landing,
     Machine,
+    Problem,
     ProductionRate,
     Scenario,
 )
 from fhops.scheduling.mobilisation import BlockDistance, MachineMobilisation, MobilisationConfig
+from fhops.scheduling.timeline.models import BlackoutWindow, ShiftDefinition, TimelineConfig
 
 
 def build_scenario(**overrides) -> Scenario:
@@ -130,6 +134,42 @@ def test_mobilisation_distances_require_known_blocks(distances):
 def test_crew_assignment_edge_cases(crew_assignments, match):
     with pytest.raises(ValidationError, match=match):
         build_scenario(crew_assignments=crew_assignments)
+
+
+def test_mip_blackout_enforcement():
+    timeline = TimelineConfig(
+        shifts=[ShiftDefinition(name="day", hours=10.0, shifts_per_day=1)],
+        blackouts=[BlackoutWindow(start_day=4, end_day=4, reason="maintenance")],
+    )
+    scenario = build_scenario(timeline=timeline)
+    model = build_model(Problem.from_scenario(scenario))
+    assert model.mach_one_block["M1", 4].upper == 0.0
+
+
+def test_sa_respects_blackouts():
+    timeline = TimelineConfig(
+        shifts=[ShiftDefinition(name="day", hours=10.0, shifts_per_day=1)],
+        blackouts=[BlackoutWindow(start_day=1, end_day=1, reason="storm")],
+    )
+    scenario = Scenario(
+        name="blackout-sa",
+        num_days=2,
+        blocks=[
+            Block(id="B1", landing_id="L1", work_required=2.0, earliest_start=1, latest_finish=2)
+        ],
+        machines=[Machine(id="M1")],
+        landings=[Landing(id="L1", daily_capacity=1)],
+        calendar=[
+            CalendarEntry(machine_id="M1", day=1, available=1),
+            CalendarEntry(machine_id="M1", day=2, available=1),
+        ],
+        production_rates=[ProductionRate(machine_id="M1", block_id="B1", rate=2.0)],
+        timeline=timeline,
+    )
+    result = solve_sa(Problem.from_scenario(scenario), iters=200, seed=7)
+    assignments = result["assignments"]
+    assert not (assignments[assignments["day"] == 1].any().any())
+    assert (assignments["day"] == 2).any()
 
 
 def test_calendar_reference_unknown_machine():
