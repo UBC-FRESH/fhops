@@ -7,11 +7,7 @@ from collections import defaultdict
 import pyomo.environ as pyo
 
 from fhops.scenario.contract import Problem
-from fhops.scheduling.mobilisation import (
-    MachineMobilisation,
-    MobilisationConfig,
-    build_distance_lookup,
-)
+from fhops.scheduling.mobilisation import MachineMobilisation, build_distance_lookup
 
 __all__ = ["build_model"]
 
@@ -28,11 +24,22 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     work_required = {block.id: block.work_required for block in sc.blocks}
     landing_capacity = {landing.id: landing.daily_capacity for landing in sc.landings}
 
-    mobilisation: MobilisationConfig | None = sc.mobilisation
+    mobilisation = sc.mobilisation
     mobil_params: dict[str, MachineMobilisation] = {}
     if mobilisation is not None:
         mobil_params = {param.machine_id: param for param in mobilisation.machine_params}
     distance_lookup = build_distance_lookup(mobilisation)
+
+    systems = sc.harvest_systems or {}
+    allowed_roles: dict[str, set[str] | None] = {}
+    for block in sc.blocks:
+        system = systems.get(block.harvest_system_id) if block.harvest_system_id else None
+        if system:
+            allowed_roles[block.id] = {job.machine_role for job in system.jobs}
+        else:
+            allowed_roles[block.id] = None
+
+    machine_roles = {machine.id: getattr(machine, "role", None) for machine in sc.machines}
 
     availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
     windows = {block_id: sc.window_for(block_id) for block_id in sc.block_ids()}
@@ -106,6 +113,15 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
         )
 
     model.obj = pyo.Objective(expr=production_expr - mobil_cost_expr, sense=pyo.maximize)
+
+    def role_constraint_rule(mdl, mach, blk, day):
+        allowed = allowed_roles.get(blk)
+        role = machine_roles.get(mach)
+        if allowed is None or role in allowed:
+            return pyo.Constraint.Skip
+        return mdl.x[mach, blk, day] == 0
+
+    model.role_filter = pyo.Constraint(model.M, model.B, model.D, rule=role_constraint_rule)
 
     def mach_one_block_rule(mdl, mach, day):
         availability_flag = availability.get((mach, int(day)), 1)

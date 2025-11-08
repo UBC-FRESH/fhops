@@ -12,6 +12,19 @@ import pandas as pd
 from fhops.scenario.contract import Problem
 from fhops.scheduling.mobilisation import MachineMobilisation, build_distance_lookup
 
+
+def _allowed_roles(scenario) -> dict[str, set[str] | None]:
+    systems = scenario.harvest_systems or {}
+    allowed: dict[str, set[str] | None] = {}
+    for block in scenario.blocks:
+        system = systems.get(block.harvest_system_id) if block.harvest_system_id else None
+        if system:
+            allowed[block.id] = {job.machine_role for job in system.jobs}
+        else:
+            allowed[block.id] = None
+    return allowed
+
+
 __all__ = ["Schedule", "solve_sa"]
 
 
@@ -28,6 +41,8 @@ def _init_greedy(pb: Problem) -> Schedule:
     rate = {(r.machine_id, r.block_id): r.rate for r in sc.production_rates}
     availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
     windows = {block_id: sc.window_for(block_id) for block_id in sc.block_ids()}
+    allowed_roles = _allowed_roles(sc)
+    machine_roles = {machine.id: getattr(machine, "role", None) for machine in sc.machines}
 
     plan: dict[str, dict[int, str | None]] = {
         machine.id: {day: None for day in pb.days} for machine in sc.machines
@@ -41,6 +56,10 @@ def _init_greedy(pb: Problem) -> Schedule:
             for block in sc.blocks:
                 earliest, latest = windows[block.id]
                 if day < earliest or day > latest or remaining[block.id] <= 1e-9:
+                    continue
+                allowed = allowed_roles.get(block.id)
+                role = machine_roles.get(machine.id)
+                if allowed is not None and role not in allowed:
                     continue
                 r = rate.get((machine.id, block.id), 0.0)
                 if r > 0:
@@ -68,6 +87,9 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
     if mobilisation is not None:
         mobil_params = {param.machine_id: param for param in mobilisation.machine_params}
 
+    allowed_roles = _allowed_roles(sc)
+    machine_roles = {machine.id: getattr(machine, "role", None) for machine in sc.machines}
+
     score = 0.0
     previous_block: dict[str, str | None] = {machine.id: None for machine in sc.machines}
     for day in sorted(pb.days):
@@ -75,6 +97,12 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
         for machine in sc.machines:
             block_id = sched.plan[machine.id][day]
             if block_id is None:
+                continue
+            allowed = allowed_roles.get(block_id)
+            role = machine_roles.get(machine.id)
+            if allowed is not None and role not in allowed:
+                score -= 1000.0
+                previous_block[machine.id] = None
                 continue
             earliest, latest = windows[block_id]
             if day < earliest or day > latest:
@@ -111,6 +139,9 @@ def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
     days = list(pb.days)
     if not machines or not days:
         return []
+    allowed_roles = _allowed_roles(sc)
+    machine_roles = {machine.id: getattr(machine, "role", None) for machine in sc.machines}
+
     # swap two machines on a day
     m1, m2 = random.sample(machines, k=2) if len(machines) >= 2 else (machines[0], machines[0])
     day = random.choice(days)
@@ -124,7 +155,21 @@ def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
     move_plan[machine][d2] = move_plan[machine][d1]
     move_plan[machine][d1] = None
     neighbours.append(Schedule(plan=move_plan))
-    return neighbours
+
+    sanitized: list[Schedule] = []
+    for neighbour in neighbours:
+        plan: dict[str, dict[int, str | None]] = {}
+        for mach, assignments in neighbour.plan.items():
+            role = machine_roles.get(mach)
+            plan[mach] = {}
+            for day_key, blk in assignments.items():
+                allowed = allowed_roles.get(blk) if blk is not None else None
+                if blk is not None and allowed is not None and role not in allowed:
+                    plan[mach][day_key] = None
+                else:
+                    plan[mach][day_key] = blk
+        sanitized.append(Schedule(plan=plan))
+    return sanitized
 
 
 def solve_sa(pb: Problem, iters: int = 2000, seed: int = 42) -> dict[str, Any]:
