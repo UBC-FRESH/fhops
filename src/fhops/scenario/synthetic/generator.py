@@ -13,6 +13,7 @@ from fhops.scenario.contract import (
     Scenario,
 )
 from fhops.scheduling.systems import HarvestSystem, default_system_registry
+from fhops.scheduling.timeline import BlackoutWindow, ShiftDefinition, TimelineConfig
 
 
 @dataclass
@@ -23,6 +24,7 @@ class SyntheticScenarioSpec:
     num_days: int
     num_machines: int
     landing_capacity: int = 1
+    blackout_days: list[int] | None = None
 
 
 def generate_basic(spec: SyntheticScenarioSpec) -> Scenario:
@@ -49,6 +51,16 @@ def generate_basic(spec: SyntheticScenarioSpec) -> Scenario:
         for machine in machines
         for block in blocks
     ]
+
+    timeline = None
+    if spec.blackout_days is not None:
+        shift = ShiftDefinition(name="day", hours=10.0, shifts_per_day=1)
+        blackouts = [
+            BlackoutWindow(start_day=day, end_day=day, reason="synthetic-blackout")
+            for day in spec.blackout_days
+        ]
+        timeline = TimelineConfig(shifts=[shift], blackouts=blackouts)
+
     return Scenario(
         name="synthetic-basic",
         num_days=spec.num_days,
@@ -57,6 +69,7 @@ def generate_basic(spec: SyntheticScenarioSpec) -> Scenario:
         landings=landings,
         calendar=calendar,
         production_rates=production_rates,
+        timeline=timeline,
     )
 
 
