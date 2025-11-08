@@ -88,5 +88,12 @@ Authoring Checklist
 3. Use ``crew_assignments`` and ``geo`` only when you have supporting data.
 4. Run ``fhops validate <scenario.yaml>`` to confirm the scenario satisfies the contract.
 
+Fixture Gallery
+---------------
+
+- ``tests/data/minimal`` — smallest possible scenario for smoke-testing the loader.
+- ``tests/data/typical`` — multi-block example with mobilisation distances and harvest system IDs.
+- ``tests/data/invalid`` — intentionally malformed inputs that surface validation errors.
+
 See also :doc:`quickstart` for CLI commands and ``tests/fixtures/regression`` for a
 mobilisation-aware example.
