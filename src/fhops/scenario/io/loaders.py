@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pandas as pd
@@ -26,6 +27,43 @@ __all__ = ["load_scenario", "read_csv"]
 
 def read_csv(path: Path) -> pd.DataFrame:
     return pd.read_csv(path)
+
+
+def _resolve_path(root: Path, value: str | None) -> Path | None:
+    if value is None:
+        return None
+    path = Path(value)
+    if not path.is_absolute():
+        path = root / path
+    if not path.exists():
+        raise FileNotFoundError(path)
+    return path
+
+
+def _validate_geojson(path: Path, expected_key: str, expected_ids: set[str], root: Path) -> str:
+    with path.open("r", encoding="utf-8") as handle:
+        data = json.load(handle)
+    if data.get("type") != "FeatureCollection":
+        raise ValueError(f"GeoJSON {path} must be a FeatureCollection")
+    features = data.get("features")
+    if not isinstance(features, list) or not features:
+        raise ValueError(f"GeoJSON {path} must contain feature entries")
+    seen: set[str] = set()
+    for feature in features:
+        props = feature.get("properties") or {}
+        fid = props.get(expected_key) or feature.get("id")
+        if fid is None:
+            raise ValueError(f"GeoJSON {path} missing '{expected_key}' property on feature")
+        if fid not in expected_ids:
+            raise ValueError(f"GeoJSON {path} feature id '{fid}' not found in scenario IDs")
+        seen.add(fid)
+    missing = expected_ids - seen
+    if missing:
+        raise ValueError(f"GeoJSON {path} missing features for ids: {sorted(missing)}")
+    try:
+        return str(path.relative_to(root))
+    except ValueError:  # pragma: no cover
+        return str(path)
 
 
 def load_scenario(yaml_path: str | Path) -> Scenario:
@@ -88,13 +126,28 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
         )
         scenario = scenario.model_copy(update={"crew_assignments": crew_assignments})
 
-    if "geo" in data_section:
-        geo_path = root / data_section["geo"]
-        try:
-            geo_ref = str(geo_path.relative_to(root))
-        except ValueError:  # pragma: no cover - fallback for absolute paths
-            geo_ref = str(geo_path)
-        geo_metadata = GeoMetadata(block_geojson=geo_ref, crs=meta.get("geo_crs"))
+    block_geo = meta.get("geo_block_path") or data_section.get("geo_block_path")
+    landing_geo = meta.get("geo_landing_path") or data_section.get("geo_landing_path")
+    geo_crs = meta.get("geo_crs") or data_section.get("geo_crs")
+
+    block_geo_path = _resolve_path(root, block_geo)
+    landing_geo_path = _resolve_path(root, landing_geo)
+
+    block_geo_ref = None
+    landing_geo_ref = None
+    if block_geo_path is not None:
+        block_ids = {block.id for block in blocks}
+        block_geo_ref = _validate_geojson(block_geo_path, "block_id", block_ids, root)
+    if landing_geo_path is not None:
+        landing_ids = {landing.id for landing in landings}
+        landing_geo_ref = _validate_geojson(landing_geo_path, "landing_id", landing_ids, root)
+
+    if block_geo_ref or landing_geo_ref or geo_crs:
+        geo_metadata = GeoMetadata(
+            block_geojson=block_geo_ref,
+            landing_geojson=landing_geo_ref,
+            crs=geo_crs,
+        )
         scenario = scenario.model_copy(update={"geo": geo_metadata})
 
     return scenario

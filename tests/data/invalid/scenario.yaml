@@ -8,3 +8,4 @@ data:
   calendar: calendar.csv
   prod_rates: production_rates.csv
   mobilisation_distances: mobilisation_distances.csv
+geo_block_path: ../geo/invalid.geojson

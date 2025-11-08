@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 from pydantic import ValidationError
 
@@ -13,6 +15,7 @@ from fhops.scenario.contract.models import (
     ProductionRate,
     Scenario,
 )
+from fhops.scenario.io import load_scenario
 from fhops.scheduling.mobilisation import BlockDistance, MachineMobilisation, MobilisationConfig
 from fhops.scheduling.timeline.models import BlackoutWindow, ShiftDefinition, TimelineConfig
 
@@ -170,6 +173,35 @@ def test_sa_respects_blackouts():
     assignments = result["assignments"]
     assert not (assignments[assignments["day"] == 1].any().any())
     assert (assignments["day"] == 2).any()
+
+
+def test_geojson_validation_errors(tmp_path):
+    scenario_dir = tmp_path / "scenario"
+    scenario_dir.mkdir()
+    (scenario_dir / "blocks.csv").write_text("id,landing_id,work_required\nB1,L1,1.0\n")
+    (scenario_dir / "machines.csv").write_text("id\nM1\n")
+    (scenario_dir / "landings.csv").write_text("id\nL1\n")
+    (scenario_dir / "calendar.csv").write_text("machine_id,day,available\nM1,1,1\n")
+    (scenario_dir / "production_rates.csv").write_text("machine_id,block_id,rate\nM1,B1,1.0\n")
+    (scenario_dir / "scenario.yaml").write_text(
+        "\n".join(
+            [
+                "name: geo-invalid",
+                "num_days: 1",
+                "schema_version: 1.0.0",
+                "data:",
+                "  blocks: blocks.csv",
+                "  machines: machines.csv",
+                "  landings: landings.csv",
+                "  calendar: calendar.csv",
+                "  prod_rates: production_rates.csv",
+                f"geo_block_path: {Path('tests/data/geo/invalid.geojson').resolve()}",
+            ]
+        )
+        + "\n"
+    )
+    with pytest.raises(Exception, match="GeoJSON"):
+        load_scenario(scenario_dir / "scenario.yaml")
 
 
 def test_calendar_reference_unknown_machine():
