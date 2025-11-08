@@ -77,8 +77,6 @@ def _init_greedy(pb: Problem) -> Schedule:
     allowed_roles, prereq_roles, machine_roles, _ = _role_metadata(sc)
     blackout = _blackout_map(sc)
     locked = _locked_map(sc)
-    locked = _locked_map(sc)
-    locked = _locked_map(sc)
 
     plan: dict[str, dict[int, str | None]] = {
         machine.id: {day: None for day in pb.days} for machine in sc.machines

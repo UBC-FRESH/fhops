@@ -5,6 +5,7 @@
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 .. automodule:: fhops.scenario.contract
    :members:

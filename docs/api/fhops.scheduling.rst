@@ -1,10 +1,11 @@
 ``fhops.scheduling`` Package
-===========================
+============================
 
 .. automodule:: fhops.scheduling
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 .. automodule:: fhops.scheduling.timeline
    :members:

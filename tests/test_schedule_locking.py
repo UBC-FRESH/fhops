@@ -9,8 +9,8 @@ from fhops.scenario.contract.models import (
     Landing,
     Machine,
     ObjectiveWeights,
-    ProductionRate,
     Problem,
+    ProductionRate,
     Scenario,
     ScheduleLock,
 )
@@ -92,13 +92,21 @@ def test_objective_weights_adjust_mobilisation_penalty():
         }
     )
     model = build_model(Problem.from_scenario(scenario))
-    # Simulate a move from B1 to B2 for M1
+    for mach in model.M:
+        for blk in model.B:
+            for day in model.D:
+                model.x[mach, blk, day].value = 0.0
+                model.prod[mach, blk, day].value = 0.0
     model.x["M1", "B1", 1].value = 1.0
     model.x["M1", "B2", 2].value = 1.0
     model.prod["M1", "B1", 1].value = 2.0
     model.prod["M1", "B2", 2].value = 2.0
-    if hasattr(model, "y"):
+    if hasattr(model, "y") and hasattr(model, "D_transition"):
+        for mach in model.M:
+            for prev_blk in model.B:
+                for curr_blk in model.B:
+                    for day in model.D_transition:
+                        model.y[mach, prev_blk, curr_blk, day].value = 0.0
         model.y["M1", "B1", "B2", 2].value = 1.0
     obj_val = pyo.value(model.obj.expr)
-    # Production contribution 4.0 minus mobilisation weight (2 * 5)
-    assert obj_val == pytest.approx( -6.0 + 4.0)
+    assert obj_val == pytest.approx(4.0 - 2.0 * 5.0)
