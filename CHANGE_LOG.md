@@ -29,6 +29,7 @@
 - Hardened scenario contract validators (non-negative fields, horizon bounds, foreign-key checks, mobilisation distance integrity) with new unit coverage (`tests/test_contract_validations.py`).
 - Extended schema validators to reject mobilisation configs referencing unknown machines, closing the linked-ID audit for CSV inputs.
 - Added optional `GeoMetadata` and `CrewAssignment` helpers with validation, enabling typed extras for geospatial references and crew mapping.
+- Authored `docs/howto/data_contract.rst` detailing CSV requirements, optional extras, and validator coverage; cross-linked from overview/quickstart.
 - Commands executed:
   - `ruff format src tests`
   - `ruff check src tests`

@@ -64,4 +64,5 @@ The regression baseline encodes these expected values:
 Compare the CLI output against the table to confirm your environment matches the regression
 baseline. The fixture is also useful when iterating on mobilisation or sequencing logic.
 
-For more examples and advanced options, see the CLI reference (:doc:`../reference/cli`).
+For more examples and advanced options, see the CLI reference (:doc:`../reference/cli`) and
+the data contract guide (:doc:`data_contract`).

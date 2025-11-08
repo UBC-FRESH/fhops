@@ -24,3 +24,5 @@ Two canonical scenarios ship with FHOPS:
 
 Use the quickstart to validate both scenarios locally and compare CLI output against the
 documented baselines before extending the solvers or data contract.
+
+For exhaustive schema details, see :doc:`howto/data_contract`.
