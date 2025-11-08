@@ -18,6 +18,7 @@
 - Added machine-role aware sequencing guardrails: MIP filters assignments by system job roles, SA heuristic honors the same, synthetic generator assigns roles, and new unit tests cover registry constraints and geo distance helpers.
 - Synthetic generator now supports blackout timelines and exports machine roles; accompanying tests verify blackout handling.
 - Added preliminary sequencing constraints (cumulative precedence) and heuristic enforcement, plus system role tests validating constraint activation.
+- Planning updates: roadmap + MIP plan now track schedule-locking functionality for contractual/external commitments.
 - Commands executed:
   - `ruff format src tests`
   - `ruff check src tests`
