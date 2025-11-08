@@ -12,12 +12,12 @@ before proposing new work.
 - Basic README explaining architecture and usage.
 
 ## Phase 1 — Core Platform Hardening 🚧 (in progress)
-- [ ] Harden data contract validations and scenario loaders (see `notes/data_contract_enhancements.md`).
+- [x] Harden data contract validations and scenario loaders (see `notes/data_contract_enhancements.md` and `docs/howto/data_contract.rst`).
 - [ ] Expand Pyomo model coverage for production constraints and objective variants (see `notes/mip_model_plan.md`).
 - [ ] Stand up modular scaffolding (`notes/modular_reorg_plan.md`) and shift-level scheduling groundwork (`scheduling/timeline`).
 - [x] Establish deterministic regression fixtures for MIP and heuristic solvers.
 - [x] Document baseline workflows in Sphinx (overview + quickstart).
-- [ ] Stand up CI enforcing the agent workflow command suite on every push and PR.
+- [x] Stand up CI enforcing the agent workflow command suite on every push and PR (see `notes/ci_cd_expansion.md`).
 - [ ] Define geospatial ingestion strategy for block geometries (GeoJSON baseline, distance matrix fallback) to support mobilisation costs (`notes/mobilisation_plan.md`, `notes/data_contract_enhancements.md`).
 
 ## Phase 2 — Solver & Heuristic Expansion
