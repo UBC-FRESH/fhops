@@ -7,7 +7,7 @@
       "id": "L1",
       "properties": {
         "landing_id": "L1",
-        "name": "Landing 1"
+        "name": "Landing 1", "landing_id": "L1"
       },
       "geometry": {
         "type": "Point",
@@ -19,7 +19,7 @@
       "id": "L2",
       "properties": {
         "landing_id": "L2",
-        "name": "Landing 2"
+        "name": "Landing 2", "landing_id": "L2"
       },
       "geometry": {
         "type": "Point",
