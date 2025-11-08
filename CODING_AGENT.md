@@ -19,8 +19,8 @@ instead of suppressing them; escalate only if consensus is reached with maintain
   starts, pauses, or completes.
 - Keep the relevant note under `notes/` in sync with actionable tasks, tests, documentation, and
   open questions. Treat these as living documents—never let TODOs drift into memory.
-- Append a dated summary to `CHANGE_LOG.md` at the end of each deliverable, mirroring the report
-  sent to the user or maintainer.
+- **Every change set must be recorded in `CHANGE_LOG.md` immediately after implementation.**
+  Summaries should mirror status updates shared with maintainers; do not skip this step.
 - Before proposing new work, re-read the latest roadmap/notes/changelog entries to avoid jumping
   the queue or rehashing solved problems.
 
