@@ -108,6 +108,7 @@ class ProductionRate(BaseModel):
 class Scenario(BaseModel):
     name: str
     num_days: int
+    schema_version: str = "1.0.0"
     start_date: date | None = None  # ISO date for reporting (optional)
     blocks: list[Block]
     machines: list[Machine]
@@ -125,6 +126,16 @@ class Scenario(BaseModel):
     def _num_days_positive(cls, value: int) -> int:
         if value < 1:
             raise ValueError("Scenario.num_days must be >= 1")
+        return value
+
+    @field_validator("schema_version")
+    @classmethod
+    def _schema_version_supported(cls, value: str) -> str:
+        supported = {"1.0.0"}
+        if value not in supported:
+            raise ValueError(
+                f"Unsupported schema_version={value}. Supported versions: {', '.join(sorted(supported))}"
+            )
         return value
 
     def machine_ids(self) -> list[str]:

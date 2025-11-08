@@ -1,5 +1,6 @@
 name: Minimal Scenario
 num_days: 1
+schema_version: 1.0.0
 data:
   blocks: blocks.csv
   machines: machines.csv

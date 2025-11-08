@@ -109,6 +109,7 @@ A scenario is a YAML pointing to CSVs:
 
 ```yaml
 name: My Scenario
+schema_version: 1.0.0
 num_days: 42
 start_date: "2025-01-01"
 data:

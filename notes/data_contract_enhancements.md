@@ -34,4 +34,5 @@ Status: Draft — update as tasks progress.
 
 ## Open Questions
 - Should invalid references be fatal or downgraded to warnings with heuristic fixes? → **Fatal.** Failing fast keeps data authors honest and aligns with the loader/unit tests. We can revisit warning-level heuristics once an explicit repair pipeline exists.
+- How do we version the data contract as fields evolve (semver vs schema tags)? → **Schema tag + semver.** Every scenario declares `schema_version` (currently `1.0.0`). The loader rejects unsupported versions; changelog/docs will track migrations.
 - How do we version the data contract as fields evolve (semver vs schema tags)?
