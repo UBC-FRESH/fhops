@@ -33,6 +33,7 @@
 - Documented GeoJSON ingestion expectations (CRS guidance, required IDs) and the `fhops geo distances` workflow for generating mobilisation matrices.
 - Added parametrised validation tests (`tests/test_contract_edge_cases.py`) to exercise edge-case scenarios across the data contract, introduced `tests/data/*` fixtures with loader coverage, published authoring guidance in the data-contract how-to, refreshed the README quickstart, introduced explicit `schema_version` support in scenarios, and extended the loader/docs to ingest timeline configs plus crew/geo metadata.
 - Integrated timeline blackouts across the MIP builder and SA heuristic, expanded fixtures/tests to cover crew/timeline ingestion, and updated the data-contract docs with timeline examples.
+- Validated GeoJSON ingestion via the scenario loader (block/landing paths, CRS/id checks), refreshed fixtures/docs, and wired CLI usage into the data contract guidance.
 - Enabled `.github/workflows/ci.yml` to run the full coding-agent command suite (ruff format/check, mypy, pytest, pre-commit, Sphinx) on pushes and PRs.
 - Recorded the decision to keep invalid references fatal in `notes/data_contract_enhancements.md` to ensure strict validation remains the default.
 - Commands executed:

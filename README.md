@@ -118,6 +118,11 @@ data:
   landings: data/landings.csv      # id, daily_capacity
   calendar: data/calendar.csv      # machine_id, day, available (0/1)
   prod_rates: data/prod_rates.csv  # machine_id, block_id, rate  (per-day when assigned)
+  mobilisation_distances: data/mobilisation_distances.csv
+  crew_assignments: data/crew_assignments.csv
+  geo_block_path: data/blocks.geojson
+  geo_landing_path: data/landings.geojson
+  geo_crs: EPSG:3005
 ```
 
 Minimum required columns are shown above; extra columns are allowed and can be used by custom constraints/operators.

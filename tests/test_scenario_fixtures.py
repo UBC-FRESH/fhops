@@ -23,6 +23,8 @@ def test_typical_fixture_loads_with_mobilisation_hooks():
     assert scenario.timeline.shifts[0].hours > 0
     assert scenario.crew_assignments is not None
     assert len(scenario.crew_assignments) == 2
+    assert scenario.geo is not None
+    assert scenario.geo.block_geojson.endswith("blocks.geojson")
 
 
 def test_invalid_fixture_raises_validation_error():

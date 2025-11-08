@@ -9,7 +9,6 @@ data:
   prod_rates: production_rates.csv
   mobilisation_distances: mobilisation_distances.csv
   crew_assignments: crew_assignments.csv
-  geo: geo.json
 timeline:
   shifts:
     - name: day
@@ -21,3 +20,5 @@ timeline:
       reason: maintenance
   days_per_week: 5
 geo_crs: EPSG:3005
+geo_block_path: ../geo/blocks.geojson
+geo_landing_path: ../geo/landings.geojson
