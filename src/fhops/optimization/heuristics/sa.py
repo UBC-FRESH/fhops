@@ -10,7 +10,7 @@ from typing import Any
 import pandas as pd
 
 from fhops.scenario.contract import Problem
-from fhops.scheduling.mobilisation import MachineMobilisation
+from fhops.scheduling.mobilisation import MachineMobilisation, build_distance_lookup
 
 __all__ = ["Schedule", "solve_sa"]
 
@@ -64,11 +64,13 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
     landing_cap = {landing.id: landing.daily_capacity for landing in sc.landings}
     mobilisation = sc.mobilisation
     mobil_params: dict[str, MachineMobilisation] = {}
+    distance_lookup = build_distance_lookup(mobilisation)
     if mobilisation is not None:
         mobil_params = {param.machine_id: param for param in mobilisation.machine_params}
 
     score = 0.0
-    for day in pb.days:
+    previous_block: dict[str, str | None] = {machine.id: None for machine in sc.machines}
+    for day in sorted(pb.days):
         used = {landing.id: 0 for landing in sc.landings}
         for machine in sc.machines:
             block_id = sched.plan[machine.id][day]
@@ -89,8 +91,17 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
             remaining[block_id] -= prod
             score += prod
             params = mobil_params.get(machine.id)
-            if params is not None:
-                score -= params.setup_cost
+            prev_blk = previous_block[machine.id]
+            if params is not None and prev_blk is not None and block_id is not None:
+                if block_id != prev_blk:
+                    distance = distance_lookup.get((prev_blk, block_id), 0.0)
+                    cost = params.setup_cost
+                    if distance <= params.walk_threshold_m:
+                        cost += params.walk_cost_per_meter * distance
+                    else:
+                        cost += params.move_cost_flat
+                    score -= cost
+            previous_block[machine.id] = block_id
     return score
 
 

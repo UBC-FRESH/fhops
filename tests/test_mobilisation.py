@@ -10,7 +10,11 @@ from fhops.scenario.contract.models import (
     ProductionRate,
     Scenario,
 )
-from fhops.scheduling.mobilisation import MachineMobilisation, MobilisationConfig
+from fhops.scheduling.mobilisation import (
+    BlockDistance,
+    MachineMobilisation,
+    MobilisationConfig,
+)
 
 
 def build_problem() -> Problem:
@@ -36,12 +40,17 @@ def build_problem() -> Problem:
                 MachineMobilisation(
                     machine_id="M1",
                     walk_cost_per_meter=0.0,
-                    move_cost_flat=0.0,
-                    walk_threshold_m=0.0,
+                    move_cost_flat=100.0,
+                    walk_threshold_m=1000.0,
                     setup_cost=5.0,
                 )
             ],
-            distances=[],
+            distances=[
+                BlockDistance(from_block="B1", to_block="B2", distance_m=2000.0),
+                BlockDistance(from_block="B2", to_block="B1", distance_m=2000.0),
+                BlockDistance(from_block="B1", to_block="B1", distance_m=0.0),
+                BlockDistance(from_block="B2", to_block="B2", distance_m=0.0),
+            ],
         ),
     )
     return Problem.from_scenario(scenario)
@@ -62,9 +71,14 @@ def test_objective_includes_mobilisation_penalty():
         var.value = 0
     for var in model.prod.values():
         var.value = 0
+    if hasattr(model, "y"):
+        for var in model.y.values():
+            var.value = 0
 
     model.x["M1", "B1", 1].value = 1
     model.x["M1", "B2", 2].value = 1
+    if hasattr(model, "y"):
+        model.y["M1", "B1", "B2", 2].value = 1
 
     objective_value = pyo.value(model.obj)
-    assert objective_value == -10.0  # two assignments, each penalised by setup cost 5
+    assert objective_value == -105.0
