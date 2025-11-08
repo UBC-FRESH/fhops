@@ -2,18 +2,20 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
 
 import geopandas as gpd
+from shapely.geometry.base import BaseGeometry
+
 
 @dataclass
 class BlockGeometry:
     """Block identifier paired with geometry in a projected CRS."""
 
     block_id: str
-    geometry: object  # Geometry type from GeoPandas (shapely)
+    geometry: BaseGeometry
 
 
 def load_block_geometries(geojson_path: Path | str) -> list[BlockGeometry]:

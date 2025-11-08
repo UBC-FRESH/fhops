@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Iterable
-
 import pyomo.environ as pyo
 
 from fhops.scenario.contract import Problem

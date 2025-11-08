@@ -4,7 +4,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from fhops.scenario.contract import Block, CalendarEntry, Landing, Machine, ProductionRate, Scenario
+from fhops.scenario.contract import (
+    Block,
+    CalendarEntry,
+    Landing,
+    Machine,
+    ProductionRate,
+    Scenario,
+)
+from fhops.scheduling.systems import HarvestSystem, default_system_registry
 
 
 @dataclass
@@ -52,4 +60,25 @@ def generate_basic(spec: SyntheticScenarioSpec) -> Scenario:
     )
 
 
-__all__ = ["SyntheticScenarioSpec", "generate_basic"]
+def generate_with_systems(
+    spec: SyntheticScenarioSpec,
+    systems: dict[str, HarvestSystem] | None = None,
+) -> Scenario:
+    """Generate a scenario and assign blocks round-robin to harvest systems."""
+
+    if systems is None:
+        systems = dict(default_system_registry())
+    system_ids = list(systems.keys())
+    if not system_ids:
+        raise ValueError("At least one harvest system is required")
+
+    base = generate_basic(spec)
+    blocks = []
+    for idx, block in enumerate(base.blocks):
+        system_id = system_ids[idx % len(system_ids)]
+        blocks.append(block.model_copy(update={"harvest_system_id": system_id}))
+
+    return base.model_copy(update={"blocks": blocks})
+
+
+__all__ = ["SyntheticScenarioSpec", "generate_basic", "generate_with_systems"]
