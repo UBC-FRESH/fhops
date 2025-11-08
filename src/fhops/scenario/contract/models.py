@@ -19,6 +19,15 @@ class ScheduleLock(BaseModel):
 class ObjectiveWeights(BaseModel):
     production: float = 1.0
     mobilisation: float = 1.0
+    transitions: float = 0.0
+    landing_slack: float = 0.0
+
+    @field_validator("production", "mobilisation", "transitions", "landing_slack")
+    @classmethod
+    def _non_negative(cls, value: float) -> float:
+        if value < 0:
+            raise ValueError("Objective weight components must be non-negative")
+        return value
 
 
 Day = int  # 1..D

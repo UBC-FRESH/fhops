@@ -31,6 +31,10 @@ What those commands do:
 - ``fhops evaluate`` replays a schedule CSV and reports KPIs such as production,
   mobilisation cost, and sequencing health (when harvest systems are configured).
 
+Objective weights live alongside the scenario metadata (`objective_weights` block in YAML).
+Use them to balance production against mobilisation spend, transition counts, or landing slack
+penalties before re-running the solvers.
+
 Regression Fixture (Phase 1 Baseline)
 -------------------------------------
 

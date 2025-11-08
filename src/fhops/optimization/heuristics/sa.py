@@ -131,7 +131,18 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
     blackout = _blackout_map(sc)
     locked = _locked_map(sc)
 
-    score = 0.0
+    weights = getattr(sc, "objective_weights", None)
+    prod_weight = weights.production if weights else 1.0
+    mobil_weight = weights.mobilisation if weights else 1.0
+    transition_weight = weights.transitions if weights else 0.0
+    landing_slack_weight = weights.landing_slack if weights else 0.0
+
+    production_total = 0.0
+    mobilisation_total = 0.0
+    transition_count = 0.0
+    landing_slack_total = 0.0
+    penalty = 0.0
+
     previous_block: dict[str, str | None] = {machine.id: None for machine in sc.machines}
     role_cumulative: defaultdict[tuple[str, str], int] = defaultdict(int)
     for day in sorted(pb.days):
@@ -141,20 +152,20 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
             block_id = sched.plan[machine.id][day]
             if block_id is None:
                 if (machine.id, day) in locked:
-                    score -= 1000.0
+                    penalty += 1000.0
                 continue
             if (machine.id, day) in blackout:
-                score -= 1000.0
+                penalty += 1000.0
                 previous_block[machine.id] = None
                 continue
             if (machine.id, day) in locked and locked[(machine.id, day)] != block_id:
-                score -= 1000.0
+                penalty += 1000.0
                 previous_block[machine.id] = None
                 continue
             allowed = allowed_roles.get(block_id)
             role: str | None = machine_roles.get(machine.id)
             if allowed is not None and (role is None or role not in allowed):
-                score -= 1000.0
+                penalty += 1000.0
                 previous_block[machine.id] = None
                 continue
             if role is None:
@@ -167,7 +178,7 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
                 available = min(role_cumulative[(block_id, prereq)] for prereq in prereq_set)
                 required = role_cumulative[role_key] + day_role_counts[role_key] + 1
                 if required > available:
-                    score -= 1000.0
+                    penalty += 1000.0
                     previous_block[machine.id] = block_id
                     continue
             earliest, latest = windows[block_id]
@@ -176,14 +187,19 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
             if remaining[block_id] <= 1e-9:
                 continue
             landing_id = landing_of[block_id]
-            used[landing_id] += 1
-            if used[landing_id] > landing_cap[landing_id]:
-                score -= 1000.0
-                continue
+            capacity = landing_cap[landing_id]
+            next_usage = used[landing_id] + 1
+            excess = max(0, next_usage - capacity)
+            if excess > 0:
+                if landing_slack_weight == 0.0:
+                    penalty += 1000.0
+                    continue
+                landing_slack_total += excess
+            used[landing_id] = next_usage
             r = rate.get((machine.id, block_id), 0.0)
             prod = min(r, remaining[block_id])
             remaining[block_id] -= prod
-            score += prod
+            production_total += prod
             params = mobil_params.get(machine.id)
             prev_blk = previous_block[machine.id]
             if params is not None and prev_blk is not None and block_id is not None:
@@ -194,12 +210,24 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
                         cost += params.walk_cost_per_meter * distance
                     else:
                         cost += params.move_cost_flat
-                    score -= cost
+                    mobilisation_total += cost
+                    transition_count += 1.0
+                else:
+                    # no mobilisation cost but still record no transition change
+                    pass
+            else:
+                if prev_blk is not None and block_id != prev_blk:
+                    transition_count += 1.0
             previous_block[machine.id] = block_id
             if role is not None:
                 day_role_counts[(block_id, role)] += 1
         for key, count in day_role_counts.items():
             role_cumulative[key] += count
+    score = prod_weight * production_total
+    score -= mobil_weight * mobilisation_total
+    score -= transition_weight * transition_count
+    score -= landing_slack_weight * landing_slack_total
+    score -= penalty
     return score
 
 

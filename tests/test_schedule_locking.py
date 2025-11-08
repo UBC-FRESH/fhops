@@ -2,6 +2,7 @@ import pyomo.environ as pyo
 import pytest
 
 from fhops.optimization.heuristics import solve_sa
+from fhops.optimization.heuristics.sa import Schedule, _evaluate
 from fhops.optimization.mip.builder import build_model
 from fhops.scenario.contract.models import (
     Block,
@@ -110,3 +111,105 @@ def test_objective_weights_adjust_mobilisation_penalty():
         model.y["M1", "B1", "B2", 2].value = 1.0
     obj_val = pyo.value(model.obj.expr)
     assert obj_val == pytest.approx(4.0 - 2.0 * 5.0)
+
+
+def test_transition_weight_penalises_moves_mip():
+    scenario = _base_scenario().model_copy(
+        update={
+            "objective_weights": ObjectiveWeights(
+                production=1.0, mobilisation=0.0, transitions=3.0
+            ),
+            "mobilisation": None,
+        }
+    )
+    model = build_model(Problem.from_scenario(scenario))
+    for mach in model.M:
+        for blk in model.B:
+            for day in model.D:
+                model.x[mach, blk, day].value = 0.0
+                model.prod[mach, blk, day].value = 0.0
+    model.x["M1", "B1", 1].value = 1.0
+    model.x["M1", "B2", 2].value = 1.0
+    model.prod["M1", "B1", 1].value = 2.0
+    model.prod["M1", "B2", 2].value = 2.0
+    if hasattr(model, "y") and hasattr(model, "D_transition"):
+        for mach in model.M:
+            for prev_blk in model.B:
+                for curr_blk in model.B:
+                    for day in model.D_transition:
+                        model.y[mach, prev_blk, curr_blk, day].value = 0.0
+        model.y["M1", "B1", "B2", 2].value = 1.0
+    obj_val = pyo.value(model.obj.expr)
+    assert obj_val == pytest.approx(4.0 - 3.0 * 1.0)
+
+
+def test_transition_weight_penalises_moves_sa():
+    scenario = _base_scenario().model_copy(
+        update={
+            "objective_weights": ObjectiveWeights(
+                production=1.0, mobilisation=0.0, transitions=2.0
+            ),
+            "mobilisation": None,
+        }
+    )
+    pb = Problem.from_scenario(scenario)
+    plan = {
+        "M1": {1: "B1", 2: "B2"},
+        "M2": {1: None, 2: None},
+    }
+    score = _evaluate(pb, Schedule(plan=plan))
+    assert score == pytest.approx(4.0 - 2.0 * 1.0)
+
+
+def test_landing_slack_penalty_mip():
+    scenario = _base_scenario().model_copy(
+        update={
+            "landings": [Landing(id="L1", daily_capacity=1)],
+            "objective_weights": ObjectiveWeights(
+                production=1.0, mobilisation=0.0, landing_slack=2.0
+            ),
+            "mobilisation": None,
+        }
+    )
+    model = build_model(Problem.from_scenario(scenario))
+    for mach in model.M:
+        for blk in model.B:
+            for day in model.D:
+                model.x[mach, blk, day].value = 0.0
+                model.prod[mach, blk, day].value = 0.0
+    model.x["M1", "B1", 1].value = 1.0
+    model.x["M2", "B2", 1].value = 1.0
+    model.prod["M1", "B1", 1].value = 2.0
+    model.prod["M2", "B2", 1].value = 2.0
+    if 2 in model.D:
+        model.prod["M1", "B1", 2].value = 0.0
+        model.prod["M1", "B2", 2].value = 0.0
+        model.prod["M2", "B1", 2].value = 0.0
+        model.prod["M2", "B2", 2].value = 0.0
+    if hasattr(model, "landing_slack"):
+        for landing_id in model.L:
+            for day in model.D:
+                model.landing_slack[landing_id, day].value = 0.0
+        model.landing_slack["L1", 1].value = 1.0
+    obj_val = pyo.value(model.obj.expr)
+    assert obj_val == pytest.approx(4.0 - 2.0 * 1.0)
+
+
+def test_landing_slack_penalty_sa():
+    scenario = _base_scenario().model_copy(
+        update={
+            "landings": [Landing(id="L1", daily_capacity=1)],
+            "objective_weights": ObjectiveWeights(
+                production=1.0, mobilisation=0.0, landing_slack=3.0
+            ),
+            "mobilisation": None,
+        }
+    )
+    pb = Problem.from_scenario(scenario)
+    plan = {
+        "M1": {1: "B1", 2: None},
+        "M2": {1: "B2", 2: None},
+    }
+    score = _evaluate(pb, Schedule(plan=plan))
+    # Two machines on one landing (capacity 1) -> slack 1 penalised
+    assert score == pytest.approx(4.0 - 3.0 * 1.0)
