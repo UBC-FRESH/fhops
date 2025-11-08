@@ -26,7 +26,7 @@ Status: Draft — update as tasks progress.
 
 ## Tests & Tooling
 - [x] Property-based or parametrised tests covering edge-case scenarios. *(Added parametrised coverage in `tests/test_contract_edge_cases.py` for negative values, horizon violations, mobilisation/crew mismatches.)*
-- [ ] Regression fixtures under `tests/data/` representing minimal, typical, and invalid cases.
+- [x] Regression fixtures under `tests/data/` representing minimal, typical, and invalid cases. *(Added loader-tested YAML/CSV bundles and documented them in the data-contract guide.)*
 
 ## Documentation
 - [ ] Draft how-to guide(s) for authoring scenarios and validating inputs.
