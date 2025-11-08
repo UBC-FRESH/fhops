@@ -23,18 +23,7 @@ extensions = [
 autosummary_generate = True
 autodoc_typehints = "description"
 nitpicky = False
-autodoc_mock_imports = [
-    "pandas",
-    "numpy",
-    "pyomo",
-    "highspy",
-    "pydantic",
-    "pyarrow",
-    "typer",
-    "rich",
-    "geopandas",
-    "yaml",
-]
+autodoc_mock_imports = ["geopandas", "highspy"]
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
