@@ -1,0 +1,30 @@
+{
+  "type": "FeatureCollection",
+  "crs": {"type": "name", "properties": {"name": "EPSG:3005"}},
+  "features": [
+    {
+      "type": "Feature",
+      "id": "L1",
+      "properties": {
+        "landing_id": "L1",
+        "name": "Landing 1", "landing_id": "L1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [0.5, -0.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "L2",
+      "properties": {
+        "landing_id": "L2",
+        "name": "Landing 2", "landing_id": "L2"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [2.5, -0.5]
+      }
+    }
+  ]
+}

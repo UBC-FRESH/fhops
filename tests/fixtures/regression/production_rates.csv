@@ -1,0 +1,5 @@
+machine_id,block_id,rate
+F1,B1,4.0
+F1,B2,4.0
+P1,B1,4.0
+P1,B2,4.0

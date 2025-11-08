@@ -1,0 +1,5 @@
+from_block,to_block,distance_m
+B1,B1,0.0
+B2,B2,0.0
+B1,B2,500.0
+B2,B1,500.0

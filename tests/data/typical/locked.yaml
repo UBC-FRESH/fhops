@@ -1,0 +1,16 @@
+
+name: Locked Scenario
+num_days: 2
+schema_version: 1.0.0
+data:
+  blocks: blocks.csv
+  machines: machines.csv
+  landings: landings.csv
+  calendar: calendar.csv
+  prod_rates: production_rates.csv
+locked_assignments:
+  - machine_id: M1
+    block_id: B1
+    day: 1
+
+data_files:

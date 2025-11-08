@@ -15,20 +15,28 @@ pip install -e .[dev]
 # optional extras for spatial IO
 pip install .[geo]
 
-# Try the tiny example:
+# Validate and solve the tiny example:
 fhops validate examples/minitoy/scenario.yaml
 fhops solve-mip examples/minitoy/scenario.yaml --out examples/minitoy/out/mip_solution.csv
 fhops solve-heur examples/minitoy/scenario.yaml --out examples/minitoy/out/sa_solution.csv
 fhops evaluate examples/minitoy/scenario.yaml examples/minitoy/out/mip_solution.csv
+
+# Exercise the regression baseline (sequencing + mobilisation setup checks)
+fhops solve-mip tests/fixtures/regression/regression.yaml --out /tmp/regression_mip.csv
+fhops solve-heur tests/fixtures/regression/regression.yaml --out /tmp/regression_sa.csv
+fhops evaluate tests/fixtures/regression/regression.yaml /tmp/regression_sa.csv
+# Expected evaluation output includes `sequencing_violation_count=0`. Mobilisation costs are
+# exercised in `tests/test_regression_integration.py`, which injects machine parameters before
+# running the CLI.
 ```
 
 ## Package layout
 
-- `fhops.core`: Data models and the `Problem` container.
-- `fhops.data`: Loaders and IO helpers.
-- `fhops.model`: Pyomo model builder.
-- `fhops.solve`: MIP and heuristic solvers.
-- `fhops.eval`: Schedule playback and KPI reporting.
+- `fhops.scenario`: Data models and the `Problem` container.
+- `fhops.scenario.io`: Loaders and IO helpers (CSV/YAML, mobilisation distances).
+- `fhops.optimization.mip`: Pyomo model builder + driver.
+- `fhops.optimization.heuristics`: Metaheuristic solvers and operators.
+- `fhops.evaluation`: Schedule playback and KPI reporting.
 - `fhops.cli`: Typer-based CLI.
 
 # What is FHOPS?
@@ -101,6 +109,7 @@ A scenario is a YAML pointing to CSVs:
 
 ```yaml
 name: My Scenario
+schema_version: 1.0.0
 num_days: 42
 start_date: "2025-01-01"
 data:
@@ -109,6 +118,18 @@ data:
   landings: data/landings.csv      # id, daily_capacity
   calendar: data/calendar.csv      # machine_id, day, available (0/1)
   prod_rates: data/prod_rates.csv  # machine_id, block_id, rate  (per-day when assigned)
+  mobilisation_distances: data/mobilisation_distances.csv
+  crew_assignments: data/crew_assignments.csv
+  geo_block_path: data/blocks.geojson
+  geo_landing_path: data/landings.geojson
+  geo_crs: EPSG:3005
+locked_assignments:
+  - machine_id: YARDER1
+    block_id: B12
+    day: 5
+objective_weights:
+  production: 1.0
+  mobilisation: 1.0
 ```
 
 Minimum required columns are shown above; extra columns are allowed and can be used by custom constraints/operators.
@@ -158,6 +179,14 @@ fhops benchmark examples/med42/scenario.yaml --time_limit 60 --iters 8000
 ### Add a new constraint (MIP)
 - Implement it in `fhops/model/pyomo_builder.py` (or as a function under `model/constraints/`).
 - Use the scenario fields you need (add to data contract if necessary).
+
+## Project Docs & Planning Artefacts
+
+- Roadmap: `FHOPS_ROADMAP.md` (mirrors detailed module notes in `notes/`).
+- Coding agent workflow: `CODING_AGENT.md` with required command cadence.
+- Change log: `CHANGE_LOG.md` tracks daily progress and executed commands.
+- Documentation: Sphinx sources live under `docs/` and publish to Read the Docs.
+- CI/CD: see `.github/workflows/ci.yml` for lint/type/test/doc automation.
 - Add a tiny unit test + one example that tickles the constraint.
 
 ### Add a new operator/neighborhood (heuristics)

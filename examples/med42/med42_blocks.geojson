@@ -1,0 +1,11 @@
+{
+"type": "FeatureCollection",
+"name": "med42_blocks",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::26910" } },
+"features": [
+{ "type": "Feature", "properties": { "block_id": "med42_1" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 0.0, 0.0 ], [ 0.0, 150.0 ], [ 150.0, 150.0 ], [ 150.0, 0.0 ], [ 0.0, 0.0 ] ] ] } },
+{ "type": "Feature", "properties": { "block_id": "med42_2" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 800.0, 0.0 ], [ 800.0, 150.0 ], [ 950.0, 150.0 ], [ 950.0, 0.0 ], [ 800.0, 0.0 ] ] ] } },
+{ "type": "Feature", "properties": { "block_id": "med42_3" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 2000.0, 0.0 ], [ 2000.0, 150.0 ], [ 2150.0, 150.0 ], [ 2150.0, 0.0 ], [ 2000.0, 0.0 ] ] ] } },
+{ "type": "Feature", "properties": { "block_id": "med42_4" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 3500.0, 0.0 ], [ 3500.0, 150.0 ], [ 3650.0, 150.0 ], [ 3650.0, 0.0 ], [ 3500.0, 0.0 ] ] ] } }
+]
+}

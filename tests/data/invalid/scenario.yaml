@@ -1,0 +1,11 @@
+name: Invalid Scenario
+num_days: 3
+schema_version: 1.0.0
+data:
+  blocks: blocks.csv
+  machines: machines.csv
+  landings: landings.csv
+  calendar: calendar.csv
+  prod_rates: production_rates.csv
+  mobilisation_distances: mobilisation_distances.csv
+geo_block_path: ../geo/invalid.geojson
