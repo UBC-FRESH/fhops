@@ -18,7 +18,7 @@ before proposing new work.
 - [x] Establish deterministic regression fixtures for MIP and heuristic solvers.
 - [x] Document baseline workflows in Sphinx (overview + quickstart).
 - [x] Stand up CI enforcing the agent workflow command suite on every push and PR (see `notes/ci_cd_expansion.md`).
-- [ ] Define geospatial ingestion strategy for block geometries (GeoJSON baseline, distance matrix fallback) to support mobilisation costs (`notes/mobilisation_plan.md`, `notes/data_contract_enhancements.md`).
+- [x] Define geospatial ingestion strategy for block geometries (GeoJSON baseline, distance matrix fallback) to support mobilisation costs (`notes/mobilisation_plan.md`, `notes/data_contract_enhancements.md`, `docs/howto/data_contract.rst`).
 
 ## Phase 2 — Solver & Heuristic Expansion
 - [ ] Metaheuristic roadmap execution (Simulated Annealing refinements, Tabu/ILS activation).
