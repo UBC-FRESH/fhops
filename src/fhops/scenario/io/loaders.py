@@ -16,8 +16,10 @@ from fhops.scenario.contract.models import (
     GeoMetadata,
     Landing,
     Machine,
+    ObjectiveWeights,
     ProductionRate,
     Scenario,
+    ScheduleLock,
 )
 from fhops.scenario.io.mobilisation import populate_mobilisation_distances
 from fhops.scheduling.timeline.models import TimelineConfig
@@ -149,5 +151,13 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
             crs=geo_crs,
         )
         scenario = scenario.model_copy(update={"geo": geo_metadata})
+
+    if "locked_assignments" in meta:
+        locks = TypeAdapter(list[ScheduleLock]).validate_python(meta["locked_assignments"])
+        scenario = scenario.model_copy(update={"locked_assignments": locks})
+
+    if "objective_weights" in meta:
+        weights = TypeAdapter(ObjectiveWeights).validate_python(meta["objective_weights"])
+        scenario = scenario.model_copy(update={"objective_weights": weights})
 
     return scenario

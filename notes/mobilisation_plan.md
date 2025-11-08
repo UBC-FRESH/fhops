@@ -14,8 +14,8 @@ Status: Draft — pending modular reorganisation.
 - [x] Implement mobilisation penalty terms in Pyomo (`optimization/mip/builder.py`). *(Setup-cost deduction wired into objective.)*
 - [x] Add heuristic loss penalties mirroring the MIP logic. *(SA evaluator subtracts setup cost per assignment.)*
 - [ ] Update evaluation metrics to report mobilisation spend.
-- [ ] Design geospatial ingestion path (GeoJSON baseline) to derive inter-block distances and persist them in `MobilisationConfig`.
-- [ ] Provide CLI helper to compute distance matrices from block geometries (projected CRS, configurable unit conversions).
+- [x] Design geospatial ingestion path (GeoJSON baseline) to derive inter-block distances and persist them in `MobilisationConfig`.
+- [x] Provide CLI helper to compute distance matrices from block geometries (projected CRS, configurable unit conversions). *(Prototype via `fhops geo distances`; loader now validates GeoJSON inputs.)*
 
 ## Tests
 - [x] Fixture scenarios with known mobilisation costs (short vs long moves). *(See `tests/test_mobilisation.py`.)*

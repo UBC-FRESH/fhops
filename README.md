@@ -123,6 +123,13 @@ data:
   geo_block_path: data/blocks.geojson
   geo_landing_path: data/landings.geojson
   geo_crs: EPSG:3005
+locked_assignments:
+  - machine_id: YARDER1
+    block_id: B12
+    day: 5
+objective_weights:
+  production: 1.0
+  mobilisation: 1.0
 ```
 
 Minimum required columns are shown above; extra columns are allowed and can be used by custom constraints/operators.

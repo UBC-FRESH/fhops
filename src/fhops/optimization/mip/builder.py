@@ -38,6 +38,8 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
             for day in range(blackout.start_day, blackout.end_day + 1):
                 for machine in sc.machines:
                     calendar_blackouts.add((machine.id, day))
+    locked_assignments = sc.locked_assignments or []
+    locked_lookup = {(lock.machine_id, lock.day): lock.block_id for lock in locked_assignments}
     windows = {block_id: sc.window_for(block_id) for block_id in sc.block_ids()}
 
     model = pyo.ConcreteModel()
@@ -108,12 +110,23 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
             for day in model.D_transition
         )
 
-    model.obj = pyo.Objective(expr=production_expr - mobil_cost_expr, sense=pyo.maximize)
+    prod_weight = 1.0
+    mobil_weight = 1.0
+    if sc.objective_weights is not None:
+        prod_weight = sc.objective_weights.production
+        mobil_weight = sc.objective_weights.mobilisation
+    obj_expr = prod_weight * production_expr
+    if mobil_params:
+        obj_expr -= mobil_weight * mobil_cost_expr
+    model.obj = pyo.Objective(expr=obj_expr, sense=pyo.maximize)
 
     def mach_one_block_rule(mdl, mach, day):
-        if (mach, int(day)) in calendar_blackouts:
+        day_int = int(day)
+        if (mach, day_int) in calendar_blackouts:
             return sum(mdl.x[mach, blk, day] for blk in mdl.B) == 0
-        availability_flag = availability.get((mach, int(day)), 1)
+        if (mach, day_int) in locked_lookup:
+            return pyo.Constraint.Skip
+        availability_flag = availability.get((mach, day_int), 1)
         return sum(mdl.x[mach, blk, day] for blk in mdl.B) <= availability_flag
 
     model.mach_one_block = pyo.Constraint(model.M, model.D, rule=mach_one_block_rule)
@@ -151,5 +164,11 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     model.landing_cap = pyo.Constraint(model.L, model.D, rule=landing_cap_rule)
 
     apply_system_sequencing_constraints(model, pb)
+
+    for lock in locked_assignments:
+        model.x[lock.machine_id, lock.block_id, lock.day].fix(1)
+        for other_blk in blocks:
+            if other_blk != lock.block_id:
+                model.x[lock.machine_id, other_blk, lock.day].fix(0)
 
     return model
