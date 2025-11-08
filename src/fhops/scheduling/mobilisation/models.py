@@ -4,7 +4,12 @@ from __future__ import annotations
 
 from pydantic import BaseModel, field_validator
 
-__all__ = ["BlockDistance", "MachineMobilisation", "MobilisationConfig"]
+__all__ = [
+    "BlockDistance",
+    "MachineMobilisation",
+    "MobilisationConfig",
+    "build_distance_lookup",
+]
 
 
 class BlockDistance(BaseModel):
@@ -52,3 +57,18 @@ class MobilisationConfig(BaseModel):
         if value < 0:
             raise ValueError("default_walk_threshold_m must be non-negative")
         return value
+
+
+def build_distance_lookup(config: MobilisationConfig | None) -> dict[tuple[str, str], float]:
+    """Return symmetric distance lookup from mobilisation config."""
+
+    if config is None or not config.distances:
+        return {}
+
+    lookup: dict[tuple[str, str], float] = {}
+    for dist in config.distances:
+        lookup[(dist.from_block, dist.to_block)] = dist.distance_m
+        lookup[(dist.to_block, dist.from_block)] = dist.distance_m
+        lookup.setdefault((dist.from_block, dist.from_block), 0.0)
+        lookup.setdefault((dist.to_block, dist.to_block), 0.0)
+    return lookup

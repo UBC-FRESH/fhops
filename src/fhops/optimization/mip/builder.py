@@ -7,6 +7,11 @@ from collections import defaultdict
 import pyomo.environ as pyo
 
 from fhops.scenario.contract import Problem
+from fhops.scheduling.mobilisation import (
+    MachineMobilisation,
+    MobilisationConfig,
+    build_distance_lookup,
+)
 
 __all__ = ["build_model"]
 
@@ -23,10 +28,11 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     work_required = {block.id: block.work_required for block in sc.blocks}
     landing_capacity = {landing.id: landing.daily_capacity for landing in sc.landings}
 
-    mobilisation = sc.mobilisation
-    setup_cost: dict[str, float] = {}
+    mobilisation: MobilisationConfig | None = sc.mobilisation
+    mobil_params: dict[str, MachineMobilisation] = {}
     if mobilisation is not None:
-        setup_cost = {param.machine_id: param.setup_cost for param in mobilisation.machine_params}
+        mobil_params = {param.machine_id: param for param in mobilisation.machine_params}
+    distance_lookup = build_distance_lookup(mobilisation)
 
     availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
     windows = {block_id: sc.window_for(block_id) for block_id in sc.block_ids()}
@@ -47,16 +53,59 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
         model.prod[mach, blk, day] for mach in model.M for blk in model.B for day in model.D
     )
 
-    penalty_expr = 0
-    if setup_cost:
-        penalty_expr = sum(
-            setup_cost.get(mach, 0.0) * model.x[mach, blk, day]
-            for mach in model.M
-            for blk in model.B
-            for day in model.D
+    mobil_cost_expr = 0
+
+    if mobil_params:
+        transition_days = [day for day in days if day > min(days)]
+        model.D_transition = pyo.Set(initialize=transition_days)
+
+        model.y = pyo.Var(model.M, model.B, model.B, model.D_transition, domain=pyo.Binary)
+
+        def _prev_match_rule(mdl, mach, prev_blk, curr_blk, day):
+            prev_day = day - 1
+            return mdl.y[mach, prev_blk, curr_blk, day] <= mdl.x[mach, prev_blk, prev_day]
+
+        def _curr_match_rule(mdl, mach, prev_blk, curr_blk, day):
+            return mdl.y[mach, prev_blk, curr_blk, day] <= mdl.x[mach, curr_blk, day]
+
+        def _link_rule(mdl, mach, prev_blk, curr_blk, day):
+            prev_day = day - 1
+            return mdl.y[mach, prev_blk, curr_blk, day] >= (
+                mdl.x[mach, prev_blk, prev_day] + mdl.x[mach, curr_blk, day] - 1
+            )
+
+        model.transition_prev = pyo.Constraint(
+            model.M, model.B, model.B, model.D_transition, rule=_prev_match_rule
+        )
+        model.transition_curr = pyo.Constraint(
+            model.M, model.B, model.B, model.D_transition, rule=_curr_match_rule
+        )
+        model.transition_link = pyo.Constraint(
+            model.M, model.B, model.B, model.D_transition, rule=_link_rule
         )
 
-    model.obj = pyo.Objective(expr=production_expr - penalty_expr, sense=pyo.maximize)
+        def _mobil_cost(mach: str, prev_blk: str, curr_blk: str) -> float:
+            params = mobil_params.get(mach)
+            if params is None or prev_blk == curr_blk:
+                return 0.0
+            distance = distance_lookup.get((prev_blk, curr_blk), 0.0)
+            threshold = params.walk_threshold_m
+            cost = params.setup_cost
+            if distance <= threshold:
+                cost += params.walk_cost_per_meter * distance
+            else:
+                cost += params.move_cost_flat
+            return cost
+
+        mobil_cost_expr = sum(
+            _mobil_cost(mach, prev_blk, curr_blk) * model.y[mach, prev_blk, curr_blk, day]
+            for mach in model.M
+            for prev_blk in model.B
+            for curr_blk in model.B
+            for day in model.D_transition
+        )
+
+    model.obj = pyo.Objective(expr=production_expr - mobil_cost_expr, sense=pyo.maximize)
 
     def mach_one_block_rule(mdl, mach, day):
         availability_flag = availability.get((mach, int(day)), 1)
