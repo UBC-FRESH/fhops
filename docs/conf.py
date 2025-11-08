@@ -33,6 +33,7 @@ autodoc_mock_imports = [
     "typer",
     "rich",
     "geopandas",
+    "yaml",
 ]
 
 intersphinx_mapping = {
