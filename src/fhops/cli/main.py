@@ -88,6 +88,9 @@ def solve_mip_cmd(
 
     assignments.to_csv(str(out), index=False)
     console.print(f"Objective: {objective:.3f}. Saved to {out}")
+    metrics = compute_kpis(pb, assignments)
+    for key, value in metrics.items():
+        console.print(f"{key}: {value:.3f}" if isinstance(value, float) else f"{key}: {value}")
 
 
 @app.command("solve-heur")
@@ -114,6 +117,9 @@ def solve_heur_cmd(
     out.parent.mkdir(parents=True, exist_ok=True)
     assignments.to_csv(str(out), index=False)
     console.print(f"Objective (heuristic): {objective:.3f}. Saved to {out}")
+    metrics = compute_kpis(pb, assignments)
+    for key, value in metrics.items():
+        console.print(f"{key}: {value:.3f}" if isinstance(value, float) else f"{key}: {value}")
 
 
 @app.command()
@@ -124,7 +130,7 @@ def evaluate(scenario: Path, assignments_csv: Path):
     df = pd.read_csv(str(assignments_csv))
     kpis = compute_kpis(pb, df)
     for k, v in kpis.items():
-        console.print(f"{k}: {v}")
+        console.print(f"{k}: {v:.3f}" if isinstance(v, float) else f"{k}: {v}")
 
 
 @app.command()
@@ -145,17 +151,28 @@ def benchmark(
 
     res_mip = solve_mip(pb, time_limit=time_limit, driver=driver, debug=debug)
     mip_csv = out_dir / "mip_solution.csv"
-    cast(pd.DataFrame, res_mip["assignments"]).to_csv(str(mip_csv), index=False)
+    mip_assignments = cast(pd.DataFrame, res_mip["assignments"])
+    mip_assignments.to_csv(str(mip_csv), index=False)
 
     res_sa = solve_sa(pb, iters=iters)
     sa_csv = out_dir / "sa_solution.csv"
-    cast(pd.DataFrame, res_sa["assignments"]).to_csv(str(sa_csv), index=False)
+    sa_assignments = cast(pd.DataFrame, res_sa["assignments"])
+    sa_assignments.to_csv(str(sa_csv), index=False)
+
+    mip_metrics = compute_kpis(pb, mip_assignments)
+    sa_metrics = compute_kpis(pb, sa_assignments)
 
     console.print(
         f"MIP obj={cast(float, res_mip['objective']):.3f}, "
         f"SA obj={cast(float, res_sa['objective']):.3f}"
     )
     console.print(f"Saved: {mip_csv}, {sa_csv}")
+    console.print("MIP metrics:")
+    for key, value in mip_metrics.items():
+        console.print(f"  {key}: {value:.3f}" if isinstance(value, float) else f"  {key}: {value}")
+    console.print("SA metrics:")
+    for key, value in sa_metrics.items():
+        console.print(f"  {key}: {value:.3f}" if isinstance(value, float) else f"  {key}: {value}")
 
 
 if __name__ == "__main__":

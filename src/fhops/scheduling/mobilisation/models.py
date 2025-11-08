@@ -50,6 +50,7 @@ class MobilisationConfig(BaseModel):
     machine_params: list[MachineMobilisation]
     distances: list[BlockDistance] | None = None
     default_walk_threshold_m: float = 1000.0
+    distance_csv: str | None = None
 
     @field_validator("default_walk_threshold_m")
     @classmethod
