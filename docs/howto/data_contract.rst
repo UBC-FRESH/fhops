@@ -10,6 +10,8 @@ Core Tables (CSV)
 
 Each scenario references a set of CSV files. Required columns and notes:
 
+- ``schema_version``: Contract version tag (currently `1.0.0`).
+
 .. list-table::
    :header-rows: 1
 
