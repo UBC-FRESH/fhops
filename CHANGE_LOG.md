@@ -14,6 +14,7 @@
 - Seeded synthetic scenario generator scaffolding (`SyntheticScenarioSpec`, `generate_basic`) and mobilisation unit tests; added scheduling/mobilisation models and updated Sphinx API docs.
 - Implemented mobilisation setup-cost penalties across MIP/SA, added GeoJSON distance tooling (`fhops geo distances`) with example block geometries, and introduced default harvest system registry/notes from Jaffray (2025).
 - Added distance-threshold mobilisation costs (transition binaries, SA evaluation alignment), shifted scenario contract to track harvest-system IDs, and expanded synthetic generator/tests for system-aware scenarios.
+- Scenario contract now provides default harvest system registry linkage for blocks, with validation to ensure IDs align with the seeded BC systems.
 - Commands executed:
   - `ruff format src tests` (clean run locally; reverted formatting edits to keep scope focused on planning work).
   - `ruff check src tests` *(fails — pre-existing import ordering and typing updates required across legacy modules).*
