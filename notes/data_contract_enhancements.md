@@ -17,7 +17,8 @@ Status: Draft — update as tasks progress.
   - Added scenario-level cross validation for horizon bounds, foreign key consistency, and mobilisation distance references.
 - [x] Introduce shift calendar models (per-shift durations, blackout dates, weekly rollups). *(TimelineConfig added; scheduling integration pending usage.)*
 - [x] Introduce mobilisation schema (machine parameters, block distances). *(MobilisationConfig added; needs wiring into optimisation.)*
-- [ ] Add schema-level validators ensuring linked IDs exist across CSV inputs (blocks↔systems↔machines↔workers).
+- [x] Add schema-level validators ensuring linked IDs exist across CSV inputs (blocks↔systems↔machines↔workers).
+  - Cross-checks now cover block→landing, production/calendars→machines, harvest-system IDs, mobilisation distances, and mobilisation machine parameters. Crew/worker mapping remains future work.
 - [ ] Introduce typed helpers for optional extras (geo metadata, crew assignments).
 - [ ] Document data contract extensions in Sphinx (`docs/howto/data_contract.rst`).
 - [ ] Specify GeoJSON ingestion schema (accepted CRS, required block properties) and distance computation workflow.
