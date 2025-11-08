@@ -6,6 +6,7 @@ from collections import defaultdict
 
 import pyomo.environ as pyo
 
+from fhops.optimization.mip.constraints.system_sequencing import apply_system_sequencing_constraints
 from fhops.scenario.contract import Problem
 from fhops.scheduling.mobilisation import MachineMobilisation, build_distance_lookup
 
@@ -30,26 +31,6 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
         mobil_params = {param.machine_id: param for param in mobilisation.machine_params}
     distance_lookup = build_distance_lookup(mobilisation)
 
-    systems = sc.harvest_systems or {}
-    allowed_roles: dict[str, set[str] | None] = {}
-    block_prereq_roles: dict[tuple[str, str], set[str]] = {}
-    for block in sc.blocks:
-        system = systems.get(block.harvest_system_id) if block.harvest_system_id else None
-        if system:
-            job_role = {job.name: job.machine_role for job in system.jobs}
-            allowed = {job.machine_role for job in system.jobs}
-            allowed_roles[block.id] = allowed
-            for job in system.jobs:
-                prereq_roles = {job_role[name] for name in job.prerequisites if name in job_role}
-                block_prereq_roles[(block.id, job.machine_role)] = prereq_roles
-        else:
-            allowed_roles[block.id] = None
-    machine_roles = {machine.id: getattr(machine, "role", None) for machine in sc.machines}
-    machines_by_role: dict[str, list[str]] = defaultdict(list)
-    for machine_id, role in machine_roles.items():
-        if role is not None:
-            machines_by_role[role].append(machine_id)
-
     availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
     windows = {block_id: sc.window_for(block_id) for block_id in sc.block_ids()}
 
@@ -57,7 +38,6 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     model.M = pyo.Set(initialize=machines)
     model.B = pyo.Set(initialize=blocks)
     model.D = pyo.Set(initialize=days)
-    model.R = pyo.Set(initialize=list(machines_by_role.keys()))
 
     def within_window(block_id: str, day: int) -> int:
         earliest, latest = windows[block_id]
@@ -124,43 +104,6 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
 
     model.obj = pyo.Objective(expr=production_expr - mobil_cost_expr, sense=pyo.maximize)
 
-    def role_constraint_rule(mdl, mach, blk, day):
-        allowed = allowed_roles.get(blk)
-        role = machine_roles.get(mach)
-        if allowed is None or role in allowed:
-            return pyo.Constraint.Skip
-        return mdl.x[mach, blk, day] == 0
-
-    model.role_filter = pyo.Constraint(model.M, model.B, model.D, rule=role_constraint_rule)
-
-    cumulative_days = sorted(days)
-
-    def sequencing_rule(mdl, blk, role, day):
-        prereq_roles = block_prereq_roles.get((blk, role))
-        if not prereq_roles:
-            return pyo.Constraint.Skip
-        machines_role = machines_by_role.get(role)
-        if not machines_role:
-            return pyo.Constraint.Skip
-        machines_prereq = [
-            (prereq_role, machines_by_role.get(prereq_role, [])) for prereq_role in prereq_roles
-        ]
-        if not any(m_list for _, m_list in machines_prereq):
-            return pyo.Constraint.Skip
-        lhs = sum(
-            mdl.x[mach, blk, d] for mach in machines_role for d in cumulative_days if d <= day
-        )
-        rhs = sum(
-            mdl.x[mach, blk, d]
-            for prereq_role, machine_list in machines_prereq
-            for mach in machine_list
-            for d in cumulative_days
-            if d <= day
-        )
-        return lhs <= rhs
-
-    model.system_sequencing = pyo.Constraint(model.B, model.R, model.D, rule=sequencing_rule)
-
     def mach_one_block_rule(mdl, mach, day):
         availability_flag = availability.get((mach, int(day)), 1)
         return sum(mdl.x[mach, blk, day] for blk in mdl.B) <= availability_flag
@@ -198,5 +141,7 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
         return assignments <= capacity
 
     model.landing_cap = pyo.Constraint(model.L, model.D, rule=landing_cap_rule)
+
+    apply_system_sequencing_constraints(model, pb)
 
     return model
