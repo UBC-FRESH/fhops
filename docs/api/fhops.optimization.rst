@@ -1,5 +1,5 @@
 ``fhops.optimization`` Package
-=============================
+==============================
 
 .. automodule:: fhops.optimization
    :members:

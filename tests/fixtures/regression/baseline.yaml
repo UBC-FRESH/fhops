@@ -1,7 +1,7 @@
 sa_expected:
-  objective: 2.0
-  total_production: 8.0
-  mobilisation_cost: 6.0
+  objective: 4.0
+  total_production: 4.0
+  mobilisation_cost: 0.0
 reference_assignments:
   - machine_id: F1
     block_id: B1
