@@ -30,7 +30,7 @@ Status: Draft — update as tasks progress.
 
 ## Documentation
 - [x] Draft how-to guide(s) for authoring scenarios and validating inputs. *(Quickstart + `docs/howto/data_contract.rst` cover authoring/validation workflows.)*
-- [ ] Update README quickstart once new constraints land.
+- [x] Update README quickstart once new constraints land. *(README now references validation workflow and regression baseline sequencing checks.)*
 
 ## Open Questions
 - Should invalid references be fatal or downgraded to warnings with heuristic fixes?

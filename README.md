@@ -15,20 +15,28 @@ pip install -e .[dev]
 # optional extras for spatial IO
 pip install .[geo]
 
-# Try the tiny example:
+# Validate and solve the tiny example:
 fhops validate examples/minitoy/scenario.yaml
 fhops solve-mip examples/minitoy/scenario.yaml --out examples/minitoy/out/mip_solution.csv
 fhops solve-heur examples/minitoy/scenario.yaml --out examples/minitoy/out/sa_solution.csv
 fhops evaluate examples/minitoy/scenario.yaml examples/minitoy/out/mip_solution.csv
+
+# Exercise the regression baseline (sequencing + mobilisation setup checks)
+fhops solve-mip tests/fixtures/regression/regression.yaml --out /tmp/regression_mip.csv
+fhops solve-heur tests/fixtures/regression/regression.yaml --out /tmp/regression_sa.csv
+fhops evaluate tests/fixtures/regression/regression.yaml /tmp/regression_sa.csv
+# Expected evaluation output includes `sequencing_violation_count=0`. Mobilisation costs are
+# exercised in `tests/test_regression_integration.py`, which injects machine parameters before
+# running the CLI.
 ```
 
 ## Package layout
 
-- `fhops.core`: Data models and the `Problem` container.
-- `fhops.data`: Loaders and IO helpers.
-- `fhops.model`: Pyomo model builder.
-- `fhops.solve`: MIP and heuristic solvers.
-- `fhops.eval`: Schedule playback and KPI reporting.
+- `fhops.scenario`: Data models and the `Problem` container.
+- `fhops.scenario.io`: Loaders and IO helpers (CSV/YAML, mobilisation distances).
+- `fhops.optimization.mip`: Pyomo model builder + driver.
+- `fhops.optimization.heuristics`: Metaheuristic solvers and operators.
+- `fhops.evaluation`: Schedule playback and KPI reporting.
 - `fhops.cli`: Typer-based CLI.
 
 # What is FHOPS?
