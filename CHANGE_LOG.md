@@ -19,9 +19,8 @@
 - Synthetic generator now supports blackout timelines and exports machine roles; accompanying tests verify blackout handling.
 - Added preliminary sequencing constraints (cumulative precedence) and heuristic enforcement, plus system role tests validating constraint activation.
 - Commands executed:
-  - `ruff format src tests` (clean run locally; reverted formatting edits to keep scope focused on planning work).
-  - `ruff check src tests` *(fails — pre-existing import ordering and typing updates required across legacy modules).*
-  - `mypy src` *(fails — missing third-party stubs and legacy type issues in core/solver modules).*
-  - `pytest` *(fails — existing regression suite depends on Nemora fixtures under `tmp/` and currently errors when reading reference CSVs).*
-  - `pre-commit run --all-files` *(fails in `ruff` stage for the same lint issues noted above).*
-  - `sphinx-build -b html docs _build/html -W` *(passes; docs scaffold builds cleanly).*
+  - `ruff format src tests`
+  - `ruff check src tests`
+  - `mypy src`
+  - `pytest`
+  - `pre-commit run --all-files`
