@@ -33,5 +33,5 @@ Status: Draft — update as tasks progress.
 - [x] Update README quickstart once new constraints land. *(README now references validation workflow and regression baseline sequencing checks.)*
 
 ## Open Questions
-- Should invalid references be fatal or downgraded to warnings with heuristic fixes?
+- Should invalid references be fatal or downgraded to warnings with heuristic fixes? → **Fatal.** Failing fast keeps data authors honest and aligns with the loader/unit tests. We can revisit warning-level heuristics once an explicit repair pipeline exists.
 - How do we version the data contract as fields evolve (semver vs schema tags)?
