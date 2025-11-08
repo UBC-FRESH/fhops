@@ -32,6 +32,12 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     distance_lookup = build_distance_lookup(mobilisation)
 
     availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
+    calendar_blackouts: set[tuple[str, int]] = set()
+    if sc.timeline and sc.timeline.blackouts:
+        for blackout in sc.timeline.blackouts:
+            for day in range(blackout.start_day, blackout.end_day + 1):
+                for machine in sc.machines:
+                    calendar_blackouts.add((machine.id, day))
     windows = {block_id: sc.window_for(block_id) for block_id in sc.block_ids()}
 
     model = pyo.ConcreteModel()
@@ -105,6 +111,8 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     model.obj = pyo.Objective(expr=production_expr - mobil_cost_expr, sense=pyo.maximize)
 
     def mach_one_block_rule(mdl, mach, day):
+        if (mach, int(day)) in calendar_blackouts:
+            return sum(mdl.x[mach, blk, day] for blk in mdl.B) == 0
         availability_flag = availability.get((mach, int(day)), 1)
         return sum(mdl.x[mach, blk, day] for blk in mdl.B) <= availability_flag
 
