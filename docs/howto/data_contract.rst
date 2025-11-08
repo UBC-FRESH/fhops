@@ -54,8 +54,29 @@ Recent helpers enable richer metadata:
 - ``MobilisationConfig`` — per-machine mobilisation costs and block distance matrices.
 - ``GeoMetadata`` — optional GeoJSON paths and CRS tags for blocks/landings.
 - ``CrewAssignment`` — map crew identifiers to machines/roles for downstream planners.
+- ``TimelineConfig`` — shift definitions and blackout windows controlling daily availability.
 
 Reference `tests/test_contract_validations.py` for examples that exercise these validators.
+
+Timeline Example
+----------------
+
+Add a top-level ``timeline`` block in your scenario YAML to describe shifts and blackouts:
+
+.. code-block:: yaml
+
+   timeline:
+     shifts:
+       - name: day
+         hours: 10
+         shifts_per_day: 1
+     blackouts:
+       - start_day: 5
+         end_day: 7
+         reason: wildfire risk
+     days_per_week: 5
+
+The loader converts this into a ``TimelineConfig`` instance available via ``scenario.timeline``.
 
 GeoJSON Ingestion & Distances
 -----------------------------

@@ -10,3 +10,14 @@ data:
   mobilisation_distances: mobilisation_distances.csv
   crew_assignments: crew_assignments.csv
   geo: geo.json
+timeline:
+  shifts:
+    - name: day
+      hours: 10
+      shifts_per_day: 1
+  blackouts:
+    - start_day: 4
+      end_day: 4
+      reason: maintenance
+  days_per_week: 5
+geo_crs: EPSG:3005
