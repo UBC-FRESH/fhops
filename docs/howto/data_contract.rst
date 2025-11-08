@@ -56,7 +56,21 @@ Recent helpers enable richer metadata:
 - ``CrewAssignment`` — map crew identifiers to machines/roles for downstream planners.
 - ``TimelineConfig`` — shift definitions and blackout windows controlling daily availability.
 - ``ScheduleLock`` — pre-assign specific machine/block/day combinations (enforced in MIP & SA).
-- ``ObjectiveWeights`` — tweak solver objective weighting (production vs mobilisation penalties).
+- ``ObjectiveWeights`` — tweak solver objective weighting (production, mobilisation penalties,
+  transition counts, optional landing-cap slack penalties).
+
+``ObjectiveWeights`` fields are optional; omit any you do not need. For example:
+
+.. code-block:: yaml
+
+   objective_weights:
+     production: 1.0
+     mobilisation: 0.5
+     transitions: 2.0
+     landing_slack: 3.0
+
+This configuration maximises production while penalising moves between blocks and soft landing
+capacity violations. Setting a weight to ``0`` reverts to the default hard behaviour.
 
 Reference `tests/test_contract_validations.py` for examples that exercise these validators.
 

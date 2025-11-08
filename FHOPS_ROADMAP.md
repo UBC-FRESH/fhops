@@ -11,9 +11,9 @@ before proposing new work.
 - Baseline tests covering core data contract and solver smoke cases.
 - Basic README explaining architecture and usage.
 
-## Phase 1 — Core Platform Hardening 🚧 (in progress)
+## Phase 1 — Core Platform Hardening ✅ (complete)
 - [x] Harden data contract validations and scenario loaders (see `notes/data_contract_enhancements.md` and `docs/howto/data_contract.rst`).
-- [ ] Expand Pyomo model coverage for production constraints and objective variants (see `notes/mip_model_plan.md`).
+- [x] Expand Pyomo model coverage for production constraints and objective variants (see `notes/mip_model_plan.md`).
 - [x] Stand up modular scaffolding (`notes/modular_reorg_plan.md`) and shift-level scheduling groundwork (`scheduling/timeline` + timeline-integrated solvers).
 - [x] Establish deterministic regression fixtures for MIP and heuristic solvers.
 - [x] Document baseline workflows in Sphinx (overview + quickstart).
@@ -44,7 +44,7 @@ before proposing new work.
 1. **Data Contract Enhancements (`notes/data_contract_enhancements.md`)**
    - Immediate focus: tighten Pydantic models, add schema-level validation tests, document custom field semantics.
 2. **MIP Model Plan (`notes/mip_model_plan.md`)**
-   - Track constraint/objective backlog, regression scenarios, and solver performance tuning tasks.
+   - With Phase 1 objectives complete, shift focus to performance instrumentation, advanced objective variants, and HiGHS export benchmarks.
 3. **Metaheuristic Roadmap (`notes/metaheuristic_roadmap.md`)**
    - Capture operator library expansion, calibration experiments, and benchmarking coverage.
 4. **Simulation & Evaluation Plan (`notes/simulation_eval_plan.md`)**

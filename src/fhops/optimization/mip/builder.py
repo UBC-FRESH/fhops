@@ -59,8 +59,22 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     )
 
     mobil_cost_expr = 0
+    transition_expr = 0
+    landing_slack_expr = 0
 
-    if mobil_params:
+    transition_weight = 0.0
+    landing_slack_weight = 0.0
+    prod_weight = 1.0
+    mobil_weight = 1.0
+    if sc.objective_weights is not None:
+        prod_weight = sc.objective_weights.production
+        mobil_weight = sc.objective_weights.mobilisation
+        transition_weight = sc.objective_weights.transitions
+        landing_slack_weight = sc.objective_weights.landing_slack
+    needs_transitions = bool(mobil_params) or transition_weight > 0.0
+    enable_landing_slack = landing_slack_weight > 0.0
+
+    if needs_transitions:
         transition_days = [day for day in days if day > min(days)]
         model.D_transition = pyo.Set(initialize=transition_days)
 
@@ -110,15 +124,13 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
             for day in model.D_transition
         )
 
-    prod_weight = 1.0
-    mobil_weight = 1.0
-    if sc.objective_weights is not None:
-        prod_weight = sc.objective_weights.production
-        mobil_weight = sc.objective_weights.mobilisation
-    obj_expr = prod_weight * production_expr
-    if mobil_params:
-        obj_expr -= mobil_weight * mobil_cost_expr
-    model.obj = pyo.Objective(expr=obj_expr, sense=pyo.maximize)
+        transition_expr = sum(
+            model.y[mach, prev_blk, curr_blk, day]
+            for mach in model.M
+            for prev_blk in model.B
+            for curr_blk in model.B
+            for day in model.D_transition
+        )
 
     def mach_one_block_rule(mdl, mach, day):
         day_int = int(day)
@@ -152,16 +164,42 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
 
     model.L = pyo.Set(initialize=list(landing_capacity.keys()))
 
-    def landing_cap_rule(mdl, landing_id, day):
-        assignments = sum(
-            mdl.x[mach, blk, day]
-            for mach in model.M
-            for blk in blocks_by_landing.get(landing_id, [])
+    if enable_landing_slack:
+        model.landing_slack = pyo.Var(model.L, model.D, domain=pyo.NonNegativeReals)
+
+        def landing_cap_rule(mdl, landing_id, day):
+            assignments = sum(
+                mdl.x[mach, blk, day]
+                for mach in model.M
+                for blk in blocks_by_landing.get(landing_id, [])
+            )
+            capacity = landing_capacity.get(landing_id, 0)
+            return assignments <= capacity + mdl.landing_slack[landing_id, day]
+
+        landing_slack_expr = sum(
+            model.landing_slack[landing_id, day] for landing_id in model.L for day in model.D
         )
-        capacity = landing_capacity.get(landing_id, 0)
-        return assignments <= capacity
+    else:
+
+        def landing_cap_rule(mdl, landing_id, day):
+            assignments = sum(
+                mdl.x[mach, blk, day]
+                for mach in model.M
+                for blk in blocks_by_landing.get(landing_id, [])
+            )
+            capacity = landing_capacity.get(landing_id, 0)
+            return assignments <= capacity
 
     model.landing_cap = pyo.Constraint(model.L, model.D, rule=landing_cap_rule)
+
+    obj_expr = prod_weight * production_expr
+    if mobil_params:
+        obj_expr -= mobil_weight * mobil_cost_expr
+    if needs_transitions and transition_weight > 0.0:
+        obj_expr -= transition_weight * transition_expr
+    if enable_landing_slack and landing_slack_weight > 0.0:
+        obj_expr -= landing_slack_weight * landing_slack_expr
+    model.obj = pyo.Objective(expr=obj_expr, sense=pyo.maximize)
 
     apply_system_sequencing_constraints(model, pb)
 
