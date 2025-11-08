@@ -21,6 +21,10 @@
 - Planning updates: roadmap + MIP plan now track schedule-locking functionality for contractual/external commitments.
 - Mobilisation workflow enhancements: auto-load distance matrices, report mobilisation spend in KPIs/CLI, and add tests for mobilisation KPI outputs.
 - Began refactoring harvest-system sequencing into a dedicated constraint module, with builder invoking the shared helper ahead of future precedence logic.
+- Refined harvest-system sequencing to enforce prior-day completion, aligned the SA heuristic evaluator with the stricter precedence logic, added regression coverage for both solvers, and updated the sequencing plan notes to reflect the milestone.
+- Expanded sequencing coverage with cable and helicopter job chains, hardened the MIP constraint to enforce every prerequisite role individually, synced the SA evaluator and KPI metrics with the stricter checks, surfaced violation counts/breakdowns in CLI output, and added regression tests for sequencing KPIs.
+- Introduced a mobilisation/blackout/sequence regression fixture, exercised it via new SA + MIP integration tests, and updated the Phase 1 roadmap and MIP plan checklists to reflect the added coverage.
+- Added fixture baseline metrics (`tests/fixtures/regression/baseline.yaml`), updated regression tests to assert against them, and documented the scenario in the Sphinx quickstart for Phase 1 workflows.
 - Commands executed:
   - `ruff format src tests`
   - `ruff check src tests`

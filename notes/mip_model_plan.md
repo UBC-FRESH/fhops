@@ -13,11 +13,11 @@ Status: Draft — align updates with roadmap Phase 1/2 milestones.
 - [x] Map each constraint/objective to source files (`fhops/model` → `optimization/mip`).
 - [x] Define parameterisation for new constraints (e.g., mobilisation thresholds, sequencing dependencies, soft landing caps, priority scores). *(Setup-cost penalties wired; thresholds pending distance integration.)*
 - [ ] Support schedule locking (pre-assigned machine/block/time decisions) in MIP and heuristics to honour external contracts and immovable commitments.
-- [ ] Create regression scenario set with expected results for automated comparison.
+- [x] Create regression scenario set with expected results for automated comparison. *(Added mobilisation/blackout/sequence fixture in `tests/fixtures/regression` exercised by both MIP + SA tests.)*
 - [ ] Evaluate Pyomo-to-HiGHS export time and propose decompositions if needed.
 
 ## Tests & Benchmarks
-- [ ] Extend unit/integration tests around the MIP builder.
+- [x] Extend unit/integration tests around the MIP builder.
 - [ ] Add performance benchmarks (pytest markers) capturing solve durations and objective values.
 
 ## Documentation

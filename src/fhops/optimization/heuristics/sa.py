@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 import random
+from collections import defaultdict
 from dataclasses import dataclass
 from typing import Any
 
@@ -28,7 +29,15 @@ def _role_metadata(scenario):
                 prereqs[(block.id, job.machine_role)] = prereq_roles
         else:
             allowed[block.id] = None
-    return allowed, prereqs
+
+    machine_roles = {machine.id: getattr(machine, "role", None) for machine in scenario.machines}
+    machines_by_role: dict[str, list[str]] = {}
+    for machine_id, role in machine_roles.items():
+        if role is None:
+            continue
+        machines_by_role.setdefault(role, []).append(machine_id)
+
+    return allowed, prereqs, machine_roles, machines_by_role
 
 
 __all__ = ["Schedule", "solve_sa"]
@@ -47,8 +56,7 @@ def _init_greedy(pb: Problem) -> Schedule:
     rate = {(r.machine_id, r.block_id): r.rate for r in sc.production_rates}
     availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
     windows = {block_id: sc.window_for(block_id) for block_id in sc.block_ids()}
-    allowed_roles, prereq_roles = _role_metadata(sc)
-    machine_roles = {machine.id: getattr(machine, "role", None) for machine in sc.machines}
+    allowed_roles, prereq_roles, machine_roles, _ = _role_metadata(sc)
 
     plan: dict[str, dict[int, str | None]] = {
         machine.id: {day: None for day in pb.days} for machine in sc.machines
@@ -93,32 +101,34 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
     if mobilisation is not None:
         mobil_params = {param.machine_id: param for param in mobilisation.machine_params}
 
-    allowed_roles, prereq_roles = _role_metadata(sc)
-    machine_roles = {machine.id: getattr(machine, "role", None) for machine in sc.machines}
+    allowed_roles, prereq_roles, machine_roles, _ = _role_metadata(sc)
 
     score = 0.0
     previous_block: dict[str, str | None] = {machine.id: None for machine in sc.machines}
-    completed_roles: dict[tuple[str, str], bool] = {}
+    role_cumulative: defaultdict[tuple[str, str], int] = defaultdict(int)
     for day in sorted(pb.days):
         used = {landing.id: 0 for landing in sc.landings}
+        day_role_counts: defaultdict[tuple[str, str], int] = defaultdict(int)
         for machine in sc.machines:
             block_id = sched.plan[machine.id][day]
             if block_id is None:
                 continue
             allowed = allowed_roles.get(block_id)
-            role = machine_roles.get(machine.id)
-            if allowed is not None and role not in allowed:
+            role: str | None = machine_roles.get(machine.id)
+            if allowed is not None and (role is None or role not in allowed):
                 score -= 1000.0
                 previous_block[machine.id] = None
                 continue
-            prereq_set = prereq_roles.get((block_id, role)) if role else None
+            if role is None:
+                prereq_set = None
+            else:
+                prereq_set = prereq_roles.get((block_id, role))
             if prereq_set:
-                unmet = [
-                    prereq
-                    for prereq in prereq_set
-                    if not completed_roles.get((block_id, prereq), False)
-                ]
-                if unmet:
+                assert role is not None
+                role_key = (block_id, role)
+                available = min(role_cumulative[(block_id, prereq)] for prereq in prereq_set)
+                required = role_cumulative[role_key] + day_role_counts[role_key] + 1
+                if required > available:
                     score -= 1000.0
                     previous_block[machine.id] = block_id
                     continue
@@ -137,10 +147,6 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
             remaining[block_id] -= prod
             score += prod
             params = mobil_params.get(machine.id)
-            prereqs = prereq_roles.get((block_id, machine_roles.get(machine.id)))
-            if prereqs:
-                if any(previous_block[machine.id] is None for _ in [0]):  # placeholder
-                    pass
             prev_blk = previous_block[machine.id]
             if params is not None and prev_blk is not None and block_id is not None:
                 if block_id != prev_blk:
@@ -152,8 +158,10 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
                         cost += params.move_cost_flat
                     score -= cost
             previous_block[machine.id] = block_id
-            if role:
-                completed_roles[(block_id, role)] = True
+            if role is not None:
+                day_role_counts[(block_id, role)] += 1
+        for key, count in day_role_counts.items():
+            role_cumulative[key] += count
     return score
 
 
@@ -163,8 +171,7 @@ def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
     days = list(pb.days)
     if not machines or not days:
         return []
-    allowed_roles, _ = _role_metadata(sc)
-    machine_roles = {machine.id: getattr(machine, "role", None) for machine in sc.machines}
+    allowed_roles, _, machine_roles, _ = _role_metadata(sc)
 
     # swap two machines on a day
     m1, m2 = random.sample(machines, k=2) if len(machines) >= 2 else (machines[0], machines[0])
