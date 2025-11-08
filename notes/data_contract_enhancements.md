@@ -22,7 +22,7 @@ Status: Draft — update as tasks progress.
 - [x] Introduce typed helpers for optional extras (geo metadata, crew assignments).
   - Added `GeoMetadata` and `CrewAssignment` models to the scenario contract, with validation ensuring machine linkage and duplicate prevention.
 - [x] Document data contract extensions in Sphinx (`docs/howto/data_contract.rst`).
-- [ ] Specify GeoJSON ingestion schema (accepted CRS, required block properties) and distance computation workflow.
+- [x] Specify GeoJSON ingestion schema (accepted CRS, required block properties) and distance computation workflow. *(Documented in `docs/howto/data_contract.rst`, referencing `fhops geo distances` workflow and CRS guidance.)*
 
 ## Tests & Tooling
 - [ ] Property-based or parametrised tests covering edge-case scenarios.
