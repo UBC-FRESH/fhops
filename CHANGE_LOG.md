@@ -42,6 +42,7 @@
 - Mocked heavy runtime dependencies (`geopandas`, `highspy`) while ensuring core libs (`pydantic`, `pyomo`, `pandas`, `pyyaml`, etc.) install via `docs/requirements.txt` so RTD autodoc renders module content with real model definitions.
 - Extended objective handling with transition and landing-slack weights; the Pyomo builder now introduces transition binaries even without mobilisation configs, landing slack variables when penalised, and the SA heuristic mirrors the weighted scoring. Added targeted unit tests covering transition and slack penalties.
 - Bumped package metadata to `v0.0.1` and finalised the Phase 1 release notes, preparing the PR for the GitHub release workflow trigger.
+- Add changelog entry for PR #5: major package reorg, roadmap and phase-1 completion; satisfy CI pre-commit check (added by gparadis).
 - Commands executed:
   - `ruff format src tests`
   - `ruff check src tests`
