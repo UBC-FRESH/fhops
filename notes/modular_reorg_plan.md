@@ -60,3 +60,18 @@ src/fhops/
 - Coordinate with `notes/data_contract_enhancements.md` and `notes/mip_model_plan.md` to keep tasks aligned with the new structure.
 - Document each migration step in CHANGE_LOG and roadmap to avoid confusion during refactors.
 - Keep tests green between phases—introduce adapters/shim imports if necessary to avoid breaking downstream code.
+
+## Phase 2 Shift-Based Scheduling Initiative
+- **Objective:** replace day-indexed scheduling with shift-indexed scheduling across scenario inputs, optimisation models, heuristics, KPIs, and CLI tooling.
+- **Key Deliverables**
+  - Shift-aware data contract (CSV/YAML schema for shifts, updated `TimelineConfig`).
+  - Updated `Problem` representation exposing `(day, shift)` timeline, plus backwards-compatible loaders.
+  - MIP/heuristic refactor with shift-indexed decision variables and operator support.
+  - KPI/benchmark updates outputting both shift-level and aggregated metrics.
+  - Documentation & migration guidance for existing scenarios.
+- **Work Breakdown**
+  1. **Contract & IO:** add shift tables/fields, loader validation, default single-shift migration path.
+  2. **Core Model:** adjust `Problem` and helper APIs to reason in shifts, propagate mobilisation/sequencing/timeline constraints.
+  3. **Optimisation:** re-index Pyomo variables/constraints, revisit mobilisation and sequencing logic for intra-day moves, ensure heuristics operate on shifts (including new operators).
+  4. **Evaluation:** modify KPIs and playback to accept shift-level assignments; expose shift filters in CLI/benchmarks.
+  5. **Regression & Docs:** update sample scenarios (minitoy/med42/large84) with synthetic shifts, refresh fixtures, and document migration steps in data contract & CLI guides.

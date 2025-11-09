@@ -22,6 +22,7 @@ before proposing new work.
 
 ## Phase 2 — Solver & Heuristic Expansion
 - [x] Scenario scaling benchmarks & tuning harness (phase kickoff task).
+- [ ] Shift-based scheduling architecture (data contract → solvers → KPIs) (`notes/modular_reorg_plan.md`, `notes/mip_model_plan.md`).
 - [ ] Metaheuristic roadmap execution (Simulated Annealing refinements, Tabu/ILS activation).
 - [x] Mobilisation penalty calibration & distance QA across benchmark scenarios (`notes/mobilisation_plan.md`).
 - [ ] Harvest system sequencing parity and machine-to-system mapping (`notes/system_sequencing_plan.md`).
@@ -40,16 +41,16 @@ before proposing new work.
 - [ ] Outreach plan (blog, seminars, partner briefings).
 
 ## Detailed Next Steps
-1. **Metaheuristic Roadmap (`notes/metaheuristic_roadmap.md`)**
-   - Prioritise SA refinements, operator registry work, and benchmarking comparisons with the new harness.
-2. **Harvest System Sequencing Plan (`notes/system_sequencing_plan.md`)**
+1. **Shift-Based Scheduling Initiative (`notes/modular_reorg_plan.md`, `notes/mip_model_plan.md`)**
+   - Design shift-aware data contract extensions, update solver indices, and migrate KPIs/benchmarks to operate per shift.
+2. **Metaheuristic Roadmap (`notes/metaheuristic_roadmap.md`)**
+   - Prioritise SA refinements, operator registry work, and benchmarking comparisons with the new harness (including shift-aware neighbourhoods).
+3. **Harvest System Sequencing Plan (`notes/system_sequencing_plan.md`)**
    - Close parity gaps between MIP/heuristic sequencing and add stress tests for machine-to-system mapping.
-3. **CLI & Documentation Plan (`notes/cli_docs_plan.md`)**
-   - Introduce solver configuration profiles/presets exposed via CLI and Sphinx reference.
-4. **MIP Model Plan (`notes/mip_model_plan.md`)**
-   - Focus on performance instrumentation (build/solve timings), advanced objective variants, and HiGHS tuning.
+4. **CLI & Documentation Plan (`notes/cli_docs_plan.md`)**
+   - Introduce solver configuration profiles/presets and document shift-based workflows in the CLI reference.
 5. **Simulation & Evaluation Plan (`notes/simulation_eval_plan.md`)**
-   - Begin planning stochastic playback and extended KPI reporting for Phase 3 transition.
+   - Prepare deterministic/stochastic playback for shift timelines and extended KPI reporting ahead of Phase 3.
 
 ## Backlog & Ideas
 - [ ] Integration with Nemora sampling outputs for downstream operations analytics.

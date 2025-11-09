@@ -5,7 +5,7 @@ Status: Draft — roadmap Phase 3 owner document.
 
 ## Objectives
 - Extend deterministic playback engine with stochastic modules (downtime, weather, landing congestion).
-- Support shift-level playback with aggregation to day/week calendars and blackout reporting.
+- Support shift-level playback with aggregation to day/week calendars and blackout reporting (align with Phase 2 shift-based scheduling initiative).
 - Expand KPI reporting (cost, utilisation, lateness, mobilisation spend) with configurable outputs (CSV, parquet, dashboards).
 - Integrate with Nemora outputs for joint scenario analysis.
 
