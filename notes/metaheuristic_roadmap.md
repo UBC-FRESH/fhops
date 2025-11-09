@@ -122,10 +122,10 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - Run per-core SA instances that emit telemetry to a shared JSONL log; post-process to select or blend results.
 
 ##### Plan – SA Parallel Execution (opt-in)
-- [ ] Multi-start orchestration: run multiple SA instances in parallel (distinct seeds/presets) and aggregate the best objective.
-- [ ] Batched neighbour evaluation: extend `_neighbors` to propose/evaluate batches concurrently via worker pool.
-- [ ] CLI/config integration: add flags to toggle parallel runs, set worker counts, and expose telemetry about parallel paths.
-- [ ] Testing & benchmarks: validate reproducibility, ensure opt-in paths fall back cleanly, and benchmark speed/quality trade-offs.
+- [x] Multi-start orchestration: run multiple SA instances in parallel (distinct seeds/presets) and aggregate the best objective.
+- [x] Batched neighbour evaluation: extend `_neighbors` to propose/evaluate batches concurrently via worker pool.
+- [x] CLI/config integration: add flags to toggle parallel runs, set worker counts, and expose telemetry about parallel paths.
+- [x] Testing & benchmarks: validate reproducibility, ensure opt-in paths fall back cleanly, and benchmark speed/quality trade-offs.
 
 ###### Subtasks – Multi-start orchestration
 - [x] Design a controller that spawns `n` independent SA runs (multiprocessing/joblib) and returns the best result plus per-run telemetry.
