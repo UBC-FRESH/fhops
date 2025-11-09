@@ -17,7 +17,9 @@ Status: Draft — to guide Phase 2 CLI enhancements.
 
 ## Immediate Next Steps
 - [x] Survey existing presets (`operator presets`, benchmark recipes) to seed profile catalog.
-- [ ] Decide on configuration format (code-based registry vs. external YAML).
+- [x] Decide on configuration format (code-based registry vs. external YAML).
+  * Profiles will be defined in a Python module (e.g., `fhops.cli.profiles`) exposing `Profile` dataclasses and a default registry. This avoids packaging extra assets and keeps typing straightforward.
+  * Follow-up work can allow optional user overrides from `~/.fhops/profiles.yaml`, but is out of scope for the first iteration.
 - [ ] Draft CLI UX (command examples, flag names).
 
 ## Tests
