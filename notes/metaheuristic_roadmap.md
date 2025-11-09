@@ -133,11 +133,9 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
   * Use `concurrent.futures.ProcessPoolExecutor` with joblib-style fallback; ensure graceful shutdown and timeout handling.
   * Gather each run's telemetry (`meta` payload) and compute best objective deterministically; retain full logs for debugging.
 - [ ] Add per-run seed/preset exploration strategy (e.g., stratified presets) and document recommended defaults.
-- [ ] Add per-run seed/preset exploration strategy (e.g., stratified presets) and document recommended defaults.
   * Generate deterministic seed grid (e.g., `base_seed + i*1000`) and map presets cyclically (`['default','explore','mobilisation','stabilise']`).
   * Allow custom strategies via callables (user can supply preset list/seed generator); provide helper `build_exploration_plan(n, presets=None)`.
   * Document recommended defaults in roadmap/docs and note telemetry fields to capture chosen seed/preset per run.
-- [ ] Ensure shared telemetry logging (JSONL) de-duplicates entries and captures the selected best run metadata.
 - [ ] Ensure shared telemetry logging (JSONL) de-duplicates entries and captures the selected best run metadata.
   * Extend telemetry writer to accept `run_id`/`preset_label` fields; guard against duplicate entries via hash/set.
   * After multi-start aggregation, append a summary record (`best_run_id`, `best_objective`, `runs_executed`) to the same log.
