@@ -13,6 +13,7 @@
 - Drafted the new heuristics configuration how-to (`docs/howto/heuristic_presets.rst`) and wired it into the Sphinx navigation with cross-references to related guides.
 - Expanded the benchmarking how-to with comparison table guidance and multi-solver CLI examples so readers can interpret the new metrics/plots.
 - Refreshed the CLI reference (`docs/reference/cli.rst`) with a heuristic configuration quick-reference pointing to presets, advanced operators, and comparison plotting scripts.
+- Added documentation maintenance notes covering benchmark figure regeneration (`docs/howto/benchmarks.rst`) and the hyperparameter tuning plan (`notes/metaheuristic_hyperparam_tuning.md`).
 - Planned documentation work for heuristic presets/benchmark interpretation (see `notes/metaheuristic_roadmap.md` Plan – Documentation Updates) ahead of drafting the new how-to content.
 
 ## 2025-11-07 — Planning Framework Bootstrap

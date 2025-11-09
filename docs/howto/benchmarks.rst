@@ -155,6 +155,10 @@ comparison charts for documentation. For example:
 
    Runtime ratios relative to the best heuristic solver (values > 1.0 are slower).
 
+.. note::
+   Regenerate the comparison summary and plots after significant heuristic changes by rerunning
+   ``fhops bench suite --include-ils --include-tabu`` and the plotting helper script.
+
 Each assignment CSV includes ``machine_id``, ``block_id``, ``day``, and ``shift_id`` columns.
 The shift label is derived from the scenario's shift calendar or timeline definition, enabling
 sub-daily benchmarking and evaluation workflows.
