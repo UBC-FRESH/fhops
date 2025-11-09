@@ -99,3 +99,10 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] **Tests:** add unit/integration coverage verifying counters increment correctly (e.g., deterministic neighbour selection, smoke test via minitoy benchmark).
 - [x] **Documentation:** document telemetry fields in CLI reference and roadmap, highlighting how to interpret operator statistics during tuning sessions.
 - [x] **Persistent telemetry log:** design a structured log (e.g., newline-delimited JSON or SQLite) keyed by scenario/operator config capturing run metadata (seed, iterations, operator stats, acceptance rate, objective). Provide a helper to append entries and document the schema for future ML/DL hyperparameter tuning workflows.
+
+#### Subtasks for (5) Documentation updates
+- [ ] **Telemetry schema doc:** add a developer note (``docs/reference/telemetry.rst`` or similar) that explains the JSONL schema, fields, and example entries produced by `--telemetry-log`.
+- [ ] **How-to section:** extend the SA how-to with guidance on interpreting `operators_stats` (e.g., acceptance thresholds, when to adjust weights).
+- [ ] **Benchmark output docs:** document the new ``operators_stats`` column in benchmark summaries and show how to parse it programmatically.
+- [ ] **Notes sync:** reference the hyperparameter tuning plan and telemetry schema in `notes/metaheuristic_hyperparam_tuning.md` for future automation work.
+- [ ] **Changelog hook:** ensure the changelog summarises the telemetry documentation work once the above items land.

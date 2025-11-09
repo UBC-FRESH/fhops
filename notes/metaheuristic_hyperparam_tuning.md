@@ -43,7 +43,7 @@ Hybrid Approach
 Recommendation
 --------------
 
-- Implement the persistent telemetry log (JSONL or SQLite).
+- Implement the persistent telemetry log (JSONL or SQLite) and capture per-operator stats.
 - Launch a basic Bayesian tuner for continuous knobs to establish baseline improvements.
 - Layer an LLM agent on top for periodic “insightful” suggestions, cross-checking them against the log.
 - Document the schema and evaluation pipeline so future automation (including fully agentic loops) can plug in.
