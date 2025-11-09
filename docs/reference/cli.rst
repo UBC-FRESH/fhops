@@ -37,6 +37,7 @@ Additional simulated annealing controls:
 - ``fhops solve-heur --list-operator-presets`` (or ``fhops bench suite --list-operator-presets``) — display all presets with their weights and descriptions.
 - ``fhops bench suite --compare-preset explore --compare-preset mobilisation`` — sweep multiple presets in one run; the benchmark summary adds a ``preset_label`` column and exports per-preset assignment CSVs for side-by-side analysis.
 - ``fhops bench suite --include-tabu`` — benchmark the Tabu prototype alongside SA (produces additional ``tabu`` rows in the summary output).
+- ``fhops bench suite --include-ils --include-tabu`` — emit solver comparison columns (best heuristic, gap/ratio metrics) so you can rank heuristics against each other and against MIP when included.
 - ``fhops solve-heur ... --batch-neighbours 4 --parallel-workers 4`` — sample multiple neighbour candidates per iteration and score them with a small worker pool (opt-in; defaults keep sequential evaluation).
 - ``fhops solve-heur ... --parallel-multistart 8`` — launch several SA runs in parallel, using the best result while logging per-run telemetry (requires ``--parallel-workers`` for true parallelism).
 - ``fhops solve-heur ... --telemetry-log fhops_runs.jsonl`` — append telemetry entries (objective, KPIs, operator stats, parallel configuration) to a JSONL file for later analysis.

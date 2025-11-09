@@ -42,14 +42,14 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] **Advanced neighbourhoods:** add shift-aware block insertion (machine ↔ shift reassignment), cross-machine exchange, and mobilisation-sensitive diversification moves. Benchmark each operator on minitoy/med42/large84 to establish performance impacts.
 - [x] **SA parallel execution (opt-in):** deliver multi-start orchestration, batched neighbour evaluation, CLI/config integration, and profiling/documentation for the new knobs.
 - [x] **Tabu Search prototype:** implement a Tabu neighbourhood on top of the registry (tabu tenure, aspiration criteria) and compare results against SA in the benchmarking harness. *(Prototype available via `fhops solve-tabu` and `fhops bench suite --include-tabu`; keep Tabu opt-in until future tuning narrows the SA performance gap.)*
-- [ ] **ILS / Hybrid solver:** design an Iterated Local Search or MIP warm-start hybrid using the registry operators. Document configuration defaults and add harness support for hybrid runs. *(ILS core + CLI/docs shipped; regression benchmarks still pending before marking complete.)*
+- [x] **ILS / Hybrid solver:** design an Iterated Local Search or MIP warm-start hybrid using the registry operators. Document configuration defaults and add harness support for hybrid runs. *(ILS CLI/docs/telemetry live; regression + benchmark suite captured in `tmp/bench_ils`; solver remains opt-in pending further tuning.)*
 - [ ] **Benchmark reporting enhancements:** extend `fhops bench suite` outputs with per-operator usage metrics, solver comparisons (SA/Tabu/Hybrid), and provide summary plots/tables for Sphinx docs.
 - [ ] **Documentation updates:** draft a Sphinx how-to covering heuristic configuration presets, registry usage, and interpreting the new benchmarking metrics.
 
 ##### Plan – ILS / Hybrid Solver
 - [x] Algorithm design: outline ILS move phases, perturbation strategy, and hybridisation with MIP warm starts.
 - [x] Implementation: create `solve_ils` (or `solve_hybrid`) module, integrating with operator registry and optional MIP kickoffs.
-- [ ] Testing & benchmarks: add unit/integration coverage, compare SA vs ILS/Hybrid on benchmarks, and capture telemetry.
+- [x] Testing & benchmarks: add unit/integration coverage, compare SA vs ILS/Hybrid on benchmarks, and capture telemetry.
 - [x] Documentation: update CLI reference/how-to notes and roadmap findings.
 
 ###### Subtasks – ILS/Hybrid Algorithm Design
@@ -73,13 +73,28 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 
 ###### Subtasks – Testing & Benchmarks (ILS/Hybrid)
 - [x] Unit tests covering perturbation behaviour, restart logic, and feasibility checks.
-- [ ] Regression tests on minitoy scenario ensuring feasibility and consistent objective.
-- [ ] Benchmark runs (minitoy/med42/large84) comparing SA, Tabu, and ILS/Hybrid; record telemetry/decision notes.
+- [x] Regression tests on minitoy scenario ensuring feasibility and consistent objective. *(`pytest tests/test_regression_integration.py`)* 
+- [x] Benchmark runs (minitoy/med42/large84) comparing SA, Tabu, and ILS/Hybrid; record telemetry/decision notes. *(See `tmp/bench_ils/summary.{csv,json}` — SA remains strongest on all scenarios; ILS trails SA but beats Tabu on quality while staying sub-second on minitoy/med42.)*
 
 ###### Subtasks – Documentation (ILS/Hybrid)
 - [x] Update CLI reference and telemetry docs with new solver options/fields.
 - [x] Add how-to section demonstrating ILS/Hybrid usage, configuration defaults, and comparative results.
 - [x] Summarise findings in roadmap/changelog, noting default recommendation (opt-in vs default).
+
+##### Plan – Benchmark Reporting Enhancements
+- [ ] Extend benchmark summaries with solver comparison deltas (SA vs ILS vs Tabu vs MIP) and highlight the top-performing heuristic per scenario.
+  * Calculate absolute/relative gaps for each heuristic against MIP (where available) and between heuristics when MIP is skipped.
+  * Include summary rows/columns in `summary.csv/json` to surface best objective, runtime, and heuristic category.
+  * Ensure telemetry logs capture solver labels consistently so downstream analysis scripts can operate on the richer data.
+- [ ] Generate visual artefacts (tables/plots) for docs.
+  * Add a small pandas/matplotlib helper under `scripts/` to render bar charts for objective gaps and runtime ratios.
+  * Store generated SVG/PNG outputs in `docs/_static/benchmarks/` and reference them from the benchmarking how-to.
+- [ ] Update Sphinx content to explain the new metrics and visuals.
+  * Refresh `docs/howto/benchmarks.rst` with interpretation guidance for the comparison columns and plots.
+  * Add a short narrative in `docs/reference/cli.rst` (bench section) describing how to enable multi-solver comparisons and where to find the artefacts.
+- [ ] Add regression tests/fixtures to lock in the enhanced reporting.
+  * Extend `tests/test_benchmark_harness.py` to assert that comparison fields appear when multiple solvers are included.
+  * Include a fixture with predetermined solver metrics to keep the comparison calculations stable across refactors.
 
 ### Subtasks for Operator Registry Scaffold
 1. **Registry data model**
@@ -148,7 +163,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] **Design & interfaces:** define new operators (block insertion, cross-machine exchange, mobilisation-aware shake), specifying preconditions, behaviour, and additional context needed (e.g., distance lookups).
 - [x] **Implementation:** add operator classes that reuse the shared sanitizer, register them with default weights, and ensure plan cloning stays efficient.
 - [x] **Weighting & presets:** set sensible defaults, expose new presets (e.g., `explore`, `mobilisation`), and update CLI docs/config helpers.
-- [x] **Benchmark evaluation:** compare baseline vs. extended operator sets across minitoy/med42/large84, capturing telemetry and summarising outcomes in notes/changelog. *(Full suite runs currently require extending the timeout for `fhops bench suite`; follow-up todo to bump limits before release.)*
+- [x] **Benchmark evaluation:** compare baseline vs. extended operator sets across minitoy/med42/large84, capturing telemetry and summarising outcomes in notes/changelog. *(Raised default MIP timeout to 1800 s so large84 runs complete without manual overrides.)*
 - [x] **Testing & regression:** expand unit/regression coverage to exercise new operators (window constraints, mobilisation penalties, lock handling).
 
 #### Parallelisation ideas (sidebar)
