@@ -326,8 +326,37 @@ def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
     rng = random
     context = OperatorContext(problem=pb, schedule=sched, sanitizer=sanitizer, rng=rng)
 
+    enabled_ops = list(registry.enabled())
+    if not enabled_ops:
+        return []
+
+    if len(enabled_ops) == 1:
+        ordered_ops = enabled_ops
+    else:
+        weight_values = [op.weight for op in enabled_ops]
+        if all(abs(w - weight_values[0]) < 1e-9 for w in weight_values):
+            ordered_ops = enabled_ops
+        else:
+            ordered_ops: list = []
+            candidates = enabled_ops.copy()
+            weights = [op.weight for op in candidates]
+            while candidates:
+                total = sum(weights)
+                if total <= 0:
+                    ordered_ops.extend(candidates)
+                    break
+                pick = rng.random() * total
+                cumulative = 0.0
+                for idx, (op, weight) in enumerate(zip(candidates, weights)):
+                    cumulative += weight
+                    if pick <= cumulative:
+                        ordered_ops.append(op)
+                        candidates.pop(idx)
+                        weights.pop(idx)
+                        break
+
     neighbours: list[Schedule] = []
-    for operator in registry.enabled():
+    for operator in ordered_ops:
         candidate = operator.apply(context)
         if candidate is not None:
             neighbours.append(candidate)

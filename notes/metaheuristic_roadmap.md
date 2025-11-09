@@ -71,8 +71,8 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] Add module-level tests ensuring default registry exposes `swap`/`move`, weight updates propagate, and disabled operators are skipped.
 
 #### Subtasks for (2) SA integration
-- [ ] **Registry wiring:** replace `_neighbors` direct logic with registry iteration, supplying a reproducible RNG seeded from `solve_sa` parameters.
-- [ ] **Shared sanitizer:** extract the availability/lock/landing-cap checks into a reusable sanitizer function leveraged by all operators, ensuring parity with current enforcement.
-- [ ] **Operator weighting:** add simple selection logic (e.g., weighted roulette) to pick operators proportionally to their configured weights; fall back to sequential iteration when only one operator is enabled.
-- [ ] **Schedule passthrough:** ensure operators can return `None` when no move is possible and `_neighbors` skips them gracefully to avoid empty neighbour lists.
+- [x] **Registry wiring:** replace `_neighbors` direct logic with registry iteration, supplying a reproducible RNG seeded from `solve_sa` parameters.
+- [x] **Shared sanitizer:** extract the availability/lock/landing-cap checks into a reusable sanitizer function leveraged by all operators, ensuring parity with current enforcement.
+- [x] **Operator weighting:** add simple selection logic (e.g., weighted roulette) to pick operators proportionally to their configured weights; fall back to sequential iteration when only one operator is enabled.
+- [x] **Schedule passthrough:** ensure operators can return `None` when no move is possible and `_neighbors` skips them gracefully to avoid empty neighbour lists.
 - [ ] **Regression verification:** rerun benchmark and regression suites to confirm SA outputs remain stable; adjust fixtures/notes if weighted operator selection affects acceptance metrics.
