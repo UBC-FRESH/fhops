@@ -82,13 +82,13 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] Summarise findings in roadmap/changelog, noting default recommendation (opt-in vs default).
 
 ##### Plan – Benchmark Reporting Enhancements
-- [ ] Extend benchmark summaries with solver comparison deltas (SA vs ILS vs Tabu vs MIP) and highlight the top-performing heuristic per scenario.
-  * Calculate absolute/relative gaps for each heuristic against MIP (where available) and between heuristics when MIP is skipped.
-  * Include summary rows/columns in `summary.csv/json` to surface best objective, runtime, and heuristic category.
-  * Ensure telemetry logs capture solver labels consistently so downstream analysis scripts can operate on the richer data.
-- [ ] Generate visual artefacts (tables/plots) for docs.
-  * Add a small pandas/matplotlib helper under `scripts/` to render bar charts for objective gaps and runtime ratios.
-  * Store generated SVG/PNG outputs in `docs/_static/benchmarks/` and reference them from the benchmarking how-to.
+- [x] Extend benchmark summaries with solver comparison deltas (SA vs ILS vs Tabu vs MIP) and highlight the top-performing heuristic per scenario.
+  * Calculate absolute/relative gaps for each heuristic against MIP (where available) and between heuristics when MIP is skipped. *(New columns `objective_gap_vs_best_heuristic` and `runtime_ratio_vs_best_heuristic` complement the existing MIP gap/ratio fields.)*
+  * Include summary rows/columns in `summary.csv/json` to surface best objective, runtime, and heuristic category. *(Added `solver_category`, `best_heuristic_solver`, `best_heuristic_objective`, `best_heuristic_runtime_s`.)*
+  * Ensure telemetry logs capture solver labels consistently so downstream analysis scripts can operate on the richer data. *(Telemetry entries already carry ``solver`` for each record, so no schema change required.)*
+- [x] Generate visual artefacts (tables/plots) for docs.
+  * Add a small pandas/matplotlib helper under `scripts/` to render bar charts for objective gaps and runtime ratios. *(`scripts/render_benchmark_plots.py` generates the figures from a suite summary.)*
+  * Store generated SVG/PNG outputs in `docs/_static/benchmarks/` and reference them from the benchmarking how-to. *(Plots `objective_gap_vs_best_heuristic.png` and `runtime_ratio_vs_best_heuristic.png` now ship and are linked in `docs/howto/benchmarks.rst`.)*
 - [ ] Update Sphinx content to explain the new metrics and visuals.
   * Refresh `docs/howto/benchmarks.rst` with interpretation guidance for the comparison columns and plots.
   * Add a short narrative in `docs/reference/cli.rst` (bench section) describing how to enable multi-solver comparisons and where to find the artefacts.
