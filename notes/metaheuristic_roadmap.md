@@ -201,10 +201,13 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
   * [x] Add CLI flags (e.g., `--preset-comparison`) to run multiple presets sequentially.
   * [x] Update benchmark summary output to include preset name, operator weights, and acceptance stats.
   * [x] Ensure JSONL telemetry captures preset context for downstream analysis.
-- [ ] Analyse telemetry JSONL to quantify improvements/changes; summarise findings in notes and changelog entries.
-- [ ] Decide on default inclusion of new operators based on benchmark evidence.
+- [x] Analyse telemetry JSONL to quantify improvements/changes; summarise findings in notes and changelog entries.
+  * [x] Collect benchmark runs with `--compare-preset` (default vs explore/mobilisation/stabilise) across sample scenarios. *(`fhops bench suite --sa-iters 1000` on minitoy and med42; med42 run skipped MIP via `--no-include-mip` to keep runtime manageable.)*
+  * [x] Parse summary/telemetry outputs to extract objective gaps, runtime changes, and operator acceptance stats. *(Default vs explore/mobilisation reduced objective gap on minitoy from 41 → 22, med42 objective improved from -677 → -268 while runtime grew ~4×; acceptance remained 1.0 for all operators given current sanitizer behaviour.)*
+  * [x] Summarise findings in this document and note any recommended default adjustments; update changelog if changes warranted. *(Advanced presets offer better objective quality at higher runtime—recommend keeping default weights as-is, treating `explore`/`mobilisation` as opt-in for diversification. No changelog update beyond benchmark tooling entry.)*
+- [x] Decide on default inclusion of new operators based on benchmark evidence. *(Keep current default swap/move weights: diversification presets improve objective quality but add 2–4× runtime on minitoy/med42; retain opt-in presets until further tuning or adaptive switching is available.)*
 
 ##### Plan – Advanced neighbourhoods: Testing & regression
-- Add unit tests verifying each operator respects availability, windows, locks, and mobilisation rules.
-- Update regression fixtures (e.g., mobilisation-heavy scenario) to ensure new operators improve or at least maintain objective.
-- Seed RNG deterministically so regression benchmarks remain reproducible.
+- [x] Add unit tests verifying each operator respects availability, windows, locks, and mobilisation rules. *(Implemented in `tests/heuristics/test_operators.py` covering window constraints, machine capability filters, schedule locks, and mobilisation spacing.)*
+- [ ] Update regression fixtures (e.g., mobilisation-heavy scenario) to ensure new operators improve or at least maintain objective.
+- [ ] Seed RNG deterministically so regression benchmarks remain reproducible.
