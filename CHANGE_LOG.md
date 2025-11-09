@@ -83,3 +83,4 @@
 - Added an opt-in multi-start controller (`fhops.optimization.heuristics.multistart.run_multi_start`) with coverage to run multiple SA instances in parallel and select the best objective while collecting per-run telemetry.
 - Added a deterministic seed/preset exploration helper (`build_exploration_plan`) plus unit tests for the multi-start module.
 - Multi-start runs now support JSONL telemetry logging (per-run records with run IDs and a summary entry) via the optional `telemetry_log` parameter.
+- Added opt-in batched neighbour generation in SA (`batch_size`, `max_workers`) with threadpool evaluation and parity tests.

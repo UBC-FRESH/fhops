@@ -5,6 +5,7 @@ from __future__ import annotations
 import math
 import random as _random
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from typing import Any
 
@@ -393,6 +394,21 @@ def _neighbors(
     return neighbours
 
 
+def _evaluate_candidates(
+    pb: Problem,
+    candidates: list[Schedule],
+    max_workers: int | None = None,
+) -> list[tuple[Schedule, float]]:
+    if not candidates:
+        return []
+    if max_workers is None or max_workers <= 1 or len(candidates) == 1:
+        return [(candidate, _evaluate(pb, candidate)) for candidate in candidates]
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        scores = list(executor.map(lambda sched: _evaluate(pb, sched), candidates))
+    return list(zip(candidates, scores))
+
+
 def solve_sa(
     pb: Problem,
     iters: int = 2000,
@@ -400,6 +416,7 @@ def solve_sa(
     operators: list[str] | None = None,
     operator_weights: dict[str, float] | None = None,
     batch_size: int | None = None,
+    max_workers: int | None = None,
 ) -> dict[str, Any]:
     """Run simulated annealing returning objective and assignments DataFrame."""
     rng = _random.Random(seed)
@@ -444,9 +461,13 @@ def solve_sa(
             operator_stats,
             batch_size=batch_size,
         )
-        for neighbor in candidates:
+        evaluations = _evaluate_candidates(
+            pb,
+            candidates,
+            max_workers=max_workers if batch_size and batch_size > 1 else None,
+        )
+        for neighbor, neighbor_score in evaluations:
             proposals += 1
-            neighbor_score = _evaluate(pb, neighbor)
             delta = neighbor_score - current_score
             if delta >= 0 or rng.random() < math.exp(delta / max(temperature, 1e-6)):
                 current = neighbor
