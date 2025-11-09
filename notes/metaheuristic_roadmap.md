@@ -142,9 +142,15 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
   * Add CLI flag to route per-run logs to separate directory when desired (e.g., `--multi-start-log-dir`).
 
 ###### Subtasks – Batched neighbour evaluation
-- [ ] Abstract neighbour generation to allow sampling `k` candidates per iteration before scoring.
+- [x] Abstract neighbour generation to allow sampling `k` candidates per iteration before scoring.
+  * Introduce `generate_neighbours(schedule, registry, rng, batch_size)` yielding raw candidate schedules without evaluating them.
+  * Refactor `_neighbors` to call the generator, keeping sanitizer logic reusable.
 - [ ] Implement a worker pool (threads/processes) to evaluate `_evaluate` concurrently and select the best improving neighbour.
+  * Add `heuristics.batch.evaluate_candidates(candidates, pb, max_workers)` returning best candidate + scores.
+  * Default to sequential path when `max_workers <= 1` to maintain parity with current behaviour.
 - [ ] Profile memory/CPU usage to confirm batch evaluation scales without overwhelming system resources.
+  * Add benchmarking notebook/notes capturing runtime vs `batch_size` for minitoy/med42/large84.
+  * Document recommended batch sizes and note any guardrails (e.g., fallback when evaluation raises).
 
 ###### Subtasks – CLI/config integration (parallel)
 - [ ] Add CLI options (`--parallel-multistart`, `--parallel-workers`, `--batch-neighbours`) with safe defaults disabled.
