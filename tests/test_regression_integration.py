@@ -94,6 +94,8 @@ def test_regression_sa_mobilisation_and_sequencing():
     pb = regression_problem()
     res = solve_sa(pb, iters=2000, seed=123)
     assignments = res["assignments"]
+    assert "shift_id" in assignments.columns
+    assert not assignments["shift_id"].isna().any()
     kpis = compute_kpis(pb, assignments)
 
     assert kpis["sequencing_violation_count"] == 0
