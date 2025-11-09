@@ -96,6 +96,27 @@ benchmark summaries programmatically to monitor operator performance over time. 
 logs (``--telemetry-log``) append the same structure to a newline-delimited JSON file for long-term
 analysis.
 
+Visual Comparisons
+------------------
+
+The helper script ``scripts/render_benchmark_plots.py`` consumes a benchmark summary and renders
+comparison charts for documentation. For example:
+
+.. code-block:: bash
+
+   fhops bench suite --include-ils --include-tabu --no-include-mip --out-dir tmp/bench_visuals
+   python scripts/render_benchmark_plots.py tmp/bench_visuals/summary.csv --out-dir docs/_static/benchmarks
+
+.. figure:: /_static/benchmarks/objective_gap_vs_best_heuristic.png
+   :alt: Objective gap per heuristic solver
+
+   Objective gap versus the best heuristic solver for each scenario (negative bars indicate the solver beats the current best heuristic).
+
+.. figure:: /_static/benchmarks/runtime_ratio_vs_best_heuristic.png
+   :alt: Runtime ratios per heuristic solver
+
+   Runtime ratios relative to the best heuristic solver (values > 1.0 are slower).
+
 Each assignment CSV includes ``machine_id``, ``block_id``, ``day``, and ``shift_id`` columns.
 The shift label is derived from the scenario's shift calendar or timeline definition, enabling
 sub-daily benchmarking and evaluation workflows.
