@@ -33,6 +33,7 @@ before proposing new work.
 - [ ] KPI expansion (cost, makespan, utilisation, mobilisation spend) with reporting templates.
 - [ ] Synthetic dataset generator & benchmarking suite (`notes/synthetic_dataset_plan.md`).
 - [ ] Reference analytics notebooks integrated into docs/examples.
+- [ ] Hyperparameter tuning framework (conventional + agentic) leveraging persistent telemetry (`notes/metaheuristic_hyperparam_tuning.md`).
 
 ## Phase 4 — Release & Community Readiness
 - [ ] Complete Sphinx documentation set (API, CLI, how-tos, examples) published to Read the Docs.
