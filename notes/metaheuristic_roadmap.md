@@ -114,6 +114,12 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] **Benchmark evaluation:** compare baseline vs. extended operator sets across minitoy/med42/large84, capturing telemetry and summarising outcomes in notes/changelog. *(Full suite runs currently require extending the timeout for `fhops bench suite`; follow-up todo to bump limits before release.)*
 - [x] **Testing & regression:** expand unit/regression coverage to exercise new operators (window constraints, mobilisation penalties, lock handling).
 
+#### Parallelisation ideas (sidebar)
+- Spin up multi-start SA runs in parallel with different seeds/presets; keep the best objective (embarrassingly parallel).
+- Evaluate a batch of neighbours concurrently (spawn workers to score candidates, accept the best improvement).
+- Parallelise preset/parameter sweeps (cooling rates, weight mixes) using joblib/multiprocessing to exploit cores.
+- Run per-core SA instances that emit telemetry to a shared JSONL log; post-process to select or blend results.
+
 ##### Plan – Advanced neighbourhoods: Design & interfaces
 - [x] Catalogue candidate operators with design goals:
   * [x] **BlockInsertionOperator** — relocate an unlocked block to an alternate feasible shift (same machine or compatible peer) to reduce congestion, unlock blackout conflicts, or align with mobilisation cooldowns.
