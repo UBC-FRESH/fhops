@@ -142,8 +142,8 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
   * Add CLI flag to route per-run logs to separate directory when desired (e.g., `--multi-start-log-dir`).
 
 - [x] Profile memory/CPU usage to confirm batch evaluation scales without overwhelming system resources.
-  * Benchmarked minitoy/med42 (`iters=500`) across `batch_size` in {None,2,4} and `max_workers` in {None,2,4}; CSV stored at `tmp/sa_batch_profile.csv`.
-  * Threaded evaluation adds ~5–6x runtime overhead relative to sequential path; recommend keeping `max_workers=None` unless future workloads justify the cost and add guardrail to auto-fallback when no speedup observed.
+  * Benchmarked minitoy/med42 (`iters=500`) and minitoy/med42/large84 (`iters=2000`) across `batch_size` in {None,4} and `max_workers` in {None,4}; CSVs stored at `tmp/sa_batch_profile.csv` and `tmp/sa_batch_profile_long.csv`.
+  * Threaded evaluation consistently added 5–6x overhead without objective gains; recommend keeping `max_workers=None` as default and adding guardrails to fall back automatically when parallel speedup is not observed.
 
 ###### Subtasks – CLI/config integration (parallel)
 - [ ] Add CLI options (`--parallel-multistart`, `--parallel-workers`, `--batch-neighbours`) with safe defaults disabled.
