@@ -17,19 +17,21 @@ from rich.console import Console
 from rich.table import Table
 
 from fhops.cli._utils import format_operator_presets, operator_preset_help, parse_operator_weights
+from fhops.cli.profiles import (
+    Profile,
+    combine_solver_configs,
+    get_profile,
+    merge_profile_with_cli,
+)
+from fhops.cli.profiles import (
+    format_profiles as format_profile_list,
+)
 from fhops.evaluation import compute_kpis
 from fhops.optimization.heuristics import solve_ils, solve_sa, solve_tabu
 from fhops.optimization.mip import build_model, solve_mip
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
 from fhops.telemetry import append_jsonl
-from fhops.cli.profiles import (
-    Profile,
-    combine_solver_configs,
-    format_profiles as format_profile_list,
-    get_profile,
-    merge_profile_with_cli,
-)
 
 console = Console()
 
@@ -556,7 +558,7 @@ def run_benchmark_suite(
             def _runtime_ratio(row: pd.Series) -> float | pd.NA:
                 best_runtime = row.get("best_heuristic_runtime_s")
                 runtime = row.get("runtime_s")
-                if isinstance(best_runtime, (int, float)) and isinstance(runtime, (int, float)):
+                if isinstance(best_runtime, (int | float)) and isinstance(runtime, (int | float)):
                     if best_runtime == 0 or math.isnan(best_runtime):
                         return pd.NA
                     return runtime / best_runtime
