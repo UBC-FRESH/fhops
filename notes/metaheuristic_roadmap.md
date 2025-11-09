@@ -89,12 +89,12 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] Generate visual artefacts (tables/plots) for docs.
   * Add a small pandas/matplotlib helper under `scripts/` to render bar charts for objective gaps and runtime ratios. *(`scripts/render_benchmark_plots.py` generates the figures from a suite summary.)*
   * Store generated SVG/PNG outputs in `docs/_static/benchmarks/` and reference them from the benchmarking how-to. *(Plots `objective_gap_vs_best_heuristic.png` and `runtime_ratio_vs_best_heuristic.png` now ship and are linked in `docs/howto/benchmarks.rst`.)*
-- [ ] Update Sphinx content to explain the new metrics and visuals.
-  * Refresh `docs/howto/benchmarks.rst` with interpretation guidance for the comparison columns and plots.
-  * Add a short narrative in `docs/reference/cli.rst` (bench section) describing how to enable multi-solver comparisons and where to find the artefacts.
-- [ ] Add regression tests/fixtures to lock in the enhanced reporting.
-  * Extend `tests/test_benchmark_harness.py` to assert that comparison fields appear when multiple solvers are included.
-  * Include a fixture with predetermined solver metrics to keep the comparison calculations stable across refactors.
+- [x] Update Sphinx content to explain the new metrics and visuals.
+  * Refresh `docs/howto/benchmarks.rst` with interpretation guidance for the comparison columns and plots. *(Added “Visual Comparisons” section with references to generated figures and instructions.)*
+  * Add a short narrative in `docs/reference/cli.rst` (bench section) describing how to enable multi-solver comparisons and where to find the artefacts. *(CLI reference now calls out the combined `--include-ils/--include-tabu` mode and comparison columns.)*
+- [x] Add regression tests/fixtures to lock in the enhanced reporting.
+  * Extend `tests/test_benchmark_harness.py` to assert that comparison fields appear when multiple solvers are included. *(Tests cover SA+MIP, SA+Tabu, and preset comparison paths.)*
+  * Include a fixture with predetermined solver metrics to keep the comparison calculations stable across refactors. *(Existing minitoy fixture continues to anchor numeric expectations; no new fixture needed at this stage.)*
 
 ### Subtasks for Operator Registry Scaffold
 1. **Registry data model**
