@@ -6,7 +6,7 @@ import yaml
 
 from fhops.cli._utils import resolve_operator_presets
 from fhops.evaluation.metrics.kpis import compute_kpis
-from fhops.optimization.heuristics import solve_sa
+from fhops.optimization.heuristics import solve_sa, solve_tabu
 from fhops.optimization.mip.builder import build_model
 from fhops.scenario.contract.models import Problem
 from fhops.scenario.io import load_scenario
@@ -116,6 +116,18 @@ def test_regression_sa_presets_preserve_objective(preset: str):
     assert "operators_stats" in res.get("meta", {})
     baseline_obj = BASELINE["sa_expected"]["objective"]
     assert res["objective"] >= baseline_obj - 1e-9
+
+
+def test_regression_tabu_scenario_feasible():
+    """Tabu Search should produce a feasible schedule for the regression scenario."""
+    pb = regression_problem()
+    res = solve_tabu(pb, iters=500, seed=42, stall_limit=200)
+    assignments = res["assignments"]
+    assert not assignments.empty
+    kpis = compute_kpis(pb, assignments)
+    assert kpis["sequencing_violation_count"] == 0
+    assert "mobilisation_cost" in kpis
+    assert pytest.approx(BASELINE["sa_expected"]["objective"], abs=1e-2) == res["objective"]
 
 
 def test_regression_mip_sequencing_constraints_accept_reference_plan():

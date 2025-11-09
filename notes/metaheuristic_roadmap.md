@@ -282,7 +282,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 
 ###### Subtasks – Testing & Benchmarks (Tabu)
 - [x] Unit tests covering tabu list behaviour, aspiration, and feasibility checks.
-- [ ] Regression tests ensuring baseline objective matches expectations on minitoy scenario.
+- [x] Regression tests ensuring baseline objective matches expectations on minitoy scenario.
 - [x] Benchmark runs (minitoy/med42/large84) comparing SA vs Tabu; capture telemetry for roadmap notes. *(Results in `tmp/tabu_bench/summary.csv` show Tabu worse than SA across scenarios; keep solver experimental.)*
 
 ###### Subtasks – Documentation (Tabu)
