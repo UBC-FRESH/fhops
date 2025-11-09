@@ -49,3 +49,4 @@
 - Refactored the SA neighbour generation with explicit swap/move operators, paving the way for a pluggable operator registry in subsequent metaheuristic work.
 - Finalised the Phase 2 shift-based scheduling plan: roadmap and modular reorg notes now outline the shift-aware data contract, solver refactors, KPI/CLI updates, and migration guidance.
 - Added shift calendar support to the scenario contract/loader (including regression coverage) so scenarios can specify per-shift machine availability ahead of full shift-aware scheduling.
+- Reindexed the Pyomo MIP builder, mobilisation/landing constraints, and sequencing helper to operate on shift tuples, refreshed regression/locking/mobilisation tests for shift-aware variables, and captured the milestone in `notes/mip_model_plan.md`.

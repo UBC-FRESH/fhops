@@ -33,8 +33,8 @@ Status: Draft — align updates with roadmap Phase 1/2 milestones.
 ## Tests & Benchmarks
 - [x] Extend unit/integration tests around the MIP builder.
 - [x] Add performance benchmarks (pytest markers) capturing solve durations and objective values.
-- [ ] Introduce shift-indexed sets/variables (machines × blocks × shifts), update mobilisation/landing constraints, and retain compatibility with legacy day-only scenarios.
-  - Include locking scenarios to ensure heuristics/MIP produce consistent results.
+- [x] Introduce shift-indexed sets/variables (machines × blocks × shifts), update mobilisation/landing constraints, and retain compatibility with legacy day-only scenarios. *(MIP builder now consumes `Problem.shifts`; mobilisation, landing, locking, and sequencing constraints iterate over shift tuples; regression/locking unit tests refreshed.)*
+  - Include locking scenarios to ensure heuristics/MIP produce consistent results. *(MIP side complete; heuristic alignment pending.)*
 
 ## Documentation
 - [ ] Update Sphinx API docs for model modules.
