@@ -5,6 +5,7 @@
   "kpi_total_production": 42.0,
   "kpi_completed_blocks": 1.0,
   "kpi_mobilisation_cost": 65.0,
+  "kpi_mobilisation_cost_by_machine": "{\"H2\": 65.0}",
   "iters": 200,
   "seed": 42
 }

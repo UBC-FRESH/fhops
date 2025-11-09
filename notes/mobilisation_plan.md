@@ -16,6 +16,7 @@ Status: Draft — pending modular reorganisation.
 - [x] Update evaluation metrics to report mobilisation spend. *(KPI module exposes `mobilisation_cost`; benchmark harness validates non-zero spend).*
 - [x] Design geospatial ingestion path (GeoJSON baseline) to derive inter-block distances and persist them in `MobilisationConfig`.
 - [x] Provide CLI helper to compute distance matrices from block geometries (projected CRS, configurable unit conversions). *(Prototype via `fhops geo distances`; loader now validates GeoJSON inputs.)*
+- [ ] Extend mobilisation calibration to the large84 benchmark scenario (distances, cost scales, validation notes).
 
 ## Tests
 - [x] Fixture scenarios with known mobilisation costs (short vs long moves). *(See `tests/test_mobilisation.py`.)*
