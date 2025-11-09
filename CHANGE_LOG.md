@@ -16,6 +16,7 @@
 - Added documentation maintenance notes covering benchmark figure regeneration (`docs/howto/benchmarks.rst`) and the hyperparameter tuning plan (`notes/metaheuristic_hyperparam_tuning.md`).
 - Published the harvest system registry reference (`docs/reference/harvest_systems.rst`) and linked it from the data contract how-to.
 - Added `docs/howto/system_sequencing.rst` covering scenario setup, solver workflows, and KPI interpretation for harvest system sequencing.
+- Introduced CLI solver profiles (`--profile`, `--list-profiles`) with documentation updates in the heuristics and sequencing guides.
 - Marked the harvest system sequencing milestone as complete in the Phase 2 roadmap.
 - Planned documentation work for heuristic presets/benchmark interpretation (see `notes/metaheuristic_roadmap.md` Plan – Documentation Updates) ahead of drafting the new how-to content.
 
