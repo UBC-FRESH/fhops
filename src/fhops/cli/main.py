@@ -204,7 +204,14 @@ def solve_heur_cmd(
         except KeyError as exc:  # pragma: no cover - CLI validation
             raise typer.BadParameter(str(exc)) from exc
 
-    combined_ops, combined_weights, final_batch_neighbours, final_parallel_workers, final_multistart, profile_extra_kwargs = merge_profile_with_cli(
+    (
+        combined_ops,
+        combined_weights,
+        final_batch_neighbours,
+        final_parallel_workers,
+        final_multistart,
+        profile_extra_kwargs,
+    ) = merge_profile_with_cli(
         selected_profile.sa if selected_profile else None,
         operator_preset,
         weight_override,
@@ -333,10 +340,26 @@ def solve_ils_cmd(
     out: Path = typer.Option(..., "--out", help="Output CSV path"),
     iters: int = 250,
     seed: int = 42,
-    perturbation_strength: int = typer.Option(3, "--perturbation-strength", help="Number of perturbation steps applied after each local search cycle."),
-    stall_limit: int = typer.Option(10, "--stall-limit", help="Number of non-improving iterations before triggering perturbation/restart."),
-    hybrid_use_mip: bool = typer.Option(False, "--hybrid-use-mip", help="Attempt a time-boxed MIP solve when stalls exceed the limit."),
-    hybrid_mip_time_limit: int = typer.Option(60, "--hybrid-mip-time-limit", help="Seconds to spend on the hybrid MIP warm start when enabled."),
+    perturbation_strength: int = typer.Option(
+        3,
+        "--perturbation-strength",
+        help="Number of perturbation steps applied after each local search cycle.",
+    ),
+    stall_limit: int = typer.Option(
+        10,
+        "--stall-limit",
+        help="Number of non-improving iterations before triggering perturbation/restart.",
+    ),
+    hybrid_use_mip: bool = typer.Option(
+        False,
+        "--hybrid-use-mip",
+        help="Attempt a time-boxed MIP solve when stalls exceed the limit.",
+    ),
+    hybrid_mip_time_limit: int = typer.Option(
+        60,
+        "--hybrid-mip-time-limit",
+        help="Seconds to spend on the hybrid MIP warm start when enabled.",
+    ),
     operator: list[str] | None = typer.Option(
         None,
         "--operator",
@@ -417,7 +440,14 @@ def solve_ils_cmd(
         except KeyError as exc:  # pragma: no cover - CLI validation
             raise typer.BadParameter(str(exc)) from exc
 
-    combined_ops, combined_weights, final_batch_neighbours, final_parallel_workers, _, profile_extra_kwargs = merge_profile_with_cli(
+    (
+        combined_ops,
+        combined_weights,
+        final_batch_neighbours,
+        final_parallel_workers,
+        _,
+        profile_extra_kwargs,
+    ) = merge_profile_with_cli(
         selected_profile.ils if selected_profile else None,
         operator_preset,
         weight_override,
@@ -442,10 +472,7 @@ def solve_ils_cmd(
             stall_limit = int(profile_extra_kwargs.pop("stall_limit"))
         if "hybrid_use_mip" in profile_extra_kwargs and not hybrid_use_mip:
             hybrid_use_mip = bool(profile_extra_kwargs.pop("hybrid_use_mip"))
-        if (
-            "hybrid_mip_time_limit" in profile_extra_kwargs
-            and hybrid_mip_time_limit == 60
-        ):
+        if "hybrid_mip_time_limit" in profile_extra_kwargs and hybrid_mip_time_limit == 60:
             hybrid_mip_time_limit = int(profile_extra_kwargs.pop("hybrid_mip_time_limit"))
     extra_ils_kwargs = profile_extra_kwargs
 
@@ -522,21 +549,48 @@ def solve_tabu_cmd(
     iters: int = 2000,
     seed: int = 42,
     tabu_tenure: int = typer.Option(0, "--tabu-tenure", help="Override tabu tenure (0=auto)"),
-    stall_limit: int = typer.Option(200, "--stall-limit", help="Max non-improving iterations before stopping."),
-    batch_neighbours: int = typer.Option(1, "--batch-neighbours", help="Neighbour samples per iteration."),
-    parallel_workers: int = typer.Option(1, "--parallel-workers", help="Threads for scoring batched neighbours."),
-    operator: list[str] | None = typer.Option(None, "--operator", "-o", help="Enable specific operators (repeatable)."),
-    operator_weight: list[str] | None = typer.Option(None, "--operator-weight", "-w", help="Set operator weight as name=value (repeatable)."),
-    operator_preset: list[str] | None = typer.Option(None, "--operator-preset", "-P", help=f"Apply operator preset ({operator_preset_help()}). Repeatable."),
+    stall_limit: int = typer.Option(
+        200, "--stall-limit", help="Max non-improving iterations before stopping."
+    ),
+    batch_neighbours: int = typer.Option(
+        1, "--batch-neighbours", help="Neighbour samples per iteration."
+    ),
+    parallel_workers: int = typer.Option(
+        1, "--parallel-workers", help="Threads for scoring batched neighbours."
+    ),
+    operator: list[str] | None = typer.Option(
+        None, "--operator", "-o", help="Enable specific operators (repeatable)."
+    ),
+    operator_weight: list[str] | None = typer.Option(
+        None, "--operator-weight", "-w", help="Set operator weight as name=value (repeatable)."
+    ),
+    operator_preset: list[str] | None = typer.Option(
+        None,
+        "--operator-preset",
+        "-P",
+        help=f"Apply operator preset ({operator_preset_help()}). Repeatable.",
+    ),
     profile: str | None = typer.Option(
         None,
         "--profile",
         help="Apply a solver profile combining presets and advanced options.",
     ),
-    list_operator_presets: bool = typer.Option(False, "--list-operator-presets", help="Show available operator presets and exit."),
-    list_profiles: bool = typer.Option(False, "--list-profiles", help="Show available solver profiles and exit."),
-    telemetry_log: Path | None = typer.Option(None, "--telemetry-log", help="Append run telemetry to JSONL.", writable=True, dir_okay=False),
-    show_operator_stats: bool = typer.Option(False, "--show-operator-stats", help="Print per-operator stats."),
+    list_operator_presets: bool = typer.Option(
+        False, "--list-operator-presets", help="Show available operator presets and exit."
+    ),
+    list_profiles: bool = typer.Option(
+        False, "--list-profiles", help="Show available solver profiles and exit."
+    ),
+    telemetry_log: Path | None = typer.Option(
+        None,
+        "--telemetry-log",
+        help="Append run telemetry to JSONL.",
+        writable=True,
+        dir_okay=False,
+    ),
+    show_operator_stats: bool = typer.Option(
+        False, "--show-operator-stats", help="Print per-operator stats."
+    ),
 ):
     """Solve with the Tabu Search heuristic."""
     if list_profiles:
@@ -567,7 +621,14 @@ def solve_tabu_cmd(
         except KeyError as exc:  # pragma: no cover - CLI validation
             raise typer.BadParameter(str(exc)) from exc
 
-    combined_ops, combined_weights, final_batch_neighbours, final_parallel_workers, _, profile_extra_kwargs = merge_profile_with_cli(
+    (
+        combined_ops,
+        combined_weights,
+        final_batch_neighbours,
+        final_parallel_workers,
+        _,
+        profile_extra_kwargs,
+    ) = merge_profile_with_cli(
         selected_profile.tabu if selected_profile else None,
         operator_preset,
         weight_override,
@@ -651,6 +712,7 @@ def solve_tabu_cmd(
             record["profile"] = selected_profile.name
             record["profile_version"] = selected_profile.version
         append_jsonl(telemetry_log, record)
+
 
 @app.command()
 def evaluate(scenario: Path, assignments_csv: Path):

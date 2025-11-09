@@ -25,7 +25,10 @@ class TabuConfig:
     stall_limit: int
 
 
-def _diff_moves(current_plan: dict[str, dict[tuple[int, str], str | None]], candidate_plan: dict[str, dict[tuple[int, str], str | None]]) -> tuple[tuple[str, int, str, str | None, str | None], ...]:
+def _diff_moves(
+    current_plan: dict[str, dict[tuple[int, str], str | None]],
+    candidate_plan: dict[str, dict[tuple[int, str], str | None]],
+) -> tuple[tuple[str, int, str, str | None, str | None], ...]:
     moves: list[tuple[str, int, str, str | None, str | None]] = []
     for machine_id, assignments in candidate_plan.items():
         current_assignments = current_plan.get(machine_id, {})
@@ -77,7 +80,9 @@ def solve_tabu(
     best_score = current_score
 
     tenure = tabu_tenure if tabu_tenure is not None else max(10, len(pb.scenario.machines))
-    tabu_queue: deque[tuple[tuple[str, int, str, str | None, str | None], ...]] = deque(maxlen=tenure)
+    tabu_queue: deque[tuple[tuple[str, int, str, str | None, str | None], ...]] = deque(
+        maxlen=tenure
+    )
     tabu_set: set[tuple[tuple[str, int, str, str | None, str | None], ...]] = set()
 
     batch_arg = batch_size if batch_size and batch_size > 0 else None

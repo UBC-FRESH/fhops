@@ -103,9 +103,11 @@ def test_benchmark_suite_with_tabu(tmp_path):
     assert set(summary["best_heuristic_solver"].dropna()) == {"sa"}
     tabu_row = summary[summary["solver"] == "tabu"].iloc[0]
     assert tabu_row["objective_gap_vs_best_heuristic"] > 0
-    assert pytest.approx(1.0, rel=1e-6) == summary[summary["solver"] == "sa"].iloc[0][
-        "runtime_ratio_vs_best_heuristic"
-    ]
+    assert (
+        pytest.approx(1.0, rel=1e-6)
+        == summary[summary["solver"] == "sa"].iloc[0]["runtime_ratio_vs_best_heuristic"]
+    )
+
 
 def test_benchmark_suite_preset_comparison(tmp_path):
     summary = run_benchmark_suite(

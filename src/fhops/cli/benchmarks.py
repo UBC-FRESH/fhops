@@ -131,9 +131,23 @@ def run_benchmark_suite(
 
     out_dir.mkdir(parents=True, exist_ok=True)
     rows: list[dict[str, object]] = []
-    profile_sa_config = combine_solver_configs(profile.bench if profile else None, profile.sa if profile else None) if profile else None
-    profile_ils_config = combine_solver_configs(profile.bench if profile else None, profile.ils if profile else None) if profile else None
-    profile_tabu_config = combine_solver_configs(profile.bench if profile else None, profile.tabu if profile else None) if profile else None
+    profile_sa_config = (
+        combine_solver_configs(profile.bench if profile else None, profile.sa if profile else None)
+        if profile
+        else None
+    )
+    profile_ils_config = (
+        combine_solver_configs(profile.bench if profile else None, profile.ils if profile else None)
+        if profile
+        else None
+    )
+    profile_tabu_config = (
+        combine_solver_configs(
+            profile.bench if profile else None, profile.tabu if profile else None
+        )
+        if profile
+        else None
+    )
 
     for bench in scenarios:
         resolved_path = bench.path.expanduser()
@@ -195,7 +209,14 @@ def run_benchmark_suite(
 
         if include_sa:
             for preset_label, run_presets in runs:
-                combined_ops, combined_weights, batch_arg, worker_arg, multistart_arg, extra_kwargs = merge_profile_with_cli(
+                (
+                    combined_ops,
+                    combined_weights,
+                    batch_arg,
+                    worker_arg,
+                    multistart_arg,
+                    extra_kwargs,
+                ) = merge_profile_with_cli(
                     profile_sa_config,
                     run_presets,
                     override_weights,
@@ -280,7 +301,14 @@ def run_benchmark_suite(
                     append_jsonl(telemetry_log, log_record)
 
         if include_ils:
-            ils_ops, ils_weight_config, ils_batch_override, ils_worker_override, _, ils_extra_kwargs = merge_profile_with_cli(
+            (
+                ils_ops,
+                ils_weight_config,
+                ils_batch_override,
+                ils_worker_override,
+                _,
+                ils_extra_kwargs,
+            ) = merge_profile_with_cli(
                 profile_ils_config,
                 operator_presets,
                 override_weights,
@@ -289,8 +317,12 @@ def run_benchmark_suite(
                 ils_workers,
                 None,
             )
-            ils_batch_final = ils_batch_override if ils_batch_override is not None else ils_batch_neighbours
-            ils_worker_final = ils_worker_override if ils_worker_override is not None else ils_workers
+            ils_batch_final = (
+                ils_batch_override if ils_batch_override is not None else ils_batch_neighbours
+            )
+            ils_worker_final = (
+                ils_worker_override if ils_worker_override is not None else ils_workers
+            )
             if ils_extra_kwargs:
                 if "perturbation_strength" in ils_extra_kwargs and ils_perturbation_strength == 3:
                     ils_perturbation_strength = int(ils_extra_kwargs.pop("perturbation_strength"))
@@ -298,10 +330,7 @@ def run_benchmark_suite(
                     ils_stall_limit = int(ils_extra_kwargs.pop("stall_limit"))
                 if "hybrid_use_mip" in ils_extra_kwargs and not ils_hybrid_use_mip:
                     ils_hybrid_use_mip = bool(ils_extra_kwargs.pop("hybrid_use_mip"))
-                if (
-                    "hybrid_mip_time_limit" in ils_extra_kwargs
-                    and ils_hybrid_mip_time_limit == 60
-                ):
+                if "hybrid_mip_time_limit" in ils_extra_kwargs and ils_hybrid_mip_time_limit == 60:
                     ils_hybrid_mip_time_limit = int(ils_extra_kwargs.pop("hybrid_mip_time_limit"))
             start = time.perf_counter()
             ils_res = solve_ils(
@@ -377,7 +406,14 @@ def run_benchmark_suite(
                 append_jsonl(telemetry_log, record)
 
         if include_tabu:
-            tabu_ops, tabu_weight_config, tabu_batch_override, tabu_worker_override, _, tabu_extra_kwargs = merge_profile_with_cli(
+            (
+                tabu_ops,
+                tabu_weight_config,
+                tabu_batch_override,
+                tabu_worker_override,
+                _,
+                tabu_extra_kwargs,
+            ) = merge_profile_with_cli(
                 profile_tabu_config,
                 operator_presets,
                 override_weights,
@@ -386,8 +422,12 @@ def run_benchmark_suite(
                 tabu_workers,
                 None,
             )
-            tabu_batch_final = tabu_batch_override if tabu_batch_override is not None else tabu_batch_neighbours
-            tabu_worker_final = tabu_worker_override if tabu_worker_override is not None else tabu_workers
+            tabu_batch_final = (
+                tabu_batch_override if tabu_batch_override is not None else tabu_batch_neighbours
+            )
+            tabu_worker_final = (
+                tabu_worker_override if tabu_worker_override is not None else tabu_workers
+            )
             if tabu_extra_kwargs:
                 if "tabu_tenure" in tabu_extra_kwargs and (tabu_tenure is None or tabu_tenure == 0):
                     tabu_tenure = int(tabu_extra_kwargs.pop("tabu_tenure"))
@@ -401,7 +441,9 @@ def run_benchmark_suite(
                 operators=tabu_ops,
                 operator_weights=tabu_weight_config if tabu_weight_config else None,
                 batch_size=tabu_batch_final if tabu_batch_final and tabu_batch_final > 1 else None,
-                max_workers=tabu_worker_final if tabu_worker_final and tabu_worker_final > 1 else None,
+                max_workers=tabu_worker_final
+                if tabu_worker_final and tabu_worker_final > 1
+                else None,
                 tabu_tenure=tabu_tenure,
                 stall_limit=tabu_stall_limit,
                 **tabu_extra_kwargs,
@@ -433,7 +475,9 @@ def run_benchmark_suite(
                     runtime_s=tabu_runtime,
                     extra=extra_tabu,
                     operator_config=tabu_meta.get("operators", tabu_weight_config),
-                    operator_stats=cast(dict[str, dict[str, float]], tabu_meta.get("operators_stats", {})),
+                    operator_stats=cast(
+                        dict[str, dict[str, float]], tabu_meta.get("operators_stats", {})
+                    ),
                 )
             )
             if telemetry_log:
@@ -504,12 +548,10 @@ def run_benchmark_suite(
             summary["best_heuristic_objective"] = summary["scenario"].map(
                 best_objective_by_scenario
             )
-            summary["best_heuristic_runtime_s"] = summary["scenario"].map(
-                best_runtime_by_scenario
+            summary["best_heuristic_runtime_s"] = summary["scenario"].map(best_runtime_by_scenario)
+            summary["objective_gap_vs_best_heuristic"] = (
+                summary["best_heuristic_objective"] - summary["objective"]
             )
-            summary["objective_gap_vs_best_heuristic"] = summary[
-                "best_heuristic_objective"
-            ] - summary["objective"]
 
             def _runtime_ratio(row: pd.Series) -> float | pd.NA:
                 best_runtime = row.get("best_heuristic_runtime_s")
@@ -520,9 +562,7 @@ def run_benchmark_suite(
                     return runtime / best_runtime
                 return pd.NA
 
-            summary["runtime_ratio_vs_best_heuristic"] = summary.apply(
-                _runtime_ratio, axis=1
-            )
+            summary["runtime_ratio_vs_best_heuristic"] = summary.apply(_runtime_ratio, axis=1)
         else:
             summary["best_heuristic_solver"] = pd.NA
             summary["best_heuristic_objective"] = pd.NA
@@ -582,12 +622,16 @@ def bench_suite(
     include_ils: bool = typer.Option(False, help="Include Iterated Local Search in benchmarks"),
     ils_iters: int = typer.Option(250, help="Iterated Local Search iterations"),
     ils_seed: int = typer.Option(42, help="Iterated Local Search RNG seed"),
-    ils_batch_neighbours: int = typer.Option(1, help="Neighbours sampled per ILS local search step"),
+    ils_batch_neighbours: int = typer.Option(
+        1, help="Neighbours sampled per ILS local search step"
+    ),
     ils_workers: int = typer.Option(1, help="Worker threads for ILS batched evaluation"),
     ils_perturbation_strength: int = typer.Option(3, help="ILS perturbation strength"),
     ils_stall_limit: int = typer.Option(10, help="ILS stall limit before restart/perturbation"),
     ils_hybrid_use_mip: bool = typer.Option(False, help="Enable hybrid MIP warm start in ILS"),
-    ils_hybrid_mip_time_limit: int = typer.Option(60, help="Time limit (s) for hybrid MIP warm start"),
+    ils_hybrid_mip_time_limit: int = typer.Option(
+        60, help="Time limit (s) for hybrid MIP warm start"
+    ),
     include_tabu: bool = typer.Option(False, help="Include Tabu Search in benchmarks"),
     tabu_iters: int = typer.Option(5000, help="Tabu Search iterations"),
     tabu_seed: int = typer.Option(42, help="Tabu Search RNG seed"),
