@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import math
-import random
+import random as _random
 from collections import defaultdict
 from dataclasses import dataclass
 from typing import Any
@@ -274,7 +274,7 @@ def _neighbors(
     pb: Problem,
     sched: Schedule,
     registry: OperatorRegistry,
-    rng: random.Random,
+    rng: _random.Random,
     operator_stats: dict[str, dict[str, float]],
 ) -> list[Schedule]:
     sc = pb.scenario
@@ -396,7 +396,7 @@ def solve_sa(
     operator_weights: dict[str, float] | None = None,
 ) -> dict[str, Any]:
     """Run simulated annealing returning objective and assignments DataFrame."""
-    random.seed(seed)
+    rng = _random.Random(seed)
     registry = OperatorRegistry.from_defaults()
     available_names = {name.lower(): name for name in registry.names()}
     if operators:
@@ -430,11 +430,11 @@ def solve_sa(
     operator_stats: dict[str, dict[str, float]] = {}
     for step in range(1, iters + 1):
         accepted = False
-        for neighbor in _neighbors(pb, current, registry, random, operator_stats):
+        for neighbor in _neighbors(pb, current, registry, rng, operator_stats):
             proposals += 1
             neighbor_score = _evaluate(pb, neighbor)
             delta = neighbor_score - current_score
-            if delta >= 0 or random.random() < math.exp(delta / max(temperature, 1e-6)):
+            if delta >= 0 or rng.random() < math.exp(delta / max(temperature, 1e-6)):
                 current = neighbor
                 current_score = neighbor_score
                 accepted = True

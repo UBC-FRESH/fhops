@@ -77,3 +77,5 @@
 - Added shift-aware SA operator presets (`explore`, `mobilisation`, `stabilise`) with documented weight profiles, updated CLI helpers/tests to expose the new options, and captured usage guidance in `docs/reference/cli.rst`.
 - Extended the benchmarking harness with `--compare-preset` sweeps, labelled summary/telemetry outputs (`preset_label`), and per-preset assignment exports to evaluate the new operators side-by-side; roadmap notes updated accordingly.
 - Added unit coverage for the advanced operators (`tests/heuristics/test_operators.py`) ensuring block insertion honours windows/availability, cross exchange respects machine capabilities, and mobilisation shake observes lock and spacing rules.
+- Added regression assertions so the advanced presets (explore/mobilisation/stabilise) maintain the mobilisation baseline objective when enabled.
+- Separated simulated annealing RNG seeding from the global `random` module by constructing a local generator per solve, keeping regression/benchmark runs deterministic without side effects.
