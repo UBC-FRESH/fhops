@@ -67,3 +67,4 @@
 - Added unit tests covering the operator registry defaults, weight configuration, and sanitizer integration.
 - Captured a detailed sub-plan for operator registry integration within SA (registry wiring, shared sanitizer reuse, operator weighting, regression verification) in `notes/metaheuristic_roadmap.md`.
 - Rewired SA neighbours to iterate through the registry with weighted operator selection while reusing the shared sanitizer, keeping regression/benchmark outputs stable.
+- Reran the benchmark/regression suites post-registry integration, updated the minitoy baseline, and checked off the verification subtask in `notes/metaheuristic_roadmap.md`.
