@@ -18,7 +18,11 @@ from fhops.cli._utils import (
 from fhops.cli.benchmarks import benchmark_app
 from fhops.cli.geospatial import geospatial_app
 from fhops.evaluation import compute_kpis
-from fhops.optimization.heuristics import solve_sa
+from fhops.optimization.heuristics import (
+    build_exploration_plan,
+    run_multi_start,
+    solve_sa,
+)
 from fhops.optimization.mip import solve_mip
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
@@ -141,6 +145,24 @@ def solve_heur_cmd(
         writable=True,
         dir_okay=False,
     ),
+    batch_neighbours: int = typer.Option(
+        1,
+        "--batch-neighbours",
+        help="Number of neighbour candidates sampled per iteration (1 keeps sequential scoring).",
+        min=1,
+    ),
+    parallel_workers: int = typer.Option(
+        1,
+        "--parallel-workers",
+        help="Worker threads for batched evaluation or multi-start orchestration (1 keeps sequential).",
+        min=1,
+    ),
+    multi_start: int = typer.Option(
+        1,
+        "--parallel-multistart",
+        help="Run multiple SA instances in parallel and select the best objective (1 disables).",
+        min=1,
+    ),
 ):
     """Solve with Simulated Annealing (heuristic)."""
     if debug:
@@ -167,13 +189,65 @@ def solve_heur_cmd(
     combined_weights: dict[str, float] = {}
     combined_weights.update(preset_weights)
     combined_weights.update(weight_config)
-    res = solve_sa(
-        pb,
-        iters=iters,
-        seed=seed,
-        operators=combined_ops,
-        operator_weights=combined_weights if combined_weights else None,
-    )
+    batch_arg = batch_neighbours if batch_neighbours > 1 else None
+    worker_arg = parallel_workers if parallel_workers > 1 else None
+    runs_meta = None
+    seed_used = seed
+
+    if multi_start > 1:
+        seeds, auto_presets = build_exploration_plan(multi_start, base_seed=seed)
+        if combined_ops:
+            preset_plan = [None] * multi_start
+        else:
+            preset_plan = auto_presets
+        try:
+            res_container = run_multi_start(
+                pb,
+                seeds=seeds,
+                presets=preset_plan,
+                max_workers=worker_arg,
+                sa_kwargs={
+                    "iters": iters,
+                    "operators": combined_ops,
+                    "operator_weights": combined_weights if combined_weights else None,
+                    "batch_size": batch_arg,
+                    "max_workers": worker_arg,
+                },
+                telemetry_log=telemetry_log,
+            )
+            res = res_container.best_result
+            runs_meta = res_container.runs_meta
+            best_meta = max(
+                (meta for meta in runs_meta if meta.get("status") == "ok"),
+                key=lambda meta: meta.get("objective", float("-inf")),
+                default=None,
+            )
+            if best_meta:
+                seed_used = int(best_meta.get("seed", seed))
+        except Exception as exc:  # pragma: no cover - guardrail path
+            console.print(
+                f"[yellow]Multi-start execution failed ({exc!r}); falling back to single run.[/]"
+            )
+            runs_meta = None
+            res = solve_sa(
+                pb,
+                iters=iters,
+                seed=seed,
+                operators=combined_ops,
+                operator_weights=combined_weights if combined_weights else None,
+                batch_size=batch_arg,
+                max_workers=worker_arg,
+            )
+    else:
+        res = solve_sa(
+            pb,
+            iters=iters,
+            seed=seed,
+            operators=combined_ops,
+            operator_weights=combined_weights if combined_weights else None,
+            batch_size=batch_arg,
+            max_workers=worker_arg,
+        )
     assignments = cast(pd.DataFrame, res["assignments"])
     objective = cast(float, res.get("objective", 0.0))
 
@@ -197,19 +271,25 @@ def solve_heur_cmd(
                     f"accept_rate={payload.get('acceptance_rate', 0):.3f}, "
                     f"weight={payload.get('weight', 0)}"
                 )
-    if telemetry_log:
+    if runs_meta:
+        console.print(
+            f"[dim]Parallel multi-start executed {len(runs_meta)} runs; best seed={seed_used}. See telemetry log for per-run details.[/]"
+        )
+    elif telemetry_log:
         stats = res.get("meta", {}).get("operators_stats", {}) or {}
         record = {
             "timestamp": datetime.utcnow().isoformat(),
             "source": "solve-heur",
             "scenario": sc.name,
             "scenario_path": str(scenario),
-            "seed": seed,
+            "seed": seed_used,
             "iterations": iters,
             "objective": float(objective),
             "kpis": metrics,
             "operators_config": operators_meta or combined_weights,
             "operators_stats": stats,
+            "batch_size": batch_neighbours,
+            "max_workers": parallel_workers,
         }
         append_jsonl(telemetry_log, record)
 
