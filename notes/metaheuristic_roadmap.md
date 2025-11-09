@@ -197,9 +197,12 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] Document default weights and recommended use cases (e.g., mobilisation-heavy scenarios). *(docs/reference/cli.rst updated to enumerate presets and note explore/mobilisation/stabilise guidance.)*
 
 ##### Plan – Advanced neighbourhoods: Benchmark evaluation
-- Extend benchmark harness to compare baseline vs. preset configurations; log objective, runtime, and operator stats.
-- Analyse telemetry JSONL to quantify improvements/changes; summarise findings in notes and changelog entries.
-- Decide on default inclusion of new operators based on benchmark evidence.
+- [x] Extend benchmark harness to compare baseline vs. preset configurations; log objective, runtime, and operator stats.
+  * [x] Add CLI flags (e.g., `--preset-comparison`) to run multiple presets sequentially.
+  * [x] Update benchmark summary output to include preset name, operator weights, and acceptance stats.
+  * [x] Ensure JSONL telemetry captures preset context for downstream analysis.
+- [ ] Analyse telemetry JSONL to quantify improvements/changes; summarise findings in notes and changelog entries.
+- [ ] Decide on default inclusion of new operators based on benchmark evidence.
 
 ##### Plan – Advanced neighbourhoods: Testing & regression
 - Add unit tests verifying each operator respects availability, windows, locks, and mobilisation rules.

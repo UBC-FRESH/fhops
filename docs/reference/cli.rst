@@ -35,6 +35,7 @@ Additional simulated annealing controls:
 - ``explore`` enables the advanced neighbourhood operators with moderate weights for general diversification, ``mobilisation`` prioritises mobilisation shake moves for distance-constrained scenarios, and ``stabilise`` tones down advanced operators to focus on consolidation.
 - ``fhops bench suite --operator-preset swap-heavy --operator-weight move=1`` — use presets within benchmarking; final configurations are captured in the summary output.
 - ``fhops solve-heur --list-operator-presets`` (or ``fhops bench suite --list-operator-presets``) — display all presets with their weights and descriptions.
+- ``fhops bench suite --compare-preset explore --compare-preset mobilisation`` — sweep multiple presets in one run; the benchmark summary adds a ``preset_label`` column and exports per-preset assignment CSVs for side-by-side analysis.
 - ``fhops solve-heur ... --telemetry-log fhops_runs.jsonl`` — append telemetry entries (objective, KPIs, operator stats) to a JSONL file for later analysis.
 - ``fhops solve-heur ... --show-operator-stats`` — print per-operator proposal/acceptance statistics at the end of a run (also available in the benchmark summaries).
 

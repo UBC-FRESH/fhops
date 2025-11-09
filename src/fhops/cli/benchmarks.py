@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import json
 import time
-from datetime import datetime
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
-from typing import Any, List, Optional, cast
+from typing import Any, cast
 
 import pandas as pd
 import typer
@@ -102,6 +102,7 @@ def run_benchmark_suite(
     operator_weights: Mapping[str, float] | None = None,
     operator_presets: Sequence[str] | None = None,
     telemetry_log: Path | None = None,
+    preset_comparisons: Sequence[str] | None = None,
 ) -> pd.DataFrame:
     """Execute the benchmark suite and return the summary DataFrame."""
     scenarios = _resolve_scenarios(scenario_paths)
@@ -147,64 +148,100 @@ def run_benchmark_suite(
         preset_ops, preset_weights = resolve_operator_presets(operator_presets)
         override_weights = operator_weights or {}
         explicit_ops = [op.lower() for op in operators] if operators else []
-        combined_ops = list(dict.fromkeys((preset_ops or []) + explicit_ops)) or None
-        combined_weights: dict[str, float] = {}
-        combined_weights.update(preset_weights)
-        combined_weights.update(override_weights)
+
+        def build_label(presets: Sequence[str] | None, has_override: bool) -> str:
+            if presets:
+                return "+".join(presets)
+            if has_override:
+                return "custom"
+            return "default"
+
+        def build_sa_config(
+            presets: Sequence[str] | None,
+        ) -> tuple[str, list[str] | None, dict[str, float] | None]:
+            preset_ops_local, preset_weights_local = resolve_operator_presets(presets)
+            combined_ops_local = list(
+                dict.fromkeys((preset_ops_local or []) + explicit_ops)
+            ) or None
+            combined_weights_local: dict[str, float] = {}
+            combined_weights_local.update(preset_weights_local)
+            combined_weights_local.update(override_weights)
+            label_local = build_label(presets, bool(override_weights or explicit_ops))
+            return label_local, combined_ops_local, combined_weights_local or None
+
+        runs: list[tuple[str, list[str] | None, dict[str, float] | None]] = []
+        base_label, combined_ops, combined_weights = build_sa_config(operator_presets)
+        runs.append((base_label, combined_ops, combined_weights))
+
+        if preset_comparisons:
+            for preset_name in preset_comparisons:
+                comparison_label, comp_ops, comp_weights = build_sa_config([preset_name])
+                runs.append((comparison_label, comp_ops, comp_weights))
 
         if include_sa:
-            start = time.perf_counter()
-            sa_res = solve_sa(
-                pb,
-                iters=sa_iters,
-                seed=sa_seed,
-                operators=combined_ops,
-                operator_weights=combined_weights if combined_weights else None,
-            )
-            sa_runtime = time.perf_counter() - start
-            sa_assign = cast(pd.DataFrame, sa_res["assignments"]).copy()
-            sa_assign.to_csv(scenario_out / "sa_assignments.csv", index=False)
-            sa_kpis = compute_kpis(pb, sa_assign)
-            sa_meta = cast(dict[str, Any], sa_res.get("meta", {}))
-            extra = {
-                "iters": sa_iters,
-                "seed": sa_seed,
-                "sa_initial_score": sa_meta.get("initial_score"),
-                "sa_acceptance_rate": sa_meta.get("acceptance_rate"),
-                "sa_accepted_moves": sa_meta.get("accepted_moves"),
-                "sa_proposals": sa_meta.get("proposals"),
-                "sa_restarts": sa_meta.get("restarts"),
-            }
-            operators_meta = cast(dict[str, float], sa_meta.get("operators", {}))
-            operator_stats = cast(dict[str, dict[str, float]], sa_meta.get("operators_stats", {}))
-            rows.append(
-                _record_metrics(
-                    scenario=bench,
-                    solver="sa",
-                    objective=cast(float, sa_res.get("objective", 0.0)),
-                    assignments=sa_assign,
-                    kpis=sa_kpis,
-                    runtime_s=sa_runtime,
-                    extra=extra,
-                    operator_config=operators_meta or combined_weights,
-                    operator_stats=operator_stats,
+            for preset_label, ops_config, weight_config in runs:
+                start = time.perf_counter()
+                sa_res = solve_sa(
+                    pb,
+                    iters=sa_iters,
+                    seed=sa_seed,
+                    operators=ops_config,
+                    operator_weights=weight_config,
                 )
-            )
-            if telemetry_log:
-                log_record = {
-                    "timestamp": datetime.utcnow().isoformat(),
-                    "source": "bench-suite",
-                    "scenario": sc.name,
-                    "scenario_path": str(resolved_path),
-                    "solver": "sa",
+                sa_runtime = time.perf_counter() - start
+                sa_assign = cast(pd.DataFrame, sa_res["assignments"]).copy()
+                output_name = (
+                    f"sa_assignments_{preset_label.replace('+', '_')}.csv"
+                    if preset_label not in {"default", "custom"}
+                    else "sa_assignments.csv"
+                )
+                sa_assign.to_csv(scenario_out / output_name, index=False)
+                sa_kpis = compute_kpis(pb, sa_assign)
+                sa_meta = cast(dict[str, Any], sa_res.get("meta", {}))
+                extra = {
+                    "iters": sa_iters,
                     "seed": sa_seed,
-                    "iterations": sa_iters,
-                    "objective": cast(float, sa_res.get("objective", 0.0)),
-                    "kpis": sa_kpis,
-                    "operators_config": operators_meta or combined_weights,
-                    "operators_stats": operator_stats,
+                    "sa_initial_score": sa_meta.get("initial_score"),
+                    "sa_acceptance_rate": sa_meta.get("acceptance_rate"),
+                    "sa_accepted_moves": sa_meta.get("accepted_moves"),
+                    "sa_proposals": sa_meta.get("proposals"),
+                    "sa_restarts": sa_meta.get("restarts"),
+                    "preset_label": preset_label,
                 }
-                append_jsonl(telemetry_log, log_record)
+                operators_meta = cast(dict[str, float], sa_meta.get("operators", {}))
+                operator_stats = cast(
+                    dict[str, dict[str, float]], sa_meta.get("operators_stats", {})
+                )
+                resolved_weights = operators_meta or (weight_config or {})
+                rows.append(
+                    _record_metrics(
+                        scenario=bench,
+                        solver="sa",
+                        objective=cast(float, sa_res.get("objective", 0.0)),
+                        assignments=sa_assign,
+                        kpis=sa_kpis,
+                        runtime_s=sa_runtime,
+                        extra=extra,
+                        operator_config=resolved_weights,
+                        operator_stats=operator_stats,
+                    )
+                )
+                if telemetry_log:
+                    log_record = {
+                        "timestamp": datetime.utcnow().isoformat(),
+                        "source": "bench-suite",
+                        "scenario": sc.name,
+                        "scenario_path": str(resolved_path),
+                        "solver": "sa",
+                        "seed": sa_seed,
+                        "iterations": sa_iters,
+                        "objective": cast(float, sa_res.get("objective", 0.0)),
+                        "kpis": sa_kpis,
+                        "operators_config": resolved_weights,
+                        "operators_stats": operator_stats,
+                        "preset_label": preset_label,
+                    }
+                    append_jsonl(telemetry_log, log_record)
 
     summary = pd.DataFrame(rows)
     if not summary.empty:
@@ -240,16 +277,27 @@ def run_benchmark_suite(
     summary.to_json(summary_json, orient="records", indent=2)
 
     table = Table(title="FHOPS Benchmark Summary")
-    for column in ["scenario", "solver", "objective", "runtime_s", "assignments"]:
+    display_columns = ["scenario", "solver"]
+    if "preset_label" in summary.columns:
+        display_columns.append("preset_label")
+    display_columns.extend(["objective", "runtime_s", "assignments"])
+    for column in display_columns:
         table.add_column(column)
     for record in summary.sort_values(["scenario", "solver"]).to_dict(orient="records"):
-        table.add_row(
+        row = [
             str(record["scenario"]),
             str(record["solver"]),
-            f"{record.get('objective', 0.0):.3f}",
-            f"{record.get('runtime_s', 0.0):.2f}",
-            str(record.get("assignments", 0)),
+        ]
+        if "preset_label" in summary.columns:
+            row.append(str(record.get("preset_label", "")))
+        row.extend(
+            [
+                f"{record.get('objective', 0.0):.3f}",
+                f"{record.get('runtime_s', 0.0):.2f}",
+                str(record.get("assignments", 0)),
+            ]
         )
+        table.add_row(*row)
     console.print(table)
 
     return summary
@@ -276,19 +324,19 @@ def bench_suite(
     include_mip: bool = typer.Option(True, help="Include MIP solver in benchmarks"),
     include_sa: bool = typer.Option(True, help="Include simulated annealing in benchmarks"),
     debug: bool = typer.Option(False, help="Forward debug flag to solvers"),
-    operator: Optional[List[str]] = typer.Option(
+    operator: list[str] | None = typer.Option(
         None,
         "--operator",
         "-o",
         help="Enable specific SA operators (repeatable). Defaults to all.",
     ),
-    operator_weight: Optional[List[str]] = typer.Option(
+    operator_weight: list[str] | None = typer.Option(
         None,
         "--operator-weight",
         "-w",
         help="Set SA operator weight as name=value (repeatable).",
     ),
-    operator_preset: Optional[List[str]] = typer.Option(
+    operator_preset: list[str] | None = typer.Option(
         None,
         "--operator-preset",
         "-P",
@@ -297,12 +345,18 @@ def bench_suite(
     list_operator_presets: bool = typer.Option(
         False, "--list-operator-presets", help="Show available operator presets and exit."
     ),
-    telemetry_log: Optional[Path] = typer.Option(
+    telemetry_log: Path | None = typer.Option(
         None,
         "--telemetry-log",
         help="Append telemetry records for each SA run to JSONL.",
         writable=True,
         dir_okay=False,
+    ),
+    compare_preset: list[str] | None = typer.Option(
+        None,
+        "--compare-preset",
+        "-C",
+        help="Run additional SA passes for each preset and include them in the summary.",
     ),
 ):
     """Run the full benchmark suite and emit summary CSV/JSON outputs."""
@@ -333,4 +387,5 @@ def bench_suite(
         operator_weights=combined_weights if combined_weights else None,
         operator_presets=operator_preset,
         telemetry_log=telemetry_log,
+        preset_comparisons=compare_preset,
     )

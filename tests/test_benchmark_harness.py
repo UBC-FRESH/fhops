@@ -27,6 +27,7 @@ def test_benchmark_suite_minitoy(tmp_path):
     assert "kpi_total_production" in loaded.columns
     assert set(loaded["scenario"]) == {"user-1"}
     assert "operators_config" in loaded.columns
+    assert "preset_label" in loaded.columns
 
     baseline_path = Path("tests/fixtures/benchmarks/minitoy_sa.json")
     baseline = json.loads(baseline_path.read_text())
@@ -65,3 +66,22 @@ def test_benchmark_suite_minitoy(tmp_path):
     assert json.loads(sa_row.get("operators_stats", "{}")) == json.loads(
         baseline["operators_stats"]
     )
+    assert sa_row["preset_label"] == baseline["preset_label"]
+
+
+def test_benchmark_suite_preset_comparison(tmp_path):
+    summary = run_benchmark_suite(
+        [Path("examples/minitoy/scenario.yaml")],
+        tmp_path,
+        time_limit=10,
+        sa_iters=200,
+        include_mip=False,
+        preset_comparisons=["explore", "stabilise"],
+    )
+    sa_rows = summary[summary["solver"] == "sa"]
+    assert len(sa_rows) == 3  # default + two comparisons
+    labels = set(sa_rows["preset_label"])
+    assert labels == {"default", "explore", "stabilise"}
+    explore_row = sa_rows.set_index("preset_label").loc["explore"]
+    config = json.loads(explore_row["operators_config"])
+    assert pytest.approx(config["mobilisation_shake"], rel=1e-6) == 0.2

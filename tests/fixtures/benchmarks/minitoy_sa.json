@@ -15,6 +15,7 @@
   "objective_vs_mip_ratio": 0.24074074074074084,
   "iters": 200,
   "seed": 42,
-  "operators_config": "{\"move\": 1.0, \"swap\": 1.0}",
+  "preset_label": "default",
+  "operators_config": "{\"block_insertion\": 0.0, \"cross_exchange\": 0.0, \"mobilisation_shake\": 0.0, \"move\": 1.0, \"swap\": 1.0}",
   "operators_stats": "{\"move\": {\"proposals\": 200.0, \"accepted\": 200.0, \"skipped\": 0.0, \"weight\": 1.0, \"acceptance_rate\": 1.0}, \"swap\": {\"proposals\": 200.0, \"accepted\": 200.0, \"skipped\": 0.0, \"weight\": 1.0, \"acceptance_rate\": 1.0}}"
 }
