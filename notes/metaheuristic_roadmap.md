@@ -262,30 +262,30 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [ ] Documentation: CLI documentation, roadmap updates, and how-to section for configuring Tabu Search.
 
 ###### Subtasks – Tabu Algorithm Design
-- [ ] Select base neighbourhoods (reuse swap/move/block insertion) and define Tabu structures (e.g., move-based tabu list).
+- [x] Select base neighbourhoods (reuse swap/move/block insertion) and define Tabu structures (e.g., move-based tabu list).
   * Use existing `SwapOperator`, `MoveOperator`, and `BlockInsertionOperator` as candidate generators; limit batch size via registry weights for diversity.
   * Track tabu entries as tuples `(machine_id, from_block, to_block, day, shift)`; maintain a FIFO queue plus hash for O(1) lookups.
   * Support optional short-term tabu for block-machine assignments to prevent immediate reversals.
-- [ ] Specify tabu tenure (fixed vs adaptive), aspiration criteria, and tie-breaking when aspiration triggers.
+- [x] Specify tabu tenure (fixed vs adaptive), aspiration criteria, and tie-breaking when aspiration triggers.
   * Start with fixed tenure = `max(10, len(machines))`; expose CLI parameter for overrides.
   * Aspiration: allow tabu move if objective improves on best-known solution or satisfies diversification threshold (e.g., mobilisation slack reduction).
   * When multiple candidates pass aspiration, prefer highest objective gain, then lowest mobilisation cost.
-- [ ] Align objective scoring with shift-aware mobilisation objective and determine stopping conditions (iterations, non-improving stalls).
+- [x] Align objective scoring with shift-aware mobilisation objective and determine stopping conditions (iterations, non-improving stalls).
   * Reuse `_evaluate` from SA to keep objective parity; store best solution and non-improving counter.
   * Default stopping: `iters` iterations or `stall_limit` (e.g., 200 iterations without improvement); expose CLI flag for stall limit.
   * Ensure tabu run emits telemetry comparable to SA (objective, stalls, tenure, aspiration hits).
 
 ###### Subtasks – Tabu Implementation
-- [ ] Create `tabu.py` with solver function (`solve_tabu`) leveraging registry operators and tabu structures.
-- [ ] Add CLI entry (`fhops solve-tabu`) with options for tenure, aspiration, iterations, and telemetry logging.
+- [x] Create `tabu.py` with solver function (`solve_tabu`) leveraging registry operators and tabu structures.
+- [x] Add CLI entry (`fhops solve-tabu`) with options for tenure, aspiration, iterations, and telemetry logging.
 - [ ] Ensure integration with benchmarking harness (`fhops bench suite`) to compare against SA.
 
 ###### Subtasks – Testing & Benchmarks (Tabu)
-- [ ] Unit tests covering tabu list behaviour, aspiration, and feasibility checks.
+- [x] Unit tests covering tabu list behaviour, aspiration, and feasibility checks.
 - [ ] Regression tests ensuring baseline objective matches expectations on minitoy scenario.
 - [ ] Benchmark runs (minitoy/med42/large84) comparing SA vs Tabu; capture telemetry for roadmap notes.
 
 ###### Subtasks – Documentation (Tabu)
-- [ ] Update CLI reference and telemetry docs with Tabu-specific fields/options.
-- [ ] Add a how-to page describing Tabu configuration, example runs, and when to prefer it over SA.
-- [ ] Note findings in roadmap/changelog once evaluation complete.
+- [x] Update CLI reference and telemetry docs with Tabu-specific fields/options.
+- [x] Add a how-to page describing Tabu configuration, example runs, and when to prefer it over SA.
+- [x] Note findings in roadmap/changelog once evaluation complete.
