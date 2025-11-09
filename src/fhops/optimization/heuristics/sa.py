@@ -276,6 +276,8 @@ def _neighbors(
     registry: OperatorRegistry,
     rng: _random.Random,
     operator_stats: dict[str, dict[str, float]],
+    *,
+    batch_size: int | None = None,
 ) -> list[Schedule]:
     sc = pb.scenario
     if not sc.machines or not pb.shifts:
@@ -370,6 +372,7 @@ def _neighbors(
                         weights.pop(idx)
                         break
 
+    limit = batch_size if batch_size is not None and batch_size > 0 else None
     neighbours: list[Schedule] = []
     for operator in ordered_ops:
         stats = operator_stats.setdefault(
@@ -382,6 +385,8 @@ def _neighbors(
         if candidate is not None:
             neighbours.append(candidate)
             stats["accepted"] += 1.0
+            if limit is not None and len(neighbours) >= limit:
+                break
         else:
             stats.setdefault("skipped", 0.0)
             stats["skipped"] += 1.0
@@ -394,6 +399,7 @@ def solve_sa(
     seed: int = 42,
     operators: list[str] | None = None,
     operator_weights: dict[str, float] | None = None,
+    batch_size: int | None = None,
 ) -> dict[str, Any]:
     """Run simulated annealing returning objective and assignments DataFrame."""
     rng = _random.Random(seed)
@@ -430,7 +436,15 @@ def solve_sa(
     operator_stats: dict[str, dict[str, float]] = {}
     for step in range(1, iters + 1):
         accepted = False
-        for neighbor in _neighbors(pb, current, registry, rng, operator_stats):
+        candidates = _neighbors(
+            pb,
+            current,
+            registry,
+            rng,
+            operator_stats,
+            batch_size=batch_size,
+        )
+        for neighbor in candidates:
             proposals += 1
             neighbor_score = _evaluate(pb, neighbor)
             delta = neighbor_score - current_score
