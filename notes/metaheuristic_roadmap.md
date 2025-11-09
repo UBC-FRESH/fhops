@@ -146,6 +146,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [ ] Add unit/integration tests verifying identical results when `workers=1` (parity with single-thread path).
 - [ ] Benchmark minitoy/med42/large84 with parallel options (record speedups/objective differences).
 - [ ] Document findings in roadmap/changelog and decide on default stance after evaluation.
+
 ##### Plan – Advanced neighbourhoods: Design & interfaces
 - [x] Catalogue candidate operators with design goals:
   * [x] **BlockInsertionOperator** — relocate an unlocked block to an alternate feasible shift (same machine or compatible peer) to reduce congestion, unlock blackout conflicts, or align with mobilisation cooldowns.
