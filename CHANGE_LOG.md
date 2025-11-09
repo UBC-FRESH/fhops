@@ -87,3 +87,4 @@
 - Extended `fhops solve-heur` CLI with `--parallel-multistart`, `--parallel-workers`, and `--batch-neighbours` flags, including guardrails, telemetry fields, and updated CLI docs for parallel workflows.
 - Documented parallel workflows in Sphinx (multistart/batched how-to, CLI references, telemetry notes) and benchmarked the parallel heuristics across minitoy/med42/large84 to guide defaults.
 - Added an experimental Tabu Search solver (`solve_tabu`), shared CLI options/telemetry, and initial unit coverage.
+- Integrated Tabu Search into the benchmarking harness (`fhops bench suite --include-tabu`) and recorded comparative results showing SA remains the default recommendation.
