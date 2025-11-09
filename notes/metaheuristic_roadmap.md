@@ -11,7 +11,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 ## Planned Tasks
 - [x] Document current SA parameter defaults and tuning rationale. *(Probability: initial temperature `max(1.0, best_score/10)`, decay `0.995`, restarts every 100 steps, neighbourhoods: day swap + intra-machine move; exposed via `--iters`, `--seed` in CLI.)*
 - [x] Capture SA metrics via benchmarking harness (objective gap vs MIP, runtime, acceptance ratio).
-- [ ] Add parallel execution pathways (multi-start seeds/presets and batched neighbour evaluation) to leverage multi-core environments.
+- [ ] Add parallel execution pathways (multi-start seeds/presets and batched neighbour evaluation) to leverage multi-core environments while keeping the single-thread solver as the default path. *(Parallelism should be opt-in/feature-flagged so we can disable it quickly if instability appears.)*
 - [x] Implement operator registry to plug in new neighbourhood moves (swap, insert, block reassignment) with shift-aware variants and expose tuning via CLI. *(Registry + advanced operators shipped; CLI/presets documented, regression/benchmarks updated.)*
 - [ ] Prototype Tabu Search with aspiration criteria and compare against SA baselines.
 - [ ] Investigate hybrid approaches (MIP warm start + heuristic refinement).
