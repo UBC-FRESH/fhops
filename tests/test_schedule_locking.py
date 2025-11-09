@@ -34,6 +34,13 @@ def _shift_tuple(pb: Problem, day: int, shift_id: str | None = None) -> tuple[in
     raise KeyError(f"Shift {shift_id!r} not found for day={day}")
 
 
+def _plan_from_days(pb: Problem, mapping: dict[str, dict[int, str | None]]) -> dict:
+    return {
+        machine: {_shift_tuple(pb, day): block for day, block in day_map.items()}
+        for machine, day_map in mapping.items()
+    }
+
+
 def _base_scenario() -> Scenario:
     return Scenario(
         name="locking",
@@ -173,10 +180,13 @@ def test_transition_weight_penalises_moves_sa():
         }
     )
     pb = Problem.from_scenario(scenario)
-    plan = {
-        "M1": {1: "B1", 2: "B2"},
-        "M2": {1: None, 2: None},
-    }
+    plan = _plan_from_days(
+        pb,
+        {
+            "M1": {1: "B1", 2: "B2"},
+            "M2": {1: None, 2: None},
+        },
+    )
     score = _evaluate(pb, Schedule(plan=plan))
     assert score == pytest.approx(4.0 - 2.0 * 1.0)
 
@@ -228,10 +238,13 @@ def test_landing_slack_penalty_sa():
         }
     )
     pb = Problem.from_scenario(scenario)
-    plan = {
-        "M1": {1: "B1", 2: None},
-        "M2": {1: "B2", 2: None},
-    }
+    plan = _plan_from_days(
+        pb,
+        {
+            "M1": {1: "B1", 2: None},
+            "M2": {1: "B2", 2: None},
+        },
+    )
     score = _evaluate(pb, Schedule(plan=plan))
     # Two machines on one landing (capacity 1) -> slack 1 penalised
     assert score == pytest.approx(4.0 - 3.0 * 1.0)

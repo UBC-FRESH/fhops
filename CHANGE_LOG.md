@@ -50,3 +50,4 @@
 - Finalised the Phase 2 shift-based scheduling plan: roadmap and modular reorg notes now outline the shift-aware data contract, solver refactors, KPI/CLI updates, and migration guidance.
 - Added shift calendar support to the scenario contract/loader (including regression coverage) so scenarios can specify per-shift machine availability ahead of full shift-aware scheduling.
 - Reindexed the Pyomo MIP builder, mobilisation/landing constraints, and sequencing helper to operate on shift tuples, updated the HiGHS driver/benchmark harness to emit shift-aware assignments, refreshed regression/locking/mobilisation/system-role tests, and captured the milestone in `notes/mip_model_plan.md`.
+- Shift-enabled the simulated annealing schedule representation, evaluation, and neighbour plumbing to operate on `(day, shift_id)` indices, updated SA output DataFrames accordingly, and refreshed the metaheuristic roadmap plus regression/unit tests with shift-aware helpers.

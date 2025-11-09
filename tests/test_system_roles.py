@@ -27,6 +27,13 @@ def _shift_key(pb: Problem, day: int, shift_id: str | None = None) -> tuple[int,
     raise KeyError(f"Shift {shift_id!r} not found for day={day}")
 
 
+def _plan_from_days(pb: Problem, mapping: dict[str, dict[int, str | None]]) -> dict:
+    return {
+        machine: {_shift_key(pb, day): block for day, block in day_map.items()}
+        for machine, day_map in mapping.items()
+    }
+
+
 def test_role_constraints_restrict_assignments():
     system = HarvestSystem(
         system_id="forward_only",
@@ -212,16 +219,22 @@ def test_sa_evaluator_penalises_out_of_order_assignments():
     pb = Problem.from_scenario(scenario)
 
     bad_plan = Schedule(
-        plan={
-            "F1": {1: None, 2: "B1"},
-            "P1": {1: "B1", 2: None},
-        }
+        plan=_plan_from_days(
+            pb,
+            {
+                "F1": {1: None, 2: "B1"},
+                "P1": {1: "B1", 2: None},
+            },
+        )
     )
     good_plan = Schedule(
-        plan={
-            "F1": {1: "B1", 2: None},
-            "P1": {1: None, 2: "B1"},
-        }
+        plan=_plan_from_days(
+            pb,
+            {
+                "F1": {1: "B1", 2: None},
+                "P1": {1: None, 2: "B1"},
+            },
+        )
     )
     bad_score = _evaluate(pb, bad_plan)
     good_score = _evaluate(pb, good_plan)
@@ -418,18 +431,24 @@ def test_sa_evaluator_requires_all_prereqs_before_helicopter():
     pb = Problem.from_scenario(scenario)
 
     incomplete_prereq_plan = Schedule(
-        plan={
-            "F1": {1: "B1", 2: None},
-            "H1": {1: None, 2: None},
-            "C1": {1: None, 2: "B1"},
-        }
+        plan=_plan_from_days(
+            pb,
+            {
+                "F1": {1: "B1", 2: None},
+                "H1": {1: None, 2: None},
+                "C1": {1: None, 2: "B1"},
+            },
+        )
     )
     complete_prereq_plan = Schedule(
-        plan={
-            "F1": {1: "B1", 2: None},
-            "H1": {1: "B1", 2: None},
-            "C1": {1: None, 2: "B1"},
-        }
+        plan=_plan_from_days(
+            pb,
+            {
+                "F1": {1: "B1", 2: None},
+                "H1": {1: "B1", 2: None},
+                "C1": {1: None, 2: "B1"},
+            },
+        )
     )
     bad_score = _evaluate(pb, incomplete_prereq_plan)
     good_score = _evaluate(pb, complete_prereq_plan)
