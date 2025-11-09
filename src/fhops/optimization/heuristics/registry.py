@@ -59,6 +59,14 @@ class OperatorRegistry:
         except KeyError as exc:  # pragma: no cover - defensive; tests cover the positive path
             raise KeyError(f"Operator '{name}' is not registered") from exc
 
+    def names(self) -> list[str]:
+        """Return all registered operator names."""
+        return list(self._operators.keys())
+
+    def weights(self) -> dict[str, float]:
+        """Return the current weight mapping."""
+        return {name: self._weights.get(name, op.weight) for name, op in self._operators.items()}
+
     def enabled(self) -> Iterable[Operator]:
         """Yield operators flagged with weight > 0."""
         for name, operator in self._operators.items():

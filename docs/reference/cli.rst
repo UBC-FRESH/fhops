@@ -26,5 +26,11 @@ Both ``solve-mip`` and ``solve-heur`` export schedules with the columns ``machin
 ``day``, and ``shift_id``. The shift identifier matches the scenario's shift calendar (or defaults to
 ``S1`` when only day-level data is provided) so downstream tooling can analyse sub-daily assignments.
 
+Additional simulated annealing controls:
+
+- ``fhops solve-heur ... --operator swap --operator move`` — restrict the operator set (defaults to all registered operators).
+- ``fhops solve-heur ... --operator-weight swap=2 --operator-weight move=0.5`` — adjust operator weights; zero disables an operator.
+- ``fhops bench suite ... --operator swap --operator-weight swap=2`` — pass the same options when running aggregate benchmarks; the summary now records the operator configuration in ``operators_config``.
+
 The evaluation output should include `mobilisation_cost=6.0` and `sequencing_violation_count=0`
 if the regression baseline is satisfied.
