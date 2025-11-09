@@ -70,8 +70,7 @@ src/fhops/
   - KPI/benchmark updates outputting both shift-level and aggregated metrics.
   - Documentation & migration guidance for existing scenarios.
 - **Work Breakdown**
-  1. **Contract & IO:** add shift tables/fields, loader validation, default single-shift migration path.
-  2. **Core Model:** adjust `Problem` and helper APIs to reason in shifts, propagate mobilisation/sequencing/timeline constraints.
-  3. **Optimisation:** re-index Pyomo variables/constraints, revisit mobilisation and sequencing logic for intra-day moves, ensure heuristics operate on shifts (including new operators).
-  4. **Evaluation:** modify KPIs and playback to accept shift-level assignments; expose shift filters in CLI/benchmarks.
-  5. **Regression & Docs:** update sample scenarios (minitoy/med42/large84) with synthetic shifts, refresh fixtures, and document migration steps in data contract & CLI guides.
+  1. **MIP Reindexing:** replace day-based sets with shift sets (`Problem.shifts`), update decision variables/constraints, and ensure mobilisation/sequencing logic consumes shift slots.
+  2. **Heuristics:** update greedy initialisation/neighbourhoods/metrics to iterate over shifts; introduce operator registry hooks.
+  3. **Evaluation & CLI:** adapt KPIs/playback/benchmarks to shift inputs and document CLI usage.
+  4. **Sample Data & Regression:** refresh example scenarios with shift calendars and adjust fixtures/regressions.
