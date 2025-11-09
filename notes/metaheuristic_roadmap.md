@@ -46,6 +46,49 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] **Benchmark reporting enhancements:** extend `fhops bench suite` outputs with per-operator usage metrics, solver comparisons (SA/Tabu/Hybrid), and provide summary plots/tables for Sphinx docs.
 - [ ] **Documentation updates:** draft a Sphinx how-to covering heuristic configuration presets, registry usage, and interpreting the new benchmarking metrics.
 
+##### Plan – Documentation Updates (Heuristics & Benchmarks)
+- [ ] Draft a comprehensive how-to for heuristic configuration.
+  * Outline preset usage (`--operator-preset`, merging rules) and provide practical examples.
+  * Explain how to combine presets with explicit `--operator` / `--operator-weight` overrides.
+  * Highlight registry-driven operators, noting advanced neighbourhoods and opt-in features (parallel multistart, batched evaluation, ILS/Tabu).
+- [ ] Add benchmark interpretation guidance.
+  * Describe the meaning of comparison columns (solver category, objective gaps, runtime ratios) with textual examples.
+  * Reference the generated plots in `docs/_static/benchmarks/` and explain how to produce fresh charts.
+  * Link telemetry logging and comparison metrics to the hyperparameter tuning roadmap.
+- [ ] Document CLI touchpoints and cross-links.
+  * Update CLI reference (`docs/reference/cli.rst`) with a dedicated section on heuristics presets and comparison flags (`--include-ils`, `--include-tabu`, plotting helper).
+  * Ensure top-level roadmap/docs reference the new how-to and plotting utilities.
+- [ ] Add regression scaffolding for docs content.
+  * Extend doc build/checklist notes to regenerate plots when benchmarks change.
+  * note TODO for future automation (maybe script to refresh benchmarking figures).
+
+###### Subtasks – Heuristic How-to Draft
+- [ ] Create `docs/howto/heuristic_presets.rst` (or similar) with structure:
+  * Introduction mapping presets to use-cases.
+  * CLI examples combining presets, weights, and parallel knobs.
+  * Registry/operator overview (swap/move/block insertion/cross exchange/mobilisation shake) with brief behaviour summaries.
+  * Optional section on ILS/Tabu integration, referencing their respective how-tos.
+- [ ] Include cross-references to existing docs (CLI reference, telemetry, parallel execution how-to).
+- [ ] Add a “next steps” link pointing readers to benchmarking guidance and tuning notes.
+
+###### Subtasks – Benchmark Interpretation Section
+- [ ] Update `docs/howto/benchmarks.rst` to add a walkthrough of comparison metrics.
+  * Provide table snippet highlighting key columns.
+  * Explain the plots and how to interpret negative/positive gaps.
+  * Mention multi-solver CLI invocation to generate the richer summary.
+- [ ] Ensure the plots appear in the Sphinx build (responsive layout, alt-text) and note the script usage.
+
+###### Subtasks – CLI Reference Refresh
+- [ ] Expand `docs/reference/cli.rst` heuristics section with:
+  * Preset overview and merging behaviour.
+  * Flags for enabling advanced operators, multi-start, batching, ILS/Tabu.
+  * Pointer to the new how-to and plotting script.
+- [ ] Verify cross-links (toctree, references) resolve correctly after the new pages are added.
+
+###### Subtasks – Maintenance Notes / Automation Hooks
+- [ ] Document in `notes/metaheuristic_hyperparam_tuning.md` or README how to regenerate plots when telemetry changes.
+- [ ] Add a lightweight checklist entry (maybe in `docs/howto/benchmarks.rst` “Maintaining this page”) reminding contributors to rerun `scripts/render_benchmark_plots.py` after major benchmark updates.
+
 ##### Plan – ILS / Hybrid Solver
 - [x] Algorithm design: outline ILS move phases, perturbation strategy, and hybridisation with MIP warm starts.
 - [x] Implementation: create `solve_ils` (or `solve_hybrid`) module, integrating with operator registry and optional MIP kickoffs.
