@@ -43,3 +43,22 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [ ] **ILS / Hybrid solver:** design an Iterated Local Search or MIP warm-start hybrid using the registry operators. Document configuration defaults and add harness support for hybrid runs.
 - [ ] **Benchmark reporting enhancements:** extend `fhops bench suite` outputs with per-operator usage metrics, solver comparisons (SA/Tabu/Hybrid), and provide summary plots/tables for Sphinx docs.
 - [ ] **Documentation updates:** draft a Sphinx how-to covering heuristic configuration presets, registry usage, and interpreting the new benchmarking metrics.
+
+### Detailed Current Next Step Notes — Operator Registry Scaffold
+1. **Registry data model**  
+   - Introduce an `Operator` protocol (name, apply function, metadata hooks) and a `OperatorRegistry` class living under `fhops.optimization.heuristics.registry`.  
+   - Default registry should register existing `swap` and `move` implementations with optional weight/enable flags.
+2. **SA integration**  
+   - Refactor `_neighbors` to consume the registry API (pull weighted operator, generate candidate, run sanitiser).  
+   - Ensure lock/availability checks remain in the shared sanitizer so all operators inherit the safeguards.
+3. **CLI + config surface**  
+   - Extend `solve_sa` signature and CLI (`solve-heur`, `bench suite`) to accept `--operator=swap --operator=move --operator-weight swap=2` style options; fall back to defaults when unspecified.  
+   - Persist operator settings into the returned `meta` telemetry for benchmarking comparisons.
+4. **Telemetry instrumentation**  
+   - Track per-operator proposal/accept counts inside the SA loop; emit JSON serialisable stats (`meta["operators"] = {...}`) and append to benchmark summary CSV/JSON.
+5. **Testing**  
+   - Add unit tests covering registry registration, toggle/weight effects, and CLI parsing (convert CLI args → registry config).  
+   - Update regression harness to assert operator telemetry fields exist and are stable for baseline seeds.
+6. **Docs & notes sync**  
+   - Document registry usage in `docs/reference/cli.rst` (new CLI flags) and seed a how-to stub for advanced tuning.  
+   - Update this roadmap and the Phase 2 checklist once registry lands.

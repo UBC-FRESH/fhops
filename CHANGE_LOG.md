@@ -58,3 +58,4 @@
 - Regression suite now asserts that SA assignment exports carry `shift_id` values and updates the metaheuristic roadmap to reflect the completed test alignment work.
 - Marked the Phase 2 shift-based scheduling architecture milestone complete after upgrading data contract, MIP/SA solvers, benchmarks, and KPI reporting to operate on `(day, shift_id)` indices.
 - Planned the next wave of metaheuristic expansion (operator registry, advanced neighbourhoods, Tabu/ILS prototypes, benchmarking/reporting upgrades) and captured the milestones in `notes/metaheuristic_roadmap.md`.
+- Broke down the operator registry scaffold task into actionable sub-steps (registry design, SA integration, CLI surface, telemetry, testing, docs) recorded in `notes/metaheuristic_roadmap.md` for execution tracking.
