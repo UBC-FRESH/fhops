@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from fhops.optimization.heuristics import run_multi_start
+from fhops.optimization.heuristics import build_exploration_plan, run_multi_start
 from fhops.scenario.contract import (
     Block,
     CalendarEntry,
@@ -81,3 +81,23 @@ def test_run_multi_start_raises_when_all_fail():
     presets = [["does-not-exist"]]
     with pytest.raises(RuntimeError):
         run_multi_start(pb, seeds, presets=presets, max_workers=1, sa_kwargs={"iters": 50})
+
+
+def test_build_exploration_plan_defaults():
+    seeds, presets = build_exploration_plan(6, base_seed=10)
+    assert seeds == [10, 1010, 2010, 3010, 4010, 5010]
+    expected = [
+        None,
+        ["explore"],
+        ["mobilisation"],
+        ["stabilise"],
+        None,
+        ["explore"],
+    ]
+    assert presets == expected
+
+
+def test_build_exploration_plan_custom_presets():
+    seeds, presets = build_exploration_plan(3, base_seed=5, presets=["swap-only", "move-only"])
+    assert seeds == [5, 1005, 2005]
+    assert presets == [["swap-only"], ["move-only"], ["swap-only"]]
