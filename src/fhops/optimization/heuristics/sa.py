@@ -90,6 +90,12 @@ def _init_greedy(pb: Problem) -> Schedule:
     allowed_roles, prereq_roles, machine_roles, _ = _role_metadata(sc)
     blackout = _blackout_map(sc)
     locked = _locked_map(sc)
+    shift_availability = (
+        {(c.machine_id, c.day, c.shift_id): int(c.available) for c in sc.shift_calendar}
+        if sc.shift_calendar
+        else {}
+    )
+    availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
 
     shifts = [(shift.day, shift.shift_id) for shift in pb.shifts]
     plan: dict[str, dict[tuple[int, str], str | None]] = {
@@ -147,6 +153,12 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
     allowed_roles, prereq_roles, machine_roles, _ = _role_metadata(sc)
     blackout = _blackout_map(sc)
     locked = _locked_map(sc)
+    shift_availability = (
+        {(c.machine_id, c.day, c.shift_id): int(c.available) for c in sc.shift_calendar}
+        if sc.shift_calendar
+        else {}
+    )
+    availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
 
     weights = getattr(sc, "objective_weights", None)
     prod_weight = weights.production if weights else 1.0
@@ -173,6 +185,12 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
             if block_id is None:
                 if (machine.id, day) in locked:
                     penalty += 1000.0
+                continue
+            shift_available = shift_availability.get((machine.id, day, shift_id), 1)
+            day_available = availability.get((machine.id, day), 1)
+            if shift_available == 0 or day_available == 0:
+                penalty += 1000.0
+                previous_block[machine.id] = None
                 continue
             if (machine.id, day, shift_id) in blackout:
                 penalty += 1000.0
