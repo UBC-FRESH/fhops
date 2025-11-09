@@ -5,6 +5,14 @@ from __future__ import annotations
 from typing import Sequence
 
 
+OPERATOR_PRESETS: dict[str, dict[str, float]] = {
+    "balanced": {"swap": 1.0, "move": 1.0},
+    "swap-only": {"swap": 1.0, "move": 0.0},
+    "move-only": {"swap": 0.0, "move": 1.0},
+    "swap-heavy": {"swap": 2.0, "move": 0.5},
+}
+
+
 def parse_operator_weights(weight_args: Sequence[str] | None) -> dict[str, float]:
     """Parse name=value weight strings into a dictionary."""
     weights: dict[str, float] = {}
@@ -27,4 +35,28 @@ def parse_operator_weights(weight_args: Sequence[str] | None) -> dict[str, float
     return weights
 
 
-__all__ = ["parse_operator_weights"]
+def parse_operator_preset(preset: str | None):
+    """Return (operators, weights) for a preset."""
+    if not preset:
+        return None, {}
+    key = preset.lower()
+    config = OPERATOR_PRESETS.get(key)
+    if config is None:
+        raise ValueError(
+            f"Unknown operator preset '{preset}'. Available: {', '.join(sorted(OPERATOR_PRESETS))}"
+        )
+    weights = {name.lower(): float(weight) for name, weight in config.items()}
+    operators = [name for name, weight in weights.items() if weight > 0]
+    return operators or None, weights
+
+
+def operator_preset_help() -> str:
+    return ", ".join(sorted(OPERATOR_PRESETS))
+
+
+__all__ = [
+    "parse_operator_weights",
+    "parse_operator_preset",
+    "operator_preset_help",
+    "OPERATOR_PRESETS",
+]

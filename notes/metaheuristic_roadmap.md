@@ -80,6 +80,6 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 #### Subtasks for (3) CLI + config surface
 - [x] **Solve CLI flags:** extend `fhops.cli.main.solve_heur` with `--operator` and `--operator-weight` options (multi-use) to enable/disable operators and tune weights; update SA entry point to parse the configuration into registry settings.
 - [x] **Benchmark harness wiring:** propagate operator configuration options through `fhops.cli.benchmarks.run_benchmark_suite` and CLI command; ensure summary outputs include the operator settings used.
-- [ ] **Default presets:** introduce sensible presets (e.g., `--preset greedy`, `--preset diversify`) or shortcuts for common configurations, and document default weight values.
+- [x] **Default presets:** introduce sensible presets (e.g., `--preset greedy`, `--preset diversify`) or shortcuts for common configurations, and document default weight values.
 - [x] **Validation & error messages:** add user-friendly errors for unknown operators or malformed weight arguments; include unit tests covering argument parsing.
 - [x] **Documentation & notes:** update `docs/reference/cli.rst` (solve/bench sections) with examples, and note the new surface area in this roadmap plus any relevant notes files.

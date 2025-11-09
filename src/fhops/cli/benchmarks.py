@@ -14,7 +14,7 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
-from fhops.cli._utils import parse_operator_weights
+from fhops.cli._utils import parse_operator_preset, parse_operator_weights, operator_preset_help
 from fhops.evaluation import compute_kpis
 from fhops.optimization.heuristics import solve_sa
 from fhops.optimization.mip import build_model, solve_mip
@@ -88,6 +88,7 @@ def run_benchmark_suite(
     debug: bool = False,
     operators: Sequence[str] | None = None,
     operator_weights: Mapping[str, float] | None = None,
+    operator_preset: str | None = None,
 ) -> pd.DataFrame:
     """Execute the benchmark suite and return the summary DataFrame."""
     scenarios = _resolve_scenarios(scenario_paths)
@@ -130,14 +131,23 @@ def run_benchmark_suite(
                 )
             )
 
+        preset_ops, preset_weights = parse_operator_preset(operator_preset)
+        override_weights = operator_weights or {}
+        combined_ops = (
+            list(dict.fromkeys((preset_ops or []) + (list(operators) if operators else []))) or None
+        )
+        combined_weights: dict[str, float] = {}
+        combined_weights.update(preset_weights)
+        combined_weights.update(override_weights)
+
         if include_sa:
             start = time.perf_counter()
             sa_res = solve_sa(
                 pb,
                 iters=sa_iters,
                 seed=sa_seed,
-                operators=list(operators) if operators else None,
-                operator_weights=dict(operator_weights) if operator_weights else None,
+                operators=combined_ops,
+                operator_weights=combined_weights if combined_weights else None,
             )
             sa_runtime = time.perf_counter() - start
             sa_assign = cast(pd.DataFrame, sa_res["assignments"]).copy()
@@ -163,7 +173,7 @@ def run_benchmark_suite(
                     kpis=sa_kpis,
                     runtime_s=sa_runtime,
                     extra=extra,
-                    operator_config=operators_meta,
+                    operator_config=operators_meta or combined_weights,
                 )
             )
 
@@ -249,13 +259,22 @@ def bench_suite(
         "-w",
         help="Set SA operator weight as name=value (repeatable).",
     ),
+    operator_preset: Optional[str] = typer.Option(
+        None,
+        "--operator-preset",
+        "-P",
+        help=f"Apply SA operator preset ({operator_preset_help()}).",
+    ),
 ):
     """Run the full benchmark suite and emit summary CSV/JSON outputs."""
     weight_config: dict[str, float]
     try:
+        _, preset_weights = parse_operator_preset(operator_preset)
         weight_config = parse_operator_weights(operator_weight)
     except ValueError as exc:  # pragma: no cover - CLI validation
         raise typer.BadParameter(str(exc)) from exc
+    combined_weights = dict(preset_weights)
+    combined_weights.update(weight_config)
     run_benchmark_suite(
         scenario_paths=scenario,
         out_dir=out_dir,
@@ -267,5 +286,6 @@ def bench_suite(
         include_sa=include_sa,
         debug=debug,
         operators=operator,
-        operator_weights=weight_config if weight_config else None,
+        operator_weights=combined_weights if combined_weights else None,
+        operator_preset=operator_preset,
     )
