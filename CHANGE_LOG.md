@@ -1,5 +1,12 @@
 # Development Change Log
 
+## 2025-11-12 — Iterated Local Search rollout
+- Implemented the `fhops.optimization.heuristics.solve_ils` Iterated Local Search solver with perturbation telemetry, hybrid MIP restarts, and operator stats parity with SA.
+- Added a dedicated `fhops solve-ils` CLI command mirroring SA batching flags, plus `fhops bench suite --include-ils` options for harness comparisons.
+- Expanded Sphinx docs: new how-to (`docs/howto/ils.rst`), CLI reference updates, telemetry schema notes, and parallel workflow cross-links covering ILS usage.
+- Introduced unit coverage for ILS (basic run, operator filtering, hybrid MIP hook) to keep heuristics regressions green.
+- Updated the roadmap/notes plan to reflect ongoing ILS/Hybrid milestone work (see `notes/metaheuristic_roadmap.md`).
+
 ## 2025-11-07 — Planning Framework Bootstrap
 - Established structured roadmap (`FHOPS_ROADMAP.md`) with phase tracking and detailed next steps.
 - Authored coding agent runbook (`CODING_AGENT.md`) aligning workflow commands with Nemora practices.

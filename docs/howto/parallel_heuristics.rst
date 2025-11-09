@@ -23,6 +23,7 @@ API Reference
 -------------
 
 - :func:`fhops.optimization.heuristics.solve_sa` – now accepts ``batch_size`` and ``max_workers`` parameters.
+- :func:`fhops.optimization.heuristics.solve_ils` – mirrors the batching parameters while layering perturbation and optional hybrid MIP restarts.
 - :func:`fhops.optimization.heuristics.run_multi_start`` – orchestrates multiple solver runs, emitting telemetry and returning the best solution.
 - :func:`fhops.optimization.heuristics.build_exploration_plan`` – helper for deterministic seeds/presets when constructing multi-start workloads.
 
@@ -30,4 +31,3 @@ Profiling Notes
 ---------------
 
 Benchmarks (``tmp/sa_batch_profile.csv`` and ``tmp/sa_batch_profile_long.csv``) show that threaded evaluation adds ~5–6× overhead on minitoy/med42/large84, so keep parallel options opt-in until future workloads justify them.
-

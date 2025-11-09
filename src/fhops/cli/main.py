@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
 import pandas as pd
 import typer
@@ -20,6 +20,7 @@ from fhops.cli.geospatial import geospatial_app
 from fhops.evaluation import compute_kpis
 from fhops.optimization.heuristics import (
     build_exploration_plan,
+    solve_ils,
     run_multi_start,
     solve_sa,
     solve_tabu,
@@ -291,6 +292,142 @@ def solve_heur_cmd(
             "operators_stats": stats,
             "batch_size": batch_neighbours,
             "max_workers": parallel_workers,
+        }
+        append_jsonl(telemetry_log, record)
+
+
+@app.command("solve-ils")
+def solve_ils_cmd(
+    scenario: Path,
+    out: Path = typer.Option(..., "--out", help="Output CSV path"),
+    iters: int = 250,
+    seed: int = 42,
+    perturbation_strength: int = typer.Option(3, "--perturbation-strength", help="Number of perturbation steps applied after each local search cycle."),
+    stall_limit: int = typer.Option(10, "--stall-limit", help="Number of non-improving iterations before triggering perturbation/restart."),
+    hybrid_use_mip: bool = typer.Option(False, "--hybrid-use-mip", help="Attempt a time-boxed MIP solve when stalls exceed the limit."),
+    hybrid_mip_time_limit: int = typer.Option(60, "--hybrid-mip-time-limit", help="Seconds to spend on the hybrid MIP warm start when enabled."),
+    operator: list[str] | None = typer.Option(
+        None,
+        "--operator",
+        "-o",
+        help="Enable specific operators (repeatable). Defaults to all registered operators.",
+    ),
+    operator_weight: list[str] | None = typer.Option(
+        None,
+        "--operator-weight",
+        "-w",
+        help="Set operator weight via name=value (repeatable).",
+    ),
+    operator_preset: list[str] | None = typer.Option(
+        None,
+        "--operator-preset",
+        "-P",
+        help=f"Apply operator preset ({operator_preset_help()}). Repeatable.",
+    ),
+    list_operator_presets: bool = typer.Option(
+        False, "--list-operator-presets", help="Show available operator presets and exit."
+    ),
+    batch_neighbours: int = typer.Option(
+        1,
+        "--batch-neighbours",
+        help="Neighbour candidates sampled per local search step (1 keeps sequential scoring).",
+        min=1,
+    ),
+    parallel_workers: int = typer.Option(
+        1,
+        "--parallel-workers",
+        help="Worker threads for batched neighbour evaluation (1 keeps sequential scoring).",
+        min=1,
+    ),
+    telemetry_log: Path | None = typer.Option(
+        None,
+        "--telemetry-log",
+        help="Append run telemetry to JSONL.",
+        writable=True,
+        dir_okay=False,
+    ),
+    show_operator_stats: bool = typer.Option(
+        False, "--show-operator-stats", help="Print per-operator stats after solving."
+    ),
+):
+    """Solve with the Iterated Local Search heuristic."""
+    if list_operator_presets:
+        console.print("Operator presets:")
+        console.print(format_operator_presets())
+        raise typer.Exit()
+
+    sc = load_scenario(str(scenario))
+    pb = Problem.from_scenario(sc)
+    try:
+        preset_ops, preset_weights = resolve_operator_presets(operator_preset)
+        weight_config = parse_operator_weights(operator_weight)
+    except ValueError as exc:  # pragma: no cover - CLI validation
+        raise typer.BadParameter(str(exc)) from exc
+
+    explicit_ops = [op.lower() for op in operator] if operator else []
+    combined_ops = list(dict.fromkeys((preset_ops or []) + explicit_ops)) or None
+    combined_weights: dict[str, float] = {}
+    combined_weights.update(preset_weights)
+    combined_weights.update(weight_config)
+
+    batch_arg = batch_neighbours if batch_neighbours > 1 else None
+    worker_arg = parallel_workers if parallel_workers > 1 else None
+
+    res = solve_ils(
+        pb,
+        iters=iters,
+        seed=seed,
+        operators=combined_ops,
+        operator_weights=combined_weights if combined_weights else None,
+        batch_size=batch_arg,
+        max_workers=worker_arg,
+        perturbation_strength=perturbation_strength,
+        stall_limit=stall_limit,
+        hybrid_use_mip=hybrid_use_mip,
+        hybrid_mip_time_limit=hybrid_mip_time_limit,
+    )
+    assignments = cast(pd.DataFrame, res["assignments"])
+    objective = cast(float, res.get("objective", 0.0))
+
+    out.parent.mkdir(parents=True, exist_ok=True)
+    assignments.to_csv(str(out), index=False)
+    console.print(f"Objective (ils): {objective:.3f}. Saved to {out}")
+    metrics = compute_kpis(pb, assignments)
+    for key, value in metrics.items():
+        console.print(f"{key}: {value:.3f}" if isinstance(value, float) else f"{key}: {value}")
+    meta = cast(dict[str, Any], res.get("meta", {}))
+    operators_meta = cast(dict[str, float], meta.get("operators", {}))
+    if operators_meta:
+        console.print(f"Operators: {operators_meta}")
+    if show_operator_stats:
+        stats = cast(dict[str, dict[str, float]], meta.get("operators_stats", {}))
+        if stats:
+            console.print("Operator stats:")
+            for name, payload in stats.items():
+                console.print(
+                    f"  {name}: proposals={payload.get('proposals', 0)}, "
+                    f"accepted={payload.get('accepted', 0)}, "
+                    f"accept_rate={payload.get('acceptance_rate', 0):.3f}, "
+                    f"weight={payload.get('weight', 0)}"
+                )
+    if telemetry_log:
+        record = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "source": "solve-ils",
+            "scenario": sc.name,
+            "scenario_path": str(scenario),
+            "seed": seed,
+            "iterations": iters,
+            "objective": objective,
+            "kpis": metrics,
+            "operators_config": operators_meta or combined_weights,
+            "operators_stats": meta.get("operators_stats"),
+            "batch_size": batch_neighbours,
+            "max_workers": parallel_workers,
+            "perturbation_strength": perturbation_strength,
+            "stall_limit": stall_limit,
+            "hybrid_use_mip": hybrid_use_mip,
+            "hybrid_mip_time_limit": hybrid_mip_time_limit,
         }
         append_jsonl(telemetry_log, record)
 
