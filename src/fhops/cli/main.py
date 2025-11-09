@@ -8,6 +8,7 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
+from fhops.cli.benchmarks import benchmark_app
 from fhops.cli.geospatial import geospatial_app
 from fhops.evaluation import compute_kpis
 from fhops.optimization.heuristics import solve_sa
@@ -17,6 +18,7 @@ from fhops.scenario.io import load_scenario
 
 app = typer.Typer(add_completion=False, no_args_is_help=True)
 app.add_typer(geospatial_app, name="geo")
+app.add_typer(benchmark_app, name="bench")
 console = Console()
 
 
