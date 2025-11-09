@@ -253,3 +253,30 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] Add unit tests verifying each operator respects availability, windows, locks, and mobilisation rules. *(Implemented in `tests/heuristics/test_operators.py` covering window constraints, machine capability filters, schedule locks, and mobilisation spacing.)*
 - [x] Update regression fixtures (e.g., mobilisation-heavy scenario) to ensure new operators improve or at least maintain objective. *(Regression integration test exercises explore/mobilisation/stabilise presets and asserts objectives remain at or above the baseline value.)*
 - [x] Seed RNG deterministically so regression benchmarks remain reproducible. *(SA now instantiates a local RNG per solve, leaving global state untouched for other tests.)*
+- [ ] **Tabu Search prototype:** implement a Tabu neighbourhood on top of the registry (tabu tenure, aspiration criteria) and compare results against SA in the benchmarking harness. Decide whether to expose as `fhops solve-tabu`.
+
+##### Plan – Tabu Search Prototype
+- [ ] Algorithm design: define neighbourhood moves, tabu tenure strategy, aspiration criteria, and scoring alignment with SA.
+- [ ] Implementation: build `fhops.optimization.heuristics.tabu` module (builder, solver entrypoint, CLI integration).
+- [ ] Testing & benchmarks: unit tests for tabu mechanics, regression comparison against SA, benchmarking on sample scenarios.
+- [ ] Documentation: CLI documentation, roadmap updates, and how-to section for configuring Tabu Search.
+
+###### Subtasks – Tabu Algorithm Design
+- [ ] Select base neighbourhoods (reuse swap/move/block insertion) and define Tabu structures (e.g., move-based tabu list).
+- [ ] Specify tabu tenure (fixed vs adaptive), aspiration criteria, and tie-breaking when aspiration triggers.
+- [ ] Align objective scoring with shift-aware mobilisation objective and determine stopping conditions (iterations, non-improving stalls).
+
+###### Subtasks – Tabu Implementation
+- [ ] Create `tabu.py` with solver function (`solve_tabu`) leveraging registry operators and tabu structures.
+- [ ] Add CLI entry (`fhops solve-tabu`) with options for tenure, aspiration, iterations, and telemetry logging.
+- [ ] Ensure integration with benchmarking harness (`fhops bench suite`) to compare against SA.
+
+###### Subtasks – Testing & Benchmarks (Tabu)
+- [ ] Unit tests covering tabu list behaviour, aspiration, and feasibility checks.
+- [ ] Regression tests ensuring baseline objective matches expectations on minitoy scenario.
+- [ ] Benchmark runs (minitoy/med42/large84) comparing SA vs Tabu; capture telemetry for roadmap notes.
+
+###### Subtasks – Documentation (Tabu)
+- [ ] Update CLI reference and telemetry docs with Tabu-specific fields/options.
+- [ ] Add a how-to page describing Tabu configuration, example runs, and when to prefer it over SA.
+- [ ] Note findings in roadmap/changelog once evaluation complete.
