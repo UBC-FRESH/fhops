@@ -62,6 +62,7 @@ def _record_metrics(
     runtime_s: float,
     extra: dict[str, object] | None = None,
     operator_config: Mapping[str, float] | None = None,
+    operator_stats: Mapping[str, Mapping[str, float]] | None = None,
 ) -> dict[str, object]:
     payload: dict[str, object] = {
         "scenario": scenario.name,
@@ -77,6 +78,10 @@ def _record_metrics(
         payload.update(extra)
     if operator_config is not None:
         payload["operators_config"] = json.dumps(dict(sorted(operator_config.items())))
+    if operator_stats is not None:
+        payload["operators_stats"] = json.dumps(
+            {name: dict(sorted(stats.items())) for name, stats in sorted(operator_stats.items())}
+        )
     return payload
 
 
@@ -168,6 +173,7 @@ def run_benchmark_suite(
                 "sa_restarts": sa_meta.get("restarts"),
             }
             operators_meta = cast(dict[str, float], sa_meta.get("operators", {}))
+            operator_stats = cast(dict[str, dict[str, float]], sa_meta.get("operators_stats", {}))
             rows.append(
                 _record_metrics(
                     scenario=bench,
@@ -178,6 +184,7 @@ def run_benchmark_suite(
                     runtime_s=sa_runtime,
                     extra=extra,
                     operator_config=operators_meta or combined_weights,
+                    operator_stats=operator_stats,
                 )
             )
 

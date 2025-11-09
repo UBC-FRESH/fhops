@@ -91,3 +91,11 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - **Discovery** — Add a `--list-operator-presets` flag that prints available presets with descriptions and weight tables.
 - **Custom presets (future)** — Consider loading user-defined presets from a config file (`~/.fhops/heuristics/presets.yaml`) merged with built-ins.
 - **Documentation** — Expand CLI docs with preset tables/examples and note merging semantics; add roadmap entry once feature lands.
+
+#### Subtasks for (4) Telemetry instrumentation
+- [x] **Per-operator counters:** track proposals/acceptances per operator within `solve_sa` and surface them in the returned `meta["operators_stats"]` object.
+- [x] **Benchmark aggregation:** extend `_record_metrics` to persist operator stats (e.g., proposals, acceptance rate) into summary outputs/CSV for SA runs.
+- [x] **CLI display:** optionally print a concise operator stats table in `solve-heur` when `--debug` or a new `--show-operator-stats` flag is used.
+- [ ] **Tests:** add unit/integration coverage verifying counters increment correctly (e.g., deterministic neighbour selection, smoke test via minitoy benchmark).
+- [x] **Documentation:** document telemetry fields in CLI reference and roadmap, highlighting how to interpret operator statistics during tuning sessions.
+- [ ] **Persistent telemetry log:** design a structured log (e.g., newline-delimited JSON or SQLite) keyed by scenario/operator config capturing run metadata (seed, iterations, operator stats, acceptance rate, objective). Provide a helper to append entries and document the schema for future ML/DL hyperparameter tuning workflows.

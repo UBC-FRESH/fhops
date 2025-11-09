@@ -270,7 +270,13 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
     return score
 
 
-def _neighbors(pb: Problem, sched: Schedule, registry: OperatorRegistry) -> list[Schedule]:
+def _neighbors(
+    pb: Problem,
+    sched: Schedule,
+    registry: OperatorRegistry,
+    rng: random.Random,
+    operator_stats: dict[str, dict[str, float]],
+) -> list[Schedule]:
     sc = pb.scenario
     if not sc.machines or not pb.shifts:
         return []
@@ -322,7 +328,6 @@ def _neighbors(pb: Problem, sched: Schedule, registry: OperatorRegistry) -> list
                     plan[mach][shift_key_iter] = blk
         return schedule_cls(plan=plan)
 
-    rng = random
     context = OperatorContext(problem=pb, schedule=sched, sanitizer=sanitizer, rng=rng)
 
     enabled_ops = list(registry.enabled())
@@ -356,9 +361,19 @@ def _neighbors(pb: Problem, sched: Schedule, registry: OperatorRegistry) -> list
 
     neighbours: list[Schedule] = []
     for operator in ordered_ops:
+        stats = operator_stats.setdefault(
+            operator.name, {"proposals": 0.0, "accepted": 0.0, "weight": operator.weight}
+        )
+        stats["weight"] = operator.weight
+        stats["proposals"] += 1.0
+
         candidate = operator.apply(context)
         if candidate is not None:
             neighbours.append(candidate)
+            stats["accepted"] += 1.0
+        else:
+            stats.setdefault("skipped", 0.0)
+            stats["skipped"] += 1.0
     return neighbours
 
 
@@ -401,9 +416,10 @@ def solve_sa(
     proposals = 0
     accepted_moves = 0
     restarts = 0
+    operator_stats: dict[str, dict[str, float]] = {}
     for step in range(1, iters + 1):
         accepted = False
-        for neighbor in _neighbors(pb, current, registry):
+        for neighbor in _neighbors(pb, current, registry, random, operator_stats):
             proposals += 1
             neighbor_score = _evaluate(pb, neighbor)
             delta = neighbor_score - current_score
@@ -446,4 +462,17 @@ def solve_sa(
         "temperature0": float(temperature0),
         "operators": registry.weights(),
     }
+    if operator_stats:
+        meta["operators_stats"] = {
+            name: {
+                "proposals": stats.get("proposals", 0.0),
+                "accepted": stats.get("accepted", 0.0),
+                "skipped": stats.get("skipped", 0.0),
+                "weight": stats.get("weight", 0.0),
+                "acceptance_rate": (stats.get("accepted", 0.0) / stats.get("proposals", 1.0))
+                if stats.get("proposals", 0.0)
+                else 0.0,
+            }
+            for name, stats in operator_stats.items()
+        }
     return {"objective": float(best_score), "assignments": assignments, "meta": meta}

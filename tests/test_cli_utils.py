@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import pytest
 
-import pytest
-
 from fhops.cli._utils import (
     OPERATOR_PRESETS,
     format_operator_presets,
