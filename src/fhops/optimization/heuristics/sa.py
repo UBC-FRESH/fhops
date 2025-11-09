@@ -63,9 +63,9 @@ __all__ = ["Schedule", "solve_sa"]
 
 @dataclass(slots=True)
 class Schedule:
-    """Machine assignment plan keyed by machine/day."""
+    """Machine assignment plan keyed by machine/(day, shift_id)."""
 
-    plan: dict[str, dict[int, str | None]]
+    plan: dict[str, dict[tuple[int, str], str | None]]
 
 
 def _init_greedy(pb: Problem) -> Schedule:
@@ -78,17 +78,18 @@ def _init_greedy(pb: Problem) -> Schedule:
     blackout = _blackout_map(sc)
     locked = _locked_map(sc)
 
-    plan: dict[str, dict[int, str | None]] = {
-        machine.id: {day: None for day in pb.days} for machine in sc.machines
+    shifts = [(shift.day, shift.shift_id) for shift in pb.shifts]
+    plan: dict[str, dict[tuple[int, str], str | None]] = {
+        machine.id: {(day, shift_id): None for day, shift_id in shifts} for machine in sc.machines
     }
 
-    for day in pb.days:
+    for day, shift_id in shifts:
         for machine in sc.machines:
             if availability.get((machine.id, day), 1) == 0:
                 continue
             lock_key = (machine.id, day)
             if lock_key in locked:
-                plan[machine.id][day] = locked[lock_key]
+                plan[machine.id][(day, shift_id)] = locked[lock_key]
                 continue
             if lock_key in blackout:
                 continue
@@ -107,7 +108,7 @@ def _init_greedy(pb: Problem) -> Schedule:
             if candidates:
                 candidates.sort(reverse=True)
                 _, best_block = candidates[0]
-                plan[machine.id][day] = best_block
+                plan[machine.id][(day, shift_id)] = best_block
                 remaining[best_block] = max(
                     0.0, remaining[best_block] - rate.get((machine.id, best_block), 0.0)
                 )
@@ -145,11 +146,14 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
 
     previous_block: dict[str, str | None] = {machine.id: None for machine in sc.machines}
     role_cumulative: defaultdict[tuple[str, str], int] = defaultdict(int)
-    for day in sorted(pb.days):
+    shifts = sorted(pb.shifts, key=lambda s: (s.day, s.shift_id))
+    for shift in shifts:
+        day = shift.day
+        shift_id = shift.shift_id
         used = {landing.id: 0 for landing in sc.landings}
-        day_role_counts: defaultdict[tuple[str, str], int] = defaultdict(int)
+        shift_role_counts: defaultdict[tuple[str, str], int] = defaultdict(int)
         for machine in sc.machines:
-            block_id = sched.plan[machine.id][day]
+            block_id = sched.plan[machine.id][(day, shift_id)]
             if block_id is None:
                 if (machine.id, day) in locked:
                     penalty += 1000.0
@@ -176,7 +180,7 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
                 assert role is not None
                 role_key = (block_id, role)
                 available = min(role_cumulative[(block_id, prereq)] for prereq in prereq_set)
-                required = role_cumulative[role_key] + day_role_counts[role_key] + 1
+                required = role_cumulative[role_key] + shift_role_counts[role_key] + 1
                 if required > available:
                     penalty += 1000.0
                     previous_block[machine.id] = block_id
@@ -220,8 +224,8 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
                     transition_count += 1.0
             previous_block[machine.id] = block_id
             if role is not None:
-                day_role_counts[(block_id, role)] += 1
-        for key, count in day_role_counts.items():
+                shift_role_counts[(block_id, role)] += 1
+        for key, count in shift_role_counts.items():
             role_cumulative[key] += count
     score = prod_weight * production_total
     score -= mobil_weight * mobilisation_total
@@ -231,67 +235,75 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
     return score
 
 
-def _swap_operator(sched: Schedule, machines: list[str], day: int) -> Schedule:
+def _swap_operator(sched: Schedule, machines: list[str], shift_key: tuple[int, str]) -> Schedule:
     swap_plan = {m: plan.copy() for m, plan in sched.plan.items()}
     m1, m2 = machines
-    swap_plan[m1][day], swap_plan[m2][day] = swap_plan[m2][day], swap_plan[m1][day]
+    swap_plan[m1][shift_key], swap_plan[m2][shift_key] = (
+        swap_plan[m2][shift_key],
+        swap_plan[m1][shift_key],
+    )
     return Schedule(plan=swap_plan)
 
 
-def _move_operator(sched: Schedule, machine: str, from_day: int, to_day: int) -> Schedule:
+def _move_operator(
+    sched: Schedule, machine: str, from_shift: tuple[int, str], to_shift: tuple[int, str]
+) -> Schedule:
     move_plan = {m: plan.copy() for m, plan in sched.plan.items()}
-    move_plan[machine][to_day] = move_plan[machine][from_day]
-    move_plan[machine][from_day] = None
+    move_plan[machine][to_shift] = move_plan[machine][from_shift]
+    move_plan[machine][from_shift] = None
     return Schedule(plan=move_plan)
 
 
 def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
     sc = pb.scenario
     machines = [machine.id for machine in sc.machines]
-    days = list(pb.days)
-    if not machines or not days:
+    shifts = [(shift.day, shift.shift_id) for shift in pb.shifts]
+    if not machines or not shifts:
         return []
     allowed_roles, _, machine_roles, _ = _role_metadata(sc)
     blackout = _blackout_map(sc)
     locked = _locked_map(sc)
 
     # swap two machines on a day
-    eligible_days = [d for d in days if sum((m, d) not in locked for m in machines) >= 2]
-    if eligible_days:
-        day = random.choice(eligible_days)
-        free_machines = [m for m in machines if (m, day) not in locked]
+    eligible_shifts = [
+        shift for shift in shifts if sum((m, shift[0]) not in locked for m in machines) >= 2
+    ]
+    if eligible_shifts:
+        shift_key = random.choice(eligible_shifts)
+        free_machines = [m for m in machines if (m, shift_key[0]) not in locked]
         m1, m2 = random.sample(free_machines, k=2)
     else:
-        day = days[0]
+        shift_key = shifts[0]
         m1, m2 = (machines[0], machines[0])
-    neighbours = [_swap_operator(sched, [m1, m2], day)]
+    neighbours = [_swap_operator(sched, [m1, m2], shift_key)]
     # move assignment within a machine across days
     machine = random.choice(machines)
-    free_days = [d for d in days if (machine, d) not in locked]
-    if len(free_days) >= 2:
-        d1, d2 = random.sample(free_days, k=2)
-    elif free_days:
-        d1 = d2 = free_days[0]
+    free_shifts = [shift for shift in shifts if (machine, shift[0]) not in locked]
+    if len(free_shifts) >= 2:
+        s1, s2 = random.sample(free_shifts, k=2)
+    elif free_shifts:
+        s1 = s2 = free_shifts[0]
     else:
-        d1 = d2 = days[0]
-    neighbours.append(_move_operator(sched, machine, d1, d2))
+        s1 = s2 = shifts[0]
+    neighbours.append(_move_operator(sched, machine, s1, s2))
 
     sanitized: list[Schedule] = []
     for neighbour in neighbours:
-        plan: dict[str, dict[int, str | None]] = {}
+        plan: dict[str, dict[tuple[int, str], str | None]] = {}
         for mach, assignments in neighbour.plan.items():
             role = machine_roles.get(mach)
             plan[mach] = {}
-            for day_key, blk in assignments.items():
+            for shift_key_iter, blk in assignments.items():
+                day_key = shift_key_iter[0]
                 allowed = allowed_roles.get(blk) if blk is not None else None
                 if (mach, day_key) in locked:
-                    plan[mach][day_key] = locked[(mach, day_key)]
+                    plan[mach][shift_key_iter] = locked[(mach, day_key)]
                 elif blk is not None and (
                     (mach, day_key) in blackout or (allowed is not None and role not in allowed)
                 ):
-                    plan[mach][day_key] = None
+                    plan[mach][shift_key_iter] = None
                 else:
-                    plan[mach][day_key] = blk
+                    plan[mach][shift_key_iter] = blk
         sanitized.append(Schedule(plan=plan))
     return sanitized
 
@@ -332,12 +344,18 @@ def solve_sa(pb: Problem, iters: int = 2000, seed: int = 42) -> dict[str, Any]:
 
     rows = []
     for machine_id, plan in best.plan.items():
-        for day, block_id in plan.items():
+        for (day, shift_id), block_id in plan.items():
             if block_id is not None:
                 rows.append(
-                    {"machine_id": machine_id, "block_id": block_id, "day": int(day), "assigned": 1}
+                    {
+                        "machine_id": machine_id,
+                        "block_id": block_id,
+                        "day": int(day),
+                        "shift_id": shift_id,
+                        "assigned": 1,
+                    }
                 )
-    assignments = pd.DataFrame(rows).sort_values(["day", "machine_id", "block_id"])
+    assignments = pd.DataFrame(rows).sort_values(["day", "shift_id", "machine_id", "block_id"])
     meta = {
         "initial_score": float(initial_score),
         "best_score": float(best_score),
