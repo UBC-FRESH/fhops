@@ -103,14 +103,16 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
             if prev_index is None:
                 return pyo.Constraint.Skip
             prev_day, prev_shift = prev_index
-            return mdl.y[mach, prev_blk, curr_blk, (day, shift_id)] <= mdl.x[
-                mach, prev_blk, (prev_day, prev_shift)
-            ]
+            return (
+                mdl.y[mach, prev_blk, curr_blk, (day, shift_id)]
+                <= mdl.x[mach, prev_blk, (prev_day, prev_shift)]
+            )
 
         def _curr_match_rule(mdl, mach, prev_blk, curr_blk, day, shift_id):
-            return mdl.y[mach, prev_blk, curr_blk, (day, shift_id)] <= mdl.x[
-                mach, curr_blk, (day, shift_id)
-            ]
+            return (
+                mdl.y[mach, prev_blk, curr_blk, (day, shift_id)]
+                <= mdl.x[mach, curr_blk, (day, shift_id)]
+            )
 
         def _link_rule(mdl, mach, prev_blk, curr_blk, day, shift_id):
             prev_index = prev_shift_map.get((day, shift_id))
@@ -147,7 +149,8 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
             return cost
 
         mobil_cost_expr = sum(
-            _mobil_cost(mach, prev_blk, curr_blk) * model.y[mach, prev_blk, curr_blk, (day, shift_id)]
+            _mobil_cost(mach, prev_blk, curr_blk)
+            * model.y[mach, prev_blk, curr_blk, (day, shift_id)]
             for mach in model.M
             for prev_blk in model.B
             for curr_blk in model.B
@@ -184,7 +187,11 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
 
     def block_cum_rule(mdl, blk):
         return (
-            sum(mdl.prod[mach, blk, (day, shift_id)] for mach in model.M for day, shift_id in model.S)
+            sum(
+                mdl.prod[mach, blk, (day, shift_id)]
+                for mach in model.M
+                for day, shift_id in model.S
+            )
             <= work_required[blk]
         )
 

@@ -21,7 +21,15 @@ def test_loader_reads_shift_calendar(tmp_path):
 
     _write_csv(
         blocks,
-        [{"id": "B1", "landing_id": "L1", "work_required": 10.0, "earliest_start": 1, "latest_finish": 2}],
+        [
+            {
+                "id": "B1",
+                "landing_id": "L1",
+                "work_required": 10.0,
+                "earliest_start": 1,
+                "latest_finish": 2,
+            }
+        ],
     )
     _write_csv(machines, [{"id": "M1"}])
     _write_csv(landings, [{"id": "L1", "daily_capacity": 1}])
