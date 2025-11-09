@@ -22,7 +22,7 @@ from fhops.cli._utils import (
     resolve_operator_presets,
 )
 from fhops.evaluation import compute_kpis
-from fhops.optimization.heuristics import solve_sa, solve_tabu
+from fhops.optimization.heuristics import solve_ils, solve_sa, solve_tabu
 from fhops.optimization.mip import build_model, solve_mip
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
@@ -94,6 +94,15 @@ def run_benchmark_suite(
     time_limit: int = 300,
     sa_iters: int = 5000,
     sa_seed: int = 42,
+    include_ils: bool = False,
+    ils_iters: int | None = None,
+    ils_seed: int | None = None,
+    ils_batch_neighbours: int = 1,
+    ils_workers: int = 1,
+    ils_perturbation_strength: int = 3,
+    ils_stall_limit: int = 10,
+    ils_hybrid_use_mip: bool = False,
+    ils_hybrid_mip_time_limit: int = 60,
     include_tabu: bool = False,
     tabu_iters: int | None = None,
     tabu_seed: int | None = None,
@@ -250,6 +259,69 @@ def run_benchmark_suite(
                     }
                     append_jsonl(telemetry_log, log_record)
 
+        if include_ils:
+            start = time.perf_counter()
+            ils_res = solve_ils(
+                pb,
+                iters=ils_iters or sa_iters,
+                seed=ils_seed or sa_seed,
+                operators=combined_ops,
+                operator_weights=combined_weights if combined_weights else None,
+                batch_size=ils_batch_neighbours if ils_batch_neighbours > 1 else None,
+                max_workers=ils_workers if ils_workers > 1 else None,
+                perturbation_strength=ils_perturbation_strength,
+                stall_limit=ils_stall_limit,
+                hybrid_use_mip=ils_hybrid_use_mip,
+                hybrid_mip_time_limit=ils_hybrid_mip_time_limit,
+            )
+            ils_runtime = time.perf_counter() - start
+            ils_assign = cast(pd.DataFrame, ils_res["assignments"]).copy()
+            ils_assign.to_csv(scenario_out / "ils_assignments.csv", index=False)
+            ils_kpis = compute_kpis(pb, ils_assign)
+            ils_meta = cast(dict[str, Any], ils_res.get("meta", {}))
+            ils_weights = cast(dict[str, float], ils_meta.get("operators", {}))
+            ils_stats = cast(dict[str, dict[str, float]], ils_meta.get("operators_stats", {}))
+            rows.append(
+                _record_metrics(
+                    scenario=bench,
+                    solver="ils",
+                    objective=cast(float, ils_res.get("objective", 0.0)),
+                    assignments=ils_assign,
+                    kpis=ils_kpis,
+                    runtime_s=ils_runtime,
+                    extra={
+                        "iters": ils_iters or sa_iters,
+                        "seed": ils_seed or sa_seed,
+                        "perturbation_strength": ils_perturbation_strength,
+                        "stall_limit": ils_stall_limit,
+                        "hybrid_use_mip": ils_hybrid_use_mip,
+                        "hybrid_mip_time_limit": ils_hybrid_mip_time_limit,
+                        "improvement_steps": ils_meta.get("improvement_steps"),
+                    },
+                    operator_config=ils_weights or combined_weights,
+                    operator_stats=ils_stats,
+                )
+            )
+            if telemetry_log:
+                record = {
+                    "timestamp": datetime.utcnow().isoformat(),
+                    "source": "bench-suite",
+                    "scenario": sc.name,
+                    "scenario_path": str(resolved_path),
+                    "solver": "ils",
+                    "seed": ils_seed or sa_seed,
+                    "iterations": ils_iters or sa_iters,
+                    "objective": cast(float, ils_res.get("objective", 0.0)),
+                    "kpis": ils_kpis,
+                    "operators_config": ils_weights or combined_weights,
+                    "operators_stats": ils_stats,
+                    "perturbation_strength": ils_perturbation_strength,
+                    "stall_limit": ils_stall_limit,
+                    "hybrid_use_mip": ils_hybrid_use_mip,
+                    "hybrid_mip_time_limit": ils_hybrid_mip_time_limit,
+                }
+                append_jsonl(telemetry_log, record)
+
         if include_tabu:
             start = time.perf_counter()
             tabu_res = solve_tabu(
@@ -380,6 +452,15 @@ def bench_suite(
     time_limit: int = typer.Option(300, help="MIP time limit (seconds)"),
     sa_iters: int = typer.Option(5000, help="Simulated annealing iterations"),
     sa_seed: int = typer.Option(42, help="Simulated annealing RNG seed"),
+    include_ils: bool = typer.Option(False, help="Include Iterated Local Search in benchmarks"),
+    ils_iters: int = typer.Option(250, help="Iterated Local Search iterations"),
+    ils_seed: int = typer.Option(42, help="Iterated Local Search RNG seed"),
+    ils_batch_neighbours: int = typer.Option(1, help="Neighbours sampled per ILS local search step"),
+    ils_workers: int = typer.Option(1, help="Worker threads for ILS batched evaluation"),
+    ils_perturbation_strength: int = typer.Option(3, help="ILS perturbation strength"),
+    ils_stall_limit: int = typer.Option(10, help="ILS stall limit before restart/perturbation"),
+    ils_hybrid_use_mip: bool = typer.Option(False, help="Enable hybrid MIP warm start in ILS"),
+    ils_hybrid_mip_time_limit: int = typer.Option(60, help="Time limit (s) for hybrid MIP warm start"),
     include_tabu: bool = typer.Option(False, help="Include Tabu Search in benchmarks"),
     tabu_iters: int = typer.Option(5000, help="Tabu Search iterations"),
     tabu_seed: int = typer.Option(42, help="Tabu Search RNG seed"),
@@ -446,6 +527,15 @@ def bench_suite(
         time_limit=time_limit,
         sa_iters=sa_iters,
         sa_seed=sa_seed,
+        include_ils=include_ils,
+        ils_iters=ils_iters,
+        ils_seed=ils_seed,
+        ils_batch_neighbours=ils_batch_neighbours,
+        ils_workers=ils_workers,
+        ils_perturbation_strength=ils_perturbation_strength,
+        ils_stall_limit=ils_stall_limit,
+        ils_hybrid_use_mip=ils_hybrid_use_mip,
+        ils_hybrid_mip_time_limit=ils_hybrid_mip_time_limit,
         include_tabu=include_tabu,
         tabu_iters=tabu_iters,
         tabu_seed=tabu_seed,

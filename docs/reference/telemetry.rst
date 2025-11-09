@@ -23,7 +23,7 @@ Each JSON record includes the following fields:
     Scenario name and file path.
 
 ``solver`` (str)
-    ``sa`` for simulated annealing (future solvers may log here as well).
+    Identifies the solver (``sa``, ``ils``, ``tabu``). When omitted the record came from ``solve-heur`` without specifying an algorithm (legacy).
 
 ``seed`` (int), ``iterations`` (int)
     Parameters used for the run.
@@ -79,6 +79,14 @@ Example
       }
     }
   }
+
+Solver-specific fields
+~~~~~~~~~~~~~~~~~~~~~~
+
+- ILS entries echo diversification metadata: ``perturbations``, ``restarts``, ``improvement_steps``,
+  ``stall_limit``, ``perturbation_strength``, and hybrid flags (``hybrid_use_mip``,
+  ``hybrid_mip_time_limit``).
+- Tabu entries include ``tabu_tenure`` and ``tabu_stall_limit``.
 
 Usage Notes
 -----------

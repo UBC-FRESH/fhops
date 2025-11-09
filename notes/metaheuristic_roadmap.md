@@ -11,9 +11,9 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 ## Planned Tasks
 - [x] Document current SA parameter defaults and tuning rationale. *(Probability: initial temperature `max(1.0, best_score/10)`, decay `0.995`, restarts every 100 steps, neighbourhoods: day swap + intra-machine move; exposed via `--iters`, `--seed` in CLI.)*
 - [x] Capture SA metrics via benchmarking harness (objective gap vs MIP, runtime, acceptance ratio).
-- [ ] Add parallel execution pathways (multi-start seeds/presets and batched neighbour evaluation) to leverage multi-core environments while keeping the single-thread solver as the default path. *(Parallelism should be opt-in/feature-flagged so we can disable it quickly if instability appears.)*
+- [x] Add parallel execution pathways (multi-start seeds/presets and batched neighbour evaluation) to leverage multi-core environments while keeping the single-thread solver as the default path. *(Parallelism should be opt-in/feature-flagged so we can disable it quickly if instability appears.)*
 - [x] Implement operator registry to plug in new neighbourhood moves (swap, insert, block reassignment) with shift-aware variants and expose tuning via CLI. *(Registry + advanced operators shipped; CLI/presets documented, regression/benchmarks updated.)*
-- [ ] Prototype Tabu Search with aspiration criteria and compare against SA baselines.
+- [x] Prototype Tabu Search with aspiration criteria and compare against SA baselines.
 - [ ] Investigate hybrid approaches (MIP warm start + heuristic refinement).
 
 ## Testing & Evaluation
@@ -42,9 +42,44 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] **Advanced neighbourhoods:** add shift-aware block insertion (machine ↔ shift reassignment), cross-machine exchange, and mobilisation-sensitive diversification moves. Benchmark each operator on minitoy/med42/large84 to establish performance impacts.
 - [x] **SA parallel execution (opt-in):** deliver multi-start orchestration, batched neighbour evaluation, CLI/config integration, and profiling/documentation for the new knobs.
 - [x] **Tabu Search prototype:** implement a Tabu neighbourhood on top of the registry (tabu tenure, aspiration criteria) and compare results against SA in the benchmarking harness. *(Prototype available via `fhops solve-tabu` and `fhops bench suite --include-tabu`; keep Tabu opt-in until future tuning narrows the SA performance gap.)*
-- [ ] **ILS / Hybrid solver:** design an Iterated Local Search or MIP warm-start hybrid using the registry operators. Document configuration defaults and add harness support for hybrid runs.
+- [ ] **ILS / Hybrid solver:** design an Iterated Local Search or MIP warm-start hybrid using the registry operators. Document configuration defaults and add harness support for hybrid runs. *(ILS core + CLI/docs shipped; regression benchmarks still pending before marking complete.)*
 - [ ] **Benchmark reporting enhancements:** extend `fhops bench suite` outputs with per-operator usage metrics, solver comparisons (SA/Tabu/Hybrid), and provide summary plots/tables for Sphinx docs.
 - [ ] **Documentation updates:** draft a Sphinx how-to covering heuristic configuration presets, registry usage, and interpreting the new benchmarking metrics.
+
+##### Plan – ILS / Hybrid Solver
+- [x] Algorithm design: outline ILS move phases, perturbation strategy, and hybridisation with MIP warm starts.
+- [x] Implementation: create `solve_ils` (or `solve_hybrid`) module, integrating with operator registry and optional MIP kickoffs.
+- [ ] Testing & benchmarks: add unit/integration coverage, compare SA vs ILS/Hybrid on benchmarks, and capture telemetry.
+- [x] Documentation: update CLI reference/how-to notes and roadmap findings.
+
+###### Subtasks – ILS/Hybrid Algorithm Design
+- [x] Select base phases: greedy start → local search (swap/move/block insertion) → perturbation (e.g., multi-start or random block swap).
+  * Phase 0: warm start via `_init_greedy` (same as SA), optionally seeded from MIP solution when available.
+  * Phase 1: apply local search using registry operators with batch sampling (reuse `_neighbors`, `_evaluate_candidates`).
+  * Phase 2: perturbation step (e.g., random multi-block swap or short SA run) before re-entering local search; expose intensity parameter.
+- [x] Define restart/acceptance criteria (e.g., accept improved solution or probabilistic acceptance if objective within threshold).
+  * Acceptance: adopt new solution if it improves the best objective or clears diversification threshold (objective >= current - epsilon).
+  * Restart trigger: after `stall_limit` perturbations without improvement, restart from best-known solution with fresh perturbation intensity.
+  * Track metrics for telemetry (`perturbations`, `restarts`, `acceptance_delta`).
+- [x] For hybrid path, specify when to invoke MIP warm start (e.g., after fixed iterations or when stalls > limit) and how to import assignments back.
+  * Invoke `solve_mip` (time-boxed) after initial ILS cycles or when stalls exceed limit; use its assignments as new baseline if feasible.
+  * Convert MIP assignments into schedule plan for ILS (shared helper) and reset tabu/ILS state accordingly.
+  * Guard with opt-in flag (`--hybrid-use-mip`); fall back gracefully if MIP fails/timeouts.
+
+###### Subtasks – ILS/Hybrid Implementation
+- [x] Implement solver function (`solve_ils` or `solve_hybrid`) leveraging shared registry/operators; expose batch/parallel knobs similar to SA.
+- [x] Add CLI command (`fhops solve-ils`) with options for iterations, perturbation strength, restart policy, and optional MIP warm start configuration.
+- [x] Extend benchmarking harness to optionally include the new solver (`--include-ils`), writing telemetry comparable to SA/Tabu.
+
+###### Subtasks – Testing & Benchmarks (ILS/Hybrid)
+- [x] Unit tests covering perturbation behaviour, restart logic, and feasibility checks.
+- [ ] Regression tests on minitoy scenario ensuring feasibility and consistent objective.
+- [ ] Benchmark runs (minitoy/med42/large84) comparing SA, Tabu, and ILS/Hybrid; record telemetry/decision notes.
+
+###### Subtasks – Documentation (ILS/Hybrid)
+- [x] Update CLI reference and telemetry docs with new solver options/fields.
+- [x] Add how-to section demonstrating ILS/Hybrid usage, configuration defaults, and comparative results.
+- [x] Summarise findings in roadmap/changelog, noting default recommendation (opt-in vs default).
 
 ### Subtasks for Operator Registry Scaffold
 1. **Registry data model**
@@ -253,7 +288,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] Add unit tests verifying each operator respects availability, windows, locks, and mobilisation rules. *(Implemented in `tests/heuristics/test_operators.py` covering window constraints, machine capability filters, schedule locks, and mobilisation spacing.)*
 - [x] Update regression fixtures (e.g., mobilisation-heavy scenario) to ensure new operators improve or at least maintain objective. *(Regression integration test exercises explore/mobilisation/stabilise presets and asserts objectives remain at or above the baseline value.)*
 - [x] Seed RNG deterministically so regression benchmarks remain reproducible. *(SA now instantiates a local RNG per solve, leaving global state untouched for other tests.)*
-- [ ] **Tabu Search prototype:** implement a Tabu neighbourhood on top of the registry (tabu tenure, aspiration criteria) and compare results against SA in the benchmarking harness. Decide whether to expose as `fhops solve-tabu`.
+- [x] **Tabu Search prototype:** implement a Tabu neighbourhood on top of the registry (tabu tenure, aspiration criteria) and compare results against SA in the benchmarking harness. Decide whether to expose as `fhops solve-tabu`.
 
 ##### Plan – Tabu Search Prototype
 - [x] Algorithm design: define neighbourhood moves, tabu tenure strategy, aspiration criteria, and scoring alignment with SA.

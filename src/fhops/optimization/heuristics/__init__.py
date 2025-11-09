@@ -4,10 +4,12 @@ from .multistart import MultiStartResult, build_exploration_plan, run_multi_star
 from .registry import MoveOperator, OperatorContext, OperatorRegistry, SwapOperator
 from .sa import Schedule, solve_sa
 from .tabu import solve_tabu
+from .ils import solve_ils
 
 __all__ = [
     "Schedule",
     "solve_sa",
+    "solve_ils",
     "OperatorContext",
     "OperatorRegistry",
     "SwapOperator",
