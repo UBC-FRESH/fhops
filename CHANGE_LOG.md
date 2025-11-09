@@ -82,3 +82,4 @@
 - Fixed the `large84` example mobilisation config to reference the actual machine IDs (H1–H16), reran SA-only benchmark sweeps to confirm diversification presets still outperform baseline, and recorded a follow-up to raise the full-suite timeout before release.
 - Added an opt-in multi-start controller (`fhops.optimization.heuristics.multistart.run_multi_start`) with coverage to run multiple SA instances in parallel and select the best objective while collecting per-run telemetry.
 - Added a deterministic seed/preset exploration helper (`build_exploration_plan`) plus unit tests for the multi-start module.
+- Multi-start runs now support JSONL telemetry logging (per-run records with run IDs and a summary entry) via the optional `telemetry_log` parameter.
