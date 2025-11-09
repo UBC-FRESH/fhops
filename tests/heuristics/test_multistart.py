@@ -83,6 +83,24 @@ def test_run_multi_start_raises_when_all_fail():
         run_multi_start(pb, seeds, presets=presets, max_workers=1, sa_kwargs={"iters": 50})
 
 
+def test_run_multi_start_writes_telemetry(tmp_path: Path):
+    log_path = tmp_path / "runs.jsonl"
+    pb = _build_problem()
+    result = run_multi_start(
+        pb,
+        seeds=[10, 20],
+        presets=[None, ["explore"]],
+        max_workers=1,
+        sa_kwargs={"iters": 100},
+        telemetry_log=log_path,
+    )
+    assert log_path.exists()
+    lines = log_path.read_text(encoding="utf-8").strip().splitlines()
+    assert len(lines) == len(result.runs_meta) + 1  # includes summary record
+    summary = lines[-1]
+    assert "multi_start_summary" in summary
+
+
 def test_build_exploration_plan_defaults():
     seeds, presets = build_exploration_plan(6, base_seed=10)
     assert seeds == [10, 1010, 2010, 3010, 4010, 5010]

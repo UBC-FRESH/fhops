@@ -136,7 +136,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
   * Generate deterministic seed grid (e.g., `base_seed + i*1000`) and map presets cyclically (`['default','explore','mobilisation','stabilise']`).
   * Allow custom strategies via callables (user can supply preset list/seed generator); provide helper `build_exploration_plan(n, presets=None)`.
   * Document recommended defaults in roadmap/docs and note telemetry fields to capture chosen seed/preset per run.
-- [ ] Ensure shared telemetry logging (JSONL) de-duplicates entries and captures the selected best run metadata.
+- [x] Ensure shared telemetry logging (JSONL) de-duplicates entries and captures the selected best run metadata.
   * Extend telemetry writer to accept `run_id`/`preset_label` fields; guard against duplicate entries via hash/set.
   * After multi-start aggregation, append a summary record (`best_run_id`, `best_objective`, `runs_executed`) to the same log.
   * Add CLI flag to route per-run logs to separate directory when desired (e.g., `--multi-start-log-dir`).
