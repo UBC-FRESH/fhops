@@ -28,7 +28,9 @@ CLI Options
 
 * ``--scenario`` / ``-s`` — add one or more custom scenario YAML paths. When omitted the
   built-in scenarios are used.
-* ``--time-limit`` — HiGHS time limit in seconds (default: 300).
+* ``--time-limit`` — HiGHS time limit in seconds (default: 1800 for the large84 horizon).
+  The quick-start example above still shows ``--time-limit 180`` for a smoke run; omit that flag to use the
+  higher default when you want optimal certificates on the largest instance.
 * ``--sa-iters`` / ``--sa-seed`` — simulated annealing iteration budget and RNG seed.
 * ``--driver`` — HiGHS driver (``auto``/``appsi``/``exec``) mirroring the ``solve-mip`` CLI.
 * ``--include-mip`` / ``--include-sa`` — toggle individual solvers when running experiments.
@@ -44,6 +46,12 @@ The summary CSV/JSON records, per scenario/solver pair:
 * number of assignments in the exported schedule,
 * key KPIs: total production, mobilisation cost, sequencing violation counts, etc.
 * For SA runs, iteration budget and RNG seed are included to help compare tuning parameters across experiments.
+* Comparison helpers:
+
+  - ``solver_category`` labels exact vs heuristic solvers.
+  - ``best_heuristic_solver`` / ``best_heuristic_objective`` identify the strongest heuristic per scenario.
+  - ``objective_gap_vs_best_heuristic`` shows how far each solver trails the top heuristic (negative values mean the solver beats the best heuristic, e.g., MIP).
+  - ``runtime_ratio_vs_best_heuristic`` reports runtime multiples relative to the quickest heuristic winner.
 
 Example JSON snippet:
 

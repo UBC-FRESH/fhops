@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 import time
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
@@ -91,7 +92,7 @@ def run_benchmark_suite(
     scenario_paths: Sequence[Path] | None,
     out_dir: Path,
     *,
-    time_limit: int = 300,
+    time_limit: int = 1800,
     sa_iters: int = 5000,
     sa_seed: int = 42,
     include_ils: bool = False,
@@ -403,6 +404,51 @@ def run_benchmark_suite(
             axis=1,
         )
 
+        heuristic_mask = summary["solver"] != "mip"
+        summary["solver_category"] = summary["solver"].map(
+            lambda solver: "exact" if solver == "mip" else "heuristic"
+        )
+        best_solver_by_scenario: dict[str, str] = {}
+        best_objective_by_scenario: dict[str, float] = {}
+        best_runtime_by_scenario: dict[str, float] = {}
+        if heuristic_mask.any():
+            heuristics = summary[heuristic_mask]
+            idx = heuristics.groupby("scenario")["objective"].idxmax()
+            for scenario, index in idx.items():
+                row = summary.loc[index]
+                best_solver_by_scenario[scenario] = str(row["solver"])
+                best_objective_by_scenario[scenario] = float(row["objective"])
+                best_runtime_by_scenario[scenario] = float(row.get("runtime_s", float("nan")))
+            summary["best_heuristic_solver"] = summary["scenario"].map(best_solver_by_scenario)
+            summary["best_heuristic_objective"] = summary["scenario"].map(
+                best_objective_by_scenario
+            )
+            summary["best_heuristic_runtime_s"] = summary["scenario"].map(
+                best_runtime_by_scenario
+            )
+            summary["objective_gap_vs_best_heuristic"] = summary[
+                "best_heuristic_objective"
+            ] - summary["objective"]
+
+            def _runtime_ratio(row: pd.Series) -> float | pd.NA:
+                best_runtime = row.get("best_heuristic_runtime_s")
+                runtime = row.get("runtime_s")
+                if isinstance(best_runtime, (int, float)) and isinstance(runtime, (int, float)):
+                    if best_runtime == 0 or math.isnan(best_runtime):
+                        return pd.NA
+                    return runtime / best_runtime
+                return pd.NA
+
+            summary["runtime_ratio_vs_best_heuristic"] = summary.apply(
+                _runtime_ratio, axis=1
+            )
+        else:
+            summary["best_heuristic_solver"] = pd.NA
+            summary["best_heuristic_objective"] = pd.NA
+            summary["best_heuristic_runtime_s"] = pd.NA
+            summary["objective_gap_vs_best_heuristic"] = pd.NA
+            summary["runtime_ratio_vs_best_heuristic"] = pd.NA
+
     summary_csv = out_dir / "summary.csv"
     summary_json = out_dir / "summary.json"
     summary.sort_values(["scenario", "solver"]).to_csv(summary_csv, index=False)
@@ -449,7 +495,7 @@ def bench_suite(
     out_dir: Path = typer.Option(
         Path("tmp/benchmarks"), "--out-dir", dir_okay=True, file_okay=False
     ),
-    time_limit: int = typer.Option(300, help="MIP time limit (seconds)"),
+    time_limit: int = typer.Option(1800, help="MIP time limit (seconds, default 30 minutes)"),
     sa_iters: int = typer.Option(5000, help="Simulated annealing iterations"),
     sa_seed: int = typer.Option(42, help="Simulated annealing RNG seed"),
     include_ils: bool = typer.Option(False, help="Include Iterated Local Search in benchmarks"),

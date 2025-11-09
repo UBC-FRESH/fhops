@@ -28,6 +28,15 @@ def test_benchmark_suite_minitoy(tmp_path):
     assert set(loaded["scenario"]) == {"user-1"}
     assert "operators_config" in loaded.columns
     assert "preset_label" in loaded.columns
+    for column in [
+        "solver_category",
+        "best_heuristic_solver",
+        "best_heuristic_objective",
+        "best_heuristic_runtime_s",
+        "objective_gap_vs_best_heuristic",
+        "runtime_ratio_vs_best_heuristic",
+    ]:
+        assert column in loaded.columns
 
     baseline_path = Path("tests/fixtures/benchmarks/minitoy_sa.json")
     baseline = json.loads(baseline_path.read_text())
@@ -67,6 +76,16 @@ def test_benchmark_suite_minitoy(tmp_path):
         baseline["operators_stats"]
     )
     assert sa_row["preset_label"] == baseline["preset_label"]
+    assert sa_row["solver_category"] == "heuristic"
+    assert sa_row["best_heuristic_solver"] == "sa"
+    assert pytest.approx(sa_row["objective"], rel=1e-6) == sa_row["best_heuristic_objective"]
+    assert pytest.approx(0.0, abs=1e-9) == sa_row["objective_gap_vs_best_heuristic"]
+    assert pytest.approx(1.0, rel=1e-6) == sa_row["runtime_ratio_vs_best_heuristic"]
+    assert mip_row["solver_category"] == "exact"
+    assert mip_row["best_heuristic_solver"] == "sa"
+    assert pytest.approx(sa_row["objective"], rel=1e-6) == mip_row["best_heuristic_objective"]
+    assert mip_row["objective_gap_vs_best_heuristic"] < 0  # MIP outperforms heuristic
+    assert mip_row["runtime_ratio_vs_best_heuristic"] > 1.0
 
 
 def test_benchmark_suite_with_tabu(tmp_path):
@@ -81,6 +100,12 @@ def test_benchmark_suite_with_tabu(tmp_path):
     )
     solvers = set(summary["solver"])
     assert {"sa", "tabu"}.issubset(solvers)
+    assert set(summary["best_heuristic_solver"].dropna()) == {"sa"}
+    tabu_row = summary[summary["solver"] == "tabu"].iloc[0]
+    assert tabu_row["objective_gap_vs_best_heuristic"] > 0
+    assert pytest.approx(1.0, rel=1e-6) == summary[summary["solver"] == "sa"].iloc[0][
+        "runtime_ratio_vs_best_heuristic"
+    ]
 
 def test_benchmark_suite_preset_comparison(tmp_path):
     summary = run_benchmark_suite(
@@ -98,3 +123,4 @@ def test_benchmark_suite_preset_comparison(tmp_path):
     explore_row = sa_rows.set_index("preset_label").loc["explore"]
     config = json.loads(explore_row["operators_config"])
     assert pytest.approx(config["mobilisation_shake"], rel=1e-6) == 0.2
+    assert all(sa_rows["best_heuristic_solver"] == "sa")
