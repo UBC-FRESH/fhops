@@ -31,7 +31,8 @@ Additional simulated annealing controls:
 - ``fhops solve-heur ... --operator swap --operator move`` — restrict the operator set (defaults to all registered operators).
 - ``fhops solve-heur ... --operator-weight swap=2 --operator-weight move=0.5`` — adjust operator weights; zero disables an operator.
 - ``fhops bench suite ... --operator swap --operator-weight swap=2`` — pass the same options when running aggregate benchmarks; the summary now records the operator configuration in ``operators_config``.
-- ``fhops solve-heur ... --operator-preset swap-only`` — apply predefined operator weight profiles (available presets: ``balanced``, ``move-only``, ``swap-heavy``, ``swap-only``, ``diversify``). Presets may be combined with explicit ``--operator`` and ``--operator-weight`` overrides.
+- ``fhops solve-heur ... --operator-preset swap-only`` — apply predefined operator weight profiles (available presets: ``balanced``, ``move-only``, ``swap-heavy``, ``swap-only``, ``diversify``, ``explore``, ``mobilisation``, ``stabilise``). Presets may be combined with explicit ``--operator`` and ``--operator-weight`` overrides.
+- ``explore`` enables the advanced neighbourhood operators with moderate weights for general diversification, ``mobilisation`` prioritises mobilisation shake moves for distance-constrained scenarios, and ``stabilise`` tones down advanced operators to focus on consolidation.
 - ``fhops bench suite --operator-preset swap-heavy --operator-weight move=1`` — use presets within benchmarking; final configurations are captured in the summary output.
 - ``fhops solve-heur --list-operator-presets`` (or ``fhops bench suite --list-operator-presets``) — display all presets with their weights and descriptions.
 - ``fhops solve-heur ... --telemetry-log fhops_runs.jsonl`` — append telemetry entries (objective, KPIs, operator stats) to a JSONL file for later analysis.

@@ -189,9 +189,12 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] Update preset definitions to include the new operators where appropriate (`explore`, `mobilisation`, etc.).
 
 ##### Plan – Advanced neighbourhoods: Weighting & presets
-- Design new presets (`explore`, `mobilisation`, etc.) combining existing and new operators with documented rationale.
-- Allow CLI overrides to combine presets with explicit weights; ensure `--list-operator-presets` reflects new options.
-- Document default weights and recommended use cases (e.g., mobilisation-heavy scenarios).
+- [x] Design new presets (`explore`, `mobilisation`, etc.) combining existing and new operators with documented rationale.
+  * [x] `explore`: swap 1.0, move 1.0, block_insertion 0.6, cross_exchange 0.6, mobilisation_shake 0.2 (balanced diversification for general improvements).
+  * [x] `mobilisation`: swap 0.8, move 0.8, block_insertion 0.4, cross_exchange 0.4, mobilisation_shake 1.2 (aggressively explores mobilisation-heavy moves).
+  * [x] `stabilise`: swap 0.5, move 1.5, block_insertion 0.2, cross_exchange 0.2, mobilisation_shake 0.0 (focus on consolidation/minimal mobilisation).
+- [x] Allow CLI overrides to combine presets with explicit weights; ensure `--list-operator-presets` reflects new options.
+- [x] Document default weights and recommended use cases (e.g., mobilisation-heavy scenarios). *(docs/reference/cli.rst updated to enumerate presets and note explore/mobilisation/stabilise guidance.)*
 
 ##### Plan – Advanced neighbourhoods: Benchmark evaluation
 - Extend benchmark harness to compare baseline vs. preset configurations; log objective, runtime, and operator stats.

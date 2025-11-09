@@ -1,9 +1,7 @@
 """CLI helper utilities for FHOPS."""
-
 from __future__ import annotations
 
-from typing import Sequence
-
+from collections.abc import Sequence
 
 OPERATOR_PRESETS: dict[str, dict[str, float]] = {
     "balanced": {
@@ -41,6 +39,27 @@ OPERATOR_PRESETS: dict[str, dict[str, float]] = {
         "cross_exchange": 0.0,
         "mobilisation_shake": 0.0,
     },
+    "explore": {
+        "swap": 1.0,
+        "move": 1.0,
+        "block_insertion": 0.6,
+        "cross_exchange": 0.6,
+        "mobilisation_shake": 0.2,
+    },
+    "mobilisation": {
+        "swap": 0.8,
+        "move": 0.8,
+        "block_insertion": 0.4,
+        "cross_exchange": 0.4,
+        "mobilisation_shake": 1.2,
+    },
+    "stabilise": {
+        "swap": 0.5,
+        "move": 1.5,
+        "block_insertion": 0.2,
+        "cross_exchange": 0.2,
+        "mobilisation_shake": 0.0,
+    },
 }
 
 OPERATOR_PRESET_DESCRIPTIONS: dict[str, str] = {
@@ -49,6 +68,9 @@ OPERATOR_PRESET_DESCRIPTIONS: dict[str, str] = {
     "move-only": "Disable swap and allow only move operations.",
     "swap-heavy": "Bias toward swap moves while keeping move available.",
     "diversify": "Encourage both operators equally with higher weights.",
+    "explore": "Activate block insertion/cross exchange with moderate mobilisation shake to diversify neighbourhood search.",
+    "mobilisation": "Emphasise mobilisation_shake to escape local minima in distance-constrained scenarios.",
+    "stabilise": "Favour move operations to consolidate plans while keeping advanced operators at low weights.",
 }
 
 
