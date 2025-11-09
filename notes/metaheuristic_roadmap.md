@@ -72,11 +72,11 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] Add a “next steps” link pointing readers to benchmarking guidance and tuning notes.
 
 ###### Subtasks – Benchmark Interpretation Section
-- [ ] Update `docs/howto/benchmarks.rst` to add a walkthrough of comparison metrics.
+- [x] Update `docs/howto/benchmarks.rst` to add a walkthrough of comparison metrics.
   * Provide table snippet highlighting key columns.
   * Explain the plots and how to interpret negative/positive gaps.
   * Mention multi-solver CLI invocation to generate the richer summary.
-- [ ] Ensure the plots appear in the Sphinx build (responsive layout, alt-text) and note the script usage.
+- [x] Ensure the plots appear in the Sphinx build (responsive layout, alt-text) and note the script usage.
 
 ###### Subtasks – CLI Reference Refresh
 - [ ] Expand `docs/reference/cli.rst` heuristics section with:

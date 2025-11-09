@@ -13,6 +13,7 @@ Quick Start
    fhops bench suite --out-dir tmp/benchmarks
    fhops bench suite --scenario examples/minitoy/scenario.yaml --scenario examples/med42/scenario.yaml --out-dir tmp/benchmarks_med
    fhops bench suite --scenario examples/large84/scenario.yaml --out-dir tmp/benchmarks_large --time-limit 180 --include-sa False
+   fhops bench suite --include-ils --include-tabu --out-dir tmp/benchmarks_compare
 
 This command:
 
@@ -52,6 +53,43 @@ The summary CSV/JSON records, per scenario/solver pair:
   - ``best_heuristic_solver`` / ``best_heuristic_objective`` identify the strongest heuristic per scenario.
   - ``objective_gap_vs_best_heuristic`` shows how far each solver trails the top heuristic (negative values mean the solver beats the best heuristic, e.g., MIP).
   - ``runtime_ratio_vs_best_heuristic`` reports runtime multiples relative to the quickest heuristic winner.
+
+A shortened example:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 15 20 15 15 15
+
+   * - scenario
+     - solver
+     - solver_category
+     - objective
+     - objective_gap_vs_best_heuristic
+     - runtime_ratio_vs_best_heuristic
+   * - minitoy
+     - sa
+     - heuristic
+     - 15.5
+     - 0.0
+     - 1.0
+   * - minitoy
+     - tabu
+     - heuristic
+     - -21.5
+     - 37.0
+     - 0.1
+   * - minitoy
+     - ils
+     - heuristic
+     - 23.0
+     - -7.5
+     - 0.3
+
+Interpretation tips:
+
+* Positive gaps mean the solver under-performs the best heuristic; negative gaps indicate an improvement (common for MIP or exploratory heuristics).
+* Runtime ratios greater than ``1`` are slower than the best heuristic; numbers below ``1`` are faster.
+* Combine these columns with telemetry logs to pinpoint operators that drive under-performance.
 
 Example JSON snippet:
 
