@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime
 from pathlib import Path
 from typing import List, Optional, cast
 
@@ -21,6 +22,7 @@ from fhops.optimization.heuristics import solve_sa
 from fhops.optimization.mip import solve_mip
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
+from fhops.telemetry import append_jsonl
 
 app = typer.Typer(add_completion=False, no_args_is_help=True)
 app.add_typer(geospatial_app, name="geo")
@@ -132,6 +134,13 @@ def solve_heur_cmd(
     show_operator_stats: bool = typer.Option(
         False, "--show-operator-stats", help="Print per-operator stats after solving."
     ),
+    telemetry_log: Optional[Path] = typer.Option(
+        None,
+        "--telemetry-log",
+        help="Append run telemetry to the given JSONL file.",
+        writable=True,
+        dir_okay=False,
+    ),
 ):
     """Solve with Simulated Annealing (heuristic)."""
     if debug:
@@ -188,6 +197,21 @@ def solve_heur_cmd(
                     f"accept_rate={payload.get('acceptance_rate', 0):.3f}, "
                     f"weight={payload.get('weight', 0)}"
                 )
+    if telemetry_log:
+        stats = res.get("meta", {}).get("operators_stats", {}) or {}
+        record = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "source": "solve-heur",
+            "scenario": sc.name,
+            "scenario_path": str(scenario),
+            "seed": seed,
+            "iterations": iters,
+            "objective": float(objective),
+            "kpis": metrics,
+            "operators_config": operators_meta or combined_weights,
+            "operators_stats": stats,
+        }
+        append_jsonl(telemetry_log, record)
 
 
 @app.command()

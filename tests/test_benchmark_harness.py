@@ -59,4 +59,9 @@ def test_benchmark_suite_minitoy(tmp_path):
     assert set(row_breakdown) == set(baseline_breakdown)
     for machine, value in baseline_breakdown.items():
         assert pytest.approx(value, rel=1e-6, abs=1e-6) == row_breakdown[machine]
-    assert sa_row.get("operators_config") == baseline["operators_config"]
+    assert json.loads(sa_row.get("operators_config", "{}")) == json.loads(
+        baseline["operators_config"]
+    )
+    assert json.loads(sa_row.get("operators_stats", "{}")) == json.loads(
+        baseline["operators_stats"]
+    )

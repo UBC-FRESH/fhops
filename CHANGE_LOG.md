@@ -71,3 +71,4 @@
 - Exposed operator configuration flags in the CLI (`solve-heur`, `fhops bench suite`), ensured benchmark summaries record `operators_config`, added parsing tests, and documented the new options.
 - Added operator presets (balanced, move-only, swap-heavy, swap-only) with CLI support and helper utilities for parsing/validation.
 - Instrumented per-operator telemetry in SA (`operators_stats`), surfaced stats in CLI/bench summaries, and documented the new tuning signals.
+- Added JSONL telemetry logging utilities with CLI `--telemetry-log` support, enabling persistent storage of SA run metadata for future hyperparameter tuning workflows.

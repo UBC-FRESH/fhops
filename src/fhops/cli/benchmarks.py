@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-import time
 import json
+import time
+from datetime import datetime
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -25,6 +26,7 @@ from fhops.optimization.heuristics import solve_sa
 from fhops.optimization.mip import build_model, solve_mip
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
+from fhops.telemetry import append_jsonl
 
 console = Console()
 
@@ -99,6 +101,7 @@ def run_benchmark_suite(
     operators: Sequence[str] | None = None,
     operator_weights: Mapping[str, float] | None = None,
     operator_presets: Sequence[str] | None = None,
+    telemetry_log: Path | None = None,
 ) -> pd.DataFrame:
     """Execute the benchmark suite and return the summary DataFrame."""
     scenarios = _resolve_scenarios(scenario_paths)
@@ -187,6 +190,21 @@ def run_benchmark_suite(
                     operator_stats=operator_stats,
                 )
             )
+            if telemetry_log:
+                log_record = {
+                    "timestamp": datetime.utcnow().isoformat(),
+                    "source": "bench-suite",
+                    "scenario": sc.name,
+                    "scenario_path": str(resolved_path),
+                    "solver": "sa",
+                    "seed": sa_seed,
+                    "iterations": sa_iters,
+                    "objective": cast(float, sa_res.get("objective", 0.0)),
+                    "kpis": sa_kpis,
+                    "operators_config": operators_meta or combined_weights,
+                    "operators_stats": operator_stats,
+                }
+                append_jsonl(telemetry_log, log_record)
 
     summary = pd.DataFrame(rows)
     if not summary.empty:
@@ -279,6 +297,13 @@ def bench_suite(
     list_operator_presets: bool = typer.Option(
         False, "--list-operator-presets", help="Show available operator presets and exit."
     ),
+    telemetry_log: Optional[Path] = typer.Option(
+        None,
+        "--telemetry-log",
+        help="Append telemetry records for each SA run to JSONL.",
+        writable=True,
+        dir_okay=False,
+    ),
 ):
     """Run the full benchmark suite and emit summary CSV/JSON outputs."""
     weight_config: dict[str, float]
@@ -307,4 +332,5 @@ def bench_suite(
         operators=operator,
         operator_weights=combined_weights if combined_weights else None,
         operator_presets=operator_preset,
+        telemetry_log=telemetry_log,
     )
