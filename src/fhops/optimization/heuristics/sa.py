@@ -10,6 +10,7 @@ from typing import Any
 
 import pandas as pd
 
+from fhops.optimization.heuristics.registry import OperatorContext, OperatorRegistry
 from fhops.scenario.contract import Problem
 from fhops.scheduling.mobilisation import MachineMobilisation, build_distance_lookup
 
@@ -269,30 +270,9 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
     return score
 
 
-def _swap_operator(sched: Schedule, machines: list[str], shift_key: tuple[int, str]) -> Schedule:
-    swap_plan = {m: plan.copy() for m, plan in sched.plan.items()}
-    m1, m2 = machines
-    swap_plan[m1][shift_key], swap_plan[m2][shift_key] = (
-        swap_plan[m2][shift_key],
-        swap_plan[m1][shift_key],
-    )
-    return Schedule(plan=swap_plan)
-
-
-def _move_operator(
-    sched: Schedule, machine: str, from_shift: tuple[int, str], to_shift: tuple[int, str]
-) -> Schedule:
-    move_plan = {m: plan.copy() for m, plan in sched.plan.items()}
-    move_plan[machine][to_shift] = move_plan[machine][from_shift]
-    move_plan[machine][from_shift] = None
-    return Schedule(plan=move_plan)
-
-
 def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
     sc = pb.scenario
-    machines = [machine.id for machine in sc.machines]
-    shifts = [(shift.day, shift.shift_id) for shift in pb.shifts]
-    if not machines or not shifts:
+    if not sc.machines or not pb.shifts:
         return []
     allowed_roles, _, machine_roles, _ = _role_metadata(sc)
     blackout = _blackout_map(sc)
@@ -303,39 +283,19 @@ def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
         else {}
     )
     availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
+    landing_of = {block.id: block.landing_id for block in sc.blocks}
+    landing_cap = {landing.id: landing.daily_capacity for landing in sc.landings}
 
-    # swap two machines on a day
-    eligible_shifts = [
-        shift for shift in shifts if sum((m, shift[0]) not in locked for m in machines) >= 2
-    ]
-    if eligible_shifts:
-        shift_key = random.choice(eligible_shifts)
-        free_machines = [m for m in machines if (m, shift_key[0]) not in locked]
-        m1, m2 = random.sample(free_machines, k=2)
-    else:
-        shift_key = shifts[0]
-        m1, m2 = (machines[0], machines[0])
-    neighbours = [_swap_operator(sched, [m1, m2], shift_key)]
-    # move assignment within a machine across days
-    machine = random.choice(machines)
-    free_shifts = [shift for shift in shifts if (machine, shift[0]) not in locked]
-    if len(free_shifts) >= 2:
-        s1, s2 = random.sample(free_shifts, k=2)
-    elif free_shifts:
-        s1 = s2 = free_shifts[0]
-    else:
-        s1 = s2 = shifts[0]
-    neighbours.append(_move_operator(sched, machine, s1, s2))
+    schedule_cls = sched.__class__
 
-    sanitized: list[Schedule] = []
-    for neighbour in neighbours:
+    def sanitizer(candidate: Schedule) -> Schedule:
         plan: dict[str, dict[tuple[int, str], str | None]] = {}
-        for mach, assignments in neighbour.plan.items():
+        landing_usage: dict[tuple[int, str, str], int] = {}
+        for mach, assignments in candidate.plan.items():
             role = machine_roles.get(mach)
             plan[mach] = {}
             for shift_key_iter, blk in assignments.items():
                 day_key = shift_key_iter[0]
-                # Ensure locked assignments stick regardless of availability
                 allowed = allowed_roles.get(blk) if blk is not None else None
                 if (mach, day_key) in locked:
                     plan[mach][shift_key_iter] = locked[(mach, day_key)]
@@ -350,9 +310,28 @@ def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
                 ):
                     plan[mach][shift_key_iter] = None
                 else:
+                    landing_id = landing_of.get(blk) if blk is not None else None
+                    if landing_id is not None:
+                        key = (day_key, shift_key_iter[1], landing_id)
+                        cap = landing_cap.get(landing_id, 0)
+                        current = landing_usage.get(key, 0)
+                        if cap > 0 and current >= cap:
+                            plan[mach][shift_key_iter] = None
+                            continue
+                        landing_usage[key] = current + 1
                     plan[mach][shift_key_iter] = blk
-        sanitized.append(Schedule(plan=plan))
-    return sanitized
+        return schedule_cls(plan=plan)
+
+    registry = OperatorRegistry.from_defaults()
+    rng = random
+    context = OperatorContext(problem=pb, schedule=sched, sanitizer=sanitizer, rng=rng)
+
+    neighbours: list[Schedule] = []
+    for operator in registry.enabled():
+        candidate = operator.apply(context)
+        if candidate is not None:
+            neighbours.append(candidate)
+    return neighbours
 
 
 def solve_sa(pb: Problem, iters: int = 2000, seed: int = 42) -> dict[str, Any]:
