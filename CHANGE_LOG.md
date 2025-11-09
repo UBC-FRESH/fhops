@@ -48,3 +48,4 @@
 - Documented the current simulated annealing defaults (temperature schedule, restarts, neighbourhoods), added SA-specific metrics (acceptance rate, objective gap vs MIP) to the benchmarking harness, refreshed regression fixtures/tests, and cross-linked CLI/docs with tuning guidance.
 - Refactored the SA neighbour generation with explicit swap/move operators, paving the way for a pluggable operator registry in subsequent metaheuristic work.
 - Finalised the Phase 2 shift-based scheduling plan: roadmap and modular reorg notes now outline the shift-aware data contract, solver refactors, KPI/CLI updates, and migration guidance.
+- Added shift calendar support to the scenario contract/loader (including regression coverage) so scenarios can specify per-shift machine availability ahead of full shift-aware scheduling.
