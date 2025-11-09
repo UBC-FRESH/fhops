@@ -27,7 +27,7 @@ Both ``solve-mip`` and ``solve-heur`` export schedules with the columns ``machin
 ``S1`` when only day-level data is provided) so downstream tooling can analyse sub-daily assignments.
 
 Heuristic configuration reference
----------------------------------
+----------------------------------
 
 See :doc:`../howto/heuristic_presets` for an end-to-end walkthrough. Common CLI patterns:
 
@@ -50,6 +50,8 @@ See :doc:`../howto/heuristic_presets` for an end-to-end walkthrough. Common CLI 
 - ``fhops bench suite --include-ils`` — add ILS rows to the benchmark summary (CSV/JSON). Combine with ``--include-tabu`` for full solver comparisons.
 - ``python scripts/render_benchmark_plots.py tmp/benchmarks/summary.csv`` — turn benchmark summaries into comparison charts for documentation (see :doc:`../howto/benchmarks`).
 - ``fhops bench suite --include-ils --include-tabu --out-dir tmp/benchmarks_compare`` — generate the richer comparison columns (best heuristic solver, objective gaps, runtime ratios).
+- ``fhops solve-heur ... --profile explore`` — apply a named solver profile that bundles presets, batching, and optional multi-start settings (see ``fhops solve-heur --list-profiles``).
+- ``fhops bench suite --profile mobilisation`` — reuse the same profile defaults across SA/ILS/Tabu when benchmarking; explicit CLI overrides still win.
 
 The evaluation output should include `mobilisation_cost=6.0` and `sequencing_violation_count=0`
 if the regression baseline is satisfied.

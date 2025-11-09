@@ -59,14 +59,14 @@ Simulated Annealing
 .. code-block:: bash
 
    fhops solve-heur examples/med42/scenario.yaml --out tmp/med42_sa.csv \
-       --operator-preset explore --show-operator-stats
+       --profile explore --show-operator-stats
 
 Iterated Local Search and Tabu Search reuse the same registry metadata:
 
 .. code-block:: bash
 
-   fhops solve-ils examples/med42/scenario.yaml --out tmp/med42_ils.csv --include-mip False
-   fhops solve-tabu examples/med42/scenario.yaml --out tmp/med42_tabu.csv --tabu-tenure 30
+   fhops solve-ils examples/med42/scenario.yaml --out tmp/med42_ils.csv --profile explore --include-mip False
+   fhops solve-tabu examples/med42/scenario.yaml --out tmp/med42_tabu.csv --profile explore --tabu-tenure 30
 
 Inspection & KPIs
 -----------------
