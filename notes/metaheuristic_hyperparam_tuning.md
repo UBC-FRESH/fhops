@@ -47,3 +47,15 @@ Recommendation
 - Launch a basic Bayesian tuner for continuous knobs to establish baseline improvements.
 - Layer an LLM agent on top for periodic “insightful” suggestions, cross-checking them against the log.
 - Document the schema and evaluation pipeline so future automation (including fully agentic loops) can plug in.
+
+Documentation Maintenance
+-------------------------
+
+- After major benchmark updates, rerun ``fhops bench suite --include-ils --include-tabu`` (optionally skipping MIP) to refresh comparison data.
+- Regenerate figures referenced in :doc:`docs/howto/benchmarks` via:
+
+  .. code-block:: bash
+
+     python scripts/render_benchmark_plots.py tmp/benchmarks_compare/summary.csv --out-dir docs/_static/benchmarks
+
+- Audit heuristic preset examples in :doc:`docs/howto/heuristic_presets` when operators or defaults change.
