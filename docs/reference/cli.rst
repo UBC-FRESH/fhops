@@ -31,8 +31,9 @@ Additional simulated annealing controls:
 - ``fhops solve-heur ... --operator swap --operator move`` — restrict the operator set (defaults to all registered operators).
 - ``fhops solve-heur ... --operator-weight swap=2 --operator-weight move=0.5`` — adjust operator weights; zero disables an operator.
 - ``fhops bench suite ... --operator swap --operator-weight swap=2`` — pass the same options when running aggregate benchmarks; the summary now records the operator configuration in ``operators_config``.
-- ``fhops solve-heur ... --operator-preset swap-only`` — apply predefined operator weight profiles (available presets: ``balanced``, ``move-only``, ``swap-heavy``, ``swap-only``). Presets may be combined with explicit ``--operator`` and ``--operator-weight`` overrides.
+- ``fhops solve-heur ... --operator-preset swap-only`` — apply predefined operator weight profiles (available presets: ``balanced``, ``move-only``, ``swap-heavy``, ``swap-only``, ``diversify``). Presets may be combined with explicit ``--operator`` and ``--operator-weight`` overrides.
 - ``fhops bench suite --operator-preset swap-heavy --operator-weight move=1`` — use presets within benchmarking; final configurations are captured in the summary output.
+- ``fhops solve-heur --list-operator-presets`` (or ``fhops bench suite --list-operator-presets``) — display all presets with their weights and descriptions.
 
 The evaluation output should include `mobilisation_cost=6.0` and `sequencing_violation_count=0`
 if the regression baseline is satisfied.

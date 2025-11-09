@@ -10,6 +10,15 @@ OPERATOR_PRESETS: dict[str, dict[str, float]] = {
     "swap-only": {"swap": 1.0, "move": 0.0},
     "move-only": {"swap": 0.0, "move": 1.0},
     "swap-heavy": {"swap": 2.0, "move": 0.5},
+    "diversify": {"swap": 1.5, "move": 1.5},
+}
+
+OPERATOR_PRESET_DESCRIPTIONS: dict[str, str] = {
+    "balanced": "Default swap/move weights (1.0 each).",
+    "swap-only": "Disable move and rely solely on swap moves.",
+    "move-only": "Disable swap and allow only move operations.",
+    "swap-heavy": "Bias toward swap moves while keeping move available.",
+    "diversify": "Encourage both operators equally with higher weights.",
 }
 
 
@@ -35,28 +44,44 @@ def parse_operator_weights(weight_args: Sequence[str] | None) -> dict[str, float
     return weights
 
 
-def parse_operator_preset(preset: str | None):
-    """Return (operators, weights) for a preset."""
-    if not preset:
+def resolve_operator_presets(presets: Sequence[str] | None):
+    """Resolve preset names into a list of operators and weight mapping."""
+    if not presets:
         return None, {}
-    key = preset.lower()
-    config = OPERATOR_PRESETS.get(key)
-    if config is None:
-        raise ValueError(
-            f"Unknown operator preset '{preset}'. Available: {', '.join(sorted(OPERATOR_PRESETS))}"
-        )
-    weights = {name.lower(): float(weight) for name, weight in config.items()}
-    operators = [name for name, weight in weights.items() if weight > 0]
-    return operators or None, weights
+    combined_weights: dict[str, float] = {}
+    for preset in presets:
+        key = preset.lower()
+        config = OPERATOR_PRESETS.get(key)
+        if config is None:
+            raise ValueError(
+                f"Unknown operator preset '{preset}'. Available: {', '.join(sorted(OPERATOR_PRESETS))}"
+            )
+        for name, weight in config.items():
+            combined_weights[name.lower()] = float(weight)
+    operators = [name for name, weight in combined_weights.items() if weight > 0]
+    return operators or None, combined_weights
 
 
 def operator_preset_help() -> str:
-    return ", ".join(sorted(OPERATOR_PRESETS))
+    return ", ".join(
+        f"{name} ({OPERATOR_PRESET_DESCRIPTIONS.get(name, '').strip()})".strip()
+        for name in sorted(OPERATOR_PRESETS)
+    )
+
+
+def format_operator_presets() -> str:
+    lines = []
+    for name in sorted(OPERATOR_PRESETS):
+        weights = ", ".join(f"{op}={val}" for op, val in OPERATOR_PRESETS[name].items())
+        desc = OPERATOR_PRESET_DESCRIPTIONS.get(name, "")
+        lines.append(f"{name}: {weights}" + (f" — {desc}" if desc else ""))
+    return "\n".join(lines)
 
 
 __all__ = [
     "parse_operator_weights",
-    "parse_operator_preset",
+    "resolve_operator_presets",
     "operator_preset_help",
+    "format_operator_presets",
     "OPERATOR_PRESETS",
 ]
