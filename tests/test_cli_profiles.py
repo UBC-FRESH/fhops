@@ -30,7 +30,13 @@ def test_merge_profile_respects_overrides():
         parallel_workers=1,
         parallel_multistart=1,
     )
-    assert set(combined_ops or []) == {"swap", "move", "block_insertion", "cross_exchange", "mobilisation_shake"}
+    assert set(combined_ops or []) == {
+        "swap",
+        "move",
+        "block_insertion",
+        "cross_exchange",
+        "mobilisation_shake",
+    }
     assert pytest.approx(weights["swap"]) == 2.0
     assert batch == 1
     assert workers == 1

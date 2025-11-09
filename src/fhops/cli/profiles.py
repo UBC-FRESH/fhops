@@ -124,7 +124,9 @@ def merge_profile_with_cli(
     batch_neighbours: int | None,
     parallel_workers: int | None,
     parallel_multistart: int | None,
-) -> tuple[list[str] | None, dict[str, float], int | None, int | None, int | None, dict[str, object]]:
+) -> tuple[
+    list[str] | None, dict[str, float], int | None, int | None, int | None, dict[str, object]
+]:
     """Merge profile defaults with CLI-provided options."""
 
     ops_pipeline: list[str] = []
@@ -138,7 +140,9 @@ def merge_profile_with_cli(
                 ops_pipeline.extend(op.lower() for op in profile_ops)
             combined_weights.update({k.lower(): float(v) for k, v in profile_weights.items()})
         if config.operator_weights:
-            combined_weights.update({k.lower(): float(v) for k, v in config.operator_weights.items()})
+            combined_weights.update(
+                {k.lower(): float(v) for k, v in config.operator_weights.items()}
+            )
         if config.extra_kwargs:
             extra_kwargs.update(config.extra_kwargs)
 
@@ -166,7 +170,11 @@ def merge_profile_with_cli(
         final_workers = config.parallel_workers
 
     final_multistart = parallel_multistart
-    if config and config.parallel_multistart and (parallel_multistart is None or parallel_multistart == 1):
+    if (
+        config
+        and config.parallel_multistart
+        and (parallel_multistart is None or parallel_multistart == 1)
+    ):
         final_multistart = config.parallel_multistart
 
     return combined_ops, final_weights, final_batch, final_workers, final_multistart, extra_kwargs
