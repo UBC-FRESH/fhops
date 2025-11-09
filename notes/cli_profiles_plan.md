@@ -36,9 +36,9 @@ Status: Draft — to guide Phase 2 CLI enhancements.
        fhops bench suite --include-ils --include-tabu --profile mobilisation --out-dir tmp/bench_profiles
 
 ## Tests
-- [ ] Unit tests ensuring profiles expand to expected solver arguments.
-- [ ] CLI integration tests covering profile selection + overrides.
-- [ ] Regression tests verifying telemetry records selected profile.
+- [x] Unit tests ensuring profiles expand to expected solver arguments.
+- [x] CLI integration tests covering profile selection + overrides.
+- [x] Regression tests verifying telemetry records selected profile.
 
 ## Documentation
 - [ ] Update CLI reference with profile descriptions and examples.
