@@ -418,7 +418,31 @@ def solve_sa(
     batch_size: int | None = None,
     max_workers: int | None = None,
 ) -> dict[str, Any]:
-    """Run simulated annealing returning objective and assignments DataFrame."""
+    """Solve the scheduling problem with simulated annealing.
+
+    Parameters
+    ----------
+    pb:
+        Parsed :class:`~fhops.scenario.contract.Problem` describing the scenario.
+    iters:
+        Number of annealing iterations. Higher values increase runtime and solution quality.
+    seed:
+        RNG seed used for deterministic runs.
+    operators:
+        Optional list of operator names to enable (default: all registered operators).
+    operator_weights:
+        Optional weight overrides for operators (values ``<= 0`` disable an operator).
+    batch_size:
+        When set, sample up to ``batch_size`` neighbour candidates per iteration.
+        ``None`` or ``<= 1`` keeps the sequential single-candidate behaviour.
+    max_workers:
+        Maximum worker threads for evaluating batched neighbours. ``None``/``<=1`` keeps sequential scoring.
+
+    Returns
+    -------
+    dict
+        Dictionary containing the best objective, assignments DataFrame, and telemetry metadata.
+    """
     rng = _random.Random(seed)
     registry = OperatorRegistry.from_defaults()
     available_names = {name.lower(): name for name in registry.names()}

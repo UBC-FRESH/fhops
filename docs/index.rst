@@ -13,6 +13,7 @@ structure mirrors our roadmap so that implementation status stays transparent.
    howto/quickstart
    howto/data_contract
    howto/benchmarks
+   howto/parallel_heuristics
 
 .. toctree::
    :maxdepth: 2
