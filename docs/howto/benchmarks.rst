@@ -68,6 +68,26 @@ identify which machines drive the bulk of movement spend. The larger ``examples/
 demonstrates the effect at scale; the CLI example above runs the MIP solver alone to keep runtimes
 bounded.
 
+Operator Telemetry
+------------------
+
+When running the suite with simulated annealing enabled, the summary CSV/JSON includes an
+``operators_config`` column (final weights) and an ``operators_stats`` column (per-operator
+telemetry). ``operators_stats`` is a JSON object recording proposals, accepted moves, skips, weights,
+and acceptance rates for each registered operator. Example snippet:
+
+.. code-block:: json
+
+   {
+     "swap": {"proposals": 200, "accepted": 200, "skipped": 0, "weight": 1.0, "acceptance_rate": 1.0},
+     "move": {"proposals": 200, "accepted": 200, "skipped": 0, "weight": 1.0, "acceptance_rate": 1.0}
+   }
+
+Use ``--show-operator-stats`` with ``fhops solve-heur`` for a human-readable table, or parse the
+benchmark summaries programmatically to monitor operator performance over time. Persistent telemetry
+logs (``--telemetry-log``) append the same structure to a newline-delimited JSON file for long-term
+analysis.
+
 Each assignment CSV includes ``machine_id``, ``block_id``, ``day``, and ``shift_id`` columns.
 The shift label is derived from the scenario's shift calendar or timeline definition, enabling
 sub-daily benchmarking and evaluation workflows.
