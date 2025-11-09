@@ -44,4 +44,4 @@
 - Bumped package metadata to `v0.0.1` and finalised the Phase 1 release notes, preparing the PR for the GitHub release workflow trigger.
 - Relaxed the `require-changelog-update` hook to support `pre-commit run --all-files` (CI no longer fails when the latest commit already updates `CHANGE_LOG.md`).
 - Added the Phase 2 benchmarking harness (`fhops bench suite`) with structured outputs, regression fixture for minitoy SA, and accompanying documentation/tests.
-- Calibrated mobilisation setups for the bundled minitoy/med42 scenarios, wired loader support for inline mobilisation configs, refreshed benchmark baselines to assert mobilisation spend (including per-machine breakdowns), and extended mobilisation docs with calibration guidance.
+- Calibrated mobilisation setups for the bundled minitoy/med42/large84 scenarios, wired loader support for inline mobilisation configs, refreshed benchmark baselines to assert mobilisation spend (including per-machine breakdowns), and extended mobilisation docs with calibration guidance and CLI examples.

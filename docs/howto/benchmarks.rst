@@ -12,6 +12,7 @@ Quick Start
 
    fhops bench suite --out-dir tmp/benchmarks
    fhops bench suite --scenario examples/minitoy/scenario.yaml --scenario examples/med42/scenario.yaml --out-dir tmp/benchmarks_med
+   fhops bench suite --scenario examples/large84/scenario.yaml --out-dir tmp/benchmarks_large --time-limit 180 --include-sa False
 
 This command:
 
@@ -62,7 +63,9 @@ Assignments are stored under ``<out-dir>/<scenario>/<solver>_assignments.csv``. 
 ``fhops evaluate`` or project-specific analytics notebooks to dig deeper.
 
 Mobilisation KPIs now include ``kpi_mobilisation_cost_by_machine`` (JSON string) so you can
-identify which machines drive the bulk of movement spend.
+identify which machines drive the bulk of movement spend. The larger ``examples/large84`` scenario
+demonstrates the effect at scale; the CLI example above runs the MIP solver alone to keep runtimes
+bounded.
 
 Regression Fixture
 ------------------
