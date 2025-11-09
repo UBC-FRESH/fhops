@@ -83,3 +83,11 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] **Default presets:** introduce sensible presets (e.g., `--preset greedy`, `--preset diversify`) or shortcuts for common configurations, and document default weight values.
 - [x] **Validation & error messages:** add user-friendly errors for unknown operators or malformed weight arguments; include unit tests covering argument parsing.
 - [x] **Documentation & notes:** update `docs/reference/cli.rst` (solve/bench sections) with examples, and note the new surface area in this roadmap plus any relevant notes files.
+
+#### Plan: Operator Preset Shortcuts
+- **Preset catalog** — Maintain a declarative preset mapping (balanced, swap-only, move-only, swap-heavy, diversify) with clear goals, each mapping to operator weight dicts.
+- **Chaining support** — Allow multiple presets via comma-separated values or repeated `--operator-preset`, merging in order; zero weights disable operators.
+- **User overrides** — Apply presets first, then explicit `--operator`/`--operator-weight` overrides to honour user intent; log final configuration.
+- **Discovery** — Add a `--list-operator-presets` flag that prints available presets with descriptions and weight tables.
+- **Custom presets (future)** — Consider loading user-defined presets from a config file (`~/.fhops/heuristics/presets.yaml`) merged with built-ins.
+- **Documentation** — Expand CLI docs with preset tables/examples and note merging semantics; add roadmap entry once feature lands.

@@ -8,7 +8,12 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
-from fhops.cli._utils import operator_preset_help, parse_operator_preset, parse_operator_weights
+from fhops.cli._utils import (
+    format_operator_presets,
+    operator_preset_help,
+    parse_operator_weights,
+    resolve_operator_presets,
+)
 from fhops.cli.benchmarks import benchmark_app
 from fhops.cli.geospatial import geospatial_app
 from fhops.evaluation import compute_kpis
@@ -115,11 +120,14 @@ def solve_heur_cmd(
         "-w",
         help="Set operator weight as name=value (e.g., --operator-weight swap=2). Repeatable.",
     ),
-    operator_preset: Optional[str] = typer.Option(
+    operator_preset: Optional[List[str]] = typer.Option(
         None,
         "--operator-preset",
         "-P",
         help=f"Apply operator preset ({operator_preset_help()}).",
+    ),
+    list_operator_presets: bool = typer.Option(
+        False, "--list-operator-presets", help="Show available operator presets and exit."
     ),
 ):
     """Solve with Simulated Annealing (heuristic)."""
@@ -129,15 +137,21 @@ def solve_heur_cmd(
             f"[dim]types → scenario={type(scenario).__name__}, out={type(out).__name__}[/]"
         )
 
+    if list_operator_presets:
+        console.print("Operator presets:")
+        console.print(format_operator_presets())
+        raise typer.Exit()
+
     sc = load_scenario(str(scenario))
     pb = Problem.from_scenario(sc)
     try:
-        preset_ops, preset_weights = parse_operator_preset(operator_preset)
+        preset_ops, preset_weights = resolve_operator_presets(operator_preset)
         weight_config = parse_operator_weights(operator_weight)
     except ValueError as exc:  # pragma: no cover - CLI validation
         raise typer.BadParameter(str(exc)) from exc
 
-    combined_ops = list(dict.fromkeys((preset_ops or []) + (operator or []))) or None
+    explicit_ops = [op.lower() for op in operator] if operator else []
+    combined_ops = list(dict.fromkeys((preset_ops or []) + explicit_ops)) or None
     combined_weights: dict[str, float] = {}
     combined_weights.update(preset_weights)
     combined_weights.update(weight_config)

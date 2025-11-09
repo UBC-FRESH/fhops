@@ -14,7 +14,12 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
-from fhops.cli._utils import parse_operator_preset, parse_operator_weights, operator_preset_help
+from fhops.cli._utils import (
+    format_operator_presets,
+    operator_preset_help,
+    parse_operator_weights,
+    resolve_operator_presets,
+)
 from fhops.evaluation import compute_kpis
 from fhops.optimization.heuristics import solve_sa
 from fhops.optimization.mip import build_model, solve_mip
@@ -88,7 +93,7 @@ def run_benchmark_suite(
     debug: bool = False,
     operators: Sequence[str] | None = None,
     operator_weights: Mapping[str, float] | None = None,
-    operator_preset: str | None = None,
+    operator_presets: Sequence[str] | None = None,
 ) -> pd.DataFrame:
     """Execute the benchmark suite and return the summary DataFrame."""
     scenarios = _resolve_scenarios(scenario_paths)
@@ -131,11 +136,10 @@ def run_benchmark_suite(
                 )
             )
 
-        preset_ops, preset_weights = parse_operator_preset(operator_preset)
+        preset_ops, preset_weights = resolve_operator_presets(operator_presets)
         override_weights = operator_weights or {}
-        combined_ops = (
-            list(dict.fromkeys((preset_ops or []) + (list(operators) if operators else []))) or None
-        )
+        explicit_ops = [op.lower() for op in operators] if operators else []
+        combined_ops = list(dict.fromkeys((preset_ops or []) + explicit_ops)) or None
         combined_weights: dict[str, float] = {}
         combined_weights.update(preset_weights)
         combined_weights.update(override_weights)
@@ -259,17 +263,25 @@ def bench_suite(
         "-w",
         help="Set SA operator weight as name=value (repeatable).",
     ),
-    operator_preset: Optional[str] = typer.Option(
+    operator_preset: Optional[List[str]] = typer.Option(
         None,
         "--operator-preset",
         "-P",
-        help=f"Apply SA operator preset ({operator_preset_help()}).",
+        help=f"Apply SA operator preset ({operator_preset_help()}). Repeatable.",
+    ),
+    list_operator_presets: bool = typer.Option(
+        False, "--list-operator-presets", help="Show available operator presets and exit."
     ),
 ):
     """Run the full benchmark suite and emit summary CSV/JSON outputs."""
     weight_config: dict[str, float]
+    if list_operator_presets:
+        console.print("Operator presets:")
+        console.print(format_operator_presets())
+        raise typer.Exit()
+
     try:
-        _, preset_weights = parse_operator_preset(operator_preset)
+        _, preset_weights = resolve_operator_presets(operator_preset)
         weight_config = parse_operator_weights(operator_weight)
     except ValueError as exc:  # pragma: no cover - CLI validation
         raise typer.BadParameter(str(exc)) from exc
@@ -287,5 +299,5 @@ def bench_suite(
         debug=debug,
         operators=operator,
         operator_weights=combined_weights if combined_weights else None,
-        operator_preset=operator_preset,
+        operator_presets=operator_preset,
     )

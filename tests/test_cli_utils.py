@@ -6,9 +6,10 @@ import pytest
 
 from fhops.cli._utils import (
     OPERATOR_PRESETS,
+    format_operator_presets,
     operator_preset_help,
-    parse_operator_preset,
     parse_operator_weights,
+    resolve_operator_presets,
 )
 
 
@@ -34,20 +35,32 @@ def test_parse_operator_weights_non_numeric():
 
 
 @pytest.mark.parametrize("preset", list(OPERATOR_PRESETS))
-def test_parse_operator_preset_known(preset):
-    operators, weights = parse_operator_preset(preset)
-    expected = OPERATOR_PRESETS[preset]
-    assert weights == {k: float(v) for k, v in expected.items()}
+def test_resolve_operator_presets_known(preset):
+    operators, weights = resolve_operator_presets([preset])
+    expected = {k: float(v) for k, v in OPERATOR_PRESETS[preset].items()}
+    assert weights == expected
     if operators:
-        assert all(name in expected for name in operators)
+        assert all(name in expected and expected[name] > 0 for name in operators)
 
 
-def test_parse_operator_preset_unknown():
+def test_resolve_operator_presets_combined():
+    operators, weights = resolve_operator_presets(["swap-only", "move-only"])
+    assert weights == {"swap": 0.0, "move": 1.0}
+    assert operators == ["move"]
+
+
+def test_resolve_operator_presets_unknown():
     with pytest.raises(ValueError):
-        parse_operator_preset("unknown")
+        resolve_operator_presets(["unknown"])
 
 
 def test_operator_preset_help_lists_presets():
     help_text = operator_preset_help()
     for name in OPERATOR_PRESETS:
         assert name in help_text
+
+
+def test_format_operator_presets_includes_descriptions():
+    formatted = format_operator_presets()
+    for name in OPERATOR_PRESETS:
+        assert name in formatted
