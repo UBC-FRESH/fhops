@@ -80,3 +80,4 @@
 - Added regression assertions so the advanced presets (explore/mobilisation/stabilise) maintain the mobilisation baseline objective when enabled.
 - Separated simulated annealing RNG seeding from the global `random` module by constructing a local generator per solve, keeping regression/benchmark runs deterministic without side effects.
 - Fixed the `large84` example mobilisation config to reference the actual machine IDs (H1–H16), reran SA-only benchmark sweeps to confirm diversification presets still outperform baseline, and recorded a follow-up to raise the full-suite timeout before release.
+- Added an opt-in multi-start controller (`fhops.optimization.heuristics.multistart.run_multi_start`) with coverage to run multiple SA instances in parallel and select the best objective while collecting per-run telemetry.
