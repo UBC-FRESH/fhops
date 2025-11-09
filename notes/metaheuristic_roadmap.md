@@ -64,7 +64,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
    - Update this roadmap and the Phase 2 checklist once registry lands.
 
 #### Subtasks for (1) Registry data model
-- [ ] Define `OperatorContext` dataclass capturing `(pb, schedule, sanitizer, rng)` to avoid tight coupling inside operator functions.
+- [x] Define `OperatorContext` dataclass capturing `(pb, schedule, sanitizer, rng)` to avoid tight coupling inside operator functions.
 - [ ] Create `Operator` protocol with `name: str`, `weight: float`, and `apply(context) -> Schedule | None`.
 - [ ] Implement `OperatorRegistry` with: `register`, `get(name)`, `enabled()` iterator, `configure({name: weight})`, and default `from_defaults()` factory.
 - [ ] Port existing `swap`/`move` logic into standalone operator functions referencing the shared sanitizer; register them in `from_defaults()`.
