@@ -132,7 +132,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
   * Define `fhops.optimization.heuristics.multistart.run_multi_start(pb, seeds, presets, max_workers)` returning `(best_result, runs_meta)`.
   * Use `concurrent.futures.ProcessPoolExecutor` with joblib-style fallback; ensure graceful shutdown and timeout handling.
   * Gather each run's telemetry (`meta` payload) and compute best objective deterministically; retain full logs for debugging.
-- [ ] Add per-run seed/preset exploration strategy (e.g., stratified presets) and document recommended defaults.
+- [x] Add per-run seed/preset exploration strategy (e.g., stratified presets) and document recommended defaults.
   * Generate deterministic seed grid (e.g., `base_seed + i*1000`) and map presets cyclically (`['default','explore','mobilisation','stabilise']`).
   * Allow custom strategies via callables (user can supply preset list/seed generator); provide helper `build_exploration_plan(n, presets=None)`.
   * Document recommended defaults in roadmap/docs and note telemetry fields to capture chosen seed/preset per run.
