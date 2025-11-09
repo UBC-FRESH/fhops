@@ -11,6 +11,7 @@ Quick Start
 .. code-block:: bash
 
    fhops bench suite --out-dir tmp/benchmarks
+   fhops bench suite --scenario examples/minitoy/scenario.yaml --scenario examples/med42/scenario.yaml --out-dir tmp/benchmarks_med
 
 This command:
 
@@ -49,10 +50,10 @@ Example JSON snippet:
    {
      "scenario": "minitoy",
      "solver": "sa",
-     "objective": 47.5,
+     "objective": 9.5,
      "runtime_s": 0.02,
-     "kpi_total_production": 47.5,
-     "kpi_mobilisation_cost": 0.0,
+     "kpi_total_production": 42.0,
+     "kpi_mobilisation_cost": 65.0,
      "kpi_sequencing_violation_count": 0
    }
 

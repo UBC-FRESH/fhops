@@ -7,3 +7,21 @@ data:
   landings: data/landings.csv
   calendar: data/calendar.csv
   prod_rates: data/prod_rates.csv
+  mobilisation_distances: minitoy_block_distances.csv
+mobilisation:
+  default_walk_threshold_m: 1000
+  distance_csv: minitoy_block_distances.csv
+  machine_params:
+    - machine_id: H1
+      walk_cost_per_meter: 0.015
+      move_cost_flat: 60
+      walk_threshold_m: 800
+      setup_cost: 10
+    - machine_id: H2
+      walk_cost_per_meter: 0.015
+      move_cost_flat: 55
+      walk_threshold_m: 800
+      setup_cost: 10
+objective_weights:
+  production: 1.0
+  mobilisation: 0.5

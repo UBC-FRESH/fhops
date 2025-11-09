@@ -20,4 +20,7 @@ block geometries.
    data is present, making it easy to track spend alongside production.
 
 GeoJSON is optional—advanced users may provide precomputed matrices directly. Ensure all data uses
-consistent projections to avoid mis-scaled distances.
+consistent projections to avoid mis-scaled distances. The sample ``examples/minitoy`` and
+``examples/med42`` scenarios now ship with mobilisation configs and distance matrices so you can
+experiment immediately; run ``fhops bench suite`` to compare solver performance and inspect the
+``kpi_mobilisation_cost`` column in the generated summary.

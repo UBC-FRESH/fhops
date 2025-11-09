@@ -30,5 +30,13 @@ def test_benchmark_suite_minitoy(tmp_path):
     baseline_path = Path("tests/fixtures/benchmarks/minitoy_sa.json")
     baseline = json.loads(baseline_path.read_text())
     row = summary.iloc[0].to_dict()
-    for key in ["objective", "kpi_total_production", "kpi_completed_blocks", "iters", "seed"]:
+    for key in [
+        "objective",
+        "kpi_total_production",
+        "kpi_completed_blocks",
+        "kpi_mobilisation_cost",
+        "iters",
+        "seed",
+    ]:
         assert pytest.approx(baseline[key], rel=1e-6, abs=1e-6) == row[key]
+    assert row["kpi_mobilisation_cost"] > 0.0
