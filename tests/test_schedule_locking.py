@@ -83,9 +83,15 @@ def test_sa_respects_locked_assignments():
     scenario = _base_scenario().model_copy(
         update={"locked_assignments": [ScheduleLock(machine_id="M2", block_id="B2", day=1)]}
     )
-    res = solve_sa(Problem.from_scenario(scenario), iters=200, seed=3)
+    pb = Problem.from_scenario(scenario)
+    res = solve_sa(pb, iters=200, seed=3)
     assignments = res["assignments"]
-    locked_rows = assignments[(assignments["machine_id"] == "M2") & (assignments["day"] == 1)]
+    day_shift = _shift_tuple(pb, 1)
+    locked_rows = assignments[
+        (assignments["machine_id"] == "M2")
+        & (assignments["day"] == day_shift[0])
+        & (assignments["shift_id"] == day_shift[1])
+    ]
     assert locked_rows.iloc[0]["block_id"] == "B2"
 
 

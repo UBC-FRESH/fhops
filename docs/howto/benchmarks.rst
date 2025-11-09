@@ -68,6 +68,10 @@ identify which machines drive the bulk of movement spend. The larger ``examples/
 demonstrates the effect at scale; the CLI example above runs the MIP solver alone to keep runtimes
 bounded.
 
+Each assignment CSV includes ``machine_id``, ``block_id``, ``day``, and ``shift_id`` columns.
+The shift label is derived from the scenario's shift calendar or timeline definition, enabling
+sub-daily benchmarking and evaluation workflows.
+
 Regression Fixture
 ------------------
 

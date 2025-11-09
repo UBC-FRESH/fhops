@@ -22,5 +22,9 @@ Baseline usage:
 - ``fhops evaluate tests/fixtures/regression/regression.yaml /tmp/regression_sa.csv``
 - ``fhops bench suite --scenario examples/minitoy/scenario.yaml --out-dir tmp/benchmarks``
 
+Both ``solve-mip`` and ``solve-heur`` export schedules with the columns ``machine_id``, ``block_id``,
+``day``, and ``shift_id``. The shift identifier matches the scenario's shift calendar (or defaults to
+``S1`` when only day-level data is provided) so downstream tooling can analyse sub-daily assignments.
+
 The evaluation output should include `mobilisation_cost=6.0` and `sequencing_violation_count=0`
 if the regression baseline is satisfied.
