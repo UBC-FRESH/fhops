@@ -69,3 +69,10 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] Implement `OperatorRegistry` with: `register`, `get(name)`, `enabled()` iterator, `configure({name: weight})`, and default `from_defaults()` factory.
 - [x] Port existing `swap`/`move` logic into standalone operator functions referencing the shared sanitizer; register them in `from_defaults()`.
 - [x] Add module-level tests ensuring default registry exposes `swap`/`move`, weight updates propagate, and disabled operators are skipped.
+
+#### Subtasks for (2) SA integration
+- [ ] **Registry wiring:** replace `_neighbors` direct logic with registry iteration, supplying a reproducible RNG seeded from `solve_sa` parameters.
+- [ ] **Shared sanitizer:** extract the availability/lock/landing-cap checks into a reusable sanitizer function leveraged by all operators, ensuring parity with current enforcement.
+- [ ] **Operator weighting:** add simple selection logic (e.g., weighted roulette) to pick operators proportionally to their configured weights; fall back to sequential iteration when only one operator is enabled.
+- [ ] **Schedule passthrough:** ensure operators can return `None` when no move is possible and `_neighbors` skips them gracefully to avoid empty neighbour lists.
+- [ ] **Regression verification:** rerun benchmark and regression suites to confirm SA outputs remain stable; adjust fixtures/notes if weighted operator selection affects acceptance metrics.
