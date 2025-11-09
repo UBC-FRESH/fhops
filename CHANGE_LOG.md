@@ -53,3 +53,4 @@
 - Shift-enabled the simulated annealing schedule representation, evaluation, and neighbour plumbing to operate on `(day, shift_id)` indices, updated SA output DataFrames accordingly, and refreshed the metaheuristic roadmap plus regression/unit tests with shift-aware helpers.
 - Extended the SA greedy initialiser and blackout checks to honour shift-level availability (calendar entries or timeline-defined shifts), ensuring locked assignments and blackout penalties match the shift-aware MIP behaviour; roadmap updated to reflect the milestone.
 - Synced CLI/docs/tests with shift-aware SA outputs (assignment CSVs now include `shift_id`, docs note the new column, and locking tests assert shift-level fixes) to close the output alignment task.
+- Hardened SA neighbourhood operators to respect shift-level availability and blackouts, sanitising invalid swaps/moves and updating the minitoy benchmark fixture to the new acceptance metrics.

@@ -279,6 +279,12 @@ def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
     allowed_roles, _, machine_roles, _ = _role_metadata(sc)
     blackout = _blackout_map(sc)
     locked = _locked_map(sc)
+    shift_availability = (
+        {(c.machine_id, c.day, c.shift_id): int(c.available) for c in sc.shift_calendar}
+        if sc.shift_calendar
+        else {}
+    )
+    availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
 
     # swap two machines on a day
     eligible_shifts = [
@@ -311,11 +317,18 @@ def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
             plan[mach] = {}
             for shift_key_iter, blk in assignments.items():
                 day_key = shift_key_iter[0]
+                # Ensure locked assignments stick regardless of availability
                 allowed = allowed_roles.get(blk) if blk is not None else None
                 if (mach, day_key) in locked:
                     plan[mach][shift_key_iter] = locked[(mach, day_key)]
-                elif blk is not None and (
-                    (mach, day_key) in blackout or (allowed is not None and role not in allowed)
+                    continue
+                shift_available = shift_availability.get((mach, day_key, shift_key_iter[1]), 1)
+                day_available = availability.get((mach, day_key), 1)
+                if blk is not None and (
+                    shift_available == 0
+                    or day_available == 0
+                    or (mach, day_key, shift_key_iter[1]) in blackout
+                    or (allowed is not None and role not in allowed)
                 ):
                     plan[mach][shift_key_iter] = None
                 else:
