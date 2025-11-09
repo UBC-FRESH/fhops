@@ -35,8 +35,8 @@ Status: Draft — supports mobilisation and constraint upgrades.
 - [x] Regression tests verifying sequencing is enforced in solver outputs (MIP + SA).
 
 ## Documentation
-- [ ] System registry reference in Sphinx.
-- [ ] Tutorials showing how to configure and analyse system-specific schedules.
+- [x] System registry reference in Sphinx.
+- [x] Tutorials showing how to configure and analyse system-specific schedules.
 
 ##### Plan – Documentation Deliverables
 - [x] Document harvest system registry
@@ -47,7 +47,7 @@ Status: Draft — supports mobilisation and constraint upgrades.
   * Create ``docs/howto/system_sequencing.rst`` walking through scenario configuration, solver expectations, and KPI interpretation.
   * Provide CLI examples (MIP + SA) demonstrating sequencing compliance and violation reporting.
   * Reference synthetic generator helpers (`generate_with_systems`) for quick experiments.
-- [ ] Update roadmap + changelog after documentation lands.
+- [x] Update roadmap + changelog after documentation lands.
 
 ## Open Questions
 - How to represent systems with optional/parallel tasks?
