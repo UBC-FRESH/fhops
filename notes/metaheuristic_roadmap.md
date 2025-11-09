@@ -128,7 +128,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [ ] Testing & benchmarks: validate reproducibility, ensure opt-in paths fall back cleanly, and benchmark speed/quality trade-offs.
 
 ###### Subtasks – Multi-start orchestration
-- [ ] Design a controller that spawns `n` independent SA runs (multiprocessing/joblib) and returns the best result plus per-run telemetry.
+- [x] Design a controller that spawns `n` independent SA runs (multiprocessing/joblib) and returns the best result plus per-run telemetry.
   * Define `fhops.optimization.heuristics.multistart.run_multi_start(pb, seeds, presets, max_workers)` returning `(best_result, runs_meta)`.
   * Use `concurrent.futures.ProcessPoolExecutor` with joblib-style fallback; ensure graceful shutdown and timeout handling.
   * Gather each run's telemetry (`meta` payload) and compute best objective deterministically; retain full logs for debugging.

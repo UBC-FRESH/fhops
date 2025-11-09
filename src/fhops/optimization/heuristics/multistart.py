@@ -1,0 +1,144 @@
+"""Multi-start orchestration helpers for heuristic solvers."""
+
+from __future__ import annotations
+
+from collections.abc import Sequence
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from dataclasses import dataclass
+from typing import Any
+
+from fhops.cli._utils import resolve_operator_presets
+from fhops.optimization.heuristics.sa import solve_sa
+from fhops.scenario.contract import Problem
+
+
+@dataclass(slots=True)
+class MultiStartResult:
+    """Container for the aggregated multi-start results."""
+
+    best_result: dict[str, Any]
+    runs_meta: list[dict[str, Any]]
+
+
+def _run_single(
+    pb: Problem,
+    seed: int,
+    preset: Sequence[str] | None,
+    sa_kwargs: dict[str, Any],
+    run_id: int,
+) -> tuple[float, dict[str, Any] | None, dict[str, Any]]:
+    """Execute a single SA run and return (objective, result, meta)."""
+
+    try:
+        operators = None
+        operator_weights = None
+        preset_label: str | None = None
+        if preset:
+            preset_label = "+".join(preset)
+            operators, operator_weights = resolve_operator_presets(preset)
+        kwargs = dict(sa_kwargs)
+        kwargs.setdefault("seed", seed)
+        if operators is not None:
+            if operators:
+                kwargs["operators"] = operators
+            if operator_weights:
+                kwargs["operator_weights"] = operator_weights
+        result = solve_sa(pb, **kwargs)
+        objective = float(result.get("objective", float("-inf")))
+        meta = result.get("meta", {}) or {}
+        meta = {
+            **meta,
+            "run_id": run_id,
+            "seed": seed,
+            "preset": preset_label or "default",
+            "objective": objective,
+            "status": "ok",
+        }
+        return objective, result, meta
+    except Exception as exc:  # pragma: no cover - defensive logging path
+        meta = {
+            "run_id": run_id,
+            "seed": seed,
+            "preset": preset_label or "default",
+            "status": "error",
+            "error": repr(exc),
+        }
+        return float("-inf"), None, meta
+
+
+def run_multi_start(
+    pb: Problem,
+    seeds: Sequence[int],
+    presets: Sequence[Sequence[str] | None] | None = None,
+    *,
+    max_workers: int | None = None,
+    sa_kwargs: dict[str, Any] | None = None,
+) -> MultiStartResult:
+    """Run multiple SA instances in parallel and return the best outcome.
+
+    Parameters
+    ----------
+    pb:
+        Problem definition to optimise.
+    seeds:
+        Iterable of RNG seeds, one per launch.
+    presets:
+        Optional iterable assigning operator presets for each run. Entries may
+        be ``None`` (default behaviour) or a sequence of preset names.
+    max_workers:
+        Maximum number of worker processes. ``None`` defers to ``ProcessPoolExecutor``.
+    sa_kwargs:
+        Extra keyword arguments forwarded to :func:`solve_sa`.
+    """
+
+    seed_list = list(seeds)
+    if not seed_list:
+        raise ValueError("seeds must contain at least one entry")
+
+    sa_kwargs = dict(sa_kwargs or {})
+    preset_list: list[Sequence[str] | None]
+    if presets is None:
+        preset_list = [None] * len(seed_list)
+    else:
+        preset_list = list(presets)
+        if len(preset_list) != len(seed_list):
+            raise ValueError("presets must match the length of seeds or be omitted")
+
+    runs_meta: list[dict[str, Any]] = []
+    results: list[tuple[float, dict[str, Any] | None]] = []
+
+    if len(seed_list) == 1 or (max_workers is not None and max_workers <= 1):
+        # Sequential fallback for simplicity/testing.
+        for idx, (seed, preset) in enumerate(zip(seed_list, preset_list)):
+            objective, result, meta = _run_single(pb, seed, preset, sa_kwargs, idx)
+            runs_meta.append(meta)
+            results.append((objective, result))
+    else:
+        with ProcessPoolExecutor(max_workers=max_workers) as executor:
+            futures = {
+                executor.submit(_run_single, pb, seed, preset, sa_kwargs, idx): idx
+                for idx, (seed, preset) in enumerate(zip(seed_list, preset_list))
+            }
+            for future in as_completed(futures):
+                idx = futures[future]
+                objective, result, meta = future.result()
+                runs_meta.append(meta)
+                results.append((objective, result))
+
+    # Select the best result (highest objective) among successful runs.
+    best_objective = float("-inf")
+    best_result: dict[str, Any] | None = None
+    for objective, result in results:
+        if result is None:
+            continue
+        if objective > best_objective or best_result is None:
+            best_objective = objective
+            best_result = result
+
+    if best_result is None:
+        raise RuntimeError("All multi-start runs failed; see runs_meta for details")
+
+    return MultiStartResult(best_result=best_result, runs_meta=runs_meta)
+
+
+__all__ = ["MultiStartResult", "run_multi_start"]
