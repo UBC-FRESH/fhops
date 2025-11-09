@@ -14,6 +14,7 @@ structure mirrors our roadmap so that implementation status stays transparent.
    howto/data_contract
    howto/benchmarks
    howto/parallel_heuristics
+   howto/tabu
 
 .. toctree::
    :maxdepth: 2

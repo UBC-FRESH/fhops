@@ -22,6 +22,7 @@ from fhops.optimization.heuristics import (
     build_exploration_plan,
     run_multi_start,
     solve_sa,
+    solve_tabu,
 )
 from fhops.optimization.mip import solve_mip
 from fhops.scenario.contract import Problem
@@ -293,6 +294,98 @@ def solve_heur_cmd(
         }
         append_jsonl(telemetry_log, record)
 
+
+@app.command("solve-tabu")
+def solve_tabu_cmd(
+    scenario: Path,
+    out: Path = typer.Option(..., "--out", help="Output CSV path"),
+    iters: int = 2000,
+    seed: int = 42,
+    tabu_tenure: int = typer.Option(0, "--tabu-tenure", help="Override tabu tenure (0=auto)"),
+    stall_limit: int = typer.Option(200, "--stall-limit", help="Max non-improving iterations before stopping."),
+    batch_neighbours: int = typer.Option(1, "--batch-neighbours", help="Neighbour samples per iteration."),
+    parallel_workers: int = typer.Option(1, "--parallel-workers", help="Threads for scoring batched neighbours."),
+    operator: list[str] | None = typer.Option(None, "--operator", "-o", help="Enable specific operators (repeatable)."),
+    operator_weight: list[str] | None = typer.Option(None, "--operator-weight", "-w", help="Set operator weight as name=value (repeatable)."),
+    operator_preset: list[str] | None = typer.Option(None, "--operator-preset", "-P", help=f"Apply operator preset ({operator_preset_help()}). Repeatable."),
+    list_operator_presets: bool = typer.Option(False, "--list-operator-presets", help="Show available operator presets and exit."),
+    telemetry_log: Path | None = typer.Option(None, "--telemetry-log", help="Append run telemetry to JSONL.", writable=True, dir_okay=False),
+    show_operator_stats: bool = typer.Option(False, "--show-operator-stats", help="Print per-operator stats."),
+):
+    """Solve with the Tabu Search heuristic."""
+    if list_operator_presets:
+        console.print("Operator presets:")
+        console.print(format_operator_presets())
+        raise typer.Exit()
+
+    sc = load_scenario(str(scenario))
+    pb = Problem.from_scenario(sc)
+    try:
+        preset_ops, preset_weights = resolve_operator_presets(operator_preset)
+        weight_config = parse_operator_weights(operator_weight)
+    except ValueError as exc:  # pragma: no cover - CLI validation
+        raise typer.BadParameter(str(exc)) from exc
+
+    explicit_ops = [op.lower() for op in operator] if operator else []
+    combined_ops = list(dict.fromkeys((preset_ops or []) + explicit_ops)) or None
+    combined_weights: dict[str, float] = {}
+    combined_weights.update(preset_weights)
+    combined_weights.update(weight_config)
+
+    batch_arg = batch_neighbours if batch_neighbours > 1 else None
+    worker_arg = parallel_workers if parallel_workers > 1 else None
+    tenure = tabu_tenure if tabu_tenure > 0 else None
+
+    res = solve_tabu(
+        pb,
+        iters=iters,
+        seed=seed,
+        operators=combined_ops,
+        operator_weights=combined_weights if combined_weights else None,
+        batch_size=batch_arg,
+        max_workers=worker_arg,
+        tabu_tenure=tenure,
+        stall_limit=stall_limit,
+    )
+    assignments = cast(pd.DataFrame, res["assignments"])
+    objective = cast(float, res.get("objective", 0.0))
+
+    out.parent.mkdir(parents=True, exist_ok=True)
+    assignments.to_csv(str(out), index=False)
+    console.print(f"Objective (tabu): {objective:.3f}. Saved to {out}")
+    metrics = compute_kpis(pb, assignments)
+    for key, value in metrics.items():
+        console.print(f"{key}: {value:.3f}" if isinstance(value, float) else f"{key}: {value}")
+    operators_meta = cast(dict[str, float], res.get("meta", {}).get("operators", {}))
+    if operators_meta:
+        console.print(f"Operators: {operators_meta}")
+    if show_operator_stats:
+        stats = res.get("meta", {}).get("operators_stats", {})
+        if stats:
+            console.print("Operator stats:")
+            for name, payload in stats.items():
+                console.print(
+                    f"  {name}: proposals={payload.get('proposals', 0)}, "
+                    f"accepted={payload.get('accepted', 0)}, "
+                    f"weight={payload.get('weight', 0)}"
+                )
+    if telemetry_log:
+        record = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "source": "solve-tabu",
+            "scenario": sc.name,
+            "scenario_path": str(scenario),
+            "seed": seed,
+            "iterations": iters,
+            "objective": objective,
+            "kpis": metrics,
+            "operators_config": operators_meta or combined_weights,
+            "tabu_tenure": tenure if tenure is not None else max(10, len(pb.scenario.machines)),
+            "stall_limit": stall_limit,
+            "batch_size": batch_neighbours,
+            "max_workers": parallel_workers,
+        }
+        append_jsonl(telemetry_log, record)
 
 @app.command()
 def evaluate(scenario: Path, assignments_csv: Path):

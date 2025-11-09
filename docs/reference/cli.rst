@@ -40,6 +40,7 @@ Additional simulated annealing controls:
 - ``fhops solve-heur ... --parallel-multistart 8`` — launch several SA runs in parallel, using the best result while logging per-run telemetry (requires ``--parallel-workers`` for true parallelism).
 - ``fhops solve-heur ... --telemetry-log fhops_runs.jsonl`` — append telemetry entries (objective, KPIs, operator stats, parallel configuration) to a JSONL file for later analysis.
 - ``fhops solve-heur ... --show-operator-stats`` — print per-operator proposal/acceptance statistics at the end of a run (also available in the benchmark summaries).
+- ``fhops solve-tabu ...`` — run the Tabu Search prototype (`--tabu-tenure`, `--stall-limit`, `--batch-neighbours`, `--parallel-workers`) and export telemetry consistent with SA runs.
 
 The evaluation output should include `mobilisation_cost=6.0` and `sequencing_violation_count=0`
 if the regression baseline is satisfied.
