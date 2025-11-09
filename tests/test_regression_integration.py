@@ -4,6 +4,7 @@ import pyomo.environ as pyo
 import pytest
 import yaml
 
+from fhops.cli._utils import resolve_operator_presets
 from fhops.evaluation.metrics.kpis import compute_kpis
 from fhops.optimization.heuristics import solve_sa
 from fhops.optimization.mip.builder import build_model
@@ -106,6 +107,15 @@ def test_regression_sa_mobilisation_and_sequencing():
     assert kpis["total_production"] == pytest.approx(BASELINE["sa_expected"]["total_production"])
 
 
+@pytest.mark.parametrize("preset", ["explore", "mobilisation", "stabilise"])
+def test_regression_sa_presets_preserve_objective(preset: str):
+    """Advanced presets should not worsen the regression objective."""
+    pb = regression_problem()
+    _, preset_weights = resolve_operator_presets([preset])
+    res = solve_sa(pb, iters=2000, seed=123, operator_weights=preset_weights)
+    assert "operators_stats" in res.get("meta", {})
+    baseline_obj = BASELINE["sa_expected"]["objective"]
+    assert res["objective"] >= baseline_obj - 1e-9
 def test_regression_mip_sequencing_constraints_accept_reference_plan():
     """Reference assignments should satisfy role filters and sequencing constraints."""
     pb = regression_problem()
