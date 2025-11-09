@@ -33,5 +33,4 @@ Telemetry records mirror SA entries but add ``tabu_tenure`` and ``stall_limit`` 
 Benchmarks
 ----------
 
-Refer to ``tmp/sa_batch_profile_long.csv`` for the latest profiling data. Tabu presently serves as an experimental option; keep the defaults opt-in until benchmarks demonstrate clear wins over SA.
-
+Refer to ``tmp/tabu_bench/summary.csv`` (generated via ``fhops bench suite --include-tabu``) and ``tmp/sa_batch_profile_long.csv`` for the latest profiling data. In current runs (minitoy/med42/large84, 500 iterations) Tabu lags behind SA, so the solver remains opt-in until further tuning.

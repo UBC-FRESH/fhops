@@ -278,12 +278,12 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 ###### Subtasks – Tabu Implementation
 - [x] Create `tabu.py` with solver function (`solve_tabu`) leveraging registry operators and tabu structures.
 - [x] Add CLI entry (`fhops solve-tabu`) with options for tenure, aspiration, iterations, and telemetry logging.
-- [ ] Ensure integration with benchmarking harness (`fhops bench suite`) to compare against SA.
+- [x] Ensure integration with benchmarking harness (`fhops bench suite`) to compare against SA. *(Use `--include-tabu` to emit Tabu rows in summaries.)*
 
 ###### Subtasks – Testing & Benchmarks (Tabu)
 - [x] Unit tests covering tabu list behaviour, aspiration, and feasibility checks.
 - [ ] Regression tests ensuring baseline objective matches expectations on minitoy scenario.
-- [ ] Benchmark runs (minitoy/med42/large84) comparing SA vs Tabu; capture telemetry for roadmap notes.
+- [x] Benchmark runs (minitoy/med42/large84) comparing SA vs Tabu; capture telemetry for roadmap notes. *(Results in `tmp/tabu_bench/summary.csv` show Tabu worse than SA across scenarios; keep solver experimental.)*
 
 ###### Subtasks – Documentation (Tabu)
 - [x] Update CLI reference and telemetry docs with Tabu-specific fields/options.
