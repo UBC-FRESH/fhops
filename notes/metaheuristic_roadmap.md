@@ -41,7 +41,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] **Operator registry scaffold:** create a registry for heuristic operators (swap, move, insert, mobilisation-aware shake) with enable/weight flags surfaced via `solve-heur` and benchmark CLI options. Implement telemetry hooks for acceptance counts per operator.
 - [x] **Advanced neighbourhoods:** add shift-aware block insertion (machine ↔ shift reassignment), cross-machine exchange, and mobilisation-sensitive diversification moves. Benchmark each operator on minitoy/med42/large84 to establish performance impacts.
 - [x] **SA parallel execution (opt-in):** deliver multi-start orchestration, batched neighbour evaluation, CLI/config integration, and profiling/documentation for the new knobs.
-- [ ] **Tabu Search prototype:** implement a Tabu neighbourhood on top of the registry (tabu tenure, aspiration criteria) and compare results against SA in the benchmarking harness. Decide whether to expose as `fhops solve-tabu`. *(Prototype available via CLI/bench; benchmarks show SA still superior—keep Tabu opt-in until further tuning and regression acceptance criteria are satisfied.)*
+- [x] **Tabu Search prototype:** implement a Tabu neighbourhood on top of the registry (tabu tenure, aspiration criteria) and compare results against SA in the benchmarking harness. *(Prototype available via `fhops solve-tabu` and `fhops bench suite --include-tabu`; keep Tabu opt-in until future tuning narrows the SA performance gap.)*
 - [ ] **ILS / Hybrid solver:** design an Iterated Local Search or MIP warm-start hybrid using the registry operators. Document configuration defaults and add harness support for hybrid runs.
 - [ ] **Benchmark reporting enhancements:** extend `fhops bench suite` outputs with per-operator usage metrics, solver comparisons (SA/Tabu/Hybrid), and provide summary plots/tables for Sphinx docs.
 - [ ] **Documentation updates:** draft a Sphinx how-to covering heuristic configuration presets, registry usage, and interpreting the new benchmarking metrics.
@@ -256,10 +256,10 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [ ] **Tabu Search prototype:** implement a Tabu neighbourhood on top of the registry (tabu tenure, aspiration criteria) and compare results against SA in the benchmarking harness. Decide whether to expose as `fhops solve-tabu`.
 
 ##### Plan – Tabu Search Prototype
-- [ ] Algorithm design: define neighbourhood moves, tabu tenure strategy, aspiration criteria, and scoring alignment with SA.
-- [ ] Implementation: build `fhops.optimization.heuristics.tabu` module (builder, solver entrypoint, CLI integration).
-- [ ] Testing & benchmarks: unit tests for tabu mechanics, regression comparison against SA, benchmarking on sample scenarios.
-- [ ] Documentation: CLI documentation, roadmap updates, and how-to section for configuring Tabu Search.
+- [x] Algorithm design: define neighbourhood moves, tabu tenure strategy, aspiration criteria, and scoring alignment with SA.
+- [x] Implementation: build `fhops.optimization.heuristics.tabu` module (builder, solver entrypoint, CLI integration).
+- [x] Testing & benchmarks: unit tests for tabu mechanics, regression comparison against SA, benchmarking on sample scenarios. *(Tabu remains opt-in after comparing against SA on minitoy/med42/large84.)*
+- [x] Documentation: CLI documentation, roadmap updates, and how-to section for configuring Tabu Search.
 
 ###### Subtasks – Tabu Algorithm Design
 - [x] Select base neighbourhoods (reuse swap/move/block insertion) and define Tabu structures (e.g., move-based tabu list).
