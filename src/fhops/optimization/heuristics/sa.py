@@ -291,6 +291,8 @@ def _neighbors(
     availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
     landing_of = {block.id: block.landing_id for block in sc.blocks}
     landing_cap = {landing.id: landing.daily_capacity for landing in sc.landings}
+    block_windows = {block.id: sc.window_for(block.id) for block in sc.blocks}
+    distance_lookup = build_distance_lookup(sc.mobilisation)
 
     schedule_cls = sched.__class__
 
@@ -328,7 +330,16 @@ def _neighbors(
                     plan[mach][shift_key_iter] = blk
         return schedule_cls(plan=plan)
 
-    context = OperatorContext(problem=pb, schedule=sched, sanitizer=sanitizer, rng=rng)
+    context = OperatorContext(
+        problem=pb,
+        schedule=sched,
+        sanitizer=sanitizer,
+        rng=rng,
+        distance_lookup=distance_lookup,
+        block_windows=block_windows,
+        landing_capacity=landing_cap,
+        landing_of=landing_of,
+    )
 
     enabled_ops = list(registry.enabled())
     if not enabled_ops:

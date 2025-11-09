@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
 from random import Random
 from typing import TYPE_CHECKING, Protocol
@@ -28,6 +28,10 @@ class OperatorContext:
     schedule: Schedule
     sanitizer: Sanitizer
     rng: Random
+    distance_lookup: Mapping[tuple[str, str], float] | None = None
+    block_windows: Mapping[str, tuple[int, int]] | None = None
+    landing_capacity: Mapping[str, int] | None = None
+    landing_of: Mapping[str, str] | None = None
 
 
 class Operator(Protocol):
