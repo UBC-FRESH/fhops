@@ -10,6 +10,7 @@
 - Began Phase 2 benchmark reporting enhancements: added a detailed plan (comparison metrics, visual artefacts, docs/test coverage) tracked in `notes/metaheuristic_roadmap.md` ahead of implementation.
 - Enhanced benchmarking summaries with heuristic comparison columns (`solver_category`, best heuristic solver/objective, gap and runtime ratios) and added regression coverage/documentation so the new fields remain stable.
 - Added a ``scripts/render_benchmark_plots.py`` helper plus Sphinx guidance/figures (`docs/_static/benchmarks/*.png`, `docs/howto/benchmarks.rst`) to visualise objective gaps and runtime ratios across heuristics.
+- Planned documentation work for heuristic presets/benchmark interpretation (see `notes/metaheuristic_roadmap.md` Plan – Documentation Updates) ahead of drafting the new how-to content.
 
 ## 2025-11-07 — Planning Framework Bootstrap
 - Established structured roadmap (`FHOPS_ROADMAP.md`) with phase tracking and detailed next steps.
