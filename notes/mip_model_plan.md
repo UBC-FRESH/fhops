@@ -31,7 +31,7 @@ Status: Draft — align updates with roadmap Phase 1/2 milestones.
 
 ## Tests & Benchmarks
 - [x] Extend unit/integration tests around the MIP builder.
-- [ ] Add performance benchmarks (pytest markers) capturing solve durations and objective values.
+- [x] Add performance benchmarks (pytest markers) capturing solve durations and objective values.
   - Include locking scenarios to ensure heuristics/MIP produce consistent results.
 
 ## Documentation

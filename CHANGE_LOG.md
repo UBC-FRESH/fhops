@@ -43,6 +43,7 @@
 - Extended objective handling with transition and landing-slack weights; the Pyomo builder now introduces transition binaries even without mobilisation configs, landing slack variables when penalised, and the SA heuristic mirrors the weighted scoring. Added targeted unit tests covering transition and slack penalties.
 - Bumped package metadata to `v0.0.1` and finalised the Phase 1 release notes, preparing the PR for the GitHub release workflow trigger.
 - Relaxed the `require-changelog-update` hook to support `pre-commit run --all-files` (CI no longer fails when the latest commit already updates `CHANGE_LOG.md`).
+- Added the Phase 2 benchmarking harness (`fhops bench suite`) with structured outputs, regression fixture for minitoy SA, and accompanying documentation/tests.
 - Add changelog entry for PR #5: major package reorg, roadmap and phase-1 completion; satisfy CI pre-commit check (added by gparadis).
 - Commands executed:
   - `ruff format src tests`

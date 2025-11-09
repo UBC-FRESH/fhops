@@ -1,0 +1,9 @@
+{
+  "scenario": "user-1",
+  "solver": "sa",
+  "objective": 47.5,
+  "kpi_total_production": 47.5,
+  "kpi_completed_blocks": 1.0,
+  "iters": 200,
+  "seed": 42
+}

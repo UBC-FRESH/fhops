@@ -21,11 +21,10 @@ before proposing new work.
 - [x] Define geospatial ingestion strategy for block geometries (GeoJSON baseline, distance matrix fallback) to support mobilisation costs (`notes/mobilisation_plan.md`, `notes/data_contract_enhancements.md`, `docs/howto/data_contract.rst`).
 
 ## Phase 2 — Solver & Heuristic Expansion
+- [ ] Scenario scaling benchmarks & tuning harness (phase kickoff task).
 - [ ] Metaheuristic roadmap execution (Simulated Annealing refinements, Tabu/ILS activation).
-- [ ] Mobilisation/setup cost integration in MIP & heuristics (`notes/mobilisation_plan.md`) — scaffolding in place, cost terms pending.
-- [ ] Harvest system sequencing constraints and machine-to-system mapping (`notes/system_sequencing_plan.md`).
-- [ ] Introduce schedule-locking support in both MIP and heuristic schedulers for external commitments (`notes/mip_model_plan.md`).
-- [ ] Scenario scaling benchmarks and tuning harness.
+- [ ] Mobilisation penalty calibration & distance QA across benchmark scenarios (`notes/mobilisation_plan.md`).
+- [ ] Harvest system sequencing parity and machine-to-system mapping (`notes/system_sequencing_plan.md`).
 - [ ] CLI ergonomics for solver configuration profiles.
 
 ## Phase 3 — Evaluation & Analytics

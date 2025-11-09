@@ -15,7 +15,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [ ] Investigate hybrid approaches (MIP warm start + heuristic refinement).
 
 ## Testing & Evaluation
-- [ ] Create benchmark suite capturing objective value vs runtime for standard scenarios.
+- [x] Create benchmark suite capturing objective value vs runtime for standard scenarios (minitoy/med42/large84 via `fhops bench suite`).
 - [ ] Add stochastic regression tests with fixed seeds.
 - [ ] Consider property-based tests for invariants (e.g., feasibility of generated schedules).
 
