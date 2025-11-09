@@ -74,3 +74,4 @@
 - Added JSONL telemetry logging utilities with CLI `--telemetry-log` support, enabling persistent storage of SA run metadata for future hyperparameter tuning workflows.
 - Captured detailed design specs for advanced neighbourhood operators (block insertion, cross-machine exchange, mobilisation shake) in `notes/metaheuristic_roadmap.md`, including context dependencies, telemetry fields, and pseudo-code to guide the upcoming implementation phase.
 - Implemented advanced neighbourhood operators (`block_insertion`, `cross_exchange`, `mobilisation_shake`) in the registry with shared helper utilities, wired them into the default registry (weight=0.0) and CLI presets, and marked the implementation subtask complete in `notes/metaheuristic_roadmap.md`.
+- Added shift-aware SA operator presets (`explore`, `mobilisation`, `stabilise`) with documented weight profiles, updated CLI helpers/tests to expose the new options, and captured usage guidance in `docs/reference/cli.rst`.
