@@ -41,3 +41,19 @@ For quick experimentation on the minitoy scenario:
 
    fhops solve-heur examples/minitoy/scenario.yaml --out tmp/minitoy_sa.csv --iters 500
    fhops evaluate examples/minitoy/scenario.yaml tmp/minitoy_sa.csv | grep mobilisation_cost
+
+Tooling Notes
+-------------
+
+* Work in a projected coordinate system (e.g., UTM zones such as EPSG:32610/26910) so reported
+  distances stay in metres. Use ``ogr2ogr``/``gdalwarp`` or QGIS to reproject shapefiles/GeoPackages
+  before exporting GeoJSON.
+* If you already maintain distance matrices in another system, skip GeoJSON and place the CSV next
+  to the scenario YAML (or reference it via ``MobilisationConfig.distance_csv``). The loader will
+  prefer inline data over auto-generated filenames.
+* Typical workflow:
+
+  1. Export block polygons to GeoJSON with ``block_id`` property.
+  2. Run ``fhops geo distances`` to generate the matrix.
+  3. Drop the CSV alongside the scenario or set ``mobilisation.distance_csv`` explicitly.
+  4. Calibrate machine-specific costs/thresholds using the benchmarking harness.

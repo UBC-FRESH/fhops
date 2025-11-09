@@ -25,8 +25,8 @@ Status: Draft — pending modular reorganisation.
 
 ## Documentation
 - [x] Sphinx how-to explaining mobilisation configuration and cost outcomes. *(Updated `docs/howto/mobilisation_geo.rst` with calibration guidance and benchmark references.)*
-- [ ] CLI examples (`fhops solve-mip --mobilisation-config ...`).
-- [ ] GeoJSON ingestion guide (projection requirements, recommended tooling, optional matrix fallback).
+- [x] CLI examples (`fhops solve-mip --mobilisation-config ...`). *(Added mobilisation-focused commands in the mobilisation how-to and CLI reference.)*
+- [x] GeoJSON ingestion guide (projection requirements, recommended tooling, optional matrix fallback).
 
 ## Open Questions
 - Preferred baseline format: GeoJSON vs shapefile vs manual matrix? *(Initial proposal: GeoJSON in UTM/provincial projection; accept precomputed matrix as alternate path.)*
