@@ -69,6 +69,6 @@
 - Rewired SA neighbours to iterate through the registry with weighted operator selection while reusing the shared sanitizer, keeping regression/benchmark outputs stable.
 - Reran the benchmark/regression suites post-registry integration, updated the minitoy baseline, and checked off the verification subtask in `notes/metaheuristic_roadmap.md`.
 - Exposed operator configuration flags in the CLI (`solve-heur`, `fhops bench suite`), ensured benchmark summaries record `operators_config`, added parsing tests, and documented the new options.
-- Added operator presets (balanced, move-only, swap-heavy, swap-only) with CLI support and helper utilities for parsing/validation.
-- Instrumented per-operator telemetry in SA (`operators_stats`), surfaced stats in CLI/bench summaries, and documented the new tuning signals.
+- Added operator presets (balanced, move-only, swap-heavy, swap-only, diversify) with CLI support and helper utilities for parsing/validation.
+- Instrumented per-operator telemetry in SA (`operators_stats`), surfaced stats in CLI/bench summaries, documented the new tuning signals, and described the telemetry schema in `docs/reference/telemetry.rst`.
 - Added JSONL telemetry logging utilities with CLI `--telemetry-log` support, enabling persistent storage of SA run metadata for future hyperparameter tuning workflows.
