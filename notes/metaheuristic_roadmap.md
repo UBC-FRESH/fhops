@@ -63,13 +63,13 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
   * note TODO for future automation (maybe script to refresh benchmarking figures).
 
 ###### Subtasks – Heuristic How-to Draft
-- [ ] Create `docs/howto/heuristic_presets.rst` (or similar) with structure:
+- [x] Create `docs/howto/heuristic_presets.rst` (or similar) with structure:
   * Introduction mapping presets to use-cases.
   * CLI examples combining presets, weights, and parallel knobs.
   * Registry/operator overview (swap/move/block insertion/cross exchange/mobilisation shake) with brief behaviour summaries.
   * Optional section on ILS/Tabu integration, referencing their respective how-tos.
-- [ ] Include cross-references to existing docs (CLI reference, telemetry, parallel execution how-to).
-- [ ] Add a “next steps” link pointing readers to benchmarking guidance and tuning notes.
+- [x] Include cross-references to existing docs (CLI reference, telemetry, parallel execution how-to).
+- [x] Add a “next steps” link pointing readers to benchmarking guidance and tuning notes.
 
 ###### Subtasks – Benchmark Interpretation Section
 - [ ] Update `docs/howto/benchmarks.rst` to add a walkthrough of comparison metrics.
