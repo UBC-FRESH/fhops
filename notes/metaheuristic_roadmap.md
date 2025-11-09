@@ -68,4 +68,4 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] Create `Operator` protocol with `name: str`, `weight: float`, and `apply(context) -> Schedule | None`.
 - [x] Implement `OperatorRegistry` with: `register`, `get(name)`, `enabled()` iterator, `configure({name: weight})`, and default `from_defaults()` factory.
 - [x] Port existing `swap`/`move` logic into standalone operator functions referencing the shared sanitizer; register them in `from_defaults()`.
-- [ ] Add module-level tests ensuring default registry exposes `swap`/`move`, weight updates propagate, and disabled operators are skipped.
+- [x] Add module-level tests ensuring default registry exposes `swap`/`move`, weight updates propagate, and disabled operators are skipped.
