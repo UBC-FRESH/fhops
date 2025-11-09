@@ -22,7 +22,7 @@ before proposing new work.
 
 ## Phase 2 — Solver & Heuristic Expansion
 - [x] Scenario scaling benchmarks & tuning harness (phase kickoff task).
-- [ ] Shift-based scheduling architecture (data contract → solvers → KPIs) (`notes/modular_reorg_plan.md`, `notes/mip_model_plan.md`).
+- [x] Shift-based scheduling architecture (data contract → solvers → KPIs) (`notes/modular_reorg_plan.md`, `notes/mip_model_plan.md`).
 - [ ] Metaheuristic roadmap execution (Simulated Annealing refinements, Tabu/ILS activation).
 - [x] Mobilisation penalty calibration & distance QA across benchmark scenarios (`notes/mobilisation_plan.md`).
 - [ ] Harvest system sequencing parity and machine-to-system mapping (`notes/system_sequencing_plan.md`).
