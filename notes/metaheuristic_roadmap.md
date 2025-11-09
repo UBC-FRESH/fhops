@@ -209,5 +209,5 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 
 ##### Plan – Advanced neighbourhoods: Testing & regression
 - [x] Add unit tests verifying each operator respects availability, windows, locks, and mobilisation rules. *(Implemented in `tests/heuristics/test_operators.py` covering window constraints, machine capability filters, schedule locks, and mobilisation spacing.)*
-- [ ] Update regression fixtures (e.g., mobilisation-heavy scenario) to ensure new operators improve or at least maintain objective.
+- [x] Update regression fixtures (e.g., mobilisation-heavy scenario) to ensure new operators improve or at least maintain objective. *(Regression integration test exercises explore/mobilisation/stabilise presets and asserts objectives remain at or above the baseline value.)*
 - [ ] Seed RNG deterministically so regression benchmarks remain reproducible.
