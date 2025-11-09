@@ -52,11 +52,11 @@ Example
 .. code-block:: json
 
    {
-     "timestamp": "2025-11-09T05:31:42.972801",
-     "source": "solve-heur",
-     "scenario": "FHOPS MiniToy",
-     "scenario_path": "examples/minitoy/scenario.yaml",
-     "solver": "sa",
+    "timestamp": "2025-11-09T05:31:42.972801",
+    "source": "solve-heur",
+    "scenario": "FHOPS MiniToy",
+    "scenario_path": "examples/minitoy/scenario.yaml",
+    "solver": "sa",
      "seed": 42,
      "iterations": 200,
      "objective": 13.0,
@@ -86,3 +86,4 @@ Usage Notes
 - Logs are append-only; use tooling such as ``jq`` or pandas to analyse historical performance.
 - Operators with frequently low acceptance rates may warrant weight adjustments or new presets.
 - Combine logs with the hyperparameter tuning plan (``notes/metaheuristic_hyperparam_tuning.md``) to drive future ML/LLM-based schedulers.
+- Parallel options add ``batch_size``/``max_workers`` fields to single-run records. Multi-start telemetry logs per-run entries with ``run_id``/``preset`` and a summary record containing ``type: multi_start_summary``, ``best_run_id``, ``best_objective``, and ``runs_executed``.

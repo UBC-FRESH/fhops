@@ -16,7 +16,15 @@ from fhops.telemetry import append_jsonl
 
 @dataclass(slots=True)
 class MultiStartResult:
-    """Container for the aggregated multi-start results."""
+    """Aggregated result of a multi-start run.
+
+    Attributes
+    ----------
+    best_result:
+        The best run's result dictionary (matching :func:`solve_sa` semantics).
+    runs_meta:
+        Telemetry entries for every run (status, objective, preset, etc.).
+    """
 
     best_result: dict[str, Any]
     runs_meta: list[dict[str, Any]]
@@ -78,22 +86,7 @@ def run_multi_start(
     telemetry_log: str | Path | None = None,
     summary_log: bool = True,
 ) -> MultiStartResult:
-    """Run multiple SA instances in parallel and return the best outcome.
-
-    Parameters
-    ----------
-    pb:
-        Problem definition to optimise.
-    seeds:
-        Iterable of RNG seeds, one per launch.
-    presets:
-        Optional iterable assigning operator presets for each run. Entries may
-        be ``None`` (default behaviour) or a sequence of preset names.
-    max_workers:
-        Maximum number of worker processes. ``None`` defers to ``ProcessPoolExecutor``.
-    sa_kwargs:
-        Extra keyword arguments forwarded to :func:`solve_sa`.
-    """
+    """Run several SA instances (possibly in parallel) and return the best outcome."""
 
     seed_list = list(seeds)
     if not seed_list:
