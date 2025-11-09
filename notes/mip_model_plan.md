@@ -8,6 +8,7 @@ Status: Draft — align updates with roadmap Phase 1/2 milestones.
 - Implement backlog items (landing capacity variants, mobilisation/setup costs, shift-level capacity, shift-length penalties).
 - Encode harvest system sequencing requirements (precedence, machine-worker compatibility) inside the MIP.
 - Benchmark solver performance across scenario scales; document tunings and warm-start strategies.
+- Transition the MIP builder from day-indexed to shift-indexed decision variables to align with Phase 2 scheduling goals.
 
 ### Current Objective/Constraint Coverage (2025-11-08 audit)
 - MIP objective supports production and mobilisation weights only; no explicit move-count or landing slack penalties yet.
@@ -32,6 +33,7 @@ Status: Draft — align updates with roadmap Phase 1/2 milestones.
 ## Tests & Benchmarks
 - [x] Extend unit/integration tests around the MIP builder.
 - [x] Add performance benchmarks (pytest markers) capturing solve durations and objective values.
+- [ ] Introduce shift-indexed sets/variables (machines × blocks × shifts), update mobilisation/landing constraints, and retain compatibility with legacy day-only scenarios.
   - Include locking scenarios to ensure heuristics/MIP produce consistent results.
 
 ## Documentation
