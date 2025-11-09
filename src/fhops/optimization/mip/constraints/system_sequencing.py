@@ -9,7 +9,9 @@ import pyomo.environ as pyo
 from fhops.scenario.contract import Problem
 
 
-def apply_system_sequencing_constraints(model: pyo.ConcreteModel, pb: Problem) -> None:
+def apply_system_sequencing_constraints(
+    model: pyo.ConcreteModel, pb: Problem, shift_sequence: list[tuple[int, str]]
+) -> None:
     """Attach role filters and precedence constraints derived from harvest systems."""
 
     scenario = pb.scenario
@@ -43,18 +45,24 @@ def apply_system_sequencing_constraints(model: pyo.ConcreteModel, pb: Problem) -
     if not hasattr(model, "R"):
         model.R = pyo.Set(initialize=list(machines_by_role.keys()))
 
-    def role_constraint_rule(mdl, mach, blk, day):
+    def role_constraint_rule(mdl, mach, blk, day, shift_id):
         allowed = allowed_roles.get(blk)
         role = machine_roles.get(mach)
         if allowed is None or role in allowed:
             return pyo.Constraint.Skip
-        return mdl.x[mach, blk, day] == 0
+        return mdl.x[mach, blk, (day, shift_id)] == 0
 
-    model.role_filter = pyo.Constraint(model.M, model.B, model.D, rule=role_constraint_rule)
+    model.role_filter = pyo.Constraint(model.M, model.B, model.S, rule=role_constraint_rule)
 
-    ordered_days = sorted(pb.days)
-    days_up_to = {day: [d for d in ordered_days if d <= day] for day in ordered_days}
-    days_before = {day: [d for d in ordered_days if d < day] for day in ordered_days}
+    ordered_shifts = list(shift_sequence)
+    if not ordered_shifts:
+        return
+
+    shifts_up_to: dict[tuple[int, str], list[tuple[int, str]]] = {}
+    shifts_before: dict[tuple[int, str], list[tuple[int, str]]] = {}
+    for idx, shift in enumerate(ordered_shifts):
+        shifts_up_to[shift] = ordered_shifts[: idx + 1]
+        shifts_before[shift] = ordered_shifts[:idx]
 
     prereq_index = [
         (blk, role, prereq) for (blk, role), prereqs in prereq_roles.items() for prereq in prereqs
@@ -62,21 +70,26 @@ def apply_system_sequencing_constraints(model: pyo.ConcreteModel, pb: Problem) -
     if prereq_index:
         model.system_sequencing_index = pyo.Set(initialize=prereq_index, dimen=3)
 
-        def sequencing_rule(mdl, blk, role, prereq, day):
+        def sequencing_rule(mdl, blk, role, prereq, day, shift_id):
             machines_role = machines_by_role.get(role)
             prereq_machines = machines_by_role.get(prereq)
             if not machines_role or not prereq_machines:
                 return pyo.Constraint.Skip
+            shift_key = (day, shift_id)
             lhs = sum(
-                mdl.x[mach, blk, d] for mach in machines_role for d in days_up_to.get(day, [])
+                mdl.x[mach, blk, s]
+                for mach in machines_role
+                for s in shifts_up_to.get(shift_key, [])
             )
             rhs = sum(
-                mdl.x[mach, blk, d] for mach in prereq_machines for d in days_before.get(day, [])
+                mdl.x[mach, blk, s]
+                for mach in prereq_machines
+                for s in shifts_before.get(shift_key, [])
             )
             return lhs <= rhs
 
         model.system_sequencing = pyo.Constraint(
-            model.system_sequencing_index, model.D, rule=sequencing_rule
+            model.system_sequencing_index, model.S, rule=sequencing_rule
         )
 
 

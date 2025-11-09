@@ -14,12 +14,15 @@ __all__ = ["build_model"]
 
 
 def build_model(pb: Problem) -> pyo.ConcreteModel:
-    """Build the core FHOPS MIP model."""
+    """Build the core FHOPS MIP model (shift-indexed)."""
+
     sc = pb.scenario
 
     machines = [machine.id for machine in sc.machines]
     blocks = [block.id for block in sc.blocks]
-    days = list(pb.days)
+    shift_list = pb.shifts
+    shift_tuples = [(shift.day, shift.shift_id) for shift in shift_list]
+    ordered_days = sorted({day for day, _ in shift_tuples})
 
     rate = {(r.machine_id, r.block_id): r.rate for r in sc.production_rates}
     work_required = {block.id: block.work_required for block in sc.blocks}
@@ -32,12 +35,20 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     distance_lookup = build_distance_lookup(mobilisation)
 
     availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
-    calendar_blackouts: set[tuple[str, int]] = set()
+    shift_availability = (
+        {(c.machine_id, c.day, c.shift_id): int(c.available) for c in sc.shift_calendar}
+        if sc.shift_calendar
+        else {}
+    )
+
+    calendar_blackouts: set[tuple[str, int, str]] = set()
     if sc.timeline and sc.timeline.blackouts:
         for blackout in sc.timeline.blackouts:
-            for day in range(blackout.start_day, blackout.end_day + 1):
-                for machine in sc.machines:
-                    calendar_blackouts.add((machine.id, day))
+            for day, shift_id in shift_tuples:
+                if blackout.start_day <= day <= blackout.end_day:
+                    for machine in sc.machines:
+                        calendar_blackouts.add((machine.id, day, shift_id))
+
     locked_assignments = sc.locked_assignments or []
     locked_lookup = {(lock.machine_id, lock.day): lock.block_id for lock in locked_assignments}
     windows = {block_id: sc.window_for(block_id) for block_id in sc.block_ids()}
@@ -45,17 +56,21 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     model = pyo.ConcreteModel()
     model.M = pyo.Set(initialize=machines)
     model.B = pyo.Set(initialize=blocks)
-    model.D = pyo.Set(initialize=days)
+    model.D = pyo.Set(initialize=ordered_days)
+    model.S = pyo.Set(initialize=shift_tuples, dimen=2)
 
     def within_window(block_id: str, day: int) -> int:
         earliest, latest = windows[block_id]
         return 1 if earliest <= day <= latest else 0
 
-    model.x = pyo.Var(model.M, model.B, model.D, domain=pyo.Binary)
-    model.prod = pyo.Var(model.M, model.B, model.D, domain=pyo.NonNegativeReals)
+    model.x = pyo.Var(model.M, model.B, model.S, domain=pyo.Binary)
+    model.prod = pyo.Var(model.M, model.B, model.S, domain=pyo.NonNegativeReals)
 
     production_expr = sum(
-        model.prod[mach, blk, day] for mach in model.M for blk in model.B for day in model.D
+        model.prod[mach, blk, (day, shift_id)]
+        for mach in model.M
+        for blk in model.B
+        for day, shift_id in model.S
     )
 
     mobil_cost_expr = 0
@@ -74,33 +89,48 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     needs_transitions = bool(mobil_params) or transition_weight > 0.0
     enable_landing_slack = landing_slack_weight > 0.0
 
+    prev_shift_map: dict[tuple[int, str], tuple[int, str]] = {}
+    for idx in range(1, len(shift_tuples)):
+        prev_shift_map[shift_tuples[idx]] = shift_tuples[idx - 1]
+
     if needs_transitions:
-        transition_days = [day for day in days if day > min(days)]
-        model.D_transition = pyo.Set(initialize=transition_days)
+        model.S_transition = pyo.Set(initialize=list(prev_shift_map.keys()), dimen=2)
 
-        model.y = pyo.Var(model.M, model.B, model.B, model.D_transition, domain=pyo.Binary)
+        model.y = pyo.Var(model.M, model.B, model.B, model.S_transition, domain=pyo.Binary)
 
-        def _prev_match_rule(mdl, mach, prev_blk, curr_blk, day):
-            prev_day = day - 1
-            return mdl.y[mach, prev_blk, curr_blk, day] <= mdl.x[mach, prev_blk, prev_day]
+        def _prev_match_rule(mdl, mach, prev_blk, curr_blk, day, shift_id):
+            prev_index = prev_shift_map.get((day, shift_id))
+            if prev_index is None:
+                return pyo.Constraint.Skip
+            prev_day, prev_shift = prev_index
+            return mdl.y[mach, prev_blk, curr_blk, (day, shift_id)] <= mdl.x[
+                mach, prev_blk, (prev_day, prev_shift)
+            ]
 
-        def _curr_match_rule(mdl, mach, prev_blk, curr_blk, day):
-            return mdl.y[mach, prev_blk, curr_blk, day] <= mdl.x[mach, curr_blk, day]
+        def _curr_match_rule(mdl, mach, prev_blk, curr_blk, day, shift_id):
+            return mdl.y[mach, prev_blk, curr_blk, (day, shift_id)] <= mdl.x[
+                mach, curr_blk, (day, shift_id)
+            ]
 
-        def _link_rule(mdl, mach, prev_blk, curr_blk, day):
-            prev_day = day - 1
-            return mdl.y[mach, prev_blk, curr_blk, day] >= (
-                mdl.x[mach, prev_blk, prev_day] + mdl.x[mach, curr_blk, day] - 1
+        def _link_rule(mdl, mach, prev_blk, curr_blk, day, shift_id):
+            prev_index = prev_shift_map.get((day, shift_id))
+            if prev_index is None:
+                return pyo.Constraint.Skip
+            prev_day, prev_shift = prev_index
+            return mdl.y[mach, prev_blk, curr_blk, (day, shift_id)] >= (
+                mdl.x[mach, prev_blk, (prev_day, prev_shift)]
+                + mdl.x[mach, curr_blk, (day, shift_id)]
+                - 1
             )
 
         model.transition_prev = pyo.Constraint(
-            model.M, model.B, model.B, model.D_transition, rule=_prev_match_rule
+            model.M, model.B, model.B, model.S_transition, rule=_prev_match_rule
         )
         model.transition_curr = pyo.Constraint(
-            model.M, model.B, model.B, model.D_transition, rule=_curr_match_rule
+            model.M, model.B, model.B, model.S_transition, rule=_curr_match_rule
         )
         model.transition_link = pyo.Constraint(
-            model.M, model.B, model.B, model.D_transition, rule=_link_rule
+            model.M, model.B, model.B, model.S_transition, rule=_link_rule
         )
 
         def _mobil_cost(mach: str, prev_blk: str, curr_blk: str) -> float:
@@ -117,42 +147,44 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
             return cost
 
         mobil_cost_expr = sum(
-            _mobil_cost(mach, prev_blk, curr_blk) * model.y[mach, prev_blk, curr_blk, day]
+            _mobil_cost(mach, prev_blk, curr_blk) * model.y[mach, prev_blk, curr_blk, (day, shift_id)]
             for mach in model.M
             for prev_blk in model.B
             for curr_blk in model.B
-            for day in model.D_transition
+            for day, shift_id in model.S_transition
         )
 
         transition_expr = sum(
-            model.y[mach, prev_blk, curr_blk, day]
+            model.y[mach, prev_blk, curr_blk, (day, shift_id)]
             for mach in model.M
             for prev_blk in model.B
             for curr_blk in model.B
-            for day in model.D_transition
+            for day, shift_id in model.S_transition
         )
 
-    def mach_one_block_rule(mdl, mach, day):
-        day_int = int(day)
-        if (mach, day_int) in calendar_blackouts:
-            return sum(mdl.x[mach, blk, day] for blk in mdl.B) == 0
-        if (mach, day_int) in locked_lookup:
+    def mach_one_shift_rule(mdl, mach, day, shift_id):
+        if (mach, day, shift_id) in calendar_blackouts:
+            return sum(mdl.x[mach, blk, (day, shift_id)] for blk in mdl.B) == 0
+        if (mach, day) in locked_lookup:
             return pyo.Constraint.Skip
-        availability_flag = availability.get((mach, day_int), 1)
-        return sum(mdl.x[mach, blk, day] for blk in mdl.B) <= availability_flag
+        available = shift_availability.get((mach, day, shift_id))
+        if available is not None:
+            return sum(mdl.x[mach, blk, (day, shift_id)] for blk in mdl.B) <= available
+        availability_flag = availability.get((mach, day), 1)
+        return sum(mdl.x[mach, blk, (day, shift_id)] for blk in mdl.B) <= availability_flag
 
-    model.mach_one_block = pyo.Constraint(model.M, model.D, rule=mach_one_block_rule)
+    model.mach_one_shift = pyo.Constraint(model.M, model.S, rule=mach_one_shift_rule)
 
-    def prod_cap_rule(mdl, mach, blk, day):
+    def prod_cap_rule(mdl, mach, blk, day, shift_id):
         r = rate.get((mach, blk), 0.0)
-        w = within_window(blk, int(day))
-        return mdl.prod[mach, blk, day] <= r * mdl.x[mach, blk, day] * w
+        w = within_window(blk, day)
+        return mdl.prod[mach, blk, (day, shift_id)] <= r * mdl.x[mach, blk, (day, shift_id)] * w
 
-    model.prod_cap = pyo.Constraint(model.M, model.B, model.D, rule=prod_cap_rule)
+    model.prod_cap = pyo.Constraint(model.M, model.B, model.S, rule=prod_cap_rule)
 
     def block_cum_rule(mdl, blk):
         return (
-            sum(mdl.prod[mach, blk, day] for mach in model.M for day in model.D)
+            sum(mdl.prod[mach, blk, (day, shift_id)] for mach in model.M for day, shift_id in model.S)
             <= work_required[blk]
         )
 
@@ -165,32 +197,34 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     model.L = pyo.Set(initialize=list(landing_capacity.keys()))
 
     if enable_landing_slack:
-        model.landing_slack = pyo.Var(model.L, model.D, domain=pyo.NonNegativeReals)
+        model.landing_slack = pyo.Var(model.L, model.S, domain=pyo.NonNegativeReals)
 
-        def landing_cap_rule(mdl, landing_id, day):
+        def landing_cap_rule(mdl, landing_id, day, shift_id):
             assignments = sum(
-                mdl.x[mach, blk, day]
+                mdl.x[mach, blk, (day, shift_id)]
                 for mach in model.M
                 for blk in blocks_by_landing.get(landing_id, [])
             )
             capacity = landing_capacity.get(landing_id, 0)
-            return assignments <= capacity + mdl.landing_slack[landing_id, day]
+            return assignments <= capacity + mdl.landing_slack[landing_id, (day, shift_id)]
 
         landing_slack_expr = sum(
-            model.landing_slack[landing_id, day] for landing_id in model.L for day in model.D
+            model.landing_slack[landing_id, (day, shift_id)]
+            for landing_id in model.L
+            for day, shift_id in model.S
         )
     else:
 
-        def landing_cap_rule(mdl, landing_id, day):
+        def landing_cap_rule(mdl, landing_id, day, shift_id):
             assignments = sum(
-                mdl.x[mach, blk, day]
+                mdl.x[mach, blk, (day, shift_id)]
                 for mach in model.M
                 for blk in blocks_by_landing.get(landing_id, [])
             )
             capacity = landing_capacity.get(landing_id, 0)
             return assignments <= capacity
 
-    model.landing_cap = pyo.Constraint(model.L, model.D, rule=landing_cap_rule)
+    model.landing_cap = pyo.Constraint(model.L, model.S, rule=landing_cap_rule)
 
     obj_expr = prod_weight * production_expr
     if mobil_params:
@@ -201,12 +235,17 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
         obj_expr -= landing_slack_weight * landing_slack_expr
     model.obj = pyo.Objective(expr=obj_expr, sense=pyo.maximize)
 
-    apply_system_sequencing_constraints(model, pb)
+    apply_system_sequencing_constraints(model, pb, shift_tuples)
 
     for lock in locked_assignments:
-        model.x[lock.machine_id, lock.block_id, lock.day].fix(1)
+        for day, shift_id in model.S:
+            if day == lock.day:
+                allowed = shift_availability.get((lock.machine_id, day, shift_id), 1)
+                model.x[lock.machine_id, lock.block_id, (day, shift_id)].fix(1 if allowed else 0)
         for other_blk in blocks:
             if other_blk != lock.block_id:
-                model.x[lock.machine_id, other_blk, lock.day].fix(0)
+                for day, shift_id in model.S:
+                    if day == lock.day:
+                        model.x[lock.machine_id, other_blk, (day, shift_id)].fix(0)
 
     return model

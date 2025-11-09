@@ -22,6 +22,18 @@ from fhops.scheduling.mobilisation import (
 )
 
 
+def _shift_tuple(pb: Problem, day: int, shift_id: str | None = None) -> tuple[int, str]:
+    candidates = [shift for shift in pb.shifts if shift.day == day]
+    if not candidates:
+        raise KeyError(f"No shift defined for day={day}")
+    if shift_id is None:
+        return (candidates[0].day, candidates[0].shift_id)
+    for shift in candidates:
+        if shift.shift_id == shift_id:
+            return (shift.day, shift.shift_id)
+    raise KeyError(f"Shift {shift_id!r} not found for day={day}")
+
+
 def _base_scenario() -> Scenario:
     return Scenario(
         name="locking",
@@ -51,11 +63,13 @@ def test_mip_respects_locked_assignments():
     scenario = _base_scenario().model_copy(
         update={"locked_assignments": [ScheduleLock(machine_id="M1", block_id="B1", day=1)]}
     )
-    model = build_model(Problem.from_scenario(scenario))
-    assert model.x["M1", "B1", 1].fixed
-    assert pyo.value(model.x["M1", "B1", 1]) == 1.0
+    pb = Problem.from_scenario(scenario)
+    model = build_model(pb)
+    shift = _shift_tuple(pb, 1)
+    assert model.x["M1", "B1", shift].fixed
+    assert pyo.value(model.x["M1", "B1", shift]) == 1.0
     # All other blocks for that machine/day must be fixed to zero
-    assert pyo.value(model.x["M1", "B2", 1]) == 0.0
+    assert pyo.value(model.x["M1", "B2", shift]) == 0.0
 
 
 def test_sa_respects_locked_assignments():
@@ -92,23 +106,26 @@ def test_objective_weights_adjust_mobilisation_penalty():
             "objective_weights": ObjectiveWeights(production=1.0, mobilisation=2.0),
         }
     )
-    model = build_model(Problem.from_scenario(scenario))
+    pb = Problem.from_scenario(scenario)
+    model = build_model(pb)
     for mach in model.M:
         for blk in model.B:
-            for day in model.D:
-                model.x[mach, blk, day].value = 0.0
-                model.prod[mach, blk, day].value = 0.0
-    model.x["M1", "B1", 1].value = 1.0
-    model.x["M1", "B2", 2].value = 1.0
-    model.prod["M1", "B1", 1].value = 2.0
-    model.prod["M1", "B2", 2].value = 2.0
-    if hasattr(model, "y") and hasattr(model, "D_transition"):
+            for day, shift_id in model.S:
+                model.x[mach, blk, (day, shift_id)].value = 0.0
+                model.prod[mach, blk, (day, shift_id)].value = 0.0
+    shift1 = _shift_tuple(pb, 1)
+    shift2 = _shift_tuple(pb, 2)
+    model.x["M1", "B1", shift1].value = 1.0
+    model.x["M1", "B2", shift2].value = 1.0
+    model.prod["M1", "B1", shift1].value = 2.0
+    model.prod["M1", "B2", shift2].value = 2.0
+    if hasattr(model, "y") and hasattr(model, "S_transition"):
         for mach in model.M:
             for prev_blk in model.B:
                 for curr_blk in model.B:
-                    for day in model.D_transition:
-                        model.y[mach, prev_blk, curr_blk, day].value = 0.0
-        model.y["M1", "B1", "B2", 2].value = 1.0
+                    for day, shift_id in model.S_transition:
+                        model.y[mach, prev_blk, curr_blk, (day, shift_id)].value = 0.0
+        model.y["M1", "B1", "B2", shift2].value = 1.0
     obj_val = pyo.value(model.obj.expr)
     assert obj_val == pytest.approx(4.0 - 2.0 * 5.0)
 
@@ -122,23 +139,26 @@ def test_transition_weight_penalises_moves_mip():
             "mobilisation": None,
         }
     )
-    model = build_model(Problem.from_scenario(scenario))
+    pb = Problem.from_scenario(scenario)
+    model = build_model(pb)
     for mach in model.M:
         for blk in model.B:
-            for day in model.D:
-                model.x[mach, blk, day].value = 0.0
-                model.prod[mach, blk, day].value = 0.0
-    model.x["M1", "B1", 1].value = 1.0
-    model.x["M1", "B2", 2].value = 1.0
-    model.prod["M1", "B1", 1].value = 2.0
-    model.prod["M1", "B2", 2].value = 2.0
-    if hasattr(model, "y") and hasattr(model, "D_transition"):
+            for day, shift_id in model.S:
+                model.x[mach, blk, (day, shift_id)].value = 0.0
+                model.prod[mach, blk, (day, shift_id)].value = 0.0
+    shift1 = _shift_tuple(pb, 1)
+    shift2 = _shift_tuple(pb, 2)
+    model.x["M1", "B1", shift1].value = 1.0
+    model.x["M1", "B2", shift2].value = 1.0
+    model.prod["M1", "B1", shift1].value = 2.0
+    model.prod["M1", "B2", shift2].value = 2.0
+    if hasattr(model, "y") and hasattr(model, "S_transition"):
         for mach in model.M:
             for prev_blk in model.B:
                 for curr_blk in model.B:
-                    for day in model.D_transition:
-                        model.y[mach, prev_blk, curr_blk, day].value = 0.0
-        model.y["M1", "B1", "B2", 2].value = 1.0
+                    for day, shift_id in model.S_transition:
+                        model.y[mach, prev_blk, curr_blk, (day, shift_id)].value = 0.0
+        model.y["M1", "B1", "B2", shift2].value = 1.0
     obj_val = pyo.value(model.obj.expr)
     assert obj_val == pytest.approx(4.0 - 3.0 * 1.0)
 
@@ -171,26 +191,28 @@ def test_landing_slack_penalty_mip():
             "mobilisation": None,
         }
     )
-    model = build_model(Problem.from_scenario(scenario))
+    pb = Problem.from_scenario(scenario)
+    model = build_model(pb)
     for mach in model.M:
         for blk in model.B:
-            for day in model.D:
-                model.x[mach, blk, day].value = 0.0
-                model.prod[mach, blk, day].value = 0.0
-    model.x["M1", "B1", 1].value = 1.0
-    model.x["M2", "B2", 1].value = 1.0
-    model.prod["M1", "B1", 1].value = 2.0
-    model.prod["M2", "B2", 1].value = 2.0
-    if 2 in model.D:
-        model.prod["M1", "B1", 2].value = 0.0
-        model.prod["M1", "B2", 2].value = 0.0
-        model.prod["M2", "B1", 2].value = 0.0
-        model.prod["M2", "B2", 2].value = 0.0
+            for day, shift_id in model.S:
+                model.x[mach, blk, (day, shift_id)].value = 0.0
+                model.prod[mach, blk, (day, shift_id)].value = 0.0
+    shift1 = _shift_tuple(pb, 1)
+    model.x["M1", "B1", shift1].value = 1.0
+    model.x["M2", "B2", shift1].value = 1.0
+    model.prod["M1", "B1", shift1].value = 2.0
+    model.prod["M2", "B2", shift1].value = 2.0
+    for mach in model.M:
+        for blk in model.B:
+            for day, shift_id in model.S:
+                if (day, shift_id) != shift1:
+                    model.prod[mach, blk, (day, shift_id)].value = 0.0
     if hasattr(model, "landing_slack"):
         for landing_id in model.L:
-            for day in model.D:
-                model.landing_slack[landing_id, day].value = 0.0
-        model.landing_slack["L1", 1].value = 1.0
+            for day, shift_id in model.S:
+                model.landing_slack[landing_id, (day, shift_id)].value = 0.0
+        model.landing_slack["L1", shift1].value = 1.0
     obj_val = pyo.value(model.obj.expr)
     assert obj_val == pytest.approx(4.0 - 2.0 * 1.0)
 
