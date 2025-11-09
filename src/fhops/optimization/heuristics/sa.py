@@ -345,14 +345,14 @@ def _neighbors(
     if not enabled_ops:
         return []
 
-    if len(enabled_ops) == 1:
-        ordered_ops = enabled_ops
+    ordered_ops = []
+    if len(enabled_ops) <= 1:
+        ordered_ops = list(enabled_ops)
     else:
         weight_values = [op.weight for op in enabled_ops]
         if all(abs(w - weight_values[0]) < 1e-9 for w in weight_values):
-            ordered_ops = enabled_ops
+            ordered_ops = list(enabled_ops)
         else:
-            ordered_ops: list = []
             candidates = enabled_ops.copy()
             weights = [op.weight for op in candidates]
             while candidates:
