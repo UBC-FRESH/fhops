@@ -20,6 +20,7 @@ structure mirrors our roadmap so that implementation status stays transparent.
 
    api/index
    reference/cli
+   reference/telemetry
 
 .. toctree::
    :maxdepth: 1
