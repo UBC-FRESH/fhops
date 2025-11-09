@@ -151,9 +151,9 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] Provide guardrails to fall back to single-thread mode on failure (exception handling, warnings).
 
 ###### Subtasks – Testing & benchmarks (parallel)
-- [ ] Add unit/integration tests verifying identical results when `workers=1` (parity with single-thread path).
-- [ ] Benchmark minitoy/med42/large84 with parallel options (record speedups/objective differences).
-- [ ] Document findings in roadmap/changelog and decide on default stance after evaluation.
+- [x] Add unit/integration tests verifying identical results when `workers=1` (parity with single-thread path). *(See `tests/heuristics/test_sa_batch.py::test_solve_sa_batch_matches_single`.)*
+- [x] Benchmark minitoy/med42/large84 with parallel options (record speedups/objective differences). *(Profiles captured in `tmp/sa_batch_profile.csv` and `tmp/sa_batch_profile_long.csv`.)*
+- [x] Document findings in roadmap/changelog and decide on default stance after evaluation. *(Threaded evaluation shows 5–6× overhead, so defaults remain sequential with parallel options opt-in.)*
 
 ##### Plan – Advanced neighbourhoods: Design & interfaces
 - [x] Catalogue candidate operators with design goals:
