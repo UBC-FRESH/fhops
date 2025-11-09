@@ -7,3 +7,91 @@ data:
   landings: data/landings.csv
   calendar: data/calendar.csv
   prod_rates: data/prod_rates.csv
+  mobilisation_distances: large84_block_distances.csv
+mobilisation:
+  default_walk_threshold_m: 900
+  distance_csv: large84_block_distances.csv
+  machine_params:
+    - machine_id: H01
+      walk_cost_per_meter: 0.02
+      move_cost_flat: 400
+      walk_threshold_m: 850
+      setup_cost: 60
+    - machine_id: H02
+      walk_cost_per_meter: 0.02
+      move_cost_flat: 400
+      walk_threshold_m: 850
+      setup_cost: 60
+    - machine_id: H03
+      walk_cost_per_meter: 0.02
+      move_cost_flat: 400
+      walk_threshold_m: 850
+      setup_cost: 60
+    - machine_id: H04
+      walk_cost_per_meter: 0.02
+      move_cost_flat: 400
+      walk_threshold_m: 850
+      setup_cost: 60
+    - machine_id: H05
+      walk_cost_per_meter: 0.02
+      move_cost_flat: 400
+      walk_threshold_m: 850
+      setup_cost: 60
+    - machine_id: H06
+      walk_cost_per_meter: 0.02
+      move_cost_flat: 400
+      walk_threshold_m: 850
+      setup_cost: 60
+    - machine_id: H07
+      walk_cost_per_meter: 0.02
+      move_cost_flat: 400
+      walk_threshold_m: 850
+      setup_cost: 60
+    - machine_id: H08
+      walk_cost_per_meter: 0.02
+      move_cost_flat: 400
+      walk_threshold_m: 850
+      setup_cost: 60
+    - machine_id: H09
+      walk_cost_per_meter: 0.02
+      move_cost_flat: 400
+      walk_threshold_m: 850
+      setup_cost: 60
+    - machine_id: H10
+      walk_cost_per_meter: 0.02
+      move_cost_flat: 400
+      walk_threshold_m: 850
+      setup_cost: 60
+    - machine_id: H11
+      walk_cost_per_meter: 0.02
+      move_cost_flat: 400
+      walk_threshold_m: 850
+      setup_cost: 60
+    - machine_id: H12
+      walk_cost_per_meter: 0.02
+      move_cost_flat: 400
+      walk_threshold_m: 850
+      setup_cost: 60
+    - machine_id: H13
+      walk_cost_per_meter: 0.02
+      move_cost_flat: 400
+      walk_threshold_m: 850
+      setup_cost: 60
+    - machine_id: H14
+      walk_cost_per_meter: 0.02
+      move_cost_flat: 400
+      walk_threshold_m: 850
+      setup_cost: 60
+    - machine_id: H15
+      walk_cost_per_meter: 0.02
+      move_cost_flat: 400
+      walk_threshold_m: 850
+      setup_cost: 60
+    - machine_id: H16
+      walk_cost_per_meter: 0.02
+      move_cost_flat: 400
+      walk_threshold_m: 850
+      setup_cost: 60
+objective_weights:
+  production: 1.0
+  mobilisation: 0.5
