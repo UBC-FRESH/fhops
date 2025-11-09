@@ -20,7 +20,17 @@ Status: Draft — to guide Phase 2 CLI enhancements.
 - [x] Decide on configuration format (code-based registry vs. external YAML).
   * Profiles will be defined in a Python module (e.g., `fhops.cli.profiles`) exposing `Profile` dataclasses and a default registry. This avoids packaging extra assets and keeps typing straightforward.
   * Follow-up work can allow optional user overrides from `~/.fhops/profiles.yaml`, but is out of scope for the first iteration.
-- [ ] Draft CLI UX (command examples, flag names).
+- [x] Draft CLI UX (command examples, flag names).
+  * Introduce a shared `--profile NAME` option for `solve-heur`, `solve-ils`, `solve-tabu`, and `bench suite`.
+  * Profiles set baseline options (operator presets, weights, batch/parallel knobs, ILS/Tabu parameters). Explicit CLI arguments still override.
+  * Add `--list-profiles` to print available profiles and short descriptions; optionally `fhops profile describe NAME`.
+  * Example usage:
+
+    .. code-block:: bash
+
+       fhops solve-heur examples/med42/scenario.yaml --profile explore
+       fhops solve-ils examples/med42/scenario.yaml --profile stabilise --perturbation-strength 5
+       fhops bench suite --include-ils --include-tabu --profile mobilisation --out-dir tmp/bench_profiles
 
 ## Tests
 - [ ] Unit tests ensuring profiles expand to expected solver arguments.
