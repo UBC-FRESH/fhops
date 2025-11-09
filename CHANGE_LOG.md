@@ -85,3 +85,4 @@
 - Multi-start runs now support JSONL telemetry logging (per-run records with run IDs and a summary entry) via the optional `telemetry_log` parameter.
 - Added opt-in batched neighbour generation in SA (`batch_size`, `max_workers`) with threadpool evaluation and parity tests.
 - Extended `fhops solve-heur` CLI with `--parallel-multistart`, `--parallel-workers`, and `--batch-neighbours` flags, including guardrails, telemetry fields, and updated CLI docs for parallel workflows.
+- Documented parallel workflows in Sphinx (multistart/batched how-to, CLI references, telemetry notes) and benchmarked the parallel heuristics across minitoy/med42/large84 to guide defaults.
