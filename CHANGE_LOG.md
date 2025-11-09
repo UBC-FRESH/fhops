@@ -62,3 +62,4 @@
 - Added detailed sub-subtasks for the registry data model (context dataclass, protocol, registry API, default operators, unit tests) to guide implementation.
 - Implemented the initial registry scaffold by introducing `OperatorContext` and sanitizer typing primitives (`fhops.optimization.heuristics.registry`) and exporting them via the heuristics package.
 - Added an `Operator` protocol defining the standardized name/weight/apply interface for heuristic operators to support the upcoming registry.
+- Implemented `OperatorRegistry` providing `register`, `get`, `enabled`, `configure`, and `from_defaults` helpers to manage heuristic operators and their weights.
