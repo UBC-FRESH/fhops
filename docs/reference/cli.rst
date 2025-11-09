@@ -26,7 +26,10 @@ Both ``solve-mip`` and ``solve-heur`` export schedules with the columns ``machin
 ``day``, and ``shift_id``. The shift identifier matches the scenario's shift calendar (or defaults to
 ``S1`` when only day-level data is provided) so downstream tooling can analyse sub-daily assignments.
 
-Additional simulated annealing controls:
+Heuristic configuration reference
+---------------------------------
+
+See :doc:`../howto/heuristic_presets` for an end-to-end walkthrough. Common CLI patterns:
 
 - ``fhops solve-heur ... --operator swap --operator move`` — restrict the operator set (defaults to all registered operators).
 - ``fhops solve-heur ... --operator-weight swap=2 --operator-weight move=0.5`` — adjust operator weights; zero disables an operator.
@@ -45,6 +48,8 @@ Additional simulated annealing controls:
 - ``fhops solve-ils ... --perturbation-strength 3 --stall-limit 10 --hybrid-use-mip`` — run the Iterated Local Search solver. The optional hybrid flag attempts a time-boxed MIP warm start when ILS stalls; ``--batch-neighbours``/``--parallel-workers`` reuse the SA batching infrastructure.
 - ``fhops solve-tabu ...`` — run the Tabu Search prototype (`--tabu-tenure`, `--stall-limit`, `--batch-neighbours`, `--parallel-workers`) and export telemetry consistent with SA runs.
 - ``fhops bench suite --include-ils`` — add ILS rows to the benchmark summary (CSV/JSON). Combine with ``--include-tabu`` for full solver comparisons.
+- ``python scripts/render_benchmark_plots.py tmp/benchmarks/summary.csv`` — turn benchmark summaries into comparison charts for documentation (see :doc:`../howto/benchmarks`).
+- ``fhops bench suite --include-ils --include-tabu --out-dir tmp/benchmarks_compare`` — generate the richer comparison columns (best heuristic solver, objective gaps, runtime ratios).
 
 The evaluation output should include `mobilisation_cost=6.0` and `sequencing_violation_count=0`
 if the regression baseline is satisfied.

@@ -79,11 +79,11 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] Ensure the plots appear in the Sphinx build (responsive layout, alt-text) and note the script usage.
 
 ###### Subtasks – CLI Reference Refresh
-- [ ] Expand `docs/reference/cli.rst` heuristics section with:
+- [x] Expand `docs/reference/cli.rst` heuristics section with:
   * Preset overview and merging behaviour.
   * Flags for enabling advanced operators, multi-start, batching, ILS/Tabu.
   * Pointer to the new how-to and plotting script.
-- [ ] Verify cross-links (toctree, references) resolve correctly after the new pages are added.
+- [x] Verify cross-links (toctree, references) resolve correctly after the new pages are added.
 
 ###### Subtasks – Maintenance Notes / Automation Hooks
 - [ ] Document in `notes/metaheuristic_hyperparam_tuning.md` or README how to regenerate plots when telemetry changes.
