@@ -131,7 +131,6 @@ def run_benchmark_suite(
 
     out_dir.mkdir(parents=True, exist_ok=True)
     rows: list[dict[str, object]] = []
-    profile_name = profile.name if profile else None
     profile_sa_config = combine_solver_configs(profile.bench if profile else None, profile.sa if profile else None) if profile else None
     profile_ils_config = combine_solver_configs(profile.bench if profile else None, profile.ils if profile else None) if profile else None
     profile_tabu_config = combine_solver_configs(profile.bench if profile else None, profile.tabu if profile else None) if profile else None
@@ -226,8 +225,9 @@ def run_benchmark_suite(
                 sa_assign.to_csv(scenario_out / output_name, index=False)
                 sa_kpis = compute_kpis(pb, sa_assign)
                 sa_meta = cast(dict[str, Any], sa_res.get("meta", {}))
-                if profile_name:
-                    sa_meta["profile"] = profile_name
+                if profile:
+                    sa_meta["profile"] = profile.name
+                    sa_meta["profile_version"] = profile.version
                 extra = {
                     "iters": sa_iters,
                     "seed": sa_seed,
@@ -238,8 +238,9 @@ def run_benchmark_suite(
                     "sa_restarts": sa_meta.get("restarts"),
                     "preset_label": preset_label,
                 }
-                if profile_name:
-                    extra["profile"] = profile_name
+                if profile:
+                    extra["profile"] = profile.name
+                    extra["profile_version"] = profile.version
                 operators_meta = cast(dict[str, float], sa_meta.get("operators", {}))
                 operator_stats = cast(
                     dict[str, dict[str, float]], sa_meta.get("operators_stats", {})
@@ -273,8 +274,9 @@ def run_benchmark_suite(
                         "operators_stats": operator_stats,
                         "preset_label": preset_label,
                     }
-                    if profile_name:
-                        log_record["profile"] = profile_name
+                    if profile:
+                        log_record["profile"] = profile.name
+                        log_record["profile_version"] = profile.version
                     append_jsonl(telemetry_log, log_record)
 
         if include_ils:
@@ -321,8 +323,9 @@ def run_benchmark_suite(
             ils_assign.to_csv(scenario_out / "ils_assignments.csv", index=False)
             ils_kpis = compute_kpis(pb, ils_assign)
             ils_meta = cast(dict[str, Any], ils_res.get("meta", {}))
-            if profile_name:
-                ils_meta["profile"] = profile_name
+            if profile:
+                ils_meta["profile"] = profile.name
+                ils_meta["profile_version"] = profile.version
             ils_weights = cast(dict[str, float], ils_meta.get("operators", {}))
             ils_stats = cast(dict[str, dict[str, float]], ils_meta.get("operators_stats", {}))
             extra_ils = {
@@ -334,8 +337,9 @@ def run_benchmark_suite(
                 "hybrid_mip_time_limit": ils_hybrid_mip_time_limit,
                 "improvement_steps": ils_meta.get("improvement_steps"),
             }
-            if profile_name:
-                extra_ils["profile"] = profile_name
+            if profile:
+                extra_ils["profile"] = profile.name
+                extra_ils["profile_version"] = profile.version
             rows.append(
                 _record_metrics(
                     scenario=bench,
@@ -367,8 +371,9 @@ def run_benchmark_suite(
                     "hybrid_use_mip": ils_hybrid_use_mip,
                     "hybrid_mip_time_limit": ils_hybrid_mip_time_limit,
                 }
-                if profile_name:
-                    record["profile"] = profile_name
+                if profile:
+                    record["profile"] = profile.name
+                    record["profile_version"] = profile.version
                 append_jsonl(telemetry_log, record)
 
         if include_tabu:
@@ -406,16 +411,18 @@ def run_benchmark_suite(
             tabu_assign.to_csv(scenario_out / "tabu_assignments.csv", index=False)
             tabu_kpis = compute_kpis(pb, tabu_assign)
             tabu_meta = cast(dict[str, Any], tabu_res.get("meta", {}))
-            if profile_name:
-                tabu_meta["profile"] = profile_name
+            if profile:
+                tabu_meta["profile"] = profile.name
+                tabu_meta["profile_version"] = profile.version
             extra_tabu = {
                 "iters": tabu_iters or sa_iters,
                 "seed": tabu_seed or sa_seed,
                 "tabu_tenure": tabu_meta.get("tabu_tenure"),
                 "tabu_stall_limit": tabu_stall_limit,
             }
-            if profile_name:
-                extra_tabu["profile"] = profile_name
+            if profile:
+                extra_tabu["profile"] = profile.name
+                extra_tabu["profile_version"] = profile.version
             rows.append(
                 _record_metrics(
                     scenario=bench,
@@ -445,8 +452,9 @@ def run_benchmark_suite(
                     "tabu_tenure": tabu_meta.get("tabu_tenure"),
                     "tabu_stall_limit": tabu_stall_limit,
                 }
-                if profile_name:
-                    record["profile"] = profile_name
+                if profile:
+                    record["profile"] = profile.name
+                    record["profile_version"] = profile.version
                 append_jsonl(telemetry_log, record)
 
     summary = pd.DataFrame(rows)

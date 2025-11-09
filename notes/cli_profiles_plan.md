@@ -1,7 +1,7 @@
 # CLI Profiles & Ergonomics Plan
 
 Date: 2025-11-12  
-Status: Draft — to guide Phase 2 CLI enhancements.
+Status: Complete — profiles shipped with CLI wiring/tests/docs.
 
 ## Objectives
 - Introduce reusable solver configuration profiles (e.g., presets for heuristics, multi-start, ILS/Tabu).
@@ -16,7 +16,7 @@ Status: Draft — to guide Phase 2 CLI enhancements.
 - [x] Implement CLI flags (`--operator-profile`, `--profile`) resolving to presets across heuristics/ILS/Tabu.
 - [x] Ensure profiles integrate with existing preset/weight overrides without surprising behaviour.
 - [x] Surface profile usage in telemetry/logging.
-- [ ] Document profiles in Sphinx (CLI reference + how-tos).
+- [x] Document profiles in Sphinx (CLI reference + how-tos).
 
 ## Immediate Next Steps
 - [x] Survey existing presets (`operator presets`, benchmark recipes) to seed profile catalog.
@@ -45,11 +45,7 @@ Status: Draft — to guide Phase 2 CLI enhancements.
 - [x] Add how-to section illustrating when to choose each profile.
 - [x] Note profile usage in benchmark/heuristic docs.
 
-## Open Questions
-- Should profiles cover both SA/ILS/Tabu simultaneously or remain solver-specific?
-- Do we need user-defined profile loading (e.g., from `~/.fhops/presets.yaml`)?
-- How to handle conflicting flags (profile + individual options) — precedence rules?
-
-## Evaluation & Reporting
-- [ ] Update changelog and Phase 2 roadmap once profiles ship.
-- [ ] Capture telemetry fields (`profile_name`, `profile_version`) for downstream analytics.
+## Open Questions & Follow-ups
+- Should we enable user-defined profiles (e.g., `~/.fhops/profiles.yaml`) in a future release?
+- Consider exposing `fhops profile describe NAME` for detailed dumps (current TODO).
+- Telemetry now records ``profile`` and ``profile_version``; downstream analytics can consume these fields.

@@ -201,7 +201,6 @@ def solve_heur_cmd(
     if profile:
         try:
             selected_profile = get_profile(profile)
-            profile_name = selected_profile.name
         except KeyError as exc:  # pragma: no cover - CLI validation
             raise typer.BadParameter(str(exc)) from exc
 
@@ -278,8 +277,9 @@ def solve_heur_cmd(
     assignments = cast(pd.DataFrame, res["assignments"])
     objective = cast(float, res.get("objective", 0.0))
     meta = cast(dict[str, Any], res.get("meta", {}))
-    if profile_name:
-        meta["profile"] = profile_name
+    if selected_profile:
+        meta["profile"] = selected_profile.name
+        meta["profile_version"] = selected_profile.version
 
     out.parent.mkdir(parents=True, exist_ok=True)
     assignments.to_csv(str(out), index=False)
@@ -321,8 +321,9 @@ def solve_heur_cmd(
             "batch_size": batch_neighbours,
             "max_workers": parallel_workers,
         }
-        if profile_name:
-            record["profile"] = profile_name
+        if selected_profile:
+            record["profile"] = selected_profile.name
+            record["profile_version"] = selected_profile.version
         append_jsonl(telemetry_log, record)
 
 
@@ -413,7 +414,6 @@ def solve_ils_cmd(
     if profile:
         try:
             selected_profile = get_profile(profile)
-            profile_name = selected_profile.name
         except KeyError as exc:  # pragma: no cover - CLI validation
             raise typer.BadParameter(str(exc)) from exc
 
@@ -473,8 +473,9 @@ def solve_ils_cmd(
     for key, value in metrics.items():
         console.print(f"{key}: {value:.3f}" if isinstance(value, float) else f"{key}: {value}")
     meta = cast(dict[str, Any], res.get("meta", {}))
-    if profile_name:
-        meta["profile"] = profile_name
+    if selected_profile:
+        meta["profile"] = selected_profile.name
+        meta["profile_version"] = selected_profile.version
     operators_meta = cast(dict[str, float], meta.get("operators", {}))
     if operators_meta:
         console.print(f"Operators: {operators_meta}")
@@ -508,8 +509,9 @@ def solve_ils_cmd(
             "hybrid_use_mip": hybrid_use_mip,
             "hybrid_mip_time_limit": hybrid_mip_time_limit,
         }
-        if profile_name:
-            record["profile"] = profile_name
+        if selected_profile:
+            record["profile"] = selected_profile.name
+            record["profile_version"] = selected_profile.version
         append_jsonl(telemetry_log, record)
 
 
@@ -612,8 +614,9 @@ def solve_tabu_cmd(
     for key, value in metrics.items():
         console.print(f"{key}: {value:.3f}" if isinstance(value, float) else f"{key}: {value}")
     meta = cast(dict[str, Any], res.get("meta", {}))
-    if profile_name:
-        meta["profile"] = profile_name
+    if selected_profile:
+        meta["profile"] = selected_profile.name
+        meta["profile_version"] = selected_profile.version
     operators_meta = cast(dict[str, float], meta.get("operators", {}))
     if operators_meta:
         console.print(f"Operators: {operators_meta}")
@@ -644,8 +647,9 @@ def solve_tabu_cmd(
             "batch_size": batch_neighbours,
             "max_workers": parallel_workers,
         }
-        if profile_name:
-            record["profile"] = profile_name
+        if selected_profile:
+            record["profile"] = selected_profile.name
+            record["profile_version"] = selected_profile.version
         append_jsonl(telemetry_log, record)
 
 @app.command()
