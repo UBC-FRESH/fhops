@@ -6,11 +6,41 @@ from typing import Sequence
 
 
 OPERATOR_PRESETS: dict[str, dict[str, float]] = {
-    "balanced": {"swap": 1.0, "move": 1.0},
-    "swap-only": {"swap": 1.0, "move": 0.0},
-    "move-only": {"swap": 0.0, "move": 1.0},
-    "swap-heavy": {"swap": 2.0, "move": 0.5},
-    "diversify": {"swap": 1.5, "move": 1.5},
+    "balanced": {
+        "swap": 1.0,
+        "move": 1.0,
+        "block_insertion": 0.0,
+        "cross_exchange": 0.0,
+        "mobilisation_shake": 0.0,
+    },
+    "swap-only": {
+        "swap": 1.0,
+        "move": 0.0,
+        "block_insertion": 0.0,
+        "cross_exchange": 0.0,
+        "mobilisation_shake": 0.0,
+    },
+    "move-only": {
+        "swap": 0.0,
+        "move": 1.0,
+        "block_insertion": 0.0,
+        "cross_exchange": 0.0,
+        "mobilisation_shake": 0.0,
+    },
+    "swap-heavy": {
+        "swap": 2.0,
+        "move": 0.5,
+        "block_insertion": 0.0,
+        "cross_exchange": 0.0,
+        "mobilisation_shake": 0.0,
+    },
+    "diversify": {
+        "swap": 1.5,
+        "move": 1.5,
+        "block_insertion": 0.0,
+        "cross_exchange": 0.0,
+        "mobilisation_shake": 0.0,
+    },
 }
 
 OPERATOR_PRESET_DESCRIPTIONS: dict[str, str] = {
