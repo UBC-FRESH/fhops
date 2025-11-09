@@ -5,11 +5,13 @@ from __future__ import annotations
 from collections.abc import Sequence
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 from fhops.cli._utils import resolve_operator_presets
 from fhops.optimization.heuristics.sa import solve_sa
 from fhops.scenario.contract import Problem
+from fhops.telemetry import append_jsonl
 
 
 @dataclass(slots=True)
@@ -73,6 +75,8 @@ def run_multi_start(
     *,
     max_workers: int | None = None,
     sa_kwargs: dict[str, Any] | None = None,
+    telemetry_log: str | Path | None = None,
+    summary_log: bool = True,
 ) -> MultiStartResult:
     """Run multiple SA instances in parallel and return the best outcome.
 
@@ -106,6 +110,7 @@ def run_multi_start(
 
     runs_meta: list[dict[str, Any]] = []
     results: list[tuple[float, dict[str, Any] | None]] = []
+    seen_ids: set[int] = set()
 
     if len(seed_list) == 1 or (max_workers is not None and max_workers <= 1):
         # Sequential fallback for simplicity/testing.
@@ -113,6 +118,9 @@ def run_multi_start(
             objective, result, meta = _run_single(pb, seed, preset, sa_kwargs, idx)
             runs_meta.append(meta)
             results.append((objective, result))
+            if telemetry_log and idx not in seen_ids:
+                append_jsonl(telemetry_log, meta)
+                seen_ids.add(idx)
     else:
         with ProcessPoolExecutor(max_workers=max_workers) as executor:
             futures = {
@@ -124,19 +132,33 @@ def run_multi_start(
                 objective, result, meta = future.result()
                 runs_meta.append(meta)
                 results.append((objective, result))
+                if telemetry_log and idx not in seen_ids:
+                    append_jsonl(telemetry_log, meta)
+                    seen_ids.add(idx)
 
     # Select the best result (highest objective) among successful runs.
     best_objective = float("-inf")
     best_result: dict[str, Any] | None = None
-    for objective, result in results:
+    best_meta: dict[str, Any] | None = None
+    for (objective, result), meta in zip(results, runs_meta):
         if result is None:
             continue
         if objective > best_objective or best_result is None:
             best_objective = objective
             best_result = result
+            best_meta = meta
 
     if best_result is None:
         raise RuntimeError("All multi-start runs failed; see runs_meta for details")
+
+    if telemetry_log and summary_log:
+        summary = {
+            "type": "multi_start_summary",
+            "best_objective": best_objective,
+            "best_run_id": best_meta.get("run_id") if best_meta else None,
+            "runs_executed": len(runs_meta),
+        }
+        append_jsonl(telemetry_log, summary)
 
     return MultiStartResult(best_result=best_result, runs_meta=runs_meta)
 
