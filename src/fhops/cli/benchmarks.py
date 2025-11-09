@@ -6,7 +6,7 @@ import time
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
 import pandas as pd
 import typer
@@ -130,6 +130,16 @@ def run_benchmark_suite(
             sa_assign = cast(pd.DataFrame, sa_res["assignments"]).copy()
             sa_assign.to_csv(scenario_out / "sa_assignments.csv", index=False)
             sa_kpis = compute_kpis(pb, sa_assign)
+            sa_meta = cast(dict[str, Any], sa_res.get("meta", {}))
+            extra = {
+                "iters": sa_iters,
+                "seed": sa_seed,
+                "sa_initial_score": sa_meta.get("initial_score"),
+                "sa_acceptance_rate": sa_meta.get("acceptance_rate"),
+                "sa_accepted_moves": sa_meta.get("accepted_moves"),
+                "sa_proposals": sa_meta.get("proposals"),
+                "sa_restarts": sa_meta.get("restarts"),
+            }
             rows.append(
                 _record_metrics(
                     scenario=bench,
@@ -138,11 +148,38 @@ def run_benchmark_suite(
                     assignments=sa_assign,
                     kpis=sa_kpis,
                     runtime_s=sa_runtime,
-                    extra={"iters": sa_iters, "seed": sa_seed},
+                    extra=extra,
                 )
             )
 
     summary = pd.DataFrame(rows)
+    if not summary.empty:
+        mip_objectives = (
+            summary[summary["solver"] == "mip"].set_index("scenario")["objective"].to_dict()
+        )
+        summary["objective_vs_mip_gap"] = summary.apply(
+            lambda row: (
+                mip_objectives.get(row["scenario"], float("nan")) - row["objective"]
+                if row["solver"] != "mip" and row["scenario"] in mip_objectives
+                else 0.0
+                if row["solver"] == "mip"
+                else pd.NA
+            ),
+            axis=1,
+        )
+        summary["objective_vs_mip_ratio"] = summary.apply(
+            lambda row: (
+                row["objective"] / mip_objectives[row["scenario"]]
+                if row["solver"] != "mip"
+                and row["scenario"] in mip_objectives
+                and mip_objectives[row["scenario"]] not in (0, None)
+                else 1.0
+                if row["solver"] == "mip"
+                else pd.NA
+            ),
+            axis=1,
+        )
+
     summary_csv = out_dir / "summary.csv"
     summary_json = out_dir / "summary.json"
     summary.sort_values(["scenario", "solver"]).to_csv(summary_csv, index=False)
