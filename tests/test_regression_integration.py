@@ -116,6 +116,8 @@ def test_regression_sa_presets_preserve_objective(preset: str):
     assert "operators_stats" in res.get("meta", {})
     baseline_obj = BASELINE["sa_expected"]["objective"]
     assert res["objective"] >= baseline_obj - 1e-9
+
+
 def test_regression_mip_sequencing_constraints_accept_reference_plan():
     """Reference assignments should satisfy role filters and sequencing constraints."""
     pb = regression_problem()

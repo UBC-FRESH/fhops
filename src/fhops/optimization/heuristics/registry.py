@@ -109,6 +109,7 @@ class OperatorRegistry:
 def _clone_plan(schedule: Schedule) -> dict[str, dict[tuple[int, str], str | None]]:
     return {machine: assignments.copy() for machine, assignments in schedule.plan.items()}
 
+
 def _locked_assignments(problem: Problem) -> dict[tuple[str, int], str]:
     locks = getattr(problem.scenario, "locked_assignments", None)
     if not locks:
@@ -117,7 +118,9 @@ def _locked_assignments(problem: Problem) -> dict[tuple[str, int], str]:
 
 
 def _production_rates(problem: Problem) -> dict[tuple[str, str], float]:
-    return {(rate.machine_id, rate.block_id): rate.rate for rate in problem.scenario.production_rates}
+    return {
+        (rate.machine_id, rate.block_id): rate.rate for rate in problem.scenario.production_rates
+    }
 
 
 def _block_window(block_id: str, context: OperatorContext) -> tuple[int, int] | None:
@@ -134,7 +137,10 @@ def _window_allows(day: int, block_id: str, context: OperatorContext) -> bool:
     return start <= day <= end
 
 
-def _plan_equals(plan_a: dict[str, dict[tuple[int, str], str | None]], plan_b: dict[str, dict[tuple[int, str], str | None]]) -> bool:
+def _plan_equals(
+    plan_a: dict[str, dict[tuple[int, str], str | None]],
+    plan_b: dict[str, dict[tuple[int, str], str | None]],
+) -> bool:
     if plan_a.keys() != plan_b.keys():
         return False
     for machine in plan_a:
@@ -146,7 +152,8 @@ def _plan_equals(plan_a: dict[str, dict[tuple[int, str], str | None]], plan_b: d
 class SwapOperator:
     """Swap the assignments of two machines on a random shift."""
 
-    name = "swap"
+    name: str = "swap"
+    weight: float
 
     def __init__(self, weight: float = 1.0) -> None:
         self.weight = weight
@@ -181,7 +188,8 @@ class SwapOperator:
 class MoveOperator:
     """Move a machine assignment from one shift to another."""
 
-    name = "move"
+    name: str = "move"
+    weight: float
 
     def __init__(self, weight: float = 1.0) -> None:
         self.weight = weight
@@ -212,7 +220,8 @@ class MoveOperator:
 class BlockInsertionOperator:
     """Relocate a block assignment to a different machine/shift within windows."""
 
-    name = "block_insertion"
+    name: str = "block_insertion"
+    weight: float
 
     def __init__(self, weight: float = 0.0) -> None:
         self.weight = weight
@@ -273,7 +282,8 @@ class BlockInsertionOperator:
 class CrossExchangeOperator:
     """Exchange two assignments across machines/shifts to rebalance workload."""
 
-    name = "cross_exchange"
+    name: str = "cross_exchange"
+    weight: float
 
     def __init__(self, weight: float = 0.0) -> None:
         self.weight = weight
@@ -330,7 +340,8 @@ class CrossExchangeOperator:
 class MobilisationShakeOperator:
     """Diversification move favouring high mobilisation distance shifts."""
 
-    name = "mobilisation_shake"
+    name: str = "mobilisation_shake"
+    weight: float
 
     def __init__(self, weight: float = 0.0, min_day_delta: int = 1) -> None:
         self.weight = weight

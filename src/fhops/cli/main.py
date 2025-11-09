@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from pathlib import Path
-from typing import List, Optional, cast
+from typing import cast
 
 import pandas as pd
 import typer
@@ -110,19 +110,19 @@ def solve_heur_cmd(
     iters: int = 2000,
     seed: int = 42,
     debug: bool = False,
-    operator: Optional[List[str]] = typer.Option(
+    operator: list[str] | None = typer.Option(
         None,
         "--operator",
         "-o",
         help="Enable specific heuristic operators (repeatable). Defaults to all.",
     ),
-    operator_weight: Optional[List[str]] = typer.Option(
+    operator_weight: list[str] | None = typer.Option(
         None,
         "--operator-weight",
         "-w",
         help="Set operator weight as name=value (e.g., --operator-weight swap=2). Repeatable.",
     ),
-    operator_preset: Optional[List[str]] = typer.Option(
+    operator_preset: list[str] | None = typer.Option(
         None,
         "--operator-preset",
         "-P",
@@ -134,7 +134,7 @@ def solve_heur_cmd(
     show_operator_stats: bool = typer.Option(
         False, "--show-operator-stats", help="Print per-operator stats after solving."
     ),
-    telemetry_log: Optional[Path] = typer.Option(
+    telemetry_log: Path | None = typer.Option(
         None,
         "--telemetry-log",
         help="Append run telemetry to the given JSONL file.",

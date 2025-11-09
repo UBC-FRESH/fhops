@@ -160,9 +160,9 @@ def run_benchmark_suite(
             presets: Sequence[str] | None,
         ) -> tuple[str, list[str] | None, dict[str, float] | None]:
             preset_ops_local, preset_weights_local = resolve_operator_presets(presets)
-            combined_ops_local = list(
-                dict.fromkeys((preset_ops_local or []) + explicit_ops)
-            ) or None
+            combined_ops_local = (
+                list(dict.fromkeys((preset_ops_local or []) + explicit_ops)) or None
+            )
             combined_weights_local: dict[str, float] = {}
             combined_weights_local.update(preset_weights_local)
             combined_weights_local.update(override_weights)
