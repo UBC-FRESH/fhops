@@ -108,7 +108,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] **Changelog hook:** ensure the changelog summarises the telemetry documentation work once the above items land.
 
 ### Subtasks for Advanced neighbourhoods
-- [x] **Design & interfaces:** define new operators (block insertion, cross-machine exchange, mobilisation-aware shake), specifying preconditions, behaviour, and additional context needed (e.g., distance lookups).
+- [ ] **Design & interfaces:** define new operators (block insertion, cross-machine exchange, mobilisation-aware shake), specifying preconditions, behaviour, and additional context needed (e.g., distance lookups).
 - [ ] **Implementation:** add operator classes that reuse the shared sanitizer, register them with default weights, and ensure plan cloning stays efficient.
 - [ ] **Weighting & presets:** set sensible defaults, expose new presets (e.g., `explore`, `mobilisation`), and update CLI docs/config helpers.
 - [ ] **Benchmark evaluation:** compare baseline vs. extended operator sets across minitoy/med42/large84, capturing telemetry and summarising outcomes in notes/changelog.
