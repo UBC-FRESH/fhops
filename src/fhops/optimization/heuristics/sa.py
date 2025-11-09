@@ -270,7 +270,7 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
     return score
 
 
-def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
+def _neighbors(pb: Problem, sched: Schedule, registry: OperatorRegistry) -> list[Schedule]:
     sc = pb.scenario
     if not sc.machines or not pb.shifts:
         return []
@@ -322,7 +322,6 @@ def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
                     plan[mach][shift_key_iter] = blk
         return schedule_cls(plan=plan)
 
-    registry = OperatorRegistry.from_defaults()
     rng = random
     context = OperatorContext(problem=pb, schedule=sched, sanitizer=sanitizer, rng=rng)
 
@@ -363,9 +362,34 @@ def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
     return neighbours
 
 
-def solve_sa(pb: Problem, iters: int = 2000, seed: int = 42) -> dict[str, Any]:
+def solve_sa(
+    pb: Problem,
+    iters: int = 2000,
+    seed: int = 42,
+    operators: list[str] | None = None,
+    operator_weights: dict[str, float] | None = None,
+) -> dict[str, Any]:
     """Run simulated annealing returning objective and assignments DataFrame."""
     random.seed(seed)
+    registry = OperatorRegistry.from_defaults()
+    available_names = {name.lower(): name for name in registry.names()}
+    if operators:
+        desired = {name.lower() for name in operators}
+        unknown = desired - set(available_names.keys())
+        if unknown:
+            raise ValueError(f"Unknown operators requested: {', '.join(sorted(unknown))}")
+        disable = {name: 0.0 for lower, name in available_names.items() if lower not in desired}
+        if disable:
+            registry.configure(disable)
+    if operator_weights:
+        normalized_weights: dict[str, float] = {}
+        for name, weight in operator_weights.items():
+            key = name.lower()
+            if key not in available_names:
+                raise ValueError(f"Unknown operator '{name}' in weights configuration")
+            normalized_weights[available_names[key]] = weight
+        registry.configure(normalized_weights)
+
     current = _init_greedy(pb)
     current_score = _evaluate(pb, current)
     best = current
@@ -379,7 +403,7 @@ def solve_sa(pb: Problem, iters: int = 2000, seed: int = 42) -> dict[str, Any]:
     restarts = 0
     for step in range(1, iters + 1):
         accepted = False
-        for neighbor in _neighbors(pb, current):
+        for neighbor in _neighbors(pb, current, registry):
             proposals += 1
             neighbor_score = _evaluate(pb, neighbor)
             delta = neighbor_score - current_score
@@ -420,5 +444,6 @@ def solve_sa(pb: Problem, iters: int = 2000, seed: int = 42) -> dict[str, Any]:
         "restarts": restarts,
         "iterations": iters,
         "temperature0": float(temperature0),
+        "operators": registry.weights(),
     }
     return {"objective": float(best_score), "assignments": assignments, "meta": meta}

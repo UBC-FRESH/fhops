@@ -8,6 +8,9 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
+from typing import List, Optional
+
+from fhops.cli._utils import parse_operator_weights
 from fhops.cli.benchmarks import benchmark_app
 from fhops.cli.geospatial import geospatial_app
 from fhops.evaluation import compute_kpis
@@ -102,6 +105,18 @@ def solve_heur_cmd(
     iters: int = 2000,
     seed: int = 42,
     debug: bool = False,
+    operator: Optional[List[str]] = typer.Option(
+        None,
+        "--operator",
+        "-o",
+        help="Enable specific heuristic operators (repeatable). Defaults to all.",
+    ),
+    operator_weight: Optional[List[str]] = typer.Option(
+        None,
+        "--operator-weight",
+        "-w",
+        help="Set operator weight as name=value (e.g., --operator-weight swap=2). Repeatable.",
+    ),
 ):
     """Solve with Simulated Annealing (heuristic)."""
     if debug:
@@ -112,7 +127,18 @@ def solve_heur_cmd(
 
     sc = load_scenario(str(scenario))
     pb = Problem.from_scenario(sc)
-    res = solve_sa(pb, iters=iters, seed=seed)
+    try:
+        weight_config = parse_operator_weights(operator_weight)
+    except ValueError as exc:  # pragma: no cover - CLI validation
+        raise typer.BadParameter(str(exc)) from exc
+
+    res = solve_sa(
+        pb,
+        iters=iters,
+        seed=seed,
+        operators=operator,
+        operator_weights=weight_config if weight_config else None,
+    )
     assignments = cast(pd.DataFrame, res["assignments"])
     objective = cast(float, res.get("objective", 0.0))
 
@@ -122,6 +148,9 @@ def solve_heur_cmd(
     metrics = compute_kpis(pb, assignments)
     for key, value in metrics.items():
         console.print(f"{key}: {value:.3f}" if isinstance(value, float) else f"{key}: {value}")
+    operators_meta = cast(dict[str, float], res.get("meta", {}).get("operators", {}))
+    if operators_meta:
+        console.print(f"Operators: {operators_meta}")
 
 
 @app.command()

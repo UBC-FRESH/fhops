@@ -14,5 +14,6 @@
   "objective_vs_mip_gap": 41.0,
   "objective_vs_mip_ratio": 0.24074074074074084,
   "iters": 200,
-  "seed": 42
+  "seed": 42,
+  "operators_config": "{\"move\": 1.0, \"swap\": 1.0}"
 }

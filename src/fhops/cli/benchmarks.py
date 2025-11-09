@@ -3,16 +3,18 @@
 from __future__ import annotations
 
 import time
+import json
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, List, Optional, cast
 
 import pandas as pd
 import typer
 from rich.console import Console
 from rich.table import Table
 
+from fhops.cli._utils import parse_operator_weights
 from fhops.evaluation import compute_kpis
 from fhops.optimization.heuristics import solve_sa
 from fhops.optimization.mip import build_model, solve_mip
@@ -54,6 +56,7 @@ def _record_metrics(
     kpis: Mapping[str, object],
     runtime_s: float,
     extra: dict[str, object] | None = None,
+    operator_config: Mapping[str, float] | None = None,
 ) -> dict[str, object]:
     payload: dict[str, object] = {
         "scenario": scenario.name,
@@ -67,6 +70,8 @@ def _record_metrics(
         payload[f"kpi_{key}"] = value
     if extra:
         payload.update(extra)
+    if operator_config is not None:
+        payload["operators_config"] = json.dumps(dict(sorted(operator_config.items())))
     return payload
 
 
@@ -81,6 +86,8 @@ def run_benchmark_suite(
     include_mip: bool = True,
     include_sa: bool = True,
     debug: bool = False,
+    operators: Sequence[str] | None = None,
+    operator_weights: Mapping[str, float] | None = None,
 ) -> pd.DataFrame:
     """Execute the benchmark suite and return the summary DataFrame."""
     scenarios = _resolve_scenarios(scenario_paths)
@@ -125,7 +132,13 @@ def run_benchmark_suite(
 
         if include_sa:
             start = time.perf_counter()
-            sa_res = solve_sa(pb, iters=sa_iters, seed=sa_seed)
+            sa_res = solve_sa(
+                pb,
+                iters=sa_iters,
+                seed=sa_seed,
+                operators=list(operators) if operators else None,
+                operator_weights=dict(operator_weights) if operator_weights else None,
+            )
             sa_runtime = time.perf_counter() - start
             sa_assign = cast(pd.DataFrame, sa_res["assignments"]).copy()
             sa_assign.to_csv(scenario_out / "sa_assignments.csv", index=False)
@@ -140,6 +153,7 @@ def run_benchmark_suite(
                 "sa_proposals": sa_meta.get("proposals"),
                 "sa_restarts": sa_meta.get("restarts"),
             }
+            operators_meta = cast(dict[str, float], sa_meta.get("operators", {}))
             rows.append(
                 _record_metrics(
                     scenario=bench,
@@ -149,6 +163,7 @@ def run_benchmark_suite(
                     kpis=sa_kpis,
                     runtime_s=sa_runtime,
                     extra=extra,
+                    operator_config=operators_meta,
                 )
             )
 
@@ -222,8 +237,25 @@ def bench_suite(
     include_mip: bool = typer.Option(True, help="Include MIP solver in benchmarks"),
     include_sa: bool = typer.Option(True, help="Include simulated annealing in benchmarks"),
     debug: bool = typer.Option(False, help="Forward debug flag to solvers"),
+    operator: Optional[List[str]] = typer.Option(
+        None,
+        "--operator",
+        "-o",
+        help="Enable specific SA operators (repeatable). Defaults to all.",
+    ),
+    operator_weight: Optional[List[str]] = typer.Option(
+        None,
+        "--operator-weight",
+        "-w",
+        help="Set SA operator weight as name=value (repeatable).",
+    ),
 ):
     """Run the full benchmark suite and emit summary CSV/JSON outputs."""
+    weight_config: dict[str, float]
+    try:
+        weight_config = parse_operator_weights(operator_weight)
+    except ValueError as exc:  # pragma: no cover - CLI validation
+        raise typer.BadParameter(str(exc)) from exc
     run_benchmark_suite(
         scenario_paths=scenario,
         out_dir=out_dir,
@@ -234,4 +266,6 @@ def bench_suite(
         include_mip=include_mip,
         include_sa=include_sa,
         debug=debug,
+        operators=operator,
+        operator_weights=weight_config if weight_config else None,
     )

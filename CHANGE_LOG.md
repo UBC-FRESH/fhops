@@ -68,3 +68,4 @@
 - Captured a detailed sub-plan for operator registry integration within SA (registry wiring, shared sanitizer reuse, operator weighting, regression verification) in `notes/metaheuristic_roadmap.md`.
 - Rewired SA neighbours to iterate through the registry with weighted operator selection while reusing the shared sanitizer, keeping regression/benchmark outputs stable.
 - Reran the benchmark/regression suites post-registry integration, updated the minitoy baseline, and checked off the verification subtask in `notes/metaheuristic_roadmap.md`.
+- Exposed operator configuration flags in the CLI (`solve-heur`, `fhops bench suite`), ensured benchmark summaries record `operators_config`, added parsing tests, and documented the new options.

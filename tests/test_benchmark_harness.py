@@ -26,6 +26,7 @@ def test_benchmark_suite_minitoy(tmp_path):
     loaded = pd.read_csv(csv_path)
     assert "kpi_total_production" in loaded.columns
     assert set(loaded["scenario"]) == {"user-1"}
+    assert "operators_config" in loaded.columns
 
     baseline_path = Path("tests/fixtures/benchmarks/minitoy_sa.json")
     baseline = json.loads(baseline_path.read_text())
@@ -58,3 +59,4 @@ def test_benchmark_suite_minitoy(tmp_path):
     assert set(row_breakdown) == set(baseline_breakdown)
     for machine, value in baseline_breakdown.items():
         assert pytest.approx(value, rel=1e-6, abs=1e-6) == row_breakdown[machine]
+    assert sa_row.get("operators_config") == baseline["operators_config"]
