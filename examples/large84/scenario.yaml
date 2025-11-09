@@ -12,47 +12,47 @@ mobilisation:
   default_walk_threshold_m: 900
   distance_csv: large84_block_distances.csv
   machine_params:
-    - machine_id: H01
+    - machine_id: H1
       walk_cost_per_meter: 0.02
       move_cost_flat: 400
       walk_threshold_m: 850
       setup_cost: 60
-    - machine_id: H02
+    - machine_id: H2
       walk_cost_per_meter: 0.02
       move_cost_flat: 400
       walk_threshold_m: 850
       setup_cost: 60
-    - machine_id: H03
+    - machine_id: H3
       walk_cost_per_meter: 0.02
       move_cost_flat: 400
       walk_threshold_m: 850
       setup_cost: 60
-    - machine_id: H04
+    - machine_id: H4
       walk_cost_per_meter: 0.02
       move_cost_flat: 400
       walk_threshold_m: 850
       setup_cost: 60
-    - machine_id: H05
+    - machine_id: H5
       walk_cost_per_meter: 0.02
       move_cost_flat: 400
       walk_threshold_m: 850
       setup_cost: 60
-    - machine_id: H06
+    - machine_id: H6
       walk_cost_per_meter: 0.02
       move_cost_flat: 400
       walk_threshold_m: 850
       setup_cost: 60
-    - machine_id: H07
+    - machine_id: H7
       walk_cost_per_meter: 0.02
       move_cost_flat: 400
       walk_threshold_m: 850
       setup_cost: 60
-    - machine_id: H08
+    - machine_id: H8
       walk_cost_per_meter: 0.02
       move_cost_flat: 400
       walk_threshold_m: 850
       setup_cost: 60
-    - machine_id: H09
+    - machine_id: H9
       walk_cost_per_meter: 0.02
       move_cost_flat: 400
       walk_threshold_m: 850
