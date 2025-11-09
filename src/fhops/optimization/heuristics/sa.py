@@ -231,6 +231,20 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
     return score
 
 
+def _swap_operator(sched: Schedule, machines: list[str], day: int) -> Schedule:
+    swap_plan = {m: plan.copy() for m, plan in sched.plan.items()}
+    m1, m2 = machines
+    swap_plan[m1][day], swap_plan[m2][day] = swap_plan[m2][day], swap_plan[m1][day]
+    return Schedule(plan=swap_plan)
+
+
+def _move_operator(sched: Schedule, machine: str, from_day: int, to_day: int) -> Schedule:
+    move_plan = {m: plan.copy() for m, plan in sched.plan.items()}
+    move_plan[machine][to_day] = move_plan[machine][from_day]
+    move_plan[machine][from_day] = None
+    return Schedule(plan=move_plan)
+
+
 def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
     sc = pb.scenario
     machines = [machine.id for machine in sc.machines]
@@ -250,9 +264,7 @@ def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
     else:
         day = days[0]
         m1, m2 = (machines[0], machines[0])
-    swap_plan = {m: plan.copy() for m, plan in sched.plan.items()}
-    swap_plan[m1][day], swap_plan[m2][day] = swap_plan[m2][day], swap_plan[m1][day]
-    neighbours = [Schedule(plan=swap_plan)]
+    neighbours = [_swap_operator(sched, [m1, m2], day)]
     # move assignment within a machine across days
     machine = random.choice(machines)
     free_days = [d for d in days if (machine, d) not in locked]
@@ -262,10 +274,7 @@ def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
         d1 = d2 = free_days[0]
     else:
         d1 = d2 = days[0]
-    move_plan = {m: plan.copy() for m, plan in sched.plan.items()}
-    move_plan[machine][d2] = move_plan[machine][d1]
-    move_plan[machine][d1] = None
-    neighbours.append(Schedule(plan=move_plan))
+    neighbours.append(_move_operator(sched, machine, d1, d2))
 
     sanitized: list[Schedule] = []
     for neighbour in neighbours:

@@ -46,3 +46,4 @@
 - Added the Phase 2 benchmarking harness (`fhops bench suite`) with structured outputs, regression fixture for minitoy SA, and accompanying documentation/tests.
 - Calibrated mobilisation setups for the bundled minitoy/med42/large84 scenarios, wired loader support for inline mobilisation configs, refreshed benchmark baselines to assert mobilisation spend (including per-machine breakdowns), documented CLI usage, added geo-distance regression coverage, and documented projection/tooling guidance for GeoJSON ingestion.
 - Documented the current simulated annealing defaults (temperature schedule, restarts, neighbourhoods), added SA-specific metrics (acceptance rate, objective gap vs MIP) to the benchmarking harness, refreshed regression fixtures/tests, and cross-linked CLI/docs with tuning guidance.
+- Refactored the SA neighbour generation with explicit swap/move operators, paving the way for a pluggable operator registry in subsequent metaheuristic work.
