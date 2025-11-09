@@ -129,6 +129,9 @@ def solve_heur_cmd(
     list_operator_presets: bool = typer.Option(
         False, "--list-operator-presets", help="Show available operator presets and exit."
     ),
+    show_operator_stats: bool = typer.Option(
+        False, "--show-operator-stats", help="Print per-operator stats after solving."
+    ),
 ):
     """Solve with Simulated Annealing (heuristic)."""
     if debug:
@@ -174,6 +177,17 @@ def solve_heur_cmd(
     operators_meta = cast(dict[str, float], res.get("meta", {}).get("operators", {}))
     if operators_meta:
         console.print(f"Operators: {operators_meta}")
+    if show_operator_stats:
+        stats = res.get("meta", {}).get("operators_stats", {})
+        if stats:
+            console.print("Operator stats:")
+            for name, payload in stats.items():
+                console.print(
+                    f"  {name}: proposals={payload.get('proposals', 0)}, "
+                    f"accepted={payload.get('accepted', 0)}, "
+                    f"accept_rate={payload.get('acceptance_rate', 0):.3f}, "
+                    f"weight={payload.get('weight', 0)}"
+                )
 
 
 @app.command()
