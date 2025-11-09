@@ -40,14 +40,22 @@ def _role_metadata(scenario):
     return allowed, prereqs, machine_roles, machines_by_role
 
 
-def _blackout_map(scenario) -> set[tuple[str, int]]:
-    blackout: set[tuple[str, int]] = set()
+def _blackout_map(scenario) -> set[tuple[str, int, str]]:
+    blackout: set[tuple[str, int, str]] = set()
     timeline = getattr(scenario, "timeline", None)
     if timeline and timeline.blackouts:
         for blackout_window in timeline.blackouts:
             for day in range(blackout_window.start_day, blackout_window.end_day + 1):
                 for machine in scenario.machines:
-                    blackout.add((machine.id, day))
+                    if scenario.shift_calendar:
+                        for entry in scenario.shift_calendar:
+                            if entry.machine_id == machine.id and entry.day == day:
+                                blackout.add((machine.id, day, entry.shift_id))
+                    elif timeline.shifts:
+                        for shift_def in timeline.shifts:
+                            blackout.add((machine.id, day, shift_def.name))
+                    else:
+                        blackout.add((machine.id, day, "S1"))
     return blackout
 
 
@@ -72,6 +80,11 @@ def _init_greedy(pb: Problem) -> Schedule:
     sc = pb.scenario
     remaining = {block.id: block.work_required for block in sc.blocks}
     rate = {(r.machine_id, r.block_id): r.rate for r in sc.production_rates}
+    shift_availability = (
+        {(c.machine_id, c.day, c.shift_id): int(c.available) for c in sc.shift_calendar}
+        if sc.shift_calendar
+        else {}
+    )
     availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
     windows = {block_id: sc.window_for(block_id) for block_id in sc.block_ids()}
     allowed_roles, prereq_roles, machine_roles, _ = _role_metadata(sc)
@@ -85,13 +98,16 @@ def _init_greedy(pb: Problem) -> Schedule:
 
     for day, shift_id in shifts:
         for machine in sc.machines:
+            if shift_availability:
+                if shift_availability.get((machine.id, day, shift_id), 1) == 0:
+                    continue
             if availability.get((machine.id, day), 1) == 0:
                 continue
             lock_key = (machine.id, day)
             if lock_key in locked:
                 plan[machine.id][(day, shift_id)] = locked[lock_key]
                 continue
-            if lock_key in blackout:
+            if (machine.id, day, shift_id) in blackout:
                 continue
             candidates: list[tuple[float, str]] = []
             for block in sc.blocks:
@@ -158,7 +174,7 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
                 if (machine.id, day) in locked:
                     penalty += 1000.0
                 continue
-            if (machine.id, day) in blackout:
+            if (machine.id, day, shift_id) in blackout:
                 penalty += 1000.0
                 previous_block[machine.id] = None
                 continue
