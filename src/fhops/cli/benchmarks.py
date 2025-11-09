@@ -22,7 +22,7 @@ from fhops.cli._utils import (
     resolve_operator_presets,
 )
 from fhops.evaluation import compute_kpis
-from fhops.optimization.heuristics import solve_sa
+from fhops.optimization.heuristics import solve_sa, solve_tabu
 from fhops.optimization.mip import build_model, solve_mip
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
@@ -94,6 +94,13 @@ def run_benchmark_suite(
     time_limit: int = 300,
     sa_iters: int = 5000,
     sa_seed: int = 42,
+    include_tabu: bool = False,
+    tabu_iters: int | None = None,
+    tabu_seed: int | None = None,
+    tabu_tenure: int | None = None,
+    tabu_stall_limit: int = 200,
+    tabu_batch_neighbours: int = 1,
+    tabu_workers: int = 1,
     driver: str = "auto",
     include_mip: bool = True,
     include_sa: bool = True,
@@ -243,6 +250,59 @@ def run_benchmark_suite(
                     }
                     append_jsonl(telemetry_log, log_record)
 
+        if include_tabu:
+            start = time.perf_counter()
+            tabu_res = solve_tabu(
+                pb,
+                iters=tabu_iters or sa_iters,
+                seed=tabu_seed or sa_seed,
+                operators=combined_ops,
+                operator_weights=combined_weights if combined_weights else None,
+                batch_size=tabu_batch_neighbours if tabu_batch_neighbours > 1 else None,
+                max_workers=tabu_workers if tabu_workers > 1 else None,
+                tabu_tenure=tabu_tenure,
+                stall_limit=tabu_stall_limit,
+            )
+            tabu_runtime = time.perf_counter() - start
+            tabu_assign = cast(pd.DataFrame, tabu_res["assignments"]).copy()
+            tabu_assign.to_csv(scenario_out / "tabu_assignments.csv", index=False)
+            tabu_kpis = compute_kpis(pb, tabu_assign)
+            tabu_meta = cast(dict[str, Any], tabu_res.get("meta", {}))
+            rows.append(
+                _record_metrics(
+                    scenario=bench,
+                    solver="tabu",
+                    objective=cast(float, tabu_res.get("objective", 0.0)),
+                    assignments=tabu_assign,
+                    kpis=tabu_kpis,
+                    runtime_s=tabu_runtime,
+                    extra={
+                        "iters": tabu_iters or sa_iters,
+                        "seed": tabu_seed or sa_seed,
+                        "tabu_tenure": tabu_meta.get("tabu_tenure"),
+                        "tabu_stall_limit": tabu_stall_limit,
+                    },
+                    operator_config=tabu_meta.get("operators", combined_weights),
+                    operator_stats=cast(dict[str, dict[str, float]], tabu_meta.get("operators_stats", {})),
+                )
+            )
+            if telemetry_log:
+                record = {
+                    "timestamp": datetime.utcnow().isoformat(),
+                    "source": "bench-suite",
+                    "scenario": sc.name,
+                    "scenario_path": str(resolved_path),
+                    "solver": "tabu",
+                    "seed": tabu_seed or sa_seed,
+                    "iterations": tabu_iters or sa_iters,
+                    "objective": cast(float, tabu_res.get("objective", 0.0)),
+                    "kpis": tabu_kpis,
+                    "operators_config": tabu_meta.get("operators", combined_weights),
+                    "tabu_tenure": tabu_meta.get("tabu_tenure"),
+                    "tabu_stall_limit": tabu_stall_limit,
+                }
+                append_jsonl(telemetry_log, record)
+
     summary = pd.DataFrame(rows)
     if not summary.empty:
         mip_objectives = (
@@ -320,6 +380,13 @@ def bench_suite(
     time_limit: int = typer.Option(300, help="MIP time limit (seconds)"),
     sa_iters: int = typer.Option(5000, help="Simulated annealing iterations"),
     sa_seed: int = typer.Option(42, help="Simulated annealing RNG seed"),
+    include_tabu: bool = typer.Option(False, help="Include Tabu Search in benchmarks"),
+    tabu_iters: int = typer.Option(5000, help="Tabu Search iterations"),
+    tabu_seed: int = typer.Option(42, help="Tabu Search RNG seed"),
+    tabu_tenure: int = typer.Option(0, help="Tabu tenure override (0=auto)"),
+    tabu_stall_limit: int = typer.Option(200, help="Tabu stall limit"),
+    tabu_batch_neighbours: int = typer.Option(1, help="Neighbours sampled per Tabu iteration"),
+    tabu_workers: int = typer.Option(1, help="Worker threads for Tabu batched evaluation"),
     driver: str = typer.Option("auto", help="HiGHS driver: auto|appsi|exec"),
     include_mip: bool = typer.Option(True, help="Include MIP solver in benchmarks"),
     include_sa: bool = typer.Option(True, help="Include simulated annealing in benchmarks"),
@@ -379,6 +446,13 @@ def bench_suite(
         time_limit=time_limit,
         sa_iters=sa_iters,
         sa_seed=sa_seed,
+        include_tabu=include_tabu,
+        tabu_iters=tabu_iters,
+        tabu_seed=tabu_seed,
+        tabu_tenure=tabu_tenure if tabu_tenure > 0 else None,
+        tabu_stall_limit=tabu_stall_limit,
+        tabu_batch_neighbours=tabu_batch_neighbours,
+        tabu_workers=tabu_workers,
         driver=driver,
         include_mip=include_mip,
         include_sa=include_sa,

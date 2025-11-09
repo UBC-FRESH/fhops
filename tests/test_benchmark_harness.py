@@ -69,6 +69,19 @@ def test_benchmark_suite_minitoy(tmp_path):
     assert sa_row["preset_label"] == baseline["preset_label"]
 
 
+def test_benchmark_suite_with_tabu(tmp_path):
+    summary = run_benchmark_suite(
+        [Path("examples/minitoy/scenario.yaml")],
+        tmp_path,
+        time_limit=10,
+        sa_iters=200,
+        include_tabu=True,
+        tabu_iters=200,
+        include_mip=False,
+    )
+    solvers = set(summary["solver"])
+    assert {"sa", "tabu"}.issubset(solvers)
+
 def test_benchmark_suite_preset_comparison(tmp_path):
     summary = run_benchmark_suite(
         [Path("examples/minitoy/scenario.yaml")],
