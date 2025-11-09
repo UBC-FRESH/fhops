@@ -1,9 +1,10 @@
 {
   "scenario": "user-1",
   "solver": "sa",
-  "objective": 47.5,
-  "kpi_total_production": 47.5,
+  "objective": 9.5,
+  "kpi_total_production": 42.0,
   "kpi_completed_blocks": 1.0,
+  "kpi_mobilisation_cost": 65.0,
   "iters": 200,
   "seed": 42
 }

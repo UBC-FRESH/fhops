@@ -22,6 +22,7 @@ from fhops.scenario.contract.models import (
     ScheduleLock,
 )
 from fhops.scenario.io.mobilisation import populate_mobilisation_distances
+from fhops.scheduling.mobilisation import MobilisationConfig
 from fhops.scheduling.timeline.models import TimelineConfig
 
 __all__ = ["load_scenario", "read_csv"]
@@ -108,13 +109,18 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
         production_rates=rates,
     )
 
+    mobilisation = None
+    if "mobilisation" in meta:
+        mobilisation = TypeAdapter(MobilisationConfig).validate_python(meta["mobilisation"])
+        scenario = scenario.model_copy(update={"mobilisation": mobilisation})
+
     mobilisation = populate_mobilisation_distances(
         root,
         scenario.name,
         data_section,
-        scenario.mobilisation,
+        mobilisation or scenario.mobilisation,
     )
-    if mobilisation is not None and mobilisation != scenario.mobilisation:
+    if mobilisation is not None:
         scenario = scenario.model_copy(update={"mobilisation": mobilisation})
 
     if "timeline" in meta:

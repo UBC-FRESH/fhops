@@ -13,17 +13,17 @@ Status: Draft — pending modular reorganisation.
 - [x] Define mobilisation parameters per machine/system (walk cost per metre, setup cost, threshold distance). *(MachineMobilisation added.)*
 - [x] Implement mobilisation penalty terms in Pyomo (`optimization/mip/builder.py`). *(Setup-cost deduction wired into objective.)*
 - [x] Add heuristic loss penalties mirroring the MIP logic. *(SA evaluator subtracts setup cost per assignment.)*
-- [ ] Update evaluation metrics to report mobilisation spend.
+- [x] Update evaluation metrics to report mobilisation spend. *(KPI module exposes `mobilisation_cost`; benchmark harness validates non-zero spend).*
 - [x] Design geospatial ingestion path (GeoJSON baseline) to derive inter-block distances and persist them in `MobilisationConfig`.
 - [x] Provide CLI helper to compute distance matrices from block geometries (projected CRS, configurable unit conversions). *(Prototype via `fhops geo distances`; loader now validates GeoJSON inputs.)*
 
 ## Tests
 - [x] Fixture scenarios with known mobilisation costs (short vs long moves). *(See `tests/test_mobilisation.py`.)*
-- [ ] Regression tests confirming solver outputs incorporate mobilisation charges.
+- [x] Regression tests confirming solver outputs incorporate mobilisation charges. *(Harness smoke test asserts SA mobilisation cost baseline for minitoy.)*
 - [ ] Integration test covering GeoJSON ingest → distance matrix generation.
 
 ## Documentation
-- [ ] Sphinx how-to explaining mobilisation configuration and cost outcomes.
+- [x] Sphinx how-to explaining mobilisation configuration and cost outcomes. *(Updated `docs/howto/mobilisation_geo.rst` with calibration guidance and benchmark references.)*
 - [ ] CLI examples (`fhops solve-mip --mobilisation-config ...`).
 - [ ] GeoJSON ingestion guide (projection requirements, recommended tooling, optional matrix fallback).
 
