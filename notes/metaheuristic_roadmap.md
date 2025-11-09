@@ -121,6 +121,31 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - Parallelise preset/parameter sweeps (cooling rates, weight mixes) using joblib/multiprocessing to exploit cores.
 - Run per-core SA instances that emit telemetry to a shared JSONL log; post-process to select or blend results.
 
+##### Plan – SA Parallel Execution (opt-in)
+- [ ] Multi-start orchestration: run multiple SA instances in parallel (distinct seeds/presets) and aggregate the best objective.
+- [ ] Batched neighbour evaluation: extend `_neighbors` to propose/evaluate batches concurrently via worker pool.
+- [ ] CLI/config integration: add flags to toggle parallel runs, set worker counts, and expose telemetry about parallel paths.
+- [ ] Testing & benchmarks: validate reproducibility, ensure opt-in paths fall back cleanly, and benchmark speed/quality trade-offs.
+
+###### Subtasks – Multi-start orchestration
+- [ ] Design a controller that spawns `n` independent SA runs (multiprocessing/joblib) and returns the best result plus per-run telemetry.
+- [ ] Add per-run seed/preset exploration strategy (e.g., stratified presets) and document recommended defaults.
+- [ ] Ensure shared telemetry logging (JSONL) de-duplicates entries and captures the selected best run metadata.
+
+###### Subtasks – Batched neighbour evaluation
+- [ ] Abstract neighbour generation to allow sampling `k` candidates per iteration before scoring.
+- [ ] Implement a worker pool (threads/processes) to evaluate `_evaluate` concurrently and select the best improving neighbour.
+- [ ] Profile memory/CPU usage to confirm batch evaluation scales without overwhelming system resources.
+
+###### Subtasks – CLI/config integration (parallel)
+- [ ] Add CLI options (`--parallel-multistart`, `--parallel-workers`, `--batch-neighbours`) with safe defaults disabled.
+- [ ] Update docs/telemetry to include parallel configuration metadata and per-run stats.
+- [ ] Provide guardrails to fall back to single-thread mode on failure (exception handling, warnings).
+
+###### Subtasks – Testing & benchmarks (parallel)
+- [ ] Add unit/integration tests verifying identical results when `workers=1` (parity with single-thread path).
+- [ ] Benchmark minitoy/med42/large84 with parallel options (record speedups/objective differences).
+- [ ] Document findings in roadmap/changelog and decide on default stance after evaluation.
 ##### Plan – Advanced neighbourhoods: Design & interfaces
 - [x] Catalogue candidate operators with design goals:
   * [x] **BlockInsertionOperator** — relocate an unlocked block to an alternate feasible shift (same machine or compatible peer) to reduce congestion, unlock blackout conflicts, or align with mobilisation cooldowns.
