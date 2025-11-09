@@ -297,15 +297,21 @@ def solve_sa(pb: Problem, iters: int = 2000, seed: int = 42) -> dict[str, Any]:
 
     temperature0 = max(1.0, best_score / 10.0)
     temperature = temperature0
+    initial_score = current_score
+    proposals = 0
+    accepted_moves = 0
+    restarts = 0
     for step in range(1, iters + 1):
         accepted = False
         for neighbor in _neighbors(pb, current):
+            proposals += 1
             neighbor_score = _evaluate(pb, neighbor)
             delta = neighbor_score - current_score
             if delta >= 0 or random.random() < math.exp(delta / max(temperature, 1e-6)):
                 current = neighbor
                 current_score = neighbor_score
                 accepted = True
+                accepted_moves += 1
                 break
         if current_score > best_score:
             best, best_score = current, current_score
@@ -313,6 +319,7 @@ def solve_sa(pb: Problem, iters: int = 2000, seed: int = 42) -> dict[str, Any]:
         if not accepted and step % 100 == 0:
             current = _init_greedy(pb)
             current_score = _evaluate(pb, current)
+            restarts += 1
 
     rows = []
     for machine_id, plan in best.plan.items():
@@ -322,4 +329,14 @@ def solve_sa(pb: Problem, iters: int = 2000, seed: int = 42) -> dict[str, Any]:
                     {"machine_id": machine_id, "block_id": block_id, "day": int(day), "assigned": 1}
                 )
     assignments = pd.DataFrame(rows).sort_values(["day", "machine_id", "block_id"])
-    return {"objective": float(best_score), "assignments": assignments}
+    meta = {
+        "initial_score": float(initial_score),
+        "best_score": float(best_score),
+        "proposals": proposals,
+        "accepted_moves": accepted_moves,
+        "acceptance_rate": (accepted_moves / proposals) if proposals else 0.0,
+        "restarts": restarts,
+        "iterations": iters,
+        "temperature0": float(temperature0),
+    }
+    return {"objective": float(best_score), "assignments": assignments, "meta": meta}

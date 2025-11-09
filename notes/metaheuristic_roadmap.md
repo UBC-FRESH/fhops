@@ -10,7 +10,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 
 ## Planned Tasks
 - [x] Document current SA parameter defaults and tuning rationale. *(Probability: initial temperature `max(1.0, best_score/10)`, decay `0.995`, restarts every 100 steps, neighbourhoods: day swap + intra-machine move; exposed via `--iters`, `--seed` in CLI.)*
-- [ ] Capture SA metrics via benchmarking harness (objective gap vs MIP, runtime, acceptance ratio).
+- [x] Capture SA metrics via benchmarking harness (objective gap vs MIP, runtime, acceptance ratio).
 - [ ] Implement operator registry to plug in new neighbourhood moves.
 - [ ] Prototype Tabu Search with aspiration criteria and compare against SA baselines.
 - [ ] Investigate hybrid approaches (MIP warm start + heuristic refinement).
