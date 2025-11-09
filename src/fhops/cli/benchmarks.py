@@ -16,18 +16,20 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
-from fhops.cli._utils import (
-    format_operator_presets,
-    operator_preset_help,
-    parse_operator_weights,
-    resolve_operator_presets,
-)
+from fhops.cli._utils import format_operator_presets, operator_preset_help, parse_operator_weights
 from fhops.evaluation import compute_kpis
 from fhops.optimization.heuristics import solve_ils, solve_sa, solve_tabu
 from fhops.optimization.mip import build_model, solve_mip
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
 from fhops.telemetry import append_jsonl
+from fhops.cli.profiles import (
+    Profile,
+    combine_solver_configs,
+    format_profiles as format_profile_list,
+    get_profile,
+    merge_profile_with_cli,
+)
 
 console = Console()
 
@@ -120,6 +122,7 @@ def run_benchmark_suite(
     operator_presets: Sequence[str] | None = None,
     telemetry_log: Path | None = None,
     preset_comparisons: Sequence[str] | None = None,
+    profile: Profile | None = None,
 ) -> pd.DataFrame:
     """Execute the benchmark suite and return the summary DataFrame."""
     scenarios = _resolve_scenarios(scenario_paths)
@@ -128,6 +131,10 @@ def run_benchmark_suite(
 
     out_dir.mkdir(parents=True, exist_ok=True)
     rows: list[dict[str, object]] = []
+    profile_name = profile.name if profile else None
+    profile_sa_config = combine_solver_configs(profile.bench if profile else None, profile.sa if profile else None) if profile else None
+    profile_ils_config = combine_solver_configs(profile.bench if profile else None, profile.ils if profile else None) if profile else None
+    profile_tabu_config = combine_solver_configs(profile.bench if profile else None, profile.tabu if profile else None) if profile else None
 
     for bench in scenarios:
         resolved_path = bench.path.expanduser()
@@ -162,7 +169,6 @@ def run_benchmark_suite(
                 )
             )
 
-        preset_ops, preset_weights = resolve_operator_presets(operator_presets)
         override_weights = operator_weights or {}
         explicit_ops = [op.lower() for op in operators] if operators else []
 
@@ -173,38 +179,43 @@ def run_benchmark_suite(
                 return "custom"
             return "default"
 
-        def build_sa_config(
+        def build_sa_run(
             presets: Sequence[str] | None,
-        ) -> tuple[str, list[str] | None, dict[str, float] | None]:
-            preset_ops_local, preset_weights_local = resolve_operator_presets(presets)
-            combined_ops_local = (
-                list(dict.fromkeys((preset_ops_local or []) + explicit_ops)) or None
-            )
-            combined_weights_local: dict[str, float] = {}
-            combined_weights_local.update(preset_weights_local)
-            combined_weights_local.update(override_weights)
+        ) -> tuple[str, Sequence[str] | None]:
             label_local = build_label(presets, bool(override_weights or explicit_ops))
-            return label_local, combined_ops_local, combined_weights_local or None
+            return label_local, presets
 
-        runs: list[tuple[str, list[str] | None, dict[str, float] | None]] = []
-        base_label, combined_ops, combined_weights = build_sa_config(operator_presets)
-        runs.append((base_label, combined_ops, combined_weights))
+        runs: list[tuple[str, Sequence[str] | None]] = []
+        base_label, base_presets = build_sa_run(operator_presets)
+        runs.append((base_label, base_presets))
 
         if preset_comparisons:
             for preset_name in preset_comparisons:
-                comparison_label, comp_ops, comp_weights = build_sa_config([preset_name])
-                runs.append((comparison_label, comp_ops, comp_weights))
+                comparison_label, comp_presets = build_sa_run([preset_name])
+                runs.append((comparison_label, comp_presets))
 
         if include_sa:
-            for preset_label, ops_config, weight_config in runs:
-                start = time.perf_counter()
-                sa_res = solve_sa(
-                    pb,
-                    iters=sa_iters,
-                    seed=sa_seed,
-                    operators=ops_config,
-                    operator_weights=weight_config,
+            for preset_label, run_presets in runs:
+                combined_ops, combined_weights, batch_arg, worker_arg, multistart_arg, extra_kwargs = merge_profile_with_cli(
+                    profile_sa_config,
+                    run_presets,
+                    override_weights,
+                    explicit_ops,
+                    None,
+                    None,
+                    None,
                 )
+                sa_kwargs = {
+                    "iters": sa_iters,
+                    "seed": sa_seed,
+                    "operators": combined_ops,
+                    "operator_weights": combined_weights if combined_weights else None,
+                    "batch_size": batch_arg if batch_arg and batch_arg > 1 else None,
+                    "max_workers": worker_arg if worker_arg and worker_arg > 1 else None,
+                }
+                sa_kwargs.update(extra_kwargs)
+                start = time.perf_counter()
+                sa_res = solve_sa(pb, **sa_kwargs)
                 sa_runtime = time.perf_counter() - start
                 sa_assign = cast(pd.DataFrame, sa_res["assignments"]).copy()
                 output_name = (
@@ -215,6 +226,8 @@ def run_benchmark_suite(
                 sa_assign.to_csv(scenario_out / output_name, index=False)
                 sa_kpis = compute_kpis(pb, sa_assign)
                 sa_meta = cast(dict[str, Any], sa_res.get("meta", {}))
+                if profile_name:
+                    sa_meta["profile"] = profile_name
                 extra = {
                     "iters": sa_iters,
                     "seed": sa_seed,
@@ -225,11 +238,13 @@ def run_benchmark_suite(
                     "sa_restarts": sa_meta.get("restarts"),
                     "preset_label": preset_label,
                 }
+                if profile_name:
+                    extra["profile"] = profile_name
                 operators_meta = cast(dict[str, float], sa_meta.get("operators", {}))
                 operator_stats = cast(
                     dict[str, dict[str, float]], sa_meta.get("operators_stats", {})
                 )
-                resolved_weights = operators_meta or (weight_config or {})
+                resolved_weights = operators_meta or (combined_weights or {})
                 rows.append(
                     _record_metrics(
                         scenario=bench,
@@ -258,30 +273,69 @@ def run_benchmark_suite(
                         "operators_stats": operator_stats,
                         "preset_label": preset_label,
                     }
+                    if profile_name:
+                        log_record["profile"] = profile_name
                     append_jsonl(telemetry_log, log_record)
 
         if include_ils:
+            ils_ops, ils_weight_config, ils_batch_override, ils_worker_override, _, ils_extra_kwargs = merge_profile_with_cli(
+                profile_ils_config,
+                operator_presets,
+                override_weights,
+                explicit_ops,
+                ils_batch_neighbours,
+                ils_workers,
+                None,
+            )
+            ils_batch_final = ils_batch_override if ils_batch_override is not None else ils_batch_neighbours
+            ils_worker_final = ils_worker_override if ils_worker_override is not None else ils_workers
+            if ils_extra_kwargs:
+                if "perturbation_strength" in ils_extra_kwargs and ils_perturbation_strength == 3:
+                    ils_perturbation_strength = int(ils_extra_kwargs.pop("perturbation_strength"))
+                if "stall_limit" in ils_extra_kwargs and ils_stall_limit == 10:
+                    ils_stall_limit = int(ils_extra_kwargs.pop("stall_limit"))
+                if "hybrid_use_mip" in ils_extra_kwargs and not ils_hybrid_use_mip:
+                    ils_hybrid_use_mip = bool(ils_extra_kwargs.pop("hybrid_use_mip"))
+                if (
+                    "hybrid_mip_time_limit" in ils_extra_kwargs
+                    and ils_hybrid_mip_time_limit == 60
+                ):
+                    ils_hybrid_mip_time_limit = int(ils_extra_kwargs.pop("hybrid_mip_time_limit"))
             start = time.perf_counter()
             ils_res = solve_ils(
                 pb,
                 iters=ils_iters or sa_iters,
                 seed=ils_seed or sa_seed,
-                operators=combined_ops,
-                operator_weights=combined_weights if combined_weights else None,
-                batch_size=ils_batch_neighbours if ils_batch_neighbours > 1 else None,
-                max_workers=ils_workers if ils_workers > 1 else None,
+                operators=ils_ops,
+                operator_weights=ils_weight_config if ils_weight_config else None,
+                batch_size=ils_batch_final if ils_batch_final and ils_batch_final > 1 else None,
+                max_workers=ils_worker_final if ils_worker_final and ils_worker_final > 1 else None,
                 perturbation_strength=ils_perturbation_strength,
                 stall_limit=ils_stall_limit,
                 hybrid_use_mip=ils_hybrid_use_mip,
                 hybrid_mip_time_limit=ils_hybrid_mip_time_limit,
+                **ils_extra_kwargs,
             )
             ils_runtime = time.perf_counter() - start
             ils_assign = cast(pd.DataFrame, ils_res["assignments"]).copy()
             ils_assign.to_csv(scenario_out / "ils_assignments.csv", index=False)
             ils_kpis = compute_kpis(pb, ils_assign)
             ils_meta = cast(dict[str, Any], ils_res.get("meta", {}))
+            if profile_name:
+                ils_meta["profile"] = profile_name
             ils_weights = cast(dict[str, float], ils_meta.get("operators", {}))
             ils_stats = cast(dict[str, dict[str, float]], ils_meta.get("operators_stats", {}))
+            extra_ils = {
+                "iters": ils_iters or sa_iters,
+                "seed": ils_seed or sa_seed,
+                "perturbation_strength": ils_perturbation_strength,
+                "stall_limit": ils_stall_limit,
+                "hybrid_use_mip": ils_hybrid_use_mip,
+                "hybrid_mip_time_limit": ils_hybrid_mip_time_limit,
+                "improvement_steps": ils_meta.get("improvement_steps"),
+            }
+            if profile_name:
+                extra_ils["profile"] = profile_name
             rows.append(
                 _record_metrics(
                     scenario=bench,
@@ -290,16 +344,8 @@ def run_benchmark_suite(
                     assignments=ils_assign,
                     kpis=ils_kpis,
                     runtime_s=ils_runtime,
-                    extra={
-                        "iters": ils_iters or sa_iters,
-                        "seed": ils_seed or sa_seed,
-                        "perturbation_strength": ils_perturbation_strength,
-                        "stall_limit": ils_stall_limit,
-                        "hybrid_use_mip": ils_hybrid_use_mip,
-                        "hybrid_mip_time_limit": ils_hybrid_mip_time_limit,
-                        "improvement_steps": ils_meta.get("improvement_steps"),
-                    },
-                    operator_config=ils_weights or combined_weights,
+                    extra=extra_ils,
+                    operator_config=ils_weights or ils_weight_config or {},
                     operator_stats=ils_stats,
                 )
             )
@@ -314,33 +360,62 @@ def run_benchmark_suite(
                     "iterations": ils_iters or sa_iters,
                     "objective": cast(float, ils_res.get("objective", 0.0)),
                     "kpis": ils_kpis,
-                    "operators_config": ils_weights or combined_weights,
+                    "operators_config": ils_weights or ils_weight_config,
                     "operators_stats": ils_stats,
                     "perturbation_strength": ils_perturbation_strength,
                     "stall_limit": ils_stall_limit,
                     "hybrid_use_mip": ils_hybrid_use_mip,
                     "hybrid_mip_time_limit": ils_hybrid_mip_time_limit,
                 }
+                if profile_name:
+                    record["profile"] = profile_name
                 append_jsonl(telemetry_log, record)
 
         if include_tabu:
+            tabu_ops, tabu_weight_config, tabu_batch_override, tabu_worker_override, _, tabu_extra_kwargs = merge_profile_with_cli(
+                profile_tabu_config,
+                operator_presets,
+                override_weights,
+                explicit_ops,
+                tabu_batch_neighbours,
+                tabu_workers,
+                None,
+            )
+            tabu_batch_final = tabu_batch_override if tabu_batch_override is not None else tabu_batch_neighbours
+            tabu_worker_final = tabu_worker_override if tabu_worker_override is not None else tabu_workers
+            if tabu_extra_kwargs:
+                if "tabu_tenure" in tabu_extra_kwargs and (tabu_tenure is None or tabu_tenure == 0):
+                    tabu_tenure = int(tabu_extra_kwargs.pop("tabu_tenure"))
+                if "stall_limit" in tabu_extra_kwargs and tabu_stall_limit == 200:
+                    tabu_stall_limit = int(tabu_extra_kwargs.pop("stall_limit"))
             start = time.perf_counter()
             tabu_res = solve_tabu(
                 pb,
                 iters=tabu_iters or sa_iters,
                 seed=tabu_seed or sa_seed,
-                operators=combined_ops,
-                operator_weights=combined_weights if combined_weights else None,
-                batch_size=tabu_batch_neighbours if tabu_batch_neighbours > 1 else None,
-                max_workers=tabu_workers if tabu_workers > 1 else None,
+                operators=tabu_ops,
+                operator_weights=tabu_weight_config if tabu_weight_config else None,
+                batch_size=tabu_batch_final if tabu_batch_final and tabu_batch_final > 1 else None,
+                max_workers=tabu_worker_final if tabu_worker_final and tabu_worker_final > 1 else None,
                 tabu_tenure=tabu_tenure,
                 stall_limit=tabu_stall_limit,
+                **tabu_extra_kwargs,
             )
             tabu_runtime = time.perf_counter() - start
             tabu_assign = cast(pd.DataFrame, tabu_res["assignments"]).copy()
             tabu_assign.to_csv(scenario_out / "tabu_assignments.csv", index=False)
             tabu_kpis = compute_kpis(pb, tabu_assign)
             tabu_meta = cast(dict[str, Any], tabu_res.get("meta", {}))
+            if profile_name:
+                tabu_meta["profile"] = profile_name
+            extra_tabu = {
+                "iters": tabu_iters or sa_iters,
+                "seed": tabu_seed or sa_seed,
+                "tabu_tenure": tabu_meta.get("tabu_tenure"),
+                "tabu_stall_limit": tabu_stall_limit,
+            }
+            if profile_name:
+                extra_tabu["profile"] = profile_name
             rows.append(
                 _record_metrics(
                     scenario=bench,
@@ -349,13 +424,8 @@ def run_benchmark_suite(
                     assignments=tabu_assign,
                     kpis=tabu_kpis,
                     runtime_s=tabu_runtime,
-                    extra={
-                        "iters": tabu_iters or sa_iters,
-                        "seed": tabu_seed or sa_seed,
-                        "tabu_tenure": tabu_meta.get("tabu_tenure"),
-                        "tabu_stall_limit": tabu_stall_limit,
-                    },
-                    operator_config=tabu_meta.get("operators", combined_weights),
+                    extra=extra_tabu,
+                    operator_config=tabu_meta.get("operators", tabu_weight_config),
                     operator_stats=cast(dict[str, dict[str, float]], tabu_meta.get("operators_stats", {})),
                 )
             )
@@ -370,10 +440,13 @@ def run_benchmark_suite(
                     "iterations": tabu_iters or sa_iters,
                     "objective": cast(float, tabu_res.get("objective", 0.0)),
                     "kpis": tabu_kpis,
-                    "operators_config": tabu_meta.get("operators", combined_weights),
+                    "operators_config": tabu_meta.get("operators", tabu_weight_config),
+                    "operators_stats": tabu_meta.get("operators_stats"),
                     "tabu_tenure": tabu_meta.get("tabu_tenure"),
                     "tabu_stall_limit": tabu_stall_limit,
                 }
+                if profile_name:
+                    record["profile"] = profile_name
                 append_jsonl(telemetry_log, record)
 
     summary = pd.DataFrame(rows)
@@ -539,6 +612,14 @@ def bench_suite(
     list_operator_presets: bool = typer.Option(
         False, "--list-operator-presets", help="Show available operator presets and exit."
     ),
+    profile: str | None = typer.Option(
+        None,
+        "--profile",
+        help="Apply a solver profile combining presets and advanced options.",
+    ),
+    list_profiles: bool = typer.Option(
+        False, "--list-profiles", help="Show available solver profiles and exit."
+    ),
     telemetry_log: Path | None = typer.Option(
         None,
         "--telemetry-log",
@@ -561,12 +642,19 @@ def bench_suite(
         raise typer.Exit()
 
     try:
-        _, preset_weights = resolve_operator_presets(operator_preset)
         weight_config = parse_operator_weights(operator_weight)
     except ValueError as exc:  # pragma: no cover - CLI validation
         raise typer.BadParameter(str(exc)) from exc
-    combined_weights = dict(preset_weights)
-    combined_weights.update(weight_config)
+    if list_profiles:
+        console.print("Solver profiles:")
+        console.print(format_profile_list())
+        raise typer.Exit()
+    profile_obj: Profile | None = None
+    if profile:
+        try:
+            profile_obj = get_profile(profile)
+        except KeyError as exc:  # pragma: no cover - CLI validation
+            raise typer.BadParameter(str(exc)) from exc
     run_benchmark_suite(
         scenario_paths=scenario,
         out_dir=out_dir,
@@ -594,8 +682,9 @@ def bench_suite(
         include_sa=include_sa,
         debug=debug,
         operators=operator,
-        operator_weights=combined_weights if combined_weights else None,
+        operator_weights=weight_config if weight_config else None,
         operator_presets=operator_preset,
         telemetry_log=telemetry_log,
         preset_comparisons=compare_preset,
+        profile=profile_obj,
     )

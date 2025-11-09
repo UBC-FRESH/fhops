@@ -9,12 +9,8 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
-from fhops.cli._utils import (
-    format_operator_presets,
-    operator_preset_help,
-    parse_operator_weights,
-    resolve_operator_presets,
-)
+from fhops.cli._utils import format_operator_presets, operator_preset_help, parse_operator_weights
+from fhops.cli.profiles import format_profiles, get_profile, merge_profile_with_cli
 from fhops.cli.benchmarks import benchmark_app
 from fhops.cli.geospatial import geospatial_app
 from fhops.evaluation import compute_kpis
@@ -134,8 +130,16 @@ def solve_heur_cmd(
         "-P",
         help=f"Apply operator preset ({operator_preset_help()}).",
     ),
+    profile: str | None = typer.Option(
+        None,
+        "--profile",
+        help="Apply a solver profile combining presets and advanced options.",
+    ),
     list_operator_presets: bool = typer.Option(
         False, "--list-operator-presets", help="Show available operator presets and exit."
+    ),
+    list_profiles: bool = typer.Option(
+        False, "--list-profiles", help="Show available solver profiles and exit."
     ),
     show_operator_stats: bool = typer.Option(
         False, "--show-operator-stats", help="Print per-operator stats after solving."
@@ -173,6 +177,11 @@ def solve_heur_cmd(
             f"[dim]types → scenario={type(scenario).__name__}, out={type(out).__name__}[/]"
         )
 
+    if list_profiles:
+        console.print("Solver profiles:")
+        console.print(format_profiles())
+        raise typer.Exit()
+
     if list_operator_presets:
         console.print("Operator presets:")
         console.print(format_operator_presets())
@@ -181,18 +190,52 @@ def solve_heur_cmd(
     sc = load_scenario(str(scenario))
     pb = Problem.from_scenario(sc)
     try:
-        preset_ops, preset_weights = resolve_operator_presets(operator_preset)
-        weight_config = parse_operator_weights(operator_weight)
+        weight_override = parse_operator_weights(operator_weight)
     except ValueError as exc:  # pragma: no cover - CLI validation
         raise typer.BadParameter(str(exc)) from exc
 
     explicit_ops = [op.lower() for op in operator] if operator else []
-    combined_ops = list(dict.fromkeys((preset_ops or []) + explicit_ops)) or None
-    combined_weights: dict[str, float] = {}
-    combined_weights.update(preset_weights)
-    combined_weights.update(weight_config)
-    batch_arg = batch_neighbours if batch_neighbours > 1 else None
-    worker_arg = parallel_workers if parallel_workers > 1 else None
+
+    selected_profile = None
+    profile_name = None
+    if profile:
+        try:
+            selected_profile = get_profile(profile)
+            profile_name = selected_profile.name
+        except KeyError as exc:  # pragma: no cover - CLI validation
+            raise typer.BadParameter(str(exc)) from exc
+
+    combined_ops, combined_weights, final_batch_neighbours, final_parallel_workers, final_multistart, profile_extra_kwargs = merge_profile_with_cli(
+        selected_profile.sa if selected_profile else None,
+        operator_preset,
+        weight_override,
+        explicit_ops,
+        batch_neighbours,
+        parallel_workers,
+        multi_start,
+    )
+
+    if final_batch_neighbours is not None:
+        batch_neighbours = final_batch_neighbours
+    if final_parallel_workers is not None:
+        parallel_workers = final_parallel_workers
+    if final_multistart is not None:
+        multi_start = final_multistart
+
+    batch_arg = batch_neighbours if batch_neighbours and batch_neighbours > 1 else None
+    worker_arg = parallel_workers if parallel_workers and parallel_workers > 1 else None
+    profile_extra_kwargs = dict(profile_extra_kwargs)  # make mutable copy
+    sa_kwargs = {
+        "iters": iters,
+        "operators": combined_ops,
+        "operator_weights": combined_weights if combined_weights else None,
+        "batch_size": batch_arg,
+        "max_workers": worker_arg,
+    }
+    if profile_extra_kwargs:
+        for key, value in profile_extra_kwargs.items():
+            sa_kwargs.setdefault(key, value)
+
     runs_meta = None
     seed_used = seed
 
@@ -208,13 +251,7 @@ def solve_heur_cmd(
                 seeds=seeds,
                 presets=preset_plan,
                 max_workers=worker_arg,
-                sa_kwargs={
-                    "iters": iters,
-                    "operators": combined_ops,
-                    "operator_weights": combined_weights if combined_weights else None,
-                    "batch_size": batch_arg,
-                    "max_workers": worker_arg,
-                },
+                sa_kwargs=sa_kwargs,
                 telemetry_log=telemetry_log,
             )
             res = res_container.best_result
@@ -231,27 +268,18 @@ def solve_heur_cmd(
                 f"[yellow]Multi-start execution failed ({exc!r}); falling back to single run.[/]"
             )
             runs_meta = None
-            res = solve_sa(
-                pb,
-                iters=iters,
-                seed=seed,
-                operators=combined_ops,
-                operator_weights=combined_weights if combined_weights else None,
-                batch_size=batch_arg,
-                max_workers=worker_arg,
-            )
+            single_run_kwargs = dict(sa_kwargs)
+            single_run_kwargs["seed"] = seed
+            res = solve_sa(pb, **single_run_kwargs)
     else:
-        res = solve_sa(
-            pb,
-            iters=iters,
-            seed=seed,
-            operators=combined_ops,
-            operator_weights=combined_weights if combined_weights else None,
-            batch_size=batch_arg,
-            max_workers=worker_arg,
-        )
+        single_run_kwargs = dict(sa_kwargs)
+        single_run_kwargs["seed"] = seed
+        res = solve_sa(pb, **single_run_kwargs)
     assignments = cast(pd.DataFrame, res["assignments"])
     objective = cast(float, res.get("objective", 0.0))
+    meta = cast(dict[str, Any], res.get("meta", {}))
+    if profile_name:
+        meta["profile"] = profile_name
 
     out.parent.mkdir(parents=True, exist_ok=True)
     assignments.to_csv(str(out), index=False)
@@ -259,7 +287,7 @@ def solve_heur_cmd(
     metrics = compute_kpis(pb, assignments)
     for key, value in metrics.items():
         console.print(f"{key}: {value:.3f}" if isinstance(value, float) else f"{key}: {value}")
-    operators_meta = cast(dict[str, float], res.get("meta", {}).get("operators", {}))
+    operators_meta = cast(dict[str, float], meta.get("operators", {}))
     if operators_meta:
         console.print(f"Operators: {operators_meta}")
     if show_operator_stats:
@@ -278,7 +306,7 @@ def solve_heur_cmd(
             f"[dim]Parallel multi-start executed {len(runs_meta)} runs; best seed={seed_used}. See telemetry log for per-run details.[/]"
         )
     elif telemetry_log:
-        stats = res.get("meta", {}).get("operators_stats", {}) or {}
+        stats = meta.get("operators_stats", {}) or {}
         record = {
             "timestamp": datetime.utcnow().isoformat(),
             "source": "solve-heur",
@@ -293,6 +321,8 @@ def solve_heur_cmd(
             "batch_size": batch_neighbours,
             "max_workers": parallel_workers,
         }
+        if profile_name:
+            record["profile"] = profile_name
         append_jsonl(telemetry_log, record)
 
 
@@ -324,8 +354,16 @@ def solve_ils_cmd(
         "-P",
         help=f"Apply operator preset ({operator_preset_help()}). Repeatable.",
     ),
+    profile: str | None = typer.Option(
+        None,
+        "--profile",
+        help="Apply a solver profile combining presets and advanced options.",
+    ),
     list_operator_presets: bool = typer.Option(
         False, "--list-operator-presets", help="Show available operator presets and exit."
+    ),
+    list_profiles: bool = typer.Option(
+        False, "--list-profiles", help="Show available solver profiles and exit."
     ),
     batch_neighbours: int = typer.Option(
         1,
@@ -351,6 +389,11 @@ def solve_ils_cmd(
     ),
 ):
     """Solve with the Iterated Local Search heuristic."""
+    if list_profiles:
+        console.print("Solver profiles:")
+        console.print(format_profiles())
+        raise typer.Exit()
+
     if list_operator_presets:
         console.print("Operator presets:")
         console.print(format_operator_presets())
@@ -359,19 +402,52 @@ def solve_ils_cmd(
     sc = load_scenario(str(scenario))
     pb = Problem.from_scenario(sc)
     try:
-        preset_ops, preset_weights = resolve_operator_presets(operator_preset)
-        weight_config = parse_operator_weights(operator_weight)
+        weight_override = parse_operator_weights(operator_weight)
     except ValueError as exc:  # pragma: no cover - CLI validation
         raise typer.BadParameter(str(exc)) from exc
 
     explicit_ops = [op.lower() for op in operator] if operator else []
-    combined_ops = list(dict.fromkeys((preset_ops or []) + explicit_ops)) or None
-    combined_weights: dict[str, float] = {}
-    combined_weights.update(preset_weights)
-    combined_weights.update(weight_config)
 
-    batch_arg = batch_neighbours if batch_neighbours > 1 else None
-    worker_arg = parallel_workers if parallel_workers > 1 else None
+    selected_profile = None
+    profile_name = None
+    if profile:
+        try:
+            selected_profile = get_profile(profile)
+            profile_name = selected_profile.name
+        except KeyError as exc:  # pragma: no cover - CLI validation
+            raise typer.BadParameter(str(exc)) from exc
+
+    combined_ops, combined_weights, final_batch_neighbours, final_parallel_workers, _, profile_extra_kwargs = merge_profile_with_cli(
+        selected_profile.ils if selected_profile else None,
+        operator_preset,
+        weight_override,
+        explicit_ops,
+        batch_neighbours,
+        parallel_workers,
+        None,
+    )
+
+    if final_batch_neighbours is not None:
+        batch_neighbours = final_batch_neighbours
+    if final_parallel_workers is not None:
+        parallel_workers = final_parallel_workers
+
+    batch_arg = batch_neighbours if batch_neighbours and batch_neighbours > 1 else None
+    worker_arg = parallel_workers if parallel_workers and parallel_workers > 1 else None
+    profile_extra_kwargs = dict(profile_extra_kwargs)
+    if profile_extra_kwargs:
+        if "perturbation_strength" in profile_extra_kwargs and perturbation_strength == 3:
+            perturbation_strength = int(profile_extra_kwargs.pop("perturbation_strength"))
+        if "stall_limit" in profile_extra_kwargs and stall_limit == 10:
+            stall_limit = int(profile_extra_kwargs.pop("stall_limit"))
+        if "hybrid_use_mip" in profile_extra_kwargs and not hybrid_use_mip:
+            hybrid_use_mip = bool(profile_extra_kwargs.pop("hybrid_use_mip"))
+        if (
+            "hybrid_mip_time_limit" in profile_extra_kwargs
+            and hybrid_mip_time_limit == 60
+        ):
+            hybrid_mip_time_limit = int(profile_extra_kwargs.pop("hybrid_mip_time_limit"))
+    extra_ils_kwargs = profile_extra_kwargs
 
     res = solve_ils(
         pb,
@@ -385,6 +461,7 @@ def solve_ils_cmd(
         stall_limit=stall_limit,
         hybrid_use_mip=hybrid_use_mip,
         hybrid_mip_time_limit=hybrid_mip_time_limit,
+        **extra_ils_kwargs,
     )
     assignments = cast(pd.DataFrame, res["assignments"])
     objective = cast(float, res.get("objective", 0.0))
@@ -396,6 +473,8 @@ def solve_ils_cmd(
     for key, value in metrics.items():
         console.print(f"{key}: {value:.3f}" if isinstance(value, float) else f"{key}: {value}")
     meta = cast(dict[str, Any], res.get("meta", {}))
+    if profile_name:
+        meta["profile"] = profile_name
     operators_meta = cast(dict[str, float], meta.get("operators", {}))
     if operators_meta:
         console.print(f"Operators: {operators_meta}")
@@ -429,6 +508,8 @@ def solve_ils_cmd(
             "hybrid_use_mip": hybrid_use_mip,
             "hybrid_mip_time_limit": hybrid_mip_time_limit,
         }
+        if profile_name:
+            record["profile"] = profile_name
         append_jsonl(telemetry_log, record)
 
 
@@ -445,11 +526,22 @@ def solve_tabu_cmd(
     operator: list[str] | None = typer.Option(None, "--operator", "-o", help="Enable specific operators (repeatable)."),
     operator_weight: list[str] | None = typer.Option(None, "--operator-weight", "-w", help="Set operator weight as name=value (repeatable)."),
     operator_preset: list[str] | None = typer.Option(None, "--operator-preset", "-P", help=f"Apply operator preset ({operator_preset_help()}). Repeatable."),
+    profile: str | None = typer.Option(
+        None,
+        "--profile",
+        help="Apply a solver profile combining presets and advanced options.",
+    ),
     list_operator_presets: bool = typer.Option(False, "--list-operator-presets", help="Show available operator presets and exit."),
+    list_profiles: bool = typer.Option(False, "--list-profiles", help="Show available solver profiles and exit."),
     telemetry_log: Path | None = typer.Option(None, "--telemetry-log", help="Append run telemetry to JSONL.", writable=True, dir_okay=False),
     show_operator_stats: bool = typer.Option(False, "--show-operator-stats", help="Print per-operator stats."),
 ):
     """Solve with the Tabu Search heuristic."""
+    if list_profiles:
+        console.print("Solver profiles:")
+        console.print(format_profiles())
+        raise typer.Exit()
+
     if list_operator_presets:
         console.print("Operator presets:")
         console.print(format_operator_presets())
@@ -458,19 +550,45 @@ def solve_tabu_cmd(
     sc = load_scenario(str(scenario))
     pb = Problem.from_scenario(sc)
     try:
-        preset_ops, preset_weights = resolve_operator_presets(operator_preset)
-        weight_config = parse_operator_weights(operator_weight)
+        weight_override = parse_operator_weights(operator_weight)
     except ValueError as exc:  # pragma: no cover - CLI validation
         raise typer.BadParameter(str(exc)) from exc
 
     explicit_ops = [op.lower() for op in operator] if operator else []
-    combined_ops = list(dict.fromkeys((preset_ops or []) + explicit_ops)) or None
-    combined_weights: dict[str, float] = {}
-    combined_weights.update(preset_weights)
-    combined_weights.update(weight_config)
 
-    batch_arg = batch_neighbours if batch_neighbours > 1 else None
-    worker_arg = parallel_workers if parallel_workers > 1 else None
+    selected_profile = None
+    profile_name = None
+    if profile:
+        try:
+            selected_profile = get_profile(profile)
+            profile_name = selected_profile.name
+        except KeyError as exc:  # pragma: no cover - CLI validation
+            raise typer.BadParameter(str(exc)) from exc
+
+    combined_ops, combined_weights, final_batch_neighbours, final_parallel_workers, _, profile_extra_kwargs = merge_profile_with_cli(
+        selected_profile.tabu if selected_profile else None,
+        operator_preset,
+        weight_override,
+        explicit_ops,
+        batch_neighbours,
+        parallel_workers,
+        None,
+    )
+
+    if final_batch_neighbours is not None:
+        batch_neighbours = final_batch_neighbours
+    if final_parallel_workers is not None:
+        parallel_workers = final_parallel_workers
+
+    batch_arg = batch_neighbours if batch_neighbours and batch_neighbours > 1 else None
+    worker_arg = parallel_workers if parallel_workers and parallel_workers > 1 else None
+    profile_extra_kwargs = dict(profile_extra_kwargs)
+    if profile_extra_kwargs:
+        if "tabu_tenure" in profile_extra_kwargs and tabu_tenure == 0:
+            tabu_tenure = int(profile_extra_kwargs.pop("tabu_tenure"))
+        if "stall_limit" in profile_extra_kwargs and stall_limit == 200:
+            stall_limit = int(profile_extra_kwargs.pop("stall_limit"))
+    extra_tabu_kwargs = profile_extra_kwargs
     tenure = tabu_tenure if tabu_tenure > 0 else None
 
     res = solve_tabu(
@@ -493,11 +611,14 @@ def solve_tabu_cmd(
     metrics = compute_kpis(pb, assignments)
     for key, value in metrics.items():
         console.print(f"{key}: {value:.3f}" if isinstance(value, float) else f"{key}: {value}")
-    operators_meta = cast(dict[str, float], res.get("meta", {}).get("operators", {}))
+    meta = cast(dict[str, Any], res.get("meta", {}))
+    if profile_name:
+        meta["profile"] = profile_name
+    operators_meta = cast(dict[str, float], meta.get("operators", {}))
     if operators_meta:
         console.print(f"Operators: {operators_meta}")
     if show_operator_stats:
-        stats = res.get("meta", {}).get("operators_stats", {})
+        stats = meta.get("operators_stats", {})
         if stats:
             console.print("Operator stats:")
             for name, payload in stats.items():
@@ -517,11 +638,14 @@ def solve_tabu_cmd(
             "objective": objective,
             "kpis": metrics,
             "operators_config": operators_meta or combined_weights,
+            "operators_stats": meta.get("operators_stats"),
             "tabu_tenure": tenure if tenure is not None else max(10, len(pb.scenario.machines)),
             "stall_limit": stall_limit,
             "batch_size": batch_neighbours,
             "max_workers": parallel_workers,
         }
+        if profile_name:
+            record["profile"] = profile_name
         append_jsonl(telemetry_log, record)
 
 @app.command()

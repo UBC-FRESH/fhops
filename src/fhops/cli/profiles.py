@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import Mapping
+from typing import Mapping, MutableMapping
+
+from fhops.cli._utils import resolve_operator_presets
 
 
 @dataclass(frozen=True)
@@ -112,4 +115,130 @@ def list_profiles() -> tuple[Profile, ...]:
     return tuple(DEFAULT_PROFILES[key] for key in sorted(DEFAULT_PROFILES))
 
 
-__all__ = ["SolverConfig", "Profile", "DEFAULT_PROFILES", "get_profile", "list_profiles"]
+def merge_profile_with_cli(
+    config: SolverConfig | None,
+    preset_args: Sequence[str] | None,
+    operator_weight_override: Mapping[str, float],
+    explicit_ops: Sequence[str],
+    batch_neighbours: int | None,
+    parallel_workers: int | None,
+    parallel_multistart: int | None,
+) -> tuple[list[str] | None, dict[str, float], int | None, int | None, int | None, dict[str, object]]:
+    """Merge profile defaults with CLI-provided options."""
+
+    ops_pipeline: list[str] = []
+    combined_weights: dict[str, float] = {}
+    extra_kwargs: dict[str, object] = {}
+
+    if config:
+        if config.operator_presets:
+            profile_ops, profile_weights = resolve_operator_presets(list(config.operator_presets))
+            if profile_ops:
+                ops_pipeline.extend(op.lower() for op in profile_ops)
+            combined_weights.update({k.lower(): float(v) for k, v in profile_weights.items()})
+        if config.operator_weights:
+            combined_weights.update({k.lower(): float(v) for k, v in config.operator_weights.items()})
+        if config.extra_kwargs:
+            extra_kwargs.update(config.extra_kwargs)
+
+    preset_ops: list[str] | None
+    preset_weight_map: dict[str, float]
+    if preset_args:
+        preset_ops, preset_weight_map = resolve_operator_presets(list(preset_args))
+        if preset_ops:
+            ops_pipeline.extend(op.lower() for op in preset_ops)
+        combined_weights.update({k.lower(): float(v) for k, v in preset_weight_map.items()})
+
+    ops_pipeline.extend(op.lower() for op in explicit_ops)
+
+    combined_ops = list(dict.fromkeys(ops_pipeline)) or None
+
+    final_weights = dict(combined_weights)
+    final_weights.update({k.lower(): float(v) for k, v in operator_weight_override.items()})
+
+    final_batch = batch_neighbours
+    if config and config.batch_neighbours and (batch_neighbours is None or batch_neighbours == 1):
+        final_batch = config.batch_neighbours
+
+    final_workers = parallel_workers
+    if config and config.parallel_workers and (parallel_workers is None or parallel_workers == 1):
+        final_workers = config.parallel_workers
+
+    final_multistart = parallel_multistart
+    if config and config.parallel_multistart and (parallel_multistart is None or parallel_multistart == 1):
+        final_multistart = config.parallel_multistart
+
+    return combined_ops, final_weights, final_batch, final_workers, final_multistart, extra_kwargs
+
+
+def solver_config_has_settings(config: SolverConfig | None) -> bool:
+    if not config:
+        return False
+    if config.operator_presets:
+        return True
+    if config.operator_weights:
+        return True
+    if config.batch_neighbours and config.batch_neighbours > 1:
+        return True
+    if config.parallel_workers and config.parallel_workers > 1:
+        return True
+    if config.parallel_multistart and config.parallel_multistart > 1:
+        return True
+    if config.extra_kwargs:
+        return True
+    return False
+
+
+def combine_solver_configs(*configs: SolverConfig | None) -> SolverConfig | None:
+    filtered = [cfg for cfg in configs if solver_config_has_settings(cfg)]
+    if not filtered:
+        return None
+
+    presets: list[str] = []
+    weights: MutableMapping[str, float] = {}
+    batch: int | None = None
+    workers: int | None = None
+    multistart: int | None = None
+    extra: MutableMapping[str, object] = {}
+
+    for cfg in filtered:
+        presets.extend(cfg.operator_presets)
+        if cfg.operator_weights:
+            weights.update({k.lower(): float(v) for k, v in cfg.operator_weights.items()})
+        if cfg.batch_neighbours:
+            batch = cfg.batch_neighbours
+        if cfg.parallel_workers:
+            workers = cfg.parallel_workers
+        if cfg.parallel_multistart:
+            multistart = cfg.parallel_multistart
+        if cfg.extra_kwargs:
+            extra.update(cfg.extra_kwargs)
+
+    return SolverConfig(
+        operator_presets=tuple(presets),
+        operator_weights=dict(weights) if weights else None,
+        batch_neighbours=batch,
+        parallel_workers=workers,
+        parallel_multistart=multistart,
+        extra_kwargs=dict(extra),
+    )
+
+
+def format_profiles() -> str:
+    lines = []
+    for profile in list_profiles():
+        lines.append(f"{profile.name}: {profile.description}")
+    return "\n".join(lines)
+
+
+__all__ = [
+    "SolverConfig",
+    "Profile",
+    "DEFAULT_PROFILES",
+    "get_profile",
+    "list_profiles",
+    "merge_profile_with_cli",
+    "format_profiles",
+    "solver_config_has_settings",
+    "combine_solver_configs",
+]
