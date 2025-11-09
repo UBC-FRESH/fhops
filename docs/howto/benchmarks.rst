@@ -43,6 +43,7 @@ The summary CSV/JSON records, per scenario/solver pair:
 * runtime (wall-clock seconds),
 * number of assignments in the exported schedule,
 * key KPIs: total production, mobilisation cost, sequencing violation counts, etc.
+* For SA runs, iteration budget and RNG seed are included to help compare tuning parameters across experiments.
 
 Example JSON snippet:
 

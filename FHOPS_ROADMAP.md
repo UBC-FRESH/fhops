@@ -21,9 +21,9 @@ before proposing new work.
 - [x] Define geospatial ingestion strategy for block geometries (GeoJSON baseline, distance matrix fallback) to support mobilisation costs (`notes/mobilisation_plan.md`, `notes/data_contract_enhancements.md`, `docs/howto/data_contract.rst`).
 
 ## Phase 2 — Solver & Heuristic Expansion
-- [ ] Scenario scaling benchmarks & tuning harness (phase kickoff task).
+- [x] Scenario scaling benchmarks & tuning harness (phase kickoff task).
 - [ ] Metaheuristic roadmap execution (Simulated Annealing refinements, Tabu/ILS activation).
-- [ ] Mobilisation penalty calibration & distance QA across benchmark scenarios (`notes/mobilisation_plan.md`).
+- [x] Mobilisation penalty calibration & distance QA across benchmark scenarios (`notes/mobilisation_plan.md`).
 - [ ] Harvest system sequencing parity and machine-to-system mapping (`notes/system_sequencing_plan.md`).
 - [ ] CLI ergonomics for solver configuration profiles.
 
@@ -40,18 +40,16 @@ before proposing new work.
 - [ ] Outreach plan (blog, seminars, partner briefings).
 
 ## Detailed Next Steps
-1. **Data Contract Enhancements (`notes/data_contract_enhancements.md`)**
-   - Immediate focus: tighten Pydantic models, add schema-level validation tests, document custom field semantics.
-2. **MIP Model Plan (`notes/mip_model_plan.md`)**
-   - With Phase 1 objectives complete, shift focus to performance instrumentation, advanced objective variants, and HiGHS export benchmarks.
-3. **Metaheuristic Roadmap (`notes/metaheuristic_roadmap.md`)**
-   - Capture operator library expansion, calibration experiments, and benchmarking coverage.
-4. **Simulation & Evaluation Plan (`notes/simulation_eval_plan.md`)**
-   - Coordinate deterministic/stochastic playback features, KPI extensions, and test fixtures.
-5. **CLI & Documentation Plan (`notes/cli_docs_plan.md`)**
-   - Align CLI UX improvements, doc content development, Sphinx/RTD publishing workflow.
-6. **CI/CD Expansion Plan (`notes/ci_cd_expansion.md`)**
-   - Owns automation backlog: GitHub Actions, coverage, dependency caching, release pipelines.
+1. **Metaheuristic Roadmap (`notes/metaheuristic_roadmap.md`)**
+   - Prioritise SA refinements, operator registry work, and benchmarking comparisons with the new harness.
+2. **Harvest System Sequencing Plan (`notes/system_sequencing_plan.md`)**
+   - Close parity gaps between MIP/heuristic sequencing and add stress tests for machine-to-system mapping.
+3. **CLI & Documentation Plan (`notes/cli_docs_plan.md`)**
+   - Introduce solver configuration profiles/presets exposed via CLI and Sphinx reference.
+4. **MIP Model Plan (`notes/mip_model_plan.md`)**
+   - Focus on performance instrumentation (build/solve timings), advanced objective variants, and HiGHS tuning.
+5. **Simulation & Evaluation Plan (`notes/simulation_eval_plan.md`)**
+   - Begin planning stochastic playback and extended KPI reporting for Phase 3 transition.
 
 ## Backlog & Ideas
 - [ ] Integration with Nemora sampling outputs for downstream operations analytics.
