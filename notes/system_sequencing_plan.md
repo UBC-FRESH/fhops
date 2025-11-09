@@ -43,7 +43,7 @@ Status: Draft — supports mobilisation and constraint upgrades.
   * Draft ``docs/reference/harvest_systems.rst`` describing registry schema, default systems, and extensibility.
   * Link from data contract/how-to pages so scenario authors know how to tag blocks.
   * Include table summarising each default system (jobs, machine roles, environments).
-- [ ] Write a sequencing tutorial
+- [x] Write a sequencing tutorial
   * Create ``docs/howto/system_sequencing.rst`` walking through scenario configuration, solver expectations, and KPI interpretation.
   * Provide CLI examples (MIP + SA) demonstrating sequencing compliance and violation reporting.
   * Reference synthetic generator helpers (`generate_with_systems`) for quick experiments.
