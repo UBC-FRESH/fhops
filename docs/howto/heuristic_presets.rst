@@ -69,6 +69,9 @@ The registry-backed operators work across all heuristics. Opt-in features share 
 * **Iterated Local Search**: ``fhops solve-ils`` reuses presets/weights. Parallel knobs mirror SA.
 * **Tabu Search**: ``fhops solve-tabu`` accepts the same preset/weight flags while adding
   Tabu-specific parameters (tenure, stall limit).
+* **Profiles**: ``fhops solve-heur --profile explore`` applies a bundled configuration (operator
+  presets, batching, multi-start). List options via ``fhops solve-heur --list-profiles``; explicit CLI
+  flags still override profile defaults.
 
 Reference the dedicated how-tos for ILS and Tabu when tuning those solvers.
 * :doc:`parallel_heuristics` details the opt-in parallel execution pathways shared across heuristics.
