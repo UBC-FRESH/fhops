@@ -27,6 +27,7 @@ class Profile:
 
     name: str
     description: str
+    version: str = "1.0.0"
     sa: SolverConfig = field(default_factory=SolverConfig)
     ils: SolverConfig = field(default_factory=SolverConfig)
     tabu: SolverConfig = field(default_factory=SolverConfig)
