@@ -16,7 +16,7 @@ Status: Draft — to guide Phase 2 CLI enhancements.
 - [ ] Document profiles in Sphinx (CLI reference + how-tos).
 
 ## Immediate Next Steps
-- [ ] Survey existing presets (`operator presets`, benchmark recipes) to seed profile catalog.
+- [x] Survey existing presets (`operator presets`, benchmark recipes) to seed profile catalog.
 - [ ] Decide on configuration format (code-based registry vs. external YAML).
 - [ ] Draft CLI UX (command examples, flag names).
 
