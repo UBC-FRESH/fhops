@@ -43,7 +43,13 @@ def test_resolve_operator_presets_known(preset):
 
 def test_resolve_operator_presets_combined():
     operators, weights = resolve_operator_presets(["swap-only", "move-only"])
-    assert weights == {"swap": 0.0, "move": 1.0}
+    assert weights == {
+        "swap": 0.0,
+        "move": 1.0,
+        "block_insertion": 0.0,
+        "cross_exchange": 0.0,
+        "mobilisation_shake": 0.0,
+    }
     assert operators == ["move"]
 
 

@@ -180,13 +180,13 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
     ```
 
 ##### Plan – Advanced neighbourhoods: Implementation
-- [ ] Implement operator classes aligned with the design spec.
-  * [ ] `BlockInsertionOperator` (respecting windows, cooldowns, landing caps).
-  * [ ] `CrossExchangeOperator` (machine compatibility, dual mobilisation checks).
-  * [ ] `MobilisationShakeOperator` (budget-aware diversification move).
-- [ ] Refactor shared helper utilities so plan cloning/sanitizer application is consistent across operators.
-- [ ] Register the new operators in `OperatorRegistry.from_defaults()` with guarded default weights (initially 0.0 for experimental moves).
-- [ ] Update preset definitions to include the new operators where appropriate (`explore`, `mobilisation`, etc.).
+- [x] Implement operator classes aligned with the design spec.
+  * [x] `BlockInsertionOperator` (respecting windows, cooldowns, landing caps).
+  * [x] `CrossExchangeOperator` (machine compatibility, dual mobilisation checks).
+  * [x] `MobilisationShakeOperator` (budget-aware diversification move).
+- [x] Refactor shared helper utilities so plan cloning/sanitizer application is consistent across operators.
+- [x] Register the new operators in `OperatorRegistry.from_defaults()` with guarded default weights (initially 0.0 for experimental moves).
+- [x] Update preset definitions to include the new operators where appropriate (`explore`, `mobilisation`, etc.).
 
 ##### Plan – Advanced neighbourhoods: Weighting & presets
 - Design new presets (`explore`, `mobilisation`, etc.) combining existing and new operators with documented rationale.
