@@ -10,14 +10,14 @@ from rich.console import Console
 from rich.table import Table
 
 from fhops.cli._utils import format_operator_presets, operator_preset_help, parse_operator_weights
-from fhops.cli.profiles import format_profiles, get_profile, merge_profile_with_cli
 from fhops.cli.benchmarks import benchmark_app
 from fhops.cli.geospatial import geospatial_app
+from fhops.cli.profiles import format_profiles, get_profile, merge_profile_with_cli
 from fhops.evaluation import compute_kpis
 from fhops.optimization.heuristics import (
     build_exploration_plan,
-    solve_ils,
     run_multi_start,
+    solve_ils,
     solve_sa,
     solve_tabu,
 )
@@ -197,7 +197,6 @@ def solve_heur_cmd(
     explicit_ops = [op.lower() for op in operator] if operator else []
 
     selected_profile = None
-    profile_name = None
     if profile:
         try:
             selected_profile = get_profile(profile)
@@ -433,7 +432,6 @@ def solve_ils_cmd(
     explicit_ops = [op.lower() for op in operator] if operator else []
 
     selected_profile = None
-    profile_name = None
     if profile:
         try:
             selected_profile = get_profile(profile)
@@ -613,11 +611,9 @@ def solve_tabu_cmd(
     explicit_ops = [op.lower() for op in operator] if operator else []
 
     selected_profile = None
-    profile_name = None
     if profile:
         try:
             selected_profile = get_profile(profile)
-            profile_name = selected_profile.name
         except KeyError as exc:  # pragma: no cover - CLI validation
             raise typer.BadParameter(str(exc)) from exc
 
@@ -651,7 +647,6 @@ def solve_tabu_cmd(
             tabu_tenure = int(profile_extra_kwargs.pop("tabu_tenure"))
         if "stall_limit" in profile_extra_kwargs and stall_limit == 200:
             stall_limit = int(profile_extra_kwargs.pop("stall_limit"))
-    extra_tabu_kwargs = profile_extra_kwargs
     tenure = tabu_tenure if tabu_tenure > 0 else None
 
     res = solve_tabu(

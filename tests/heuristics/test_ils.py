@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pandas as pd
 
-from fhops.optimization.heuristics import solve_ils
 from fhops.optimization.heuristics import ils as ils_module
+from fhops.optimization.heuristics import solve_ils
 from fhops.scenario.contract import (
     Block,
     CalendarEntry,

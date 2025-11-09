@@ -1,10 +1,10 @@
 """Heuristic solvers for FHOPS."""
 
+from .ils import solve_ils
 from .multistart import MultiStartResult, build_exploration_plan, run_multi_start
 from .registry import MoveOperator, OperatorContext, OperatorRegistry, SwapOperator
 from .sa import Schedule, solve_sa
 from .tabu import solve_tabu
-from .ils import solve_ils
 
 __all__ = [
     "Schedule",
