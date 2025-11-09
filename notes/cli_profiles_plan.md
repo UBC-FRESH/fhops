@@ -41,9 +41,9 @@ Status: Draft — to guide Phase 2 CLI enhancements.
 - [x] Regression tests verifying telemetry records selected profile.
 
 ## Documentation
-- [ ] Update CLI reference with profile descriptions and examples.
-- [ ] Add how-to section illustrating when to choose each profile.
-- [ ] Note profile usage in benchmark/heuristic docs.
+- [x] Update CLI reference with profile descriptions and examples.
+- [x] Add how-to section illustrating when to choose each profile.
+- [x] Note profile usage in benchmark/heuristic docs.
 
 ## Open Questions
 - Should profiles cover both SA/ILS/Tabu simultaneously or remain solver-specific?
