@@ -147,7 +147,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 
 ###### Subtasks – CLI/config integration (parallel)
 - [x] Add CLI options (`--parallel-multistart`, `--parallel-workers`, `--batch-neighbours`) with safe defaults disabled.
-- [ ] Update docs/telemetry to include parallel configuration metadata and per-run stats.
+- [x] Update docs/telemetry to include parallel configuration metadata and per-run stats.
 - [x] Provide guardrails to fall back to single-thread mode on failure (exception handling, warnings).
 
 ###### Subtasks – Testing & benchmarks (parallel)

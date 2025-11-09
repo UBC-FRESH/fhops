@@ -84,4 +84,4 @@
 - Added a deterministic seed/preset exploration helper (`build_exploration_plan`) plus unit tests for the multi-start module.
 - Multi-start runs now support JSONL telemetry logging (per-run records with run IDs and a summary entry) via the optional `telemetry_log` parameter.
 - Added opt-in batched neighbour generation in SA (`batch_size`, `max_workers`) with threadpool evaluation and parity tests.
-- Extended `fhops solve-heur` CLI with `--parallel-multistart`, `--parallel-workers`, and `--batch-neighbours` flags, including guardrails and telemetry support for parallel runs.
+- Extended `fhops solve-heur` CLI with `--parallel-multistart`, `--parallel-workers`, and `--batch-neighbours` flags, including guardrails, telemetry fields, and updated CLI docs for parallel workflows.
