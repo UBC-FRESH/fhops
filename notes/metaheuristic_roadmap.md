@@ -43,7 +43,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] **SA parallel execution (opt-in):** deliver multi-start orchestration, batched neighbour evaluation, CLI/config integration, and profiling/documentation for the new knobs.
 - [x] **Tabu Search prototype:** implement a Tabu neighbourhood on top of the registry (tabu tenure, aspiration criteria) and compare results against SA in the benchmarking harness. *(Prototype available via `fhops solve-tabu` and `fhops bench suite --include-tabu`; keep Tabu opt-in until future tuning narrows the SA performance gap.)*
 - [x] **ILS / Hybrid solver:** design an Iterated Local Search or MIP warm-start hybrid using the registry operators. Document configuration defaults and add harness support for hybrid runs. *(ILS CLI/docs/telemetry live; regression + benchmark suite captured in `tmp/bench_ils`; solver remains opt-in pending further tuning.)*
-- [ ] **Benchmark reporting enhancements:** extend `fhops bench suite` outputs with per-operator usage metrics, solver comparisons (SA/Tabu/Hybrid), and provide summary plots/tables for Sphinx docs.
+- [x] **Benchmark reporting enhancements:** extend `fhops bench suite` outputs with per-operator usage metrics, solver comparisons (SA/Tabu/Hybrid), and provide summary plots/tables for Sphinx docs.
 - [ ] **Documentation updates:** draft a Sphinx how-to covering heuristic configuration presets, registry usage, and interpreting the new benchmarking metrics.
 
 ##### Plan – ILS / Hybrid Solver
