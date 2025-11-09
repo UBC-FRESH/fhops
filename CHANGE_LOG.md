@@ -72,3 +72,4 @@
 - Added operator presets (balanced, move-only, swap-heavy, swap-only, diversify) with CLI support and helper utilities for parsing/validation.
 - Instrumented per-operator telemetry in SA (`operators_stats`), surfaced stats in CLI/bench summaries, documented the new tuning signals, and described the telemetry schema in `docs/reference/telemetry.rst`.
 - Added JSONL telemetry logging utilities with CLI `--telemetry-log` support, enabling persistent storage of SA run metadata for future hyperparameter tuning workflows.
+- Captured detailed design specs for advanced neighbourhood operators (block insertion, cross-machine exchange, mobilisation shake) in `notes/metaheuristic_roadmap.md`, including context dependencies, telemetry fields, and pseudo-code to guide the upcoming implementation phase.

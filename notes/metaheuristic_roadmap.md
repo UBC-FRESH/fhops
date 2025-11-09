@@ -115,23 +115,78 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [ ] **Testing & regression:** expand unit/regression coverage to exercise new operators (window constraints, mobilisation penalties, lock handling).
 
 ##### Plan – Advanced neighbourhoods: Design & interfaces
-- Catalogue candidate operators with design goals:
-  * **BlockInsertionOperator** — relocate a block assignment to a different shift (same or different machine) within availability/windows to reduce congestion.
-  * **CrossExchangeOperator** — exchange assignments between machines across shifts to rebalance workloads and unlock sequencing opportunities.
-  * **MobilisationShakeOperator** — intentionally trigger mobilisation-heavy moves to escape local optima while respecting mobilisation thresholds.
-- For each operator, specify:
-  * **Preconditions** – required machine roles, availability, locks, mobilisation data.
-  * **Inputs** – mobilisation distance lookup, block windows, landing capacities (reuse data prepared in `_evaluate`).
-  * **Schedule deltas** – which `(machine, day, shift)` entries change and how vacated slots are handled.
-  * **Telemetry fields** – additional metrics such as `distance_delta`, `mobilisation_delta`, or `window_shifted` to add to `operators_stats`.
-- Extend `OperatorContext` (optional) with references like `distance_lookup`, `block_windows`, and `landing_capacity`, defaulting to `None` for backwards compatibility.
-- Draft pseudo-code for each operator capturing candidate selection, validation order, and fallback behaviour (return `None` when no feasible move exists).
+- [x] Catalogue candidate operators with design goals:
+  * [x] **BlockInsertionOperator** — relocate an unlocked block to an alternate feasible shift (same machine or compatible peer) to reduce congestion, unlock blackout conflicts, or align with mobilisation cooldowns.
+  * [x] **CrossExchangeOperator** — exchange two assignments between machines/shifts when each machine can service the other block, targeting workload balance and freeing future sequencing options.
+  * [x] **MobilisationShakeOperator** — orchestrate a controlled mobilisation-heavy move that explores distant shifts while keeping cooldowns and landing capacities within configured slack.
+- [x] For each operator, specify detailed constraints and telemetry:
+  * [x] **BlockInsertionOperator**
+    - Preconditions: source block not locked; candidate target machine supports block role; shift lies within block window; landing slot available; mobilisation cooldown for target machine satisfied.
+    - Inputs: `distance_lookup[(machine_id, block_id)]`, `block_windows[block_id]` (list of `(shift_id, machine_id)` windows), machine availability matrix, landing capacity map by `(landing_id, shift_id)`, mobilisation cooldown ledger, blackout map.
+    - Schedule deltas: remove `(machine_src, shift_src)` assignment; insert `(machine_tgt, shift_tgt)` assignment; optionally mark source shift idle placeholder to preserve horizon; recompute mobilisation chain for `machine_src` and `machine_tgt`.
+    - Telemetry: `distance_delta`, `shift_offset` (target shift index minus source), `machine_changed` flag, `landing_feasible` boolean.
+  * [x] **CrossExchangeOperator**
+    - Preconditions: both blocks unlocked; machines mutually capable for swapped roles; candidate shifts within respective windows; landing constraints satisfied post-swap; mobilisation cooldowns satisfied for both machines.
+    - Inputs: compatibility matrix (machine ↔ block role), `distance_lookup`, both blocks' windows, landing capacity map for both landings, mobilisation cooldown ledger, blackout map.
+    - Schedule deltas: replace `(machine_a, shift_a)` with block_b and `(machine_b, shift_b)` with block_a; update mobilisation sequences for both machines; ensure vacated shifts re-evaluated for availability.
+    - Telemetry: `distance_delta_a`, `distance_delta_b`, `workload_delta` (difference in assigned hours across machines), `swap_success` boolean.
+  * [x] **MobilisationShakeOperator**
+    - Preconditions: block unlocked; machine has mobilisation slack budget remaining; neighbouring shifts available for temporary vacancy; alternative landing within `shake_radius`; mobilisation cooldown for candidate machine satisfied post-move.
+    - Inputs: mobilisation distance matrix, `mobilisation_budget[machine_id]`, blackout windows, landing capacity forecast, optional rejection counter per block to avoid repeated failures.
+    - Schedule deltas: vacate existing assignment; assign block to distant `(machine_tgt, shift_tgt)`; optionally insert idle placeholder in source to maintain coverage; recalc mobilisation path for involved machines.
+    - Telemetry: `mobilisation_delta`, `cooldown_triggered`, `shake_depth` (number of shifts moved), `acceptance_temperature`.
+- [x] Extend `OperatorContext` with optional references: `distance_lookup`, `block_windows`, `landing_capacity`, `mobilisation_budget`, `cooldown_tracker`. Defaults remain `None`; populated in SA driver via cached evaluator outputs so operators share consistent data without recomputation.
+- [x] Draft pseudo-code for each operator capturing candidate selection, validation order, and fallback behaviour (return `None` when infeasible):
+  * **BlockInsertionOperator**
+    ```python
+    def apply(ctx: OperatorContext) -> Schedule | None:
+        block = ctx.rng.choice(ctx.schedule.unlocked_blocks())
+        candidates = feasible_insertions(block, ctx)
+        for machine_id, shift_id in shuffle(candidates, ctx.rng):
+            if not mobilisation_ok(machine_id, shift_id, block, ctx):
+                continue
+            candidate = ctx.schedule.clone()
+            candidate.move_block(block, machine_id, shift_id)
+            if ctx.sanitizer(candidate):
+                ctx.telemetry.record("block_insertion", block, machine_id, shift_id)
+                return candidate
+        return None
+    ```
+  * **CrossExchangeOperator**
+    ```python
+    def apply(ctx: OperatorContext) -> Schedule | None:
+        pair = pick_exchange_pair(ctx.schedule, ctx.rng)
+        if pair is None:
+            return None
+        a, b = pair  # (machine_id, shift_id, block_id)
+        if not exchange_feasible(a, b, ctx):
+            return None
+        candidate = ctx.schedule.clone()
+        candidate.swap_assignments(a, b)
+        return candidate if ctx.sanitizer(candidate) else None
+    ```
+  * **MobilisationShakeOperator**
+    ```python
+    def apply(ctx: OperatorContext) -> Schedule | None:
+        block = select_stagnant_block(ctx.schedule, ctx.telemetry, ctx.rng)
+        target = pick_mobilisation_target(block, ctx)
+        if target is None:
+            return None
+        candidate = ctx.schedule.clone()
+        candidate.reassign(block, *target)
+        if mobilisation_within_budget(candidate, ctx):
+            return candidate if ctx.sanitizer(candidate) else None
+        return None
+    ```
 
 ##### Plan – Advanced neighbourhoods: Implementation
-- Implement operator classes (e.g., `InsertionOperator`, `ExchangeOperator`, `MobilisationShakeOperator`).
-- Use helper utilities to clone plans and ensure sanitizer is applied uniformly.
-- Register new operators in `OperatorRegistry.from_defaults()` with guarded default weights.
-- Update preset definitions to include new operators where appropriate.
+- [ ] Implement operator classes aligned with the design spec.
+  * [ ] `BlockInsertionOperator` (respecting windows, cooldowns, landing caps).
+  * [ ] `CrossExchangeOperator` (machine compatibility, dual mobilisation checks).
+  * [ ] `MobilisationShakeOperator` (budget-aware diversification move).
+- [ ] Refactor shared helper utilities so plan cloning/sanitizer application is consistent across operators.
+- [ ] Register the new operators in `OperatorRegistry.from_defaults()` with guarded default weights (initially 0.0 for experimental moves).
+- [ ] Update preset definitions to include the new operators where appropriate (`explore`, `mobilisation`, etc.).
 
 ##### Plan – Advanced neighbourhoods: Weighting & presets
 - Design new presets (`explore`, `mobilisation`, etc.) combining existing and new operators with documented rationale.
