@@ -13,9 +13,9 @@ Status: Draft — to guide Phase 2 CLI enhancements.
   * Create `Profile` dataclass with fields: `name`, `description`, `sa`, `ils`, `tabu`, and optional `bench_suite` overrides.
   * Each solver config holds: `operator_presets`, `operator_weights`, `batch_neighbours`, `parallel_workers`, `parallel_multistart`, plus solver-specific kwargs (e.g., `tabu_tenure`, `perturbation_strength`).
   * Seed initial profiles aligned with existing presets: `default`, `explore`, `mobilisation`, `stabilise`, `intense-diversify`, `parallel-explore`.
-- [ ] Implement CLI flags (`--operator-profile`, `--profile`) resolving to presets across heuristics/ILS/Tabu.
-- [ ] Ensure profiles integrate with existing preset/weight overrides without surprising behaviour.
-- [ ] Surface profile usage in telemetry/logging.
+- [x] Implement CLI flags (`--operator-profile`, `--profile`) resolving to presets across heuristics/ILS/Tabu.
+- [x] Ensure profiles integrate with existing preset/weight overrides without surprising behaviour.
+- [x] Surface profile usage in telemetry/logging.
 - [ ] Document profiles in Sphinx (CLI reference + how-tos).
 
 ## Immediate Next Steps
