@@ -141,16 +141,9 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
   * After multi-start aggregation, append a summary record (`best_run_id`, `best_objective`, `runs_executed`) to the same log.
   * Add CLI flag to route per-run logs to separate directory when desired (e.g., `--multi-start-log-dir`).
 
-###### Subtasks – Batched neighbour evaluation
-- [x] Abstract neighbour generation to allow sampling `k` candidates per iteration before scoring.
-  * Introduce `generate_neighbours(schedule, registry, rng, batch_size)` yielding raw candidate schedules without evaluating them.
-  * Refactor `_neighbors` to call the generator, keeping sanitizer logic reusable.
-- [x] Implement a worker pool (threads/processes) to evaluate `_evaluate` concurrently and select the best improving neighbour.
-  * Add `heuristics.batch.evaluate_candidates(candidates, pb, max_workers)` returning best candidate + scores.
-  * Default to sequential path when `max_workers <= 1` to maintain parity with current behaviour.
-- [ ] Profile memory/CPU usage to confirm batch evaluation scales without overwhelming system resources.
-  * Add benchmarking notebook/notes capturing runtime vs `batch_size` for minitoy/med42/large84.
-  * Document recommended batch sizes and note any guardrails (e.g., fallback when evaluation raises).
+- [x] Profile memory/CPU usage to confirm batch evaluation scales without overwhelming system resources.
+  * Benchmarked minitoy/med42 (`iters=500`) across `batch_size` in {None,2,4} and `max_workers` in {None,2,4}; CSV stored at `tmp/sa_batch_profile.csv`.
+  * Threaded evaluation adds ~5–6x runtime overhead relative to sequential path; recommend keeping `max_workers=None` unless future workloads justify the cost and add guardrail to auto-fallback when no speedup observed.
 
 ###### Subtasks – CLI/config integration (parallel)
 - [ ] Add CLI options (`--parallel-multistart`, `--parallel-workers`, `--batch-neighbours`) with safe defaults disabled.
