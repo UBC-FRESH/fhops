@@ -146,9 +146,9 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
   * Threaded evaluation consistently added 5–6x overhead without objective gains; recommend keeping `max_workers=None` as default and adding guardrails to fall back automatically when parallel speedup is not observed.
 
 ###### Subtasks – CLI/config integration (parallel)
-- [ ] Add CLI options (`--parallel-multistart`, `--parallel-workers`, `--batch-neighbours`) with safe defaults disabled.
+- [x] Add CLI options (`--parallel-multistart`, `--parallel-workers`, `--batch-neighbours`) with safe defaults disabled.
 - [ ] Update docs/telemetry to include parallel configuration metadata and per-run stats.
-- [ ] Provide guardrails to fall back to single-thread mode on failure (exception handling, warnings).
+- [x] Provide guardrails to fall back to single-thread mode on failure (exception handling, warnings).
 
 ###### Subtasks – Testing & benchmarks (parallel)
 - [ ] Add unit/integration tests verifying identical results when `workers=1` (parity with single-thread path).
