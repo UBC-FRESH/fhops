@@ -44,12 +44,4 @@
 - Bumped package metadata to `v0.0.1` and finalised the Phase 1 release notes, preparing the PR for the GitHub release workflow trigger.
 - Relaxed the `require-changelog-update` hook to support `pre-commit run --all-files` (CI no longer fails when the latest commit already updates `CHANGE_LOG.md`).
 - Added the Phase 2 benchmarking harness (`fhops bench suite`) with structured outputs, regression fixture for minitoy SA, and accompanying documentation/tests.
-- Calibrated mobilisation setups for the bundled minitoy/med42 scenarios, wired loader support for inline mobilisation configs, refreshed benchmark baselines to assert mobilisation spend, and extended mobilisation docs with calibration guidance.
-- Add changelog entry for PR #5: major package reorg, roadmap and phase-1 completion; satisfy CI pre-commit check (added by gparadis).
-- Commands executed:
-  - `ruff format src tests`
-  - `ruff check src tests`
-  - `mypy src`
-  - `pytest`
-  - `sphinx-build -b html docs docs/_build/html`
-  - `pre-commit run --all-files`
+- Calibrated mobilisation setups for the bundled minitoy/med42 scenarios, wired loader support for inline mobilisation configs, refreshed benchmark baselines to assert mobilisation spend (including per-machine breakdowns), and extended mobilisation docs with calibration guidance.

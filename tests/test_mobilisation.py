@@ -1,3 +1,5 @@
+import json
+
 import pandas as pd
 import pyomo.environ as pyo
 
@@ -106,6 +108,8 @@ def test_compute_kpis_reports_mobilisation_cost():
     df = pd.DataFrame(assignments)
     kpis = compute_kpis(pb, df)
     assert kpis.get("mobilisation_cost") == 105.0
+    per_machine = json.loads(kpis.get("mobilisation_cost_by_machine", "{}"))
+    assert per_machine == {"M1": 105.0}
 
 
 def test_compute_kpis_reports_sequencing_metrics():

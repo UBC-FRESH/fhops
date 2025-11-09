@@ -54,11 +54,15 @@ Example JSON snippet:
      "runtime_s": 0.02,
      "kpi_total_production": 42.0,
      "kpi_mobilisation_cost": 65.0,
+     "kpi_mobilisation_cost_by_machine": "{\"H2\": 65.0}",
      "kpi_sequencing_violation_count": 0
    }
 
 Assignments are stored under ``<out-dir>/<scenario>/<solver>_assignments.csv``. Feed these into
 ``fhops evaluate`` or project-specific analytics notebooks to dig deeper.
+
+Mobilisation KPIs now include ``kpi_mobilisation_cost_by_machine`` (JSON string) so you can
+identify which machines drive the bulk of movement spend.
 
 Regression Fixture
 ------------------

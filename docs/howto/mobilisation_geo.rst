@@ -23,4 +23,21 @@ GeoJSON is optional—advanced users may provide precomputed matrices directly. 
 consistent projections to avoid mis-scaled distances. The sample ``examples/minitoy`` and
 ``examples/med42`` scenarios now ship with mobilisation configs and distance matrices so you can
 experiment immediately; run ``fhops bench suite`` to compare solver performance and inspect the
-``kpi_mobilisation_cost`` column in the generated summary.
+``kpi_mobilisation_cost`` and ``kpi_mobilisation_cost_by_machine`` columns in the generated summary.
+
+Command Examples
+----------------
+
+Solve the medium benchmark with mobilisation enabled and inspect spend:
+
+.. code-block:: bash
+
+   fhops solve-mip examples/med42/scenario.yaml --out tmp/med42_mip.csv
+   fhops evaluate examples/med42/scenario.yaml tmp/med42_mip.csv | grep mobilisation_cost
+
+For quick experimentation on the minitoy scenario:
+
+.. code-block:: bash
+
+   fhops solve-heur examples/minitoy/scenario.yaml --out tmp/minitoy_sa.csv --iters 500
+   fhops evaluate examples/minitoy/scenario.yaml tmp/minitoy_sa.csv | grep mobilisation_cost
