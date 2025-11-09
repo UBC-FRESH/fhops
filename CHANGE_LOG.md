@@ -64,3 +64,4 @@
 - Added an `Operator` protocol defining the standardized name/weight/apply interface for heuristic operators to support the upcoming registry.
 - Implemented `OperatorRegistry` providing `register`, `get`, `enabled`, `configure`, and `from_defaults` helpers to manage heuristic operators and their weights.
 - Ported the existing swap/move neighbourhood logic into standalone operators registered via `OperatorRegistry.from_defaults()`, updated SA neighbour generation to run through the registry, and refreshed the minitoy benchmark baseline for the new behaviour.
+- Added unit tests covering the operator registry defaults, weight configuration, and sanitizer integration.
