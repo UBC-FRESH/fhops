@@ -39,7 +39,7 @@ Cross References & Validators
 
 The Pydantic models enforce consistency:
 
-- Blocks reference known landings; harvest-system IDs must exist.
+- Blocks reference known landings; harvest-system IDs must exist (see :doc:`../reference/harvest_systems` for defaults).
 - Calendar and production rates must reference defined machines/blocks and lie within the
   scenario horizon.
 - Mobilisation distances must reference known blocks; mobilisation parameters must reference
