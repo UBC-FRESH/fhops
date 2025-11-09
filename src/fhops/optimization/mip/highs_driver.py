@@ -114,19 +114,20 @@ def solve_mip(
     rows = []
     for machine in model.M:
         for block in model.B:
-            for day in model.D:
-                assigned = pyo.value(model.x[machine, block, day])
-                production = pyo.value(model.prod[machine, block, day])
+            for day, shift_id in model.S:
+                assigned = pyo.value(model.x[machine, block, (day, shift_id)])
+                production = pyo.value(model.prod[machine, block, (day, shift_id)])
                 if assigned > 0.5 or production > 1e-6:
                     rows.append(
                         {
                             "machine_id": machine,
                             "block_id": block,
                             "day": int(day),
+                            "shift_id": shift_id,
                             "assigned": int(assigned > 0.5),
                             "production": float(production),
                         }
                     )
-    assignments = pd.DataFrame(rows).sort_values(["day", "machine_id", "block_id"])
+    assignments = pd.DataFrame(rows).sort_values(["day", "shift_id", "machine_id", "block_id"])
     objective = pyo.value(model.obj)
     return {"objective": objective, "assignments": assignments}

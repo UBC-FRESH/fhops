@@ -353,10 +353,7 @@ class Problem(BaseModel):
                 for entry in scenario.shift_calendar
                 if entry.available == 1
             }
-            shifts = [
-                ShiftInstance(day=day, shift_id=shift_id)
-                for day, shift_id in sorted(unique)
-            ]
+            shifts = [ShiftInstance(day=day, shift_id=shift_id) for day, shift_id in sorted(unique)]
         elif scenario.timeline and scenario.timeline.shifts:
             shifts = []
             for day in days:
