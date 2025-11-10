@@ -25,8 +25,28 @@ def _assignments_to_schedule(pb: Problem, assignments: pd.DataFrame) -> Schedule
         machine.id: {(day, shift_id): None for (day, shift_id) in shifts}
         for machine in pb.scenario.machines
     }
-    for row in assignments.itertuples(index=False):
-        plan[row.machine_id][(int(row.day), row.shift_id)] = row.block_id
+    for record in assignments.to_dict(orient="records"):
+        machine_raw = record.get("machine_id")
+        day_raw = record.get("day")
+        shift_raw = record.get("shift_id")
+        block_raw = record.get("block_id")
+        if machine_raw is None or day_raw is None or shift_raw is None:
+            continue
+        machine_id = str(machine_raw)
+        day_value: int
+        if isinstance(day_raw, int | float):
+            day_value = int(day_raw)
+        elif isinstance(day_raw, str):
+            try:
+                day_value = int(day_raw)
+            except ValueError:
+                continue
+        else:
+            continue
+        shift_id = str(shift_raw)
+        block_id = cast(str | None, block_raw if block_raw is not None else None)
+        if machine_id in plan:
+            plan[machine_id][(day_value, shift_id)] = block_id
     return Schedule(plan=plan)
 
 

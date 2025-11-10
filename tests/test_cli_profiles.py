@@ -21,7 +21,7 @@ def test_get_profile_default():
 
 def test_merge_profile_respects_overrides():
     profile = DEFAULT_PROFILES["explore"]
-    combined_ops, weights, batch, workers, multistart, extra = merge_profile_with_cli(
+    resolved = merge_profile_with_cli(
         profile.sa,
         None,
         {"swap": 2.0},
@@ -30,18 +30,18 @@ def test_merge_profile_respects_overrides():
         parallel_workers=1,
         parallel_multistart=1,
     )
-    assert set(combined_ops or []) == {
+    assert set(resolved.operators or []) == {
         "swap",
         "move",
         "block_insertion",
         "cross_exchange",
         "mobilisation_shake",
     }
-    assert pytest.approx(weights["swap"]) == 2.0
-    assert batch == 1
-    assert workers == 1
-    assert multistart == 1
-    assert extra == {}
+    assert pytest.approx(resolved.operator_weights.get("swap", 0.0)) == 2.0
+    assert resolved.batch_neighbours is None
+    assert resolved.parallel_workers is None
+    assert resolved.parallel_multistart is None
+    assert resolved.extra_kwargs == {}
 
 
 def test_list_profiles_command(tmp_path: Path):

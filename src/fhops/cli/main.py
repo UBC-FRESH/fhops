@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from datetime import datetime
 from pathlib import Path
 from typing import Any, cast
@@ -203,14 +204,7 @@ def solve_heur_cmd(
         except KeyError as exc:  # pragma: no cover - CLI validation
             raise typer.BadParameter(str(exc)) from exc
 
-    (
-        combined_ops,
-        combined_weights,
-        final_batch_neighbours,
-        final_parallel_workers,
-        final_multistart,
-        profile_extra_kwargs,
-    ) = merge_profile_with_cli(
+    resolved = merge_profile_with_cli(
         selected_profile.sa if selected_profile else None,
         operator_preset,
         weight_override,
@@ -220,36 +214,36 @@ def solve_heur_cmd(
         multi_start,
     )
 
-    if final_batch_neighbours is not None:
-        batch_neighbours = final_batch_neighbours
-    if final_parallel_workers is not None:
-        parallel_workers = final_parallel_workers
-    if final_multistart is not None:
-        multi_start = final_multistart
+    if resolved.batch_neighbours is not None:
+        batch_neighbours = resolved.batch_neighbours
+    if resolved.parallel_workers is not None:
+        parallel_workers = resolved.parallel_workers
+    if resolved.parallel_multistart is not None:
+        multi_start = resolved.parallel_multistart
 
     batch_arg = batch_neighbours if batch_neighbours and batch_neighbours > 1 else None
     worker_arg = parallel_workers if parallel_workers and parallel_workers > 1 else None
-    profile_extra_kwargs = dict(profile_extra_kwargs)  # make mutable copy
-    sa_kwargs = {
+
+    resolved_weights = resolved.operator_weights if resolved.operator_weights else None
+    sa_kwargs: dict[str, Any] = {
         "iters": iters,
-        "operators": combined_ops,
-        "operator_weights": combined_weights if combined_weights else None,
+        "operators": resolved.operators,
+        "operator_weights": resolved_weights,
         "batch_size": batch_arg,
         "max_workers": worker_arg,
     }
-    if profile_extra_kwargs:
-        for key, value in profile_extra_kwargs.items():
-            sa_kwargs.setdefault(key, value)
+    if resolved.extra_kwargs:
+        sa_kwargs.update(resolved.extra_kwargs)
 
     runs_meta = None
     seed_used = seed
 
     if multi_start > 1:
         seeds, auto_presets = build_exploration_plan(multi_start, base_seed=seed)
-        if combined_ops:
-            preset_plan = [None] * multi_start
+        if resolved.operators:
+            preset_plan: list[Sequence[str] | None] = [None for _ in range(multi_start)]
         else:
-            preset_plan = auto_presets
+            preset_plan = list(auto_presets)
         try:
             res_container = run_multi_start(
                 pb,
@@ -267,17 +261,24 @@ def solve_heur_cmd(
                 default=None,
             )
             if best_meta:
-                seed_used = int(best_meta.get("seed", seed))
+                seed_value = best_meta.get("seed")
+                if isinstance(seed_value, int):
+                    seed_used = seed_value
+                elif isinstance(seed_value, str):
+                    try:
+                        seed_used = int(seed_value)
+                    except ValueError:
+                        pass
         except Exception as exc:  # pragma: no cover - guardrail path
             console.print(
                 f"[yellow]Multi-start execution failed ({exc!r}); falling back to single run.[/]"
             )
             runs_meta = None
-            single_run_kwargs = dict(sa_kwargs)
-            single_run_kwargs["seed"] = seed
-            res = solve_sa(pb, **single_run_kwargs)
+            fallback_kwargs: dict[str, Any] = dict(sa_kwargs)
+            fallback_kwargs["seed"] = seed
+            res = solve_sa(pb, **fallback_kwargs)
     else:
-        single_run_kwargs = dict(sa_kwargs)
+        single_run_kwargs: dict[str, Any] = dict(sa_kwargs)
         single_run_kwargs["seed"] = seed
         res = solve_sa(pb, **single_run_kwargs)
     assignments = cast(pd.DataFrame, res["assignments"])
@@ -322,7 +323,7 @@ def solve_heur_cmd(
             "iterations": iters,
             "objective": float(objective),
             "kpis": metrics,
-            "operators_config": operators_meta or combined_weights,
+            "operators_config": operators_meta or resolved.operator_weights,
             "operators_stats": stats,
             "batch_size": batch_neighbours,
             "max_workers": parallel_workers,
@@ -438,14 +439,7 @@ def solve_ils_cmd(
         except KeyError as exc:  # pragma: no cover - CLI validation
             raise typer.BadParameter(str(exc)) from exc
 
-    (
-        combined_ops,
-        combined_weights,
-        final_batch_neighbours,
-        final_parallel_workers,
-        _,
-        profile_extra_kwargs,
-    ) = merge_profile_with_cli(
+    resolved = merge_profile_with_cli(
         selected_profile.ils if selected_profile else None,
         operator_preset,
         weight_override,
@@ -455,31 +449,39 @@ def solve_ils_cmd(
         None,
     )
 
-    if final_batch_neighbours is not None:
-        batch_neighbours = final_batch_neighbours
-    if final_parallel_workers is not None:
-        parallel_workers = final_parallel_workers
+    if resolved.batch_neighbours is not None:
+        batch_neighbours = resolved.batch_neighbours
+    if resolved.parallel_workers is not None:
+        parallel_workers = resolved.parallel_workers
 
     batch_arg = batch_neighbours if batch_neighbours and batch_neighbours > 1 else None
     worker_arg = parallel_workers if parallel_workers and parallel_workers > 1 else None
-    profile_extra_kwargs = dict(profile_extra_kwargs)
+    profile_extra_kwargs: dict[str, Any] = dict(resolved.extra_kwargs)
     if profile_extra_kwargs:
         if "perturbation_strength" in profile_extra_kwargs and perturbation_strength == 3:
-            perturbation_strength = int(profile_extra_kwargs.pop("perturbation_strength"))
+            value = profile_extra_kwargs.pop("perturbation_strength")
+            if isinstance(value, int):
+                perturbation_strength = value
         if "stall_limit" in profile_extra_kwargs and stall_limit == 10:
-            stall_limit = int(profile_extra_kwargs.pop("stall_limit"))
+            value = profile_extra_kwargs.pop("stall_limit")
+            if isinstance(value, int):
+                stall_limit = value
         if "hybrid_use_mip" in profile_extra_kwargs and not hybrid_use_mip:
-            hybrid_use_mip = bool(profile_extra_kwargs.pop("hybrid_use_mip"))
+            value = profile_extra_kwargs.pop("hybrid_use_mip")
+            if isinstance(value, bool):
+                hybrid_use_mip = value
         if "hybrid_mip_time_limit" in profile_extra_kwargs and hybrid_mip_time_limit == 60:
-            hybrid_mip_time_limit = int(profile_extra_kwargs.pop("hybrid_mip_time_limit"))
-    extra_ils_kwargs = profile_extra_kwargs
+            value = profile_extra_kwargs.pop("hybrid_mip_time_limit")
+            if isinstance(value, int):
+                hybrid_mip_time_limit = value
+    extra_ils_kwargs: dict[str, Any] = profile_extra_kwargs
 
     res = solve_ils(
         pb,
         iters=iters,
         seed=seed,
-        operators=combined_ops,
-        operator_weights=combined_weights if combined_weights else None,
+        operators=resolved.operators,
+        operator_weights=resolved.operator_weights or None,
         batch_size=batch_arg,
         max_workers=worker_arg,
         perturbation_strength=perturbation_strength,
@@ -525,7 +527,7 @@ def solve_ils_cmd(
             "iterations": iters,
             "objective": objective,
             "kpis": metrics,
-            "operators_config": operators_meta or combined_weights,
+            "operators_config": operators_meta or resolved.operator_weights,
             "operators_stats": meta.get("operators_stats"),
             "batch_size": batch_neighbours,
             "max_workers": parallel_workers,
@@ -617,14 +619,7 @@ def solve_tabu_cmd(
         except KeyError as exc:  # pragma: no cover - CLI validation
             raise typer.BadParameter(str(exc)) from exc
 
-    (
-        combined_ops,
-        combined_weights,
-        final_batch_neighbours,
-        final_parallel_workers,
-        _,
-        profile_extra_kwargs,
-    ) = merge_profile_with_cli(
+    resolved = merge_profile_with_cli(
         selected_profile.tabu if selected_profile else None,
         operator_preset,
         weight_override,
@@ -634,31 +629,36 @@ def solve_tabu_cmd(
         None,
     )
 
-    if final_batch_neighbours is not None:
-        batch_neighbours = final_batch_neighbours
-    if final_parallel_workers is not None:
-        parallel_workers = final_parallel_workers
+    if resolved.batch_neighbours is not None:
+        batch_neighbours = resolved.batch_neighbours
+    if resolved.parallel_workers is not None:
+        parallel_workers = resolved.parallel_workers
 
     batch_arg = batch_neighbours if batch_neighbours and batch_neighbours > 1 else None
     worker_arg = parallel_workers if parallel_workers and parallel_workers > 1 else None
-    profile_extra_kwargs = dict(profile_extra_kwargs)
+    profile_extra_kwargs: dict[str, Any] = dict(resolved.extra_kwargs)
     if profile_extra_kwargs:
-        if "tabu_tenure" in profile_extra_kwargs and tabu_tenure == 0:
-            tabu_tenure = int(profile_extra_kwargs.pop("tabu_tenure"))
+        if "tabu_tenure" in profile_extra_kwargs and (tabu_tenure is None or tabu_tenure == 0):
+            value = profile_extra_kwargs.pop("tabu_tenure")
+            if isinstance(value, int):
+                tabu_tenure = value
         if "stall_limit" in profile_extra_kwargs and stall_limit == 200:
-            stall_limit = int(profile_extra_kwargs.pop("stall_limit"))
-    tenure = tabu_tenure if tabu_tenure > 0 else None
+            value = profile_extra_kwargs.pop("stall_limit")
+            if isinstance(value, int):
+                stall_limit = value
+    tenure = tabu_tenure if tabu_tenure and tabu_tenure > 0 else None
 
     res = solve_tabu(
         pb,
         iters=iters,
         seed=seed,
-        operators=combined_ops,
-        operator_weights=combined_weights if combined_weights else None,
+        operators=resolved.operators,
+        operator_weights=resolved.operator_weights or None,
         batch_size=batch_arg,
         max_workers=worker_arg,
         tabu_tenure=tenure,
         stall_limit=stall_limit,
+        **profile_extra_kwargs,
     )
     assignments = cast(pd.DataFrame, res["assignments"])
     objective = cast(float, res.get("objective", 0.0))
@@ -696,7 +696,7 @@ def solve_tabu_cmd(
             "iterations": iters,
             "objective": objective,
             "kpis": metrics,
-            "operators_config": operators_meta or combined_weights,
+            "operators_config": operators_meta or resolved.operator_weights,
             "operators_stats": meta.get("operators_stats"),
             "tabu_tenure": tenure if tenure is not None else max(10, len(pb.scenario.machines)),
             "stall_limit": stall_limit,

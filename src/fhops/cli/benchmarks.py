@@ -20,11 +20,9 @@ from fhops.cli._utils import format_operator_presets, operator_preset_help, pars
 from fhops.cli.profiles import (
     Profile,
     combine_solver_configs,
+    format_profiles,
     get_profile,
     merge_profile_with_cli,
-)
-from fhops.cli.profiles import (
-    format_profiles as format_profile_list,
 )
 from fhops.evaluation import compute_kpis
 from fhops.optimization.heuristics import solve_ils, solve_sa, solve_tabu
@@ -211,14 +209,7 @@ def run_benchmark_suite(
 
         if include_sa:
             for preset_label, run_presets in runs:
-                (
-                    combined_ops,
-                    combined_weights,
-                    batch_arg,
-                    worker_arg,
-                    multistart_arg,
-                    extra_kwargs,
-                ) = merge_profile_with_cli(
+                resolved_sa = merge_profile_with_cli(
                     profile_sa_config,
                     run_presets,
                     override_weights,
@@ -227,15 +218,18 @@ def run_benchmark_suite(
                     None,
                     None,
                 )
-                sa_kwargs = {
+                sa_kwargs: dict[str, Any] = {
                     "iters": sa_iters,
                     "seed": sa_seed,
-                    "operators": combined_ops,
-                    "operator_weights": combined_weights if combined_weights else None,
-                    "batch_size": batch_arg if batch_arg and batch_arg > 1 else None,
-                    "max_workers": worker_arg if worker_arg and worker_arg > 1 else None,
+                    "operators": resolved_sa.operators,
+                    "operator_weights": (
+                        resolved_sa.operator_weights if resolved_sa.operator_weights else None
+                    ),
+                    "batch_size": resolved_sa.batch_neighbours,
+                    "max_workers": resolved_sa.parallel_workers,
                 }
-                sa_kwargs.update(extra_kwargs)
+                if resolved_sa.extra_kwargs:
+                    sa_kwargs.update(resolved_sa.extra_kwargs)
                 start = time.perf_counter()
                 sa_res = solve_sa(pb, **sa_kwargs)
                 sa_runtime = time.perf_counter() - start
@@ -268,7 +262,9 @@ def run_benchmark_suite(
                 operator_stats = cast(
                     dict[str, dict[str, float]], sa_meta.get("operators_stats", {})
                 )
-                resolved_weights = operators_meta or (combined_weights or {})
+                resolved_weights = operators_meta or (
+                    resolved_sa.operator_weights if resolved_sa.operator_weights else {}
+                )
                 rows.append(
                     _record_metrics(
                         scenario=bench,
@@ -303,14 +299,7 @@ def run_benchmark_suite(
                     append_jsonl(telemetry_log, log_record)
 
         if include_ils:
-            (
-                ils_ops,
-                ils_weight_config,
-                ils_batch_override,
-                ils_worker_override,
-                _,
-                ils_extra_kwargs,
-            ) = merge_profile_with_cli(
+            resolved_ils = merge_profile_with_cli(
                 profile_ils_config,
                 operator_presets,
                 override_weights,
@@ -319,34 +308,50 @@ def run_benchmark_suite(
                 ils_workers,
                 None,
             )
-            ils_batch_final = (
-                ils_batch_override if ils_batch_override is not None else ils_batch_neighbours
+            ils_batch_arg = resolved_ils.batch_neighbours
+            if ils_batch_arg is None and ils_batch_neighbours > 1:
+                ils_batch_arg = ils_batch_neighbours
+            ils_worker_arg = resolved_ils.parallel_workers
+            if ils_worker_arg is None and ils_workers > 1:
+                ils_worker_arg = ils_workers
+            ils_weight_config = (
+                resolved_ils.operator_weights if resolved_ils.operator_weights else None
             )
-            ils_worker_final = (
-                ils_worker_override if ils_worker_override is not None else ils_workers
-            )
-            if ils_extra_kwargs:
-                if "perturbation_strength" in ils_extra_kwargs and ils_perturbation_strength == 3:
-                    ils_perturbation_strength = int(ils_extra_kwargs.pop("perturbation_strength"))
-                if "stall_limit" in ils_extra_kwargs and ils_stall_limit == 10:
-                    ils_stall_limit = int(ils_extra_kwargs.pop("stall_limit"))
-                if "hybrid_use_mip" in ils_extra_kwargs and not ils_hybrid_use_mip:
-                    ils_hybrid_use_mip = bool(ils_extra_kwargs.pop("hybrid_use_mip"))
-                if "hybrid_mip_time_limit" in ils_extra_kwargs and ils_hybrid_mip_time_limit == 60:
-                    ils_hybrid_mip_time_limit = int(ils_extra_kwargs.pop("hybrid_mip_time_limit"))
+            ils_extra_kwargs: dict[str, Any] = dict(resolved_ils.extra_kwargs)
+            perturbation_strength_val = ils_perturbation_strength
+            stall_limit_val = ils_stall_limit
+            hybrid_use_mip_val = ils_hybrid_use_mip
+            hybrid_mip_time_limit_val = ils_hybrid_mip_time_limit
+
+            value = ils_extra_kwargs.pop("perturbation_strength", None)
+            if isinstance(value, int | float):
+                perturbation_strength_val = int(value)
+            value = ils_extra_kwargs.pop("stall_limit", None)
+            if isinstance(value, int | float):
+                stall_limit_val = int(value)
+            value = ils_extra_kwargs.pop("hybrid_use_mip", None)
+            if isinstance(value, bool):
+                hybrid_use_mip_val = value
+            value = ils_extra_kwargs.pop("hybrid_mip_time_limit", None)
+            if isinstance(value, int | float):
+                hybrid_mip_time_limit_val = int(value)
+
+            ils_run_iters = ils_iters if ils_iters is not None else sa_iters
+            ils_run_seed = ils_seed if ils_seed is not None else sa_seed
+
             start = time.perf_counter()
             ils_res = solve_ils(
                 pb,
-                iters=ils_iters or sa_iters,
-                seed=ils_seed or sa_seed,
-                operators=ils_ops,
-                operator_weights=ils_weight_config if ils_weight_config else None,
-                batch_size=ils_batch_final if ils_batch_final and ils_batch_final > 1 else None,
-                max_workers=ils_worker_final if ils_worker_final and ils_worker_final > 1 else None,
-                perturbation_strength=ils_perturbation_strength,
-                stall_limit=ils_stall_limit,
-                hybrid_use_mip=ils_hybrid_use_mip,
-                hybrid_mip_time_limit=ils_hybrid_mip_time_limit,
+                iters=ils_run_iters,
+                seed=ils_run_seed,
+                operators=resolved_ils.operators,
+                operator_weights=ils_weight_config,
+                batch_size=ils_batch_arg,
+                max_workers=ils_worker_arg,
+                perturbation_strength=perturbation_strength_val,
+                stall_limit=stall_limit_val,
+                hybrid_use_mip=hybrid_use_mip_val,
+                hybrid_mip_time_limit=hybrid_mip_time_limit_val,
                 **ils_extra_kwargs,
             )
             ils_runtime = time.perf_counter() - start
@@ -360,12 +365,12 @@ def run_benchmark_suite(
             ils_weights = cast(dict[str, float], ils_meta.get("operators", {}))
             ils_stats = cast(dict[str, dict[str, float]], ils_meta.get("operators_stats", {}))
             extra_ils = {
-                "iters": ils_iters or sa_iters,
-                "seed": ils_seed or sa_seed,
-                "perturbation_strength": ils_perturbation_strength,
-                "stall_limit": ils_stall_limit,
-                "hybrid_use_mip": ils_hybrid_use_mip,
-                "hybrid_mip_time_limit": ils_hybrid_mip_time_limit,
+                "iters": ils_run_iters,
+                "seed": ils_run_seed,
+                "perturbation_strength": perturbation_strength_val,
+                "stall_limit": stall_limit_val,
+                "hybrid_use_mip": hybrid_use_mip_val,
+                "hybrid_mip_time_limit": hybrid_mip_time_limit_val,
                 "improvement_steps": ils_meta.get("improvement_steps"),
             }
             if profile:
@@ -380,7 +385,7 @@ def run_benchmark_suite(
                     kpis=ils_kpis,
                     runtime_s=ils_runtime,
                     extra=extra_ils,
-                    operator_config=ils_weights or ils_weight_config or {},
+                    operator_config=ils_weights or (ils_weight_config or {}),
                     operator_stats=ils_stats,
                 )
             )
@@ -391,16 +396,16 @@ def run_benchmark_suite(
                     "scenario": sc.name,
                     "scenario_path": str(resolved_path),
                     "solver": "ils",
-                    "seed": ils_seed or sa_seed,
-                    "iterations": ils_iters or sa_iters,
+                    "seed": ils_run_seed,
+                    "iterations": ils_run_iters,
                     "objective": cast(float, ils_res.get("objective", 0.0)),
                     "kpis": ils_kpis,
                     "operators_config": ils_weights or ils_weight_config,
                     "operators_stats": ils_stats,
-                    "perturbation_strength": ils_perturbation_strength,
-                    "stall_limit": ils_stall_limit,
-                    "hybrid_use_mip": ils_hybrid_use_mip,
-                    "hybrid_mip_time_limit": ils_hybrid_mip_time_limit,
+                    "perturbation_strength": perturbation_strength_val,
+                    "stall_limit": stall_limit_val,
+                    "hybrid_use_mip": hybrid_use_mip_val,
+                    "hybrid_mip_time_limit": hybrid_mip_time_limit_val,
                 }
                 if profile:
                     record["profile"] = profile.name
@@ -408,14 +413,7 @@ def run_benchmark_suite(
                 append_jsonl(telemetry_log, record)
 
         if include_tabu:
-            (
-                tabu_ops,
-                tabu_weight_config,
-                tabu_batch_override,
-                tabu_worker_override,
-                _,
-                tabu_extra_kwargs,
-            ) = merge_profile_with_cli(
+            resolved_tabu = merge_profile_with_cli(
                 profile_tabu_config,
                 operator_presets,
                 override_weights,
@@ -424,30 +422,39 @@ def run_benchmark_suite(
                 tabu_workers,
                 None,
             )
-            tabu_batch_final = (
-                tabu_batch_override if tabu_batch_override is not None else tabu_batch_neighbours
+            tabu_batch_arg = resolved_tabu.batch_neighbours
+            if tabu_batch_arg is None and tabu_batch_neighbours > 1:
+                tabu_batch_arg = tabu_batch_neighbours
+            tabu_worker_arg = resolved_tabu.parallel_workers
+            if tabu_worker_arg is None and tabu_workers > 1:
+                tabu_worker_arg = tabu_workers
+            tabu_weight_config = (
+                resolved_tabu.operator_weights if resolved_tabu.operator_weights else None
             )
-            tabu_worker_final = (
-                tabu_worker_override if tabu_worker_override is not None else tabu_workers
-            )
-            if tabu_extra_kwargs:
-                if "tabu_tenure" in tabu_extra_kwargs and (tabu_tenure is None or tabu_tenure == 0):
-                    tabu_tenure = int(tabu_extra_kwargs.pop("tabu_tenure"))
-                if "stall_limit" in tabu_extra_kwargs and tabu_stall_limit == 200:
-                    tabu_stall_limit = int(tabu_extra_kwargs.pop("stall_limit"))
+            tabu_extra_kwargs: dict[str, Any] = dict(resolved_tabu.extra_kwargs)
+            tabu_tenure_val = tabu_tenure
+            tabu_stall_limit_val = tabu_stall_limit
+            value = tabu_extra_kwargs.pop("tabu_tenure", None)
+            if isinstance(value, int | float):
+                tabu_tenure_val = int(value)
+            value = tabu_extra_kwargs.pop("stall_limit", None)
+            if isinstance(value, int | float):
+                tabu_stall_limit_val = int(value)
+
+            tabu_run_iters = tabu_iters if tabu_iters is not None else sa_iters
+            tabu_run_seed = tabu_seed if tabu_seed is not None else sa_seed
+
             start = time.perf_counter()
             tabu_res = solve_tabu(
                 pb,
-                iters=tabu_iters or sa_iters,
-                seed=tabu_seed or sa_seed,
-                operators=tabu_ops,
-                operator_weights=tabu_weight_config if tabu_weight_config else None,
-                batch_size=tabu_batch_final if tabu_batch_final and tabu_batch_final > 1 else None,
-                max_workers=tabu_worker_final
-                if tabu_worker_final and tabu_worker_final > 1
-                else None,
-                tabu_tenure=tabu_tenure,
-                stall_limit=tabu_stall_limit,
+                iters=tabu_run_iters,
+                seed=tabu_run_seed,
+                operators=resolved_tabu.operators,
+                operator_weights=tabu_weight_config,
+                batch_size=tabu_batch_arg,
+                max_workers=tabu_worker_arg,
+                tabu_tenure=tabu_tenure_val,
+                stall_limit=tabu_stall_limit_val,
                 **tabu_extra_kwargs,
             )
             tabu_runtime = time.perf_counter() - start
@@ -458,11 +465,13 @@ def run_benchmark_suite(
             if profile:
                 tabu_meta["profile"] = profile.name
                 tabu_meta["profile_version"] = profile.version
+            tabu_weights = cast(dict[str, float], tabu_meta.get("operators", {}))
+            tabu_stats = cast(dict[str, dict[str, float]], tabu_meta.get("operators_stats", {}))
             extra_tabu = {
-                "iters": tabu_iters or sa_iters,
-                "seed": tabu_seed or sa_seed,
-                "tabu_tenure": tabu_meta.get("tabu_tenure"),
-                "tabu_stall_limit": tabu_stall_limit,
+                "iters": tabu_run_iters,
+                "seed": tabu_run_seed,
+                "tabu_tenure": tabu_meta.get("tabu_tenure", tabu_tenure_val),
+                "tabu_stall_limit": tabu_stall_limit_val,
             }
             if profile:
                 extra_tabu["profile"] = profile.name
@@ -476,10 +485,8 @@ def run_benchmark_suite(
                     kpis=tabu_kpis,
                     runtime_s=tabu_runtime,
                     extra=extra_tabu,
-                    operator_config=tabu_meta.get("operators", tabu_weight_config),
-                    operator_stats=cast(
-                        dict[str, dict[str, float]], tabu_meta.get("operators_stats", {})
-                    ),
+                    operator_config=tabu_weights or (tabu_weight_config or {}),
+                    operator_stats=tabu_stats,
                 )
             )
             if telemetry_log:
@@ -489,14 +496,14 @@ def run_benchmark_suite(
                     "scenario": sc.name,
                     "scenario_path": str(resolved_path),
                     "solver": "tabu",
-                    "seed": tabu_seed or sa_seed,
-                    "iterations": tabu_iters or sa_iters,
+                    "seed": tabu_run_seed,
+                    "iterations": tabu_run_iters,
                     "objective": cast(float, tabu_res.get("objective", 0.0)),
                     "kpis": tabu_kpis,
-                    "operators_config": tabu_meta.get("operators", tabu_weight_config),
-                    "operators_stats": tabu_meta.get("operators_stats"),
-                    "tabu_tenure": tabu_meta.get("tabu_tenure"),
-                    "tabu_stall_limit": tabu_stall_limit,
+                    "operators_config": tabu_weights or tabu_weight_config,
+                    "operators_stats": tabu_stats,
+                    "tabu_tenure": tabu_meta.get("tabu_tenure", tabu_tenure_val),
+                    "tabu_stall_limit": tabu_stall_limit_val,
                 }
                 if profile:
                     record["profile"] = profile.name
@@ -505,31 +512,55 @@ def run_benchmark_suite(
 
     summary = pd.DataFrame(rows)
     if not summary.empty:
-        mip_objectives = (
-            summary[summary["solver"] == "mip"].set_index("scenario")["objective"].to_dict()
-        )
-        summary["objective_vs_mip_gap"] = summary.apply(
-            lambda row: (
-                mip_objectives.get(row["scenario"], float("nan")) - row["objective"]
-                if row["solver"] != "mip" and row["scenario"] in mip_objectives
-                else 0.0
-                if row["solver"] == "mip"
-                else pd.NA
-            ),
-            axis=1,
-        )
-        summary["objective_vs_mip_ratio"] = summary.apply(
-            lambda row: (
-                row["objective"] / mip_objectives[row["scenario"]]
-                if row["solver"] != "mip"
-                and row["scenario"] in mip_objectives
-                and mip_objectives[row["scenario"]] not in (0, None)
-                else 1.0
-                if row["solver"] == "mip"
-                else pd.NA
-            ),
-            axis=1,
-        )
+        summary = summary.copy()
+        summary["scenario_key"] = summary["scenario"].astype(str)
+        raw_objectives = summary[summary["solver"] == "mip"].set_index("scenario_key")["objective"]
+        mip_objectives: dict[str, float] = {}
+        for key, value in raw_objectives.items():
+            try:
+                mip_objectives[str(key)] = float(value)
+            except (TypeError, ValueError):
+                continue
+
+        def _coerce_float(value: object) -> float | None:
+            if isinstance(value, int | float):
+                return float(value)
+            if isinstance(value, str):
+                try:
+                    return float(value)
+                except ValueError:
+                    return None
+            return None
+
+        def _objective_gap(row: pd.Series) -> object:
+            scenario_key = str(row.get("scenario_key", ""))
+            mip_value = mip_objectives.get(scenario_key)
+            if row.get("solver") == "mip":
+                return 0.0
+            if mip_value is None:
+                return pd.NA
+            objective_val = _coerce_float(row.get("objective", 0.0))
+            if objective_val is None:
+                return pd.NA
+            return mip_value - objective_val
+
+        def _objective_ratio(row: pd.Series) -> object:
+            scenario_key = str(row.get("scenario_key", ""))
+            mip_value = mip_objectives.get(scenario_key)
+            if row.get("solver") == "mip":
+                return 1.0
+            if mip_value is None:
+                return pd.NA
+            if mip_value == 0:
+                return pd.NA
+            objective_val = _coerce_float(row.get("objective", 0.0))
+            if objective_val is None:
+                return pd.NA
+            mip_value_float = mip_value
+            return objective_val / mip_value_float
+
+        summary["objective_vs_mip_gap"] = summary.apply(_objective_gap, axis=1)
+        summary["objective_vs_mip_ratio"] = summary.apply(_objective_ratio, axis=1)
 
         heuristic_mask = summary["solver"] != "mip"
         summary["solver_category"] = summary["solver"].map(
@@ -540,29 +571,36 @@ def run_benchmark_suite(
         best_runtime_by_scenario: dict[str, float] = {}
         if heuristic_mask.any():
             heuristics = summary[heuristic_mask]
-            idx = heuristics.groupby("scenario")["objective"].idxmax()
-            for scenario, index in idx.items():
+            idx = heuristics.groupby("scenario_key")["objective"].idxmax()
+            for scenario_key, index in idx.items():
                 row = summary.loc[index]
-                best_solver_by_scenario[scenario] = str(row["solver"])
-                best_objective_by_scenario[scenario] = float(row["objective"])
-                best_runtime_by_scenario[scenario] = float(row.get("runtime_s", float("nan")))
-            summary["best_heuristic_solver"] = summary["scenario"].map(best_solver_by_scenario)
-            summary["best_heuristic_objective"] = summary["scenario"].map(
+                key_str = str(scenario_key)
+                best_solver_by_scenario[key_str] = str(row["solver"])
+                objective_val = _coerce_float(row.get("objective", 0.0))
+                if objective_val is not None:
+                    best_objective_by_scenario[key_str] = objective_val
+                runtime_val = _coerce_float(row.get("runtime_s", float("nan")))
+                if runtime_val is not None:
+                    best_runtime_by_scenario[key_str] = runtime_val
+            summary["best_heuristic_solver"] = summary["scenario_key"].map(best_solver_by_scenario)
+            summary["best_heuristic_objective"] = summary["scenario_key"].map(
                 best_objective_by_scenario
             )
-            summary["best_heuristic_runtime_s"] = summary["scenario"].map(best_runtime_by_scenario)
+            summary["best_heuristic_runtime_s"] = summary["scenario_key"].map(
+                best_runtime_by_scenario
+            )
             summary["objective_gap_vs_best_heuristic"] = (
                 summary["best_heuristic_objective"] - summary["objective"]
             )
 
-            def _runtime_ratio(row: pd.Series) -> float | pd.NA:
-                best_runtime = row.get("best_heuristic_runtime_s")
-                runtime = row.get("runtime_s")
-                if isinstance(best_runtime, (int | float)) and isinstance(runtime, (int | float)):
-                    if best_runtime == 0 or math.isnan(best_runtime):
-                        return pd.NA
-                    return runtime / best_runtime
-                return pd.NA
+            def _runtime_ratio(row: pd.Series) -> object:
+                best_runtime_val = _coerce_float(row.get("best_heuristic_runtime_s"))
+                runtime_val = _coerce_float(row.get("runtime_s"))
+                if best_runtime_val is None or runtime_val is None:
+                    return pd.NA
+                if best_runtime_val == 0 or math.isnan(best_runtime_val):
+                    return pd.NA
+                return runtime_val / best_runtime_val
 
             summary["runtime_ratio_vs_best_heuristic"] = summary.apply(_runtime_ratio, axis=1)
         else:
@@ -584,17 +622,28 @@ def run_benchmark_suite(
     display_columns.extend(["objective", "runtime_s", "assignments"])
     for column in display_columns:
         table.add_column(column)
-    for record in summary.sort_values(["scenario", "solver"]).to_dict(orient="records"):
+    for record_obj in summary.sort_values(["scenario", "solver"]).to_dict(orient="records"):
+        record = cast(dict[str, object], record_obj)
         row = [
             str(record["scenario"]),
             str(record["solver"]),
         ]
         if "preset_label" in summary.columns:
             row.append(str(record.get("preset_label", "")))
+        objective_val = _coerce_float(record.get("objective", 0.0))
+        runtime_val = _coerce_float(record.get("runtime_s", 0.0))
+        objective_fmt = (
+            f"{objective_val:.3f}"
+            if objective_val is not None
+            else str(record.get("objective", ""))
+        )
+        runtime_fmt = (
+            f"{runtime_val:.2f}" if runtime_val is not None else str(record.get("runtime_s", ""))
+        )
         row.extend(
             [
-                f"{record.get('objective', 0.0):.3f}",
-                f"{record.get('runtime_s', 0.0):.2f}",
+                objective_fmt,
+                runtime_fmt,
                 str(record.get("assignments", 0)),
             ]
         )
@@ -701,7 +750,7 @@ def bench_suite(
         raise typer.BadParameter(str(exc)) from exc
     if list_profiles:
         console.print("Solver profiles:")
-        console.print(format_profile_list())
+        console.print(format_profiles())
         raise typer.Exit()
     profile_obj: Profile | None = None
     if profile:
