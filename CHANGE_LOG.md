@@ -10,6 +10,8 @@
 - Implemented idle-hour and sequencing-violation accounting in the playback adapters/summaries to surface richer shift/day analytics ahead of CLI wiring.
 - Added `tests/test_playback.py` with regression-problem coverage for block completion metadata, sequencing guards, and idle-hour aggregation.
 - Introduced the `fhops eval playback` CLI command (table output + CSV export scaffolding) to run deterministic playback outside notebooks.
+- Documented playback workflows in `docs/reference/cli.rst` and the new `docs/howto/evaluation.rst`.
+- Added a CLI smoke test (`tests/test_cli_playback.py`) ensuring playback exports remain stable.
 - Checked off the playback inventory subtask in the roadmap to reflect the newly documented findings.
 
 ## 2025-11-13 — CLI profile integration hardening
