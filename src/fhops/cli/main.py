@@ -18,8 +18,10 @@ from fhops.evaluation import (
     PlaybackConfig,
     SamplingConfig,
     compute_kpis,
+    export_playback,
     run_playback,
     run_stochastic_playback,
+    playback_summary_metrics,
 )
 from fhops.optimization.heuristics import (
     build_exploration_plan,
@@ -922,129 +924,32 @@ def eval_playback(
         )
     console.print(day_table)
 
+    shift_df = pd.DataFrame([s.__dict__ for s in shift_summaries])
+    day_df = pd.DataFrame([s.__dict__ for s in day_summaries])
+
+    try:
+        export_playback(
+            shift_df,
+            day_df,
+            shift_csv=shift_out,
+            day_csv=day_out,
+            shift_parquet=shift_parquet,
+            day_parquet=day_parquet,
+            summary_md=summary_md,
+        )
+    except ImportError as exc:
+        console.print("[red]Parquet export requires either pyarrow or fastparquet. Install one of them to enable this feature.[/red]")
+        raise typer.Exit(1) from exc
+
     if shift_out:
-        shift_df = pd.DataFrame(
-            {
-                "day": [s.day for s in shift_summaries],
-                "shift_id": [s.shift_id for s in shift_summaries],
-                "machine_id": [s.machine_id for s in shift_summaries],
-                "sample_id": [s.sample_id for s in shift_summaries],
-                "production_units": [s.production_units for s in shift_summaries],
-                "total_hours": [s.total_hours for s in shift_summaries],
-                "idle_hours": [s.idle_hours for s in shift_summaries],
-                "mobilisation_cost": [s.mobilisation_cost for s in shift_summaries],
-                "sequencing_violations": [s.sequencing_violations for s in shift_summaries],
-                "blackout_conflicts": [s.blackout_conflicts for s in shift_summaries],
-                "available_hours": [s.available_hours for s in shift_summaries],
-                "utilisation_ratio": [s.utilisation_ratio for s in shift_summaries],
-            }
-        )
-        shift_out.parent.mkdir(parents=True, exist_ok=True)
-        shift_df.to_csv(shift_out, index=False)
         console.print(f"Shift summary saved to {shift_out}")
-    else:
-        shift_df = pd.DataFrame(
-            {
-                "day": [s.day for s in shift_summaries],
-                "shift_id": [s.shift_id for s in shift_summaries],
-                "machine_id": [s.machine_id for s in shift_summaries],
-                "sample_id": [s.sample_id for s in shift_summaries],
-                "production_units": [s.production_units for s in shift_summaries],
-                "total_hours": [s.total_hours for s in shift_summaries],
-                "idle_hours": [s.idle_hours for s in shift_summaries],
-                "mobilisation_cost": [s.mobilisation_cost for s in shift_summaries],
-                "sequencing_violations": [s.sequencing_violations for s in shift_summaries],
-                "available_hours": [s.available_hours for s in shift_summaries],
-                "utilisation_ratio": [s.utilisation_ratio for s in shift_summaries],
-            }
-        )
-
     if day_out:
-        day_df = pd.DataFrame(
-            {
-                "day": [s.day for s in day_summaries],
-                "sample_id": [s.sample_id for s in day_summaries],
-                "production_units": [s.production_units for s in day_summaries],
-                "total_hours": [s.total_hours for s in day_summaries],
-                "idle_hours": [s.idle_hours for s in day_summaries],
-                "mobilisation_cost": [s.mobilisation_cost for s in day_summaries],
-                "completed_blocks": [s.completed_blocks for s in day_summaries],
-                "blackout_conflicts": [s.blackout_conflicts for s in day_summaries],
-                "sequencing_violations": [s.sequencing_violations for s in day_summaries],
-                "available_hours": [s.available_hours for s in day_summaries],
-                "utilisation_ratio": [s.utilisation_ratio for s in day_summaries],
-            }
-        )
-        day_out.parent.mkdir(parents=True, exist_ok=True)
-        day_df.to_csv(day_out, index=False)
         console.print(f"Day summary saved to {day_out}")
-    else:
-        day_df = pd.DataFrame(
-            {
-                "day": [s.day for s in day_summaries],
-                "sample_id": [s.sample_id for s in day_summaries],
-                "production_units": [s.production_units for s in day_summaries],
-                "total_hours": [s.total_hours for s in day_summaries],
-                "idle_hours": [s.idle_hours for s in day_summaries],
-                "mobilisation_cost": [s.mobilisation_cost for s in day_summaries],
-                "completed_blocks": [s.completed_blocks for s in day_summaries],
-                "sequencing_violations": [s.sequencing_violations for s in day_summaries],
-                "available_hours": [s.available_hours for s in day_summaries],
-                "utilisation_ratio": [s.utilisation_ratio for s in day_summaries],
-            }
-        )
-
     if shift_parquet:
-        shift_parquet.parent.mkdir(parents=True, exist_ok=True)
-        try:
-            shift_df.to_parquet(shift_parquet, index=False)
-        except ImportError as exc:
-            console.print(
-                "[red]Parquet export requires either pyarrow or fastparquet. Install one of them to enable this feature.[/red]"
-            )
-            raise typer.Exit(1) from exc
         console.print(f"Shift parquet saved to {shift_parquet}")
-
     if day_parquet:
-        day_parquet.parent.mkdir(parents=True, exist_ok=True)
-        try:
-            day_df.to_parquet(day_parquet, index=False)
-        except ImportError as exc:
-            console.print(
-                "[red]Parquet export requires either pyarrow or fastparquet. Install one of them to enable this feature.[/red]"
-            )
-            raise typer.Exit(1) from exc
         console.print(f"Day parquet saved to {day_parquet}")
-
     if summary_md:
-        summary_md.parent.mkdir(parents=True, exist_ok=True)
-        samples_count = int(day_df["sample_id"].nunique())
-        total_production = float(day_df["production_units"].sum())
-        avg_util = (
-            float(day_df["utilisation_ratio"].dropna().mean())
-            if not day_df["utilisation_ratio"].dropna().empty
-            else 0.0
-        )
-        markdown_lines = [
-            "# Playback Summary",
-            "",
-            f"- Samples: {samples_count}",
-            f"- Total production units: {total_production:.2f}",
-            f"- Average utilisation (day-level): {avg_util:.2f}",
-            f"- Total mobilisation cost: {float(day_df['mobilisation_cost'].sum()):.2f}",
-            "",
-            "## Per-day Snapshot (first 10 rows)",
-            "",
-        ]
-        preview = day_df.head(10).copy()
-        preview["utilisation_ratio"] = preview["utilisation_ratio"].map(
-            lambda x: f"{x:.2f}" if pd.notna(x) else ""
-        )
-        try:
-            markdown_lines.append(preview.to_markdown(index=False))
-        except ImportError:
-            markdown_lines.append("```\n" + preview.to_csv(index=False) + "```")
-        summary_md.write_text("\n".join(markdown_lines), encoding="utf-8")
         console.print(f"Markdown summary saved to {summary_md}")
 
 

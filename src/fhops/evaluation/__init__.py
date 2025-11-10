@@ -33,6 +33,11 @@ from .playback.aggregates import (
     shift_dataframe,
     shift_dataframe_from_ensemble,
 )
+from .playback.exporters import (
+    export_playback,
+    playback_summary_metrics,
+    render_markdown_summary,
+)
 
 __all__ = [
     "compute_kpis",
@@ -64,4 +69,7 @@ __all__ = [
     "shift_dataframe_from_ensemble",
     "day_dataframe_from_ensemble",
     "machine_utilisation_summary",
+    "export_playback",
+    "render_markdown_summary",
+    "playback_summary_metrics",
 ]

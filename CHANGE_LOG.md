@@ -17,6 +17,7 @@
 - Extended CLI to expose landing shock parameters (`--landing-*`) with regression coverage.
 - Added shift/day summary schema enhancements (sample IDs, utilisation ratios) plus Parquet/Markdown export options on `fhops eval playback`.
 - Introduced playback aggregation helpers (`shift_dataframe`, `day_dataframe`, `machine_utilisation_summary`, etc.) with regression tests backing the new schema.
+- Refactored playback exports into shared helpers (`playback/exporters.py`) and added CLI regression coverage (`tests/test_cli_playback_exports.py`).
 - Extended stochastic playback tests with property-style checks covering deterministic equivalence and production bounds.
 - Added landing shock sampling to the stochastic runner and regression coverage guarding production reductions.
 - Checked off the playback inventory subtask in the roadmap to reflect the newly documented findings.
