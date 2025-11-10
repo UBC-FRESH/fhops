@@ -7,7 +7,7 @@ import math
 import time
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, cast
 
@@ -280,7 +280,7 @@ def run_benchmark_suite(
                 )
                 if telemetry_log:
                     log_record = {
-                        "timestamp": datetime.utcnow().isoformat(),
+                        "timestamp": datetime.now(UTC).isoformat(),
                         "source": "bench-suite",
                         "scenario": sc.name,
                         "scenario_path": str(resolved_path),
@@ -391,7 +391,7 @@ def run_benchmark_suite(
             )
             if telemetry_log:
                 record = {
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                     "source": "bench-suite",
                     "scenario": sc.name,
                     "scenario_path": str(resolved_path),
@@ -491,7 +491,7 @@ def run_benchmark_suite(
             )
             if telemetry_log:
                 record = {
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                     "source": "bench-suite",
                     "scenario": sc.name,
                     "scenario_path": str(resolved_path),

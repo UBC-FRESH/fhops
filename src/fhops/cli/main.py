@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, cast
 
@@ -315,7 +315,7 @@ def solve_heur_cmd(
     elif telemetry_log:
         stats = meta.get("operators_stats", {}) or {}
         record = {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "source": "solve-heur",
             "scenario": sc.name,
             "scenario_path": str(scenario),
@@ -519,7 +519,7 @@ def solve_ils_cmd(
                 )
     if telemetry_log:
         record = {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "source": "solve-ils",
             "scenario": sc.name,
             "scenario_path": str(scenario),
@@ -688,7 +688,7 @@ def solve_tabu_cmd(
                 )
     if telemetry_log:
         record = {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "source": "solve-tabu",
             "scenario": sc.name,
             "scenario_path": str(scenario),
