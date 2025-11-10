@@ -26,6 +26,7 @@ structure mirrors our roadmap so that implementation status stays transparent.
 
    api/index
    reference/cli
+   reference/playback_aggregates
    reference/harvest_systems
    reference/telemetry
 

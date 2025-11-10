@@ -56,6 +56,37 @@ Use ``--summary-md`` to generate a Markdown digest containing topline metrics (s
 production, average utilisation) plus a preview table of the first 10 day-level rows. This is handy
 for dropping rich summaries into release notes or retrospective documents.
 
+Quickstart example
+------------------
+
+.. code-block:: console
+
+   $ fhops eval playback examples/minitoy/scenario.yaml \
+       --assignments tests/fixtures/playback/minitoy_assignments.csv \
+       --samples 5 \
+       --downtime-prob 0.1 \
+       --weather-prob 0.2 \
+       --landing-prob 0.3 \
+       --shift-out tmp/minitoy_shift.csv \
+       --day-out tmp/minitoy_day.csv \
+       --shift-parquet tmp/minitoy_shift.parquet \
+       --day-parquet tmp/minitoy_day.parquet \
+       --summary-md tmp/minitoy_summary.md
+
+Load the Parquet file and compute machine utilisation:
+
+.. code-block:: python
+
+   import pandas as pd
+   from fhops.evaluation import machine_utilisation_summary
+
+   shift_df = pd.read_parquet("tmp/minitoy_shift.parquet")
+   utilisation = machine_utilisation_summary(shift_df)
+   print(utilisation.head())
+
+The Markdown summary (``tmp/minitoy_summary.md``) contains topline metrics and a preview table – open
+it in any Markdown viewer or drop it into documentation.
+
 Stochastic playback toggles
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
