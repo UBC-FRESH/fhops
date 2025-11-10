@@ -43,6 +43,7 @@ def test_eval_playback_cli(tmp_path: Path):
 
     shift_out = tmp_path / "shift.csv"
     day_out = tmp_path / "day.csv"
+    summary_md = tmp_path / "summary.md"
 
     result = runner.invoke(
         app,
@@ -55,18 +56,24 @@ def test_eval_playback_cli(tmp_path: Path):
             str(shift_out),
             "--day-out",
             str(day_out),
+            "--summary-md",
+            str(summary_md),
         ],
     )
 
     assert result.exit_code == 0, result.stdout
     assert shift_out.exists()
     assert day_out.exists()
+    assert summary_md.exists()
 
     shift_df = pd.read_csv(shift_out)
     day_df = pd.read_csv(day_out)
 
     assert not shift_df.empty
     assert not day_df.empty
+    summary_text = summary_md.read_text(encoding="utf-8")
+    assert "Playback Summary" in summary_text
+    assert "Total production units" in summary_text
 
     sc = load_scenario(scenario_path)
     pb = Problem.from_scenario(sc)

@@ -290,11 +290,6 @@ def run_stochastic_playback(
     active_events = list(events) if events is not None else _default_events(sampling_config)
 
     samples: list[PlaybackSample] = []
-    if not active_events:
-        for sample_id in range(num_samples):
-            samples.append(PlaybackSample(sample_id=sample_id, result=base_result))
-        return EnsembleResult(base_result=base_result, samples=samples)
-
     for sample_id in range(num_samples):
         rng = np.random.default_rng(sampling_config.base_seed + sample_id)
         context = SamplingContext(problem=problem, sample_id=sample_id, rng=rng, config=sampling_config)
@@ -305,7 +300,7 @@ def run_stochastic_playback(
         for event in active_events:
             sample_assignments = event.apply(context, sample_assignments, base_production)
 
-        playback_result = run_playback(problem, sample_assignments)
+        playback_result = run_playback(problem, sample_assignments, sample_id=sample_id)
         samples.append(PlaybackSample(sample_id=sample_id, result=playback_result))
 
     return EnsembleResult(base_result=base_result, samples=samples)
