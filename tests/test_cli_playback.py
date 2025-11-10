@@ -33,6 +33,10 @@ def _solve_sa_assignments(scenario_path: str, tmp_path: Path) -> Path:
     return tmp_path / "assignments.csv"
 
 
+def _total_production(playback_result) -> float:
+    return sum(summary.production_units for summary in playback_result.day_summaries)
+
+
 def test_eval_playback_cli(tmp_path: Path):
     scenario_path = "tests/fixtures/regression/regression.yaml"
     assignments_path = _solve_sa_assignments(scenario_path, tmp_path)
@@ -119,6 +123,49 @@ def test_eval_playback_cli_stochastic(tmp_path: Path):
     )
     base_day_len = len(base.day_summaries)
     assert len(day_df) == base_day_len * samples
+
+
+def test_eval_playback_cli_landing(tmp_path: Path):
+    scenario_path = "tests/fixtures/regression/regression.yaml"
+    assignments_path = _solve_sa_assignments(scenario_path, tmp_path)
+
+    shift_out = tmp_path / "shift_landing.csv"
+    day_out = tmp_path / "day_landing.csv"
+
+    result = runner.invoke(
+        app,
+        [
+            "eval-playback",
+            scenario_path,
+            "--assignments",
+            str(assignments_path),
+            "--samples",
+            "2",
+            "--landing-prob",
+            "1.0",
+            "--landing-mult-min",
+            "0.2",
+            "--landing-mult-max",
+            "0.2",
+            "--landing-duration",
+            "2",
+            "--shift-out",
+            str(shift_out),
+            "--day-out",
+            str(day_out),
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+
+    day_df = pd.read_csv(day_out)
+    base_total = _total_production(
+        run_playback(
+            Problem.from_scenario(load_scenario(scenario_path)),
+            pd.read_csv(assignments_path),
+        )
+    )
+
+    assert day_df["production_units"].sum() < base_total * 2
 
 
 @pytest.mark.parametrize("scenario_name", ["minitoy", "med42"])

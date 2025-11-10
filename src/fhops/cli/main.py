@@ -777,6 +777,33 @@ def eval_playback(
         min=1,
         help="Number of consecutive days affected once weather occurs.",
     ),
+    landing_probability: float = typer.Option(
+        0.0,
+        "--landing-prob",
+        min=0.0,
+        max=1.0,
+        help="Probability a landing experiences a throughput shock (0 disables).",
+    ),
+    landing_multiplier_low: float = typer.Option(
+        0.4,
+        "--landing-mult-min",
+        min=0.0,
+        max=1.0,
+        help="Minimum throughput multiplier applied during landing shocks.",
+    ),
+    landing_multiplier_high: float = typer.Option(
+        0.8,
+        "--landing-mult-max",
+        min=0.0,
+        max=1.0,
+        help="Maximum throughput multiplier applied during landing shocks.",
+    ),
+    landing_duration: int = typer.Option(
+        1,
+        "--landing-duration",
+        min=1,
+        help="Number of consecutive days landing shocks persist.",
+    ),
 ):
     """Run deterministic playback to produce shift/day summaries."""
 
@@ -787,7 +814,12 @@ def eval_playback(
 
     playback_config = PlaybackConfig(include_idle_records=include_idle)
 
-    if samples <= 1 and downtime_probability <= 0 and weather_probability <= 0:
+    if (
+        samples <= 1
+        and downtime_probability <= 0
+        and weather_probability <= 0
+        and landing_probability <= 0
+    ):
         playback = run_playback(pb, df, config=playback_config)
         shift_summaries = playback.shift_summaries
         day_summaries = playback.day_summaries
@@ -803,6 +835,13 @@ def eval_playback(
         sampling_config.weather.day_probability = weather_probability
         sampling_config.weather.severity_levels = {"default": weather_severity}
         sampling_config.weather.impact_window_days = weather_window
+        sampling_config.landing.enabled = landing_probability > 0
+        sampling_config.landing.probability = landing_probability
+        sampling_config.landing.capacity_multiplier_range = (
+            landing_multiplier_low,
+            landing_multiplier_high,
+        )
+        sampling_config.landing.duration_days = landing_duration
 
         ensemble = run_stochastic_playback(
             pb,
