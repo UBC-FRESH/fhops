@@ -64,6 +64,7 @@ Status: Draft — roadmap Phase 3 owner document.
   - [x] Create `fhops/evaluation/playback/core.py` containing deterministic playback runner + record dataclasses.
   - [x] Add bridge helpers (`fhops/evaluation/playback/adapters.py`) translating `Schedule.plan` and MIP tensors into canonical playback records.
   - [x] Wire `fhops.evaluation.__init__` exports to include new playback entry points.
+  - [x] Capture idle hours and sequencing violation metadata during playback record/summarisation.
 - **CLI integration**
   - [ ] Implement `fhops eval playback` command (Typer) with `--shift-out`, `--day-out`, `--format` flags and console summary.
   - [ ] Update CLI docs (`docs/reference/cli.rst`, `docs/howto/evaluation.rst`) with command usage and schema tables.
