@@ -3,6 +3,7 @@
 ## 2025-11-14 — Phase 3 playback planning kickoff
 - Expanded the Phase 3 roadmap checklist with detailed subtasks covering playback upgrades, KPI expansion, synthetic datasets, analytics notebooks, and hyperparameter tuning deliverables.
 - Logged the deterministic playback audit (current assets vs. gaps) inside `notes/simulation_eval_plan.md` to anchor upcoming shift/day reporting work.
+- Authored the shift/day reporting specification (schemas, CLI surfaces, contract deltas) within `notes/simulation_eval_plan.md` and marked the roadmap subtask complete.
 - Checked off the playback inventory subtask in the roadmap to reflect the newly documented findings.
 
 ## 2025-11-13 — CLI profile integration hardening
