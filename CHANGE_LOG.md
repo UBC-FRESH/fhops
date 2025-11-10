@@ -8,6 +8,7 @@
 - Ran `ruff format`, `ruff check`, `mypy src`, and targeted pytest suites to keep lint/type/test gates green.
 - Replaced `datetime.utcnow()` usage in CLI telemetry with timezone-aware `datetime.now(UTC)` to silence pytest warnings and emit explicit UTC offsets.
 - Added a geopandas-free GeoJSON loader fallback so geospatial utilities and tests run in lean environments without the optional dependency.
+- Normalised trailing whitespace in roadmap/planning notes and switched benchmark plotting utilities to import `Iterable` from `collections.abc` to keep pre-commit hooks clean.
 
 ## 2025-11-12 — Iterated Local Search rollout
 - Implemented the `fhops.optimization.heuristics.solve_ils` Iterated Local Search solver with perturbation telemetry, hybrid MIP restarts, and operator stats parity with SA.

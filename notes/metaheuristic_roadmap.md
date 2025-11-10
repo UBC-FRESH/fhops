@@ -116,7 +116,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 
 ###### Subtasks – Testing & Benchmarks (ILS/Hybrid)
 - [x] Unit tests covering perturbation behaviour, restart logic, and feasibility checks.
-- [x] Regression tests on minitoy scenario ensuring feasibility and consistent objective. *(`pytest tests/test_regression_integration.py`)* 
+- [x] Regression tests on minitoy scenario ensuring feasibility and consistent objective. *(`pytest tests/test_regression_integration.py`)*
 - [x] Benchmark runs (minitoy/med42/large84) comparing SA, Tabu, and ILS/Hybrid; record telemetry/decision notes. *(See `tmp/bench_ils/summary.{csv,json}` — SA remains strongest on all scenarios; ILS trails SA but beats Tabu on quality while staying sub-second on minitoy/med42.)*
 
 ###### Subtasks – Documentation (ILS/Hybrid)

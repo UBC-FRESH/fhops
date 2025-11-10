@@ -10,8 +10,8 @@ heuristic per scenario. The plots are intended for inclusion in Sphinx docs unde
 from __future__ import annotations
 
 import argparse
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 import matplotlib.pyplot as plt
 import pandas as pd
