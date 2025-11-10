@@ -34,7 +34,7 @@ before proposing new work.
     - [x] Inventory deterministic playback path (`fhops/eval`, `scheduling/timeline`) and capture gaps in `notes/simulation_eval_plan.md`.
     - [x] Spec shift/day reporting interfaces and required data contract updates.
     - [x] Produce migration checklist for refactoring playback modules and regression fixtures.
-  - [ ] Stochastic sampling extensions
+  - [x] Stochastic sampling extensions
     - [x] Design RNG seeding + scenario ensemble API and land it as a draft in `notes/simulation_eval_plan.md`.
     - [x] Implement downtime/weather sampling operators with unit and property-based tests.
     - [x] Integrate sampling toggles into CLI/automation commands (document defaults in `docs/howto/evaluation.rst`).

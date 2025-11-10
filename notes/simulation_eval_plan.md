@@ -51,6 +51,7 @@ Status: Draft — roadmap Phase 3 owner document.
   - Introduce `fhops eval playback` command: loads scenario + assignments, runs playback, writes `--shift-out`/`--day-out` files (CSV by default, Parquet optional via flag).
   - Update `docs/howto/evaluation.rst` with usage examples, schema tables, and troubleshooting (e.g., missing shift calendars).
   - Add quickstart snippet demonstrating CLI usage + notebook-friendly Pandas interop.
+  - Provide aggregation recipe showing how to summarise per-machine/per-day stats for KPI expansion modules.
 - **Testing & validation**
   - Regression fixtures: deterministic playback for `examples/minitoy` and regression scenario; assert shift/day outputs and mobilisation tagging.
   - Property-based tests ensuring aggregation across shifts equals day totals and respects blackout windows (no work counted inside blackout).
@@ -81,6 +82,7 @@ Status: Draft — roadmap Phase 3 owner document.
     - Added initial coverage in `tests/test_playback.py` verifying block completions, sequencing violations, and idle-hour aggregation on regression scenario data.
   - [x] Add CLI smoke test invoking playback command on synthetic assignments ensuring file creation + summaries (`tests/test_cli_playback.py`).
   - [ ] Ensure property-based tests enforce shift totals == day totals and respect blackout constraints.
+  - [ ] Add regression tests comparing CLI exports with expected shift/day schemas once Parquet support lands.
 
 ### Stochastic Sampling API Plan — 2025-02-??
 - **Objectives**
