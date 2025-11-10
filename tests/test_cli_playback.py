@@ -74,3 +74,49 @@ def test_eval_playback_cli(tmp_path: Path):
     assert day_df["production_units"].sum() == pytest.approx(
         sum(summary.production_units for summary in cli_playback.day_summaries)
     )
+
+
+@pytest.mark.parametrize("scenario_name", ["minitoy", "med42"])
+def test_playback_fixture_matches_cli(tmp_path: Path, scenario_name: str):
+    scenario_path = Path(f"examples/{scenario_name}/scenario.yaml")
+    assignments_fixture = Path(f"tests/fixtures/playback/{scenario_name}_assignments.csv")
+    shift_fixture = Path(f"tests/fixtures/playback/{scenario_name}_shift.csv")
+    day_fixture = Path(f"tests/fixtures/playback/{scenario_name}_day.csv")
+
+    assert assignments_fixture.exists()
+    assert shift_fixture.exists()
+    assert day_fixture.exists()
+
+    shift_out = tmp_path / f"{scenario_name}_shift.csv"
+    day_out = tmp_path / f"{scenario_name}_day.csv"
+
+    result = runner.invoke(
+        app,
+        [
+            "eval-playback",
+            str(scenario_path),
+            "--assignments",
+            str(assignments_fixture),
+            "--shift-out",
+            str(shift_out),
+            "--day-out",
+            str(day_out),
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+
+    shift_df_cli = pd.read_csv(shift_out)
+    day_df_cli = pd.read_csv(day_out)
+    shift_df_fixture = pd.read_csv(shift_fixture)
+    day_df_fixture = pd.read_csv(day_fixture)
+
+    pd.testing.assert_frame_equal(
+        shift_df_cli.sort_values(list(shift_df_cli.columns)).reset_index(drop=True),
+        shift_df_fixture.sort_values(list(shift_df_fixture.columns)).reset_index(drop=True),
+        check_dtype=False,
+    )
+    pd.testing.assert_frame_equal(
+        day_df_cli.sort_values(list(day_df_cli.columns)).reset_index(drop=True),
+        day_df_fixture.sort_values(list(day_df_fixture.columns)).reset_index(drop=True),
+        check_dtype=False,
+    )
