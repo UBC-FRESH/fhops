@@ -86,6 +86,7 @@ Status: Draft — roadmap Phase 3 owner document.
   - `SamplingContext`: dataclass capturing RNG seed, sample_id, scenario metadata, and reusable random streams (downtime, weather, mobilisation).
   - `StochasticEvent`: protocol for sampling events; concrete implementations (`DowntimeEvent`, `WeatherShiftEvent`, `LandingConstraintShock`) mutate playback records prior to aggregation.
   - `PlaybackEnsemble`: orchestrator that runs deterministic playback per sample, applies stochastic events, and emits shift/day summaries + aggregate statistics.
+  - Configuration surfaced via Pydantic models (`DowntimeEventConfig`, `WeatherEventConfig`, `LandingShockConfig`, `SamplingConfig`) under `fhops.evaluation.playback.events`.
 - **API surface**
   - `run_stochastic_playback(problem, schedule, *, samples=10, seed=123, events=None)` returning `EnsembleResult` with:
     - `sample_records`: iterator/generator of per-sample playback outputs.
