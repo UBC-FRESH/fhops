@@ -6,11 +6,12 @@ import json
 from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any, cast
 
 try:  # Optional dependency; we fall back to a lightweight parser if unavailable.
     import geopandas as gpd
 except ModuleNotFoundError:  # pragma: no cover - exercised when geopandas not installed
-    gpd = None  # type: ignore[assignment]
+    gpd = cast(Any, None)
 
 from shapely.geometry import shape
 from shapely.geometry.base import BaseGeometry
