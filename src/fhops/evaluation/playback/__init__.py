@@ -18,6 +18,15 @@ from .events import (
     SamplingEventConfig,
     WeatherEventConfig,
 )
+from .stochastic import (
+    DowntimeEvent,
+    EnsembleResult,
+    PlaybackEvent,
+    PlaybackSample,
+    SamplingContext,
+    WeatherEvent,
+    run_stochastic_playback,
+)
 
 __all__ = [
     "PlaybackConfig",
@@ -35,4 +44,11 @@ __all__ = [
     "WeatherEventConfig",
     "LandingShockConfig",
     "SamplingConfig",
+    "SamplingContext",
+    "PlaybackEvent",
+    "DowntimeEvent",
+    "WeatherEvent",
+    "PlaybackSample",
+    "EnsembleResult",
+    "run_stochastic_playback",
 ]

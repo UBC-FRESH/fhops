@@ -90,6 +90,7 @@ Status: Draft — roadmap Phase 3 owner document.
   - `StochasticEvent`: protocol for sampling events; concrete implementations (`DowntimeEvent`, `WeatherShiftEvent`, `LandingConstraintShock`) mutate playback records prior to aggregation.
   - `PlaybackEnsemble`: orchestrator that runs deterministic playback per sample, applies stochastic events, and emits shift/day summaries + aggregate statistics.
   - Configuration surfaced via Pydantic models (`DowntimeEventConfig`, `WeatherEventConfig`, `LandingShockConfig`, `SamplingConfig`) under `fhops.evaluation.playback.events`.
+  - Implemented initial `DowntimeEvent` and `WeatherEvent` logic in `fhops.evaluation.playback.stochastic` with ensemble runner + regression tests.
 - **API surface**
   - `run_stochastic_playback(problem, schedule, *, samples=10, seed=123, events=None)` returning `EnsembleResult` with:
     - `sample_records`: iterator/generator of per-sample playback outputs.
@@ -106,6 +107,7 @@ Status: Draft — roadmap Phase 3 owner document.
   - Integrate with telemetry store so hyperparameter tuning can reuse stochastic runs.
 - **Testing strategy**
   - Unit tests for each event type (downtime/weather/landing) verifying statistical properties via fixed seeds.
+    - Added initial coverage in `tests/test_stochastic_playback.py` for downtime and weather sampling.
   - Property-based tests ensuring deterministic playback equivalence when events are disabled (`samples=1`, no events).
   - Performance smoke to confirm ensemble scaling (e.g., 20 samples on minitoy executes within target wall time).
 - **Open questions**
