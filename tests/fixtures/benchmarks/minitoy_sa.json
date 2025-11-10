@@ -1,0 +1,21 @@
+{
+  "scenario": "user-1",
+  "solver": "sa",
+  "objective": 13.0,
+  "kpi_total_production": 45.5,
+  "kpi_completed_blocks": 1.0,
+  "kpi_mobilisation_cost": 65.0,
+  "kpi_mobilisation_cost_by_machine": "{\"H2\": 65.0}",
+  "sa_initial_score": -4021.5,
+  "sa_acceptance_rate": 0.31197771587743733,
+  "sa_accepted_moves": 112,
+  "sa_proposals": 359,
+  "sa_restarts": 0,
+  "objective_vs_mip_gap": 41.0,
+  "objective_vs_mip_ratio": 0.24074074074074084,
+  "iters": 200,
+  "seed": 42,
+  "preset_label": "default",
+  "operators_config": "{\"block_insertion\": 0.0, \"cross_exchange\": 0.0, \"mobilisation_shake\": 0.0, \"move\": 1.0, \"swap\": 1.0}",
+  "operators_stats": "{\"move\": {\"proposals\": 200.0, \"accepted\": 200.0, \"skipped\": 0.0, \"weight\": 1.0, \"acceptance_rate\": 1.0}, \"swap\": {\"proposals\": 200.0, \"accepted\": 200.0, \"skipped\": 0.0, \"weight\": 1.0, \"acceptance_rate\": 1.0}}"
+}

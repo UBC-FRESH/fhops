@@ -1,5 +1,35 @@
 # Development Change Log
 
+## 2025-11-13 — CLI profile integration hardening
+- Refactored solver profile merging to return a structured `ResolvedSolverConfig`, simplifying how CLI commands consume operator presets, weights, batching, and extras.
+- Updated `fhops solve-heur`, `solve-ils`, and `solve-tabu` to rely on the resolved config, improved multi-start seed handling, and ensured profile extras override CLI defaults safely.
+- Tightened the benchmark suite (`fhops bench suite`) by reusing the resolved configs across SA/ILS/Tabu, normalising telemetry/summary metrics, and making scenario comparisons mypy-safe.
+- Hardened ILS schedule reconstruction to tolerate mixed pandas dtypes and added regression coverage in `tests/test_cli_profiles.py` for the new resolver.
+- Ran `ruff format`, `ruff check`, `mypy src`, and targeted pytest suites to keep lint/type/test gates green.
+- Replaced `datetime.utcnow()` usage in CLI telemetry with timezone-aware `datetime.now(UTC)` to silence pytest warnings and emit explicit UTC offsets.
+- Added a geopandas-free GeoJSON loader fallback so geospatial utilities and tests run in lean environments without the optional dependency.
+- Normalised trailing whitespace in roadmap/planning notes and switched benchmark plotting utilities to import `Iterable` from `collections.abc` to keep pre-commit hooks clean.
+
+## 2025-11-12 — Iterated Local Search rollout
+- Implemented the `fhops.optimization.heuristics.solve_ils` Iterated Local Search solver with perturbation telemetry, hybrid MIP restarts, and operator stats parity with SA.
+- Added a dedicated `fhops solve-ils` CLI command mirroring SA batching flags, plus `fhops bench suite --include-ils` options for harness comparisons.
+- Expanded Sphinx docs: new how-to (`docs/howto/ils.rst`), CLI reference updates, telemetry schema notes, and parallel workflow cross-links covering ILS usage.
+- Introduced unit coverage for ILS (basic run, operator filtering, hybrid MIP hook) to keep heuristics regressions green.
+- Updated the roadmap/notes plan to reflect ongoing ILS/Hybrid milestone work (see `notes/metaheuristic_roadmap.md`).
+- Increased `fhops bench suite` default MIP time limit to 1800 s so large84 benchmarks reach optimality without manual overrides; docs/roadmap updated accordingly.
+- Began Phase 2 benchmark reporting enhancements: added a detailed plan (comparison metrics, visual artefacts, docs/test coverage) tracked in `notes/metaheuristic_roadmap.md` ahead of implementation.
+- Enhanced benchmarking summaries with heuristic comparison columns (`solver_category`, best heuristic solver/objective, gap and runtime ratios) and added regression coverage/documentation so the new fields remain stable.
+- Added a ``scripts/render_benchmark_plots.py`` helper plus Sphinx guidance/figures (`docs/_static/benchmarks/*.png`, `docs/howto/benchmarks.rst`) to visualise objective gaps and runtime ratios across heuristics.
+- Drafted the new heuristics configuration how-to (`docs/howto/heuristic_presets.rst`) and wired it into the Sphinx navigation with cross-references to related guides.
+- Expanded the benchmarking how-to with comparison table guidance and multi-solver CLI examples so readers can interpret the new metrics/plots.
+- Refreshed the CLI reference (`docs/reference/cli.rst`) with a heuristic configuration quick-reference pointing to presets, advanced operators, and comparison plotting scripts.
+- Added documentation maintenance notes covering benchmark figure regeneration (`docs/howto/benchmarks.rst`) and the hyperparameter tuning plan (`notes/metaheuristic_hyperparam_tuning.md`).
+- Published the harvest system registry reference (`docs/reference/harvest_systems.rst`) and linked it from the data contract how-to.
+- Added `docs/howto/system_sequencing.rst` covering scenario setup, solver workflows, and KPI interpretation for harvest system sequencing.
+- Introduced CLI solver profiles (`--profile`, `--list-profiles`) with documentation updates in the heuristics and sequencing guides.
+- Marked the harvest system sequencing milestone as complete in the Phase 2 roadmap.
+- Planned documentation work for heuristic presets/benchmark interpretation (see `notes/metaheuristic_roadmap.md` Plan – Documentation Updates) ahead of drafting the new how-to content.
+
 ## 2025-11-07 — Planning Framework Bootstrap
 - Established structured roadmap (`FHOPS_ROADMAP.md`) with phase tracking and detailed next steps.
 - Authored coding agent runbook (`CODING_AGENT.md`) aligning workflow commands with Nemora practices.
@@ -43,11 +73,48 @@
 - Extended objective handling with transition and landing-slack weights; the Pyomo builder now introduces transition binaries even without mobilisation configs, landing slack variables when penalised, and the SA heuristic mirrors the weighted scoring. Added targeted unit tests covering transition and slack penalties.
 - Bumped package metadata to `v0.0.1` and finalised the Phase 1 release notes, preparing the PR for the GitHub release workflow trigger.
 - Relaxed the `require-changelog-update` hook to support `pre-commit run --all-files` (CI no longer fails when the latest commit already updates `CHANGE_LOG.md`).
-- Add changelog entry for PR #5: major package reorg, roadmap and phase-1 completion; satisfy CI pre-commit check (added by gparadis).
-- Commands executed:
-  - `ruff format src tests`
-  - `ruff check src tests`
-  - `mypy src`
-  - `pytest`
-  - `sphinx-build -b html docs docs/_build/html`
-  - `pre-commit run --all-files`
+- Added the Phase 2 benchmarking harness (`fhops bench suite`) with structured outputs, regression fixture for minitoy SA, and accompanying documentation/tests.
+- Calibrated mobilisation setups for the bundled minitoy/med42/large84 scenarios, wired loader support for inline mobilisation configs, refreshed benchmark baselines to assert mobilisation spend (including per-machine breakdowns), documented CLI usage, added geo-distance regression coverage, and documented projection/tooling guidance for GeoJSON ingestion.
+- Documented the current simulated annealing defaults (temperature schedule, restarts, neighbourhoods), added SA-specific metrics (acceptance rate, objective gap vs MIP) to the benchmarking harness, refreshed regression fixtures/tests, and cross-linked CLI/docs with tuning guidance.
+- Refactored the SA neighbour generation with explicit swap/move operators, paving the way for a pluggable operator registry in subsequent metaheuristic work.
+- Finalised the Phase 2 shift-based scheduling plan: roadmap and modular reorg notes now outline the shift-aware data contract, solver refactors, KPI/CLI updates, and migration guidance.
+- Added shift calendar support to the scenario contract/loader (including regression coverage) so scenarios can specify per-shift machine availability ahead of full shift-aware scheduling.
+- Reindexed the Pyomo MIP builder, mobilisation/landing constraints, and sequencing helper to operate on shift tuples, updated the HiGHS driver/benchmark harness to emit shift-aware assignments, refreshed regression/locking/mobilisation/system-role tests, and captured the milestone in `notes/mip_model_plan.md`.
+- Shift-enabled the simulated annealing schedule representation, evaluation, and neighbour plumbing to operate on `(day, shift_id)` indices, updated SA output DataFrames accordingly, and refreshed the metaheuristic roadmap plus regression/unit tests with shift-aware helpers.
+- Extended the SA greedy initialiser and blackout checks to honour shift-level availability (calendar entries or timeline-defined shifts), ensuring locked assignments and blackout penalties match the shift-aware MIP behaviour; roadmap updated to reflect the milestone.
+- Synced CLI/docs/tests with shift-aware SA outputs (assignment CSVs now include `shift_id`, docs note the new column, and locking tests assert shift-level fixes) to close the output alignment task.
+- Hardened SA neighbourhood operators to respect shift-level availability and blackouts, sanitising invalid swaps/moves and updating the minitoy benchmark fixture to the new acceptance metrics.
+- Shift-aware SA objective evaluation now honours shift availability, mobilisation transitions, landing slack, and blackout penalties per `(day, shift)` slot, bringing heuristic scoring in line with the MIP objective.
+- Regression suite now asserts that SA assignment exports carry `shift_id` values and updates the metaheuristic roadmap to reflect the completed test alignment work.
+- Marked the Phase 2 shift-based scheduling architecture milestone complete after upgrading data contract, MIP/SA solvers, benchmarks, and KPI reporting to operate on `(day, shift_id)` indices.
+- Planned the next wave of metaheuristic expansion (operator registry, advanced neighbourhoods, Tabu/ILS prototypes, benchmarking/reporting upgrades) and captured the milestones in `notes/metaheuristic_roadmap.md`.
+- Broke down the operator registry scaffold task into actionable sub-steps (registry design, SA integration, CLI surface, telemetry, testing, docs) recorded in `notes/metaheuristic_roadmap.md` for execution tracking.
+- Added detailed sub-subtasks for the registry data model (context dataclass, protocol, registry API, default operators, unit tests) to guide implementation.
+- Implemented the initial registry scaffold by introducing `OperatorContext` and sanitizer typing primitives (`fhops.optimization.heuristics.registry`) and exporting them via the heuristics package.
+- Added an `Operator` protocol defining the standardized name/weight/apply interface for heuristic operators to support the upcoming registry.
+- Implemented `OperatorRegistry` providing `register`, `get`, `enabled`, `configure`, and `from_defaults` helpers to manage heuristic operators and their weights.
+- Ported the existing swap/move neighbourhood logic into standalone operators registered via `OperatorRegistry.from_defaults()`, updated SA neighbour generation to run through the registry, and refreshed the minitoy benchmark baseline for the new behaviour.
+- Added unit tests covering the operator registry defaults, weight configuration, and sanitizer integration.
+- Captured a detailed sub-plan for operator registry integration within SA (registry wiring, shared sanitizer reuse, operator weighting, regression verification) in `notes/metaheuristic_roadmap.md`.
+- Rewired SA neighbours to iterate through the registry with weighted operator selection while reusing the shared sanitizer, keeping regression/benchmark outputs stable.
+- Reran the benchmark/regression suites post-registry integration, updated the minitoy baseline, and checked off the verification subtask in `notes/metaheuristic_roadmap.md`.
+- Exposed operator configuration flags in the CLI (`solve-heur`, `fhops bench suite`), ensured benchmark summaries record `operators_config`, added parsing tests, and documented the new options.
+- Added operator presets (balanced, move-only, swap-heavy, swap-only, diversify) with CLI support and helper utilities for parsing/validation.
+- Instrumented per-operator telemetry in SA (`operators_stats`), surfaced stats in CLI/bench summaries, documented the new tuning signals, and described the telemetry schema in `docs/reference/telemetry.rst`.
+- Added JSONL telemetry logging utilities with CLI `--telemetry-log` support, enabling persistent storage of SA run metadata for future hyperparameter tuning workflows.
+- Captured detailed design specs for advanced neighbourhood operators (block insertion, cross-machine exchange, mobilisation shake) in `notes/metaheuristic_roadmap.md`, including context dependencies, telemetry fields, and pseudo-code to guide the upcoming implementation phase.
+- Implemented advanced neighbourhood operators (`block_insertion`, `cross_exchange`, `mobilisation_shake`) in the registry with shared helper utilities, wired them into the default registry (weight=0.0) and CLI presets, and marked the implementation subtask complete in `notes/metaheuristic_roadmap.md`.
+- Added shift-aware SA operator presets (`explore`, `mobilisation`, `stabilise`) with documented weight profiles, updated CLI helpers/tests to expose the new options, and captured usage guidance in `docs/reference/cli.rst`.
+- Extended the benchmarking harness with `--compare-preset` sweeps, labelled summary/telemetry outputs (`preset_label`), and per-preset assignment exports to evaluate the new operators side-by-side; roadmap notes updated accordingly.
+- Added unit coverage for the advanced operators (`tests/heuristics/test_operators.py`) ensuring block insertion honours windows/availability, cross exchange respects machine capabilities, and mobilisation shake observes lock and spacing rules.
+- Added regression assertions so the advanced presets (explore/mobilisation/stabilise) maintain the mobilisation baseline objective when enabled.
+- Separated simulated annealing RNG seeding from the global `random` module by constructing a local generator per solve, keeping regression/benchmark runs deterministic without side effects.
+- Fixed the `large84` example mobilisation config to reference the actual machine IDs (H1–H16), reran SA-only benchmark sweeps to confirm diversification presets still outperform baseline, and recorded a follow-up to raise the full-suite timeout before release.
+- Added an opt-in multi-start controller (`fhops.optimization.heuristics.multistart.run_multi_start`) with coverage to run multiple SA instances in parallel and select the best objective while collecting per-run telemetry.
+- Added a deterministic seed/preset exploration helper (`build_exploration_plan`) plus unit tests for the multi-start module.
+- Multi-start runs now support JSONL telemetry logging (per-run records with run IDs and a summary entry) via the optional `telemetry_log` parameter.
+- Added opt-in batched neighbour generation in SA (`batch_size`, `max_workers`) with threadpool evaluation and parity tests.
+- Extended `fhops solve-heur` CLI with `--parallel-multistart`, `--parallel-workers`, and `--batch-neighbours` flags, including guardrails, telemetry fields, and updated CLI docs for parallel workflows.
+- Documented parallel workflows in Sphinx (multistart/batched how-to, CLI references, telemetry notes) and benchmarked the parallel heuristics across minitoy/med42/large84 to guide defaults.
+- Added an experimental Tabu Search solver (`solve_tabu`), shared CLI options/telemetry, and initial unit coverage.
+- Integrated Tabu Search into the benchmarking harness (`fhops bench suite --include-tabu`) and recorded comparative results showing SA remains the default recommendation.

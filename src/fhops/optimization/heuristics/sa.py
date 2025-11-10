@@ -3,13 +3,15 @@
 from __future__ import annotations
 
 import math
-import random
+import random as _random
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from typing import Any
 
 import pandas as pd
 
+from fhops.optimization.heuristics.registry import OperatorContext, OperatorRegistry
 from fhops.scenario.contract import Problem
 from fhops.scheduling.mobilisation import MachineMobilisation, build_distance_lookup
 
@@ -40,14 +42,22 @@ def _role_metadata(scenario):
     return allowed, prereqs, machine_roles, machines_by_role
 
 
-def _blackout_map(scenario) -> set[tuple[str, int]]:
-    blackout: set[tuple[str, int]] = set()
+def _blackout_map(scenario) -> set[tuple[str, int, str]]:
+    blackout: set[tuple[str, int, str]] = set()
     timeline = getattr(scenario, "timeline", None)
     if timeline and timeline.blackouts:
         for blackout_window in timeline.blackouts:
             for day in range(blackout_window.start_day, blackout_window.end_day + 1):
                 for machine in scenario.machines:
-                    blackout.add((machine.id, day))
+                    if scenario.shift_calendar:
+                        for entry in scenario.shift_calendar:
+                            if entry.machine_id == machine.id and entry.day == day:
+                                blackout.add((machine.id, day, entry.shift_id))
+                    elif timeline.shifts:
+                        for shift_def in timeline.shifts:
+                            blackout.add((machine.id, day, shift_def.name))
+                    else:
+                        blackout.add((machine.id, day, "S1"))
     return blackout
 
 
@@ -63,34 +73,49 @@ __all__ = ["Schedule", "solve_sa"]
 
 @dataclass(slots=True)
 class Schedule:
-    """Machine assignment plan keyed by machine/day."""
+    """Machine assignment plan keyed by machine/(day, shift_id)."""
 
-    plan: dict[str, dict[int, str | None]]
+    plan: dict[str, dict[tuple[int, str], str | None]]
 
 
 def _init_greedy(pb: Problem) -> Schedule:
     sc = pb.scenario
     remaining = {block.id: block.work_required for block in sc.blocks}
     rate = {(r.machine_id, r.block_id): r.rate for r in sc.production_rates}
+    shift_availability = (
+        {(c.machine_id, c.day, c.shift_id): int(c.available) for c in sc.shift_calendar}
+        if sc.shift_calendar
+        else {}
+    )
     availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
     windows = {block_id: sc.window_for(block_id) for block_id in sc.block_ids()}
     allowed_roles, prereq_roles, machine_roles, _ = _role_metadata(sc)
     blackout = _blackout_map(sc)
     locked = _locked_map(sc)
+    shift_availability = (
+        {(c.machine_id, c.day, c.shift_id): int(c.available) for c in sc.shift_calendar}
+        if sc.shift_calendar
+        else {}
+    )
+    availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
 
-    plan: dict[str, dict[int, str | None]] = {
-        machine.id: {day: None for day in pb.days} for machine in sc.machines
+    shifts = [(shift.day, shift.shift_id) for shift in pb.shifts]
+    plan: dict[str, dict[tuple[int, str], str | None]] = {
+        machine.id: {(day, shift_id): None for day, shift_id in shifts} for machine in sc.machines
     }
 
-    for day in pb.days:
+    for day, shift_id in shifts:
         for machine in sc.machines:
+            if shift_availability:
+                if shift_availability.get((machine.id, day, shift_id), 1) == 0:
+                    continue
             if availability.get((machine.id, day), 1) == 0:
                 continue
             lock_key = (machine.id, day)
             if lock_key in locked:
-                plan[machine.id][day] = locked[lock_key]
+                plan[machine.id][(day, shift_id)] = locked[lock_key]
                 continue
-            if lock_key in blackout:
+            if (machine.id, day, shift_id) in blackout:
                 continue
             candidates: list[tuple[float, str]] = []
             for block in sc.blocks:
@@ -107,7 +132,7 @@ def _init_greedy(pb: Problem) -> Schedule:
             if candidates:
                 candidates.sort(reverse=True)
                 _, best_block = candidates[0]
-                plan[machine.id][day] = best_block
+                plan[machine.id][(day, shift_id)] = best_block
                 remaining[best_block] = max(
                     0.0, remaining[best_block] - rate.get((machine.id, best_block), 0.0)
                 )
@@ -130,6 +155,12 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
     allowed_roles, prereq_roles, machine_roles, _ = _role_metadata(sc)
     blackout = _blackout_map(sc)
     locked = _locked_map(sc)
+    shift_availability = (
+        {(c.machine_id, c.day, c.shift_id): int(c.available) for c in sc.shift_calendar}
+        if sc.shift_calendar
+        else {}
+    )
+    availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
 
     weights = getattr(sc, "objective_weights", None)
     prod_weight = weights.production if weights else 1.0
@@ -145,16 +176,25 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
 
     previous_block: dict[str, str | None] = {machine.id: None for machine in sc.machines}
     role_cumulative: defaultdict[tuple[str, str], int] = defaultdict(int)
-    for day in sorted(pb.days):
+    shifts = sorted(pb.shifts, key=lambda s: (s.day, s.shift_id))
+    for shift in shifts:
+        day = shift.day
+        shift_id = shift.shift_id
         used = {landing.id: 0 for landing in sc.landings}
-        day_role_counts: defaultdict[tuple[str, str], int] = defaultdict(int)
+        shift_role_counts: defaultdict[tuple[str, str], int] = defaultdict(int)
         for machine in sc.machines:
-            block_id = sched.plan[machine.id][day]
+            block_id = sched.plan[machine.id][(day, shift_id)]
             if block_id is None:
                 if (machine.id, day) in locked:
                     penalty += 1000.0
                 continue
-            if (machine.id, day) in blackout:
+            shift_available = shift_availability.get((machine.id, day, shift_id), 1)
+            day_available = availability.get((machine.id, day), 1)
+            if shift_available == 0 or day_available == 0:
+                penalty += 1000.0
+                previous_block[machine.id] = None
+                continue
+            if (machine.id, day, shift_id) in blackout:
                 penalty += 1000.0
                 previous_block[machine.id] = None
                 continue
@@ -176,7 +216,7 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
                 assert role is not None
                 role_key = (block_id, role)
                 available = min(role_cumulative[(block_id, prereq)] for prereq in prereq_set)
-                required = role_cumulative[role_key] + day_role_counts[role_key] + 1
+                required = role_cumulative[role_key] + shift_role_counts[role_key] + 1
                 if required > available:
                     penalty += 1000.0
                     previous_block[machine.id] = block_id
@@ -220,8 +260,8 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
                     transition_count += 1.0
             previous_block[machine.id] = block_id
             if role is not None:
-                day_role_counts[(block_id, role)] += 1
-        for key, count in day_role_counts.items():
+                shift_role_counts[(block_id, role)] += 1
+        for key, count in shift_role_counts.items():
             role_cumulative[key] += count
     score = prod_weight * production_total
     score -= mobil_weight * mobilisation_total
@@ -231,65 +271,198 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
     return score
 
 
-def _neighbors(pb: Problem, sched: Schedule) -> list[Schedule]:
+def _neighbors(
+    pb: Problem,
+    sched: Schedule,
+    registry: OperatorRegistry,
+    rng: _random.Random,
+    operator_stats: dict[str, dict[str, float]],
+    *,
+    batch_size: int | None = None,
+) -> list[Schedule]:
     sc = pb.scenario
-    machines = [machine.id for machine in sc.machines]
-    days = list(pb.days)
-    if not machines or not days:
+    if not sc.machines or not pb.shifts:
         return []
     allowed_roles, _, machine_roles, _ = _role_metadata(sc)
     blackout = _blackout_map(sc)
     locked = _locked_map(sc)
+    shift_availability = (
+        {(c.machine_id, c.day, c.shift_id): int(c.available) for c in sc.shift_calendar}
+        if sc.shift_calendar
+        else {}
+    )
+    availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
+    landing_of = {block.id: block.landing_id for block in sc.blocks}
+    landing_cap = {landing.id: landing.daily_capacity for landing in sc.landings}
+    block_windows = {block.id: sc.window_for(block.id) for block in sc.blocks}
+    distance_lookup = build_distance_lookup(sc.mobilisation)
 
-    # swap two machines on a day
-    eligible_days = [d for d in days if sum((m, d) not in locked for m in machines) >= 2]
-    if eligible_days:
-        day = random.choice(eligible_days)
-        free_machines = [m for m in machines if (m, day) not in locked]
-        m1, m2 = random.sample(free_machines, k=2)
-    else:
-        day = days[0]
-        m1, m2 = (machines[0], machines[0])
-    swap_plan = {m: plan.copy() for m, plan in sched.plan.items()}
-    swap_plan[m1][day], swap_plan[m2][day] = swap_plan[m2][day], swap_plan[m1][day]
-    neighbours = [Schedule(plan=swap_plan)]
-    # move assignment within a machine across days
-    machine = random.choice(machines)
-    free_days = [d for d in days if (machine, d) not in locked]
-    if len(free_days) >= 2:
-        d1, d2 = random.sample(free_days, k=2)
-    elif free_days:
-        d1 = d2 = free_days[0]
-    else:
-        d1 = d2 = days[0]
-    move_plan = {m: plan.copy() for m, plan in sched.plan.items()}
-    move_plan[machine][d2] = move_plan[machine][d1]
-    move_plan[machine][d1] = None
-    neighbours.append(Schedule(plan=move_plan))
+    schedule_cls = sched.__class__
 
-    sanitized: list[Schedule] = []
-    for neighbour in neighbours:
-        plan: dict[str, dict[int, str | None]] = {}
-        for mach, assignments in neighbour.plan.items():
+    def sanitizer(candidate: Schedule) -> Schedule:
+        plan: dict[str, dict[tuple[int, str], str | None]] = {}
+        landing_usage: dict[tuple[int, str, str], int] = {}
+        for mach, assignments in candidate.plan.items():
             role = machine_roles.get(mach)
             plan[mach] = {}
-            for day_key, blk in assignments.items():
+            for shift_key_iter, blk in assignments.items():
+                day_key = shift_key_iter[0]
                 allowed = allowed_roles.get(blk) if blk is not None else None
                 if (mach, day_key) in locked:
-                    plan[mach][day_key] = locked[(mach, day_key)]
-                elif blk is not None and (
-                    (mach, day_key) in blackout or (allowed is not None and role not in allowed)
+                    plan[mach][shift_key_iter] = locked[(mach, day_key)]
+                    continue
+                shift_available = shift_availability.get((mach, day_key, shift_key_iter[1]), 1)
+                day_available = availability.get((mach, day_key), 1)
+                if blk is not None and (
+                    shift_available == 0
+                    or day_available == 0
+                    or (mach, day_key, shift_key_iter[1]) in blackout
+                    or (allowed is not None and role not in allowed)
                 ):
-                    plan[mach][day_key] = None
+                    plan[mach][shift_key_iter] = None
                 else:
-                    plan[mach][day_key] = blk
-        sanitized.append(Schedule(plan=plan))
-    return sanitized
+                    landing_id = landing_of.get(blk) if blk is not None else None
+                    if landing_id is not None:
+                        key = (day_key, shift_key_iter[1], landing_id)
+                        cap = landing_cap.get(landing_id, 0)
+                        current = landing_usage.get(key, 0)
+                        if cap > 0 and current >= cap:
+                            plan[mach][shift_key_iter] = None
+                            continue
+                        landing_usage[key] = current + 1
+                    plan[mach][shift_key_iter] = blk
+        return schedule_cls(plan=plan)
+
+    context = OperatorContext(
+        problem=pb,
+        schedule=sched,
+        sanitizer=sanitizer,
+        rng=rng,
+        distance_lookup=distance_lookup,
+        block_windows=block_windows,
+        landing_capacity=landing_cap,
+        landing_of=landing_of,
+    )
+
+    enabled_ops = list(registry.enabled())
+    if not enabled_ops:
+        return []
+
+    ordered_ops = []
+    if len(enabled_ops) <= 1:
+        ordered_ops = list(enabled_ops)
+    else:
+        weight_values = [op.weight for op in enabled_ops]
+        if all(abs(w - weight_values[0]) < 1e-9 for w in weight_values):
+            ordered_ops = list(enabled_ops)
+        else:
+            candidates = enabled_ops.copy()
+            weights = [op.weight for op in candidates]
+            while candidates:
+                total = sum(weights)
+                if total <= 0:
+                    ordered_ops.extend(candidates)
+                    break
+                pick = rng.random() * total
+                cumulative = 0.0
+                for idx, (op, weight) in enumerate(zip(candidates, weights)):
+                    cumulative += weight
+                    if pick <= cumulative:
+                        ordered_ops.append(op)
+                        candidates.pop(idx)
+                        weights.pop(idx)
+                        break
+
+    limit = batch_size if batch_size is not None and batch_size > 0 else None
+    neighbours: list[Schedule] = []
+    for operator in ordered_ops:
+        stats = operator_stats.setdefault(
+            operator.name, {"proposals": 0.0, "accepted": 0.0, "weight": operator.weight}
+        )
+        stats["weight"] = operator.weight
+        stats["proposals"] += 1.0
+
+        candidate = operator.apply(context)
+        if candidate is not None:
+            neighbours.append(candidate)
+            stats["accepted"] += 1.0
+            if limit is not None and len(neighbours) >= limit:
+                break
+        else:
+            stats.setdefault("skipped", 0.0)
+            stats["skipped"] += 1.0
+    return neighbours
 
 
-def solve_sa(pb: Problem, iters: int = 2000, seed: int = 42) -> dict[str, Any]:
-    """Run simulated annealing returning objective and assignments DataFrame."""
-    random.seed(seed)
+def _evaluate_candidates(
+    pb: Problem,
+    candidates: list[Schedule],
+    max_workers: int | None = None,
+) -> list[tuple[Schedule, float]]:
+    if not candidates:
+        return []
+    if max_workers is None or max_workers <= 1 or len(candidates) == 1:
+        return [(candidate, _evaluate(pb, candidate)) for candidate in candidates]
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        scores = list(executor.map(lambda sched: _evaluate(pb, sched), candidates))
+    return list(zip(candidates, scores))
+
+
+def solve_sa(
+    pb: Problem,
+    iters: int = 2000,
+    seed: int = 42,
+    operators: list[str] | None = None,
+    operator_weights: dict[str, float] | None = None,
+    batch_size: int | None = None,
+    max_workers: int | None = None,
+) -> dict[str, Any]:
+    """Solve the scheduling problem with simulated annealing.
+
+    Parameters
+    ----------
+    pb:
+        Parsed :class:`~fhops.scenario.contract.Problem` describing the scenario.
+    iters:
+        Number of annealing iterations. Higher values increase runtime and solution quality.
+    seed:
+        RNG seed used for deterministic runs.
+    operators:
+        Optional list of operator names to enable (default: all registered operators).
+    operator_weights:
+        Optional weight overrides for operators (values ``<= 0`` disable an operator).
+    batch_size:
+        When set, sample up to ``batch_size`` neighbour candidates per iteration.
+        ``None`` or ``<= 1`` keeps the sequential single-candidate behaviour.
+    max_workers:
+        Maximum worker threads for evaluating batched neighbours. ``None``/``<=1`` keeps sequential scoring.
+
+    Returns
+    -------
+    dict
+        Dictionary containing the best objective, assignments DataFrame, and telemetry metadata.
+    """
+    rng = _random.Random(seed)
+    registry = OperatorRegistry.from_defaults()
+    available_names = {name.lower(): name for name in registry.names()}
+    if operators:
+        desired = {name.lower() for name in operators}
+        unknown = desired - set(available_names.keys())
+        if unknown:
+            raise ValueError(f"Unknown operators requested: {', '.join(sorted(unknown))}")
+        disable = {name: 0.0 for lower, name in available_names.items() if lower not in desired}
+        if disable:
+            registry.configure(disable)
+    if operator_weights:
+        normalized_weights: dict[str, float] = {}
+        for name, weight in operator_weights.items():
+            key = name.lower()
+            if key not in available_names:
+                raise ValueError(f"Unknown operator '{name}' in weights configuration")
+            normalized_weights[available_names[key]] = weight
+        registry.configure(normalized_weights)
+
     current = _init_greedy(pb)
     current_score = _evaluate(pb, current)
     best = current
@@ -297,15 +470,34 @@ def solve_sa(pb: Problem, iters: int = 2000, seed: int = 42) -> dict[str, Any]:
 
     temperature0 = max(1.0, best_score / 10.0)
     temperature = temperature0
+    initial_score = current_score
+    proposals = 0
+    accepted_moves = 0
+    restarts = 0
+    operator_stats: dict[str, dict[str, float]] = {}
     for step in range(1, iters + 1):
         accepted = False
-        for neighbor in _neighbors(pb, current):
-            neighbor_score = _evaluate(pb, neighbor)
+        candidates = _neighbors(
+            pb,
+            current,
+            registry,
+            rng,
+            operator_stats,
+            batch_size=batch_size,
+        )
+        evaluations = _evaluate_candidates(
+            pb,
+            candidates,
+            max_workers=max_workers if batch_size and batch_size > 1 else None,
+        )
+        for neighbor, neighbor_score in evaluations:
+            proposals += 1
             delta = neighbor_score - current_score
-            if delta >= 0 or random.random() < math.exp(delta / max(temperature, 1e-6)):
+            if delta >= 0 or rng.random() < math.exp(delta / max(temperature, 1e-6)):
                 current = neighbor
                 current_score = neighbor_score
                 accepted = True
+                accepted_moves += 1
                 break
         if current_score > best_score:
             best, best_score = current, current_score
@@ -313,13 +505,44 @@ def solve_sa(pb: Problem, iters: int = 2000, seed: int = 42) -> dict[str, Any]:
         if not accepted and step % 100 == 0:
             current = _init_greedy(pb)
             current_score = _evaluate(pb, current)
+            restarts += 1
 
     rows = []
     for machine_id, plan in best.plan.items():
-        for day, block_id in plan.items():
+        for (day, shift_id), block_id in plan.items():
             if block_id is not None:
                 rows.append(
-                    {"machine_id": machine_id, "block_id": block_id, "day": int(day), "assigned": 1}
+                    {
+                        "machine_id": machine_id,
+                        "block_id": block_id,
+                        "day": int(day),
+                        "shift_id": shift_id,
+                        "assigned": 1,
+                    }
                 )
-    assignments = pd.DataFrame(rows).sort_values(["day", "machine_id", "block_id"])
-    return {"objective": float(best_score), "assignments": assignments}
+    assignments = pd.DataFrame(rows).sort_values(["day", "shift_id", "machine_id", "block_id"])
+    meta = {
+        "initial_score": float(initial_score),
+        "best_score": float(best_score),
+        "proposals": proposals,
+        "accepted_moves": accepted_moves,
+        "acceptance_rate": (accepted_moves / proposals) if proposals else 0.0,
+        "restarts": restarts,
+        "iterations": iters,
+        "temperature0": float(temperature0),
+        "operators": registry.weights(),
+    }
+    if operator_stats:
+        meta["operators_stats"] = {
+            name: {
+                "proposals": stats.get("proposals", 0.0),
+                "accepted": stats.get("accepted", 0.0),
+                "skipped": stats.get("skipped", 0.0),
+                "weight": stats.get("weight", 0.0),
+                "acceptance_rate": (stats.get("accepted", 0.0) / stats.get("proposals", 1.0))
+                if stats.get("proposals", 0.0)
+                else 0.0,
+            }
+            for name, stats in operator_stats.items()
+        }
+    return {"objective": float(best_score), "assignments": assignments, "meta": meta}

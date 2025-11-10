@@ -13,19 +13,20 @@ Status: Draft — pending modular reorganisation.
 - [x] Define mobilisation parameters per machine/system (walk cost per metre, setup cost, threshold distance). *(MachineMobilisation added.)*
 - [x] Implement mobilisation penalty terms in Pyomo (`optimization/mip/builder.py`). *(Setup-cost deduction wired into objective.)*
 - [x] Add heuristic loss penalties mirroring the MIP logic. *(SA evaluator subtracts setup cost per assignment.)*
-- [ ] Update evaluation metrics to report mobilisation spend.
+- [x] Update evaluation metrics to report mobilisation spend. *(KPI module exposes `mobilisation_cost`; benchmark harness validates non-zero spend).*
 - [x] Design geospatial ingestion path (GeoJSON baseline) to derive inter-block distances and persist them in `MobilisationConfig`.
 - [x] Provide CLI helper to compute distance matrices from block geometries (projected CRS, configurable unit conversions). *(Prototype via `fhops geo distances`; loader now validates GeoJSON inputs.)*
+- [x] Extend mobilisation calibration to the large84 benchmark scenario (generated landing-aware distance matrix, inline mobilisation config, docs updated).
 
 ## Tests
 - [x] Fixture scenarios with known mobilisation costs (short vs long moves). *(See `tests/test_mobilisation.py`.)*
-- [ ] Regression tests confirming solver outputs incorporate mobilisation charges.
-- [ ] Integration test covering GeoJSON ingest → distance matrix generation.
+- [x] Regression tests confirming solver outputs incorporate mobilisation charges. *(Harness smoke test asserts SA mobilisation cost baseline for minitoy.)*
+- [x] Integration test covering GeoJSON ingest → distance matrix generation. *(See `tests/test_geospatial_distances.py`.)*
 
 ## Documentation
-- [ ] Sphinx how-to explaining mobilisation configuration and cost outcomes.
-- [ ] CLI examples (`fhops solve-mip --mobilisation-config ...`).
-- [ ] GeoJSON ingestion guide (projection requirements, recommended tooling, optional matrix fallback).
+- [x] Sphinx how-to explaining mobilisation configuration and cost outcomes. *(Updated `docs/howto/mobilisation_geo.rst` with calibration guidance and benchmark references.)*
+- [x] CLI examples (`fhops solve-mip --mobilisation-config ...`). *(Added mobilisation-focused commands in the mobilisation how-to and CLI reference.)*
+- [x] GeoJSON ingestion guide (projection requirements, recommended tooling, optional matrix fallback).
 
 ## Open Questions
 - Preferred baseline format: GeoJSON vs shapefile vs manual matrix? *(Initial proposal: GeoJSON in UTM/provincial projection; accept precomputed matrix as alternate path.)*

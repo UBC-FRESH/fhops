@@ -145,8 +145,11 @@ def test_mip_blackout_enforcement():
         blackouts=[BlackoutWindow(start_day=4, end_day=4, reason="maintenance")],
     )
     scenario = build_scenario(timeline=timeline)
-    model = build_model(Problem.from_scenario(scenario))
-    assert model.mach_one_block["M1", 4].upper == 0.0
+    pb = Problem.from_scenario(scenario)
+    model = build_model(pb)
+    shift_key = next((shift for shift in pb.shifts if shift.day == 4), None)
+    assert shift_key is not None
+    assert model.mach_one_shift["M1", shift_key.day, shift_key.shift_id].upper == 0.0
 
 
 def test_sa_respects_blackouts():

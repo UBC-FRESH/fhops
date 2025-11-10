@@ -9,9 +9,9 @@ Status: Draft — supports mobilisation and constraint upgrades.
 - Surface system information in scenario contract, synthetic datasets, and docs.
 
 ## Planned Tasks
-- [ ] Define harvest system registry structure under `scheduling/systems` (jobs, machines, prerequisites) based on Jaffray (2025) system taxonomy (ground-based, CTL, steep-slope tethered, cable variants, helicopter).
+- [x] Define harvest system registry structure under `scheduling/systems` (jobs, machines, prerequisites) based on Jaffray (2025) system taxonomy (ground-based, CTL, steep-slope tethered, cable variants, helicopter).
 - [x] Seed default registry in `scheduling/systems/models.py::default_system_registry()` covering BC systems.
-- [ ] Extend scenario contract to assign blocks to systems and map workers to machine-job pairs.
+- [x] Extend scenario contract to assign blocks to systems and map workers to machine-job pairs.
 - [x] Implement sequencing constraints in Pyomo (precedence, resource availability).
 - [x] Teach heuristics to respect sequencing and system-specific constraints.
 - [x] Update evaluation to check compliance and report violations.
@@ -35,8 +35,19 @@ Status: Draft — supports mobilisation and constraint upgrades.
 - [x] Regression tests verifying sequencing is enforced in solver outputs (MIP + SA).
 
 ## Documentation
-- [ ] System registry reference in Sphinx.
-- [ ] Tutorials showing how to configure and analyse system-specific schedules.
+- [x] System registry reference in Sphinx.
+- [x] Tutorials showing how to configure and analyse system-specific schedules.
+
+##### Plan – Documentation Deliverables
+- [x] Document harvest system registry
+  * Draft ``docs/reference/harvest_systems.rst`` describing registry schema, default systems, and extensibility.
+  * Link from data contract/how-to pages so scenario authors know how to tag blocks.
+  * Include table summarising each default system (jobs, machine roles, environments).
+- [x] Write a sequencing tutorial
+  * Create ``docs/howto/system_sequencing.rst`` walking through scenario configuration, solver expectations, and KPI interpretation.
+  * Provide CLI examples (MIP + SA) demonstrating sequencing compliance and violation reporting.
+  * Reference synthetic generator helpers (`generate_with_systems`) for quick experiments.
+- [x] Update roadmap + changelog after documentation lands.
 
 ## Open Questions
 - How to represent systems with optional/parallel tasks?

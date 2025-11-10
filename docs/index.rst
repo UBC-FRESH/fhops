@@ -12,6 +12,12 @@ structure mirrors our roadmap so that implementation status stays transparent.
    overview
    howto/quickstart
    howto/data_contract
+   howto/benchmarks
+   howto/heuristic_presets
+   howto/parallel_heuristics
+   howto/system_sequencing
+   howto/ils
+   howto/tabu
 
 .. toctree::
    :maxdepth: 2
@@ -19,6 +25,8 @@ structure mirrors our roadmap so that implementation status stays transparent.
 
    api/index
    reference/cli
+   reference/harvest_systems
+   reference/telemetry
 
 .. toctree::
    :maxdepth: 1

@@ -14,6 +14,26 @@ from fhops.scenario.contract.models import (
 from fhops.scheduling.systems import HarvestSystem, SystemJob
 
 
+def _shift_key(pb: Problem, day: int, shift_id: str | None = None) -> tuple[int, str]:
+    matches = [shift for shift in pb.shifts if shift.day == day]
+    if not matches:
+        raise KeyError(f"No shift found for day={day}")
+    if shift_id is None:
+        selected = matches[0]
+        return (selected.day, selected.shift_id)
+    for shift in matches:
+        if shift.shift_id == shift_id:
+            return (shift.day, shift.shift_id)
+    raise KeyError(f"Shift {shift_id!r} not found for day={day}")
+
+
+def _plan_from_days(pb: Problem, mapping: dict[str, dict[int, str | None]]) -> dict:
+    return {
+        machine: {_shift_key(pb, day): block for day, block in day_map.items()}
+        for machine, day_map in mapping.items()
+    }
+
+
 def test_role_constraints_restrict_assignments():
     system = HarvestSystem(
         system_id="forward_only",
@@ -47,13 +67,15 @@ def test_role_constraints_restrict_assignments():
         ],
         harvest_systems={"forward_only": system},
     )
-    model = build_model(Problem.from_scenario(scenario))
-    assert ("M2", "B1", 1) in model.role_filter
-    con = model.role_filter["M2", "B1", 1]
+    pb = Problem.from_scenario(scenario)
+    model = build_model(pb)
+    shift_key = _shift_key(pb, 1)
+    assert ("M2", "B1") + shift_key in model.role_filter
+    con = model.role_filter["M2", "B1", *shift_key]
     # Constraint should be x[M2,B1,1] == 0
     assert con.lower == 0
     assert con.upper == 0
-    assert con.body == model.x["M2", "B1", 1]
+    assert con.body == model.x["M2", "B1", shift_key]
 
 
 def test_sequencing_blocks_without_prior_work():
@@ -96,10 +118,11 @@ def test_sequencing_blocks_without_prior_work():
     )
     pb = Problem.from_scenario(scenario)
     model = build_model(pb)
+    shift_key = _shift_key(pb, 1)
     for var in model.x.values():
         var.value = 0
-    model.x["M2", "B1", 1].value = 1
-    con = model.system_sequencing["B1", "processor", "feller", 1]
+    model.x["M2", "B1", shift_key].value = 1
+    con = model.system_sequencing["B1", "processor", "feller", *shift_key]
     lhs = pyo.value(con.body)
     rhs = pyo.value(con.upper)
     assert lhs > rhs
@@ -143,11 +166,13 @@ def test_sequencing_allows_roles_after_prereqs_complete():
     )
     pb = Problem.from_scenario(scenario)
     model = build_model(pb)
+    fel_shift = _shift_key(pb, 1)
+    proc_shift = _shift_key(pb, 2)
     for var in model.x.values():
         var.value = 0
-    model.x["M1", "B1", 1].value = 1
-    model.x["M2", "B1", 2].value = 1
-    con = model.system_sequencing["B1", "processor", "feller", 2]
+    model.x["M1", "B1", fel_shift].value = 1
+    model.x["M2", "B1", proc_shift].value = 1
+    con = model.system_sequencing["B1", "processor", "feller", *proc_shift]
     lhs = pyo.value(con.body)
     rhs = pyo.value(con.upper)
     assert lhs <= rhs
@@ -194,16 +219,22 @@ def test_sa_evaluator_penalises_out_of_order_assignments():
     pb = Problem.from_scenario(scenario)
 
     bad_plan = Schedule(
-        plan={
-            "F1": {1: None, 2: "B1"},
-            "P1": {1: "B1", 2: None},
-        }
+        plan=_plan_from_days(
+            pb,
+            {
+                "F1": {1: None, 2: "B1"},
+                "P1": {1: "B1", 2: None},
+            },
+        )
     )
     good_plan = Schedule(
-        plan={
-            "F1": {1: "B1", 2: None},
-            "P1": {1: None, 2: "B1"},
-        }
+        plan=_plan_from_days(
+            pb,
+            {
+                "F1": {1: "B1", 2: None},
+                "P1": {1: None, 2: "B1"},
+            },
+        )
     )
     bad_score = _evaluate(pb, bad_plan)
     good_score = _evaluate(pb, good_plan)
@@ -260,18 +291,21 @@ def test_cable_system_enforces_multi_stage_sequence():
     model = build_model(pb)
     for var in model.x.values():
         var.value = 0
-    model.x["Y1", "B1", 1].value = 1
-    con = model.system_sequencing["B1", "yarder", "faller", 1]
+    shift1 = _shift_key(pb, 1)
+    shift2 = _shift_key(pb, 2)
+    shift3 = _shift_key(pb, 3)
+    model.x["Y1", "B1", shift1].value = 1
+    con = model.system_sequencing["B1", "yarder", "faller", *shift1]
     assert pyo.value(con.body) > pyo.value(con.upper)
 
     for var in model.x.values():
         var.value = 0
-    model.x["F1", "B1", 1].value = 1
-    model.x["Y1", "B1", 2].value = 1
-    con = model.system_sequencing["B1", "yarder", "faller", 2]
+    model.x["F1", "B1", shift1].value = 1
+    model.x["Y1", "B1", shift2].value = 1
+    con = model.system_sequencing["B1", "yarder", "faller", *shift2]
     assert pyo.value(con.body) <= pyo.value(con.upper)
-    model.x["P1", "B1", 3].value = 1
-    con = model.system_sequencing["B1", "processor", "yarder", 3]
+    model.x["P1", "B1", shift3].value = 1
+    con = model.system_sequencing["B1", "processor", "yarder", *shift3]
     assert pyo.value(con.body) <= pyo.value(con.upper)
 
 
@@ -327,20 +361,22 @@ def test_helicopter_system_requires_all_prerequisites():
 
     for var in model.x.values():
         var.value = 0
-    model.x["F1", "B1", 1].value = 1
-    model.x["C1", "B1", 2].value = 1
-    con_faller = model.system_sequencing["B1", "helicopter", "faller", 2]
-    con_hook = model.system_sequencing["B1", "helicopter", "hook_tender", 2]
+    shift1 = _shift_key(pb, 1)
+    shift2 = _shift_key(pb, 2)
+    model.x["F1", "B1", shift1].value = 1
+    model.x["C1", "B1", shift2].value = 1
+    con_faller = model.system_sequencing["B1", "helicopter", "faller", *shift2]
+    con_hook = model.system_sequencing["B1", "helicopter", "hook_tender", *shift2]
     assert pyo.value(con_faller.body) <= pyo.value(con_faller.upper)
     assert pyo.value(con_hook.body) > pyo.value(con_hook.upper)
 
     for var in model.x.values():
         var.value = 0
-    model.x["F1", "B1", 1].value = 1
-    model.x["H1", "B1", 1].value = 1
-    model.x["C1", "B1", 2].value = 1
-    con_faller = model.system_sequencing["B1", "helicopter", "faller", 2]
-    con_hook = model.system_sequencing["B1", "helicopter", "hook_tender", 2]
+    model.x["F1", "B1", shift1].value = 1
+    model.x["H1", "B1", shift1].value = 1
+    model.x["C1", "B1", shift2].value = 1
+    con_faller = model.system_sequencing["B1", "helicopter", "faller", *shift2]
+    con_hook = model.system_sequencing["B1", "helicopter", "hook_tender", *shift2]
     assert pyo.value(con_faller.body) <= pyo.value(con_faller.upper)
     assert pyo.value(con_hook.body) <= pyo.value(con_hook.upper)
 
@@ -395,18 +431,24 @@ def test_sa_evaluator_requires_all_prereqs_before_helicopter():
     pb = Problem.from_scenario(scenario)
 
     incomplete_prereq_plan = Schedule(
-        plan={
-            "F1": {1: "B1", 2: None},
-            "H1": {1: None, 2: None},
-            "C1": {1: None, 2: "B1"},
-        }
+        plan=_plan_from_days(
+            pb,
+            {
+                "F1": {1: "B1", 2: None},
+                "H1": {1: None, 2: None},
+                "C1": {1: None, 2: "B1"},
+            },
+        )
     )
     complete_prereq_plan = Schedule(
-        plan={
-            "F1": {1: "B1", 2: None},
-            "H1": {1: "B1", 2: None},
-            "C1": {1: None, 2: "B1"},
-        }
+        plan=_plan_from_days(
+            pb,
+            {
+                "F1": {1: "B1", 2: None},
+                "H1": {1: "B1", 2: None},
+                "C1": {1: None, 2: "B1"},
+            },
+        )
     )
     bad_score = _evaluate(pb, incomplete_prereq_plan)
     good_score = _evaluate(pb, complete_prereq_plan)

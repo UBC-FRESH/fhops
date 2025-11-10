@@ -20,4 +20,40 @@ block geometries.
    data is present, making it easy to track spend alongside production.
 
 GeoJSON is optional—advanced users may provide precomputed matrices directly. Ensure all data uses
-consistent projections to avoid mis-scaled distances.
+consistent projections to avoid mis-scaled distances. The sample ``examples/minitoy`` and
+``examples/med42`` scenarios now ship with mobilisation configs and distance matrices so you can
+experiment immediately; run ``fhops bench suite`` to compare solver performance and inspect the
+``kpi_mobilisation_cost`` and ``kpi_mobilisation_cost_by_machine`` columns in the generated summary.
+
+Command Examples
+----------------
+
+Solve the medium benchmark with mobilisation enabled and inspect spend:
+
+.. code-block:: bash
+
+   fhops solve-mip examples/med42/scenario.yaml --out tmp/med42_mip.csv
+   fhops evaluate examples/med42/scenario.yaml tmp/med42_mip.csv | grep mobilisation_cost
+
+For quick experimentation on the minitoy scenario:
+
+.. code-block:: bash
+
+   fhops solve-heur examples/minitoy/scenario.yaml --out tmp/minitoy_sa.csv --iters 500
+   fhops evaluate examples/minitoy/scenario.yaml tmp/minitoy_sa.csv | grep mobilisation_cost
+
+Tooling Notes
+-------------
+
+* Work in a projected coordinate system (e.g., UTM zones such as EPSG:32610/26910) so reported
+  distances stay in metres. Use ``ogr2ogr``/``gdalwarp`` or QGIS to reproject shapefiles/GeoPackages
+  before exporting GeoJSON.
+* If you already maintain distance matrices in another system, skip GeoJSON and place the CSV next
+  to the scenario YAML (or reference it via ``MobilisationConfig.distance_csv``). The loader will
+  prefer inline data over auto-generated filenames.
+* Typical workflow:
+
+  1. Export block polygons to GeoJSON with ``block_id`` property.
+  2. Run ``fhops geo distances`` to generate the matrix.
+  3. Drop the CSV alongside the scenario or set ``mobilisation.distance_csv`` explicitly.
+  4. Calibrate machine-specific costs/thresholds using the benchmarking harness.

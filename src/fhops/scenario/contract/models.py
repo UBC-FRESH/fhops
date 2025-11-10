@@ -113,6 +113,36 @@ class CalendarEntry(BaseModel):
         return value
 
 
+class ShiftCalendarEntry(BaseModel):
+    """Machine availability at the shift granularity."""
+
+    machine_id: str
+    day: Day
+    shift_id: str
+    available: int = 1
+
+    @field_validator("day")
+    @classmethod
+    def _day_positive(cls, value: Day) -> Day:
+        if value < 1:
+            raise ValueError("ShiftCalendarEntry.day must be >= 1")
+        return value
+
+    @field_validator("shift_id")
+    @classmethod
+    def _shift_not_empty(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("ShiftCalendarEntry.shift_id must be non-empty")
+        return value
+
+    @field_validator("available")
+    @classmethod
+    def _availability_flag(cls, value: int) -> int:
+        if value not in (0, 1):
+            raise ValueError("ShiftCalendarEntry.available must be 0 or 1")
+        return value
+
+
 class ProductionRate(BaseModel):
     machine_id: str
     block_id: str
@@ -135,6 +165,7 @@ class Scenario(BaseModel):
     machines: list[Machine]
     landings: list[Landing]
     calendar: list[CalendarEntry]
+    shift_calendar: list[ShiftCalendarEntry] | None = None
     production_rates: list[ProductionRate]
     timeline: TimelineConfig | None = None
     mobilisation: MobilisationConfig | None = None
@@ -216,6 +247,17 @@ class Scenario(BaseModel):
                     f"Calendar entry day {entry.day} exceeds scenario horizon num_days={self.num_days}"
                 )
 
+        if self.shift_calendar:
+            for shift_entry in self.shift_calendar:
+                if shift_entry.machine_id not in machine_ids:
+                    raise ValueError(
+                        f"Shift calendar entry references unknown machine_id={shift_entry.machine_id}"
+                    )
+                if shift_entry.day > self.num_days:
+                    raise ValueError(
+                        f"Shift calendar entry day {shift_entry.day} exceeds scenario horizon num_days={self.num_days}"
+                    )
+
         for rate in self.production_rates:
             if rate.machine_id not in machine_ids:
                 raise ValueError(f"Production rate references unknown machine_id={rate.machine_id}")
@@ -278,9 +320,24 @@ class Scenario(BaseModel):
         return self
 
 
+class ShiftInstance(BaseModel):
+    """Concrete shift slot identified by day and shift label."""
+
+    day: Day
+    shift_id: str
+
+    @field_validator("shift_id")
+    @classmethod
+    def _shift_not_empty(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("ShiftInstance.shift_id must be non-empty")
+        return value
+
+
 class Problem(BaseModel):
     scenario: Scenario
     days: list[Day]
+    shifts: list[ShiftInstance]
 
     @classmethod
     def from_scenario(cls, scenario: Scenario) -> Problem:
@@ -288,7 +345,23 @@ class Problem(BaseModel):
             scenario = scenario.model_copy(
                 update={"harvest_systems": dict(default_system_registry())}
             )
-        return cls(scenario=scenario, days=list(range(1, scenario.num_days + 1)))
+        days = list(range(1, scenario.num_days + 1))
+        shifts: list[ShiftInstance]
+        if scenario.shift_calendar:
+            unique = {
+                (entry.day, entry.shift_id)
+                for entry in scenario.shift_calendar
+                if entry.available == 1
+            }
+            shifts = [ShiftInstance(day=day, shift_id=shift_id) for day, shift_id in sorted(unique)]
+        elif scenario.timeline and scenario.timeline.shifts:
+            shifts = []
+            for day in days:
+                for shift_def in scenario.timeline.shifts:
+                    shifts.append(ShiftInstance(day=day, shift_id=shift_def.name))
+        else:
+            shifts = [ShiftInstance(day=day, shift_id="S1") for day in days]
+        return cls(scenario=scenario, days=days, shifts=shifts)
 
 
 __all__ = [
@@ -297,6 +370,7 @@ __all__ = [
     "Machine",
     "Landing",
     "CalendarEntry",
+    "ShiftCalendarEntry",
     "ProductionRate",
     "Scenario",
     "Problem",
@@ -307,6 +381,7 @@ __all__ = [
     "CrewAssignment",
     "ScheduleLock",
     "ObjectiveWeights",
+    "ShiftInstance",
 ]
 
 

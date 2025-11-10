@@ -20,8 +20,10 @@ from fhops.scenario.contract.models import (
     ProductionRate,
     Scenario,
     ScheduleLock,
+    ShiftCalendarEntry,
 )
 from fhops.scenario.io.mobilisation import populate_mobilisation_distances
+from fhops.scheduling.mobilisation import MobilisationConfig
 from fhops.scheduling.timeline.models import TimelineConfig
 
 __all__ = ["load_scenario", "read_csv"]
@@ -96,6 +98,15 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
     rates = TypeAdapter(list[ProductionRate]).validate_python(
         read_csv(require("prod_rates")).to_dict("records")
     )
+    shift_calendar = None
+    if "shift_calendar" in data_section:
+        shift_calendar = TypeAdapter(list[ShiftCalendarEntry]).validate_python(
+            read_csv(require("shift_calendar")).to_dict("records")
+        )
+    elif "shift_calendar" in meta:
+        shift_calendar = TypeAdapter(list[ShiftCalendarEntry]).validate_python(
+            meta["shift_calendar"]
+        )
 
     scenario = Scenario(
         name=meta["name"],
@@ -105,16 +116,22 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
         machines=machines,
         landings=landings,
         calendar=calendar,
+        shift_calendar=shift_calendar,
         production_rates=rates,
     )
+
+    mobilisation = None
+    if "mobilisation" in meta:
+        mobilisation = TypeAdapter(MobilisationConfig).validate_python(meta["mobilisation"])
+        scenario = scenario.model_copy(update={"mobilisation": mobilisation})
 
     mobilisation = populate_mobilisation_distances(
         root,
         scenario.name,
         data_section,
-        scenario.mobilisation,
+        mobilisation or scenario.mobilisation,
     )
-    if mobilisation is not None and mobilisation != scenario.mobilisation:
+    if mobilisation is not None:
         scenario = scenario.model_copy(update={"mobilisation": mobilisation})
 
     if "timeline" in meta:
