@@ -36,7 +36,7 @@ before proposing new work.
     - [x] Produce migration checklist for refactoring playback modules and regression fixtures.
   - [ ] Stochastic sampling extensions
     - [x] Design RNG seeding + scenario ensemble API and land it as a draft in `notes/simulation_eval_plan.md`.
-    - [ ] Implement downtime/weather sampling operators with unit and property-based tests.
+    - [x] Implement downtime/weather sampling operators with unit and property-based tests.
     - [x] Integrate sampling toggles into CLI/automation commands (document defaults in `docs/howto/evaluation.rst`).
   - [ ] Shift/day reporting deliverables
     - [ ] Define aggregation schemas for shift/day calendars and extend KPI dataclasses.
