@@ -59,6 +59,55 @@ Status: Draft — roadmap Phase 3 owner document.
   - Whether to persist playback outputs inside telemetry store alongside solver metadata (tie-in with tuning framework).
   - How to surface partially assigned shifts (e.g., empty shift_id) — consider dedicated `unassigned` bucket vs. omission.
 
+### Playback Migration Checklist — 2025-02-??
+- **Module scaffolding**
+  - [ ] Create `fhops/evaluation/playback/core.py` containing deterministic playback runner + record dataclasses.
+  - [ ] Add bridge helpers (`fhops/evaluation/playback/adapters.py`) translating `Schedule.plan` and MIP tensors into canonical playback records.
+  - [ ] Wire `fhops.evaluation.__init__` exports to include new playback entry points.
+- **CLI integration**
+  - [ ] Implement `fhops eval playback` command (Typer) with `--shift-out`, `--day-out`, `--format` flags and console summary.
+  - [ ] Update CLI docs (`docs/reference/cli.rst`, `docs/howto/evaluation.rst`) with command usage and schema tables.
+  - [ ] Add quickstart snippet illustrating playback → KPI pipeline in `docs/howto/evaluation.rst`.
+- **Deprecations & cleanup**
+  - [ ] Replace `fhops.eval.kpis` shim with warning-free import once playback module lives under `fhops.evaluation`.
+  - [ ] Sweep notebooks/tests to use new playback adapters instead of ad-hoc DataFrame construction.
+  - [ ] Document migration guidance in changelog + roadmap when rollout completes.
+- **Testing & fixtures**
+  - [ ] Author deterministic playback regression fixtures (`tests/fixtures/playback/minitoy.json`, etc.).
+  - [ ] Add unit tests covering Schedule→record conversion, blackout tagging, mobilisation accumulation.
+  - [ ] Add CLI smoke test invoking playback command on synthetic assignments ensuring file creation + summaries.
+  - [ ] Ensure property-based tests enforce shift totals == day totals and respect blackout constraints.
+
+### Stochastic Sampling API Plan — 2025-02-??
+- **Objectives**
+  - Layer stochastic extensions (downtime, weather, landing congestion) atop the deterministic playback runner with reproducible sampling.
+  - Support ensemble execution (N samples per scenario) with aggregated KPI outputs and confidence interval reporting.
+- **Core abstractions**
+  - `SamplingContext`: dataclass capturing RNG seed, sample_id, scenario metadata, and reusable random streams (downtime, weather, mobilisation).
+  - `StochasticEvent`: protocol for sampling events; concrete implementations (`DowntimeEvent`, `WeatherShiftEvent`, `LandingConstraintShock`) mutate playback records prior to aggregation.
+  - `PlaybackEnsemble`: orchestrator that runs deterministic playback per sample, applies stochastic events, and emits shift/day summaries + aggregate statistics.
+- **API surface**
+  - `run_stochastic_playback(problem, schedule, *, samples=10, seed=123, events=None)` returning `EnsembleResult` with:
+    - `sample_records`: iterator/generator of per-sample playback outputs.
+    - `aggregated_shift`/`aggregated_day`: DataFrames summarising means/percentiles.
+    - `kpi_distribution`: dictionary containing per-KPI arrays + summary stats.
+  - CLI entry (`fhops eval simulate`) with flags `--samples`, `--seed`, `--include-downtime`, `--include-weather`, `--include-landing`, `--out-dir`.
+- **Sampling mechanics**
+  - Introduce RNG utilities under `fhops.evaluation.playback.random` using `numpy.random.Generator`.
+  - Provide event-specific configuration (e.g., downtime mean duration, weather severity) via YAML/JSON schema validated against `pydantic` models.
+  - Ensure deterministic replay by exposing `--sample-ids` and capturing seed metadata in output manifests.
+- **Outputs & storage**
+  - Emit ensemble results to structured directory: `out_dir/{sample_id}/shift.csv`, `day.csv`, plus `aggregates/*.csv`.
+  - Produce summary manifest (`manifest.json`) capturing configuration, seeds, runtime, KPI summary.
+  - Integrate with telemetry store so hyperparameter tuning can reuse stochastic runs.
+- **Testing strategy**
+  - Unit tests for each event type (downtime/weather/landing) verifying statistical properties via fixed seeds.
+  - Property-based tests ensuring deterministic playback equivalence when events are disabled (`samples=1`, no events).
+  - Performance smoke to confirm ensemble scaling (e.g., 20 samples on minitoy executes within target wall time).
+- **Open questions**
+  - Do we require parallel execution support out of the gate (thread/process pools)?
+  - How to surface user-defined stochastic events (plugin entry points or config-driven expressions)?
+
 ## Testing Strategy
 - [ ] Regression fixtures representing deterministic and stochastic runs.
 - [ ] Property-based checks to ensure KPIs remain within expected bounds.
