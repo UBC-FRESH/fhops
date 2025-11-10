@@ -545,4 +545,4 @@ def solve_sa(
             }
             for name, stats in operator_stats.items()
         }
-    return {"objective": float(best_score), "assignments": assignments, "meta": meta}
+    return {"objective": float(best_score), "assignments": assignments, "meta": meta, "schedule": best}

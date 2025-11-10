@@ -9,6 +9,7 @@ import yaml
 from fhops.evaluation.playback import (
     PlaybackConfig,
     assignments_to_records,
+    schedule_to_records,
     run_playback,
 )
 from fhops.scenario.contract import Problem
@@ -129,3 +130,38 @@ def test_run_playback_reports_idle_hours():
     day2 = day_map[2]
     assert day2.available_hours > day2.total_hours
     assert day2.idle_hours == pytest.approx(day2.available_hours - day2.total_hours)
+
+
+def test_schedule_to_records_matches_assignments_conversion():
+    pb = regression_problem()
+
+    df = pd.DataFrame(
+        [
+            {"machine_id": "F1", "block_id": "B1", "day": 1, "shift_id": "S1", "assigned": 1},
+            {"machine_id": "F1", "block_id": "B2", "day": 2, "shift_id": "S1", "assigned": 1},
+        ]
+    )
+
+    hm_schedule = schedule_to_records.__globals__["Schedule"] if "Schedule" in schedule_to_records.__globals__ else None
+    if hm_schedule is None or hm_schedule is object:
+        pytest.skip("Schedule type unavailable for schedule_to_records coverage")
+
+    schedule = hm_schedule(  # type: ignore[call-arg]
+        {
+            "F1": {
+                (1, "S1"): "B1",
+                (2, "S1"): "B2",
+            },
+            "P1": {
+                (1, "S1"): None,
+                (2, "S1"): None,
+            },
+        }
+    )
+
+    schedule_records = list(schedule_to_records(pb, schedule))
+    assignment_records = list(assignments_to_records(pb, df))
+
+    assert {(rec.machine_id, rec.day, rec.block_id) for rec in schedule_records} == {
+        (rec.machine_id, rec.day, rec.block_id) for rec in assignment_records
+    }
