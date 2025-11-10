@@ -109,6 +109,7 @@ Status: Draft — roadmap Phase 3 owner document.
   - Unit tests for each event type (downtime/weather/landing) verifying statistical properties via fixed seeds.
     - Added initial coverage in `tests/test_stochastic_playback.py` for downtime and weather sampling.
   - Property-based tests ensuring deterministic playback equivalence when events are disabled (`samples=1`, no events).
+    - Added regression/property checks ensuring base playback is recovered when probabilities are zero and sample production stays within deterministic bounds.
   - Performance smoke to confirm ensemble scaling (e.g., 20 samples on minitoy executes within target wall time).
 - **Open questions**
   - Do we require parallel execution support out of the gate (thread/process pools)?

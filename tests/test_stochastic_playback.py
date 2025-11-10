@@ -52,3 +52,43 @@ def test_weather_event_scales_production():
     result = run_stochastic_playback(problem, assignments, sampling_config=config)
     sample_total = _total_production(result.samples[0].result)
     assert sample_total == pytest.approx(base_total * 0.5, rel=1e-6)
+
+
+@pytest.mark.parametrize("samples", [1, 3, 5])
+@pytest.mark.parametrize("seed", [0, 42, 1234])
+def test_stochastic_defaults_match_deterministic(samples: int, seed: int):
+    problem, assignments = _load_problem_and_assignments("minitoy")
+    base = run_playback(problem, assignments)
+    base_total = _total_production(base)
+
+    config = SamplingConfig(samples=samples, base_seed=seed)
+    config.downtime.enabled = False
+    config.weather.enabled = False
+
+    ensemble = run_stochastic_playback(problem, assignments, sampling_config=config)
+
+    assert _total_production(ensemble.base_result) == pytest.approx(base_total, rel=1e-9)
+    assert len(ensemble.samples) == samples
+    for sample in ensemble.samples:
+        assert _total_production(sample.result) == pytest.approx(base_total, rel=1e-9)
+
+
+@pytest.mark.parametrize("downtime_prob", [0.1, 0.5])
+@pytest.mark.parametrize("weather_prob", [0.0, 0.3])
+def test_stochastic_production_bounds(downtime_prob: float, weather_prob: float):
+    problem, assignments = _load_problem_and_assignments("minitoy")
+    base = run_playback(problem, assignments)
+    base_total = _total_production(base)
+
+    config = SamplingConfig(samples=5, base_seed=777)
+    config.downtime.enabled = downtime_prob > 0
+    config.downtime.probability = downtime_prob
+    config.weather.enabled = weather_prob > 0
+    config.weather.day_probability = weather_prob
+    config.weather.severity_levels = {"moderate": 0.25}
+
+    ensemble = run_stochastic_playback(problem, assignments, sampling_config=config)
+
+    for sample in ensemble.samples:
+        total = _total_production(sample.result)
+        assert 0.0 <= total <= base_total + 1e-6
