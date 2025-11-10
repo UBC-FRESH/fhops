@@ -54,6 +54,7 @@ The command also exposes stochastic options mirroring the API:
 * ``--samples`` — number of stochastic samples to evaluate (defaults to ``1`` for deterministic playback).
 * ``--downtime-prob`` / ``--downtime-max`` — probability of downtime events and an optional maximum number of assignments to drop per day.
 * ``--weather-prob`` / ``--weather-severity`` / ``--weather-window`` — frequency, severity, and duration of weather-induced production reductions.
+* ``--landing-prob`` / ``--landing-mult-min`` / ``--landing-mult-max`` / ``--landing-duration`` — sample landing congestion shocks that scale production by a multiplier for a fixed number of days.
 
 By default these probabilities are ``0.0`` so the command behaves deterministically unless you turn them on.
 Each sample’s shift/day summaries are concatenated in the exported CSVs, making it easy to aggregate or

@@ -1,6 +1,6 @@
 # Development Change Log
 
-## 2025-11-14 — Phase 3 playback planning kickoff
+## 2025-11-10 — Phase 3 playback planning kickoff
 - Expanded the Phase 3 roadmap checklist with detailed subtasks covering playback upgrades, KPI expansion, synthetic datasets, analytics notebooks, and hyperparameter tuning deliverables.
 - Logged the deterministic playback audit (current assets vs. gaps) inside `notes/simulation_eval_plan.md` to anchor upcoming shift/day reporting work.
 - Authored the shift/day reporting specification (schemas, CLI surfaces, contract deltas) within `notes/simulation_eval_plan.md` and marked the roadmap subtask complete.
@@ -14,11 +14,12 @@
 - Added a CLI smoke test (`tests/test_cli_playback.py`) ensuring playback exports remain stable.
 - Implemented stochastic playback scaffolding (`run_stochastic_playback`, downtime/weather events) with regression fixtures and unit coverage in `tests/test_stochastic_playback.py`.
 - Added stochastic toggles to `fhops eval playback` (`--samples`, `--downtime-*`, `--weather-*`) and documented the workflow in the CLI reference/how-to.
+- Extended CLI to expose landing shock parameters (`--landing-*`) with regression coverage.
 - Extended stochastic playback tests with property-style checks covering deterministic equivalence and production bounds.
 - Added landing shock sampling to the stochastic runner and regression coverage guarding production reductions.
 - Checked off the playback inventory subtask in the roadmap to reflect the newly documented findings.
 
-## 2025-11-13 — CLI profile integration hardening
+## 2025-11-09 — CLI profile integration hardening
 - Refactored solver profile merging to return a structured `ResolvedSolverConfig`, simplifying how CLI commands consume operator presets, weights, batching, and extras.
 - Updated `fhops solve-heur`, `solve-ils`, and `solve-tabu` to rely on the resolved config, improved multi-start seed handling, and ensured profile extras override CLI defaults safely.
 - Tightened the benchmark suite (`fhops bench suite`) by reusing the resolved configs across SA/ILS/Tabu, normalising telemetry/summary metrics, and making scenario comparisons mypy-safe.
@@ -28,7 +29,7 @@
 - Added a geopandas-free GeoJSON loader fallback so geospatial utilities and tests run in lean environments without the optional dependency.
 - Normalised trailing whitespace in roadmap/planning notes and switched benchmark plotting utilities to import `Iterable` from `collections.abc` to keep pre-commit hooks clean.
 
-## 2025-11-12 — Iterated Local Search rollout
+## 2025-11-08 — Iterated Local Search rollout
 - Implemented the `fhops.optimization.heuristics.solve_ils` Iterated Local Search solver with perturbation telemetry, hybrid MIP restarts, and operator stats parity with SA.
 - Added a dedicated `fhops solve-ils` CLI command mirroring SA batching flags, plus `fhops bench suite --include-ils` options for harness comparisons.
 - Expanded Sphinx docs: new how-to (`docs/howto/ils.rst`), CLI reference updates, telemetry schema notes, and parallel workflow cross-links covering ILS usage.
