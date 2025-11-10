@@ -6,6 +6,7 @@
 - Tightened the benchmark suite (`fhops bench suite`) by reusing the resolved configs across SA/ILS/Tabu, normalising telemetry/summary metrics, and making scenario comparisons mypy-safe.
 - Hardened ILS schedule reconstruction to tolerate mixed pandas dtypes and added regression coverage in `tests/test_cli_profiles.py` for the new resolver.
 - Ran `ruff format`, `ruff check`, `mypy src`, and targeted pytest suites to keep lint/type/test gates green.
+- Replaced `datetime.utcnow()` usage in CLI telemetry with timezone-aware `datetime.now(UTC)` to silence pytest warnings and emit explicit UTC offsets.
 
 ## 2025-11-12 — Iterated Local Search rollout
 - Implemented the `fhops.optimization.heuristics.solve_ils` Iterated Local Search solver with perturbation telemetry, hybrid MIP restarts, and operator stats parity with SA.
