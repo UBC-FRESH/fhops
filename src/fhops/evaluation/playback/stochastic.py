@@ -153,6 +153,72 @@ class WeatherEvent:
         return df
 
 
+class LandingShockEvent:
+    """Reduce landing throughput via random shocks."""
+
+    def __init__(self, config):
+        self.config = config
+
+    def apply(
+        self,
+        context: SamplingContext,
+        assignments: pd.DataFrame,
+        base_production: dict[Key, float],
+    ) -> pd.DataFrame:
+        df = assignments.copy()
+        if df.empty or self.config.probability <= 0:
+            return df
+        rng = context.rng
+        scenario = context.problem.scenario
+
+        landings = self.config.target_landing_ids or [landing.id for landing in scenario.landings]
+        if not landings:
+            return df
+
+        shocks: dict[str, tuple[int, float]] = {}
+        for landing_id in landings:
+            if rng.random() <= self.config.probability:
+                duration = max(self.config.duration_days, 1)
+                lower, upper = self.config.capacity_multiplier_range
+                multiplier = float(rng.uniform(lower, upper))
+                shocks[landing_id] = {
+                    "duration": duration,
+                    "multiplier": multiplier,
+                    "remaining": duration,
+                }
+
+        if not shocks:
+            return df
+
+        landing_lookup = {}
+        for block in scenario.blocks:
+            landing_lookup[block.id] = block.landing_id
+
+        df["_landing_multiplier"] = 1.0
+        for idx, row in df.iterrows():
+            block_id = str(row["block_id"])
+            landing_id = landing_lookup.get(block_id)
+            if not landing_id or landing_id not in shocks:
+                continue
+            shock = shocks[landing_id]
+            if shock["remaining"] <= 0:
+                continue
+            multiplier = shock["multiplier"]
+            key = (
+                str(row["machine_id"]),
+                block_id,
+                int(row["day"]),
+                str(row.get("shift_id", "S1")),
+            )
+            baseline = base_production.get(key, row.get("production", 0.0) or 0.0)
+            adjusted = max(baseline * multiplier, 0.0)
+            df.loc[idx, "production"] = adjusted
+            df.loc[idx, "_landing_multiplier"] = multiplier
+            shock["remaining"] -= 1
+
+        return df
+
+
 @dataclass(slots=True)
 class PlaybackSample:
     sample_id: int
@@ -171,6 +237,8 @@ def _default_events(config: SamplingConfig) -> list[PlaybackEvent]:
         events.append(DowntimeEvent(config.downtime))
     if config.weather.enabled:
         events.append(WeatherEvent(config.weather))
+    if config.landing.enabled:
+        events.append(LandingShockEvent(config.landing))
     return events
 
 
@@ -205,27 +273,34 @@ def run_stochastic_playback(
     base_result = run_playback(problem, base_assignments)
 
     base_production = _build_production_map(problem, base_assignments)
+    production_values = [
+        base_production.get(
+            (
+                row["machine_id"],
+                row["block_id"] if pd.notna(row["block_id"]) else "",
+                int(row["day"]),
+                row["shift_id"],
+            ),
+            0.0,
+        )
+        for _, row in base_assignments.iterrows()
+    ]
+    base_production_series = pd.Series(production_values, index=base_assignments.index)
     num_samples = sampling_config.samples
     active_events = list(events) if events is not None else _default_events(sampling_config)
 
     samples: list[PlaybackSample] = []
+    if not active_events:
+        for sample_id in range(num_samples):
+            samples.append(PlaybackSample(sample_id=sample_id, result=base_result))
+        return EnsembleResult(base_result=base_result, samples=samples)
+
     for sample_id in range(num_samples):
         rng = np.random.default_rng(sampling_config.base_seed + sample_id)
         context = SamplingContext(problem=problem, sample_id=sample_id, rng=rng, config=sampling_config)
 
         sample_assignments = base_assignments.copy()
-        sample_assignments["production"] = [
-            base_production.get(
-                (
-                    row["machine_id"],
-                    row["block_id"] if pd.notna(row["block_id"]) else "",
-                    int(row["day"]),
-                    row["shift_id"],
-                ),
-                None,
-            )
-            for _, row in sample_assignments.iterrows()
-        ]
+        sample_assignments["production"] = base_production_series.copy()
 
         for event in active_events:
             sample_assignments = event.apply(context, sample_assignments, base_production)

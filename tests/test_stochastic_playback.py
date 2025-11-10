@@ -64,6 +64,7 @@ def test_stochastic_defaults_match_deterministic(samples: int, seed: int):
     config = SamplingConfig(samples=samples, base_seed=seed)
     config.downtime.enabled = False
     config.weather.enabled = False
+    config.landing.enabled = False
 
     ensemble = run_stochastic_playback(problem, assignments, sampling_config=config)
 
@@ -86,9 +87,29 @@ def test_stochastic_production_bounds(downtime_prob: float, weather_prob: float)
     config.weather.enabled = weather_prob > 0
     config.weather.day_probability = weather_prob
     config.weather.severity_levels = {"moderate": 0.25}
+    config.landing.enabled = False
 
     ensemble = run_stochastic_playback(problem, assignments, sampling_config=config)
 
     for sample in ensemble.samples:
         total = _total_production(sample.result)
         assert 0.0 <= total <= base_total + 1e-6
+
+
+def test_landing_shock_reduces_production():
+    problem, assignments = _load_problem_and_assignments("med42")
+    base = run_playback(problem, assignments)
+    base_total = _total_production(base)
+
+    config = SamplingConfig(samples=1, base_seed=2025)
+    config.downtime.enabled = False
+    config.weather.enabled = False
+    config.landing.enabled = True
+    config.landing.probability = 1.0
+    config.landing.capacity_multiplier_range = (0.2, 0.2)
+    config.landing.duration_days = 3
+
+    ensemble = run_stochastic_playback(problem, assignments, sampling_config=config)
+    sample = ensemble.samples[0].result
+    total = _total_production(sample)
+    assert total < base_total
