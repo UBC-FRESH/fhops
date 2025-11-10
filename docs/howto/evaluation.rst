@@ -46,6 +46,16 @@ flag, only shifts that perform work are listed.
 ``--shift-out`` and ``--day-out`` accept CSV paths. Folders are created automatically if they do not
 exist.
 
+Parquet and Markdown exports
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Set ``--shift-parquet`` / ``--day-parquet`` to emit Parquet artefacts. These require ``pyarrow`` or
+``fastparquet``. The command fails early with a helpful message if neither backend is installed.
+
+Use ``--summary-md`` to generate a Markdown digest containing topline metrics (sample count, total
+production, average utilisation) plus a preview table of the first 10 day-level rows. This is handy
+for dropping rich summaries into release notes or retrospective documents.
+
 Stochastic playback toggles
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

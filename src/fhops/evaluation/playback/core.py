@@ -45,6 +45,7 @@ class PlaybackRecord:
     mobilisation_cost: float | None = None
     blackout_hit: bool = False
     metadata: dict[str, object] = field(default_factory=dict)
+    sample_id: int = 0
 
 
 @dataclass(slots=True)
@@ -61,6 +62,8 @@ class ShiftSummary:
     idle_hours: float | None = None
     blackout_conflicts: int = 0
     sequencing_violations: int = 0
+    utilisation_ratio: float | None = None
+    sample_id: int = 0
 
 
 @dataclass(slots=True)
@@ -76,6 +79,8 @@ class DaySummary:
     idle_hours: float | None = None
     blackout_conflicts: int = 0
     sequencing_violations: int = 0
+    utilisation_ratio: float | None = None
+    sample_id: int = 0
 
 
 @dataclass(slots=True)
@@ -86,6 +91,7 @@ class PlaybackResult:
     shift_summaries: Sequence[ShiftSummary]
     day_summaries: Sequence[DaySummary]
     config: PlaybackConfig
+    sample_id: int = 0
 
 
 def run_playback(
@@ -93,6 +99,7 @@ def run_playback(
     assignments: "pd.DataFrame",
     *,
     config: PlaybackConfig | None = None,
+    sample_id: int = 0,
 ) -> PlaybackResult:
     """Convert solver assignments into playback records and aggregated summaries."""
 
@@ -111,6 +118,7 @@ def run_playback(
             records,
             availability_map,
             include_idle=cfg.include_idle_records,
+            sample_id=sample_id,
         )
     )
     completed_by_day: dict[int, set[str]] = defaultdict(set)
@@ -122,6 +130,7 @@ def run_playback(
             shift_summaries,
             availability_map,
             completed_by_day,
+            sample_id=sample_id,
         )
     )
 
@@ -135,6 +144,7 @@ def run_playback(
         shift_summaries=shift_summaries,
         day_summaries=day_summaries,
         config=cfg,
+        sample_id=sample_id,
     )
 
 
@@ -143,6 +153,7 @@ def summarise_shifts(
     availability_map: dict[tuple[int, str, str], float],
     *,
     include_idle: bool = False,
+    sample_id: int = 0,
 ) -> Iterator[ShiftSummary]:
     """Aggregate playback records to machine/shift summaries."""
 
@@ -156,6 +167,7 @@ def summarise_shifts(
                 shift_id=shift_id,
                 machine_id=machine_id,
                 available_hours=available_hours,
+                sample_id=sample_id,
             )
 
     for record in records:
@@ -167,6 +179,7 @@ def summarise_shifts(
                 shift_id=record.shift_id,
                 machine_id=record.machine_id,
                 available_hours=availability_map.get(key, 0.0),
+                sample_id=sample_id,
             )
             aggregates[key] = summary
         seen.add(key)
@@ -185,6 +198,10 @@ def summarise_shifts(
     for key, summary in aggregates.items():
         if summary.idle_hours is None:
             summary.idle_hours = max(summary.available_hours - summary.total_hours, 0.0)
+        if summary.available_hours > 0:
+            summary.utilisation_ratio = summary.total_hours / summary.available_hours
+        else:
+            summary.utilisation_ratio = None
 
     for key in sorted(aggregates):
         if include_idle or key in seen:
@@ -195,6 +212,7 @@ def summarise_days(
     shift_summaries: Iterable[ShiftSummary],
     availability_map: dict[tuple[int, str, str], float],
     completed_by_day: dict[int, set[str]],
+    sample_id: int = 0,
 ) -> Iterator[DaySummary]:
     """Aggregate playback results to day-level summaries."""
 
@@ -207,7 +225,7 @@ def summarise_days(
     for summary in shift_summaries:
         day_summary = aggregates.get(summary.day)
         if day_summary is None:
-            day_summary = DaySummary(day=summary.day)
+            day_summary = DaySummary(day=summary.day, sample_id=sample_id)
             aggregates[summary.day] = day_summary
 
         day_summary.available_hours += summary.available_hours
@@ -218,7 +236,7 @@ def summarise_days(
         day_summary.sequencing_violations += summary.sequencing_violations
 
     for day, available in availability_by_day.items():
-        day_summary = aggregates.setdefault(day, DaySummary(day=day))
+        day_summary = aggregates.setdefault(day, DaySummary(day=day, sample_id=sample_id))
         day_summary.available_hours = max(day_summary.available_hours, available)
 
     # Compute per-day idle hours and completed block counts via aggregated data.
@@ -226,6 +244,10 @@ def summarise_days(
         day_summary = aggregates[day]
         day_summary.idle_hours = max(day_summary.available_hours - day_summary.total_hours, 0.0)
         day_summary.completed_blocks = len(completed_by_day.get(day, set()))
+        if day_summary.available_hours > 0:
+            day_summary.utilisation_ratio = day_summary.total_hours / day_summary.available_hours
+        else:
+            day_summary.utilisation_ratio = None
         yield day_summary
 
 

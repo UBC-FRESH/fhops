@@ -69,6 +69,7 @@ Status: Draft — roadmap Phase 3 owner document.
 - **CLI integration**
   - [x] Implement `fhops eval playback` command (Typer) with `--shift-out`, `--day-out`, `--include-idle` flags and console summary scaffolding.
     - Added stochastic toggles (`--samples`, downtime/weather, landing) with regression coverage in `tests/test_cli_playback.py`.
+    - Extend export options to Parquet (when dependencies exist) and Markdown summaries so analytics consumers can grab shareable artefacts.
   - [ ] Update CLI docs (`docs/reference/cli.rst`, `docs/howto/evaluation.rst`) with command usage and schema tables.
   - [ ] Add quickstart snippet illustrating playback → KPI pipeline in `docs/howto/evaluation.rst`.
 - **Deprecations & cleanup**
