@@ -25,11 +25,13 @@ def test_shift_dataframe_matches_fixture():
     assignments = _load_assignments("minitoy")
 
     playback = run_playback(problem, assignments)
-    df = shift_dataframe(playback).sort_values(["day", "machine_id"]).reset_index(drop=True)
+    df = shift_dataframe(playback)
+    df = df.reindex(sorted(df.columns), axis=1).sort_values(["day", "machine_id"]).reset_index(drop=True)
 
     fixture = pd.read_csv("tests/fixtures/playback/minitoy_shift.csv").sort_values(
         ["day", "machine_id"]
     ).reset_index(drop=True)
+    fixture = fixture.reindex(sorted(fixture.columns), axis=1)
 
     pd.testing.assert_frame_equal(df, fixture, check_dtype=False)
 
@@ -40,11 +42,13 @@ def test_day_dataframe_matches_fixture():
     assignments = _load_assignments("med42")
 
     playback = run_playback(problem, assignments)
-    df = day_dataframe(playback).sort_values(["day"]).reset_index(drop=True)
+    df = day_dataframe(playback)
+    df = df.reindex(sorted(df.columns), axis=1).sort_values(["day"]).reset_index(drop=True)
 
     fixture = pd.read_csv("tests/fixtures/playback/med42_day.csv").sort_values(["day"]).reset_index(
         drop=True
     )
+    fixture = fixture.reindex(sorted(fixture.columns), axis=1)
     pd.testing.assert_frame_equal(df, fixture, check_dtype=False)
 
 
