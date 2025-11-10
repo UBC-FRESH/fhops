@@ -61,9 +61,9 @@ Status: Draft — roadmap Phase 3 owner document.
 
 ### Playback Migration Checklist — 2025-02-??
 - **Module scaffolding**
-  - [ ] Create `fhops/evaluation/playback/core.py` containing deterministic playback runner + record dataclasses.
-  - [ ] Add bridge helpers (`fhops/evaluation/playback/adapters.py`) translating `Schedule.plan` and MIP tensors into canonical playback records.
-  - [ ] Wire `fhops.evaluation.__init__` exports to include new playback entry points.
+  - [x] Create `fhops/evaluation/playback/core.py` containing deterministic playback runner + record dataclasses.
+  - [x] Add bridge helpers (`fhops/evaluation/playback/adapters.py`) translating `Schedule.plan` and MIP tensors into canonical playback records.
+  - [x] Wire `fhops.evaluation.__init__` exports to include new playback entry points.
 - **CLI integration**
   - [ ] Implement `fhops eval playback` command (Typer) with `--shift-out`, `--day-out`, `--format` flags and console summary.
   - [ ] Update CLI docs (`docs/reference/cli.rst`, `docs/howto/evaluation.rst`) with command usage and schema tables.
