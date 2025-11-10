@@ -21,6 +21,7 @@ from .events import (
 from .stochastic import (
     DowntimeEvent,
     EnsembleResult,
+    LandingShockEvent,
     PlaybackEvent,
     PlaybackSample,
     SamplingContext,
@@ -47,6 +48,7 @@ __all__ = [
     "SamplingContext",
     "PlaybackEvent",
     "DowntimeEvent",
+    "LandingShockEvent",
     "WeatherEvent",
     "PlaybackSample",
     "EnsembleResult",

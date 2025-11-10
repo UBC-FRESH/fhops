@@ -15,6 +15,7 @@
 - Implemented stochastic playback scaffolding (`run_stochastic_playback`, downtime/weather events) with regression fixtures and unit coverage in `tests/test_stochastic_playback.py`.
 - Added stochastic toggles to `fhops eval playback` (`--samples`, `--downtime-*`, `--weather-*`) and documented the workflow in the CLI reference/how-to.
 - Extended stochastic playback tests with property-style checks covering deterministic equivalence and production bounds.
+- Added landing shock sampling to the stochastic runner and regression coverage guarding production reductions.
 - Checked off the playback inventory subtask in the roadmap to reflect the newly documented findings.
 
 ## 2025-11-13 — CLI profile integration hardening
