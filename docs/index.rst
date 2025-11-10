@@ -15,6 +15,7 @@ structure mirrors our roadmap so that implementation status stays transparent.
    howto/benchmarks
    howto/heuristic_presets
    howto/parallel_heuristics
+   howto/evaluation
    howto/system_sequencing
    howto/ils
    howto/tabu
