@@ -16,6 +16,19 @@ Status: Draft — roadmap Phase 3 owner document.
 - [ ] Capture mobilisation-related metrics and reporting hooks.
 - [ ] Prototype Nemora integration (import stand tables as stress tests).
 
+### Deterministic Playback Inventory — 2025-02-??
+- **Current assets**
+  - Legacy `fhops.eval.kpis` simply re-exports `fhops.evaluation.metrics.kpis.compute_kpis`; the latter is still the working KPI entry point (expects a day-level assignments `DataFrame` with `machine_id`, `block_id`, `day` columns).
+  - `Scenario` contracts expose `timeline`, `calendar`, and optional `shift_calendar` fields plus `TimelineConfig`/`ShiftDefinition`/`BlackoutWindow` models in `fhops.scheduling.timeline` for describing shift structures.
+  - Heuristic solvers (`fhops.optimization.heuristics.sa`) emit `Schedule.plan` dictionaries keyed by `(day, shift_id)` and already consult blackout windows + shift availability, so raw schedule data is available for playback.
+- **Gaps to close**
+  - `fhops.evaluation.playback` is an empty namespace; there is no deterministic playback engine to transform solver outputs into time-indexed records or to stitch together shift/day aggregates.
+  - No bridge converts `Schedule.plan` (or MIP outputs) into the tabular format consumed by `compute_kpis`; downstream consumers hand-roll conversions in notebooks/tests.
+  - CLI layer lacks a playback/evaluation command; documentation only references KPI helpers via solver examples.
+  - Reporting primitives stop at day-level metrics—no shift/day rollups, blackout reporting, or mobilisation timelines exist.
+  - Regression coverage is limited to KPI calculators; there are no fixtures validating end-to-end playback or ensuring calendars/timelines are honoured.
+  - Deprecation warning for `fhops.eval.kpis` remains—needs removal once new playback module lands to avoid dual entry points.
+
 ## Testing Strategy
 - [ ] Regression fixtures representing deterministic and stochastic runs.
 - [ ] Property-based checks to ensure KPIs remain within expected bounds.
