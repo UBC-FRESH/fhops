@@ -14,7 +14,13 @@ from fhops.cli._utils import format_operator_presets, operator_preset_help, pars
 from fhops.cli.benchmarks import benchmark_app
 from fhops.cli.geospatial import geospatial_app
 from fhops.cli.profiles import format_profiles, get_profile, merge_profile_with_cli
-from fhops.evaluation import PlaybackConfig, compute_kpis, run_playback
+from fhops.evaluation import (
+    PlaybackConfig,
+    SamplingConfig,
+    compute_kpis,
+    run_playback,
+    run_stochastic_playback,
+)
 from fhops.optimization.heuristics import (
     build_exploration_plan,
     run_multi_start,
@@ -731,6 +737,46 @@ def eval_playback(
         "--include-idle",
         help="Emit idle entries for machine/shift combinations without work.",
     ),
+    samples: int = typer.Option(
+        1,
+        "--samples",
+        help="Number of stochastic samples to run (1 keeps deterministic playback).",
+        min=1,
+    ),
+    base_seed: int = typer.Option(123, "--seed", help="Base RNG seed for stochastic playback."),
+    downtime_probability: float = typer.Option(
+        0.0,
+        "--downtime-prob",
+        min=0.0,
+        max=1.0,
+        help="Probability of downtime per eligible assignment (0 disables downtime).",
+    ),
+    downtime_max_concurrent: int | None = typer.Option(
+        None,
+        "--downtime-max",
+        min=1,
+        help="Max assignments to drop per day (None uses binomial sampling).",
+    ),
+    weather_probability: float = typer.Option(
+        0.0,
+        "--weather-prob",
+        min=0.0,
+        max=1.0,
+        help="Probability a day receives a weather impact (0 disables weather).",
+    ),
+    weather_severity: float = typer.Option(
+        0.3,
+        "--weather-severity",
+        min=0.0,
+        max=1.0,
+        help="Fractional production reduction applied when weather strikes.",
+    ),
+    weather_window: int = typer.Option(
+        1,
+        "--weather-window",
+        min=1,
+        help="Number of consecutive days affected once weather occurs.",
+    ),
 ):
     """Run deterministic playback to produce shift/day summaries."""
 
@@ -739,14 +785,42 @@ def eval_playback(
 
     df = pd.read_csv(assignments_csv)
 
-    playback = run_playback(
-        pb,
-        df,
-        config=PlaybackConfig(include_idle_records=include_idle),
-    )
+    playback_config = PlaybackConfig(include_idle_records=include_idle)
 
-    shift_summaries = playback.shift_summaries
-    day_summaries = playback.day_summaries
+    if samples <= 1 and downtime_probability <= 0 and weather_probability <= 0:
+        playback = run_playback(pb, df, config=playback_config)
+        shift_summaries = playback.shift_summaries
+        day_summaries = playback.day_summaries
+    else:
+        sampling_config = SamplingConfig(
+            samples=samples,
+            base_seed=base_seed,
+        )
+        sampling_config.downtime.enabled = downtime_probability > 0
+        sampling_config.downtime.probability = downtime_probability
+        sampling_config.downtime.max_concurrent = downtime_max_concurrent
+        sampling_config.weather.enabled = weather_probability > 0
+        sampling_config.weather.day_probability = weather_probability
+        sampling_config.weather.severity_levels = {"default": weather_severity}
+        sampling_config.weather.impact_window_days = weather_window
+
+        ensemble = run_stochastic_playback(
+            pb,
+            df,
+            sampling_config=sampling_config,
+        )
+        if ensemble.samples:
+            shift_summaries = [
+                summary
+                for sample in ensemble.samples
+                for summary in sample.result.shift_summaries
+            ]
+            day_summaries = [
+                summary for sample in ensemble.samples for summary in sample.result.day_summaries
+            ]
+        else:
+            shift_summaries = ensemble.base_result.shift_summaries
+            day_summaries = ensemble.base_result.day_summaries
 
     shift_table = Table(title="Shift Playback Summary")
     shift_table.add_column("Machine")

@@ -76,6 +76,51 @@ def test_eval_playback_cli(tmp_path: Path):
     )
 
 
+def test_eval_playback_cli_stochastic(tmp_path: Path):
+    scenario_path = "tests/fixtures/regression/regression.yaml"
+    assignments_path = _solve_sa_assignments(scenario_path, tmp_path)
+
+    shift_out = tmp_path / "shift.csv"
+    day_out = tmp_path / "day.csv"
+
+    samples = 3
+
+    result = runner.invoke(
+        app,
+        [
+            "eval-playback",
+            scenario_path,
+            "--assignments",
+            str(assignments_path),
+            "--samples",
+            str(samples),
+            "--downtime-prob",
+            "1.0",
+            "--shift-out",
+            str(shift_out),
+            "--day-out",
+            str(day_out),
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+
+    shift_df = pd.read_csv(shift_out)
+    day_df = pd.read_csv(day_out)
+
+    # All production zero due to downtime probability 1.0
+    assert pytest.approx(shift_df["production_units"].sum(), abs=1e-9) == 0.0
+    assert pytest.approx(day_df["production_units"].sum(), abs=1e-9) == 0.0
+
+    assert shift_df.empty
+
+    base = run_playback(
+        Problem.from_scenario(load_scenario(scenario_path)),
+        pd.read_csv(assignments_path),
+    )
+    base_day_len = len(base.day_summaries)
+    assert len(day_df) == base_day_len * samples
+
+
 @pytest.mark.parametrize("scenario_name", ["minitoy", "med42"])
 def test_playback_fixture_matches_cli(tmp_path: Path, scenario_name: str):
     scenario_path = Path(f"examples/{scenario_name}/scenario.yaml")

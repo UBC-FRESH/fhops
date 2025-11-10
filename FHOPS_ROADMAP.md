@@ -30,14 +30,14 @@ before proposing new work.
 
 ## Phase 3 — Evaluation & Analytics
 - [ ] Robust schedule playback with stochastic extensions (downtime/weather sampling) and shift/day reporting.
-  - [ ] Playback engine audit
+  - [x] Playback engine audit
     - [x] Inventory deterministic playback path (`fhops/eval`, `scheduling/timeline`) and capture gaps in `notes/simulation_eval_plan.md`.
     - [x] Spec shift/day reporting interfaces and required data contract updates.
     - [x] Produce migration checklist for refactoring playback modules and regression fixtures.
   - [ ] Stochastic sampling extensions
     - [x] Design RNG seeding + scenario ensemble API and land it as a draft in `notes/simulation_eval_plan.md`.
     - [ ] Implement downtime/weather sampling operators with unit and property-based tests.
-    - [ ] Integrate sampling toggles into CLI/automation commands (document defaults in `docs/howto/evaluation.rst`).
+    - [x] Integrate sampling toggles into CLI/automation commands (document defaults in `docs/howto/evaluation.rst`).
   - [ ] Shift/day reporting deliverables
     - [ ] Define aggregation schemas for shift/day calendars and extend KPI dataclasses.
     - [ ] Add exporters (CSV/Parquet + Markdown summary) wired into playback CLI.
