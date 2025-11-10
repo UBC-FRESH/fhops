@@ -8,6 +8,7 @@
 - Drafted the stochastic sampling API plan (sampling abstractions, CLI surface, testing strategy) and marked the RNG design subtask complete.
 - Scaffolded the new playback package (`core.py`, `adapters.py`, `events.py`) with dataclasses, adapters, and Pydantic configs exported via `fhops.evaluation`.
 - Implemented idle-hour and sequencing-violation accounting in the playback adapters/summaries to surface richer shift/day analytics ahead of CLI wiring.
+- Added `tests/test_playback.py` with regression-problem coverage for block completion metadata, sequencing guards, and idle-hour aggregation.
 - Checked off the playback inventory subtask in the roadmap to reflect the newly documented findings.
 
 ## 2025-11-13 — CLI profile integration hardening
