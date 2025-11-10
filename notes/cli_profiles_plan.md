@@ -1,6 +1,6 @@
 # CLI Profiles & Ergonomics Plan
 
-Date: 2025-11-12  
+Date: 2025-11-12
 Status: Complete — profiles shipped with CLI wiring/tests/docs.
 
 ## Objectives
