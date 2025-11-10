@@ -75,6 +75,7 @@ Status: Draft — roadmap Phase 3 owner document.
   - [ ] Document migration guidance in changelog + roadmap when rollout completes.
 - **Testing & fixtures**
   - [ ] Author deterministic playback regression fixtures (`tests/fixtures/playback/minitoy.json`, etc.).
+    - Proposed approach: use `fhops eval playback` to capture `shift`/`day` CSVs for `examples/minitoy` and `examples/med42`, store under `tests/fixtures/playback/`, and add a regression test that replays the fixtures via `run_playback` to catch schema/metric drift.
   - [ ] Add unit tests covering Schedule→record conversion, blackout tagging, mobilisation accumulation.
     - Added initial coverage in `tests/test_playback.py` verifying block completions, sequencing violations, and idle-hour aggregation on regression scenario data.
   - [x] Add CLI smoke test invoking playback command on synthetic assignments ensuring file creation + summaries (`tests/test_cli_playback.py`).
