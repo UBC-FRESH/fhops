@@ -32,7 +32,7 @@ before proposing new work.
 - [ ] Robust schedule playback with stochastic extensions (downtime/weather sampling) and shift/day reporting.
   - [ ] Playback engine audit
     - [x] Inventory deterministic playback path (`fhops/eval`, `scheduling/timeline`) and capture gaps in `notes/simulation_eval_plan.md`.
-    - [ ] Spec shift/day reporting interfaces and required data contract updates.
+    - [x] Spec shift/day reporting interfaces and required data contract updates.
     - [ ] Produce migration checklist for refactoring playback modules and regression fixtures.
   - [ ] Stochastic sampling extensions
     - [ ] Design RNG seeding + scenario ensemble API and land it as a draft in `notes/simulation_eval_plan.md`.
