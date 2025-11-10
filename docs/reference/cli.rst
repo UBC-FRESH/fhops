@@ -22,6 +22,7 @@ Baseline usage:
 - ``fhops solve-heur tests/fixtures/regression/regression.yaml --out /tmp/regression_sa.csv``
 - ``fhops evaluate tests/fixtures/regression/regression.yaml /tmp/regression_sa.csv``
 - ``fhops eval playback --scenario tests/fixtures/regression/regression.yaml --assignments /tmp/regression_sa.csv --shift-out tmp/shift_summary.csv --day-out tmp/day_summary.csv``
+- ``fhops eval playback tests/fixtures/regression/regression.yaml --assignments tmp/regression_sa.csv --samples 10 --downtime-prob 0.1 --weather-prob 0.2`` — run stochastic playback, capturing downtime and weather variability.
 - ``fhops bench suite --scenario examples/minitoy/scenario.yaml --out-dir tmp/benchmarks``
 
 Both ``solve-mip`` and ``solve-heur`` export schedules with the columns ``machine_id``, ``block_id``,

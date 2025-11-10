@@ -46,6 +46,19 @@ flag, only shifts that perform work are listed.
 ``--shift-out`` and ``--day-out`` accept CSV paths. Folders are created automatically if they do not
 exist.
 
+Stochastic playback toggles
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The command also exposes stochastic options mirroring the API:
+
+* ``--samples`` — number of stochastic samples to evaluate (defaults to ``1`` for deterministic playback).
+* ``--downtime-prob`` / ``--downtime-max`` — probability of downtime events and an optional maximum number of assignments to drop per day.
+* ``--weather-prob`` / ``--weather-severity`` / ``--weather-window`` — frequency, severity, and duration of weather-induced production reductions.
+
+By default these probabilities are ``0.0`` so the command behaves deterministically unless you turn them on.
+Each sample’s shift/day summaries are concatenated in the exported CSVs, making it easy to aggregate or
+visualise variability across runs.
+
 Relationship to KPI evaluation
 ------------------------------
 
