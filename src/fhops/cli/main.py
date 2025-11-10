@@ -14,7 +14,7 @@ from fhops.cli._utils import format_operator_presets, operator_preset_help, pars
 from fhops.cli.benchmarks import benchmark_app
 from fhops.cli.geospatial import geospatial_app
 from fhops.cli.profiles import format_profiles, get_profile, merge_profile_with_cli
-from fhops.evaluation import compute_kpis
+from fhops.evaluation import PlaybackConfig, compute_kpis, run_playback
 from fhops.optimization.heuristics import (
     build_exploration_plan,
     run_multi_start,
@@ -718,6 +718,112 @@ def evaluate(scenario: Path, assignments_csv: Path):
     kpis = compute_kpis(pb, df)
     for k, v in kpis.items():
         console.print(f"{k}: {v:.3f}" if isinstance(v, float) else f"{k}: {v}")
+
+
+@app.command("eval-playback")
+def eval_playback(
+    scenario: Path,
+    assignments_csv: Path = typer.Option(..., "--assignments", help="Assignments CSV (machine_id, block_id, day, shift_id)."),
+    shift_out: Path | None = typer.Option(None, "--shift-out", help="Optional path to save shift-level playback summary (CSV)."),
+    day_out: Path | None = typer.Option(None, "--day-out", help="Optional path to save day-level playback summary (CSV)."),
+    include_idle: bool = typer.Option(
+        False,
+        "--include-idle",
+        help="Emit idle entries for machine/shift combinations without work.",
+    ),
+):
+    """Run deterministic playback to produce shift/day summaries."""
+
+    sc = load_scenario(str(scenario))
+    pb = Problem.from_scenario(sc)
+
+    df = pd.read_csv(assignments_csv)
+
+    playback = run_playback(
+        pb,
+        df,
+        config=PlaybackConfig(include_idle_records=include_idle),
+    )
+
+    shift_summaries = playback.shift_summaries
+    day_summaries = playback.day_summaries
+
+    shift_table = Table(title="Shift Playback Summary")
+    shift_table.add_column("Machine")
+    shift_table.add_column("Day")
+    shift_table.add_column("Shift")
+    shift_table.add_column("Prod", justify="right")
+    shift_table.add_column("Hours", justify="right")
+    shift_table.add_column("Idle", justify="right")
+    shift_table.add_column("Mobilisation", justify="right")
+    shift_table.add_column("Sequencing", justify="right")
+    for summary in shift_summaries[:20]:
+        shift_table.add_row(
+            summary.machine_id,
+            str(summary.day),
+            summary.shift_id,
+            f"{summary.production_units:.2f}",
+            f"{summary.total_hours:.2f}",
+            f"{(summary.idle_hours or 0.0):.2f}",
+            f"{summary.mobilisation_cost:.2f}",
+            str(summary.sequencing_violations),
+        )
+    console.print(shift_table)
+
+    day_table = Table(title="Day Playback Summary")
+    day_table.add_column("Day")
+    day_table.add_column("Prod", justify="right")
+    day_table.add_column("Hours", justify="right")
+    day_table.add_column("Idle", justify="right")
+    day_table.add_column("Mobilisation", justify="right")
+    day_table.add_column("Completed", justify="right")
+    day_table.add_column("Sequencing", justify="right")
+    for summary in day_summaries:
+        day_table.add_row(
+            str(summary.day),
+            f"{summary.production_units:.2f}",
+            f"{summary.total_hours:.2f}",
+            f"{(summary.idle_hours or 0.0):.2f}",
+            f"{summary.mobilisation_cost:.2f}",
+            str(summary.completed_blocks),
+            str(summary.sequencing_violations),
+        )
+    console.print(day_table)
+
+    if shift_out:
+        shift_df = pd.DataFrame(
+            {
+                "day": [s.day for s in shift_summaries],
+                "shift_id": [s.shift_id for s in shift_summaries],
+                "machine_id": [s.machine_id for s in shift_summaries],
+                "production_units": [s.production_units for s in shift_summaries],
+                "total_hours": [s.total_hours for s in shift_summaries],
+                "idle_hours": [s.idle_hours for s in shift_summaries],
+                "mobilisation_cost": [s.mobilisation_cost for s in shift_summaries],
+                "sequencing_violations": [s.sequencing_violations for s in shift_summaries],
+                "available_hours": [s.available_hours for s in shift_summaries],
+            }
+        )
+        shift_out.parent.mkdir(parents=True, exist_ok=True)
+        shift_df.to_csv(shift_out, index=False)
+        console.print(f"Shift summary saved to {shift_out}")
+
+    if day_out:
+        day_df = pd.DataFrame(
+            {
+                "day": [s.day for s in day_summaries],
+                "production_units": [s.production_units for s in day_summaries],
+                "total_hours": [s.total_hours for s in day_summaries],
+                "idle_hours": [s.idle_hours for s in day_summaries],
+                "mobilisation_cost": [s.mobilisation_cost for s in day_summaries],
+                "completed_blocks": [s.completed_blocks for s in day_summaries],
+                "sequencing_violations": [s.sequencing_violations for s in day_summaries],
+                "available_hours": [s.available_hours for s in day_summaries],
+            }
+        )
+        day_out.parent.mkdir(parents=True, exist_ok=True)
+        day_df.to_csv(day_out, index=False)
+        console.print(f"Day summary saved to {day_out}")
 
 
 @app.command()
