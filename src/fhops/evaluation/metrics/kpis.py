@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from collections import Counter, defaultdict
 
 import pandas as pd
@@ -48,6 +49,7 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> dict[str, float | in
         else {}
     )
     previous_block: dict[str, str | None] = {machine.id: None for machine in sc.machines}
+    mobilisation_by_machine: dict[str, float] = defaultdict(float)
 
     allowed_roles, prereq_roles, machine_roles = _system_metadata(pb)
     system_blocks = {block.id for block in sc.blocks if block.harvest_system_id}
@@ -106,6 +108,7 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> dict[str, float | in
                 else:
                     cost += params.move_cost_flat
                 mobilisation_cost += cost
+                mobilisation_by_machine[machine_id] += cost
             previous_block[machine_id] = block_id
 
         for (blk, role), count in day_counts.items():
@@ -119,6 +122,13 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> dict[str, float | in
     }
     if mobilisation is not None:
         result["mobilisation_cost"] = mobilisation_cost
+        if mobilisation_by_machine:
+            result["mobilisation_cost_by_machine"] = json.dumps(
+                {
+                    machine: round(cost, 3)
+                    for machine, cost in sorted(mobilisation_by_machine.items())
+                }
+            )
 
     if system_blocks:
         result["sequencing_violation_count"] = seq_violations

@@ -5,7 +5,7 @@ Status: Draft — update as tasks progress.
 
 ## Objectives
 - Tighten Pydantic models for scenarios, including cross-field validation and informative errors.
-- Add support for shift-level scheduling (per-shift calendars, blackout rules) while retaining day/week reporting hooks.
+- Add support for shift-level scheduling (per-shift calendars, blackout rules) while retaining day/week reporting hooks. *(Phase 2 shift migration will extend TimelineConfig with explicit shift tables and loader upgrades.)*
 - Represent harvest systems, machine capabilities, and worker training matrices in the contract.
 - Expand IO helpers for CSV/YAML consistency, defaults, and schema evolution.
 - Provide fixtures and docs so contributors can craft valid scenarios quickly.

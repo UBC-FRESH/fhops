@@ -60,3 +60,17 @@ src/fhops/
 - Coordinate with `notes/data_contract_enhancements.md` and `notes/mip_model_plan.md` to keep tasks aligned with the new structure.
 - Document each migration step in CHANGE_LOG and roadmap to avoid confusion during refactors.
 - Keep tests green between phases—introduce adapters/shim imports if necessary to avoid breaking downstream code.
+
+## Phase 2 Shift-Based Scheduling Initiative
+- **Objective:** replace day-indexed scheduling with shift-indexed scheduling across scenario inputs, optimisation models, heuristics, KPIs, and CLI tooling.
+- **Key Deliverables**
+  - Shift-aware data contract (CSV/YAML schema for shifts, updated `TimelineConfig`).
+  - Updated `Problem` representation exposing `(day, shift)` timeline, plus backwards-compatible loaders.
+  - MIP/heuristic refactor with shift-indexed decision variables and operator support.
+  - KPI/benchmark updates outputting both shift-level and aggregated metrics.
+  - Documentation & migration guidance for existing scenarios.
+- **Work Breakdown**
+  1. **MIP Reindexing:** replace day-based sets with shift sets (`Problem.shifts`), update decision variables/constraints, and ensure mobilisation/sequencing logic consumes shift slots.
+  2. **Heuristics:** update greedy initialisation/neighbourhoods/metrics to iterate over shifts; introduce operator registry hooks.
+  3. **Evaluation & CLI:** adapt KPIs/playback/benchmarks to shift inputs and document CLI usage.
+  4. **Sample Data & Regression:** refresh example scenarios with shift calendars and adjust fixtures/regressions.

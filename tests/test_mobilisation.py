@@ -1,3 +1,5 @@
+import json
+
 import pandas as pd
 import pyomo.environ as pyo
 
@@ -18,6 +20,18 @@ from fhops.scheduling.mobilisation import (
     MobilisationConfig,
 )
 from fhops.scheduling.systems import HarvestSystem, SystemJob
+
+
+def _shift_tuple(pb: Problem, day: int, shift_id: str | None = None) -> tuple[int, str]:
+    candidates = [shift for shift in pb.shifts if shift.day == day]
+    if not candidates:
+        raise KeyError(f"No shift defined for day={day}")
+    if shift_id is None:
+        return (candidates[0].day, candidates[0].shift_id)
+    for shift in candidates:
+        if shift.shift_id == shift_id:
+            return (shift.day, shift.shift_id)
+    raise KeyError(f"Shift {shift_id!r} not found for day={day}")
 
 
 def build_problem() -> Problem:
@@ -63,7 +77,7 @@ def test_build_model_with_mobilisation_config():
     pb = build_problem()
     model = build_model(pb)
     assert model is not None
-    assert hasattr(model, "mach_one_block")
+    assert hasattr(model, "mach_one_shift")
 
 
 def test_objective_includes_mobilisation_penalty():
@@ -78,10 +92,12 @@ def test_objective_includes_mobilisation_penalty():
         for var in model.y.values():
             var.value = 0
 
-    model.x["M1", "B1", 1].value = 1
-    model.x["M1", "B2", 2].value = 1
+    shift1 = _shift_tuple(pb, 1)
+    shift2 = _shift_tuple(pb, 2)
+    model.x["M1", "B1", shift1].value = 1
+    model.x["M1", "B2", shift2].value = 1
     if hasattr(model, "y"):
-        model.y["M1", "B1", "B2", 2].value = 1
+        model.y["M1", "B1", "B2", shift2].value = 1
 
     objective_value = pyo.value(model.obj)
     assert objective_value == -105.0
@@ -93,19 +109,28 @@ def test_compute_kpis_reports_mobilisation_cost():
 
     for var in model.x.values():
         var.value = 0
-    model.x["M1", "B1", 1].value = 1
-    model.x["M1", "B2", 2].value = 1
+    model.x["M1", "B1", _shift_tuple(pb, 1)].value = 1
+    model.x["M1", "B2", _shift_tuple(pb, 2)].value = 1
 
     assignments = []
     for mach in model.M:
         for blk in model.B:
-            for day in model.D:
-                if pyo.value(model.x[mach, blk, day]) > 0.5:
-                    assignments.append({"machine_id": mach, "block_id": blk, "day": int(day)})
+            for day, shift_id in model.S:
+                if pyo.value(model.x[mach, blk, (day, shift_id)]) > 0.5:
+                    assignments.append(
+                        {
+                            "machine_id": mach,
+                            "block_id": blk,
+                            "day": int(day),
+                            "shift_id": shift_id,
+                        }
+                    )
 
     df = pd.DataFrame(assignments)
     kpis = compute_kpis(pb, df)
     assert kpis.get("mobilisation_cost") == 105.0
+    per_machine = json.loads(kpis.get("mobilisation_cost_by_machine", "{}"))
+    assert per_machine == {"M1": 105.0}
 
 
 def test_compute_kpis_reports_sequencing_metrics():
