@@ -62,8 +62,8 @@ Status: Draft — roadmap Phase 3 owner document.
 
 ### Shift/Day Reporting Plan — 2025-02-??
 - **Aggregation helpers & KPI alignment**
-  - [ ] Extend `ShiftSummary`/`DaySummary` (or introduce dedicated KPI dataclasses) with any additional fields needed for Phase 3 KPI expansion (per-landing mobilisation, blackout breakdowns, etc.).
-  - [ ] Implement aggregation helpers (e.g., `playback/aggregates.py`) that compute per-machine utilisation, mobilisation totals, blackout counts, feeding future KPI modules.
+  - [x] Extend `ShiftSummary`/`DaySummary` (or introduce dedicated KPI dataclasses) with any additional fields needed for Phase 3 KPI expansion (per-landing mobilisation, blackout breakdowns, etc.).
+  - [x] Implement aggregation helpers (e.g., `playback/aggregates.py`) that compute per-machine utilisation, mobilisation totals, blackout counts, feeding future KPI modules.
   - [ ] Validate helper outputs against regression fixtures and reconcile with KPI spec.
 - **Exporter & serialization pipeline**
   - [x] CSV exports via CLI (`--shift-out`, `--day-out`).

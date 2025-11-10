@@ -934,6 +934,7 @@ def eval_playback(
                 "idle_hours": [s.idle_hours for s in shift_summaries],
                 "mobilisation_cost": [s.mobilisation_cost for s in shift_summaries],
                 "sequencing_violations": [s.sequencing_violations for s in shift_summaries],
+                "blackout_conflicts": [s.blackout_conflicts for s in shift_summaries],
                 "available_hours": [s.available_hours for s in shift_summaries],
                 "utilisation_ratio": [s.utilisation_ratio for s in shift_summaries],
             }
@@ -968,6 +969,7 @@ def eval_playback(
                 "idle_hours": [s.idle_hours for s in day_summaries],
                 "mobilisation_cost": [s.mobilisation_cost for s in day_summaries],
                 "completed_blocks": [s.completed_blocks for s in day_summaries],
+                "blackout_conflicts": [s.blackout_conflicts for s in day_summaries],
                 "sequencing_violations": [s.sequencing_violations for s in day_summaries],
                 "available_hours": [s.available_hours for s in day_summaries],
                 "utilisation_ratio": [s.utilisation_ratio for s in day_summaries],
