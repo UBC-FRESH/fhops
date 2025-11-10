@@ -1,5 +1,12 @@
 # Development Change Log
 
+## 2025-11-13 — CLI profile integration hardening
+- Refactored solver profile merging to return a structured `ResolvedSolverConfig`, simplifying how CLI commands consume operator presets, weights, batching, and extras.
+- Updated `fhops solve-heur`, `solve-ils`, and `solve-tabu` to rely on the resolved config, improved multi-start seed handling, and ensured profile extras override CLI defaults safely.
+- Tightened the benchmark suite (`fhops bench suite`) by reusing the resolved configs across SA/ILS/Tabu, normalising telemetry/summary metrics, and making scenario comparisons mypy-safe.
+- Hardened ILS schedule reconstruction to tolerate mixed pandas dtypes and added regression coverage in `tests/test_cli_profiles.py` for the new resolver.
+- Ran `ruff format`, `ruff check`, `mypy src`, and targeted pytest suites to keep lint/type/test gates green.
+
 ## 2025-11-12 — Iterated Local Search rollout
 - Implemented the `fhops.optimization.heuristics.solve_ils` Iterated Local Search solver with perturbation telemetry, hybrid MIP restarts, and operator stats parity with SA.
 - Added a dedicated `fhops solve-ils` CLI command mirroring SA batching flags, plus `fhops bench suite --include-ils` options for harness comparisons.

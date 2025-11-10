@@ -33,6 +33,18 @@ class Profile:
     bench: SolverConfig = field(default_factory=SolverConfig)
 
 
+@dataclass(frozen=True)
+class ResolvedSolverConfig:
+    """Resolved solver configuration after merging profile defaults and CLI overrides."""
+
+    operators: list[str] | None
+    operator_weights: dict[str, float]
+    batch_neighbours: int | None
+    parallel_workers: int | None
+    parallel_multistart: int | None
+    extra_kwargs: dict[str, object]
+
+
 DEFAULT_PROFILES: dict[str, Profile] = {
     "default": Profile(
         name="default",
@@ -123,16 +135,14 @@ def merge_profile_with_cli(
     batch_neighbours: int | None,
     parallel_workers: int | None,
     parallel_multistart: int | None,
-) -> tuple[
-    list[str] | None, dict[str, float], int | None, int | None, int | None, dict[str, object]
-]:
+) -> ResolvedSolverConfig:
     """Merge profile defaults with CLI-provided options."""
 
     ops_pipeline: list[str] = []
     combined_weights: dict[str, float] = {}
     extra_kwargs: dict[str, object] = {}
 
-    if config:
+    if config is not None:
         if config.operator_presets:
             profile_ops, profile_weights = resolve_operator_presets(list(config.operator_presets))
             if profile_ops:
@@ -145,8 +155,6 @@ def merge_profile_with_cli(
         if config.extra_kwargs:
             extra_kwargs.update(config.extra_kwargs)
 
-    preset_ops: list[str] | None
-    preset_weight_map: dict[str, float]
     if preset_args:
         preset_ops, preset_weight_map = resolve_operator_presets(list(preset_args))
         if preset_ops:
@@ -154,29 +162,34 @@ def merge_profile_with_cli(
         combined_weights.update({k.lower(): float(v) for k, v in preset_weight_map.items()})
 
     ops_pipeline.extend(op.lower() for op in explicit_ops)
+    operators = list(dict.fromkeys(ops_pipeline)) or None
 
-    combined_ops = list(dict.fromkeys(ops_pipeline)) or None
+    weights = {k.lower(): float(v) for k, v in combined_weights.items()}
+    for key, value in operator_weight_override.items():
+        weights[key.lower()] = float(value)
 
-    final_weights = dict(combined_weights)
-    final_weights.update({k.lower(): float(v) for k, v in operator_weight_override.items()})
-
-    final_batch = batch_neighbours
-    if config and config.batch_neighbours and (batch_neighbours is None or batch_neighbours == 1):
+    final_batch = batch_neighbours if batch_neighbours and batch_neighbours > 1 else None
+    if config and config.batch_neighbours and final_batch is None:
         final_batch = config.batch_neighbours
 
-    final_workers = parallel_workers
-    if config and config.parallel_workers and (parallel_workers is None or parallel_workers == 1):
+    final_workers = parallel_workers if parallel_workers and parallel_workers > 1 else None
+    if config and config.parallel_workers and final_workers is None:
         final_workers = config.parallel_workers
 
-    final_multistart = parallel_multistart
-    if (
-        config
-        and config.parallel_multistart
-        and (parallel_multistart is None or parallel_multistart == 1)
-    ):
+    final_multistart = (
+        parallel_multistart if parallel_multistart and parallel_multistart > 1 else None
+    )
+    if config and config.parallel_multistart and final_multistart is None:
         final_multistart = config.parallel_multistart
 
-    return combined_ops, final_weights, final_batch, final_workers, final_multistart, extra_kwargs
+    return ResolvedSolverConfig(
+        operators=operators,
+        operator_weights=weights,
+        batch_neighbours=final_batch,
+        parallel_workers=final_workers,
+        parallel_multistart=final_multistart,
+        extra_kwargs=dict(extra_kwargs),
+    )
 
 
 def solver_config_has_settings(config: SolverConfig | None) -> bool:
@@ -198,7 +211,9 @@ def solver_config_has_settings(config: SolverConfig | None) -> bool:
 
 
 def combine_solver_configs(*configs: SolverConfig | None) -> SolverConfig | None:
-    filtered = [cfg for cfg in configs if solver_config_has_settings(cfg)]
+    filtered: list[SolverConfig] = [
+        cfg for cfg in configs if cfg is not None and solver_config_has_settings(cfg)
+    ]
     if not filtered:
         return None
 
@@ -242,6 +257,7 @@ def format_profiles() -> str:
 __all__ = [
     "SolverConfig",
     "Profile",
+    "ResolvedSolverConfig",
     "DEFAULT_PROFILES",
     "get_profile",
     "list_profiles",
