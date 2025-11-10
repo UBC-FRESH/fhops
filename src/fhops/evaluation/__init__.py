@@ -3,20 +3,20 @@
 from .metrics.kpis import compute_kpis
 from .playback import (
     DaySummary,
-    DowntimeEventConfig,
     DowntimeEvent,
+    DowntimeEventConfig,
+    EnsembleResult,
     LandingShockConfig,
+    LandingShockEvent,
     PlaybackEvent,
     PlaybackConfig,
     PlaybackRecord,
     PlaybackResult,
     PlaybackSample,
     SamplingConfig,
+    SamplingContext,
     SamplingEventConfig,
     ShiftSummary,
-    SamplingContext,
-    LandingShockEvent,
-    EnsembleResult,
     WeatherEvent,
     WeatherEventConfig,
     assignments_to_records,
@@ -25,6 +25,13 @@ from .playback import (
     schedule_to_records,
     summarise_days,
     summarise_shifts,
+)
+from .playback.aggregates import (
+    day_dataframe,
+    day_dataframe_from_ensemble,
+    machine_utilisation_summary,
+    shift_dataframe,
+    shift_dataframe_from_ensemble,
 )
 
 __all__ = [
@@ -52,4 +59,9 @@ __all__ = [
     "PlaybackSample",
     "EnsembleResult",
     "run_stochastic_playback",
+    "shift_dataframe",
+    "day_dataframe",
+    "shift_dataframe_from_ensemble",
+    "day_dataframe_from_ensemble",
+    "machine_utilisation_summary",
 ]
