@@ -12,6 +12,7 @@
 - Introduced the `fhops eval playback` CLI command (table output + CSV export scaffolding) to run deterministic playback outside notebooks.
 - Documented playback workflows in `docs/reference/cli.rst` and the new `docs/howto/evaluation.rst`.
 - Added a CLI smoke test (`tests/test_cli_playback.py`) ensuring playback exports remain stable.
+- Implemented stochastic playback scaffolding (`run_stochastic_playback`, downtime/weather events) with regression fixtures and unit coverage in `tests/test_stochastic_playback.py`.
 - Checked off the playback inventory subtask in the roadmap to reflect the newly documented findings.
 
 ## 2025-11-13 — CLI profile integration hardening
