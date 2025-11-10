@@ -30,10 +30,70 @@ before proposing new work.
 
 ## Phase 3 — Evaluation & Analytics
 - [ ] Robust schedule playback with stochastic extensions (downtime/weather sampling) and shift/day reporting.
+  - [ ] Playback engine audit
+    - [x] Inventory deterministic playback path (`fhops/eval`, `scheduling/timeline`) and capture gaps in `notes/simulation_eval_plan.md`.
+    - [ ] Spec shift/day reporting interfaces and required data contract updates.
+    - [ ] Produce migration checklist for refactoring playback modules and regression fixtures.
+  - [ ] Stochastic sampling extensions
+    - [ ] Design RNG seeding + scenario ensemble API and land it as a draft in `notes/simulation_eval_plan.md`.
+    - [ ] Implement downtime/weather sampling operators with unit and property-based tests.
+    - [ ] Integrate sampling toggles into CLI/automation commands (document defaults in `docs/howto/evaluation.rst`).
+  - [ ] Shift/day reporting deliverables
+    - [ ] Define aggregation schemas for shift/day calendars and extend KPI dataclasses.
+    - [ ] Add exporters (CSV/Parquet + Markdown summary) wired into playback CLI.
+    - [ ] Validate outputs across benchmark scenarios and stash fixtures for CI smoke runs.
 - [ ] KPI expansion (cost, makespan, utilisation, mobilisation spend) with reporting templates.
+  - [ ] Metric specification & alignment
+    - [ ] Reconcile definitions across `notes/mip_model_plan.md`, `notes/mobilisation_plan.md`, and simulation notes.
+    - [ ] Document final KPI formulas and assumptions in `docs/howto/evaluation.rst`.
+    - [ ] Map required raw signals from playback outputs and ensure data contract coverage.
+  - [ ] Implementation & validation
+    - [ ] Extend KPI calculators to emit cost, makespan, utilisation, mobilisation spend variants.
+    - [ ] Add regression fixtures and property-based checks confirming KPI ranges per scenario tier.
+    - [ ] Wire KPIs into CLI reporting with configurable profiles and smoke tests.
+  - [ ] Reporting templates
+    - [ ] Draft tabular templates (CSV/Markdown) plus optional visuals for docs/notebooks.
+    - [ ] Provide Sphinx snippets and CLI help examples showcasing new KPI bundles.
+    - [ ] Capture follow-up backlog items for advanced dashboards (e.g., Plotly) if deferred.
 - [ ] Synthetic dataset generator & benchmarking suite (`notes/synthetic_dataset_plan.md`).
+  - [ ] Design & planning
+    - [ ] Finalise dataset taxonomy and parameter ranges in `notes/synthetic_dataset_plan.md`.
+    - [ ] Align generator requirements with Phase 2 benchmarking harness expectations.
+    - [ ] Identify storage strategy and naming for generated scenarios (`data/synthetic/`).
+  - [ ] Generator implementation
+    - [ ] Build core sampling utilities (terrain, system mix, downtime patterns) with tests.
+    - [ ] Expose CLI entry (`fhops synth`) and configuration schema for batch generation.
+    - [ ] Add validation suite ensuring generated datasets meet contract + KPI sanity bounds.
+  - [ ] Benchmark integration
+    - [ ] Hook synthetic scenarios into benchmark harness and CI smoke targets.
+    - [ ] Provide metadata manifests describing each scenario for docs/examples.
+    - [ ] Outline scaling experiments and capture results in changelog/notes.
 - [ ] Reference analytics notebooks integrated into docs/examples.
+  - [ ] Notebook scaffolding
+    - [ ] Select representative deterministic + stochastic scenarios (baseline + synthetic).
+    - [ ] Define notebook storyboards (playback walkthrough, KPI deep-dive, what-if analysis).
+    - [ ] Create reusable plotting helpers (matplotlib/Altair) shared across notebooks.
+  - [ ] Notebook authoring
+    - [ ] Draft notebooks under `docs/examples/analytics/` with executed outputs.
+    - [ ] Ensure notebooks call CLI/modules via lightweight wrappers for reproducibility.
+    - [ ] Capture metadata (runtime, dependencies) and add smoke execution script.
+  - [ ] Documentation & automation
+    - [ ] Integrate notebooks into Sphinx (nbsphinx or nbconvert pipeline) with cross-links.
+    - [ ] Add CI check to execute notebooks (or cached outputs) on critical scenarios.
+    - [ ] Update README and docs landing pages to advertise analytics assets.
 - [ ] Hyperparameter tuning framework (conventional + agentic) leveraging persistent telemetry (`notes/metaheuristic_hyperparam_tuning.md`).
+  - [ ] Telemetry & persistence groundwork
+    - [ ] Define telemetry schema (solver configuration, KPIs, runtime stats) and storage backend.
+    - [ ] Implement logging hooks in solvers and playback runs, persisting to local store.
+    - [ ] Document data retention/rotation strategy in tuning notes.
+  - [ ] Conventional tuning toolkit
+    - [ ] Implement grid/random/Bayesian search drivers leveraging telemetry store.
+    - [ ] Provide CLI surfaces for launching tuning sweeps with scenario bundles.
+    - [ ] Add automated comparison reports summarising best configurations per scenario class.
+  - [ ] Agentic tuning integration
+    - [ ] Prototype agent loop per `notes/metaheuristic_hyperparam_tuning.md` (prompt templates + action space).
+    - [ ] Validate agent performance against deterministic benchmarks and log deltas.
+    - [ ] Capture rollout guidelines and safety rails in docs before broader rollout.
 
 ## Phase 4 — Release & Community Readiness
 - [ ] Complete Sphinx documentation set (API, CLI, how-tos, examples) published to Read the Docs.
