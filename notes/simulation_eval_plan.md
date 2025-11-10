@@ -60,30 +60,27 @@ Status: Draft — roadmap Phase 3 owner document.
   - Whether to persist playback outputs inside telemetry store alongside solver metadata (tie-in with tuning framework).
   - How to surface partially assigned shifts (e.g., empty shift_id) — consider dedicated `unassigned` bucket vs. omission.
 
-### Playback Migration Checklist — 2025-02-??
-- **Module scaffolding**
-  - [x] Create `fhops/evaluation/playback/core.py` containing deterministic playback runner + record dataclasses.
-  - [x] Add bridge helpers (`fhops/evaluation/playback/adapters.py`) translating `Schedule.plan` and MIP tensors into canonical playback records.
-  - [x] Wire `fhops.evaluation.__init__` exports to include new playback entry points.
-  - [x] Capture idle hours and sequencing violation metadata during playback record/summarisation.
-- **CLI integration**
-  - [x] Implement `fhops eval playback` command (Typer) with `--shift-out`, `--day-out`, `--include-idle` flags and console summary scaffolding.
-    - Added stochastic toggles (`--samples`, downtime/weather, landing) with regression coverage in `tests/test_cli_playback.py`.
-    - Extend export options to Parquet (when dependencies exist) and Markdown summaries so analytics consumers can grab shareable artefacts.
-  - [ ] Update CLI docs (`docs/reference/cli.rst`, `docs/howto/evaluation.rst`) with command usage and schema tables.
-  - [ ] Add quickstart snippet illustrating playback → KPI pipeline in `docs/howto/evaluation.rst`.
-- **Deprecations & cleanup**
-  - [ ] Replace `fhops.eval.kpis` shim with warning-free import once playback module lives under `fhops.evaluation`.
-  - [ ] Sweep notebooks/tests to use new playback adapters instead of ad-hoc DataFrame construction.
-  - [ ] Document migration guidance in changelog + roadmap when rollout completes.
-- **Testing & fixtures**
-  - [ ] Author deterministic playback regression fixtures (`tests/fixtures/playback/minitoy.json`, etc.).
-    - Proposed approach: use `fhops eval playback` to capture `shift`/`day` CSVs for `examples/minitoy` and `examples/med42`, store under `tests/fixtures/playback/`, and add a regression test that replays the fixtures via `run_playback` to catch schema/metric drift.
-  - [ ] Add unit tests covering Schedule→record conversion, blackout tagging, mobilisation accumulation.
-    - Added initial coverage in `tests/test_playback.py` verifying block completions, sequencing violations, and idle-hour aggregation on regression scenario data.
-  - [x] Add CLI smoke test invoking playback command on synthetic assignments ensuring file creation + summaries (`tests/test_cli_playback.py`).
-  - [ ] Ensure property-based tests enforce shift totals == day totals and respect blackout constraints.
-  - [ ] Add regression tests comparing CLI exports with expected shift/day schemas once Parquet support lands.
+### Shift/Day Reporting Plan — 2025-02-??
+- **Aggregation helpers & KPI alignment**
+  - [ ] Extend `ShiftSummary`/`DaySummary` (or introduce dedicated KPI dataclasses) with any additional fields needed for Phase 3 KPI expansion (per-landing mobilisation, blackout breakdowns, etc.).
+  - [ ] Implement aggregation helpers (e.g., `playback/aggregates.py`) that compute per-machine utilisation, mobilisation totals, blackout counts, feeding future KPI modules.
+  - [ ] Validate helper outputs against regression fixtures and reconcile with KPI spec.
+- **Exporter & serialization pipeline**
+  - [x] CSV exports via CLI (`--shift-out`, `--day-out`).
+  - [x] Parquet exports with dependency checks (`--shift-parquet`, `--day-parquet`).
+  - [x] Markdown summary generation (`--summary-md`).
+  - [ ] Refactor serialization paths so CLI, telemetry, and automation share a single helper to avoid duplication.
+- **Benchmark validation & fixtures**
+  - [x] Capture deterministic fixtures for minitoy/med42 (CSV).
+  - [ ] Capture matching Parquet fixtures (or generate on the fly) and add regression tests diffing CLI exports vs. stored schema.
+  - [ ] Ensure CI runs a smoke covering CSV + Parquet + Markdown outputs for minitoy/med42/regression scenarios.
+- **Documentation**
+  - [ ] Add quickstart snippet to `docs/howto/evaluation.rst` demonstrating command → Parquet → Pandas load, including utilisation interpretation.
+  - [ ] Document aggregation helpers for KPI contributors.
+  - [x] Document exporter options (CLI reference + Markdown section).
+- **Testing**
+  - [ ] Property-based tests ensuring shift totals equal day totals and blackout constraints hold.
+  - [x] CLI smoke tests cover CSV, stochastic toggles, Markdown, landing shocks.
 
 ### Stochastic Sampling API Plan — 2025-02-??
 - **Objectives**
