@@ -9,6 +9,12 @@
 - Linked the notebook suite from the README and docs landing pages, describing how to regenerate runs locally with the light-mode flag.
 - Documented full-mode runtimes in `notes/analytics_notebooks_plan.md`, concluded caching is unnecessary for now, and marked the Phase 3 analytics notebooks milestone complete in the roadmap.
 
+## 2025-11-11 — Simulated annealing telemetry groundwork
+- Added `RunTelemetryLogger`, a reusable JSONL context manager capturing run + step telemetry and exporting metadata for downstream tuning workflows.
+- Instrumented `solve_sa` to emit telemetry (run id, configuration, metrics, step snapshots) when `telemetry_log` is provided; CLI multi-start now propagates context into these records.
+- Updated roadmap and tuning plan notes to reflect the schema draft and SA logging milestone; introduced regression tests ensuring telemetry logs are written with matching run identifiers.
+- Added a placeholder `fhops tune-random` CLI command that surfaces recent telemetry records while the full random-search tuner is under construction.
+
 ## 2025-11-11 — Playback telemetry integration
 - Extended `fhops eval playback` with a `--telemetry-log` option that records export metrics, sampling parameters, and artifact paths via the shared playback exporter helpers.
 - Ensured playback exports reuse the canonical aggregation helpers in both deterministic and stochastic modes so telemetry reflects the exact CLI outputs.

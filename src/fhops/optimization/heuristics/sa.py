@@ -6,7 +6,9 @@ import math
 import random as _random
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import nullcontext
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 import pandas as pd
@@ -14,6 +16,7 @@ import pandas as pd
 from fhops.optimization.heuristics.registry import OperatorContext, OperatorRegistry
 from fhops.scenario.contract import Problem
 from fhops.scheduling.mobilisation import MachineMobilisation, build_distance_lookup
+from fhops.telemetry import RunTelemetryLogger
 
 
 def _role_metadata(scenario):
@@ -417,6 +420,8 @@ def solve_sa(
     operator_weights: dict[str, float] | None = None,
     batch_size: int | None = None,
     max_workers: int | None = None,
+    telemetry_log: str | Path | None = None,
+    telemetry_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Solve the scheduling problem with simulated annealing.
 
@@ -463,86 +468,145 @@ def solve_sa(
             normalized_weights[available_names[key]] = weight
         registry.configure(normalized_weights)
 
-    current = _init_greedy(pb)
-    current_score = _evaluate(pb, current)
-    best = current
-    best_score = current_score
-
-    temperature0 = max(1.0, best_score / 10.0)
-    temperature = temperature0
-    initial_score = current_score
-    proposals = 0
-    accepted_moves = 0
-    restarts = 0
-    operator_stats: dict[str, dict[str, float]] = {}
-    for step in range(1, iters + 1):
-        accepted = False
-        candidates = _neighbors(
-            pb,
-            current,
-            registry,
-            rng,
-            operator_stats,
-            batch_size=batch_size,
-        )
-        evaluations = _evaluate_candidates(
-            pb,
-            candidates,
-            max_workers=max_workers if batch_size and batch_size > 1 else None,
-        )
-        for neighbor, neighbor_score in evaluations:
-            proposals += 1
-            delta = neighbor_score - current_score
-            if delta >= 0 or rng.random() < math.exp(delta / max(temperature, 1e-6)):
-                current = neighbor
-                current_score = neighbor_score
-                accepted = True
-                accepted_moves += 1
-                break
-        if current_score > best_score:
-            best, best_score = current, current_score
-        temperature = temperature0 * (0.995**step)
-        if not accepted and step % 100 == 0:
-            current = _init_greedy(pb)
-            current_score = _evaluate(pb, current)
-            restarts += 1
-
-    rows = []
-    for machine_id, plan in best.plan.items():
-        for (day, shift_id), block_id in plan.items():
-            if block_id is not None:
-                rows.append(
-                    {
-                        "machine_id": machine_id,
-                        "block_id": block_id,
-                        "day": int(day),
-                        "shift_id": shift_id,
-                        "assigned": 1,
-                    }
-                )
-    assignments = pd.DataFrame(rows).sort_values(["day", "shift_id", "machine_id", "block_id"])
-    meta = {
-        "initial_score": float(initial_score),
-        "best_score": float(best_score),
-        "proposals": proposals,
-        "accepted_moves": accepted_moves,
-        "acceptance_rate": (accepted_moves / proposals) if proposals else 0.0,
-        "restarts": restarts,
-        "iterations": iters,
-        "temperature0": float(temperature0),
+    config_snapshot: dict[str, Any] = {
+        "iters": iters,
+        "batch_size": batch_size,
+        "max_workers": max_workers,
         "operators": registry.weights(),
     }
-    if operator_stats:
-        meta["operators_stats"] = {
-            name: {
-                "proposals": stats.get("proposals", 0.0),
-                "accepted": stats.get("accepted", 0.0),
-                "skipped": stats.get("skipped", 0.0),
-                "weight": stats.get("weight", 0.0),
-                "acceptance_rate": (stats.get("accepted", 0.0) / stats.get("proposals", 1.0))
-                if stats.get("proposals", 0.0)
-                else 0.0,
-            }
-            for name, stats in operator_stats.items()
+    context_payload = dict(telemetry_context or {})
+    step_interval = context_payload.pop("step_interval", 100)
+    scenario_name = getattr(pb.scenario, "name", None)
+    scenario_path = context_payload.pop("scenario_path", None)
+
+    telemetry_logger: RunTelemetryLogger | None = None
+    if telemetry_log:
+        telemetry_logger = RunTelemetryLogger(
+            log_path=telemetry_log,
+            solver="sa",
+            scenario=scenario_name,
+            scenario_path=scenario_path,
+            seed=seed,
+            config=config_snapshot,
+            context=context_payload,
+            step_interval=step_interval if isinstance(step_interval, int) and step_interval > 0 else None,
+        )
+
+    with (telemetry_logger if telemetry_logger else nullcontext()) as run_logger:
+        current = _init_greedy(pb)
+        current_score = _evaluate(pb, current)
+        best = current
+        best_score = current_score
+
+        temperature0 = max(1.0, best_score / 10.0)
+        temperature = temperature0
+        initial_score = current_score
+        proposals = 0
+        accepted_moves = 0
+        restarts = 0
+        operator_stats: dict[str, dict[str, float]] = {}
+        for step in range(1, iters + 1):
+            accepted = False
+            candidates = _neighbors(
+                pb,
+                current,
+                registry,
+                rng,
+                operator_stats,
+                batch_size=batch_size,
+            )
+            evaluations = _evaluate_candidates(
+                pb,
+                candidates,
+                max_workers=max_workers if batch_size and batch_size > 1 else None,
+            )
+            for neighbor, neighbor_score in evaluations:
+                proposals += 1
+                delta = neighbor_score - current_score
+                if delta >= 0 or rng.random() < math.exp(delta / max(temperature, 1e-6)):
+                    current = neighbor
+                    current_score = neighbor_score
+                    accepted = True
+                    accepted_moves += 1
+                    break
+            if current_score > best_score:
+                best, best_score = current, current_score
+            temperature = temperature0 * (0.995**step)
+            if run_logger and telemetry_logger and telemetry_logger.step_interval:
+                if step == 1 or step == iters or (step % telemetry_logger.step_interval == 0):
+                    acceptance_rate = (accepted_moves / proposals) if proposals else 0.0
+                    run_logger.log_step(
+                        step=step,
+                        objective=float(current_score),
+                        best_objective=float(best_score),
+                        temperature=float(temperature),
+                        acceptance_rate=acceptance_rate,
+                        proposals=proposals,
+                        accepted_moves=accepted_moves,
+                    )
+            if not accepted and step % 100 == 0:
+                current = _init_greedy(pb)
+                current_score = _evaluate(pb, current)
+                restarts += 1
+
+        rows = []
+        for machine_id, plan in best.plan.items():
+            for (day, shift_id), block_id in plan.items():
+                if block_id is not None:
+                    rows.append(
+                        {
+                            "machine_id": machine_id,
+                            "block_id": block_id,
+                            "day": int(day),
+                            "shift_id": shift_id,
+                            "assigned": 1,
+                        }
+                    )
+        assignments = pd.DataFrame(rows).sort_values(["day", "shift_id", "machine_id", "block_id"])
+        meta = {
+            "initial_score": float(initial_score),
+            "best_score": float(best_score),
+            "proposals": proposals,
+            "accepted_moves": accepted_moves,
+            "acceptance_rate": (accepted_moves / proposals) if proposals else 0.0,
+            "restarts": restarts,
+            "iterations": iters,
+            "temperature0": float(temperature0),
+            "operators": registry.weights(),
         }
+        if operator_stats:
+            meta["operators_stats"] = {
+                name: {
+                    "proposals": stats.get("proposals", 0.0),
+                    "accepted": stats.get("accepted", 0.0),
+                    "skipped": stats.get("skipped", 0.0),
+                    "weight": stats.get("weight", 0.0),
+                    "acceptance_rate": (stats.get("accepted", 0.0) / stats.get("proposals", 1.0))
+                    if stats.get("proposals", 0.0)
+                    else 0.0,
+                }
+                for name, stats in operator_stats.items()
+            }
+        if run_logger and telemetry_logger:
+            run_logger.finalize(
+                status="ok",
+                metrics={
+                    "objective": float(best_score),
+                    "initial_score": float(initial_score),
+                    "acceptance_rate": meta["acceptance_rate"],
+                },
+                extra={
+                    "iterations": iters,
+                    "restarts": restarts,
+                    "proposals": proposals,
+                    "accepted_moves": accepted_moves,
+                    "temperature0": float(temperature0),
+                    "operators": registry.weights(),
+                },
+            )
+            meta["telemetry_run_id"] = telemetry_logger.run_id
+            if telemetry_logger.steps_path:
+                meta["telemetry_steps_path"] = str(telemetry_logger.steps_path)
+            meta["telemetry_log_path"] = str(telemetry_logger.log_path)
+
     return {"objective": float(best_score), "assignments": assignments, "meta": meta, "schedule": best}
