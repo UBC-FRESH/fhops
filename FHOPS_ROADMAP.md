@@ -70,8 +70,8 @@ before proposing new work.
     - [x] Outline scaling experiments and capture results in changelog/notes.
 - [ ] Reference analytics notebooks integrated into docs/examples.
   - [ ] Notebook scaffolding
-    - [ ] Select representative deterministic + stochastic scenarios (baseline + synthetic).
-    - [ ] Define notebook storyboards (playback walkthrough, KPI deep-dive, what-if analysis).
+    - [x] Select representative deterministic + stochastic scenarios (baseline + synthetic).
+    - [x] Define notebook storyboards (playback walkthrough, KPI deep-dive, what-if analysis).
     - [ ] Create reusable plotting helpers (matplotlib/Altair) shared across notebooks.
   - [ ] Notebook authoring
     - [ ] Draft notebooks under `docs/examples/analytics/` with executed outputs.
