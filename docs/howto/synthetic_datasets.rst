@@ -119,9 +119,19 @@ Use the bundles anywhere a normal scenario is accepted. Typical entry points:
   command accepts YAML/TOML configs via ``--config`` when you need full control over the
   ``SyntheticDatasetConfig`` fields.
 
-.. note::
-   When you write directly to ``examples/synthetic/<tier>`` the CLI automatically refreshes the aggregate
-   ``examples/synthetic/metadata.yaml`` so documentation and automation stay in sync.
+  .. note::
+     When you write directly to ``examples/synthetic/<tier>`` the CLI automatically refreshes the aggregate
+     ``examples/synthetic/metadata.yaml`` so documentation and automation stay in sync.
+
+* Create several bundles via a batch plan:
+
+  .. code-block:: bash
+
+     fhops synth batch plans/synthetic.yaml --overwrite
+
+  The plan file can be YAML/TOML/JSON and contains a list of entries, each mirroring the options
+  accepted by ``fhops synth generate`` (``tier``, ``seed``, ``config``, overrides, etc.). This is handy
+  when preparing datasets for experiments or CI warmups.
 
 These commands reuse the same CLI surfaces already documented in :doc:`evaluation` and
 :doc:`../reference/cli`, but the synthetic bundles keep the inputs lightweight enough for quick
