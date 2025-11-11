@@ -127,11 +127,13 @@ Use the bundles anywhere a normal scenario is accepted. Typical entry points:
 
   .. code-block:: bash
 
-     fhops synth batch plans/synthetic.yaml --overwrite
+     fhops synth batch docs/examples/synthetic_batch_plan.yaml --overwrite
 
   The plan file can be YAML/TOML/JSON and contains a list of entries, each mirroring the options
   accepted by ``fhops synth generate`` (``tier``, ``seed``, ``config``, overrides, etc.). This is handy
-  when preparing datasets for experiments or CI warmups.
+  when preparing datasets for experiments or CI warmups. See
+  ``docs/examples/synthetic_batch_plan.yaml`` (and the referenced ``synthetic_batch_custom.yaml``) for
+  a ready-to-run example.
 
 These commands reuse the same CLI surfaces already documented in :doc:`evaluation` and
 :doc:`../reference/cli`, but the synthetic bundles keep the inputs lightweight enough for quick
