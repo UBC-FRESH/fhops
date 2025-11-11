@@ -120,34 +120,34 @@ Status: Draft — roadmap Phase 3 owner document.
 
 ### KPI Expansion Plan — 2025-02-??
 - **Metric specification & alignment**
-  - [ ] Reconcile production/utilisation/makespan definitions across `notes/mip_model_plan.md`, `notes/mobilisation_plan.md`, and this document.
-  - [ ] Document final KPI formulas and assumptions in `docs/howto/evaluation.rst`.
+- [x] Reconcile production/utilisation/makespan definitions across `notes/mip_model_plan.md`, `notes/mobilisation_plan.md`, and this document (see shared glossary in `docs/howto/evaluation.rst`).
+- [x] Document final KPI formulas and assumptions in `docs/howto/evaluation.rst`.
     - [x] Capture utilisation/makespan/mobilisation landing formulas alongside existing production/mobilisation metrics.
-    - [ ] Add weather/downtime penalty definitions after stochastic cost modelling lands.
-  - [ ] Map required raw signals from playback outputs and ensure data contract coverage.
-    - Confirm `ShiftSummary`/`DaySummary` expose landing IDs, machine roles, downtime/weather flags.
-    - Extend playback dataclasses and fixtures where additional columns (e.g., `landing_id`, `downtime_reason`) are required.
+    - [x] Add weather/downtime penalty definitions after stochastic cost modelling lands.
+  - [x] Map required raw signals from playback outputs and ensure data contract coverage.
+    - [x] Confirm `ShiftSummary`/`DaySummary` expose landing IDs, machine roles, downtime/weather flags.
+    - [x] Extend playback dataclasses and fixtures where additional columns (e.g., `landing_id`, `downtime_reason`) are required.
 
 - **Implementation & validation**
-  - [ ] Extend KPI calculators to emit cost, makespan, utilisation, mobilisation spend variants.
+- [x] Extend KPI calculators to emit cost, makespan, utilisation, mobilisation spend variants.
     - [x] Implement utilisation aggregators that reduce shift/day summaries into KPI scalars.
     - [x] Compute makespan and exposure windows via deterministic playback baselines.
     - [x] Add per-landing mobilisation breakdowns.
     - [x] Introduce weather/downtime cost estimates (average production loss) based on playback downtime and weather signals.
-- [ ] Add regression fixtures and property-based checks confirming KPI ranges per scenario tier.
+- [x] Add regression fixtures and property-based checks confirming KPI ranges per scenario tier.
     - [x] Update minitoy/med42 expected outputs to include utilisation/makespan baselines.
     - [x] Add property checks ensuring utilisation stays in `[0, 1]` and makespan spans the latest productive day.
     - [x] Capture deterministic/stochastic KPI snapshots in `tests/fixtures/kpi/` for regression comparison.
-  - [ ] Wire KPIs into CLI reporting with configurable profiles and smoke tests.
+  - [x] Wire KPIs into CLI reporting with configurable profiles and smoke tests.
     - [x] Update `fhops evaluate`, telemetry payloads, and benchmark harness exports to surface the new KPIs.
     - [x] Add CLI flags or profiles to toggle KPI bundles once the expanded metrics land.
 
 - **Reporting templates**
   - [x] Draft tabular templates (CSV/Markdown) plus optional visuals for docs/notebooks.
     - Provide Markdown/CSV examples referencing the expanded KPI set.
-  - [ ] Provide Sphinx snippets and CLI help examples showcasing new KPI bundles.
-  - [ ] Capture follow-up backlog items for advanced dashboards (e.g., Plotly) if deferred.
-
+  - [x] Provide Sphinx snippets and CLI help examples showcasing new KPI bundles.
+  - [x] Capture follow-up backlog items for advanced dashboards (e.g., Plotly) if deferred (see Backlog & Ideas section).
+c
 ## Testing Strategy
 - [x] Regression fixtures representing deterministic and stochastic runs.
 - [x] Property-based checks to ensure KPIs remain within expected bounds.
