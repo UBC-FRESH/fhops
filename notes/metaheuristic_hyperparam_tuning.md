@@ -16,6 +16,8 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - [x] Define telemetry schema (`TelemetryRun`, `TelemetryStep`) covering scenario, solver, seeds, operator weights, acceptance stats, objective trajectory, timing.
 - [ ] Implement logging hooks in SA/ILS/Tabu solvers and playback validators writing to JSONL (phase 1) and SQLite (optional phase 2).
   - [x] Simulated Annealing JSONL prototype: run + step telemetry recorded via `RunTelemetryLogger`.
+  - [x] ILS JSONL logging (run + step snapshots, CLI integration).
+  - [x] Tabu JSONL logging (run + step snapshots, CLI integration).
 - [x] Provide helper module (`fhops.telemetry.run_logger`) with append/query utilities and retention controls.
 - [ ] Document retention/rotation strategy and storage location in this note + CLI help.
 
