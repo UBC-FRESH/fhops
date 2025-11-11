@@ -38,6 +38,8 @@ Status: Draft — scaffolding notebooks that surface deterministic and stochasti
   - `playback_walkthrough.ipynb`
   - `stochastic_robustness.ipynb`
   - `what_if_analysis.ipynb`
+- Store deterministic/stochastic assignment CSVs under `docs/examples/analytics/data/` for reproducible runs.
+- [x] Flesh out notebooks with narrative walkthroughs and executed outputs (scenario overview, KPIs, plots).
 - Provide `scripts/run_analytics_notebooks.py` to execute notebooks via `papermill`.
 - CI smoke target: execute notebooks with reduced sampling counts (configurable via environment variables).
 
