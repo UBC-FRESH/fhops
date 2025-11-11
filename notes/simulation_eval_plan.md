@@ -143,7 +143,7 @@ Status: Draft — roadmap Phase 3 owner document.
     - [x] Add CLI flags or profiles to toggle KPI bundles once the expanded metrics land.
 
 - **Reporting templates**
-  - [ ] Draft tabular templates (CSV/Markdown) plus optional visuals for docs/notebooks.
+  - [x] Draft tabular templates (CSV/Markdown) plus optional visuals for docs/notebooks.
     - Provide Markdown/CSV examples referencing the expanded KPI set.
   - [ ] Provide Sphinx snippets and CLI help examples showcasing new KPI bundles.
   - [ ] Capture follow-up backlog items for advanced dashboards (e.g., Plotly) if deferred.

@@ -10,7 +10,7 @@
 - Expanded ``docs/howto/evaluation.rst`` with a CLI → Parquet → pandas quickstart, telemetry pointers, and an aggregation helper reference for KPI contributors.
 - Added KPI-alignment regression ensuring playback aggregation outputs reproduce legacy KPI totals for minitoy/med42 fixtures.
 - Introduced ``KPIResult`` structured mappings so KPI totals and shift/day calendars share a canonical schema exported via both playback helpers and CLI telemetry, and added utilisation, makespan, and landing-level mobilisation metrics to the KPI bundle.
-- Added regression snapshots for deterministic/stochastic KPI outputs plus property-based coverage ensuring utilisation ratios stay within bounds, makespan aligns with productive days, and downtime/weather signals remain stable, alongside estimated production-loss metrics for downtime and weather events and a CLI `--kpi-mode` flag to toggle basic vs. extended KPI summaries.
+- Added regression snapshots for deterministic/stochastic KPI outputs plus property-based coverage ensuring utilisation ratios stay within bounds, makespan aligns with productive days, and downtime/weather signals remain stable, alongside estimated production-loss metrics for downtime and weather events, a CLI `--kpi-mode` flag to toggle basic vs. extended KPI summaries, and a Markdown KPI summary template under `docs/templates/` for reports.
 
 ## 2025-11-10 — Phase 3 playback planning kickoff
 - Expanded the Phase 3 roadmap checklist with detailed subtasks covering playback upgrades, KPI expansion, synthetic datasets, analytics notebooks, and hyperparameter tuning deliverables.
