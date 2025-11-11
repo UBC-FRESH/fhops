@@ -482,12 +482,14 @@ def solve_sa(
     telemetry_logger: RunTelemetryLogger | None = None
     if telemetry_log:
         scenario = pb.scenario
+        timeline = getattr(scenario, "timeline", None)
         scenario_features = {
             "num_days": getattr(scenario, "num_days", None),
             "num_blocks": len(getattr(scenario, "blocks", []) or []),
             "num_machines": len(getattr(scenario, "machines", []) or []),
             "num_landings": len(getattr(scenario, "landings", []) or []),
             "num_shift_calendar_entries": len(getattr(scenario, "shift_calendar", []) or []),
+            "num_timeline_shifts": len(getattr(timeline, "shifts", []) or []),
         }
         telemetry_logger = RunTelemetryLogger(
             log_path=telemetry_log,
