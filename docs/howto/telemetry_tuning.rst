@@ -129,6 +129,11 @@ The generated history table lists the best/mean objectives per algorithm and
 scenario across snapshots (derived from the filename stem). The optional Altair
 chart highlights objective trends at a glance.
 
+Continuous integration already copies the minitoy smoke sweep into the
+``history/`` subdirectory of the ``telemetry-report`` artifact using UTC
+timestamps, so you can download successive runs and feed them directly to the
+history command.
+
 CI Automation
 -------------
 
