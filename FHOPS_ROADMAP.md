@@ -95,7 +95,7 @@ before proposing new work.
     - [ ] Provide CLI surfaces for launching tuning sweeps with scenario bundles.
       - [x] Random tuner CLI (`fhops tune-random`) executing SA sweeps and recording telemetry.
       - [x] Bayesian/SMBO tuner CLI (`fhops tune-bayes`) built on Optuna.
-    - [x] Automate a CI smoke sweep that publishes `fhops telemetry report` artifacts for baseline scenarios.
+    - [x] Automate CI sweeps (minitoy + med42) that publish `fhops telemetry report` artifacts and history summaries for baseline scenarios (CSV/MD/HTML + published chart).
       - [x] Grid tuner CLI (`fhops tune-grid`) evaluating preset/batch-size combinations.
     - [ ] Add automated comparison reports summarising best configurations per scenario class.
     - [ ] Benchmark tuner strategies (grid vs. random vs. Bayesian/SMBO vs. neural/agentic) and log meta-telemetry for automated model selection.
