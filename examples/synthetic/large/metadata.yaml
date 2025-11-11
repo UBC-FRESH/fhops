@@ -1,0 +1,50 @@
+name: synthetic-large
+tier: large
+seed: 303
+counts:
+  blocks: 16
+  machines: 6
+  landings: 3
+  calendar: 108
+  production_rates: 96
+terrain_counts:
+  steep: 4
+  snow: 5
+  mixed: 7
+prescription_counts:
+  variable_retention: 8
+  clearcut: 8
+crew_capabilities:
+  crew-1:
+  - grader
+  - harvester
+  crew-2:
+  - grader
+  - harvester
+  - processor
+  crew-3:
+  - forwarder
+  - grader
+  - harvester
+  crew-4:
+  - forwarder
+  - grader
+  crew-1-2:
+  - grader
+  - harvester
+  crew-2-2:
+  - grader
+  - harvester
+  - processor
+blackouts:
+- start_day: 6
+  end_day: 8
+  reason: synthetic-blackout
+- start_day: 10
+  end_day: 12
+  reason: synthetic-blackout
+- start_day: 14
+  end_day: 15
+  reason: synthetic-blackout
+shifts_per_day: 2
+shift_hours: 9.145076361143277

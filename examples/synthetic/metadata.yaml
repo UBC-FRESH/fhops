@@ -1,63 +1,110 @@
 small:
   name: synthetic-small
+  tier: small
   seed: 101
-  num_days: 6
   counts:
     blocks: 4
     machines: 2
     landings: 1
     calendar: 12
     production_rates: 8
+  terrain_counts:
+    gentle: 3
+    mixed: 1
+  prescription_counts:
+    selection: 3
+    thinning: 1
+  crew_capabilities:
+    crew-1:
+    - harvester
+    crew-2:
+    - harvester
   blackouts: []
   shifts_per_day: 1
-  shift_hours: 11.638760837217669
+  shift_hours: 11.277521674435338
+  num_days: 6
 medium:
   name: synthetic-medium
+  tier: medium
   seed: 202
-  num_days: 12
   counts:
     blocks: 8
     machines: 4
     landings: 2
     calendar: 48
     production_rates: 32
-  blackouts:
-  - start_day: 9
-    end_day: 9
-    reason: synthetic-blackout
-  - start_day: 10
-    end_day: 11
-    reason: synthetic-blackout
+  terrain_counts:
+    rolling: 1
+    mixed: 6
+    steep: 1
+  prescription_counts:
+    clearcut: 2
+    thinning: 6
+  crew_capabilities:
+    crew-1:
+    - forwarder
+    - harvester
+    crew-2:
+    - harvester
+    - processor
+    crew-3:
+    - forwarder
+    crew-1-2:
+    - forwarder
+    - harvester
+  blackouts: []
   shifts_per_day: 1
-  shift_hours: 10.012292290145101
+  shift_hours: 10.024584580290202
+  num_days: 12
 large:
   name: synthetic-large
+  tier: large
   seed: 303
-  num_days: 18
   counts:
     blocks: 16
     machines: 6
     landings: 3
     calendar: 108
     production_rates: 96
+  terrain_counts:
+    steep: 4
+    snow: 5
+    mixed: 7
+  prescription_counts:
+    variable_retention: 8
+    clearcut: 8
+  crew_capabilities:
+    crew-1:
+    - grader
+    - harvester
+    crew-2:
+    - grader
+    - harvester
+    - processor
+    crew-3:
+    - forwarder
+    - grader
+    - harvester
+    crew-4:
+    - forwarder
+    - grader
+    crew-1-2:
+    - grader
+    - harvester
+    crew-2-2:
+    - grader
+    - harvester
+    - processor
   blackouts:
-  - start_day: 4
-    end_day: 4
-    reason: synthetic-blackout
-  - start_day: 5
-    end_day: 6
-    reason: synthetic-blackout
-  - start_day: 7
-    end_day: 9
-    reason: synthetic-blackout
-  - start_day: 8
+  - start_day: 6
     end_day: 8
     reason: synthetic-blackout
-  - start_day: 9
-    end_day: 9
+  - start_day: 10
+    end_day: 12
     reason: synthetic-blackout
   - start_day: 14
     end_day: 15
     reason: synthetic-blackout
   shifts_per_day: 2
-  shift_hours: 10.572538180571637
+  shift_hours: 9.145076361143277
+  num_days: 18

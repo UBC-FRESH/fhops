@@ -7,10 +7,11 @@ data:
   landings: data/landings.csv
   calendar: data/calendar.csv
   prod_rates: data/prod_rates.csv
+  crew_assignments: data/crew_assignments.csv
 timeline:
   shifts:
   - name: S1
-    hours: 11.638760837217669
+    hours: 11.277521674435338
     shifts_per_day: 1
   blackouts: []
   days_per_week: 7

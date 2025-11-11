@@ -15,6 +15,24 @@ Each bundle includes a ``scenario.yaml`` pointing at the CSV tables under ``data
 loaded directly with ``fhops.scenario.io.load_scenario``; the regression tests (`tests/test_synthetic_dataset.py`)
 exercise this path to ensure compatibility.
 
+Columns & metadata
+------------------
+
+The generators now attach terrain/prescription tags to every block and assign each machine to a crew
+with recorded capability notes. The tables therefore expose:
+
+* ``blocks.csv`` — includes ``terrain`` and ``prescription`` columns alongside the scheduling window.
+* ``machines.csv`` — adds a ``crew`` column mapping machines to the generated crew IDs.
+* ``crew_assignments.csv`` — the scenario-level mapping written for the loader/validators so downstream
+  tooling can recover crew → machine relationships.
+
+Bundle metadata is captured in two places:
+
+* ``examples/synthetic/<tier>/metadata.yaml`` summarises the sample-level counts, terrain/prescription mix,
+  crew capability pools, and blackout windows.
+* ``examples/synthetic/metadata.yaml`` aggregates the same information for all tiers so automation can
+  reference the library without reading every directory.
+
 Reproducibility
 ---------------
 
