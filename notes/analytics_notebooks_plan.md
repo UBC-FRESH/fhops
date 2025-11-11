@@ -37,7 +37,7 @@ Status: Draft — scaffolding notebooks that surface deterministic and stochasti
    - Run `fhops solve-heur --telemetry-log`, parse JSONL for objective/acceptance trends. *(sample telemetry log ingested and plotted)*
    - Visualise operator stats and runtime evolution.
 8. **Ensemble Resilience Comparison**
-   - Compare multiple stochastic tiers (small/medium/large).
+   - Compare multiple stochastic tiers (small/medium/large). *(notebook executed with mean/std comparisons)*
    - Compute risk metrics, show production/downtime distributions side-by-side.
 9. **Operator/Benchmark Sweep**
    - Parameterise `fhops bench suite` with multiple presets.
