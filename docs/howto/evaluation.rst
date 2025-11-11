@@ -81,7 +81,16 @@ shareable summary:
    pathlib.Path("tmp/minitoy_kpi_summary.md").write_text(report, encoding="utf-8")
 
 You can embed the generated Markdown as-is in docs/notebooks or adapt the template to match your
-reporting format (CSV, HTML, etc.).
+reporting format (CSV, HTML, etc.). A CSV variant lives alongside the Markdown template, so you can
+generate spreadsheet-friendly snapshots just as easily:
+
+.. code-block:: python
+
+   csv_template = Template(pathlib.Path("docs/templates/kpi_summary.csv").read_text(encoding="utf-8"))
+   pathlib.Path("tmp/minitoy_kpi_summary.csv").write_text(
+       csv_template.safe_substitute({key: kpi_data.get(key, "-") for key in kpi_data}),
+       encoding="utf-8",
+   )
 
 Parquet and Markdown exports
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
