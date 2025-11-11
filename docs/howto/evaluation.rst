@@ -120,6 +120,11 @@ that mirror the CLI exports:
 * ``compute_kpis(...)`` returns a :class:`fhops.evaluation.KPIResult`, a mapping that exposes scalar
   KPI totals while optionally attaching the canonical shift/day calendars. Use ``to_dict()`` when you
   need a JSON-serialisable payload or the helper ``with_calendars`` to bundle playback DataFrames.
+* ``compute_utilisation_metrics(shift_df, day_df)`` — helper under
+  :mod:`fhops.evaluation.metrics.aggregates` that produces mean/weighted utilisation values plus
+  per-machine and per-role breakdowns.
+* ``compute_makespan_metrics(problem, shift_df)`` — derives the latest productive day/shift (makespan)
+  according to the scenario’s shift ordering; accepts fallback day/shift sets for deterministic/stochastic blends.
 
 KPI formulas & required signals
 -------------------------------
@@ -129,20 +134,19 @@ The current KPI bundle includes:
 * ``total_production`` — sum of ``production_units`` over all day summaries.
 * ``completed_blocks`` — count of blocks whose remaining work is zero after playback.
 * ``mobilisation_cost`` — total mobilisation spend accumulated in playback record metadata.
-* ``mobilisation_cost_by_machine`` — JSON mapping of machine IDs to their cumulative mobilisation outlay.
+* ``mobilisation_cost_by_machine`` / ``mobilisation_cost_by_landing`` — JSON mappings that expose
+  cumulative mobilisation outlay by machine and landing.
 * ``sequencing_violation_*`` (when harvest systems are present) — counts and breakdowns derived from the
   heuristic/MIP sequencing checks captured during playback.
+* ``utilisation_ratio_mean_*`` / ``utilisation_ratio_weighted_*`` — average and weighted utilisation taken
+  from the shift/day calendars, with optional breakdowns by machine or role.
+* ``makespan_day`` / ``makespan_shift`` — latest day/shift containing productive assignments according to
+  the scenario’s shift definition order.
 
-Upcoming KPIs planned for Phase 3 expansion will reuse the shift/day summaries as follows:
+Upcoming KPI extensions planned for Phase 3 will reuse the same shift/day summaries:
 
-* **Utilisation** — average of ``utilisation_ratio`` at the shift or day level, with optional filters
-  by machine role or landing. Requires ``available_hours`` and ``total_hours`` from the shift summaries.
-* **Makespan** — latest day (and shift) with non-zero production, obtainable by inspecting the day
-  summary index once stochastic samples are aggregated.
-* **Cost variants** — mobilisation spend is already tracked; property-based verifications will
-  introduce additional cost categories (e.g., weather downtime penalties) that extend ``KPIResult``.
-* **Mobilisation spend per landing/system** — will consume the shift summaries' machine/landing metadata
-  once those columns are added to the playback pipeline.
+* **Weather/downtime penalties** — additional cost categories driven by stochastic events.
+* **Landing/system production breakdowns** — richer summaries for dashboards/notebooks.
 
 Before adding a new KPI ensure the required signal exists in either ``ShiftSummary`` or ``DaySummary``.
 If a field is missing, extend the playback dataclasses first so both deterministic and stochastic flows

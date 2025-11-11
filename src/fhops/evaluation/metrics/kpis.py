@@ -14,6 +14,8 @@ from fhops.evaluation.playback.aggregates import DAY_SUMMARY_COLUMNS, SHIFT_SUMM
 from fhops.scenario.contract import Problem
 from fhops.scheduling.mobilisation import build_distance_lookup
 
+from .aggregates import compute_makespan_metrics, compute_utilisation_metrics
+
 __all__ = ["KPIResult", "compute_kpis"]
 
 
@@ -229,68 +231,15 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
     shift_df = shift_dataframe(playback_result)
     day_df = day_dataframe(playback_result)
 
-    if not shift_df.empty:
-        util_shift = shift_df["utilisation_ratio"].dropna()
-        if not util_shift.empty:
-            result["utilisation_ratio_mean_shift"] = float(util_shift.mean())
-        total_hours = float(shift_df["total_hours"].sum())
-        total_available = float(shift_df["available_hours"].sum())
-        if total_available > 0:
-            result["utilisation_ratio_weighted_shift"] = total_hours / total_available
-        per_machine = (
-            shift_df.dropna(subset=["utilisation_ratio"])
-            .groupby("machine_id")["utilisation_ratio"]
-            .mean()
-            .dropna()
-        )
-        if not per_machine.empty:
-            result["utilisation_ratio_by_machine"] = json.dumps(
-                {machine: round(float(value), 4) for machine, value in sorted(per_machine.items())}
-            )
-        if "machine_role" in shift_df.columns:
-            per_role = (
-                shift_df.dropna(subset=["machine_role", "utilisation_ratio"])
-                .groupby("machine_role")["utilisation_ratio"]
-                .mean()
-                .dropna()
-            )
-            if not per_role.empty:
-                result["utilisation_ratio_by_role"] = json.dumps(
-                    {role: round(float(value), 4) for role, value in sorted(per_role.items())}
-                )
-        active_shifts = shift_df[shift_df["production_units"] > 0]
-        if not active_shifts.empty:
-            shift_order = {(shift.day, shift.shift_id): idx for idx, shift in enumerate(pb.shifts)}
+    utilisation_metrics = compute_utilisation_metrics(shift_df, day_df)
+    result.update(utilisation_metrics)
 
-            def _rank(row: pd.Series) -> tuple[int, float]:
-                key = (int(row["day"]), str(row["shift_id"]))
-                order = shift_order.get(key)
-                if order is not None:
-                    return (0, float(order))
-                return (1, float(row["day"]))
-
-            ranked = active_shifts.copy()
-            ranked["_rank_tuple"] = ranked.apply(_rank, axis=1)
-            last_row = ranked.sort_values("_rank_tuple").iloc[-1]
-            result["makespan_day"] = int(last_row["day"])
-            result["makespan_shift"] = str(last_row["shift_id"])
-
-    if "makespan_day" not in result:
-        result["makespan_day"] = max(days_with_work) if days_with_work else 0
-    if "makespan_shift" not in result:
-        if shift_keys_with_work:
-            day, shift_id = max(shift_keys_with_work)
-            result["makespan_shift"] = str(shift_id)
-        else:
-            result["makespan_shift"] = "N/A"
-
-    if not day_df.empty:
-        util_day = day_df["utilisation_ratio"].dropna()
-        if not util_day.empty:
-            result["utilisation_ratio_mean_day"] = float(util_day.mean())
-        total_hours_day = float(day_df["total_hours"].sum())
-        total_available_day = float(day_df["available_hours"].sum())
-        if total_available_day > 0:
-            result["utilisation_ratio_weighted_day"] = total_hours_day / total_available_day
+    makespan_metrics = compute_makespan_metrics(
+        pb,
+        shift_df,
+        fallback_days=days_with_work,
+        fallback_shift_keys=shift_keys_with_work,
+    )
+    result.update(makespan_metrics)
 
     return KPIResult(totals=result, shift_calendar=shift_df, day_calendar=day_df)
