@@ -175,6 +175,35 @@ def test_eval_playback_cli_landing(tmp_path: Path):
     assert day_df["production_units"].sum() < base_total * 2
 
 
+def test_eval_playback_cli_writes_telemetry(tmp_path: Path):
+    scenario_path = "tests/fixtures/regression/regression.yaml"
+    assignments_path = _solve_sa_assignments(scenario_path, tmp_path)
+    telemetry_log = tmp_path / "runs.jsonl"
+
+    result = runner.invoke(
+        app,
+        [
+            "eval-playback",
+            scenario_path,
+            "--assignments",
+            str(assignments_path),
+            "--telemetry-log",
+            str(telemetry_log),
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert telemetry_log.exists()
+    lines = telemetry_log.read_text(encoding="utf-8").strip().splitlines()
+    assert len(lines) == 1
+    record = json.loads(lines[0])
+    assert record["solver"] == "playback"
+    assert record["status"] == "ok"
+    assert record["context"]["assignments_path"] == str(assignments_path)
+    steps_file = telemetry_log.parent / "steps" / f"{record['run_id']}.jsonl"
+    assert steps_file.exists()
+    assert steps_file.read_text(encoding="utf-8").strip()
+
+
 def test_evaluate_cli_basic_kpi_mode(tmp_path: Path):
     scenario_path = "tests/fixtures/regression/regression.yaml"
     assignments_path = _solve_sa_assignments(scenario_path, tmp_path)
