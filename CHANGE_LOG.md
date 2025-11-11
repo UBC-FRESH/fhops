@@ -1,5 +1,11 @@
 # Development Change Log
 
+## 2025-11-11 — Playback telemetry integration
+- Extended `fhops eval playback` with a `--telemetry-log` option that records export metrics, sampling parameters, and artifact paths via the shared playback exporter helpers.
+- Ensured playback exports reuse the canonical aggregation helpers in both deterministic and stochastic modes so telemetry reflects the exact CLI outputs.
+- Added regression coverage (`tests/test_cli_playback_exports.py::test_eval_playback_telemetry_log`) asserting the JSONL payload captures scenario metadata and export metrics.
+- Updated shift/day reporting planning notes to reflect the completed telemetry wiring.
+
 ## 2025-11-10 — Phase 3 playback planning kickoff
 - Expanded the Phase 3 roadmap checklist with detailed subtasks covering playback upgrades, KPI expansion, synthetic datasets, analytics notebooks, and hyperparameter tuning deliverables.
 - Logged the deterministic playback audit (current assets vs. gaps) inside `notes/simulation_eval_plan.md` to anchor upcoming shift/day reporting work.

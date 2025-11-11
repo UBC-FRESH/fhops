@@ -101,3 +101,42 @@ def _resolve_assignments_fixture(scenario_path: str, tmp_path: Path) -> Path:
     if result.exit_code != 0:
         raise AssertionError(result.stdout)
     return assignments
+
+
+def test_eval_playback_telemetry_log(tmp_path: Path):
+    scenario_path = Path("examples/minitoy/scenario.yaml")
+    assignments = Path("tests/fixtures/playback/minitoy_assignments.csv")
+    telemetry_log = tmp_path / "telemetry.jsonl"
+    shift_out = tmp_path / "shift.csv"
+    day_out = tmp_path / "day.csv"
+    summary_md = tmp_path / "summary.md"
+
+    result = runner.invoke(
+        app,
+        [
+            "eval-playback",
+            str(scenario_path),
+            "--assignments",
+            str(assignments),
+            "--shift-out",
+            str(shift_out),
+            "--day-out",
+            str(day_out),
+            "--summary-md",
+            str(summary_md),
+            "--telemetry-log",
+            str(telemetry_log),
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert telemetry_log.exists()
+    payload = telemetry_log.read_text(encoding="utf-8").strip().splitlines()
+    assert len(payload) == 1
+    record = json.loads(payload[0])
+
+    assert record["source"] == "eval-playback"
+    assert record["scenario_path"] == str(scenario_path)
+    assert record["export"]["shift_csv"] == str(shift_out)
+    assert record["export"]["day_csv"] == str(day_out)
+    assert record["export"]["summary_md"] == str(summary_md)
+    assert record["export_metrics"]["samples"] == 1

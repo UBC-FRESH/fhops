@@ -69,7 +69,7 @@ Status: Draft — roadmap Phase 3 owner document.
   - [x] CSV exports via CLI (`--shift-out`, `--day-out`).
   - [x] Parquet exports with dependency checks (`--shift-parquet`, `--day-parquet`).
   - [x] Markdown summary generation (`--summary-md`).
-  - [x] Refactor serialization paths so CLI, telemetry, and automation share a single helper to avoid duplication (see `playback/exporters.py`; telemetry integration still pending).
+  - [x] Refactor serialization paths so CLI, telemetry, and automation share a single helper to avoid duplication (see `playback/exporters.py`; telemetry integration now wired via `--telemetry-log`).
 - **Benchmark validation & fixtures**
   - [x] Capture deterministic fixtures for minitoy/med42 (CSV).
   - [ ] Capture matching Parquet fixtures (or generate on the fly) and add regression tests diffing CLI exports vs. stored schema.
