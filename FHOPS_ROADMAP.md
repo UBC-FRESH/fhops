@@ -86,6 +86,7 @@ before proposing new work.
     - [x] Define telemetry schema (solver configuration, KPIs, runtime stats) and storage backend (drafted in `notes/metaheuristic_hyperparam_tuning.md`).
     - [ ] Implement logging hooks in solvers and playback runs, persisting to local store.
       - [x] Simulated Annealing JSONL run logger emitting run/step telemetry (`RunTelemetryLogger`, `solve_sa`).
+      - [x] ILS + Tabu telemetry integration (run/step logging, CLI wiring).
     - [ ] Document data retention/rotation strategy in tuning notes.
   - [ ] Conventional tuning toolkit
     - [ ] Implement grid/random/Bayesian search drivers leveraging telemetry store.

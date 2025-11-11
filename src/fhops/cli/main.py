@@ -437,7 +437,7 @@ def solve_heur_cmd(
         console.print(
             f"[dim]Parallel multi-start executed {len(runs_meta)} runs; best seed={seed_used}. See telemetry log for per-run details.[/]"
         )
-    elif telemetry_log:
+    elif telemetry_log and "telemetry_run_id" not in meta:
         stats = meta.get("operators_stats", {}) or {}
         record = {
             "timestamp": datetime.now(UTC).isoformat(),
@@ -608,6 +608,23 @@ def solve_ils_cmd(
                 hybrid_mip_time_limit = value
     extra_ils_kwargs: dict[str, Any] = profile_extra_kwargs
 
+    telemetry_kwargs: dict[str, Any] = {}
+    existing_ctx = extra_ils_kwargs.pop("telemetry_context", None)
+    if telemetry_log:
+        base_context: dict[str, Any] = {
+            "scenario_path": str(scenario),
+            "source": "cli.solve-ils",
+        }
+        if selected_profile:
+            base_context["profile"] = selected_profile.name
+            base_context["profile_version"] = selected_profile.version
+        if isinstance(existing_ctx, dict):
+            base_context.update(existing_ctx)
+        telemetry_kwargs["telemetry_log"] = telemetry_log
+        telemetry_kwargs["telemetry_context"] = base_context
+    elif isinstance(existing_ctx, dict):
+        extra_ils_kwargs["telemetry_context"] = existing_ctx
+
     res = solve_ils(
         pb,
         iters=iters,
@@ -621,6 +638,7 @@ def solve_ils_cmd(
         hybrid_use_mip=hybrid_use_mip,
         hybrid_mip_time_limit=hybrid_mip_time_limit,
         **extra_ils_kwargs,
+        **telemetry_kwargs,
     )
     assignments = cast(pd.DataFrame, res["assignments"])
     objective = cast(float, res.get("objective", 0.0))
@@ -648,7 +666,7 @@ def solve_ils_cmd(
                     f"accept_rate={payload.get('acceptance_rate', 0):.3f}, "
                     f"weight={payload.get('weight', 0)}"
                 )
-    if telemetry_log:
+    if telemetry_log and "telemetry_run_id" not in meta:
         record = {
             "timestamp": datetime.now(UTC).isoformat(),
             "source": "solve-ils",
@@ -786,6 +804,23 @@ def solve_tabu_cmd(
                 stall_limit = value
     tenure = tabu_tenure if tabu_tenure and tabu_tenure > 0 else None
 
+    existing_ctx = profile_extra_kwargs.pop("telemetry_context", None)
+    telemetry_kwargs: dict[str, Any] = {}
+    if telemetry_log:
+        base_context: dict[str, Any] = {
+            "scenario_path": str(scenario),
+            "source": "cli.solve-tabu",
+        }
+        if selected_profile:
+            base_context["profile"] = selected_profile.name
+            base_context["profile_version"] = selected_profile.version
+        if isinstance(existing_ctx, dict):
+            base_context.update(existing_ctx)
+        telemetry_kwargs["telemetry_log"] = telemetry_log
+        telemetry_kwargs["telemetry_context"] = base_context
+    elif isinstance(existing_ctx, dict):
+        profile_extra_kwargs["telemetry_context"] = existing_ctx
+
     res = solve_tabu(
         pb,
         iters=iters,
@@ -797,6 +832,7 @@ def solve_tabu_cmd(
         tabu_tenure=tenure,
         stall_limit=stall_limit,
         **profile_extra_kwargs,
+        **telemetry_kwargs,
     )
     assignments = cast(pd.DataFrame, res["assignments"])
     objective = cast(float, res.get("objective", 0.0))
@@ -823,7 +859,7 @@ def solve_tabu_cmd(
                     f"accepted={payload.get('accepted', 0)}, "
                     f"weight={payload.get('weight', 0)}"
                 )
-    if telemetry_log:
+    if telemetry_log and "telemetry_run_id" not in meta:
         record = {
             "timestamp": datetime.now(UTC).isoformat(),
             "source": "solve-tabu",
