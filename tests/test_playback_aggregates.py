@@ -14,6 +14,8 @@ from fhops.evaluation import (
     day_dataframe,
     day_dataframe_from_ensemble,
     compute_kpis,
+    compute_makespan_metrics,
+    compute_utilisation_metrics,
     machine_utilisation_summary,
     run_playback,
     run_stochastic_playback,
@@ -127,6 +129,7 @@ def test_shift_totals_match_day_totals(samples, enable_downtime, enable_weather,
     scenario = load_scenario("examples/med42/scenario.yaml")
     problem = Problem.from_scenario(scenario)
     assignments = _load_assignments("med42")
+    kpis = compute_kpis(problem, assignments)
 
     cfg = _build_sampling_config(samples, enable_downtime, enable_weather, enable_landing)
     result = run_stochastic_playback(problem, assignments, sampling_config=cfg)
@@ -182,6 +185,75 @@ def test_shift_totals_match_day_totals(samples, enable_downtime, enable_weather,
     available_day = merged["available_hours_day"].to_numpy(dtype=float)
     available_shift = merged["available_hours_shift"].to_numpy(dtype=float)
     assert np.all(available_day + 1e-6 >= available_shift)
+
+    util_metrics = compute_utilisation_metrics(shift_df, day_df)
+    for key in [
+        "utilisation_ratio_mean_shift",
+        "utilisation_ratio_weighted_shift",
+        "utilisation_ratio_mean_day",
+        "utilisation_ratio_weighted_day",
+    ]:
+        value = util_metrics.get(key)
+        if value is not None:
+            assert 0.0 <= value <= 1.0 + 1e-9
+
+    util_machine_str = util_metrics.get("utilisation_ratio_by_machine")
+    if util_machine_str:
+        per_machine = json.loads(util_machine_str)
+        assert per_machine
+        assert all(0.0 <= val <= 1.0 + 1e-9 for val in per_machine.values())
+
+    util_role_str = util_metrics.get("utilisation_ratio_by_role")
+    if util_role_str:
+        per_role = json.loads(util_role_str)
+        assert per_role
+        assert all(0.0 <= val <= 1.0 + 1e-9 for val in per_role.values())
+
+    active_days = day_df[day_df["production_units"] > 0]
+    fallback_days = set(int(day) for day in active_days["day"]) if not active_days.empty else None
+    active_shifts = shift_df[shift_df["production_units"] > 0]
+    fallback_shift_keys = (
+        set((int(row["day"]), str(row["shift_id"])) for _, row in active_shifts.iterrows())
+        if not active_shifts.empty
+        else None
+    )
+
+    makespan_metrics = compute_makespan_metrics(
+        problem,
+        shift_df,
+        fallback_days=fallback_days,
+        fallback_shift_keys=fallback_shift_keys,
+    )
+    assert makespan_metrics["makespan_day"] >= 0
+    if fallback_days:
+        assert makespan_metrics["makespan_day"] >= max(fallback_days)
+    if fallback_shift_keys:
+        assert makespan_metrics["makespan_shift"] != "N/A"
+
+    if kpis.get("utilisation_ratio_mean_shift") is not None:
+        assert 0.0 <= kpis["utilisation_ratio_mean_shift"] <= 1.0 + 1e-9
+    if kpis.get("utilisation_ratio_weighted_shift") is not None:
+        assert 0.0 <= kpis["utilisation_ratio_weighted_shift"] <= 1.0 + 1e-9
+    if kpis.get("utilisation_ratio_mean_day") is not None:
+        assert 0.0 <= kpis["utilisation_ratio_mean_day"] <= 1.0 + 1e-9
+    if kpis.get("utilisation_ratio_weighted_day") is not None:
+        assert 0.0 <= kpis["utilisation_ratio_weighted_day"] <= 1.0 + 1e-9
+
+    if kpis.get("utilisation_ratio_by_machine"):
+        per_machine = json.loads(kpis["utilisation_ratio_by_machine"])
+        assert per_machine
+        assert all(0.0 <= val <= 1.0 + 1e-9 for val in per_machine.values())
+
+    util_role_json = kpis.get("utilisation_ratio_by_role")
+    if util_role_json:
+        per_role = json.loads(util_role_json)
+        assert per_role
+        assert all(0.0 <= val <= 1.0 + 1e-9 for val in per_role.values())
+
+    if "makespan_day" in kpis and fallback_days:
+        assert kpis["makespan_day"] >= max(fallback_days)
+    if "makespan_shift" in kpis and fallback_shift_keys:
+        assert kpis["makespan_shift"] != "N/A"
 
 
 _playback_record_strategy = st.builds(
