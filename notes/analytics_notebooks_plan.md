@@ -28,13 +28,13 @@ Status: Draft — scaffolding notebooks that surface deterministic and stochasti
    - Explore landing shock parameters and throughput impact. *(initial walkthrough scaffolded and executed)*
    - Compare shift/day stats pre/post congestion, chart landing utilisation.
 5. **Harvest System Mix Explorer**
-   - Showcase system mix presets from synthetic generator.
+   - Showcase system mix presets from synthetic generator. *(scaffolded/executed with baseline vs custom mix comparison)*
    - Analyse machine-role allocation, production contribution, utilisation heatmap.
 6. **KPI Decomposition Deep Dive**
-   - Break down costs: mobilisation, sequencing, downtime, weather.
+   - Break down costs: mobilisation, sequencing, downtime, weather. *(executed deterministic walkthrough added)*
    - Integrate CLI outputs and cross-reference reference docs.
 7. **Telemetry & Solver Diagnostics**
-   - Run `fhops solve-heur --telemetry-log`, parse JSONL for objective/acceptance trends.
+   - Run `fhops solve-heur --telemetry-log`, parse JSONL for objective/acceptance trends. *(sample telemetry log ingested and plotted)*
    - Visualise operator stats and runtime evolution.
 8. **Ensemble Resilience Comparison**
    - Compare multiple stochastic tiers (small/medium/large).
