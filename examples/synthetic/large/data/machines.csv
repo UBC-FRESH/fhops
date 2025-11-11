@@ -1,7 +1,7 @@
-id,role,daily_hours
-M1,harvester,10.65
-M2,forwarder,11.15
-M3,harvester,11.86
-M4,forwarder,11.86
-M5,harvester,11.93
-M6,forwarder,11.25
+id,role,crew,daily_hours
+M1,harvester,crew-1,9.29
+M2,forwarder,crew-2,10.3
+M3,harvester,crew-3,11.73
+M4,forwarder,crew-4,11.73
+M5,harvester,crew-1-2,11.85
+M6,forwarder,crew-2-2,10.5

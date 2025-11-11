@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import random
+from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -12,6 +13,7 @@ import yaml
 from fhops.scenario.contract import (
     Block,
     CalendarEntry,
+    CrewAssignment,
     Landing,
     Machine,
     ProductionRate,
@@ -19,6 +21,37 @@ from fhops.scenario.contract import (
 )
 from fhops.scheduling.systems import HarvestSystem, default_system_registry
 from fhops.scheduling.timeline import BlackoutWindow, ShiftDefinition, TimelineConfig
+
+
+TIER_DEFAULTS: dict[str, dict[str, object]] = {
+    "small": {
+        "terrain_pool": ["gentle", "mixed"],
+        "prescription_pool": ["thinning", "selection"],
+        "crew_pool": ["crew-1", "crew-2"],
+        "capability_pool": ["harvester", "forwarder"],
+        "crew_capability_span": (1, 1),
+        "blackout_probability": 0.0,
+        "blackout_duration": (1, 1),
+    },
+    "medium": {
+        "terrain_pool": ["rolling", "mixed", "steep"],
+        "prescription_pool": ["clearcut", "thinning"],
+        "crew_pool": ["crew-1", "crew-2", "crew-3"],
+        "capability_pool": ["harvester", "forwarder", "processor"],
+        "crew_capability_span": (1, 2),
+        "blackout_probability": 0.12,
+        "blackout_duration": (1, 2),
+    },
+    "large": {
+        "terrain_pool": ["steep", "mixed", "snow"],
+        "prescription_pool": ["clearcut", "variable_retention"],
+        "crew_pool": ["crew-1", "crew-2", "crew-3", "crew-4"],
+        "capability_pool": ["harvester", "forwarder", "processor", "grader"],
+        "crew_capability_span": (2, 3),
+        "blackout_probability": 0.2,
+        "blackout_duration": (2, 3),
+    },
+}
 
 
 @dataclass
@@ -134,6 +167,12 @@ class SyntheticDatasetConfig:
     blackout_probability: float = 0.1
     blackout_duration: tuple[int, int] | int = (1, 2)
     role_pool: list[str] = field(default_factory=lambda: ["harvester", "forwarder"])
+    tier: str | None = None
+    terrain_pool: list[str] = field(default_factory=lambda: ["mixed"])
+    prescription_pool: list[str] = field(default_factory=lambda: ["clearcut"])
+    crew_pool: list[str] = field(default_factory=lambda: ["crew-1", "crew-2"])
+    capability_pool: list[str] = field(default_factory=lambda: ["harvester", "forwarder"])
+    crew_capability_span: tuple[int, int] = (1, 2)
 
 
 @dataclass
@@ -146,8 +185,15 @@ class SyntheticDatasetBundle:
     landings: pd.DataFrame
     calendar: pd.DataFrame
     production_rates: pd.DataFrame
+    metadata: dict[str, object] | None = None
 
-    def write(self, out_dir: Path, *, include_yaml: bool = True) -> Path:
+    def write(
+        self,
+        out_dir: Path,
+        *,
+        include_yaml: bool = True,
+        metadata_path: Path | None = None,
+    ) -> Path:
         out_dir = Path(out_dir)
         data_dir = out_dir / "data"
         data_dir.mkdir(parents=True, exist_ok=True)
@@ -160,17 +206,26 @@ class SyntheticDatasetBundle:
 
         scenario_path = out_dir / "scenario.yaml"
         if include_yaml:
+            data_section: dict[str, str] = {
+                "blocks": "data/blocks.csv",
+                "machines": "data/machines.csv",
+                "landings": "data/landings.csv",
+                "calendar": "data/calendar.csv",
+                "prod_rates": "data/prod_rates.csv",
+            }
+            if self.scenario.crew_assignments is not None:
+                crew_path = data_dir / "crew_assignments.csv"
+                crew_records = [
+                    assignment.model_dump(exclude_none=True)
+                    for assignment in self.scenario.crew_assignments
+                ]
+                pd.DataFrame.from_records(crew_records).to_csv(crew_path, index=False)
+                data_section["crew_assignments"] = "data/crew_assignments.csv"
             payload: dict[str, object] = {
                 "name": self.scenario.name,
                 "num_days": self.scenario.num_days,
                 "schema_version": self.scenario.schema_version,
-                "data": {
-                    "blocks": "data/blocks.csv",
-                    "machines": "data/machines.csv",
-                    "landings": "data/landings.csv",
-                    "calendar": "data/calendar.csv",
-                    "prod_rates": "data/prod_rates.csv",
-                },
+                "data": data_section,
             }
             if self.scenario.timeline is not None:
                 payload["timeline"] = self.scenario.timeline.model_dump(exclude_none=True)
@@ -188,6 +243,12 @@ class SyntheticDatasetBundle:
 
             with scenario_path.open("w", encoding="utf-8") as handle:
                 yaml.safe_dump(payload, handle, sort_keys=False)
+        meta_out = metadata_path
+        if meta_out is None and self.metadata is not None:
+            meta_out = out_dir / "metadata.yaml"
+        if meta_out is not None and self.metadata is not None:
+            with Path(meta_out).open("w", encoding="utf-8") as handle:
+                yaml.safe_dump(self.metadata, handle, sort_keys=False)
         return scenario_path
 
 
@@ -209,18 +270,29 @@ def generate_random_dataset(
     """Generate a random synthetic dataset bundle (scenario + CSV tables)."""
 
     rng = random.Random(seed)
+    feature_rng = random.Random(seed + 10_001)
+    tier_defaults = TIER_DEFAULTS.get((config.tier or "").lower(), {})
     num_blocks = _sample_int(rng, config.num_blocks)
     num_days = _sample_int(rng, config.num_days)
     num_machines = _sample_int(rng, config.num_machines)
     num_landings = max(1, _sample_int(rng, config.num_landings))
 
     landing_ids = [f"L{i + 1}" for i in range(num_landings)]
+    blackout_probability = tier_defaults.get("blackout_probability", config.blackout_probability)
+    blackout_duration = tier_defaults.get("blackout_duration", config.blackout_duration)
+    terrain_pool = tier_defaults.get("terrain_pool", config.terrain_pool)
+    prescription_pool = tier_defaults.get("prescription_pool", config.prescription_pool)
+    crew_pool = tier_defaults.get("crew_pool", config.crew_pool)
+    capability_pool = tier_defaults.get("capability_pool", config.capability_pool or config.role_pool)
+    crew_capability_span = tier_defaults.get("crew_capability_span", config.crew_capability_span)
     blocks_records: list[dict[str, object]] = []
     for idx in range(num_blocks):
         landing_id = rng.choice(landing_ids)
         work_required = round(_sample_float(rng, config.work_required), 3)
         earliest = rng.randint(1, num_days)
         latest = rng.randint(earliest, num_days)
+        terrain = feature_rng.choice(terrain_pool) if terrain_pool else None
+        prescription = feature_rng.choice(prescription_pool) if prescription_pool else None
         blocks_records.append(
             {
                 "id": f"B{idx + 1}",
@@ -228,17 +300,65 @@ def generate_random_dataset(
                 "work_required": work_required,
                 "earliest_start": earliest,
                 "latest_finish": latest,
+                **({"terrain": terrain} if terrain is not None else {}),
+                **({"prescription": prescription} if prescription is not None else {}),
             }
         )
 
     role_pool = config.role_pool or []
     machines_records: list[dict[str, object]] = []
+    base_crews = crew_pool or [f"crew-{idx + 1}" for idx in range(num_machines)]
+    crew_capabilities: dict[str, list[str]] = {}
+    base_capabilities: dict[str, list[str]] = {}
+    if base_crews:
+        span_low, span_high = crew_capability_span
+        span_low = max(0, int(span_low))
+        span_high = max(span_low, int(span_high))
+        max_pick = len(capability_pool)
+        for base in base_crews:
+            if base in base_capabilities:
+                continue
+            if max_pick == 0 or span_high == 0:
+                base_capabilities[base] = []
+                continue
+            pick_low = min(max_pick, span_low)
+            pick_high = min(max_pick, span_high)
+            if pick_high <= 0:
+                base_capabilities[base] = []
+                continue
+            lower = pick_low if pick_low > 0 else 1
+            pick = feature_rng.randint(lower, pick_high)
+            pick = max(1 if pick_low > 0 else 0, pick)
+            pick = min(max_pick, pick)
+            if pick == 0:
+                base_capabilities[base] = []
+                continue
+            base_capabilities[base] = sorted(feature_rng.sample(capability_pool, k=pick))
+    crew_ids: list[str] = []
+    if base_crews:
+        counts: dict[str, int] = {}
+        for idx in range(num_machines):
+            base = base_crews[idx % len(base_crews)]
+            counts[base] = counts.get(base, 0) + 1
+            if counts[base] == 1 and base not in crew_ids and len(base_crews) >= num_machines:
+                crew_id = base
+            elif counts[base] == 1 and base not in crew_ids and len(base_crews) >= counts[base]:
+                crew_id = base
+            else:
+                crew_id = f"{base}-{counts[base]}"
+                while crew_id in crew_ids:
+                    counts[base] += 1
+                    crew_id = f"{base}-{counts[base]}"
+            crew_ids.append(crew_id)
+            crew_capabilities[crew_id] = list(base_capabilities.get(base, []))
     for idx in range(num_machines):
         role = role_pool[idx % len(role_pool)] if role_pool else None
+        assigned_crew = crew_ids[idx] if crew_ids else None
         machines_records.append(
             {
                 "id": f"M{idx + 1}",
                 "role": role,
+                "crew": assigned_crew,
                 "daily_hours": round(_sample_float(rng, config.shift_hours), 2),
             }
         )
@@ -281,16 +401,20 @@ def generate_random_dataset(
         shifts_per_day=config.shifts_per_day,
     )
     blackouts: list[BlackoutWindow] = []
-    for day in range(1, num_days + 1):
-        if rng.random() <= config.blackout_probability:
-            duration = max(1, _sample_int(rng, config.blackout_duration))
+    day_cursor = 1
+    while day_cursor <= num_days:
+        if rng.random() <= blackout_probability:
+            duration = max(1, _sample_int(rng, blackout_duration))
             blackouts.append(
                 BlackoutWindow(
-                    start_day=day,
-                    end_day=min(num_days, day + duration - 1),
+                    start_day=day_cursor,
+                    end_day=min(num_days, day_cursor + duration - 1),
                     reason="synthetic-blackout",
                 )
             )
+            day_cursor += duration
+        else:
+            day_cursor += 1
     timeline = TimelineConfig(shifts=[shift_def], blackouts=blackouts)
 
     blocks = [Block(**record) for record in blocks_records]
@@ -298,6 +422,27 @@ def generate_random_dataset(
     landings = [Landing(**record) for record in landings_records]
     calendar = [CalendarEntry(**record) for record in calendar_records]
     production_rates = [ProductionRate(**record) for record in production_records]
+
+    crew_assignment_models: list[CrewAssignment] | None = None
+    if crew_pool:
+        assignments: list[CrewAssignment] = []
+        for machine in machines:
+            crew_id = machine.crew
+            if crew_id is None:
+                continue
+            capabilities = crew_capabilities.get(crew_id, [])
+            notes = None
+            if capabilities:
+                notes = f"capabilities={','.join(capabilities)}"
+            assignments.append(
+                CrewAssignment(
+                    crew_id=crew_id,
+                    machine_id=machine.id,
+                    primary_role=machine.role,
+                    notes=notes,
+                )
+            )
+        crew_assignment_models = assignments or None
 
     scenario = Scenario(
         name=config.name,
@@ -308,6 +453,7 @@ def generate_random_dataset(
         calendar=calendar,
         production_rates=production_rates,
         timeline=timeline,
+        crew_assignments=crew_assignment_models,
     )
 
     if systems is None:
@@ -327,6 +473,39 @@ def generate_random_dataset(
             updated_blocks.append(block.model_copy(update={"harvest_system_id": system_id}))
         scenario = scenario.model_copy(update={"blocks": updated_blocks, "harvest_systems": systems})
 
+    metadata: dict[str, object] = {
+        "name": config.name,
+        "tier": (config.tier or "custom"),
+        "seed": seed,
+        "counts": {
+            "blocks": len(blocks_records),
+            "machines": len(machines_records),
+            "landings": len(landings_records),
+            "calendar": len(calendar_records),
+            "production_rates": len(production_records),
+        },
+        "terrain_counts": dict(
+            Counter(
+                record.get("terrain")
+                for record in blocks_records
+                if record.get("terrain") is not None
+            )
+        ),
+        "prescription_counts": dict(
+            Counter(
+                record.get("prescription")
+                for record in blocks_records
+                if record.get("prescription") is not None
+            )
+        ),
+        "crew_capabilities": crew_capabilities,
+        "blackouts": [
+            blackout.model_dump(exclude_none=True) for blackout in blackouts
+        ],
+        "shifts_per_day": config.shifts_per_day,
+        "shift_hours": shift_def.hours,
+    }
+
     return SyntheticDatasetBundle(
         scenario=scenario,
         blocks=pd.DataFrame.from_records(blocks_records),
@@ -334,6 +513,7 @@ def generate_random_dataset(
         landings=pd.DataFrame.from_records(landings_records),
         calendar=pd.DataFrame.from_records(calendar_records),
         production_rates=pd.DataFrame.from_records(production_records),
+        metadata=metadata,
     )
 
 

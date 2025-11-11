@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import yaml
+
 from fhops.scenario.io import load_scenario
 from fhops.scenario.synthetic import (
     SyntheticDatasetConfig,
@@ -25,6 +27,11 @@ def test_generate_random_dataset_bundle(tmp_path: Path):
     assert len(bundle.blocks) == 6
     assert len(bundle.machines) == 3
     assert sorted(bundle.machines["role"].dropna().unique()) == ["forwarder", "logger"]
+    assert "terrain" in bundle.blocks.columns
+    assert "prescription" in bundle.blocks.columns
+    assert "crew" in bundle.machines.columns
+    assert bundle.metadata is not None
+    assert bundle.metadata["crew_capabilities"]
 
     out_dir = tmp_path / "synthetic_med"
     scenario_yaml = bundle.write(out_dir)
@@ -38,6 +45,12 @@ def test_generate_random_dataset_bundle(tmp_path: Path):
     ]:
         assert (out_dir / filename).exists()
 
+    metadata_path = out_dir / "metadata.yaml"
+    assert metadata_path.exists()
+    metadata = yaml.safe_load(metadata_path.read_text(encoding="utf-8"))
+    assert metadata["crew_capabilities"]
+    assert metadata["terrain_counts"]
+
     loaded = load_scenario(scenario_yaml)
     assert len(loaded.blocks) == len(bundle.blocks)
     assert len(loaded.machines) == len(bundle.machines)
@@ -47,6 +60,8 @@ def test_generate_random_dataset_bundle(tmp_path: Path):
 
     # ensure timeline preserved
     assert loaded.timeline is not None
+    assert loaded.crew_assignments is not None
+    assert any(assignment.notes for assignment in loaded.crew_assignments or [])
 
 
 def test_reference_dataset_loads():
@@ -62,6 +77,7 @@ def test_reference_dataset_loads():
 def test_random_dataset_statistics_within_bounds():
     config = SyntheticDatasetConfig(
         name="synthetic-stats",
+        tier="large",
         num_blocks=(10, 10),
         num_days=(12, 12),
         num_machines=(4, 4),
@@ -75,16 +91,24 @@ def test_random_dataset_statistics_within_bounds():
 
     availability_ratios: list[float] = []
     blackout_counts: list[int] = []
+    blackout_durations: list[int] = []
     for seed in range(10):
         bundle = generate_random_dataset(config, seed=seed)
         availability_ratios.append(float(bundle.calendar["available"].mean()))
         scenario = bundle.scenario
         if scenario.timeline is not None:
             blackout_counts.append(len(scenario.timeline.blackouts))
+            blackout_durations.extend(
+                blackout.end_day - blackout.start_day + 1
+                for blackout in scenario.timeline.blackouts
+            )
 
         # production/work bounds
         assert bundle.blocks["work_required"].between(5.0, 15.0).all()
         assert bundle.production_rates["rate"].between(5.0, 15.0).all()
+        assert "terrain" in bundle.blocks.columns
+        assert bundle.metadata is not None
+        assert bundle.metadata["tier"] == "large"
 
     avg_availability = sum(availability_ratios) / len(availability_ratios)
     assert abs(avg_availability - config.availability_probability) <= 0.15
@@ -97,3 +121,28 @@ def test_random_dataset_statistics_within_bounds():
             num_days = config.num_days
         expected = config.blackout_probability * num_days
         assert avg_blackouts <= expected + 2
+        assert any(length >= 2 for length in blackout_durations)
+
+
+def test_tier_defaults_drive_blackouts_and_crews():
+    config = SyntheticDatasetConfig(
+        name="synthetic-large-tier",
+        tier="large",
+        num_blocks=(16, 16),
+        num_days=(18, 18),
+        num_machines=(6, 6),
+        num_landings=(3, 3),
+        shifts_per_day=2,
+    )
+
+    blackout_totals = []
+    crews_seen: set[str] = set()
+    for seed in range(5):
+        bundle = generate_random_dataset(config, seed=303 + seed)
+        timeline = bundle.scenario.timeline
+        assert timeline is not None
+        blackout_totals.append(len(timeline.blackouts))
+        for assignment in bundle.scenario.crew_assignments or []:
+            crews_seen.add(assignment.crew_id)
+    assert sum(blackout_totals) > 0
+    assert crews_seen

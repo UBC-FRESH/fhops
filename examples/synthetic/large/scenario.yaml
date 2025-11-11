@@ -7,26 +7,18 @@ data:
   landings: data/landings.csv
   calendar: data/calendar.csv
   prod_rates: data/prod_rates.csv
+  crew_assignments: data/crew_assignments.csv
 timeline:
   shifts:
   - name: S1
-    hours: 10.572538180571637
+    hours: 9.145076361143277
     shifts_per_day: 2
   blackouts:
-  - start_day: 4
-    end_day: 4
-    reason: synthetic-blackout
-  - start_day: 5
-    end_day: 6
-    reason: synthetic-blackout
-  - start_day: 7
-    end_day: 9
-    reason: synthetic-blackout
-  - start_day: 8
+  - start_day: 6
     end_day: 8
     reason: synthetic-blackout
-  - start_day: 9
-    end_day: 9
+  - start_day: 10
+    end_day: 12
     reason: synthetic-blackout
   - start_day: 14
     end_day: 15

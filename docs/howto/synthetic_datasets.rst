@@ -50,6 +50,26 @@ shift calendars).
 The example README (``examples/synthetic/README.md``) gives a short overview and links back to the
 metadata file if you need exact counts or blackout windows for reproducibility.
 
+Block enrichment, crews, and blackouts
+--------------------------------------
+
+Each bundle ships with richer signals to support evaluation/benchmarking:
+
+* ``blocks.csv`` now contains ``terrain`` and ``prescription`` columns sampled from tier-aware pools
+  (e.g., ``gentle``/``mixed`` for the small instance, ``steep``/``snow`` for the large one).
+* ``machines.csv`` adds a ``crew`` column; the generated ``crew_assignments.csv`` table records the
+  crew → machine mapping with capability notes so validators and scenario loaders can reconstruct
+  assignments.
+* Crew capabilities are sampled from the ``capability_pool`` while respecting the tier-specific span
+  (single-skill crews in ``small``, multi-skill teams in ``large``).
+* Blackout windows are produced with tier defaults: zero-probability for ``small`` bundles, short gaps
+  for ``medium``, and multi-day outages for ``large``. Metadata captures the sampled windows so smoke
+  tests can diff future changes.
+
+If you regenerate the library, the metadata YAML under each tier (and the aggregate metadata file in
+``examples/synthetic/``) records the terrain/prescription mix, crew capabilities, blackout windows,
+and the seed that produced the dataset.
+
 CLI walkthrough
 ---------------
 
@@ -89,6 +109,10 @@ These commands reuse the same CLI surfaces already documented in :doc:`evaluatio
 :doc:`../reference/cli`, but the synthetic bundles keep the inputs lightweight enough for quick
 iteration and teaching exercises.
 
+The loader automatically ingests ``crew_assignments.csv`` when present, so downstream analytics can
+group KPIs by crew. Pair the bundle metadata with playback exports to slice utilisation or downtime
+by terrain/prescription class.
+
 Regenerating bundles
 --------------------
 
@@ -103,12 +127,17 @@ The generator can be scripted to refresh or extend the library. Seeds are record
 
    config = SyntheticDatasetConfig(
        name="synthetic-medium",
+       tier="medium",
        num_blocks=(8, 10),
        num_days=12,
        num_machines=4,
        num_landings=2,
        shifts_per_day=1,
        shift_hours=(9.5, 10.5),
+       terrain_pool=["rolling", "mixed", "steep"],
+       crew_pool=["crew-alpha", "crew-beta", "crew-gamma"],
+       capability_pool=["harvester", "forwarder", "processor"],
+       crew_capability_span=(1, 2),
    )
 
    bundle = generate_random_dataset(config, seed=202)
