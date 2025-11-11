@@ -61,13 +61,13 @@ before proposing new work.
     - [x] Align generator requirements with Phase 2 benchmarking harness expectations.
     - [x] Identify storage strategy and naming for generated scenarios (`data/synthetic/`).
   - [ ] Generator implementation
-    - [ ] Build core sampling utilities (terrain, system mix, downtime patterns) with tests.
+    - [x] Build core sampling utilities (terrain, system mix, downtime patterns) with tests.
     - [x] Expose CLI entry (`fhops synth`) and configuration schema for batch generation.
     - [ ] Add validation suite ensuring generated datasets meet contract + KPI sanity bounds.
   - [ ] Benchmark integration
     - [x] Hook synthetic scenarios into benchmark harness and CI smoke targets.
     - [x] Provide metadata manifests describing each scenario for docs/examples.
-    - [ ] Outline scaling experiments and capture results in changelog/notes.
+    - [x] Outline scaling experiments and capture results in changelog/notes.
 - [ ] Reference analytics notebooks integrated into docs/examples.
   - [ ] Notebook scaffolding
     - [ ] Select representative deterministic + stochastic scenarios (baseline + synthetic).

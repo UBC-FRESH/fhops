@@ -29,6 +29,7 @@ All tiers share a consistent column layout (see `examples/synthetic/metadata.yam
 - **Blackout windows** — probabilistic sampling tuned per tier (`0.0`, `0.1`, `0.2` respectively).
 - **Crew assignment CSVs** — each scenario now writes `crew_assignments.csv` so solvers/validators can recover crew → machine mappings without custom wiring.
 - **Metadata registry** — per-tier `metadata.yaml` files summarise terrain/prescription counts, crew capabilities, blackout windows, and seeds; the aggregate `examples/synthetic/metadata.yaml` collates them for automation.
+- **Sampling utilities** — weighted terrain/prescription profiles, blackout bias windows (`BlackoutBias`), and harvest system mixes are now configurable in `generator.py`, with the selected profiles recorded in bundle metadata.
 
 ## CLI Generation Command
 
@@ -92,6 +93,17 @@ We will integrate the reference bundles into the Phase 2 benchmarking harness wi
 3. **Runtime Budgets** — align SA/ILS defaults to keep executions under 60 s for CI, with expanded presets documented for deeper experiments.
 4. **Result Storage** — reuse the existing benchmarking output structure (`tmp/benchmarks/...`) and document the synthetic-specific expectations in `docs/howto/benchmarks.rst`.
 
+## Scaling Experiments (2025-11-11)
+
+`run_benchmark_suite` smoke pass (`sa_iters=250`, `time_limit=15s`, SA only) across medium/large synthetic tiers:
+
+| Scenario         | Objective | Runtime (s) | Total Production | Makespan (days) |
+|------------------|-----------|-------------|------------------|-----------------|
+| synthetic-medium | 92.235    | 0.05        | 92.235           | 12              |
+| synthetic-large  | 176.808   | 0.10        | 176.808          | 17              |
+
+Both tiers finish in under 0.1 seconds with the smoke settings, leaving ample headroom for CI checks and deeper stochastic experiments.
+
 ## Planned Tasks
 - [x] Define configuration schema for synthetic dataset generator (`scenario/synthetic/generator.py`).
 - [x] Support basic timeline blackouts and harvest system role assignment in synthetic scenarios.
@@ -103,6 +115,7 @@ We will integrate the reference bundles into the Phase 2 benchmarking harness wi
 - [x] Unit tests ensuring generated datasets satisfy scenario contract validators. *(See `tests/test_synthetic.py`.)*
 - [x] Statistical checks on sampled parameters (distributions, workload constraints).
 - [x] Benchmark smoke validation verifying KPI bounds for reference bundles. *(See `tests/test_benchmark_harness.py::test_synthetic_small_benchmark_kpi_bounds`.)*
+- [x] Property-based KPI sanity checks covering synthetic smoke runs. *(See `tests/test_benchmark_harness.py::test_synthetic_kpi_properties`.)*
 
 ## Documentation
 - [x] Sphinx guide on generating and using synthetic datasets.

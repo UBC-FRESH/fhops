@@ -22,36 +22,10 @@ from fhops.scenario.contract import (
 from fhops.scheduling.systems import HarvestSystem, default_system_registry
 from fhops.scheduling.timeline import BlackoutWindow, ShiftDefinition, TimelineConfig
 
-
-TIER_DEFAULTS: dict[str, dict[str, object]] = {
-    "small": {
-        "terrain_pool": ["gentle", "mixed"],
-        "prescription_pool": ["thinning", "selection"],
-        "crew_pool": ["crew-1", "crew-2"],
-        "capability_pool": ["harvester", "forwarder"],
-        "crew_capability_span": (1, 1),
-        "blackout_probability": 0.0,
-        "blackout_duration": (1, 1),
-    },
-    "medium": {
-        "terrain_pool": ["rolling", "mixed", "steep"],
-        "prescription_pool": ["clearcut", "thinning"],
-        "crew_pool": ["crew-1", "crew-2", "crew-3"],
-        "capability_pool": ["harvester", "forwarder", "processor"],
-        "crew_capability_span": (1, 2),
-        "blackout_probability": 0.12,
-        "blackout_duration": (1, 2),
-    },
-    "large": {
-        "terrain_pool": ["steep", "mixed", "snow"],
-        "prescription_pool": ["clearcut", "variable_retention"],
-        "crew_pool": ["crew-1", "crew-2", "crew-3", "crew-4"],
-        "capability_pool": ["harvester", "forwarder", "processor", "grader"],
-        "crew_capability_span": (2, 3),
-        "blackout_probability": 0.2,
-        "blackout_duration": (2, 3),
-    },
-}
+_DEFAULT_TERRAIN_POOL = ["mixed"]
+_DEFAULT_PRESCRIPTION_POOL = ["clearcut"]
+_DEFAULT_CREW_POOL = ["crew-1", "crew-2"]
+_DEFAULT_CAPABILITY_POOL = ["harvester", "forwarder"]
 
 
 @dataclass
@@ -149,6 +123,33 @@ def _as_range(value: tuple[int, int] | int) -> tuple[int, int]:
     return (value, value)
 
 
+def _weighted_choice(
+    rng: random.Random, pool: list[str], weights: list[float] | None
+) -> str | None:
+    if not pool:
+        return None
+    if weights and len(weights) == len(pool):
+        return rng.choices(pool, weights=weights, k=1)[0]
+    return rng.choice(pool)
+
+
+def _normalise_mix(mix: dict[str, float]) -> dict[str, float]:
+    total = sum(value for value in mix.values() if value >= 0)
+    if total == 0:
+        return {key: 1.0 / len(mix) for key in mix}
+    return {key: value / total if value >= 0 else 0.0 for key, value in mix.items()}
+
+
+@dataclass
+class BlackoutBias:
+    """Bias blackout probabilities for specific windows."""
+
+    start_day: int
+    end_day: int
+    probability: float
+    duration: tuple[int, int] | int | None = None
+
+
 @dataclass
 class SyntheticDatasetConfig:
     """Configuration for generating random synthetic datasets."""
@@ -168,11 +169,15 @@ class SyntheticDatasetConfig:
     blackout_duration: tuple[int, int] | int = (1, 2)
     role_pool: list[str] = field(default_factory=lambda: ["harvester", "forwarder"])
     tier: str | None = None
-    terrain_pool: list[str] = field(default_factory=lambda: ["mixed"])
-    prescription_pool: list[str] = field(default_factory=lambda: ["clearcut"])
-    crew_pool: list[str] = field(default_factory=lambda: ["crew-1", "crew-2"])
-    capability_pool: list[str] = field(default_factory=lambda: ["harvester", "forwarder"])
+    terrain_pool: list[str] = field(default_factory=lambda: list(_DEFAULT_TERRAIN_POOL))
+    terrain_weights: list[float] | None = None
+    prescription_pool: list[str] = field(default_factory=lambda: list(_DEFAULT_PRESCRIPTION_POOL))
+    prescription_weights: list[float] | None = None
+    crew_pool: list[str] = field(default_factory=lambda: list(_DEFAULT_CREW_POOL))
+    capability_pool: list[str] = field(default_factory=lambda: list(_DEFAULT_CAPABILITY_POOL))
     crew_capability_span: tuple[int, int] = (1, 2)
+    system_mix: dict[str, float] | None = None
+    blackout_biases: list[BlackoutBias] = field(default_factory=list)
 
 
 @dataclass
@@ -252,6 +257,52 @@ class SyntheticDatasetBundle:
         return scenario_path
 
 
+TIER_DEFAULTS: dict[str, dict[str, object]] = {
+    "small": {
+        "terrain_pool": ["gentle", "mixed"],
+        "terrain_weights": [0.7, 0.3],
+        "prescription_pool": ["thinning", "selection"],
+        "prescription_weights": [0.6, 0.4],
+        "crew_pool": ["crew-1", "crew-2"],
+        "capability_pool": ["harvester", "forwarder"],
+        "crew_capability_span": (1, 1),
+        "blackout_probability": 0.0,
+        "blackout_duration": (1, 1),
+        "blackout_biases": [],
+    },
+    "medium": {
+        "terrain_pool": ["rolling", "mixed", "steep"],
+        "terrain_weights": [0.2, 0.6, 0.2],
+        "prescription_pool": ["clearcut", "thinning"],
+        "prescription_weights": [0.35, 0.65],
+        "crew_pool": ["crew-1", "crew-2", "crew-3"],
+        "capability_pool": ["harvester", "forwarder", "processor"],
+        "crew_capability_span": (1, 2),
+        "blackout_probability": 0.12,
+        "blackout_duration": (1, 2),
+        "blackout_biases": [
+            BlackoutBias(start_day=8, end_day=10, probability=0.35, duration=(1, 2)),
+        ],
+    },
+    "large": {
+        "terrain_pool": ["steep", "mixed", "snow"],
+        "terrain_weights": [0.35, 0.4, 0.25],
+        "prescription_pool": ["clearcut", "variable_retention"],
+        "prescription_weights": [0.5, 0.5],
+        "crew_pool": ["crew-1", "crew-2", "crew-3", "crew-4"],
+        "capability_pool": ["harvester", "forwarder", "processor", "grader"],
+        "crew_capability_span": (2, 3),
+        "blackout_probability": 0.2,
+        "blackout_duration": (2, 3),
+        "blackout_biases": [
+            BlackoutBias(start_day=5, end_day=7, probability=0.4, duration=(2, 3)),
+            BlackoutBias(start_day=12, end_day=14, probability=0.35, duration=(2, 3)),
+        ],
+        "system_mix": {"ground_fb_skid": 0.4, "ctl": 0.35, "steep_tethered": 0.25},
+    },
+}
+
+
 def _sample_int(rng: random.Random, bounds: tuple[int, int] | int) -> int:
     low, high = _as_range(bounds)
     return rng.randint(int(low), int(high))
@@ -278,21 +329,77 @@ def generate_random_dataset(
     num_landings = max(1, _sample_int(rng, config.num_landings))
 
     landing_ids = [f"L{i + 1}" for i in range(num_landings)]
-    blackout_probability = tier_defaults.get("blackout_probability", config.blackout_probability)
+    blackout_probability = tier_defaults.get(
+        "blackout_probability", config.blackout_probability
+    )
+    if config.blackout_probability != SyntheticDatasetConfig.__dataclass_fields__[
+        "blackout_probability"
+    ].default:
+        blackout_probability = config.blackout_probability
     blackout_duration = tier_defaults.get("blackout_duration", config.blackout_duration)
-    terrain_pool = tier_defaults.get("terrain_pool", config.terrain_pool)
-    prescription_pool = tier_defaults.get("prescription_pool", config.prescription_pool)
-    crew_pool = tier_defaults.get("crew_pool", config.crew_pool)
-    capability_pool = tier_defaults.get("capability_pool", config.capability_pool or config.role_pool)
-    crew_capability_span = tier_defaults.get("crew_capability_span", config.crew_capability_span)
+    if config.blackout_duration != SyntheticDatasetConfig.__dataclass_fields__[
+        "blackout_duration"
+    ].default:
+        blackout_duration = config.blackout_duration
+
+    terrain_pool = list(tier_defaults.get("terrain_pool", config.terrain_pool))
+    if config.terrain_pool and config.terrain_pool != _DEFAULT_TERRAIN_POOL:
+        terrain_pool = list(config.terrain_pool)
+    terrain_weights = tier_defaults.get("terrain_weights")
+    if config.terrain_weights is not None:
+        terrain_weights = config.terrain_weights
+
+    prescription_pool = list(
+        tier_defaults.get("prescription_pool", config.prescription_pool)
+    )
+    if config.prescription_pool and config.prescription_pool != _DEFAULT_PRESCRIPTION_POOL:
+        prescription_pool = list(config.prescription_pool)
+    prescription_weights = tier_defaults.get("prescription_weights")
+    if config.prescription_weights is not None:
+        prescription_weights = config.prescription_weights
+
+    crew_pool = list(tier_defaults.get("crew_pool", config.crew_pool))
+    if config.crew_pool and config.crew_pool != _DEFAULT_CREW_POOL:
+        crew_pool = list(config.crew_pool)
+
+    capability_pool = list(
+        tier_defaults.get("capability_pool", config.capability_pool or config.role_pool)
+    )
+    if config.capability_pool and config.capability_pool != _DEFAULT_CAPABILITY_POOL:
+        capability_pool = list(config.capability_pool)
+
+    crew_capability_span = tier_defaults.get(
+        "crew_capability_span", config.crew_capability_span
+    )
+    if config.crew_capability_span != SyntheticDatasetConfig.__dataclass_fields__[
+        "crew_capability_span"
+    ].default:
+        crew_capability_span = config.crew_capability_span
+
+    blackout_biases = list(tier_defaults.get("blackout_biases", []))
+    if config.blackout_biases:
+        blackout_biases = list(config.blackout_biases)
+
+    system_mix = tier_defaults.get("system_mix", config.system_mix)
+    if config.system_mix is not None:
+        system_mix = config.system_mix
+    normalised_mix = _normalise_mix(system_mix) if system_mix else None
     blocks_records: list[dict[str, object]] = []
     for idx in range(num_blocks):
         landing_id = rng.choice(landing_ids)
         work_required = round(_sample_float(rng, config.work_required), 3)
         earliest = rng.randint(1, num_days)
         latest = rng.randint(earliest, num_days)
-        terrain = feature_rng.choice(terrain_pool) if terrain_pool else None
-        prescription = feature_rng.choice(prescription_pool) if prescription_pool else None
+        terrain = (
+            _weighted_choice(feature_rng, terrain_pool, terrain_weights)
+            if terrain_pool
+            else None
+        )
+        prescription = (
+            _weighted_choice(feature_rng, prescription_pool, prescription_weights)
+            if prescription_pool
+            else None
+        )
         blocks_records.append(
             {
                 "id": f"B{idx + 1}",
@@ -403,8 +510,15 @@ def generate_random_dataset(
     blackouts: list[BlackoutWindow] = []
     day_cursor = 1
     while day_cursor <= num_days:
-        if rng.random() <= blackout_probability:
-            duration = max(1, _sample_int(rng, blackout_duration))
+        day_probability = blackout_probability
+        duration_bounds = blackout_duration
+        for bias in blackout_biases:
+            if bias.start_day <= day_cursor <= bias.end_day:
+                day_probability = max(day_probability, bias.probability)
+                if bias.duration is not None:
+                    duration_bounds = bias.duration
+        if rng.random() <= day_probability:
+            duration = max(1, _sample_int(rng, duration_bounds))
             blackouts.append(
                 BlackoutWindow(
                     start_day=day_cursor,
@@ -468,8 +582,17 @@ def generate_random_dataset(
             scenario = scenario.model_copy(update={"machines": updated_machines})
         updated_blocks = []
         system_ids = list(systems.keys())
+        system_weights = None
+        if normalised_mix:
+            available_mix = {key: normalised_mix.get(key, 0.0) for key in system_ids}
+            if any(weight > 0 for weight in available_mix.values()):
+                system_weights = [available_mix[system_id] for system_id in system_ids]
+            # zero-weight fallback -> round robin
         for idx, block in enumerate(scenario.blocks):
-            system_id = system_ids[idx % len(system_ids)]
+            if system_weights:
+                system_id = feature_rng.choices(system_ids, weights=system_weights, k=1)[0]
+            else:
+                system_id = system_ids[idx % len(system_ids)]
             updated_blocks.append(block.model_copy(update={"harvest_system_id": system_id}))
         scenario = scenario.model_copy(update={"blocks": updated_blocks, "harvest_systems": systems})
 
@@ -504,6 +627,24 @@ def generate_random_dataset(
         ],
         "shifts_per_day": config.shifts_per_day,
         "shift_hours": shift_def.hours,
+        "terrain_profile": {
+            "values": terrain_pool,
+            "weights": terrain_weights,
+        },
+        "prescription_profile": {
+            "values": prescription_pool,
+            "weights": prescription_weights,
+        },
+        "system_mix": normalised_mix,
+        "blackout_biases": [
+            {
+                "start_day": bias.start_day,
+                "end_day": bias.end_day,
+                "probability": bias.probability,
+                "duration": bias.duration,
+            }
+            for bias in blackout_biases
+        ],
     }
 
     return SyntheticDatasetBundle(
@@ -521,6 +662,7 @@ __all__ = [
     "SyntheticScenarioSpec",
     "SyntheticDatasetConfig",
     "SyntheticDatasetBundle",
+    "BlackoutBias",
     "generate_basic",
     "generate_with_systems",
     "generate_random_dataset",
