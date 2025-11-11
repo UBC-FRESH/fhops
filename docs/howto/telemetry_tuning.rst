@@ -108,6 +108,27 @@ The script aligns records on (algorithm, scenario) and appends ``best_delta_*``
 columns showing the improvement relative to the first report label.
 Passing ``--out-chart`` generates an Altair HTML visualization of best objectives per algorithm.
 
+Historical Trends
+-----------------
+
+Keep dated copies of ``tuner_report.csv`` snapshots (for example, download the
+``telemetry-report`` artifact from multiple CI runs) and place them in a single
+directory. Then call ``analyze_tuner_reports.py`` with ``--history-dir`` to
+produce a longitudinal view:
+
+.. code-block:: bash
+
+   python scripts/analyze_tuner_reports.py \
+       --report latest=tmp/ci-telemetry/tuner_report.csv \
+       --history-dir docs/examples/analytics/data/tuner_reports \
+       --out-history-csv tmp/history.csv \
+       --out-history-markdown tmp/history.md \
+       --out-history-chart tmp/history.html
+
+The generated history table lists the best/mean objectives per algorithm and
+scenario across snapshots (derived from the filename stem). The optional Altair
+chart highlights objective trends at a glance.
+
 CI Automation
 -------------
 

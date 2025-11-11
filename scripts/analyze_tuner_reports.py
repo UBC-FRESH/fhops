@@ -105,6 +105,76 @@ def _format_number(value, prefix: str = "") -> str:
         return str(value)
 
 
+def _collect_history(directory: Path, *, pattern: str = "*.csv") -> pd.DataFrame:
+    directory = directory.expanduser()
+    if not directory.exists():
+        raise FileNotFoundError(f"History directory not found: {directory}")
+
+    records: list[pd.DataFrame] = []
+    for path in sorted(directory.glob(pattern)):
+        if not path.is_file():
+            continue
+        snapshot = path.stem
+        df = pd.read_csv(path)
+        required = {"algorithm", "scenario", "best_objective", "mean_objective", "runs"}
+        if required - set(df.columns):
+            continue
+        df = df.copy()
+        df["snapshot"] = snapshot
+        records.append(df[["algorithm", "scenario", "best_objective", "mean_objective", "runs", "snapshot"]])
+    if not records:
+        return pd.DataFrame(columns=["algorithm", "scenario", "best_objective", "mean_objective", "runs", "snapshot"])
+    combined = pd.concat(records, ignore_index=True)
+    combined["algorithm"] = combined["algorithm"].str.lower().str.strip()
+    combined["scenario"] = combined["scenario"].str.strip()
+    return combined
+
+
+def _render_history_markdown(df: pd.DataFrame) -> str:
+    headers = ["Snapshot", "Algorithm", "Scenario", "Best", "Mean", "Runs"]
+    lines = [
+        "| " + " | ".join(headers) + " |",
+        "| " + " | ".join(["---"] * len(headers)) + " |",
+    ]
+    for _, row in df.iterrows():
+        lines.append(
+            "| "
+            + " | ".join(
+                [
+                    str(row["snapshot"]),
+                    str(row["algorithm"]),
+                    str(row["scenario"]),
+                    _format_number(row["best_objective"]),
+                    _format_number(row["mean_objective"]),
+                    str(int(row["runs"])) if pd.notna(row["runs"]) else "",
+                ]
+            )
+            + " |"
+        )
+    return "\n".join(lines)
+
+
+def _export_history_chart(df: pd.DataFrame, output_path: Path) -> None:
+    try:
+        import altair as alt
+    except ImportError as exc:  # pragma: no cover - optional dependency
+        raise SystemExit("Altair is required for --out-history-chart support.") from exc
+
+    chart = (
+        alt.Chart(df)
+        .mark_line(point=True)
+        .encode(
+            x=alt.X("snapshot:N", title="Snapshot"),
+            y=alt.Y("best_objective:Q", title="Best Objective"),
+            color=alt.Color("algorithm:N", title="Algorithm"),
+            row=alt.Row("scenario:N", title="Scenario"),
+        )
+        .properties(width=250, height=180)
+    )
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    chart.save(output_path, embed_options={"actions": False})
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -112,6 +182,16 @@ def main(argv: list[str] | None = None) -> int:
         action="append",
         required=True,
         help="Report path (or label=path). Directories default to tuner_report.csv.",
+    )
+    parser.add_argument(
+        "--history-dir",
+        type=Path,
+        help="Directory containing multiple tuner_report CSV snapshots to build a history.",
+    )
+    parser.add_argument(
+        "--history-pattern",
+        default="*.csv",
+        help="Filename glob used when scanning --history-dir (default: *.csv).",
     )
     parser.add_argument(
         "--out-csv",
@@ -127,6 +207,21 @@ def main(argv: list[str] | None = None) -> int:
         "--out-chart",
         type=Path,
         help="Optional HTML path for an Altair chart comparing best objectives.",
+    )
+    parser.add_argument(
+        "--out-history-csv",
+        type=Path,
+        help="Optional CSV path for the historical aggregation when --history-dir is set.",
+    )
+    parser.add_argument(
+        "--out-history-markdown",
+        type=Path,
+        help="Optional Markdown path for the historical aggregation when --history-dir is set.",
+    )
+    parser.add_argument(
+        "--out-history-chart",
+        type=Path,
+        help="Optional HTML Altair chart showing history trends (requires --history-dir).",
     )
     args = parser.parse_args(argv)
 
@@ -190,6 +285,25 @@ def main(argv: list[str] | None = None) -> int:
 
     if not args.out_csv and not args.out_markdown:
         print(markdown)
+
+    if args.history_dir:
+        history_df = _collect_history(Path(args.history_dir), pattern=args.history_pattern)
+        if history_df.empty:
+            print("No history entries discovered in", args.history_dir)
+        else:
+            history_df.sort_values(["scenario", "algorithm", "snapshot"], inplace=True)
+            if args.out_history_csv:
+                args.out_history_csv.parent.mkdir(parents=True, exist_ok=True)
+                history_df.to_csv(args.out_history_csv, index=False)
+            if args.out_history_markdown:
+                args.out_history_markdown.parent.mkdir(parents=True, exist_ok=True)
+                args.out_history_markdown.write_text(
+                    _render_history_markdown(history_df) + "\n", encoding="utf-8"
+                )
+            if args.out_history_chart:
+                _export_history_chart(history_df, args.out_history_chart)
+            if not any([args.out_history_csv, args.out_history_markdown, args.out_history_chart]):
+                print(_render_history_markdown(history_df))
     return 0
 
 

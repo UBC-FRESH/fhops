@@ -73,3 +73,34 @@ def test_analyze_tuner_reports_cli(tmp_path: Path):
     assert combined.loc[0, "best_baseline"] == 7.5
     assert combined.loc[0, "best_experiment"] == 8.0
     assert combined.loc[0, "best_delta_experiment"] == 0.5
+
+
+def test_analyze_tuner_reports_history(tmp_path: Path):
+    history_dir = tmp_path / "history"
+    history_dir.mkdir()
+    _write_report(history_dir / "2024-11-01.csv", "random", "MiniToy", 7.0, 6.5, 2)
+    _write_report(history_dir / "2024-11-02.csv", "random", "MiniToy", 7.5, 7.1, 2)
+
+    history_csv = tmp_path / "history.csv"
+    history_md = tmp_path / "history.md"
+
+    cmd = [
+        "python",
+        "scripts/analyze_tuner_reports.py",
+        "--report",
+        f"baseline={history_dir / '2024-11-02.csv'}",
+        "--history-dir",
+        str(history_dir),
+        "--out-history-csv",
+        str(history_csv),
+        "--out-history-markdown",
+        str(history_md),
+    ]
+    subprocess.run(cmd, text=True, capture_output=True, check=True)
+
+    assert history_csv.exists()
+    assert history_md.exists()
+    df = pd.read_csv(history_csv)
+    assert set(df.columns) == {"algorithm", "scenario", "best_objective", "mean_objective", "runs", "snapshot"}
+    assert len(df) == 2
+    assert "2024-11-02" in df["snapshot"].tolist()
