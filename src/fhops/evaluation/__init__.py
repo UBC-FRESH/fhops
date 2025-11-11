@@ -1,6 +1,7 @@
 """Evaluation layer (playback, metrics, reporting)."""
 
 from .metrics.kpis import KPIResult, compute_kpis
+from .metrics.aggregates import compute_makespan_metrics, compute_utilisation_metrics
 from .playback import (
     DaySummary,
     DowntimeEvent,
@@ -44,6 +45,8 @@ from .playback.exporters import (
 __all__ = [
     "compute_kpis",
     "KPIResult",
+    "compute_utilisation_metrics",
+    "compute_makespan_metrics",
     "PlaybackConfig",
     "PlaybackRecord",
     "PlaybackResult",
