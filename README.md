@@ -62,8 +62,9 @@ performance. The workflow also archives each run under `history/` and ships
 `docs/howto/telemetry_tuning.rst` for a step-by-step guide and download instructions.
 
 When GitHub Pages is enabled, the CI workflow publishes the latest history bundle at
-`telemetry/history_summary.html` on your Pages site, providing an easily-shareable chart without
-downloading artefacts.
+`telemetry/history_summary.html` on your Pages site (for example,
+`https://<github-username>.github.io/fhops/telemetry/history_summary.html`), providing an
+easily-shareable chart without downloading artefacts.
 
 ## Package layout
 

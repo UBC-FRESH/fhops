@@ -121,6 +121,8 @@ DESIRED_METRICS = {
     "mobilisation_cost": "best_mobilisation_cost",
     "utilisation_ratio_mean_shift": "best_utilisation_ratio_shift",
     "utilisation_ratio_mean_day": "best_utilisation_ratio_day",
+    "downtime_hours": "best_downtime_hours",
+    "weather_severity_total": "best_weather_severity",
 }
 
 
