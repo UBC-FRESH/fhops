@@ -64,6 +64,14 @@ jobs:
             --out-csv tmp/ci-telemetry/tuner_report.csv \
             --out-markdown tmp/ci-telemetry/tuner_report.md
 
+      - name: Archive telemetry history snapshot
+        run: |
+          snapshot_dir=tmp/ci-telemetry/history
+          mkdir -p "$snapshot_dir"
+          snapshot_name="$(date -u +"%Y-%m-%dT%H%M%SZ")"
+          cp tmp/ci-telemetry/tuner_report.csv "$snapshot_dir/$snapshot_name.csv"
+          cp tmp/ci-telemetry/tuner_report.md "$snapshot_dir/$snapshot_name.md"
+
       - name: Upload telemetry report artifact
         uses: actions/upload-artifact@v3
         with:
