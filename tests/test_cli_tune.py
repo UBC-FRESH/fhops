@@ -36,7 +36,11 @@ def test_tune_random_cli_runs_solver(tmp_path: Path):
     assert len(lines) == 2
     first = json.loads(lines[0])
     assert first["solver"] == "sa"
+    assert first["schema_version"] == "1.1"
     assert "operator_weights" in result.stdout or "Operators" in result.stdout
+    context = first.get("context", {})
+    assert context.get("num_blocks") is not None
+    assert context.get("num_machines") is not None
 
     steps_dir = telemetry_log.parent / "steps"
     assert steps_dir.exists()

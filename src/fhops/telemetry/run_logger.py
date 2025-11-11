@@ -49,6 +49,7 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
     config: Mapping[str, Any] | None = None
     context: Mapping[str, Any] | None = None
     step_interval: int | None = 100
+    schema_version: str = "1.1"
     run_id: str = field(default_factory=lambda: uuid4().hex, init=False)
     _start_time: float = field(default=0.0, init=False)
     _start_timestamp: str | None = field(default=None, init=False)
@@ -96,6 +97,7 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
             return
         record = {
             "record_type": "step",
+            "schema_version": self.schema_version,
             "run_id": self.run_id,
             "timestamp": _iso_now(),
             "step": step,
@@ -144,6 +146,7 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
         duration = self.elapsed() if self._start_time else 0.0
         record = {
             "record_type": "run",
+            "schema_version": self.schema_version,
             "run_id": self.run_id,
             "solver": self.solver,
             "scenario": self.scenario,
