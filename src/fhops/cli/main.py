@@ -18,10 +18,14 @@ from fhops.evaluation import (
     PlaybackConfig,
     SamplingConfig,
     compute_kpis,
+    day_dataframe,
+    day_dataframe_from_ensemble,
     export_playback,
+    playback_summary_metrics,
     run_playback,
     run_stochastic_playback,
-    playback_summary_metrics,
+    shift_dataframe,
+    shift_dataframe_from_ensemble,
 )
 from fhops.optimization.heuristics import (
     build_exploration_plan,
@@ -821,6 +825,13 @@ def eval_playback(
         "--summary-md",
         help="Write a Markdown summary of aggregated metrics.",
     ),
+    telemetry_log: Path | None = typer.Option(
+        None,
+        "--telemetry-log",
+        help="Append playback telemetry (metrics, export paths) to the given JSONL file.",
+        writable=True,
+        dir_okay=False,
+    ),
 ):
     """Run deterministic playback to produce shift/day summaries."""
 
@@ -831,15 +842,22 @@ def eval_playback(
 
     playback_config = PlaybackConfig(include_idle_records=include_idle)
 
-    if (
+    shift_df: pd.DataFrame
+    day_df: pd.DataFrame
+
+    deterministic_mode = (
         samples <= 1
         and downtime_probability <= 0
         and weather_probability <= 0
         and landing_probability <= 0
-    ):
-        playback = run_playback(pb, df, config=playback_config)
-        shift_summaries = playback.shift_summaries
-        day_summaries = playback.day_summaries
+    )
+
+    if deterministic_mode:
+        playback_result = run_playback(pb, df, config=playback_config)
+        shift_summaries = list(playback_result.shift_summaries)
+        day_summaries = list(playback_result.day_summaries)
+        shift_df = shift_dataframe(playback_result)
+        day_df = day_dataframe(playback_result)
     else:
         sampling_config = SamplingConfig(
             samples=samples,
@@ -874,9 +892,14 @@ def eval_playback(
             day_summaries = [
                 summary for sample in ensemble.samples for summary in sample.result.day_summaries
             ]
+            shift_df = shift_dataframe_from_ensemble(ensemble)
+            day_df = day_dataframe_from_ensemble(ensemble)
         else:
-            shift_summaries = ensemble.base_result.shift_summaries
-            day_summaries = ensemble.base_result.day_summaries
+            base_result = ensemble.base_result
+            shift_summaries = list(base_result.shift_summaries)
+            day_summaries = list(base_result.day_summaries)
+            shift_df = shift_dataframe(base_result)
+            day_df = day_dataframe(base_result)
 
     shift_table = Table(title="Shift Playback Summary")
     shift_table.add_column("Machine")
@@ -924,11 +947,9 @@ def eval_playback(
         )
     console.print(day_table)
 
-    shift_df = pd.DataFrame([s.__dict__ for s in shift_summaries])
-    day_df = pd.DataFrame([s.__dict__ for s in day_summaries])
-
+    export_metrics: dict[str, Any] = {}
     try:
-        export_playback(
+        export_metrics = export_playback(
             shift_df,
             day_df,
             shift_csv=shift_out,
@@ -951,6 +972,40 @@ def eval_playback(
         console.print(f"Day parquet saved to {day_parquet}")
     if summary_md:
         console.print(f"Markdown summary saved to {summary_md}")
+    if telemetry_log:
+        record = {
+            "timestamp": datetime.now(UTC).isoformat(),
+            "source": "eval-playback",
+            "scenario": sc.name,
+            "scenario_path": str(scenario),
+            "assignments_path": str(assignments_csv),
+            "deterministic": bool(deterministic_mode),
+            "samples_requested": samples,
+            "include_idle": include_idle,
+            "sampling": {
+                "base_seed": base_seed,
+                "downtime_probability": downtime_probability,
+                "downtime_max_concurrent": downtime_max_concurrent,
+                "weather_probability": weather_probability,
+                "weather_severity": weather_severity,
+                "weather_window": weather_window,
+                "landing_probability": landing_probability,
+                "landing_multiplier_low": landing_multiplier_low,
+                "landing_multiplier_high": landing_multiplier_high,
+                "landing_duration": landing_duration,
+            },
+            "export": {
+                "shift_csv": str(shift_out) if shift_out else None,
+                "day_csv": str(day_out) if day_out else None,
+                "shift_parquet": str(shift_parquet) if shift_parquet else None,
+                "day_parquet": str(day_parquet) if day_parquet else None,
+                "summary_md": str(summary_md) if summary_md else None,
+            },
+            "export_metrics": export_metrics or playback_summary_metrics(shift_df, day_df),
+            "shift_rows": int(len(shift_df)),
+            "day_rows": int(len(day_df)),
+        }
+        append_jsonl(telemetry_log, record)
 
 
 @app.command()

@@ -18,24 +18,58 @@ __all__ = [
     "machine_utilisation_summary",
 ]
 
+_SHIFT_COLUMNS = [
+    "day",
+    "shift_id",
+    "machine_id",
+    "sample_id",
+    "production_units",
+    "total_hours",
+    "idle_hours",
+    "mobilisation_cost",
+    "sequencing_violations",
+    "blackout_conflicts",
+    "available_hours",
+    "utilisation_ratio",
+]
 
-def _summary_dataframe(summaries: Sequence[ShiftSummary | DaySummary]) -> pd.DataFrame:
+_DAY_COLUMNS = [
+    "day",
+    "sample_id",
+    "production_units",
+    "total_hours",
+    "idle_hours",
+    "mobilisation_cost",
+    "completed_blocks",
+    "blackout_conflicts",
+    "sequencing_violations",
+    "available_hours",
+    "utilisation_ratio",
+]
+
+
+def _summary_dataframe(
+    summaries: Sequence[ShiftSummary | DaySummary],
+    *,
+    columns: Sequence[str],
+) -> pd.DataFrame:
     if not summaries:
-        return pd.DataFrame()
+        return pd.DataFrame(columns=columns)
     rows = [asdict(summary) for summary in summaries]
-    return pd.DataFrame(rows)
+    df = pd.DataFrame(rows)
+    return df.reindex(columns=columns)
 
 
 def shift_dataframe(result: PlaybackResult) -> pd.DataFrame:
     """Convert shift summaries into a DataFrame."""
 
-    return _summary_dataframe(result.shift_summaries)
+    return _summary_dataframe(result.shift_summaries, columns=_SHIFT_COLUMNS)
 
 
 def day_dataframe(result: PlaybackResult) -> pd.DataFrame:
     """Convert day summaries into a DataFrame."""
 
-    return _summary_dataframe(result.day_summaries)
+    return _summary_dataframe(result.day_summaries, columns=_DAY_COLUMNS)
 
 
 def shift_dataframe_from_ensemble(
@@ -51,8 +85,9 @@ def shift_dataframe_from_ensemble(
     for sample in ensemble.samples:
         frames.append(shift_dataframe(sample.result))
     if not frames:
-        return pd.DataFrame()
-    return pd.concat(frames, ignore_index=True)
+        return pd.DataFrame(columns=_SHIFT_COLUMNS)
+    combined = pd.concat(frames, ignore_index=True)
+    return combined.reindex(columns=_SHIFT_COLUMNS)
 
 
 def day_dataframe_from_ensemble(
@@ -68,8 +103,9 @@ def day_dataframe_from_ensemble(
     for sample in ensemble.samples:
         frames.append(day_dataframe(sample.result))
     if not frames:
-        return pd.DataFrame()
-    return pd.concat(frames, ignore_index=True)
+        return pd.DataFrame(columns=_DAY_COLUMNS)
+    combined = pd.concat(frames, ignore_index=True)
+    return combined.reindex(columns=_DAY_COLUMNS)
 
 
 def machine_utilisation_summary(shift_df: pd.DataFrame) -> pd.DataFrame:
