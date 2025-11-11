@@ -49,3 +49,39 @@ def test_tune_random_cli_runs_solver(tmp_path: Path):
         run_id = payload.get("run_id")
         if isinstance(run_id, str):
             assert (steps_dir / f"{run_id}.jsonl").exists()
+
+
+def test_tune_grid_cli_runs(tmp_path: Path):
+    telemetry_log = tmp_path / "telemetry" / "runs.jsonl"
+
+    result = runner.invoke(
+        app,
+        [
+            "tune-grid",
+            "examples/minitoy/scenario.yaml",
+            "--telemetry-log",
+            str(telemetry_log),
+            "--batch-size",
+            "1",
+            "--batch-size",
+            "2",
+            "--preset",
+            "balanced",
+            "--preset",
+            "explore",
+            "--iters",
+            "10",
+            "--seed",
+            "99",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert telemetry_log.exists()
+    lines = telemetry_log.read_text(encoding="utf-8").strip().splitlines()
+    # two presets * two batch sizes = four runs
+    assert len(lines) == 4
+    payload = json.loads(lines[0])
+    assert payload["solver"] == "sa"
+    context = payload.get("context", {})
+    assert context.get("source") == "cli.tune-grid"
+    assert context.get("batch_size") in {1, 2}

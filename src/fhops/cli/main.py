@@ -15,7 +15,12 @@ import click
 from rich.console import Console
 from rich.table import Table
 
-from fhops.cli._utils import format_operator_presets, operator_preset_help, parse_operator_weights
+from fhops.cli._utils import (
+    OPERATOR_PRESETS,
+    format_operator_presets,
+    operator_preset_help,
+    parse_operator_weights,
+)
 from fhops.cli.benchmarks import benchmark_app
 from fhops.cli.geospatial import geospatial_app
 from fhops.cli.telemetry import telemetry_app
@@ -1400,6 +1405,145 @@ def tune_random_cli(
             str(entry["seed"]),
             str(entry["batch_size"]),
             op_preview if len(op_preview) < 80 else op_preview[:77] + "...",
+        )
+    console.print(table)
+
+    if telemetry_log:
+        console.print(
+            f"[dim]{len(results)} telemetry record(s) written to {telemetry_log}. Step logs stored in {telemetry_log.parent / 'steps'}.[/]"
+        )
+
+
+ @app.command("tune-grid")
+def tune_grid_cli(
+    scenarios: list[Path] = typer.Argument(
+        ...,
+        exists=True,
+        readable=True,
+        dir_okay=True,
+        help="Scenario YAMLs or bundle directories to evaluate.",
+    ),
+    telemetry_log: Path = typer.Option(
+        Path("telemetry/runs.jsonl"),
+        "--telemetry-log",
+        help="Telemetry JSONL capturing per-run metadata (optional).",
+        dir_okay=False,
+        writable=False,
+    ),
+    batch_size: list[int] = typer.Option(
+        None,
+        "--batch-size",
+        help="Batch size options to evaluate (repeatable). Defaults to [1, 2, 3].",
+    ),
+    preset: list[str] = typer.Option(
+        None,
+        "--preset",
+        help="Operator preset(s) to evaluate (repeatable). Defaults to balanced/explore/mobilisation.",
+    ),
+    iters: int = typer.Option(
+        250,
+        "--iters",
+        min=10,
+        help="Simulated annealing iterations per configuration.",
+    ),
+    seed: int = typer.Option(
+        123,
+        "--seed",
+        help="Base seed (increments deterministically across grid points).",
+    ),
+):
+    """Exhaustively evaluate a grid of operator presets and batch sizes."""
+    scenario_files: list[Path] = []
+    for entry in scenarios:
+        if entry.is_dir():
+            scenario_files.extend(sorted(entry.rglob("*.yaml")))
+        else:
+            scenario_files.append(entry)
+    if not scenario_files:
+        console.print("[yellow]No scenario files discovered. Nothing to evaluate.[/]")
+        raise typer.Exit(1)
+
+    batch_values = sorted(set(batch_size)) if batch_size else [1, 2, 3]
+    preset_values = [name.lower() for name in (preset or ["balanced", "explore", "mobilisation"])]
+
+    for name in preset_values:
+        if name not in OPERATOR_PRESETS:
+            console.print(
+                f"[red]Unknown operator preset '{name}'. Available: {', '.join(sorted(OPERATOR_PRESETS))}[/]"
+            )
+            raise typer.Exit(1)
+
+    results: list[dict[str, Any]] = []
+    run_seed = seed
+    for scenario_path in scenario_files:
+        sc = load_scenario(str(scenario_path))
+        pb = Problem.from_scenario(sc)
+        console.print(
+            f"[dim]Grid tuning {scenario_path} ({len(batch_values) * len(preset_values)} configuration(s))[/]"
+        )
+        for batch_choice in batch_values:
+            for preset_name in preset_values:
+                operator_weights = {
+                    key.lower(): float(value)
+                    for key, value in OPERATOR_PRESETS[preset_name].items()
+                }
+                telemetry_kwargs: dict[str, Any] = {}
+                if telemetry_log:
+                    telemetry_kwargs = {
+                        "telemetry_log": telemetry_log,
+                        "telemetry_context": {
+                            "source": "cli.tune-grid",
+                            "preset": preset_name,
+                            "batch_size": batch_choice,
+                            "grid_seed": run_seed,
+                        },
+                    }
+                try:
+                    res = solve_sa(
+                        pb,
+                        iters=iters,
+                        seed=run_seed,
+                        batch_size=batch_choice if batch_choice > 1 else None,
+                        operator_weights=operator_weights,
+                        **telemetry_kwargs,
+                    )
+                except Exception as exc:  # pragma: no cover - defensive
+                    console.print(
+                        f"[yellow]Run failed for {scenario_path} (preset={preset_name}, batch={batch_choice}): {exc!r}[/]"
+                    )
+                    run_seed += 1
+                    continue
+
+                results.append(
+                    {
+                        "scenario": scenario_path.name,
+                        "objective": float(res.get("objective", 0.0)),
+                        "preset": preset_name,
+                        "batch_size": batch_choice,
+                        "seed": run_seed,
+                        "telemetry_run_id": res.get("meta", {}).get("telemetry_run_id"),
+                    }
+                )
+                run_seed += 1
+
+    if not results:
+        console.print("[yellow]Grid tuner did not produce any successful runs.[/]")
+        return
+
+    table = Table(title="Grid tuner results", show_lines=False)
+    table.add_column("Scenario")
+    table.add_column("Objective", justify="right")
+    table.add_column("Preset")
+    table.add_column("Batch", justify="right")
+    table.add_column("Seed", justify="right")
+
+    for entry in sorted(results, key=lambda item: item["objective"], reverse=True):
+        table.add_row(
+            entry["scenario"],
+            f"{entry['objective']:.3f}",
+            entry["preset"],
+            str(entry["batch_size"]),
+            str(entry["seed"]),
         )
     console.print(table)
 
