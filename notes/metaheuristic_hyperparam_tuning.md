@@ -21,6 +21,9 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
   - [x] Playback telemetry logging (CLI hook + step logs).
 - [x] Provide helper module (`fhops.telemetry.run_logger`) with append/query utilities and retention controls.
 - [x] Document retention/rotation strategy and storage location in this note + CLI help.
+- [ ] Introduce scenario descriptor capture (block/machine counts, horizon, landing stats) so tuners can learn across instances.
+- [ ] Add schema versioning to run/step records and document the schema contract to de-risk future consumers.
+- [ ] Persist KPI outcomes / objective components in a normalised telemetry table (SQLite phase) for ML feature pipelines.
 
 ### Conventional Tuning Toolkit
 - [ ] Implement grid and random search drivers operating on the telemetry store (CLI-friendly).
@@ -34,6 +37,7 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - [ ] Build agent loop driver that reads telemetry snapshots, requests proposals, validates via harness, and records outcomes.
 - [ ] Add safety rails (budget limits, whitelist parameters) and log all prompts/responses for auditability.
 - [ ] Document usage guidance and risks (docs/howto or dedicated guide).
+- [ ] Investigate ML-driven tuner (Bayesian/SMBO or neural surrogate) leveraging the enriched telemetry schema; capture data-processing pipeline requirements (feature selection, normalisation) before implementation.
 
 ### Automation & Docs
 - [ ] Update roadmap + docs as milestones complete.
@@ -44,6 +48,7 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - [x] Add a lightweight telemetry pruning helper (`fhops telemetry prune`) that truncates `runs.jsonl` and cleans matching step logs. *(See `fhops.cli.telemetry.prune`.)*
 - [x] Implement the first conventional tuner driver (`fhops tune random` execution mode) that samples solver configs and records telemetry entries.
 - [x] Provide a simple JSONL → DataFrame loader in `fhops.telemetry` to make analyses/tests easier ahead of the SQLite backend.
+- [ ] Add scenario descriptor exporter (machines/blocks/shifts) to telemetry runs so ML tuners can generalise across instances.
 
 ### Telemetry schema (draft)
 

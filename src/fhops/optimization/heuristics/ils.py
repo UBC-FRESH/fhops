@@ -197,12 +197,23 @@ def solve_ils(
         "operators": registry.weights(),
     }
     context_payload = dict(telemetry_context or {})
+    scenario = pb.scenario
+    scenario_features = {
+        "num_days": getattr(scenario, "num_days", None),
+        "num_blocks": len(getattr(scenario, "blocks", []) or []),
+        "num_machines": len(getattr(scenario, "machines", []) or []),
+        "num_landings": len(getattr(scenario, "landings", []) or []),
+        "num_shift_calendar_entries": len(getattr(scenario, "shift_calendar", []) or []),
+    }
+    context_payload.setdefault("scenario_features", scenario_features)
     step_interval = context_payload.pop("step_interval", 25)
     scenario_name = getattr(pb.scenario, "name", None)
     scenario_path = context_payload.pop("scenario_path", None)
 
     telemetry_logger: RunTelemetryLogger | None = None
     if telemetry_log:
+        telemetry_context = dict(context_payload)
+        telemetry_context.update(scenario_features)
         telemetry_logger = RunTelemetryLogger(
             log_path=telemetry_log,
             solver="ils",
@@ -210,7 +221,7 @@ def solve_ils(
             scenario_path=scenario_path,
             seed=seed,
             config=config_snapshot,
-            context=context_payload,
+            context=telemetry_context,
             step_interval=step_interval if isinstance(step_interval, int) and step_interval > 0 else None,
         )
 
