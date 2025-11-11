@@ -77,14 +77,15 @@ before proposing new work.
     - [x] Draft notebooks under `docs/examples/analytics/` with executed outputs.
     - [x] Ensure notebooks call CLI/modules via lightweight wrappers for reproducibility.
     - [x] Capture metadata (runtime, dependencies) and add smoke execution script.
-  - [ ] Documentation & automation
+  - [x] Documentation & automation
     - [x] Integrate notebooks into Sphinx (nbsphinx or nbconvert pipeline) with cross-links.
     - [x] Add CI check to execute notebooks (or cached outputs) on critical scenarios.
     - [x] Update README and docs landing pages to advertise analytics assets.
 - [ ] Hyperparameter tuning framework (conventional + agentic) leveraging persistent telemetry (`notes/metaheuristic_hyperparam_tuning.md`).
   - [ ] Telemetry & persistence groundwork
-    - [ ] Define telemetry schema (solver configuration, KPIs, runtime stats) and storage backend.
+    - [x] Define telemetry schema (solver configuration, KPIs, runtime stats) and storage backend (drafted in `notes/metaheuristic_hyperparam_tuning.md`).
     - [ ] Implement logging hooks in solvers and playback runs, persisting to local store.
+      - [x] Simulated Annealing JSONL run logger emitting run/step telemetry (`RunTelemetryLogger`, `solve_sa`).
     - [ ] Document data retention/rotation strategy in tuning notes.
   - [ ] Conventional tuning toolkit
     - [ ] Implement grid/random/Bayesian search drivers leveraging telemetry store.

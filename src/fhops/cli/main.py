@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
+from collections import deque
 import json
 from datetime import UTC, datetime
 from pathlib import Path
@@ -350,6 +351,17 @@ def solve_heur_cmd(
 
     runs_meta = None
     seed_used = seed
+    base_telemetry_context: dict[str, Any] | None = None
+    if telemetry_log:
+        base_telemetry_context = {
+            "scenario_path": str(scenario),
+            "source": "cli.solve-heur",
+        }
+        if selected_profile:
+            base_telemetry_context["profile"] = selected_profile.name
+            base_telemetry_context["profile_version"] = selected_profile.version
+        sa_kwargs["telemetry_log"] = telemetry_log
+        sa_kwargs["telemetry_context"] = base_telemetry_context
 
     if multi_start > 1:
         seeds, auto_presets = build_exploration_plan(multi_start, base_seed=seed)
@@ -365,6 +377,7 @@ def solve_heur_cmd(
                 max_workers=worker_arg,
                 sa_kwargs=sa_kwargs,
                 telemetry_log=telemetry_log,
+                telemetry_context=base_telemetry_context,
             )
             res = res_container.best_result
             runs_meta = res_container.runs_meta
@@ -1171,6 +1184,83 @@ def benchmark(
     console.print("SA metrics:")
     for key, value in sa_metrics.items():
         console.print(f"  {key}: {value:.3f}" if isinstance(value, float) else f"  {key}: {value}")
+
+
+@app.command("tune-random")
+def tune_random_cli(
+    scenarios: list[Path] = typer.Argument(
+        ...,
+        exists=True,
+        readable=True,
+        dir_okay=True,
+        help="Scenario YAMLs or bundle directories to sample during tuning.",
+    ),
+    telemetry_log: Path = typer.Option(
+        Path("telemetry/runs.jsonl"),
+        "--telemetry-log",
+        help="Telemetry JSONL capturing prior heuristic runs (optional).",
+        dir_okay=False,
+        writable=False,
+    ),
+    samples: int = typer.Option(
+        5,
+        "--samples",
+        min=1,
+        help="Show the latest N telemetry records for context.",
+    ),
+):
+    """Stub random-search tuner that previews existing telemetry."""
+    console.print(
+        f"[dim]Random tuner stub — scenarios queued: {', '.join(str(path) for path in scenarios)}[/]"
+    )
+    if not telemetry_log.exists():
+        console.print(f"[yellow]Telemetry log {telemetry_log} not found. Nothing to preview yet.[/]")
+        console.print(
+            "[dim]Run `fhops solve-heur --telemetry-log` to populate telemetry before launching the tuner.[/]"
+        )
+        return
+
+    records: deque[dict[str, Any]] = deque(maxlen=samples)
+    with telemetry_log.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                payload = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            record_type = payload.get("record_type")
+            if record_type not in (None, "run"):
+                continue
+            records.append(payload)
+
+    if not records:
+        console.print("[yellow]No run-level telemetry records available to display yet.[/]")
+        return
+
+    table = Table(title=f"Run telemetry (latest {len(records)} records)")
+    table.add_column("Run ID", overflow="fold")
+    table.add_column("Solver")
+    table.add_column("Scenario")
+    table.add_column("Objective", justify="right")
+    table.add_column("Status")
+    table.add_column("Duration (s)", justify="right")
+    for record in records:
+        metrics = record.get("metrics") or {}
+        objective = metrics.get("objective", record.get("objective"))
+        duration = record.get("duration_seconds")
+        table.add_row(
+            str(record.get("run_id", "-")),
+            str(record.get("solver", "-")),
+            str(record.get("scenario") or record.get("scenario_path") or "-"),
+            f"{objective:.3f}" if isinstance(objective, (int, float)) else str(objective),
+            str(record.get("status", "-")),
+            f"{duration:.2f}" if isinstance(duration, (int, float)) else str(duration or "-"),
+        )
+
+    console.print(table)
+    console.print("[dim]Full tuner implementation pending — this command currently previews telemetry only.[/]")
 
 
 if __name__ == "__main__":

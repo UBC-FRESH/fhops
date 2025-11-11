@@ -1,6 +1,94 @@
 Metaheuristic Hyperparameter Tuning Plan
 ========================================
 
+Date: 2025-11-11  
+Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
+
+## Objectives
+- Capture rich telemetry from heuristic runs (config, interim metrics, outcomes).
+- Provide conventional tuning drivers (grid/random/Bayesian) that operate on the telemetry store.
+- Explore an LLM-assisted agent loop that consumes telemetry and proposes new presets with guardrails.
+- Document workflows (CLI, docs) so users can reproduce sweeps and compare tuners.
+
+## Deliverables Checklist
+
+### Telemetry & Persistence Groundwork
+- [x] Define telemetry schema (`TelemetryRun`, `TelemetryStep`) covering scenario, solver, seeds, operator weights, acceptance stats, objective trajectory, timing.
+- [ ] Implement logging hooks in SA/ILS/Tabu solvers and playback validators writing to JSONL (phase 1) and SQLite (optional phase 2).
+  - [x] Simulated Annealing JSONL prototype: run + step telemetry recorded via `RunTelemetryLogger`.
+- [x] Provide helper module (`fhops.telemetry.run_logger`) with append/query utilities and retention controls.
+- [ ] Document retention/rotation strategy and storage location in this note + CLI help.
+
+### Conventional Tuning Toolkit
+- [ ] Implement grid and random search drivers operating on the telemetry store (CLI-friendly).
+- [ ] Integrate a Bayesian/SMBO tuner (e.g., Optuna or scikit-optimize) with pluggable search spaces.
+- [ ] Expose CLI commands (`fhops tune random`, `fhops tune bayes`) that schedule sweeps over scenario bundles.
+  - [x] Placeholder `fhops tune-random` surfaces latest telemetry records while full tuner is built.
+- [ ] Generate automated comparison reports (CSV/Markdown) summarising best configs per scenario tier; stash fixtures/tests.
+
+### Agentic Tuning Integration
+- [ ] Define prompt templates and action space for the LLM agent (config proposals, narrative rationale).
+- [ ] Build agent loop driver that reads telemetry snapshots, requests proposals, validates via harness, and records outcomes.
+- [ ] Add safety rails (budget limits, whitelist parameters) and log all prompts/responses for auditability.
+- [ ] Document usage guidance and risks (docs/howto or dedicated guide).
+
+### Automation & Docs
+- [ ] Update roadmap + docs as milestones complete.
+- [ ] Add Sphinx how-to covering telemetry schema, tuner commands, and agent workflow once stable.
+- [ ] Ensure CI smoke targets exist for lightweight tuning sweeps (e.g., single random search iteration).
+
+## Immediate Next Steps
+- [x] Sketch telemetry schema (`TelemetryRun`, `TelemetryStep`, `TelemetryArtifact`) and align with existing solver stats; capture preliminary schema diagram in this note.
+- [x] Prototype JSONL logger in Simulated Annealing driver (write via context manager) and add unit smoke test capturing a sample record.
+- [x] Draft CLI stub (`fhops tune random`) that accepts scenario bundle paths and prints parsed telemetry entries (placeholder implementation).
+
+### Telemetry schema (draft)
+
+We will persist three related record types in JSONL (phase 1) and mirror the schema in a SQLite view when we introduce structured queries.
+
+#### TelemetryRun
+| Field | Type | Notes |
+| --- | --- | --- |
+| `run_id` | `str` (UUID4) | Stable identifier for the tuning run. |
+| `timestamp` | `datetime` (ISO8601) | Start time. |
+| `solver` | `str` | e.g., `sa`, `ils`, `tabu`. |
+| `scenario` | `str` | Scenario path or alias. |
+| `bundle` | `str | None` | Optional benchmark bundle identifier. |
+| `seed` | `int` | RNG seed. |
+| `config` | `dict[str, Any]` | Flattened solver options (cooling schedule, operator weights, etc.). |
+| `status` | `str` | `ok`, `timeout`, `error`. |
+| `metrics` | `dict[str, float]` | Final KPIs (objective, production, utilisation, runtime). |
+| `artifacts` | `list[str]` | Paths to serialized logs, solution CSVs, etc. |
+
+#### TelemetryStep
+| Field | Type | Notes |
+| --- | --- | --- |
+| `run_id` | `str` | Foreign key to `TelemetryRun`. |
+| `step` | `int` | Iteration index (temperature step, epoch). |
+| `objective` | `float` | Current best objective. |
+| `temperature` | `float | None` | SA-specific cooling value. |
+| `acceptance_rate` | `float | None` | Accepted moves / total. |
+| `best_delta` | `float | None` | Improvement at this step. |
+| `elapsed_seconds` | `float` | Wall-clock since run start. |
+| `operator_stats` | `dict[str, Any]` | Usage counts/acceptance per operator. |
+
+#### TelemetryArtifact
+| Field | Type | Notes |
+| --- | --- | --- |
+| `run_id` | `str` | Foreign key to `TelemetryRun`. |
+| `name` | `str` | e.g., `solution_csv`, `telemetry_jsonl`. |
+| `path` | `str` | Relative filesystem path. |
+| `mime_type` | `str` | Helps downstream ingestion. |
+| `size_bytes` | `int` | Optional size metadata. |
+
+**Storage layout (JSONL)**  
+- `telemetry/runs.jsonl` — one line per `TelemetryRun` record.  
+- `telemetry/steps/<run_id>.jsonl` — time-series per run (optional when step logging disabled).  
+- `telemetry/artifacts.jsonl` — references for discovered outputs.
+
+**SQLite (phase 2)**  
+Mirrors the same schema with `runs`, `steps`, `artifacts` tables plus indexes on `(scenario, solver)` and `(run_id)` to accelerate queries.
+
 LLM-Driven Tuner (Agentic Auto-Tuning)
 --------------------------------------
 
