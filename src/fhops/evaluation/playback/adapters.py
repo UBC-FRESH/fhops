@@ -200,6 +200,12 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
                 metadata["block_completed"] = True
 
             blackout_hit = day in blackout_days
+            downtime_flag = bool(row.get("_downtime", 0))
+            weather_severity_value = row.get("_weather_severity")
+            if pd.notna(weather_severity_value) and weather_severity_value != 0:
+                weather_severity = float(weather_severity_value)
+            else:
+                weather_severity = None
 
             yield PlaybackRecord(
                 day=day,
@@ -212,6 +218,8 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
                 blackout_hit=blackout_hit,
                 landing_id=landing_id,
                 machine_role=role,
+                downtime=downtime_flag,
+                weather_severity=weather_severity,
                 metadata=metadata,
             )
 

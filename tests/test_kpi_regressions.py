@@ -96,4 +96,12 @@ def test_kpi_stochastic_snapshot() -> None:
         }
     )
 
+    if "downtime_hours" in shift_df.columns:
+        snapshot["downtime_hours_total"] = round(float(shift_df["downtime_hours"].sum()), 6)
+        snapshot["downtime_event_count"] = int(shift_df["downtime_events"].sum())
+    if "weather_severity_total" in shift_df.columns:
+        snapshot["weather_severity_total"] = round(
+            float(shift_df["weather_severity_total"].sum()), 6
+        )
+
     assert snapshot == fixture_data

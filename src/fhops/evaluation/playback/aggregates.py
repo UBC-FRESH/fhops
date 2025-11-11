@@ -34,6 +34,9 @@ SHIFT_SUMMARY_COLUMNS = [
     "blackout_conflicts",
     "available_hours",
     "utilisation_ratio",
+    "downtime_hours",
+    "downtime_events",
+    "weather_severity_total",
 ]
 
 DAY_SUMMARY_COLUMNS = [
@@ -48,6 +51,9 @@ DAY_SUMMARY_COLUMNS = [
     "sequencing_violations",
     "available_hours",
     "utilisation_ratio",
+    "downtime_hours",
+    "downtime_events",
+    "weather_severity_total",
 ]
 
 

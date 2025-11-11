@@ -138,6 +138,7 @@ def test_compute_kpis_reports_mobilisation_cost():
     assert kpis.get("makespan_shift") == "S1"
     assert pytest.approx(kpis.get("utilisation_ratio_mean_shift", 0.0)) == 1.0
     assert pytest.approx(kpis.get("utilisation_ratio_weighted_shift", 0.0)) == 1.0
+    assert kpis.get("downtime_hours_total", 0.0) == 0.0
 
 
 def test_compute_kpis_reports_sequencing_metrics():

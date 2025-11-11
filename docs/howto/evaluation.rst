@@ -142,6 +142,10 @@ The current KPI bundle includes:
   from the shift/day calendars, with optional breakdowns by machine or role.
 * ``makespan_day`` / ``makespan_shift`` — latest day/shift containing productive assignments according to
   the scenario’s shift definition order.
+* ``downtime_hours_total`` / ``downtime_event_count`` / ``downtime_hours_by_machine`` — aggregate downtime
+  exposure derived from stochastic sampling (zero for deterministic runs).
+* ``weather_severity_total`` / ``weather_severity_by_machine`` — cumulative weather intensity applied during
+  stochastic playback, useful for correlating production drops with weather samples.
 
 Upcoming KPI extensions planned for Phase 3 will reuse the same shift/day summaries:
 

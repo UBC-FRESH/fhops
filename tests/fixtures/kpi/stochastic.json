@@ -1,5 +1,7 @@
 {
   "day_rows": 108,
+  "downtime_event_count": 0,
+  "downtime_hours_total": 0.0,
   "makespan_day": 41,
   "makespan_shift": "S1",
   "production_units_sum": 859.584574,
@@ -9,5 +11,6 @@
   "utilisation_ratio_mean_day": 0.504927,
   "utilisation_ratio_mean_shift": 1.0,
   "utilisation_ratio_weighted_day": 0.503623,
-  "utilisation_ratio_weighted_shift": 1.0
+  "utilisation_ratio_weighted_shift": 1.0,
+  "weather_severity_total": 64.75
 }
