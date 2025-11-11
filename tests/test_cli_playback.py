@@ -175,6 +175,29 @@ def test_eval_playback_cli_landing(tmp_path: Path):
     assert day_df["production_units"].sum() < base_total * 2
 
 
+def test_evaluate_cli_basic_kpi_mode(tmp_path: Path):
+    scenario_path = "tests/fixtures/regression/regression.yaml"
+    assignments_path = _solve_sa_assignments(scenario_path, tmp_path)
+
+    result = runner.invoke(
+        app,
+        [
+            "evaluate",
+            scenario_path,
+            "--assignments",
+            str(assignments_path),
+            "--kpi-mode",
+            "basic",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    stdout = result.stdout
+    assert "KPI Summary" in stdout
+    assert "Production" in stdout
+    assert "Downtime" not in stdout
+    assert "Weather" not in stdout
+
+
 @pytest.mark.parametrize("scenario_name", ["minitoy", "med42"])
 def test_playback_fixture_matches_cli(tmp_path: Path, scenario_name: str):
     scenario_path = Path(f"examples/{scenario_name}/scenario.yaml")
