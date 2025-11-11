@@ -26,7 +26,7 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - [ ] Implement grid and random search drivers operating on the telemetry store (CLI-friendly).
 - [ ] Integrate a Bayesian/SMBO tuner (e.g., Optuna or scikit-optimize) with pluggable search spaces.
 - [ ] Expose CLI commands (`fhops tune random`, `fhops tune bayes`) that schedule sweeps over scenario bundles.
-  - [x] Placeholder `fhops tune-random` surfaces latest telemetry records while full tuner is built.
+  - [x] Random tuner execution mode (`fhops tune-random`) running SA sweeps and recording telemetry.
 - [ ] Generate automated comparison reports (CSV/Markdown) summarising best configs per scenario tier; stash fixtures/tests.
 
 ### Agentic Tuning Integration
@@ -41,9 +41,9 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - [ ] Ensure CI smoke targets exist for lightweight tuning sweeps (e.g., single random search iteration).
 
 ## Immediate Next Steps
-- [ ] Add a lightweight telemetry pruning helper (`fhops telemetry prune`) that truncates `runs.jsonl` and cleans matching step logs.
-- [ ] Implement the first conventional tuner driver (`fhops tune random` execution mode) that samples solver configs and records telemetry entries.
-- [ ] Provide a simple JSONL → DataFrame loader in `fhops.telemetry` to make analyses/tests easier ahead of the SQLite backend.
+- [x] Add a lightweight telemetry pruning helper (`fhops telemetry prune`) that truncates `runs.jsonl` and cleans matching step logs. *(See `fhops.cli.telemetry.prune`.)*
+- [x] Implement the first conventional tuner driver (`fhops tune random` execution mode) that samples solver configs and records telemetry entries.
+- [x] Provide a simple JSONL → DataFrame loader in `fhops.telemetry` to make analyses/tests easier ahead of the SQLite backend.
 
 ### Telemetry schema (draft)
 

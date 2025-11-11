@@ -92,6 +92,7 @@ before proposing new work.
   - [ ] Conventional tuning toolkit
     - [ ] Implement grid/random/Bayesian search drivers leveraging telemetry store.
     - [ ] Provide CLI surfaces for launching tuning sweeps with scenario bundles.
+      - [x] Random tuner CLI (`fhops tune-random`) executing SA sweeps and recording telemetry.
     - [ ] Add automated comparison reports summarising best configurations per scenario class.
   - [ ] Agentic tuning integration
     - [ ] Prototype agent loop per `notes/metaheuristic_hyperparam_tuning.md` (prompt templates + action space).
