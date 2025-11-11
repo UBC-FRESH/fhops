@@ -1,0 +1,22 @@
+name: synthetic-large
+num_days: 16
+schema_version: 1.0.0
+data:
+  blocks: data/blocks.csv
+  machines: data/machines.csv
+  landings: data/landings.csv
+  calendar: data/calendar.csv
+  prod_rates: data/prod_rates.csv
+timeline:
+  shifts:
+  - name: S1
+    hours: 11.25708939959458
+    shifts_per_day: 2
+  blackouts:
+  - start_day: 12
+    end_day: 12
+    reason: synthetic-blackout
+  - start_day: 16
+    end_day: 16
+    reason: synthetic-blackout
+  days_per_week: 7
