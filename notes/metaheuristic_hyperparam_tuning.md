@@ -14,12 +14,13 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 
 ### Telemetry & Persistence Groundwork
 - [x] Define telemetry schema (`TelemetryRun`, `TelemetryStep`) covering scenario, solver, seeds, operator weights, acceptance stats, objective trajectory, timing.
-- [ ] Implement logging hooks in SA/ILS/Tabu solvers and playback validators writing to JSONL (phase 1) and SQLite (optional phase 2).
+- [x] Implement logging hooks in SA/ILS/Tabu solvers and playback validators writing to JSONL (phase 1) and SQLite (optional phase 2).
   - [x] Simulated Annealing JSONL prototype: run + step telemetry recorded via `RunTelemetryLogger`.
   - [x] ILS JSONL logging (run + step snapshots, CLI integration).
   - [x] Tabu JSONL logging (run + step snapshots, CLI integration).
+  - [x] Playback telemetry logging (CLI hook + step logs).
 - [x] Provide helper module (`fhops.telemetry.run_logger`) with append/query utilities and retention controls.
-- [ ] Document retention/rotation strategy and storage location in this note + CLI help.
+- [x] Document retention/rotation strategy and storage location in this note + CLI help.
 
 ### Conventional Tuning Toolkit
 - [ ] Implement grid and random search drivers operating on the telemetry store (CLI-friendly).
@@ -40,9 +41,9 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - [ ] Ensure CI smoke targets exist for lightweight tuning sweeps (e.g., single random search iteration).
 
 ## Immediate Next Steps
-- [x] Sketch telemetry schema (`TelemetryRun`, `TelemetryStep`, `TelemetryArtifact`) and align with existing solver stats; capture preliminary schema diagram in this note.
-- [x] Prototype JSONL logger in Simulated Annealing driver (write via context manager) and add unit smoke test capturing a sample record.
-- [x] Draft CLI stub (`fhops tune random`) that accepts scenario bundle paths and prints parsed telemetry entries (placeholder implementation).
+- [ ] Add a lightweight telemetry pruning helper (`fhops telemetry prune`) that truncates `runs.jsonl` and cleans matching step logs.
+- [ ] Implement the first conventional tuner driver (`fhops tune random` execution mode) that samples solver configs and records telemetry entries.
+- [ ] Provide a simple JSONL → DataFrame loader in `fhops.telemetry` to make analyses/tests easier ahead of the SQLite backend.
 
 ### Telemetry schema (draft)
 
@@ -90,6 +91,20 @@ We will persist three related record types in JSONL (phase 1) and mirror the sch
 
 **SQLite (phase 2)**  
 Mirrors the same schema with `runs`, `steps`, `artifacts` tables plus indexes on `(scenario, solver)` and `(run_id)` to accelerate queries.
+
+## Telemetry storage & retention (2025-11-12)
+
+- **Storage layout:** heuristics default to writing run records to `telemetry/runs.jsonl`. Step logs live beside it under `telemetry/steps/<run_id>.jsonl`. Commands accept `--telemetry-log` to override the run log path; step logs are automatically co-located.
+- **Rotation policy:** keep the most recent 5k runs (≈25–30 MB with current schema). For manual pruning run:
+
+  ```bash
+  tail -n 5000 telemetry/runs.jsonl > telemetry/runs.tmp && mv telemetry/runs.tmp telemetry/runs.jsonl
+  find telemetry/steps -type f -mtime +14 -delete
+  ```
+
+  Future work: add `fhops telemetry prune` to automate the truncation/synchronisation process.
+- **Archiving:** move older logs to `telemetry/archive/YYYYMMDD/` (both `runs.jsonl` and matching step files) before pruning if longer history is required. Compression (`xz`/`gzip`) keeps archives compact.
+- **Docs & CLI:** `solve-heur`, `solve-ils`, and `solve-tabu` help text now points to the recommended `telemetry/` directory and explains step-log co-location so users adopt the shared store by default.
 
 LLM-Driven Tuner (Agentic Auto-Tuning)
 --------------------------------------

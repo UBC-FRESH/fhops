@@ -87,6 +87,7 @@ before proposing new work.
     - [ ] Implement logging hooks in solvers and playback runs, persisting to local store.
       - [x] Simulated Annealing JSONL run logger emitting run/step telemetry (`RunTelemetryLogger`, `solve_sa`).
       - [x] ILS + Tabu telemetry integration (run/step logging, CLI wiring).
+      - [x] Playback CLI telemetry (run metadata + step logging for day summaries).
     - [ ] Document data retention/rotation strategy in tuning notes.
   - [ ] Conventional tuning toolkit
     - [ ] Implement grid/random/Bayesian search drivers leveraging telemetry store.

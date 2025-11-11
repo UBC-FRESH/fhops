@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from collections import deque
+from contextlib import nullcontext
 import json
 from datetime import UTC, datetime
 from pathlib import Path
@@ -41,7 +42,7 @@ from fhops.optimization.heuristics import (
 from fhops.optimization.mip import solve_mip
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
-from fhops.telemetry import append_jsonl
+from fhops.telemetry import RunTelemetryLogger, append_jsonl
 
 app = typer.Typer(add_completion=False, no_args_is_help=True)
 app.add_typer(geospatial_app, name="geo")
@@ -255,7 +256,7 @@ def solve_heur_cmd(
     telemetry_log: Path | None = typer.Option(
         None,
         "--telemetry-log",
-        help="Append run telemetry to the given JSONL file.",
+        help="Append run telemetry to a JSONL file (e.g. telemetry/runs.jsonl); step logs land in telemetry/steps/.",
         writable=True,
         dir_okay=False,
     ),
@@ -529,7 +530,7 @@ def solve_ils_cmd(
     telemetry_log: Path | None = typer.Option(
         None,
         "--telemetry-log",
-        help="Append run telemetry to JSONL.",
+        help="Append run telemetry to a JSONL file (default recommendation: telemetry/runs.jsonl).",
         writable=True,
         dir_okay=False,
     ),
@@ -733,7 +734,7 @@ def solve_tabu_cmd(
     telemetry_log: Path | None = typer.Option(
         None,
         "--telemetry-log",
-        help="Append run telemetry to JSONL.",
+        help="Append run telemetry to a JSONL file (e.g. telemetry/runs.jsonl); step logs are written next to it under telemetry/steps/.",
         writable=True,
         dir_okay=False,
     ),
@@ -1000,7 +1001,7 @@ def eval_playback(
     telemetry_log: Path | None = typer.Option(
         None,
         "--telemetry-log",
-        help="Append playback telemetry (metrics, export paths) to the given JSONL file.",
+        help="Append playback telemetry to a JSONL file (e.g. telemetry/runs.jsonl); step logs land in telemetry/steps/.",
         writable=True,
         dir_okay=False,
     ),
@@ -1012,172 +1013,212 @@ def eval_playback(
 
     df = pd.read_csv(assignments_csv)
 
-    playback_config = PlaybackConfig(include_idle_records=include_idle)
-
-    shift_df: pd.DataFrame
-    day_df: pd.DataFrame
-
-    deterministic_mode = (
-        samples <= 1
-        and downtime_probability <= 0
-        and weather_probability <= 0
-        and landing_probability <= 0
-    )
-
-    if deterministic_mode:
-        playback_result = run_playback(pb, df, config=playback_config)
-        shift_summaries = list(playback_result.shift_summaries)
-        day_summaries = list(playback_result.day_summaries)
-        shift_df = shift_dataframe(playback_result)
-        day_df = day_dataframe(playback_result)
-    else:
-        sampling_config = SamplingConfig(
-            samples=samples,
-            base_seed=base_seed,
-        )
-        sampling_config.downtime.enabled = downtime_probability > 0
-        sampling_config.downtime.probability = downtime_probability
-        sampling_config.downtime.max_concurrent = downtime_max_concurrent
-        sampling_config.weather.enabled = weather_probability > 0
-        sampling_config.weather.day_probability = weather_probability
-        sampling_config.weather.severity_levels = {"default": weather_severity}
-        sampling_config.weather.impact_window_days = weather_window
-        sampling_config.landing.enabled = landing_probability > 0
-        sampling_config.landing.probability = landing_probability
-        sampling_config.landing.capacity_multiplier_range = (
-            landing_multiplier_low,
-            landing_multiplier_high,
-        )
-        sampling_config.landing.duration_days = landing_duration
-
-        ensemble = run_stochastic_playback(
-            pb,
-            df,
-            sampling_config=sampling_config,
-        )
-        if ensemble.samples:
-            shift_summaries = [
-                summary
-                for sample in ensemble.samples
-                for summary in sample.result.shift_summaries
-            ]
-            day_summaries = [
-                summary for sample in ensemble.samples for summary in sample.result.day_summaries
-            ]
-            shift_df = shift_dataframe_from_ensemble(ensemble)
-            day_df = day_dataframe_from_ensemble(ensemble)
-        else:
-            base_result = ensemble.base_result
-            shift_summaries = list(base_result.shift_summaries)
-            day_summaries = list(base_result.day_summaries)
-            shift_df = shift_dataframe(base_result)
-            day_df = day_dataframe(base_result)
-
-    shift_table = Table(title="Shift Playback Summary")
-    shift_table.add_column("Machine")
-    shift_table.add_column("Day")
-    shift_table.add_column("Shift")
-    shift_table.add_column("Prod", justify="right")
-    shift_table.add_column("Hours", justify="right")
-    shift_table.add_column("Idle", justify="right")
-    shift_table.add_column("Mobilisation", justify="right")
-    shift_table.add_column("Sequencing", justify="right")
-    shift_table.add_column("Utilisation", justify="right")
-    for summary in shift_summaries[:20]:
-        shift_table.add_row(
-            summary.machine_id,
-            str(summary.day),
-            summary.shift_id,
-            f"{summary.production_units:.2f}",
-            f"{summary.total_hours:.2f}",
-            f"{(summary.idle_hours or 0.0):.2f}",
-            f"{summary.mobilisation_cost:.2f}",
-            str(summary.sequencing_violations),
-            f"{(summary.utilisation_ratio or 0.0):.2f}",
-        )
-    console.print(shift_table)
-
-    day_table = Table(title="Day Playback Summary")
-    day_table.add_column("Day")
-    day_table.add_column("Prod", justify="right")
-    day_table.add_column("Hours", justify="right")
-    day_table.add_column("Idle", justify="right")
-    day_table.add_column("Mobilisation", justify="right")
-    day_table.add_column("Completed", justify="right")
-    day_table.add_column("Sequencing", justify="right")
-    day_table.add_column("Utilisation", justify="right")
-    for summary in day_summaries:
-        day_table.add_row(
-            str(summary.day),
-            f"{summary.production_units:.2f}",
-            f"{summary.total_hours:.2f}",
-            f"{(summary.idle_hours or 0.0):.2f}",
-            f"{summary.mobilisation_cost:.2f}",
-            str(summary.completed_blocks),
-            str(summary.sequencing_violations),
-            f"{(summary.utilisation_ratio or 0.0):.2f}",
-        )
-    console.print(day_table)
-
-    export_metrics: dict[str, Any] = {}
-    try:
-        export_metrics = export_playback(
-            shift_df,
-            day_df,
-            shift_csv=shift_out,
-            day_csv=day_out,
-            shift_parquet=shift_parquet,
-            day_parquet=day_parquet,
-            summary_md=summary_md,
-        )
-    except ImportError as exc:
-        console.print("[red]Parquet export requires either pyarrow or fastparquet. Install one of them to enable this feature.[/red]")
-        raise typer.Exit(1) from exc
-
-    if shift_out:
-        console.print(f"Shift summary saved to {shift_out}")
-    if day_out:
-        console.print(f"Day summary saved to {day_out}")
-    if shift_parquet:
-        console.print(f"Shift parquet saved to {shift_parquet}")
-    if day_parquet:
-        console.print(f"Day parquet saved to {day_parquet}")
-    if summary_md:
-        console.print(f"Markdown summary saved to {summary_md}")
+    config_snapshot = {
+        "include_idle": include_idle,
+        "samples": samples,
+        "downtime_probability": downtime_probability,
+        "downtime_max_concurrent": downtime_max_concurrent,
+        "weather_probability": weather_probability,
+        "weather_severity": weather_severity,
+        "weather_window": weather_window,
+        "landing_probability": landing_probability,
+        "landing_multiplier_low": landing_multiplier_low,
+        "landing_multiplier_high": landing_multiplier_high,
+        "landing_duration": landing_duration,
+    }
+    context_snapshot = {
+        "assignments_path": str(assignments_csv),
+        "command": "eval-playback",
+    }
+    telemetry_logger: RunTelemetryLogger | None = None
     if telemetry_log:
-        record = {
-            "timestamp": datetime.now(UTC).isoformat(),
-            "source": "eval-playback",
-            "scenario": sc.name,
-            "scenario_path": str(scenario),
-            "assignments_path": str(assignments_csv),
-            "deterministic": bool(deterministic_mode),
-            "samples_requested": samples,
-            "include_idle": include_idle,
-            "sampling": {
-                "base_seed": base_seed,
-                "downtime_probability": downtime_probability,
-                "downtime_max_concurrent": downtime_max_concurrent,
-                "weather_probability": weather_probability,
-                "weather_severity": weather_severity,
-                "weather_window": weather_window,
-                "landing_probability": landing_probability,
-                "landing_multiplier_low": landing_multiplier_low,
-                "landing_multiplier_high": landing_multiplier_high,
-                "landing_duration": landing_duration,
-            },
-            "export": {
-                "shift_csv": str(shift_out) if shift_out else None,
-                "day_csv": str(day_out) if day_out else None,
-                "shift_parquet": str(shift_parquet) if shift_parquet else None,
-                "day_parquet": str(day_parquet) if day_parquet else None,
-                "summary_md": str(summary_md) if summary_md else None,
-            },
-            "export_metrics": export_metrics or playback_summary_metrics(shift_df, day_df),
-            "shift_rows": int(len(shift_df)),
-            "day_rows": int(len(day_df)),
-        }
-        append_jsonl(telemetry_log, record)
+        telemetry_logger = RunTelemetryLogger(
+            log_path=telemetry_log,
+            solver="playback",
+            scenario=sc.name,
+            scenario_path=str(scenario),
+            config=config_snapshot,
+            context=context_snapshot,
+            step_interval=1,
+        )
+
+    artifacts: list[str] = []
+
+    with (telemetry_logger if telemetry_logger else nullcontext()) as run_logger:
+        playback_config = PlaybackConfig(include_idle_records=include_idle)
+
+        deterministic_mode = (
+            samples <= 1
+            and downtime_probability <= 0
+            and weather_probability <= 0
+            and landing_probability <= 0
+        )
+
+        if deterministic_mode:
+            playback_result = run_playback(pb, df, config=playback_config)
+            shift_summaries = list(playback_result.shift_summaries)
+            day_summaries = list(playback_result.day_summaries)
+            shift_df = shift_dataframe(playback_result)
+            day_df = day_dataframe(playback_result)
+        else:
+            sampling_config = SamplingConfig(
+                samples=samples,
+                base_seed=base_seed,
+            )
+            sampling_config.downtime.enabled = downtime_probability > 0
+            sampling_config.downtime.probability = downtime_probability
+            sampling_config.downtime.max_concurrent = downtime_max_concurrent
+            sampling_config.weather.enabled = weather_probability > 0
+            sampling_config.weather.day_probability = weather_probability
+            sampling_config.weather.severity_levels = {"default": weather_severity}
+            sampling_config.weather.impact_window_days = weather_window
+            sampling_config.landing.enabled = landing_probability > 0
+            sampling_config.landing.probability = landing_probability
+            sampling_config.landing.capacity_multiplier_range = (
+                landing_multiplier_low,
+                landing_multiplier_high,
+            )
+            sampling_config.landing.duration_days = landing_duration
+
+            ensemble = run_stochastic_playback(
+                pb,
+                df,
+                sampling_config=sampling_config,
+            )
+            if ensemble.samples:
+                shift_summaries = [
+                    summary
+                    for sample in ensemble.samples
+                    for summary in sample.result.shift_summaries
+                ]
+                day_summaries = [
+                    summary
+                    for sample in ensemble.samples
+                    for summary in sample.result.day_summaries
+                ]
+                shift_df = shift_dataframe_from_ensemble(ensemble)
+                day_df = day_dataframe_from_ensemble(ensemble)
+            else:
+                base_result = ensemble.base_result
+                shift_summaries = list(base_result.shift_summaries)
+                day_summaries = list(base_result.day_summaries)
+                shift_df = shift_dataframe(base_result)
+                day_df = day_dataframe(base_result)
+
+        if telemetry_logger and run_logger:
+            cumulative_production = 0.0
+            for idx, summary in enumerate(day_summaries, start=1):
+                production = float(getattr(summary, "production_units", 0.0))
+                cumulative_production += production
+                run_logger.log_step(
+                    step=idx,
+                    objective=production,
+                    best_objective=cumulative_production,
+                    temperature=None,
+                    acceptance_rate=None,
+                    proposals=0,
+                    accepted_moves=0,
+                )
+
+        shift_table = Table(title="Shift Playback Summary")
+        shift_table.add_column("Machine")
+        shift_table.add_column("Day")
+        shift_table.add_column("Shift")
+        shift_table.add_column("Prod", justify="right")
+        shift_table.add_column("Hours", justify="right")
+        shift_table.add_column("Idle", justify="right")
+        shift_table.add_column("Mobilisation", justify="right")
+        shift_table.add_column("Sequencing", justify="right")
+        shift_table.add_column("Utilisation", justify="right")
+        for summary in shift_summaries[:20]:
+            shift_table.add_row(
+                summary.machine_id,
+                str(summary.day),
+                summary.shift_id,
+                f"{summary.production_units:.2f}",
+                f"{summary.total_hours:.2f}",
+                f"{(summary.idle_hours or 0.0):.2f}",
+                f"{summary.mobilisation_cost:.2f}",
+                str(summary.sequencing_violations),
+                f"{(summary.utilisation_ratio or 0.0):.2f}",
+            )
+        console.print(shift_table)
+
+        day_table = Table(title="Day Playback Summary")
+        day_table.add_column("Day")
+        day_table.add_column("Prod", justify="right")
+        day_table.add_column("Hours", justify="right")
+        day_table.add_column("Idle", justify="right")
+        day_table.add_column("Mobilisation", justify="right")
+        day_table.add_column("Completed", justify="right")
+        day_table.add_column("Sequencing", justify="right")
+        day_table.add_column("Utilisation", justify="right")
+        for summary in day_summaries:
+            day_table.add_row(
+                str(summary.day),
+                f"{summary.production_units:.2f}",
+                f"{summary.total_hours:.2f}",
+                f"{(summary.idle_hours or 0.0):.2f}",
+                f"{summary.mobilisation_cost:.2f}",
+                str(summary.completed_blocks),
+                str(summary.sequencing_violations),
+                f"{(summary.utilisation_ratio or 0.0):.2f}",
+            )
+        console.print(day_table)
+
+        export_metrics: dict[str, Any] = {}
+        try:
+            export_metrics = export_playback(
+                shift_df,
+                day_df,
+                shift_csv=shift_out,
+                day_csv=day_out,
+                shift_parquet=shift_parquet,
+                day_parquet=day_parquet,
+                summary_md=summary_md,
+            )
+        except ImportError as exc:
+            console.print("[red]Parquet export requires either pyarrow or fastparquet. Install one of them to enable this feature.[/red]")
+            raise typer.Exit(1) from exc
+
+        if shift_out:
+            console.print(f"Shift summary saved to {shift_out}")
+            artifacts.append(str(shift_out))
+        if day_out:
+            console.print(f"Day summary saved to {day_out}")
+            artifacts.append(str(day_out))
+        if shift_parquet:
+            console.print(f"Shift parquet saved to {shift_parquet}")
+            artifacts.append(str(shift_parquet))
+        if day_parquet:
+            console.print(f"Day parquet saved to {day_parquet}")
+            artifacts.append(str(day_parquet))
+        if summary_md:
+            console.print(f"Markdown summary saved to {summary_md}")
+            artifacts.append(str(summary_md))
+
+        if telemetry_logger:
+            metrics_payload = {
+                "total_production": float(day_df["production_units"].sum())
+                if "production_units" in day_df
+                else 0.0,
+                "total_hours": float(day_df["total_hours"].sum())
+                if "total_hours" in day_df
+                else 0.0,
+                "shift_rows": int(len(shift_df)),
+                "day_rows": int(len(day_df)),
+                "deterministic": bool(deterministic_mode),
+                "samples_requested": samples,
+            }
+            extra_payload = {
+                "export_metrics": export_metrics or playback_summary_metrics(shift_df, day_df),
+            }
+            telemetry_logger.finalize(
+                status="ok",
+                metrics=metrics_payload,
+                extra=extra_payload,
+                artifacts=artifacts,
+            )
 
 
 @app.command()

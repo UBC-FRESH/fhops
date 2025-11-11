@@ -153,6 +153,7 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
             "metrics": dict(metrics or {}),
             "config": dict(self.config or {}),
             "context": dict(self.context or {}),
+            "extra": dict(extra or {}),
             "artifacts": list(artifacts or []),
             "error": error,
             "started_at": self._start_timestamp,
