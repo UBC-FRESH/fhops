@@ -39,9 +39,9 @@ before proposing new work.
     - [x] Implement downtime/weather sampling operators with unit and property-based tests.
     - [x] Integrate sampling toggles into CLI/automation commands (document defaults in `docs/howto/evaluation.rst`).
   - [ ] Shift/day reporting deliverables
-    - [ ] Define aggregation schemas for shift/day calendars and extend KPI dataclasses.
-    - [ ] Add exporters (CSV/Parquet + Markdown summary) wired into playback CLI.
-    - [ ] Validate outputs across benchmark scenarios and stash fixtures for CI smoke runs.
+    - [x] Define aggregation schemas for shift/day calendars and extend KPI dataclasses.
+    - [x] Add exporters (CSV/Parquet + Markdown summary) wired into playback CLI.
+    - [x] Validate outputs across benchmark scenarios and stash fixtures for CI smoke runs.
 - [ ] KPI expansion (cost, makespan, utilisation, mobilisation spend) with reporting templates.
   - [ ] Metric specification & alignment
     - [ ] Reconcile definitions across `notes/mip_model_plan.md`, `notes/mobilisation_plan.md`, and simulation notes.

@@ -4,13 +4,74 @@ from __future__ import annotations
 
 import json
 from collections import Counter, defaultdict
+from collections.abc import Iterator, Mapping
+from dataclasses import dataclass, field
+from typing import Any, ClassVar
 
 import pandas as pd
 
+from fhops.evaluation.playback.aggregates import DAY_SUMMARY_COLUMNS, SHIFT_SUMMARY_COLUMNS
 from fhops.scenario.contract import Problem
 from fhops.scheduling.mobilisation import build_distance_lookup
 
-__all__ = ["compute_kpis"]
+__all__ = ["KPIResult", "compute_kpis"]
+
+
+@dataclass(slots=True)
+class KPIResult(Mapping[str, float | int | str]):
+    """Structured KPI bundle with optional shift/day calendar attachments."""
+
+    totals: dict[str, float | int | str] = field(default_factory=dict)
+    shift_calendar: pd.DataFrame | None = None
+    day_calendar: pd.DataFrame | None = None
+
+    SHIFT_COLUMNS: ClassVar[tuple[str, ...]] = tuple(SHIFT_SUMMARY_COLUMNS)
+    DAY_COLUMNS: ClassVar[tuple[str, ...]] = tuple(DAY_SUMMARY_COLUMNS)
+
+    def __post_init__(self) -> None:
+        if self.shift_calendar is not None:
+            missing = set(self.SHIFT_COLUMNS) - set(self.shift_calendar.columns)
+            if missing:
+                raise ValueError(f"Shift calendar missing columns: {sorted(missing)}")
+            self.shift_calendar = self.shift_calendar.reindex(columns=self.SHIFT_COLUMNS).copy()
+        if self.day_calendar is not None:
+            missing = set(self.DAY_COLUMNS) - set(self.day_calendar.columns)
+            if missing:
+                raise ValueError(f"Day calendar missing columns: {sorted(missing)}")
+            self.day_calendar = self.day_calendar.reindex(columns=self.DAY_COLUMNS).copy()
+
+    # Mapping interface -------------------------------------------------
+    def __getitem__(self, key: str) -> float | int | str:
+        return self.totals[key]
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self.totals)
+
+    def __len__(self) -> int:
+        return len(self.totals)
+
+    def get(self, key: str, default: Any = None) -> Any:
+        return self.totals.get(key, default)
+
+    # Convenience helpers -----------------------------------------------
+    def to_dict(self) -> dict[str, float | int | str]:
+        """Return the scalar KPI totals as a plain dictionary."""
+
+        return dict(self.totals)
+
+    def with_calendars(
+        self,
+        *,
+        shift_calendar: pd.DataFrame | None = None,
+        day_calendar: pd.DataFrame | None = None,
+    ) -> "KPIResult":
+        """Return a copy with the provided calendars attached."""
+
+        return KPIResult(
+            totals=self.to_dict(),
+            shift_calendar=shift_calendar if shift_calendar is not None else self.shift_calendar,
+            day_calendar=day_calendar if day_calendar is not None else self.day_calendar,
+        )
 
 
 def _system_metadata(pb: Problem):
@@ -141,4 +202,4 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> dict[str, float | in
             if seq_reason_counts
             else "none"
         )
-    return result
+    return KPIResult(totals=result)
