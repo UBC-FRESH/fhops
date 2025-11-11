@@ -6,6 +6,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
 
+import os
+
 import pandas as pd
 
 try:  # optional dependency for rich charts
@@ -76,6 +78,17 @@ def run_stochastic_summary(
             num_machines=len(scenario.machines),
         )
         sampling_config = sampling_config_for(config)
+
+    light_mode = os.getenv("FHOPS_ANALYTICS_LIGHT")
+    if light_mode:
+        sampling_config = sampling_config.model_copy()
+        sampling_config.samples = max(1, min(sampling_config.samples, 4))
+        if sampling_config.downtime.enabled:
+            sampling_config.downtime.probability = min(sampling_config.downtime.probability, 0.1)
+        if sampling_config.weather.enabled:
+            sampling_config.weather.day_probability = min(sampling_config.weather.day_probability, 0.2)
+        if sampling_config.landing.enabled:
+            sampling_config.landing.probability = min(sampling_config.landing.probability, 0.2)
 
     ensemble = run_stochastic_playback(problem, assignments, sampling_config=sampling_config)
     shift_df = shift_dataframe_from_ensemble(ensemble)

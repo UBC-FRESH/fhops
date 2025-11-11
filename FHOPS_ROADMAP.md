@@ -68,19 +68,19 @@ before proposing new work.
     - [x] Hook synthetic scenarios into benchmark harness and CI smoke targets.
     - [x] Provide metadata manifests describing each scenario for docs/examples.
     - [x] Outline scaling experiments and capture results in changelog/notes.
-- [ ] Reference analytics notebooks integrated into docs/examples.
-  - [ ] Notebook scaffolding
+- [x] Reference analytics notebooks integrated into docs/examples.
+  - [x] Notebook scaffolding
     - [x] Select representative deterministic + stochastic scenarios (baseline + synthetic).
     - [x] Define notebook storyboards (playback walkthrough, KPI deep-dive, what-if analysis).
     - [x] Create reusable plotting helpers (matplotlib/Altair) shared across notebooks.
-  - [ ] Notebook authoring
+  - [x] Notebook authoring
     - [x] Draft notebooks under `docs/examples/analytics/` with executed outputs.
     - [x] Ensure notebooks call CLI/modules via lightweight wrappers for reproducibility.
-    - [ ] Capture metadata (runtime, dependencies) and add smoke execution script.
+    - [x] Capture metadata (runtime, dependencies) and add smoke execution script.
   - [ ] Documentation & automation
-    - [ ] Integrate notebooks into Sphinx (nbsphinx or nbconvert pipeline) with cross-links.
-    - [ ] Add CI check to execute notebooks (or cached outputs) on critical scenarios.
-    - [ ] Update README and docs landing pages to advertise analytics assets.
+    - [x] Integrate notebooks into Sphinx (nbsphinx or nbconvert pipeline) with cross-links.
+    - [x] Add CI check to execute notebooks (or cached outputs) on critical scenarios.
+    - [x] Update README and docs landing pages to advertise analytics assets.
 - [ ] Hyperparameter tuning framework (conventional + agentic) leveraging persistent telemetry (`notes/metaheuristic_hyperparam_tuning.md`).
   - [ ] Telemetry & persistence groundwork
     - [ ] Define telemetry schema (solver configuration, KPIs, runtime stats) and storage backend.

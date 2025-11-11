@@ -30,6 +30,20 @@ fhops evaluate tests/fixtures/regression/regression.yaml /tmp/regression_sa.csv
 # running the CLI.
 ```
 
+## Analytics notebooks
+
+Executed analytics notebooks live under `docs/examples/analytics/` and are published to the
+documentation site. They showcase deterministic playback, stochastic robustness, telemetry
+diagnostics, and benchmarking workflows. Regenerate them locally with:
+
+```bash
+python scripts/run_analytics_notebooks.py --light
+```
+
+The `--light` flag mirrors CI: it sets `FHOPS_ANALYTICS_LIGHT=1`, trimming stochastic sample counts so
+the suite finishes quickly. Drop the flag (or unset the environment variable) when you want the full
+ensemble versions.
+
 ## Package layout
 
 - `fhops.scenario`: Data models and the `Problem` container.
