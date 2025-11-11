@@ -13,6 +13,7 @@ from typing import Any
 
 import pandas as pd
 
+from fhops.evaluation import compute_kpis
 from fhops.optimization.heuristics.registry import OperatorContext, OperatorRegistry
 from fhops.scenario.contract import Problem
 from fhops.scheduling.mobilisation import MachineMobilisation, build_distance_lookup
@@ -597,13 +598,25 @@ def solve_sa(
                 }
                 for name, stats in operator_stats.items()
             }
+        kpi_result = compute_kpis(pb, assignments)
+        kpi_totals = kpi_result.to_dict()
+        meta["kpi_totals"] = {
+            key: (float(value) if isinstance(value, (int, float)) else value)
+            for key, value in kpi_totals.items()
+        }
         if run_logger and telemetry_logger:
+            numeric_kpis = {
+                key: float(value)
+                for key, value in kpi_totals.items()
+                if isinstance(value, (int, float))
+            }
             run_logger.finalize(
                 status="ok",
                 metrics={
                     "objective": float(best_score),
                     "initial_score": float(initial_score),
                     "acceptance_rate": meta["acceptance_rate"],
+                    **numeric_kpis,
                 },
                 extra={
                     "iterations": iters,
@@ -613,6 +626,7 @@ def solve_sa(
                     "temperature0": float(temperature0),
                     "operators": registry.weights(),
                 },
+                kpis=kpi_totals,
             )
             meta["telemetry_run_id"] = telemetry_logger.run_id
             if telemetry_logger.steps_path:

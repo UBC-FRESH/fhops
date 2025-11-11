@@ -11,6 +11,7 @@ from typing import Any, Mapping
 from uuid import uuid4
 
 from .jsonl import append_jsonl
+from .sqlite_store import persist_run
 
 
 def _iso_now() -> str:
@@ -50,6 +51,7 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
     context: Mapping[str, Any] | None = None
     step_interval: int | None = 100
     schema_version: str = "1.1"
+    sqlite_path: Path | None = None
     run_id: str = field(default_factory=lambda: uuid4().hex, init=False)
     _start_time: float = field(default=0.0, init=False)
     _start_timestamp: str | None = field(default=None, init=False)
@@ -58,6 +60,8 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
 
     def __post_init__(self) -> None:
         self.log_path = Path(self.log_path)
+        if self.sqlite_path is None and self.log_path:
+            self.sqlite_path = self.log_path.with_suffix(".sqlite")
         if self.step_interval and self.step_interval > 0:
             self._steps_path = self.log_path.parent / "steps" / f"{self.run_id}.jsonl"
 
@@ -76,9 +80,10 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
                 extra=None,
                 error=repr(exc),
                 artifacts=None,
+                kpis=None,
             )
             return False
-        self._close(status="ok", metrics=None, extra=None, error=None, artifacts=None)
+        self._close(status="ok", metrics=None, extra=None, error=None, artifacts=None, kpis=None)
         return False
 
     def log_step(
@@ -127,9 +132,17 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
         extra: Mapping[str, Any] | None = None,
         error: str | None = None,
         artifacts: list[str] | None = None,
+        kpis: Mapping[str, Any] | None = None,
     ) -> None:
         """Write the terminal run record."""
-        self._close(status=status, metrics=metrics, extra=extra, error=error, artifacts=artifacts)
+        self._close(
+            status=status,
+            metrics=metrics,
+            extra=extra,
+            error=error,
+            artifacts=artifacts,
+            kpis=kpis,
+        )
 
     def _close(
         self,
@@ -139,6 +152,7 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
         extra: Mapping[str, Any] | None,
         error: str | None,
         artifacts: list[str] | None,
+        kpis: Mapping[str, Any] | None,
     ) -> None:
         if self._closed:
             return
@@ -163,7 +177,22 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
             "finished_at": finished_at,
             "duration_seconds": round(duration, 3),
         }
+        if metrics:
+            record["metrics"] = dict(metrics)
+        else:
+            record["metrics"] = {}
+        if kpis:
+            record["kpis"] = dict(kpis)
+        else:
+            record["kpis"] = {}
         append_jsonl(self.log_path, record)
+        if self.sqlite_path:
+            persist_run(
+                self.sqlite_path,
+                record=record,
+                metrics=record["metrics"],
+                kpis=record["kpis"],
+            )
         self._closed = True
 
 

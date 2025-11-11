@@ -1413,6 +1413,20 @@ def tune_random_cli(
         console.print(
             f"[dim]{len(results)} telemetry record(s) written to {telemetry_log}. Step logs stored in {telemetry_log.parent / 'steps'}.[/]"
         )
+        scenario_best: dict[str, float] = {}
+        for entry in results:
+            scenario_best[entry["scenario"]] = max(
+                scenario_best.get(entry["scenario"], float("-inf")), entry["objective"]
+            )
+        summary_record = {
+            "record_type": "tuner_summary",
+            "schema_version": "1.1",
+            "algorithm": "random",
+            "scenarios_evaluated": len(scenario_best),
+            "configurations": len(results),
+            "scenario_best": scenario_best,
+        }
+        append_jsonl(telemetry_log, summary_record)
 
 
 @app.command("tune-grid")
@@ -1552,6 +1566,20 @@ def tune_grid_cli(
         console.print(
             f"[dim]{len(results)} telemetry record(s) written to {telemetry_log}. Step logs stored in {telemetry_log.parent / 'steps'}.[/]"
         )
+        scenario_best: dict[str, float] = {}
+        for entry in results:
+            scenario_best[entry["scenario"]] = max(
+                scenario_best.get(entry["scenario"], float("-inf")), entry["objective"]
+            )
+        summary_record = {
+            "record_type": "tuner_summary",
+            "schema_version": "1.1",
+            "algorithm": "grid",
+            "scenarios_evaluated": len(scenario_best),
+            "configurations": len(results),
+            "scenario_best": scenario_best,
+        }
+        append_jsonl(telemetry_log, summary_record)
 
 
 @app.command("tune-bayes")
@@ -1690,6 +1718,19 @@ def tune_bayes_cli(
             console.print(
                 f"[dim]{len(trial_results)} telemetry record(s) written to {telemetry_log}. Step logs stored in {telemetry_log.parent / 'steps'}.[/]"
             )
+            scenario_best: dict[str, float] = {}
+            scenario_best[scenario_path.name] = max(
+                (record["objective"] for record in trial_results), default=float("nan")
+            )
+            summary_record = {
+                "record_type": "tuner_summary",
+                "schema_version": "1.1",
+                "algorithm": "bayes",
+                "scenarios_evaluated": 1,
+                "configurations": len(trial_results),
+                "scenario_best": scenario_best,
+            }
+            append_jsonl(telemetry_log, summary_record)
 
 if __name__ == "__main__":
     app()

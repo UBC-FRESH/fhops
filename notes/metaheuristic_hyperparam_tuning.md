@@ -20,15 +20,17 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
   - [x] Tabu JSONL logging (run + step snapshots, CLI integration).
   - [x] Playback telemetry logging (CLI hook + step logs).
 - [x] Provide helper module (`fhops.telemetry.run_logger`) with append/query utilities and retention controls.
+- [x] Introduced SQLite persistence helper (`fhops.telemetry.sqlite_store.persist_run`) to mirror run metrics/KPIs alongside the JSONL stream.
 - [x] Document retention/rotation strategy and storage location in this note + CLI help.
 - [x] Introduce scenario descriptor capture (block/machine counts, horizon, landing stats) so tuners can learn across instances.
 - [x] Add schema versioning to run/step records and document the schema contract to de-risk future consumers.
-- [ ] Persist KPI outcomes / objective components in a normalised telemetry table (SQLite phase) for ML feature pipelines.
+- [x] Persist KPI outcomes / objective components in a normalised telemetry table (SQLite phase) for ML feature pipelines.
 
 ### Conventional Tuning Toolkit
-- [ ] Implement grid and random search drivers operating on the telemetry store (CLI-friendly).
-  - [x] Grid tuner execution mode (`fhops tune-grid`) evaluating preset/batch-size cartesian products with telemetry logging.
-  - [x] Random tuner execution mode (`fhops tune-random`) running SA sweeps and recording telemetry.
+- [x] Implement grid and random search drivers operating on the telemetry store (CLI-friendly).
+- [x] Grid tuner execution mode (`fhops tune-grid`) evaluating preset/batch-size cartesian products with telemetry logging.
+- [x] Random tuner execution mode (`fhops tune-random`) running SA sweeps and recording telemetry.
+- [x] CLI tuners (random/grid/bayes) append `tuner_summary` records capturing per-scenario best objectives and configuration counts for quick comparisons.
 - [x] Integrate a Bayesian/SMBO tuner (Optuna TPE) with pluggable search spaces (`fhops tune-bayes`).
 - [ ] Expose CLI commands (`fhops tune random`, `fhops tune bayes`) that schedule sweeps over scenario bundles.
 - [ ] Generate automated comparison reports (CSV/Markdown) summarising best configs per scenario tier; stash fixtures/tests.
@@ -110,12 +112,16 @@ We will persist three related record types in JSONL (phase 1) and mirror the sch
 - `telemetry/steps/<run_id>.jsonl` — time-series per run (optional when step logging disabled).  
 - `telemetry/artifacts.jsonl` — references for discovered outputs.
 
-**SQLite (phase 2)**  
-Mirrors the same schema with `runs`, `steps`, `artifacts` tables plus indexes on `(scenario, solver)` and `(run_id)` to accelerate queries.
+**SQLite Store (phase 2)**  
+`telemetry/runs.sqlite` is created alongside the JSONL log and currently persists:
+- `runs` — one row per heuristic invocation (metadata + JSON columns for config/context/extra).
+- `run_metrics` — scalar metrics keyed by name (objective, acceptance rate, KPI aggregates).
+- `run_kpis` — KPI totals normalised for downstream feature pipelines.
+Foreign keys cascade deletions so `fhops telemetry prune` keeps SQLite in sync with the JSONL history.
 
 ## Telemetry storage & retention (2025-11-12)
 
-- **Storage layout:** heuristics default to writing run records to `telemetry/runs.jsonl`. Step logs live beside it under `telemetry/steps/<run_id>.jsonl`. Commands accept `--telemetry-log` to override the run log path; step logs are automatically co-located.
+- **Storage layout:** heuristics default to writing run records to `telemetry/runs.jsonl` and a mirrored SQLite store at `telemetry/runs.sqlite`. Step logs live beside the JSONL under `telemetry/steps/<run_id>.jsonl`. Commands accept `--telemetry-log` to override the run log path; step logs and the SQLite database are automatically co-located.
 - **Rotation policy:** keep the most recent 5k runs (≈25–30 MB with current schema). For manual pruning run:
 
   ```bash

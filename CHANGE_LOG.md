@@ -1,5 +1,11 @@
 # Development Change Log
 
+## 2025-11-11 — Telemetry KPI persistence
+- Added a SQLite-backed telemetry mirror (`telemetry/runs.sqlite`) via `fhops.telemetry.sqlite_store.persist_run`, keeping run metadata, metrics, and KPI totals normalised alongside the JSONL history.
+- Simulated annealing, ILS, and Tabu solvers now compute KPI bundles for every run, inject the totals into telemetry records, and persist them to both JSONL and SQLite stores.
+- CLI tuners (`fhops tune-random`, `fhops tune-grid`, `fhops tune-bayes`) append `tuner_summary` records with per-scenario best objectives; regression tests assert the summaries and SQLite tables exist with KPI content.
+- Refreshed `notes/metaheuristic_hyperparam_tuning.md` and the roadmap to mark the telemetry persistence milestone and document the new storage layout.
+
 ## 2025-11-11 — Analytics notebook automation
 - Added the analytics notebook runner to CI (`.github/workflows/ci.yml`) so the curated suite executes in light mode on every push/PR, exercising Altair plots and playback helpers.
 - Captured fresh execution metadata in `docs/examples/analytics/data/notebook_metadata.json` and documented the `FHOPS_ANALYTICS_LIGHT` toggle in planning notes for reproducible smoke runs.

@@ -91,7 +91,7 @@ before proposing new work.
       - [x] Enrich telemetry with scenario descriptors and schema versioning for ML tuners.
     - [ ] Document data retention/rotation strategy in tuning notes.
   - [ ] Conventional tuning toolkit
-    - [ ] Implement grid/random/Bayesian search drivers leveraging telemetry store.
+    - [x] Implement grid/random/Bayesian search drivers leveraging telemetry store.
     - [ ] Provide CLI surfaces for launching tuning sweeps with scenario bundles.
       - [x] Random tuner CLI (`fhops tune-random`) executing SA sweeps and recording telemetry.
       - [x] Bayesian/SMBO tuner CLI (`fhops tune-bayes`) built on Optuna.
