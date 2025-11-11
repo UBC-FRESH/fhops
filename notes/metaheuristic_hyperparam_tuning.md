@@ -31,9 +31,10 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - [x] Grid tuner execution mode (`fhops tune-grid`) evaluating preset/batch-size cartesian products with telemetry logging.
 - [x] Random tuner execution mode (`fhops tune-random`) running SA sweeps and recording telemetry.
 - [x] CLI tuners (random/grid/bayes) append `tuner_summary` records capturing per-scenario best objectives and configuration counts for quick comparisons.
+- [x] `fhops telemetry report` command summarises tuner performance to CSV/Markdown directly from the SQLite store (see tests and telemetry docs).
 - [x] Integrate a Bayesian/SMBO tuner (Optuna TPE) with pluggable search spaces (`fhops tune-bayes`).
 - [ ] Expose CLI commands (`fhops tune random`, `fhops tune bayes`) that schedule sweeps over scenario bundles.
-- [ ] Generate automated comparison reports (CSV/Markdown) summarising best configs per scenario tier; stash fixtures/tests.
+- [x] Generate automated comparison reports (CSV/Markdown) summarising best configs per scenario tier; stash fixtures/tests.
 - [ ] Benchmark grid vs. random vs. Bayesian/SMBO (and future neural/meta-learned) tuners across canonical scenarios; log comparative telemetry (win rate, best obj delta, runtime).
 - [ ] Emit tuner-level meta-telemetry (algorithm name, configuration, budget, convergence stats) so higher-level orchestration can evaluate tuner performance.
 
