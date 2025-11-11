@@ -198,7 +198,10 @@ def test_eval_playback_cli_writes_telemetry(tmp_path: Path):
     record = json.loads(lines[0])
     assert record["solver"] == "playback"
     assert record["status"] == "ok"
+    assert record["schema_version"] == "1.1"
     assert record["context"]["assignments_path"] == str(assignments_path)
+    assert record["context"].get("num_blocks") is not None
+    assert record["context"].get("num_machines") is not None
     steps_file = telemetry_log.parent / "steps" / f"{record['run_id']}.jsonl"
     assert steps_file.exists()
     assert steps_file.read_text(encoding="utf-8").strip()

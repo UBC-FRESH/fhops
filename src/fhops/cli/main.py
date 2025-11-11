@@ -1030,9 +1030,17 @@ def eval_playback(
         "landing_multiplier_high": landing_multiplier_high,
         "landing_duration": landing_duration,
     }
+    scenario_features = {
+        "num_days": getattr(sc, "num_days", None),
+        "num_blocks": len(getattr(sc, "blocks", []) or []),
+        "num_machines": len(getattr(sc, "machines", []) or []),
+        "num_landings": len(getattr(sc, "landings", []) or []),
+        "num_shift_calendar_entries": len(getattr(sc, "shift_calendar", []) or []),
+    }
     context_snapshot = {
         "assignments_path": str(assignments_csv),
         "command": "eval-playback",
+        **scenario_features,
     }
     telemetry_logger: RunTelemetryLogger | None = None
     if telemetry_log:
@@ -1216,6 +1224,7 @@ def eval_playback(
             }
             extra_payload = {
                 "export_metrics": export_metrics or playback_summary_metrics(shift_df, day_df),
+                "scenario_features": scenario_features,
             }
             telemetry_logger.finalize(
                 status="ok",

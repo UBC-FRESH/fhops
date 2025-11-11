@@ -88,7 +88,7 @@ before proposing new work.
       - [x] Simulated Annealing JSONL run logger emitting run/step telemetry (`RunTelemetryLogger`, `solve_sa`).
       - [x] ILS + Tabu telemetry integration (run/step logging, CLI wiring).
       - [x] Playback CLI telemetry (run metadata + step logging for day summaries).
-      - [ ] Enrich telemetry with scenario descriptors and schema versioning for ML tuners.
+      - [x] Enrich telemetry with scenario descriptors and schema versioning for ML tuners.
     - [ ] Document data retention/rotation strategy in tuning notes.
   - [ ] Conventional tuning toolkit
     - [ ] Implement grid/random/Bayesian search drivers leveraging telemetry store.
