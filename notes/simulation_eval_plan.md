@@ -75,8 +75,8 @@ Status: Draft — roadmap Phase 3 owner document.
   - [x] Capture matching Parquet fixtures (or generate on the fly) and add regression tests diffing CLI exports vs. stored schema.
   - [x] Ensure CI runs a smoke covering CSV + Parquet + Markdown outputs for minitoy/med42/regression scenarios (see `tests/test_cli_playback_exports.py`).
 - **Documentation**
-  - [ ] Add quickstart snippet to `docs/howto/evaluation.rst` demonstrating command → Parquet → Pandas load, including utilisation interpretation.
-  - [ ] Document aggregation helpers for KPI contributors.
+  - [x] Add quickstart snippet to `docs/howto/evaluation.rst` demonstrating command → Parquet → Pandas load, including utilisation interpretation.
+  - [x] Document aggregation helpers for KPI contributors.
   - [x] Document exporter options (CLI reference + Markdown section).
 - **Testing**
   - [x] Property-based tests ensuring shift totals equal day totals.
