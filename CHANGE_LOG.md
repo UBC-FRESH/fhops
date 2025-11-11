@@ -6,6 +6,7 @@
 - CLI tuners (`fhops tune-random`, `fhops tune-grid`, `fhops tune-bayes`) append `tuner_summary` records with per-scenario best objectives; regression tests assert the summaries and SQLite tables exist with KPI content.
 - CLI tuning commands mirror their `tuner_summary` payloads into the SQLite store so benchmarking/reporting jobs can query sweep outcomes without parsing JSONL.
 - Added `fhops telemetry report` to aggregate tuner performance into CSV/Markdown summaries sourced from the SQLite metrics and summary tables; coverage lives in `tests/test_cli_telemetry_report.py`.
+- CI runs a lightweight minitoy sweep that generates `fhops telemetry report` artifacts (`telemetry-report` bundle) for baseline monitoring.
 - Refreshed `notes/metaheuristic_hyperparam_tuning.md` and the roadmap to mark the telemetry persistence milestone and document the new storage layout.
 
 ## 2025-11-11 — Analytics notebook automation
