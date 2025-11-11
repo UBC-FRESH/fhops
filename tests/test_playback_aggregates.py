@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+from collections import Counter, defaultdict
+
 import numpy as np
 import pandas as pd
 from hypothesis import given, settings, strategies as st
 
 from fhops.evaluation import (
+    PlaybackRecord,
     SamplingConfig,
     day_dataframe,
     day_dataframe_from_ensemble,
@@ -13,6 +16,8 @@ from fhops.evaluation import (
     run_stochastic_playback,
     shift_dataframe,
     shift_dataframe_from_ensemble,
+    summarise_days,
+    summarise_shifts,
 )
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
@@ -172,3 +177,59 @@ def test_shift_totals_match_day_totals(samples, enable_downtime, enable_weather,
     available_day = merged["available_hours_day"].to_numpy(dtype=float)
     available_shift = merged["available_hours_shift"].to_numpy(dtype=float)
     assert np.all(available_day + 1e-6 >= available_shift)
+
+
+_playback_record_strategy = st.builds(
+    PlaybackRecord,
+    day=st.integers(min_value=1, max_value=7),
+    shift_id=st.sampled_from(["S1", "S2"]),
+    machine_id=st.sampled_from(["M1", "M2", "M3"]),
+    block_id=st.sampled_from(["B1", "B2", "B3", "B4"]),
+    hours_worked=st.floats(min_value=0.0, max_value=12.0, allow_nan=False, allow_infinity=False),
+    production_units=st.floats(min_value=0.0, max_value=200.0, allow_nan=False, allow_infinity=False),
+    mobilisation_cost=st.floats(min_value=0.0, max_value=50.0, allow_nan=False, allow_infinity=False),
+    blackout_hit=st.booleans(),
+)
+
+
+@settings(max_examples=25, deadline=None)
+@given(st.lists(_playback_record_strategy, min_size=1, max_size=20))
+def test_blackout_conflicts_aggregate(records):
+    availability_map = {
+        (record.day, record.shift_id, record.machine_id): 10.0 for record in records
+    }
+    shift_summaries = list(
+        summarise_shifts(
+            records,
+            availability_map,
+            include_idle=False,
+            sample_id=0,
+        )
+    )
+
+    expected_shift_counts: Counter[tuple[int, str, str]] = Counter()
+    for record in records:
+        if record.blackout_hit:
+            expected_shift_counts[(record.day, record.shift_id, record.machine_id)] += 1
+
+    for summary in shift_summaries:
+        key = (summary.day, summary.shift_id, summary.machine_id)
+        assert summary.blackout_conflicts == expected_shift_counts.get(key, 0)
+        assert summary.blackout_conflicts >= 0
+
+    day_summaries = list(
+        summarise_days(
+            shift_summaries,
+            availability_map,
+            defaultdict(set),
+            sample_id=0,
+        )
+    )
+
+    expected_day_counts: Counter[int] = Counter()
+    for (day, _shift_id, _machine_id), count in expected_shift_counts.items():
+        expected_day_counts[day] += count
+
+    for summary in day_summaries:
+        assert summary.blackout_conflicts == expected_day_counts.get(summary.day, 0)
+        assert summary.blackout_conflicts >= 0
