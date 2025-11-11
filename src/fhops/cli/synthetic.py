@@ -144,6 +144,18 @@ def _describe_metadata(metadata: Dict[str, Any]) -> None:
             for bias in biases
         )
         console.print(f"Blackout biases: {bias_summary}")
+    sampling = metadata.get("sampling_config") or {}
+    if sampling:
+        downtime = sampling.get("downtime", {})
+        weather = sampling.get("weather", {})
+        landing = sampling.get("landing", {})
+        console.print(
+            "Sampling preset: "
+            f"samples={sampling.get('samples')} "
+            f"downtime={'on' if downtime.get('enabled') else 'off'} "
+            f"weather={'on' if weather.get('enabled') else 'off'} "
+            f"landing={'on' if landing.get('enabled') else 'off'}"
+        )
 
 
 def _refresh_aggregate_metadata(base_dir: Path) -> None:
