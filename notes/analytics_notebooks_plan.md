@@ -25,7 +25,7 @@ Status: Draft — scaffolding notebooks that surface deterministic and stochasti
    - Base: start from mini toy or synthetic medium, adjust parameters inline (e.g., add downtime bias, adjust landing capacity).
    - Compare pre/post KPIs, include interactive parameter toggles, and consolidated comparison tables.
 4. **Landing Congestion Analysis**
-   - Explore landing shock parameters and throughput impact.
+   - Explore landing shock parameters and throughput impact. *(initial walkthrough scaffolded and executed)*
    - Compare shift/day stats pre/post congestion, chart landing utilisation.
 5. **Harvest System Mix Explorer**
    - Showcase system mix presets from synthetic generator.
