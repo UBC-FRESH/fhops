@@ -117,6 +117,7 @@ We will persist three related record types in JSONL (phase 1) and mirror the sch
 - `runs` — one row per heuristic invocation (metadata + JSON columns for config/context/extra).
 - `run_metrics` — scalar metrics keyed by name (objective, acceptance rate, KPI aggregates).
 - `run_kpis` — KPI totals normalised for downstream feature pipelines.
+- `tuner_summaries` — per-command sweep summaries (algorithm, budget, best-by-scenario snapshots).
 Foreign keys cascade deletions so `fhops telemetry prune` keeps SQLite in sync with the JSONL history.
 
 ## Telemetry storage & retention (2025-11-12)

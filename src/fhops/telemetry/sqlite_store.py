@@ -1,13 +1,15 @@
-"""SQLite-backed storage helpers for telemetry runs and metrics."""
+"""SQLite-backed storage helpers for telemetry runs, KPIs, and tuner summaries."""
 
 from __future__ import annotations
 
 import json
 import sqlite3
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Mapping
+from uuid import uuid4
 
-__all__ = ["persist_run"]
+__all__ = ["persist_run", "persist_tuner_summary"]
 
 
 _SCHEMA = """
@@ -45,7 +47,20 @@ CREATE TABLE IF NOT EXISTS run_kpis (
     PRIMARY KEY (run_id, name),
     FOREIGN KEY (run_id) REFERENCES runs(run_id) ON DELETE CASCADE
 );
+CREATE TABLE IF NOT EXISTS tuner_summaries (
+    summary_id TEXT PRIMARY KEY,
+    schema_version TEXT,
+    algorithm TEXT,
+    scenarios_evaluated INTEGER,
+    configurations INTEGER,
+    scenario_best_json TEXT,
+    created_at TEXT
+);
 """
+
+
+def _ensure_schema(conn: sqlite3.Connection) -> None:
+    conn.executescript(_SCHEMA)
 
 
 def _json_dumps(payload: Mapping[str, Any] | None) -> str | None:
@@ -76,12 +91,16 @@ def persist_run(
 
     conn = sqlite3.connect(path)
     try:
-        conn.executescript(_SCHEMA)
+        _ensure_schema(conn)
         run_id = record["run_id"]
         config_json = _json_dumps(record.get("config"))
         context_json = _json_dumps(record.get("context"))
         extra_json = _json_dumps(record.get("extra"))
-        artifacts_json = json.dumps(record.get("artifacts", []), ensure_ascii=False) if record.get("artifacts") else None
+        artifacts_json = (
+            json.dumps(record.get("artifacts", []), ensure_ascii=False)
+            if record.get("artifacts")
+            else None
+        )
 
         with conn:
             conn.execute(
@@ -149,3 +168,54 @@ def persist_run(
     finally:
         conn.close()
 
+
+def persist_tuner_summary(
+    sqlite_path: str | Path,
+    record: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Persist a tuner summary record to SQLite and return the enriched payload."""
+
+    path = Path(sqlite_path)
+    if not path.parent.exists():
+        path.parent.mkdir(parents=True, exist_ok=True)
+
+    payload = dict(record)
+    summary_id = payload.setdefault("summary_id", uuid4().hex)
+    payload.setdefault(
+        "created_at", datetime.now(timezone.utc).isoformat(timespec="seconds")
+    )
+
+    scenario_best = payload.get("scenario_best") or {}
+    scenario_best_json = json.dumps(scenario_best, ensure_ascii=False, sort_keys=True)
+
+    conn = sqlite3.connect(path)
+    try:
+        _ensure_schema(conn)
+        with conn:
+            conn.execute(
+                """
+                INSERT OR REPLACE INTO tuner_summaries (
+                    summary_id,
+                    schema_version,
+                    algorithm,
+                    scenarios_evaluated,
+                    configurations,
+                    scenario_best_json,
+                    created_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    summary_id,
+                    payload.get("schema_version"),
+                    payload.get("algorithm"),
+                    payload.get("scenarios_evaluated"),
+                    payload.get("configurations"),
+                    scenario_best_json,
+                    payload.get("created_at"),
+                ),
+            )
+    finally:
+        conn.close()
+
+    return payload

@@ -65,6 +65,16 @@ def test_tune_random_cli_runs_solver(tmp_path: Path):
             "SELECT name, value FROM run_kpis WHERE run_id = ?", (first_run_id,)
         ).fetchall()
         assert kpis
+        summary_rows = conn.execute(
+            "SELECT algorithm, summary_id, scenario_best_json FROM tuner_summaries"
+        ).fetchall()
+        assert summary_rows
+        algo, summary_id, scenario_json = summary_rows[0]
+        assert algo == "random"
+        assert summary_id == summary["summary_id"]
+        assert json.loads(scenario_json) == summary["scenario_best"]
+    assert "summary_id" in summary
+    assert "created_at" in summary
 
 
 def test_tune_grid_cli_runs(tmp_path: Path):
@@ -106,6 +116,14 @@ def test_tune_grid_cli_runs(tmp_path: Path):
     assert summary["algorithm"] == "grid"
     sqlite_path = telemetry_log.with_suffix(".sqlite")
     assert sqlite_path.exists()
+    with sqlite3.connect(sqlite_path) as conn:
+        row = conn.execute(
+            "SELECT summary_id, scenario_best_json FROM tuner_summaries WHERE algorithm = 'grid'"
+        ).fetchone()
+        assert row is not None
+        assert row[0] == summary["summary_id"]
+        assert json.loads(row[1]) == summary["scenario_best"]
+    assert "created_at" in summary
 
 
 def test_tune_bayes_cli_runs(tmp_path: Path):
@@ -137,5 +155,14 @@ def test_tune_bayes_cli_runs(tmp_path: Path):
     summary = json.loads(lines[-1])
     assert summary["record_type"] == "tuner_summary"
     assert summary["algorithm"] == "bayes"
+    assert "summary_id" in summary
+    assert "created_at" in summary
     sqlite_path = telemetry_log.with_suffix(".sqlite")
     assert sqlite_path.exists()
+    with sqlite3.connect(sqlite_path) as conn:
+        row = conn.execute(
+            "SELECT summary_id, scenario_best_json FROM tuner_summaries WHERE algorithm = 'bayes'"
+        ).fetchone()
+        assert row is not None
+        assert row[0] == summary["summary_id"]
+        assert json.loads(row[1]) == summary["scenario_best"]

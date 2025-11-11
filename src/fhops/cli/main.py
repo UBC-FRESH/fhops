@@ -52,6 +52,7 @@ from fhops.optimization.mip import solve_mip
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
 from fhops.telemetry import RunTelemetryLogger, append_jsonl
+from fhops.telemetry.sqlite_store import persist_tuner_summary
 
 app = typer.Typer(add_completion=False, no_args_is_help=True)
 app.add_typer(geospatial_app, name="geo")
@@ -1426,6 +1427,10 @@ def tune_random_cli(
             "configurations": len(results),
             "scenario_best": scenario_best,
         }
+        summary_record = persist_tuner_summary(
+            telemetry_log.with_suffix(".sqlite"),
+            summary_record,
+        )
         append_jsonl(telemetry_log, summary_record)
 
 
@@ -1579,9 +1584,11 @@ def tune_grid_cli(
             "configurations": len(results),
             "scenario_best": scenario_best,
         }
+        summary_record = persist_tuner_summary(
+            telemetry_log.with_suffix(".sqlite"),
+            summary_record,
+        )
         append_jsonl(telemetry_log, summary_record)
-
-
 @app.command("tune-bayes")
 def tune_bayes_cli(
     scenarios: list[Path] = typer.Argument(
@@ -1730,6 +1737,10 @@ def tune_bayes_cli(
                 "configurations": len(trial_results),
                 "scenario_best": scenario_best,
             }
+            summary_record = persist_tuner_summary(
+                telemetry_log.with_suffix(".sqlite"),
+                summary_record,
+            )
             append_jsonl(telemetry_log, summary_record)
 
 if __name__ == "__main__":
