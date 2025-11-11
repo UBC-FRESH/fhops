@@ -95,3 +95,17 @@ Usage Notes
 - Operators with frequently low acceptance rates may warrant weight adjustments or new presets.
 - Combine logs with the hyperparameter tuning plan (``notes/metaheuristic_hyperparam_tuning.md``) to drive future ML/LLM-based schedulers.
 - Parallel options add ``batch_size``/``max_workers`` fields to single-run records. Multi-start telemetry logs per-run entries with ``run_id``/``preset`` and a summary record containing ``type: multi_start_summary``, ``best_run_id``, ``best_objective``, and ``runs_executed``.
+
+CLI Reporting
+-------------
+
+Use the ``fhops telemetry report`` sub-command to aggregate the mirrored SQLite
+store into CSV/Markdown summaries without re-running the tuners::
+
+    fhops telemetry report telemetry/runs.sqlite \
+        --out-csv tmp/tuner_report.csv \
+        --out-markdown tmp/tuner_report.md
+
+The command scans ``runs``, ``run_metrics``, ``run_kpis``, and
+``tuner_summaries`` tables to surface best/mean objective values per algorithm
+and scenario. See :doc:`../howto/telemetry_tuning` for a step-by-step guide.

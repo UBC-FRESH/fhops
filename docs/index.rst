@@ -21,6 +21,7 @@ ensembles.
    howto/heuristic_presets
    howto/parallel_heuristics
    howto/evaluation
+   howto/telemetry_tuning
    howto/synthetic_datasets
    howto/system_sequencing
    howto/ils
