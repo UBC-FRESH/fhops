@@ -98,3 +98,20 @@ artefacts as a baseline when evaluating new heuristics or tuning strategies.
 For longer experiments (e.g., synthetic bundles or larger iteration budgets),
 reuse the same workflow with adjusted ``--runs`` / ``--trials`` / ``--iters``
 parameters and point the telemetry log at a scenario-specific directory.
+
+Downloading CI Reports
+----------------------
+
+Each CI run exposes a ``telemetry-report`` artefact containing the latest
+``tuner_report.{csv,md}`` files alongside the raw telemetry bundle. To download:
+
+* Via the GitHub web UI: open the completed workflow run, expand the **Artifacts**
+  section, and click ``telemetry-report`` to fetch the zip file.
+* Via the command line (requires `gh`):
+
+  .. code-block:: bash
+
+     gh run download --repo <owner>/<repo> --name telemetry-report --dir tmp/ci-telemetry
+
+After extraction, inspect ``tuner_report.md`` directly or load
+``tuner_report.csv`` into pandas/Polars for deeper analysis.
