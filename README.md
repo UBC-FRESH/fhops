@@ -44,6 +44,21 @@ The `--light` flag mirrors CI: it sets `FHOPS_ANALYTICS_LIGHT=1`, trimming stoch
 the suite finishes quickly. Drop the flag (or unset the environment variable) when you want the full
 ensemble versions.
 
+## Telemetry & Tuning
+
+Heuristic sweeps (`fhops tune-random`, `fhops tune-grid`, `fhops tune-bayes`) log every run to
+`telemetry/runs.jsonl` and mirror the data into a SQLite store. Aggregate the results with:
+
+```bash
+fhops telemetry report telemetry/runs.sqlite \
+    --out-csv tmp/tuner_report.csv \
+    --out-markdown tmp/tuner_report.md
+```
+
+CI executes a lightweight minitoy sweep on every run and uploads the resulting `telemetry-report`
+artefact (Markdown + CSV) so you can track baseline performance. See
+`docs/howto/telemetry_tuning.rst` for a step-by-step guide and download instructions.
+
 ## Package layout
 
 - `fhops.scenario`: Data models and the `Problem` container.
