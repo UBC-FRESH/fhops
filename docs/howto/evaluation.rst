@@ -117,6 +117,9 @@ that mirror the CLI exports:
   fastest way to build custom utilisation charts.
 * ``export_playback(shift_df, day_df, ...)`` — shared serializer used by the CLI and telemetry code;
   it writes CSV/Parquet/Markdown outputs and returns the same summary metrics recorded in telemetry.
+* ``compute_kpis(...)`` returns a :class:`fhops.evaluation.KPIResult`, a mapping that exposes scalar
+  KPI totals while optionally attaching the canonical shift/day calendars. Use ``to_dict()`` when you
+  need a JSON-serialisable payload or the helper ``with_calendars`` to bundle playback DataFrames.
 
 These helpers are safe to use in notebooks, KPI pipelines, or automation scripts. The schemas are
 covered by regression tests so future changes will not silently break downstream consumers.
