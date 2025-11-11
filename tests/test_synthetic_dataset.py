@@ -4,12 +4,14 @@ from collections import Counter
 from pathlib import Path
 
 import yaml
+import pytest
 
 from fhops.scenario.io import load_scenario
 from fhops.scenario.synthetic import (
-    SyntheticDatasetConfig,
     BlackoutBias,
+    SyntheticDatasetConfig,
     generate_random_dataset,
+    sampling_config_for,
 )
 from fhops.scheduling.systems import default_system_registry
 
@@ -53,6 +55,7 @@ def test_generate_random_dataset_bundle(tmp_path: Path):
     metadata = yaml.safe_load(metadata_path.read_text(encoding="utf-8"))
     assert metadata["crew_capabilities"]
     assert metadata["terrain_counts"]
+    assert metadata["sampling_config"]["samples"] >= 1
 
     loaded = load_scenario(scenario_yaml)
     assert len(loaded.blocks) == len(bundle.blocks)
@@ -214,3 +217,38 @@ def test_system_mix_applies_when_systems_provided():
     total = sum(assignments.values())
     dominant = max(assignments.values()) / total
     assert dominant > 0.6
+
+
+def test_sampling_config_for_tier_defaults():
+    config = SyntheticDatasetConfig(
+        name="tier-medium",
+        tier="medium",
+        num_blocks=(8, 8),
+        num_days=(10, 10),
+        num_machines=(4, 4),
+    )
+    sampling = sampling_config_for(config)
+    assert sampling.samples == 12
+    assert sampling.downtime.enabled is True
+    assert pytest.approx(0.12, rel=1e-6) == sampling.downtime.probability  # type: ignore[name-defined]
+    assert sampling.weather.enabled is True
+    assert sampling.weather.day_probability > 0.2
+    assert sampling.landing.enabled is True
+
+
+def test_sampling_config_override_merges(tmp_path: Path):
+    config = SyntheticDatasetConfig(
+        name="override",
+        tier="small",
+        num_blocks=6,
+        num_days=6,
+        num_machines=3,
+        sampling_overrides={
+            "samples": 20,
+            "downtime": {"enabled": True, "probability": 0.5},
+        },
+    )
+    sampling = sampling_config_for(config)
+    assert sampling.samples == 20
+    assert sampling.downtime.enabled is True
+    assert sampling.downtime.probability == 0.5

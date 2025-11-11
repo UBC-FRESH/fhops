@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import random
 from collections import Counter
+from copy import deepcopy
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -21,6 +22,7 @@ from fhops.scenario.contract import (
 )
 from fhops.scheduling.systems import HarvestSystem, default_system_registry
 from fhops.scheduling.timeline import BlackoutWindow, ShiftDefinition, TimelineConfig
+from fhops.evaluation.playback.events import SamplingConfig
 
 _DEFAULT_TERRAIN_POOL = ["mixed"]
 _DEFAULT_PRESCRIPTION_POOL = ["clearcut"]
@@ -140,6 +142,20 @@ def _normalise_mix(mix: dict[str, float]) -> dict[str, float]:
     return {key: value / total if value >= 0 else 0.0 for key, value in mix.items()}
 
 
+def _deep_merge(base: dict[str, object], updates: dict[str, object]) -> dict[str, object]:
+    result = deepcopy(base)
+    for key, value in updates.items():
+        if (
+            key in result
+            and isinstance(result[key], dict)
+            and isinstance(value, dict)
+        ):
+            result[key] = _deep_merge(result[key], value)  # type: ignore[arg-type]
+        else:
+            result[key] = value
+    return result
+
+
 @dataclass
 class BlackoutBias:
     """Bias blackout probabilities for specific windows."""
@@ -178,6 +194,7 @@ class SyntheticDatasetConfig:
     crew_capability_span: tuple[int, int] = (1, 2)
     system_mix: dict[str, float] | None = None
     blackout_biases: list[BlackoutBias] = field(default_factory=list)
+    sampling_overrides: dict[str, object] | None = None
 
 
 @dataclass
@@ -301,6 +318,71 @@ TIER_DEFAULTS: dict[str, dict[str, object]] = {
         "system_mix": {"ground_fb_skid": 0.4, "ctl": 0.35, "steep_tethered": 0.25},
     },
 }
+
+SAMPLING_PRESETS: dict[str, dict[str, object]] = {
+    "small": {
+        "samples": 6,
+        "downtime": {"enabled": False, "probability": 0.0},
+        "weather": {"enabled": False, "day_probability": 0.0, "severity_levels": {}},
+        "landing": {"enabled": False, "probability": 0.0},
+    },
+    "medium": {
+        "samples": 12,
+        "downtime": {
+            "enabled": True,
+            "probability": 0.12,
+            "mean_duration_hours": 3.0,
+            "std_duration_hours": 1.0,
+            "max_concurrent": 1,
+        },
+        "weather": {
+            "enabled": True,
+            "day_probability": 0.25,
+            "severity_levels": {"moderate": 0.6, "severe": 0.4},
+            "impact_window_days": 2,
+        },
+        "landing": {
+            "enabled": True,
+            "probability": 0.18,
+            "capacity_multiplier_range": (0.45, 0.75),
+            "duration_days": 2,
+        },
+    },
+    "large": {
+        "samples": 18,
+        "downtime": {
+            "enabled": True,
+            "probability": 0.2,
+            "mean_duration_hours": 5.0,
+            "std_duration_hours": 2.0,
+            "max_concurrent": 2,
+        },
+        "weather": {
+            "enabled": True,
+            "day_probability": 0.35,
+            "severity_levels": {"moderate": 0.4, "severe": 0.6},
+            "impact_window_days": 3,
+        },
+        "landing": {
+            "enabled": True,
+            "probability": 0.25,
+            "capacity_multiplier_range": (0.35, 0.7),
+            "duration_days": 3,
+        },
+    },
+}
+
+
+def sampling_config_for(config: SyntheticDatasetConfig) -> SamplingConfig:
+    base = SamplingConfig()
+    tier_key = (config.tier or "").lower()
+    preset_updates = SAMPLING_PRESETS.get(tier_key, {})
+    data = base.model_dump()
+    if preset_updates:
+        data = _deep_merge(data, preset_updates)
+    if config.sampling_overrides:
+        data = _deep_merge(data, config.sampling_overrides)
+    return SamplingConfig.model_validate(data)
 
 
 def _sample_int(rng: random.Random, bounds: tuple[int, int] | int) -> int:
@@ -596,6 +678,8 @@ def generate_random_dataset(
             updated_blocks.append(block.model_copy(update={"harvest_system_id": system_id}))
         scenario = scenario.model_copy(update={"blocks": updated_blocks, "harvest_systems": systems})
 
+    sampling_config = sampling_config_for(config)
+
     metadata: dict[str, object] = {
         "name": config.name,
         "tier": (config.tier or "custom"),
@@ -645,6 +729,7 @@ def generate_random_dataset(
             }
             for bias in blackout_biases
         ],
+        "sampling_config": sampling_config.model_dump(),
     }
 
     return SyntheticDatasetBundle(
@@ -663,6 +748,7 @@ __all__ = [
     "SyntheticDatasetConfig",
     "SyntheticDatasetBundle",
     "BlackoutBias",
+    "SAMPLING_PRESETS",
     "generate_basic",
     "generate_with_systems",
     "generate_random_dataset",
