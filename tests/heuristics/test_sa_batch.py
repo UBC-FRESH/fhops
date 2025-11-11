@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import sqlite3
 from pathlib import Path
 
 import pytest
@@ -90,6 +91,7 @@ def test_solve_sa_writes_telemetry(tmp_path: Path):
         telemetry_context={"scenario_path": str(scenario_path)},
     )
     assert log_path.exists()
+    assert "kpi_totals" in res["meta"]
     lines = log_path.read_text(encoding="utf-8").strip().splitlines()
     assert len(lines) == 1
     record = json.loads(lines[0])
@@ -97,6 +99,13 @@ def test_solve_sa_writes_telemetry(tmp_path: Path):
     assert record["status"] == "ok"
     assert pytest.approx(record["metrics"]["objective"], rel=1e-6) == res["objective"]
     assert record["run_id"] == res["meta"]["telemetry_run_id"]
+    sqlite_path = log_path.with_suffix(".sqlite")
+    assert sqlite_path.exists()
+    with sqlite3.connect(sqlite_path) as conn:
+        rows = conn.execute(
+            "SELECT name FROM run_kpis WHERE run_id = ?", (record["run_id"],)
+        ).fetchall()
+        assert rows
     steps_path = res["meta"].get("telemetry_steps_path")
     assert steps_path
     steps_path = Path(steps_path)

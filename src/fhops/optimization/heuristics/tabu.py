@@ -11,6 +11,7 @@ from typing import Any
 
 import pandas as pd
 
+from fhops.evaluation import compute_kpis
 from fhops.optimization.heuristics.registry import OperatorRegistry
 from fhops.optimization.heuristics.sa import (
     _evaluate,
@@ -235,12 +236,26 @@ def solve_tabu(
         }
         if operator_stats:
             meta["operators_stats"] = operator_stats
+
+        kpi_result = compute_kpis(pb, assignments)
+        kpi_totals = kpi_result.to_dict()
+        meta["kpi_totals"] = {
+            key: (float(value) if isinstance(value, (int, float)) else value)
+            for key, value in kpi_totals.items()
+        }
+
         if run_logger and telemetry_logger:
+            numeric_kpis = {
+                key: float(value)
+                for key, value in kpi_totals.items()
+                if isinstance(value, (int, float))
+            }
             run_logger.finalize(
                 status="ok",
                 metrics={
                     "objective": float(best_score),
                     "initial_score": float(initial_score),
+                    **numeric_kpis,
                 },
                 extra={
                     "iterations": iters,
@@ -249,6 +264,7 @@ def solve_tabu(
                     "stall_limit": stall_limit,
                     "tabu_tenure": tenure,
                 },
+                kpis=kpi_totals,
             )
             meta["telemetry_run_id"] = telemetry_logger.run_id
             meta["telemetry_log_path"] = str(telemetry_logger.log_path)
