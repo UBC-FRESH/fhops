@@ -43,7 +43,7 @@ Status: Draft — scaffolding notebooks that surface deterministic and stochasti
    - Parameterise `fhops bench suite` with multiple presets. *(notebook executes suite with preset comparisons)*
   - Summarise objective/runtime comparisons, visualise solver performance. *(objective/runtime pivot tables added)*
 10. **Benchmark Summary Notebook**
-    - Load benchmark CSV outputs across scenarios.
+    - Load benchmark CSV outputs across scenarios. *(CSV generated and notebook summarises objectives/runtimes)*
     - Chart solver categories, KPIs, and scaling behaviour.
 
 ## Shared Utilities
