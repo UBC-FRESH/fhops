@@ -88,12 +88,14 @@ def solve_tabu(
     }
     context_payload = dict(telemetry_context or {})
     scenario = pb.scenario
+    timeline = getattr(scenario, "timeline", None)
     scenario_features = {
         "num_days": getattr(scenario, "num_days", None),
         "num_blocks": len(getattr(scenario, "blocks", []) or []),
         "num_machines": len(getattr(scenario, "machines", []) or []),
         "num_landings": len(getattr(scenario, "landings", []) or []),
         "num_shift_calendar_entries": len(getattr(scenario, "shift_calendar", []) or []),
+        "num_timeline_shifts": len(getattr(timeline, "shifts", []) or []),
     }
     context_payload.setdefault("scenario_features", scenario_features)
     step_interval = context_payload.pop("step_interval", 25)
