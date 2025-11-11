@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from collections import Counter, defaultdict
 
 import numpy as np
@@ -36,6 +37,7 @@ def test_shift_dataframe_matches_fixture():
 
     playback = run_playback(problem, assignments)
     df = shift_dataframe(playback)
+    assert "machine_role" in df.columns
     df = df.reindex(sorted(df.columns), axis=1).sort_values(["day", "machine_id"]).reset_index(drop=True)
 
     fixture = pd.read_csv("tests/fixtures/playback/minitoy_shift.csv").sort_values(
@@ -91,6 +93,7 @@ def test_shift_dataframe_from_ensemble_handles_samples():
     df = shift_dataframe_from_ensemble(ensemble)
     assert "sample_id" in df.columns
     assert df["sample_id"].nunique() == 2
+    assert "machine_role" in df.columns
 
 
 def _build_sampling_config(
@@ -250,6 +253,11 @@ def test_kpi_alignment_with_aggregates(scenario_name: str):
 
     assert day_df["production_units"].sum() == pytest.approx(kpis["total_production"])
     assert day_df["completed_blocks"].sum() == pytest.approx(kpis["completed_blocks"])
+    assert "utilisation_ratio_mean_shift" in kpis
+    active_days = day_df[day_df["production_units"] > 0]
+    if not active_days.empty:
+        assert kpis["makespan_day"] == int(active_days["day"].max())
+    assert "makespan_shift" in kpis
 
     if "mobilisation_cost" in kpis:
         assert day_df["mobilisation_cost"].sum() == pytest.approx(kpis["mobilisation_cost"])
@@ -258,3 +266,7 @@ def test_kpi_alignment_with_aggregates(scenario_name: str):
         assert shift_df["sequencing_violations"].sum() == pytest.approx(
             kpis["sequencing_violation_count"]
         )
+
+    if kpis.get("utilisation_ratio_by_machine"):
+        per_machine = json.loads(kpis["utilisation_ratio_by_machine"])
+        assert per_machine

@@ -24,6 +24,7 @@ SHIFT_SUMMARY_COLUMNS = [
     "day",
     "shift_id",
     "machine_id",
+    "machine_role",
     "sample_id",
     "production_units",
     "total_hours",

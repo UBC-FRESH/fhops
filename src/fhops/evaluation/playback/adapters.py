@@ -84,6 +84,8 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
     )
     previous_block: dict[str, str | None] = defaultdict(lambda: None)
 
+    landing_lookup = {block.id: block.landing_id for block in scenario.blocks}
+
     blackout_days: set[int] = set()
     if scenario.timeline and scenario.timeline.blackouts:
         for blackout in scenario.timeline.blackouts:
@@ -165,6 +167,9 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
             if hours_source:
                 metadata["hours_source"] = hours_source
             metadata["production_source"] = production_source
+            landing_id = landing_lookup.get(block_id)
+            if landing_id is not None:
+                metadata["landing_id"] = landing_id
 
             role = machine_roles.get(machine_id)
             allowed = allowed_roles.get(block_id)
@@ -205,6 +210,8 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
                 production_units=production_units,
                 mobilisation_cost=mobilisation_value,
                 blackout_hit=blackout_hit,
+                landing_id=landing_id,
+                machine_role=role,
                 metadata=metadata,
             )
 

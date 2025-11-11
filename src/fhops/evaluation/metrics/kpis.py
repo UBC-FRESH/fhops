@@ -94,8 +94,8 @@ def _system_metadata(pb: Problem):
     return allowed, prereqs, machine_roles
 
 
-def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> dict[str, float | int | str]:
-    """Compute production, mobilisation, and sequencing KPIs from assignments."""
+def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
+    """Compute production, mobilisation, utilisation, and sequencing KPIs from assignments."""
 
     sc = pb.scenario
     rate = {(r.machine_id, r.block_id): r.rate for r in sc.production_rates}
@@ -111,6 +111,8 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> dict[str, float | in
     )
     previous_block: dict[str, str | None] = {machine.id: None for machine in sc.machines}
     mobilisation_by_machine: dict[str, float] = defaultdict(float)
+    landing_lookup = {block.id: block.landing_id for block in sc.blocks}
+    mobilisation_by_landing: dict[str, float] = defaultdict(float)
 
     allowed_roles, prereq_roles, machine_roles = _system_metadata(pb)
     system_blocks = {block.id for block in sc.blocks if block.harvest_system_id}
@@ -121,6 +123,8 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> dict[str, float | in
     seq_reason_counts: Counter[str] = Counter()
 
     total_prod = 0.0
+    days_with_work: set[int] = set()
+    shift_keys_with_work: set[tuple[int, str]] = set()
     sorted_assignments = assignments.sort_values(["day", "machine_id", "block_id"])
     for day in sorted_assignments["day"].drop_duplicates().sort_values():
         day = int(day)
@@ -129,6 +133,9 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> dict[str, float | in
         for _, row in day_rows.iterrows():
             machine_id = row["machine_id"]
             block_id = row["block_id"]
+            shift_id = (
+                row["shift_id"] if "shift_id" in row and not pd.isna(row["shift_id"]) else "S1"
+            )
             role = machine_roles.get(machine_id)
             allowed = allowed_roles.get(block_id)
 
@@ -158,6 +165,9 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> dict[str, float | in
             production = min(rate.get((machine_id, block_id), 0.0), remaining[block_id])
             remaining[block_id] = max(0.0, remaining[block_id] - production)
             total_prod += production
+            if production > 0:
+                days_with_work.add(day)
+                shift_keys_with_work.add((day, str(shift_id)))
 
             params = mobil_params.get(machine_id)
             prev = previous_block.get(machine_id)
@@ -170,6 +180,9 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> dict[str, float | in
                     cost += params.move_cost_flat
                 mobilisation_cost += cost
                 mobilisation_by_machine[machine_id] += cost
+                landing_id = landing_lookup.get(block_id)
+                if landing_id:
+                    mobilisation_by_landing[landing_id] += cost
             previous_block[machine_id] = block_id
 
         for (blk, role), count in day_counts.items():
@@ -190,6 +203,13 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> dict[str, float | in
                     for machine, cost in sorted(mobilisation_by_machine.items())
                 }
             )
+        if mobilisation_by_landing:
+            result["mobilisation_cost_by_landing"] = json.dumps(
+                {
+                    landing: round(cost, 3)
+                    for landing, cost in sorted(mobilisation_by_landing.items())
+                }
+            )
 
     if system_blocks:
         result["sequencing_violation_count"] = seq_violations
@@ -202,4 +222,75 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> dict[str, float | in
             if seq_reason_counts
             else "none"
         )
-    return KPIResult(totals=result)
+    from fhops.evaluation.playback import PlaybackConfig, run_playback
+    from fhops.evaluation.playback.aggregates import day_dataframe, shift_dataframe
+
+    playback_result = run_playback(pb, assignments, config=PlaybackConfig())
+    shift_df = shift_dataframe(playback_result)
+    day_df = day_dataframe(playback_result)
+
+    if not shift_df.empty:
+        util_shift = shift_df["utilisation_ratio"].dropna()
+        if not util_shift.empty:
+            result["utilisation_ratio_mean_shift"] = float(util_shift.mean())
+        total_hours = float(shift_df["total_hours"].sum())
+        total_available = float(shift_df["available_hours"].sum())
+        if total_available > 0:
+            result["utilisation_ratio_weighted_shift"] = total_hours / total_available
+        per_machine = (
+            shift_df.dropna(subset=["utilisation_ratio"])
+            .groupby("machine_id")["utilisation_ratio"]
+            .mean()
+            .dropna()
+        )
+        if not per_machine.empty:
+            result["utilisation_ratio_by_machine"] = json.dumps(
+                {machine: round(float(value), 4) for machine, value in sorted(per_machine.items())}
+            )
+        if "machine_role" in shift_df.columns:
+            per_role = (
+                shift_df.dropna(subset=["machine_role", "utilisation_ratio"])
+                .groupby("machine_role")["utilisation_ratio"]
+                .mean()
+                .dropna()
+            )
+            if not per_role.empty:
+                result["utilisation_ratio_by_role"] = json.dumps(
+                    {role: round(float(value), 4) for role, value in sorted(per_role.items())}
+                )
+        active_shifts = shift_df[shift_df["production_units"] > 0]
+        if not active_shifts.empty:
+            shift_order = {(shift.day, shift.shift_id): idx for idx, shift in enumerate(pb.shifts)}
+
+            def _rank(row: pd.Series) -> tuple[int, float]:
+                key = (int(row["day"]), str(row["shift_id"]))
+                order = shift_order.get(key)
+                if order is not None:
+                    return (0, float(order))
+                return (1, float(row["day"]))
+
+            ranked = active_shifts.copy()
+            ranked["_rank_tuple"] = ranked.apply(_rank, axis=1)
+            last_row = ranked.sort_values("_rank_tuple").iloc[-1]
+            result["makespan_day"] = int(last_row["day"])
+            result["makespan_shift"] = str(last_row["shift_id"])
+
+    if "makespan_day" not in result:
+        result["makespan_day"] = max(days_with_work) if days_with_work else 0
+    if "makespan_shift" not in result:
+        if shift_keys_with_work:
+            day, shift_id = max(shift_keys_with_work)
+            result["makespan_shift"] = str(shift_id)
+        else:
+            result["makespan_shift"] = "N/A"
+
+    if not day_df.empty:
+        util_day = day_df["utilisation_ratio"].dropna()
+        if not util_day.empty:
+            result["utilisation_ratio_mean_day"] = float(util_day.mean())
+        total_hours_day = float(day_df["total_hours"].sum())
+        total_available_day = float(day_df["available_hours"].sum())
+        if total_available_day > 0:
+            result["utilisation_ratio_weighted_day"] = total_hours_day / total_available_day
+
+    return KPIResult(totals=result, shift_calendar=shift_df, day_calendar=day_df)

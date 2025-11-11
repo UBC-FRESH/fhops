@@ -118,6 +118,38 @@ Status: Draft — roadmap Phase 3 owner document.
   - Do we require parallel execution support out of the gate (thread/process pools)?
   - How to surface user-defined stochastic events (plugin entry points or config-driven expressions)?
 
+### KPI Expansion Plan — 2025-02-??
+- **Metric specification & alignment**
+  - [ ] Reconcile production/utilisation/makespan definitions across `notes/mip_model_plan.md`, `notes/mobilisation_plan.md`, and this document.
+  - [ ] Document final KPI formulas and assumptions in `docs/howto/evaluation.rst`.
+    - Current coverage: `total_production`, `completed_blocks`, `mobilisation_cost`, `mobilisation_cost_by_machine`, sequencing violation counts/breakdowns.
+    - Planned additions:
+      - *Utilisation averages* — mean of `utilisation_ratio` per machine role, landing, and day.
+      - *Makespan* — latest `(day, shift)` with non-zero production per sample (max over deterministic base or ensemble).
+      - *Landing mobilisation spend* — mobilisation totals rolled up by landing/system identifiers.
+      - *Weather/downtime penalties* — optional cost components driven by stochastic events.
+  - [ ] Map required raw signals from playback outputs and ensure data contract coverage.
+    - Confirm `ShiftSummary`/`DaySummary` expose landing IDs, machine roles, downtime/weather flags.
+    - Extend playback dataclasses and fixtures where additional columns (e.g., `landing_id`, `downtime_reason`) are required.
+
+- **Implementation & validation**
+  - [ ] Extend KPI calculators to emit cost, makespan, utilisation, mobilisation spend variants.
+    - Implement utilisation aggregators that reduce shift/day summaries into KPI scalars.
+    - Compute makespan and exposure windows via deterministic playback or stochastic ensembles.
+    - Add per-landing/system mobilisation and production breakdowns.
+  - [ ] Add regression fixtures and property-based checks confirming KPI ranges per scenario tier.
+    - Update minitoy/med42 expected outputs to include utilisation/makespan baselines.
+    - Add property checks ensuring utilisation stays in `[0, 1]` and makespan spans the latest productive day.
+  - [ ] Wire KPIs into CLI reporting with configurable profiles and smoke tests.
+    - Update `fhops evaluate`, telemetry payloads, and benchmark harness exports to surface the new KPIs.
+    - Add CLI flags or profiles to toggle KPI bundles once the expanded metrics land.
+
+- **Reporting templates**
+  - [ ] Draft tabular templates (CSV/Markdown) plus optional visuals for docs/notebooks.
+    - Provide Markdown/CSV examples referencing the expanded KPI set.
+  - [ ] Provide Sphinx snippets and CLI help examples showcasing new KPI bundles.
+  - [ ] Capture follow-up backlog items for advanced dashboards (e.g., Plotly) if deferred.
+
 ## Testing Strategy
 - [ ] Regression fixtures representing deterministic and stochastic runs.
 - [ ] Property-based checks to ensure KPIs remain within expected bounds.
