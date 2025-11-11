@@ -19,7 +19,8 @@ repository and rendered via ``nbsphinx`` during the documentation build.
    landing_congestion
    system_mix
    kpi_decomposition
-   telemetry_diagnostics
    ensemble_resilience
    operator_sweep
+   telemetry_diagnostics
+   tuner_report_analysis
    benchmark_summary
