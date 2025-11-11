@@ -72,7 +72,7 @@ before proposing new work.
   - [ ] Notebook scaffolding
     - [x] Select representative deterministic + stochastic scenarios (baseline + synthetic).
     - [x] Define notebook storyboards (playback walkthrough, KPI deep-dive, what-if analysis).
-    - [ ] Create reusable plotting helpers (matplotlib/Altair) shared across notebooks.
+    - [x] Create reusable plotting helpers (matplotlib/Altair) shared across notebooks.
   - [ ] Notebook authoring
     - [ ] Draft notebooks under `docs/examples/analytics/` with executed outputs.
     - [ ] Ensure notebooks call CLI/modules via lightweight wrappers for reproducibility.

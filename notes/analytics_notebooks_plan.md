@@ -26,7 +26,7 @@ Status: Draft — scaffolding notebooks that surface deterministic and stochasti
    - Compare pre/post KPIs and visualise differences.
 
 ## Shared Utilities
-- Module: `docs/examples/analytics/utils.py`
+- Module: `docs/examples/analytics/utils.py` *(implemented)*
   - `load_playback_tables(scenario_path, assignments_path)`
   - `run_stochastic_summary(scenario_path, assignments_path, sampling_config)`
   - Chart helpers (`plot_production_series`, `plot_utilisation_heatmap`, `plot_distribution`).
