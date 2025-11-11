@@ -143,6 +143,16 @@ Load the Parquet file, compute machine utilisation, and sanity-check totals:
 The Markdown summary (``tmp/minitoy_summary.md``) contains topline metrics and preview tables. Open it
 in any Markdown viewer or drop it directly into release notes.
 
+When you need a quick textual snapshot without leaving the CLI, pass ``--kpi-mode`` to the solver
+commands:
+
+.. code-block:: console
+
+   $ fhops solve-heur examples/minitoy/scenario.yaml --out tmp/minitoy_sa.csv --kpi-mode basic
+
+The basic mode prints only production/mobilisation KPIs. Switch to ``--kpi-mode extended`` to include
+utilisation, downtime, and weather metrics in the CLI output.
+
 Telemetry JSONL records can be ingested by automation scripts or dashboards. Each entry includes the
 scenario, sampling configuration, export paths, and summary metrics so playback runs are traceable.
 
