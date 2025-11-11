@@ -5,6 +5,13 @@ from pathlib import Path
 
 import pandas as pd
 
+try:
+    import altair  # noqa: F401
+except ImportError:  # pragma: no cover - optional dependency
+    ALTAIR_AVAILABLE = False
+else:
+    ALTAIR_AVAILABLE = True
+
 
 def _write_report(path: Path, algorithm: str, scenario: str, best: float, mean: float, runs: int) -> None:
     df = pd.DataFrame(
@@ -29,20 +36,25 @@ def test_analyze_tuner_reports_cli(tmp_path: Path):
 
     markdown_out = tmp_path / "comparison.md"
     csv_out = tmp_path / "comparison.csv"
+    chart_out = tmp_path / "comparison.html"
+
+    cmd = [
+        "python",
+        "scripts/analyze_tuner_reports.py",
+        "--report",
+        f"baseline={report_a}",
+        "--report",
+        f"experiment={report_b}",
+        "--out-markdown",
+        str(markdown_out),
+        "--out-csv",
+        str(csv_out),
+    ]
+    if ALTAIR_AVAILABLE:
+        cmd.extend(["--out-chart", str(chart_out)])
 
     result = subprocess.run(
-        [
-            "python",
-            "scripts/analyze_tuner_reports.py",
-            "--report",
-            f"baseline={report_a}",
-            "--report",
-            f"experiment={report_b}",
-            "--out-markdown",
-            str(markdown_out),
-            "--out-csv",
-            str(csv_out),
-        ],
+        cmd,
         text=True,
         capture_output=True,
         check=True,
@@ -50,6 +62,8 @@ def test_analyze_tuner_reports_cli(tmp_path: Path):
     assert result.returncode == 0
     assert markdown_out.exists()
     assert csv_out.exists()
+    if ALTAIR_AVAILABLE:
+        assert chart_out.exists()
 
     content = markdown_out.read_text(encoding="utf-8")
     assert "| Algorithm | Scenario |" in content

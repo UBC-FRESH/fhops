@@ -123,6 +123,11 @@ def main(argv: list[str] | None = None) -> int:
         type=Path,
         help="Optional Markdown output path for the combined report.",
     )
+    parser.add_argument(
+        "--out-chart",
+        type=Path,
+        help="Optional HTML path for an Altair chart comparing best objectives.",
+    )
     args = parser.parse_args(argv)
 
     labels: list[str] = []
@@ -147,6 +152,41 @@ def main(argv: list[str] | None = None) -> int:
     if args.out_markdown:
         args.out_markdown.parent.mkdir(parents=True, exist_ok=True)
         args.out_markdown.write_text(markdown + "\n", encoding="utf-8")
+
+    if args.out_chart:
+        try:
+            import altair as alt
+        except ImportError as exc:  # pragma: no cover - optional dependency
+            raise SystemExit("Altair is required for --out-chart support.") from exc
+
+        chart_records: list[dict[str, object]] = []
+        for _, row in combined.iterrows():
+            for label in labels:
+                best_val = row.get(f"best_{label}")
+                if pd.notna(best_val):
+                    chart_records.append(
+                        {
+                            "algorithm": row["algorithm"],
+                            "scenario": row["scenario"],
+                            "label": label,
+                            "best_objective": best_val,
+                        }
+                    )
+        chart_df = pd.DataFrame(chart_records)
+        if not chart_df.empty:
+            chart = (
+                alt.Chart(chart_df)
+                .mark_line(point=True)
+                .encode(
+                    x=alt.X("label:N", title="Report"),
+                    y=alt.Y("best_objective:Q", title="Best Objective"),
+                    color=alt.Color("algorithm:N", title="Algorithm"),
+                    row=alt.Row("scenario:N", title="Scenario"),
+                )
+                .properties(width=250, height=180)
+            )
+            args.out_chart.parent.mkdir(parents=True, exist_ok=True)
+            chart.save(args.out_chart, embed_options={"actions": False})
 
     if not args.out_csv and not args.out_markdown:
         print(markdown)
