@@ -9,6 +9,7 @@
 - CI runs a lightweight minitoy sweep that generates `fhops telemetry report` artifacts (`telemetry-report` bundle) for baseline monitoring.
 - Added `scripts/analyze_tuner_reports.py` plus tests, enabling deltas across multiple reports (baseline vs. experiment) to highlight objective improvements.
 - Extended `scripts/analyze_tuner_reports.py` with historical reporting (`--history-dir`, CSV/Markdown/Altair outputs) so dated telemetry snapshots can be trended over time.
+- CI now captures med42 alongside minitoy, publishes history summaries (`history_summary.{csv,md,html}`), and docs include a sample telemetry history figure plus a dedicated analysis notebook.
 - Refreshed `notes/metaheuristic_hyperparam_tuning.md` and the roadmap to mark the telemetry persistence milestone and document the new storage layout.
 
 ## 2025-11-11 — Analytics notebook automation

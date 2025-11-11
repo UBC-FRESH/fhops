@@ -64,7 +64,9 @@ machine-readable (CSV) and human-readable (Markdown) summaries:
 The command prints a Markdown table to stdout by default; passing ``--out-*``
 flags writes the same content to disk. The generated CSV columns include
 aggregated statistics (best/mean objective, run counts) plus any matching
-``tuner_summaries`` rows added by the CLI commands.
+``tuner_summaries`` rows added by the CLI commands. Continuous integration
+executes this pipeline for **minitoy** and **med42** so the published artefacts
+already contain multiple scenarios.
 
 Sample Output
 -------------
@@ -135,6 +137,13 @@ timestamps, so you can download successive runs and feed them directly to the
 history command. The workflow also generates ``history_summary.{csv,md,html}``
 via ``analyze_tuner_reports.py --history-dir`` so you can inspect trends
 immediately after downloading the artifact.
+
+.. figure:: ../examples/analytics/data/tuner_reports/history_summary.png
+   :alt: Sample telemetry history chart
+   :align: center
+
+   Sample telemetry history derived from the committed demo data. Actual CI
+   artefacts contain the latest minitoy and med42 measurements.
 
 CI Automation
 -------------

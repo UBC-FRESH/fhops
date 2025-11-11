@@ -68,6 +68,23 @@ jobs:
             --trials 1 \
             --iters 50 \
             --seed 1618
+          # med42 smoke sweep (short budgets)
+          fhops tune-random examples/med42/scenario.yaml \
+            --telemetry-log tmp/ci-telemetry/runs.jsonl \
+            --runs 1 \
+            --iters 40 \
+            --base-seed 4242
+          fhops tune-grid examples/med42/scenario.yaml \
+            --telemetry-log tmp/ci-telemetry/runs.jsonl \
+            --batch-size 1 \
+            --preset balanced \
+            --iters 40 \
+            --seed 4545
+          fhops tune-bayes examples/med42/scenario.yaml \
+            --telemetry-log tmp/ci-telemetry/runs.jsonl \
+            --trials 1 \
+            --iters 40 \
+            --seed 5656
           fhops telemetry report tmp/ci-telemetry/runs.sqlite \
             --out-csv tmp/ci-telemetry/tuner_report.csv \
             --out-markdown tmp/ci-telemetry/tuner_report.md
