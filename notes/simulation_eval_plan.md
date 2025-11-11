@@ -80,7 +80,7 @@ Status: Draft — roadmap Phase 3 owner document.
   - [x] Document exporter options (CLI reference + Markdown section).
 - **Testing**
   - [x] Property-based tests ensuring shift totals equal day totals.
-  - [ ] Property-based tests ensuring blackout constraints hold.
+  - [x] Property-based tests ensuring blackout constraints hold.
   - [x] CLI smoke tests cover CSV, stochastic toggles, Markdown, landing shocks.
 
 ### Stochastic Sampling API Plan — 2025-02-??
