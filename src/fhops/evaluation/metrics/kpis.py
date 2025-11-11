@@ -242,10 +242,14 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
     )
     result.update(makespan_metrics)
 
+    total_hours_recorded = float(shift_df.get("total_hours", pd.Series(dtype=float)).sum())
+    avg_production_rate = (total_prod / total_hours_recorded) if total_hours_recorded > 0 else 0.0
+
     if "downtime_hours" in shift_df.columns:
         total_downtime_hours = float(shift_df["downtime_hours"].sum())
         if total_downtime_hours > 0:
             result["downtime_hours_total"] = total_downtime_hours
+            result["downtime_production_loss_est"] = total_downtime_hours * avg_production_rate
         downtime_by_machine = shift_df.groupby("machine_id", dropna=False)["downtime_hours"].sum()
         downtime_by_machine = downtime_by_machine[downtime_by_machine > 0]
         if not downtime_by_machine.empty:
@@ -263,6 +267,13 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
         total_weather_severity = float(shift_df["weather_severity_total"].sum())
         if total_weather_severity > 0:
             result["weather_severity_total"] = total_weather_severity
+            # Approximate weather impact by scaling total affected severity with average shift hours.
+            average_shift_hours = (
+                (total_hours_recorded / len(shift_df)) if len(shift_df) > 0 else 0.0
+            )
+            weather_hours_est = total_weather_severity * average_shift_hours
+            result["weather_hours_est"] = weather_hours_est
+            result["weather_production_loss_est"] = weather_hours_est * avg_production_rate
         weather_by_machine = shift_df.groupby("machine_id", dropna=False)["weather_severity_total"].sum()
         weather_by_machine = weather_by_machine[weather_by_machine > 0]
         if not weather_by_machine.empty:

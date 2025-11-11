@@ -96,12 +96,21 @@ def test_kpi_stochastic_snapshot() -> None:
         }
     )
 
+    total_prod = float(shift_df["production_units"].sum())
+    total_hours = float(shift_df["total_hours"].sum())
+    avg_rate = total_prod / total_hours if total_hours > 0 else 0.0
+
     if "downtime_hours" in shift_df.columns:
-        snapshot["downtime_hours_total"] = round(float(shift_df["downtime_hours"].sum()), 6)
+        downtime_hours_total = float(shift_df["downtime_hours"].sum())
+        snapshot["downtime_hours_total"] = round(downtime_hours_total, 6)
         snapshot["downtime_event_count"] = int(shift_df["downtime_events"].sum())
+        snapshot["downtime_production_loss_est"] = round(downtime_hours_total * avg_rate, 6)
     if "weather_severity_total" in shift_df.columns:
-        snapshot["weather_severity_total"] = round(
-            float(shift_df["weather_severity_total"].sum()), 6
-        )
+        weather_total = float(shift_df["weather_severity_total"].sum())
+        snapshot["weather_severity_total"] = round(weather_total, 6)
+        avg_shift_hours = total_hours / len(shift_df) if len(shift_df) else 0.0
+        weather_hours_est = weather_total * avg_shift_hours
+        snapshot["weather_hours_est"] = round(weather_hours_est, 6)
+        snapshot["weather_production_loss_est"] = round(weather_hours_est * avg_rate, 6)
 
     assert snapshot == fixture_data
