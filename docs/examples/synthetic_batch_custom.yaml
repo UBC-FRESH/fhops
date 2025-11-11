@@ -1,0 +1,23 @@
+# Custom config used by docs/examples/synthetic_batch_plan.yaml
+name: synthetic-custom-docs
+num_blocks: [6, 8]
+num_days: 10
+num_machines: [3, 4]
+num_landings: 2
+terrain_pool:
+  - rolling
+  - steep
+terrain_weights:
+  - 0.4
+  - 0.6
+prescription_pool:
+  - thinning
+  - clearcut
+prescription_weights:
+  - 0.5
+  - 0.5
+sampling_overrides:
+  samples: 16
+  downtime:
+    enabled: true
+    probability: 0.18
