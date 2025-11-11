@@ -116,6 +116,7 @@ Both tiers finish in under 0.1 seconds with the smoke settings, leaving ample he
 - [x] Statistical checks on sampled parameters (distributions, workload constraints).
 - [x] Benchmark smoke validation verifying KPI bounds for reference bundles. *(See `tests/test_benchmark_harness.py::test_synthetic_small_benchmark_kpi_bounds`.)*
 - [x] Property-based KPI sanity checks covering synthetic smoke runs. *(See `tests/test_benchmark_harness.py::test_synthetic_kpi_properties`.)*
+- [x] Stochastic playback validation across small/medium tiers (`tests/test_synthetic_validation.py`).
 
 ## Documentation
 - [x] Sphinx guide on generating and using synthetic datasets.
