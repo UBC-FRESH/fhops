@@ -63,7 +63,7 @@ before proposing new work.
   - [ ] Generator implementation
     - [x] Build core sampling utilities (terrain, system mix, downtime patterns) with tests.
     - [x] Expose CLI entry (`fhops synth`) and configuration schema for batch generation.
-    - [ ] Add validation suite ensuring generated datasets meet contract + KPI sanity bounds.
+    - [x] Add validation suite ensuring generated datasets meet contract + KPI sanity bounds.
   - [ ] Benchmark integration
     - [x] Hook synthetic scenarios into benchmark harness and CI smoke targets.
     - [x] Provide metadata manifests describing each scenario for docs/examples.
