@@ -153,8 +153,8 @@ Status: Draft — roadmap Phase 3 owner document.
 - [x] Property-based checks to ensure KPIs remain within expected bounds.
 
 ## Documentation
-- [ ] Author Sphinx how-to for evaluation workflows.
-- [ ] Provide notebook-style examples demonstrating robustness analysis.
+- [x] Author Sphinx how-to for evaluation workflows.
+- [x] Provide notebook-style examples demonstrating robustness analysis.
 
 ## Open Questions
 - How to manage runtime for Monte Carlo simulations in CI?
