@@ -1,0 +1,22 @@
+name: synthetic-medium
+num_days: 10
+schema_version: 1.0.0
+data:
+  blocks: data/blocks.csv
+  machines: data/machines.csv
+  landings: data/landings.csv
+  calendar: data/calendar.csv
+  prod_rates: data/prod_rates.csv
+timeline:
+  shifts:
+  - name: S1
+    hours: 9.815575077228795
+    shifts_per_day: 1
+  blackouts:
+  - start_day: 4
+    end_day: 5
+    reason: synthetic-blackout
+  - start_day: 6
+    end_day: 7
+    reason: synthetic-blackout
+  days_per_week: 7

@@ -1,0 +1,16 @@
+name: synthetic-small
+num_days: 6
+schema_version: 1.0.0
+data:
+  blocks: data/blocks.csv
+  machines: data/machines.csv
+  landings: data/landings.csv
+  calendar: data/calendar.csv
+  prod_rates: data/prod_rates.csv
+timeline:
+  shifts:
+  - name: S1
+    hours: 11.277521674435338
+    shifts_per_day: 1
+  blackouts: []
+  days_per_week: 7

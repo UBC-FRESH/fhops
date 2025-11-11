@@ -11,7 +11,7 @@
 - Added KPI-alignment regression ensuring playback aggregation outputs reproduce legacy KPI totals for minitoy/med42 fixtures.
 - Introduced ``KPIResult`` structured mappings so KPI totals and shift/day calendars share a canonical schema exported via both playback helpers and CLI telemetry, and added utilisation, makespan, and landing-level mobilisation metrics to the KPI bundle.
 - Added regression snapshots for deterministic/stochastic KPI outputs plus property-based coverage ensuring utilisation ratios stay within bounds, makespan aligns with productive days, and downtime/weather signals remain stable, alongside estimated production-loss metrics for downtime and weather events, a CLI `--kpi-mode` flag to toggle basic vs. extended KPI summaries, KPI reporting templates (Markdown/CSV), a stochastic robustness walkthrough under `docs/examples/`, and the completion of the Phase 3 KPI expansion milestone in the roadmap.
-- Implemented a random synthetic dataset generator (`generate_random_dataset`) with CSV/YAML bundle support and regression coverage, advancing the synthetic dataset roadmap item.
+- Implemented a random synthetic dataset generator (`generate_random_dataset`) with CSV/YAML bundle support, produced small/medium/large reference datasets under `examples/synthetic/`, and added regression coverage to keep the generator stable.
 
 ## 2025-11-10 — Phase 3 playback planning kickoff
 - Expanded the Phase 3 roadmap checklist with detailed subtasks covering playback upgrades, KPI expansion, synthetic datasets, analytics notebooks, and hyperparameter tuning deliverables.
