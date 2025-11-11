@@ -11,6 +11,7 @@
 - Added KPI-alignment regression ensuring playback aggregation outputs reproduce legacy KPI totals for minitoy/med42 fixtures.
 - Introduced ``KPIResult`` structured mappings so KPI totals and shift/day calendars share a canonical schema exported via both playback helpers and CLI telemetry, and added utilisation, makespan, and landing-level mobilisation metrics to the KPI bundle.
 - Added regression snapshots for deterministic/stochastic KPI outputs plus property-based coverage ensuring utilisation ratios stay within bounds, makespan aligns with productive days, and downtime/weather signals remain stable, alongside estimated production-loss metrics for downtime and weather events, a CLI `--kpi-mode` flag to toggle basic vs. extended KPI summaries, KPI reporting templates (Markdown/CSV), a stochastic robustness walkthrough under `docs/examples/`, and the completion of the Phase 3 KPI expansion milestone in the roadmap.
+- Implemented a random synthetic dataset generator (`generate_random_dataset`) with CSV/YAML bundle support and regression coverage, advancing the synthetic dataset roadmap item.
 
 ## 2025-11-10 — Phase 3 playback planning kickoff
 - Expanded the Phase 3 roadmap checklist with detailed subtasks covering playback upgrades, KPI expansion, synthetic datasets, analytics notebooks, and hyperparameter tuning deliverables.
@@ -152,3 +153,4 @@
 - Documented parallel workflows in Sphinx (multistart/batched how-to, CLI references, telemetry notes) and benchmarked the parallel heuristics across minitoy/med42/large84 to guide defaults.
 - Added an experimental Tabu Search solver (`solve_tabu`), shared CLI options/telemetry, and initial unit coverage.
 - Integrated Tabu Search into the benchmarking harness (`fhops bench suite --include-tabu`) and recorded comparative results showing SA remains the default recommendation.
+- Introduced a synthetic scenario dataset generator (`generate_random_dataset`) with CSV/YAML bundle writer helpers, scenario plan updates, and regression coverage (`tests/test_synthetic_dataset.py`) to support Phase 3 benchmarking workflows.

@@ -17,9 +17,9 @@ Status: Draft — groundwork for thesis-aligned datasets.
 ## Planned Tasks
 - [x] Define configuration schema for synthetic dataset generator (`scenario/synthetic/generator.py`).
 - [x] Support basic timeline blackouts and harvest system role assignment in synthetic scenarios.
-- [ ] Implement randomised and template-driven generators producing YAML/CSV bundles.
+- [x] Implement randomised and template-driven generators producing YAML/CSV bundles.
 - [ ] Produce reference datasets (small/medium/large) with metadata for benchmarking.
-- [ ] Hook dataset generation into tests/CI where feasible.
+- [x] Hook dataset generation into tests/CI where feasible. *(See `tests/test_synthetic_dataset.py`.)*
 
 ## Tests & Validation
 - [x] Unit tests ensuring generated datasets satisfy scenario contract validators. *(See `tests/test_synthetic.py`.)*
