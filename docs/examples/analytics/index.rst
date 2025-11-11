@@ -23,4 +23,5 @@ repository and rendered via ``nbsphinx`` during the documentation build.
    operator_sweep
    telemetry_diagnostics
    tuner_report_analysis
+   tuner_history_analysis
    benchmark_summary

@@ -109,3 +109,16 @@ store into CSV/Markdown summaries without re-running the tuners::
 The command scans ``runs``, ``run_metrics``, ``run_kpis``, and
 ``tuner_summaries`` tables to surface best/mean objective values per algorithm
 and scenario. See :doc:`../howto/telemetry_tuning` for a step-by-step guide.
+
+Historical Trends
+-----------------
+
+Each CI run uploads three ready-made history artefacts under the
+``telemetry-report`` bundle:
+
+* ``history_summary.csv`` — tabular history of best/mean objectives for dated snapshots.
+* ``history_summary.md`` — Markdown rendering of the same table.
+* ``history_summary.html`` — Altair chart plotting best objective trends.
+
+Download those files (or rerun ``analyze_tuner_reports.py --history-dir`` on a
+local archive) to inspect performance trends without regenerating telemetry.
