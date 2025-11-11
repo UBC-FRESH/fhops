@@ -4,6 +4,7 @@
 - Added a SQLite-backed telemetry mirror (`telemetry/runs.sqlite`) via `fhops.telemetry.sqlite_store.persist_run`, keeping run metadata, metrics, and KPI totals normalised alongside the JSONL history.
 - Simulated annealing, ILS, and Tabu solvers now compute KPI bundles for every run, inject the totals into telemetry records, and persist them to both JSONL and SQLite stores.
 - CLI tuners (`fhops tune-random`, `fhops tune-grid`, `fhops tune-bayes`) append `tuner_summary` records with per-scenario best objectives; regression tests assert the summaries and SQLite tables exist with KPI content.
+- CLI tuning commands mirror their `tuner_summary` payloads into the SQLite store so benchmarking/reporting jobs can query sweep outcomes without parsing JSONL.
 - Refreshed `notes/metaheuristic_hyperparam_tuning.md` and the roadmap to mark the telemetry persistence milestone and document the new storage layout.
 
 ## 2025-11-11 — Analytics notebook automation
