@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
+import json
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, cast
@@ -53,6 +54,93 @@ def _enable_rich_tracebacks():
         _rt.install(show_locals=True, width=140, extra_lines=2)
     except Exception:
         pass
+
+
+def _ensure_kpi_dict(kpis: Any) -> dict[str, Any]:
+    if hasattr(kpis, "to_dict") and callable(kpis.to_dict):
+        return dict(kpis.to_dict())
+    return dict(kpis)
+
+
+def _format_metric_value(value: Any) -> Any:
+    if isinstance(value, str):
+        try:
+            parsed = json.loads(value)
+        except json.JSONDecodeError:
+            return value
+        if isinstance(parsed, dict):
+            return ", ".join(f"{k}={parsed[k]}" for k in sorted(parsed))
+    if isinstance(value, float):
+        return f"{value:.3f}"
+    return value
+
+
+def _print_kpi_summary(kpis: Any) -> None:
+    data = _ensure_kpi_dict(kpis)
+    if not data:
+        return
+
+    sections: list[tuple[str, list[str]]] = [
+        (
+            "Production",
+            ["total_production", "completed_blocks", "makespan_day", "makespan_shift"],
+        ),
+        (
+            "Mobilisation",
+            [
+                "mobilisation_cost",
+                "mobilisation_cost_by_machine",
+                "mobilisation_cost_by_landing",
+            ],
+        ),
+        (
+            "Utilisation",
+            [
+                "utilisation_ratio_mean_shift",
+                "utilisation_ratio_weighted_shift",
+                "utilisation_ratio_mean_day",
+                "utilisation_ratio_weighted_day",
+                "utilisation_ratio_by_machine",
+                "utilisation_ratio_by_role",
+            ],
+        ),
+        (
+            "Downtime",
+            [
+                "downtime_hours_total",
+                "downtime_event_count",
+                "downtime_production_loss_est",
+                "downtime_hours_by_machine",
+            ],
+        ),
+        (
+            "Weather",
+            [
+                "weather_severity_total",
+                "weather_hours_est",
+                "weather_production_loss_est",
+                "weather_severity_by_machine",
+            ],
+        ),
+        (
+            "Sequencing",
+            [
+                "sequencing_violation_count",
+                "sequencing_violation_blocks",
+                "sequencing_violation_days",
+                "sequencing_violation_breakdown",
+            ],
+        ),
+    ]
+
+    console.print("[bold]KPI Summary[/bold]")
+    for title, keys in sections:
+        lines = [(key, data[key]) for key in keys if key in data]
+        if not lines:
+            continue
+        console.print(f"[bold]{title}[/bold]")
+        for key, value in lines:
+            console.print(f"  {key}: {_format_metric_value(value)}")
 
 
 @app.command()
@@ -114,8 +202,7 @@ def solve_mip_cmd(
     assignments.to_csv(str(out), index=False)
     console.print(f"Objective: {objective:.3f}. Saved to {out}")
     metrics = compute_kpis(pb, assignments)
-    for key, value in metrics.items():
-        console.print(f"{key}: {value:.3f}" if isinstance(value, float) else f"{key}: {value}")
+    _print_kpi_summary(metrics)
 
 
 @app.command("solve-heur")
@@ -304,8 +391,7 @@ def solve_heur_cmd(
     assignments.to_csv(str(out), index=False)
     console.print(f"Objective (heuristic): {objective:.3f}. Saved to {out}")
     metrics = compute_kpis(pb, assignments)
-    for key, value in metrics.items():
-        console.print(f"{key}: {value:.3f}" if isinstance(value, float) else f"{key}: {value}")
+    _print_kpi_summary(metrics)
     operators_meta = cast(dict[str, float], meta.get("operators", {}))
     if operators_meta:
         console.print(f"Operators: {operators_meta}")
@@ -509,8 +595,7 @@ def solve_ils_cmd(
     assignments.to_csv(str(out), index=False)
     console.print(f"Objective (ils): {objective:.3f}. Saved to {out}")
     metrics = compute_kpis(pb, assignments)
-    for key, value in metrics.items():
-        console.print(f"{key}: {value:.3f}" if isinstance(value, float) else f"{key}: {value}")
+    _print_kpi_summary(metrics)
     meta = cast(dict[str, Any], res.get("meta", {}))
     if selected_profile:
         meta["profile"] = selected_profile.name
@@ -728,8 +813,7 @@ def evaluate(scenario: Path, assignments_csv: Path):
     pb = Problem.from_scenario(sc)
     df = pd.read_csv(str(assignments_csv))
     kpis = compute_kpis(pb, df)
-    for k, v in kpis.items():
-        console.print(f"{k}: {v:.3f}" if isinstance(v, float) else f"{k}: {v}")
+    _print_kpi_summary(kpis)
 
 
 @app.command("eval-playback")
