@@ -128,8 +128,11 @@ produce a longitudinal view:
        --out-history-chart tmp/history.html
 
 The generated history table lists the best/mean objectives per algorithm and
-scenario across snapshots (derived from the filename stem). The optional Altair
-chart highlights objective trends at a glance.
+scenario across snapshots (derived from the filename stem). When the source
+telemetry includes extra KPIs (total production, mobilisation cost, downtime
+hours, weather severity, utilisation ratios) they appear as additional columns in
+the history summary. The optional Altair chart highlights objective trends at a
+glance.
 
 Continuous integration already copies the minitoy smoke sweep into the
 ``history/`` subdirectory of the ``telemetry-report`` artifact using UTC
