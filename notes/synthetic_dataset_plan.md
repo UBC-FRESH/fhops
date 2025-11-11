@@ -104,6 +104,17 @@ We will integrate the reference bundles into the Phase 2 benchmarking harness wi
 
 Both tiers finish in under 0.1 seconds with the smoke settings, leaving ample headroom for CI checks and deeper stochastic experiments.
 
+### Stochastic playback snapshot
+
+Using the tier sampling presets (`sampling_config_for`) and replaying the SA assignments over the same scenarios:
+
+| Scenario         | Samples | Mean Production | Std Production | Mean Weather Severity | Mean Utilisation |
+|------------------|---------|-----------------|----------------|-----------------------|------------------|
+| synthetic-medium | 12      | 25.55           | 4.16           | 0.27                  | 1.00             |
+| synthetic-large  | 18      | 18.25           | 4.88           | 0.24                  | 1.00             |
+
+Downtime shocks did not fire in the smoke run (probabilities are low for the short horizons), but the wiring ensures sample counts and weather effects are exercised in CI (`tests/test_synthetic_validation.py`).
+
 ## Planned Tasks
 - [x] Define configuration schema for synthetic dataset generator (`scenario/synthetic/generator.py`).
 - [x] Support basic timeline blackouts and harvest system role assignment in synthetic scenarios.
