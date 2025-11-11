@@ -4,6 +4,7 @@ from collections import Counter, defaultdict
 
 import numpy as np
 import pandas as pd
+import pytest
 from hypothesis import given, settings, strategies as st
 
 from fhops.evaluation import (
@@ -11,6 +12,7 @@ from fhops.evaluation import (
     SamplingConfig,
     day_dataframe,
     day_dataframe_from_ensemble,
+    compute_kpis,
     machine_utilisation_summary,
     run_playback,
     run_stochastic_playback,
@@ -233,3 +235,26 @@ def test_blackout_conflicts_aggregate(records):
     for summary in day_summaries:
         assert summary.blackout_conflicts == expected_day_counts.get(summary.day, 0)
         assert summary.blackout_conflicts >= 0
+
+
+@pytest.mark.parametrize("scenario_name", ["minitoy", "med42"])
+def test_kpi_alignment_with_aggregates(scenario_name: str):
+    scenario = load_scenario(f"examples/{scenario_name}/scenario.yaml")
+    problem = Problem.from_scenario(scenario)
+    assignments = _load_assignments(scenario_name)
+
+    playback = run_playback(problem, assignments)
+    shift_df = shift_dataframe(playback)
+    day_df = day_dataframe(playback)
+    kpis = compute_kpis(problem, assignments)
+
+    assert day_df["production_units"].sum() == pytest.approx(kpis["total_production"])
+    assert day_df["completed_blocks"].sum() == pytest.approx(kpis["completed_blocks"])
+
+    if "mobilisation_cost" in kpis:
+        assert day_df["mobilisation_cost"].sum() == pytest.approx(kpis["mobilisation_cost"])
+
+    if "sequencing_violation_count" in kpis:
+        assert shift_df["sequencing_violations"].sum() == pytest.approx(
+            kpis["sequencing_violation_count"]
+        )
