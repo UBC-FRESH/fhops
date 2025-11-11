@@ -119,12 +119,18 @@ jobs:
 
       - name: Prepare history publish bundle
         run: |
-          publish_dir=tmp/ci-telemetry/publish/telemetry
+          root_dir=tmp/ci-telemetry/publish
+          publish_dir="$root_dir/telemetry"
           mkdir -p "$publish_dir"
+          touch "$root_dir/.nojekyll"
           cp tmp/ci-telemetry/history_summary.csv "$publish_dir/" || true
           cp tmp/ci-telemetry/history_summary.md "$publish_dir/" || true
           cp tmp/ci-telemetry/history_summary.html "$publish_dir/" || true
           cp tmp/ci-telemetry/tuner_report.md "$publish_dir/latest_tuner_report.md"
+
+      - name: Inspect publish bundle
+        run: |
+          echo "Contents of tmp/ci-telemetry/publish:" && ls -R tmp/ci-telemetry/publish || true
 
       - name: Upload history pages artifact
         uses: actions/upload-pages-artifact@v1
