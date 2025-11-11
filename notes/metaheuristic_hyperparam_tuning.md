@@ -50,6 +50,7 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - [ ] Update roadmap + docs as milestones complete.
 - [x] Add Sphinx how-to covering telemetry schema, tuner commands, and agent workflow once stable.
 - [x] Provide comparison tooling (`scripts/analyze_tuner_reports.py`) to diff multiple reports and surface deltas.
+- [x] Publish telemetry history artefacts (minitoy + med42) to GitHub Pages for quick trend review.
 - [ ] Ensure CI smoke targets exist for lightweight tuning sweeps (e.g., single random search iteration).
 - [x] Schedule `fhops telemetry report` in CI/nightly to publish comparison artifacts for baseline scenarios.
 

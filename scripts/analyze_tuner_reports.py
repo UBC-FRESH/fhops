@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Iterable
 
 import pandas as pd
+import sqlite3
 
 
 def _parse_report_arg(entry: str) -> tuple[str, Path]:
@@ -35,15 +36,25 @@ def _load_report(label: str, path: Path) -> pd.DataFrame:
     df = df.copy()
     df["algorithm"] = df["algorithm"].str.lower().str.strip()
     df["scenario"] = df["scenario"].str.strip()
+    if "best_run_id" not in df.columns:
+        df["best_run_id"] = None
     df.rename(
         columns={
             "best_objective": f"best_{label}",
             "mean_objective": f"mean_{label}",
             "runs": f"runs_{label}",
+            "best_run_id": f"best_run_id_{label}",
         },
         inplace=True,
     )
-    subset = ["algorithm", "scenario", f"best_{label}", f"mean_{label}", f"runs_{label}"]
+    subset = [
+        "algorithm",
+        "scenario",
+        f"best_run_id_{label}",
+        f"best_{label}",
+        f"mean_{label}",
+        f"runs_{label}",
+    ]
     return df[subset]
 
 
@@ -105,6 +116,40 @@ def _format_number(value, prefix: str = "") -> str:
         return str(value)
 
 
+DESIRED_METRICS = {
+    "total_production": "best_total_production",
+    "mobilisation_cost": "best_mobilisation_cost",
+    "utilisation_ratio_mean_shift": "best_utilisation_ratio_shift",
+    "utilisation_ratio_mean_day": "best_utilisation_ratio_day",
+}
+
+
+def _load_run_metrics(sqlite_path: Path, run_id: str | None) -> dict[str, float]:
+    if not run_id or not sqlite_path.exists():
+        return {}
+    metrics: dict[str, float] = {}
+    conn = sqlite3.connect(sqlite_path)
+    try:
+        rows = conn.execute(
+            "SELECT name, value, value_text FROM run_metrics WHERE run_id = ?",
+            (run_id,),
+        ).fetchall()
+    finally:
+        conn.close()
+    for name, value, value_text in rows:
+        if name not in DESIRED_METRICS:
+            continue
+        column = DESIRED_METRICS[name]
+        if value is not None:
+            metrics[column] = float(value)
+        elif value_text:
+            try:
+                metrics[column] = float(value_text)
+            except ValueError:
+                continue
+    return metrics
+
+
 def _collect_history(directory: Path, *, pattern: str = "*.csv") -> pd.DataFrame:
     directory = directory.expanduser()
     if not directory.exists():
@@ -121,7 +166,23 @@ def _collect_history(directory: Path, *, pattern: str = "*.csv") -> pd.DataFrame
             continue
         df = df.copy()
         df["snapshot"] = snapshot
-        records.append(df[["algorithm", "scenario", "best_objective", "mean_objective", "runs", "snapshot"]])
+        sqlite_path = path.with_suffix(".sqlite")
+        metric_rows = []
+        for row in df.itertuples(index=False):
+            metrics = _load_run_metrics(sqlite_path, getattr(row, "best_run_id", None))
+            metric_rows.append(metrics)
+        metrics_df = pd.DataFrame(metric_rows)
+        merged = pd.concat([df, metrics_df], axis=1)
+        keep_cols = [
+            "algorithm",
+            "scenario",
+            "best_run_id",
+            "best_objective",
+            "mean_objective",
+            "runs",
+            "snapshot",
+        ] + list(DESIRED_METRICS.values())
+        records.append(merged[[col for col in keep_cols if col in merged.columns]])
     if not records:
         return pd.DataFrame(columns=["algorithm", "scenario", "best_objective", "mean_objective", "runs", "snapshot"])
     combined = pd.concat(records, ignore_index=True)
@@ -131,26 +192,26 @@ def _collect_history(directory: Path, *, pattern: str = "*.csv") -> pd.DataFrame
 
 
 def _render_history_markdown(df: pd.DataFrame) -> str:
-    headers = ["Snapshot", "Algorithm", "Scenario", "Best", "Mean", "Runs"]
+    extra_columns = [col for col in DESIRED_METRICS.values() if col in df.columns]
+    headers = ["Snapshot", "Algorithm", "Scenario", "Best", "Mean", "Runs"] + [
+        col.replace("best_", "").replace("_", " ").title() for col in extra_columns
+    ]
     lines = [
         "| " + " | ".join(headers) + " |",
         "| " + " | ".join(["---"] * len(headers)) + " |",
     ]
     for _, row in df.iterrows():
-        lines.append(
-            "| "
-            + " | ".join(
-                [
-                    str(row["snapshot"]),
-                    str(row["algorithm"]),
-                    str(row["scenario"]),
-                    _format_number(row["best_objective"]),
-                    _format_number(row["mean_objective"]),
-                    str(int(row["runs"])) if pd.notna(row["runs"]) else "",
-                ]
-            )
-            + " |"
-        )
+        cells = [
+            str(row["snapshot"]),
+            str(row["algorithm"]),
+            str(row["scenario"]),
+            _format_number(row["best_objective"]),
+            _format_number(row["mean_objective"]),
+            str(int(row["runs"])) if pd.notna(row["runs"]) else "",
+        ]
+        for col in extra_columns:
+            cells.append(_format_number(row.get(col)))
+        lines.append("| " + " | ".join(cells) + " |")
     return "\n".join(lines)
 
 
