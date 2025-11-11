@@ -95,6 +95,7 @@ before proposing new work.
     - [ ] Provide CLI surfaces for launching tuning sweeps with scenario bundles.
       - [x] Random tuner CLI (`fhops tune-random`) executing SA sweeps and recording telemetry.
     - [ ] Add automated comparison reports summarising best configurations per scenario class.
+    - [ ] Benchmark tuner strategies (grid vs. random vs. Bayesian/SMBO vs. neural/agentic) and log meta-telemetry for automated model selection.
   - [ ] Agentic tuning integration
     - [ ] Prototype agent loop per `notes/metaheuristic_hyperparam_tuning.md` (prompt templates + action space).
     - [ ] Validate agent performance against deterministic benchmarks and log deltas.

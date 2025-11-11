@@ -31,6 +31,8 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - [ ] Expose CLI commands (`fhops tune random`, `fhops tune bayes`) that schedule sweeps over scenario bundles.
   - [x] Random tuner execution mode (`fhops tune-random`) running SA sweeps and recording telemetry.
 - [ ] Generate automated comparison reports (CSV/Markdown) summarising best configs per scenario tier; stash fixtures/tests.
+- [ ] Benchmark grid vs. random vs. Bayesian/SMBO (and future neural/meta-learned) tuners across canonical scenarios; log comparative telemetry (win rate, best obj delta, runtime).
+- [ ] Emit tuner-level meta-telemetry (algorithm name, configuration, budget, convergence stats) so higher-level orchestration can evaluate tuner performance.
 
 ### Agentic Tuning Integration
 - [ ] Define prompt templates and action space for the LLM agent (config proposals, narrative rationale).
@@ -38,11 +40,24 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - [ ] Add safety rails (budget limits, whitelist parameters) and log all prompts/responses for auditability.
 - [ ] Document usage guidance and risks (docs/howto or dedicated guide).
 - [ ] Investigate ML-driven tuner (Bayesian/SMBO or neural surrogate) leveraging the enriched telemetry schema; capture data-processing pipeline requirements (feature selection, normalisation) before implementation.
+- [ ] Explore meta-telemetry driven model selection: capture tuner performance summaries so the platform can automatically choose between grid/random/Bayesian/agentic approaches per scenario class.
 
 ### Automation & Docs
 - [ ] Update roadmap + docs as milestones complete.
 - [ ] Add Sphinx how-to covering telemetry schema, tuner commands, and agent workflow once stable.
 - [ ] Ensure CI smoke targets exist for lightweight tuning sweeps (e.g., single random search iteration).
+
+## Notes on Meta-Tuning & Literature
+- Thornton, C., Hutter, F., Hoos, H. H., & Leyton-Brown, K. (2013). *Auto-WEKA: Combined Selection and Hyperparameter Optimization of Classification Algorithms*. Proceedings of KDD ’13, 847–855. https://doi.org/10.1145/2487575.2487629 — Demonstrates joint optimisation of algorithm choice and hyperparameters, effectively automating tuner selection via logged performance.
+- Golovin, D., Solnik, B., Moitra, S., Kochanski, G., Karro, J., & Sculley, D. (2017). *Google Vizier: A Service for Black-Box Optimization*. Proceedings of KDD ’17, 1487–1495. https://doi.org/10.1145/3097983.3098043 — Describes a production system that deploys multiple optimisation strategies and adapts using telemetry, reinforcing the value of meta-level logging.
+- Feurer, M., & Hutter, F. (2019). *Hyperparameter Optimization*. In F. Hutter, L. Kotthoff, & J. Vanschoren (Eds.), *Automated Machine Learning: Methods, Systems, Challenges* (pp. 3–33). Springer. Chapter DOI: https://doi.org/10.1007/978-3-030-05318-5_1 — Surveys meta-learning approaches that leverage historical runs for warm starts and optimiser selection, highlighting the importance of consistent scenario descriptors and schema versioning.
+- Bischl, B., Binder, M., Lang, M., Pielok, T., Richter, J., Coors, S., Thomas, J., Ullmann, T., Becker, M., Boulesteix, A.-L., Deng, D., & Lindauer, M. (2023). *Hyperparameter Optimization: Foundations, Algorithms, Best Practices and Open Challenges*. *WIREs Data Mining and Knowledge Discovery*, 13(2), e1484. https://doi.org/10.1002/widm.1484 — Provides a contemporary overview of optimiser portfolios and meta-level selection, showing that combining multiple tuners improves robustness across problem classes.
+- Therefore, collecting tuner-level meta-telemetry (algorithm name, budget, convergence metrics, scenario descriptors, schema version) is not overkill; it is a prerequisite for AutoML-style tuner selection, optimiser portfolios, and stacked optimisation loops.
+- Local copies stashed under `docs/references/`:
+  - `thornton2013-auto-weka.pdf`
+  - `golovin2017-vizier.pdf`
+  - `feurer2019-hpo-chapter.pdf`
+  - `bischl2023-hpo-review.pdf`
 
 ## Immediate Next Steps
 - [x] Add a lightweight telemetry pruning helper (`fhops telemetry prune`) that truncates `runs.jsonl` and cleans matching step logs. *(See `fhops.cli.telemetry.prune`.)*
