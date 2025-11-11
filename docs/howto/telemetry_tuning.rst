@@ -88,6 +88,24 @@ Step 3 – Iterate
 * Because the report operates directly on the SQLite store, you can rerun it at
   any time without regenerating telemetry.
 
+Step 4 – Compare Multiple Reports
+---------------------------------
+
+To track changes across branches or nightly runs, use
+``scripts/analyze_tuner_reports.py`` to merge several ``tuner_report.csv`` files
+and compute deltas against a baseline:
+
+.. code-block:: bash
+
+   python scripts/analyze_tuner_reports.py \
+       baseline=tmp/ci-telemetry/tuner_report.csv \
+       experiment=tmp/local/tuner_report.csv \
+       --out-markdown tmp/comparison.md \
+       --out-csv tmp/comparison.csv
+
+The script aligns records on (algorithm, scenario) and appends ``best_delta_*``
+columns showing the improvement relative to the first report label.
+
 CI Automation
 -------------
 
