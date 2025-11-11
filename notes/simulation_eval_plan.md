@@ -136,7 +136,7 @@ Status: Draft — roadmap Phase 3 owner document.
     - [ ] Introduce weather/downtime cost variants once stochastic penalties are modelled.
   - [ ] Add regression fixtures and property-based checks confirming KPI ranges per scenario tier.
     - [x] Update minitoy/med42 expected outputs to include utilisation/makespan baselines.
-    - Add property checks ensuring utilisation stays in `[0, 1]` and makespan spans the latest productive day.
+    - [x] Add property checks ensuring utilisation stays in `[0, 1]` and makespan spans the latest productive day.
   - [ ] Wire KPIs into CLI reporting with configurable profiles and smoke tests.
     - [x] Update `fhops evaluate`, telemetry payloads, and benchmark harness exports to surface the new KPIs.
     - [ ] Add CLI flags or profiles to toggle KPI bundles once the expanded metrics land.
@@ -149,7 +149,7 @@ Status: Draft — roadmap Phase 3 owner document.
 
 ## Testing Strategy
 - [ ] Regression fixtures representing deterministic and stochastic runs.
-- [ ] Property-based checks to ensure KPIs remain within expected bounds.
+- [x] Property-based checks to ensure KPIs remain within expected bounds.
 
 ## Documentation
 - [ ] Author Sphinx how-to for evaluation workflows.
