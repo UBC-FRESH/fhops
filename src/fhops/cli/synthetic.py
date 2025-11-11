@@ -134,6 +134,36 @@ def _describe_metadata(metadata: Dict[str, Any]) -> None:
     console.print(f"Blackouts: {len(metadata.get('blackouts', []))}")
 
 
+def _refresh_aggregate_metadata(base_dir: Path) -> None:
+    aggregate: Dict[str, Any] = {}
+    for child in sorted(base_dir.iterdir()):
+        if not child.is_dir():
+            continue
+        metadata_file = child / "metadata.yaml"
+        scenario_file = child / "scenario.yaml"
+        if not metadata_file.exists() or not scenario_file.exists():
+            continue
+        data = yaml.safe_load(metadata_file.read_text(encoding="utf-8"))
+        if not isinstance(data, dict):
+            continue
+        scenario_payload = yaml.safe_load(scenario_file.read_text(encoding="utf-8"))
+        if isinstance(scenario_payload, dict) and "num_days" in scenario_payload:
+            data = {**data, "num_days": scenario_payload["num_days"]}
+        aggregate[child.name] = data
+    if aggregate:
+        with (base_dir / "metadata.yaml").open("w", encoding="utf-8") as handle:
+            yaml.safe_dump(aggregate, handle, sort_keys=False)
+
+
+def _maybe_refresh_metadata(target_dir: Path) -> None:
+    base_dir = Path("examples/synthetic").resolve()
+    try:
+        target_dir.resolve().relative_to(base_dir)
+    except ValueError:
+        return
+    _refresh_aggregate_metadata(base_dir)
+
+
 @synth_app.command("generate")
 def generate_synthetic_dataset(
     output_dir: Path = typer.Argument(
@@ -260,3 +290,4 @@ def generate_synthetic_dataset(
 
     console.print(f"[green]Synthetic dataset written to {target_dir}[/green]")
     _describe_metadata(metadata)
+    _maybe_refresh_metadata(target_dir)

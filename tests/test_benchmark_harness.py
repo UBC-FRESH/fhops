@@ -126,3 +126,29 @@ def test_benchmark_suite_preset_comparison(tmp_path):
     config = json.loads(explore_row["operators_config"])
     assert pytest.approx(config["mobilisation_shake"], rel=1e-6) == 0.2
     assert all(sa_rows["best_heuristic_solver"] == "sa")
+
+
+def test_synthetic_small_benchmark_kpi_bounds(tmp_path):
+    summary = run_benchmark_suite(
+        [Path("examples/synthetic/small/scenario.yaml")],
+        tmp_path,
+        time_limit=5,
+        sa_iters=100,
+        include_mip=False,
+    )
+    assert not summary.empty
+    sa_row = summary.iloc[0]
+    assert sa_row["scenario_path"].endswith("examples/synthetic/small/scenario.yaml")
+    assert sa_row["kpi_total_production"] > 0
+    assert 0 <= sa_row["kpi_utilisation_ratio_mean_shift"] <= 1.01
+    assert 0 <= sa_row["kpi_utilisation_ratio_mean_day"] <= 1.01
+
+    util_by_machine = json.loads(sa_row["kpi_utilisation_ratio_by_machine"])
+    for value in util_by_machine.values():
+        assert 0 <= value <= 1.01
+
+    util_by_role = json.loads(sa_row["kpi_utilisation_ratio_by_role"])
+    for value in util_by_role.values():
+        assert 0 <= value <= 1.01
+
+    assert sa_row["kpi_completed_blocks"] >= 1

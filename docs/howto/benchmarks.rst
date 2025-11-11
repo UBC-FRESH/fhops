@@ -1,7 +1,8 @@
 Benchmarking Harness
 ====================
 
-FHOPS ships sample scenarios in ``examples/`` (``minitoy``, ``med42``, ``large84``) that cover
+FHOPS ships sample scenarios in ``examples/`` (``minitoy``, ``med42``, ``large84``, and the synthetic
+tiers under ``examples/synthetic/``) that cover
 increasing planning horizons. The Phase 2 benchmarking harness runs the MIP and heuristic
 solvers across these datasets, captures objectives/KPIs, and stores results for inspection.
 
@@ -13,11 +14,12 @@ Quick Start
    fhops bench suite --out-dir tmp/benchmarks
    fhops bench suite --scenario examples/minitoy/scenario.yaml --scenario examples/med42/scenario.yaml --out-dir tmp/benchmarks_med
    fhops bench suite --scenario examples/large84/scenario.yaml --out-dir tmp/benchmarks_large --time-limit 180 --include-sa False
+   fhops bench suite --scenario examples/synthetic/small/scenario.yaml --out-dir tmp/benchmarks_synth --sa-iters 200 --include-mip False
    fhops bench suite --include-ils --include-tabu --out-dir tmp/benchmarks_compare
 
 This command:
 
-* loads each bundled scenario (minitoy → med42 → large84),
+* loads each bundled scenario (minitoy → med42 → large84 → synthetic-small by default),
 * solves them with the MIP (HiGHS) and simulated annealing using default limits, and
 * writes a summary table to ``tmp/benchmarks/summary.{csv,json}`` alongside per-solver
   assignment exports (``mip_assignments.csv``, ``sa_assignments.csv``).
