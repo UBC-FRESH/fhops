@@ -6,6 +6,7 @@
 - Added regression coverage (`tests/test_cli_playback_exports.py::test_eval_playback_telemetry_log`) asserting the JSONL payload captures scenario metadata and export metrics.
 - Updated shift/day reporting planning notes to reflect the completed telemetry wiring.
 - Added Hypothesis-based regressions (`tests/test_playback_aggregates.py::test_shift_totals_match_day_totals`, `test_blackout_conflicts_aggregate`) verifying shift/day totals reconcile and blackout conflicts aggregate correctly across stochastic configurations.
+- Generated deterministic Parquet fixtures for minitoy/med42 playback outputs and extended the CLI regression to diff CLI Parquet exports against the stored schema snapshots.
 
 ## 2025-11-10 — Phase 3 playback planning kickoff
 - Expanded the Phase 3 roadmap checklist with detailed subtasks covering playback upgrades, KPI expansion, synthetic datasets, analytics notebooks, and hyperparameter tuning deliverables.
