@@ -32,6 +32,12 @@ structure mirrors our roadmap so that implementation status stays transparent.
 
 .. toctree::
    :maxdepth: 1
+   :caption: Examples
+
+   examples/robustness
+
+.. toctree::
+   :maxdepth: 1
    :caption: Project Processes
 
    contributing
