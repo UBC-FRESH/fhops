@@ -50,6 +50,39 @@ exist.
 view focuses on production/mobilisation; the extended view includes utilisation, downtime, and weather
 metrics derived from the playback summaries.
 
+Reporting templates
+-------------------
+
+The repository ships with lightweight templates under ``docs/templates/`` that you can use to stage
+KPI snapshots in Markdown/CSV reports. For example ``docs/templates/kpi_summary.md`` is a simple
+Markdown table containing placeholders such as ``{{ total_production }}``, ``{{ uptime_ratio_mean_day }}``,
+and ``{{ downtime_hours_by_machine }}``.
+
+Populate the template with the output of ``compute_kpis`` (or the CLI telemetry payload) to produce a
+shareable summary:
+
+.. code-block:: python
+
+   import pathlib
+   from string import Template
+
+   from fhops.evaluation import compute_kpis
+   from fhops.scenario.contract import Problem
+   from fhops.scenario.io import load_scenario
+
+   template_path = pathlib.Path("docs/templates/kpi_summary.md")
+   template = Template(template_path.read_text(encoding="utf-8"))
+
+   pb = Problem.from_scenario(load_scenario("examples/minitoy/scenario.yaml"))
+   assignments = pd.read_csv("tests/fixtures/playback/minitoy_assignments.csv")
+   kpi_data = compute_kpis(pb, assignments).to_dict()
+
+   report = template.safe_substitute({key: kpi_data.get(key, "-") for key in kpi_data})
+   pathlib.Path("tmp/minitoy_kpi_summary.md").write_text(report, encoding="utf-8")
+
+You can embed the generated Markdown as-is in docs/notebooks or adapt the template to match your
+reporting format (CSV, HTML, etc.).
+
 Parquet and Markdown exports
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
