@@ -46,6 +46,10 @@ flag, only shifts that perform work are listed.
 ``--shift-out`` and ``--day-out`` accept CSV paths. Folders are created automatically if they do not
 exist.
 
+``--kpi-mode`` toggles between ``basic`` and ``extended`` KPI summaries in the CLI output. The basic
+view focuses on production/mobilisation; the extended view includes utilisation, downtime, and weather
+metrics derived from the playback summaries.
+
 Parquet and Markdown exports
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

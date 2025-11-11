@@ -140,7 +140,7 @@ Status: Draft — roadmap Phase 3 owner document.
     - [x] Capture deterministic/stochastic KPI snapshots in `tests/fixtures/kpi/` for regression comparison.
   - [ ] Wire KPIs into CLI reporting with configurable profiles and smoke tests.
     - [x] Update `fhops evaluate`, telemetry payloads, and benchmark harness exports to surface the new KPIs.
-    - [ ] Add CLI flags or profiles to toggle KPI bundles once the expanded metrics land.
+    - [x] Add CLI flags or profiles to toggle KPI bundles once the expanded metrics land.
 
 - **Reporting templates**
   - [ ] Draft tabular templates (CSV/Markdown) plus optional visuals for docs/notebooks.

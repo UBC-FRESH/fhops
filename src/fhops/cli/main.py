@@ -8,6 +8,7 @@ from typing import Any, cast
 
 import pandas as pd
 import typer
+import click
 from rich.console import Console
 from rich.table import Table
 
@@ -44,6 +45,7 @@ app = typer.Typer(add_completion=False, no_args_is_help=True)
 app.add_typer(geospatial_app, name="geo")
 app.add_typer(benchmark_app, name="bench")
 console = Console()
+KPI_MODE = click.Choice(["basic", "extended"], case_sensitive=False)
 
 
 def _enable_rich_tracebacks():
@@ -75,7 +77,8 @@ def _format_metric_value(value: Any) -> Any:
     return value
 
 
-def _print_kpi_summary(kpis: Any) -> None:
+def _print_kpi_summary(kpis: Any, mode: str = "extended") -> None:
+    mode = mode.lower()
     data = _ensure_kpi_dict(kpis)
     if not data:
         return
@@ -135,6 +138,8 @@ def _print_kpi_summary(kpis: Any) -> None:
 
     console.print("[bold]KPI Summary[/bold]")
     for title, keys in sections:
+        if mode == "basic" and title not in {"Production", "Mobilisation"}:
+            continue
         lines = [(key, data[key]) for key in keys if key in data]
         if not lines:
             continue
@@ -250,6 +255,13 @@ def solve_heur_cmd(
         help="Append run telemetry to the given JSONL file.",
         writable=True,
         dir_okay=False,
+    ),
+    kpi_mode: str = typer.Option(
+        "extended",
+        "--kpi-mode",
+        help="Control verbosity of KPI output (basic|extended).",
+        show_choices=True,
+        click_type=KPI_MODE,
     ),
     batch_neighbours: int = typer.Option(
         1,
@@ -391,7 +403,7 @@ def solve_heur_cmd(
     assignments.to_csv(str(out), index=False)
     console.print(f"Objective (heuristic): {objective:.3f}. Saved to {out}")
     metrics = compute_kpis(pb, assignments)
-    _print_kpi_summary(metrics)
+    _print_kpi_summary(metrics, mode=kpi_mode)
     operators_meta = cast(dict[str, float], meta.get("operators", {}))
     if operators_meta:
         console.print(f"Operators: {operators_meta}")
@@ -506,6 +518,13 @@ def solve_ils_cmd(
         writable=True,
         dir_okay=False,
     ),
+    kpi_mode: str = typer.Option(
+        "extended",
+        "--kpi-mode",
+        help="Control verbosity of KPI output (basic|extended).",
+        show_choices=True,
+        click_type=KPI_MODE,
+    ),
     show_operator_stats: bool = typer.Option(
         False, "--show-operator-stats", help="Print per-operator stats after solving."
     ),
@@ -595,7 +614,7 @@ def solve_ils_cmd(
     assignments.to_csv(str(out), index=False)
     console.print(f"Objective (ils): {objective:.3f}. Saved to {out}")
     metrics = compute_kpis(pb, assignments)
-    _print_kpi_summary(metrics)
+    _print_kpi_summary(metrics, mode=kpi_mode)
     meta = cast(dict[str, Any], res.get("meta", {}))
     if selected_profile:
         meta["profile"] = selected_profile.name
@@ -685,6 +704,13 @@ def solve_tabu_cmd(
         writable=True,
         dir_okay=False,
     ),
+    kpi_mode: str = typer.Option(
+        "extended",
+        "--kpi-mode",
+        help="Control verbosity of KPI output (basic|extended).",
+        show_choices=True,
+        click_type=KPI_MODE,
+    ),
     show_operator_stats: bool = typer.Option(
         False, "--show-operator-stats", help="Print per-operator stats."
     ),
@@ -764,8 +790,7 @@ def solve_tabu_cmd(
     assignments.to_csv(str(out), index=False)
     console.print(f"Objective (tabu): {objective:.3f}. Saved to {out}")
     metrics = compute_kpis(pb, assignments)
-    for key, value in metrics.items():
-        console.print(f"{key}: {value:.3f}" if isinstance(value, float) else f"{key}: {value}")
+    _print_kpi_summary(metrics, mode=kpi_mode)
     meta = cast(dict[str, Any], res.get("meta", {}))
     if selected_profile:
         meta["profile"] = selected_profile.name
@@ -807,13 +832,25 @@ def solve_tabu_cmd(
 
 
 @app.command()
-def evaluate(scenario: Path, assignments_csv: Path):
+def evaluate(
+    scenario: Path,
+    assignments_csv: Path = typer.Option(
+        ..., "--assignments", help="Assignments CSV (machine_id, block_id, day, shift_id)."
+    ),
+    kpi_mode: str = typer.Option(
+        "extended",
+        "--kpi-mode",
+        help="Control verbosity of KPI output (basic|extended).",
+        show_choices=True,
+        click_type=KPI_MODE,
+    ),
+):
     """Evaluate a schedule CSV against the scenario."""
     sc = load_scenario(str(scenario))
     pb = Problem.from_scenario(sc)
     df = pd.read_csv(str(assignments_csv))
     kpis = compute_kpis(pb, df)
-    _print_kpi_summary(kpis)
+    _print_kpi_summary(kpis, mode=kpi_mode)
 
 
 @app.command("eval-playback")
