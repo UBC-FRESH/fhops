@@ -14,16 +14,37 @@ Status: Draft — scaffolding notebooks that surface deterministic and stochasti
    - Story beats:
      - Load scenario + assignments, run deterministic playback.
      - Visualise shift/day tables, highlight key KPI outputs.
-     - Introduce basic charts (production over days, machine utilisation).
+     - Introduce basic charts (production vs utilisation), landing/cost snapshots, and CLI parity cells.
 2. **Stochastic Robustness Explorer**
    - Scenario: `examples/synthetic/medium/scenario.yaml` (SA assignments from CLI).
    - Story beats:
      - Generate stochastic ensemble using `sampling_config_for`.
      - Plot aggregates (production distribution, weather impact, utilisation bands).
-     - Summarise risk metrics (mean/std, quantiles, downtime vs weather components).
+     - Summarise risk metrics (mean/std, quantiles, downtime vs weather components) and deterministic deltas.
 3. **What-If Scenario Tweaks**
    - Base: start from mini toy or synthetic medium, adjust parameters inline (e.g., add downtime bias, adjust landing capacity).
-   - Compare pre/post KPIs and visualise differences.
+   - Compare pre/post KPIs, include interactive parameter toggles, and consolidated comparison tables.
+4. **Landing Congestion Analysis**
+   - Explore landing shock parameters and throughput impact.
+   - Compare shift/day stats pre/post congestion, chart landing utilisation.
+5. **Harvest System Mix Explorer**
+   - Showcase system mix presets from synthetic generator.
+   - Analyse machine-role allocation, production contribution, utilisation heatmap.
+6. **KPI Decomposition Deep Dive**
+   - Break down costs: mobilisation, sequencing, downtime, weather.
+   - Integrate CLI outputs and cross-reference reference docs.
+7. **Telemetry & Solver Diagnostics**
+   - Run `fhops solve-heur --telemetry-log`, parse JSONL for objective/acceptance trends.
+   - Visualise operator stats and runtime evolution.
+8. **Ensemble Resilience Comparison**
+   - Compare multiple stochastic tiers (small/medium/large).
+   - Compute risk metrics, show production/downtime distributions side-by-side.
+9. **Operator/Benchmark Sweep**
+   - Parameterise `fhops bench suite` with multiple presets.
+  - Summarise objective/runtime comparisons, visualise solver performance.
+10. **Benchmark Summary Notebook**
+    - Load benchmark CSV outputs across scenarios.
+    - Chart solver categories, KPIs, and scaling behaviour.
 
 ## Shared Utilities
 - Module: `docs/examples/analytics/utils.py` *(implemented)*

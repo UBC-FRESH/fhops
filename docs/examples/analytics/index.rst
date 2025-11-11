@@ -11,3 +11,10 @@ repository and rendered via ``nbsphinx`` during the documentation build.
    playback_walkthrough
    stochastic_robustness
    what_if_analysis
+   landing_congestion
+   system_mix
+   kpi_decomposition
+   telemetry_diagnostics
+   ensemble_resilience
+   operator_sweep
+   benchmark_summary
