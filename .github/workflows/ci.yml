@@ -7,6 +7,15 @@ on:
       - 'feature/**'
   pull_request:
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
   lint-test-docs:
     runs-on: ubuntu-latest
@@ -24,7 +33,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: tmp/ci-telemetry/history
-          key: telemetry-history-${{ github.run_id }}
+          key: telemetry-history-${{ github.ref_name }}
           restore-keys: |
             telemetry-history-
 
@@ -33,6 +42,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e .[dev]
           pip install -r docs/requirements.txt
+          pip install altair
 
       - name: Ruff format check
         run: ruff format --check src tests
@@ -106,6 +116,20 @@ jobs:
             --out-history-markdown tmp/ci-telemetry/history_summary.md \
             --out-history-chart tmp/ci-telemetry/history_summary.html
 
+      - name: Prepare history publish bundle
+        run: |
+          publish_dir=tmp/ci-telemetry/publish/telemetry
+          mkdir -p "$publish_dir"
+          cp tmp/ci-telemetry/history_summary.csv "$publish_dir/" || true
+          cp tmp/ci-telemetry/history_summary.md "$publish_dir/" || true
+          cp tmp/ci-telemetry/history_summary.html "$publish_dir/" || true
+          cp tmp/ci-telemetry/tuner_report.md "$publish_dir/latest_tuner_report.md"
+
+      - name: Upload history pages artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: tmp/ci-telemetry/publish
+
       - name: Upload telemetry report artifact
         uses: actions/upload-artifact@v3
         with:
@@ -117,3 +141,14 @@ jobs:
 
       - name: Build documentation
         run: sphinx-build -b html docs _build/html -W
+
+  deploy-history:
+    needs: lint-test-docs
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+    steps:
+      - name: Deploy history to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
