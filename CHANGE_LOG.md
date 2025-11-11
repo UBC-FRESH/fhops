@@ -19,6 +19,7 @@
 - Introduced `fhops.telemetry.load_jsonl` to load telemetry JSONL records into dataframes for downstream analysis.
 - Enriched heuristic telemetry (SA/ILS/Tabu) with scenario descriptors (counts of blocks/machines/landings/etc.) and recorded a telemetry schema version so future ML tuners can consume the data without schema retrofits.
 - Added `fhops tune-grid` to exhaustively evaluate operator presets and batch-size combinations, logging results and telemetry for benchmarking against other tuning strategies.
+- Added `fhops tune-bayes` (Optuna TPE) to perform Bayesian/SMBO searches over SA hyperparameters and log per-trial telemetry.
 - Updated roadmap and tuning plan notes to reflect the schema draft and SA logging milestone; introduced regression tests ensuring telemetry logs are written with matching run identifiers.
 - Added a placeholder `fhops tune-random` CLI command that surfaces recent telemetry records while the full random-search tuner is under construction.
 
