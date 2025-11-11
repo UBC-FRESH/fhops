@@ -44,6 +44,8 @@ class PlaybackRecord:
     production_units: float | None = None
     mobilisation_cost: float | None = None
     blackout_hit: bool = False
+    landing_id: str | None = None
+    machine_role: str | None = None
     metadata: dict[str, object] = field(default_factory=dict)
     sample_id: int = 0
 
@@ -55,6 +57,7 @@ class ShiftSummary:
     day: int
     shift_id: str
     machine_id: str
+    machine_role: str | None = None
     available_hours: float = 0.0
     total_hours: float = 0.0
     production_units: float = 0.0
@@ -179,10 +182,13 @@ def summarise_shifts(
                 shift_id=record.shift_id,
                 machine_id=record.machine_id,
                 available_hours=availability_map.get(key, 0.0),
+                machine_role=record.machine_role,
                 sample_id=sample_id,
             )
             aggregates[key] = summary
         seen.add(key)
+        if summary.machine_role is None and record.machine_role is not None:
+            summary.machine_role = record.machine_role
 
         if record.hours_worked is not None:
             summary.total_hours += record.hours_worked

@@ -121,6 +121,33 @@ that mirror the CLI exports:
   KPI totals while optionally attaching the canonical shift/day calendars. Use ``to_dict()`` when you
   need a JSON-serialisable payload or the helper ``with_calendars`` to bundle playback DataFrames.
 
+KPI formulas & required signals
+-------------------------------
+
+The current KPI bundle includes:
+
+* ``total_production`` — sum of ``production_units`` over all day summaries.
+* ``completed_blocks`` — count of blocks whose remaining work is zero after playback.
+* ``mobilisation_cost`` — total mobilisation spend accumulated in playback record metadata.
+* ``mobilisation_cost_by_machine`` — JSON mapping of machine IDs to their cumulative mobilisation outlay.
+* ``sequencing_violation_*`` (when harvest systems are present) — counts and breakdowns derived from the
+  heuristic/MIP sequencing checks captured during playback.
+
+Upcoming KPIs planned for Phase 3 expansion will reuse the shift/day summaries as follows:
+
+* **Utilisation** — average of ``utilisation_ratio`` at the shift or day level, with optional filters
+  by machine role or landing. Requires ``available_hours`` and ``total_hours`` from the shift summaries.
+* **Makespan** — latest day (and shift) with non-zero production, obtainable by inspecting the day
+  summary index once stochastic samples are aggregated.
+* **Cost variants** — mobilisation spend is already tracked; property-based verifications will
+  introduce additional cost categories (e.g., weather downtime penalties) that extend ``KPIResult``.
+* **Mobilisation spend per landing/system** — will consume the shift summaries' machine/landing metadata
+  once those columns are added to the playback pipeline.
+
+Before adding a new KPI ensure the required signal exists in either ``ShiftSummary`` or ``DaySummary``.
+If a field is missing, extend the playback dataclasses first so both deterministic and stochastic flows
+emit the same schema and downstream KPIs remain reproducible.
+
 These helpers are safe to use in notebooks, KPI pipelines, or automation scripts. The schemas are
 covered by regression tests so future changes will not silently break downstream consumers.
 
