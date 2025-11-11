@@ -101,10 +101,12 @@ and compute deltas against a baseline:
        baseline=tmp/ci-telemetry/tuner_report.csv \
        experiment=tmp/local/tuner_report.csv \
        --out-markdown tmp/comparison.md \
-       --out-csv tmp/comparison.csv
+       --out-csv tmp/comparison.csv \
+       --out-chart tmp/comparison.html
 
 The script aligns records on (algorithm, scenario) and appends ``best_delta_*``
 columns showing the improvement relative to the first report label.
+Passing ``--out-chart`` generates an Altair HTML visualization of best objectives per algorithm.
 
 CI Automation
 -------------
