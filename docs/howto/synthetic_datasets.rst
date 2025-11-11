@@ -105,6 +105,16 @@ Use the bundles anywhere a normal scenario is accepted. Typical entry points:
                        --operator-preset explore \\
                        --out-dir tmp/bench_synth_large
 
+* Generate a fresh bundle (preview or write to disk):
+
+  .. code-block:: bash
+
+     fhops synth generate tmp/synth_medium_custom --tier medium --seed 321 --blocks 10:14 --preview
+
+  Drop ``--preview`` (and optionally add ``--overwrite``) to write the generated CSV/YAML bundle. The
+  command accepts YAML/TOML configs via ``--config`` when you need full control over the
+  ``SyntheticDatasetConfig`` fields.
+
 These commands reuse the same CLI surfaces already documented in :doc:`evaluation` and
 :doc:`../reference/cli`, but the synthetic bundles keep the inputs lightweight enough for quick
 iteration and teaching exercises.

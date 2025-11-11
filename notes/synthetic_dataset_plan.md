@@ -30,6 +30,59 @@ All tiers share a consistent column layout (see `examples/synthetic/metadata.yam
 - **Crew assignment CSVs** — each scenario now writes `crew_assignments.csv` so solvers/validators can recover crew → machine mappings without custom wiring.
 - **Metadata registry** — per-tier `metadata.yaml` files summarise terrain/prescription counts, crew capabilities, blackout windows, and seeds; the aggregate `examples/synthetic/metadata.yaml` collates them for automation.
 
+## CLI Generation Command
+
+We will surface the generator via ``fhops synth`` so bundles can be created without writing ad-hoc scripts.
+
+**Command shape**
+
+```
+fhops synth generate [OUTPUT_DIR] \
+  --tier {small,medium,large,custom} \
+  --config config.yaml \
+  --seed 123 \
+  --overwrite \
+  --preview
+```
+
+- ``OUTPUT_DIR`` defaults to ``examples/synthetic/<tier>`` when omitted.
+- ``--tier`` loads the canonical preset (matching ``TIER_DEFAULTS`` in the generator); ``custom`` requires
+  either ``--config`` or individual overrides.
+- ``--config`` points to a YAML/TOML file serialising ``SyntheticDatasetConfig`` (fields other than
+  ``name`` default to the preset, so users can override a subset).
+- ``--seed`` sets the RNG seed; when omitted, default to the preset seed (`metadata.yaml` should record it).
+- ``--overwrite`` removes an existing directory; otherwise command aborts if outputs already exist.
+- ``--preview`` prints the sampled counts/metadata instead of writing files (useful for notebooks).
+
+**Configuration serialisation**
+
+Schema mirrors ``SyntheticDatasetConfig`` with camel-case keys for CLI ergonomics:
+
+```yaml
+name: synthetic-custom
+num_blocks: [10, 14]
+num_days: 14
+num_machines: [5, 6]
+num_landings: 3
+shifts_per_day: 1
+shift_hours: [9.0, 10.5]
+landing_capacity: [2, 3]
+work_required: [8.0, 16.0]
+production_rate: [8.0, 16.0]
+availability_probability: 0.85
+blackout_probability: 0.15
+blackout_duration: [1, 2]
+terrain_pool: ["rolling", "steep"]
+prescription_pool: ["thinning", "clearcut"]
+crew_pool: ["crew-alpha", "crew-beta"]
+capability_pool: ["harvester", "forwarder", "processor"]
+crew_capability_span: [1, 2]
+```
+
+When both ``--tier`` and ``--config`` are provided, we merge defaults (tier → seed/pools/blackouts) with
+explicit overrides. CLI should also expose lightweight flags for the most common tweaks (`--blocks`,
+`--machines`, `--landings`, `--days`, `--shifts-per-day`) so instructors can craft variations quickly.
+
 ## Benchmarking Alignment
 
 We will integrate the reference bundles into the Phase 2 benchmarking harness with the following guardrails:
