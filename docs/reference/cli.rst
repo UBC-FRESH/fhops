@@ -27,6 +27,7 @@ Baseline usage:
 - ``fhops eval playback ... --shift-parquet tmp/shift.parquet --day-parquet tmp/day.parquet --summary-md tmp/playback.md`` — export Parquet files and a Markdown summary alongside the CSV outputs.
   See :doc:`../howto/evaluation` for a full end-to-end example.
 - ``fhops bench suite --scenario examples/minitoy/scenario.yaml --out-dir tmp/benchmarks``
+- ``fhops synth generate tmp/custom_bundle --tier medium --seed 777 --blocks 10:12`` — create a synthetic scenario bundle using the medium preset with a custom block range; add ``--preview`` to inspect metadata without writing files.
 
 Both ``solve-mip`` and ``solve-heur`` export schedules with the columns ``machine_id``, ``block_id``,
 ``day``, and ``shift_id``. The shift identifier matches the scenario's shift calendar (or defaults to

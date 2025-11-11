@@ -62,7 +62,7 @@ before proposing new work.
     - [x] Identify storage strategy and naming for generated scenarios (`data/synthetic/`).
   - [ ] Generator implementation
     - [ ] Build core sampling utilities (terrain, system mix, downtime patterns) with tests.
-    - [ ] Expose CLI entry (`fhops synth`) and configuration schema for batch generation.
+    - [x] Expose CLI entry (`fhops synth`) and configuration schema for batch generation.
     - [ ] Add validation suite ensuring generated datasets meet contract + KPI sanity bounds.
   - [ ] Benchmark integration
     - [ ] Hook synthetic scenarios into benchmark harness and CI smoke targets.

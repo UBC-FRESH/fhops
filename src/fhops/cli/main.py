@@ -15,6 +15,7 @@ from rich.table import Table
 from fhops.cli._utils import format_operator_presets, operator_preset_help, parse_operator_weights
 from fhops.cli.benchmarks import benchmark_app
 from fhops.cli.geospatial import geospatial_app
+from fhops.cli.synthetic import synth_app
 from fhops.cli.profiles import format_profiles, get_profile, merge_profile_with_cli
 from fhops.evaluation import (
     PlaybackConfig,
@@ -44,6 +45,7 @@ from fhops.telemetry import append_jsonl
 app = typer.Typer(add_completion=False, no_args_is_help=True)
 app.add_typer(geospatial_app, name="geo")
 app.add_typer(benchmark_app, name="bench")
+app.add_typer(synth_app, name="synth")
 console = Console()
 KPI_MODE = click.Choice(["basic", "extended"], case_sensitive=False)
 
