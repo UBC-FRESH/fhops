@@ -181,13 +181,19 @@ def test_playback_fixture_matches_cli(tmp_path: Path, scenario_name: str):
     assignments_fixture = Path(f"tests/fixtures/playback/{scenario_name}_assignments.csv")
     shift_fixture = Path(f"tests/fixtures/playback/{scenario_name}_shift.csv")
     day_fixture = Path(f"tests/fixtures/playback/{scenario_name}_day.csv")
+    shift_parquet_fixture = Path(f"tests/fixtures/playback/{scenario_name}_shift.parquet")
+    day_parquet_fixture = Path(f"tests/fixtures/playback/{scenario_name}_day.parquet")
 
     assert assignments_fixture.exists()
     assert shift_fixture.exists()
     assert day_fixture.exists()
+    assert shift_parquet_fixture.exists()
+    assert day_parquet_fixture.exists()
 
     shift_out = tmp_path / f"{scenario_name}_shift.csv"
     day_out = tmp_path / f"{scenario_name}_day.csv"
+    shift_parquet_out = tmp_path / f"{scenario_name}_shift.parquet"
+    day_parquet_out = tmp_path / f"{scenario_name}_day.parquet"
 
     result = runner.invoke(
         app,
@@ -200,6 +206,10 @@ def test_playback_fixture_matches_cli(tmp_path: Path, scenario_name: str):
             str(shift_out),
             "--day-out",
             str(day_out),
+            "--shift-parquet",
+            str(shift_parquet_out),
+            "--day-parquet",
+            str(day_parquet_out),
         ],
     )
     assert result.exit_code == 0, result.stdout
@@ -217,5 +227,22 @@ def test_playback_fixture_matches_cli(tmp_path: Path, scenario_name: str):
     pd.testing.assert_frame_equal(
         day_df_cli.sort_values(list(day_df_cli.columns)).reset_index(drop=True),
         day_df_fixture.sort_values(list(day_df_fixture.columns)).reset_index(drop=True),
+        check_dtype=False,
+    )
+
+    pytest.importorskip("pyarrow", reason="Parquet fixtures require pyarrow or fastparquet")
+    shift_parquet_cli = pd.read_parquet(shift_parquet_out)
+    day_parquet_cli = pd.read_parquet(day_parquet_out)
+    shift_parquet_fixture_df = pd.read_parquet(shift_parquet_fixture)
+    day_parquet_fixture_df = pd.read_parquet(day_parquet_fixture)
+
+    pd.testing.assert_frame_equal(
+        shift_parquet_cli.sort_values(list(shift_parquet_cli.columns)).reset_index(drop=True),
+        shift_parquet_fixture_df.sort_values(list(shift_parquet_fixture_df.columns)).reset_index(drop=True),
+        check_dtype=False,
+    )
+    pd.testing.assert_frame_equal(
+        day_parquet_cli.sort_values(list(day_parquet_cli.columns)).reset_index(drop=True),
+        day_parquet_fixture_df.sort_values(list(day_parquet_fixture_df.columns)).reset_index(drop=True),
         check_dtype=False,
     )

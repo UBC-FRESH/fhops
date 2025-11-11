@@ -72,7 +72,7 @@ Status: Draft — roadmap Phase 3 owner document.
   - [x] Refactor serialization paths so CLI, telemetry, and automation share a single helper to avoid duplication (see `playback/exporters.py`; telemetry integration now wired via `--telemetry-log`).
 - **Benchmark validation & fixtures**
   - [x] Capture deterministic fixtures for minitoy/med42 (CSV).
-  - [ ] Capture matching Parquet fixtures (or generate on the fly) and add regression tests diffing CLI exports vs. stored schema.
+  - [x] Capture matching Parquet fixtures (or generate on the fly) and add regression tests diffing CLI exports vs. stored schema.
   - [x] Ensure CI runs a smoke covering CSV + Parquet + Markdown outputs for minitoy/med42/regression scenarios (see `tests/test_cli_playback_exports.py`).
 - **Documentation**
   - [ ] Add quickstart snippet to `docs/howto/evaluation.rst` demonstrating command → Parquet → Pandas load, including utilisation interpretation.
