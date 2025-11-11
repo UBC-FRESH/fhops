@@ -1,0 +1,6 @@
+{"iteration": 0, "objective": 200, "accepted": 10, "temperature": 1.0}
+{"iteration": 50, "objective": 195, "accepted": 11, "temperature": 0.5}
+{"iteration": 100, "objective": 190, "accepted": 12, "temperature": 0.3333333333333333}
+{"iteration": 150, "objective": 185, "accepted": 13, "temperature": 0.25}
+{"iteration": 200, "objective": 180, "accepted": 14, "temperature": 0.2}
+{"iteration": 250, "objective": 175, "accepted": 15, "temperature": 0.16666666666666666}
