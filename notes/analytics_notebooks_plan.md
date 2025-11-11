@@ -40,8 +40,8 @@ Status: Draft — scaffolding notebooks that surface deterministic and stochasti
    - Compare multiple stochastic tiers (small/medium/large). *(notebook executed with mean/std comparisons)*
    - Compute risk metrics, show production/downtime distributions side-by-side.
 9. **Operator/Benchmark Sweep**
-   - Parameterise `fhops bench suite` with multiple presets.
-  - Summarise objective/runtime comparisons, visualise solver performance.
+   - Parameterise `fhops bench suite` with multiple presets. *(notebook executes suite with preset comparisons)*
+  - Summarise objective/runtime comparisons, visualise solver performance. *(objective/runtime pivot tables added)*
 10. **Benchmark Summary Notebook**
     - Load benchmark CSV outputs across scenarios.
     - Chart solver categories, KPIs, and scaling behaviour.
