@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import Counter
 from pathlib import Path
 
 import yaml
@@ -7,8 +8,10 @@ import yaml
 from fhops.scenario.io import load_scenario
 from fhops.scenario.synthetic import (
     SyntheticDatasetConfig,
+    BlackoutBias,
     generate_random_dataset,
 )
+from fhops.scheduling.systems import default_system_registry
 
 
 def test_generate_random_dataset_bundle(tmp_path: Path):
@@ -146,3 +149,68 @@ def test_tier_defaults_drive_blackouts_and_crews():
             crews_seen.add(assignment.crew_id)
     assert sum(blackout_totals) > 0
     assert crews_seen
+
+
+def test_weighted_terrain_profile_skews_distribution():
+    config = SyntheticDatasetConfig(
+        name="weighted-terrain",
+        tier=None,
+        num_blocks=(12, 12),
+        num_days=(8, 8),
+        num_machines=(3, 3),
+        terrain_pool=["gentle", "steep"],
+        terrain_weights=[0.1, 0.9],
+        blackout_probability=0.0,
+    )
+    counts: Counter[str] = Counter()
+    for seed in range(10):
+        bundle = generate_random_dataset(config, seed=seed)
+        counts.update(bundle.blocks["terrain"])
+
+    total = sum(counts.values())
+    assert counts["steep"] / total > 0.65
+
+
+def test_blackout_biases_increase_activity():
+    bias = BlackoutBias(start_day=3, end_day=4, probability=0.9, duration=1)
+    config = SyntheticDatasetConfig(
+        name="biased-blackouts",
+        tier=None,
+        num_blocks=6,
+        num_days=6,
+        num_machines=3,
+        blackout_probability=0.0,
+        blackout_biases=[bias],
+    )
+    observed: list[list[tuple[int, int]]] = []
+    for seed in range(5):
+        bundle = generate_random_dataset(config, seed=seed)
+        blackouts = [
+            (b.start_day, b.end_day)
+            for b in bundle.scenario.timeline.blackouts  # type: ignore[union-attr]
+        ]
+        observed.append(blackouts)
+
+    assert any(any(3 <= start <= 4 for start, _ in blackouts) for blackouts in observed)
+
+
+def test_system_mix_applies_when_systems_provided():
+    systems = dict(default_system_registry())
+    selected_systems = {key: systems[key] for key in list(systems.keys())[:2]}
+    mix = {list(selected_systems.keys())[0]: 0.8, list(selected_systems.keys())[1]: 0.2}
+    config = SyntheticDatasetConfig(
+        name="system-mix",
+        tier=None,
+        num_blocks=20,
+        num_days=6,
+        num_machines=4,
+        system_mix=mix,
+    )
+
+    bundle = generate_random_dataset(config, seed=99, systems=selected_systems)
+    assignments = Counter(
+        block.harvest_system_id for block in bundle.scenario.blocks if block.harvest_system_id
+    )
+    total = sum(assignments.values())
+    dominant = max(assignments.values()) / total
+    assert dominant > 0.6

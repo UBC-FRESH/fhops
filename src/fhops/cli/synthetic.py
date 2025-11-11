@@ -132,6 +132,18 @@ def _describe_metadata(metadata: Dict[str, Any]) -> None:
         + (", ".join(f"{k}={prescription[k]}" for k in sorted(prescription)) or "n/a")
     )
     console.print(f"Blackouts: {len(metadata.get('blackouts', []))}")
+    system_mix = metadata.get("system_mix") or {}
+    if system_mix:
+        console.print(
+            "System mix: " + ", ".join(f"{k}={system_mix[k]:.2f}" for k in sorted(system_mix))
+        )
+    biases = metadata.get("blackout_biases") or []
+    if biases:
+        bias_summary = ", ".join(
+            f"{bias['start_day']}-{bias['end_day']}@{bias['probability']:.2f}"
+            for bias in biases
+        )
+        console.print(f"Blackout biases: {bias_summary}")
 
 
 def _refresh_aggregate_metadata(base_dir: Path) -> None:

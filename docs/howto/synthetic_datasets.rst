@@ -65,6 +65,10 @@ Each bundle ships with richer signals to support evaluation/benchmarking:
 * Blackout windows are produced with tier defaults: zero-probability for ``small`` bundles, short gaps
   for ``medium``, and multi-day outages for ``large``. Metadata captures the sampled windows so smoke
   tests can diff future changes.
+* Weighted terrain/prescription distributions and blackout bias windows can be overridden via
+  ``SyntheticDatasetConfig`` (see ``terrain_weights`` / ``prescription_weights`` and ``blackout_biases``)
+  to concentrate sampling on seasonal or topographical hotspots. Harvest-system mixes are also recorded
+  when bundled systems are supplied.
 
 If you regenerate the library, the metadata YAML under each tier (and the aggregate metadata file in
 ``examples/synthetic/``) records the terrain/prescription mix, crew capabilities, blackout windows,
