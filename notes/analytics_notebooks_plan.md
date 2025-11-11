@@ -42,16 +42,16 @@ Status: Draft — scaffolding notebooks that surface deterministic and stochasti
 - CI smoke target: execute notebooks with reduced sampling counts (configurable via environment variables).
 
 ## Documentation Integration
-- Use `nbsphinx` to render notebooks within Sphinx (`docs/examples/analytics/index.rst`).
-- Update `docs/index.rst` “Examples” to include the analytics notebooks.
-- Mention notebooks in `README.md` and `docs/howto/evaluation.rst` for discoverability.
+- Use `nbsphinx` to render notebooks within Sphinx (`docs/examples/analytics/index.rst`). ✅
+- Update `docs/index.rst` “Examples” to include the analytics notebooks. ✅
+- Mention notebooks in `README.md` and `docs/howto/evaluation.rst` for discoverability. *(todo)*
 
 ## Open Questions
 - Do we expand the what-if notebook to include solver reruns, or keep it playback-only for now?
 - Decide whether to bundle pre-rendered images when runtime is high (fallback to cached HTML exports?).
 
 ## Next Actions
-- [ ] Scaffold utilities module (`docs/examples/analytics/utils.py`) and add minimal plotting helpers.
-- [ ] Create empty notebooks with headers/storyboard cells.
-- [ ] Wire `nbsphinx` / documentation index to anticipate the new notebooks.
+- [x] Scaffold utilities module (`docs/examples/analytics/utils.py`) and add minimal plotting helpers.
+- [x] Create empty notebooks with headers/storyboard cells.
+- [x] Wire `nbsphinx` / documentation index to anticipate the new notebooks.
 - [ ] Prepare reduced sampling config for CI smoke execution.
