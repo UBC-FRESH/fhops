@@ -41,5 +41,8 @@ jobs:
       - name: Pre-commit hooks
         run: pre-commit run --all-files
 
+      - name: Analytics notebooks (light)
+        run: python scripts/run_analytics_notebooks.py --light --timeout 300
+
       - name: Build documentation
         run: sphinx-build -b html docs _build/html -W

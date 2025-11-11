@@ -1,5 +1,14 @@
 # Development Change Log
 
+## 2025-11-11 — Analytics notebook automation
+- Added the analytics notebook runner to CI (`.github/workflows/ci.yml`) so the curated suite executes in light mode on every push/PR, exercising Altair plots and playback helpers.
+- Captured fresh execution metadata in `docs/examples/analytics/data/notebook_metadata.json` and documented the `FHOPS_ANALYTICS_LIGHT` toggle in planning notes for reproducible smoke runs.
+- Updated the analytics notebooks roadmap/planning entries to mark the runner + metadata milestones complete and highlighted follow-up documentation tasks.
+
+## 2025-11-11 — Analytics notebooks theme closure
+- Linked the notebook suite from the README and docs landing pages, describing how to regenerate runs locally with the light-mode flag.
+- Documented full-mode runtimes in `notes/analytics_notebooks_plan.md`, concluded caching is unnecessary for now, and marked the Phase 3 analytics notebooks milestone complete in the roadmap.
+
 ## 2025-11-11 — Playback telemetry integration
 - Extended `fhops eval playback` with a `--telemetry-log` option that records export metrics, sampling parameters, and artifact paths via the shared playback exporter helpers.
 - Ensured playback exports reuse the canonical aggregation helpers in both deterministic and stochastic modes so telemetry reflects the exact CLI outputs.

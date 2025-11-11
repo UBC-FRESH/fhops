@@ -57,13 +57,13 @@ Status: Draft — scaffolding notebooks that surface deterministic and stochasti
 
 ## Execution & Automation
 - Place notebooks under `docs/examples/analytics/`:
-  - `playback_walkthrough.ipynb`
-  - `stochastic_robustness.ipynb`
-  - `what_if_analysis.ipynb`
+- `playback_walkthrough.ipynb`
+- `stochastic_robustness.ipynb`
+- `what_if_analysis.ipynb`
 - Store deterministic/stochastic assignment CSVs under `docs/examples/analytics/data/` for reproducible runs.
 - [x] Flesh out notebooks with narrative walkthroughs and executed outputs (scenario overview, KPIs, plots).
-- Provide `scripts/run_analytics_notebooks.py` to execute notebooks via `papermill`.
-- CI smoke target: execute notebooks with reduced sampling counts (configurable via environment variables).
+- [x] Provide `scripts/run_analytics_notebooks.py` to execute notebooks via `nbconvert` with metadata capture.
+- [x] CI smoke target: execute notebooks with reduced sampling counts (configurable via environment variables).
 
 ## Documentation Integration
 - Use `nbsphinx` to render notebooks within Sphinx (`docs/examples/analytics/index.rst`). ✅
@@ -78,4 +78,28 @@ Status: Draft — scaffolding notebooks that surface deterministic and stochasti
 - [x] Scaffold utilities module (`docs/examples/analytics/utils.py`) and add minimal plotting helpers.
 - [x] Create empty notebooks with headers/storyboard cells.
 - [x] Wire `nbsphinx` / documentation index to anticipate the new notebooks.
-- [ ] Prepare reduced sampling config for CI smoke execution.
+- [x] Prepare reduced sampling config for CI smoke execution (`FHOPS_ANALYTICS_LIGHT` env flag).
+- [x] Update `README.md` and docs landing pages with links to the analytics notebook suite and execution guidance.
+- [x] Investigate lighter-weight caching or execution guards if notebook runtime grows (consider storing rendered HTML in future).
+  - [x] Profile current runtimes in full (non-light) mode and document thresholds that would trigger caching.
+  - [x] Prototype/decision: caching deferred — current runs complete <6s; no cache directory added (capture in backlog if future regressions appear).
+  - [x] Runner guard rails noted (`FHOPS_ANALYTICS_LIGHT`) removes need for additional force-refresh toggle today.
+
+### Runtime snapshot (2025-11-11 full mode)
+- playback_walkthrough: 4.18s
+- stochastic_robustness: 4.28s
+- what_if_analysis: 4.13s
+- landing_congestion: 4.93s
+- system_mix: 3.93s
+- kpi_decomposition: 4.38s
+- telemetry_diagnostics: 4.08s
+- ensemble_resilience: 5.13s
+- operator_sweep: 4.18s
+- benchmark_summary: 3.93s
+
+*Observation*: even with full stochastic settings, each notebook completes in <6s on dev hardware, so caching remains optional. Revisit caching only if CI runtime regresses.
+
+## Outcome (2025-11-11)
+- CI runs light-mode notebooks; full-mode runtimes documented.
+- README/docs advertise the suite and light flag.
+- Caching deferred (backlog item if runtimes exceed ~10s per notebook or CI pressure increases).
