@@ -7,6 +7,7 @@
 - CLI tuning commands mirror their `tuner_summary` payloads into the SQLite store so benchmarking/reporting jobs can query sweep outcomes without parsing JSONL.
 - Added `fhops telemetry report` to aggregate tuner performance into CSV/Markdown summaries sourced from the SQLite metrics and summary tables; coverage lives in `tests/test_cli_telemetry_report.py`.
 - CI runs a lightweight minitoy sweep that generates `fhops telemetry report` artifacts (`telemetry-report` bundle) for baseline monitoring.
+- Added `scripts/analyze_tuner_reports.py` plus tests, enabling deltas across multiple reports (baseline vs. experiment) to highlight objective improvements.
 - Refreshed `notes/metaheuristic_hyperparam_tuning.md` and the roadmap to mark the telemetry persistence milestone and document the new storage layout.
 
 ## 2025-11-11 — Analytics notebook automation
