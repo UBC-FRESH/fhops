@@ -132,7 +132,9 @@ chart highlights objective trends at a glance.
 Continuous integration already copies the minitoy smoke sweep into the
 ``history/`` subdirectory of the ``telemetry-report`` artifact using UTC
 timestamps, so you can download successive runs and feed them directly to the
-history command.
+history command. The workflow also generates ``history_summary.{csv,md,html}``
+via ``analyze_tuner_reports.py --history-dir`` so you can inspect trends
+immediately after downloading the artifact.
 
 CI Automation
 -------------

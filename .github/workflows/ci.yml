@@ -20,6 +20,14 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Restore telemetry history cache
+        uses: actions/cache@v3
+        with:
+          path: tmp/ci-telemetry/history
+          key: telemetry-history-${{ github.run_id }}
+          restore-keys: |
+            telemetry-history-
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -71,6 +79,15 @@ jobs:
           snapshot_name="$(date -u +"%Y-%m-%dT%H%M%SZ")"
           cp tmp/ci-telemetry/tuner_report.csv "$snapshot_dir/$snapshot_name.csv"
           cp tmp/ci-telemetry/tuner_report.md "$snapshot_dir/$snapshot_name.md"
+
+      - name: Generate telemetry history comparison
+        run: |
+          python scripts/analyze_tuner_reports.py \
+            --report latest=tmp/ci-telemetry/tuner_report.csv \
+            --history-dir tmp/ci-telemetry/history \
+            --out-history-csv tmp/ci-telemetry/history_summary.csv \
+            --out-history-markdown tmp/ci-telemetry/history_summary.md \
+            --out-history-chart tmp/ci-telemetry/history_summary.html
 
       - name: Upload telemetry report artifact
         uses: actions/upload-artifact@v3
