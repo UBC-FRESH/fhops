@@ -50,6 +50,7 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - [ ] Update roadmap + docs as milestones complete.
 - [ ] Add Sphinx how-to covering telemetry schema, tuner commands, and agent workflow once stable.
 - [ ] Ensure CI smoke targets exist for lightweight tuning sweeps (e.g., single random search iteration).
+- [ ] Schedule `fhops telemetry report` in CI/nightly to publish comparison artifacts for baseline scenarios.
 
 ## Notes on Meta-Tuning & Literature
 - Thornton, C., Hutter, F., Hoos, H. H., & Leyton-Brown, K. (2013). *Auto-WEKA: Combined Selection and Hyperparameter Optimization of Classification Algorithms*. Proceedings of KDD ’13, 847–855. https://doi.org/10.1145/2487575.2487629 — Demonstrates joint optimisation of algorithm choice and hyperparameters, effectively automating tuner selection via logged performance.

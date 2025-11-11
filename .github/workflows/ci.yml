@@ -41,6 +41,35 @@ jobs:
       - name: Pre-commit hooks
         run: pre-commit run --all-files
 
+      - name: Telemetry tuning smoke report
+        run: |
+          mkdir -p tmp/ci-telemetry
+          fhops tune-random examples/minitoy/scenario.yaml \
+            --telemetry-log tmp/ci-telemetry/runs.jsonl \
+            --runs 1 \
+            --iters 50 \
+            --base-seed 31415
+          fhops tune-grid examples/minitoy/scenario.yaml \
+            --telemetry-log tmp/ci-telemetry/runs.jsonl \
+            --batch-size 1 \
+            --preset balanced \
+            --iters 50 \
+            --seed 2718
+          fhops tune-bayes examples/minitoy/scenario.yaml \
+            --telemetry-log tmp/ci-telemetry/runs.jsonl \
+            --trials 1 \
+            --iters 50 \
+            --seed 1618
+          fhops telemetry report tmp/ci-telemetry/runs.sqlite \
+            --out-csv tmp/ci-telemetry/tuner_report.csv \
+            --out-markdown tmp/ci-telemetry/tuner_report.md
+
+      - name: Upload telemetry report artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: telemetry-report
+          path: tmp/ci-telemetry
+
       - name: Analytics notebooks (light)
         run: python scripts/run_analytics_notebooks.py --light --timeout 300
 

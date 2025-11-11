@@ -1,0 +1,100 @@
+Telemetry-Driven Tuning
+=======================
+
+The hyperparameter tuning CLIs (`fhops tune-random`, `fhops tune-grid`, `fhops tune-bayes`)
+log every run to JSONL and automatically mirror the same data into
+``telemetry/runs.sqlite``. This guide walks through a lightweight sweep,
+generating a tuning report, and interpreting the resulting artefacts.
+
+Prerequisites
+-------------
+
+* FHOPS installed in your virtual environment (``pip install -e .[dev]``).
+* The example scenarios shipped under ``examples/`` (installed with the project).
+
+Step 1 – Collect Telemetry
+--------------------------
+
+Pick a directory for the telemetry bundle and point each tuning command at the
+same ``--telemetry-log`` path. FHOPS will create the JSONL file plus a mirrored
+SQLite database alongside it.
+
+.. code-block:: bash
+
+   mkdir -p tmp/tuner-demo
+
+   fhops tune-random examples/minitoy/scenario.yaml \
+       --runs 2 \
+       --iters 150 \
+       --telemetry-log tmp/tuner-demo/runs.jsonl
+
+   fhops tune-grid examples/minitoy/scenario.yaml \
+       --batch-size 1 \
+       --batch-size 2 \
+       --preset balanced \
+       --preset explore \
+       --iters 150 \
+       --telemetry-log tmp/tuner-demo/runs.jsonl
+
+   fhops tune-bayes examples/minitoy/scenario.yaml \
+       --trials 3 \
+       --iters 150 \
+       --telemetry-log tmp/tuner-demo/runs.jsonl
+
+After those commands complete you will have:
+
+* ``tmp/tuner-demo/runs.jsonl`` — append-only log of each run.
+* ``tmp/tuner-demo/runs.sqlite`` — structured tables (`runs`, `run_metrics`,
+  `run_kpis`, and `tuner_summaries`) that mirror the JSONL payload.
+* ``tmp/tuner-demo/steps/<run_id>.jsonl`` — optional per-step logs (only when
+  the solver emits granular snapshots).
+
+Step 2 – Generate a Comparison Report
+-------------------------------------
+
+Use the ``fhops telemetry report`` subcommand to aggregate the SQLite store into
+machine-readable (CSV) and human-readable (Markdown) summaries:
+
+.. code-block:: bash
+
+   fhops telemetry report tmp/tuner-demo/runs.sqlite \
+       --out-csv tmp/tuner-demo/tuner_report.csv \
+       --out-markdown tmp/tuner-demo/tuner_report.md
+
+The command prints a Markdown table to stdout by default; passing ``--out-*``
+flags writes the same content to disk. The generated CSV columns include
+aggregated statistics (best/mean objective, run counts) plus any matching
+``tuner_summaries`` rows added by the CLI commands.
+
+Sample Output
+-------------
+
+Markdown table (``tmp/tuner-demo/tuner_report.md``) for a short sweep:
+
+.. code-block:: text
+
+   | Algorithm | Scenario | Best Objective | Mean Objective | Runs | Summary Best | Configurations |
+   | --- | --- | --- | --- | --- | --- | --- |
+   | bayes | FHOPS MiniToy | 8.125 | 8.125 | 1 | 8.125 | 3 |
+   | grid | FHOPS MiniToy | 7.750 | 7.438 | 4 | 7.750 | 4 |
+   | random | FHOPS MiniToy | 7.375 | 6.812 | 2 | 7.375 | 2 |
+
+Step 3 – Iterate
+----------------
+
+* Use the CSV file for deeper analysis in pandas/Polars or to drive dashboards.
+* Inspect the Markdown report (or the uploaded CI artefact) in code reviews to
+  track how a branch affects tuning performance.
+* Because the report operates directly on the SQLite store, you can rerun it at
+  any time without regenerating telemetry.
+
+CI Automation
+-------------
+
+The main CI workflow runs a nightly smoke sweep on ``examples/minitoy`` and
+uploads ``tmp/ci-telemetry/tuner_report.{csv,md}`` as build artefacts. Use those
+artefacts as a baseline when evaluating new heuristics or tuning strategies.
+
+For longer experiments (e.g., synthetic bundles or larger iteration budgets),
+reuse the same workflow with adjusted ``--runs`` / ``--trials`` / ``--iters``
+parameters and point the telemetry log at a scenario-specific directory.
