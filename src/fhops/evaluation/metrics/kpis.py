@@ -242,4 +242,35 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
     )
     result.update(makespan_metrics)
 
+    if "downtime_hours" in shift_df.columns:
+        total_downtime_hours = float(shift_df["downtime_hours"].sum())
+        if total_downtime_hours > 0:
+            result["downtime_hours_total"] = total_downtime_hours
+        downtime_by_machine = shift_df.groupby("machine_id", dropna=False)["downtime_hours"].sum()
+        downtime_by_machine = downtime_by_machine[downtime_by_machine > 0]
+        if not downtime_by_machine.empty:
+            result["downtime_hours_by_machine"] = json.dumps(
+                {
+                    machine: round(float(hours), 3)
+                    for machine, hours in sorted(downtime_by_machine.items())
+                }
+            )
+        total_downtime_events = int(shift_df.get("downtime_events", 0).sum())
+        if total_downtime_events > 0:
+            result["downtime_event_count"] = total_downtime_events
+
+    if "weather_severity_total" in shift_df.columns:
+        total_weather_severity = float(shift_df["weather_severity_total"].sum())
+        if total_weather_severity > 0:
+            result["weather_severity_total"] = total_weather_severity
+        weather_by_machine = shift_df.groupby("machine_id", dropna=False)["weather_severity_total"].sum()
+        weather_by_machine = weather_by_machine[weather_by_machine > 0]
+        if not weather_by_machine.empty:
+            result["weather_severity_by_machine"] = json.dumps(
+                {
+                    machine: round(float(value), 3)
+                    for machine, value in sorted(weather_by_machine.items())
+                }
+            )
+
     return KPIResult(totals=result, shift_calendar=shift_df, day_calendar=day_df)

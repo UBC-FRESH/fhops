@@ -46,6 +46,8 @@ class PlaybackRecord:
     blackout_hit: bool = False
     landing_id: str | None = None
     machine_role: str | None = None
+    downtime: bool = False
+    weather_severity: float | None = None
     metadata: dict[str, object] = field(default_factory=dict)
     sample_id: int = 0
 
@@ -67,6 +69,9 @@ class ShiftSummary:
     sequencing_violations: int = 0
     utilisation_ratio: float | None = None
     sample_id: int = 0
+    downtime_hours: float = 0.0
+    downtime_events: int = 0
+    weather_severity_total: float = 0.0
 
 
 @dataclass(slots=True)
@@ -84,6 +89,9 @@ class DaySummary:
     sequencing_violations: int = 0
     utilisation_ratio: float | None = None
     sample_id: int = 0
+    downtime_hours: float = 0.0
+    downtime_events: int = 0
+    weather_severity_total: float = 0.0
 
 
 @dataclass(slots=True)
@@ -200,6 +208,11 @@ def summarise_shifts(
             summary.blackout_conflicts += 1
         if record.metadata.get("sequencing_violation"):
             summary.sequencing_violations += 1
+        if record.downtime and record.hours_worked is not None:
+            summary.downtime_hours += record.hours_worked
+            summary.downtime_events += 1
+        if record.weather_severity:
+            summary.weather_severity_total += float(record.weather_severity)
 
     for key, summary in aggregates.items():
         if summary.idle_hours is None:
@@ -240,6 +253,9 @@ def summarise_days(
         day_summary.mobilisation_cost += summary.mobilisation_cost
         day_summary.blackout_conflicts += summary.blackout_conflicts
         day_summary.sequencing_violations += summary.sequencing_violations
+        day_summary.downtime_hours += summary.downtime_hours
+        day_summary.downtime_events += summary.downtime_events
+        day_summary.weather_severity_total += summary.weather_severity_total
 
     for day, available in availability_by_day.items():
         day_summary = aggregates.setdefault(day, DaySummary(day=day, sample_id=sample_id))
