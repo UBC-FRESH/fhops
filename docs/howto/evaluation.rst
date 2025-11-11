@@ -144,8 +144,10 @@ The current KPI bundle includes:
   the scenario’s shift definition order.
 * ``downtime_hours_total`` / ``downtime_event_count`` / ``downtime_hours_by_machine`` — aggregate downtime
   exposure derived from stochastic sampling (zero for deterministic runs).
+* ``downtime_production_loss_est`` — approximate production loss using average production per hour times downtime hours.
 * ``weather_severity_total`` / ``weather_severity_by_machine`` — cumulative weather intensity applied during
   stochastic playback, useful for correlating production drops with weather samples.
+* ``weather_hours_est`` / ``weather_production_loss_est`` — estimated hours and production impact attributable to weather, based on aggregate severity and average shift hours.
 
 Upcoming KPI extensions planned for Phase 3 will reuse the same shift/day summaries:
 

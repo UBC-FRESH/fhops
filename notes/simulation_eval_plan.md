@@ -133,7 +133,7 @@ Status: Draft — roadmap Phase 3 owner document.
     - [x] Implement utilisation aggregators that reduce shift/day summaries into KPI scalars.
     - [x] Compute makespan and exposure windows via deterministic playback baselines.
     - [x] Add per-landing mobilisation breakdowns.
-    - [ ] Introduce weather/downtime cost variants once stochastic penalties are modelled.
+    - [x] Introduce weather/downtime cost estimates (average production loss) based on playback downtime and weather signals.
 - [ ] Add regression fixtures and property-based checks confirming KPI ranges per scenario tier.
     - [x] Update minitoy/med42 expected outputs to include utilisation/makespan baselines.
     - [x] Add property checks ensuring utilisation stays in `[0, 1]` and makespan spans the latest productive day.
