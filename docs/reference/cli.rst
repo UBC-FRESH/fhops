@@ -20,7 +20,7 @@ Baseline usage:
 
 - ``fhops solve-mip tests/fixtures/regression/regression.yaml --out /tmp/regression_mip.csv``
 - ``fhops solve-heur tests/fixtures/regression/regression.yaml --out /tmp/regression_sa.csv``
-- ``fhops evaluate tests/fixtures/regression/regression.yaml /tmp/regression_sa.csv``
+- ``fhops evaluate tests/fixtures/regression/regression.yaml --assignments tmp/regression_sa.csv --kpi-mode extended``
 - ``fhops eval playback --scenario tests/fixtures/regression/regression.yaml --assignments /tmp/regression_sa.csv --shift-out tmp/shift_summary.csv --day-out tmp/day_summary.csv``
 - ``fhops eval playback tests/fixtures/regression/regression.yaml --assignments tmp/regression_sa.csv --samples 10 --downtime-prob 0.1 --weather-prob 0.2`` — run stochastic playback, capturing downtime and weather variability.
 - ``fhops eval playback ... --landing-prob 0.3 --landing-mult-min 0.3 --landing-mult-max 0.7 --landing-duration 2`` — simulate landing congestion shocks that temporarily reduce throughput.
@@ -50,6 +50,7 @@ See :doc:`../howto/heuristic_presets` for an end-to-end walkthrough. Common CLI 
 - ``fhops solve-heur ... --batch-neighbours 4 --parallel-workers 4`` — sample multiple neighbour candidates per iteration and score them with a small worker pool (opt-in; defaults keep sequential evaluation).
 - ``fhops solve-heur ... --parallel-multistart 8`` — launch several SA runs in parallel, using the best result while logging per-run telemetry (requires ``--parallel-workers`` for true parallelism).
 - ``fhops solve-heur ... --telemetry-log fhops_runs.jsonl`` — append telemetry entries (objective, KPIs, operator stats, parallel configuration) to a JSONL file for later analysis.
+- ``fhops solve-heur ... --kpi-mode basic`` — print the concise KPI bundle (production/mobilisation only). Use ``extended`` to show utilisation, downtime, and weather metrics.
 - ``fhops solve-heur ... --show-operator-stats`` — print per-operator proposal/acceptance statistics at the end of a run (also available in the benchmark summaries).
 - ``fhops solve-ils ... --perturbation-strength 3 --stall-limit 10 --hybrid-use-mip`` — run the Iterated Local Search solver. The optional hybrid flag attempts a time-boxed MIP warm start when ILS stalls; ``--batch-neighbours``/``--parallel-workers`` reuse the SA batching infrastructure.
 - ``fhops solve-tabu ...`` — run the Tabu Search prototype (`--tabu-tenure`, `--stall-limit`, `--batch-neighbours`, `--parallel-workers`) and export telemetry consistent with SA runs.
