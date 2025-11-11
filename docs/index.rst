@@ -36,6 +36,7 @@ structure mirrors our roadmap so that implementation status stays transparent.
    :caption: Examples
 
    examples/robustness
+   examples/analytics/index
 
 .. toctree::
    :maxdepth: 1
