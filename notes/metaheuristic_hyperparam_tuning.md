@@ -27,9 +27,10 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 
 ### Conventional Tuning Toolkit
 - [ ] Implement grid and random search drivers operating on the telemetry store (CLI-friendly).
+  - [x] Grid tuner execution mode (`fhops tune-grid`) evaluating preset/batch-size cartesian products with telemetry logging.
+  - [x] Random tuner execution mode (`fhops tune-random`) running SA sweeps and recording telemetry.
 - [ ] Integrate a Bayesian/SMBO tuner (e.g., Optuna or scikit-optimize) with pluggable search spaces.
 - [ ] Expose CLI commands (`fhops tune random`, `fhops tune bayes`) that schedule sweeps over scenario bundles.
-  - [x] Random tuner execution mode (`fhops tune-random`) running SA sweeps and recording telemetry.
 - [ ] Generate automated comparison reports (CSV/Markdown) summarising best configs per scenario tier; stash fixtures/tests.
 - [ ] Benchmark grid vs. random vs. Bayesian/SMBO (and future neural/meta-learned) tuners across canonical scenarios; log comparative telemetry (win rate, best obj delta, runtime).
 - [ ] Emit tuner-level meta-telemetry (algorithm name, configuration, budget, convergence stats) so higher-level orchestration can evaluate tuner performance.
