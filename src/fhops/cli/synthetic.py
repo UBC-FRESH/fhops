@@ -112,6 +112,27 @@ def _merge_config(
     return SyntheticDatasetConfig(**data)
 
 
+def _resolve_cli_overrides(
+    blocks: str | None,
+    machines: str | None,
+    landings: str | None,
+    days: str | None,
+    shifts_per_day: int | None,
+) -> Dict[str, Any]:
+    overrides: Dict[str, Any] = {}
+    if blocks:
+        overrides["num_blocks"] = blocks
+    if machines:
+        overrides["num_machines"] = machines
+    if landings:
+        overrides["num_landings"] = landings
+    if days:
+        overrides["num_days"] = days
+    if shifts_per_day is not None:
+        overrides["shifts_per_day"] = shifts_per_day
+    return overrides
+
+
 def _describe_metadata(metadata: Dict[str, Any]) -> None:
     console.print("[bold]Synthetic Dataset Summary[/bold]")
     console.print(f"Name: {metadata.get('name')}")
@@ -188,6 +209,102 @@ def _maybe_refresh_metadata(target_dir: Path) -> None:
     _refresh_aggregate_metadata(base_dir)
 
 
+def _resolve_dataset_inputs(
+    tier: str,
+    config_path: Path | None,
+    config_overrides: Dict[str, Any],
+    cli_overrides: Dict[str, Any],
+    seed: int | None,
+) -> tuple[SyntheticDatasetConfig, int]:
+    tier = (tier or "small").lower()
+    if tier not in TIER_PRESETS and tier != "custom":
+        raise typer.BadParameter(f"Unknown tier '{tier}'. Valid options: {', '.join(TIER_PRESETS)}.")
+
+    base_config = TIER_PRESETS.get(
+        tier,
+        SyntheticDatasetConfig(
+            name="synthetic-custom",
+            tier=None,
+            num_blocks=(8, 12),
+            num_days=(12, 16),
+            num_machines=(4, 6),
+            num_landings=(2, 3),
+        ),
+    )
+
+    config_data: Dict[str, Any] = {}
+    if config_path is not None:
+        config_data = _load_config(config_path)
+        if not isinstance(config_data, dict):
+            raise typer.BadParameter("Config file must yield a mapping/dictionary.")
+
+    merged = _merge_config(base_config, config_data)
+    merged = _merge_config(merged, config_overrides)
+    merged = _merge_config(merged, cli_overrides)
+
+    seed_value = seed
+    if seed_value is None and "seed" in config_data:
+        seed_value = int(config_data["seed"])
+    if seed_value is None and "seed" in config_overrides:
+        seed_value = int(config_overrides["seed"])
+    if seed_value is None and "seed" in cli_overrides:
+        seed_value = int(cli_overrides["seed"])
+    if seed_value is None:
+        seed_value = TIER_SEEDS.get(tier, 123)
+
+    return merged, seed_value
+
+
+def _generate_dataset(
+    *,
+    output_dir: Path | None,
+    tier: str,
+    config_path: Path | None,
+    seed: int | None,
+    config_overrides: Dict[str, Any] | None,
+    cli_overrides: Dict[str, Any] | None,
+    overwrite: bool,
+    preview: bool,
+) -> Dict[str, Any]:
+    merged_config, seed_value = _resolve_dataset_inputs(
+        tier,
+        config_path,
+        config_overrides or {},
+        cli_overrides or {},
+        seed,
+    )
+    bundle = generate_random_dataset(merged_config, seed=seed_value)
+
+    metadata = bundle.metadata or {}
+    metadata = {
+        **metadata,
+        "seed": seed_value,
+    }
+
+    if preview:
+        _describe_metadata(metadata)
+        return metadata
+
+    target_dir = output_dir
+    if target_dir is None:
+        target_dir = Path("examples/synthetic") / (merged_config.tier or merged_config.name)
+    if target_dir.exists():
+        if not overwrite:
+            console.print(f"[red]Directory {target_dir} already exists. Use --overwrite to replace.[/red]")
+            raise typer.Exit(1)
+        shutil.rmtree(target_dir)
+    target_dir.mkdir(parents=True, exist_ok=True)
+
+    metadata_path = target_dir / "metadata.yaml"
+    bundle.metadata = metadata
+    bundle.write(target_dir, metadata_path=metadata_path)
+
+    console.print(f"[green]Synthetic dataset written to {target_dir}[/green]")
+    _describe_metadata(metadata)
+    _maybe_refresh_metadata(target_dir)
+    return metadata
+
+
 @synth_app.command("generate")
 def generate_synthetic_dataset(
     output_dir: Path = typer.Argument(
@@ -245,73 +362,66 @@ def generate_synthetic_dataset(
         min=1,
         help="Override shifts per day.",
     ),
+):
+    cli_overrides = _resolve_cli_overrides(blocks, machines, landings, days, shifts_per_day)
+    _generate_dataset(
+        output_dir=output_dir,
+        tier=tier,
+        config_path=config,
+        seed=seed,
+        config_overrides={},
+        cli_overrides=cli_overrides,
+        overwrite=overwrite,
+        preview=preview,
+    )
+
+
+@synth_app.command("batch")
+def generate_batch(
+    plan: Path = typer.Argument(..., help="YAML/TOML/JSON plan file containing a list of bundle entries."),
+    overwrite: bool = typer.Option(False, "--overwrite", help="Overwrite existing bundle directories."),
+    preview: bool = typer.Option(False, "--preview", help="Preview metadata for all bundles without writing files."),
 ) -> None:
-    tier = (tier or "small").lower()
-    if tier not in TIER_PRESETS and tier != "custom":
-        raise typer.BadParameter(f"Unknown tier '{tier}'. Valid options: {', '.join(TIER_PRESETS)}.")
+    payload = _load_config(plan)
+    if not isinstance(payload, list):
+        raise typer.BadParameter("Batch plan must be a list of bundle entries.")
 
-    base_config = TIER_PRESETS.get(tier, SyntheticDatasetConfig(
-        name="synthetic-custom",
-        tier=None,
-        num_blocks=(8, 12),
-        num_days=(12, 16),
-        num_machines=(4, 6),
-        num_landings=(2, 3),
-    ))
+    for entry in payload:
+        if not isinstance(entry, dict):
+            raise typer.BadParameter("Each batch entry must be a mapping.")
+        tier = entry.get("tier", "small")
+        output_dir = entry.get("output_dir")
+        output_path = Path(output_dir) if output_dir is not None else None
+        config_path = entry.get("config")
+        config_path = Path(config_path) if config_path else None
+        seed_value = entry.get("seed")
+        entry_overrides = entry.get("overrides", {})
+        if not isinstance(entry_overrides, dict):
+            raise typer.BadParameter("Batch entry 'overrides' must be a mapping.")
 
-    config_overrides: Dict[str, Any] = {}
-    if config is not None:
-        config_overrides = _load_config(config)
-        if not isinstance(config_overrides, dict):
-            raise typer.BadParameter("Config file must yield a mapping/dictionary.")
+        cli_flags = entry.get("flags", {})
+        if cli_flags and not isinstance(cli_flags, dict):
+            raise typer.BadParameter("Batch entry 'flags' must be a mapping when provided.")
 
-    cli_overrides: Dict[str, Any] = {}
-    if blocks:
-        cli_overrides["num_blocks"] = blocks
-    if machines:
-        cli_overrides["num_machines"] = machines
-    if landings:
-        cli_overrides["num_landings"] = landings
-    if days:
-        cli_overrides["num_days"] = days
-    if shifts_per_day is not None:
-        cli_overrides["shifts_per_day"] = shifts_per_day
+        cli_overrides = _resolve_cli_overrides(
+            cli_flags.get("blocks"),
+            cli_flags.get("machines"),
+            cli_flags.get("landings"),
+            cli_flags.get("days"),
+            cli_flags.get("shifts_per_day"),
+        )
 
-    merged = _merge_config(base_config, config_overrides)
-    merged = _merge_config(merged, cli_overrides)
+        entry_preview = entry.get("preview", preview)
+        entry_overwrite = entry.get("overwrite", overwrite)
 
-    seed_value = seed
-    if seed_value is None and "seed" in config_overrides:
-        seed_value = int(config_overrides["seed"])
-    if seed_value is None:
-        seed_value = TIER_SEEDS.get(tier, 123)
-
-    bundle = generate_random_dataset(merged, seed=seed_value)
-
-    metadata = bundle.metadata or {}
-    metadata = {
-        **metadata,
-        "seed": seed_value,
-    }
-
-    if preview:
-        _describe_metadata(metadata)
-        return
-
-    target_dir = output_dir
-    if target_dir is None:
-        target_dir = Path("examples/synthetic") / (merged.tier or merged.name)
-    if target_dir.exists():
-        if not overwrite:
-            console.print(f"[red]Directory {target_dir} already exists. Use --overwrite to replace.[/red]")
-            raise typer.Exit(1)
-        shutil.rmtree(target_dir)
-    target_dir.mkdir(parents=True, exist_ok=True)
-
-    metadata_path = target_dir / "metadata.yaml"
-    bundle.metadata = metadata
-    bundle.write(target_dir, metadata_path=metadata_path)
-
-    console.print(f"[green]Synthetic dataset written to {target_dir}[/green]")
-    _describe_metadata(metadata)
-    _maybe_refresh_metadata(target_dir)
+        console.print(f"[bold]Generating bundle for tier '{tier}'[/bold]")
+        _generate_dataset(
+            output_dir=output_path,
+            tier=tier,
+            config_path=config_path,
+            seed=seed_value,
+            config_overrides=entry_overrides,
+            cli_overrides=cli_overrides,
+            overwrite=entry_overwrite,
+            preview=entry_preview,
+        )

@@ -28,6 +28,7 @@ Baseline usage:
   See :doc:`../howto/evaluation` for a full end-to-end example.
 - ``fhops bench suite --scenario examples/minitoy/scenario.yaml --out-dir tmp/benchmarks``
 - ``fhops synth generate tmp/custom_bundle --tier medium --seed 777 --blocks 10:12`` — create a synthetic scenario bundle using the medium preset with a custom block range; add ``--preview`` to inspect metadata without writing files.
+- ``fhops synth batch plans/synthetic.yaml --overwrite`` — process several bundles in one call using a YAML/TOML/JSON plan (each entry supports the same fields as `generate`), refreshing metadata automatically when writing to ``examples/synthetic``.
 
 Both ``solve-mip`` and ``solve-heur`` export schedules with the columns ``machine_id``, ``block_id``,
 ``day``, and ``shift_id``. The shift identifier matches the scenario's shift calendar (or defaults to

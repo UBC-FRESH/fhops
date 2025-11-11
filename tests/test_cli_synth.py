@@ -6,7 +6,7 @@ import yaml
 from typer.testing import CliRunner
 
 from fhops.cli.main import app
-from fhops.cli.synthetic import _refresh_aggregate_metadata
+from fhops.cli.synthetic import _refresh_aggregate_metadata, _resolve_cli_overrides, _generate_dataset
 
 
 runner = CliRunner()
@@ -90,3 +90,51 @@ def test_refresh_aggregate_metadata(tmp_path: Path):
     aggregate = yaml.safe_load(aggregate_path.read_text(encoding="utf-8"))
     assert aggregate["small"]["num_days"] == 6
     assert aggregate["medium"]["terrain_counts"]["mixed"] == 5
+
+
+def test_synth_batch_generates_multiple(tmp_path: Path):
+    plan = tmp_path / "plan.yaml"
+    plan.write_text(
+        """
+        - tier: small
+          output_dir: "{tmp}/bundle_small"
+          seed: 501
+        - tier: custom
+          output_dir: "{tmp}/bundle_custom"
+          config: "{tmp}/config.yaml"
+          overrides:
+            name: synthetic-custom
+            num_blocks: [5, 5]
+          flags:
+            blocks: "5:5"
+          seed: 777
+        """.replace("{tmp}", str(tmp_path)),
+        encoding="utf-8",
+    )
+
+    config_path = tmp_path / "config.yaml"
+    config_path.write_text(
+        """
+        num_days: 6
+        num_machines: 2
+        num_landings: 1
+        """,
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "synth",
+            "batch",
+            str(plan),
+            "--overwrite",
+        ],
+    )
+    assert result.exit_code == 0
+    assert (tmp_path / "bundle_small" / "scenario.yaml").exists()
+    assert (tmp_path / "bundle_custom" / "scenario.yaml").exists()
+    small_meta = yaml.safe_load(
+        (tmp_path / "bundle_small" / "metadata.yaml").read_text(encoding="utf-8")
+    )
+    assert small_meta["seed"] == 501
