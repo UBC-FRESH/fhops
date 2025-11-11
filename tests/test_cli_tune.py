@@ -10,18 +10,8 @@ from fhops.cli.main import app
 runner = CliRunner()
 
 
-def test_tune_random_cli_stub(tmp_path: Path):
-    telemetry_log = tmp_path / "runs.jsonl"
-    record = {
-        "record_type": "run",
-        "run_id": "abc123",
-        "solver": "sa",
-        "scenario": "minitoy",
-        "status": "ok",
-        "metrics": {"objective": 123.45},
-        "duration_seconds": 1.23,
-    }
-    telemetry_log.write_text(json.dumps(record) + "\n", encoding="utf-8")
+def test_tune_random_cli_runs_solver(tmp_path: Path):
+    telemetry_log = tmp_path / "telemetry" / "runs.jsonl"
 
     result = runner.invoke(
         app,
@@ -30,11 +20,28 @@ def test_tune_random_cli_stub(tmp_path: Path):
             "examples/minitoy/scenario.yaml",
             "--telemetry-log",
             str(telemetry_log),
-            "--samples",
-            "1",
+            "--runs",
+            "2",
+            "--iters",
+            "10",
+            "--base-seed",
+            "42",
         ],
     )
 
     assert result.exit_code == 0, result.stdout
-    assert "Random tuner stub" in result.stdout
-    assert "abc123" in result.stdout
+    assert telemetry_log.exists()
+
+    lines = telemetry_log.read_text(encoding="utf-8").strip().splitlines()
+    assert len(lines) == 2
+    first = json.loads(lines[0])
+    assert first["solver"] == "sa"
+    assert "operator_weights" in result.stdout or "Operators" in result.stdout
+
+    steps_dir = telemetry_log.parent / "steps"
+    assert steps_dir.exists()
+    for entry in lines:
+        payload = json.loads(entry)
+        run_id = payload.get("run_id")
+        if isinstance(run_id, str):
+            assert (steps_dir / f"{run_id}.jsonl").exists()

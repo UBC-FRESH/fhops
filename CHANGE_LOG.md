@@ -14,6 +14,9 @@
 - Instrumented `solve_sa` to emit telemetry (run id, configuration, metrics, step snapshots) when `telemetry_log` is provided; CLI multi-start now propagates context into these records.
 - Extended telemetry logging to `solve_ils` and `solve_tabu`, including CLI wiring and regression tests, so all heuristics share the JSONL store with consistent run/step metadata.
 - Added playback CLI telemetry: `fhops eval playback` now records run/step summaries via `RunTelemetryLogger`, emits artifacts/metrics, and exposes steps under `telemetry/steps/`; regression coverage ensures the JSONL line and step log are produced.
+- Added `fhops telemetry prune` for trimming `runs.jsonl` and matching step logs to keep telemetry lightweight.
+- Upgraded `fhops tune-random` to execute simulated annealing sweeps, sample operator weights, and record telemetry entries for each run.
+- Introduced `fhops.telemetry.load_jsonl` to load telemetry JSONL records into dataframes for downstream analysis.
 - Updated roadmap and tuning plan notes to reflect the schema draft and SA logging milestone; introduced regression tests ensuring telemetry logs are written with matching run identifiers.
 - Added a placeholder `fhops tune-random` CLI command that surfaces recent telemetry records while the full random-search tuner is under construction.
 

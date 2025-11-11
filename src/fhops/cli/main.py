@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from collections import deque
+import random
 from contextlib import nullcontext
 import json
 from datetime import UTC, datetime
@@ -17,6 +18,7 @@ from rich.table import Table
 from fhops.cli._utils import format_operator_presets, operator_preset_help, parse_operator_weights
 from fhops.cli.benchmarks import benchmark_app
 from fhops.cli.geospatial import geospatial_app
+from fhops.cli.telemetry import telemetry_app
 from fhops.cli.synthetic import synth_app
 from fhops.cli.profiles import format_profiles, get_profile, merge_profile_with_cli
 from fhops.evaluation import (
@@ -39,6 +41,7 @@ from fhops.optimization.heuristics import (
     solve_sa,
     solve_tabu,
 )
+from fhops.optimization.heuristics.registry import OperatorRegistry
 from fhops.optimization.mip import solve_mip
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
@@ -48,6 +51,7 @@ app = typer.Typer(add_completion=False, no_args_is_help=True)
 app.add_typer(geospatial_app, name="geo")
 app.add_typer(benchmark_app, name="bench")
 app.add_typer(synth_app, name="synth")
+app.add_typer(telemetry_app, name="telemetry")
 console = Console()
 KPI_MODE = click.Choice(["basic", "extended"], case_sensitive=False)
 
@@ -1279,65 +1283,121 @@ def tune_random_cli(
         dir_okay=False,
         writable=False,
     ),
-    samples: int = typer.Option(
-        5,
-        "--samples",
+    runs: int = typer.Option(
+        3,
+        "--runs",
         min=1,
-        help="Show the latest N telemetry records for context.",
+        help="Number of random configurations to evaluate per scenario.",
+    ),
+    iters: int = typer.Option(
+        250,
+        "--iters",
+        min=10,
+        help="Simulated annealing iterations per run.",
+    ),
+    base_seed: int = typer.Option(
+        123,
+        "--base-seed",
+        help="Seed used to initialise the random tuner (per-run seeds derive from this).",
     ),
 ):
-    """Stub random-search tuner that previews existing telemetry."""
-    console.print(
-        f"[dim]Random tuner stub — scenarios queued: {', '.join(str(path) for path in scenarios)}[/]"
-    )
-    if not telemetry_log.exists():
-        console.print(f"[yellow]Telemetry log {telemetry_log} not found. Nothing to preview yet.[/]")
-        console.print(
-            "[dim]Run `fhops solve-heur --telemetry-log` to populate telemetry before launching the tuner.[/]"
-        )
-        return
+    """Randomly sample simulated annealing configurations and record telemetry."""
+    scenario_files: list[Path] = []
+    for entry in scenarios:
+        if entry.is_dir():
+            scenario_files.extend(sorted(entry.rglob("*.yaml")))
+        else:
+            scenario_files.append(entry)
 
-    records: deque[dict[str, Any]] = deque(maxlen=samples)
-    with telemetry_log.open("r", encoding="utf-8") as handle:
-        for line in handle:
-            line = line.strip()
-            if not line:
-                continue
+    if not scenario_files:
+        console.print("[yellow]No scenario files discovered. Nothing to tune.[/]")
+        raise typer.Exit(1)
+
+    rng = random.Random(base_seed)
+    registry = OperatorRegistry.from_defaults()
+    operator_names = list(registry.names())
+
+    results: list[dict[str, Any]] = []
+
+    for scenario_path in scenario_files:
+        sc = load_scenario(str(scenario_path))
+        pb = Problem.from_scenario(sc)
+        console.print(f"[dim]Tuning {scenario_path} ({runs} run(s))[/]")
+        for run_idx in range(runs):
+            run_seed = rng.randrange(1, 1_000_000_000)
+            batch_size_choice = rng.choice([1, 2, 3])
+            weight_count = rng.randint(1, max(1, len(operator_names)))
+            selected_ops = rng.sample(operator_names, weight_count)
+            operator_weights = {name: round(rng.uniform(0.5, 1.5), 3) for name in selected_ops}
+
+            telemetry_kwargs: dict[str, Any] = {}
+            if telemetry_log:
+                telemetry_context = {
+                    "source": "cli.tune-random",
+                    "tuner_seed": base_seed,
+                    "run_index": run_idx,
+                    "batch_size_choice": batch_size_choice,
+                    "operator_count": weight_count,
+                }
+                telemetry_kwargs = {
+                    "telemetry_log": telemetry_log,
+                    "telemetry_context": telemetry_context,
+                }
+
             try:
-                payload = json.loads(line)
-            except json.JSONDecodeError:
+                res = solve_sa(
+                    pb,
+                    iters=iters,
+                    seed=run_seed,
+                    batch_size=batch_size_choice if batch_size_choice > 1 else None,
+                    operator_weights=operator_weights,
+                    **telemetry_kwargs,
+                )
+            except Exception as exc:  # pragma: no cover - defensive
+                console.print(
+                    f"[yellow]Run failed for {scenario_path} (seed={run_seed}): {exc!r}[/]"
+                )
                 continue
-            record_type = payload.get("record_type")
-            if record_type not in (None, "run"):
-                continue
-            records.append(payload)
 
-    if not records:
-        console.print("[yellow]No run-level telemetry records available to display yet.[/]")
+            results.append(
+                {
+                    "scenario": scenario_path.name,
+                    "objective": float(res.get("objective", 0.0)),
+                    "seed": run_seed,
+                    "batch_size": batch_size_choice,
+                    "operator_weights": operator_weights,
+                    "telemetry_run_id": res.get("meta", {}).get("telemetry_run_id"),
+                }
+            )
+
+    if not results:
+        console.print("[yellow]Random tuner did not produce any successful runs.[/]")
         return
 
-    table = Table(title=f"Run telemetry (latest {len(records)} records)")
-    table.add_column("Run ID", overflow="fold")
-    table.add_column("Solver")
+    table = Table(title="Random tuner results", show_lines=False)
     table.add_column("Scenario")
     table.add_column("Objective", justify="right")
-    table.add_column("Status")
-    table.add_column("Duration (s)", justify="right")
-    for record in records:
-        metrics = record.get("metrics") or {}
-        objective = metrics.get("objective", record.get("objective"))
-        duration = record.get("duration_seconds")
-        table.add_row(
-            str(record.get("run_id", "-")),
-            str(record.get("solver", "-")),
-            str(record.get("scenario") or record.get("scenario_path") or "-"),
-            f"{objective:.3f}" if isinstance(objective, (int, float)) else str(objective),
-            str(record.get("status", "-")),
-            f"{duration:.2f}" if isinstance(duration, (int, float)) else str(duration or "-"),
-        )
+    table.add_column("Seed", justify="right")
+    table.add_column("Batch", justify="right")
+    table.add_column("Operators")
 
+    for entry in sorted(results, key=lambda item: item["objective"], reverse=True):
+        op_preview = ", ".join(
+            f"{name}={weight:.2f}" for name, weight in sorted(entry["operator_weights"].items())
+        )
+        table.add_row(
+            entry["scenario"],
+            f"{entry['objective']:.3f}",
+            str(entry["seed"]),
+            str(entry["batch_size"]),
+            op_preview if len(op_preview) < 80 else op_preview[:77] + "...",
+        )
     console.print(table)
-    console.print("[dim]Full tuner implementation pending — this command currently previews telemetry only.[/]")
+
+    if telemetry_log:
+        console.print(
+            f"[dim]{len(results)} telemetry record(s) written to {telemetry_log}. Step logs stored in {telemetry_log.parent / 'steps'}.[/]"
+        )
 
 
 if __name__ == "__main__":
