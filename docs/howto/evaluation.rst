@@ -200,10 +200,24 @@ The current KPI bundle includes:
   the scenario’s shift definition order.
 * ``downtime_hours_total`` / ``downtime_event_count`` / ``downtime_hours_by_machine`` — aggregate downtime
   exposure derived from stochastic sampling (zero for deterministic runs).
-* ``downtime_production_loss_est`` — approximate production loss using average production per hour times downtime hours.
+* ``downtime_production_loss_est`` — estimated production loss, computed as ``downtime_hours_total`` multiplied by the average production rate observed in the current playback.
 * ``weather_severity_total`` / ``weather_severity_by_machine`` — cumulative weather intensity applied during
   stochastic playback, useful for correlating production drops with weather samples.
-* ``weather_hours_est`` / ``weather_production_loss_est`` — estimated hours and production impact attributable to weather, based on aggregate severity and average shift hours.
+* ``weather_hours_est`` / ``weather_production_loss_est`` — estimated hours and production impact attributable to weather, derived from the aggregate severity multiplied by the average shift length and production rate.
+
+Weather & downtime cost assumptions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The loss estimates make the following assumptions:
+
+* ``downtime_hours_total`` sums the recorded downtime hours emitted by stochastic events. Multiplying by the
+  observed average production rate (total production divided by total hours worked) yields an approximate
+  lost-production figure. This is intentionally conservative—it does not try to infer which machines were
+  idle when downtime struck.
+* ``weather_severity_total`` aggregates the per-assignment severity values (0–1). Converting this to hours
+  uses the average shift duration; multiplying by the same average production rate yields a comparable
+  lost-production estimate. If you model multiple shifts per day or heterogeneous shift lengths, consider
+  computing refined per-machine/shift loss metrics downstream.
 
 Upcoming KPI extensions planned for Phase 3 will reuse the same shift/day summaries:
 

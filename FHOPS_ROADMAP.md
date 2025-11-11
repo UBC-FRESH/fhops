@@ -42,19 +42,19 @@ before proposing new work.
     - [x] Define aggregation schemas for shift/day calendars and extend KPI dataclasses.
     - [x] Add exporters (CSV/Parquet + Markdown summary) wired into playback CLI.
     - [x] Validate outputs across benchmark scenarios and stash fixtures for CI smoke runs.
-- [ ] KPI expansion (cost, makespan, utilisation, mobilisation spend) with reporting templates.
-  - [ ] Metric specification & alignment
-    - [ ] Reconcile definitions across `notes/mip_model_plan.md`, `notes/mobilisation_plan.md`, and simulation notes.
-    - [ ] Document final KPI formulas and assumptions in `docs/howto/evaluation.rst`.
-    - [ ] Map required raw signals from playback outputs and ensure data contract coverage.
-  - [ ] Implementation & validation
-    - [ ] Extend KPI calculators to emit cost, makespan, utilisation, mobilisation spend variants.
-    - [ ] Add regression fixtures and property-based checks confirming KPI ranges per scenario tier.
-    - [ ] Wire KPIs into CLI reporting with configurable profiles and smoke tests.
-  - [ ] Reporting templates
-    - [ ] Draft tabular templates (CSV/Markdown) plus optional visuals for docs/notebooks.
-    - [ ] Provide Sphinx snippets and CLI help examples showcasing new KPI bundles.
-    - [ ] Capture follow-up backlog items for advanced dashboards (e.g., Plotly) if deferred.
+- [x] KPI expansion (cost, makespan, utilisation, mobilisation spend) with reporting templates.
+  - [x] Metric specification & alignment
+    - [x] Reconcile definitions across `notes/mip_model_plan.md`, `notes/mobilisation_plan.md`, and simulation notes.
+    - [x] Document final KPI formulas and assumptions in `docs/howto/evaluation.rst`.
+    - [x] Map required raw signals from playback outputs and ensure data contract coverage.
+  - [x] Implementation & validation
+    - [x] Extend KPI calculators to emit cost, makespan, utilisation, mobilisation spend variants.
+    - [x] Add regression fixtures and property-based checks confirming KPI ranges per scenario tier.
+    - [x] Wire KPIs into CLI reporting with configurable profiles and smoke tests.
+  - [x] Reporting templates
+    - [x] Draft tabular templates (CSV/Markdown) plus optional visuals for docs/notebooks.
+    - [x] Provide Sphinx snippets and CLI help examples showcasing new KPI bundles.
+    - [x] Capture follow-up backlog items for advanced dashboards (e.g., Plotly) if deferred (defer to backlog).
 - [ ] Synthetic dataset generator & benchmarking suite (`notes/synthetic_dataset_plan.md`).
   - [ ] Design & planning
     - [ ] Finalise dataset taxonomy and parameter ranges in `notes/synthetic_dataset_plan.md`.
