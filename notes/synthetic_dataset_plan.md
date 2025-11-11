@@ -23,11 +23,11 @@ Status: Draft — groundwork for thesis-aligned datasets.
 
 ## Tests & Validation
 - [x] Unit tests ensuring generated datasets satisfy scenario contract validators. *(See `tests/test_synthetic.py`.)*
-- [ ] Statistical checks on sampled parameters (distributions, workload constraints).
+- [x] Statistical checks on sampled parameters (distributions, workload constraints).
 
 ## Documentation
-- [ ] Sphinx guide on generating and using synthetic datasets.
-- [ ] Example CLI or script usage for students.
+- [x] Sphinx guide on generating and using synthetic datasets.
+- [x] Example CLI or script usage for students.
 
 ## Dependencies
 - Align with `notes/data_contract_enhancements.md` (worker skills, system definitions).

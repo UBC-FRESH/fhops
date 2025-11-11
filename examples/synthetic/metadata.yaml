@@ -1,0 +1,63 @@
+small:
+  name: synthetic-small
+  seed: 101
+  num_days: 6
+  counts:
+    blocks: 4
+    machines: 2
+    landings: 1
+    calendar: 12
+    production_rates: 8
+  blackouts: []
+  shifts_per_day: 1
+  shift_hours: 11.638760837217669
+medium:
+  name: synthetic-medium
+  seed: 202
+  num_days: 12
+  counts:
+    blocks: 8
+    machines: 4
+    landings: 2
+    calendar: 48
+    production_rates: 32
+  blackouts:
+  - start_day: 9
+    end_day: 9
+    reason: synthetic-blackout
+  - start_day: 10
+    end_day: 11
+    reason: synthetic-blackout
+  shifts_per_day: 1
+  shift_hours: 10.012292290145101
+large:
+  name: synthetic-large
+  seed: 303
+  num_days: 18
+  counts:
+    blocks: 16
+    machines: 6
+    landings: 3
+    calendar: 108
+    production_rates: 96
+  blackouts:
+  - start_day: 4
+    end_day: 4
+    reason: synthetic-blackout
+  - start_day: 5
+    end_day: 6
+    reason: synthetic-blackout
+  - start_day: 7
+    end_day: 9
+    reason: synthetic-blackout
+  - start_day: 8
+    end_day: 8
+    reason: synthetic-blackout
+  - start_day: 9
+    end_day: 9
+    reason: synthetic-blackout
+  - start_day: 14
+    end_day: 15
+    reason: synthetic-blackout
+  shifts_per_day: 2
+  shift_hours: 10.572538180571637
