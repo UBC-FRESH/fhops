@@ -102,6 +102,7 @@ We will integrate the reference bundles into the Phase 2 benchmarking harness wi
 ## Tests & Validation
 - [x] Unit tests ensuring generated datasets satisfy scenario contract validators. *(See `tests/test_synthetic.py`.)*
 - [x] Statistical checks on sampled parameters (distributions, workload constraints).
+- [x] Benchmark smoke validation verifying KPI bounds for reference bundles. *(See `tests/test_benchmark_harness.py::test_synthetic_small_benchmark_kpi_bounds`.)*
 
 ## Documentation
 - [x] Sphinx guide on generating and using synthetic datasets.

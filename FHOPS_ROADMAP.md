@@ -65,7 +65,7 @@ before proposing new work.
     - [x] Expose CLI entry (`fhops synth`) and configuration schema for batch generation.
     - [ ] Add validation suite ensuring generated datasets meet contract + KPI sanity bounds.
   - [ ] Benchmark integration
-    - [ ] Hook synthetic scenarios into benchmark harness and CI smoke targets.
+    - [x] Hook synthetic scenarios into benchmark harness and CI smoke targets.
     - [x] Provide metadata manifests describing each scenario for docs/examples.
     - [ ] Outline scaling experiments and capture results in changelog/notes.
 - [ ] Reference analytics notebooks integrated into docs/examples.

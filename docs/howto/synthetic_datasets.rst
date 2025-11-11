@@ -115,6 +115,10 @@ Use the bundles anywhere a normal scenario is accepted. Typical entry points:
   command accepts YAML/TOML configs via ``--config`` when you need full control over the
   ``SyntheticDatasetConfig`` fields.
 
+.. note::
+   When you write directly to ``examples/synthetic/<tier>`` the CLI automatically refreshes the aggregate
+   ``examples/synthetic/metadata.yaml`` so documentation and automation stay in sync.
+
 These commands reuse the same CLI surfaces already documented in :doc:`evaluation` and
 :doc:`../reference/cli`, but the synthetic bundles keep the inputs lightweight enough for quick
 iteration and teaching exercises.

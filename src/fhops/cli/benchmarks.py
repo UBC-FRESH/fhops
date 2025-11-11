@@ -44,6 +44,7 @@ DEFAULT_SCENARIOS: tuple[BenchmarkScenario, ...] = (
     BenchmarkScenario("minitoy", Path("examples/minitoy/scenario.yaml")),
     BenchmarkScenario("med42", Path("examples/med42/scenario.yaml")),
     BenchmarkScenario("large84", Path("examples/large84/scenario.yaml")),
+    BenchmarkScenario("synthetic-small", Path("examples/synthetic/small/scenario.yaml")),
 )
 
 
