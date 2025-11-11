@@ -1,0 +1,5 @@
+snapshot,algorithm,scenario,best_objective,mean_objective,runs
+2024-11-10T000000Z,random,SampleScenario,6.2,6.0,2
+2024-11-11T000000Z,random,SampleScenario,6.8,6.4,2
+2024-11-12T000000Z,grid,SampleScenario,7.1,6.8,2
+2024-11-13T000000Z,grid,SampleScenario,7.5,7.1,2

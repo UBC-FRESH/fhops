@@ -55,8 +55,10 @@ fhops telemetry report telemetry/runs.sqlite \
     --out-markdown tmp/tuner_report.md
 ```
 
-CI executes a lightweight minitoy sweep on every run and uploads the resulting `telemetry-report`
-artefact (Markdown + CSV) so you can track baseline performance. See
+CI executes lightweight sweeps on the **minitoy** and **med42** example scenarios for every run and
+uploads the resulting `telemetry-report` artefact (Markdown + CSV) so you can track baseline
+performance. The workflow also archives each run under `history/` and ships
+`history_summary.{csv,md,html}` for quick trend analysis. See
 `docs/howto/telemetry_tuning.rst` for a step-by-step guide and download instructions.
 
 ## Package layout
