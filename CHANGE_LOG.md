@@ -5,6 +5,7 @@
 - Ensured playback exports reuse the canonical aggregation helpers in both deterministic and stochastic modes so telemetry reflects the exact CLI outputs.
 - Added regression coverage (`tests/test_cli_playback_exports.py::test_eval_playback_telemetry_log`) asserting the JSONL payload captures scenario metadata and export metrics.
 - Updated shift/day reporting planning notes to reflect the completed telemetry wiring.
+- Added a Hypothesis-based regression (`tests/test_playback_aggregates.py::test_shift_totals_match_day_totals`) verifying shift-level aggregates reconcile with day-level summaries across stochastic configurations.
 
 ## 2025-11-10 — Phase 3 playback planning kickoff
 - Expanded the Phase 3 roadmap checklist with detailed subtasks covering playback upgrades, KPI expansion, synthetic datasets, analytics notebooks, and hyperparameter tuning deliverables.
