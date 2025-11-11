@@ -6,8 +6,17 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
 
-import altair as alt
 import pandas as pd
+
+try:  # optional dependency for rich charts
+    import altair as alt  # type: ignore
+except ModuleNotFoundError:
+    alt = None  # type: ignore
+
+try:
+    import matplotlib.pyplot as plt
+except ModuleNotFoundError:
+    plt = None
 
 from fhops.evaluation import (
     PlaybackConfig,
@@ -75,39 +84,72 @@ def run_stochastic_summary(
     return tables, sampling_config
 
 
-def plot_production_by_day(day_df: pd.DataFrame, *, sample_id: int | None = None) -> alt.Chart:
+def _require_backend() -> None:
+    if alt is None and plt is None:
+        raise RuntimeError("Install 'altair' or 'matplotlib' to render charts.")
+
+
+def plot_production_by_day(day_df: pd.DataFrame, *, sample_id: int | None = None):
     """Plot production by day (optionally filtered to a specific sample)."""
     data = day_df
     if sample_id is not None and "sample_id" in day_df.columns:
         data = day_df[day_df["sample_id"] == sample_id]
-    return (
-        alt.Chart(data)
-        .mark_bar()
-        .encode(
-            x="day:O",
-            y=alt.Y("production_units:Q", title="Production (units)"),
-            color="sample_id:N" if "sample_id" in data.columns else alt.value("#1f77b4"),
+    if alt is not None:
+        return (
+            alt.Chart(data)
+            .mark_bar()
+            .encode(
+                x="day:O",
+                y=alt.Y("production_units:Q", title="Production (units)"),
+                color="sample_id:N" if "sample_id" in data.columns else alt.value("#1f77b4"),
+            )
+            .properties(width=500, height=240)
         )
-        .properties(width=500, height=240)
-    )
+    _require_backend()
+    assert plt is not None
+    fig, ax = plt.subplots(figsize=(6, 3))
+    bar_data = data.groupby("day")["production_units"].sum()
+    ax.bar(bar_data.index.astype(str), bar_data.values, color="#1f77b4")
+    ax.set_xlabel("Day")
+    ax.set_ylabel("Production (units)")
+    ax.set_title("Production by Day")
+    fig.tight_layout()
+    return fig
 
 
-def plot_utilisation_heatmap(shift_df: pd.DataFrame) -> alt.Chart:
+def plot_utilisation_heatmap(shift_df: pd.DataFrame):
     """Heatmap of utilisation ratios by machine/day."""
     data = shift_df.copy()
     if "sample_id" in data.columns:
         data = data.groupby(["machine_id", "day"], as_index=False)["utilisation_ratio"].mean()
-
-    return (
-        alt.Chart(data)
-        .mark_rect()
-        .encode(
-            x=alt.X("day:O", title="Day"),
-            y=alt.Y("machine_id:O", title="Machine"),
-            color=alt.Color("utilisation_ratio:Q", title="Utilisation", scale=alt.Scale(scheme="blues")),
+    if alt is not None:
+        return (
+            alt.Chart(data)
+            .mark_rect()
+            .encode(
+                x=alt.X("day:O", title="Day"),
+                y=alt.Y("machine_id:O", title="Machine"),
+                color=alt.Color(
+                    "utilisation_ratio:Q", title="Utilisation", scale=alt.Scale(scheme="blues")
+                ),
+            )
+            .properties(width=500, height=240)
         )
-        .properties(width=500, height=240)
-    )
+    _require_backend()
+    assert plt is not None
+    pivot = data.pivot(index="machine_id", columns="day", values="utilisation_ratio").sort_index()
+    fig, ax = plt.subplots(figsize=(6, 3))
+    im = ax.imshow(pivot, aspect="auto", cmap="Blues", vmin=0, vmax=max(1.0, pivot.max().max()))
+    ax.set_xticks(range(len(pivot.columns)))
+    ax.set_xticklabels(pivot.columns.astype(str))
+    ax.set_xlabel("Day")
+    ax.set_yticks(range(len(pivot.index)))
+    ax.set_yticklabels(pivot.index)
+    ax.set_ylabel("Machine")
+    ax.set_title("Utilisation Heatmap")
+    fig.colorbar(im, ax=ax, label="Utilisation")
+    fig.tight_layout()
+    return fig
 
 
 def plot_distribution(
@@ -115,15 +157,25 @@ def plot_distribution(
     *,
     title: str,
     xlabel: str,
-) -> alt.Chart:
+):
     """Simple histogram for sample distributions."""
     series = pd.Series(list(values), name=xlabel)
-    return (
-        alt.Chart(series.to_frame())
-        .mark_bar(opacity=0.75)
-        .encode(
-            x=alt.X(f"{xlabel}:Q", bin=alt.Bin(maxbins=20), title=xlabel),
-            y=alt.Y("count()", title="Frequency"),
+    if alt is not None:
+        return (
+            alt.Chart(series.to_frame())
+            .mark_bar(opacity=0.75)
+            .encode(
+                x=alt.X(f"{xlabel}:Q", bin=alt.Bin(maxbins=20), title=xlabel),
+                y=alt.Y("count()", title="Frequency"),
+            )
+            .properties(title=title, width=400, height=240)
         )
-        .properties(title=title, width=400, height=240)
-    )
+    _require_backend()
+    assert plt is not None
+    fig, ax = plt.subplots(figsize=(5, 3))
+    ax.hist(series.values, bins=20, color="#1f77b4", alpha=0.75)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel("Frequency")
+    ax.set_title(title)
+    fig.tight_layout()
+    return fig
