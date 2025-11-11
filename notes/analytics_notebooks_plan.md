@@ -53,6 +53,7 @@ Status: Draft — scaffolding notebooks that surface deterministic and stochasti
   - Chart helpers (`plot_production_series`, `plot_utilisation_heatmap`, `plot_distribution`).
 - Plot stack: prefer Altair for interactive views (fallback to matplotlib for static fallback).
 - Output cache: store derived CSV/JSON under `docs/_build/analytics/` to keep notebooks lightweight when re-running.
+- Future improvement: expand notebooks with deeper CLI tie-ins/interactive controls and ensure Altair/Jupyter double-rendering is addressed in a follow-up pass.
 
 ## Execution & Automation
 - Place notebooks under `docs/examples/analytics/`:
