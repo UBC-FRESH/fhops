@@ -85,3 +85,31 @@ def test_tune_grid_cli_runs(tmp_path: Path):
     context = payload.get("context", {})
     assert context.get("source") == "cli.tune-grid"
     assert context.get("batch_size") in {1, 2}
+
+
+def test_tune_bayes_cli_runs(tmp_path: Path):
+    telemetry_log = tmp_path / "telemetry" / "runs.jsonl"
+
+    result = runner.invoke(
+        app,
+        [
+            "tune-bayes",
+            "examples/minitoy/scenario.yaml",
+            "--telemetry-log",
+            str(telemetry_log),
+            "--trials",
+            "2",
+            "--iters",
+            "10",
+            "--seed",
+            "321",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert telemetry_log.exists()
+    lines = telemetry_log.read_text(encoding="utf-8").strip().splitlines()
+    assert len(lines) == 2
+    payload = json.loads(lines[0])
+    assert payload["solver"] == "sa"
+    context = payload.get("context", {})
+    assert context.get("source") == "cli.tune-bayes"

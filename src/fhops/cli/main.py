@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, cast
 
 import pandas as pd
+import optuna
 import typer
 import click
 from rich.console import Console
@@ -1414,7 +1415,7 @@ def tune_random_cli(
         )
 
 
- @app.command("tune-grid")
+@app.command("tune-grid")
 def tune_grid_cli(
     scenarios: list[Path] = typer.Argument(
         ...,
@@ -1552,6 +1553,143 @@ def tune_grid_cli(
             f"[dim]{len(results)} telemetry record(s) written to {telemetry_log}. Step logs stored in {telemetry_log.parent / 'steps'}.[/]"
         )
 
+
+@app.command("tune-bayes")
+def tune_bayes_cli(
+    scenarios: list[Path] = typer.Argument(
+        ...,
+        exists=True,
+        readable=True,
+        dir_okay=True,
+        help="Scenario YAMLs or bundle directories to evaluate.",
+    ),
+    telemetry_log: Path = typer.Option(
+        Path("telemetry/runs.jsonl"),
+        "--telemetry-log",
+        help="Telemetry JSONL capturing per-trial metadata (optional).",
+        dir_okay=False,
+        writable=False,
+    ),
+    trials: int = typer.Option(
+        20,
+        "--trials",
+        min=1,
+        help="Number of Bayesian optimisation trials per scenario.",
+    ),
+    iters: int = typer.Option(
+        250,
+        "--iters",
+        min=10,
+        help="Simulated annealing iterations per trial.",
+    ),
+    seed: int = typer.Option(
+        123,
+        "--seed",
+        help="Random seed for the Bayesian sampler.",
+    ),
+):
+    """Optimise SA hyperparameters with Bayesian/SMBO search (Optuna TPE)."""
+
+    scenario_files: list[Path] = []
+    for entry in scenarios:
+        if entry.is_dir():
+            scenario_files.extend(sorted(entry.rglob("*.yaml")))
+        else:
+            scenario_files.append(entry)
+    if not scenario_files:
+        console.print("[yellow]No scenario files discovered. Nothing to evaluate.[/]")
+        raise typer.Exit(1)
+
+    optuna.logging.set_verbosity(optuna.logging.WARNING)
+    operator_names = list(OperatorRegistry.from_defaults().names())
+
+    for scenario_path in scenario_files:
+        sc = load_scenario(str(scenario_path))
+        pb = Problem.from_scenario(sc)
+        console.print(
+            f"[dim]Bayesian tuning {scenario_path} ({trials} trial(s))[/]"
+        )
+
+        sampler = optuna.samplers.TPESampler(seed=seed)
+        study = optuna.create_study(direction="maximize", sampler=sampler)
+        trial_results: list[dict[str, Any]] = []
+
+        def objective(trial: optuna.trial.Trial) -> float:
+            batch_choice = trial.suggest_int("batch_size", 1, 3)
+            operator_weights = {
+                name: trial.suggest_float(f"weight_{name}", 0.0, 2.0)
+                for name in operator_names
+            }
+            telemetry_kwargs: dict[str, Any] = {}
+            if telemetry_log:
+                telemetry_kwargs = {
+                    "telemetry_log": telemetry_log,
+                    "telemetry_context": {
+                        "source": "cli.tune-bayes",
+                        "trial": trial.number,
+                        "batch_size": batch_choice,
+                        "tuner_seed": seed,
+                    },
+                }
+            try:
+                res = solve_sa(
+                    pb,
+                    iters=iters,
+                    seed=seed + trial.number,
+                    batch_size=batch_choice if batch_choice > 1 else None,
+                    operator_weights=operator_weights,
+                    **telemetry_kwargs,
+                )
+            except Exception as exc:  # pragma: no cover - defensive path
+                trial.set_user_attr("error", repr(exc))
+                raise optuna.exceptions.TrialPruned() from exc
+
+            objective = float(res.get("objective", 0.0))
+            trial.set_user_attr("telemetry_run_id", res.get("meta", {}).get("telemetry_run_id"))
+            trial_results.append(
+                {
+                    "trial": trial.number,
+                    "objective": objective,
+                    "batch_size": batch_choice,
+                    "operator_weights": operator_weights,
+                    "telemetry_run_id": res.get("meta", {}).get("telemetry_run_id"),
+                }
+            )
+            return objective
+
+        try:
+            study.optimize(objective, n_trials=trials)
+        except optuna.exceptions.OptunaError as exc:  # pragma: no cover - defensive path
+            console.print(f"[red]Bayesian tuner failed for {scenario_path}: {exc!r}[/]")
+            continue
+
+        best = study.best_trial
+        console.print(
+            f"Best objective for {scenario_path.name}: {best.value:.3f} (trial {best.number}, batch={best.params.get('batch_size')})"
+        )
+
+        table = Table(title=f"Bayesian tuner trials — {scenario_path.name}", show_lines=False)
+        table.add_column("Trial", justify="right")
+        table.add_column("Objective", justify="right")
+        table.add_column("Batch", justify="right")
+        table.add_column("Weights")
+
+        for record in sorted(trial_results, key=lambda row: row["objective"], reverse=True):
+            weights_preview = ", ".join(
+                f"{name}={weight:.2f}" for name, weight in sorted(record["operator_weights"].items())
+            )
+            table.add_row(
+                str(record["trial"]),
+                f"{record['objective']:.3f}",
+                str(record["batch_size"]),
+                weights_preview if len(weights_preview) < 80 else weights_preview[:77] + "...",
+            )
+        console.print(table)
+
+        if telemetry_log:
+            console.print(
+                f"[dim]{len(trial_results)} telemetry record(s) written to {telemetry_log}. Step logs stored in {telemetry_log.parent / 'steps'}.[/]"
+            )
 
 if __name__ == "__main__":
     app()
