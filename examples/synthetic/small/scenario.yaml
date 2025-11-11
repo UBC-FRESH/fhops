@@ -10,7 +10,7 @@ data:
 timeline:
   shifts:
   - name: S1
-    hours: 11.277521674435338
+    hours: 11.638760837217669
     shifts_per_day: 1
   blackouts: []
   days_per_week: 7

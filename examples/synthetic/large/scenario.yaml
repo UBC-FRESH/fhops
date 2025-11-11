@@ -1,5 +1,5 @@
 name: synthetic-large
-num_days: 16
+num_days: 18
 schema_version: 1.0.0
 data:
   blocks: data/blocks.csv
@@ -10,13 +10,25 @@ data:
 timeline:
   shifts:
   - name: S1
-    hours: 11.25708939959458
+    hours: 10.572538180571637
     shifts_per_day: 2
   blackouts:
-  - start_day: 12
-    end_day: 12
+  - start_day: 4
+    end_day: 4
     reason: synthetic-blackout
-  - start_day: 16
-    end_day: 16
+  - start_day: 5
+    end_day: 6
+    reason: synthetic-blackout
+  - start_day: 7
+    end_day: 9
+    reason: synthetic-blackout
+  - start_day: 8
+    end_day: 8
+    reason: synthetic-blackout
+  - start_day: 9
+    end_day: 9
+    reason: synthetic-blackout
+  - start_day: 14
+    end_day: 15
     reason: synthetic-blackout
   days_per_week: 7
