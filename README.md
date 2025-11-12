@@ -67,6 +67,9 @@ The latest per-scenario leaderboard lives in the Pages bundle at
 strongest algorithm/objective per scenario for the current CI run without downloading artefacts.
 Deeper comparisons (`tuner_comparison.*`, `tuner_leaderboard.*`) contrast grid/random/Bayesian
 strategies with win rates, average deltas, and runtime stats.
+Use ``scripts/run_tuning_benchmarks.py --plan baseline-smoke`` to reproduce the CI smoke sweep
+over minitoy+med42 with aligned budgets; the ``synthetic-smoke`` and ``full-spectrum`` plans extend
+the same matrix to synthetic tiers.
 
 All tuning commands accept `--bundle` to expand scenario manifests. Built-in aliases include
 `baseline` (minitoy + med42) and the synthetic tiers (`synthetic`, `synthetic-small`, etc.).

@@ -9,8 +9,8 @@ def test_run_tuning_benchmarks_minimal(tmp_path: Path):
     cmd = [
         "python",
         "scripts/run_tuning_benchmarks.py",
-        "--bundle",
-        "minitoy",
+        "--plan",
+        "baseline-smoke",
         "--out-dir",
         str(out_dir),
         "--random-runs",
