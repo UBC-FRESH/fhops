@@ -100,6 +100,8 @@ before proposing new work.
       - [x] Grid tuner CLI (`fhops tune-grid`) evaluating preset/batch-size combinations.
     - [x] Add automated comparison reports summarising best configurations per scenario class.
     - [ ] Benchmark tuner strategies (grid vs. random vs. Bayesian/SMBO vs. neural/agentic) and log meta-telemetry for automated model selection.
+    - [ ] Introduce dual convergence thresholds (soft ≤5%, hard ≤1%) in telemetry analytics so automated stopping criteria have rich signals.
+    - [ ] Parallelise the tuning harness (≈16 worker processes × 4 threads) with per-worker telemetry merge so sweeps scale linearly with hardware.
     - [ ] Reporting polish
       - [x] Tighten `_compute_history_deltas` so percentage columns remain valid and Markdown renders cleanly.
       - [x] Confirm README + docs/how-to explicitly reference the GitHub Pages URL and the exported delta artefacts.

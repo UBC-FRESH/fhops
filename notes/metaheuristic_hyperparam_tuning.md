@@ -70,12 +70,25 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
    - Generate Markdown/CSV summaries: recommended iteration budget per tier & algorithm for new scenarios (based on regression predictions + safety margin).
    - Visualise convergence curves (Altair) overlaying empirical and fitted models.
 5. **Automation**
-   - Extend `scripts/analyze_tuner_reports.py` or add a companion script (`scripts/fit_convergence_models.py`) to reproducibly generate the models.
-   - Store fitted parameters/artefacts under `docs/examples/analytics/data/convergence/`.
+ - Extend `scripts/analyze_tuner_reports.py` or add a companion script (`scripts/fit_convergence_models.py`) to reproducibly generate the models.
+ - Store fitted parameters/artefacts under `docs/examples/analytics/data/convergence/`.
 
 ### Documentation TODOs (post-modelling)
 - Publish convergence datasets and model recommendations in the telemetry how-to once baselines are populated and fits are available.
 - Add summary section to the README linking to convergence reports and recommended iteration budgets.
+- Document dual convergence thresholds (hard=≤1%, soft=≤5%) in docs and CLI help once analytics incorporate both signals.
+
+### Dual-threshold convergence analysis (new)
+- [ ] Update convergence reporting to emit both hard (≤1%) and soft (≤5%) gap metrics per run/tier so we can observe early “soft” convergence and final “hard” convergence.
+- [ ] Extend `convergence_summary` outputs with counts/iteration statistics for each threshold (e.g., `success_rate_soft`, `mean_iterations_to_5pct`) to capture curvature information.
+- [ ] Plot convergence trajectories highlighting when runs cross 5% vs. 1% to visualise rate and curvature for each tuner.
+- [ ] Feed both thresholds into the modelling experiment (fit separate regressors and/or joint models) to improve automated stopping rules.
+
+### Parallel telemetry sweeps (planned upgrade)
+- [ ] Add process-level parallelism to `scripts/run_tuning_benchmarks.py` (target 16 worker processes × 4 threads each) so scenario/tier/tuner jobs run concurrently.
+- [ ] Emit per-worker telemetry chunks (JSONL + SQLite) and merge them deterministically after completion to avoid write contention.
+- [ ] Increase default heuristic parallelism (e.g., `--parallel-workers` 4) when running long-tier sweeps so each worker exploits multi-core hardware.
+- [ ] Update docs (`docs/howto/telemetry_tuning.rst`) with recommended parallel flags and resource guidance; capture validation tests for the merge path.
 - [ ] Schedule medium/long tier convergence sweeps (baseline + synthetic bundles) with MIP baselines and publish resulting convergence summaries to docs/Pages once complete.
 - [x] Emit tuner-level meta-telemetry (algorithm name, configuration, budget, convergence stats) so higher-level orchestration can evaluate tuner performance.
   - [x] Extend `RunTelemetryLogger` / CLI tuners to include `tuner_meta` (algorithm label, search budget, config search space hints, convergence indicators).
