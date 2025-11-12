@@ -36,7 +36,7 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - [x] Expose CLI commands (`fhops tune random`, `fhops tune bayes`) that schedule sweeps over scenario bundles.
 - [x] Generate automated comparison reports (CSV/Markdown) summarising best configs per scenario tier; stash fixtures/tests.
 - [ ] Benchmark grid vs. random vs. Bayesian/SMBO (and future neural/meta-learned) tuners across canonical scenarios; log comparative telemetry (win rate, best obj delta, runtime).
-  - [ ] Finalise `benchmark_bundle_plan` (baseline bundle + synthetic tiers) with aligned budgets per tuner and document the configuration in this note and `docs/howto/telemetry_tuning.rst`.
+  - [x] Finalise `benchmark_bundle_plan` (baseline bundle + synthetic tiers) with aligned budgets per tuner and document the configuration in this note and `docs/howto/telemetry_tuning.rst`.
   - [ ] Automate comparison artefacts integration in CI (publish `tuner_comparison.*` and `tuner_leaderboard.*` alongside summaries).
 - [x] Emit tuner-level meta-telemetry (algorithm name, configuration, budget, convergence stats) so higher-level orchestration can evaluate tuner performance.
   - [x] Extend `RunTelemetryLogger` / CLI tuners to include `tuner_meta` (algorithm label, search budget, config search space hints, convergence indicators).
