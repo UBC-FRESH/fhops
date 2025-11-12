@@ -40,8 +40,12 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
   - [ ] Automate comparison artefacts integration in CI (publish `tuner_comparison.*` and `tuner_leaderboard.*` alongside summaries).
   - [x] Produce per-bundle leaderboards/comparisons (baseline vs each synthetic tier) and publish them alongside global summaries.
   - [ ] Add budget sensitivity sweeps (e.g., 100/250/500 iterations) and chart marginal gain vs runtime.
+    - [ ] When running local sweeps, target ≥64 CPU cores (leave ~8 cores idle) and cap per-run RSS to ~8 GB so multi-core runs remain stable.
   - [ ] Incorporate ILS/Tabu (and future tuners) into the benchmark harness with aligned budgets.
   - [ ] Generate convergence diagnostics by comparing heuristic best trajectories against MIP optimal objectives; record convergence slopes and thresholds.
+    - [ ] Measure iterations-to-≤1% optimality gap per tuner/scenario when MIP optima are known.
+    - [ ] Fit convergence models (gap vs. iterations vs. scenario features/difficulty) and store parameters for future stopping-criterion recommendations.
+    - [ ] Extend benchmark plans with long-budget runs (e.g., 100/250/500+ iters or trials) to populate the convergence dataset.
   - [ ] Compute scenario difficulty indices (delta to MIP optimum, tuner win distribution) and include in comparison artefacts.
 - [x] Emit tuner-level meta-telemetry (algorithm name, configuration, budget, convergence stats) so higher-level orchestration can evaluate tuner performance.
   - [x] Extend `RunTelemetryLogger` / CLI tuners to include `tuner_meta` (algorithm label, search budget, config search space hints, convergence indicators).
@@ -50,11 +54,21 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 
 ## Benchmark Bundle Plan (draft)
 
-| Plan name       | Bundles / Scenarios                                        | Random tuner budget          | Grid tuner budget                                     | Bayesian tuner budget        |
-|-----------------|------------------------------------------------------------|------------------------------|-------------------------------------------------------|------------------------------|
-| baseline-smoke  | `baseline` (examples/minitoy, examples/med42)              | 3 runs × 250 iters           | presets `balanced`,`explore` × batch `{1,2}` × 250 iters | 30 trials × 250 iters        |
-| synthetic-smoke | `synthetic` (small, medium, large tiers)                   | 3 runs × 300 iters           | presets `balanced`,`explore` × batch `{1,2}` × 300 iters | 30 trials × 300 iters        |
-| full-spectrum   | baseline + synthetic bundles (combined run)               | inherits per-scenario budgets above | inherits per-scenario budgets above                     | inherits per-scenario budgets |
+### Budget tiers (wired into `run_tuning_benchmarks.py`)
+
+| Tier label | Random tuner budget | Grid tuner budget | Bayesian/SMBO budget |
+|------------|--------------------|-------------------|----------------------|
+| `short`    | 2 runs × 150 iters | presets `balanced`,`explore` × batch `{1,2}` × 150 iters | 20 trials × 150 iters |
+| `medium`   | 3 runs × 300 iters | presets `balanced`,`explore` × batch `{1,2}` × 300 iters | 40 trials × 300 iters |
+| `long`     | 5 runs × 600 iters | presets `balanced`,`explore` × batch `{1,2}` × 600 iters | 75 trials × 600 iters |
+
+Smaller smoke runs override the tier defaults via plan-specific budgets (see table below), but the CLI runner now accepts `--tier short --tier medium --tier long` and stamps telemetry with `context.tier`.
+
+| Plan name       | Bundles / Scenarios                                        | Default tiers | Notes |
+|-----------------|------------------------------------------------------------|---------------|-------|
+| baseline-smoke  | `baseline` (examples/minitoy, examples/med42)              | `short`       | Overrides short tier to 3 runs × 250 iters and 30 SMBO trials to mirror legacy smoke timings. |
+| synthetic-smoke | `synthetic` (small, medium, large tiers)                   | `short`       | Short tier lifted to 300 iters / 30 trials to exercise the synthetic instances. |
+| full-spectrum   | baseline + synthetic bundles (combined run)               | `short`,`medium` | Short tier matches smokes; medium tier extends to 4 runs × 450 iters / 45 SMBO trials for convergence comparisons. |
 
 Guidelines:
 
@@ -62,6 +76,9 @@ Guidelines:
 - Grid configs iterate presets before batch sizes to keep result ordering stable.
 - Future tuners (e.g., neural/agentic) should target equivalent iteration/trial budgets or document deviations.
 - Add a `benchmark_plan` preset to scripts and CI so the same matrix is reused locally and in automation.
+- `scripts/run_tuning_benchmarks.py` accepts repeated `--tier` flags and forwards `--tier-label` to every CLI tuner so telemetry consumers can pivot by tier.
+- When running wide sweeps, request at least 64 of 72 available CPU cores (`GNU parallel` or runner `--processes`) and cap per-run RSS to ≈8 GB to avoid node exhaustion.
+- Use long-tier budgets when fitting convergence models (iterations to ≤1 % optimality gap) so the telemetry captures the tail behaviour needed for extrapolation.
 
 ### Agentic Tuning Integration
 - [ ] Define prompt templates and action space for the LLM agent (config proposals, narrative rationale).

@@ -212,6 +212,7 @@ the canonical bundles and emit aggregate reports in one go:
 
    python scripts/run_tuning_benchmarks.py \
        --bundle baseline \
+       --tier short --tier medium \
        --out-dir tmp/tuning-benchmarks \
        --random-runs 2 \
        --grid-iters 150 \
@@ -221,7 +222,8 @@ The script resets (or appends to) the telemetry log, runs the requested tuners, 
 ``fhops telemetry report`` to generate ``tuner_report.{csv,md}``, and invokes
 ``analyze_tuner_reports.py`` with ``--out-summary-*`` so you get a concise per-scenario
 leaderboard. Adjust ``--bundle`` and tuner-specific options to suit larger sweeps or
-CI smoke passes.
+CI smoke passes. Repeating ``--tier`` runs each budget tier sequentially and forwards
+``--tier-label`` to the CLI tuners so telemetry collectors can pivot results by tier.
 
 In addition to the per-scenario summaries, the script now emits:
 
@@ -235,22 +237,31 @@ Use ``--plan`` to reuse the curated budgets across bundles:
 
 .. list-table::
    :header-rows: 1
-   :widths: 25 40 35
+   :widths: 20 35 15 30
 
    * - Plan
      - Coverage
-     - Budgets (random / grid / bayes)
+     - Default tiers
+     - Tier overrides (random / grid / bayes)
    * - ``baseline-smoke``
      - ``examples/minitoy`` + ``examples/med42``
+     - ``short``
      - ``3 × 250 iters`` / ``(balanced, explore) × batch {1,2} × 250`` / ``30 trials × 250``
    * - ``synthetic-smoke``
      - ``examples/synthetic/{small,medium,large}``
+     - ``short``
      - ``3 × 300 iters`` / ``(balanced, explore) × batch {1,2} × 300`` / ``30 trials × 300``
    * - ``full-spectrum``
      - baseline + synthetic bundles
-     - inherits budgets from the above rows
+     - ``short``, ``medium``
+     - ``medium`` tier extends to ``4 × 450 iters`` / ``(balanced, explore) × batch {1,2} × 450`` / ``45 trials × 450``
 
-Budgets deliver a 3–5 minute sweep locally; override any option (e.g., ``--random-runs``) as needed.
+Tier defaults (short/medium/long) are embedded in the runner; omit overrides to pick up
+``2 × 150`` / ``3 × 300`` / ``5 × 600`` iteration schedules for random/grid/bayesian respectively.
+Budgets deliver a 3–5 minute sweep locally on ``short``; bump to ``medium`` or ``long`` when you need
+convergence traces for modelling. Override any option (e.g., ``--random-runs``) as needed.
+When running full benchmark suites on shared hardware, pin at least 64 CPU cores to the job and cap
+per-run RSS to ~8 GB to avoid starving other workloads while we expand the benchmark matrix.
 
 CI publishes the latest summary tables to GitHub Pages; check
 ``https://<org>.github.io/<repo>/telemetry/latest_tuner_summary.md`` (per-scenario
