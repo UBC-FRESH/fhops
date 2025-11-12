@@ -17,6 +17,7 @@
 - Telemetry context now records `bundle` / `bundle_member`, and `tuner_summary.scenario_best` uses `bundle:member` keys so comparison scripts retain bundle provenance while generating reports/deltas.
 - Documented bundle usage in `docs/howto/telemetry_tuning.rst`, updated the README, and marked the roadmap/plan checklist item (“Provide CLI surfaces for bundle sweeps”) as complete.
 - Extended `scripts/analyze_tuner_reports.py` with per-scenario summary outputs (`--out-summary-csv`, `--out-summary-markdown`) so CI can surface the leading algorithm/objective per report without opening the full comparison table.
+- Added ``scripts/run_tuning_benchmarks.py`` to orchestrate random/grid/Bayesian sweeps over scenario bundles, emit fresh telemetry reports, and produce the new per-scenario summaries in one shot.
 
 ## 2025-11-11 — Analytics notebook automation
 - Added the analytics notebook runner to CI (`.github/workflows/ci.yml`) so the curated suite executes in light mode on every push/PR, exercising Altair plots and playback helpers.

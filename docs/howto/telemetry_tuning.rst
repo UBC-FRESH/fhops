@@ -202,6 +202,27 @@ mirroring the GitHub Pages snapshot. Monitoring those files or wiring them into 
 status badge is a simple way to highlight regressions without manually opening the
 full report.
 
+Automated Sweeps
+----------------
+
+Use ``scripts/run_tuning_benchmarks.py`` to orchestrate random/grid/Bayesian sweeps over
+the canonical bundles and emit aggregate reports in one go:
+
+.. code-block:: bash
+
+   python scripts/run_tuning_benchmarks.py \
+       --bundle baseline \
+       --out-dir tmp/tuning-benchmarks \
+       --random-runs 2 \
+       --grid-iters 150 \
+       --bayes-trials 4
+
+The script resets (or appends to) the telemetry log, runs the requested tuners, calls
+``fhops telemetry report`` to generate ``tuner_report.{csv,md}``, and invokes
+``analyze_tuner_reports.py`` with ``--out-summary-*`` so you get a concise per-scenario
+leaderboard. Adjust ``--bundle`` and tuner-specific options to suit larger sweeps or
+CI smoke passes.
+
 .. _telemetry_bundle_aliases:
 
 Bundle Aliases
