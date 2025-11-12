@@ -42,11 +42,12 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
   - [ ] Add budget sensitivity sweeps (e.g., 100/250/500 iterations) and chart marginal gain vs runtime.
     - [ ] When running local sweeps, target ≥64 CPU cores (leave ~8 cores idle) and cap per-run RSS to ~8 GB so multi-core runs remain stable.
   - [x] Incorporate ILS/Tabu (and future tuners) into the benchmark harness with aligned budgets.
-  - [ ] Generate convergence diagnostics by comparing heuristic best trajectories against MIP optimal objectives; record convergence slopes and thresholds.
-    - [ ] Measure iterations-to-≤1% optimality gap per tuner/scenario when MIP optima are known.
-    - [ ] Fit convergence models (gap vs. iterations vs. scenario features/difficulty) and store parameters for future stopping-criterion recommendations.
-    - [ ] Extend benchmark plans with long-budget runs (e.g., 100/250/500+ iters or trials) to populate the convergence dataset.
+- [ ] Generate convergence diagnostics by comparing heuristic best trajectories against MIP optimal objectives; record convergence slopes and thresholds.
+  - [ ] Measure iterations-to-≤1% optimality gap per tuner/scenario when MIP optima are known.
+  - [ ] Fit convergence models (gap vs. iterations vs. scenario features/difficulty) and store parameters for future stopping-criterion recommendations.
+  - [ ] Extend benchmark plans with long-budget runs (e.g., 100/250/500+ iters or trials) to populate the convergence dataset.
 - [ ] Compute scenario difficulty indices (delta to MIP optimum, tuner win distribution) and include in comparison artefacts.
+- [ ] Schedule medium/long tier convergence sweeps (baseline + synthetic bundles) with MIP baselines and publish resulting convergence summaries to docs/Pages once complete.
 - [x] Emit tuner-level meta-telemetry (algorithm name, configuration, budget, convergence stats) so higher-level orchestration can evaluate tuner performance.
   - [x] Extend `RunTelemetryLogger` / CLI tuners to include `tuner_meta` (algorithm label, search budget, config search space hints, convergence indicators).
   - [x] Persist meta fields in SQLite (either JSON column or dedicated table) for downstream selection agents.
