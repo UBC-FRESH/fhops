@@ -107,13 +107,27 @@ def _format_markdown(df: pd.DataFrame, labels: list[str]) -> str:
     return "\n".join(lines)
 
 
-def _format_number(value, prefix: str = "") -> str:
+def _format_number(value, *, prefix: str = "", suffix: str = "", multiplier: float | None = None) -> str:
     if value is None or (isinstance(value, float) and pd.isna(value)):
         return ""
     try:
-        return f"{prefix}{float(value):.3f}"
+        numeric = float(value)
     except (TypeError, ValueError):
         return str(value)
+    if multiplier is not None:
+        numeric *= multiplier
+    return f"{prefix}{numeric:.3f}{suffix}"
+
+
+def _format_percent(value) -> str:
+    return _format_number(value, suffix="%", multiplier=100.0)
+
+
+def _is_zero(value) -> bool:
+    try:
+        return float(value) == 0.0
+    except (TypeError, ValueError):
+        return False
 
 
 DESIRED_METRICS = {
@@ -121,8 +135,12 @@ DESIRED_METRICS = {
     "mobilisation_cost": "best_mobilisation_cost",
     "utilisation_ratio_mean_shift": "best_utilisation_ratio_shift",
     "utilisation_ratio_mean_day": "best_utilisation_ratio_day",
-    "downtime_hours": "best_downtime_hours",
+    "downtime_hours_total": "best_downtime_hours",
+    "downtime_event_count": "best_downtime_events",
+    "downtime_production_loss_est": "best_downtime_loss",
     "weather_severity_total": "best_weather_severity",
+    "weather_hours_est": "best_weather_hours",
+    "weather_production_loss_est": "best_weather_loss",
 }
 METRIC_LABELS = {
     "best_objective": "Best Objective",
@@ -131,7 +149,11 @@ METRIC_LABELS = {
     "best_utilisation_ratio_shift": "Utilisation (Shift)",
     "best_utilisation_ratio_day": "Utilisation (Day)",
     "best_downtime_hours": "Downtime Hours",
+    "best_downtime_events": "Downtime Events",
+    "best_downtime_loss": "Downtime Loss (Est.)",
     "best_weather_severity": "Weather Severity",
+    "best_weather_hours": "Weather Hours (Est.)",
+    "best_weather_loss": "Weather Loss (Est.)",
 }
 
 
@@ -279,18 +301,17 @@ def _compute_history_deltas(df: pd.DataFrame) -> pd.DataFrame:
             entry[f"{metric}"] = current_val
             if current_val is not None and prev_val is not None and not (pd.isna(current_val) or pd.isna(prev_val)):
                 entry[f"{metric}_delta"] = float(current_val) - float(prev_val)
+                if not _is_zero(prev_val):
+                    entry[f"{metric}_delta_pct"] = (float(current_val) - float(prev_val)) / float(prev_val)
+                else:
+                    entry[f"{metric}_delta_pct"] = None
             else:
                 entry[f"{metric}_delta"] = None
+                entry[f"{metric}_delta_pct"] = None
         records.append(entry)
-    columns = [
-        "scenario",
-        "algorithm",
-        "snapshot_current",
-        "snapshot_previous",
-    ]
-    for metric in metrics:
-        columns.extend([metric, f"{metric}_delta"])
-    return pd.DataFrame(records, columns=columns) if records else pd.DataFrame(columns=columns)
+    if not records:
+        return pd.DataFrame()
+    return pd.DataFrame(records)
 
 
 def _render_delta_markdown(df: pd.DataFrame) -> str:
@@ -300,10 +321,15 @@ def _render_delta_markdown(df: pd.DataFrame) -> str:
     metrics = ["best_objective"] + [col for col in DESIRED_METRICS.values() if col in df.columns]
     for metric in metrics:
         label = METRIC_LABELS.get(metric, metric.replace("best_", "").replace("_", " ").title())
-        metric_pairs.append((metric, f"{metric}_delta", label))
+        entries = [(metric, label), (f"{metric}_delta", f"Δ {label}")]
+        pct_column = f"{metric}_delta_pct"
+        if pct_column in df.columns:
+            entries.append((pct_column, f"Δ% {label}"))
+        metric_pairs.append(entries)
     headers = ["Scenario", "Algorithm", "Current Snapshot", "Previous Snapshot"]
-    for _, _, label in metric_pairs:
-        headers.extend([label, f"Δ {label}"])
+    for entries in metric_pairs:
+        for _, header_label in entries:
+            headers.append(header_label)
     lines = [
         "| " + " | ".join(headers) + " |",
         "| " + " | ".join(["---"] * len(headers)) + " |",
@@ -315,9 +341,15 @@ def _render_delta_markdown(df: pd.DataFrame) -> str:
             str(row["snapshot_current"]),
             str(row["snapshot_previous"]),
         ]
-        for metric, delta_metric, _ in metric_pairs:
-            cells.append(_format_number(row.get(metric)))
-            cells.append(_format_number(row.get(delta_metric), prefix="+"))
+        for entries in metric_pairs:
+            for column, _ in entries:
+                value = row.get(column)
+                if column.endswith("_delta_pct"):
+                    cells.append(_format_percent(value))
+                elif column.endswith("_delta"):
+                    cells.append(_format_number(value, prefix="+"))
+                else:
+                    cells.append(_format_number(value))
         lines.append("| " + " | ".join(cells) + " |")
     return "\n".join(lines)
 

@@ -33,7 +33,7 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - [x] CLI tuners (random/grid/bayes) append `tuner_summary` records capturing per-scenario best objectives and configuration counts for quick comparisons.
 - [x] `fhops telemetry report` command summarises tuner performance to CSV/Markdown directly from the SQLite store (see tests and telemetry docs).
 - [x] Integrate a Bayesian/SMBO tuner (Optuna TPE) with pluggable search spaces (`fhops tune-bayes`).
-- [ ] Expose CLI commands (`fhops tune random`, `fhops tune bayes`) that schedule sweeps over scenario bundles.
+- [x] Expose CLI commands (`fhops tune random`, `fhops tune bayes`) that schedule sweeps over scenario bundles.
 - [x] Generate automated comparison reports (CSV/Markdown) summarising best configs per scenario tier; stash fixtures/tests.
 - [ ] Benchmark grid vs. random vs. Bayesian/SMBO (and future neural/meta-learned) tuners across canonical scenarios; log comparative telemetry (win rate, best obj delta, runtime).
 - [ ] Emit tuner-level meta-telemetry (algorithm name, configuration, budget, convergence stats) so higher-level orchestration can evaluate tuner performance.
@@ -53,6 +53,10 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - [x] Publish telemetry history artefacts (minitoy + med42) to GitHub Pages for quick trend review.
 - [ ] Ensure CI smoke targets exist for lightweight tuning sweeps (e.g., single random search iteration).
 - [x] Schedule `fhops telemetry report` in CI/nightly to publish comparison artifacts for baseline scenarios.
+- [ ] Automate a dashboard or README badge that surfaces the published delta summary so regressions are visible without opening the full report.
+- [x] Tighten `_compute_history_deltas` so percentage columns remain valid and Markdown renders cleanly.
+- [x] Verify README/how-to copy clearly references the Pages URL and exported delta artefacts.
+- [x] Expand `DESIRED_METRICS` (e.g., downtime) once telemetry logging exposes the fields.
 
 ## Notes on Meta-Tuning & Literature
 - Thornton, C., Hutter, F., Hoos, H. H., & Leyton-Brown, K. (2013). *Auto-WEKA: Combined Selection and Hyperparameter Optimization of Classification Algorithms*. Proceedings of KDD ’13, 847–855. https://doi.org/10.1145/2487575.2487629 — Demonstrates joint optimisation of algorithm choice and hyperparameters, effectively automating tuner selection via logged performance.
