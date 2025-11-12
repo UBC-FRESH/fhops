@@ -88,6 +88,12 @@ aggregated statistics (best/mean objective, run counts) plus any matching
 executes this pipeline for **minitoy** and **med42** so the published artefacts
 already contain multiple scenarios.
 
+Add ``--out-summary-csv`` / ``--out-summary-markdown`` to emit a per-scenario
+scoreboard showing the best algorithm/objective for each report label (baseline,
+experiment, etc.). The summary files are ideal for dashboard badges or CI checks
+because they surface the top performer per scenario without manually inspecting
+the full table.
+
 Sample Output
 -------------
 
