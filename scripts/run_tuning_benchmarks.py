@@ -10,10 +10,18 @@ import sys
 from collections import defaultdict
 from copy import deepcopy
 from pathlib import Path
+from typing import Any, Sequence
 import json
 import sqlite3
 from statistics import fmean
 import pandas as pd
+import typer
+
+from fhops.cli.main import _collect_tuning_scenarios
+from fhops.optimization.heuristics.ils import solve_ils
+from fhops.optimization.heuristics.tabu import solve_tabu
+from fhops.scenario.contract import Problem
+from fhops.scenario.io.loaders import load_scenario
 
 CLI_ENTRY_POINT = [sys.executable, "-m", "fhops.cli.main"]
 ANALYZE_SCRIPT = [sys.executable, "scripts/analyze_tuner_reports.py"]
@@ -27,22 +35,34 @@ DEFAULT_GRID_BATCH_SIZES = [1, 2]
 DEFAULT_GRID_PRESETS = ["balanced", "explore"]
 DEFAULT_TUNERS = ["random", "grid", "bayes"]
 DEFAULT_TIERS = ["short"]
+DEFAULT_ILS_RUNS = 2
+DEFAULT_ILS_ITERS = 250
+DEFAULT_ILS_SEED = 321
+DEFAULT_TABU_RUNS = 2
+DEFAULT_TABU_ITERS = 1500
+DEFAULT_TABU_SEED = 555
 
 TIER_BUDGETS: dict[str, dict[str, object]] = {
     "short": {
         "random": {"runs": 2, "iters": 150},
         "grid": {"iters": 150, "batch_sizes": list(DEFAULT_GRID_BATCH_SIZES), "presets": list(DEFAULT_GRID_PRESETS)},
         "bayes": {"trials": 20, "iters": 150},
+        "ils": {"runs": 2, "iters": 200, "perturbation_strength": 3, "stall_limit": 10},
+        "tabu": {"runs": 2, "iters": 1200, "stall_limit": 150},
     },
     "medium": {
         "random": {"runs": 3, "iters": 300},
         "grid": {"iters": 300, "batch_sizes": list(DEFAULT_GRID_BATCH_SIZES), "presets": list(DEFAULT_GRID_PRESETS)},
         "bayes": {"trials": 40, "iters": 300},
+        "ils": {"runs": 3, "iters": 350, "perturbation_strength": 3, "stall_limit": 12},
+        "tabu": {"runs": 3, "iters": 2000, "stall_limit": 180},
     },
     "long": {
         "random": {"runs": 5, "iters": 600},
         "grid": {"iters": 600, "batch_sizes": list(DEFAULT_GRID_BATCH_SIZES), "presets": list(DEFAULT_GRID_PRESETS)},
         "bayes": {"trials": 75, "iters": 600},
+        "ils": {"runs": 5, "iters": 700, "perturbation_strength": 4, "stall_limit": 15, "hybrid_use_mip": True},
+        "tabu": {"runs": 5, "iters": 3000, "stall_limit": 220},
     },
 }
 
@@ -50,38 +70,49 @@ BENCHMARK_PLANS: dict[str, dict[str, object]] = {
     "baseline-smoke": {
         "bundles": ["baseline"],
         "tiers": ["short"],
+        "tuners": ["random", "grid", "bayes", "ils", "tabu"],
         "budgets": {
             "short": {
                 "random": {"runs": 3, "iters": 250},
                 "grid": {"iters": 250, "batch_sizes": [1, 2], "presets": ["balanced", "explore"]},
                 "bayes": {"trials": 30, "iters": 250},
+                "ils": {"runs": 2, "iters": 260, "perturbation_strength": 3, "stall_limit": 10},
+                "tabu": {"runs": 2, "iters": 1600, "stall_limit": 160},
             }
         },
     },
     "synthetic-smoke": {
         "bundles": ["synthetic"],
         "tiers": ["short"],
+        "tuners": ["random", "grid", "bayes", "ils", "tabu"],
         "budgets": {
             "short": {
                 "random": {"runs": 3, "iters": 300},
                 "grid": {"iters": 300, "batch_sizes": [1, 2], "presets": ["balanced", "explore"]},
                 "bayes": {"trials": 30, "iters": 300},
+                "ils": {"runs": 2, "iters": 320, "perturbation_strength": 3, "stall_limit": 12},
+                "tabu": {"runs": 2, "iters": 1800, "stall_limit": 180},
             }
         },
     },
     "full-spectrum": {
         "bundles": ["baseline", "synthetic"],
         "tiers": ["short", "medium"],
+        "tuners": ["random", "grid", "bayes", "ils", "tabu"],
         "budgets": {
             "short": {
                 "random": {"runs": 3, "iters": 300},
                 "grid": {"iters": 300, "batch_sizes": [1, 2], "presets": ["balanced", "explore"]},
                 "bayes": {"trials": 30, "iters": 300},
+                "ils": {"runs": 2, "iters": 320, "perturbation_strength": 3, "stall_limit": 12},
+                "tabu": {"runs": 2, "iters": 1800, "stall_limit": 180},
             },
             "medium": {
                 "random": {"runs": 4, "iters": 450},
                 "grid": {"iters": 450, "batch_sizes": [1, 2], "presets": ["balanced", "explore"]},
                 "bayes": {"trials": 45, "iters": 450},
+                "ils": {"runs": 3, "iters": 520, "perturbation_strength": 3, "stall_limit": 14},
+                "tabu": {"runs": 3, "iters": 2200, "stall_limit": 200},
             },
         },
     },
@@ -136,7 +167,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--tuner",
         action="append",
-        choices=["random", "grid", "bayes"],
+        choices=["random", "grid", "bayes", "ils", "tabu"],
         help="Subset of tuners to run (defaults to plan or all).",
     )
     parser.add_argument(
@@ -192,6 +223,36 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Iterations per Bayesian optimisation trial.",
     )
     parser.add_argument(
+        "--ils-runs",
+        type=int,
+        help="Number of Iterated Local Search restarts per scenario.",
+    )
+    parser.add_argument(
+        "--ils-iters",
+        type=int,
+        help="Iterated Local Search iterations per restart.",
+    )
+    parser.add_argument(
+        "--ils-base-seed",
+        type=int,
+        help="Base seed for Iterated Local Search runs (incremented per run).",
+    )
+    parser.add_argument(
+        "--tabu-runs",
+        type=int,
+        help="Number of Tabu Search restarts per scenario.",
+    )
+    parser.add_argument(
+        "--tabu-iters",
+        type=int,
+        help="Tabu Search iterations per restart.",
+    )
+    parser.add_argument(
+        "--tabu-base-seed",
+        type=int,
+        help="Base seed for Tabu Search runs (incremented per run).",
+    )
+    parser.add_argument(
         "--summary-label",
         default="current",
         help="Report label used when generating summary tables (default: current).",
@@ -217,6 +278,210 @@ def ensure_clean_log(log_path: Path, append: bool) -> None:
         shutil.rmtree(steps_dir)
 
 
+def _resolve_heuristic_scenarios(
+    scenario_args: Sequence[Path] | None,
+    bundle_specs: Sequence[str] | None,
+) -> tuple[list[Path], dict[Path, dict[str, str]]]:
+    try:
+        scenarios, bundle_map = _collect_tuning_scenarios(scenario_args or [], bundle_specs or [])
+    except typer.BadParameter as exc:  # pragma: no cover - delegated CLI validation
+        raise RuntimeError(f"Failed to resolve scenarios for heuristics: {exc}") from exc
+    ordered: list[Path] = []
+    seen: set[Path] = set()
+    for scenario_path in scenarios:
+        resolved = scenario_path.resolve()
+        if resolved in seen:
+            continue
+        seen.add(resolved)
+        ordered.append(scenario_path)
+    return ordered, bundle_map
+
+
+def _scenario_display_name(scenario_path: Path, sc: Any) -> str:
+    return (
+        getattr(sc, "name", None)
+        or scenario_path.parent.name
+        or scenario_path.stem
+    )
+
+
+def _build_context_payload(
+    *,
+    algorithm: str,
+    scenario_path: Path,
+    scenario_label: str,
+    bundle_meta: dict[str, str] | None,
+    tier_label: str | None,
+    budget: dict[str, Any],
+    progress: dict[str, Any],
+    config: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    context: dict[str, Any] = {
+        "source": f"benchmark.{algorithm}",
+        "scenario_path": str(scenario_path),
+        "scenario_label": scenario_label,
+    }
+    if bundle_meta:
+        context["bundle"] = bundle_meta.get("bundle")
+        context["bundle_member"] = bundle_meta.get("bundle_member", scenario_label)
+    if tier_label:
+        context["tier"] = tier_label
+    tuner_meta = {
+        "algorithm": algorithm,
+        "budget": budget,
+        "progress": progress,
+    }
+    if config:
+        tuner_meta["config"] = config
+    if bundle_meta:
+        tuner_meta["bundle"] = bundle_meta.get("bundle")
+        tuner_meta["bundle_member"] = bundle_meta.get("bundle_member", scenario_label)
+    context["tuner_meta"] = tuner_meta
+    return context
+
+
+def _run_ils_benchmarks(
+    scenario_files: Sequence[Path],
+    bundle_map: dict[Path, dict[str, str]],
+    telemetry_log: Path,
+    *,
+    runs: int,
+    iters: int,
+    base_seed: int,
+    tier_label: str | None,
+    extra_kwargs: dict[str, Any],
+    verbose: bool,
+) -> None:
+    if runs <= 0 or iters <= 0:
+        return
+    seed_counter = base_seed
+    for scenario_index, scenario_path in enumerate(scenario_files):
+        sc = load_scenario(str(scenario_path))
+        scenario_label = _scenario_display_name(scenario_path, sc)
+        bundle_meta = bundle_map.get(scenario_path.resolve())
+        if verbose:
+            meta_str = (
+                f"bundle={bundle_meta['bundle']}, member={bundle_meta.get('bundle_member')}"
+                if bundle_meta
+                else "standalone"
+            )
+            print(
+                f"[ILS] {scenario_label} ({meta_str}) — runs={runs}, iters={iters}, tier={tier_label or 'n/a'}"
+            )
+        for run_idx in range(runs):
+            pb = Problem.from_scenario(sc)
+            run_seed = seed_counter
+            seed_counter += 1
+            budget_payload = {
+                "runs_total": runs,
+                "iters_per_run": iters,
+                "tier": tier_label,
+            }
+            progress_payload = {
+                "run_index": run_idx + 1,
+                "total_runs": runs,
+            }
+            config_payload = {
+                key: value for key, value in extra_kwargs.items() if key in {
+                    "perturbation_strength",
+                    "stall_limit",
+                    "hybrid_use_mip",
+                    "hybrid_mip_time_limit",
+                    "batch_size",
+                    "max_workers",
+                }
+            }
+            telemetry_context = _build_context_payload(
+                algorithm="ils",
+                scenario_path=scenario_path,
+                scenario_label=scenario_label,
+                bundle_meta=bundle_meta,
+                tier_label=tier_label,
+                budget=budget_payload,
+                progress=progress_payload,
+                config=config_payload or None,
+            )
+            telemetry_context["run_seed"] = run_seed
+            solve_ils(
+                pb,
+                iters=iters,
+                seed=run_seed,
+                telemetry_log=telemetry_log,
+                telemetry_context=telemetry_context,
+                **extra_kwargs,
+            )
+
+
+def _run_tabu_benchmarks(
+    scenario_files: Sequence[Path],
+    bundle_map: dict[Path, dict[str, str]],
+    telemetry_log: Path,
+    *,
+    runs: int,
+    iters: int,
+    base_seed: int,
+    tier_label: str | None,
+    extra_kwargs: dict[str, Any],
+    verbose: bool,
+) -> None:
+    if runs <= 0 or iters <= 0:
+        return
+    seed_counter = base_seed
+    for scenario_index, scenario_path in enumerate(scenario_files):
+        sc = load_scenario(str(scenario_path))
+        scenario_label = _scenario_display_name(scenario_path, sc)
+        bundle_meta = bundle_map.get(scenario_path.resolve())
+        if verbose:
+            meta_str = (
+                f"bundle={bundle_meta['bundle']}, member={bundle_meta.get('bundle_member')}"
+                if bundle_meta
+                else "standalone"
+            )
+            print(
+                f"[Tabu] {scenario_label} ({meta_str}) — runs={runs}, iters={iters}, tier={tier_label or 'n/a'}"
+            )
+        for run_idx in range(runs):
+            pb = Problem.from_scenario(sc)
+            run_seed = seed_counter
+            seed_counter += 1
+            budget_payload = {
+                "runs_total": runs,
+                "iters_per_run": iters,
+                "tier": tier_label,
+            }
+            progress_payload = {
+                "run_index": run_idx + 1,
+                "total_runs": runs,
+            }
+            config_payload = {
+                key: value for key, value in extra_kwargs.items() if key in {
+                    "tabu_tenure",
+                    "stall_limit",
+                    "batch_size",
+                    "max_workers",
+                }
+            }
+            telemetry_context = _build_context_payload(
+                algorithm="tabu",
+                scenario_path=scenario_path,
+                scenario_label=scenario_label,
+                bundle_meta=bundle_meta,
+                tier_label=tier_label,
+                budget=budget_payload,
+                progress=progress_payload,
+                config=config_payload or None,
+            )
+            telemetry_context["run_seed"] = run_seed
+            solve_tabu(
+                pb,
+                iters=iters,
+                seed=run_seed,
+                telemetry_log=telemetry_log,
+                telemetry_context=telemetry_context,
+                **extra_kwargs,
+            )
+
+
 def run_tuner_commands(
     *,
     bundles: list[str],
@@ -230,70 +495,125 @@ def run_tuner_commands(
     grid_presets: list[str],
     bayes_trials: int,
     bayes_iters: int,
+    ils_config: dict[str, Any] | None,
+    tabu_config: dict[str, Any] | None,
+    heuristic_scenarios: list[Path] | None,
+    heuristic_bundle_map: dict[Path, dict[str, str]] | None,
     verbose: bool,
     tier_label: str | None = None,
 ) -> None:
     bundle_arguments = _bundle_args(bundles) if bundles else []
     scenario_arguments = _scenario_args(scenarios) if scenarios else []
     target_arguments = bundle_arguments + scenario_arguments
-    if not target_arguments:
+
+    if not target_arguments and not (heuristic_scenarios and tuners):
         raise ValueError("No bundles or scenarios specified for tuning.")
 
-    if "random" in tuners:
-        cmd = (
-            CLI_ENTRY_POINT
-            + ["tune-random"]
-            + target_arguments
-            + [
-                "--telemetry-log",
-                str(telemetry_log),
-                "--runs",
-                str(random_runs),
-                "--iters",
-                str(random_iters),
-            ]
-        )
-        if tier_label:
-            cmd.extend(["--tier-label", tier_label])
-        _run(cmd, verbose=verbose)
+    if target_arguments and any(
+        name in tuners for name in ("random", "grid", "bayes")
+    ):
+        if "random" in tuners:
+            cmd = (
+                CLI_ENTRY_POINT
+                + ["tune-random"]
+                + target_arguments
+                + [
+                    "--telemetry-log",
+                    str(telemetry_log),
+                    "--runs",
+                    str(random_runs),
+                    "--iters",
+                    str(random_iters),
+                ]
+            )
+            if tier_label:
+                cmd.extend(["--tier-label", tier_label])
+            _run(cmd, verbose=verbose)
 
-    if "grid" in tuners:
-        cmd = (
-            CLI_ENTRY_POINT
-            + ["tune-grid"]
-            + target_arguments
-            + [
-                "--telemetry-log",
-                str(telemetry_log),
-                "--iters",
-                str(grid_iters),
-            ]
-        )
-        for batch_size in grid_batch_sizes:
-            cmd.extend(["--batch-size", str(batch_size)])
-        for preset in grid_presets:
-            cmd.extend(["--preset", preset])
-        if tier_label:
-            cmd.extend(["--tier-label", tier_label])
-        _run(cmd, verbose=verbose)
+        if "grid" in tuners:
+            cmd = (
+                CLI_ENTRY_POINT
+                + ["tune-grid"]
+                + target_arguments
+                + [
+                    "--telemetry-log",
+                    str(telemetry_log),
+                    "--iters",
+                    str(grid_iters),
+                ]
+            )
+            for batch_size in grid_batch_sizes:
+                cmd.extend(["--batch-size", str(batch_size)])
+            for preset in grid_presets:
+                cmd.extend(["--preset", preset])
+            if tier_label:
+                cmd.extend(["--tier-label", tier_label])
+            _run(cmd, verbose=verbose)
 
-    if "bayes" in tuners:
-        cmd = (
-            CLI_ENTRY_POINT
-            + ["tune-bayes"]
-            + target_arguments
-            + [
-                "--telemetry-log",
-                str(telemetry_log),
-                "--trials",
-                str(bayes_trials),
-                "--iters",
-                str(bayes_iters),
-            ]
+        if "bayes" in tuners:
+            cmd = (
+                CLI_ENTRY_POINT
+                + ["tune-bayes"]
+                + target_arguments
+                + [
+                    "--telemetry-log",
+                    str(telemetry_log),
+                    "--trials",
+                    str(bayes_trials),
+                    "--iters",
+                    str(bayes_iters),
+                ]
+            )
+            if tier_label:
+                cmd.extend(["--tier-label", tier_label])
+            _run(cmd, verbose=verbose)
+
+    heuristics_requested = any(name in tuners for name in ("ils", "tabu"))
+    scenario_files = heuristic_scenarios or []
+    bundle_map = heuristic_bundle_map or {}
+
+    if heuristics_requested and not scenario_files:
+        raise ValueError(
+            "Heuristic tuners (ILS/Tabu) require scenarios resolved from --bundle or --scenario."
         )
-        if tier_label:
-            cmd.extend(["--tier-label", tier_label])
-        _run(cmd, verbose=verbose)
+
+    telemetry_path = telemetry_log.resolve() if heuristics_requested else telemetry_log
+
+    if "ils" in tuners:
+        config = ils_config or {}
+        runs = int(config.get("runs", DEFAULT_ILS_RUNS))
+        iters = int(config.get("iters", DEFAULT_ILS_ITERS))
+        seed = int(config.get("seed", DEFAULT_ILS_SEED))
+        extra_kwargs = dict(config.get("extra_kwargs", {}))
+        _run_ils_benchmarks(
+            scenario_files,
+            bundle_map,
+            telemetry_path,
+            runs=max(0, runs),
+            iters=max(0, iters),
+            base_seed=seed,
+            tier_label=tier_label,
+            extra_kwargs=extra_kwargs,
+            verbose=verbose,
+        )
+
+    if "tabu" in tuners:
+        config = tabu_config or {}
+        runs = int(config.get("runs", DEFAULT_TABU_RUNS))
+        iters = int(config.get("iters", DEFAULT_TABU_ITERS))
+        seed = int(config.get("seed", DEFAULT_TABU_SEED))
+        extra_kwargs = dict(config.get("extra_kwargs", {}))
+        _run_tabu_benchmarks(
+            scenario_files,
+            bundle_map,
+            telemetry_path,
+            runs=max(0, runs),
+            iters=max(0, iters),
+            base_seed=seed,
+            tier_label=tier_label,
+            extra_kwargs=extra_kwargs,
+            verbose=verbose,
+        )
 
 
 def generate_reports(
@@ -415,6 +735,7 @@ def generate_comparisons(sqlite_path: Path, out_dir: Path) -> dict[str, object]:
         else:
             scenario_key = scenario_name
             display_name = scenario_name
+            bundle_name = "standalone"
         scenario_display[scenario_key] = display_name
         scenario_bundle.setdefault(scenario_key, bundle_name)
 
@@ -646,6 +967,15 @@ def main(argv: list[str] | None = None) -> int:
 
     plan_budgets = (plan_cfg.get("budgets") if plan_cfg else {}) or {}
 
+    heuristics_needed = any(name in tuners for name in ("ils", "tabu"))
+    heuristic_scenarios: list[Path] = []
+    heuristic_bundle_map: dict[Path, dict[str, str]] = {}
+    if heuristics_needed:
+        heuristic_scenarios, heuristic_bundle_map = _resolve_heuristic_scenarios(
+            scenario_paths,
+            bundles,
+        )
+
     for tier in tiers:
         tier_config = deepcopy(TIER_BUDGETS[tier])
         if plan_budgets:
@@ -660,9 +990,9 @@ def main(argv: list[str] | None = None) -> int:
                     if tuner_name in tier_config:
                         tier_config[tuner_name].update(deepcopy(tuner_cfg))  # type: ignore[index]
 
-        random_cfg = tier_config.get("random", {})
-        grid_cfg = tier_config.get("grid", {})
-        bayes_cfg = tier_config.get("bayes", {})
+        random_cfg = dict(tier_config.get("random", {}))
+        grid_cfg = dict(tier_config.get("grid", {}))
+        bayes_cfg = dict(tier_config.get("bayes", {}))
 
         if args.random_runs is not None:
             random_cfg["runs"] = args.random_runs
@@ -687,12 +1017,63 @@ def main(argv: list[str] | None = None) -> int:
         bayes_trials = int(bayes_cfg.get("trials", DEFAULT_BAYES_TRIALS))
         bayes_iters = int(bayes_cfg.get("iters", DEFAULT_BAYES_ITERS))
 
+        ils_config_payload: dict[str, Any] | None = None
+        ils_runs_display: int | None = None
+        ils_iters_display: int | None = None
+        if "ils" in tuners:
+            ils_cfg = dict(tier_config.get("ils", {}))
+            if args.ils_runs is not None:
+                ils_cfg["runs"] = args.ils_runs
+            if args.ils_iters is not None:
+                ils_cfg["iters"] = args.ils_iters
+            if args.ils_base_seed is not None:
+                ils_cfg["seed"] = args.ils_base_seed
+            ils_runs_value = int(ils_cfg.pop("runs", DEFAULT_ILS_RUNS))
+            ils_iters_value = int(ils_cfg.pop("iters", DEFAULT_ILS_ITERS))
+            ils_seed_value = int(ils_cfg.pop("seed", DEFAULT_ILS_SEED))
+            ils_config_payload = {
+                "runs": ils_runs_value,
+                "iters": ils_iters_value,
+                "seed": ils_seed_value,
+                "extra_kwargs": ils_cfg,
+            }
+            ils_runs_display = ils_runs_value
+            ils_iters_display = ils_iters_value
+
+        tabu_config_payload: dict[str, Any] | None = None
+        tabu_runs_display: int | None = None
+        tabu_iters_display: int | None = None
+        if "tabu" in tuners:
+            tabu_cfg = dict(tier_config.get("tabu", {}))
+            if args.tabu_runs is not None:
+                tabu_cfg["runs"] = args.tabu_runs
+            if args.tabu_iters is not None:
+                tabu_cfg["iters"] = args.tabu_iters
+            if args.tabu_base_seed is not None:
+                tabu_cfg["seed"] = args.tabu_base_seed
+            tabu_runs_value = int(tabu_cfg.pop("runs", DEFAULT_TABU_RUNS))
+            tabu_iters_value = int(tabu_cfg.pop("iters", DEFAULT_TABU_ITERS))
+            tabu_seed_value = int(tabu_cfg.pop("seed", DEFAULT_TABU_SEED))
+            tabu_config_payload = {
+                "runs": tabu_runs_value,
+                "iters": tabu_iters_value,
+                "seed": tabu_seed_value,
+                "extra_kwargs": tabu_cfg,
+            }
+            tabu_runs_display = tabu_runs_value
+            tabu_iters_display = tabu_iters_value
+
         if args.verbose:
-            print(
+            message = (
                 f"[tier:{tier}] random(runs={random_runs}, iters={random_iters}) "
                 f"grid(iters={grid_iters}, batches={grid_batch_sizes}, presets={grid_presets}) "
                 f"bayes(trials={bayes_trials}, iters={bayes_iters})"
             )
+            if ils_runs_display is not None and ils_iters_display is not None:
+                message += f" ils(runs={ils_runs_display}, iters={ils_iters_display})"
+            if tabu_runs_display is not None and tabu_iters_display is not None:
+                message += f" tabu(runs={tabu_runs_display}, iters={tabu_iters_display})"
+            print(message)
 
         run_tuner_commands(
             bundles=bundles,
@@ -706,6 +1087,10 @@ def main(argv: list[str] | None = None) -> int:
             grid_presets=[str(x) for x in grid_presets],
             bayes_trials=bayes_trials,
             bayes_iters=bayes_iters,
+            ils_config=ils_config_payload,
+            tabu_config=tabu_config_payload,
+            heuristic_scenarios=heuristic_scenarios if heuristics_needed else None,
+            heuristic_bundle_map=heuristic_bundle_map if heuristics_needed else None,
             verbose=args.verbose,
             tier_label=tier,
         )

@@ -224,6 +224,9 @@ The script resets (or appends to) the telemetry log, runs the requested tuners, 
 leaderboard. Adjust ``--bundle`` and tuner-specific options to suit larger sweeps or
 CI smoke passes. Repeating ``--tier`` runs each budget tier sequentially and forwards
 ``--tier-label`` to the CLI tuners so telemetry collectors can pivot results by tier.
+Include ``--tuner ils --tuner tabu`` (or rely on plan defaults) to sweep Iterated Local Search
+and Tabu Search alongside the simulated annealing tuners; use ``--ils-runs`` / ``--ils-iters`` and
+``--tabu-runs`` / ``--tabu-iters`` to override the tier budgets when experimenting locally.
 
 In addition to the per-scenario summaries, the script now emits:
 
@@ -262,6 +265,10 @@ Budgets deliver a 3–5 minute sweep locally on ``short``; bump to ``medium`` or
 convergence traces for modelling. Override any option (e.g., ``--random-runs``) as needed.
 When running full benchmark suites on shared hardware, pin at least 64 CPU cores to the job and cap
 per-run RSS to ~8 GB to avoid starving other workloads while we expand the benchmark matrix.
+ILS/Tabu inherit the same tier labels: ``short`` executes two restarts with ~200/1 200 iterations,
+``medium`` scales to three restarts with ~350/2 000 iterations, and ``long`` extends to five restarts
+(ILS enables the hybrid MIP warm start) with ~700/3 000 iterations. Adjust the respective ``--ils-*``
+and ``--tabu-*`` flags when you need lighter smoke runs or deeper convergence traces.
 
 CI publishes the latest summary tables to GitHub Pages; check
 ``https://<org>.github.io/<repo>/telemetry/latest_tuner_summary.md`` (per-scenario

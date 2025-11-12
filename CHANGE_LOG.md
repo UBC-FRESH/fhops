@@ -25,6 +25,9 @@
 - Benchmark pipeline now emits per-bundle comparison/leaderboard tables and `tuner_difficulty*.{md,csv}` difficulty indices (including MIP gaps and second-best deltas), all published via GitHub Pages.
 - `scripts/run_tuning_benchmarks.py` gained tier-aware budgets (`short`/`medium`/`long`) plus plan overrides; the runner forwards `--tier-label` to CLI tuners so telemetry pivots can separate budget tiers.
 - Updated `docs/howto/telemetry_tuning.rst` and `notes/metaheuristic_hyperparam_tuning.md` with the tier matrix, hardware guidelines (≥64 cores, 8 GB RSS cap), and instructions for sequencing multiple tiers in one sweep.
+- Integrated Iterated Local Search and Tabu Search into `scripts/run_tuning_benchmarks.py`; tier presets now drive their restart/iteration budgets, telemetry contexts record bundle/tier metadata, and `tests/test_run_tuning_benchmarks.py` exercises the new flags.
+- Hardened comparison generation when runs lack bundle metadata (heuristic sweeps now default to `standalone` rather than raising).
+- Docs/notes refreshed to outline the ILS/Tabu tier budgets and CLI overrides (`--ils-*`, `--tabu-*`) for smoke vs. deep sweeps.
 
 ## 2025-11-11 — Analytics notebook automation
 - Added the analytics notebook runner to CI (`.github/workflows/ci.yml`) so the curated suite executes in light mode on every push/PR, exercising Altair plots and playback helpers.
