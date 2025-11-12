@@ -223,6 +223,11 @@ The script resets (or appends to) the telemetry log, runs the requested tuners, 
 leaderboard. Adjust ``--bundle`` and tuner-specific options to suit larger sweeps or
 CI smoke passes.
 
+CI publishes the latest summary tables to GitHub Pages; check
+``https://<org>.github.io/<repo>/telemetry/latest_tuner_summary.md`` (per-scenario
+leaderboard) and ``latest_history_summary.md`` (delta vs. previous snapshot) to spot regression
+signals without grabbing artefacts.
+
 .. _telemetry_bundle_aliases:
 
 Bundle Aliases
