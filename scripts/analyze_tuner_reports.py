@@ -354,6 +354,73 @@ def _render_delta_markdown(df: pd.DataFrame) -> str:
     return "\n".join(lines)
 
 
+def _summarize_best_by_scenario(df: pd.DataFrame, labels: list[str]) -> pd.DataFrame:
+    if df.empty:
+        return pd.DataFrame(columns=["scenario"])
+    scenarios = sorted(set(df["scenario"].dropna()))
+    rows: list[dict[str, object]] = []
+    for scenario in scenarios:
+        subset = df[df["scenario"] == scenario]
+        if subset.empty:
+            continue
+        summary: dict[str, object] = {"scenario": scenario}
+        baseline_value: float | None = None
+        for idx, label in enumerate(labels):
+            value_column = f"best_{label}"
+            if value_column not in subset.columns:
+                summary[f"best_algorithm_{label}"] = ""
+                summary[f"best_value_{label}"] = None
+                if idx != 0:
+                    summary[f"best_delta_{label}"] = None
+                continue
+            values = pd.to_numeric(subset[value_column], errors="coerce")
+            valid = subset.loc[values.notna()]
+            if valid.empty:
+                summary[f"best_algorithm_{label}"] = ""
+                summary[f"best_value_{label}"] = None
+                if idx != 0:
+                    summary[f"best_delta_{label}"] = None
+                continue
+            best_idx = values.idxmax()
+            best_entry = subset.loc[best_idx]
+            best_value = float(values.loc[best_idx])
+            summary[f"best_algorithm_{label}"] = str(best_entry["algorithm"])
+            summary[f"best_value_{label}"] = best_value
+            if idx == 0:
+                baseline_value = best_value
+            else:
+                summary[f"best_delta_{label}"] = (
+                    best_value - baseline_value if baseline_value is not None else None
+                )
+        rows.append(summary)
+    return pd.DataFrame(rows)
+
+
+def _render_summary_markdown(df: pd.DataFrame, labels: list[str]) -> str:
+    if df.empty:
+        return "*(No scenarios available to summarise.)*"
+    headers = ["Scenario"]
+    for idx, label in enumerate(labels):
+        headers.extend([f"Best Algo ({label})", f"Best Obj ({label})"])
+        if idx != 0:
+            headers.append(f"Δ vs {labels[0]}")
+    lines = [
+        "| " + " | ".join(headers) + " |",
+        "| " + " | ".join(["---"] * len(headers)) + " |",
+    ]
+    for _, row in df.iterrows():
+        cells = [str(row["scenario"])]
+        for idx, label in enumerate(labels):
+            algo = str(row.get(f"best_algorithm_{label}", "") or "")
+            value = _format_number(row.get(f"best_value_{label}"))
+            cells.extend([algo, value])
+            if idx != 0:
+                delta = _format_number(row.get(f"best_delta_{label}"), prefix="+")
+                cells.append(delta)
+        lines.append("| " + " | ".join(cells) + " |")
+    return "\n".join(lines)
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -411,6 +478,16 @@ def main(argv: list[str] | None = None) -> int:
         "--out-history-delta-markdown",
         type=Path,
         help="Optional Markdown path for the delta summary (requires --history-dir).",
+    )
+    parser.add_argument(
+        "--out-summary-csv",
+        type=Path,
+        help="Optional CSV path summarising the best algorithm/objective per scenario for each report label.",
+    )
+    parser.add_argument(
+        "--out-summary-markdown",
+        type=Path,
+        help="Optional Markdown table listing per-scenario best performance for each report label.",
     )
     args = parser.parse_args(argv)
 
@@ -474,6 +551,17 @@ def main(argv: list[str] | None = None) -> int:
 
     if not args.out_csv and not args.out_markdown:
         print(markdown)
+
+    if args.out_summary_csv or args.out_summary_markdown:
+        summary_df = _summarize_best_by_scenario(combined, labels)
+        if args.out_summary_csv:
+            args.out_summary_csv.parent.mkdir(parents=True, exist_ok=True)
+            summary_df.to_csv(args.out_summary_csv, index=False)
+        if args.out_summary_markdown:
+            args.out_summary_markdown.parent.mkdir(parents=True, exist_ok=True)
+            args.out_summary_markdown.write_text(
+                _render_summary_markdown(summary_df, labels) + "\n", encoding="utf-8"
+            )
 
     if args.history_dir:
         history_df = _collect_history(Path(args.history_dir), pattern=args.history_pattern)

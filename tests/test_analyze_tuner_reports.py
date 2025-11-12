@@ -49,6 +49,8 @@ def test_analyze_tuner_reports_cli(tmp_path: Path):
     markdown_out = tmp_path / "comparison.md"
     csv_out = tmp_path / "comparison.csv"
     chart_out = tmp_path / "comparison.html"
+    summary_csv = tmp_path / "summary.csv"
+    summary_md = tmp_path / "summary.md"
 
     cmd = [
         "python",
@@ -61,6 +63,10 @@ def test_analyze_tuner_reports_cli(tmp_path: Path):
         str(markdown_out),
         "--out-csv",
         str(csv_out),
+        "--out-summary-csv",
+        str(summary_csv),
+        "--out-summary-markdown",
+        str(summary_md),
     ]
     if ALTAIR_AVAILABLE:
         cmd.extend(["--out-chart", str(chart_out)])
@@ -74,6 +80,8 @@ def test_analyze_tuner_reports_cli(tmp_path: Path):
     assert result.returncode == 0
     assert markdown_out.exists()
     assert csv_out.exists()
+    assert summary_csv.exists()
+    assert summary_md.exists()
     if ALTAIR_AVAILABLE:
         assert chart_out.exists()
 
@@ -85,6 +93,24 @@ def test_analyze_tuner_reports_cli(tmp_path: Path):
     assert combined.loc[0, "best_baseline"] == 7.5
     assert combined.loc[0, "best_experiment"] == 8.0
     assert combined.loc[0, "best_delta_experiment"] == 0.5
+    summary_df = pd.read_csv(summary_csv)
+    expected_columns = {
+        "scenario",
+        "best_algorithm_baseline",
+        "best_value_baseline",
+        "best_algorithm_experiment",
+        "best_value_experiment",
+        "best_delta_experiment",
+    }
+    assert expected_columns.issubset(set(summary_df.columns))
+    assert summary_df.loc[0, "best_algorithm_baseline"] == "random"
+    assert summary_df.loc[0, "best_value_baseline"] == pytest.approx(7.5)
+    assert summary_df.loc[0, "best_algorithm_experiment"] == "random"
+    assert summary_df.loc[0, "best_value_experiment"] == pytest.approx(8.0)
+    assert summary_df.loc[0, "best_delta_experiment"] == pytest.approx(0.5)
+    summary_md_text = summary_md.read_text(encoding="utf-8")
+    assert "Best Algo (baseline)" in summary_md_text
+    assert "Best Obj (experiment)" in summary_md_text
 
 
 def test_analyze_tuner_reports_history(tmp_path: Path):

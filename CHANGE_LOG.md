@@ -16,6 +16,7 @@
 - Added bundle resolution helpers (`--bundle` / `-b`) to `fhops tune-random`, `fhops tune-grid`, and `fhops tune-bayes`, supporting built-in aliases (`baseline`, `synthetic[-tier]`, etc.) and custom manifests via `alias=/path/to/metadata.yaml`.
 - Telemetry context now records `bundle` / `bundle_member`, and `tuner_summary.scenario_best` uses `bundle:member` keys so comparison scripts retain bundle provenance while generating reports/deltas.
 - Documented bundle usage in `docs/howto/telemetry_tuning.rst`, updated the README, and marked the roadmap/plan checklist item (“Provide CLI surfaces for bundle sweeps”) as complete.
+- Extended `scripts/analyze_tuner_reports.py` with per-scenario summary outputs (`--out-summary-csv`, `--out-summary-markdown`) so CI can surface the leading algorithm/objective per report without opening the full comparison table.
 
 ## 2025-11-11 — Analytics notebook automation
 - Added the analytics notebook runner to CI (`.github/workflows/ci.yml`) so the curated suite executes in light mode on every push/PR, exercising Altair plots and playback helpers.
