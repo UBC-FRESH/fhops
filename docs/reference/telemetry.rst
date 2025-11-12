@@ -119,6 +119,7 @@ Each CI run uploads three ready-made history artefacts under the
 * ``history_summary.csv`` — tabular history of best/mean objectives for dated snapshots.
 * ``history_summary.md`` — Markdown rendering of the same table.
 * ``history_summary.html`` — Altair chart plotting best objective trends.
+* ``history_delta.{csv,md}`` — latest vs. previous snapshot diff across objectives and key KPIs.
 
 Download those files (or rerun ``analyze_tuner_reports.py --history-dir`` on a
 local archive) to inspect performance trends without regenerating telemetry.

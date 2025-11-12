@@ -257,6 +257,71 @@ def _export_history_chart(df: pd.DataFrame, output_path: Path) -> None:
     chart.save(output_path, embed_options={"actions": False})
 
 
+def _compute_history_deltas(df: pd.DataFrame) -> pd.DataFrame:
+    if df.empty:
+        return pd.DataFrame()
+    metrics = ["best_objective"] + [col for col in DESIRED_METRICS.values() if col in df.columns]
+    records: list[dict[str, object]] = []
+    for (scenario, algorithm), group in df.sort_values("snapshot").groupby(["scenario", "algorithm"], dropna=False):
+        if len(group) < 2:
+            continue
+        latest = group.iloc[-1]
+        previous = group.iloc[-2]
+        entry: dict[str, object] = {
+            "scenario": scenario,
+            "algorithm": algorithm,
+            "snapshot_current": latest["snapshot"],
+            "snapshot_previous": previous["snapshot"],
+        }
+        for metric in metrics:
+            current_val = latest.get(metric)
+            prev_val = previous.get(metric)
+            entry[f"{metric}"] = current_val
+            if current_val is not None and prev_val is not None and not (pd.isna(current_val) or pd.isna(prev_val)):
+                entry[f"{metric}_delta"] = float(current_val) - float(prev_val)
+            else:
+                entry[f"{metric}_delta"] = None
+        records.append(entry)
+    columns = [
+        "scenario",
+        "algorithm",
+        "snapshot_current",
+        "snapshot_previous",
+    ]
+    for metric in metrics:
+        columns.extend([metric, f"{metric}_delta"])
+    return pd.DataFrame(records, columns=columns) if records else pd.DataFrame(columns=columns)
+
+
+def _render_delta_markdown(df: pd.DataFrame) -> str:
+    if df.empty:
+        return "*(Not enough history to compute deltas yet.)*"
+    metric_pairs = []
+    metrics = ["best_objective"] + [col for col in DESIRED_METRICS.values() if col in df.columns]
+    for metric in metrics:
+        label = METRIC_LABELS.get(metric, metric.replace("best_", "").replace("_", " ").title())
+        metric_pairs.append((metric, f"{metric}_delta", label))
+    headers = ["Scenario", "Algorithm", "Current Snapshot", "Previous Snapshot"]
+    for _, _, label in metric_pairs:
+        headers.extend([label, f"Δ {label}"])
+    lines = [
+        "| " + " | ".join(headers) + " |",
+        "| " + " | ".join(["---"] * len(headers)) + " |",
+    ]
+    for _, row in df.iterrows():
+        cells = [
+            str(row["scenario"]),
+            str(row["algorithm"]),
+            str(row["snapshot_current"]),
+            str(row["snapshot_previous"]),
+        ]
+        for metric, delta_metric, _ in metric_pairs:
+            cells.append(_format_number(row.get(metric)))
+            cells.append(_format_number(row.get(delta_metric), prefix="+"))
+        lines.append("| " + " | ".join(cells) + " |")
+    return "\n".join(lines)
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -304,6 +369,16 @@ def main(argv: list[str] | None = None) -> int:
         "--out-history-chart",
         type=Path,
         help="Optional HTML Altair chart showing history trends (requires --history-dir).",
+    )
+    parser.add_argument(
+        "--out-history-delta-csv",
+        type=Path,
+        help="Optional CSV path summarising latest vs previous snapshot deltas (requires --history-dir).",
+    )
+    parser.add_argument(
+        "--out-history-delta-markdown",
+        type=Path,
+        help="Optional Markdown path for the delta summary (requires --history-dir).",
     )
     args = parser.parse_args(argv)
 
@@ -384,6 +459,16 @@ def main(argv: list[str] | None = None) -> int:
                 )
             if args.out_history_chart:
                 _export_history_chart(history_df, args.out_history_chart)
+            if args.out_history_delta_csv or args.out_history_delta_markdown:
+                delta_df = _compute_history_deltas(history_df)
+                if args.out_history_delta_csv:
+                    args.out_history_delta_csv.parent.mkdir(parents=True, exist_ok=True)
+                    delta_df.to_csv(args.out_history_delta_csv, index=False)
+                if args.out_history_delta_markdown:
+                    args.out_history_delta_markdown.parent.mkdir(parents=True, exist_ok=True)
+                    args.out_history_delta_markdown.write_text(
+                        _render_delta_markdown(delta_df) + "\n", encoding="utf-8"
+                    )
             if not any([args.out_history_csv, args.out_history_markdown, args.out_history_chart]):
                 print(_render_history_markdown(history_df))
     return 0

@@ -141,6 +141,21 @@ history command. The workflow also generates ``history_summary.{csv,md,html}``
 via ``analyze_tuner_reports.py --history-dir`` so you can inspect trends
 immediately after downloading the artifact.
 
+Delta Snapshot Summary
+----------------------
+
+For a quick “what changed since last snapshot” view, pass ``--out-history-delta-*`` when
+invoking ``analyze_tuner_reports.py``. The CI workflow already produces
+``history_delta.{csv,md}``, summarising the latest vs. previous snapshot for objectives and KPIs.
+Example command:
+
+.. code-block:: bash
+
+   python scripts/analyze_tuner_reports.py \
+       --history-dir docs/examples/analytics/data/tuner_reports \
+       --out-history-delta-csv tmp/history_delta.csv \
+       --out-history-delta-markdown tmp/history_delta.md
+
 .. figure:: ../examples/analytics/data/tuner_reports/history_summary.png
    :alt: Sample telemetry history chart
    :align: center
