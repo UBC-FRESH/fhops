@@ -46,11 +46,12 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
     - [ ] Measure iterations-to-≤1% optimality gap per tuner/scenario when MIP optima are known.
     - [ ] Fit convergence models (gap vs. iterations vs. scenario features/difficulty) and store parameters for future stopping-criterion recommendations.
     - [ ] Extend benchmark plans with long-budget runs (e.g., 100/250/500+ iters or trials) to populate the convergence dataset.
-  - [ ] Compute scenario difficulty indices (delta to MIP optimum, tuner win distribution) and include in comparison artefacts.
+- [ ] Compute scenario difficulty indices (delta to MIP optimum, tuner win distribution) and include in comparison artefacts.
 - [x] Emit tuner-level meta-telemetry (algorithm name, configuration, budget, convergence stats) so higher-level orchestration can evaluate tuner performance.
   - [x] Extend `RunTelemetryLogger` / CLI tuners to include `tuner_meta` (algorithm label, search budget, config search space hints, convergence indicators).
   - [x] Persist meta fields in SQLite (either JSON column or dedicated table) for downstream selection agents.
   - [x] Update docs/tests to cover meta-telemetry schema, ensuring backwards compatibility for existing consumers.
+- [x] Fold the heuristic parameter catalogue into user-facing docs (`docs/howto/telemetry_tuning.rst`, CLI help) so the tuning surface is documented alongside execution workflows.
 
 ## Benchmark Bundle Plan (draft)
 
@@ -83,6 +84,27 @@ Guidelines:
 - When running wide sweeps, request at least 64 of 72 available CPU cores (`GNU parallel` or runner `--processes`) and cap per-run RSS to ≈8 GB to avoid node exhaustion.
 - Use long-tier budgets when fitting convergence models (iterations to ≤1 % optimality gap) so the telemetry captures the tail behaviour needed for extrapolation.
 - Convergence instrumentation: `scripts/analyze_tuner_reports.py --telemetry-log <runs.jsonl> --out-convergence-*` now scans step logs to compute iterations-to-1% gap per SA/ILS/Tabu run (requires MIP baselines in the same telemetry store). Run long-tier sweeps first so the dataset contains meaningful trajectories.
+
+### Heuristic parameter catalogue (tuning surface)
+
+| Layer | Parameters / flags | Typical range / notes | Tier coverage |
+|-------|--------------------|------------------------|---------------|
+| **Simulated Annealing (`solve-heur`, `tune-random/grid/bayes`)** | `--iters`, `--temperature0`, `--cooling-rate` | Iteration horizon (short/medium/long tiers: 150/300/600). Initial temp 50–500, cooling 0.90–0.999. | All tiers |
+| | `--batch-neighbours`, `--parallel-workers` | Batch candidate sampling (1–5) with optional thread pool. | Grid presets iterate batch sizes; medium/long tiers allow worker pools. |
+| | `--operator`, `--operator-weight`, `--operator-preset` | Operator enable/weights; presets `balanced`, `explore`, `mobilisation`, `agentic`. | Grid enumerates preset×batch; random/Bayesian sample weight vectors. |
+| | `--multi-start`, profile extras (reheating, temperature schedules) | Multi-start count, seed progression, reheating frequency (via profiles). | Medium/long tiers may enable; Bayesian/agentic loops mutate through `tuner_meta`. |
+| **Iterated Local Search (`solve-ils`, `tune-*`)** | `--iters` | Outer loop cycles: short 200, medium 350, long 700. | All tiers |
+| | `--perturbation-strength`, `--stall-limit` | Diversification vs exploitation (strength 1–6, stall 8–20). | Swept in medium/long tiers and Bayesian tuner. |
+| | `--hybrid-use-mip`, `--hybrid-mip-time-limit` | Trigger limited MIP restart when stalled (30–180 s). | Long tier default; optional override for experiments. |
+| | Operator/preset weights, batching (`--operator*`, `--batch-neighbours`, `--parallel-workers`) | Shared registry with SA; presets keep tuners comparable. | Included through tier profiles + search spaces. |
+| **Tabu Search (`solve-tabu`, `tune-*`)** | `--iters` | Iteration horizon (short 1 200 / medium 2 000 / long 3 000). | All tiers |
+| | `--tabu-tenure` | Tabu list length (auto ≈ machine count; explore 20–120). | Random/Bayesian tuning + tier overrides. |
+| | `--stall-limit` | Stop after non-improving steps (150–250). | Tied to tier defaults. |
+| | Operator presets/weights, batching | Same registry knobs as SA/ILS for cross-tuner parity. | Search spaces reference named presets. |
+| **Tuner-level budgets** | Random: `--runs`, `--iters`; Grid: `--iters`, `--batch-size`, `--preset`; Bayes: `--trials`, `--iters`, Optuna search space definition. | Tier presets (short 2×150, medium 3×300, long 5×600) + plan overrides. | Documented in bundle plan/how-to |
+| **Meta / agentic extensions** | Telemetry-derived features (acceptance slope, objective gap trajectory, scenario descriptors). | Captured via `tuner_meta` and `context`; future agents mutate presets/budgets using these signals. | Planned Phase 3 deliverable |
+
+Parameters wrapped inside profiles (cooling schedule families, operator templates, multi-start strategies) remain part of the search surface; tuning drivers surface them via preset names so Bayesian/agentic tuners can toggle discrete options without bespoke code.
 
 ### Agentic Tuning Integration
 - [ ] Define prompt templates and action space for the LLM agent (config proposals, narrative rationale).
