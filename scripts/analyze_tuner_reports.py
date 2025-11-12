@@ -124,6 +124,15 @@ DESIRED_METRICS = {
     "downtime_hours": "best_downtime_hours",
     "weather_severity_total": "best_weather_severity",
 }
+METRIC_LABELS = {
+    "best_objective": "Best Objective",
+    "best_total_production": "Total Production",
+    "best_mobilisation_cost": "Mobilisation Cost",
+    "best_utilisation_ratio_shift": "Utilisation (Shift)",
+    "best_utilisation_ratio_day": "Utilisation (Day)",
+    "best_downtime_hours": "Downtime Hours",
+    "best_weather_severity": "Weather Severity",
+}
 
 
 def _load_run_metrics(sqlite_path: Path, run_id: str | None) -> dict[str, float]:
@@ -196,7 +205,7 @@ def _collect_history(directory: Path, *, pattern: str = "*.csv") -> pd.DataFrame
 def _render_history_markdown(df: pd.DataFrame) -> str:
     extra_columns = [col for col in DESIRED_METRICS.values() if col in df.columns]
     headers = ["Snapshot", "Algorithm", "Scenario", "Best", "Mean", "Runs"] + [
-        col.replace("best_", "").replace("_", " ").title() for col in extra_columns
+        METRIC_LABELS.get(col, col) for col in extra_columns
     ]
     lines = [
         "| " + " | ".join(headers) + " |",
@@ -222,17 +231,27 @@ def _export_history_chart(df: pd.DataFrame, output_path: Path) -> None:
         import altair as alt
     except ImportError as exc:  # pragma: no cover - optional dependency
         raise SystemExit("Altair is required for --out-history-chart support.") from exc
-
+    value_columns = ["best_objective"] + [
+        col for col in DESIRED_METRICS.values() if col in df.columns
+    ]
+    chart_df = df.melt(
+        id_vars=["snapshot", "algorithm", "scenario"],
+        value_vars=value_columns,
+        var_name="metric",
+        value_name="value",
+    )
+    chart_df["metric_label"] = chart_df["metric"].map(METRIC_LABELS).fillna(chart_df["metric"])
     chart = (
-        alt.Chart(df)
+        alt.Chart(chart_df)
         .mark_line(point=True)
         .encode(
             x=alt.X("snapshot:N", title="Snapshot"),
-            y=alt.Y("best_objective:Q", title="Best Objective"),
+            y=alt.Y("value:Q", title="Value"),
             color=alt.Color("algorithm:N", title="Algorithm"),
+            column=alt.Column("metric_label:N", title="Metric", sort=list(METRIC_LABELS.values())),
             row=alt.Row("scenario:N", title="Scenario"),
         )
-        .properties(width=250, height=180)
+        .properties(width=220, height=180)
     )
     output_path.parent.mkdir(parents=True, exist_ok=True)
     chart.save(output_path, embed_options={"actions": False})
