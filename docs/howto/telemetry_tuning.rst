@@ -278,6 +278,28 @@ The comparison and leaderboard tables are also available at
 ``.../latest_tuner_comparison.{md,csv}`` and ``.../latest_tuner_leaderboard.{md,csv}``.
 Bundle-specific variants (``tuner_comparison_baseline.*``, ``tuner_leaderboard_synthetic.*``) are published alongside a difficulty table (``tuner_difficulty*.{md,csv}``) containing best-algorithm deltas, second-best gaps, and MIP gaps when available.
 
+Convergence metrics
+-------------------
+
+Once sweeps finish, derive time-to-quality signals with
+``scripts/analyze_tuner_reports.py``. Provide the generated report (or directory) and
+the telemetry log so the script can inspect step logs:
+
+.. code-block:: bash
+
+   python scripts/analyze_tuner_reports.py \
+       --report tmp/tuning-benchmarks/tuner_report.csv \
+       --telemetry-log tmp/tuning-benchmarks/telemetry/runs.jsonl \
+       --out-convergence-csv tmp/tuning-benchmarks/convergence_runs.csv \
+       --out-convergence-summary-csv tmp/tuning-benchmarks/convergence_summary.csv \
+       --out-convergence-summary-markdown tmp/tuning-benchmarks/convergence_summary.md
+
+The summary tallies, per scenario/algorithm/tier, how many runs reach a ≤1 % gap versus
+the recorded MIP optimum, plus the mean/median iteration counts required. Step logs
+must be present (the runner writes them to ``telemetry/steps/<run_id>.jsonl``) and each
+scenario needs a matching ``solve-mip`` baseline in the telemetry store. Adjust
+``--convergence-threshold`` if you need a different gap target.
+
 Tuner metadata summary
 ~~~~~~~~~~~~~~~~~~~~~~
 

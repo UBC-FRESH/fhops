@@ -82,6 +82,7 @@ Guidelines:
 - Tier presets now cover random/grid/bayes as well as ILS/Tabu; heuristics inherit the same bundle metadata and tier contexts for pivoting in telemetry reports.
 - When running wide sweeps, request at least 64 of 72 available CPU cores (`GNU parallel` or runner `--processes`) and cap per-run RSS to ≈8 GB to avoid node exhaustion.
 - Use long-tier budgets when fitting convergence models (iterations to ≤1 % optimality gap) so the telemetry captures the tail behaviour needed for extrapolation.
+- Convergence instrumentation: `scripts/analyze_tuner_reports.py --telemetry-log <runs.jsonl> --out-convergence-*` now scans step logs to compute iterations-to-1% gap per SA/ILS/Tabu run (requires MIP baselines in the same telemetry store). Run long-tier sweeps first so the dataset contains meaningful trajectories.
 
 ### Agentic Tuning Integration
 - [ ] Define prompt templates and action space for the LLM agent (config proposals, narrative rationale).

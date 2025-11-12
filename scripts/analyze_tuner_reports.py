@@ -4,9 +4,10 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
-from typing import Iterable
+from typing import Any, Iterable
 
 import pandas as pd
 import sqlite3
@@ -128,6 +129,336 @@ def _is_zero(value) -> bool:
         return float(value) == 0.0
     except (TypeError, ValueError):
         return False
+
+
+def _parse_json_field(payload: str | None) -> dict[str, Any]:
+    if not payload:
+        return {}
+    try:
+        return json.loads(payload)
+    except json.JSONDecodeError:
+        return {}
+
+
+def _determine_scenario_key(
+    scenario_field: str | None,
+    context: dict[str, Any],
+) -> tuple[str, str, str | None]:
+    bundle = context.get("bundle")
+    member = context.get("bundle_member")
+    label = context.get("scenario_label") or member or scenario_field or "unknown"
+    if bundle:
+        key = f"{bundle}:{member or label}"
+        display = key
+    else:
+        key = label
+        display = label
+    return key, display, bundle
+
+
+def _safe_float(value: Any) -> float | None:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _extract_convergence_steps(step_path: Path, threshold: float) -> tuple[int | None, float | None]:
+    if not step_path.exists():
+        return None, None
+    first_reach: int | None = None
+    best_logged: float | None = None
+    with step_path.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                record = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            best_value = _safe_float(record.get("best_objective"))
+            if best_value is None:
+                continue
+            if best_logged is None or best_value > best_logged:
+                best_logged = best_value
+            step_value = record.get("step")
+            if (
+                best_value >= threshold
+                and first_reach is None
+                and isinstance(step_value, (int, float))
+            ):
+                first_reach = int(step_value)
+    return first_reach, best_logged
+
+
+def _compute_convergence(
+    sqlite_path: Path,
+    telemetry_log: Path,
+    *,
+    threshold: float,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    if not sqlite_path.exists():
+        raise FileNotFoundError(f"Telemetry SQLite store not found: {sqlite_path}")
+
+    conn = sqlite3.connect(sqlite_path)
+    conn.row_factory = sqlite3.Row
+    try:
+        run_rows = conn.execute(
+            """
+            SELECT run_id, solver, scenario, duration_seconds,
+                   context_json, config_json, tuner_meta_json
+            FROM runs
+            """
+        ).fetchall()
+        metric_rows = conn.execute(
+            """
+            SELECT run_id, value, value_text
+            FROM run_metrics
+            WHERE name = 'objective'
+            """
+        ).fetchall()
+    finally:
+        conn.close()
+
+    objective_map: dict[str, float] = {}
+    for row in metric_rows:
+        run_id = row["run_id"]
+        value = row["value"]
+        if value is None and row["value_text"]:
+            value = _safe_float(row["value_text"])
+        if value is None:
+            continue
+        objective_map[run_id] = float(value)
+
+    mip_objectives: dict[str, float] = {}
+    scenario_meta: dict[str, dict[str, Any]] = {}
+    heuristics_records: list[dict[str, Any]] = []
+
+    steps_dir = telemetry_log.parent / "steps"
+    heuristic_solvers = {"sa", "ils", "tabu"}
+
+    for row in run_rows:
+        run_id = row["run_id"]
+        solver = (row["solver"] or "").lower()
+        scenario_field = row["scenario"]
+        context = _parse_json_field(row["context_json"])
+        config = _parse_json_field(row["config_json"])
+        tuner_meta = _parse_json_field(row["tuner_meta_json"])
+        scenario_key, scenario_display, bundle_name = _determine_scenario_key(scenario_field, context)
+        scenario_meta.setdefault(
+            scenario_key,
+            {
+                "scenario": scenario_display,
+                "bundle": bundle_name,
+            },
+        )
+        if solver == "mip":
+            objective = objective_map.get(run_id)
+            if objective is None:
+                continue
+            previous = mip_objectives.get(scenario_key)
+            mip_objectives[scenario_key] = (
+                max(previous, objective) if previous is not None else objective
+            )
+            continue
+
+        if solver not in heuristic_solvers:
+            continue
+
+        heuristics_records.append(
+            {
+                "run_id": run_id,
+                "solver": solver,
+                "scenario_key": scenario_key,
+                "scenario": scenario_display,
+                "bundle": bundle_name,
+                "context": context,
+                "config": config,
+                "tuner_meta": tuner_meta,
+                "duration_seconds": _safe_float(row["duration_seconds"]),
+            }
+        )
+
+    if not heuristics_records:
+        runs_columns = [
+            "scenario",
+            "bundle",
+            "algorithm",
+            "tier",
+            "run_id",
+            "iterations_to_1pct",
+            "total_iterations",
+            "best_objective",
+            "mip_objective",
+            "gap_pct",
+            "duration_seconds",
+        ]
+        summary_columns = [
+            "scenario",
+            "bundle",
+            "algorithm",
+            "tier",
+            "runs_total",
+            "runs_reached_1pct",
+            "success_rate",
+            "mean_iterations_to_1pct",
+            "median_iterations_to_1pct",
+            "min_iterations_to_1pct",
+            "max_iterations_to_1pct",
+            "mean_gap_pct",
+        ]
+        return pd.DataFrame(columns=runs_columns), pd.DataFrame(columns=summary_columns)
+
+    runs_records: list[dict[str, Any]] = []
+
+    for record in heuristics_records:
+        scenario_key = record["scenario_key"]
+        mip_obj = mip_objectives.get(scenario_key)
+        if mip_obj is None or mip_obj == 0:
+            # Skip scenarios without a baseline optimum
+            continue
+        threshold_value = float(mip_obj) * (1.0 - threshold)
+        run_id = record["run_id"]
+        steps_path = steps_dir / f"{run_id}.jsonl"
+        iterations_to_gap, best_logged = _extract_convergence_steps(steps_path, threshold_value)
+
+        best_objective = objective_map.get(run_id)
+        if best_objective is None and best_logged is not None:
+            best_objective = best_logged
+        elif best_logged is not None:
+            best_objective = max(best_objective, best_logged)  # type: ignore[arg-type]
+
+        if best_objective is None:
+            continue
+
+        config = record["config"]
+        tuner_meta = record["tuner_meta"]
+        progress = tuner_meta.get("progress", {}) if isinstance(tuner_meta, dict) else {}
+        total_iterations = None
+        for key in ("iters", "iterations"):
+            value = config.get(key)
+            if isinstance(value, (int, float)):
+                total_iterations = int(value)
+                break
+        if total_iterations is None and isinstance(progress, dict):
+            value = progress.get("iterations")
+            if isinstance(value, (int, float)):
+                total_iterations = int(value)
+
+        # Fallback when threshold reached only at final iteration
+        if iterations_to_gap is None and best_objective >= threshold_value and total_iterations is not None:
+            iterations_to_gap = total_iterations
+
+        gap_pct = None
+        if mip_obj != 0:
+            gap_pct_raw = (float(mip_obj) - float(best_objective)) / float(mip_obj)
+            gap_pct = max(0.0, gap_pct_raw)
+
+        tier = record["context"].get("tier")
+        if tier is None and isinstance(tuner_meta, dict):
+            budget = tuner_meta.get("budget", {})
+            if isinstance(budget, dict):
+                tier = budget.get("tier")
+
+        runs_records.append(
+            {
+                "scenario": record["scenario"],
+                "bundle": record["bundle"],
+                "algorithm": record["solver"],
+                "tier": tier or "",
+                "run_id": run_id,
+                "iterations_to_1pct": iterations_to_gap,
+                "total_iterations": total_iterations,
+                "best_objective": best_objective,
+                "mip_objective": mip_obj,
+                "gap_pct": gap_pct,
+                "duration_seconds": record["duration_seconds"],
+            }
+        )
+
+    runs_df = pd.DataFrame(runs_records)
+    if runs_df.empty:
+        runs_columns = [
+            "scenario",
+            "bundle",
+            "algorithm",
+            "tier",
+            "run_id",
+            "iterations_to_1pct",
+            "total_iterations",
+            "best_objective",
+            "mip_objective",
+            "gap_pct",
+            "duration_seconds",
+        ]
+        summary_columns = [
+            "scenario",
+            "bundle",
+            "algorithm",
+            "tier",
+            "runs_total",
+            "runs_reached_1pct",
+            "success_rate",
+            "mean_iterations_to_1pct",
+            "median_iterations_to_1pct",
+            "min_iterations_to_1pct",
+            "max_iterations_to_1pct",
+            "mean_gap_pct",
+        ]
+        return pd.DataFrame(columns=runs_columns), pd.DataFrame(columns=summary_columns)
+
+    group_columns = ["scenario", "bundle", "algorithm", "tier"]
+    summary_records: list[dict[str, Any]] = []
+    for key, group in runs_df.groupby(group_columns, dropna=False):
+        scenario, bundle, algorithm, tier = key
+        total_runs = len(group)
+        reached_mask = group["iterations_to_1pct"].notna()
+        reached = int(reached_mask.sum())
+        success_rate = reached / total_runs if total_runs else 0.0
+        iteration_values = group.loc[reached_mask, "iterations_to_1pct"].astype(float)
+        summary_records.append(
+            {
+                "scenario": scenario,
+                "bundle": bundle,
+                "algorithm": algorithm,
+                "tier": tier,
+                "runs_total": total_runs,
+                "runs_reached_1pct": reached,
+                "success_rate": success_rate,
+                "mean_iterations_to_1pct": iteration_values.mean() if not iteration_values.empty else None,
+                "median_iterations_to_1pct": iteration_values.median() if not iteration_values.empty else None,
+                "min_iterations_to_1pct": iteration_values.min() if not iteration_values.empty else None,
+                "max_iterations_to_1pct": iteration_values.max() if not iteration_values.empty else None,
+                "mean_gap_pct": group["gap_pct"].mean(skipna=True) if "gap_pct" in group else None,
+            }
+        )
+
+    summary_df = pd.DataFrame(summary_records).sort_values(
+        ["scenario", "algorithm", "tier"], na_position="last"
+    )
+    runs_df.sort_values(["scenario", "algorithm", "tier", "run_id"], inplace=True)
+    return runs_df, summary_df
+
+
+def _render_simple_markdown(df: pd.DataFrame) -> str:
+    if df.empty:
+        return "*(no data)*"
+    headers = list(df.columns)
+    lines = [
+        "| " + " | ".join(headers) + " |",
+        "| " + " | ".join(["---"] * len(headers)) + " |",
+    ]
+    for _, row in df.iterrows():
+        cells = []
+        for col in headers:
+            value = row[col]
+            if isinstance(value, float):
+                cells.append(f"{value:.3f}")
+            else:
+                cells.append("" if value is None else str(value))
+        lines.append("| " + " | ".join(cells) + " |")
+    return "\n".join(lines)
 
 
 DESIRED_METRICS = {
@@ -489,6 +820,32 @@ def main(argv: list[str] | None = None) -> int:
         type=Path,
         help="Optional Markdown table listing per-scenario best performance for each report label.",
     )
+    parser.add_argument(
+        "--telemetry-log",
+        type=Path,
+        help="Telemetry runs JSONL used to derive convergence metrics (requires matching .sqlite store).",
+    )
+    parser.add_argument(
+        "--convergence-threshold",
+        type=float,
+        default=0.01,
+        help="Optimality gap threshold (fraction). Default: 0.01 (1%% gap).",
+    )
+    parser.add_argument(
+        "--out-convergence-csv",
+        type=Path,
+        help="Optional CSV path for per-run convergence metrics (requires --telemetry-log).",
+    )
+    parser.add_argument(
+        "--out-convergence-summary-csv",
+        type=Path,
+        help="Optional CSV path for aggregated convergence metrics (requires --telemetry-log).",
+    )
+    parser.add_argument(
+        "--out-convergence-summary-markdown",
+        type=Path,
+        help="Optional Markdown path for aggregated convergence metrics (requires --telemetry-log).",
+    )
     args = parser.parse_args(argv)
 
     labels: list[str] = []
@@ -562,6 +919,39 @@ def main(argv: list[str] | None = None) -> int:
             args.out_summary_markdown.write_text(
                 _render_summary_markdown(summary_df, labels) + "\n", encoding="utf-8"
             )
+
+    convergence_outputs_requested = any(
+        [
+            args.out_convergence_csv,
+            args.out_convergence_summary_csv,
+            args.out_convergence_summary_markdown,
+        ]
+    )
+    if args.telemetry_log:
+        telemetry_log = args.telemetry_log
+        sqlite_path = telemetry_log.with_suffix(".sqlite")
+        convergence_runs_df, convergence_summary_df = _compute_convergence(
+            sqlite_path,
+            telemetry_log,
+            threshold=max(0.0, float(args.convergence_threshold)),
+        )
+        if args.out_convergence_csv:
+            args.out_convergence_csv.parent.mkdir(parents=True, exist_ok=True)
+            convergence_runs_df.to_csv(args.out_convergence_csv, index=False)
+        if args.out_convergence_summary_csv:
+            args.out_convergence_summary_csv.parent.mkdir(parents=True, exist_ok=True)
+            convergence_summary_df.to_csv(args.out_convergence_summary_csv, index=False)
+        if args.out_convergence_summary_markdown:
+            args.out_convergence_summary_markdown.parent.mkdir(parents=True, exist_ok=True)
+            args.out_convergence_summary_markdown.write_text(
+                _render_simple_markdown(convergence_summary_df) + "\n",
+                encoding="utf-8",
+            )
+        if not convergence_outputs_requested and not args.out_csv and not args.out_markdown:
+            # Print a brief convergence summary when running interactively
+            print(_render_simple_markdown(convergence_summary_df))
+    elif convergence_outputs_requested:
+        raise SystemExit("--telemetry-log is required when requesting convergence outputs.")
 
     if args.history_dir:
         history_df = _collect_history(Path(args.history_dir), pattern=args.history_pattern)

@@ -1096,9 +1096,15 @@ def evaluate(
 @app.command("eval-playback")
 def eval_playback(
     scenario: Path,
-    assignments_csv: Path = typer.Option(..., "--assignments", help="Assignments CSV (machine_id, block_id, day, shift_id)."),
-    shift_out: Path | None = typer.Option(None, "--shift-out", help="Optional path to save shift-level playback summary (CSV)."),
-    day_out: Path | None = typer.Option(None, "--day-out", help="Optional path to save day-level playback summary (CSV)."),
+    assignments_csv: Path = typer.Option(
+        ..., "--assignments", help="Assignments CSV (machine_id, block_id, day, shift_id)."
+    ),
+    shift_out: Path | None = typer.Option(
+        None, "--shift-out", help="Optional path to save shift-level playback summary (CSV)."
+    ),
+    day_out: Path | None = typer.Option(
+        None, "--day-out", help="Optional path to save day-level playback summary (CSV)."
+    ),
     include_idle: bool = typer.Option(
         False,
         "--include-idle",
@@ -1224,6 +1230,7 @@ def eval_playback(
     context_snapshot = {
         "assignments_path": str(assignments_csv),
         "command": "eval-playback",
+        "source": "eval-playback",
         **scenario_features,
     }
     telemetry_logger: RunTelemetryLogger | None = None
@@ -1240,7 +1247,7 @@ def eval_playback(
 
     artifacts: list[str] = []
 
-    with (telemetry_logger if telemetry_logger else nullcontext()) as run_logger:
+    with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
         playback_config = PlaybackConfig(include_idle_records=include_idle)
 
         deterministic_mode = (
@@ -1374,7 +1381,9 @@ def eval_playback(
                 summary_md=summary_md,
             )
         except ImportError as exc:
-            console.print("[red]Parquet export requires either pyarrow or fastparquet. Install one of them to enable this feature.[/red]")
+            console.print(
+                "[red]Parquet export requires either pyarrow or fastparquet. Install one of them to enable this feature.[/red]"
+            )
             raise typer.Exit(1) from exc
 
         if shift_out:
@@ -1394,6 +1403,17 @@ def eval_playback(
             artifacts.append(str(summary_md))
 
         if telemetry_logger:
+            export_payload = {}
+            if shift_out:
+                export_payload["shift_csv"] = str(shift_out)
+            if day_out:
+                export_payload["day_csv"] = str(day_out)
+            if shift_parquet:
+                export_payload["shift_parquet"] = str(shift_parquet)
+            if day_parquet:
+                export_payload["day_parquet"] = str(day_parquet)
+            if summary_md:
+                export_payload["summary_md"] = str(summary_md)
             metrics_payload = {
                 "total_production": float(day_df["production_units"].sum())
                 if "production_units" in day_df
@@ -1407,6 +1427,7 @@ def eval_playback(
                 "samples_requested": samples,
             }
             extra_payload = {
+                "export": export_payload,
                 "export_metrics": export_metrics or playback_summary_metrics(shift_df, day_df),
                 "scenario_features": scenario_features,
             }
@@ -1523,9 +1544,7 @@ def tune_random_cli(
         scenario_resolved = scenario_path.resolve()
         bundle_meta = bundle_map.get(scenario_resolved)
         scenario_display = (
-            getattr(sc, "name", None)
-            or scenario_path.parent.name
-            or scenario_path.stem
+            getattr(sc, "name", None) or scenario_path.parent.name or scenario_path.stem
         )
         if bundle_meta:
             console.print(
@@ -1552,7 +1571,9 @@ def tune_random_cli(
                 }
                 if bundle_meta:
                     telemetry_context["bundle"] = bundle_meta["bundle"]
-                    telemetry_context["bundle_member"] = bundle_meta.get("bundle_member", scenario_display)
+                    telemetry_context["bundle_member"] = bundle_meta.get(
+                        "bundle_member", scenario_display
+                    )
                 if tier_label:
                     telemetry_context["tier"] = tier_label
                 tuner_meta_payload = {
@@ -1574,7 +1595,9 @@ def tune_random_cli(
                 }
                 if bundle_meta:
                     tuner_meta_payload["bundle"] = bundle_meta["bundle"]
-                    tuner_meta_payload["bundle_member"] = bundle_meta.get("bundle_member", scenario_display)
+                    tuner_meta_payload["bundle_member"] = bundle_meta.get(
+                        "bundle_member", scenario_display
+                    )
                 telemetry_kwargs = {
                     "telemetry_log": telemetry_log,
                     "telemetry_context": telemetry_context,
@@ -1654,9 +1677,7 @@ def tune_random_cli(
         scenario_best: dict[str, float] = {}
         for entry in results:
             key = entry.get("scenario_key", entry["scenario"])
-            scenario_best[key] = max(
-                scenario_best.get(key, float("-inf")), entry["objective"]
-            )
+            scenario_best[key] = max(scenario_best.get(key, float("-inf")), entry["objective"])
         summary_record = {
             "record_type": "tuner_summary",
             "schema_version": "1.1",
@@ -1745,9 +1766,7 @@ def tune_grid_cli(
         scenario_resolved = scenario_path.resolve()
         bundle_meta = bundle_map.get(scenario_resolved)
         scenario_display = (
-            getattr(sc, "name", None)
-            or scenario_path.parent.name
-            or scenario_path.stem
+            getattr(sc, "name", None) or scenario_path.parent.name or scenario_path.stem
         )
         config_count = len(batch_values) * len(preset_values)
         if bundle_meta:
@@ -1803,7 +1822,9 @@ def tune_grid_cli(
                     }
                     if bundle_meta:
                         tuner_meta_payload["bundle"] = bundle_meta["bundle"]
-                        tuner_meta_payload["bundle_member"] = bundle_meta.get("bundle_member", scenario_display)
+                        tuner_meta_payload["bundle_member"] = bundle_meta.get(
+                            "bundle_member", scenario_display
+                        )
                     telemetry_kwargs["telemetry_context"]["tuner_meta"] = tuner_meta_payload
                 try:
                     res = solve_sa(
@@ -1877,9 +1898,7 @@ def tune_grid_cli(
         scenario_best: dict[str, float] = {}
         for entry in results:
             key = entry.get("scenario_key", entry["scenario"])
-            scenario_best[key] = max(
-                scenario_best.get(key, float("-inf")), entry["objective"]
-            )
+            scenario_best[key] = max(scenario_best.get(key, float("-inf")), entry["objective"])
         summary_record = {
             "record_type": "tuner_summary",
             "schema_version": "1.1",
@@ -1893,6 +1912,8 @@ def tune_grid_cli(
             summary_record,
         )
         append_jsonl(telemetry_log, summary_record)
+
+
 @app.command("tune-bayes")
 def tune_bayes_cli(
     scenarios: list[Path] | None = typer.Argument(
@@ -1954,18 +1975,14 @@ def tune_bayes_cli(
         scenario_resolved = scenario_path.resolve()
         bundle_meta = bundle_map.get(scenario_resolved)
         scenario_display = (
-            getattr(sc, "name", None)
-            or scenario_path.parent.name
-            or scenario_path.stem
+            getattr(sc, "name", None) or scenario_path.parent.name or scenario_path.stem
         )
         if bundle_meta:
             console.print(
                 f"[dim]Bayesian tuning {scenario_display} (bundle={bundle_meta['bundle']}, trials={trials})[/]"
             )
         else:
-            console.print(
-                f"[dim]Bayesian tuning {scenario_display} ({trials} trial(s))[/]"
-            )
+            console.print(f"[dim]Bayesian tuning {scenario_display} ({trials} trial(s))[/]")
 
         sampler = optuna.samplers.TPESampler(seed=seed)
         study = optuna.create_study(direction="maximize", sampler=sampler)
@@ -1974,8 +1991,7 @@ def tune_bayes_cli(
         def objective(trial: optuna.trial.Trial) -> float:
             batch_choice = trial.suggest_int("batch_size", 1, 3)
             operator_weights = {
-                name: trial.suggest_float(f"weight_{name}", 0.0, 2.0)
-                for name in operator_names
+                name: trial.suggest_float(f"weight_{name}", 0.0, 2.0) for name in operator_names
             }
             telemetry_kwargs: dict[str, Any] = {}
             if telemetry_log:
@@ -2014,7 +2030,9 @@ def tune_bayes_cli(
                 }
                 if bundle_meta:
                     tuner_meta_payload["bundle"] = bundle_meta["bundle"]
-                    tuner_meta_payload["bundle_member"] = bundle_meta.get("bundle_member", scenario_display)
+                    tuner_meta_payload["bundle_member"] = bundle_meta.get(
+                        "bundle_member", scenario_display
+                    )
                 telemetry_kwargs["telemetry_context"]["tuner_meta"] = tuner_meta_payload
             try:
                 res = solve_sa(
@@ -2071,7 +2089,8 @@ def tune_bayes_cli(
 
         for record in sorted(trial_results, key=lambda row: row["objective"], reverse=True):
             weights_preview = ", ".join(
-                f"{name}={weight:.2f}" for name, weight in sorted(record["operator_weights"].items())
+                f"{name}={weight:.2f}"
+                for name, weight in sorted(record["operator_weights"].items())
             )
             row = [
                 str(record["trial"]),
@@ -2091,9 +2110,7 @@ def tune_bayes_cli(
             scenario_best: dict[str, float] = {}
             for record in trial_results:
                 key = record.get("scenario_key", scenario_display)
-                scenario_best[key] = max(
-                    scenario_best.get(key, float("-inf")), record["objective"]
-                )
+                scenario_best[key] = max(scenario_best.get(key, float("-inf")), record["objective"])
             summary_record = {
                 "record_type": "tuner_summary",
                 "schema_version": "1.1",
@@ -2107,6 +2124,7 @@ def tune_bayes_cli(
                 summary_record,
             )
             append_jsonl(telemetry_log, summary_record)
+
 
 if __name__ == "__main__":
     app()

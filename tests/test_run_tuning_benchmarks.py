@@ -106,3 +106,28 @@ def test_run_tuning_benchmarks_minimal(tmp_path: Path):
     assert meta_summary_md.exists()
     meta_text = meta_summary_md.read_text(encoding="utf-8")
     assert "algorithm" in meta_text.lower()
+
+    convergence_runs_csv = out_dir / "convergence_runs.csv"
+    convergence_summary_csv = out_dir / "convergence_summary.csv"
+    convergence_summary_md = out_dir / "convergence_summary.md"
+    subprocess.run(
+        [
+            "python",
+            "scripts/analyze_tuner_reports.py",
+            "--report",
+            str(out_dir / "tuner_report.csv"),
+            "--telemetry-log",
+            str(telemetry_log),
+            "--out-convergence-csv",
+            str(convergence_runs_csv),
+            "--out-convergence-summary-csv",
+            str(convergence_summary_csv),
+            "--out-convergence-summary-markdown",
+            str(convergence_summary_md),
+        ],
+        check=True,
+        text=True,
+    )
+    assert convergence_runs_csv.exists()
+    assert convergence_summary_csv.exists()
+    assert convergence_summary_md.exists()
