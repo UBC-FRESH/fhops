@@ -1509,10 +1509,30 @@ def tune_random_cli(
                 if bundle_meta:
                     telemetry_context["bundle"] = bundle_meta["bundle"]
                     telemetry_context["bundle_member"] = bundle_meta.get("bundle_member", scenario_display)
+                tuner_meta_payload = {
+                    "algorithm": "random",
+                    "budget": {
+                        "runs_total": runs,
+                        "iters_per_run": iters,
+                    },
+                    "config": {
+                        "batch_size": batch_size_choice,
+                        "operator_count": weight_count,
+                        "operators": operator_weights,
+                    },
+                    "progress": {
+                        "run_index": run_idx + 1,
+                        "total_runs": runs,
+                    },
+                }
+                if bundle_meta:
+                    tuner_meta_payload["bundle"] = bundle_meta["bundle"]
+                    tuner_meta_payload["bundle_member"] = bundle_meta.get("bundle_member", scenario_display)
                 telemetry_kwargs = {
                     "telemetry_log": telemetry_log,
                     "telemetry_context": telemetry_context,
                 }
+                telemetry_kwargs["telemetry_context"]["tuner_meta"] = tuner_meta_payload
 
             try:
                 res = solve_sa(
@@ -1686,6 +1706,7 @@ def tune_grid_cli(
             console.print(
                 f"[dim]Grid tuning {scenario_display} ({config_count} configuration(s))[/]"
             )
+        config_counter = 0
         for batch_choice in batch_values:
             for preset_name in preset_values:
                 operator_weights = {
@@ -1708,6 +1729,27 @@ def tune_grid_cli(
                         telemetry_kwargs["telemetry_context"]["bundle_member"] = bundle_meta.get(
                             "bundle_member", scenario_display
                         )
+                    config_counter += 1
+                    tuner_meta_payload = {
+                        "algorithm": "grid",
+                        "budget": {
+                            "total_configs": config_count,
+                            "iters_per_config": iters,
+                        },
+                        "config": {
+                            "preset": preset_name,
+                            "batch_size": batch_choice,
+                            "operators": operator_weights,
+                        },
+                        "progress": {
+                            "config_index": config_counter,
+                            "total_configs": config_count,
+                        },
+                    }
+                    if bundle_meta:
+                        tuner_meta_payload["bundle"] = bundle_meta["bundle"]
+                        tuner_meta_payload["bundle_member"] = bundle_meta.get("bundle_member", scenario_display)
+                    telemetry_kwargs["telemetry_context"]["tuner_meta"] = tuner_meta_payload
                 try:
                     res = solve_sa(
                         pb,
@@ -1891,6 +1933,26 @@ def tune_bayes_cli(
                     telemetry_kwargs["telemetry_context"]["bundle_member"] = bundle_meta.get(
                         "bundle_member", scenario_display
                     )
+                tuner_meta_payload = {
+                    "algorithm": "bayes",
+                    "budget": {
+                        "trials_total": trials,
+                        "iters_per_trial": iters,
+                    },
+                    "config": {
+                        "trial_number": trial.number,
+                        "batch_size": batch_choice,
+                        "operators": operator_weights,
+                    },
+                    "progress": {
+                        "trial_index": trial.number + 1,
+                        "total_trials": trials,
+                    },
+                }
+                if bundle_meta:
+                    tuner_meta_payload["bundle"] = bundle_meta["bundle"]
+                    tuner_meta_payload["bundle_member"] = bundle_meta.get("bundle_member", scenario_display)
+                telemetry_kwargs["telemetry_context"]["tuner_meta"] = tuner_meta_payload
             try:
                 res = solve_sa(
                     pb,
