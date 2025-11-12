@@ -38,6 +38,11 @@ def test_run_tuning_benchmarks_minimal(tmp_path: Path):
     comparison_md = out_dir / "tuner_comparison.md"
     leaderboard_csv = out_dir / "tuner_leaderboard.csv"
     leaderboard_md = out_dir / "tuner_leaderboard.md"
+    difficulty_csv = out_dir / "tuner_difficulty.csv"
+    difficulty_md = out_dir / "tuner_difficulty.md"
+    baseline_comp_csv = out_dir / "tuner_comparison_baseline.csv"
+    baseline_leader_csv = out_dir / "tuner_leaderboard_baseline.csv"
+    baseline_diff_csv = out_dir / "tuner_difficulty_baseline.csv"
 
     assert telemetry_log.exists()
     assert report_csv.exists()
@@ -47,6 +52,11 @@ def test_run_tuning_benchmarks_minimal(tmp_path: Path):
     assert comparison_md.exists()
     assert leaderboard_csv.exists()
     assert leaderboard_md.exists()
+    assert difficulty_csv.exists()
+    assert difficulty_md.exists()
+    assert baseline_comp_csv.exists()
+    assert baseline_leader_csv.exists()
+    assert baseline_diff_csv.exists()
 
     # Ensure summary mentions the minitoy scenario
     summary_text = summary_md.read_text(encoding="utf-8")
@@ -56,6 +66,8 @@ def test_run_tuning_benchmarks_minimal(tmp_path: Path):
     assert "scenario" in comparison_text.lower()
     leaderboard_text = leaderboard_md.read_text(encoding="utf-8")
     assert "algorithm" in leaderboard_text.lower()
+    difficulty_text = difficulty_md.read_text(encoding="utf-8")
+    assert "mip_gap" in difficulty_text.lower()
 
     meta_summary_csv = out_dir / "tuner_meta_summary.csv"
     meta_summary_md = out_dir / "tuner_meta_summary.md"

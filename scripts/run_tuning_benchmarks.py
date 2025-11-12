@@ -316,7 +316,11 @@ def _render_markdown_table(df: pd.DataFrame) -> str:
     return "\n".join(lines)
 
 
-def generate_comparisons(sqlite_path: Path, out_dir: Path) -> tuple[Path, Path, Path, Path]:
+def _sanitize_bundle_name(name: str) -> str:
+    return name.replace("/", "_").replace(":", "_").replace(" ", "_")
+
+
+def generate_comparisons(sqlite_path: Path, out_dir: Path) -> dict[str, object]:
     conn = sqlite3.connect(sqlite_path)
     conn.row_factory = sqlite3.Row
     rows = conn.execute(
@@ -339,7 +343,8 @@ def generate_comparisons(sqlite_path: Path, out_dir: Path) -> tuple[Path, Path, 
 
     scenario_data: dict[str, dict[str, dict[str, list[float]]]] = {}
     scenario_display: dict[str, str] = {}
-    algorithms_seen: set[str] = set()
+    scenario_bundle: dict[str, str] = {}
+    scenario_mip: dict[str, float] = {}
 
     for row in rows:
         context = json.loads(row["context_json"] or "{}")
@@ -347,31 +352,39 @@ def generate_comparisons(sqlite_path: Path, out_dir: Path) -> tuple[Path, Path, 
         algorithm = tuner_meta.get("algorithm") or context.get("algorithm") or _infer_algorithm(
             context.get("source"), row["solver"]
         )
-        algorithms_seen.add(algorithm)
         bundle = context.get("bundle")
         bundle_member = context.get("bundle_member")
         scenario_name = row["scenario"] or bundle_member or "unknown"
         if bundle:
             scenario_key = f"{bundle}:{bundle_member or scenario_name}"
             display_name = scenario_key
+            bundle_name = bundle
         else:
             scenario_key = scenario_name
             display_name = scenario_name
         scenario_display[scenario_key] = display_name
+        scenario_bundle.setdefault(scenario_key, bundle_name)
+
+        objective_value = float(row["objective"]) if row["objective"] is not None else None
+        if algorithm == "mip":
+            if objective_value is not None:
+                previous = scenario_mip.get(scenario_key)
+                scenario_mip[scenario_key] = (
+                    max(previous, objective_value) if previous is not None else objective_value
+                )
+            continue
 
         data = scenario_data.setdefault(scenario_key, {}).setdefault(
             algorithm, {"objectives": [], "runtimes": []}
         )
-        objective_value = float(row["objective"]) if row["objective"] is not None else None
         if objective_value is not None:
             data["objectives"].append(objective_value)
         duration = row["duration_seconds"]
         if duration is not None:
             data["runtimes"].append(float(duration))
 
-    comparison_rows: list[dict[str, object]] = []
-    algorithm_summary: dict[str, dict[str, object]] = {
-        algo: {
+    def compute_metrics(selected_keys: set[str] | None):
+        summary_template = lambda: {
             "wins": 0,
             "scenario_participation": 0,
             "best_values": [],
@@ -379,97 +392,161 @@ def generate_comparisons(sqlite_path: Path, out_dir: Path) -> tuple[Path, Path, 
             "runtime_values": [],
             "delta_values": [],
         }
-        for algo in algorithms_seen
-    }
+        algorithm_summary: dict[str, dict[str, object]] = defaultdict(summary_template)
+        comparison_rows: list[dict[str, object]] = []
+        difficulty_rows: list[dict[str, object]] = []
+        scenarios_considered: list[str] = []
 
-    for scenario_key, alg_stats in scenario_data.items():
-        if not alg_stats:
-            continue
-        scenario_name = scenario_display.get(scenario_key, scenario_key)
-        overall_best = max(
-            (max(stats["objectives"]) for stats in alg_stats.values() if stats["objectives"]),
-            default=None,
-        )
-        if overall_best is None:
-            continue
-
-        for algorithm, stats in alg_stats.items():
-            objectives = stats["objectives"]
-            if not objectives:
+        for scenario_key, alg_stats in scenario_data.items():
+            if selected_keys is not None and scenario_key not in selected_keys:
                 continue
-            best_obj = max(objectives)
-            mean_obj = fmean(objectives)
-            runtimes = stats["runtimes"]
-            avg_runtime = fmean(runtimes) if runtimes else None
-            delta_vs_best = best_obj - overall_best
+            if not alg_stats:
+                continue
+            scenario_name = scenario_display.get(scenario_key, scenario_key)
+            bundle_name = scenario_bundle.get(scenario_key, "standalone")
+            objective_entries: list[tuple[str, float, float, float | None]] = []
+            for algorithm, stats in alg_stats.items():
+                objectives = stats["objectives"]
+                if not objectives:
+                    continue
+                best_obj = max(objectives)
+                mean_obj = fmean(objectives)
+                runtimes = stats["runtimes"]
+                avg_runtime = fmean(runtimes) if runtimes else None
+                objective_entries.append((algorithm, best_obj, mean_obj, avg_runtime))
+            if not objective_entries:
+                continue
+            scenarios_considered.append(scenario_key)
+            objective_entries.sort(key=lambda item: item[1], reverse=True)
+            overall_best = objective_entries[0][1]
+            second_best_delta = (
+                objective_entries[0][1] - objective_entries[1][1]
+                if len(objective_entries) > 1
+                else None
+            )
+            for algorithm, best_obj, mean_obj, avg_runtime in objective_entries:
+                delta_vs_best = best_obj - overall_best
+                comparison_rows.append(
+                    {
+                        "scenario": scenario_name,
+                        "bundle": bundle_name,
+                        "algorithm": algorithm,
+                        "best_objective": best_obj,
+                        "mean_objective": mean_obj,
+                        "mean_runtime": avg_runtime,
+                        "delta_vs_best": delta_vs_best,
+                    }
+                )
+                summary = algorithm_summary[algorithm]
+                summary["scenario_participation"] += 1
+                summary["best_values"].append(best_obj)
+                summary["mean_values"].append(mean_obj)
+                summary["delta_values"].append(delta_vs_best)
+                if avg_runtime is not None:
+                    summary["runtime_values"].append(avg_runtime)
+                if abs(delta_vs_best) < 1e-9:
+                    summary["wins"] += 1
 
-            comparison_rows.append(
+            mip_obj = scenario_mip.get(scenario_key)
+            difficulty_rows.append(
                 {
                     "scenario": scenario_name,
-                    "algorithm": algorithm,
-                    "best_objective": best_obj,
-                    "mean_objective": mean_obj,
-                    "mean_runtime": avg_runtime,
-                    "delta_vs_best": delta_vs_best,
+                    "bundle": bundle_name,
+                    "best_algorithm": objective_entries[0][0],
+                    "best_objective": objective_entries[0][1],
+                    "second_best_delta": second_best_delta,
+                    "mip_objective": mip_obj,
+                    "mip_gap": (mip_obj - objective_entries[0][1]) if mip_obj is not None else None,
+                    "algorithms_evaluated": len(objective_entries),
                 }
             )
 
-            summary = algorithm_summary.setdefault(
-                algorithm,
-                {
-                    "wins": 0,
-                    "scenario_participation": 0,
-                    "best_values": [],
-                    "mean_values": [],
-                    "runtime_values": [],
-                    "delta_values": [],
-                },
+        comparison_df = pd.DataFrame(comparison_rows)
+        if not comparison_df.empty:
+            comparison_df.sort_values(
+                ["bundle", "scenario", "algorithm"], ascending=[True, True, True], inplace=True
             )
-            summary["scenario_participation"] = summary.get("scenario_participation", 0) + 1
-            summary["best_values"].append(best_obj)
-            summary["mean_values"].append(mean_obj)
-            summary["delta_values"].append(delta_vs_best)
-            if avg_runtime is not None:
-                summary["runtime_values"].append(avg_runtime)
-            if abs(delta_vs_best) < 1e-9:
-                summary["wins"] = summary.get("wins", 0) + 1
 
-    comparison_df = pd.DataFrame(comparison_rows).sort_values(
-        ["scenario", "delta_vs_best"], ascending=[True, True]
-    )
+        scenario_count = len(set(scenarios_considered))
+        leaderboard_rows: list[dict[str, object]] = []
+        for algorithm, stats in algorithm_summary.items():
+            if stats["scenario_participation"] == 0 or scenario_count == 0:
+                continue
+            wins = stats["wins"]
+            leaderboard_rows.append(
+                {
+                    "algorithm": algorithm,
+                    "wins": wins,
+                    "scenarios": scenario_count,
+                    "win_rate": wins / scenario_count if scenario_count else 0.0,
+                    "avg_best_objective": fmean(stats["best_values"]) if stats["best_values"] else None,
+                    "avg_mean_objective": fmean(stats["mean_values"]) if stats["mean_values"] else None,
+                    "avg_runtime": fmean(stats["runtime_values"]) if stats["runtime_values"] else None,
+                    "avg_delta_vs_best": fmean(stats["delta_values"]) if stats["delta_values"] else None,
+                }
+            )
+        leaderboard_df = pd.DataFrame(leaderboard_rows).sort_values(
+            ["win_rate", "algorithm"], ascending=[False, True]
+        )
 
-    scenario_count = len(scenario_data)
-    leaderboard_rows: list[dict[str, object]] = []
-    for algorithm, stats in algorithm_summary.items():
-        if stats["scenario_participation"] == 0:
-            continue
-        wins = stats.get("wins", 0)
-        win_rate = (wins / scenario_count) if scenario_count else 0.0
-        leader_entry = {
-            "algorithm": algorithm,
-            "wins": wins,
-            "scenarios": scenario_count,
-            "win_rate": win_rate,
-            "avg_best_objective": fmean(stats["best_values"]) if stats["best_values"] else None,
-            "avg_mean_objective": fmean(stats["mean_values"]) if stats["mean_values"] else None,
-            "avg_runtime": fmean(stats["runtime_values"]) if stats["runtime_values"] else None,
-            "avg_delta_vs_best": fmean(stats["delta_values"]) if stats["delta_values"] else None,
-        }
-        leaderboard_rows.append(leader_entry)
+        difficulty_df = pd.DataFrame(difficulty_rows).sort_values(
+            ["bundle", "scenario"], ascending=[True, True]
+        )
+        return comparison_df, leaderboard_df, difficulty_df
 
-    leaderboard_df = pd.DataFrame(leaderboard_rows).sort_values("win_rate", ascending=False)
+    comparison_df, leaderboard_df, difficulty_df = compute_metrics(None)
 
     comparison_csv = out_dir / "tuner_comparison.csv"
     comparison_md = out_dir / "tuner_comparison.md"
     leaderboard_csv = out_dir / "tuner_leaderboard.csv"
     leaderboard_md = out_dir / "tuner_leaderboard.md"
+    difficulty_csv = out_dir / "tuner_difficulty.csv"
+    difficulty_md = out_dir / "tuner_difficulty.md"
 
     comparison_df.to_csv(comparison_csv, index=False)
     comparison_md.write_text(_render_markdown_table(comparison_df), encoding="utf-8")
     leaderboard_df.to_csv(leaderboard_csv, index=False)
     leaderboard_md.write_text(_render_markdown_table(leaderboard_df), encoding="utf-8")
+    difficulty_df.to_csv(difficulty_csv, index=False)
+    difficulty_md.write_text(_render_markdown_table(difficulty_df), encoding="utf-8")
 
-    return comparison_csv, comparison_md, leaderboard_csv, leaderboard_md
+    bundle_outputs: dict[str, dict[str, Path]] = {}
+    for bundle_name in sorted(set(scenario_bundle.values())):
+        selected_keys = {key for key, value in scenario_bundle.items() if value == bundle_name}
+        bundle_comp, bundle_leader, bundle_diff = compute_metrics(selected_keys)
+        if bundle_comp.empty:
+            continue
+        sanitized = _sanitize_bundle_name(bundle_name)
+        comp_csv = out_dir / f"tuner_comparison_{sanitized}.csv"
+        comp_md = out_dir / f"tuner_comparison_{sanitized}.md"
+        leader_csv = out_dir / f"tuner_leaderboard_{sanitized}.csv"
+        leader_md = out_dir / f"tuner_leaderboard_{sanitized}.md"
+        diff_csv = out_dir / f"tuner_difficulty_{sanitized}.csv"
+        diff_md = out_dir / f"tuner_difficulty_{sanitized}.md"
+        bundle_comp.to_csv(comp_csv, index=False)
+        comp_md.write_text(_render_markdown_table(bundle_comp), encoding="utf-8")
+        bundle_leader.to_csv(leader_csv, index=False)
+        leader_md.write_text(_render_markdown_table(bundle_leader), encoding="utf-8")
+        bundle_diff.to_csv(diff_csv, index=False)
+        diff_md.write_text(_render_markdown_table(bundle_diff), encoding="utf-8")
+        bundle_outputs[bundle_name] = {
+            "comparison_csv": comp_csv,
+            "comparison_md": comp_md,
+            "leaderboard_csv": leader_csv,
+            "leaderboard_md": leader_md,
+            "difficulty_csv": diff_csv,
+            "difficulty_md": diff_md,
+        }
+
+    return {
+        "comparison_csv": comparison_csv,
+        "comparison_md": comparison_md,
+        "leaderboard_csv": leaderboard_csv,
+        "leaderboard_md": leaderboard_md,
+        "difficulty_csv": difficulty_csv,
+        "difficulty_md": difficulty_md,
+        "per_bundle": bundle_outputs,
+    }
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -561,7 +638,7 @@ def main(argv: list[str] | None = None) -> int:
         verbose=args.verbose,
     )
 
-    comparison_csv, comparison_md, leaderboard_csv, leaderboard_md = generate_comparisons(
+    comparison_artifacts = generate_comparisons(
         telemetry_log.with_suffix(".sqlite"), out_dir
     )
 
@@ -570,10 +647,12 @@ def main(argv: list[str] | None = None) -> int:
         print("Report CSV:", report_csv)
         print("Summary CSV:", summary_csv)
         print("Summary Markdown:", summary_md)
-        print("Comparison CSV:", comparison_csv)
-        print("Comparison Markdown:", comparison_md)
-        print("Leaderboard CSV:", leaderboard_csv)
-        print("Leaderboard Markdown:", leaderboard_md)
+        print("Comparison CSV:", comparison_artifacts["comparison_csv"])
+        print("Comparison Markdown:", comparison_artifacts["comparison_md"])
+        print("Leaderboard CSV:", comparison_artifacts["leaderboard_csv"])
+        print("Leaderboard Markdown:", comparison_artifacts["leaderboard_md"])
+        print("Difficulty CSV:", comparison_artifacts["difficulty_csv"])
+        print("Difficulty Markdown:", comparison_artifacts["difficulty_md"])
 
     return 0
 

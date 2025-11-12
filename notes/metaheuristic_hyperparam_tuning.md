@@ -38,6 +38,11 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - [ ] Benchmark grid vs. random vs. Bayesian/SMBO (and future neural/meta-learned) tuners across canonical scenarios; log comparative telemetry (win rate, best obj delta, runtime).
   - [x] Finalise `benchmark_bundle_plan` (baseline bundle + synthetic tiers) with aligned budgets per tuner and document the configuration in this note and `docs/howto/telemetry_tuning.rst`.
   - [ ] Automate comparison artefacts integration in CI (publish `tuner_comparison.*` and `tuner_leaderboard.*` alongside summaries).
+  - [x] Produce per-bundle leaderboards/comparisons (baseline vs each synthetic tier) and publish them alongside global summaries.
+  - [ ] Add budget sensitivity sweeps (e.g., 100/250/500 iterations) and chart marginal gain vs runtime.
+  - [ ] Incorporate ILS/Tabu (and future tuners) into the benchmark harness with aligned budgets.
+  - [ ] Generate convergence diagnostics by comparing heuristic best trajectories against MIP optimal objectives; record convergence slopes and thresholds.
+  - [ ] Compute scenario difficulty indices (delta to MIP optimum, tuner win distribution) and include in comparison artefacts.
 - [x] Emit tuner-level meta-telemetry (algorithm name, configuration, budget, convergence stats) so higher-level orchestration can evaluate tuner performance.
   - [x] Extend `RunTelemetryLogger` / CLI tuners to include `tuner_meta` (algorithm label, search budget, config search space hints, convergence indicators).
   - [x] Persist meta fields in SQLite (either JSON column or dedicated table) for downstream selection agents.

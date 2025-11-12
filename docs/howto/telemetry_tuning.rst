@@ -258,6 +258,7 @@ leaderboard) and ``latest_history_summary.md`` (delta vs. previous snapshot) to 
 signals without grabbing artefacts.
 The comparison and leaderboard tables are also available at
 ``.../latest_tuner_comparison.{md,csv}`` and ``.../latest_tuner_leaderboard.{md,csv}``.
+Bundle-specific variants (``tuner_comparison_baseline.*``, ``tuner_leaderboard_synthetic.*``) are published alongside a difficulty table (``tuner_difficulty*.{md,csv}``) containing best-algorithm deltas, second-best gaps, and MIP gaps when available.
 
 Tuner metadata summary
 ~~~~~~~~~~~~~~~~~~~~~~
