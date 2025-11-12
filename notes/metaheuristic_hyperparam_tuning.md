@@ -36,12 +36,27 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - [x] Expose CLI commands (`fhops tune random`, `fhops tune bayes`) that schedule sweeps over scenario bundles.
 - [x] Generate automated comparison reports (CSV/Markdown) summarising best configs per scenario tier; stash fixtures/tests.
 - [ ] Benchmark grid vs. random vs. Bayesian/SMBO (and future neural/meta-learned) tuners across canonical scenarios; log comparative telemetry (win rate, best obj delta, runtime).
-  - [ ] Finalise benchmark matrix (baseline bundle + synthetic tiers) with aligned budgets per tuner and document the configuration in this note.
+  - [ ] Finalise `benchmark_bundle_plan` (baseline bundle + synthetic tiers) with aligned budgets per tuner and document the configuration in this note and `docs/howto/telemetry_tuning.rst`.
   - [ ] Automate comparison artefacts integration in CI (publish `tuner_comparison.*` and `tuner_leaderboard.*` alongside summaries).
 - [x] Emit tuner-level meta-telemetry (algorithm name, configuration, budget, convergence stats) so higher-level orchestration can evaluate tuner performance.
   - [x] Extend `RunTelemetryLogger` / CLI tuners to include `tuner_meta` (algorithm label, search budget, config search space hints, convergence indicators).
   - [x] Persist meta fields in SQLite (either JSON column or dedicated table) for downstream selection agents.
   - [x] Update docs/tests to cover meta-telemetry schema, ensuring backwards compatibility for existing consumers.
+
+## Benchmark Bundle Plan (draft)
+
+| Plan name       | Bundles / Scenarios                                        | Random tuner budget          | Grid tuner budget                                     | Bayesian tuner budget        |
+|-----------------|------------------------------------------------------------|------------------------------|-------------------------------------------------------|------------------------------|
+| baseline-smoke  | `baseline` (examples/minitoy, examples/med42)              | 3 runs × 250 iters           | presets `balanced`,`explore` × batch `{1,2}` × 250 iters | 30 trials × 250 iters        |
+| synthetic-smoke | `synthetic` (small, medium, large tiers)                   | 3 runs × 300 iters           | presets `balanced`,`explore` × batch `{1,2}` × 300 iters | 30 trials × 300 iters        |
+| full-spectrum   | baseline + synthetic bundles (combined run)               | inherits per-scenario budgets above | inherits per-scenario budgets above                     | inherits per-scenario budgets |
+
+Guidelines:
+
+- Seeds are derived from the base seed plus scenario index, ensuring reproducibility.
+- Grid configs iterate presets before batch sizes to keep result ordering stable.
+- Future tuners (e.g., neural/agentic) should target equivalent iteration/trial budgets or document deviations.
+- Add a `benchmark_plan` preset to scripts and CI so the same matrix is reused locally and in automation.
 
 ### Agentic Tuning Integration
 - [ ] Define prompt templates and action space for the LLM agent (config proposals, narrative rationale).

@@ -228,6 +228,30 @@ In addition to the per-scenario summaries, the script now emits:
 * ``tuner_comparison.{csv,md}`` — per-scenario/per-algorithm table with best objective, mean objective, mean runtime, and delta vs. the scenario leader.
 * ``tuner_leaderboard.{csv,md}`` — aggregate win rates, average metrics, and deltas per algorithm across all scenarios.
 
+Benchmark plans
+~~~~~~~~~~~~~~~
+
+Use ``--plan`` to reuse the curated budgets across bundles:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 25 40 35
+
+   * - Plan
+     - Coverage
+     - Budgets (random / grid / bayes)
+   * - ``baseline-smoke``
+     - ``examples/minitoy`` + ``examples/med42``
+     - ``3 × 250 iters`` / ``(balanced, explore) × batch {1,2} × 250`` / ``30 trials × 250``
+   * - ``synthetic-smoke``
+     - ``examples/synthetic/{small,medium,large}``
+     - ``3 × 300 iters`` / ``(balanced, explore) × batch {1,2} × 300`` / ``30 trials × 300``
+   * - ``full-spectrum``
+     - baseline + synthetic bundles
+     - inherits budgets from the above rows
+
+Budgets deliver a 3–5 minute sweep locally; override any option (e.g., ``--random-runs``) as needed.
+
 CI publishes the latest summary tables to GitHub Pages; check
 ``https://<org>.github.io/<repo>/telemetry/latest_tuner_summary.md`` (per-scenario
 leaderboard) and ``latest_history_summary.md`` (delta vs. previous snapshot) to spot regression

@@ -63,7 +63,7 @@ jobs:
         run: |
           mkdir -p tmp/ci-telemetry
           python scripts/run_tuning_benchmarks.py \
-            --bundle baseline \
+            --plan baseline-smoke \
             --out-dir tmp/ci-telemetry \
             --random-runs 1 \
             --random-iters 50 \

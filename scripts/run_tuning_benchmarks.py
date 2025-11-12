@@ -17,6 +17,36 @@ import pandas as pd
 CLI_ENTRY_POINT = [sys.executable, "-m", "fhops.cli.main"]
 ANALYZE_SCRIPT = [sys.executable, "scripts/analyze_tuner_reports.py"]
 
+DEFAULT_RANDOM_RUNS = 3
+DEFAULT_RANDOM_ITERS = 250
+DEFAULT_GRID_ITERS = 250
+DEFAULT_BAYES_TRIALS = 20
+DEFAULT_BAYES_ITERS = 250
+DEFAULT_GRID_BATCH_SIZES = [1, 2]
+DEFAULT_GRID_PRESETS = ["balanced", "explore"]
+DEFAULT_TUNERS = ["random", "grid", "bayes"]
+
+BENCHMARK_PLANS: dict[str, dict[str, object]] = {
+    "baseline-smoke": {
+        "bundles": ["baseline"],
+        "random": {"runs": 3, "iters": 250},
+        "grid": {"iters": 250, "batch_sizes": [1, 2], "presets": ["balanced", "explore"]},
+        "bayes": {"trials": 30, "iters": 250},
+    },
+    "synthetic-smoke": {
+        "bundles": ["synthetic"],
+        "random": {"runs": 3, "iters": 300},
+        "grid": {"iters": 300, "batch_sizes": [1, 2], "presets": ["balanced", "explore"]},
+        "bayes": {"trials": 30, "iters": 300},
+    },
+    "full-spectrum": {
+        "bundles": ["baseline", "synthetic"],
+        "random": {"runs": 3, "iters": 300},
+        "grid": {"iters": 300, "batch_sizes": [1, 2], "presets": ["balanced", "explore"]},
+        "bayes": {"trials": 30, "iters": 300},
+    },
+}
+
 
 def _run(cmd: list[str], *, verbose: bool = False) -> None:
     if verbose:
@@ -53,10 +83,15 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Explicit scenario YAML path (repeatable).",
     )
     parser.add_argument(
+        "--plan",
+        choices=sorted(BENCHMARK_PLANS.keys()),
+        help="Named benchmark plan providing bundles and tuner budgets.",
+    )
+    parser.add_argument(
         "--tuner",
         action="append",
         choices=["random", "grid", "bayes"],
-        help="Subset of tuners to run (default: all).",
+        help="Subset of tuners to run (defaults to plan or all).",
     )
     parser.add_argument(
         "--out-dir",
@@ -77,42 +112,37 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--random-runs",
         type=int,
-        default=3,
         help="Number of random tuner runs per scenario.",
     )
     parser.add_argument(
         "--random-iters",
         type=int,
-        default=250,
         help="Simulated annealing iterations per random tuner run.",
     )
     parser.add_argument(
         "--grid-iters",
         type=int,
-        default=250,
         help="Simulated annealing iterations per grid configuration.",
     )
     parser.add_argument(
         "--grid-batch-size",
         action="append",
         type=int,
-        help="Batch size to evaluate (repeatable, default: 1 and 2).",
+        help="Batch size to evaluate (repeatable).",
     )
     parser.add_argument(
         "--grid-preset",
         action="append",
-        help="Operator preset to evaluate (repeatable, default: balanced and explore).",
+        help="Operator preset to evaluate (repeatable).",
     )
     parser.add_argument(
         "--bayes-trials",
         type=int,
-        default=20,
         help="Number of Bayesian optimisation trials per scenario.",
     )
     parser.add_argument(
         "--bayes-iters",
         type=int,
-        default=250,
         help="Iterations per Bayesian optimisation trial.",
     )
     parser.add_argument(
@@ -445,7 +475,13 @@ def generate_comparisons(sqlite_path: Path, out_dir: Path) -> tuple[Path, Path, 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
 
-    tuners = args.tuner or ["random", "grid", "bayes"]
+    plan_cfg: dict[str, object] | None = None
+    if args.plan:
+        plan_cfg = BENCHMARK_PLANS.get(args.plan)
+        if plan_cfg is None:
+            raise ValueError(f"Unknown plan '{args.plan}'. Available: {', '.join(BENCHMARK_PLANS)}")
+
+    tuners = args.tuner or (plan_cfg.get("tuners") if plan_cfg else None) or DEFAULT_TUNERS
     out_dir: Path = args.out_dir
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -453,21 +489,68 @@ def main(argv: list[str] | None = None) -> int:
     telemetry_log.parent.mkdir(parents=True, exist_ok=True)
     ensure_clean_log(telemetry_log, append=args.append)
 
-    grid_batch_sizes = args.grid_batch_size or [1, 2]
-    grid_presets = args.grid_preset or ["balanced", "explore"]
+    bundles = list(args.bundle or [])
+    if plan_cfg and not bundles:
+        bundles = list(plan_cfg.get("bundles", []))
+
+    scenario_paths = list(args.scenario or [])
+    if plan_cfg and not scenario_paths and plan_cfg.get("scenarios"):
+        scenario_paths = [Path(p) for p in plan_cfg["scenarios"]]  # type: ignore[arg-type]
+
+    random_runs = args.random_runs if args.random_runs is not None else (
+        plan_cfg.get("random", {}).get("runs") if plan_cfg else None  # type: ignore[union-attr]
+    )
+    if random_runs is None:
+        random_runs = DEFAULT_RANDOM_RUNS
+
+    random_iters = args.random_iters if args.random_iters is not None else (
+        plan_cfg.get("random", {}).get("iters") if plan_cfg else None  # type: ignore[union-attr]
+    )
+    if random_iters is None:
+        random_iters = DEFAULT_RANDOM_ITERS
+
+    grid_iters = args.grid_iters if args.grid_iters is not None else (
+        plan_cfg.get("grid", {}).get("iters") if plan_cfg else None  # type: ignore[union-attr]
+    )
+    if grid_iters is None:
+        grid_iters = DEFAULT_GRID_ITERS
+
+    grid_batch_sizes = args.grid_batch_size or (
+        plan_cfg.get("grid", {}).get("batch_sizes") if plan_cfg else None  # type: ignore[union-attr]
+    )
+    if not grid_batch_sizes:
+        grid_batch_sizes = list(DEFAULT_GRID_BATCH_SIZES)
+
+    grid_presets = args.grid_preset or (
+        plan_cfg.get("grid", {}).get("presets") if plan_cfg else None  # type: ignore[union-attr]
+    )
+    if not grid_presets:
+        grid_presets = list(DEFAULT_GRID_PRESETS)
+
+    bayes_trials = args.bayes_trials if args.bayes_trials is not None else (
+        plan_cfg.get("bayes", {}).get("trials") if plan_cfg else None  # type: ignore[union-attr]
+    )
+    if bayes_trials is None:
+        bayes_trials = DEFAULT_BAYES_TRIALS
+
+    bayes_iters = args.bayes_iters if args.bayes_iters is not None else (
+        plan_cfg.get("bayes", {}).get("iters") if plan_cfg else None  # type: ignore[union-attr]
+    )
+    if bayes_iters is None:
+        bayes_iters = DEFAULT_BAYES_ITERS
 
     run_tuner_commands(
-        bundles=args.bundle or [],
-        scenarios=args.scenario or [],
+        bundles=bundles,
+        scenarios=scenario_paths,
         telemetry_log=telemetry_log,
         tuners=tuners,
-        random_runs=args.random_runs,
-        random_iters=args.random_iters,
-        grid_iters=args.grid_iters,
+        random_runs=random_runs,
+        random_iters=random_iters,
+        grid_iters=grid_iters,
         grid_batch_sizes=grid_batch_sizes,
         grid_presets=grid_presets,
-        bayes_trials=args.bayes_trials,
-        bayes_iters=args.bayes_iters,
+        bayes_trials=bayes_trials,
+        bayes_iters=bayes_iters,
         verbose=args.verbose,
     )
 
