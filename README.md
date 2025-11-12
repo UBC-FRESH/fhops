@@ -61,6 +61,10 @@ performance. The workflow also archives each run under `history/` and ships
 `history_summary.{csv,md,html}` for quick trend analysis. See
 `docs/howto/telemetry_tuning.rst` for a step-by-step guide and download instructions.
 `history_delta.{csv,md}` capture latest-vs-previous deltas so regressions stand out instantly.
+The latest per-scenario leaderboard lives in the Pages bundle at
+`https://ubc-fresh.github.io/fhops/telemetry/latest_tuner_summary.md` and
+`https://ubc-fresh.github.io/fhops/telemetry/latest_history_summary.md`, summarising the
+strongest algorithm/objective per scenario for the current CI run without downloading artefacts.
 
 All tuning commands accept `--bundle` to expand scenario manifests. Built-in aliases include
 `baseline` (minitoy + med42) and the synthetic tiers (`synthetic`, `synthetic-small`, etc.).
