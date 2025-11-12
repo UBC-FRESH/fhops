@@ -57,6 +57,7 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - [x] Tighten `_compute_history_deltas` so percentage columns remain valid and Markdown renders cleanly.
 - [x] Verify README/how-to copy clearly references the Pages URL and exported delta artefacts.
 - [x] Expand `DESIRED_METRICS` (e.g., downtime) once telemetry logging exposes the fields.
+- [x] Emit per-scenario summary outputs (`analyze_tuner_reports --out-summary-*`) so CI can surface the leading algorithm/objective per report.
 
 ## Notes on Meta-Tuning & Literature
 - Thornton, C., Hutter, F., Hoos, H. H., & Leyton-Brown, K. (2013). *Auto-WEKA: Combined Selection and Hyperparameter Optimization of Classification Algorithms*. Proceedings of KDD ’13, 847–855. https://doi.org/10.1145/2487575.2487629 — Demonstrates joint optimisation of algorithm choice and hyperparameters, effectively automating tuner selection via logged performance.
@@ -75,6 +76,7 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - [x] Implement the first conventional tuner driver (`fhops tune random` execution mode) that samples solver configs and records telemetry entries.
 - [x] Provide a simple JSONL → DataFrame loader in `fhops.telemetry` to make analyses/tests easier ahead of the SQLite backend.
 - [x] Add scenario descriptor exporter (machines/blocks/shifts) to telemetry runs so ML tuners can generalise across instances.
+- [ ] Stage benchmarking sweeps comparing grid/random/bayes on the canonical bundle and capture comparative telemetry summaries.
 
 ### Telemetry schema (draft)
 
