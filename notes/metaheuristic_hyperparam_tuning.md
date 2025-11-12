@@ -47,6 +47,35 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
   - [ ] Fit convergence models (gap vs. iterations vs. scenario features/difficulty) and store parameters for future stopping-criterion recommendations.
   - [ ] Extend benchmark plans with long-budget runs (e.g., 100/250/500+ iters or trials) to populate the convergence dataset.
 - [ ] Compute scenario difficulty indices (delta to MIP optimum, tuner win distribution) and include in comparison artefacts.
+- [x] Schedule medium/long tier convergence sweeps (baseline + synthetic bundles) with MIP baselines and publish resulting convergence summaries to docs/Pages once complete.
+  - Baseline convergence dataset: `tmp/convergence-baseline/` (telemetry, history, convergence summaries).
+  - Synthetic convergence dataset: `tmp/convergence-synthetic/` (telemetry, history, convergence summaries).
+  - Long-tier Tabu runs limited to 3 restarts × 2 000 iterations to stay within wall-clock bounds; revisit with parallel workers enabled if additional samples are required.
+  - Convergence summaries currently empty because MIP baselines are missing from the telemetry store; next sweep iteration must include `solve-mip` runs (or replay archived results) before recomputing convergence metrics.
+
+### Convergence modelling experiment (draft outline)
+
+1. **Populate baselines**
+   - Ensure each scenario participating in convergence analysis has an up-to-date MIP optimum recorded in the telemetry store (`runs` table with `solver='mip'`).
+   - If solving the full MIP is infeasible, capture best-known upper bounds and record them as reference metrics with an explicit `status`.
+2. **Feature extraction**
+   - From convergence runs: iterations to ≤1 % gap (from `convergence_runs.csv`), final best objective, acceptance statistics (mean acceptance rate, number of improvements), tier label, tuner algorithm.
+   - Scenario descriptors: machines, blocks, horizon (already emitted in telemetry `context.scenario_features`).
+   - MIP metadata: objective value, solve time, termination condition.
+3. **Modelling plan**
+   - Start with non-parametric regression (LOESS or scikit-learn `RandomForestRegressor`) to map `(scenario_features, tier, algorithm, budget)` → `iterations_to_1pct`.
+   - Build per-algorithm parametric fits (e.g., power-law `gap(t) = a * t^{-b}`) to derive interpretable slopes for documentation.
+   - Validate via time-based train/test split (e.g., baseline scenarios for training, synthetic for hold-out) and measure MAE on predicted iterations.
+4. **Outputs**
+   - Generate Markdown/CSV summaries: recommended iteration budget per tier & algorithm for new scenarios (based on regression predictions + safety margin).
+   - Visualise convergence curves (Altair) overlaying empirical and fitted models.
+5. **Automation**
+   - Extend `scripts/analyze_tuner_reports.py` or add a companion script (`scripts/fit_convergence_models.py`) to reproducibly generate the models.
+   - Store fitted parameters/artefacts under `docs/examples/analytics/data/convergence/`.
+
+### Documentation TODOs (post-modelling)
+- Publish convergence datasets and model recommendations in the telemetry how-to once baselines are populated and fits are available.
+- Add summary section to the README linking to convergence reports and recommended iteration budgets.
 - [ ] Schedule medium/long tier convergence sweeps (baseline + synthetic bundles) with MIP baselines and publish resulting convergence summaries to docs/Pages once complete.
 - [x] Emit tuner-level meta-telemetry (algorithm name, configuration, budget, convergence stats) so higher-level orchestration can evaluate tuner performance.
   - [x] Extend `RunTelemetryLogger` / CLI tuners to include `tuner_meta` (algorithm label, search budget, config search space hints, convergence indicators).
