@@ -256,6 +256,8 @@ CI publishes the latest summary tables to GitHub Pages; check
 ``https://<org>.github.io/<repo>/telemetry/latest_tuner_summary.md`` (per-scenario
 leaderboard) and ``latest_history_summary.md`` (delta vs. previous snapshot) to spot regression
 signals without grabbing artefacts.
+The comparison and leaderboard tables are also available at
+``.../latest_tuner_comparison.{md,csv}`` and ``.../latest_tuner_leaderboard.{md,csv}``.
 
 .. _telemetry_bundle_aliases:
 

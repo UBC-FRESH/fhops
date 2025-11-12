@@ -67,6 +67,9 @@ The latest per-scenario leaderboard lives in the Pages bundle at
 strongest algorithm/objective per scenario for the current CI run without downloading artefacts.
 Deeper comparisons (`tuner_comparison.*`, `tuner_leaderboard.*`) contrast grid/random/Bayesian
 strategies with win rates, average deltas, and runtime stats.
+Grab them straight from GitHub Pages via
+`https://ubc-fresh.github.io/fhops/telemetry/latest_tuner_comparison.md` and
+`latest_tuner_leaderboard.md` (CSV siblings share the same names).
 Use ``scripts/run_tuning_benchmarks.py --plan baseline-smoke`` to reproduce the CI smoke sweep
 over minitoy+med42 with aligned budgets; the ``synthetic-smoke`` and ``full-spectrum`` plans extend
 the same matrix to synthetic tiers.
