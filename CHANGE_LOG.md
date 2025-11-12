@@ -29,6 +29,7 @@
 - Hardened comparison generation when runs lack bundle metadata (heuristic sweeps now default to `standalone` rather than raising).
 - Docs/notes refreshed to outline the ILS/Tabu tier budgets and CLI overrides (`--ils-*`, `--tabu-*`) for smoke vs. deep sweeps.
 - `scripts/analyze_tuner_reports.py` now accepts `--telemetry-log` and emits per-run/summary convergence reports (iterations to ≤1 % gap) by parsing step logs; the how-to adds usage guidance and tests cover the new outputs.
+- Published a heuristic parameter catalogue in `docs/howto/telemetry_tuning.rst`, aligning the planning table with user-facing documentation so tuning surfaces are discoverable.
 
 ## 2025-11-11 — Analytics notebook automation
 - Added the analytics notebook runner to CI (`.github/workflows/ci.yml`) so the curated suite executes in light mode on every push/PR, exercising Altair plots and playback helpers.

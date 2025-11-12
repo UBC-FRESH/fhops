@@ -270,6 +270,73 @@ ILS/Tabu inherit the same tier labels: ``short`` executes two restarts with ~200
 (ILS enables the hybrid MIP warm start) with ~700/3 000 iterations. Adjust the respective ``--ils-*``
 and ``--tabu-*`` flags when you need lighter smoke runs or deeper convergence traces.
 
+Heuristic parameter catalogue
+-----------------------------
+
+Use the table below to map CLI flags to the tuning surface. The benchmark tiers above seed default
+budgets; you can override any parameter when experimenting locally or defining Optuna search spaces.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 35 25 18
+
+   * - Layer
+     - Parameters / flags
+     - Typical range / notes
+     - Tier coverage
+   * - Simulated Annealing (``solve-heur``, ``tune-random/grid/bayes``)
+     - ``--iters`` (150/300/600), ``--temperature0`` (50–500), ``--cooling-rate`` (0.90–0.999)
+     - Iteration horizon + geometric cooling schedule
+     - short/medium/long
+   * -
+     - ``--batch-neighbours`` (1–5), ``--parallel-workers`` (1–4)
+     - Batched neighbour evaluation with optional thread pool
+     - grid presets cover batch; medium/long enable workers
+   * -
+     - ``--operator``, ``--operator-weight``, ``--operator-preset`` (balanced/explore/mobilisation/agentic)
+     - Operator activation/weights; searchers toggle presets or sample weights
+     - All tiers via grid/random/bayes
+   * -
+     - ``--multi-start``, profile extras (reheating, schedule families)
+     - Multi-start counts, seed progression, reheating cadence
+     - Enabled in medium/long profiles; agentic tuner mutates via ``tuner_meta``
+   * - Iterated Local Search (``solve-ils``/tuning drivers)
+     - ``--iters`` (200/350/700)
+     - Outer perturbation/local-search cycles
+     - All tiers
+   * -
+     - ``--perturbation-strength`` (1–6), ``--stall-limit`` (8–20)
+     - Diversification vs. exploitation
+     - Random/Bayesian search + medium/long defaults
+   * -
+     - ``--hybrid-use-mip``, ``--hybrid-mip-time-limit`` (30–180 s)
+     - Hybrid restart when stalled
+     - Long tier default, optional elsewhere
+   * -
+     - Operator/preset flags, batching options
+     - Shares registry knobs with SA so presets stay aligned
+     - All tiers
+   * - Tabu Search (``solve-tabu``/tuning drivers)
+     - ``--iters`` (1 200/2 000/3 000)
+     - Search horizon per tier
+     - All tiers
+   * -
+     - ``--tabu-tenure`` (auto → machine count, sweep 20–120), ``--stall-limit`` (150–250)
+     - List length & stagnation window
+     - Random/Bayesian search + tier overrides
+   * -
+     - Operator/preset weights, batching
+     - Mirrors SA/ILS for cross-tuner parity
+     - All tiers
+   * - Tuner budgets
+     - Random: ``--runs``, ``--iters``; Grid: ``--iters``, ``--batch-size``, ``--preset``; Bayes: ``--trials``, ``--iters``
+     - Tier presets define default budgets; plans override for smokes/full suites
+     - Documented above
+   * - Meta / agentic extensions
+     - Telemetry-derived features (gap slope, acceptance trajectory, scenario descriptors)
+     - Stored in ``tuner_meta`` / ``context`` for future AutoML/LLM agents
+     - Planned Phase 3 enhancement
+
 CI publishes the latest summary tables to GitHub Pages; check
 ``https://<org>.github.io/<repo>/telemetry/latest_tuner_summary.md`` (per-scenario
 leaderboard) and ``latest_history_summary.md`` (delta vs. previous snapshot) to spot regression
