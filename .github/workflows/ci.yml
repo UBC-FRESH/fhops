@@ -62,42 +62,17 @@ jobs:
       - name: Telemetry tuning smoke report
         run: |
           mkdir -p tmp/ci-telemetry
-          fhops tune-random examples/minitoy/scenario.yaml \
-            --telemetry-log tmp/ci-telemetry/runs.jsonl \
-            --runs 1 \
-            --iters 50 \
-            --base-seed 31415
-          fhops tune-grid examples/minitoy/scenario.yaml \
-            --telemetry-log tmp/ci-telemetry/runs.jsonl \
-            --batch-size 1 \
-            --preset balanced \
-            --iters 50 \
-            --seed 2718
-          fhops tune-bayes examples/minitoy/scenario.yaml \
-            --telemetry-log tmp/ci-telemetry/runs.jsonl \
-            --trials 1 \
-            --iters 50 \
-            --seed 1618
-          # med42 smoke sweep (short budgets)
-          fhops tune-random examples/med42/scenario.yaml \
-            --telemetry-log tmp/ci-telemetry/runs.jsonl \
-            --runs 1 \
-            --iters 40 \
-            --base-seed 4242
-          fhops tune-grid examples/med42/scenario.yaml \
-            --telemetry-log tmp/ci-telemetry/runs.jsonl \
-            --batch-size 1 \
-            --preset balanced \
-            --iters 40 \
-            --seed 4545
-          fhops tune-bayes examples/med42/scenario.yaml \
-            --telemetry-log tmp/ci-telemetry/runs.jsonl \
-            --trials 1 \
-            --iters 40 \
-            --seed 5656
-          fhops telemetry report tmp/ci-telemetry/runs.sqlite \
-            --out-csv tmp/ci-telemetry/tuner_report.csv \
-            --out-markdown tmp/ci-telemetry/tuner_report.md
+          python scripts/run_tuning_benchmarks.py \
+            --bundle baseline \
+            --out-dir tmp/ci-telemetry \
+            --random-runs 1 \
+            --random-iters 50 \
+            --grid-iters 50 \
+            --grid-batch-size 1 \
+            --grid-preset balanced \
+            --bayes-trials 1 \
+            --bayes-iters 50 \
+            --summary-label latest
 
       - name: Archive telemetry history snapshot
         run: |
@@ -115,7 +90,9 @@ jobs:
             --history-dir tmp/ci-telemetry/history \
             --out-history-csv tmp/ci-telemetry/history_summary.csv \
             --out-history-markdown tmp/ci-telemetry/history_summary.md \
-            --out-history-chart tmp/ci-telemetry/history_summary.html
+            --out-history-chart tmp/ci-telemetry/history_summary.html \
+            --out-summary-csv tmp/ci-telemetry/history_summary_latest.csv \
+            --out-summary-markdown tmp/ci-telemetry/history_summary_latest.md
 
       - name: Prepare history publish bundle
         run: |
@@ -127,6 +104,10 @@ jobs:
           cp tmp/ci-telemetry/history_summary.md "$publish_dir/" || true
           cp tmp/ci-telemetry/history_summary.html "$publish_dir/" || true
           cp tmp/ci-telemetry/tuner_report.md "$publish_dir/latest_tuner_report.md"
+          cp tmp/ci-telemetry/tuner_summary.md "$publish_dir/latest_tuner_summary.md" || true
+          cp tmp/ci-telemetry/tuner_summary.csv "$publish_dir/latest_tuner_summary.csv" || true
+          cp tmp/ci-telemetry/history_summary_latest.md "$publish_dir/latest_history_summary.md" || true
+          cp tmp/ci-telemetry/history_summary_latest.csv "$publish_dir/latest_history_summary.csv" || true
 
       - name: Inspect publish bundle
         run: |
