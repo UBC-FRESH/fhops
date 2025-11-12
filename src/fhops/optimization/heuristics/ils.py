@@ -210,6 +210,7 @@ def solve_ils(
     }
     context_payload.setdefault("scenario_features", scenario_features)
     step_interval = context_payload.pop("step_interval", 25)
+    tuner_meta = context_payload.pop("tuner_meta", None)
     scenario_name = getattr(pb.scenario, "name", None)
     scenario_path = context_payload.pop("scenario_path", None)
 
@@ -350,6 +351,10 @@ def solve_ils(
             for key, value in kpi_totals.items()
         }
 
+        if tuner_meta is not None:
+            progress = tuner_meta.setdefault("progress", {})
+            progress.setdefault("best_objective", float(best_score))
+            progress.setdefault("iterations", iters)
         if run_logger and telemetry_logger:
             numeric_kpis = {
                 key: float(value)
@@ -372,6 +377,7 @@ def solve_ils(
                     "hybrid_used": hybrid_use_mip,
                 },
                 kpis=kpi_totals,
+                tuner_meta=tuner_meta,
             )
             meta["telemetry_run_id"] = telemetry_logger.run_id
             meta["telemetry_log_path"] = str(telemetry_logger.log_path)

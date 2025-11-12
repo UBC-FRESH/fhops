@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS runs (
     context_json TEXT,
     extra_json TEXT,
     artifacts_json TEXT,
+    tuner_meta_json TEXT,
     error TEXT
 );
 CREATE TABLE IF NOT EXISTS run_metrics (
@@ -61,6 +62,9 @@ CREATE TABLE IF NOT EXISTS tuner_summaries (
 
 def _ensure_schema(conn: sqlite3.Connection) -> None:
     conn.executescript(_SCHEMA)
+    columns = {row[1] for row in conn.execute("PRAGMA table_info(runs)").fetchall()}
+    if "tuner_meta_json" not in columns:
+        conn.execute("ALTER TABLE runs ADD COLUMN tuner_meta_json TEXT")
 
 
 def _json_dumps(payload: Mapping[str, Any] | None) -> str | None:
@@ -101,6 +105,7 @@ def persist_run(
             if record.get("artifacts")
             else None
         )
+        tuner_meta_json = _json_dumps(record.get("tuner_meta"))
 
         with conn:
             conn.execute(
@@ -120,9 +125,10 @@ def persist_run(
                     context_json,
                     extra_json,
                     artifacts_json,
+                    tuner_meta_json,
                     error
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     run_id,
@@ -139,6 +145,7 @@ def persist_run(
                     context_json,
                     extra_json,
                     artifacts_json,
+                    tuner_meta_json,
                     record.get("error"),
                 ),
             )

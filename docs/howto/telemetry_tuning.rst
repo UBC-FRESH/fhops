@@ -223,6 +223,11 @@ The script resets (or appends to) the telemetry log, runs the requested tuners, 
 leaderboard. Adjust ``--bundle`` and tuner-specific options to suit larger sweeps or
 CI smoke passes.
 
+In addition to the per-scenario summaries, the script now emits:
+
+* ``tuner_comparison.{csv,md}`` — per-scenario/per-algorithm table with best objective, mean objective, mean runtime, and delta vs. the scenario leader.
+* ``tuner_leaderboard.{csv,md}`` — aggregate win rates, average metrics, and deltas per algorithm across all scenarios.
+
 CI publishes the latest summary tables to GitHub Pages; check
 ``https://<org>.github.io/<repo>/telemetry/latest_tuner_summary.md`` (per-scenario
 leaderboard) and ``latest_history_summary.md`` (delta vs. previous snapshot) to spot regression

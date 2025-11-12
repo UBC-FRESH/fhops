@@ -81,9 +81,10 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
                 error=repr(exc),
                 artifacts=None,
                 kpis=None,
+                tuner_meta=None,
             )
             return False
-        self._close(status="ok", metrics=None, extra=None, error=None, artifacts=None, kpis=None)
+        self._close(status="ok", metrics=None, extra=None, error=None, artifacts=None, kpis=None, tuner_meta=None)
         return False
 
     def log_step(
@@ -133,6 +134,7 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
         error: str | None = None,
         artifacts: list[str] | None = None,
         kpis: Mapping[str, Any] | None = None,
+        tuner_meta: Mapping[str, Any] | None = None,
     ) -> None:
         """Write the terminal run record."""
         self._close(
@@ -142,6 +144,7 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
             error=error,
             artifacts=artifacts,
             kpis=kpis,
+            tuner_meta=tuner_meta,
         )
 
     def _close(
@@ -153,6 +156,7 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
         error: str | None,
         artifacts: list[str] | None,
         kpis: Mapping[str, Any] | None,
+        tuner_meta: Mapping[str, Any] | None,
     ) -> None:
         if self._closed:
             return
@@ -176,6 +180,7 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
             "started_at": self._start_timestamp,
             "finished_at": finished_at,
             "duration_seconds": round(duration, 3),
+            "tuner_meta": dict(tuner_meta or {}),
         }
         if metrics:
             record["metrics"] = dict(metrics)

@@ -38,6 +38,9 @@ def test_tune_random_cli_runs_solver(tmp_path: Path):
     first = json.loads(lines[0])
     assert first["solver"] == "sa"
     assert first["schema_version"] == "1.1"
+    tuner_meta = first.get("tuner_meta")
+    assert tuner_meta is not None
+    assert tuner_meta.get("algorithm") == "random"
     assert "operator_weights" in result.stdout or "Operators" in result.stdout
     context = first.get("context", {})
     assert context.get("num_blocks") is not None
@@ -110,6 +113,9 @@ def test_tune_grid_cli_runs(tmp_path: Path):
     assert payload["solver"] == "sa"
     context = payload.get("context", {})
     assert context.get("source") == "cli.tune-grid"
+    tuner_meta = payload.get("tuner_meta")
+    assert tuner_meta is not None
+    assert tuner_meta.get("algorithm") == "grid"
     assert context.get("batch_size") in {1, 2}
     summary = json.loads(lines[-1])
     assert summary["record_type"] == "tuner_summary"
@@ -194,6 +200,9 @@ def test_tune_bayes_cli_runs(tmp_path: Path):
     assert payload["solver"] == "sa"
     context = payload.get("context", {})
     assert context.get("source") == "cli.tune-bayes"
+    tuner_meta = payload.get("tuner_meta")
+    assert tuner_meta is not None
+    assert tuner_meta.get("algorithm") == "bayes"
     summary = json.loads(lines[-1])
     assert summary["record_type"] == "tuner_summary"
     assert summary["algorithm"] == "bayes"

@@ -36,7 +36,12 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - [x] Expose CLI commands (`fhops tune random`, `fhops tune bayes`) that schedule sweeps over scenario bundles.
 - [x] Generate automated comparison reports (CSV/Markdown) summarising best configs per scenario tier; stash fixtures/tests.
 - [ ] Benchmark grid vs. random vs. Bayesian/SMBO (and future neural/meta-learned) tuners across canonical scenarios; log comparative telemetry (win rate, best obj delta, runtime).
-- [ ] Emit tuner-level meta-telemetry (algorithm name, configuration, budget, convergence stats) so higher-level orchestration can evaluate tuner performance.
+  - [ ] Finalise benchmark matrix (baseline bundle + synthetic tiers) with aligned budgets per tuner and document the configuration in this note.
+  - [ ] Automate comparison artefacts integration in CI (publish `tuner_comparison.*` and `tuner_leaderboard.*` alongside summaries).
+- [x] Emit tuner-level meta-telemetry (algorithm name, configuration, budget, convergence stats) so higher-level orchestration can evaluate tuner performance.
+  - [x] Extend `RunTelemetryLogger` / CLI tuners to include `tuner_meta` (algorithm label, search budget, config search space hints, convergence indicators).
+  - [x] Persist meta fields in SQLite (either JSON column or dedicated table) for downstream selection agents.
+  - [x] Update docs/tests to cover meta-telemetry schema, ensuring backwards compatibility for existing consumers.
 
 ### Agentic Tuning Integration
 - [ ] Define prompt templates and action space for the LLM agent (config proposals, narrative rationale).

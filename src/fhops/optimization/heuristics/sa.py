@@ -477,6 +477,7 @@ def solve_sa(
     }
     context_payload = dict(telemetry_context or {})
     step_interval = context_payload.pop("step_interval", 100)
+    tuner_meta = context_payload.pop("tuner_meta", None)
     scenario_name = getattr(pb.scenario, "name", None)
     scenario_path = context_payload.pop("scenario_path", None)
 
@@ -610,6 +611,10 @@ def solve_sa(
                 for key, value in kpi_totals.items()
                 if isinstance(value, (int, float))
             }
+            if tuner_meta is not None:
+                progress = tuner_meta.setdefault("progress", {})
+                progress.setdefault("best_objective", float(best_score))
+                progress.setdefault("iterations", iters)
             run_logger.finalize(
                 status="ok",
                 metrics={
@@ -627,6 +632,7 @@ def solve_sa(
                     "operators": registry.weights(),
                 },
                 kpis=kpi_totals,
+                tuner_meta=tuner_meta,
             )
             meta["telemetry_run_id"] = telemetry_logger.run_id
             if telemetry_logger.steps_path:

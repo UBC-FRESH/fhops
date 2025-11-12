@@ -65,6 +65,8 @@ The latest per-scenario leaderboard lives in the Pages bundle at
 `https://ubc-fresh.github.io/fhops/telemetry/latest_tuner_summary.md` and
 `https://ubc-fresh.github.io/fhops/telemetry/latest_history_summary.md`, summarising the
 strongest algorithm/objective per scenario for the current CI run without downloading artefacts.
+Deeper comparisons (`tuner_comparison.*`, `tuner_leaderboard.*`) contrast grid/random/Bayesian
+strategies with win rates, average deltas, and runtime stats.
 
 All tuning commands accept `--bundle` to expand scenario manifests. Built-in aliases include
 `baseline` (minitoy + med42) and the synthetic tiers (`synthetic`, `synthetic-small`, etc.).
