@@ -84,7 +84,15 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
                 tuner_meta=None,
             )
             return False
-        self._close(status="ok", metrics=None, extra=None, error=None, artifacts=None, kpis=None, tuner_meta=None)
+        self._close(
+            status="ok",
+            metrics=None,
+            extra=None,
+            error=None,
+            artifacts=None,
+            kpis=None,
+            tuner_meta=None,
+        )
         return False
 
     def log_step(
@@ -162,6 +170,7 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
             return
         finished_at = _iso_now()
         duration = self.elapsed() if self._start_time else 0.0
+        context_payload = dict(self.context or {})
         record = {
             "record_type": "run",
             "schema_version": self.schema_version,
@@ -173,7 +182,7 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
             "status": status,
             "metrics": dict(metrics or {}),
             "config": dict(self.config or {}),
-            "context": dict(self.context or {}),
+            "context": context_payload,
             "extra": dict(extra or {}),
             "artifacts": list(artifacts or []),
             "error": error,
@@ -182,6 +191,10 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
             "duration_seconds": round(duration, 3),
             "tuner_meta": dict(tuner_meta or {}),
         }
+        # Promote common context fields for backwards compatibility with legacy tooling.
+        for promoted_key in ("source", "command", "profile", "profile_version", "tier"):
+            if promoted_key in context_payload and promoted_key not in record:
+                record[promoted_key] = context_payload[promoted_key]
         if metrics:
             record["metrics"] = dict(metrics)
         else:
@@ -190,6 +203,14 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
             record["kpis"] = dict(kpis)
         else:
             record["kpis"] = {}
+        extra_payload = record["extra"]
+        if isinstance(extra_payload, dict):
+            if "export" in extra_payload and "export" not in record:
+                record["export"] = extra_payload["export"]
+            if "scenario_features" in extra_payload and "scenario_features" not in record:
+                record["scenario_features"] = extra_payload["scenario_features"]
+            if "export_metrics" in extra_payload and "export_metrics" not in record:
+                record["export_metrics"] = extra_payload["export_metrics"]
         append_jsonl(self.log_path, record)
         if self.sqlite_path:
             persist_run(
