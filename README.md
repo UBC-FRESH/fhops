@@ -63,8 +63,8 @@ performance. The workflow also archives each run under `history/` and ships
 
 When GitHub Pages is enabled, the CI workflow publishes the latest history bundle at
 `telemetry/history_summary.html` on your Pages site (for example,
-`https://<github-username>.github.io/fhops/telemetry/history_summary.html`), providing an
-easily-shareable chart without downloading artefacts.
+`https://ubc-fresh.github.io/fhops/telemetry/history_summary.html`), providing an
+easily-shareable chart showing objective and KPI trends without downloading artefacts.
 
 ## Package layout
 

@@ -96,6 +96,7 @@ before proposing new work.
       - [x] Random tuner CLI (`fhops tune-random`) executing SA sweeps and recording telemetry.
       - [x] Bayesian/SMBO tuner CLI (`fhops tune-bayes`) built on Optuna.
     - [x] Automate CI sweeps (minitoy + med42) that publish `fhops telemetry report` artifacts and history summaries for baseline scenarios (CSV/MD/HTML + published chart).
+    - [ ] After merging Phase 3 PR, verify GitHub Pages deployment on `main` (ensure `telemetry/history_summary.html` loads).
       - [x] Grid tuner CLI (`fhops tune-grid`) evaluating preset/batch-size combinations.
     - [ ] Add automated comparison reports summarising best configurations per scenario class.
     - [ ] Benchmark tuner strategies (grid vs. random vs. Bayesian/SMBO vs. neural/agentic) and log meta-telemetry for automated model selection.
