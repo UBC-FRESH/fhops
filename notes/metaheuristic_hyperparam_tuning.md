@@ -77,6 +77,8 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - [x] Provide a simple JSONL → DataFrame loader in `fhops.telemetry` to make analyses/tests easier ahead of the SQLite backend.
 - [x] Add scenario descriptor exporter (machines/blocks/shifts) to telemetry runs so ML tuners can generalise across instances.
 - [ ] Stage benchmarking sweeps comparing grid/random/bayes on the canonical bundle and capture comparative telemetry summaries.
+- [ ] Wire `scripts/run_tuning_benchmarks.py` into CI (smoke mode) so minitoy/med42 sweeps publish the summary tables automatically.
+- [ ] Use the per-scenario summary CSV/Markdown to drive README badges or dashboards that flag regressions without opening full reports.
 
 ### Telemetry schema (draft)
 
