@@ -108,6 +108,10 @@ jobs:
           cp tmp/ci-telemetry/tuner_summary.csv "$publish_dir/latest_tuner_summary.csv" || true
           cp tmp/ci-telemetry/history_summary_latest.md "$publish_dir/latest_history_summary.md" || true
           cp tmp/ci-telemetry/history_summary_latest.csv "$publish_dir/latest_history_summary.csv" || true
+          cp tmp/ci-telemetry/tuner_comparison.md "$publish_dir/latest_tuner_comparison.md" || true
+          cp tmp/ci-telemetry/tuner_comparison.csv "$publish_dir/latest_tuner_comparison.csv" || true
+          cp tmp/ci-telemetry/tuner_leaderboard.md "$publish_dir/latest_tuner_leaderboard.md" || true
+          cp tmp/ci-telemetry/tuner_leaderboard.csv "$publish_dir/latest_tuner_leaderboard.csv" || true
 
       - name: Inspect publish bundle
         run: |
