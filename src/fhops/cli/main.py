@@ -683,6 +683,11 @@ def solve_ils_cmd(
         writable=True,
         dir_okay=False,
     ),
+    tier_label: str | None = typer.Option(
+        None,
+        "--tier-label",
+        help="Optional label describing the budget tier for telemetry summaries.",
+    ),
     kpi_mode: str = typer.Option(
         "extended",
         "--kpi-mode",
@@ -770,6 +775,21 @@ def solve_ils_cmd(
             base_context["profile_version"] = selected_profile.version
         if isinstance(existing_ctx, dict):
             base_context.update(existing_ctx)
+        if tier_label:
+            base_context["tier"] = tier_label
+        tuner_meta_payload = {
+            "algorithm": "ils",
+            "budget": {
+                "iters": iters,
+                "tier": tier_label,
+            },
+            "config": {
+                "perturbation_strength": perturbation_strength,
+                "stall_limit": stall_limit,
+                "hybrid_use_mip": hybrid_use_mip,
+            },
+        }
+        base_context["tuner_meta"] = tuner_meta_payload
         telemetry_kwargs["telemetry_log"] = telemetry_log
         telemetry_kwargs["telemetry_context"] = base_context
     elif isinstance(existing_ctx, dict):
@@ -887,6 +907,11 @@ def solve_tabu_cmd(
         writable=True,
         dir_okay=False,
     ),
+    tier_label: str | None = typer.Option(
+        None,
+        "--tier-label",
+        help="Optional label describing the budget tier for telemetry summaries.",
+    ),
     kpi_mode: str = typer.Option(
         "extended",
         "--kpi-mode",
@@ -966,6 +991,20 @@ def solve_tabu_cmd(
             base_context["profile_version"] = selected_profile.version
         if isinstance(existing_ctx, dict):
             base_context.update(existing_ctx)
+        if tier_label:
+            base_context["tier"] = tier_label
+        tuner_meta_payload = {
+            "algorithm": "tabu",
+            "budget": {
+                "iters": iters,
+                "tier": tier_label,
+            },
+            "config": {
+                "tabu_tenure": tenure if tenure is not None else max(10, len(pb.scenario.machines)),
+                "stall_limit": stall_limit,
+            },
+        }
+        base_context["tuner_meta"] = tuner_meta_payload
         telemetry_kwargs["telemetry_log"] = telemetry_log
         telemetry_kwargs["telemetry_context"] = base_context
     elif isinstance(existing_ctx, dict):
@@ -1460,6 +1499,11 @@ def tune_random_cli(
         "--base-seed",
         help="Seed used to initialise the random tuner (per-run seeds derive from this).",
     ),
+    tier_label: str | None = typer.Option(
+        None,
+        "--tier-label",
+        help="Optional label describing the budget tier for telemetry summaries.",
+    ),
 ):
     """Randomly sample simulated annealing configurations and record telemetry."""
     scenario_files, bundle_map = _collect_tuning_scenarios(scenarios, bundle)
@@ -1509,11 +1553,14 @@ def tune_random_cli(
                 if bundle_meta:
                     telemetry_context["bundle"] = bundle_meta["bundle"]
                     telemetry_context["bundle_member"] = bundle_meta.get("bundle_member", scenario_display)
+                if tier_label:
+                    telemetry_context["tier"] = tier_label
                 tuner_meta_payload = {
                     "algorithm": "random",
                     "budget": {
                         "runs_total": runs,
                         "iters_per_run": iters,
+                        "tier": tier_label,
                     },
                     "config": {
                         "batch_size": batch_size_choice,
@@ -1668,6 +1715,11 @@ def tune_grid_cli(
         "--seed",
         help="Base seed (increments deterministically across grid points).",
     ),
+    tier_label: str | None = typer.Option(
+        None,
+        "--tier-label",
+        help="Optional label describing the budget tier for telemetry summaries.",
+    ),
 ):
     """Exhaustively evaluate a grid of operator presets and batch sizes."""
     scenario_files, bundle_map = _collect_tuning_scenarios(scenarios, bundle)
@@ -1729,12 +1781,15 @@ def tune_grid_cli(
                         telemetry_kwargs["telemetry_context"]["bundle_member"] = bundle_meta.get(
                             "bundle_member", scenario_display
                         )
+                    if tier_label:
+                        telemetry_kwargs["telemetry_context"]["tier"] = tier_label
                     config_counter += 1
                     tuner_meta_payload = {
                         "algorithm": "grid",
                         "budget": {
                             "total_configs": config_count,
                             "iters_per_config": iters,
+                            "tier": tier_label,
                         },
                         "config": {
                             "preset": preset_name,
@@ -1877,6 +1932,11 @@ def tune_bayes_cli(
         "--seed",
         help="Random seed for the Bayesian sampler.",
     ),
+    tier_label: str | None = typer.Option(
+        None,
+        "--tier-label",
+        help="Optional label describing the budget tier for telemetry summaries.",
+    ),
 ):
     """Optimise SA hyperparameters with Bayesian/SMBO search (Optuna TPE)."""
 
@@ -1933,11 +1993,14 @@ def tune_bayes_cli(
                     telemetry_kwargs["telemetry_context"]["bundle_member"] = bundle_meta.get(
                         "bundle_member", scenario_display
                     )
+                if tier_label:
+                    telemetry_kwargs["telemetry_context"]["tier"] = tier_label
                 tuner_meta_payload = {
                     "algorithm": "bayes",
                     "budget": {
                         "trials_total": trials,
                         "iters_per_trial": iters,
+                        "tier": tier_label,
                     },
                     "config": {
                         "trial_number": trial.number,
