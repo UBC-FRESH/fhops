@@ -1,18 +1,18 @@
 from __future__ import annotations
 
-from collections.abc import Sequence
-from collections import deque
-import random
-from contextlib import nullcontext
+import click
 import json
+import optuna
+import pandas as pd
+import random
+import typer
+import yaml
+from collections import deque
+from collections.abc import Sequence
+from contextlib import nullcontext
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, cast
-
-import pandas as pd
-import optuna
-import typer
-import click
 from rich.console import Console
 from rich.table import Table
 
@@ -61,6 +61,24 @@ app.add_typer(synth_app, name="synth")
 app.add_typer(telemetry_app, name="telemetry")
 console = Console()
 KPI_MODE = click.Choice(["basic", "extended"], case_sensitive=False)
+
+TUNING_BUNDLE_ALIASES: dict[str, list[tuple[str, Path]]] = {
+    "baseline": [
+        ("minitoy", Path("examples/minitoy/scenario.yaml")),
+        ("med42", Path("examples/med42/scenario.yaml")),
+    ],
+    "minitoy": [("minitoy", Path("examples/minitoy/scenario.yaml"))],
+    "med42": [("med42", Path("examples/med42/scenario.yaml"))],
+    "large84": [("large84", Path("examples/large84/scenario.yaml"))],
+    "synthetic-small": [("synthetic-small", Path("examples/synthetic/small/scenario.yaml"))],
+    "synthetic-medium": [("synthetic-medium", Path("examples/synthetic/medium/scenario.yaml"))],
+    "synthetic-large": [("synthetic-large", Path("examples/synthetic/large/scenario.yaml"))],
+    "synthetic": [
+        ("synthetic-small", Path("examples/synthetic/small/scenario.yaml")),
+        ("synthetic-medium", Path("examples/synthetic/medium/scenario.yaml")),
+        ("synthetic-large", Path("examples/synthetic/large/scenario.yaml")),
+    ],
+}
 
 
 def _enable_rich_tracebacks():
@@ -161,6 +179,126 @@ def _print_kpi_summary(kpis: Any, mode: str = "extended") -> None:
         console.print(f"[bold]{title}[/bold]")
         for key, value in lines:
             console.print(f"  {key}: {_format_metric_value(value)}")
+
+
+def _discover_scenarios_from_path(path: Path) -> list[Path]:
+    expanded = path.expanduser()
+    if not expanded.exists():
+        raise typer.BadParameter(f"Scenario path not found: {path}")
+    if expanded.is_file():
+        return [expanded]
+    scenario_file = expanded / "scenario.yaml"
+    if scenario_file.exists():
+        return [scenario_file]
+    immediate_yaml = sorted(expanded.glob("*.yaml"))
+    if immediate_yaml:
+        return immediate_yaml
+    child_candidates: list[Path] = []
+    for child in sorted(expanded.iterdir()):
+        if not child.is_dir():
+            continue
+        child_scenario = child / "scenario.yaml"
+        if child_scenario.exists():
+            child_candidates.append(child_scenario)
+    if child_candidates:
+        return child_candidates
+    raise typer.BadParameter(f"No scenario.yaml discovered under directory: {path}")
+
+
+def _parse_bundle_spec(spec: str) -> tuple[str, str | None]:
+    if "=" not in spec:
+        return spec, None
+    alias, target = spec.split("=", 1)
+    alias = alias.strip()
+    target = target.strip()
+    if not alias:
+        raise typer.BadParameter(f"Invalid bundle spec (empty alias): {spec}")
+    if not target:
+        raise typer.BadParameter(f"Invalid bundle spec (empty target): {spec}")
+    return alias, target
+
+
+def _resolve_bundle_from_path(alias: str, target_path: Path) -> list[tuple[str, str, Path]]:
+    resolved = target_path.expanduser()
+    if not resolved.exists():
+        raise typer.BadParameter(f"Bundle target not found: {target_path}")
+    members: list[tuple[str, str, Path]] = []
+    if resolved.is_file():
+        suffix = resolved.suffix.lower()
+        if suffix in {".yaml", ".yml"}:
+            data = yaml.safe_load(resolved.read_text(encoding="utf-8"))
+            base_dir = resolved.parent
+            if isinstance(data, dict):
+                for key in sorted(data):
+                    scenario_dir = base_dir / key
+                    scenario_file = scenario_dir / "scenario.yaml"
+                    if scenario_file.exists():
+                        members.append((alias, str(key), scenario_file))
+            if members:
+                return members
+            return [(alias, resolved.stem, resolved)]
+        return [(alias, resolved.stem, resolved)]
+    metadata_file = resolved / "metadata.yaml"
+    if metadata_file.exists():
+        return _resolve_bundle_from_path(alias, metadata_file)
+    scenario_file = resolved / "scenario.yaml"
+    if scenario_file.exists():
+        return [(alias, resolved.name, scenario_file)]
+    child_members: list[tuple[str, str, Path]] = []
+    for child in sorted(resolved.iterdir()):
+        if not child.is_dir():
+            continue
+        child_scenario = child / "scenario.yaml"
+        if child_scenario.exists():
+            child_members.append((alias, child.name, child_scenario))
+    if child_members:
+        return child_members
+    raise typer.BadParameter(f"Bundle target does not contain scenarios: {target_path}")
+
+
+def _resolve_bundle_spec(spec: str) -> list[tuple[str, str, Path]]:
+    alias, target = _parse_bundle_spec(spec)
+    normalized = alias.lower()
+    if target is None and normalized in TUNING_BUNDLE_ALIASES:
+        bundle_members: list[tuple[str, str, Path]] = []
+        for member_name, scenario_path in TUNING_BUNDLE_ALIASES[normalized]:
+            bundle_members.append((alias, member_name, scenario_path))
+        return bundle_members
+    target_path = Path(target) if target else Path(alias)
+    bundle_alias = alias if target else target_path.name
+    return _resolve_bundle_from_path(bundle_alias, target_path)
+
+
+def _collect_tuning_scenarios(
+    scenario_args: Sequence[Path] | None,
+    bundle_specs: Sequence[str] | None,
+) -> tuple[list[Path], dict[Path, dict[str, str]]]:
+    discovered: list[Path] = []
+    bundle_map: dict[Path, dict[str, str]] = {}
+
+    if scenario_args:
+        for entry in scenario_args:
+            for scenario_path in _discover_scenarios_from_path(entry):
+                discovered.append(scenario_path)
+
+    if bundle_specs:
+        for spec in bundle_specs:
+            for alias, member, scenario_path in _resolve_bundle_spec(spec):
+                discovered.append(scenario_path)
+                bundle_map[scenario_path.resolve()] = {
+                    "bundle": alias,
+                    "bundle_member": member,
+                }
+
+    ordered: list[Path] = []
+    seen: set[Path] = set()
+    for scenario_path in discovered:
+        resolved = scenario_path.resolve()
+        if resolved in seen:
+            continue
+        seen.add(resolved)
+        ordered.append(scenario_path)
+    return ordered, bundle_map
 
 
 @app.command()
@@ -1285,12 +1423,18 @@ def benchmark(
 
 @app.command("tune-random")
 def tune_random_cli(
-    scenarios: list[Path] = typer.Argument(
-        ...,
+    scenarios: list[Path] | None = typer.Argument(
+        None,
         exists=True,
         readable=True,
         dir_okay=True,
-        help="Scenario YAMLs or bundle directories to sample during tuning.",
+        help="Scenario YAMLs or directories to sample during tuning (repeatable).",
+    ),
+    bundle: list[str] | None = typer.Option(
+        None,
+        "--bundle",
+        "-b",
+        help="Scenario bundle alias or path (repeatable). Supports alias=path syntax.",
     ),
     telemetry_log: Path = typer.Option(
         Path("telemetry/runs.jsonl"),
@@ -1318,15 +1462,9 @@ def tune_random_cli(
     ),
 ):
     """Randomly sample simulated annealing configurations and record telemetry."""
-    scenario_files: list[Path] = []
-    for entry in scenarios:
-        if entry.is_dir():
-            scenario_files.extend(sorted(entry.rglob("*.yaml")))
-        else:
-            scenario_files.append(entry)
-
+    scenario_files, bundle_map = _collect_tuning_scenarios(scenarios, bundle)
     if not scenario_files:
-        console.print("[yellow]No scenario files discovered. Nothing to tune.[/]")
+        console.print("[yellow]No scenarios resolved. Provide --bundle or explicit paths.[/]")
         raise typer.Exit(1)
 
     rng = random.Random(base_seed)
@@ -1338,7 +1476,20 @@ def tune_random_cli(
     for scenario_path in scenario_files:
         sc = load_scenario(str(scenario_path))
         pb = Problem.from_scenario(sc)
-        console.print(f"[dim]Tuning {scenario_path} ({runs} run(s))[/]")
+        scenario_resolved = scenario_path.resolve()
+        bundle_meta = bundle_map.get(scenario_resolved)
+        scenario_display = (
+            getattr(sc, "name", None)
+            or scenario_path.parent.name
+            or scenario_path.stem
+        )
+        if bundle_meta:
+            console.print(
+                f"[dim]Tuning {scenario_display} (bundle={bundle_meta['bundle']}, runs={runs})[/]"
+            )
+        else:
+            console.print(f"[dim]Tuning {scenario_display} ({runs} run(s))[/]")
+
         for run_idx in range(runs):
             run_seed = rng.randrange(1, 1_000_000_000)
             batch_size_choice = rng.choice([1, 2, 3])
@@ -1355,6 +1506,9 @@ def tune_random_cli(
                     "batch_size_choice": batch_size_choice,
                     "operator_count": weight_count,
                 }
+                if bundle_meta:
+                    telemetry_context["bundle"] = bundle_meta["bundle"]
+                    telemetry_context["bundle_member"] = bundle_meta.get("bundle_member", scenario_display)
                 telemetry_kwargs = {
                     "telemetry_log": telemetry_log,
                     "telemetry_context": telemetry_context,
@@ -1377,7 +1531,13 @@ def tune_random_cli(
 
             results.append(
                 {
-                    "scenario": scenario_path.name,
+                    "scenario": scenario_display,
+                    "scenario_key": (
+                        f"{bundle_meta['bundle']}:{bundle_meta.get('bundle_member', scenario_display)}"
+                        if bundle_meta
+                        else scenario_display
+                    ),
+                    "bundle": bundle_meta["bundle"] if bundle_meta else None,
                     "objective": float(res.get("objective", 0.0)),
                     "seed": run_seed,
                     "batch_size": batch_size_choice,
@@ -1391,7 +1551,10 @@ def tune_random_cli(
         return
 
     table = Table(title="Random tuner results", show_lines=False)
+    include_bundle = any(entry.get("bundle") for entry in results)
     table.add_column("Scenario")
+    if include_bundle:
+        table.add_column("Bundle")
     table.add_column("Objective", justify="right")
     table.add_column("Seed", justify="right")
     table.add_column("Batch", justify="right")
@@ -1401,13 +1564,20 @@ def tune_random_cli(
         op_preview = ", ".join(
             f"{name}={weight:.2f}" for name, weight in sorted(entry["operator_weights"].items())
         )
-        table.add_row(
+        row = [
             entry["scenario"],
-            f"{entry['objective']:.3f}",
-            str(entry["seed"]),
-            str(entry["batch_size"]),
-            op_preview if len(op_preview) < 80 else op_preview[:77] + "...",
+        ]
+        if include_bundle:
+            row.append(entry.get("bundle") or "")
+        row.extend(
+            [
+                f"{entry['objective']:.3f}",
+                str(entry["seed"]),
+                str(entry["batch_size"]),
+                op_preview if len(op_preview) < 80 else op_preview[:77] + "...",
+            ]
         )
+        table.add_row(*row)
     console.print(table)
 
     if telemetry_log:
@@ -1416,8 +1586,9 @@ def tune_random_cli(
         )
         scenario_best: dict[str, float] = {}
         for entry in results:
-            scenario_best[entry["scenario"]] = max(
-                scenario_best.get(entry["scenario"], float("-inf")), entry["objective"]
+            key = entry.get("scenario_key", entry["scenario"])
+            scenario_best[key] = max(
+                scenario_best.get(key, float("-inf")), entry["objective"]
             )
         summary_record = {
             "record_type": "tuner_summary",
@@ -1436,12 +1607,18 @@ def tune_random_cli(
 
 @app.command("tune-grid")
 def tune_grid_cli(
-    scenarios: list[Path] = typer.Argument(
-        ...,
+    scenarios: list[Path] | None = typer.Argument(
+        None,
         exists=True,
         readable=True,
         dir_okay=True,
         help="Scenario YAMLs or bundle directories to evaluate.",
+    ),
+    bundle: list[str] | None = typer.Option(
+        None,
+        "--bundle",
+        "-b",
+        help="Scenario bundle alias or path (repeatable). Supports alias=path syntax.",
     ),
     telemetry_log: Path = typer.Option(
         Path("telemetry/runs.jsonl"),
@@ -1473,14 +1650,9 @@ def tune_grid_cli(
     ),
 ):
     """Exhaustively evaluate a grid of operator presets and batch sizes."""
-    scenario_files: list[Path] = []
-    for entry in scenarios:
-        if entry.is_dir():
-            scenario_files.extend(sorted(entry.rglob("*.yaml")))
-        else:
-            scenario_files.append(entry)
+    scenario_files, bundle_map = _collect_tuning_scenarios(scenarios, bundle)
     if not scenario_files:
-        console.print("[yellow]No scenario files discovered. Nothing to evaluate.[/]")
+        console.print("[yellow]No scenarios resolved. Provide --bundle or explicit paths.[/]")
         raise typer.Exit(1)
 
     batch_values = sorted(set(batch_size)) if batch_size else [1, 2, 3]
@@ -1498,9 +1670,22 @@ def tune_grid_cli(
     for scenario_path in scenario_files:
         sc = load_scenario(str(scenario_path))
         pb = Problem.from_scenario(sc)
-        console.print(
-            f"[dim]Grid tuning {scenario_path} ({len(batch_values) * len(preset_values)} configuration(s))[/]"
+        scenario_resolved = scenario_path.resolve()
+        bundle_meta = bundle_map.get(scenario_resolved)
+        scenario_display = (
+            getattr(sc, "name", None)
+            or scenario_path.parent.name
+            or scenario_path.stem
         )
+        config_count = len(batch_values) * len(preset_values)
+        if bundle_meta:
+            console.print(
+                f"[dim]Grid tuning {scenario_display} (bundle={bundle_meta['bundle']}, configs={config_count})[/]"
+            )
+        else:
+            console.print(
+                f"[dim]Grid tuning {scenario_display} ({config_count} configuration(s))[/]"
+            )
         for batch_choice in batch_values:
             for preset_name in preset_values:
                 operator_weights = {
@@ -1518,6 +1703,11 @@ def tune_grid_cli(
                             "grid_seed": run_seed,
                         },
                     }
+                    if bundle_meta:
+                        telemetry_kwargs["telemetry_context"]["bundle"] = bundle_meta["bundle"]
+                        telemetry_kwargs["telemetry_context"]["bundle_member"] = bundle_meta.get(
+                            "bundle_member", scenario_display
+                        )
                 try:
                     res = solve_sa(
                         pb,
@@ -1536,7 +1726,13 @@ def tune_grid_cli(
 
                 results.append(
                     {
-                        "scenario": scenario_path.name,
+                        "scenario": scenario_display,
+                        "scenario_key": (
+                            f"{bundle_meta['bundle']}:{bundle_meta.get('bundle_member', scenario_display)}"
+                            if bundle_meta
+                            else scenario_display
+                        ),
+                        "bundle": bundle_meta["bundle"] if bundle_meta else None,
                         "objective": float(res.get("objective", 0.0)),
                         "preset": preset_name,
                         "batch_size": batch_choice,
@@ -1551,20 +1747,30 @@ def tune_grid_cli(
         return
 
     table = Table(title="Grid tuner results", show_lines=False)
+    include_bundle = any(entry.get("bundle") for entry in results)
     table.add_column("Scenario")
+    if include_bundle:
+        table.add_column("Bundle")
     table.add_column("Objective", justify="right")
     table.add_column("Preset")
     table.add_column("Batch", justify="right")
     table.add_column("Seed", justify="right")
 
     for entry in sorted(results, key=lambda item: item["objective"], reverse=True):
-        table.add_row(
+        row = [
             entry["scenario"],
-            f"{entry['objective']:.3f}",
-            entry["preset"],
-            str(entry["batch_size"]),
-            str(entry["seed"]),
+        ]
+        if include_bundle:
+            row.append(entry.get("bundle") or "")
+        row.extend(
+            [
+                f"{entry['objective']:.3f}",
+                entry["preset"],
+                str(entry["batch_size"]),
+                str(entry["seed"]),
+            ]
         )
+        table.add_row(*row)
     console.print(table)
 
     if telemetry_log:
@@ -1573,8 +1779,9 @@ def tune_grid_cli(
         )
         scenario_best: dict[str, float] = {}
         for entry in results:
-            scenario_best[entry["scenario"]] = max(
-                scenario_best.get(entry["scenario"], float("-inf")), entry["objective"]
+            key = entry.get("scenario_key", entry["scenario"])
+            scenario_best[key] = max(
+                scenario_best.get(key, float("-inf")), entry["objective"]
             )
         summary_record = {
             "record_type": "tuner_summary",
@@ -1591,12 +1798,18 @@ def tune_grid_cli(
         append_jsonl(telemetry_log, summary_record)
 @app.command("tune-bayes")
 def tune_bayes_cli(
-    scenarios: list[Path] = typer.Argument(
-        ...,
+    scenarios: list[Path] | None = typer.Argument(
+        None,
         exists=True,
         readable=True,
         dir_okay=True,
         help="Scenario YAMLs or bundle directories to evaluate.",
+    ),
+    bundle: list[str] | None = typer.Option(
+        None,
+        "--bundle",
+        "-b",
+        help="Scenario bundle alias or path (repeatable). Supports alias=path syntax.",
     ),
     telemetry_log: Path = typer.Option(
         Path("telemetry/runs.jsonl"),
@@ -1625,14 +1838,9 @@ def tune_bayes_cli(
 ):
     """Optimise SA hyperparameters with Bayesian/SMBO search (Optuna TPE)."""
 
-    scenario_files: list[Path] = []
-    for entry in scenarios:
-        if entry.is_dir():
-            scenario_files.extend(sorted(entry.rglob("*.yaml")))
-        else:
-            scenario_files.append(entry)
+    scenario_files, bundle_map = _collect_tuning_scenarios(scenarios, bundle)
     if not scenario_files:
-        console.print("[yellow]No scenario files discovered. Nothing to evaluate.[/]")
+        console.print("[yellow]No scenarios resolved. Provide --bundle or explicit paths.[/]")
         raise typer.Exit(1)
 
     optuna.logging.set_verbosity(optuna.logging.WARNING)
@@ -1641,9 +1849,21 @@ def tune_bayes_cli(
     for scenario_path in scenario_files:
         sc = load_scenario(str(scenario_path))
         pb = Problem.from_scenario(sc)
-        console.print(
-            f"[dim]Bayesian tuning {scenario_path} ({trials} trial(s))[/]"
+        scenario_resolved = scenario_path.resolve()
+        bundle_meta = bundle_map.get(scenario_resolved)
+        scenario_display = (
+            getattr(sc, "name", None)
+            or scenario_path.parent.name
+            or scenario_path.stem
         )
+        if bundle_meta:
+            console.print(
+                f"[dim]Bayesian tuning {scenario_display} (bundle={bundle_meta['bundle']}, trials={trials})[/]"
+            )
+        else:
+            console.print(
+                f"[dim]Bayesian tuning {scenario_display} ({trials} trial(s))[/]"
+            )
 
         sampler = optuna.samplers.TPESampler(seed=seed)
         study = optuna.create_study(direction="maximize", sampler=sampler)
@@ -1666,6 +1886,11 @@ def tune_bayes_cli(
                         "tuner_seed": seed,
                     },
                 }
+                if bundle_meta:
+                    telemetry_kwargs["telemetry_context"]["bundle"] = bundle_meta["bundle"]
+                    telemetry_kwargs["telemetry_context"]["bundle_member"] = bundle_meta.get(
+                        "bundle_member", scenario_display
+                    )
             try:
                 res = solve_sa(
                     pb,
@@ -1687,6 +1912,13 @@ def tune_bayes_cli(
                     "objective": objective,
                     "batch_size": batch_choice,
                     "operator_weights": operator_weights,
+                    "scenario": scenario_display,
+                    "scenario_key": (
+                        f"{bundle_meta['bundle']}:{bundle_meta.get('bundle_member', scenario_display)}"
+                        if bundle_meta
+                        else scenario_display
+                    ),
+                    "bundle": bundle_meta["bundle"] if bundle_meta else None,
                     "telemetry_run_id": res.get("meta", {}).get("telemetry_run_id"),
                 }
             )
@@ -1704,21 +1936,27 @@ def tune_bayes_cli(
         )
 
         table = Table(title=f"Bayesian tuner trials — {scenario_path.name}", show_lines=False)
+        include_bundle = any(record.get("bundle") for record in trial_results)
         table.add_column("Trial", justify="right")
         table.add_column("Objective", justify="right")
         table.add_column("Batch", justify="right")
         table.add_column("Weights")
+        if include_bundle:
+            table.add_column("Bundle")
 
         for record in sorted(trial_results, key=lambda row: row["objective"], reverse=True):
             weights_preview = ", ".join(
                 f"{name}={weight:.2f}" for name, weight in sorted(record["operator_weights"].items())
             )
-            table.add_row(
+            row = [
                 str(record["trial"]),
                 f"{record['objective']:.3f}",
                 str(record["batch_size"]),
                 weights_preview if len(weights_preview) < 80 else weights_preview[:77] + "...",
-            )
+            ]
+            if include_bundle:
+                row.append(record.get("bundle") or "")
+            table.add_row(*row)
         console.print(table)
 
         if telemetry_log:
@@ -1726,14 +1964,16 @@ def tune_bayes_cli(
                 f"[dim]{len(trial_results)} telemetry record(s) written to {telemetry_log}. Step logs stored in {telemetry_log.parent / 'steps'}.[/]"
             )
             scenario_best: dict[str, float] = {}
-            scenario_best[scenario_path.name] = max(
-                (record["objective"] for record in trial_results), default=float("nan")
-            )
+            for record in trial_results:
+                key = record.get("scenario_key", scenario_display)
+                scenario_best[key] = max(
+                    scenario_best.get(key, float("-inf")), record["objective"]
+                )
             summary_record = {
                 "record_type": "tuner_summary",
                 "schema_version": "1.1",
                 "algorithm": "bayes",
-                "scenarios_evaluated": 1,
+                "scenarios_evaluated": len(scenario_best),
                 "configurations": len(trial_results),
                 "scenario_best": scenario_best,
             }

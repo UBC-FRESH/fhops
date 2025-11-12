@@ -12,6 +12,11 @@
 - CI now captures med42 alongside minitoy, publishes history summaries (`history_summary.{csv,md,html}`), and docs include a sample telemetry history figure plus a dedicated analysis notebook.
 - Refreshed `notes/metaheuristic_hyperparam_tuning.md` and the roadmap to mark the telemetry persistence milestone and document the new storage layout.
 
+## 2025-11-12 — Tuning bundles & delta polish
+- Added bundle resolution helpers (`--bundle` / `-b`) to `fhops tune-random`, `fhops tune-grid`, and `fhops tune-bayes`, supporting built-in aliases (`baseline`, `synthetic[-tier]`, etc.) and custom manifests via `alias=/path/to/metadata.yaml`.
+- Telemetry context now records `bundle` / `bundle_member`, and `tuner_summary.scenario_best` uses `bundle:member` keys so comparison scripts retain bundle provenance while generating reports/deltas.
+- Documented bundle usage in `docs/howto/telemetry_tuning.rst`, updated the README, and marked the roadmap/plan checklist item (“Provide CLI surfaces for bundle sweeps”) as complete.
+
 ## 2025-11-11 — Analytics notebook automation
 - Added the analytics notebook runner to CI (`.github/workflows/ci.yml`) so the curated suite executes in light mode on every push/PR, exercising Altair plots and playback helpers.
 - Captured fresh execution metadata in `docs/examples/analytics/data/notebook_metadata.json` and documented the `FHOPS_ANALYTICS_LIGHT` toggle in planning notes for reproducible smoke runs.

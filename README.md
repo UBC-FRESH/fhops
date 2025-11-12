@@ -62,6 +62,11 @@ performance. The workflow also archives each run under `history/` and ships
 `docs/howto/telemetry_tuning.rst` for a step-by-step guide and download instructions.
 `history_delta.{csv,md}` capture latest-vs-previous deltas so regressions stand out instantly.
 
+All tuning commands accept `--bundle` to expand scenario manifests. Built-in aliases include
+`baseline` (minitoy + med42) and the synthetic tiers (`synthetic`, `synthetic-small`, etc.).
+Combine aliases or point to your own `metadata.yaml` via `alias=/path/to/metadata.yaml` to run
+sweeps across curated scenario sets while keeping telemetry labelled with the originating bundle.
+
 When GitHub Pages is enabled, the CI workflow publishes the latest history bundle at
 `telemetry/history_summary.html` on your Pages site (for example,
 `https://ubc-fresh.github.io/fhops/telemetry/history_summary.html`), providing an

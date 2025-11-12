@@ -41,6 +41,26 @@ SQLite database alongside it.
        --iters 150 \
        --telemetry-log tmp/tuner-demo/runs.jsonl
 
+You can now supply **scenario bundles** instead of individual paths. The built-in
+aliases ``baseline`` (minitoy + med42), ``synthetic`` (small/medium/large tiers),
+and the tier-specific aliases (``synthetic-small`` etc.) expand to their component
+scenarios. Point the tuning commands at a bundle with ``--bundle``:
+
+.. code-block:: bash
+
+   fhops tune-random --bundle baseline \
+       --runs 1 \
+       --iters 150 \
+       --telemetry-log tmp/tuner-demo/runs.jsonl
+
+   fhops tune-bayes --bundle synthetic-small \
+       --trials 2 \
+       --iters 150 \
+       --telemetry-log tmp/tuner-demo/runs.jsonl
+
+Bundle specs also accept ``alias=path`` so you can wire custom manifests or directories
+containing ``metadata.yaml``. See :ref:`telemetry_bundle_aliases` below for details.
+
 After those commands complete you will have:
 
 * ``tmp/tuner-demo/runs.jsonl`` — append-only log of each run.
@@ -141,6 +161,13 @@ history command. The workflow also generates ``history_summary.{csv,md,html}``
 via ``analyze_tuner_reports.py --history-dir`` so you can inspect trends
 immediately after downloading the artifact.
 
+If your repository enables GitHub Pages for the documentation or telemetry site,
+the CI workflow publishes the HTML history to
+``https://<org>.github.io/<repo>/telemetry/history_summary.html``. The README links
+to the live page (see the FHOPS reference deployment at
+``https://ubc-fresh.github.io/fhops/telemetry/history_summary.html``), so you can
+share the same chart without downloading artifacts.
+
 Delta Snapshot Summary
 ----------------------
 
@@ -162,6 +189,34 @@ Example command:
 
    Sample telemetry history derived from the committed demo data. Actual CI
    artefacts contain the latest minitoy and med42 measurements.
+
+The delta outputs are versioned alongside the HTML chart. When CI finishes it
+emits ``history_delta.{csv,md}`` (and any optional PNG/HTML charts you request),
+mirroring the GitHub Pages snapshot. Monitoring those files or wiring them into a
+status badge is a simple way to highlight regressions without manually opening the
+full report.
+
+.. _telemetry_bundle_aliases:
+
+Bundle Aliases
+--------------
+
+The tuning commands accept ``--bundle`` to expand a manifest of scenarios. FHOPS ships
+the following aliases:
+
+* ``baseline`` → ``examples/minitoy/scenario.yaml`` and ``examples/med42/scenario.yaml``
+* ``synthetic`` → the ``small``, ``medium``, and ``large`` synthetic tiers
+* ``synthetic-small`` / ``synthetic-medium`` / ``synthetic-large`` → individual synthetic tiers
+* ``minitoy`` / ``med42`` / ``large84`` → convenience handles for the built-in evaluation set
+
+Aliases are case-insensitive and you can specify multiple ``--bundle`` flags in a single
+command. For custom bundles, pass ``alias=/path/to/metadata.yaml`` (or the directory
+containing ``metadata.yaml``). Each entry inside the metadata file is resolved relative to
+its location, so ``examples/synthetic/metadata.yaml`` gives you ``synthetic-small`` et al.
+
+Bundle members are logged in telemetry context as ``bundle`` / ``bundle_member`` and appear
+in the aggregated ``tuner_summary`` records as ``bundle:member`` keys. This keeps the
+history/delta tooling aware of the scenario family without changing existing report formats.
 
 CI Automation
 -------------
