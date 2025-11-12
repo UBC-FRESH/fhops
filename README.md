@@ -60,6 +60,7 @@ uploads the resulting `telemetry-report` artefact (Markdown + CSV) so you can tr
 performance. The workflow also archives each run under `history/` and ships
 `history_summary.{csv,md,html}` for quick trend analysis. See
 `docs/howto/telemetry_tuning.rst` for a step-by-step guide and download instructions.
+`history_delta.{csv,md}` capture latest-vs-previous deltas so regressions stand out instantly.
 
 When GitHub Pages is enabled, the CI workflow publishes the latest history bundle at
 `telemetry/history_summary.html` on your Pages site (for example,

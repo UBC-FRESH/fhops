@@ -83,6 +83,8 @@ def test_analyze_tuner_reports_history(tmp_path: Path):
 
     history_csv = tmp_path / "history.csv"
     history_md = tmp_path / "history.md"
+    delta_csv = tmp_path / "history_delta.csv"
+    delta_md = tmp_path / "history_delta.md"
 
     cmd = [
         "python",
@@ -95,12 +97,21 @@ def test_analyze_tuner_reports_history(tmp_path: Path):
         str(history_csv),
         "--out-history-markdown",
         str(history_md),
+        "--out-history-delta-csv",
+        str(delta_csv),
+        "--out-history-delta-markdown",
+        str(delta_md),
     ]
     subprocess.run(cmd, text=True, capture_output=True, check=True)
 
     assert history_csv.exists()
     assert history_md.exists()
+    assert delta_csv.exists()
+    assert delta_md.exists()
     df = pd.read_csv(history_csv)
     assert set(df.columns) == {"algorithm", "scenario", "best_objective", "mean_objective", "runs", "snapshot"}
     assert len(df) == 2
     assert "2024-11-02" in df["snapshot"].tolist()
+    delta_df = pd.read_csv(delta_csv)
+    assert "best_objective_delta" in delta_df.columns
+    assert delta_df.loc[0, "best_objective_delta"] == 0.5
