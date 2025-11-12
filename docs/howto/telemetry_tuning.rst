@@ -259,6 +259,19 @@ signals without grabbing artefacts.
 The comparison and leaderboard tables are also available at
 ``.../latest_tuner_comparison.{md,csv}`` and ``.../latest_tuner_leaderboard.{md,csv}``.
 
+Tuner metadata summary
+~~~~~~~~~~~~~~~~~~~~~~
+
+Runs now embed high-level metadata (algorithm, budgets, progress) via ``tuner_meta``. Use
+``scripts/summarize_tuner_meta.py`` to inspect the aggregated view:
+
+.. code-block:: bash
+
+   python scripts/summarize_tuner_meta.py telemetry/runs.sqlite \
+       --out-markdown tmp/tuner_meta_summary.md
+
+The summary table lists algorithms, number of runs, unique scenarios, and representative budgets.
+
 .. _telemetry_bundle_aliases:
 
 Bundle Aliases

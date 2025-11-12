@@ -56,3 +56,23 @@ def test_run_tuning_benchmarks_minimal(tmp_path: Path):
     assert "scenario" in comparison_text.lower()
     leaderboard_text = leaderboard_md.read_text(encoding="utf-8")
     assert "algorithm" in leaderboard_text.lower()
+
+    meta_summary_csv = out_dir / "tuner_meta_summary.csv"
+    meta_summary_md = out_dir / "tuner_meta_summary.md"
+    subprocess.run(
+        [
+            "python",
+            "scripts/summarize_tuner_meta.py",
+            str(telemetry_log.with_suffix(".sqlite")),
+            "--out-csv",
+            str(meta_summary_csv),
+            "--out-markdown",
+            str(meta_summary_md),
+        ],
+        check=True,
+        text=True,
+    )
+    assert meta_summary_csv.exists()
+    assert meta_summary_md.exists()
+    meta_text = meta_summary_md.read_text(encoding="utf-8")
+    assert "algorithm" in meta_text.lower()

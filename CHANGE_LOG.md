@@ -21,6 +21,7 @@
 - Recorded tuner metadata (`tuner_meta`) in telemetry runs (JSONL + SQLite), including algorithm labels, budgets, and configuration context, enabling downstream orchestration and comparison scripts to reason about search performance.
 - `scripts/run_tuning_benchmarks.py` now generates `tuner_comparison.{csv,md}` and `tuner_leaderboard.{csv,md}` assets summarising best objective deltas, runtime averages, and win rates across algorithms.
 - Introduced benchmark plans (`baseline-smoke`, `synthetic-smoke`, `full-spectrum`) with aligned tuner budgets; `scripts/run_tuning_benchmarks.py --plan` and CI smoke sweeps now reuse the documented matrix.
+- Added `scripts/summarize_tuner_meta.py` utility to inspect `tuner_meta` payloads (per algorithm run counts, sample budgets/configs) and linked it from the telemetry how-to.
 
 ## 2025-11-11 — Analytics notebook automation
 - Added the analytics notebook runner to CI (`.github/workflows/ci.yml`) so the curated suite executes in light mode on every push/PR, exercising Altair plots and playback helpers.
