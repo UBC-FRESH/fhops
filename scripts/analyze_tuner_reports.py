@@ -7,7 +7,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Sequence
 
 import pandas as pd
 import sqlite3
@@ -108,7 +108,9 @@ def _format_markdown(df: pd.DataFrame, labels: list[str]) -> str:
     return "\n".join(lines)
 
 
-def _format_number(value, *, prefix: str = "", suffix: str = "", multiplier: float | None = None) -> str:
+def _format_number(
+    value, *, prefix: str = "", suffix: str = "", multiplier: float | None = None
+) -> str:
     if value is None or (isinstance(value, float) and pd.isna(value)):
         return ""
     try:
@@ -163,11 +165,15 @@ def _safe_float(value: Any) -> float | None:
         return None
 
 
-def _extract_convergence_steps(step_path: Path, threshold: float) -> tuple[int | None, float | None]:
+def _extract_convergence_steps(
+    step_path: Path, thresholds: Sequence[float]
+) -> tuple[dict[float, int | None], float | None]:
     if not step_path.exists():
-        return None, None
-    first_reach: int | None = None
+        return {threshold: None for threshold in thresholds}, None
+    first_reach: dict[float, int | None] = {threshold: None for threshold in thresholds}
     best_logged: float | None = None
+    sorted_thresholds = sorted(thresholds)
+
     with step_path.open("r", encoding="utf-8") as handle:
         for line in handle:
             line = line.strip()
@@ -183,12 +189,10 @@ def _extract_convergence_steps(step_path: Path, threshold: float) -> tuple[int |
             if best_logged is None or best_value > best_logged:
                 best_logged = best_value
             step_value = record.get("step")
-            if (
-                best_value >= threshold
-                and first_reach is None
-                and isinstance(step_value, (int, float))
-            ):
-                first_reach = int(step_value)
+            if isinstance(step_value, (int, float)):
+                for threshold in sorted_thresholds:
+                    if best_value >= threshold and first_reach[threshold] is None:
+                        first_reach[threshold] = int(step_value)
     return first_reach, best_logged
 
 
@@ -196,7 +200,8 @@ def _compute_convergence(
     sqlite_path: Path,
     telemetry_log: Path,
     *,
-    threshold: float,
+    hard_threshold: float,
+    soft_threshold: float,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     if not sqlite_path.exists():
         raise FileNotFoundError(f"Telemetry SQLite store not found: {sqlite_path}")
@@ -245,7 +250,9 @@ def _compute_convergence(
         context = _parse_json_field(row["context_json"])
         config = _parse_json_field(row["config_json"])
         tuner_meta = _parse_json_field(row["tuner_meta_json"])
-        scenario_key, scenario_display, bundle_name = _determine_scenario_key(scenario_field, context)
+        scenario_key, scenario_display, bundle_name = _determine_scenario_key(
+            scenario_field, context
+        )
         scenario_meta.setdefault(
             scenario_key,
             {
@@ -288,6 +295,7 @@ def _compute_convergence(
             "tier",
             "run_id",
             "iterations_to_1pct",
+            "iterations_to_5pct",
             "total_iterations",
             "best_objective",
             "mip_objective",
@@ -306,22 +314,38 @@ def _compute_convergence(
             "median_iterations_to_1pct",
             "min_iterations_to_1pct",
             "max_iterations_to_1pct",
+            "runs_reached_5pct",
+            "success_rate_soft",
+            "mean_iterations_to_5pct",
+            "median_iterations_to_5pct",
+            "min_iterations_to_5pct",
+            "max_iterations_to_5pct",
             "mean_gap_pct",
         ]
         return pd.DataFrame(columns=runs_columns), pd.DataFrame(columns=summary_columns)
 
     runs_records: list[dict[str, Any]] = []
-
+    threshold_targets = {
+        "hard": float(hard_threshold),
+        "soft": float(soft_threshold),
+    }
     for record in heuristics_records:
         scenario_key = record["scenario_key"]
         mip_obj = mip_objectives.get(scenario_key)
         if mip_obj is None or mip_obj == 0:
             # Skip scenarios without a baseline optimum
             continue
-        threshold_value = float(mip_obj) * (1.0 - threshold)
+        threshold_values = {
+            name: float(mip_obj) * (1.0 - frac) for name, frac in threshold_targets.items()
+        }
         run_id = record["run_id"]
         steps_path = steps_dir / f"{run_id}.jsonl"
-        iterations_to_gap, best_logged = _extract_convergence_steps(steps_path, threshold_value)
+        iterations_map, best_logged = _extract_convergence_steps(
+            steps_path,
+            [threshold_values["hard"], threshold_values["soft"]],
+        )
+        iterations_to_hard = iterations_map.get(threshold_values["hard"])
+        iterations_to_soft = iterations_map.get(threshold_values["soft"])
 
         best_objective = objective_map.get(run_id)
         if best_objective is None and best_logged is not None:
@@ -347,8 +371,18 @@ def _compute_convergence(
                 total_iterations = int(value)
 
         # Fallback when threshold reached only at final iteration
-        if iterations_to_gap is None and best_objective >= threshold_value and total_iterations is not None:
-            iterations_to_gap = total_iterations
+        if (
+            iterations_to_hard is None
+            and best_objective >= threshold_values["hard"]
+            and total_iterations is not None
+        ):
+            iterations_to_hard = total_iterations
+        if (
+            iterations_to_soft is None
+            and best_objective >= threshold_values["soft"]
+            and total_iterations is not None
+        ):
+            iterations_to_soft = total_iterations
 
         gap_pct = None
         if mip_obj != 0:
@@ -368,7 +402,8 @@ def _compute_convergence(
                 "algorithm": record["solver"],
                 "tier": tier or "",
                 "run_id": run_id,
-                "iterations_to_1pct": iterations_to_gap,
+                "iterations_to_1pct": iterations_to_hard,
+                "iterations_to_5pct": iterations_to_soft,
                 "total_iterations": total_iterations,
                 "best_objective": best_objective,
                 "mip_objective": mip_obj,
@@ -386,6 +421,7 @@ def _compute_convergence(
             "tier",
             "run_id",
             "iterations_to_1pct",
+            "iterations_to_5pct",
             "total_iterations",
             "best_objective",
             "mip_objective",
@@ -404,6 +440,12 @@ def _compute_convergence(
             "median_iterations_to_1pct",
             "min_iterations_to_1pct",
             "max_iterations_to_1pct",
+            "runs_reached_5pct",
+            "success_rate_soft",
+            "mean_iterations_to_5pct",
+            "median_iterations_to_5pct",
+            "min_iterations_to_5pct",
+            "max_iterations_to_5pct",
             "mean_gap_pct",
         ]
         return pd.DataFrame(columns=runs_columns), pd.DataFrame(columns=summary_columns)
@@ -413,10 +455,14 @@ def _compute_convergence(
     for key, group in runs_df.groupby(group_columns, dropna=False):
         scenario, bundle, algorithm, tier = key
         total_runs = len(group)
-        reached_mask = group["iterations_to_1pct"].notna()
-        reached = int(reached_mask.sum())
-        success_rate = reached / total_runs if total_runs else 0.0
-        iteration_values = group.loc[reached_mask, "iterations_to_1pct"].astype(float)
+        reached_hard_mask = group["iterations_to_1pct"].notna()
+        reached_soft_mask = group["iterations_to_5pct"].notna()
+        reached_hard = int(reached_hard_mask.sum())
+        reached_soft = int(reached_soft_mask.sum())
+        success_rate_hard = reached_hard / total_runs if total_runs else 0.0
+        success_rate_soft = reached_soft / total_runs if total_runs else 0.0
+        hard_iterations = group.loc[reached_hard_mask, "iterations_to_1pct"].astype(float)
+        soft_iterations = group.loc[reached_soft_mask, "iterations_to_5pct"].astype(float)
         summary_records.append(
             {
                 "scenario": scenario,
@@ -424,12 +470,34 @@ def _compute_convergence(
                 "algorithm": algorithm,
                 "tier": tier,
                 "runs_total": total_runs,
-                "runs_reached_1pct": reached,
-                "success_rate": success_rate,
-                "mean_iterations_to_1pct": iteration_values.mean() if not iteration_values.empty else None,
-                "median_iterations_to_1pct": iteration_values.median() if not iteration_values.empty else None,
-                "min_iterations_to_1pct": iteration_values.min() if not iteration_values.empty else None,
-                "max_iterations_to_1pct": iteration_values.max() if not iteration_values.empty else None,
+                "runs_reached_1pct": reached_hard,
+                "success_rate": success_rate_hard,
+                "mean_iterations_to_1pct": hard_iterations.mean()
+                if not hard_iterations.empty
+                else None,
+                "median_iterations_to_1pct": hard_iterations.median()
+                if not hard_iterations.empty
+                else None,
+                "min_iterations_to_1pct": hard_iterations.min()
+                if not hard_iterations.empty
+                else None,
+                "max_iterations_to_1pct": hard_iterations.max()
+                if not hard_iterations.empty
+                else None,
+                "runs_reached_5pct": reached_soft,
+                "success_rate_soft": success_rate_soft,
+                "mean_iterations_to_5pct": soft_iterations.mean()
+                if not soft_iterations.empty
+                else None,
+                "median_iterations_to_5pct": soft_iterations.median()
+                if not soft_iterations.empty
+                else None,
+                "min_iterations_to_5pct": soft_iterations.min()
+                if not soft_iterations.empty
+                else None,
+                "max_iterations_to_5pct": soft_iterations.max()
+                if not soft_iterations.empty
+                else None,
                 "mean_gap_pct": group["gap_pct"].mean(skipna=True) if "gap_pct" in group else None,
             }
         )
@@ -548,7 +616,16 @@ def _collect_history(directory: Path, *, pattern: str = "*.csv") -> pd.DataFrame
         ] + list(DESIRED_METRICS.values())
         records.append(merged[[col for col in keep_cols if col in merged.columns]])
     if not records:
-        return pd.DataFrame(columns=["algorithm", "scenario", "best_objective", "mean_objective", "runs", "snapshot"])
+        return pd.DataFrame(
+            columns=[
+                "algorithm",
+                "scenario",
+                "best_objective",
+                "mean_objective",
+                "runs",
+                "snapshot",
+            ]
+        )
     combined = pd.concat(records, ignore_index=True)
     combined["algorithm"] = combined["algorithm"].str.lower().str.strip()
     combined["scenario"] = combined["scenario"].str.strip()
@@ -615,7 +692,9 @@ def _compute_history_deltas(df: pd.DataFrame) -> pd.DataFrame:
         return pd.DataFrame()
     metrics = ["best_objective"] + [col for col in DESIRED_METRICS.values() if col in df.columns]
     records: list[dict[str, object]] = []
-    for (scenario, algorithm), group in df.sort_values("snapshot").groupby(["scenario", "algorithm"], dropna=False):
+    for (scenario, algorithm), group in df.sort_values("snapshot").groupby(
+        ["scenario", "algorithm"], dropna=False
+    ):
         if len(group) < 2:
             continue
         latest = group.iloc[-1]
@@ -630,10 +709,16 @@ def _compute_history_deltas(df: pd.DataFrame) -> pd.DataFrame:
             current_val = latest.get(metric)
             prev_val = previous.get(metric)
             entry[f"{metric}"] = current_val
-            if current_val is not None and prev_val is not None and not (pd.isna(current_val) or pd.isna(prev_val)):
+            if (
+                current_val is not None
+                and prev_val is not None
+                and not (pd.isna(current_val) or pd.isna(prev_val))
+            ):
                 entry[f"{metric}_delta"] = float(current_val) - float(prev_val)
                 if not _is_zero(prev_val):
-                    entry[f"{metric}_delta_pct"] = (float(current_val) - float(prev_val)) / float(prev_val)
+                    entry[f"{metric}_delta_pct"] = (float(current_val) - float(prev_val)) / float(
+                        prev_val
+                    )
                 else:
                     entry[f"{metric}_delta_pct"] = None
             else:
@@ -832,6 +917,12 @@ def main(argv: list[str] | None = None) -> int:
         help="Optimality gap threshold (fraction). Default: 0.01 (1%% gap).",
     )
     parser.add_argument(
+        "--convergence-soft-threshold",
+        type=float,
+        default=0.05,
+        help="Secondary (softer) gap threshold (fraction). Default: 0.05 (5%% gap).",
+    )
+    parser.add_argument(
         "--out-convergence-csv",
         type=Path,
         help="Optional CSV path for per-run convergence metrics (requires --telemetry-log).",
@@ -858,9 +949,7 @@ def main(argv: list[str] | None = None) -> int:
     combined = _merge_reports(frames)
     baseline = labels[0]
     for label in labels[1:]:
-        combined[f"best_delta_{label}"] = (
-            combined[f"best_{label}"] - combined[f"best_{baseline}"]
-        )
+        combined[f"best_delta_{label}"] = combined[f"best_{label}"] - combined[f"best_{baseline}"]
 
     if args.out_csv:
         args.out_csv.parent.mkdir(parents=True, exist_ok=True)
@@ -933,7 +1022,8 @@ def main(argv: list[str] | None = None) -> int:
         convergence_runs_df, convergence_summary_df = _compute_convergence(
             sqlite_path,
             telemetry_log,
-            threshold=max(0.0, float(args.convergence_threshold)),
+            hard_threshold=max(0.0, float(args.convergence_threshold)),
+            soft_threshold=max(0.0, float(args.convergence_soft_threshold)),
         )
         if args.out_convergence_csv:
             args.out_convergence_csv.parent.mkdir(parents=True, exist_ok=True)

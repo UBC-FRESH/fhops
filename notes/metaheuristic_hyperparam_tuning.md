@@ -86,9 +86,12 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 
 ### Parallel telemetry sweeps (planned upgrade)
 - [ ] Add process-level parallelism to `scripts/run_tuning_benchmarks.py` (target 16 worker processes × 4 threads each) so scenario/tier/tuner jobs run concurrently.
-- [ ] Emit per-worker telemetry chunks (JSONL + SQLite) and merge them deterministically after completion to avoid write contention.
-- [ ] Increase default heuristic parallelism (e.g., `--parallel-workers` 4) when running long-tier sweeps so each worker exploits multi-core hardware.
-- [ ] Update docs (`docs/howto/telemetry_tuning.rst`) with recommended parallel flags and resource guidance; capture validation tests for the merge path.
+  - [ ] Introduce a `--max-workers` flag and use `ProcessPoolExecutor` to dispatch `(scenario, tuner, tier)` units, buffering CLI commands per worker.
+  - [ ] Ensure each worker writes telemetry to a unique chunk (`runs.<worker>.jsonl`, per-run step logs, SQLite copy).
+- [ ] Implement a deterministic merge step that consolidates JSONL, step logs, and SQLite entries after worker completion (dedupe on `run_id`).
+  - [ ] Add automated tests that run two worker chunks and verify the merged telemetry matches serial execution.
+- [ ] Increase default heuristic parallelism (e.g., `--parallel-workers` 4) when `--max-workers` is set so each worker leverages multi-core hardware without oversubscription.
+- [ ] Update docs (`docs/howto/telemetry_tuning.rst`) with recommended parallel flags, resource guidance (16 proc × 4 threads), and troubleshooting tips.
 - [ ] Schedule medium/long tier convergence sweeps (baseline + synthetic bundles) with MIP baselines and publish resulting convergence summaries to docs/Pages once complete.
 - [x] Emit tuner-level meta-telemetry (algorithm name, configuration, budget, convergence stats) so higher-level orchestration can evaluate tuner performance.
   - [x] Extend `RunTelemetryLogger` / CLI tuners to include `tuner_meta` (algorithm label, search budget, config search space hints, convergence indicators).
