@@ -61,15 +61,15 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Optional tier label stored in telemetry context (e.g., long).",
     )
     parser.add_argument(
+        "--driver",
+        default="auto",
+        help="MIP solver driver (auto, highs-appsi, highs-exec, gurobi, gurobi-appsi, gurobi-direct).",
+    )
+    parser.add_argument(
         "--time-limit",
         type=int,
         default=900,
         help="HiGHS time limit in seconds (default: 900).",
-    )
-    parser.add_argument(
-        "--driver",
-        default="auto",
-        help="HiGHS driver override (auto|appsi|exec).",
     )
     parser.add_argument(
         "--append",
@@ -154,6 +154,7 @@ def main(argv: list[str] | None = None) -> int:
         context = {
             "source": "benchmark.mip",
             "scenario_features": features,
+            "solver_driver": args.driver,
         }
         if args.tier_label:
             context["tier"] = args.tier_label

@@ -397,6 +397,9 @@ the recorded MIP optimum, plus the mean/median iteration counts required. Step l
 must be present (the runner writes them to ``telemetry/steps/<run_id>.jsonl``) and each
 scenario needs a matching ``solve-mip`` baseline in the telemetry store. Adjust
 ``--convergence-threshold`` if you need a different gap target.
+When the default HiGHS setup struggles on larger instances, run ``scripts/ingest_mip_baselines.py``
+with ``--driver gurobi`` (after installing ``fhops[gurobi]`` and configuring the Gurobi license) to
+log the exact optimum using the commercial solver, then rerun the analyzer.
 
 Tuner metadata summary
 ~~~~~~~~~~~~~~~~~~~~~~

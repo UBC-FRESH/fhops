@@ -37,6 +37,9 @@ dev = [
 geo = [
   "geopandas>=0.14.0"
 ]
+gurobi = [
+  "gurobipy>=11.0.0"
+]
 
 [project.scripts]
 fhops = "fhops.cli.main:app"

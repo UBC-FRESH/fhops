@@ -99,7 +99,9 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
   - [x] Update docs/tests to cover meta-telemetry schema, ensuring backwards compatibility for existing consumers.
 - [x] Fold the heuristic parameter catalogue into user-facing docs (`docs/howto/telemetry_tuning.rst`, CLI help) so the tuning surface is documented alongside execution workflows.
 - [x] Introduce a tractable `small21` baseline dataset (≈½ the scale of `med42`) so MIP solves finish quickly and provide a second reference optimum; wire it into the convergence sweeps and telemetry fixtures.
-- [ ] Schedule an extended MIP benchmarking window (overnight/off-peak) to finish the outstanding `med42` optimum and capture long-run solver telemetry once resource constraints ease.
+- [x] Schedule an extended MIP benchmarking window (overnight/off-peak) to finish the outstanding `med42` optimum and capture long-run solver telemetry once resource constraints ease.
+- [x] Wire in Gurobi as an optional MIP backend (CLI flag + docs); keep HiGHS as default but document licensing/install steps so we can solve larger baselines reliably.
+- [ ] Run long-leash convergence experiments for each heuristic (SA/ILS/Tabu) on representative scenarios (minitoy, small21, med42, synthetic tiers) with budgets in the 2 000–10 000+ iteration range; capture wall-clock vs. improvement curves and record when 5 % / 1 % gaps are actually met.
 
 ## Benchmark Bundle Plan (draft)
 
@@ -325,3 +327,41 @@ Documentation Maintenance
      python scripts/render_benchmark_plots.py tmp/benchmarks_compare/summary.csv --out-dir docs/_static/benchmarks
 
 - Audit heuristic preset examples in :doc:`docs/howto/heuristic_presets` when operators or defaults change.
+
+## Incoming
+
+### Gurobi license registration for optional gurobi MIP solver (when not using default HiGHS)
+
+Add instructions to the documentation (installation notes) for pulling the lightweight gurobi license registration executable file bundle for linux from their server and using that to register an academic gurobi license from the command line (these tools are not included when gurobi installed via pip). See real example below (obviously anonymize for documentation example).
+
+```bash
+(.venv) gep@jupyterhub01:~/projects/fhops/tmp$ wget https://packages.gurobi.com/lictools/licensetools13.0.0_linux64.tar.gz
+--2025-11-13 06:11:15--  https://packages.gurobi.com/lictools/licensetools13.0.0_linux64.tar.gz
+Resolving packages.gurobi.com (packages.gurobi.com)... 3.175.64.15, 3.175.64.34, 3.175.64.115, ...
+Connecting to packages.gurobi.com (packages.gurobi.com)|3.175.64.15|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 23089111 (22M) [binary/octet-stream]
+Saving to: ‘licensetools13.0.0_linux64.tar.gz’
+
+licensetools13.0.0_linux64.tar.gz                                   100%[=================================================================================================================================================================>]  22.02M  30.3MB/s    in 0.7s    
+
+2025-11-13 06:11:16 (30.3 MB/s) - ‘licensetools13.0.0_linux64.tar.gz’ saved [23089111/23089111]
+
+(.venv) gep@jupyterhub01:~/projects/fhops/tmp$ tar xvfz licensetools13.0.0_linux64.tar.gz 
+grbprobe
+grb_ts
+grb_wlsproxy
+grbgetkey
+(.venv) gep@jupyterhub01:~/projects/fhops/tmp$ ./grbgetkey 021ee1de-5fb7-4490-ae90-3e8801924974
+info  : grbgetkey version 13.0.0, build v13.0.0beta1
+info  : Platform is linux64 (linux) - "Ubuntu 24.04.3 LTS"
+info  : Contacting Gurobi license server...
+info  : License file for license ID 2737116 was successfully retrieved
+info  : License expires at the end of the day on 2026-11-13
+info  : Saving license file...
+
+In which directory would you like to store the Gurobi license file?
+[hit Enter to store it in /home/gep]: 
+
+info  : License 2737116 written to file /home/gep/gurobi.lic
+```
