@@ -82,14 +82,14 @@ before proposing new work.
     - [x] Add CI check to execute notebooks (or cached outputs) on critical scenarios.
     - [x] Update README and docs landing pages to advertise analytics assets.
 - [ ] Hyperparameter tuning framework (conventional + agentic) leveraging persistent telemetry (`notes/metaheuristic_hyperparam_tuning.md`).
-  - [ ] Telemetry & persistence groundwork
+  - [x] Telemetry & persistence groundwork
     - [x] Define telemetry schema (solver configuration, KPIs, runtime stats) and storage backend (drafted in `notes/metaheuristic_hyperparam_tuning.md`).
-    - [ ] Implement logging hooks in solvers and playback runs, persisting to local store.
+    - [x] Implement logging hooks in solvers and playback runs, persisting to local store.
       - [x] Simulated Annealing JSONL run logger emitting run/step telemetry (`RunTelemetryLogger`, `solve_sa`).
       - [x] ILS + Tabu telemetry integration (run/step logging, CLI wiring).
       - [x] Playback CLI telemetry (run metadata + step logging for day summaries).
       - [x] Enrich telemetry with scenario descriptors and schema versioning for ML tuners.
-    - [ ] Document data retention/rotation strategy in tuning notes.
+    - [x] Document data retention/rotation strategy in tuning notes.
   - [ ] Conventional tuning toolkit
     - [x] Implement grid/random/Bayesian search drivers leveraging telemetry store.
     - [x] Provide CLI surfaces for launching tuning sweeps with scenario bundles.
@@ -100,8 +100,8 @@ before proposing new work.
       - [x] Grid tuner CLI (`fhops tune-grid`) evaluating preset/batch-size combinations.
     - [x] Add automated comparison reports summarising best configurations per scenario class.
     - [ ] Benchmark tuner strategies (grid vs. random vs. Bayesian/SMBO vs. neural/agentic) and log meta-telemetry for automated model selection.
-    - [ ] Introduce dual convergence thresholds (soft ≤5%, hard ≤1%) in telemetry analytics so automated stopping criteria have rich signals.
-    - [ ] Parallelise the tuning harness (≈16 worker processes × 4 threads) with per-worker telemetry merge so sweeps scale linearly with hardware.
+    - [x] Introduce dual convergence thresholds (soft ≤5%, hard ≤1%) in telemetry analytics so automated stopping criteria have rich signals.
+    - [x] Parallelise the tuning harness (≈16 worker processes × 4 threads) with per-worker telemetry merge so sweeps scale linearly with hardware.
     - [ ] Reporting polish
       - [x] Tighten `_compute_history_deltas` so percentage columns remain valid and Markdown renders cleanly.
       - [x] Confirm README + docs/how-to explicitly reference the GitHub Pages URL and the exported delta artefacts.
@@ -135,3 +135,4 @@ before proposing new work.
 - [ ] Cloud execution harness for large-scale heuristics.
 - [ ] DSS integration hooks (ArcGIS, QGIS) for geo-enabled workflows.
 - [ ] Jaffray MASc thesis alignment checkpoints (`notes/thesis_alignment.md` TBD).
+- [ ] VSCode keeps firing web apps on various random-sounding ports while running `injest_mip_baselines.py` and other benchmarking scripts? What is up with that? It is annoyingly resulting in VSCode interface popping up "Your application is running on port XXXX" messages (becaue of the built-in port-forwarding proxy).

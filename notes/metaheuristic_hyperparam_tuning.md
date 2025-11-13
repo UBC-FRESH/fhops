@@ -79,25 +79,27 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - Document dual convergence thresholds (hard=≤1%, soft=≤5%) in docs and CLI help once analytics incorporate both signals.
 
 ### Dual-threshold convergence analysis (new)
-- [ ] Update convergence reporting to emit both hard (≤1%) and soft (≤5%) gap metrics per run/tier so we can observe early “soft” convergence and final “hard” convergence.
-- [ ] Extend `convergence_summary` outputs with counts/iteration statistics for each threshold (e.g., `success_rate_soft`, `mean_iterations_to_5pct`) to capture curvature information.
+- [x] Update convergence reporting to emit both hard (≤1%) and soft (≤5%) gap metrics per run/tier so we can observe early “soft” convergence and final “hard” convergence.
+- [x] Extend `convergence_summary` outputs with counts/iteration statistics for each threshold (e.g., `success_rate_soft`, `mean_iterations_to_5pct`) to capture curvature information.
 - [ ] Plot convergence trajectories highlighting when runs cross 5% vs. 1% to visualise rate and curvature for each tuner.
 - [ ] Feed both thresholds into the modelling experiment (fit separate regressors and/or joint models) to improve automated stopping rules.
 
 ### Parallel telemetry sweeps (planned upgrade)
-- [ ] Add process-level parallelism to `scripts/run_tuning_benchmarks.py` (target 16 worker processes × 4 threads each) so scenario/tier/tuner jobs run concurrently.
-  - [ ] Introduce a `--max-workers` flag and use `ProcessPoolExecutor` to dispatch `(scenario, tuner, tier)` units, buffering CLI commands per worker.
-  - [ ] Ensure each worker writes telemetry to a unique chunk (`runs.<worker>.jsonl`, per-run step logs, SQLite copy).
-- [ ] Implement a deterministic merge step that consolidates JSONL, step logs, and SQLite entries after worker completion (dedupe on `run_id`).
+- [x] Add process-level parallelism to `scripts/run_tuning_benchmarks.py` (target 16 worker processes × 4 threads each) so scenario/tier/tuner jobs run concurrently.
+  - [x] Introduce a `--max-workers` flag and use `ProcessPoolExecutor` to dispatch `(scenario, tuner, tier)` units, buffering CLI commands per worker.
+  - [x] Ensure each worker writes telemetry to a unique chunk (`runs.<worker>.jsonl`, per-run step logs, SQLite copy).
+- [x] Implement a deterministic merge step that consolidates JSONL, step logs, and SQLite entries after worker completion (dedupe on `run_id`).
   - [ ] Add automated tests that run two worker chunks and verify the merged telemetry matches serial execution.
 - [ ] Increase default heuristic parallelism (e.g., `--parallel-workers` 4) when `--max-workers` is set so each worker leverages multi-core hardware without oversubscription.
 - [ ] Update docs (`docs/howto/telemetry_tuning.rst`) with recommended parallel flags, resource guidance (16 proc × 4 threads), and troubleshooting tips.
 - [ ] Schedule medium/long tier convergence sweeps (baseline + synthetic bundles) with MIP baselines and publish resulting convergence summaries to docs/Pages once complete.
 - [x] Emit tuner-level meta-telemetry (algorithm name, configuration, budget, convergence stats) so higher-level orchestration can evaluate tuner performance.
-  - [x] Extend `RunTelemetryLogger` / CLI tuners to include `tuner_meta` (algorithm label, search budget, config search space hints, convergence indicators).
+- [x] Extend `RunTelemetryLogger` / CLI tuners to include `tuner_meta` (algorithm label, search budget, config search space hints, convergence indicators).
   - [x] Persist meta fields in SQLite (either JSON column or dedicated table) for downstream selection agents.
   - [x] Update docs/tests to cover meta-telemetry schema, ensuring backwards compatibility for existing consumers.
 - [x] Fold the heuristic parameter catalogue into user-facing docs (`docs/howto/telemetry_tuning.rst`, CLI help) so the tuning surface is documented alongside execution workflows.
+- [x] Introduce a tractable `small21` baseline dataset (≈½ the scale of `med42`) so MIP solves finish quickly and provide a second reference optimum; wire it into the convergence sweeps and telemetry fixtures.
+- [ ] Schedule an extended MIP benchmarking window (overnight/off-peak) to finish the outstanding `med42` optimum and capture long-run solver telemetry once resource constraints ease.
 
 ## Benchmark Bundle Plan (draft)
 
@@ -130,6 +132,11 @@ Guidelines:
 - When running wide sweeps, request at least 64 of 72 available CPU cores (`GNU parallel` or runner `--processes`) and cap per-run RSS to ≈8 GB to avoid node exhaustion.
 - Use long-tier budgets when fitting convergence models (iterations to ≤1 % optimality gap) so the telemetry captures the tail behaviour needed for extrapolation.
 - Convergence instrumentation: `scripts/analyze_tuner_reports.py --telemetry-log <runs.jsonl> --out-convergence-*` now scans step logs to compute iterations-to-1% gap per SA/ILS/Tabu run (requires MIP baselines in the same telemetry store). Run long-tier sweeps first so the dataset contains meaningful trajectories.
+
+#### Latest parallel sweep
+- Command: `python scripts/run_tuning_benchmarks.py --plan full-spectrum --max-workers 16 --out-dir tmp/tuning-benchmarks/full-spectrum-parallel --summary-label full-spectrum-parallel`
+- Outcome: short + medium tiers completed across baseline + synthetic bundles; chunk logs merged without conflicts after `_merge_sqlite` fix; leaderboard shows Bayesian > grid/random on best objective for every scenario.
+- Artefacts: see `tmp/tuning-benchmarks/full-spectrum-parallel/telemetry/` for merged JSONL/SQLite and `tuner_*` comparison/leaderboard Markdown. Next action is to rerun `scripts/analyze_tuner_reports.py` against this directory to refresh convergence summaries with the new dual-threshold metrics.
 
 ### Heuristic parameter catalogue (tuning surface)
 
