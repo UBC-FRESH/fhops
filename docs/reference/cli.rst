@@ -19,6 +19,7 @@ Run ``fhops --help`` to inspect the full command tree.
 Baseline usage:
 
 - ``fhops solve-mip tests/fixtures/regression/regression.yaml --out /tmp/regression_mip.csv``
+- ``fhops solve-mip examples/med42/scenario.yaml --driver gurobi --time-limit 600 --out tmp/med42_gurobi.csv`` — run the MIP with the Gurobi backend (requires installing ``fhops[gurobi]`` and configuring a licence).
 - ``fhops solve-heur tests/fixtures/regression/regression.yaml --out /tmp/regression_sa.csv``
 - ``fhops evaluate tests/fixtures/regression/regression.yaml --assignments tmp/regression_sa.csv --kpi-mode extended``
 - ``fhops eval playback --scenario tests/fixtures/regression/regression.yaml --assignments /tmp/regression_sa.csv --shift-out tmp/shift_summary.csv --day-out tmp/day_summary.csv``

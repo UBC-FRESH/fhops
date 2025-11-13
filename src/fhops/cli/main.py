@@ -341,7 +341,10 @@ def solve_mip_cmd(
     scenario: Path,
     out: Path = typer.Option(..., "--out", help="Output CSV path"),
     time_limit: int = 60,
-    driver: str = typer.Option("auto", help="HiGHS driver: auto|appsi|exec"),
+    driver: str = typer.Option(
+        "auto",
+        help="MIP driver: auto|highs-appsi|highs-exec|gurobi|gurobi-appsi|gurobi-direct",
+    ),
     debug: bool = typer.Option(False, "--debug", help="Verbose tracebacks & solver logs"),
 ):
     """Solve with HiGHS (exact)."""

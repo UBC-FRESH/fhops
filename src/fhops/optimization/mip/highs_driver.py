@@ -1,4 +1,4 @@
-"""HiGHS driver for FHOPS MIP."""
+"""MIP solver driver plumbing (HiGHS by default, optional Gurobi)."""
 
 from __future__ import annotations
 
@@ -25,6 +25,10 @@ except Exception:  # pragma: no cover - rich optional
 
 
 console = Console()
+
+
+class SolverUnavailable(RuntimeError):
+    """Raised when a requested solver backend is not available."""
 
 
 def _try_appsi_highs():
@@ -72,21 +76,41 @@ def _set_appsi_controls(solver, time_limit: int, debug: bool) -> bool:
 def solve_mip(
     pb: Problem, time_limit: int = 60, driver: str = "auto", debug: bool = False
 ) -> Mapping[str, object]:
-    """Build and solve the FHOPS MIP with HiGHS (APPSI or exec)."""
+    """Build and solve the FHOPS MIP."""
+    driver_clean = driver.lower()
     model = build_model(pb)
 
-    use_appsi: bool | None = None
-    if driver == "appsi":
+    if driver_clean == "auto":
+        try:
+            return _solve_with_gurobi(model, time_limit, driver_hint="auto", debug=debug)
+        except SolverUnavailable:
+            return _solve_with_highs(model, time_limit, driver_hint="auto", debug=debug)
+
+    if driver_clean in {"gurobi", "gurobi-appsi", "gurobi-direct"}:
+        return _solve_with_gurobi(model, time_limit, driver_hint=driver_clean, debug=debug)
+
+    if driver_clean in {"highs", "appsi", "highs-appsi", "exec", "highs-exec"}:
+        return _solve_with_highs(model, time_limit, driver_hint=driver_clean, debug=debug)
+
+    raise ValueError(
+        f"Unknown MIP driver '{driver}'. "
+        "Supported values: auto, highs, highs-appsi, highs-exec, gurobi, gurobi-appsi, gurobi-direct."
+    )
+
+
+def _solve_with_highs(model: pyo.ConcreteModel, time_limit: int, driver_hint: str, *, debug: bool):
+    use_appsi: bool | None
+    if driver_hint in {"appsi", "highs-appsi"}:
         use_appsi = True
-    elif driver == "exec":
+    elif driver_hint in {"exec", "highs-exec"}:
         use_appsi = False
-    if use_appsi is None:
+    else:
         use_appsi = _try_appsi_highs() is not None
 
     if use_appsi:
         solver = _try_appsi_highs()
         if solver is None:
-            raise RuntimeError("Requested driver=appsi, but appsi.highs is unavailable.")
+            raise SolverUnavailable("Requested driver=appsi, but appsi.highs is unavailable.")
         _set_appsi_controls(solver, time_limit=time_limit, debug=debug)
         if debug:
             console.print("[bold cyan]FHOPS[/]: using [bold]appsi.highs[/] driver.")
@@ -94,7 +118,7 @@ def solve_mip(
     else:
         opt = _try_exec_highs()
         if opt is None:
-            raise RuntimeError("HiGHS solver not available (no 'highs' executable found).")
+            raise SolverUnavailable("HiGHS solver not available (no 'highs' executable found).")
         timelimit_kw: int | None = None
         options = getattr(opt, "options", None)
         if isinstance(options, dict):
@@ -110,7 +134,51 @@ def solve_mip(
         if timelimit_kw is not None:
             solve_kwargs["timelimit"] = timelimit_kw
         opt.solve(model, **solve_kwargs)
+    return _extract_results(model)
 
+
+def _solve_with_gurobi(
+    model: pyo.ConcreteModel, time_limit: int, driver_hint: str, *, debug: bool
+) -> Mapping[str, object]:
+    solver = None
+    if driver_hint in {"auto", "gurobi", "gurobi-appsi"}:
+        solver = _try_appsi_gurobi()
+        if solver:
+            _set_appsi_gurobi_controls(solver, time_limit=time_limit, debug=debug)
+            if debug:
+                console.print("[bold cyan]FHOPS[/]: using [bold]appsi.gurobi[/] driver.")
+            try:
+                solver.solve(model)
+                return _extract_results(model)
+            except Exception:
+                if driver_hint in {"gurobi-appsi"}:
+                    raise
+                solver = None  # fall through to exec attempt
+        if driver_hint == "gurobi-appsi":
+            raise SolverUnavailable("Requested driver=gurobi-appsi, but appsi.gurobi is unavailable.")
+
+    if driver_hint in {"auto", "gurobi", "gurobi-direct"}:
+        opt = _try_exec_gurobi()
+        if opt:
+            _configure_exec_gurobi(opt, time_limit=time_limit, debug=debug)
+            if debug:
+                console.print("[bold cyan]FHOPS[/]: using [bold]gurobi (exec)[/] driver.")
+            try:
+                opt.solve(model, tee=bool(debug))
+                return _extract_results(model)
+            except Exception:
+                if driver_hint == "gurobi-direct":
+                    raise
+                opt = None
+        if driver_hint == "gurobi-direct":
+            raise SolverUnavailable("Requested driver=gurobi-direct, but Gurobi interface is unavailable.")
+
+    raise SolverUnavailable(
+        "Gurobi solver unavailable (install gurobipy and ensure the license is configured)."
+    )
+
+
+def _extract_results(model: pyo.ConcreteModel) -> Mapping[str, object]:
     rows = []
     for machine in model.M:
         for block in model.B:
@@ -131,3 +199,61 @@ def solve_mip(
     assignments = pd.DataFrame(rows).sort_values(["day", "shift_id", "machine_id", "block_id"])
     objective = pyo.value(model.obj)
     return {"objective": objective, "assignments": assignments}
+
+
+def _try_appsi_gurobi():
+    try:
+        from pyomo.contrib.appsi.solvers.gurobi import Gurobi
+
+        solver = Gurobi()
+        try:
+            available = solver.available()
+        except TypeError:
+            available = solver.available
+        if not available:
+            return None
+        return solver
+    except Exception:
+        return None
+
+
+def _try_exec_gurobi():
+    try:
+        solver = pyo.SolverFactory("gurobi")
+        if solver is not None and solver.available(exception_flag=False):
+            return solver
+    except Exception:
+        return None
+    return None
+
+
+def _set_appsi_gurobi_controls(solver, time_limit: int, debug: bool) -> bool:
+    try:
+        cfg = getattr(solver, "config", None)
+        if cfg is not None:
+            if hasattr(cfg, "time_limit"):
+                cfg.time_limit = time_limit
+            if hasattr(cfg, "verbosity"):
+                cfg.verbosity = 10 if debug else 0
+            return True
+    except Exception:
+        pass
+
+    try:
+        if hasattr(solver, "options"):
+            solver.options["TimeLimit"] = time_limit
+            return True
+    except Exception:
+        pass
+    return False
+
+
+def _configure_exec_gurobi(opt, *, time_limit: int, debug: bool) -> None:
+    options = getattr(opt, "options", None)
+    if not isinstance(options, dict):
+        opt.options = {}
+        options = opt.options
+    options["TimeLimit"] = time_limit
+    options["timelimit"] = time_limit
+    if not debug:
+        options.setdefault("OutputFlag", 0)
