@@ -35,9 +35,38 @@ CLI Options
   The quick-start example above still shows ``--time-limit 180`` for a smoke run; omit that flag to use the
   higher default when you want optimal certificates on the largest instance.
 * ``--sa-iters`` / ``--sa-seed`` — simulated annealing iteration budget and RNG seed.
-* ``--driver`` — HiGHS driver (``auto``/``appsi``/``exec``) mirroring the ``solve-mip`` CLI.
+* ``--driver`` — MIP driver (``auto``/``highs-appsi``/``highs-exec``/``gurobi``/``gurobi-appsi``/``gurobi-direct``) mirroring the ``solve-mip`` CLI.
 * ``--include-mip`` / ``--include-sa`` — toggle individual solvers when running experiments.
 * ``--out-dir`` — destination for summary files (default: ``tmp/benchmarks``).
+
+Optional Gurobi backend (Linux)
+-------------------------------
+
+HiGHS remains the default open-source MIP solver. If you have access to a Gurobi licence (e.g.
+academic named-user), install the optional extras and register the licence before selecting
+``--driver gurobi``:
+
+.. code-block:: bash
+
+   # install gurobipy alongside FHOPS
+   pip install fhops[gurobi]
+
+   # download the lightweight licence tools bundle (version shown is illustrative)
+   wget https://packages.gurobi.com/lictools/licensetools13.0.0_linux64.tar.gz
+   tar xvfz licensetools13.0.0_linux64.tar.gz
+
+   # request your licence key (replace XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX)
+   ./grbgetkey XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+
+   # accept the default path (typically $HOME/gurobi.lic) or specify a custom location
+   # if you store the licence elsewhere, export GRB_LICENSE_FILE so gurobipy can find it:
+   export GRB_LICENSE_FILE=/path/to/gurobi.lic
+
+   # quick sanity check
+   python -c "import gurobipy as gp; m = gp.Model(); m.setParam('OutputFlag', 0); m.optimize()"
+
+Once the licence is active, any FHOPS command can use Gurobi by passing ``--driver gurobi`` (or the
+other Gurobi driver variants). Without an available licence the CLI will fall back to HiGHS.
 
 Interpreting Outputs
 --------------------
@@ -100,7 +129,7 @@ Example JSON snippet:
    {
      "scenario": "minitoy",
      "solver": "sa",
-     "objective": 9.5,
+    "objective": 9.5,
      "runtime_s": 0.02,
      "kpi_total_production": 42.0,
      "kpi_mobilisation_cost": 65.0,
