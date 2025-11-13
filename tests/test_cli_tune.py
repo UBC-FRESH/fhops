@@ -6,6 +6,7 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
+from fhops.cli import main
 from fhops.cli.main import app
 
 runner = CliRunner()
@@ -154,24 +155,25 @@ def test_tune_random_supports_bundle_alias(tmp_path: Path):
     assert result.exit_code == 0, result.stdout
     assert telemetry_log.exists()
     lines = telemetry_log.read_text(encoding="utf-8").strip().splitlines()
-    # two scenarios (minitoy, med42) -> two runs + summary record
-    assert len(lines) == 3
+    baseline_members = {alias for alias, _ in main.TUNING_BUNDLE_ALIASES["baseline"]}
+    assert len(lines) == len(baseline_members) + 1
     parsed = [json.loads(line) for line in lines]
     run_records = [payload for payload in parsed if payload.get("record_type") == "run"]
-    assert len(run_records) == 2
+    assert len(run_records) == len(baseline_members)
     bundle_members = set()
     for payload in run_records:
         context = payload.get("context") or {}
         assert context.get("bundle") == "baseline"
         member = context.get("bundle_member")
-        assert member in {"minitoy", "med42"}
+        assert member in baseline_members
         bundle_members.add(member)
-    assert bundle_members == {"minitoy", "med42"}
+    assert bundle_members == baseline_members
 
     summary = parsed[-1]
     assert summary["record_type"] == "tuner_summary"
     assert summary["algorithm"] == "random"
-    assert set(summary["scenario_best"].keys()) == {"baseline:minitoy", "baseline:med42"}
+    expected_keys = {f"baseline:{member}" for member in baseline_members}
+    assert set(summary["scenario_best"].keys()) == expected_keys
 
 
 def test_tune_bayes_cli_runs(tmp_path: Path):

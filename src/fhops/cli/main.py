@@ -65,9 +65,11 @@ KPI_MODE = click.Choice(["basic", "extended"], case_sensitive=False)
 TUNING_BUNDLE_ALIASES: dict[str, list[tuple[str, Path]]] = {
     "baseline": [
         ("minitoy", Path("examples/minitoy/scenario.yaml")),
+        ("small21", Path("examples/small21/scenario.yaml")),
         ("med42", Path("examples/med42/scenario.yaml")),
     ],
     "minitoy": [("minitoy", Path("examples/minitoy/scenario.yaml"))],
+    "small21": [("small21", Path("examples/small21/scenario.yaml"))],
     "med42": [("med42", Path("examples/med42/scenario.yaml"))],
     "large84": [("large84", Path("examples/large84/scenario.yaml"))],
     "synthetic-small": [("synthetic-small", Path("examples/synthetic/small/scenario.yaml"))],

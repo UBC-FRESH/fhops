@@ -4,11 +4,14 @@
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
 import shutil
 import subprocess
 import sys
+import uuid
 from collections import defaultdict
 from copy import deepcopy
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Sequence
 import json
@@ -22,13 +25,16 @@ from fhops.optimization.heuristics.ils import solve_ils
 from fhops.optimization.heuristics.tabu import solve_tabu
 from fhops.scenario.contract import Problem
 from fhops.scenario.io.loaders import load_scenario
+from fhops.telemetry.sqlite_store import _ensure_schema
 
 CLI_ENTRY_POINT = [sys.executable, "-m", "fhops.cli.main"]
 ANALYZE_SCRIPT = [sys.executable, "scripts/analyze_tuner_reports.py"]
 
 DEFAULT_RANDOM_RUNS = 3
 DEFAULT_RANDOM_ITERS = 250
+DEFAULT_RANDOM_SEED = 123
 DEFAULT_GRID_ITERS = 250
+DEFAULT_GRID_SEED = 123
 DEFAULT_BAYES_TRIALS = 20
 DEFAULT_BAYES_ITERS = 250
 DEFAULT_GRID_BATCH_SIZES = [1, 2]
@@ -258,6 +264,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Report label used when generating summary tables (default: current).",
     )
     parser.add_argument(
+        "--max-workers",
+        type=int,
+        default=1,
+        help="Number of worker processes for parallel sweeps. Defaults to 1 (serial).",
+    )
+    parser.add_argument(
         "--verbose",
         action="store_true",
         help="Print commands before executing them.",
@@ -338,6 +350,24 @@ def _build_context_payload(
         tuner_meta["bundle_member"] = bundle_meta.get("bundle_member", scenario_label)
     context["tuner_meta"] = tuner_meta
     return context
+
+
+def _sanitize_for_filename(value: str) -> str:
+    safe_chars = []
+    for ch in value:
+        safe_chars.append(ch if ch.isalnum() or ch in ("-", "_") else "_")
+    return "".join(safe_chars)
+
+
+@dataclass(slots=True)
+class TuningJob:
+    kind: str  # cli, ils, tabu
+    tuner: str
+    scenario_path: Path
+    bundle_meta: dict[str, str] | None
+    tier: str | None
+    chunk_path: Path
+    options: dict[str, Any]
 
 
 def _run_ils_benchmarks(
@@ -491,6 +521,7 @@ def run_tuner_commands(
     random_runs: int,
     random_iters: int,
     grid_iters: int,
+    grid_seed: int,
     grid_batch_sizes: list[int],
     grid_presets: list[str],
     bayes_trials: int,
@@ -501,7 +532,13 @@ def run_tuner_commands(
     heuristic_bundle_map: dict[Path, dict[str, str]] | None,
     verbose: bool,
     tier_label: str | None = None,
+    max_workers: int = 1,
+    random_base_seed: int = DEFAULT_RANDOM_SEED,
 ) -> None:
+    cli_tuners = [name for name in tuners if name in {"random", "grid", "bayes"}]
+    heur_tuners = [name for name in tuners if name in {"ils", "tabu"}]
+    use_parallel = max_workers > 1
+
     bundle_arguments = _bundle_args(bundles) if bundles else []
     scenario_arguments = _scenario_args(scenarios) if scenarios else []
     target_arguments = bundle_arguments + scenario_arguments
@@ -509,10 +546,49 @@ def run_tuner_commands(
     if not target_arguments and not (heuristic_scenarios and tuners):
         raise ValueError("No bundles or scenarios specified for tuning.")
 
-    if target_arguments and any(
-        name in tuners for name in ("random", "grid", "bayes")
-    ):
-        if "random" in tuners:
+    cli_scenarios: list[Path] = []
+    cli_bundle_meta: dict[Path, dict[str, str]] = {}
+    if cli_tuners:
+        try:
+            cli_scenarios, cli_bundle_meta = _resolve_heuristic_scenarios(
+                scenarios,
+                bundles,
+            )
+        except RuntimeError as exc:
+            raise RuntimeError(f"Failed to resolve scenarios for CLI tuners: {exc}") from exc
+        if not cli_scenarios:
+            raise ValueError("No scenarios resolved for CLI tuners.")
+
+    heuristics_requested = bool(heur_tuners)
+    heur_scenarios = list(heuristic_scenarios or [])
+    heur_bundle_meta = dict(heuristic_bundle_map or {})
+    if heuristics_requested:
+        if not heur_scenarios:
+            heur_scenarios = list(cli_scenarios)
+        if not heur_bundle_meta and cli_bundle_meta:
+            heur_bundle_meta = dict(cli_bundle_meta)
+        if not heur_scenarios:
+            raise ValueError(
+                "Heuristic tuners (ILS/Tabu) require scenarios resolved from --bundle or --scenario."
+            )
+
+    union_scenarios: list[Path] = []
+    union_bundle_meta: dict[Path, dict[str, str]] = {}
+    seen: set[Path] = set()
+    for path in cli_scenarios + heur_scenarios:
+        resolved = path.resolve()
+        if resolved not in seen:
+            union_scenarios.append(path)
+            seen.add(resolved)
+        if resolved in cli_bundle_meta:
+            union_bundle_meta[resolved] = cli_bundle_meta[resolved]
+        if resolved in heur_bundle_meta:
+            union_bundle_meta[resolved] = heur_bundle_meta[resolved]
+
+    def _execute_cli_tuners() -> None:
+        if not (target_arguments and cli_tuners):
+            return
+        if "random" in cli_tuners:
             cmd = (
                 CLI_ENTRY_POINT
                 + ["tune-random"]
@@ -526,11 +602,12 @@ def run_tuner_commands(
                     str(random_iters),
                 ]
             )
+            cmd.extend(["--base-seed", str(random_base_seed)])
             if tier_label:
                 cmd.extend(["--tier-label", tier_label])
             _run(cmd, verbose=verbose)
 
-        if "grid" in tuners:
+        if "grid" in cli_tuners:
             cmd = (
                 CLI_ENTRY_POINT
                 + ["tune-grid"]
@@ -542,6 +619,7 @@ def run_tuner_commands(
                     str(grid_iters),
                 ]
             )
+            cmd.extend(["--seed", str(grid_seed)])
             for batch_size in grid_batch_sizes:
                 cmd.extend(["--batch-size", str(batch_size)])
             for preset in grid_presets:
@@ -550,7 +628,7 @@ def run_tuner_commands(
                 cmd.extend(["--tier-label", tier_label])
             _run(cmd, verbose=verbose)
 
-        if "bayes" in tuners:
+        if "bayes" in cli_tuners:
             cmd = (
                 CLI_ENTRY_POINT
                 + ["tune-bayes"]
@@ -568,26 +646,41 @@ def run_tuner_commands(
                 cmd.extend(["--tier-label", tier_label])
             _run(cmd, verbose=verbose)
 
-    heuristics_requested = any(name in tuners for name in ("ils", "tabu"))
-    scenario_files = heuristic_scenarios or []
-    bundle_map = heuristic_bundle_map or {}
+    if use_parallel:
+        _execute_cli_tuners()
+        if heur_tuners:
+            heuristic_configs: dict[str, dict[str, Any]] = {}
+            if "ils" in heur_tuners and ils_config:
+                heuristic_configs["ils"] = ils_config
+            if "tabu" in heur_tuners and tabu_config:
+                heuristic_configs["tabu"] = tabu_config
+            jobs = _build_parallel_jobs(
+                tuners=heur_tuners,
+                scenario_files=union_scenarios,
+                bundle_map=union_bundle_meta,
+                tier_label=tier_label,
+                telemetry_log=telemetry_log,
+                cli_configs={},
+                heuristic_configs=heuristic_configs,
+            )
+            _run_jobs_parallel(jobs, max_workers, telemetry_log, verbose)
+        return
 
-    if heuristics_requested and not scenario_files:
-        raise ValueError(
-            "Heuristic tuners (ILS/Tabu) require scenarios resolved from --bundle or --scenario."
-        )
+    _execute_cli_tuners()
 
-    telemetry_path = telemetry_log.resolve() if heuristics_requested else telemetry_log
+    if not heuristics_requested:
+        return
 
-    if "ils" in tuners:
-        config = ils_config or {}
-        runs = int(config.get("runs", DEFAULT_ILS_RUNS))
-        iters = int(config.get("iters", DEFAULT_ILS_ITERS))
-        seed = int(config.get("seed", DEFAULT_ILS_SEED))
-        extra_kwargs = dict(config.get("extra_kwargs", {}))
+    telemetry_path = telemetry_log.resolve()
+
+    if "ils" in heur_tuners and ils_config:
+        runs = int(ils_config.get("runs", DEFAULT_ILS_RUNS))
+        iters = int(ils_config.get("iters", DEFAULT_ILS_ITERS))
+        seed = int(ils_config.get("seed", DEFAULT_ILS_SEED))
+        extra_kwargs = dict(ils_config.get("extra_kwargs", {}))
         _run_ils_benchmarks(
-            scenario_files,
-            bundle_map,
+            heur_scenarios,
+            heur_bundle_meta,
             telemetry_path,
             runs=max(0, runs),
             iters=max(0, iters),
@@ -597,15 +690,14 @@ def run_tuner_commands(
             verbose=verbose,
         )
 
-    if "tabu" in tuners:
-        config = tabu_config or {}
-        runs = int(config.get("runs", DEFAULT_TABU_RUNS))
-        iters = int(config.get("iters", DEFAULT_TABU_ITERS))
-        seed = int(config.get("seed", DEFAULT_TABU_SEED))
-        extra_kwargs = dict(config.get("extra_kwargs", {}))
+    if "tabu" in heur_tuners and tabu_config:
+        runs = int(tabu_config.get("runs", DEFAULT_TABU_RUNS))
+        iters = int(tabu_config.get("iters", DEFAULT_TABU_ITERS))
+        seed = int(tabu_config.get("seed", DEFAULT_TABU_SEED))
+        extra_kwargs = dict(tabu_config.get("extra_kwargs", {}))
         _run_tabu_benchmarks(
-            scenario_files,
-            bundle_map,
+            heur_scenarios,
+            heur_bundle_meta,
             telemetry_path,
             runs=max(0, runs),
             iters=max(0, iters),
@@ -614,6 +706,208 @@ def run_tuner_commands(
             extra_kwargs=extra_kwargs,
             verbose=verbose,
         )
+
+
+def _execute_job(job: TuningJob, verbose: bool) -> Path:
+    chunk_path = job.chunk_path
+    chunk_path.parent.mkdir(parents=True, exist_ok=True)
+    if job.kind == "cli":
+        cmd = CLI_ENTRY_POINT + [f"tune-{job.tuner}", str(job.scenario_path)]
+        cmd.extend(["--telemetry-log", str(chunk_path)])
+        if job.tier:
+            cmd.extend(["--tier-label", job.tier])
+        opts = job.options
+        if job.tuner == "random":
+            cmd.extend(["--runs", str(opts["runs"]), "--iters", str(opts["iters"])])
+            if "base_seed" in opts:
+                cmd.extend(["--base-seed", str(opts["base_seed"])])
+        elif job.tuner == "grid":
+            cmd.extend(["--iters", str(opts["iters"])])
+            if "seed" in opts:
+                cmd.extend(["--seed", str(opts["seed"])])
+            for batch_size in opts["batch_sizes"]:
+                cmd.extend(["--batch-size", str(batch_size)])
+            for preset in opts["presets"]:
+                cmd.extend(["--preset", preset])
+        elif job.tuner == "bayes":
+            cmd.extend(
+                ["--trials", str(opts["trials"]), "--iters", str(opts["iters"])]
+            )
+        else:
+            raise ValueError(f"Unsupported CLI tuner {job.tuner}")
+        if verbose:
+            print("$", " ".join(cmd))
+        subprocess.run(cmd, check=True, text=True)
+    elif job.kind == "ils":
+        bundle_map: dict[Path, dict[str, str]] = {}
+        if job.bundle_meta:
+            bundle_map[job.scenario_path.resolve()] = job.bundle_meta
+        _run_ils_benchmarks(
+            [job.scenario_path],
+            bundle_map,
+            job.chunk_path,
+            runs=job.options["runs"],
+            iters=job.options["iters"],
+            base_seed=job.options["seed"],
+            tier_label=job.tier,
+            extra_kwargs=job.options.get("extra_kwargs", {}),
+            verbose=verbose,
+        )
+    elif job.kind == "tabu":
+        bundle_map: dict[Path, dict[str, str]] = {}
+        if job.bundle_meta:
+            bundle_map[job.scenario_path.resolve()] = job.bundle_meta
+        _run_tabu_benchmarks(
+            [job.scenario_path],
+            bundle_map,
+            job.chunk_path,
+            runs=job.options["runs"],
+            iters=job.options["iters"],
+            base_seed=job.options["seed"],
+            tier_label=job.tier,
+            extra_kwargs=job.options.get("extra_kwargs", {}),
+            verbose=verbose,
+        )
+    else:
+        raise ValueError(f"Unknown job kind {job.kind}")
+    return chunk_path
+
+
+def _merge_sqlite(chunk_db: Path, target_db: Path) -> None:
+    target_db.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(target_db)
+    try:
+        _ensure_schema(conn)
+        conn.execute("ATTACH DATABASE ? AS chunk", (str(chunk_db),))
+        for table in ("runs", "run_metrics", "run_kpis", "tuner_summaries"):
+            conn.execute(f"INSERT OR REPLACE INTO {table} SELECT * FROM chunk.{table}")
+        conn.commit()
+        conn.execute("DETACH DATABASE chunk")
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def _merge_chunks(main_log: Path, chunk_logs: list[Path], verbose: bool) -> None:
+    if not chunk_logs:
+        return
+    main_log.parent.mkdir(parents=True, exist_ok=True)
+    main_steps = main_log.parent / "steps"
+    main_steps.mkdir(parents=True, exist_ok=True)
+    main_db = main_log.with_suffix(".sqlite")
+    for chunk in chunk_logs:
+        if not chunk.exists():
+            continue
+        with chunk.open("r", encoding="utf-8") as src, main_log.open(
+            "a", encoding="utf-8"
+        ) as dest:
+            for line in src:
+                dest.write(line if line.endswith("\n") else line + "\n")
+        chunk_steps_dir = chunk.parent / "steps"
+        if chunk_steps_dir.exists():
+            for step_file in chunk_steps_dir.glob("*"):
+                target = main_steps / step_file.name
+                if target.exists():
+                    target.unlink()
+                step_file.rename(target)
+        chunk_db = chunk.with_suffix(".sqlite")
+        if chunk_db.exists():
+            _merge_sqlite(chunk_db, main_db)
+            chunk_db.unlink()
+        if chunk.exists():
+            chunk.unlink()
+        if chunk_steps_dir.exists():
+            shutil.rmtree(chunk_steps_dir, ignore_errors=True)
+    chunk_dir = main_log.parent / "chunks"
+    if chunk_dir.exists() and not any(chunk_dir.iterdir()):
+        chunk_dir.rmdir()
+
+
+def _run_jobs_parallel(
+    jobs: list[TuningJob], max_workers: int, telemetry_log: Path, verbose: bool
+) -> None:
+    if not jobs:
+        return
+    chunk_paths: list[Path] = []
+    with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
+        futures = [executor.submit(_execute_job, job, verbose) for job in jobs]
+        for future in concurrent.futures.as_completed(futures):
+            chunk_paths.append(future.result())
+    _merge_chunks(telemetry_log, chunk_paths, verbose)
+
+
+def _build_parallel_jobs(
+    *,
+    tuners: list[str],
+    scenario_files: list[Path],
+    bundle_map: dict[Path, dict[str, str]],
+    tier_label: str | None,
+    telemetry_log: Path,
+    cli_configs: dict[str, dict[str, Any]],
+    heuristic_configs: dict[str, dict[str, Any]],
+) -> list[TuningJob]:
+    if not scenario_files:
+        return []
+    jobs: list[TuningJob] = []
+    chunk_dir = telemetry_log.parent / "chunks"
+    chunk_dir.mkdir(parents=True, exist_ok=True)
+    for idx, scenario_path in enumerate(scenario_files):
+        resolved = scenario_path.resolve()
+        bundle_meta = bundle_map.get(resolved)
+        bundle_name = bundle_meta.get("bundle") if bundle_meta else "standalone"
+        member_name = bundle_meta.get("bundle_member") if bundle_meta else scenario_path.stem
+        safe_fragment = _sanitize_for_filename(f"{bundle_name}_{member_name}")
+        for tuner in tuners:
+            chunk_name = f"{tuner}_{safe_fragment}_{tier_label or 'none'}_{uuid.uuid4().hex[:8]}"
+            chunk_path = chunk_dir / f"{chunk_name}.jsonl"
+            if tuner in {"random", "grid", "bayes"}:
+                config = cli_configs.get(tuner)
+                if not config:
+                    continue
+                opts = config.copy()
+                if tuner == "random":
+                    runs = opts["runs"]
+                    base_seed = opts.get("base_seed", DEFAULT_RANDOM_SEED) + idx * max(1, runs)
+                    opts["base_seed"] = base_seed
+                if tuner == "grid":
+                    batch_sizes = opts.get("batch_sizes") or [1]
+                    presets = opts.get("presets") or ["balanced", "explore"]
+                    configs_per_scenario = max(1, len(batch_sizes) * len(presets))
+                    seed_base = opts.get("seed", DEFAULT_GRID_SEED) + idx * configs_per_scenario
+                    opts["seed"] = seed_base
+                jobs.append(
+                    TuningJob(
+                        kind="cli",
+                        tuner=tuner,
+                        scenario_path=scenario_path,
+                        bundle_meta=bundle_meta,
+                        tier=tier_label,
+                        chunk_path=chunk_path,
+                        options=opts,
+                    )
+                )
+            elif tuner in {"ils", "tabu"}:
+                opts = heuristic_configs.get(tuner)
+                if not opts:
+                    continue
+                runs = opts["runs"]
+                seed_base = opts["seed"] + idx * max(1, runs)
+                job_opts = opts.copy()
+                job_opts["seed"] = seed_base
+                jobs.append(
+                    TuningJob(
+                        kind=tuner,
+                        tuner=tuner,
+                        scenario_path=scenario_path,
+                        bundle_meta=bundle_meta,
+                        tier=tier_label,
+                        chunk_path=chunk_path,
+                        options=job_opts,
+                    )
+                )
+            else:
+                continue
+    return jobs
 
 
 def generate_reports(
@@ -1009,8 +1303,10 @@ def main(argv: list[str] | None = None) -> int:
         if args.bayes_iters is not None:
             bayes_cfg["iters"] = args.bayes_iters
 
+        random_base_seed = int(random_cfg.get("base_seed", DEFAULT_RANDOM_SEED))
         random_runs = int(random_cfg.get("runs", DEFAULT_RANDOM_RUNS))
         random_iters = int(random_cfg.get("iters", DEFAULT_RANDOM_ITERS))
+        grid_seed = int(grid_cfg.get("seed", DEFAULT_GRID_SEED))
         grid_iters = int(grid_cfg.get("iters", DEFAULT_GRID_ITERS))
         grid_batch_sizes = list(grid_cfg.get("batch_sizes") or DEFAULT_GRID_BATCH_SIZES)
         grid_presets = list(grid_cfg.get("presets") or DEFAULT_GRID_PRESETS)
@@ -1083,6 +1379,7 @@ def main(argv: list[str] | None = None) -> int:
             random_runs=random_runs,
             random_iters=random_iters,
             grid_iters=grid_iters,
+            grid_seed=grid_seed,
             grid_batch_sizes=[int(x) for x in grid_batch_sizes],
             grid_presets=[str(x) for x in grid_presets],
             bayes_trials=bayes_trials,
@@ -1093,6 +1390,8 @@ def main(argv: list[str] | None = None) -> int:
             heuristic_bundle_map=heuristic_bundle_map if heuristics_needed else None,
             verbose=args.verbose,
             tier_label=tier,
+            max_workers=args.max_workers,
+            random_base_seed=random_base_seed,
         )
 
     report_csv, summary_csv, summary_md = generate_reports(

@@ -3,9 +3,12 @@ from __future__ import annotations
 import subprocess
 from pathlib import Path
 
+import pandas as pd
+import pandas.testing as pdt
+from collections import Counter
 
-def test_run_tuning_benchmarks_minimal(tmp_path: Path):
-    out_dir = tmp_path / "results"
+
+def _run_benchmarks(out_dir: Path, *, max_workers: int | None = None) -> None:
     cmd = [
         "python",
         "scripts/run_tuning_benchmarks.py",
@@ -46,7 +49,26 @@ def test_run_tuning_benchmarks_minimal(tmp_path: Path):
         "--tabu-iters",
         "10",
     ]
+    if max_workers is not None:
+        cmd.extend(["--max-workers", str(max_workers)])
     subprocess.run(cmd, check=True, text=True)
+
+
+def _normalise(df: pd.DataFrame, *, drop_bundle: bool = True) -> pd.DataFrame:
+    result = df.copy()
+    if "scenario" in result.columns:
+        result["scenario"] = result["scenario"].apply(
+            lambda value: value.split(":", 1)[1] if isinstance(value, str) and ":" in value else value
+        )
+    if drop_bundle and "bundle" in result.columns:
+        result = result.drop(columns=["bundle"])
+    result = result.sort_values(list(result.columns)).reset_index(drop=True)
+    return result.drop_duplicates().reset_index(drop=True)
+
+
+def test_run_tuning_benchmarks_minimal(tmp_path: Path):
+    out_dir = tmp_path / "results"
+    _run_benchmarks(out_dir)
 
     telemetry_log = out_dir / "telemetry" / "runs.jsonl"
     report_csv = out_dir / "tuner_report.csv"
@@ -76,7 +98,6 @@ def test_run_tuning_benchmarks_minimal(tmp_path: Path):
     assert baseline_leader_csv.exists()
     assert baseline_diff_csv.exists()
 
-    # Ensure summary mentions the minitoy scenario
     summary_text = summary_md.read_text(encoding="utf-8")
     assert "Minitoy" in summary_text or "MiniToy" in summary_text
 
@@ -131,3 +152,46 @@ def test_run_tuning_benchmarks_minimal(tmp_path: Path):
     assert convergence_runs_csv.exists()
     assert convergence_summary_csv.exists()
     assert convergence_summary_md.exists()
+
+
+def test_run_tuning_benchmarks_parallel_matches_serial(tmp_path: Path):
+    serial_dir = tmp_path / "serial"
+    parallel_dir = tmp_path / "parallel"
+
+    _run_benchmarks(serial_dir)
+    _run_benchmarks(parallel_dir, max_workers=2)
+
+    serial_summary = pd.read_csv(serial_dir / "tuner_summary.csv")
+    parallel_summary = pd.read_csv(parallel_dir / "tuner_summary.csv")
+
+    serial_summary_sorted = _normalise(serial_summary, drop_bundle=False)
+    parallel_summary_sorted = _normalise(parallel_summary, drop_bundle=False)
+    pdt.assert_frame_equal(serial_summary_sorted, parallel_summary_sorted, check_dtype=False, atol=1e-9)
+
+    def signature(df: pd.DataFrame) -> Counter[tuple[str, float, float, float]]:
+        keys = []
+        for row in df.itertuples(index=False):
+            keys.append(
+                (
+                    getattr(row, "algorithm"),
+                    round(float(getattr(row, "best_objective")), 6),
+                    round(float(getattr(row, "mean_objective")), 6),
+                    round(float(getattr(row, "delta_vs_best")), 6),
+                )
+            )
+        return Counter(keys)
+
+    serial_comparison_signature = signature(pd.read_csv(serial_dir / "tuner_comparison.csv"))
+    parallel_comparison_signature = signature(pd.read_csv(parallel_dir / "tuner_comparison.csv"))
+    assert serial_comparison_signature == parallel_comparison_signature
+
+    serial_log = serial_dir / "telemetry" / "runs.jsonl"
+    parallel_log = parallel_dir / "telemetry" / "runs.jsonl"
+    assert serial_log.exists()
+    assert parallel_log.exists()
+
+    with serial_log.open("r", encoding="utf-8") as src:
+        serial_lines = sum(1 for _ in src)
+    with parallel_log.open("r", encoding="utf-8") as src:
+        parallel_lines = sum(1 for _ in src)
+    assert serial_lines == parallel_lines

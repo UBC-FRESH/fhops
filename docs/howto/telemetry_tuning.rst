@@ -233,6 +233,37 @@ In addition to the per-scenario summaries, the script now emits:
 * ``tuner_comparison.{csv,md}`` — per-scenario/per-algorithm table with best objective, mean objective, mean runtime, and delta vs. the scenario leader.
 * ``tuner_leaderboard.{csv,md}`` — aggregate win rates, average metrics, and deltas per algorithm across all scenarios.
 
+Parallel execution
+~~~~~~~~~~~~~~~~~~
+
+Longer sweeps benefit from process-level parallelism. Pass ``--max-workers`` to fan
+out `(scenario, tier, tuner)` jobs across a process pool while keeping telemetry
+safe:
+
+.. code-block:: bash
+
+   python scripts/run_tuning_benchmarks.py \
+       --plan full-spectrum \
+       --max-workers 16 \
+       --out-dir tmp/tuning-benchmarks/full-spectrum-parallel \
+       --summary-label full-spectrum-parallel
+
+Each worker writes to its own JSONL/SQLite ``chunks/`` directory. When the pool
+finishes, the script merges those chunks into ``telemetry/runs.jsonl`` and the
+SQLite store before deleting the fragments. The merged log retains the same schema
+as the serial run, so ``fhops telemetry report`` and
+``scripts/analyze_tuner_reports.py`` work unchanged.
+
+Resource tips:
+
+* On the 72-core staging node we leave ~8 cores idle and run with
+  ``--max-workers 16``; each CLI tuner can still use light threading (e.g.
+  ``--parallel-workers``) without oversubscribing the host.
+* Cap per-run RSS to roughly 8 GB when launching large bundles so the node stays
+  responsive while 16 workers stream telemetry.
+* The process pool bumps the random tuners' base seeds by scenario index, ensuring
+  the parallel sweep produces identical configurations to the serial harness.
+
 Benchmark plans
 ~~~~~~~~~~~~~~~
 
