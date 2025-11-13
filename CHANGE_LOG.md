@@ -215,3 +215,4 @@
 - Added an experimental Tabu Search solver (`solve_tabu`), shared CLI options/telemetry, and initial unit coverage.
 - Integrated Tabu Search into the benchmarking harness (`fhops bench suite --include-tabu`) and recorded comparative results showing SA remains the default recommendation.
 - Introduced a synthetic scenario dataset generator (`generate_random_dataset`) with CSV/YAML bundle writer helpers, scenario plan updates, and regression coverage (`tests/test_synthetic_dataset.py`) to support Phase 3 benchmarking workflows.
+- Added optional Gurobi backend support (extra `fhops[gurobi]`, CLI `--driver gurobi`, fallback-friendly solver plumbing), documented Linux licence setup, and extended the MIP ingestion helper to accept driver overrides for heavier baselines.
