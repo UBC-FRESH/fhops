@@ -119,8 +119,8 @@ before proposing new work.
 - [ ] Outreach plan (blog, seminars, partner briefings).
 
 ## Detailed Next Steps
-1. **Shift-Based Scheduling Initiative (`notes/modular_reorg_plan.md`, `notes/mip_model_plan.md`)**
-   - Design shift-aware data contract extensions, update solver indices, and migrate KPIs/benchmarks to operate per shift.
+1. **Geospatial & Mobilisation Intake (`notes/mobilisation_plan.md`, `notes/data_contract_enhancements.md`)**
+   - Finalise GeoJSON ingestion + distance workflows and wire mobilisation costs end-to-end.
 2. **Metaheuristic Roadmap (`notes/metaheuristic_roadmap.md`)**
    - Prioritise SA refinements, operator registry work, and benchmarking comparisons with the new harness (including shift-aware neighbourhoods).
 3. **Harvest System Sequencing Plan (`notes/system_sequencing_plan.md`)**
