@@ -94,34 +94,6 @@ jobs:
             --out-summary-csv tmp/ci-telemetry/history_summary_latest.csv \
             --out-summary-markdown tmp/ci-telemetry/history_summary_latest.md
 
-      - name: Prepare history publish bundle
-        run: |
-          root_dir=tmp/ci-telemetry/publish
-          publish_dir="$root_dir/telemetry"
-          mkdir -p "$publish_dir"
-          touch "$root_dir/.nojekyll"
-          cp tmp/ci-telemetry/history_summary.csv "$publish_dir/" || true
-          cp tmp/ci-telemetry/history_summary.md "$publish_dir/" || true
-          cp tmp/ci-telemetry/history_summary.html "$publish_dir/" || true
-          cp tmp/ci-telemetry/tuner_report.md "$publish_dir/latest_tuner_report.md"
-          cp tmp/ci-telemetry/tuner_summary.md "$publish_dir/latest_tuner_summary.md" || true
-          cp tmp/ci-telemetry/tuner_summary.csv "$publish_dir/latest_tuner_summary.csv" || true
-          cp tmp/ci-telemetry/history_summary_latest.md "$publish_dir/latest_history_summary.md" || true
-          cp tmp/ci-telemetry/history_summary_latest.csv "$publish_dir/latest_history_summary.csv" || true
-          cp tmp/ci-telemetry/tuner_comparison.md "$publish_dir/latest_tuner_comparison.md" || true
-          cp tmp/ci-telemetry/tuner_comparison.csv "$publish_dir/latest_tuner_comparison.csv" || true
-          cp tmp/ci-telemetry/tuner_leaderboard.md "$publish_dir/latest_tuner_leaderboard.md" || true
-          cp tmp/ci-telemetry/tuner_leaderboard.csv "$publish_dir/latest_tuner_leaderboard.csv" || true
-
-      - name: Inspect publish bundle
-        run: |
-          echo "Contents of tmp/ci-telemetry/publish:" && ls -R tmp/ci-telemetry/publish || true
-
-      - name: Upload history pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: tmp/ci-telemetry/publish
-
       - name: Upload telemetry report artifact
         uses: actions/upload-artifact@v4
         with:
@@ -138,6 +110,38 @@ jobs:
 
       - name: Build documentation
         run: sphinx-build -b html docs _build/html -W
+
+      - name: Prepare Pages bundle
+        run: |
+          site_dir=tmp/pages
+          rm -rf "$site_dir"
+          mkdir -p "$site_dir"
+          cp -R _build/html/* "$site_dir/"
+          touch "$site_dir/.nojekyll"
+
+          publish_dir="$site_dir/telemetry"
+          mkdir -p "$publish_dir"
+          cp tmp/ci-telemetry/history_summary.csv "$publish_dir/" || true
+          cp tmp/ci-telemetry/history_summary.md "$publish_dir/" || true
+          cp tmp/ci-telemetry/history_summary.html "$publish_dir/" || true
+          cp tmp/ci-telemetry/tuner_report.md "$publish_dir/latest_tuner_report.md"
+          cp tmp/ci-telemetry/tuner_summary.md "$publish_dir/latest_tuner_summary.md" || true
+          cp tmp/ci-telemetry/tuner_summary.csv "$publish_dir/latest_tuner_summary.csv" || true
+          cp tmp/ci-telemetry/history_summary_latest.md "$publish_dir/latest_history_summary.md" || true
+          cp tmp/ci-telemetry/history_summary_latest.csv "$publish_dir/latest_history_summary.csv" || true
+          cp tmp/ci-telemetry/tuner_comparison.md "$publish_dir/latest_tuner_comparison.md" || true
+          cp tmp/ci-telemetry/tuner_comparison.csv "$publish_dir/latest_tuner_comparison.csv" || true
+          cp tmp/ci-telemetry/tuner_leaderboard.md "$publish_dir/latest_tuner_leaderboard.md" || true
+          cp tmp/ci-telemetry/tuner_leaderboard.csv "$publish_dir/latest_tuner_leaderboard.csv" || true
+
+      - name: Inspect publish bundle
+        run: |
+          echo "Contents of tmp/pages:" && ls -R tmp/pages || true
+
+      - name: Upload history pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: tmp/pages
 
   deploy-history:
     needs: lint-test-docs
