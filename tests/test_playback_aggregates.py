@@ -40,11 +40,17 @@ def test_shift_dataframe_matches_fixture():
     playback = run_playback(problem, assignments)
     df = shift_dataframe(playback)
     assert "machine_role" in df.columns
-    df = df.reindex(sorted(df.columns), axis=1).sort_values(["day", "machine_id"]).reset_index(drop=True)
+    df = (
+        df.reindex(sorted(df.columns), axis=1)
+        .sort_values(["day", "machine_id"])
+        .reset_index(drop=True)
+    )
 
-    fixture = pd.read_csv("tests/fixtures/playback/minitoy_shift.csv").sort_values(
-        ["day", "machine_id"]
-    ).reset_index(drop=True)
+    fixture = (
+        pd.read_csv("tests/fixtures/playback/minitoy_shift.csv")
+        .sort_values(["day", "machine_id"])
+        .reset_index(drop=True)
+    )
     fixture = fixture.reindex(sorted(fixture.columns), axis=1)
 
     pd.testing.assert_frame_equal(df, fixture, check_dtype=False)
@@ -59,8 +65,10 @@ def test_day_dataframe_matches_fixture():
     df = day_dataframe(playback)
     df = df.reindex(sorted(df.columns), axis=1).sort_values(["day"]).reset_index(drop=True)
 
-    fixture = pd.read_csv("tests/fixtures/playback/med42_day.csv").sort_values(["day"]).reset_index(
-        drop=True
+    fixture = (
+        pd.read_csv("tests/fixtures/playback/med42_day.csv")
+        .sort_values(["day"])
+        .reset_index(drop=True)
     )
     fixture = fixture.reindex(sorted(fixture.columns), axis=1)
     pd.testing.assert_frame_equal(df, fixture, check_dtype=False)
@@ -263,8 +271,12 @@ _playback_record_strategy = st.builds(
     machine_id=st.sampled_from(["M1", "M2", "M3"]),
     block_id=st.sampled_from(["B1", "B2", "B3", "B4"]),
     hours_worked=st.floats(min_value=0.0, max_value=12.0, allow_nan=False, allow_infinity=False),
-    production_units=st.floats(min_value=0.0, max_value=200.0, allow_nan=False, allow_infinity=False),
-    mobilisation_cost=st.floats(min_value=0.0, max_value=50.0, allow_nan=False, allow_infinity=False),
+    production_units=st.floats(
+        min_value=0.0, max_value=200.0, allow_nan=False, allow_infinity=False
+    ),
+    mobilisation_cost=st.floats(
+        min_value=0.0, max_value=50.0, allow_nan=False, allow_infinity=False
+    ),
     blackout_hit=st.booleans(),
 )
 

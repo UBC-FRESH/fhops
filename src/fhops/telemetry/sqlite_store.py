@@ -188,9 +188,7 @@ def persist_tuner_summary(
 
     payload = dict(record)
     summary_id = payload.setdefault("summary_id", uuid4().hex)
-    payload.setdefault(
-        "created_at", datetime.now(timezone.utc).isoformat(timespec="seconds")
-    )
+    payload.setdefault("created_at", datetime.now(timezone.utc).isoformat(timespec="seconds"))
 
     scenario_best = payload.get("scenario_best") or {}
     scenario_best_json = json.dumps(scenario_best, ensure_ascii=False, sort_keys=True)

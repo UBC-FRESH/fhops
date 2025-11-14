@@ -117,7 +117,17 @@ def test_analyze_tuner_reports_history(tmp_path: Path):
     history_dir = tmp_path / "history"
     history_dir.mkdir()
 
-    def _persist_history_snapshot(stem: str, *, best: float, mean: float, runs: int, run_id: str, total_prod: float, downtime_hours: float, downtime_events: int) -> None:
+    def _persist_history_snapshot(
+        stem: str,
+        *,
+        best: float,
+        mean: float,
+        runs: int,
+        run_id: str,
+        total_prod: float,
+        downtime_hours: float,
+        downtime_events: int,
+    ) -> None:
         csv_path = history_dir / f"{stem}.csv"
         sqlite_path = csv_path.with_suffix(".sqlite")
         _write_report(csv_path, "random", "MiniToy", best, mean, runs, best_run_id=run_id)

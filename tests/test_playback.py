@@ -142,7 +142,11 @@ def test_schedule_to_records_matches_assignments_conversion():
         ]
     )
 
-    hm_schedule = schedule_to_records.__globals__["Schedule"] if "Schedule" in schedule_to_records.__globals__ else None
+    hm_schedule = (
+        schedule_to_records.__globals__["Schedule"]
+        if "Schedule" in schedule_to_records.__globals__
+        else None
+    )
     if hm_schedule is None or hm_schedule is object:
         pytest.skip("Schedule type unavailable for schedule_to_records coverage")
 

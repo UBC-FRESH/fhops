@@ -501,10 +501,12 @@ def solve_sa(
             seed=seed,
             config=config_snapshot,
             context={**scenario_features, **context_payload},
-            step_interval=step_interval if isinstance(step_interval, int) and step_interval > 0 else None,
+            step_interval=step_interval
+            if isinstance(step_interval, int) and step_interval > 0
+            else None,
         )
 
-    with (telemetry_logger if telemetry_logger else nullcontext()) as run_logger:
+    with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
         current = _init_greedy(pb)
         current_score = _evaluate(pb, current)
         best = current
@@ -639,4 +641,9 @@ def solve_sa(
                 meta["telemetry_steps_path"] = str(telemetry_logger.steps_path)
             meta["telemetry_log_path"] = str(telemetry_logger.log_path)
 
-    return {"objective": float(best_score), "assignments": assignments, "meta": meta, "schedule": best}
+    return {
+        "objective": float(best_score),
+        "assignments": assignments,
+        "meta": meta,
+        "schedule": best,
+    }

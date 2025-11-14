@@ -155,7 +155,9 @@ def _solve_with_gurobi(
                     raise
                 solver = None  # fall through to exec attempt
         if driver_hint == "gurobi-appsi":
-            raise SolverUnavailable("Requested driver=gurobi-appsi, but appsi.gurobi is unavailable.")
+            raise SolverUnavailable(
+                "Requested driver=gurobi-appsi, but appsi.gurobi is unavailable."
+            )
 
     if driver_hint in {"auto", "gurobi", "gurobi-direct"}:
         opt = _try_exec_gurobi()
@@ -171,7 +173,9 @@ def _solve_with_gurobi(
                     raise
                 opt = None
         if driver_hint == "gurobi-direct":
-            raise SolverUnavailable("Requested driver=gurobi-direct, but Gurobi interface is unavailable.")
+            raise SolverUnavailable(
+                "Requested driver=gurobi-direct, but Gurobi interface is unavailable."
+            )
 
     raise SolverUnavailable(
         "Gurobi solver unavailable (install gurobipy and ensure the license is configured)."
