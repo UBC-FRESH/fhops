@@ -131,6 +131,11 @@ jobs:
       - name: Analytics notebooks (light)
         run: python scripts/run_analytics_notebooks.py --light --timeout 300
 
+      - name: Install Pandoc
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc
+
       - name: Build documentation
         run: sphinx-build -b html docs _build/html -W
 
