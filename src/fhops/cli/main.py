@@ -896,7 +896,7 @@ def solve_tabu_cmd(
     seed: int = 42,
     tabu_tenure: int = typer.Option(0, "--tabu-tenure", help="Override tabu tenure (0=auto)"),
     stall_limit: int = typer.Option(
-        200, "--stall-limit", help="Max non-improving iterations before stopping."
+        1_000_000, "--stall-limit", help="Max non-improving iterations before stopping."
     ),
     batch_neighbours: int = typer.Option(
         1, "--batch-neighbours", help="Neighbour samples per iteration."

@@ -102,7 +102,14 @@ Grab them straight from GitHub Pages via
 `latest_tuner_leaderboard.md` (CSV siblings share the same names).
 Per-bundle splits (`tuner_comparison_baseline.*`, `tuner_comparison_synthetic.*`, …) and scenario
 difficulty tables (`tuner_difficulty*.{md,csv}`) expose bundle-specific rankings, MIP gaps, and
-second-best deltas for quick triage.
+second-best deltas for quick triage. When you include `--telemetry-log` in
+`scripts/analyze_tuner_reports.py`, the convergence CSV/Markdown adds richer gap diagnostics:
+
+- `baseline_objective`: starting objective recorded in telemetry.
+- `gap_absolute = Z* – Zrun`: objective delta in native units (sign-agnostic).
+- `gap_range = clamp((Z* – Zrun) / (Z* – Zbaseline), 0..1)`: fraction of distance between the
+  baseline solution and the MIP optimum still remaining, robust to negative objectives.
+
 Use ``scripts/run_tuning_benchmarks.py --plan baseline-smoke`` to reproduce the CI smoke sweep
 over minitoy+med42 with aligned budgets; the ``synthetic-smoke`` and ``full-spectrum`` plans extend
 the same matrix to synthetic tiers.
