@@ -216,10 +216,11 @@ def solve_ils(
 
     telemetry_logger: RunTelemetryLogger | None = None
     if telemetry_log:
+        log_path = Path(telemetry_log)
         telemetry_context = dict(context_payload)
         telemetry_context.update(scenario_features)
         telemetry_logger = RunTelemetryLogger(
-            log_path=telemetry_log,
+            log_path=log_path,
             solver="ils",
             scenario=scenario_name,
             scenario_path=scenario_path,

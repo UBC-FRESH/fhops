@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import random
 from collections import Counter
+from collections.abc import Sequence
 from copy import deepcopy
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
+from typing import Any, TypeVar, cast
 
 import pandas as pd
 import yaml
@@ -24,10 +26,28 @@ from fhops.scenario.contract import (
 from fhops.scheduling.systems import HarvestSystem, default_system_registry
 from fhops.scheduling.timeline import BlackoutWindow, ShiftDefinition, TimelineConfig
 
+T = TypeVar("T")
+
 _DEFAULT_TERRAIN_POOL = ["mixed"]
 _DEFAULT_PRESCRIPTION_POOL = ["clearcut"]
 _DEFAULT_CREW_POOL = ["crew-1", "crew-2"]
 _DEFAULT_CAPABILITY_POOL = ["harvester", "forwarder"]
+
+
+def _sequence_list(value: object | None, fallback: Sequence[T]) -> list[T]:
+    if isinstance(value, Sequence) and not isinstance(value, str | bytes):
+        return [cast(T, item) for item in value]
+    return list(fallback)
+
+
+def _maybe_numeric_dict(value: object | None) -> dict[str, float] | None:
+    if not isinstance(value, dict):
+        return None
+    typed: dict[str, float] = {}
+    for key, raw in value.items():
+        if isinstance(raw, int | float):
+            typed[str(key)] = float(raw)
+    return typed
 
 
 @dataclass
@@ -249,8 +269,7 @@ class SyntheticDatasetBundle:
                 payload["timeline"] = self.scenario.timeline.model_dump(exclude_none=True)
             if self.scenario.harvest_systems is not None:
                 payload["harvest_systems"] = {
-                    key: system.model_dump(exclude_none=True)
-                    for key, system in self.scenario.harvest_systems.items()
+                    key: asdict(system) for key, system in self.scenario.harvest_systems.items()
                 }
             if self.scenario.objective_weights is not None:
                 payload["objective_weights"] = self.scenario.objective_weights.model_dump(
@@ -370,7 +389,7 @@ SAMPLING_PRESETS: dict[str, dict[str, object]] = {
 
 
 def sampling_config_for(config: SyntheticDatasetConfig) -> SamplingConfig:
-    base = SamplingConfig()
+    base = SamplingConfig(samples=10)
     tier_key = (config.tier or "").lower()
     preset_updates = SAMPLING_PRESETS.get(tier_key, {})
     data = base.model_dump()
@@ -407,57 +426,91 @@ def generate_random_dataset(
     num_landings = max(1, _sample_int(rng, config.num_landings))
 
     landing_ids = [f"L{i + 1}" for i in range(num_landings)]
-    blackout_probability = tier_defaults.get("blackout_probability", config.blackout_probability)
-    if (
-        config.blackout_probability
-        != SyntheticDatasetConfig.__dataclass_fields__["blackout_probability"].default
-    ):
-        blackout_probability = config.blackout_probability
-    blackout_duration = tier_defaults.get("blackout_duration", config.blackout_duration)
-    if (
-        config.blackout_duration
-        != SyntheticDatasetConfig.__dataclass_fields__["blackout_duration"].default
-    ):
-        blackout_duration = config.blackout_duration
+    default_blackout_prob = SyntheticDatasetConfig.__dataclass_fields__[
+        "blackout_probability"
+    ].default
+    blackout_probability = config.blackout_probability
+    if config.blackout_probability == default_blackout_prob:
+        prob_candidate = tier_defaults.get("blackout_probability")
+        if isinstance(prob_candidate, int | float):
+            blackout_probability = float(prob_candidate)
 
-    terrain_pool = list(tier_defaults.get("terrain_pool", config.terrain_pool))
+    default_blackout_duration = SyntheticDatasetConfig.__dataclass_fields__[
+        "blackout_duration"
+    ].default
+    blackout_duration: tuple[int, int] | int = config.blackout_duration
+    if config.blackout_duration == default_blackout_duration:
+        duration_candidate = tier_defaults.get("blackout_duration")
+        if isinstance(duration_candidate, tuple) and len(duration_candidate) >= 2:
+            blackout_duration = (int(duration_candidate[0]), int(duration_candidate[1]))
+        elif isinstance(duration_candidate, int):
+            blackout_duration = int(duration_candidate)
+
+    terrain_pool = _sequence_list(tier_defaults.get("terrain_pool"), config.terrain_pool)
     if config.terrain_pool and config.terrain_pool != _DEFAULT_TERRAIN_POOL:
         terrain_pool = list(config.terrain_pool)
-    terrain_weights = tier_defaults.get("terrain_weights")
+    terrain_weights: list[float] | None = None
+    default_terrain_weights = tier_defaults.get("terrain_weights")
+    if isinstance(default_terrain_weights, Sequence) and not isinstance(
+        default_terrain_weights, str | bytes
+    ):
+        terrain_weights = [float(weight) for weight in default_terrain_weights]
     if config.terrain_weights is not None:
-        terrain_weights = config.terrain_weights
+        terrain_weights = [float(weight) for weight in config.terrain_weights]
 
-    prescription_pool = list(tier_defaults.get("prescription_pool", config.prescription_pool))
+    prescription_pool = _sequence_list(
+        tier_defaults.get("prescription_pool"), config.prescription_pool
+    )
     if config.prescription_pool and config.prescription_pool != _DEFAULT_PRESCRIPTION_POOL:
         prescription_pool = list(config.prescription_pool)
-    prescription_weights = tier_defaults.get("prescription_weights")
+    prescription_weights: list[float] | None = None
+    default_prescription_weights = tier_defaults.get("prescription_weights")
+    if isinstance(default_prescription_weights, Sequence) and not isinstance(
+        default_prescription_weights, str | bytes
+    ):
+        prescription_weights = [float(weight) for weight in default_prescription_weights]
     if config.prescription_weights is not None:
-        prescription_weights = config.prescription_weights
+        prescription_weights = [float(weight) for weight in config.prescription_weights]
 
-    crew_pool = list(tier_defaults.get("crew_pool", config.crew_pool))
+    crew_pool = _sequence_list(tier_defaults.get("crew_pool"), config.crew_pool)
     if config.crew_pool and config.crew_pool != _DEFAULT_CREW_POOL:
         crew_pool = list(config.crew_pool)
 
-    capability_pool = list(
-        tier_defaults.get("capability_pool", config.capability_pool or config.role_pool)
+    capability_source = tier_defaults.get("capability_pool")
+    capability_pool = _sequence_list(
+        capability_source, config.capability_pool or config.role_pool or []
     )
     if config.capability_pool and config.capability_pool != _DEFAULT_CAPABILITY_POOL:
         capability_pool = list(config.capability_pool)
 
-    crew_capability_span = tier_defaults.get("crew_capability_span", config.crew_capability_span)
-    if (
-        config.crew_capability_span
-        != SyntheticDatasetConfig.__dataclass_fields__["crew_capability_span"].default
-    ):
-        crew_capability_span = config.crew_capability_span
+    crew_capability_span = config.crew_capability_span
+    default_span = SyntheticDatasetConfig.__dataclass_fields__["crew_capability_span"].default
+    if crew_capability_span == default_span:
+        span_candidate = tier_defaults.get("crew_capability_span")
+        if isinstance(span_candidate, Sequence):
+            try:
+                crew_capability_span = (int(span_candidate[0]), int(span_candidate[1]))
+            except (IndexError, TypeError, ValueError):
+                crew_capability_span = config.crew_capability_span
 
-    blackout_biases = list(tier_defaults.get("blackout_biases", []))
+    blackout_biases: list[BlackoutBias] = []
+    default_biases = tier_defaults.get("blackout_biases")
+    if isinstance(default_biases, Sequence):
+        parsed_biases: list[BlackoutBias] = []
+        for bias in default_biases:
+            if isinstance(bias, BlackoutBias):
+                parsed_biases.append(bias)
+            elif isinstance(bias, dict):
+                parsed_biases.append(BlackoutBias(**bias))
+        blackout_biases = parsed_biases
     if config.blackout_biases:
         blackout_biases = list(config.blackout_biases)
 
-    system_mix = tier_defaults.get("system_mix", config.system_mix)
+    system_mix: dict[str, float] | None = None
     if config.system_mix is not None:
-        system_mix = config.system_mix
+        system_mix = dict(config.system_mix)
+    else:
+        system_mix = _maybe_numeric_dict(tier_defaults.get("system_mix"))
     normalised_mix = _normalise_mix(system_mix) if system_mix else None
     blocks_records: list[dict[str, object]] = []
     for idx in range(num_blocks):
@@ -552,25 +605,25 @@ def generate_random_dataset(
     ]
 
     calendar_records: list[dict[str, object]] = []
-    for machine in machines_records:
+    for machine_record in machines_records:
         for day in range(1, num_days + 1):
             available = 1 if rng.random() <= config.availability_probability else 0
             calendar_records.append(
                 {
-                    "machine_id": machine["id"],
+                    "machine_id": machine_record["id"],
                     "day": day,
                     "available": available,
                 }
             )
 
     production_records: list[dict[str, object]] = []
-    for machine in machines_records:
-        for block in blocks_records:
+    for machine_record in machines_records:
+        for block_record in blocks_records:
             rate = round(_sample_float(rng, config.production_rate), 3)
             production_records.append(
                 {
-                    "machine_id": machine["id"],
-                    "block_id": block["id"],
+                    "machine_id": machine_record["id"],
+                    "block_id": block_record["id"],
                     "rate": rate,
                 }
             )
@@ -584,12 +637,15 @@ def generate_random_dataset(
     day_cursor = 1
     while day_cursor <= num_days:
         day_probability = blackout_probability
-        duration_bounds = blackout_duration
+        duration_bounds: tuple[int, int] | int = blackout_duration
         for bias in blackout_biases:
             if bias.start_day <= day_cursor <= bias.end_day:
                 day_probability = max(day_probability, bias.probability)
                 if bias.duration is not None:
-                    duration_bounds = bias.duration
+                    if isinstance(bias.duration, tuple):
+                        duration_bounds = (int(bias.duration[0]), int(bias.duration[1]))
+                    else:
+                        duration_bounds = int(bias.duration)
         if rng.random() <= day_probability:
             duration = max(1, _sample_int(rng, duration_bounds))
             blackouts.append(
@@ -604,19 +660,22 @@ def generate_random_dataset(
             day_cursor += 1
     timeline = TimelineConfig(shifts=[shift_def], blackouts=blackouts)
 
-    blocks = [Block(**record) for record in blocks_records]
-    machines = [Machine(**record) for record in machines_records]
-    landings = [Landing(**record) for record in landings_records]
-    calendar = [CalendarEntry(**record) for record in calendar_records]
-    production_rates = [ProductionRate(**record) for record in production_records]
+    blocks = [Block(**cast(dict[str, Any], record)) for record in blocks_records]
+    machines = [Machine(**cast(dict[str, Any], record)) for record in machines_records]
+    landings = [Landing(**cast(dict[str, Any], record)) for record in landings_records]
+    calendar = [CalendarEntry(**cast(dict[str, Any], record)) for record in calendar_records]
+    production_rates = [
+        ProductionRate(**cast(dict[str, Any], record)) for record in production_records
+    ]
 
     crew_assignment_models: list[CrewAssignment] | None = None
     if crew_pool:
         assignments: list[CrewAssignment] = []
         for machine in machines:
-            crew_id = machine.crew
-            if crew_id is None:
+            crew_id_value = machine.crew
+            if crew_id_value is None:
                 continue
+            crew_id = str(crew_id_value)
             capabilities = crew_capabilities.get(crew_id, [])
             notes = None
             if capabilities:

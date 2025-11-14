@@ -572,7 +572,7 @@ def run_benchmark_suite(
         best_runtime_by_scenario: dict[str, float] = {}
         if heuristic_mask.any():
             heuristics = summary[heuristic_mask]
-            idx = heuristics.groupby("scenario_key")["objective"].idxmax()
+            idx = heuristics.groupby("scenario_key")["objective"].idxmin()
             for scenario_key, index in idx.items():
                 row = summary.loc[index]
                 key_str = str(scenario_key)
@@ -590,9 +590,12 @@ def run_benchmark_suite(
             summary["best_heuristic_runtime_s"] = summary["scenario_key"].map(
                 best_runtime_by_scenario
             )
-            summary["objective_gap_vs_best_heuristic"] = (
-                summary["best_heuristic_objective"] - summary["objective"]
-            )
+            gap_vs_best = summary["objective"] - summary["best_heuristic_objective"]
+            summary["objective_gap_vs_best_heuristic"] = gap_vs_best
+            exact_mask = summary["solver_category"] == "exact"
+            summary.loc[exact_mask, "objective_gap_vs_best_heuristic"] = -summary.loc[
+                exact_mask, "objective_gap_vs_best_heuristic"
+            ]
 
             def _runtime_ratio(row: pd.Series) -> object:
                 best_runtime_val = _coerce_float(row.get("best_heuristic_runtime_s"))

@@ -284,8 +284,8 @@ def _compute_shift_availability(
     machines = {machine.id: machine for machine in scenario.machines}
 
     day_availability: dict[tuple[str, int], int] = {}
-    for entry in scenario.calendar:
-        day_availability[(entry.machine_id, entry.day)] = entry.available
+    for calendar_entry in scenario.calendar:
+        day_availability[(calendar_entry.machine_id, calendar_entry.day)] = calendar_entry.available
 
     shift_hours = {}
     if scenario.timeline and scenario.timeline.shifts:
@@ -297,19 +297,19 @@ def _compute_shift_availability(
         return day_availability.get((machine_id, day), 1) == 1
 
     if scenario.shift_calendar:
-        for entry in scenario.shift_calendar:
-            if entry.available != 1:
+        for shift_entry in scenario.shift_calendar:
+            if shift_entry.available != 1:
                 continue
-            if entry.machine_id not in machines:
+            if shift_entry.machine_id not in machines:
                 continue
-            if not machine_available(entry.machine_id, entry.day):
+            if not machine_available(shift_entry.machine_id, shift_entry.day):
                 continue
-            hours = shift_hours.get(entry.shift_id)
+            hours = shift_hours.get(shift_entry.shift_id)
             if hours is None and config.infer_missing_shifts:
-                hours = machines[entry.machine_id].daily_hours
+                hours = machines[shift_entry.machine_id].daily_hours
             if hours is None:
                 continue
-            availability[(entry.day, entry.shift_id, entry.machine_id)] = hours
+            availability[(shift_entry.day, shift_entry.shift_id, shift_entry.machine_id)] = hours
     elif shift_hours:
         for day in problem.days:
             for shift_id, hours in shift_hours.items():

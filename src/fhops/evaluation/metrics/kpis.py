@@ -259,7 +259,10 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
                     for machine, hours in sorted(downtime_by_machine.items())
                 }
             )
-        total_downtime_events = int(shift_df.get("downtime_events", 0).sum())
+        downtime_events_series = shift_df.get("downtime_events")
+        total_downtime_events = (
+            int(float(downtime_events_series.sum())) if downtime_events_series is not None else 0
+        )
         if total_downtime_events > 0:
             result["downtime_event_count"] = total_downtime_events
 

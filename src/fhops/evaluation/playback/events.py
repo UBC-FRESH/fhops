@@ -13,6 +13,30 @@ __all__ = [
 ]
 
 
+def _default_downtime_config() -> DowntimeEventConfig:
+    return DowntimeEventConfig(
+        probability=0.15,
+        mean_duration_hours=4.0,
+        std_duration_hours=1.5,
+    )
+
+
+def _default_weather_config() -> WeatherEventConfig:
+    return WeatherEventConfig(
+        day_probability=0.2,
+        impact_window_days=1,
+        severity_levels={"light": 0.1, "moderate": 0.3, "severe": 0.6},
+    )
+
+
+def _default_landing_config() -> LandingShockConfig:
+    return LandingShockConfig(
+        probability=0.1,
+        capacity_multiplier_range=(0.4, 0.8),
+        duration_days=1,
+    )
+
+
 class SamplingEventConfig(BaseModel):
     """Base configuration shared by all stochastic events."""
 
@@ -73,6 +97,6 @@ class SamplingConfig(BaseModel):
 
     samples: int = Field(10, ge=1)
     base_seed: int = 123
-    downtime: DowntimeEventConfig = Field(default_factory=DowntimeEventConfig)
-    weather: WeatherEventConfig = Field(default_factory=WeatherEventConfig)
-    landing: LandingShockConfig = Field(default_factory=LandingShockConfig)
+    downtime: DowntimeEventConfig = Field(default_factory=_default_downtime_config)
+    weather: WeatherEventConfig = Field(default_factory=_default_weather_config)
+    landing: LandingShockConfig = Field(default_factory=_default_landing_config)

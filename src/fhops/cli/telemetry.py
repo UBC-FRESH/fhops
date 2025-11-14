@@ -7,6 +7,7 @@ from collections import deque
 from collections.abc import Iterable
 from pathlib import Path
 from statistics import fmean
+from typing import TypedDict
 
 import typer
 
@@ -131,6 +132,16 @@ def _summarise_config(config: dict[str, object] | None) -> str:
     return "; ".join(parts)
 
 
+class _AggregateRecord(TypedDict):
+    algorithm: str
+    scenario: str
+    objectives: list[float]
+    best_objective: float
+    best_run_id: str
+    best_started_at: str
+    best_config: dict[str, object]
+
+
 def _collect_tuner_report(sqlite_path: Path) -> list[dict[str, object]]:
     if not sqlite_path.exists():
         raise FileNotFoundError(f"Telemetry SQLite store not found: {sqlite_path}")
@@ -139,14 +150,14 @@ def _collect_tuner_report(sqlite_path: Path) -> list[dict[str, object]]:
     conn.row_factory = sqlite3.Row
     summary_map: dict[tuple[str, str], dict[str, object]] = {}
     try:
-        rows = conn.execute(
+        summary_rows = conn.execute(
             """
             SELECT algorithm, scenario_best_json, configurations, created_at, summary_id, schema_version
             FROM tuner_summaries
             ORDER BY created_at
             """
         ).fetchall()
-        for row in rows:
+        for row in summary_rows:
             algorithm = row["algorithm"] or "unknown"
             scenario_map = json.loads(row["scenario_best_json"] or "{}")
             for scenario, value in scenario_map.items():
@@ -178,7 +189,7 @@ def _collect_tuner_report(sqlite_path: Path) -> list[dict[str, object]]:
     finally:
         conn.close()
 
-    aggregates: dict[tuple[str, str], dict[str, object]] = {}
+    aggregates: dict[tuple[str, str], _AggregateRecord] = {}
     for row in run_rows:
         context = json.loads(row["context_json"] or "{}")
         source = context.get("source")
@@ -195,30 +206,30 @@ def _collect_tuner_report(sqlite_path: Path) -> list[dict[str, object]]:
         algorithm = str(algorithm)
         scenario = row["scenario"] or "unknown"
         key = (algorithm, scenario)
-        record = aggregates.setdefault(
-            key,
-            {
-                "algorithm": algorithm,
-                "scenario": scenario,
-                "objectives": [],
-                "best_objective": float("-inf"),
-                "best_run_id": "",
-                "best_started_at": "",
-                "best_config": {},
-            },
-        )
+        if key not in aggregates:
+            aggregates[key] = _AggregateRecord(
+                algorithm=algorithm,
+                scenario=scenario,
+                objectives=[],
+                best_objective=float("-inf"),
+                best_run_id="",
+                best_started_at="",
+                best_config={},
+            )
+        record = aggregates[key]
         objective = row["objective"]
         if objective is None:
             continue
-        record["objectives"].append(objective)
-        if objective > record["best_objective"]:
-            record["best_objective"] = float(objective)
+        objective_value = float(objective)
+        record["objectives"].append(objective_value)
+        if objective_value > record["best_objective"]:
+            record["best_objective"] = objective_value
             record["best_run_id"] = row["run_id"]
             record["best_started_at"] = row["started_at"] or ""
             config = json.loads(row["config_json"] or "{}")
             record["best_config"] = config if isinstance(config, dict) else {}
 
-    rows: list[dict[str, object]] = []
+    report_rows: list[dict[str, object]] = []
     for key, data in sorted(aggregates.items()):
         algorithm, scenario = key
         objectives = data["objectives"]
@@ -235,8 +246,8 @@ def _collect_tuner_report(sqlite_path: Path) -> list[dict[str, object]]:
             "best_config": _summarise_config(data["best_config"]),
         }
         stats_entry.update(summary_map.get(key, {}))
-        rows.append(stats_entry)
-    return rows
+        report_rows.append(stats_entry)
+    return report_rows
 
 
 def _render_markdown(rows: list[dict[str, object]]) -> str:
@@ -251,6 +262,10 @@ def _render_markdown(rows: list[dict[str, object]]) -> str:
     ]
     lines = ["| " + " | ".join(headers) + " |", "| " + " | ".join(["---"] * len(headers)) + " |"]
     for row in rows:
+        summary_best_raw = row.get("summary_best")
+        summary_best_str = (
+            f"{float(summary_best_raw):.3f}" if isinstance(summary_best_raw, int | float) else ""
+        )
         lines.append(
             "| "
             + " | ".join(
@@ -260,11 +275,7 @@ def _render_markdown(rows: list[dict[str, object]]) -> str:
                     f"{row['best_objective']:.3f}",
                     f"{row['mean_objective']:.3f}",
                     str(row["runs"]),
-                    (
-                        f"{float(row['summary_best']):.3f}"
-                        if isinstance(row.get("summary_best"), int | float)
-                        else ""
-                    ),
+                    summary_best_str,
                     str(row.get("summary_configurations", "")),
                 ]
             )
@@ -325,6 +336,7 @@ def report(
             writer = csv.DictWriter(handle, fieldnames=headers)
             writer.writeheader()
             for row in rows:
+                summary_best_raw = row.get("summary_best")
                 writer.writerow(
                     {
                         "algorithm": row["algorithm"],
@@ -336,8 +348,8 @@ def report(
                         "best_started_at": row["best_started_at"],
                         "best_config": row["best_config"],
                         "summary_best": (
-                            f"{float(row['summary_best']):.6f}"
-                            if isinstance(row.get("summary_best"), int | float)
+                            f"{float(summary_best_raw):.6f}"
+                            if isinstance(summary_best_raw, int | float)
                             else ""
                         ),
                         "summary_configurations": row.get("summary_configurations", ""),

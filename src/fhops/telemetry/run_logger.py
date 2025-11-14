@@ -8,7 +8,7 @@ from contextlib import AbstractContextManager
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 from uuid import uuid4
 
 from .jsonl import append_jsonl
@@ -73,7 +73,7 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
             self._steps_path.parent.mkdir(parents=True, exist_ok=True)
         return self
 
-    def __exit__(self, exc_type, exc, tb) -> bool:
+    def __exit__(self, exc_type, exc, tb) -> Literal[False]:
         if exc_type:
             self._close(
                 status="error",
@@ -196,14 +196,10 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
         for promoted_key in ("source", "command", "profile", "profile_version", "tier"):
             if promoted_key in context_payload and promoted_key not in record:
                 record[promoted_key] = context_payload[promoted_key]
-        if metrics:
-            record["metrics"] = dict(metrics)
-        else:
-            record["metrics"] = {}
-        if kpis:
-            record["kpis"] = dict(kpis)
-        else:
-            record["kpis"] = {}
+        metrics_payload = dict(metrics or {})
+        kpi_payload = dict(kpis or {})
+        record["metrics"] = metrics_payload
+        record["kpis"] = kpi_payload
         extra_payload = record["extra"]
         if isinstance(extra_payload, dict):
             if "export" in extra_payload and "export" not in record:
@@ -217,8 +213,8 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
             persist_run(
                 self.sqlite_path,
                 record=record,
-                metrics=record["metrics"],
-                kpis=record["kpis"],
+                metrics=metrics_payload,
+                kpis=kpi_payload,
             )
         self._closed = True
 

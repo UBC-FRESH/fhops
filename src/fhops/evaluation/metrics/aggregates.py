@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Iterable
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -97,7 +97,8 @@ def compute_makespan_metrics(
                 return (1, float(row["day"]), 0.0)
 
             active["_rank_tuple"] = active.apply(_rank, axis=1)
-            last_row = active.sort_values("_rank_tuple").iloc[-1]
+            sorted_active = cast(pd.DataFrame, active).sort_values(by="_rank_tuple")
+            last_row = sorted_active.iloc[-1]
             metrics["makespan_day"] = int(last_row["day"])
             metrics["makespan_shift"] = str(last_row["shift_id"])
             del active["_rank_tuple"]
