@@ -6,6 +6,7 @@
 - Refined the tuning benchmark runner (`scripts/run_tuning_benchmarks.py`) with proper helper functions (no lambda assignments) and saner typing, and made the analyzer resilient when stitching best-objective stats together.
 - GitHub Pages now converts the Markdown telemetry tables to standalone HTML (via Pandoc) and the docs link to those HTML renderings so the dashboards display as formatted tables instead of raw pipes.
 - Added a scheduled workflow (`analytics-notebooks.yml`) that runs the full analytics notebook suite every Monday, captures timestamped artefacts, redeploys GitHub Pages with the refreshed dashboards, and documents the cadence in the telemetry how-to so stochastic regressions surface even when daily CI uses the light mode.
+- Wrapped up the telemetry dashboards bundle: README + telemetry reference now point to `reference/dashboards`, dashboards embed the new history delta view, both CI workflows publish the delta artefacts, and the operations note captures the weekly workflow ownership/triage playbook.
 - Scoped the `mypy` pre-commit hook to `src/`, disabled filename passing, and taught it to ignore third-party imports so the hook behaves like our documented `mypy src` workflow. Hook failures now flag missing CHANGE_LOG entries earlier.
 - Regenerated the analytics notebook metadata with a trailing newline so the `end-of-file-fixer` hook no longer churns during CI.
 
