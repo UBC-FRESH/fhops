@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from collections.abc import Iterator
+from typing import TYPE_CHECKING
 
 import pandas as pd
 
@@ -12,10 +13,10 @@ from fhops.scheduling.mobilisation import build_distance_lookup
 
 from .core import PlaybackRecord
 
-try:  # pragma: no cover - optional import for typing
+if TYPE_CHECKING:  # pragma: no cover
     from fhops.optimization.heuristics.sa import Schedule
-except ImportError:  # pragma: no cover - fallback when heuristics not available
-    Schedule = object  # type: ignore[assignment]
+else:  # pragma: no cover - runtime fallback
+    Schedule = object
 
 __all__ = [
     "schedule_to_records",

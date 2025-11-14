@@ -483,6 +483,7 @@ def solve_sa(
 
     telemetry_logger: RunTelemetryLogger | None = None
     if telemetry_log:
+        log_path = Path(telemetry_log)
         scenario = pb.scenario
         timeline = getattr(scenario, "timeline", None)
         scenario_features = {
@@ -494,7 +495,7 @@ def solve_sa(
             "num_timeline_shifts": len(getattr(timeline, "shifts", []) or []),
         }
         telemetry_logger = RunTelemetryLogger(
-            log_path=telemetry_log,
+            log_path=log_path,
             solver="sa",
             scenario=scenario_name,
             scenario_path=scenario_path,

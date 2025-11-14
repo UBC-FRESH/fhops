@@ -121,10 +121,10 @@ def playback_summary_metrics(shift_df: pd.DataFrame, day_df: pd.DataFrame) -> di
 
 def _write_parquet(df: pd.DataFrame, path: Path) -> None:
     try:
-        import pyarrow  # noqa: F401
+        import pyarrow  # type: ignore[import-untyped]  # noqa: F401
     except ImportError:
         try:
-            import fastparquet  # noqa: F401
+            import fastparquet  # type: ignore[import-not-found]  # noqa: F401
         except ImportError as exc:  # pragma: no cover - dependency guard
             raise ImportError("Parquet export requires pyarrow or fastparquet") from exc
 

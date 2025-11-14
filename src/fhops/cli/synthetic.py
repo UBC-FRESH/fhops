@@ -10,9 +10,9 @@ import typer
 from rich.console import Console
 
 try:
-    import tomllib  # Python 3.11+
+    import tomllib
 except ModuleNotFoundError:  # pragma: no cover
-    tomllib = None
+    tomllib = None  # type: ignore[assignment]
 
 import yaml
 

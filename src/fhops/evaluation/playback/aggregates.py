@@ -63,10 +63,10 @@ def _summary_dataframe(
     columns: Sequence[str],
 ) -> pd.DataFrame:
     if not summaries:
-        return pd.DataFrame(columns=columns)
+        return pd.DataFrame(columns=list(columns))
     rows = [asdict(summary) for summary in summaries]
     df = pd.DataFrame(rows)
-    return df.reindex(columns=columns)
+    return df.reindex(columns=list(columns))
 
 
 def shift_dataframe(result: PlaybackResult) -> pd.DataFrame:

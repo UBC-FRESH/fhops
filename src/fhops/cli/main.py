@@ -28,8 +28,10 @@ from fhops.cli.profiles import format_profiles, get_profile, merge_profile_with_
 from fhops.cli.synthetic import synth_app
 from fhops.cli.telemetry import telemetry_app
 from fhops.evaluation import (
+    DaySummary,
     PlaybackConfig,
     SamplingConfig,
+    ShiftSummary,
     compute_kpis,
     day_dataframe,
     day_dataframe_from_ensemble,
@@ -1284,6 +1286,9 @@ def eval_playback(
             and landing_probability <= 0
         )
 
+        shift_summaries: list[ShiftSummary]
+        day_summaries: list[DaySummary]
+
         if deterministic_mode:
             playback_result = run_playback(pb, df, config=playback_config)
             shift_summaries = list(playback_result.shift_summaries)
@@ -1360,17 +1365,17 @@ def eval_playback(
         shift_table.add_column("Mobilisation", justify="right")
         shift_table.add_column("Sequencing", justify="right")
         shift_table.add_column("Utilisation", justify="right")
-        for summary in shift_summaries[:20]:
+        for shift_summary in shift_summaries[:20]:
             shift_table.add_row(
-                summary.machine_id,
-                str(summary.day),
-                summary.shift_id,
-                f"{summary.production_units:.2f}",
-                f"{summary.total_hours:.2f}",
-                f"{(summary.idle_hours or 0.0):.2f}",
-                f"{summary.mobilisation_cost:.2f}",
-                str(summary.sequencing_violations),
-                f"{(summary.utilisation_ratio or 0.0):.2f}",
+                shift_summary.machine_id,
+                str(shift_summary.day),
+                shift_summary.shift_id,
+                f"{shift_summary.production_units:.2f}",
+                f"{shift_summary.total_hours:.2f}",
+                f"{(shift_summary.idle_hours or 0.0):.2f}",
+                f"{shift_summary.mobilisation_cost:.2f}",
+                str(shift_summary.sequencing_violations),
+                f"{(shift_summary.utilisation_ratio or 0.0):.2f}",
             )
         console.print(shift_table)
 
@@ -1383,16 +1388,16 @@ def eval_playback(
         day_table.add_column("Completed", justify="right")
         day_table.add_column("Sequencing", justify="right")
         day_table.add_column("Utilisation", justify="right")
-        for summary in day_summaries:
+        for day_summary in day_summaries:
             day_table.add_row(
-                str(summary.day),
-                f"{summary.production_units:.2f}",
-                f"{summary.total_hours:.2f}",
-                f"{(summary.idle_hours or 0.0):.2f}",
-                f"{summary.mobilisation_cost:.2f}",
-                str(summary.completed_blocks),
-                str(summary.sequencing_violations),
-                f"{(summary.utilisation_ratio or 0.0):.2f}",
+                str(day_summary.day),
+                f"{day_summary.production_units:.2f}",
+                f"{day_summary.total_hours:.2f}",
+                f"{(day_summary.idle_hours or 0.0):.2f}",
+                f"{day_summary.mobilisation_cost:.2f}",
+                str(day_summary.completed_blocks),
+                str(day_summary.sequencing_violations),
+                f"{(day_summary.utilisation_ratio or 0.0):.2f}",
             )
         console.print(day_table)
 

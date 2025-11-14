@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Protocol, TypedDict, cast
 
 import numpy as np
 import pandas as pd
@@ -93,9 +93,10 @@ class DowntimeEvent:
             else:
                 selected = [idx for idx in indices if rng.random() <= self.config.probability]
             for idx in selected:
-                df.loc[idx, "assigned"] = 0
-                df.loc[idx, "production"] = 0.0
-                df.loc[idx, "_downtime"] = 1
+                row_index = cast(int | str, idx)
+                df.loc[row_index, "assigned"] = 0
+                df.loc[row_index, "production"] = 0.0
+                df.loc[row_index, "_downtime"] = 1
         df.drop(columns="_target_role", inplace=True)
         return df
 
@@ -149,9 +150,16 @@ class WeatherEvent:
             )
             base = base_production.get(key, row.get("production", 0.0) or 0.0)
             adjusted = max(base * (1 - severity), 0.0)
-            df.loc[idx, "production"] = adjusted
-            df.loc[idx, "_weather_severity"] = severity
+            row_index = cast(int | str, idx)
+            df.loc[row_index, "production"] = adjusted
+            df.loc[row_index, "_weather_severity"] = severity
         return df
+
+
+class LandingShockState(TypedDict):
+    duration: int
+    multiplier: float
+    remaining: int
 
 
 class LandingShockEvent:
@@ -176,7 +184,7 @@ class LandingShockEvent:
         if not landings:
             return df
 
-        shocks: dict[str, tuple[int, float]] = {}
+        shocks: dict[str, LandingShockState] = {}
         for landing_id in landings:
             if rng.random() <= self.config.probability:
                 duration = max(self.config.duration_days, 1)
@@ -213,8 +221,9 @@ class LandingShockEvent:
             )
             baseline = base_production.get(key, row.get("production", 0.0) or 0.0)
             adjusted = max(baseline * multiplier, 0.0)
-            df.loc[idx, "production"] = adjusted
-            df.loc[idx, "_landing_multiplier"] = multiplier
+            row_index = cast(int | str, idx)
+            df.loc[row_index, "production"] = adjusted
+            df.loc[row_index, "_landing_multiplier"] = multiplier
             shock["remaining"] -= 1
 
         return df
