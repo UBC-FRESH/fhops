@@ -31,6 +31,15 @@ instead of suppressing them; escalate only if consensus is reached with maintain
   them under the relevant note.
 - Keep PR descriptions concise but linked to roadmap phases and note sections for traceability.
 
+## Release workflow (RC prep)
+- Packaging uses Hatch (mirroring the ws3 repo). Keep ``pyproject.toml`` / ``hatch.toml`` in sync
+  and use ``hatch build`` for local validation before any publish step.
+- Follow `notes/release_candidate_prep.md` for the current RC checklist (version bump, wheel/sdist
+  smoke tests, release notes, CI tag jobs). Update that note and the roadmap after each milestone.
+- Release day cadence: bump version, regenerate changelog entry, `hatch build`, smoke install in a
+  clean venv, tag (`git tag -s vX.Y.Z`), push tag, then publish (TestPyPI first, PyPI second if
+  applicable). Document the exact commands in the changelog.
+
 ## Collaboration guidelines
 - Flag blockers or scope shifts by opening a dedicated section in the pertinent note and linking
   it from the next changelog entry.

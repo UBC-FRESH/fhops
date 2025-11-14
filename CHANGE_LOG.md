@@ -10,6 +10,9 @@
 - Scoped the `mypy` pre-commit hook to `src/`, disabled filename passing, and taught it to ignore third-party imports so the hook behaves like our documented `mypy src` workflow. Hook failures now flag missing CHANGE_LOG entries earlier.
 - Regenerated the analytics notebook metadata with a trailing newline so the `end-of-file-fixer` hook no longer churns during CI.
 - Refreshed `.pre-commit-config.yaml` (ruff v0.14.5, mypy v1.18.2, pre-commit-hooks v6.0.0) to eliminate the deprecated stage warning and keep local hooks aligned with upstream behavior.
+- Started the release candidate prep effort on branch `release-candidate-prep`: added
+  `notes/release_candidate_prep.md`, updated the roadmap detailed next steps, and expanded
+  `CODING_AGENT.md` with Hatch-based release workflow guidance.
 
 ## 2025-11-13 — Docs landing fix
 - Repaired `docs/index.rst` so the dashboards reference appears inside the “Getting Started” toctree, restoring a valid Sphinx build and keeping the telemetry links visible on GitHub Pages.
