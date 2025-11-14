@@ -13,6 +13,18 @@ constructing, solving, and evaluating harvesting schedules. At its core FHOPS su
 The roadmap in :doc:`roadmap` and the notes under ``notes/`` guide ongoing development. Refer to
 :doc:`howto/quickstart` for a hands-on example.
 
+Installation
+------------
+
+FHOPS publishes wheels/sdists via Hatch. Once the release candidate is on PyPI, install with::
+
+   pip install fhops
+
+For development or release verification, install Hatch and run the full suite locally::
+
+   pip install hatch
+   hatch run dev:suite
+
 Baseline Workflows
 ------------------
 

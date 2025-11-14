@@ -38,7 +38,8 @@ instead of suppressing them; escalate only if consensus is reached with maintain
   smoke tests, release notes, CI tag jobs). Update that note and the roadmap after each milestone.
 - Release day cadence: bump version, regenerate changelog entry, `hatch build`, smoke install in a
   clean venv, tag (`git tag -s vX.Y.Z`), push tag, then publish (TestPyPI first, PyPI second if
-  applicable). Document the exact commands in the changelog.
+  applicable). Version source lives at `src/fhops/__init__.__version__` (pyproject uses Hatch's
+  dynamic version hook). Document the exact commands in the changelog.
 
 ## Collaboration guidelines
 - Flag blockers or scope shifts by opening a dedicated section in the pertinent note and linking
