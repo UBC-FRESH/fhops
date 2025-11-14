@@ -11,7 +11,7 @@ Status: Draft — drive the v0.x RC process.
 ## Tasks
 1. **Versioning & Hatch wiring**
    - [x] Add ``hatch.toml``/pyproject updates (build-system, project metadata, scripts, dependencies).
-   - [ ] Define version source (e.g., ``src/fhops/__init__.py``) and document bump workflow.
+   - [x] Define version source (pyproject now uses ``[tool.hatch.version]`` pointing at ``src/fhops/__init__.__version__``; bump workflow = edit that constant + changelog).
    - [x] Configure Hatch environments/custom commands for lint/test/release parity with ws3.
 2. **Packaging QA**
    - [x] ``hatch build`` wheel/sdist locally and inspect contents (license, data files, examples).
@@ -24,9 +24,9 @@ Status: Draft — drive the v0.x RC process.
    - [ ] Ensure docs landing page highlights versioned install instructions.
    - [ ] Link telemetry dashboards/release notes for transparency.
 4. **Release Notes**
-   - [ ] Summarise Phase 1-3 achievements, telemetry tooling, and new CLI surfaces.
-   - [ ] Document breaking changes and migration guidance (schema version, mobilisation config).
-   - [ ] Add "Known Issues / Next" section pointing to backlog items (agentic tuner, DSS hooks).
+   - [x] Summarise Phase 1-3 achievements, telemetry tooling, and new CLI surfaces (see `notes/release_notes_draft.md`).
+   - [x] Document breaking changes and migration guidance (schema version, mobilisation config).
+   - [x] Add "Known Issues / Next" section pointing to backlog items (agentic tuner, DSS hooks).
 5. **Hyperparameter tuning sign-off**
    - [ ] Re-run the tuning harness (baseline + synthetic bundles) with the latest code, capturing tuned vs. default results for SA/ILS/Tabu.
    - [ ] Document the improvements (objective delta, runtime, win rate) in release notes and telemetry dashboards.

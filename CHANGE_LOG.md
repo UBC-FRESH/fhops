@@ -16,6 +16,9 @@
 - Added `hatch.toml` with dev/release environments mirroring the CI cadence, ran `hatch build`
   to produce sdist/wheel artifacts, and smoke-tested the wheel in a fresh virtualenv via
   `fhops --help` and a minitoy validation run.
+- Switched project versioning to Hatch’s dynamic mode (`pyproject.toml` derives from
+  `src/fhops/__init__.__version__`), documented the bump workflow in `CODING_AGENT.md`, and
+  refreshed README/docs with pip/Hatch install instructions plus a draft of the RC release notes.
 
 ## 2025-11-13 — Docs landing fix
 - Repaired `docs/index.rst` so the dashboards reference appears inside the “Getting Started” toctree, restoring a valid Sphinx build and keeping the telemetry links visible on GitHub Pages.

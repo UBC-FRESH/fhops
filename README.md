@@ -7,6 +7,19 @@ forest harvesting operations plans. It provides:
 - A **metaheuristic engine** (Simulated Annealing v0.1) with pluggable operators.
 - A CLI (`fhops`) to validate data, solve with MIP or heuristics, and evaluate results.
 
+## Installation
+
+```bash
+pip install fhops  # once the release candidate lands on PyPI
+```
+
+For local development or when cutting a release candidate, use Hatch to mirror the CI suite:
+
+```bash
+pip install hatch
+hatch run dev:suite
+```
+
 ## Quick start (development install)
 
 ```bash
