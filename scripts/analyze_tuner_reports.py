@@ -218,23 +218,28 @@ def _compute_convergence(
         ).fetchall()
         metric_rows = conn.execute(
             """
-            SELECT run_id, value, value_text
+            SELECT run_id, name, value, value_text
             FROM run_metrics
-            WHERE name = 'objective'
+            WHERE name IN ('objective', 'initial_score')
             """
         ).fetchall()
     finally:
         conn.close()
 
     objective_map: dict[str, float] = {}
+    initial_score_map: dict[str, float] = {}
     for row in metric_rows:
         run_id = row["run_id"]
+        metric_name = row["name"]
         value = row["value"]
         if value is None and row["value_text"]:
             value = _safe_float(row["value_text"])
         if value is None:
             continue
-        objective_map[run_id] = float(value)
+        if metric_name == "objective":
+            objective_map[run_id] = float(value)
+        elif metric_name == "initial_score":
+            initial_score_map[run_id] = float(value)
 
     mip_objectives: dict[str, float] = {}
     scenario_meta: dict[str, dict[str, Any]] = {}
@@ -299,7 +304,10 @@ def _compute_convergence(
             "total_iterations",
             "best_objective",
             "mip_objective",
+            "baseline_objective",
+            "gap_absolute",
             "gap_pct",
+            "gap_range",
             "duration_seconds",
         ]
         summary_columns = [
@@ -320,7 +328,9 @@ def _compute_convergence(
             "median_iterations_to_5pct",
             "min_iterations_to_5pct",
             "max_iterations_to_5pct",
+            "mean_gap_absolute",
             "mean_gap_pct",
+            "mean_gap_range",
         ]
         return pd.DataFrame(columns=runs_columns), pd.DataFrame(columns=summary_columns)
 
@@ -384,10 +394,21 @@ def _compute_convergence(
         ):
             iterations_to_soft = total_iterations
 
-        gap_pct = None
+        baseline_objective = initial_score_map.get(run_id)
+
+        gap_absolute: float | None = None
+        gap_pct: float | None = None
+        gap_range: float | None = None
+        delta = float(mip_obj) - float(best_objective)
+        gap_absolute = delta
         if mip_obj != 0:
-            gap_pct_raw = (float(mip_obj) - float(best_objective)) / float(mip_obj)
+            gap_pct_raw = delta / float(mip_obj)
             gap_pct = max(0.0, gap_pct_raw)
+        if baseline_objective is not None:
+            denom = float(mip_obj) - float(baseline_objective)
+            if denom > 1e-9:
+                ratio = delta / denom
+                gap_range = max(0.0, min(1.0, ratio))
 
         tier = record["context"].get("tier")
         if tier is None and isinstance(tuner_meta, dict):
@@ -407,7 +428,10 @@ def _compute_convergence(
                 "total_iterations": total_iterations,
                 "best_objective": best_objective,
                 "mip_objective": mip_obj,
+                "baseline_objective": baseline_objective,
+                "gap_absolute": gap_absolute,
                 "gap_pct": gap_pct,
+                "gap_range": gap_range,
                 "duration_seconds": record["duration_seconds"],
             }
         )
@@ -425,7 +449,10 @@ def _compute_convergence(
             "total_iterations",
             "best_objective",
             "mip_objective",
+            "baseline_objective",
+            "gap_absolute",
             "gap_pct",
+            "gap_range",
             "duration_seconds",
         ]
         summary_columns = [
@@ -446,7 +473,9 @@ def _compute_convergence(
             "median_iterations_to_5pct",
             "min_iterations_to_5pct",
             "max_iterations_to_5pct",
+            "mean_gap_absolute",
             "mean_gap_pct",
+            "mean_gap_range",
         ]
         return pd.DataFrame(columns=runs_columns), pd.DataFrame(columns=summary_columns)
 
@@ -498,7 +527,13 @@ def _compute_convergence(
                 "max_iterations_to_5pct": soft_iterations.max()
                 if not soft_iterations.empty
                 else None,
+                "mean_gap_absolute": group["gap_absolute"].mean(skipna=True)
+                if "gap_absolute" in group
+                else None,
                 "mean_gap_pct": group["gap_pct"].mean(skipna=True) if "gap_pct" in group else None,
+                "mean_gap_range": group["gap_range"].mean(skipna=True)
+                if "gap_range" in group
+                else None,
             }
         )
 

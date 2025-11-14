@@ -23,6 +23,15 @@ from fhops.scenario.contract import Problem
 from fhops.telemetry import RunTelemetryLogger
 
 
+TABU_DEFAULT_OPERATOR_WEIGHTS: dict[str, float] = {
+    "swap": 1.0,
+    "move": 1.0,
+    "block_insertion": 0.6,
+    "cross_exchange": 0.6,
+    "mobilisation_shake": 0.4,
+}
+
+
 @dataclass(slots=True)
 class TabuConfig:
     tenure: int
@@ -53,7 +62,7 @@ def solve_tabu(
     batch_size: int | None = None,
     max_workers: int | None = None,
     tabu_tenure: int | None = None,
-    stall_limit: int = 200,
+    stall_limit: int = 1_000_000,
     telemetry_log: str | Path | None = None,
     telemetry_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
@@ -62,6 +71,13 @@ def solve_tabu(
     rng = _random.Random(seed)
     registry = OperatorRegistry.from_defaults()
     available = {name.lower(): name for name in registry.names()}
+    default_operator_weights = {
+        available[name]: weight
+        for name, weight in TABU_DEFAULT_OPERATOR_WEIGHTS.items()
+        if name in available
+    }
+    if default_operator_weights:
+        registry.configure(default_operator_weights)
     if operators:
         requested = {name.lower() for name in operators}
         unknown = requested - set(available.keys())
@@ -154,6 +170,7 @@ def solve_tabu(
                 break
 
             best_candidate_tuple: tuple[Any, ...] | None = None
+            fallback_candidate_tuple: tuple[Any, ...] | None = None
             for candidate, score in sorted(evaluations, key=lambda item: item[1], reverse=True):
                 proposals += 1
                 move_sig = _diff_moves(current.plan, candidate.plan)
@@ -162,9 +179,17 @@ def solve_tabu(
                 if not is_tabu or aspiration:
                     best_candidate_tuple = (candidate, score, move_sig)
                     break
+                if fallback_candidate_tuple is None:
+                    fallback_candidate_tuple = (candidate, score, move_sig)
 
             if best_candidate_tuple is None:
-                break
+                if fallback_candidate_tuple is None:
+                    break
+                # Forced diversification: relax tabu constraint by expiring the oldest entry.
+                if len(tabu_queue) >= tenure:
+                    expired = tabu_queue.popleft()
+                    tabu_set.discard(expired)
+                best_candidate_tuple = fallback_candidate_tuple
 
             candidate, score, move_sig = best_candidate_tuple
             current = candidate
