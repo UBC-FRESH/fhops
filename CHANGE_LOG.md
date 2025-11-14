@@ -9,6 +9,7 @@
 - Wrapped up the telemetry dashboards bundle: README + telemetry reference now point to `reference/dashboards`, dashboards embed the new history delta view, both CI workflows publish the delta artefacts, and the operations note captures the weekly workflow ownership/triage playbook.
 - Scoped the `mypy` pre-commit hook to `src/`, disabled filename passing, and taught it to ignore third-party imports so the hook behaves like our documented `mypy src` workflow. Hook failures now flag missing CHANGE_LOG entries earlier.
 - Regenerated the analytics notebook metadata with a trailing newline so the `end-of-file-fixer` hook no longer churns during CI.
+- Refreshed `.pre-commit-config.yaml` (ruff v0.14.5, mypy v1.18.2, pre-commit-hooks v6.0.0) to eliminate the deprecated stage warning and keep local hooks aligned with upstream behavior.
 
 ## 2025-11-13 — Docs landing fix
 - Repaired `docs/index.rst` so the dashboards reference appears inside the “Getting Started” toctree, restoring a valid Sphinx build and keeping the telemetry links visible on GitHub Pages.
