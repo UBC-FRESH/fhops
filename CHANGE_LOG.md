@@ -8,6 +8,7 @@
 - Added per-file Ruff ignores for the analytics notebooks so their sys.path bootstrapping cells stop tripping `E402`, and let `pre-commit` keep them formatted without destructive rewrites (`pyproject.toml`).
 - Tightened the global typing story: telemetry/benchmark helpers now use modern unions, convergence reporting avoids `type: ignore`, and parquet exporters no longer rely on unused type ignores.
 - Refined the tuning benchmark runner (`scripts/run_tuning_benchmarks.py`) with proper helper functions (no lambda assignments) and saner typing, and made the analyzer resilient when stitching best-objective stats together.
+- GitHub Pages now converts the Markdown telemetry tables to standalone HTML (via Pandoc) and the docs link to those HTML renderings so the dashboards display as formatted tables instead of raw pipes.
 - Scoped the `mypy` pre-commit hook to `src/`, disabled filename passing, and taught it to ignore third-party imports so the hook behaves like our documented `mypy src` workflow. Hook failures now flag missing CHANGE_LOG entries earlier.
 - Regenerated the analytics notebook metadata with a trailing newline so the `end-of-file-fixer` hook no longer churns during CI.
 
