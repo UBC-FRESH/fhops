@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+
 from fhops.telemetry.sqlite_store import persist_run
 
 try:

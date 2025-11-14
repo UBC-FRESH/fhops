@@ -349,7 +349,7 @@ def solve_ils(
         kpi_result = compute_kpis(pb, assignments)
         kpi_totals = kpi_result.to_dict()
         meta["kpi_totals"] = {
-            key: (float(value) if isinstance(value, (int, float)) else value)
+            key: (float(value) if isinstance(value, int | float) else value)
             for key, value in kpi_totals.items()
         }
 
@@ -361,7 +361,7 @@ def solve_ils(
             numeric_kpis = {
                 key: float(value)
                 for key, value in kpi_totals.items()
-                if isinstance(value, (int, float))
+                if isinstance(value, int | float)
             }
             run_logger.finalize(
                 status="ok",

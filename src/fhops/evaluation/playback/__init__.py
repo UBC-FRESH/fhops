@@ -1,5 +1,6 @@
 """Schedule playback engines (deterministic, stochastic)."""
 
+from .adapters import assignments_to_records, schedule_to_records
 from .core import (
     DaySummary,
     PlaybackConfig,
@@ -10,7 +11,6 @@ from .core import (
     summarise_days,
     summarise_shifts,
 )
-from .adapters import assignments_to_records, schedule_to_records
 from .events import (
     DowntimeEventConfig,
     LandingShockConfig,

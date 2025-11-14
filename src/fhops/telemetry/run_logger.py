@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 import time
+from collections.abc import Mapping
 from contextlib import AbstractContextManager
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 from uuid import uuid4
 
 from .jsonl import append_jsonl
@@ -15,7 +16,7 @@ from .sqlite_store import persist_run
 
 
 def _iso_now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+    return datetime.now(UTC).isoformat(timespec="seconds")
 
 
 @dataclass(slots=True)
@@ -65,7 +66,7 @@ class RunTelemetryLogger(AbstractContextManager["RunTelemetryLogger"]):
         if self.step_interval and self.step_interval > 0:
             self._steps_path = self.log_path.parent / "steps" / f"{self.run_id}.jsonl"
 
-    def __enter__(self) -> "RunTelemetryLogger":
+    def __enter__(self) -> RunTelemetryLogger:
         self._start_time = time.perf_counter()
         self._start_timestamp = _iso_now()
         if self._steps_path:

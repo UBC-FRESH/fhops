@@ -3,8 +3,8 @@ from __future__ import annotations
 from collections import Counter
 from pathlib import Path
 
-import yaml
 import pytest
+import yaml
 
 from fhops.scenario.io import load_scenario
 from fhops.scenario.synthetic import (

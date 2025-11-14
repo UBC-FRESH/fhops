@@ -8,10 +8,7 @@ from typer.testing import CliRunner
 from fhops.cli.main import app
 from fhops.cli.synthetic import (
     _refresh_aggregate_metadata,
-    _resolve_cli_overrides,
-    _generate_dataset,
 )
-
 
 runner = CliRunner()
 

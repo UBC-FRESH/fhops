@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from collections.abc import Iterable, Iterator, Sequence
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Iterable, Iterator, Sequence
+from typing import TYPE_CHECKING
 
 from fhops.scenario.contract import Problem
 
@@ -107,7 +108,7 @@ class PlaybackResult:
 
 def run_playback(
     problem: Problem,
-    assignments: "pd.DataFrame",
+    assignments: pd.DataFrame,
     *,
     config: PlaybackConfig | None = None,
     sample_id: int = 0,

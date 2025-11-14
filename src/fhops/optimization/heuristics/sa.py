@@ -604,14 +604,14 @@ def solve_sa(
         kpi_result = compute_kpis(pb, assignments)
         kpi_totals = kpi_result.to_dict()
         meta["kpi_totals"] = {
-            key: (float(value) if isinstance(value, (int, float)) else value)
+            key: (float(value) if isinstance(value, int | float) else value)
             for key, value in kpi_totals.items()
         }
         if run_logger and telemetry_logger:
             numeric_kpis = {
                 key: float(value)
                 for key, value in kpi_totals.items()
-                if isinstance(value, (int, float))
+                if isinstance(value, int | float)
             }
             if tuner_meta is not None:
                 progress = tuner_meta.setdefault("progress", {})
