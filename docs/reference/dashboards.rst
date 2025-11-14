@@ -9,14 +9,14 @@ Direct links:
 
 - `Global telemetry history <https://ubc-fresh.github.io/fhops/telemetry/history_summary.html>`_
   – interactive trend chart.
-- `Latest per-scenario history snapshot <https://ubc-fresh.github.io/fhops/telemetry/latest_history_summary.md>`_
-  – leaderboard for the latest report label.
-- `Latest tuner report <https://ubc-fresh.github.io/fhops/telemetry/latest_tuner_report.md>`_
-  – raw Markdown table for code reviews.
-- `Latest tuner comparison <https://ubc-fresh.github.io/fhops/telemetry/latest_tuner_comparison.md>`_
-  / `leaderboard <https://ubc-fresh.github.io/fhops/telemetry/latest_tuner_leaderboard.md>`_
+- `Latest per-scenario history snapshot <https://ubc-fresh.github.io/fhops/telemetry/latest_history_summary.html>`_
+  – leaderboard for the latest report label (`.md` source lives alongside the HTML file).
+- `Latest tuner report <https://ubc-fresh.github.io/fhops/telemetry/latest_tuner_report.html>`_
+  – raw Markdown table rendered as HTML (Markdown source is still published).
+- `Latest tuner comparison <https://ubc-fresh.github.io/fhops/telemetry/latest_tuner_comparison.html>`_
+  / `leaderboard <https://ubc-fresh.github.io/fhops/telemetry/latest_tuner_leaderboard.html>`_
   – win counts and runtime ratios.
-- `Per-bundle difficulty tables <https://ubc-fresh.github.io/fhops/telemetry/tuner_difficulty.md>`_
-  – gap + success rates per tier (CSV versions live beside the Markdown files).
+- `Per-bundle difficulty tables <https://ubc-fresh.github.io/fhops/telemetry/tuner_difficulty.html>`_
+  – gap + success rates per tier (CSV + Markdown versions live beside the HTML files).
 
 See :ref:`telemetry_dashboard_interpretation` for guidance on how to respond to each signal.

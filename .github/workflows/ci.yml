@@ -136,6 +136,20 @@ jobs:
           cp tmp/ci-telemetry/tuner_difficulty.md "$publish_dir/tuner_difficulty.md" || true
           cp tmp/ci-telemetry/tuner_difficulty.csv "$publish_dir/tuner_difficulty.csv" || true
 
+          render_md_to_html() {
+            local source_file="$1"
+            local target_file="$2"
+            if [ -f "$source_file" ]; then
+              pandoc "$source_file" -f gfm -t html5 -s -o "$target_file"
+            fi
+          }
+
+          render_md_to_html "$publish_dir/latest_history_summary.md" "$publish_dir/latest_history_summary.html"
+          render_md_to_html "$publish_dir/latest_tuner_report.md" "$publish_dir/latest_tuner_report.html"
+          render_md_to_html "$publish_dir/latest_tuner_comparison.md" "$publish_dir/latest_tuner_comparison.html"
+          render_md_to_html "$publish_dir/latest_tuner_leaderboard.md" "$publish_dir/latest_tuner_leaderboard.html"
+          render_md_to_html "$publish_dir/tuner_difficulty.md" "$publish_dir/tuner_difficulty.html"
+
       - name: Inspect publish bundle
         run: |
           echo "Contents of tmp/pages:" && ls -R tmp/pages || true
