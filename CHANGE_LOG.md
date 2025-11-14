@@ -1,5 +1,9 @@
 # Development Change Log
 
+## 2025-11-16 — Docs landing fix
+- Repaired `docs/index.rst` so the dashboards reference appears inside the “Getting Started” toctree, restoring a valid Sphinx build and keeping the telemetry links visible on GitHub Pages.
+- Added the missing trailing newline to the generated analytics metadata JSON files so the `end-of-file-fixer` hook and CI stop rewriting them on every run.
+
 ## 2025-11-14 — Tooling polish & CI compliance
 - Added per-file Ruff ignores for the analytics notebooks so their sys.path bootstrapping cells stop tripping `E402`, and let `pre-commit` keep them formatted without destructive rewrites (`pyproject.toml`).
 - Tightened the global typing story: telemetry/benchmark helpers now use modern unions, convergence reporting avoids `type: ignore`, and parquet exporters no longer rely on unused type ignores.
