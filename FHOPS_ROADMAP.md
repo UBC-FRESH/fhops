@@ -103,7 +103,9 @@ before proposing new work.
     - [x] Introduce dual convergence thresholds (soft ≤5%, hard ≤1%) in telemetry analytics so automated stopping criteria have rich signals.
     - [x] Parallelise the tuning harness (≈16 worker processes × 4 threads) with per-worker telemetry merge so sweeps scale linearly with hardware.
     - [x] Add optional Gurobi backend (`fhops[gurobi]`, `--driver gurobi`) for MIP solves that outgrow HiGHS.
-    - [ ] Run long-horizon convergence sweeps (SA/ILS/Tabu, ≥10 000 iterations) on baseline + synthetic bundles to measure iteration/runtime scaling and tune stopping heuristics.
+    - [x] Run long-horizon convergence sweeps (SA/ILS/Tabu, ≥10 000 iterations) on baseline + synthetic bundles to measure iteration/runtime scaling and tune stopping heuristics.
+      - `tmp/convergence-long/long_run_summary.csv` captures wall-clock rates and gap progress; only SA/ILS on `synthetic-medium` reached ≤5 % gap within 10 000 iterations, highlighting the need for deeper budgets or enhanced operators elsewhere.
+      - Next: rerun SA/ILS/Tabu with ≥MIP wall-clock budgets (≥10 min) and log Z* vs. iteration/time curves for regression against scenario size/difficulty.
     - [ ] Reporting polish
       - [x] Tighten `_compute_history_deltas` so percentage columns remain valid and Markdown renders cleanly.
       - [x] Confirm README + docs/how-to explicitly reference the GitHub Pages URL and the exported delta artefacts.

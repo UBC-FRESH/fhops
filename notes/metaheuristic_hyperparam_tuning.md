@@ -101,7 +101,16 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - [x] Introduce a tractable `small21` baseline dataset (≈½ the scale of `med42`) so MIP solves finish quickly and provide a second reference optimum; wire it into the convergence sweeps and telemetry fixtures.
 - [x] Schedule an extended MIP benchmarking window (overnight/off-peak) to finish the outstanding `med42` optimum and capture long-run solver telemetry once resource constraints ease.
 - [x] Wire in Gurobi as an optional MIP backend (CLI flag + docs); keep HiGHS as default but document licensing/install steps so we can solve larger baselines reliably.
-- [ ] Run long-leash convergence experiments for each heuristic (SA/ILS/Tabu) on representative scenarios (minitoy, small21, med42, synthetic tiers) with budgets in the 2 000–10 000+ iteration range; capture wall-clock vs. improvement curves and record when 5 % / 1 % gaps are actually met.
+- [x] Run long-leash convergence experiments for each heuristic (SA/ILS/Tabu) on representative scenarios (minitoy, small21, med42, synthetic tiers) with budgets in the 2 000–10 000+ iteration range; capture wall-clock vs. improvement curves and record when 5 % / 1 % gaps are actually met.
+  - Telemetry + step logs live in `tmp/convergence-long/` (see `long_run_summary.csv` for wallclock-per-1000 iteration stats and gap checkpoints).
+  - SA/ILS hit ≤5 % gap only on `synthetic-medium` within 10 000 iterations (SA ≈100 iters, ILS ≈225); other scenarios remain >10 % off, suggesting we need larger horizons or richer neighbourhoods.
+  - Tabu completes 10 000 iterations in milliseconds but stalls >20 % gap even on synthetic sets — revisit operator mix/tabu tenure before counting it as converged.
+- [ ] Extend SA/ILS sweeps to ≥25 000 iterations (or ≥10 minute wall-clock, whichever is larger) on `med42`, `small21`, and all synthetic tiers so the trajectories mirror the MIP solve-time budgets.
+  - Use the measured wall-clock per 1 000 iterations from `long_run_summary.csv` to set target horizons (e.g., med42 SA ≈2.5 s/1k ⇒ 240 k iterations for a 10 min leash, 360 k+ if matching a 15 min Gurobi solve).
+  - Capture per-minute checkpoints (iteration, best objective, wall-clock) to drive Z* vs. iteration/time plots.
+- [ ] Re-tune Tabu tenure/operator weights under long budgets (≥10 minutes) and log whether diversification closes the >20 % gap; fall back to hybrid or multi-neighbour scoring if not.
+- [ ] Fit scenario-size vs. iterations-to-gap curves (5 % / 1 %) using the long-run telemetry to inform adaptive stopping heuristics. Candidate predictors: block count, machine count, planning horizon days, MIP solve time, difficulty proxies (e.g., mobilisation density).
+- [ ] Surface Z* trajectories (iteration + wall-clock) per scenario/heuristic in the docs so we can eyeball convergence shapes before training meta-models.
 
 ## Benchmark Bundle Plan (draft)
 

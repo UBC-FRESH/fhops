@@ -414,6 +414,11 @@ def solve_heur_cmd(
         writable=True,
         dir_okay=False,
     ),
+    tier_label: str | None = typer.Option(
+        None,
+        "--tier-label",
+        help="Optional label describing the budget tier for telemetry summaries.",
+    ),
     kpi_mode: str = typer.Option(
         "extended",
         "--kpi-mode",
@@ -515,6 +520,21 @@ def solve_heur_cmd(
         if selected_profile:
             base_telemetry_context["profile"] = selected_profile.name
             base_telemetry_context["profile_version"] = selected_profile.version
+        if tier_label:
+            base_telemetry_context["tier"] = tier_label
+        tuner_meta_payload = {
+            "algorithm": "sa",
+            "budget": {
+                "iters": iters,
+                "tier": tier_label,
+            },
+            "config": {
+                "batch_size": batch_arg,
+                "max_workers": worker_arg,
+                "parallel_multistart": multi_start,
+            },
+        }
+        base_telemetry_context["tuner_meta"] = tuner_meta_payload
         sa_kwargs["telemetry_log"] = telemetry_log
         sa_kwargs["telemetry_context"] = base_telemetry_context
 
@@ -608,6 +628,8 @@ def solve_heur_cmd(
             "batch_size": batch_neighbours,
             "max_workers": parallel_workers,
         }
+        if tier_label:
+            record["tier"] = tier_label
         if selected_profile:
             record["profile"] = selected_profile.name
             record["profile_version"] = selected_profile.version
