@@ -171,7 +171,9 @@ Guidelines:
 
 Parameters wrapped inside profiles (cooling schedule families, operator templates, multi-start strategies) remain part of the search surface; tuning drivers surface them via preset names so Bayesian/agentic tuners can toggle discrete options without bespoke code.
 
-### Agentic Tuning Integration
+### Agentic Tuning Integration *(Deferred — Not Now / Maybe Later)*
+
+Status: paused until the conventional tuning toolkit, benchmarking automation, and reporting polish are complete. Keep the checklist for future planning but treat it as backlog for now.
 - [ ] Define prompt templates and action space for the LLM agent (config proposals, narrative rationale).
 - [ ] Build agent loop driver that reads telemetry snapshots, requests proposals, validates via harness, and records outcomes.
 - [ ] Add safety rails (budget limits, whitelist parameters) and log all prompts/responses for auditability.
@@ -212,6 +214,9 @@ Parameters wrapped inside profiles (cooling schedule families, operator template
 - [ ] Stage benchmarking sweeps comparing grid/random/bayes on the canonical bundle and capture comparative telemetry summaries.
 - [ ] Wire `scripts/run_tuning_benchmarks.py` into CI (smoke mode) so minitoy/med42 sweeps publish the summary tables automatically.
 - [ ] Use the per-scenario summary CSV/Markdown to drive README badges or dashboards that flag regressions without opening full reports.
+
+## Not Now / Maybe Later
+- Agentic tuner R&D (prompt/action loop, guardrails, benchmarking, rollout docs) — revisit once the conventional tuning suite, CI sweeps, and reporting polish are complete.
 
 ### Telemetry schema (draft)
 
