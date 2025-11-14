@@ -202,6 +202,39 @@ mirroring the GitHub Pages snapshot. Monitoring those files or wiring them into 
 status badge is a simple way to highlight regressions without manually opening the
 full report.
 
+.. _telemetry_dashboard_interpretation:
+
+Interpreting Dashboards
+-----------------------
+
+The Pages site (`live links in the README <../README.html#live-dashboards>`_) mirrors the
+artefacts generated in this guide. Here is how to read the main pages and what to do when
+you spot an anomaly:
+
+* **history_summary.html** – shows objective/KPI trends per scenario/bundle. Hover over a
+  point to see the branch label and gap. Action: red trend or widening gap? Open the
+  corresponding ``latest_tuner_report`` row and re-run the scenario locally; many teams keep
+  a “≤5 % gap” rule that must hold before merging.
+* **latest_history_summary.md/csv** – distilled leaderboard for the latest report label.
+  Treat this as a regression gate in PRs (for example, assert that SA on med42 stays within
+  ±2 % of baseline). Action: if a scenario drops out of the table, check telemetry logs to
+  confirm the run actually executed.
+* **latest_tuner_report.md/csv** – raw stats (best/mean objective, run IDs, configs) per
+  (algorithm, scenario). Action: when a reviewer asks “what changed?”, cite the row
+  showing the improved/worsened objective and, if needed, drill into the JSONL/SQLite
+  entry using ``best_run_id``.
+* **latest_tuner_leaderboard.md** / **latest_tuner_comparison.md** – derived by
+  ``scripts/analyze_tuner_reports.py``; highlight win counts, runtime ratios, and delta to
+  the baseline report. Action: use this to justify tuning work (“grid wins fewer scenarios
+  but halves runtime”) or to flag regressions.
+* **tuner_difficulty*.md/csv** – scenario difficulty indices (baseline/synthetic tiers,
+  MIP gap, second-best delta). Action: use the soft/hard success rates to prioritise future
+  tuning: if a bundle never reaches the 1 % threshold, increase iteration budgets or add new
+  heuristics before chasing other work.
+
+Whenever you publish a new artefact under ``tmp/ci-telemetry/publish/telemetry/``, add the
+link to the README so users can discover it and reference it in code reviews.
+
 Automated Sweeps
 ----------------
 
