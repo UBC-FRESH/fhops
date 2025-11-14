@@ -1,0 +1,66 @@
+{
+  "generated_at": "2025-11-11T10:03:51+00:00",
+  "light_mode": false,
+  "notebooks": [
+    {
+      "notebook": "docs/examples/analytics/playback_walkthrough.ipynb",
+      "status": "ok",
+      "runtime_seconds": 4.18,
+      "message": ""
+    },
+    {
+      "notebook": "docs/examples/analytics/stochastic_robustness.ipynb",
+      "status": "ok",
+      "runtime_seconds": 4.28,
+      "message": ""
+    },
+    {
+      "notebook": "docs/examples/analytics/what_if_analysis.ipynb",
+      "status": "ok",
+      "runtime_seconds": 4.13,
+      "message": ""
+    },
+    {
+      "notebook": "docs/examples/analytics/landing_congestion.ipynb",
+      "status": "ok",
+      "runtime_seconds": 4.93,
+      "message": ""
+    },
+    {
+      "notebook": "docs/examples/analytics/system_mix.ipynb",
+      "status": "ok",
+      "runtime_seconds": 3.93,
+      "message": ""
+    },
+    {
+      "notebook": "docs/examples/analytics/kpi_decomposition.ipynb",
+      "status": "ok",
+      "runtime_seconds": 4.38,
+      "message": ""
+    },
+    {
+      "notebook": "docs/examples/analytics/telemetry_diagnostics.ipynb",
+      "status": "ok",
+      "runtime_seconds": 4.08,
+      "message": ""
+    },
+    {
+      "notebook": "docs/examples/analytics/ensemble_resilience.ipynb",
+      "status": "ok",
+      "runtime_seconds": 5.13,
+      "message": ""
+    },
+    {
+      "notebook": "docs/examples/analytics/operator_sweep.ipynb",
+      "status": "ok",
+      "runtime_seconds": 4.18,
+      "message": ""
+    },
+    {
+      "notebook": "docs/examples/analytics/benchmark_summary.ipynb",
+      "status": "ok",
+      "runtime_seconds": 3.93,
+      "message": ""
+    }
+  ]
+}

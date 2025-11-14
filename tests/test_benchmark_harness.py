@@ -3,8 +3,10 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+from hypothesis import HealthCheck, given, settings, strategies as st
 
 from fhops.cli.benchmarks import run_benchmark_suite
+from fhops.scenario.synthetic import SyntheticDatasetConfig, generate_random_dataset
 
 
 def test_benchmark_suite_minitoy(tmp_path):
@@ -126,3 +128,59 @@ def test_benchmark_suite_preset_comparison(tmp_path):
     config = json.loads(explore_row["operators_config"])
     assert pytest.approx(config["mobilisation_shake"], rel=1e-6) == 0.2
     assert all(sa_rows["best_heuristic_solver"] == "sa")
+
+
+def test_synthetic_small_benchmark_kpi_bounds(tmp_path):
+    summary = run_benchmark_suite(
+        [Path("examples/synthetic/small/scenario.yaml")],
+        tmp_path,
+        time_limit=5,
+        sa_iters=100,
+        include_mip=False,
+    )
+    assert not summary.empty
+    sa_row = summary.iloc[0]
+    assert sa_row["scenario_path"].endswith("examples/synthetic/small/scenario.yaml")
+    assert sa_row["kpi_total_production"] > 0
+    assert 0 <= sa_row["kpi_utilisation_ratio_mean_shift"] <= 1.01
+    assert 0 <= sa_row["kpi_utilisation_ratio_mean_day"] <= 1.01
+
+    util_by_machine = json.loads(sa_row["kpi_utilisation_ratio_by_machine"])
+    for value in util_by_machine.values():
+        assert 0 <= value <= 1.01
+
+    util_by_role = json.loads(sa_row["kpi_utilisation_ratio_by_role"])
+    for value in util_by_role.values():
+        assert 0 <= value <= 1.01
+
+    assert sa_row["kpi_completed_blocks"] >= 1
+
+
+@settings(max_examples=4, deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture])
+@given(seed_value=st.integers(min_value=1, max_value=500))
+def test_synthetic_kpi_properties(seed_value: int, tmp_path):
+    config = SyntheticDatasetConfig(
+        name="synthetic-hypo",
+        tier="small",
+        num_blocks=(5, 6),
+        num_days=(6, 7),
+        num_machines=(2, 3),
+        blackout_probability=0.05,
+        availability_probability=0.85,
+    )
+    bundle = generate_random_dataset(config, seed=seed_value)
+    scenario_dir = tmp_path / f"scenario_{seed_value}"
+    bundle.write(scenario_dir)
+
+    bench_dir = tmp_path / f"bench_{seed_value}"
+    summary = run_benchmark_suite(
+        [scenario_dir / "scenario.yaml"],
+        bench_dir,
+        time_limit=5,
+        sa_iters=40,
+        include_mip=False,
+    )
+    row = summary.iloc[0]
+    assert row["kpi_total_production"] >= row["kpi_completed_blocks"]
+    assert 0.0 <= row["kpi_utilisation_ratio_mean_shift"] <= 1.01
+    assert 0.0 <= row["kpi_utilisation_ratio_mean_day"] <= 1.01

@@ -2,6 +2,7 @@ import json
 
 import pandas as pd
 import pyomo.environ as pyo
+import pytest
 
 from fhops.evaluation.metrics.kpis import compute_kpis
 from fhops.optimization.mip.builder import build_model
@@ -131,6 +132,13 @@ def test_compute_kpis_reports_mobilisation_cost():
     assert kpis.get("mobilisation_cost") == 105.0
     per_machine = json.loads(kpis.get("mobilisation_cost_by_machine", "{}"))
     assert per_machine == {"M1": 105.0}
+    per_landing = json.loads(kpis.get("mobilisation_cost_by_landing", "{}"))
+    assert per_landing == {"L1": 105.0}
+    assert kpis.get("makespan_day") == 2
+    assert kpis.get("makespan_shift") == "S1"
+    assert pytest.approx(kpis.get("utilisation_ratio_mean_shift", 0.0)) == 1.0
+    assert pytest.approx(kpis.get("utilisation_ratio_weighted_shift", 0.0)) == 1.0
+    assert kpis.get("downtime_hours_total", 0.0) == 0.0
 
 
 def test_compute_kpis_reports_sequencing_metrics():

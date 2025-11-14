@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 import random as _random
+from contextlib import nullcontext
+from pathlib import Path
 from typing import Any, cast
 
 import pandas as pd
 
+from fhops.evaluation import compute_kpis
 from fhops.optimization.heuristics.registry import OperatorRegistry
 from fhops.optimization.heuristics.sa import (
     Schedule,
@@ -17,6 +20,7 @@ from fhops.optimization.heuristics.sa import (
 )
 from fhops.optimization.mip import solve_mip
 from fhops.scenario.contract import Problem
+from fhops.telemetry import RunTelemetryLogger
 
 
 def _assignments_to_schedule(pb: Problem, assignments: pd.DataFrame) -> Schedule:
@@ -124,6 +128,8 @@ def solve_ils(
     stall_limit: int = 10,
     hybrid_use_mip: bool = False,
     hybrid_mip_time_limit: int = 60,
+    telemetry_log: str | Path | None = None,
+    telemetry_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Run Iterated Local Search (optionally with MIP warm starts).
 
@@ -181,104 +187,203 @@ def solve_ils(
     batch_arg = batch_size if batch_size and batch_size > 1 else None
     worker_arg = max_workers if max_workers and max_workers > 1 else None
 
-    current = _init_greedy(pb)
-    current_score = _evaluate(pb, current)
-    best = current
-    best_score = current_score
-    initial_score = current_score
-
-    stalls = 0
-    perturbations = 0
-    restarts = 0
-    improvement_steps = 0
-    operator_stats: dict[str, dict[str, float]] = {}
-
-    for _ in range(max(1, iters)):
-        current, current_score, improved, steps = _local_search(
-            pb, current, registry, rng, batch_arg, worker_arg, operator_stats
-        )
-        improvement_steps += steps
-        if current_score > best_score:
-            best, best_score = current, current_score
-            stalls = 0
-        else:
-            stalls += 1
-
-        if stalls >= stall_limit:
-            if hybrid_use_mip:
-                try:
-                    mip_res = solve_mip(
-                        pb, time_limit=hybrid_mip_time_limit, driver="auto", debug=False
-                    )
-                    assignments = cast(pd.DataFrame, mip_res["assignments"]).copy()
-                    hybrid_schedule = _assignments_to_schedule(pb, assignments)
-                    hybrid_score = _evaluate(pb, hybrid_schedule)
-                    if hybrid_score > best_score:
-                        best, best_score = hybrid_schedule, hybrid_score
-                        current = best
-                        current_score = best_score
-                        stalls = 0
-                        restarts += 1
-                        continue
-                except Exception:  # pragma: no cover - defensive path
-                    pass
-            current = best
-            current = _perturb_schedule(
-                pb, current, registry, rng, perturbation_strength, operator_stats
-            )
-            current_score = _evaluate(pb, current)
-            stall_limit = max(1, stall_limit)
-            stalls = 0
-            perturbations += 1
-        else:
-            current = _perturb_schedule(
-                pb, current, registry, rng, perturbation_strength, operator_stats
-            )
-            current_score = _evaluate(pb, current)
-            perturbations += 1
-
-    rows = []
-    for machine_id, plan in best.plan.items():
-        for (day, shift_id), block_id in plan.items():
-            if block_id is not None:
-                rows.append(
-                    {
-                        "machine_id": machine_id,
-                        "block_id": block_id,
-                        "day": int(day),
-                        "shift_id": shift_id,
-                        "assigned": 1,
-                    }
-                )
-    assignments = pd.DataFrame(rows).sort_values(["day", "shift_id", "machine_id", "block_id"])
-    meta = {
-        "initial_score": float(initial_score),
-        "best_score": float(best_score),
-        "iterations": iters,
-        "perturbations": perturbations,
-        "restarts": restarts,
-        "stall_limit": stall_limit,
+    config_snapshot = {
+        "iters": iters,
+        "batch_size": batch_size,
+        "max_workers": max_workers,
         "perturbation_strength": perturbation_strength,
-        "hybrid_used": hybrid_use_mip,
-        "algorithm": "ils",
+        "stall_limit": stall_limit,
+        "hybrid_use_mip": hybrid_use_mip,
+        "hybrid_mip_time_limit": hybrid_mip_time_limit,
         "operators": registry.weights(),
-        "improvement_steps": improvement_steps,
     }
-    if operator_stats:
-        meta["operators_stats"] = {
-            name: {
-                "proposals": stats.get("proposals", 0.0),
-                "accepted": stats.get("accepted", 0.0),
-                "skipped": stats.get("skipped", 0.0),
-                "weight": stats.get("weight", 0.0),
-                "acceptance_rate": (
-                    stats.get("accepted", 0.0) / stats.get("proposals", 1.0)
-                    if stats.get("proposals", 0.0)
-                    else 0.0
-                ),
-            }
-            for name, stats in operator_stats.items()
+    context_payload = dict(telemetry_context or {})
+    scenario = pb.scenario
+    timeline = getattr(scenario, "timeline", None)
+    scenario_features = {
+        "num_days": getattr(scenario, "num_days", None),
+        "num_blocks": len(getattr(scenario, "blocks", []) or []),
+        "num_machines": len(getattr(scenario, "machines", []) or []),
+        "num_landings": len(getattr(scenario, "landings", []) or []),
+        "num_shift_calendar_entries": len(getattr(scenario, "shift_calendar", []) or []),
+        "num_timeline_shifts": len(getattr(timeline, "shifts", []) or []),
+    }
+    context_payload.setdefault("scenario_features", scenario_features)
+    step_interval = context_payload.pop("step_interval", 25)
+    tuner_meta = context_payload.pop("tuner_meta", None)
+    scenario_name = getattr(pb.scenario, "name", None)
+    scenario_path = context_payload.pop("scenario_path", None)
+
+    telemetry_logger: RunTelemetryLogger | None = None
+    if telemetry_log:
+        telemetry_context = dict(context_payload)
+        telemetry_context.update(scenario_features)
+        telemetry_logger = RunTelemetryLogger(
+            log_path=telemetry_log,
+            solver="ils",
+            scenario=scenario_name,
+            scenario_path=scenario_path,
+            seed=seed,
+            config=config_snapshot,
+            context=telemetry_context,
+            step_interval=step_interval if isinstance(step_interval, int) and step_interval > 0 else None,
+        )
+
+    with (telemetry_logger if telemetry_logger else nullcontext()) as run_logger:
+        current = _init_greedy(pb)
+        current_score = _evaluate(pb, current)
+        best = current
+        best_score = current_score
+        initial_score = current_score
+
+        stalls = 0
+        perturbations = 0
+        restarts = 0
+        improvement_steps = 0
+        operator_stats: dict[str, dict[str, float]] = {}
+
+        total_iterations = max(1, iters)
+        for iteration in range(1, total_iterations + 1):
+            current, current_score, improved, steps = _local_search(
+                pb, current, registry, rng, batch_arg, worker_arg, operator_stats
+            )
+            improvement_steps += steps
+            if current_score > best_score:
+                best, best_score = current, current_score
+                stalls = 0
+            else:
+                stalls += 1
+
+            if run_logger and telemetry_logger and telemetry_logger.step_interval:
+                if (
+                    iteration == 1
+                    or iteration == total_iterations
+                    or iteration % telemetry_logger.step_interval == 0
+                ):
+                    run_logger.log_step(
+                        step=iteration,
+                        objective=float(current_score),
+                        best_objective=float(best_score),
+                        temperature=None,
+                        acceptance_rate=None,
+                        proposals=int(steps),
+                        accepted_moves=int(steps if improved else 0),
+                    )
+
+            if stalls >= stall_limit:
+                if hybrid_use_mip:
+                    try:
+                        mip_res = solve_mip(
+                            pb, time_limit=hybrid_mip_time_limit, driver="auto", debug=False
+                        )
+                        assignments = cast(pd.DataFrame, mip_res["assignments"]).copy()
+                        hybrid_schedule = _assignments_to_schedule(pb, assignments)
+                        hybrid_score = _evaluate(pb, hybrid_schedule)
+                        if hybrid_score > best_score:
+                            best, best_score = hybrid_schedule, hybrid_score
+                            current = best
+                            current_score = best_score
+                            stalls = 0
+                            restarts += 1
+                            continue
+                    except Exception:  # pragma: no cover - defensive path
+                        pass
+                current = best
+                current = _perturb_schedule(
+                    pb, current, registry, rng, perturbation_strength, operator_stats
+                )
+                current_score = _evaluate(pb, current)
+                stalls = 0
+                perturbations += 1
+            else:
+                current = _perturb_schedule(
+                    pb, current, registry, rng, perturbation_strength, operator_stats
+                )
+                current_score = _evaluate(pb, current)
+                perturbations += 1
+
+        rows = []
+        for machine_id, plan in best.plan.items():
+            for (day, shift_id), block_id in plan.items():
+                if block_id is not None:
+                    rows.append(
+                        {
+                            "machine_id": machine_id,
+                            "block_id": block_id,
+                            "day": int(day),
+                            "shift_id": shift_id,
+                            "assigned": 1,
+                        }
+                    )
+        assignments = pd.DataFrame(rows).sort_values(["day", "shift_id", "machine_id", "block_id"])
+        meta = {
+            "initial_score": float(initial_score),
+            "best_score": float(best_score),
+            "iterations": iters,
+            "perturbations": perturbations,
+            "restarts": restarts,
+            "stall_limit": stall_limit,
+            "perturbation_strength": perturbation_strength,
+            "hybrid_used": hybrid_use_mip,
+            "algorithm": "ils",
+            "operators": registry.weights(),
+            "improvement_steps": improvement_steps,
         }
+        if operator_stats:
+            meta["operators_stats"] = {
+                name: {
+                    "proposals": stats.get("proposals", 0.0),
+                    "accepted": stats.get("accepted", 0.0),
+                    "skipped": stats.get("skipped", 0.0),
+                    "weight": stats.get("weight", 0.0),
+                    "acceptance_rate": (
+                        stats.get("accepted", 0.0) / stats.get("proposals", 1.0)
+                        if stats.get("proposals", 0.0)
+                        else 0.0
+                    ),
+                }
+                for name, stats in operator_stats.items()
+            }
+        kpi_result = compute_kpis(pb, assignments)
+        kpi_totals = kpi_result.to_dict()
+        meta["kpi_totals"] = {
+            key: (float(value) if isinstance(value, (int, float)) else value)
+            for key, value in kpi_totals.items()
+        }
+
+        if tuner_meta is not None:
+            progress = tuner_meta.setdefault("progress", {})
+            progress.setdefault("best_objective", float(best_score))
+            progress.setdefault("iterations", iters)
+        if run_logger and telemetry_logger:
+            numeric_kpis = {
+                key: float(value)
+                for key, value in kpi_totals.items()
+                if isinstance(value, (int, float))
+            }
+            run_logger.finalize(
+                status="ok",
+                metrics={
+                    "objective": float(best_score),
+                    "initial_score": float(initial_score),
+                    **numeric_kpis,
+                },
+                extra={
+                    "iterations": iters,
+                    "perturbations": perturbations,
+                    "restarts": restarts,
+                    "stall_limit": stall_limit,
+                    "perturbation_strength": perturbation_strength,
+                    "hybrid_used": hybrid_use_mip,
+                },
+                kpis=kpi_totals,
+                tuner_meta=tuner_meta,
+            )
+            meta["telemetry_run_id"] = telemetry_logger.run_id
+            meta["telemetry_log_path"] = str(telemetry_logger.log_path)
+            if telemetry_logger.steps_path:
+                meta["telemetry_steps_path"] = str(telemetry_logger.steps_path)
+
     return {"objective": float(best_score), "assignments": assignments, "meta": meta}
 
 

@@ -95,3 +95,31 @@ Usage Notes
 - Operators with frequently low acceptance rates may warrant weight adjustments or new presets.
 - Combine logs with the hyperparameter tuning plan (``notes/metaheuristic_hyperparam_tuning.md``) to drive future ML/LLM-based schedulers.
 - Parallel options add ``batch_size``/``max_workers`` fields to single-run records. Multi-start telemetry logs per-run entries with ``run_id``/``preset`` and a summary record containing ``type: multi_start_summary``, ``best_run_id``, ``best_objective``, and ``runs_executed``.
+
+CLI Reporting
+-------------
+
+Use the ``fhops telemetry report`` sub-command to aggregate the mirrored SQLite
+store into CSV/Markdown summaries without re-running the tuners::
+
+    fhops telemetry report telemetry/runs.sqlite \
+        --out-csv tmp/tuner_report.csv \
+        --out-markdown tmp/tuner_report.md
+
+The command scans ``runs``, ``run_metrics``, ``run_kpis``, and
+``tuner_summaries`` tables to surface best/mean objective values per algorithm
+and scenario. See :doc:`../howto/telemetry_tuning` for a step-by-step guide.
+
+Historical Trends
+-----------------
+
+Each CI run uploads three ready-made history artefacts under the
+``telemetry-report`` bundle:
+
+* ``history_summary.csv`` — tabular history of best/mean objectives for dated snapshots.
+* ``history_summary.md`` — Markdown rendering of the same table.
+* ``history_summary.html`` — Altair chart plotting best objective trends.
+* ``history_delta.{csv,md}`` — latest vs. previous snapshot diff across objectives and key KPIs.
+
+Download those files (or rerun ``analyze_tuner_reports.py --history-dir`` on a
+local archive) to inspect performance trends without regenerating telemetry.

@@ -16,13 +16,145 @@ Status: Draft — roadmap Phase 3 owner document.
 - [ ] Capture mobilisation-related metrics and reporting hooks.
 - [ ] Prototype Nemora integration (import stand tables as stress tests).
 
+### Deterministic Playback Inventory — 2025-02-??
+- **Current assets**
+  - Legacy `fhops.eval.kpis` simply re-exports `fhops.evaluation.metrics.kpis.compute_kpis`; the latter is still the working KPI entry point (expects a day-level assignments `DataFrame` with `machine_id`, `block_id`, `day` columns).
+  - `Scenario` contracts expose `timeline`, `calendar`, and optional `shift_calendar` fields plus `TimelineConfig`/`ShiftDefinition`/`BlackoutWindow` models in `fhops.scheduling.timeline` for describing shift structures.
+  - Heuristic solvers (`fhops.optimization.heuristics.sa`) emit `Schedule.plan` dictionaries keyed by `(day, shift_id)` and already consult blackout windows + shift availability, so raw schedule data is available for playback.
+- **Gaps to close**
+  - `fhops.evaluation.playback` is an empty namespace; there is no deterministic playback engine to transform solver outputs into time-indexed records or to stitch together shift/day aggregates.
+  - No bridge converts `Schedule.plan` (or MIP outputs) into the tabular format consumed by `compute_kpis`; downstream consumers hand-roll conversions in notebooks/tests.
+  - CLI layer lacks a playback/evaluation command; documentation only references KPI helpers via solver examples.
+  - Reporting primitives stop at day-level metrics—no shift/day rollups, blackout reporting, or mobilisation timelines exist.
+  - Regression coverage is limited to KPI calculators; there are no fixtures validating end-to-end playback or ensuring calendars/timelines are honoured.
+  - Deprecation warning for `fhops.eval.kpis` remains—needs removal once new playback module lands to avoid dual entry points.
+
+### Shift/Day Reporting Specification — 2025-02-??
+- **Scope & outcomes**
+  - Produce a deterministic playback module that converts solver outputs (`Schedule.plan`, MIP assignment tensors, CSV fixtures) into canonical, shift-indexed records.
+  - Emit both shift-granular and day-aggregated datasets consumable by KPI calculators, dashboards, and upcoming stochastic sampling hooks.
+  - Define schemas so CLI/reporting layers can stream results to CSV/Parquet and hand-roll aggregations disappear from examples/tests.
+- **Input expectations**
+  - Accept `Problem` + schedule-like payloads (either `Schedule` or wide DataFrame) with optional mobilisation and shift calendar context.
+  - Normalise availability signals: honour `scenario.shift_calendar` when present, fall back to `TimelineConfig.shifts`, and inject synthetic `shift_id="S1"` when neither is provided.
+  - Capture blackout usage by inspecting `TimelineConfig.blackouts` and tagging resulting playback rows with `blackout_hit` flags.
+- **Proposed output models**
+  - `PlaybackRecord`: dataclass capturing `day`, `shift_id`, `machine_id`, `block_id`, `hours_worked`, `production_units`, `mobilisation_cost`, `blackout_hit`, `notes`. Records will be streamable as a generator for large scenarios.
+  - `ShiftSummary`: aggregation keyed by `day`, `shift_id`, `machine_id` with totals for production, mobilisation, idle hours, blackout conflicts, sequencing violations.
+  - `DaySummary`: aggregation keyed by `day`, grouped across machines, reporting completed blocks, mobilisation totals, downtime reasons, utilisation ratios.
+  - Provide adapters to `pandas.DataFrame` so `compute_kpis` can continue to operate while new KPI modules iterate towards shift-aware variants.
+- **Data contract additions**
+  - Extend `ShiftDefinition` with optional `start_offset_hours` (default 0) to support chronological ordering and downstream charting; mark backwards-compatible.
+  - Add `TimelineConfig.reporting_template` stub (enum: `shift_only`, `shift_and_day`, `day_only`) to steer default playback exporters and CLI printing.
+  - Track expected mobilisation units on a per-shift basis by adding `mobilisation_cost_flat` vs. `mobilisation_cost_variable` fields to `ShiftSummary` schema.
+- **CLI & docs**
+  - Introduce `fhops eval playback` command: loads scenario + assignments, runs playback, writes `--shift-out`/`--day-out` files (CSV by default, Parquet optional via flag).
+  - Update `docs/howto/evaluation.rst` with usage examples, schema tables, and troubleshooting (e.g., missing shift calendars).
+  - Add quickstart snippet demonstrating CLI usage + notebook-friendly Pandas interop.
+  - Provide aggregation recipe showing how to summarise per-machine/per-day stats for KPI expansion modules.
+- **Testing & validation**
+  - Regression fixtures: deterministic playback for `examples/minitoy` and regression scenario; assert shift/day outputs and mobilisation tagging.
+  - Property-based tests ensuring aggregation across shifts equals day totals and respects blackout windows (no work counted inside blackout).
+  - CLI smoke test invoking `fhops eval playback` with synthetic assignments verifying file emission + console summary.
+- **Open decisions**
+  - Whether to persist playback outputs inside telemetry store alongside solver metadata (tie-in with tuning framework).
+  - How to surface partially assigned shifts (e.g., empty shift_id) — consider dedicated `unassigned` bucket vs. omission.
+
+### Shift/Day Reporting Plan — 2025-02-??
+- **Aggregation helpers & KPI alignment**
+  - [x] Extend `ShiftSummary`/`DaySummary` (or introduce dedicated KPI dataclasses) with any additional fields needed for Phase 3 KPI expansion (per-landing mobilisation, blackout breakdowns, etc.).
+  - [x] Implement aggregation helpers (e.g., `playback/aggregates.py`) that compute per-machine utilisation, mobilisation totals, blackout counts, feeding future KPI modules.
+  - [x] Validate helper outputs against regression fixtures and reconcile with KPI spec.
+  - [x] Introduce `KPIResult` mapping to surface canonical KPI totals alongside optional shift/day calendars.
+- **Exporter & serialization pipeline**
+  - [x] CSV exports via CLI (`--shift-out`, `--day-out`).
+  - [x] Parquet exports with dependency checks (`--shift-parquet`, `--day-parquet`).
+  - [x] Markdown summary generation (`--summary-md`).
+  - [x] Refactor serialization paths so CLI, telemetry, and automation share a single helper to avoid duplication (see `playback/exporters.py`; telemetry integration now wired via `--telemetry-log`).
+- **Benchmark validation & fixtures**
+  - [x] Capture deterministic fixtures for minitoy/med42 (CSV).
+  - [x] Capture matching Parquet fixtures (or generate on the fly) and add regression tests diffing CLI exports vs. stored schema.
+  - [x] Ensure CI runs a smoke covering CSV + Parquet + Markdown outputs for minitoy/med42/regression scenarios (see `tests/test_cli_playback_exports.py`).
+- **Documentation**
+  - [x] Add quickstart snippet to `docs/howto/evaluation.rst` demonstrating command → Parquet → Pandas load, including utilisation interpretation.
+  - [x] Document aggregation helpers for KPI contributors.
+  - [x] Document exporter options (CLI reference + Markdown section).
+- **Testing**
+  - [x] Property-based tests ensuring shift totals equal day totals.
+  - [x] Property-based tests ensuring blackout constraints hold.
+  - [x] CLI smoke tests cover CSV, stochastic toggles, Markdown, landing shocks.
+
+### Stochastic Sampling API Plan — 2025-02-??
+- **Objectives**
+  - Layer stochastic extensions (downtime, weather, landing congestion) atop the deterministic playback runner with reproducible sampling.
+  - Support ensemble execution (N samples per scenario) with aggregated KPI outputs and confidence interval reporting.
+- **Core abstractions**
+  - `SamplingContext`: dataclass capturing RNG seed, sample_id, scenario metadata, and reusable random streams (downtime, weather, mobilisation).
+  - `StochasticEvent`: protocol for sampling events; concrete implementations (`DowntimeEvent`, `WeatherShiftEvent`, `LandingConstraintShock`) mutate playback records prior to aggregation.
+  - `PlaybackEnsemble`: orchestrator that runs deterministic playback per sample, applies stochastic events, and emits shift/day summaries + aggregate statistics.
+  - Configuration surfaced via Pydantic models (`DowntimeEventConfig`, `WeatherEventConfig`, `LandingShockConfig`, `SamplingConfig`) under `fhops.evaluation.playback.events`.
+  - Implemented initial `DowntimeEvent`, `WeatherEvent`, and `LandingShockEvent` logic in `fhops.evaluation.playback.stochastic` with ensemble runner + regression tests.
+- **API surface**
+  - `run_stochastic_playback(problem, schedule, *, samples=10, seed=123, events=None)` returning `EnsembleResult` with:
+    - `sample_records`: iterator/generator of per-sample playback outputs.
+    - `aggregated_shift`/`aggregated_day`: DataFrames summarising means/percentiles.
+    - `kpi_distribution`: dictionary containing per-KPI arrays + summary stats.
+  - CLI entry (`fhops eval simulate`) with flags `--samples`, `--seed`, `--include-downtime`, `--include-weather`, `--include-landing`, `--out-dir`.
+- **Sampling mechanics**
+  - Introduce RNG utilities under `fhops.evaluation.playback.random` using `numpy.random.Generator`.
+  - Provide event-specific configuration (e.g., downtime mean duration, weather severity) via YAML/JSON schema validated against `pydantic` models.
+  - Ensure deterministic replay by exposing `--sample-ids` and capturing seed metadata in output manifests.
+- **Outputs & storage**
+  - Emit ensemble results to structured directory: `out_dir/{sample_id}/shift.csv`, `day.csv`, plus `aggregates/*.csv`.
+  - Produce summary manifest (`manifest.json`) capturing configuration, seeds, runtime, KPI summary.
+  - Integrate with telemetry store so hyperparameter tuning can reuse stochastic runs.
+- **Testing strategy**
+  - Unit tests for each event type (downtime/weather/landing) verifying statistical properties via fixed seeds.
+    - Added initial coverage in `tests/test_stochastic_playback.py` for downtime, weather, and landing shocks.
+  - Property-based tests ensuring deterministic playback equivalence when events are disabled (`samples=1`, no events).
+    - Added regression/property checks ensuring base playback is recovered when probabilities are zero and sample production stays within deterministic bounds.
+  - Performance smoke to confirm ensemble scaling (e.g., 20 samples on minitoy executes within target wall time).
+- **Open questions**
+  - Do we require parallel execution support out of the gate (thread/process pools)?
+  - How to surface user-defined stochastic events (plugin entry points or config-driven expressions)?
+
+### KPI Expansion Plan — 2025-02-??
+- **Metric specification & alignment**
+- [x] Reconcile production/utilisation/makespan definitions across `notes/mip_model_plan.md`, `notes/mobilisation_plan.md`, and this document (see shared glossary in `docs/howto/evaluation.rst`).
+- [x] Document final KPI formulas and assumptions in `docs/howto/evaluation.rst`.
+    - [x] Capture utilisation/makespan/mobilisation landing formulas alongside existing production/mobilisation metrics.
+    - [x] Add weather/downtime penalty definitions after stochastic cost modelling lands.
+  - [x] Map required raw signals from playback outputs and ensure data contract coverage.
+    - [x] Confirm `ShiftSummary`/`DaySummary` expose landing IDs, machine roles, downtime/weather flags.
+    - [x] Extend playback dataclasses and fixtures where additional columns (e.g., `landing_id`, `downtime_reason`) are required.
+
+- **Implementation & validation**
+- [x] Extend KPI calculators to emit cost, makespan, utilisation, mobilisation spend variants.
+    - [x] Implement utilisation aggregators that reduce shift/day summaries into KPI scalars.
+    - [x] Compute makespan and exposure windows via deterministic playback baselines.
+    - [x] Add per-landing mobilisation breakdowns.
+    - [x] Introduce weather/downtime cost estimates (average production loss) based on playback downtime and weather signals.
+- [x] Add regression fixtures and property-based checks confirming KPI ranges per scenario tier.
+    - [x] Update minitoy/med42 expected outputs to include utilisation/makespan baselines.
+    - [x] Add property checks ensuring utilisation stays in `[0, 1]` and makespan spans the latest productive day.
+    - [x] Capture deterministic/stochastic KPI snapshots in `tests/fixtures/kpi/` for regression comparison.
+  - [x] Wire KPIs into CLI reporting with configurable profiles and smoke tests.
+    - [x] Update `fhops evaluate`, telemetry payloads, and benchmark harness exports to surface the new KPIs.
+    - [x] Add CLI flags or profiles to toggle KPI bundles once the expanded metrics land.
+
+- **Reporting templates**
+  - [x] Draft tabular templates (CSV/Markdown) plus optional visuals for docs/notebooks.
+    - Provide Markdown/CSV examples referencing the expanded KPI set.
+  - [x] Provide Sphinx snippets and CLI help examples showcasing new KPI bundles.
+  - [x] Capture follow-up backlog items for advanced dashboards (e.g., Plotly) if deferred (see Backlog & Ideas section).
+c
 ## Testing Strategy
-- [ ] Regression fixtures representing deterministic and stochastic runs.
-- [ ] Property-based checks to ensure KPIs remain within expected bounds.
+- [x] Regression fixtures representing deterministic and stochastic runs.
+- [x] Property-based checks to ensure KPIs remain within expected bounds.
 
 ## Documentation
-- [ ] Author Sphinx how-to for evaluation workflows.
-- [ ] Provide notebook-style examples demonstrating robustness analysis.
+- [x] Author Sphinx how-to for evaluation workflows.
+- [x] Provide notebook-style examples demonstrating robustness analysis.
 
 ## Open Questions
 - How to manage runtime for Monte Carlo simulations in CI?

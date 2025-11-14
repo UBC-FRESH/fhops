@@ -1,0 +1,23 @@
+name: synthetic-small
+tier: small
+seed: 101
+counts:
+  blocks: 4
+  machines: 2
+  landings: 1
+  calendar: 12
+  production_rates: 8
+terrain_counts:
+  gentle: 3
+  mixed: 1
+prescription_counts:
+  selection: 3
+  thinning: 1
+crew_capabilities:
+  crew-1:
+  - harvester
+  crew-2:
+  - harvester
+blackouts: []
+shifts_per_day: 1
+shift_hours: 11.277521674435338

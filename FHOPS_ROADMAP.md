@@ -29,11 +29,88 @@ before proposing new work.
 - [x] CLI ergonomics for solver configuration profiles.
 
 ## Phase 3 — Evaluation & Analytics
-- [ ] Robust schedule playback with stochastic extensions (downtime/weather sampling) and shift/day reporting.
-- [ ] KPI expansion (cost, makespan, utilisation, mobilisation spend) with reporting templates.
-- [ ] Synthetic dataset generator & benchmarking suite (`notes/synthetic_dataset_plan.md`).
-- [ ] Reference analytics notebooks integrated into docs/examples.
+- [x] Robust schedule playback with stochastic extensions (downtime/weather sampling) and shift/day reporting.
+  - [x] Playback engine audit
+    - [x] Inventory deterministic playback path (`fhops/eval`, `scheduling/timeline`) and capture gaps in `notes/simulation_eval_plan.md`.
+    - [x] Spec shift/day reporting interfaces and required data contract updates.
+    - [x] Produce migration checklist for refactoring playback modules and regression fixtures.
+  - [x] Stochastic sampling extensions
+    - [x] Design RNG seeding + scenario ensemble API and land it as a draft in `notes/simulation_eval_plan.md`.
+    - [x] Implement downtime/weather sampling operators with unit and property-based tests.
+    - [x] Integrate sampling toggles into CLI/automation commands (document defaults in `docs/howto/evaluation.rst`).
+  - [x] Shift/day reporting deliverables
+    - [x] Define aggregation schemas for shift/day calendars and extend KPI dataclasses.
+    - [x] Add exporters (CSV/Parquet + Markdown summary) wired into playback CLI.
+    - [x] Validate outputs across benchmark scenarios and stash fixtures for CI smoke runs.
+- [x] KPI expansion (cost, makespan, utilisation, mobilisation spend) with reporting templates.
+  - [x] Metric specification & alignment
+    - [x] Reconcile definitions across `notes/mip_model_plan.md`, `notes/mobilisation_plan.md`, and simulation notes.
+    - [x] Document final KPI formulas and assumptions in `docs/howto/evaluation.rst`.
+    - [x] Map required raw signals from playback outputs and ensure data contract coverage.
+  - [x] Implementation & validation
+    - [x] Extend KPI calculators to emit cost, makespan, utilisation, mobilisation spend variants.
+    - [x] Add regression fixtures and property-based checks confirming KPI ranges per scenario tier.
+    - [x] Wire KPIs into CLI reporting with configurable profiles and smoke tests.
+  - [x] Reporting templates
+    - [x] Draft tabular templates (CSV/Markdown) plus optional visuals for docs/notebooks.
+    - [x] Provide Sphinx snippets and CLI help examples showcasing new KPI bundles.
+    - [x] Capture follow-up backlog items for advanced dashboards (e.g., Plotly) if deferred (defer to backlog).
+- [x] Synthetic dataset generator & benchmarking suite (`notes/synthetic_dataset_plan.md`).
+  - [x] Design & planning
+    - [x] Finalise dataset taxonomy and parameter ranges in `notes/synthetic_dataset_plan.md`.
+    - [x] Align generator requirements with Phase 2 benchmarking harness expectations.
+    - [x] Identify storage strategy and naming for generated scenarios (`data/synthetic/`).
+  - [x] Generator implementation
+    - [x] Build core sampling utilities (terrain, system mix, downtime patterns) with tests.
+    - [x] Expose CLI entry (`fhops synth`) and configuration schema for batch generation.
+    - [x] Add validation suite ensuring generated datasets meet contract + KPI sanity bounds.
+  - [x] Benchmark integration
+    - [x] Hook synthetic scenarios into benchmark harness and CI smoke targets.
+    - [x] Provide metadata manifests describing each scenario for docs/examples.
+    - [x] Outline scaling experiments and capture results in changelog/notes.
+- [x] Reference analytics notebooks integrated into docs/examples.
+  - [x] Notebook scaffolding
+    - [x] Select representative deterministic + stochastic scenarios (baseline + synthetic).
+    - [x] Define notebook storyboards (playback walkthrough, KPI deep-dive, what-if analysis).
+    - [x] Create reusable plotting helpers (matplotlib/Altair) shared across notebooks.
+  - [x] Notebook authoring
+    - [x] Draft notebooks under `docs/examples/analytics/` with executed outputs.
+    - [x] Ensure notebooks call CLI/modules via lightweight wrappers for reproducibility.
+    - [x] Capture metadata (runtime, dependencies) and add smoke execution script.
+  - [x] Documentation & automation
+    - [x] Integrate notebooks into Sphinx (nbsphinx or nbconvert pipeline) with cross-links.
+    - [x] Add CI check to execute notebooks (or cached outputs) on critical scenarios.
+    - [x] Update README and docs landing pages to advertise analytics assets.
 - [ ] Hyperparameter tuning framework (conventional + agentic) leveraging persistent telemetry (`notes/metaheuristic_hyperparam_tuning.md`).
+  - [x] Telemetry & persistence groundwork
+    - [x] Define telemetry schema (solver configuration, KPIs, runtime stats) and storage backend (drafted in `notes/metaheuristic_hyperparam_tuning.md`).
+    - [x] Implement logging hooks in solvers and playback runs, persisting to local store.
+      - [x] Simulated Annealing JSONL run logger emitting run/step telemetry (`RunTelemetryLogger`, `solve_sa`).
+      - [x] ILS + Tabu telemetry integration (run/step logging, CLI wiring).
+      - [x] Playback CLI telemetry (run metadata + step logging for day summaries).
+      - [x] Enrich telemetry with scenario descriptors and schema versioning for ML tuners.
+    - [x] Document data retention/rotation strategy in tuning notes.
+  - [ ] Conventional tuning toolkit
+    - [x] Implement grid/random/Bayesian search drivers leveraging telemetry store.
+    - [x] Provide CLI surfaces for launching tuning sweeps with scenario bundles.
+      - [x] Random tuner CLI (`fhops tune-random`) executing SA sweeps and recording telemetry.
+      - [x] Bayesian/SMBO tuner CLI (`fhops tune-bayes`) built on Optuna.
+    - [x] Automate CI sweeps (minitoy + med42) that publish `fhops telemetry report` artifacts and history summaries for baseline scenarios (CSV/MD/HTML + published chart).
+    - [ ] After merging Phase 3 PR, verify GitHub Pages deployment on `main` (ensure `telemetry/history_summary.html` loads).
+      - [x] Grid tuner CLI (`fhops tune-grid`) evaluating preset/batch-size combinations.
+    - [x] Add automated comparison reports summarising best configurations per scenario class.
+    - [ ] Benchmark tuner strategies (grid vs. random vs. Bayesian/SMBO vs. neural/agentic) and log meta-telemetry for automated model selection.
+    - [x] Introduce dual convergence thresholds (soft ≤5%, hard ≤1%) in telemetry analytics so automated stopping criteria have rich signals.
+    - [x] Parallelise the tuning harness (≈16 worker processes × 4 threads) with per-worker telemetry merge so sweeps scale linearly with hardware.
+    - [x] Add optional Gurobi backend (`fhops[gurobi]`, `--driver gurobi`) for MIP solves that outgrow HiGHS.
+    - [x] Run long-horizon convergence sweeps (SA/ILS/Tabu, ≥10 000 iterations) on baseline + synthetic bundles to measure iteration/runtime scaling and tune stopping heuristics.
+      - `tmp/convergence-long/long_run_summary.csv` captures wall-clock rates and gap progress; only SA/ILS on `synthetic-medium` reached ≤5 % gap within 10 000 iterations, highlighting the need for deeper budgets or enhanced operators elsewhere.
+      - Next: rerun SA/ILS/Tabu with ≥MIP wall-clock budgets (≥10 min) and log Z* vs. iteration/time curves for regression against scenario size/difficulty.
+    - [ ] Reporting polish
+      - [x] Tighten `_compute_history_deltas` so percentage columns remain valid and Markdown renders cleanly.
+      - [x] Confirm README + docs/how-to explicitly reference the GitHub Pages URL and the exported delta artefacts.
+      - [x] Expand `DESIRED_METRICS` (e.g., downtime) once telemetry logging exposes the required fields.
+  - [ ] Agentic tuning integration *(deferred — see Backlog & Ideas; focus remains on conventional toolkit completion).*
 
 ## Phase 4 — Release & Community Readiness
 - [ ] Complete Sphinx documentation set (API, CLI, how-tos, examples) published to Read the Docs.
@@ -54,8 +131,10 @@ before proposing new work.
    - Prepare deterministic/stochastic playback for shift timelines and extended KPI reporting ahead of Phase 3.
 
 ## Backlog & Ideas
+- [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
 - [ ] Integration with Nemora sampling outputs for downstream operations analytics.
 - [ ] Scenario authoring UI and schema validators for web clients.
 - [ ] Cloud execution harness for large-scale heuristics.
 - [ ] DSS integration hooks (ArcGIS, QGIS) for geo-enabled workflows.
 - [ ] Jaffray MASc thesis alignment checkpoints (`notes/thesis_alignment.md` TBD).
+- [ ] VSCode keeps firing web apps on various random-sounding ports while running `injest_mip_baselines.py` and other benchmarking scripts? What is up with that? It is annoyingly resulting in VSCode interface popping up "Your application is running on port XXXX" messages (becaue of the built-in port-forwarding proxy).

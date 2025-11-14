@@ -1,0 +1,31 @@
+name: synthetic-medium
+tier: medium
+seed: 202
+counts:
+  blocks: 8
+  machines: 4
+  landings: 2
+  calendar: 48
+  production_rates: 32
+terrain_counts:
+  rolling: 1
+  mixed: 6
+  steep: 1
+prescription_counts:
+  clearcut: 2
+  thinning: 6
+crew_capabilities:
+  crew-1:
+  - forwarder
+  - harvester
+  crew-2:
+  - harvester
+  - processor
+  crew-3:
+  - forwarder
+  crew-1-2:
+  - forwarder
+  - harvester
+blackouts: []
+shifts_per_day: 1
+shift_hours: 10.024584580290202

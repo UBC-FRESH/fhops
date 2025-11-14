@@ -48,6 +48,12 @@ def _run_single(
             operators, operator_weights = resolve_operator_presets(preset)
         kwargs = dict(sa_kwargs)
         kwargs.setdefault("seed", seed)
+        telemetry_ctx = dict(kwargs.get("telemetry_context") or {})
+        telemetry_ctx.setdefault("multi_start_run_id", run_id)
+        if preset_label:
+            telemetry_ctx.setdefault("preset", preset_label)
+        telemetry_ctx.setdefault("source", telemetry_ctx.get("source", "run_multi_start"))
+        kwargs["telemetry_context"] = telemetry_ctx
         if operators is not None:
             if operators:
                 kwargs["operators"] = operators
@@ -85,6 +91,7 @@ def run_multi_start(
     sa_kwargs: dict[str, Any] | None = None,
     telemetry_log: str | Path | None = None,
     summary_log: bool = True,
+    telemetry_context: dict[str, Any] | None = None,
 ) -> MultiStartResult:
     """Run several SA instances (possibly in parallel) and return the best outcome."""
 
@@ -93,6 +100,11 @@ def run_multi_start(
         raise ValueError("seeds must contain at least one entry")
 
     sa_kwargs = dict(sa_kwargs or {})
+    if telemetry_log:
+        sa_kwargs.setdefault("telemetry_log", telemetry_log)
+    if telemetry_context:
+        sa_kwargs.setdefault("telemetry_context", telemetry_context)
+    log_via_sa = bool(telemetry_log and sa_kwargs.get("telemetry_log"))
     preset_list: list[Sequence[str] | None]
     if presets is None:
         preset_list = [None] * len(seed_list)
@@ -111,7 +123,7 @@ def run_multi_start(
             objective, result, meta = _run_single(pb, seed, preset, sa_kwargs, idx)
             runs_meta.append(meta)
             results.append((objective, result))
-            if telemetry_log and idx not in seen_ids:
+            if telemetry_log and not log_via_sa and idx not in seen_ids:
                 append_jsonl(telemetry_log, meta)
                 seen_ids.add(idx)
     else:
@@ -125,7 +137,7 @@ def run_multi_start(
                 objective, result, meta = future.result()
                 runs_meta.append(meta)
                 results.append((objective, result))
-                if telemetry_log and idx not in seen_ids:
+                if telemetry_log and not log_via_sa and idx not in seen_ids:
                     append_jsonl(telemetry_log, meta)
                     seen_ids.add(idx)
 
@@ -151,6 +163,8 @@ def run_multi_start(
             "best_run_id": best_meta.get("run_id") if best_meta else None,
             "runs_executed": len(runs_meta),
         }
+        if best_meta:
+            summary["best_telemetry_run_id"] = best_meta.get("telemetry_run_id")
         append_jsonl(telemetry_log, summary)
 
     return MultiStartResult(best_result=best_result, runs_meta=runs_meta)

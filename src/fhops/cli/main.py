@@ -1,20 +1,45 @@
 from __future__ import annotations
 
+import click
+import json
+import optuna
+import pandas as pd
+import random
+import typer
+import yaml
+from collections import deque
 from collections.abc import Sequence
+from contextlib import nullcontext
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, cast
-
-import pandas as pd
-import typer
 from rich.console import Console
 from rich.table import Table
 
-from fhops.cli._utils import format_operator_presets, operator_preset_help, parse_operator_weights
+from fhops.cli._utils import (
+    OPERATOR_PRESETS,
+    format_operator_presets,
+    operator_preset_help,
+    parse_operator_weights,
+)
 from fhops.cli.benchmarks import benchmark_app
 from fhops.cli.geospatial import geospatial_app
+from fhops.cli.telemetry import telemetry_app
+from fhops.cli.synthetic import synth_app
 from fhops.cli.profiles import format_profiles, get_profile, merge_profile_with_cli
-from fhops.evaluation import compute_kpis
+from fhops.evaluation import (
+    PlaybackConfig,
+    SamplingConfig,
+    compute_kpis,
+    day_dataframe,
+    day_dataframe_from_ensemble,
+    export_playback,
+    playback_summary_metrics,
+    run_playback,
+    run_stochastic_playback,
+    shift_dataframe,
+    shift_dataframe_from_ensemble,
+)
 from fhops.optimization.heuristics import (
     build_exploration_plan,
     run_multi_start,
@@ -22,15 +47,40 @@ from fhops.optimization.heuristics import (
     solve_sa,
     solve_tabu,
 )
+from fhops.optimization.heuristics.registry import OperatorRegistry
 from fhops.optimization.mip import solve_mip
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
-from fhops.telemetry import append_jsonl
+from fhops.telemetry import RunTelemetryLogger, append_jsonl
+from fhops.telemetry.sqlite_store import persist_tuner_summary
 
 app = typer.Typer(add_completion=False, no_args_is_help=True)
 app.add_typer(geospatial_app, name="geo")
 app.add_typer(benchmark_app, name="bench")
+app.add_typer(synth_app, name="synth")
+app.add_typer(telemetry_app, name="telemetry")
 console = Console()
+KPI_MODE = click.Choice(["basic", "extended"], case_sensitive=False)
+
+TUNING_BUNDLE_ALIASES: dict[str, list[tuple[str, Path]]] = {
+    "baseline": [
+        ("minitoy", Path("examples/minitoy/scenario.yaml")),
+        ("small21", Path("examples/small21/scenario.yaml")),
+        ("med42", Path("examples/med42/scenario.yaml")),
+    ],
+    "minitoy": [("minitoy", Path("examples/minitoy/scenario.yaml"))],
+    "small21": [("small21", Path("examples/small21/scenario.yaml"))],
+    "med42": [("med42", Path("examples/med42/scenario.yaml"))],
+    "large84": [("large84", Path("examples/large84/scenario.yaml"))],
+    "synthetic-small": [("synthetic-small", Path("examples/synthetic/small/scenario.yaml"))],
+    "synthetic-medium": [("synthetic-medium", Path("examples/synthetic/medium/scenario.yaml"))],
+    "synthetic-large": [("synthetic-large", Path("examples/synthetic/large/scenario.yaml"))],
+    "synthetic": [
+        ("synthetic-small", Path("examples/synthetic/small/scenario.yaml")),
+        ("synthetic-medium", Path("examples/synthetic/medium/scenario.yaml")),
+        ("synthetic-large", Path("examples/synthetic/large/scenario.yaml")),
+    ],
+}
 
 
 def _enable_rich_tracebacks():
@@ -41,6 +91,216 @@ def _enable_rich_tracebacks():
         _rt.install(show_locals=True, width=140, extra_lines=2)
     except Exception:
         pass
+
+
+def _ensure_kpi_dict(kpis: Any) -> dict[str, Any]:
+    if hasattr(kpis, "to_dict") and callable(kpis.to_dict):
+        return dict(kpis.to_dict())
+    return dict(kpis)
+
+
+def _format_metric_value(value: Any) -> Any:
+    if isinstance(value, str):
+        try:
+            parsed = json.loads(value)
+        except json.JSONDecodeError:
+            return value
+        if isinstance(parsed, dict):
+            return ", ".join(f"{k}={parsed[k]}" for k in sorted(parsed))
+    if isinstance(value, float):
+        return f"{value:.3f}"
+    return value
+
+
+def _print_kpi_summary(kpis: Any, mode: str = "extended") -> None:
+    mode = mode.lower()
+    data = _ensure_kpi_dict(kpis)
+    if not data:
+        return
+
+    sections: list[tuple[str, list[str]]] = [
+        (
+            "Production",
+            ["total_production", "completed_blocks", "makespan_day", "makespan_shift"],
+        ),
+        (
+            "Mobilisation",
+            [
+                "mobilisation_cost",
+                "mobilisation_cost_by_machine",
+                "mobilisation_cost_by_landing",
+            ],
+        ),
+        (
+            "Utilisation",
+            [
+                "utilisation_ratio_mean_shift",
+                "utilisation_ratio_weighted_shift",
+                "utilisation_ratio_mean_day",
+                "utilisation_ratio_weighted_day",
+                "utilisation_ratio_by_machine",
+                "utilisation_ratio_by_role",
+            ],
+        ),
+        (
+            "Downtime",
+            [
+                "downtime_hours_total",
+                "downtime_event_count",
+                "downtime_production_loss_est",
+                "downtime_hours_by_machine",
+            ],
+        ),
+        (
+            "Weather",
+            [
+                "weather_severity_total",
+                "weather_hours_est",
+                "weather_production_loss_est",
+                "weather_severity_by_machine",
+            ],
+        ),
+        (
+            "Sequencing",
+            [
+                "sequencing_violation_count",
+                "sequencing_violation_blocks",
+                "sequencing_violation_days",
+                "sequencing_violation_breakdown",
+            ],
+        ),
+    ]
+
+    console.print("[bold]KPI Summary[/bold]")
+    for title, keys in sections:
+        if mode == "basic" and title not in {"Production", "Mobilisation"}:
+            continue
+        lines = [(key, data[key]) for key in keys if key in data]
+        if not lines:
+            continue
+        console.print(f"[bold]{title}[/bold]")
+        for key, value in lines:
+            console.print(f"  {key}: {_format_metric_value(value)}")
+
+
+def _discover_scenarios_from_path(path: Path) -> list[Path]:
+    expanded = path.expanduser()
+    if not expanded.exists():
+        raise typer.BadParameter(f"Scenario path not found: {path}")
+    if expanded.is_file():
+        return [expanded]
+    scenario_file = expanded / "scenario.yaml"
+    if scenario_file.exists():
+        return [scenario_file]
+    immediate_yaml = sorted(expanded.glob("*.yaml"))
+    if immediate_yaml:
+        return immediate_yaml
+    child_candidates: list[Path] = []
+    for child in sorted(expanded.iterdir()):
+        if not child.is_dir():
+            continue
+        child_scenario = child / "scenario.yaml"
+        if child_scenario.exists():
+            child_candidates.append(child_scenario)
+    if child_candidates:
+        return child_candidates
+    raise typer.BadParameter(f"No scenario.yaml discovered under directory: {path}")
+
+
+def _parse_bundle_spec(spec: str) -> tuple[str, str | None]:
+    if "=" not in spec:
+        return spec, None
+    alias, target = spec.split("=", 1)
+    alias = alias.strip()
+    target = target.strip()
+    if not alias:
+        raise typer.BadParameter(f"Invalid bundle spec (empty alias): {spec}")
+    if not target:
+        raise typer.BadParameter(f"Invalid bundle spec (empty target): {spec}")
+    return alias, target
+
+
+def _resolve_bundle_from_path(alias: str, target_path: Path) -> list[tuple[str, str, Path]]:
+    resolved = target_path.expanduser()
+    if not resolved.exists():
+        raise typer.BadParameter(f"Bundle target not found: {target_path}")
+    members: list[tuple[str, str, Path]] = []
+    if resolved.is_file():
+        suffix = resolved.suffix.lower()
+        if suffix in {".yaml", ".yml"}:
+            data = yaml.safe_load(resolved.read_text(encoding="utf-8"))
+            base_dir = resolved.parent
+            if isinstance(data, dict):
+                for key in sorted(data):
+                    scenario_dir = base_dir / key
+                    scenario_file = scenario_dir / "scenario.yaml"
+                    if scenario_file.exists():
+                        members.append((alias, str(key), scenario_file))
+            if members:
+                return members
+            return [(alias, resolved.stem, resolved)]
+        return [(alias, resolved.stem, resolved)]
+    metadata_file = resolved / "metadata.yaml"
+    if metadata_file.exists():
+        return _resolve_bundle_from_path(alias, metadata_file)
+    scenario_file = resolved / "scenario.yaml"
+    if scenario_file.exists():
+        return [(alias, resolved.name, scenario_file)]
+    child_members: list[tuple[str, str, Path]] = []
+    for child in sorted(resolved.iterdir()):
+        if not child.is_dir():
+            continue
+        child_scenario = child / "scenario.yaml"
+        if child_scenario.exists():
+            child_members.append((alias, child.name, child_scenario))
+    if child_members:
+        return child_members
+    raise typer.BadParameter(f"Bundle target does not contain scenarios: {target_path}")
+
+
+def _resolve_bundle_spec(spec: str) -> list[tuple[str, str, Path]]:
+    alias, target = _parse_bundle_spec(spec)
+    normalized = alias.lower()
+    if target is None and normalized in TUNING_BUNDLE_ALIASES:
+        bundle_members: list[tuple[str, str, Path]] = []
+        for member_name, scenario_path in TUNING_BUNDLE_ALIASES[normalized]:
+            bundle_members.append((alias, member_name, scenario_path))
+        return bundle_members
+    target_path = Path(target) if target else Path(alias)
+    bundle_alias = alias if target else target_path.name
+    return _resolve_bundle_from_path(bundle_alias, target_path)
+
+
+def _collect_tuning_scenarios(
+    scenario_args: Sequence[Path] | None,
+    bundle_specs: Sequence[str] | None,
+) -> tuple[list[Path], dict[Path, dict[str, str]]]:
+    discovered: list[Path] = []
+    bundle_map: dict[Path, dict[str, str]] = {}
+
+    if scenario_args:
+        for entry in scenario_args:
+            for scenario_path in _discover_scenarios_from_path(entry):
+                discovered.append(scenario_path)
+
+    if bundle_specs:
+        for spec in bundle_specs:
+            for alias, member, scenario_path in _resolve_bundle_spec(spec):
+                discovered.append(scenario_path)
+                bundle_map[scenario_path.resolve()] = {
+                    "bundle": alias,
+                    "bundle_member": member,
+                }
+
+    ordered: list[Path] = []
+    seen: set[Path] = set()
+    for scenario_path in discovered:
+        resolved = scenario_path.resolve()
+        if resolved in seen:
+            continue
+        seen.add(resolved)
+        ordered.append(scenario_path)
+    return ordered, bundle_map
 
 
 @app.command()
@@ -81,7 +341,10 @@ def solve_mip_cmd(
     scenario: Path,
     out: Path = typer.Option(..., "--out", help="Output CSV path"),
     time_limit: int = 60,
-    driver: str = typer.Option("auto", help="HiGHS driver: auto|appsi|exec"),
+    driver: str = typer.Option(
+        "auto",
+        help="MIP driver: auto|highs-appsi|highs-exec|gurobi|gurobi-appsi|gurobi-direct",
+    ),
     debug: bool = typer.Option(False, "--debug", help="Verbose tracebacks & solver logs"),
 ):
     """Solve with HiGHS (exact)."""
@@ -102,8 +365,7 @@ def solve_mip_cmd(
     assignments.to_csv(str(out), index=False)
     console.print(f"Objective: {objective:.3f}. Saved to {out}")
     metrics = compute_kpis(pb, assignments)
-    for key, value in metrics.items():
-        console.print(f"{key}: {value:.3f}" if isinstance(value, float) else f"{key}: {value}")
+    _print_kpi_summary(metrics)
 
 
 @app.command("solve-heur")
@@ -148,9 +410,21 @@ def solve_heur_cmd(
     telemetry_log: Path | None = typer.Option(
         None,
         "--telemetry-log",
-        help="Append run telemetry to the given JSONL file.",
+        help="Append run telemetry to a JSONL file (e.g. telemetry/runs.jsonl); step logs land in telemetry/steps/.",
         writable=True,
         dir_okay=False,
+    ),
+    tier_label: str | None = typer.Option(
+        None,
+        "--tier-label",
+        help="Optional label describing the budget tier for telemetry summaries.",
+    ),
+    kpi_mode: str = typer.Option(
+        "extended",
+        "--kpi-mode",
+        help="Control verbosity of KPI output (basic|extended).",
+        show_choices=True,
+        click_type=KPI_MODE,
     ),
     batch_neighbours: int = typer.Option(
         1,
@@ -237,6 +511,32 @@ def solve_heur_cmd(
 
     runs_meta = None
     seed_used = seed
+    base_telemetry_context: dict[str, Any] | None = None
+    if telemetry_log:
+        base_telemetry_context = {
+            "scenario_path": str(scenario),
+            "source": "cli.solve-heur",
+        }
+        if selected_profile:
+            base_telemetry_context["profile"] = selected_profile.name
+            base_telemetry_context["profile_version"] = selected_profile.version
+        if tier_label:
+            base_telemetry_context["tier"] = tier_label
+        tuner_meta_payload = {
+            "algorithm": "sa",
+            "budget": {
+                "iters": iters,
+                "tier": tier_label,
+            },
+            "config": {
+                "batch_size": batch_arg,
+                "max_workers": worker_arg,
+                "parallel_multistart": multi_start,
+            },
+        }
+        base_telemetry_context["tuner_meta"] = tuner_meta_payload
+        sa_kwargs["telemetry_log"] = telemetry_log
+        sa_kwargs["telemetry_context"] = base_telemetry_context
 
     if multi_start > 1:
         seeds, auto_presets = build_exploration_plan(multi_start, base_seed=seed)
@@ -252,6 +552,7 @@ def solve_heur_cmd(
                 max_workers=worker_arg,
                 sa_kwargs=sa_kwargs,
                 telemetry_log=telemetry_log,
+                telemetry_context=base_telemetry_context,
             )
             res = res_container.best_result
             runs_meta = res_container.runs_meta
@@ -292,8 +593,7 @@ def solve_heur_cmd(
     assignments.to_csv(str(out), index=False)
     console.print(f"Objective (heuristic): {objective:.3f}. Saved to {out}")
     metrics = compute_kpis(pb, assignments)
-    for key, value in metrics.items():
-        console.print(f"{key}: {value:.3f}" if isinstance(value, float) else f"{key}: {value}")
+    _print_kpi_summary(metrics, mode=kpi_mode)
     operators_meta = cast(dict[str, float], meta.get("operators", {}))
     if operators_meta:
         console.print(f"Operators: {operators_meta}")
@@ -312,7 +612,7 @@ def solve_heur_cmd(
         console.print(
             f"[dim]Parallel multi-start executed {len(runs_meta)} runs; best seed={seed_used}. See telemetry log for per-run details.[/]"
         )
-    elif telemetry_log:
+    elif telemetry_log and "telemetry_run_id" not in meta:
         stats = meta.get("operators_stats", {}) or {}
         record = {
             "timestamp": datetime.now(UTC).isoformat(),
@@ -322,12 +622,14 @@ def solve_heur_cmd(
             "seed": seed_used,
             "iterations": iters,
             "objective": float(objective),
-            "kpis": metrics,
+            "kpis": metrics.to_dict(),
             "operators_config": operators_meta or resolved.operator_weights,
             "operators_stats": stats,
             "batch_size": batch_neighbours,
             "max_workers": parallel_workers,
         }
+        if tier_label:
+            record["tier"] = tier_label
         if selected_profile:
             record["profile"] = selected_profile.name
             record["profile_version"] = selected_profile.version
@@ -404,9 +706,21 @@ def solve_ils_cmd(
     telemetry_log: Path | None = typer.Option(
         None,
         "--telemetry-log",
-        help="Append run telemetry to JSONL.",
+        help="Append run telemetry to a JSONL file (default recommendation: telemetry/runs.jsonl).",
         writable=True,
         dir_okay=False,
+    ),
+    tier_label: str | None = typer.Option(
+        None,
+        "--tier-label",
+        help="Optional label describing the budget tier for telemetry summaries.",
+    ),
+    kpi_mode: str = typer.Option(
+        "extended",
+        "--kpi-mode",
+        help="Control verbosity of KPI output (basic|extended).",
+        show_choices=True,
+        click_type=KPI_MODE,
     ),
     show_operator_stats: bool = typer.Option(
         False, "--show-operator-stats", help="Print per-operator stats after solving."
@@ -476,6 +790,38 @@ def solve_ils_cmd(
                 hybrid_mip_time_limit = value
     extra_ils_kwargs: dict[str, Any] = profile_extra_kwargs
 
+    telemetry_kwargs: dict[str, Any] = {}
+    existing_ctx = extra_ils_kwargs.pop("telemetry_context", None)
+    if telemetry_log:
+        base_context: dict[str, Any] = {
+            "scenario_path": str(scenario),
+            "source": "cli.solve-ils",
+        }
+        if selected_profile:
+            base_context["profile"] = selected_profile.name
+            base_context["profile_version"] = selected_profile.version
+        if isinstance(existing_ctx, dict):
+            base_context.update(existing_ctx)
+        if tier_label:
+            base_context["tier"] = tier_label
+        tuner_meta_payload = {
+            "algorithm": "ils",
+            "budget": {
+                "iters": iters,
+                "tier": tier_label,
+            },
+            "config": {
+                "perturbation_strength": perturbation_strength,
+                "stall_limit": stall_limit,
+                "hybrid_use_mip": hybrid_use_mip,
+            },
+        }
+        base_context["tuner_meta"] = tuner_meta_payload
+        telemetry_kwargs["telemetry_log"] = telemetry_log
+        telemetry_kwargs["telemetry_context"] = base_context
+    elif isinstance(existing_ctx, dict):
+        extra_ils_kwargs["telemetry_context"] = existing_ctx
+
     res = solve_ils(
         pb,
         iters=iters,
@@ -489,6 +835,7 @@ def solve_ils_cmd(
         hybrid_use_mip=hybrid_use_mip,
         hybrid_mip_time_limit=hybrid_mip_time_limit,
         **extra_ils_kwargs,
+        **telemetry_kwargs,
     )
     assignments = cast(pd.DataFrame, res["assignments"])
     objective = cast(float, res.get("objective", 0.0))
@@ -497,8 +844,7 @@ def solve_ils_cmd(
     assignments.to_csv(str(out), index=False)
     console.print(f"Objective (ils): {objective:.3f}. Saved to {out}")
     metrics = compute_kpis(pb, assignments)
-    for key, value in metrics.items():
-        console.print(f"{key}: {value:.3f}" if isinstance(value, float) else f"{key}: {value}")
+    _print_kpi_summary(metrics, mode=kpi_mode)
     meta = cast(dict[str, Any], res.get("meta", {}))
     if selected_profile:
         meta["profile"] = selected_profile.name
@@ -517,7 +863,7 @@ def solve_ils_cmd(
                     f"accept_rate={payload.get('acceptance_rate', 0):.3f}, "
                     f"weight={payload.get('weight', 0)}"
                 )
-    if telemetry_log:
+    if telemetry_log and "telemetry_run_id" not in meta:
         record = {
             "timestamp": datetime.now(UTC).isoformat(),
             "source": "solve-ils",
@@ -526,7 +872,7 @@ def solve_ils_cmd(
             "seed": seed,
             "iterations": iters,
             "objective": objective,
-            "kpis": metrics,
+            "kpis": metrics.to_dict(),
             "operators_config": operators_meta or resolved.operator_weights,
             "operators_stats": meta.get("operators_stats"),
             "batch_size": batch_neighbours,
@@ -550,7 +896,7 @@ def solve_tabu_cmd(
     seed: int = 42,
     tabu_tenure: int = typer.Option(0, "--tabu-tenure", help="Override tabu tenure (0=auto)"),
     stall_limit: int = typer.Option(
-        200, "--stall-limit", help="Max non-improving iterations before stopping."
+        1_000_000, "--stall-limit", help="Max non-improving iterations before stopping."
     ),
     batch_neighbours: int = typer.Option(
         1, "--batch-neighbours", help="Neighbour samples per iteration."
@@ -584,9 +930,21 @@ def solve_tabu_cmd(
     telemetry_log: Path | None = typer.Option(
         None,
         "--telemetry-log",
-        help="Append run telemetry to JSONL.",
+        help="Append run telemetry to a JSONL file (e.g. telemetry/runs.jsonl); step logs are written next to it under telemetry/steps/.",
         writable=True,
         dir_okay=False,
+    ),
+    tier_label: str | None = typer.Option(
+        None,
+        "--tier-label",
+        help="Optional label describing the budget tier for telemetry summaries.",
+    ),
+    kpi_mode: str = typer.Option(
+        "extended",
+        "--kpi-mode",
+        help="Control verbosity of KPI output (basic|extended).",
+        show_choices=True,
+        click_type=KPI_MODE,
     ),
     show_operator_stats: bool = typer.Option(
         False, "--show-operator-stats", help="Print per-operator stats."
@@ -648,6 +1006,37 @@ def solve_tabu_cmd(
                 stall_limit = value
     tenure = tabu_tenure if tabu_tenure and tabu_tenure > 0 else None
 
+    existing_ctx = profile_extra_kwargs.pop("telemetry_context", None)
+    telemetry_kwargs: dict[str, Any] = {}
+    if telemetry_log:
+        base_context: dict[str, Any] = {
+            "scenario_path": str(scenario),
+            "source": "cli.solve-tabu",
+        }
+        if selected_profile:
+            base_context["profile"] = selected_profile.name
+            base_context["profile_version"] = selected_profile.version
+        if isinstance(existing_ctx, dict):
+            base_context.update(existing_ctx)
+        if tier_label:
+            base_context["tier"] = tier_label
+        tuner_meta_payload = {
+            "algorithm": "tabu",
+            "budget": {
+                "iters": iters,
+                "tier": tier_label,
+            },
+            "config": {
+                "tabu_tenure": tenure if tenure is not None else max(10, len(pb.scenario.machines)),
+                "stall_limit": stall_limit,
+            },
+        }
+        base_context["tuner_meta"] = tuner_meta_payload
+        telemetry_kwargs["telemetry_log"] = telemetry_log
+        telemetry_kwargs["telemetry_context"] = base_context
+    elif isinstance(existing_ctx, dict):
+        profile_extra_kwargs["telemetry_context"] = existing_ctx
+
     res = solve_tabu(
         pb,
         iters=iters,
@@ -659,6 +1048,7 @@ def solve_tabu_cmd(
         tabu_tenure=tenure,
         stall_limit=stall_limit,
         **profile_extra_kwargs,
+        **telemetry_kwargs,
     )
     assignments = cast(pd.DataFrame, res["assignments"])
     objective = cast(float, res.get("objective", 0.0))
@@ -667,8 +1057,7 @@ def solve_tabu_cmd(
     assignments.to_csv(str(out), index=False)
     console.print(f"Objective (tabu): {objective:.3f}. Saved to {out}")
     metrics = compute_kpis(pb, assignments)
-    for key, value in metrics.items():
-        console.print(f"{key}: {value:.3f}" if isinstance(value, float) else f"{key}: {value}")
+    _print_kpi_summary(metrics, mode=kpi_mode)
     meta = cast(dict[str, Any], res.get("meta", {}))
     if selected_profile:
         meta["profile"] = selected_profile.name
@@ -686,7 +1075,7 @@ def solve_tabu_cmd(
                     f"accepted={payload.get('accepted', 0)}, "
                     f"weight={payload.get('weight', 0)}"
                 )
-    if telemetry_log:
+    if telemetry_log and "telemetry_run_id" not in meta:
         record = {
             "timestamp": datetime.now(UTC).isoformat(),
             "source": "solve-tabu",
@@ -695,7 +1084,7 @@ def solve_tabu_cmd(
             "seed": seed,
             "iterations": iters,
             "objective": objective,
-            "kpis": metrics,
+            "kpis": metrics.to_dict(),
             "operators_config": operators_meta or resolved.operator_weights,
             "operators_stats": meta.get("operators_stats"),
             "tabu_tenure": tenure if tenure is not None else max(10, len(pb.scenario.machines)),
@@ -710,14 +1099,371 @@ def solve_tabu_cmd(
 
 
 @app.command()
-def evaluate(scenario: Path, assignments_csv: Path):
+def evaluate(
+    scenario: Path,
+    assignments_csv: Path = typer.Option(
+        ..., "--assignments", help="Assignments CSV (machine_id, block_id, day, shift_id)."
+    ),
+    kpi_mode: str = typer.Option(
+        "extended",
+        "--kpi-mode",
+        help="Control verbosity of KPI output (basic|extended).",
+        show_choices=True,
+        click_type=KPI_MODE,
+    ),
+):
     """Evaluate a schedule CSV against the scenario."""
     sc = load_scenario(str(scenario))
     pb = Problem.from_scenario(sc)
     df = pd.read_csv(str(assignments_csv))
     kpis = compute_kpis(pb, df)
-    for k, v in kpis.items():
-        console.print(f"{k}: {v:.3f}" if isinstance(v, float) else f"{k}: {v}")
+    _print_kpi_summary(kpis, mode=kpi_mode)
+
+
+@app.command("eval-playback")
+def eval_playback(
+    scenario: Path,
+    assignments_csv: Path = typer.Option(
+        ..., "--assignments", help="Assignments CSV (machine_id, block_id, day, shift_id)."
+    ),
+    shift_out: Path | None = typer.Option(
+        None, "--shift-out", help="Optional path to save shift-level playback summary (CSV)."
+    ),
+    day_out: Path | None = typer.Option(
+        None, "--day-out", help="Optional path to save day-level playback summary (CSV)."
+    ),
+    include_idle: bool = typer.Option(
+        False,
+        "--include-idle",
+        help="Emit idle entries for machine/shift combinations without work.",
+    ),
+    samples: int = typer.Option(
+        1,
+        "--samples",
+        help="Number of stochastic samples to run (1 keeps deterministic playback).",
+        min=1,
+    ),
+    base_seed: int = typer.Option(123, "--seed", help="Base RNG seed for stochastic playback."),
+    downtime_probability: float = typer.Option(
+        0.0,
+        "--downtime-prob",
+        min=0.0,
+        max=1.0,
+        help="Probability of downtime per eligible assignment (0 disables downtime).",
+    ),
+    downtime_max_concurrent: int | None = typer.Option(
+        None,
+        "--downtime-max",
+        min=1,
+        help="Max assignments to drop per day (None uses binomial sampling).",
+    ),
+    weather_probability: float = typer.Option(
+        0.0,
+        "--weather-prob",
+        min=0.0,
+        max=1.0,
+        help="Probability a day receives a weather impact (0 disables weather).",
+    ),
+    weather_severity: float = typer.Option(
+        0.3,
+        "--weather-severity",
+        min=0.0,
+        max=1.0,
+        help="Fractional production reduction applied when weather strikes.",
+    ),
+    weather_window: int = typer.Option(
+        1,
+        "--weather-window",
+        min=1,
+        help="Number of consecutive days affected once weather occurs.",
+    ),
+    landing_probability: float = typer.Option(
+        0.0,
+        "--landing-prob",
+        min=0.0,
+        max=1.0,
+        help="Probability a landing experiences a throughput shock (0 disables).",
+    ),
+    landing_multiplier_low: float = typer.Option(
+        0.4,
+        "--landing-mult-min",
+        min=0.0,
+        max=1.0,
+        help="Minimum throughput multiplier applied during landing shocks.",
+    ),
+    landing_multiplier_high: float = typer.Option(
+        0.8,
+        "--landing-mult-max",
+        min=0.0,
+        max=1.0,
+        help="Maximum throughput multiplier applied during landing shocks.",
+    ),
+    landing_duration: int = typer.Option(
+        1,
+        "--landing-duration",
+        min=1,
+        help="Number of consecutive days landing shocks persist.",
+    ),
+    shift_parquet: Path | None = typer.Option(
+        None,
+        "--shift-parquet",
+        help="Optional Parquet output for shift-level summary.",
+    ),
+    day_parquet: Path | None = typer.Option(
+        None,
+        "--day-parquet",
+        help="Optional Parquet output for day-level summary.",
+    ),
+    summary_md: Path | None = typer.Option(
+        None,
+        "--summary-md",
+        help="Write a Markdown summary of aggregated metrics.",
+    ),
+    telemetry_log: Path | None = typer.Option(
+        None,
+        "--telemetry-log",
+        help="Append playback telemetry to a JSONL file (e.g. telemetry/runs.jsonl); step logs land in telemetry/steps/.",
+        writable=True,
+        dir_okay=False,
+    ),
+):
+    """Run deterministic playback to produce shift/day summaries."""
+
+    sc = load_scenario(str(scenario))
+    pb = Problem.from_scenario(sc)
+
+    df = pd.read_csv(assignments_csv)
+
+    config_snapshot = {
+        "include_idle": include_idle,
+        "samples": samples,
+        "downtime_probability": downtime_probability,
+        "downtime_max_concurrent": downtime_max_concurrent,
+        "weather_probability": weather_probability,
+        "weather_severity": weather_severity,
+        "weather_window": weather_window,
+        "landing_probability": landing_probability,
+        "landing_multiplier_low": landing_multiplier_low,
+        "landing_multiplier_high": landing_multiplier_high,
+        "landing_duration": landing_duration,
+    }
+    scenario_features = {
+        "num_days": getattr(sc, "num_days", None),
+        "num_blocks": len(getattr(sc, "blocks", []) or []),
+        "num_machines": len(getattr(sc, "machines", []) or []),
+        "num_landings": len(getattr(sc, "landings", []) or []),
+        "num_shift_calendar_entries": len(getattr(sc, "shift_calendar", []) or []),
+    }
+    context_snapshot = {
+        "assignments_path": str(assignments_csv),
+        "command": "eval-playback",
+        "source": "eval-playback",
+        **scenario_features,
+    }
+    telemetry_logger: RunTelemetryLogger | None = None
+    if telemetry_log:
+        telemetry_logger = RunTelemetryLogger(
+            log_path=telemetry_log,
+            solver="playback",
+            scenario=sc.name,
+            scenario_path=str(scenario),
+            config=config_snapshot,
+            context=context_snapshot,
+            step_interval=1,
+        )
+
+    artifacts: list[str] = []
+
+    with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
+        playback_config = PlaybackConfig(include_idle_records=include_idle)
+
+        deterministic_mode = (
+            samples <= 1
+            and downtime_probability <= 0
+            and weather_probability <= 0
+            and landing_probability <= 0
+        )
+
+        if deterministic_mode:
+            playback_result = run_playback(pb, df, config=playback_config)
+            shift_summaries = list(playback_result.shift_summaries)
+            day_summaries = list(playback_result.day_summaries)
+            shift_df = shift_dataframe(playback_result)
+            day_df = day_dataframe(playback_result)
+        else:
+            sampling_config = SamplingConfig(
+                samples=samples,
+                base_seed=base_seed,
+            )
+            sampling_config.downtime.enabled = downtime_probability > 0
+            sampling_config.downtime.probability = downtime_probability
+            sampling_config.downtime.max_concurrent = downtime_max_concurrent
+            sampling_config.weather.enabled = weather_probability > 0
+            sampling_config.weather.day_probability = weather_probability
+            sampling_config.weather.severity_levels = {"default": weather_severity}
+            sampling_config.weather.impact_window_days = weather_window
+            sampling_config.landing.enabled = landing_probability > 0
+            sampling_config.landing.probability = landing_probability
+            sampling_config.landing.capacity_multiplier_range = (
+                landing_multiplier_low,
+                landing_multiplier_high,
+            )
+            sampling_config.landing.duration_days = landing_duration
+
+            ensemble = run_stochastic_playback(
+                pb,
+                df,
+                sampling_config=sampling_config,
+            )
+            if ensemble.samples:
+                shift_summaries = [
+                    summary
+                    for sample in ensemble.samples
+                    for summary in sample.result.shift_summaries
+                ]
+                day_summaries = [
+                    summary
+                    for sample in ensemble.samples
+                    for summary in sample.result.day_summaries
+                ]
+                shift_df = shift_dataframe_from_ensemble(ensemble)
+                day_df = day_dataframe_from_ensemble(ensemble)
+            else:
+                base_result = ensemble.base_result
+                shift_summaries = list(base_result.shift_summaries)
+                day_summaries = list(base_result.day_summaries)
+                shift_df = shift_dataframe(base_result)
+                day_df = day_dataframe(base_result)
+
+        if telemetry_logger and run_logger:
+            cumulative_production = 0.0
+            for idx, summary in enumerate(day_summaries, start=1):
+                production = float(getattr(summary, "production_units", 0.0))
+                cumulative_production += production
+                run_logger.log_step(
+                    step=idx,
+                    objective=production,
+                    best_objective=cumulative_production,
+                    temperature=None,
+                    acceptance_rate=None,
+                    proposals=0,
+                    accepted_moves=0,
+                )
+
+        shift_table = Table(title="Shift Playback Summary")
+        shift_table.add_column("Machine")
+        shift_table.add_column("Day")
+        shift_table.add_column("Shift")
+        shift_table.add_column("Prod", justify="right")
+        shift_table.add_column("Hours", justify="right")
+        shift_table.add_column("Idle", justify="right")
+        shift_table.add_column("Mobilisation", justify="right")
+        shift_table.add_column("Sequencing", justify="right")
+        shift_table.add_column("Utilisation", justify="right")
+        for summary in shift_summaries[:20]:
+            shift_table.add_row(
+                summary.machine_id,
+                str(summary.day),
+                summary.shift_id,
+                f"{summary.production_units:.2f}",
+                f"{summary.total_hours:.2f}",
+                f"{(summary.idle_hours or 0.0):.2f}",
+                f"{summary.mobilisation_cost:.2f}",
+                str(summary.sequencing_violations),
+                f"{(summary.utilisation_ratio or 0.0):.2f}",
+            )
+        console.print(shift_table)
+
+        day_table = Table(title="Day Playback Summary")
+        day_table.add_column("Day")
+        day_table.add_column("Prod", justify="right")
+        day_table.add_column("Hours", justify="right")
+        day_table.add_column("Idle", justify="right")
+        day_table.add_column("Mobilisation", justify="right")
+        day_table.add_column("Completed", justify="right")
+        day_table.add_column("Sequencing", justify="right")
+        day_table.add_column("Utilisation", justify="right")
+        for summary in day_summaries:
+            day_table.add_row(
+                str(summary.day),
+                f"{summary.production_units:.2f}",
+                f"{summary.total_hours:.2f}",
+                f"{(summary.idle_hours or 0.0):.2f}",
+                f"{summary.mobilisation_cost:.2f}",
+                str(summary.completed_blocks),
+                str(summary.sequencing_violations),
+                f"{(summary.utilisation_ratio or 0.0):.2f}",
+            )
+        console.print(day_table)
+
+        export_metrics: dict[str, Any] = {}
+        try:
+            export_metrics = export_playback(
+                shift_df,
+                day_df,
+                shift_csv=shift_out,
+                day_csv=day_out,
+                shift_parquet=shift_parquet,
+                day_parquet=day_parquet,
+                summary_md=summary_md,
+            )
+        except ImportError as exc:
+            console.print(
+                "[red]Parquet export requires either pyarrow or fastparquet. Install one of them to enable this feature.[/red]"
+            )
+            raise typer.Exit(1) from exc
+
+        if shift_out:
+            console.print(f"Shift summary saved to {shift_out}")
+            artifacts.append(str(shift_out))
+        if day_out:
+            console.print(f"Day summary saved to {day_out}")
+            artifacts.append(str(day_out))
+        if shift_parquet:
+            console.print(f"Shift parquet saved to {shift_parquet}")
+            artifacts.append(str(shift_parquet))
+        if day_parquet:
+            console.print(f"Day parquet saved to {day_parquet}")
+            artifacts.append(str(day_parquet))
+        if summary_md:
+            console.print(f"Markdown summary saved to {summary_md}")
+            artifacts.append(str(summary_md))
+
+        if telemetry_logger:
+            export_payload = {}
+            if shift_out:
+                export_payload["shift_csv"] = str(shift_out)
+            if day_out:
+                export_payload["day_csv"] = str(day_out)
+            if shift_parquet:
+                export_payload["shift_parquet"] = str(shift_parquet)
+            if day_parquet:
+                export_payload["day_parquet"] = str(day_parquet)
+            if summary_md:
+                export_payload["summary_md"] = str(summary_md)
+            metrics_payload = {
+                "total_production": float(day_df["production_units"].sum())
+                if "production_units" in day_df
+                else 0.0,
+                "total_hours": float(day_df["total_hours"].sum())
+                if "total_hours" in day_df
+                else 0.0,
+                "shift_rows": int(len(shift_df)),
+                "day_rows": int(len(day_df)),
+                "deterministic": bool(deterministic_mode),
+                "samples_requested": samples,
+            }
+            extra_payload = {
+                "export": export_payload,
+                "export_metrics": export_metrics or playback_summary_metrics(shift_df, day_df),
+                "scenario_features": scenario_features,
+            }
+            telemetry_logger.finalize(
+                status="ok",
+                metrics=metrics_payload,
+                extra=extra_payload,
+                artifacts=artifacts,
+            )
 
 
 @app.command()
@@ -760,6 +1506,651 @@ def benchmark(
     console.print("SA metrics:")
     for key, value in sa_metrics.items():
         console.print(f"  {key}: {value:.3f}" if isinstance(value, float) else f"  {key}: {value}")
+
+
+@app.command("tune-random")
+def tune_random_cli(
+    scenarios: list[Path] | None = typer.Argument(
+        None,
+        exists=True,
+        readable=True,
+        dir_okay=True,
+        help="Scenario YAMLs or directories to sample during tuning (repeatable).",
+    ),
+    bundle: list[str] | None = typer.Option(
+        None,
+        "--bundle",
+        "-b",
+        help="Scenario bundle alias or path (repeatable). Supports alias=path syntax.",
+    ),
+    telemetry_log: Path = typer.Option(
+        Path("telemetry/runs.jsonl"),
+        "--telemetry-log",
+        help="Telemetry JSONL capturing prior heuristic runs (optional).",
+        dir_okay=False,
+        writable=False,
+    ),
+    runs: int = typer.Option(
+        3,
+        "--runs",
+        min=1,
+        help="Number of random configurations to evaluate per scenario.",
+    ),
+    iters: int = typer.Option(
+        250,
+        "--iters",
+        min=10,
+        help="Simulated annealing iterations per run.",
+    ),
+    base_seed: int = typer.Option(
+        123,
+        "--base-seed",
+        help="Seed used to initialise the random tuner (per-run seeds derive from this).",
+    ),
+    tier_label: str | None = typer.Option(
+        None,
+        "--tier-label",
+        help="Optional label describing the budget tier for telemetry summaries.",
+    ),
+):
+    """Randomly sample simulated annealing configurations and record telemetry."""
+    scenario_files, bundle_map = _collect_tuning_scenarios(scenarios, bundle)
+    if not scenario_files:
+        console.print("[yellow]No scenarios resolved. Provide --bundle or explicit paths.[/]")
+        raise typer.Exit(1)
+
+    rng = random.Random(base_seed)
+    registry = OperatorRegistry.from_defaults()
+    operator_names = list(registry.names())
+
+    results: list[dict[str, Any]] = []
+
+    for scenario_path in scenario_files:
+        sc = load_scenario(str(scenario_path))
+        pb = Problem.from_scenario(sc)
+        scenario_resolved = scenario_path.resolve()
+        bundle_meta = bundle_map.get(scenario_resolved)
+        scenario_display = (
+            getattr(sc, "name", None) or scenario_path.parent.name or scenario_path.stem
+        )
+        if bundle_meta:
+            console.print(
+                f"[dim]Tuning {scenario_display} (bundle={bundle_meta['bundle']}, runs={runs})[/]"
+            )
+        else:
+            console.print(f"[dim]Tuning {scenario_display} ({runs} run(s))[/]")
+
+        for run_idx in range(runs):
+            run_seed = rng.randrange(1, 1_000_000_000)
+            batch_size_choice = rng.choice([1, 2, 3])
+            weight_count = rng.randint(1, max(1, len(operator_names)))
+            selected_ops = rng.sample(operator_names, weight_count)
+            operator_weights = {name: round(rng.uniform(0.5, 1.5), 3) for name in selected_ops}
+
+            telemetry_kwargs: dict[str, Any] = {}
+            if telemetry_log:
+                telemetry_context = {
+                    "source": "cli.tune-random",
+                    "tuner_seed": base_seed,
+                    "run_index": run_idx,
+                    "batch_size_choice": batch_size_choice,
+                    "operator_count": weight_count,
+                }
+                if bundle_meta:
+                    telemetry_context["bundle"] = bundle_meta["bundle"]
+                    telemetry_context["bundle_member"] = bundle_meta.get(
+                        "bundle_member", scenario_display
+                    )
+                if tier_label:
+                    telemetry_context["tier"] = tier_label
+                tuner_meta_payload = {
+                    "algorithm": "random",
+                    "budget": {
+                        "runs_total": runs,
+                        "iters_per_run": iters,
+                        "tier": tier_label,
+                    },
+                    "config": {
+                        "batch_size": batch_size_choice,
+                        "operator_count": weight_count,
+                        "operators": operator_weights,
+                    },
+                    "progress": {
+                        "run_index": run_idx + 1,
+                        "total_runs": runs,
+                    },
+                }
+                if bundle_meta:
+                    tuner_meta_payload["bundle"] = bundle_meta["bundle"]
+                    tuner_meta_payload["bundle_member"] = bundle_meta.get(
+                        "bundle_member", scenario_display
+                    )
+                telemetry_kwargs = {
+                    "telemetry_log": telemetry_log,
+                    "telemetry_context": telemetry_context,
+                }
+                telemetry_kwargs["telemetry_context"]["tuner_meta"] = tuner_meta_payload
+
+            try:
+                res = solve_sa(
+                    pb,
+                    iters=iters,
+                    seed=run_seed,
+                    batch_size=batch_size_choice if batch_size_choice > 1 else None,
+                    operator_weights=operator_weights,
+                    **telemetry_kwargs,
+                )
+            except Exception as exc:  # pragma: no cover - defensive
+                console.print(
+                    f"[yellow]Run failed for {scenario_path} (seed={run_seed}): {exc!r}[/]"
+                )
+                continue
+
+            results.append(
+                {
+                    "scenario": scenario_display,
+                    "scenario_key": (
+                        f"{bundle_meta['bundle']}:{bundle_meta.get('bundle_member', scenario_display)}"
+                        if bundle_meta
+                        else scenario_display
+                    ),
+                    "bundle": bundle_meta["bundle"] if bundle_meta else None,
+                    "objective": float(res.get("objective", 0.0)),
+                    "seed": run_seed,
+                    "batch_size": batch_size_choice,
+                    "operator_weights": operator_weights,
+                    "telemetry_run_id": res.get("meta", {}).get("telemetry_run_id"),
+                }
+            )
+
+    if not results:
+        console.print("[yellow]Random tuner did not produce any successful runs.[/]")
+        return
+
+    table = Table(title="Random tuner results", show_lines=False)
+    include_bundle = any(entry.get("bundle") for entry in results)
+    table.add_column("Scenario")
+    if include_bundle:
+        table.add_column("Bundle")
+    table.add_column("Objective", justify="right")
+    table.add_column("Seed", justify="right")
+    table.add_column("Batch", justify="right")
+    table.add_column("Operators")
+
+    for entry in sorted(results, key=lambda item: item["objective"], reverse=True):
+        op_preview = ", ".join(
+            f"{name}={weight:.2f}" for name, weight in sorted(entry["operator_weights"].items())
+        )
+        row = [
+            entry["scenario"],
+        ]
+        if include_bundle:
+            row.append(entry.get("bundle") or "")
+        row.extend(
+            [
+                f"{entry['objective']:.3f}",
+                str(entry["seed"]),
+                str(entry["batch_size"]),
+                op_preview if len(op_preview) < 80 else op_preview[:77] + "...",
+            ]
+        )
+        table.add_row(*row)
+    console.print(table)
+
+    if telemetry_log:
+        console.print(
+            f"[dim]{len(results)} telemetry record(s) written to {telemetry_log}. Step logs stored in {telemetry_log.parent / 'steps'}.[/]"
+        )
+        scenario_best: dict[str, float] = {}
+        for entry in results:
+            key = entry.get("scenario_key", entry["scenario"])
+            scenario_best[key] = max(scenario_best.get(key, float("-inf")), entry["objective"])
+        summary_record = {
+            "record_type": "tuner_summary",
+            "schema_version": "1.1",
+            "algorithm": "random",
+            "scenarios_evaluated": len(scenario_best),
+            "configurations": len(results),
+            "scenario_best": scenario_best,
+        }
+        summary_record = persist_tuner_summary(
+            telemetry_log.with_suffix(".sqlite"),
+            summary_record,
+        )
+        append_jsonl(telemetry_log, summary_record)
+
+
+@app.command("tune-grid")
+def tune_grid_cli(
+    scenarios: list[Path] | None = typer.Argument(
+        None,
+        exists=True,
+        readable=True,
+        dir_okay=True,
+        help="Scenario YAMLs or bundle directories to evaluate.",
+    ),
+    bundle: list[str] | None = typer.Option(
+        None,
+        "--bundle",
+        "-b",
+        help="Scenario bundle alias or path (repeatable). Supports alias=path syntax.",
+    ),
+    telemetry_log: Path = typer.Option(
+        Path("telemetry/runs.jsonl"),
+        "--telemetry-log",
+        help="Telemetry JSONL capturing per-run metadata (optional).",
+        dir_okay=False,
+        writable=False,
+    ),
+    batch_size: list[int] = typer.Option(
+        None,
+        "--batch-size",
+        help="Batch size options to evaluate (repeatable). Defaults to [1, 2, 3].",
+    ),
+    preset: list[str] = typer.Option(
+        None,
+        "--preset",
+        help="Operator preset(s) to evaluate (repeatable). Defaults to balanced/explore/mobilisation.",
+    ),
+    iters: int = typer.Option(
+        250,
+        "--iters",
+        min=10,
+        help="Simulated annealing iterations per configuration.",
+    ),
+    seed: int = typer.Option(
+        123,
+        "--seed",
+        help="Base seed (increments deterministically across grid points).",
+    ),
+    tier_label: str | None = typer.Option(
+        None,
+        "--tier-label",
+        help="Optional label describing the budget tier for telemetry summaries.",
+    ),
+):
+    """Exhaustively evaluate a grid of operator presets and batch sizes."""
+    scenario_files, bundle_map = _collect_tuning_scenarios(scenarios, bundle)
+    if not scenario_files:
+        console.print("[yellow]No scenarios resolved. Provide --bundle or explicit paths.[/]")
+        raise typer.Exit(1)
+
+    batch_values = sorted(set(batch_size)) if batch_size else [1, 2, 3]
+    preset_values = [name.lower() for name in (preset or ["balanced", "explore", "mobilisation"])]
+
+    for name in preset_values:
+        if name not in OPERATOR_PRESETS:
+            console.print(
+                f"[red]Unknown operator preset '{name}'. Available: {', '.join(sorted(OPERATOR_PRESETS))}[/]"
+            )
+            raise typer.Exit(1)
+
+    results: list[dict[str, Any]] = []
+    run_seed = seed
+    for scenario_path in scenario_files:
+        sc = load_scenario(str(scenario_path))
+        pb = Problem.from_scenario(sc)
+        scenario_resolved = scenario_path.resolve()
+        bundle_meta = bundle_map.get(scenario_resolved)
+        scenario_display = (
+            getattr(sc, "name", None) or scenario_path.parent.name or scenario_path.stem
+        )
+        config_count = len(batch_values) * len(preset_values)
+        if bundle_meta:
+            console.print(
+                f"[dim]Grid tuning {scenario_display} (bundle={bundle_meta['bundle']}, configs={config_count})[/]"
+            )
+        else:
+            console.print(
+                f"[dim]Grid tuning {scenario_display} ({config_count} configuration(s))[/]"
+            )
+        config_counter = 0
+        for batch_choice in batch_values:
+            for preset_name in preset_values:
+                operator_weights = {
+                    key.lower(): float(value)
+                    for key, value in OPERATOR_PRESETS[preset_name].items()
+                }
+                telemetry_kwargs: dict[str, Any] = {}
+                if telemetry_log:
+                    telemetry_kwargs = {
+                        "telemetry_log": telemetry_log,
+                        "telemetry_context": {
+                            "source": "cli.tune-grid",
+                            "preset": preset_name,
+                            "batch_size": batch_choice,
+                            "grid_seed": run_seed,
+                        },
+                    }
+                    if bundle_meta:
+                        telemetry_kwargs["telemetry_context"]["bundle"] = bundle_meta["bundle"]
+                        telemetry_kwargs["telemetry_context"]["bundle_member"] = bundle_meta.get(
+                            "bundle_member", scenario_display
+                        )
+                    if tier_label:
+                        telemetry_kwargs["telemetry_context"]["tier"] = tier_label
+                    config_counter += 1
+                    tuner_meta_payload = {
+                        "algorithm": "grid",
+                        "budget": {
+                            "total_configs": config_count,
+                            "iters_per_config": iters,
+                            "tier": tier_label,
+                        },
+                        "config": {
+                            "preset": preset_name,
+                            "batch_size": batch_choice,
+                            "operators": operator_weights,
+                        },
+                        "progress": {
+                            "config_index": config_counter,
+                            "total_configs": config_count,
+                        },
+                    }
+                    if bundle_meta:
+                        tuner_meta_payload["bundle"] = bundle_meta["bundle"]
+                        tuner_meta_payload["bundle_member"] = bundle_meta.get(
+                            "bundle_member", scenario_display
+                        )
+                    telemetry_kwargs["telemetry_context"]["tuner_meta"] = tuner_meta_payload
+                try:
+                    res = solve_sa(
+                        pb,
+                        iters=iters,
+                        seed=run_seed,
+                        batch_size=batch_choice if batch_choice > 1 else None,
+                        operator_weights=operator_weights,
+                        **telemetry_kwargs,
+                    )
+                except Exception as exc:  # pragma: no cover - defensive
+                    console.print(
+                        f"[yellow]Run failed for {scenario_path} (preset={preset_name}, batch={batch_choice}): {exc!r}[/]"
+                    )
+                    run_seed += 1
+                    continue
+
+                results.append(
+                    {
+                        "scenario": scenario_display,
+                        "scenario_key": (
+                            f"{bundle_meta['bundle']}:{bundle_meta.get('bundle_member', scenario_display)}"
+                            if bundle_meta
+                            else scenario_display
+                        ),
+                        "bundle": bundle_meta["bundle"] if bundle_meta else None,
+                        "objective": float(res.get("objective", 0.0)),
+                        "preset": preset_name,
+                        "batch_size": batch_choice,
+                        "seed": run_seed,
+                        "telemetry_run_id": res.get("meta", {}).get("telemetry_run_id"),
+                    }
+                )
+                run_seed += 1
+
+    if not results:
+        console.print("[yellow]Grid tuner did not produce any successful runs.[/]")
+        return
+
+    table = Table(title="Grid tuner results", show_lines=False)
+    include_bundle = any(entry.get("bundle") for entry in results)
+    table.add_column("Scenario")
+    if include_bundle:
+        table.add_column("Bundle")
+    table.add_column("Objective", justify="right")
+    table.add_column("Preset")
+    table.add_column("Batch", justify="right")
+    table.add_column("Seed", justify="right")
+
+    for entry in sorted(results, key=lambda item: item["objective"], reverse=True):
+        row = [
+            entry["scenario"],
+        ]
+        if include_bundle:
+            row.append(entry.get("bundle") or "")
+        row.extend(
+            [
+                f"{entry['objective']:.3f}",
+                entry["preset"],
+                str(entry["batch_size"]),
+                str(entry["seed"]),
+            ]
+        )
+        table.add_row(*row)
+    console.print(table)
+
+    if telemetry_log:
+        console.print(
+            f"[dim]{len(results)} telemetry record(s) written to {telemetry_log}. Step logs stored in {telemetry_log.parent / 'steps'}.[/]"
+        )
+        scenario_best: dict[str, float] = {}
+        for entry in results:
+            key = entry.get("scenario_key", entry["scenario"])
+            scenario_best[key] = max(scenario_best.get(key, float("-inf")), entry["objective"])
+        summary_record = {
+            "record_type": "tuner_summary",
+            "schema_version": "1.1",
+            "algorithm": "grid",
+            "scenarios_evaluated": len(scenario_best),
+            "configurations": len(results),
+            "scenario_best": scenario_best,
+        }
+        summary_record = persist_tuner_summary(
+            telemetry_log.with_suffix(".sqlite"),
+            summary_record,
+        )
+        append_jsonl(telemetry_log, summary_record)
+
+
+@app.command("tune-bayes")
+def tune_bayes_cli(
+    scenarios: list[Path] | None = typer.Argument(
+        None,
+        exists=True,
+        readable=True,
+        dir_okay=True,
+        help="Scenario YAMLs or bundle directories to evaluate.",
+    ),
+    bundle: list[str] | None = typer.Option(
+        None,
+        "--bundle",
+        "-b",
+        help="Scenario bundle alias or path (repeatable). Supports alias=path syntax.",
+    ),
+    telemetry_log: Path = typer.Option(
+        Path("telemetry/runs.jsonl"),
+        "--telemetry-log",
+        help="Telemetry JSONL capturing per-trial metadata (optional).",
+        dir_okay=False,
+        writable=False,
+    ),
+    trials: int = typer.Option(
+        20,
+        "--trials",
+        min=1,
+        help="Number of Bayesian optimisation trials per scenario.",
+    ),
+    iters: int = typer.Option(
+        250,
+        "--iters",
+        min=10,
+        help="Simulated annealing iterations per trial.",
+    ),
+    seed: int = typer.Option(
+        123,
+        "--seed",
+        help="Random seed for the Bayesian sampler.",
+    ),
+    tier_label: str | None = typer.Option(
+        None,
+        "--tier-label",
+        help="Optional label describing the budget tier for telemetry summaries.",
+    ),
+):
+    """Optimise SA hyperparameters with Bayesian/SMBO search (Optuna TPE)."""
+
+    scenario_files, bundle_map = _collect_tuning_scenarios(scenarios, bundle)
+    if not scenario_files:
+        console.print("[yellow]No scenarios resolved. Provide --bundle or explicit paths.[/]")
+        raise typer.Exit(1)
+
+    optuna.logging.set_verbosity(optuna.logging.WARNING)
+    operator_names = list(OperatorRegistry.from_defaults().names())
+
+    for scenario_path in scenario_files:
+        sc = load_scenario(str(scenario_path))
+        pb = Problem.from_scenario(sc)
+        scenario_resolved = scenario_path.resolve()
+        bundle_meta = bundle_map.get(scenario_resolved)
+        scenario_display = (
+            getattr(sc, "name", None) or scenario_path.parent.name or scenario_path.stem
+        )
+        if bundle_meta:
+            console.print(
+                f"[dim]Bayesian tuning {scenario_display} (bundle={bundle_meta['bundle']}, trials={trials})[/]"
+            )
+        else:
+            console.print(f"[dim]Bayesian tuning {scenario_display} ({trials} trial(s))[/]")
+
+        sampler = optuna.samplers.TPESampler(seed=seed)
+        study = optuna.create_study(direction="maximize", sampler=sampler)
+        trial_results: list[dict[str, Any]] = []
+
+        def objective(trial: optuna.trial.Trial) -> float:
+            batch_choice = trial.suggest_int("batch_size", 1, 3)
+            operator_weights = {
+                name: trial.suggest_float(f"weight_{name}", 0.0, 2.0) for name in operator_names
+            }
+            telemetry_kwargs: dict[str, Any] = {}
+            if telemetry_log:
+                telemetry_kwargs = {
+                    "telemetry_log": telemetry_log,
+                    "telemetry_context": {
+                        "source": "cli.tune-bayes",
+                        "trial": trial.number,
+                        "batch_size": batch_choice,
+                        "tuner_seed": seed,
+                    },
+                }
+                if bundle_meta:
+                    telemetry_kwargs["telemetry_context"]["bundle"] = bundle_meta["bundle"]
+                    telemetry_kwargs["telemetry_context"]["bundle_member"] = bundle_meta.get(
+                        "bundle_member", scenario_display
+                    )
+                if tier_label:
+                    telemetry_kwargs["telemetry_context"]["tier"] = tier_label
+                tuner_meta_payload = {
+                    "algorithm": "bayes",
+                    "budget": {
+                        "trials_total": trials,
+                        "iters_per_trial": iters,
+                        "tier": tier_label,
+                    },
+                    "config": {
+                        "trial_number": trial.number,
+                        "batch_size": batch_choice,
+                        "operators": operator_weights,
+                    },
+                    "progress": {
+                        "trial_index": trial.number + 1,
+                        "total_trials": trials,
+                    },
+                }
+                if bundle_meta:
+                    tuner_meta_payload["bundle"] = bundle_meta["bundle"]
+                    tuner_meta_payload["bundle_member"] = bundle_meta.get(
+                        "bundle_member", scenario_display
+                    )
+                telemetry_kwargs["telemetry_context"]["tuner_meta"] = tuner_meta_payload
+            try:
+                res = solve_sa(
+                    pb,
+                    iters=iters,
+                    seed=seed + trial.number,
+                    batch_size=batch_choice if batch_choice > 1 else None,
+                    operator_weights=operator_weights,
+                    **telemetry_kwargs,
+                )
+            except Exception as exc:  # pragma: no cover - defensive path
+                trial.set_user_attr("error", repr(exc))
+                raise optuna.exceptions.TrialPruned() from exc
+
+            objective = float(res.get("objective", 0.0))
+            trial.set_user_attr("telemetry_run_id", res.get("meta", {}).get("telemetry_run_id"))
+            trial_results.append(
+                {
+                    "trial": trial.number,
+                    "objective": objective,
+                    "batch_size": batch_choice,
+                    "operator_weights": operator_weights,
+                    "scenario": scenario_display,
+                    "scenario_key": (
+                        f"{bundle_meta['bundle']}:{bundle_meta.get('bundle_member', scenario_display)}"
+                        if bundle_meta
+                        else scenario_display
+                    ),
+                    "bundle": bundle_meta["bundle"] if bundle_meta else None,
+                    "telemetry_run_id": res.get("meta", {}).get("telemetry_run_id"),
+                }
+            )
+            return objective
+
+        try:
+            study.optimize(objective, n_trials=trials)
+        except optuna.exceptions.OptunaError as exc:  # pragma: no cover - defensive path
+            console.print(f"[red]Bayesian tuner failed for {scenario_path}: {exc!r}[/]")
+            continue
+
+        best = study.best_trial
+        console.print(
+            f"Best objective for {scenario_path.name}: {best.value:.3f} (trial {best.number}, batch={best.params.get('batch_size')})"
+        )
+
+        table = Table(title=f"Bayesian tuner trials — {scenario_path.name}", show_lines=False)
+        include_bundle = any(record.get("bundle") for record in trial_results)
+        table.add_column("Trial", justify="right")
+        table.add_column("Objective", justify="right")
+        table.add_column("Batch", justify="right")
+        table.add_column("Weights")
+        if include_bundle:
+            table.add_column("Bundle")
+
+        for record in sorted(trial_results, key=lambda row: row["objective"], reverse=True):
+            weights_preview = ", ".join(
+                f"{name}={weight:.2f}"
+                for name, weight in sorted(record["operator_weights"].items())
+            )
+            row = [
+                str(record["trial"]),
+                f"{record['objective']:.3f}",
+                str(record["batch_size"]),
+                weights_preview if len(weights_preview) < 80 else weights_preview[:77] + "...",
+            ]
+            if include_bundle:
+                row.append(record.get("bundle") or "")
+            table.add_row(*row)
+        console.print(table)
+
+        if telemetry_log:
+            console.print(
+                f"[dim]{len(trial_results)} telemetry record(s) written to {telemetry_log}. Step logs stored in {telemetry_log.parent / 'steps'}.[/]"
+            )
+            scenario_best: dict[str, float] = {}
+            for record in trial_results:
+                key = record.get("scenario_key", scenario_display)
+                scenario_best[key] = max(scenario_best.get(key, float("-inf")), record["objective"])
+            summary_record = {
+                "record_type": "tuner_summary",
+                "schema_version": "1.1",
+                "algorithm": "bayes",
+                "scenarios_evaluated": len(scenario_best),
+                "configurations": len(trial_results),
+                "scenario_best": scenario_best,
+            }
+            summary_record = persist_tuner_summary(
+                telemetry_log.with_suffix(".sqlite"),
+                summary_record,
+            )
+            append_jsonl(telemetry_log, summary_record)
 
 
 if __name__ == "__main__":
