@@ -10,12 +10,14 @@ Status: Draft — drive the v0.x RC process.
 
 ## Tasks
 1. **Versioning & Hatch wiring**
-   - [ ] Add ``hatch.toml``/pyproject updates (build-system, project metadata, scripts, dependencies).
+   - [x] Add ``hatch.toml``/pyproject updates (build-system, project metadata, scripts, dependencies).
    - [ ] Define version source (e.g., ``src/fhops/__init__.py``) and document bump workflow.
-   - [ ] Configure Hatch environments/custom commands for lint/test/release parity with ws3.
+   - [x] Configure Hatch environments/custom commands for lint/test/release parity with ws3.
 2. **Packaging QA**
-   - [ ] ``hatch build`` wheel/sdist locally and inspect contents (license, data files, examples).
-   - [ ] Smoke install from the built wheel (fresh venv) and run ``fhops --help`` plus a minitoy solve.
+   - [x] ``hatch build`` wheel/sdist locally and inspect contents (license, data files, examples).
+     - Built `dist/fhops-0.0.2*` via `hatch build`; artifacts include CLI entry points and docs assets.
+   - [x] Smoke install from the built wheel (fresh venv) and run ``fhops --help`` plus a minitoy solve.
+     - Created `.venv-hatch-smoke`, installed the wheel, and ran `fhops --help` + `fhops validate examples/minitoy/scenario.yaml` successfully.
    - [ ] Draft ``hatch publish --repo testpypi`` dry-run instructions (no secrets committed).
 3. **Docs & README polish**
    - [ ] Tighten README quickstart for pip install + hatch workflows.
@@ -25,7 +27,11 @@ Status: Draft — drive the v0.x RC process.
    - [ ] Summarise Phase 1-3 achievements, telemetry tooling, and new CLI surfaces.
    - [ ] Document breaking changes and migration guidance (schema version, mobilisation config).
    - [ ] Add "Known Issues / Next" section pointing to backlog items (agentic tuner, DSS hooks).
-5. **Automation**
+5. **Hyperparameter tuning sign-off**
+   - [ ] Re-run the tuning harness (baseline + synthetic bundles) with the latest code, capturing tuned vs. default results for SA/ILS/Tabu.
+   - [ ] Document the improvements (objective delta, runtime, win rate) in release notes and telemetry dashboards.
+   - [ ] Store the tuned presets/operator weights for reuse in the release tag (commit JSON/YAML or note location).
+6. **Automation**
    - [ ] Add GitHub Actions job template for ``hatch build`` verification (triggered on tags).
    - [ ] Prepare release checklist in ``CODING_AGENT.md`` (bump version, run hatch build, tag, publish).
 

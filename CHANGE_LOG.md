@@ -13,6 +13,9 @@
 - Started the release candidate prep effort on branch `release-candidate-prep`: added
   `notes/release_candidate_prep.md`, updated the roadmap detailed next steps, and expanded
   `CODING_AGENT.md` with Hatch-based release workflow guidance.
+- Added `hatch.toml` with dev/release environments mirroring the CI cadence, ran `hatch build`
+  to produce sdist/wheel artifacts, and smoke-tested the wheel in a fresh virtualenv via
+  `fhops --help` and a minitoy validation run.
 
 ## 2025-11-13 — Docs landing fix
 - Repaired `docs/index.rst` so the dashboards reference appears inside the “Getting Started” toctree, restoring a valid Sphinx build and keeping the telemetry links visible on GitHub Pages.
