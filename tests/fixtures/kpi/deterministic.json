@@ -1,0 +1,30 @@
+{
+  "med42": {
+    "completed_blocks": 4.0,
+    "makespan_day": 41,
+    "makespan_shift": "S1",
+    "mobilisation_cost": 3650.0,
+    "mobilisation_cost_by_landing": "{\"L1\": 650.0, \"L2\": 1000.0, \"L3\": 600.0, \"L4\": 1400.0}",
+    "mobilisation_cost_by_machine": "{\"H1\": 850.0, \"H2\": 400.0, \"H3\": 350.0, \"H4\": 450.0, \"H5\": 650.0, \"H6\": 400.0, \"H7\": 250.0, \"H8\": 300.0}",
+    "total_production": 511.813,
+    "utilisation_ratio_by_machine": "{\"H1\": 1.0, \"H2\": 1.0, \"H3\": 1.0, \"H4\": 1.0, \"H5\": 1.0, \"H6\": 1.0, \"H7\": 1.0, \"H8\": 1.0}",
+    "utilisation_ratio_mean_day": 0.761409,
+    "utilisation_ratio_mean_shift": 1.0,
+    "utilisation_ratio_weighted_day": 0.757246,
+    "utilisation_ratio_weighted_shift": 1.0
+  },
+  "minitoy": {
+    "completed_blocks": 3.0,
+    "makespan_day": 14,
+    "makespan_shift": "S1",
+    "mobilisation_cost": 335.0,
+    "mobilisation_cost_by_landing": "{\"L1\": 135.0, \"L2\": 200.0}",
+    "mobilisation_cost_by_machine": "{\"H1\": 140.0, \"H2\": 195.0}",
+    "total_production": 54.0,
+    "utilisation_ratio_by_machine": "{\"H1\": 1.0, \"H2\": 1.0}",
+    "utilisation_ratio_mean_day": 0.785714,
+    "utilisation_ratio_mean_shift": 1.0,
+    "utilisation_ratio_weighted_day": 0.777778,
+    "utilisation_ratio_weighted_shift": 1.0
+  }
+}

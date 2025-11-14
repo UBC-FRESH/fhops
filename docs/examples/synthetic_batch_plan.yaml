@@ -1,0 +1,25 @@
+# Example batch plan for ``fhops synth batch``.
+#
+# Invoke with:
+#   fhops synth batch docs/examples/synthetic_batch_plan.yaml --overwrite
+#
+# The output directories below are relative to the project root; adjust paths as needed.
+
+- tier: small
+  output_dir: tmp/synthetic_batch/small
+  seed: 601
+
+- tier: medium
+  output_dir: tmp/synthetic_batch/medium
+  seed: 602
+  overrides:
+    name: synthetic-medium-batch
+    num_days: 14
+  flags:
+    blocks: "8:10"
+    machines: "4:5"
+
+- tier: custom
+  output_dir: tmp/synthetic_batch/custom
+  config: docs/examples/synthetic_batch_custom.yaml
+  seed: 603

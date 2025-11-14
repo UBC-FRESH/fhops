@@ -1,5 +1,6 @@
 """Telemetry utilities for recording FHOPS run data."""
 
-from .jsonl import append_jsonl
+from .jsonl import append_jsonl, load_jsonl
+from .run_logger import RunTelemetryLogger
 
-__all__ = ["append_jsonl"]
+__all__ = ["append_jsonl", "load_jsonl", "RunTelemetryLogger"]

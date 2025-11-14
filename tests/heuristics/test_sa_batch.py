@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import json
+import sqlite3
+from pathlib import Path
+
 import pytest
 
 from fhops.optimization.heuristics import solve_sa
@@ -13,6 +17,7 @@ from fhops.scenario.contract import (
     Scenario,
 )
 from fhops.scenario.contract.models import ShiftCalendarEntry
+from fhops.scenario.io.loaders import load_scenario
 
 
 def _simple_problem() -> Problem:
@@ -71,3 +76,42 @@ def test_evaluate_candidates_empty():
     pb = _simple_problem()
     batched = solve_sa(pb, iters=1, seed=1, batch_size=0, max_workers=4)
     assert "objective" in batched
+
+
+def test_solve_sa_writes_telemetry(tmp_path: Path):
+    scenario_path = Path("examples/minitoy/scenario.yaml")
+    scenario = load_scenario(scenario_path)
+    pb = Problem.from_scenario(scenario)
+    log_path = tmp_path / "runs.jsonl"
+    res = solve_sa(
+        pb,
+        iters=10,
+        seed=5,
+        telemetry_log=log_path,
+        telemetry_context={"scenario_path": str(scenario_path)},
+    )
+    assert log_path.exists()
+    assert "kpi_totals" in res["meta"]
+    lines = log_path.read_text(encoding="utf-8").strip().splitlines()
+    assert len(lines) == 1
+    record = json.loads(lines[0])
+    assert record["solver"] == "sa"
+    assert record["status"] == "ok"
+    assert pytest.approx(record["metrics"]["objective"], rel=1e-6) == res["objective"]
+    assert record["run_id"] == res["meta"]["telemetry_run_id"]
+    sqlite_path = log_path.with_suffix(".sqlite")
+    assert sqlite_path.exists()
+    with sqlite3.connect(sqlite_path) as conn:
+        rows = conn.execute(
+            "SELECT name FROM run_kpis WHERE run_id = ?", (record["run_id"],)
+        ).fetchall()
+        assert rows
+    steps_path = res["meta"].get("telemetry_steps_path")
+    assert steps_path
+    steps_path = Path(steps_path)
+    assert steps_path.exists()
+    step_lines = steps_path.read_text(encoding="utf-8").strip().splitlines()
+    assert step_lines
+    last_step = json.loads(step_lines[-1])
+    assert last_step["record_type"] == "step"
+    assert last_step["run_id"] == record["run_id"]

@@ -44,6 +44,7 @@ DEFAULT_SCENARIOS: tuple[BenchmarkScenario, ...] = (
     BenchmarkScenario("minitoy", Path("examples/minitoy/scenario.yaml")),
     BenchmarkScenario("med42", Path("examples/med42/scenario.yaml")),
     BenchmarkScenario("large84", Path("examples/large84/scenario.yaml")),
+    BenchmarkScenario("synthetic-small", Path("examples/synthetic/small/scenario.yaml")),
 )
 
 
@@ -288,7 +289,7 @@ def run_benchmark_suite(
                         "seed": sa_seed,
                         "iterations": sa_iters,
                         "objective": cast(float, sa_res.get("objective", 0.0)),
-                        "kpis": sa_kpis,
+                        "kpis": sa_kpis.to_dict(),
                         "operators_config": resolved_weights,
                         "operators_stats": operator_stats,
                         "preset_label": preset_label,
@@ -399,7 +400,7 @@ def run_benchmark_suite(
                     "seed": ils_run_seed,
                     "iterations": ils_run_iters,
                     "objective": cast(float, ils_res.get("objective", 0.0)),
-                    "kpis": ils_kpis,
+                    "kpis": ils_kpis.to_dict(),
                     "operators_config": ils_weights or ils_weight_config,
                     "operators_stats": ils_stats,
                     "perturbation_strength": perturbation_strength_val,
@@ -499,7 +500,7 @@ def run_benchmark_suite(
                     "seed": tabu_run_seed,
                     "iterations": tabu_run_iters,
                     "objective": cast(float, tabu_res.get("objective", 0.0)),
-                    "kpis": tabu_kpis,
+                    "kpis": tabu_kpis.to_dict(),
                     "operators_config": tabu_weights or tabu_weight_config,
                     "operators_stats": tabu_stats,
                     "tabu_tenure": tabu_meta.get("tabu_tenure", tabu_tenure_val),

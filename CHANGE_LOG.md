@@ -1,6 +1,102 @@
 # Development Change Log
 
-## 2025-11-13 — CLI profile integration hardening
+## 2025-11-11 — Telemetry KPI persistence
+- Added a SQLite-backed telemetry mirror (`telemetry/runs.sqlite`) via `fhops.telemetry.sqlite_store.persist_run`, keeping run metadata, metrics, and KPI totals normalised alongside the JSONL history.
+- Simulated annealing, ILS, and Tabu solvers now compute KPI bundles for every run, inject the totals into telemetry records, and persist them to both JSONL and SQLite stores.
+- CLI tuners (`fhops tune-random`, `fhops tune-grid`, `fhops tune-bayes`) append `tuner_summary` records with per-scenario best objectives; regression tests assert the summaries and SQLite tables exist with KPI content.
+- CLI tuning commands mirror their `tuner_summary` payloads into the SQLite store so benchmarking/reporting jobs can query sweep outcomes without parsing JSONL.
+- Added `fhops telemetry report` to aggregate tuner performance into CSV/Markdown summaries sourced from the SQLite metrics and summary tables; coverage lives in `tests/test_cli_telemetry_report.py`.
+- CI runs a lightweight minitoy sweep that generates `fhops telemetry report` artifacts (`telemetry-report` bundle) for baseline monitoring.
+- Added `scripts/analyze_tuner_reports.py` plus tests, enabling deltas across multiple reports (baseline vs. experiment) to highlight objective improvements.
+- Extended `scripts/analyze_tuner_reports.py` with historical reporting (`--history-dir`, CSV/Markdown/Altair outputs) so dated telemetry snapshots can be trended over time.
+- CI now captures med42 alongside minitoy, publishes history summaries (`history_summary.{csv,md,html}`), and docs include a sample telemetry history figure plus a dedicated analysis notebook.
+- Refreshed `notes/metaheuristic_hyperparam_tuning.md` and the roadmap to mark the telemetry persistence milestone and document the new storage layout.
+
+## 2025-11-12 — Tuning bundles & delta polish
+- Added bundle resolution helpers (`--bundle` / `-b`) to `fhops tune-random`, `fhops tune-grid`, and `fhops tune-bayes`, supporting built-in aliases (`baseline`, `synthetic[-tier]`, etc.) and custom manifests via `alias=/path/to/metadata.yaml`.
+- Telemetry context now records `bundle` / `bundle_member`, and `tuner_summary.scenario_best` uses `bundle:member` keys so comparison scripts retain bundle provenance while generating reports/deltas.
+- Documented bundle usage in `docs/howto/telemetry_tuning.rst`, updated the README, and marked the roadmap/plan checklist item (“Provide CLI surfaces for bundle sweeps”) as complete.
+- Extended `scripts/analyze_tuner_reports.py` with per-scenario summary outputs (`--out-summary-csv`, `--out-summary-markdown`) so CI can surface the leading algorithm/objective per report without opening the full comparison table.
+- Added ``scripts/run_tuning_benchmarks.py`` to orchestrate random/grid/Bayesian sweeps over scenario bundles, emit fresh telemetry reports, and produce the new per-scenario summaries in one shot.
+- Recorded tuner metadata (`tuner_meta`) in telemetry runs (JSONL + SQLite), including algorithm labels, budgets, and configuration context, enabling downstream orchestration and comparison scripts to reason about search performance.
+- `scripts/run_tuning_benchmarks.py` now generates `tuner_comparison.{csv,md}` and `tuner_leaderboard.{csv,md}` assets summarising best objective deltas, runtime averages, and win rates across algorithms.
+- Introduced benchmark plans (`baseline-smoke`, `synthetic-smoke`, `full-spectrum`) with aligned tuner budgets; `scripts/run_tuning_benchmarks.py --plan` and CI smoke sweeps now reuse the documented matrix.
+- Added `scripts/summarize_tuner_meta.py` utility to inspect `tuner_meta` payloads (per algorithm run counts, sample budgets/configs) and linked it from the telemetry how-to.
+- Benchmark pipeline now emits per-bundle comparison/leaderboard tables and `tuner_difficulty*.{md,csv}` difficulty indices (including MIP gaps and second-best deltas), all published via GitHub Pages.
+- `scripts/run_tuning_benchmarks.py` gained tier-aware budgets (`short`/`medium`/`long`) plus plan overrides; the runner forwards `--tier-label` to CLI tuners so telemetry pivots can separate budget tiers.
+- Updated `docs/howto/telemetry_tuning.rst` and `notes/metaheuristic_hyperparam_tuning.md` with the tier matrix, hardware guidelines (≥64 cores, 8 GB RSS cap), and instructions for sequencing multiple tiers in one sweep.
+- Integrated Iterated Local Search and Tabu Search into `scripts/run_tuning_benchmarks.py`; tier presets now drive their restart/iteration budgets, telemetry contexts record bundle/tier metadata, and `tests/test_run_tuning_benchmarks.py` exercises the new flags.
+- Hardened comparison generation when runs lack bundle metadata (heuristic sweeps now default to `standalone` rather than raising).
+- Docs/notes refreshed to outline the ILS/Tabu tier budgets and CLI overrides (`--ils-*`, `--tabu-*`) for smoke vs. deep sweeps.
+- `scripts/analyze_tuner_reports.py` now accepts `--telemetry-log` and emits per-run/summary convergence reports (iterations to ≤1 % gap) by parsing step logs; the how-to adds usage guidance and tests cover the new outputs.
+- Published a heuristic parameter catalogue in `docs/howto/telemetry_tuning.rst`, aligning the planning table with user-facing documentation so tuning surfaces are discoverable.
+
+## 2025-11-11 — Analytics notebook automation
+- Added the analytics notebook runner to CI (`.github/workflows/ci.yml`) so the curated suite executes in light mode on every push/PR, exercising Altair plots and playback helpers.
+- Captured fresh execution metadata in `docs/examples/analytics/data/notebook_metadata.json` and documented the `FHOPS_ANALYTICS_LIGHT` toggle in planning notes for reproducible smoke runs.
+- Updated the analytics notebooks roadmap/planning entries to mark the runner + metadata milestones complete and highlighted follow-up documentation tasks.
+
+## 2025-11-11 — Analytics notebooks theme closure
+- Linked the notebook suite from the README and docs landing pages, describing how to regenerate runs locally with the light-mode flag.
+- Documented full-mode runtimes in `notes/analytics_notebooks_plan.md`, concluded caching is unnecessary for now, and marked the Phase 3 analytics notebooks milestone complete in the roadmap.
+
+## 2025-11-11 — Simulated annealing telemetry groundwork
+- Added `RunTelemetryLogger`, a reusable JSONL context manager capturing run + step telemetry and exporting metadata for downstream tuning workflows.
+- Instrumented `solve_sa` to emit telemetry (run id, configuration, metrics, step snapshots) when `telemetry_log` is provided; CLI multi-start now propagates context into these records.
+- Extended telemetry logging to `solve_ils` and `solve_tabu`, including CLI wiring and regression tests, so all heuristics share the JSONL store with consistent run/step metadata.
+- Added playback CLI telemetry: `fhops eval playback` now records run/step summaries via `RunTelemetryLogger`, emits artifacts/metrics, and exposes steps under `telemetry/steps/`; regression coverage ensures the JSONL line and step log are produced.
+- Added `fhops telemetry prune` for trimming `runs.jsonl` and matching step logs to keep telemetry lightweight.
+- Upgraded `fhops tune-random` to execute simulated annealing sweeps, sample operator weights, and record telemetry entries for each run.
+- Introduced `fhops.telemetry.load_jsonl` to load telemetry JSONL records into dataframes for downstream analysis.
+- Enriched heuristic telemetry (SA/ILS/Tabu) with scenario descriptors (counts of blocks/machines/landings/etc.) and recorded a telemetry schema version so future ML tuners can consume the data without schema retrofits.
+- Added `fhops tune-grid` to exhaustively evaluate operator presets and batch-size combinations, logging results and telemetry for benchmarking against other tuning strategies.
+- Added `fhops tune-bayes` (Optuna TPE) to perform Bayesian/SMBO searches over SA hyperparameters and log per-trial telemetry.
+- Updated roadmap and tuning plan notes to reflect the schema draft and SA logging milestone; introduced regression tests ensuring telemetry logs are written with matching run identifiers.
+- Added a placeholder `fhops tune-random` CLI command that surfaces recent telemetry records while the full random-search tuner is under construction.
+
+## 2025-11-11 — Playback telemetry integration
+- Extended `fhops eval playback` with a `--telemetry-log` option that records export metrics, sampling parameters, and artifact paths via the shared playback exporter helpers.
+- Ensured playback exports reuse the canonical aggregation helpers in both deterministic and stochastic modes so telemetry reflects the exact CLI outputs.
+- Added regression coverage (`tests/test_cli_playback_exports.py::test_eval_playback_telemetry_log`) asserting the JSONL payload captures scenario metadata and export metrics.
+- Updated shift/day reporting planning notes to reflect the completed telemetry wiring.
+- Added Hypothesis-based regressions (`tests/test_playback_aggregates.py::test_shift_totals_match_day_totals`, `test_blackout_conflicts_aggregate`) verifying shift/day totals reconcile and blackout conflicts aggregate correctly across stochastic configurations.
+- Generated deterministic Parquet fixtures for minitoy/med42 playback outputs and extended the CLI regression to diff CLI Parquet exports against the stored schema snapshots.
+- Expanded ``docs/howto/evaluation.rst`` with a CLI → Parquet → pandas quickstart, telemetry pointers, and an aggregation helper reference for KPI contributors.
+- Added KPI-alignment regression ensuring playback aggregation outputs reproduce legacy KPI totals for minitoy/med42 fixtures.
+- Introduced ``KPIResult`` structured mappings so KPI totals and shift/day calendars share a canonical schema exported via both playback helpers and CLI telemetry, and added utilisation, makespan, and landing-level mobilisation metrics to the KPI bundle.
+- Added regression snapshots for deterministic/stochastic KPI outputs plus property-based coverage ensuring utilisation ratios stay within bounds, makespan aligns with productive days, and downtime/weather signals remain stable, alongside estimated production-loss metrics for downtime and weather events, a CLI `--kpi-mode` flag to toggle basic vs. extended KPI summaries, KPI reporting templates (Markdown/CSV), a stochastic robustness walkthrough under `docs/examples/`, and the completion of the Phase 3 KPI expansion milestone in the roadmap.
+- Implemented a random synthetic dataset generator (`generate_random_dataset`) with CSV/YAML bundle support, produced small/medium/large reference datasets under `examples/synthetic/`, added statistical sanity tests over the generator outputs, regression coverage to keep the pipeline stable, and documented the bundles/metadata workflow in `docs/howto/synthetic_datasets.rst` (including CLI usage examples and the new `examples/synthetic/metadata.yaml` registry). The generator now samples tier-aware terrain/prescription tags, unique crew assignments with capability pools, richer blackout patterns, and emits `crew_assignments.csv` plus per-tier metadata so benchmarking/automation can reason about the synthetic library.
+- Added the `fhops synth generate` CLI command with tier presets, config merging, preview mode, and regression coverage (`tests/test_cli_synth.py`), enabling scripted creation of synthetic bundles with crew assignments and metadata out of the box.
+- Extended the CLI with `fhops synth batch`, allowing multi-bundle generation from plan files; added regression coverage (`tests/test_cli_synth.py::test_synth_batch_generates_multiple`) and updated docs to reflect the workflow.
+- Refreshed the benchmarking harness/tests to cover the synthetic small bundle, enforced KPI sanity bounds, documented synthetic usage in the benchmarking how-to, and added automatic metadata aggregation updates whenever canonical bundles are regenerated (see `src/fhops/cli/synthetic.py`).
+- Introduced weighted terrain/prescription sampling, blackout bias windows (`BlackoutBias`), and harvest-system mix support in the synthetic generator with targeted unit tests (`tests/test_synthetic_dataset.py::test_weighted_terrain_profile_skews_distribution`, `test_blackout_biases_increase_activity`, `test_system_mix_applies_when_systems_provided`) and property-based KPI checks (`tests/test_benchmark_harness.py::test_synthetic_kpi_properties`). Recorded medium/large tier scaling benchmarks in `notes/synthetic_dataset_plan.md`.
+- Added tier-aware stochastic sampling presets (`SAMPLING_PRESETS`) surfaced via `sampling_config_for`, embedded the recommended ensemble settings in bundle metadata/CLI output, and added regression coverage for sampling overrides (`tests/test_synthetic_dataset.py::test_sampling_config_for_tier_defaults`, `test_sampling_config_override_merges`).
+- Logged stochastic scaling experiments (medium/large tiers with sampling presets) and wired CI smoke coverage via `tests/test_synthetic_validation.py`; production/variance metrics captured in `notes/synthetic_dataset_plan.md`.
+- Authored additional analytics notebooks (landing congestion, system mix, KPI decomposition, telemetry diagnostics, ensemble resilience, operator sweep, benchmark summary) with executed outputs under `docs/examples/analytics/`, plus supporting data files for reproducible runs.
+
+## 2025-11-10 — Phase 3 playback planning kickoff
+- Expanded the Phase 3 roadmap checklist with detailed subtasks covering playback upgrades, KPI expansion, synthetic datasets, analytics notebooks, and hyperparameter tuning deliverables.
+- Logged the deterministic playback audit (current assets vs. gaps) inside `notes/simulation_eval_plan.md` to anchor upcoming shift/day reporting work.
+- Authored the shift/day reporting specification (schemas, CLI surfaces, contract deltas) within `notes/simulation_eval_plan.md` and marked the roadmap subtask complete.
+- Documented the playback migration checklist detailing module scaffolding, CLI integration, cleanup, and regression coverage, and checked off the corresponding roadmap item.
+- Drafted the stochastic sampling API plan (sampling abstractions, CLI surface, testing strategy) and marked the RNG design subtask complete.
+- Scaffolded the new playback package (`core.py`, `adapters.py`, `events.py`) with dataclasses, adapters, and Pydantic configs exported via `fhops.evaluation`.
+- Implemented idle-hour and sequencing-violation accounting in the playback adapters/summaries to surface richer shift/day analytics ahead of CLI wiring.
+- Added `tests/test_playback.py` with regression-problem coverage for block completion metadata, sequencing guards, and idle-hour aggregation.
+- Introduced the `fhops eval playback` CLI command (table output + CSV export scaffolding) to run deterministic playback outside notebooks.
+- Documented playback workflows in `docs/reference/cli.rst` and the new `docs/howto/evaluation.rst`.
+- Added a CLI smoke test (`tests/test_cli_playback.py`) ensuring playback exports remain stable.
+- Implemented stochastic playback scaffolding (`run_stochastic_playback`, downtime/weather events) with regression fixtures and unit coverage in `tests/test_stochastic_playback.py`.
+- Added stochastic toggles to `fhops eval playback` (`--samples`, `--downtime-*`, `--weather-*`) and documented the workflow in the CLI reference/how-to.
+- Extended CLI to expose landing shock parameters (`--landing-*`) with regression coverage.
+- Added shift/day summary schema enhancements (sample IDs, utilisation ratios) plus Parquet/Markdown export options on `fhops eval playback`.
+- Introduced playback aggregation helpers (`shift_dataframe`, `day_dataframe`, `machine_utilisation_summary`, etc.) with regression tests backing the new schema.
+- Refactored playback exports into shared helpers (`playback/exporters.py`) and added CLI regression coverage (`tests/test_cli_playback_exports.py`).
+- Extended stochastic playback tests with property-style checks covering deterministic equivalence and production bounds.
+- Added landing shock sampling to the stochastic runner and regression coverage guarding production reductions.
+- Checked off the playback inventory subtask in the roadmap to reflect the newly documented findings.
+
+## 2025-11-09 — CLI profile integration hardening
 - Refactored solver profile merging to return a structured `ResolvedSolverConfig`, simplifying how CLI commands consume operator presets, weights, batching, and extras.
 - Updated `fhops solve-heur`, `solve-ils`, and `solve-tabu` to rely on the resolved config, improved multi-start seed handling, and ensured profile extras override CLI defaults safely.
 - Tightened the benchmark suite (`fhops bench suite`) by reusing the resolved configs across SA/ILS/Tabu, normalising telemetry/summary metrics, and making scenario comparisons mypy-safe.
@@ -10,7 +106,7 @@
 - Added a geopandas-free GeoJSON loader fallback so geospatial utilities and tests run in lean environments without the optional dependency.
 - Normalised trailing whitespace in roadmap/planning notes and switched benchmark plotting utilities to import `Iterable` from `collections.abc` to keep pre-commit hooks clean.
 
-## 2025-11-12 — Iterated Local Search rollout
+## 2025-11-08 — Iterated Local Search rollout
 - Implemented the `fhops.optimization.heuristics.solve_ils` Iterated Local Search solver with perturbation telemetry, hybrid MIP restarts, and operator stats parity with SA.
 - Added a dedicated `fhops solve-ils` CLI command mirroring SA batching flags, plus `fhops bench suite --include-ils` options for harness comparisons.
 - Expanded Sphinx docs: new how-to (`docs/howto/ils.rst`), CLI reference updates, telemetry schema notes, and parallel workflow cross-links covering ILS usage.
@@ -118,3 +214,5 @@
 - Documented parallel workflows in Sphinx (multistart/batched how-to, CLI references, telemetry notes) and benchmarked the parallel heuristics across minitoy/med42/large84 to guide defaults.
 - Added an experimental Tabu Search solver (`solve_tabu`), shared CLI options/telemetry, and initial unit coverage.
 - Integrated Tabu Search into the benchmarking harness (`fhops bench suite --include-tabu`) and recorded comparative results showing SA remains the default recommendation.
+- Introduced a synthetic scenario dataset generator (`generate_random_dataset`) with CSV/YAML bundle writer helpers, scenario plan updates, and regression coverage (`tests/test_synthetic_dataset.py`) to support Phase 3 benchmarking workflows.
+- Added optional Gurobi backend support (extra `fhops[gurobi]`, CLI `--driver gurobi`, fallback-friendly solver plumbing), documented Linux licence setup, and extended the MIP ingestion helper to accept driver overrides for heavier baselines.

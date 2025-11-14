@@ -7,6 +7,15 @@ on:
       - 'feature/**'
   pull_request:
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
   lint-test-docs:
     runs-on: ubuntu-latest
@@ -20,11 +29,20 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Restore telemetry history cache
+        uses: actions/cache@v3
+        with:
+          path: tmp/ci-telemetry/history
+          key: telemetry-history-${{ github.ref_name }}
+          restore-keys: |
+            telemetry-history-
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -e .[dev]
           pip install -r docs/requirements.txt
+          pip install altair
 
       - name: Ruff format check
         run: ruff format --check src tests
@@ -41,5 +59,88 @@ jobs:
       - name: Pre-commit hooks
         run: pre-commit run --all-files
 
+      - name: Telemetry tuning smoke report
+        run: |
+          mkdir -p tmp/ci-telemetry
+          python scripts/run_tuning_benchmarks.py \
+            --plan baseline-smoke \
+            --out-dir tmp/ci-telemetry \
+            --random-runs 1 \
+            --random-iters 50 \
+            --grid-iters 50 \
+            --grid-batch-size 1 \
+            --grid-preset balanced \
+            --bayes-trials 1 \
+            --bayes-iters 50 \
+            --summary-label latest
+
+      - name: Archive telemetry history snapshot
+        run: |
+          snapshot_dir=tmp/ci-telemetry/history
+          mkdir -p "$snapshot_dir"
+          snapshot_name="$(date -u +"%Y-%m-%dT%H%M%SZ")"
+          cp tmp/ci-telemetry/tuner_report.csv "$snapshot_dir/$snapshot_name.csv"
+          cp tmp/ci-telemetry/tuner_report.md "$snapshot_dir/$snapshot_name.md"
+          cp tmp/ci-telemetry/runs.sqlite "$snapshot_dir/$snapshot_name.sqlite"
+
+      - name: Generate telemetry history comparison
+        run: |
+          python scripts/analyze_tuner_reports.py \
+            --report latest=tmp/ci-telemetry/tuner_report.csv \
+            --history-dir tmp/ci-telemetry/history \
+            --out-history-csv tmp/ci-telemetry/history_summary.csv \
+            --out-history-markdown tmp/ci-telemetry/history_summary.md \
+            --out-history-chart tmp/ci-telemetry/history_summary.html \
+            --out-summary-csv tmp/ci-telemetry/history_summary_latest.csv \
+            --out-summary-markdown tmp/ci-telemetry/history_summary_latest.md
+
+      - name: Prepare history publish bundle
+        run: |
+          root_dir=tmp/ci-telemetry/publish
+          publish_dir="$root_dir/telemetry"
+          mkdir -p "$publish_dir"
+          touch "$root_dir/.nojekyll"
+          cp tmp/ci-telemetry/history_summary.csv "$publish_dir/" || true
+          cp tmp/ci-telemetry/history_summary.md "$publish_dir/" || true
+          cp tmp/ci-telemetry/history_summary.html "$publish_dir/" || true
+          cp tmp/ci-telemetry/tuner_report.md "$publish_dir/latest_tuner_report.md"
+          cp tmp/ci-telemetry/tuner_summary.md "$publish_dir/latest_tuner_summary.md" || true
+          cp tmp/ci-telemetry/tuner_summary.csv "$publish_dir/latest_tuner_summary.csv" || true
+          cp tmp/ci-telemetry/history_summary_latest.md "$publish_dir/latest_history_summary.md" || true
+          cp tmp/ci-telemetry/history_summary_latest.csv "$publish_dir/latest_history_summary.csv" || true
+          cp tmp/ci-telemetry/tuner_comparison.md "$publish_dir/latest_tuner_comparison.md" || true
+          cp tmp/ci-telemetry/tuner_comparison.csv "$publish_dir/latest_tuner_comparison.csv" || true
+          cp tmp/ci-telemetry/tuner_leaderboard.md "$publish_dir/latest_tuner_leaderboard.md" || true
+          cp tmp/ci-telemetry/tuner_leaderboard.csv "$publish_dir/latest_tuner_leaderboard.csv" || true
+
+      - name: Inspect publish bundle
+        run: |
+          echo "Contents of tmp/ci-telemetry/publish:" && ls -R tmp/ci-telemetry/publish || true
+
+      - name: Upload history pages artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: tmp/ci-telemetry/publish
+
+      - name: Upload telemetry report artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: telemetry-report
+          path: tmp/ci-telemetry
+
+      - name: Analytics notebooks (light)
+        run: python scripts/run_analytics_notebooks.py --light --timeout 300
+
       - name: Build documentation
         run: sphinx-build -b html docs _build/html -W
+
+  deploy-history:
+    needs: lint-test-docs
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+    steps:
+      - name: Deploy history to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2

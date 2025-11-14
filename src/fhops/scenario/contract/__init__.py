@@ -3,6 +3,7 @@
 from .models import (
     Block,
     CalendarEntry,
+    CrewAssignment,
     Day,
     Landing,
     Machine,
@@ -20,4 +21,5 @@ __all__ = [
     "ProductionRate",
     "Scenario",
     "Problem",
+    "CrewAssignment",
 ]
