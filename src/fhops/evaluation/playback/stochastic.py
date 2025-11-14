@@ -65,7 +65,9 @@ class DowntimeEvent:
         if df.empty or self.config.probability <= 0:
             return df
         scenario = context.problem.scenario
-        machine_roles = {machine.id: getattr(machine, "role", None) for machine in scenario.machines}
+        machine_roles = {
+            machine.id: getattr(machine, "role", None) for machine in scenario.machines
+        }
         df["_target_role"] = df["machine_id"].map(machine_roles)
         role_filter = self.config.target_machine_roles
         mask = df["_target_role"].notna() if role_filter else pd.Series(True, index=df.index)
@@ -88,9 +90,7 @@ class DowntimeEvent:
                     continue
                 selected = rng.choice(indices, size=k, replace=False)
             else:
-                selected = [
-                    idx for idx in indices if rng.random() <= self.config.probability
-                ]
+                selected = [idx for idx in indices if rng.random() <= self.config.probability]
             for idx in selected:
                 df.loc[idx, "assigned"] = 0
                 df.loc[idx, "production"] = 0.0
@@ -292,7 +292,9 @@ def run_stochastic_playback(
     samples: list[PlaybackSample] = []
     for sample_id in range(num_samples):
         rng = np.random.default_rng(sampling_config.base_seed + sample_id)
-        context = SamplingContext(problem=problem, sample_id=sample_id, rng=rng, config=sampling_config)
+        context = SamplingContext(
+            problem=problem, sample_id=sample_id, rng=rng, config=sampling_config
+        )
 
         sample_assignments = base_assignments.copy()
         sample_assignments["production"] = base_production_series.copy()

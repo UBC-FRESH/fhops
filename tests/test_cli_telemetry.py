@@ -27,7 +27,9 @@ def _write_step_logs(steps_dir: Path, count: int) -> None:
     steps_dir.mkdir(parents=True, exist_ok=True)
     for idx in range(count):
         step_path = steps_dir / f"run-{idx}.jsonl"
-        step_path.write_text(json.dumps({"run_id": f"run-{idx}", "record_type": "step"}) + "\n", encoding="utf-8")
+        step_path.write_text(
+            json.dumps({"run_id": f"run-{idx}", "record_type": "step"}) + "\n", encoding="utf-8"
+        )
 
 
 def test_telemetry_prune(tmp_path: Path):

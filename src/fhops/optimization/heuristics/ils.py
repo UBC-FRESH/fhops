@@ -226,10 +226,12 @@ def solve_ils(
             seed=seed,
             config=config_snapshot,
             context=telemetry_context,
-            step_interval=step_interval if isinstance(step_interval, int) and step_interval > 0 else None,
+            step_interval=step_interval
+            if isinstance(step_interval, int) and step_interval > 0
+            else None,
         )
 
-    with (telemetry_logger if telemetry_logger else nullcontext()) as run_logger:
+    with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
         current = _init_greedy(pb)
         current_score = _evaluate(pb, current)
         best = current

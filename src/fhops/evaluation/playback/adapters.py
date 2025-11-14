@@ -73,7 +73,9 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
 
     shift_hours_map: dict[str, float] = {}
     if scenario.timeline and scenario.timeline.shifts:
-        shift_hours_map = {shift_def.name: shift_def.hours for shift_def in scenario.timeline.shifts}
+        shift_hours_map = {
+            shift_def.name: shift_def.hours for shift_def in scenario.timeline.shifts
+        }
 
     mobilisation = scenario.mobilisation
     mobilisation_lookup = build_distance_lookup(mobilisation) if mobilisation else {}
@@ -104,9 +106,7 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
             return hours, "machine_daily_hours"
         return None, None
 
-    def production_for(
-        machine_id: str, block_id: str, proposed: float | None
-    ) -> tuple[float, str]:
+    def production_for(machine_id: str, block_id: str, proposed: float | None) -> tuple[float, str]:
         if proposed is not None:
             value = max(proposed, 0.0)
             return value, "column"
@@ -195,7 +195,11 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
             if violation_reason is not None:
                 metadata["sequencing_violation"] = violation_reason
 
-            if block_id in remaining and remaining[block_id] <= 1e-6 and block_id not in completed_blocks:
+            if (
+                block_id in remaining
+                and remaining[block_id] <= 1e-6
+                and block_id not in completed_blocks
+            ):
                 completed_blocks.add(block_id)
                 metadata["block_completed"] = True
 

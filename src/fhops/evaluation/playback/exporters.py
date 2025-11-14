@@ -72,9 +72,9 @@ def render_markdown_summary(
     ]
 
     utilisation = machine_utilisation_summary(shift_df)
-    utilisation_preview = utilisation.sort_values(
-        by=["utilisation_ratio"], ascending=False
-    ).head(10)
+    utilisation_preview = utilisation.sort_values(by=["utilisation_ratio"], ascending=False).head(
+        10
+    )
 
     if not utilisation_preview.empty:
         try:
@@ -126,9 +126,7 @@ def _write_parquet(df: pd.DataFrame, path: Path) -> None:
         try:
             import fastparquet  # noqa: F401
         except ImportError as exc:  # pragma: no cover - dependency guard
-            raise ImportError(
-                "Parquet export requires pyarrow or fastparquet"
-            ) from exc
+            raise ImportError("Parquet export requires pyarrow or fastparquet") from exc
 
     path.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(path, index=False)

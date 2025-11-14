@@ -139,10 +139,7 @@ def _describe_metadata(metadata: Dict[str, Any]) -> None:
     console.print(f"Tier: {metadata.get('tier')}")
     console.print(f"Seed: {metadata.get('seed')}")
     counts = metadata.get("counts", {})
-    console.print(
-        "Counts: "
-        + ", ".join(f"{key}={counts[key]}" for key in sorted(counts))
-    )
+    console.print("Counts: " + ", ".join(f"{key}={counts[key]}" for key in sorted(counts)))
     terrain = metadata.get("terrain_counts") or {}
     prescription = metadata.get("prescription_counts") or {}
     console.print(
@@ -161,8 +158,7 @@ def _describe_metadata(metadata: Dict[str, Any]) -> None:
     biases = metadata.get("blackout_biases") or []
     if biases:
         bias_summary = ", ".join(
-            f"{bias['start_day']}-{bias['end_day']}@{bias['probability']:.2f}"
-            for bias in biases
+            f"{bias['start_day']}-{bias['end_day']}@{bias['probability']:.2f}" for bias in biases
         )
         console.print(f"Blackout biases: {bias_summary}")
     sampling = metadata.get("sampling_config") or {}
@@ -218,7 +214,9 @@ def _resolve_dataset_inputs(
 ) -> tuple[SyntheticDatasetConfig, int]:
     tier = (tier or "small").lower()
     if tier not in TIER_PRESETS and tier != "custom":
-        raise typer.BadParameter(f"Unknown tier '{tier}'. Valid options: {', '.join(TIER_PRESETS)}.")
+        raise typer.BadParameter(
+            f"Unknown tier '{tier}'. Valid options: {', '.join(TIER_PRESETS)}."
+        )
 
     base_config = TIER_PRESETS.get(
         tier,
@@ -290,7 +288,9 @@ def _generate_dataset(
         target_dir = Path("examples/synthetic") / (merged_config.tier or merged_config.name)
     if target_dir.exists():
         if not overwrite:
-            console.print(f"[red]Directory {target_dir} already exists. Use --overwrite to replace.[/red]")
+            console.print(
+                f"[red]Directory {target_dir} already exists. Use --overwrite to replace.[/red]"
+            )
             raise typer.Exit(1)
         shutil.rmtree(target_dir)
     target_dir.mkdir(parents=True, exist_ok=True)
@@ -378,9 +378,15 @@ def generate_synthetic_dataset(
 
 @synth_app.command("batch")
 def generate_batch(
-    plan: Path = typer.Argument(..., help="YAML/TOML/JSON plan file containing a list of bundle entries."),
-    overwrite: bool = typer.Option(False, "--overwrite", help="Overwrite existing bundle directories."),
-    preview: bool = typer.Option(False, "--preview", help="Preview metadata for all bundles without writing files."),
+    plan: Path = typer.Argument(
+        ..., help="YAML/TOML/JSON plan file containing a list of bundle entries."
+    ),
+    overwrite: bool = typer.Option(
+        False, "--overwrite", help="Overwrite existing bundle directories."
+    ),
+    preview: bool = typer.Option(
+        False, "--preview", help="Preview metadata for all bundles without writing files."
+    ),
 ) -> None:
     payload = _load_config(plan)
     if not isinstance(payload, list):

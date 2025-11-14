@@ -274,7 +274,9 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
             weather_hours_est = total_weather_severity * average_shift_hours
             result["weather_hours_est"] = weather_hours_est
             result["weather_production_loss_est"] = weather_hours_est * avg_production_rate
-        weather_by_machine = shift_df.groupby("machine_id", dropna=False)["weather_severity_total"].sum()
+        weather_by_machine = shift_df.groupby("machine_id", dropna=False)[
+            "weather_severity_total"
+        ].sum()
         weather_by_machine = weather_by_machine[weather_by_machine > 0]
         if not weather_by_machine.empty:
             result["weather_severity_by_machine"] = json.dumps(

@@ -58,7 +58,9 @@ def _normalise(df: pd.DataFrame, *, drop_bundle: bool = True) -> pd.DataFrame:
     result = df.copy()
     if "scenario" in result.columns:
         result["scenario"] = result["scenario"].apply(
-            lambda value: value.split(":", 1)[1] if isinstance(value, str) and ":" in value else value
+            lambda value: value.split(":", 1)[1]
+            if isinstance(value, str) and ":" in value
+            else value
         )
     if drop_bundle and "bundle" in result.columns:
         result = result.drop(columns=["bundle"])
@@ -166,7 +168,9 @@ def test_run_tuning_benchmarks_parallel_matches_serial(tmp_path: Path):
 
     serial_summary_sorted = _normalise(serial_summary, drop_bundle=False)
     parallel_summary_sorted = _normalise(parallel_summary, drop_bundle=False)
-    pdt.assert_frame_equal(serial_summary_sorted, parallel_summary_sorted, check_dtype=False, atol=1e-9)
+    pdt.assert_frame_equal(
+        serial_summary_sorted, parallel_summary_sorted, check_dtype=False, atol=1e-9
+    )
 
     def signature(df: pd.DataFrame) -> Counter[tuple[str, float, float, float]]:
         keys = []

@@ -121,7 +121,16 @@ def machine_utilisation_summary(shift_df: pd.DataFrame) -> pd.DataFrame:
     """Aggregate shift summaries into per-machine utilisation metrics."""
 
     if shift_df.empty:
-        return pd.DataFrame(columns=["sample_id", "machine_id", "total_hours", "available_hours", "utilisation_ratio", "production_units"])
+        return pd.DataFrame(
+            columns=[
+                "sample_id",
+                "machine_id",
+                "total_hours",
+                "available_hours",
+                "utilisation_ratio",
+                "production_units",
+            ]
+        )
     group_cols = [col for col in ["sample_id", "machine_id"] if col in shift_df.columns]
     aggregated = (
         shift_df.groupby(group_cols, dropna=False, as_index=False)

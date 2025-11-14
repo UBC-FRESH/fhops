@@ -293,11 +293,15 @@ def test_playback_fixture_matches_cli(tmp_path: Path, scenario_name: str):
 
     pd.testing.assert_frame_equal(
         shift_parquet_cli.sort_values(list(shift_parquet_cli.columns)).reset_index(drop=True),
-        shift_parquet_fixture_df.sort_values(list(shift_parquet_fixture_df.columns)).reset_index(drop=True),
+        shift_parquet_fixture_df.sort_values(list(shift_parquet_fixture_df.columns)).reset_index(
+            drop=True
+        ),
         check_dtype=False,
     )
     pd.testing.assert_frame_equal(
         day_parquet_cli.sort_values(list(day_parquet_cli.columns)).reset_index(drop=True),
-        day_parquet_fixture_df.sort_values(list(day_parquet_fixture_df.columns)).reset_index(drop=True),
+        day_parquet_fixture_df.sort_values(list(day_parquet_fixture_df.columns)).reset_index(
+            drop=True
+        ),
         check_dtype=False,
     )

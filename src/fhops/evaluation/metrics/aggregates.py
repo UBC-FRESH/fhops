@@ -85,7 +85,9 @@ def compute_makespan_metrics(
     if shift_df is not None and not shift_df.empty:
         active = shift_df[shift_df.get("production_units", 0) > 0].copy()
         if not active.empty:
-            shift_order = {(shift.day, shift.shift_id): idx for idx, shift in enumerate(problem.shifts)}
+            shift_order = {
+                (shift.day, shift.shift_id): idx for idx, shift in enumerate(problem.shifts)
+            }
 
             def _rank(row: pd.Series) -> tuple[int, float, float]:
                 key = (int(row["day"]), str(row["shift_id"]))

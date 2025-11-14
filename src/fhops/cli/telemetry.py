@@ -10,7 +10,9 @@ from typing import Iterable
 
 import typer
 
-telemetry_app = typer.Typer(add_completion=False, no_args_is_help=True, help="Telemetry maintenance utilities.")
+telemetry_app = typer.Typer(
+    add_completion=False, no_args_is_help=True, help="Telemetry maintenance utilities."
+)
 
 
 def _read_run_lines(path: Path) -> Iterable[tuple[str, dict[str, object] | None]]:
@@ -86,8 +88,7 @@ def prune(
     steps_root = steps_dir or telemetry_log.parent / "steps"
     if dry_run:
         typer.echo(
-            f"[dry-run] Would keep {len(kept_entries)} record(s) and prune "
-            f"{len(removed_entries)}."
+            f"[dry-run] Would keep {len(kept_entries)} record(s) and prune {len(removed_entries)}."
         )
         if removed_run_ids:
             typer.echo(

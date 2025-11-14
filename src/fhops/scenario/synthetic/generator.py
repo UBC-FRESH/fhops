@@ -145,11 +145,7 @@ def _normalise_mix(mix: dict[str, float]) -> dict[str, float]:
 def _deep_merge(base: dict[str, object], updates: dict[str, object]) -> dict[str, object]:
     result = deepcopy(base)
     for key, value in updates.items():
-        if (
-            key in result
-            and isinstance(result[key], dict)
-            and isinstance(value, dict)
-        ):
+        if key in result and isinstance(result[key], dict) and isinstance(value, dict):
             result[key] = _deep_merge(result[key], value)  # type: ignore[arg-type]
         else:
             result[key] = value
@@ -411,17 +407,17 @@ def generate_random_dataset(
     num_landings = max(1, _sample_int(rng, config.num_landings))
 
     landing_ids = [f"L{i + 1}" for i in range(num_landings)]
-    blackout_probability = tier_defaults.get(
-        "blackout_probability", config.blackout_probability
-    )
-    if config.blackout_probability != SyntheticDatasetConfig.__dataclass_fields__[
-        "blackout_probability"
-    ].default:
+    blackout_probability = tier_defaults.get("blackout_probability", config.blackout_probability)
+    if (
+        config.blackout_probability
+        != SyntheticDatasetConfig.__dataclass_fields__["blackout_probability"].default
+    ):
         blackout_probability = config.blackout_probability
     blackout_duration = tier_defaults.get("blackout_duration", config.blackout_duration)
-    if config.blackout_duration != SyntheticDatasetConfig.__dataclass_fields__[
-        "blackout_duration"
-    ].default:
+    if (
+        config.blackout_duration
+        != SyntheticDatasetConfig.__dataclass_fields__["blackout_duration"].default
+    ):
         blackout_duration = config.blackout_duration
 
     terrain_pool = list(tier_defaults.get("terrain_pool", config.terrain_pool))
@@ -431,9 +427,7 @@ def generate_random_dataset(
     if config.terrain_weights is not None:
         terrain_weights = config.terrain_weights
 
-    prescription_pool = list(
-        tier_defaults.get("prescription_pool", config.prescription_pool)
-    )
+    prescription_pool = list(tier_defaults.get("prescription_pool", config.prescription_pool))
     if config.prescription_pool and config.prescription_pool != _DEFAULT_PRESCRIPTION_POOL:
         prescription_pool = list(config.prescription_pool)
     prescription_weights = tier_defaults.get("prescription_weights")
@@ -450,12 +444,11 @@ def generate_random_dataset(
     if config.capability_pool and config.capability_pool != _DEFAULT_CAPABILITY_POOL:
         capability_pool = list(config.capability_pool)
 
-    crew_capability_span = tier_defaults.get(
-        "crew_capability_span", config.crew_capability_span
-    )
-    if config.crew_capability_span != SyntheticDatasetConfig.__dataclass_fields__[
-        "crew_capability_span"
-    ].default:
+    crew_capability_span = tier_defaults.get("crew_capability_span", config.crew_capability_span)
+    if (
+        config.crew_capability_span
+        != SyntheticDatasetConfig.__dataclass_fields__["crew_capability_span"].default
+    ):
         crew_capability_span = config.crew_capability_span
 
     blackout_biases = list(tier_defaults.get("blackout_biases", []))
@@ -473,9 +466,7 @@ def generate_random_dataset(
         earliest = rng.randint(1, num_days)
         latest = rng.randint(earliest, num_days)
         terrain = (
-            _weighted_choice(feature_rng, terrain_pool, terrain_weights)
-            if terrain_pool
-            else None
+            _weighted_choice(feature_rng, terrain_pool, terrain_weights) if terrain_pool else None
         )
         prescription = (
             _weighted_choice(feature_rng, prescription_pool, prescription_weights)
@@ -676,7 +667,9 @@ def generate_random_dataset(
             else:
                 system_id = system_ids[idx % len(system_ids)]
             updated_blocks.append(block.model_copy(update={"harvest_system_id": system_id}))
-        scenario = scenario.model_copy(update={"blocks": updated_blocks, "harvest_systems": systems})
+        scenario = scenario.model_copy(
+            update={"blocks": updated_blocks, "harvest_systems": systems}
+        )
 
     sampling_config = sampling_config_for(config)
 
@@ -706,9 +699,7 @@ def generate_random_dataset(
             )
         ),
         "crew_capabilities": crew_capabilities,
-        "blackouts": [
-            blackout.model_dump(exclude_none=True) for blackout in blackouts
-        ],
+        "blackouts": [blackout.model_dump(exclude_none=True) for blackout in blackouts],
         "shifts_per_day": config.shifts_per_day,
         "shift_hours": shift_def.hours,
         "terrain_profile": {

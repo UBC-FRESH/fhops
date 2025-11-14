@@ -132,10 +132,12 @@ def solve_tabu(
             seed=seed,
             config=config_snapshot,
             context=telemetry_context,
-            step_interval=step_interval if isinstance(step_interval, int) and step_interval > 0 else None,
+            step_interval=step_interval
+            if isinstance(step_interval, int) and step_interval > 0
+            else None,
         )
 
-    with (telemetry_logger if telemetry_logger else nullcontext()) as run_logger:
+    with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
         current = _init_greedy(pb)
         current_score = _evaluate(pb, current)
         initial_score = current_score
@@ -216,11 +218,7 @@ def solve_tabu(
                 stalls += 1
 
             if run_logger and telemetry_logger and telemetry_logger.step_interval:
-                if (
-                    step == 1
-                    or step == iters
-                    or step % telemetry_logger.step_interval == 0
-                ):
+                if step == 1 or step == iters or step % telemetry_logger.step_interval == 0:
                     acceptance_rate = (improvements / proposals) if proposals else None
                     run_logger.log_step(
                         step=step,

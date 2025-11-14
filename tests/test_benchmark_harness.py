@@ -156,7 +156,9 @@ def test_synthetic_small_benchmark_kpi_bounds(tmp_path):
     assert sa_row["kpi_completed_blocks"] >= 1
 
 
-@settings(max_examples=4, deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture])
+@settings(
+    max_examples=4, deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture]
+)
 @given(seed_value=st.integers(min_value=1, max_value=500))
 def test_synthetic_kpi_properties(seed_value: int, tmp_path):
     config = SyntheticDatasetConfig(
