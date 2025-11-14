@@ -5,12 +5,12 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
+import sqlite3
+from collections.abc import Iterable, Sequence
 from pathlib import Path
-from typing import Any, Iterable, Sequence
+from typing import Any
 
 import pandas as pd
-import sqlite3
 
 
 def _parse_report_arg(entry: str) -> tuple[str, Path]:
@@ -189,7 +189,7 @@ def _extract_convergence_steps(
             if best_logged is None or best_value > best_logged:
                 best_logged = best_value
             step_value = record.get("step")
-            if isinstance(step_value, (int, float)):
+            if isinstance(step_value, int | float):
                 for threshold in sorted_thresholds:
                     if best_value >= threshold and first_reach[threshold] is None:
                         first_reach[threshold] = int(step_value)
@@ -358,10 +358,10 @@ def _compute_convergence(
         iterations_to_soft = iterations_map.get(threshold_values["soft"])
 
         best_objective = objective_map.get(run_id)
-        if best_objective is None and best_logged is not None:
+        if best_objective is None:
             best_objective = best_logged
         elif best_logged is not None:
-            best_objective = max(best_objective, best_logged)  # type: ignore[arg-type]
+            best_objective = max(best_objective, best_logged)
 
         if best_objective is None:
             continue
@@ -372,12 +372,12 @@ def _compute_convergence(
         total_iterations = None
         for key in ("iters", "iterations"):
             value = config.get(key)
-            if isinstance(value, (int, float)):
+            if isinstance(value, int | float):
                 total_iterations = int(value)
                 break
         if total_iterations is None and isinstance(progress, dict):
             value = progress.get("iterations")
-            if isinstance(value, (int, float)):
+            if isinstance(value, int | float):
                 total_iterations = int(value)
 
         # Fallback when threshold reached only at final iteration
@@ -481,8 +481,8 @@ def _compute_convergence(
 
     group_columns = ["scenario", "bundle", "algorithm", "tier"]
     summary_records: list[dict[str, Any]] = []
-    for key, group in runs_df.groupby(group_columns, dropna=False):
-        scenario, bundle, algorithm, tier = key
+    grouped = runs_df.groupby(group_columns, dropna=False)
+    for (scenario, bundle, algorithm, tier), group in grouped:
         total_runs = len(group)
         reached_hard_mask = group["iterations_to_1pct"].notna()
         reached_soft_mask = group["iterations_to_5pct"].notna()

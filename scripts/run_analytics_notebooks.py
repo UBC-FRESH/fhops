@@ -10,6 +10,7 @@ By default the script executes the curated analytics notebooks under
 ``docs/examples/analytics/`` using ``jupyter nbconvert`` and records per-notebook
 runtime/status metadata to ``docs/examples/analytics/data/notebook_metadata.json``.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -18,9 +19,9 @@ import os
 import subprocess
 import sys
 import time
-from datetime import datetime, timezone
+from collections.abc import Iterable
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Iterable
 
 DEFAULT_NOTEBOOKS = [
     "docs/examples/analytics/playback_walkthrough.ipynb",
@@ -39,7 +40,9 @@ DATA_DIR = Path("docs/examples/analytics/data")
 METADATA_PATH = DATA_DIR / "notebook_metadata.json"
 
 
-def run_notebook(path: Path, *, light: bool, timeout: int | None, env: dict[str, str]) -> tuple[str, float, str]:
+def run_notebook(
+    path: Path, *, light: bool, timeout: int | None, env: dict[str, str]
+) -> tuple[str, float, str]:
     """Execute the notebook and return (status, runtime_seconds, message)."""
     cmd = [
         sys.executable,
@@ -83,18 +86,17 @@ def normalise_paths(notebooks: Iterable[str]) -> list[Path]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--light",
-        action="store_true",
-        help="Run in light mode (fewer stochastic samples).")
+        "--light", action="store_true", help="Run in light mode (fewer stochastic samples)."
+    )
     parser.add_argument(
-        "--keep-going",
-        action="store_true",
-        help="Continue executing notebooks even if one fails.")
+        "--keep-going", action="store_true", help="Continue executing notebooks even if one fails."
+    )
     parser.add_argument(
         "--timeout",
         type=int,
         default=None,
-        help="Optional timeout (seconds) per notebook execution.")
+        help="Optional timeout (seconds) per notebook execution.",
+    )
     parser.add_argument(
         "--notebook",
         dest="notebooks",
@@ -117,7 +119,9 @@ def main() -> int:
 
     for path in paths:
         print(f"Executing {path}...")
-        status, duration, message = run_notebook(path, light=args.light, timeout=args.timeout, env=env)
+        status, duration, message = run_notebook(
+            path, light=args.light, timeout=args.timeout, env=env
+        )
         results.append(
             {
                 "notebook": str(path),
@@ -133,7 +137,7 @@ def main() -> int:
             overall_status = 1
 
     metadata = {
-        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "generated_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "light_mode": bool(args.light),
         "notebooks": results,
     }

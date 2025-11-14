@@ -1,7 +1,7 @@
 Metaheuristic Hyperparameter Tuning Plan
 ========================================
 
-Date: 2025-11-11  
+Date: 2025-11-11
 Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 
 ## Objectives
@@ -257,12 +257,12 @@ We will persist three related record types in JSONL (phase 1) and mirror the sch
 | `mime_type` | `str` | Helps downstream ingestion. |
 | `size_bytes` | `int` | Optional size metadata. |
 
-**Storage layout (JSONL)**  
-- `telemetry/runs.jsonl` — one line per `TelemetryRun` record.  
-- `telemetry/steps/<run_id>.jsonl` — time-series per run (optional when step logging disabled).  
+**Storage layout (JSONL)**
+- `telemetry/runs.jsonl` — one line per `TelemetryRun` record.
+- `telemetry/steps/<run_id>.jsonl` — time-series per run (optional when step logging disabled).
 - `telemetry/artifacts.jsonl` — references for discovered outputs.
 
-**SQLite Store (phase 2)**  
+**SQLite Store (phase 2)**
 `telemetry/runs.sqlite` is created alongside the JSONL log and currently persists:
 - `runs` — one row per heuristic invocation (metadata + JSON columns for config/context/extra).
 - `run_metrics` — scalar metrics keyed by name (objective, acceptance rate, KPI aggregates).
@@ -358,11 +358,11 @@ HTTP request sent, awaiting response... 200 OK
 Length: 23089111 (22M) [binary/octet-stream]
 Saving to: ‘licensetools13.0.0_linux64.tar.gz’
 
-licensetools13.0.0_linux64.tar.gz                                   100%[=================================================================================================================================================================>]  22.02M  30.3MB/s    in 0.7s    
+licensetools13.0.0_linux64.tar.gz                                   100%[=================================================================================================================================================================>]  22.02M  30.3MB/s    in 0.7s
 
 2025-11-13 06:11:16 (30.3 MB/s) - ‘licensetools13.0.0_linux64.tar.gz’ saved [23089111/23089111]
 
-(.venv) gep@jupyterhub01:~/projects/fhops/tmp$ tar xvfz licensetools13.0.0_linux64.tar.gz 
+(.venv) gep@jupyterhub01:~/projects/fhops/tmp$ tar xvfz licensetools13.0.0_linux64.tar.gz
 grbprobe
 grb_ts
 grb_wlsproxy
@@ -376,7 +376,7 @@ info  : License expires at the end of the day on 2026-11-13
 info  : Saving license file...
 
 In which directory would you like to store the Gurobi license file?
-[hit Enter to store it in /home/gep]: 
+[hit Enter to store it in /home/gep]:
 
 info  : License 2737116 written to file /home/gep/gurobi.lic
 ```

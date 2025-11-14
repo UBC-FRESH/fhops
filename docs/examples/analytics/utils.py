@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
+import os
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
-
-import os
 
 import pandas as pd
 
@@ -32,7 +31,7 @@ from fhops.evaluation import (
 )
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
-from fhops.scenario.synthetic import sampling_config_for, SyntheticDatasetConfig
+from fhops.scenario.synthetic import SyntheticDatasetConfig, sampling_config_for
 
 
 @dataclass
@@ -86,7 +85,9 @@ def run_stochastic_summary(
         if sampling_config.downtime.enabled:
             sampling_config.downtime.probability = min(sampling_config.downtime.probability, 0.1)
         if sampling_config.weather.enabled:
-            sampling_config.weather.day_probability = min(sampling_config.weather.day_probability, 0.2)
+            sampling_config.weather.day_probability = min(
+                sampling_config.weather.day_probability, 0.2
+            )
         if sampling_config.landing.enabled:
             sampling_config.landing.probability = min(sampling_config.landing.probability, 0.2)
 

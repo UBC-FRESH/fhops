@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import json
 from pathlib import Path
 from typing import Any
 
@@ -19,11 +18,7 @@ from fhops.telemetry.run_logger import RunTelemetryLogger
 
 
 def _scenario_label(scenario_path: Path, scenario_obj: Any) -> str:
-    return (
-        getattr(scenario_obj, "name", None)
-        or scenario_path.parent.name
-        or scenario_path.stem
-    )
+    return getattr(scenario_obj, "name", None) or scenario_path.parent.name or scenario_path.stem
 
 
 def _scenario_features(scenario_obj: Any) -> dict[str, Any]:
@@ -181,9 +176,7 @@ def main(argv: list[str] | None = None) -> int:
                 kpis=kpis,
             )
         if args.verbose:
-            print(
-                f"[MIP] objective={objective:.3f} telemetry_run_id={run_logger.run_id}"
-            )
+            print(f"[MIP] objective={objective:.3f} telemetry_run_id={run_logger.run_id}")
     return 0
 
 

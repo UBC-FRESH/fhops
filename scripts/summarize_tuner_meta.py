@@ -57,7 +57,9 @@ def summarise(sqlite_path: Path) -> pd.DataFrame:
         )
 
     if not records:
-        return pd.DataFrame(columns=["algorithm", "runs", "scenarios", "sample_budget", "sample_config"])
+        return pd.DataFrame(
+            columns=["algorithm", "runs", "scenarios", "sample_budget", "sample_config"]
+        )
 
     df = pd.DataFrame(records)
     grouped = (
