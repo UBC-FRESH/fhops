@@ -4,7 +4,7 @@
     "scenario_path":"\/home\/gep\/projects\/fhops\/examples\/synthetic\/medium\/scenario.yaml",
     "solver":"sa",
     "objective":89.37,
-    "runtime_s":0.0298652952,
+    "runtime_s":0.0431041731,
     "assignments":9,
     "kpi_total_production":89.37,
     "kpi_completed_blocks":5.0,
@@ -31,17 +31,17 @@
     "objective_vs_mip_ratio":null,
     "solver_category":"heuristic",
     "best_heuristic_solver":"sa",
-    "best_heuristic_objective":94.908,
-    "best_heuristic_runtime_s":0.0633170307,
-    "objective_gap_vs_best_heuristic":5.538,
-    "runtime_ratio_vs_best_heuristic":0.4716787071
+    "best_heuristic_objective":89.37,
+    "best_heuristic_runtime_s":0.0431041731,
+    "objective_gap_vs_best_heuristic":0.0,
+    "runtime_ratio_vs_best_heuristic":1.0
   },
   {
     "scenario":"user-1",
     "scenario_path":"\/home\/gep\/projects\/fhops\/examples\/synthetic\/medium\/scenario.yaml",
     "solver":"sa",
     "objective":94.371,
-    "runtime_s":0.0811993089,
+    "runtime_s":0.093003646,
     "assignments":9,
     "kpi_total_production":94.371,
     "kpi_completed_blocks":5.0,
@@ -68,17 +68,17 @@
     "objective_vs_mip_ratio":null,
     "solver_category":"heuristic",
     "best_heuristic_solver":"sa",
-    "best_heuristic_objective":94.908,
-    "best_heuristic_runtime_s":0.0633170307,
-    "objective_gap_vs_best_heuristic":0.537,
-    "runtime_ratio_vs_best_heuristic":1.2824244599
+    "best_heuristic_objective":89.37,
+    "best_heuristic_runtime_s":0.0431041731,
+    "objective_gap_vs_best_heuristic":5.001,
+    "runtime_ratio_vs_best_heuristic":2.157648302
   },
   {
     "scenario":"user-1",
     "scenario_path":"\/home\/gep\/projects\/fhops\/examples\/synthetic\/medium\/scenario.yaml",
     "solver":"sa",
     "objective":94.908,
-    "runtime_s":0.0633170307,
+    "runtime_s":0.075352998,
     "assignments":9,
     "kpi_total_production":94.908,
     "kpi_completed_blocks":6.0,
@@ -105,9 +105,9 @@
     "objective_vs_mip_ratio":null,
     "solver_category":"heuristic",
     "best_heuristic_solver":"sa",
-    "best_heuristic_objective":94.908,
-    "best_heuristic_runtime_s":0.0633170307,
-    "objective_gap_vs_best_heuristic":0.0,
-    "runtime_ratio_vs_best_heuristic":1.0
+    "best_heuristic_objective":89.37,
+    "best_heuristic_runtime_s":0.0431041731,
+    "objective_gap_vs_best_heuristic":5.538,
+    "runtime_ratio_vs_best_heuristic":1.7481601543
   }
 ]
