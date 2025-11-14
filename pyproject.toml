@@ -59,6 +59,7 @@ exclude = [
 [tool.ruff.lint]
 select = ["E", "F", "I", "W", "UP"]
 ignore = ["E501"]
+per-file-ignores = {"docs/examples/analytics/*.ipynb" = ["E402"]}
 
 [tool.mypy]
 python_version = "3.11"
@@ -73,6 +74,14 @@ module = [
   "yaml",
   "geopandas",
   "shapely.*",
+  "typer",
+  "rich.*",
+  "click",
+  "optuna.*",
+  "numpy.*",
+  "pyarrow.*",
+  "fastparquet.*",
+  "pydantic.*",
 ]
 ignore_missing_imports = true
 

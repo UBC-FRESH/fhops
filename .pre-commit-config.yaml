@@ -9,6 +9,8 @@ repos:
     rev: v1.10.0
     hooks:
       - id: mypy
+        args: ["src"]
+        pass_filenames: false
         additional_dependencies: []
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0

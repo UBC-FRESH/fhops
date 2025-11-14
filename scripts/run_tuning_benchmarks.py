@@ -5,18 +5,20 @@ from __future__ import annotations
 
 import argparse
 import concurrent.futures
+import json
 import shutil
+import sqlite3
 import subprocess
 import sys
 import uuid
 from collections import defaultdict
+from collections.abc import Sequence
 from copy import deepcopy
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Sequence
-import json
-import sqlite3
 from statistics import fmean
+from typing import Any
+
 import pandas as pd
 import typer
 
@@ -51,23 +53,41 @@ DEFAULT_TABU_SEED = 555
 TIER_BUDGETS: dict[str, dict[str, object]] = {
     "short": {
         "random": {"runs": 2, "iters": 150},
-        "grid": {"iters": 150, "batch_sizes": list(DEFAULT_GRID_BATCH_SIZES), "presets": list(DEFAULT_GRID_PRESETS)},
+        "grid": {
+            "iters": 150,
+            "batch_sizes": list(DEFAULT_GRID_BATCH_SIZES),
+            "presets": list(DEFAULT_GRID_PRESETS),
+        },
         "bayes": {"trials": 20, "iters": 150},
         "ils": {"runs": 2, "iters": 200, "perturbation_strength": 3, "stall_limit": 10},
         "tabu": {"runs": 2, "iters": 1200, "stall_limit": 150},
     },
     "medium": {
         "random": {"runs": 3, "iters": 300},
-        "grid": {"iters": 300, "batch_sizes": list(DEFAULT_GRID_BATCH_SIZES), "presets": list(DEFAULT_GRID_PRESETS)},
+        "grid": {
+            "iters": 300,
+            "batch_sizes": list(DEFAULT_GRID_BATCH_SIZES),
+            "presets": list(DEFAULT_GRID_PRESETS),
+        },
         "bayes": {"trials": 40, "iters": 300},
         "ils": {"runs": 3, "iters": 350, "perturbation_strength": 3, "stall_limit": 12},
         "tabu": {"runs": 3, "iters": 2000, "stall_limit": 180},
     },
     "long": {
         "random": {"runs": 5, "iters": 600},
-        "grid": {"iters": 600, "batch_sizes": list(DEFAULT_GRID_BATCH_SIZES), "presets": list(DEFAULT_GRID_PRESETS)},
+        "grid": {
+            "iters": 600,
+            "batch_sizes": list(DEFAULT_GRID_BATCH_SIZES),
+            "presets": list(DEFAULT_GRID_PRESETS),
+        },
         "bayes": {"trials": 75, "iters": 600},
-        "ils": {"runs": 5, "iters": 700, "perturbation_strength": 4, "stall_limit": 15, "hybrid_use_mip": True},
+        "ils": {
+            "runs": 5,
+            "iters": 700,
+            "perturbation_strength": 4,
+            "stall_limit": 15,
+            "hybrid_use_mip": True,
+        },
         "tabu": {"runs": 5, "iters": 3000, "stall_limit": 220},
     },
 }
@@ -310,11 +330,7 @@ def _resolve_heuristic_scenarios(
 
 
 def _scenario_display_name(scenario_path: Path, sc: Any) -> str:
-    return (
-        getattr(sc, "name", None)
-        or scenario_path.parent.name
-        or scenario_path.stem
-    )
+    return getattr(sc, "name", None) or scenario_path.parent.name or scenario_path.stem
 
 
 def _build_context_payload(
@@ -412,7 +428,10 @@ def _run_ils_benchmarks(
                 "total_runs": runs,
             }
             config_payload = {
-                key: value for key, value in extra_kwargs.items() if key in {
+                key: value
+                for key, value in extra_kwargs.items()
+                if key
+                in {
                     "perturbation_strength",
                     "stall_limit",
                     "hybrid_use_mip",
@@ -484,7 +503,10 @@ def _run_tabu_benchmarks(
                 "total_runs": runs,
             }
             config_payload = {
-                key: value for key, value in extra_kwargs.items() if key in {
+                key: value
+                for key, value in extra_kwargs.items()
+                if key
+                in {
                     "tabu_tenure",
                     "stall_limit",
                     "batch_size",
@@ -730,9 +752,7 @@ def _execute_job(job: TuningJob, verbose: bool) -> Path:
             for preset in opts["presets"]:
                 cmd.extend(["--preset", preset])
         elif job.tuner == "bayes":
-            cmd.extend(
-                ["--trials", str(opts["trials"]), "--iters", str(opts["iters"])]
-            )
+            cmd.extend(["--trials", str(opts["trials"]), "--iters", str(opts["iters"])])
         else:
             raise ValueError(f"Unsupported CLI tuner {job.tuner}")
         if verbose:
@@ -798,9 +818,7 @@ def _merge_chunks(main_log: Path, chunk_logs: list[Path], verbose: bool) -> None
     for chunk in chunk_logs:
         if not chunk.exists():
             continue
-        with chunk.open("r", encoding="utf-8") as src, main_log.open(
-            "a", encoding="utf-8"
-        ) as dest:
+        with chunk.open("r", encoding="utf-8") as src, main_log.open("a", encoding="utf-8") as dest:
             for line in src:
                 dest.write(line if line.endswith("\n") else line + "\n")
         chunk_steps_dir = chunk.parent / "steps"
@@ -1016,8 +1034,10 @@ def generate_comparisons(sqlite_path: Path, out_dir: Path) -> dict[str, object]:
     for row in rows:
         context = json.loads(row["context_json"] or "{}")
         tuner_meta = json.loads(row["tuner_meta_json"] or "{}")
-        algorithm = tuner_meta.get("algorithm") or context.get("algorithm") or _infer_algorithm(
-            context.get("source"), row["solver"]
+        algorithm = (
+            tuner_meta.get("algorithm")
+            or context.get("algorithm")
+            or _infer_algorithm(context.get("source"), row["solver"])
         )
         bundle = context.get("bundle")
         bundle_member = context.get("bundle_member")
@@ -1052,14 +1072,16 @@ def generate_comparisons(sqlite_path: Path, out_dir: Path) -> dict[str, object]:
             data["runtimes"].append(float(duration))
 
     def compute_metrics(selected_keys: set[str] | None):
-        summary_template = lambda: {
-            "wins": 0,
-            "scenario_participation": 0,
-            "best_values": [],
-            "mean_values": [],
-            "runtime_values": [],
-            "delta_values": [],
-        }
+        def summary_template() -> dict[str, Any]:
+            return {
+                "wins": 0,
+                "scenario_participation": 0,
+                "best_values": [],
+                "mean_values": [],
+                "runtime_values": [],
+                "delta_values": [],
+            }
+
         algorithm_summary: dict[str, dict[str, object]] = defaultdict(summary_template)
         comparison_rows: list[dict[str, object]] = []
         difficulty_rows: list[dict[str, object]] = []
@@ -1147,10 +1169,18 @@ def generate_comparisons(sqlite_path: Path, out_dir: Path) -> dict[str, object]:
                     "wins": wins,
                     "scenarios": scenario_count,
                     "win_rate": wins / scenario_count if scenario_count else 0.0,
-                    "avg_best_objective": fmean(stats["best_values"]) if stats["best_values"] else None,
-                    "avg_mean_objective": fmean(stats["mean_values"]) if stats["mean_values"] else None,
-                    "avg_runtime": fmean(stats["runtime_values"]) if stats["runtime_values"] else None,
-                    "avg_delta_vs_best": fmean(stats["delta_values"]) if stats["delta_values"] else None,
+                    "avg_best_objective": fmean(stats["best_values"])
+                    if stats["best_values"]
+                    else None,
+                    "avg_mean_objective": fmean(stats["mean_values"])
+                    if stats["mean_values"]
+                    else None,
+                    "avg_runtime": fmean(stats["runtime_values"])
+                    if stats["runtime_values"]
+                    else None,
+                    "avg_delta_vs_best": fmean(stats["delta_values"])
+                    if stats["delta_values"]
+                    else None,
                 }
             )
         leaderboard_df = pd.DataFrame(leaderboard_rows).sort_values(
@@ -1401,9 +1431,7 @@ def main(argv: list[str] | None = None) -> int:
         verbose=args.verbose,
     )
 
-    comparison_artifacts = generate_comparisons(
-        telemetry_log.with_suffix(".sqlite"), out_dir
-    )
+    comparison_artifacts = generate_comparisons(telemetry_log.with_suffix(".sqlite"), out_dir)
 
     if args.verbose:
         print("Telemetry log:", telemetry_log)

@@ -1,6 +1,6 @@
 # Analytics Notebook Plan
 
-Date: 2025-11-11  
+Date: 2025-11-11
 Status: Draft — scaffolding notebooks that surface deterministic and stochastic analytics workflows.
 
 ## Objectives
