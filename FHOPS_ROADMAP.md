@@ -129,6 +129,10 @@ before proposing new work.
    - Introduce solver configuration profiles/presets and document shift-based workflows in the CLI reference.
 5. **Simulation & Evaluation Plan (`notes/simulation_eval_plan.md`)**
    - Prepare deterministic/stochastic playback for shift timelines and extended KPI reporting ahead of Phase 3.
+6. **Telemetry Dashboards & Reporting Polish (`docs/howto/telemetry_tuning.rst`, `docs/reference/dashboards.rst`)**
+   - Add interpretation/playbook sections for each published dashboard, embed consolidated landing views (iframes or raw HTML) into Sphinx, and backfill testing/automation notes so CI coverage extends to the full notebook suite.
+   - Automate a weekly “full” analytics notebook run (no `--light`) via a scheduled GitHub Actions workflow that uploads refreshed artefacts to the telemetry bundle and alerts if any notebook fails.
+   - Capture operational expectations (rotation owners, notification channel, artifact retention) in `notes/metaheuristic_hyperparam_tuning.md` once the workflow lands.
 
 ## Backlog & Ideas
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
@@ -138,3 +142,6 @@ before proposing new work.
 - [ ] DSS integration hooks (ArcGIS, QGIS) for geo-enabled workflows.
 - [ ] Jaffray MASc thesis alignment checkpoints (`notes/thesis_alignment.md` TBD).
 - [ ] VSCode keeps firing web apps on various random-sounding ports while running `injest_mip_baselines.py` and other benchmarking scripts? What is up with that? It is annoyingly resulting in VSCode interface popping up "Your application is running on port XXXX" messages (becaue of the built-in port-forwarding proxy).
+- [ ] Schedule “full” analytics notebook runs (no light flag) on a less frequent cadence (nightly or weekly: leaning towards weekly) to guard against stochastic regression while keeping CI duration manageable.
+  - [ ] Extend CI with a `cron` job that invokes `scripts/run_analytics_notebooks.py --timeout 900` (no `--light`) and publishes the resulting reports to the telemetry Pages bundle, keeping a 4-week artifact history for comparison.
+- [ ] `pre-commit` autoupdate (especially `pre-commit-hooks`) plus workflow wiring so stage deprecation warnings are resolved before upstream removal.

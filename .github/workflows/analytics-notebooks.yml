@@ -1,0 +1,50 @@
+name: Analytics Notebooks (Full)
+
+on:
+  schedule:
+    # Mondays at 06:00 UTC
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  run-notebooks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[dev]
+          pip install -r docs/requirements.txt
+
+      - name: Execute analytics notebooks (full)
+        run: |
+          python scripts/run_analytics_notebooks.py --timeout 900 --keep-going
+
+      - name: Collect notebook artefacts
+        run: |
+          timestamp="$(date -u +"%Y-%m-%dT%H%M%SZ")"
+          out_dir="tmp/analytics-notebooks"
+          history_dir="$out_dir/history/$timestamp"
+          mkdir -p "$history_dir"
+          cp docs/examples/analytics/data/notebook_metadata.json "$out_dir/notebook_metadata_latest.json"
+          cp docs/examples/analytics/data/notebook_metadata.json "$history_dir/notebook_metadata.json"
+          tar -czf "$history_dir/notebooks.tar.gz" docs/examples/analytics/*.ipynb
+          ls -R "$out_dir"
+
+      - name: Upload full notebook artefacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: analytics-notebooks-full
+          path: tmp/analytics-notebooks

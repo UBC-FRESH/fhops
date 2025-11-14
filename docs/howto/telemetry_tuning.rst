@@ -208,32 +208,78 @@ Interpreting Dashboards
 -----------------------
 
 The Pages site (`live links in the README <../README.html#live-dashboards>`_) mirrors the
-artefacts generated in this guide. Here is how to read the main pages and what to do when
-you spot an anomaly:
+artefacts generated in this guide. Each page now renders as both Markdown and HTML (look
+for ``.html`` suffixes if your browser should display tables instead of raw pipes). Use
+the playbook below whenever CI publishes new telemetry.
 
-* **history_summary.html** – shows objective/KPI trends per scenario/bundle. Hover over a
-  point to see the branch label and gap. Action: red trend or widening gap? Open the
-  corresponding ``latest_tuner_report`` row and re-run the scenario locally; many teams keep
-  a “≤5 % gap” rule that must hold before merging.
-* **latest_history_summary.md/csv** – distilled leaderboard for the latest report label.
-  Treat this as a regression gate in PRs (for example, assert that SA on med42 stays within
-  ±2 % of baseline). Action: if a scenario drops out of the table, check telemetry logs to
-  confirm the run actually executed.
-* **latest_tuner_report.md/csv** – raw stats (best/mean objective, run IDs, configs) per
-  (algorithm, scenario). Action: when a reviewer asks “what changed?”, cite the row
-  showing the improved/worsened objective and, if needed, drill into the JSONL/SQLite
-  entry using ``best_run_id``.
-* **latest_tuner_leaderboard.md** / **latest_tuner_comparison.md** – derived by
-  ``scripts/analyze_tuner_reports.py``; highlight win counts, runtime ratios, and delta to
-  the baseline report. Action: use this to justify tuning work (“grid wins fewer scenarios
-  but halves runtime”) or to flag regressions.
-* **tuner_difficulty*.md/csv** – scenario difficulty indices (baseline/synthetic tiers,
-  MIP gap, second-best delta). Action: use the soft/hard success rates to prioritise future
-  tuning: if a bundle never reaches the 1 % threshold, increase iteration budgets or add new
-  heuristics before chasing other work.
+history_summary.html ― trend radar
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Whenever you publish a new artefact under ``tmp/ci-telemetry/publish/telemetry/``, add the
-link to the README so users can discover it and reference it in code reviews.
+Plots best objective/KPI progression per scenario/bundle across snapshots. Hover over a
+point to see the report label, algorithm, best objective, gap vs. baseline, and any KPI
+columns included in the telemetry store.
+
+* **Watch for**: inflection points (gap grows >1 % week-over-week), flat lines (no new
+  entries for a scenario), or metrics moving opposite to expectations (runtime spikes).
+* **Next action**: confirm the problematic scenario in ``latest_tuner_report`` and re-run
+  the relevant tuner locally with ``--summary-label`` matching the failing branch. Most
+  teams gate merges on “≤5 % gap” or “no KPI regressions,” so record the offending label
+  in the PR thread.
+
+latest_history_summary.{html,md,csv} ― current leaderboard
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Tabulates the latest snapshot only, one row per scenario with the best algorithm, best
+objective, and basic deltas.
+
+* **Watch for**: missing scenarios (telemetry not produced), different algorithms suddenly
+  leading (could be good or bad), or best objectives worse than the baseline.
+* **Next action**: treat this page as a regression gate. If SA on med42 falls outside its
+  ±2 % guardrail, open the telemetry SQLite file and inspect the corresponding run for
+  configuration drift or scenario regressions.
+
+latest_tuner_report.{html,md,csv} ― raw per-algorithm stats
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Lists every (algorithm, scenario) pair with best/mean objectives, runtimes, run counts,
+and configuration references.
+
+* **Watch for**: lower run counts (tuner crashed), unexpectedly high runtime mean, or
+  missing KPI columns (telemetry logging failed).
+* **Next action**: when a reviewer asks “what changed?”, cite the specific row. Drill into
+  ``runs.jsonl`` / ``runs.sqlite`` via ``best_run_id`` to replay the exact configuration or
+  attach the JSONL snippet to the PR.
+
+latest_tuner_comparison & latest_tuner_leaderboard
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Derived by ``scripts/analyze_tuner_reports.py`` to highlight win counts, runtime ratios,
+and deltas for every algorithm across the whole bundle.
+
+* **Watch for**: an algorithm’s win rate dropping after a feature lands, or runtime ratios
+  diverging (e.g., grid becomes 3× slower than SA).
+* **Next action**: use the leaderboard to justify tuning investments (“grid wins fewer
+  scenarios but halves runtime”) or to flag regressions. If a regression is limited to a
+  single scenario, prioritise that dataset in the next sweep plan.
+
+tuner_difficulty*.{html,md,csv}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Difficulty indices bucketed by bundle/tier. Columns include soft/hard success rates
+(≤5 % and ≤1 % gaps), average delta to the best algorithm, and MIP gap when available.
+
+* **Watch for**: bundles that never reach the hard success rate, or scenarios where the
+  second-best delta is minuscule (indicating redundant algorithms).
+* **Next action**: bump iteration budgets or introduce specialised heuristics for chronic
+  failures before expanding the benchmark matrix. If only the synthetic tiers struggle,
+  log a follow-up in ``notes/metaheuristic_hyperparam_tuning.md`` so we keep attacking the
+  right difficulty bucket.
+
+Adding new dashboard assets
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Whenever you publish a new artefact under ``tmp/ci-telemetry/telemetry/`` add the link to
+the README and ``docs/reference/dashboards.rst`` so users can discover it during reviews.
 
 Automated Sweeps
 ----------------
@@ -333,6 +379,30 @@ ILS/Tabu inherit the same tier labels: ``short`` executes two restarts with ~200
 ``medium`` scales to three restarts with ~350/2 000 iterations, and ``long`` extends to five restarts
 (ILS enables the hybrid MIP warm start) with ~700/3 000 iterations. Adjust the respective ``--ils-*``
 and ``--tabu-*`` flags when you need lighter smoke runs or deeper convergence traces.
+
+Notebook execution cadence
+--------------------------
+
+CI currently runs ``scripts/run_analytics_notebooks.py --light`` on every push/PR to keep the
+documentation builds fast and to guarantee that deterministic figures regenerate without manual
+intervention. The stochastic notebooks (telemetry diagnostics, stochastic robustness, etc.) still
+exercise live sampling even in light mode, so maintainers should schedule **full** notebook runs
+without the ``--light`` flag at least weekly (or nightly on a beefier runner) to guard against
+parameter regressions that only appear with larger ensemble sizes.
+
+Recommended workflow (automated by ``.github/workflows/analytics-notebooks.yml``):
+
+1. For day-to-day development run the light suite locally or rely on CI for coverage.
+2. Once per week execute ``python scripts/run_analytics_notebooks.py --timeout 900`` (no light flag)
+   on your workstation or a scheduled GitHub Actions workflow and upload the refreshed artefacts to
+   the telemetry Pages bundle (``tmp/pages/telemetry``). The scheduled workflow already uploads the
+   executed notebooks and metadata as a downloadable artifact so reviewers can diff the last four
+   weeks of runs.
+3. If a notebook fails only in full mode, open an issue referencing the relevant scenario bundle and
+   record the failure in ``notes/metaheuristic_hyperparam_tuning.md`` so it feeds the roadmap.
+
+Document the cadence (and links to historical runs) in team ops notes so newcomers know which sweep
+establishes the “truth” for dashboards and KPIs.
 
 Heuristic parameter catalogue
 -----------------------------
