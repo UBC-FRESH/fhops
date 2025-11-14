@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-import pandas as pd
 from pathlib import Path
+
+import pandas as pd
 
 from fhops.cli.benchmarks import run_benchmark_suite
 from fhops.evaluation import (

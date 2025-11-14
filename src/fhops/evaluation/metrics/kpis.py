@@ -66,7 +66,7 @@ class KPIResult(Mapping[str, float | int | str]):
         *,
         shift_calendar: pd.DataFrame | None = None,
         day_calendar: pd.DataFrame | None = None,
-    ) -> "KPIResult":
+    ) -> KPIResult:
         """Return a copy with the provided calendars attached."""
 
         return KPIResult(

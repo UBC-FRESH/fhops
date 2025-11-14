@@ -1,7 +1,7 @@
 """Evaluation layer (playback, metrics, reporting)."""
 
-from .metrics.kpis import KPIResult, compute_kpis
 from .metrics.aggregates import compute_makespan_metrics, compute_utilisation_metrics
+from .metrics.kpis import KPIResult, compute_kpis
 from .playback import (
     DaySummary,
     DowntimeEvent,
@@ -9,8 +9,8 @@ from .playback import (
     EnsembleResult,
     LandingShockConfig,
     LandingShockEvent,
-    PlaybackEvent,
     PlaybackConfig,
+    PlaybackEvent,
     PlaybackRecord,
     PlaybackResult,
     PlaybackSample,
@@ -29,10 +29,10 @@ from .playback import (
 )
 from .playback.aggregates import (
     DAY_SUMMARY_COLUMNS,
+    SHIFT_SUMMARY_COLUMNS,
     day_dataframe,
     day_dataframe_from_ensemble,
     machine_utilisation_summary,
-    SHIFT_SUMMARY_COLUMNS,
     shift_dataframe,
     shift_dataframe_from_ensemble,
 )

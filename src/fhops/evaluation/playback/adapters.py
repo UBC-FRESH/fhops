@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import Iterator
+from collections.abc import Iterator
 
 import pandas as pd
 
-from fhops.scheduling.mobilisation import build_distance_lookup
 from fhops.scenario.contract import Problem
+from fhops.scheduling.mobilisation import build_distance_lookup
 
 from .core import PlaybackRecord
 
@@ -23,7 +23,7 @@ __all__ = [
 ]
 
 
-def schedule_to_records(problem: Problem, schedule: "Schedule") -> Iterator[PlaybackRecord]:
+def schedule_to_records(problem: Problem, schedule: Schedule) -> Iterator[PlaybackRecord]:
     """Convert a heuristic `Schedule` plan into playback records."""
 
     rows: list[dict[str, object]] = []

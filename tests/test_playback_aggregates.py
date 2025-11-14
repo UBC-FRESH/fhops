@@ -6,16 +6,17 @@ from collections import Counter, defaultdict
 import numpy as np
 import pandas as pd
 import pytest
-from hypothesis import given, settings, strategies as st
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 from fhops.evaluation import (
     PlaybackRecord,
     SamplingConfig,
-    day_dataframe,
-    day_dataframe_from_ensemble,
     compute_kpis,
     compute_makespan_metrics,
     compute_utilisation_metrics,
+    day_dataframe,
+    day_dataframe_from_ensemble,
     machine_utilisation_summary,
     run_playback,
     run_stochastic_playback,

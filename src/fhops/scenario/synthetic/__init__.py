@@ -1,8 +1,8 @@
 """Synthetic scenario generators."""
 
 from .generator import (
-    BlackoutBias,
     SAMPLING_PRESETS,
+    BlackoutBias,
     SyntheticDatasetBundle,
     SyntheticDatasetConfig,
     SyntheticScenarioSpec,

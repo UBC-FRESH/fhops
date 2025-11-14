@@ -4,7 +4,7 @@ import json
 import shutil
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any, Dict, Tuple
+from typing import Any
 
 import typer
 from rich.console import Console
@@ -21,7 +21,7 @@ from fhops.scenario.synthetic import SyntheticDatasetConfig, generate_random_dat
 console = Console()
 synth_app = typer.Typer(no_args_is_help=True, help="Generate synthetic FHOPS scenarios.")
 
-TIER_PRESETS: Dict[str, SyntheticDatasetConfig] = {
+TIER_PRESETS: dict[str, SyntheticDatasetConfig] = {
     "small": SyntheticDatasetConfig(
         name="synthetic-small",
         tier="small",
@@ -51,14 +51,14 @@ TIER_PRESETS: Dict[str, SyntheticDatasetConfig] = {
     ),
 }
 
-TIER_SEEDS: Dict[str, int] = {
+TIER_SEEDS: dict[str, int] = {
     "small": 101,
     "medium": 202,
     "large": 303,
 }
 
 
-def _parse_range(value: str) -> Tuple[int, int]:
+def _parse_range(value: str) -> tuple[int, int]:
     try:
         lo, hi = value.split(":")
         return int(lo), int(hi)
@@ -66,7 +66,7 @@ def _parse_range(value: str) -> Tuple[int, int]:
         raise typer.BadParameter("Expected range in the form 'min:max'.") from exc
 
 
-def _load_config(path: Path) -> Dict[str, Any]:
+def _load_config(path: Path) -> dict[str, Any]:
     suffix = path.suffix.lower()
     if suffix in {".yaml", ".yml"}:
         return yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -81,21 +81,21 @@ def _load_config(path: Path) -> Dict[str, Any]:
 
 def _merge_config(
     base: SyntheticDatasetConfig,
-    overrides: Dict[str, Any],
+    overrides: dict[str, Any],
 ) -> SyntheticDatasetConfig:
     data = asdict(base)
     for key, value in overrides.items():
         if key == "seed":
             continue
         if key in {"num_blocks", "num_days", "num_machines", "num_landings", "landing_capacity"}:
-            if isinstance(value, (list, tuple)) and len(value) == 2:
+            if isinstance(value, list | tuple) and len(value) == 2:
                 data[key] = tuple(int(part) for part in value)
             elif isinstance(value, str) and ":" in value:
                 data[key] = _parse_range(value)
             else:
                 data[key] = int(value)
         elif key in {"shift_hours", "work_required", "production_rate"}:
-            if isinstance(value, (list, tuple)) and len(value) == 2:
+            if isinstance(value, list | tuple) and len(value) == 2:
                 data[key] = (float(value[0]), float(value[1]))
             elif isinstance(value, str) and ":" in value:
                 lo, hi = value.split(":")
@@ -103,7 +103,7 @@ def _merge_config(
             else:
                 raise typer.BadParameter(f"{key} expects a two-value range.")
         elif key in {"crew_capability_span"}:
-            if isinstance(value, (list, tuple)) and len(value) == 2:
+            if isinstance(value, list | tuple) and len(value) == 2:
                 data[key] = (int(value[0]), int(value[1]))
             else:
                 raise typer.BadParameter(f"{key} expects a two-value range.")
@@ -118,8 +118,8 @@ def _resolve_cli_overrides(
     landings: str | None,
     days: str | None,
     shifts_per_day: int | None,
-) -> Dict[str, Any]:
-    overrides: Dict[str, Any] = {}
+) -> dict[str, Any]:
+    overrides: dict[str, Any] = {}
     if blocks:
         overrides["num_blocks"] = blocks
     if machines:
@@ -133,7 +133,7 @@ def _resolve_cli_overrides(
     return overrides
 
 
-def _describe_metadata(metadata: Dict[str, Any]) -> None:
+def _describe_metadata(metadata: dict[str, Any]) -> None:
     console.print("[bold]Synthetic Dataset Summary[/bold]")
     console.print(f"Name: {metadata.get('name')}")
     console.print(f"Tier: {metadata.get('tier')}")
@@ -176,7 +176,7 @@ def _describe_metadata(metadata: Dict[str, Any]) -> None:
 
 
 def _refresh_aggregate_metadata(base_dir: Path) -> None:
-    aggregate: Dict[str, Any] = {}
+    aggregate: dict[str, Any] = {}
     for child in sorted(base_dir.iterdir()):
         if not child.is_dir():
             continue
@@ -208,8 +208,8 @@ def _maybe_refresh_metadata(target_dir: Path) -> None:
 def _resolve_dataset_inputs(
     tier: str,
     config_path: Path | None,
-    config_overrides: Dict[str, Any],
-    cli_overrides: Dict[str, Any],
+    config_overrides: dict[str, Any],
+    cli_overrides: dict[str, Any],
     seed: int | None,
 ) -> tuple[SyntheticDatasetConfig, int]:
     tier = (tier or "small").lower()
@@ -230,7 +230,7 @@ def _resolve_dataset_inputs(
         ),
     )
 
-    config_data: Dict[str, Any] = {}
+    config_data: dict[str, Any] = {}
     if config_path is not None:
         config_data = _load_config(config_path)
         if not isinstance(config_data, dict):
@@ -259,11 +259,11 @@ def _generate_dataset(
     tier: str,
     config_path: Path | None,
     seed: int | None,
-    config_overrides: Dict[str, Any] | None,
-    cli_overrides: Dict[str, Any] | None,
+    config_overrides: dict[str, Any] | None,
+    cli_overrides: dict[str, Any] | None,
     overwrite: bool,
     preview: bool,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     merged_config, seed_value = _resolve_dataset_inputs(
         tier,
         config_path,

@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import subprocess
+from collections import Counter
 from pathlib import Path
 
 import pandas as pd
 import pandas.testing as pdt
-from collections import Counter
 
 
 def _run_benchmarks(out_dir: Path, *, max_workers: int | None = None) -> None:

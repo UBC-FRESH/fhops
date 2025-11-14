@@ -1,18 +1,18 @@
 from __future__ import annotations
 
-import click
 import json
-import optuna
-import pandas as pd
 import random
-import typer
-import yaml
-from collections import deque
 from collections.abc import Sequence
 from contextlib import nullcontext
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, cast
+
+import click
+import optuna
+import pandas as pd
+import typer
+import yaml
 from rich.console import Console
 from rich.table import Table
 
@@ -24,9 +24,9 @@ from fhops.cli._utils import (
 )
 from fhops.cli.benchmarks import benchmark_app
 from fhops.cli.geospatial import geospatial_app
-from fhops.cli.telemetry import telemetry_app
-from fhops.cli.synthetic import synth_app
 from fhops.cli.profiles import format_profiles, get_profile, merge_profile_with_cli
+from fhops.cli.synthetic import synth_app
+from fhops.cli.telemetry import telemetry_app
 from fhops.evaluation import (
     PlaybackConfig,
     SamplingConfig,

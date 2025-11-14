@@ -4,9 +4,9 @@ import csv
 import json
 import sqlite3
 from collections import deque
+from collections.abc import Iterable
 from pathlib import Path
 from statistics import fmean
-from typing import Iterable
 
 import typer
 
@@ -74,11 +74,6 @@ def prune(
     kept_entries = deque(lines, maxlen=keep)
     removed_entries = lines[:-keep]
 
-    kept_run_ids = {
-        payload.get("run_id")
-        for _, payload in kept_entries
-        if isinstance(payload, dict) and payload.get("run_id")
-    }
     removed_run_ids = {
         payload.get("run_id")
         for _, payload in removed_entries
@@ -267,7 +262,7 @@ def _render_markdown(rows: list[dict[str, object]]) -> str:
                     str(row["runs"]),
                     (
                         f"{float(row['summary_best']):.3f}"
-                        if isinstance(row.get("summary_best"), (int, float))
+                        if isinstance(row.get("summary_best"), int | float)
                         else ""
                     ),
                     str(row.get("summary_configurations", "")),
@@ -342,7 +337,7 @@ def report(
                         "best_config": row["best_config"],
                         "summary_best": (
                             f"{float(row['summary_best']):.6f}"
-                            if isinstance(row.get("summary_best"), (int, float))
+                            if isinstance(row.get("summary_best"), int | float)
                             else ""
                         ),
                         "summary_configurations": row.get("summary_configurations", ""),

@@ -9,8 +9,8 @@ import yaml
 from fhops.evaluation.playback import (
     PlaybackConfig,
     assignments_to_records,
-    schedule_to_records,
     run_playback,
+    schedule_to_records,
 )
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
@@ -20,7 +20,6 @@ from fhops.scheduling.mobilisation import (
     MobilisationConfig,
 )
 from fhops.scheduling.systems import HarvestSystem, SystemJob
-
 
 FIXTURE_DIR = Path(__file__).parent / "fixtures" / "regression"
 SCENARIO_PATH = FIXTURE_DIR / "regression.yaml"

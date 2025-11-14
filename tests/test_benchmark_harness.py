@@ -3,7 +3,8 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
-from hypothesis import HealthCheck, given, settings, strategies as st
+from hypothesis import HealthCheck, given, settings
+from hypothesis import strategies as st
 
 from fhops.cli.benchmarks import run_benchmark_suite
 from fhops.scenario.synthetic import SyntheticDatasetConfig, generate_random_dataset

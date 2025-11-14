@@ -11,6 +11,7 @@ from pathlib import Path
 import pandas as pd
 import yaml
 
+from fhops.evaluation.playback.events import SamplingConfig
 from fhops.scenario.contract import (
     Block,
     CalendarEntry,
@@ -22,7 +23,6 @@ from fhops.scenario.contract import (
 )
 from fhops.scheduling.systems import HarvestSystem, default_system_registry
 from fhops.scheduling.timeline import BlackoutWindow, ShiftDefinition, TimelineConfig
-from fhops.evaluation.playback.events import SamplingConfig
 
 _DEFAULT_TERRAIN_POOL = ["mixed"]
 _DEFAULT_PRESCRIPTION_POOL = ["clearcut"]

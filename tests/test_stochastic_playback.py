@@ -4,7 +4,6 @@ import pandas as pd
 import pytest
 
 from fhops.evaluation import (
-    PlaybackConfig,
     SamplingConfig,
     run_playback,
     run_stochastic_playback,
