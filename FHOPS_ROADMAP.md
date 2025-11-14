@@ -110,10 +110,7 @@ before proposing new work.
       - [x] Tighten `_compute_history_deltas` so percentage columns remain valid and Markdown renders cleanly.
       - [x] Confirm README + docs/how-to explicitly reference the GitHub Pages URL and the exported delta artefacts.
       - [x] Expand `DESIRED_METRICS` (e.g., downtime) once telemetry logging exposes the required fields.
-  - [ ] Agentic tuning integration
-    - [ ] Prototype agent loop per `notes/metaheuristic_hyperparam_tuning.md` (prompt templates + action space).
-    - [ ] Validate agent performance against deterministic benchmarks and log deltas.
-    - [ ] Capture rollout guidelines and safety rails in docs before broader rollout.
+  - [ ] Agentic tuning integration *(deferred — see Backlog & Ideas; focus remains on conventional toolkit completion).*
 
 ## Phase 4 — Release & Community Readiness
 - [ ] Complete Sphinx documentation set (API, CLI, how-tos, examples) published to Read the Docs.
@@ -134,6 +131,7 @@ before proposing new work.
    - Prepare deterministic/stochastic playback for shift timelines and extended KPI reporting ahead of Phase 3.
 
 ## Backlog & Ideas
+- [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
 - [ ] Integration with Nemora sampling outputs for downstream operations analytics.
 - [ ] Scenario authoring UI and schema validators for web clients.
 - [ ] Cloud execution harness for large-scale heuristics.
