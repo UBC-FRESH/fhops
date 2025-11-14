@@ -8,6 +8,8 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 jobs:
   run-notebooks:
@@ -28,6 +30,41 @@ jobs:
           pip install -e .[dev]
           pip install -r docs/requirements.txt
 
+      - name: Telemetry tuning smoke report
+        run: |
+          mkdir -p tmp/ci-telemetry
+          python scripts/run_tuning_benchmarks.py \
+            --plan baseline-smoke \
+            --out-dir tmp/ci-telemetry \
+            --random-runs 1 \
+            --random-iters 50 \
+            --grid-iters 50 \
+            --grid-batch-size 1 \
+            --grid-preset balanced \
+            --bayes-trials 1 \
+            --bayes-iters 50 \
+            --summary-label weekly-full-notebooks
+
+      - name: Archive telemetry history snapshot
+        run: |
+          snapshot_dir=tmp/ci-telemetry/history
+          mkdir -p "$snapshot_dir"
+          snapshot_name="$(date -u +"%Y-%m-%dT%H%M%SZ")"
+          cp tmp/ci-telemetry/tuner_report.csv "$snapshot_dir/$snapshot_name.csv"
+          cp tmp/ci-telemetry/tuner_report.md "$snapshot_dir/$snapshot_name.md"
+          cp tmp/ci-telemetry/telemetry/runs.sqlite "$snapshot_dir/$snapshot_name.sqlite"
+
+      - name: Generate telemetry history comparison
+        run: |
+          python scripts/analyze_tuner_reports.py \
+            --report latest=tmp/ci-telemetry/tuner_report.csv \
+            --history-dir tmp/ci-telemetry/history \
+            --out-history-csv tmp/ci-telemetry/history_summary.csv \
+            --out-history-markdown tmp/ci-telemetry/history_summary.md \
+            --out-history-chart tmp/ci-telemetry/history_summary.html \
+            --out-summary-csv tmp/ci-telemetry/history_summary_latest.csv \
+            --out-summary-markdown tmp/ci-telemetry/history_summary_latest.md
+
       - name: Execute analytics notebooks (full)
         run: |
           python scripts/run_analytics_notebooks.py --timeout 900 --keep-going
@@ -36,11 +73,16 @@ jobs:
         run: |
           timestamp="$(date -u +"%Y-%m-%dT%H%M%SZ")"
           out_dir="tmp/analytics-notebooks"
-          history_dir="$out_dir/history/$timestamp"
-          mkdir -p "$history_dir"
+          history_root="$out_dir/history"
+          run_dir="$history_root/$timestamp"
+          mkdir -p "$run_dir"
           cp docs/examples/analytics/data/notebook_metadata.json "$out_dir/notebook_metadata_latest.json"
-          cp docs/examples/analytics/data/notebook_metadata.json "$history_dir/notebook_metadata.json"
-          tar -czf "$history_dir/notebooks.tar.gz" docs/examples/analytics/*.ipynb
+          cp docs/examples/analytics/data/notebook_metadata.json "$run_dir/notebook_metadata.json"
+          tar -czf "$run_dir/notebooks.tar.gz" docs/examples/analytics/*.ipynb
+          if [ -d "$history_root" ]; then
+            cd "$history_root"
+            ls -1 | sort | head -n -4 | xargs -r -d '\n' rm -rf
+          fi
           ls -R "$out_dir"
 
       - name: Upload full notebook artefacts
@@ -48,3 +90,60 @@ jobs:
         with:
           name: analytics-notebooks-full
           path: tmp/analytics-notebooks
+          retention-days: 28
+
+      - name: Install Pandoc
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc
+
+      - name: Build documentation
+        run: sphinx-build -b html docs _build/html -W
+
+      - name: Prepare Pages bundle
+        run: |
+          site_dir=tmp/pages
+          rm -rf "$site_dir"
+          mkdir -p "$site_dir"
+          cp -R _build/html/* "$site_dir/"
+          touch "$site_dir/.nojekyll"
+
+          publish_dir="$site_dir/telemetry"
+          mkdir -p "$publish_dir"
+          cp tmp/ci-telemetry/history_summary.csv "$publish_dir/" || true
+          cp tmp/ci-telemetry/history_summary.md "$publish_dir/" || true
+          cp tmp/ci-telemetry/history_summary.html "$publish_dir/" || true
+          cp tmp/ci-telemetry/tuner_report.md "$publish_dir/latest_tuner_report.md"
+          cp tmp/ci-telemetry/tuner_summary.md "$publish_dir/latest_tuner_summary.md" || true
+          cp tmp/ci-telemetry/tuner_summary.csv "$publish_dir/latest_tuner_summary.csv" || true
+          cp tmp/ci-telemetry/history_summary_latest.md "$publish_dir/latest_history_summary.md" || true
+          cp tmp/ci-telemetry/history_summary_latest.csv "$publish_dir/latest_history_summary.csv" || true
+          cp tmp/ci-telemetry/tuner_comparison.md "$publish_dir/latest_tuner_comparison.md" || true
+          cp tmp/ci-telemetry/tuner_comparison.csv "$publish_dir/latest_tuner_comparison.csv" || true
+          cp tmp/ci-telemetry/tuner_leaderboard.md "$publish_dir/latest_tuner_leaderboard.md" || true
+          cp tmp/ci-telemetry/tuner_leaderboard.csv "$publish_dir/latest_tuner_leaderboard.csv" || true
+          cp tmp/ci-telemetry/tuner_difficulty.md "$publish_dir/tuner_difficulty.md" || true
+          cp tmp/ci-telemetry/tuner_difficulty.csv "$publish_dir/tuner_difficulty.csv" || true
+
+          notebooks_dir="$publish_dir/notebooks"
+          rm -rf "$notebooks_dir"
+          mkdir -p "$notebooks_dir"
+          cp docs/examples/analytics/data/notebook_metadata.json "$notebooks_dir/metadata_latest.json" || true
+          cp tmp/analytics-notebooks/notebook_metadata_latest.json "$notebooks_dir/notebook_metadata_latest.json" || true
+          if [ -d tmp/analytics-notebooks/history ]; then
+            cp -R tmp/analytics-notebooks/history "$notebooks_dir/"
+          fi
+
+      - name: Upload history pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: tmp/pages
+
+  deploy:
+    needs: run-notebooks
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4

@@ -1,29 +1,17 @@
 # Development Change Log
 
-## 2025-11-16 — Docs landing fix
-- Repaired `docs/index.rst` so the dashboards reference appears inside the “Getting Started” toctree, restoring a valid Sphinx build and keeping the telemetry links visible on GitHub Pages.
-- Added the missing trailing newline to the generated analytics metadata JSON files so the `end-of-file-fixer` hook and CI stop rewriting them on every run.
-
 ## 2025-11-14 — Tooling polish & CI compliance
 - Added per-file Ruff ignores for the analytics notebooks so their sys.path bootstrapping cells stop tripping `E402`, and let `pre-commit` keep them formatted without destructive rewrites (`pyproject.toml`).
 - Tightened the global typing story: telemetry/benchmark helpers now use modern unions, convergence reporting avoids `type: ignore`, and parquet exporters no longer rely on unused type ignores.
 - Refined the tuning benchmark runner (`scripts/run_tuning_benchmarks.py`) with proper helper functions (no lambda assignments) and saner typing, and made the analyzer resilient when stitching best-objective stats together.
 - GitHub Pages now converts the Markdown telemetry tables to standalone HTML (via Pandoc) and the docs link to those HTML renderings so the dashboards display as formatted tables instead of raw pipes.
-- Added a scheduled workflow (`analytics-notebooks.yml`) that runs the full analytics notebook suite every Monday, captures timestamped artefacts, and documents the cadence in the telemetry how-to so stochastic regressions surface even when daily CI uses the light mode.
+- Added a scheduled workflow (`analytics-notebooks.yml`) that runs the full analytics notebook suite every Monday, captures timestamped artefacts, redeploys GitHub Pages with the refreshed dashboards, and documents the cadence in the telemetry how-to so stochastic regressions surface even when daily CI uses the light mode.
 - Scoped the `mypy` pre-commit hook to `src/`, disabled filename passing, and taught it to ignore third-party imports so the hook behaves like our documented `mypy src` workflow. Hook failures now flag missing CHANGE_LOG entries earlier.
 - Regenerated the analytics notebook metadata with a trailing newline so the `end-of-file-fixer` hook no longer churns during CI.
 
-## 2025-11-11 — Telemetry KPI persistence
-- Added a SQLite-backed telemetry mirror (`telemetry/runs.sqlite`) via `fhops.telemetry.sqlite_store.persist_run`, keeping run metadata, metrics, and KPI totals normalised alongside the JSONL history.
-- Simulated annealing, ILS, and Tabu solvers now compute KPI bundles for every run, inject the totals into telemetry records, and persist them to both JSONL and SQLite stores.
-- CLI tuners (`fhops tune-random`, `fhops tune-grid`, `fhops tune-bayes`) append `tuner_summary` records with per-scenario best objectives; regression tests assert the summaries and SQLite tables exist with KPI content.
-- CLI tuning commands mirror their `tuner_summary` payloads into the SQLite store so benchmarking/reporting jobs can query sweep outcomes without parsing JSONL.
-- Added `fhops telemetry report` to aggregate tuner performance into CSV/Markdown summaries sourced from the SQLite metrics and summary tables; coverage lives in `tests/test_cli_telemetry_report.py`.
-- CI runs a lightweight minitoy sweep that generates `fhops telemetry report` artifacts (`telemetry-report` bundle) for baseline monitoring.
-- Added `scripts/analyze_tuner_reports.py` plus tests, enabling deltas across multiple reports (baseline vs. experiment) to highlight objective improvements.
-- Extended `scripts/analyze_tuner_reports.py` with historical reporting (`--history-dir`, CSV/Markdown/Altair outputs) so dated telemetry snapshots can be trended over time.
-- CI now captures med42 alongside minitoy, publishes history summaries (`history_summary.{csv,md,html}`), and docs include a sample telemetry history figure plus a dedicated analysis notebook.
-- Refreshed `notes/metaheuristic_hyperparam_tuning.md` and the roadmap to mark the telemetry persistence milestone and document the new storage layout.
+## 2025-11-13 — Docs landing fix
+- Repaired `docs/index.rst` so the dashboards reference appears inside the “Getting Started” toctree, restoring a valid Sphinx build and keeping the telemetry links visible on GitHub Pages.
+- Added the missing trailing newline to the generated analytics metadata JSON files so the `end-of-file-fixer` hook and CI stop rewriting them on every run.
 
 ## 2025-11-12 — Tuning bundles & delta polish
 - Added bundle resolution helpers (`--bundle` / `-b`) to `fhops tune-random`, `fhops tune-grid`, and `fhops tune-bayes`, supporting built-in aliases (`baseline`, `synthetic[-tier]`, etc.) and custom manifests via `alias=/path/to/metadata.yaml`.
@@ -43,6 +31,18 @@
 - Docs/notes refreshed to outline the ILS/Tabu tier budgets and CLI overrides (`--ils-*`, `--tabu-*`) for smoke vs. deep sweeps.
 - `scripts/analyze_tuner_reports.py` now accepts `--telemetry-log` and emits per-run/summary convergence reports (iterations to ≤1 % gap) by parsing step logs; the how-to adds usage guidance and tests cover the new outputs.
 - Published a heuristic parameter catalogue in `docs/howto/telemetry_tuning.rst`, aligning the planning table with user-facing documentation so tuning surfaces are discoverable.
+
+## 2025-11-11 — Telemetry KPI persistence
+- Added a SQLite-backed telemetry mirror (`telemetry/runs.sqlite`) via `fhops.telemetry.sqlite_store.persist_run`, keeping run metadata, metrics, and KPI totals normalised alongside the JSONL history.
+- Simulated annealing, ILS, and Tabu solvers now compute KPI bundles for every run, inject the totals into telemetry records, and persist them to both JSONL and SQLite stores.
+- CLI tuners (`fhops tune-random`, `fhops tune-grid`, `fhops tune-bayes`) append `tuner_summary` records with per-scenario best objectives; regression tests assert the summaries and SQLite tables exist with KPI content.
+- CLI tuning commands mirror their `tuner_summary` payloads into the SQLite store so benchmarking/reporting jobs can query sweep outcomes without parsing JSONL.
+- Added `fhops telemetry report` to aggregate tuner performance into CSV/Markdown summaries sourced from the SQLite metrics and summary tables; coverage lives in `tests/test_cli_telemetry_report.py`.
+- CI runs a lightweight minitoy sweep that generates `fhops telemetry report` artifacts (`telemetry-report` bundle) for baseline monitoring.
+- Added `scripts/analyze_tuner_reports.py` plus tests, enabling deltas across multiple reports (baseline vs. experiment) to highlight objective improvements.
+- Extended `scripts/analyze_tuner_reports.py` with historical reporting (`--history-dir`, CSV/Markdown/Altair outputs) so dated telemetry snapshots can be trended over time.
+- CI now captures med42 alongside minitoy, publishes history summaries (`history_summary.{csv,md,html}`), and docs include a sample telemetry history figure plus a dedicated analysis notebook.
+- Refreshed `notes/metaheuristic_hyperparam_tuning.md` and the roadmap to mark the telemetry persistence milestone and document the new storage layout.
 
 ## 2025-11-11 — Analytics notebook automation
 - Added the analytics notebook runner to CI (`.github/workflows/ci.yml`) so the curated suite executes in light mode on every push/PR, exercising Altair plots and playback helpers.

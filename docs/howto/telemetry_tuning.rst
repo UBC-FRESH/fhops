@@ -396,8 +396,8 @@ Recommended workflow (automated by ``.github/workflows/analytics-notebooks.yml``
 2. Once per week execute ``python scripts/run_analytics_notebooks.py --timeout 900`` (no light flag)
    on your workstation or a scheduled GitHub Actions workflow and upload the refreshed artefacts to
    the telemetry Pages bundle (``tmp/pages/telemetry``). The scheduled workflow already uploads the
-   executed notebooks and metadata as a downloadable artifact so reviewers can diff the last four
-   weeks of runs.
+   executed notebooks and metadata as a downloadable artifact (retained for 28 days) and redeploys
+   GitHub Pages so the embedded dashboards stay current even if no new commits land that week.
 3. If a notebook fails only in full mode, open an issue referencing the relevant scenario bundle and
    record the failure in ``notes/metaheuristic_hyperparam_tuning.md`` so it feeds the roadmap.
 
