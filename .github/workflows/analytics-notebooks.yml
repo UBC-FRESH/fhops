@@ -63,7 +63,9 @@ jobs:
             --out-history-markdown tmp/ci-telemetry/history_summary.md \
             --out-history-chart tmp/ci-telemetry/history_summary.html \
             --out-summary-csv tmp/ci-telemetry/history_summary_latest.csv \
-            --out-summary-markdown tmp/ci-telemetry/history_summary_latest.md
+            --out-summary-markdown tmp/ci-telemetry/history_summary_latest.md \
+            --out-history-delta-csv tmp/ci-telemetry/history_delta.csv \
+            --out-history-delta-markdown tmp/ci-telemetry/history_delta.md
 
       - name: Execute analytics notebooks (full)
         run: |
@@ -124,6 +126,8 @@ jobs:
           cp tmp/ci-telemetry/tuner_leaderboard.csv "$publish_dir/latest_tuner_leaderboard.csv" || true
           cp tmp/ci-telemetry/tuner_difficulty.md "$publish_dir/tuner_difficulty.md" || true
           cp tmp/ci-telemetry/tuner_difficulty.csv "$publish_dir/tuner_difficulty.csv" || true
+          cp tmp/ci-telemetry/history_delta.md "$publish_dir/history_delta.md" || true
+          cp tmp/ci-telemetry/history_delta.csv "$publish_dir/history_delta.csv" || true
 
           notebooks_dir="$publish_dir/notebooks"
           rm -rf "$notebooks_dir"
@@ -133,6 +137,21 @@ jobs:
           if [ -d tmp/analytics-notebooks/history ]; then
             cp -R tmp/analytics-notebooks/history "$notebooks_dir/"
           fi
+
+          render_md_to_html() {
+            local source_file="$1"
+            local target_file="$2"
+            if [ -f "$source_file" ]; then
+              pandoc "$source_file" -f gfm -t html5 -s -o "$target_file"
+            fi
+          }
+
+          render_md_to_html "$publish_dir/latest_history_summary.md" "$publish_dir/latest_history_summary.html"
+          render_md_to_html "$publish_dir/latest_tuner_report.md" "$publish_dir/latest_tuner_report.html"
+          render_md_to_html "$publish_dir/latest_tuner_comparison.md" "$publish_dir/latest_tuner_comparison.html"
+          render_md_to_html "$publish_dir/latest_tuner_leaderboard.md" "$publish_dir/latest_tuner_leaderboard.html"
+          render_md_to_html "$publish_dir/tuner_difficulty.md" "$publish_dir/tuner_difficulty.html"
+          render_md_to_html "$publish_dir/history_delta.md" "$publish_dir/history_delta.html"
 
       - name: Upload history pages artifact
         uses: actions/upload-pages-artifact@v3

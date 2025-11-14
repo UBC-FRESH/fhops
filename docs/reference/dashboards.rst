@@ -18,6 +18,8 @@ Direct links:
   – win counts and runtime ratios.
 - `Per-bundle difficulty tables <https://ubc-fresh.github.io/fhops/telemetry/tuner_difficulty.html>`_
   – gap + success rates per tier (CSV + Markdown versions live beside the HTML files).
+- `History deltas <https://ubc-fresh.github.io/fhops/telemetry/history_delta.html>`_
+  – latest vs. previous snapshot change log (HTML rendered from Markdown). CSV/MD sources live beside this file.
 
 Embedded previews
 -----------------
@@ -55,6 +57,8 @@ below. Each tile links to the full-screen version for deeper inspection.
              title="Latest tuner leaderboard"></iframe>
      <iframe src="https://ubc-fresh.github.io/fhops/telemetry/tuner_difficulty.html"
              title="Per-bundle difficulty"></iframe>
+     <iframe src="https://ubc-fresh.github.io/fhops/telemetry/history_delta.html"
+             title="History delta"></iframe>
    </div>
 
 See :ref:`telemetry_dashboard_interpretation` for guidance on how to respond to each signal.

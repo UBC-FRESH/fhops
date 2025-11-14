@@ -63,7 +63,7 @@ fhops evaluate tests/fixtures/regression/regression.yaml /tmp/regression_sa.csv
 Expected evaluation output includes `sequencing_violation_count=0`. Mobilisation costs are
 exercised in `tests/test_regression_integration.py`, which injects machine parameters before
 running the CLI.
-## Analytics notebooks
+## Analytics notebooks & dashboards
 
 Executed analytics notebooks live under `docs/examples/analytics/` and are published to the
 documentation site. They showcase deterministic playback, stochastic robustness, telemetry
@@ -76,3 +76,12 @@ python scripts/run_analytics_notebooks.py --light
 The `--light` flag mirrors CI: it sets `FHOPS_ANALYTICS_LIGHT=1`, trimming stochastic sample counts so
 the suite finishes quickly. Drop the flag (or unset the environment variable) when you want the full
 ensemble versions.
+
+Live dashboards (auto-published after every `main` build and the weekly full notebook run) live at
+`https://ubc-fresh.github.io/fhops/reference/dashboards.html`. Highlights:
+
+- Telemetry history trends and per-scenario leaderboards.
+- Latest tuner reports, comparison tables, and win-rate leaderboards.
+- Difficulty indices per bundle/tier and weekly notebook metadata archives.
+
+Each dashboard entry includes regeneration commands so you can reproduce the artefacts locally.

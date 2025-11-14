@@ -206,6 +206,25 @@ Status: paused until the conventional tuning toolkit, benchmarking automation, a
   - `feurer2019-hpo-chapter.pdf`
   - `bischl2023-hpo-review.pdf`
 
+## Operations & Monitoring
+- [x] Document telemetry retention policy (JSONL + SQLite snapshots). Keep ≥30 days of raw logs; archive older telemetry under `telemetry/archive/YYYYMMDD/`.
+- [x] CI telemetry smoke run publishes `history_summary*`, `tuner_report*`, `tuner_comparison*`, `tuner_leaderboard*`, `tuner_difficulty*` plus dashboards on GitHub Pages (`/telemetry/`).
+- [x] Weekly full analytics workflow (`.github/workflows/analytics-notebooks.yml`) executes Mondays 06:00 UTC:
+  1. Installs dev + docs deps.
+  2. Runs baseline-smoke tuning sweep (refresh telemetry history).
+  3. Executes `scripts/run_analytics_notebooks.py --timeout 900 --keep-going` (no `--light`).
+  4. Archives notebook metadata + rendered notebooks under `tmp/analytics-notebooks/history/<timestamp>/` (GH artifact `analytics-notebooks-full`, retention 28 days).
+  5. Rebuilds Sphinx docs + telemetry bundle and deploys GitHub Pages (telemetry dashboards + `telemetry/notebooks/` history).
+- **Ownership & escalation**
+  - Rotation: assign quarterly owners (track here + `notes/team_ops.md`). Owner checks workflow Tuesday morning and responds to failures within 12 h.
+  - Notification: TODO — add Slack/Email webhook for workflow failures (placeholder: manual checks).
+  - Triage checklist on failure:
+    * Download `analytics-notebooks-full` artifact; diff `notebook_metadata.json` vs previous week (runtime spikes, `status != ok`).
+    * Re-run failing notebook locally; capture stdout, plots, environment info.
+    * Inspect telemetry sweep artefacts (`tmp/ci-telemetry`) in case failures originate from tuning harness.
+    * File an issue referencing workflow run URL, attach logs, and tag scenario owners; update this note when systemic fixes land.
+  - SLA: dashboards must be redeployed within 24 h of failure; if stale >7 days, block telemetry-dependent merges until workflow is green.
+
 ## Immediate Next Steps
 - [x] Add a lightweight telemetry pruning helper (`fhops telemetry prune`) that truncates `runs.jsonl` and cleans matching step logs. *(See `fhops.cli.telemetry.prune`.)*
 - [x] Implement the first conventional tuner driver (`fhops tune random` execution mode) that samples solver configs and records telemetry entries.

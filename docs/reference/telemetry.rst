@@ -100,7 +100,8 @@ CLI Reporting
 -------------
 
 Use the ``fhops telemetry report`` sub-command to aggregate the mirrored SQLite
-store into CSV/Markdown summaries without re-running the tuners::
+store into CSV/Markdown summaries without re-running the tuners (CI and the
+weekly analytics workflow both invoke this before deploying GitHub Pages)::
 
     fhops telemetry report telemetry/runs.sqlite \
         --out-csv tmp/tuner_report.csv \
@@ -108,7 +109,8 @@ store into CSV/Markdown summaries without re-running the tuners::
 
 The command scans ``runs``, ``run_metrics``, ``run_kpis``, and
 ``tuner_summaries`` tables to surface best/mean objective values per algorithm
-and scenario. See :doc:`../howto/telemetry_tuning` for a step-by-step guide.
+and scenario. See :doc:`../howto/telemetry_tuning` for a step-by-step guide and
+``docs/reference/dashboards`` for the live links generated from these files.
 
 Historical Trends
 -----------------

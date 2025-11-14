@@ -92,7 +92,9 @@ jobs:
             --out-history-markdown tmp/ci-telemetry/history_summary.md \
             --out-history-chart tmp/ci-telemetry/history_summary.html \
             --out-summary-csv tmp/ci-telemetry/history_summary_latest.csv \
-            --out-summary-markdown tmp/ci-telemetry/history_summary_latest.md
+            --out-summary-markdown tmp/ci-telemetry/history_summary_latest.md \
+            --out-history-delta-csv tmp/ci-telemetry/history_delta.csv \
+            --out-history-delta-markdown tmp/ci-telemetry/history_delta.md
 
       - name: Upload telemetry report artifact
         uses: actions/upload-artifact@v4
@@ -135,6 +137,8 @@ jobs:
           cp tmp/ci-telemetry/tuner_leaderboard.csv "$publish_dir/latest_tuner_leaderboard.csv" || true
           cp tmp/ci-telemetry/tuner_difficulty.md "$publish_dir/tuner_difficulty.md" || true
           cp tmp/ci-telemetry/tuner_difficulty.csv "$publish_dir/tuner_difficulty.csv" || true
+          cp tmp/ci-telemetry/history_delta.md "$publish_dir/history_delta.md" || true
+          cp tmp/ci-telemetry/history_delta.csv "$publish_dir/history_delta.csv" || true
 
           render_md_to_html() {
             local source_file="$1"
@@ -149,6 +153,7 @@ jobs:
           render_md_to_html "$publish_dir/latest_tuner_comparison.md" "$publish_dir/latest_tuner_comparison.html"
           render_md_to_html "$publish_dir/latest_tuner_leaderboard.md" "$publish_dir/latest_tuner_leaderboard.html"
           render_md_to_html "$publish_dir/tuner_difficulty.md" "$publish_dir/tuner_difficulty.html"
+          render_md_to_html "$publish_dir/history_delta.md" "$publish_dir/history_delta.html"
 
       - name: Inspect publish bundle
         run: |
