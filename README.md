@@ -124,6 +124,26 @@ When GitHub Pages is enabled, the CI workflow publishes the latest history bundl
 `https://ubc-fresh.github.io/fhops/telemetry/history_summary.html`), providing an
 easily-shareable chart showing objective and KPI trends without downloading artefacts.
 
+## Live dashboards
+
+Everything under `https://ubc-fresh.github.io/fhops/` is rebuilt automatically on every
+successful `main` run. Direct links to the most common artefacts:
+
+- Global telemetry history with inline charting:
+  `https://ubc-fresh.github.io/fhops/telemetry/history_summary.html`
+- Latest per-scenario history snapshot (Markdown / CSV):
+  `https://ubc-fresh.github.io/fhops/telemetry/latest_history_summary.md`
+- Latest tuner leaderboard and comparison tables:
+  `https://ubc-fresh.github.io/fhops/telemetry/latest_tuner_leaderboard.md`
+  and `https://ubc-fresh.github.io/fhops/telemetry/latest_tuner_comparison.md`
+- Raw tuner report bundle (Markdown):
+  `https://ubc-fresh.github.io/fhops/telemetry/latest_tuner_report.md`
+- Per-bundle difficulty tables (`baseline`, `synthetic`, etc.):
+  `https://ubc-fresh.github.io/fhops/telemetry/tuner_difficulty.md`
+
+If you add new published artefacts under `tmp/ci-telemetry/publish/telemetry/`, link them
+here so users can discover them without trawling the Pages file tree.
+
 ## Package layout
 
 - `fhops.scenario`: Data models and the `Problem` container.
