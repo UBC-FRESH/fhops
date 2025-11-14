@@ -5,6 +5,7 @@
 - Tightened the global typing story: telemetry/benchmark helpers now use modern unions, convergence reporting avoids `type: ignore`, and parquet exporters no longer rely on unused type ignores.
 - Refined the tuning benchmark runner (`scripts/run_tuning_benchmarks.py`) with proper helper functions (no lambda assignments) and saner typing, and made the analyzer resilient when stitching best-objective stats together.
 - Scoped the `mypy` pre-commit hook to `src/`, disabled filename passing, and taught it to ignore third-party imports so the hook behaves like our documented `mypy src` workflow. Hook failures now flag missing CHANGE_LOG entries earlier.
+- Regenerated the analytics notebook metadata with a trailing newline so the `end-of-file-fixer` hook no longer churns during CI.
 
 ## 2025-11-11 — Telemetry KPI persistence
 - Added a SQLite-backed telemetry mirror (`telemetry/runs.sqlite`) via `fhops.telemetry.sqlite_store.persist_run`, keeping run metadata, metrics, and KPI totals normalised alongside the JSONL history.
