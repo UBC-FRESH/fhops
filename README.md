@@ -127,19 +127,34 @@ easily-shareable chart showing objective and KPI trends without downloading arte
 ## Live dashboards
 
 Everything under `https://ubc-fresh.github.io/fhops/` is rebuilt automatically on every
-successful `main` run. Direct links to the most common artefacts:
+successful `main` run. These artefacts mirror the ones documented in
+[`docs/howto/telemetry_tuning.rst`](docs/howto/telemetry_tuning.rst#interpreting-dashboards),
+so skim that section for a deeper tour of each metric and suggested follow-up actions.
 
-- Global telemetry history with inline charting:
+Direct links:
+
+- **Global telemetry history** – interactive chart showing objective/KPI trends and bundle
+  badges for quick regressions:
   `https://ubc-fresh.github.io/fhops/telemetry/history_summary.html`
-- Latest per-scenario history snapshot (Markdown / CSV):
+  - Action: red trend or gap spike? Drill into the matching report below and re-run the
+    affected scenarios locally.
+- **Latest per-scenario history snapshot** – Markdown/CSV table with the current best
+  algorithm/objective per scenario:
   `https://ubc-fresh.github.io/fhops/telemetry/latest_history_summary.md`
-- Latest tuner leaderboard and comparison tables:
+  - Action: use this as a regression gate in PRs (e.g., “SA must stay within 5 % on med42”).
+- **Latest tuner leaderboard and comparison tables** – win counts, runtime ratios, and
+  delta analysis across algorithms:
   `https://ubc-fresh.github.io/fhops/telemetry/latest_tuner_leaderboard.md`
   and `https://ubc-fresh.github.io/fhops/telemetry/latest_tuner_comparison.md`
-- Raw tuner report bundle (Markdown):
+  - Action: if a branch worsens runtime or drops win rate, inspect the telemetry runs that
+    landed in the table and tweak presets/budgets accordingly.
+- **Raw tuner report bundle** – the Markdown report used by code review:
   `https://ubc-fresh.github.io/fhops/telemetry/latest_tuner_report.md`
-- Per-bundle difficulty tables (`baseline`, `synthetic`, etc.):
+  - Action: open this to inspect exact configs, run IDs, and KPI deltas referenced in a PR.
+- **Per-bundle difficulty tables** (`baseline`, `synthetic`, etc.):
   `https://ubc-fresh.github.io/fhops/telemetry/tuner_difficulty.md`
+  - Action: consult these when planning new tiers (e.g., “synthetic-medium needs more SA
+    iterations to reach ≤5 % gap”).
 
 If you add new published artefacts under `tmp/ci-telemetry/publish/telemetry/`, link them
 here so users can discover them without trawling the Pages file tree.
