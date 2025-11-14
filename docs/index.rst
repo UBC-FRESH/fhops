@@ -12,8 +12,10 @@ ensembles.
 
 .. toctree::
    :maxdepth: 2
-   reference/dashboards
    :caption: Getting Started
+   reference/dashboards
+
+
 
    overview
    howto/quickstart
