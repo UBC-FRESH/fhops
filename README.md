@@ -76,4 +76,3 @@ python scripts/run_analytics_notebooks.py --light
 The `--light` flag mirrors CI: it sets `FHOPS_ANALYTICS_LIGHT=1`, trimming stochastic sample counts so
 the suite finishes quickly. Drop the flag (or unset the environment variable) when you want the full
 ensemble versions.
-
