@@ -13,10 +13,8 @@ ensembles.
 .. toctree::
    :maxdepth: 2
    :caption: Getting Started
+
    reference/dashboards
-
-
-
    overview
    howto/quickstart
    howto/data_contract
