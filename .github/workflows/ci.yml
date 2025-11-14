@@ -133,6 +133,8 @@ jobs:
           cp tmp/ci-telemetry/tuner_comparison.csv "$publish_dir/latest_tuner_comparison.csv" || true
           cp tmp/ci-telemetry/tuner_leaderboard.md "$publish_dir/latest_tuner_leaderboard.md" || true
           cp tmp/ci-telemetry/tuner_leaderboard.csv "$publish_dir/latest_tuner_leaderboard.csv" || true
+          cp tmp/ci-telemetry/tuner_difficulty.md "$publish_dir/tuner_difficulty.md" || true
+          cp tmp/ci-telemetry/tuner_difficulty.csv "$publish_dir/tuner_difficulty.csv" || true
 
       - name: Inspect publish bundle
         run: |
