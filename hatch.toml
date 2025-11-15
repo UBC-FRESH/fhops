@@ -1,0 +1,24 @@
+[envs]
+  [envs.dev]
+  dependencies = [
+    ".[dev]",
+  ]
+  features = ["dev"]
+  scripts.format = "ruff format src tests"
+  scripts.lint = "ruff check src tests"
+  scripts.typecheck = "mypy src"
+  scripts.test = "pytest"
+  scripts.docs = "sphinx-build -b html docs _build/html -W"
+  scripts.suite = [
+    "ruff format src tests",
+    "ruff check src tests",
+    "mypy src",
+    "pytest",
+    "pre-commit run --all-files",
+    "sphinx-build -b html docs _build/html -W",
+  ]
+
+  [envs.release]
+  dependencies = []
+  scripts.build = "hatch build"
+  scripts.clean = "rm -rf dist"

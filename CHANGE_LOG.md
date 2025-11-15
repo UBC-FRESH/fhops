@@ -10,6 +10,32 @@
 - Scoped the `mypy` pre-commit hook to `src/`, disabled filename passing, and taught it to ignore third-party imports so the hook behaves like our documented `mypy src` workflow. Hook failures now flag missing CHANGE_LOG entries earlier.
 - Regenerated the analytics notebook metadata with a trailing newline so the `end-of-file-fixer` hook no longer churns during CI.
 - Refreshed `.pre-commit-config.yaml` (ruff v0.14.5, mypy v1.18.2, pre-commit-hooks v6.0.0) to eliminate the deprecated stage warning and keep local hooks aligned with upstream behavior.
+- Started the release candidate prep effort on branch `release-candidate-prep`: added
+  `notes/release_candidate_prep.md`, updated the roadmap detailed next steps, and expanded
+  `CODING_AGENT.md` with Hatch-based release workflow guidance.
+- Added `hatch.toml` with dev/release environments mirroring the CI cadence, ran `hatch build`
+  to produce sdist/wheel artifacts, and smoke-tested the wheel in a fresh virtualenv via
+  `fhops --help` and a minitoy validation run.
+- Switched project versioning to Hatch’s dynamic mode (`pyproject.toml` derives from
+  `src/fhops/__init__.__version__`), documented the bump workflow in `CODING_AGENT.md`, and
+  refreshed README/docs with pip/Hatch install instructions plus a draft of the RC release notes.
+- Ran the release candidate tuning sweep (`scripts/run_tuning_benchmarks.py --plan baseline-smoke`)
+  and captured tuned vs. baseline improvements (`notes/release_tuning_results.md`). Best operator
+  configurations per scenario/algorithm now live in `notes/release_tuned_presets.json` for reuse.
+- Added `.github/workflows/release-build.yml`, which runs `hatch run release:build` on tag pushes
+  and uploads the `dist/` artifacts; release instructions in `CODING_AGENT.md` now reference the
+  automation. Added workflow comments clarifying that publishing still happens via manual twine
+  steps documented in the release notes.
+- Documented TestPyPI/PyPI publishing cadence (hatch build + twine upload + smoke install) in
+  `notes/release_candidate_prep.md` and `CODING_AGENT.md`.
+- Completed TestPyPI dry run: uploaded `fhops 0.0.2` via Hatch (`HATCH_INDEX=testpypi hatch publish`) and
+  verified install in a fresh venv using `pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple fhops`.
+- Release docs now describe the Hatch-only publish flow (no manual Twine invocation).
+- CONTRIBUTING.md now references Hatch workflows (`hatch run dev:suite`, `hatch publish`) so
+  contributors follow the same release process outlined in CODING_AGENT.md.
+- Bumped package version to `0.1.0` in `src/fhops/__init__.py` ahead of the PyPI publish/tag.
+- Added quick-demo commands (tuning harness runs) to README/docs overview and highlighted tuned
+  presets in the release notes draft.
 
 ## 2025-11-13 — Docs landing fix
 - Repaired `docs/index.rst` so the dashboards reference appears inside the “Getting Started” toctree, restoring a valid Sphinx build and keeping the telemetry links visible on GitHub Pages.

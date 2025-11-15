@@ -281,6 +281,28 @@ Adding new dashboard assets
 Whenever you publish a new artefact under ``tmp/ci-telemetry/telemetry/`` add the link to
 the README and ``docs/reference/dashboards.rst`` so users can discover it during reviews.
 
+Release candidate presets
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The latest release-candidate tuning sweep stores its best configurations in
+``notes/release_tuned_presets.json`` (generated via ``scripts/run_tuning_benchmarks.py`` and the
+analysis helpers). Each entry includes the scenario, algorithm, objective, seed, and operator
+weights. To reuse a preset, parse the JSON and forward the operator weights to the CLI:
+
+.. code-block:: bash
+
+   python - <<'PY'
+   import json
+   presets = json.load(open('notes/release_tuned_presets.json'))
+   target = next(p for p in presets if p["scenario"] == "FHOPS Medium42" and p["algorithm"] == "random")
+   print(target["config"]["operators"])
+   PY
+
+   # feed into fhops tune-random --operator-weight swap=... etc.
+
+This preserves the tuned improvements documented in ``notes/release_tuning_results.md`` and the
+release notes.
+
 Automated Sweeps
 ----------------
 

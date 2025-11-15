@@ -1,0 +1,647 @@
+[
+  {
+    "scenario": "FHOPS MiniToy",
+    "algorithm": "random",
+    "objective": 35.5,
+    "seed": 900336294,
+    "config": {
+      "iters": 300,
+      "batch_size": null,
+      "max_workers": null,
+      "operators": {
+        "swap": 0.745,
+        "move": 0.834,
+        "block_insertion": 0.837,
+        "cross_exchange": 0.0,
+        "mobilisation_shake": 0.66
+      }
+    },
+    "tuner_meta": {
+      "algorithm": "random",
+      "budget": {
+        "runs_total": 2,
+        "iters_per_run": 300,
+        "tier": "short"
+      },
+      "config": {
+        "batch_size": 1,
+        "operator_count": 4,
+        "operators": {
+          "mobilisation_shake": 0.66,
+          "block_insertion": 0.837,
+          "move": 0.834,
+          "swap": 0.745
+        }
+      },
+      "progress": {
+        "run_index": 2,
+        "total_runs": 2,
+        "best_objective": 35.5,
+        "iterations": 300
+      },
+      "bundle": "baseline",
+      "bundle_member": "minitoy"
+    }
+  },
+  {
+    "scenario": "FHOPS Small21",
+    "algorithm": "random",
+    "objective": -12.376999999999953,
+    "seed": 7081372,
+    "config": {
+      "iters": 300,
+      "batch_size": 2,
+      "max_workers": null,
+      "operators": {
+        "swap": 0.626,
+        "move": 1.0,
+        "block_insertion": 0.931,
+        "cross_exchange": 0.792,
+        "mobilisation_shake": 1.407
+      }
+    },
+    "tuner_meta": {
+      "algorithm": "random",
+      "budget": {
+        "runs_total": 2,
+        "iters_per_run": 300,
+        "tier": "short"
+      },
+      "config": {
+        "batch_size": 2,
+        "operator_count": 4,
+        "operators": {
+          "swap": 0.626,
+          "mobilisation_shake": 1.407,
+          "cross_exchange": 0.792,
+          "block_insertion": 0.931
+        }
+      },
+      "progress": {
+        "run_index": 2,
+        "total_runs": 2,
+        "best_objective": -12.376999999999953,
+        "iterations": 300
+      },
+      "bundle": "baseline",
+      "bundle_member": "small21"
+    }
+  },
+  {
+    "scenario": "FHOPS Medium42",
+    "algorithm": "random",
+    "objective": -545.3170000000002,
+    "seed": 338511234,
+    "config": {
+      "iters": 300,
+      "batch_size": null,
+      "max_workers": null,
+      "operators": {
+        "swap": 1.0,
+        "move": 1.347,
+        "block_insertion": 1.01,
+        "cross_exchange": 0.919,
+        "mobilisation_shake": 1.021
+      }
+    },
+    "tuner_meta": {
+      "algorithm": "random",
+      "budget": {
+        "runs_total": 2,
+        "iters_per_run": 300,
+        "tier": "short"
+      },
+      "config": {
+        "batch_size": 1,
+        "operator_count": 4,
+        "operators": {
+          "mobilisation_shake": 1.021,
+          "cross_exchange": 0.919,
+          "block_insertion": 1.01,
+          "move": 1.347
+        }
+      },
+      "progress": {
+        "run_index": 2,
+        "total_runs": 2,
+        "best_objective": -545.3170000000002,
+        "iterations": 300
+      },
+      "bundle": "baseline",
+      "bundle_member": "med42"
+    }
+  },
+  {
+    "scenario": "FHOPS MiniToy",
+    "algorithm": "grid",
+    "objective": 15.5,
+    "seed": 123,
+    "config": {
+      "iters": 300,
+      "batch_size": 2,
+      "max_workers": null,
+      "operators": {
+        "swap": 1.0,
+        "move": 1.0,
+        "block_insertion": 0.0,
+        "cross_exchange": 0.0,
+        "mobilisation_shake": 0.0
+      }
+    },
+    "tuner_meta": {
+      "algorithm": "grid",
+      "budget": {
+        "total_configs": 1,
+        "iters_per_config": 300,
+        "tier": "short"
+      },
+      "config": {
+        "preset": "balanced",
+        "batch_size": 2,
+        "operators": {
+          "swap": 1.0,
+          "move": 1.0,
+          "block_insertion": 0.0,
+          "cross_exchange": 0.0,
+          "mobilisation_shake": 0.0
+        }
+      },
+      "progress": {
+        "config_index": 1,
+        "total_configs": 1,
+        "best_objective": 15.5,
+        "iterations": 300
+      },
+      "bundle": "baseline",
+      "bundle_member": "minitoy"
+    }
+  },
+  {
+    "scenario": "FHOPS Small21",
+    "algorithm": "grid",
+    "objective": -10.771999999999991,
+    "seed": 124,
+    "config": {
+      "iters": 300,
+      "batch_size": 2,
+      "max_workers": null,
+      "operators": {
+        "swap": 1.0,
+        "move": 1.0,
+        "block_insertion": 0.0,
+        "cross_exchange": 0.0,
+        "mobilisation_shake": 0.0
+      }
+    },
+    "tuner_meta": {
+      "algorithm": "grid",
+      "budget": {
+        "total_configs": 1,
+        "iters_per_config": 300,
+        "tier": "short"
+      },
+      "config": {
+        "preset": "balanced",
+        "batch_size": 2,
+        "operators": {
+          "swap": 1.0,
+          "move": 1.0,
+          "block_insertion": 0.0,
+          "cross_exchange": 0.0,
+          "mobilisation_shake": 0.0
+        }
+      },
+      "progress": {
+        "config_index": 1,
+        "total_configs": 1,
+        "best_objective": -10.771999999999991,
+        "iterations": 300
+      },
+      "bundle": "baseline",
+      "bundle_member": "small21"
+    }
+  },
+  {
+    "scenario": "FHOPS Medium42",
+    "algorithm": "grid",
+    "objective": -733.2460000000001,
+    "seed": 125,
+    "config": {
+      "iters": 300,
+      "batch_size": 2,
+      "max_workers": null,
+      "operators": {
+        "swap": 1.0,
+        "move": 1.0,
+        "block_insertion": 0.0,
+        "cross_exchange": 0.0,
+        "mobilisation_shake": 0.0
+      }
+    },
+    "tuner_meta": {
+      "algorithm": "grid",
+      "budget": {
+        "total_configs": 1,
+        "iters_per_config": 300,
+        "tier": "short"
+      },
+      "config": {
+        "preset": "balanced",
+        "batch_size": 2,
+        "operators": {
+          "swap": 1.0,
+          "move": 1.0,
+          "block_insertion": 0.0,
+          "cross_exchange": 0.0,
+          "mobilisation_shake": 0.0
+        }
+      },
+      "progress": {
+        "config_index": 1,
+        "total_configs": 1,
+        "best_objective": -733.2460000000001,
+        "iterations": 300
+      },
+      "bundle": "baseline",
+      "bundle_member": "med42"
+    }
+  },
+  {
+    "scenario": "FHOPS MiniToy",
+    "algorithm": "bayes",
+    "objective": 11.5,
+    "seed": 124,
+    "config": {
+      "iters": 300,
+      "batch_size": 3,
+      "max_workers": null,
+      "operators": {
+        "swap": 1.3696594771697266,
+        "move": 0.9618638029687219,
+        "block_insertion": 0.784235036388301,
+        "cross_exchange": 0.6863560323017388,
+        "mobilisation_shake": 1.4580994147680832
+      }
+    },
+    "tuner_meta": {
+      "algorithm": "bayes",
+      "budget": {
+        "trials_total": 3,
+        "iters_per_trial": 300,
+        "tier": "short"
+      },
+      "config": {
+        "trial_number": 1,
+        "batch_size": 3,
+        "operators": {
+          "swap": 1.3696594771697266,
+          "move": 0.9618638029687219,
+          "block_insertion": 0.784235036388301,
+          "cross_exchange": 0.6863560323017388,
+          "mobilisation_shake": 1.4580994147680832
+        }
+      },
+      "progress": {
+        "trial_index": 2,
+        "total_trials": 3,
+        "best_objective": 11.5,
+        "iterations": 300
+      },
+      "bundle": "baseline",
+      "bundle_member": "minitoy"
+    }
+  },
+  {
+    "scenario": "FHOPS Small21",
+    "algorithm": "bayes",
+    "objective": -6.605999999999952,
+    "seed": 125,
+    "config": {
+      "iters": 300,
+      "batch_size": 2,
+      "max_workers": null,
+      "operators": {
+        "swap": 0.1193557932191367,
+        "move": 0.7960885106608628,
+        "block_insertion": 1.4759908114640714,
+        "cross_exchange": 0.36498346090699996,
+        "mobilisation_shake": 0.35090351229498506
+      }
+    },
+    "tuner_meta": {
+      "algorithm": "bayes",
+      "budget": {
+        "trials_total": 3,
+        "iters_per_trial": 300,
+        "tier": "short"
+      },
+      "config": {
+        "trial_number": 2,
+        "batch_size": 2,
+        "operators": {
+          "swap": 0.1193557932191367,
+          "move": 0.7960885106608628,
+          "block_insertion": 1.4759908114640714,
+          "cross_exchange": 0.36498346090699996,
+          "mobilisation_shake": 0.35090351229498506
+        }
+      },
+      "progress": {
+        "trial_index": 3,
+        "total_trials": 3,
+        "best_objective": -6.605999999999952,
+        "iterations": 300
+      },
+      "bundle": "baseline",
+      "bundle_member": "small21"
+    }
+  },
+  {
+    "scenario": "FHOPS Medium42",
+    "algorithm": "bayes",
+    "objective": -590.3340000000001,
+    "seed": 124,
+    "config": {
+      "iters": 300,
+      "batch_size": 3,
+      "max_workers": null,
+      "operators": {
+        "swap": 1.3696594771697266,
+        "move": 0.9618638029687219,
+        "block_insertion": 0.784235036388301,
+        "cross_exchange": 0.6863560323017388,
+        "mobilisation_shake": 1.4580994147680832
+      }
+    },
+    "tuner_meta": {
+      "algorithm": "bayes",
+      "budget": {
+        "trials_total": 3,
+        "iters_per_trial": 300,
+        "tier": "short"
+      },
+      "config": {
+        "trial_number": 1,
+        "batch_size": 3,
+        "operators": {
+          "swap": 1.3696594771697266,
+          "move": 0.9618638029687219,
+          "block_insertion": 0.784235036388301,
+          "cross_exchange": 0.6863560323017388,
+          "mobilisation_shake": 1.4580994147680832
+        }
+      },
+      "progress": {
+        "trial_index": 2,
+        "total_trials": 3,
+        "best_objective": -590.3340000000001,
+        "iterations": 300
+      },
+      "bundle": "baseline",
+      "bundle_member": "med42"
+    }
+  },
+  {
+    "scenario": "FHOPS MiniToy",
+    "algorithm": "tabu",
+    "objective": 32.5,
+    "seed": 556,
+    "config": {
+      "iters": 1500,
+      "batch_size": null,
+      "max_workers": null,
+      "tabu_tenure": null,
+      "stall_limit": 160,
+      "operators": {
+        "swap": 1.0,
+        "move": 1.0,
+        "block_insertion": 0.6,
+        "cross_exchange": 0.6,
+        "mobilisation_shake": 0.4
+      }
+    },
+    "tuner_meta": {
+      "algorithm": "tabu",
+      "budget": {
+        "runs_total": 2,
+        "iters_per_run": 1500,
+        "tier": "short"
+      },
+      "progress": {
+        "run_index": 2,
+        "total_runs": 2,
+        "best_objective": 32.5,
+        "iterations": 1500
+      },
+      "config": {
+        "stall_limit": 160
+      },
+      "bundle": "baseline",
+      "bundle_member": "minitoy"
+    }
+  },
+  {
+    "scenario": "FHOPS MiniToy",
+    "algorithm": "ils",
+    "objective": 10.5,
+    "seed": 321,
+    "config": {
+      "iters": 350,
+      "batch_size": null,
+      "max_workers": null,
+      "perturbation_strength": 3,
+      "stall_limit": 10,
+      "hybrid_use_mip": false,
+      "hybrid_mip_time_limit": 60,
+      "operators": {
+        "swap": 1.0,
+        "move": 1.0,
+        "block_insertion": 0.0,
+        "cross_exchange": 0.0,
+        "mobilisation_shake": 0.0
+      }
+    },
+    "tuner_meta": {
+      "algorithm": "ils",
+      "budget": {
+        "runs_total": 2,
+        "iters_per_run": 350,
+        "tier": "short"
+      },
+      "progress": {
+        "run_index": 1,
+        "total_runs": 2,
+        "best_objective": 10.5,
+        "iterations": 350
+      },
+      "config": {
+        "perturbation_strength": 3,
+        "stall_limit": 10
+      },
+      "bundle": "baseline",
+      "bundle_member": "minitoy"
+    }
+  },
+  {
+    "scenario": "FHOPS Small21",
+    "algorithm": "tabu",
+    "objective": 15.693999999999999,
+    "seed": 557,
+    "config": {
+      "iters": 1500,
+      "batch_size": null,
+      "max_workers": null,
+      "tabu_tenure": null,
+      "stall_limit": 160,
+      "operators": {
+        "swap": 1.0,
+        "move": 1.0,
+        "block_insertion": 0.6,
+        "cross_exchange": 0.6,
+        "mobilisation_shake": 0.4
+      }
+    },
+    "tuner_meta": {
+      "algorithm": "tabu",
+      "budget": {
+        "runs_total": 2,
+        "iters_per_run": 1500,
+        "tier": "short"
+      },
+      "progress": {
+        "run_index": 1,
+        "total_runs": 2,
+        "best_objective": 15.693999999999999,
+        "iterations": 1500
+      },
+      "config": {
+        "stall_limit": 160
+      },
+      "bundle": "baseline",
+      "bundle_member": "small21"
+    }
+  },
+  {
+    "scenario": "FHOPS Small21",
+    "algorithm": "ils",
+    "objective": -92.757,
+    "seed": 323,
+    "config": {
+      "iters": 350,
+      "batch_size": null,
+      "max_workers": null,
+      "perturbation_strength": 3,
+      "stall_limit": 10,
+      "hybrid_use_mip": false,
+      "hybrid_mip_time_limit": 60,
+      "operators": {
+        "swap": 1.0,
+        "move": 1.0,
+        "block_insertion": 0.0,
+        "cross_exchange": 0.0,
+        "mobilisation_shake": 0.0
+      }
+    },
+    "tuner_meta": {
+      "algorithm": "ils",
+      "budget": {
+        "runs_total": 2,
+        "iters_per_run": 350,
+        "tier": "short"
+      },
+      "progress": {
+        "run_index": 1,
+        "total_runs": 2,
+        "best_objective": -92.757,
+        "iterations": 350
+      },
+      "config": {
+        "perturbation_strength": 3,
+        "stall_limit": 10
+      },
+      "bundle": "baseline",
+      "bundle_member": "small21"
+    }
+  },
+  {
+    "scenario": "FHOPS Medium42",
+    "algorithm": "ils",
+    "objective": -844.7880000000001,
+    "seed": 325,
+    "config": {
+      "iters": 350,
+      "batch_size": null,
+      "max_workers": null,
+      "perturbation_strength": 3,
+      "stall_limit": 10,
+      "hybrid_use_mip": false,
+      "hybrid_mip_time_limit": 60,
+      "operators": {
+        "swap": 1.0,
+        "move": 1.0,
+        "block_insertion": 0.0,
+        "cross_exchange": 0.0,
+        "mobilisation_shake": 0.0
+      }
+    },
+    "tuner_meta": {
+      "algorithm": "ils",
+      "budget": {
+        "runs_total": 2,
+        "iters_per_run": 350,
+        "tier": "short"
+      },
+      "progress": {
+        "run_index": 1,
+        "total_runs": 2,
+        "best_objective": -844.7880000000001,
+        "iterations": 350
+      },
+      "config": {
+        "perturbation_strength": 3,
+        "stall_limit": 10
+      },
+      "bundle": "baseline",
+      "bundle_member": "med42"
+    }
+  },
+  {
+    "scenario": "FHOPS Medium42",
+    "algorithm": "tabu",
+    "objective": 24.755000000000003,
+    "seed": 560,
+    "config": {
+      "iters": 1500,
+      "batch_size": null,
+      "max_workers": null,
+      "tabu_tenure": null,
+      "stall_limit": 160,
+      "operators": {
+        "swap": 1.0,
+        "move": 1.0,
+        "block_insertion": 0.6,
+        "cross_exchange": 0.6,
+        "mobilisation_shake": 0.4
+      }
+    },
+    "tuner_meta": {
+      "algorithm": "tabu",
+      "budget": {
+        "runs_total": 2,
+        "iters_per_run": 1500,
+        "tier": "short"
+      },
+      "progress": {
+        "run_index": 2,
+        "total_runs": 2,
+        "best_objective": 24.755000000000003,
+        "iterations": 1500
+      },
+      "config": {
+        "stall_limit": 160
+      },
+      "bundle": "baseline",
+      "bundle_member": "med42"
+    }
+  }
+]
