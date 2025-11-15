@@ -5,6 +5,7 @@
 - Phase 2 solver upgrades: shift-indexed MIP/heuristics, mobilisation penalties, harvest system sequencing, CLI presets.
 - Phase 3 evaluation stack: deterministic/stochastic playback, KPI expansion, synthetic dataset generator, analytics notebooks + telemetry dashboards.
 - Telemetry + tuning harness: persistent JSONL/SQLite store, CLI tuners (random/grid/bayes), comparison/difficulty dashboards, GitHub Pages publishing.
+- Tuned presets: baseline bundle re-optimised with higher budgets; best configs stored in `notes/release_tuned_presets.json` and reflected on telemetry dashboards.
 
 ## Installation
 - `pip install fhops` (PyPI)

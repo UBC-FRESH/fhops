@@ -109,3 +109,32 @@ Use these records when reproducing benchmarks or seeding custom presets, e.g.
 python -c "import json; cfg=json.load(open('notes/release_tuned_presets.json')); print(cfg[0])"
 # feed operator weights into fhops tune-random --operator-weight swap=... --operator-weight move=...
 ```
+
+## Quick demos
+
+Show off the tuning harness or heuristics in one command:
+
+```bash
+python scripts/run_tuning_benchmarks.py \
+  --bundle synthetic-small \
+  --out-dir tmp/demo-synth \
+  --random-runs 1 --random-iters 400 \
+  --grid-iters 400 --grid-preset explore \
+  --bayes-trials 2 --bayes-iters 400 \
+  --max-workers 8 \
+&& column -t -s'|' tmp/demo-synth/tuner_report.md | sed 's/^/  /'
+```
+
+or run eight random restarts per heuristic on the baseline bundle:
+
+```bash
+python scripts/run_tuning_benchmarks.py \
+  --bundle baseline \
+  --out-dir tmp/demo-restarts \
+  --tuner random --tuner ils --tuner tabu \
+  --random-runs 8 --random-iters 400 \
+  --ils-runs 8 --ils-iters 400 \
+  --tabu-runs 8 --tabu-iters 2000 \
+  --max-workers 8 \
+&& column -t -s'|' tmp/demo-restarts/tuner_summary.md | sed 's/^/  /'
+```
