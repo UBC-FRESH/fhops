@@ -1,0 +1,234 @@
+{
+  "Append": {
+    "unit": "ix 9. Independent variables",
+    "description": "Variables are presented in alphabetical order according to their abbreviations. Hence, rel ated variabl es are present ed in s describing the work output are presented in two places since it has been described by bot h weight an d volume in th e mod An asterisk (* ) indicates a dummy variable, and a lowercase letter followed by a colon ( :) in the un it column spe cifies t model."
+  },
+  "Abbreviation": {
+    "unit": "Unit",
+    "description": "Independent variable Movement and distances travelled"
+  },
+  "A₁": {
+    "unit": "m",
+    "description": "Movement to trees/movement per cycl"
+  },
+  "A₂": {
+    "unit": "ft",
+    "description": "Movement to trees/movement per cycl"
+  },
+  "A₃": {
+    "unit": "m",
+    "description": "Movement to bunch"
+  },
+  "A₄": {
+    "unit": "ft",
+    "description": "Movement to bunch"
+  },
+  "A₅": {
+    "unit": "m",
+    "description": "Total distance traversed in the corridor"
+  },
+  "A₆": {
+    "unit": "m",
+    "description": "Untethered di stance traversed in the co"
+  },
+  "A₇": {
+    "unit": "m",
+    "description": "Tethered dista nce traversed in the corri"
+  },
+  "A₈": {
+    "unit": "m",
+    "description": "Movement to deck"
+  },
+  "A₉": {
+    "unit": "m",
+    "description": "Skidding dista nce Weight of hand led unit and/or output (trees/stems/logs/biomass)"
+  },
+  "B₁": {
+    "unit": "ODkg/tree",
+    "description": "Dry weight of tree"
+  },
+  "B₂": {
+    "unit": "dry ton/ha",
+    "description": "Biomass remo val"
+  },
+  "B₃": {
+    "unit": "ODton/ha",
+    "description": "Biomass per h ectare"
+  },
+  "B₄": {
+    "unit": "green tons",
+    "description": "Weight of ma terial produced i n the cor"
+  },
+  "B₅": {
+    "unit": "green tons",
+    "description": "Weight of ma terial produced w hile unt B₆ green tons Weight of m aterial produced while teth ered B₇ green tons Weight of sa w-log material p roduced i n the corrido r B₈ green tons Weight of bi ochar feedstock produced in the corrid or B₉ green tons Weight of sa w-log material p roduced while unteth ered B₁₀ green tons Weight saw- log m aterial pro duced whi le tethered B₁₁ green tons Weight of bi ochar feedstock produced while unteth ered B₁₂ green tons Weight of bi ochar feedstock produced while tether ed B₁₃ kg Dry weight of all s tems on th e stump B₁₄ kg Weight of tr ee B₁₅ ton/km Stocking B₁₆ tons Wood remo val Diameter/DBH of ha rvested trees/stems/logs D₁ cm Diameter at breast height D₂ cm Basal area w eighte d diamete r at breast height D₃ cm Removed ba sal are a weighte d diamete r at breast he ight D₄ cm Sum of diam eter at breast he ight in acc umulation D₅ mm Diameter at breast height D₆ mm Basal area w eighte d diamete r at breast height D₇ cm Diameter at breast height und er bark D₈ cm Diameter of top lo g under ba rk D₉ cm Diameter at breast height of t rees from which logs were D₁₀ cm Diameter at breast height of t rees from which logs were D₁₁ cm Diameter pe r cycle D₁₂ cm Butt end dia meter *D₁₃ c: 36 c m ≤ DBH ≤ 51 cm 1/0, d: DBH > 51 cm 1/0 Diameter at breast height cla ss Machine data E₁ revolu tions/min Engine spee d E₂ liters/ min Hydraulic p ump fl ow E₃ kW Engine pow er E₄ % Proportion o f engi ne time op erating at the medium load"
+  },
+  "E₅": {
+    "unit": "%",
+    "description": "Proportion of"
+  },
+  "E₆": {
+    "unit": "kg",
+    "description": "Harvester hea"
+  },
+  "E₇": {
+    "unit": "cm",
+    "description": "Max cutting d"
+  },
+  "E₈": {
+    "unit": "m3",
+    "description": "Load volume *E₉ 1: Purpose bui lt, 2: Excavat or - N orihiro et al. (2018 ) Machine type 1: Beaver, 0: B ea r - Ackerm an et al. (20 21) c: Agama 1/0, d: Vimek 1/0 - Spin elli et al. (2022) *E₁₀ 1: C360, 0: S3 50 Head model *E₁₁ 1/0 Accumulating *E₁₂ Model 5: XXX L is baseline , o: S 1/0, p: M 1/0, q: L 1/0, r: XL 1/0, s: XXL 1/0 Harvester hea Model 9: XXX L is baseline , m: S 1/0, n: M 1/0, o: L 1/0 - Eriksson & Lindroos (2014) M is baseline, e: L 1/0, f: X L 1/0, g: XX L 1 /0 - Liski et al. (2020) *E₁₃ M is baseline, c: L 1/0, d: X L 1/0 Harvester size"
+  },
+  "E₁₄": {
+    "unit": "m3",
+    "description": "Grapple load s"
+  },
+  "E₁₅": {
+    "unit": "%",
+    "description": "Proportion of Height of trees harvested"
+  },
+  "H₁": {
+    "unit": "m",
+    "description": "Height"
+  },
+  "H₂": {
+    "unit": "m",
+    "description": "Basal area we"
+  },
+  "H₃": {
+    "unit": "m",
+    "description": "Dominant hei Harvesting inte nsity/density"
+  },
+  "I₁": {
+    "unit": "%",
+    "description": "Harvested bas"
+  },
+  "I₂": {
+    "unit": "%",
+    "description": "Thinning inte"
+  },
+  "I₃": {
+    "unit": "trees/ha",
+    "description": "Harvested tree"
+  },
+  "I₄": {
+    "unit": "m2/ha",
+    "description": "Basal area"
+  },
+  "I₅": {
+    "unit": "trees/ha",
+    "description": "Stand density *I₆ b: Light (15%) , c : Medium (30%) and H eav y (45%) - Man ner et al. (2023) Harvest intens X<30 m3/ha is ba seline, e: 3 0≤X≤ 60 1/0, f: X>60 1/0 - Me derski et al. (2016) Miscellaneous"
+  },
+  "Miscellaneous": {
+    "unit": "features of",
+    "description": "harvested t rees"
+  },
+  "M₂": {
+    "unit": "score",
+    "description": "NASA Task Loa d Index *M₃ Quarter 1 is baseline, l: Quarter 2 1/0, m : Quarter 3 1/0, n: Quarter 4 1/0 Quarter of year"
+  },
+  "M₄": {
+    "unit": "m",
+    "description": "Cumulative log l ength *M₅ Site B 1/0 - Holzleitner & Kanzia n (202 2) Site/Unit Model 1-5: c: Unit 2 1/ 0, d: Unit 3 1/0 - Holzleitner & Kanzian (20 22) Model 6: c: Unit 1, d: U nit 3 1/0 - Kizha & Han (2016) e: S1T2 1/0 , f: S2T1 1/ 0 - K. Geo rge et al. (2022)"
+  },
+  "M₆": {
+    "unit": "number",
+    "description": "Total number of small trees in the w"
+  },
+  "M₇": {
+    "unit": "number",
+    "description": "Total number of trees in the working Work cycle-ba sed observa tions"
+  },
+  "N₁": {
+    "unit": "number",
+    "description": "Cuts per cycle"
+  },
+  "N₂": {
+    "unit": "number",
+    "description": "Number of swin gs"
+  },
+  "N₃": {
+    "unit": "number",
+    "description": "Trees per cycle"
+  },
+  "N₄": {
+    "unit": "number",
+    "description": "Number of logs per cycle"
+  },
+  "N₅": {
+    "unit": "sec",
+    "description": "Time per crane c ycle"
+  },
+  "N₆": {
+    "unit": "number",
+    "description": "Number of stand ing trees pe r cycle"
+  },
+  "N₇": {
+    "unit": "number",
+    "description": "Number of down ed trees per cycle"
+  },
+  "N₈": {
+    "unit": "number",
+    "description": "Number of stems on the stu mp per c"
+  },
+  "N₉": {
+    "unit": "number",
+    "description": "Number of trees per accumu lation"
+  },
+  "N₁₀": {
+    "unit": "number",
+    "description": "Number of proce ssing passe s per cyc"
+  },
+  "O₁": {
+    "unit": "score/tree",
+    "description": "Crookedness"
+  },
+  "O₂": {
+    "unit": "score/tree",
+    "description": "Limbiness"
+  },
+  "O₃": {
+    "unit": "score/tree",
+    "description": "Forkedness"
+  },
+  "O₄": {
+    "unit": "1/2 or 1/3 o",
+    "description": "r 1/4 of tree height (u nclear h ow these values should be interpre ted in model) Crown class"
+  },
+  "O₅": {
+    "unit": "Single, Dou",
+    "description": "ble or Multi (unclear how th ese values should be interp reted in model) Stem form"
+  },
+  "O₆": {
+    "unit": "≤5 or 5-10",
+    "description": "cm (unclear how thes e values should be interpreted in model) Branch thickness *O₇ Model 1: f: D ouglas fir 1/0, g: Redwood 1/0, h: Western hemlock 1/0 Tree speci Model 2: f: R edwood 1/ 0, g: Western he mloc k 1 /0 Model 3: f: R edwood 1/ 0, g: Douglas fir 1/0, h: Western Hemlock 1/0 Model 4: f: R edwood 1/ 0, g: Western he mloc k 1 /0, h: Ta noak 1/0 Model 5: f: T anoak 1/0, g: R edwood 1/0, h: W e stern hem lock 1/0 Model 6: g: D ouglas fir 1/0, h: Redwood 1/0, i: Western hemlock 1/0 - Kizha & Han (2016) 1: Spruce , 0: Pine - Man ner et al. (2023) 1: Quercu s ile x, 0: Quer cus pyrenaica - Tolos an a et al. ( 2018) Model 1: Pine is baselin e, h: Spruce 1/0, i: Bi rc h 1/0, j: Other broadleaved 1/0, k: Mixed removal 1 /0 Model 2: Pine is baselin e, c: Spruce 1/0, d: B irc h 1/0, e: Other broadleaved 1/0, f: Mixed removal 1 /0 - Liski et al . (20 20) *O₈ c: Hardw ood 1/0, d: Sof twoo d 1/0 - Geor ge e t a l. (2022) Wood type 1: Softwo od, 0: Hardwo od - Hiesl & Ben jami n (2015) 1: Hardw ood, 0: Softwo od - Soman et al. (20 20 ) Mixwood 1/0 - Spinelli et al. (2020a)"
+  },
+  "O₉": {
+    "unit": "1%",
+    "description": "Difficult tr *O₁₀ 1/0 Poor tree f"
+  },
+  "O₁₁": {
+    "unit": "number",
+    "description": "Number of *O₁₂ 1/0 Forking *O₁₃ 1/0 Wind dam"
+  },
+  "O₁₄": {
+    "unit": "%",
+    "description": "Hardwood *O₁₅ 1: High fo rest , 0: Coppi ce - Chakroun et al. ( 20 16) Stand type 1: Planted , 2: Coppice - Nori hiro et al. (2 018) *O₁₆ 41-60 is b asel ine, c: 61- 80 1 /0, d: 81-100 1/0 Age class *O₁₇ 1: Double ste m, 0: Singl e ste m Stem type Operator featu res"
+  },
+  "P₁": {
+    "unit": "years",
+    "description": "Operator e *P₂ 1: Operat or B (less expe rien ced), 0: Oper ator A Operator Features related to terra in and work conditions S₁ % Slope S₂ 1-5, Berg (1992) Slope S₃ 1-5, Berg (1992) Terrain rough ness *S₄ 1/0 Expected sno w limitatio n *S₅ 1/0 Expected dayl ight limita tion S₆ trees/ha Undergrowth Treatment/execution of harvest *T₁ 1: Energy wood, 0: Pulpwood or integrated harvest of energywood and pulpwood Type of harve st *T₂ 1/0 Cross-cutting practice *T₃ 1/0 Small scale ch ain of har vest *T₄ 1/0 Adaptation ki t treatment *T₅ 1/0 2 m log lengt h treatment *T₆ 1/0 Larger stem f elled first *T₇ 1/0 Regeneration felling *T₈ 1/0 Multi-tree han dling *T₉ 1/0 Debarking *T₁₀ 1/0 Logging resid ue recover y adaptation Volume of handled unit and/or output (tree/stem/log) V₁ m³ Stem volume over bark V₂ dm³ Stem volume over bark V₃ m³ Stem volume under bark V₄ m³ Volume of lo gs per tree irrespective of them matching set q V₅ m³ Volume of lo gs per tree matching set quality specifications V₆ m³ Estimated rec overed vol ume per stem with a reduction fact V₇ m³ Whole tree vo lume V₈ m³ Stem one volu me V₉ m³ Stem two vol ume V₁₀ m³ Accumulated volume of trees in the head V₁₁ m³ Mean tree vol ume in an accumulation"
+  },
+  "V₁₂": {
+    "unit": "dm³",
+    "description": "Whole tre"
+  },
+  "V₁₃": {
+    "unit": "m3",
+    "description": "Total harv"
+  },
+  "V₁₄": {
+    "unit": "m3/ha",
+    "description": "Harvested"
+  }
+}
