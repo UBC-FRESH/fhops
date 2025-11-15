@@ -10,6 +10,8 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
+from fhops.core import FHOPSValueError
+from fhops.productivity import LahrsenModel, estimate_productivity
 from fhops.scenario.contract import Scenario
 from fhops.scenario.io import load_scenario
 from fhops.scheduling.systems import HarvestSystem, default_system_registry
@@ -309,6 +311,74 @@ def inspect_block(
     _render_kv_table(f"Block Inspection — {selected_block.id}", rows)
     console.print(
         "[yellow]* TODO: add derived statistics (windows, production rates) once defined.[/yellow]"
+    )
+
+
+@dataset_app.command("estimate-productivity")
+def estimate_productivity_cmd(
+    avg_stem_size: float = typer.Option(
+        ...,
+        "--avg-stem-size",
+        min=0.0,
+        help="Average harvested stem size (m³/stem).",
+    ),
+    volume_per_ha: float = typer.Option(
+        ...,
+        "--volume-per-ha",
+        min=0.0,
+        help="Average harvested volume per hectare (m³/ha).",
+    ),
+    stem_density: float = typer.Option(
+        ...,
+        "--stem-density",
+        min=0.0,
+        help="Average stem density (trees/ha).",
+    ),
+    ground_slope: float = typer.Option(
+        ...,
+        "--ground-slope",
+        min=0.0,
+        help="Average ground slope (percent).",
+    ),
+    model: LahrsenModel = typer.Option(
+        LahrsenModel.DAILY,
+        "--model",
+        case_sensitive=False,
+        help="Which Lahrsen (2025) coefficient set to use.",
+    ),
+    allow_out_of_range: bool = typer.Option(
+        False,
+        "--allow-out-of-range",
+        help="Skip range validation (useful for exploratory synthetic data).",
+    ),
+):
+    """Estimate productivity (m³/PMH15) via Lahrsen (2025) BC regression."""
+    try:
+        result = estimate_productivity(
+            avg_stem_size=avg_stem_size,
+            volume_per_ha=volume_per_ha,
+            stem_density=stem_density,
+            ground_slope=ground_slope,
+            model=model,
+            validate_ranges=not allow_out_of_range,
+        )
+    except FHOPSValueError as exc:  # pragma: no cover - Typer surfaces error.
+        raise typer.BadParameter(str(exc)) from exc
+
+    rows = [
+        ("Model", result.model.value),
+        ("Average Stem Size (m³/stem)", f"{result.avg_stem_size:.3f}"),
+        ("Volume per Hectare (m³/ha)", f"{result.volume_per_ha:.1f}"),
+        ("Stem Density (trees/ha)", f"{result.stem_density:.1f}"),
+        ("Ground Slope (%)", f"{result.ground_slope:.1f}"),
+        ("Predicted Productivity (m³/PMH15)", f"{result.predicted_m3_per_pmh:.2f}"),
+    ]
+    _render_kv_table(
+        "Lahrsen (2025) Feller-Buncher Productivity Estimate",
+        rows,
+    )
+    console.print(
+        "[dim]Coefficients sourced from Lahrsen, 2025 (UBC PhD) — whole-tree feller-buncher dataset.[/dim]"
     )
 
 

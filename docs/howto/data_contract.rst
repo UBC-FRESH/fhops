@@ -21,11 +21,13 @@ Each scenario references a set of CSV files. Required columns and notes:
    * - ``blocks.csv``
      - ``id``, ``landing_id``, ``work_required``
      - Optional: ``earliest_start``/``latest_finish`` (defaults 1 / ``num_days``)
-   * - ``machines.csv``
-     - ``id``
-     - Optional: ``role``, ``crew``; numeric fields must be non-negative. ``daily_hours`` defaults
-       to ``24`` — we assume machines are available around the clock unless explicitly constrained
-       by the calendar or shift-level availability.
+    * - ``machines.csv``
+      - ``id``
+      - Optional: ``role``, ``crew``; numeric fields must be non-negative. ``daily_hours`` defaults
+        to ``24`` — we assume machines are available around the clock unless explicitly constrained
+        by the calendar or shift-level availability. ``operating_cost`` is the machine rental rate in
+        $/SMH (scheduled machine hour) so it maps cleanly onto shifts/days; derive $/m³ post‑hoc
+        from playback outputs if needed.
       - The `fhops dataset inspect-machine` CLI warns when a machine advertises non-24 h
         availability so you can catch accidental edits before shipping datasets.
    * - ``landings.csv``

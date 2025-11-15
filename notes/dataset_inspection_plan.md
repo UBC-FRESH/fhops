@@ -36,6 +36,17 @@
 - Dataset inspector CLI grew `inspect-block`/`inspect-machine` commands plus non-24 h/day warnings to surface regressions immediately; roadmap + release notes capture the milestone.
 - Documentation touchpoints (data contract + synthetic how-to) and release notes now reference the inspector warning and CLI override so users understand the new behavior.
 
+## BC Productivity Model Insights (Lahrsen 2025 thesis)
+- Dataset: 9,865 FPDat II production reports (filtered to 3,081 daily machine-level observations, 205 cutblocks) from 71 feller-bunchers across BC (Jan 2022–Jul 2024); covariates captured automatically: average stem size (0.09–1.32 m³/tree), average volume per hectare (75–856 m³/ha), stem density (205–3,044 trees/ha), ground slope (1.5–48.9%).
+- Daily machine-level mixed-effects model (nested MachineID within BlockID) provides fixed-effect coefficients for productivity in m³/PMH15:  
+  `Prod = 67.99*AvgStemSiz + 0.059*VolumePerH + 0.012*AvgStemDen - 0.461*AvgGroundS` (heteroscedastic best-fit; CI ranges roughly ±10%).  
+  Stem size dominates (>+59 m³/PMH15 per +1 m³/tree), slope penalty ≈ −0.46 per +1%, density/volume effects smaller per unit but cover wide ranges.
+- Cutblock-level linear model (aggregation) delivers similar structure with tighter CIs:  
+  `Prod = 61.02*AvgStemSiz + 0.052*VolumePerH + 0.014*AvgStemDen - 0.24*AvgGroundS` (+ optional block-size term).  
+  A heteroscedastic variant (random contractor effect) yields coefficients 57.08 / 0.031 / 0.003 / −0.36 / +0.013.
+- Thesis also documents GNSS/coverage QA thresholds (≥70–90% coverage, <3 h GNSS gaps) and PMH15 error calibration (<1% with WTD 60–90 s + OTD), which we can reuse for data validation tooling.
+- Parameter domains from the thesis give modern BC benchmarks for sample dataset defaults and synthetic generator ranges (piece size, densities, slopes, productivity).
+
 ## TODO Checklist
 - [x] Update `Machine.daily_hours` default in the data contract to 24.0 so newly defined machines inherit round-the-clock availability.
 - [x] Ensure synthetic dataset generator configs/sample overrides default to 24-hour machines (shift configs or CLI overrides may need alignment).
@@ -43,3 +54,55 @@
 - [x] Document the 24-hour assumption in data-contract/how-to docs and cross-link from the planning roadmap.
 - [x] Extend the dataset inspector to flag machines with `daily_hours != 24` (warning first, enforcement later).
 - [ ] Revisit mobilisation/production-rate assumptions once the 24-hour baseline is enforced.
+- [ ] (Greg) Track down the original MRNF harvest-cost technical report cited in the Woodstock DLL, add it to the references library, and capture its equations for future machine-costing helpers.
+- [ ] (Greg) Identify Canadian (BC-first, Canada-wide) machine productivity functions covering major systems/prescriptions, confirm licensing/IP constraints, and document which coefficients we can openly publish; defer US coverage until needed.
+- [ ] Extract structured Lahrsen 2025 parameter ranges (stem size, volume/ha, density, slope, productivity) into reusable config/validation tables and surface them in docs + schema validators.
+- [ ] Align FHOPS sample datasets + synthetic generator defaults with Lahrsen 2025 parameter ranges (piece size, volume/ha, density, slope, productivity) and document validation thresholds.
+- [ ] Implement Lahrsen-based productivity helper (fixed-effect predictions + optional block-level adjustments) as interim baseline until new FPInnovations coefficients arrive.
+
+## Rollout Plan (3-level work breakdown)
+
+1. **CLI + Data Enhancements**
+   1.1 Machine Inspector Expansion
+       - Add mobilisation parameter output (walk cost, thresholds, setup/move costs) for each machine.
+       - Surface utilisation/rental-rate interpretations (explicit $/SMH label, warn if missing).
+       - Provide optional verbose mode to dump crew capabilities and future productivity defaults.
+   1.2 Block/Scenario Context
+       - Extend `inspect-block` with key derived stats (area, avg stem size, harvest system links).
+       - Allow dataset-level summaries (counts, default assumptions) as scaffolding for aggregation later.
+   1.3 Synthetic Generator Signals
+       - Persist utilisation + rental rate defaults in synthetic configs/metadata.
+       - Ensure CLI overrides propagate to metadata and inspector views for parity.
+
+2. **Machine Costing Helper**
+   2.1 Equation Port + Validation
+       - Port WS3 harvest cost productivity/rental-rate equations into FHOPS helpers.
+       - Reproduce spreadsheet/DLL outputs with unit tests seeded by Greg’s examples.
+       - Add documentation referencing the MRNF report (pending retrieval).
+   2.2 CLI/API Exposure
+       - New command (`fhops dataset estimate-cost` or similar) that combines machine params, block attributes, and productivity functions to emit $/SMH and (optionally) $/m³.
+       - Provide templates/config files so users can define custom machine systems.
+   2.3 Evaluation Integration
+       - Hook helper into playback/KPI modules to compute $/m³ post-hoc using actual assignments.
+       - Emit warnings when solver inputs (rental rates, utilisation) are missing but evaluation needs them.
+
+3. **References, Docs, and Governance**
+   3.1 Source Document Capture (Greg)
+       - Locate MRNF harvest-cost tech report, archive in `notes/` or `docs/reference/`, and cite it in planning docs.
+       - Record provenance for productivity equations and any calibration constants.
+   3.2 Documentation Updates
+       - Expand data-contract/how-to sections with rental-rate workflow, machine costing helper usage, and CLI examples.
+       - Add evaluation guide section on interpreting $/SMH vs. $/m³ outputs.
+   3.3 Roadmap & Release Tracking
+       - Reflect the rollout stages in `FHOPS_ROADMAP.md` and release notes once milestones land.
+       - Define QA checkpoints (inspection CLI regression, cost-helper parity tests, doc updates) before public release.
+
+## Proposed Next Steps
+1. **Ingest Lahrsen coefficients**
+   - Encode daily machine-level fixed-effect equations in a new helper module, expose via CLI (`fhops dataset estimate-productivity`) using block attributes (stem size, volume/ha, density, slope).
+   - Validate our implementation by recreating Lahrsen’s heteroscedastic predictions on a sampled dataset (unit tests comparing to published coefficients/CIs).
+   - Extract the observed parameter ranges from Lahrsen 2025 into a machine-readable table (JSON/YAML) and hook them into schema validation + docs so future tasks can reuse them.
+2. **Update dataset defaults**
+   - Rewrite sample dataset JSON/CSV templates and synthetic generator distributions to fall within Lahrsen-observed ranges; add validation rules rejecting out-of-band values unless explicitly overridden.
+3. **Plan costing workflow**
+   - Combine the productivity helper with machine rental-rate inputs (in $/SMH) to produce BC-calibrated $/m³ estimates downstream in evaluation scripts; document how this links to the forthcoming machine-costing CLI.
