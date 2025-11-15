@@ -1,0 +1,79 @@
+enabled the collectio,n of geo,spatial inf,"ormation, and",with this inf,ormation and
+,,,,,
+subsequent data proc,"essing, it",was possib,le to assign a sl,ope value for,each stem. It
+,,,,,
+was concluded that s,lope did n,ot have a s,ignificant effec,t on producti,"vity, as slope"
+,,,,,
+values only ranged fr,om 0-12,%. This typ,e of combinatio,n of differen,t data sources
+,,,,,
+is evidently a potenti,al useful,method for,bypassing som,e of the cons,traints which
+,,,,,
+automatic data collec,tion indu,ces. Conse,"quently, more t",ypes of varia,bles and data
+,,,,,
+can be combined to,analyze,productiv,ity and develo,p improved,productivity
+,,,,,
+models.,,,,,
+,,,,,
+Discrepancies betwe,en autom,atic and m,anual measurem,ents of diam,eter at breast
+,,,,,
+height and volume h,ave been,observed (,Brewer et al. 2,018). Brewer,et al. (2018)
+,,,,,
+observed that diamet,er at brea,st height a,nd volume valu,es measured,by harvester
+,,,,,
+heads were significa,ntly lowe,r than thos,e obtained by m,anual measu,rements with
+,,,,,
+diameter at breast he,ight tape,. In their st,"udy, they cond",ucted a conv,entional time
+,,,,,
+study to develop pro,ductivity,models a,nd compared th,ese to mode,ls developed
+,,,,,
+using consecutive tim,estamps,from follo,w-up data. Nota,"bly, they onl",y used values
+,,,,,
+from the manual me,asuremen,ts of diam,eter at breast he,ight and vol,ume for both
+,,,,,
+methodologies. Give,n the sign,ificant diff,erence in meas,"urements, the",productivity
+,,,,,
+models likely would,vary as,well if har,vester head me,asurements,were used in
+,,,,,
+conjunction with the,follow-u,p timestam,"ps. However, t",he extent of,this variation
+,,,,,
+remains uncertain as,Brewer e,t al. (2018),did not examin,e this. Theref,"ore, in future"
+,,,,,
+"studies, it would be b",eneficial,to scrutini,ze the extent to,which this d,iscrepancy in
+,,,,,
+measurement types i,nfluences,productiv,ity models. Su,ch studies co,uld elucidate
+,,,,,
+the differences betw,een mode,ls derived,from conventio,nal time stud,ies and those
+,,,,,
+derived from follow,-up data,", providin",g insights into,how these,measurement
+,,,,,
+discrepancies affect,model acc,uracy.,,,
+,,,,,
+The aforementioend,points,regarding,future researc,h and deve,lopment for
+,,,,,
+automatic collection,of data an,d follow-u,p studies have,mainly been,aimed at CTL
+,,,,,
+harvesters. Feller-bu,nchers d,o normally,not capture c,ontinuous a,nd automatic
+,,,,,
+production data due t,o lack of,sensors an,d processing he,ads (Lahrsen,et al. 2022).
+,,,,,
+"It is, therefore, mor",e difficul,t to perfor,m follow-up s,tudies for th,ese types of
+,,,,,
+machines compared,to CTL h,arvesters.,"Nevertheless, r",esearch effor,ts have been
+,,,,,
+made to develop m,ethods en,abling the,automatic rec,ording of tim,e for feller-
+,,,,,
+buncher work eleme,"nts, such",as those in,Pan et al. (2022,"), which cou",ld potentially
+,,,,,
+enhance the effective,ness and,lower the c,ost of work stud,ies. Pan et a,l. (2022) used
+,,,,,
+machine learning m,ethods u,tilizing sou,nd and video,data to clas,sify a feller-
+,,,,,
+buncher’s operationa,l state.,The study,showed promis,ing results f,or automatic
+,,,,,
+recording of the fell,er-bunche,rs work. H,"owever, some",inaccuracies,for the work
+,,,,,
+element ”pile” were,"observed,",indicating,the need for fur,ther studies t,o refine these
+,,,,,
+methods. They also n,oted the p,ossibility o,f combining au,ditory and vi,sual data with
+,,,,,
+data from the feller,-buncher,’s CAN-bu,"s, which could",potentially,increase the

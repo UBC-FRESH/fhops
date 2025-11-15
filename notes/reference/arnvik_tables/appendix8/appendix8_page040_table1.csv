@@ -1,0 +1,45 @@
+T,able 14. Relative,distribution (%),of models’,mathematical,s,tructure w,ithin depen,dent varia,bles (colu,mns) fro,m most c,ommon t,o least co,mmon. P,roduc,tivit,y = PV
+(,"volume/time), PW","(weight/time), P",U (units/tim,e); Time per u,n,it of outpu,t: TV = (ti,me/volume,"), TW (tim",e/weight,"), TU (ti",me/unit);,Time for,work cyc,le =,W; T,ime for
+e,lement(s) regardin,g handling of tre,e = E; Time,for moving =,,M; Time fo,r loading =,L,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+T,abell 14. Relativ f,ördelning (%) a,v modellers,matematiska s,t,ruktur för,beroende,variabler (,kolumner),från van,ligast till,ovanlig,ast. Prod,uktivitet,= PV,(vol,"ym/tid),"
+P,"W (vikt/tid), PU (",enheter/tid); Tid,per enhet a,v output: TV,,= (tid/voly,"m), TW (ti","d/vikt), TU",(tid/enhe,t); Tid pe,r arbetsc,ykel = W,; Tid pe,r arbetsm,omen,t an,gående
+h,antering av träd =,E; Tid för förfly,ttning = M;,Tid för lastnin,,g = L,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,Mathematical fu,nction type,,,,"PV,","PW,","PU,","TV,","TW,","TU,","W,","E,","M,","L,",,total
+,,,,,,,,,,,,,,,,,
+,,,,,,n=214,n=36,n=4,n=16,n=5,n=11,n=60,n=62,n=13,n=1,,
+,,,,,,,,,,,,,,,,,
+,"Purely linear, n=",153,,,,29.9,47.2,75.0,12.5,20.0,81.8,65.0,22.6,30.8,,,153
+,,,,,,,,,,,,,,,,,
+,Purely second-d,egree polynomi,"al, n=51",,,18.2,,,,,9.1,1.7,14.5,7.7,,,51
+,,,,,,,,,,,,,,,,,
+,Purely power la,"w, n=50",,,,14.5,27.8,25.0,6.3,60.0,,3.3,3.2,,,,50
+,,,,,,,,,,,,,,,,,
+,"Log-linear, n=40",,,,,8.9,16.7,,,,,,17.7,30.8,,,40
+,,,,,,,,,,,,,,,,,
+,Non-linear with,power law term,"s, n=36",,,6.1,2.8,,68.8,,,18.3,,,,,36
+,,,,,,,,,,,,,,,,,
+,Purely third-deg,ree polynomial,", n=24",,,6.5,,,,,,,16.1,,,,24
+,,,,,,,,,,,,,,,,,
+,Purely Exponent,"ial, n=15",,,,,,,,,9.1,11.7,11.3,,,,15
+,,,,,,,,,,,,,,,,,
+,Exponential wit,h logarithmic tr,ansformati,"on, n=15",,7.0,,,,,,,,,,,15
+,,,,,,,,,,,,,,,,,
+,Linear with divi,"sion operation,",n=7,,,,,,12.5,,,,1.6,23.1,100.,0,7
+,,,,,,,,,,,,,,,,,
+,Non-linear with,power law and,linear term,"s, n=7",,0.5,,,,20.0,,,8.1,,,,7
+,,,,,,,,,,,,,,,,,
+,Non-linear with,quadratic term,and logarit,hmic,,2.8,,,,,,,,,,,6
+,,,,,,,,,,,,,,,,,
+,"transformation,",n=6,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,Second-degree p,olynomial with,interactio,"n terms,",,0.9,,,,,,,4.8,7.7,,,6
+,,,,,,,,,,,,,,,,,
+,n=6,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,Non-linear with,"quadratic term,",interaction,term and,,1.4,,,,,,,,,,,3
+,,,,,,,,,,,,,,,,,
+,logarithmic tran,"sformation, n=3",,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,40,,,,,,,,,

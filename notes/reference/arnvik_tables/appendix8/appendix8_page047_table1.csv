@@ -1,0 +1,73 @@
+high proporti,on of sout,hern European,publicatio,ns including we,ight related
+,,,,,
+variables.,,,,,
+,,,,,
+When it comes,to the mod,els’ predictive c,"apabilities,",the identified mo,dels spanned
+,,,,,
+from explaini,ng almost,nothing (0.7%),to almost,all (99.0%) of t,he observed
+,,,,,
+variation. In,"fact, numer",ous publication,s’ models,exhibited excep,tionally low
+coefficients o,f determina,tion (R2 and R,2-adjusted),. Lindroos & Ca,valli (2016)
+,,,,,
+stressed the irr,elevance of,such models du,e to low pre,dictive capabiliti,"es. However,"
+,,,,,
+as mentioned,"previously,",the main aim of,several p,ublications in this,review was
+,,,,,
+not necessaril,y to develop,models with hi,gh predicti,"ve powers, but r",ather explore
+,,,,,
+the effects of,various fac,tors. Consequen,"tly, it is re",asonable that se,veral models
+,,,,,
+exhibited low,predictive,capabilities.,Reporting,models with lo,w statistical
+,,,,,
+significance a,nd low co,efficients of de,terminatio,n could still off,er insightful
+,,,,,
+contributions.,For exam,"ple, if no stati",stical sign,ificance exists b,etween two
+,,,,,
+"variables, it m",ight simply,indicate the ab,sence of re,lationship betwe,"en them, and"
+,,,,,
+the purpose of,the publica,tion might be to,display tha,t lack of relations,hip. Another
+,,,,,
+reason is that i,t might sho,w that further st,udies are n,eeded in that spec,ific research
+,,,,,
+area. Lahrsen,et al. (202,2) highlighted t,hat two st,udies contradicte,d each other
+,,,,,
+regarding the i,mpact of sn,"ow, and hence t",he importa,nce of further res,earch in that
+,,,,,
+area.,,,,,
+,,,,,
+For the identif,ied product,"ivity models, it",was more,common to repo,rt R2 values
+instead of R2-,adjusted val,ues. This is sim,ilar to the,results of Lindro,os & Cavalli
+,,,,,
+(2016) and B,öhm & Ka,nzian (2023).,Adding mo,re predictors wi,ll inevitably
+increase R2 an,d can result,in an overfitted,model. H,"owever, R2-adjust",ed penalizes
+,,,,,
+"this, and provi",des a more r,obust evaluation,of the mo,dels’ actual ability,to represent
+,,,,,
+the proportion,of variance,(Böhm & Kanz,ian 2023).,"Thus, an overfitte",d model will
+not accurately,predict out,"come and it is, t","herefore, pr",eferable to repor,t R2-adjusted
+,,,,,
+for regression,models wit,h multiple predi,ctors.,,
+,,,,,
+There was a w,ide variatio,n of what was re,ported in te,rms of statistical,significance.
+,,,,,
+In several pu,"blications,",no statistical s,ignificance,at all was rep,orted. Some
+,,,,,
+publications o,nly reporte,d statistical sig,nificance o,f the predictors,and not the
+,,,,,
+"actual model,",while a few,publications vali,dated their,models with data,sets reserved
+,,,,,
+for this purpos,e. Validatin,g a model with,a reserved,dataset is more r,"obust, as it is"
+,,,,,
+not the data th,e model has,been trained on,(Raschka,"2018). Thus, it is",preferable to
+,,,,,
+test the predict,ive capabili,ties of a model t,his way. Ho,"wever, manual da",ta collection
+,,,,,
+is relatively ex,pensive an,d time-consumin,g (e.g. Oli,vera et al. 2016;,Brewer et al.
+,,,,,
+2018; Liski et,al. 2020).,"Consequently, r",esearchers,might be relucta,nt to collect
+,,,,,
+larger datasets,", or, at least,",be reluctant to s,et aside a p,art of an already s,mall number
+,,,,,
+of data points,for data v,alidation. This,would be a,possible explan,ation for the
+,,,,,
+absence of val,idation data,in studies. Furt,"her, as pre",viously mentione,"d, the nature"

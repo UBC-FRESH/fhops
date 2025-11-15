@@ -1,0 +1,41 @@
+T,able 9. Quantity of models with different machine types and d,ependen,t variable,s. SB =,swing-bo,om; DTT,= drive-t,o-tree; B,= bundli,ng unit;,Sim =,sim,ulation;
+P,"roductivity = PV (volume/time), PW (weight/time), PU (units/tim",e); Tim,e per uni,t of outpu,t: TV = (,time/volu,"me), TW",(time/wei,"ght), TU",(time/un,it); Tim,e f,or work
+c,ycle = W; Time for work element(s) regarding handling of tree =,E; Time,for movi,ng = M;,Time for l,oading =,L,,,,,,
+,,,,,,,,,,,,,
+T,abell 9. Kvantitet av modeller med olika maskintyper och bero,ende v,ariabler.,SB = swi,ng-boom;,DTT =,drive-to-t,ree; B =,buntning,senhet;,Sim =,sim,ulation;
+P,"roduktivitet = PV (volym/tid), PW (vikt/tid), PU (enheter/tid); Tid",per enh,et av out,put: TV =,(tid/voly,"m), TW (ti","d/vikt), T",U (tid/enh,et); Tid p,er arbets,cykel =,W,; Tid för
+a,rbetsmoment angående hantering av träd = E; Tid för förflyttning,= M; T,id för las,tning = L,,,,,,,,,
+,,,,,,,,,,,,,
+,Machine type,PV,PW,PU,TV,TW,TU,W,E,M,L,,Total
+,,,,,,,,,,,,,
+,CTL/Harvester/Excavator-Based/Tracked,44,,,,,,4,9,1,,,58
+,,,,,,,,,,,,,
+,CTL/Harvester/Purpose-Built/Tracked,28,2,,,,,3,4,2,,,39
+,,,,,,,,,,,,,
+,CTL/Harvester/Purpose-Built/Wheeled,91,4,2,3,2,10,9,43,8,,,172
+,,,,,,,,,,,,,
+,CTL/Harvester/Unknown/Unknown,15,,,11,,,11,,,,,37
+,,,,,,,,,,,,,
+,CTL/Harvester (Sim)/Purpose-Built/Wheeled,4,,,,,,,,,,,4
+,,,,,,,,,,,,,
+,CTL/Harwarder/Purpose-Built/Wheeled,3,,,1,,,,,,,,4
+,,,,,,,,,,,,,
+,CTL/Skidder-Harvester/Purpose-Built/Wheeled,2,,,,,,2,,,,,4
+,,,,,,,,,,,,,
+,FT/Feller-Buncher (SB)/Excavator-Based/Tracked,16,3,1,,,,6,4,1,,,31
+,,,,,,,,,,,,,
+,FT/Feller-Buncher (SB)/Purpose-Built/Tracked,3,4,,,,,22,,,,,29
+,,,,,,,,,,,,,
+,FT/Feller-Buncher (SB)/Purpose-Built/Wheeled,,17,,1,3,,,,,,,21
+,,,,,,,,,,,,,
+,FT/Feller-Buncher (B)/Purpose-Built/Wheeled,,4,1,,,1,,1,,,,7
+,,,,,,,,,,,,,
+,FT/Feller-Buncher (DTT)/Purpose-Built/Wheeled,,2,,,,,3,,,,,5
+,,,,,,,,,,,,,
+,FT/Feller-Buncher (DTT)/Excavator-Based/Tracked,,1,,,,,,,,,,1
+,,,,,,,,,,,,,
+,"FT/Feller-Buncher (SB), (Sim)/Purpose-Built/Wheeled",15,,,,,,,,,,,15
+,,,,,,,,,,,,,
+,FT/Harwarder/Purpose-Built/Wheeled,,,,,,,,1,1,1,,3
+,,,,,,,,,,,,,
+,Total,221,37,4,16,5,11,60,62,13,1,,

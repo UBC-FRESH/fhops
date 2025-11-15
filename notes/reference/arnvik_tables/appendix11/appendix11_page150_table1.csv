@@ -1,0 +1,61 @@
+Spinelli et a,l.,(2023),,1,PL,16,Linear mode,l,-,0.918,SV,,-
+,,,,,,,,,,,,,
+Spinelli et a,l.,(2020a),,1,-,26,Linear mode,l,-,0.649,P <,0.0001,24.12
+,,,,,,,,,,,,,
+,,,,2,-,26,Linear mode,l,-,0.315,P =,0.0017,12.503
+,,,,,,,,,,,,,
+Spinelli et a,l.,(2020b),,1,PL,13,Linear mode,l,-,0.014,P =,0.3018,1.174
+,,,,,,,,,,,,,
+,,,,2,PL,13,Linear mode,l,-,0.602,P =,0.0011,19.167
+,,,,,,,,,,,,,
+,,,,3,PL,13,Linear mode,l,-,0.026,P =,0.2751,1.319
+,,,,,,,,,,,,,
+Stoilov et a,l. (,2021),,1,EL,31,Linear mode,l,0.93,0.92,P <,0.05,69.54
+,,,,,,,,,,,,,
+,,,,2,EL,31,Linear mode,l,0.86,0.83,P <,0.05,31.32
+,,,,,,,,,,,,,
+,,,,3,EL,31,Linear mode,l,0.57,0.49,P <,0.05,6.5
+,,,,,,,,,,,,,
+,,,,4,EL,31,Linear mode,l,0.37,0.25,P <,0.05,2.98
+,,,,,,,,,,,,,
+Strandgard,&,Mitchell,(2018),1,EL,108,Exponential,model,0.73,-,SV,,-
+,,,,,,,,,,,,,
+,,,,2,EL,106,Exponential,model,0.3,-,SV,,-
+,,,,,,,,,,,,,
+,,,,3,EL,101,Exponential,model,0.5,-,SV,,-
+,,,,,,,,,,,,,
+,,,,4,EL,101,Linear mode,l,0.13,-,SV,,-
+,,,,,,,,,,,,,
+,,,,5,EL,108,Exponential,model,0.73,-,SV,,-
+,,,,,,,,,,,,,
+,,,,6,EL,106,Exponential,model,0.4,-,SV,,-
+,,,,,,,,,,,,,
+,,,,7,EL,136,Exponential,model,0.36,-,SV,,-
+,,,,,,,,,,,,,
+Strandgard,&,Mitchell,(2019),1,EL,107,Exponential,model,0.59,-,-,,-
+,,,,,,,,,,,,,
+,,,,2,EL,107,Power law m,odel,0.53,-,-,,-
+,,,,,,,,,,,,,
+,,,,3,EL,104,Exponential,model,0.41,-,-,,-
+,,,,,,,,,,,,,
+,,,,4,EL,104,Power law m,odel,0.6,-,-,,-
+,,,,,,,,,,,,,
+Strandgard,&,Mitchell,(2020),1,EL,321,Power law m,odel,-,0.88,SV,,-
+,,,,,,,,,,,,,
+,,,,2,EL,378,Power law m,odel,-,0.32,SV,,-
+,,,,,,,,,,,,,
+,,,,3,EL,378,Power law m,odel,-,0.72,SV,,-
+,,,,,,,,,,,,,
+Strandgard,et,al. (2016,),1,-,47,Linear mode,l,0.8,-,SV,,-
+,,,,,,,,,,,,,
+,,,,2,-,47,Linear mode,l,0.79,-,SV,,-
+,,,,,,,,,,,,,
+Strandgard,et,al. (2015,),1,CL,116,Non-linear m,odel with power law terms,0.75,-,SV,,-
+,,,,,,,,,,,,,
+Tajbos & M,es,singerov,a (2014),1,EL,187,Linear mode,l,0.35,-,P =,0.0000,100.48
+,,,,,,,,,,,,,
+,,,,2,EL,68,Linear mode,l,0.23,-,P =,0.0001,18.52
+,,,,,,,,,,,,,
+,,,,3,EL,96,Linear mode,l,0.52,-,P =,0.0000,101.63
+,,,,,,,,,,,,,
+,,,,4,EL,32,Linear mode,l,0.9,-,P =,0.0000,255.77

@@ -1,0 +1,61 @@
+,,5,EL,189,Linear model,,,0.25,-,P =,0.0000,62.38
+,,,,,,,,,,,,
+,,6,EL,64,Linear model,,,0.48,-,P =,0.0000,56.14
+,,,,,,,,,,,,
+Tolosana e,t al. (2023),1,EL,-,Log-linear mod,el,,0.84,-,SV,,-
+,,,,,,,,,,,,
+,,2,EL,-,Log-linear mod,el,,0.27,-,SV,,-
+,,,,,,,,,,,,
+,,3,EL,-,Non-linear mod,el with pow,er law terms,0.73,0.52,SV,,-
+,,,,,,,,,,,,
+Tolosana e,t al. (2018),1,CL,17,Linear model,,,0.901,0.878,P =,0.0000,39.31
+,,,,,,,,,,,,
+,,2,CL,17,Linear model,,,-,-,-,,-
+,,,,,,,,,,,,
+Townsend,et al. (2019),1,EL,-,Linear model,,,0.52,-,SV,,-
+,,,,,,,,,,,,
+,,2,EL,-,Linear model,,,0.51,-,SV,,-
+,,,,,,,,,,,,
+,,3,EL,-,Linear model,,,0.51,-,SV,,-
+,,,,,,,,,,,,
+,,4,EL,-,Linear model,,,0.48,-,SV,,-
+,,,,,,,,,,,,
+,,5,EL,-,Linear model,,,0.54,-,SV,,-
+,,,,,,,,,,,,
+Walsh & S,trandgard (2014),1,EL,48,Log-linear mod,el,,0.33,-,-,,-
+,,,,,,,,,,,,
+,,2,EL,55,Log-linear mod,el,,0.61,-,-,,-
+,,,,,,,,,,,,
+Walsh et a,l. (2014),1,EL,70,Log-linear mod,el,,0.39,-,-,,-
+,,,,,,,,,,,,
+,,2,EL,76,Log-linear mod,el,,0.47,-,-,,-
+,,,,,,,,,,,,
+Williams,& Ackerman (2016),1,EL,500,Linear model,,,0.8,-,P <,0.01,-
+,,,,,,,,,,,,
+Zimelis et,al. (2020),1,EL,18,Second-degree,polynomial,model,0.88,-,SV,,-
+,,,,,,,,,,,,
+,,2,EL,18,Second-degree,polynomial,model,0.91,-,-,,-
+,,,,,,,,,,,,
+Zimelis et,al. (2018),1,EL,9985,Linear model,,,0.85,-,P =,2.82×10-21,372
+,,,,,,,,,,,,
+,,2,EL,-,Second-degree,polynomial,model,0.73,-,-,,-
+,,,,,,,,,,,,
+Zimelis et,al. (2019),1,EL,-,Third-degree p,olynomial m,odel,0.96,-,-,,-
+,,,,,,,,,,,,
+,,2,EL,-,Third-degree p,olynomial m,odel,0.72,-,-,,-
+,,,,,,,,,,,,
+Zimelis et,al. (2017a),1,EL,-,Log-linear mod,el,,0.5444,-,-,,-
+,,,,,,,,,,,,
+,,2,EL,-,Log-linear mod,el,,0.695,-,-,,-
+,,,,,,,,,,,,
+,,3,EL,-,Second-degree,polynomial,model,0.6551,-,-,,-
+,,,,,,,,,,,,
+,,4,EL,-,Second-degree,polynomial,model,0.9091,-,-,,-
+,,,,,,,,,,,,
+Zimelis et,al. (2017b),1,EL,-,Third-degree p,olynomial m,odel,0.98,-,-,,-
+,,,,,,,,,,,,
+,,2,EL,-,Third-degree p,olynomial m,odel,0.93,-,-,,-
+,,,,,,,,,,,,
+,,3,EL,-,Linear model,,,0.5,-,-,,-
+,,,,,,,,,,,,
+Zimelis &,Spalva (2022),1,-,-,Second-degree,polynomial,model,0.9048,-,-,,-

@@ -1,0 +1,61 @@
+,,,,6,EL,15,Second-degree,polynomial,model,0.259,-,-,,-
+,,,,,,,,,,,,,,
+,,,,7,EL,22,Second-degree,polynomial,model,0.802,-,-,,-
+,,,,,,,,,,,,,,
+,,,,8,EL,30,Second-degree,polynomial,model,0.461,-,-,,-
+,,,,,,,,,,,,,,
+Laina et,a,l. (2013),,1,EL,6022,Non-linear mod,el with pow,er law terms and division operation,0.56,-,SV,,-
+,,,,,,,,,,,,,,
+,,,,2,EL,3507,Non-linear mod,el with pow,er law terms and division operation,0.79,-,SV,,-
+,,,,,,,,,,,,,,
+Laitila e,t,al. (2016),,1,EL,25,Log-linear mod,el,,0.141,-,P =,0.070,3.626
+,,,,,,,,,,,,,,
+,,,,2,EL,40,Linear model w,ith division,operation,0.544,-,P <,0.001,44.06
+,,,,,,,,,,,,,,
+,,,,3,EL,25,Linear model,,,0.032,-,P =,0.400,0.738
+,,,,,,,,,,,,,,
+,,,,4,EL,40,Linear model,,,0.167,-,P =,0.009,7.632
+,,,,,,,,,,,,,,
+,,,,5,EL,25,Linear model,,,0.514,-,P <,0.001,23.298
+,,,,,,,,,,,,,,
+,,,,6,EL,40,Linear model,,,0.738,-,P <,0.001,107.174
+,,,,,,,,,,,,,,
+Laitila &,,Väätäinen,(2014),1,EL,37,Log-linear mod,el,,0.12,-,SV,,-
+,,,,,,,,,,,,,,
+,,,,2,EL,37,Linear model w,ith division,operation,0.369,-,SV,,-
+,,,,,,,,,,,,,,
+,,,,3,EL,37,Log-linear mod,el,,0.775,-,SV,,-
+,,,,,,,,,,,,,,
+Laitila &,,Väätäinen,(2020),1,EL,80,Linear model w,ith division,operation,0.881,-,P <,0.001,576.779
+,,,,,,,,,,,,,,
+,,,,2,EL,80,Log-linear mod,el,,0.724,-,P <,0.001,204.102
+,,,,,,,,,,,,,,
+,,,,3,EL,80,Linear model w,ith division,operation,0.848,-,P <,0.001,434.187
+,,,,,,,,,,,,,,
+Laitila &,,Väätäinen,(2021),1,EL,17,Linear model,,,0.44,-,P =,0.004,-
+,,,,,,,,,,,,,,
+,,,,2,EL,17,Linear model,,,0.61,-,P <,0.001,-
+,,,,,,,,,,,,,,
+Laitila &,,Väätäinen,(2023),1,EL,16,Linear model,,,0.59,-,P <,0.001,19.845
+,,,,,,,,,,,,,,
+Laitila e,t,al. (2013),,1,EL,-,Log-linear mod,el,,0.46,-,SV,,-
+,,,,,,,,,,,,,,
+,,,,2,EL,-,Third-degree p,olynomial m,odel,0.6,-,SV,,-
+,,,,,,,,,,,,,,
+,,,,3,EL,-,Second-degree,polynomial,model,0.58,-,SV,,-
+,,,,,,,,,,,,,,
+Laitila e,t,al. (2020),,1,EL,535,Second-degree,polynomial,model,0.46,-,P <,0.001,223.174
+,,,,,,,,,,,,,,
+Lazdiņš,e,t al. (2019),,1,-,-,Power law mod,el,,0.93979,-,-,,-
+,,,,,,,,,,,,,,
+,,,,2,-,-,Power law mod,el,,0.964,-,-,,-
+,,,,,,,,,,,,,,
+,,,,3,-,-,Power law mod,el,,0.9784,-,-,,-
+,,,,,,,,,,,,,,
+Lazdiņš,(,2014),,1,EL,-,Exponential mo,del,,0.92,-,-,,-
+,,,,,,,,,,,,,,
+Lazdiņš,e,t al. (2021),,1,PL,-,Third-degree p,olynomial m,odel,0.9717,-,-,,-
+,,,,,,,,,,,,,,
+Lazdiņš,e,t al. (2016),,1,EL,-,Power law mod,el,,0.91094,-,-,,-
+,,,,,,,,,,,,,,
+,,,,2,EL,-,Power law mod,el,,0.79425,-,-,,-

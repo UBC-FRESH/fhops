@@ -1,0 +1,79 @@
+From the findings,of this revi,"ew, it appe",ars that only,a limited,number of
+,,,,,
+productivity models,for fully m,echanized h,arvesting have,been dev,eloped and
+,,,,,
+published using foll,ow-up data i,n the period,2013-2023. Th,is would in,dicate that
+,,,,,
+researchers seem to,have favored,manual data,collection whe,n studying,harvesting
+,,,,,
+machines. Neverthel,"ess, several",of the identifi,ed models deve,loped from,follow-up
+,,,,,
+data showed promi,sing results,in terms of,predictive cap,abilities.,Due to the
+,,,,,
+beneficial aspects of,follow-up st,"udies, such a",s lower cost (e.,g. Olivera,et al. 2016;
+,,,,,
+Brewer et al. 2018;,Liski et al.,"2020), alon",g with the evid,ently relat,ively good
+,,,,,
+predictive power,of identified,"models, th",ese results m,ay facilita,te further
+,,,,,
+development of mo,dels with foll,ow-up data.,"In addition, du",e to the rel,atively low
+,,,,,
+cost and good predi,ctive capabi,"lities, compa",nies that keep,records of,production
+,,,,,
+data would likely be,interested i,n this method,of developing,and enhan,cing future
+,,,,,
+models (Eriksson &,Lindroos 20,14).,,,
+,,,,,
+Regression analysis,is a commo,n statistical,method to anal,yze factors,’ effect on
+,,,,,
+productivity (Acuna,et al. 2012),". It is, howev","er, important t",o note that,traditional
+,,,,,
+"statistical methods,",such as linea,r regression a,"nalysis, may n",ot perform,adequately
+,,,,,
+for very large amou,nts of data (,Rossit et al.,"2019). This, in",combinatio,n with the
+,,,,,
+vast amounts of da,ta collected,with sensor,s and OBCs fr,om harves,"ters, could"
+,,,,,
+potentially limit the,possibility,to analyze f,ollow-up data,with only,traditional
+,,,,,
+methods. The traditi,onal statistic,al methods m,ay not take full,advantage,of the data.
+,,,,,
+"Researchers, such a",s Rossit et a,"l. (2019), ha",ve therefore uti,lized ”Big,Data” and
+,,,,,
+data mining techni,ques to addr,ess these li,mitations. The,results on,modelling
+,,,,,
+productivity and ana,lysis of diffe,rent variable,s’ effect on prod,uctivity wi,th decision
+,,,,,
+trees and k-means a,lgorithms w,ere promisin,"g, probably faci",litating fur,ther use of
+,,,,,
+these approaches i,n combinati,on with aut,omatic data co,llection w,ith OBCs.
+,,,,,
+"Additionally, due to",the already,large amoun,ts of data colle,cted from,"OBCs, and"
+,,,,,
+the anticipated deve,lopments in t,echnology w,hich would like,ly further i,ncrease the
+,,,,,
+available data amou,nt (Gao et al,". 2022), wou",ld make machin,e learning,techniques
+,,,,,
+a prominent method,for analyzin,g large volu,mes of data (Li,ski et al. 2,020). Liski
+,,,,,
+et al. (2020) pred,icted harves,ter producti,vity with Ord,inary Lea,st Squares
+,,,,,
+"regression (OLS), G",radient boos,ted machine,"(GBM), and Su",pport vect,or machine
+,,,,,
+(SVM). OLS prove,d to be a suff,icient metho,"d, however, GB",M and SV,M showed
+,,,,,
+great potential for fu,ture research,.,,,
+,,,,,
+There are certain va,riables that,OBCs do not,"capture, such a",s slope (Ol,ivera et al.
+,,,,,
+2016). Since slope,could poten,tially affect,productivity an,d be incor,porated in
+,,,,,
+"models, which was",done by Eri,ksson & Lin,"droos (2014), W",illiams &,Ackerman
+,,,,,
+"(2016), Ackerman e","t al. (2018),",and Norihiro,"et al. (2018), i",t would be,beneficial
+,,,,,
+to collect informatio,n regarding,slope when,harvesting is pe,rformed in,areas with
+,,,,,
+steep slopes. Oliver,a et al. (20,16) conducte,d a follow-up,study on,a harvester
+,,,,,
+equipped with a co,mbined GSM,-GNSS ante,nna. The attac,hment of t,he antenna

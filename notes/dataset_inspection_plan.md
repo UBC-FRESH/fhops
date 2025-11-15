@@ -41,6 +41,7 @@
 - Initial costing helper CLI is in place: `fhops dataset estimate-cost` pairs Lahrsen productivity (deterministic or RV) with rental rates/utilisation to emit $/m³.
 - Candidate productivity models for single-grip harvesters/harwarders identified via Arnvik (2024) review (2013–2023 literature); next step is selecting/porting BC-appropriate regressions for those roles.
 - Appendix 8 tables from Arnvik (2024) exported (per-page CSVs + aggregate raw dump) via `scripts/extract_arnvik_models.py`; next step is normalising the rows into the productivity registry schema.
+- Initial pass at normalising Appendix 8 models landed ~200 provisional entries in `notes/reference/arnvik_tables/registry_models.json` via `scripts/build_productivity_registry.py`; follow-up needed to enrich entries with Appendix 9–11 metadata and cover remaining rows.
 - Appendix 8 in Arnvik (2024) lists 422 productivity models (harvesters, feller-bunchers, harwarders). Need to digitise into a searchable registry (machine type, region, system, predictors, coefficients, R², etc.) so we can plug gaps for the remaining machine roles.
 
 ## BC Productivity Model Insights (Lahrsen 2025 thesis)

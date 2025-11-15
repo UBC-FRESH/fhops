@@ -1,0 +1,61 @@
+,11,EL,1478,Linear mode,l,,,,0.65,-,P <0.001,-
+,,,,,,,,,,,,
+,12,EL,177,Linear mode,l,,,,0.76,-,P <0.001,-
+,,,,,,,,,,,,
+,13,EL,1156,Linear mode,l,,,,0.56,-,P <0.001,-
+,,,,,,,,,,,,
+,14,EL,1099,Linear mode,l,,,,0.64,-,P <0.001,-
+,,,,,,,,,,,,
+,15,EL,297,Linear mode,l,,,,0.62,-,P <0.001,-
+,,,,,,,,,,,,
+,16,EL,181,Linear mode,l,,,,0.56,-,P <0.001,-
+,,,,,,,,,,,,
+,17,EL,4388,Linear mode,l,,,,0.624,-,P <0.001,-
+,,,,,,,,,,,,
+Nuutinen & Björheden (2016),1,EL,171,Log-linear m,odel,,,,0.252,-,SV,-
+,,,,,,,,,,,,
+Olivera et al. (2016),1,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+,,,,,,,,,,,,
+,2,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+,,,,,,,,,,,,
+,3,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+,,,,,,,,,,,,
+,4,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+,,,,,,,,,,,,
+,5,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+,,,,,,,,,,,,
+,6,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+,,,,,,,,,,,,
+,7,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+,,,,,,,,,,,,
+,8,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+,,,,,,,,,,,,
+,9,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+,,,,,,,,,,,,
+,10,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+,,,,,,,,,,,,
+,11,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+,,,,,,,,,,,,
+,12,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+,,,,,,,,,,,,
+,13,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+,,,,,,,,,,,,
+,14,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+,,,,,,,,,,,,
+Petitmermet et al. (2019),1,PL,45,Linear mode,l,,,,-,0.9412,SV,-
+,,,,,,,,,,,,
+,2,PL,45,Linear mode,l,,,,-,0.9412,SV,-
+,,,,,,,,,,,,
+,3,PL,45,Linear mode,l,,,,-,0.9412,SV,-
+,,,,,,,,,,,,
+,4,PL,45,Linear mode,l,,,,-,0.9399,SV,-
+,,,,,,,,,,,,
+,5,PL,45,Linear mode,l,,,,-,0.9398,SV,-
+,,,,,,,,,,,,
+,6,PL,45,Linear mode,l,,,,-,0.9398,SV,-
+,,,,,,,,,,,,
+,7,PL,45,Linear mode,l,,,,-,0.9384,SV,-
+,,,,,,,,,,,,
+,8,PL,45,Linear mode,l,,,,-,0.9368,SV,-
+,,,,,,,,,,,,
+Petty & Kärhä (2014),1,EL,374,Log-linear m,odel,,,,0.17,0.16,P <0.0001,2117.84

@@ -1,0 +1,61 @@
+,,11,-,-,,Log-linear mod,el,,0.9874,-,SV,-
+,,,,,,,,,,,,
+,,12,-,-,,Log-linear mod,el,,0.9873,-,SV,-
+,,,,,,,,,,,,
+,,13,-,-,,Log-linear mod,el,,0.9871,-,SV,-
+,,,,,,,,,,,,
+Kim et al. (20,17),1,EL,185,,Linear model,,,-,0.5406,P <0.0001,-
+,,,,,,,,,,,,
+Kizha & Han,(2016),1,EL,approx.,200,Linear model,,,0.15,-,SV,-
+,,,,,,,,,,,,
+,,2,EL,approx.,200,Linear model,,,0.19,-,SV,-
+,,,,,,,,,,,,
+,,3,EL,approx.,200,Linear model,,,0.41,-,SV,-
+,,,,,,,,,,,,
+,,4,EL,approx.,200,Linear model,,,0.1,-,SV,-
+,,,,,,,,,,,,
+,,5,EL,approx.,200,Linear model,,,0.12,-,SV,-
+,,,,,,,,,,,,
+,,6,EL,approx.,200,Linear model,,,0.39,-,SV,-
+,,,,,,,,,,,,
+Kormanek &,Baj (2018),1,EL,35,,Linear model,,,0.1734,-,-,-
+,,,,,,,,,,,,
+,,2,EL,35,,Linear model,,,0.1138,-,-,-
+,,,,,,,,,,,,
+Kormanek &,Kępa (2016),1,EL,75,,Linear model,,,0.3455,-,-,-
+,,,,,,,,,,,,
+Krč et al. (20,15),1,EL,229,,Linear model,,,0.762,0.759,P = 0.000,240.439
+,,,,,,,,,,,,
+Labelle et al.,(2017),1,EL,338,,Third-degree p,olynomial m,odel,0.6854,-,-,-
+,,,,,,,,,,,,
+,,2,EL,365,,Third-degree p,olynomial m,odel,0.7293,-,-,-
+,,,,,,,,,,,,
+,,3,EL,42,,Power law mod,el,,0.8322,-,-,-
+,,,,,,,,,,,,
+,,4,EL,55,,Power law mod,el,,0.8572,-,-,-
+,,,,,,,,,,,,
+Labelle et al.,(2018),1,EL,56,,Second-degree,polynomial,model,0.35,-,-,-
+,,,,,,,,,,,,
+,,2,EL,67,,Second-degree,polynomial,model,0.27,-,-,-
+,,,,,,,,,,,,
+,,3,EL,48,,Second-degree,polynomial,model,0.24,-,-,-
+,,,,,,,,,,,,
+,,4,EL,72,,Second-degree,polynomial,model,0.12,-,-,-
+,,,,,,,,,,,,
+Labelle & Hu,ß (2018),1,EL,68,,Second-degree,polynomial,model,0.3196,-,-,-
+,,,,,,,,,,,,
+,,2,EL,135,,Second-degree,polynomial,model,0.4689,-,-,-
+,,,,,,,,,,,,
+Labelle et al.,(2016),1,EL,54,,Power law mod,el,,0.247,-,-,-
+,,,,,,,,,,,,
+,,2,EL,55,,Power law mod,el,,0.3215,-,-,-
+,,,,,,,,,,,,
+Labelle et al.,(2019),1,EL,15,,Second-degree,polynomial,model,0.838,-,-,-
+,,,,,,,,,,,,
+,,2,EL,15,,Second-degree,polynomial,model,0.295,-,-,-
+,,,,,,,,,,,,
+,,3,EL,22,,Second-degree,polynomial,model,0.756,-,-,-
+,,,,,,,,,,,,
+,,4,EL,30,,Second-degree,polynomial,model,0.082,-,-,-
+,,,,,,,,,,,,
+,,5,EL,15,,Second-degree,polynomial,model,0.834,-,-,-

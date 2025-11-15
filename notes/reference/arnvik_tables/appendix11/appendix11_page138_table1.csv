@@ -1,0 +1,43 @@
+App,e,n,dix 11. S,tati,stic,al signi,ficance,and observational units,,,,
+,,,,,,,,,,,,
+Type of,o,b,"servational unit, n",umb,er of o,"bservations, t",ype of equati,"on, and coefficients of determination. nr = model nu",mber; OB,= obser,vational uni,"t,"
+,,,,,,,,,,,,
+PL = pl,o,t l,evel (includes sta,nds a,s well,"), CL = cycle","level, EL =",element level; SV = statistical significance for pred,ictors in,"model, b",ut not the a,c
+,,,,,,,,,,,,
+statistic,al,ly,significant.,,,,,,,,,
+,,,,,,,,,,,,
+Author(s),,,,nr,OB,Observations,Mathematical str,ucture,R²,R²-adj,Significance,F
+,,,,,,,,,,,,
+Ackerman,et,al.,(2018),1,EL,436,Power law model,,0.7531,-,-,-
+,,,,,,,,,,,,
+,,,,2,EL,428,Linear Model,,0.712,-,-,-
+,,,,,,,,,,,,
+,,,,3,EL,436,Linear model,,-,-,SV,-
+,,,,,,,,,,,,
+,,,,4,EL,428,Linear model,,-,-,SV,-
+,,,,,,,,,,,,
+,,,,5,EL,436,Linear model with,interaction term,-,-,SV,-
+,,,,,,,,,,,,
+,,,,6,EL,428,Linear model with,interaction term,-,-,SV,-
+,,,,,,,,,,,,
+Ackerman,et,al.,(2021),1,CL,140 465,Nonlinear model w,ith exponential terms and division operation,-,-,SV,-
+,,,,,,,,,,,,
+,,,,2,CL,140 465,Nonlinear model w,"ith exponential terms, division operations, and interaction effects",-,-,SV,-
+,,,,,,,,,,,,
+Ackerman,et,al.,(2022),1,EL,281,Power law model,,0.58,-,SV,-
+,,,,,,,,,,,,
+,,,,2,EL,284,Power law model,,0.58,-,SV,-
+,,,,,,,,,,,,
+Acosta et a,l.,(20,21),1,EL,259,Linear model,,0.76,-,-,-
+,,,,,,,,,,,,
+Acuna et a,l. (,20,17),1,EL,1048,Exponential model,with logarithmic transformation,-,0.85,SV,-
+,,,,,,,,,,,,
+Alam et al.,(2,01,4),1,EL,153,Log-linear model,,0.58,-,-,-
+,,,,,,,,,,,,
+,,,,2,EL,103,Log-linear model,,0.33,-,-,-
+,,,,,,,,,,,,
+,,,,3,EL,153,Log-linear model,,0.4,-,-,-
+,,,,,,,,,,,,
+,,,,4,EL,103,Log-linear model,,0.15,-,-,-
+,,,,,,,,,,,,
+Apăfăian e,t a,l. (,2017),1,EL,1045,Exponential model,,0.46,-,P <0.001,-

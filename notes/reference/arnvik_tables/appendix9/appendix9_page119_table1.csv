@@ -1,0 +1,57 @@
+E₅,%,,,,,,,,,,Proportion of
+,,,,,,,,,,,
+E₆,kg,,,,,,,,,,Harvester hea
+,,,,,,,,,,,
+E₇,cm,,,,,,,,,,Max cutting d
+,,,,,,,,,,,
+E₈,m3,,,,,,,,,,Load volume
+,,,,,,,,,,,
+*E₉,1: Purpose bui,"lt,",2: Excavat,or - N,orihiro,et,al. (2018,),,,Machine type
+,,,,,,,,,,,
+,"1: Beaver, 0: B",ea,r - Ackerm,an et,al. (20,21),,,,,
+,,,,,,,,,,,
+,"c: Agama 1/0,",d:,Vimek 1/0,- Spin,elli et,al.,(2022),,,,
+,,,,,,,,,,,
+*E₁₀,"1: C360, 0: S3",50,,,,,,,,,Head model
+,,,,,,,,,,,
+*E₁₁,1/0,,,,,,,,,,Accumulating
+,,,,,,,,,,,
+*E₁₂,Model 5: XXX,L,is baseline,", o: S","1/0, p:",M,"1/0, q: L","1/0, r:","XL 1/0,",s: XXL 1/0,Harvester hea
+,,,,,,,,,,,
+,Model 9: XXX,L,is baseline,", m: S","1/0, n:",M,"1/0, o: L",1/0 -,Eriksson,& Lindroos (2014),
+,,,,,,,,,,,
+,"M is baseline,",e:,"L 1/0, f: X","L 1/0,",g: XX,L 1,/0 - Liski,et al.,(2020),,
+,,,,,,,,,,,
+*E₁₃,"M is baseline,",c:,"L 1/0, d: X",L 1/0,,,,,,,Harvester size
+,,,,,,,,,,,
+E₁₄,m3,,,,,,,,,,Grapple load s
+,,,,,,,,,,,
+E₁₅,%,,,,,,,,,,Proportion of
+,,,,,,,,,,,
+Height of trees,harvested,,,,,,,,,,
+,,,,,,,,,,,
+H₁,m,,,,,,,,,,Height
+,,,,,,,,,,,
+H₂,m,,,,,,,,,,Basal area we
+,,,,,,,,,,,
+H₃,m,,,,,,,,,,Dominant hei
+,,,,,,,,,,,
+Harvesting inte,nsity/density,,,,,,,,,,
+,,,,,,,,,,,
+I₁,%,,,,,,,,,,Harvested bas
+,,,,,,,,,,,
+I₂,%,,,,,,,,,,Thinning inte
+,,,,,,,,,,,
+I₃,trees/ha,,,,,,,,,,Harvested tree
+,,,,,,,,,,,
+I₄,m2/ha,,,,,,,,,,Basal area
+,,,,,,,,,,,
+I₅,trees/ha,,,,,,,,,,Stand density
+,,,,,,,,,,,
+*I₆,b: Light (15%),", c",: Medium,(30%),and H,eav,y (45%),- Man,ner et al.,(2023),Harvest intens
+,,,,,,,,,,,
+,X<30 m3/ha is,ba,"seline, e: 3",0≤X≤,"60 1/0,",f:,X>60 1/0,- Me,derski et,al. (2016),
+,,,,,,,,,,,
+,Miscellaneous,,,,,,,,,,
+,,,,,,,,,,,
+Miscellaneous,variables,,,,,,,,,,

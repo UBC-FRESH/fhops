@@ -1,0 +1,2917 @@
+[
+  {
+    "machine_type": "unknown",
+    "system": "n=8",
+    "region": "",
+    "publication": "29 model 1",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "n=15 n=17 n =6",
+    "r_squared": null,
+    "notes": "Base machine: n=2; System: n=15; DV: n=36 n=9 n =8"
+  },
+  {
+    "machine_type": ".0",
+    "system": "100",
+    "region": "",
+    "publication": "29 1 CTL, n= model 82",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "93.3 41.2 1 00.0",
+    "r_squared": null,
+    "notes": "Base machine: ; System: 66.7; DV: 75.0 33.3 8 7.5"
+  },
+  {
+    "machine_type": "unknown",
+    "system": "2",
+    "region": "",
+    "publication": "34 1 CTL/Harvester/Purpose-Built/Tracked model 28",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "39",
+    "r_squared": null,
+    "notes": "Base machine: ; System: ; DV:  3 4 2"
+  },
+  {
+    "machine_type": "2",
+    "system": "4",
+    "region": "",
+    "publication": "34 1 CTL/Harvester/Purpose-Built/Wheeled model 91",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "172",
+    "r_squared": null,
+    "notes": "Base machine: 3; System: 2; DV: 10 9 43 8"
+  },
+  {
+    "machine_type": "1",
+    "system": "3",
+    "region": "",
+    "publication": "34 1 FT/Feller-Buncher (SB)/Excavator-Based/Tracked model 16",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "31",
+    "r_squared": null,
+    "notes": "Base machine: ; System: ; DV:  6 4 1"
+  },
+  {
+    "machine_type": "unknown",
+    "system": "4",
+    "region": "",
+    "publication": "34 1 FT/Feller-Buncher (SB)/Purpose-Built/Tracked model 3",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "29",
+    "r_squared": null,
+    "notes": "Base machine: ; System: ; DV:  22"
+  },
+  {
+    "machine_type": "4",
+    "system": "37",
+    "region": "",
+    "publication": "34 1 Total model 221",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "1",
+    "r_squared": null,
+    "notes": "Base machine: 16; System: 5; DV: 11 60 62 13"
+  },
+  {
+    "machine_type": "unknown",
+    "system": "87.5",
+    "region": "",
+    "publication": "35 1 Africa, n= model 8",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "12.5",
+    "r_squared": null,
+    "notes": "Base machine: ; System: ; DV:  "
+  },
+  {
+    "machine_type": "unknown",
+    "system": "60.0",
+    "region": "",
+    "publication": "35 1 Australia, n=1 model 5",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "33.3 6.7",
+    "r_squared": null,
+    "notes": "Base machine: 26.7; System: ; DV:  "
+  },
+  {
+    "machine_type": "unknown",
+    "system": "41.7",
+    "region": "",
+    "publication": "35 1 N. Europe, n=3 model 6",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "3 38.9 19.4 2.8",
+    "r_squared": null,
+    "notes": "Base machine: 8.3; System: ; DV: 8.3 8.3 8.3 8."
+  },
+  {
+    "machine_type": "unknown",
+    "system": "11.1",
+    "region": "",
+    "publication": "35 1 S. Europe, n= model 9",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "22.2 22.2",
+    "r_squared": null,
+    "notes": "Base machine: 66.7; System: ; DV: 11.1 "
+  },
+  {
+    "machine_type": "unknown",
+    "system": "87.5",
+    "region": "",
+    "publication": "35 1 W. Europe, n= model 8",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "12.5 12.5",
+    "r_squared": null,
+    "notes": "Base machine: ; System: ; DV:  12.5"
+  },
+  {
+    "machine_type": "unknown",
+    "system": "60.0",
+    "region": "",
+    "publication": "35 1 E. Europe, n=1 model 5",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "26.7 33.3 6.7",
+    "r_squared": null,
+    "notes": "Base machine: 13.3; System: ; DV:  6.7"
+  },
+  {
+    "machine_type": "unknown",
+    "system": "5.9",
+    "region": "",
+    "publication": "35 1 N. America, n= model 17",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "9 82.4",
+    "r_squared": null,
+    "notes": "Base machine: 5.9; System: ; DV:  5."
+  },
+  {
+    "machine_type": "0",
+    "system": "100.",
+    "region": "",
+    "publication": "35 1 S. America, n= model 6",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "16.7 16.7",
+    "r_squared": null,
+    "notes": "Base machine: ; System: ; DV:  "
+  },
+  {
+    "machine_type": "n=2",
+    "system": "n=8",
+    "region": "",
+    "publication": "37 model 1",
+    "predictors": [
+      "A"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "America,",
+    "r_squared": null,
+    "notes": "Base machine: n=15; System: Europe,; DV: Europe, Europe, Europe, America,"
+  },
+  {
+    "machine_type": "unknown",
+    "system": "25.0",
+    "region": "",
+    "publication": "37 1 Machine data, n= model 11",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "16.7",
+    "r_squared": null,
+    "notes": "Base machine: 6.7; System: 8.3; DV:  12.5 20.0"
+  },
+  {
+    "machine_type": "unknown",
+    "system": "12.5",
+    "region": "",
+    "publication": "37 1 Treatment/execution of harves t, n= model 11",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "16.7",
+    "r_squared": null,
+    "notes": "Base machine: 6.7; System: 11.1; DV:  25.0 13.3"
+  },
+  {
+    "machine_type": "unknown",
+    "system": ".9",
+    "region": "",
+    "publication": "41 1 Linear with interaction term , n=2 model 0",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "2",
+    "r_squared": null,
+    "notes": "Base machine: ; System: ; DV:  "
+  },
+  {
+    "machine_type": "unknown",
+    "system": ".9",
+    "region": "",
+    "publication": "41 1 Linear with logarithmic tra nsformations and model 0",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "2",
+    "r_squared": null,
+    "notes": "Base machine: ; System: ; DV:  "
+  },
+  {
+    "machine_type": "unknown",
+    "system": ".5",
+    "region": "",
+    "publication": "41 1 Linear with logarithmic tra nsformations, n=1 model 0",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "1",
+    "r_squared": null,
+    "notes": "Base machine: ; System: ; DV:  "
+  },
+  {
+    "machine_type": "unknown",
+    "system": ".5",
+    "region": "",
+    "publication": "41 1 Nonlinear with exponential terms and division model 0",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "1",
+    "r_squared": null,
+    "notes": "Base machine: ; System: ; DV:  "
+  },
+  {
+    "machine_type": "unknown",
+    "system": ".5",
+    "region": "",
+    "publication": "41 1 Nonlinear with exponential terms, division model 0",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "1",
+    "r_squared": null,
+    "notes": "Base machine: ; System: ; DV:  "
+  },
+  {
+    "machine_type": "00.0",
+    "system": "00.0 1",
+    "region": "",
+    "publication": "41 1 Sum model 1",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "0",
+    "r_squared": null,
+    "notes": "Base machine: 100.0 10; System: 0.0 100; DV: .0 100.0 100.0 100.0 1 00.0 100."
+  },
+  {
+    "machine_type": "n=2",
+    "system": "n=8",
+    "region": "",
+    "publication": "41 model 1",
+    "predictors": [
+      "A"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "America,",
+    "r_squared": null,
+    "notes": "Base machine: n=15; System: Europe,; DV: Europe, Europe, Europe, America,"
+  },
+  {
+    "machine_type": "100.0",
+    "system": "62.5",
+    "region": "",
+    "publication": "41 1 Purely linear, n= model 57",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "16.7",
+    "r_squared": null,
+    "notes": "Base machine: 20.0; System: 30.6; DV: 66.7 12.5 86.7 94.1"
+  },
+  {
+    "machine_type": "50.0",
+    "system": "25.0",
+    "region": "",
+    "publication": "41 1 Purely Second-degree poly nomial, n= model 20",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "50.0",
+    "r_squared": null,
+    "notes": "Base machine: ; System: 25.0; DV: 11.1 37.5 6.7"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "80 1 Ackerman et al. (2021) model 2",
+    "predictors": [
+      "C",
+      "N"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "No - 12 month s Clearcutting",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: Ponsse Bea r Ponsse H 8"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "80 1 model 2",
+    "predictors": [
+      "C",
+      "N"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "No - 12 month s Clearcutting",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: Ponsse Bea ver Ponsse H 6"
+  },
+  {
+    "machine_type": "s",
+    "system": "multiple part",
+    "region": "",
+    "publication": "81 model 1",
+    "predictors": [
+      "T"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "Thinning",
+    "r_squared": null,
+    "notes": "Base machine: ; System: ; DV:  "
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "82 1 Hiesl & Benj amin (2013) model 6",
+    "predictors": [
+      "H",
+      "N",
+      "P",
+      "Y"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "No Yes - Partial Harvest",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: CT; DV: - -"
+  },
+  {
+    "machine_type": "HW",
+    "system": "CTL",
+    "region": "",
+    "publication": "82 1 K\u00e4rh\u00e4 et al. ( 2018b) model 3",
+    "predictors": [
+      "C",
+      "N",
+      "O",
+      "T"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "No - - Clearcutting, Thinnin g, Other/Co",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: Ponsse Wis ent Dual -"
+  },
+  {
+    "machine_type": "HW",
+    "system": "CTL",
+    "region": "",
+    "publication": "82 1 model 2",
+    "predictors": [
+      "C",
+      "N",
+      "O",
+      "T"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "No - - Clearcutting, Thinnin g, Other/Co",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: Valmet 801 Combi -"
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "82 1 Kizha & Han (2016) model 2",
+    "predictors": [
+      "C",
+      "N"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "No No - Clearcutting",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: CT; DV: John Deere 959K -"
+  },
+  {
+    "machine_type": "unknown",
+    "system": "8)",
+    "region": "",
+    "publication": "83 1 Labelle & H u \u00df ( model 201",
+    "predictors": [
+      "H",
+      "H8",
+      "N",
+      "P",
+      "R"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "r Ponsse H8 No No - Regeneration Harvest",
+    "r_squared": null,
+    "notes": "Base machine: -; System: CTL; DV: H PB RW Ponsse Bea"
+  },
+  {
+    "machine_type": "unknown",
+    "system": "021)",
+    "region": "",
+    "publication": "83 1 Leszczy\u0144ski e t al. ( model 2",
+    "predictors": [
+      "A",
+      "N",
+      "S",
+      "T"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "057-4 Arbro 400 S No - - Thinning",
+    "r_squared": null,
+    "notes": "Base machine: -; System: CTL; DV: H EB CT Kubota KX"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "84 1 model 2",
+    "predictors": [
+      "B",
+      "C",
+      "F",
+      "N",
+      "S",
+      "T"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "No - - Selective Thinning From Below, Clearcutting,",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: Komatsu 90 1TX.1 350"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "84 1 model 3",
+    "predictors": [
+      "B",
+      "C",
+      "F",
+      "N",
+      "S",
+      "T"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "No - - Selective Thinning From Below, Clearcutting,",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: John Deere 1270E H414"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "84 1 model 3",
+    "predictors": [
+      "B",
+      "C",
+      "F",
+      "N",
+      "S",
+      "T"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "No - - Selective Thinning From Below, Clearcutting,",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: John Deere 1270E H480"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "85 1 Spinelli & D e Arruda Moura model 53",
+    "predictors": [
+      "H",
+      "P",
+      "U",
+      "Y"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "Yes - P-40 000 hours Unspecified Harv esting",
+    "r_squared": null,
+    "notes": "Base machine: EB; System: CT; DV: Komatsu PC 200-8 Komatsu Forest 370"
+  },
+  {
+    "machine_type": "unknown",
+    "system": ")",
+    "region": "",
+    "publication": "86 1 Strandgard et al. ( model 2016",
+    "predictors": [
+      "A",
+      "C",
+      "D",
+      "N",
+      "S",
+      "T",
+      "Y"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "CAT 320D Southstar 450 Yes No - Clearcutting",
+    "r_squared": null,
+    "notes": "Base machine: 5; System: CTL; DV: H EB CT"
+  },
+  {
+    "machine_type": "unknown",
+    "system": ")",
+    "region": "",
+    "publication": "86 1 Strandgard et al. ( model 2015",
+    "predictors": [
+      "B",
+      "C",
+      "N",
+      "Q",
+      "T",
+      "Y"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "Timbco 445 B Quadco hotsaw No Yes - Clearcutting",
+    "r_squared": null,
+    "notes": "Base machine: -; System: FT; DV: FB PB CT"
+  },
+  {
+    "machine_type": "FT",
+    "system": "-",
+    "region": "",
+    "publication": "87 model 1",
+    "predictors": [
+      "H",
+      "N",
+      "R",
+      "Y"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "No Yes - Restoration Harvest",
+    "r_squared": null,
+    "notes": "Base machine: FB DT; System: PB; DV: RW CAT 573 C -"
+  },
+  {
+    "machine_type": "FT",
+    "system": "-",
+    "region": "",
+    "publication": "87 model 1",
+    "predictors": [
+      "H",
+      "N",
+      "R",
+      "Y"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "No Yes - Restoration Harvest",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: PB; DV: CT TimberPro TL735 B -"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "-",
+    "region": "",
+    "publication": "87 model 1",
+    "predictors": [
+      "H",
+      "N",
+      "R",
+      "T",
+      "X",
+      "Y"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "0 XT No Yes - Restoration Harvest",
+    "r_squared": null,
+    "notes": "Base machine: H; System: EB; DV: CT John Deere 240D Logmax 700"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "-",
+    "region": "",
+    "publication": "87 model 1",
+    "predictors": [
+      "E",
+      "N",
+      "T"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "Extreme No No - Thinning",
+    "r_squared": null,
+    "notes": "Base machine: H; System: PB; DV: RW Vimek 404 SE Keto Forest"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "-",
+    "region": "",
+    "publication": "87 model 1",
+    "predictors": [
+      "E",
+      "F",
+      "N",
+      "T"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "Eco No No - Thinning, Fi nal Felling,",
+    "r_squared": null,
+    "notes": "Base machine: H; System: PB; DV: RW Vimek 404 SE Keto-Forest"
+  },
+  {
+    "machine_type": "adensis,",
+    "system": "rubens, Tsuga Can",
+    "region": "",
+    "publication": "91 model 1",
+    "predictors": [
+      "E"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "Experience",
+    "r_squared": null,
+    "notes": "Base machine: ; System: ; DV:  "
+  },
+  {
+    "machine_type": "unknown",
+    "system": "rubens, Populus",
+    "region": "",
+    "publication": "91 model 1",
+    "predictors": [
+      "E"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "Experience",
+    "r_squared": null,
+    "notes": "Base machine: ; System: ; DV:  "
+  },
+  {
+    "machine_type": "Betula",
+    "system": "Betula pubescens,",
+    "region": "",
+    "publication": "91 model 1",
+    "predictors": [
+      "E"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "Experience",
+    "r_squared": null,
+    "notes": "Base machine: *(13.6-; System: whole tree volume; DV:  "
+  },
+  {
+    "machine_type": "unknown",
+    "system": "Betula spp",
+    "region": "",
+    "publication": "91 model 1",
+    "predictors": [
+      "E"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "Experience",
+    "r_squared": null,
+    "notes": "Base machine: ; System: ; DV:  "
+  },
+  {
+    "machine_type": "etula",
+    "system": "Betula verrucosa, B",
+    "region": "",
+    "publication": "91 model 1",
+    "predictors": [
+      "E",
+      "Y"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "Years Exper",
+    "r_squared": null,
+    "notes": "Base machine: ; System: ; DV:  "
+  },
+  {
+    "machine_type": "ns, Picea",
+    "system": "rubrum, Picea rube",
+    "region": "",
+    "publication": "95 model 1",
+    "predictors": [
+      "E"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "Experience",
+    "r_squared": null,
+    "notes": "Base machine: ; System: ; DV:  Sediment Parent Material"
+  },
+  {
+    "machine_type": "Eucalyptus",
+    "system": ")",
+    "region": "",
+    "publication": "96 1 Strandgard et al. ( model 2016",
+    "predictors": [
+      "F",
+      "O",
+      "Y"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "- Few Obstructions <5\u00b0 24 1-20 Years",
+    "r_squared": null,
+    "notes": "Base machine: globulus; System: 11.5 *(8.5-; DV: 0.26 *(0.13-0.46 ) m\u00b3 188 *(152-245) mm"
+  },
+  {
+    "machine_type": "Eucalyptus",
+    "system": ")",
+    "region": "",
+    "publication": "96 1 Strandgard et al. ( model 2015",
+    "predictors": [
+      "A",
+      "B",
+      "E",
+      "G",
+      "S",
+      "Y"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "Stable Ground And Basalt - <5\u00b0 1 1 Year Expe",
+    "r_squared": null,
+    "notes": "Base machine: nitens; System: 17; DV: 0.18 (0-1.58) m\u00b3 18.0 (4.7-47.0) c m"
+  },
+  {
+    "machine_type": "1",
+    "system": "21)",
+    "region": "",
+    "publication": "101 1 Acosta et a l. ( model 20",
+    "predictors": [
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": ") -a+bV\u2081",
+    "r_squared": null,
+    "notes": "Base machine: CTL; System: H; DV: EB CT PV (m\u00b3 h\u207b\u00b9"
+  },
+  {
+    "machine_type": "1",
+    "system": "17)",
+    "region": "",
+    "publication": "101 1 Acuna et al . ( model 20",
+    "predictors": [
+      "M",
+      "O\u2081\u2082",
+      "P",
+      "V\u2083"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "PMh\u207b\u00b9) expa-bO\u2081\u2082+cln(V\u2083)",
+    "r_squared": null,
+    "notes": "Base machine: CTL; System: H; DV: EB CT PV (m\u00b3ub"
+  },
+  {
+    "machine_type": "1",
+    "system": "4)",
+    "region": "",
+    "publication": "101 1 Alam et al. (2 model 01",
+    "predictors": [
+      "M",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "Mh\u207b\u00b9) a+bln(V\u2081)",
+    "r_squared": null,
+    "notes": "Base machine: CTL; System: H; DV: PB CT PV (m\u00b3 P"
+  },
+  {
+    "machine_type": "1",
+    "system": "020)",
+    "region": "",
+    "publication": "102 1 Berendt et al. ( model 2",
+    "predictors": [
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "0 \u207b\u00b9) aV\u2081",
+    "r_squared": null,
+    "notes": "Base machine: CTL; System: H; DV: PB RW PV (m\u00b3 PMh"
+  },
+  {
+    "machine_type": "1",
+    "system": ")",
+    "region": "",
+    "publication": "102 1 Berg et al. (2 model 014",
+    "predictors": [
+      "D\u2085"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "\u207b \u00b9) a+bD\u2085-cD\u2085d-eln(D\u2085)",
+    "r_squared": null,
+    "notes": "Base machine: CTL; System: H Sim; DV: PB RW PV (m\u00b3 PMh"
+  },
+  {
+    "machine_type": "1",
+    "system": "9)",
+    "region": "",
+    "publication": "102 1 Bilici et al. (2 model 01",
+    "predictors": [
+      "D\u2081",
+      "H\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "-a+bD\u2081+cH\u2081",
+    "r_squared": null,
+    "notes": "Base machine: FT; System: FB; DV: EB CT PV (m\u00b3 h\u207b\u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "24",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "O\u2081",
+      "O\u2081\u2081",
+      "O\u2082",
+      "O\u2083",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aO\u2081bO\u2082-cO\u2083-dO\u2081\u2081-eV\u2081f",
+    "r_squared": null,
+    "notes": "Base machine: H; System: -; DV: - PV (m\u00b3 min \u207b\u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "25",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "O\u2081",
+      "O\u2081\u2081",
+      "O\u2082",
+      "O\u2083",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aO\u2081-bO\u2082-cO\u2083-dO\u2081\u2081-eV\u2081f",
+    "r_squared": null,
+    "notes": "Base machine: H; System: -; DV: - PV (m\u00b3 min \u207b\u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "26",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "O\u2081",
+      "O\u2081\u2081",
+      "O\u2082",
+      "O\u2083",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aO\u2081bO\u2082-cO\u2083-dO\u2081\u2081-eV\u2081f",
+    "r_squared": null,
+    "notes": "Base machine: H; System: -; DV: - PV (m\u00b3 min \u207b\u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "27",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "O\u2081",
+      "O\u2081\u2081",
+      "O\u2082",
+      "O\u2083",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aO\u2081bO\u2082-cO\u2083-dO\u2081\u2081-eV\u2081f",
+    "r_squared": null,
+    "notes": "Base machine: H; System: -; DV: - PV (m\u00b3 min \u207b\u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "28",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "O\u2081\u2081",
+      "O\u2082",
+      "O\u2083",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aO\u2082-bO\u2083-cO\u2081\u2081-dV\u2081e",
+    "r_squared": null,
+    "notes": "Base machine: H; System: -; DV: - PV (m\u00b3 min \u207b\u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "29",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "O\u2081",
+      "O\u2081\u2081",
+      "O\u2082",
+      "O\u2083",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aO\u2081-bO\u2082-cO\u2083-dO\u2081\u2081-eV\u2081f",
+    "r_squared": null,
+    "notes": "Base machine: H; System: -; DV: - PV (m\u00b3 min \u207b\u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "30",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "O\u2081",
+      "O\u2081\u2081",
+      "O\u2082",
+      "O\u2083",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aO\u2081-bO\u2082-cO\u2083-dO\u2081\u2081-eV\u2081f",
+    "r_squared": null,
+    "notes": "Base machine: H; System: -; DV: - PV (m\u00b3 min \u207b\u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "31",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "O\u2081",
+      "O\u2081\u2081",
+      "O\u2082",
+      "O\u2083",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aO\u2081-bO\u2082-cO\u2083-dO\u2081\u2081-eV\u2081f",
+    "r_squared": null,
+    "notes": "Base machine: H; System: -; DV: - PV (m\u00b3 min \u207b\u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "32",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "O\u2081\u2081",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aO\u2081\u2081bV\u2081c",
+    "r_squared": null,
+    "notes": "Base machine: H; System: -; DV: - PV (m\u00b3 min \u207b\u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "33",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "O\u2081",
+      "O\u2081\u2081",
+      "O\u2082",
+      "O\u2083",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aO\u2081-bO\u2082-cO\u2083-dO\u2081\u2081-eV\u2081f",
+    "r_squared": null,
+    "notes": "Base machine: H; System: -; DV: - PV (m\u00b3 min \u207b\u00b9)"
+  },
+  {
+    "machine_type": "FT",
+    "system": "2",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "H\u2082"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "\u00b9) aH\u2082",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: PB; DV: RW PW (ODton E h\u207b\n0"
+  },
+  {
+    "machine_type": "FT",
+    "system": "3",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "I\u2085"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "\u00b9) aI\u2085",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: PB; DV: RW PW (ODton E h\u207b\n0"
+  },
+  {
+    "machine_type": "FT",
+    "system": "4",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "D\u2085"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "\u00b9) aD\u2085",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: PB; DV: RW PW (ODton E h\u207b\n0"
+  },
+  {
+    "machine_type": "FT",
+    "system": "5",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "B\u2083"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "\u00b9) aB\u2083",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: PB; DV: RW PW (ODton E h\u207b\n0"
+  },
+  {
+    "machine_type": "FT",
+    "system": "6",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "H\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "\u00b9) aH\u2081",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: PB; DV: RW PW (ODton E h\u207b\n0"
+  },
+  {
+    "machine_type": "FT",
+    "system": "7",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "D\u2086"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "\u00b9) aD\u2086",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: PB; DV: RW PW (ODton E h\u207b\n0"
+  },
+  {
+    "machine_type": "FT",
+    "system": "8",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "H\u2083"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "\u00b9) aH\u2083",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: PB; DV: RW PW (ODton E h\u207b\n0"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "2",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "O\u2081\u2083",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "(s) a+bV\u2081-cV\u2081d+eV\u2081f+gO\u2081\u2083",
+    "r_squared": null,
+    "notes": "Base machine: H; System: PB; DV: RW E fell, pro cess"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "3",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "O\u2081\u2083",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "(s) a+bV\u2081-cV\u2081d+eV\u2081f+gO\u2081\u2083",
+    "r_squared": null,
+    "notes": "Base machine: H; System: PB; DV: RW E fell, pro cess"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "4",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "I\u2083",
+      "O\u2081\u2083"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a+b/I\u2083+cO\u2081\u2083",
+    "r_squared": null,
+    "notes": "Base machine: H; System: PB; DV: RW M moving (s)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "2",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "T\u2082",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "(s) a+bV\u2081-cV\u2081d+eV\u2081f+gT\u2082",
+    "r_squared": null,
+    "notes": "Base machine: H; System: PB; DV: RW E fell, pro cess"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "3",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "T\u2082",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "(s) a+bV\u2081-cV\u2081d+eV\u2081f+gT\u2082",
+    "r_squared": null,
+    "notes": "Base machine: H; System: PB; DV: RW E fell, pro cess"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "4",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "T\u2082",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "(s) a+bV\u2081-cV\u2081d+eV\u2081f+gT\u2082",
+    "r_squared": null,
+    "notes": "Base machine: H; System: PB; DV: RW E fell, pro cess"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "5",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "T\u2082",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "(s) a+bV\u2081-cV\u2081d+eV\u2081f+gT\u2082",
+    "r_squared": null,
+    "notes": "Base machine: H; System: PB; DV: RW E fell, pro cess"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "6",
+    "region": "",
+    "publication": "106 model 1",
+    "predictors": [
+      "T\u2082",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "(s) a+bV\u2081-cV\u2081d+eV\u2081f+gT\u2082",
+    "r_squared": null,
+    "notes": "Base machine: H; System: PB; DV: RW E fell, pro cess"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "107 1 model 7",
+    "predictors": [
+      "T\u2082",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "ce ss (s) a+bV\u2081-cV\u2081d+eV\u2081f+gT\u2082",
+    "r_squared": null,
+    "notes": "Base machine: ; System: PB; DV: RW E fell, p ro"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "107 1 model 8",
+    "predictors": [
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": ") a+bV\u2081-cV\u2081 +eV\u2081",
+    "r_squared": null,
+    "notes": "Base machine: ; System: PB; DV: RW PV (m\u00b3 E \u207b\u00b9\n0"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "107 1 model 9",
+    "predictors": [
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": ") a+bV\u2081-cV\u2081 -eV\u2081",
+    "r_squared": null,
+    "notes": "Base machine: ; System: PB; DV: RW PV (m\u00b3 E \u207b\u00b9\n0"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "107 1 model 10",
+    "predictors": [
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": ") a+bV\u2081-cV\u2081 -eV\u2081",
+    "r_squared": null,
+    "notes": "Base machine: ; System: PB; DV: RW PV (m\u00b3 E \u207b\u00b9\n0"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "107 1 model 11",
+    "predictors": [
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": ") a+bV\u2081-cV\u2081 -eV\u2081",
+    "r_squared": null,
+    "notes": "Base machine: ; System: PB; DV: RW PV (m\u00b3 E \u207b\u00b9\n0"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "107 1 model 12",
+    "predictors": [
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": ") a+bV\u2081-cV\u2081 -eV\u2081",
+    "r_squared": null,
+    "notes": "Base machine: ; System: PB; DV: RW PV (m\u00b3 E \u207b\u00b9\n0"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "107 1 model 13",
+    "predictors": [
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": ") a+bV\u2081-cV\u2081 -eV\u2081",
+    "r_squared": null,
+    "notes": "Base machine: ; System: PB; DV: RW PV (m\u00b3 E \u207b\u00b9\n0"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "107 1 model 14",
+    "predictors": [
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": ") a+bV\u2081-cV\u2081 -eV\u2081",
+    "r_squared": null,
+    "notes": "Base machine: ; System: PB; DV: RW PV (m\u00b3 E \u207b\u00b9\n0"
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "107 1 Karpachev & Bykovskiy model 1",
+    "predictors": [
+      "D"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "\u207b \u00b9)-D",
+    "r_squared": null,
+    "notes": "Base machine: Sim; System: PB; DV: RW PV (m\u00b3 s hift"
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "107 1 model 2",
+    "predictors": [
+      "D",
+      "M\u2087"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "\u207b \u00b9)-D a+bln(M\u2087)",
+    "r_squared": null,
+    "notes": "Base machine: Sim; System: PB; DV: RW PV (m\u00b3 s hift"
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "107 1 model 3",
+    "predictors": [
+      "D",
+      "M\u2087"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "\u207b \u00b9)-D -a+bln(M\u2087)",
+    "r_squared": null,
+    "notes": "Base machine: Sim; System: PB; DV: RW PV (m\u00b3 s hift"
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "107 1 model 4",
+    "predictors": [
+      "D",
+      "M\u2086"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "\u207b \u00b9)-D a-bM\u2086",
+    "r_squared": null,
+    "notes": "Base machine: Sim; System: PB; DV: RW PV (m\u00b3 s hift"
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "107 1 model 5",
+    "predictors": [
+      "D",
+      "M\u2086"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "\u207b \u00b9)-D a-bM\u2086",
+    "r_squared": null,
+    "notes": "Base machine: Sim; System: PB; DV: RW PV (m\u00b3 s hift"
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "107 1 model 6",
+    "predictors": [
+      "D",
+      "M\u2086"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "\u207b \u00b9)-D a-bM\u2086",
+    "r_squared": null,
+    "notes": "Base machine: Sim; System: PB; DV: RW PV (m\u00b3 s hift"
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "107 1 model 7",
+    "predictors": [
+      "D",
+      "M\u2087"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "\u207b \u00b9)-D a+bln(M\u2087)",
+    "r_squared": null,
+    "notes": "Base machine: Sim; System: PB; DV: RW PV (m\u00b3 s hift"
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "107 1 model 8",
+    "predictors": [
+      "D",
+      "M\u2087"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "\u207b \u00b9)-D -a+bln(M\u2087)",
+    "r_squared": null,
+    "notes": "Base machine: Sim; System: PB; DV: RW PV (m\u00b3 s hift"
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "107 1 model 9",
+    "predictors": [
+      "D",
+      "M\u2087"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "\u207b \u00b9)-D -a+bln(M\u2087)",
+    "r_squared": null,
+    "notes": "Base machine: Sim; System: PB; DV: RW PV (m\u00b3 s hift"
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "107 1 model 10",
+    "predictors": [
+      "D",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "\u207b \u00b9)-D -a+bV\u2081",
+    "r_squared": null,
+    "notes": "Base machine: Sim; System: PB; DV: RW PV (m\u00b3 s hift"
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "107 1 model 11",
+    "predictors": [
+      "D",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "\u207b \u00b9)-D a+bln(V\u2081)",
+    "r_squared": null,
+    "notes": "Base machine: Sim; System: PB; DV: RW PV (m\u00b3 s hift"
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "107 1 model 12",
+    "predictors": [
+      "D",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "\u207b \u00b9)-D a+bln(V\u2081)",
+    "r_squared": null,
+    "notes": "Base machine: Sim; System: PB; DV: RW PV (m\u00b3 s hift"
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "107 1 model 13",
+    "predictors": [
+      "D",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "\u207b \u00b9)-D a+bln(V\u2081)",
+    "r_squared": null,
+    "notes": "Base machine: Sim; System: PB; DV: RW PV (m\u00b3 s hift"
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "107 1 Kim et al. (20 17) model 1",
+    "predictors": [
+      "A\u2082",
+      "N\u2086",
+      "N\u2087"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a+bN\u2086+cN\u2087+dA\u2082",
+    "r_squared": null,
+    "notes": "Base machine: ; System: PB; DV: CT W cycle (s)"
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "107 1 Kizha & Han (2016) model 1",
+    "predictors": [
+      "D\u2081",
+      "M\u2085",
+      "N\u2083",
+      "O\u2087"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "e (centi-min) a+bN\u2083-cM\u2085-dM\u2085+eD\u2081+fO\u2087+gO\u2087+hO\u2087",
+    "r_squared": null,
+    "notes": "Base machine: ; System: PB; DV: CT W log cy cl"
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "107 1 model 2",
+    "predictors": [
+      "D\u2081",
+      "M\u2085",
+      "N\u2083",
+      "O\u2087"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "e (centi-min) a+bN\u2083-cM\u2085-dM\u2085+eD\u2081-fO\u2087-gO\u2087",
+    "r_squared": null,
+    "notes": "Base machine: ; System: PB; DV: CT W log cy cl"
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "107 1 model 3",
+    "predictors": [
+      "D\u2081",
+      "M\u2085",
+      "N\u2083",
+      "O\u2087"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "e (centi-min) a+bN\u2083-cM\u2085-dM\u2085+eD\u2081-fO\u2087-gO\u2087-hO\u2087",
+    "r_squared": null,
+    "notes": "Base machine: ; System: PB; DV: CT W log cy cl"
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "107 1 model 4",
+    "predictors": [
+      "D\u2081",
+      "M\u2085",
+      "N\u2083",
+      "O\u2087"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "( centi-min) a-bN\u2083-cM\u2085-dM\u2085+eD\u2081+fO\u2087-gO\u2087+hO\u2087",
+    "r_squared": null,
+    "notes": "Base machine: ; System: PB; DV: CT W ln cyc le"
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "107 1 model 5",
+    "predictors": [
+      "D\u2081",
+      "M\u2085",
+      "N\u2083",
+      "O\u2087"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "( centi-min) a+bN\u2083-cM\u2085-dM\u2085+eD\u2081-fO\u2087-gO\u2087-hO\u2087",
+    "r_squared": null,
+    "notes": "Base machine: ; System: PB; DV: CT W ln cyc le"
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "107 1 model 6",
+    "predictors": [
+      "A\u2081",
+      "D\u2081",
+      "I",
+      "M\u2085",
+      "N\u2083",
+      "O\u2087"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "( centi-min) a-bN\u2083+cM\u2085+dM\u2085-eA\u2081-fD\u2081+gO\u2087-hO\u2087-IO\u2087",
+    "r_squared": null,
+    "notes": "Base machine: ; System: PB; DV: CT W ln cyc le"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "107 1 Kormanek & Baj (2018) model 1",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a+bD\u2081",
+    "r_squared": null,
+    "notes": "Base machine: ; System: PB; DV: RW E fell (s )"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 model 2",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a+bD\u2081",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: E delimb, bu ck (s)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 Kormanek & K\u0119pa (2016) model 1",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "-a+bD\u2081",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: E fell (s)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 Kr\u010d et al. (20 15) model 1",
+    "predictors": [
+      "D\u2081",
+      "O\u2084",
+      "O\u2085",
+      "O\u2086"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a+bO\u2084+cO\u2085+dO\u2086+eD\u2081",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: E fell, pro ce ss (s)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 Labelle et al. (2017) model 1",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a-bD\u2081+cD\u2081 -eD\u2081",
+    "r_squared": null,
+    "notes": "Base machine: EB; System: CT; DV: PV (m\u00b3 PM h \u207b\n0 \u00b9)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 model 2",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a-bD\u2081+cD\u2081 -eD\u2081",
+    "r_squared": null,
+    "notes": "Base machine: EB; System: CT; DV: PV (m\u00b3 PM h \u207b\n0 \u00b9)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 model 3",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aD\u2081",
+    "r_squared": null,
+    "notes": "Base machine: EB; System: CT; DV: PV (m\u00b3 PM h \u207b\n0 \u00b9)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 model 4",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aD\u2081",
+    "r_squared": null,
+    "notes": "Base machine: EB; System: CT; DV: PV (m\u00b3 PM h \u207b\n0 \u00b9)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 Labelle et al. (2018) model 1",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "-a+bD\u2081-cD\u2081",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: PV (m\u00b3 PM h \u207b\n0 \u00b9)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 model 2",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "-a+bD\u2081-cD\u2081",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: PV (m\u00b3 PM h \u207b\n0 \u00b9)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 model 3",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "-a+bD\u2081-cD\u2081",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: CT; DV: PV (m\u00b3 PM h \u207b\n0 \u00b9)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 model 4",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "-a+bD\u2081-cD\u2081",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: CT; DV: PV (m\u00b3 PM h \u207b\n0 \u00b9)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 Labelle & Hu \u00df (2018) model 1",
+    "predictors": [
+      "V\u2083"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aV\u2083-bV\u2083",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: PV (m\u00b3ub P M h \u207b\u00b9)\n0"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 model 2",
+    "predictors": [
+      "V\u2083"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aV\u2083-bV\u2083",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: PV (m\u00b3ub P M h \u207b\u00b9)\n0"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 Labelle et al. (2016) model 1",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aD\u2081b",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: CT; DV: PV (m\u00b3 PM h\u207b\u00b9 )"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 model 2",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aD\u2081b",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: CT; DV: PV (m\u00b3 PM h\u207b\u00b9 )"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 Labelle et al. (2019) model 1",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "-a+bD\u2081-cD\u2081",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: PV (m\u00b3 PM h \u207b\n0 \u00b9)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 model 2",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "-a+bD\u2081-cD\u2081",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: PV (m\u00b3 PM h \u207b\n0 \u00b9)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 model 3",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "-a+bD\u2081-cD\u2081",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: PV (m\u00b3 PM h \u207b\n0 \u00b9)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 model 4",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a+bD\u2081-cD\u2081",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: PV (m\u00b3 PM h \u207b\n0 \u00b9)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 model 5",
+    "predictors": [
+      "V\u2086"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a+bV\u2086-cV\u2086",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: PV (m\u00b3 PM h \u207b\n0 \u00b9)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 model 6",
+    "predictors": [
+      "V\u2086"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a+bV\u2086-cV\u2086",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: PV (m\u00b3 PM h \u207b\n0 \u00b9)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 model 7",
+    "predictors": [
+      "V\u2086"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a+bV\u2086-cV\u2086",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: PV (m\u00b3 PM h \u207b\n0 \u00b9)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 model 8",
+    "predictors": [
+      "V\u2086"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a+bV\u2086-cV\u2086",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: PV (m\u00b3 PM h \u207b\n0 \u00b9)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 Laina et al. (2 013) model 1",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "(aD\u2081b)/((-c+dD\u2081)e)",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: PW (ODton h\u207b \u00b9)"
+  },
+  {
+    "machine_type": "FB",
+    "system": "FT",
+    "region": "",
+    "publication": "108 1 model 2",
+    "predictors": [
+      "D\u2081",
+      "N\u2083"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "(aD\u2081bN\u2083)/(-c+d/N\u2083e)",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: PW (ODton h\u207b \u00b9)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 Laitila et al. ( 2016) model 1",
+    "predictors": [
+      "I\u2083"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a-bln(I\u2083)",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: M move (s tr ee\u207b\u00b9)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 model 2",
+    "predictors": [
+      "I\u2083"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "-a+b(c/I\u2083)",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: M move (s tr ee\u207b\u00b9)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 model 3",
+    "predictors": [
+      "N\u2089"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a-bN\u2089",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: E fell (s tr ee\u207b \u00b9)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 model 4",
+    "predictors": [
+      "N\u2089"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a-bN\u2089",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: E fell (s tr ee\u207b \u00b9)"
+  },
+  {
+    "machine_type": "H",
+    "system": "CTL",
+    "region": "",
+    "publication": "108 1 model 5",
+    "predictors": [
+      "V\u2082"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a+bV\u2082",
+    "r_squared": null,
+    "notes": "Base machine: PB; System: RW; DV: E process (s tree\u207b\u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "6",
+    "region": "",
+    "publication": "109 model 1",
+    "predictors": [
+      "V\u2082"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a+bV\u2082",
+    "r_squared": null,
+    "notes": "Base machine: H; System: PB; DV: RW E process (s tree\u207b\u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "2",
+    "region": "",
+    "publication": "109 model 1",
+    "predictors": [
+      "N\u2089"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a+b(c/N\u2089)",
+    "r_squared": null,
+    "notes": "Base machine: H; System: EB; DV: CT E fell (s tree\u207b \u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "3",
+    "region": "",
+    "publication": "109 model 1",
+    "predictors": [
+      "V\u2082"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "-a+bln(V\u2082)",
+    "r_squared": null,
+    "notes": "Base machine: H; System: EB; DV: CT E process (s tree\u207b\u00b9)"
+  },
+  {
+    "machine_type": "*FT",
+    "system": "2",
+    "region": "",
+    "publication": "109 model 1",
+    "predictors": [
+      "V\u2082"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "-a+bln(V\u2082)",
+    "r_squared": null,
+    "notes": "Base machine: HW; System: PB; DV: RW E fell (s tree\u207b \u00b9)"
+  },
+  {
+    "machine_type": "*FT",
+    "system": "3",
+    "region": "",
+    "publication": "109 model 1",
+    "predictors": [
+      "E\u2081\u2084"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "-a+b/E\u2081\u2084",
+    "r_squared": null,
+    "notes": "Base machine: HW; System: PB; DV: RW L load (s gra pple-load\u207b\u00b9)"
+  },
+  {
+    "machine_type": "FT",
+    "system": "2",
+    "region": "",
+    "publication": "109 model 1",
+    "predictors": [
+      "V\u2082"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a+bV\u2082",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: EB; DV: CT E fell, bunch (s tree\u207b\u00b9)"
+  },
+  {
+    "machine_type": "*CTL",
+    "system": "2",
+    "region": "",
+    "publication": "109 model 1",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "-a+bD\u2081-cD\u2081d+eD\u2081f",
+    "r_squared": null,
+    "notes": "Base machine: H; System: PB; DV: RW E fell, proce ss (s)"
+  },
+  {
+    "machine_type": "*CTL",
+    "system": "3",
+    "region": "",
+    "publication": "109 model 1",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a+bD\u2081+cD\u2081d",
+    "r_squared": null,
+    "notes": "Base machine: H; System: PB; DV: RW E fell, proce ss (s)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "2",
+    "region": "",
+    "publication": "109 model 1",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aD\u2081b",
+    "r_squared": null,
+    "notes": "Base machine: H; System: -; DV: - PV (m\u00b3 h\u207b\u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "3",
+    "region": "",
+    "publication": "109 model 1",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aD\u2081b",
+    "r_squared": null,
+    "notes": "Base machine: H; System: -; DV: - PV (m\u00b3 h\u207b\u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "2",
+    "region": "",
+    "publication": "109 model 1",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aD\u2081-b",
+    "r_squared": null,
+    "notes": "Base machine: H; System: PB; DV: RW PU (trees h\u207b\u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "2",
+    "region": "",
+    "publication": "109 model 1",
+    "predictors": [
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aV\u2081",
+    "r_squared": null,
+    "notes": "Base machine: H; System: EB; DV: CT PV (m\u00b3 PMh\n15 \u207b\u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "3",
+    "region": "",
+    "publication": "109 model 1",
+    "predictors": [
+      "I\u2082",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aV\u2081 I\u2082",
+    "r_squared": null,
+    "notes": "Base machine: H; System: EB; DV: CT PV (m\u00b3 PMh\n15 \u207b\u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "4",
+    "region": "",
+    "publication": "109 model 1",
+    "predictors": [
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aV\u2081",
+    "r_squared": null,
+    "notes": "Base machine: H; System: EB; DV: CT PV (m\u00b3 PMh\n15 \u207b\u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "5",
+    "region": "",
+    "publication": "109 model 1",
+    "predictors": [
+      "I\u2082"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aI\u2082",
+    "r_squared": null,
+    "notes": "Base machine: H; System: EB; DV: CT PV (m\u00b3 PMh\n15 \u207b\u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "6",
+    "region": "",
+    "publication": "109 model 1",
+    "predictors": [
+      "I\u2082"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aI\u2082",
+    "r_squared": null,
+    "notes": "Base machine: H; System: EB; DV: CT PV (m\u00b3 PMh\n15 \u207b\u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "2",
+    "region": "",
+    "publication": "109 model 1",
+    "predictors": [
+      "O\u2087",
+      "T\u2087",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a+bT\u2087-cO\u2087-dO\u2087-eO\u2087-fO\u2087+gV\u2081-hV\u2081i",
+    "r_squared": null,
+    "notes": "Base machine: H; System: PB; DV: RW PV (m\u00b3 E h\u207b\u00b9)\n0"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "2",
+    "region": "",
+    "publication": "113 model 1",
+    "predictors": [
+      "E\u2081",
+      "E\u2082"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a+bE\u2081c+dE\u2082e-fE\u2081E\u2082",
+    "r_squared": null,
+    "notes": "Base machine: H; System: PB; DV: CT E fell (s)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "3",
+    "region": "",
+    "publication": "113 model 1",
+    "predictors": [
+      "E\u2081",
+      "E\u2082"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": ") a-bE\u2081+cE\u2081d-eE\u2082+fE\u2082g+hE\u2081E\u2082",
+    "r_squared": null,
+    "notes": "Base machine: H; System: PB; DV: CT E process (s"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "4",
+    "region": "",
+    "publication": "113 model 1",
+    "predictors": [
+      "E\u2081",
+      "E\u2082"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a-bE\u2081c-dE\u2082e",
+    "r_squared": null,
+    "notes": "Base machine: H; System: PB; DV: CT M move (s )"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "5",
+    "region": "",
+    "publication": "113 model 1",
+    "predictors": [
+      "E\u2081",
+      "E\u2082"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a-bE\u2081c-dE\u2082e",
+    "r_squared": null,
+    "notes": "Base machine: H; System: PB; DV: CT E fell (s)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "6",
+    "region": "",
+    "publication": "113 model 1",
+    "predictors": [
+      "E\u2081",
+      "E\u2082"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": ") a+bE\u2081c+dE\u2082e-fE\u2081E\u2082",
+    "r_squared": null,
+    "notes": "Base machine: H; System: PB; DV: CT E process (s"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "7",
+    "region": "",
+    "publication": "113 model 1",
+    "predictors": [
+      "E\u2081",
+      "E\u2082"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a-bE\u2081c-dE\u2082e+fE\u2081E\u2082",
+    "r_squared": null,
+    "notes": "Base machine: H; System: PB; DV: CT PV (m\u00b3 h\u207b\u00b9) -U"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "8",
+    "region": "",
+    "publication": "113 model 1",
+    "predictors": [
+      "E\u2081",
+      "E\u2082"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "-a+bE\u2082+cE\u2081d",
+    "r_squared": null,
+    "notes": "Base machine: H; System: PB; DV: CT PV (m\u00b3 h\u207b\u00b9) -U"
+  },
+  {
+    "machine_type": "FT",
+    "system": "2",
+    "region": "",
+    "publication": "113 model 1",
+    "predictors": [
+      "B\u2081\u2083",
+      "N\u2088"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a+bB\u2081\u2083+cN\u2088",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: EB; DV: CT W cycle (s)"
+  },
+  {
+    "machine_type": "FT",
+    "system": "3",
+    "region": "",
+    "publication": "113 model 1",
+    "predictors": [
+      "B\u2081\u2083"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a+bB\u2081\u2083",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: EB; DV: CT W cycle (s)"
+  },
+  {
+    "machine_type": "FT",
+    "system": "4",
+    "region": "",
+    "publication": "113 model 1",
+    "predictors": [
+      "B\u2081\u2083"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a+bB\u2081\u2083",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: EB; DV: CT W cycle (s)"
+  },
+  {
+    "machine_type": "FT",
+    "system": "5",
+    "region": "",
+    "publication": "113 model 1",
+    "predictors": [
+      "B\u2081\u2083"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a-bB\u2081\u2083+cB\u2081\u2083d",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: EB; DV: CT W cycle (s)"
+  },
+  {
+    "machine_type": "FT",
+    "system": "2",
+    "region": "",
+    "publication": "113 model 1",
+    "predictors": [
+      "O\u2088"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "(min) a+bO\u2088",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: PB; DV: CT W log cycl e"
+  },
+  {
+    "machine_type": "FT",
+    "system": "3",
+    "region": "",
+    "publication": "113 model 1",
+    "predictors": [
+      "A\u2081",
+      "A\u2083",
+      "N\u2083"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "(min) a+bA\u2081+cA\u2083+dN\u2083",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: PB; DV: CT W log cycl e"
+  },
+  {
+    "machine_type": "FT",
+    "system": "2",
+    "region": "",
+    "publication": "113 model 1",
+    "predictors": [
+      "A\u2081",
+      "A\u2083",
+      "D\u2081\u2081",
+      "M\u2081",
+      "N\u2083"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a+bA\u2081+cD\u2081\u2081+dA\u2083+eN\u2083-fM\u2081",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: PB; DV: CT W cycle (s)"
+  },
+  {
+    "machine_type": "*FT",
+    "system": "2",
+    "region": "",
+    "publication": "113 model 1",
+    "predictors": [
+      "B\u2081\u2084"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aB\u2081\u2084b",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: EB; DV: CT E fell (s)"
+  },
+  {
+    "machine_type": "*FT",
+    "system": "3",
+    "region": "",
+    "publication": "113 model 1",
+    "predictors": [
+      "B\u2081\u2084"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aB\u2081\u2084",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: EB; DV: CT PW (ton h \u207b\n15 \u00b9)"
+  },
+  {
+    "machine_type": "*FT",
+    "system": "4",
+    "region": "",
+    "publication": "113 model 1",
+    "predictors": [
+      "B\u2081\u2084"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aB\u2081\u2084",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: EB; DV: CT PW (ton h \u207b\n15 \u00b9)"
+  },
+  {
+    "machine_type": "1",
+    "system": ")",
+    "region": "",
+    "publication": "114 1 Strandgard et al. ( model 2016",
+    "predictors": [
+      "E\u2083",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "h \u207b\u00b9)\n0 a+bV\u2081+cE\u2083",
+    "r_squared": null,
+    "notes": "Base machine: CTL; System: H; DV: PB, EB CT PV (m\u00b3 PM"
+  },
+  {
+    "machine_type": "1",
+    "system": ")",
+    "region": "",
+    "publication": "114 1 Strandgard et al. ( model 2015",
+    "predictors": [
+      "V\u2081\u2080",
+      "V\u2081\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "h \u207b\u00b9)\n0 aV\u2081\u2080 V\u2081\u2081",
+    "r_squared": null,
+    "notes": "Base machine: FT; System: FB; DV: PB CT PV (m\u00b3 PM"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "4",
+    "region": "",
+    "publication": "115 model 1",
+    "predictors": [
+      "A\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "in ) a+bA\u2081",
+    "r_squared": null,
+    "notes": "Base machine: H; System: ; DV: PB RW M move (m"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "5",
+    "region": "",
+    "publication": "115 model 1",
+    "predictors": [
+      "O\u2081\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "(m in) a+bO\u2081\u2081",
+    "r_squared": null,
+    "notes": "Base machine: H; System: ; DV: PB RW E process"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "6",
+    "region": "",
+    "publication": "115 model 1",
+    "predictors": [
+      "O\u2081\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "(m in) a+bO\u2081\u2081",
+    "r_squared": null,
+    "notes": "Base machine: H; System: ; DV: PB RW E process"
+  },
+  {
+    "machine_type": "B (FT)",
+    "system": "2",
+    "region": "",
+    "publication": "115 model 1",
+    "predictors": [
+      "B\u2081",
+      "E",
+      "H",
+      "W"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "E WH\u207b\u00b9) -a+bln(B\u2081)",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: ; DV: PB RW PW (ODton"
+  },
+  {
+    "machine_type": "B (FT)",
+    "system": "3",
+    "region": "",
+    "publication": "115 model 1",
+    "predictors": [
+      "B\u2081",
+      "D",
+      "H",
+      "I\u2081",
+      "M",
+      "S"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "SM H\u207b\u00b9)-D -a+bI\u2081c+dB\u2081e",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: ; DV: PB RW PW (ODton"
+  },
+  {
+    "machine_type": "FT",
+    "system": "2",
+    "region": "",
+    "publication": "115 model 1",
+    "predictors": [
+      "B\u2081",
+      "I\u2081",
+      "M",
+      "O\u2087",
+      "P"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "PM h\u207b\u00b9) -a+bI\u2081+cB\u2081+dO\u2087",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: DT; DV: PB RW PW (ODton"
+  },
+  {
+    "machine_type": "FT",
+    "system": "2",
+    "region": "",
+    "publication": "115 model 1",
+    "predictors": [
+      "N\u2083"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "in ) a+bN\u2083",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: DT; DV: PB RW W cycle (m"
+  },
+  {
+    "machine_type": "FT",
+    "system": "3",
+    "region": "",
+    "publication": "115 model 1",
+    "predictors": [
+      "N\u2083"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "in ) a+bN\u2083",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: DT; DV: PB RW W cycle (m"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "4",
+    "region": "",
+    "publication": "115 model 1",
+    "predictors": [
+      "A\u2081",
+      "D\u2081",
+      "N\u2083",
+      "N\u2084"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "in ) -a+bN\u2083+cA\u2081+dD\u2081+eN\u2084",
+    "r_squared": null,
+    "notes": "Base machine: H; System: ; DV: EB CT W cycle (m"
+  },
+  {
+    "machine_type": "FT",
+    "system": "5",
+    "region": "",
+    "publication": "115 model 1",
+    "predictors": [
+      "A\u2081",
+      "N\u2083"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "in ) a+bN\u2083+cA\u2081",
+    "r_squared": null,
+    "notes": "Base machine: FB; System: ; DV: PB CT W cycle (m"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "2",
+    "region": "",
+    "publication": "115 model 1",
+    "predictors": [
+      "M",
+      "P",
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "P Mh \u207b\u00b9)\n0 a+bln(V\u2081)",
+    "r_squared": null,
+    "notes": "Base machine: H; System: ; DV: PB CT PW (GMton"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "2",
+    "region": "",
+    "publication": "115 model 1",
+    "predictors": [
+      "V\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "h \u207b\n0 \u00b9) a+bln(V\u2081)",
+    "r_squared": null,
+    "notes": "Base machine: H; System: ; DV: PB CT PV (m\u00b3 PM"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "2",
+    "region": "",
+    "publication": "115 model 1",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "-a+bD\u2081-cD\u2081d",
+    "r_squared": null,
+    "notes": "Base machine: H; System: ; DV: PB RW PV (m\u00b3 h\u207b\u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "2",
+    "region": "",
+    "publication": "115 model 1",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "bu ck (s) a-bD\u2081+cD\u2081d",
+    "r_squared": null,
+    "notes": "Base machine: H; System: ; DV: PB RW E delimb,"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "2",
+    "region": "",
+    "publication": "115 model 1",
+    "predictors": [
+      "D\u2081"
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "a-bD\u2081+cD\u2081d-eD\u2081f",
+    "r_squared": null,
+    "notes": "Base machine: H; System: ; DV: PB RW PV (m\u00b3 h\u207b\u00b9)"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "2",
+    "region": "",
+    "publication": "115 model 1",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "er operation (s",
+    "r_squared": null,
+    "notes": "Base machine: H; System: ; DV: PB RW E feed roll"
+  },
+  {
+    "machine_type": "CTL",
+    "system": "3",
+    "region": "",
+    "publication": "115 model 1",
+    "predictors": [],
+    "coefficients": {},
+    "intercept": null,
+    "form": "er operation, d",
+    "r_squared": null,
+    "notes": "Base machine: H; System: ; DV: PB RW E feed roll"
+  }
+]

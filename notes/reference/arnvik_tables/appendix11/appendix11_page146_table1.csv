@@ -1,0 +1,61 @@
+Leszczyński et,al. (2021),1,EL,-,Power law mod,el,,0.91,-,SV,-
+,,,,,,,,,,,
+,,2,EL,-,Power law mod,el,,0.82,-,SV,-
+,,,,,,,,,,,
+,,3,EL,-,Non-linear mod,el with pow,er law terms,-,-,SV,-
+,,,,,,,,,,,
+,,4,EL,-,Power law mod,el,,-,-,SV,-
+,,,,,,,,,,,
+,,5,EL,-,Power law mod,el,,-,0.5192,P = 0.008,8.304
+,,,,,,,,,,,
+,,6,EL,-,Power law mod,el,,-,0.0291,P = 0.367,0.84
+,,,,,,,,,,,
+Liski et al. (20,20),1,PL,1104,Second-degree,polynomial,model,0.846,-,-,-
+,,,,,,,,,,,
+,,2,PL,1104,Second-degree,polynomial,model,0.822,-,-,-
+,,,,,,,,,,,
+Louis & Kizha,(2021),1,EL,390,Linear model,,,-,0.34,SV,-
+,,,,,,,,,,,
+,,2,EL,160,Linear model,,,-,0.18,SV,-
+,,,,,,,,,,,
+Magagnotti et a,l. (2021),1,PL,18,Linear model,,,-,0.507,P <0.05,31.1
+,,,,,,,,,,,
+,,2,PL,18,Linear model,,,-,0.801,P <0.05,35.2
+,,,,,,,,,,,
+,,3,PL,18,Linear model,,,-,0.757,P <0.05,27.4
+,,,,,,,,,,,
+,,4,PL,18,Linear model,,,-,0.765,P <0.05,28.6
+,,,,,,,,,,,
+Manner et al. (,2023),1,CL,115,Linear model,,,0.89,-,SV,-
+,,,,,,,,,,,
+,,2,CL,115,Power law mod,el,,0.86,-,P <0.0001,1366.7
+,,,,,,,,,,,
+McEwan et al.,(2016),1,EL,-,Second-degree,polynomial,model,-,0.428,SV,-
+,,,,,,,,,,,
+,,2,EL,-,Second-degree,polynomial,model,-,0.715,SV,-
+,,,,,,,,,,,
+,,3,EL,-,Second-degree,polynomial,model,-,0.75,SV,-
+,,,,,,,,,,,
+Mederski et al.,(2016),1,PL,56,Linear model,,,-,0.7168,SV,-
+,,,,,,,,,,,
+,,2,PL,56,Linear model,,,-,0.3934,SV,-
+,,,,,,,,,,,
+Norihiro et al.,(2018),1,EL,4388,Linear model,,,0.64,-,P <0.001,-
+,,,,,,,,,,,
+,,2,EL,297,Linear model,,,0.45,-,P <0.001,-
+,,,,,,,,,,,
+,,3,EL,2255,Linear model,,,0.61,-,P <0.001,-
+,,,,,,,,,,,
+,,4,EL,181,Linear model,,,0.79,-,P <0.001,-
+,,,,,,,,,,,
+,,5,EL,1478,Linear model,,,0.76,-,P <0.001,-
+,,,,,,,,,,,
+,,6,EL,177,Linear model,,,0.75,-,P <0.001,-
+,,,,,,,,,,,
+,,7,EL,4388,Linear model,,,0.68,-,P <0.001,-
+,,,,,,,,,,,
+,,8,EL,1655,Linear model,,,0.76,-,P <0.001,-
+,,,,,,,,,,,
+,,9,EL,2552,Linear model,,,0.6,-,P <0.001,-
+,,,,,,,,,,,
+,,10,EL,181,Linear model,,,0.78,-,P <0.001,-

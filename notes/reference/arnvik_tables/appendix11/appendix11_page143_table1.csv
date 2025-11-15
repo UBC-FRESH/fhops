@@ -1,0 +1,61 @@
+,,7,EL,17,Power law m,odel,,,,,,,,0.821,-,P <0.001,68.885
+,,,,,,,,,,,,,,,,,
+,,8,EL,17,Power law m,odel,,,,,,,,0.782,-,P <0.001,53.807
+,,,,,,,,,,,,,,,,,
+Kärhä et al.,(2018a),1,EL,1088,Non-linear m,odel,with,po,wer,law,and,linear,terms,-,0.636,P <0.001,155
+,,,,,,,,,,,,,,,,,
+,,2,EL,1088,Non-linear m,odel,with,po,wer,law,and,linear,terms,-,0.635,P <0.001,184
+,,,,,,,,,,,,,,,,,
+,,3,EL,1088,Non-linear m,odel,with,po,wer,law,and,linear,terms,-,0.709,P <0.001,190
+,,,,,,,,,,,,,,,,,
+,,4,EL,1529,Linear model,with,divi,sio,n op,erati,on,,,-,0.559,P <0.01,9.9
+,,,,,,,,,,,,,,,,,
+Kärhä et al.,(2018b),1,PL,-,Log-linear m,odel,,,,,,,,0.13,-,P <0.05,3.056
+,,,,,,,,,,,,,,,,,
+Kärhä et al.,(2019),1,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,0.561,P <0.001,634.5
+,,,,,,,,,,,,,,,,,
+,,2,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,0.512,P <0.001,520.5
+,,,,,,,,,,,,,,,,,
+,,3,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,0.524,P <0.001,544.6
+,,,,,,,,,,,,,,,,,
+,,4,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,0.533,P <0.001,565.4
+,,,,,,,,,,,,,,,,,
+,,5,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,0.528,P <0.001,554.2
+,,,,,,,,,,,,,,,,,
+,,6,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,0.525,P <0.001,547.4
+,,,,,,,,,,,,,,,,,
+,,7,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,0.517,P <0.001,530.0
+,,,,,,,,,,,,,,,,,
+,,8,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,-,-,-
+,,,,,,,,,,,,,,,,,
+,,9,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,-,-,-
+,,,,,,,,,,,,,,,,,
+,,10,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,-,-,-
+,,,,,,,,,,,,,,,,,
+,,11,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,-,-,-
+,,,,,,,,,,,,,,,,,
+,,12,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,-,-,-
+,,,,,,,,,,,,,,,,,
+,,13,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,-,-,-
+,,,,,,,,,,,,,,,,,
+,,14,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,-,-,-
+,,,,,,,,,,,,,,,,,
+Karpachev,& Bykovskiy (2019),1,-,-,Log-linear m,odel,,,,,,,,0.9955,-,SV,-
+,,,,,,,,,,,,,,,,,
+,,2,-,-,Log-linear m,odel,,,,,,,,0.992,-,SV,-
+,,,,,,,,,,,,,,,,,
+,,3,-,-,Log-linear m,odel,,,,,,,,0.9856,-,SV,-
+,,,,,,,,,,,,,,,,,
+,,4,-,-,Linear model,,,,,,,,,0.9946,-,SV,-
+,,,,,,,,,,,,,,,,,
+,,5,-,-,Linear model,,,,,,,,,0.991,-,SV,-
+,,,,,,,,,,,,,,,,,
+,,6,-,-,Linear model,,,,,,,,,0.9827,-,SV,-
+,,,,,,,,,,,,,,,,,
+,,7,-,-,Log-linear m,odel,,,,,,,,0.929,-,SV,-
+,,,,,,,,,,,,,,,,,
+,,8,-,-,Log-linear m,odel,,,,,,,,0.9956,-,SV,-
+,,,,,,,,,,,,,,,,,
+,,9,-,-,Log-linear m,odel,,,,,,,,0.9856,-,SV,-
+,,,,,,,,,,,,,,,,,
+,,10,-,-,Linear model,,,,,,,,,-,-,SV,-

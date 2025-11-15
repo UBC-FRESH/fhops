@@ -1,0 +1,27 @@
+Abbreviations for time where delays are,included,
+,,
+* = Delays added as a factor of 1.2,,
+,,
+-D = All delays were included,,
+,,
+,,
+"E = Productive hour including delays l
+15",ess than 15,minutes
+,,
+,,
+"h = Productive hour including delays l
+15",ess than 15,minutes
+,,
+,,
+"PMh = Productive machine hour inclu
+15",ding delays,less than
+,,
+,,
+"PMmin = Productive machine minute
+15",including de,lays less
+,,
+SMH = Scheduled machine hour,,
+,,
+Abbreviations for dependent variables w,here it is un,clear if d
+,,
+-U = Could not ascertain if delays were,included or,excluded

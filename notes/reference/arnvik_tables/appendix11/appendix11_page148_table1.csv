@@ -1,0 +1,61 @@
+,2,EL,332,Log-linear mod,el,,0.34,0.33,P <,0.0001,1282.24
+,,,,,,,,,,,
+,3,EL,366,Log-linear mod,el,,0.26,0.25,P <,0.0001,1669.85
+,,,,,,,,,,,
+,4,EL,262,Log-linear mod,el,,0.31,0.3,P <,0.0001,1458.32
+,,,,,,,,,,,
+,5,EL,364,Log-linear mod,el,,0.22,0.21,P <,0.0001,1904.89
+,,,,,,,,,,,
+,6,EL,334,Log-linear mod,el,,0.21,0.2,P <,0.0001,1570.91
+,,,,,,,,,,,
+,7,EL,22,Log-linear mod,el,,0.72,0.71,P =,0.000,53.48
+,,,,,,,,,,,
+,8,EL,6,Second-degree,polynomial,model,0.99,0.99,P =,0.000,14735.693
+,,,,,,,,,,,
+,9,EL,6,Second-degree,polynomial,model,0.99,0.99,P =,0.000,12169.468
+,,,,,,,,,,,
+,10,EL,7,Second-degree,polynomial,model,0.99,0.99,P =,0.000,7761.318
+,,,,,,,,,,,
+,11,EL,7,Second-degree,polynomial,model,0.99,0.99,P =,0.000,6176.361
+,,,,,,,,,,,
+,12,EL,7,Second-degree,polynomial,model,0.99,0.99,P =,0.000,6329.739
+,,,,,,,,,,,
+,13,EL,7,Second-degree,polynomial,model,0.99,0.99,P =,0.000,5401.736
+,,,,,,,,,,,
+Polowy & Molińska-Glura (2023),1,SL,108,Linear model,,,-,0.897,SV,,-
+,,,,,,,,,,,
+,2,SL,108,Linear model,,,0.846,-,SV,,-
+,,,,,,,,,,,
+,3,SL,108,Linear model,,,0.942,-,SV,,-
+,,,,,,,,,,,
+Prinz et al. (2021),1,EL,165,Exponential mo,del,,0.865,-,P <0,.001,1047.137
+,,,,,,,,,,,
+,2,EL,126,Exponential mo,del,,0.909,-,P <0,.001,1241.662
+,,,,,,,,,,,
+,3,EL,819,Third-degree p,olynomial m,odel,0.879,-,P <0,.001,1980.297
+,,,,,,,,,,,
+,4,EL,612,Third-degree p,olynomial m,odel,0.934,-,P <0,.001,2860.012
+,,,,,,,,,,,
+Ramantswana et al. (2013),1,CL,724,Second-degree,polynomial,model,0.88,-,P =,0.05,-
+,,,,,,,,,,,
+,2,CL,485,Second-degree,polynomial,model,0.87,-,P =,0.05,-
+,,,,,,,,,,,
+,3,CL,542,Second-degree,polynomial,model,0.88,-,P =,0.05,-
+,,,,,,,,,,,
+,4,CL,724,Second-degree,polynomial,model,0.884848,-,SS,,-
+,,,,,,,,,,,
+,5,CL,33,Linear model,,,0.67,-,SV,,-
+,,,,,,,,,,,
+,6,CL,70,Second-degree,polynomial,model,0.77,-,SV,,-
+,,,,,,,,,,,
+,7,CL,13,Second-degree,polynomial,model,0.92,-,SV,,-
+,,,,,,,,,,,
+,8,CL,246,Second-degree,polynomial,model,0.89,-,SV,,-
+,,,,,,,,,,,
+,9,CL,485,Second-degree,polynomial,model,0.873293,-,SS,,-
+,,,,,,,,,,,
+Rosińska et al. (2022),1,EL,-,Linear model,,,0.321,0.32,P <,0.0001,442.53
+,,,,,,,,,,,
+,2,EL,-,Second-degree,polynomial,model,0.16,0.158,P <,0.0001,89.133
+,,,,,,,,,,,
+,3,EL,-,Linear model,,,0.359,0.357,P <,0.001,169.66

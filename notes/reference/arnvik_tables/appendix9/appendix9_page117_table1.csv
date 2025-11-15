@@ -1,0 +1,43 @@
+Append,ix 9. Independent variables,,,
+,,,,
+Variables are,"presented in alphabetical order according to their abbreviations. Hence, rel",ated variabl,es are present,ed in s
+,,,,
+describing the,work output are presented in two places since it has been described by bot,h weight an,d volume in th,e mod
+,,,,
+An asterisk (*,") indicates a dummy variable, and a lowercase letter followed by a colon (",:) in the un,it column spe,cifies t
+,,,,
+model.,,,,
+,,,,
+Abbreviation,Unit,Independent,variable,
+,,,,
+Movement and,distances travelled,,,
+,,,,
+A₁,m,Movement to,trees/movement,per cycl
+,,,,
+A₂,ft,Movement to,trees/movement,per cycl
+,,,,
+A₃,m,Movement to,bunch,
+,,,,
+A₄,ft,Movement to,bunch,
+,,,,
+A₅,m,Total distance,traversed in the,corridor
+,,,,
+A₆,m,Untethered di,stance traversed,in the co
+,,,,
+A₇,m,Tethered dista,nce traversed in,the corri
+,,,,
+A₈,m,Movement to,deck,
+,,,,
+A₉,m,Skidding dista,nce,
+,,,,
+Weight of hand,led unit and/or output (trees/stems/logs/biomass),,,
+,,,,
+B₁,ODkg/tree,Dry weight of,tree,
+,,,,
+B₂,dry ton/ha,Biomass remo,val,
+,,,,
+B₃,ODton/ha,Biomass per h,ectare,
+,,,,
+B₄,green tons,Weight of ma,terial produced i,n the cor
+,,,,
+B₅,green tons,Weight of ma,terial produced w,hile unt

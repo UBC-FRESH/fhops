@@ -1,0 +1,836 @@
+138,1,App,e,n,dix 11. S,tati,stic,al signi,ficance,and observational units,,,,
+138,1,,,,,,,,,,,,,
+138,1,Type of,o,b,"servational unit, n",umb,er of o,"bservations, t",ype of equati,"on, and coefficients of determination. nr = model nu",mber; OB,= obser,vational uni,"t,"
+138,1,,,,,,,,,,,,,
+138,1,PL = pl,o,t l,evel (includes sta,nds a,s well,"), CL = cycle","level, EL =",element level; SV = statistical significance for pred,ictors in,"model, b",ut not the a,c
+138,1,,,,,,,,,,,,,
+138,1,statistic,al,ly,significant.,,,,,,,,,
+138,1,,,,,,,,,,,,,
+138,1,Author(s),,,,nr,OB,Observations,Mathematical str,ucture,R²,R²-adj,Significance,F
+138,1,,,,,,,,,,,,,
+138,1,Ackerman,et,al.,(2018),1,EL,436,Power law model,,0.7531,-,-,-
+138,1,,,,,,,,,,,,,
+138,1,,,,,2,EL,428,Linear Model,,0.712,-,-,-
+138,1,,,,,,,,,,,,,
+138,1,,,,,3,EL,436,Linear model,,-,-,SV,-
+138,1,,,,,,,,,,,,,
+138,1,,,,,4,EL,428,Linear model,,-,-,SV,-
+138,1,,,,,,,,,,,,,
+138,1,,,,,5,EL,436,Linear model with,interaction term,-,-,SV,-
+138,1,,,,,,,,,,,,,
+138,1,,,,,6,EL,428,Linear model with,interaction term,-,-,SV,-
+138,1,,,,,,,,,,,,,
+138,1,Ackerman,et,al.,(2021),1,CL,140 465,Nonlinear model w,ith exponential terms and division operation,-,-,SV,-
+138,1,,,,,,,,,,,,,
+138,1,,,,,2,CL,140 465,Nonlinear model w,"ith exponential terms, division operations, and interaction effects",-,-,SV,-
+138,1,,,,,,,,,,,,,
+138,1,Ackerman,et,al.,(2022),1,EL,281,Power law model,,0.58,-,SV,-
+138,1,,,,,,,,,,,,,
+138,1,,,,,2,EL,284,Power law model,,0.58,-,SV,-
+138,1,,,,,,,,,,,,,
+138,1,Acosta et a,l.,(20,21),1,EL,259,Linear model,,0.76,-,-,-
+138,1,,,,,,,,,,,,,
+138,1,Acuna et a,l. (,20,17),1,EL,1048,Exponential model,with logarithmic transformation,-,0.85,SV,-
+138,1,,,,,,,,,,,,,
+138,1,Alam et al.,(2,01,4),1,EL,153,Log-linear model,,0.58,-,-,-
+138,1,,,,,,,,,,,,,
+138,1,,,,,2,EL,103,Log-linear model,,0.33,-,-,-
+138,1,,,,,,,,,,,,,
+138,1,,,,,3,EL,153,Log-linear model,,0.4,-,-,-
+138,1,,,,,,,,,,,,,
+138,1,,,,,4,EL,103,Log-linear model,,0.15,-,-,-
+138,1,,,,,,,,,,,,,
+138,1,Apăfăian e,t a,l. (,2017),1,EL,1045,Exponential model,,0.46,-,P <0.001,-
+139,1,,,2,EL,1045,Exponential mode,l,,,,,,0.49,-,P <0.001,-
+139,1,,,,,,,,,,,,,,,,
+139,1,,,3,EL,1045,Exponential mode,l,,,,,,0.25,-,P <0.001,-
+139,1,,,,,,,,,,,,,,,,
+139,1,,,4,EL,1045,Linear model,,,,,,,0.2,-,P <0.001,-
+139,1,,,,,,,,,,,,,,,,
+139,1,,,5,EL,1045,Power law model,,,,,,,0.62,-,P <0.001,-
+139,1,,,,,,,,,,,,,,,,
+139,1,Berendt et,al. (2020),1,EL,706,Power law model,,,,,,,0.515,-,P <0.05,-
+139,1,,,,,,,,,,,,,,,,
+139,1,Berg et al.,(2014),1,-,800,Non-linear model,with,quadratic,term,and,logarithmic,transformation,0.985,-,SV,-
+139,1,,,,,,,,,,,,,,,,
+139,1,,,2,-,800,Non-linear model,with,quadratic,term,and,logarithmic,transformation,0.994,-,SV,-
+139,1,,,,,,,,,,,,,,,,
+139,1,,,3,-,800,Second-degree pol,ynom,ial mode,l,,,,0.981,-,SV,-
+139,1,,,,,,,,,,,,,,,,
+139,1,,,4,-,800,Non-linear model,with,quadratic,term,and,logarithmic,transformation,0.998,-,SV,-
+139,1,,,,,,,,,,,,,,,,
+139,1,Bergström,& Di Fulvio (2014),1,EL,10,Linear model with,divi,sion opera,tion,,,,-,0.47,P = 0.017,-
+139,1,,,,,,,,,,,,,,,,
+139,1,,,2,EL,7,Linear model with,divi,sion opera,tion,,,,-,0.78,P = 0.022,-
+139,1,,,,,,,,,,,,,,,,
+139,1,Bergström,et al. (2016),1,EL,26,Linear model,,,,,,,-,0.6,P <0.001,-
+139,1,,,,,,,,,,,,,,,,
+139,1,,,2,EL,26,Linear model,,,,,,,0.7,0.68,SV,-
+139,1,,,,,,,,,,,,,,,,
+139,1,,,3,EL,26,Linear model,,,,,,,0.77,0.75,SV,-
+139,1,,,,,,,,,,,,,,,,
+139,1,Bergström,et al. (2022),1,EL,32,Linear model,,,,,,,-,0.676,SV,-
+139,1,,,,,,,,,,,,,,,,
+139,1,,,2,EL,32,Linear model,,,,,,,-,0.676,SV,-
+139,1,,,,,,,,,,,,,,,,
+139,1,,,3,EL,32,Linear model,,,,,,,-,0.457,SV,-
+139,1,,,,,,,,,,,,,,,,
+139,1,,,4,EL,32,Linear model,,,,,,,-,0.457,SV,-
+139,1,,,,,,,,,,,,,,,,
+139,1,,,5,EL,32,Linear model,,,,,,,-,0.454,SV,-
+139,1,,,,,,,,,,,,,,,,
+139,1,,,6,EL,32,Linear model,,,,,,,-,0.454,SV,-
+139,1,,,,,,,,,,,,,,,,
+139,1,,,7,EL,32,Linear model,,,,,,,-,0.452,SV,-
+139,1,,,,,,,,,,,,,,,,
+139,1,,,8,EL,32,Linear model,,,,,,,-,0.452,SV,-
+139,1,,,,,,,,,,,,,,,,
+139,1,Bilici et al.,(2019),1,EL,30,Linear model,,,,,,,0.7,-,P <0.05,30.968
+139,1,,,,,,,,,,,,,,,,
+139,1,,,2,EL,30,Linear model,,,,,,,0.63,-,P <0.05,34.959
+139,1,,,,,,,,,,,,,,,,
+139,1,,,3,EL,30,Linear model,,,,,,,0.6541,-,SV,-
+139,1,,,,,,,,,,,,,,,,
+139,1,,,4,EL,30,Linear model,,,,,,,0.2844,-,SV,-
+139,1,,,,,,,,,,,,,,,,
+139,1,,,5,EL,30,Linear model,,,,,,,0.7501,-,SV,-
+139,1,,,,,,,,,,,,,,,,
+139,1,,,6,EL,30,Linear model,,,,,,,0.6814,-,SV,-
+139,1,,,,,,,,,,,,,,,,
+139,1,Brewer et a,l. (2018),1,CL,165,Linear model,,,,,,,0.37,-,-,-
+139,1,,,,,,,,,,,,,,,,
+139,1,,,2,CL,165,Linear model,,,,,,,0.47,-,-,-
+139,1,,,,,,,,,,,,,,,,
+139,1,,,3,CL,158,Linear model,,,,,,,0.21,-,-,-
+140,1,,,4,CL,158,Linear mod,el,,,,,,,,,,,,0.25,-,-,
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,,,5,CL,173,Linear mod,el,,,,,,,,,,,,0.39,-,-,
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,,,6,CL,173,Linear mod,el,,,,,,,,,,,,0.34,-,-,
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,,,7,CL,125,Linear mod,el,,,,,,,,,,,,0.18,-,-,
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,,,8,CL,125,Linear mod,el,,,,,,,,,,,,0.2,-,-,
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,Brown et al. (2013),,1,EL,124,Log-linear,model,,,,,,,,,,,,0.6,-,P <,0.05
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,,,2,EL,126,Log-linear,model,,,,,,,,,,,,0.61,-,P <,0.05
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,Carter et al. (2017),,1,EL,84,Linear mod,el,,,,,,,,,,,,0.85,-,P =,0.36
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,Chakroun et al. (2016),,1,EL,-,Power law,model,,,,,,,,,,,,0.73,-,SV,
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,,,2,EL,-,Power law,model,,,,,,,,,,,,0.73,-,SV,
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,,,3,EL,-,Power law,model,,,,,,,,,,,,0.58,-,SV,
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,,,4,EL,-,Power law,model,,,,,,,,,,,,0.8,-,SV,
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,,,5,EL,-,Power law,model,,,,,,,,,,,,0.66,-,SV,
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,Chung et al. (2022),,1,EL,220,Linear mod,el,,,,,,,,,,,,-,0.67,P <,0.001
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,,,2,EL,87,Linear mod,el,,,,,,,,,,,,-,0.89,P <,0.001
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,Di Fulvio & Bergström,(2013),1,EL,9,Linear mod,el,,,,,,,,,,,,0.909,0.855,SV,
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,Erber et al. (2016),,1,EL,598,Linear mod,el,,,,,,,,,,,,-,0.007,P =,2.1×10-2
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,,,2,EL,598,Non-linear,model,with,power l,aw,,and,linear,terms,,,,,-,0.49,P <,2×10-16
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,,,3,EL,598,Non-linear,model,with,power l,aw,,and,linear,terms,,,,,-,0.21,P <,2.0×10-16
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,,,4,EL,598,Non-linear,model,with,power l,aw,,and,linear,terms,,,,,-,0.42,P <,2×10-16
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,Eriksson & Lindroos (2,014),1,PL,12350,Non-linear,model,with,quadrati,c,t,erm,and lo,garith,mic t,rans,formation,,-,0.553,P <,0.001
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,,,2,PL,12350,Non-linear,model,with,quadrati,c,t,erm,and lo,garith,mic t,rans,formation,,-,0.6,P <,0.001
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,,,3,PL,12350,Non-linear,model,with,quadrati,c,t,"erm,",intera,ction,term,and,logarithmic,transformation,-,0.617,P <,0.001
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,,,4,PL,12350,Non-linear,model,with,quadrati,c,t,"erm,",intera,ction,term,and,logarithmic,transformation,-,0.625,P <,0.001
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,,,5,PL,12350,Non-linear,model,with,quadrati,c,t,"erm,",intera,ction,term,and,logarithmic,transformation,-,0.626,P <,0.001
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,,,6,PL,4851,Non-linear,model,with,quadrati,c,t,erm,and lo,garith,mic t,rans,formation,,-,0.576,P <,0.001
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,,,7,PL,4851,Linear mod,el with,loga,rithmic,tra,,nsfo,rmatio,ns,,,,,-,0.581,P <,0.001
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,,,8,PL,4851,Linear mod,el with,loga,rithmic,tra,,nsfo,rmatio,ns an,d inte,racti,on terms,,-,0.598,P <,0.001
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,,,9,PL,4851,Linear mod,el with,loga,rithmic,tra,,nsfo,rmatio,ns an,d inte,racti,on terms,,-,0.612,P <,0.001
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,Fernandez-Lacruz et al.,(2013),1,EL,13,Power law,model,,,,,,,,,,,,-,0.617,P =,0.0009
+140,1,,,,,,,,,,,,,,,,,,,,,,
+140,1,Fernandez-Lacruz et al.,(2021),1,EL,9,Power law,model,,,,,,,,,,,,0.952,-,P <,0.001
+141,1,,,2,EL,9,Power law model,,,,0.897,-,P <,0.001,-
+141,1,,,,,,,,,,,,,,
+141,1,George et al.,(2022),1,EL,542,Linear model,,,,0.57,-,P <,0.05,-
+141,1,,,,,,,,,,,,,,
+141,1,Ghaffariyan,(2013),1,EL,59,Log-linear model,,,,0.32,-,P =,0.05,-
+141,1,,,,,,,,,,,,,,
+141,1,,,2,EL,65,Power law model,,,,0.73,-,P =,0.05,-
+141,1,,,,,,,,,,,,,,
+141,1,Ghaffariyan,et al. (2019),1,CL,-,Power law model,,,,-,-,-,,-
+141,1,,,,,,,,,,,,,,
+141,1,Ghaffariyan,et al. (2013),1,EL,80,Log-linear model,,,,0.402,-,P =,0.05,-
+141,1,,,,,,,,,,,,,,
+141,1,Ghaffariyan,et al. (2015),1,CL,562,Exponential mode,l,,,0.519,-,P <,0.01,605.45
+141,1,,,,,,,,,,,,,,
+141,1,Green et al. (,2020),1,EL,110,Linear model,,,,0.5,-,P <,0.001,35.53
+141,1,,,,,,,,,,,,,,
+141,1,,,2,EL,168,Linear model,,,,0.23,-,P <,0.001,16.3
+141,1,,,,,,,,,,,,,,
+141,1,Grönlund &,Eliasson (2019),1,EL,10,Linear model,,,,0.942,-,SV,,-
+141,1,,,,,,,,,,,,,,
+141,1,Gülci et al. (,2021),1,EL,57,Linear model,,,,0.45,0.42,SV,,-
+141,1,,,,,,,,,,,,,,
+141,1,,,2,EL,57,Linear model,,,,0.49,0.46,SV,,-
+141,1,,,,,,,,,,,,,,
+141,1,,,3,EL,60,Second-degree pol,ynomial,model,,0.48,0.42,SV,,-
+141,1,,,,,,,,,,,,,,
+141,1,,,4,EL,60,Second-degree pol,ynomial,model,,0.5,0.44,SV,,-
+141,1,,,,,,,,,,,,,,
+141,1,Han et al. (2,018),1,EL,863,Linear model,,,,-,0.4329,P <,0.01,-
+141,1,,,,,,,,,,,,,,
+141,1,Hiesl & Ben,jamin (2013),1,CL,481,Linear model,,,,-,0.4,SV,,-
+141,1,,,,,,,,,,,,,,
+141,1,Hiesl & Ben,jamin (2015),1,CL,1154,Linear model,,,,-,0.2,SV,,-
+141,1,,,,,,,,,,,,,,
+141,1,Hiesl et al. (,2015),1,PL,12,Linear model,,,,-,0.36,SV,,-
+141,1,,,,,,,,,,,,,,
+141,1,,,2,PL,9,Linear model,,,,-,0.14,SV,,-
+141,1,,,,,,,,,,,,,,
+141,1,Holzleitner,& Kanzian (2022),1,EL,390,Power law model,,,,-,-,SV,,-
+141,1,,,,,,,,,,,,,,
+141,1,,,2,EL,390,Non-linear model,with pow,er law,and linear terms,0.553,0.548,SV,,-
+141,1,,,,,,,,,,,,,,
+141,1,,,3,EL,390,Power law model,,,,0.521,0.518,SV,,-
+141,1,,,,,,,,,,,,,,
+141,1,Horváth et a,l. (2016),1,EL,392,Non-linear model,with pow,er law,terms,0.58,-,P <,0.05,108.614
+141,1,,,,,,,,,,,,,,
+141,1,,,2,EL,135,Non-linear model,with pow,er law,terms,0.54,-,P <,0.05,30.61
+141,1,,,,,,,,,,,,,,
+141,1,,,3,EL,593,Non-linear model,with pow,er law,terms,0.48,-,P <,0.05,110.199
+141,1,,,,,,,,,,,,,,
+141,1,,,4,EL,275,Non-linear model,with pow,er law,terms,0.57,-,P <,0.05,71.622
+141,1,,,,,,,,,,,,,,
+141,1,,,5,EL,1426,Non-linear model,with pow,er law,terms,0.53,-,P <,0.05,316.94
+141,1,,,,,,,,,,,,,,
+141,1,,,6,EL,501,Non-linear model,with pow,er law,terms,0.61,-,P <,0.05,196.174
+141,1,,,,,,,,,,,,,,
+141,1,,,7,EL,1928,Non-linear model,with pow,er law,terms,0.35,-,P <,0.05,207.455
+141,1,,,,,,,,,,,,,,
+141,1,,,8,EL,496,Non-linear model,with pow,er law,terms,0.61,-,P <,0.05,150.526
+141,1,,,,,,,,,,,,,,
+141,1,,,9,EL,1026,Non-linear model,with pow,er law,terms,0.57,-,P <,0.05,271.479
+142,1,10,EL,153,Non-linear,model,with,power,law,terms,0.21,-,P <0.05,20.47
+142,1,,,,,,,,,,,,,
+142,1,11,EL,1675,Non-linear,model,with,power,law,terms,0.61,-,P <0.05,522.7
+142,1,,,,,,,,,,,,,
+142,1,12,EL,392,Non-linear,model,with,power,law,terms,0.25,-,P <0.05,25.645
+142,1,,,,,,,,,,,,,
+142,1,13,EL,135,Non-linear,model,with,power,law,terms,0.19,-,P <0.05,6.152
+142,1,,,,,,,,,,,,,
+142,1,14,EL,593,Non-linear,model,with,power,law,terms,0.12,-,P <0.05,15.813
+142,1,,,,,,,,,,,,,
+142,1,15,EL,275,Non-linear,model,with,power,law,terms,0.31,-,P <0.05,24.361
+142,1,,,,,,,,,,,,,
+142,1,16,EL,1426,Non-linear,model,with,power,law,terms,0.53,-,P <0.05,317.548
+142,1,,,,,,,,,,,,,
+142,1,17,EL,501,Non-linear,model,with,power,law,terms,0.39,-,P <0.05,77.822
+142,1,,,,,,,,,,,,,
+142,1,18,EL,1928,Non-linear,model,with,power,law,terms,0.52,-,P <0.05,423.266
+142,1,,,,,,,,,,,,,
+142,1,19,EL,496,Non-linear,model,with,power,law,terms,0.77,-,P <0.05,319.957
+142,1,,,,,,,,,,,,,
+142,1,20,EL,1026,Non-linear,model,with,power,law,terms,0.79,-,P <0.05,789.152
+142,1,,,,,,,,,,,,,
+142,1,21,EL,153,Non-linear,model,with,power,law,terms,0.21,-,P <0.05,20.206
+142,1,,,,,,,,,,,,,
+142,1,22,EL,1675,Non-linear,model,with,power,law,terms,0.8,-,P <0.05,1294.678
+142,1,,,,,,,,,,,,,
+142,1,23,EL,392,Non-linear,model,with,power,law,terms,0.25,-,P <0.05,25.66
+142,1,,,,,,,,,,,,,
+142,1,24,EL,135,Non-linear,model,with,power,law,terms,0.19,-,P <0.05,6.093
+142,1,,,,,,,,,,,,,
+142,1,25,EL,593,Non-linear,model,with,power,law,terms,0.12,-,P <0.05,15.835
+142,1,,,,,,,,,,,,,
+142,1,26,EL,275,Non-linear,model,with,power,law,terms,0.31,-,P <0.05,24.065
+142,1,,,,,,,,,,,,,
+142,1,27,EL,1426,Non-linear,model,with,power,law,terms,0.53,-,P <0.05,317.977
+142,1,,,,,,,,,,,,,
+142,1,28,EL,501,Non-linear,model,with,power,law,terms,0.39,-,P <0.05,77.676
+142,1,,,,,,,,,,,,,
+142,1,29,EL,1928,Non-linear,model,with,power,law,terms,0.52,-,P <0.05,422.684
+142,1,,,,,,,,,,,,,
+142,1,30,EL,496,Non-linear,model,with,power,law,terms,0.77,-,P <0.05,319.03
+142,1,,,,,,,,,,,,,
+142,1,31,EL,1026,Non-linear,model,with,power,law,terms,0.79,-,P <0.05,782.738
+142,1,,,,,,,,,,,,,
+142,1,32,EL,153,Non-linear,model,with,power,law,terms,0.21,-,P <0.05,20.205
+142,1,,,,,,,,,,,,,
+142,1,33,EL,1675,Non-linear,model,with,power,law,terms,0.79,-,P <0.05,1287.774
+142,1,,,,,,,,,,,,,
+142,1,1,CL,186,Linear mod,el,,,,,-,-,SV,-
+142,1,,,,,,,,,,,,,
+142,1,1,EL,17,Power law,model,,,,,0.961,-,P <0.001,368.824
+142,1,,,,,,,,,,,,,
+142,1,2,EL,17,Power law,model,,,,,0.956,-,P <0.001,324.558
+142,1,,,,,,,,,,,,,
+142,1,3,EL,17,Power law,model,,,,,0.939,-,P <0.001,229.112
+142,1,,,,,,,,,,,,,
+142,1,4,EL,17,Power law,model,,,,,0.909,-,P <0.001,150.308
+142,1,,,,,,,,,,,,,
+142,1,5,EL,17,Power law,model,,,,,0.884,-,P <0.001,114.541
+142,1,,,,,,,,,,,,,
+142,1,6,EL,17,Power law,model,,,,,0.863,-,P <0.001,94.485
+143,1,,,7,EL,17,Power law m,odel,,,,,,,,0.821,-,P <0.001,68.885
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,8,EL,17,Power law m,odel,,,,,,,,0.782,-,P <0.001,53.807
+143,1,,,,,,,,,,,,,,,,,,
+143,1,Kärhä et al.,(2018a),1,EL,1088,Non-linear m,odel,with,po,wer,law,and,linear,terms,-,0.636,P <0.001,155
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,2,EL,1088,Non-linear m,odel,with,po,wer,law,and,linear,terms,-,0.635,P <0.001,184
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,3,EL,1088,Non-linear m,odel,with,po,wer,law,and,linear,terms,-,0.709,P <0.001,190
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,4,EL,1529,Linear model,with,divi,sio,n op,erati,on,,,-,0.559,P <0.01,9.9
+143,1,,,,,,,,,,,,,,,,,,
+143,1,Kärhä et al.,(2018b),1,PL,-,Log-linear m,odel,,,,,,,,0.13,-,P <0.05,3.056
+143,1,,,,,,,,,,,,,,,,,,
+143,1,Kärhä et al.,(2019),1,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,0.561,P <0.001,634.5
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,2,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,0.512,P <0.001,520.5
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,3,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,0.524,P <0.001,544.6
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,4,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,0.533,P <0.001,565.4
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,5,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,0.528,P <0.001,554.2
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,6,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,0.525,P <0.001,547.4
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,7,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,0.517,P <0.001,530.0
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,8,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,-,-,-
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,9,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,-,-,-
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,10,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,-,-,-
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,11,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,-,-,-
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,12,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,-,-,-
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,13,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,-,-,-
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,14,EL,-,Third-degree,poly,nomi,al,mod,el,,,,-,-,-,-
+143,1,,,,,,,,,,,,,,,,,,
+143,1,Karpachev,& Bykovskiy (2019),1,-,-,Log-linear m,odel,,,,,,,,0.9955,-,SV,-
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,2,-,-,Log-linear m,odel,,,,,,,,0.992,-,SV,-
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,3,-,-,Log-linear m,odel,,,,,,,,0.9856,-,SV,-
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,4,-,-,Linear model,,,,,,,,,0.9946,-,SV,-
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,5,-,-,Linear model,,,,,,,,,0.991,-,SV,-
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,6,-,-,Linear model,,,,,,,,,0.9827,-,SV,-
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,7,-,-,Log-linear m,odel,,,,,,,,0.929,-,SV,-
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,8,-,-,Log-linear m,odel,,,,,,,,0.9956,-,SV,-
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,9,-,-,Log-linear m,odel,,,,,,,,0.9856,-,SV,-
+143,1,,,,,,,,,,,,,,,,,,
+143,1,,,10,-,-,Linear model,,,,,,,,,-,-,SV,-
+144,1,,,11,-,-,,Log-linear mod,el,,0.9874,-,SV,-
+144,1,,,,,,,,,,,,,
+144,1,,,12,-,-,,Log-linear mod,el,,0.9873,-,SV,-
+144,1,,,,,,,,,,,,,
+144,1,,,13,-,-,,Log-linear mod,el,,0.9871,-,SV,-
+144,1,,,,,,,,,,,,,
+144,1,Kim et al. (20,17),1,EL,185,,Linear model,,,-,0.5406,P <0.0001,-
+144,1,,,,,,,,,,,,,
+144,1,Kizha & Han,(2016),1,EL,approx.,200,Linear model,,,0.15,-,SV,-
+144,1,,,,,,,,,,,,,
+144,1,,,2,EL,approx.,200,Linear model,,,0.19,-,SV,-
+144,1,,,,,,,,,,,,,
+144,1,,,3,EL,approx.,200,Linear model,,,0.41,-,SV,-
+144,1,,,,,,,,,,,,,
+144,1,,,4,EL,approx.,200,Linear model,,,0.1,-,SV,-
+144,1,,,,,,,,,,,,,
+144,1,,,5,EL,approx.,200,Linear model,,,0.12,-,SV,-
+144,1,,,,,,,,,,,,,
+144,1,,,6,EL,approx.,200,Linear model,,,0.39,-,SV,-
+144,1,,,,,,,,,,,,,
+144,1,Kormanek &,Baj (2018),1,EL,35,,Linear model,,,0.1734,-,-,-
+144,1,,,,,,,,,,,,,
+144,1,,,2,EL,35,,Linear model,,,0.1138,-,-,-
+144,1,,,,,,,,,,,,,
+144,1,Kormanek &,Kępa (2016),1,EL,75,,Linear model,,,0.3455,-,-,-
+144,1,,,,,,,,,,,,,
+144,1,Krč et al. (20,15),1,EL,229,,Linear model,,,0.762,0.759,P = 0.000,240.439
+144,1,,,,,,,,,,,,,
+144,1,Labelle et al.,(2017),1,EL,338,,Third-degree p,olynomial m,odel,0.6854,-,-,-
+144,1,,,,,,,,,,,,,
+144,1,,,2,EL,365,,Third-degree p,olynomial m,odel,0.7293,-,-,-
+144,1,,,,,,,,,,,,,
+144,1,,,3,EL,42,,Power law mod,el,,0.8322,-,-,-
+144,1,,,,,,,,,,,,,
+144,1,,,4,EL,55,,Power law mod,el,,0.8572,-,-,-
+144,1,,,,,,,,,,,,,
+144,1,Labelle et al.,(2018),1,EL,56,,Second-degree,polynomial,model,0.35,-,-,-
+144,1,,,,,,,,,,,,,
+144,1,,,2,EL,67,,Second-degree,polynomial,model,0.27,-,-,-
+144,1,,,,,,,,,,,,,
+144,1,,,3,EL,48,,Second-degree,polynomial,model,0.24,-,-,-
+144,1,,,,,,,,,,,,,
+144,1,,,4,EL,72,,Second-degree,polynomial,model,0.12,-,-,-
+144,1,,,,,,,,,,,,,
+144,1,Labelle & Hu,ß (2018),1,EL,68,,Second-degree,polynomial,model,0.3196,-,-,-
+144,1,,,,,,,,,,,,,
+144,1,,,2,EL,135,,Second-degree,polynomial,model,0.4689,-,-,-
+144,1,,,,,,,,,,,,,
+144,1,Labelle et al.,(2016),1,EL,54,,Power law mod,el,,0.247,-,-,-
+144,1,,,,,,,,,,,,,
+144,1,,,2,EL,55,,Power law mod,el,,0.3215,-,-,-
+144,1,,,,,,,,,,,,,
+144,1,Labelle et al.,(2019),1,EL,15,,Second-degree,polynomial,model,0.838,-,-,-
+144,1,,,,,,,,,,,,,
+144,1,,,2,EL,15,,Second-degree,polynomial,model,0.295,-,-,-
+144,1,,,,,,,,,,,,,
+144,1,,,3,EL,22,,Second-degree,polynomial,model,0.756,-,-,-
+144,1,,,,,,,,,,,,,
+144,1,,,4,EL,30,,Second-degree,polynomial,model,0.082,-,-,-
+144,1,,,,,,,,,,,,,
+144,1,,,5,EL,15,,Second-degree,polynomial,model,0.834,-,-,-
+145,1,,,,,6,EL,15,Second-degree,polynomial,model,0.259,-,-,,-
+145,1,,,,,,,,,,,,,,,
+145,1,,,,,7,EL,22,Second-degree,polynomial,model,0.802,-,-,,-
+145,1,,,,,,,,,,,,,,,
+145,1,,,,,8,EL,30,Second-degree,polynomial,model,0.461,-,-,,-
+145,1,,,,,,,,,,,,,,,
+145,1,Laina et,a,l. (2013),,1,EL,6022,Non-linear mod,el with pow,er law terms and division operation,0.56,-,SV,,-
+145,1,,,,,,,,,,,,,,,
+145,1,,,,,2,EL,3507,Non-linear mod,el with pow,er law terms and division operation,0.79,-,SV,,-
+145,1,,,,,,,,,,,,,,,
+145,1,Laitila e,t,al. (2016),,1,EL,25,Log-linear mod,el,,0.141,-,P =,0.070,3.626
+145,1,,,,,,,,,,,,,,,
+145,1,,,,,2,EL,40,Linear model w,ith division,operation,0.544,-,P <,0.001,44.06
+145,1,,,,,,,,,,,,,,,
+145,1,,,,,3,EL,25,Linear model,,,0.032,-,P =,0.400,0.738
+145,1,,,,,,,,,,,,,,,
+145,1,,,,,4,EL,40,Linear model,,,0.167,-,P =,0.009,7.632
+145,1,,,,,,,,,,,,,,,
+145,1,,,,,5,EL,25,Linear model,,,0.514,-,P <,0.001,23.298
+145,1,,,,,,,,,,,,,,,
+145,1,,,,,6,EL,40,Linear model,,,0.738,-,P <,0.001,107.174
+145,1,,,,,,,,,,,,,,,
+145,1,Laitila &,,Väätäinen,(2014),1,EL,37,Log-linear mod,el,,0.12,-,SV,,-
+145,1,,,,,,,,,,,,,,,
+145,1,,,,,2,EL,37,Linear model w,ith division,operation,0.369,-,SV,,-
+145,1,,,,,,,,,,,,,,,
+145,1,,,,,3,EL,37,Log-linear mod,el,,0.775,-,SV,,-
+145,1,,,,,,,,,,,,,,,
+145,1,Laitila &,,Väätäinen,(2020),1,EL,80,Linear model w,ith division,operation,0.881,-,P <,0.001,576.779
+145,1,,,,,,,,,,,,,,,
+145,1,,,,,2,EL,80,Log-linear mod,el,,0.724,-,P <,0.001,204.102
+145,1,,,,,,,,,,,,,,,
+145,1,,,,,3,EL,80,Linear model w,ith division,operation,0.848,-,P <,0.001,434.187
+145,1,,,,,,,,,,,,,,,
+145,1,Laitila &,,Väätäinen,(2021),1,EL,17,Linear model,,,0.44,-,P =,0.004,-
+145,1,,,,,,,,,,,,,,,
+145,1,,,,,2,EL,17,Linear model,,,0.61,-,P <,0.001,-
+145,1,,,,,,,,,,,,,,,
+145,1,Laitila &,,Väätäinen,(2023),1,EL,16,Linear model,,,0.59,-,P <,0.001,19.845
+145,1,,,,,,,,,,,,,,,
+145,1,Laitila e,t,al. (2013),,1,EL,-,Log-linear mod,el,,0.46,-,SV,,-
+145,1,,,,,,,,,,,,,,,
+145,1,,,,,2,EL,-,Third-degree p,olynomial m,odel,0.6,-,SV,,-
+145,1,,,,,,,,,,,,,,,
+145,1,,,,,3,EL,-,Second-degree,polynomial,model,0.58,-,SV,,-
+145,1,,,,,,,,,,,,,,,
+145,1,Laitila e,t,al. (2020),,1,EL,535,Second-degree,polynomial,model,0.46,-,P <,0.001,223.174
+145,1,,,,,,,,,,,,,,,
+145,1,Lazdiņš,e,t al. (2019),,1,-,-,Power law mod,el,,0.93979,-,-,,-
+145,1,,,,,,,,,,,,,,,
+145,1,,,,,2,-,-,Power law mod,el,,0.964,-,-,,-
+145,1,,,,,,,,,,,,,,,
+145,1,,,,,3,-,-,Power law mod,el,,0.9784,-,-,,-
+145,1,,,,,,,,,,,,,,,
+145,1,Lazdiņš,(,2014),,1,EL,-,Exponential mo,del,,0.92,-,-,,-
+145,1,,,,,,,,,,,,,,,
+145,1,Lazdiņš,e,t al. (2021),,1,PL,-,Third-degree p,olynomial m,odel,0.9717,-,-,,-
+145,1,,,,,,,,,,,,,,,
+145,1,Lazdiņš,e,t al. (2016),,1,EL,-,Power law mod,el,,0.91094,-,-,,-
+145,1,,,,,,,,,,,,,,,
+145,1,,,,,2,EL,-,Power law mod,el,,0.79425,-,-,,-
+146,1,Leszczyński et,al. (2021),1,EL,-,Power law mod,el,,0.91,-,SV,-
+146,1,,,,,,,,,,,,
+146,1,,,2,EL,-,Power law mod,el,,0.82,-,SV,-
+146,1,,,,,,,,,,,,
+146,1,,,3,EL,-,Non-linear mod,el with pow,er law terms,-,-,SV,-
+146,1,,,,,,,,,,,,
+146,1,,,4,EL,-,Power law mod,el,,-,-,SV,-
+146,1,,,,,,,,,,,,
+146,1,,,5,EL,-,Power law mod,el,,-,0.5192,P = 0.008,8.304
+146,1,,,,,,,,,,,,
+146,1,,,6,EL,-,Power law mod,el,,-,0.0291,P = 0.367,0.84
+146,1,,,,,,,,,,,,
+146,1,Liski et al. (20,20),1,PL,1104,Second-degree,polynomial,model,0.846,-,-,-
+146,1,,,,,,,,,,,,
+146,1,,,2,PL,1104,Second-degree,polynomial,model,0.822,-,-,-
+146,1,,,,,,,,,,,,
+146,1,Louis & Kizha,(2021),1,EL,390,Linear model,,,-,0.34,SV,-
+146,1,,,,,,,,,,,,
+146,1,,,2,EL,160,Linear model,,,-,0.18,SV,-
+146,1,,,,,,,,,,,,
+146,1,Magagnotti et a,l. (2021),1,PL,18,Linear model,,,-,0.507,P <0.05,31.1
+146,1,,,,,,,,,,,,
+146,1,,,2,PL,18,Linear model,,,-,0.801,P <0.05,35.2
+146,1,,,,,,,,,,,,
+146,1,,,3,PL,18,Linear model,,,-,0.757,P <0.05,27.4
+146,1,,,,,,,,,,,,
+146,1,,,4,PL,18,Linear model,,,-,0.765,P <0.05,28.6
+146,1,,,,,,,,,,,,
+146,1,Manner et al. (,2023),1,CL,115,Linear model,,,0.89,-,SV,-
+146,1,,,,,,,,,,,,
+146,1,,,2,CL,115,Power law mod,el,,0.86,-,P <0.0001,1366.7
+146,1,,,,,,,,,,,,
+146,1,McEwan et al.,(2016),1,EL,-,Second-degree,polynomial,model,-,0.428,SV,-
+146,1,,,,,,,,,,,,
+146,1,,,2,EL,-,Second-degree,polynomial,model,-,0.715,SV,-
+146,1,,,,,,,,,,,,
+146,1,,,3,EL,-,Second-degree,polynomial,model,-,0.75,SV,-
+146,1,,,,,,,,,,,,
+146,1,Mederski et al.,(2016),1,PL,56,Linear model,,,-,0.7168,SV,-
+146,1,,,,,,,,,,,,
+146,1,,,2,PL,56,Linear model,,,-,0.3934,SV,-
+146,1,,,,,,,,,,,,
+146,1,Norihiro et al.,(2018),1,EL,4388,Linear model,,,0.64,-,P <0.001,-
+146,1,,,,,,,,,,,,
+146,1,,,2,EL,297,Linear model,,,0.45,-,P <0.001,-
+146,1,,,,,,,,,,,,
+146,1,,,3,EL,2255,Linear model,,,0.61,-,P <0.001,-
+146,1,,,,,,,,,,,,
+146,1,,,4,EL,181,Linear model,,,0.79,-,P <0.001,-
+146,1,,,,,,,,,,,,
+146,1,,,5,EL,1478,Linear model,,,0.76,-,P <0.001,-
+146,1,,,,,,,,,,,,
+146,1,,,6,EL,177,Linear model,,,0.75,-,P <0.001,-
+146,1,,,,,,,,,,,,
+146,1,,,7,EL,4388,Linear model,,,0.68,-,P <0.001,-
+146,1,,,,,,,,,,,,
+146,1,,,8,EL,1655,Linear model,,,0.76,-,P <0.001,-
+146,1,,,,,,,,,,,,
+146,1,,,9,EL,2552,Linear model,,,0.6,-,P <0.001,-
+146,1,,,,,,,,,,,,
+146,1,,,10,EL,181,Linear model,,,0.78,-,P <0.001,-
+147,1,,11,EL,1478,Linear mode,l,,,,0.65,-,P <0.001,-
+147,1,,,,,,,,,,,,,
+147,1,,12,EL,177,Linear mode,l,,,,0.76,-,P <0.001,-
+147,1,,,,,,,,,,,,,
+147,1,,13,EL,1156,Linear mode,l,,,,0.56,-,P <0.001,-
+147,1,,,,,,,,,,,,,
+147,1,,14,EL,1099,Linear mode,l,,,,0.64,-,P <0.001,-
+147,1,,,,,,,,,,,,,
+147,1,,15,EL,297,Linear mode,l,,,,0.62,-,P <0.001,-
+147,1,,,,,,,,,,,,,
+147,1,,16,EL,181,Linear mode,l,,,,0.56,-,P <0.001,-
+147,1,,,,,,,,,,,,,
+147,1,,17,EL,4388,Linear mode,l,,,,0.624,-,P <0.001,-
+147,1,,,,,,,,,,,,,
+147,1,Nuutinen & Björheden (2016),1,EL,171,Log-linear m,odel,,,,0.252,-,SV,-
+147,1,,,,,,,,,,,,,
+147,1,Olivera et al. (2016),1,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+147,1,,,,,,,,,,,,,
+147,1,,2,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+147,1,,,,,,,,,,,,,
+147,1,,3,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+147,1,,,,,,,,,,,,,
+147,1,,4,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+147,1,,,,,,,,,,,,,
+147,1,,5,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+147,1,,,,,,,,,,,,,
+147,1,,6,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+147,1,,,,,,,,,,,,,
+147,1,,7,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+147,1,,,,,,,,,,,,,
+147,1,,8,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+147,1,,,,,,,,,,,,,
+147,1,,9,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+147,1,,,,,,,,,,,,,
+147,1,,10,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+147,1,,,,,,,,,,,,,
+147,1,,11,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+147,1,,,,,,,,,,,,,
+147,1,,12,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+147,1,,,,,,,,,,,,,
+147,1,,13,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+147,1,,,,,,,,,,,,,
+147,1,,14,CL,42690,Exponential,model,with,logarithmic,transformation,-,-,P <0.001,-
+147,1,,,,,,,,,,,,,
+147,1,Petitmermet et al. (2019),1,PL,45,Linear mode,l,,,,-,0.9412,SV,-
+147,1,,,,,,,,,,,,,
+147,1,,2,PL,45,Linear mode,l,,,,-,0.9412,SV,-
+147,1,,,,,,,,,,,,,
+147,1,,3,PL,45,Linear mode,l,,,,-,0.9412,SV,-
+147,1,,,,,,,,,,,,,
+147,1,,4,PL,45,Linear mode,l,,,,-,0.9399,SV,-
+147,1,,,,,,,,,,,,,
+147,1,,5,PL,45,Linear mode,l,,,,-,0.9398,SV,-
+147,1,,,,,,,,,,,,,
+147,1,,6,PL,45,Linear mode,l,,,,-,0.9398,SV,-
+147,1,,,,,,,,,,,,,
+147,1,,7,PL,45,Linear mode,l,,,,-,0.9384,SV,-
+147,1,,,,,,,,,,,,,
+147,1,,8,PL,45,Linear mode,l,,,,-,0.9368,SV,-
+147,1,,,,,,,,,,,,,
+147,1,Petty & Kärhä (2014),1,EL,374,Log-linear m,odel,,,,0.17,0.16,P <0.0001,2117.84
+148,1,,2,EL,332,Log-linear mod,el,,0.34,0.33,P <,0.0001,1282.24
+148,1,,,,,,,,,,,,
+148,1,,3,EL,366,Log-linear mod,el,,0.26,0.25,P <,0.0001,1669.85
+148,1,,,,,,,,,,,,
+148,1,,4,EL,262,Log-linear mod,el,,0.31,0.3,P <,0.0001,1458.32
+148,1,,,,,,,,,,,,
+148,1,,5,EL,364,Log-linear mod,el,,0.22,0.21,P <,0.0001,1904.89
+148,1,,,,,,,,,,,,
+148,1,,6,EL,334,Log-linear mod,el,,0.21,0.2,P <,0.0001,1570.91
+148,1,,,,,,,,,,,,
+148,1,,7,EL,22,Log-linear mod,el,,0.72,0.71,P =,0.000,53.48
+148,1,,,,,,,,,,,,
+148,1,,8,EL,6,Second-degree,polynomial,model,0.99,0.99,P =,0.000,14735.693
+148,1,,,,,,,,,,,,
+148,1,,9,EL,6,Second-degree,polynomial,model,0.99,0.99,P =,0.000,12169.468
+148,1,,,,,,,,,,,,
+148,1,,10,EL,7,Second-degree,polynomial,model,0.99,0.99,P =,0.000,7761.318
+148,1,,,,,,,,,,,,
+148,1,,11,EL,7,Second-degree,polynomial,model,0.99,0.99,P =,0.000,6176.361
+148,1,,,,,,,,,,,,
+148,1,,12,EL,7,Second-degree,polynomial,model,0.99,0.99,P =,0.000,6329.739
+148,1,,,,,,,,,,,,
+148,1,,13,EL,7,Second-degree,polynomial,model,0.99,0.99,P =,0.000,5401.736
+148,1,,,,,,,,,,,,
+148,1,Polowy & Molińska-Glura (2023),1,SL,108,Linear model,,,-,0.897,SV,,-
+148,1,,,,,,,,,,,,
+148,1,,2,SL,108,Linear model,,,0.846,-,SV,,-
+148,1,,,,,,,,,,,,
+148,1,,3,SL,108,Linear model,,,0.942,-,SV,,-
+148,1,,,,,,,,,,,,
+148,1,Prinz et al. (2021),1,EL,165,Exponential mo,del,,0.865,-,P <0,.001,1047.137
+148,1,,,,,,,,,,,,
+148,1,,2,EL,126,Exponential mo,del,,0.909,-,P <0,.001,1241.662
+148,1,,,,,,,,,,,,
+148,1,,3,EL,819,Third-degree p,olynomial m,odel,0.879,-,P <0,.001,1980.297
+148,1,,,,,,,,,,,,
+148,1,,4,EL,612,Third-degree p,olynomial m,odel,0.934,-,P <0,.001,2860.012
+148,1,,,,,,,,,,,,
+148,1,Ramantswana et al. (2013),1,CL,724,Second-degree,polynomial,model,0.88,-,P =,0.05,-
+148,1,,,,,,,,,,,,
+148,1,,2,CL,485,Second-degree,polynomial,model,0.87,-,P =,0.05,-
+148,1,,,,,,,,,,,,
+148,1,,3,CL,542,Second-degree,polynomial,model,0.88,-,P =,0.05,-
+148,1,,,,,,,,,,,,
+148,1,,4,CL,724,Second-degree,polynomial,model,0.884848,-,SS,,-
+148,1,,,,,,,,,,,,
+148,1,,5,CL,33,Linear model,,,0.67,-,SV,,-
+148,1,,,,,,,,,,,,
+148,1,,6,CL,70,Second-degree,polynomial,model,0.77,-,SV,,-
+148,1,,,,,,,,,,,,
+148,1,,7,CL,13,Second-degree,polynomial,model,0.92,-,SV,,-
+148,1,,,,,,,,,,,,
+148,1,,8,CL,246,Second-degree,polynomial,model,0.89,-,SV,,-
+148,1,,,,,,,,,,,,
+148,1,,9,CL,485,Second-degree,polynomial,model,0.873293,-,SS,,-
+148,1,,,,,,,,,,,,
+148,1,Rosińska et al. (2022),1,EL,-,Linear model,,,0.321,0.32,P <,0.0001,442.53
+148,1,,,,,,,,,,,,
+148,1,,2,EL,-,Second-degree,polynomial,model,0.16,0.158,P <,0.0001,89.133
+148,1,,,,,,,,,,,,
+148,1,,3,EL,-,Linear model,,,0.359,0.357,P <,0.001,169.66
+149,1,,,4,EL,-,Linear model,,,,,,0.271,-,-,-
+149,1,,,,,,,,,,,,,,,
+149,1,,,5,EL,-,Linear model,,,,,,0.36,-,-,-
+149,1,,,,,,,,,,,,,,,
+149,1,,,6,EL,-,Second-degree,polynomial,model,with,interaction,terms,-,-,-,-
+149,1,,,,,,,,,,,,,,,
+149,1,Santos et al.,(2022),1,PL,80,Second-degree,polynomial,model,,,,-,-,SV,-
+149,1,,,,,,,,,,,,,,,
+149,1,Santos et al.,(2021),1,PL,-,Second-degree,polynomial,model,,,,0.86,-,SV,-
+149,1,,,,,,,,,,,,,,,
+149,1,Santos et al.,(2020),1,EL,-,Second-degree,polynomial,model,with,interaction,terms,0.82,-,SV,-
+149,1,,,,,,,,,,,,,,,
+149,1,,,2,EL,-,Second-degree,polynomial,model,with,interaction,terms,0.69,-,SV,-
+149,1,,,,,,,,,,,,,,,
+149,1,,,3,EL,-,Second-degree,polynomial,model,with,interaction,terms,0.99,-,SV,-
+149,1,,,,,,,,,,,,,,,
+149,1,,,4,EL,-,Second-degree,polynomial,model,,,,0.82,-,SV,-
+149,1,,,,,,,,,,,,,,,
+149,1,,,5,EL,-,Second-degree,polynomial,model,,,,0.85,-,SV,-
+149,1,,,,,,,,,,,,,,,
+149,1,,,6,EL,-,Second-degree,polynomial,model,with,interaction,terms,0.9,-,SV,-
+149,1,,,,,,,,,,,,,,,
+149,1,,,7,EL,-,Second-degree,polynomial,model,with,interaction,terms,0.82,-,SV,-
+149,1,,,,,,,,,,,,,,,
+149,1,,,8,EL,-,Second-degree,polynomial,model,,,,0.89,-,SV,-
+149,1,,,,,,,,,,,,,,,
+149,1,Schweier et,al. (2015),1,EL,-,Linear model,,,,,,0.733,-,P <0.0001,126.511
+149,1,,,,,,,,,,,,,,,
+149,1,,,2,EL,-,Linear model,,,,,,0.795,-,P <0.0001,104.784
+149,1,,,,,,,,,,,,,,,
+149,1,,,3,EL,-,Linear model,,,,,,0.379,-,P <0.0001,63.573
+149,1,,,,,,,,,,,,,,,
+149,1,,,4,EL,-,Linear model,,,,,,0.639,-,P <0.0001,232.129
+149,1,,,,,,,,,,,,,,,
+149,1,,,5,EL,-,Second-degree,polynomial,model,,,,0.415,-,P <0.0001,103.779
+149,1,,,,,,,,,,,,,,,
+149,1,Slugeň et al.,(2014),1,EL,159,Linear model,,,,,,0.4915,-,P = 0.0000,-
+149,1,,,,,,,,,,,,,,,
+149,1,Soman et al.,(2020),1,EL,99,Linear model,,,,,,-,0.18,SV,-
+149,1,,,,,,,,,,,,,,,
+149,1,,,2,EL,104,Linear model,,,,,,-,0.19,SV,-
+149,1,,,,,,,,,,,,,,,
+149,1,,,3,EL,106,Linear model,,,,,,-,0.34,SV,-
+149,1,,,,,,,,,,,,,,,
+149,1,Soman et al.,(2019),1,EL,,Linear model,,,,,,-,0.42,SV,-
+149,1,,,,,,,,,,,,,,,
+149,1,,,2,EL,,Linear model,,,,,,-,0.45,SV,-
+149,1,,,,,,,,,,,,,,,
+149,1,Sperandio et,al. (2021),1,EL,-,Power law mod,el,,,,,0.1014,-,P <0.01,-
+149,1,,,,,,,,,,,,,,,
+149,1,,,2,EL,-,Power law mod,el,,,,,0.3842,-,P <0.01,-
+149,1,,,,,,,,,,,,,,,
+149,1,,,3,EL,-,Power law mod,el,,,,,0.8751,-,P <0.01,-
+149,1,,,,,,,,,,,,,,,
+149,1,,,4,EL,-,Power law mod,el,,,,,0.9377,-,P <0.01,-
+149,1,,,,,,,,,,,,,,,
+149,1,Spinelli et al,. (2014),1,PL,24,Linear model,,,,,,0.959,-,P <0.0001,270.9
+149,1,,,,,,,,,,,,,,,
+149,1,Spinelli & D,e Arruda Moura (2019),1,-,106,Log-linear mod,el,,,,,-,0.858,SV,-
+149,1,,,,,,,,,,,,,,,
+149,1,Spinelli et al,. (2022),1,PL,33,Linear model,,,,,,-,0.944,SV,-
+150,1,Spinelli et a,l.,(2023),,1,PL,16,Linear mode,l,-,0.918,SV,,-
+150,1,,,,,,,,,,,,,,
+150,1,Spinelli et a,l.,(2020a),,1,-,26,Linear mode,l,-,0.649,P <,0.0001,24.12
+150,1,,,,,,,,,,,,,,
+150,1,,,,,2,-,26,Linear mode,l,-,0.315,P =,0.0017,12.503
+150,1,,,,,,,,,,,,,,
+150,1,Spinelli et a,l.,(2020b),,1,PL,13,Linear mode,l,-,0.014,P =,0.3018,1.174
+150,1,,,,,,,,,,,,,,
+150,1,,,,,2,PL,13,Linear mode,l,-,0.602,P =,0.0011,19.167
+150,1,,,,,,,,,,,,,,
+150,1,,,,,3,PL,13,Linear mode,l,-,0.026,P =,0.2751,1.319
+150,1,,,,,,,,,,,,,,
+150,1,Stoilov et a,l. (,2021),,1,EL,31,Linear mode,l,0.93,0.92,P <,0.05,69.54
+150,1,,,,,,,,,,,,,,
+150,1,,,,,2,EL,31,Linear mode,l,0.86,0.83,P <,0.05,31.32
+150,1,,,,,,,,,,,,,,
+150,1,,,,,3,EL,31,Linear mode,l,0.57,0.49,P <,0.05,6.5
+150,1,,,,,,,,,,,,,,
+150,1,,,,,4,EL,31,Linear mode,l,0.37,0.25,P <,0.05,2.98
+150,1,,,,,,,,,,,,,,
+150,1,Strandgard,&,Mitchell,(2018),1,EL,108,Exponential,model,0.73,-,SV,,-
+150,1,,,,,,,,,,,,,,
+150,1,,,,,2,EL,106,Exponential,model,0.3,-,SV,,-
+150,1,,,,,,,,,,,,,,
+150,1,,,,,3,EL,101,Exponential,model,0.5,-,SV,,-
+150,1,,,,,,,,,,,,,,
+150,1,,,,,4,EL,101,Linear mode,l,0.13,-,SV,,-
+150,1,,,,,,,,,,,,,,
+150,1,,,,,5,EL,108,Exponential,model,0.73,-,SV,,-
+150,1,,,,,,,,,,,,,,
+150,1,,,,,6,EL,106,Exponential,model,0.4,-,SV,,-
+150,1,,,,,,,,,,,,,,
+150,1,,,,,7,EL,136,Exponential,model,0.36,-,SV,,-
+150,1,,,,,,,,,,,,,,
+150,1,Strandgard,&,Mitchell,(2019),1,EL,107,Exponential,model,0.59,-,-,,-
+150,1,,,,,,,,,,,,,,
+150,1,,,,,2,EL,107,Power law m,odel,0.53,-,-,,-
+150,1,,,,,,,,,,,,,,
+150,1,,,,,3,EL,104,Exponential,model,0.41,-,-,,-
+150,1,,,,,,,,,,,,,,
+150,1,,,,,4,EL,104,Power law m,odel,0.6,-,-,,-
+150,1,,,,,,,,,,,,,,
+150,1,Strandgard,&,Mitchell,(2020),1,EL,321,Power law m,odel,-,0.88,SV,,-
+150,1,,,,,,,,,,,,,,
+150,1,,,,,2,EL,378,Power law m,odel,-,0.32,SV,,-
+150,1,,,,,,,,,,,,,,
+150,1,,,,,3,EL,378,Power law m,odel,-,0.72,SV,,-
+150,1,,,,,,,,,,,,,,
+150,1,Strandgard,et,al. (2016,),1,-,47,Linear mode,l,0.8,-,SV,,-
+150,1,,,,,,,,,,,,,,
+150,1,,,,,2,-,47,Linear mode,l,0.79,-,SV,,-
+150,1,,,,,,,,,,,,,,
+150,1,Strandgard,et,al. (2015,),1,CL,116,Non-linear m,odel with power law terms,0.75,-,SV,,-
+150,1,,,,,,,,,,,,,,
+150,1,Tajbos & M,es,singerov,a (2014),1,EL,187,Linear mode,l,0.35,-,P =,0.0000,100.48
+150,1,,,,,,,,,,,,,,
+150,1,,,,,2,EL,68,Linear mode,l,0.23,-,P =,0.0001,18.52
+150,1,,,,,,,,,,,,,,
+150,1,,,,,3,EL,96,Linear mode,l,0.52,-,P =,0.0000,101.63
+150,1,,,,,,,,,,,,,,
+150,1,,,,,4,EL,32,Linear mode,l,0.9,-,P =,0.0000,255.77
+151,1,,,5,EL,189,Linear model,,,0.25,-,P =,0.0000,62.38
+151,1,,,,,,,,,,,,,
+151,1,,,6,EL,64,Linear model,,,0.48,-,P =,0.0000,56.14
+151,1,,,,,,,,,,,,,
+151,1,Tolosana e,t al. (2023),1,EL,-,Log-linear mod,el,,0.84,-,SV,,-
+151,1,,,,,,,,,,,,,
+151,1,,,2,EL,-,Log-linear mod,el,,0.27,-,SV,,-
+151,1,,,,,,,,,,,,,
+151,1,,,3,EL,-,Non-linear mod,el with pow,er law terms,0.73,0.52,SV,,-
+151,1,,,,,,,,,,,,,
+151,1,Tolosana e,t al. (2018),1,CL,17,Linear model,,,0.901,0.878,P =,0.0000,39.31
+151,1,,,,,,,,,,,,,
+151,1,,,2,CL,17,Linear model,,,-,-,-,,-
+151,1,,,,,,,,,,,,,
+151,1,Townsend,et al. (2019),1,EL,-,Linear model,,,0.52,-,SV,,-
+151,1,,,,,,,,,,,,,
+151,1,,,2,EL,-,Linear model,,,0.51,-,SV,,-
+151,1,,,,,,,,,,,,,
+151,1,,,3,EL,-,Linear model,,,0.51,-,SV,,-
+151,1,,,,,,,,,,,,,
+151,1,,,4,EL,-,Linear model,,,0.48,-,SV,,-
+151,1,,,,,,,,,,,,,
+151,1,,,5,EL,-,Linear model,,,0.54,-,SV,,-
+151,1,,,,,,,,,,,,,
+151,1,Walsh & S,trandgard (2014),1,EL,48,Log-linear mod,el,,0.33,-,-,,-
+151,1,,,,,,,,,,,,,
+151,1,,,2,EL,55,Log-linear mod,el,,0.61,-,-,,-
+151,1,,,,,,,,,,,,,
+151,1,Walsh et a,l. (2014),1,EL,70,Log-linear mod,el,,0.39,-,-,,-
+151,1,,,,,,,,,,,,,
+151,1,,,2,EL,76,Log-linear mod,el,,0.47,-,-,,-
+151,1,,,,,,,,,,,,,
+151,1,Williams,& Ackerman (2016),1,EL,500,Linear model,,,0.8,-,P <,0.01,-
+151,1,,,,,,,,,,,,,
+151,1,Zimelis et,al. (2020),1,EL,18,Second-degree,polynomial,model,0.88,-,SV,,-
+151,1,,,,,,,,,,,,,
+151,1,,,2,EL,18,Second-degree,polynomial,model,0.91,-,-,,-
+151,1,,,,,,,,,,,,,
+151,1,Zimelis et,al. (2018),1,EL,9985,Linear model,,,0.85,-,P =,2.82×10-21,372
+151,1,,,,,,,,,,,,,
+151,1,,,2,EL,-,Second-degree,polynomial,model,0.73,-,-,,-
+151,1,,,,,,,,,,,,,
+151,1,Zimelis et,al. (2019),1,EL,-,Third-degree p,olynomial m,odel,0.96,-,-,,-
+151,1,,,,,,,,,,,,,
+151,1,,,2,EL,-,Third-degree p,olynomial m,odel,0.72,-,-,,-
+151,1,,,,,,,,,,,,,
+151,1,Zimelis et,al. (2017a),1,EL,-,Log-linear mod,el,,0.5444,-,-,,-
+151,1,,,,,,,,,,,,,
+151,1,,,2,EL,-,Log-linear mod,el,,0.695,-,-,,-
+151,1,,,,,,,,,,,,,
+151,1,,,3,EL,-,Second-degree,polynomial,model,0.6551,-,-,,-
+151,1,,,,,,,,,,,,,
+151,1,,,4,EL,-,Second-degree,polynomial,model,0.9091,-,-,,-
+151,1,,,,,,,,,,,,,
+151,1,Zimelis et,al. (2017b),1,EL,-,Third-degree p,olynomial m,odel,0.98,-,-,,-
+151,1,,,,,,,,,,,,,
+151,1,,,2,EL,-,Third-degree p,olynomial m,odel,0.93,-,-,,-
+151,1,,,,,,,,,,,,,
+151,1,,,3,EL,-,Linear model,,,0.5,-,-,,-
+151,1,,,,,,,,,,,,,
+151,1,Zimelis &,Spalva (2022),1,-,-,Second-degree,polynomial,model,0.9048,-,-,,-

@@ -1,0 +1,61 @@
+,,4,EL,-,Linear model,,,,,,0.271,-,-,-
+,,,,,,,,,,,,,,
+,,5,EL,-,Linear model,,,,,,0.36,-,-,-
+,,,,,,,,,,,,,,
+,,6,EL,-,Second-degree,polynomial,model,with,interaction,terms,-,-,-,-
+,,,,,,,,,,,,,,
+Santos et al.,(2022),1,PL,80,Second-degree,polynomial,model,,,,-,-,SV,-
+,,,,,,,,,,,,,,
+Santos et al.,(2021),1,PL,-,Second-degree,polynomial,model,,,,0.86,-,SV,-
+,,,,,,,,,,,,,,
+Santos et al.,(2020),1,EL,-,Second-degree,polynomial,model,with,interaction,terms,0.82,-,SV,-
+,,,,,,,,,,,,,,
+,,2,EL,-,Second-degree,polynomial,model,with,interaction,terms,0.69,-,SV,-
+,,,,,,,,,,,,,,
+,,3,EL,-,Second-degree,polynomial,model,with,interaction,terms,0.99,-,SV,-
+,,,,,,,,,,,,,,
+,,4,EL,-,Second-degree,polynomial,model,,,,0.82,-,SV,-
+,,,,,,,,,,,,,,
+,,5,EL,-,Second-degree,polynomial,model,,,,0.85,-,SV,-
+,,,,,,,,,,,,,,
+,,6,EL,-,Second-degree,polynomial,model,with,interaction,terms,0.9,-,SV,-
+,,,,,,,,,,,,,,
+,,7,EL,-,Second-degree,polynomial,model,with,interaction,terms,0.82,-,SV,-
+,,,,,,,,,,,,,,
+,,8,EL,-,Second-degree,polynomial,model,,,,0.89,-,SV,-
+,,,,,,,,,,,,,,
+Schweier et,al. (2015),1,EL,-,Linear model,,,,,,0.733,-,P <0.0001,126.511
+,,,,,,,,,,,,,,
+,,2,EL,-,Linear model,,,,,,0.795,-,P <0.0001,104.784
+,,,,,,,,,,,,,,
+,,3,EL,-,Linear model,,,,,,0.379,-,P <0.0001,63.573
+,,,,,,,,,,,,,,
+,,4,EL,-,Linear model,,,,,,0.639,-,P <0.0001,232.129
+,,,,,,,,,,,,,,
+,,5,EL,-,Second-degree,polynomial,model,,,,0.415,-,P <0.0001,103.779
+,,,,,,,,,,,,,,
+Slugeň et al.,(2014),1,EL,159,Linear model,,,,,,0.4915,-,P = 0.0000,-
+,,,,,,,,,,,,,,
+Soman et al.,(2020),1,EL,99,Linear model,,,,,,-,0.18,SV,-
+,,,,,,,,,,,,,,
+,,2,EL,104,Linear model,,,,,,-,0.19,SV,-
+,,,,,,,,,,,,,,
+,,3,EL,106,Linear model,,,,,,-,0.34,SV,-
+,,,,,,,,,,,,,,
+Soman et al.,(2019),1,EL,,Linear model,,,,,,-,0.42,SV,-
+,,,,,,,,,,,,,,
+,,2,EL,,Linear model,,,,,,-,0.45,SV,-
+,,,,,,,,,,,,,,
+Sperandio et,al. (2021),1,EL,-,Power law mod,el,,,,,0.1014,-,P <0.01,-
+,,,,,,,,,,,,,,
+,,2,EL,-,Power law mod,el,,,,,0.3842,-,P <0.01,-
+,,,,,,,,,,,,,,
+,,3,EL,-,Power law mod,el,,,,,0.8751,-,P <0.01,-
+,,,,,,,,,,,,,,
+,,4,EL,-,Power law mod,el,,,,,0.9377,-,P <0.01,-
+,,,,,,,,,,,,,,
+Spinelli et al,. (2014),1,PL,24,Linear model,,,,,,0.959,-,P <0.0001,270.9
+,,,,,,,,,,,,,,
+Spinelli & D,e Arruda Moura (2019),1,-,106,Log-linear mod,el,,,,,-,0.858,SV,-
+,,,,,,,,,,,,,,
+Spinelli et al,. (2022),1,PL,33,Linear model,,,,,,-,0.944,SV,-

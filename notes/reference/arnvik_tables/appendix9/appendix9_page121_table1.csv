@@ -1,0 +1,59 @@
+*O₇,Model 1:,f: D,ouglas fir,"1/0,",g: Redwood,"1/0,",h:,Western,hemlock 1/0,Tree speci
+,,,,,,,,,,
+,Model 2:,f: R,edwood 1/,"0, g:",Western he,mloc,k 1,/0,,
+,,,,,,,,,,
+,Model 3:,f: R,edwood 1/,"0, g:",Douglas fir,"1/0,",h:,Western,Hemlock 1/0,
+,,,,,,,,,,
+,Model 4:,f: R,edwood 1/,"0, g:",Western he,mloc,k 1,"/0, h: Ta",noak 1/0,
+,,,,,,,,,,
+,Model 5:,f: T,"anoak 1/0,",g: R,"edwood 1/0,",h: W,e,stern hem,lock 1/0,
+,,,,,,,,,,
+,Model 6:,g: D,ouglas fir,"1/0,",h: Redwood,"1/0,",i:,Western,hemlock 1/0 - Kizha & Han,
+,,,,,,,,,,
+,(2016),,,,,,,,,
+,,,,,,,,,,
+,1: Spruce,", 0:",Pine - Man,ner,et al. (2023),,,,,
+,,,,,,,,,,
+,1: Quercu,s ile,"x, 0: Quer",cus,pyrenaica -,Tolos,an,a et al. (,2018),
+,,,,,,,,,,
+,Model 1:,Pine,is baselin,"e, h:","Spruce 1/0,",i: Bi,rc,"h 1/0, j:","Other broadleaved 1/0, k: Mixed",
+,,,,,,,,,,
+,removal 1,/0,,,,,,,,
+,,,,,,,,,,
+,Model 2:,Pine,is baselin,"e, c:","Spruce 1/0,",d: B,irc,"h 1/0, e:","Other broadleaved 1/0, f: Mixed",
+,,,,,,,,,,
+,removal 1,/0 -,Liski et al,. (20,20),,,,,
+,,,,,,,,,,
+*O₈,c: Hardw,ood,"1/0, d: Sof",twoo,d 1/0 - Geor,ge e,t a,l. (2022),,Wood type
+,,,,,,,,,,
+,1: Softwo,"od,",0: Hardwo,od -,Hiesl & Ben,jami,n,(2015),,
+,,,,,,,,,,
+,1: Hardw,"ood,",0: Softwo,od -,Soman et al.,(20,20,),,
+,,,,,,,,,,
+,Mixwood,1/0,- Spinelli,et al.,(2020a),,,,,
+,,,,,,,,,,
+O₉,1%,,,,,,,,,Difficult tr
+,,,,,,,,,,
+*O₁₀,1/0,,,,,,,,,Poor tree f
+,,,,,,,,,,
+O₁₁,number,,,,,,,,,Number of
+,,,,,,,,,,
+*O₁₂,1/0,,,,,,,,,Forking
+,,,,,,,,,,
+*O₁₃,1/0,,,,,,,,,Wind dam
+,,,,,,,,,,
+O₁₄,%,,,,,,,,,Hardwood
+,,,,,,,,,,
+*O₁₅,1: High fo,rest,", 0: Coppi",ce -,Chakroun et,al. (,20,16),,Stand type
+,,,,,,,,,,
+,1: Planted,", 2:",Coppice -,Nori,hiro et al. (2,018),,,,
+,,,,,,,,,,
+*O₁₆,41-60 is b,asel,"ine, c: 61-",80 1,"/0, d: 81-100",1/0,,,,Age class
+,,,,,,,,,,
+*O₁₇,1: Double,ste,"m, 0: Singl",e ste,m,,,,,Stem type
+,,,,,,,,,,
+Operator featu,res,,,,,,,,,
+,,,,,,,,,,
+P₁,years,,,,,,,,,Operator e
+,,,,,,,,,,
+*P₂,1: Operat,or B,(less expe,rien,"ced), 0: Oper",ator,A,,,Operator
