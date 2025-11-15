@@ -25,6 +25,7 @@ from fhops.scenario.contract.models import (
 from fhops.scenario.io.mobilisation import populate_mobilisation_distances
 from fhops.scheduling.mobilisation import MobilisationConfig
 from fhops.scheduling.timeline.models import TimelineConfig
+from fhops.validation.ranges import validate_block_ranges
 
 __all__ = ["load_scenario", "read_csv"]
 
@@ -83,9 +84,8 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
             raise FileNotFoundError(candidate)
         return candidate
 
-    blocks = TypeAdapter(list[Block]).validate_python(
-        read_csv(require("blocks")).to_dict("records")
-    )
+    blocks_raw = read_csv(require("blocks")).to_dict("records")
+    blocks = TypeAdapter(list[Block]).validate_python(blocks_raw)
     machines = TypeAdapter(list[Machine]).validate_python(
         read_csv(require("machines")).to_dict("records")
     )
@@ -177,4 +177,23 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
         weights = TypeAdapter(ObjectiveWeights).validate_python(meta["objective_weights"])
         scenario = scenario.model_copy(update={"objective_weights": weights})
 
+    _emit_block_range_warnings(blocks_raw, scenario.name)
     return scenario
+
+
+def _emit_block_range_warnings(block_rows: list[dict[str, object]], scenario_name: str) -> None:
+    for row in block_rows:
+        block_id = str(row.get("id"))
+        stem_size = row.get("avg_stem_size") or row.get("stem_size") or row.get("mean_stem_size")
+        volume = row.get("volume_per_ha") or row.get("avg_volume_per_ha")
+        density = row.get("stem_density")
+        slope = row.get("ground_slope") or row.get("slope_percent") or row.get("slope")
+        warnings = validate_block_ranges(
+            block_id=block_id,
+            stem_size=float(stem_size) if stem_size is not None else None,
+            volume_per_ha=float(volume) if volume is not None else None,
+            stem_density=float(density) if density is not None else None,
+            ground_slope=float(slope) if slope is not None else None,
+        )
+        for msg in warnings:
+            print(f"[scenario:{scenario_name}] {msg}")
