@@ -19,6 +19,9 @@
 - Switched project versioning to Hatch’s dynamic mode (`pyproject.toml` derives from
   `src/fhops/__init__.__version__`), documented the bump workflow in `CODING_AGENT.md`, and
   refreshed README/docs with pip/Hatch install instructions plus a draft of the RC release notes.
+- Ran the release candidate tuning sweep (`scripts/run_tuning_benchmarks.py --plan baseline-smoke`)
+  and captured tuned vs. baseline improvements (`notes/release_tuning_results.md`). Best operator
+  configurations per scenario/algorithm now live in `notes/release_tuned_presets.json` for reuse.
 
 ## 2025-11-13 — Docs landing fix
 - Repaired `docs/index.rst` so the dashboards reference appears inside the “Getting Started” toctree, restoring a valid Sphinx build and keeping the telemetry links visible on GitHub Pages.

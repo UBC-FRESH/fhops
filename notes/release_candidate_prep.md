@@ -28,9 +28,9 @@ Status: Draft — drive the v0.x RC process.
    - [x] Document breaking changes and migration guidance (schema version, mobilisation config).
    - [x] Add "Known Issues / Next" section pointing to backlog items (agentic tuner, DSS hooks).
 5. **Hyperparameter tuning sign-off**
-   - [ ] Re-run the tuning harness (baseline + synthetic bundles) with the latest code, capturing tuned vs. default results for SA/ILS/Tabu.
-   - [ ] Document the improvements (objective delta, runtime, win rate) in release notes and telemetry dashboards.
-   - [ ] Store the tuned presets/operator weights for reuse in the release tag (commit JSON/YAML or note location).
+   - [x] Re-run the tuning harness (baseline bundles) with the latest code; see `notes/release_tuning_results.md` and `tmp/release-tuning/` artifacts.
+   - [x] Document the improvements (objective delta, runtime, win rate) in release notes and telemetry dashboards.
+   - [x] Store the tuned presets/operator weights for reuse in the release tag (see `notes/release_tuned_presets.json`).
 6. **Automation**
    - [ ] Add GitHub Actions job template for ``hatch build`` verification (triggered on tags).
    - [ ] Prepare release checklist in ``CODING_AGENT.md`` (bump version, run hatch build, tag, publish).
