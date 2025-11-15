@@ -32,7 +32,7 @@ Status: Draft — drive the v0.x RC process.
    - [x] Document the improvements (objective delta, runtime, win rate) in release notes and telemetry dashboards.
    - [x] Store the tuned presets/operator weights for reuse in the release tag (see `notes/release_tuned_presets.json`).
 6. **Automation**
-   - [ ] Add GitHub Actions job template for ``hatch build`` verification (triggered on tags).
+   - [x] Add GitHub Actions job template for ``hatch build`` verification (triggered on tags) — see `.github/workflows/release-build.yml`.
    - [ ] Prepare release checklist in ``CODING_AGENT.md`` (bump version, run hatch build, tag, publish).
 
 ## References

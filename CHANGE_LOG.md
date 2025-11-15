@@ -22,6 +22,9 @@
 - Ran the release candidate tuning sweep (`scripts/run_tuning_benchmarks.py --plan baseline-smoke`)
   and captured tuned vs. baseline improvements (`notes/release_tuning_results.md`). Best operator
   configurations per scenario/algorithm now live in `notes/release_tuned_presets.json` for reuse.
+- Added `.github/workflows/release-build.yml`, which runs `hatch run release:build` on tag pushes
+  and uploads the `dist/` artifacts; release instructions in `CODING_AGENT.md` now reference the
+  automation.
 
 ## 2025-11-13 — Docs landing fix
 - Repaired `docs/index.rst` so the dashboards reference appears inside the “Getting Started” toctree, restoring a valid Sphinx build and keeping the telemetry links visible on GitHub Pages.
