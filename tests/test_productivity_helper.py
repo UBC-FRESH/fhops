@@ -43,3 +43,14 @@ def test_load_lahrsen_ranges_contains_expected_keys():
     daily = ranges["daily"]
     assert daily["avg_stem_size_m3"]["min"] == pytest.approx(0.09)
     assert ranges["cutblock"]["productivity_m3_per_pmh15"]["max"] == pytest.approx(133.1)
+
+
+def test_allow_out_of_range_collects_warnings():
+    result = estimate_productivity(
+        avg_stem_size=2.0,
+        volume_per_ha=300.0,
+        stem_density=900.0,
+        ground_slope=15.0,
+        validate_ranges=False,
+    )
+    assert result.out_of_range

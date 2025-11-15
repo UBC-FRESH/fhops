@@ -11,7 +11,11 @@ from rich.console import Console
 from rich.table import Table
 
 from fhops.core import FHOPSValueError
-from fhops.productivity import LahrsenModel, estimate_productivity
+from fhops.productivity import (
+    LahrsenModel,
+    estimate_productivity,
+    load_lahrsen_ranges,
+)
 from fhops.scenario.contract import Scenario
 from fhops.scenario.io import load_scenario
 from fhops.scheduling.systems import HarvestSystem, default_system_registry
@@ -377,9 +381,67 @@ def estimate_productivity_cmd(
         "Lahrsen (2025) Feller-Buncher Productivity Estimate",
         rows,
     )
+    if result.out_of_range:
+        console.print("[red]Warning: inputs outside observed BC ranges:[/red]")
+        for msg in result.out_of_range:
+            console.print(f"  - {msg}")
+    range_table = Table(title="Observed Ranges (Lahrsen 2025)")
+    range_table.add_column("Variable", style="bold")
+    range_table.add_column("Min")
+    range_table.add_column("Max")
+    for label, key in [
+        ("Avg stem size (m³)", "avg_stem_size"),
+        ("Volume per ha (m³)", "volume_per_ha"),
+        ("Stem density (/ha)", "stem_density"),
+        ("Ground slope (%)", "ground_slope"),
+    ]:
+        bounds = result.ranges[key]
+        min_val = bounds.get("min")
+        max_val = bounds.get("max")
+        range_table.add_row(
+            label,
+            f"{min_val:.3f}" if min_val is not None else "—",
+            f"{max_val:.3f}" if max_val is not None else "—",
+        )
+    console.print(range_table)
     console.print(
         "[dim]Coefficients sourced from Lahrsen, 2025 (UBC PhD) — whole-tree feller-buncher dataset.[/dim]"
     )
+
+
+@dataset_app.command("productivity-ranges")
+def show_productivity_ranges():
+    """Display Lahrsen (2025) observed parameter ranges."""
+
+    data = load_lahrsen_ranges()
+    for section in ("daily", "cutblock"):
+        table = Table(title=f"Lahrsen 2025 {section.title()} Ranges")
+        table.add_column("Variable", style="bold")
+        table.add_column("Min")
+        table.add_column("Max")
+        table.add_column("Mean")
+        table.add_column("Median")
+        entries = [
+            ("productivity_m3_per_pmh15", "Productivity (m³/PMH15)"),
+            ("avg_stem_size_m3", "Avg stem size (m³)"),
+            ("volume_per_ha_m3", "Volume per ha (m³)"),
+            ("stem_density_per_ha", "Stem density (/ha)"),
+            ("ground_slope_percent", "Ground slope (%)"),
+            ("block_size_ha", "Block size (ha)"),
+        ]
+        for key, label in entries:
+            if key not in data[section]:
+                continue
+            entry = data[section][key]
+            table.add_row(
+                label,
+                f"{entry.get('min', float('nan')):.3f}" if "min" in entry else "—",
+                f"{entry.get('max', float('nan')):.3f}" if "max" in entry else "—",
+                f"{entry.get('mean', float('nan')):.3f}" if "mean" in entry else "—",
+                f"{entry.get('median', float('nan')):.3f}" if "median" in entry else "—",
+            )
+        console.print(table)
+    console.print("[dim]Data from Lahrsen (2025) – see thesis for study context.[/dim]")
 
 
 __all__ = ["dataset_app"]

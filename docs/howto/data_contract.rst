@@ -26,8 +26,9 @@ Each scenario references a set of CSV files. Required columns and notes:
       - Optional: ``role``, ``crew``; numeric fields must be non-negative. ``daily_hours`` defaults
         to ``24`` — we assume machines are available around the clock unless explicitly constrained
         by the calendar or shift-level availability. ``operating_cost`` is the machine rental rate in
-        $/SMH (scheduled machine hour) so it maps cleanly onto shifts/days; derive $/m³ post‑hoc
-        from playback outputs if needed.
+        $/SMH (scheduled machine hour), i.e., SMH = scheduled hours and PMH = productive hours;
+        Lahrsen (2025) productivity coefficients are calibrated in m³/PMH15 (PMH with short delays
+        ≤15 min included). Convert to $/m³ post‑hoc using playback outputs or the costing helper.
       - The `fhops dataset inspect-machine` CLI warns when a machine advertises non-24 h
         availability so you can catch accidental edits before shipping datasets.
    * - ``landings.csv``

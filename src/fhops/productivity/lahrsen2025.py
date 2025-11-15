@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Mapping
 
 from fhops.core.errors import FHOPSValueError
+from fhops.productivity.ranges import load_lahrsen_ranges
 
 
 class LahrsenModel(str, Enum):
@@ -27,6 +28,8 @@ class ProductivityEstimate:
     stem_density: float
     ground_slope: float
     predicted_m3_per_pmh: float
+    ranges: Mapping[str, Mapping[str, float]] = field(default_factory=dict)
+    out_of_range: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -60,22 +63,46 @@ _COEFFICIENTS: Mapping[LahrsenModel, _Coefficients] = {
     ),
 }
 
-# Observed ranges from Lahrsen (2025) daily machine-level dataset (min/max).
-_STEM_SIZE_RANGE = (0.09, 1.32)
-_VOLUME_HA_RANGE = (75.0, 856.2)
-_DENSITY_RANGE = (205.0, 3044.0)
-_SLOPE_RANGE = (1.5, 48.9)
+_RANGE_DATA = load_lahrsen_ranges()
+_MODEL_TO_SECTION = {
+    LahrsenModel.DAILY: "daily",
+    LahrsenModel.CUTBLOCK: "cutblock",
+    LahrsenModel.CUTBLOCK_HETEROSCEDASTIC: "cutblock",
+}
+_FIELD_KEYS = {
+    "avg_stem_size": "avg_stem_size_m3",
+    "volume_per_ha": "volume_per_ha_m3",
+    "stem_density": "stem_density_per_ha",
+    "ground_slope": "ground_slope_percent",
+}
 
 
-def _validate(value: float, name: str, bounds: tuple[float, float]) -> None:
-    lo, hi = bounds
+def _range_bounds(model: LahrsenModel, key: str) -> Mapping[str, float]:
+    section = _MODEL_TO_SECTION[model]
+    field_key = _FIELD_KEYS[key]
+    return _RANGE_DATA[section][field_key]
+
+
+def _check_range(
+    *,
+    value: float,
+    name: str,
+    bounds: Mapping[str, float],
+    strict: bool,
+    violations: list[str],
+) -> None:
+    lo = bounds.get("min")
+    hi = bounds.get("max")
     if value <= 0:
         raise FHOPSValueError(f"{name} must be positive (got {value}).")
-    if not (lo <= value <= hi):
-        # Outside observed range, warn by raising to caller? Instead raise informative error.
-        raise FHOPSValueError(
-            f"{name}={value} outside Lahrsen (2025) observed range [{lo}, {hi}]."
-        )
+    if lo is None or hi is None:
+        return
+    if lo <= value <= hi:
+        return
+    msg = f"{name}={value} outside Lahrsen (2025) observed range [{lo}, {hi}]"
+    if strict:
+        raise FHOPSValueError(msg)
+    violations.append(msg)
 
 
 def estimate_productivity(
@@ -107,10 +134,44 @@ def estimate_productivity(
     """
 
     if validate_ranges:
-        _validate(avg_stem_size, "avg_stem_size", _STEM_SIZE_RANGE)
-        _validate(volume_per_ha, "volume_per_ha", _VOLUME_HA_RANGE)
-        _validate(stem_density, "stem_density", _DENSITY_RANGE)
-        _validate(ground_slope, "ground_slope", _SLOPE_RANGE)
+        strict = True
+    else:
+        strict = False
+    bounds_cache = {
+        "avg_stem_size": _range_bounds(model, "avg_stem_size"),
+        "volume_per_ha": _range_bounds(model, "volume_per_ha"),
+        "stem_density": _range_bounds(model, "stem_density"),
+        "ground_slope": _range_bounds(model, "ground_slope"),
+    }
+    violations: list[str] = []
+    _check_range(
+        value=avg_stem_size,
+        name="avg_stem_size",
+        bounds=bounds_cache["avg_stem_size"],
+        strict=strict,
+        violations=violations,
+    )
+    _check_range(
+        value=volume_per_ha,
+        name="volume_per_ha",
+        bounds=bounds_cache["volume_per_ha"],
+        strict=strict,
+        violations=violations,
+    )
+    _check_range(
+        value=stem_density,
+        name="stem_density",
+        bounds=bounds_cache["stem_density"],
+        strict=strict,
+        violations=violations,
+    )
+    _check_range(
+        value=ground_slope,
+        name="ground_slope",
+        bounds=bounds_cache["ground_slope"],
+        strict=strict,
+        violations=violations,
+    )
 
     coeffs = _COEFFICIENTS[model]
     predicted = (
@@ -128,4 +189,6 @@ def estimate_productivity(
         stem_density=stem_density,
         ground_slope=ground_slope,
         predicted_m3_per_pmh=predicted,
+        ranges=bounds_cache,
+        out_of_range=tuple(violations),
     )
