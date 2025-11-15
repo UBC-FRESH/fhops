@@ -11,6 +11,11 @@ from rich.console import Console
 from rich.table import Table
 
 from fhops.core import FHOPSValueError
+from fhops.costing import (
+    MachineCostEstimate,
+    estimate_unit_cost_from_distribution,
+    estimate_unit_cost_from_stand,
+)
 from fhops.productivity import (
     LahrsenModel,
     ProductivityDistributionEstimate,
@@ -511,3 +516,92 @@ def show_productivity_ranges():
 
 
 __all__ = ["dataset_app"]
+@dataset_app.command("estimate-cost")
+def estimate_cost_cmd(
+    rental_rate: float = typer.Option(..., help="Rental rate ($/SMH)", min=0.0),
+    utilisation: float = typer.Option(0.9, help="Utilisation coefficient (0-1)", min=0.0, max=1.0),
+    productivity: float | None = typer.Option(None, help="Direct productivity (m³/PMH15)."),
+    use_rv: bool = typer.Option(False, help="Treat stand inputs as random variates with stddevs."),
+    avg_stem_size: float | None = typer.Option(None, help="Avg stem size (m³)"),
+    avg_stem_size_sigma: float = typer.Option(0.05, help="Std dev stem size (m³)", min=0.0),
+    volume_per_ha: float | None = typer.Option(None, help="Volume per ha (m³)"),
+    volume_per_ha_sigma: float = typer.Option(25.0, help="Std dev volume/ha", min=0.0),
+    stem_density: float | None = typer.Option(None, help="Stem density (/ha)"),
+    stem_density_sigma: float = typer.Option(50.0, help="Std dev stem density", min=0.0),
+    ground_slope: float | None = typer.Option(None, help="Ground slope (%)"),
+    ground_slope_sigma: float = typer.Option(2.0, help="Std dev slope", min=0.0),
+    model: LahrsenModel = typer.Option(LahrsenModel.DAILY, case_sensitive=False),
+    samples: int = typer.Option(5000, help="Monte Carlo samples (RV mode)", min=1),
+):
+    """Estimate $/m³ given rental rate, utilisation, and (optionally) Lahrsen stand inputs."""
+
+    if productivity is None:
+        required = [avg_stem_size, volume_per_ha, stem_density, ground_slope]
+        if any(value is None for value in required):
+            raise typer.BadParameter(
+                "Provide either --productivity or all stand metrics (avg stem size, volume/ha, stem density, slope)."
+            )
+        if use_rv:
+            cost, prod = estimate_unit_cost_from_distribution(
+                rental_rate_smh=rental_rate,
+                utilisation=utilisation,
+                avg_stem_size_mu=avg_stem_size,
+                avg_stem_size_sigma=avg_stem_size_sigma,
+                volume_per_ha_mu=volume_per_ha,
+                volume_per_ha_sigma=volume_per_ha_sigma,
+                stem_density_mu=stem_density,
+                stem_density_sigma=stem_density_sigma,
+                ground_slope_mu=ground_slope,
+                ground_slope_sigma=ground_slope_sigma,
+                model=model,
+                samples=samples,
+            )
+            productivity = prod.expected_m3_per_pmh
+            prod_info = {
+                "method": prod.method,
+                "productivity_mean": prod.expected_m3_per_pmh,
+                "productivity_std": prod.std_m3_per_pmh,
+                "samples": prod.sample_count,
+            }
+        else:
+            cost, prod = estimate_unit_cost_from_stand(
+                rental_rate_smh=rental_rate,
+                utilisation=utilisation,
+                avg_stem_size=avg_stem_size,
+                volume_per_ha=volume_per_ha,
+                stem_density=stem_density,
+                ground_slope=ground_slope,
+                model=model,
+            )
+            prod_info = {
+                "method": "deterministic",
+                "productivity_mean": prod.predicted_m3_per_pmh,
+                "productivity_std": None,
+                "samples": 0,
+            }
+    else:
+        cost = MachineCostEstimate(
+            rental_rate_smh=rental_rate,
+            utilisation=utilisation,
+            productivity_m3_per_pmh=productivity,
+            cost_per_m3=rental_rate / (utilisation * productivity),
+            method="direct",
+        )
+        prod_info = {
+            "method": "direct",
+            "productivity_mean": productivity,
+            "productivity_std": None,
+            "samples": 0,
+        }
+
+    rows = [
+        ("Rental Rate ($/SMH)", f"{cost.rental_rate_smh:.2f}"),
+        ("Utilisation", f"{cost.utilisation:.3f}"),
+        ("Productivity (m³/PMH15)", f"{cost.productivity_m3_per_pmh:.2f}"),
+        ("Cost ($/m³)", f"{cost.cost_per_m3:.2f}"),
+        ("Productivity Method", prod_info["method"]),
+    ]
+    if prod_info["productivity_std"] is not None:
+        rows.append(("Productivity Std", f"{prod_info['productivity_std']:.2f}"))
+    rows.append(("Samples", str(prod_info["samples"])) )
+    _render_kv_table("Machine Cost Estimate", rows)
