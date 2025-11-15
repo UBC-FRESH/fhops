@@ -33,6 +33,7 @@
 - Release docs now describe the Hatch-only publish flow (no manual Twine invocation).
 - CONTRIBUTING.md now references Hatch workflows (`hatch run dev:suite`, `hatch publish`) so
   contributors follow the same release process outlined in CODING_AGENT.md.
+- Bumped package version to `0.1.0` in `src/fhops/__init__.py` ahead of the PyPI publish/tag.
 - Added quick-demo commands (tuning harness runs) to README/docs overview and highlighted tuned
   presets in the release notes draft.
 
