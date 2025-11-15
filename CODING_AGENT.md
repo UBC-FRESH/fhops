@@ -43,6 +43,12 @@ instead of suppressing them; escalate only if consensus is reached with maintain
 - GitHub Actions workflow `.github/workflows/release-build.yml` mirrors this process on tags by
   running `hatch run release:build` and uploading `dist/` artifacts; verify the job succeeds before
   publishing to TestPyPI/PyPI.
+- TestPyPI/PyPI publishing cadence:
+  1. `rm -rf dist` && `hatch run release:build`
+  2. `python -m twine upload --repository testpypi dist/*` (requires `TESTPYPI_TOKEN` secret)
+  3. Create fresh venv, `pip install -i https://test.pypi.org/simple/ fhops`, run smoke commands
+  4. Repeat `twine upload dist/*` against PyPI once verification passes (uses `PYPI_TOKEN`)
+  5. Tag release (`git tag -s vX.Y.Z && git push --tags`)
 
 ## Collaboration guidelines
 - Flag blockers or scope shifts by opening a dedicated section in the pertinent note and linking
