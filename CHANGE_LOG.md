@@ -31,6 +31,8 @@
 - Completed TestPyPI dry run: uploaded `fhops 0.0.2` via Hatch (`HATCH_INDEX=testpypi hatch publish`) and
   verified install in a fresh venv using `pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple fhops`.
 - Release docs now describe the Hatch-only publish flow (no manual Twine invocation).
+- CONTRIBUTING.md now references Hatch workflows (`hatch run dev:suite`, `hatch publish`) so
+  contributors follow the same release process outlined in CODING_AGENT.md.
 - Added quick-demo commands (tuning harness runs) to README/docs overview and highlighted tuned
   presets in the release notes draft.
 
