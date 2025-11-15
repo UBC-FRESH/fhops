@@ -40,6 +40,9 @@ instead of suppressing them; escalate only if consensus is reached with maintain
   clean venv, tag (`git tag -s vX.Y.Z`), push tag, then publish (TestPyPI first, PyPI second if
   applicable). Version source lives at `src/fhops/__init__.__version__` (pyproject uses Hatch's
   dynamic version hook). Document the exact commands in the changelog.
+- GitHub Actions workflow `.github/workflows/release-build.yml` mirrors this process on tags by
+  running `hatch run release:build` and uploading `dist/` artifacts; verify the job succeeds before
+  publishing to TestPyPI/PyPI.
 
 ## Collaboration guidelines
 - Flag blockers or scope shifts by opening a dedicated section in the pertinent note and linking
