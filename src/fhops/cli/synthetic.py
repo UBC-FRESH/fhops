@@ -107,6 +107,8 @@ def _merge_config(
                 data[key] = (int(value[0]), int(value[1]))
             else:
                 raise typer.BadParameter(f"{key} expects a two-value range.")
+        elif key == "machine_daily_hours":
+            data[key] = float(value)
         else:
             data[key] = value
     return SyntheticDatasetConfig(**data)
@@ -118,6 +120,7 @@ def _resolve_cli_overrides(
     landings: str | None,
     days: str | None,
     shifts_per_day: int | None,
+    machine_daily_hours: float | None,
 ) -> dict[str, Any]:
     overrides: dict[str, Any] = {}
     if blocks:
@@ -130,6 +133,8 @@ def _resolve_cli_overrides(
         overrides["num_days"] = days
     if shifts_per_day is not None:
         overrides["shifts_per_day"] = shifts_per_day
+    if machine_daily_hours is not None:
+        overrides["machine_daily_hours"] = machine_daily_hours
     return overrides
 
 
@@ -362,8 +367,16 @@ def generate_synthetic_dataset(
         min=1,
         help="Override shifts per day.",
     ),
+    machine_daily_hours: float | None = typer.Option(
+        None,
+        "--machine-daily-hours",
+        min=0.0,
+        help="Override daily hours assigned to each generated machine.",
+    ),
 ):
-    cli_overrides = _resolve_cli_overrides(blocks, machines, landings, days, shifts_per_day)
+    cli_overrides = _resolve_cli_overrides(
+        blocks, machines, landings, days, shifts_per_day, machine_daily_hours
+    )
     _generate_dataset(
         output_dir=output_dir,
         tier=tier,
@@ -410,12 +423,13 @@ def generate_batch(
             raise typer.BadParameter("Batch entry 'flags' must be a mapping when provided.")
 
         cli_overrides = _resolve_cli_overrides(
-            cli_flags.get("blocks"),
-            cli_flags.get("machines"),
-            cli_flags.get("landings"),
-            cli_flags.get("days"),
-            cli_flags.get("shifts_per_day"),
-        )
+        cli_flags.get("blocks"),
+        cli_flags.get("machines"),
+        cli_flags.get("landings"),
+        cli_flags.get("days"),
+        cli_flags.get("shifts_per_day"),
+        cli_flags.get("machine_daily_hours"),
+    )
 
         entry_preview = entry.get("preview", preview)
         entry_overwrite = entry.get("overwrite", overwrite)

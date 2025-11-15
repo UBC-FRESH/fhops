@@ -119,6 +119,13 @@ Use the bundles anywhere a normal scenario is accepted. Typical entry points:
   command accepts YAML/TOML configs via ``--config`` when you need full control over the
   ``SyntheticDatasetConfig`` fields.
 
+  Common flags you can mix in:
+
+  - ``--machines 6:8`` / ``--landings 2`` / ``--days 10:14`` to resample sizes.
+  - ``--shifts-per-day 2`` to simulate multi-shift calendars.
+  - ``--machine-daily-hours 20`` when you want the generated ``machines.csv`` to reflect partial-day
+    availability (default is 24, matching the data-contract baseline).
+
   .. note::
      When you write directly to ``examples/synthetic/<tier>`` the CLI automatically refreshes the aggregate
      ``examples/synthetic/metadata.yaml`` so documentation and automation stay in sync.

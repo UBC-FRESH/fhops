@@ -69,7 +69,7 @@ class Block(BaseModel):
 class Machine(BaseModel):
     id: str
     crew: str | None = None
-    daily_hours: float = 10.0
+    daily_hours: float = 24.0
     operating_cost: float = 0.0
     role: str | None = None
 

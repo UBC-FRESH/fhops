@@ -1,5 +1,10 @@
 # Development Change Log
 
+## 2025-11-15 — Dataset inspector & 24 h baseline
+- Added a new `fhops dataset` CLI app with `inspect-machine` / `inspect-block` commands, interactive selectors, Rich table output, and warnings whenever a machine advertises non‑24 h availability so dataset regressions surface immediately.
+- Enforced the 24 h/day contract across the stack: `Machine.daily_hours` now defaults to 24, all bundled `machines.csv` files were refreshed, and the synthetic generator exposes a `machine_daily_hours` override (also wired through the CLI/batch helpers).
+- Updated docs/release notes to explain the round-the-clock assumption, the new inspector warning, and the synthetic CLI override so users know how to customise availability when required.
+
 ## 2025-11-14 — Tooling polish & CI compliance
 - Added per-file Ruff ignores for the analytics notebooks so their sys.path bootstrapping cells stop tripping `E402`, and let `pre-commit` keep them formatted without destructive rewrites (`pyproject.toml`).
 - Tightened the global typing story: telemetry/benchmark helpers now use modern unions, convergence reporting avoids `type: ignore`, and parquet exporters no longer rely on unused type ignores.

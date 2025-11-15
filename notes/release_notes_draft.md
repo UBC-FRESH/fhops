@@ -6,6 +6,7 @@
 - Phase 3 evaluation stack: deterministic/stochastic playback, KPI expansion, synthetic dataset generator, analytics notebooks + telemetry dashboards.
 - Telemetry + tuning harness: persistent JSONL/SQLite store, CLI tuners (random/grid/bayes), comparison/difficulty dashboards, GitHub Pages publishing.
 - Tuned presets: baseline bundle re-optimised with higher budgets; best configs stored in `notes/release_tuned_presets.json` and reflected on telemetry dashboards.
+- Dataset QA: synthetic CLI now exposes `--machine-daily-hours`, and the new dataset inspector warns when machines deviate from the 24 h/day baseline to catch contract regressions early.
 
 ## Installation
 - `pip install fhops` (PyPI)

@@ -23,7 +23,11 @@ Each scenario references a set of CSV files. Required columns and notes:
      - Optional: ``earliest_start``/``latest_finish`` (defaults 1 / ``num_days``)
    * - ``machines.csv``
      - ``id``
-     - Optional: ``role``, ``crew``; numeric fields must be non-negative
+     - Optional: ``role``, ``crew``; numeric fields must be non-negative. ``daily_hours`` defaults
+       to ``24`` — we assume machines are available around the clock unless explicitly constrained
+       by the calendar or shift-level availability.
+      - The `fhops dataset inspect-machine` CLI warns when a machine advertises non-24 h
+        availability so you can catch accidental edits before shipping datasets.
    * - ``landings.csv``
      - ``id``
      - ``daily_capacity`` defaults to 2, must be ≥ 0
@@ -58,6 +62,9 @@ Recent helpers enable richer metadata:
 - ``ScheduleLock`` — pre-assign specific machine/block/day combinations (enforced in MIP & SA).
 - ``ObjectiveWeights`` — tweak solver objective weighting (production, mobilisation penalties,
   transition counts, optional landing-cap slack penalties).
+- Round-the-clock operations — unless you override ``machines.csv`` or the calendar, FHOPS
+  expects continuous availability (24 h/day) and only pauses work when you add blackouts,
+  downtime sampling, or calendar gaps.
 
 ``ObjectiveWeights`` fields are optional; omit any you do not need. For example:
 

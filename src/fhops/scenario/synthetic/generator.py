@@ -193,6 +193,7 @@ class SyntheticDatasetConfig:
     num_landings: tuple[int, int] | int = 1
     shift_hours: tuple[float, float] = (8.0, 12.0)
     shifts_per_day: int = 1
+    machine_daily_hours: float = 24.0
     landing_capacity: tuple[int, int] | int = (1, 3)
     work_required: tuple[float, float] = (6.0, 18.0)
     production_rate: tuple[float, float] = (6.0, 18.0)
@@ -592,7 +593,7 @@ def generate_random_dataset(
                 "id": f"M{idx + 1}",
                 "role": role,
                 "crew": assigned_crew,
-                "daily_hours": round(_sample_float(rng, config.shift_hours), 2),
+                "daily_hours": float(config.machine_daily_hours),
             }
         )
 
