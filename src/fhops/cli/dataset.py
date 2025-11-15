@@ -16,6 +16,7 @@ from fhops.productivity import (
     estimate_productivity,
     load_lahrsen_ranges,
 )
+from fhops.validation.ranges import validate_block_ranges
 from fhops.scenario.contract import Scenario
 from fhops.scenario.io import load_scenario
 from fhops.scheduling.systems import HarvestSystem, default_system_registry
@@ -312,7 +313,26 @@ def inspect_block(
         ),
         ("Harvest System ID", selected_block.harvest_system_id or "—"),
     ]
+    if selected_block.avg_stem_size_m3 is not None:
+        rows.append(("Avg Stem Size (m³)", f"{selected_block.avg_stem_size_m3:.3f}"))
+    if selected_block.volume_per_ha_m3 is not None:
+        rows.append(("Volume per ha (m³)", f"{selected_block.volume_per_ha_m3:.1f}"))
+    if selected_block.stem_density_per_ha is not None:
+        rows.append(("Stem Density (/ha)", f"{selected_block.stem_density_per_ha:.1f}"))
+    if selected_block.ground_slope_percent is not None:
+        rows.append(("Ground Slope (%)", f"{selected_block.ground_slope_percent:.1f}"))
     _render_kv_table(f"Block Inspection — {selected_block.id}", rows)
+    warnings = validate_block_ranges(
+        block_id=selected_block.id,
+        stem_size=selected_block.avg_stem_size_m3,
+        volume_per_ha=selected_block.volume_per_ha_m3,
+        stem_density=selected_block.stem_density_per_ha,
+        ground_slope=selected_block.ground_slope_percent,
+    )
+    if warnings:
+        console.print("[red]Stand metric warnings:[/red]")
+        for msg in warnings:
+            console.print(f"  - {msg}")
     console.print(
         "[yellow]* TODO: add derived statistics (windows, production rates) once defined.[/yellow]"
     )

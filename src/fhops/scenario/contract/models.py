@@ -42,12 +42,22 @@ class Block(BaseModel):
     earliest_start: Day | None = 1
     latest_finish: Day | None = None
     harvest_system_id: str | None = None
+    avg_stem_size_m3: float | None = None
+    volume_per_ha_m3: float | None = None
+    stem_density_per_ha: float | None = None
+    ground_slope_percent: float | None = None
 
     @field_validator("work_required")
     @classmethod
     def _work_positive(cls, value: float) -> float:
         if value < 0:
             raise ValueError("Block.work_required must be non-negative")
+        return value
+    @field_validator("avg_stem_size_m3", "volume_per_ha_m3", "stem_density_per_ha", "ground_slope_percent")
+    @classmethod
+    def _optional_non_negative(cls, value: float | None) -> float | None:
+        if value is not None and value < 0:
+            raise ValueError("Block stand attribute fields must be non-negative")
         return value
 
     @field_validator("earliest_start")

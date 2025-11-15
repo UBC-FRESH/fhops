@@ -14,6 +14,7 @@ import pandas as pd
 import yaml
 
 from fhops.evaluation.playback.events import SamplingConfig
+from fhops.productivity import load_lahrsen_ranges
 from fhops.scenario.contract import (
     Block,
     CalendarEntry,
@@ -32,6 +33,25 @@ _DEFAULT_TERRAIN_POOL = ["mixed"]
 _DEFAULT_PRESCRIPTION_POOL = ["clearcut"]
 _DEFAULT_CREW_POOL = ["crew-1", "crew-2"]
 _DEFAULT_CAPABILITY_POOL = ["harvester", "forwarder"]
+_LAHRSEN_RANGES = load_lahrsen_ranges()
+
+
+def _sample_metric(rng: random.Random, entry: dict[str, float]) -> float:
+    lower = entry.get("min")
+    upper = entry.get("max")
+    if lower is None or upper is None:
+        return float(entry.get("mean", 0.0))
+    return round(rng.uniform(lower, upper), 3)
+
+
+def _sample_block_metrics(rng: random.Random, section: str) -> dict[str, float]:
+    ranges = _LAHRSEN_RANGES.get(section, _LAHRSEN_RANGES["daily"])
+    return {
+        "avg_stem_size_m3": _sample_metric(rng, ranges["avg_stem_size_m3"]),
+        "volume_per_ha_m3": _sample_metric(rng, ranges["volume_per_ha_m3"]),
+        "stem_density_per_ha": _sample_metric(rng, ranges["stem_density_per_ha"]),
+        "ground_slope_percent": _sample_metric(rng, ranges["ground_slope_percent"]),
+    }
 
 
 def _sequence_list(value: object | None, fallback: Sequence[T]) -> list[T]:
@@ -212,6 +232,7 @@ class SyntheticDatasetConfig:
     system_mix: dict[str, float] | None = None
     blackout_biases: list[BlackoutBias] = field(default_factory=list)
     sampling_overrides: dict[str, object] | None = None
+    block_metric_section: str = "daily"
 
 
 @dataclass
@@ -527,6 +548,7 @@ def generate_random_dataset(
             if prescription_pool
             else None
         )
+        stand_metrics = _sample_block_metrics(feature_rng, config.block_metric_section)
         blocks_records.append(
             {
                 "id": f"B{idx + 1}",
@@ -534,6 +556,7 @@ def generate_random_dataset(
                 "work_required": work_required,
                 "earliest_start": earliest,
                 "latest_finish": latest,
+                **stand_metrics,
                 **({"terrain": terrain} if terrain is not None else {}),
                 **({"prescription": prescription} if prescription is not None else {}),
             }
