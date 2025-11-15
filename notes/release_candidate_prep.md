@@ -40,8 +40,9 @@ Status: Draft — drive the v0.x RC process.
      - ``python -m pip install --upgrade build twine``
      - ``rm -rf dist``
      - ``hatch run release:build``
-     - ``python -m twine upload --repository testpypi dist/*`` (requires ``TESTPYPI_TOKEN``)
-     - ``pip install -i https://test.pypi.org/simple/ fhops`` and run smoke commands
+     - ``python -m twine upload --repository testpypi dist/*`` (requires ``TESTPYPI_TOKEN``) ✅ 2025-11-15
+     - ``python -m venv .venv-testpypi && . .venv-testpypi/bin/activate``
+     - ``pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple fhops`` and run smoke commands (`fhops --help`, `fhops validate examples/minitoy/scenario.yaml`) ✅
    - [ ] Document environment variables/secrets: ``TESTPYPI_TOKEN`` and ``PYPI_TOKEN`` (GitHub secrets) plus local ``~/.pypirc`` fallback.
    - [ ] After TestPyPI validation, repeat for PyPI (`twine upload dist/*`) during the release tag.
 
