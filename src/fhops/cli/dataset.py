@@ -13,7 +13,9 @@ from rich.table import Table
 from fhops.core import FHOPSValueError
 from fhops.productivity import (
     LahrsenModel,
+    ProductivityDistributionEstimate,
     estimate_productivity,
+    estimate_productivity_distribution,
     load_lahrsen_ranges,
 )
 from fhops.validation.ranges import validate_block_ranges
@@ -427,6 +429,50 @@ def estimate_productivity_cmd(
     console.print(
         "[dim]Coefficients sourced from Lahrsen, 2025 (UBC PhD) — whole-tree feller-buncher dataset.[/dim]"
     )
+
+
+@dataset_app.command("estimate-productivity-rv")
+def estimate_productivity_rv_cmd(
+    avg_stem_size: float = typer.Option(..., help="Mean stem size (m³)", min=0.0),
+    avg_stem_size_sigma: float = typer.Option(0.05, help="Std dev for stem size (m³)", min=0.0),
+    volume_per_ha: float = typer.Option(..., help="Mean volume per ha (m³)", min=0.0),
+    volume_per_ha_sigma: float = typer.Option(25.0, help="Std dev volume per ha (m³)", min=0.0),
+    stem_density: float = typer.Option(..., help="Mean stem density (/ha)", min=0.0),
+    stem_density_sigma: float = typer.Option(50.0, help="Std dev stem density (/ha)", min=0.0),
+    ground_slope: float = typer.Option(..., help="Mean slope (%)", min=0.0),
+    ground_slope_sigma: float = typer.Option(2.0, help="Std dev slope (%)", min=0.0),
+    model: LahrsenModel = typer.Option(LahrsenModel.DAILY, case_sensitive=False),
+    method: str = typer.Option("auto", help="RV evaluation method: auto|pacal|monte-carlo"),
+    samples: int = typer.Option(5000, help="Monte Carlo samples"),
+):
+    """Estimate expected productivity when inputs are random variates."""
+
+    try:
+        result = estimate_productivity_distribution(
+            avg_stem_size_mu=avg_stem_size,
+            avg_stem_size_sigma=avg_stem_size_sigma,
+            volume_per_ha_mu=volume_per_ha,
+            volume_per_ha_sigma=volume_per_ha_sigma,
+            stem_density_mu=stem_density,
+            stem_density_sigma=stem_density_sigma,
+            ground_slope_mu=ground_slope,
+            ground_slope_sigma=ground_slope_sigma,
+            model=model,
+            method=method.lower(),
+            samples=samples,
+        )
+    except FHOPSValueError as exc:  # pragma: no cover
+        raise typer.BadParameter(str(exc)) from exc
+
+    rows = [
+        ("Model", result.model.value),
+        ("Method", result.method),
+        ("Expected Productivity (m³/PMH15)", f"{result.expected_m3_per_pmh:.2f}"),
+        ("Std Dev", f"{result.std_m3_per_pmh:.2f}" if result.std_m3_per_pmh is not None else "—"),
+        ("Samples", str(result.sample_count) if result.sample_count else "—"),
+        ("PaCal Used", "yes" if result.pacal_used else "no"),
+    ]
+    _render_kv_table("Lahrsen Productivity (RV)", rows)
 
 
 @dataset_app.command("productivity-ranges")

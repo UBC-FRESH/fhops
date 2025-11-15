@@ -6,8 +6,15 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Mapping
 
+import numpy as np
+
 from fhops.core.errors import FHOPSValueError
 from fhops.productivity.ranges import load_lahrsen_ranges
+
+try:  # pragma: no cover - optional dependency
+    import pacal  # type: ignore
+except Exception:  # pragma: no cover - fallback path
+    pacal = None
 
 
 class LahrsenModel(str, Enum):
@@ -30,6 +37,18 @@ class ProductivityEstimate:
     predicted_m3_per_pmh: float
     ranges: Mapping[str, Mapping[str, float]] = field(default_factory=dict)
     out_of_range: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class ProductivityDistributionEstimate:
+    """Expected productivity when inputs are random variates."""
+
+    model: LahrsenModel
+    method: str
+    expected_m3_per_pmh: float
+    std_m3_per_pmh: float | None
+    sample_count: int
+    pacal_used: bool
 
 
 @dataclass(frozen=True)
@@ -191,4 +210,118 @@ def estimate_productivity(
         predicted_m3_per_pmh=predicted,
         ranges=bounds_cache,
         out_of_range=tuple(violations),
+    )
+
+
+def _pacal_available() -> bool:
+    return pacal is not None
+
+
+def _build_pacal_var(mu: float, sigma: float, bounds: Mapping[str, float]):  # pragma: no cover - requires pacal
+    assert pacal is not None
+    dist = pacal.NormalDistr(mu, sigma)
+    lower = bounds.get("min")
+    upper = bounds.get("max")
+    if lower is not None:
+        dist = dist | pacal.Gt(lower)
+    if upper is not None:
+        dist = dist | pacal.Lt(upper)
+    return dist
+
+
+def _sample_truncated_normal(
+    mu: float,
+    sigma: float,
+    bounds: Mapping[str, float],
+    size: int,
+) -> np.ndarray:
+    if sigma <= 0 or size <= 0:
+        return np.full(max(size, 1), mu)
+    lower = bounds.get("min")
+    upper = bounds.get("max")
+    samples = np.random.normal(mu, sigma, size)
+    if lower is not None:
+        mask = samples < lower
+        while mask.any():
+            samples[mask] = np.random.normal(mu, sigma, mask.sum())
+            mask = samples < lower
+    if upper is not None:
+        mask = samples > upper
+        while mask.any():
+            samples[mask] = np.random.normal(mu, sigma, mask.sum())
+            mask = samples > upper
+    return samples
+
+
+def estimate_productivity_distribution(
+    *,
+    avg_stem_size_mu: float,
+    avg_stem_size_sigma: float,
+    volume_per_ha_mu: float,
+    volume_per_ha_sigma: float,
+    stem_density_mu: float,
+    stem_density_sigma: float,
+    ground_slope_mu: float,
+    ground_slope_sigma: float,
+    model: LahrsenModel = LahrsenModel.DAILY,
+    method: str = "auto",
+    samples: int = 5000,
+) -> ProductivityDistributionEstimate:
+    """Estimate expected productivity when inputs are random variates."""
+
+    coeffs = _COEFFICIENTS[model]
+    bounds = {
+        "avg_stem_size": _range_bounds(model, "avg_stem_size"),
+        "volume_per_ha": _range_bounds(model, "volume_per_ha"),
+        "stem_density": _range_bounds(model, "stem_density"),
+        "ground_slope": _range_bounds(model, "ground_slope"),
+    }
+
+    use_pacal = method == "pacal" or (method == "auto" and _pacal_available())
+    if use_pacal:
+        if not _pacal_available():  # pragma: no cover - depends on pacal
+            raise FHOPSValueError("PaCal not available; install 'pacal' or set method='monte-carlo'.")
+        stem = _build_pacal_var(avg_stem_size_mu, avg_stem_size_sigma, bounds["avg_stem_size"])
+        volume = _build_pacal_var(volume_per_ha_mu, volume_per_ha_sigma, bounds["volume_per_ha"])
+        density = _build_pacal_var(stem_density_mu, stem_density_sigma, bounds["stem_density"])
+        slope = _build_pacal_var(ground_slope_mu, ground_slope_sigma, bounds["ground_slope"])
+        expr = (
+            coeffs.intercept
+            + coeffs.stem_size * stem
+            + coeffs.volume_per_ha * volume
+            + coeffs.stem_density * density
+            + coeffs.ground_slope * slope
+        )
+        expected = float(expr.mean())
+        std = float(expr.std()) if hasattr(expr, "std") else None
+        return ProductivityDistributionEstimate(
+            model=model,
+            method="pacal",
+            expected_m3_per_pmh=expected,
+            std_m3_per_pmh=std,
+            sample_count=0,
+            pacal_used=True,
+        )
+
+    samples = max(samples, 1)
+    stem_s = _sample_truncated_normal(avg_stem_size_mu, avg_stem_size_sigma, bounds["avg_stem_size"], samples)
+    volume_s = _sample_truncated_normal(volume_per_ha_mu, volume_per_ha_sigma, bounds["volume_per_ha"], samples)
+    density_s = _sample_truncated_normal(stem_density_mu, stem_density_sigma, bounds["stem_density"], samples)
+    slope_s = _sample_truncated_normal(ground_slope_mu, ground_slope_sigma, bounds["ground_slope"], samples)
+    preds = (
+        coeffs.intercept
+        + coeffs.stem_size * stem_s
+        + coeffs.volume_per_ha * volume_s
+        + coeffs.stem_density * density_s
+        + coeffs.ground_slope * slope_s
+    )
+    expected = float(np.mean(preds))
+    std = float(np.std(preds, ddof=1)) if samples > 1 else 0.0
+    return ProductivityDistributionEstimate(
+        model=model,
+        method="monte-carlo",
+        expected_m3_per_pmh=expected,
+        std_m3_per_pmh=std,
+        sample_count=samples,
+        pacal_used=False,
     )
