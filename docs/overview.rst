@@ -13,6 +13,34 @@ constructing, solving, and evaluating harvesting schedules. At its core FHOPS su
 The roadmap in :doc:`roadmap` and the notes under ``notes/`` guide ongoing development. Refer to
 :doc:`howto/quickstart` for a hands-on example.
 
+Installation
+------------
+
+FHOPS publishes wheels/sdists via Hatch. Once the release candidate is on PyPI, install with::
+
+   pip install fhops
+
+For development or release verification, install Hatch and run the full suite locally::
+
+   pip install hatch
+   hatch run dev:suite
+
+Quick demo
+----------
+
+Demonstrate the tuning harness on synthetic scenarios from the CLI::
+
+   python scripts/run_tuning_benchmarks.py \
+       --bundle synthetic-small \
+       --out-dir tmp/demo-synth \
+       --random-runs 1 --random-iters 400 \
+       --grid-iters 400 --grid-preset explore \
+       --bayes-trials 2 --bayes-iters 400 \
+       --max-workers 8 \
+   && column -t -s'|' tmp/demo-synth/tuner_report.md | sed 's/^/  /'
+
+See :doc:`howto/telemetry_tuning` for more recipes (including tuned presets used for the release).
+
 Baseline Workflows
 ------------------
 

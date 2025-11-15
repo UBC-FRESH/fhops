@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "fhops"
-version = "0.0.2"
+dynamic = ["version"]
 description = "Forest Harvesting Operations Planning System"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -43,6 +43,9 @@ gurobi = [
 
 [project.scripts]
 fhops = "fhops.cli.main:app"
+
+[tool.hatch.version]
+path = "src/fhops/__init__.py"
 
 [tool.black]
 line-length = 100

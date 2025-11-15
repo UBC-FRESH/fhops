@@ -7,6 +7,19 @@ forest harvesting operations plans. It provides:
 - A **metaheuristic engine** (Simulated Annealing v0.1) with pluggable operators.
 - A CLI (`fhops`) to validate data, solve with MIP or heuristics, and evaluate results.
 
+## Installation
+
+```bash
+pip install fhops  # once the release candidate lands on PyPI
+```
+
+For local development or when cutting a release candidate, use Hatch to mirror the CI suite:
+
+```bash
+pip install hatch
+hatch run dev:suite
+```
+
 ## Quick start (development install)
 
 ```bash
@@ -85,3 +98,43 @@ Live dashboards (auto-published after every `main` build and the weekly full not
 - Difficulty indices per bundle/tier and weekly notebook metadata archives.
 
 Each dashboard entry includes regeneration commands so you can reproduce the artefacts locally.
+
+### Tuned heuristic presets
+
+Release candidate tuning runs are recorded in `notes/release_tuning_results.md`; the best operator
+weights and configurations per scenario/algorithm are serialized in `notes/release_tuned_presets.json`.
+Use these records when reproducing benchmarks or seeding custom presets, e.g.
+
+```bash
+python -c "import json; cfg=json.load(open('notes/release_tuned_presets.json')); print(cfg[0])"
+# feed operator weights into fhops tune-random --operator-weight swap=... --operator-weight move=...
+```
+
+## Quick demos
+
+Show off the tuning harness or heuristics in one command:
+
+```bash
+python scripts/run_tuning_benchmarks.py \
+  --bundle synthetic-small \
+  --out-dir tmp/demo-synth \
+  --random-runs 1 --random-iters 400 \
+  --grid-iters 400 --grid-preset explore \
+  --bayes-trials 2 --bayes-iters 400 \
+  --max-workers 8 \
+&& column -t -s'|' tmp/demo-synth/tuner_report.md | sed 's/^/  /'
+```
+
+or run eight random restarts per heuristic on the baseline bundle:
+
+```bash
+python scripts/run_tuning_benchmarks.py \
+  --bundle baseline \
+  --out-dir tmp/demo-restarts \
+  --tuner random --tuner ils --tuner tabu \
+  --random-runs 8 --random-iters 400 \
+  --ils-runs 8 --ils-iters 400 \
+  --tabu-runs 8 --tabu-iters 2000 \
+  --max-workers 8 \
+&& column -t -s'|' tmp/demo-restarts/tuner_summary.md | sed 's/^/  /'
+```

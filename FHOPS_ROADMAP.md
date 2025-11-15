@@ -119,8 +119,8 @@ before proposing new work.
 - [ ] Outreach plan (blog, seminars, partner briefings).
 
 ## Detailed Next Steps
-1. **Geospatial & Mobilisation Intake (`notes/mobilisation_plan.md`, `notes/data_contract_enhancements.md`)**
-   - Finalise GeoJSON ingestion + distance workflows and wire mobilisation costs end-to-end.
+1. **Release Candidate Prep (`notes/release_candidate_prep.md`, `CODING_AGENT.md`, `notes/cli_docs_plan.md`)**
+   - Lock feature set, refresh install/docs, and draft release notes + Hatch-based packaging checklist ahead of the public milestone.
 2. **Metaheuristic Roadmap (`notes/metaheuristic_roadmap.md`)**
    - Prioritise SA refinements, operator registry work, and benchmarking comparisons with the new harness (including shift-aware neighbourhoods).
 3. **Harvest System Sequencing Plan (`notes/system_sequencing_plan.md`)**

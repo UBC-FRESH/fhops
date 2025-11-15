@@ -31,6 +31,25 @@ instead of suppressing them; escalate only if consensus is reached with maintain
   them under the relevant note.
 - Keep PR descriptions concise but linked to roadmap phases and note sections for traceability.
 
+## Release workflow (RC prep)
+- Packaging uses Hatch (mirroring the ws3 repo). Keep ``pyproject.toml`` / ``hatch.toml`` in sync
+  and use ``hatch build`` for local validation before any publish step.
+- Follow `notes/release_candidate_prep.md` for the current RC checklist (version bump, wheel/sdist
+  smoke tests, release notes, CI tag jobs). Update that note and the roadmap after each milestone.
+- Release day cadence: bump version, regenerate changelog entry, `hatch build`, smoke install in a
+  clean venv, tag (`git tag -s vX.Y.Z`), push tag, then publish (TestPyPI first, PyPI second if
+  applicable). Version source lives at `src/fhops/__init__.__version__` (pyproject uses Hatch's
+  dynamic version hook). Document the exact commands in the changelog.
+- GitHub Actions workflow `.github/workflows/release-build.yml` mirrors this process on tags by
+  running `hatch run release:build` and uploading `dist/` artifacts; verify the job succeeds before
+  publishing to TestPyPI/PyPI.
+- TestPyPI/PyPI publishing cadence (Hatch-only):
+  1. `hatch clean && hatch build`
+  2. `HATCH_INDEX=testpypi hatch publish` (configure `HATCH_INDEX_TESTPYPI_AUTH` or `~/.pypirc`)
+  3. Create fresh venv, `pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple fhops`, run smoke commands
+  4. `HATCH_INDEX=pypi hatch publish` once verification passes (uses `HATCH_INDEX_PYPI_AUTH`)
+  5. Tag release (`git tag -s vX.Y.Z && git push --tags`)
+
 ## Collaboration guidelines
 - Flag blockers or scope shifts by opening a dedicated section in the pertinent note and linking
   it from the next changelog entry.
