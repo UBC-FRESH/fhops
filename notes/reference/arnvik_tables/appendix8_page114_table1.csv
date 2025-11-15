@@ -1,0 +1,54 @@
+Spinelli et a,l.,(2023),,1,CTL,H,PB,RW,PW,(Bone d,ry ton SMH⁻¹)*,a+bB₃-cT₅B₃
+Spinelli et a,l.,(2020a),,1,CTL,H Sim,PB,RW,PV,(m³ h⁻¹),-U,a+bP₁-cO₈
+,,,,,,,,,,,,
+,,,,2,CTL,H Sim,PB,RW,PV,(m³ h⁻¹),-U,a-bM₂
+Spinelli et a,l.,(2020b),,1,FT,FB,EB,CT,W,cycle (s),,a-bB₁₄
+,,,,2,FT,FB,EB,CT,PU,(tree SM,H⁻¹)*,a-bB₁₄
+,,,,,,,,,,,,
+,,,,3,FT,FB,EB,CT,PW,(ton SM,H⁻¹)*,a-bB₁₄
+Stoilov et a,l. (,2021),,1,CTL,SH,PB,RW,W,cycle (m,in),-a+bA₉+cE₈+dN₃
+,,,,,,,,,,,,
+,,,,2,CTL,SH,PB,RW,W,cycle (m,in)-D,aA₉
+,,,,,,,,,,,,
+,,,,3,CTL,SH,PB,RW,PV,(m³ PM,h⁻¹),a-bA₉-cN₃
+,,,,4,CTL,SH,PB,RW,PV,(m³ PM,h⁻¹)-D,a-bA₉
+Strandgard,&,Mitchell,(2018),1,*CTL,H,EB,CT,W,cycle (s),,aexpa+bN₁₀+cN₄
+,,,,2,*CTL,H,EB,CT,W,cycle (s),,aexpa+bN₄
+,,,,3,*CTL,H,EB,CT,W,cycle (s),,aexpa+bN₄
+,,,,,,,,,,,,
+,,,,4,*CTL,H,EB,CT,E,fell (s),,a+bN₄
+,,,,5,*CTL,H,EB,CT,E,process,(s),aexpa+bN₁₀+cN₄
+,,,,6,*CTL,H,EB,CT,E,process,(s),aexpa+bN₁₀+cN₄
+,,,,7,*CTL,H,EB,CT,E,process,(s),aexpa+bN₄
+,,,,,,,,,,,,bV₁
+Strandgard,&,Mitchell,(2019),1,CTL,H,PB,CT,W,cycle (P,"Mh )
+0",aexp
+,,,,,,,,,,,,b
+,,,,2,CTL,H,PB,CT,PV,(m³ PM,"h ⁻¹)
+0",aV₁
+,,,,,,,,,,,,bV₁
+,,,,3,CTL,H,PB,CT,W,cycle (P,"Mh )
+0",aexp
+,,,,,,,,,,,,b
+,,,,4,CTL,H,PB,CT,PV,(m³ PM,"h ⁻¹)
+0",aV₁
+,,,,,,,,,,,,b
+Strandgard,&,Mitchell,(2020),1,FT,FB,EB,CT,PV,(m³ PM,"h ⁻¹)
+0",aV₁
+,,,,2,CTL,H,PB,RW,W,cycle (m,in),aV₁b
+,,,,,,,,,,,,b
+,,,,3,CTL,H,PB,RW,PV,(m³ PM,"h ⁻¹)
+0",aV₁
+,,,,,,,,,,,,
+Strandgard,et,al. (2016,),1,CTL,H,"PB, EB",CT,PV,(m³ PM,"h ⁻¹)
+0",a+bV₁+cE₃
+,,,,,,,,,,,,
+,,,,2,CTL,H,"PB, EB",CT,PV,(m³ PM,"h ⁻¹)
+0",a+bV₁
+,,,,,,,,,,,,b c
+Strandgard,et,al. (2015,),1,FT,FB,PB,CT,PV,(m³ PM,"h ⁻¹)
+0",aV₁₀ V₁₁
+Tajbos & M,es,singerov,a (2014),1,CTL,H,PB,RW,W,cycle (m,in),a+bV₁
+,,,,2,CTL,H,PB,RW,W,cycle (m,in),a+bV₁
+,,,,,,,,,,,,
+,,,,3,CTL,H,PB,RW,M,move (m,in),a+bA₁

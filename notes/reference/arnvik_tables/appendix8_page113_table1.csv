@@ -1,0 +1,48 @@
+Santos et a,l.,(2022),1,CTL,H,PB,CT,PV,(m³ h⁻¹),-D,,a+bV₃-cV₃d
+Santos et a,l.,(2021),1,CTL,H,PB,CT,PV,(m³ h⁻¹),-D,,a+bV₁-cV₁d
+Santos et a,l.,(2020),1,CTL,H,PB,CT,M,move (s,),,a+bE₁c+dE₂e-fE₁E₂
+,,,2,CTL,H,PB,CT,E,fell (s),,,a+bE₁c+dE₂e-fE₁E₂
+,,,3,CTL,H,PB,CT,E,process,(s,),a-bE₁+cE₁d-eE₂+fE₂g+hE₁E₂
+,,,4,CTL,H,PB,CT,M,move (s,),,a-bE₁c-dE₂e
+,,,5,CTL,H,PB,CT,E,fell (s),,,a-bE₁c-dE₂e
+,,,6,CTL,H,PB,CT,E,process,(s,),a+bE₁c+dE₂e-fE₁E₂
+,,,7,CTL,H,PB,CT,PV,(m³ h⁻¹),-U,,a-bE₁c-dE₂e+fE₁E₂
+,,,8,CTL,H,PB,CT,PV,(m³ h⁻¹),-U,,-a+bE₂+cE₁d
+,,,,,,,,,,,,
+Schweier e,t,al. (2015),1,FT,FB,EB,CT,W,cycle (s),,,a+bB₁₃+cN₈
+,,,,,,,,,,,,
+,,,2,FT,FB,EB,CT,W,cycle (s),,,a+bB₁₃+cN₈
+,,,3,FT,FB,EB,CT,W,cycle (s),,,a+bB₁₃
+,,,,,,,,,,,,
+,,,4,FT,FB,EB,CT,W,cycle (s),,,a+bB₁₃
+,,,5,FT,FB,EB,CT,W,cycle (s),,,a-bB₁₃+cB₁₃d
+Slugeň et a,l.,(2014),1,CTL,H,PB,RW,E,process,(,min),-a+bO₁₁
+,,,,,,,,,,,,
+Soman et a,l.,(2020),1,FT,FB,PB,CT,W,log cycl,e,(min),a+bA₁+cN₃
+,,,,,,,,,,,,
+,,,2,FT,FB,PB,CT,W,log cycl,e,(min),a+bO₈
+,,,,,,,,,,,,
+,,,3,FT,FB,PB,CT,W,log cycl,e,(min),a+bA₁+cA₃+dN₃
+Soman et a,l.,(2019),1,FT,FB,PB,CT,W,cycle (s),,,a+bA₁+cD₁₁+dA₃+eN₃
+,,,2,FT,FB,PB,CT,W,cycle (s),,,a+bA₁+cD₁₁+dA₃+eN₃-fM₁
+Sperandio,et,al. (2021),1,*FT,FB,EB,CT,E,fell (s),,,aB₁₄-b
+,,,2,*FT,FB,EB,CT,E,fell (s),,,aB₁₄b
+,,,,,,,,,,,,b
+,,,3,*FT,FB,EB,CT,PW,"(ton h ⁻
+15",¹),,aB₁₄
+,,,,,,,,,,,,b
+,,,4,*FT,FB,EB,CT,PW,"(ton h ⁻
+15",¹),,aB₁₄
+,,,,,,,,,,,,
+Spinelli et,al,. (2014),1,FT,"FB, FB","PB, EB",CT,PW,(ton SM,H,⁻¹)-D,
+,,,,,,,,,,,,
+,,,,,,,,,,,,a+bB₁₅-cT₃
+,,,,,,,,,,,,
+,,,,,DT,,,,,,,
+,,,,,,,,,,,,
+Spinelli &,D,e Arruda Moura,1,CTL,H,EB,CT,PV,(m³ub h,⁻¹,),
+,,,,,,,,,,,,
+,,,,,,,,,,,,a+blog(V₃)+cT₄
+,,,,,,,,,,,,
+(2019),,,,,,,,,,,,
+Spinelli et,al,. (2022),1,CTL,H,PB,RW,PW,(Bone d,ry,ton SMH⁻¹)*,a-bB₃-cE₉-dE₉

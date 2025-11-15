@@ -1,0 +1,45 @@
+,,,,2,CTL,H,PB,CT,PV,(m³ PMh,⁻,¹),a+bln(V₁)
+,,,,3,CTL,H,PB,CT,PV,(m³ PMh,⁻,¹),a+bln(V₁)
+,,,,,,,,,,,,,
+,,,,4,CTL,H,PB,CT,PV,(m³ PMh,⁻,¹),a+bln(V₁)
+Apăfăian e,t a,l. (,2017),1,CTL,H,PB,RW,E,delimb (,s),,aexpbM₄
+,,,,2,CTL,H,PB,RW,E,"delimb,",b,uck (s),aexpbV₁
+,,,,3,CTL,H,PB,RW,W,cycle (s),,,aexpbV₁
+,,,,4,CTL,H,PB,RW,W,cycle (s),,,a+bV₁
+,,,,5,CTL,H,PB,RW,PV,(m³ h⁻¹),,,aV₁b
+,,,,,,,,,,,,,b
+Berendt et,al.,(2,020),1,CTL,H,PB,RW,PV,(m³ PMh,0,⁻¹),aV₁
+Berg et al.,(2,014,),1,CTL,H Sim,PB,RW,PV,(m³ PMh,⁻,¹),a+bD₅-cD₅d-eln(D₅)
+,,,,2,CTL,H Sim,PB,RW,PV,(m³ PMh,⁻,¹),a+bV₁+cV₁d+eln(V₁)
+,,,,3,*FT,FB Sim,PB,RW,PV,(m³ PMh,⁻,¹),-a+bD₅-cD₅d
+,,,,4,*FT,FB Sim,PB,RW,PV,(m³ PMh,⁻,¹),a+bV₁-cV₁d+eln(V₁)
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+Bergström,&,Di,Fulvio (2014),1,CTL,H,PB,RW,TV,(PMmin,0,m³ ⁻¹),a+b/V₂
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,2,FT,FB,PB,RW,TV,(PMmin,0,m³ ⁻¹),a+b/V₂+c/I₃
+,,,,,,,,,,,,,
+Bergström,et,al.,(2016),1,B (FT),FB,PB,RW,TU,(PMmin,0,bundle⁻¹),-a+bN₅
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,2,B (FT),FB,PB,RW,PW,(ODton,P,"Mh ⁻¹)
+0",a+bV₂
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,3,B (FT),FB,PB,RW,PU,(bundles,,"PMh ⁻¹)
+0",a+bV₂
+,,,,,,,,,,,,,
+Bergström,et,al.,(2022),1,*FT,FB,PB,RW,PW,(dry ton,P,Mh⁻¹),a+bB₂
+,,,,2,*FT,FB,PB,RW,PW,(dry ton,P,Mh⁻¹),a+bB₂
+,,,,3,*FT,FB,PB,RW,PW,(dry ton,P,Mh⁻¹),a+bD₂
+,,,,4,*FT,FB,PB,RW,PW,(dry ton,P,Mh⁻¹),a+bD₂
+,,,,5,*FT,FB,PB,RW,PW,(dry ton,P,Mh⁻¹),a+bD₃
+,,,,6,*FT,FB,PB,RW,PW,(dry ton,P,Mh⁻¹),a+bD₃
+,,,,7,*FT,FB,PB,RW,PW,(dry ton,P,Mh⁻¹),a+bH₂
+,,,,8,*FT,FB,PB,RW,PW,(dry ton,P,Mh⁻¹),a+bH₂
+Bilici et al.,(2,01,9),1,FT,FB,EB,CT,PV,(m³ h⁻¹),,,-a+bD₁+cH₁
+,,,,2,*FT,FB,EB,CT,PV,(m³ h⁻¹),,,-a+bD₁+cH₁
+,,,,3,FT,FB,EB,CT,PV,(m³ h⁻¹),,,-a+bD₁
+,,,,,,,,,,,,,
+,,,,4,*FT,FB,EB,CT,PV,(m³ h⁻¹),,,-a+bD₁

@@ -1,0 +1,40 @@
+Louis & Kizha (2021),1,FT,FB,PB,,CT,W,cycle (s),a+bA₁+cN₃
+,2,FT,FB,PB,,CT,W,cycle (s),a+bA₃+cN₃
+,,,,,,,,,
+Magagnotti et al. (2021),1,CTL,H,PB,,RW,PV,(tot above-ground m³,
+,,,,,,,,,
+,,,,,,,,,-a+bV₇+cT₈
+,,,,,,,,,
+,,,,,,,,SMH⁻¹)*,
+,2,CTL,H,PB,,RW,PV,(m³ SMH⁻¹)*,-a+bV₄+cT₈
+,3,CTL,H,PB,,RW,PV,(m³ SMH⁻¹)*,-a+bV₅+cT₈
+,,,,,,,,,
+,4,CTL,H,PB,,RW,PV,(m³ SMH⁻¹)*,-a+bV₅+cT₈V₅
+Manner et al. (2023),1,CTL,H,PB,,RW,TV,(s m³ ⁻¹),a-bI₆+cI₆+dV₃+eA₁+fO₇
+,2,CTL,H,PB,,RW,TV,(s m³ ⁻¹),aV₃-b
+McEwan et al. (2016),1,CTL,H,EB,,CT,E,ln fell (s),a+bD₁c+dP₂
+,2,CTL,H,EB,,CT,E,process (s),a+bD₁c+dP₂+eP₂O₁₇
+,3,CTL,H,EB,,CT,E,"fell, process (s)",a+bD₁c+dP₂+eP₂O₁₇
+,,,,,,,,,
+Mederski et al. (2016),1,CTL,H,PB,,RW,PV,(m³ PMh⁻¹),-a+bD₁-cO₁₆-dO₁₆+eI₆+fI₆
+,2,CTL,H,PB,,RW,PV,(m³ PMh⁻¹),a+bV₁+cO₁₆+dO₁₆+eI₆+fI₆
+,,,,,,,,,
+Norihiro et al. (2018),1,CTL,H,"PB,",EB,CT,PV,(m³ PMh⁻¹),a+bV₁
+,,,,,,,,,
+,2,CTL,H,EB,,CT,PV,(m³ PMh⁻¹),a+bV₁
+,3,CTL,H,"PB,",EB,CT,PV,(m³ PMh⁻¹),a+bV₁
+,,,,,,,,,
+,4,CTL,H,EB,,CT,PV,(m³ PMh⁻¹),a+bV₁
+,5,CTL,H,EB,,CT,PV,(m³ PMh⁻¹),a+bV₁
+,6,CTL,H,EB,,CT,PV,(m³ PMh⁻¹),a+bV₁
+,7,CTL,H,"PB,",EB,CT,PV,(m³ PMh⁻¹),a+bE₉-cO₁₅+dS₁-eN₁₀+fV₁
+,8,CTL,H,EB,,CT,PV,(m³ PMh⁻¹),a+bO₁₅+cV₁
+,9,CTL,H,"PB,",EB,CT,PV,(m³ PMh⁻¹),a+bE₉-cO₁₅-dS₁-eN₁₀+fV₁
+,,,,,,,,,
+,10,CTL,H,EB,,CT,PV,(m³ PMh⁻¹),a+bV₁
+,11,CTL,H,EB,,CT,PV,(m³ PMh⁻¹),a+bV₁
+,12,CTL,H,EB,,CT,PV,(m³ PMh⁻¹),a+bV₁
+,13,CTL,H,PB,,CT,PV,(m³ PMh⁻¹),a-bO₁₅-cS₁+dV₁
+,14,CTL,H,EB,,CT,PV,(m³ PMh⁻¹),a-bO₁₅+cS₁+dV₁
+,15,CTL,H,EB,,CT,PV,(m³ PMh⁻¹),a-bN₁₀+cV₁
+,16,CTL,H,EB,,CT,PV,(m³ PMh⁻¹),a-bN₁₀+cV₁

@@ -1,0 +1,64 @@
+,7,CTL,H,PB,RW,M,move (s),,a-bln(I₃)
+,,,,,,,,,d
+,8,CTL,H,PB,RW,PV,(m³ PMh,"⁻¹)
+0",-a+bD₁+cD₁
+,,,,,,,,,d
+,9,CTL,H,PB,RW,PV,(m³ PMh,"⁻¹)
+0",-a+bD₁+cD₁
+,,,,,,,,,d
+,10,CTL,H,PB,RW,PV,(m³ PMh,"⁻¹)
+0",a+bD₁+cD₁
+,,,,,,,,,d
+,11,CTL,H,PB,RW,PV,(m³ PMh,"⁻¹)
+0",a+bD₁+cD₁
+,,,,,,,,,d
+,12,CTL,H,PB,RW,PV,(m³ PMh,"⁻¹)
+0",a+bD₁+cD₁
+,,,,,,,,,d
+,13,CTL,H,PB,RW,PV,(m³ PMh,"⁻¹)
+0",-a+bD₁+cD₁
+,,,,,,,,,
+Polowy & Molińska-Glura,1,CTL,H,PB,RW,PV,(m³ h⁻¹),,
+,,,,,,,,,
+,,,,,,,,,-a+bV₁+cE₁₅+dE₄+eE₅
+,,,,,,,,,
+(2023),,,,,,,,,
+,2,CTL,H,PB,RW,PV,(m³ h⁻¹),,aV₁+bE₁₅
+,3,CTL,H,PB,RW,PV,(m³ h⁻¹),,-a+bV₁+cE₁₅+dE₅
+Prinz et al. (2021),1,CTL,H,PB,RW,E,fell (ms),,aexpbD₅
+,2,CTL,H,PB,RW,E,fell (ms),,aexpbD₅
+,3,CTL,H,PB,RW,E,crosscut,(ms),a+bD₅-cD₅d+eD₅f
+,4,CTL,H,PB,RW,E,crosscut,(ms),a-bD₅+cD₅d-eD₅f
+,,,,,,,,,d
+Ramantswana et al. (2013),1,CTL,H,EB,CT,PV,(m³ PMh,"⁻¹)
+0",a+bV₁-cV₁
+,,,,,,,,,d
+,2,CTL,H,EB,CT,PV,(m³ PMh,"⁻¹)
+0",a+bV₁-cV₁
+,,,,,,,,,d
+,3,CTL,H,EB,CT,PV,(m³ PMh,"⁻¹)
+0",a+bV₁-cV₁
+,,,,,,,,,e g i
+,4,CTL,H,EB,CT,PV,(m³ PMh,"⁻¹)
+0",a+bV₈+cV₉-dV₈ -fV₉ -hT₆+jV₈T₆
+,,,,,,,,,
+,5,CTL,H,EB,CT,PV,(m³ PMh,"⁻¹)
+0",a+bV₈+cV₉
+,,,,,,,,,d
+,6,CTL,H,EB,CT,PV,(m³ PMh,"⁻¹)
+0",aV₈+bV₉-cV₈
+,,,,,,,,,e
+,7,CTL,H,EB,CT,PV,(m³ PMh,"⁻¹)
+0",a+bV₈-cV₉+dV₉ -fT₆
+,,,,,,,,,e g
+,8,CTL,H,EB,CT,PV,(m³ PMh,"⁻¹)
+0",a+bV₈+cV₉-dV₈ -fV₉
+,,,,,,,,,d
+,9,CTL,H,EB,CT,PV,(m³ PMh,"⁻¹)
+0",a+bV₁-cV₁ +eO₁₀
+Rosińska et al. (2022),1,CTL,H,PB,RW,PV,(m³ub h⁻,¹),-a+bD₇
+,2,CTL,H,PB,RW,PV,(m³ub h⁻,¹),-a+bD₈-cD₈d
+,3,CTL,H,PB,RW,PV,(m³ub h⁻,¹),a+bV₁-cD₈+dD₇
+,4,CTL,H,PB,RW,PV,(m³ub h⁻,¹),-a+bD₉
+,5,CTL,H,PB,RW,PV,(m³ub h⁻,¹),-a+bD₁₀
+,6,CTL,H,PB,RW,PV,(m³ub h⁻,¹),-a+bD₇+cD₈-dD₇D₈+eD₇f-gD₈h

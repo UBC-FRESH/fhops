@@ -1,0 +1,61 @@
+,,,4,CTL,H,,PB,RW,M,move (m,in,),a+bA₁
+,,,5,CTL,H,,PB,RW,E,process,(m,in),a+bO₁₁
+,,,,,,,,,,,,,
+,,,6,CTL,H,,PB,RW,E,process,(m,in),a+bO₁₁
+Tolosana e,t al,. (2023),1,B (FT),FB,,PB,RW,PW,(ODton,E,WH⁻¹),-a+bln(B₁)
+,,,2,B (FT),FB,,PB,RW,PW,(ODton,E,WH⁻¹),-a+bln(B₁)
+,,,3,B (FT),FB,,PB,RW,PW,(ODton,SM,H⁻¹)-D,-a+bI₁c+dB₁e
+Tolosana e,t al,. (2018),1,FT,FB,DT,PB,RW,PW,(ODton,PM,h⁻¹),-a+bI₁+cB₁+dO₇
+,,,,,,,,,,,,,
+,,,2,FT,FB,DT,PB,RW,PW,(ODton,PM,h⁻¹),-a+bI₁+cB₁+dO₇
+,,,,,,,,,,,,,
+Townsend,et,al. (2019),1,FT,FB,DT,PB,RW,W,cycle (m,in,),a+bN₃
+,,,2,FT,FB,DT,PB,RW,W,cycle (m,in,),a+bN₃
+,,,,,,,,,,,,,
+,,,3,FT,FB,DT,PB,RW,W,cycle (m,in,),a+bN₃
+,,,,,,,,,,,,,
+,,,4,CTL,H,,EB,CT,W,cycle (m,in,),-a+bN₃+cA₁+dD₁+eN₄
+,,,5,FT,FB,,PB,CT,W,cycle (m,in,),a+bN₃+cA₁
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+Walsh & S,tra,ndgard (2014),1,CTL,H,,PB,CT,PW,(GMton,P,"Mh ⁻¹)
+0",a+bln(V₁)
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,2,CTL,H,,PB,CT,PW,(GMton,P,"Mh ⁻¹)
+0",a+bln(V₁)
+,,,,,,,,,,,,,
+Walsh et a,l. (,2014),1,CTL,H,,PB,CT,PV,(m³ PM,"h ⁻
+0",¹),a+bln(V₁)
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,2,CTL,H,,PB,CT,PV,(m³ PM,"h ⁻
+0",¹),a+bln(V₁)
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+Williams,& A,ckerman (2016),1,CTL,H,,PB,CT,PV,(m³ PM,"h ⁻
+0",¹),-a+bD₁-cS₁-dA₁
+Zimelis et,al.,(2020),1,CTL,H,,PB,RW,TU,(min tre,e⁻¹,),a-bD₁+cD₁d
+,,,2,CTL,H,,PB,RW,PV,(m³ h⁻¹),,,-a+bD₁-cD₁d
+Zimelis et,al.,(2018),1,CTL,H,,PB,RW,PV,(m³ h⁻¹),,,-a+bD₁
+,,,2,CTL,H,,PB,RW,E,"delimb,",bu,ck (s),a-bD₁+cD₁d
+Zimelis et,al.,(2019),1,CTL,H,,PB,RW,PV,(m³ h⁻¹),,,-a+bD₁-cD₁d+eD₁f
+,,,2,CTL,H,,PB,RW,PV,(m³ h⁻¹),,,a-bD₁+cD₁d-eD₁f
+,,,,,,,,,,,,,
+Zimelis et,al.,(2017a),1,CTL,H,,PB,RW,E,feed roll,er,operation (s,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,-a+bln(D₁)
+,,,,,,,,,,,,,
+,,,,,,,,,,tree⁻¹),,,
+,,,,,,,,,,,,,
+,,,2,CTL,H,,PB,RW,E,feed roll,er,operation (s,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,-a+bln(D₁)
+,,,,,,,,,,,,,
+,,,,,,,,,,tree⁻¹),,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,3,CTL,H,,PB,RW,E,feed roll,er,"operation,",d
+,,,,,,,,,,,,,-a+bD₁-cD₁
+,,,,,,,,,,,,,
+,,,,,,,,,,delimb (,s t,ree⁻¹),

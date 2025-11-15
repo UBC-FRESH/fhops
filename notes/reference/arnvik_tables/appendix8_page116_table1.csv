@@ -1,0 +1,13 @@
+,,,,,,,,,,
+,,,4,CTL,H,PB,RW,E,"feed roller operation,",d
+,,,,,,,,,,-a+bD₁+cD₁
+,,,,,,,,,,
+,,,,,,,,,delimb (s tree⁻¹),
+Zimelis,et,al. (2017b),1,CTL,H,PB,RW,PV,(m³ h⁻¹),-aD₁+bD₁c-dD₁e
+,,,2,CTL,H,PB,RW,PV,(m³ h⁻¹),a-bD₁+cD₁d-eD₁f
+,,,,,,,,,,
+,,,3,CTL,H,PB,RW,PV,(m³ h⁻¹),-a+bD₁
+Zimelis,&,Spalva (2022),1,CTL,H,PB,RW,PV,(m³ h⁻¹),-a+bD₁-cD₁d
+,,,,,,,,,,
+,,,2,CTL,H,PB,RW,PU,(trees h⁻¹),a-bD₁
+Zimelis,et,al. (2016),1,CTL,H,EB,CT,PV,(m³ h⁻¹),aD₁b

@@ -1,0 +1,54 @@
+,,7,CTL,H,,PB,RW,E,"fell, p",ro,ce,ss (s),a+bV₁-cV₁d+eV₁f+gT₂
+,,,,,,,,,,,,,d f
+,,8,CTL,H,,PB,RW,PV,(m³ E,"⁻¹
+0",),,a+bV₁-cV₁ +eV₁
+,,,,,,,,,,,,,d f
+,,9,CTL,H,,PB,RW,PV,(m³ E,"⁻¹
+0",),,a+bV₁-cV₁ -eV₁
+,,,,,,,,,,,,,d f
+,,10,CTL,H,,PB,RW,PV,(m³ E,"⁻¹
+0",),,a+bV₁-cV₁ -eV₁
+,,,,,,,,,,,,,d f
+,,11,CTL,H,,PB,RW,PV,(m³ E,"⁻¹
+0",),,a+bV₁-cV₁ -eV₁
+,,,,,,,,,,,,,d f
+,,12,CTL,H,,PB,RW,PV,(m³ E,"⁻¹
+0",),,a+bV₁-cV₁ -eV₁
+,,,,,,,,,,,,,d f
+,,13,CTL,H,,PB,RW,PV,(m³ E,"⁻¹
+0",),,a+bV₁-cV₁ -eV₁
+,,,,,,,,,,,,,d f
+,,14,CTL,H,,PB,RW,PV,(m³ E,"⁻¹
+0",),,a+bV₁-cV₁ -eV₁
+,,,,,,,,,,,,,
+Karpachev &,Bykovskiy,1,FT,FB,Sim,PB,RW,PV,(m³ s,hift,⁻,¹)-D,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,a+bln(M₇)
+,,,,,,,,,,,,,
+(2019),,,,,,,,,,,,,
+,,2,FT,FB,Sim,PB,RW,PV,(m³ s,hift,⁻,¹)-D,a+bln(M₇)
+,,,,,,,,,,,,,
+,,3,FT,FB,Sim,PB,RW,PV,(m³ s,hift,⁻,¹)-D,-a+bln(M₇)
+,,,,,,,,,,,,,
+,,4,FT,FB,Sim,PB,RW,PV,(m³ s,hift,⁻,¹)-D,a-bM₆
+,,5,FT,FB,Sim,PB,RW,PV,(m³ s,hift,⁻,¹)-D,a-bM₆
+,,,,,,,,,,,,,
+,,6,FT,FB,Sim,PB,RW,PV,(m³ s,hift,⁻,¹)-D,a-bM₆
+,,,,,,,,,,,,,
+,,7,FT,FB,Sim,PB,RW,PV,(m³ s,hift,⁻,¹)-D,a+bln(M₇)
+,,8,FT,FB,Sim,PB,RW,PV,(m³ s,hift,⁻,¹)-D,-a+bln(M₇)
+,,,,,,,,,,,,,
+,,9,FT,FB,Sim,PB,RW,PV,(m³ s,hift,⁻,¹)-D,-a+bln(M₇)
+,,10,FT,FB,Sim,PB,RW,PV,(m³ s,hift,⁻,¹)-D,-a+bV₁
+,,11,FT,FB,Sim,PB,RW,PV,(m³ s,hift,⁻,¹)-D,a+bln(V₁)
+,,12,FT,FB,Sim,PB,RW,PV,(m³ s,hift,⁻,¹)-D,a+bln(V₁)
+,,13,FT,FB,Sim,PB,RW,PV,(m³ s,hift,⁻,¹)-D,a+bln(V₁)
+Kim et al. (20,17),1,FT,FB,,PB,CT,W,cycle,(s),,,a+bN₆+cN₇+dA₂
+,,,,,,,,,,,,,
+Kizha & Han,(2016),1,FT,FB,,PB,CT,W,log cy,cl,e,(centi-min),a+bN₃-cM₅-dM₅+eD₁+fO₇+gO₇+hO₇
+,,2,FT,FB,,PB,CT,W,log cy,cl,e,(centi-min),a+bN₃-cM₅-dM₅+eD₁-fO₇-gO₇
+,,3,FT,FB,,PB,CT,W,log cy,cl,e,(centi-min),a+bN₃-cM₅-dM₅+eD₁-fO₇-gO₇-hO₇
+,,4,FT,FB,,PB,CT,W,ln cyc,le,(,centi-min),a-bN₃-cM₅-dM₅+eD₁+fO₇-gO₇+hO₇
+,,5,FT,FB,,PB,CT,W,ln cyc,le,(,centi-min),a+bN₃-cM₅-dM₅+eD₁-fO₇-gO₇-hO₇
+,,6,FT,FB,,PB,CT,W,ln cyc,le,(,centi-min),a-bN₃+cM₅+dM₅-eA₁-fD₁+gO₇-hO₇-IO₇
+Kormanek &,Baj (2018),1,CTL,H,,PB,RW,E,fell (s,),,,a+bD₁

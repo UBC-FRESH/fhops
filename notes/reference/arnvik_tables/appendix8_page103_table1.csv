@@ -1,0 +1,53 @@
+,,5,FT,FB,EB,CT,PV,(m³ h⁻¹),,a+bV₁
+,,6,*FT,FB,EB,CT,PV,(m³ h⁻¹),,a+bV₁
+,,,,,,,,,,
+Brewer et al.,(2018),1,CTL,H,PB,RW,PV,(m³ PMh,⁻¹),a+bV₁
+,,2,CTL,H,PB,RW,PV,(m³ PMh,⁻¹),a+bV₁
+,,3,CTL,H,PB,RW,PV,(m³ PMh,⁻¹),a+bV₁
+,,,,,,,,,,
+,,4,CTL,H,PB,RW,PV,(m³ PMh,⁻¹),a+bV₁
+,,5,CTL,H,PB,RW,PV,(m³ PMh,⁻¹),a+bV₁
+,,,,,,,,,,
+,,6,CTL,H,PB,RW,PV,(m³ PMh,⁻¹),a+bV₁
+,,,,,,,,,,
+,,7,CTL,H,PB,RW,PV,(m³ PMh,⁻¹),a+bV₁
+,,8,CTL,H,PB,RW,PV,(m³ PMh,⁻¹),a+bV₁
+,,,,,,,,,,
+,,,,,,,,,,
+Brown et al.,(2013),1,FT,FB,PB,CT,PV,√(m³ PM,"h ⁻¹)
+0",a+bln(V₁)
+,,,,,,,,,,
+,,,,,,,,,,
+,,2,FT,FB,PB,CT,PV,√(m³ PM,"h ⁻¹)
+0",a+bln(V₁)
+Carter et al.,(2017),1,FT,FB,PB,CT,W,cycle (ce,nti-min),a+bA₁+cN₁+dA₃
+Chakroun et,al. (2016),1,*FT,FB,EB,CT,PV,(m³ PMh,⁻¹),(a+bE₁₀)V₁c
+,,2,*FT,FB,EB,CT,PV,(m³ PMh,⁻¹),(a+bE₁₀)V₁c
+,,3,*FT,FB,EB,CT,PV,(m³ PMh,⁻¹),(a-bE₁₀)V₁c
+,,4,*FT,FB,EB,CT,PV,(m³ PMh,⁻¹),(a+bO₁₅)V₁c
+,,5,*FT,FB,EB,CT,PV,(m³ PMh,⁻¹),(a+bO₁₅)V₁c
+,,,,,,,,,,
+Chung et al.,(2022),1,FT,FB,PB,CT,W,cycle (s),,a+bA₂+cD₁₃+dD₁₃
+,,2,FT,FB,PB,CT,W,cycle (s),,a+bA₄+cN₂
+Di Fulvio &,Bergström (2013),1,CTL,HW,PB,RW,TV,(PMmin,m³ ⁻¹),a+bI₅-cT₁
+,,,,,,,,,,
+Erber et al. (,2016),1,CTL,H,PB,RW,M,move (PS,"H dry ton⁻¹)
+0",a-bT₈
+,,,,,,,,,,-c
+,,2,CTL,H,PB,RW,E,fell (PSH,"dry ton⁻¹)
+0",a+bD₂ -dN₃-eT₈
+,,,,,,,,,,
+,,,,,,,,,,
+,,3,CTL,H,PB,RW,E,process (,"PSH dry
+0",-c
+,,,,,,,,,,a+bD₂ -dN₃-eT₈
+,,,,,,,,,,
+,,,,,,,,ton⁻¹),,
+,,,,,,,,,,-c
+,,4,CTL,H,PB,RW,TW,"(PSH dr
+0",y ton⁻¹),a+bD₂ -dN₃-eT₈
+Eriksson & L,indroos (2014),1,CTL,H,PB,RW,PV,ln (m³ub,PMh⁻¹),a+bln(V₃)-c(ln(V₃))d
+,,2,CTL,H,PB,RW,PV,ln (m³ub,PMh⁻¹),a+bln(V₃)+cln(V₁₃)+dln(V₁₄)-e(ln(V₃))f
+,,,,,,,,,,
+,,3,CTL,H,PB,RW,PV,ln (m³ub,PMh⁻¹),a+bln(V₃)+cln(V₁₃)+dln(V₁₄)-e(ln(V₃))f-gln(S₃S₂)-
+,,,,,,,,,,hln(O₉)-iT₁₀

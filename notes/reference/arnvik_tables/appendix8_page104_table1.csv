@@ -1,0 +1,42 @@
+,,,,,,,,,,
+,,4,CTL,H,PB,RW,PV,ln (m³ub,PMh⁻¹),a+bln(V₃)+cln(V₁₃)+dln(V₁₄)-e(ln(V₃))f-gln(S₃S₂)-
+,,,,,,,,,,hln(O₉)-iT₁₀+jS₅-kS₄-lln(S₆)+mE₁₁+nln(E₆)
+,,,,,,,,,,
+,,5,CTL,H,PB,RW,PV,ln (m³ub,PMh⁻¹),a+bln(V₃)+cln(V₁₃)+dln(V₁₄)-e(ln(V₃))f-gln(S₃S₂)-
+,,,,,,,,,,hln(O₉)-iT₁₀+jS₅-kS₄-
+,,,,,,,,,,lln(S₆)+mE₁₁+nln(E₆)+oE₁₂ln(V₃)+pE₁₂ln(V₃)+qE₁₂ln(
+,,,,,,,,,,V₃)+rE₁₂ln(V₃)+sE₁₂ln(V₃)
+,,6,CTL,H,PB,RW,PV,ln (m³ub,PMh⁻¹),a+bln(V₃)-c(ln(V₃))d
+,,,,,,,,,,
+,,7,CTL,H,PB,RW,PV,ln (m³ub,PMh⁻¹),a+bln(V₃)+cln(V₁₃)+dln(V₁₄)
+,,8,CTL,H,PB,RW,PV,ln (m³ub,PMh⁻¹),a+bln(V₃)+cln(V₁₃)+dln(V₁₄)-eln(S₃S₂)-fln(O₉)-
+,,,,,,,,,,gln(S₆)
+,,9,CTL,H,PB,RW,PV,ln (m³ub,PMh⁻¹),a+bln(V₃)+cln(V₁₃)+dln(V₁₄)-eln(S₃S₂)-fln(O₉)-
+,,,,,,,,,,gln(S₆)+hS₅-iS₄+jE₁₁+kln(E₆)-
+,,,,,,,,,,lln(E₇)+mE₁₂ln(V₃)+nE₁₂ln(V₃)+oE₁₂ln(V₃)
+Fernandez-Lacruz,et al. (2013),1,FT,FB,PB,RW,TW,(PWmin,ODton⁻¹),expaH₂-b
+Fernandez-Lacruz,et al. (2021),1,*FT,FB,PB,RW,TW,(PMmin,dry ton⁻¹),expaH₂-b
+,,2,*FT,FB,PB,RW,TW,(PMmin,dry ton⁻¹),expaD₂-b
+,,,,,,,,,,
+George et al. (202,2),1,CTL,H,PB,RW,W,cycle (s),,a+bN₄+cO₈+dO₈-eM₅+fM₅+gA₈+hA₁+iD₁₂
+,,,,,,,,,,
+Ghaffariyan (2013,),1,FT,FB,PB,CT,PW,(ton PMh,"⁻¹)
+0",a+bln(V₁)
+,,2,FT,FB,PB,CT,W,cycle (s),,aV₁-b
+,,,,,,,,,,b
+Ghaffariyan et al.,(2019),1,CTL,H,-,-,PV,(m³ PMh,"⁻¹)
+0",aV₁
+,,,,,,,,,,
+Ghaffariyan et al.,(2013),1,FT,FB,PB,CT,PW,(GMton,"PMh ⁻¹)
+0",a+bln(V₁)
+,,,,,,,,,,bD₁
+Ghaffariyan et al.,(2015),1,CTL,H,PB,CT,W,cycle (P,"Mmin )
+0",aexp
+Green et al. (2020,),1,CTL,H,PB,RW,W,cycle (s),,-a+bD₁+cA₁+dN₄
+,,2,CTL,H,PB,RW,W,cycle (s),,-a+bD₁+cA₁+dN₄
+Grönlund & Elias,son (2019),1,CTL,H,PB,RW,TW,(s ODton,⁻¹),a-bB₂+cI₃
+Gülci et al. (2021),,1,FT,FB,EB,CT,PV,(m³ h⁻¹),,-a+bH₁+cD₁+dV₁
+,,2,FT,FB,EB,CT,PV,(m³ h⁻¹),,a+bH₁+cD₁+dV₁
+,,3,FT,FB,EB,CT,PV,(m³ h⁻¹),,a-bH₁+cH₁d-eD₁+fD₁g-hV₁-iV₁j
+,,4,FT,FB,EB,CT,PV,(m³ h⁻¹),,a-bH₁+cH₁d-eD₁+fD₁g-hV₁-iV₁j
+Han et al. (2018),,1,FT,FB,PB,CT,W,cycle (s),,a+bN₆+cN₇+dA₁

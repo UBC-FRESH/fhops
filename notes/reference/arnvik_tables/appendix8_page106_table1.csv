@@ -1,0 +1,49 @@
+,,,24,CTL,H,-,-,PV,(m³ min,⁻¹),,aO₁bO₂-cO₃-dO₁₁-eV₁f
+,,,25,CTL,H,-,-,PV,(m³ min,⁻¹),,aO₁-bO₂-cO₃-dO₁₁-eV₁f
+,,,26,CTL,H,-,-,PV,(m³ min,⁻¹),,aO₁bO₂-cO₃-dO₁₁-eV₁f
+,,,27,CTL,H,-,-,PV,(m³ min,⁻¹),,aO₁bO₂-cO₃-dO₁₁-eV₁f
+,,,28,CTL,H,-,-,PV,(m³ min,⁻¹),,aO₂-bO₃-cO₁₁-dV₁e
+,,,29,CTL,H,-,-,PV,(m³ min,⁻¹),,aO₁-bO₂-cO₃-dO₁₁-eV₁f
+,,,30,CTL,H,-,-,PV,(m³ min,⁻¹),,aO₁-bO₂-cO₃-dO₁₁-eV₁f
+,,,31,CTL,H,-,-,PV,(m³ min,⁻¹),,aO₁-bO₂-cO₃-dO₁₁-eV₁f
+,,,32,CTL,H,-,-,PV,(m³ min,⁻¹),,aO₁₁bV₁c
+,,,33,CTL,H,-,-,PV,(m³ min,⁻¹),,aO₁-bO₂-cO₃-dO₁₁-eV₁f
+,,,,,,,,,,,,
+Jernigan,et a,l. (2015),1,FT,FB,PB,CT,W,cycle (P,Mmi,n),a+bN₉
+,,,,,,,,,,,,b
+Jylhä &,Ber,gström (2016),1,FT,FB,PB,RW,PW,(ODton,"E h⁻
+0",¹),aV₁₂
+,,,,,,,,,,,,b
+,,,2,FT,FB,PB,RW,PW,(ODton,"E h⁻
+0",¹),aH₂
+,,,,,,,,,,,,-b
+,,,3,FT,FB,PB,RW,PW,(ODton,"E h⁻
+0",¹),aI₅
+,,,,,,,,,,,,b
+,,,4,FT,FB,PB,RW,PW,(ODton,"E h⁻
+0",¹),aD₅
+,,,,,,,,,,,,b
+,,,5,FT,FB,PB,RW,PW,(ODton,"E h⁻
+0",¹),aB₃
+,,,,,,,,,,,,b
+,,,6,FT,FB,PB,RW,PW,(ODton,"E h⁻
+0",¹),aH₁
+,,,,,,,,,,,,b
+,,,7,FT,FB,PB,RW,PW,(ODton,"E h⁻
+0",¹),aD₆
+,,,,,,,,,,,,b
+,,,8,FT,FB,PB,RW,PW,(ODton,"E h⁻
+0",¹),aH₃
+Kärhä et,al.,(2018a),1,CTL,H,PB,RW,E,"fell, pro",cess,(s),a+bV₁-cV₁d+eV₁f+gO₁₃
+,,,2,CTL,H,PB,RW,E,"fell, pro",cess,(s),a+bV₁-cV₁d+eV₁f+gO₁₃
+,,,3,CTL,H,PB,RW,E,"fell, pro",cess,(s),a+bV₁-cV₁d+eV₁f+gO₁₃
+,,,4,CTL,H,PB,RW,M,moving,(s),,a+b/I₃+cO₁₃
+,,,,,,,,,,,,
+Kärhä et,al.,(2018b),1,CTL,HW,PB,RW,PV,"(m³ E ⁻
+15",¹),,-a+bln(V₂)
+Kärhä et,al.,(2019),1,CTL,H,PB,RW,E,"fell, pro",cess,(s),a+bV₁-cV₁d+eV₁f-gT₂
+,,,2,CTL,H,PB,RW,E,"fell, pro",cess,(s),a+bV₁-cV₁d+eV₁f+gT₂
+,,,3,CTL,H,PB,RW,E,"fell, pro",cess,(s),a+bV₁-cV₁d+eV₁f+gT₂
+,,,4,CTL,H,PB,RW,E,"fell, pro",cess,(s),a+bV₁-cV₁d+eV₁f+gT₂
+,,,5,CTL,H,PB,RW,E,"fell, pro",cess,(s),a+bV₁-cV₁d+eV₁f+gT₂
+,,,6,CTL,H,PB,RW,E,"fell, pro",cess,(s),a+bV₁-cV₁d+eV₁f+gT₂

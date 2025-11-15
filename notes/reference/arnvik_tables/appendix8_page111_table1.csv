@@ -1,0 +1,31 @@
+,17,CTL,H,"PB, EB",CT,PV,(m³ P,Mh⁻¹),,a+bV₁
+Nuutinen & Björheden (2016),1,B (FT),FB,PB,RW,E,fell (s),,,a+bln(N₉)
+Olivera et al. (2016),1,CTL,H,PB,RW,PV,(m³ub,h⁻¹),,exp-a+bln(D₅)
+,2,CTL,H,PB,RW,PV,(m³ub,h⁻¹),,exp-a+bln(D₅)
+,3,CTL,H,PB,RW,PV,(m³ub,h⁻¹),,exp-a+bln(D₅)
+,4,CTL,H,PB,RW,PV,(m³ub,h⁻¹),,exp-a+bln(D₅)
+,5,CTL,H,PB,RW,PV,(m³ub,h⁻¹),,exp-a+bln(D₅)
+,6,CTL,H,PB,RW,PV,(m³ub,h⁻¹),,exp-a+bln(D₅)
+,7,CTL,H,PB,RW,PV,(m³ub,h⁻¹),,exp-a+bln(D₅)
+,8,CTL,H,PB,RW,PV,(m³ub,h⁻¹),,exp-a+bln(D₅)
+,9,CTL,H,PB,RW,PV,(m³ub,h⁻¹),,exp-a+bln(D₅)
+,10,CTL,H,PB,RW,PV,(m³ub,h⁻¹),,exp-a+bln(D₅)
+,11,CTL,H,PB,RW,PV,(m³ub,h⁻¹),,exp-a+bln(D₅)
+,12,CTL,H,PB,RW,PV,(m³ub,h⁻¹),,exp-a+bln(D₅)
+,13,CTL,H,PB,RW,PV,(m³ub,h⁻¹),,exp-a+bln(D₅)
+,14,CTL,H,PB,RW,PV,(m³ub,h⁻¹),,exp-a+bln(D₅)
+Petitmermet et al. (2019),1,CTL,H,PB,RW,TU,(min c,orrido,r-1),a+bB₄+cA₅
+,2,CTL,H,PB,RW,TU,(min c,orrido,r-1),a+bB₅+cB₆+dA₅
+,3,CTL,H,PB,RW,TU,(min c,orrido,r-1),a+bB₄+cA₆+dA₇
+,4,CTL,H,PB,RW,TU,(min c,orrido,r-1),a+bB₅+cB₆+dA₆+eA₇
+,5,CTL,H,PB,RW,TU,(min c,orrido,r-1),a+bA₅+cB₇+dB₈
+,6,CTL,H,PB,RW,TU,(min c,orrido,r-1),a+bA₆+cA₇+dB₇+eB₈
+,7,CTL,H,PB,RW,TU,(min c,orrido,r-1),a+bA₅+cB₉+dB₁₀+eB₁₁+fB₁₂
+,8,CTL,H,PB,RW,TU,(min c,orrido,r-1),a+bA₆+cA₇+dB₉+eB₁₀+fB₁₁+gB₁₂
+Petty & Kärhä (2014),1,CTL,H,PB,RW,E,"fell, pr",ocess,(s),aln(D₁-b)
+,2,CTL,H,PB,RW,E,"fell, pr",ocess,(s),aln(D₁-b)
+,3,CTL,H,PB,RW,E,"fell, pr",ocess,(s),aln(D₁-b)
+,4,CTL,H,PB,RW,E,"fell, pr",ocess,(s),aln(D₁-b)
+,5,CTL,H,PB,RW,E,"fell, pr",ocess,(s),aln(D₁-b)
+,,,,,,,,,,
+,6,CTL,H,PB,RW,E,"fell, pr",ocess,(s),aln(D₁-b)

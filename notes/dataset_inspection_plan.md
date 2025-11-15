@@ -40,6 +40,8 @@
 - WS3’s PaCal + Monte Carlo backup logic needs to be ported so Lahrsen-style productivity/costing helpers can treat inputs as random variates (expected-value outputs) rather than deterministic means; capture this before we wire the costing helper.
 - Initial costing helper CLI is in place: `fhops dataset estimate-cost` pairs Lahrsen productivity (deterministic or RV) with rental rates/utilisation to emit $/m³.
 - Candidate productivity models for single-grip harvesters/harwarders identified via Arnvik (2024) review (2013–2023 literature); next step is selecting/porting BC-appropriate regressions for those roles.
+- Appendix 8 tables from Arnvik (2024) exported (per-page CSVs + aggregate raw dump) via `scripts/extract_arnvik_models.py`; next step is normalising the rows into the productivity registry schema.
+- Appendix 8 in Arnvik (2024) lists 422 productivity models (harvesters, feller-bunchers, harwarders). Need to digitise into a searchable registry (machine type, region, system, predictors, coefficients, R², etc.) so we can plug gaps for the remaining machine roles.
 
 ## BC Productivity Model Insights (Lahrsen 2025 thesis)
 - Dataset: 9,865 FPDat II production reports (filtered to 3,081 daily machine-level observations, 205 cutblocks) from 71 feller-bunchers across BC (Jan 2022–Jul 2024); covariates captured automatically: average stem size (0.09–1.32 m³/tree), average volume per hectare (75–856 m³/ha), stem density (205–3,044 trees/ha), ground slope (1.5–48.9%).
@@ -69,8 +71,8 @@
 - [ ] Port WS3 random-variate handling (PaCal + Monte Carlo fallback) into the productivity/costing helpers so expected-value outputs behave correctly even when PaCal fails to converge.
 - [ ] Source BC productivity functions (or build new regressions) for every machine role in the harvest system registry so the costing helper can cover entire systems, not just feller bunchers:
   - [x] feller-buncher (Lahrsen 2025)
-  - [ ] single_grip_harvester *(candidate: Eriksson & Lindroos 2014 CTL harvester model — see Arnvik 2024 pp. 37–39 for summary)*
-  - [ ] forwarder *(candidate: Laitila & Väätäinen 2020 harwarder/forwarder regressions — see Arnvik 2024 Fig. 1/Table 13)*
+  - [ ] single_grip_harvester *(candidate: Eriksson & Lindroos 2014 CTL harvester model — see Arnvik 2024 pp. 37–39 for summary; pull coefficients from Appendix 8 once digitised)*
+  - [ ] forwarder *(candidate: Laitila & Väätäinen 2020 harwarder/forwarder regressions — see Arnvik 2024 Fig. 1/Table 13; confirm in Appendix 8)*
   - [ ] grapple_skidder
   - [ ] shovel_logger
   - [ ] loader
@@ -80,6 +82,10 @@
   - [ ] tethered_shovel_or_skidder
   - [ ] helicopter_longline / loader_or_water
   - [ ] hand_faller / hand_or_mech_faller / hand_buck_or_processor
+- [ ] Digitise Arnvik 2024 Appendix 8 productivity catalog (harvesters, feller-bunchers, harwarders) into a structured registry (CSV/JSON) keyed by machine type, harvesting system, region, predictors, coefficients, R². Plan includes:
+  - [ ] Extraction strategy: attempt Tabula/pandas parsing; if automated extraction fails due to formatting, fall back to semi-manual OCR or direct data entry.
+  - [ ] Registry design: schema capturing publication metadata, machine type, harvest system, predictors, mathematical form, coefficients, fit metrics.
+  - [ ] Ingestion pipeline: scripts to clean/normalise extracted rows (e.g., map machine type labels to FHOPS roles, convert units, note site conditions).
 
 ## Rollout Plan (3-level work breakdown)
 

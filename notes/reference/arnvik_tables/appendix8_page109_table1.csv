@@ -1,0 +1,51 @@
+,,,6,CTL,H,PB,RW,E,process (s,tree⁻¹),a+bV₂
+Laitila & Vää,täinen,(2014),1,CTL,H,EB,CT,M,move (s tr,ee⁻¹),a-bln(I₃)
+,,,,,,,,,,,
+,,,2,CTL,H,EB,CT,E,fell (s tree⁻,¹),a+b(c/N₉)
+,,,3,CTL,H,EB,CT,E,process (s,tree⁻¹),-a+bln(V₂)
+Laitila & Vää,täinen,(2020),1,*FT,HW,PB,RW,M,move (s tr,ee⁻¹),a+b/I₃
+,,,,,,,,,,,
+,,,2,*FT,HW,PB,RW,E,fell (s tree⁻,¹),-a+bln(V₂)
+,,,3,*FT,HW,PB,RW,L,load (s gra,pple-load⁻¹),-a+b/E₁₄
+,,,,,,,,,,,
+Laitila & Vää,täinen,(2021),1,FT,FB,EB,CT,M,move (s),,a-bI₃
+,,,,,,,,,,,
+,,,2,FT,FB,EB,CT,E,"fell, bunch",(s tree⁻¹),a+bV₂
+Laitila & Vää,täinen,(2023),1,FT,FB,EB,CT,E,"fell, bunch",(s tree⁻¹),a-bexpN₉
+,,,,,,,,,,,
+Laitila et al. (,2013),,1,*CTL,H,PB,RW,M,move (s tr,ee⁻¹),a-bln(I₃)
+,,,2,*CTL,H,PB,RW,E,"fell, proce",ss (s),-a+bD₁-cD₁d+eD₁f
+,,,3,*CTL,H,PB,RW,E,"fell, proce",ss (s),a+bD₁+cD₁d
+Laitila et al. (,2020),,1,CTL,H,PB,RW,E,"fell, proce",ss (s),a+bV₂+cV₂d
+Lazdiņš et al.,(2019),,1,CTL,H,-,-,PV,(m³ h⁻¹),,aD₁b
+,,,2,CTL,H,-,-,PV,(m³ h⁻¹),,aD₁b
+,,,3,CTL,H,-,-,PV,(m³ h⁻¹),,aD₁b
+Lazdiņš (2014,),,1,CTL,H,PB,RW,TU,(centi-min,tree⁻¹),aexpbD₁
+Lazdiņš et al.,(2021),,1,CTL,H,PB,RW,PV,(m³ h⁻¹),,a+bV₁-cV₁d+dV₁e
+Lazdiņš et al.,(2016),,1,CTL,H,PB,RW,PV,(m³ h⁻¹),,aD₁b
+,,,2,CTL,H,PB,RW,PU,(trees h⁻¹),,aD₁-b
+,,,,,,,,,,,b
+Leszczyński e,t al. (2,021),1,CTL,H,EB,CT,PV,"(m³ PMh
+15",⁻¹),aV₁
+,,,,,,,,,,,b
+,,,2,CTL,H,EB,CT,PV,"(m³ PMh
+15",⁻¹),aV₁
+,,,,,,,,,,,b c
+,,,3,CTL,H,EB,CT,PV,"(m³ PMh
+15",⁻¹),aV₁ I₂
+,,,,,,,,,,,b
+,,,4,CTL,H,EB,CT,PV,"(m³ PMh
+15",⁻¹),aV₁
+,,,,,,,,,,,b
+,,,5,CTL,H,EB,CT,PV,"(m³ PMh
+15",⁻¹),aI₂
+,,,,,,,,,,,b
+,,,6,CTL,H,EB,CT,PV,"(m³ PMh
+15",⁻¹),aI₂
+,,,,,,,,,,,
+Liski et al. (20,20),,1,CTL,H,PB,RW,PV,"(m³ E h⁻¹)
+0",,a+bT₇+cE₁₃-dE₁₃-eE₁₂+fE₁₂+gE₁₂-hO₇-iO₇-jO₇-kO₇-
+,,,,,,,,,,,lM₃-mM₃-nM₃+oV₁-pV₁q-rT₇V₁+sT₇V₁t
+,,,,,,,,,,,
+,,,2,CTL,H,PB,RW,PV,"(m³ E h⁻¹)
+0",,a+bT₇-cO₇-dO₇-eO₇-fO₇+gV₁-hV₁i

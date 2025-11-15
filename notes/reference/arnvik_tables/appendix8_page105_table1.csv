@@ -1,0 +1,47 @@
+,,,,,,,,,,,
+Hiesl & Benjamin (2013),1,FT,FB,PB,CT,W,log (P,M,mi,"n )
+15",-a+bN₉+cD₄
+,,,,,,,,,,,
+Hiesl & Benjamin (2015),1,CTL,H,PB,RW,W,log (P,M,mi,"n )
+15",-a+bD₁-cO₈
+,,,,,,,,,,,
+,,,,,,,,,,,
+Hiesl et al. (2015),1,CTL,H,PB,RW,PW,(ton P,M,"h
+15",⁻¹),-a+bI₅-cI₄-dO₁₄+eB₁₆+fV₁
+,,,,,,,,,,,
+,2,FT,FB,PB,CT,PW,(ton P,M,"h
+15",⁻¹),a-bI₅-cI₄+dO₁₄+eB₁₆
+,,,,,,,,,,,c
+Holzleitner & Kanzian (2022),1,CTL,H,PB,RW,PV,(m³ P,"Sh
+0",⁻¹),,a+bV₁ -dT₉
+,,,,,,,,,,,c
+,2,CTL,H,PB,RW,PV,(m³ P,"Sh
+0",⁻¹),,a+bV₁ -dT₉+eM₅-fV₁M₅
+,,,,,,,,,,,c
+,3,CTL,H,PB,RW,PV,(m³ P,"Sh
+0",⁻¹),,a+bV₁ -dT₉
+Horváth et al. (2016),1,CTL,H,-,-,W,cycle,(m,in),,aO₁bO₂cO₃dO₁₁eV₁f
+,2,CTL,H,-,-,W,cycle,(m,in),,aO₁-bO₂cO₃dO₁₁eV₁f
+,3,CTL,H,-,-,W,cycle,(m,in),,aO₁bO₂eO₃dO₁₁eV₁-f
+,4,CTL,H,-,-,W,cycle,(m,in),,aO₁-bO₂cO₃dO₁₁eV₁-f
+,5,CTL,H,-,-,W,cycle,(m,in),,aO₁-bO₂cO₃dO₁₁eV₁-f
+,6,CTL,H,-,-,W,cycle,(m,in),,aO₂bO₃cO₁₁dV₁e
+,7,CTL,H,-,-,W,cycle,(m,in),,aO₁bO₂cO₃dO₁₁eV₁f
+,8,CTL,H,-,-,W,cycle,(m,in),,aO₁bO₂cO₃dO₁₁eV₁f
+,9,CTL,H,-,-,W,cycle,(m,in),,aO₁bO₂cO₃dO₁₁eV₁f
+,10,CTL,H,-,-,W,cycle,(m,in),,aO₁₁-bV₁c
+,11,CTL,H,-,-,W,cycle,(m,in),,aO₁bO₂cO₃dO₁₁eV₁f
+,12,CTL,H,-,-,TV,(min,m³,⁻¹),,aO₁bO₂cO₃dO₁₁eV₁-f
+,13,CTL,H,-,-,TV,(min,m³,⁻¹),,aO₁-bO₂cO₃dO₁₁eV₁-f
+,14,CTL,H,-,-,TV,(min,m³,⁻¹),,aO₁bO₂cO₃dO₁₁eV₁-f
+,15,CTL,H,-,-,TV,(min,m³,⁻¹),,aO₁-bO₂cO₃dO₁₁eV₁-f
+,16,CTL,H,-,-,TV,(min,m³,⁻¹),,aO₁-bO₂cO₃dO₁₁eV₁-f
+,17,CTL,H,-,-,TV,(min,m³,⁻¹),,aO₂bO₃cO₁₁dV₁-e
+,18,CTL,H,-,-,TV,(min,m³,⁻¹),,aO₁bO₂cO₃dO₁₁eV₁-f
+,19,CTL,H,-,-,TV,(min,m³,⁻¹),,aO₁bO₂cO₃dO₁₁eV₁-f
+,20,CTL,H,-,-,TV,(min,m³,⁻¹),,aO₁bO₂cO₃dO₁₁eV₁-f
+,21,CTL,H,-,-,TV,(min,m³,⁻¹),,aO₁₁-bV₁-c
+,22,CTL,H,-,-,TV,(min,m³,⁻¹),,aO₁bO₂cO₃dO₁₁eV₁-f
+,23,CTL,H,-,-,PV,(m³ m,in⁻,¹),,aO₁-bO₂-cO₃-dO₁₁-eV₁f
+,,,,,,,,,,,
+,,,,,,,,105,,,

@@ -32,7 +32,8 @@ dev = [
   "mypy>=1.10.0",
   "pre-commit>=3.7.0",
   "pandas-stubs>=2.2.0",
-  "types-PyYAML>=6.0.12"
+  "types-PyYAML>=6.0.12",
+  "pdfplumber>=0.10.3"
 ]
 geo = [
   "geopandas>=0.14.0"
