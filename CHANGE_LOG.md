@@ -28,8 +28,9 @@
   steps documented in the release notes.
 - Documented TestPyPI/PyPI publishing cadence (hatch build + twine upload + smoke install) in
   `notes/release_candidate_prep.md` and `CODING_AGENT.md`.
-- Completed TestPyPI dry run: uploaded `fhops 0.0.2` to TestPyPI via `twine upload --repository testpypi dist/*`
-  and verified install in a fresh venv using `pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple fhops`.
+- Completed TestPyPI dry run: uploaded `fhops 0.0.2` via Hatch (`HATCH_INDEX=testpypi hatch publish`) and
+  verified install in a fresh venv using `pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple fhops`.
+- Release docs now describe the Hatch-only publish flow (no manual Twine invocation).
 - Added quick-demo commands (tuning harness runs) to README/docs overview and highlighted tuned
   presets in the release notes draft.
 

@@ -37,14 +37,12 @@ Status: Draft — drive the v0.x RC process.
 
 7. **Publishing (TestPyPI → PyPI)**
    - [ ] Dry run using TestPyPI:
-     - ``python -m pip install --upgrade build twine``
-     - ``rm -rf dist``
-     - ``hatch run release:build``
-     - ``python -m twine upload --repository testpypi dist/*`` (requires ``TESTPYPI_TOKEN``) ✅ 2025-11-15
+     - ``hatch clean && hatch build``
+     - ``HATCH_INDEX=testpypi hatch publish`` (requires ``HATCH_INDEX_TESTPYPI_AUTH`` or ``~/.pypirc``) ✅ 2025-11-15
      - ``python -m venv .venv-testpypi && . .venv-testpypi/bin/activate``
      - ``pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple fhops`` and run smoke commands (`fhops --help`, `fhops validate examples/minitoy/scenario.yaml`) ✅
-   - [ ] Document environment variables/secrets: ``TESTPYPI_TOKEN`` and ``PYPI_TOKEN`` (GitHub secrets) plus local ``~/.pypirc`` fallback.
-   - [ ] After TestPyPI validation, repeat for PyPI (`twine upload dist/*`) during the release tag.
+   - [ ] Document environment variables/secrets: ``HATCH_INDEX_TESTPYPI_AUTH`` (token for TestPyPI) and ``HATCH_INDEX_PYPI_AUTH`` for PyPI, or configure ``~/.pypirc``.
+   - [ ] After TestPyPI validation, repeat for PyPI: ``HATCH_INDEX=pypi hatch publish`` during the release tag.
 
 ## References
 - ws3 Hatch workflow: https://github.com/ubc-fresh/ws3
