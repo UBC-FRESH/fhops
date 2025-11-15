@@ -98,3 +98,14 @@ Live dashboards (auto-published after every `main` build and the weekly full not
 - Difficulty indices per bundle/tier and weekly notebook metadata archives.
 
 Each dashboard entry includes regeneration commands so you can reproduce the artefacts locally.
+
+### Tuned heuristic presets
+
+Release candidate tuning runs are recorded in `notes/release_tuning_results.md`; the best operator
+weights and configurations per scenario/algorithm are serialized in `notes/release_tuned_presets.json`.
+Use these records when reproducing benchmarks or seeding custom presets, e.g.
+
+```bash
+python -c "import json; cfg=json.load(open('notes/release_tuned_presets.json')); print(cfg[0])"
+# feed operator weights into fhops tune-random --operator-weight swap=... --operator-weight move=...
+```

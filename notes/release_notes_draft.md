@@ -15,7 +15,8 @@
 - Objective weights now configurable (`ObjectiveWeights`); mobilisation penalties enabled by default when config present.
 
 ## Known Issues / Next
-- Hyperparameter tuning sign-off pending final rerun (documenting tuned presets).
+- Tuned presets stored at `notes/release_tuned_presets.json`; consider baking winning operator weights
+  into future CLI presets.
 - Agentic tuner R&D + DSS/geo UI remain on backlog.
 - Release automation (tag-triggered hatch build + publish) to be wired after RC validation.
 
@@ -23,3 +24,4 @@
 - Lint/type/test/docs suite via Hatch.
 - Packaging smoke test: `hatch build` + venv install.
 - Telemetry dashboards: https://ubc-fresh.github.io/fhops/reference/dashboards.html
+- Tuned presets JSON: `notes/release_tuned_presets.json`
