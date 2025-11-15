@@ -25,6 +25,8 @@
 - Added `.github/workflows/release-build.yml`, which runs `hatch run release:build` on tag pushes
   and uploads the `dist/` artifacts; release instructions in `CODING_AGENT.md` now reference the
   automation.
+- Documented TestPyPI/PyPI publishing cadence (hatch build + twine upload + smoke install) in
+  `notes/release_candidate_prep.md` and `CODING_AGENT.md`.
 
 ## 2025-11-13 — Docs landing fix
 - Repaired `docs/index.rst` so the dashboards reference appears inside the “Getting Started” toctree, restoring a valid Sphinx build and keeping the telemetry links visible on GitHub Pages.

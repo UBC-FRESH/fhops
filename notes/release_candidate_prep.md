@@ -35,6 +35,16 @@ Status: Draft — drive the v0.x RC process.
    - [x] Add GitHub Actions job template for ``hatch build`` verification (triggered on tags) — see `.github/workflows/release-build.yml`.
    - [ ] Prepare release checklist in ``CODING_AGENT.md`` (bump version, run hatch build, tag, publish).
 
+7. **Publishing (TestPyPI → PyPI)**
+   - [ ] Dry run using TestPyPI:
+     - ``python -m pip install --upgrade build twine``
+     - ``rm -rf dist``
+     - ``hatch run release:build``
+     - ``python -m twine upload --repository testpypi dist/*`` (requires ``TESTPYPI_TOKEN``)
+     - ``pip install -i https://test.pypi.org/simple/ fhops`` and run smoke commands
+   - [ ] Document environment variables/secrets: ``TESTPYPI_TOKEN`` and ``PYPI_TOKEN`` (GitHub secrets) plus local ``~/.pypirc`` fallback.
+   - [ ] After TestPyPI validation, repeat for PyPI (`twine upload dist/*`) during the release tag.
+
 ## References
 - ws3 Hatch workflow: https://github.com/ubc-fresh/ws3
 - Packaging guides: Hatch docs, PyPA best practices.
