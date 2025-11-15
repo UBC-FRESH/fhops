@@ -300,7 +300,7 @@ weights. To reuse a preset, parse the JSON and forward the operator weights to t
 
    # feed into fhops tune-random --operator-weight swap=... etc.
 
-This preserves the tuned improvements documented in :doc:`notes/release_tuning_results` and the
+This preserves the tuned improvements documented in ``notes/release_tuning_results.md`` and the
 release notes.
 
 Automated Sweeps
