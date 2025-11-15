@@ -24,7 +24,8 @@
   configurations per scenario/algorithm now live in `notes/release_tuned_presets.json` for reuse.
 - Added `.github/workflows/release-build.yml`, which runs `hatch run release:build` on tag pushes
   and uploads the `dist/` artifacts; release instructions in `CODING_AGENT.md` now reference the
-  automation.
+  automation. Added workflow comments clarifying that publishing still happens via manual twine
+  steps documented in the release notes.
 - Documented TestPyPI/PyPI publishing cadence (hatch build + twine upload + smoke install) in
   `notes/release_candidate_prep.md` and `CODING_AGENT.md`.
 - Completed TestPyPI dry run: uploaded `fhops 0.0.2` to TestPyPI via `twine upload --repository testpypi dist/*`

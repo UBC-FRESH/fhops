@@ -6,6 +6,10 @@ on:
       - 'v*'
   workflow_dispatch:
 
+# Note: this job only builds and uploads artifacts. Publishing to
+# TestPyPI/PyPI remains a manual `twine upload` step documented in
+# CODING_AGENT.md / notes/release_candidate_prep.md so maintainers
+# can verify builds before pushing to production indexes.
 jobs:
   build:
     runs-on: ubuntu-latest
