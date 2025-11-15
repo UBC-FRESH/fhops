@@ -1,0 +1,87 @@
+{
+  "source": {
+    "citation": "Lahrsen, S. T. (2025). Digital Transformation in Timber Harvesting: An Automated Framework for Productivity and Performance Monitoring in Whole-Tree Harvesting. UBC PhD Thesis.",
+    "notes": "Ranges and descriptive statistics extracted from Chapter 6 (Tables 6.1 & 6.2)."
+  },
+  "daily": {
+    "productivity_m3_per_pmh15": {
+      "min": 14.2,
+      "max": 148.0,
+      "mean": 54.0,
+      "median": 49.6,
+      "iqr": 34.9
+    },
+    "avg_stem_size_m3": {
+      "min": 0.09,
+      "max": 1.32,
+      "mean": 0.38,
+      "median": 0.31,
+      "iqr": 0.21
+    },
+    "volume_per_ha_m3": {
+      "min": 75.0,
+      "max": 856.2,
+      "mean": 353.2,
+      "median": 333.9,
+      "iqr": 260.9
+    },
+    "stem_density_per_ha": {
+      "min": 205.0,
+      "max": 3044.0,
+      "mean": 1093.0,
+      "median": 905.0,
+      "iqr": 904.0
+    },
+    "ground_slope_percent": {
+      "min": 1.5,
+      "max": 48.9,
+      "mean": 17.9,
+      "median": 15.6,
+      "iqr": 13.9
+    }
+  },
+  "cutblock": {
+    "productivity_m3_per_pmh15": {
+      "min": 20.2,
+      "max": 133.1,
+      "mean": 70.9,
+      "median": 69.4,
+      "iqr": 36.4
+    },
+    "avg_stem_size_m3": {
+      "min": 0.12,
+      "max": 1.19,
+      "mean": 0.47,
+      "median": 0.40,
+      "iqr": 0.31
+    },
+    "volume_per_ha_m3": {
+      "min": 83.2,
+      "max": 752.3,
+      "mean": 357.4,
+      "median": 337.1,
+      "iqr": 209.3
+    },
+    "stem_density_per_ha": {
+      "min": 205.0,
+      "max": 2834.0,
+      "mean": 894.0,
+      "median": 706.0,
+      "iqr": 658.0
+    },
+    "ground_slope_percent": {
+      "min": 2.3,
+      "max": 40.7,
+      "mean": 17.3,
+      "median": 15.3,
+      "iqr": 17.4
+    },
+    "block_size_ha": {
+      "min": 0.8,
+      "max": 92.3,
+      "mean": 18.0,
+      "median": 13.0,
+      "iqr": 18.3
+    }
+  }
+}

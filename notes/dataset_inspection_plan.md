@@ -46,6 +46,7 @@
   A heteroscedastic variant (random contractor effect) yields coefficients 57.08 / 0.031 / 0.003 / −0.36 / +0.013.
 - Thesis also documents GNSS/coverage QA thresholds (≥70–90% coverage, <3 h GNSS gaps) and PMH15 error calibration (<1% with WTD 60–90 s + OTD), which we can reuse for data validation tooling.
 - Parameter domains from the thesis give modern BC benchmarks for sample dataset defaults and synthetic generator ranges (piece size, densities, slopes, productivity).
+- Snapshot of these ranges now lives in `src/fhops/productivity/_data/lahrsen2025_ranges.json` for validators/docs to consume.
 
 ## TODO Checklist
 - [x] Update `Machine.daily_hours` default in the data contract to 24.0 so newly defined machines inherit round-the-clock availability.
@@ -56,7 +57,7 @@
 - [ ] Revisit mobilisation/production-rate assumptions once the 24-hour baseline is enforced.
 - [ ] (Greg) Track down the original MRNF harvest-cost technical report cited in the Woodstock DLL, add it to the references library, and capture its equations for future machine-costing helpers.
 - [ ] (Greg) Identify Canadian (BC-first, Canada-wide) machine productivity functions covering major systems/prescriptions, confirm licensing/IP constraints, and document which coefficients we can openly publish; defer US coverage until needed.
-- [ ] Extract structured Lahrsen 2025 parameter ranges (stem size, volume/ha, density, slope, productivity) into reusable config/validation tables and surface them in docs + schema validators.
+- [x] Extract structured Lahrsen 2025 parameter ranges (stem size, volume/ha, density, slope, productivity) into reusable config/validation tables and surface them in docs + schema validators.
 - [ ] Align FHOPS sample datasets + synthetic generator defaults with Lahrsen 2025 parameter ranges (piece size, volume/ha, density, slope, productivity) and document validation thresholds.
 - [ ] Implement Lahrsen-based productivity helper (fixed-effect predictions + optional block-level adjustments) as interim baseline until new FPInnovations coefficients arrive.
 
