@@ -69,8 +69,8 @@
 - [ ] Port WS3 random-variate handling (PaCal + Monte Carlo fallback) into the productivity/costing helpers so expected-value outputs behave correctly even when PaCal fails to converge.
 - [ ] Source BC productivity functions (or build new regressions) for every machine role in the harvest system registry so the costing helper can cover entire systems, not just feller bunchers:
   - [x] feller-buncher (Lahrsen 2025)
-  - [ ] single_grip_harvester *(Arnvik 2024 review lists multiple CTL harvester regressions with DBH/height predictors – select BC-suitable candidate)*
-  - [ ] forwarder *(see Arnvik 2024 harwarder section for payload/forwarding productivity models to adapt)*
+  - [ ] single_grip_harvester *(candidate: Eriksson & Lindroos 2014 CTL harvester model — see Arnvik 2024 pp. 37–39 for summary)*
+  - [ ] forwarder *(candidate: Laitila & Väätäinen 2020 harwarder/forwarder regressions — see Arnvik 2024 Fig. 1/Table 13)*
   - [ ] grapple_skidder
   - [ ] shovel_logger
   - [ ] loader
