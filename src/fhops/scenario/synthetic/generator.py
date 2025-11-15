@@ -46,11 +46,21 @@ def _sample_metric(rng: random.Random, entry: dict[str, float]) -> float:
 
 def _sample_block_metrics(rng: random.Random, section: str) -> dict[str, float]:
     ranges = _LAHRSEN_RANGES.get(section, _LAHRSEN_RANGES["daily"])
+    avg_stem = _sample_metric(rng, ranges["avg_stem_size_m3"])
+    volume = _sample_metric(rng, ranges["volume_per_ha_m3"])
+    density = _sample_metric(rng, ranges["stem_density_per_ha"])
+    slope = _sample_metric(rng, ranges["ground_slope_percent"])
+
+    def _sigma(val: float) -> float:
+        return round(max(val * 0.2, 0.0), 3)
+
     return {
-        "avg_stem_size_m3": _sample_metric(rng, ranges["avg_stem_size_m3"]),
-        "volume_per_ha_m3": _sample_metric(rng, ranges["volume_per_ha_m3"]),
-        "stem_density_per_ha": _sample_metric(rng, ranges["stem_density_per_ha"]),
-        "ground_slope_percent": _sample_metric(rng, ranges["ground_slope_percent"]),
+        "avg_stem_size_m3": avg_stem,
+        "volume_per_ha_m3": volume,
+        "volume_per_ha_sigma_m3": _sigma(volume),
+        "stem_density_per_ha": density,
+        "stem_density_per_ha_sigma": _sigma(density),
+        "ground_slope_percent": slope,
     }
 
 

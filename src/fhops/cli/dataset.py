@@ -324,8 +324,12 @@ def inspect_block(
         rows.append(("Avg Stem Size (m³)", f"{selected_block.avg_stem_size_m3:.3f}"))
     if selected_block.volume_per_ha_m3 is not None:
         rows.append(("Volume per ha (m³)", f"{selected_block.volume_per_ha_m3:.1f}"))
+    if selected_block.volume_per_ha_sigma_m3 is not None:
+        rows.append(("Volume per ha σ (m³)", f"{selected_block.volume_per_ha_sigma_m3:.1f}"))
     if selected_block.stem_density_per_ha is not None:
         rows.append(("Stem Density (/ha)", f"{selected_block.stem_density_per_ha:.1f}"))
+    if selected_block.stem_density_per_ha_sigma is not None:
+        rows.append(("Stem Density σ (/ha)", f"{selected_block.stem_density_per_ha_sigma:.1f}"))
     if selected_block.ground_slope_percent is not None:
         rows.append(("Ground Slope (%)", f"{selected_block.ground_slope_percent:.1f}"))
     _render_kv_table(f"Block Inspection — {selected_block.id}", rows)

@@ -44,7 +44,9 @@ class Block(BaseModel):
     harvest_system_id: str | None = None
     avg_stem_size_m3: float | None = None
     volume_per_ha_m3: float | None = None
+    volume_per_ha_sigma_m3: float | None = None
     stem_density_per_ha: float | None = None
+    stem_density_per_ha_sigma: float | None = None
     ground_slope_percent: float | None = None
 
     @field_validator("work_required")
@@ -53,7 +55,14 @@ class Block(BaseModel):
         if value < 0:
             raise ValueError("Block.work_required must be non-negative")
         return value
-    @field_validator("avg_stem_size_m3", "volume_per_ha_m3", "stem_density_per_ha", "ground_slope_percent")
+    @field_validator(
+        "avg_stem_size_m3",
+        "volume_per_ha_m3",
+        "volume_per_ha_sigma_m3",
+        "stem_density_per_ha",
+        "stem_density_per_ha_sigma",
+        "ground_slope_percent",
+    )
     @classmethod
     def _optional_non_negative(cls, value: float | None) -> float | None:
         if value is not None and value < 0:
