@@ -27,6 +27,8 @@
   automation.
 - Documented TestPyPI/PyPI publishing cadence (hatch build + twine upload + smoke install) in
   `notes/release_candidate_prep.md` and `CODING_AGENT.md`.
+- Added quick-demo commands (tuning harness runs) to README/docs overview and highlighted tuned
+  presets in the release notes draft.
 
 ## 2025-11-13 — Docs landing fix
 - Repaired `docs/index.rst` so the dashboards reference appears inside the “Getting Started” toctree, restoring a valid Sphinx build and keeping the telemetry links visible on GitHub Pages.
