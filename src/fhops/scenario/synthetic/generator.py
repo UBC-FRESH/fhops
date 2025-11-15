@@ -57,7 +57,7 @@ def _sample_block_metrics(rng: random.Random, section: str) -> dict[str, float]:
     return {
         "avg_stem_size_m3": avg_stem,
         "volume_per_ha_m3": volume,
-        "volume_per_ha_sigma_m3": _sigma(volume),
+        "volume_per_ha_m3_sigma": _sigma(volume),
         "stem_density_per_ha": density,
         "stem_density_per_ha_sigma": _sigma(density),
         "ground_slope_percent": slope,

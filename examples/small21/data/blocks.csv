@@ -1,4 +1,4 @@
-id,landing_id,work_required,earliest_start,latest_finish,avg_stem_size_m3,volume_per_ha_m3,stem_density_per_ha,ground_slope_percent,volume_per_ha_sigma_m3,stem_density_per_ha_sigma
+id,landing_id,work_required,earliest_start,latest_finish,avg_stem_size_m3,volume_per_ha_m3,stem_density_per_ha,ground_slope_percent,volume_per_ha_m3_sigma,stem_density_per_ha_sigma
 B01,L1,28.0,8,14,0.45,380.0,950.0,20.0,76.0,190.0
 B02,L3,27.0,13,18,0.45,380.0,950.0,20.0,76.0,190.0
 B03,L4,27.0,13,19,0.45,380.0,950.0,20.0,76.0,190.0

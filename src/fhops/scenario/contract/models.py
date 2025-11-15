@@ -44,7 +44,7 @@ class Block(BaseModel):
     harvest_system_id: str | None = None
     avg_stem_size_m3: float | None = None
     volume_per_ha_m3: float | None = None
-    volume_per_ha_sigma_m3: float | None = None
+    volume_per_ha_m3_sigma: float | None = None
     stem_density_per_ha: float | None = None
     stem_density_per_ha_sigma: float | None = None
     ground_slope_percent: float | None = None
@@ -58,7 +58,7 @@ class Block(BaseModel):
     @field_validator(
         "avg_stem_size_m3",
         "volume_per_ha_m3",
-        "volume_per_ha_sigma_m3",
+        "volume_per_ha_m3_sigma",
         "stem_density_per_ha",
         "stem_density_per_ha_sigma",
         "ground_slope_percent",

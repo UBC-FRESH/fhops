@@ -20,7 +20,7 @@ Each scenario references a set of CSV files. Required columns and notes:
      - Notes
     * - ``blocks.csv``
       - ``id``, ``landing_id``, ``work_required``
-      - Optional: ``earliest_start``/``latest_finish`` (defaults 1 / ``num_days``); stand metrics (``avg_stem_size_m3``, ``volume_per_ha_m3``, ``stem_density_per_ha``, ``ground_slope_percent``) plus optional uncertainty columns (``volume_per_ha_sigma_m3``, ``stem_density_per_ha_sigma``) are supported and default to Lahrsen (2025) BC ranges in synthetic bundles.
+      - Optional: ``earliest_start``/``latest_finish`` (defaults 1 / ``num_days``); stand metrics (``avg_stem_size_m3``, ``volume_per_ha_m3``, ``stem_density_per_ha``, ``ground_slope_percent``) plus optional uncertainty columns (``volume_per_ha_m3_sigma``, ``stem_density_per_ha_sigma``) are supported and default to Lahrsen (2025) BC ranges in synthetic bundles.
     * - ``machines.csv``
       - ``id``
       - Optional: ``role``, ``crew``; numeric fields must be non-negative. ``daily_hours`` defaults
