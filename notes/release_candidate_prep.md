@@ -18,11 +18,11 @@ Status: Draft — drive the v0.x RC process.
      - Built `dist/fhops-0.0.2*` via `hatch build`; artifacts include CLI entry points and docs assets.
    - [x] Smoke install from the built wheel (fresh venv) and run ``fhops --help`` plus a minitoy solve.
      - Created `.venv-hatch-smoke`, installed the wheel, and ran `fhops --help` + `fhops validate examples/minitoy/scenario.yaml` successfully.
-   - [ ] Draft ``hatch publish --repo testpypi`` dry-run instructions (no secrets committed).
+   - [x] Draft ``HATCH_INDEX=testpypi hatch publish`` dry-run instructions (see Section 7).
 3. **Docs & README polish**
-   - [ ] Tighten README quickstart for pip install + hatch workflows.
-   - [ ] Ensure docs landing page highlights versioned install instructions.
-   - [ ] Link telemetry dashboards/release notes for transparency.
+   - [x] Tighten README quickstart for pip install + hatch workflows (see README Installation).
+   - [x] Ensure docs landing page highlights versioned install instructions (docs/overview.rst Installation + Quick demo).
+   - [x] Link telemetry dashboards/release notes for transparency (README dashboards + release notes draft).
 4. **Release Notes**
    - [x] Summarise Phase 1-3 achievements, telemetry tooling, and new CLI surfaces (see `notes/release_notes_draft.md`).
    - [x] Document breaking changes and migration guidance (schema version, mobilisation config).
@@ -33,15 +33,15 @@ Status: Draft — drive the v0.x RC process.
    - [x] Store the tuned presets/operator weights for reuse in the release tag (see `notes/release_tuned_presets.json`).
 6. **Automation**
    - [x] Add GitHub Actions job template for ``hatch build`` verification (triggered on tags) — see `.github/workflows/release-build.yml`.
-   - [ ] Prepare release checklist in ``CODING_AGENT.md`` (bump version, run hatch build, tag, publish).
+   - [x] Prepare release checklist in ``CODING_AGENT.md`` (Hatch build/publish cadence documented under Release workflow).
 
 7. **Publishing (TestPyPI → PyPI)**
-   - [ ] Dry run using TestPyPI:
+   - [x] Dry run using TestPyPI:
      - ``hatch clean && hatch build``
      - ``HATCH_INDEX=testpypi hatch publish`` (requires ``HATCH_INDEX_TESTPYPI_AUTH`` or ``~/.pypirc``) ✅ 2025-11-15
      - ``python -m venv .venv-testpypi && . .venv-testpypi/bin/activate``
      - ``pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple fhops`` and run smoke commands (`fhops --help`, `fhops validate examples/minitoy/scenario.yaml`) ✅
-   - [ ] Document environment variables/secrets: ``HATCH_INDEX_TESTPYPI_AUTH`` (token for TestPyPI) and ``HATCH_INDEX_PYPI_AUTH`` for PyPI, or configure ``~/.pypirc``.
+   - [x] Document environment variables/secrets: ``HATCH_INDEX_TESTPYPI_AUTH`` (token for TestPyPI) and ``HATCH_INDEX_PYPI_AUTH`` for PyPI, or configure ``~/.pypirc`` (see CODING_AGENT.md Release workflow).
    - [ ] After TestPyPI validation, repeat for PyPI: ``HATCH_INDEX=pypi hatch publish`` during the release tag.
 
 ## References
