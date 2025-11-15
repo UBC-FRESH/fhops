@@ -37,6 +37,7 @@
 - Documentation touchpoints (data contract + synthetic how-to) and release notes now reference the inspector warning and CLI override so users understand the new behavior.
 - Scenario loader + synthetic generator now emit Lahrsen-based stand metrics (`avg_stem_size_m3`, etc.) and warn when blocks drift outside BC ranges; `fhops dataset` exposes commands to inspect these ranges interactively.
 - Sample datasets now carry those stand metrics (seeded within Lahrsen ranges), reducing validator noise and giving users concrete examples of expected values.
+- WS3’s PaCal + Monte Carlo backup logic needs to be ported so Lahrsen-style productivity/costing helpers can treat inputs as random variates (expected-value outputs) rather than deterministic means; capture this before we wire the costing helper.
 
 ## BC Productivity Model Insights (Lahrsen 2025 thesis)
 - Dataset: 9,865 FPDat II production reports (filtered to 3,081 daily machine-level observations, 205 cutblocks) from 71 feller-bunchers across BC (Jan 2022–Jul 2024); covariates captured automatically: average stem size (0.09–1.32 m³/tree), average volume per hectare (75–856 m³/ha), stem density (205–3,044 trees/ha), ground slope (1.5–48.9%).
@@ -63,6 +64,7 @@
 - [x] Align FHOPS sample datasets + synthetic generator defaults with Lahrsen 2025 parameter ranges (piece size, volume/ha, density, slope, productivity) and document validation thresholds.
 - [ ] Implement Lahrsen-based productivity helper (fixed-effect predictions + optional block-level adjustments) as interim baseline until new FPInnovations coefficients arrive.
 - [ ] Document PMH/PMH15/SMH terminology consistently across how-to guides (e.g., evaluation, costing) once productivity helper/costing pipeline stabilises.
+- [ ] Port WS3 random-variate handling (PaCal + Monte Carlo fallback) into the productivity/costing helpers so expected-value outputs behave correctly even when PaCal fails to converge.
 
 ## Rollout Plan (3-level work breakdown)
 
