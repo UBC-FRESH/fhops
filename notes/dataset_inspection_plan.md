@@ -65,6 +65,7 @@
 - [ ] Implement Lahrsen-based productivity helper (fixed-effect predictions + optional block-level adjustments) as interim baseline until new FPInnovations coefficients arrive.
 - [ ] Document PMH/PMH15/SMH terminology consistently across how-to guides (e.g., evaluation, costing) once productivity helper/costing pipeline stabilises.
 - [ ] Port WS3 random-variate handling (PaCal + Monte Carlo fallback) into the productivity/costing helpers so expected-value outputs behave correctly even when PaCal fails to converge.
+- [ ] Source BC productivity functions (or build new regressions) for every machine role in the harvest system registry—skidders, loaders, processors, yarders, etc.—so the costing helper can cover entire systems, not just feller bunchers.
 
 ## Rollout Plan (3-level work breakdown)
 
