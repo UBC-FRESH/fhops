@@ -33,10 +33,12 @@ from fhops.productivity import (
     estimate_cable_skidding_productivity_unver_robust_profile,
     estimate_cable_skidding_productivity_unver_spss,
     estimate_cable_skidding_productivity_unver_spss_profile,
+    estimate_cable_yarder_cycle_time_tr127_minutes,
     estimate_cable_yarder_productivity_lee2018_downhill,
     estimate_cable_yarder_productivity_lee2018_uphill,
     estimate_cable_yarder_productivity_tr125_multi_span,
     estimate_cable_yarder_productivity_tr125_single_span,
+    estimate_cable_yarder_productivity_tr127,
     estimate_forwarder_productivity_kellogg_bettinger,
     estimate_forwarder_productivity_large_forwarder_thinning,
     estimate_forwarder_productivity_small_forwarder_thinning,
@@ -126,6 +128,22 @@ class SkylineProductivityModel(str, Enum):
     LEE_DOWNHILL = "lee-downhill"
     TR125_SINGLE = "tr125-single-span"
     TR125_MULTI = "tr125-multi-span"
+    TR127_BLOCK1 = "tr127-block1"
+    TR127_BLOCK2 = "tr127-block2"
+    TR127_BLOCK3 = "tr127-block3"
+    TR127_BLOCK4 = "tr127-block4"
+    TR127_BLOCK5 = "tr127-block5"
+    TR127_BLOCK6 = "tr127-block6"
+
+
+_TR127_MODEL_TO_BLOCK = {
+    SkylineProductivityModel.TR127_BLOCK1: 1,
+    SkylineProductivityModel.TR127_BLOCK2: 2,
+    SkylineProductivityModel.TR127_BLOCK3: 3,
+    SkylineProductivityModel.TR127_BLOCK4: 4,
+    SkylineProductivityModel.TR127_BLOCK5: 5,
+    SkylineProductivityModel.TR127_BLOCK6: 6,
+}
 
 
 def _candidate_roots() -> list[Path]:
@@ -1158,6 +1176,12 @@ def estimate_skyline_productivity_cmd(
     large_end_diameter_cm: float = typer.Option(
         34.0, min=1.0, help="Required for Lee downhill (cm).", show_default=False
     ),
+    num_logs: float | None = typer.Option(
+        None,
+        "--num-logs",
+        min=0.0,
+        help="Number of logs per turn (required for TR127 Blocks 5–6).",
+    ),
     tr119_treatment: str | None = typer.Option(
         None,
         "--tr119-treatment",
@@ -1205,7 +1229,7 @@ def estimate_skyline_productivity_cmd(
             ("Lateral Distance (m)", f"{lateral_distance_m:.1f}"),
             ("Payload (m³)", f"{(payload_m3 or 1.6):.2f}"),
         ]
-    else:
+    elif model is SkylineProductivityModel.TR125_MULTI:
         value = estimate_cable_yarder_productivity_tr125_multi_span(
             slope_distance_m=slope_distance_m,
             lateral_distance_m=lateral_distance_m,
@@ -1217,6 +1241,34 @@ def estimate_skyline_productivity_cmd(
             ("Lateral Distance (m)", f"{lateral_distance_m:.1f}"),
             ("Payload (m³)", f"{(payload_m3 or 1.6):.2f}"),
         ]
+    elif model in _TR127_MODEL_TO_BLOCK:
+        block_id = _TR127_MODEL_TO_BLOCK[model]
+        if block_id in (5, 6) and num_logs is None:
+            raise typer.BadParameter("--num-logs is required for TR127 Block 5/6 models.")
+        cycle_minutes = estimate_cable_yarder_cycle_time_tr127_minutes(
+            block=block_id,
+            slope_distance_m=slope_distance_m,
+            lateral_distance_m=lateral_distance_m,
+            num_logs=num_logs,
+        )
+        value = estimate_cable_yarder_productivity_tr127(
+            block=block_id,
+            payload_m3=payload_m3 or 1.6,
+            slope_distance_m=slope_distance_m,
+            lateral_distance_m=lateral_distance_m,
+            num_logs=num_logs,
+        )
+        rows = [
+            ("Model", model.value),
+            ("Block", str(block_id)),
+            ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
+            ("Lateral Distance (m)", f"{lateral_distance_m:.1f}"),
+            ("Logs per Turn", f"{num_logs:.1f}" if num_logs is not None else "—"),
+            ("Payload (m³)", f"{(payload_m3 or 1.6):.2f}"),
+            ("Cycle Time (min)", f"{cycle_minutes:.2f}"),
+        ]
+    else:
+        raise typer.BadParameter(f"Unsupported skyline model: {model}")
     if tr119_treatment:
         try:
             treatment = get_tr119_treatment(tr119_treatment)

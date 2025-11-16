@@ -5,10 +5,12 @@ from .cable_logging import (
     estimate_cable_skidding_productivity_unver_robust_profile,
     estimate_cable_skidding_productivity_unver_spss,
     estimate_cable_skidding_productivity_unver_spss_profile,
+    estimate_cable_yarder_cycle_time_tr127_minutes,
     estimate_cable_yarder_productivity_lee2018_downhill,
     estimate_cable_yarder_productivity_lee2018_uphill,
     estimate_cable_yarder_productivity_tr125_multi_span,
     estimate_cable_yarder_productivity_tr125_single_span,
+    estimate_cable_yarder_productivity_tr127,
 )
 from .eriksson2014 import (
     estimate_forwarder_productivity_final_felling,
@@ -67,6 +69,8 @@ __all__ = [
     "estimate_cable_yarder_productivity_lee2018_downhill",
     "estimate_cable_yarder_productivity_tr125_single_span",
     "estimate_cable_yarder_productivity_tr125_multi_span",
+    "estimate_cable_yarder_cycle_time_tr127_minutes",
+    "estimate_cable_yarder_productivity_tr127",
     "estimate_forwarder_productivity_small_forwarder_thinning",
     "estimate_forwarder_productivity_large_forwarder_thinning",
     "estimate_forwarder_productivity_kellogg_bettinger",
