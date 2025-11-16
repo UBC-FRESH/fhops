@@ -1,0 +1,1004 @@
+                                                              Silva Fennica vol. 54 no. 5 article id 10379
+                                                                               Category: research article
+
+SILVA FENNICA
+                                                                       https://doi.org/10.14214/sf.10379
+                                                                              http://www.silvafennica.fi
+                                                                               Licenced CC BY-SA 4.0
+                                                          ISSN-L 0037-5330 | ISSN 2242-4075 (Online)
+                                                                 The Finnish Society of Forest Science
+
+
+
+
+Juha Laitila1 and Kari Väätäinen1
+
+
+
+Productivity of harvesting and clearing of brushwood
+alongside forest roads
+
+       Laitila J., Väätäinen K. (2020). Productivity of harvesting and clearing of brushwood alongside
+       forest roads. Silva Fennica vol. 54 no. 5 article id 10379. 21 p. https://doi.org/10.14214/sf.10379
+
+           Highlights
+       •     The results can be used as a basis to determine in what kinds of cases brushwood biomass
+             should be recovered and where it should be left to decay.
+       •     The average volume of harvested brushwood and forwarding distance are the key elements
+             to harvesting productivity with a harwarder.
+       •     Stump diameter has a strong impact on clearing productivity of brushwood.
+
+           Abstract
+       Expertise in the cost-efficient utilization and treatment of brushwood on forest roadside sites is
+       limited. In the present study, the productivity of brushwood clearing and harvesting on forest
+       roadside sites was defined by creating time-consumption models or parameters for the aforemen-
+       tioned working methods. Compiled time consumption models and parameters for the brushwood
+       clearing and harvesting can be used as a basis for evaluating alternative management practices and
+       to determine when brushwood biomass should be harvested and when it should be left to decay.
+       The harvesting of brushwood was based on the harwarder system and the clearing of brushwood
+       was done with a spiral cutter, which is a novel accessory for cutting roadside vegetation. Based
+       on the study results, the average volume of harvested brushwood and forwarding distance are the
+       key elements that have an effect on harvesting productivity with harwarders. Correspondingly,
+       stump diameter has a strong impact on the clearing productivity of brushwood. The plot-wise
+       productivity of the spiral cutter in brushwood clearings varied in the range of 0.19–0.61 ha per
+       PMh. An increase in stump diameter slowed down the clearing productivity of the spiral cutter
+       and there was a clear step downward in clearing productivity as the average diameter increased
+       from 30 mm to 40 mm. The machinery under study operated well and there were no interruptions
+       due to machine breakdowns.
+
+       Keywords energy wood; harwarder; logging; spiral cutter; time study; whole-trees
+       Address 1 Natural Resources Institute Finland (Luke), Production systems, P.O. Box 68, FI-80101
+       Joensuu, Finland
+       E-mail juha.laitila@luke.fi
+       Received 18 May 2020 Revised 8 September 2020 Accepted 10 September 2020
+
+
+
+
+                                                  1
+Silva Fennica vol. 54 no. 5 article id 10379 · Laitila et al. · Productivity of harvesting and clearing of brushwood …
+
+
+
+
+1 Introduction
+
+1.1 Background
+
+Finland has approximately 135 000 kilometres of forest roads, most of which have been built from
+the 1970s to the 1990s (Kiss et al. 2015; Kaakkurivaara 2018). Typically, the width of the forest
+roadway is 4–5 m and the width of road right-of-way (including side slopes and ditches) is 8–12 m
+(Uusitalo 2010). Forest roads, which are owned by private forest owners, forest companies or the
+state forest service, provide access to harvesting sites and enable the transportation of timber from
+forests to mills, railways or floating terminals (Korpilahti 2008; Kiss et al. 2015; Kaakkurivaara
+2018). The road network also eases silvicultural operations, recreation, collection of non-wood
+products or firefighting and rescue operations (Kiss et al. 2015; Kaakkurivaara 2018; Laschi et al.
+2019). The road network needs to be kept in good condition, so that it is able to withstand heavy
+timber truck and other vehicles (Coulter et al. 2006; Korpilahti 2008; Pellegrini et al. 2013). On
+dry roads, bearing capacity is higher than that of roads that fail to dry out properly (Korpilahti
+2008; Kiss et al. 2015; Kaakkurivaara 2018).
+       The ditching system plays an important role in the drying of forest roads and overgrown
+roadside vegetation (brushwood) can obstruct proper drainage if the woody vegetation growing is
+not cleared on a regular basis (Korpilahti 2008; Kiss et al. 2015; Kaakkurivaara 2018). Clearing
+cycles and management distances are derived from growing conditions and species; faster growth
+requires more attention. Woody vegetation effectively prevent the drainage of side ditches and the
+road surface. In addition, it narrows the width of the functional roadway and limits sight distance,
+leading to reduced road safety. Such brushwood consists of saplings, bushes and young trees of
+a range of deciduous plant species mixed with conifers (Korpilahti 2008; Ebenhard et al. 2017).
+Based on the Finnish national forest road quality standards, in the worst case the roadway and sides
+are fully covered by brushwood (diameter at 1.3 m height over 5 cm) that it cannot be removed
+economically by normal road maintenance, e.g. with rotor or chain mulchers (Korpilahti 2008),
+which are attached, e.g. to a tractor, excavator or harvester. With mulchers, the cutting is based on
+blunt tools which increase noise and fuel consumption as well as risk of thrown wood splinters
+into the surroundings, especially if the brushwood is overgrown.
+       Currently, very little of the brushwood overgrowth is utilized for energy in Finland, and it
+is almost invariably cut and left to decompose, even if the clearing cost is considerable. The basic
+economic advantages of brushwood recovery would be the fact that the cost of harvesting could
+be offset by the existing mulching costs and income from the harvested biomass (Iwarsson-Wide
+2009b,c). In addition, it could decrease, e.g. the forest road renovation costs of dilapidated roads,
+keep the ditches open and improve both the availability and accessibility of forest biomass. Brush-
+wood harvesting has also a negative effect on soil fertility, especially on poor sites and when leaves
+are also removed from the site, which may restrain coppicing and regrowth (Unrau et al. 2018).
+In contrast to brushwood mulching, the productivity (m3 per operating hour) and cost efficiency
+(euros per m3) of mechanized harvesting improves with increasing tree size and harvest intensity
+(Unrau et al. 2018). Even though the harvesting technologies used in overgrowth brushwood can
+be similar to those used in conventional forestry, the harvesting costs can be expected to be dif-
+ferent in roadside brushwood clearing with smaller tree sizes, smaller harvesting sites and longer
+forwarding driving distances.
+       In conventional mechanized thinning, the operator selects the trees to be thinned. In roadside
+brushwood harvesting, all biomass from a specific area is harvested systematically, the remain-
+ing tree stand do not hamper harvesting and the time used on tree selection can be avoided. The
+cost-efficiency of roadside brushwood harvesting is based on the mass handling of small-sized
+
+
+
+                                                           2
+Silva Fennica vol. 54 no. 5 article id 10379 · Laitila et al. · Productivity of harvesting and clearing of brushwood …
+
+
+
+
+trees (Unrau et al. 2018). In energy wood harvesting, the most interest has focused on multi-tree
+handling with accumulating felling heads and harvester heads (Bergström 2009; Kärhä 2011; Lai-
+tila 2012; Erber and Kühmaier 2017; Läspä and Nurmi 2018). With these heads, the operator can
+cut and collect multiple trees in the head before processing them and thus increasing productivity
+(Bergström 2009; Laitila 2012; Erber and Kühmaier 2017; Läspä and Nurmi 2018). These heads
+can be mounted on harvesters, excavators or tractors. A harwarder is a dual purpose machine for
+cutting and forwarding and the harwarder head is capable of cutting, accumulating and processing
+as well as loading and unloading harvested trees (Laitila and Asikainen 2006; Kärhä 2006; Laitila
+2008; Rottensteiner et al. 2008; Iwarsson-Wide 2009c; Belbo 2010). The competitiveness of the
+harwarder is based on the large proportion of the cutting work in relation to forwarding and to the
+low relocation costs when compared to operating with the conventional harvesting system using
+two machines (Kärhä 2006; Laitila 2008; Kärhä et al. 2018). Roadside brushwood stands are easily
+accessible from existing road networks, but they can be scattered in the landscape and their size
+may be too small to be economically viable for the two-machine system (harvester and forwarder)
+which favours the dual purpose machine system.
+
+1.2 Aim of the study
+
+Productivity studies and information from the brushwood clearing and harvesting operations on
+forest roadside sites are limited (Iwarsson-Wide 2009b,c). In order to have a better understanding
+of the cost efficiency and profitability of alternative management practices and their operations,
+more information on productivity is required as conditions can vary greatly from site to site. In
+the present study, the productivity of brushwood clearing and harvesting on forest roadside sites
+was defined by creating time-consumption models and parameters for the aforementioned work-
+ing methods. In addition, tree species specific regression models for height and diameter at breast
+height (DBH) 1.3 m were derived in which the stump diameter was the independent variable.
+       The harvesting of brushwood was based on the harwarder in our study and the clearing of
+brushwood was done with a spiral cutter, which is a novel accessory for cutting roadside vegetation.
+The functionality of the spiral cutter is based on the rotating spiral, which pulls the material being
+cut against the sharp blade and cuts it. Compared to traditional chain or reel mulchers the cutting
+is more energy efficient and it does not toss wood splitters into the surroundings. Compiled time
+consumption models and parameters for the brushwood clearing and harvesting can be used for
+evaluating alternative management practices and to determine when brushwood biomass should
+be harvested and when it should be left to decay.
+
+
+2 Material and methods
+
+2.1 Machinery studied
+
+2.1.1 Harwarder
+
+The base machine of the harwarder was a 8-wheeled Ponsse Buffalo Dual manufactured in 2018,
+with an engine power of 205 kW, mass of 24 800 kg (equipped with 900 mm wide KOPA flotation
+tracks) and load capacity of 14 000 kg (Fig. 1). The length of the load space was 4650 mm and
+its cross-sectional area 5 m2. The loader model was K90DUAL+ with a 9-metre reach and 160
+kilonewton meters (kNm) lifting moment. The loader was equipped with an Epec LoadOptimizer
+crane scale with an accuracy of 2 kg. The harwarder-operator was skilful, and he had 30 years of
+
+
+
+                                                           3
+Silva Fennica vol. 54 no. 5 article id 10379 · Laitila et al. · Productivity of harvesting and clearing of brushwood …
+
+
+
+
+Fig. 1. The studied harwarder consisting of a Ponsse Buffalo Dual forwarder and the Moipu 300 F1 harwarder head.
+The harvesting of brushwood was based on the dual purpose machine system.
+
+
+
+work experience in driving harvesters and 15 years of work experience in energy wood harvesting
+with a harwarder.
+       The harwarder head was a Moipu 300 F1 equipped with hydraulic shears, feed rollers and
+delimbing knives (Fig. 1). The maximum cutting diameter with one cut was 30 cm. Multi-tree
+handling was based on a system that enables the synchronising of the feed roller and delimbing
+knife functions to operate as an accumulating device. The opening diameter of the delimbing knives
+was 130 cm, which helps collecting and loading trees with the harwarder head. The height of the
+harwarder head is 100 cm and it weighs 650 kg (www.moipu.com).
+
+2.1.2 Spiral cutter
+
+The base machine for the JAK SP-180 spiral cutter was a wheeled Neuson 6503 WD mini-excavator
+manufactured in 2008, with an engine power of 43 kW and mass of 5935 kg. The JAK SP-180
+spiral cutter was attached to the tip of the excavator boom (Fig. 2). The device was hydraulically
+powered, and the flow rate of the excavator’s hydraulic system was 186 litres per minute. The
+weight and operating width of the JAK SP-180 spiral cutter was 295 kg and 180 cm, respectively.
+The manufacturer’s recommended maximum cutting diameter was 50–70 mm for the JAK SP-180
+spiral cutter.
+
+
+
+
+Fig. 2. JAK SP-180 spiral cutter was attached to the boom tip of wheeled Neuson 6503 WD mini-excavator. The clear-
+ing of brushwood was done with the spiral cutter in the study.
+
+
+
+
+                                                           4
+Silva Fennica vol. 54 no. 5 article id 10379 · Laitila et al. · Productivity of harvesting and clearing of brushwood …
+
+
+
+
+       The JAK SP-180 spiral cutter was made up of three rotating spirals with fixed underlying
+plate-shaped blades (Fig. 2). Rotating spiral pulls the material being cut until the sharp-edged
+blade cuts it off and brushwood falls backwards. The low rotation speed of the spirals (370 round
+per minutes) minimizes the risk of thrown wood splinters and other damage to the surroundings.
+The JAK SP-180 spiral cutter was made of high-strength and wear-resistant steel which allows
+the lightweight structure of the device, which means that smaller carrier vehicles (min 5000 kg)
+can also be used. The excavator-operator had over two years working experience with the spiral
+cutter, and in addition, he was also the inventor and developer of the JAK SP-180 spiral cutter.
+
+2.2 Time study plots and brushwood measurements
+
+Time studies were carried out on a private forest road where clearing of brushwood had been done
+randomly, or then neglected totally. The forest road had been built in the late 1980s and was located
+in Iisalmi in Eastern Finland (63°26´N, 26°59´E). The width of the forest roadway was 4.5 m and
+the width of the road area (including side slopes and ditches) averaged 10.5 m. Alongside the
+forest road, 80 time study plots for the harwarder and 13 time study plots for the spiral cutter were
+established. When establishing the time study plots, the aim was that the number and volume of
+trees varied between the plots. In addition, for the harwarder harvesting, road sections where the
+size of brushwood was bigger compared to those cleared with the spiral cutter were selected. The
+length of the rectangular time study plots were 25 m and the widths equalled the measured work
+path. The width of the time study plot was, on average 3.0 m for the harwarder and 1.8 m for the
+spiral cutter. The boundaries of the time study plots alongside the forest road were marked by
+means of marking paints and ribbons.
+       The initial data from the time study plots were based on stump diameter measurements by
+tree species which were carried out after harvesting and clearing. The stump diameter was measured
+at 10 cm height from the ground to an accuracy of 1 mm while the tree species was determined
+visually. All stump diameters by tree species were measured from the spiral cutter time study
+plots and coverage of the measurement was thus 100%. For the harwarder time study plots, two
+rectangular (5 m long and 3 m wide) sample plots were established that were located five m from
+the beginning and end of the time study plot. The coverage of the sample plot measurements was
+40% of the total time study plot area of the harwarder.
+       The stump diameter data by tree species was complemented with sample tree data which
+consisted measured information about the tree height, DBH and diameter at the stump height (10 cm
+from the ground). The accuracy of the tree height measurements were 10 cm and the diameters
+were measured to an accuracy of 1 mm. The randomly selected sample trees were measured while
+establishing time study plots for the harwarder and the spiral cutter before beginning of the time
+studies. The number of sample trees were 202 for all the time study plots. Based on the sample
+tree measurement data, tree specific regression models for height and DBH were derived in which
+the tree species specific stump diameter was the independent variable. The regression models were
+used to describe the brushwood properties of the time study plot before harvesting or clearing. The
+height of the measured sample trees varied in the range of 1.7–15.4 m and the DBH varied in the
+range of 12–163 mm. The average height and DBH of the sample trees were 6.3 m with a standard
+deviation (SD) of 2.5 m and 72 mm (SD 32). The stump diameter of the sample trees varied in
+the range of 21–225 mm and the average stump diameter of the sample trees was 87 mm (SD 36).
+       The measured sample tree data were combined as a data matrix and based on that were
+derived tree specific regression models for height and DBH in which the tree species specific
+stump diameter was the independent variable. The derived regression models, together with Repola
+(2006, 2008, 2009) and Repola et al. (2007) biomass models in which the independent variables
+
+
+
+                                                           5
+Silva Fennica vol. 54 no. 5 article id 10379 · Laitila et al. · Productivity of harvesting and clearing of brushwood …
+
+
+
+
+Table 1. The statistical characteristics of tree species specific regression models for height and DBH in which the stump
+diameter (x1, x2, x3 and x4 for the stump diameters of birch, spruce, pine and other broadleaves in respective order) is
+the independent variable.
+Tree     Dependent variable       R2          F-test         N      Term     Constant/Coefficient              t-test
+model
+                                         F-value       p                     Estimate   Std. error   t-value            p
+
+DBH      DBHBirch                0.946   521.531   <0.001   31   Constant    –1.268      4.359       –0.291         0.773
+                                                                   x1        0.830       0.036       22.837         <0.001
+         DBHSpruce               0.936   824.357   <0.001   57   Constant    –5.009      2.404       –2.083         0.042
+                                                                   x2        0.897       0.031       28.712         <0.001
+         DBHPine                 0.965 2029.299 <0.001      75   Constant    –3.075      1.923       –1.599          0.114
+                                                                   x3        0.875       0.019       45.048         <0.001
+         DBHOther broadleaf      0.989 3342.685 <0.001      39   Constant    –5.847      1.289       –4.536         <0.001
+                                                                   x4        0.933       0.016       57.816         <0.001
+Height HeightBirch               0.764   97.260    <0.001   31   Constant     2.432      0.746        3.261         0.003
+of the                                                             x1         0.061      0.006        9.862         <0.001
+tree
+       HeightSpruce              0.827   263.788   <0.001   57   Constant     0.159      0.279        0.571         0.570
+                                                                   x2         0.061      0.004       16.242         <0.001
+         HeightPine              0.965   196.838   <0.001   75   Constant     2.083      0.324       14.030         <0.001
+                                                                   x3         0.046      0.003        6.419         <0.001
+         HeightOther broadleaf   0.911   391.037   <0.001   39   Constant     1.751      0.253       19.775         <0.001
+                                                                   x4         0.063      0.003        6.922         <0.001
+
+
+
+
+were height and DBH, were used to describe the brushwood properties and dimensions on the time
+study plots before harvesting and clearing.
+       DBH and the tree height were strongly dependent on stump diameter. The tree species
+specific regression models for height and DBH as well as statistical characteristics of regression
+models are detailed in Table 1.
+
+2.3 Time study
+
+2.3.1 Time study of the harwarder
+
+The harwarder time study was conducted between 3 and 5 June 2019 and the brushwood were
+harvested as not delimbed. The brushwood harvested from the 80 harwarder time study plots was
+weighted by the crane scale of the Ponsse Buffalo Dual harwarder during unloading and the above-
+mentioned regression models for height and DBH were needed to estimate brushwood properties
+(tree species specific biomass of stem wood, stem bark, foliage as well as living branches) and
+relative proportions of tree species biomass for each harwarder time study plot before harvesting.
+The weighted biomass was converted to m3 (solid) based on the relative proportions of tree spe-
+cies on the time study plot. The number of harwarder loads weighed was the same as the number
+of time study plots.
+        The estimated share of tree species from the total cutting removal was 27% for Scots pine
+(Pinus sylvestris L.), 33% for Norway spruce (Picea abies (L.) H. Karst.), 20% for Downy birch
+(Betula pubescens Ehrh.) and 19% for other broadleaved tree species such aspen, alder, rowan
+and willow. The distribution of tree species biomass on the time study plot was calculated based
+on Repola (2006, 2008, 2009) and Repola et al. (2007) biomass models in which the independ-
+ent variables were height and DBH. The weighted cutting removal from time study plots were
+converted to m3 with the tree species distribution specific green density (kg m–3) values produced
+
+
+
+                                                            6
+Silva Fennica vol. 54 no. 5 article id 10379 · Laitila et al. · Productivity of harvesting and clearing of brushwood …
+
+
+
+
+by Finnish Forest Research Institute (Ministry of Agriculture and Forestry 2010; Lindblad et al.
+2010). The average green density was 912 kg m–3 (SD 15) on the time study plots.
+       The respective values for the total number of trees harvested and volume were 5257 and
+85.5 m3 during the time study. The average volume of the harvested trees varied in the range of
+8–111 dm3, the harvesting intensity was 0.08–1.36 harvested trees per m2 (800–13 600 trees per
+hectare, ha) and the harvesting removal was 0.23–1.87 m3 on the time study plots (30–249 m3
+per ha). The volume of trees harvested (dm3) on a time study plot was calculated by dividing
+the cutting removal (m3) by the number of trees harvested. The number of trees harvested was
+obtained from the time study in which the number of trees in each grapple bunch during cutting
+was observed and recorded (Table 2). The average stump diameter was 54 mm and it varied in
+the range of 32–177 mm on the time study plots. Based on the stump diameter measurements,
+the estimated average height of trees per time study plot was in the range of 2.7–11.7 m and the
+average height of trees was 4.2 m (SD 1.3).
+       Due to the time study’s plot-wise mass measurement method and study layout, the harwarder
+loads were not completely full. The operational payload data was studied at the same site by a
+follow-up study which determined the size of a full payload (7 loads and 45 861 kg total) as well as
+grapple load size during unloading (173 grapple loads total). The follow-up study data was recorded
+by the harwarder operator and Epec LoadOptimizer crane scale system. The driving distance with
+load from the time study plot to the roadside landing and back as empty were measured by digital
+map (www.karttapaikka.fi) to an estimated accuracy of 1 m.
+       The time study was carried out manually with a Rufco-900 handheld field computer. The
+time-study observer was placed in the cabin of the harwarder in a position that enabled him to
+fully observe the harvesting operations and markings with minimal obstruction for the harwarder
+operator. The working time was recorded through the application of a continuous timing method
+
+
+
+Table 2. Work elements with detailed definitions in harvesting roadside brushwood with the harwarder.
+Work element                     Definition of the work element
+
+Moving between the working       Begins when the harwarder starts to move (wheels are turning) and ends when the
+locations                        harwarder stops moving to perform another activity at the working location, e.g.
+                                 positioning to cut.
+Positioning to cut               Begins when the boom starts to swing towards the first tree and ends when the empty
+                                 harwarder head is resting on the tree before the felling cut at stump height begins.
+                                 With tall trees (higher than 8 m), the harwarder head is first placed halfway along the
+                                 tree to be felled.
+Accumulating the felling         Begins when the felling cut starts (either at the stump height or halfway of the tree)
+                                 and ends when the accumulated tree bunch starts moving to the load space of the
+                                 harwarder. With tall trees the top is cut first, after which the harwarder head is moved
+                                 vertically downward and the tree is cut again at the stump height. The number of
+                                 trees in each harwarder head bunch is observed and recorded.
+Loading                          The harwarder loads directly felled trees to the load space of the harwarder. Begins
+                                 when the accumulated tree bunch starts moving to the load space of the harwarder
+                                 and ends when the empty harwarder head start positioning to cut, the load is full or
+                                 harwarder starts to move to the next working location.
+Driving loaded or unloaded       Driving with load begins when the brushwood is harvested from the time study plot
+                                 (harwarder head is positioned for driving loaded and wheels are turning) and ends
+                                 when the harwarder stops to begin unloading at the landing area.
+                                 Driving unloaded begins when the load is empty, the harwarder head is positioned
+                                 for driving unloaded and its wheels are turning. Driving unloaded ends when the
+                                 harwarder stops at the working location and positioning to cut starts.
+Sorting of trees placed in the   Sorting of trees placed in the load space of the harwarder before the final grip for
+load space of the harwarder      unloading.
+Unloading                        Starts when the harwarder stops at the landing for unloading and ends when the
+                                 load is empty and harwarder head is positioned for driving unloaded. The number of
+                                 harwarder head loads during unloading is recorded.
+
+
+
+
+                                                             7
+Silva Fennica vol. 54 no. 5 article id 10379 · Laitila et al. · Productivity of harvesting and clearing of brushwood …
+
+
+
+
+wherein a clock ran continuously and the times for different phases were separated from each
+other under distinct numeric codes (Harstela 1991; Magagnotti et al. 2013). During the recording,
+the cutting functions had the highest priority, followed by the loading, moving, unloading and the
+arrangement elements. The time for the highest prioritized work element was recorded if multiple
+work elements were performed simultaneously. Auxiliary time use (e.g. planning of work and
+preparations) was included in the work phases in which it was observed. Productive machine (PM)
+time, the working time excluding all delays (IUFRO 1995), was divided into the following work
+phases as listed in Table 2.
+
+2.3.2 Time study of the spiral cutter
+
+The time study of the spiral cutter was conducted on 13 September 2019. The clearing work was
+recorded using a video camera (GoPro 6), and the time study was carried out by one researcher who
+analysed the collected video material. The camera was placed in the cabin of the mini-excavator in
+a position that enabled it to fully record the clearing operation and the boundary markings of the
+time study plots with minimal obstruction to the harvester operator. The video material was ana-
+lysed by continuous timing from a computer screen using the Rufco-900 handheld field computer,
+and the work elements and time study plots were separated from each other with numerical codes.
+The work processes were recorded and the productive machine (PM) time on the time study plots
+divided into work elements according to Table 3.
+       The average stump diameter was 37 mm and it varied in the range of 27–54 mm on the time
+study plots. Correspondingly, the maximum stump diameter was in the range of 34–99 mm on the
+time study plots. The density of brushwood was 1.8–8.3 stumps per m2 (18 222–83 333 stumps
+per ha) and the total cross-sectional area of stump diameters were in the range of 5.0–24.5 cm2
+per m2 on the time study plots (5.0–24.5 m2 per ha). Based on the stump diameter measurements, the
+estimated average height of brushwood trees per the time study plot was in the range of 1.9–4.0 m
+and the average estimated height of trees was 2.9 m (SD 0.7).
+
+2.4 Data analysis
+
+In the modelling of the harwarder work, the recorded plot-wise time study data and the measured
+harvested brushwood volumes were combined as a data matrix. The time consumption of the five
+main work elements in the harwarder harvesting (Moving, Cutting, Loading, Unloading and For-
+warding) were formulated through the application of regression analysis in which the harvesting
+conditions, such as volume of harvested trees (dm3), the harvesting intensity (harvested trees per
+ha), grapple load volume during loading and unloading (m3) and forwarding distance (m) were
+independent variables. The unit for calculation of productive machine time consumption was
+seconds per tree, per grapple load volume or per harwarder load, and productivity in harwarder
+harvesting was expressed in solid cubic metres per productive machine hour time (m3 per PMh).
+
+
+Table 3. Work elements with detailed definitions in roadside brushwood clearing with the spiral cutter.
+Work element                         Definition of the work element
+
+Continuous clearing of brushwood The mini-excavator is driving forward at a steady pace, brushwood is fed con-
+                                 tinuously to the blades by rotating spirals, brushwood is cut down in a desirable
+                                 direction (backwards) and the work is not interrupted
+Slow down clearing of brushwood The mini-excavator has to slow down the driving speed or stop because brush-
+                                 wood is cut down slowly, improperly or fell in an undesirable direction (towards
+                                 mini-excavator). The clearing work is partly interrupted, but the spirals continue
+                                 to rotate either forward or backwards
+
+
+
+
+                                                            8
+Silva Fennica vol. 54 no. 5 article id 10379 · Laitila et al. · Productivity of harvesting and clearing of brushwood …
+
+
+
+
+Table 4. Regression model statistics for harvesting with the harwarder (x1 = number of harvested trees per hectare,
+x2 = the average volume of the harvested trees (dm3), x3 = grapple load size during loading (m3), x4 = grapple load size
+during unloading (m3), x5 = forwarding distance (m)).
+Work phase model Dependent variable      R2          F-test       N      Term    Constant/Coefficient      t-test
+                                                F-value     p                    Estimate Std. error t-value      p
+
+Moving                  TMoving         0.881 576.779 <0.001      80   Constant 0.168        0.045    3.721    <0.001
+                                                                         1/x1   4351.5       181.2    24.016   <0.001
+Cutting                 TCutting        0.724 204.102 <0.001      80   Constant –4.571       0.680    –6.719   <0.001
+                                                                        ln(x2)   3.400       0.238    14.286   <0.001
+Loading                 TLoading        0.848 434.187 <0.001      80   Constant –8.222       5.176    –1.588    0.116
+                                                                         1/x3    7.237       0.347    20.837   <0.001
+Number of trees      NNumber of trees   0.487   73.960   <0.001   80   Constant 1.163        0.411    2.830    0.006
+in the grapple
+                                                                         1/x2   53.675 6.241          8.600    <0.001
+Unloading              TUnloading       0.203   19.919   <0.001   80   Constant 99.030 8.259          11.990   <0.001
+                                                                          x4   –140.211 31.416        –4.463   <0.001
+Forwarding            TForwarding       0.900 757.519 <0.001      85   Constant 24.154 3.688          6.549    <0.001
+                                                                          x5     0.691   0.025        27.523   <0.001
+
+
+
+
+       Statistical analyses were carried out with IBM SPSS Statistics 21.0 statistical software. Dif-
+ferent transformations and curve types were tested in order to achieve symmetrical residuals for
+the derived regression models and in order to ensure the statistical significance of the coefficients.
+The results of the regression model analyses are detailed in Table 4.
+       The plot-wise productivity of the spiral cutter in brushwood clearing (PMh) were defined as
+a function of the cleared area (ha per PMh) or as a function clearing speed (m per s). Both the con-
+tinuous and slowed down clearing of brushwood were included in the plot-wise time consumption
+and productivity analysis. Based on the stump diameter measurements, plot-wise productivity was
+calculated as a function of maximum and average stump diameter, stump density, cross-sectional
+area of stump diameters and estimated height of brushwood.
+
+
+3 Results
+
+3.1 Time consumption of working elements in harwarder harvesting
+
+In this time study, moving between working locations represented 9% of the productive machine
+time (Fig. 3). Positioning to cut and accumulating felling constituted 14% and 45% of the produc-
+tive machine time in the harvesting of brushwood. Loading and unloading represented 19% and
+13% of the productive machine time, respectively. Cross-cutting of standing trees at elevations
+higher than stump height took 2% of the productive machine time and sorting of trees placed in
+the load space of the harwarder 1%. Time consumption of driving loaded or unloaded are purely
+dependent on forwarding distances and because the harwarder loads were not completely full, due
+to the plot-wise mass measurement method, Fig. 3 focused on analysing the proportion of working
+elements, which are done with the loader and harwarder head.
+
+
+
+
+                                                           9
+Silva Fennica vol. 54 no. 5 article id 10379 · Laitila et al. · Productivity of harvesting and clearing of brushwood …
+
+
+
+
+     Fig. 3. Average proportion of various working elements in the harwarder harvesting of roadside brushwood.
+
+
+
+
+3.2 Time consumption models for harwarder harvesting
+
+Moving time (TMoving) was dependent on the number of harvested trees per m2. The moving time
+per tree harvested decreased as the number of trees harvested per ha; in such cases, it was pos-
+sible to cut more trees from a single work location (Fig. 4). The time consumption of moving was
+formulated as:
+
+
+
+
+    Fig. 4. The time consumption of moving between work locations as a function of trees harvested per ha in the
+    harwarder harvesting of roadside brushwood.
+
+
+
+
+                                                          10
+Silva Fennica vol. 54 no. 5 article id 10379 · Laitila et al. · Productivity of harvesting and clearing of brushwood …
+
+
+
+
+                              
+TMoving  0.168  4351.5  1 x11                                                                           (1)
+
+where
+TMoving = moving between working locations, expressed in seconds per harvested tree
+x1 = number of harvested trees per ha
+
+       Time consumption of multi-tree cutting (TCutting), expressed in seconds per harvested brush-
+wood tree, was modelled from the average volume of harvested tree of each study plot. The time
+consumptions of multi-tree cutting increased when larger-sized trees were harvested. The working
+elements of positioning to cut, accumulating felling and cross-cutting of standing trees at eleva-
+tions higher than stump height were included in the time model of multi-tree cutting. The time
+consumption of multi-tree cutting was formulated as:
+
+TCutting  4.571  3.4 ln  x2                                                                            (2)
+
+where
+TCutting = time consumption of multi-tree cutting, expressed in seconds per harvested tree
+x2 = the average volume of the harvested brushwood trees, dm3
+
+      Loading time (TLoading), expressed in seconds per m3, was dependent on the grapple load size
+during the loading cycle (Fig. 5). The grapple load size (x3) was dependent on the average volume
+of harvested brushwood trees (Eq. 2) and number of trees in the grapple during loading (Eq. 4).
+
+
+
+
+    Fig. 5. Time consumption of loading as a function of grapple load size in the harwarder harvesting of roadside
+    brushwood.
+
+
+
+
+                                                          11
+Silva Fennica vol. 54 no. 5 article id 10379 · Laitila et al. · Productivity of harvesting and clearing of brushwood …
+
+
+
+
+                               
+TLoading  8.222  7.237  1 x31                                                                         (3)
+
+where
+TLoading = time consumption of loading, seconds per solid cubic metre, m3
+x3 = grapple load size during loading (= NNumber of trees × x2), m3
+
+       The number of trees in the grapple (NNumber of trees) was predicted based on the average volume
+(dm3) of the harvested trees.
+
+                                           
+N Number of trees  1.163  53.675  1 x21                                                               (4)
+
+where
+NNumber of trees = number of trees in the grapple during loading
+x2 = average volume of harvested brushwood trees, dm3
+
+       When modelling the time consumption for unloading (TUnloading) expressed in seconds per m3,
+the average grapple load size during unloading was the independent variable. In the time studies,
+the average grapple load size for unloading was 0.26 m3 (min 0.18 m3 – max 0.39 m3) and 0.29 m3
+in the follow up study. A total of 5.4 seconds per m3 auxiliary time was added to the unloading
+time, which was used, e.g. for sorting trees placed in the load space of the harwarder before the
+final grip for unloading. Time consumption of unloading was formulated as:
+
+TUnloading  99.030  140.211 x4  5.4                                                                     (5)
+
+where
+TUnloading = time consumption of unloading, seconds per m3
+x4 = grapple load size during unloading, m3
+5.4 = Sorting of trees placed in the load space of the harwarder. Average handling time, seconds
+per m3
+
+       The forwarding distance (Fig. 6) was the independent variable for time consumption of for-
+warding (TForwarding) using the harwarder on the forest road. The forwarding distance was defined
+as a mean of driving loaded and driving unloaded distances (Manner et al. 2016). The time con-
+sumption of forwarding, expressed in seconds per load, were the same both for driving as loaded
+and unloaded. Load size was excluded from the model as a second independent variable, since
+the loads were not full during the time study due to the time study’s plot-wise mass measurement
+method and study layout. The average payload was 1.07 m3 (SD 0.31) and it varied in the range of
+0.23–1.87 m3 during the time study. It is quite obvious that such a small payload does not overload
+the forwarder’s engines or transmission systems design power, or the frame volume of the whole
+tree load does not complicate the harwarder’s normal stability. Time consumption of transporting
+was formulated as:
+
+TForwarding  24.154  0.691 x5                                                                            (6)
+
+where
+TForwarding = time consumption of transporting, seconds per load
+x5 = forwarding distance, m
+
+
+
+
+                                                          12
+Silva Fennica vol. 54 no. 5 article id 10379 · Laitila et al. · Productivity of harvesting and clearing of brushwood …
+
+
+
+
+    Fig. 6. Time consumption of driving loaded and driving unloaded as a function of forwarding distance (m) in
+    the harwarder harvesting of roadside brushwood.
+
+
+
+
+      The total harvesting time consumption, seconds per m3, by the harwarder method (TTotal)
+was obtained by adding up the time consumption values for the main work elements as follows:
+
+                                         
+TTotal  TMoving  1000 x21  TCutting  1000 x21  
+                                                                                                            (7 )
+      TLoading  TUnloading  TForwarding  1 x61 
+
+x2 = the average volume of the harvested brushwood trees, dm3
+x6 = the load volume of the harwarder, m3
+
+       Based on the follow up study, the average payload of full loads was 7.1 m3. The harvest-
+ing productivity per productive machine hour time (m3 PMh–1) was calculated by dividing 3600
+seconds by the total harvesting time consumption (TTotal).
+       Harvesting productivity was more sensitive to the average volume of harvested brushwood
+trees than to the forwarding distance (Fig. 7). While the average volume of brushwood trees was
+doubled from 15 to 30 dm³, harvesting productivity was increased 20% from 6.5 to 8.4 m3 PMh–1
+with the forwarding distance of 100 m. Respective productivities were 5.9 and 7.4 m3 PMh–1
+with the forwarding distance of 400 m. Alternatively, when analysing clearing productivity as in
+ha PMh–1, the effect of the average brushwood tree volume was opposite compared to harvesting
+productivity, the bigger was the average brushwood tree volume the lower was the clearing pro-
+ductivity (Fig. 8). To bear in mind, both results were calculated with the payload of 7.1 m³, and
+with 6000 trees harvested per hectare.
+
+
+
+
+                                                          13
+Silva Fennica vol. 54 no. 5 article id 10379 · Laitila et al. · Productivity of harvesting and clearing of brushwood …
+
+
+
+
+    Fig. 7. The harvesting productivity of roadside brushwood with the harwarder as a function of forwarding dis-
+    tance and average volume of harvested brushwood trees. The harwarder’s payload was 7.1 m3 and the number
+    of harvested trees per ha was 6000.
+
+
+
+
+   Fig. 8. The clearing productivity of roadside brushwood with the harwarder as a function of forwarding dis-
+   tance and average volume of harvested brushwood trees. The harwarder’s payload was 7.1 m3 and the number
+   of harvested trees per ha was 6000.
+
+
+
+
+                                                          14
+Silva Fennica vol. 54 no. 5 article id 10379 · Laitila et al. · Productivity of harvesting and clearing of brushwood …
+
+
+
+
+           Fig. 9. The time study plot-wise clearing productivity (ha per PMh) of the JAK SP-180 spiral
+           cutter as a function of average stump diameter of brushwood trees, mm.
+
+
+
+
+3.4 Efficiency of the spiral cutter
+
+The plot-wise productivity of the JAK SP-180 spiral cutter in brushwood clearing varied in the
+range of 0.19–0.61 ha per PMh (Fig. 9). Correspondingly, the plot-wise speed of brushwood clearing
+varied in the range of 0.29–0.95 m per second (Fig. 10). An increase in the average and maximum
+stump diameter slow down both the clearing productivity and clearing speed of the JAK SP-180
+spiral cutter (Figs. 9 and 10) and there was a clear step downward in clearing productivity as the
+average diameter increased from 30 mm to 40 mm (Fig. 9). Thin brushwood is cut off in one spiral
+rotation whereas thicker brushwood needs two rotations or more, which slow down clearing speed
+and productivity (Figs. 9 and 10). The number of stumps per ha had no effect on the time study
+plot-wise clearing productivity (Fig. 11).
+
+
+
+
+           Fig. 10. The clearing speed (m per s) and the max. brushwood stump diameter (mm) by the
+           study plot of the JAK SP-180 spiral cutter.
+
+
+
+
+                                                          15
+Silva Fennica vol. 54 no. 5 article id 10379 · Laitila et al. · Productivity of harvesting and clearing of brushwood …
+
+
+
+
+           Fig. 11. The time study plot-wise roadside brushwood clearing productivity (ha per PMh) of the
+           JAK SP-180 spiral cutter as a function of stump density per ha.
+
+
+
+        The estimated height of brushwood is strongly dependent on measured stump diameters
+on the time study plot. An increase in the height of brushwood increased the plot-wise time con-
+sumption of working elements and slow down brushwood clearing (Fig. 12). It is obvious that
+the clearing of robust brushwood takes more time and with high brushwood, the risk that it fell in
+an undesirable direction and hit the base-machine is also bigger compared to shorter brushwood.
+       The time-study plot number 7, having average stump diameter of 31 mm and density of
+83 333 stumps per ha seems to be an outlier, when analysing factors affecting time consumption and
+efficiency of brushwood clearing with the JAK SP-180 spiral cutter. Based on the stump diameter
+or brushwood height only, the time consumption should be one of the lowest among the time study
+plots included to the experiment. Instead, it was the highest in the experiment. Obviously, the high
+time consumption can be explained with the extraordinary large cross-sectional area of stump
+diameters on the time study plot number 7 (Fig. 13). The cross-sectional area of stump diameters
+describes the combined effect of stump diameters and number of stumps on the time study plot.
+
+
+
+
+           Fig. 12. The time consumption (seconds per time study plot) of continuous clearing and slowed
+           down clearing working elements in brushwood clearing and estimated brushwood height by the
+           time study plots of JAK SP-180 spiral cutter.
+
+
+
+
+                                                          16
+Silva Fennica vol. 54 no. 5 article id 10379 · Laitila et al. · Productivity of harvesting and clearing of brushwood …
+
+
+
+
+           Fig. 13. The time study plot-wise clearing productivity (ha per PMh) of the JAK SP-180 spiral
+           cutter as a function of cross-sectional area of stump diameters (m2 per ha) by the time study
+           plot.
+
+
+
+
+4 Discussion and conclusions
+
+In this study, time-consumption models for brushwood harvesting, defined productivity parameters
+for brushwood clearing and derived tree specific regression models for brushwood height and
+DBH were formulated. Results and formulas can be used in further studies as a basis for evaluat-
+ing alternative management practices of brushwood cuttings next to forest roads and to determine,
+when brushwood biomass should be recovered and when it should be left to decay. When applying
+the results, it is important to remember that the width of the cleared side slope was 3.0 m for the
+harwarder and 1.8 m for the spiral cutter. The spiral cutter must drive twice so that the width of
+the cleared area is approximately the same as with the harwarder.
+        The studied machinery worked well, there were no interruptions due to machine breakdowns
+and the quality of the work was good (e.g. brushwood was cleared properly and contaminants e.g.
+roots and soil in the harvested brushwood was excluded). However, when reviewing the results,
+it has to be taken into account that the results are based on only one, relatively small-scale test,
+which does not fully correspond to real world work. Therefore, they must not be used, e.g. as a
+baseline for productivity in determination of unit costs for brushwood harvesting and clearing.
+Accordingly, a long-term follow-up study would give a more reliable picture of productivity in
+practice (Magagnotti et al. 2013), as well as of the functional and technical utilization rate of the
+machinery in varying roadside brushwood conditions, at different times of the year.
+        In the year 2008 and 2009, Skogforsk carried out two case studies about brushwood harvest-
+ing along forest roadsides (Iwarsson-Wide 2009b,c). In the first study, a Valmet 911 equipped with
+a Bracke C16 circular saw accumulating felling head was used, and felled brushwood was placed
+in grapple piles at the roadside. In the second study, a Ponsse Dual harwarder with a multi-tree
+handling, shear felling head (Ponsse EH25) was examined. Felled brushwood was loaded directly
+and forwarded to storage. In the time study plots, which were 4.5 m wide, the number of stems
+per hectare varied between 7000 and 4300, and the cutting removal between 39 and 52 tonnes dry
+matter (oven-dry tonne of forest biomass) per hectare. The average heights of brushwood in the
+two studies were 5.5 m and 9.2 m, respectively. The average productivity in felling and harvest-
+ing were 2.6 and 3.7 tonnes dry matter per PMh, respectively, which are at the same level as our
+results when the impact of forwarding is considered.
+
+
+
+                                                          17
+Silva Fennica vol. 54 no. 5 article id 10379 · Laitila et al. · Productivity of harvesting and clearing of brushwood …
+
+
+
+
+       There is a wide variety of studies available on forest road maintenance (Parr and Way 1988;
+Coulter et al. 2006; Pellegrini et al. 2013; Kiss et al. 2015; Kaakkurivaara 2018; Laschi et al. 2019),
+but surprisingly there are no studies regarding clearing productivity of brushwood along roadsides,
+which has traditionally been regarded as a part of regular road maintenance. There exist many
+studies developing biomass supply systems for forested marginal land (Iwarsson-Wide 2009a,b,c;
+Di Fulvio et al. 2012; Fernandez-Lacruz et al. 2013; Jyhä et al. 2015; Jylhä and Bergström 2016;
+Spinelli et al. 2017; Fernandez-Lacruz 2019), but the direct comparison of results is difficult because
+circumstances, working methods or measurement units are different.
+       The common practice in forest technology is to use volume or DBH to model biomass
+removal and harvesting productivity, but, for example, in the study of Fernandez-Lacruz et al.
+(2013), tree height was chosen as the independent variable when modelling harvesters’ productivity
+(productive machine time consumption per oven-dry tonne of forest biomass) in the clearing of
+power line corridors. Better comparability of results and description of circumstances, in addition to
+plot-wise measurement accuracy, were the reasons why the tree species specific regression models
+for height and DBH were included in our study and presented in the results.
+       The density and dimensions of brushwood along the forest roadside varies greatly and the
+problem is that biomass-rich forest road sections are embedded in the less biomass-rich sections.
+In some sections of forest roadsides there is plenty of tall brushwood, while others virtually lack
+brushwood suitable for harvesting, but are an excellent section for clearing. In order to guarantee
+cost efficient use of existing machinery, accurate methods for assessing and mapping potential
+sections for brushwood clearing and harvesting along forest roadsides are needed when renovating
+and maintaining dilapidated forest roads. Lately, a novel laser scanning–based approach identi-
+fying forest road sections that fulfil requirements for brushwood harvesting has been developed
+(Iwarsson-Wide et al. 2013). The accuracy of the approach has been evaluated and result were
+already correct in 64% of the cases.
+       Based on the study results, the average volume of harvested brushwood and forwarding
+distance are the key elements that have an effect on harvesting productivity with the harwarder
+(Fig. 7). The same has been noted in previous studies early thinnings (Laitila and Asikainen 2006;
+Kärhä 2006; Rottensteiner et a. 2008). Correspondingly, stump diameter has a strong impact on
+the clearing productivity of brushwood with the spiral cutter (Fig. 9). In addition to the presented
+productivity data, income from the harvested brushwood as well as hourly cost of the existing
+machinery are the key-elements for the comprehensive cost study to determine in what kind of
+cases roadside brushwood should be recovered and where it should be left to decay.
+
+
+References
+
+Belbo H. (2010). Comparison of two working methods for small tree harvesting with a multi tree
+    felling head mounted on farm tractor. Silva Fennica 44(3): 453–464. https://doi.org/10.14214/
+    sf.142.
+Bergström D. (2009). Techniques and systems for boom-corridor thinning in young dense forests.
+    Acta Universitatis Agriculturae Sueciae 2009:87. 53 p.
+Coulter E.D., Sessions J., Wing M.G. (2006). Scheduling forest road maintenance using the analytic
+    hierarchy process and heuristics. Silva Fennica 40(1): 143–160. https://doi.org/10.14214/sf.357.
+Di Fulvio F., Bergström D., Kons K., Nordfjell T. (2012). Productivity and profitability of forest
+    machines in the harvesting of normal and overgrown willow plantations. Croatian Journal of
+    Forest Engineering 33(1): 25–37.
+Ebenhard T., Forsberg M., Lind T., Nilsson D., Andersson R., Emanuelsson U., Eriksson L.,
+
+
+
+                                                          18
+Silva Fennica vol. 54 no. 5 article id 10379 · Laitila et al. · Productivity of harvesting and clearing of brushwood …
+
+
+
+
+    Hultåker O., Iwarsson Wide M., Ståhl G. (2017). Environmental effects of brushwood har-
+    vesting for bioenergy. Forest Ecology and Management 383: 85–98. https://doi.org/10.1016/j.
+    foreco.2016.05.022.
+Erber G., Kühmaier M. (2017). Research trends in European forest fuel supply chains: a review of
+    the last ten years (2007–2017) – Part one: harvesting and storage. Croatian Journal of Forest
+    Engineering 38(2): 269–278.
+Fernandez-Lacruz R. (2019). Improving supply chains for logging residues and small-diameter
+    trees in Sweden. Ph.D. Thesis, Department of Forest Biomaterials and Technology, Swedish
+    University of Agricultural Sciences, Umeå, Sweden. Agriculturae Sueciae 2019:44. https://
+    pub.epsilon.slu.se/16161/
+Fernandez-Lacruz R., Di Fulvio F., Bergström D. (2013). Productivity and profitability of har-
+    vesting power line corridors for bioenergy. Silva Fennica 47(1) article 904. 23 p. https://doi.
+    org/10.14214/sf.904.
+Hakkila P. (1978). Pienpuun korjuu polttoaineeksi. [Harvesting of small-sized wood for fuel]. Folia
+    Forestalia 342. 38 p. [In Finnish]. http://urn.fi/URN:ISBN:951-40-0324-1.
+Harstela P. (1991). Work studies in forestry. University of Joensuu. Silva Carelica 18. 41 p.
+IUFRO WP 3.04.02. (1995). Forest work study nomenclature. Test edition valid 1995–2000.
+    Department of Operational Efficiency, Swedish University of Agricultural Sciences. 16 p.
+Iwarsson-Wide M. (2009a). Teknik och metod Ponsse EH25. Trädbränsleuttag med Ponsse EH25
+    i kraftledningsgata. [Technique and method Ponsse EH25.Wood fuel recovery with Ponsse
+    EH25 in power line corridor]. Arbetsrapport från Skogforsk nr 681-2009. 14 p. [In Swedish].
+Iwarsson-Wide M. (2009b). Skogsbränsleuttag i vägkanter. Prestationsstudie – uttag av skogsbränsle
+    i vägkant med Bracke C16. [Recovery of forest fuel along forest road. Productivity study –
+    recovery of forest fuel along forest road with Bracke C16]. Arbetsrapport från Skogforsk nr
+    695-2009. 15 p. [In Swedish].
+Iwarsson-Wide M. (2009c). Skogsbränsleuttag i vägkanter – prestationsstudie. Uttag av skogs-
+    bränsle i vägkant med Ponsse Dual med EH25. [Recovery of forest fuel along forest road.
+    Productivity study – recovery of forest fuel along forest road with Ponsse Dual EH25]. Arbets-
+    rapport från Skogforsk nr 696-2009. 16 p. [In Swedish].
+Iwarsson-Wide M., Olofsson K., Wallerman J., Sjödin M., Torstensson P.-O., Aasland T., Barth A.,
+    Larsson M. (2013). Effektiv volymuppskattning av biomassa i vägkanter och ungskogar med
+    laserdata. [Effective estimate of biomass volume on roadsides and in young forests using laser
+    data]. Arbetsrapport från Skogforsk nr 804-2013. 48 p. [In Swedish with an English abstract].
+Jylhä P., Bergström D. (2016). Productivity of harvesting dense birch stands for bioenergy. Biomass
+    and Bioenergy 88: 142–151. https://doi.org/10.1016/j.biombioe.2016.03.016.
+Jylhä P., Hytönen J., Ahtikoski A. (2015). Profitability of short-rotation biomass production on
+    downy birch stands on cut-away peatlands in northern Finland. Biomass and Bioenergy 75:
+    272–281. https://doi.org/10.1016/j.biombioe.2015.02.027.
+Kaakkurivaara T. (2018) Innovative methods for measuring and improving the bearing capacity of
+    forest roads. Dissertationes Forestales 251. 57 p. https://doi.org/10.14214/df.251.
+Kärhä K. (2006). Whole-tree harvesting in young stands in Finland. Forestry Studies 45: 118–134.
+Kärhä K. (2011). Integrated harvesting of energy wood and pulpwood in first thinnings using the
+    two-pile cutting method. Biomass and Bioenergy 35(8): 3397–3403. https://doi.org/10.1016/j.
+    biombioe.2010.10.029.
+Kärhä K., Poikela A., Palander T. (2018). Productivity and costs of harwarder systems in industrial
+    roundwood thinnings. Croatian Journal of Forest Engineering 39(1): 23–33.
+Kiss K., Malinen J., Tokola T. (2015). Forest road quality control using ALS data. Canadian Journal
+    of Forest Research 45(11): 1636–1642. https://doi.org/10.1139/cjfr-2015-0067.
+
+
+
+                                                          19
+Silva Fennica vol. 54 no. 5 article id 10379 · Laitila et al. · Productivity of harvesting and clearing of brushwood …
+
+
+
+
+Korpilahti A. (2008). Metsäteiden kuntoinventoinnin ja kuntotiedon hyödyntämisen toimintamalli.
+     [Inventory of forest roads quality and operating model for the utilization of collected infor-
+     mation]. Metsätehon raportti 202. 60 p. [In Finnish].
+Laitila J. (2008). Harvesting technology and the cost of fuel chips from early thinnings. Silva Fen-
+     nica 42(2): 267–283. https://doi.org/10.14214/sf.256.
+Laitila J. (2012). Methodology for choice of harvesting system for energy wood from early thin-
+     ning. Dissertationes Forestales 143. 103 p. https://doi.org/10.14214/df.143.
+Laitila J., Asikainen A. (2006). Energy wood logging from early thinnings by harwarder method.
+     Baltic Forestry 12(1): 94–102.
+Laschi A., Foderi C., Fabiano F., Neri F., Cambi M., Mariotti B., Marchi E. (2019). Forest road
+     planning, construction and maintenance to improve forest fire fighting: a review. Croatian
+     Journal of Forest Engineering 40(1): 207–219.
+Läspä O., Nurmi J. (2018) Geometrical thinning in energy wood harvesting, International Journal
+     of Forest Engineering 29(3): 171–178. https://doi.org/10.1080/14942119.2018.1493845
+Lindblad J., Äijälä O., Koistinen A. (2010). Energiapuun mittaus (27.9.2010). [Measurement
+     of energy wood]. Metsätalouden kehittämiskeskus Tapio ja Metsäntutkimuslaitos. 31 p. [In
+     Finnish].
+Magagnotti N., Kanzian C., Schulmeyer F., Spinelli R. (2013). A new guide for work studies in
+     forestry. International Journal of Forest Engineering (24)3: 249–253. https://doi.org/10.1080
+     /14942119.2013.856613.
+Manner J., Palmroth L., Nordfjell T., Lindroos O. (2016). Load level forwarding work element
+     analysis based on automatic follow-up data. Silva Fennica 50(3) article 1546. 19 p. https://
+     doi.org/10.14214/sf.1546.
+Ministry of Agriculture and Forestry. (2010). Maa- ja metsätalousministeriön asetus kuormainvaa’an
+     käytöstä puutavaran mittauksessa ja erien erillään pidosta annetun maa- ja metsätalousmin-
+     isteriön asetuksen muuttamisesta. [Statute of the Ministry of Agriculture and Forestry for the
+     use of loader-mounted scales in the weighing of timber lots]. (Dnro 666/14/2010, Nro 8/10).
+     8 p. [In Finnish].
+Parr T.W., Way J.M. (1988) Management of roadside vegetation: the long-term effects of cutting.
+     Journal of Applied Ecology 25(3): 1073–1087. https://doi.org/10.2307/2403767.
+Pellegrini M., Grigolato S., Cavalli R. (2013). Spatial multi-criteria decision process to define
+     maintenance priorities of forest road network: an application in the Italian Alpine region.
+     Croatian Journal of Forest Engineering 34(1): 31–42.
+Repola J. (2006). Models for vertical wood density of Scots pine, Norway spruce and birch stems,
+     and their application to determine average wood density. Silva Fennica 40(4): 673–685. https://
+     doi.org/10.14214/sf.322.
+Repola J. (2008). Biomass equations for birch in Finland. Silva Fennica 42(4): 605–624. https://
+     doi.org/10.14214/sf.236.
+Repola J. (2009). Biomass equations for Scots pine and Norway spruce in Finland. Silva Fennica
+     43(4): 625–647. https://doi.org/10.14214/sf.184.
+Repola J., Ojansuu R., Kukkola M. (2007). Biomass functions for Scots pine, Norway spruce and
+     birch in Finland. Working Papers of the Finnish Forest Research Institute 53. 28 p. http://urn.
+     fi/URN:ISBN:978-951-40-2046-9.
+Rottensteiner C., Affenzeller G., Stampfer K. (2008). Evaluation of the feller-buncher Moipu 400E
+     for energy wood harvesting. Croatian Journal of Forest Engineering 29(2): 117–128.
+Spinelli R., Magagnotti N., Schweier J. (2017). Trends and perspectives in coppice harvesting.
+     Croatian Journal of Forest Engineering 38(2): 219–230.
+Unrau A., Becker G., Spinelli R., Lazdina D., Magagnotti N., Nicolescu V.N., Buckley P., Bart-
+
+
+
+                                                          20
+Silva Fennica vol. 54 no. 5 article id 10379 · Laitila et al. · Productivity of harvesting and clearing of brushwood …
+
+
+
+
+    lett D., Kofman P.D. (eds.) (2018). Coppice forests in Europe. Albert Ludwig University of
+    Freiburg, Freiburg im Breisgau, Germany. 392 p. https://www.eurocoppice.uni-freiburg.de/
+    intern/coppiceineurope-volume/coppice-forests-in-europe-2018-09-10-final-small.pdf.
+Uusitalo J. (2010). Introduction to forest operations and technology. JVP Forest Systems Oy. 287 p.
+    ISBN 9789529252695.
+
+Total of 42 references.
+
+
+
+
+                                                          21
+

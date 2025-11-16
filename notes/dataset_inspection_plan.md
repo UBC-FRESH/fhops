@@ -49,6 +49,7 @@
 - Added `scripts/parse_arnvik_table9.py` so Table 9 (machine types vs. dependent-variable counts) lives in `notes/reference/arnvik_tables/table9_machine_counts.csv`, making it easier to measure how far we are from Arnvik’s reported 422-model inventory.
 - Added `scripts/extract_arnvik_appendix45.py`, which uses Camelot to dump Appendix 4 (machine specs) and Appendix 5 (stand/operator descriptions) into raw CSVs (`appendix4_machines.csv`, `appendix5_stands.csv`). These need further normalization (e.g., splitting N/HM fields, parsing machine/head models, debarking flags), but the source data is now machine-readable.
 - Implemented the Stoilov et al. (2021) skidder-harvester equations (delay-free and with-delays) as FHOPS helpers so `skidder_harvester` now has a baseline productivity model.
+- Implemented the Laitila & Väätäinen (2020) brushwood harwarder equations (Eq. 1–7) as `fhops.productivity.laitila2020.estimate_brushwood_harwarder_productivity`; unit tests (`tests/test_laitila2020.py`) recreate the published 6.5–8.4 m³/PMH curves across forwarding distances.
 - Reviewed the new machine-productivity PDFs (Di Fulvio 2024, Eriksson & Lindroos 2014, Kellogg & Bettinger 1994, McNeel & Rutherford, Ghaffariyan et al. 2019, Stoilov et al. 2021, Laitila & Väätäinen 2020, Berry 2019, Lee et al. 2018, Ünver-Okan 2020, Spinelli et al. 2016). These cover forwarders, grapple skidders/shovel loggers, processors/landing ops, brushwood harwarders, small cable yarders, coppice harvesters, etc.—none appear in Arnvik Appendix 8, so we must ingest them manually to close the FHOPS machine-role gaps.
 - Current machine-type coverage from Arnvik (Camelot + legacy): 260 `single_grip_harvester`, 94 `feller_buncher`, 14 `feller_buncher_sim`, 8 `harwarder`, 6 `single_grip_harvester_sim`, 5 `skidder_harvester`, 5 `feller_buncher_drive_to_tree`. No forwarders/grapple skidders yet – these are the next extraction targets.
 
@@ -217,3 +218,17 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
    - Rewrite sample dataset JSON/CSV templates and synthetic generator distributions to fall within Lahrsen-observed ranges; add validation rules rejecting out-of-band values unless explicitly overridden.
 3. **Plan costing workflow**
    - Combine the productivity helper with machine rental-rate inputs (in $/SMH) to produce BC-calibrated $/m³ estimates downstream in evaluation scripts; document how this links to the forthcoming machine-costing CLI.
+
+## Machine-Role Productivity Rollout (Steps 1–6)
+1. [x] **Brushwood harwarder / forwarder variant**
+   - Implemented via `fhops.productivity.laitila2020` using Laitila & Väätäinen (2020) Eq. 1–7; reproduces 6.5–8.4 m³/PMH range and exposes payload/grapple controls for registry + costing integration.
+2. [ ] **Conventional forwarder variants (biomass, slash, CTL)**
+   - Extend Eriksson & Lindroos (2014) with biomass/brushwood cases (Laitila & Väätäinen 2014/2020, FPDat datasets) so forwarder roles have BC-calibrated productivity outside CTL thinning/final felling.
+3. [ ] **Grapple skidder + shovel logger suites**
+   - Pull regressions from Han & George, Kellogg & Bettinger (1994), McNeel & Rutherford, and FPInnovations grapple studies; normalise predictors (slope, turn length, turn volume) to FHOPS schema.
+4. [ ] **Processors, loaders, merchandisers**
+   - Use Berry (2019) + related theses to derive roadside processor/log-loader cycle models; ensure block attributes (species mix, product breakdown) drive productivity estimates.
+5. [ ] **Cable, tethered, and aerial systems**
+   - Mine Ünver-Okan (2020), Lee et al. (2018), and helicopter yarding reports for skyline/helilogging productivity; specify when tethered harvesters fall back to cable defaults.
+6. [ ] **Manual / hybrid operations**
+   - Capture provisional envelopes for motor-manual cutting, small forwarders, and hybrid crews; identify literature gaps so grad students can queue targeted field data collection.

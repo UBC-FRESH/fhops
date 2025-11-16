@@ -1,5 +1,10 @@
 # Development Change Log
 
+# 2025-11-16 — Brushwood harwarder productivity helper
+- Implemented the Laitila & Väätäinen (2020) brushwood harwarder equations (`fhops.productivity.laitila2020`) so the CLI/registry can model roadside biomass recovery productivity given tree density, piece size, and forwarding distance.
+- Added regression tests reproducing the paper’s reported 6.5–8.4 m³/PMH cases to guard the helper against future refactors.
+- Logged the new helper + follow-on machine-role rollout plan in `notes/dataset_inspection_plan.md` and extracted the source PDF text into `notes/reference/article10379.txt` for future parsers.
+
 ## 2025-11-15 — Dataset inspector & 24 h baseline
 - Added a new `fhops dataset` CLI app with `inspect-machine` / `inspect-block` commands, interactive selectors, Rich table output, and warnings whenever a machine advertises non‑24 h availability so dataset regressions surface immediately.
 - Enforced the 24 h/day contract across the stack: `Machine.daily_hours` now defaults to 24, all bundled `machines.csv` files were refreshed, and the synthetic generator exposes a `machine_daily_hours` override (also wired through the CLI/batch helpers).
