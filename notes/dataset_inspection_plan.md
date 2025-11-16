@@ -145,7 +145,7 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
 - [ ] Source BC productivity functions (or build new regressions) for every machine role in the harvest system registry so the costing helper can cover entire systems, not just feller bunchers:
   - [x] feller-buncher (Lahrsen 2025 + Arnvik Appendix 8 models already ingested)
   - [x] single_grip_harvester (Arnvik Appendix 8 models ingested via Camelot)
-  - [ ] forwarder *(not covered in Appendix 8 – need to mine Eriksson & Lindroos 2014, Laitila & Väätäinen 2014/2020, and FPInnovations datasets for CTL forwarding regressions)*
+  - [x] forwarder *(implemented baseline Eriksson & Lindroos 2014 model for CTL operations; still need to ingest Laitila & Väätäinen + FPInnovations variants for brushwood/southern conditions)*
   - [ ] grapple_skidder *(seek sources such as Han et al. 2018, George et al. 2022 for grapple-skidder cycle-time models)*
   - [ ] shovel_logger *(likely only in regional studies; consider mining FPInnovations yarding/cable literature or BC-specific shovel logging time studies)*
   - [ ] loader *(loader productivity/cycle-time functions absent; may be simple derived metrics but need references)*

@@ -1,5 +1,9 @@
 """Productivity helpers (calibrated on BC whole-tree datasets)."""
 
+from .eriksson2014 import (
+    estimate_forwarder_productivity_final_felling,
+    estimate_forwarder_productivity_thinning,
+)
 from .lahrsen2025 import (
     LahrsenModel,
     ProductivityDistributionEstimate,
@@ -16,4 +20,6 @@ __all__ = [
     "estimate_productivity",
     "estimate_productivity_distribution",
     "load_lahrsen_ranges",
+    "estimate_forwarder_productivity_final_felling",
+    "estimate_forwarder_productivity_thinning",
 ]
