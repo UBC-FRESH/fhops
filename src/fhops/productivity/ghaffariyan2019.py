@@ -3,6 +3,28 @@
 from __future__ import annotations
 
 import math
+from enum import Enum
+
+
+class ALPACASlopeClass(str, Enum):
+    """Slope buckets described by Ghaffariyan et al. (2019)."""
+
+    FLAT = "flat"  # <10%
+    TEN_TO_TWENTY = "10-20"  # 10-20%
+    OVER_TWENTY = ">20"  # >20%
+
+
+_ALPACA_SLOPE_MULTIPLIERS: dict[ALPACASlopeClass, float] = {
+    ALPACASlopeClass.FLAT: 1.0,
+    ALPACASlopeClass.TEN_TO_TWENTY: 0.75,
+    ALPACASlopeClass.OVER_TWENTY: 0.15,
+}
+
+
+def alpaca_slope_multiplier(slope_class: ALPACASlopeClass) -> float:
+    """Return the published slope multiplier for the provided bucket."""
+
+    return _ALPACA_SLOPE_MULTIPLIERS[slope_class]
 
 
 def _validate_inputs(extraction_distance_m: float, slope_factor: float) -> None:
@@ -47,7 +69,7 @@ def estimate_forwarder_productivity_large_forwarder_thinning(
 
     _validate_inputs(extraction_distance_m, slope_factor)
 
-    base_productivity = 87.65 / (extraction_distance_m ** 0.126)
+    base_productivity = 87.65 / (extraction_distance_m**0.126)
     productivity = base_productivity * slope_factor
     if productivity <= 0:
         raise ValueError("derived productivity must be > 0")
@@ -55,6 +77,8 @@ def estimate_forwarder_productivity_large_forwarder_thinning(
 
 
 __all__ = [
+    "ALPACASlopeClass",
+    "alpaca_slope_multiplier",
     "estimate_forwarder_productivity_small_forwarder_thinning",
     "estimate_forwarder_productivity_large_forwarder_thinning",
 ]

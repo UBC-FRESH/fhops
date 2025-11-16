@@ -130,7 +130,7 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
 
 Ad hoc notes (TODO: process these leads and pull into planning docs):
 
-- 
+-
 
 ### Next Actions for Missing Machine Families
 
@@ -147,11 +147,11 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
 
 ## BC Productivity Model Insights (Lahrsen 2025 thesis)
 - Dataset: 9,865 FPDat II production reports (filtered to 3,081 daily machine-level observations, 205 cutblocks) from 71 feller-bunchers across BC (Jan 2022–Jul 2024); covariates captured automatically: average stem size (0.09–1.32 m³/tree), average volume per hectare (75–856 m³/ha), stem density (205–3,044 trees/ha), ground slope (1.5–48.9%).
-- Daily machine-level mixed-effects model (nested MachineID within BlockID) provides fixed-effect coefficients for productivity in m³/PMH15:  
-  `Prod = 67.99*AvgStemSiz + 0.059*VolumePerH + 0.012*AvgStemDen - 0.461*AvgGroundS` (heteroscedastic best-fit; CI ranges roughly ±10%).  
+- Daily machine-level mixed-effects model (nested MachineID within BlockID) provides fixed-effect coefficients for productivity in m³/PMH15:
+  `Prod = 67.99*AvgStemSiz + 0.059*VolumePerH + 0.012*AvgStemDen - 0.461*AvgGroundS` (heteroscedastic best-fit; CI ranges roughly ±10%).
   Stem size dominates (>+59 m³/PMH15 per +1 m³/tree), slope penalty ≈ −0.46 per +1%, density/volume effects smaller per unit but cover wide ranges.
-- Cutblock-level linear model (aggregation) delivers similar structure with tighter CIs:  
-  `Prod = 61.02*AvgStemSiz + 0.052*VolumePerH + 0.014*AvgStemDen - 0.24*AvgGroundS` (+ optional block-size term).  
+- Cutblock-level linear model (aggregation) delivers similar structure with tighter CIs:
+  `Prod = 61.02*AvgStemSiz + 0.052*VolumePerH + 0.014*AvgStemDen - 0.24*AvgGroundS` (+ optional block-size term).
   A heteroscedastic variant (random contractor effect) yields coefficients 57.08 / 0.031 / 0.003 / −0.36 / +0.013.
 - Thesis also documents GNSS/coverage QA thresholds (≥70–90% coverage, <3 h GNSS gaps) and PMH15 error calibration (<1% with WTD 60–90 s + OTD), which we can reuse for data validation tooling.
 - Parameter domains from the thesis give modern BC benchmarks for sample dataset defaults and synthetic generator ranges (piece size, densities, slopes, productivity).
@@ -245,6 +245,48 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
    - Rewrite sample dataset JSON/CSV templates and synthetic generator distributions to fall within Lahrsen-observed ranges; add validation rules rejecting out-of-band values unless explicitly overridden.
 3. **Plan costing workflow**
    - Combine the productivity helper with machine rental-rate inputs (in $/SMH) to produce BC-calibrated $/m³ estimates downstream in evaluation scripts; document how this links to the forthcoming machine-costing CLI.
+
+## Productivity Backlog Plan
+
+### Forwarder / grapple-skidder coverage
+- [x] Parse Arnvik Appendix 8–11 JSON dumps (`notes/reference/arnvik_tables/`) to isolate forwarder/harwarder/grapple-skidder regressions; capture predictor ranges + units in a machine-readable table under `data/productivity/arnvik_forwarder.json` (script: `scripts/build_arnvik_forwarder_table.py`, currently surfaces harwarder + skidder-harvester rows—the appendices do not include standalone forwarder codes, so the forwarder role is proxied via harwarder models until additional data surfaces).
+- [ ] Acknowledge the Arnvik gap explicitly: document in docs/planning that Appendix 8 only covers harvesters/feller-bunchers/harwarders (per thesis title) and will not produce primary-transport regressions; use the dataset solely for harwarder validation.
+- [ ] Pick BC-appropriate equations (terrain / stem size ranges similar to Lahrsen + FPInnovations studies). Document gaps where coefficients are Scandinavian-centric and note pending FPInnovations confirmations.
+- [ ] Implement helper module (`fhops.productivity.forwarder_bc`) with thin wrappers per model; wire into CLI (`fhops dataset estimate-productivity --machine-role forwarder`) and add pytest coverage comparing against published PMH/m³ tables.
+- [ ] Update dataset defaults/synthetic generator (`src/fhops/scenario/synthetic/generator.py`) so forwarder productivity references the new helper; refresh fixtures or tests that assert production totals.
+- Reference inventory for forwarder work:
+  - `notes/reference/sb_202_2019_2.txt` — Ghaffariyan et al. (2019) AFORA/ALPACA models (Eq. 2–3) giving closed-form m³/PMH₀ curves for 14 t and 20 t forwarders as a function of extraction distance plus slope multipliers (10–20% → ×0.75, >20% → ×0.15). Best quick-win for coding because equations are already explicit.
+  - `notes/reference/forests-13-00305-v2.txt` — West. Oregon tethered harvester-forwarder Monte Carlo (Allman et al. 2021) with Equation (1)/(2) for cycle time contributions and Appendix S1 payload-vs-slope/distance regressions (Pl,kg). Use these to derive slope penalties/payload caps for coastal BC steep-slope scenarios when we port the ALPACA functions.
+  - `notes/reference/sb_202_2019_2.txt` Table 4 + Figures 7/8 and `tests/test_ghaffariyan2019.py` already provide expected outputs; need to wrap them in CLI/regression harnesses and document the assumptions (Australia pine/euc thinning, gentle terrain) before grafting BC-specific adjustments.
+  - [x] CLI now exposes `--slope-class` buckets (flat, 10–20 %, >20 %) wired to the ALPACA multipliers so analysts can pick the published factors without manual math; unit tests cover the new path.
+
+### Skyline alternatives (Ünver-Okan 2020 / Lee et al. 2018)
+- [ ] Extract coefficients from `/notes/reference/unver.pdf` and `/notes/reference/Productivity and cost ... South Korea.pdf`; convert units to metric + CAD for FHOPS defaults. Capture slope/lateral reach constraints.
+- [ ] Add module `fhops.productivity.skyline_alt` exposing uphill/downhill productivity estimators and optional treatment multipliers (reuse TR119 scaling when available). Provide clearly documented assumptions/caveats (non-BC data, average stem diameters, carriage types).
+- [ ] Extend CLI (`fhops dataset estimate-skyline`) to let users choose between FPInnovations placeholders and these alternatives; include warnings when using non-BC data. Add regression tests for representative slope/distances.
+- [ ] Update telemetry/KPI layers so skyline simulations store which regression family was used (new enum/field in machine cost snapshot).
+
+### Appendix 5 normalization
+- [ ] Re-extract the landscape pages (confirmed orientation issue) and store raw CSV under `notes/reference/arnvik_tables/appendix5_raw.csv`.
+- [ ] Normalize into structured JSON (`data/reference/arnvik/appendix5_stands.json`) with schema: stand_id, slope_gradient, yarding_distance, lateral_distance, terrain class, treatment (cth, strip, partial).
+- [ ] Build loader (`fhops.reference.arnvik_appendix5`) and integration hooks so productivity helpers (skyline and cable skidding) can pull slope/landing metadata automatically.
+- [ ] Add CLI command (`fhops reference appendix5-stands --filter ...`) plus unit tests verifying schema + sample rows. Refresh docs to explain how stand metadata feeds the skyline models.
+
+### Cross-cutting tasks
+- [ ] Update planning docs (`notes/dataset_inspection_plan.md`) and roadmap to reflect the above milestones and dependencies (e.g., waiting on FPInnovations TR112 scans).
+- [ ] Expand docs/how-to sections describing the new productivity helpers and Appendix 5 loader; include assumptions table and CLI examples.
+- [ ] Refresh fixtures/tests impacted by new productivity defaults (playback/KPI outputs if production shifts) and document any non-BC source caveats in `CHANGE_LOG.md`.
+- [ ] After implementation, rerun `pytest` + CLI smoke commands (`fhops dataset estimate-productivity`, `fhops reference appendix5-stands`) and capture telemetry snapshots to ensure reporting hooks continue to work.
+- [ ] **CLI/Lint debt cleanup**
+  - Skyline productivity CLI still references Lee (2018) / TR125 helpers without importing them. Fix by re-exporting those functions in `fhops.productivity.__init__` (already done) and explicitly importing them in `src/fhops/cli/dataset.py` so Ruff stops reporting F821. Add regression test covering each skyline model path once wiring is fixed.
+  - `src/fhops/cli/main.py` assigns `_machine_cost_snapshot(sc)` to a local variable in four commands without using it. Either log/emit the snapshot or drop the assignment so Ruff stops flagging F841.
+  - `src/fhops/reference/arnvik_appendix5.py` retains an unused `primary_index` variable—remove it or document why it’s needed to silence Ruff.
+- [ ] **Type-check backlog (mypy)**
+  - Scenario loader (`src/fhops/scenario/io/loaders.py`) still passes `object`-typed CSV values straight into `float()`. Audit the parsing pipeline (pandas vs. csv) and insert explicit type casts or `typing.cast(float, ...)` hints so mypy sees `float`/`str` inputs.
+  - Telemetry CLI (`src/fhops/cli/telemetry.py`) builds list entries mixing strings and objects; convert to `str()` before appending or adjust the type hint to `list[str]`.
+  - Dataset CLI passes optional floats directly into `estimate_forwarder_productivity_kellogg_bettinger` et al. Guard those arguments (enforce `is None` checks before calling) or use `cast(float, volume_per_load)` so mypy stops complaining about `float | None`.
+  - `ProductivityDistributionEstimate` vs. `ProductivityEstimate` mismatch at lines ~939; restructure the code so we don’t assign a `ProductivityEstimate` instance to the wrong variable or update the type hint.
+  - Skyline helper imports (linked to Ruff fix) must also satisfy mypy once the module exports are in place.
 - **FPInnovations reference batch catalogued**
    - `notes/fpinnovations_reference_log.md` now covers the Advantage, Special Report, Handbook, Technical Report, Field/Forest Note, and cable-yard (FNCY) series (all but the OCR-stubborn FNCY14). High-priority sources for the registry/costing helper include SR54 & TR75 (coastal grapple yarders), TR119/TR125 (skyline + partial-cut productivity/cost), TR106/TR108 (interior CTL vs. tree-length systems), TR2016N46 (modern winch-assist harvester), SR89/TR103 (steep-slope ground skidding + soil-disturbance mitigation), HB12 (system catalog), and SR49/SR85 (equipment planning + partial-cut comparisons). TR112/TR127 regressions aren’t extractable from the available scans, so skyline coverage will rely on alternative references (e.g., Ünver-Okan 2020, Lee et al. 2018) until better copies surface. Next action: mine the remaining reports and integrate alternative skyline/tethered regressions so grapple skidders/yarders, skyline partial cuts, tethered felling, and steep-slope skidders enter the registry without waiting on new field campaigns.
 - **BC grapple yarder helpers implemented**
@@ -259,7 +301,7 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
 - **OpCost-style machine-rate dataset plan**
    - [x] Define the schema for a default machine-rate table (`machine_name`, `role`, `ownership_cost_per_smh`, `operating_cost_per_smh`, `default_utilization`, `move_in_cost`, `source`, `notes`). Store it under `data/machine_rates.json` and expose loader helpers.
    - [x] Transcribe core machine classes from Dodson et al. (2015) (feller-buncher, grapple skidder, processor, loader, road grader, etc.) and Hartley & Han (2007) (coastal grapple yarder, swing yarder, tower yarder) with FX/fuel adjustments to BC dollars (document CAD/USD rate and diesel price assumptions).
-   - [x] Layer in FPInnovations repair/maintenance survey (Advantage Vol. 4 No. 23: "Repair and maintenance costs of timber harvesting equipment") as optional coefficients so operating costs can be recomputed from utilization hours when users supply custom labour/fuel inputs. CLI: `fhops dataset estimate-cost --machine-role <role>` now assembles owning + operating + (optional) repair allowances, lets users override individual components, and shows the breakdown + FPInnovations reference hours (2002→2024 CPI factor ≈1.56). 
+   - [x] Layer in FPInnovations repair/maintenance survey (Advantage Vol. 4 No. 23: "Repair and maintenance costs of timber harvesting equipment") as optional coefficients so operating costs can be recomputed from utilization hours when users supply custom labour/fuel inputs. CLI: `fhops dataset estimate-cost --machine-role <role>` now assembles owning + operating + (optional) repair allowances, lets users override individual components, and shows the breakdown + FPInnovations reference hours (2002→2024 CPI factor ≈1.56).
    - [x] Implement a costing helper that blends the default rates with scenario overrides (e.g., `fhops.costing.machine_rates.load_defaults()` → `MachineRate` dataclass). Include utilisation scaling and move-in amortization logic per block/system.
    - [x] Wire machine-role defaults into scenario machinery: `Machine` models now auto-fill `operating_cost` from the rental-rate table when missing, the synthetic dataset generator writes roles + costs, and the example `machines.csv` templates include canonical role slugs (`feller_buncher`, `grapple_skidder`, `roadside_processor`, `loader`) so evaluation tooling has consistent metadata.
    - [x] Canonicalised machine-role slugs across harvest systems + solver constraints (`normalize_machine_role`), so hyphenated labels (`feller-buncher`, `roadside processor`, etc.) map to the same machine-rate entries and system jobs; tests cover the new behaviour.

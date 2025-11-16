@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Iterable
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Iterable, Optional
 
 import typer
 from rich.console import Console
@@ -25,9 +25,10 @@ from fhops.costing.machine_rates import (
     select_usage_class_multiplier,
 )
 from fhops.productivity import (
+    ALPACASlopeClass,
     KelloggLoadType,
     LahrsenModel,
-    ProductivityDistributionEstimate,
+    alpaca_slope_multiplier,
     estimate_cable_skidding_productivity_unver_robust,
     estimate_cable_skidding_productivity_unver_robust_profile,
     estimate_cable_skidding_productivity_unver_spss,
@@ -39,12 +40,12 @@ from fhops.productivity import (
     estimate_productivity_distribution,
     load_lahrsen_ranges,
 )
-from fhops.reference import load_appendix5_stands, get_tr119_treatment
-from fhops.validation.ranges import validate_block_ranges
+from fhops.reference import get_tr119_treatment, load_appendix5_stands
 from fhops.scenario.contract import Machine, Scenario
 from fhops.scenario.io import load_scenario
 from fhops.scheduling.systems import HarvestSystem, default_system_registry
 from fhops.telemetry.machine_costs import build_machine_cost_snapshots
+from fhops.validation.ranges import validate_block_ranges
 
 console = Console()
 dataset_app = typer.Typer(help="Inspect FHOPS datasets and bundled examples.")
@@ -215,8 +216,7 @@ def _ensure_dataset(identifier: str | None, interactive: bool) -> tuple[str, Sce
         if not interactive:
             raise typer.BadParameter("Dataset identifier is required when prompts are disabled.")
         dataset_id = typer.prompt(
-            "Dataset name or scenario path "
-            f"(bundled options: {', '.join(sorted(KNOWN_DATASETS))})"
+            f"Dataset name or scenario path (bundled options: {', '.join(sorted(KNOWN_DATASETS))})"
         )
     name, path = _resolve_dataset(dataset_id)
     scenario = load_scenario(path)
@@ -237,8 +237,7 @@ def _select_system(
         system = systems.get(system_id)
         if system is None:
             raise typer.BadParameter(
-                f"Unknown harvest system '{system_id}'. "
-                f"Options: {', '.join(sorted(systems))}"
+                f"Unknown harvest system '{system_id}'. Options: {', '.join(sorted(systems))}"
             )
         return system.system_id, system
     if not interactive:
@@ -348,9 +347,13 @@ def inspect_machine(
             ("Default Rental Rate ($/SMH)", f"{default_snapshot.rental_rate_smh:.2f}")
         )
         if default_snapshot.ownership is not None:
-            default_rate_rows.append(("Default Owning ($/SMH)", f"{default_snapshot.ownership:.2f}"))
+            default_rate_rows.append(
+                ("Default Owning ($/SMH)", f"{default_snapshot.ownership:.2f}")
+            )
         if default_snapshot.operating is not None:
-            default_rate_rows.append(("Default Operating ($/SMH)", f"{default_snapshot.operating:.2f}"))
+            default_rate_rows.append(
+                ("Default Operating ($/SMH)", f"{default_snapshot.operating:.2f}")
+            )
         if default_snapshot.repair_maintenance is not None:
             default_rate_rows.append(
                 ("Default Repair/Maint. ($/SMH)", f"{default_snapshot.repair_maintenance:.2f}")
@@ -621,37 +624,43 @@ def estimate_forwarder_productivity_cmd(
         case_sensitive=False,
         help="Forwarder regression to evaluate.",
     ),
-    extraction_distance: Optional[float] = typer.Option(
+    extraction_distance: float | None = typer.Option(
         None,
         "--extraction-distance",
         min=0.0,
         help="Mean forwarding distance (m). Required for Ghaffariyan models.",
     ),
-    slope_factor: float = typer.Option(
-        1.0,
+    slope_class: ALPACASlopeClass = typer.Option(
+        ALPACASlopeClass.FLAT,
+        "--slope-class",
+        case_sensitive=False,
+        help="Slope bin (<10, 10-20, >20 percent) from Ghaffariyan et al. 2019.",
+    ),
+    slope_factor: float | None = typer.Option(
+        None,
         "--slope-factor",
         min=0.0,
-        help="Multiplier to approximate slope penalties (>0). Applies to Ghaffariyan models.",
+        help="Custom multiplier overriding --slope-class for Ghaffariyan models.",
     ),
-    volume_per_load: Optional[float] = typer.Option(
+    volume_per_load: float | None = typer.Option(
         None,
         "--volume-per-load",
         min=0.0,
         help="Per-load volume (m³). Required for Kellogg models.",
     ),
-    distance_out: Optional[float] = typer.Option(
+    distance_out: float | None = typer.Option(
         None,
         "--distance-out",
         min=0.0,
         help="Distance from landing to the first loading point (m). Required for Kellogg models.",
     ),
-    travel_in_unit: Optional[float] = typer.Option(
+    travel_in_unit: float | None = typer.Option(
         None,
         "--travel-in-unit",
         min=0.0,
         help="Distance travelled while loading within the unit (m). Required for Kellogg models.",
     ),
-    distance_in: Optional[float] = typer.Option(
+    distance_in: float | None = typer.Option(
         None,
         "--distance-in",
         min=0.0,
@@ -660,28 +669,35 @@ def estimate_forwarder_productivity_cmd(
 ):
     """Estimate forwarder productivity (m³/PMH0) for thinning operations."""
 
-    if model in (ForwarderProductivityModel.GHAFFARIYAN_SMALL, ForwarderProductivityModel.GHAFFARIYAN_LARGE):
+    if model in (
+        ForwarderProductivityModel.GHAFFARIYAN_SMALL,
+        ForwarderProductivityModel.GHAFFARIYAN_LARGE,
+    ):
         if extraction_distance is None:
             raise typer.BadParameter("--extraction-distance is required for Ghaffariyan models.")
-        if slope_factor <= 0:
+        slope_multiplier = (
+            slope_factor if slope_factor is not None else alpaca_slope_multiplier(slope_class)
+        )
+        if slope_multiplier <= 0:
             raise typer.BadParameter("--slope-factor must be > 0.")
         if model is ForwarderProductivityModel.GHAFFARIYAN_SMALL:
             value = estimate_forwarder_productivity_small_forwarder_thinning(
                 extraction_distance_m=extraction_distance,
-                slope_factor=slope_factor,
+                slope_factor=slope_multiplier,
             )
             reference = "Ghaffariyan et al. 2019 (14 t forwarder)"
         else:
             value = estimate_forwarder_productivity_large_forwarder_thinning(
                 extraction_distance_m=extraction_distance,
-                slope_factor=slope_factor,
+                slope_factor=slope_multiplier,
             )
             reference = "Ghaffariyan et al. 2019 (20 t forwarder)"
         rows = [
             ("Model", model.value),
             ("Reference", reference),
             ("Extraction Distance (m)", f"{extraction_distance:.1f}"),
-            ("Slope Factor", f"{slope_factor:.2f}"),
+            ("Slope Class", slope_class.value),
+            ("Slope Factor", f"{slope_multiplier:.2f}"),
             ("Predicted Productivity (m³/PMH0)", f"{value:.2f}"),
         ]
     else:
@@ -718,9 +734,13 @@ def estimate_forwarder_productivity_cmd(
     _render_kv_table("Forwarder Productivity Estimate", rows)
     console.print("[dim]Values expressed in PMH0 (productive machine hours without delays).[/dim]")
     if model in _KELLOGG_MODEL_TO_LOAD:
-        console.print("[dim]Regression from Kellogg & Bettinger (1994) western Oregon CTL thinning study.[/dim]")
+        console.print(
+            "[dim]Regression from Kellogg & Bettinger (1994) western Oregon CTL thinning study.[/dim]"
+        )
     else:
-        console.print("[dim]Regression from Ghaffariyan et al. (2019) ALPACA thinning dataset.[/dim]")
+        console.print(
+            "[dim]Regression from Ghaffariyan et al. (2019) ALPACA thinning dataset.[/dim]"
+        )
 
 
 @dataset_app.command("productivity-ranges")
@@ -759,6 +779,8 @@ def show_productivity_ranges():
 
 
 __all__ = ["dataset_app"]
+
+
 @dataset_app.command("estimate-cost")
 def estimate_cost_cmd(
     rental_rate: float | None = typer.Option(None, help="Rental rate ($/SMH)", min=0.0),
@@ -825,7 +847,9 @@ def estimate_cost_cmd(
     overrides = [owning_rate, operating_rate, repair_rate]
     if machine_role is None:
         if any(value is not None for value in overrides):
-            raise typer.BadParameter("--owning-rate/--operating-rate/--repair-rate require --machine-role.")
+            raise typer.BadParameter(
+                "--owning-rate/--operating-rate/--repair-rate require --machine-role."
+            )
     else:
         if rental_rate is not None:
             raise typer.BadParameter("Use either --rental-rate or --machine-role (not both).")
@@ -878,7 +902,9 @@ def estimate_cost_cmd(
                 repair_usage_bucket = select_usage_class_multiplier(machine_entry, usage_hours)
 
     if rental_rate is None:
-        raise typer.BadParameter("Provide either --rental-rate or --machine-role (or use --dataset/--machine).")
+        raise typer.BadParameter(
+            "Provide either --rental-rate or --machine-role (or use --dataset/--machine)."
+        )
 
     if productivity is None:
         required = [avg_stem_size, volume_per_ha, stem_density, ground_slope]
@@ -1026,7 +1052,13 @@ def list_appendix5_stands(
     for entry in filtered[:limit]:
         slope = entry.average_slope_percent
         slope_text = f"{slope:.1f}" if slope is not None else entry.slope_text or "—"
-        table.add_row(entry.author, entry.tree_species or "—", slope_text, entry.ground_condition or "—", entry.ground_roughness or "—")
+        table.add_row(
+            entry.author,
+            entry.tree_species or "—",
+            slope_text,
+            entry.ground_condition or "—",
+            entry.ground_roughness or "—",
+        )
     if not filtered:
         console.print("No matching profiles.")
         return
@@ -1038,7 +1070,10 @@ def estimate_cable_skidding_cmd(
     model: CableSkiddingModel = typer.Option(CableSkiddingModel.UNVER_SPSS, case_sensitive=False),
     log_volume_m3: float = typer.Option(..., min=0.01, help="Log volume per cycle (m³)."),
     slope_percent: float | None = typer.Option(
-        None, "--slope-percent", min=0.1, help="Route slope percent (ignored when --profile is used)."
+        None,
+        "--slope-percent",
+        min=0.1,
+        help="Route slope percent (ignored when --profile is used).",
     ),
     profile: str | None = typer.Option(
         None, "--profile", help="Appendix 5 author/stand name to supply slope defaults."
@@ -1048,9 +1083,13 @@ def estimate_cable_skidding_cmd(
 
     if profile:
         if model is CableSkiddingModel.UNVER_SPSS:
-            value = estimate_cable_skidding_productivity_unver_spss_profile(profile=profile, log_volume_m3=log_volume_m3)
+            value = estimate_cable_skidding_productivity_unver_spss_profile(
+                profile=profile, log_volume_m3=log_volume_m3
+            )
         else:
-            value = estimate_cable_skidding_productivity_unver_robust_profile(profile=profile, log_volume_m3=log_volume_m3)
+            value = estimate_cable_skidding_productivity_unver_robust_profile(
+                profile=profile, log_volume_m3=log_volume_m3
+            )
         rows = [
             ("Model", model.value),
             ("Profile", profile),
@@ -1059,7 +1098,9 @@ def estimate_cable_skidding_cmd(
         ]
     else:
         if slope_percent is None:
-            raise typer.BadParameter("Provide --slope-percent or --profile to supply slope defaults.")
+            raise typer.BadParameter(
+                "Provide --slope-percent or --profile to supply slope defaults."
+            )
         if model is CableSkiddingModel.UNVER_SPSS:
             value = estimate_cable_skidding_productivity_unver_spss(log_volume_m3, slope_percent)
         else:
@@ -1075,7 +1116,9 @@ def estimate_cable_skidding_cmd(
 
 @dataset_app.command("estimate-skyline-productivity")
 def estimate_skyline_productivity_cmd(
-    model: SkylineProductivityModel = typer.Option(SkylineProductivityModel.LEE_UPHILL, case_sensitive=False),
+    model: SkylineProductivityModel = typer.Option(
+        SkylineProductivityModel.LEE_UPHILL, case_sensitive=False
+    ),
     slope_distance_m: float = typer.Option(..., min=1.0, help="Slope yarding distance (m)."),
     lateral_distance_m: float = typer.Option(25.0, min=0.0, help="Lateral yarding distance (m)."),
     payload_m3: float = typer.Option(None, help="Payload per turn (m³). Defaults per source."),

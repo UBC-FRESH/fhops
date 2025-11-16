@@ -15,10 +15,34 @@ runner = CliRunner()
 def test_cli_forwarder_productivity_ghaffariyan_small() -> None:
     result = runner.invoke(
         dataset_app,
-        ["estimate-forwarder-productivity", "--model", "ghaffariyan-small", "--extraction-distance", "100"],
+        [
+            "estimate-forwarder-productivity",
+            "--model",
+            "ghaffariyan-small",
+            "--extraction-distance",
+            "100",
+        ],
     )
     assert result.exit_code == 0
     expected = estimate_forwarder_productivity_small_forwarder_thinning(100.0)
+    assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_forwarder_productivity_ghaffariyan_small_slope_class() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-forwarder-productivity",
+            "--model",
+            "ghaffariyan-small",
+            "--extraction-distance",
+            "200",
+            "--slope-class",
+            "10-20",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_forwarder_productivity_small_forwarder_thinning(200.0, slope_factor=0.75)
     assert f"{expected:.2f}" in result.stdout
 
 

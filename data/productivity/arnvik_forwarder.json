@@ -1,0 +1,364 @@
+{
+  "generated_at": "2025-11-16T21:49:35.810780+00:00",
+  "source": "Arnvik (2024) Appendix 8–11 tables (Camelot extraction)",
+  "machine_types_considered": [
+    "harwarder",
+    "harwarder_sim",
+    "skidder_harvester"
+  ],
+  "machine_types_present": [
+    "harwarder",
+    "skidder_harvester"
+  ],
+  "predictors": {
+    "A₉": {
+      "unit": "m",
+      "description": "Skidding dista nce Weight of hand led unit and/or output (trees/stems/logs/biomass)",
+      "range_hint": null
+    },
+    "E₁₄": {
+      "unit": "m3",
+      "description": "Grapple load s",
+      "range_hint": null
+    },
+    "E₈": {
+      "unit": "m3",
+      "description": "Load volume *E₉ 1: Purpose bui lt, 2: Excavat or - N orihiro et al. (2018 ) Machine type 1: Beaver, 0: B ea r - Ackerm an et al. (20 21) c: Agama 1/0, d: Vimek 1/0 - Spin elli et al. (2022) *E₁₀ 1: C360, 0: S3 50 Head model *E₁₁ 1/0 Accumulating *E₁₂ Model 5: XXX L is baseline , o: S 1/0, p: M 1/0, q: L 1/0, r: XL 1/0, s: XXL 1/0 Harvester hea Model 9: XXX L is baseline , m: S 1/0, n: M 1/0, o: L 1/0 - Eriksson & Lindroos (2014) M is baseline, e: L 1/0, f: X L 1/0, g: XX L 1 /0 - Liski et al. (2020) *E₁₃ M is baseline, c: L 1/0, d: X L 1/0 Harvester size",
+      "range_hint": "Load volume *E₉ 1: Purpose bui lt, 2: Excavat or - N orihiro et al. (2018 ) Machine type 1: Beaver, 0: B ea r - Ackerm an et al. (20 21) c: Agama 1/0, d: Vimek 1/0 - Spin elli et al. (2022) *E₁₀ 1: C360, 0: S3 50 Head model *E₁₁ 1/0 Accumulating *E₁₂ Model 5: XXX L is baseline , o: S 1/0, p: M 1/0, q: L 1/0, r: XL 1/0, s: XXL 1/0 Harvester hea Model 9: XXX L is baseline , m: S 1/0, n: M 1/0, o: L 1/0 - Eriksson & Lindroos (2014) M is baseline, e: L 1/0, f: X L 1/0, g: XX L 1 /0 - Liski et al. (2020) *E₁₃ M is baseline, c: L 1/0, d: X L 1/0 Harvester size"
+    },
+    "I₃": {
+      "unit": "trees/ha",
+      "description": "Harvested tree",
+      "range_hint": null
+    },
+    "I₅": {
+      "unit": "trees/ha",
+      "description": "Stand density *I₆ b: Light (15%) , c : Medium (30%) and H eav y (45%) - Man ner et al. (2023) Harvest intens X<30 m3/ha is ba seline, e: 3 0≤X≤ 60 1/0, f: X>60 1/0 - Me derski et al. (2016) Miscellaneous",
+      "range_hint": "Stand density *I₆ b: Light (15%) , c : Medium (30%) and H eav y (45%) - Man ner et al. (2023) Harvest intens X<30 m3/ha is ba seline, e: 3 0≤X≤ 60 1/0, f: X>60 1/0 - Me derski et al. (2016) Miscellaneous"
+    },
+    "N₃": {
+      "unit": "number",
+      "description": "Trees per cycle",
+      "range_hint": null
+    },
+    "T₁": {
+      "unit": "",
+      "description": "",
+      "range_hint": null
+    },
+    "V₁": {
+      "unit": "",
+      "description": "",
+      "range_hint": null
+    },
+    "V₂": {
+      "unit": "",
+      "description": "",
+      "range_hint": null
+    }
+  },
+  "models": [
+    {
+      "role": "forwarder_harwarder",
+      "machine_type": "harwarder",
+      "system": "cut_to_length",
+      "publication": "Ackerman et al. (2022) model 1",
+      "dependent_variable": "PV (m³ PMh⁻¹)",
+      "base_machine": "PB",
+      "propulsion": "RW",
+      "form": "aV₁b",
+      "coefficients": {
+        "a": "*68.5909",
+        "b": "0.5505649"
+      },
+      "r_squared": 0.58,
+      "observations": 281,
+      "observational_unit": "EL",
+      "structure": "Power law model",
+      "significance": "SV",
+      "f_stat": "-",
+      "predictor_codes": [
+        "V₁"
+      ]
+    },
+    {
+      "role": "forwarder_harwarder",
+      "machine_type": "harwarder",
+      "system": "cut_to_length",
+      "publication": "Ackerman et al. (2022) model 2",
+      "dependent_variable": "PV (m³ PMh⁻¹)",
+      "base_machine": "PB",
+      "propulsion": "RW",
+      "form": "aV₁b",
+      "coefficients": {
+        "a": "*30.26950014",
+        "b": "0.5505689"
+      },
+      "r_squared": 0.58,
+      "observations": 284,
+      "observational_unit": "EL",
+      "structure": "Power law model",
+      "significance": "SV",
+      "f_stat": "-",
+      "predictor_codes": [
+        "V₁"
+      ]
+    },
+    {
+      "role": "forwarder_harwarder",
+      "machine_type": "harwarder",
+      "system": "cut_to_length",
+      "publication": "Di Fulvio & Bergström (2013) model 1",
+      "dependent_variable": "TV (PMmin m³ ⁻¹)",
+      "base_machine": "PB",
+      "propulsion": "RW",
+      "form": "a+bI₅-cT₁",
+      "coefficients": {
+        "a": "5.4043",
+        "b": "0.000874",
+        "c": "1.1512"
+      },
+      "r_squared": 0.909,
+      "observations": 9,
+      "observational_unit": "EL",
+      "structure": "Linear model",
+      "significance": "SV",
+      "f_stat": "-",
+      "predictor_codes": [
+        "I₅",
+        "T₁"
+      ]
+    },
+    {
+      "role": "forwarder_harwarder",
+      "machine_type": "harwarder",
+      "system": "cut_to_length",
+      "publication": "Kärhä et al. (2018b) model 1",
+      "dependent_variable": "PV (m³ E15⁻¹)",
+      "base_machine": "PB",
+      "propulsion": "RW",
+      "form": "-a+bln(V₂)",
+      "coefficients": {
+        "a": "1.877",
+        "b": "1.641"
+      },
+      "r_squared": 0.13,
+      "observations": null,
+      "observational_unit": "PL",
+      "structure": "Log-linear model",
+      "significance": "P <0.05",
+      "f_stat": "3.056",
+      "predictor_codes": [
+        "V₂"
+      ]
+    },
+    {
+      "role": "forwarder_harwarder",
+      "machine_type": "harwarder",
+      "system": "*ft",
+      "publication": "Laitila & Vää täinen (2020) model 1",
+      "dependent_variable": "M move (s tr ee⁻¹)",
+      "base_machine": "PB",
+      "propulsion": "RW",
+      "form": "a+b/I₃",
+      "coefficients": {},
+      "r_squared": null,
+      "observations": null,
+      "observational_unit": null,
+      "structure": null,
+      "significance": null,
+      "f_stat": null,
+      "predictor_codes": [
+        "I₃"
+      ]
+    },
+    {
+      "role": "forwarder_harwarder",
+      "machine_type": "harwarder",
+      "system": "full_tree",
+      "publication": "Laitila & Väätäinen (2020) model 1",
+      "dependent_variable": "M move (s tree⁻¹)",
+      "base_machine": "PB",
+      "propulsion": "RW",
+      "form": "a+b/I₃",
+      "coefficients": {
+        "a": "0.168",
+        "b": "4351.5"
+      },
+      "r_squared": 0.881,
+      "observations": 80,
+      "observational_unit": "EL",
+      "structure": "Linear model with division operation",
+      "significance": "P <0.001",
+      "f_stat": "576.779",
+      "predictor_codes": [
+        "I₃"
+      ]
+    },
+    {
+      "role": "forwarder_harwarder",
+      "machine_type": "harwarder",
+      "system": "full_tree",
+      "publication": "Laitila & Väätäinen (2020) model 2",
+      "dependent_variable": "E fell (s tree⁻¹)",
+      "base_machine": "PB",
+      "propulsion": "RW",
+      "form": "-a+bln(V₂)",
+      "coefficients": {
+        "a": "4.571",
+        "b": "3.4"
+      },
+      "r_squared": 0.724,
+      "observations": 80,
+      "observational_unit": "EL",
+      "structure": "Log-linear model",
+      "significance": "P <0.001",
+      "f_stat": "204.102",
+      "predictor_codes": [
+        "V₂"
+      ]
+    },
+    {
+      "role": "forwarder_harwarder",
+      "machine_type": "harwarder",
+      "system": "full_tree",
+      "publication": "Laitila & Väätäinen (2020) model 3",
+      "dependent_variable": "L load (s grapple-load⁻¹)",
+      "base_machine": "PB",
+      "propulsion": "RW",
+      "form": "-a+b/E₁₄",
+      "coefficients": {
+        "a": "8.222",
+        "b": "7.237"
+      },
+      "r_squared": 0.848,
+      "observations": 80,
+      "observational_unit": "EL",
+      "structure": "Linear model with division operation",
+      "significance": "P <0.001",
+      "f_stat": "434.187",
+      "predictor_codes": [
+        "E₁₄"
+      ]
+    },
+    {
+      "role": "grapple_skidder",
+      "machine_type": "skidder_harvester",
+      "system": "cut_to_length",
+      "publication": "Stoilov et a l. (2021) model 1",
+      "dependent_variable": "W cycle (m in)",
+      "base_machine": "PB",
+      "propulsion": "RW",
+      "form": "-a+bA₉+cE₈+dN₃",
+      "coefficients": {},
+      "r_squared": null,
+      "observations": null,
+      "observational_unit": null,
+      "structure": null,
+      "significance": null,
+      "f_stat": null,
+      "predictor_codes": [
+        "A₉",
+        "E₈",
+        "N₃"
+      ]
+    },
+    {
+      "role": "grapple_skidder",
+      "machine_type": "skidder_harvester",
+      "system": "cut_to_length",
+      "publication": "Stoilov et al. (2021) model 1",
+      "dependent_variable": "W cycle (min)",
+      "base_machine": "",
+      "propulsion": "PB RW",
+      "form": "-a+bA₉+cE₈+dN₃",
+      "coefficients": {
+        "a": "13.73",
+        "b": "0.056",
+        "c": "3.7",
+        "d": "5.94"
+      },
+      "r_squared": 0.93,
+      "observations": 31,
+      "observational_unit": "EL",
+      "structure": "Linear model",
+      "significance": "P <0.05",
+      "f_stat": "69.54",
+      "predictor_codes": [
+        "A₉",
+        "E₈",
+        "N₃"
+      ]
+    },
+    {
+      "role": "grapple_skidder",
+      "machine_type": "skidder_harvester",
+      "system": "cut_to_length",
+      "publication": "Stoilov et al. (2021) model 2",
+      "dependent_variable": "W cycle (min)-D",
+      "base_machine": "",
+      "propulsion": "PB RW",
+      "form": "aA₉",
+      "coefficients": {
+        "a": "0.0764"
+      },
+      "r_squared": 0.86,
+      "observations": 31,
+      "observational_unit": "EL",
+      "structure": "Linear model",
+      "significance": "P <0.05",
+      "f_stat": "31.32",
+      "predictor_codes": [
+        "A₉"
+      ]
+    },
+    {
+      "role": "grapple_skidder",
+      "machine_type": "skidder_harvester",
+      "system": "cut_to_length",
+      "publication": "Stoilov et al. (2021) model 3",
+      "dependent_variable": "PV (m³ PMh⁻¹)",
+      "base_machine": "",
+      "propulsion": "PB RW",
+      "form": "a-bA₉-cN₃",
+      "coefficients": {
+        "a": "14.59",
+        "b": "0.018",
+        "c": "2.16"
+      },
+      "r_squared": 0.57,
+      "observations": 31,
+      "observational_unit": "EL",
+      "structure": "Linear model",
+      "significance": "P <0.05",
+      "f_stat": "6.5",
+      "predictor_codes": [
+        "A₉",
+        "N₃"
+      ]
+    },
+    {
+      "role": "grapple_skidder",
+      "machine_type": "skidder_harvester",
+      "system": "cut_to_length",
+      "publication": "Stoilov et al. (2021) model 4",
+      "dependent_variable": "PV (m³ PMh⁻¹)-D",
+      "base_machine": "",
+      "propulsion": "PB RW",
+      "form": "a-bA₉",
+      "coefficients": {
+        "a": "12.21",
+        "b": "0.029"
+      },
+      "r_squared": 0.37,
+      "observations": 31,
+      "observational_unit": "EL",
+      "structure": "Linear model",
+      "significance": "P <0.05",
+      "f_stat": "2.98",
+      "predictor_codes": [
+        "A₉"
+      ]
+    }
+  ]
+}
