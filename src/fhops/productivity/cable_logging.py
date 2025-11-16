@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from fhops.reference import get_appendix5_profile
+
 
 def _validate_inputs(log_volume_m3: float, route_slope_percent: float) -> None:
     if log_volume_m3 <= 0:
@@ -24,6 +26,36 @@ def estimate_cable_skidding_productivity_unver_robust(log_volume_m3: float, rout
     _validate_inputs(log_volume_m3, route_slope_percent)
     value = 3.0940 + 5.5182 * log_volume_m3 - 1.3886 * route_slope_percent / 100.0
     return max(value, 0.0)
+
+
+def _profile_slope_percent(profile: str) -> float:
+    record = get_appendix5_profile(profile)
+    slope = record.average_slope_percent
+    if slope is None:
+        raise ValueError(f"Profile '{profile}' does not include a usable slope.")
+    return slope
+
+
+def estimate_cable_skidding_productivity_unver_spss_profile(
+    *,
+    profile: str,
+    log_volume_m3: float,
+) -> float:
+    """Estimate productivity using a named Appendix 5 stand to supply slope (%)."""
+
+    slope = _profile_slope_percent(profile)
+    return estimate_cable_skidding_productivity_unver_spss(log_volume_m3, slope)
+
+
+def estimate_cable_skidding_productivity_unver_robust_profile(
+    *,
+    profile: str,
+    log_volume_m3: float,
+) -> float:
+    """Robust regression variant that derives slope (%) from an Appendix 5 stand."""
+
+    slope = _profile_slope_percent(profile)
+    return estimate_cable_skidding_productivity_unver_robust(log_volume_m3, slope)
 
 
 def _validate_positive(value: float, name: str) -> None:
@@ -96,6 +128,8 @@ def estimate_cable_yarder_productivity_lee2018_downhill(
 __all__ = [
     "estimate_cable_skidding_productivity_unver_spss",
     "estimate_cable_skidding_productivity_unver_robust",
+    "estimate_cable_skidding_productivity_unver_spss_profile",
+    "estimate_cable_skidding_productivity_unver_robust_profile",
     "estimate_cable_yarder_productivity_lee2018_uphill",
     "estimate_cable_yarder_productivity_lee2018_downhill",
 ]

@@ -26,6 +26,10 @@ from fhops.productivity import (
     KelloggLoadType,
     LahrsenModel,
     ProductivityDistributionEstimate,
+    estimate_cable_skidding_productivity_unver_robust,
+    estimate_cable_skidding_productivity_unver_robust_profile,
+    estimate_cable_skidding_productivity_unver_spss,
+    estimate_cable_skidding_productivity_unver_spss_profile,
     estimate_forwarder_productivity_kellogg_bettinger,
     estimate_forwarder_productivity_large_forwarder_thinning,
     estimate_forwarder_productivity_small_forwarder_thinning,
@@ -33,6 +37,7 @@ from fhops.productivity import (
     estimate_productivity_distribution,
     load_lahrsen_ranges,
 )
+from fhops.reference import load_appendix5_stands
 from fhops.validation.ranges import validate_block_ranges
 from fhops.scenario.contract import Scenario
 from fhops.scenario.io import load_scenario
@@ -97,6 +102,13 @@ _KELLOGG_MODEL_TO_LOAD = {
     ForwarderProductivityModel.KELLOGG_PULPWOOD: KelloggLoadType.PULPWOOD,
     ForwarderProductivityModel.KELLOGG_MIXED: KelloggLoadType.MIXED,
 }
+
+
+class CableSkiddingModel(str, Enum):
+    """Ünver-Okan cable skidding regressions."""
+
+    UNVER_SPSS = "unver-spss"
+    UNVER_ROBUST = "unver-robust"
 
 
 def _candidate_roots() -> list[Path]:
@@ -846,3 +858,72 @@ def estimate_cost_cmd(
         console.print(
             f"[dim]Repair/maintenance allowance derived from Advantage Vol. 4 No. 23 (usage class {repair_reference_hours / 1000:.0f}×1000 h).[/dim]"
         )
+
+
+@dataset_app.command("appendix5-stands")
+def list_appendix5_stands(
+    author_filter: str | None = typer.Option(None, "--author", help="Filter by author substring."),
+    limit: int = typer.Option(20, "--limit", min=1, max=200, help="Max rows to display."),
+):
+    """Show stand metadata extracted from Arnvik (2024) Appendix 5."""
+
+    entries = load_appendix5_stands()
+    filtered = [
+        entry
+        for entry in entries
+        if not author_filter or author_filter.lower() in entry.author.lower()
+    ]
+    table = Table(title="Appendix 5 Stand Profiles")
+    table.add_column("Author", style="bold")
+    table.add_column("Species")
+    table.add_column("Slope (%)")
+    table.add_column("Ground Condition")
+    table.add_column("Roughness")
+    for entry in filtered[:limit]:
+        slope = entry.average_slope_percent
+        slope_text = f"{slope:.1f}" if slope is not None else entry.slope_text or "—"
+        table.add_row(entry.author, entry.tree_species or "—", slope_text, entry.ground_condition or "—", entry.ground_roughness or "—")
+    if not filtered:
+        console.print("No matching profiles.")
+        return
+    console.print(table)
+
+
+@dataset_app.command("estimate-cable-skidding")
+def estimate_cable_skidding_cmd(
+    model: CableSkiddingModel = typer.Option(CableSkiddingModel.UNVER_SPSS, case_sensitive=False),
+    log_volume_m3: float = typer.Option(..., min=0.01, help="Log volume per cycle (m³)."),
+    slope_percent: float | None = typer.Option(
+        None, "--slope-percent", min=0.1, help="Route slope percent (ignored when --profile is used)."
+    ),
+    profile: str | None = typer.Option(
+        None, "--profile", help="Appendix 5 author/stand name to supply slope defaults."
+    ),
+):
+    """Estimate cable skidding productivity (m³/h) using Ünver-Okan (2020) regressions."""
+
+    if profile:
+        if model is CableSkiddingModel.UNVER_SPSS:
+            value = estimate_cable_skidding_productivity_unver_spss_profile(profile=profile, log_volume_m3=log_volume_m3)
+        else:
+            value = estimate_cable_skidding_productivity_unver_robust_profile(profile=profile, log_volume_m3=log_volume_m3)
+        rows = [
+            ("Model", model.value),
+            ("Profile", profile),
+            ("Log Volume (m³)", f"{log_volume_m3:.3f}"),
+            ("Productivity (m³/h)", f"{value:.2f}"),
+        ]
+    else:
+        if slope_percent is None:
+            raise typer.BadParameter("Provide --slope-percent or --profile to supply slope defaults.")
+        if model is CableSkiddingModel.UNVER_SPSS:
+            value = estimate_cable_skidding_productivity_unver_spss(log_volume_m3, slope_percent)
+        else:
+            value = estimate_cable_skidding_productivity_unver_robust(log_volume_m3, slope_percent)
+        rows = [
+            ("Model", model.value),
+            ("Log Volume (m³)", f"{log_volume_m3:.3f}"),
+            ("Slope (%)", f"{slope_percent:.2f}"),
+            ("Productivity (m³/h)", f"{value:.2f}"),
+        ]
+    _render_kv_table("Cable Skidding Productivity", rows)

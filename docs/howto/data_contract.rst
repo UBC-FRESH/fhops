@@ -201,6 +201,20 @@ for each machine/system. Use the CLI helper (deterministic or distribution-based
 Lahrsen stand descriptors and machine rates into comparable $/m³ for QA, reporting, or solver
 inputs.
 
+Skyline Stand Profiles
+----------------------
+
+Arnvik (2024) Appendix 5 stand metadata is bundled under
+``notes/reference/arnvik_tables/appendix5_stands_normalized.json`` and exposed via the CLI:
+
+- ``fhops dataset appendix5-stands`` lists authors/species and the parsed slope/ground descriptors
+  (filter with ``--author``). The parser converts ranges (e.g., ``23 (5-55)%``) and qualitative labels
+  (``Level - Erasmus``) into approximate slope percentages.
+- ``fhops dataset estimate-cable-skidding`` evaluates the Ünver-Okan (2020) regressions. Supply either
+  ``--slope-percent`` or a stand ``--profile`` (author name) to pull slope defaults directly from Appendix 5.
+- Programmatically, ``fhops.reference.arnvik_appendix5`` exposes dataclasses and helper functions so skyline
+  helpers and costing workflows can bind stand descriptors to the new cable productivity models.
+
 Authoring Checklist
 -------------------
 

@@ -4,7 +4,9 @@ import pytest
 
 from fhops.productivity import (
     estimate_cable_skidding_productivity_unver_robust,
+    estimate_cable_skidding_productivity_unver_robust_profile,
     estimate_cable_skidding_productivity_unver_spss,
+    estimate_cable_skidding_productivity_unver_spss_profile,
     estimate_cable_yarder_productivity_lee2018_downhill,
     estimate_cable_yarder_productivity_lee2018_uphill,
 )
@@ -42,3 +44,13 @@ def test_lee2018_validates_inputs():
             lateral_distance_m=0.0,
             large_end_diameter_cm=34.0,
         )
+
+
+def test_unver_profile_helpers_match_manual_slope():
+    profile = "Ackerman et al. (2018)"
+    value_spss = estimate_cable_skidding_productivity_unver_spss_profile(profile=profile, log_volume_m3=0.35)
+    manual = estimate_cable_skidding_productivity_unver_spss(0.35, 23.0)
+    assert pytest.approx(value_spss, rel=1e-6) == manual
+    value_robust = estimate_cable_skidding_productivity_unver_robust_profile(profile=profile, log_volume_m3=0.35)
+    manual_robust = estimate_cable_skidding_productivity_unver_robust(0.35, 23.0)
+    assert pytest.approx(value_robust, rel=1e-6) == manual_robust
