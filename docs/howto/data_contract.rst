@@ -142,6 +142,43 @@ The command computes centroid-to-centroid distances (in metres) respecting the C
 resulting CSV aligns with the ``MobilisationConfig`` distance format and can be referenced
 under ``scenario.data.mobilisation_distances``.
 
+Machine-Rate Defaults & Costing Helper
+--------------------------------------
+
+FHOPS includes a BC-focused rental-rate catalogue under ``data/machine_rates.json`` to keep
+costing consistent across scenarios:
+
+- Each entry records ``machine_name``, ``role``, owning/operating costs ($/SMH), default
+  utilisation, move-in allowance, citation, and notes. Baseline values combine Dodson et al.
+  (2015) Montana machine-rate data (converted at ~1.33 CAD/USD with diesel ≈ CAD 1.80/L) and
+  Hartley & Han (2007) coastal grapple-yarders to match BC market conditions.
+- Repair and maintenance allowances come from FPInnovations Advantage Vol. 4 No. 23 (2003).
+  The report’s 2002 CAD regression averages are escalated to 2024 CAD using the Statistics
+  Canada Machinery & Equipment CPI (Table 18-10-0005-01), giving a cumulative multiplier of
+  ≈1.56. These allowances are optional per role.
+- The CLI exposes the defaults via ``fhops dataset estimate-cost``::
+
+      # Deterministic Lahrsen productivity with table defaults
+      fhops dataset estimate-cost --machine-role grapple_yarder \
+        --avg-stem-size 0.45 --volume-per-ha 320 --stem-density 750 --ground-slope 35
+
+  The command prints the chosen role, source, owning/operating/repair split, utilisation,
+  productivity (m³/PMH15), and $/m³. Add ``--include-repair/--exclude-repair`` to toggle the
+  FPInnovations allowance or override components directly::
+
+      fhops dataset estimate-cost --machine-role feller_buncher \
+        --owning-rate 95 --operating-rate 120 --repair-rate 40 \
+        --productivity 30 --utilisation 0.8
+
+- Supplying ``--rental-rate`` bypasses the lookup for bespoke studies, but ``machines.csv`` rows
+  should normally use the curated rates (or CLI recomputed totals) so costing/evaluation tools
+  stay aligned.
+
+When authoring datasets set ``machines.csv.operating_cost`` to the all-in rental rate ($/SMH)
+for each machine/system. Use the CLI helper (deterministic or distribution-based) to turn
+Lahrsen stand descriptors and machine rates into comparable $/m³ for QA, reporting, or solver
+inputs.
+
 Authoring Checklist
 -------------------
 
