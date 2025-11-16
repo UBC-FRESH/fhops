@@ -1,0 +1,710 @@
+                                                              International Journal of Forest Engineering, 2015 http://dx.doi.org/10.1080/14942119.2015.1069497
+
+
+
+
+                                                               Montana logging machine rates
+
+
+                                                               Elizabeth Dodsona, Steve Hayesb, Joshua Meeka, and Christopher R. Keyesa
+
+                                                               a
+                                                                College of Forestry and Conservation, University of Montana, Missoula, MT, USA; bBureau of Business and Economic Research,
+                                                               University of Montana, Missoula, MT, USA
+                                                               (Received 13 February 2014; ﬁnal version accepted 1 July   2015)
+
+
+
+                                                                      Montana’s logging industry has changed signiﬁcantly over the past two decades. Increased operating costs and
+Downloaded by [University of Montana] at 06:31 27 July 2015
+
+
+
+
+                                                                      subsequent diminishing returns, combined with a shifting paradigm in regards to active forest management
+                                                                      have had signiﬁcant impacts on the economic and demographic make-up of the industry. One way to address
+                                                                      these changes and mitigate the associated challenges of continued viability is through analysis of the factors and
+                                                                      constraints impacting routine operational costs. To provide a resource for comparison between commonly-
+                                                                      utilized logging equipment, the hourly owning and operating costs of select mechanical, ground-based
+                                                                      machines were calculated using the machine rate method from data supplied by western Montana equipment
+                                                                      dealers. The results were compared to historical cost data, and reasons for increased logging expense were
+                                                                      studied and discussed. Inﬂation-adjusted operating costs for ground-based equipment appear to be 32–86%
+                                                                      higher than 20 years ago. Reasons include increases in equipment purchase price, fuel, labor wages and
+                                                                      beneﬁts, and repair/maintenance expenses as well as a decrease in the number of operational days per year.
+                                                                      Keywords: machine costs; United States; historic cost comparison
+
+
+                                                               Introduction                                                           In addition to these economic changes, forestry
+                                                               Forestry has long been one of Montana’s foremost                   in Montana is undergoing an ecological manage-
+                                                               industries and the state has played a signiﬁcant role              ment paradigm shift. The emphasis on purely pro-
+                                                               in the Northwest’s forest industry for well over a                 duction-oriented forestry exists less today than when
+                                                               century. In 2012, Montana’s forest products indus-                 log prices and annual harvest volumes were higher
+                                                               try harvested 1.8 million m3 (351 million board feet               20 years ago. As a result of changing ecological
+                                                               (MMBF) Scribner log scale), employed 6650 work-                    objectives and the challenges related to global cli-
+                                                               ers, and produced an estimated 1.4 million m3 (584                 mate change, more logging contractors are relying
+                                                               MMBF, lumber tally) of lumber with the majority of                 on restoration, salvage, and stewardship harvest pro-
+                                                               that activity occurring in the western part of the state           jects with differing ecological objectives. This brings
+                                                               (Morgan et al. 2013).                                              a new set of challenges and a need for innovation,
+                                                                   The industry as a whole has changed signiﬁcantly               diversity, and ﬂexibility within the industry. The
+                                                               from its early days, and is very different now to what             demographic and economic changes occurring in
+                                                               it was 20 years ago. Harvest volumes have decreased                the state, along with evolving ecological goals have
+                                                               by 64% since 1993 and consequently, so too have                    signiﬁcantly altered Montana’s forest industry. To
+                                                               employment numbers (44% decrease) along with                       remain relevant, the industry must continually
+                                                               total sales revenue from ﬁnished products (71%                     adapt to the changing conditions.
+                                                               decrease) (Morgan et al. 2013). Despite this decline,                  Montana’s logging sector has experienced trends
+                                                               the average wage in the forest products industry is                similar to the industry at large. In 2012, 575 people
+                                                               16% higher than the average across all sectors in                  were employed in some aspect of logging in
+                                                               Montana (Department of Natural Resources and                       Montana, a decline of 96% from 10 years prior
+                                                               Conservation [DNRC] 2013).                                         (Bureau of Labor Statistics [BLS] 2013). While
+
+
+                                                               Corresponding author. Elizabeth Dodson, College of Forestry and Conservation, University of Montana, 32 Campus Drive,
+                                                               Missoula, MT 59812, USA. Email: Elizabeth.dodson@umontana.edu
+
+
+
+
+                                                               © 2015 Forest Products Society
+                                                              2    E. Dodson et al.
+
+                                                              employment has decreased, research suggests that         down from the producer to the consumer and are
+                                                              the costs of operating a logging business have           thus an issue of concern throughout the supply
+                                                              increased (Baker et al. 2013). Studies over the past     chain.
+                                                              20 years have illustrated the impacts of increased           It is of utmost importance to any business to
+                                                              logging costs, above inﬂation, across all component      consider the factors that affect it and ﬁnd ways to
+                                                              cost categories (Cubbage et al. 1988; Hayes et al.       remain competitive. Constant consideration of pro-
+                                                              2011). Initial investment levels for new logging         duction levels, operating costs and constraints, and
+                                                              equipment have increased, as have fuel, oil, and         ways to increase the former while minimizing the
+                                                              maintenance costs. Increased concern over the            latter should be a main concern of any business
+                                                              environmental impact of equipment emissions has          owner, especially in the context of a slowly-recover-
+                                                              led to signiﬁcant advances in engine technology but      ing economy. While this is largely a matter of the
+                                                              have also contributed to rising purchase costs. This     personal motivation of the individual business, gen-
+                                                              modern equipment is more powerful and efﬁcient           eralized resources are available to serve as estimators
+                                                              allowing for increased production, decreased fuel        of start-up and operational costs, a means of com-
+                                                              usage and emissions, increased reliability and           parison between equipment types and logging sys-
+                                                              decreased need for human labor. However, the             tems, or as base rates to begin negotiating logging
+                                                              advances and beneﬁts allowed by improved technol-        rates.
+Downloaded by [University of Montana] at 06:31 27 July 2015
+
+
+
+
+                                                              ogy have been somewhat stiﬂed by the economic                Speciﬁc to the forest products industry, extensive
+                                                              situation that Montana’s timber industry faces.          logging cost and production analyses have been pro-
+                                                              Whether or not the improved efﬁciencies of modern        duced formally since the early 1940s and even before
+                                                              machinery will offset the increased costs of purchas-    (Brandstrom 1933; Matthews 1942). Since then,
+                                                              ing new equipment is a concern of considerable           costing research has been ongoing, though mostly
+                                                              measure for contemporary logging professionals           in the southern region of the United States
+                                                              (Carino et al. 1995).                                    (Cubbage et al. 1986; Werblow & Cubbage 1986),
+                                                                  While total operating costs have largely increased   but also with recent work in an international con-
+                                                              over the past 20 years, delivered prices for logs have   stellation (Ackerman et al. 2014). This research has
+                                                              experienced a large volatility and in nominal year       varied in scope and objective, and ranges from offer-
+                                                              dollars have generally decreased since mid-1990s         ing generalized logging equipment rates to speciﬁc
+                                                              levels (Figure 1), thus continuing to decrease the       costs and productivity rates for one piece of equip-
+                                                              already small proﬁt margins for logging contractors      ment studied in a particular setting.
+                                                              (Cubbage et al. 1988; Bureau of Business and                 The methods used to produce these estimates
+                                                              Economic Research [BBER] 2014). Logging costs            have remained largely unchanged and focus on
+                                                              not only affect a logging business, but also the land-   either (1) the “machine rate analysis” developed by
+                                                              owner or agency relying on that contractor as            Matthews (1942), and reﬁned by Miyata (1980) and
+                                                              increased operational costs are inevitably passed        others, or (2) the cash ﬂow analysis utilized more
+                                                                                                                       frequently in the accounting or ﬁnance industries
+                                                                                                                       (Burgess & Cubbage 1989). The predominance of
+                                                                                                                       this costing research occurred mostly from 1942
+                                                                                                                       through the 1990s, and has lessened in recent years
+                                                                                                                       perhaps due in part to a decline in the industry, and/
+                                                                                                                       or increased complexity of costing more advanced
+                                                                                                                       equipment. Government agencies, research institu-
+                                                                                                                       tions, and major timber companies have continued
+                                                                                                                       to produce cost research into the twenty-ﬁrst cen-
+                                                                                                                       tury, though in what seems considerably less volume.
+                                                                                                                       The practical consideration of operating costs is one
+                                                                                                                       way to improve the long-term survival of an indivi-
+                                                                                                                       dual operation and is an important facet of active
+                                                                                                                       forest management research.
+                                                                                                                           Montana logging cost data have been publicly
+                                                                                                                       available since at least the 1950s, and there is evi-
+                                                                                                                       dence that previously-operating regional timber
+                                                              Figure 1. Mill delivered log prices in nominal year US   companies kept detailed records prior to that (Roe
+                                                              dollars in Montana for the period 1990–2013 (Source:     & Squillace 1953). Since then, it is likely that
+                                                              Bureau of Business and Economic Research 2014).          Montana’s major timber companies have kept
+                                                                                                                              International Journal of Forest Engineering   3
+
+                                                              detailed cost records, most of which are not available    an easy-to-use and easy-to-apply method that also
+                                                              publicly as they contain proprietary data. It is          provides a standard format for comparison.
+                                                              unknown, outside of the companies themselves,                 The machine rate method can rely heavily on
+                                                              whether this type of logging cost analysis is on-         general “rules of thumb” (ROT), when there is a
+                                                              going to ensure that contract rates reﬂect actual log-    lack of good machine records, these ROT offer stan-
+                                                              ging costs, a concept that has been studied in other      dardized ways to account for ﬁxed and variable costs
+                                                              parts of the country (Cutshall et al. 2000). The          speciﬁc to logging machinery. These ROT have been
+                                                              increasing challenges of economic viability and con-      reﬁned in various published literature (Brinker et al.
+                                                              tinued interest in logging cost work are two signiﬁ-      2002; Smidt & Gallagher 2013). The simplicity of
+                                                              cant reasons for maintaining this type of research        this method has made it popular for comparison
+                                                              into the future.                                          between types of equipment over the years, though
+                                                                  The objectives of this work were to produce a         it does have obvious limitations. For example, ﬁxed
+                                                              resource for estimating owning and operating costs,       costs will be higher when the equipment is new, and
+                                                              independent of production, for the ground-based           lower as it ages. Conversely, operating costs will be
+                                                              logging equipment typically         encountered      in   lower when new, and generally higher as the equip-
+                                                              Montana and to compare changes in costs over a 20-        ment ages (Werblow & Cubbage 1986). The
+                                                              year period. The high costs of operating logging          machine rate method doesn’t allow for this sort of
+Downloaded by [University of Montana] at 06:31 27 July 2015
+
+
+
+
+                                                              equipment that may be familiar to the owner of a          analysis, and doesn’t take into account various
+                                                              logging ﬁrm may be less so to the mill, forester, or      investment credits or other Federal and State tax
+                                                              private landowner contracting with that ﬁrm. There        laws (Werblow & Cubbage 1986).
+                                                              has been an identiﬁed need (from discussions with             While the machine rate analysis is suitable for
+                                                              various individuals from Montana mills, agencies,         general cost estimation, its limitations negate it
+                                                              and loggers) to produce a set of baseline costs that      from being a useful tool for individual, machine-
+                                                              might serve as a negotiating tool for logging profes-     and situation-speciﬁc cost estimation and tracking.
+                                                              sionals, as well as an informational resource for other   Individual loggers with solid record-keeping might
+                                                              interested parties to assess and understand the com-      instead choose to employ a second method of cost
+                                                              ponent parts of logging costs and how these compo-        estimation, cash ﬂow analysis (Burgess & Cubbage
+                                                              nents impact total expenditures. Further, offering a      1989; Cutshall et al. 2000). This approach tracks the
+                                                              range of equipment costs might assist individuals or      in-ﬂows and out-ﬂows of cash related to a given
+                                                              businesses that are considering purchasing new            piece of machinery on a periodic basis and accounts
+                                                              equipment in ﬁnding the right piece of equipment          for the time-value of money. For an individual log-
+                                                              for their speciﬁc operation.                              ging contractor with detailed cost records and an
+                                                                                                                        understanding of accounting, this method will
+                                                                                                                        prove more intuitive and accurate for cost tracking
+                                                                                                                        and will account for changes in costs over the life of
+                                                              Methods
+                                                                                                                        equipment. Comparisons of the two methods of cost
+                                                              Equipment costing methods                                 accounting have found the cash ﬂow analysis to be
+                                                              Logging cost estimation has historically relied on two    more accurate, though a more cumbersome method
+                                                              accounting methods: the machine rate method or            based on the amount of detailed input data required,
+                                                              cash ﬂow analysis (Burgess & Cubbage 1989).               constantly changing Federal tax laws, and the com-
+                                                              Arguably the most common method is the machine            plexity of calculations (Burgess & Cubbage 1989). In
+                                                              rate approach popularized by Matthews (1942) and          this same comparison, Burgess and Cubbage (1989)
+                                                              further reﬁned and used by others since then (e.g.        also found that the machine rate method generally
+                                                              Miyata 1980; Brinker et al. 2002). The machine rate       underestimates actual costs, and that the cash ﬂow
+                                                              method compiles and averages ﬁxed and variable            analysis was more true to actual costs reported by
+                                                              costs over the lifespan of a piece of logging equip-      logging contractors. However, for the sake of com-
+                                                              ment so that costs may be calculated per scheduled        parison and standardization, as well as due to the
+                                                              machine hour (SMH) or productive machine hour             lack of ﬁrm-speciﬁc data upon which to base a cash
+                                                              (PMH) (Miyata 1980). Fixed cost are those that            ﬂow analysis, this report produces equipment costs
+                                                              occur even if the machine is not operating such as        that were computed using the standard machine rate
+                                                              depreciation, principal repayment, interest, insur-       method.
+                                                              ance, and taxes. Variable (or operating) costs are            An additional limitation of the method is that all
+                                                              only incurred when the machine is actually operated,      costs are independent of production. Variables such
+                                                              such as maintenance and repair, fuel, lube, oil, and      as working days per year and the ratio of scheduled
+                                                              labor (Miyata 1980). The machine rate approach is         to productive machine hours are needed, however
+                                                              4      E. Dodson et al.
+
+                                                              these variables have no direct relation to the volume                         Speciﬁc costs for each piece of equipment were
+                                                              of timber harvested or processed. It is assumed that                      then broken out into ﬁxed and variable costs to
+                                                              the hourly cost of equipment will remain relatively                       produce daily and hourly rates per scheduled and
+                                                              constant for a given contractor from harvest unit to                      productive machine hours per established machine
+                                                              harvest unit. What will change between units is the                       rate equations (Matthews 1942; Brinker et al. 2002).
+                                                              volume of timber produced per productive hour.                            Equipment depreciation was calculated using the
+                                                              This change in production will therefore have an                          straight-line method and an assumed economic life
+                                                              impact on the cost per unit volume.                                       of 5 years for all equipment. Though logging equip-
+                                                                                                                                        ment may realistically be utilized longer than 5 years,
+                                                                                                                                        this number was chosen based on machine rate
+                                                              Machine rate analysis                                                     method protocol and conversations with local equip-
+                                                              For this analysis, we relied primarily on local equip-                    ment dealers and ﬁnanciers. Other ﬁxed cost data
+                                                              ment dealers and data in the form of equipment                            including interest, insurance, and taxes were col-
+                                                              speciﬁcation and cost sheets, as well as ROT widely                       lected from Federal, state, city, and private agencies.
+                                                              accepted from published sources           (Table     1)                   Labor costs were assembled using Montana-speciﬁc
+                                                              (Matthews 1942; Brinker et al. 2002). There are                           wage data from the Bureau of Labor Statistics (BLS
+                                                              ﬁve dealerships in the Missoula, Montana area that                        2013) and were based on a 9.5 hour working day.
+Downloaded by [University of Montana] at 06:31 27 July 2015
+
+
+
+
+                                                              sell new logging equipment to contractors within the                      Worker’s compensation insurance, Federal unem-
+                                                              study region that combined have distribution rights                       ployment taxes, Social Security taxes, and beneﬁt
+                                                              to all major, commonly-utilized equipment brands.                         costs were acquired from Federal, state, and city
+                                                              The individual in charge of forestry equipment sales                      agencies, local insurance dealers, and the Montana
+                                                              at each dealership was contacted; four out of the ﬁve                     Logging Association. Operating costs were based on
+                                                              dealerships agreed to directly participate. Direct                        a scheduled 180 working days per year (1710 sched-
+                                                              interviews were conducted and each dealer was                             uled hours). Mobilization, road building or mainte-
+                                                              asked to provide data for their most frequently sold                      nance, and other contracted services such as slash
+                                                              ground-based logging equipment, including feller-                         disposal were not included in this estimate. It should
+                                                              bunchers, skidders, processors, and log loaders.                          also be noted that production rates have no inﬂuence
+                                                              Ultimately, a Manufacturer’s Suggested Retail Price                       on hourly cost estimates beyond ROT utilization
+                                                              (MSRP) (prior to any discounting, delivery, and                           rates. After compilation of cost data (Meek 2014),
+                                                              other associated charges) and speciﬁcation data                           six local loggers (acting as experts) were contacted
+                                                              were provided for 6–11 pieces of equipment in each                        and interviewed to validate these costs and make
+                                                              category of a ground-based operation, with the                            adjustments as applicable.
+                                                              exception of skidders (Table 2). The ﬁfth dealership                          To identify changes in logging cost over time,
+                                                              not participating in an interview offers an online tool                   current estimates were compared to data produced
+                                                              allowing users to build and price a piece of equip-                       over 20 years ago in 1993 by one of Montana’s
+                                                              ment with associated features such as engine type,                        former major timber companies and landowners.
+                                                              cab type, hydraulic package, attachments, etc., that                      These data had hourly costs broken down through
+                                                              was also used to gather cost and speciﬁcation data                        typical machine rate methods for individual pieces
+                                                              (Caterpillar Tractor Company 2013).                                       of equipment across different logging systems
+                                                                                                                                        (ground and cable) and split between ﬁxed and
+                                                                                                                                        variable costs. The historic costs were based on
+                                                              Table 1. Machine rate parameters and assumptions uti-
+                                                              lized by equipment type.                                                  200 working days per year. These costs were then
+                                                                                                                                        adjusted to 2013 dollars using the Consumer Price
+                                                                                            Salvage            Repair and               Index inﬂator provided by the BLS (2013).
+                                                              Equipment            Life      value Utilization maintenance              Production estimates were not included in the his-
+                                                              type               (years)      (%)     (%)          (%)
+                                                                                                                                        toric data, and consequently are not included in
+                                                              Feller-Buncher         5         15           60              75          this report.
+                                                              Skidder                5         15           65              90
+                                                              Processor              5         20           90             100
+                                                              Stroke-Boom            5         20           90             100          Results
+                                                                Delimber
+                                                              Loader                 5         30           65              90          As evide nced by the machine rate calculations, along
+                                                                                                                                        with the range of ﬁxed and variable costs by equip-
+                                                              Note: The following rates are constant for all equipment types:           ment type (Table 3), the cost of purchasing and
+                                                              Interest 6.50%, Insurance 1.30%, taxes 2%, fuel use 13.35 L/kW-hr
+                                                              (2.63 gal/hp-hr), fuel $0.92/L ($3.50/gal), lube and oil 36.80% of fuel   operating a new piece of logging equipment is sig-
+                                                              cost.                                                                     niﬁcant. For a prospective new logging business, the
+                                                                                                                                   International Journal of Forest Engineering         5
+
+                                                              Table 2. Logging equipment data acquired from western Montana dealers and calculated total cost (USD) per scheduled
+                                                              machine hour.
+
+                                                              Equip. type           Brand          Model        Under-carriage    Weight (kg)   HP      Purchase price     Total $/SMH
+
+                                                              Feller-Buncher    John Deere      759J                  Track         27,243      241        583,736            169.82
+                                                                                Cat             511                   Track         24,362      247        320,270            114.60
+                                                                                                521                   Track         27,084      284        482,660            151.71
+                                                                                                522B                  Track         30,409      284        387,110            131.52
+                                                                                Timbco          XT445L-2              Track         30,416      300        532,341            163.42
+                                                                                                XT430L-2              Track         27,685      300        470,091            150.27
+                                                                                TimberPro       TL735B                Track         27,070      300        503,443            157.32
+                                                                                Cat             541                   Track         30,191      305        414,000            138.79
+                                                                                                552                   Track         35,680      305        513,530            159.83
+                                                                                                551                   Track         31,057      308        465,110            149.82
+                                                                                Tigercat        LX 830                Track         36,287      300        500,000            156.59
+                                                              Skidder           Cat             535C                  Tire          18,044      152        292,562            108.22
+                                                                                                545C                  Tire          19,198      219        325,155            121.68
+                                                                                John Deere      848H Grapple          Tire          17,826      200        369,444            129.97
+                                                                                Tigercat        620D                  Tire          16,443      220        285,000            112.68
+                                                              Tracked Skidder   Cat             527 GR                Track         17,710      150        405,218            133.53
+Downloaded by [University of Montana] at 06:31 27 July 2015
+
+
+
+
+                                                              Processor         John Deere      2454D Logger          Track         14,160      194        428,179            150.02
+                                                                                Komatsu         PC210LC-10            Track         23,323      160        417,000            149.16
+                                                                                Pierce          Titan 22              Track         14,160      194        393,000            142.37
+                                                                                                Titan 23              Track         14,160      194        410,514            145.18
+                                                                                Komatsu         PC290LC-1             Track         30,570      213        540,000            176.77
+                                                                                Pierce          GP                    Track         14,160      194        398,000            142.36
+                                                              Stroke-Boom       Denharco        DT 4150               Track         14,160      194        459,364            156.20
+                                                                Delimber                        DM 4150               Track         14,160      194        442,853            152.47
+                                                                                Pierce          PTD2856               Track         14,160      194        521,214            170.14
+                                                              Loader            John Deere      2154D Logger          Track         12,093      159        371,766            111.78
+                                                                                Doosan          DX 225 LL             Track         29,499      155        218,998             81.58
+                                                                                Komatsu         PC210LC-10            Track         23,323      160        325,000            102.68
+                                                                                Cat             320D FM               Track         26,905      157        257,294             89.22
+                                                                                                325D FM               Track         33,329      204        351,055            110.75
+                                                                                                330D FM               Track         41,433      268        392,310            123.15
+                                                                                                324D                  Track         31,231      188        394,885            118.26
+
+
+
+
+                                                              Table 3. Estimated hourly costs (USD) for select ground-based equipment categories in Montana. A wage and beneﬁts
+                                                              rate of $27.64/hour, assuming a 9.5-hour day, is used for all machines and included in total machine costs.
+
+                                                                                                                                 Cost per productive machine hour        Total machine
+                                                                                    Cost per scheduled machine hour ($/SMH)                  ($/PMH)                          cost
+
+                                                                                                            Insurance. Fixed     Fuel, Lube, Repair and    Variable
+                                                              Category              Depreciation Interest     and tax   cost       and Oil    Maint.        cost      $/SMH $/PMH
+
+                                                              Feller-Buncher Avg.       46.75      11.80       6.36      64.90     36.37        58.43        94.80       149.43   249.04
+                                                                             Min.       31.84       8.03       4.52      44.39     30.38        39.80        70.93       114.60   190.99
+                                                                             Max.       58.03      14.64       7.75      80.43     38.82        72.54       103.97       169.82   283.04
+                                                              Skidder        Avg.       33.35       8.42       4.70      46.47     26.28        46.18        72.46       121.22   152.46
+                                                                             Min.       28.33       7.15       4.08      39.57     20.95        39.23        61.50       108.22   130.82
+                                                                             Max.       40.28      10.17       5.56      56.01     30.72        55.78        78.78       133.53   166.49
+                                                              Processor      Avg.       40.39      11.16       5.99      57.53     26.68        44.88        71.56       149.58   166.20
+                                                                             Min.       36.77      10.16       5.50      52.43     22.34        40.86        65.69       141.23   156.92
+                                                                             Max.       50.53      13.96       7.34      71.83     29.74        56.14        85.88       176.77   196.41
+                                                              Stroke-Boom    Avg.       44.40      12.26       6.52      63.18     27.09        49.33        76.42       159.60   177.34
+                                                                Delimber     Min.       41.44      11.45       6.13      59.01     27.09        46.04        73.13       152.47   169.41
+                                                                             Max.       48.77      13.47       7.11      69.35     27.09        54.19        81.28       170.14   189.05
+                                                              Loader         Avg.       27.03       9.04       4.87      40.94     19.12        37.43        56.55       105.35   162.07
+                                                                             Min.       17.93       5.99       3.43      27.35     16.07        24.83        40.90        81.58   125.51
+                                                                             Max.       32.33      10.81       5.71      48.85     27.79        44.76        72.26       123.15   189.46
+                                                              6    E. Dodson et al.
+
+                                                              initial investment of approximately $1.5 million dol-    main factors contributing to increases in equipment
+                                                              lars for a complete logging system might preclude        costs purportedly has been in the purchase price of
+                                                              entry into the ﬁeld. For established loggers looking     new equipment (and price of steel), diesel fuel
+                                                              to replace one piece of equipment, careful considera-    prices, and labor costs (Brinker et al. 2002;
+                                                              tion of operational needs is required to match the       Hampton 2004; Smidt & Gallagher 2013).
+                                                              right equipment to the right job. For instance, horse-
+                                                              power (HP) needs should be of concern based on the
+                                                              calculated price difference between equipment HP         Factors affecting ﬁxed cost changes over time
+                                                              ranges in Table 1. For example, the average pur-         New equipment might come with added efﬁciency,
+                                                              chase price for a feller-buncher with more than 285      power, reliability and consequently productivity, but
+                                                              HP is 9% (roughly $42,000) more than a feller-           also with substantial ﬁxed and variable costs. It has
+                                                              buncher with less than 285 HP. Ideally this increase     been noted that the mere initial investment in a
+                                                              in HP would have a corresponding increase in pro-        mechanized logging operation can constitute 40–
+                                                              duction; however changes in other variables such as      50% of the delivered cost of wood, let alone all
+                                                              piece size, skidding distance, and harvested and resi-   other intervening factors (Ashton et al. 2007). This
+                                                              dual volume per unit area confound this compari-         cost is signiﬁcant and purportedly has been rising
+                                                              son. The cost of operating a log processor ranges        over the past 20 years, begging the question of
+Downloaded by [University of Montana] at 06:31 27 July 2015
+
+
+
+
+                                                              from $1421 per 9.5-hour day for a dangle-head pro-       what factors are contributing to escalating logging
+                                                              cessor to $1516 per day for a stroke-boom delimber,      costs and equipment purchase prices. While this is
+                                                              a difference of 6% or $95 per day. Over the course of    largely uncontrollable (in contrast to operating
+                                                              a 180-day operating year, this difference equals         costs), it might be of interest and concern to the
+                                                              approximately $17,000. Between equipment and             logging industry to understand the underlying rea-
+                                                              labor, a business owner might expect daily costs to      sons for this trend.
+                                                              equal roughly $5100 per day if all new equipment is            Comparisons between equipment purchase price
+                                                              utilized. These costs do not include other necessary     from our historic data and contemporary data
+                                                              costs such as support vehicles to transport the crew     proved challenging based on several factors. Most
+                                                              or overhead costs such as bookkeeping and sale           notably, equipment utilized today is mechanically
+                                                              administration.                                          and technologically very different to 20 years ago.
+                                                                                                                       Based on equipment speciﬁcation data provided by
+                                                                                                                       equipment dealers there were observable differences
+                                                              Discussion                                               in both weight and horsepower between data sets,
+                                                              Comparison to historic cost data                         with modern equipment having a range of 12–122%
+                                                              As illustrated by Table 4, the cost of running a         more horsepower, thus potentially contributing to
+                                                              mechanical ground-based system in Montana has            increased fuel usage, lube and oil, maintenance,
+                                                              signiﬁcantly increased over the past 20 years beyond     and initial purchase price. The trend with larger
+                                                              inﬂation. Similar results have been found in other       and more powerful machines can also be found in
+                                                              regions, dating back to the 1980s where researchers      the Nordics (Nordfjell et al. 2010). Ideally this
+                                                              found that “. . .the costs of logging equipment have     increase in power would equate to an increase in
+                                                              increased at rates considerably greater than the         productivity or a reduction in complete system bot-
+                                                              prices received by loggers” (Cubbage et al. 1988,        tleneck, a concept validated by research around the
+                                                              p. 9). Based on comparison to past data as well as       country, though the increase in purchase price might
+                                                              anecdotal interviews with logging professionals, the     offset the production beneﬁts of purchasing new
+                                                                                                                       equipment (Cubbage et al. 1986). Ultimately,
+                                                                                                                       “. . .the replacement should be able to generate addi-
+                                                              Table 4. Logging cost comparison between 1993 historic   tional income from increased production (in terms
+                                                              data adjusted for inﬂation (2013 dollars) and 2013       of quantity and/or quality) to offset the additional
+                                                              machine rate data assuming a 9.5-hour day.
+                                                                                                                       costs associated with it” (Carino et al. 1995, p. 62).
+                                                                                       Total cost     Cost change            In addition to increased engine power, changing
+                                                                                        ($/day)     beyond inﬂation    emission standards have inﬂuenced the initial purchase
+                                                              Equipment type          1993   2013    $/Day      %
+                                                                                                                       of logging equipment. Federal emission standards
+                                                                                                                       have been in place since 1994, with several planned
+                                                              Feller Buncher          1072   1420     348      +32     changes occurring since by means of changing gene-
+                                                              Skidder                  639   1152     513      +80     rations or “tiers” of standards that new vehicles must
+                                                              Stroke-Boom Delimber     999   1516     517      +52     meet (Environmental Protection Agency [EPA] 2013).
+                                                              Loader                   714   1001     287      +40
+                                                                                                                       This tiered system implemented a plan to reduce
+                                                                                                                              International Journal of Forest Engineering      7
+
+                                                              particulate matter and nitrogen oxide from off-road       (Bleiwas et al. 2013). The cost of steel as a raw
+                                                              heavy equipment by 50–96% of the current equipment        material can constitute 60% of the total cost to pro-
+                                                              generation in several steps. Essentially, machine man-    duce a piece of equipment and a number of equip-
+                                                              ufacturers are charged with adding emission control       ment manufacturers have stated that as a result of
+                                                              technology to the exhaust system; this will occur         this issue, consumers might see a rise in purchase
+                                                              through either exhaust gas recirculation (EGR) or         price from 3 to 5% if there is a continued upward
+                                                              selective catalytic reduction (SCR) (Diesel               swing in steel prices (Hampton 2004; Electrical
+                                                              Technology Forum 2012). While all vehicles in the         Contractor Magazine 2008; Holden-Moss 2012).
+                                                              US are subject to these tiers, heavy equipment will           Changes to the ﬁxed cost categories of logging
+                                                              enter Tier 4 standards in 2014, though many manu-         equipment are entirely susceptible to forces outside
+                                                              facturers produced and sold Tier 4 equipment in the       of the owner of a business or operator of a piece of
+                                                              US earlier than this (Doosan Equipment 2013). These       equipment, and thus are personally uncontrollable.
+                                                              required engine alterations along with the addition of    Remaining aware of the internal changes impacting
+                                                              the DEF system (ﬂuid replenishment) will undoubt-         ﬁxed cost is crucial, but the one opportunity a busi-
+                                                              edly impact both initial purchase price and operating     ness owner does have in this regard is to carefully
+                                                              costs, though the exact impact is unknown and likely      match speciﬁc equipment to individual operational
+                                                              manufacturer-dependent. This range is from a 1%           need and capital availability and outlay to assist in
+Downloaded by [University of Montana] at 06:31 27 July 2015
+
+
+
+
+                                                              increase (Diesel Net 2013) up to 30% based on our         continued operational viability.
+                                                              interviews with local equipment dealers and published
+                                                              resources. All new equipment is subject to Tier 4
+                                                              standards, but older equipment will not require retro-    Factors affecting variable cost changes over
+                                                              ﬁtting, a consideration for deciding between purchas-     time
+                                                              ing new versus used equipment (Diesel Technology          In addition to increased ﬁxed costs, there has been a
+                                                              Forum 2012). At some point in the near future             notable rise in the variable costs of operation.
+                                                              Montana’s logging professionals will be faced with        Volatile fuel costs are an especially inﬂuential factor
+                                                              the decision between continuing to invest in the costly   on operational costs, and are a cost that is unlikely to
+                                                              maintenance required to retain older equipment or         level out in the near future. Debate continues over
+                                                              purchasing new, “greener” equipment. This is a deci-      how Tier 4 standards will impact fuel usage, though
+                                                              sion that individual business owners must make alone,     from conversations with equipment dealers it
+                                                              but one that will have signiﬁcant cumulative effects on   appears that with increasing engine sophistication
+                                                              the industry and environment.                             this might also provide increased fuel efﬁciency.
+                                                                  While the mechanical side of logging equipment        This is especially important to the logging industry,
+                                                              has changed signiﬁcantly, there has also been sub-        as increased fuel costs can greatly impact an opera-
+                                                              stantial improvement in on-board technology. Most         tion’s break-even point and erode proﬁt margins
+                                                              modern equipment has advanced computer systems            (Meek 2014). Estimated fuel costs used here were
+                                                              capable of determining and processing different cut       based on the average price for off-road diesel in
+                                                              log speciﬁcations, and then storing production data       Montana at the time of analysis (Mountain West
+                                                              for future use. Some systems enable mill operators to     Coop. Missoula 2013) and fuel usage relied on
+                                                              adjust cutting speciﬁcations from the mill without        value assumptions produced by Plummer and
+                                                              having to implement any changes on the machine,           Stokes (1983); a range of 18.9–30.3 liters (5–8 gal-
+                                                              can monitor how the machine is operating mechani-         lons) per hour was calculated based on the horse-
+                                                              cally and when maintenance is required, and can set       power of the machines. This range was validated as
+                                                              movement boundaries to prevent potential theft or         “typical” from our interviews with dealers and con-
+                                                              vandalism. These systems ideally enable loggers and       tractors and from current research (Green et al.
+                                                              mill operators to interact more seamlessly and            2014; Kenney et al. 2014), though fuel usage will
+                                                              improve overall efﬁciency. Yet, similar to cost           vary by topography, operator skill, weather, and
+                                                              changes resulting from mechanical advances, there         other factors.
+                                                              is an underlying cost associated with this improved           To illustrate the impacts of fuel prices on total
+                                                              technology that may be of further consideration           daily operating cost, a sensitivity analysis was con-
+                                                              when purchasing new equipment.                            ducted for a typical mechanical ground-based sys-
+                                                                  Another explanation for rising purchase prices is     tem. Using machine         rate    calculations,     this
+                                                              that the price of steel has increased from $175 per       equipment combination would use roughly 522 liters
+                                                              ton (adjusted for inﬂation) in 1993 to $216 in 2011,      (138 gallons) of fuel per day. At $0.92/L ($3.50/
+                                                              an increase of over 23% beyond inﬂation, as a result      gallon), daily fuel expenditures would equal $483;
+                                                              of restricted supply and increased demand overseas        if diesel prices increased to $1.06/L ($4.00/gallon)
+                                                              8     E. Dodson et al.
+
+                                                              this daily expense would be $552, a difference of $69                          35,000
+
+                                                              or 14%. Contrasted with the average fuel price in                              30,000
+                                                              1993 at $0.38/L ($1.44/gallon) adjusted to 2013 dol-
+                                                                                                                                             25,000
+
+
+
+
+                                                                                                                         Yearly Cost (USD)
+                                                              lars (from historic industry cost data), daily fuel
+                                                              expense would only be $199, or 41% of the 2013                                 20,000
+                                                              daily fuel cost estimate. Varying fuel prices have an                          15,000
+                                                              impact on daily fuel expenditures and when these
+                                                                                                                                             10,000
+                                                              prices are extrapolated further, the difference in daily
+                                                              cost becomes increasingly signiﬁcant. Similar to the                            5,000
+                                                              issues inherent to the ﬁxed cost categories, changing                              0
+                                                              fuel prices can’t be directly controlled, though fuel                                   2007   2008   2009   2010   2011   2012   2013
+                                                                                                                                                                           Year
+                                                              usage and subsequent expenses can be mitigated by
+                                                              operator skill and consideration of fuel use during        Figure 2. Actual (nominal) yearly maintenance costs of
+                                                              downtimes such as breaks or other delays.                  one feller-buncher.
+                                                                  The cost of repairs and maintenance for logging
+                                                              equipment is another inﬂuential expense though one
+                                                              that is notoriously difﬁcult to track with reliability         The difﬁculty in assessing the applicability of
+Downloaded by [University of Montana] at 06:31 27 July 2015
+
+
+
+
+                                                              (Werblow & Cubbage 1986). These costs exist as             machine rate ROT is highlighted by repair and
+                                                              both routine, expected maintenance and                as   maintenance data acquired from a local logger for
+                                                              unplanned, potentially catastrophic breakdowns that        one feller-buncher of well-known make and model
+                                                              can have a signiﬁcant impact on an operation’s mone-       over the course of 7 years from 2007–2013. As
+                                                              tary situation both in lost productivity and return, as    shown in Figure 2, repair and maintenance costs
+                                                              well as cash ﬂow. Repair and maintenance costs vary        did not increase linearly over the life of this machine
+                                                              depending on the type and make/model of machine,           but ﬂuctuated widely. Average yearly maintenance
+                                                              operator skill and usage, topography, and planned          costs over the 7 years was $13,660 with an hourly
+                                                              maintenance routine. This study employed the typi-         rate of $15.93 based on an average 1295 operated
+                                                              cal machine rate method of accounting for mainte-          hours per year, but ranged from a low of $5.01/hour
+                                                              nance as a percentage of depreciation. However, we         in year 6 to a high of $22.93/hour in year 5.
+                                                              attempted to acquire local ROT from the equipment              Ultimately, calculating an average repair and
+                                                              dealers that were surveyed for comparison and ver-         maintenance cost to suit the range of equipment
+                                                              iﬁcation of established ROT. Unsurprisingly, those         and conditions experienced is challenging and
+                                                              dealers agreed that average repair and maintenance         assumed values are virtually meaningless in them-
+                                                              rates are hard to predict; an estimated range of $35–      selves as the volatility of costs is so great. Instead,
+                                                              $50 per operated hour was given anecdotally.               logging contractors should remain aware of the range
+                                                              Utilizing the machine rate ROT produced a range            of values they can expect over the lifespan of a piece
+                                                              of $24–$72 per operated hour varying with the type         of equipment and should save accordingly.
+                                                              of machine. The calculated average rate was highest            Like repair and maintenance costs, machine utiliza-
+                                                              for feller-bunchers at $58/PMH, similar for proces-        tion is highly variable. Newer equipment is assumed to
+                                                              sors and skidders at $46/PMH, and lowest for loaders       be more reliable than older equipment; however
+                                                              at $37/PMH. Using the machine rate ROT likely              machine utilization is inﬂuenced by more than
+                                                              overestimates repair and maintenance costs early in        mechanical break-downs. Smaller harvest tracts, lower
+                                                              a machine’s life, and underestimates them later on.        removal volume per unit area, increased average dis-
+                                                              However, assuming a straight-line repair and main-         tance to access replacement parts, and increased
+                                                              tenance cost might allow a business owner to “accu-        demands for non-productive machine time such as
+                                                              mulate a reserve fund in early years to cover the          erosion control or other environmental protection mea-
+                                                              higher costs incurred later in the equipment’s life”       sures all serve to decrease overall machine utilization.
+                                                              as noted by Werblow and Cubbage (1986, p. 13).                 Though the variable costs of a logging operation
+                                                                  In our interviews with loggers, foresters, and         are signiﬁcant, they are also more pliable to change
+                                                              equipment dealers, maintenance costs were fre-             than ﬁxed costs, largely based on operator skill and
+                                                              quently highlighted as a cost that has increased           judgment, mitigation of equipment wear from harsh
+                                                              over the past 20 years. Local equipment dealers            operating conditions, and the type and condition of
+                                                              acknowledged that the price of lubricant and oil,          the equipment itself. There are ways to reduce
+                                                              hydraulic hoses, and other parts has increased in          these daily expenditures, but it will again require
+                                                              recent years though no contemporary research has           thoughtful consideration of operating parameters
+                                                              attempted to quantify this change.                         and conditions to do so.
+                                                                                                                              International Journal of Forest Engineering    9
+
+                                                              Other factors affecting operational costs                 It’s been noted in several recent publications that the
+                                                              The mechanical (ﬁxed and variable) costs of running       average age of the logging sector workforce is
+                                                              a logging operation account for a large portion of        increasing. In a 2004 survey of           the    Inland
+                                                              overall cost difference between our historic and con-     Northwest, Allen et al. (2008) found that 58% of
+                                                              temporary cost data. However, other more general          respondents were over the age of 40, with an average
+                                                              factors exist that routinely impact operational costs.    age of 51 years. This is affecting all associated labor
+                                                              First, the number of annual days a logger works           costs including hourly wages, worker’s compensa-
+                                                              appears to have decreased over the past 20 years.         tion (WC) rates, social security, and other personnel
+                                                              Montana loggers work, on average, between 9 and           costs. According to Bureau of Labor Statistics
+                                                              10 months a year. This range is due to a variety of       (2013) data, Montana’s average wage for logging
+                                                              factors, most notably market inﬂuences on consumer        equipment operators is $16.75 per hour and $19.53
+                                                              need and the availability of a consistent supply of       per hour for timber fallers. Beneﬁt costs including
+                                                              timber. Yearly weather patterns also inﬂuence the         WC, Social Security, Federal and State unemploy-
+                                                              amount of operable days with closed forest access         ment, and Medicare rates were compiled from
+                                                              due to spring break-up, high amounts of snow, or          respective Federal and State agencies. We found
+                                                              extreme ﬁre danger. A shorter working year can            that excluding WC rates, fringe beneﬁts constitute
+                                                              decrease proﬁt margins by increasing the required         23% of the base wage; including WC this percentage
+Downloaded by [University of Montana] at 06:31 27 July 2015
+
+
+
+
+                                                              hourly contribution to ﬁxed costs and decreasing the      can rise to 30–50% of the base wage. While the
+                                                              volume of timber produced on an annual basis.             forest industry sector still commands higher wages
+                                                              Based on our machine rate calculations a 10 day           than other sectors in Montana, survey respondents
+                                                              increase to 190 days per year changes daily cost by       reported diminishing wages and revenue each year.
+                                                              3.4% or about $175 per day for a mechanical ground-       Hourly rates have stayed relatively the same over the
+                                                              based side. Likewise, if current machine rates are        past 20 years, but the decreasing number of opera-
+                                                              calculated using the 200-day work year that was           tional days per year amounts to reduced pay over the
+                                                              used to develop the machine rates 20 years ago, daily     course of a full year. Base wage rates are controlla-
+                                                              operating costs decrease 6.5% or $330 per day. It         ble; however business owners should expect rising
+                                                              should be noted that even calculated costs assuming a     fringe beneﬁt costs to be of increasing signiﬁcance
+                                                              200-day work year, machine rates are 24–74% higher        on total operating expenses.
+                                                              than inﬂation-adjusted 1993 costs. This increase puts          Worker’s compensation insurance (WCI) rates
+                                                              added strain on an operation to maintain consistent       are increasingly important to operational viability.
+                                                              production over the days that are available, thus         According to a recent article in the Forest Operations
+                                                              increasing stress from machine breakdowns, labor          Review, “The logging profession ranks number one
+                                                              recruitment and retention, and other issues.              among the most hazardous occupations in terms of
+                                                              Consistent production is key to mini- mizing costs, a     fatalities per 100 workers and logging and hauling
+                                                              point that is especially salient for loggers with aging   rank as the top two areas for high severity claims
+                                                              equipment, restricted wood sup- plies, and                among insurance companies that provide Worker’s
+                                                              increasingly expensive labor costs (Baker                 Compensation” (Lemire 2013, p. 31). In Montana,
+                                                              & Greene 2012). Our interviews with local logging         as in most states, speciﬁc WCI rates are based on a
+                                                              professionals indicated that the shorter work year        logging contractors work experience and history of
+                                                              combined with the inability to depend on a consis-        accidents (Montana State Fund 2012). These rates
+                                                              tent wood supply are the two most            signiﬁcant   can vary from $4–6 per hour on average, to upwards
+                                                              changes that they have seen over the past 20 years,       of $9 per hour. Some loggers in Montana reported
+                                                              and are a reason that many loggers have gone out of       upwards of 78% of the base wage paid in worker’s
+                                                              business.                                                 compensation insurance. In a ranking of state-level
+                                                                  Another inﬂuence on general operating cost not        WCI rates, Montana ranks eighth highest in the
+                                                              included here is the increased driving distance to get    nation (Dotter & Manly 2012). There are signs that
+                                                              to a job site. A consequence of decreased logging         the situation is improving based on declining rates
+                                                              employment and mill facilities means the same area        over the past 10 years, a decline that is based largely
+                                                              is covered by fewer contractors and those remaining       on increased safety measures in logging equipment
+                                                              must travel further. This results in increased fuel       such as enclosed cabs and seatbelt usage and a tran-
+                                                              usage, vehicle maintenance, mobilization costs, and       sition from conventional to mechanized operations.
+                                                              down-time for repairs.                                    Further, there has been a notable shift in the “safety
+                                                                  A ﬁnal inﬂuence is in regards to the changing         culture” of the logging industry with greater use of
+                                                              demographics of the logging contractor workforce.         hard hats, saw chaps, radios and cellphones, as well
+                                                                                                                                 International Journal of Forest Engineering          11
+
+                                                              as the addition of the formalized Montana Logging                 the Council on Forest Engineering; 2012 Sep 12; New
+                                                              Association Safety Ranger program. Though WC                      Bern (NC): Council on Forest Engineering.
+                                                              rates have decreased on average, they still remain a          Baker S, Greene D, Harris T, Mei R. 2013. Regional
+                                                                                                                                cost analysis and indices for conventional timber har-
+                                                              signiﬁcant cost and one that can be somewhat miti-                vesting operations; [cited 2013 Oct 29]. Available
+                                                              gated at the business level.                                      from: http://wsri.org/resources/media/RegCostAnal
+                                                                  Changes in Federal health care policies, via the              FinalRpt.pdf
+                                                              Affordable Care Act, might further increase labor             Bleiwas DI, DiFrancesco CA, Fenton MD, Kelly TD.
+                                                              beneﬁt costs though the exact impacts are currently               2013. Iron and steel statistics. United States Geological
+                                                                                                                                Survey; [cited 2013 Oct 29]. Available from: http://
+                                                              unknown. While health care costs are both signiﬁ-                 minerals.usgs.gov/minerals/pubs/commodity/iron_
+                                                              cant and unknown, there might be a non-monetary                   &_steel/
+                                                              beneﬁt to offering health insurance by way of main-           Brandstrom AJF. 1933. Analysis of logging costs and oper-
+                                                              taining employee loyalty.                                         ating methods in the Douglas ﬁr region. Seattle (WA):
+                                                                  Though unpredictable, these external factors will             Charles Lathrop Pack Forestry Foundation; Paciﬁc
+                                                                                                                                Northwest Forest Experiment Station.
+                                                              continue to have implications on a ﬁrm’s hourly,              Brinker RW, Kinard J, Rummer R, Lanford B. 2002.
+                                                              daily, and yearly operational costs.                              Machine rates for selected forest harvesting machines.
+                                                                                                                                Auburn (AL) Alabama Agricultural Experiment
+                                                                                                                                Station, Auburn University; 32 p.
+                                                              Conclusion                                                    [BBER] Bureau of Business and Economic Research.
+Downloaded by [University of Montana] at 06:31 27 July 2015
+
+
+
+
+                                                                                                                                2014. Quarterly log prices 1990–2014; [cited 2014
+                                                              Hourly owning and operating costs for common new                  Jan 28]. Available from: http://bber.umt.edu/FIR/F_
+                                                              logging equipment typically used throughout                       LogPrice.asp
+                                                              Montana have been developed as a means to assist              [BLS] Bureau of Labor Statistics. 2013. Current popula-
+                                                              logging contractors, foresters, researchers,     and              tion statistics; [cited 2013 Sep 1]. Available from:
+                                                                                                                                http://bls.gov/data/
+                                                              others in appropriately assessing costs of logging            Burgess JA, Cubbage FW. 1989. Comparison of machine
+                                                              operations. Hourly machine costs for all categories               rate and cash ﬂow approaches for estimating forest
+                                                              of equipment were found to have increased beyond                  harvesting equipment costs. In: Proceeding of the con-
+                                                              inﬂation over the past 20 years. When costing is                  ference on American Society of                Agricultural
+                                                              completed for equipment not speciﬁcally attached                  Engineers; 1989 Dec; New Orleans (LA): American
+                                                                                                                                Society of Agricultural Engineers.
+                                                              to a single contractor, ROT costing approximations
+                                                                                                                            Carino HF, Lin W, Muehlenfeld K, Li Y. 1995. Systems
+                                                              must be used. While all ROTs used in this manu-                   approach to equipment replacement in wood products
+                                                              script were veriﬁed with equipment dealers and log-               manufacturing. Forest Prod J. 45:61–68.
+                                                              ging contractors to be appropriate, many vary widely          Caterpillar Tractor Company. 2013. Build and quote tool.
+                                                              and additional research and, for individual ﬁrms,                 Peoria, (IL): Caterpillar Inc.; [cited 2013 Sep 1].
+                                                                                                                                Available from: http://buildandquote.cat.com/
+                                                              cost tracking, is needed to better understand rela-           Cubbage FW, Granskog JE, Stokes B. 1986. Logging pro-
+                                                              tionships between stand, site, and economic factors               ductivity and costs in the south: trends and causes. In:
+                                                              and individual cost categories.                                   Proceeding of the 1986 Society of American Foresters’
+                                                                                                                                national convention: forests, the world and the profes-
+                                                                                                                                sion; Birmingham (AL): Society of               American
+                                                              Disclosure statement                                              Foresters; p. 343–347.
+                                                              No potential conﬂict of interest was reported by the          Cubbage FW, Stokes BJ, Granskog JE. 1988. Trends in
+                                                              authors.                                                          southern forest harvesting equipment and logging
+                                                                                                                                costs. Forest Prod J. 32:6–10.
+                                                                                                                            Cutshall JB, Grace LA, Munn IA. 2000. An analysis of
+                                                                                                                                inﬂation in timber harvesting costs. In: Proceedings of
+                                                              References                                                        the Southern Forest Economics                 Workshop:
+                                                              Ackerman P, Belbo H, Eliasson L, de Jong A, Lazdins A,            Hardwoods - an underdeveloped resource?; 2000
+                                                                  Lyons J. 2014. The COST model for calculation of              Mar 26–28; Lexington, KT: International Society of
+                                                                  forest operations costs. Int J For Eng. 25:75–81.             Forest Resource Economics; p. 265–271.
+                                                              Allen TT, Sup-Han H, Shook SR. 2008. A structural             [DNRC] Department of Natural Resources                    and
+                                                                  assessment of the contract logging sector in the              Conservation. 2013. Montana forest product fact sheet;
+                                                                  Inland Northwest. Forest Prod J. 58:5–27.                     [cited 2013 Sep 1]. Available from: http://dnrc.mt.gov/
+                                                              Ashton S, Jackson B, Schroeder R. 2007. Cost factors in           Forestry/Assistance/ForProdWeek/Documents/Fact
+                                                                  harvesting woody biomass. In: Hubbard W, Biles L,             Sheet.pdf
+                                                                  Mayﬁeld C, Ashton S, editors. Sustainable forestry for    Diesel Net. 2013. Non-road diesel engines emissions stan-
+                                                                  bioenergy and bio-based products: trainers curriculum         dards. Ontario (Canada); [cited 2013 Apr              21].
+                                                                  notebook. Athens (GA): Southern Forest Research               Available from: http://www.dieselnet.com/standards/
+                                                                  Partnership, Inc.; p. 153–156.                                us/nonroad.php
+                                                              Baker S, Greene D. 2012. Factors affecting logging costs      Diesel Technology Forum. 2012. Clean diesel technology
+                                                                  and contract rates. In: Proceeding of the conference of       for off-road engines and equipment: Tier 4 and more;
+                                                              10     E. Dodson et al.
+
+                                                                  [cited 2013 Sep 1]. Available from http://www.diesel       Matthews DM. 1942. Cost control in the logging industry.
+                                                                  forum.org/index.cfm?objectid=A7507860-A25A-11E0-               New York (NY): McGraw-Hill Book Company; 374 p.
+                                                                  B59A000C296BA163.                                         Meek J 2014. Montana logging costs: resources for con-
+                                                              Doosan Equipment. 2013. Tier 4 interim brochure; [cited          tinued industry viability [Professional Paper]. Missoula
+                                                                  2013 Sep 1]. Available from: http://www.doosanequip          (MT): University of Montana.
+                                                                    ment.com/dice/products/tier4/Tier+4+Overview.page.      Miyata ES. 1980. Determining ﬁxed and operating costs of
+                                                              Dotter J, Manley M. 2012. 2012 Oregon worker’s compen-           logging equipment. St. Paul (MN): GTR NC-55. U.S.
+                                                                  sation premium rate ranking summary. Salem (OR):             Dept. of Agriculture, Forest Service, North Central
+                                                                  Department of Consumer and Business Services.                Forest Experiment Station.
+                                                              Electrical Contractor Magazine. 2008 (May) Steel costs        Montana State Fund. 2012. Montana State Fund’s guide to
+                                                                  adding to construction equipment prices; [cited 2013         the Workers’ Compensation System; [cited 2013 Sep 20].
+                                                                  Sep 1]. Available from: http://www.ecmag.com/section/        Available from: http://www.leg.mt.gov/content/
+                                                                  miscellaneous/steel-costs-adding-construction-equip          Committees/Interim/../mt-state-fund-brochure.pdf
+                                                                  ment-prices                                               Morgan TA, Keegan CE, Hayes SW, Sorenson CB. 2013.
+                                                              Environmental Protection Agency (EPA). 2013. Non-road            Montana’s forest products industry: 2013 Outlook.
+                                                                  diesel engines. Washington (DC): EPA; [cited 2013            Missoula (Mt): Bureau of Business and Economic
+                                                                  Sep 1]. Available from: http://www.epa.gov/otaq/non          Research; [cited 2013 Sep 10]. Available from http://
+                                                                  road-diesel.htm                                              www.bber.umt.edu/forest/outlook.asp
+                                                              Green D, Biang E, Baker SA. 2014. Fuel consumption            Mountain West Cooperative. 2013. Cenex fuel station.
+                                                                  rates of southern timber harvesting equipment. In:           4570 N. Reserve Street, Missoula, Montana 59808.
+                                                                  Proceeding of the conference of the Council on               (406) 543-8383.
+Downloaded by [University of Montana] at 06:31 27 July 2015
+
+
+
+
+                                                                  Forest Engineering; 2014 Jun 22–25; Moline (IL):          Nordfjell T, Björheden R, Thor M, Wästerlund I. 2010.
+                                                                  Council on Forest Engineering.                               Changes in technical performance, mechanical avail-
+                                                              Hampton T 2004. Equipment producers struggle with                ability and prices of machines used in forest operations
+                                                                  steel prices. Engineering News-Record; [cited 2013           in Sweden from 1985 to 2010. Scand J For Res.
+                                                                  Sep 1]. Available from: https://enr.construction.com/        25:382–389.
+                                                                  features/bizLabor/archives/040322b.asp                    Plummer G, Stokes BJ. 1983. Petroleum product consump-
+                                                              Hayes SW, Keegan CE, Morgan TA. 2011. Estimating                 tion estimators for off-highway forest operations.
+                                                                  harvesting costs [Poster]; [cited 2013 Sep 1].               Report 83-A-12. Washington (DC): American
+                                                                  Available from: http://bber.umt.edu/pubs/forest/prices/      Pulpwood Association, Southwide Energy Committee;
+                                                                  loggingCostPoster2011.pdf                                    10 pp.
+                                                              Holden-Moss. 2012. Construction machinery manufactur-         Roe AL, Squillace AE. 1953. Effect of cutting methods on
+                                                                  ing; [cited 2013 Sep 1]. Available from: http://www.          logging costs in Larch–Douglas-Fir. J Forest. 51:799–802.
+                                                                  holdenmoss.com/manufacturing/                                Smidt M, Gallagher T. 2013. Factors affecting fuel con-
+                                                              Kenney J, Gallagher T, Smidt M, Mitchell D, McDonald                 sumption and harvesting costs. In: Proceeding of the
+                                                                  T. 2014. Factors that affect fuel consumption in log-        conference of the Council on Forest Engineering; 2013
+                                                                  ging systems. In: Proceeding of the conference of the        Jul; Missoula (MT): Council on Forest Engineering.
+                                                                  Council on Forest Engineering; 2014 Jun 22–25;            Werblow DA, Cubbage FW. 1986. Forest harvesting
+                                                                  Moline (IL): Council on Forest Engineering.                  equipment ownership and operating costs in 1984.
+                                                              Lemire JJ. 2013. Safety in focus. Forest Op Rev. 15:31.          South J Ap Forest. 10:10–15.
+
