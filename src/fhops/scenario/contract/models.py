@@ -6,6 +6,7 @@ from datetime import date
 
 from pydantic import BaseModel, ValidationInfo, field_validator, model_validator
 
+from fhops.costing.machine_rates import compose_default_rental_rate_for_role
 from fhops.scheduling import MobilisationConfig, TimelineConfig
 from fhops.scheduling.systems import HarvestSystem, default_system_registry
 
@@ -98,6 +99,23 @@ class Machine(BaseModel):
         if value < 0:
             raise ValueError("Machine numerical fields must be non-negative")
         return value
+
+    @field_validator("role")
+    @classmethod
+    def _normalise_role(cls, value: str | None) -> str | None:
+        if value is None:
+            return value
+        stripped = value.strip()
+        return stripped or None
+
+    @model_validator(mode="after")
+    def _apply_role_defaults(self) -> "Machine":
+        if (self.operating_cost is None or self.operating_cost <= 0) and self.role:
+            composed = compose_default_rental_rate_for_role(self.role)
+            if composed is not None:
+                operating_cost, _ = composed
+                return self.model_copy(update={"operating_cost": operating_cost})
+        return self
 
 
 class Landing(BaseModel):

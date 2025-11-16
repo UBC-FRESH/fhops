@@ -19,8 +19,8 @@ from fhops.costing import (
 )
 from fhops.costing.machine_rates import (
     MachineRate,
-    compose_rental_rate,
-    load_default_machine_rates,
+    compose_default_rental_rate_for_role,
+    get_machine_rate,
 )
 from fhops.productivity import (
     KelloggLoadType,
@@ -41,28 +41,22 @@ from fhops.scheduling.systems import HarvestSystem, default_system_registry
 console = Console()
 dataset_app = typer.Typer(help="Inspect FHOPS datasets and bundled examples.")
 
-_MACHINE_RATES_BY_ROLE: dict[str, MachineRate] | None = None
-
-
-def _machine_rates_by_role() -> dict[str, MachineRate]:
-    global _MACHINE_RATES_BY_ROLE
-    if _MACHINE_RATES_BY_ROLE is None:
-        _MACHINE_RATES_BY_ROLE = {entry.role.lower(): entry for entry in load_default_machine_rates()}
-    return _MACHINE_RATES_BY_ROLE
-
 
 def _machine_rate_roles_help() -> str:
-    roles = ", ".join(sorted(_machine_rates_by_role().keys()))
+    from fhops.costing.machine_rates import load_machine_rate_index
+
+    roles = ", ".join(sorted(load_machine_rate_index().keys()))
     return f"Available roles: {roles}"
 
 
 def _resolve_machine_rate(role: str) -> MachineRate:
-    role_key = role.lower()
-    lookup = _machine_rates_by_role()
-    if role_key not in lookup:
-        available = ", ".join(sorted(lookup.keys()))
+    rate = get_machine_rate(role)
+    if rate is None:
+        from fhops.costing.machine_rates import load_machine_rate_index
+
+        available = ", ".join(sorted(load_machine_rate_index().keys()))
         raise typer.BadParameter(f"Unknown machine role '{role}'. Valid roles: {available}")
-    return lookup[role_key]
+    return rate
 
 
 @dataclass(frozen=True)
@@ -742,13 +736,16 @@ def estimate_cost_cmd(
 
     if machine_role is not None:
         machine_entry = _resolve_machine_rate(machine_role)
-        rental_rate, rental_breakdown = compose_rental_rate(
-            machine_entry,
+        composed = compose_default_rental_rate_for_role(
+            machine_role,
             include_repair_maintenance=include_repair,
             ownership_override=owning_rate,
             operating_override=operating_rate,
             repair_override=repair_rate,
         )
+        if composed is None:
+            raise typer.BadParameter(f"No default rate available for role '{machine_role}'.")
+        rental_rate, rental_breakdown = composed
         if include_repair and machine_entry.repair_maintenance_cost_per_smh is not None:
             repair_reference_hours = machine_entry.repair_maintenance_reference_hours
 

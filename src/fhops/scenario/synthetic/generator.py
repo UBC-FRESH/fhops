@@ -13,6 +13,7 @@ from typing import Any, TypeVar, cast
 import pandas as pd
 import yaml
 
+from fhops.costing.machine_rates import compose_default_rental_rate_for_role
 from fhops.evaluation.playback.events import SamplingConfig
 from fhops.productivity import load_lahrsen_ranges
 from fhops.scenario.contract import (
@@ -34,6 +35,15 @@ _DEFAULT_PRESCRIPTION_POOL = ["clearcut"]
 _DEFAULT_CREW_POOL = ["crew-1", "crew-2"]
 _DEFAULT_CAPABILITY_POOL = ["harvester", "forwarder"]
 _LAHRSEN_RANGES = load_lahrsen_ranges()
+
+
+def _default_operating_cost_for_role(role: str | None) -> float:
+    if not role:
+        return 0.0
+    composed = compose_default_rental_rate_for_role(role)
+    if composed is None:
+        return 0.0
+    return round(composed[0], 2)
 
 
 def _sample_metric(rng: random.Random, entry: dict[str, float]) -> float:
@@ -621,12 +631,14 @@ def generate_random_dataset(
     for idx in range(num_machines):
         role = role_pool[idx % len(role_pool)] if role_pool else None
         assigned_crew = crew_ids[idx] if crew_ids else None
+        rental_rate = _default_operating_cost_for_role(role)
         machines_records.append(
             {
                 "id": f"M{idx + 1}",
                 "role": role,
                 "crew": assigned_crew,
                 "daily_hours": float(config.machine_daily_hours),
+                "operating_cost": rental_rate,
             }
         )
 
@@ -742,7 +754,12 @@ def generate_random_dataset(
         roles = sorted({job.machine_role for system in systems.values() for job in system.jobs})
         if roles:
             updated_machines = [
-                machine.model_copy(update={"role": roles[idx % len(roles)]})
+                machine.model_copy(
+                    update={
+                        "role": roles[idx % len(roles)],
+                        "operating_cost": _default_operating_cost_for_role(roles[idx % len(roles)]),
+                    }
+                )
                 for idx, machine in enumerate(scenario.machines)
             ]
             scenario = scenario.model_copy(update={"machines": updated_machines})

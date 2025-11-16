@@ -7,6 +7,7 @@
 - Extended `fhops.dataset estimate-cost` so users can specify `--machine-role` instead of a raw rate; the command loads the role’s defaults from `data/machine_rates.json`, applies overrides (`--owning-rate`, `--operating-rate`, `--repair-rate`), toggles the FPInnovations allowance, and prints the source plus breakdown. Added regression tests in `tests/test_costing.py` to cover the new helper.
 - Documented the CPI assumption and CLI workflow in `notes/dataset_inspection_plan.md`, and queued the documentation/system-integration follow-ups in the planning section.
 - Expanded `docs/howto/data_contract.rst` with a “Machine-Rate Defaults & Costing Helper” section covering the CAD assumptions, FPInnovations 1.56 CPI escalation, and CLI usage examples so dataset authors know how to consume the defaults.
+- Scenario contract + synthetic datasets now auto-fill machine rental rates from the role defaults: `Machine` models backfill `operating_cost` when set to `0`, the synthetic generator writes roles + rates (using the rental table), and all example `machines.csv` templates now include canonical role slugs for downstream costing. The dataset guide notes the new fallback.
 
 ## 2025-11-17 — BC grapple yarder productivity helpers
 - Added `fhops.productivity.grapple_bc` implementing MacDonald (1988) SR-54 (Washington 118A on mechanically bunched second-growth) and Peterson (1987) TR-75 (Madill 084 on bunched vs. hand-felled turns) travel-time models so FHOPS can estimate grapple yarder productivity using BC datasets instead of plantation regressions.

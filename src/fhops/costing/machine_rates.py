@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from pathlib import Path
+from functools import lru_cache
 from typing import Sequence
 
 DATA_PATH = Path(__file__).resolve().parents[3] / "data/machine_rates.json"
@@ -60,6 +61,40 @@ def load_default_machine_rates() -> Sequence[MachineRate]:
     return tuple(rates)
 
 
+def _normalise_role(role: str) -> str:
+    return role.strip().lower().replace("-", "_")
+
+
+ROLE_SYNONYMS = {
+    "feller-buncher": "feller_buncher",
+    "roadside_processor": "processor",
+    "landing_processor_or_hand_buck": "processor",
+    "hand_buck_or_processor": "processor",
+    "loader_or_water": "loader",
+}
+
+
+@lru_cache(maxsize=1)
+def load_machine_rate_index() -> dict[str, MachineRate]:
+    """Return a cached mapping of normalised role → machine rate."""
+
+    index: dict[str, MachineRate] = {}
+    for rate in load_default_machine_rates():
+        index[_normalise_role(rate.role)] = rate
+    for alias, target in ROLE_SYNONYMS.items():
+        normalised = _normalise_role(alias)
+        target_rate = index.get(_normalise_role(target))
+        if target_rate is not None:
+            index[normalised] = target_rate
+    return index
+
+
+def get_machine_rate(role: str) -> MachineRate | None:
+    """Return the default machine rate entry for the supplied role (case-insensitive)."""
+
+    return load_machine_rate_index().get(_normalise_role(role))
+
+
 def compose_rental_rate(
     machine_rate: MachineRate,
     *,
@@ -102,4 +137,33 @@ def compose_rental_rate(
     return total, breakdown
 
 
-__all__ = ["MachineRate", "load_default_machine_rates", "compose_rental_rate"]
+def compose_default_rental_rate_for_role(
+    role: str,
+    *,
+    include_repair_maintenance: bool = True,
+    ownership_override: float | None = None,
+    operating_override: float | None = None,
+    repair_override: float | None = None,
+) -> tuple[float, dict[str, float]] | None:
+    """Compose the rental rate for a machine role directly from the defaults."""
+
+    rate = get_machine_rate(role)
+    if rate is None:
+        return None
+    return compose_rental_rate(
+        rate,
+        include_repair_maintenance=include_repair_maintenance,
+        ownership_override=ownership_override,
+        operating_override=operating_override,
+        repair_override=repair_override,
+    )
+
+
+__all__ = [
+    "MachineRate",
+    "load_default_machine_rates",
+    "load_machine_rate_index",
+    "get_machine_rate",
+    "compose_rental_rate",
+    "compose_default_rental_rate_for_role",
+]

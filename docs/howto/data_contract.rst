@@ -29,6 +29,9 @@ Each scenario references a set of CSV files. Required columns and notes:
         $/SMH (scheduled machine hour), i.e., SMH = scheduled hours and PMH = productive hours;
         Lahrsen (2025) productivity coefficients are calibrated in m³/PMH15 (PMH with short delays
         ≤15 min included). Convert to $/m³ post‑hoc using playback outputs or the costing helper.
+        When ``operating_cost`` is omitted or set to ``0`` and a ``role`` is provided, FHOPS looks up
+        the default machine-rate entry (owning + operating + optional repair) and auto-fills the
+        value during scenario validation.
       - The `fhops dataset inspect-machine` CLI warns when a machine advertises non-24 h
         availability so you can catch accidental edits before shipping datasets.
    * - ``landings.csv``
