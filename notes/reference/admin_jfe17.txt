@@ -1,0 +1,342 @@
+                                                                     International Journal of Forest Engineering ♦ 67
+
+   Optimization of Road Spacing for Log                       ing and forward nearby logs to the landing by sequentially
+  Length Shovel Logging on Gentle Terrain                     picking logs up with the grapple-equipped heelboom, ro-
+                                                              tating the boom 180 degrees and laying the logs down
+                                                              again (Figure 1). Although initially dubious to many, pro-
+                    John Sessions
+                                                              duction was high, up to five truck loads per machine hour
+                    Kevin Boston
+                                                              [4]. The method rapidly spread throughout the western
+                Oregon State University
+                                                              US from California to Alaska and later to the US Southeast
+                     Oregon, USA
+                                                              and Northeast. The popularity of the method is that one
+                                                              operator with one piece of equipment can do both the
+                                                              yarding and loading. Hydraulic loaders used for shovel
+ABSTRACT                                                      logging usually are equipped with longer frames, wider
+                                                              tracks, higher clearance undercarriages, and heavier track
+  Shovel logging has become a popular logging system in       drives. The wide tracks with low ground pressure and
+the western United States due to its high productivity. Its   one pass of the shovel, often walking on debris, limits soil
+low ground pressure and single pass, often on a matt of       compaction. Floch (1988) reported that increases of soil
+limbs result in little ground disturbance. Despite this in-   bulk density of less than 8 percent in the shovel trails in a
+creasing popularity, there have been few operational stud-    shovel logging study on the Olympic National Forest in
+ies of shovel logging. This paper describes the optimal       western Washington (USA). Although shovel logging is
+road spacing problem for shovel logging using a serpen-       usually done in clearcutting, it has been used in thinning
+tine pattern on gentle terrain. A mathematical model for      and selective harvesting [3] and [4].
+shovel logging is presented for two cases (1) to minimize
+the sum of shovel yarding costs plus road costs from the
+landowner’s point of view and(2) to maximize profits from
+the point of view of a logging contractor. For the operat-
+ing conditions assumed, the optimal shovel yarding dis-
+tance is four swings when shovel yarding plus roads costs
+are minimized and three swings when logging contractor
+profit is maximized. For the example data, the model re-
+sults demonstrate the flexibility of shovel logging in that
+there is little difference between total road construction
+plus skidding cost from the optimal number of swings to
+as many as six swings. Sensitivity analysis was performed
+on road cost and volume per ha and support the stability      Figure 1. A sketch of a shovel logging machine. Shovel
+of the solution with the minimum logging cost occurring                 logging machines generally have longer, wider
+at four swings with just a small difference for as many as              tracks, higher clearance, and heavier track drives
+six swings over a range of road construction and volume                 than on-road log loaders.
+removals.
+
+                                                                Several production studies have documented shovel
+Keywords:     Harvest planning, log transportation, har-      logging including those by [10], [4] and [1]. These studies
+              vesting costs.                                  described shovel yarding operations and provided pro-
+                                                              duction data but did not provide decision support models
+                                                              that could be used to either minimize the sum of road and
+INTRODUCTION                                                  logging costs or maximize the profits from shovel logging
+                                                              operations. This paper presents an analytical framework
+  As the story goes, shovel logging originated on a log       to evaluate the daily production and road spacing for
+landing in western Washington in the 1970’s when a loader     shovel logging operations.
+operator on a broken-down logging side decided to take
+the track-mounted hydraulic excavator loader off the land-
+                                                              THE ROAD SPACING PROBLEM
+
+                                                                The efficient combination of roads and landings is a
+The authors are, respectively, Professor, Department of
+                                                              classic forest engineering problem with a rich history.
+Forest Engineering, College of Forestry, and Assistant
+                                                              Matthews (1942) developed road spacing formulas for both
+Professor, Department of Forest Engineering, College of
+                                                              continuous and discrete landings under the objective of
+Forestry,
+68 ♦ International Journal of Forest Engineering
+
+minimizing the sum of road costs and skidding costs to
+the landowner. Sessions (1986) examined the ramifications
+of income tax rules on road spacing issues. Thompson
+(1988) considered road spacing from the perspective of a
+logging contractor wanting to maximize profits. Sessions
+and Yeap (1989) examined simultaneous allocation of equip-
+ment and road spacing from a contractor’s point of view.
+Recently, Stewart (2003) revisited these ideas.
+
+   The classic road spacing problem of Matthews assumes
+that the marginal cost of skidding is constant with respect
+to distance and that road spacing is a continuous vari-
+able. Starnes (1985) used Matthews’ least cost approach
+to estimate the optimal shovel logging road spacing using
+data from his production study at Yakutat, Alaska. Al-
+though it may be possible to approximate the shovel log-
+ging process using these assumptions, we believe more
+insight can be developed by a process-based approach
+that more closely reflects the elements of shovel logging.
+                                                                Figure 2. Serpentine shovel logging pattern for swinging
+                                                                          long logs on gentle terrain. The operator often
+SHOVELLOGGING PATTERN                                                     starts at the lower right straightening up the
+                                                                          rack closest to the road, then proceeds to the
+   Several shovel logging patterns are used, but all more                 back of the unit, and works toward the front on
+closely resemble continuous landings as opposed to dis-                   the unit in a serpentine pattern.
+crete landings. There are two common shovel logging
+patterns. The first is a serpentine pattern (Figure 2) where
+the shovel begins at the back of the unit and works its
+way forward accumulating the wood in rows, or racks, and
+moving the rows, or racks, forward. Sometimes an initial
+pass is made along the road to straighten the logs that will
+ultimately form the base of the log deck [6]. The serpen-
+tine pattern is most commonly used on flat terrain with
+long logs. An alternative pattern, more often used in slop-
+ing terrain (up to 40% slope) or with full trees is to travel
+on trails perpendicular to the road (Figure 3.) This paper
+analyzes the long-log, serpentine skidding pattern.
+
+
+FORMULATION
+
+   We assume the objective for the planner is to either (1)
+minimize the sum of road plus shovel logging costs for the
+landowner or (2) maximize the profit for the shovel logger.
+We also assume the roads have not been constructed and
+once constructed will be used for this single entry. Addi-
+tionally, it is assumed the terrain is gentle with shovel
+logging long logs to both sides of the road. From an op-
+eration’s viewpoint, the assumptions are: one, that the
+shovel must complete its yarding pattern and return to the      Figure 3. Vertical pattern for forwarding tree length or full
+road periodically to load trucks after completing its ser-                trees to road side and for operations on steeper
+pentine pattern and two, it must deliver a minimum amount                 terrain. The shovel arranges trees or logs while
+of wood to roadside each day. This will allow the shovel                  preparing a trail perpendicular to the truck road
+to serve both functions of yarding and loading trucks.                    and then returns along the trail forwarding the
+                                                                          trees or logs to roadside.
+                                                                        International Journal of Forest Engineering ♦ 69
+
+   The road spacing will be an integer of the swing dis-         the roadside rack, (2) moving logs from their original rack
+tance of the shovel (Figure 4). Three shovel yarding ac-         to the next rack, (3) forwarding logs that have been han-
+tivities are recognized. First, the shovel passes along the      dled once to the roadside rack, and (4) summing total walk-
+spur road creating a bed for the future logs by indexing         ing time for the loader.
+the log butts in the first rack. Next, the shovel walks to the
+back-end of the unit to position itself at the last rack while     If the volume per unit area is w, the time to move the
+moving any logs in its way to the side. Then, the shovel         logs from rack i to the roadside rack equals moving logs
+begins a serpentine walk back to the road. The problem           from the original rack i to the rack (i-1) plus rehandling
+assume three walking speeds, v1, when moving along the           logs after they have been initially handled across the re-
+road indexing the butts, v2, while walking to the back of        maining (i-1) racks.
+the unit, and v3 while moving along the serpentine pat-
+tern. While straightening logs in the first (roadside) rack         Summing up the time spent overall, the total shovel
+we assume a swing time per cycle, t0, with each swing            time, shovel yarding cost, shovel yarding production, area
+processing volume b0.                                            yarded per day, and volume yarded per day can be calcu-
+                                                                 lated as follows:
+
+                                                                   Straightening logs in the roadside rack as a result of the
+                                                                 felling pattern:
+                                                                                     T1 = t0 (yw z)/ b0
+
+                                                                   Moving logs from their original rack to the next rack:
+                                                                                  T2 = n t1 (yw z)/ b1
+
+                                                                   Moving logs that have been handled once to the road-
+                                                                 side rack:
+                                                                              T3= 0.5 (n-1) n t2 (yw z)/b2
+
+                                                                   Summing walking time for the shovel:
+                                                                           T4 = y v1 + n z v2 + n (y+z) v3
+
+Figure 4. Forwarding pattern for two way shovel opera-             The total shovel time for one side of the road is:
+          tion to the truck road. Straight lines indicate                        TT = T1 + T2 + T3 + T4
+          path of shovel and arcs indicated swings by
+          shovel. Depending on the number of shovel                The total shovel cost for one side of the road is:
+           passes (n, even or odd) and one-way versus                         C = c1 T1 + c2T2 + c3 T3 + c4 T4
+           two-way shovel logging to road side, the shovel
+           may have to backtrack down the road to start          where ci is the cost per minute of element Ti. The total
+           the next harvest unit.                                volume to be yarded to one side of the road is:
+                                                                                      W = (n+1) z y w
+
+   Additionally, the assumption is that the logs in other        since there is one more rack than shovel pass required.
+racks are also not perfectly aligned so that logs that origi-    The production per minute is:
+nate in racks, other than the rack closest to the road, re-                             p = W/TT
+quire a swing time per cycle, t1, moving a volume b1. For
+wood that has been moved more than once, the assump-               The production per yarding period is P = 480 p assum-
+tion is that each rehandling requires a swing time, t2, mov-     ing an 8-hr yarding period
+ing a volume b2. Each time the logs are handled with the
+exception of the rack closest to the road they are moved a         If the shovel is to return to the road at the end of each
+distance, z, closer to the road and that each rack contains      yarding period, then the area to be yarded each period is:
+the volume from the unit that is z wide.
+                                                                                     A = P/w = (n+1) z y
+  If n is defined to be the number of shovel passes paral-
+lel to the road and y is the length along road to be yarded        Therefore, the length of the shovel logging rack, y = P/
+in one yarding period, then the total shovel time can be         (w (n+1) z). If the shovel is required to produce at least K
+divided into four components: (1) straightening logs in          tonnes per day, then a feasible solution must result in
+70 ♦ International Journal of Forest Engineering
+
+P>K. If the optimal road spacing results in P<K then the        the truck road to load trucks. Additionally, there is little
+distance between roads must be reduced to the point the         difference in the cost per tonne, and cost per ha for the
+P>K.                                                            longer swings. Although the shovel costs have an initial
+                                                                high cost for arranging the piles with a linear cost with
+  If the objective is to minimize the road plus logging cost    respect to yarding distance (Figure 6), the road cost per
+for the landowner, the optimal road spacing is 2(n+1) z.        tonne decreases nearly at the same rate. The result is that
+Therefore, the goal is to find the n that minimizes the total   the total logging cost per tonne remains relatively con-
+cost of roads plus shovel logging each day where the            stant after two or more swings.
+
+Total Cost of Roads + Shovel Logging per unit volume =          Table 1. Inputs for shovel logging – road spacing model
+(R y + 2 C) / (2 W)                                                      example.
+
+   On the other hand if it were desirable to find the road      Item                                               Value
+plus logging cost for a logging contractor being paid m
+dollars per unit volume at roadside and who can purchase        Shovel swing length (meters)                       16.15
+roads at a cost of R dollars per unit length, the goal is to    Volume (tonnes per ha)                               375
+find n that maximizes the daily profit where the daily profit   Effective hour (minutes)                              50
+is
+                                                                Seconds per swing- 1st handling                       30
+Daily Profit = Daily Revenue – Daily Shovel Cost – Road         Seconds per swing – 2nd handling                      30
+Cost = m P - C - R y/2                                          Tonnes moved per swing – 1st handling                  1
+                                                                Tonnes moved per swing – 2nd handling                  2
+   Since n is an integer, and the optimal number of shovel      Shovel cost per hour walking or swinging            $125
+passes is probably less than 10, summing the total costs
+                                                                Seconds per swing except at roadside                  30
+or profits starting with n = 1 and increasing n until one
+reaches minimum cost or maximum profit is an easy way to        Seconds per swing at roadside                         20
+find the road spacing that reaches the appropriate objec-       Price per tonnes for wood delivered roadside       $4.00
+tive. If the goal was to have a minimum required produc-        Road cost per kilometer                            $6,211
+tion rate that constrains us from reaching the cost or profit
+goal, then iterations stop at that n.                              Sensitivity analysis was performed on road construc-
+                                                                tion costs and volume per hectare to determine the impact
+Example                                                         of these parameters on the solution. In both cases, the
+                                                                optimal solution remains the same with regard to the cost
+   The example uses a machine with a swing length of            per tonne being minimized at four swings. This demon-
+16.15 m on gentle terrain allowing for the serpentine pat-      strates the stability of the optimal policy to minimize the
+tern to be used with two-way forwarding to roadside. The        operating costs at four swings (Figures 10, 11 and 12) for
+volume to be removed is 375 tonnes/ha. The inputs (Table        the range of conditions and assumptions described in
+1) describe the typical Pacific Northwest, USA conditions.      this study.
+The assumed objective is to determine the road spacing
+for the cases that minimize the cost to the landowner and
+maximize profit to the contractor.                              DISCUSSION AND CONCLUDING REMARKS
+  Four scenarios were analyzed in a factorial design; two          We have assumed walking time is independent of the
+include the constraint that the shovel had to return to the     number of shovel passes, n. In reality, the total walking
+landing once per day. The other scenarios required the          distance varies by a factor of y/2 depending if n is even or
+shovel to return the road twice per day to load trucks.         odd. This is because the loader ends up at different ends
+Two scenarios used a travel speed of 0.7 kph and, the           of the strip depending on whether n is even or odd and
+other had a speed of 1.3 kph.                                   has to walk back to begin the next strip.
+  The minimum cost per tonne and cost per ha were found            For our example, the lack of sensitivity to the number of
+when there were four swings (Figures 5 and 8), but the          times that the shovel needs to return to the road in order
+maximum returns to the contractor occurred with 3 swings        to be responsive to trucking needs may allow this logging
+(Figures 9). For the range of operating conditions in this      system to avoid a dedicated loader at the landing.
+study the optimal solution is insensitive to the travel speed
+and the required number of times the shovel will return to        In our example, it was assumed the objective of the
+                                                                   International Journal of Forest Engineering ♦ 71
+
+
+
+
+Figure 5. Cost per tonne for shovel logging with 1 to 6 swings including truck road costs and shovel logging costs.
+          Costs do not include felling.
+
+
+
+
+Figure 6. Yarding cost per tonne for shovel logging with one to six swings.
+72 ♦ International Journal of Forest Engineering
+
+
+
+
+Figure 7. Road cost per tonne for shovel logging with road spacing varying from 1 to 6 shovel swings for two-way
+          shovel logging to the truck road.
+
+
+
+
+Figure 8. Cost per hectare for shovel logging with 1 to 6 swings for shovel logging cost plus truck road construction
+          cost.
+                                                                  International Journal of Forest Engineering ♦ 73
+
+
+
+
+Figure 9. Contractor profits per day for shovel logging with one to six swings after payment for shovel logging and
+          road costs. Costs do not include felling.
+
+
+
+
+Figure 10. Cost per tonne for shovel logging with one to six swings including truck road costs and shovel logging
+          costs. Costs do not include felling.
+74 ♦ International Journal of Forest Engineering
+
+
+
+
+Figure 11. Cost per tonne for shovel logging with one to six swings including truck road costs and shovel logging costs.
+           Costs do not include felling.
+
+
+
+
+Figure 12. Total cost, forwarding cost and roading costs per tonne for shovel logging for the case where there is 375
+           tonnes per hectare, travel speed of 1.3 kph and one return trip to the landing per day.
+                                                                       International Journal of Forest Engineering ♦ 75
+
+layout was to determine the road spacing and shovel log-              Tech. Rpt. No. TR-120, 37 pp.
+ging pattern that minimized cost to the landowner where         [2]   Egan, A. 1999. Residual stand damage after shovel
+the landowner costs were road construction and shovel                 logging and conventional ground skidding in an Ap-
+logging cost. This road spacing also maximized landowner              palachian hardwood stand. Forest Prod. J. 49(6):88-
+profits if the landowner faces a fixed price for his timber           92.
+and maximizes profit by minimizing cost.
+                                                                [3]   Egan, A., K. Waldron, R. Hicks, and J. Skousen. 2002.
+   The same model was used to solve for the road spacing              Effects of shovel logging and rubber-tired skidding
+and shovel logging pattern for a contract logger who is               on surface soil attributes in a selectively harvested
+paid on a $/tonne basis, purchases road construction,                 northern hardwood stand. Journal of Forest Engi-
+and wants to maximize contractor profits. If the logger is            neering 13(1):27-35.
+paid a fixed-price per tonne that corresponds to the cost
+per tonne at the road spacing that minimizes the sum of         [4]   Fisher, J.G. 1986. Logging with a hydraulic excava-
+road construction and logging cost, the logger profit maxi-           tor: A case study. MF paper, Department of Forest
+mizing strategy yields the same road spacing as the cost              Engineering, Oregon State U., 71 pp.
+minimizing strategy for the landowner and there is zero
+“excess profit”. However, if the logger is paid a higher        [5]   Floch, R. 1988. Shovel logging and soil compaction:
+cost per tonne than the cost per tonne that minimizes the             A case study. MF paper. Department of Forest Engi-
+sum of road plus logging cost, the logger will try to reduce          neering, Oregon State U. 75 pp
+the road spacing and pay the additional road cost to get
+his profit as quickly as possible before moving on. This        [6]   Harder, P. 1988. Modified loader excels as substitute
+strategy has two important assumptions (1) the logger                 for yarder. Forest Industries, Miller Freeman Pub,
+has a next job to move to upon immediate completion of                June, p. 16-17.
+this job under similar contract conditions or (2) his costs
+significantly decrease between jobs (Sessions and Yeap          [7]   Matthews, D.M. 1942. Cost control in the logging
+1989).                                                                industry. McGraw-Hill, NY, 374 pp.
+
+    There are still a number of research questions to be        [8]   Sessions, J. 1986. Can income tax rules affect man-
+answered with regards to shovel logging. Several involve              agement strategies for forest roads? WJAF 1(1):26-
+its interaction with felling methods. Under what condi-               28.
+tions is log-length shovel logging superior to full-tree
+shovel logging? For whole tree yarding, what is the im-         [9]   Sessions, J. and Y.H. Yeap. Optimizing road spacing
+pact of felling and organizing the trees with feller-bunchers         and equipment allocation simultaneously. Forest
+as opposed to motor-manual felling methods where stems                Prod. J. 39(10):43-46.
+are delimbed and topped in the woods? What is the cost
+effectiveness of shovel logging as compared to cut-to-          [10] Starnes, L.W. 1985. Preliminary time study, loader
+length systems for clearcut harvests? Under what condi-              swing yarding. Timber Mgmt. Staff Rpt., Chatham
+tions could shovel logging transport shorter logs to for-            Area, Tongass National Forest, 13 pp. On file at De-
+warder trails be more effective than a dense system of               partment of Forest Engineering, Oregon State U.,
+forwarder trails?                                                    Corvallis.
+
+                                                                [11] Stewart, W.B. 2003. Checking our foundations:
+AUTHOR CONTACT                                                       Matthews’ least cost models revisited. SJAF
+                                                                     27(1):30-35.
+  Professor Boston can be reached by e-mail at --
+            kevin.boston@oregonstate.edu                        [12] Thompson, M.A. 1988. Optimizing spur road spac-
+                                                                     ing on the basis of profit potential. Forest Prod. J.
+                                                                     38(5)53-57.
+LITERATURE CITED
+
+[1]   Andersson, B. and G. Young. 1998. Harvesting coastal
+      second-growth forests: Summary of harvesting sys-
+      tem performance. Forest Engr. Res. Inst. of Canada,
+

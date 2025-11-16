@@ -1,0 +1,1723 @@
+      International Journal of Forest Engineering
+
+
+
+
+      ISSN: (Print) (Online) Journal homepage: https://www.tandfonline.com/loi/tife20
+
+
+
+
+Benchmarking operational conditions,
+productivity, and costs of harvesting from
+industrial plantations in different global regions
+
+Fulvio Di Fulvio, Mauricio Acuna, Pierre Ackerman, Simon Ackerman,
+Raffaele Spinelli, Dalia Abbas, Nopparat Kaakkurivaara, Sandra Sánchez-
+García & Saulo Philipe Sebastião Guerra
+
+To cite this article: Fulvio Di Fulvio, Mauricio Acuna, Pierre Ackerman, Simon Ackerman,
+Raffaele Spinelli, Dalia Abbas, Nopparat Kaakkurivaara, Sandra Sánchez-García & Saulo Philipe
+Sebastião Guerra (10 Jan 2024): Benchmarking operational conditions, productivity, and costs
+of harvesting from industrial plantations in different global regions, International Journal of
+Forest Engineering, DOI: 10.1080/14942119.2023.2296789
+
+To link to this article: https://doi.org/10.1080/14942119.2023.2296789
+
+
+
+
+       © 2024 The Author(s). Published with                    View supplementary material
+       license by Taylor & Francis Group, LLC.
+
+
+       Published online: 10 Jan 2024.                          Submit your article to this journal
+
+
+
+       Article views: 106                                      View related articles
+
+
+
+       View Crossmark data
+
+
+
+
+                      Full Terms & Conditions of access and use can be found at
+             https://www.tandfonline.com/action/journalInformation?journalCode=tife20
+INTERNATIONAL JOURNAL OF FOREST ENGINEERING
+https://doi.org/10.1080/14942119.2023.2296789
+
+
+
+
+Benchmarking operational conditions, productivity, and costs of harvesting from
+industrial plantations in different global regions
+Fulvio Di Fulvioa, Mauricio Acunab, Pierre Ackermanc, Simon Ackermanc, Raffaele Spinellid, Dalia Abbase,
+Nopparat Kaakkurivaaraf,g, Sandra Sánchez-Garcíaf, and Saulo Philipe Sebastião Guerrah
+a
+ Integrated Biosphere Futures (IBF), Biodiversity and Natural Resources Program (BNR), International Institute for Applied Systems Analysis (IIASA),
+Laxenburg, Austria; bNatural Resources Institute (Luke), Production Systems Unit, Joensuu, Finland; cDepartment of Forest and Wood Science, Faculty of
+AgriSciences, Stellenbosch University, Stellenboch, South Africa; dCNR IBE Instituto per la Bioeconomia, Florence, Italy; eForest Products Laboratory, USDA
+Forest Service, American University, Washington DC, USA; fPolo Tecnológico y Empresarial de la Biomasa de Asturias (PTEBi), Asturias, Spain; gDepartment of
+Forest Engineering, Faculty of Forestry, Kasetsart University, Bangkok, Thailand; hSchool of Agriculture Sciences (FCA), São Paulo State University (UNESP),
+Botucatu, Brazil
+
+
+    ABSTRACT                                                                                                                                                 ARTICLE HISTORY
+    There has been a global increase in the demand for woody biomass in the last decade. The imperative to                                                   Received 29 December 2022
+    achieve the highest production per unit of land while preserving natural forest resources has expanded                                                   Accepted 11 December 2023
+    intensive forest cultivation in industrial plantations. The development of a global bioeconomy is expected to                                            KEYWORDS
+    further increase the demand for biomass for material and energy use from industrial forest plantations.                                                  Forest operations;
+    Efficiently planning supply from these timber sources requires up-to-date information on current harvesting                                              productivity; costs; industrial
+    systems. This study aims to provide an overview of existing systems and their performance in industrial                                                  plantations; roundwood;
+    plantations located in seven relevant global regions. Eight regional experts combined knowledge, supported                                               benchmarking
+    by relevant literature, to create a unique database for benchmarking harvesting systems regarding their
+    productivity and supply costs. Current mechanized systems can reach harvesting productivity exceeding
+    100 m3 per productive machine hour (PMH), while roadside costs range between 5 and 20 USD m−3 solid
+    volume. Harvesting systems are modified continuously to adapt to plantations’ characteristics and industrial
+    requirements in the different regions. Local socioeconomic factors and the historical sectorial evolution in each
+    region significantly impact the selection of harvesting systems, mechanization levels, type of machinery, and
+    resulting harvesting costs. Expanding plantations to more marginal lands requires further research on adapting
+    agricultural/construction machinery to steep terrain plantations. International literature tends to represent
+    large-scale, highly mechanized systems well. In contrast, fewer studies are available for characterizing small-
+    scale systems, particularly in developing regions.
+
+
+
+Introduction                                                                                        The supply of roundwood from this forest category has
+                                                                                                 increased significantly recently, reaching an estimated volume of
+There has been a growing global demand for wood for material                                     561 M m3 in 2012, representing 33.4% of the global roundwood
+and energy uses in the past decades (FAOSTAT 2020). The                                          annual harvest (Jürgensen et al. 2014). The first ten countries in
+need to achieve high production per unit of forest land while                                    order of wood supply from plantations were identified to be Brazil,
+preserving natural forest resources has led to the development                                   the United States, China, India, Chile, New Zealand, Australia,
+of intensified forest cultivation modules based on fast-growing                                  South Africa, Thailand, and Indonesia (Jürgensen et al. 2014).
+species, densely planted and managed with a high input level,                                       According to the INDUFOR Databank, the global area of these
+capable of maximum returns. These forests fall under the                                         plantations reached 54 Mha in 2012, with the US (13 Mha), China
+definition of “forest plantations.” More specifically, in this                                   (7 Mha), and Brazil (7 Mha) having the most extensive areas
+study, “industrial plantations” are defined according to                                         (Barua et al. 2014). A recent remote sensing mapping of “industrial
+Jürgensen et al. (2014) as “Forests of primarily introduced                                      plantations” estimated that seven tropical countries reached
+and native species, established through planting or seeding                                      approximately 10 Mha by 2014 (Petersen et al. 2016). However,
+mainly for the production of wood or nonwood products.”                                          uncertainties still exist in mapping current industrial plantation
+    Industrial plantations differ fundamentally from natural forest                              areas and their regions.
+stands since they serve different ecological, economic, and social                                  The expansion of industrial plantations is expected to
+functions. More specifically, Industrial plantations are commer­                                 increase in the next decades. According to FSC/INDUFOR
+cially planned for optimum woody biomass production in mono­                                     (2012) projections, the area dedicated to “industrial planta­
+cultures, where Pinus, Eucalyptus, Populus, and Acacia are the                                   tions” could reach 91 M ha by 2050, almost doubling the
+most common commercial species (FAO 2006).                                                       current existing area. Under these conditions, it is expected
+
+CONTACT Fulvio Di Fulvio        difulvi@iiasa.ac.at    Integrated Biosphere Futures (IBF), Biodiversity and Natural Resources Program (BNR), International Institute for
+Applied Systems Analysis (IIASA), Schlossplatz 1, Laxenburg 2361, Austria
+   Supplemental data for this article can be accessed online at https://doi.org/10.1080/14942119.2023.2296789.
+© 2024 The Author(s). Published with license by Taylor & Francis Group, LLC.
+This is an Open Access article distributed under the terms of the Creative Commons Attribution-NonCommercial-NoDerivatives License (http://creativecommons.org/licenses/by-nc-nd/4.0/),
+which permits non-commercial re-use, distribution, and reproduction in any medium, provided the original work is properly cited, and is not altered, transformed, or built upon in any way. The
+terms on which this article has been published allow the posting of the Accepted Manuscript in a repository by the author(s) or with their consent.
+2      F. DI FULVIO ET AL.
+
+
+that industrial plantations could supply between 1 and 2 billion   remaining experts are researchers who led previous studies on
+m3 per year, thus meeting more than 50% of the global round­       forest operations in industrial plantations within their respec­
+wood demand by 2050 (FSC/INDUFOR 2012). In addition,               tive regions. The experts identified and compiled the most
+under ambitious climate change mitigation targets, the produc­     relevant information sources and publications in their regions
+tion of wood from industrial plantations could increase to         in a shared database. Each expert provided productivity and
+approximately 3–4 billion m3 by 2050 (Lauri et al. 2017).          cost figures for their region’s most relevant and current har­
+    Harvesting operations in plantations can contribute to 30–     vesting systems.
+40% of roundwood production cost (i.e. including tree estab­           The literature selected by the regional experts included a
+lishment, cultivation and harvesting) (Barrios et al. 2008;        characterization of harvesting systems used in harvesting
+Bendlin et al. 2016). Together with road transportation, they      plantations, providing estimates of system productivity and
+can account for over 50% of the final wood production cost         costs.
+(Minette et al. 2008; Machado et al. 2014; Favreau and Ristea          The regional experts investigated studies in their respective
+2017) and sometimes exceeding 70% (Pulkki 2001).                   regions by using web browsing, entering combinations of
+    The homogeneity of plantation systems and the generally        words such as plantation type (“industrial/roundwood planta­
+favorable terrain conditions in which they are established         tion”), names of species (“Eucalyptus, Poplar, Pine”), operation
+are ideal for mechanizing harvesting operations to maxi­           names (“harvesting,” “logging”), and names of their respective
+mize efficiency and minimize wood supply costs (Zhang et           regions (e.g. ”the US”). After the web search, each expert
+al. 2019). However, expanding industrial plantations has led       screened the studies for relevance, excluding those not deemed
+to planting trees in sites that are more difficult to mechan­      relevant (i.e. not representative of site/machine conditions).
+ize, such as steeper slopes and environmentally sensitive              Preference was given to scientific papers published between
+areas. Accordingly, there is a growing interest in designing       2010 and 2021 to facilitate comparability of technologies and
+new harvesting systems and machinery for plantations that          costs. Data sources, ranked in order of preference, included
+can operate in increasingly challenging site conditions            primary scientific articles, technical reports, Doctoral/MSc
+(McEwan et al. 2020).                                              Theses, and local publications and unpublished datasets pro­
+    Therefore, the geographical allocation of future plantation    vided by the authors.
+investments requires a better understanding of current harvest­        The boundaries of the harvesting systems encompassed all
+ing systems, their performances, and related costs. In this        operations from the stump to the roadside landing/landing site
+context, a comparison of different global regions is necessary     (hereafter referred to as “landing“). These operations included
+to reveal both similarities and differences though-benchmark­      tree felling, extraction of trees or tree sections to the landing,
+ing exercises, where the competitiveness is evaluated from         and processing trees/tree sections into logs and/or woodchips.
+different perspectives (Siry et al. 2006; Cubbage et al. 2010,     The primary product under consideration was wood for mate­
+2014; Lundbäck et al. 2021). In the case of wood harvesting,       rial used as logs or woodchips. However, some of the studies
+some international benchmarking examples under standar­            selected presented integrated systems that produced both wood
+dized cost accounting methodologies have recently been             for material use and energy-wood biomass. In the latter case,
+reported (Di Fulvio et al. 2017; Ghaffariyan et al. 2017).         only the extraction and processing of roundwood were con­
+    Thus, this study aims to benchmark harvesting systems in       sidered, excluding any additional operation dedicated to the
+industrial plantations across different global regions. This       extraction and processing of energy-wood assortments. For a
+study analyses harvesting systems’ efficiencies from various       more comprehensive description of the working environment
+sources, including experts’ input, literature studies, and data­   in each region, site characteristics were considered, where
+sets from the investigated regions. The study also includes cost   applicable. Information on the working environment included
+rate estimates for applied systems and cost ranges per unit of     main tree species, rotation length, management type, yield
+harvested products.                                                (removal per hectare), harvested tree size, extraction distance
+    Another primary goal of the study is to provide a snapshot     to the landing, slope, and final use of the harvested products
+of the state-of-the-art systems deployed in industrial planta­     (assortments), as the main features impacting harvesting
+tions to harvest wood for material uses. The methodological        operations.
+approach and results of this study are intended to guide future        Harvesting systems were identified in each study and clas­
+research and industrial development in forest operations and       sified according to the type of assortment extracted (to the
+evaluate regional competitiveness.                                 landing) and assigned to three broad categories: Full-Tree
+                                                                   (FT) (extraction of the whole tree), Tree-Length (TL) (extrac­
+                                                                   tion of delimbed and topped trees), Cut-To-Length (CTL)
+Materials and methods                                              (extraction of log assortments).
+                                                                       The collection of information for individual harvesting
+Data collection and system boundaries
+                                                                   operations included a description of machinery and the work­
+Forest operation experts (i.e. the coauthors of the present        force used in each work step (felling, extraction, processing)
+study) from different global regions and with local expertise      along with work efficiencies/productivity, preferably provided
+in their respective geographical areas provided data for this      as solid volume over bark (m3) per Productive Machine Hour
+study from their specific global region. Most experts involved     (PMH) (working time excluding delays). In addition to net
+in this study are forest operations researchers who participated   productivity, delays and technical utilization rates were
+in previous benchmarking studies (Di Fulvio et al. 2017). The      recorded when available.
+                                                                                                   INTERNATIONAL JOURNAL OF FOREST ENGINEERING                    3
+
+
+   The following costs were also collected: operational cost rate                  literature. Subsequently, in the second phase, the experts con­
+per Scheduled Machine Hour (SMH) (SMH=working hours                                ducted a broader literature search and provided a “synthesis
+including delays), cost of each operation per unit of product                      report” (approximately 500 words); this included a description
+over bark (USD m−3), and cost of the harvesting system per                         of typical industrial plantation modules, systems, productivity,
+unit of product over bark (USD m−3).                                               and cost ranges in their region/s. Based on this comprehensive
+                                                                                   review, 68 studies were identified and added to a shared database.
+                                                                                       Each observation/study collected in the master database
+Data harmonization
+                                                                                   contained a “Study ID” and related features. The identified
+Given the benchmarking from different observations/sources, the                    studies provided varying information, depending on their
+study required a standardization to common units based on some                     scope. Some focused on specific harvesting operations (tree
+standard conversion coefficients. Weights of products were con­                    felling, extraction), while others considered the entire harvest­
+verted to solid volumes over bark (m3 solid) according to green                    ing system (from stump to roadside) or reviewed various
+wood densities provided in the respective studies or according to                  systems applied in a region.
+the density factors presented in Miles and Smith (2009).                               The records in the database were then grouped by region
+    Conversion between PMH and SMH was obtained using                              (and species inside broader regions): Australia (11 records),
+work delays recorded in each single-machine study.                                 Brazil (20 records), East Asia (5 records), European poplar (4
+Alternatively, if the information was missing or irrelevant,                       records), Iberian Eucalyptus (4 records), South Africa (15
+typical technical utilization rates for forest operations were                     records) and US (9 records).
+sourced from Brinker et al. (2002) for the different operations.                       The oldest study in the dataset dated back to the year 2000;
+    Costs were collected in local currencies (LCU) and then con­                   however, most of the studies collected (57) were from within
+verted to US Dollars (USD) using historical exchange rates related                 the designed target period (2010–2021).
+to the year of publication of each paper/report as per www.exchan                      The attributes were systematically compiled in an Excel data­
+gerates.org.uk and https://www1.oanda.com/currency/converter/.                     base for each study, including the variables listed in Table 1. If a
+No other attempts were made to harmonize costs (inflation rates,                   study included multiple working conditions/harvesting systems,
+GDP growth), and only costs collected from studies published                       separate records were created. The full observed ranges for each
+between 2010 and 2020 were assumed to be comparable.                               variable were extracted (min.-max.). However, only the statistics
+                                                                                   (average, standard deviation) were extracted if data were pre­
+                                                                                   sented in aggregated statistical form.
+Data handling
+                                                                                       The primary descriptors of working conditions and produc­
+An expert group was established in 2019, comprising experts                        tivity in the different regions (Annex I) were statistically com­
+from various regions: Australia, Brazil, East Asia, Europe (one                    pared. For this purpose, the average for each study/observation
+each from Italy and Spain), South Africa, and the United States.                   was first computed, while the variation range was also extracted
+These regions were chosen for their representation of current                      (where available). Pearson’s correlation tests were conducted in
+industrial plantation areas. Unfortunately, some other relevant                    the R statistical software package on the average of the variables
+regions, such as India, Chile, New Zealand, and Indonesia,                         extracted from each study, and the correlation was deemed
+were not included due to the inability to reach experts capable                    significant for p-value <0.05.
+of supporting the benchmarking initiative.
+    In the first phase (2019), a template for extracting and collect­
+ing information from selected studies was designed and distrib­                    Results
+uted to the regional experts (see Supplementary Information I).
+                                                                                   Regional experts’ overviews
+    Each regional expert was requested to complete at least two
+templates (summary of two studies) during this initial phase,                      This section presents a summary description of regions of
+allowing a period of familiarization to identify the most relevant                 interest, plantation characteristics (Table 2), typical harvesting
+
+Table 1. Variables that were extracted from each study and included in the database.
+ Variable name                                                                     Description                                                          Unit
+ Year                     Date when the study was conducted
+ Country                  The country where the study took place
+ Tree species             Primary tree species in the plantation
+ Silviculture operation   Operation observed in the study (e.g. clearcut, thinning)
+ Product                  Main product produced in the operation (i.e. sawlogs, pulpwood logs, veneer, pulpwood chips)
+ Age                      The age of the plantation at the time of the observed operation                                                               Year
+ Stem volume              Tree stem volume                                                                                                             m3 solid
+ Stand volume             The volume of stem wood per hectare of the plantation                                                                        m3 ha−1
+ Distance to road         Distance of stand to roadside/landing                                                                                          m
+ System                   Harvesting system (i.e. CTL, TL, FT)
+ Machine                  Description of the machine used in each operation and harvesting system (e.g. large harvester, medium forwarder, skidder)
+ Productivity             Hourly productivity of each operation                                                                                       m3 PMH−1
+ Delays                   Delays time measured/reported for the operation                                                                               % SMH
+ Hourly cost              Hourly cost of each operation                                                                                               LCU SMH−1
+ Operation cost           Cost of each operation per unit of product                                                                                   LCU m−3
+ System cost              Cost for the whole harvesting system per unit of product (up to roadside)                                                    LCU m−3
+4            F. DI FULVIO ET AL.
+
+
+Table 2. Regional context, cultivation schemes and products reported by regional experts.
+                                                Regional context                                                     Cultivation schemes and products
+    Australia      The total commercial plantation area was 1.93 M hectares (ha) in 2018, of    Rotation ages in Radiata pine plantations range between 25 and 40 years.
+                     which about half were softwood species (1.04 M ha, dominated by              These plantations are thinned 2–3 times during the rotation age, and in
+                     Pinus radiata) and half hardwood species (0.9 M ha, dominated by             some cases, trees are also pruned to produce high-value clear logs. At
+                     Eucalyptus globulus and Eucalyptus nitens) (ABARES 2019). The primary        the end of the rotation, the tree size ranges between 0.8 and 1.5 m3.
+                     purpose of commercial plantation forestry is wood production.              Rotation ages in Eucalyptus globulus and Eucalyptus nitens plantations
+                   The total roundwood harvested totaled 32.9 M m3 in 2017–18,                    range between 10 and 15 years. These plantations may have an early
+                     corresponding to a 27.7% increase over 2008–09. About 86.7% of the           thinning during the rotation (Acuna et al. 2017). At the end of the
+                     logs harvested (28.8 M m3) occurred in plantations, and only 13.3% (4.1      rotation, tree size ranges between 0.5 and 1 m3, depending on on-site
+                     M m3) occurred in native forests. The roundwood harvested in                 quality.
+                     softwood plantations corresponded to 10.9 M m3 of sawlogs and 6.7 M
+                     m3 of pulpwood logs and other logs. Around 0.8 M m3 of sawlogs and
+                     10.5 M m3 of pulpwood logs and other logs were harvested from
+                     hardwood plantation estates (ABARES 2019).
+    Brazil         Brazil has 500 M ha of forested area, and 9.8 M ha are commercially          Typical Eucalyptus rotations are usually between 6–7 years, and the
+                     planted with hybrid Eucalyptus spp. and Pinus spp. FSC, PEFC, and ISO         national MAI (mean annual increment) of these plantations is 35.3 m3
+                     certifications cover 6.7 M ha of these plantations SNIF (Boletim SNIF         ha−1 year−1.
+                     2018). Eucalyptus plantations contribute 1.2 % of the Brazilian GDP,       Coppice regeneration in Eucalyptus plantations is an economically viable
+                     with gross revenues of R$ 244.6 billion (49 billion USD) (IBA Relatório       alternative to replanting in Brazil, even though it yields only 70 % of the
+                     2022).                                                                        original stand volume (Guedes et al. 2011).
+    South East     The rate of Eucalyptus spp. plantation establishment has increased sharply   Eucalyptus is mainly used as a raw material for pulp and paper industries,
+      Asia           in the past decade. The overall plantation area in the region exceeds 10      sawn timber, veneer, and wood chips, especially in Thailand, Vietnam,
+                     M ha.                                                                         Malaysia, China, and India Eucalyptus is generally grown in plantations
+                   Teak (Tectona grandis) is one of the most important tropical timber             (blocks, along roadsides, along canals, or on the border of paddy fields),
+                     species in natural forests and plantations.                                   with 5–10 years rotation, depending on the end-use product, the
+                   Rubberwood (Hevea brasiliensis) offers the most attractive and readily          intensity of management/silviculture, soil fertility, and clone selection.
+                     available wood-based resource for biobased feedstocks from                    The standing volume at the harvesting time ranges between 50 and
+                     plantation forestry in Thailand. In 2014, the rubberwood plantation           100 m3 ha−1. Typical assortments are logs extracted from stems for
+                     area was 2.75 M ha, and the majority of the plantation (70%) is located       different uses, including sawlogs, veneer logs, pulpwood, and residues
+                     in the Southern part of Thailand. The total Rubberwood production is          for bioenergy use. Teak is commonly used in manufacturing outdoor
+                     approximately 5 Million t year−1. Smallholders own a large proportion         furniture, boat decks, construction, indoor flooring, countertops, and as
+                     of mature rubber plantations.                                                 a veneer for indoor finishing. Initially, the rotation was 80 years for teak,
+                                                                                                   but recently, it has been shortened to 20–40 years, depending on the
+                                                                                                   region. Teak plantations require thinning to remove poorly formed
+                                                                                                   trees and to reduce the overall stand density to the final harvest (200 to
+                                                                                                   300 trees/ha). In Thailand, two thinnings are usually conducted
+                                                                                                   between 15 and 25 years; the final harvest is at 30 years. The
+                                                                                                   rubberwood trees have a rotation period of 25–30 years. After latex
+                                                                                                   production declined, rubber trees were cut down. Now, wood from
+                                                                                                   rubber trees, apart from harvesting the latex, is used as timber and fuel.
+    European       Hybrid poplar (Populus x Euroamericana) plantations represent a              Poplar is generally grown in industrial plantations, established at final
+      poplar         traditional crop and a strategic fiber source in many European countries      density and clearcut after 7 to 30 years, depending on climate, soil
+                     (Britt 2000), Cardias-Williams and (Thomas 2006), as well as in the           fertility, varietal (or clone), and product target (Cogliastro et al. 1997).
+                     temperate regions of North America and Asia (Heilman 1999), (Sedjo            Intermediate rotations of 10 to 15 years are typical in the
+                     1999). China, France, India, Italy, and Turkey each already produce over      Mediterranean, where poplar plantations are geared to support a
+                     1 M m3 of poplar wood (IPC 2008).                                             thriving veneer industry (Hongyuan 1992), (Castro and Zanuttini 2008).
+                                                                                                   Central Europe’s most extended rotations are typical in countries such
+                                                                                                   as Belgium and France, where poplar is also used for veneer and
+                                                                                                   sawlog production (Cuchet et al. 2004). Growth rates vary between 15
+                                                                                                   and 45 m3 ha−1 year−1, resulting in a stand stocking at harvest that
+                                                                                                   ranges from 200 to over 600 m3 ha−1 (Picchio et al. 2008). Most
+                                                                                                   plantations are designed to deliver high-quality timber, so value
+                                                                                                   recovery is often a critical issue. Shorter rotations generally apply to
+                                                                                                   those stands exclusively designed for pulp production, once popular in
+                                                                                                   North America (Spinelli et al. 2008) and now spreading in Eastern
+                                                                                                   Europe (Jansons et al. 2014).
+    Iberian       In Europe, the Iberian Peninsula is the region with the highest               E. globulus plantations in the Iberian Peninsula are internationally
+       Eucalyptus    concentration of Eucalyptus plantations, comprising an area (mostly E.        recognized for their good yields. Annual volume increments can reach
+                     globulus) with around 620,000 ha in (Spain MAPA 2020) and 845,000 ha          50 m3 ha−1 year−1, with averages ranging between 7 and 30 m3
+                     in Portugal (ICNF 2019).                                                      ha−1year−1 (Muñoz 2007); optimal rotations range between 8 and 12
+                  The harvest levels of Eucalyptus have increased by around 3 M m3 (with           years when trees are grown for the production of cellulose pulp
+                     bark) in the last ten years (from ca. 4 to ca. 7 M m3). According to the      (Rodriguez and Borges 1999).
+                     latest Spanish Forest Statistics Yearbook (Anuario de Estadística
+                     Forestal 2019), which compiles data collected in 2017, 86% of the
+                     harvest of evergreen species corresponded to Eucalyptus spp. The
+                     volume stock of E. globulus, E. camaldulensis, and E. nitens accounted
+                     for 79.6 M m3, 5.5 M m3, and 1 M m3, respectively. These stocks are
+                     concentrated primarily in the northwest regions of Spain.
+                                                                                                                                                                     (Continued)
+                                                                                                       INTERNATIONAL JOURNAL OF FOREST ENGINEERING                          5
+
+
+Table 2. (Continued).
+                                             Regional context                                                    Cultivation schemes and products
+ South Africa  The 1.21 Mha of South African plantations only accounts for 1% of the           Rotation lengths differ significantly depending on management
+                  country’s total land area (FSA 2017). Of the 1.21 Mha, softwoods (i.e.         objectives. Softwood structural timber is grown between 20 and 30
+                  Pinus spp.) total about 619.000 ha, while the remaining area consists of       years before clear felling with at least three selections, thinning, and
+                  hardwoods (i.e. Eucalyptus and Acacia spp.). Of the total plantation           pruning during their lifetime. A final thinning will reduce the stem
+                  area, 57% is managed for pulpwood, 38 % for structural timber, 3% for          count to approximately 250 to 350 stems ha−1. The final volumes for
+                  mining timber, and 2% for other purposes (FSA 2017). The total                 these stands are 250 to 450 m3 ha−1 of standing biomass at clear
+                  plantation round wood production during 2016/2017 was 18.3 Mm3, of             felling.
+                  which 37% was softwood and 63% hardwood. Total plantation                    Hardwood pulpwood, in contrast, is clear-felled between 10 to 15 years
+                  roundwood sales were R10.1 billion (ca. 500 M USD) for the same                (site dependent) (ca. 125–150 m3 ha−1), and softwood pulpwood felled
+                  period (FSA 2017). Of the 619,000 ha of softwood, 74% is managed for           at around 15 years (at ca. 120 to 150 m3 ha−1). There is a hardwood
+                  structural saw timber and 26% for pulpwood production. In contrast,            structural production process, and the rotation ages around 25 years.
+                  around 87% of all the hardwood volume ends up in the pulp mills in
+                  South Africa. The pulp and paper industry consumes approximately
+                  66% of all fiber supplied by the commercial forest industry in South
+                  Africa (FSA 2017).
+ United States Plantation forestry is minimal in the US since only approximately 11% of Pine plantations are harvested at 15–30 years for roundwood logs.
+                  the timberland is planted (22 M ha). Most of the planted forest in the         Eucalyptus and poplar plantations for pulpwood chips are harvested
+                  US is in the southern US states (67%-14.5 M ha). To a large degree,            after 6–10 years. Hybrid poplar plantations in the Pacific Northwest are
+                  actively managed plantations are privately owned (Stanturf and Zhang           mostly harvested at ages not exceeding 15 years for sawlogs and
+                  2003). In the southern US, plantations are mostly pines, comprising            pulpwood chips, as a more favorable regulatory environment for
+                  loblolly pine (P. taeda) in the coastal plains; slash pine (P. elliottii) in   intensive management and tax advantages.
+                  Florida and adjacent states; and increasingly longleaf pine (P. palustris)
+                  for restoration. In the western US, west of the Cascade Mountain range,
+                  Douglas-fir (Pseudotsuga menziesii) plantations are dominant. In the
+                  northern and midwestern states of the US, native Eastern cottonwood
+                  (Populus deltoides) is the fastest-growing tree. Interest in Aspen for
+                  fiber production has led to an interest in hybrid poplar in the Lake
+                  States, especially Minnesota. Eucalyptus plantations are primarily
+                  located in northern California. In Maine, hybrid larch (Larix spp.) was
+                  planted by one company for several years (Stanturf and Zhang 2003).
+
+
+
+
+systems, their performances, and typical costs (Table 3) as                           large as 2.0 m3 in Australia. At harvest time, the stem volume of
+provided by the experts involved in the benchmarking study.                           Poplar for pulpwood production in the US is similar to that of
+It complements the figures reported in Table A1, relying on                           Eucalyptus. In contrast, a stem volume of approximately 1.0 m3
+expert knowledge.                                                                     is cut when Poplar is used to produce veneer, sawlogs, and
+                                                                                      pulpwood in Europe.
+
+Benchmarking harvesting conditions in industrial
+plantations                                                                           Benchmarking operational productivity
+Timber from Eucalyptus plantations is mainly destined for pulp­                       The productivity of harvesters is significantly correlated with
+wood production. Their rotation length (3–15 years) is generally                      stem volume (r = 0.766, p = 0.003) (Figure 3). The highest
+shorter than that of Pine, which can produce both sawlogs and                         productivity is observed with the large stems in Australian
+pulpwood (14–40 years) (Figure 1). Poplar rotations are between                       pine plantations, where a single grip harvester can produce
+10–23 years if aimed at a mix of different assortments (e.g. in                       more than 100 m3 PMH−1. Similar productivity is also
+Italy). Yield from plantations ranges from 50 to 700 m3 ha−1.                         observed in South African pine operations. In contrast, lower
+Generally, the harvest volume correlates with rotation length (r                      harvester productivity is observed in Eucalyptus plantations,
+= 0.568, p = 0.034). However, it is interesting to note the difference                which results from the harvest of smaller stem volumes; in this
+in the main annual increment (MAI) between Eucalyptus (33 m3                          case, a productivity of 50 m3 PMH−1 is achievable for stem
+ha−1 year−1) and Pine (21 m3 ha−1 year−1) in Brazil. This can be                      volumes of 0.5 m3. A primary difference between the use of
+explained by factors such as planting densities, site differences,                    harvesters in Eucalyptus and pine plantations is that, in the
+and silviculture management between the two species in the                            former case, the machine is also used for debarking pulpwood
+various countries. The lowest harvest volume per hectare was                          at the stump, while in pine operations, debarking is usually
+observed in Eucalyptus plantations in East Asia, where the volume                     performed at mills. Under the considered range of conditions,
+usually remains under 100 m3 ha−1 due to the high demand for                          productivity increased at a rate of 4.2 m3 PMH−1 per 0.1 m3 of
+industrial raw materials in that region.                                              stem volume under a linear modeling approximation.
+    The mean stem volume at harvest is also correlated with                              The productivity of feller-bunchers weakly correlates with
+rotation length (r = 0.720, p = 0.001) (Figure 2). The stem                           stem volume (r = 0.367, p = 0.330). It is generally double that of
+volume of Eucalyptus plantations is generally lower than                              harvesters, exceeding 100 m3 PMH−1 in most pine operations
+0.5 m3 tree−1, whereas pine is generally higher. This is mainly                       compared to single-grip harvesters. Relatively high productiv­
+due to longer pine rotation lengths to produce high-value pro­                        ity is observed in stem volumes below 0.5 m3 in Eucalyptus
+ducts (e.g. sawlogs, veneer logs, etc.), resulting in stem sizes as                   plantations (Figure 4). The higher productivity of feller-
+                                                                                                                                                                                                                                        6
+
+
+
+
+Table 3. Harvesting systems, productivity and costs ported by the regional experts.
+                                                            Harvesting systems                                                                                        Productivity and Costs
+                                                                                                                                                                                                                                        F. DI FULVIO ET AL.
+
+
+
+
+ Australia      Most harvesting operations are conducted on relatively flat terrain with maximum slopes that do not The cost of the most common harvesting systems usually ranges between 11.5 and 23.6 USD/m3 (Annex
+                  exceed 15–20%; therefore, they are predominantly harvested with ground-based equipment. Cable             1). These costs depend on several factors, including tree size, tree form and site quality.
+                  logging or winch-assisted operations are less common and account for less than 10% of the total log
+                  harvest. FT, CTL, and in-field chipping (IFC) are the three major harvesting systems. The FT and CTL
+                  systems are the predominant systems in Eucalyptus globulus, Eucalyptus nitens and Radiata pine
+                  plantations, while IFC is the predominant system in Eucalyptus globulus plantations (Lambert et al.
+                  2006) (Annex 1). The CTL system is the most common in Radiata pine operations. The harvester-
+                  processors cut about six to eight log types during harvesting, including 3.7, 4.9, 5.5, and 6.1 m long
+                  sawlogs and 2.4–3.6 m long pulpwood logs. Onboard computers installed on harvesters are
+                  widespread in Radiata pine operations to collect standard forest production data StanforD data
+                  (Strandgard et al. 2013), (Skogforsk 2014) for optimizing cross-cutting and maximizing the value
+                  recovery from the log types cut during harvesting. CTL is preferred in Radiata pine operations where
+                  the mix of products is complex (i.e.> 10 log assortments). For example, this is the case when tree size
+                  is relatively small (< 0.5 m3), when tree quality is poor (bad tree form and high occurrence of
+                  branches), or when site fertility is poor. The CTL system is preferred to allow nutrients to remain on
+                  the site. The FT and the CTL systems are popular in Eucalyptus globulus and Eucalyptus nitens
+                  operations (Acuna et al. 2017), (Ghaffariyan et al. 2019). Harvesters and processors cut short (about 5
+                  m) and long (about 10 m) pulpwood logs during harvesting. Onboard computers installed in
+                  harvesters are rarely used in these hardwood operations, but some companies are starting to install
+                  onboard computers to collect StanforD data. The IFC operations in Australia are conducted on flat
+                  areas where operating space for locating the DDCs (delimber-debarker-chipper) landings is not a
+                  limitation. Woodchips are hauled to ports or static chip mills, whereas logging residues are either
+                  returned to the stump on poor-quality sites or chipped and sold as energy biomass on good-quality
+                  sites (Acuna et al. 2012).
+ Brazil         As the area of planted forests increased in Brazil, their silvicultural mechanization intensified, and    During the first rotation of clear-cuts on flat terrain, a harvester produces between 19 and 31 m3 PMH−1,
+                  harvesting equipment became larger and heavier (Suzuki et al. 2014); hence, harvesters have been          and forwarder productivity varies between 26 and 36 m3 PMH−1. The harvesting and forwarding
+                  replaced by feller-bunchers, which are more cost-effective in tree cutting (Bertin 2010). (Lopes and      hourly operational costs (i.e. in April 2018) are described by (Carvalho et al. 2018) to be respectively
+                  Pagnussat 2017) reported on the influence of technology, operator training, population conditions,        ca. 90 USD SMH−1 and 73 USD SMH−1. Thus, the cost of the harvesting system for logs at the roadside
+                  mechanical availability, and operational efficiency in Brazilian plantations.).                           would vary between 4.9 and 7.5 USD m−3. The feller-buncher operation is suitable for Eucalyptus
+                                                                                                                            coppice because it handles multiple stems from each stump. For example, a eucalyptus feller-buncher
+                                                                                                                            operation in Brazil, on flat terrain, reaches productivity between 40 and 50 m3 PMH−1, with
+                                                                                                                            operational costs around 1.00 USD m−3 (i.e. with average productivity of 48 m3 PMH−1) (Nascimento
+                                                                                                                            et al. 2011). (Miyajima et al. 2016) show that the slope is a limiting factor; on average, the feller-
+                                                                                                                            buncher productivity was 124 m3 PMH−1 for undulating slopes and up to 142 m3 PMH−1 on flat
+                                                                                                                            terrain. For the skidder operation, (Lopes et al. 2014) indicate an average cost of 1.60 USD m−3 and
+                                                                                                                            productivity varying from 59 to 62 m3 PMH−1. However, it is still necessary to de-branch, debark, and
+                                                                                                                            cut-to-length the felled and skidded trees using a forestry wood processor, which adds an extra 2.13
+                                                                                                                            USD m−3 (Simões et al. 2014).
+                                                                                                                                                                                                                          (Continued)
+Table 3. (Continued).
+                                                          Harvesting systems                                                                                       Productivity and Costs
+ South East     Eucalyptus: The dominant logging system consists of semi-mechanized harvesting operations. It               Eucalyptus: The mean felling and processing productivity are 0.5–4 m3 SMH−1 for the semi-mechanized
+   Asia           includes essential manual work, where felling and crosscutting are the only motor-manual activities.        system (Manavakun 2014), (Engler et al. 2016), with costs per product unit that range between 1.8
+                  Motor-manual felling is performed by one chainsaw operator who is exclusively responsible for felling       and 5 USD m−3. The productivity of a fully mechanized harvesting system varies between 50–60
+                  trees and cross-cutting the stem sections. Next, a group of workers performs de-branching with a            tonne day−1, depending on extraction distance.
+                  bush knife. Sectioning or marking assortments are manual operations performed by only one worker            Teak: In terms of productivity according to work phase can be summarized that felling by chainsaw
+                  on-site. Subsequently, crosscutting is performed again by a chainsaw operator. Several workers carry        25–30 m3 PMH−1, skidding by elephant 5–10 m3 PMH−1, skidding by farm tractor 10–25 m3 PMH−1,
+                  the logs by hand and pile them at the harvesting site. Loading concludes the harvesting operation           skidding by skidder 15–20 m3 PMH−1, and primary transportation with self-loading truck 7–8 m3
+                  and is carried out manually by a group of workers or with a front-end grapple loader. The fully             PMH−1 (Rianthakool et al. 2018). The average harvesting cost is about 8–11 USD m−3, depending on
+                  mechanized harvesting operation involves a small harvester and farm tractor with a timber trailer. The      the equipment used (Rianthakool et al. 2018).
+                  harvester felled, delimbed, measured the stems, and cut them into different assortments specified by        Rubberwood: Productivity of tree felling by chainsaw varies between 20–60 m3 PMH−1, delimbing 7–
+                  the mill, and the timber trailer attached to a farm tractor transported the logs to the roadside. The       21 m3 PMH−1, cross-cutting 5–11 m3
+                  loading of vehicles for long-distance transportation to mills is performed with a front-end grapple         PMH−1, stacking 9–21 m3 PMH−1, manual loading 3–6 m3 PMH−1 and mechanized loading 16–22 m3
+                  loader. However, fully mechanized harvesting is limited and is usually applied only in large-scale          PMH−1 (Rianthakool and Sakai 2014).
+                  operations because of the high initial investment.Teak: the logging method that is commonly applied
+                  is the TL method. In this method, trees are felled, delimbed, and topped at the stump area by a
+                  chainsaw; then, trees are skidded to the roadside by an elephant, farm tractor, or skidder, depending
+                  on slope limitation and available resources. A self-loading truck or a front-ended grapple loader
+                  performs the primary transportation of logs. At log the landing, trees are crossed cut into 3, 4, and 6 m
+                  long logs and stacked into a pile for auction.Rubberwood: harvesting in Thailand applies both FT and
+                  CTL methods. Harvesting techniques can be divided into 1) cutting above the stump and 2) uprooting
+                  the stump. For the FT method, trees are felled by chainsaw, extracted by tractor or elephants to the
+                  roadside, and then trees are processed into short logs (2 m) and loaded onto the truck either by
+                  staffing or mechanized loading by an excavator. Where CTL is implemented, trees are pushed and
+                  pulled by a modified bulldozer or excavator until their stumps are uprooted. Then, it was followed by
+                  delimbing, cross-cutting with a chainsaw at the stump area, manually stacking, and mechanized
+                  loading to the truck by excavator or front-ended grapple tractor.
+ European       Harvesting techniques vary from place to place, but they all reflect the favorable work conditions offered Mean felling and processing productivity is 6 and 9 m3 SMH−1, respectively, for the motor-manual and
+   poplar         by clear-cuts in flat terrain where poplar plantations are established (Picchio et al. 2008). When good-    semi-mechanized systems, the latter consisting of mechanical felling by feller-buncher followed by
+                  quality stems are appropriately merchandied, the yield of high-value veneer logs often exceeds 50%          motor-manual processing (Spinelli et al. 2011a). In contrast, fully mechanized felling and processing
+                  of the total volume. For that reason, most owners still look at mechanized cut-to-length harvesting         will raise productivity to over 20 m3 SMH−1 (Puttock et al. 2005). Poplar plantations offer such
+                  with suspicion and favor motor-manual processing, which they deem more accurate (Marshall et al.            favorable conditions to mechanized harvesting that they are the only forest environment in Central
+                  2006). In that case, trees are felled motor-manually or with a feller-buncher, and they are preferably      Europe where harvesters can reach the same high-productivity levels as Nordic countries (Spinelli et
+                  processed with chainsaws before or after extraction to the roadside, depending on terrain conditions.       al. 2010). Previous studies suggest mechanized processing does not significantly reduce value
+                  In summer, many cutovers can be accessed with trucks; hence, extraction is unnecessary. The large           recovery (Spinelli and Magagnotti 2011b). Depending on tree size and harvesting technique, felling
+                  trees obtained from the older Central European stands may exceed the size limits of mainstream CTL          and processing costs will vary between 3 and 17 USD m−3. In addition to this cost, an extraction cost
+                  equipment and are processed motor-manually.                                                                 of approximately 11 USD m−3 should be added. Concerning shorter-rotation stands established for
+                                                                                                                              pulpwood production, abundant data are available for North America (Spinelli and Hartsough 2006).
+                                                                                                                              However, very little productivity data is available from Europe, where these plantations are still new
+                                                                                                                              and are only coming to the harvesting age. Early experiences suggest that an effective harvesting
+                                                                                                                              technique consists of mechanical felling and bunching, skidding to the roadside with a grapple
+                                                                                                                              skidder or an adapted farm tractor, and processing with a grapple saw or a slasher. Correctly
+                                                                                                                              deployed, this system incurs a total harvesting cost of 20 USD m−3 (Spinelli et al. 2012).
+                                                                                                                                                                                                                          (Continued)
+                                                                                                                                                                                                                                        INTERNATIONAL JOURNAL OF FOREST ENGINEERING
+                                                                                                                                                                                                                                        7
+                                                                                                                                                                                                                                      8
+
+
+
+Table 3. (Continued).
+                                                           Harvesting systems                                                                                      Productivity and Costs
+ Iberian       A semi-mechanized system is usually employed for harvesting Eucalyptus stands destined for producing A wide range of productivity and costs can be observed in the region, depending on the level of
+    Eucalyptus    paper pulp; thus, the felling and cutting of the stems into logs is performed manually with a           mechanization, extraction distances, and scale of the operations.
+                  chainsaw, followed by mechanized processing with a processor’s head. The stems are usually cut into
+                  2.5 m logs and then stacked for later transport to the loading area by a forwarder. A two-pass
+                  harvesting system is quite popular in Spain, where forestry residues are collected separately after the
+                                                                                                                                                                                                                                      F. DI FULVIO ET AL.
+
+
+
+
+                  felling and cutting of stems have been completed. In the second phase, the residual forest biomass
+                  (branches, leaves, and bark that remain on the ground after removing stems) is compacted and
+                  bundled by a dedicated bundling machine. Bundles are then extracted by forwarders to the loading
+                  area and transported to end customers by trucks. Once at the factory, the bundles are chipped and
+                  used to produce the electricity required in the pulp production process or sold as a surplus to the
+                  National Electricity System (Sánchez-García 2016). In some areas, productivity studies are underway
+                  to explore efficiency gains and safety improvements that may result from fully mechanized systems.
+                  These systems include a harvester for felling the trees and processing the stems, usually cut into logs
+                  of over 5 m.
+ South Africa Regarding harvesting systems applied in South Africa, a study by (Wenhold et al. 2019) showed that The productivity of the different operations ranges from 25 m3 PMH−1 for semi-mechanized systems to
+                  57% of operations are fully mechanized, and the rest are motor-manual based for all species and         85 m3 PMH−1 and more for feller-buncher and grapple skidder systems. In mechanized CTL
+                  products. All hardwood pulpwood is debarked in the field, whether manually or mechanically.             operations, productivity in clear felling (average tree size of about 0.7 to 1.0 m3 and species
+                  Regardless of the product, all softwoods are debarked at mill sites using various mechanical            dependant), is between 50 and 80 m3 PMH−1 for a harvester and 25 to 35 m3 PMH−1 for a forwarder.
+                  equipment. Mechanized CTL harvesting systems are becoming more prevalent in South Africa, but TL        The cost/m3 is between R125/m3 (7 USD) and R150/m3 (8 USD), but the benefits of mechanized over
+                  systems will remain in use for the foreseeable future, particularly in softwood pulp, veneer, and       motor-manual remain improved operational safety, improved product quality, and potentially higher
+                  structural timber harvesting, where no debarking in-field is necessary. These TL systems mainly         rates of production associated with mechanization. These increases in productivity range from 9 to 12
+                  comprise motor-manual felling in tandem with cable skidders or being fully mechanized, including        m3 PMH−1 for the harvester and 18 to 22 m3 PMH−1 for forwarding (Hogg et al. 2011).
+                  feller-bunchers and grapple skidders. There is a 35%:65% split between motor-manual and                 However, the emergence of excavator-based harvesters as potentially suitable alternatives to
+                  mechanized systems for hardwood pulpwood operations. The larger pulp companies have moved               purpose-built machines has opened a debate about the most suitable cost and productivity within
+                  firmly to mechanization, while smaller landowners still use the more conventional motor-manual          the South African forestry environment and context. The number of excavator-based machines in
+                  with manual debarking, stacking, and loading for secondary transport. The decision is primarily driven  South Africa and worldwide attests to their suitability in easy terrain, where leveling technology is not
+                  by the availability of capital to purchase mechanized systems and an economy of scale.                  required. However, in steeper terrain, the outcomes are not that clear. A study in hardwood
+                                                                                                                          pulpwood stands indicates that the productivity of an excavator-based harvester decreases by
+                                                                                                                          0.048m3 PMH−1 for every 1% increase in slope (Ackerman et al. 2018). Purpose-built machines are not
+                                                                                                                          significantly affected by the slope. A purpose-built harvester was found to have a higher mean
+                                                                                                                          productivity (16.24 m3PMH−1) greater than the excavator-based machine (13.00 m3 PMH−1), but this
+                                                                                                                          extra productivity came at a price as the excavator-based machine was more economical per cubic
+                                                                                                                          meter. The mean harvest cost for the purpose-built machine was 6.60 USD m−3, while the excavator-
+                                                                                                                          based machine achieved a mean cost of 5.06 USD m−3 (Ackerman et al. 2018).
+ United States The systems applied in the loblolly pine plantations use traditional FT harvesting with a chainsaw or Results of the (Conrad et al. 2013) study described conventional roundwood (only tree-length) southern
+                  feller-buncher, followed by skidders, loaders, and delimbers. A recent study by (Conrad et al. 2013)    pine commercial clearcut extraction system to be at 70.6 m3 PMH−1, with an average cut and load
+                  described a harvest system of fiber in a loblolly pine (Pinus taeda L.) plantation. The study in the    cost of 7.95 USD m−3 (for roundwood loaded on truck). In the integrated option (roundwood and
+                  Coastal Plain of North Carolina assessed harvesting productivity and costs with and without biomass     chips), the system productivity rate was 58 m3 PMH−1 (49.3 t PMH−1) for roundwood extraction and
+                  energy extraction. Feller-buncher systems are operated in eucalyptus plantations in California          17.9 m3 PMH−1 (15.2 t PMH−1) of woodchips for energy (Conrad et al. 2013). A similar study, in 28–33-
+                  (Spinelli et al. 2002). The cost of recovering sawlogs from pulpwood-sized plantations and              year-old clearcut pine plantations (Pinus elliottii and Pinus taeda) was conducted in Georgia by Baker
+                  cottonwood short-rotation farms was investigated in the past (Spinelli et al. 2008). The harvesting     et al. (2010), in integrated harvesting of roundwood and woodchips with similar productivity (42–68
+                  system used was the full-tree system, including a manual selection of stems suitable for sawlogs,       m3 PMH−1) and costs for roundwood (6.9 USD m3). Eucalyptus: Felling and bunching productivity
+                  mechanical felling, and bunching, forwarding to a landing, mechanized processing, and feeding into      ranged from 24 to 32 m3 PMH−1. The productivity of the skidder/loader was 48–93 m3 PMH−1, and the
+                  a chain-flail delimber-debarker-chipper (DDC) of pulpwood size stem sections.                           delimber-debarker-chipper was 30–38 m3 PMH−1. The cost of the whole system ranged between 8-
+                                                                                                                          and 13 USD m−3, depending on the tree size (Spinelli et al. 2002). Cottonwood: In the case of
+                                                                                                                          pulpwood production, productivity for a feller-buncher reached 42 m3 PMH−1, 92 m3 PMH−1 for
+                                                                                                                          forwarding, 17 m3 PMH−1 for processing and 60 m3 PMH−1 for the DDC. Trees/tree sections with
+                                                                                                                          smaller diameters are sorted into pulpwood production. Manual selection of trees suitable for
+                                                                                                                          sawlogs significantly increased total costs, representing 73% of the additional costs for sawlogs,
+                                                                                                                          compared to the exclusive production of pulpwood (Spinelli et al. 2008).
+                                                                                                                                          INTERNATIONAL JOURNAL OF FOREST ENGINEERING   9
+
+
+                                                              800
+
+                                                              700
+
+                                                              600                                                     BRA Pi
+
+
+
+
+                                   Removal volume (m3 ha-1)
+                                                              500
+                                                                                                            ITA Po                                  AUS Pi
+                                                              400
+                                                                                                                                 ZAF Pi
+                                                              300                    AUS Eu        ESP Eu
+                                                                          BRA Eu
+                                                              200                                  MYS Ac                US Pi
+                                                                                 ZAF Eu
+                                                                        CHN Eu
+                                                              100                                                                          THA Tk
+                                                                                                   PRT Eu
+                                                                                          THA Eu
+                                                                0
+                                                                    0            5        10         15       20      25                  30        35       40   45
+                                                                                                            Rotation (year)
+
+Figure 1. Removal volume as a function of rotation length (Pi = pine, Eu = Eucalyptus, Po = Poplar, Ac = Acacia, Tk = Teak). Dots and grey lines represent the average
+value and the variation range between x and y axes, respectively. (Country codes in the figure: AUS = Australia, BRA = Brazil, CHN = China, ESP = Spain, ITA = Italy, MYS
+= Malaysia, PRT = Portugal, THA =Thailand, US = United States, ZAF = South Africa).
+
+
+
+
+                                                              2.5
+
+                                                              2.3
+                                                                                                                                                    AUS Pi
+                                                              2.0
+                                    Stem volume (m3)
+
+
+
+
+                                                              1.8
+
+                                                              1.5
+
+                                                              1.3
+                                                                                                            ITA Po     BRA Pi
+                                                              1.0
+                                                                                            MYS Ac
+                                                              0.8                                               ZAF Pi                     THA Tk
+                                                                                      US Eu
+                                                              0.5         BRA Eu                     AUS Eu
+                                                                                                   ZAF Eu
+                                                              0.3        THA Eu                                          US Pi       THA Rb
+                                                                                                PRT Eu
+                                                                        CHN Eu                         ESP Eu
+                                                                                          US Po
+                                                              0.0
+                                                                    0            5         10        15         20         25             30        35       40   45
+                                                                                                     Rotation (Year)
+Figure 2. Individual stem volume as a function of rotation length (Pi = Pine, Eu = Eucalyptus, Po = Poplar, Ac = Acacia, Tk = Teak, Rb = Rubberwood). Dots and grey lines
+represent the average value and the variation range in the x and y axes, respectively. (Country codes in the figure: AUS = Australia, BRA = Brazil, CHN = China, ESP =
+Spain, ITA = Italy, MYS = Malaysia, PRT = Portugal, THA =Thailand, US = United States, ZAF = South Africa).
+
+
+bunchers, when compared to harvesters, is explained mainly by                                                        86.0 m3 PMH−1, with the highest productivity reached in the
+the fact that feller-bunchers only fell and bunch trees, without                                                     case of Australian pine operations (Figure 5). Generally, pro­
+incurring extra processing time associated with delimbing,                                                           ductivity tended to be correlated with removal volume per
+debarking and crosscutting trees. Multiple stems offset the                                                          hectare (r = 0.607, p = 0.148) and inversely correlated with
+impact on productivity in smaller tree volumes, although this                                                        extraction distance (r = −0.600,p = 0.207). However, the rela­
+advantage is lost when the felling head can not accumulate                                                           tions are not statistically significant, given the limited number
+multiple stems. This is the case, for example, of feller-bunchers                                                    of observations and the high background noise originating
+operating in poplar plantations in Italy, where stems need to be                                                     from other influencing factors often excluded from the
+laid down carefully for further grading to minimize losses and                                                       measurements.
+maximize stem value recovery.                                                                                            Depending on factors such as extraction distance, number
+   The productivity associated with the extraction of round­                                                         of log grades, and slope, a CTL system might be balanced with
+wood with a forwarder in CTL systems varied between 9.0 and                                                          one harvester and one forwarder. In some cases, for example,
+10         F. DI FULVIO ET AL.
+
+
+                                                                   160
+
+                                                                   140
+
+                                                                   120
+                                                                                                                                                     AUS Pi
+
+
+
+                                    Productivity (m3 PMH-1)
+                                                                   100
+
+                                                                           80
+                                                                                                            ZAF Pi
+                                                                           60
+                                                                                                                       ITA Po
+                                                                           40         AUS Eu
+                                                                                     BRA Eu                            BRA Pi
+                                                                           20
+                                                                                     PRT Eu ZAF Eu
+                                                                            0
+                                                                                0.0             0.5              1.0                1.5        2.0              2.5    3.0
+                                                                                                                       Stem volume (m3)
+Figure 3. Harvester productivity in Eucalyptus (Eu), Pine (Pi), and Poplar (Po) plantations as a function of stem volume. Dots and grey lines represent the average value
+and the variation range in the x and y axes, respectively. (Country codes in the figure: AUS = Australia, BRA = Brazil, ITA = Italy, PRT = Portugal, ZAF = South Africa).
+
+
+                                                                            200
+
+                                                                            175
+
+                                                                            150
+                                                 Productivity (m3 PMH-1)
+
+
+
+
+                                                                            125                       US Pi                                            AUS Pi
+
+                                                                            100                                              BRA Pi
+                                                                                          AUS Eu              ZAF Pi
+
+                                                                                75
+
+                                                                                50                 BRA Eu
+                                                                                           US Po
+                                                                                25            US Eu
+                                                                                                                           ITA Po
+
+                                                                                 0
+                                                                                      0               0.5              1         1.5        2                    2.5    3
+                                                                                                                                         3
+                                                                                                                           Stem volume (m )
+Figure 4. Feller-buncher productivity in Eucalyptus (Eu), Pine (Pi), and Poplar (Po) plantations as a function of stem volume. Dots and grey lines represent the average
+value and the variation range in the x and y axes, respectively. (Country codes in the figure: AUS = Australia, BRA = Brazil, ITA = Italy, US = United States, ZAF = South
+Africa).
+
+
+when the productivity of the harvesters is much higher than                                                                         removal volume, bunch size (which affects the number of
+that of forwarders, more than one forwarder is required to                                                                          trees moved per trip), terrain conditions, and tree size (dia­
+maintain the balance of the system (e.g. Pine plantations in                                                                        meter and volume). Skidders are generally used for shorter
+South Africa and Australia). Long extraction distances reveal                                                                       extraction distances and carrying smaller payloads than for­
+that forwarders travel on forest roads to carry logs to unloading                                                                   warders. In the analyzed studies, the average overall extrac­
+areas (e.g. Spain) in some operations. In other cases, forwarders                                                                   tion distance was 248 m (min. 50 m, max. 705 m) for skidders
+are used to extract logs to the roadside, unloading points, and                                                                     and 380 m (min. 105 m, max. 200 m) for forwarders. Skidding
+load logging trucks.                                                                                                                productivity may reach maximum values generally higher
+   Skidder productivity is not significantly correlated with                                                                        than the ones observed for forwarders. Thus, the maximum
+removal volumes and extraction distances (p > 0.05), given                                                                          productivity of grapple skidders reached 120 m3 PMH−1 in
+the limited number of observations and the influence of                                                                             the US and South African Pine plantations. Grapple skidders
+other confounding factors (Figure 6). These factors include                                                                         generally work with feller-bunchers in FT systems. In some
+                                                                                                                                                    INTERNATIONAL JOURNAL OF FOREST ENGINEERING                    11
+
+
+                              100                                                                                                         140
+                               90
+                                                                        AUS Pi                                                            120
+                               80
+    Productivity (m3 PMH-1)
+
+
+
+
+                               70
+                                                                                                                                          100
+
+
+
+
+                                                                                                                Productivity (m3 PMH-1)
+                               60
+                                                            AUS Eu
+                               50                                       ZAF Pi                                                             80
+                                                                                                                                                              US Pi
+                                                                                                                                                                                   ZAF Pi
+                               40                  BRA Eu
+                                                                                                                                           60                             AUS Eu              BRA Pi
+                               30
+                                                                          ITA Po
+                                                                                                                                                                        BRA Eu
+                               20                                                                                                          40
+                                                               ESP Eu
+                               10                  PRT Eu
+
+                                0                                                                                                          20                  THA Tk
+                                    0     100       200       300       400      500   600     700   800
+                                                            Removal volume (m3 ha-1)                                                        0
+                                                                                                                                                0       100    200  300   400    500    600            700   800
+                              100                                                                                                                                Removal volume (m3 ha-1)
+                              90
+                                                                                                                                          140
+                                        AUS Pi
+                              80
+    Productivity (m3 PMH-1)
+
+
+
+
+                              70                                                                                                          120
+                              60
+                                             AUS Eu                                                                                       100
+                                                                                                                Productivity (m3 PMH-1)
+                              50
+                                         ZAF Pi
+                              40                                                                                                           80
+                                             ITA Po                                                                                                                   ZAF Pi         US Pi
+                              30
+                              20                                                                                                           60                    AUS Eu
+                                                             ESP Eu
+                              10                                                                                                                     BRA Pi
+                                             PRT Eu
+                                                                                                                                           40
+                               0
+                                    0             500         1000            1500      2000         2500
+                                                                                                                                           20
+                                                            Extraction distance (m)
+
+Figure 5. Forwarder productivity as a function of removal volume per hectare                                                                0
+(top) and extraction distance (bottom) in Eucalyptus (Eu), Pine (Pi), and Poplar                                                                0       100    200      300     400    500    600      700   800
+(Po) plantations. Dots and grey lines represent the average value and the variation                                                                                   Extraction distance (m)
+range in the x and y axes, respectively. (Country codes in the figure: AUS =
+Australia, BRA = Brazil, ESP = Spain, ITA = Italy, PRT = Portugal, ZAF = South                              Figure 6. Skidder productivity in Eucalyptus (Eu), Pine (Pi), and Teak (Tk) planta­
+Africa).                                                                                                    tions as a function of removal volume per hectare (top) and extraction distance
+                                                                                                            (bottom). Dots and grey lines represent the average value and the variation range
+                                                                                                            in the x and y axes, respectively. (Country codes in the figure: AUS = Australia, BRA
+                                                                                                            = Brazil, THA =Thailand, US = United States, ZAF = South Africa).
+cases (e.g. in the US, Pine plantations), their productivity is
+well balanced with that of a feller-buncher. In contrast, in
+other cases (e.g. Brazilian or Australian Eucalyptus planta­                                                felling in Iberia and Italian poplar trees’ felling-processing. The
+tions), it is significantly lower than for feller-bunchers,                                                 large variety of systems based on motor-manual operations
+requiring more than one skidder to maintain system balance.                                                 makes it difficult to compare them directly and perform statis­
+   Processor productivity varied between 5.0 and 139 m3                                                     tical analyses; however, the observations reported indicate their
+PMH−1. These machines generally work at landings in FT                                                      productivity level compared to mechanized systems.
+systems (feller-buncher, grapple/cable skidder). Productivity
+of processors is generally correlated with stem volume in the
+case of single stem handling (e.g. in pine plantations); however,
+                                                                                                            Benchmarking harvesting systems and their costs
+this was not the case when combining all the studies in the
+dataset (r= − 0.296, p = 0.628), given the considerable hetero­                                             Of the 85 observed harvesting systems, the majority (45) repre­
+geneity of working conditions (Figure 7).                                                                   sented CTL harvesting, followed by FT (35) and TL (5) harvest­
+   Motor-manual-based operations (motor-manual felling and                                                  ing. CTL was the dominant system observed in Europe and
+processing, manual stacking for tractor/trailer-based forwarding                                            East Asia. FT systems were the most frequent in the US.
+to roadside) generally have a productivity below 15 m3 PMH−1                                                Although CTL was the most frequently observed system in
+(Figure 8). The only case where they exceeded this threshold was                                            Brazil and South Africa, many cases dealt with FT. Similarly,
+in teak plantations in Thailand (tree felling only). In the same                                            CTL was the dominant system in pine plantations and FT in
+region (South-East Asia), the lowest productivity was observed                                              Eucalyptus plantations in Australia. TL systems were observed
+when operating with small stems in Eucalyptus plantations.                                                  in fewer cases and countries (South Africa, East Asia, and the
+Medium productivity levels were observed in Eucalyptus trees’                                               US) (Figure 9).
+12                                F. DI FULVIO ET AL.
+
+
+                                160                                                                           the US appear to be the most cost-competitive regions. In con­
+                                                                                                              trast, harvesting costs in Eucalyptus plantations in Iberia and
+                                140
+                                                                                                              Australia generally exceed 10 USD m−3, mainly due to difficult
+                                120                                                                           terrain/site conditions (Iberia) and high labor costs (Australia).
+                                                                                                              The highest costs are reported in operations that involve proces­
+     Productivity (m3 PMH-1)
+
+
+
+
+                                100                     BRA Eu
+                                                                                                              sing high-value stems (e.g. veneer logs), such as Poplar in Italy or
+                                                                                                              Paraserianthes in the Philippines.
+                                 80                                                                              A breakdown of the costs by operation in each harvesting
+                                                             US Pi
+                                                                                                              system reveals that felling and processing accounted for the
+                                 60
+                                                                         ZAF Pi                               largest cost share (generally over 50% of the total cost in CTL
+                                 40                                                                           systems) (Figure 11). This figure can increase to 80% in FT
+                                                         AUS Eu                                               systems, due to high processing costs. Processing costs increase,
+                                             ESP Eu
+                                 20           US Po
+                                                                                  ITA Po                      particularly with single stems (e.g. a slasher deck in South
+                                                                                                              Africa), and decrease when multiple stems are processed (e.g.
+                                  0
+                                      0      0.2       0.4       0.6   0.8   1    1.2       1.4   1.6   1.8
+                                                                                                              multi-stem processing of Eucalyptus in Brazil). Among mechan­
+                                                                   Stem volume (m3)
+                                                                                                              ized CTL systems, forwarding costs may exceed felling and
+                                                                                                              processing costs, mainly when logs are extracted over relatively
+Figure 7. Processor productivity in Eucalyptus (Eu), Pine (Pi), and Poplar (Po)                               long distances (e.g. in the Iberian Eucalyptus case). In contrast, it
+plantations as a function of stem volume. Dots and grey lines represent the
+average value and the variation range in the x and y axes, respectively.                                      remains under 50% of the total cost in plantations with shorter
+(Country codes in the figure: AUS = Australia, BRA = Brazil, ESP = Spain, ITA =                               extraction distances (Australia, Brazil, and South Africa).
+Italy, US = United States, ZAF = South Africa).
+
+
+                                                                                                              Discussion
+                                 35
+                                                                                                              Similarities and differences across regions and systems
+                                 30                                                                           This study gathered data from both literature and personal
+                                                                           THA Tk                             communications by experts to provide an overview of current
+                                 25
+      Productivity (m3 PMH-1)
+
+
+
+
+                                                                                                              harvesting systems and their performance in industrial planta­
+                                                                                                              tions. Based on this, it is possible to point out some similarities
+                                 20
+                                                                                                              and differences that are relevant to understanding current
+                                                                                                              trends and future evolution in the sector.
+                                 15
+                                                   THA Rb                ZAF Pi
+                                                                                                                 In terms of wood products, two extremes can be observed;
+                                                                                                              some systems aim at high-value recoveries and high fiber volume
+                                 10
+                                                                                                              recovery, as in poplar plantations in Italy (Spinelli et al. 2011)
+                                                                                   ITA Po
+                                          PRT Eu                                                              and the US (Spinelli et al. 2008), where specific quality require­
+                                  5
+                                             THA Eu                                                           ments need to be met (i.e. veneer, sawlogs, pulpwood products
+                                              CHN Eu                                                          combination). Accordingly, the harvesting systems in these
+                                  0
+                                      0      0.2       0.4       0.6   0.8   1    1.2       1.4   1.6   1.8   regions are designed to integrate motor-manual selection opera­
+                                                                   Stem volume (m3)                           tions (manual bucking of logs) with mechanized felling and
+                                                                                                              extraction. Similar trends can be observed in fully mechanized
+Figure 8. Productivity of motor-manual operations in Eucalyptus (Eu), Pine (Pi),                              systems in Australian pine plantations, where up to ten different
+Poplar (Po), Teak (Tk), and Rubberwood (Rb) plantations as a function of stem
+volume. (ZAF Pi = South Africa felling with chainsaw, ITA Po = Italy felling and                              products can be included in optimizing value recovery with on-
+processing with chainsaw, PRT Eu = Portugal felling with chainsaw, CHN Eu =                                   board computers.
+China felling and processing with chainsaw and manual extraction, THA Eu =                                       At the other end of the spectrum, it is the mass production
+Thailand felling and processing with brush saw and extraction with farm tractor,
+THA Tk = Thailand felling with chainsaw, THA Rb = Thailand felling and proces­                                of pulpwood, which is typical of Eucalyptus plantations that are
+sing with chainsaw). Dots and grey lines represent the average value and the                                  expanding in different regions. Here, it is theoretically possible
+variation range in the x and y axes, respectively.                                                            to maximize the level of mechanization and potentially apply
+                                                                                                              multiple stem handling systems. However, the degree of
+                                                                                                              mechanization is still governed by regional socio-economical
+    Based on studies published between 2010 and 2020, forest-to-                                              and local operational factors.
+landing harvesting and extraction costs are generally lower than                                                 Mechanized systems, which maintain high productivity and
+30 USD m−3 (Figure 10). The lowest harvesting costs (under 5                                                  minimize labor input, are generally preferred in most regions,
+USD m−3) are observed in Eucalyptus plantations in South-East                                                 regardless of labor cost (Australia, Brazil, Iberia, South Africa, US).
+Asia (China, Thailand), due to low labor costs of the motor-                                                     However, semi-mechanized systems, based on motor-man­
+manual based systems applied in these regions. Similar costs                                                  ual operations, are still applied in regions with relatively low
+were also achieved in Eucalyptus harvesting in Brazil due to                                                  labor costs and limited capital available for investment in
+high productivity in mechanized systems, high yields, and rela­                                               mechanized equipment. An example is Eucalyptus plantations
+tively low labor costs. After these two regions, South Africa and                                             in East Asia, where despite low productivity associated with
+                                                                                                             INTERNATIONAL JOURNAL OF FOREST ENGINEERING                   13
+
+
+                                                             25
+
+
+
+                                                             20
+
+
+
+
+                                Number of observations (N)
+                                                             15
+
+
+
+                                                             10
+
+
+
+                                                              5
+
+
+
+                                                              0
+                                                                  Australia   Brazil   East Asia European Iberian      South        US
+                                                                                                  Poplar Eucalyptus    Africa
+
+                                                                                          CTL    TL   FT
+
+Figure 9. Number of observations by harvesting system and study region.
+
+
+
+
+Figure 10. Regional harvesting costs at the roadside (felling, extraction to roadside, and stem processing) for the species included in the study (Eu = eucalyptus, Pi = Pine,
+Po = Poplar, Pa = Paraserianthes, Tk = Teak) during the period 2010–2020. Squares represent the average value; the grey lines are the cost variation ranges (min, max).
+
+
+manual/motor-manual work, costs per m3 are competitive and                                       larger companies prefer purchasing and retrofitting machinery.
+comparable to those achieved with fully mechanized systems                                       Similarly, in South Africa, motor-manual felling is still applied in
+applied in the other regions (Figure 10).                                                        small-scale operations, whereas fully mechanized systems are
+    General socio-economic conditions, development of the                                        applied in large-scale operations. Therefore, capital availability
+plantation industry, scale of operations, integration of forest                                  remains a pivotal factor regardless of regional economics.
+operations in the industry, and business size can influence the                                     In some very industrialized countries, like Italy or Spain,
+selection of equipment and systems in each region. Typical of                                    motor-manual felling in plantations is still a common prac­
+Brazil and Australia, purpose-built harvesters imported from                                     tice due to the relatively smaller scale of operations com­
+abroad by large-scale forest companies/contractors co-existed                                    pared to some other regions where the operation scale is
+with excavators acquired by smaller contractors on the local                                     relatively larger (Australia, Brazil). The ownership of single
+market and converted into forest harvesters by adding harvest­                                   small woodlots in Italy or Spain (e.g. <5 ha) can play a
+ing heads (also imported from abroad). This investment strategy                                  significant role in equipment selection, discouraging large
+allows small companies to reduce their investment effort, oper­                                  investments. The selection of smaller and more basic equip­
+ate at low hourly operational costs, and maintain high produc­                                   ment is also driven by local knowledge available for assis­
+tivity levels. It is also a sensible strategy wherever high import                               tance with specialized forest machinery. This can lead forest
+taxes are a reality (Seixas and Ferreira Batista 2012, 2014).                                    entrepreneurs to focus on small equipment or simpler sys­
+    A similar phenomenon can be observed in Thailand, where                                      tems based on conventional farm/construction machinery
+small contractors invest in labor-intensive operations, whereas                                  they are already familiar with.
+14        F. DI FULVIO ET AL.
+
+
+    In the US and Iberia, FT and CTL systems are the most                          highly structured (geometric layout) working environment typical
+common, consistent with the historical development of forest                       of industrial plantations has allowed achieving these high produc­
+harvesting systems in these regions (i.e. the US and Europe).                      tivity levels, even when using non-purpose-built equipment.
+In other regions, CTL and FT systems are observed to largely                       However, given the ongoing expansion of plantations to more
+co-exist.                                                                          challenging sites (e.g. in Brazil or South Africa), a substantial
+    In most regions, pulpwood from Eucalyptus plantations is                       amount of research is being conducted to study the factors (e.g.
+delivered at the industry gate without bark, which is left at the                  steep terrain) that can affect the efficiency of the operations in
+stump or piled at the landing. Therefore, debarking is an                          these conditions (Miyajima et al. 2016; Ackerman et al. 2018).
+additional factor to be considered when designing and plan­
+ning operations and systems in Eucalyptus plantations if com­
+pared to conifers plantations (Murphy et al. 2017).                                Strengths and weakness of the study
+    Full-tree processing is still a significant bottleneck in what
+are essentially hot systems (Hogg et al. 2010), given the short                    This study included an overview of current systems applied to
+interaction between feller-buncher felling, subsequent grapple                     the harvesting of industrial plantations located in several global
+skidder extraction, and debarking/processing with processors.                      regions. Experts from different regions supported and comple­
+In those cases, the number of log grades also determines the                       mented findings from the literature and improved the under­
+system to use. For many assortments, it might be challenging to                    standing of trends.
+process and stack the logs at the landing, particularly in areas                       While not exhaustive globally due to the relatively small
+with restricted landing/storage space. Here, CTL might be the                      sample size, the study focused on specific regions where plan­
+option. For these reasons, in South Africa, FT systems based on                    tations are well-established or still expanding. Some regions,
+single-stem processing are being replaced by CTL systems with                      like East Asia, posed challenges in accessing data, mainly due to
+processing and debarking capabilities at the stump (Norihiro et                    a language barrier in understanding local literature or conver­
+al. 2018). Given the easier removal of bark when wood moist­                       sing with local experts.
+ure content is still high, the need to debark trees shortly after                      The study acknowledges its limitations, as there may be
+harvest further favors CTL operations.                                             studies carried out by local universities or research institutes
+    In other regions, there is a tendency toward increasing                        that are not published in peer-reviewed journals and were not
+multi-tree handling in Eucalyptus stands, mainly when stem                         fully accessible. In some regions, such as the US, a noticeable
+size ranges between 0.1 and 0.5 m3 (Bertin 2010). This is so,                      trend in the last ten years is the abundance of studies on harvest­
+given that multi-stem handling can reduce the incidence of                         ing plantations for energy wood or integrated timber and energy
+processing times (bucking, delimbing) and, consequently, the                       wood production (Ghaffariyan et al. 2017). Conversely, the
+total cost at the roadside of FT systems (Figure 11).                              number of recent studies exclusively focused on the harvesting
+    An opposite strategy for coping with hot FT systems in                         of roundwood in Eucalyptus or Poplar plantations is finite. This
+Eucalyptus plantations has been delimbing-debarking-chip­                          limitation hinders a full comparison of economic performances
+ping units, which appeared to be a cost-competitive alternative                    in the US with those achieved in other regions. The literature gap
+in Australia and the US (Strandgard et al. 2019).                                  emphasizes the need for new studies in this field to update
+    The productivity level shown in this study for specialized                     current performances and enhance the modeling of future sec­
+harvesters is 40–50 m3 PMH−1 for stem volumes of 0.5 m3. The                       toral developments through up-to-date datasets.
+
+
+
+
+Figure 11. Cost breakdown by harvesting system (CTL, FT) and plantation type (Eu = Eucalyptus, Pi = Pine, Po = Poplar) in the study regions. Me = fully mechanized,
+Se = semi-mechanized.
+                                                                                 INTERNATIONAL JOURNAL OF FOREST ENGINEERING           15
+
+
+   Most of the collected studies were based on large-scale              Moreover, local socioeconomic factors and historical sec­
+operations, and as a result, our study may not represent            torial evolution in each region still significantly influence the
+well small-scale semi-mechanized operations which remain            selection of harvesting systems, machinery, and mechanization
+prevalent in many regions. For example, according to our            levels.
+Brazilian expert, motor-manual felling is still widely prac­            The peer-reviewed literature considered in this study
+ticed in the region, yet we could not find published studies        appears to concentrate on large-scale, highly mechanized
+reporting productivity and costs for this type of operation         systems. It is not solely the cost that determines the equip­
+in that specific region.                                            ment selection. This aspect would need to be further exam­
+   To harmonize the collected data from different studies           ined through dedicated studies to identify the most
+and regions, we applied standardized factors, converting the        effective solutions in each region. For example, CTL sys­
+data to a common reference unit. For example, the conver­           tems might be preferred where slash must be left in the
+sion between net and gross productivity was obtained                forest to maintain soil fertility or protect the soil from
+through utilization rates. In some cases, specific factors          erosion. In contrast, in cases without those constraints,
+from the studies were available, or we applied relevant             FT systems could be favored.
+ones for the particular region, as seen in Wenhold et al.               Plantations being established on more remote sites, such as
+(2019) for South Africa. In other cases, we had to rely on          those dominated by steep terrain and marginal lands, creates a
+more general utilization factors, as described in our meth­         new challenge for many existing systems and machinery. These
+odology. It’s important to acknowledge that this approach           are often based on local equipment borrowed from other
+may have introduced some bias in the comprehensive                  sectors (such as construction and agriculture). Therefore,
+representation of the local equipment status and usage              their adaptation to more rugged and complex terrain requires
+(Abbas et al. 2021).                                                further investigation to analyze their pros and cons compared
+   In some of the studies analyzed, we encountered units that       to purpose-built equipment.
+proved challenging to compare across the dataset. For instance,         Finally, this study highlighted the difficulty of obtaining up-
+in one study, the productivity was measured in “trees per           to-date and comparable forest harvesting data. Despite the
+hour,” which had to be supplemented with stem volume figures        growing amount of information available on the web through
+to establish a standard volumetric measure (m3 solid PMH−1).        numerous scientific publications and technical reports, there is
+Despite numerous initiatives to establish common data collec­       still a need to establish networks of experts who can assist in
+tion standards (Magagnotti et al. 2013; Ackerman et al. 2014),      compiling and scrutinizing the data collected from these
+there is still a need to standardize data collection methodolo­     studies.
+gies in forest operation research. Another aspect requiring a
+standardized approach was the treatment of exchange rates
+from local currencies to USD. Due to the continuous and             Conclusions
+rapid fluctuations of exchange rates over time, we could not
+fully account for the yearly variations in economic competi­        This benchmarking study offers an overview of the most
+tiveness. However, we opted for this approach due to its sim­       relevant harvesting systems currently applied in industrial
+plicity. While there are more sophisticated methods for             roundwood plantations across different global regions. It
+standardizing monetary values and comparing costs across            enables the identification of current productivity and cost
+regions (Di Fulvio et al. 2017), they would entail additional       levels, along with factors influencing system selection and
+economic assumptions. Additionally, we did not attempt to           performance. Additionally, the study suggests literature
+update costs over time; instead, our goal was to standardize        gaps and future needs for adapting harvesting systems to
+them by limiting the collection period to ten years.                evolving conditions.
+   It’s essential to emphasize that the costs reported in this          The study emphasizes the necessity for protocols and guide­
+study are exclusively those directly associated with the harvest­   lines in creating, processing, and updating benchmarking data­
+ing operation. They do not encompass other cost items such as       sets. This ensures that up-to-date information on harvesting
+machinery relocation, operation planning, overhead, operator        productivity and costs is readily available to researchers, prac­
+travel, and other administrative expenses. Including these          titioners, and decision-makers. Such protocols could be struc­
+would result in harvesting costs exceeding the ones reported        tured as a “Logging Watchdog,” providing a continuously
+in the study.                                                       updated global database.
+
+
+Recommendations for future research                                 Acknowledgements
+
+Future harvesting systems and equipment must continuously           We acknowledge support from the Horizon Europe project
+                                                                    ForestNavigator— Navigating European forests and forest bioeconomy
+adapt to specific product combinations based on industrial          sustainably to EU climate neutrality (grant agreement No 101056875).
+plantation operational parameters (species, rotations, site con­
+ditions) and industrial demands. On one end, some systems
+focus solely on low-cost mass production of fiber/pulpwood,
+                                                                    Disclosure statement
+while others prioritize maximizing value recovery, even at the
+expense of higher costs.                                            No potential conflict of interest was reported by the author(s).
+16       F. DI FULVIO ET AL.
+
+
+Funding                                                                      Lundbäck M, Häggström C, Nordfjell T. 2021. Worldwide trends in
+                                                                                methods for harvesting and extracting industrial roundwood. Int J
+This work was supported by the HORIZON EUROPE Framework                         For Eng. 32(3):202–215. doi: 10.1080/14942119.2021.1906617.
+Programme [101056875].                                                       Machado CC, Silva EN, Pereira RS, Castro GP. 2014. O setor florestal
+                                                                                brasileiro e a colheita florestal. In: Machado CC, editor. Colheita
+                                                                                florestal. 3rd ed. Viçosa, MG: Editora; p. 15–45. UFV, 2014, cap. 1.
+References                                                                   Magagnotti N, Kanzian C, Schulmeyer F, Spinelli R. 2013. A new guide for
+                                                                                work studies in forestry. Int J For Eng. 24(3):249–253. doi: 10.1080/
+Common sections                                                                 14942119.2013.856613.
+Abbas D, Di Fulvio F, Marchi E, Spinelli R, Schmidt M, Bilek T, Han H-S.     McEwan A, Marchi E, Spinelli R, Brink M. 2020. Past, present and future
+   2021. A proposal for an integrated methodological and scientific             of industrial plantation forestry and implication on future timber
+   approach to cost-used forestry machines. Croat J For Eng. 42(1):63–          harvesting technology. J For Res. 31(2):339–351. doi: 10.1007/s11676-
+   75. doi: 10.5552/crojfe.2021.849.                                            019-01019-3.
+Ackerman P, Gleasure E, Ackerman S, Shuttleworth B. 2014. Standards for      Miles PD, Smith WB. 2009. Specific gravity and other properties of wood
+   time studies for the South African forest industry. [accessed 2019 May       and bark for 156 tree species found in North America. Res. Note NRS-
+   27]. http://www.forestproductivity.co.za/?page_id=678.                       38. Newtown Square, PA: U.S. Department of Agriculture, Forest
+Barrios A, López AM, Nieto VM. 2008. Influencia del diámetro medio del          Service, Northern Research Station.
+   rodal y las distancias medias de extracción en los costos de un sistema   Minette LJ, Souza AP, Silva EP, Medeiros NM. 2008. Postos de trabalho e
+   de cosecha en bosques de Eucalyptus globulus en la zona central de           perfil de operadores de máquinas de colheita florestal. Revista Ceres. 55
+   chile. Colomb For. 11:83–92. doi: 10.14483/udistrital.jour.colomb.for.       (1):66–73.
+   2008.1.a06.                                                               Murphy G, Acuna M, Brown M. 2017. Economics of in-forest debarking
+Barua SK, Lehtonen P, Pahkasalo T. 2014. Plantation vision: potentials,         of radiata pine in New Zealand and Australia. NZ J For. 62(2):26–32.
+   challenges, and policy options for global industrial forest plantation    Petersen R, Aksenov D, Goldman E, Sargent S, Harris N, Manisha A,
+   development. Int Forest Rev. 16(2):117–127. doi: 10.1505/                    Esipova E, Shevade V, Loboda T. 2016. Mapping tree plantations with
+   146554814811724801.                                                          multispectral imagery: preliminary results for seven tropical countries.
+Bendlin L, Souza A, Senff CO, Pedro JJ, Stafin OO. 2016. Custos de              Technical Note. Washington, DC: World Resources Institute. www.
+   produção, expectativas de retorno e riscos associados ao plantio de          wri.org/publication/mapping-treeplantations.
+   eucalipto na região do Planalto Norte – Catarinense/Brasil. Custos e      Pulkki R. 2001. Role of supply chain management in the wise use of wood
+                                                                                resources. South Afr For J. 191(1):89–95. doi: 10.1080/20702620.2001.
+   gronegócio line. 12(2). ISSN 1808-2882.
+                                                                                10434154.
+Brinker RW, Kinard J, Rummer B, Lanford B. 2002. Machine rates for
+                                                                             Siry JP, Greene WD, Harris TG, Izlar RL, Hamsley A, Eason KE, Tye T,
+   selected forest harvesting machines. Auburn (AL): Alabama
+                                                                                Baldwin SS, Hydahl C. 2006. Wood supply chain efficiency and fiber
+   Experiment Station; p. 32.
+                                                                                cost: what can we do better? For Prod J. 56:4–10. www.exchangerates.
+Cubbage F, Donagh PM, Balmelli G, Olmos VM, Bussoni A, Rubilar R,
+                                                                                org.uk.
+   Torre RDL, Lord R, Huang J, Hoeflich VA, et al. 2014. Global timber
+                                                                             Zhang G, Hui G, Hu Y, Zhao Z, Guan X, Gadow KV, Zhang G. 2019.
+   investments and trends, 2005-2011. New Zealand J For Sci. 44(1):12.
+                                                                                Designing near-natural planting patterns for plantation forests in china
+   doi: 10.1186/1179-5395-44-S1-S7.
+                                                                                forest ecosystems. For Ecosyst. 6(1). doi: 10.1186/s40663-019-0187-x.
+Cubbage F, Koesbandana S, Mac Donagh P, Rubilar R, Balmelli G, Olmos
+                                                                             ABARES. 2019, November. Australian forest and wood products statistics,
+   VM, De La Torre R, Murara M, Hoeflich VA, Kotze H, et al. 2010.
+                                                                                March and June quarters 2019. Australian Bureau of Agricultural and
+   Global timber investments, wood costs, regulation, and risk. Biomass
+                                                                                Resource Economics and Sciences, Canberra. CC BY 4.0. [accessed
+   Bioenergy. 34(12):1667–1678. doi: 10.1016/j.biombioe.2010.05.008.            2020 March 6]. doi: 10.25814/5dd613f2cf61a.
+Di Fulvio F, Abbas D, Spinelli R, Acuna M, Ackerman P, Lindroos O.           Australia
+   2017. Benchmarking technical and cost factors in forest felling and       Acuna M, Strandgard M, Wiedemann J, Mitchell R. 2017. Impacts of early
+   processing operations in different global regions during the period          thinning of a eucalyptus globulus Labill. Pulplog Plantation in Western
+   2013–2014. Int J For Eng. 28(2):94–105. doi: 10.1080/14942119.2017.          Australia on economic profitability and harvester productivity. Forests.
+   1311559.                                                                     8(11):415. doi: 10.3390/f8110415.
+FAO. 2006. Global planted forests thematic study: results and analysis, by   Acuna M, Mirowski L, Ghaffariyan MR, Brown M. 2012. Optimising
+   A. De Lungo, J. Ball and J. Carle. Planted forests and trees Working         transport efficiency and costs in Australian wood chipping operations.
+   Paper 38. Rome.                                                              Biomass Bioenergy. 46(2012):291–300. doi: 10.1016/j.biombioe.2012.
+FAOSTAT. 2020. http://www.fao.org/faostat.                                      08.014.
+Favreau J, Ristea C. 2017. The role of FPInnovations, governments, and       Acuna M, Skinnell J, Evanson T, Mitchell R. 2011. Bunching with a self-
+   industry in transforming Canada’s forest industry. Chapter four. In:         levelling feller-buncher on steep terrain for efficient yarder extraction
+   D’Amours S, Ouhimmou M, Audy JF, Feng Y, editors. Forest value               [utjecaj sakupljanja stabala feler-bančerom na strmom terenu na
+   chain optimisation and sustainability. Ottawa: CRC Press, Taylor and         učinkovito iznošenje drva žičarom]. Croat J For Eng. 32(2):521–531.
+   Frances Group; p. 76–94.                                                  Ghaffariyan MR, Spinelli R, Magagnotti N, Brown M. 2015. Integrated
+FSC/INDUFOR. 2012. Strategic review on the future of plantations, pro­          harvesting for conventional log and energy wood assortments: a case
+   duced for the forest stewardship council. http://ic.fsc.org/force-down       study in a pine plantation in Western Australia, southern forests. South
+   load.php?file=671.                                                           For J For Sci. 77(4):249–254. doi: 10.2989/20702620.2015.1052946.
+Ghaffariyan MR, Brown M, Acuna M, Sessions J, Gallagher T, Kühmaier          Ghaffariyan MR. 2013. Comparing productivity-cost of roadside proces­
+   M, Spinelli R, Visser R, Devlin G, Eliasson L, et al. 2017. An interna­      sing system and road side chipping system in Western Australia. J for
+   tional review of the most productive and cost effective forest biomass       Sci. 59(5):204–210. doi: 10.17221/81/2012-JFS.
+   recovery technologies and supply chains. Renew Sust Energ Rev.            Ghaffariyan MR, Brown M. 2013. Selecting the efficient harvesting method
+   74:145–158. doi: 10.1016/j.rser.2017.02.014.                                 using multiple-criteria analysis: a case study in south-west Western
+Jürgensen C, Kollert W, Lebedys A. 2014. Assessment of industrial round­        Australia. J for Sci. 59(12):479–486. doi: 10.17221/45/2013-JFS.
+   wood production from planted forests. FAO planted forests and trees       Lambert J, Quill D, Bren LJ. 2006, December. Growth in blue gum forest
+   working paper FP/48/E. Rome. http://www.fao.org/forestry/plantedfor          harvesting and haulage requirements in the green triangle 2007-2020.
+   ests/67508@170537/en/.                                                       CRC Forestry, consultant report. Hobart: Australia; p. 120
+Lauri P, Forsell N, Korosuo A, Havlík P, Obersteiner M, Nordin A. 2017.      Ghaffariyan M, Acuna M, Brown M. 2019. Machine productivity evalua­
+   Impact of the 2 °C target on global woody biomass use. For Policy            tion for harvesters and forwarders in thinning operations in Australia.
+   Econ. 83:121–130. doi: 10.1016/j.forpol.2017.07.005.                         Silva Balcanica. 20(2):13–25.
+                                                                                           INTERNATIONAL JOURNAL OF FOREST ENGINEERING                 17
+
+
+Acuna M, Strandgard M, Wiedemann J, Mitchell R. 2017. Impacts of early        Mac Donagh P, Botta G, Schlichter T, Cubbage F. 2017. Harvesting
+   thinning of a Eucalyptus plantation in Western Australia on economic          contractor production and costs in forest plantations of Argentina,
+   profitability and harvester productivity. Forests. 8(11):415. doi: 10.        Brazil, and Uruguay. Int J For Eng. 28(3):157–168. doi: 10.1080/
+   3390/f8110415.                                                                14942119.2017.1360657.
+Skogforsk. 2014. [accessed 2010 March 6]. https://www.skogforsk.se/eng        Miyajima RH. 2019. Modelagem da produtividade e dos custos de
+   lish/projects/stanford/.                                                      máquinas na colheita de eucalipto [Modeling machine productivity
+Strandgard M, Mitchell R, Acuna M. 2016. General productivity model for          and costs in eucalyptus harvesting]. Tese (Doutorado em Ciências
+   single grip harvesters in Australian eucalypt plantations. Aust For. 79       Florestal). Botucatu: Universidade Estadual Paulista Júlio de Mesquita
+   (2):108–113. doi: 10.1080/00049158.2015.1127198.                              Filho.
+Strandgard M, Mitchell R, Wiedemann J. 2019. Comparison of produc­            Miyajima RH, Tonin RP, De Souza Passos JR, Fenner PT. 2016. A
+   tivity, cost and chip quality of four balanced harvest systems operating      influência da declividade do terreno e do tempo de experiência dos
+   in a Eucalyptus globulus Plantation in Western Australia. Croat J For         operadores no rendimento do feller buncher. Sci For. 44(110):443–451.
+   Eng. 40:1.                                                                    doi: 10.18671/scifor.v44n110.17.
+Strandgard M, Walsh D, Acuna M. 2013. Estimating harvester productiv­         Moreira da Costa E, da Cunha Marzano FL, Cardoso Machado C, da Silva
+   ity in pinus radiata plantations using StanForD stem files. Scand J           Leite E. 2017. Performance and operational costs of a harvester in a low
+   Forest Res. 28(1):73–80. doi: 10.1080/02827581.2012.706633.                   productivity forest. Rev Eng Agric. 25(2):124–131. doi: 10.13083/
+Strandgard M, Walsh D, Mitchell R. 2015. Productivity and cost of                reveng.v25i2.751.
+   whole‑tree harvesting without debarking in a Eucalyptus nitens plan­       Nascimento AC, Leite AMP, Soares TS, Freitas LC. 2011. Technical and
+   tation in Tasmania, Australia. South For. 77(3):173–178. doi: 10.2989/        economical analysis of the forest harvesting with Feller-Buncher.
+   20702620.2014.1001669.                                                        CERNE. 17(1):9–15. doi: 10.1590/S0104-77602011000100002.
+Brazil                                                                        Pereira ALN, Lopes ES, Dias AN. 2015. Technical and cost analysis of
+Bertin VAS. 2010. Análise de dois modais de sistemas de colheita meca­           feller buncher and skidder on wood harvesting in different stand
+   nizados de eucalipto em primeira rotação [Analysis of two modes of            productivity. Ciênc Florest. 25(4):981–989. doi: 10.5902/
+   mechanized Eucalyptus harvesting systems in first rotation].                  1980509820659.
+   Dissertação (Mestrado em Agronomia Energia na Agricultura).                Schettino S, Minette LJ, Souza AP. 2015. Correlation between volumetry
+   Botucatu: Universidade Estadual Paulista Júlio de Mesquita Filho.             of eucalyptus forests and productivity and costs of wood harvesting
+Bramucci M. 2001. Determinação e quantificação de fatores de influência          machines. Rev Árvore. 39(5):935–942. doi: 10.1590/0100-
+   sobre a produtividade de “harvester” na colheita de madeira                   67622015000500016.
+   [Determination and quantification of factors influencing the harvester     Seixas F, Ferreira Batista JL. 2012. Use of wheeled harvesters and excava­
+                                                                                 tors in eucalyptus harvesting in brazil. 35th Council on Forest
+   productivity in wood harvesting]. Dissertação (Mestrado em Ciências
+                                                                                 Engineering Annual Meeting. New Bern, North Carolina.
+   Florestais) - Escola Superior de Agricultura Luiz de Queiroz.
+                                                                              Seixas F, Ferreira Batista JL. 2014. Comparação técnica e econômica entre
+   Piracicaba: Universidade de São Paulo.
+                                                                                 harvesters de pneus e com máquina base de esteiras technical and
+Carvalho LME, Silva CS, Leite AMP. 2018. Simulação de cenário de
+                                                                                 economical comparison between wheel harvesters and excavators.
+   variação da eficiência operacional e da produtividade no desempenho
+                                                                                 Ciênc Florestal Santa Maria. 24(1):185–191. doi: 10.5902/
+   e custo das atividades de corte e extração florestal. [Simulation of
+                                                                                 1980509813335.
+   operating efficiency and productivity variation scenario in the perfor­
+                                                                              Simoes D, Ferres PT. 2010. Influência do relevo na produtividade e custos
+   mance and cost of logging and logging activities]. In: Malinovski J,
+                                                                                 do harvester. Influence of relief in productivity and costs of harvester.
+   Malinovski R, Malinovski R, Oliveira E, Preto R. editors. Anais of 18o.
+                                                                                 Sci For Piracicaba. 38(85):107–114.
+   Seminário de Colheita e Transporte de Madeira. Brasília: Embrapa; p.
+                                                                              Simões D, Fenner PT, Esperancini MST. 2014. Productivity and costs of
+   27–30.
+                                                                                 feller buncher and forest processor in stands of eucalypt in first cut.
+de Oliveira Júnior ED, Seixas F. 2012. Energy Analysis of two eucalyptus         Ciênc Florest. 24:3. doi: 10.5902/1980509815742.
+   harvesting systems in Brazil. 35th Council on Forest Engineering           SNIF Boletim SNIF. 2018. Bulletin The National Forest Information
+   Annual Meeting. New Bern, North Carolina.                                     System – SNIF. [accessed 2020 Nov 11]. http://www.florestal.gov.br/
+Do Nascimento Santos DWF, Fernandes HC, Magalhães Valente DS,                    documentos/publicacoes/4092-boletim-snif-2018-ed1/file.
+   Meira Gomes B, Pinheiro Dadalto J, da Silva Leite E. 2018.                 Spinelli R, Conrado de Arruda Moura A. 2019. Productivity and utiliza­
+   Desempenho técnico e econômico de distintos modelos de forwarders.            tion benchmarks for chain flail delimber-debarkers-chippers 2019 used
+   Nativa Sinop. 6(3):305–308. Pesquisas Agrárias e Ambientais. doi:             in fast-growing plantations Croat. J For Eng. 40(1):65–80.
+   http://dx.doi.org/10.31413/nativa.v6i3.5070.                               Spinelli R, Conrado de Arruda Moura A, Manoel da Silva P. 2018.
+Guedes ICL, Coelho Júnior LM, Oliveira AD, Mello JM, Rezende JLP,                Decreasing the diesel fuel consumption and CO2 emissions of indus­
+   Silva CPC. 2011. Economic analysis of replacement regeneration and            trial in-field chipping operations. J Clean Prod. 172:2174–2181. doi: 10.
+   coppice regeneration in eucalyptus stands under risk conditions.              1016/j.jclepro.2017.11.196.
+   Cerne. 17(3):393–401. doi: 10.1590/S0104-77602011000300014.                Suzuki L, Lima CLR, Reinert DJ, Reichert JM, Pillon CN. 2014. Estrutura e
+IBÁ Relatório. 2022. Indústria brasileira de árvores [Brazilian Trees            armazenamento de água em um Argissolo sob pastagem cultivada,
+   Industry]. Brasília: IBÁ.                                                     floresta nativa e povoamento de eucalipto no Rio Grande do Sul
+Leite ES, Fernandes HC, Guedes IL, Do Amaral EJ. 2014. Technical and             [Water structure and storage in an Argisol under cultivated pasture,
+   economic analysis of semimechanized harvest of eucalyptus in different        native forest and eucalyptus stand in Rio Grande do Sul]. Rev Bras
+   spacing [Análise técnica e de custos do corte florestal semimecanizado        Ciênc do Solo. 38(1):94–106.
+   em povoamentos de eucalipto em diferentes espaçamentos. Cerne. 20          East Asia
+   (4):637–643. doi: 10.1590/01047760201420041340.                            Carandang AP, Carandang MG, Camacho LD, Camacho SC, Aguilon BC,
+Lopes ES, Cruziniani E, Dias NA, Fiedler NC. 2007. Avaliação técnica e           Gevaña DT. 2015. Profitability of smallholder private tree plantations
+   econômica do corte de madeira de pinus com cabeçote harvester em              in Talacogon, Agusan Del Sur, Philippines. Ecosyst Dev J. 5(3):3–11.
+   diferentes condições operacionais. Floresta. 37(3):3. doi: 10.5380/rf.     Engelbrecht R, McEwan A, Spinelli R. 2017. A robust productivity model
+   v37i3.9926.                                                                   for grapple yarding in fast-growing tree plantations. Forests. 8(10):396.
+Lopes ES, Oliveira D, Sampietro JA. 2014. Influence of wheeled types of a        doi: 10.3390/f8100396.
+   skidder on productivity and cost of the forest harvesting. Floresta. 44    Engler B, Becker G, Hoffmann S. 2016. Process mechanization models for
+   (1):1. doi: 10.5380/rf.v44i1.31356.                                           improved Eucalyptus plantation management in Southern China based
+Lopes ES, Pagnussat MB. 2017. Effect of the behavioral profile on operator       on the analysis of currently applied semi-mechanized harvesting opera­
+   performance in timber harvesting. Int J For Eng. 28(3):134–139. doi:          tions. Biomass Bioenergy. 87:96–106. doi: 10.1016/j.biombioe.2016.02.
+   10.1080/14942119.2017.1328847.                                                021.
+18        F. DI FULVIO ET AL.
+
+
+Hoffmann S, Jaeger D, Schoenherr S, Talbot B. 2015. Challenges in                Spinelli R, Hartsough B, Magagnotti N. 2010. Productivity standards for
+   mechanization efforts of small diameter eucalyptus harvesting opera­             harvesters and processors in Italy. For Prod J. 60(3):226–235. doi: 10.
+   tions with a low capacity running skyline yarder in Southern China.              13073/0015-7473-60.3.226.
+   Forests. 6(12):2959–2981. doi: 10.3390/f6092959.                              Spinelli R, Magagnotti N, Sperandio G, Cielo P, Verani S, Zanuttini R.
+Manavakun N. 2014. Harvesting operations in eucalyptus plantations in               2011. Cost and productivity of harvesting high-value hybrid poplar
+   Thailand [Doctoral Dissertation]. Finnish Society of Forest Science,             plantations in Italy. For Prod J. 61(1):64–70. doi: 10.13073/0015-
+   Finnish Forest Research Institute, Faculty of Agriculture and Forestry           7473-61.1.64.
+   at the University of Helsinki; https://dissertationesforestales.fi/pdf/arti   Spinelli R, Schweier J, De Francesco F. 2012. Harvesting techniques for
+   cle1960.pdf.                                                                     non-industrial forestry plantations. Biosyst Eng. 113(4):319–324. doi:
+Rianthakool R, Sakai H. 2014. Short wood harvesting and pickup truck                10.1016/j.biosystemseng.2012.09.008.
+   transportation during regeneration of rubber plantations. Bull Univ           Verani S, Sperandio G, Civitarese V, Spinelli R. 2017. La meccanizzazione
+   Tokyo For. 130:45–58.                                                            nella raccolta di impianti di arboricoltura da legno: produttività di
+Rianthakool R, Kaakkurivaara N, Diloksampun P, Arunpraparut W. 2018.                lavoro e costi. Forest. 14(4):237–246. http://www.sisef.it/forest@/con
+   Supply chain operations in teak plantation. Proceedings of the 6th               tents/?id=efor2389-014.
+   International Forest Engineering Conference (FEC). Rotorua, New               Iberian Eucalyptus
+   Zealand; 16-19 April 2018.                                                    CETEMAS-ENCE. 2019. Primary field data from ENCE company work­
+European poplar                                                                     ing in the North of Spain collected and evaluated by CETEMAS (Forest
+Britt C. 2000. Poplars: a multiple-use crop for European arable farmers.            and Wood Technology Research Centre of Asturias) in 2019 at
+   In: Poplar and willow culture: meeting the needs of society and the              Province of Lugo and Coruña [unpublished].
+   environment. Minnesota: USDA Forest Service, St. Paul. GTR-NC-                Dias AC, Arroja L, Capela I. Carbon dioxide emissions from forest
+   215; p. 24.                                                                      operations in Portuguese eucalypt and maritime pine stands. 2007.
+Cardias-Williams F, Thomas T. 2006. Some key issues concerning current              Scand J Forest Res. 22(5):422–432. doi: 10.1080/02827580701582692.
+   poplar production and future marketing in the United Kingdom. New             Magagnotti N, Nati C, Pari L, Spinelli R, Visser R. 2011. Assessing the cost
+   For. 31(3):343–359. doi: 10.1007/s11056-005-8197-7.                              of stump-site debarking in eucalypt plantations. Biosyst Eng. 110
+Castro G, Zanuttini R. 2008. Poplar cultivation in Italy: history, state of         (4):443–449. doi: 10.1016/j.biosystemseng.2011.09.009.
+   the art, perspectives. Proceedings of the Cost Action E44 Final               MAPA. 2020. Anuario de Estadística Forestal 2020. Madrid, Spain:
+   Conference in Milan on a European wood processing strategy: future               Ministerio de Agricultura, Pesca y Alimentación.
+   resources matching products and innovations. Milan, Italy; 30 May             ICNF. 2019. 6º Inventário Florestal Nacional - Relatório Final. Lisboa,
+   2008 141–154.
+                                                                                    Portugal: Instituto da Conservação da Natureza e das Florestas.
+Cogliastro A, Gagnon D, Bouchard A. 1997. Experimental determination
+                                                                                 Muñoz G. 2007. Aspectos particulares de la ordenación de plantaciones de
+   of soil characteristics optimal for the growth of ten hardwoods planted
+                                                                                    eucalipto (Eucalyptus globulus Labill.). Boletín del CIDEU; p. 171–180.
+   on abandoned farmland. For Ecol Manage. 96(1–2):49–63. doi: 10.
+                                                                                 Rodriguez LCE, Borges JG. 1999. Técnicas matemáticas para
+   1016/S0378-1127(97)00042-X.
+                                                                                    determinação de níveis sustentáveis de produção florestal. Rev For. 12
+Cuchet E, Roux P, Spinelli R. 2004. Performance of a logging residue
+                                                                                    (1/2):83–92.
+   bundler in the temperate forests of France. Biomass Bioenergy. 27
+                                                                                 Sánchez-García S. 2016. Potential biomass use in Asturias: GIS analysis,
+   (1):31–39. doi: 10.1016/j.biombioe.2003.10.006.
+                                                                                    yields, costs and logistics [Doctoral thesis]. http://hdl.handle.net/
+Heilman P. 1999. Planted forests: poplars. New For. 17(1/3):89–93. doi: 10.
+                                                                                    10651/38974.
+   1023/A:1006515204167.
+                                                                                 Spanish Forest Statistics Yearbook. 2019. Anuario de Estadística Forestal
+Hongyuan X. 1992. The culture history and breeding strategy of poplar in
+   Italy. J For Res. 3(2):95–100. doi: 10.1007/BF02843043.                          Ministerio de Agricultura, Pesca y Alimentación. Madrid: Gobierno de
+IPC. 2008. International poplar commission 23rd session. Beijing,                   España. https://www.mapa.gob.es/es/desarrollo-rural/estadisticas/fore
+   China. Synthesis of Country Progress Reports. www.fao.org/for                    stal_anuarios_todos.aspx.
+   estry/ipc2008/en .                                                            Spinelli R, Owende PMO, Ward SM, Tornero M. 2004. Comparison of
+Jansons A, Zurkova S, Ladzina D, Zeps M. 2014. Productivity of poplar               short-wood forwarding systems used in Iberia. Silva Fenn. 38(1):85–94.
+   hybrid (Populus balsamifera x P. laurifolia) in Latcia. Agron Res. 12            doi: 10.14214/sf.437.
+   (2):469–478.                                                                  South Africa
+Marshall H, Murphy G, Boston K. 2006. Evaluation of the economic                 Ackerman P, Martin C, Brewer J, Ackerman S. 2018. Effect of slope on
+   impacts of length and diameter measurement error on mechanical                   productivity and cost of eucalyptus pulpwood harvesting using single-
+   harvesters and processors operating in pine stands. Can J For Res. 36            grip purpose-built and excavator-based harvesters. Int J For Eng. 29
+   (7):1661–1673. doi: 10.1139/x06-064.                                             (2):74–82. doi: 10.1080/14942119.2018.1431491.
+Picchio R, Verani S, Spinelli R, Picchi G. 2008. Field Handbook – Poplar         Ackerman P, Pulkki R, Odhiambo B. 2016. Comparison of cable skidding
+   Harvesting. International Poplar Commission Working Paper IPC/8.                 productivity and cost: pre-choking mainline versus tagline systems.
+   Rome: Forest Management Division, FAO.                                           Croat J For Eng. 37(2):261–268.
+Puttock D, Spinelli R, Hartsough B. 2005. Operational trials of cut-to-          Ackerman P, Pulkki R, Gleasure E. 2014. Modelling of wander ratios,
+   length harvesting of poplar in a mixed wood stand. Int J For Eng. 16             travel speeds and productivity of cable and grapple skidders in soft­
+   (1):39–49. doi: 10.1080/14942119.2005.10702506.                                  wood sawtimber operations in South Africa. South For J For Sci. 76
+Sedjo R. 1999. The potential of high-yield plantation forestry for meeting          (2):101–110. doi: 10.2989/20702620.2014.917355.
+   timber needs. New For. 17(1/3):339–360. doi: 10.1023/                         Ackerman P, Williams C, Ackerman S, Nati C. 2017. Diesel consumption
+   A:1006563420947.                                                                 and carbon balance in South African pine clear-felling CTL operations:
+Spinelli R, Hartsough B. 2006. Harvesting SRF poplar for pulpwood:                  a preliminary case study. Croat J For Eng. 38(1):65–72.
+   experience in the Pacific Northwest. Biomass Bioenerg. 30(5):439–             Brewer J, Talbot B, Belbo H, Ackerman P, Ackerman S. 2018. A compar­
+   445. doi: 10.1016/j.biombioe.2005.11.021.                                        ison of two methods of data collection for modelling productivity of
+Spinelli R, Hartsough BR, Moore PW. 2008. Recovering sawlogs from                   harvesters: manual time study and follow-up study using on-board-
+   pulpwood-size plantation cottonwood. For Prod J. 58(4):80–84.                    computer stem records. Ann For Res. 61(1):109–124. doi: 10.15287/afr.
+Spinelli R, Magagnotti N, Nati C. 2011a. Work quality and veneer value              2018.962.
+   recovery of mechanized and manual log-making in Italian poplar                Eggers J, McEwan A, Conradie B. 2010. Saw timber tree optimisation in
+   plantations. Eur J Forest Res. 130(5):737–744. doi: 10.1007/s10342-              South Africa: a comparison of mechanized tree optimisation (har­
+   010-0464-2.                                                                      vester/processor) versus current manual methods. South For J For
+Spinelli R, Magagnotti N. 2011b. Strategies for the processing of tree tops         Sci. 72(1):23–30. http://www.tandfonline.com/doi/abs/10.2989/
+   from hybrid poplar plantations. Balt For. 17(1):50–57.                           20702620.2010.481099.
+                                                                                           INTERNATIONAL JOURNAL OF FOREST ENGINEERING                19
+
+
+FSA. 2017. The South African forestry and forest products industry 2015.      Conrad JL, Bolding MC, Aust WM, Smith RL, Horcher A. 2013.
+   https://forestry.co.za/wp-content/uploads/2022/11/South-African-              Harvesting productivity and costs when utilizing energywood from
+   Forestry-Forest-Products-Industry-2015-R.                                     pine plantations of the southern Coastal Plain USA. Biomass
+Hogg GA, Pulkki RE, Ackerman PA. 2010. Multi-stem mechanized har­                Bioenergy. 52:85–95. doi: 10.1016/j.biombioe.2013.02.038.
+   vesting operation analysis – application of arena 9 discrete-event simu­   Daniel MJ, Gallagher T, Mitchell D, McDonald T, Via B. 2019.
+   lation software in Zululand, South Africa. Int J For Eng. 21(2):14–22.        Productivity and cost estimates for incorporating tracked processors
+   doi: 10.1080/14942119.2010.10702594.                                          into conventional loblolly pine harvesting regimes in the Southeastern
+Hogg G, Pulkki R, Ackerman P. 2011. Excavator-based processor operator           United States. Int J For Eng. 30(2):155–162. doi: 10.1080/14942119.
+   productivity and cost analysis in Zululand, South Africa. South For J         2019.1611131.
+   For Sci. 73(2):109–115. doi: 10.2989/20702620.2011.610874.                 Hartsough BR, Spinelli R, Pottle SJ. 2002. Delimbing hybrid poplar prior
+Norihiro J, Ackerman P, Spong BD, Längin D. 2018. Productivity model             to processing with a flail/chipper. For Prod J. 52(4):85–93.
+   for cut-to-length harvester operation in South African eucalyptus pulp­    Klepac J, Mitchell D. 2016. Comparison of four harvesting systems in a
+   wood plantations. Croat J For Eng. 39(1):1–13.                                Loblolly Pine Plantation. Prof Agric Workers J. 4(1):9.
+Pellegrini M, Ackerman P, Cavalli R. 2013. On-board computing in forest       Klepac J, Mitchell D. 2017. Evaluation of a tracked feller-buncher harvest­
+   machinery as a tool to improve skidding operations in South African           ing plantation loblolly pine. USDA, Forest Service US. https://www.srs.
+   softwood sawtimber operations. South For J For Sci. 75(2):89–96. doi:         fs.usda.gov/pubs/ja/2017/ja_2017_mitchell_003.pdf.
+   10.2989/20702620.2013.785107.                                              Klepac J, Rummer B. 2000. Productivity and cost comparison of two
+Wenhold R, Ackerman P, Ackerman S, Gagliardi K. 2019, March 1. Skills            different-sized skidders. Written for Presentation at the 2000 ASAE
+   development of mechanized softwood saw timber cut-to-length har­              Annual International Meeting, Midwest Express Center, Milwaukee,
+   vester operators on the Highveld of South Africa. Int J For Eng. 31           Wisconsin, USA; July 9-12 2000.
+   (1):9–18. doi: 10.1080/14942119.2019.1578561.                              Spinelli R, Hartsough B, Moore P. 2008. Recovering sawlogs from pulp­
+Williams C, Ackerman P. 2016. Cost-productivity analysis of South                wood-size plantation cottonwood. For Prod J. 58:80–84.
+   African pine sawtimber mechanized cut-to-length harvesting. Vol. 78,       Spinelli R, Hartsough BR, Owende PMO, Ward SM. 2002. Productivity
+   Southern Forests; p. 267–274.                                                 and cost of mechanized whole-tree harvesting of fast-growing eucalypt
+Williams C, Ackerman P. 2019. South African pine cut-to-length harvest­          stands. Int J For Eng. 13(2):49–60. doi: 10.1080/14942119.2002.
+   ing: an analysis of fibre loss and productivity. Croat J For Eng. 40          10702462.
+   (1):55–63.                                                                 Spinelli R, Moura ACA. 2019. Productivity and utilization benchmarks for
+U.S                                                                              chain flail delimber-debarkers-chippers used in fast-growing planta­
+Baker SA, Westbrook MDJ, Greene WD. 2010. Evaluation of inte­                    tions. Croat J for Eng. 40(1):65–80.
+   grated harvesting systems in pine stands of the southern United            Stanturf JA, Zhang D. 2003. Plantations forests in the United States of
+   States. Biomass Bioenergy. 34(5):720–727. doi: 10.1016/j.biombioe.            America: past, present and future. http://www.fao.org/3/xii/0325-
+   2010.01.014 .                                                                 b1.htm.
+Annex I
+                                                                                                                                                                                                                                    20
+
+
+
+
+Table A1. Benchmarking plantation characteristics, harvesting systems, productivity, and costs across the different study regions.
+
+                                                                         Harvesting system                      Hourly       Operational     System cost
+                                                                        (CTL= cut to length,        Net       operational   cost per unit     per unit of
+ Country           Plantation characteristics (rotation length, stem   TL= tree-length, FT=    productivity    cost (USD     of product     product (USD
+                                                                                                  3
+ (Region)              volume, removal per hectare, products)                 full tree)       (m PMH−1)        SMH−1)       (USD m−3)           m−3)                                    References
+                                                                                                                                                                                                                                    F. DI FULVIO ET AL.
+
+
+
+
+ Australia       Eucalyptus globulus, Eucalyptus nitens, 8–15 years    CTL (logs, debarked                                                    17.7–23.4   Strandgard et al. (2019), Acuna et al. (2017), Lambert et al. (2006),
+                   rotations, stem volume 0.1–0.7 m3, 200–325 m3          and loaded)                                                                        Ghaffariyan (2013), Ghaffariyan and Brown (2013), McEwan et al.
+                   ha−1, pulp logs and pulp chips                                                                                                            (2020), Strandgard et al. (2015), Strandgard et al. (2016)
+                                                                       Tracked harvester          8–55           177          5.8–15.0
+                                                                          (large excavator/
+                                                                          specialized)
+                                                                       Forwarder                    34                               5
+                                                                       Loader
+                                                                       FT (logs, debarked                                                    11.5–23.6
+                                                                          and loaded)
+                                                                       Feller-buncher            65–140        133–198         2.2–3.6
+                                                                          (tracked
+                                                                          specialized)
+                                                                       Grapple skidder            32–94        98–128         2.6–5.6
+                                                                       Processor                   5–66        117–147        8.4–15.8
+                                                                       Loader                     74–96          115          1.7–1.9
+                                                                       FT (woodchips A)                                                      12.9–21.9
+                                                                       Feller-buncher            65–140        133–198         2.2–3.6
+                                                                          (tracked
+                                                                          specialized)
+                                                                       Grapple skidder            32–94         98–128         2.6–5.6
+                                                                       Delimber-debarker-         50–51                          8.2
+                                                                          chipper
+                                                                       FT (woodchips B)                                                      12.9–21.9
+                                                                       Feller-buncher            65–140        133–198         2.2–3.6
+                                                                          (tracked
+                                                                          specialized)
+                                                                       Grapple skidder            32–94         98–128         2.6–5.6
+                                                                       Flail-delimber-              64                           5.2
+                                                                          debarker
+                                                                       Chipper                      64                           5.7
+                                                                                                                                                                                                                      (Continued)
+Table A1. (Continued).
+                                                                           Harvesting system                        Hourly       Operational     System cost
+                                                                          (CTL= cut to length,         Net        operational   cost per unit     per unit of
+ Country          Plantation characteristics (rotation length, stem       TL= tree-length, FT=     productivity    cost (USD     of product     product (USD
+ (Region)             volume, removal per hectare, products)                    full tree)         (m3 PMH−1)       SMH−1)       (USD m−3)           m−3)                                      References
+ Australia      Pinus radiata, 32–34 years rotation, stem volume          CTL                                                                    12.6–20.0      Strandgard et al. (2013), Acuna et al. (2011), Ghaffariyan et al. (2015)
+                   0.6–3.5 m3, harvest volume 315–470 m3 ha−1,
+                   sawlogs and pulpwood logs
+                                                                          Tracked harvester          50–160          150
+                                                                             (large specialized)
+                                                                          Forwarder                    86            101
+                                                                          FT                                                                     15.5–19.6
+                                                                          Feller-buncher             20–206
+                                                                             (tracked
+                                                                             specialized)
+                                                                          Swing yarder               30–90
+                                                                          Processor on
+                                                                             excavator
+ Brazil         Eucalyptus ssp., E. grandis, E. grandis x urophylla, E.   CTL (A)                                                                  4.9–7.5      Moreira da Costa et al. (2017), Carvalho et al. (2018), Bertin (2010),
+                  urograndis, 4–11 years rotation, stem volume 0.1–                                                                                               Simoes and Ferres (2010) , Bramucci (2001), Do Nascimento Santos
+                  0.6 m3, harvest volume 50–440 m3 ha−1, pulplogs/                                                                                                et al. (2018); Nascimento et al. (2011), Simões et al. (2014),
+                  debarked pulplogs                                                                                                                               Schettino et al. (2015), Miyajima (2019) , Nascimento et al. (2011) ,
+                                                                          Tracked harvester           5–42         53–136         1.3–9.7                         Mac Donagh et al. (2017), de Oliveira Júnior and Seixas (2012),
+                                                                             (excavator based)                                                                    Seixas and Ferreira Batista (2012), Leite et al. (2014), Spinelli et al.
+                                                                                                                                                                  (2018), Spinelli and Conrado de Arruda Moura (2019), Spinelli &
+                                                                          Forwarder                  29–44          72–73         1.8–2.5
+                                                                                                                                                                  Moura (2019)
+                                                                          CTL (B)
+                                                                          Feller-buncher               107
+                                                                             (tracked excavator
+                                                                             based)(felling)
+                                                                          Processor                    139
+                                                                             (tracked excavator
+                                                                             based) (processing
+                                                                             in stand)
+                                                                          FT (logs)                                                                2.7–8.8
+                                                                          Feller-buncher             10–80            81          0.5–2.5
+                                                                             (tracked
+                                                                             specialized)
+                                                                          Grapple skidder            40–60                        0.3–1.8
+                                                                          Slasher/grapple            38–57                        0.3–4.5
+                                                                             processor
+                                                                          FT (woodchips)
+                                                                          Feller-buncher             10–80
+                                                                             (tracked
+                                                                             specialized)
+                                                                          Grapple skidder            40–60
+                                                                          Delimber-Debarker-         80–112
+                                                                                                                                                                                                                                             INTERNATIONAL JOURNAL OF FOREST ENGINEERING
+
+
+
+
+                                                                             Chipper
+                                                                                                                                                                                                                               (Continued)
+                                                                                                                                                                                                                                             21
+                                                                                                                                                                                                                                          22
+
+
+
+
+Table A1. (Continued).
+                                                                       Harvesting system                      Hourly       Operational     System cost
+                                                                      (CTL= cut to length,        Net       operational   cost per unit     per unit of
+ Country          Plantation characteristics (rotation length, stem   TL= tree-length, FT=   productivity    cost (USD     of product     product (USD
+                                                                                                3
+ (Region)             volume, removal per hectare, products)                full tree)       (m PMH−1)        SMH−1)       (USD m−3)           m−3)                                      References
+                Pinus ssp, P. taeda, age 15–39, stem volume 0.4–1.6 CTL                                                                                   Lopes et al. (2007), Lopes et al. (2014), Pereira et al. (2015)
+                                                                                                                                                                                                                                          F. DI FULVIO ET AL.
+
+
+
+
+                   m3, harvest volume 400–730 m3 ha−1, sawlogs
+                   and pulpwood
+                                                                    Tracked harvester          32–34           115          3.4–3.6
+                                                                       (excavator based)
+                                                                    FT                                                                       1.8–2.6
+                                                                                                                                          (unprocessed)
+                                                                      Feller-buncher           85–130           68          0.6–0.9
+                                                                         (tracked
+                                                                         specialized)
+                                                                      Skidder                  46–63          71–82         1.2–1.7
+                                                                      CTL
+                                                                      Tracked harvester        32–34           115          3.4–3.6
+                                                                         (excavator based)
+                                                                      FT                                                                     1.8–2.6
+                                                                                                                                          (unprocessed)
+                                                                    Feller-buncher             85–130           68          0.6–0.9
+                                                                       (tracked
+                                                                       specialized)
+                                                                    Skidder                     46–63         71–82         1.2–1.7
+ China (South   Eucalyptus grandis, 3–9 years rotation, stem volume CTL                        0.4–0.8                                       1.5–3.0      Engler et al. (2016)
+   East Asia)     0.1 m3, harvest volume 58–115 m3 ha−1,                                       (whole
+                  pulpwood                                                                     system)
+                                                                    Motor-manual felling
+                                                                       with the chainsaw
+                                                                    Manual delimbing by
+                                                                       knives
+                                                                    Motor-manual
+                                                                       bucking by
+                                                                       chainsaw
+                                                                    Manual extraction by
+                                                                       gravity
+                                                                    TL                                                                                    Hoffmann et al. (2015)
+                                                                    Chainsaw
+                                                                       (felling and
+                                                                       delimbing)
+                                                                    Cable yarder               5.0–6.2         125         33.8–50.2
+                                                                    Chainsaw
+                                                                       (processing)
+                                                                                                                                                                                                                            (Continued)
+Table A1. (Continued).
+                                                                       Harvesting system                      Hourly       Operational     System cost
+                                                                      (CTL= cut to length,        Net       operational   cost per unit     per unit of
+ Country          Plantation characteristics (rotation length, stem   TL= tree-length, FT=   productivity    cost (USD     of product     product (USD
+                                                                                                3
+ (Region)             volume, removal per hectare, products)                full tree)       (m PMH−1)        SMH−1)       (USD m−3)           m−3)                                   References
+ Thailand      Eucalyptus ssp., 5–10 years rotation, stem volume      CTL                      2.9–4.6       8.7–14.0                        3.5–5.0      Manavakun (2014)
+   (South East   0.1 m3, harvest volume 50–100 m3 ha−1,                                        (whole
+   Asia)         pulpwood                                                                      system)
+                                                                      Brush saw in felling
+                                                                         and bucking
+                                                                      Manual tools in
+                                                                         delimbing and
+                                                                         piling
+                                                                      Farm tractor in
+                                                                         extraction and
+                                                                         loading/manual
+                                                                         loading
+                Teak, 20–40 years rotation, stem volume 0.86 m3,      TL                                                                      8–11        Rianthakool et al. (2018)
+                  harvest volume 130–170 m3 ha−1, sawed timber        Motor-manual felling     25–30                          1.09
+                                                                         with the chainsaw
+                                                                      Elephant skidding         5–10                          1.38
+                                                                      Farm tractor             10–25                          0.96
+                                                                      Skidder                  15–20
+                Rubberwood, 25–30 years rotation, stem volume         CTL                                                                                 Rianthakool and Sakai (2014)
+                  0.27 m3, sawed timber
+                                                                   Felling with chainsaw        25.1          22.69           0.90
+                                                                   Cross cutting with           23.1          22.67           0.98
+                                                                     the chainsaw
+ Malaysia      Acacia mangium, 10–15 years rotation, stem volume FT                                                                                       Engelbrecht et al. (2017)
+   (South East   0.2–1.2 m3, harvest volume 85–365 m3 ha−1
+   Asia)
+                                                                   Chainsaw
+                                                                   Excavator (bunching)
+                                                                   Cable yarder                15–133
+                                                                   Excavator with
+                                                                     grapple
+ Philippines   Paraserianthes falcata, 8–10 years rotation, veneer CTL                                                                        13.8        Carandang et al. (2015)
+   (South East   and plywood
+   Asia)
+                                                                   Chainsaw felling and                                       2.7
+                                                                     processing
+                                                                   Extraction with                                            11.1
+                                                                     animal, manual,
+                                                                     wrecker
+                                                                                                                                                                                                                 INTERNATIONAL JOURNAL OF FOREST ENGINEERING
+
+
+
+
+                                                                                                                                                                                                   (Continued)
+                                                                                                                                                                                                                 23
+                                                                                                                                                                                                                                              24
+
+Table A1. (Continued).
+                                                                        Harvesting system                       Hourly       Operational       System cost
+                                                                       (CTL= cut to length,         Net       operational   cost per unit       per unit of
+ Country           Plantation characteristics (rotation length, stem   TL= tree-length, FT=    productivity    cost (USD     of product       product (USD
+                                                                                                  3
+ (Region)              volume, removal per hectare, products)                full tree)        (m PMH−1)        SMH−1)       (USD m−3)             m−3)                                       References
+ Italy           Populus ssp., 10–23 years rotation, stem volume 0.4– CTL (motor-manual)                                                       18.1–28.1      Spinelli et al. (2008), Spinelli et al. (2010), Spinelli et al. (2011a,
+    (European      1.6 m3, harvest volume 200–600 m3 ha−1,                                                                                                      2011b),) Verani et al. (2017)
+    Poplar)        production of veneer, sawlogs, pulpwood and
+                   woodchips
+                                                                                                                                                                                                                                              F. DI FULVIO ET AL.
+
+
+
+
+                                                                      Chainsaw                    2–9             28          7.0–17.0
+                                                                      Farm tractor               15–22                          11.1
+                                                                      CTL (semi-                                                               18.1–28.1
+                                                                        mechanized)
+                                                                      Feller-buncher             12–13           141           7.0–17.0
+                                                                        (excavator based)                                   (incl. proces.)
+                                                                        (felling)
+                                                                      Chainsaw                    8–12            28             11.1
+                                                                        (processing)
+                                                                      Farm tractor
+                                                                      CTL mechanized                                          5.0–13.0         14.7–24.1
+                                                                      Harvester                  20–60           146            11.1
+                                                                        (wheeled
+                                                                        specialized)
+                                                                      Farm tractor               15–22
+                                                                      Forwarder                  29–36
+                                                                      FT mechanized                                                               20.8
+                                                                      Feller-buncher
+                                                                        (excavator based)
+                                                                      Grapple skidder
+                                                                      Processor                   14.3
+ Spain and       Eucalyptus globulus, Eucalyptus spp., 10–14 years    CTL (motor-manual)                                                                      CETEMAS-ENCE (2019)
+   Portugal        rotation, stem volume 0.1 m3, harvest volume 90–                                                                                             Spinelli et al. (2004)
+   (Iberian        270 m3 ha−1, short logs and pulpwood                                                                                                         Magagnotti et al. (2011), Dias et al. (2007)
+   Eucalyptus)
+                                                                       Chainsaw                    4
+                                                                       Farm tractor                12
+                                                                       CTL semi-mechanized                                                      7.7–10.6
+                                                                       Chainsaw (felling)        23–32            16           0.6–0.8
+                                                                       Harvester                 22–26            71           3.5–3.6
+                                                                         (tracked excavator
+                                                                         based)
+                                                                         (processing)
+                                                                       Forwarder/Farm             9–19          47–93          3.0–6.2
+                                                                         tractor and trailer
+                                                                       CTL mechanized                                                          16.3–29.4
+                                                                       Harvester (wheeled         3–33           115
+                                                                         specialized)
+                                                                       Forwarder                  9–19          48–93
+                                                                                                                                                                                                                                (Continued)
+Table A1. (Continued).
+                                                                          Harvesting system                        Hourly       Operational     System cost
+                                                                         (CTL= cut to length,         Net        operational   cost per unit     per unit of
+ Country          Plantation characteristics (rotation length, stem      TL= tree-length, FT=     productivity    cost (USD     of product     product (USD
+ (Region)             volume, removal per hectare, products)                   full tree)         (m3 PMH−1)       SMH−1)       (USD m−3)           m−3)                                     References
+ South Africa   Eucalyptus grandis x camaldulensis, E. grandis, 7–12     CTL (debarked)                                                           7.0–8.0      Ackerman et al. (2018)
+                  years rotation, stem volume 0.1–0.5 m3, harvest                                                                                                Norihiro et al. (2018)
+                  volume 118–160 m3 ha−1, pulpwood                                                                                                               Hogg et al. (2011)
+                                                                           Harvester                13–20           137          5.3–8.9
+                                                                              (tracked
+                                                                              eexcavator based/
+                                                                              specialized
+                                                                              wheeled
+                                                                              incl. debarking)
+                                                                           FT (debarked)                                                          4.8–5.8
+                                                                           Feller-buncher                                        0.8–0.9
+                                                                              (wheeled
+                                                                              specialized)
+                                                                           Grapple Skidder                                       1.0–1.2
+                                                                           Excavator with           18–28                        1.8–2.9
+                                                                              processor head
+                                                                              (delimbing/
+                                                                              debarking and
+                                                                              topping)
+                                                                           Slasher deck                                            0.9
+                Pinus radiata, P. elliottii, P. patula, P. pinaster, 20–30 CTL (no debarking)                                                     9.0–9.5      Ackerman et al. (2017), Brewer et al. (2018), Williams and Ackerman
+                   + years rotation, Stem volume 0.3–1 m3, harvest                                                                                               (2016), Williams and Ackerman (2019), Eggers et al. (2010),
+                   volume 257–481 m3 ha−1, sawlogs, plywood,                                                                                                     Ackerman et al. (2016), Pellegrini et al. (2013), Ackerman et al.
+                   pulpwood                                                                                                                                      (2014)
+                                                                           Tracked harvester        21–101        90–120           2.6
+                                                                              (specialized)
+                                                                           Forwarder                28–57         75–110           1.9
+                                                                           TL motor-manual (no                                                    3.6–5.0
+                                                                              debarking)
+                                                                           Chainsaw                 10–13          10–25         1.1–1.5
+                                                                           Grapple Skidder           9–46         80–100
+                                                                           Cable Skidder            20–45          70–80
+                                                                           Chainsaw                 20–25          10–25
+                                                                           Processor                40–50          80–90         5.0–6.3
+                                                                           FT mechanized (no                                                      4.0–4.4
+                                                                              debarking)                                                       (unprocessed)
+                                                                           Feller-buncher           80–120         80–90
+                                                                              (specialized)
+                                                                           Grapple/Cable            44–124         70–80
+                                                                              Skidder
+ US             Pinus taeda, P. elliottii, 14–30 years rotation, Stem      FT (logs)                                                              6.9–8.3      Conrad et al. (2013), Daniel et al. (2019)
+                   volume 0.2–0.6 m3, Harvest volume 80–223 m3                                                                                                   Baker et al. (2010)
+                                                                                                                                                                                                                                      INTERNATIONAL JOURNAL OF FOREST ENGINEERING
+
+
+
+
+                   ha−1, sawlogs, pulpwood, pulp chips                                                                                                           Klepac and Mitchell (2016)
+                                                                                                                                                                 Klepac and Mitchell (2017)
+                                                                                                                                                                 Klepac and Rummer (2000)
+                                                                                                                                                                                                                                      25
+
+
+
+
+                                                                                                                                                                                                                        (Continued)
+                                                                                                                                                                                                            26
+
+
+
+
+Table A1. (Continued).
+                                                                                                                                                                                                            F. DI FULVIO ET AL.
+
+
+
+
+                                                                       Harvesting system                      Hourly       Operational     System cost
+                                                                      (CTL= cut to length,       Net        operational   cost per unit     per unit of
+ Country          Plantation characteristics (rotation length, stem   TL= tree-length, FT=   productivity    cost (USD     of product     product (USD
+ (Region)             volume, removal per hectare, products)                full tree)       (m3 PMH−1)       SMH−1)       (USD m−3)           m−3)                                      References
+                                                                      Feller-buncher           82–149
+                                                                        (specialized
+                                                                        tracked)
+                                                                      Grapple skidder          24–113         55–69         1.6–2.0
+                                                                      Delimber/Loader          43–63                        1.5–1.9
+                                                                        delimber
+                                                                      Processor/Processor      43–94
+                                                                        on excavator
+                                                                      Loader                   43–63
+                Eucalyptus camaldulensis, E viminalis, 7–10 years     FT (pulpchips)                                                        8.2–12.9      Spinelli et al. (2002)
+                  rotation, Stem volume 0.1–0.2 m3, pulp chips
+                                                                      Feller-buncher           24–32          53–94         2.4–4.8
+                                                                         (specialized
+                                                                         wheeled/tracked)
+                                                                      Skidder/Loader           49–83          62–69         1.2–1.8
+                                                                      Deliber-debarker-        30–38         157–169        4.5–6.3
+                                                                         chipper
+                Poplar spp., 6–8 years rotation, Stem volume 0.13     FT (pulpchips)                                                           5.2        Spinelli et al. (2008), Hartsough et al. (2002)
+                  m3, sawlogs, pulp chips
+                                                                      Feller-buncher             42            82             1.8
+                                                                      Forwarder                  92            89             0.9
+                                                                      Delimber-debarker-         60            175            2.6
+                                                                        chipper
+                                                                      FT (sawlogs)                                                            17.4
+                                                                      Feller-buncher             42             82             1.8
+                                                                      Forwarder                  92             89             0.9
+                                                                      Manual selection           5              75            14.5
+                                                                      Processor (on              17             80             5.3
+                                                                        excavator)
+

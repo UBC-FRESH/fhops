@@ -23,6 +23,15 @@ from .stoilov2021 import (
     estimate_skidder_harvester_productivity_delay_free,
     estimate_skidder_harvester_productivity_with_delays,
 )
+from .spinelli2017 import (
+    GrappleYarderInputs,
+    estimate_grapple_yarder_productivity,
+)
+from .sessions2006 import (
+    ShovelLoggingParameters,
+    ShovelLoggingResult,
+    estimate_shovel_logging_productivity,
+)
 
 __all__ = [
     "LahrsenModel",
@@ -40,4 +49,9 @@ __all__ = [
     "estimate_brushwood_harwarder_productivity",
     "estimate_skidder_harvester_productivity_delay_free",
     "estimate_skidder_harvester_productivity_with_delays",
+    "GrappleYarderInputs",
+    "estimate_grapple_yarder_productivity",
+    "ShovelLoggingParameters",
+    "ShovelLoggingResult",
+    "estimate_shovel_logging_productivity",
 ]

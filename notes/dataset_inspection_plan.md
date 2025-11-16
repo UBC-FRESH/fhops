@@ -52,6 +52,8 @@
 - Implemented the Laitila & Väätäinen (2020) brushwood harwarder equations (Eq. 1–7) as `fhops.productivity.laitila2020.estimate_brushwood_harwarder_productivity`; unit tests (`tests/test_laitila2020.py`) recreate the published 6.5–8.4 m³/PMH curves across forwarding distances.
 - Added the Ghaffariyan et al. (2019) thinning forwarder models (small 14 t and large 20 t variants) as `fhops.productivity.ghaffariyan2019`, with regression tests matching Table 4 productivity values and optional slope multipliers for >10% trails.
 - Captured the Kellogg & Bettinger (1994) CTL multi-product forwarder regression (`fhops.productivity.kellogg_bettinger1994`) so mixed/saw/pulp scenarios with explicit travel components can be estimated; tests mirror Table 8 productivity numbers.
+- Added Sessions & Boston (2006) shovel-logging helper (`fhops.productivity.sessions2006`) so we can inspect road-spacing trade-offs (productivity, cost/tonne, profit). Regression tests replicate the published 4-pass scenario.
+- Added Spinelli et al. (2017) excavator-based grapple yarder regression (`fhops.productivity.spinelli2017`) as an interim surrogate for the requested grapple-skidder model; still need Han & George field equations once available.
 - `fhops dataset estimate-forwarder-productivity` now exposes both sets of forwarder regressions (Ghaffariyan small/large + Kellogg saw/pulp/mixed) with parameter validation and Typer tests, so users can query productivity without writing Python.
 - Reviewed the new machine-productivity PDFs (Di Fulvio 2024, Eriksson & Lindroos 2014, Kellogg & Bettinger 1994, McNeel & Rutherford, Ghaffariyan et al. 2019, Stoilov et al. 2021, Laitila & Väätäinen 2020, Berry 2019, Lee et al. 2018, Ünver-Okan 2020, Spinelli et al. 2016). These cover forwarders, grapple skidders/shovel loggers, processors/landing ops, brushwood harwarders, small cable yarders, coppice harvesters, etc.—none appear in Arnvik Appendix 8, so we must ingest them manually to close the FHOPS machine-role gaps.
 - Current machine-type coverage from Arnvik (Camelot + legacy): 260 `single_grip_harvester`, 94 `feller_buncher`, 14 `feller_buncher_sim`, 8 `harwarder`, 6 `single_grip_harvester_sim`, 5 `skidder_harvester`, 5 `feller_buncher_drive_to_tree`. No forwarders/grapple skidders yet – these are the next extraction targets.
@@ -223,7 +225,7 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
    - Combine the productivity helper with machine rental-rate inputs (in $/SMH) to produce BC-calibrated $/m³ estimates downstream in evaluation scripts; document how this links to the forthcoming machine-costing CLI.
 
 ## Immediate Next Tasks (queue)
-- Extract grapple-skidder and shovel-logger productivity functions (Han & George, Kellogg & Bettinger follow-ups) and prototype helpers/tests so Step 3 can close.
+- Track down Han & George grapple-skidder data (or equivalent BC datasets) so we can replace the interim Spinelli et al. yarder regression with an on-point grapple-skidder model.
 - Expand Appendix 4/5 normalization to include operator, machine weight, and slope applicability metadata needed for the remaining machine families.
 
 ## Machine-Role Productivity Rollout (Steps 1–6)

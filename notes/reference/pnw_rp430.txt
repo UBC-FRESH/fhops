@@ -1,0 +1,1958 @@
+                     This file was created by scanning the printed publication.
+                     Text errors identified by the software have been corrected;
+                                  however, some errors may remain.
+
+
+
+
+United States
+Department of
+Agriculture
+                    Cost and Productivity of
+Forest Service
+Pacific Northwest
+                    New Technology for Harvesting
+Research Station
+
+Research Paper
+                    and In-Woods Processing
+PNW-RP-430
+July 1990           Small-Diameter Trees
+                    Michael B Lambert and James O. Howard
+
+
+
+
+                                               d
+    "'::.5:::~ .:             ::j         :::..:L,         :=;'~    ~:~:-~ :'~:::~ -.:               :~;:~            .     "--~:'.             :    ~:::,:"_':-~        2          :.~ :,-'::(:'i""               ":;:-              :s'~-"--:~f          ?'~'           ::'      ......           :'--'~"       ~ :%:'::           :':"        :     ~rff.-~,--*?.?.:~'~:7_:~.:-..~-~'~.~',~.~-.?                        .T
+
+    ,~'2.--~.,           -•         •-:f:'.~.            : :-~     ~:'.      7::': ~ :7:-.:,~            :~" ~ ~",          - 7::~"--               :7 ;~-~':G~:g:             - ~ .... -'~:~ *"                   ;;i:~:        ::      -:.:,-7-::f'2--       :-:~         :.~     .: ".:        :: ".:.~%:          ~.,       ::     ~ ~-.,." _::5¢~:- :" ::::=-:-:.t                  °           :-~:~     ~;L-..- ~   :'
+
+
+
+
+    _.              ::             _ ~ _::.:_--.._.,.                 . -,-::        :=- .~..#.<             > ~: ~         : ~.:a: ..              .. ' .~;-'..:.;'--         :'>:'~'"               " -r-...~?:~.--:-':              ":- ..-'~    -.."~         ,4 ~:-:'-.               -':':':,:     :,.:,    :"~:.-.=J-~               ..':':      ~.~.::. :.-.--    .G.:-->       ~:   :.-~;:':         =-~. ~:~- ."
+
+
+
+
+    L-~-.;:~     -.~:                 -    : • " 2 :        ._.'-5 ..:.,:e    ..     ,..-:E_~.       ,    ..::. ~ : ~ . . ~       .: :     ~_
+
+                                                                                                                                                                       ,-7~.:'.. ":-':               • :"   -2-,   :    ~'-" "           .'. " - • > z %e:2 ~:~                    :~"       a. :~-- -_Q:T--.         "~ Y:~'a--       ~<;:~-
+
+                                                                                                                                                          =7
+
+
+
+         ;-7.'.~-             -:          '.-~,-:i~
+
+                                                ~o,.-,     . ~'=~::~::!~ :-.,"~:: .. :a~--~ ,. ~ ::_-e. ~'~::.            -~-:-n~!~      :: .~.:~
+
+
+
+
+                                                                                                                                                               ~-':          '~,'     ": ' ~-         ", :::. ~.~           ,--:-=.': ~:2-~ :'~- ~--:.:":             ->--        -2-      ;/- {-'"     - :~:,-i~':::.'~.:,,,:::'>                   :-g~-':-~,.    --    -'-~':-~-:'.--:U       :
+
+
+
+
+                                                                                                                                                               ::.~-_.•:__" :,~-~.            :.::      T ~ ::' :::          :         ~.-:::          •~{: ::        ~'.: : = :'i ;,:-.•>:;~7                   G:,-        <-~:: :::;:---S- ~ " :•:~-:~:;              7,': :'g,(~'-'R:e•.:.
+
+
+
+
+                         : " i--:"~ -~ i~ : i > ; ~ - " ; , - -                    ~:~.-         ~ " ~ ~7~{:~.:.:'-,'--#2~ : : . . :, : ~ _ - r ' ~ - > -":::.:'::5:':,~- ~ : :                         ~>.~:-":'::.~'~:~• ~                    :'~.7:~ : ~ a • ~ - . : - ' ~ ( : , ~         ~ , :':' :{£..:4~" a~-:.~.
+
+
+
+
+                                                                                                                                                                                                                                                                                                                                                                                    .-~<-.-" ~ =             '•:;:':'5 ~,;~-:--::::-:~ " ~
+
+
+                                                                                                                                                                                                                                                                                                                                                                                    ::i~:i~i~!~:%~-~:i~:~ i::i
+
+
+--'_-
+   !~ ~..;~:Sf ::~.~ ~ ~:~:~#';~-.~-:~~-i.~ ::'-~:-~--:::~'
+                                                                                                                                                                      ~.'~,-z~.':::~- .L. ~: - i~ . ~:i~,-'t._:T: -..-~::,.:,..                                         :         .-..-~> -~'L~,-;-:!-~%-I:~
+
+
+:        ~:~- :'< - : " - G ~ , "                    ~-"-" -:~:., =                7 .~" ;2-L---",~L ~            - " ~,-~" ~:'~' •
+                                                                                                                                                                                                                                                                                                                                                                                                                            : .7" "-:'7!•
+
+
+
+
+                :~L:<~'~:5 :                      _~ , " - ~ o !             ,~      :>%~ e , : . ~ : ~ ' ~ ~ ~      i 2~:'~i: ~ ~'*;b~-~                        ~< ~+ ~i!5 ::,4:-'.:2~::?. ~ - ~ - ; ~ , > ~ : ' , ~ . ~                          --~. ~ "-~.'P~ :'~::                             :.-.~ ~ : ~ : ~         ~:~!~:-~
+
+                ~_2~75:c:~:~.~:.~ :: ~ , ~ , : ~ ~   ~ ~:':~ ~i~-"~-'~ : :if.:~-~ )~-~-:~A i ~'.~ : ~ S : ~ : ~ : ~ : T £ ~ :                                                              -~ ~-" ..:i. ~ ! v ~ - ~ : ~  ~ "          ~~ - ' ~ : : < ~ ~ - ' : ~ : ; ~      ~                          , ~::-~17~ > :~%,i
+                ,:~% ~ ' . : ~ , : : ~ • ~<~,, % -£: ~ - - - ~ - ~ e ~ - ' ~ : ~. ~ o~:;, ~ L : ~ - ~ > ~ o ~                                                                                 r : , ' _ ~ < - . ~ ~..->- 7 ,~. - ~ : ~ - ~ - .      >~ ~ - ~           ~.~:                               "~ ~ < 2 ~ ' - ' , , , ,
+
+                                                                                                                                                                                                                                                                                                                                                                                     ,~,_'!,:, ..:~:~->~:,i.:-~>.~ -: ?:i ~
+                : ~-,~,~
+                  ~ "._~i.:;:~i~
+                             s ~ ' . -: "!i-~
+                                         -:~ ? ~' < '' -~~~ - i~:~
+                                                               ~ ~.~{-=~~ - ~ - ~• ~~-,~
+                                                                                     - , ' ~ , ~~:~-17::
+                                                                                                   ~     ~ ,i,~7  ,L:,p~.
+                                                                                                               ~.;-.  -~-. •• "• • ~~:~: L,-~.~_,
+                                                                                                                                         ~ . ' ~ 4 ~ .~ ,i. ~! ~"V~
+                                                                                                                                                         p~.-  ..- : :~-~~~,
+                                                                                                                                                                           , ~'~:-~.~ '~,~,
+                                                                                                                                                                                          ~ ) ~~ : ~ > ~ :-w:~-<~'~
+                                                                                                                                                                                                           ::~ ~:~" : ~ ',: : ' - ." ~~ "-~ . ~g ~~:,:-~ :'f"~< . >~-:'~~ ,~L"
+                                                                                                                                                                                                                                                                           -.-~ ~"~:' -:
+                                                                                                                                                                                                                                                                                       .,;
+                •a ~ - ,    ~..--,,-~--:, ~ , A            '= ~ ~                  :~-:~, t, 5 , . ~                ~ ~ ,g       ~ 7~-~         .~L     " ~ L ~      ~       ~ - - ~ = - " ~. :        ~-~"       ~:'~" ~ °              . ; , ~ - ~ , : ~:~ : "~ . " : , , ~ - ; ~ '
+                ~        j~,~'.:~-~::a:~-~"                  ~.~:-_          : ::~. ~':-_,~, ~-:.o ~ L'~ ~" "~a~.~ : ~ ' ~ " . ~ ' ~ <                            ~      :~ "         ~--'~              ~,:'~       "~,~             " : ~ - ~"~7 H _ _ ~ . - ~ . ~ :
+                  ~:~.'-" .'-~-:'~>S~ ' ~ , ~ ,           ,~ 7 ~ P ' ~ ~' ~-,~::'±:~:~'":-:~::. " . ~ _ , ' ~ ~,.~- ~ - ~ - ' ~                         :~72:'~'-~7 ~ " , : > i ! ~ N ~ , ~ -'~ ; ,:~'~ : ~ > - ~ ' - - - ~ " ,~ ~                        ~'~:~ :~ "7:'': "~'~
+                ~g~-~i ~U:-'-!:                 " ~.- ~,~ ~:~-.~--~S:                                      ~i' :'~'5 ~"~':,~:~?:~:~                      i":~>~ ~ ~          ~            ~ "             :;~'=-:~'-<'~V~:~. ': ~ :'~'::~:~::~i"-'2~                                  ~
+
+
+
+                                                                                                                                      -":-7         % ' - ~ ~4:;: . ~ - ' ~                     ~"                 !: "               , ° i ~-~.~ :::~..~,: ~ ~- -'.-~"'.'PL*--'i~-.~.: ~.
+
+
+
+
+                                                                                                                              ~ : ~ : ~L "~! ~ •~-• ~                                                   -2 ~ : ~'., :-% ,~ •.-~ :" '~ ~:~.::" ~:::-•~~'~- !-- •:~: ~f~:., ~i',)!" •~ :.~ :- ~. ~ :~!~ ~: ~_"
+                                                                                                                              -:~-~.::, ~"-'~,~:~ ~.~-,:::,,-~,:.                      ~         • ~               ~':~ ~ ' ~ i ~'~-~ A:~i:'--:!i~~ ~ : - • ~7: ~ , : ~ : ~ : ~ ' ~ ; ~ : ~        i~7.~.~
+
+
+
+
+                                                                                                                                Ya: ~:_ :, :7               ~~ . ~                  ::7~~ '~ =~/~ ~.~:<~_~:-.'~ :-!*-~-~,~2 ~'-" ~ ~'~:~,~-"-::-:g~ - ~ ~-~" -'7" .:-5: ~~,.-~ ~.:;~ ~::
+                                                                                                                              :;-~ >:. 5 ~ ! ~: ~! - c ~ : ~      ° ~ ~.--~i~ ~ ~I:,,~.--,S ~ T ~ ~ ~ ~ , ~                             ~. • i ~ _ . : ~ _ ! : " . : ~ " ~ : 7          ~-~ ~ : ~         ~.~,~:~              ~~           :~
+Abstract   Lambert, Michael B; Howard, James O. 1990. Cost and productivity of technology
+             for harvesting and in-woods processing small-diameter trees. Res. Pap. PNW-
+             RP-430. Portland, OR: U.S. Department of Agriculture, Forest Service, Pacific
+             Northwest Research Station. 37 p.
+
+           A study was conducted on the productivity and cost of an integrated harvesting and
+           processing system operating in small-diameter timber (western hemlock-type) on the
+           Olympic Peninsula of western Washington. The system uses a new steep-slope feller-
+           buncher, a clam-bunk grapple-skidder (forwarder), a prototype chain-flail debarker-
+           delimber, a chipper, a conveyor system, and a prototype shredder. The study showed
+           that the system harvested and processed trees at a combined-system cost of $7.80
+           per green ton at a production rate of 455 green tons per day. The delivered product
+           mix was 53 percent chips, 21 percent saw logs, and 26 percent hogged fuel by
+           weight. The productivity and machine rate of each piece of harvesting and process-
+           ing equipment and other data are given.
+
+           Keywords: Logging, whole-tree harvesting, feller-buncher, intensive harvesting,
+           utilization, integrated harvesting, in-woods chipping, small-tree harvesting.
+
+Summary    An integrated harvesting and processing system is operating in dense stands of
+           small-diameter timber (western hemlock-type) on the Olympic Peninsula of western
+           Washington. The stands are being clearcut to a 1-inch by 10-foot standard with an
+           integrated system employing six pieces of woodland equipment, three of which are
+           distinctly new. Trees are felled and bundled with a new steep-slope feller-buncher
+           and carried to an in-woods processing system by a clam-bunk grapple-skidder (for-
+           warder) where they are sorted and simultaneously processed into three products:
+           saw logs, clean-pulp chips, and hogged fuel. A prototype, multiple-stem, chain-flail
+           debarker-delimber prepares some stems for chipping. Bark, branches, trim ends, and
+           very small trees not processed into saw logs or clean chips are lifted by a conveyor-
+           grapple system into a prototype shredder, which processes all remaining woody
+           materials into hogged fuel.
+
+           A study was conducted to quantify the operating parameters of the system, including
+           production rates and costs of individual machines, the interdependency of equipment
+           at the processing site, and the overall production cost of the system.
+
+           The study showed that the system harvested and processed about 300 green tons of
+           products per acre from 2,300 standing trees per acre at a production rate of 455 tons
+           per day and at a cost of $7.80 per green ton. The delivered product mix was 53 per-
+           cent chips, 21 percent saw logs, and 26 percent hogged fuel by weight. Because the
+           processing system produced three distinct products simultaneously, costs of opera-
+           tion could not be rigidly attributed to individual products. This integrated system was
+           able to economically produce three separate products simultaneously from a stag-
+           nated stand of small-diameter trees, where single-product extraction had not pre-
+           viously been profitable.
+Contents   1    Background
+
+           3    Objectives
+
+           4    System Description
+
+           4    Harvesting System
+
+           5    Processing System
+
+           10   Support System
+
+           10   Study Methods
+
+           10   Area Selection
+
+           11   Stand Inventory
+
+           11   Time and Production Measurements
+
+           14   Cost and Machine-Rate Determinations
+
+           15   Results and Discussion
+
+           15   Equipment Development
+
+           16   Stand Inventory
+
+           16   Products
+
+           18   Production Rates
+
+           26   Equipment Availability
+
+           27   Productive-Time Ratio
+
+           28   Costs
+
+           30   Conclusions
+
+           31   Acknowledgments
+
+           31   Metric Equivalents
+
+           32   Literature Cited
+
+           32   Appendix
+
+           32   Ownership-Cost Information
+
+           33   Operating-Cost Information
+
+           35   Glossary
+Background   Natural regeneration after a series of catastrophic fires, the latest in the mid-1920s,
+             produced overstocked stands of small trees on the Olympic Peninsula in the State of
+             Washington. About 20,000 acres of these stands are on the Quilcene Ranger District,
+             Olympic National Forest. These stands, with average diameters of 8 inches and less,
+             have stocking densities up to 40,000 stems per acre. Doghair 1 is a local term that
+             has been used to describe these stands. These stands (fig. 1) are comprised pri-
+             marily of western hemlock (Tsuga heterophylla (Raf.) Sarg.), Douglas-fir (Pseudo-
+             tsuga menziesii (Mirb.) Franco var. menziesfi), and western redcedar (Thuja plicata
+             Donn ex D. Don), and occasional large cedar snags.
+
+             Because of the overstocked conditions, growth in the doghair stands is well below
+             normal. A goal of land managers has been to restore these stands to a more pro-
+             ductive state. Conventional harvesting methods and equipment have been poorly
+             adapted to the dense, small-diameter trees, and have resulted in inefficient handling
+             of small trees, high costs, and low product recovery per acre. Stand-conversion
+             alternatives have also proved to be cost prohibitive. It seemed unconventional means
+             would be required to accomplish the objective of converting these stands to more
+             productive conditions.
+
+             1 See glossary for terms used in this report.
+
+
+
+
+             Figure 1--Dense stand of small-diameter trees in the
+             study area near Quilcene, Washington. Harvesting stands
+             such as this requires innovative technology and multiple-
+             product marketing.
+ Early attempts to rehabilitate these stands were complicated by inadequate equip-
+ment for harvesting and processing, ineffective marketing for all potential products,
+and adverse environmental impacts, particularly soil compaction. In recent years,
+several timber operators have attempted to harvest doghair stands by using combi-
+nations of equipment and marketing options. These approaches, however, also
+proved to be unsuccessful because of inefficiencies in either harvesting, processing,
+or marketing. One timber operator devised a central, in-woods processing operation
+to take advantage of new technologies and whole-tree product marketing. In addition,
+innovations in felling and skidding stems to the in-woods processing operation were
+attempted and refined. The use of feller-bunchers and multiple-stem forwarding
+proved to be the most efficient and cost-effective means for delivering the trees to
+the processing center. A great deal of progress has been made in making better
+equipment and methods for handling and processing doghair stands. Equally impor-
+tant has been the successful marketing of all biomass components of these stands
+as saw logs, clean chips, and hogged fuel.
+
+In 1983, the USDA Forest Service awarded a contract to Hermann Brothers Logging
+and Construction Company (1) to enable continued development and study of equip-
+ment and methods for economically converting stagnated stands of small trees to a
+productive status and (2) to provide the basis for a comprehensive study of the tech-
+nology and economic feasibility of removing and using the products from small-
+diameter tree stands. 2
+
+In 1986, a grant from the U.S. Department of Energy (Bonneville Power Administra-
+tion) through the Pacific Northwest and Alaska Bioenergy Program was awarded to
+Hermann Brothers to assist in the development of specialized equipment for produc-
+ing biomass fuels from these overstocked stands.
+
+In the past 4 years, the timber operator has developed and applied several arrange-
+ments of equipment in search of better harvesting and processing economy and
+efficiency. One specific need was a feller-buncher capable of operating on terrain
+steeper than 30 percent, thus extending the area available for timber harvesting. A
+new steep-ground feller-buncher was developed, with a self-leveling boom carriage
+that automatically stabilizes the operator's control cab on slopes up to 70 percent.
+Preliminary evaluations showed this machine to be faster and capable of operating
+on much steeper ground (80 percent) than other felling and bunching machines in
+use at the time. This feller-buncher, coupled with a clam-bunk skidder (grapple
+forwarder), has greatly improved the efficiency and economics of delivering small-
+diameter trees to the in-woods processing site. The timber operator has also used
+mobile cable yarders to bring trees into the in-woods processing system, where
+slopes have exceeded the slope capabilities of the clam-bunk skidder.
+
+2 The use of trade, firm, or corporation names in this publica-
+tion is for the information and convenience of the reader.
+Such use does not constitute an official endorsement or
+approval by either the U.S. Department of Agriculture or the
+U.S. Department of Energy of any product or service to the
+exclusion of others that may be suitable.
+             This report describes the cost and productivity of equipment systems observed dur-
+             ing two related studies. The first study focused on the successful felling, bunching,
+             and forwarding operations being used in the doghair stands on the Quilcene District.
+             The second study addressed the operation of an in-woods, whole-tree-utilization
+             system that was observed in fall and winter of 1986-87. The intent of the studies was
+             to capture the comprehensive technical and economic information provided by appli-
+             cation of this new technology to small-diameter tree stands. These studies were con-
+             ducted simultaneously to share common elements.
+
+             This report provides information to evaluate a promising biomass-harvesting method
+             and a basis for evaluating harvests of similar stands elsewhere in the region. As
+             noted in a recent issue of Biologue, "The profitable conversion of small-diameter
+             trees could result in significant increases in supplies of woody biomass for production
+             of energy...a key element in the effective marketing of small-diameter trees" (Anon.
+             1986). Energy values from whole-tree chips are high (Howard 1987), providing an
+             incentive to use biomass that would othe,"wise be left as residue. The proven ability
+             to efficiently harvest small-diameter stands and multiple-product marketing will pro-
+             vide new opportunities to the land manager. Stands previously thought to be unmer-
+             chantable may now be considered in a different way. Potential sites for applying this
+             technology include stands currently defined as precommercial size, having underused
+             species (such as Iodgepole pine and red alder), available for commercial thinning,
+             and available for removal of smaller tree.', in a double-entry harvest system. Econom-
+             ics, and other factors, may still limit some applications. The ability to use all possible
+             products in a stand in a cost effective manner, however, will affect the management
+             and harvest of the region's second-grow'h timber.
+
+Objectives   The objective of this effort was to characterize and quantify the operating parameters
+             of the existing harvesting and processing system being used for stands of small-
+             diameter trees. The effort is being made because of the need for a cost-effective
+             stand conversion method. Potential multiple-product markets for the biomass har-
+             vested from these stands present an opi~'ortunity for increased revenue to aid the
+             conversion of these stands.
+
+             Specific objectives of these studies were as follows:
+
+             1. Determine the quantities and types of wood products harvested and processed per
+             acre from the doghair study area by the system.
+
+             2. Determine the costs and production rate of each piece of equipment used in the
+             harvesting and processing subsystems.
+
+             3. Identify and sum the total costs ($) of owning and operating the harvesting and
+             processing subsystems during the study periods.
+
+             4. Determine the total productive cost (S/ton) of harvesting and processing with this
+             system as it produces the observed product mix.
+System Description   Figure 2 illustrates the equipment arrangement and flow of materials from the stump
+                     through the in-woods processing system and onto trucks bound for market. The fol-
+                     lowing sections describe each piece of equipment.
+
+Harvesting System    Feller-buncher--A prototype steep-slope feller-buncher, model FB-1, developed by
+                     Washington Logging Equipment Company, 3 used to cut and prebunch the doghair
+                     trees (fig. 3).
+
+                     3 The FB-1 is currently manufactured and marketed by Allied
+                     Systems Company of Sherwood, Oregon, as the Allied Tree
+                     Harvester ATH-28.
+
+
+
+
+                      Harvesting
+
+
+                                                                      /J
+
+
+
+                      Processing
+
+
+
+
+                                    i                  I
+
+
+
+                                   T                  T                    T
+
+
+
+
+                     Figure 2--Equipment arrangement and material flows through
+                     the in-woods processing system for small-diameter trees.
+                    Figure 3~Steep-slope feller-buncherprototype usedduring the study.
+
+                    Forwarder--A rubber-tired clam-bunk skidder, Timberjack 520A, with a selfloading
+                    grapple, was used to transport the prebunched trees from the woods to the process-
+                    ing site (fig. 4).
+
+Processing System   Several field trials of various combinations of equipment and material handling
+                    processes were tried with limited successes. Figure 5 shows an overview of the final
+                    central processing system being used on study site B. The system is arranged so
+                    that the trees to be processed arrive on one end, and the products are hauled away
+                    in trucks from the opposite end. The processing system consisted of the following
+                    specific equipment:
+    Figure 4--Forwarders that move large loads of small stems enhance the efficiency
+    of harvesting dense stands.
+
+
+
+
+    Figure 5---The central processing system, where all breakdown of products occurs.
+
+    Mobile Ioader--A self-propelled, Caterpillar 225, shovel-type loader (fig. 6) used to
+    sort the trees and position them for processing. The loader was an integral part of the
+    clean-chip operation, feeding trees through the "debarker-delimber" and into the reach
+    of the grapple used by the chipper operator to feed the chipper. This loader moved
+    several forms of woody materials to the shredder. The loader also loaded log trucks.
+
+    Debarker-delimber--A prototype chain-flail machine (fig. 7), built by Hermann
+    Brothers, used to clean bark and limbs from multiple stems before chipping so that
+    resulting chips would have relatively low bark content. The flail chains were mounted
+    on twin vertical shafts.
+
+
+
+
+6
+                                   Figure 6--The mobile loader, which handles all materials arriving at
+                                   the landing.
+
+
+
+
+Figure 7--The debarker-delimber processed trees that produced clean chips and hogged fuel.
+
+                                   Chipper--A Morbark Chiparvester with a 23-inch in-feed opening used for processing
+                                   the debarked trees into clean chips (fig. 8).
+
+                                   Shredder--A prototype machine with a drum chipping head and a built-in Prentice
+                                   loader used for processing the smaller trees, the bark and limbs from the debarker,
+                                   the limbs and trim ends from the saw log operation, and all other subgrade material
+                                   on the landing into hogged fuel (fig. 9).
+    Figure 8--The chipper producedclean chips from stems that had been debarked
+    and delimbed.
+
+
+
+
+    Figure 9--The shredderprocessedall materials not sold as logs
+    or chips.
+
+    Conveyor.magnet systemmA hydraulically driven conveyor system used to handle
+    the bark and limbs that were expelled from the debarker-delimber (fig. 10). The con-
+    veyor system sorted the woody debris into three size categories: (1) large, heavy
+    limbs; (2) small limbs; and (3) fine materials. Both categories of limbs were piled
+    within reach of the shredder grapple, which periodically lifted the piles and loaded
+    them into the shredder in-feed bin. The fine materials were lifted by another conveyor
+    and dropped across an inclined magnet, which was designed to trap ferrous mate-
+    rials and prevent them from damaging the cutting teeth inside the shredder.
+
+
+
+
+8
+Figure lO--The magnet-conveyor system.
+Support System   Road and landing construction equipment--A variety of equipment used in many
+                 capacities and for different lengths of time to prepare and maintain the landing at the
+                 processing site and the road that leads to it. Items in this category included earth-
+                 moving trucks, front end loaders, bull dozers, and motor graders. In the current oper-
+                 ating system, approved by the Quilcene District, a large (D-6 size) tractor is used
+                 after harvest for ripping the soil on heavily traveled paths, such as the "go back" road
+                 used by the forwarder.
+
+                 Maintenance equipment--Service vehicles with welders, hoists, and spare parts
+                 used to maintain the processing equipment in operating condition. Fuel and oil
+                 vehicles were also used.
+
+                 Crew transportation--A six-passenger pickup truck used to transport the work crew
+                 to the work site each day.
+
+Study Methods    Two study blocks were selected for whole-tree harvesting during this study. Cost and
+                 productivity information was recorded while the prototype harvesting and processing
+                 system operated normally in the study area. Trees to be harvested were preinven-
+                 toried by using conventional stand exams. Processed products were weighed as they
+                 were taken out of the area. This put production data on a green-weight-per-unit-time
+                 basis. Cost information was on a dollar-per-productive-hour basis. This resulted in
+                 productive costs being expressed in dollars per green ton.
+
+                 A steady-state operation was observed, free of any transitory effects of equipment
+                 set-up or move-out. Each study block was completely harvested during the respec-
+                 tive harvest period. Study of processing was done concurrently with the study of har-
+                 vesting so the same stand could be observed from the start of felling to the end of
+                 processing. Simultaneous studies simplified the field work because stand exams and
+                 truck weighing applied to both studies. Furthermore, all nonstudy materials were
+                 removed from the processing site before each study period so that only trees from
+                 the marked study blocks were processed.
+
+Area Selection   The study area, on the Quilcene Ranger District, Olympic National Forest, consisted
+                 of 3.12 acres (block A) plus 3.48 acres (block B) of small-diameter trees within a tim-
+                 ber sale (Doghair Unit 79) that was under contract for harvest and site conversion
+                 during the study. Both study blocks had similar stand density and terrain. Slopes
+                 ranged from 20 to 35 percent. Each block was selected so as to allow a single for-
+                 warder to keep the processing equipment busy. An additional forwarder was some-
+                 times used by the operator to cover longer distances, however. The blocks were
+                 laid out in roughly rectangular shapes for convenience in marking and harvesting.
+                 Figure 11 shows the location of the study area.
+
+
+
+
+10
+                              ~         ~'p~_          Canada
+
+
+                         Ocean ~ / ~f~e seatt~                      /
+
+                                  ~ - - Study area
+
+                                                       w,°.
+
+
+                          /
+                      Figure 11--Locationof the studyareanear PortAngeles
+                      on the Olympicpeninsulaof westemWashington.
+
+                      The soils underlying these overstocked stands are Entisols and Inceptisols that devel-
+                      oped on deposits from continental glaciers (Jennings and others 1982). Generally,
+                      these geologic materials differ in particle size and shape, strata orientation, degree of
+                      compaction, and resistance to weathering. The soils are weakly developed, lacking
+                      structure and differentiation of horizons; this has resulted in soils that are highly vari-
+                      able even within small areas of similar relief. Many of the unstructured subsurface
+                      layers are impermeable and seem deficient in nitrogen (N) and some micronutrients
+                      such as copper (Cu) and iron (Fe) with perhaps toxic levels of manganese (Mn)
+                      (Little and Waddel11987).
+
+Stand Inventory       The number and size of trees in each study block were determined by a routine
+                      stand-exam procedure. On each block, twelve one-fiffieth-acre circular plots were
+                      systematically laid out. All standing trees in the plots, living and dead, were inven-
+                      toried by 1-inch diameter classes and species. Diameters at breast height of all
+                      sample trees were recorded, and heights of three randomly selected trees in each
+                      diameter class were recorded. The ground slope was measured, and terrain rough-
+                      ness was assessed. An estimate of the total number of trees by diameter class for
+                      each block was computed from these data.
+
+Time and Production   Observations were recorded during harvesting and processing to provide data from
+Measurements          which estimates of production rates for each piece of equipment in the system could
+                      be made; this required observations of the operation of each piece of equipment.
+                      Operational-time components were recorded for all equipment throughout the study.
+                      In addition, more detailed observations that included production information such as
+                      number of pieces handled were made on each machine during several randomly
+                      chosen, intense, hourly sample periods. Table 1 shows the intense observation time
+                      for each machine on each study block as a percentage of the total operating time.
+                      Time elements and units of production were recorded as described below.
+
+
+
+
+                                                                                                               11
+     Table 1--Observation time as a percentage of
+     total operating time for each machine by study
+     block
+
+     Machine                   Block A        Block B
+
+                                       Percent
+
+     Feller-buncher              100              28
+     Forwarder                    25              26
+     Sorter-loader                22             100
+     Debarker-delimber           100             100
+     Chipper                      18             100
+     Shredder                    100             100
+
+
+     Time measurements--For each piece of equipment, an on-site observer recorded
+     time in the following categories:
+
+     Time category              Definitions
+
+     Scheduled time             Total planned work hours that each piece of equipment
+                                was assigned to the job. Also, the sum of all time
+                                components: that is productive, idle, delay, and down
+                                times (total operational time).
+
+     Productive time            Hours when equipment was working at the assigned
+                                task(s).
+
+     Idle time                  Time when equipment was ready to be productive but
+                                could not process material because none was available
+                                from the previous process (no workload).
+
+     Delay time                 Time when equipment could not complete material
+                                processing because the subsequent process was fully
+                                loaded and could not accept new material (bottleneck
+                                ahead).
+
+     Down time                  Time when equipment was unavailable for productive
+                                work because of scheduled or nonscheduled interrup-
+                                tion of processing due to mechanical or operator
+                                inability to proceed.
+
+
+
+
+12
+Figure 12--Total green weight of all products was found by
+weighing all trucks on portable scales.
+
+
+Production measurements--Production of the harvesting and processing system
+was measured in units of green weight (tons). Weight units are preferred to other
+units such as cords, board feet, or even cubic feet for biomass measurements be-
+cause all forms and parts of the tree can be consistently accounted for by weight.
+Very small trees cannot be measured by existing board-foot rules, and no other
+measurement adequately tracks limbs and tops. Also, many wood-handling systems
+are limited in how much weight they can lift, and equipment designers and operators
+can be more effective when they know how much actual weight is to be handled.
+Weight units can readily be converted to other units of measure when needed to aid
+communication. If desired, green weight may be adjusted for moisture content to
+reflect wood weight at a different moisture content, such as bone-dry units.
+
+For this study, all products being taken from the processing site at the landing were
+weighed on portable truck scales (fig. 12). Each truck was weighed, both loaded and
+unloaded, so that the product net weight could be determined. The portable-scale
+results were corroborated with mill scales where the products were delivered. The
+net weights of each product were summed to give the individual production of logs,
+chips, and hogged fuel. The weights of all products were then summed to give the
+aggregated production (multiple-product yield) from the study blocks. Because the
+landing was cleared before and after each study period, the assumption was made
+that the total product weight 4 was equivalent to the weight of all trees handled by the
+feller-buncher and subsequently by the forwarder and also the mobile loader. Simi-
+larly, the weight of all chips was the production of the chipper and the debarker-
+delimber. The total hogged-fuel weight was the production of the shredder, and the
+production of saw logs was equal to the weight of the logs that were hauled out on
+log trucks.
+
+4 Moisture loss was assumed to be negligible during the har-
+vesting and processing activities. Moisture is lost, however,
+because trees continue to transpire moisture when felled and
+left on the ground with their crowns intact. Moisture also
+evaporates during the chipping and shredding operations (as
+witnessed in visible evaporation from warm chips in freshly
+loaded vans). The extent of moisture loss from these sources
+is unknown.
+
+
+
+
+                                                                                       13
+                                                                     Continue
+Figure 12--Total green weight of all products was found by
+weighing all trucks on portable scales.
+
+
+Production measurements--Production of the harvesting and processing system
+was measured in units of green weight (tons). Weight units are preferred to other
+units such as cords, board feet, or even cubic feet for biomass measurements be-
+cause all forms and parts of the tree can be consistently accounted for by weight.
+Very small trees cannot be measured by existing board-foot rules, and no other
+measurement adequately tracks limbs and tops. Also, many wood-handling systems
+are limited in how much weight they can lift, and equipment designers and operators
+can be more effective when they know how much actual weight is to be handled.
+Weight units can readily be converted to other units of measure when needed to aid
+communication. If desired, green weight may be adjusted for moisture content to
+reflect wood weight at a different moisture content, such as bone-dry units.
+
+For this study, all products being taken from the processing site at the landing were
+weighed on portable truck scales (fig. 12). Each truck was weighed, both loaded and
+unloaded, so that the product net weight could be determined. The portable-scale
+results were corroborated with mill scales where the products were delivered. The
+net weights of each product were summed to give the individual production of logs,
+chips, and hogged fuel. The weights of all products were then summed to give the
+aggregated production (multiple-product yield) from the study blocks. Because the
+landing was cleared before and after each study period, the assumption was made
+that the total product weight 4 was equivalent to the weight of all trees handled by the
+feller-buncher and subsequently by the forwarder and also the mobile loader. Simi-
+larly, the weight of all chips was the production of the chipper and the debarker-
+delimber. The total hogged-fuel weight was the production of the shredder, and the
+production of saw logs was equal to the weight of the logs that were hauled out on
+log trucks.
+
+4 Moisture loss was assumed to be negligible during the har-
+vesting and processing activities. Moisture is lost, however,
+because trees continue to transpire moisture when felled and
+left on the ground with their crowns intact. Moisture also
+evaporates during the chipping and shredding operations (as
+witnessed in visible evaporation from warm chips in freshly
+loaded vans). The extent of moisture loss from these sources
+is unknown.
+
+
+
+
+                                                                                       13
+                                                                     Continue
+                          This file was created by scanning the printed publication.
+Previous                  Text errors identified by the software have been corrected;
+                                       however, some errors may remain.
+
+
+
+
+ Cost and Machine Rate   The cost of harvesting and processing these small-diameter trees was an important
+ Determinations          part of the study because the economics of stand conversion by using the central
+                         processing system and multiple-product marketing affects how and where the system
+                         may be applied.
+
+                         A machine rate was calculated for each piece of equipment. The machine rate is
+                         defined as the hourly cost of ownership and operation for a machine or process,
+                         including investment amortization, consumables, and labor costs. The machine rate
+                         is based on a productive hour. This takes machine reliability (availability) and usage
+                         rate (ratio of productive time to scheduled time) into account. Costs of ownership
+                         (Mifflin 1980) were calculated for each piece of equipment, based on factors such as
+                         original investment, interest rates, salvage value, depreciation period, taxes, and
+                         insurance. Similarly, operating costs, including fuel and oil consumed plus labor and
+                         supervision expenses, were also calculated for each piece of equipment.
+
+                         Productive costs of each machine were calculated by dividing machine rates by the
+                         corresponding production rates. Total productive costs of owning and operating the
+                         harvesting system were calculated by summing the productive costs of the two
+                         machines of that system. For the harvesting system, however, the productive costs of
+                         the individual machines are not additive because each machine processes a different
+                         percentage of woody materials; therefore, the productive cost of the processing sys-
+                         tem was calculated by summing the products of the productive cost of each machine
+                         and the quantity of materials handled by that machine, and then dividing that sum by
+                         the total weight of all woody products delivered. This is equivalent to dividing the total
+                         cost of all operations by the total weight of all products from the system.
+
+                         The following computation methods and equations were used to calculate the values
+                         needed to satisfy the objectives of this study:
+
+                         Production rates for each harvesting and processing operation were calculated by
+                         dividing the total production of each operation by the total productive time spent to do
+                         that operation during the study.
+
+                         Machine rates for each piece of equipment were calculated with the equations below.
+
+                         The productive-time ratio of each machine was calculated by dividing the produc-
+                         tive time of each machine by the scheduled time for that machine.
+
+                         Machine availability was calculated from the equation below to quantify the reliabil-
+                         ity of the equipment during this study.
+
+                         The productive cost for the total harvesting and processing system was calculated
+                         by dividing the total cost of all operations by the total weight of all products loaded
+                         onto trucks or vans for delivery to market.
+
+
+
+
+ 14
+                        Computation equations follow:
+
+                        Productive time (p-hr)    =     scheduled time - (idle, delay, and down times)
+
+                        Productive time ratio (%) =     productive time x 100
+                                                        scheduled time
+
+                        Machine availability (%) =      (scheduled time - down time) x 100
+                                                              scheduled time
+
+                        Production rate                 tons of material processed
+                         (tons/p-hr)                          productive time
+
+                        Ownership cost ($/s-hr)   =     total annual ownership costs
+                                                          scheduled hours per year
+
+                        Operating cost ($/p-hr)   =     hourly crew wages x (1 + supervision rate) +
+                                                              productive time ratio / 100
+
+                                                        hourly fuel cost + hourly oil cost
+
+                        Machine rate ($/p-hr)           (hourly ownership cost) + hourly operating cost
+                                                        (productive time ratio)
+
+                        Productive cost (S/ton)   =     (machine rate) =        (total cost for job)
+                                                        (production rate)       (total production)
+
+                        System cost ($)           =     sum of (productive cost x production) for all
+                                                        equipment and personnel used in the system
+
+                        System productive cost    =           system cost
+                         (S/ton)                        total tons of product
+
+Results and             Several new pieces of equipment were designed and constructed to complete the
+Discussion              prototype harvesting and processing system. In fact, four of the major components of
+                        the system were operated as first-of-their-kind prototypes. They are as follows:
+Equipment Development
+                        1. Steep-slope feller-buncher
+                        2. Multiple-stem debarker-delimber
+                        3. Shredder
+                        4. Conveyor-magnet system
+
+                        The FB-1 steep-slope feller-buncher wa(. delivered to the study site by the manufac-
+                        turer about 6 months before the study fo: operator training and initial trials of the
+                        machine. When the study began, the operator seemed to be proficient, and the
+                        machine was functioning with a high degree of reliability.
+
+
+
+
+                                                                                                            15
+                  A prototype debarker-delimber for multiple stems (designed and built by Hermann
+                  Bros.) was used during the study. This machine uses chain-flails to remove bark and
+                  limbs. Chains were mounted on twin vertical shafts. The debarker-delimber had no
+                  built-in feed system. Feeding was accomplished by the mobile loader in conjunction
+                  with the grapple of the chipper. The mobile loader passed trees through the chain-
+                  flails until they exited the debarker-delimber within reach of the chippers grapple,
+                  which grasped the cleaned stems and fed them directly into the chippers feedworks.
+
+                  The biomass shredder was also designed and fabricated by Hermann Brothers. It
+                  was put into service on the study area about 3 months before the study.
+
+                  The magnet and its collecting bin were built and added to the processing system at
+                  the beginning of the processing study on block A. The debris conveyor system was
+                  introduced to the processing system a few days before the beginning of the study on
+                  block B. This support equipment was also designed and fabricated by the Hermann
+                  Brothers from commercially available components. The processing system was
+                  moved onto the prepared landing and was ready for production in about 2 hours.
+                  Each landing was about one third of an acre and was adjacent to a lower corner of a
+                  study block. Materials from about 40 acres of doghair stands were handled on each
+                  landing.
+
+Stand Inventory   Table 2 lists the population of trees on each study block by diameter class. About
+                  half of the trees on each block were dead. The living trees were comprised of west-
+                  ern hemlock (33 percent), Douglas-fir (28 percent), redcedar (22 percent), true fir
+                  (16 percent), and alder (1 percent). About 78 percent of the trees on block A and
+                  85 percent of the trees on block B had diameters of 6 inches or less. The stand
+                  inventory showed that block A contained 1,642 stems per acre and block B contained
+                  2,283 trees per acre. A statistical analysis showed the standard error of the mean to
+                  be 151.8 trees per acre (9.3 percent) on bl~ck A and 200.7 trees per acre (8.8 per-
+                  cent) on block B. The mean stand diameter for all trees on both blocks was 4.1
+                  inches. The canopy was closed with a typical live tree height of about 95 feet. This
+                  stand characterization is given to help compare doghair stands to stands in other
+                  areas.
+
+                  During the study, most of the smaller, dead trees were not delivered to the process-
+                  ing site. Because of the extent of decay, they usually broke into short pieces during
+                  the felling process. Adjusting the stand exam for this situation by excluding dead
+                  trees under 4 inches, the estimated number of trees processed from block A was
+                  896 per acre and 1,241 trees per acre from block B.
+
+Products          All trees taken from the study blocks were transported to the sorting and processing
+                  site at the landing. Materials were not allowed to accumulate at the landing. Depend-
+                  ing on their size and quality, the trees wer~ processed into three different products:
+                  saw logs, pulp quality chips, or hogged fuel (table 3).
+
+
+
+
+16
+Table 2--Number of stems per acre by diameter class for
+study blocks A and B
+
+                                     Block A                                      Block B
+Diameter
+class                     Live        Dead             Total           Live        Dead       Total
+
+
+Inches                     .......              Number of stems per acre .......
+
+
+1                           25        "271              296            104         *654        758
+2                           38        *304              342            167         *288       455
+3                          62         "171              233            179         "100        279
+4                         121           50              171            129           54        183
+5                          96           25              121            100           25        125
+6                         121               4           125            125           12        137
+7                          42              m             42             58           --         58
+8                           71             --            71             33           m          33
+9                           29             --            29             38           --         38
+10                          62             --            62             38               4      42
+11                          25             ~             25             25           ~          25
+12                          50             --            50             21               4      25
+13                          17             --            17              8           --          8
+14                          21             m             21             21            4         25
+15                          17             --            17             17           --         17
+16                          --             --             --            29           --         29
+17                              4          --              4            25           --         25
+18                          ~              --             --            17           --         17
+19                          .         .            .           .   .          .
+20                              4              4           8            --           --
+21                          .         .            .           .   .          .
+22                              4          m               4             4           ~           4
+23                              4          ~               4            --           m
+
+
+      Total               813             829          1,642       1,138          1,145      2,283
+
+* Most dead stems under 4 inches in diameter w e r e left in the w o o d s
+- - = No trees of that diameter observed in stand e x a m s
+
+
+
+
+                                                                                                      17
+                   Table 3~Product distribution a from study blocks by green tons
+                   per acre and percentage
+
+                                                        Block A                         Block B
+
+                   Product                   Tons/acre        Percent          Tons/acre       Percent
+
+                   Saw logs                       45              16               60              21
+                   Chips                         147              53              157              53
+                   Hogged fuel                    84              31               76              26
+
+                        Total                    276              100             293              100
+
+                   a No particularmerchantabilityspecificationswere imposedon this system.This
+                   permitted the operatorto adjustthe productoutputto follow the market-dictated
+                   highestand best use on a near daily basis.
+
+                   Table 4--Nominal daily production of
+                   the doghair harvesting and processing
+                   system
+
+                   Product                    Block A         Block B
+
+                                                  Truckloads~day a
+
+                   Saw logs                         2               3
+                   Clean chips                      7               9
+                   Hogged fuel                      4               4
+
+                   a Basedon 10-hourworkdays, 25 tons per log truck,
+                   20 tons per chip or hogged-fuelvan.
+
+Production Rates   The overall-system-daily production rates are shown in table 4. These average rates
+                   are based on 10-hour workdays and net product weights of 25 tons per log truck and
+                   20 tons per chip or hogged-fuel truck.
+
+                   Table 5 summarizes the production rates of the harvesting and processing equipment
+                   on each study block. Note that the production rates refer to the individual pieces of
+                   equipment and not to the products or to the material-handling processes. The produc-
+                   tion rates of all equipment were higher on block B than on block A. Progress on a
+                   learning curve may have had a slight effect, and there were more trees and slightly
+                   larger trees on block B, but the main contributor to higher production rates was the
+                   addition of a conveyor system to the processing system at the landing. As materials
+                   flowed through the landing faster, the forwarder was able to deliver trees faster, there-
+                   by making more efficient use of its productive time. The time spent by the forwarder
+                   in roadway improvements also contributed to a higher production rate on block B.
+
+
+
+
+18
+Table 5--Production rates of harvesting and
+processing equipment on each study block
+
+Machine                                       Block A      Block B
+
+                                                     Tons/p-hP
+Harvesting equipment:
+ Feller-buncher                                 55               60
+ Forwarder                                      46               65
+
+Processing equipment:
+ Sorter-loader                                  30           42
+ Debarker-delimber                              29           34
+ Chipper                                        29           34
+ Shredder                                       10           10.5
+
+a Tons = green tons; p-hr = productive hour
+
+
+Harvesting--The FB-1 (ATH-28) steep-slope feller-buncher was used to mechan-
+ically fell and simultaneously bunch the trees On both study blocks. Block A was
+felled in November 1986; block B was fe'led in January 1987. Forwarding was done
+entirely with a single forwarder (clam-bunk skidder, Timberjack 520A). Forwarding
+was done simultaneously with the processing operation, about 1 week after felling
+each block.
+
+Cutting--Felling and bunching with the steep-slope feller-buncher progressed effi-
+ciently and effectively with the machine working both uphill and downhill. Butts of the
+trees were placed downhill for easy loading by the clam-bunk skidder. Because less
+rotation of the felling boom was required when working uphill, the production rate of
+the feller-buncher was about 40 percent higher on the uphill passes. The independ-
+ently pivoting, quad-track drive system of the feller-buncher gave it excellent mobil-
+ity over uneven terrain on all slopes encountered, which ranged between 20-35 per-
+cent in the stand and up to 60 percent in short stretches. The automatic leveling
+feature of the feller-buncher boom platform functioned well, keeping the operator
+from working in unnatural positions and allowing him and the machine to operate
+consistently and smoothly. The machine had high ground clearance (almost 3 feet),
+which enabled it to pass easily over many ground obstacles that would have im-
+peded travel of most woods machinery. The effective reach of the cutting head was
+about 60 feet from one side to the other, compared to a cutting path of about 40 feet
+by the conventional feller-bunchers used in the area.
+
+
+
+
+                                                                                      19
+     The production rates of the feller-buncher on this test were 55 and 60 tons per pro-
+     ductive hour, respectively, on blocks A and B. Based on data collected during the in-
+     tense, hourly sample periods, the corresponding production rates in number of stems
+     per productive hour were 195 and 225. The overall production rate on an area basis
+     was 0.20 acres per productive hour on both blocks A and B. The feller-buncher aver-
+     aged 2.27 stems per cycle on block A and 2.24 stems per cycle on block B. A limited
+     observation (1 hour only) of relative production rates of uphill vs. downhill operation
+     during the study on block B showed that the feller-buncher cut and bunched 124
+     cycles per productive hour during uphill operation and 87 cycles per productive hour
+     during downhill operation. A cycle is defined here to be the felling, rotating, and
+     bunching movements of the machine. A cycle was counted each time the trees held
+     in the shear head were released onto the ground or a bunch. Table 6 shows the dis-
+     tribution of piece count handled by the feller-buncher on each cycle. Over 40 percent
+     of the cycles handled only one tree, and 80 percent of the cycles handled three or
+     fewer trees.
+
+     The number of stems harvested, based on the observed production rate, was 9 per-
+     cent higher than the number of trees based on the adjusted stand exam on block A
+     and 13 percent lower on block B.
+
+     Table 7 summarizes the operational-time components of the feller-buncher on each
+     study block. The 8-percent downtime on block A consisted of 34 minutes to replace a
+     broken hydraulic hose on the felling head, 17 minutes total for checking and bleeding
+     lines, and 34 minutes for operator breaks.
+
+     Table 6~Distribution of number of stems
+     cut and bunched per turn by the feller.
+     buncher
+
+                                    Frequency
+     No. of stems
+     per turn                Block A       Block B
+
+                                     Percent
+
+     1                         41               43
+     2                         25               21
+     3                         14               16
+     4                         11               10
+     5-8                        9               10
+
+
+
+
+20
+Table 7--Operational-time components for the
+feller-buncher
+
+Time component                       Block A       Block B
+
+                                            Percent
+
+Operational time:
+ Productive time                       91             99
+ Idle time                              0              0
+ Delay time                             1              0
+ Down time                              8              1
+
+     Total                            100             100
+
+
+Forwarding--The forwarder (clam-bunk skidder) was used to transport the trees
+from the felling and bunching sites of each study block to the roadside landing,
+where they were processed for transportation to market. Block A was forwarded in
+November 1986; block B was forwarded in January 1987. A typical turn of about
+50-70 trees arrived about every 18 minutes on either block. The forwarder usually
+climbed to the top of the block and then loaded trees from the prearranged bunches
+as it headed back downhill towards the landing. The operator swiveled his seat
+around backwards to drive the machine in reverse or to operate the loading grapple.
+Traveling toward the landing, the operator faced forward, stopping occasionally to
+add logs to the bunk as the load straightened and settled during travel. Periodically,
+the operator would close the clam jaws to compact the load. The clam-bunk jaws
+would be closed when the load was complete, and the operator would continue to
+drive downhill toward the landing. This driving would straighten and further compact
+the load as the trees were pulled into the roadway, behind the forwarder, often
+making room for even more trees to be loaded onto the bunk. After the bunk was
+full, the operator would typically hold one or more larger trees in the loading-grapple
+jaws as he continued toward the landing. Once at the landing, both grapple and bunk
+jaws were opened, and the forwarder would drive ahead, allowing the trees to fall
+onto the ground within reach of the mobile loader. The forwarder seemed to perform
+its work smoothly and efficiently. It accomplished the forwarding operation on both
+study blocks without difficulty. The machine seemed to have adequate power and
+traction to climb the slopes on the study blocks. It also had sufficient power to lift the
+butt end of any tree and sometimes as many as 10 trees as it positioned them onto
+its bunk. It had sufficient agility and maneuverability to access the prebunched trees,
+while negotiating over and around many large culls and stumps. Forwarding with a
+clam-bunk skidder seems to be limited by uphill gradeability to slopes under 50 per-
+cent. Cable yarders (also used by Hermann Brothers in doghair stands) could reach
+trees bunched by the steep-slope feller-buncher on slopes greater than 50 percent.
+
+The forwarder was also observed in use as a road-building device. On major skid
+roads that required multiple passes by the forwarder, the forwarder was used to lay
+small limbs and tree tops into surface depressions to minimize mud holes and soil
+compaction.
+
+
+
+
+                                                                                        21
+     Observed production rates of the forwarder on this test were 46 and 65 tons per pro-
+     ductive hour, respectively, on blocks A and B. Corresponding production rates in units
+     of stems per productive hour were 161 and 244, based on earlier stem counts going
+     into the prebunched piles. The production rate on an area basis was 0.17 acres per
+     productive hour on blocks A and 0.22 acres per productive hour on block B. This
+     production rate approximated the production rate of the feller-buncher, for the skid-
+     ding distances of this study. The two machines worked well together in this respect.
+     The feller-buncher operator always positioned the prebunched piles of trees with the
+     maximum convenience of the forwarder operator in mind, that is, semi-herring bone
+     fashion with the butts downhill. Harvesting sequence and travel routes were carefully
+     planned by the operators and coordinated with the material flow needs of the process-
+     ing system.
+
+     While study observations were being made, the forwarder provided a continual flow
+     of trees for the processing system at the landing. The operator used slack demand
+     times for nonproductive activities such as road maintenance, hydraulic hose replace-
+     ments, and lunch breaks. The forwarder operator was observed to pace arrival times
+     at the landing according to the stockpile of unprocessed trees. This was done by
+     varying the route and distance traveled to load trees. When the stockpile was high,
+     the forwarder loaded trees from the far end of the study block, bypassing some
+     closer trees, which could later be quickly forwarded on demand when the stockpile
+     was low. The operator also regularly bypassed some larger trees that were close to
+     the landing to save them for times when a heavy load was needed at the landing.
+     The larger trees were also used as load binders on top of bunks filled with many
+     smaller trees. This practice secured the load for travel and improved the load density
+     in the clam bunk.
+
+     The production rate of the forwarder is sensitive to the required travel distance. If the
+     cutting unit were quite close or next to the landing, the forwarder could be expected
+     to move trees faster than the feller-buncher could fell and bunch them; thus, the pro-
+     duction rate of the forwarder might far exceed that of the processing system at the
+     landing. On the other hand, as the travel distance increases, the forwarder would
+     be slower than the feller-buncher; in this case, additional forwarders might be used
+     to balance the harvesting operation so that trees arrive at the landing at the proper
+     frequency to minimize idle time and delays of other processing equipment. For ex-
+     ample, the average forwarding distance for each block during this study was about
+     one quarter mile, and the forwarder spent roughly half of its productive time traveling.
+     If the forwarding distance were doubled to one half mile, then the relative time spent
+     traveling would increase to 67 percent, and the production rate could be expected to
+     decrease to about two-thirds of the previous rate.
+
+
+
+
+22
+Table 8 illustrates the operational-time components of the forwarder on each study
+block. The information for block A is from a complete time-study log kept by an
+observer during the entire study period. The information for block B is based on
+observations made during the hourly (random) sample periods. On block B, the time
+spent doing other work (primarily road building along the haul route) seemed effec-
+tive in improving the production rate of the forwarder, because even though a smaller
+percentage of operating time was spent as productive time, a higher production was
+achieved on block B. The forwarder experienced occasional delays at the landing,
+waiting for the loader to sort and clear previous incoming loads of trees. There were
+fewer such delays on block B because the landing-processing system was more
+efficient and predictable. Most of the downtime was caused by worn hydraulic hoses
+on the grapple boom. The operator replaced three of these while loading trees.
+
+Table 9 shows the relative proportions of productive time the forwarder used to do
+separate functions on each of the study blocks. The information is based on observa-
+tions made during the hourly (random) sample periods. A higher proportion of time
+was spent traveling on block B because the ground was wetter and softer in January
+on block B than it was in November on block A. The forwarder was used 75 and
+57 percent of the time on blocks A and B, respectively. This reflects unplanned down-
+time and use of the forwarder for operations other than forwarding (principally road
+building and maintenance on block B) during the harvest. Most of the road-building
+time can be attributed to the study being conducted during winter months.
+
+Processing--Observations made during the study resulted in measurements of pro-
+duction rates (in tons per hour) for the major components of the processing system.
+Trees from block A were processed in November 1986; trees from block B were
+processed in January 1987 (refer to table 5 for the production rates). On block A,
+loading the magnet chute presented a bottleneck to continuous processing of mate-
+rials from the debarker through the shredder. At one time, all on-site loaders (4, in-
+cluding the one on the grapple-skidder) were being used to load the magnet chute
+and the shredder. At this time a formidable pile of woody debris had accumulated
+around the debarker. This debris pile caused delays and downtime for the debarker
+and idle time for the chipper.
+
+Table 8---Operational-time components of the
+forwarder
+
+Time component                     Block A       Block B
+
+                                           Percent
+
+Operational time:
+ Productive time                      75              57
+ Other work                            2              21
+ Idle time                             0               0
+ Delay time                           15               6
+ Down time                             8              16
+
+     Total                           100             100
+
+
+
+
+                                                                                    23
+     Table 9reProductive-time components of the
+     forwarder
+
+     Time component                     Block A       Block B
+
+                                                Percent
+
+     Productive time:
+      Travel                               44             57
+      Loading                              53             40
+      Unloading                             3              3
+
+           Total                          100             100
+
+
+     Sorting--As the trees were delivered to the landing for processing by the forwarder,
+     the mobile loader first set aside the saw logs and then separated the hogged-fuel
+     material from the trees that could be processed into clean chips. This sorting process
+     progressed rapidly, thereby allowing the loader to attend to its major role of feeding
+     the debarker-delimber. Because the mobile loader handled all materials at least
+     once, its production rate is based on the weight of all delivered products. Repeated
+     handling of individual trees is not considered here. On block A, the production rate
+     was 30 tons per productive hour for all functions performed by the mobile loader-
+     sorter. The rate increased to 42 tons per productive hour on block B, where the
+     material handling conveyor was in full operation.
+
+     During the observation periods, the percent of productive time spent in direct support
+     of chips, saw logs, and hogged fuel was as follows: 74:15:12 and 78:12:10 on blocks
+     A and B, respectively.
+
+     Clean-chip process--After clearing the incoming trees from the drop zone used by
+     the forwarder, the loader moved into position next to the debarker-delimber to assist
+     in the clean-chip operation. The loader would then typically feed one or two but
+     sometimes as many as four trees into the debarker-delimber. As the cleaned stems
+     emerged from the debarker-delimber, they were grabbed by the loading grapple
+     attached to the chipper. The chipper operator continued to pull the trees through the
+     chain-flail at a rate consistent with proper cleaning. The stems were then placed into
+     the feed works of the chipper, which transformed the clean stems into clean chips
+     and blew them into a waiting chip van. Bark content of less than 1 percent could
+     easily be achieved with this method. The production rate of the chipper is the same
+     as the production rate of the debarker in the clean-chip operation because both ma-
+     chines process the same trees and the rate is based on the weight of the chips in
+     the van. Twice during the study, the debarker was bypassed and the chipper proc-
+     essed whole trees into hogged fuel. The chipper's production rate when producing
+     hogged fuel was about 50 percent higher than its production rate for clean chips.
+
+
+
+
+24
+The production rate of the chipper was limited by the desired cleanliness of chips
+produced. The material feed rate of the chipper in linear feet per second was fixed
+because the feed rollers are geared directly to the chipping disc drive system. The
+chipper's production rate in tons per productive hour can only be increased by feed-
+ing larger trees or multiple trees (more basal area through the knives). When multiple
+trees are fed through the debarker, however, the effectiveness of the debarking
+chains is decreased, which results in higher bark content in the chips. Even though
+the debarker is designed to handle multiple stems, the typical load usually consisted
+of three or fewer trees during this study. This resulted in chips with a bark content of
+less than 2 percent, which was the goal of the operator.
+
+From a block B sample observation of 504 loads of trees fed into the debarker-
+delimber, 87 percent of the loads were single trees, 11 percent were two trees at a
+time, and 2 percent were three or more trees.
+
+Overall, the production rate of the chipper was 29 and 34 tons of pulp-quality chips
+per productive hour on blocks A and B, respectively.
+
+Hogged-fuel process--The prototype shredder normally processed all materials that
+were not delivered as saw logs or clean chips into hogged fuel. Materials came from
+several sources: very small or unsound trees, repeatedly bucked by the chaser; limbs
+and trim ends from saw logs; limbs and broken tops discharged from the debarker-
+delimber; bark and fines discharged from the debarker-delimber; bark and other
+friable particles discharged by the chipper.
+
+Observations on block B showed that an average of 70 loads per productive hour
+were dropped into the shredder hopper. Of these, 56 percent consisted of sawed
+stems and branches from the first and second categories above.
+
+A conveyor belt lifted bark and limbs out of the debarker-delimber and discharged
+them onto another system 5 of two conveyors that continuously separated the mate-
+rials into three categories. Larger limbs usually overshot the second conveyor and
+were side cast directly in front of the conveyor that discharged materials from the
+debarker-delimber. Fine materials, including most of the bark, filtered down through
+openings in the top bed of the second conveyor and were delivered to a third con-
+veyor along with any metal chain pieces that occasionally became separated during
+operation. Branches that did not filter down through the top bed of the second
+conveyor were piled within easy reach of the shredder loading grapple. The third
+conveyor then lifted the fine materials and any possible chain particles to a chute that
+passed over a 1000-pound permanent magnet. The magnet was designed to trap
+chain particles to prevent damage to the sharp knives of the shredder. Fine wood
+particles that passed over the magnet were collected in a hopper that was regularly
+emptied by the shredder loading grapple, alternately with branches and other debris
+as listed above. The shredded hogged fuel was then blown into a waiting van.
+
+5 The second and third conveyors were used on block B but
+not on block A. The added material-handling equipment im-
+proved production efficiency. Moreover, large quantities of
+materials did not accumulate during the day on block B. On
+block A, all three loaders were typically used at the end of
+each workday to load the shredder until the landing was
+cleaned.
+
+
+
+                                                                                       25
+                         The shredder operator opened the clam-shell doors of the hopper over the shredding
+                         drum each time a load was dropped in by the grapple. The doors can be seen in fig-
+                         ure 9. Materials from the conveyor system and the saw-log operation were small
+                         enough to easily fit into the shredder hopper. The small trees, however, had to be
+                         progressively bucked by a chaser with a chain saw to make hopper-length loads
+                         (4 to 5 feet long) for the grapple to drop into the hopper. This repeated bucking
+                         operation progressed faster than might have been expected because the shredder
+                         operator used the loading grapple to move the trees incrementally, in bunches, over
+                         a crosswise cull log. This enabled the chaser to buck many trees at a time without
+                         moving wood or binding the saw. The result was a clean landing with almost all
+                         woody materials being hauled out in a van or on a log truck.
+
+                         The production rate of the hogged-fuel process was calculated based on the weight
+                         of hogged fuel leaving the site. The primary machine in the hogged-fuel process was
+                         the shredder, which handled all the hogged-fuel materials. The production rate of the
+                         shredder was 10 tons per hour on block A and 10.5 tons per hour on block B.
+
+                         Even though materials destined for hogged fuel were also handled repeatedly by the
+                         sorter-loader and partially by the debarker-delimber, the chipper, the conveyor-magnet
+                         system, and the chaser, the hogged-fuel production rate was attributed to the shred-
+                         der because of its singular function. The other systems contributed to the production
+                         rate but were not specifically characterized by the amount of their contribution rela-
+                         tive to the contribution of the shredder or to the other products they handled. The
+                         interrelated functions of the processing equipment make simple assignments of costs
+                         equally difficult and arbitrary. No production rate was calculated for the conveyor
+                         system, though it clearly processed only hogged-fuel materials.
+
+                         When the chipper was used without the debarker to produce hogged fuel, larger
+                         cross-sectional areas of trees (multiple stems) were fed into the chipper, increasing
+                         its effective production rate, without concern about bark content. One van on block A
+                         was tilled with 47,600 pounds of hogged fuel in 27 minutes, a hogged-fuel production
+                         rate of 52.9 green tons per productive hour for the chipper.
+
+Equipment Availability   The results of equipment availability (or reliability) are presented in table 10. The
+                         study period was an extremely short time sample for predicting long-term reliability.
+                         The observed availabilities are useful for those wishing to accumulate these data with
+                         other reported data. All machines experienced relatively high availability, especially
+                         considering the minor amount of prior operating time on the three new prototype
+                         machines.
+
+
+
+
+26
+                        Table l O---Equipment-availability and productive-time ratios from
+                        doghalr harvesting and processing study
+
+                                                     Equipment availability             Productive-time ratio
+
+                        Machine                      Block A       Block B              Block A      Block B
+
+                                                                              Percent
+
+                        Harvesting equipment:
+                         Feller-buncher                 95            99                  91            99
+                         Forwarder                      92            84                  75            57
+
+                        Processing equipment:
+                         Sorter-loader                  98           100                  93            86
+                         Debarker-delimber              88            84                  55            61
+                         Chipper                        90            93                  58            60
+                         Shredder                       86            99                  80            86
+
+
+                        The availability was higher on block B than on block A for every piece of equipment
+                        except the forwarder and the debarker-delimber. The forwarder suffered two hydrau-
+                        lic hose failures on block B, and the debarker-delimber was down for over 3 hours on
+                        block B with an immobile discharge conveyor. The availability of the shredder was
+                        significantly improved on block B. The discharge chute became clogged two times on
+                        block A because too much wet material (in the form of old cull logs) was dumped into
+                        the hopper at one time. This did not happen on block B, where wet materials were
+                        loaded alternately with the other materials. The additional conveyors helped smooth
+                        out delivery of fine materials to the shredder, and they separated limbs and fines,
+                        giving the shredder operator a selection of materials to load. Because of the material
+                        sorting action of the conveyor system, the magnet chute also rarely became clogged
+                        on block B.
+
+Productive-Time Ratio   The ratios of productive time are also reported in table 10. These ratios were used
+                        for calculating costs and production rates on the common basis of productive hours.
+                        The ratios may also be used by planners to estimate scheduled hours required to
+                        complete a future job.
+
+                        The feller-buncher worked independently with high availability at a single task.
+                        Consequently, the productive-time ratio of the feller-buncher was consistently high.
+
+                        The forwarder had production capacity to spare; therefore, the operator used some
+                        idle time to perform other useful work, such as skid road maintenance. This resulted
+                        in a relatively low productive-time ratio in spite of high availability.
+
+                        Although the availability of the loader was 100 percent on block B, the loader had a
+                        lower productive-time ratio there than on block A. This is a result of the loader being
+                        delayed while the belt of the debarker-delimber was jammed.
+
+
+
+
+                                                                                                                27
+        Because of the disabling belt jam-up, described earlier, the debarker-dellmber
+        lost productive time on block B. The results showed, however, an overall rise in
+        productive-time ratio for the debarker on block B. This indicates the overall improve-
+        ment in system availability on block B, which had the benefit of two additional con-
+        veyors to move woody debris (principally limbs and bark) continuously from the
+        debarker across the magnet chute for the shredder.
+
+        The jammed debarker left the chipper idle because it could not operate while the
+        debarker was being serviced. Consequently, the productive-time ratio of the chipper
+        was lower on block B than on block A. The chipper and the shredder were delayed
+        for a few minutes every time a van was filled and an empty van was moved into
+        position.        '
+
+        The productive-time ratios for the chipper include the times when the chipper was
+        used to produce hp,gged fuel instead of clean chips. The operator chose to do this on
+        occasion to meet his hogged,fuel market demand, while balancing the flow of mate-
+        rials arriving at the in-woods processing site.
+
+        The debarker was purposely idled for the time when the chipper was producing
+        hogged fuel. Oh one occasion on block B, the chipper filled a van with hogged fuel in
+        36 minutes. The debarker was not needed for this operation. The debarker was out
+        of production for a total of 2 hours and 22 minutes on that occasion to support this
+        use of the chipper to produce hogged fuel: 37 minutes to reconfigure the debarker
+        (remove its top) to bypass whole trees, 36 minutes to produce the load of hogged
+        fuel, 32 minutes to restore the normal configuration, and another 37 minutes of re-
+        lated delay before the debarker was restarted. Still, the productive-time ratio for the
+        debarker-delimber was higher on block B.
+
+        The productive time ratio of the shredder was higher on block B, primarily because
+        the shredder-feedstock handling system was improved by the added conveyors.
+
+Costs   Machine rates were calculated for each piece of harvesting and processing equip-
+        ment. The calculations include ownership and operation costs. They do not include
+        costs associated with equipment move-in, set-up, overnight maintenance, or road
+        and landing construction; company risk and profit are also excluded. Costs for the
+        conveyor-magnet system 6 were included, but they accounted for only about $0.06
+        per ton of total product. No interest payments are included for the shredder and the
+        debarker-delimber because funds for these machines were provided from extemal
+        sources. Average yearly investment values were included, however. Machine rates,
+        broken down by ownership and operating costs (with the exclusions noted above),
+        are shown in table 11.
+
+        The productive costs of harvesting and processing are shown in table 12. These
+        costs were calculated by combining the production results of table 5 with the cost
+        results of table 11. The total productive cost was $9.52 and $7.80 per ton on blocks
+        A and B, respectively.
+
+        8 Conveyors of this type cost about $20,000. They have negli-
+        gible operating costs because they are all powered by ex-
+        cess hydraulic power from other machinery, and no additional
+        operator is required.
+
+
+
+28
+Table 11--Costs and machine rates for equipment used for harvesting and
+in-woods processing of small-diameter trees
+
+                                                          Block A                                    Block B
+
+                                Own                       Operate            Machine      Own     Operate      Machine
+Machine                         cost                       cost               rate        cost     cost         rate
+
+                                ............                        Dollars per productive hour ............
+
+Harvesting equipment:
+ Feller-buncher                46.86                       26.05                 72.91    43.07       24.35     67.42
+ Forwarder                     35.71                       29.58                 65.29    46.98       37.66     84.64
+
+Processing equipment:
+ Sorter-loader                 30.83                       25.41                 56.24    33.34       27.09     60.43
+ Debarker-delimber             15.04                        2.10                 17.14    13.56        2.10     15.66
+ Chipper                       35.74                       44.98                 84.79    43.48       38.71     82.19
+ Shredder                      44.51                       32.06                 76.57    41.41       30.38     71.79
+ Magnet-conveyor                 .32                        0                      .32     2.21        0         2.21
+
+
+
+Table 12--Productive costs per green ton for equipment used
+for harvesting and In-woods processing of small-diameter trees
+
+Machine                               Block A                       Block B              Materials
+
+                                  .   .   .   .   .   .     $/TorP   .   .   .   .   .
+
+
+
+
+Harvesting equipment:
+ Feller-buncher                               1.33                       1.13            Whole trees
+ Forwarder                                    1.42                       1.30            Whole trees
+
+       Total                                  2.75                       2.43
+
+Processing equipment:
+ Sorter-loader                                1.87                       1.44            Mixed
+ Debarker-delimber                             .59                        .46            Whole trees
+ Chipper                                      2.92                       2.42            Clean stems
+ Shredder                                     7.66                       6.84            Mixed
+ Magnet-conveyor                               .04                        .23            Bark and fines
+
+       Total b                                6.77                   5.37
+
+    Total system cost b                       9.52                       7.80
+
+a Each entry is based on the green tons of material processed by a particular machine
+~for example: whole trees, clean stems, etc.).
+  The itemized productive costs of each component of the processing system are not
+additive because each machine processesonly a portion of the total product output.
+Processing costs were calculated by summing the products of the cost per ton and the
+respective tonnage processed by each machine and then dividing that sum by the total
+weight of delivered products.
+
+
+
+
+                                                                                                                        29
+              The productive costs incurred to process each product (such as, the clean-chip opera-
+              tion) are difficult to calculate without arbitrary assignment of the costs of the multiple-
+              purpose machines that operate as an integrated system for the good of the entire
+              system. Therefore, productive costs of each machine are given (table 12), based on
+              the weight of material handled by each machine. Productive costs of the total system
+              based on prorated use of each machine for its respective proportion of products
+              handled are also shown in table 12. Because the different pieces of equipment proc-
+              ess different weights of material, and because some materials may be handled by
+              more than one piece of equipment, the productive costs are not truly additive. These
+              costs should be considered along with the percentage breakdown of the products
+              produced (table 3). It would be incorrect to focus on only one product and attempt to
+              isolate the unit cost of that product only. At the study site, all products are delivered
+              by the system. Without all products being delivered, a harvest may not be feasible
+              because of economics, environmental impacts, or other reasons discussed previ-
+              ously. There could be no clean chips without the debarker; no hogged fuel without
+              the collective inputs of materials from the sorting, saw log, and chipping operations;
+              and no saw logs from these stands without a way to clean the harvest site and
+              market the other products.
+
+Conclusions   The steep-slope feller-buncher and clam-bunk-skidder harvesting system was well
+              adapted to the stand and terrain conditions of this study. The feller-buncher func-
+              tioned remarkably well, with lift capacity, power, and gradability to spare. The clam-
+              bunk skidder kept pace with the felling and the processing production rates, with
+              extra time to do other tasks such as skid road maintenance. Productive costs for
+              harvesting the study blocks were $2.75 and $2.43 per ton on blocks A and B,
+              respectively.
+
+              The in-woods, multiple-product processing system demonstrated a consistent ability
+              to sort and process the small-diameter trees into a marketable mix of products. All
+              machines had high reliability and high productive-time ratios. Average daily produc-
+              tion was about three truck loads of logs, eight van loads of clean chips, and four vans
+              of hogged fuel. Productive costs for processing the material from study blocks A and
+              B were $6.77 and $5.37 per ton, respectively.
+
+              The mobile sorter-loader and the chipper appeared to be sized adequately for this
+              application. These are regular, production-line equipment items, and their reliabilities
+              were very high even though the chipper had very little operating time on it before
+              this study started. The multi-stem debarker-delimber, the shredder, and the magnet-
+              conveyor system were designed, fabricated, and used for the first time on this job;
+              all worked well. Occasional system clogs were encountered, especially with large,
+              unsound cull logs (shredder) or extremely dense crowns (debarker). These clogs
+              were all overcome quickly, and the system operated nearly continuously. The added
+              conveyors on block B enhanced the material-handling capabilities within the process-
+              ing system.
+
+              The chipping operation could not proceed without the mobile loader because the
+              loader was needed to insert trees into the debarker; chips were not produced while
+              the loader tended to log trucks, for example, but log trucks were usually loaded
+              during other slack times for the chipper, such as during knife or van changes. The
+              interruptions were minimal, and an additional loader is probably not warranted.
+
+
+
+30
+                     The total system-productive costs for harvesting and processing multiple products
+                     from the two study blocks in the doghair stand were $9.52 per ton in block A and
+                     $7.80 per ton in block B. The weight ratio of chips to total product weight was 53 per-
+                     cent on both blocks. Saw logs comprised 16 percent of the product weight on block
+                     A and 21 percent on block B. The remaining product was hogged fuel: 31 and 26 per-
+                     cent on blocks A and B, respectively. The actual mix of delivered products should be
+                     considered simultaneously with the total system-production costs because it is not
+                     reasonable to isolate the cost of producing individual products in an integrated sys-
+                     tem such as this. The important questions to answer are as follows: Is the system
+                     profitable? Would a different configuration be more profitable in this market? Would
+                     this or a different configuration be more profitable in a different market?
+
+                     The relatively low productive costs of this system, coupled with short haul, local
+                     markets for all three products, and a continuing need for operations in similar stands,
+                     combine to make the system feasible. The substantial capitalization costs, however,
+                     can be justified only with adequate forest inventories and thorough planning.
+
+                     This system or adaptations of it may be technically and economically suited to har-
+                     vest and process other stands of small-d=ameter trees, where total marketing is
+                     required to justify any harvest, and where it is desirable to collect the energy-wood
+                     component of the stand.
+
+Acknowledgments      The authors express appreciation to the U.S. Department of Energy, Bonneville
+                     Power Administration, and the Olympic National Forest for their support of this and
+                     related studies. Excellent cooperation between the interested people of the Govern-
+                     ment and private agencies during the course of this study has resulted in its success-
+                     ful conclusion. Special acknowledgment is made to the Quilcene District, Olympic
+                     National Forest, particularly Bob Haase, District Ranger, and Clark Bainbridge,
+                     doghair project coordinator, who were helpful in applying their resources and staffs
+                     toward the goals of this effort. Special acknowledgment is also given to Hermann
+                     Brothers Logging and Construction Company, particularly Steve and Bill Hermann,
+                     for their enthusiasm and support; and to their field personnel and equipment opera-
+                     tors: Ron Hermann on the feller-buncher, Chris Rambo on the forwarder, John Pruss
+                     on the mobile loader, John Heikilla on the chipper, Gary Smith on the shredder, and
+                     Clay Halton, chaser, for their courtesy, concerns for safety, and other assistance in
+                     conducting this study.
+
+Metric Equivalents   1 inch = 2.54 centimeters
+                     1 foot = 30.48 centimeters
+                     1 mile = 1.609 kilometers
+                     1 acre = 0.405 hectare
+                     1 cubic foot = 0.0283 cubic meter (stere)
+                     1 pound = 0.454 kilogram
+                     1 ton = 0.907 metric tonne
+                     1 gallon = 3.785 liters
+
+
+
+
+                                                                                                             31
+Literature Cited   Anon. 1986. Onestop debarker/chipper simplifies "doghair" harvest system. In:
+                      Biologue; 1985 December-1986 January; Portsmouth, NH: National Wood Energy
+                      Association: 12-13.
+
+                   Howard, James O. 1987. Harvesting overstocked stands of small-diameter trees,
+                      Report No. 5: Energy values of whole-trees and crowns. Report to U.S. Depart-
+                      ment of Energy (Bonneville Power Administration). Portland, OR: U.S. Department
+                      of Agriculture, Forest Service, Pacific Northwest Research Station. 13 p.
+
+                   Jennings, Wesley; May, Meredith; Sheehy, Gwen; Darling, Nancy. 1982. The
+                      Olympic National Forest soil resource inventory update report, 1982. Olympia, WA:
+                      U.S. Department of Agriculture, Forest Service, Olympic National Forest. [not
+                      paged].
+
+                   Little, Susan N.; Waddell, Dale R. 1987. Highly stocked coniferous stands on the
+                      Olympic Peninsula: chemical composition and implications for harvest strategy.
+                       Res. Pap. PNW-RP-384. Portland, OR: U.S. Department of Agriculture, Forest
+                      Service, Pacific Northwest Research Station. 29 p.
+
+                   Mifflin, Ronald W. 1980. Computer assisted yarding cost analysis. Gen. Tech. Rep.
+                      PNW-GTR-108. Portland, OR: U.S. Department of Agriculture, Forest Service,
+                      Pacific Northwest Forest and Range Exl: =.riment Station. 62 p.
+
+Appendix           The parameters used for calculating ownership costs are summarized in table 13 for
+                   the harvesting machines on both study blocks. Table 14 provides the ownership-cost
+Ownership Cost     summary for the sorter-loader and the debarker-delimber. Table 15 shows the
+Information        ownership-cost summary for the chipper and the shredder.
+
+                   Table 13--Equipment-ownership costs fur the feller-buncher and the
+                   forwarder
+
+                                                               Feller-buncher            Forwarder
+
+                   Parameter                    Units     Block A       Block B     Block A      Block B
+
+                   Original investment        $          328,000a     328,000a     206,000      206,000
+                   Depreciation period        Yrs              5            5            5            5
+                   Annual utilization         S-hrs/yr     2,000        2,000        2,000        2,000
+                   Machine availability       %               95           99           92           84
+                   Productive-time ratio      %               91           99           75           57
+                   Salvage value              %               10           10           10           10
+                   Salvage value              $           32,800       32,800       20,600       20,600
+                   Annual depreciation        $/yr        59,040       59,040       37,080       37,080
+                   Average yearly
+                    investment                $/yr       209,920      209,920      131,840      131,840
+                   Interest rate              %               10.75        10.75        10.50        10.50
+                   Annual interest            $/yr        22,566       22,566       13,843       13,843
+                   Taxes, license,
+                    and insurance             $/yr         3,674         3,674       2,637           2,637
+                   See footnote on following page.
+
+
+
+
+32
+                 Table 13---continued
+
+                                                                    Feller-buncher                    Forwarder
+
+                 Parameter                     Units           Block A       Block B         Block A         Block B
+
+                 Scheduled hours            S-hrs/job           17.25          17.3            25.1            27.6
+                 Fixed costs                S/job              735.66         737.67          698.96          672.18
+                 Fixed costs per
+                  scheduled hour            $/S-hr              42.64             42.64        26.78              26.78
+                 Fixed costs per
+                  productive hour           $/P-hr              46.86             43.07        35.71              46.98
+
+                 a Estimated capital cost; not a market-derivedvalue.
+
+                 Table 1 4 - - E q u i p m e n t - o w n e r s h i p costs for the sorter-loader and the
+                 debarker-delimber
+
+                                                                   So~er-loader              Debarker-delimber
+
+                 Parameter                     Units        Block A        Block B         Block A         Block B
+
+                 Original investment        $             230,000         230,000          85,000 a        85,000 a
+                 Depreciation period        Yrs                 5               5               5               5
+                 Annual utilization         S-hrs/yr        2,000           2,000           2,000           2,000
+                 Machine availability       %                  98             100              88              84
+                 Productive-time ratio      %                  93              86              55              61
+                 Salvage value              $              20,000          20,000           5,000           5,000
+                 Annual depreciation        $/yr           42,000          42,000          16,000          16,000
+                 Average yearly
+                  investment                $/yr          146,000         146,000          53,000          53,000
+                 Interest rate              %                   9.00            9.00            0               0
+                 Annual interest            $/yr           13,140          13,140               0               0
+                 Taxes, license,
+                  and insurance             $/yr             2,190          2,190             530             530
+                 Scheduled hours            S-hrs/job           30.95          28.0            28.5            26.4
+                 Fixed costs                S/job              887.34         802.76          235.70          218.33
+                 Fixed costs per
+                  scheduled hour            $/s-hr              28.67             28.67          8.27              8.27
+                 Fixed costs per
+                  productive hour           $/p-hr              30.83             33.34         15.04             13.56
+
+                 a Estimated capital cost; not a market-derived value.
+
+Operating Cost   The parameters used for the calculation of operating costs are summarized in
+Information      Table 16 for the harvesting machines on both study blocks. Table 17 provides the
+                 cost summary for the sorter-loader and the debarker-delimber, and Table 18 gives
+                 the operating-cost summary for the chipper and the shredder.
+
+
+
+
+                                                                                                                          33
+     Table 1 5 - - - E q u i p m e n t - o w n e r s h i p c o s t s for the c h i p p e r a n d the s h r e d d e r
+
+                                                                     Chipper                             Shredder
+
+     Parameter                           Units           Block A             Block B             Block A              Block B
+
+     Original investment              $                203,000             203,000             350,000 a             350,000 a
+     Depreciation period              Yrs                    5                   5                   5                     5
+     Annual utilization               S-hrs/yr           2,000               2,000               2,000                 2,000
+     Machine availability             %                     90                  93                  86                    89
+     Productive-time ratio            %                     58                  60                  80                    86
+     Salvage value                    $                 20,000              20,000              10,000                10,000
+     Annual depreciation              $/yr              36,600              36,600              68,000                68,000
+     Average yearly
+      investment                      $/yr             129,800             129,800             214,000               214,000
+     Interest rate                    %                     10.50               10.50                0                     0
+     Annual interest                  $/yr              13,629              13,629                   0                     0
+     Taxes, license,
+      and insurance                   $/yr                1,947                1,947               3,210               3,210
+     Scheduled hours                  S-hrs/job              29.97                27.60               30.86               29.40
+     Fixed costs                      S/job                 781.92               720.08            1,098.92            1,046.93
+     Fixed costs per
+      scheduled hour                  $/s-hr                  26.09                26.09               35.61              35.61
+     Fixed costs per
+      productive hour                 $/p-hr                  44.98                43.48               44.51              41.41
+
+     a Estimated capital cost; not a market-derivedvalue.
+
+     Table 1 6 - - E q u i p m e n t - o p e r a t i n g c o s t s for the f e l l e r - b u n c h e r a n d t h e
+     forwarder
+
+                                                                Feller-buncher                           Forwarder
+
+     Parameter                           Units            Block A            Block B             Block A              Block B
+
+     Total crew wage                  $/hr                    11.50                11.50               11.50              11.50
+     Supervision                      % of wages              67                   67                  67                 67
+     Fuel cost                        $/gal                    0.61                 0.61                0.61               0.61
+     Fuel consumption                 Gal/p-hr                 6.5                  6.5                 5                  5
+     Hourly fuel cost                 $/p-hr                   3.96                 3.96                3.05               3.05
+     Hourly oil cost                  $/p-hr                     .99                  .99                 .92                .92
+     Hourly labor costs               $/p-hr                  21.10                19.40               25.61              33.69
+     Hourly fuel and
+      oil costs                       $/p-hr                    4.95                4.95                 3.97              3.97
+     Hourly operating
+      cost                            $/p-hr                  26.05                24.35               29.58              34.66
+     Machine rate                     $/p-hr                  72.91                67.42               65.29              84.64
+
+
+
+
+34
+            Table 17---Equipment-operating costs for the sorter-loader and the
+            debarker-delimber
+
+                                                      Sorter-loader            Debarker-delimber
+
+            Parameter                Units       Block A        Block B       Block A       Block B
+
+            Total crew wage        $/hr             11.50            11.50         0             0
+            Supervision            % of wages       67               67           67            67
+            Fuel cost              $/gal               .61              .61          .61             .61
+            Fuel consumption       Gal/p-hr          6                6            3               3
+            Hourly fuel cost       $/p-hr            3.66             3.66         1.83            1.83
+            Hourly oil cost        $/p-hr            1.10             1.10           .27             .27
+            Hourly labor costs     $/p-hr           20.65            22.33         0               0
+            Hourly fuel and
+             oil costs             $/p-hr             4.76            4.76         2.10            2.10
+            Hourly operating
+             cost                  $/p-hr           25.41            27.09         2.10          2.10
+            Machine rate           $/p-hr           56.24            60.43        17.14         15.66
+
+
+            Table 18--Equipment-operating costs for the chipper and the shredder
+
+                                                           Chipper                 Shredder
+
+            Parameter                Units       Block A        Block B       Block A       Block B
+
+            Total crew wage        $/hr             11.50            11.50       11.50          11.50
+            Supervision            % of wages       67               67          67             67
+            Fuel cost              $/gal               .61              .61         .61            .61
+            Fuel consumption       Gal/p-hr          9                9          11             11
+            Hourly fuel cost       $/p-hr            5.49             5.49        6.71           6.71
+            Hourly oil cost        $/p-hr            1.21             1.21        1.34           1.34
+            Hourly labor costs     $/p-hr           33.11            32.01       24.01          22.33
+            Hourly fuel and
+             oil costs             $/p-hr             6.70            6.70         8.05            8.05
+            Hourly operating
+             cost                  $/p-hr           39.81            38.71       32.06          30.38
+            Machine rate           $/p-hr           84.79            82.19       76.57          71.79
+
+
+
+Glossary    C h i p p e r - - A machine with sharp knives used for processing entire stems into pulp
+            chips.
+
+           • Doghair--A term used in this report to describe dense stands of small-diameter
+             trees that are overstocked and growing very slowly.
+
+            Feller-buncher--A machine used for severing trees from their stumps and arranging
+            the severed stems into piles.
+
+            F o r w a r d e r m S e e skidder. The operator generally referred to his skidder as a
+            forwarder because of the function it performed. Consequently, the terms are used
+            interchangeably in this report, although a forwarder usually transports trees or tree
+            segments without dragging any part of the tree.
+
+
+
+
+                                                                                                           35
+     Friable--Easily crumbled or pulverized.
+
+     Hogged fuel--Woody biomass that has been processed by a hammer hog, shredder,
+     or similar comminution device so that it may be easily handled in bulk and burned for
+     conversion into heat energy (also called hog fuel); usually comprised of low value or
+     very small-diameter trees, cull logs, branches, and tree tops.
+
+     Landlng--A processing site usually adjacent to both the harvesting area and a
+     surfaced roadway, accessible by both highway transport vehicles and forwarding
+     equipment.
+
+     Loader--A machine used for lifting and moving trees and tree pads.
+
+     Machine rate--Hourly cost of owning and operating a piece of equipment.
+
+     Productive cost--Cost of owning a piece of equipment per unit of production in
+     units of dollars per ton.
+
+     Shredder--A drum-type chipper built by Hermann Brothers for processing limbs,
+     bark, small trees, and other woody biomass into hogged fuel.
+
+     Skidder--A ground-based machine that transports trees and tree parts from the
+     stump to the landing.
+
+     Supervision rate~A fraction of the total crew wages that is charged to basic super-
+     vision of labor and overhead, expressed as a decimal number, where 1.0 means
+     100 percent of wages. This rate includes unemployment insurance and other em-
+     ployee overhead expenses.
+
+     Time:
+
+     Scheduled: Total work time when the equipment was allocated for operation on the
+     study blocks. Scheduled time for all jobs during a year would total the annual-use
+     hours for the equipment.
+
+     Operating: The inclusive time between the first moment of productive time until the
+     machine shuts down for the day. Operating time includes all productive time, idle
+     time, delay time, other work performed, and all downtime (planned and unplanned)
+     during the operating day(s). For this study, warm-up and cool-down times and normal
+     after-hour fueling and maintenance times were not included in operating time. Oper-
+     ating time was recorded by an observer, unlike scheduled time which was estab-
+     lished (allocated) before the operation began.
+
+     Productive: Scheduled time less all unproductive time segments, such as idle, delay,
+     and down times.
+
+     Idle: Periods of time when equipment could not process material because no mate-
+     rial was available from the previous process. (No workload.)
+
+
+
+
+36
+Delay: Periods of time when equipment could not complete material processing
+because the subsequent process was fully loaded and could not accept new material
+(bottleneck ahead).
+
+Down: Periods of time when equipment was unavailable for productive work because
+of scheduled or nonscheduled interruptio'.'l of processing owing to mechanical or
+operator inability to proceed.
+
+Turn--A complete work cycle, referring to a specific tree-harvesting process, such as
+(1) cutting a tree and positioning it on the ground or (2) loading felled trees and
+transporting them to a landing.
+
+Forwarding--The process of moving trees and trees parts from the stump to a
+landing.
+
+
+
+
+                                                                                   37
+     Lambert, Michael B; Howard, James O. 1990. Cost and productivity of technology for
+       harvesting and in-woods processing small-diameter trees. Res. Pap. PNW-RP-430.
+       Portland, OR: U.S. Department of Agriculture, Forest Service, Pacific Northwest
+       Research Station. 37 p.
+
+     A study was conducted on the productivity and cost of an integrated harvesting and
+     processing system operating in small-diameter timber (western hemlock-type) on the
+     Olympic Peninsula of western Washington. The system uses a new steep-slope feller-
+     buncher, a clam-bunk grapple-skidder (forwarder), a prototype chain-flail debarker-
+     delimber, a chipper, a conveyor system, and a prototype shredder. The study showed
+     that the system harvested and processed trees at a combined-system cost of $7.80 per
+     green ton at a production rate of 455 green tons per day. The delivered product mix was
+     53 percent chips, 21 percent saw logs, and 26 percent hogged fuel by weight. The pro-
+     ductivity and machine rate of each piece of harvesting and processing equipment and
+     other data are given.
+
+     Keywords: Logging, whole-tree harvesting, feller-buncher, intensive harvesting, utilization,
+     integrated harvesting, in-woods chipping, small-tree harvesting.
+
+
+
+
+The Forest Service of the U.S. Department of
+Agriculture is dedicated to the principle of multiple
+use management of the Nation's forest resources
+for sustained yields of wood, water, forage, wildlife,
+and recreation. Through forestry research,
+cooperation with the States and private forest
+owners, and management of the National Forests
+and National Grasslands, it strives - - as directed by
+Congress n to provide increasingly greater service
+to a growing Nation.
+
+The U.S. Department of Agriculture is an Equal
+Opportunity Employer. Applicants for all Department
+programs will be given equal consideration without
+regard to age, race, color, sex, religion, or national
+origin.
+
+Pacific Northwest Research Station
+319 S.W. Pine St.
+P.O. Box 3890
+Portland, Oregon 97208-3890
+U.S. Department of Agriculture                               BULK RATE
+                                                            POSTAGE +
+Pacific Northwest Research Station                           FEES PAID
+319 S.W. Pine Street                                          USDA-FS
+P.O. Box 3890                                              PERMIT No. G-40
+Portland, Oregon 97208
+
+
+Official Business
+Penalty for Private Use, $300
+
+
+
+
+                                     do NOT detach label
+

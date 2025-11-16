@@ -1,0 +1,590 @@
+Open access                                                                                                      Original scientific paper
+
+DOI: https://doi.org/10.5552/crojfe.2020.677
+
+
+
+
+                  Modelling of Work Efficiency in Cable
+                     Traction with Tractor Implementing
+                  the Least-Squares Methods and Robust
+                                             Regression
+                                                                                                           Saliha Ünver-Okan
+
+                    Abstract
+
+                    Wood-harvesting activities are conducted by contractors through tendering based on prices
+                    determined by the amount of transported wood, land conditions and transport method param-
+                    eters. Managers should determine the average completion time of the work and the base price
+                    accurately to prevent both work and contractor losses prior to the tender and note the same in
+                    the tender contract. Thus, prediction of productivity in wood production is of great importance
+                    in the determination of the work duration and cost. In this context, the aim of the present study
+                    was to determine the most accurate estimation model that would predict productivity (Pe)
+                    based on log volume (Vt), route slope (P) and winching distance (D) in uphill cable skidding
+                    activities with a drum tractor. In the current study, estimation models were developed that
+                    use both linear regression through SPSS employing all data and the robust regression method
+                    that minimizes the effect of outliers. Harvesting units were selected among pure spruce (Picea
+                    orientalis (L.) Link) stands via the uphill cable-skidding method with a tractor in the North-
+                    East of Turkey. Route slope, winching distance, log volume and time-consumption data were
+                    collected in the chosen harvesting units and productivity prediction models were developed
+                    with these data. In this study, the productivity estimation was performed using linear regres-
+                    sion in SPSS and robust regression methods prepared in MATLAB environment. The coef-
+                    ficients calculated by these methods were statistically tested, and it was determined that the
+                    winching distance coefficient was insignificant with both methods. Thus, the productivity
+                    estimation model was re-determined with both methods based on the slope and log volume
+                    parameters, and the findings were compared. Additionally, the standard errors of the coeffi-
+                    cients of both models were compared and it was concluded that the robust method was more
+                    sensitive than the SPSS regression method.
+                    Keywords: prediction model, productivity, time measurement, cable logging, uphill skidding
+
+
+
+                      1. Introduction                                      Wood production consists of three main stages:
+     Forestry includes different activities, such as estab-             cutting/felling, extraction/primary transport and
+lishment of the stand, silviculture and maintenance ac-                 transportation/secondary transport. The process of
+tivities, production of wood material or secondary                      extraction is technically difficult, ergonomically risky
+products, marketing and sales, planning and construc-                   and expensive and includes heavy work that could
+tion of forest buildings, control of forest fires and pests             lead to significant environmental damage (Ünver-
+(i.e., insects, fungi) and recreational activities. One of the          Okan 2017). During log extraction, various machinery
+most important forestry activities is wood production,                  such as forwarders, skidders, tractors, harwarders,
+which is the main source of income for forest enterpris-                helicopters, balloons and tower yarders, are used
+es and requires periodic interventions in the forest.                   (Ibrahimovic 2016). However, expensive machines
+
+Croat. j. for. eng. 41(2020)1                                                                                                        109
+S. Ünver-Okan      Modelling of Work Efficiency in Cable Traction with Tractor Implementing the Least-Squares ... (109–117)
+
+
+may not be used in countries with less favourable eco-           adequate to use the robust method, which could pro-
+nomic conditions (Blakeney 1992, Wang et al. 2005). In           vide more reliable results by limiting the weight of
+Turkey, where approximately half of the forests are              outliers (Al-Amleh 2015). With the robust regression
+dispersed in areas with a slope higher than 40%, the             method, the measurements are affected neither by the
+cable-skidding method with drummed forestry trac-                errors in these measurements nor the errors in others,
+tors is predominantly used uphill, while tower yarders           hence the negative impact of measurement errors on
+are used occasionally (Acar et al. 2015).                        the results are reduced. This method permits more ac-
+         When using the method of cable-skidding with a          curate determination of rough erroneous measure-
+forestry tractor, the cable on the drum of the forestry          ments without dispersing the effect of outliers. There-
+tractor, which is fixed roadside, is pulled to the loca-         fore, a model, where matching data produces reliable
+tion of the logs by a worker, tied to a log, and the trac-       results, could be designed.
+tor engine pulls the cable to extract the log to the road-           The objective of the study was to design a model to
+side. The utility of the cable-skidding method depends           accurately estimate effective productivity (Pe), where
+on the presence of a forest road; the maximum winch-             log volume (Vt), route slope (P) and winching distance
+ing distance of tractors is between 100 and 120 m                (D) were known in a harvesting unit, where uphill
+­(Erdas et al. 2014).                                            tractor cable skidding was carried out. For this pur-
+         Certain studies report that the main limiting factors   pose, the effective productivity estimation for cable
+ surrounding the decision to select the extraction meth-         skidding was modelled with two methods: 1) Statisti-
+ od with a harvesting unit as well as the productivity           cal Package for the Social Sciences (SPSS) linear regres-
+ of the machine are the silviculture, forest operation           sion; and 2) robust regression, with a final comparison
+ management, terrain condition, winching distance,               of both methods.
+ tree size and route slope (Akay et al. 2004, Ghaffariyan
+ et al. 2012, Spinelli et al. 2010). These parameters have
+ a negative effect on productivity, especially in uphill                     2. Material and Methods
+ extraction operations. Kovácsová and Antalová (2010)                The study was performed in the East Black Sea for-
+ emphasized that forests should be operated with op-             ests in North-East of Turkey during 2016–2017. Route
+ timum productivity to meet the requirements of both             slope, winching distance, log volume and winching
+ present and future generations.                                 time data were collected from harvesting units that
+         Wood-production activities are required to be com-      utilize uphill cable winching with a forest tractor. All
+ pleted within a certain period of time owing to the fact        harvesting units were pure spruce (Picea orientalis (L.)
+ that they are conducted in natural conditions and with          Link) stands of a middle age class and these forests
+ living material. As per the forestry regulations in             had a closure of 0.71 to 1.00. The slopes of the skidding
+ ­Turkey, wood-logging operations are tendered to                routes between 40–80% were measured with an incli-
+  ­contractors with the stumpage sale method or forest           nometer and winching distances between 38 and 115 m
+   villagers based on the unit price. In both cases, the         were evaluated with a steel tape measure.
+   operators should make an accurate work plan, deter-
+                                                                     In the study, 247 logs were extracted uphill using
+   mining the completion time of the work and the open
+                                                                 a MB-Track 900 model forest tractor. One log was skid-
+   tender price that should be specified accurately. Thus,
+                                                                 ded each time. Diameters (d) in cm and lengths (L) in
+   it is of great importance to anticipate work productiv-
+   ity and come up with an adequate plan in wood                 m of the logs were measured. The volume of the trans-
+   ­production. One of the most commonly used methods            ported logs (Vt) in m3 was calculated with Huber’s
+    is working time studies to analyse productivity of           formula (Castellanos et al. 2007, The Forest Service
+    ­harvesting systems (Gallis 2004, Gallis and Spyroglou       1999):
+     2012, Savelli et al. 2010).                                                             p ´ d2
+         Regression analysis is one of the most commonly                              Vt =          L 		                  (1)
+                                                                                              4000
+     used statistical methods of estimation models to estab-
+     lish the correlation between two or more variables             Time measurements were performed with a stop-
+     (Khamis and Razak 2017). As calculation with the LSM        watch and the winching times (t) in h for each log were
+     is rather easy, it is the preferred method for most re-     determined by the reset time measurement technique.
+     gression applications (Wu and Yu 2018). However, it         Effective productivity of the system (Pe) in m3/h was
+     was demonstrated in various works that outlier or           calculated as (Mederski 2006):
+     multi-polar/missing data within a data set may ad-
+     versely affect regression results (Hekimoğlu and                                           Vt
+                                                                                         Pe =        		                   (2)
+     ­Berber 2003, Wen et al. 2013). In such cases, it is more                                  t
+
+
+110                                                                                              Croat. j. for. eng. 41(2020)1
+Modelling of Work Efficiency in Cable Traction with Tractor Implementing the Least-Squares ... (109–117)           S. Ünver-Okan
+
+
+    The regression equation for effective productivity                                                        é ù
+(Pe) included skidded log volume (Vt), route slope (P)                                                        ê ú
+and winching distance (D):                                              é ù é                               ùê ú  
+                                                                        ê ú ê                               ú
+                                                                        ê v1 ú ê1 x1         x2       ¼ xt ú ê b0 ú  y 
+                   Pe = b0 + b1Vt + b2 Pi + bt Di          (3)                                                ê ú  1
+                     i              i                                   ê v2 ú = ê1 x1       x2       ¼ xt ú ê b1 ú  y 
+                                                                        ê ú ê                               ú      – 2       (7)
+Where:                                                                  ê  ú ê                      ú êb2 ú   
+                                                                                                              ê ú  
+b0, b1, …, bt coefficients                                              ê v ú ê1 x           x2       ¼ xt úû ê  ú  y 
+                                                                        ë nû ë       1
+i             number of data (i=1, 2, …, 120).                                                                êb ú  n 
+                                                                                                              ë tû
+    The equation was solved with the SPSS linear re-
+gression and robust regression methods. Significant              Where:
+coefficients were determined for each solution and               y      output vector
+regression equations were written with these coeffi-             A      coefficient matrix
+cients.                                                          b      regression coefficient matrix
+                                                                 V      correction vector.
+2.1 Regression Analysis                                            The regression coefficients were obtained with the
+    The regression is a popular method that deter-               LSM method as:
+mines the correlation between one independent vari-
+                                                                                         (            ) A Py 		
+                                                                                                       -1
+able and one or more dependent variables with a                                   b = AT PA                 T
+                                                                                                                             (8)
+mathematical function (Uyanık and Güler 2013). In the
+                                                                 Where:
+literature, there are statistical estimation methods such
+as, the least squares method (LSM) (Koch 1999),                  P       weight matrix of input variables
+weighted least squares (Draper and Smith 1998), ro-                The reverse weight matrix of the coefficients (Qbb)
+bust regression (Chen and Pinar 1998, Gross 2003,                was obtained with Eq. 8 as:
+Rousseeuw and Leroy 1987, Staudte and Sheater
+                                                                                                  (         ) 		
+                                                                                                             −1
+1990), genetic algorithm (Pan et al. 1995) and artificial                           Qbb = AT PA                              (9)
+neural networks (Stern 1996).
+    The relationship between the inputs and outputs                 The average error (mo) of the unit measure was de-
+in a multivariate linear regression model was ex-                termined with the correction vector (V) calculated by
+pressed as:                                                      the coefficients vector (b) put in Eq. 7 as:
+
+                y = b0 + b1 x1 + b2 x2 + ××× + bt xt + e   (4)                                        V T PV
+                                                                                     mo = ±                  		             (10)
+Where:                                                                                                 n−u
+                                                                 Where:
+y             dependent variable
+x1, x2, …, xt independent variables                              n       number of measurements
+ε             random error                                       u       number of unknowns.
+t             number of unknown parameters.                         The standard error (SE) for regression parameters
+                                                                 (mb) was calculated as:
+2.1.1 The Least-Squares Method (LSM)
+    In the estimation of model parameters, the LSM                                  mbi = ±mo qb b 		                       (11)
+                                                                                                            i i
+was applied, and the objective function was written as:
+                                                                 Where:
+      n
+                                                     2           qbibi      i-diagonal of Qbb matrix
+     ∑  y − ( b + b x + b x + ⋅⋅⋅ + b x ) → min. (5)
+     i =1
+            i        0    1 1     2 2          t t                     The reverse weight matrix of the corrections (Qvv)
+                                                                 was calculated as:
+   As (e) was the opposite of correction (n), when er-
+ror was replaced by correction in Eq. 4, the following                            Q=
+                                                                                   vv P −1 − AQbb AT                        (12)
+equation was obtained:                                              The standard error of corrections was calculated as:
+            vi = b0 + b1 x1 + b2 x2 + ××× + bt xt - yi     (6)                    Q=  P −1 − AQbb AT                        (13)
+                                                                                   vv
+   This equation could be written as a matrix:
+                                                                     The significance of the regression coefficients ob-
+                             V = Ab – y                          tained with Eq. 8 was tested as:
+
+Croat. j. for. eng. 41(2020)1                                                                                               111
+S. Ünver-Okan       Modelling of Work Efficiency in Cable Traction with Tractor Implementing the Least-Squares ... (109–117)
+
+
+                     bi              bi                                  until the desired convergence and the new weights of
+            Tbi =             =                 ³t           a   (14)    outliers were gradually reduced (Hekimoğlu and
+                    mb            m0 qb b            f ,1-
+                                                                        ­Berber 2003).
+                          i               i i                2
+
+                                                                           The iterated weight matrix was determined as:
+Where:
+qb1b1	i-diagonal element in reverse weight matrix                                                   Pi = PWi–1		                  (18)
+         of corrections (Qbb)
+                                                                        Where:
+t a 	table value for t distribution in degrees of free-
+ f ,1−                                                                  i      number of iteration
+       2 dom, f (Koch 1999)
+                                                                           The robust weight matrix in the initial iteration ac-
+2.1.2 Robust Regression Method                                          cepted as the unit matrix (W0=I).
+    Although normal distribution of errors is assumed                      The parameters were calculated with the LSM
+in LSM, in most applications, the normal distribution                   based on Eqs. (7) and (8) as:
+of errors cannot be ensured. An incorrect measure-
+ment adversely affects the LSM estimator and estima-                                        bi = ( AT Pi A)−1 AT Pi y              (19)
+tion value. Outliers impair all LSM findings, and thus
+all test sizes owing to the spillover effect. These cause                  Iteration was maintained until the difference be-
+the regression curve obtained with LSM to shift to-                     tween the bi+1 and bi parameters were insignificant. It
+wards the outliers. Therefore, outliers are a serious                   was observed that the weights of the outliers were di-
+problem in LSM analysis. One of the methods to over-                    minished after each iteration, and some were even
+come this problem is the robust regression method                       observed to approach zero. The significance tests of
+(Gallegos and Ritter 2005, Maronna and Zamar 2002,                      the regression coefficients were conducted with Eq. 14.
+Meer et al. 1991, Wilcox 1997).                                         Then, the regression equation was obtained with the
+    The robust regression method categorizes the mea-                   significant coefficients.
+surements into reliable data and outliers. Reliable data                   Various weight functions are used in robust regres-
+have random errors, while the outliers have gross er-                   sion analysis (Gökalp et al. 2008) (Table 1).
+rors. The robust regression method is different from
+the LSM method in that it is not affected by outliers.
+Specifically, the parameters are calculated by assign-                  Table 1 Commonly used robust weight functions
+ing iteratively smaller weights to the outliers (Caspary
+and Borutta 1987, Gao et al. 1992, Hampel et al. 1986,                      Estimation method                 Weight functions
+Yang 1994, Yang et al. 2002).
+    The objective function (r) was written in the robust                                                     vi 
+                                                                                                           sin  
+estimation method as:                                                                                        c  v ≤ cπ
+                                                                                                                   i
+                       n                                                  Andrews M-estimation        Wi =   vi 
+                              ρ ( vi ) → min. 		                                                             c 
+                     ∑                                           (15)
+                                                                                                             
+                      i =1                                                                                  0 vi > cπ
+                                                                                                           
+    The derivative of the objective function was taken
+to obtain the prediction function (y) as:                                                                       1      vi ≤ c
+                                                                                                                
+                                                                            Huber M-estimation             Wi =  c
+                                   ∂r                                                                                     vi > c
+                 ry (n=
+                      i)            = r′ ( n i )                 (16)                                           
+                                   ∂v i                                                                          vi
+and weight function (W) as:                                                                                       2
+                                                                                                                       2
+                                                                                                             vi  
+                                  ψ ( vi )                                                                  1−        vi ≤ c
+                                                                                                      Wi =    c  
+                  ( vi )
+                 W=                = Wi
+                                   vi
+                                                                 (17)    Beaton-Tukey M-estimation
+                                                                                                                   
+                                                                                                                0 vi > c
+                                                                                                           
+    The prediction was made iteratively by re-weight-
+ing the LSM method. In each iteration, standardized                                                            v2 
+corrections were compared with a limit value and new                                                        exp  − i  vi > c
+                                                                             Danimarc method          Wi =        c2 
+weights of the data were determined based on the se-                                                                   
+                                                                                                             
+lected weight function. The iteration was maintained                                                                1 vi ≤ c
+                                                                                                           
+
+112                                                                                                        Croat. j. for. eng. 41(2020)1
+Modelling of Work Efficiency in Cable Traction with Tractor Implementing the Least-Squares ... (109–117)                             S. Ünver-Okan
+
+
+    The limit value parameter (c) for the weight func-                                    3. Results and Discussion
+tions in Table 1 can be determined with various tech-
+niques. In order for robust methods to provide accu-                         3.1 SPSS Regression
+rate and reliable results, the limit value parameters                           The correlation of several parameters of the har-
+should be determined as accurately as possible. The                          vesting operations with productivity is generally de-
+limit value was based on the assumption that observa-                        termined by regression models (Gallis 2004). The lin-
+tional errors would be scattered within the limits of ± c                    ear regression function was established according to
+within a certain probability. The limit value could be                       Eq. 3 using the log volume, slope and transport dis-
+assumed as:                                                                  tance for effective productivity in the uphill tractor
+                                    c = ks0		                         (20)   cable-skidding method. The coefficients of the param-
+Where:                                                                       eters and the significance levels of these coefficients
+                                                                             were determined by SPSS from Eq. 3 (Table 2).
+s0	preliminary standard error for the measure-
+       ment set
+       Instead of vi ≤ c , standardized values of the cor-                   Table 2 The coefficients of slope, volume, distance and significance
+                                                                             testing with SPSS
+                  vi
+rections (                 ≤ k ) could be taken. The H0 hypotheses
+                 mv                                                                         Unstandardized       Standardized
+                       i
+could be constructed as:                                                        Model        Coefficients         coefficients       t       Sig.
+
+                                H0 : E ( v ) = 0 		                   (21)                  B            SE          Beta
+
+and test size (Ti) could be tested as:                                       (Constant)    4.397         .779                      5.642     .000
+
+                           vi      vi                                        Slope        –2.357         .816       –.137          –2.887    .004
+                Ti
+                =          =             ≤ t a 		                     (22)
+                           mv                                                Distance      –.004         .006       –.028          –.585     .559
+                              i
+                                m0  q vv
+                                            f ,1−
+                                                  2
+                                       i i
+                                                                             Volume        5.383         .403        .655          13.368    .000
+Where:
+qnini	ith diagonal element in the weight matrix of
+       corrections (Qvv)                                                         It was found that the distance coefficient was not
+t               t-table value in degrees of freedom f                        significant at p> 0.05 (Table 2). Therefore, the regres-
+            a
+    f ,1−
+            2
+                                                                             sion equation for effective productivity was recon-
+   Using Eq. 22, the limit value was calculated for                          structed with log volume and slope as:
+each correction as:                                                                                 Pe =
+                                                                                                       b0 + b1Vt + b2 Pi                       (26)
+                                                                                                     i                i
+
+                              ci = m0 qv v t                   a 		   (23)      The coefficients of the parameters and the signifi-
+                                            i i        f ,1−
+                                                               2
+                                                                             cance levels of these coefficients were re-calculated by
+   When the weights of the data were different, the                          SPSS from Eq. 26 (Table 3).
+limit value after the first iteration in Eq. 23 was:
+
+                            ci = m0 qv v           Pi t               (24)   Table 3 The coefficients of slope, volume and significance testing
+                                      i i                         a
+                                                          f ,1−              with SPSS
+                                                                  2
+
+   A common limit value was calculated by taking the                                         Unstandardized        Standardized
+average of c values calculated as (Gökalp and Boz                                             coefficients          coefficients
+                                                                                Model                                                    t   Sig.
+2005):
+                                                                                             B             SE             Beta
+                                            n
+
+                                 c=
+                                      ∑ c 		i =1
+                                                   i
+                                                                      (25)
+                                                                             (Constant)    4.188          .692                      6.054    .000
+
+                                           n                                 Slope         –2.392         .813        –.140         –2.943   .004
+
+    Based on empirical studies, statisticians suggest                        Volume        5.325          .390            .648      13.662   .000
+that the limit value c could be taken as 1.5 or 2 (Somogyi
+1988). However, calculating the limit value c separately
+for each measure with Eq. 25 provides a more realistic                           Thus, the regression equation of effective producti­
+decision.                                                                    vity for uphill forestry tractor cable-skidding technique
+
+Croat. j. for. eng. 41(2020)1                                                                                                                   113
+S. Ünver-Okan          Modelling of Work Efficiency in Cable Traction with Tractor Implementing the Least-Squares ... (109–117)
+
+
+was determined using significant coefficients with                     culated with log volume and route slope, which were
+linear regression in SPSS as:                                          determined as significant, and standard errors for the
+                                                                       coefficients (mbi) were calculated with Eq. 11 with sig-
+                  Pe =
+                     4.188 + 5.325 Vt − 2.392 Pi                       nificance tests conducted (Table 5).
+                   i                   i
+
+
+
+       ( R2 0.481,
+       =    =      F 113.065, p < 0.05)                        (27)
+                                                                       Table 5 The coefficients of slope, volume and significance testing
+    Previous studies showed that productivity was                      with the robust regression method
+generally affected by volume (Proto et al. 2018), dis-
+tance (Nikooy et al. 2013), slope (Gilanipoor et al.                                                                t-table value     Decision
+                                                                         Coefficients        SE     Test size
+2012), the number of logs in each cycle (Gholami and                                                                  tf ,1− a      Tb ≥ tf ,1− a
+                                                                              bi             mbi       Tbi
+Majnounian 2008) and interaction between them                                                                               2                    2
+(Mousavi 2009, Naghdi 2004, Pilevar 1996). While it
+                                                                        b0 = 3.0940         0.495     6.253            1.969         Significant
+was found that distance affected productivity in some
+studies (Nikooy 2007, Wang 2004), it was determined                     b1 = 5.5182         0.284    19.416            1.969         Significant
+that distance had no effect on productivity by Mousavi
+                                                                        b2 = –1.3886        0.570     2.436            1.969         Significant
+and Nikooy (2014) similar to this study. On the other
+hand, Gilanipoor et al. (2012) determined that produc-
+tivity depended on slope and volume similar to the
+findings in this study.                                                    It was found that the transport distance coefficient
+                                                                       was not significant (Table 5). For this reason, log vol-
+3.2 Robust Regression                                                  ume and slope coefficients were re-calculated from the
+                                                                       robust regression method in Eq. 26 and significance
+    The regression coefficients in Eq. 3 were calculated
+                                                                       tests were performed. Hence, the regression equation
+by the robust regression method with iterations. These
+                                                                       of effective productivity for the uphill forestry tractor
+calculations were performed with the software written
+                                                                       cable-skidding technique was determined using sig-
+by the author in the MATLAB environment. The Huber
+                                                                       nificant coefficients with the robust regression method
+M-Estimation was used as the estimation method
+                                                                       as follows:
+(Table 1). In the Huber M-Estimation, the limit value
+(c) was determined by Eq. 25. Robust weights (W) were                              Pe =
+                                                                                      3.0940 + 5.5182 Vt − 1.3886 Pi                        (28)
+calculated from Eq. 17. The iterated weight matrix (Pi)                                 i                       i
+
+
+was determined by Eq. 18. Regression equation coef-                       In the literature, various studies comparing LSM
+ficients in Eq. 3 were calculated by Eq. 19 after itera-               and robust regression methods have been made.
+tions. With this method, the significance of the coeffi-               Muhlbauer et al. (2009) found that external observa-
+cients was tested by comparing the test size (Tbi) and                 tions might bias the LSM trend estimate and lead to
+t-table value (Table 4).                                               an overly high or low estimate. Therefore, it was de-
+                                                                       termined that the robust method was more suitable
+Table 4 The coefficients of slope, volume, distance and significance   than LSM for estimation modelling. Similar to this
+testing with the robust regression method                              study, Hekimoğlu and Erenoğlu (2005) determined
+                                                                       that it was more appropriate to use robust methods in
+                                    t-table value      Decision        cases of outliers.
+   Coefficients        Test size
+        bi                Tbi          tf ,1− a     Tb ≥ tf ,1− a
+                                             2                    2
+                                                                                              4. Conclusions
+  b0= 3.0228            5.459          1.969          Significant
+                                                                           This work is of great importance and represents the
+  b1 = 5.5073           18.899         1.969          Significant      most accurate estimation of the productivity of pro-
+                                                                       duction and realization of production during wood-
+ b2 = –1.4064           2.464          1.969          Significant
+                                                                       extraction activities, one of the most difficult and ex-
+ b3 = –0.0011           0.253          1.969         Insignificant     pensive stages of wood production. In the literature,
+                                                                       productivity prediction models were largely devel-
+                                                                       oped by linear regression analysis in SPSS software.
+    It was found that the winching distance coefficient                However, for the linear regression model of the SPSS
+(b3) in Eq. 3 was insignificant (Table 4). Therefore, the              program, sufficiently accurate results may not be ob-
+effective productivity regression coefficients were cal-               tained because the coefficients are calculated accord-
+
+114                                                                                                          Croat. j. for. eng. 41(2020)1
+Modelling of Work Efficiency in Cable Traction with Tractor Implementing the Least-Squares ... (109–117)       S. Ünver-Okan
+
+
+   ing to the LSM method from all data containing outli-         Caspary, W., Borutto, H., 1987: Robust estimation in defor-
+   ers. Therefore, this research sought to investigate more      mation models. Survey Review 29(223): 29–45. https://doi.
+   sensitive determination of productivity estimation.           org/10.1179/sre.1987.29.223.29
+   For this purpose, productivity estimation was carried         Castellanos, A., Blanco, A.M., Palencia, V., 2007: Applications
+   out by the robust estimation method, which minimiz-           of radial basis neural networks for area forest. International
+   es the effects of outliers, and the results were com-         Journal Information Theories & Applications 14(3): 218–222.
+   pared with SPSS estimation.                                   Chen, B., Pinar, M.Ç., 1998: On Newton’s method for Hu-
+       In this study, spruce logs with the volume of             ber’s robust M-estimation problems in linear regression.
+­0.28–2.35 m3 were transported uphill with a forest              Swets & Zeitlinger 38(4): 674–684. https://doi.org/10.1007/
+ ­tractor at 38–115 m distances in harvesting units              BF02510408
+  ­having a slope between 40 and 80%. The productivity           Draper, N.R., Smith, H., 1998: Applied Regression Analysis,
+   estimations were produced using SPSS and the Huber-M          Wiley, 736 p.
+   estimation with the robust regression method prepared         Erdas, O., Acar, H.H., Eker, M., 2014: Transport techniques
+   in MATLAB by taking the slope, volume and transport           for forest products. KTU Faculty of Forestry, Trabzon, Pub-
+   distance. With both estimation methods, it was deter-         lish No: 233/39, 504 p.
+   mined that slope and volume had a significant effect          Gallegos, M.T., Ritter, G., 2005: A Robust method for cluster
+   on productivity, while the winching distance was not          analysis. The Annals of Statistics 33(1): 347–380. https://doi.
+   effective. It was determined that the productivity was        org/10.1214/009053604000000940
+   directly proportional to volume and inversely propor-         Gallis, C., 2004: Comparative cost estimation for forwarding
+   tional to slope. The standard errors of the coefficients      small-sized beech wood with horses and mini-skidder in
+   of both models were compared and it was concluded             northearn Greece. Forest Products Journal 54(11): 84–90.
+   that the robust method was more sensitive than the            Gallis, C., Spyroglou, G., 2012: Productivity linear regression
+   SPSS regression method.                                       models of tree-length harvesting system in natural coastal
+       In future studies, productivity estimations for cable     Aleppo Pine (Pinus halepensis L.) forests in the Chalkidiki
+   traction with forestry tractors should be investigated        area of Greece. Croatian Journal of Forest Engineering 33(1):
+   for different slopes, volumes and tree species. In addi-      115–123.
+   tion, it is recommended that productivity estimates for       Gao, Y., Krakinwsky, E.J., Czompo, J., 1992: Robust testing
+   different extraction methods be made with different           procedure for detection of multiple blunders. Journal for
+   robust estimation methods.                                    Survey Engineering ASCE 118(1): 11–23. https://doi.
+                                                                 org/10.1061/(ASCE)0733-9453(1992)118:1(11)
+Acknowledgements                                                 Ghaffariyan, M.R., Sessions, J., Brown, M., 2012: Machine
+   This study was financially supported by the »Sci-             productivity and residual harvesting residues associated
+entific and Technological Research Council of Turkey             with a cut-to-length harvest system in southern Tasmania.
+                                                                 Southern Forests: Journal of Forest Science 74(4): 229–235.
+(TUBITAK)« (The project number: 115O017).
+                                                                 https://doi.org/10.2989/20702620.2012.741770
+                                                                 Gholami, M.J., Majnounian, B., 2008: Productivity and cost
+                     5. References                               of wheeled skidder in Hyrcanian forest. International Jour-
+                                                                 nal of Natural and Engineering Sciences 2(3): 99–103.
+Acar, H.H., Kaya, A., Ünver-Okan, S., Üçüncü, K., 2015:
+Evaluation of skidding system by MB-Track 900 forest trac-       Gilanipoor, N., Najafi, A., Heshmat Alvaezin, S.M., 2012:
+tors on steep slope in thinning operations. International sym-   Productivity and cost of farm tractor skidding. Journal of
+posium FORMEC, 4–8 October, Linz, Austria, 1–6 p.                Forest Science 58(1): 21–26. https://doi.org/10.17221/4804-JFS
+Akay, A.E., Erdas, O., Session, J., 2004: Determining produc-    Gökalp, E., Güngör, O., Boz, Y., 2008: Evaluation of different
+tivity of mechanized harvesting machines. Journal of Ap-         outlier detection methods for GPS networks. Sensors 8(11):
+plied Sciences 4(1): 100–105. https://doi.org/10.3923/           7344–7358. https://doi.org/10.3390/s8117344
+jas.2004.100.105                                                 Gökalp, E., Boz, Y., 2005: Comparison of robust M-estima-
+Al-Amleh, M.A.A.H., 2015: Robust methods in regression           tions in determination of the outlying baseline vectors in GPS
+analysis: Comparison and improvement. Master’s Thesis,           networks. Map Journal 134: 1–17.
+Zarqa University, Jordan, 68 p.                                  Gross, J., 2003: Linear Regression. Springer Verlag, Berlin,
+Blakeney, K.J., 1992: Environmentally friendly helicopter        Heidelberg, New York, 398 p.
+logging in Papua New Guinea. Symposium on Harvesting             Hampel, F., Ronchetti, E., Rousseeuw, P., Stahel, W., 1986:
+and Silviculture for Sustainable Forestry in the Tropics. For-   Robust statistics: The approach based on influence functions.
+est Research Institute Malaysia, October 5–9, 145–150.           John Wiley and Sons Inc., New York, 536 p.
+
+
+Croat. j. for. eng. 41(2020)1                                                                                              115
+S. Ünver-Okan       Modelling of Work Efficiency in Cable Traction with Tractor Implementing the Least-Squares ... (109–117)
+
+
+Hekimoğlu, Ş., Berber, M., 2003: Effectiveness of robust           Pan, Z., Chen, Y., Kang, L., Zhang, Y., 1995: Parameter esti-
+methods in heterogeneous linear models. Journal of Geodesy         mation by genetic algorithms for nonlinear regression, opti-
+76(11–12): 706–713. https://doi.org/10.1007/s00190-002-            mization techniques and applications. Proceeding of ICO-
+0289-y                                                             PA’95 2(1): 946–953.
+Hekimoğlu, Ş., Erenoğlu, R.C., 2005: Outlier detection by us-      Pilevar, B., 1996: Calculation of cost in two harvesting sys-
+ing robust methods and comparison results to tests for outli-      tem: Cable crane and ground skidding. Master Thesis, Teh-
+ers for leveling networks. 2nd Engineering Survey Sympo-           ran University, Tehran, 98 p.
+sium, 23–25 October, Istanbul, Turkey, 481–490.                    Proto, A.R., Macrì, G., Visser, R., Russo, D., Zimbalatti, G.,
+Ibrahimovic, A.Q., 2016: Suspended forestry machines for           2018: Comparison of timber extraction productivity between
+sustainable forestry. Ph.D Thesis, KTH Royal Institute of          winch and grapple skidding: A case study in southern Italian
+Technology, Stockholm, Sweden.                                     forests. Forests 9(2): 61–72. https://doi.org/10.3390/f9020061
+                                                                   Rousseeuw, P.J., Leroy, A.M., 1987: Robust regression and
+Khamis, A., Razak, N.A.A., 2017: A comparative study of
+                                                                   outlier detection. John Wiley, New York, 329 p.
+robust regression methods in modeling the currency in cir-
+culation in Malaysia. International Journal of Science and         Savelli, S., Cavalli, R., Baldini, S., Picchio, R., 2010: Small scale
+Research 6(4): 241–244.                                            mechanization of thinning in artificial coniferous plantation.
+                                                                   Croatian Journal of Forest Engineering 31(1): 11–21.
+Kovácsová, P., Antalová, M., 2010: Precision forestry-defini-
+tion and technologies. Šumarski list 134(11–12): 603–611.          Somogyi, J., 1988: Robust estimation and their use in geod-
+                                                                   esy. Acta Geod. Geogh. Mont. Hung. 23(l): 45–55.
+Koch, K.R., 1999: Parameter estimation and hypothesis test-
+                                                                   Spinelli, R., Magagnotti, N., Lombardini, C., 2010: Perfor-
+ing in linear models. Springer, Berlin, Heidelberg, New York,
+                                                                   mance, capability and costs of small-scale cable yarding tech-
+334 p.
+                                                                   nology. Small Scale Forestry 9(1): 123–135. https://doi.
+Maronna, R.A., Zamar, R.H., 2002: Robust estimates of location     org/10.1007/s11842-009-9106-2
+and dispersion for high-dimensional data sets. Technometrics       Staudte, R.G., Sheater, S.J., 1990: Robust estimation and test-
+44: 307–317. https://doi.org/10.1198/004017002188618509            ing. Wiley, New York, 376 p.
+Mederski, P.S., 2006: A comparison of harvesting productiv-        Stern, H.S., 1996: Neural networks in applied statistics. Tech-
+ity and costs in thinning operations with and without mid-         nometrics 38(3): 205–214.
+field. Forest Ecology and Management 224: 286–296. https://
+                                                                   The Forest Service, 1999: Timber measurement manual: Stan-
+doi.org/10.1016/j.foreco.2005.12.042
+                                                                   dard procedures for the measurement of round timber for
+Meer, P., Mintz, D., Rosenfeld, A., Kim, D.Y., 1991: Robust        sale purposes in Ireland. The Forest Service of the Depart-
+regression methods in computer vision: A review. Interna-          ment of the Marine & Natural Resources, Ireland, 82 p.
+tional Journal of Computer Vision 6(1): 59–70. https://doi.        Ünver-Okan, S., 2017: Comparison of drummed forest
+org/10.1007/BF00127126                                             tractor and portable winch systems for uphill extraction
+Mousavi, R., 2009: Comparison of productivity, cost and en-        economical and technical aspects. TUBITAK Project Code:
+vironmental impacts of two harvesting methods in northern          115O017.
+Iran: Short-log vs. long-log. Dissertationes Forestales 82: 93     Uyanık, G.K., Guler, N., 2013: A study on multiple linear
+p.                                                                 regression analysis. Procedia – Social and Behavioral Sci-
+Muhlbauer, A., Spichtinger, P., Lohmann, U., 2019: Applica-        ences 106: 234–240. https://doi.org/10.1016/j.sb-
+tion and comparison of robust linear regression methods for        spro.2013.12.027
+trend estimation. Journal of Applied Meteorology and Cli-          Wang, J., Grushecky, S.T., McNeel, J. 2005: Production anal-
+matology        48(9):     1961–1970.         https://doi.         ysis of helicopter logging in west Virginia: A preliminary
+org/10.1175/2009JAMC1851.1                                         case study. Forest Products Journal 55(12): 71–76.
+Naghdi, R., 2004: Investigation and comparison of full tree        Wang, J., Long, C., McNeel, J., Baumgras, J., 2004: Productiv-
+and log utilization methods in order to presentation the best      ity and cost of manual felling and cable skidding in central
+model forest roads network in Neka region (North of Iran).         Appalachian hardwood forests. Forest Product Journal 54:
+Ph.D. Thesis, Tarbiat Modarres University, Tehran, 238 p.          45–51.
+Nikooy, M., Esmailnezhad, A., Naghdi R., 2013: Productiv-          Wen, Y.W., Tsai, Y.W., Wu, D.B.C., Chen, P.F., 2013: The Im-
+ity and cost analysis of skidding with Timberjack 450C in          pact of Outliers on net-benefit regression model in cost- ef-
+forest plantations in Shafaroud Watershed, Iran. Journal of        fectiveness analysis. PLoS ONE 8(6): 1–9. https://doi.
+Forest Science 59(7): 261–266. https://doi.org/10.17221/19/2013-   org/10.1371/journal.pone.0065930
+JFS                                                                Wilcox, R.R., 1997: Introduction to robust estimation and
+Nikooy, M., 2007: Production optimization and reduction            hypothesis testing. Academic Press, New York, 608 p.
+impact on forest by preparing harvest planning in Nav, Iran.        Wu, C., Yu, J.Z., 2018: Evaluation of linear regression
+Ph.D. Thesis, Tehran University, Tehran, 165 p.                    t­echniques for atmospheric applications: the importance of
+
+
+116                                                                                                     Croat. j. for. eng. 41(2020)1
+Modelling of Work Efficiency in Cable Traction with Tractor Implementing the Least-Squares ... (109–117)     S. Ünver-Okan
+
+
+a­ ppropriate weighting. Atmospheric Measurement Techniques     Yang, Y., Song, L., Xu, T., 2002: Robust estimator for corre-
+ 11: 1233–1250. https://doi.org/10.5194/amt-11-1233-2018        lated observations based on bifactor equivalent weights.
+Yang, Y., 1994: Robust estimation for dependent observa-        Journal of Geodesy 76 (6): 353–358. https://doi.org/10.1007/
+tions. Manuscript Geod 19(1): 10–17.                            s00190-002-0256-7
+
+
+
+
+                                                                Authors’ addresses:
+                                                                Asst. prof. Saliha Ünver-Okan, PhD *
+                                                                e-mail: cansu@ktu.edu.tr
+                                                                Karadeniz Technical University
+                                                                Faculty of Forestry
+                                                                Department of Forest Engineering
+                                                                61080 Trabzon
+                                                                TURKEY
+Received: May 20, 2019
+Accepted: October 23, 2019                                      * Corresponding author
+
+Croat. j. for. eng. 41(2020)1                                                                                           117
+
