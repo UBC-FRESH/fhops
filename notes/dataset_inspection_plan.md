@@ -261,10 +261,10 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
   - [x] CLI now exposes `--slope-class` buckets (flat, 10–20 %, >20 %) wired to the ALPACA multipliers so analysts can pick the published factors without manual math; unit tests cover the new path.
 
 ### Skyline alternatives (Ünver-Okan 2020 / Lee et al. 2018)
-- [ ] Extract coefficients from `/notes/reference/unver.pdf` and `/notes/reference/Productivity and cost ... South Korea.pdf`; convert units to metric + CAD for FHOPS defaults. Capture slope/lateral reach constraints.
-- [ ] Add module `fhops.productivity.skyline_alt` exposing uphill/downhill productivity estimators and optional treatment multipliers (reuse TR119 scaling when available). Provide clearly documented assumptions/caveats (non-BC data, average stem diameters, carriage types).
-- [ ] Extend CLI (`fhops dataset estimate-skyline`) to let users choose between FPInnovations placeholders and these alternatives; include warnings when using non-BC data. Add regression tests for representative slope/distances.
-- [ ] Update telemetry/KPI layers so skyline simulations store which regression family was used (new enum/field in machine cost snapshot).
+- [x] Extract coefficients from `/notes/reference/unver.pdf` (Ünver-Okan hill-skidding regressions already implemented) and `/notes/reference/Productivity and cost ... South Korea.pdf` (Lee et al. 2018 HAM300 uphill/downhill regressions live in `fhops.productivity.cable_logging`).
+- [x] The helpers already expose the estimators (Ünver cable skidding + Lee skyline); remaining work is to document assumptions/caveats, tie them into telemetry, and ensure CLI warnings for non-BC sources are clear.
+- [ ] Add telemetry tagging when non-BC skyline models (Ünver/Lee) are selected so downstream consumers know the provenance. (CLI warnings + source tags are live; telemetry needs to mirror the provenance.)
+- [ ] Update docs/how-to sections describing the non-BC skyline/tethered helpers and reiterate the assumptions (spruce uphill skidding in Turkey, South Korean tethered yarder case study, etc.).
 
 ### Appendix 5 normalization
 - [x] Re-extract the landscape pages (confirmed orientation issue) and normalize into `data/reference/arnvik/appendix5_stands.json` via `scripts/build_appendix5_reference.py` (numeric stand age/volume/DBH + slope percent now recorded alongside the original text).

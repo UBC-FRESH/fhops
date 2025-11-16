@@ -1132,6 +1132,7 @@ def estimate_cable_skidding_cmd(
 ):
     """Estimate cable skidding productivity (m³/h) using Ünver-Okan (2020) regressions."""
 
+    source_label = None
     if profile:
         if model is CableSkiddingModel.UNVER_SPSS:
             value = estimate_cable_skidding_productivity_unver_spss_profile(
@@ -1152,17 +1153,29 @@ def estimate_cable_skidding_cmd(
             raise typer.BadParameter(
                 "Provide --slope-percent or --profile to supply slope defaults."
             )
-        if model is CableSkiddingModel.UNVER_SPSS:
-            value = estimate_cable_skidding_productivity_unver_spss(log_volume_m3, slope_percent)
-        else:
+        source_label = "Ünver-Okan 2020 (SPSS linear regression, North-East Turkey spruce uphill skidding)."
+        if model is CableSkiddingModel.UNVER_ROBUST:
             value = estimate_cable_skidding_productivity_unver_robust(log_volume_m3, slope_percent)
+            source_label = "Ünver-Okan 2020 (robust regression, North-East Turkey spruce uphill skidding)."
+        else:
+            value = estimate_cable_skidding_productivity_unver_spss(log_volume_m3, slope_percent)
         rows = [
             ("Model", model.value),
             ("Log Volume (m³)", f"{log_volume_m3:.3f}"),
             ("Slope (%)", f"{slope_percent:.2f}"),
             ("Productivity (m³/h)", f"{value:.2f}"),
         ]
+    console_warning = None
+    if model in {CableSkiddingModel.UNVER_SPSS, CableSkiddingModel.UNVER_ROBUST}:
+        console_warning = (
+            "[yellow]Warning:[/yellow] Ünver-Okan regressions were calibrated outside BC "
+            "(North-East Turkey spruce uphill skidding). Use with caution."
+        )
     _render_kv_table("Cable Skidding Productivity", rows)
+    if source_label:
+        console.print(f"[dim]Source: {source_label}[/dim]")
+    if console_warning:
+        console.print(console_warning)
 
 
 @dataset_app.command("estimate-skyline-productivity")
@@ -1193,10 +1206,17 @@ def estimate_skyline_productivity_cmd(
     if payload_m3 is not None and payload_m3 <= 0:
         raise typer.BadParameter("--payload-m3 must be > 0 when specified.")
 
+    source_label = None
+    console_warning = None
     if model is SkylineProductivityModel.LEE_UPHILL:
         value = estimate_cable_yarder_productivity_lee2018_uphill(
             yarding_distance_m=slope_distance_m,
             payload_m3=payload_m3 or 0.57,
+        )
+        source_label = "Lee et al. 2018 (HAM300 uphill, South Korea)."
+        console_warning = (
+            "[yellow]Warning:[/yellow] Lee et al. (2018) regressions are non-BC small-scale skyline "
+            "studies (South Korea). Validate before using for BC costing."
         )
         rows = [
             ("Model", model.value),
@@ -1209,6 +1229,11 @@ def estimate_skyline_productivity_cmd(
             lateral_distance_m=lateral_distance_m,
             large_end_diameter_cm=large_end_diameter_cm,
             payload_m3=payload_m3 or 0.61,
+        )
+        source_label = "Lee et al. 2018 (HAM300 downhill, South Korea)."
+        console_warning = (
+            "[yellow]Warning:[/yellow] Lee et al. (2018) regressions are non-BC small-scale skyline "
+            "studies (South Korea). Validate before using for BC costing."
         )
         rows = [
             ("Model", model.value),
@@ -1229,6 +1254,7 @@ def estimate_skyline_productivity_cmd(
             ("Lateral Distance (m)", f"{lateral_distance_m:.1f}"),
             ("Payload (m³)", f"{(payload_m3 or 1.6):.2f}"),
         ]
+        source_label = "FPInnovations TR-125 single-span regression (coastal BC)."
     elif model is SkylineProductivityModel.TR125_MULTI:
         value = estimate_cable_yarder_productivity_tr125_multi_span(
             slope_distance_m=slope_distance_m,
@@ -1241,6 +1267,7 @@ def estimate_skyline_productivity_cmd(
             ("Lateral Distance (m)", f"{lateral_distance_m:.1f}"),
             ("Payload (m³)", f"{(payload_m3 or 1.6):.2f}"),
         ]
+        source_label = "FPInnovations TR-125 multi-span regression (coastal BC)."
     elif model in _TR127_MODEL_TO_BLOCK:
         block_id = _TR127_MODEL_TO_BLOCK[model]
         if block_id in (5, 6) and num_logs is None:
@@ -1267,6 +1294,7 @@ def estimate_skyline_productivity_cmd(
             ("Payload (m³)", f"{(payload_m3 or 1.6):.2f}"),
             ("Cycle Time (min)", f"{cycle_minutes:.2f}"),
         ]
+        source_label = f"FPInnovations TR-127 Block {block_id} regression (northwestern BC)."
     else:
         raise typer.BadParameter(f"Unsupported skyline model: {model}")
     if tr119_treatment:
@@ -1281,3 +1309,7 @@ def estimate_skyline_productivity_cmd(
             rows.append(("TR119 Yarding Cost ($/m³)", f"{treatment.yarding_total_cost_per_m3:.2f}"))
     rows.append(("Productivity (m³/PMH)", f"{value:.2f}"))
     _render_kv_table("Skyline Productivity", rows)
+    if source_label:
+        console.print(f"[dim]Source: {source_label}[/dim]")
+    if console_warning:
+        console.print(console_warning)
