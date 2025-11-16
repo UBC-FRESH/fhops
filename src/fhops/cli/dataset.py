@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from collections.abc import Iterable
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 
@@ -46,10 +47,11 @@ from fhops.productivity import (
     estimate_productivity_distribution,
     load_lahrsen_ranges,
 )
-from fhops.reference import get_tr119_treatment, load_appendix5_stands
+from fhops.reference import get_appendix5_profile, get_tr119_treatment, load_appendix5_stands
 from fhops.scenario.contract import Machine, Scenario
 from fhops.scenario.io import load_scenario
 from fhops.scheduling.systems import HarvestSystem, default_system_registry
+from fhops.telemetry import append_jsonl
 from fhops.telemetry.machine_costs import build_machine_cost_snapshots
 from fhops.validation.ranges import validate_block_ranges
 
@@ -1129,10 +1131,18 @@ def estimate_cable_skidding_cmd(
     profile: str | None = typer.Option(
         None, "--profile", help="Appendix 5 author/stand name to supply slope defaults."
     ),
+    telemetry_log: Path | None = typer.Option(
+        None,
+        "--telemetry-log",
+        help="Append cable-skidding inputs/output to a JSONL telemetry file.",
+        dir_okay=False,
+        writable=True,
+    ),
 ):
     """Estimate cable skidding productivity (m³/h) using Ünver-Okan (2020) regressions."""
 
-    source_label = None
+    source_label = "Ünver-Okan 2020 (North-East Turkey spruce uphill skidding)."
+    slope_value = slope_percent
     if profile:
         if model is CableSkiddingModel.UNVER_SPSS:
             value = estimate_cable_skidding_productivity_unver_spss_profile(
@@ -1142,6 +1152,7 @@ def estimate_cable_skidding_cmd(
             value = estimate_cable_skidding_productivity_unver_robust_profile(
                 profile=profile, log_volume_m3=log_volume_m3
             )
+        slope_value = get_appendix5_profile(profile).average_slope_percent
         rows = [
             ("Model", model.value),
             ("Profile", profile),
@@ -1176,6 +1187,19 @@ def estimate_cable_skidding_cmd(
         console.print(f"[dim]Source: {source_label}[/dim]")
     if console_warning:
         console.print(console_warning)
+    if telemetry_log:
+        payload = {
+            "timestamp": datetime.now(UTC).isoformat(),
+            "command": "dataset estimate-cable-skidding",
+            "model": model.value,
+            "profile": profile,
+            "slope_percent": slope_value,
+            "log_volume_m3": log_volume_m3,
+            "productivity_m3_per_h": value,
+            "source": source_label,
+            "non_bc_source": True,
+        }
+        append_jsonl(telemetry_log, payload)
 
 
 @dataset_app.command("estimate-skyline-productivity")
@@ -1200,6 +1224,13 @@ def estimate_skyline_productivity_cmd(
         "--tr119-treatment",
         help="Optional TR119 treatment (e.g., strip_cut, 70_retention, 65_retention) to scale output and show costs.",
     ),
+    telemetry_log: Path | None = typer.Option(
+        None,
+        "--telemetry-log",
+        help="Append skyline inputs/output to a JSONL telemetry file.",
+        dir_okay=False,
+        writable=True,
+    ),
 ):
     """Estimate skyline productivity (m³/PMH) using Lee et al. (2018) or TR-125 regressions."""
 
@@ -1208,6 +1239,7 @@ def estimate_skyline_productivity_cmd(
 
     source_label = None
     console_warning = None
+    cycle_minutes = None
     if model is SkylineProductivityModel.LEE_UPHILL:
         value = estimate_cable_yarder_productivity_lee2018_uphill(
             yarding_distance_m=slope_distance_m,
@@ -1255,6 +1287,7 @@ def estimate_skyline_productivity_cmd(
             ("Payload (m³)", f"{(payload_m3 or 1.6):.2f}"),
         ]
         source_label = "FPInnovations TR-125 single-span regression (coastal BC)."
+        cycle_minutes = None
     elif model is SkylineProductivityModel.TR125_MULTI:
         value = estimate_cable_yarder_productivity_tr125_multi_span(
             slope_distance_m=slope_distance_m,
@@ -1268,6 +1301,7 @@ def estimate_skyline_productivity_cmd(
             ("Payload (m³)", f"{(payload_m3 or 1.6):.2f}"),
         ]
         source_label = "FPInnovations TR-125 multi-span regression (coastal BC)."
+        cycle_minutes = None
     elif model in _TR127_MODEL_TO_BLOCK:
         block_id = _TR127_MODEL_TO_BLOCK[model]
         if block_id in (5, 6) and num_logs is None:
@@ -1313,3 +1347,19 @@ def estimate_skyline_productivity_cmd(
         console.print(f"[dim]Source: {source_label}[/dim]")
     if console_warning:
         console.print(console_warning)
+    if telemetry_log:
+        payload = {
+            "timestamp": datetime.now(UTC).isoformat(),
+            "command": "dataset estimate-skyline",
+            "model": model.value,
+            "slope_distance_m": slope_distance_m,
+            "lateral_distance_m": lateral_distance_m,
+            "num_logs": num_logs,
+            "payload_m3": payload_m3,
+            "cycle_minutes": cycle_minutes,
+            "productivity_m3_per_pmh": value,
+            "tr119_treatment": tr119_treatment,
+            "source": source_label,
+            "non_bc_source": bool(console_warning),
+        }
+        append_jsonl(telemetry_log, payload)

@@ -263,7 +263,7 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
 ### Skyline alternatives (Ünver-Okan 2020 / Lee et al. 2018)
 - [x] Extract coefficients from `/notes/reference/unver.pdf` (Ünver-Okan hill-skidding regressions already implemented) and `/notes/reference/Productivity and cost ... South Korea.pdf` (Lee et al. 2018 HAM300 uphill/downhill regressions live in `fhops.productivity.cable_logging`).
 - [x] The helpers already expose the estimators (Ünver cable skidding + Lee skyline); remaining work is to document assumptions/caveats, tie them into telemetry, and ensure CLI warnings for non-BC sources are clear.
-- [ ] Add telemetry tagging when non-BC skyline models (Ünver/Lee) are selected so downstream consumers know the provenance. (CLI warnings + source tags are live; telemetry needs to mirror the provenance.)
+- [x] Add telemetry tagging when non-BC skyline models (Ünver/Lee) are selected so downstream consumers know the provenance (CLI now exposes `--telemetry-log` for cable/sk skyline commands, recording model + provenance + warning flag).
 - [ ] Update docs/how-to sections describing the non-BC skyline/tethered helpers and reiterate the assumptions (spruce uphill skidding in Turkey, South Korean tethered yarder case study, etc.).
 
 ### Appendix 5 normalization

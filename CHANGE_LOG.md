@@ -23,6 +23,7 @@
 - Normalised Arnvik Appendix 5 stand data into `data/reference/arnvik/appendix5_stands.json` (via `scripts/build_appendix5_reference.py`), updated the loader/CLI to surface numeric slope/age/volume/DBH fields, and extended `tests/test_reference_appendix5.py` to assert the parsed values.
 - Transcribed TR127 Appendix VII regressions into `data/reference/fpinnovations/tr127_regressions.json`, added skyline helpers/CLI support (`tr127-block1` … `block6`), and added regression coverage (`tests/test_cli_dataset_skyline.py`) built around the published Block 5 example.
 - Added provenance notes + warnings when running the Ünver-Okan cable-skidding and Lee et al. (2018) skyline models so users know when they’re leaving BC-calibrated regressions.
+- Skyline/cable CLI commands now accept `--telemetry-log`, appending JSONL entries (model, provenance, inputs, outputs, and non-BC flag) so downstream telemetry reports can trace when Ünver/Lee regressions were used.
 - Added TR-125 skyline regressions (single/multi-span) and TR-119 partial-cut treatment multipliers: skyline CLI now exposes `estimate-skyline-productivity` with optional `--tr119-treatment` scaling, productivity module exports the new helpers, and TR-119 data lives in `notes/reference/fpinnovations/tr119_yarding_productivity.json` for costing defaults. Tests cover the new loaders and regressions.
 
 ## 2025-11-17 — BC grapple yarder productivity helpers
