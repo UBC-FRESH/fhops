@@ -48,6 +48,7 @@
 - `scripts/build_productivity_registry.py` can ingest the Camelot aggregate, fall back to the legacy pdfplumber rows for any gaps, and now builds 392 enriched models (up from 109) covering harvesters, feller-bunchers, harwarders, and skidder-harvesters. Machine labels are harmonised (no more `fb_sim__pb` artefacts), and the builder automatically backfills missing formulas/units from the legacy source.
 - Added `scripts/parse_arnvik_table9.py` so Table 9 (machine types vs. dependent-variable counts) lives in `notes/reference/arnvik_tables/table9_machine_counts.csv`, making it easier to measure how far we are from Arnvik’s reported 422-model inventory.
 - Added `scripts/extract_arnvik_appendix45.py`, which uses Camelot to dump Appendix 4 (machine specs) and Appendix 5 (stand/operator descriptions) into raw CSVs (`appendix4_machines.csv`, `appendix5_stands.csv`). These need further normalization (e.g., splitting N/HM fields, parsing machine/head models, debarking flags), but the source data is now machine-readable.
+- Reviewed the new machine-productivity PDFs (Di Fulvio 2024, Eriksson & Lindroos 2014, Kellogg & Bettinger 1994, McNeel & Rutherford, Ghaffariyan et al. 2019, Stoilov et al. 2021, Laitila & Väätäinen 2020, Berry 2019, Lee et al. 2018, Ünver-Okan 2020, Spinelli et al. 2016). These cover forwarders, grapple skidders/shovel loggers, processors/landing ops, brushwood harwarders, small cable yarders, coppice harvesters, etc.—none appear in Arnvik Appendix 8, so we must ingest them manually to close the FHOPS machine-role gaps.
 - Current machine-type coverage from Arnvik (Camelot + legacy): 260 `single_grip_harvester`, 94 `feller_buncher`, 14 `feller_buncher_sim`, 8 `harwarder`, 6 `single_grip_harvester_sim`, 5 `skidder_harvester`, 5 `feller_buncher_drive_to_tree`. No forwarders/grapple skidders yet – these are the next extraction targets.
 
 ### Arnvik Machine Coverage Snapshot
@@ -85,6 +86,22 @@ Quick comparison to Arnvik Table 9 (`scripts/parse_arnvik_table9.py`) shows why 
 | tethered_shovel_or_skidder | ❌ | Winch-assist operations: mine FPInnovations trials. |
 | helicopter_longline / loader_or_water | ❌ | See Arnvik Appendix 1 (helicopter references) + FPInnovations helicopter cost modules. |
 | hand_faller / hand_or_mech_faller | ❌ | Manual falling regressions (historical BC/Quebec studies). |
+
+Ad hoc notes (TODO: process these leads and pull into planning docs):
+
+- Di Fulvio et al. 2024 – global benchmarking (harvester, forwarder, skidder costs) for plantations.
+- Eriksson & Lindroos 2014 – forwarder + harvester models (700 machines, Sweden).
+- Kellogg & Bettinger 1994 / McNeel & Rutherford – CTL thinnings + selection harvest harvester/forwarder productivity.
+- Ghaffariyan et al. 2019 – Australian thinning productivity (ALPACA database) for harvester/forwarder.
+- Stoilov et al. 2021 – combined skidder-harvester (HSM 805 ZL + Woody 50) models.
+- Berry 2019 – processor productivity (Kinleith NZ) for roadside processors.
+- Lee et al. 2018, Ünver-Okan 2020 – small cable yarder + tractor winch productivity.
+- Laitila & Väätäinen 2020 – brushwood harwarder & clearing productivity.
+- Spinelli et al. 2016 – coppice harvesting meta-analysis (excavator-based harvesters, farm tractors).
+
+Ad hoc notes (TODO: process these leads and pull into planning docs):
+
+- 
 
 ### Next Actions for Missing Machine Families
 
