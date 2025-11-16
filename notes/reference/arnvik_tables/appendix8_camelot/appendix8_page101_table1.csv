@@ -1,0 +1,14 @@
+page,table,author,model,harvest_method,machine_type,base_machine,propulsion,dv_type,units,formula
+101,1,Ackerman et al. (2018),1,CTL,H,EB,CT,PV,(m³ub PMh⁻¹),aV₃b
+101,1,Ackerman et al. (2018),2,CTL,H,PB,CT,PV,(m³ub PMh⁻¹),a+bV₃
+101,1,Ackerman et al. (2018),3,CTL,H,EB,CT,PV,(m³ub PMh⁻¹),a+bV₃-cS₁
+101,1,Ackerman et al. (2018),4,CTL,H,PB,CT,PV,(m³ub PMh⁻¹),a+bV₃+cS₁
+101,1,Ackerman et al. (2018),5,CTL,H,EB,CT,PV,(m³ub PMh⁻¹),a+bV₃-cS₁-dV₃S₁
+101,1,Ackerman et al. (2018),6,CTL,H,PB,CT,PV,(m³ub PMh⁻¹),a+bV₃+cS₁-dV₃S₁
+101,1,Ackerman et al. (2021),1,CTL,H,PB,RW,PV,(m³ PMh⁻¹),a/((b+expD₁-c)d)-expeD₁
+101,1,Ackerman et al. (2021),2,CTL,H,PB,RW,PV,(m³ PMh⁻¹),a+bE₉+α/((c+expD₁-d(-e))-expD₁(f+gE₉)
+101,1,Ackerman et al. (2022),1,CTL,HW,PB,RW,PV,(m³ PMh⁻¹),aV₁b
+101,1,Ackerman et al. (2022),2,CTL,HW,PB,RW,PV,(m³ PMh⁻¹),aV₁b
+101,1,Acosta et al. (2021),1,CTL,H,EB,CT,PV,(m³ h⁻¹),-a+bV₁
+101,1,Acuna et al. (2017),1,CTL,H,EB,CT,PV,(m³ub PMh⁻¹),expa-bO₁₂+cln(V₃)
+101,1,Alam et al. (2014),1,CTL,H,PB,CT,PV,(m³ PMh⁻¹),a+bln(V₁)

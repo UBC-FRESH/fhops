@@ -1,0 +1,25 @@
+page,table,author,model,harvest_method,machine_type,base_machine,propulsion,dv_type,units,formula
+111,2,Nuutinen & Björheden (2016),1,B (FT),FB,PB,RW,E,fell (s),a+bln(N₉)
+111,2,Olivera et al. (2016),1,CTL,H,PB,RW,PV,(m³ub h⁻¹),exp-a+bln(D₅)
+111,2,Olivera et al. (2016),2,CTL,H,PB,RW,PV,(m³ub h⁻¹),exp-a+bln(D₅)
+111,2,Olivera et al. (2016),3,CTL,H,PB,RW,PV,(m³ub h⁻¹),exp-a+bln(D₅)
+111,2,Olivera et al. (2016),4,CTL,H,PB,RW,PV,(m³ub h⁻¹),exp-a+bln(D₅)
+111,2,Olivera et al. (2016),5,CTL,H,PB,RW,PV,(m³ub h⁻¹),exp-a+bln(D₅)
+111,2,Olivera et al. (2016),6,CTL,H,PB,RW,PV,(m³ub h⁻¹),exp-a+bln(D₅)
+111,2,Olivera et al. (2016),7,CTL,H,PB,RW,PV,(m³ub h⁻¹),exp-a+bln(D₅)
+111,2,Olivera et al. (2016),8,CTL,H,PB,RW,PV,(m³ub h⁻¹),exp-a+bln(D₅)
+111,2,Olivera et al. (2016),9,CTL,H,PB,RW,PV,(m³ub h⁻¹),exp-a+bln(D₅)
+111,2,Petitmermet et al. (2019),1,CTL,H,PB,RW,TU,(min corridor-1),a+bB₄+cA₅
+111,2,Petitmermet et al. (2019),2,CTL,H,PB,RW,TU,(min corridor-1),a+bB₅+cB₆+dA₅
+111,2,Petitmermet et al. (2019),3,CTL,H,PB,RW,TU,(min corridor-1),a+bB₄+cA₆+dA₇
+111,2,Petitmermet et al. (2019),4,CTL,H,PB,RW,TU,(min corridor-1),a+bB₅+cB₆+dA₆+eA₇
+111,2,Petitmermet et al. (2019),5,CTL,H,PB,RW,TU,(min corridor-1),a+bA₅+cB₇+dB₈
+111,2,Petitmermet et al. (2019),6,CTL,H,PB,RW,TU,(min corridor-1),a+bA₆+cA₇+dB₇+eB₈
+111,2,Petitmermet et al. (2019),7,CTL,H,PB,RW,TU,(min corridor-1),
+111,2,Petitmermet et al. (2019),8,CTL,H,PB,RW,TU,(min corridor-1),
+111,2,Petty & Kärhä (2014),1,CTL,H,PB,RW,E,"fell, process (s)",aln(D₁-b)
+111,2,Petty & Kärhä (2014),2,CTL,H,PB,RW,E,"fell, process (s)",aln(D₁-b)
+111,2,Petty & Kärhä (2014),3,CTL,H,PB,RW,E,"fell, process (s)",aln(D₁-b)
+111,2,Petty & Kärhä (2014),4,CTL,H,PB,RW,E,"fell, process (s)",aln(D₁-b)
+111,2,Petty & Kärhä (2014),5,CTL,H,PB,RW,E,"fell, process (s)",aln(D₁-b)
+111,2,Petty & Kärhä (2014),6,CTL,H,PB,RW,E,"fell, process (s)",aln(D₁-b)

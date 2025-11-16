@@ -1,0 +1,15 @@
+page,table,author,model,harvest_method,machine_type,base_machine,propulsion,dv_type,units,formula
+104,1,Fernandez-Lacruz et al. (2013),1,FT,FB,PB,RW,TW,(PWmin ODton⁻¹),expaH₂-b
+104,1,Fernandez-Lacruz et al. (2021),1,*FT,FB,PB,RW,TW,(PMmin dry ton⁻¹),expaH₂-b
+104,1,Fernandez-Lacruz et al. (2021),2,*FT,FB,PB,RW,TW,(PMmin dry ton⁻¹),expaD₂-b
+104,1,George et al. (2022),1,CTL,H,PB,RW,W,cycle (s),
+104,1,Ghaffariyan (2013),1,FT,FB,PB,CT,PW,(ton PMh0⁻¹),a+bln(V₁)
+104,1,Ghaffariyan (2013),2,FT,FB,PB,CT,W,cycle (s),aV₁-b
+104,1,Ghaffariyan et al. (2019),1,CTL,H,-,-,PV,(m³ PMh0⁻¹),aV₁b
+104,1,Ghaffariyan et al. (2013),1,FT,FB,PB,CT,PW,(GMton PMh0⁻¹),a+bln(V₁)
+104,1,Ghaffariyan et al. (2015),1,CTL,H,PB,CT,W,cycle (PMmin0),aexpbD₁
+104,1,Green et al. (2020),1,CTL,H,PB,RW,W,cycle (s),-a+bD₁+cA₁+dN₄
+104,1,Green et al. (2020),2,CTL,H,PB,RW,W,cycle (s),-a+bD₁+cA₁+dN₄
+104,1,Grönlund & Eliasson (2019),1,CTL,H,PB,RW,TW,(s ODton⁻¹),a-bB₂+cI₃
+104,1,Gülci et al. (2021),1,FT,FB,EB,CT,PV,(m³ h⁻¹),-a+bH₁+cD₁+dV₁
+104,1,Gülci et al. (2021),2,FT,FB,EB,CT,PV,(m³ h⁻¹),a+bH₁+cD₁+dV₁

@@ -1,0 +1,27 @@
+page,table,author,model,harvest_method,machine_type,base_machine,propulsion,dv_type,units,formula
+103,1,Brewer et al. (2018),1,CTL,H,PB,RW,PV,(m³ PMh⁻¹),a+bV₁
+103,1,Brewer et al. (2018),2,CTL,H,PB,RW,PV,(m³ PMh⁻¹),a+bV₁
+103,1,Brewer et al. (2018),3,CTL,H,PB,RW,PV,(m³ PMh⁻¹),a+bV₁
+103,1,Brewer et al. (2018),4,CTL,H,PB,RW,PV,(m³ PMh⁻¹),a+bV₁
+103,1,Brewer et al. (2018),5,CTL,H,PB,RW,PV,(m³ PMh⁻¹),a+bV₁
+103,1,Brewer et al. (2018),6,CTL,H,PB,RW,PV,(m³ PMh⁻¹),a+bV₁
+103,1,Brewer et al. (2018),7,CTL,H,PB,RW,PV,(m³ PMh⁻¹),a+bV₁
+103,1,Brewer et al. (2018),8,CTL,H,PB,RW,PV,(m³ PMh⁻¹),a+bV₁
+103,1,Brown et al. (2013),1,FT,FB,PB,CT,PV,√(m³ PMh0⁻¹),a+bln(V₁)
+103,1,Brown et al. (2013),2,FT,FB,PB,CT,PV,√(m³ PMh0⁻¹),a+bln(V₁)
+103,1,Carter et al. (2017),1,FT,FB,PB,CT,W,cycle (centi-min),a+bA₁+cN₁+dA₃
+103,1,Chakroun et al. (2016),1,*FT,FB,EB,CT,PV,(m³ PMh⁻¹),(a+bE₁₀)V₁c
+103,1,Chakroun et al. (2016),2,*FT,FB,EB,CT,PV,(m³ PMh⁻¹),(a+bE₁₀)V₁c
+103,1,Chakroun et al. (2016),3,*FT,FB,EB,CT,PV,(m³ PMh⁻¹),(a-bE₁₀)V₁c
+103,1,Chakroun et al. (2016),4,*FT,FB,EB,CT,PV,(m³ PMh⁻¹),(a+bO₁₅)V₁c
+103,1,Chakroun et al. (2016),5,*FT,FB,EB,CT,PV,(m³ PMh⁻¹),(a+bO₁₅)V₁c
+103,1,Chung et al. (2022),1,FT,FB,PB,CT,W,cycle (s),a+bA₂+cD₁₃+dD₁₃
+103,1,Chung et al. (2022),2,FT,FB,PB,CT,W,cycle (s),a+bA₄+cN₂
+103,1,Di Fulvio & Bergström (2013),1,CTL,HW,PB,RW,TV,(PMmin m³ ⁻¹),a+bI₅-cT₁
+103,1,Erber et al. (2016),1,CTL,H,PB,RW,M,move (PSH0 dry ton⁻¹),a-bT₈
+103,1,Erber et al. (2016),2,CTL,H,PB,RW,E,fell (PSH0 dry ton⁻¹),a+bD₂-c-dN₃-eT₈
+103,1,Erber et al. (2016),3,CTL,H,PB,RW,E,process (PSH0 dry,
+103,1,Erber et al. (2016),4,CTL,H,PB,RW,TW,(PSH0 dry ton⁻¹),a+bD₂-c-dN₃-eT₈
+103,1,Eriksson & Lindroos (2014),1,CTL,H,PB,RW,PV,ln (m³ub PMh⁻¹),a+bln(V₃)-c(ln(V₃))d
+103,1,Eriksson & Lindroos (2014),2,CTL,H,PB,RW,PV,ln (m³ub PMh⁻¹),a+bln(V₃)+cln(V₁₃)+dln(V₁₄)-e(ln(V₃))f
+103,1,Eriksson & Lindroos (2014),3,CTL,H,PB,RW,PV,ln (m³ub PMh⁻¹),

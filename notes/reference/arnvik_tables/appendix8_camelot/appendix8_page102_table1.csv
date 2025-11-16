@@ -1,0 +1,28 @@
+page,table,author,model,harvest_method,machine_type,base_machine,propulsion,dv_type,units,formula
+102,1,Apăfăian et al. (2017),1,CTL,H,PB,RW,E,delimb (s),aexpbM₄
+102,1,Apăfăian et al. (2017),2,CTL,H,PB,RW,E,"delimb, buck (s)",aexpbV₁
+102,1,Apăfăian et al. (2017),3,CTL,H,PB,RW,W,cycle (s),aexpbV₁
+102,1,Apăfăian et al. (2017),4,CTL,H,PB,RW,W,cycle (s),a+bV₁
+102,1,Apăfăian et al. (2017),5,CTL,H,PB,RW,PV,(m³ h⁻¹),aV₁b
+102,1,Berendt et al. (2020),1,CTL,H,PB,RW,PV,(m³ PMh0⁻¹),aV₁b
+102,1,Berg et al. (2014),1,CTL,H Sim,PB,RW,PV,(m³ PMh⁻¹),a+bD₅-cD₅d-eln(D₅)
+102,1,Berg et al. (2014),2,CTL,H Sim,PB,RW,PV,(m³ PMh⁻¹),a+bV₁+cV₁d+eln(V₁)
+102,1,Berg et al. (2014),3,*FT,FB Sim  PB,,RW,PV,(m³ PMh⁻¹),-a+bD₅-cD₅d
+102,1,Berg et al. (2014),4,*FT,FB Sim  PB,,RW,PV,(m³ PMh⁻¹),a+bV₁-cV₁d+eln(V₁)
+102,1,Bergström & Di Fulvio (2014),1,CTL,H,PB,RW,TV,(PMmin0 m³ ⁻¹),a+b/V₂
+102,1,Bergström & Di Fulvio (2014),2,FT,FB,PB,RW,TV,(PMmin0 m³ ⁻¹),a+b/V₂+c/I₃
+102,1,Bergström et al. (2016),1,B (FT),FB,PB,RW,TU,(PMmin0 bundle⁻¹),-a+bN₅
+102,1,Bergström et al. (2016),2,B (FT),FB,PB,RW,PW,(ODton PMh0⁻¹),a+bV₂
+102,1,Bergström et al. (2016),3,B (FT),FB,PB,RW,PU,(bundles PMh0⁻¹),a+bV₂
+102,1,Bergström et al. (2022),1,*FT,FB,PB,RW,PW,(dry ton PMh⁻¹),a+bB₂
+102,1,Bergström et al. (2022),2,*FT,FB,PB,RW,PW,(dry ton PMh⁻¹),a+bB₂
+102,1,Bergström et al. (2022),3,*FT,FB,PB,RW,PW,(dry ton PMh⁻¹),a+bD₂
+102,1,Bergström et al. (2022),4,*FT,FB,PB,RW,PW,(dry ton PMh⁻¹),a+bD₂
+102,1,Bergström et al. (2022),5,*FT,FB,PB,RW,PW,(dry ton PMh⁻¹),a+bD₃
+102,1,Bergström et al. (2022),6,*FT,FB,PB,RW,PW,(dry ton PMh⁻¹),a+bD₃
+102,1,Bergström et al. (2022),7,*FT,FB,PB,RW,PW,(dry ton PMh⁻¹),a+bH₂
+102,1,Bergström et al. (2022),8,*FT,FB,PB,RW,PW,(dry ton PMh⁻¹),a+bH₂
+102,1,Bilici et al. (2019),1,FT,FB,EB,CT,PV,(m³ h⁻¹),-a+bD₁+cH₁
+102,1,Bilici et al. (2019),2,*FT,FB,EB,CT,PV,(m³ h⁻¹),-a+bD₁+cH₁
+102,1,Bilici et al. (2019),3,FT,FB,EB,CT,PV,(m³ h⁻¹),-a+bD₁
+102,1,Bilici et al. (2019),4,*FT,FB,EB,CT,PV,(m³ h⁻¹),-a+bD₁

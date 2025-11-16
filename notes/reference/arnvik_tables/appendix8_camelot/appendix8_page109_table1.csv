@@ -1,0 +1,29 @@
+page,table,author,model,harvest_method,machine_type,base_machine,propulsion,dv_type,units,formula
+109,1,Laitila & Väätäinen (2014),1,CTL,H,EB,CT,M,move (s tree⁻¹),a-bln(I₃)
+109,1,Laitila & Väätäinen (2014),2,CTL,H,EB,CT,E,fell (s tree⁻¹),a+b(c/N₉)
+109,1,Laitila & Väätäinen (2014),3,CTL,H,EB,CT,E,process (s tree⁻¹),-a+bln(V₂)
+109,1,Laitila & Väätäinen (2020),1,*FT,HW,PB,RW,M,move (s tree⁻¹),a+b/I₃
+109,1,Laitila & Väätäinen (2020),2,*FT,HW,PB,RW,E,fell (s tree⁻¹),-a+bln(V₂)
+109,1,Laitila & Väätäinen (2020),3,*FT,HW,PB,RW,L,load (s grapple-load⁻¹),-a+b/E₁₄
+109,1,Laitila & Väätäinen (2021),1,FT,FB,EB,CT,M,move (s),a-bI₃
+109,1,Laitila & Väätäinen (2021),2,FT,FB,EB,CT,E,"fell, bunch (s tree⁻¹)",a+bV₂
+109,1,Laitila & Väätäinen (2023),1,FT,FB,EB,CT,E,"fell, bunch (s tree⁻¹)",a-bexpN₉
+109,1,Laitila et al. (2013),1,*CTL,H,PB,RW,M,move (s tree⁻¹),a-bln(I₃)
+109,1,Laitila et al. (2013),2,*CTL,H,PB,RW,E,"fell, process (s)",-a+bD₁-cD₁d+eD₁f
+109,1,Laitila et al. (2013),3,*CTL,H,PB,RW,E,"fell, process (s)",a+bD₁+cD₁d
+109,1,Laitila et al. (2020),1,CTL,H,PB,RW,E,"fell, process (s)",a+bV₂+cV₂d
+109,1,Lazdiņš et al. (2019),1,CTL,H,-,-,PV,(m³ h⁻¹),aD₁b
+109,1,Lazdiņš et al. (2019),2,CTL,H,-,-,PV,(m³ h⁻¹),aD₁b
+109,1,Lazdiņš et al. (2019),3,CTL,H,-,-,PV,(m³ h⁻¹),aD₁b
+109,1,Lazdiņš (2014),1,CTL,H,PB,RW,TU,(centi-min tree⁻¹),aexpbD₁
+109,1,Lazdiņš et al. (2021),1,CTL,H,PB,RW,PV,(m³ h⁻¹),a+bV₁-cV₁d+dV₁e
+109,1,Lazdiņš et al. (2016),1,CTL,H,PB,RW,PV,(m³ h⁻¹),aD₁b
+109,1,Lazdiņš et al. (2016),2,CTL,H,PB,RW,PU,(trees h⁻¹),aD₁-b
+109,1,Leszczyński et al. (2021),1,CTL,H,EB,CT,PV,(m³ PMh15⁻¹),aV₁b
+109,1,Leszczyński et al. (2021),2,CTL,H,EB,CT,PV,(m³ PMh15⁻¹),aV₁b
+109,1,Leszczyński et al. (2021),3,CTL,H,EB,CT,PV,(m³ PMh15⁻¹),aV₁bI₂c
+109,1,Leszczyński et al. (2021),4,CTL,H,EB,CT,PV,(m³ PMh15⁻¹),aV₁b
+109,1,Leszczyński et al. (2021),5,CTL,H,EB,CT,PV,(m³ PMh15⁻¹),aI₂b
+109,1,Leszczyński et al. (2021),6,CTL,H,EB,CT,PV,(m³ PMh15⁻¹),aI₂b
+109,1,Liski et al. (2020),1,CTL,H,PB,RW,PV,(m³ E0h⁻¹),
+109,1,Liski et al. (2020),2,CTL,H,PB,RW,PV,(m³ E0h⁻¹),a+bT₇-cO₇-dO₇-eO₇-fO₇+gV₁-hV₁i

@@ -1,0 +1,30 @@
+page,table,author,model,harvest_method,machine_type,base_machine,propulsion,dv_type,units,formula
+108,1,Kormanek & Kępa (2016),1,CTL,H,PB,RW,E,fell (s),-a+bD₁
+108,1,Krč et al. (2015),1,CTL,H,PB,RW,E,"fell, process (s)",a+bO₄+cO₅+dO₆+eD₁
+108,1,Labelle et al. (2017),1,CTL,H,EB,CT,PV,(m³ PMh0⁻¹),a-bD₁+cD₁d-eD₁f
+108,1,Labelle et al. (2017),2,CTL,H,EB,CT,PV,(m³ PMh0⁻¹),a-bD₁+cD₁d-eD₁f
+108,1,Labelle et al. (2017),3,CTL,H,EB,CT,PV,(m³ PMh0⁻¹),aD₁b
+108,1,Labelle et al. (2017),4,CTL,H,EB,CT,PV,(m³ PMh0⁻¹),aD₁b
+108,1,Labelle et al. (2018),1,CTL,H,PB,RW,PV,(m³ PMh0⁻¹),-a+bD₁-cD₁d
+108,1,Labelle et al. (2018),2,CTL,H,PB,RW,PV,(m³ PMh0⁻¹),-a+bD₁-cD₁d
+108,1,Labelle et al. (2018),3,CTL,H,PB,CT,PV,(m³ PMh0⁻¹),-a+bD₁-cD₁d
+108,1,Labelle et al. (2018),4,CTL,H,PB,CT,PV,(m³ PMh0⁻¹),-a+bD₁-cD₁d
+108,1,Labelle & Huß (2018),1,CTL,H,PB,RW,PV,(m³ub PMh0⁻¹),aV₃-bV₃c
+108,1,Labelle & Huß (2018),2,CTL,H,PB,RW,PV,(m³ub PMh0⁻¹),aV₃-bV₃c
+108,1,Labelle et al. (2016),1,CTL,H,PB,CT,PV,(m³ PMh⁻¹),aD₁b
+108,1,Labelle et al. (2016),2,CTL,H,PB,CT,PV,(m³ PMh⁻¹),aD₁b
+108,1,Labelle et al. (2019),1,CTL,H,PB,RW,PV,(m³ PMh0⁻¹),-a+bD₁-cD₁d
+108,1,Labelle et al. (2019),2,CTL,H,PB,RW,PV,(m³ PMh0⁻¹),-a+bD₁-cD₁d
+108,1,Labelle et al. (2019),3,CTL,H,PB,RW,PV,(m³ PMh0⁻¹),-a+bD₁-cD₁d
+108,1,Labelle et al. (2019),4,CTL,H,PB,RW,PV,(m³ PMh0⁻¹),a+bD₁-cD₁d
+108,1,Labelle et al. (2019),5,CTL,H,PB,RW,PV,(m³ PMh0⁻¹),a+bV₆-cV₆d
+108,1,Labelle et al. (2019),6,CTL,H,PB,RW,PV,(m³ PMh0⁻¹),a+bV₆-cV₆d
+108,1,Labelle et al. (2019),7,CTL,H,PB,RW,PV,(m³ PMh0⁻¹),a+bV₆-cV₆d
+108,1,Labelle et al. (2019),8,CTL,H,PB,RW,PV,(m³ PMh0⁻¹),a+bV₆-cV₆d
+108,1,Laina et al. (2013),1,CTL,H,PB,RW,PW,(ODton h⁻¹),(aD₁b)/((-c+dD₁)e)
+108,1,Laina et al. (2013),2,FT,FB,PB,RW,PW,(ODton h⁻¹),(aD₁bN₃)/(-c+d/N₃e)
+108,1,Laitila et al. (2016),1,CTL,H,PB,RW,M,move (s tree⁻¹),a-bln(I₃)
+108,1,Laitila et al. (2016),2,CTL,H,PB,RW,M,move (s tree⁻¹),-a+b(c/I₃)
+108,1,Laitila et al. (2016),3,CTL,H,PB,RW,E,fell (s tree⁻¹),a-bN₉
+108,1,Laitila et al. (2016),4,CTL,H,PB,RW,E,fell (s tree⁻¹),a-bN₉
+108,1,Laitila et al. (2016),5,CTL,H,PB,RW,E,process (s tree⁻¹),a+bV₂

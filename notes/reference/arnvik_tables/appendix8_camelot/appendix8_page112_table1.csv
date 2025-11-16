@@ -1,0 +1,23 @@
+page,table,author,model,harvest_method,machine_type,base_machine,propulsion,dv_type,units,formula
+112,1,Polowy & Molińska-Glura,1,CTL,H,PB,RW,PV,(m³ h⁻¹),
+112,1,Polowy & Molińska-Glura,2,CTL,H,PB,RW,PV,(m³ h⁻¹),aV₁+bE₁₅
+112,1,Polowy & Molińska-Glura,3,CTL,H,PB,RW,PV,(m³ h⁻¹),-a+bV₁+cE₁₅+dE₅
+112,1,Prinz et al. (2021),1,CTL,H,PB,RW,E,fell (ms),aexpbD₅
+112,1,Prinz et al. (2021),2,CTL,H,PB,RW,E,fell (ms),aexpbD₅
+112,1,Prinz et al. (2021),3,CTL,H,PB,RW,E,crosscut (ms),a+bD₅-cD₅d+eD₅f
+112,1,Prinz et al. (2021),4,CTL,H,PB,RW,E,crosscut (ms),a-bD₅+cD₅d-eD₅f
+112,1,Ramantswana et al. (2013),1,CTL,H,EB,CT,PV,(m³ PMh0⁻¹),a+bV₁-cV₁d
+112,1,Ramantswana et al. (2013),2,CTL,H,EB,CT,PV,(m³ PMh0⁻¹),a+bV₁-cV₁d
+112,1,Ramantswana et al. (2013),3,CTL,H,EB,CT,PV,(m³ PMh0⁻¹),a+bV₁-cV₁d
+112,1,Ramantswana et al. (2013),4,CTL,H,EB,CT,PV,(m³ PMh0⁻¹),a+bV₈+cV₉-dV₈e-fV₉g-hT₆i+jV₈T₆
+112,1,Ramantswana et al. (2013),5,CTL,H,EB,CT,PV,(m³ PMh0⁻¹),a+bV₈+cV₉
+112,1,Ramantswana et al. (2013),6,CTL,H,EB,CT,PV,(m³ PMh0⁻¹),aV₈+bV₉-cV₈d
+112,1,Ramantswana et al. (2013),7,CTL,H,EB,CT,PV,(m³ PMh0⁻¹),a+bV₈-cV₉+dV₉e-fT₆
+112,1,Ramantswana et al. (2013),8,CTL,H,EB,CT,PV,(m³ PMh0⁻¹),a+bV₈+cV₉-dV₈e-fV₉g
+112,1,Ramantswana et al. (2013),9,CTL,H,EB,CT,PV,(m³ PMh0⁻¹),a+bV₁-cV₁d+eO₁₀
+112,1,Rosińska et al. (2022),1,CTL,H,PB,RW,PV,(m³ub h⁻¹),-a+bD₇
+112,1,Rosińska et al. (2022),2,CTL,H,PB,RW,PV,(m³ub h⁻¹),-a+bD₈-cD₈d
+112,1,Rosińska et al. (2022),3,CTL,H,PB,RW,PV,(m³ub h⁻¹),a+bV₁-cD₈+dD₇
+112,1,Rosińska et al. (2022),4,CTL,H,PB,RW,PV,(m³ub h⁻¹),-a+bD₉
+112,1,Rosińska et al. (2022),5,CTL,H,PB,RW,PV,(m³ub h⁻¹),-a+bD₁₀
+112,1,Rosińska et al. (2022),6,CTL,H,PB,RW,PV,(m³ub h⁻¹),-a+bD₇+cD₈-dD₇D₈+eD₇f-gD₈h

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 import json
 import re
 from pathlib import Path
@@ -10,6 +11,7 @@ from typing import Iterable
 from fhops.productivity_registry import ProductivityModel, registry
 
 APPENDIX8 = Path("notes/reference/arnvik_tables/appendix8/appendix8_aggregate.csv")
+APPENDIX8_CAMELOT = Path("notes/reference/arnvik_tables/appendix8_camelot/appendix8_camelot_aggregate.csv")
 VARS_JSON = Path("notes/reference/arnvik_tables/appendix9/variables.json")
 PARAM_JSON = Path("notes/reference/arnvik_tables/appendix10/parameters.json")
 STAT_JSON = Path("notes/reference/arnvik_tables/appendix11/statistics.json")
@@ -49,8 +51,6 @@ HARVEST_METHOD_MAP = {
 
 
 def iter_rows(path: Path) -> Iterable[list[str]]:
-    import csv
-
     with path.open(encoding="utf-8") as fh:
         reader = csv.reader(fh)
         for row in reader:
@@ -107,7 +107,17 @@ def normalize_harvest_method(value: str) -> str:
     return value.lower().replace(" ", "_")
 
 
-def parse_model_row(row: list[str]) -> ProductivityModel | None:
+def clean_token(value: str) -> str:
+    return value.strip().lstrip("*,")
+
+
+def _normalize_publication(candidate: str) -> str:
+    candidate = candidate.replace(" ,", ",").replace("( ", "(").replace(" )", ")")
+    candidate = re.sub(r"\((\d+)\s+(\d+[a-z]?)\)", lambda m: f"({m.group(1)}{m.group(2)})", candidate)
+    return candidate.strip().rstrip(",")
+
+
+def decode_model_row(row: list[str]) -> tuple[str, str, str, str, str, str, str, str, str] | None:
     if len(row) < 6:
         return None
     cells = [cell.strip() for cell in row[2:] if cell and cell.strip()]
@@ -165,6 +175,30 @@ def parse_model_row(row: list[str]) -> ProductivityModel | None:
     formula = " ".join(tokens_tail[cursor:]).strip()
     if not formula or not harvest_method:
         return None
+    return (
+        publication,
+        model_nr,
+        harvest_method,
+        machine_type,
+        base_machine,
+        propulsion,
+        dv_type,
+        units,
+        formula,
+    )
+
+
+def build_productivity_model(
+    publication: str,
+    model_nr: str,
+    harvest_method: str,
+    machine_type: str,
+    base_machine: str,
+    propulsion: str,
+    dv_type: str,
+    units: str,
+    formula: str,
+) -> ProductivityModel:
     predictor_codes = human_predictors(formula)
     predictor_details = [
         {
@@ -176,7 +210,7 @@ def parse_model_row(row: list[str]) -> ProductivityModel | None:
     ]
     params, stats = fetch_metadata(publication, model_nr)
     ref = fetch_reference(publication)
-    model = ProductivityModel(
+    return ProductivityModel(
         machine_type=machine_type or "unknown",
         system=harvest_method,
         region="",
@@ -189,7 +223,70 @@ def parse_model_row(row: list[str]) -> ProductivityModel | None:
         notes=build_notes(base_machine, propulsion, dv_type, units, stats),
         reference=ref,
     )
-    return model
+
+
+def parse_model_row(row: list[str]) -> ProductivityModel | None:
+    payload = decode_model_row(row)
+    if not payload:
+        return None
+    return build_productivity_model(*payload)
+
+
+def parse_camelot_row(record: dict) -> tuple[ProductivityModel | None, bool, tuple[str, str] | None]:
+    publication = record.get("author", "").strip()
+    if not publication or "built;" in publication:
+        return None, False, None
+    model_nr = record.get("model", "").strip()
+    if not model_nr:
+        return None, False, None
+    harvest_method = normalize_harvest_method(clean_token(record.get("harvest_method", "")))
+    machine_raw = clean_token(record.get("machine_type", ""))
+    base_machine = clean_token(record.get("base_machine", ""))
+    propulsion_raw = clean_token(record.get("propulsion", ""))
+    dv_type = clean_token(record.get("dv_type", ""))
+    units = record.get("units", "").strip()
+    formula = record.get("formula", "").strip()
+    if base_machine and base_machine not in {"PB", "EB"}:
+        formula = units or formula
+        units = dv_type
+        dv_type = propulsion_raw
+        propulsion_raw = base_machine
+        base_machine = ""
+    if not base_machine and machine_raw:
+        for candidate in ("PB", "EB"):
+            if machine_raw.endswith(candidate):
+                machine_raw = machine_raw[: -len(candidate)].strip()
+                base_machine = candidate
+                break
+    machine_type = normalize_machine_type(machine_raw)
+    propulsion = propulsion_raw
+    fallback = LEGACY_LOOKUP.get((publication, model_nr))
+    if fallback:
+        _, _, fhm, fmachine, fbase, fprop, fdv, funits, fformula = fallback
+        harvest_method = harvest_method or fhm
+        machine_type = machine_type or fmachine
+        base_machine = base_machine or fbase
+        propulsion = propulsion or fprop
+        dv_type = dv_type or fdv
+        units = units or funits
+        formula = formula or fformula
+    if not formula or not harvest_method:
+        return None, False, None
+    return (
+        build_productivity_model(
+            publication,
+            model_nr,
+            harvest_method,
+            machine_type,
+            base_machine,
+            propulsion,
+            dv_type,
+            units,
+            formula,
+        ),
+        True,
+        (publication, model_nr),
+    )
 
 
 def _parse_float(value: str | None) -> float | None:
@@ -215,14 +312,51 @@ def build_notes(base_machine: str, propulsion: str, dependent: str, units: str, 
     return "; ".join(filter(None, pieces))
 
 
+def build_legacy_lookup() -> dict[tuple[str, str], tuple[str, str, str, str, str, str, str, str, str]]:
+    lookup: dict[tuple[str, str], tuple[str, str, str, str, str, str, str, str, str]] = {}
+    if not APPENDIX8.exists():
+        return lookup
+    for row in iter_rows(APPENDIX8):
+        payload = decode_model_row(row)
+        if not payload:
+            continue
+        publication, model_nr, *_ = payload
+        lookup[(publication, model_nr)] = payload
+    return lookup
+
+
+LEGACY_LOOKUP = build_legacy_lookup()
+
+
 def main() -> None:
     registry._models.clear()  # reset
     count = 0
-    for row in iter_rows(APPENDIX8):
-        model = parse_model_row(row)
-        if model:
+    seen: set[tuple[str, str]] = set()
+    if APPENDIX8_CAMELOT.exists():
+        with APPENDIX8_CAMELOT.open(encoding="utf-8") as fh:
+            reader = csv.DictReader(fh)
+            for record in reader:
+                model, matched, key = parse_camelot_row(record)
+                if key and key in seen:
+                    continue
+                if model:
+                    registry.add(model)
+                    count += 1
+                    if key:
+                        seen.add(key)
+        # backfill missing entries from legacy lookup
+        for key, payload in LEGACY_LOOKUP.items():
+            if key in seen:
+                continue
+            model = build_productivity_model(*payload)
             registry.add(model)
             count += 1
+    else:
+        for row in iter_rows(APPENDIX8):
+            model = parse_model_row(row)
+            if model:
+                registry.add(model)
+                count += 1
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     with OUTPUT.open("w", encoding="utf-8") as fh:
         json.dump([model.__dict__ for model in registry.all()], fh, indent=2, ensure_ascii=False)

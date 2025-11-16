@@ -1,0 +1,31 @@
+page,table,author,model,harvest_method,machine_type,base_machine,propulsion,dv_type,units,formula
+105,2,Hiesl & Benjamin (2013),1,FT,FB,PB,CT,W,log (PMmin15),-a+bN₉+cD₄
+105,2,Hiesl & Benjamin (2015),1,CTL,H,PB,RW,W,log (PMmin15),-a+bD₁-cO₈
+105,2,Hiesl et al. (2015),1,CTL,H,PB,RW,PW,(ton PMh15⁻¹),-a+bI₅-cI₄-dO₁₄+eB₁₆+fV₁
+105,2,Hiesl et al. (2015),2,FT,FB,PB,CT,PW,(ton PMh15⁻¹),a-bI₅-cI₄+dO₁₄+eB₁₆
+105,2,Holzleitner & Kanzian (2022),1,CTL,H,PB,RW,PV,(m³ PSh0⁻¹),a+bV₁c-dT₉
+105,2,Holzleitner & Kanzian (2022),2,CTL,H,PB,RW,PV,(m³ PSh0⁻¹),a+bV₁c-dT₉+eM₅-fV₁M₅
+105,2,Holzleitner & Kanzian (2022),3,CTL,H,PB,RW,PV,(m³ PSh0⁻¹),a+bV₁c-dT₉
+105,2,Horváth et al. (2016),1,CTL,H,-,-,W,cycle (min),aO₁bO₂cO₃dO₁₁eV₁f
+105,2,Horváth et al. (2016),2,CTL,H,-,-,W,cycle (min),aO₁-bO₂cO₃dO₁₁eV₁f
+105,2,Horváth et al. (2016),3,CTL,H,-,-,W,cycle (min),aO₁bO₂eO₃dO₁₁eV₁-f
+105,2,Horváth et al. (2016),4,CTL,H,-,-,W,cycle (min),aO₁-bO₂cO₃dO₁₁eV₁-f
+105,2,Horváth et al. (2016),5,CTL,H,-,-,W,cycle (min),aO₁-bO₂cO₃dO₁₁eV₁-f
+105,2,Horváth et al. (2016),6,CTL,H,-,-,W,cycle (min),aO₂bO₃cO₁₁dV₁e
+105,2,Horváth et al. (2016),7,CTL,H,-,-,W,cycle (min),aO₁bO₂cO₃dO₁₁eV₁f
+105,2,Horváth et al. (2016),8,CTL,H,-,-,W,cycle (min),aO₁bO₂cO₃dO₁₁eV₁f
+105,2,Horváth et al. (2016),9,CTL,H,-,-,W,cycle (min),aO₁bO₂cO₃dO₁₁eV₁f
+105,2,Horváth et al. (2016),10,CTL,H,-,-,W,cycle (min),aO₁₁-bV₁c
+105,2,Horváth et al. (2016),11,CTL,H,-,-,W,cycle (min),aO₁bO₂cO₃dO₁₁eV₁f
+105,2,Horváth et al. (2016),12,CTL,H,-,-,TV,(min m³ ⁻¹),aO₁bO₂cO₃dO₁₁eV₁-f
+105,2,Horváth et al. (2016),13,CTL,H,-,-,TV,(min m³ ⁻¹),aO₁-bO₂cO₃dO₁₁eV₁-f
+105,2,Horváth et al. (2016),14,CTL,H,-,-,TV,(min m³ ⁻¹),aO₁bO₂cO₃dO₁₁eV₁-f
+105,2,Horváth et al. (2016),15,CTL,H,-,-,TV,(min m³ ⁻¹),aO₁-bO₂cO₃dO₁₁eV₁-f
+105,2,Horváth et al. (2016),16,CTL,H,-,-,TV,(min m³ ⁻¹),aO₁-bO₂cO₃dO₁₁eV₁-f
+105,2,Horváth et al. (2016),17,CTL,H,-,-,TV,(min m³ ⁻¹),aO₂bO₃cO₁₁dV₁-e
+105,2,Horváth et al. (2016),18,CTL,H,-,-,TV,(min m³ ⁻¹),aO₁bO₂cO₃dO₁₁eV₁-f
+105,2,Horváth et al. (2016),19,CTL,H,-,-,TV,(min m³ ⁻¹),aO₁bO₂cO₃dO₁₁eV₁-f
+105,2,Horváth et al. (2016),20,CTL,H,-,-,TV,(min m³ ⁻¹),aO₁bO₂cO₃dO₁₁eV₁-f
+105,2,Horváth et al. (2016),21,CTL,H,-,-,TV,(min m³ ⁻¹),aO₁₁-bV₁-c
+105,2,Horváth et al. (2016),22,CTL,H,-,-,TV,(min m³ ⁻¹),aO₁bO₂cO₃dO₁₁eV₁-f
+105,2,Horváth et al. (2016),23,CTL,H,-,-,PV,(m³ min⁻¹),aO₁-bO₂-cO₃-dO₁₁-eV₁f

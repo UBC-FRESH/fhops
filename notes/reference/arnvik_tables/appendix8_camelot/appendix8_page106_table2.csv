@@ -1,0 +1,21 @@
+page,table,author,model,harvest_method,machine_type,base_machine,propulsion,dv_type,units,formula
+106,2,Jernigan et al. (2015),1,FT,FB,PB,CT,W,cycle (PMmin),a+bN₉
+106,2,Jylhä & Bergström (2016),1,FT,FB,PB,RW,PW,(ODton E0h⁻¹),aV₁₂b
+106,2,Jylhä & Bergström (2016),2,FT,FB,PB,RW,PW,(ODton E0h⁻¹),aH₂b
+106,2,Jylhä & Bergström (2016),3,FT,FB,PB,RW,PW,(ODton E0h⁻¹),aI₅-b
+106,2,Jylhä & Bergström (2016),4,FT,FB,PB,RW,PW,(ODton E0h⁻¹),aD₅b
+106,2,Jylhä & Bergström (2016),5,FT,FB,PB,RW,PW,(ODton E0h⁻¹),aB₃b
+106,2,Jylhä & Bergström (2016),6,FT,FB,PB,RW,PW,(ODton E0h⁻¹),aH₁b
+106,2,Jylhä & Bergström (2016),7,FT,FB,PB,RW,PW,(ODton E0h⁻¹),aD₆b
+106,2,Jylhä & Bergström (2016),8,FT,FB,PB,RW,PW,(ODton E0h⁻¹),aH₃b
+106,2,Kärhä et al. (2018a),1,CTL,H,PB,RW,E,"fell, process (s)",a+bV₁-cV₁d+eV₁f+gO₁₃
+106,2,Kärhä et al. (2018a),2,CTL,H,PB,RW,E,"fell, process (s)",a+bV₁-cV₁d+eV₁f+gO₁₃
+106,2,Kärhä et al. (2018a),3,CTL,H,PB,RW,E,"fell, process (s)",a+bV₁-cV₁d+eV₁f+gO₁₃
+106,2,Kärhä et al. (2018a),4,CTL,H,PB,RW,M,moving (s),a+b/I₃+cO₁₃
+106,2,Kärhä et al. (2018b),1,CTL,HW,PB,RW,PV,(m³ E15⁻¹),-a+bln(V₂)
+106,2,Kärhä et al. (2019),1,CTL,H,PB,RW,E,"fell, process (s)",a+bV₁-cV₁d+eV₁f-gT₂
+106,2,Kärhä et al. (2019),2,CTL,H,PB,RW,E,"fell, process (s)",a+bV₁-cV₁d+eV₁f+gT₂
+106,2,Kärhä et al. (2019),3,CTL,H,PB,RW,E,"fell, process (s)",a+bV₁-cV₁d+eV₁f+gT₂
+106,2,Kärhä et al. (2019),4,CTL,H,PB,RW,E,"fell, process (s)",a+bV₁-cV₁d+eV₁f+gT₂
+106,2,Kärhä et al. (2019),5,CTL,H,PB,RW,E,"fell, process (s)",a+bV₁-cV₁d+eV₁f+gT₂
+106,2,Kärhä et al. (2019),6,CTL,H,PB,RW,E,"fell, process (s)",a+bV₁-cV₁d+eV₁f+gT₂
