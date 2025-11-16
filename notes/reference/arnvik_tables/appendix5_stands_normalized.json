@@ -1,0 +1,1668 @@
+[
+  {
+    "author": "Ackerman et al. (2018)",
+    "tree_species": "Eucalyptus grandis x camaldulensis",
+    "stand_age": "8",
+    "stem_volume": "0.154 (0.034-0.477) m³ub",
+    "dbh": "15.89 (9.00-27.20) cm",
+    "ground_condition": "2/3 - Erasmus (1994)",
+    "ground_roughness": "3 - Erasmus (1994)",
+    "slope": "23 (5-55)%",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      88
+    ]
+  },
+  {
+    "author": "Ackerman et al. (2021)",
+    "tree_species": "*Pinus patula, Pinus elliotti Pinus taeda",
+    "stand_age": "-",
+    "stem_volume": "0.92 (0.01-2.50) m³ before trimming of data",
+    "dbh": "31.38 (7.30-59.70) cm, before trimming of data",
+    "ground_condition": "Good Ground Conditions - Erasmus (1994)",
+    "ground_roughness": "-",
+    "slope": "Predominately Flat - Erasmus (1994)",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      88
+    ]
+  },
+  {
+    "author": "Ackerman et al. (2022)",
+    "tree_species": "Pinus patula",
+    "stand_age": "10",
+    "stem_volume": "0.12 (0.03-0.13) m³",
+    "dbh": "15.9 (8.2-26.0) cm",
+    "ground_condition": "Firm - Erasmus (1994)",
+    "ground_roughness": "Even - Erasmus (1994)",
+    "slope": "Level - Erasmus (1994)",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      88
+    ]
+  },
+  {
+    "author": "Acosta et al. (2021)",
+    "tree_species": "Teak",
+    "stand_age": "18",
+    "stem_volume": "0.3408 m³",
+    "dbh": "-",
+    "ground_condition": "Clayey With Good Drainage",
+    "ground_roughness": "-",
+    "slope": "<15%",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      88
+    ]
+  },
+  {
+    "author": "Acuna et al. (2017)",
+    "tree_species": "Eucalyptus globulus",
+    "stand_age": "9,5",
+    "stem_volume": "*(0.233-0.464) m³ub",
+    "dbh": "*(167-253) mm",
+    "ground_condition": "Firm And Even",
+    "ground_roughness": "Firm And Even",
+    "slope": "(0-6)°",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      88
+    ]
+  },
+  {
+    "author": "Alam et al. (2014)",
+    "tree_species": "Radiata pine",
+    "stand_age": "*(34-35)",
+    "stem_volume": "*(1.8-2.4) m³",
+    "dbh": "*(39.0-51.2) cm",
+    "ground_condition": "-",
+    "ground_roughness": "Good",
+    "slope": "<5°",
+    "num_operators": "2",
+    "notes": "",
+    "pages": [
+      88
+    ]
+  },
+  {
+    "author": "Apăfăian et al. (2017)",
+    "tree_species": "Picea Abies",
+    "stand_age": "45",
+    "stem_volume": "0.364 (0.044-0.676) m³",
+    "dbh": "23 cm",
+    "ground_condition": "Luvosoil",
+    "ground_roughness": "-",
+    "slope": "10%",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      88
+    ]
+  },
+  {
+    "author": "Berendt et al. (2020)",
+    "tree_species": "*Picea abies, *Pseudotsuga menziesii, Pinus sylvestris Acer pseudoplatanus, Fagus sylvatica",
+    "stand_age": "*(35-56)",
+    "stem_volume": "*(0.14-0.54) m³",
+    "dbh": "*(18.5-33.4) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "(60-70)%",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      88
+    ]
+  },
+  {
+    "author": "Berg et al. (2014)",
+    "tree_species": "Picea abies, Pinus sylvestris Deciduous",
+    "stand_age": "*(90-200)",
+    "stem_volume": "*(0.104-2.068) m3",
+    "dbh": "*(144-419) mm",
+    "ground_condition": "1 - Berg (1992)",
+    "ground_roughness": "1 - Berg (1992)",
+    "slope": "1 - Berg (1992)",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      88
+    ]
+  },
+  {
+    "author": "Bergström & Di Fulvio (2014)",
+    "tree_species": "Pinus sylvestris, Picea abies Betula spp",
+    "stand_age": "-",
+    "stem_volume": "51 *(49-55) dm³",
+    "dbh": "9.3 *(9.1-9.6) cm",
+    "ground_condition": "2 - Berg (1992)",
+    "ground_roughness": "3 - Berg (1992)",
+    "slope": "1 - Berg (1992)",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      88
+    ]
+  },
+  {
+    "author": "Bergström et al. (2016)",
+    "tree_species": "Pinus sylvestris, Picea abies Betula spp., Alnus incana Pinus Contorta",
+    "stand_age": "30-35",
+    "stem_volume": "26.5 *(15.0-43.0) dm3",
+    "dbh": "7.1 *(5.5-8.5) cm",
+    "ground_condition": "2 - Berg (1992)",
+    "ground_roughness": "1 - Berg (1992)",
+    "slope": "1 - Berg (1992)",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      89
+    ]
+  },
+  {
+    "author": "Bergström et al. (2022)",
+    "tree_species": "Acer pseudoplatanus, Betula spp., Corylus avellana Fagus sylvatica, Ostrya carpinifolia, Alnus incana Sorbus aucuparia, Salix spp., Fraxinus excelsior Ulmus glabra, Pinus sylvestris, Picea abies, Tilia cordata",
+    "stand_age": "*(20-40)",
+    "stem_volume": "*(10-64) dm³, whole tree volume",
+    "dbh": "*(3.3-9.4) cm",
+    "ground_condition": "*(1-2) - Berg (1992)",
+    "ground_roughness": "*(1-2) - Berg (1992)",
+    "slope": "*(1-2) - Berg (1992)",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      89
+    ]
+  },
+  {
+    "author": "Bilici et al. (2019)",
+    "tree_species": "Pinus brutia",
+    "stand_age": "-",
+    "stem_volume": "-",
+    "dbh": "*(24.63-34.28), (10-46) cm",
+    "ground_condition": "-",
+    "ground_roughness": "*(Low-High)",
+    "slope": "*(15-25), (12-29)%",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      89
+    ]
+  },
+  {
+    "author": "Brewer et al. (2018)",
+    "tree_species": "Pinus patula",
+    "stand_age": "22",
+    "stem_volume": "1.05 *(1.12-1.33) m³ub",
+    "dbh": "*(33.90-36.01) cm",
+    "ground_condition": "Good - Erasmus (1994)",
+    "ground_roughness": "Low - Erasmus (1994)",
+    "slope": "(0-14)% - Erasmus (1994)",
+    "num_operators": "4",
+    "notes": "",
+    "pages": [
+      89
+    ]
+  },
+  {
+    "author": "Brown et al. (2013)",
+    "tree_species": "Pinus radiata",
+    "stand_age": "24",
+    "stem_volume": "0.61 (0.06-1.84) m³",
+    "dbh": "0.29 (0.10-0.46) m",
+    "ground_condition": "Moist, Soft And Clay Loamy Soils",
+    "ground_roughness": "Some Dolerite Rocks",
+    "slope": "21 (7-27)°",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      89
+    ]
+  },
+  {
+    "author": "Carter et al. (2017)",
+    "tree_species": "Hybrid poplar",
+    "stand_age": "7",
+    "stem_volume": "0.045 m³",
+    "dbh": "(6.35-11.94) cm",
+    "ground_condition": "-",
+    "ground_roughness": "Free Of Any Impassable Objects",
+    "slope": "No Discernible Slope",
+    "num_operators": ">1",
+    "notes": "",
+    "pages": [
+      89
+    ]
+  },
+  {
+    "author": "Chakroun et al. (2016)",
+    "tree_species": "Oak, Birch, Hornbeam Other hardwoods, Beech Ash, Field maple",
+    "stand_age": "30",
+    "stem_volume": "*(0.029-0.065) m³",
+    "dbh": "*(8.7-10.1) cm",
+    "ground_condition": "Firm",
+    "ground_roughness": "-",
+    "slope": "Even",
+    "num_operators": "2",
+    "notes": "",
+    "pages": [
+      89
+    ]
+  },
+  {
+    "author": "Chung et al. (2022)",
+    "tree_species": "Douglas-fir",
+    "stand_age": "60",
+    "stem_volume": "1.27 m³",
+    "dbh": "41 cm",
+    "ground_condition": "Silty Clay Loam Soils",
+    "ground_roughness": "-",
+    "slope": "45%",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      89
+    ]
+  },
+  {
+    "author": "Di Fulvio & Bergström (2013)",
+    "tree_species": "Pinus sylvestris, Picea abies Betula spp",
+    "stand_age": "32",
+    "stem_volume": "*(41-45) dm³",
+    "dbh": "*(8.4-9.0) cm",
+    "ground_condition": "2 - Berg (1992)",
+    "ground_roughness": "2 - Berg (1992)",
+    "slope": "2 - Berg (1992)",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      89
+    ]
+  },
+  {
+    "author": "Erber et al. (2016)",
+    "tree_species": "Carpinus betulus",
+    "stand_age": "-",
+    "stem_volume": "8.2 dm3",
+    "dbh": "4.0 (1.0-23.0) cm, basal area weighted",
+    "ground_condition": "Stagnogley Soil",
+    "ground_roughness": "Without Major Obstacles",
+    "slope": "Flat",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      89
+    ]
+  },
+  {
+    "author": "Eriksson & Lindroos (2014)",
+    "tree_species": "Pinus sylvestris, Picea abies Pinus contorta",
+    "stand_age": "-",
+    "stem_volume": "*(0.11-0.25), (0.03-1.82) m³ub",
+    "dbh": "-",
+    "ground_condition": "-",
+    "ground_roughness": "*(1.7-1.8), (1.0-5.0) - Berg (1992)",
+    "slope": "*(1.6-1.7), (1.0-5.0) - Berg (1992)",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      89
+    ]
+  },
+  {
+    "author": "Fernandez-Lacruz et al. (2013)",
+    "tree_species": "Betula spp., Salix spp., Picea abies, Pinus sylvestris",
+    "stand_age": "-",
+    "stem_volume": "1.71 OD kg",
+    "dbh": "*(2.3-4.7) cm, basal area weighted",
+    "ground_condition": "1 - Berg (1992)",
+    "ground_roughness": "2 - Berg (1992)",
+    "slope": "1 - Berg (1992)",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      90
+    ]
+  },
+  {
+    "author": "Fernandez-Lacruz et al. (2021)",
+    "tree_species": "Betula spp., Alnus incana Salix spp., Picea abies Pinus sylvestris",
+    "stand_age": "24 (14-34)",
+    "stem_volume": "-",
+    "dbh": "*(1.9-5.7) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      90
+    ]
+  },
+  {
+    "author": "George et al. (2022)",
+    "tree_species": "Cedar, Acer rubrum, Larix laricina, Picea rubens Tsuga canadensis, Pinus strobus, Fraxinus nigra Betula alleghaniensis Populus tremuloides, Betula papyrifera, Abies balsamea",
+    "stand_age": "-",
+    "stem_volume": "-",
+    "dbh": "*(22.1-26.2) cm, quadratic mean diameter (QMD)",
+    "ground_condition": "Frozen",
+    "ground_roughness": "-",
+    "slope": "(0-15)%",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      90
+    ]
+  },
+  {
+    "author": "Ghaffariyan (2013)",
+    "tree_species": "Eucalyptus globulus",
+    "stand_age": "*(11-13)",
+    "stem_volume": "*(0.178-0.205) m³",
+    "dbh": "-",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "Flat",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      90
+    ]
+  },
+  {
+    "author": "Ghaffariyan et al. (2019)",
+    "tree_species": "-",
+    "stand_age": "-",
+    "stem_volume": "-",
+    "dbh": "-",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      90
+    ]
+  },
+  {
+    "author": "Ghaffariyan et al. (2013)",
+    "tree_species": "Eucalyptus globulus",
+    "stand_age": "-",
+    "stem_volume": "0.21 m³",
+    "dbh": "17.8 cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "Flat",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      90
+    ]
+  },
+  {
+    "author": "Ghaffariyan et al. (2015)",
+    "tree_species": "Pinus radiata",
+    "stand_age": "32",
+    "stem_volume": "1.53 m³",
+    "dbh": "*(42.0-42.1) cm",
+    "ground_condition": "Firm",
+    "ground_roughness": "Even",
+    "slope": "Flat",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      90
+    ]
+  },
+  {
+    "author": "Green et al. (2020)",
+    "tree_species": "Pseudotsuga menziesii Abies grandis, Acer macrophyllum",
+    "stand_age": "60",
+    "stem_volume": "-",
+    "dbh": "*(48.3-49.5) cm",
+    "ground_condition": "Price Soils",
+    "ground_roughness": "-",
+    "slope": "*(27-30), (7-50)%",
+    "num_operators": "2",
+    "notes": "",
+    "pages": [
+      90
+    ]
+  },
+  {
+    "author": "Grönlund & Eliasson (2019)",
+    "tree_species": "Birch, Spruce",
+    "stand_age": "*(14-25)",
+    "stem_volume": "-",
+    "dbh": "*(4.1-12.0) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      90
+    ]
+  },
+  {
+    "author": "Gülci et al. (2021)",
+    "tree_species": "Pinus pinaster",
+    "stand_age": "-",
+    "stem_volume": "0.38 m³",
+    "dbh": "23.13 cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "16%",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      90
+    ]
+  },
+  {
+    "author": "Han et al. (2018)",
+    "tree_species": "Pinus contorta var. latifolia",
+    "stand_age": "-",
+    "stem_volume": "-",
+    "dbh": "22.4 cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "Relatively Flat",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      90
+    ]
+  },
+  {
+    "author": "Hiesl & Benjamin (2013)",
+    "tree_species": "Fagus grandifolia, Acer rubrum, Betula alleghaniensis, Betula papyrifera, Populus tremuloides, Abies balsamea, Picea rubens Tsuga Canadensis, Thuja occidentalis",
+    "stand_age": "-",
+    "stem_volume": "-",
+    "dbh": "(10-63) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "(2-14)%",
+    "num_operators": "6",
+    "notes": "",
+    "pages": [
+      90
+    ]
+  },
+  {
+    "author": "Hiesl & Benjamin (2015)",
+    "tree_species": "Abies balsamea, Picea rubens, Tsuga Canadensis Thuja occidentalis, Fagus grandifolia, Acer rubrum Betula alleghaniensis Betula papyrifera, Populus tremuloides",
+    "stand_age": "-",
+    "stem_volume": "-",
+    "dbh": "*(13-20), (10-58) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "(1-5)%",
+    "num_operators": "4",
+    "notes": "",
+    "pages": [
+      91
+    ]
+  },
+  {
+    "author": "Hiesl et al. (2015)",
+    "tree_species": "Abies balsamea, Picea rubens, Populus tremuloides, Betula papyrifera, Betula alleghaniensis, Pinus strobus, Thuja occidentalis",
+    "stand_age": "-",
+    "stem_volume": "*(0.03-0.17) m³",
+    "dbh": "*(9.6-18.7) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "2",
+    "notes": "",
+    "pages": [
+      91
+    ]
+  },
+  {
+    "author": "Holzleitner & Kanzian (2022)",
+    "tree_species": "*Picea abies, Larix decidua Quercus robur, Fagus sylvatica, Betula pendula",
+    "stand_age": "56",
+    "stem_volume": "0.8 m³",
+    "dbh": "28.7 cm",
+    "ground_condition": "-",
+    "ground_roughness": "Without Major Obstacles",
+    "slope": "10%",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      91
+    ]
+  },
+  {
+    "author": "Horváth et al. (2016)",
+    "tree_species": "Black locust, Beech, Turkey oak, Hornbeam, Noble poplar, Spruce, Scots pine Black pine",
+    "stand_age": "-",
+    "stem_volume": "-",
+    "dbh": "-",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      91
+    ]
+  },
+  {
+    "author": "Jernigan et al. (2015)",
+    "tree_species": "Pine",
+    "stand_age": "11",
+    "stem_volume": "0.14 green tons",
+    "dbh": "-",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "Minimum Slope",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      91
+    ]
+  },
+  {
+    "author": "Jylhä & Bergström (2016)",
+    "tree_species": "Pinus sylvestris, Picea abies Betula pubescens, Betula Pendula, Other",
+    "stand_age": "22.7 *(13.6- 29.3)",
+    "stem_volume": "20.1 *(0.6-70.8) dm³ whole tree volume",
+    "dbh": "44.5 *(10.0-98.0) mm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      91
+    ]
+  },
+  {
+    "author": "Kärhä et al. (2018a)",
+    "tree_species": "Norway spruce, Scots pine Betula spp",
+    "stand_age": "-",
+    "stem_volume": "0.76 *(0.70-0.85) m³",
+    "dbh": "-",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "3",
+    "notes": "",
+    "pages": [
+      91
+    ]
+  },
+  {
+    "author": "Kärhä et al. (2018b)",
+    "tree_species": "Picea abies, Pinus sylvestris Betula verrucosa, Betula pubescens, Populus tremula",
+    "stand_age": "-",
+    "stem_volume": "226 *(128-247) dm³",
+    "dbh": "-",
+    "ground_condition": "Normal To Difficult",
+    "ground_roughness": "Normal To Difficult",
+    "slope": "Normal To Difficult",
+    "num_operators": "11",
+    "notes": "",
+    "pages": [
+      91
+    ]
+  },
+  {
+    "author": "Kärhä et al. (2019)",
+    "tree_species": "*Norway spruce, Scots pine Betula spp, Populus tremula",
+    "stand_age": "-",
+    "stem_volume": "0.687 m³",
+    "dbh": "27.2 cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "5",
+    "notes": "",
+    "pages": [
+      91
+    ]
+  },
+  {
+    "author": "Karpachev & Bykovskiy",
+    "tree_species": "-",
+    "stand_age": "-",
+    "stem_volume": "(0.0042-2.26) m³",
+    "dbh": "-",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "-",
+    "notes": "(2019)",
+    "pages": [
+      92
+    ]
+  },
+  {
+    "author": "Kim et al. (2017)",
+    "tree_species": "Lodgepole pine, Douglas-fir Subalpine fir",
+    "stand_age": "-",
+    "stem_volume": "-",
+    "dbh": "7.5 in, Quadratic mean diameter",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "9%",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      92
+    ]
+  },
+  {
+    "author": "Kizha & Han (2016)",
+    "tree_species": "Sequoia sempervirens Pseudotsuga menziessii Tsuga heterophylla, Tanoak",
+    "stand_age": "60",
+    "stem_volume": "-",
+    "dbh": "*(18-23) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "≤111%",
+    "num_operators": "2",
+    "notes": "",
+    "pages": [
+      92
+    ]
+  },
+  {
+    "author": "Kormanek & Baj (2018)",
+    "tree_species": "Pine",
+    "stand_age": "65",
+    "stem_volume": "0.62 m³",
+    "dbh": "-",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "Flat Forestland",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      92
+    ]
+  },
+  {
+    "author": "Kormanek & Kępa (2016)",
+    "tree_species": "Spruce, Beech, Sycamore",
+    "stand_age": "47",
+    "stem_volume": "-",
+    "dbh": "-",
+    "ground_condition": "Podsoil, Soil Strongly Turfed",
+    "ground_roughness": "-",
+    "slope": "Little Inclination",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      92
+    ]
+  },
+  {
+    "author": "Krč et al. (2015)",
+    "tree_species": "*Spruce, Fir, *Beech, Oak *Maple, Elm, Cherry",
+    "stand_age": "-",
+    "stem_volume": "0.36 m³",
+    "dbh": "19.55 cm",
+    "ground_condition": "Not Problematic",
+    "ground_roughness": "Rockiness Is Due To Dolomite Bedrock Very Small",
+    "slope": "≤45%",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      92
+    ]
+  },
+  {
+    "author": "Labelle et al. (2017)",
+    "tree_species": "Pinus sylvestris, Picea abies",
+    "stand_age": "120 *(89- 143)",
+    "stem_volume": "*(0.29-0.89) m³",
+    "dbh": "*(19.5-30.3) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      92
+    ]
+  },
+  {
+    "author": "Labelle et al. (2018)",
+    "tree_species": "Fagus Sylvatica, Quercus robur, Quercus petraea",
+    "stand_age": "-",
+    "stem_volume": "*(1.7-1.9) m³",
+    "dbh": "*(35.6-39.3) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      92
+    ]
+  },
+  {
+    "author": "Labelle & Huß (2018)",
+    "tree_species": "*Picea abies, Fagus sylvatica, Quercus robur Betula pendula",
+    "stand_age": "80",
+    "stem_volume": "*(2.8-2.9) m³",
+    "dbh": "*(46.6-47.0) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      92
+    ]
+  },
+  {
+    "author": "Labelle et al. (2016)",
+    "tree_species": "*Sugar maple, Yellow birch Other",
+    "stand_age": "-",
+    "stem_volume": "-",
+    "dbh": "33 cm, quadratic mean diameter",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "<10%",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      92
+    ]
+  },
+  {
+    "author": "Labelle et al. (2019)",
+    "tree_species": "*Common beech, *Picea abies, Pinus sylvestris",
+    "stand_age": "90 (75- 110)",
+    "stem_volume": "1.74 *(1.13-2.11) m³",
+    "dbh": "37.5 *(29.7-43.6) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "<5%",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      92
+    ]
+  },
+  {
+    "author": "Laina et al. (2013)",
+    "tree_species": "Quercus pyrenaica",
+    "stand_age": "-",
+    "stem_volume": "-",
+    "dbh": "*(5.8-10.6) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "*(1-24)%",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      92
+    ]
+  },
+  {
+    "author": "Laitila et al. (2016)",
+    "tree_species": "Betula pubescens, Pine",
+    "stand_age": "-",
+    "stem_volume": "*(50-58) dm³",
+    "dbh": "*(5-20) cm",
+    "ground_condition": "1 - Anon. (1990)",
+    "ground_roughness": "1 - Anon. (1990)",
+    "slope": "1 - Anon. (1990)",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      92
+    ]
+  },
+  {
+    "author": "Laitila & Väätäinen (2014)",
+    "tree_species": "Pinus sylvestris",
+    "stand_age": "(30-40)",
+    "stem_volume": "57 *(26-83) dm³",
+    "dbh": "-",
+    "ground_condition": "1 - Anon. (1990)",
+    "ground_roughness": "1 - Anon. (1990)",
+    "slope": "1 - Anon. (1990)",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      92
+    ]
+  },
+  {
+    "author": "Laitila & Väätäinen (2020)",
+    "tree_species": "Pinus sylvestris, Picea abies Betula pubescens, Other broadleaved tree species such as Aspen, Alder, Rowan and Willow",
+    "stand_age": "-",
+    "stem_volume": "(8–111) dm³",
+    "dbh": "72 (12–163) mm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "2",
+    "notes": "",
+    "pages": [
+      92,
+      93
+    ]
+  },
+  {
+    "author": "Laitila & Väätäinen (2021)",
+    "tree_species": "Pinus sylvestris, Picea abies Betula pubescens, Other broadleaved tree species such as Aspen, Alder Rowan, and Willow",
+    "stand_age": "-",
+    "stem_volume": "(6-54) dm³",
+    "dbh": "41 *(21-97) mm, stump diameter",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      93
+    ]
+  },
+  {
+    "author": "Laitila & Väätäinen (2023)",
+    "tree_species": "Pinus sylvestris, Picea abies Betula pendula, Other broadleaves",
+    "stand_age": "(15-25)",
+    "stem_volume": "*(14.2-52.0) dm³",
+    "dbh": "*(51-97) mm",
+    "ground_condition": "1 - Anon. (1990)",
+    "ground_roughness": "1 - Anon. (1990)",
+    "slope": "1 - Anon. (1990)",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      93
+    ]
+  },
+  {
+    "author": "Laitila et al. (2013)",
+    "tree_species": "Pinus sylvestris",
+    "stand_age": "-",
+    "stem_volume": "-",
+    "dbh": "*(14.5-15.1) cm",
+    "ground_condition": "Drained Peatland",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      93
+    ]
+  },
+  {
+    "author": "Laitila et al. (2020)",
+    "tree_species": "*Scots pine, Norway spruce Downy birch",
+    "stand_age": "-",
+    "stem_volume": "-",
+    "dbh": "-",
+    "ground_condition": "Ditched Peatland",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      93
+    ]
+  },
+  {
+    "author": "Lazdiņš  et al. (2019)",
+    "tree_species": "Pine, Spruce",
+    "stand_age": "-",
+    "stem_volume": "-",
+    "dbh": "*(17.2-19.2) cm",
+    "ground_condition": "Dry Sandy Mineral Soils",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      93
+    ]
+  },
+  {
+    "author": "Lazdiņš (2014)",
+    "tree_species": "Spruce, Grey alder, Black alder, Birch",
+    "stand_age": "-",
+    "stem_volume": "-",
+    "dbh": "9 cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      93
+    ]
+  },
+  {
+    "author": "Lazdiņš  et al. (2021)",
+    "tree_species": "Betula pendula",
+    "stand_age": "-",
+    "stem_volume": "0.06 m³",
+    "dbh": "12 cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      93
+    ]
+  },
+  {
+    "author": "Lazdiņš et al. (2016)",
+    "tree_species": "Spruce",
+    "stand_age": "-",
+    "stem_volume": "-",
+    "dbh": "*(9.7-10.9) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      93
+    ]
+  },
+  {
+    "author": "Leszczyński et al. (2021)",
+    "tree_species": "Scots pine",
+    "stand_age": "25",
+    "stem_volume": "*(0.074-0.103) m³",
+    "dbh": "*(11.7-13.5) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      93
+    ]
+  },
+  {
+    "author": "Liski et al. (2020)",
+    "tree_species": "Pine, Spruce, Birch, Other broadleaves",
+    "stand_age": "-",
+    "stem_volume": "0.2741 (0.033-1.267) m³",
+    "dbh": "-",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "27",
+    "notes": "",
+    "pages": [
+      93
+    ]
+  },
+  {
+    "author": "Louis & Kizha (2021)",
+    "tree_species": "Picea rubens, Acer saccharum, Acer pensylvanicum, Picea mariana, Betula alleghaniensis, Fagus grandifolia",
+    "stand_age": "-",
+    "stem_volume": "*(0.05-0.12) m³",
+    "dbh": "-",
+    "ground_condition": "Ragmuff-Monson Complex (38%), Telos-Chesuncook- Ragmuff Association (27%) And Chesuncook- Elliottsville Association (23%)",
+    "ground_roughness": "-",
+    "slope": "(3-35)%",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      93
+    ]
+  },
+  {
+    "author": "Magagnotti et al. (2021)",
+    "tree_species": "Populus x euroamericana",
+    "stand_age": "8",
+    "stem_volume": "0.087 (0.074-0.103) m³ whole above ground",
+    "dbh": "12 cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      93
+    ]
+  },
+  {
+    "author": "Manner et al. (2023)",
+    "tree_species": "Pinus sylvestris, Picea abies Betula spp",
+    "stand_age": "90",
+    "stem_volume": "0.642 *(0.500-0.867) m³ub",
+    "dbh": "-",
+    "ground_condition": "2 - Berg (1992)",
+    "ground_roughness": "2 - Berg (1992)",
+    "slope": "1 - Berg (1992)",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      94
+    ]
+  },
+  {
+    "author": "McEwan et al. (2016)",
+    "tree_species": "Eucalyptus grandis",
+    "stand_age": "11",
+    "stem_volume": "0.466 m³ub",
+    "dbh": "21 (8-40) cm",
+    "ground_condition": "-",
+    "ground_roughness": "Smooth - Erasmus (1994)",
+    "slope": "<20% - Erasmus (1994)",
+    "num_operators": "2",
+    "notes": "",
+    "pages": [
+      94
+    ]
+  },
+  {
+    "author": "Mederski et al. (2016)",
+    "tree_species": "Pinus sylvestris",
+    "stand_age": "*(40-100)",
+    "stem_volume": "0.14 m3",
+    "dbh": "*(19.5-25.2) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "2",
+    "notes": "",
+    "pages": [
+      94
+    ]
+  },
+  {
+    "author": "Norihiro et al. (2018)",
+    "tree_species": "Eucalyptus grandis x camaldulensis, Eucalyptus grandis x urophylla Eucalyptus smitthii Eucalyptus dunnii",
+    "stand_age": "*(7-12)",
+    "stem_volume": "*(0.12-0.38) m3",
+    "dbh": "*(15.3-21.6), (5.2-35.7) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "*(0-61)%",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      94
+    ]
+  },
+  {
+    "author": "Nuutinen & Björheden (2016)",
+    "tree_species": "*Pine, Spruce, Birch",
+    "stand_age": "*(25-40)",
+    "stem_volume": "*(27-84) dm³, above ground volume",
+    "dbh": "-",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      94
+    ]
+  },
+  {
+    "author": "Olivera et al. (2016)",
+    "tree_species": "Eucalyptus bicostata Eucalyptus dunnii Eucalyptus grandis Eucalyptus maidenii",
+    "stand_age": "*(15-19)",
+    "stem_volume": "*(0.29-0.55) m³ub",
+    "dbh": "*(183-223) mm",
+    "ground_condition": "Loam, Predominantly Deep",
+    "ground_roughness": "-",
+    "slope": "Gentle, Mostly Below 6% Occasionally Over 12%",
+    "num_operators": "3",
+    "notes": "",
+    "pages": [
+      94
+    ]
+  },
+  {
+    "author": "Petitmermet et al. (2019)",
+    "tree_species": "Abies concolor, Pinus ponderosa",
+    "stand_age": "-",
+    "stem_volume": "-",
+    "dbh": "<53.3 cm",
+    "ground_condition": "Primarily Loamy-Skeletal",
+    "ground_roughness": "-",
+    "slope": "38 (12-70)%",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      94
+    ]
+  },
+  {
+    "author": "Petty & Kärhä (2014)",
+    "tree_species": "Picea abies, Pinus sylvestris broadleaves, primarily Betula pubescens",
+    "stand_age": "-",
+    "stem_volume": "63 *(51-77) dm³",
+    "dbh": "10.9 *(10.0-12.3) cm",
+    "ground_condition": "High Bearing Capacity",
+    "ground_roughness": "No Foreign Obstacles",
+    "slope": "Level Terrain",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      94
+    ]
+  },
+  {
+    "author": "Santos et al. (2022)",
+    "tree_species": "Eucalyptus grandis x Eucalyptus urophylla",
+    "stand_age": "-",
+    "stem_volume": "*(0.08-0.20) m³ub",
+    "dbh": "-",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      95
+    ]
+  },
+  {
+    "author": "Santos et al. (2021)",
+    "tree_species": "Eucalyptus grandis x Eucalyptus urophylla",
+    "stand_age": "6,3",
+    "stem_volume": "0.10 m³",
+    "dbh": "-",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "12",
+    "notes": "",
+    "pages": [
+      95
+    ]
+  },
+  {
+    "author": "Santos et al. (2020)",
+    "tree_species": "Eucalyptus grandis x Eucalyptus urophylla",
+    "stand_age": "-",
+    "stem_volume": "*(0.08-0.16) m³",
+    "dbh": "-",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "Flat Relief",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      95
+    ]
+  },
+  {
+    "author": "Schweier et al. (2015)",
+    "tree_species": "Quercus pubescens, Quercus ilex, Castanea sativa Quercus cerris, Populus alba, Robinia pseudoacacia Populus x euroamericana",
+    "stand_age": "*(5-26)",
+    "stem_volume": "*(5-109) dry kg",
+    "dbh": "*(7-20), (5-31) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "*(2-35)%",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      95
+    ]
+  },
+  {
+    "author": "Slugeň et al. (2014)",
+    "tree_species": "Quercus petraea, Fagus sylvatica",
+    "stand_age": "*(70-75)",
+    "stem_volume": "*(0.38-0.50) m³",
+    "dbh": "*(22-27) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "*(15-17)%",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      95
+    ]
+  },
+  {
+    "author": "Soman et al. (2020)",
+    "tree_species": "Abies balsamea, Acer rubrum, Picea rubens, Picea mariana, Pinus strobus Populus tremuloides Populus grandidentata Thuja occidentalis, Tsuga canadensis, Quercus rubra Picea glauca, raxinus americana, Betula populifolia, Betula papyrifera",
+    "stand_age": "-",
+    "stem_volume": "-",
+    "dbh": "-",
+    "ground_condition": "Glacial-Till And Marine Sediment Parent Material",
+    "ground_roughness": "-",
+    "slope": "<15%",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      95
+    ]
+  },
+  {
+    "author": "Soman et al. (2019)",
+    "tree_species": "Tsuga canadensis, Betula alleghaniensis, Abies balsamea, Populus spp Fagus grandifolia, Picea rubens, Betula papyrifera Pinus strobus",
+    "stand_age": "-",
+    "stem_volume": "-",
+    "dbh": "-",
+    "ground_condition": "Howland Silt Loam And Monarda-Burnham Complex",
+    "ground_roughness": "-",
+    "slope": "<9%",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      95
+    ]
+  },
+  {
+    "author": "Sperandio et al. (2021)",
+    "tree_species": "Populus × canadensis",
+    "stand_age": "*(8-11)",
+    "stem_volume": "*(50.57-101.41), (17-491) kg",
+    "dbh": "*(9.84-13.20) cm",
+    "ground_condition": "Clayey-Loamy Soil",
+    "ground_roughness": "-",
+    "slope": "Flat",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      96
+    ]
+  },
+  {
+    "author": "Spinelli et al. (2014)",
+    "tree_species": "Eucalyptus polybractea",
+    "stand_age": "20",
+    "stem_volume": "*(93-96), (67-154) kg",
+    "dbh": "-",
+    "ground_condition": "Pasture Field",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      96
+    ]
+  },
+  {
+    "author": "Spinelli & De Arruda Moura",
+    "tree_species": "Eucalyptus urograndis",
+    "stand_age": "*(4-11)",
+    "stem_volume": "0.145 *(0.1-0.4) m³ub",
+    "dbh": "-",
+    "ground_condition": "Firm Sandy Soils",
+    "ground_roughness": "-",
+    "slope": "<10%",
+    "num_operators": "120",
+    "notes": "(2019)",
+    "pages": [
+      96
+    ]
+  },
+  {
+    "author": "Spinelli et al. (2022)",
+    "tree_species": "Populus x euramericana",
+    "stand_age": "5",
+    "stem_volume": "30 dry kg, stem and branches",
+    "dbh": "12 *(11.9-12.4) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "4",
+    "notes": "",
+    "pages": [
+      96
+    ]
+  },
+  {
+    "author": "Spinelli et al. (2023)",
+    "tree_species": "Populus x euramericana",
+    "stand_age": "6",
+    "stem_volume": "-",
+    "dbh": "12 *(12.1-12.3) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      96
+    ]
+  },
+  {
+    "author": "Spinelli et al. (2020a)",
+    "tree_species": "Spruce, Fir, Broadleaves",
+    "stand_age": "(60-80)",
+    "stem_volume": "*(0.675-1.374), (0.25-3.1) m³",
+    "dbh": "-",
+    "ground_condition": "Cambisol",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "13",
+    "notes": "",
+    "pages": [
+      96
+    ]
+  },
+  {
+    "author": "Spinelli et al. (2020b)",
+    "tree_species": "Poplar (clone AF8)",
+    "stand_age": "7",
+    "stem_volume": "103 kg fresh weight, tree mass",
+    "dbh": "15.1 cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      96
+    ]
+  },
+  {
+    "author": "Stoilov et al. (2021)",
+    "tree_species": "Pinus sylvestris, Pinus nigra",
+    "stand_age": "55",
+    "stem_volume": "-",
+    "dbh": "*(24-30) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "19°",
+    "num_operators": "2",
+    "notes": "",
+    "pages": [
+      96
+    ]
+  },
+  {
+    "author": "Strandgard & Mitchell (2018)",
+    "tree_species": "Eucalyptus globulus",
+    "stand_age": "10,5",
+    "stem_volume": "*(0.06-0.21) m³",
+    "dbh": "*(105-167) mm",
+    "ground_condition": "Good Load-Bearing Capacity",
+    "ground_roughness": "No Obstacles To The Movements Of The Harvesting Machines",
+    "slope": "<5°",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      96
+    ]
+  },
+  {
+    "author": "Strandgard & Mitchell (2019)",
+    "tree_species": "Pinus radiata",
+    "stand_age": "29",
+    "stem_volume": "1.2 m³",
+    "dbh": "*(389-396) mm",
+    "ground_condition": "Duplex Sandy Gravel",
+    "ground_roughness": "-",
+    "slope": "≤5°",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      96
+    ]
+  },
+  {
+    "author": "Strandgard & Mitchell (2020)",
+    "tree_species": "Pinus radiata",
+    "stand_age": "29",
+    "stem_volume": "*(0.90-0.95) m³",
+    "dbh": "*(326-343) mm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "<15°",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      96
+    ]
+  },
+  {
+    "author": "Strandgard et al. (2016)",
+    "tree_species": "Eucalyptus globulus",
+    "stand_age": "11.5 *(8.5- 14.0)",
+    "stem_volume": "0.26 *(0.13-0.46) m³",
+    "dbh": "188 *(152-245) mm",
+    "ground_condition": "-",
+    "ground_roughness": "Few Obstructions",
+    "slope": "<5°",
+    "num_operators": "24",
+    "notes": "",
+    "pages": [
+      96
+    ]
+  },
+  {
+    "author": "Strandgard et al. (2015)",
+    "tree_species": "Eucalyptus nitens",
+    "stand_age": "17",
+    "stem_volume": "0.18 (0-1.58) m³",
+    "dbh": "18.0 (4.7-47.0) cm",
+    "ground_condition": "Stable Ground And Basalt Soils",
+    "ground_roughness": "-",
+    "slope": "<5°",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      96
+    ]
+  },
+  {
+    "author": "Tajbos & Messingerova (2014)",
+    "tree_species": "Spruce , Fir, Larch, Birch",
+    "stand_age": "*(25-40)",
+    "stem_volume": "*(0.01-0.36) m³",
+    "dbh": "*(6-21) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "*(15-40)%",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      96
+    ]
+  },
+  {
+    "author": "Tolosana et al. (2023)",
+    "tree_species": "Eucalyptus globulus Quercus suber, Pinus pinaster",
+    "stand_age": "-",
+    "stem_volume": "*(10.2-17.5) oven dry ton kg",
+    "dbh": "*(9.0-12.4) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      96
+    ]
+  },
+  {
+    "author": "Tolosana et al. (2018)",
+    "tree_species": "Quercus ilex, Quercus pyrenaica",
+    "stand_age": ">35",
+    "stem_volume": "(7.4-22.5) kg, dry weight",
+    "dbh": "*(5.7-7.1) cm",
+    "ground_condition": "Dry Sandy Soils",
+    "ground_roughness": "-",
+    "slope": "Flat",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      97
+    ]
+  },
+  {
+    "author": "Townsend et al. (2019)",
+    "tree_species": "Pinus ponderosa Pseudotsuga menziesii Abies concolor, Quercus gambelii, Populus tremuloides",
+    "stand_age": "-",
+    "stem_volume": "-",
+    "dbh": "*(22.9-30.7) cm, quadratic mean diameter",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "*(7-15)%",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      97
+    ]
+  },
+  {
+    "author": "Walsh & Strandgard (2014)",
+    "tree_species": "Pinus Radiata",
+    "stand_age": "34",
+    "stem_volume": "*(2.24-2.80) m³",
+    "dbh": "*(49.9-53.6) cm",
+    "ground_condition": "-",
+    "ground_roughness": "No Obstacles Or Rocks",
+    "slope": "Flat Terrain",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      97
+    ]
+  },
+  {
+    "author": "Walsh et al. (2014)",
+    "tree_species": "Radiata pine",
+    "stand_age": "34",
+    "stem_volume": "2.1 m³",
+    "dbh": "*(49.7-50.0) cm",
+    "ground_condition": "-",
+    "ground_roughness": "No Obstacles Or Rocks",
+    "slope": "Flat",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      97
+    ]
+  },
+  {
+    "author": "Williams & Ackerman (2016)",
+    "tree_species": "Pinus elliottii",
+    "stand_age": "*(21-26)",
+    "stem_volume": "*(0.99-1.10) m³",
+    "dbh": "*(35.99-37.50), (22.0-57.5) cm",
+    "ground_condition": "*(2-3, 2-4, 3-5) - Erasmus (1994)",
+    "ground_roughness": "1 - Erasmus (1994)",
+    "slope": "*(0-10)%",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      97
+    ]
+  },
+  {
+    "author": "Zimelis et al. (2020)",
+    "tree_species": "Pine, Spruce, Birch, Aspen Black alder, Grey alder Hard deciduous, Soft deciduous",
+    "stand_age": "-",
+    "stem_volume": "-",
+    "dbh": "10 (3-30) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      97
+    ]
+  },
+  {
+    "author": "Zimelis et al. (2018)",
+    "tree_species": "Norway spruce, Scots pine Deciduous trees",
+    "stand_age": "-",
+    "stem_volume": "*(0.02-0.10) m³",
+    "dbh": "*(4-13) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "1",
+    "notes": "",
+    "pages": [
+      97
+    ]
+  },
+  {
+    "author": "Zimelis et al. (2019)",
+    "tree_species": "-",
+    "stand_age": "-",
+    "stem_volume": "-",
+    "dbh": "(1-20) cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      97
+    ]
+  },
+  {
+    "author": "Zimelis et al. (2017a)",
+    "tree_species": "Spruce, Birch, Pine",
+    "stand_age": "-",
+    "stem_volume": "-",
+    "dbh": "-",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      97
+    ]
+  },
+  {
+    "author": "Zimelis et al. (2017b)",
+    "tree_species": "Pine, Spruce, Birch",
+    "stand_age": "*(18-67)",
+    "stem_volume": "*(0.045-0.085) m³",
+    "dbh": "11 *(8.8-16.2) cm, tree diameter",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      97
+    ]
+  },
+  {
+    "author": "Zimelis & Spalva (2022)",
+    "tree_species": "Scarred aspen",
+    "stand_age": "-",
+    "stem_volume": "0.11 m³",
+    "dbh": "12.2 cm",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      97
+    ]
+  },
+  {
+    "author": "Zimelis et al. (2016)",
+    "tree_species": "Pine, Spruce, Deciduous",
+    "stand_age": "-",
+    "stem_volume": "0.28 m³",
+    "dbh": "-",
+    "ground_condition": "-",
+    "ground_roughness": "-",
+    "slope": "-",
+    "num_operators": "-",
+    "notes": "",
+    "pages": [
+      97
+    ]
+  }
+]
