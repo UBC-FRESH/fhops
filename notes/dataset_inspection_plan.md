@@ -37,17 +37,15 @@
 - Documentation touchpoints (data contract + synthetic how-to) and release notes now reference the inspector warning and CLI override so users understand the new behavior.
 - Scenario loader + synthetic generator now emit Lahrsen-based stand metrics (`avg_stem_size_m3`, etc.) and warn when blocks drift outside BC ranges; `fhops dataset` exposes commands to inspect these ranges interactively.
 - Sample datasets now carry those stand metrics (seeded within Lahrsen ranges), reducing validator noise and giving users concrete examples of expected values.
-- WS3’s PaCal + Monte Carlo backup logic needs to be ported so Lahrsen-style productivity/costing helpers can treat inputs as random variates (expected-value outputs) rather than deterministic means; capture this before we wire the costing helper.
-- Initial costing helper CLI is in place: `fhops dataset estimate-cost` pairs Lahrsen productivity (deterministic or RV) with rental rates/utilisation to emit $/m³.
-- Candidate productivity models for single-grip harvesters/harwarders identified via Arnvik (2024) review (2013–2023 literature); next step is selecting/porting BC-appropriate regressions for those roles.
-- Appendix 8 tables from Arnvik (2024) exported (per-page CSVs + aggregate raw dump) via `scripts/extract_arnvik_models.py`; next step is normalising the rows into the productivity registry schema.
-- Appendix 8 extraction now targets the true section pages (101–116) so the aggregated CSV is clean; `scripts/build_productivity_registry.py` now preserves publication context when only the model rows are present, boosting coverage to 357 parsed models (still missing the last ~65 rows—likely other machine families that Arnvik references but aren’t captured by the current tables). Preliminary counts from Table 9 (in the thesis) suggest we still need to ingest forwarder, grapple-skidder, shovel logger, yarder, and helicopter models.
-- Appendices 9–11 are now machine-readable: `scripts/parse_arnvik_{variables,parameters,statistics}.py` stream text directly from the PDF to capture variable definitions, per-model coefficients (a–t), and observational metadata (OB, observations, structure, R², significance, F). These JSONs (`notes/reference/arnvik_tables/appendix{9,10,11}/*.json`) power the registry builder/validator.
-- Machine-type labels coming out of Appendix 8 are now harmonised against FHOPS roles (e.g., `H` → `single_grip_harvester`, `FB` → `feller_buncher`, `HW` → `harwarder`), giving us immediate visibility into roles we already cover vs. gaps (harwarder, skidder_harvester) that need BC productivity functions + system support.
-- Added a Camelot-based extractor (`scripts/extract_arnvik_models_camelot.py`) that reads the Appendix 8 tables directly from the PDF using a tuned table region; it now normalises `(author, model, HM, machine, base, propulsion, DV, units, formula)` rows for pages 101–116 and produces a dedicated aggregate CSV for downstream tooling.
-- `scripts/build_productivity_registry.py` can ingest the Camelot aggregate, fall back to the legacy pdfplumber rows for any gaps, and now builds 392 enriched models (up from 109) covering harvesters, feller-bunchers, harwarders, and skidder-harvesters. Machine labels are harmonised (no more `fb_sim__pb` artefacts), and the builder automatically backfills missing formulas/units from the legacy source.
-- Added `scripts/parse_arnvik_table9.py` so Table 9 (machine types vs. dependent-variable counts) lives in `notes/reference/arnvik_tables/table9_machine_counts.csv`, making it easier to measure how far we are from Arnvik’s reported 422-model inventory.
-- Added `scripts/extract_arnvik_appendix45.py`, which uses Camelot to dump Appendix 4 (machine specs) and Appendix 5 (stand/operator descriptions) into raw CSVs (`appendix4_machines.csv`, `appendix5_stands.csv`). These need further normalization (e.g., splitting N/HM fields, parsing machine/head models, debarking flags), but the source data is now machine-readable.
++ [ ] Candidate productivity models for single-grip harvesters/harwarders identified via Arnvik (2024) review (2013–2023 literature); next step is selecting/porting BC-appropriate regressions for those roles.
++ [x] Appendix 8 tables from Arnvik (2024) exported (per-page CSVs + aggregate raw dump) via `scripts/extract_arnvik_models.py`; next step is normalising the rows into the productivity registry schema.
++ [x] Appendix 8 extraction now targets the true section pages (101–116) so the aggregated CSV is clean; `scripts/build_productivity_registry.py` now preserves publication context when only the model rows are present, boosting coverage to 357 parsed models (still missing the last ~65 rows—likely other machine families that Arnvik references but aren’t captured by the current tables). Preliminary counts from Table 9 (in the thesis) suggest we still need to ingest forwarder, grapple-skidder, shovel logger, yarder, and helicopter models.
++ [x] Appendices 9–11 are now machine-readable: `scripts/parse_arnvik_{variables,parameters,statistics}.py` stream text directly from the PDF to capture variable definitions, per-model coefficients (a–t), and observational metadata (OB, observations, structure, R², significance, F). These JSONs (`notes/reference/arnvik_tables/appendix{9,10,11}/*.json`) power the registry builder/validator.
++ [x] Machine-type labels coming out of Appendix 8 are now harmonised against FHOPS roles (e.g., `H` → `single_grip_harvester`, `FB` → `feller_buncher`, `HW` → `harwarder`), giving us immediate visibility into roles we already cover vs. gaps (harwarder, skidder_harvester) that need BC productivity functions + system support.
++ [x] Added a Camelot-based extractor (`scripts/extract_arnvik_models_camelot.py`) that reads the Appendix 8 tables directly from the PDF using a tuned table region; it now normalises `(author, model, HM, machine, base, propulsion, DV, units, formula)` rows for pages 101–116 and produces a dedicated aggregate CSV for downstream tooling.
++ [x] `scripts/build_productivity_registry.py` can ingest the Camelot aggregate, fall back to the legacy pdfplumber rows for any gaps, and now builds 392 enriched models (up from 109) covering harvesters, feller-bunchers, harwarders, and skidder-harvesters. Machine labels are harmonised (no more `fb_sim__pb` artefacts), and the builder automatically backfills missing formulas/units from the legacy source.
++ [x] Added `scripts/parse_arnvik_table9.py` so Table 9 (machine types vs. dependent-variable counts) lives in `notes/reference/arnvik_tables/table9_machine_counts.csv`, making it easier to measure how far we are from Arnvik’s reported 422-model inventory.
++ [x] Added `scripts/extract_arnvik_appendix45.py`, which uses Camelot to dump Appendix 4 (machine specs) and Appendix 5 (stand/operator descriptions) into raw CSVs (`appendix4_machines.csv`, `appendix5_stands.csv`). These need further normalization (e.g., splitting N/HM fields, parsing machine/head models, debarking flags), but the source data is now machine-readable.
 - Implemented the Stoilov et al. (2021) skidder-harvester equations (delay-free and with-delays) as FHOPS helpers so `skidder_harvester` now has a baseline productivity model.
 - Implemented the Laitila & Väätäinen (2020) brushwood harwarder equations (Eq. 1–7) as `fhops.productivity.laitila2020.estimate_brushwood_harwarder_productivity`; unit tests (`tests/test_laitila2020.py`) recreate the published 6.5–8.4 m³/PMH curves across forwarding distances.
 - Added the Ghaffariyan et al. (2019) thinning forwarder models (small 14 t and large 20 t variants) as `fhops.productivity.ghaffariyan2019`, with regression tests matching Table 4 productivity values and optional slope multipliers for >10% trails.
@@ -147,46 +145,46 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
 - Snapshot of these ranges now lives in `src/fhops/productivity/_data/lahrsen2025_ranges.json` for validators/docs to consume.
 
 ## TODO Checklist
-- [x] Update `Machine.daily_hours` default in the data contract to 24.0 so newly defined machines inherit round-the-clock availability.
-- [x] Ensure synthetic dataset generator configs/sample overrides default to 24-hour machines (shift configs or CLI overrides may need alignment).
-- [x] Sweep every shipped dataset (`examples/*/data/machines.csv`, regression fixtures, docs snippets) to set `daily_hours=24`.
-- [x] Document the 24-hour assumption in data-contract/how-to docs and cross-link from the planning roadmap.
-- [x] Extend the dataset inspector to flag machines with `daily_hours != 24` (warning first, enforcement later).
-- [ ] Revisit mobilisation/production-rate assumptions once the 24-hour baseline is enforced.
-- [ ] (Greg) Track down the original MRNF harvest-cost technical report cited in the Woodstock DLL, add it to the references library, and capture its equations for future machine-costing helpers.
-- [ ] (Greg) Identify Canadian (BC-first, Canada-wide) machine productivity functions covering major systems/prescriptions, confirm licensing/IP constraints, and document which coefficients we can openly publish; defer US coverage until needed.
-- [x] Extract structured Lahrsen 2025 parameter ranges (stem size, volume/ha, density, slope, productivity) into reusable config/validation tables and surface them in docs + schema validators.
-- [x] Align FHOPS sample datasets + synthetic generator defaults with Lahrsen 2025 parameter ranges (piece size, volume/ha, density, slope, productivity) and document validation thresholds.
-- [ ] Implement Lahrsen-based productivity helper (fixed-effect predictions + optional block-level adjustments) as interim baseline until new FPInnovations coefficients arrive.
-- [ ] Document PMH/PMH15/SMH terminology consistently across how-to guides (e.g., evaluation, costing) once productivity helper/costing pipeline stabilises.
-- [ ] Port WS3 random-variate handling (PaCal + Monte Carlo fallback) into the productivity/costing helpers so expected-value outputs behave correctly even when PaCal fails to converge.
-- [ ] Source BC productivity functions (or build new regressions) for every machine role in the harvest system registry so the costing helper can cover entire systems, not just feller bunchers:
-  - [x] feller-buncher (Lahrsen 2025 + Arnvik Appendix 8 models already ingested)
-  - [x] single_grip_harvester (Arnvik Appendix 8 models ingested via Camelot)
-  - [x] forwarder *(implemented baseline Eriksson & Lindroos 2014 model for CTL operations; still need to ingest Laitila & Väätäinen + FPInnovations variants for brushwood/southern conditions)*
-  - [ ] grapple_skidder *(seek sources such as Han et al. 2018, George et al. 2022 for grapple-skidder cycle-time models)*
-  - [ ] shovel_logger *(likely only in regional studies; consider mining FPInnovations yarding/cable literature or BC-specific shovel logging time studies)*
-  - [ ] loader *(loader productivity/cycle-time functions absent; may be simple derived metrics but need references)*
-  - [ ] roadside_processor / landing_processor_or_hand_buck *(some harvester-side processing models exist; need explicit landing processor regressions)*
-  - [ ] grapple_yarder / skyline_yarder *(no Appendix 8 coverage; look to Aubuchon 1982, Böhm & Kanzian 2023 review)
-  - [ ] tethered_harvester *(Lahrsen-based BC data partially covers this; need explicit tethered winch assist productivity functions)*
-  - [ ] tethered_shovel_or_skidder *(same as above)*
-  - [ ] helicopter_longline / loader_or_water *(Arnvik cites helicopter productivity literature – extract those)*
-  - [ ] hand_faller / hand_or_mech_faller / hand_buck_or_processor *(Appendix 8 lacks manual falling models; rely on FPInnovations / historical time studies)*
-- [ ] Digitise Arnvik 2024 Appendix 8 productivity catalog (harvesters, feller-bunchers, harwarders) into a structured registry (CSV/JSON) keyed by machine type, harvesting system, region, predictors, coefficients, R². Plan includes:
-  - [ ] Extraction strategy: attempt Tabula/pandas parsing; if automated extraction fails due to formatting, fall back to semi-manual OCR or direct data entry.
-  - [ ] Registry design: schema capturing publication metadata, machine type, harvest system, predictors, mathematical form, coefficients, fit metrics.
-  - [ ] Ingestion pipeline: scripts to clean/normalise extracted rows (e.g., map machine type labels to FHOPS roles, convert units, note site conditions).
-  - [x] Capture Arnvik (2024) bibliography as structured JSON (`notes/reference/arnvik_tables/references.json`) and plumb it into the productivity registry so every model records its citation provenance.
-  - [x] Lock Appendix 8 page ranges to 101–116 and update the registry builder so it parses those tables into structured rows (currently 357 models with coefficients/statistics wired in, + citation metadata).
-  - [x] Parse Appendix 9 variable definitions into JSON and attach units/descriptions to predictor codes.
-  - [x] Parse Appendix 10 parameters + Appendix 11 statistical metadata straight from the PDF (text parsing to avoid CSV artefacts) and feed them into the registry builder so every model includes coefficients, OB context, R², significance, and F statistics.
-  - [ ] Extend Appendix 8 extraction to the remaining machine tables (forwarders, grapple skidders, shovel/shovel loggers, yarders, helicopters, etc.), targeting ~422 total models, and update role mappings accordingly.
-    - [ ] Confirm exact page ranges for each missing machine family (scan PDF for “Forwarder”, “Skidder”, “Yarder”, etc.) so extractor can be extended deterministically.
-    - [ ] If tables are embedded in multi-column layouts (or appendices 7/8 supplements), prototype a fallback parser (camelot/tabula, or manual CSV transcription) to avoid silent data loss.
-    - [x] Finish normalising the Camelot output so each row yields `(author, model, HM, machine, base, propulsion, DV, units, formula)` even when Camelot merges/splits the author/model cells; once stable, flip the registry builder to ingest the Camelot aggregate instead of the noisier pdfplumber CSV (done – builder now merges Camelot + legacy rows for 392 models).
-    - [ ] Map remaining machine families referenced in Table 9 (forwarder, grapple skidder, shovel logger, yarder, helicopter) to FHOPS machine roles, and flag which ones still lack regression coverage in the registry.
-  - [ ] Add validation (unit tests or checksum scripts) that fail if the extracted model count, predictor metadata, or coefficient sets drift from the expected totals.
+[x] Update `Machine.daily_hours` default in the data contract to 24.0 so newly defined machines inherit round-the-clock availability.
+[x] Ensure synthetic dataset generator configs/sample overrides default to 24-hour machines (shift configs or CLI overrides may need alignment).
+[x] Sweep every shipped dataset (`examples/*/data/machines.csv`, regression fixtures, docs snippets) to set `daily_hours=24`.
+[x] Document the 24-hour assumption in data-contract/how-to docs and cross-link from the planning roadmap.
+[x] Extend the dataset inspector to flag machines with `daily_hours != 24` (warning first, enforcement later).
+[ ] Revisit mobilisation/production-rate assumptions once the 24-hour baseline is enforced.
+[ ] (Greg) Track down the original MRNF harvest-cost technical report cited in the Woodstock DLL, add it to the references library, and capture its equations for future machine-costing helpers.
+[ ] (Greg) Identify Canadian (BC-first, Canada-wide) machine productivity functions covering major systems/prescriptions, confirm licensing/IP constraints, and document which coefficients we can openly publish; defer US coverage until needed.
+[x] Extract structured Lahrsen 2025 parameter ranges (stem size, volume/ha, density, slope, productivity) into reusable config/validation tables and surface them in docs + schema validators.
+[x] Align FHOPS sample datasets + synthetic generator defaults with Lahrsen 2025 parameter ranges (piece size, volume/ha, density, slope, productivity) and document validation thresholds.
+[ ] Implement Lahrsen-based productivity helper (fixed-effect predictions + optional block-level adjustments) as interim baseline until new FPInnovations coefficients arrive.
+[ ] Document PMH/PMH15/SMH terminology consistently across how-to guides (e.g., evaluation, costing) once productivity helper/costing pipeline stabilises.
+[ ] Port WS3 random-variate handling (PaCal + Monte Carlo fallback) into the productivity/costing helpers so expected-value outputs behave correctly even when PaCal fails to converge.
+[ ] Source BC productivity functions (or build new regressions) for every machine role in the harvest system registry so the costing helper can cover entire systems, not just feller bunchers:
+  [x] feller-buncher (Lahrsen 2025 + Arnvik Appendix 8 models already ingested)
+  [x] single_grip_harvester (Arnvik Appendix 8 models ingested via Camelot)
+  [x] forwarder *(implemented baseline Eriksson & Lindroos 2014 model for CTL operations; still need to ingest Laitila & Väätäinen + FPInnovations variants for brushwood/southern conditions)*
+  [ ] grapple_skidder *(seek sources such as Han et al. 2018, George et al. 2022 for grapple-skidder cycle-time models)*
+  [ ] shovel_logger *(likely only in regional studies; consider mining FPInnovations yarding/cable literature or BC-specific shovel logging time studies)*
+  [ ] loader *(loader productivity/cycle-time functions absent; may be simple derived metrics but need references)*
+  [ ] roadside_processor / landing_processor_or_hand_buck *(some harvester-side processing models exist; need explicit landing processor regressions)*
+  [ ] grapple_yarder / skyline_yarder *(no Appendix 8 coverage; look to Aubuchon 1982, Böhm & Kanzian 2023 review)
+  [ ] tethered_harvester *(Lahrsen-based BC data partially covers this; need explicit tethered winch assist productivity functions)*
+  [ ] tethered_shovel_or_skidder *(same as above)*
+  [ ] helicopter_longline / loader_or_water *(Arnvik cites helicopter productivity literature – extract those)*
+  [ ] hand_faller / hand_or_mech_faller / hand_buck_or_processor *(Appendix 8 lacks manual falling models; rely on FPInnovations / historical time studies)*
+[ ] Digitise Arnvik 2024 Appendix 8 productivity catalog (harvesters, feller-bunchers, harwarders) into a structured registry (CSV/JSON) keyed by machine type, harvesting system, region, predictors, coefficients, R². Plan includes:
+  [ ] Extraction strategy: attempt Tabula/pandas parsing; if automated extraction fails due to formatting, fall back to semi-manual OCR or direct data entry.
+  [ ] Registry design: schema capturing publication metadata, machine type, harvest system, predictors, mathematical form, coefficients, fit metrics.
+  [ ] Ingestion pipeline: scripts to clean/normalise extracted rows (e.g., map machine type labels to FHOPS roles, convert units, note site conditions).
+  [x] Capture Arnvik (2024) bibliography as structured JSON (`notes/reference/arnvik_tables/references.json`) and plumb it into the productivity registry so every model records its citation provenance.
+  [x] Lock Appendix 8 page ranges to 101–116 and update the registry builder so it parses those tables into structured rows (currently 357 models with coefficients/statistics wired in, + citation metadata).
+  [x] Parse Appendix 9 variable definitions into JSON and attach units/descriptions to predictor codes.
+  [x] Parse Appendix 10 parameters + Appendix 11 statistical metadata straight from the PDF (text parsing to avoid CSV artefacts) and feed them into the registry builder so every model includes coefficients, OB context, R², significance, and F statistics.
+  [ ] Extend Appendix 8 extraction to the remaining machine tables (forwarders, grapple skidders, shovel/shovel loggers, yarders, helicopters, etc.), targeting ~422 total models, and update role mappings accordingly.
+    [ ] Confirm exact page ranges for each missing machine family (scan PDF for “Forwarder”, “Skidder”, “Yarder”, etc.) so extractor can be extended deterministically.
+    [ ] If tables are embedded in multi-column layouts (or appendices 7/8 supplements), prototype a fallback parser (camelot/tabula, or manual CSV transcription) to avoid silent data loss.
+    [x] Finish normalising the Camelot output so each row yields `(author, model, HM, machine, base, propulsion, DV, units, formula)` even when Camelot merges/splits the author/model cells; once stable, flip the registry builder to ingest the Camelot aggregate instead of the noisier pdfplumber CSV (done – builder now merges Camelot + legacy rows for 392 models).
+    [ ] Map remaining machine families referenced in Table 9 (forwarder, grapple skidder, shovel logger, yarder, helicopter) to FHOPS machine roles, and flag which ones still lack regression coverage in the registry.
+  [ ] Add validation (unit tests or checksum scripts) that fail if the extracted model count, predictor metadata, or coefficient sets drift from the expected totals.
 
 ## Rollout Plan (3-level work breakdown)
 
