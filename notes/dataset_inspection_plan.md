@@ -236,7 +236,7 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
 - Expand Appendix 4/5 normalization to include operator, machine weight, and slope applicability metadata needed for the remaining machine families.
 - Extract quantitative regressions from Visser et al. (2025), McNeel (2000), West et al. (2022), and Renzie (2006) to seed shovel-assist, longline yarding, steep-slope winch-assist, and partial-cut productivity helpers.
 - Port critical OpCost parameters (Bell 2017) into the costing helper design so we can align machine-rate inputs with the USFS/FPInnovations convention; document any deltas vs current rental-rate workflow.
-- Secure an accessible copy of “Effects of Alternative Silvicultural Systems…” (PDF currently DRM-locked) or replace it with another silviculture-productivity reference so that partial-cut modeling has defensible data.
+- Park the “Effects of Alternative Silvicultural Systems…” PDF (currently DRM-locked) until bandwidth frees up; partial-cut modeling will rely on Renzie (2006) + other accessible sources in the interim.
 
 ## Machine-Role Productivity Rollout (Steps 1–6)
 1. [x] **Brushwood harwarder / forwarder variant**
