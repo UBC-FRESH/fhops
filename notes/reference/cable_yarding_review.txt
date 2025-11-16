@@ -1,0 +1,1670 @@
+      International Journal of Forest Engineering
+
+
+
+
+      ISSN: 1494-2119 (Print) 1913-2220 (Online) Journal homepage: www.tandfonline.com/journals/tife20
+
+
+
+
+A review on cable yarding operation performance
+and its assessment
+
+Stephan Böhm & Christian Kanzian
+
+To cite this article: Stephan Böhm & Christian Kanzian (2023) A review on cable yarding
+operation performance and its assessment, International Journal of Forest Engineering, 34:2,
+229-253, DOI: 10.1080/14942119.2022.2153505
+
+To link to this article: https://doi.org/10.1080/14942119.2022.2153505
+
+
+
+
+       © 2022 The Author(s). Published with
+       license by Taylor & Francis Group, LLC.
+
+
+       Published online: 28 Dec 2022.
+
+
+
+       Submit your article to this journal
+
+
+
+       Article views: 2147
+
+
+
+       View related articles
+
+
+
+       View Crossmark data
+
+
+
+       Citing articles: 5 View citing articles
+
+
+
+
+                       Full Terms & Conditions of access and use can be found at
+              https://www.tandfonline.com/action/journalInformation?journalCode=tife20
+INTERNATIONAL JOURNAL OF FOREST ENGINEERING
+2023, VOL. 34, NO. 2, 229–253
+https://doi.org/10.1080/14942119.2022.2153505
+
+
+
+
+A review on cable yarding operation performance and its assessment
+Stephan Böhm                and Christian Kanzian
+Department of Forest and Soil Sciences, Institute of Forest Engineering, University of Natural Resources and Life Sciences Vienna, Peter Jordan Strasse
+82, 1190 Vienna, Austria
+
+
+    ABSTRACT                                                                                                                                              ARTICLE HISTORY
+    Cable yarding is a well-established practice for wood extraction in mountainous regions in most parts of                                              Received 14 September 2022
+    the world where fully mechanized harvesting systems like harvester-forwarder combinations cannot                                                      Accepted 28 November 2022
+    operate due to steep terrain. Work- and time-studies are most relevant to create productivity models                                                  KEYWORDS
+    for cost estimation, simulation, system development or simply to compare different harvesting systems.                                                Cable yarding performance;
+    The present work investigates 70 work studies on cable yarding operations, regarding assessment                                                       productivity models; time
+    methods to establish a knowledge base on cable yarding performance models. A comprehensive                                                            consumption models; meta-
+    literature research was performed to identify relevant studies. Information about the investigated extrac­                                            analysis; cycle time
+    tion campaigns regarding site specifics, stock specifics, the utilized equipment alongside the work-study-                                            equations; steep terrain
+    methods, as well as the statistical approaches for model creation were collected. The data gained and the
+    associated models were systematically analyzed to compare different yarding systems concerning their
+    performance. A set of 98 models was selected for this purpose. Productivity of the investigated systems
+    ranges from 1.5 m3/PSH to 69.3 m3/PSH with a mean value of 9.8 m3/PSH where PSH represents the
+    productive system hour. A meta-analysis was performed with the data that is presented in the literature
+    found to test several hypotheses concerning the influence of different parameters on the performance of
+    yarding systems. Various relationships are so strong that regression analysis with the meta-dataset, that is
+    mostly containing mean values presented, results in significant correlations. The diversity in problem
+    formulation and the corresponding diversity in methodical approaches account for limitations in compar­
+    ability of performance. The consultation of guiding literature on forest work studies can promote
+    comparability between studies.
+
+
+
+Introduction                                                                                   operations is important to identify potential areas for further
+Cable yarding is a widespread option for wood extraction in                                    improvement (Varch et al. 2020).
+mountainous regions in most parts of the world. For exam­                                         To maximize productivity that can be understood as the
+ple, in Austria where 57% of the forest-covered land has                                       ratio of output over input, scientific management aims to
+terrain slopes of more than 30%, cable-based extraction is                                     standardize equipment and tools, optimize the production
+of major importance (Nemestothy 2014). In 2021, 3.88 hm3                                       flow and improve the labor process (Heinimann 2021). In the
+solid under bark which equals 21.06% of total logging in                                       case of timber production, the output is the quantity of timber
+Austria were cable yarded (BMLRT 2022). Further indica­                                        produced and the input can be understood as the sum of all
+tors for the importance of cable-based wood extraction are                                     production factors used (Kanawaty 1992).
+the wide manufacturer’s offer for cable yarders and the                                           Productivity studies often “evaluate a single production
+number of cable yarders operatng in Europe. Wassermann                                         system’s productive performance, characterized by system
+(2018) identified 63 types of tower yarders from 15                                            output per system time unit” (Heinimann 2021). They have a
+European manufacturers. Spinelli et al. (2013) surveyed                                        long history in the field of forest engineering and are nowa­
+1,206 Italian logging companies and described that they                                        days primarily aiming at the evaluation and representation
+utilized 359 cable yarders of which 129 (36%) were tower                                       of the performance of man-machine-systems in wood
+yarders. Not only in Europe, but also in New Zealand the                                       extraction processes. Regarding cable yarding systems, the
+requirements on modern wood extraction systems promote                                         evaluation of efficiency, as well as the analysis of the impact
+the usage as well as the improvement of cable yarding sys­                                     of environmental features have drawn the interest of forest
+tems (Harrill et al. 2019) that are mainly imported from the                                   engineers in recent years (Cavalli 2012). The initial aim of
+Pacific Northwest (Visser and Harrill 2017).                                                   work studies, that has been to improve processes and the
+   Cable-based wood extraction in steep terrain shows disad­                                   effectivity of resource allocation to increase performance,
+vantages against ground-based extraction options in regard of                                  shifted toward the intention to describe a system in a specific
+harvesting costs (Spinelli et al. 2015, 2017b). With respect to                                production context (Heinimann 2021).
+low or even negative profit margins in mountain forest opera­                                     Work studies were defined as “techniques of method study
+tions the investigation of the performance shown in yarding                                    and work measurement” by the International Labor Organization
+
+CONTACT Stephan Böhm            stephan.boehm@boku.ac.at       Department of Forest and Soil Sciences, Institute of Forest Engineering, University of Natural Resources
+and Life Sciences Vienna, Peter Jordan Strasse 82, 1190 Vienna, Austria
+© 2022 The Author(s). Published with license by Taylor & Francis Group, LLC.
+This is an Open Access article distributed under the terms of the Creative Commons Attribution-NonCommercial-NoDerivatives License (http://creativecommons.org/licenses/by-nc-nd/4.0/),
+which permits non-commercial re-use, distribution, and reproduction in any medium, provided the original work is properly cited, and is not altered, transformed, or built upon in any way.
+230      S. BÖHM AND C. KANZIAN
+
+
+(ILO) (FAO 1992). Kanawaty (1992) stated that a work study is           Nevertheless, published performance studies on cable-based
+typically split into two parts, namely a method study to determine   wood extraction processes present very heterogenous data. The
+the best way to fulfil a task on the one hand, and on the other      present review investigates the reasons for this heterogeneity. It
+hand the work measurement that includes the time and motion          analyzes selected cable logging-related work studies concern­
+study (Björheden and Thompson 2000). A time study investigates       ing principles that are provided by the abovementioned guid­
+a specific task regarding the elapsed time, under the assumption     ing literature. The presented productivity, efficiency, and cycle
+that the single work steps (cycle elements) are “independent of      time equations are analyzed regarding their predictors and the
+each other, resulting in strong linearity assumptions” (Heinimann    corresponding metrics to develop an understanding for per­
+2021). In forestry, as in other branches, scientific management is   formance-influencing factors. Then a meta-dataset containing
+aiming to gain in-depth information for process optimization.        a selection of presented metrics on observed yarding opera­
+Many studies investigate wood extraction processes due to their      tions is used to display the relationships between performance
+resource intensity. On the performance of cable-based wood           and the parameters of yarding operations.
+extraction systems Lindroos and Cavalli (2016) identified 21
+scientific articles published within a timeframe of 10 years.
+    The detailed investigation of these systems is dangerous and     Materials and methods
+expensive (Magagnotti et al. 2012). Challenges are the unique­       Literature review
+ness of the investigated extraction operations as well as the
+conditions under which the measurements are done. To con­            To identify suitable literature that is providing sound data on
+duct a cycle level (CL) or an element level (EL) time study that     the performance of cable yarding systems in wood extraction
+delivers valuable results for productivity estimations, the pre­     operations, a comprehensive literature search was conducted.
+sence of experienced researchers – often more than one – in the      In the very first step, online resources (www.google.com, www.
+operational procedures is required (Björheden and Thompson           scopus.com, www.webofscience.com) were scanned using the
+2000). To gather data for the performance assessment, the            keywords “cable yarding” and “productivity.” In the second
+observation of a longer period and a purpose-fitting count of        step, the literature identified was inserted in the search box of
+observed work cycles are necessary, which consequently results       www.researchgate.net. For each of the articles, the related
+in a high financial effort.                                          research, as well as the citations and the quoted literature
+    Forest operations are dependent on external factors such as      were scanned to identify further relevant research.
+terrain and existing infrastructure along with grade of mechan­         The keyword pool was expanded several times and new
+ization (Enache et al. 2016), the experience level of workers        keywords and terms were added such as “time study,” “timber
+(Purfürst 2010; Ottaviani Aalmo and Talbot 2014), or the             harvesting,” “standing skyline,” “productivity analysis,” “cut to
+weather (Holzfeind et al. 2021). To quantify these factors, an       length,” “whole-tree yarding,” “tree-length yarding” “planta­
+appropriate data recording concept must be developed. The            tion,” “efficiency,” “carriage” and “road spacing.”
+acquired data is obligated to describe the observed process             Several initially found and analyzed sources were excluded
+transparently. Measurements must be assigned to a unit and           from further quantitative analysis since no suitable data for the
+fitted into a model that describes the process plausibly and is      attempt of comparing the performance of yarding activities
+statistically sound.                                                 was provided. Consequently, the review-strategy cannot be
+    There have been attempts to harmonize wood extraction            described as systematic, since a systematic review is aiming to
+work studies in the past decades (Bergstrand 1991; Olsen et          identify and display all evidence on a topic. According to the
+al. 1998; Magagnotti et al. 2012) and also very recently             indicators to identify the approach to literature reviews pro­
+(Heinimann 2021) by providing guidelines. Magagnotti et              vided by Snyder (2019), the present work must be classified as a
+al. (2012) published a guideline for the operational perfor­         mixture of a semi-systematic review and an integrative review.
+mance of work studies in forestry without the aspiration of
+prescribing “how to do things” and consequently standardi­
+                                                                     Data collection and classification
+zation, but to offer insights on various approaches that can
+be applied. Ackerman et al. (2014b) provides a standardized          Seventy different sources that present empirical data on cable
+time study methodology that was developed for the South              yarding performance and 98 regression models were selected
+African forest industry. Heinimann (2021) aims at the devel­         for further analysis. Three peer-reviewed articles were excluded
+opment of the statistical model that describes the observed          from further analysis since they are presented in Korean lan­
+work processes and presents possible statistical approaches.         guage (Cho et al. 2015; 2016b; Choi et al. 2018).
+Nevertheless, in the tutorial requirements on operational               To bring the extracted information from the literature
+activities are also described, since the adequate recording          reviewed to an order that allows for further analysis, a spread­
+of data is crucial for punctilious model development. As a           sheet was used to gather numeric information on the observed
+foundation for common understanding, Björheden and                   yarding operations. The spreadsheet contains general informa­
+Thompson (2000) attempted to standardize forest work                 tion about the source, such as the name(s) of the author(s), the
+study nomenclature. Often referred to in published work              year it was published in, the purpose of the research and the
+studies, is the Ackerman et al. (2014a) model for cost calcu­        country it originated from.
+lation for forestry equipment along with other guidelines to            Relevant information regarding the time study, the model
+cost calculation principles (Miyata 1980; Woo et al. 1990;           development and the performance assessment were collected.
+FAO 1992; Acar 1994; Brinker et al. 2002).                           Information about the explanatory value of the models (e.g. R-
+                                                                                   INTERNATIONAL JOURNAL OF FOREST ENGINEERING         231
+
+
+squared), the scope in which it was created (e.g. number of                 The dataset originating from Acuna et al. (2011) was
+valid observations), the applied timing method, the duration of         excluded since it is incomparable due to the research question.
+observation and the observed productivity were also collected.          Furthermore the presented data in Huber and Stampfer (2015)
+In addition, the time-study-data was gathered comprising the            is not suitable for a comparison due to the study layout. Talbot
+means of cycle times, the definition of the cycle time elements         et al. (2015) used the data from the same observations that were
+and the average time spent on each cycle time element or work           used in Talbot et al. (2014), which led to exclusion. In Haynes
+step, as well as observed delay times.                                  and Visser (2001), as well as in Abeyratne (2021) output
+    Descriptions provided of the yarding operation were                 quantification was presented as mass. Conversion to volume
+extracted, including the yarding equipment (mainline pull,              was not possible because of unknown densities. Consequently
+carriage capacity), the yarding corridor metrics (slope, yarding        the datasets were excluded.
+distance, lateral distance), as well as load data (mean piece size,         The created meta-dataset underwent a simple statistical
+mean volume per cycle, number of yarded logs), the extraction           analysis approach using descriptive statistics, plots and multi­
+method and the yarding direction. Parameters that describe the          ple linear regression, testing the effect of possibly influencing
+stand such as the management system, the tree species compo­            variables. If present in the meta-dataset, nominal and ordinal-
+sition, the stand density and the growing stock (volume per             scaled variables were converted to factors, while the cardinal
+hectare), average DBH and average tree height were collected.           scaled variables were treated as numeric variables. All statistical
+The applied silvicultural treatment, its intensity, the harvested       analysis steps were done within the software package R (R Core
+volume and the felling method were recorded. In datasets                Team 2022) using the libraries “ggplot2” (Wickham 2016),
+where clear cut (CC) was the treatment, the intensity was set           “readxl” (Wickham and Bryan 2022) and “openxlsx”
+to 100%.                                                                (Schauberger and Walker 2021). The application of mean
+                                                                        comparison tests like Tukey’s honestly significant difference
+                                                                        test were not considered due to the heterogeneity in the dataset
+Analysis of statistical models                                          and many missing values within individual records. Moreover,
+                                                                        a deeper statistical analysis was not within the scope of this
+To develop an understanding for the performance influencing
+                                                                        particular review.
+parameters within cable yarding operations 98 statistical mod­
+els, originating from 35 different sources, were analyzed
+regarding the independent variables and dependent variables.
+                                                                        Results
+A collection of regression models were selected since they
+evaluate performance shown in yarding activities directly1.             Purpose of reviewed studies
+Models for the performance shown in single work cycle ele­
+                                                                        From an engineering perspective, 14 study purposes were
+ments that are presented in the literature reviewed were not
+                                                                        identified from within the dataset. Of course, studies can
+considered in this list (e.g., Spinelli et al. 2017a, 2021). In Cadei
+                                                                        have multiple purposes at once. Thereafter multipurpose stu­
+et al. (2021) a model for energy efficiency is presented that is
+                                                                        dies have been assigned to multiple purpose categories.
+not further analyzed in this paper.
+                                                                        However, with 56 most of the studies looked at single system
+                                                                        performance, followed by yarder comparison with eight and
+                                                                        yarding direction with six records (Figure 1a). Looking at
+Quantitative analysis
+                                                                        silvicultural treatments or environment in which operations
+Seventy-four datasets were examined from the literature                 have been carried out, most studies were done in clear cuts
+reviewed to describe the observed yarding operations and                with 19, followed by thinning operations (10), salvage logging
+their performance. These datasets were selected for their con­          (7) and selective cut (7, Figure 1b).
+sistency regarding the presented data. In terms of study design             In detail, possible reasons to conduct studies were the
+three categories are identified. Cycle level (CL) as well as            assessment of single new (Talbot et al. 2013; Proto et al.
+elemental level (EL) studies are considered, but only work              2016) or established (Ozturk and Senturk 2006, 2016; Ozturk
+cycle-based statistical models are considered for quantitative          and Demir 2007) yarding equipment under specific conditions
+analysis. Shift level (SL) studies were excluded, because they do       as well as the direct comparison of two comparable machines
+not provide detailed information on specific yarding opera­             or systems under same or similar conditions (Spinelli et al.
+tions. Studies that present data in any other than the metric           2009, 2017a; Varch et al. 2020). The effect of new technology
+system were also excluded (Huyler and LeDoux 1997; Largo                like partial automation is investigated (Spinelli et al. 2020).
+2004; Hartley and Han 2007).                                            Furthermore, the training and learning curve effect along
+    Not all datasets provided all data explicitly. For example,         with the level of qualification and experience of workers were
+Picchio et al. (2020) did not present the average cycle volume          investigated (Ottaviani Aalmo and Talbot 2014; Hoffmann et
+and load volume, respectively. Yet, it can be calculated from           al. 2016a). Performance was evaluated for optimal road spacing
+mean piece count per yarding cycle and the average tree                 purposes (Ghaffariyan et al. 2009b). Also the influence of
+volume, since the information is provided that whole trees              various silvicultural treatments (Renzie and Han 2001, 2008;
+(WT) were extracted. Furthermore, the relation of productive            Hoffmann et al. 2016b; Erber et al. 2017), different operational
+time, scheduled time and the utilization rate as well as the            parameters such as the yarding direction (Spinelli et al. 2015;
+relation between total cycle time, delay-free cycle time and            Lee et al. 2018), or the extraction method (Cho et al. 2019; Han
+the utilization rate were used to fill data gaps.                       and Han 2020) were surveyed. Aspects of ergonomic
+232        S. BÖHM AND C. KANZIAN
+
+
+
+
+Figure 1. Number of cable yarding performance studies categorized by (a) engineering perspective and (b) the kind of silvicultural treatment applied or stand
+conditions.
+
+
+
+
+improvement such as the usage of radio-controlled chokers                       “continuous time recording” (Spinelli et al. 2017a). The
+(Leitner 2009; Stampfer et al. 2010; Devlin and Klvac 2014)                     reviewed performance studies furthermore applied “repetition
+or the possibilities of indulgent silvicultural treatment for espe­             timing” (Ozturk and Senturk 2006; Ozturk and Demir 2007;
+cially sensitive environments (Schweier and Ludowicy 2020;                      Senturk et al. 2007; Zimbalatti and Proto 2009, 2010; Proto and
+Shoshyn et al. 2022) are motives to investigate cable yarding                   Zimbaletti 2015; Macri et al. 2016; Proto et al. 2016) and
+operations as a part of the wood supply chain. Table 1 provides                 “repetitive multimoment timing” (Tunay and Melemez 2003),
+a description of the purposes of the reviewed studies.                          as manual timing methods. In several studies, handheld com­
+                                                                                puters with time-study data logger software were used, (Daxner
+                                                                                1998; Haynes and Visser 2001; Hartley and Han 2007;
+Cost calculation
+                                                                                Ghaffariyan et al. 2009a; Pierzchała 2010; Stampfer et al.
+Besides the performance evaluation of the applied extraction                    2010; Ottaviani Aalmo and Talbot 2014; Huber and Stampfer
+systems, many studies evaluate the cost of the observed opera­                  2015). Acuna et al. (2011) chose a different approach and
+tion by applying cost calculation-principles that can be found                  applied video analysis for timing purposes (Table 1). As recent
+in the literature. Regarding the literature reviewed, costs were                works show, advances in sensor technology might support
+calculated in 40 (57%) of the 70 studies (Table 1). In 10 studies               automated timing in cable yarding operations in the future
+(14%), the cost was calculated according to Ackerman et al.                     (Gallo et al. 2013, 2021; Pierzchała et al. 2018; Varch et al.
+(2014a). Brinker et al.’s (2002) principle was used five times                  2022).
+(7%). Miyata (1980) is referred to in 12 studies (17%) and the
+FAO (1992) is referred to three times (4%). Woo et al. (1990)
+                                                                                Study design
+and Acar (1994) are referred to once. Four studies refer to more
+than one source for cost calculation (Macri et al. 2016; Jeong et               Observational studies, also named descriptive studies, are used
+al. 2017; Cho et al. 2018; Han and Han 2020). In one study                      to describe a system under specific conditions. They are the
+(Renzie and Han 2008), the Forest Engineering Research                          simplest of work study designs and typically carried out to
+Institute of Canada’s (FERIC) standard costing method was                       learn about a specific yarding system under non-variable con­
+applied. Eleven studies (16%) present a cost calculation without                ditions. Per definition, the system-describing variables are
+mentioning a reference for the applied method.                                  neither affected nor controlled by the investigator (Ackerman
+                                                                                et al. 2014b). The comparability to other observational studies
+                                                                                is limited since results may differ as soon as conditions vary
+Timing and data collection method
+                                                                                slightly (Lindroos and Cavalli 2016). Among the literature
+The timing methods “cumulative timing” (Eroğlu et al. 2009)                     reviewed, 17 sources (24%) present observational studies with­
+and “snap back timing,” (Ozturk 2009; Hoffmann et al. 2015,                     out model development (Zimbalatti and Proto 2009; Cho et al.
+2016a, 2016b) were presented in Björheden and Thompson                          2016a; Choi et al. 2018) (Table 1). For instance the work of
+(2000), along with “selective timing.” They were referred to                    Zimbalatti and Proto (2010) investigates roundwood extrac­
+in the literature regarding timing methods also with altering                   tion in Calabria, South Italy by a Greifenberg TG 1100 cable
+nomenclature “continuous timing” (Munteanu et al. 2019) or                      yarder.
+                                                                                                   INTERNATIONAL JOURNAL OF FOREST ENGINEERING                        233
+
+
+Table 1. List of examined literature with reference, country of origin, the determined study scope (EL: element level, CL: cycle level, SL: shift level), study design
+determined, the purpose of the study or the targeted goals, the applied statistical analysis methods and tools, information about cost-calculation and the timing and
+data collection method.
+
+                                                                                                                                                       Timing and data
+                                                                                                                                                          collection
+ Reference        Country Scope     Study design          Purpose of the study                Statistical methods                Cost calculation          method
+ Abeyratne          New     EL      Observational/    Productivity and cycle time         Multiple regression analysis
+   2021           Zealand              model                of yarding system
+ Acuna et al.     Australia EL      Observational/    Productivity and cycle time          Multiple linear regression                                   Video record
+   2011                                model           of a combination of swing                                                                          analysis
+                                                      yarder and feller buncher in
+                                                               steep terrain
+ Aruga et al.      Japan      EL    Observational/        Comparison between                  Regression analysis                      Done
+   2019                                model              different age classes
+ Baek et al.       Korea     CL     Observational/    Productivity and cost of two    Regression analysis, 2/3 of data for      Brinker et al. 2002
+   2020                                model           cable yarders, comparison       model generation, 1/3 of data for
+                                                           of the productivity          validation, sensitivity analysis
+                                                        efficiency of two yarder
+                                                                   types
+ Baldini et al.     Italy     EL     Observational/            Productivity                     Regression                             Done
+   2003                                   model
+ Cadei et al.       Italy     EL     Observational/ Energy efficiency of yarding Linear regression analysis, linear mixed
+   2021                                 model for              system                         effect models
+                                         energy
+                                     efficiency, not
+                                    for performance
+ Campbell et        New       EL     Observational/        Productivity          Linear regression techniques, Shapiro–
+   al. 2016       Zealand/                model                                        Wilk test for normalization
+                   Austria
+ Cavalli and        Italy    CL      Observational      Productivity and cost of
+   Lubello                                                  yarding system
+   2006
+ Cho et al.        Korea     CL      Observational           Productivity and       Regression model, sensitivity analysis         Miyata 1980           Continuous
+   2016a                                               operational cost of yarding             for each element                                         chronometry
+                                                                  system
+ Cho et al.        Korea     CL     Observational/       Productivity and cost of   Regression analysis (70% generation/        Brinker et al. 2002,
+   2018                                model                 yarding system          30% validation), sensitivity analysis         Miyata 1980
+ Cho et al.        Korea     CL     Experimental        Comparison between two                                                         KWF
+   2019                                                     extraction systems
+                                                       (productivity and cost) CTL
+                                                      (ground based) vs FT (cable-
+                                                                  based)
+ Chung et al.       USA      CL     Observational/    Productivity and cost, effect Multiple least-squares linear regression       Miyata 1980
+   2022                                model                 of pre-bunching                        analysis
+ Daxner 1998      Austria     EL    Observational/     Productivity and efficiency   Stepwise multiple linear regression,           FAO 1992             Time study
+                                       model            of carriage ”WOODLINER”                     ANCOVA                                                software
+                                                                                                                                                        Latschbacher
+ Devlin and       Ireland     EL     Observational      Productivity and cost of                                                   Miyata 1980
+   Klvac 2014                                         yarding systems and radio-
+                                                           controlled choker
+ Eker et al.      Turkey      EL    Observational/       Productivity and time              Regression analysis
+   2001a                               model                   consumption
+ Engelbrecht      Malaysia   SL &   Observational/      Productivity of grapple      Normalized data, ANCOVA, Tukey–
+   et al. 2017                CL       model                 yarding system        Kramer test, χ² test, regression analysis,
+                                                                                                Scheffe´s test
+ Erber et al.     Germany     SL    Observational/    Impact analysis of yarding            Regression analysis
+   2017                                model           direction and silvicultural
+                                                             treatment, time
+                                                          consumption model
+ Eroğlu et al.   Turkey       EL     Observational         Time consumption                                                                            Cumulative time
+    2009                                                                                                                                               measurement87F
+ Evanson et al.   New         EL     Observational            Productivity                                                             Done
+    2017        Zealand
+ Ghaffariyan et Austria      CL     Observational/            Productivity            Balancing data, stepwise regression,             Done              Time study
+    al. 2009a9                         model                                                  correlation testing                                         software
+ Ghaffariyan et Austria      CL     Observational/       Optimal road spacing                 Multiple regression
+    al. 2009b                          model
+ Ghaffariyan et Austria      CL     Observational/       Optimal road spacing                 Multiple regression                      Done
+    al. 2010                           model
+                                                                                                                                                             (Continued)
+234           S. BÖHM AND C. KANZIAN
+
+Table 1. (Continued).
+                                                                                                                                                       Timing and data
+                                                                                                                                                          collection
+ Reference        Country Scope   Study design        Purpose of the study                    Statistical methods                Cost calculation          method
+ Han and           USA      EL    Observational/      Comparison between              Stepwise regression, normality tests,    Brinker et al. 2002,
+   Han2020                           model          extraction methods (FT vs          residual plot, Durbin–Watson test,         Miyata 1980
+                                                               TL)                  forward selection method, matrix plots,
+                                                                                    variation inflation factors (VIF), Pearson
+                                                                                      correlation, Mallows’ CP values, 70%
+                                                                                     model building, 30% testing (paired t-
+                                                                                                       test)
+ Hartley and       USA      EL    Observational/           Comparison of                        Regression model                  Miyata 1980          Time study data
+   Han 2007                          model            management systems                                                                               logger program
+ Haynes and        USA      EL    Observational/       Effect of professional           Single and multiple regression                                 Time study data
+   Visser 2001                       model           training on productivity                                                                          logger program
+ Hoffmann et       China    EL    Observational/     Performance of yarding                   Regression analysis                   FAO 1992              Snap back
+   al. 2015                          model                     system
+ Hoffmann et       China    EL    Observational/     Performance of start up             Stepwise multiple regression                                    Snap back
+   al. 2016a                         model              cable yarding crew
+ Hoffmann et       China    EL    Observational/        Comparison of two                Stepwise multiple regression            Ackerman et al.         Snap back
+   al. 2016b                         model         management systems clear                                                          2014a
+                                                   cut (FT) vs selective cut (TL)
+ Huber and        Austria   EL    Experimental/     Effect of topping trees on        Multiple regression, aggregation of                              Time study data
+   Stampfer                          model                   efficiency               separate sub models on main cycle                                logger program
+   2015                                                                                            elements
+ Huyler and        USA      EL    Observational/            Cycle time                        Regression analysis                                        Continuous
+   LeDoux                            model                                                                                                                 timing
+   1997
+ Jeong et al.      Korea    EL    Observational       Productivity and cost                                                     Brinker et al. 2002,
+   2017                                                                                                                            Miyata 1980,
+                                                                                                                                 Woo et al. 1990
+ Largo 2004        USA      EL    Observational/     Productivity and cost of             Multiple regression analysis             Miyata 1980
+                                     model               yarding system
+ Lee et al.        Korea    EL    Observational/      Productivity and cost            Sensitivity analysis, least square       Brinker et al. 2002
+   2018                              model                                          regression, 70% model building, 30%
+                                                                                                      test
+ Lee and Lee       Korea    CL    Observational/      Productivity and cost          Homogeneity tested by Bartlett’s K2           Miyata 1980
+   2021                              model                                          method, ANOVA + ANCOVA, paired t-
+                                                                                                      test
+ Leitner 2009     Austria   EL    Experimental/     Efficiency and ergonomic         Multiple linear regression, ANCOVA                Done
+                                     model            benefit of Ludwig RC
+                                                              Choker
+ Macri et al.      Italy    EL    Observational/      Productivity and cost                    Regression model                   Ackerman et al.        Repetition
+   2016                              model                                                                                      2014a; Miyata 1980        timing
+ Munteanu et      Romania   EL    Observational/       Time consumption                       Regression analysis
+   al. 2017                          model
+ Munteanu et      Romania   EL    Observational/       Time consumption,            Correlation analysis, regression model,      Ackerman et al.         Continuous
+   al. 2019                          model              productivity, cost          normality check by Q-Q plot, stepwise            2014a              chronometry
+                                                                                     backward regression, fitting by least-
+                                                                                      squares multiple linear regression
+                                                                                                   technique
+ Ottaviani        Norway    EL    Observational/       Time consumption                    Linear mixed regression,                                    Time study data
+   Aalmo and                         model                                                  intercorrelation testing                                   logger program
+   Talbot
+   2014
+ Ozturk 2009      Turkey    EL    Observational/       Time consumption,             Regression model, sensitivity analysis                              Snap back
+                                     model                 productivity
+ Ozturk and       Turkey    EL    Observational       Productivity and time
+    Aykut 2003                                            consumption
+ Ozturk and       Turkey    EL    Observational/       Time consumption,            Multiple regression, sensitivity analysis                            Repetition
+    Demir                            model                 productivity                                                                                   timing
+    2007
+ Ozturk and       Turkey    EL    Observational/        Productivity, cost       Linear regression model, Durbin–                                        Repetition
+    Senturk                          model                                         Watson test for autocorrelation                                        timing
+    2006                                                                        between the independent variables
+ Ozturk and       Turkey    EL    Observational/           Productivity        Regression model, Durbin–Watson test
+    Senturk                          model                                        for autocorrelation between the
+    2016                                                                               independent variables
+ Picchio et al.    Italy    EL    Observational/   Comparative analysis of two          Multivariate ANOVA                         Miyata 1980
+    2020                             model           cable yarder operations
+ Pierzchała       Austria   EL    Observational/    Productivity of long cable     Multiple regression, collinearity                FAO 1992             Time study
+    2010                             model                   system                   analysis, residual analysis                                         software
+                                                                                                                                                        Latschbacher
+                                                                                                                                                             (Continued)
+                                                                                                    INTERNATIONAL JOURNAL OF FOREST ENGINEERING                    235
+
+
+Table 1. (Continued).
+                                                                                                                                                    Timing and data
+                                                                                                                                                       collection
+ Reference         Country Scope     Study design        Purpose of the study                   Statistical methods             Cost calculation        method
+ Proto and           Italy    EL     Observational       Productivity and cost                                                       Done             Repetition
+    Zimbaletti                                                                                                                                         timing
+   2015
+ Proto et al.       Czech     EL     Observational/   Productivity and costs of the              Regression model                    Done             Repetition
+   2016            Republic             model              system; differences                                                                         timing
+                                                           between uphill and
+                                                                downhill
+ Renzie and        Canada     SL &   Observational      Productivity and cost of                                               Forest Engineering
+   Han 2008                    CL                        alternative silvicultural                                             Research Institute
+                                                           systems/treatments                                                  of Canada’s FERIC
+                                                                                                                                standard costing
+                                                                                                                                    methods
+ Schweier et     Germany      SL     Observational/      Productivity and cost          Regression analysis, ANOVA, Cook’s            Done
+   al. 2020                             model                                           distance, mean value comparisons
+ Senturk et al. Turkey        EL     Observational/     Productivity and cost of                Regression analysis                  Done             Repetition
+   2007                                 model                 Koller K300                                                                              timing
+ Shepherd and      New        EL     Observational    Productivity of Koller K602h
+   Visser 2021 Zealand
+ Shoshyn et al. Belarus       EL     Observational/   Performance of cable yarder               Regression analysis                  Done
+   2022          Republic               model          under swampy conditions
+ Spinelli et al.   Italy      EL     Observational/      Productivity and cost                Regression techniques               Miyata 1980
+   2009                                 model
+ Spinelli et al.   Italy      EL     Observational/     Productivity, comparison       Stepwise regression techniques
+   2015                                 model               between uphill and
+                                                                  downhill
+ Spinelli et al.     Italy    EL     Observational/       Productivity and cost,    ANOVA, square root transformations for      Ackerman et al.     Continuous time
+   2017a                                model          comparison between two         normalizing, Levene's test, χ² test,          2014a              recording
+                                                               carriage types              multiple linear regression
+ Spinelli et al.     Italy    EL     Experimental/    Productivity and cost, effect ANOVA, Tukey–Kramer test, Kruskal–          Ackerman et al.
+   2020                                 model              of partly automation      Wallis non-parametric test, Scheffe’s          2014a
+                                                                                       test, multiple linear regression
+ Spinelli et al.     Italy    EL     Experimental/           Productivity, time      Mann–Whitney test, multiple linear         Ackerman et al.
+   2021                                 model            consumption and cost,       regressionanalysis, residual analysis          2014a
+                                                      effect of yarding technique:
+                                                      single hitch vs double hitch
+ Stampfer et       Austria    EL     Observational/     Efficiency and ergonomic       Regression analysis, correlation                                Time study
+    al. 2010                            model             benefit of Ludwig RC        analysis, ANOVA, residual analysis                                software
+                                                                   Choker                                                                           Latschbacher EG
+                                                                                                                                                           20
+ Stoilov 2019      Romania    EL     Observational/   Productivity and cycle time        Regression analysis, exclusion of
+                                        model               of yarding system             outliners, correlation analysis
+ Stoilov 2021      Bulgaria    El    Observational/     Productivity and cost of               Regression analysis              Ackerman et al.
+                                        model                yarding system                                                         2014a
+ Stoilov et al.    Bulgaria    El    Observational/     Productivity and cost of           Least squares multiple linear        Ackerman et al.
+   2021                                 model          yarding system in salvage         regression, exclusion of outliners,        2014a
+                                                                operation                       correlation analysis
+ Talbot et al.     Norway     EL     Observational/        Productivity of fully             Multiple linear regression
+   2013                                 model          integrated yarding system
+ Talbot et al.     Norway     CL     Observational/   Effect of disintegration of an   Elaborate testing, regression methods    Ackerman et al.
+   2015                                 model          integrated yarding system                                                    2014a
+ Torgersen         Norway     EL     Observational       Productivity of yarding
+   and Lisland                                                    system
+   2002
+ Tunay and         Turkey     EL     Observational/      Productivity and cost                Regression techniques                Acar 1994          Repetitive
+   Melemez                              model                                                                                                       (multimoment)
+   2003                                                                                                                                                 timing
+ Varch et al.      Austria    EL     Observational/       Efficiency and cost,            Regression analysis, correlation      Ackerman et al.
+   2020                                 model          comparison between two                    analysis, ANOVA                    2014a
+                                                             carriage types
+ Zimbalatti          Italy    EL     Observational     Productivity, comparison                                                                       Repetition
+   and Proto                                          between three yarder types                                                                       timing
+   2009
+ Zimbalatti          Italy    EL     Observational            Productivity                                                                            Repetition
+   and Proto                                                                                                                                           timing
+   2010
+236      S. BÖHM AND C. KANZIAN
+
+
+   In contrast to observational studies where no factorial           accounted for them as an own class. In their definitions, the
+treatment takes place, an experimental study design often            cutting unit level (UL) is not presented. Instead, the plot level
+offers better insight into the performance of wood extraction        (PL) study is defined.
+systems. The possibility to control independent variables not
+only allows for control of variation, but also adds complexity
+to the study design, especially if more than one factor is           Shift and cutting unit level
+affecting the dependent variable. Experimental designs com­          Shift level (SL) studies are beneficial when the productivity of a
+pare various factors to identify an effect and its cause. This       system should be assessed for a long period of time like in
+requires a prior investigation whether there are interaction         follow-up studies or for general monitoring. Ackerman et al.
+effects between two factors (Ackerman et al. 2014b). An              (2014b) suggest the recording of (1) shift start and end time, (2)
+example for an experimental study is the work of Cho et al.          record of crew working, (3) production in appropriate unit, (4)
+(2019) who compared the performance of two integrated                job type, (5) delays and causes of delays and (6) fuel consump­
+harvesting systems in South Korea. Regarding the literature          tion. The presence of a trained researcher is not necessarily
+reviewed, this can be considered as an exception, since the          required since there is only one data record needed per shift.
+rest of the studies present a statistical model (modeling            For example, a supervising operator can record the required
+studies) or had been classified as observational studies             data on a prepared datasheet (Engelbrecht et al. 2017). This
+(Table 1).                                                           results in low study costs. The benefit of reduced effort can be
+   The literature reviewed first and foremost (69%) presents         compromised by the fact that the data quality strongly depends
+examples for models created from observational studies,              on the motivation of the recorder to support the study (Erber et
+what consequently classifies them as modeling studies as             al. 2017). The recorder needs to understand his role for the
+Ackerman et al. (2014b) understand them. Experimental                success of the study (Ackerman et al. 2014b). Some of this data
+studies that provide statistical models (Leitner 2009; Huber         possibly is automatically recorded by onboard data loggers
+and Stampfer 2015; Spinelli et al. 2020, 2021) are rare (6%)         (Varch et al. 2022) or recorded by the owner of the machine
+because the experimental character of harvesting related             (Schweier et al. 2020), but for cable yarding operations data
+work studies must be scrutinized since the possibility to            quality and density is mostly not as good as for fully mechan­
+fully control the system state variables under real world            ized harvesting systems. For both types, SL and UL, the system
+conditions is mostly not given (Heinimann 2021). An exam­            input is measured in units of productive time and the output is
+ple for this kind of experimental design is the work of              measured in units of mass or volume (Heinimann 2021).
+Stampfer et al. (2010), who investigated the efficiency and          Regarding the reviewed literature four studies (5%) are classi­
+ergonomic benefits of radio-controlled chokers in cable              fied as SL studies.
+yarding operations, applying a monofactorial block design
+study layout. The statistical models were obtained by regres­
+sion techniques, whereby various regression techniques               Cycle level studies
+were applied. Statistical testing and data processing are not        A completed work cycle is the most apparent observational
+very homogeneous. The listing of applied techniques (Table           unit that can be investigated regarding cable yarding perfor­
+1) includes analysis of variance (ANOVA), linear and multi­          mance studies (Heinimann 2021). Depending on the objective
+ple regression modeling, multiple comparison tests, correla­         and the investigated process it can be conducted manually or
+tion analysis, and others.                                           by applying automatized data-gathering (Ackerman et al.
+                                                                     2014b). This requires equipment that is set appropriately to
+Scope of work studies                                                record the desired data. The input of the production system is
+                                                                     measured in units of time, whereas the output is recorded in
+The scope of work studies is defined by the level of interest that   mass or volume units (Heinimann 2021). Advantages of CL
+is investigated (Ackerman et al. 2014b). For Heinimann (2021)        studies are that they examine the variability in work processes
+the process of scoping is divided into three considerable            and allow for delay information. Ackerman et al. (2014b) do
+aspects. At first the investigated production system must be         not recommend the application of CL studies for the evalua­
+described by a decisive response, its state, the input and the       tion of wood extraction processes. They are work-intensive and
+describing nuisance variables. Second, the system boundaries         expensive (Heinimann 2021), but do not provide information
+need to be set by defining where input enters and output exits       about the single work elements. Regarding the literature
+the system. For most of the reviewed production systems, the         reviewed, 13 studies (18%) are classified as CL studies.
+standing tree is the boundary when input begins. On the other
+hand, the logged piece of wood, ready for further transporta­
+tion at the forest road is the boundary where output exits the       Element level studies
+system. The third aspect of scoping is the definition of the
+observational unit, that also allows for classification.             A work cycle can be divided into a subset of individual func­
+According to Magagnotti et al. (2012) and Heinimann (2021)           tional steps, the work elements (Magagnotti et al. 2012). The
+this can be (1) the work cycle, (2) the shift or (3) the cutting     work element as an observational unit provides detailed data
+unit. Work or cycle elements that were investigated in a lot of      describing the investigated process in much higher resolution,
+cable yarding-related productivity studies are a subset of a         what allows for deeper analysis and a better understanding.
+work cycle. Contrary to this, Ackerman et al. (2014b)                Traditionally EL studies are conducted manually with a
+                                                                                INTERNATIONAL JOURNAL OF FOREST ENGINEERING        237
+
+
+stopwatch and clipboard, but recently broadly available tech­        Twenty-two models (22%) use the piece count per cycle (n.
+nologies promote the possibility of the application of modern        cycle) (e.g., Hartley and Han 2007). Nine models (9%) use the
+timing methods. For example, Varch et al. (2020) used time-          tree volume (tree.vol) as an input variable (e.g., Stampfer et al.
+study software (RC 5, version 1) on a handheld computer              2010) and 12 of the reviewed models (12%) use the piece size as
+(Algiz 7) for their study on recuperating carriages.                 an input variable (e.g., Varch et al. 2020).
+Furthermore, video record analysis is a modern possibility for          The harvesting intensity (e.g., Ghaffariyan et al. 2009a) is
+                                                                     considered in 12 of the 98 models (12%) and the residual
+timing that is applied in performance studies observing fully
+                                                                     vegetation (e.g., Ozturk and Senturk 2006) in seven (7%). The
+mechanized harvesting systems (Holzleitner et al. 2018, 2019;
+                                                                     effect of silvicultural treatment (silv.treat) is an independent
+Holzleitner and Kanzian 2022). Regarding the reviewed cable
+                                                                     factor in two of the models (2%) (e.g., Erber et al. 2017). The
+yarding performance studies, only Acuna et al. (2011) used           log presentation (Hoffmann et al. 2016b) in one (1%).
+video record analysis for timing purposes.                              Twenty-seven of the reviewed models (28%) moreover
+   The input to EL studies is measured in time units. The            explain the influence of parameters that are specific to their
+output is measured in units of volume or mass. In most of            research question or special conditions that probably have an
+the reviewed EL studies, the values of single elements are           influence on the performance. For example, the investigation
+summed at the end, so the output can be correlated with a            of the benefits of radio-controlled (rc) chokers (Leitner 2009;
+completed work cycle in addition to the information gained           Stampfer et al. 2010; Campbell et al. 2016) is demanding the
+about the single work elements. Regarding the literature             incorporation of a corresponding variable representing if rc-
+reviewed, 54 (77%) studies are classified as EL studies.             choker are used or not (dummy.choker) in the model. In the
+                                                                     past these variables often have been named dummy variables to
+Review of statistical models                                         be included in regression analysis. Nowadays they are usually
+                                                                     named factors. Spinelli et al. (2017) investigated the effect of a
+Independent variables                                                motorized carriage and introduced a corresponding dummy
+According to Heinimann et al. (2001), the influencing para­          variable (dummy.motorized) in their model.
+meters for the performance of a cable yarding systems are the           The time that is required for the completion of single cycle
+stem volume, yarding distance, lateral yarding distance, bunch­      elements is employed as an input variable for five models (5%)
+ing strategy, and the yarder type and the extraction method.         (e.g. Ozturk and Senturk 2006). In all these five models that
+Independent variables are required to describe these para­           originate from the same region, the total cycle time is the
+meters quantitatively. The 98 reviewed models include 3.94           dependent variable.
+independent variables on average (mode = 3, range: 1 to 7)
+                                                                     Dependent variables
+(Table 2). Seventy-five of the 98 models (77%) use the yarding
+                                                                     The performance-describing dependent variable is the produc­
+distance (yard.dist), which is the distance the extracted wood
+                                                                     tivity in most cases, which is the yarded volume in relation to
+moves along the cable-line as input. In most of the studies it is
+                                                                     the spent time, or the efficiency, which is the time spent in
+referred as “yarding distance,” (e.g., Ghaffariyan et al. 2009b),    relation to the yarded volume or the cycle time, representing
+but occasionally is referred as “extraction distance,” (e.g.,        the time needed to complete one whole yarding cycle. Cycle
+Picchio et al. 2020), “transportation distance” (Senturk et al.      time can be assessed as delay free cycle time or as total cycle
+2007), or “hauling distance” (Talbot et al. 2013). Three models      time (cycle time including delays). Table 2 shows that in the
+instead use the “span length” (Erber et al. 2017) or “line length”   literature reviewed the productivity is referred as “productiv­
+(Engelbrecht et al. 2017) as an input variable.                      ity” (e.g., Pierzchała 2010; Acuna et al. 2011; Spinelli et al.
+   Sixty-four models (65%) use the lateral yarding distance (lat.    2015), as “net productivity” (e.g., Baldini et al. 2003;
+dist) as an independent variable, the nomenclature is hetero­        Engelbrecht et al. 2017), as “production rate” (e.g., Campbell
+genous regarding the denotation of the load movement from            et al. 2016), as “yarding productivity” (e.g., Daxner 1998; Cho
+the stand to the cable corridor. For example, Baek et al. (2020)     et al. 2018), or “total time productivity” (Shoshyn et al. 2022).
+referred to it as “lateral distance,” Campbell et al. (2016) used    The unit of productivity is in all but one of the reviewed models
+the term “lateral haul distance.” Spinelli et al. (2015) called it   m3/PMH2 or m3/PSH3 as presented in Table 2. Haynes and
+“lateral yarding distance.” Ozturk (2009) refers to it as “lateral   Visser (2001) used t/PMH. Productivity is employed as a
+bunching distance,” Ozturk and Senturk (2016) as “lateral            dependent variable 32 times (32%) regarding the selected
+dragging.”                                                           models.
+   In 23 of the reviewed models (23%) the average slope of the           The efficiency was referred as “efficiency” (e.g., Leitner
+cable corridor is considered as an input variable, either            2009; Stampfer et al. 2010), or “yarding efficiency” (Varch et
+recorded as terrain slope or as the cable line slope. Three          al. 2020) and was employed four times (4%) as an independent
+models (3%) consider the yarding direction (yard.dir) as an          variable. Delay free cycle time was referred as such in the
+influencing factor.                                                  reviewed publications presenting statistical models, except in
+   The payload size is strongly affecting productivity according     (Talbot et al. 2013), where the “effective time for yarding” was
+to the piece-volume-principle. Therefore, payload quantifica­        assessed. The cycle time including delays was referred as “total
+tion is crucial for the development of productivity models.          cycle time” (Tunay and Melemez 2003; Ozturk and Demir
+Thirty-four of the models (35%) use the load volume per              2007; Ozturk 2009; Hoffmann et al. 2015, 2016b; Proto et al.
+cycle (vol.cycle) as an input variable, (e.g., Lee and Lee 2021).    2016; Spinelli et al. 2017a), or as “cycle time” (Huyler and
+238        S. BÖHM AND C. KANZIAN
+
+
+Table 2. Description of reviewed statistical models from various sources analyzed regarding dependent and independent variables. PSH = productive system hour
+
+                                      Dependent          Dependent        Independent         Number of                   Adj.    Number of valid   Model’s p-
+ Number         Reference               variable        variable unit        variables   independent variables     R²      R²      observations      value
+ 1           Abeyratne 2021        Cycle time         min               yard.dist                 1                0.5                 353
+ 2           Abeyratne 2021        Cycle time         min               yard.dist                 1                0.1                 431
+ 3           Abeyratne 2021        Cycle time         min               yard.dist                 1               0.44                 246
+ 4           Abeyratne 2021        Cycle time         min               yard.dist                 1                0.6                1030
+ 5           Abeyratne 2021        Cycle time         min               n.cycle                   2                0.6                1030
+                                                                        yard.dist
+ 6           Acuna et al. 2011 Productivity           m³/PMH            yard.dist                  3              0.62                 184              0
+                                                                        n.cycle
+                                                                        dummy.bunch
+ 7           Baek et al. 2020      Delay free cycle   sec               vol.cycle                  4             0.5934                346            <0.01
+                                     time
+                                                                        yard.dist
+                                                                        lat.dist
+                                                                        n.cycle
+ 8           Baek et al. 2020      Delay free cycle   sec               vol.cycle                  4             0.4813                244            <0.01
+                                     time
+                                                                        yard.dist
+                                                                        lat.dist
+                                                                        n.cycle
+ 9           Baldini et al. 2003   Net productivity   m³/PMH            yard.dist                  1              0.739                 70
+ 10          Baldini et al. 2003   Net productivity   m³/PMH            yard.dist                  1             0.8518                 66
+ 11          Baldini et al. 2003   Net productivity   m³/PMH            yard.dist                  1              0.678                155
+ 12          Baldini et al. 2003   Net productivity   m³/PMH            yard.dist                  1             0.6026                114
+ 13          Baldini et al. 2003   Net productivity   m³/PMH            yard.dist                  1             0.7066                 95
+ 14          Campbell et al.       Production rate    m³/PMH            n.cycle                    3              0.68                 177
+               2016
+                                                                        piece.size
+                                                                        yard.dist
+ 15          Campbell et al.       Production rate    m³/PMH            vol.cycle                  1              0.71                  97
+               2016
+ 16          Campbell et al.       Production rate    m³/PMH            n.cycle                    3              0.74                  45
+               2016
+                                                                        piece.size
+                                                                        lat.dist
+ 17          Campbell et al.       Production rate    m³/PMH            vol.cycle                  3              0.29                 239
+               2016
+                                                                        dummy.
+                                                                           chokerset
+                                                                        yard.dist
+ 18          Cho et al. 2018       Yarding            m³/PMH            lat.dist                   3              0.75                 230           <0.001
+                                     productivity
+                                                                        yard.dist
+                                                                        tree.vol
+ 19          Chung et al. 2022 Delay free cycle       sec               yard.dist                  3                      0,47         293           <0.001
+                                 time
+                                                                        lat.dist
+                                                                        n.cycle
+ 20          Chung et al. 2022 Delay free cycle       sec               yard.dist                  1                      0,53         195           <0.001
+                                 time
+ 21          Daxner 1998       Yarding                m³/PSH0           yard.dist                  3             0.618                 369
+                                 productivity
+                                                                        lat.dist
+                                                                        piece.size
+ 22          Engelbrecht et al. Net productivity      m³/PMH            piece.size                 7                      0.501       42,927         <0.0001
+               2017
+                                                                        line.length
+                                                                        n.cycle
+                                                                        stack.dist
+                                                                        dummy.yarder
+                                                                        dummy.team
+                                                                                                                                                    (Continued)
+                                                                                            INTERNATIONAL JOURNAL OF FOREST ENGINEERING                   239
+
+
+Table 2. (Continued).
+                                     Dependent          Dependent        Independent        Number of                  Adj.    Number of valid   Model’s p-
+ Number          Reference            variable         variable unit       variables   independent variables    R²      R²      observations      value
+                                                                       top.vol
+ 23          Erber et al. 2017    Time               PSH15/m³          tree.vol                 4              0.511                223
+                                    consumption
+                                                                       yard.dir
+                                                                       line.length
+                                                                       silv.treat
+ 24          Ghaffariyan et al.   Delay free cycle   min               yard.dist                6               0.9    0.899        1554           0.05
+               2009a                time
+                                                                       lat.dist
+                                                                       slope
+                                                                       tree.vol
+                                                                       intensity
+                                                                       road.space
+ 25          Ghaffariyan et al.   Delay free cycle   min               yard.dist                5              0.886 0.885          958            0.05
+               2009a                time
+                                                                       lat.dist
+                                                                       slope
+                                                                       piece.size
+                                                                       intensity
+ 26          Ghaffariyan et al.   Delay free cycle   min               yard.dist                5              0.889 0.888          541            0.05
+               2009a                time
+                                                                       lat.dist
+                                                                       slope
+                                                                       piece.size
+                                                                       intensity
+ 27          Ghaffariyan et al.   Delay free cycle   min               yard.dist                6              0.934 0.933          591            0.05
+               2009b                time
+                                                                       lat.dist
+                                                                       vol.cycle
+                                                                       tree.vol
+                                                                       stand.density
+                                                                       slope
+ 28          Ghaffariyan et al.   Delay free cycle   min               yard.dist                6              0.894 0.893          752            0.05
+               2010                 time
+                                                                       lat.dist
+                                                                       intensity
+                                                                       yard.dir
+                                                                       slope
+                                                                       vol.cycle
+ 29          Han and Han          Delay free cycle   min               lat.dist                 2              0.37                 156            <0.05
+               2020                 time
+                                                                       yard.dist
+ 30          Han and Han          Delay free cycle   min               lat.dist                 2              0.78                 121            <0.05
+               2020                 time
+                                                                       yard.dist
+ 31          Hartley and Han      Delay free cycle   min               yard.dist                3              0.42                 301
+               2007                 time
+                                                                       lat.dist
+                                                                       n.cycle
+ 32          Hartley and Han      Delay free cycle   min               yard.dist                3              0.29                 115
+               2007                 time
+                                                                       lat.dist
+                                                                       n.cycle
+ 33          Hartley and Han      Delay free cycle   min               yard.dist                4              0.36                 346
+               2007                 time
+                                                                       lat.dist
+                                                                       n.cycle
+                                                                       dummy.graple
+ 34          Hartley and Han      Delay free cycle   min               yard.dist                3              0.25                 126
+               2007                 time
+                                                                                                                                                 (Continued)
+240        S. BÖHM AND C. KANZIAN
+
+
+Table 2. (Continued).
+                                  Dependent          Dependent        Independent           Number of                 Adj.   Number of valid   Model’s p-
+ Number          Reference         variable         variable unit       variables      independent variables    R²     R²     observations      value
+                                                                    lat.dist
+                                                                    n.cycle
+ 35          Hartley and Han Delay free cycle     min               dummy.silv.treat            1              0.48               860
+               2007              time
+ 36          Haynes and Visser Productivity       t/PMH             yard.dist                   4              0.7
+               2001
+                                                                    n.cycle
+                                                                    piece.size
+                                                                    dummy.train
+ 37          Hoffmann et al.   Total cycle time   min               yard.dist                   7              0.46               145           <0.001
+               2015
+                                                                    lat.dist
+                                                                    slope
+                                                                    veg
+                                                                    n.cycle
+                                                                    vol.cycle
+                                                                    dummy.manage
+ 38          Hoffmann et al.   Cycle time         min               yard.dist                   5              0.61               170           <0.001
+               2016a
+                                                                    lat.dist
+                                                                    slope
+                                                                    veg
+                                                                    off-set.slope
+ 39          Hoffmann et al.   Cycle time         min               yard.dist                   4              0.36                81           <0.001
+               2016a
+                                                                    lat.dist
+                                                                    slope
+                                                                    veg
+ 40          Hoffmann et al.   Cycle time         min               yard.dist                   6              0.66               216           <0.001
+               2016a
+                                                                    lat.dist
+                                                                    slope
+                                                                    veg
+                                                                    log.vol
+                                                                    n.cycle
+ 41          Hoffmann et al.   Cycle time         min               yard.dist                   4              0.41               159           <0.001
+               2016a
+                                                                    n.cycle
+                                                                    lat.dist
+                                                                    veg
+ 42          Hoffmann et al.   Total cycle time   min               yard.dist                   5              0.43                88           <0.001
+               2016b
+                                                                    lat.dist
+                                                                    veg
+                                                                    log.presentation
+                                                                    n.cycle
+ 43          Hoffmann et al.   Total cycle time   min               yard.dist                   4              0.43                89           <0.001
+               2016b
+                                                                    lat.dist
+                                                                    log.presentation
+                                                                    n.cycle
+ 44          Hoffmann et al.   Total cycle time   min               yard.dist                   4              0.53                             <0.001
+               2016b
+                                                                    lat.dist
+                                                                    veg
+                                                                    log.presentation
+ 45          Huyler and        Cycle time         min               yard.dist                   4              0.67                80
+               LeDoux 1997
+                                                                    lat.dist
+                                                                    tree.vol
+                                                                                                                                               (Continued)
+                                                                                           INTERNATIONAL JOURNAL OF FOREST ENGINEERING                    241
+
+
+Table 2. (Continued).
+                                    Dependent          Dependent        Independent        Number of                  Adj.    Number of valid   Model’s p-
+ Number          Reference           variable         variable unit       variables   independent variables    R²      R²      observations      value
+                                                                      vol.cycle
+ 46          Largo 2004          Delay free cycle   min               yard.dist                2              0.28                 218            <0.05
+                                   time
+                                                                      lat.dist
+ 47          Largo 2004          Delay free cycle   min               yard.dist                2              0.21                 237            <0.05
+                                   time
+                                                                      lat.dist
+ 48          Lee et al. 2018     Delay free cycle   sec               yard.dist                1              0.58                 101            0.00
+                                   time
+ 49          Lee et al. 2018     Delay free cycle   sec               large.end.               3              0.54                  56            0.00
+                                   time                                  diameter
+                                                                      yard.dist
+                                                                      lat.dist
+ 50          Lee and Lee 2021 Delay free cycle      min               yard.dist                3                      0.531        343            <0.01
+                                time
+                                                                      lat.dist
+                                                                      vol.cycle
+ 51          Lee and Lee 2021 Delay free cycle      min               yard.dist                3                      0.65          92            <0.01
+                                time
+                                                                      lat.dist
+                                                                      vol.cycle
+ 52          Leitner 2009        Efficiency         min/m³            tree.vol                 2              0.774 0.773          936            0.000
+                                                                      dummy.choker
+ 53          Leitner 2009        Efficiency         min/m³            tree.vol                 3              0.816 0.814          270            0.000
+                                                                      yard.dist
+                                                                      dummy.choker
+ 54          Macri et al. 2016   Total yarding      min               yard.dist                4              0.71                  70
+                                   cycle time
+                                                                      lat.dist
+                                                                      slope
+                                                                      vol.cycle
+ 55          Macri et al. 2016   Total yarding      min               lat.dist                 4              0.73                  70
+                                   cycle time
+                                                                      yard.dist
+                                                                      slope
+                                                                      vol.cycle
+ 56          Munteanu et al.     Cycle time         sec               lat.dist                 2                      0.22         316
+               2017
+                                                                      slope
+ 57          Munteanu et al.     Cycle time         sec               yard.dist                3              0.57                 558           <0.001
+               2019
+                                                                      lat.dist
+                                                                      lat.slope
+ 58          Ozturk 2009         Total cycle time   min               yard.dist                4                                    75
+                                                                      lat.dist
+                                                                      cycle.time.
+                                                                         elements
+ 59          Ozturk and Demir Total cycle time      min               cycle.time.              6              0.995                 80
+               2007                                                      elements
+ 60          Ozturk and       Total time            min               yard.dist                6
+               Senturk 2006
+                                                                      lat.dist
+                                                                      vol.cycle
+                                                                      cycle.time.
+                                                                         elements
+ 61          Ozturk and          Yarding time       min               yard.dist                3                      0.807         30
+               Senturk 2016
+                                                                      vol.cycle
+                                                                      lat.dist
+ 62          Picchio et al. 2020 Extraction time    min               vol.cycle                2                      0.859        3485          <0.001
+                                                                      yard.dist
+                                                                                                                                                (Continued)
+242        S. BÖHM AND C. KANZIAN
+
+
+Table 2. (Continued).
+                                    Dependent             Dependent        Independent          Number of                  Adj.    Number of valid   Model’s p-
+ Number          Reference           variable            variable unit       variables     independent variables    R²      R²      observations      value
+ 63          Picchio et al. 2020 Extraction time    min                  vol.cycle                  2                      0.934        3416          <0.001
+                                                                         yard.dist
+ 64          Pierzchala 2010     Productivity       m³/PSH15             yard.dist                  4              0.66                 228
+                                                                         lat.dist
+                                                                         piece.size
+                                                                         n.cycle
+ 65          Proto et al. 2016   Total cycle time   min                  yard.dist                  3              0.44                 100            0.001
+                                                                         lat.dist
+                                                                         vol.cycle
+                                                                         dummy.yard.dir
+ 66          Senturk et al.      Delay free cycle   min                  yard.dist                  4               0.8
+               2007                time
+                                                                         lat.dist
+                                                                         vol.cycle
+                                                                         timber.number
+ 67          Senturk et al.      Delay free cycle   min                  yard.dist                  4               0.7
+               2007                time
+                                                                         lat.dist
+                                                                         vol.cycle
+                                                                         timber.number
+ 68          Senturk et al.      Delay free cycle   min                  yard.dist                  4              0.64
+               2007                time
+                                                                         lat.dist
+                                                                         vol.cycle
+                                                                         timber.number10
+ 69          Shoshyn et al.      Productivity       m³                   yard.dist                  6
+               2022
+                                                                         lat.dist
+                                                                         stocking
+                                                                         vol.cycle
+                                                                         piece.size
+                                                                         n.cycle
+ 70          Spinelli et al.     Productivity       m³/h                 yard.dist                  4              0.39                 171
+               2015
+                                                                         lat.dist
+                                                                         n.cycle
+                                                                         piece.size
+ 71          Spinelli et al.     Productivity       m³/h                 yard.dist                  3              0.66                 137
+               2015
+                                                                         lat.dist
+                                                                         piece.size
+ 72          Spinelli et al.     Productivity       m³/h                 yard.dist                  3              0.42                 308
+               2015
+                                                                         lat.dist
+                                                                         piece.size
+ 73          Spinelli et al.     Total cycle time11 sec                  yard.dist                  2                      0.461         83            <0.05
+               2017
+                                                                         dummy.
+                                                                           motorized
+ 74          Spinelli et al.     Productivity       m³/PMH               yard.dist                2 (+1)           0.163                280            <0.05
+               2020
+                                                                         dummy.auto
+ 75          Stampfer et al.     efficiency         min                  tree.vol                   2              0.77                 936
+                2010
+                                                                         dummy.choker
+ 76          Stoilov 2019        Delay free cycle   min                  lat.dist                 3 (+3)           0.774                 90            <0.05
+                                   time
+                                                                         yard.dist
+                                                                         slope
+ 77          Stoilov 2019        Cycle time         min                  lat.dist                 2 (+5)           0.54                  90            <0.05
+                                                                                                                                                     (Continued)
+                                                                                           INTERNATIONAL JOURNAL OF FOREST ENGINEERING                 243
+
+
+Table 2. (Continued).
+                                    Dependent          Dependent        Independent        Number of                 Adj.   Number of valid   Model’s p-
+ Number          Reference           variable         variable unit       variables   independent variables    R²     R²     observations      value
+                                                                      yard.dist
+                                                                      slope
+                                                                      vol.cycle
+ 78          Stoilov 2019        Productivity       m³/PMH            lat.dist               4(+2)            0.95                90            <0.05
+                                                                      yard.dist
+                                                                      slope
+                                                                      vol.cycle
+ 79          Stoilov 2019        Productivity       m³/SMH            yard.dist              3(+4)            0.74                90            <0.05
+                                                                      slope
+                                                                      vol.cycle
+ 80          Stoilov 2021        Delay free cycle   sec               lat.dist                 2              0.49   0.46         90            <0.05
+                                   time
+                                                                      slope
+ 81          Stoilov 2021        Cycle time         sec               yard.dist                2              0.20   0.15         90            <0.05
+                                                                      slope
+ 82          Stoilov 2021        Productivity       m³/PMH            vol.cycle                3              0.45   0.42         90            <0.05
+                                                                      lat.dist
+                                                                      slope
+ 83          Stoilov 2021        Productivity       m³/SMH            vol.cycle                2              0.31   0.27         90            <0.05
+                                                                      slope
+ 84          Stoilov et al. 2021 Delay free cycle   sec               yard.dist                4                     0.54         90            <0.05
+                                   time
+                                                                      lat.dist
+                                                                      slope
+                                                                      dummy.damage
+ 85          Stoilov et al. 2021 Delay free cycle   sec               lat.dist                 1                     0.87         30            <0.05
+                                   time
+ 86          Stoilov et al. 2021 Delay free cycle   sec               lat.dist                 1                     0.67         30            <0.05
+                                   time
+ 87          Stoilov et al. 2021 Delay free cycle   sec               lat.dist                 1                     0.20         30            <0.05
+                                   time
+ 88          Stoilov et al. 2021 Productivity       m³/PMH            yard.dist                3                     0.73         90
+                                                                      lat.dist
+                                                                      vol.cycle
+ 89          Stoilov et al. 2021 Productivity       m³/PMH            lat.dist                 2                     0.84         30            <0.05
+                                                                      vol.cycle
+ 90          Stoilov et al. 2021 Productivity       m³/PMH            lat.dist                 2                     0.62         30            <0.05
+                                                                      vol.cycle
+ 91          Stoilov et al. 2021 Productivity       m³/PMH            lat.dist                 2                     0.57         30            <0.05
+                                                                      vol.cycle
+ 92          Stoilov et al. 2021 Productivity       m³/SMH            vol.cycle                1                     0.50         90            <0.05
+ 93          Stoilov et al. 2021 Productivity       m³/SMH            vol.cycle                1                     0.54         30            <0.05
+ 94          Stoilov et al. 2021 Productivity       m³/SMH            lat.dist                 2                     0.62         30            <0.05
+                                                                      vol.cycle
+ 95          Stoilov et al. 2021 Productivity       m³/SMH            lat.dist                 2                     0.57         30            <0.05
+                                                                      vol.cycle
+ 96          Talbot et al. 2013 Effective time for sec                yard.dist                3              0.56   0.55        149           <0.001
+                                   yarding
+                                                                      lat.dist
+                                                                      n.cycle
+ 97          Tunay and           Total cycle time   sec               cycle.time.              1              0.94                40             0.1
+               Melemez 2003                                              elements
+ 98          Varch et al. 2020   Yarding            PSH0/m³           yard.dist                3                     0.6         305           <0.001
+                                   efficiency
+                                                                      lat.dist
+                                                                      tree.vol
+244      S. BÖHM AND C. KANZIAN
+
+
+LeDoux 1997; Hoffmann et al. 2016a; Munteanu et al. 2017,            Spinelli et al. (2015) noted that the volume was determined
+2019), as “yarding time” (Ozturk and Senturk 2016), as “total        from mid diameter and length in a cut-to-length yarding
+time” (Ozturk and Senturk 2006), or “extraction time” (Picchio       operation. In the literature reviewed there are only a few
+et al. 2020). Regarding the reviewed models, the total cycle time    examples (e.g., Schweier and Ludowicy 2020) that specify the
+and delay free cycle time were employed as a dependent vari­         volume of the yarded timber by indicating the voluminal con­
+able 30 (31%) and 32 (33%) times, respectively. Erber et al.         sideration of bark (m3ub/m3ob).6
+(2017) used the time consumption with PSH15/m3 as output to              Previous attempts for harmonization of forest work studies
+their model. Nearly all investigated sources provide the pro­        (Ackerman et al. 2014b) and its nomenclature (Björheden and
+ductivity (mostly in m3/PMH without any further specifica­           Thompson 2000) presented a detailed time concept for forest
+tions) of the investigated yarding operation, at least in addition   work studies containing 28 time classes. Heinimann (2021)
+to their model output.                                               followed with an adapted, and with respect to practicability
+                                                                     simplified, classification that contains five time classes. Most of
+                                                                     the examined models are represented by this concept. An
+Model characteristics
+                                                                     exception are the models, 69, 70, and 71 (Spinelli et al. 2015)
+The R-squared value (R2) also known as the coefficient of            that link the extracted volume to hours without further speci­
+determination is a measure of how good the generated model           fications (m3/h) and model 68 (Shoshyn et al. 2022), where the
+fits the data. A coefficient of determination of 0.87 means that     extracted volume is not linked to a time unit.
+the model can explain 87% of the variation in the data and is            The abbreviation “PMH0” describes the production time in
+often understood as an indicator for the model’s quality. The        multiple regards. It indicates that the recorded time was pro­
+adjusted R-squared value (adj. R2) accounts for the overfitting      ductive time that was spent by a machine and was recorded in
+due to the additional inserted predictors. When the adj. R2 is       hours. The subscript figure “0” indicates that all delays are
+higher than R2, it indicates that the addition of an input vari­     excluded (e.g., Ghaffariyan et al. 2009b; Hoffmann et al.
+able increased the explanatory value of the model. Regarding         2016a). The subscript figure “15” in the abbreviation
+the 98 selected models, for 73 (75%) models a R-squared value        “PMH15” means that short delays under 15 minutes are
+is presented. For 35 models (36%) an adjusted R2 value is            included (e.g., Varch et al. 2020).
+presented.                                                               The typical yarder-specific work cycle elements and delays
+    The p-value indicates the probability that the null hypoth­      were described by Ackerman et al. (2014b) together with a
+esis is true, or in other words the smaller the p-value, the more    proposal for break points. Break points in time study context
+likely it is (based on the data) that the predictors are affecting   are happenings that mark the transition from one work step
+the response variable. For 58 models (59%) a p-value is              (cycle element) to the next work step. For example, this can be
+presented.4                                                          the beginning of carriage movement, which separates the cycle
+    For 90 models (92%) the number of valid observations is          elements “Mainline in” and “Carriage in.” Within the literature
+presented. A valid observation is a complete and uncompro­           reviewed work cycle elements nomenclature is inconsistent
+mised data record that is used for model fitting. This is, for       and break points were set differently in a broad variety. For
+example, all data that was gathered on one complete yarding          example, the element “Carriage out” is often referred as “out­
+cycle in the case of EL or CL studies. In case of SL studies, the    haul” (Ghaffariyan et al. 2009b) or “outhaul empty” (Ozturk
+number of shifts represents the sample size. Since the SL            2009). In some cases specifications were made e.g. “outhaul
+studies are often conducted over long periods and include            and position” (Evanson et al. 2017). For this cycle element, the
+data from many harvesting operations, the results are consid­        break points are relatively homogenous among the studies and
+ered to be more robust (Erber et al. 2017).                          were at least formulated similar to Ackerman et al.'s (2014b)
+                                                                     definition. In most cases they are defined by the start and the
+                                                                     end of the carriage movement along the cable line.
+Data acquisition
+                                                                         In contrast, the cycle time elements “Mainline out” and
+As previously described, quantitative data is recorded during        “Mainline in” are not universally descriptive for all yarding
+work studies to identify performance-influencing parameters          operations. The usage of those terms implicates the utilization
+in production systems. Heinimann (2021) presented a list of          of a yarding system where the carriage is clamped, and the
+metrics for system inputs and outputs that are relevant and          hook mechanism is attached to the mainline itself. Motorized
+praxis orientated for forest work studies. The input to a yarding    slack pulling carriages and self-propelled carriages carry hoist
+production system is subdivided in the production factors, the       ropes for load attachment. Therefore, nomenclature is adapted,
+objects to be yarded and the operational inputs (energy).            the term “lateral out” describes this work element accurately.
+Output is the product (yarded timber) and the emissions.5            In various studies, the work phase is described as “hook des­
+The object to be yarded is, in most of the reviewed studies,         cent” (Zimbalatti and Proto 2009), or “release of mainline”
+the felled tree. However, there are studies observing cut-to-        (Ghaffariyan et al. 2009b). Evanson et al. (2017) referred to
+length operations with preprocessed logs (Hoffmann et al.            the “walk in, lower and pull rope,” a description of the choker
+2015; Lee et al. 2018).                                              setters’ activity and the movement made by the rope or the
+   Only a few studies present a reference for the load volume        hook.
+determination. Firstly Smalian’s formula, (e.g., Hoffmann et al.         The start of the “choker setting” (Ghaffariyan et al. 2010),
+2016a; Cho et al. 2016a) and secondly Huber’s formula (e.g.,         “choking” (Jeong et al. 2017), “choke” (Talbot et al. 2013) or
+Zimbalatti and Proto 2009; Proto et al. 2016) are mentioned.         “hook-up” (Hoffmann et al. 2016b) cycle element is in most
+                                                                                 INTERNATIONAL JOURNAL OF FOREST ENGINEERING                        245
+
+
+cases marked by the arrival of the choker setter with the hook at   because productivity ranges from 2.1 m3/PSH15 (q.05) to 26.1
+the load, or when the choker setter starts to attach the first      m3/PSH15 (q.95) if looking at the quantiles. Even though mean
+piece of wood (Devlin and Klvac 2014). It ends when the             uphill production rates are higher compared to downhill, this is
+choker setter is in the clear and gives the sign, respectively      not the case if the median (q.50) is calculated for the subsets
+(Baek et al. 2020).                                                 uphill and downhill resulting in values of 6.4 m3/PSH15 versus
+    The “mainline in” or “lateral in” time element starts when      9.1 m3/PSH15. Assuming that load volumes per cycle behave in
+the “hooking,” “choker setting” ends. In most sources the           line with production rates, delay free cycle times should show
+starting break point is marked by the end of the previous           the same difference between uphill and downhill yarding
+cycle time element (e.g., Pierzchała 2010), or when the load is     resulting in lower median delay free cycle times.
+starting to move toward the carriage (Eroğlu et al. 2009). The      Nevertheless, a downhill yarding cycle takes 37% longer with
+diversity in nomenclature is, analog to the described nomen­        8.2 min/cycle then the median cycle time for uphill yarding of
+clature diversity for “mainline out,” a product of diversity in     6.0 min/cycle (Table 3).
+utilized systems.                                                      While productivity and cycle times might attract the most
+    There are several examples for studies, where the tasks and     research first, conditions under which the studies have been
+activities of the three previously discussed cycle elements were    carried out provide a deeper insight into the different opera­
+aggregated to one data record (e.g., Hoffmann et al. 2015;          tions (Table 4). Yarding distance reportedly ranges from 44 to
+Campbell et al. 2016; Chung et al. 2022). Furthermore there         372 m (q.05, q.95) with a median of 134 m. A noticeable
+are examples for studies where the hook-pulling and the hook­       difference between uphill and downhill yarding can not be
+ing were aggregated, but the pulling of the load to the carriage    detected. Mean volume of wood transported per cylce is 1.09
+was timed separately (Ozturk and Aykut 2003; Tunay and              m3, but can reach up to 5.97 m3/cycle. However, 90% of the
+Melemez 2003).                                                      studies report cycle volumes between 0.20 and 2.38 m3 with a
+    “Carriage return” has, analog to “carriage out” homogenous      median of 0.80 m3/cycle. However, comparing the median of
+definitions regarding breakpoints. Starting and ending is           the studies on downhill operations against uphill unveils a
+mostly associated with the beginning and ending of carriage         higher volume per cycle with 0.99 m3 for downhill versus
+movement along the cable line. However, nomenclature is very        0.75 m3 for uphill yarding (Table 4). This explains the differ­
+heterogenous. It is referred to as “inhaul” (e.g., Ghaffariyan et   ence observed in productivity mentioned above and points out
+al. 2009b), as “travel of loaded carriage” (Ozturk and Senturk      that higher cycle times can be outweighed through higher
+2016), or “carriage in” (Hartley and Han 2007).                     volumes to achive desireable productivity.
+    Lee and Lee (2021) and Spinelli et al. (2015) aggregated the       The extraction method may influence yarding productivity
+“lateral in” or “mainline in” and “inhaul” or “carriage in” work    and delay free cycle time regarding the investigated datasets.
+steps to “carriage in.” Eker et al. (2001) as well as Lee et al.    For cut-to-length (CTL), tree length (TL) and wholetree (WT)
+(2018) chose the same approach but referred to “pulling loaded      the median productivity is 6.0, 4.1 and 10.1 m3/PSH15, respec­
+carriage” and “in-haul,” respectively.                              tively (Figure 2a). For WT operations 90% of the studies
+    “De-choking” as described by Ackerman et al. (2014b) is not     indicate a productivity between 2.0 and 27.9 m3/PSH15. Delay
+referred to as such in the literature reviewed. Used terms are:     free cycle time does not differ much between CTL and WT, as
+“unhook” (Baek et al. 2020), ”load release” (Ghaffariyan et al.     for both groups the gross of the studies (90%) report values
+2009b), “unchoking” (Picchio et al. 2020), “unload” (Spinelli et    between approx. 3.5 and 15 min. TL seems to have lower cycle
+al. 2015), or “carriage unloading” (Zimbalatti and Proto 2010).     times across the studies, but only 13 sources dealt with TL
+Break points are in most cases defined by the non-movement          operations (Figure 2b).
+of the carriage at the landing site.
+    Some authors oriented themselves on previously conducted
+performance studies regarding cycle element definitions. Baek
+et al. (2020) and Proto et al. (2016) referred to Huyler and        Table 3. Descriptive statistics on meta-dataset extracted from literature for
+LeDoux (1997). It has to be noted that not every source pro­        productivity and delay free cycle time for the whole dataset (overall) and the
+                                                                    subsets based on yarding direction (uphill, downhill). Missing entries are excluded
+vides a definition of break points (e.g., Baldini et al. 2003).     resulting in a different number of records (n). SD = standard deviation, min = mini­
+Contrary to Ackerman et al.’s (2014b) delay categorization,         mum, q.05 = 5% percentile, q.50 = 50% percentile, q.95 = 95% percentile,
+delays are mostly categorized as operational delays, mechanical     max = maximum.
+delays or personal delays (Pierzchała 2010; Hoffmann et al.          variable                 productivity                        cycle time
+2015; Cho et al. 2016a). Investigation of delays is, depending on
+the research question and the investigated system, not always        unit                      m³/PSH15                              min
+requested and detailed information on delay time is mostly not       subset         Overall     uphill       downhill   overall    uphill      downhill
+presented.                                                           mean            9.8         10.2           8.5       7.4        7.1         8.6
+                                                                     sd              9.5         10.7           4.0       3.8        3.4         4.7
+                                                                     min             1.5         1.5            1.7       3.2        3.6         3.2
+Quantitative meta-data analysis                                      q.05            2.1         2.4            1.9       3.6        3.9         3.2
+The average productivity for all 75 datasets is 9.8 m3/PSH15,        q.50            7.1         6.4            9.1       6.0        5.6         8.2
+                                                                     q.95            26.1        27.1          13.3      14.9       14.8         16.0
+whereby uphill operations are more productive with 10.2 m3/
+                                                                     max             67.3        67.3          13.3      21.0       18.4         21.0
+PSH15 compared to downhill with 8.5 m3/PSH15 (Table 3).
+                                                                     n                74          56            18        70         53           17
+However, a large variation can be observed in the dataset,
+246         S. BÖHM AND C. KANZIAN
+
+
+    To prove if the well-known piece-volume principle may be                        operations that are mostly executed by commercial harvesting
+present in the meta-dataset as well, productivity was plotted                       companies. Kanawaty (1992) stated that a work study is typi­
+against average volume per cycle. A clear trend can be observed                     cally split into a method study and the work measurement.
+indicating a positive correlation between both (Figure 3a).                         Cable yarding work studies often do not include the method
+Furthermore, the extraction method might have an impact                             study, since the responsible decision maker’s evaluation of the
+and shows a trend as well, respectively. However, this seems                        site and operational conditions, as well as their experience in
+not to be the case for the meta-dataset. Average yarding dis­                       cable yarding activities, are defining “how the task is fulfilled.”
+tance could impact productivity as well. As shown in Figure 3b,                     At least the interest in an economically justifiable operation
+there might be a trend that with increasing average yarding                         and the responsibility for a safe operation are requiring that in
+distance the productivity may drop. However, further analysis                       most cases. Consequently, researchers can often only adapt
+will be done, applying regression methods to prove if the trend                     their research methods to those conditions. Nevertheless, the
+can be confirmed. It has to be noted that one data record is                        assumption can be made that experienced decision makers in
+excluded because it shows extremly high production rates with                       harvesting enterprises come at least close to the one best way to
+67.3 m3/PSH15. Furthermore, not all records contain yarding                         perform the task when planning the extraction operation.
+distance, which limits the available records for the regression                         Researchers observe the operation and cannot influence the
+analysis to 63.                                                                     work processes. Therefore, the studies have no experimental
+    Based on the 63 records, using values for productivity,                         character as defined by Ackerman et al. (2014b) and must be
+average cycle volume (vol.cycle), average yarding distance                          classified as observational studies. It can be argued that Varch
+(yard.dist) and extraction method (extr.meth), linear regres­                       et al. (2020) conducted an experimental study, using a mono
+sion modeling was done with following model as starting point                       factorial random study design. Since each of the investigated
+(Eq. 1). βi represents the estimates within the model. After a                      carriages were utilized in a separate cable line where the aver­
+first pass with inclusion of all mentioned independent vari­                        age slope and the average yarding distance were altering, a
+ables, it can be seen that extraction method did not pass the p                     classification as an observational study is possible. Two systems
+≤ 0.05 level set to be included in the final model (Model 1,                        were investigated under similar conditions, their performances
+Table 5). Removing extraction method from the model caused                          were described and compared afterward. Other studies, where
+only a minor drop in model performance from R2 = 0.716 to                           two or more pieces of yarding gear are compared to each other
+R2 = 0.715. The same is true for the AIC (Akaike’s Information                      (e.g., Zimbalatti and Proto 2009; Spinelli et al. 2017a; Varch et
+Criterion) which did not change due to the exclusion (Model 2,                      al. 2020), are classified as observational studies in the present
+Table 5). With an R2 of 0.715 more than 71% of the variation of                     work for the same reason. However, categorization is difficult
+productivity within the meta-dataset can be explained by cycle                      due to the specificity of studies and requires consideration of
+volume and yarding distance, which is quite high in the context                     details in study design and differential diagnosis between the
+of forest operations productivity modeling.                                         evaluation techniques presented.
+            productivity ¼ β0 þ β1 vol:cycle þ β2 yard:dist
+                                                                            (1)
+                               þ β3 extr:meth
+                                                                                    Comparability of evaluated performance
+                                                                                    The quantitative comparability of work studies originating
+Discussion                                                                          from different studies that were conducted by different authors
+                                                                                    is very limited and requires great care and attention to the
+Classification                                                                      specifications of the studies (Lindroos and Cavalli 2016).
+The variation in study methodology is very wide, since every                        Authors with experience in conducting a performance evalua­
+extraction operation is unique due to specific site and opera­                      tion have preferences on research methods that are based on
+tional conditions. Research is mostly done on real forest                           their experience. They will consequently choose a similar
+
+
+Table 4. Descriptive statistics of the conditions provided by the studies reviewed on cable yarding operations and performance. (n = number of records, SD = standard
+deviation, min = minimum, q.05 = 5% percentile, q.50 = 50% percentile, q.95 = 95% percentile, max = maximum).
+
+ variable                         yarding distance                                   volume / cycle                                         slope
+
+ unit                                    m                                                 m³                                                 %
+ subset              overall          uphill         downhill           overall         uphill          downhill          overall          uphill          downhill
+ mean                 154              152             161               1.09            1.10             1.06             53.9             55.6             46.7
+ sd                   113              114             113               0.89            0.97             0.63             13.7             13.0             14.9
+ min                   41              41              50                0.17            0.19             0.17             17.5             27.0             17.5
+ q.05                  44              43              50                0.20            0.30             0.20             32.1             33.7             23.1
+ q.50                 134              130             140               0.80            0.75             0.99             55.0             59.0             47.5
+ q.95                 372              312             358               2.38            2.56             1.94             72.2             74.2             65.5
+ max                  729              729             400               5.97            5.97             2.13             78.0             78.0             70.0
+ n                     72              54              18                 68              50               18               55               45               10
+                                                                                                    INTERNATIONAL JOURNAL OF FOREST ENGINEERING                      247
+
+
+
+
+Figure 2. Boxplots expressing the (a) productivity and (b) delay free cycle time range by extraction method for cut-to-length (CTL), whole tree (WT) and tree length (TL)
+extraction.
+
+
+
+
+Figure 3. Yarding productivity by extraction method for (a) average cycle volume and (b) average yarding distance.
+
+
+
+
+approach, with modifications to adapt to the actual study goals                       crucial for comparability. The above displayed heterogene­
+and conditions.                                                                       ity in break point definition, primarily between the cycle
+   The variety of utilized yarding systems and the resulting                          elements that take place in the stand (mainline out or
+variety in problem formulation require a corresponding variety                        lateral out, hooking or choking, mainline in or lateral in),
+of study layouts, as every research question requires the con­                        makes a comparison between studies at the elemental level
+templation of a constitutive indicator. To achieve that, adap­                        very difficult. The recording of corresponding elemental
+tion of the investigation methods to particular conditions is                         times often requires the presence of a researcher in the
+mandatory. Consequently, the evaluated and presented data                             stand near the felling site. This is dangerous and especially
+are not homogeneous and are inconsistent concerning data                              in steep terrain inconvenient, but it is crucial to gain a
+structure, density, and quality.                                                      deeper understanding of the yarding process. Ackerman et
+   Regarding performance studies and especially regarding                             al.'s (2014b) suggestion for break point definitions provides
+cable yarding time studies, the break point definition is                             reproducible measurements. An application of these
+248        S. BÖHM AND C. KANZIAN
+
+
+Table 5. Linear regression models for the combined assessment of the predictors average cycle volume (vol.cycle) and average yarding distance (yard.dist) and
+extraction method (extr.meth). Model 1 includes all independent variables, whereas in Model 2 extr.meth was excluded, because it did not pass the minimum p-value of
+0.05 to be included. (CI = confidence interval of the estimates, AIC = Akaike’s Information Criterion, p-values ≤ 0.05 marked in bold).
+
+                                                      Model 1                                                                   Model 2
+ Predictors                 Estimates (βi)                   CI                      p                Estimates (βi)                  CI                     p
+ (Intercept)                     2.87                   0.29 to 5.44              0.030                    3.45                  1.45 to 5.44              0.001
+ vol.cycle                      10.18                  8.40 to 11.97              <0.001                  10.52                 8.83 to 12.21              <0.001
+ yard.dist                      −0.04                 −0.05 to −0.02              <0.001                  −0.04                −0.05 to −0.02              <0.001
+ extr.meth (TL)                  0.20                  −2.61 to 3.00               0.888
+ extr.meth (WT)                  1.51                  −0.73 to 3.74               0.183
+ Observations                                             63                                                                      63
+ R2/R2 adjusted                                      0.734/0.716                                                              0.725/0.715
+ AIC                                                   353.086                                                                  351.329
+
+
+
+definitions should be considered when conducting a time                            to productivity, also for efficiency (e.g. PSH15/m3ub) the indi­
+study on cable yarding operations.                                                 cators are valuable.
+   Alongside break point definition, the aggregation of cycle                         The usage of PSH instead of PMH in yarding operations
+elements is also relevant in regard to comparability. As                           should be considered. Heinimann (2021) argued that also in
+described, in several studies the cycle elements were aggregated                   cases were only one machine is observed, the observational
+in various configurations. This affects the resolution of the                      unit is a system consisting of the utilized machine and its
+study and is a further aspect to be considered when comparing                      operator. In the case of yarding operations, the system consists
+results of various studies.                                                        of the yarder – including operator – and the choker setters.
+   The heterogeneity in cycle time element nomenclature is                         Most of the observed operations from the literature reviewed
+less problematic for comparability. It is not relevant, whether                    employ a crew of four workers (mean = 3.7, range: 2 to 8), that
+the movement of the load toward the cable line is referred to as                   supports this approach since every one of them is a perfor­
+“lateral in” or “mainline in.” This variation in nomenclature                      mance-influencing element of the investigated system.
+accrues from the attempt to describe the investigated system                          For time as input or output, the problem of unit selection
+correctly. The term “mainline out” is specific for yarding sys­                    does not arise, since time is always measured in seconds,
+tems which spool out the mainline for load attachment and                          minutes, hours, etc. in forest work studies and conversion is
+does not describe a system in which a carriage is carrying a                       simple. However, the usage of centi-minutes has benefits and
+hoist rope on an extra drum. It can be argued that the term                        can be recommended, since it is easier to imagine the extent of
+“lateral out or in“ is including those configurations as well,                     e.g. 3.41 min than the extent of 205 s.
+since it describes the direction of the movement, lateral to the                      The usage of any other than the metric system in load
+yarding direction. Still, living skyline systems are excluded, in                  quantification (Huyler and LeDoux 1997; Largo 2004; Hartley
+which the load is not moved laterally to the cable corridor, but                   and Han 2007) should be avoided, to allow the work to be put
+tangentially toward the yarder (Talbot et al. 2013).                               into context internationally. It needs to be stressed that the
+Nevertheless, a common understanding can be promoted by                            exact and complete documentation of the recorded data,
+a common language, which underlines the value of Björheden                         including entities, is crucial for comparability and also to
+and Thompson’s (2000) effort to harmonize nomenclature and                         meet scientific standards since reproducibility is a key require­
+allows for the suggestion to use the most inclusive                                ment (Heinimann 2021). Currently, a comprehensive protocol
+nomenclature.                                                                      providing support to researchers for how the data should be
+                                                                                   presented does not exist. From the authors' experience data
+                                                                                   might have been collected and sits on the media, but during
+Quantification of performance                                                      writing of the reports and publications the reporting of basic
+To provide the best possible information on the evaluated                          figures often gets lost due to the complexity of productivity
+performance, it is necessary to provide the productivity in a                      studies and the specific research questions one tries to answer.
+specific format, e.g. m3ub/PSH15 (volume measured under
+bark, investigation of a system during productive time, short
+                                                                                   Data acquisition
+delays under 15 min included). As presented in Table 2 most of
+the literature reviewed is not providing data in this format.                      The application of action cameras on heavy machinery to
+While the indicator for short delay consideration is presented                     record the working process for later analysis on screen was
+in most of the productivity models the indicator for bark                          only done by Acuna et al. (2011) regarding the reviewed cable
+consideration is not presented among the models reviewed.                          logging studies. However, it is a successfully used method for
+Among the literature presented on cable yarding performance                        the investigation of fully mechanized extraction systems (e.g.,
+(see Table 1), the indicator is presented rarely (e.g., Schweier                   Niemistö et al. 2012; Holzleitner et al. 2018, 2019; Holzleitner
+and Ludowicy 2020). In the section “Quantitative meta-data                         and Kanzian 2022) where all relevant work steps can be
+analysis” all productivity information is presented as m3/PSH15                    observed by one camera. The application in cable yarding
+regardless of the original declaration from the source. Analog                     studies may not be as beneficial since single work elements
+                                                                                INTERNATIONAL JOURNAL OF FOREST ENGINEERING        249
+
+
+are carried out in different locations and one single camera         Selection of independent variables
+cannot film all relevant processes. Nevertheless, further evalua­
+                                                                     The selection of the tested independent variables is, along with
+tion of this possible application should be considered. A con­
+                                                                     practicability considerations regarding data acquisition, also
+figuration with multiple cameras with synchronized clocks
+                                                                     driven by “forest common sense” like the piece-volume prin­
+could deliver valuable insights, especially if one camera is
+                                                                     ciple and experience of researchers. For instance, Lee and Lee
+installed in the carriage, facing downward to record the activ­
+                                                                     (2021) follow Schweier and Ludowicy (2020) and Baek et al.
+ities in the stand.
+                                                                     (2020) with the selection of predictors. For specific research
+    The recording of the span length instead of the average
+                                                                     questions concerning the influence of factors like radio-con­
+yarding distance occurs primarily in SL studies (Erber et al.
+                                                                     trolled chokers (Leitner 2009; Stampfer et al. 2010) or motor­
+2017; Evanson et al. 2017), which seems to be conclusive con­
+                                                                     ized carriages (Spinelli et al. 2017a), specific dummy variables
+sidering the absence of research personnel during the opera­
+                                                                     were introduced.
+tion. The span length is one record per installed line, while the
+average yarding distance is obtained from records taken in
+cycle frequency. That could be considered too much of an effort
+                                                                     Limitations of comparability
+by the person who is responsible for data recording and could
+be a source of errors. This is one of the factors that define the    As already stated, the quantitative comparison of the evaluated
+differences in resolution between SL and CL, or even EL stu­         performance from different sources is limited. Different yard­
+dies. However, the usage of data loggers tracking the carriage       ing conditions result in different effective factors. Moreover,
+position and movements (Gallo et al. 2013, 2021; Pierzchała et       factors with great influence on one investigated system may be
+al. 2018), multiple cameras, and CAN-Bus (Central Area               not present, or at least not significantly influencing the perfor­
+Network) loggers (Varch et al. 2022) might be further exploited      mance in another system.
+in the future. These technologies might reduce manual field             An example of that is the residual vegetation that may
+work for researchers. The downside will be the complexity and        influence the performance during the cycle elements “main­
+costs added in study preparation, and moreover in post-pro­          line in” or “lateral in.” In a study where a clearcut operation
+cessing of all data streams collected to get meaningful results.     is observed, there will not be any residual stand left that
+Beside costs and complexity Pierzchała et al. (2018) could           could affect performance but eventually there are big rocks
+determine 78% of the cycle elements correctly for cable yarding      lying around which increase terrain ruggedness and cause a
+operations. Gallo et al. (2021) were able to identify 97.6% of the   similar effect. In the first case the ruggedness can be quanti­
+defined cycle elements using GNSS records, processed with            fied on a cardinal scale by reporting the harvesting intensity.
+self-developed algorithms. Pan et al. (2022) could classify 94%      In the second case the quantification can only be addressed
+of the work elements within feller-buncher operations with a         categorially on an ordinal scale.7 This can of course produce
+low cost camera. These promising results illustrate the potential    valuable input information for an experiment but cannot be
+of digital time assessment methods.                                  translated into a meta-context since most other studies do
+    The altering approaches in payload size quantification           not provide this information. Those providing it were prob­
+probably accrue from operation-specific considerations. Due          ably conducted by a different author team with another
+to safety concerns, it is not recommended to measure the             subjective evaluation and categorization of the terrain rug­
+processed logs in the landing area of an integrated yarding          gedness caused by rocks.
+system, where a boom with an attached processor is operat­              Another factor that cannot be compared between studies is
+ing. The quantification method must be fitted to the condi­          human labor. There are studies that investigate the training
+tions of the single work investigation. This results in a            effect (Ottaviani Aalmo and Talbot 2014) or crew effect
+variety of different payload size information formats.               (Hoffmann et al. 2016a), which provide data on these factors'
+Nevertheless, with respect to performance comparability              influence on performance, but the comparability to results
+this would be less of a problem, if a method description             from other studies is not given, since experience of employed
+allows for reproducibility under consideration of the rela­          workers as well as their motivation are hard – or even impos­
+tionship between piece volume, piece count and cycle                 sible to quantify.
+volume as described in the section “Quantitative meta-data              The weather probably has a significant effect on perfor­
+analysis.” Compared to automatic timing of work cycle ele­           mance in cable yarding operations, which is not displayed
+ments, the automation of payload size measurement has not            in the frame of the present work. It is very likely that heavy
+been covered by the literature the authors are aware of.             rain and wet conditions in the stand will decrease perfor­
+However, to successfully carry out sensor-based productivity         mance, since the choker setter’s movement will be more
+studies both timing and payload measurement must be done             cautious and consequently slower. Furthermore, the work­
+simultaneously. For integrated systems having the cable              ers' motivation may be lower under rainy work conditions.
+yarder and processor on the same platform, researchers               Applicable data was not found in an extent that allows
+could probably extract volumes from the processor’s proto­           further analysis. Most of the sources reviewed do not pro­
+col and link it to the corresponding time records of the             vide detailed information on weather conditions. A possible
+yarder. However, for other systems accurate automatic                explanation could be that work measurement is mostly
+volume and payload measurements which can be linked to               conducted under good weather conditions, which seems to
+individual work cycles might not be possible in the near             be conclusive since safety could decrease under bad weather
+future, respectively.                                                conditions for research personnel.
+250          S. BÖHM AND C. KANZIAN
+
+
+Discussion of the results from the meta-analysis                                 3. PSH (productive system hour) expresses that the output is related
+                                                                                    to the productive time of the whole yarding system instead of the
+The quantitative analysis of the gathered data may provide                          machine only.
+meaningful information for many other researchers, especially                    4. This does not include significance levels for specific predictors as
+for modeling studies or other kind of simulation and predic­                        presented in several models e.g. Erber et al. (2017).
+tion modeling purposes. Main principles found in individual                      5. Since the performance is not directly influenced by qualitative
+                                                                                    criteria of expanded energy and produced emissions and their
+studies regarding the impact of different influencing factors,                      quantity is not a limiting factor in the yarding cycle, they are not
+can be proven even in a highly aggregated manner like the                           considered in the present work.
+underlying meta-dataset. To our knowledge this is one of the                     6. ub: under bark; bark volume is not considered. ob: over bark; bark
+rare attempts to do a meta-data analysis extracted from pub­                        volume is considered.
+lished research studies in the field of cable yarding operations.                7. Without exceeding effort
+                                                                                 8. Probably means continuous timing
+Surprinsigly a relative high correlation between productivity,                   9. Data from Limbeck-Lilienau (2002) and Stampfer et al. (2003).
+cycle volume, and yarding distance were observed with the                       10. Probably means n.cycle.
+heterogenety of the dataset in mind.                                            11. Delay free cycle time was measured and an overall delay factor
+    However, due to the small sample size within the meta-                          according to Spinelli and Visser (2008) was applied.
+dataset this result must be considered as a trend. Although,
+additional variables could be extracted from many sources
+                                                                              Disclosure statement
+used. By far not all data has been explored in depth. Judging
+from the existing information, further investigation may deliver              No potential conflict of interest was reported by the authors.
+valuable deeper insights, but was out of the scope of this article.
+                                                                              ORCID
+Conclusions                                                                   Stephan Böhm      http://orcid.org/0000-0001-7803-6618
+                                                                              Christian Kanzian    http://orcid.org/0000-0002-1198-9788
+A collection of cable yarding specific performance studies is
+presented that gives an insight on the scientific appraisal of this
+topic. The review of a selection of statistical models presented              References
+allows for insights on the influencing factors. The comparative               Abeyratne H. 2021. Productivity potential of the harvestline cable yarder:
+view on cable yarding productivity is underlying many limita­                    results of three case studies. New Zealand; [accessed 2022 Sep 14].
+tions with respect to the reasons presented. The diversity in                    https://forestengineering.org/wp-content/uploads/2021/11/
+problem formulation and the corresponding diversity in meth­                     HarvestLine-Yarder-Study-Hus-Abeyratne-ENFO-2021-1.pdf.
+                                                                              Acar HH. 1994. Transport plans in forestry and preparation of forest
+odical approaches account for these limitations. With great                      transport plans for mountain regions [Doctorate thesis]. Trabzon:
+care and attention to details of the single work studies, a                      KTU, Faculty of Forestry.
+quantitative meta-analysis was performed and yields at least a                Ackerman P, Belbo H, Eliasson L, de Jong A, Lazdiņš A, Lyons J. 2014a.
+few results that were expected to be displayed. It would be                      The COST model for calculation of forest operations cost. Int J For
+beneficial for comparability of yarding operations to consider                   Eng. 25. doi:10.1080/14942119.2014.903711.
+                                                                              Ackerman P, Gleasure E, Ackerman S, Shuttleworth B. 2014b. Standards
+the principles that are already presented in the guiding litera­                 for time studies for the South African forest industry. South Africa:
+ture. A bigger collection of complete datasets would result in                   ICFR/FESA.
+more coherence that could be displayed from a statistical meta-               Acuna M, Skinnell J, Evanson T, Mitchell R. 2011. Bunching with a self-
+analysis. Advances in sensor, data logger, and data-processing                   levelling Feller-Buncher on steep terrain for efficient yarder extraction.
+technologies allow us to automate productivity studies to some                   Croat J For Eng. 32.
+                                                                              Aruga K, Yamada T and Yamamoto T. (2019). Comparative Analyses of
+extent as recent publications demonstrate, but at the time of                    the Cycle Time, Productivity, and Cost Between 62- and 107-Year-Old
+writing this article these technologies cannot replace field work                Japanese Cypress Clear-Cutting Operations Using a Small-Scale Cable
+for researchers. We hope that this review may support                            Logging System. Small-scale Forestry, 18(2): 279–289. doi:10.1007/
+researchers in their individual preparation of cable yarding                     s11842-018-9412-7
+performance studies and provide insights into research activ­                 Baek S-A, Cho K-H, Lee E. 2020. Performance comparison for two cable
+                                                                                 extraction machines in a Larix kaempferi (Lamb.) Carr. Plantation.
+ities done in the field of forest engineering to researchers from                Sustainability. 12. doi:10.3390/su12218864.
+other forest science disciplines.                                             Baldini S, Calvani P, Picchio R. 2003. Winch use in work with extralight
+                                                                                 cable systems in South-Central Italy. Viterbo: Università degli Studi
+                                                                                 della Tuscia, Viterbo, Dipartimento di Scienze Forestali e delle Sue
+Notes                                                                            Risorse.
+                                                                              Bergstrand KG. 1991. Planning and analysis of forestry operation studies.
+      1. Direct evaluation means that the performance is evaluated by one        Skogsarbeten Bull. 17.
+         statistical model for the whole yarding cycle. Models that are an    Björheden R, Thompson MA. 2000. An international nomenclature for
+         aggregation of sub models, e.g. Huber and Stampfer (2015) are not       forest work study. Field DB, editor. Proceedings of IUFRO 1995 S3.04
+         considered in this list.                                                Subject Area: 20th World Congress 6-12 August 1995 Tampere,
+      2. PMH (productive machine hour) is provided in most of the litera­        Finland, Orono, Maine: University of Maine. 190–215. https://www.
+         ture reviewed. However, there are differences regarding the inclu­      fs.usda.gov/treesearch/pubs/15500
+         sion of short delays. PMH15 indicates that delays shorter than       BMLRT. 2022. Holzeinschlagsmeldung über das Kalenderjahr 2021.
+         15 min were not recorded as delay and therefore count as produc­        [Austrian Timber Harvesting Statistics 2021] [Online]. Vienna
+         tive work time. PMH0 indicates that every delay, noticed by the         (Austria):Federal Ministry of Agriculture, Regions and Tourism.
+         researcher was timed as delay.                                          German.
+                                                                                           INTERNATIONAL JOURNAL OF FOREST ENGINEERING                 251
+
+
+Brinker RW, Kinard J, Rummer B, Lanford B. 2002. Machine rates for             Gallo R, Grigolato S, Cavalli R, Mazzetto F. 2013. GNSS-based operational
+   selected forest harvesting machines. Circular. 29.                             monitoring devices for forest logging operation chains. J Agric Eng. 44.
+Cadei A, Mologni O, Marchi L, Sforza F, Röser D, Cavalli R, Grigolato S.          doi:10.4081/jae.2013.269.
+   2021. Energy efficiency of a hybrid cable yarding system: a case study in   Gallo R, Visser R, Mazzetto F. 2021. Developing an automated monitoring
+   the North-Eastern Italian Alps under real working conditions. J Agric          system for cable yarding systems. Croat J For Eng (Online). 42:213–
+   Eng. 52. doi:10.4081/jae.2021.1185.                                            225. doi:10.5552/crojfe.2021.768.
+Campbell T, Harrill H, Visser R. 2016. Assessment of the opportunity of        Ghaffariyan MR, Stampfer K, Sessions J. 2009b. Optimal road spacing of
+   modern cable yarders for application in New Zealand. Canterbury:               cable yarding using a tower yarder in Southern Austria. Eur J For Res.
+   New Zealand School of Forestry, University of Canterbury, New                  129:409–416. doi:10.1007/s10342-009-0346-7.
+   Zealand.                                                                    Ghaffariyan MR, Stampfer K, Sessions J. 2009a. Production equations for
+Cavalli R. 2012. Prospects of research on cable logging in forest engineer­       tower yarders in Austria. Int J For Eng. 20:17–21. doi:10.1080/
+   ing community. Croat J For Eng. 33:339–356.                                    14942119.2009.10702571.
+Cavalli R, Lubello D 2006. Firewood cable yarding on steep terrain in          Ghaffariyan MR, Stampfer K, Sessions J, Durston T, Kühmaier M,
+   alpine conditions: In: Proceedings of FORMEC Conference, Sept 24–              Kanzian C. 2010. Road network optimization using heuristic and linear
+   28. Sofia, Bulgaria.                                                           programming. J For Sci. 56:137–145. doi:10.17221/12/2009-JFS.
+Cho K-H, Cho M-J, Han H-S, Cha D-S. 2015. Harvesting cost of tree-             Han S-K, Han H-S. 2020. Productivity and cost of whole-tree and tree-
+   length thinning in a Larix leptolepis stands. J Korean For Soc. 104:221–       length harvesting in fuel reduction thinning treatments using cable
+   229. doi:10.14578/jkfs.2015.104.2.221.                                         yarding systems. Forest Sci Technol. 16:41–48. doi:10.1080/21580103.
+Cho M-J, Cho K, Choi B, Cha D. 2018. Yarding productivity of tree-length          2020.1712264.
+   harvesting using a small cable-yarder in steep slope, South Korea.          Harrill H, Visser R, Raymond K. 2019. New Zealand cable logging 2008–
+   Forest Sci Technol. 14:1–6. doi:10.1080/21580103.2018.1478887.                 2018: a period of change. Curr Forestry Rep. 5:114–123. doi:10.1007/
+Cho M-J, Cho K, Jeong E, Lee J, Choi B, Han S, Cha D. 2016a. Harvesting           s40725-019-00092-5.
+   cost and productive of tree-length thinning in a pinus densiflora stand     Hartley D, Han H-S. 2007. Effects of alternative silvicultural treatments on
+   using the tower yarder (HAM300). J for Environ Sci. 32:189–195.                cable harvesting productivity and cost in Western Washington. West J
+   doi:10.7747/JFES.2016.32.2.189.                                                Appl For. 22:204–212. doi:10.1093/wjaf/22.3.204.
+Cho M-J, Choi Y, Mun H-S, Lee C-G, Lee E-J, Jung E-J, J-H O, Kim D-H,          Haynes H, Visser R. 2001. Productivity Improvements through profes­
+   Cha D-S. 2016b. Productivity and costs of felling operation for three          sional training in appalachian cable logging operations.
+   harvesting methods in mixed forest stands. 441–448.                         Heinimann H 2021. Operational productivity studies in forestry based on
+Cho M-J, Choi Y, Paik S-H, Mun H-S, Cha D-S, J-H O. 2019. Comparison              statistical models - A tutorial. Zürich: ETH Forest Engineering
+   of productivity and cost between two integrated harvesting systems in          Research Paper. 56p.
+   South Korea. Forests. 10(9): 763. doi: 10.3390/f10090763.                   Heinimann H, Stampfer K, Loschek J, Caminada L 2001. Perspectives on
+Choi Y, Cho M-J, Mun H-S, Kim D-H, Cha D-S, Oh J-H. 2018. Analysis                Central European cable yarding systems. 123.
+   on yarding productivity and cost of tower-yarder based on excavator         Hoffmann S, Jaeger D, Lingenfelder M, Schoenherr S. 2016a. Analyzing
+   using radio-controlled double clamp carriage. Biosensors &                     the efficiency of a start-up cable yarding crew in Southern China under
+   Bioelectronics. 107:266–277. doi:10.14578/jkfs.2018.107.3.266. Korean.         new forest management perspectives. Forests. 7:188. doi:10.3390/
+Chung W, Morrissette B, Green P, Garrelts B, Leshchinsky B, Belart F,             f7090188.
+   Sessions J, Wimer J, Garland J. 2022. Effects of pre-bunching trees with    Hoffmann S, Jaeger D, Schoenherr S, Lingenfelder M, Sun D, Zeng J.
+   a tethered feller-buncher on cable logging productivity and costs: a case      2016b. The effect of forest management systems on productivity and
+   study in Southern Oregon. For Sci. 68:325–333. doi:10.1093/forsci/             costs of cable yarding operations in southern China. Forestry Letters.
+   fxac008.                                                                       109:11–24.
+Daxner P 1998. Produktivität des selbstfahrenden Laufwagens                    Hoffmann S, Jaeger D, Schoenherr S, Talbot B. 2015. Challenges in
+   “WOODLINER”: [Productivity of the Self-Propelled Carriage                      mechanization efforts of small diameter eucalyptus harvesting opera­
+   “WOODLINER” [Master Thesis]. Vienna (Austria): University of                   tions with a low capacity running skyline yarder in Southern China.
+   Natural Resources and Life Sciences, Vienna. German.                           Forests. 6:2959–2981. doi:10.3390/f6092959.
+Devlin G, Klvac R. 2014. How technology can improve the efficiency of          Holzfeind T, Kanzian C, Gronalt M. 2021. Challenging agent-based simu­
+   excavator-based cable harvesting for potential biomass extraction—A            lation for forest operations to optimize the European cable yarding and
+   woody productivity resource and cost analysis for Ireland. Energies.           transport supply chain. Int J For Eng. 32:77–90. doi:10.1080/14942119.
+   7:8374–8395. doi:10.3390/en7128374.                                            2021.1850074.
+Eker M, Acar H, Karaman A, Çağlar S. 2001. An investigation on gantner         Holzleitner F, Kanzian C. 2022. Integrated in-stand debarking with a
+   skyline using for timber extraction in Turkish forestry. 1:121–128.            harvester in cut-to-length operations – processing and extraction per­
+Enache A, Kühmaier M, Visser R, Stampfer K. 2016. Forestry operations             formance assessment. Int J For Eng. 33:66–79. doi:10.1080/14942119.
+   in the European mountains: a study of current practices and efficiency         2021.2013049.
+   gaps. Scand J For Res. 31:412–427. doi:10.1080/02827581.2015.               Holzleitner F, Kastner M, Stampfer K, Höller N, Kanzian C. 2018.
+   1130849.                                                                       Monitoring cable tensile forces of winch-assist harvester and for­
+Engelbrecht R, Mcewan A, Spinelli R. 2017. A robust productivity model            warder operations in steep terrain. Forests. 9:53. doi:10.3390/
+   for grapple yarding in fast-growing tree plantations. Forests. 8:396.          f9020053.
+   doi:10.3390/f8100396.                                                       Holzleitner F, Langmaier M, Hochbichler E, Obermayer B, Stampfer K,
+Erber G, Haberl A, Pentek T, Stampfer K. 2017. Impact of operational              Kanzian C. 2019. Effect of prior tree marking, thinning method and
+   parameters on the productivity of whole tree cable yarding – a statis­         topping diameter on harvester performance in a first thinning opera­
+   tical analysis based on operation data. Austrian J For Sci. 134:1–18.          tion – a field experiment. Silva Fenn. 53. doi:10.14214/sf.10178.
+Eroğlu H, Özkaya M, Acar H, Karaman A, Yolasığmaz H. 2009. An                  Huber C, Stampfer K. 2015. Efficiency of topping trees in cable yarding
+   investigation on roundwood extraction of Fagus orientalis lipsky,              operations. Croat J For Eng. 36:185–194.
+   Abies nordmanniana (Stew.) Spach. and Picea orientalis (L.) Link. by        Huyler NK, LeDoux CB. 1997. Cycle-time equation for the Koller K300
+   Urus M III forest skyline on snow. Afr J Biotechnol.                           cable yarder operating on steep slopes in the Northeast. St. Paul (MN):
+Evanson T, Hill S, Thorton C, Visser R. 2017. Productivity of the Koller          U.S. Department of Agriculture, Forest Service, North Central
+   K602H yarder in radiata pine. Rototua, New Zealand: Forest Growers             Research Station. doi: 10.2737/2Fne-rp-705.
+   Research.                                                                   Jeong E, Cho K, Cho M, Choi B, Cha D. 2017. Productivity and cost of
+FAO. 1992. Cost control in forest harvesting and road construction.               tree-length harvesting using cable yarding system in a Larch (Larix
+   Rome: Food and Agricultural Organization of the United Nations.                leptolepis) clear-cutting stand. J for Environ Sci. 33:147–153. EN.
+   106. (FAO forestry paper; vol. 99).                                            doi:10.7747/JFES.2017.33.2.147.
+252        S. BÖHM AND C. KANZIAN
+
+
+Kanawaty G, editor. 1992. Introduction to work study. 4th (rev.). Geneva:     Picchio R, Venanzi R, Di Marzio N, Tocci D, Tavankar F. 2020. A
+   International Labour Office. 524.                                             comparative analysis of two cable yarder technologies performing
+Largo S 2004. Productivity and cost evaluation for non-guyline yarders in        thinning operations on a 33 year old pine plantation: a potential source
+   Northern Idaho. 2004 Council on Forest Engineering (COFE)                     of wood for energy. Energies. 13:5376. doi:10.3390/en13205376.
+   Conference Proceedings: “Machines and People, The Interface.” Apr          Pierzchała M 2010. Development of a productivity model for long distance
+   27–30 Hot Springs (AR)                                                        cable yarding [Master Thesis]. Vienna (Austria): University of Natural
+Lee E, Im S, Han S-K. 2018. Productivity and cost of a small-scale cable         Resources and Life Sciences, Vienna.
+   yarder in an uphill and downhill area: a case study in South Korea.        Pierzchała M, Kvaal K, Stampfer K, Talbot B. 2018. Automatic recognition
+   Forest Sci Technol. 14:1–7. doi:10.1080/21580103.2017.1409662.                of work phases in cable yarding supported by sensor fusion. Int J For
+Lee S-J, Lee E. 2021. Salvage cable yarding operations productivity of           Eng. 29:12–20. doi:10.1080/14942119.2017.1373502.
+   pinewood nematode infected Pinus trees in South Korea. Int J For           Proto AR, Skoupy A, Macri G, Zimbaletti G. 2016. Time consumption and
+   Eng. 1–9. doi:10.1080/14942119.2021.1903776.                                  productivity of a medium size mobile tower yarder in downhill and
+Leitner T 2009. Funkchoker bei der Seilrückung - Effizinzanalyse und             uphill configurations: a case study in Czech Republic. J Agric Eng.
+   ergonomische Beurteilung: [Radio Controlled Choker in Cable Yarding           47:216–221. doi:10.4081/jae.2016.551.
+   Operations - Efficiency Analysis and Ergonomic Assessment] [Master         Proto AR, Zimbaletti G. 2015. Firewood cable extraction in the southern
+   Thesis]. Vienna (Austria): University of Natural Resources and Life           Mediterranean area of Italy. For Sci. 12. doi:10.1080/21580103.2015.
+   Sciences, Vienna. German.                                                     1018961.
+Limbeck-Lilienau B 2002. Hochmechanisierte Holzernte mit schräger             Purfürst T. 2010. Learning curves of harvester operators. Croat J For Eng
+   Seiltrasse: [Highly Mechanized Diagonal Cable Corridor Harvesting]            (Online). 32.
+   [Master Thesis]. Vienna (Austria): University of Natural Resources and     R Core Team. 2022. R: a language and environment for statistical comput­
+   Life Sciences, Vienna. German.                                                ing. R foundation for statistical computing. Vienna (Austria): R
+Lindroos O, Cavalli R. 2016. Cable yarding productivity models: a sys­           Foundation for Statistical Computing. Accessed 14 August 2022.
+   tematic review over the period 2000–2011. Int J For Eng. 27:1–16.             https://www.r-project.org/.
+   doi:10.1080/14942119.2016.1198633.                                         Renzie C, Han H-S 2001. An operational comparison of partial cut and
+Macri G, Russo D, Luzzi G, Rossi A. 2016. An investigation in roundwood          clearcut harvesting methods in Old CedarHemlock forests in Central
+   extraction of Fagus sylvatica and Calabrian Pine by Greifenberg TG700.        British Columbia. 2001 Council on Forest Engineering (COFE)
+   Contemp Eng Sci. 9:1085–1094. doi:10.12988/ces.2016.68131.                    Conference Proceedings: “Appalachian Hardwoods: managing
+Magagnotti N, Spinelli R, Acuna M, Bigot M, Guerra S, Hartsough B,               Change.”
+   Kanzian C, Kärhä K, Lindroos O, Roux S, et al. 2012. Good practice         Renzie C, Han H-S. 2008. Harvesting productivity and cost of clearcut and
+   guidelines for biomass production studies, COST action FP-0902, WG            partial cut in interior British Columbia, Canada. J for Environ Sci.
+   2 Operations research and measurement methodologies. Bioresource              24:1–14.
+   Technology. 128:697–702. doi:10.1016/j.biortech.2012.10.149.               Schauberger P, Walker A 2021. openxlsx: read, write and edit xlsx files: r
+Miyata ES 1980. Determining fixed and operational costs of logging               package version 4.2.5 Accessed 14 August 2022. https://cran.r-project.
+   equipment. USDA forest service. General Technical Report.                     org/package=openxlsx.
+Munteanu C, Ignea G, Akay A, Borz S. 2017. Yarding pre-bunched stems          Schweier J, Klein M-L, Kirsten H, Jaeger D, Brieger F, Sauter UH. 2020.
+   in thinning operations: estimates on time consumption. Bull                   Productivity and cost analysis of tower yarder systems using the Koller
+   Transilvania Univ Brasov, Series II: Forestry, Wood Industry, Agric           507 and the Valentini 400 in southwest Germany. Int J For Eng. 1–12.
+   Food Eng. 10:1–2017.                                                          doi:10.1080/14942119.2020.1761746.
+Munteanu C, Yoshida M, Iordache E, Borz S, Ignea G. 2019. Performance         Schweier J, Ludowicy C. 2020. Comparison of a cable-based and a ground-
+   and cost of downhill cable yarding operations in a group shelterwood          based system in flat and soil-sensitive area: a case study from Southern
+   system. J For Res. 24. doi:10.1080/13416979.2019.1603577.                     Baden in Germany. Forests. 11:611. doi:10.3390/f11060611.
+Nemestothy N. 2014. Kosten und Nutzen einer zeitgerechten                     Senturk N, Tolga O, Demir M. 2007. Productivity and costs in the course
+   Durchforstung: [Cost and Benefits of Timely Thinning Operations].             of timber transportation with the Koller K300 cable system in Turkey.
+   Wien: BFW-Praxisinformation. German.                                          Build Environ. 42:2107–2113. doi:10.1016/j.buildenv.2006.03.005.
+Niemistö P, Korpunen H, Laurén A, Salomäki M, Uusitalo J. 2012. Impact        Shepherd D, Visser R 2021. Koller 602h productivity study: Coront forest,
+   and productivity of harvesting while retaining young understorey              Arrowtown, New Zealand [Draft Report].
+   spruces in final cutting of downy birch (Betula pubescens). Silva          Shoshyn A, Protas P, Štollmann V. 2022. New technological solutions for
+   Fenn. 46. doi:10.14214/sf.67.                                                 waterlogged forests by cable yarding. J For Sci. 68:46–60. doi:10.17221/
+Olsen ED, Hossain MM, Miller ME, Oregon State University. Forest                 94/2021-JFS.
+   Research Laboratory. 1998. Statistical comparison of methods used in       Snyder H. 2019. Literature review as a research methodology: an overview
+   harvesting work studies. Corvallis (Or.): College of Forestry, Forest         and guidelines. J Bus Res. 104:333–339. https://www.sciencedirect.
+   Research Laboratory, Oregon State University. http://id.loc.gov/vocabu        com/science/article/pii/S0148296319304564
+   lary/iso639-2/eng; [accessed 2022 Jul 28].                                 Spinelli R, Magagnotti N, Cosola G, Labelle ER, Visser R, Erber G. 2021.
+Ottaviani Aalmo G, Talbot B. 2014. Operator performance improvement              The Effect of Yarding Technique on Yarding Productivity and Cost.
+   through training in a controlled cable yarding study. Int J For Eng. 25.      Croat J For Eng (Online). 42:369–380. doi:10.5552/crojfe.2021.886.
+   doi:10.1080/14942119.2014.904150.                                          Spinelli R, Magagnotti N, Facchinetti D. 2013. Logging companies in the
+Ozturk T. 2009. Productivity of timber extraction by Urus MIII cable             European mountains: an example from the Italian Alps. Int J For Eng.
+   crane from selective spruce forests. Afr J Agric Res. 4.                      24:109–120. doi:10.1080/14942119.2013.838376.
+Ozturk T, Aykut T. 2003. Time analysis on Koller K300 cable system on         Spinelli R, Magagnotti N, Lombardini C. 2009. Performance, capability
+   difficult terrain in Turkey.                                                  and costs of small-scale cable yarding technology. Small-scale For.
+Ozturk T, Demir M. 2007. Transporting of spruce timbers by URUS MIII             9:123–135. doi:10.1007/s11842-009-9106-2.
+   cable system from selective forests of Artvin region. Build Environ.       Spinelli R, Magagnotti N, Visser R. 2015. Productivity models for cable
+   42:1278–1282. doi:10.1016/j.buildenv.2005.12.001.                             yarding in Alpine forests. Eur J For Eng. 1:9–14.
+Ozturk T, Senturk N. 2006. Extraction of spruce timber by Gantner cable       Spinelli R, Marchi E, Visser R, Harrill H, Gallo R, Cambi M, Neri F,
+   crane from selective forests of Artvin region. Croat J For Eng. 27.           Lombardini C, Magagnotti N. 2017a. The effect of carriage type on
+Ozturk T, Senturk N. 2016. Productivity and costs of timber extraction by        yarding productivity and cost. Int J For Eng. 28. doi:10.1080/14942119.
+   urus miii skyline yarder in Northeast Turkey. 630:11–12.                      2016.1267970.
+Pan P, McDonald T, Smidt M, Dias R. 2022. Use of vision and sound to          Spinelli R, Visser R. 2008. Analyzing and estimating delays in harvester
+   classify feller-buncher operational state. Int J For Eng. 33:129–138.         operations. Int J For Eng. 19:36–41. doi:10.1080/14942119.2008.
+   doi:10.1080/14942119.2022.2037927.                                            10702558.
+                                                                                         INTERNATIONAL JOURNAL OF FOREST ENGINEERING               253
+
+
+Spinelli R, Visser R, Magagnotti N, Lombardini C. 2020. The effect of        Tunay M, Melemez K 2003. Work performance of Koller K300 cable
+   partial automation on the productivity and cost of a mobile tower            system on difficult terrain in Turkey: In: Workshop Proceedings
+   yarder. AFR. 63:3–14. doi:10.15287/afr.2020.1883.                            “New Trends in Wood Harvesting with Cable Systems for Sustainable
+Spinelli R, Visser R, Riond C, Magagnotti N. 2017b. A survey of logging         Forest Management in theMountains,” Ossiach, Austria, 18–24 June,
+   contract rates in the Southern European Alps. Small-scale For. 16:179–       pp 113–120.
+   193. doi:10.1007/s11842-016-9350-1.                                       Varch T, Erber G, Spinelli R, Magagnotti N, Stampfer K. 2020.
+Stampfer K, Leitner T, Visser R. 2010. Efficiency and ergonomic benefits        Productivity, fuel consumption and cost in whole tree cable yarding:
+   of using radio controlled chokers in cable yarding. Croat J for Eng          conventional diesel carriage versus electrical energy-recuperating car­
+   (Crojfe@sumfak Hr). 31:No.1. 31.                                             riage. Int J For Eng. 1–11. doi:10.1080/14942119.2020.1848178.
+Stampfer K, Limbeck-Lilienau B, Kanzian C, Klaus V. 2003.                    Varch T, Malle D, Erber G, Gollob C, Spinelli R, Holzinger A, Stampfer K
+   Baumverfahren im Seilgelände: [Full Tree Extraction in Steep                 2022. Automated cycle time determination from machine sensor data.:
+   Terrain]. Vienna (Austria): FPP-Koorperationsabkommen Forst-                 In: Chung W, Kanzian C, McNeary P, editors. Proceedings of The Joint
+   Platte-Papier. German.                                                       44th Annual Meeting of Council on Forest Mechanization (FORMEC),
+Stoilov S 2019. Tower yarder work time and productivity study in                and 2022 IUFRO All-Division 3 Meeting. Oct 04-07; Corvallis, Oregon,
+   Rhodope Mountains. Proceedings of the Biennial International                 USA. COFE and FORMEC.
+   Symposium ”Forest and Sustainable Development” 25th -27th                 Visser R, Harrill H. 2017. Cable yarding in North America and New
+   October Brașov, Romania.                                                     Zealand: a review of developments and practices. Croat J For Eng: J
+Stoilov S. 2021. Productivity and costs of cable yarding in group shelter­      Theory Appl For Eng. 38:209–217.
+   wood system in deciduous forests. 331–342.                                Wassermann C 2018. Mastseilgeräte für die Holzernte: Eine Analyse des
+Stoilov S, Proto AR, Angelov G, Papandrea SF, Borz SA. 2021. Evaluation         europäischen Herstellerangebotes: [Tower Yarders for Timber
+   of salvage logging productivity and costs in the Sensitive Forests of        Harvesting: An Analysis of European Manufacturers’ Offer] [Master
+   Bulgaria. Forests. 12:309. doi:10.3390/f12030309.                            Thesis]. Vienna Austria: University of Natural Resources and Life
+Talbot B, Ottaviani Aalmo G, Stampfer K. 2013. Productivity analysis of         Sciences, Vienna. German.
+   an un-guyed integrated yarder-processor with running skyline. Croat J     Wickham H. 2016. ggplot2: elegant graphics for data analysis. Second.
+   For Eng. 35:201–210.                                                         Sievert C, translator. Switzerland: Springer. 260. (Use R!).
+Talbot B, Ottaviani Aalmo G, Stampfer K. 2014. Productivity analysis of      Wickham H, Bryan J 2022. readxl: read excel files: r package version 1.4.0
+   an un-guyed integrated yarder-processor with running skyline. Croat J        Accessed 14 August 2022. https://cran.r-project.org/package=readxl.
+   For Eng. 35:201–210.                                                      Woo BM, Park JM, Lee JW, Chung N. 1990. A study on economical
+Talbot B, Stampfer K, Visser R. 2015. Machine function integration and          analysis of yarding operation by cable crane. J Korean For Soc.
+   its effect on the performance of a timber yarding and processing          Zimbalatti G, Proto AR. 2009. Cable logging opportunities for firewood in
+   operation. Biosyst Eng. 135:10–20. doi:10.1016/j.biosystemseng.2015.         Calabrian forests. Biosyst Eng. 102:63–68. doi:10.1016/j.biosystemseng.
+   03.013.                                                                      2008.10.008.
+Torgersen H, Lisland T. 2002. Excavator-based cable logging and proces­      Zimbalatti G, Proto AR 2010. Timber extraction with a cable crane in
+   sing system: a Norwegian case study. Int J For Eng. 13:11–16. doi:10.        South Italy (Calabria): In: Proceedings of FORMEC Conference, Jul 11-
+   1080/14942119.2002.10702451.                                                 14. Padova, Italy.
+
