@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import cast
 
 import pandas as pd
 import yaml
@@ -177,7 +178,7 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
         weights = TypeAdapter(ObjectiveWeights).validate_python(meta["objective_weights"])
         scenario = scenario.model_copy(update={"objective_weights": weights})
 
-    _emit_block_range_warnings(blocks_raw, scenario.name)
+    _emit_block_range_warnings(cast(list[dict[str, object]], blocks_raw), scenario.name)
     return scenario
 
 
@@ -190,10 +191,26 @@ def _emit_block_range_warnings(block_rows: list[dict[str, object]], scenario_nam
         slope = row.get("ground_slope") or row.get("slope_percent") or row.get("slope")
         warnings = validate_block_ranges(
             block_id=block_id,
-            stem_size=float(stem_size) if stem_size is not None else None,
-            volume_per_ha=float(volume) if volume is not None else None,
-            stem_density=float(density) if density is not None else None,
-            ground_slope=float(slope) if slope is not None else None,
+            stem_size=_coerce_float(stem_size),
+            volume_per_ha=_coerce_float(volume),
+            stem_density=_coerce_float(density),
+            ground_slope=_coerce_float(slope),
         )
         for msg in warnings:
             print(f"[scenario:{scenario_name}] {msg}")
+
+
+def _coerce_float(value: object | None) -> float | None:
+    if value is None:
+        return None
+    if isinstance(value, int | float):
+        return float(value)
+    if isinstance(value, str):
+        stripped = value.strip()
+        if not stripped:
+            return None
+        try:
+            return float(stripped)
+        except ValueError:
+            return None
+    return None

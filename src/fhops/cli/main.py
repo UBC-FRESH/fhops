@@ -321,7 +321,6 @@ def _collect_tuning_scenarios(
 def validate(scenario: Path):
     """Validate a scenario YAML and print summary."""
     sc = load_scenario(str(scenario))
-    machine_costs = _machine_cost_snapshot(sc)
     pb = Problem.from_scenario(sc)
     t = Table(title=f"Scenario: {sc.name}")
     t.add_column("Entities")
@@ -337,7 +336,6 @@ def validate(scenario: Path):
 def build_mip(scenario: Path):
     """Build the MIP and print basic stats (no solve)."""
     sc = load_scenario(str(scenario))
-    machine_costs = _machine_cost_snapshot(sc)
     pb = Problem.from_scenario(sc)
     try:
         from fhops.model.pyomo_builder import build_model
@@ -371,7 +369,6 @@ def solve_mip_cmd(
         )
 
     sc = load_scenario(str(scenario))
-    machine_costs = _machine_cost_snapshot(sc)
     pb = Problem.from_scenario(sc)
 
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -1140,7 +1137,6 @@ def evaluate(
 ):
     """Evaluate a schedule CSV against the scenario."""
     sc = load_scenario(str(scenario))
-    machine_costs = _machine_cost_snapshot(sc)
     pb = Problem.from_scenario(sc)
     df = pd.read_csv(str(assignments_csv))
     kpis = compute_kpis(pb, df)

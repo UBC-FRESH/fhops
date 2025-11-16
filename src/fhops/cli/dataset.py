@@ -33,6 +33,10 @@ from fhops.productivity import (
     estimate_cable_skidding_productivity_unver_robust_profile,
     estimate_cable_skidding_productivity_unver_spss,
     estimate_cable_skidding_productivity_unver_spss_profile,
+    estimate_cable_yarder_productivity_lee2018_downhill,
+    estimate_cable_yarder_productivity_lee2018_uphill,
+    estimate_cable_yarder_productivity_tr125_multi_span,
+    estimate_cable_yarder_productivity_tr125_single_span,
     estimate_forwarder_productivity_kellogg_bettinger,
     estimate_forwarder_productivity_large_forwarder_thinning,
     estimate_forwarder_productivity_small_forwarder_thinning,
@@ -712,6 +716,10 @@ def estimate_forwarder_productivity_cmd(
             missing.append("--distance-in")
         if missing:
             raise typer.BadParameter(f"{', '.join(missing)} required for Kellogg models.")
+        assert volume_per_load is not None
+        assert distance_out is not None
+        assert travel_in_unit is not None
+        assert distance_in is not None
         load_type = _KELLOGG_MODEL_TO_LOAD[model]
         value = estimate_forwarder_productivity_kellogg_bettinger(
             load_type=load_type,
@@ -906,14 +914,19 @@ def estimate_cost_cmd(
             "Provide either --rental-rate or --machine-role (or use --dataset/--machine)."
         )
 
+    prod_info: dict[str, object]
     if productivity is None:
         required = [avg_stem_size, volume_per_ha, stem_density, ground_slope]
         if any(value is None for value in required):
             raise typer.BadParameter(
                 "Provide either --productivity or all stand metrics (avg stem size, volume/ha, stem density, slope)."
             )
+        assert avg_stem_size is not None
+        assert volume_per_ha is not None
+        assert stem_density is not None
+        assert ground_slope is not None
         if use_rv:
-            cost, prod = estimate_unit_cost_from_distribution(
+            cost, prod_distribution = estimate_unit_cost_from_distribution(
                 rental_rate_smh=rental_rate,
                 utilisation=utilisation,
                 avg_stem_size_mu=avg_stem_size,
@@ -928,15 +941,15 @@ def estimate_cost_cmd(
                 samples=samples,
                 rental_rate_breakdown=rental_breakdown,
             )
-            productivity = prod.expected_m3_per_pmh
+            productivity = prod_distribution.expected_m3_per_pmh
             prod_info = {
-                "method": prod.method,
-                "productivity_mean": prod.expected_m3_per_pmh,
-                "productivity_std": prod.std_m3_per_pmh,
-                "samples": prod.sample_count,
+                "method": prod_distribution.method,
+                "productivity_mean": prod_distribution.expected_m3_per_pmh,
+                "productivity_std": prod_distribution.std_m3_per_pmh,
+                "samples": prod_distribution.sample_count,
             }
         else:
-            cost, prod = estimate_unit_cost_from_stand(
+            cost, prod_point = estimate_unit_cost_from_stand(
                 rental_rate_smh=rental_rate,
                 utilisation=utilisation,
                 avg_stem_size=avg_stem_size,
@@ -948,7 +961,7 @@ def estimate_cost_cmd(
             )
             prod_info = {
                 "method": "deterministic",
-                "productivity_mean": prod.predicted_m3_per_pmh,
+                "productivity_mean": prod_point.predicted_m3_per_pmh,
                 "productivity_std": None,
                 "samples": 0,
             }
@@ -968,10 +981,10 @@ def estimate_cost_cmd(
             "samples": 0,
         }
 
-    rows = []
-    if dataset_name:
+    rows: list[tuple[str, str]] = []
+    if dataset_name is not None:
         rows.append(("Dataset", dataset_name))
-        if dataset_path:
+        if dataset_path is not None:
             rows.append(("Scenario Path", str(dataset_path)))
     if machine_entry is not None:
         rows.extend(
@@ -1011,7 +1024,7 @@ def estimate_cost_cmd(
             ("Utilisation", f"{cost.utilisation:.3f}"),
             ("Productivity (m³/PMH15)", f"{cost.productivity_m3_per_pmh:.2f}"),
             ("Cost ($/m³)", f"{cost.cost_per_m3:.2f}"),
-            ("Productivity Method", prod_info["method"]),
+            ("Productivity Method", str(prod_info["method"])),
         ]
     )
     if prod_info["productivity_std"] is not None:

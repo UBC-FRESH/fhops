@@ -51,7 +51,6 @@ def _parse_slope(value: str) -> float | None:
             return default
     matches = re.findall(r"-?\d+(?:\.\d+)?", value)
     if matches:
-        primary_index = value.find(matches[0])
         use_first_only = False
         if "(" in value:
             before_paren = value.split("(", 1)[0]

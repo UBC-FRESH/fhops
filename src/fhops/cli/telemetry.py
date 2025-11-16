@@ -293,8 +293,8 @@ def _render_markdown(rows: list[dict[str, object]]) -> str:
                     str(row["runs"]),
                     summary_best_str,
                     str(row.get("summary_configurations", "")),
-                    row.get("machine_costs_summary", ""),
-                    row.get("repair_usage_alert", ""),
+                    str(row.get("machine_costs_summary", "")),
+                    str(row.get("repair_usage_alert", "")),
                 ]
             )
             + " |"
