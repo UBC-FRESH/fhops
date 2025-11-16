@@ -1,0 +1,222 @@
+page,row,c0,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10
+80,1,"without delays, T = total time.",,,,,,,,,,
+80,2,Authors,Note,N,HM,M,BM,Pr Machine Model,Head Model Deb  MTC,,,
+80,3,Ackerman et al. (2018),,-,CTL,H,EB,CT Volvo EC-210-BF,Maskiner SP-591LX  Yes No,,,
+80,4,,,-,CTL,H,PB,CT TimberPro TL-725B,Maskiner SP-591LX Yes No,,,
+80,5,Ackerman et al. (2021),,2,CTL,H,PB,RW Ponsse Bear,Ponsse H8 No -,,,
+80,6,,,2,CTL,H,PB,RW Ponsse Beaver,Ponsse H6 No -,,,
+80,7,Ackerman et al. (2022),,-,CTL,HW,PB,RW  Malwa 560C,Log Max 928A No No,-,,
+80,8,Acosta et al. (2021),,-,CTL,H,EB,CT CAT 315D,Log Max 5000 No No,,,
+80,9,Acuna et al. (2017),,-,CTL,H,EB,CT CAT 322L,Waratah HTH620  Yes No,-,,
+80,10,Alam et al. (2014),,-,CTL,H,PB,CT Valmet 475EX,"Rosin 997 (2006 model, no. 5)  No No",-,,
+80,11,,,-,CTL,H,PB,CT Valmet 475EX,"Rosin 997 (2006 model, no. 2)  No No",-,,
+80,12,Apăfăian et al. (2017),,-,CTL,H,PB,RW Valmet 911.4,Valmet 360.2 No No,,,
+80,13,Berendt et al. (2020),,-,CTL,H,PB,RW 405FH4 8WD,Waratah H415 No No,,,
+80,14,Berg et al. (2014),*Whole tree is uprooted,-,CTL,H Sim,PB,RW -,John Deere H480C No No,-,,
+80,15,,,-,*FT,FB Sim  PB,,RW Timberpro TB830-B,- No No,-,,
+80,16,Bergström & Di Fulvio (2014),,-,CTL,H,PB,RW Ecolog 560 D,MAMA No Yes,,,
+80,17,,,-,FT,FB,PB,RW Ecolog 560 D,C16 No Yes,,,
+80,18,Bergström et al. (2016),,-,B (FT)  FB,,PB,RW Logman 811 FC,Nisula 280E+ No Yes,,,
+81,1,Bergström et al. (2022),*Trees could be cut in,- *FT,FB,PB,RW,Valmet 901.4,Bracke C16.c No,Yes,,
+81,2,,multiple parts,,,,,,,,,
+81,3,Bilici et al. (2019),*Taller trees cut in two parts,-,*FT/FT  FB,EB,CT,-,Westtech Woodcracker C450  No,No,,
+81,4,Brewer et al. (2018),,2 CTL,H,PB,RW,Ponsse Bear,H8 No,No,,
+81,5,,,2 CTL,H,PB,RW,Ponsse Beaver,H6 No,No,,
+81,6,Brown et al. (2013),,- FT,FB,PB,CT,Valmet 475EXL,Quadco hotsaw No,No,,
+81,7,Carter et al. (2017),,- FT,FB,PB,CT,John Deere 653G,- No,Yes,,
+81,8,Chakroun et al. (2016),*Trees could be cut in two,- *FT,FB,EB,CT,Doosan 140 lcr,"Jacquier C360, Sève S350 No",Yes,,
+81,9,,parts,,,,,,,,,
+81,10,Chung et al. (2022),,- FT,FB,PB,CT,Tigercat LS855E,- No,No,,
+81,11,Di Fulvio & Bergström (2013),The same machine but with,- CTL,HW,PB,RW,Ponsse Dual,Ponsse H53e No,Yes,,
+81,12,,two different processing,,,,,,,,,
+81,13,,heads,,,,,,,,,
+81,14,,,- CTL,HW,PB,RW,Ponsse Dual,Ponsse EH25 No,Yes,,
+81,15,Erber et al. (2016),,- CTL,H,PB,RW,Komatsu 911,Naarva EF 28 No,Yes,,
+81,16,Eriksson & Lindroos (2014),*Examples of machine,>700  CTL,H,PB,RW,Valmet 901,- No,-,,
+81,17,,models used,,,,,,,,,
+81,18,,,- CTL,H,PB,RW,Komatsu 901,- No,-,,
+81,19,,,- CTL,H,PB,RW,John Deere 1070,- No,-,,
+81,20,,,- CTL,H,PB,RW,Valmet 911,- No,-,,
+81,21,,,- CTL,H,PB,RW,John Deere 1270,- No,-,,
+81,22,Fernandez-Lacruz et al. (2013),,- FT,FB,PB,RW,Skogsjan 495,Bracke C16.b No,Yes,,
+81,23,Fernandez-Lacruz et al. (2021),*Taller trees were bucked,- *FT,FB,PB,RW,Rottne H8,AFH Naarva-Grip 1500-25EH  No,Yes,,
+81,24,George et al. (2022),,- CTL,H,PB,RW,Ponsse Scorpion King,- No,No,,
+81,25,,,- CTL,H,PB,RW,John Deere 1270 G,- No,No,,
+81,26,Ghaffariyan (2013),,- FT,FB,PB,CT,Tigercat 511C,- No,No,,
+81,27,,,- FT,FB,PB,CT,Tigercat 822C,- No,No,,
+81,28,Ghaffariyan et al. (2019),,- CTL,H,-,-,-,- -,-,,
+81,29,Ghaffariyan et al. (2013),,- FT,FB,PB,CT,Tigercat 845C,Tigercat 2001 No,No,,
+81,30,Ghaffariyan et al. (2015),,- CTL,H,PB,CT,CAT 541,Rosin RD977 No,No,,
+81,31,Green et al. (2020),,- CTL,H,PB,RW,Ponsse Bear,- No,No,,
+81,32,Grönlund & Eliasson (2019),,- CTL,H,PB,RW,Valmet 901.4,SP 250 No,Yes,,
+81,33,,,,,,,,81,,,
+82,1,,-,CTL,H,PB,RW,John Deere 1070,H754,No,Yes,
+82,2,,-,CTL,H,PB,RW,Gremo 1050h,SP 561,No,Yes,
+82,3,Gülci et al. (2021),-,FT,FB,EB,CT,-,Wood Cracker C450,No,No,
+82,4,Han et al. (2018),-,FT,FB,PB,CT,TimberPro TL735 B,-,No,-,
+82,5,Hiesl & Benjamin (2013),6,FT,FB,PB,CT,-,-,No,Yes,
+82,6,Hiesl & Benjamin (2015),-,CTL,H,PB,RW,Ponsse Ergo,-,No,No,
+82,7,,-,CTL,H,PB,RW,Timberjack 1270 D,-,No,No,
+82,8,,-,CTL,H,PB,RW,Valmet 911.4,-,No,No,
+82,9,,-,CTL,H,PB,RW,Ponsse Fox,-,No,No,
+82,10,Hiesl et al. (2015),-,CTL,H,PB,RW,Ponsse Ergo,-,No,-,
+82,11,,-,FT,FB,PB,CT,CAT 501,-,No,-,
+82,12,Holzleitner & Kanzian (2022),-,CTL,H,PB,RW,John Deere 1270 G,John Deere H415,Yes,No,
+82,13,Horváth et al. (2016),-,CTL,H,-,-,-,-,No,No,
+82,14,Jernigan et al. (2015),-,FT,FB,PB,CT,Tigercat 845D,-,No,Yes,
+82,15,Jylhä & Bergström (2016),-,FT,FB,PB,RW,Valmet 911.3,Bracke C16.b,No,Yes,
+82,16,Kärhä et al. (2018a),-,CTL,H,PB,RW,Ponsse Ergo,Ponsse H73,No,No,
+82,17,,-,CTL,H,PB,RW,John Deere 1270D ECOIII,John Deere H414,No,No,
+82,18,,-,CTL,H,PB,RW,Logset 8H GT,Logset TH 75X,No,No,
+82,19,Kärhä et al. (2018b),3,CTL,HW,PB,RW,Ponsse Wisent Dual,-,No,-,
+82,20,,2,CTL,HW,PB,RW,Valmet 801 Combi,-,No,-,
+82,21,Kärhä et al. (2019),-,CTL,H,PB,RW,John Deere 1270G,John Deere H414,No,No,
+82,22,,-,CTL,H,PB,RW,Komatsu 911.5,Komatsu 365,No,No,
+82,23,,-,CTL,H,PB,RW,Komatsu 931.1,Komatsu 365,No,No,
+82,24,,-,CTL,H,PB,RW,Ponsse Ergo,Ponsse H7,No,No,
+82,25,Karpachev & Bykovskiy (2019),-,FT,FB Sim  PB,,RW,-,-,No,Yes,
+82,26,Kim et al. (2017),-,FT,FB,PB,CT,Tigercat LX830C,Tigercat 5702,No,Yes,
+82,27,Kizha & Han (2016),2,FT,FB,PB,CT,John Deere 959K,-,No,No,
+82,28,Kormanek & Baj (2018),-,CTL,H,PB,RW,Fao Far 6840,Arbo Stroke 400 S,No,No,
+82,29,Kormanek & Kępa (2016),-,CTL,H,PB,RW,Highlander harvester,Woody 60,No,No,
+82,30,Krč et al. (2015),-,CTL,H,PB,RW,Timberjack 1270 D,H 754,No,No,
+82,31,Labelle et al. (2017),-,CTL,H,EB,CT,Atlas Königstiger T23,Ponsse H6,No,No,
+82,32,Labelle et al. (2018),-,CTL,H,PB,RW,TimberPro TF840-B,SP Maskiner SP861LF,No,No,
+82,33,,,,,,,,82,,,
+83,1,,,-,CTL,H,PB,RW,Rottne H20,Rottne EGS700,No,No
+83,2,,,-,CTL,H,PB,CT,Impex Hannibal T50,Lako 1118,No,No
+83,3,,,-,CTL,H,PB,CT,Impex Hannibal T40,Ponsse H8,No,No
+83,4,Labelle & Huß (2018),,-,CTL,H,PB,RW,Ponsse Bear,Ponsse H8,No,No
+83,5,Labelle et al. (2016),,-,CTL,H,PB,CT,Landrich,Ponsse H8,No,No
+83,6,Labelle et al. (2019),,-,CTL,H,PB,RW,TimberPro 620-E,LogMax 7000C,No,No
+83,7,Laina et al. (2013),,-,FT,FB,PB,RW,Timberjack 1070,"""harvesting head 745""",No,Yes
+83,8,,,-,CTL,H,PB,RW,Timberjack 1270 C,"""harvesting head H270""""",No,No
+83,9,Laitila et al. (2016),,-,CTL,H,PB,RW,Komatsu 901.4,Komatsu 350.1,No,Yes
+83,10,Laitila & Väätäinen (2014),,-,CTL,H,EB,CT,New Holland Kobelco E,Naarva EF 28,No,Yes
+83,11,,,,,,,,135 B SR LCD,,,
+83,12,Laitila & Väätäinen (2020),*Trees >8m cut in two parts,-,*FT,HW,PB,RW,Ponsse Buffalo Dual,Moipu 300 F1,No,Yes
+83,13,Laitila & Väätäinen (2021),,-,FT,FB,EB,CT,New Holland Kobelco E,Risupeto,No,Yes
+83,14,,,,,,,,200 SR,,,
+83,15,Laitila & Väätäinen (2023),,-,FT,FB,EB,CT,Kobelco SK140SRL-7,Risupeto II,No,Yes
+83,16,Laitila et al. (2013),"*In one harvesting system, the",-,*CTL,H,PB,RW,Ponsse Cobra HS 10,Ponsse H53,No,No
+83,17,,whole tree is lifted up then,,,,,,,,,
+83,18,,bucked,,,,,,,,,
+83,19,Laitila et al. (2020),,-,CTL,H,PB,RW,Komatsu 911.5,Komatsu C93,No,No
+83,20,Lazdiņš et al. (2019),,-,CTL,H,-,-,-,-,No,-
+83,21,Lazdiņš (2014),,-,CTL,H,PB,RW,Ponsse Fox,H6,No,Yes
+83,22,Lazdiņš et al. (2021),,-,CTL,H,PB,RW,Vimek 404 T5,Keto Forst Silver,No,-
+83,23,Lazdiņš et al. (2016),,-,CTL,H,PB,RW,Vimek 404T6,-,No,No
+83,24,Leszczyński et al. (2021),,-,CTL,H,EB,CT,Kubota KX057-4,Arbro 400 S,No,-
+83,25,Liski et al. (2020),,-,CTL,H,PB,RW,Komatsu 901.4,340,No,-
+83,26,,,4,CTL,H,PB,RW,John Deere 1170E,H413,No,-
+83,27,,,3,CTL,H,PB,RW,John Deere 1170E,H460,No,-
+83,28,,,2,CTL,H,PB,RW,John Deere 1170E,H414,No,-
+84,1,,2,CTL H,PB,RW,Komatsu 901TX.1,350,No,-,,
+84,2,,3,CTL H,PB,RW,John Deere 1270E,H414,No,-,,
+84,3,,-,CTL H,PB,RW,John Deere 1270E,H415,No,-,,
+84,4,,3,CTL H,PB,RW,John Deere 1270E,H480,No,-,,
+84,5,Louis & Kizha (2021),-,FT FB,PB,CT,John Deere 853,-,No,Yes,,
+84,6,Magagnotti et al. (2021),-,CTL H,PB,RW,Ponsse Beaver,Ponsse H6,No,Yes,,
+84,7,Manner et al. (2023),-,CTL H,PB,RW,Ponsse Scorpion,Ponsse H6,No,No,,
+84,8,McEwan et al. (2016),-,CTL H,EB,CT,Sumitomo SH210,Waratah HTH616C,Yes,No,,
+84,9,Mederski et al. (2016),-,CTL H,PB,RW,Komatsu 931.1,Komatsu 365,No,-,,
+84,10,Norihiro et al. (2018),-,CTL H,EB,CT,Hitachi Zaxis 200,Waratah H616,Yes,No,,
+84,11,,-,CTL H,PB,CT,Timberpro TL-725B,Maskiner SP 591-LX,No,No,,
+84,12,,-,CTL H,EB,CT,Volvo EC-210bf,Maskiner SP 591-LX,No,No,,
+84,13,,-,CTL H,EB,CT,Hitachi Zaxis 200,Waratah H616,Yes,No,,
+84,14,,-,CTL H,EB,CT,Hitachi Zaxis 200,Maskiner SP 591-LX,No,No,,
+84,15,,-,CTL H,EB,CT,Komatsu PC 200,Maskiner SP 591-LX,Yes,No,,
+84,16,Nuutinen & Björheden (2016),-,B (FT)  FB,PB,RW,Logman 811 FC,Nisula 280E+,No,Yes,,
+84,17,Olivera et al. (2016),-,CTL H,PB,RW,Ponsse Ergo 8W,Ponsse H7euca,Yes,No,,
+84,18,Petitmermet et al. (2019),-,CTL H,PB,RW,Ponsse Bear,-,No,-,,
+84,19,Petty & Kärhä (2014),-,CTL H,PB,RW,Ponsse Ergo,Ponsse H7,No,Yes,,
+84,20,Polowy & Molińska-Glura,-,CTL H,PB,RW,John Deere 1070E,John Deere H412,No,-,,
+84,21,(2023),,,,,,,,,,
+84,22,,-,CTL H,PB,RW,John Deere 1070G,John Deere H412,No,-,,
+84,23,Prinz et al. (2021),-,CTL H,PB,RW,Ponsse Scorpion,H6,No,No,,
+84,24,,-,CTL H,PB,RW,Ponsse Ergo,H7,No,No,,
+84,25,Ramantswana et al. (2013),-,CTL H,EB,CT,Hitachi Zaxis 200-3,Waratah HTH616,Yes,No,,
+84,26,Rosińska et al. (2022),-,CTL H,PB,RW,John Deere 1270 D,758HD,No,No,,
+84,27,,-,CTL H,PB,RW,John Deere 1270E,H480C,No,No,,
+84,28,,-,CTL H,PB,RW,Ponsse Ergo,H73,No,No,,
+84,29,,,,,,,84,,,,
+85,1,,,-,CTL,H,PB,RW,Ponsse Ergo 6,H7,No,No
+85,2,,,-,CTL,H,PB,RW,Ponsse Ergo 6,H73,No,No
+85,3,,,-,CTL,H,PB,RW,Sampo Rosenlew 1066,HTH460,No,No
+85,4,,,-,CTL,H,PB,RW,TBM Preus 84,Kesla 24RHII,No,No
+85,5,,,-,CTL,H,PB,RW,Timberjack 1070D,HTH460,No,No
+85,6,,,-,CTL,H,PB,RW,Valmet 901.3,351.1,No,No
+85,7,Santos et al. (2022),,-,CTL,H,PB,CT,Komatsu PC200F-8M0,Komatsu 370E,Yes,-
+85,8,Santos et al. (2021),,-,CTL,H,PB,CT,Komatsu PC200F-8M0,Komatsu model 370E,Yes,-
+85,9,Santos et al. (2020),,-,CTL,H,PB,CT,Komatsu PC200F-8M0,Komatsu 370E,Yes,No
+85,10,Schweier et al. (2015),,-,FT,FB,EB,CT,Hitachi Zaxis 210,COMAF GD350,No,-
+85,11,,,-,FT,FB,EB,CT,CAT 317 LN,Cut-Tree 450,No,-
+85,12,,,-,FT,FB,EB,CT,Hitachi EX 135,Cut-Tree 450,No,-
+85,13,,,-,FT,FB,EB,CT,Hitachi EX 165,Biasi,No,-
+85,14,,,-,FT,FB,EB,CT,Hitachi EX 165,Biasi,No,-
+85,15,Slugeň et al. (2014),,-,CTL,H,PB,RW,John Deere 1070D,JD H754,No,No
+85,16,Soman et al. (2020),,-,FT,FB,PB,CT,John Deere 753G,-,No,No
+85,17,Soman et al. (2019),,-,FT,FB,PB,CT,John Deere 753G,-,No,Yes
+85,18,Sperandio et al. (2021),*FT: Trees could be cut in,-,*FT,FB,EB,CT,Volvo EC 140 CL,Westtech C350,No,Yes
+85,19,,two parts,,,,,,,,,
+85,20,Spinelli et al. (2014),,-,FT,FB,PB,CT,Tigercat 845C,-,No,-
+85,21,,,-,FT,FB DT  EB,,CT,Posi-track RC-100,Tree Terminator,No,-
+85,22,Spinelli & De Arruda Moura,,53,CTL,H,EB,CT,Komatsu PC200-8,Komatsu Forest 370,Yes,-
+85,23,(2019),,,,,,,,,,
+85,24,Spinelli et al. (2022),,-,CTL,H,PB,RW,Agama AH6,Nisula 325H,No,No
+85,25,,,-,CTL,H,PB,RW,Rottne H8,EGS 406,No,No
+85,26,,,-,CTL,H,PB,RW,Sampo HR46,Kesla 18RH,No,No
+85,27,,,-,CTL,H,PB,RW,Vimek 404,Keto Forst V4,No,No
+85,28,Spinelli et al. (2023),,-,CTL,H,PB,RW,Rottne H8D,EGS 406,No,-
+85,29,Spinelli et al. (2020a),,-,CTL,H Sim,PB,RW,John Deere 1270E,-,-,-
+85,30,Spinelli et al. (2020b),,-,FT,FB,EB,CT,Liebherr 317,Westtech Woodcracker 350,No,Yes
+85,31,Stoilov et al. (2021),,-,CTL,SH,PB,RW,HSM 805 ZL,Woody 50,No,-
+85,32,,,,,,,,,85,,
+86,1,Strandgard & Mitchell (2018),*Some trees had several,-,*CTL,H EB,CT,Hyundai 210LC-9,SP 591LX,Yes,*Yes,-
+86,2,,"stems, but each stem was",,,,,,,,,
+86,3,,processed individually,,,,,,,,,
+86,4,Strandgard & Mitchell (2019),,-,CTL,H PB,CT,John Deere 903KH,Waratah 624C,No,No,-
+86,5,Strandgard & Mitchell (2020),,-,CTL,H PB,RW,John Deere 1470e,JD H290,No,No,-
+86,6,,,-,FT,FB EB,CT,Komatsu PC 300 HW,Rosin 800,No,No,-
+86,7,Strandgard et al. (2016),,5,CTL,H EB,CT,CAT 320D,Southstar 450,Yes,No,-
+86,8,,,2,CTL,H EB,CT,CAT 322C,Waratah 616,Yes,No,-
+86,9,,,-,CTL,H EB,CT,CAT 322C,Waratah 616b,Yes,No,-
+86,10,,,5,CTL,H EB,CT,CAT 322CL,Waratah 620,Yes,No,-
+86,11,,,-,CTL,H EB,CT,CAT 322CL,Waratah 616C,Yes,No,-
+86,12,,,3,CTL,H EB,CT,CAT 324D,Waratah 618c,Yes,No,-
+86,13,,,5,CTL,H PB,CT,CAT 324D FM,Waratah 616C,Yes,No,-
+86,14,,,6,CTL,H PB,CT,CAT 324D FM,Waratah 616D,Yes,No,-
+86,15,,,-,CTL,H EB,CT,CAT 324DL,Waratah 616c,Yes,No,-
+86,16,,,-,CTL,H PB,CT,CAT 521,Waratah 620,Yes,No,-
+86,17,,,5,CTL,H PB,CT,CAT 511,Waratah 616C,Yes,No,-
+86,18,,,-,CTL,H PB,CT,Valmet 425EX,Valmet 378,Yes,No,-
+86,19,,,-,CTL,H EB,CT,Volvo 210,Waratah 616,Yes,No,-
+86,20,,,3,CTL,H EB,CT,Volvo 210B,Waratah 616,Yes,No,-
+86,21,,,3,CTL,H EB,CT,Volvo 210B,Waratah 616C,Yes,No,-
+86,22,,,-,CTL,H EB,CT,Volvo EC210BLC,Waratah 616B,Yes,No,-
+86,23,,,-,CTL,H EB,CT,Volvo EC210BLC,Maskiner 591,Yes,No,-
+86,24,,,-,CTL,H EB,CT,Volvo EC240C,Waratah 616C,Yes,No,-
+86,25,,,-,CTL,H EB,CT,Volvo EC250DL,Waratah 616c,Yes,No,-
+86,26,Strandgard et al. (2015),,-,FT,FB PB,CT,Timbco 445B,Quadco hotsaw,No,Yes,-
+86,27,Tajbos & Messingerova (2014),,-,CTL,H PB,RW,John Deere 770D,-,No,No,-
+86,28,,,-,CTL,H PB,RW,Valmet 911.1,-,No,No,-
+86,29,Tolosana et al. (2023),,-,B (FT)  FB,PB,RW,Logman 811 FC,Nisula 280E+,No,-,
+86,30,Tolosana et al. (2018),,-,FT,FB DT  PB,RW,John Deere 643J,JD FD45,No,Yes,-
+86,31,Townsend et al. (2019),,-,FT,FB DT  PB,RW,Tigercat 726G,-,No,Yes,-
+86,32,,,-,FT,FB DT  PB,RW,John Deere 843 L (2),-,No,Yes,-
+86,33,,,,,,,,86,,,
+87,1,,-,FT,,FB DT  PB,RW,CAT 573 C,-,No,Yes,
+87,2,,-,FT,FB,PB,CT,TimberPro TL735 B,-,No,Yes,
+87,3,,-,CTL,H,EB,CT,John Deere 240D,Logmax 7000 XT,No,Yes,
+87,4,Walsh & Strandgard (2014),-,CTL,H,PB,CT,Timbco 475,Rosin 997,No,No,
+87,5,Walsh et al. (2014),-,CTL,H,PB,CT,Tigercat H860C,Waratah HTH624C-Super,No,No,
+87,6,Williams & Ackerman (2016),-,CTL,H,PB,CT,John Deere 753,Waratah HTH623C,No,No,
+87,7,Zimelis et al. (2020),-,CTL,H,PB,RW  Malwa,,-,No,No,
+87,8,Zimelis et al. (2018),-,CTL,H,PB,RW,Vimek 404 SE,Keto Forest Eco,No,No,
+87,9,,-,CTL,H,PB,RW,Vimek 404 SE,Keto Forest Extreme,No,No,
+87,10,Zimelis et al. (2019),-,CTL,H,PB,RW,Vimek 404SE,Bracke C.12,No,No,
+87,11,,-,CTL,H,PB,RW,Vimek 404SE,Keto-Forest Eco,No,No,
+87,12,Zimelis et al. (2017a),-,CTL,H,PB,RW,Ponsse Ergo,H7,No,No,
+87,13,Zimelis et al. (2017b),-,CTL,H,PB,RW,Vimek 404 T5,-,No,No,
+87,14,Zimelis & Spalva (2022),-,CTL,H,PB,RW  Malwa 560H,,-,No,-,
+87,15,Zimelis et al. (2016),-,CTL,H,EB,CT,New Holland 215B,Ponsse H7,No,Yes,

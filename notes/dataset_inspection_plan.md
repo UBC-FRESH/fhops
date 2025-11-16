@@ -47,6 +47,7 @@
 - Added a Camelot-based extractor (`scripts/extract_arnvik_models_camelot.py`) that reads the Appendix 8 tables directly from the PDF using a tuned table region; it now normalises `(author, model, HM, machine, base, propulsion, DV, units, formula)` rows for pages 101–116 and produces a dedicated aggregate CSV for downstream tooling.
 - `scripts/build_productivity_registry.py` can ingest the Camelot aggregate, fall back to the legacy pdfplumber rows for any gaps, and now builds 392 enriched models (up from 109) covering harvesters, feller-bunchers, harwarders, and skidder-harvesters. Machine labels are harmonised (no more `fb_sim__pb` artefacts), and the builder automatically backfills missing formulas/units from the legacy source.
 - Added `scripts/parse_arnvik_table9.py` so Table 9 (machine types vs. dependent-variable counts) lives in `notes/reference/arnvik_tables/table9_machine_counts.csv`, making it easier to measure how far we are from Arnvik’s reported 422-model inventory.
+- Added `scripts/extract_arnvik_appendix45.py`, which uses Camelot to dump Appendix 4 (machine specs) and Appendix 5 (stand/operator descriptions) into raw CSVs (`appendix4_machines.csv`, `appendix5_stands.csv`). These need further normalization (e.g., splitting N/HM fields, parsing machine/head models, debarking flags), but the source data is now machine-readable.
 - Current machine-type coverage from Arnvik (Camelot + legacy): 260 `single_grip_harvester`, 94 `feller_buncher`, 14 `feller_buncher_sim`, 8 `harwarder`, 6 `single_grip_harvester_sim`, 5 `skidder_harvester`, 5 `feller_buncher_drive_to_tree`. No forwarders/grapple skidders yet – these are the next extraction targets.
 
 ### Arnvik Machine Coverage Snapshot
@@ -93,6 +94,8 @@ Quick comparison to Arnvik Table 9 (`scripts/parse_arnvik_table9.py`) shows why 
 4. **Processor / Loader** – Extract landing processor/log loader models (e.g., Labelle et al. 2016/2018, FPDat loader datasets) so `roadside_processor` and `loader` roles have coverage.
 5. **Tethered systems** – Build interim regressions from Lahrsen’s BC tethered FPDat data for `tethered_harvester` and `tethered_shovel_or_skidder`, then validate against any published winch-assist studies.
 6. **Manual operations** – Locate BC/Quebec hand-falling time studies to cover `hand_faller`, `hand_or_mech_faller`, and `hand_buck_or_processor` jobs.
+7. **Appendix 4/5 normalization** – Parse the new raw CSVs into structured schemas (machine specs per publication/model, stand/operator metadata), then attach the relevant snippets to each registry entry so we can report machine model defaults and stand/operator context in the CLI.
+8. **Appendix 7 abbreviations** – Ingest DV abbreviations into a dictionary so CLI output can show human-friendly descriptions for PV/PW/TV/TW/TU/etc.
 - Appendix references are now parsed via `scripts/parse_arnvik_references.py`, producing `notes/reference/arnvik_tables/references.json` and letting the registry tag each model with its original citation for provenance checks.
 - Appendix 8 in Arnvik (2024) lists 422 productivity models (harvesters, feller-bunchers, harwarders). Need to digitise into a searchable registry (machine type, region, system, predictors, coefficients, R², etc.) so we can plug gaps for the remaining machine roles.
 

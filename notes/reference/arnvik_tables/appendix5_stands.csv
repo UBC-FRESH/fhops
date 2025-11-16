@@ -1,0 +1,268 @@
+page,row,c0,c1,c2,c3,c4,c5,c6
+88,1,"mean values between areas, units, or treatments.",,,,,,
+88,2,Author(s),TSC,Stand Age,Stem Volume,DBH,Ground Condition,Ground Roughness
+88,3,Ackerman et al. (2018),Eucalyptus grandis x,8,0.154 (0.034-0.477) m³ub,15.89 (9.00-27.20) cm,2/3 - Erasmus (1994),3 - Erasmus (1994)
+88,4,,camaldulensis,,,,,
+88,5,Ackerman et al. (2021),"*Pinus patula, Pinus elliotti,",-,"0.92 (0.01-2.50) m³,","31.38 (7.30-59.70) cm, before",Good Ground Conditions -,-
+88,6,,Pinus taeda,,before trimming of data,trimming of data,Erasmus (1994),
+88,7,Ackerman et al. (2022),Pinus patula,10,0.12 (0.03-0.13) m³,15.9 (8.2-26.0) cm,Firm - Erasmus (1994),Even - Erasmus
+88,8,,,,,,,(1994)
+88,9,Acosta et al. (2021),Teak,18,0.3408 m³,-,Clayey With Good Drainage,-
+88,10,Acuna et al. (2017),Eucalyptus globulus,"9,5",*(0.233-0.464) m³ub,*(167-253) mm,Firm And Even,Firm And Even
+88,11,Alam et al. (2014),Radiata pine,*(34-35),*(1.8-2.4) m³,*(39.0-51.2) cm,-,Good
+88,12,Apăfăian et al. (2017),Picea Abies,45,0.364 (0.044-0.676) m³,23 cm,Luvosoil,-
+88,13,Berendt et al. (2020),"*Picea abies, *Pseudotsuga",*(35-56),*(0.14-0.54) m³,*(18.5-33.4) cm,-,-
+88,14,,"menziesii, Pinus sylvestris,",,,,,
+88,15,,"Acer pseudoplatanus, Fagus",,,,,
+88,16,,sylvatica,,,,,
+88,17,Berg et al. (2014),"Picea abies, Pinus sylvestris,",*(90-200),*(0.104-2.068) m3,*(144-419) mm,1 - Berg (1992),1 - Berg (1992)
+88,18,,Deciduous,,,,,
+88,19,Bergström & Di Fulvio (2014),"Pinus sylvestris, Picea abies,",-,51 *(49-55) dm³,9.3 *(9.1-9.6) cm,2 - Berg (1992),3 - Berg (1992)
+88,20,,Betula spp,,,,,
+89,1,Bergström et al. (2016),"Pinus sylvestris, Picea abies,",30-35,26.5 *(15.0-43.0) dm3,7.1 *(5.5-8.5) cm,2 - Berg (1992),
+89,2,,"Betula spp., Alnus incana,",,,,,
+89,3,,Pinus Contorta,,,,,
+89,4,Bergström et al. (2022),"Acer pseudoplatanus, Betula",*(20-40),"*(10-64) dm³, whole tree",*(3.3-9.4) cm,*(1-2) - Berg (1992),
+89,5,,"spp., Corylus avellana,",,volume,,,
+89,6,,"Fagus sylvatica, Ostrya",,,,,
+89,7,,"carpinifolia, Alnus incana,",,,,,
+89,8,,"Sorbus aucuparia, Salix",,,,,
+89,9,,"spp., Fraxinus excelsior,",,,,,
+89,10,,"Ulmus glabra, Pinus",,,,,
+89,11,,"sylvestris, Picea abies, Tilia",,,,,
+89,12,,cordata,,,,,
+89,13,Bilici et al. (2019),Pinus brutia,-,-,"*(24.63-34.28), (10-46) cm",-,
+89,14,Brewer et al. (2018),Pinus patula,22,1.05 *(1.12-1.33) m³ub,*(33.90-36.01) cm,Good - Erasmus (1994),
+89,15,Brown et al. (2013),Pinus radiata,24,0.61 (0.06-1.84) m³,0.29 (0.10-0.46) m,"Moist, Soft And Clay",
+89,16,,,,,,Loamy Soils,
+89,17,Carter et al. (2017),Hybrid poplar,7,0.045 m³,(6.35-11.94) cm,-,
+89,18,Chakroun et al. (2016),"Oak, Birch, Hornbeam,",30,*(0.029-0.065) m³,*(8.7-10.1) cm,Firm,-
+89,19,,"Other hardwoods, Beech,",,,,,
+89,20,,"Ash, Field maple",,,,,
+89,21,Chung et al. (2022),Douglas-fir,60,1.27 m³,41 cm,Silty Clay Loam Soils,-
+89,22,Di Fulvio & Bergström (2013),"Pinus sylvestris, Picea abies,",32,*(41-45) dm³,*(8.4-9.0) cm,2 - Berg (1992),
+89,23,,Betula spp,,,,,
+89,24,Erber et al. (2016),Carpinus betulus,-,8.2 dm3,"4.0 (1.0-23.0) cm, basal area",Stagnogley Soil,
+89,25,,,,,weighted,,Obstacles
+89,26,Eriksson & Lindroos (2014),"Pinus sylvestris, Picea abies,",-,"*(0.11-0.25), (0.03-1.82)",-,-,
+89,27,,Pinus contorta,,m³ub,,,
+90,1,Fernandez-Lacruz et al. (2013),"Betula spp., Salix spp., Picea",-,1.71 OD kg,"*(2.3-4.7) cm, basal area",1 - Berg (1992),2 - Berg (1992)
+90,2,,"abies, Pinus sylvestris",,,weighted,,
+90,3,Fernandez-Lacruz et al. (2021),"Betula spp., Alnus incana,",24 (14-34),-,*(1.9-5.7) cm,-,-
+90,4,,"Salix spp., Picea abies,",,,,,
+90,5,,Pinus sylvestris,,,,,
+90,6,George et al. (2022),"Cedar, Acer rubrum, Larix",-,-,"*(22.1-26.2) cm, quadratic",Frozen,-
+90,7,,"laricina, Picea rubens,",,,mean diameter (QMD),,
+90,8,,"Tsuga canadensis, Pinus",,,,,
+90,9,,"strobus, Fraxinus nigra,",,,,,
+90,10,,"Betula alleghaniensis,",,,,,
+90,11,,"Populus tremuloides, Betula",,,,,
+90,12,,"papyrifera, Abies balsamea",,,,,
+90,13,Ghaffariyan (2013),Eucalyptus globulus,*(11-13),*(0.178-0.205) m³,-,-,-
+90,14,Ghaffariyan et al. (2019),-,-,-,-,-,-
+90,15,Ghaffariyan et al. (2013),Eucalyptus globulus,-,0.21 m³,17.8 cm,-,-
+90,16,Ghaffariyan et al. (2015),Pinus radiata,32,1.53 m³,*(42.0-42.1) cm,Firm,Even
+90,17,Green et al. (2020),"Pseudotsuga menziesii,",60,-,*(48.3-49.5) cm,Price Soils,-
+90,18,,"Abies grandis, Acer",,,,,
+90,19,,macrophyllum,,,,,
+90,20,Grönlund & Eliasson (2019),"Birch, Spruce",*(14-25),-,*(4.1-12.0) cm,-,-
+90,21,Gülci et al. (2021),Pinus pinaster,-,0.38 m³,23.13 cm,-,-
+90,22,Han et al. (2018),Pinus contorta var. latifolia,-,-,22.4 cm,-,-
+90,23,Hiesl & Benjamin (2013),"Fagus grandifolia, Acer",-,-,(10-63) cm,-,-
+90,24,,"rubrum, Betula",,,,,
+90,25,,"alleghaniensis, Betula",,,,,
+90,26,,"papyrifera, Populus",,,,,
+90,27,,"tremuloides, Abies",,,,,
+90,28,,"balsamea, Picea rubens,",,,,,
+90,29,,"Tsuga Canadensis, Thuja",,,,,
+90,30,,occidentalis,,,,,
+91,1,Hiesl & Benjamin (2015),"Abies balsamea, Picea",-,-,"*(13-20), (10-58) cm",-,-
+91,2,,"rubens, Tsuga Canadensis,",,,,,
+91,3,,"Thuja occidentalis, Fagus",,,,,
+91,4,,"grandifolia, Acer rubrum,",,,,,
+91,5,,"Betula alleghaniensis,",,,,,
+91,6,,"Betula papyrifera, Populus",,,,,
+91,7,,tremuloides,,,,,
+91,8,Hiesl et al. (2015),"Abies balsamea, Picea",-,*(0.03-0.17) m³,*(9.6-18.7) cm,-,-
+91,9,,"rubens, Populus",,,,,
+91,10,,"tremuloides, Betula",,,,,
+91,11,,"papyrifera, Betula",,,,,
+91,12,,"alleghaniensis, Pinus",,,,,
+91,13,,"strobus, Thuja occidentalis",,,,,
+91,14,Holzleitner & Kanzian (2022),"*Picea abies, Larix decidua,",56,0.8 m³,28.7 cm,-,
+91,15,,"Quercus robur, Fagus",,,,,Obstacles
+91,16,,"sylvatica, Betula pendula",,,,,
+91,17,Horváth et al. (2016),"Black locust, Beech, Turkey",-,-,-,-,-
+91,18,,"oak, Hornbeam, Noble",,,,,
+91,19,,"poplar, Spruce, Scots pine,",,,,,
+91,20,,Black pine,,,,,
+91,21,Jernigan et al. (2015),Pine,11,0.14 green tons,-,-,-
+91,22,Jylhä & Bergström (2016),"Pinus sylvestris, Picea abies,",22.7,"20.1 *(0.6-70.8) dm³,",44.5 *(10.0-98.0) mm,-,-
+91,23,,"Betula pubescens, Betula",*(13.6-,whole tree volume,,,
+91,24,,"Pendula, Other",29.3),,,,
+91,25,Kärhä et al. (2018a),"Norway spruce, Scots pine,",-,0.76 *(0.70-0.85) m³,-,-,-
+91,26,,Betula spp,,,,,
+91,27,Kärhä et al. (2018b),"Picea abies, Pinus sylvestris,",-,226 *(128-247) dm³,-,Normal To Difficult,
+91,28,,"Betula verrucosa, Betula",,,,,
+91,29,,"pubescens, Populus tremula",,,,,
+91,30,Kärhä et al. (2019),"*Norway spruce, Scots pine,",-,0.687 m³,27.2 cm,-,-
+91,31,,"Betula spp, Populus tremula",,,,,
+92,1,Karpachev & Bykovskiy,-,-,(0.0042-2.26) m³,-,-,-
+92,2,(2019),,,,,,
+92,3,Kim et al. (2017),"Lodgepole pine, Douglas-fir,",-,-,"7.5 in, Quadratic mean",-,-
+92,4,,Subalpine fir,,,diameter,,
+92,5,Kizha & Han (2016),"Sequoia sempervirens,",60,-,*(18-23) cm,-,-
+92,6,,"Pseudotsuga menziessii,",,,,,
+92,7,,"Tsuga heterophylla, Tanoak",,,,,
+92,8,Kormanek & Baj (2018),Pine,65,0.62 m³,-,-,-
+92,9,Kormanek & Kępa (2016),"Spruce, Beech, Sycamore",47,-,-,"Podsoil, Soil Strongly",-
+92,10,,,,,,Turfed,
+92,11,Krč et al. (2015),"*Spruce, Fir, *Beech, Oak,",-,0.36 m³,19.55 cm,Not Problematic,
+92,12,,"*Maple, Elm, Cherry",,,,,
+92,13,Labelle et al. (2017),"Pinus sylvestris, Picea abies",120 *(89-,*(0.29-0.89) m³,*(19.5-30.3) cm,-,-
+92,14,,,143),,,,
+92,15,Labelle et al. (2018),"Fagus Sylvatica, Quercus",-,*(1.7-1.9) m³,*(35.6-39.3) cm,-,-
+92,16,,"robur, Quercus petraea",,,,,
+92,17,Labelle & Huß (2018),"*Picea abies, Fagus",80,*(2.8-2.9) m³,*(46.6-47.0) cm,-,-
+92,18,,"sylvatica, Quercus robur,",,,,,
+92,19,,Betula pendula,,,,,
+92,20,Labelle et al. (2016),"*Sugar maple, Yellow birch,",-,-,"33 cm, quadratic mean",-,-
+92,21,,Other,,,diameter,,
+92,22,Labelle et al. (2019),"*Common beech, *Picea",90 (75-,1.74 *(1.13-2.11) m³,37.5 *(29.7-43.6) cm,-,-
+92,23,,"abies, Pinus sylvestris",110),,,,
+92,24,Laina et al. (2013),Quercus pyrenaica,-,-,*(5.8-10.6) cm,-,-
+92,25,Laitila et al. (2016),"Betula pubescens, Pine",-,*(50-58) dm³,*(5-20) cm,1 - Anon. (1990),
+92,26,Laitila & Väätäinen (2014),Pinus sylvestris,(30-40),57 *(26-83) dm³,-,1 - Anon. (1990),
+92,27,Laitila & Väätäinen (2020),"Pinus sylvestris, Picea abies,",-,(8–111) dm³,72 (12–163) mm,-,-
+92,28,,"Betula pubescens, Other",,,,,
+92,29,,broadleaved tree species,,,,,
+93,1,,"such as Aspen, Alder, Rowan",,,,,
+93,2,,and Willow,,,,,
+93,3,Laitila & Väätäinen (2021),"Pinus sylvestris, Picea abies,",-,(6-54) dm³,"41 *(21-97) mm, stump",-,-
+93,4,,"Betula pubescens, Other",,,diameter,,
+93,5,,broadleaved tree species,,,,,
+93,6,,"such as Aspen, Alder,",,,,,
+93,7,,"Rowan, and Willow",,,,,
+93,8,Laitila & Väätäinen (2023),"Pinus sylvestris, Picea abies,",(15-25),*(14.2-52.0) dm³,*(51-97) mm,1 - Anon. (1990),
+93,9,,"Betula pendula, Other",,,,,
+93,10,,broadleaves,,,,,
+93,11,Laitila et al. (2013),Pinus sylvestris,-,-,*(14.5-15.1) cm,Drained Peatland,-
+93,12,Laitila et al. (2020),"*Scots pine, Norway spruce,",-,-,-,Ditched Peatland,-
+93,13,,Downy birch,,,,,
+93,14,Lazdiņš  et al. (2019),"Pine, Spruce",-,-,*(17.2-19.2) cm,Dry Sandy Mineral Soils,-
+93,15,Lazdiņš (2014),"Spruce, Grey alder, Black",-,-,9 cm,-,-
+93,16,,"alder, Birch",,,,,
+93,17,Lazdiņš  et al. (2021),Betula pendula,-,0.06 m³,12 cm,-,-
+93,18,Lazdiņš et al. (2016),Spruce,-,-,*(9.7-10.9) cm,-,-
+93,19,Leszczyński et al. (2021),Scots pine,25,*(0.074-0.103) m³,*(11.7-13.5) cm,-,-
+93,20,Liski et al. (2020),"Pine, Spruce, Birch, Other",-,0.2741 (0.033-1.267) m³,-,-,-
+93,21,,broadleaves,,,,,
+93,22,Louis & Kizha (2021),"Picea rubens, Acer",-,*(0.05-0.12) m³,-,Ragmuff-Monson Complex,-
+93,23,,"saccharum, Acer",,,,"(38%), Telos-Chesuncook-",
+93,24,,"pensylvanicum, Picea",,,,"Ragmuff Association (27%),",
+93,25,,"mariana, Betula",,,,And Chesuncook-,
+93,26,,"alleghaniensis, Fagus",,,,Elliottsville Association,
+93,27,,grandifolia,,,,(23%),
+93,28,Magagnotti et al. (2021),Populus x euroamericana,8,"0.087 (0.074-0.103) m³,",12 cm,-,-
+93,29,,,,whole above ground,,,
+94,1,Manner et al. (2023),"Pinus sylvestris, Picea abies,",90,0.642 *(0.500-0.867) m³ub,-,2 - Berg (1992),
+94,2,,Betula spp,,,,,
+94,3,McEwan et al. (2016),Eucalyptus grandis,11,0.466 m³ub,21 (8-40) cm,-,Smooth -
+94,4,Mederski et al. (2016),Pinus sylvestris,*(40-100),0.14 m3,*(19.5-25.2) cm,-,-
+94,5,Norihiro et al. (2018),Eucalyptus grandis x,*(7-12),*(0.12-0.38) m3,"*(15.3-21.6), (5.2-35.7) cm",-,-
+94,6,,"camaldulensis, Eucalyptus",,,,,
+94,7,,"grandis x urophylla,",,,,,
+94,8,,"Eucalyptus smitthii,",,,,,
+94,9,,Eucalyptus dunnii,,,,,
+94,10,Nuutinen & Björheden (2016),"*Pine, Spruce, Birch",*(25-40),"*(27-84) dm³, above",-,-,-
+94,11,,,,ground volume,,,
+94,12,Olivera et al. (2016),"Eucalyptus bicostata,",*(15-19),*(0.29-0.55) m³ub,*(183-223) mm,"Loam, Predominantly Deep",-
+94,13,,"Eucalyptus dunnii,",,,,,
+94,14,,"Eucalyptus grandis,",,,,,
+94,15,,Eucalyptus maidenii,,,,,
+94,16,Petitmermet et al. (2019),"Abies concolor, Pinus",-,-,<53.3 cm,Primarily Loamy-Skeletal,-
+94,17,,ponderosa,,,,,
+94,18,Petty & Kärhä (2014),"Picea abies, Pinus sylvestris,",-,63 *(51-77) dm³,10.9 *(10.0-12.3) cm,High Bearing Capacity,
+94,19,,"broadleaves, primarily",,,,,
+94,20,,Betula pubescens,,,,,
+95,1,Santos et al. (2022),Eucalyptus grandis x,-,*(0.08-0.20) m³ub,-,-,-
+95,2,,Eucalyptus urophylla,,,,,
+95,3,Santos et al. (2021),Eucalyptus grandis x,"6,3",0.10 m³,-,-,-
+95,4,,Eucalyptus urophylla,,,,,
+95,5,Santos et al. (2020),Eucalyptus,-,*(0.08-0.16) m³,-,-,-
+95,6,,grandis x Eucalyptus,,,,,
+95,7,,urophylla,,,,,
+95,8,Schweier et al. (2015),"Quercus pubescens, Quercus",*(5-26),*(5-109) dry kg,"*(7-20), (5-31) cm",-,-
+95,9,,"ilex, Castanea sativa,",,,,,
+95,10,,"Quercus cerris, Populus",,,,,
+95,11,,"alba, Robinia pseudoacacia,",,,,,
+95,12,,Populus x euroamericana,,,,,
+95,13,Slugeň et al. (2014),"Quercus petraea, Fagus",*(70-75),*(0.38-0.50) m³,*(22-27) cm,-,-
+95,14,,sylvatica,,,,,
+95,15,Soman et al. (2020),"Abies balsamea, Acer",-,-,-,Glacial-Till And Marine,-
+95,16,,"rubrum, Picea rubens, Picea",,,,Sediment Parent Material,
+95,17,,"mariana, Pinus strobus,",,,,,
+95,18,,"Populus tremuloides,",,,,,
+95,19,,"Populus grandidentata,",,,,,
+95,20,,"Thuja occidentalis, Tsuga",,,,,
+95,21,,"canadensis, Quercus rubra,",,,,,
+95,22,,"Picea glauca, raxinus",,,,,
+95,23,,"americana, Betula",,,,,
+95,24,,"populifolia, Betula",,,,,
+95,25,,papyrifera,,,,,
+95,26,Soman et al. (2019),"Tsuga canadensis, Betula",-,-,-,Howland Silt Loam And,-
+95,27,,"alleghaniensis, Abies",,,,Monarda-Burnham Complex,
+95,28,,"balsamea, Populus spp,",,,,,
+95,29,,"Fagus grandifolia, Picea",,,,,
+95,30,,"rubens, Betula papyrifera,",,,,,
+95,31,,Pinus strobus,,,,,
+96,1,Sperandio et al. (2021),Populus × canadensis,*(8-11),"*(50.57-101.41), (17-491)",*(9.84-13.20) cm,Clayey-Loamy Soil,-
+96,2,,,,kg,,,
+96,3,Spinelli et al. (2014),Eucalyptus polybractea,20,"*(93-96), (67-154) kg",-,Pasture Field,-
+96,4,Spinelli & De Arruda Moura,Eucalyptus urograndis,*(4-11),0.145 *(0.1-0.4) m³ub,-,Firm Sandy Soils,-
+96,5,(2019),,,,,,
+96,6,Spinelli et al. (2022),Populus x euramericana,5,"30 dry kg, stem and",12 *(11.9-12.4) cm,-,-
+96,7,,,,branches,,,
+96,8,Spinelli et al. (2023),Populus x euramericana,6,-,12 *(12.1-12.3) cm,-,-
+96,9,Spinelli et al. (2020a),"Spruce, Fir, Broadleaves",(60-80),"*(0.675-1.374), (0.25-3.1)",-,Cambisol,-
+96,10,,,,m³,,,
+96,11,Spinelli et al. (2020b),Poplar (clone AF8),7,"103 kg fresh weight, tree",15.1 cm,-,-
+96,12,,,,mass,,,
+96,13,Stoilov et al. (2021),"Pinus sylvestris, Pinus nigra",55,-,*(24-30) cm,-,-
+96,14,Strandgard & Mitchell (2018),Eucalyptus globulus,"10,5",*(0.06-0.21) m³,*(105-167) mm,Good Load-Bearing,
+96,15,,,,,,Capacity,
+96,16,Strandgard & Mitchell (2019),Pinus radiata,29,1.2 m³,*(389-396) mm,Duplex Sandy Gravel,-
+96,17,Strandgard & Mitchell (2020),Pinus radiata,29,*(0.90-0.95) m³,*(326-343) mm,-,-
+96,18,Strandgard et al. (2016),Eucalyptus globulus,11.5 *(8.5-,0.26 *(0.13-0.46) m³,188 *(152-245) mm,-,
+96,19,,,14.0),,,,
+96,20,Strandgard et al. (2015),Eucalyptus nitens,17,0.18 (0-1.58) m³,18.0 (4.7-47.0) cm,Stable Ground And Basalt,-
+96,21,,,,,,Soils,
+96,22,Tajbos & Messingerova (2014),"Spruce , Fir, Larch, Birch",*(25-40),*(0.01-0.36) m³,*(6-21) cm,-,-
+96,23,Tolosana et al. (2023),"Eucalyptus globulus,",-,*(10.2-17.5) oven dry ton,*(9.0-12.4) cm,-,-
+96,24,,"Quercus suber, Pinus",,kg,,,
+96,25,,pinaster,,,,,
+97,1,Tolosana et al. (2018),"Quercus ilex, Quercus",>35,"(7.4-22.5) kg, dry weight",*(5.7-7.1) cm,Dry Sandy Soils,-
+97,2,,pyrenaica,,,,,
+97,3,Townsend et al. (2019),"Pinus ponderosa,",-,-,"*(22.9-30.7) cm, quadratic",-,-
+97,4,,"Pseudotsuga menziesii,",,,mean diameter,,
+97,5,,"Abies concolor, Quercus",,,,,
+97,6,,"gambelii, Populus",,,,,
+97,7,,tremuloides,,,,,
+97,8,Walsh & Strandgard (2014),Pinus Radiata,34,*(2.24-2.80) m³,*(49.9-53.6) cm,-,No Obstacles Or
+97,9,,,,,,,Rocks
+97,10,Walsh et al. (2014),Radiata pine,34,2.1 m³,*(49.7-50.0) cm,-,No Obstacles Or
+97,11,,,,,,,Rocks
+97,12,Williams & Ackerman (2016),Pinus elliottii,*(21-26),*(0.99-1.10) m³,"*(35.99-37.50), (22.0-57.5) cm","*(2-3, 2-4, 3-5) - Erasmus",1 - Erasmus (1994)
+97,13,,,,,,(1994),
+97,14,Zimelis et al. (2020),"Pine, Spruce, Birch, Aspen,",-,-,10 (3-30) cm,-,-
+97,15,,"Black alder, Grey alder,",,,,,
+97,16,,"Hard deciduous, Soft",,,,,
+97,17,,deciduous,,,,,
+97,18,Zimelis et al. (2018),"Norway spruce, Scots pine,",-,*(0.02-0.10) m³,*(4-13) cm,-,-
+97,19,,Deciduous trees,,,,,
+97,20,Zimelis et al. (2019),-,-,-,(1-20) cm,-,-
+97,21,Zimelis et al. (2017a),"Spruce, Birch, Pine",-,-,-,-,-
+97,22,Zimelis et al. (2017b),"Pine, Spruce, Birch",*(18-67),*(0.045-0.085) m³,"11 *(8.8-16.2) cm, tree",-,-
+97,23,,,,,diameter,,
+97,24,Zimelis & Spalva (2022),Scarred aspen,-,0.11 m³,12.2 cm,-,-
+97,25,Zimelis et al. (2016),"Pine, Spruce, Deciduous",-,0.28 m³,-,-,-
