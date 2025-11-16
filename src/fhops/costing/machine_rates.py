@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from pathlib import Path
+import re
 from functools import lru_cache
 from typing import Sequence
 
@@ -61,17 +62,24 @@ def load_default_machine_rates() -> Sequence[MachineRate]:
     return tuple(rates)
 
 
-def _normalise_role(role: str) -> str:
-    return role.strip().lower().replace("-", "_")
-
-
 ROLE_SYNONYMS = {
-    "feller-buncher": "feller_buncher",
     "roadside_processor": "processor",
     "landing_processor_or_hand_buck": "processor",
     "hand_buck_or_processor": "processor",
     "loader_or_water": "loader",
 }
+
+
+def normalize_machine_role(role: str | None) -> str | None:
+    if role is None:
+        return None
+    stripped = role.strip().lower()
+    if not stripped:
+        return None
+    slug = re.sub(r"[^\w]+", "_", stripped).strip("_")
+    if not slug:
+        return None
+    return ROLE_SYNONYMS.get(slug, slug)
 
 
 @lru_cache(maxsize=1)
@@ -80,19 +88,18 @@ def load_machine_rate_index() -> dict[str, MachineRate]:
 
     index: dict[str, MachineRate] = {}
     for rate in load_default_machine_rates():
-        index[_normalise_role(rate.role)] = rate
-    for alias, target in ROLE_SYNONYMS.items():
-        normalised = _normalise_role(alias)
-        target_rate = index.get(_normalise_role(target))
-        if target_rate is not None:
-            index[normalised] = target_rate
+        key = normalize_machine_role(rate.role) or rate.role
+        index[key] = rate
     return index
 
 
 def get_machine_rate(role: str) -> MachineRate | None:
     """Return the default machine rate entry for the supplied role (case-insensitive)."""
 
-    return load_machine_rate_index().get(_normalise_role(role))
+    normalised = normalize_machine_role(role)
+    if normalised is None:
+        return None
+    return load_machine_rate_index().get(normalised)
 
 
 def compose_rental_rate(
@@ -166,4 +173,5 @@ __all__ = [
     "get_machine_rate",
     "compose_rental_rate",
     "compose_default_rental_rate_for_role",
+    "normalize_machine_role",
 ]

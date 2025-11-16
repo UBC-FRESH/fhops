@@ -7,6 +7,7 @@ from collections import defaultdict
 import pyomo.environ as pyo
 
 from fhops.scenario.contract import Problem
+from fhops.costing.machine_rates import normalize_machine_role
 
 
 def apply_system_sequencing_constraints(
@@ -33,7 +34,10 @@ def apply_system_sequencing_constraints(
             prereq = {job_roles[name] for name in job.prerequisites if name in job_roles}
             prereq_roles[(block.id, job.machine_role)] = prereq
 
-    machine_roles = {machine.id: getattr(machine, "role", None) for machine in scenario.machines}
+    machine_roles = {
+        machine.id: normalize_machine_role(getattr(machine, "role", None))
+        for machine in scenario.machines
+    }
     machines_by_role: dict[str, list[str]] = defaultdict(list)
     for machine_id, role in machine_roles.items():
         if role is not None:

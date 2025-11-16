@@ -5,6 +5,8 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
+from fhops.costing.machine_rates import normalize_machine_role
+
 
 @dataclass(frozen=True)
 class SystemJob:
@@ -13,6 +15,11 @@ class SystemJob:
     name: str
     machine_role: str
     prerequisites: Sequence[str]
+
+    def __post_init__(self) -> None:
+        normalised = normalize_machine_role(self.machine_role)
+        if normalised:
+            object.__setattr__(self, "machine_role", normalised)
 
 
 @dataclass(frozen=True)

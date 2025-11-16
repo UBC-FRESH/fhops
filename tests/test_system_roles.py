@@ -78,6 +78,36 @@ def test_role_constraints_restrict_assignments():
     assert con.body == model.x["M2", "B1", shift_key]
 
 
+def test_role_normalisation_matches_machine_and_job():
+    system = HarvestSystem(
+        system_id="fb_system",
+        jobs=[SystemJob(name="felling", machine_role="feller-buncher", prerequisites=[])],
+    )
+    scenario = Scenario(
+        name="role-normalise",
+        num_days=1,
+        blocks=[
+            Block(
+                id="B1",
+                landing_id="L1",
+                work_required=5.0,
+                earliest_start=1,
+                latest_finish=1,
+                harvest_system_id="fb_system",
+            )
+        ],
+        machines=[Machine(id="M1", role="feller_buncher")],
+        landings=[Landing(id="L1", daily_capacity=1)],
+        calendar=[CalendarEntry(machine_id="M1", day=1, available=1)],
+        production_rates=[ProductionRate(machine_id="M1", block_id="B1", rate=5.0)],
+        harvest_systems={"fb_system": system},
+    )
+    pb = Problem.from_scenario(scenario)
+    model = build_model(pb)
+    shift_key = _shift_key(pb, 1)
+    assert ("M1", "B1", *shift_key) not in model.role_filter
+
+
 def test_sequencing_blocks_without_prior_work():
     system = HarvestSystem(
         system_id="ground_sequence",

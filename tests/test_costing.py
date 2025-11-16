@@ -1,7 +1,7 @@
 import pytest
 
 from fhops.costing import compute_unit_cost, estimate_unit_cost_from_stand
-from fhops.costing.machine_rates import MachineRate, compose_rental_rate
+from fhops.costing.machine_rates import MachineRate, compose_rental_rate, normalize_machine_role
 from fhops.productivity import LahrsenModel
 
 
@@ -57,3 +57,9 @@ def test_compose_rental_rate_with_repair_toggle():
     total_no_repair, breakdown_no = compose_rental_rate(rate, include_repair_maintenance=False)
     assert pytest.approx(total_no_repair) == 330.0
     assert "repair_maintenance" not in breakdown_no
+
+
+def test_normalize_machine_role_synonyms():
+    assert normalize_machine_role("Feller-Buncher") == "feller_buncher"
+    assert normalize_machine_role("roadside processor") == "processor"
+    assert normalize_machine_role(" Loader-Or-Water ") == "loader"

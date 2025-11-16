@@ -13,7 +13,7 @@ from typing import Any, TypeVar, cast
 import pandas as pd
 import yaml
 
-from fhops.costing.machine_rates import compose_default_rental_rate_for_role
+from fhops.costing.machine_rates import compose_default_rental_rate_for_role, normalize_machine_role
 from fhops.evaluation.playback.events import SamplingConfig
 from fhops.productivity import load_lahrsen_ranges
 from fhops.scenario.contract import (
@@ -38,9 +38,10 @@ _LAHRSEN_RANGES = load_lahrsen_ranges()
 
 
 def _default_operating_cost_for_role(role: str | None) -> float:
-    if not role:
+    canonical = normalize_machine_role(role)
+    if not canonical:
         return 0.0
-    composed = compose_default_rental_rate_for_role(role)
+    composed = compose_default_rental_rate_for_role(canonical)
     if composed is None:
         return 0.0
     return round(composed[0], 2)
@@ -629,7 +630,8 @@ def generate_random_dataset(
             crew_ids.append(crew_id)
             crew_capabilities[crew_id] = list(base_capabilities.get(base, []))
     for idx in range(num_machines):
-        role = role_pool[idx % len(role_pool)] if role_pool else None
+        raw_role = role_pool[idx % len(role_pool)] if role_pool else None
+        role = normalize_machine_role(raw_role)
         assigned_crew = crew_ids[idx] if crew_ids else None
         rental_rate = _default_operating_cost_for_role(role)
         machines_records.append(
@@ -756,7 +758,7 @@ def generate_random_dataset(
             updated_machines = [
                 machine.model_copy(
                     update={
-                        "role": roles[idx % len(roles)],
+                        "role": normalize_machine_role(roles[idx % len(roles)]),
                         "operating_cost": _default_operating_cost_for_role(roles[idx % len(roles)]),
                     }
                 )
