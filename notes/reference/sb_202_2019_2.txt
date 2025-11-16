@@ -1,0 +1,475 @@
+Silva Balcanica, 20(2)/2019                                          DOI: 10.6084/m9.figshare.9929051
+
+
+  MACHINE PRODUCTIVITY EVALUATION FOR HARVESTERS
+ AND FORWARDERS IN THINNING OPERATIONS IN AUSTRALIA
+
+              Mohammad R. Ghaffariyan, Mauricio Acuna, Mark Brown
+   Forest Industries Research Centre, University of the Sunshine Coast, Queensland
+
+                                                 Abstract
+
+         Investment in thinning as part of forest management is generally for one of three purposes: improved
+future stand growth and quality to produce higher value products for later final harvest, removal of fuels to
+reduce fire risk or to meet ecological goals such as increasing biodiversity. The focus of this paper is on the
+thinning operations in Australian pine and eucalypt plantations, which are almost exclusively conducted
+by harvester-processors and forwarders. The Australian Forest Operations Research Alliance (AFORA) has
+conducted research projects on assessing the productivity of harvester-processors and forwarders in pine and
+eucalypt plantations in different sates/regions. All-time study data collected in different case studies have
+been consolidated into a data base called ALPACA (Australian Logging Productivity and Cost Appraisal).
+The data were used to develop the general productivity predicting models for harvester and forwarder based
+on multiple regression modelling. Harvester productivity was mainly a function of tree volume. Forwarder
+productivity was primarily a function of extraction distance. Slope has been included in the models as a
+weighting factor based on three classes and namely <15%, from 15% to 25% and >25%.
+        Key words: Thinning, Time study, Productivity, Forwarder, Harvester
+
+
+
+
+                                          INTRODUCTION
+
+       Australia’s industrial plantations consist of softwood species (1.03 million ha,
+mostly pine) and hardwood plantations (0.98 million ha, mostly eucalypt) (ABARES,
+2013). Thinning within forest management is generally done for one of three purposes:
+improved future stand growth and quality to produce higher value products for later final
+harvest, removal of fuels to reduce fire risk or to meet ecological goals such as increasing
+biodiversity. Thinning materials are usually small size woods, such as pulp logs, large
+branches and tops with limited industry uses. Pulp logs are used for pulp and paper
+making purposes or, where bioenergy markets are strong, they can be used for bioenergy.
+Large branches and tops generally do not meet industrial wood standards, thus are only
+recovered for bioenergy applications. Because profit margin in thinning operations is
+low, then it is essential to control the cost of operations. One of the suitable approaches
+to control the cost is developing machine productivity and cost-predicting models for
+the expected range of operating conditions. The focus of this research is on the thinning
+operations in Australian pine and eucalypt plantations, which are almost exclusively
+conducted by harvester-processors and forwarders.
+
+
+                                                     13
+       Studies on the application of the cut-to-length (CTL) system have been carried
+out in commercial thinning in North America (Kellogg, Bettinger, 1994; Hossain, Olsen,
+1998; Turner, Han, 2003; Kellogg, Spong, 2004) and Europe (Glode, 1999; Hanell et
+al., 2000; Spinelli et al., 2002; Nurminen et al., 2006; Rottensteiner et al., 2008). In
+Australia, the efficiency of a harvester-processor on a per-tonne basis was found to be
+higher than the combination of feller-buncher and processor in native forest thinning
+(Acuna, Kellogg, 2009).
+       Many factors can affect productivity of harvesters and forwarders; they are
+summarised in Table 1.
+
+                Table 1. Available knowledge on harvesters and forwarders productivity.
+
+                                                        Range of
+ Machine       Impacting factors on productivity       productivity        Source of information
+                                                       (m3/PMH0)
+                                                                         Kärä et al. 2004; Visser and
+                                                                          Spinelli 2012; Walsh and
+ Harvester               tree size, forking              5.6 to 50
+                                                                        Strandgard 2014; Acuna et al.
+                                                                            2017; Baek et al. 2017
+                                                                      Horvat et al. 1990; Kellogg and
+           type of logs (pulpwood, sawlog or mixed
+                                                                        Bettinger (1994); Tufts and
+            loads), volume per load, travel distance
+                                                                     Brinker 1993; Kuitto et al. 1994;
+            to where loading begins, travel distance
+                                                                     UK Forestry Commission 1995;
+              during loading and travel distance to    8 to over 36
+ Forwarder                                                          Gullberg    1997; Martin dos Santos
+             landing, stand type, average extraction    m3/PMH0
+                                                                    et al. 1995; Saunders 1996; Geolia
+           distance, timber density on the strip road,
+                                                                      et al. 1999; Spinelli et al. 2003;
+             load volume and size of forwarder and
+                                                                    Cordero et al. 2006, Nurminen et
+                      slope of the skid trail
+                                                                          al. 2006; Baek et al. 2017
+
+        Although several research projects have been conducted on assessing the productivity
+and cost of harvester-processors and forwarders in pine and eucalypt plantations in different
+states/regions in Australia (Acuna et al., 2017; Walsh, Strandgard, 2014; Ghaffariyan et
+al., 2012; Ghaffariyan, Brown, 2013), there is still no general model which merges all
+information to provide users with a benchmarking and predicting tool for productivity
+estimation in thinning operations in Australia. This paper aimed to develop a general
+productivity-predicting model for harvesters and forwarders in thinning operations and
+test the significance impact of operational factors (tree size, extraction distance, etc.) on
+machine productivity using multilinear regression modelling.
+
+
+                               MATERIALS AND METHODS
+Modelling of thinning operations with ALPACA
+      The tool ALPACA (Australian Logging Productivity and Cost Appraisal),
+developed by the Australian Forest Operations Research Alliance (AFORA), was used to
+
+                                                  14
+generate a productivity model for a harvester and a forwarder, which are commonly used
+in softwood and hardwood thinning operations. ALPACA is an Excel-based tool used
+to model and estimate harvest productivity and costs under different scenarios, assist
+planners to match harvesting systems to forest conditions, assess the impact of factors on
+productivity and cost and as a control tool to compare planned and actual productivity
+of harvesting systems, among others. The structure of the ALPACA tool is the same as
+that of the tool IRLPACA described in Murphy et al. (2010). Input parameters include
+harvest area, relocation distance, stand details (merchantable volume and trees to be
+removed per hectare, species), harvest type (e.g. clearfelling, thinning), working hours per
+year, harvesting system (e.g. cut-to-length, tree length) and machine hourly productivity
+and costs (Figure 1). As outputs, the tool provides daily production (m3 and tonnes), cost
+per m3 and cost per tonne by machine and for the whole system, as well as days to log
+the harvest unit. In addition, the tool allows the user to balance the system, i.e. to find
+the mix of felling/processing and extraction equipment that achieves the least harvesting
+cost (Acuna, Strandgard, 2017).
+       Productivity models in ALPACA have been developed for the most common
+ground-based harvesting systems existing across Australia from more than 200 time
+
+
+
+
+               Fig. 1. Data input interface to model a thinning operation in ALPACA.
+
+
+                                               15
+studies. Table 1 shows the ground-based systems included in the ALPACA tool, including
+the equipment for felling, processing, extraction and loading. Softwood and hardwood
+thinning operations are usually conducted using a harvester for felling the trees and
+processing the stems into logs (Figure 2), a forwarder to collect, load and extract the logs
+to roadside (Figure 3) and a dedicated loader to load the logs onto trucks (last system in
+Table 2 which is the one considered in this study). Eventually, the forwarder also can do
+the loading, although this option was not considered in the study.
+
+      Table 2. Ground-based systems and corresponding equipment included in the ALPACA tool.
+
+ *Felling (cutover), **Felling/              Extraction                   Processing             Loading
+     Processing (cutover)               (cutover to roadside)             (roadside)            (roadside)
+        *Feller-buncher                        Skidder                     Processor             Loader
+        *Feller-buncher                        Skidder                  In-field chipper     In-field chipper
+          **Harvester                         Forwarder                       NA                Forwarder
+          **Harvester                         Forwarder                       NA                 Loader
+
+
+
+
+ Fig. 2. Harvester. Harvesters fell the trees, process     Fig. 3. Forwarder. Forwarders are used to collect/
+   them into logs and sort the logs in small piles.       load logs into bins and extract them to roadside. At
+                                                                  roadside, logs are stacked into piles.
+
+Models for thinning operations developed with ALPACA
+       Productivity models in ALPACA, including those for thinning operations, are
+derived mainly from piece count studies but also from detailed time studies. In piece
+count studies, the number of trees, stems or logs produced in a certain period of time
+(e.g. one hour), along with their average volume, are recorded. These figures are then used
+to compute the productivity of harvesting equipment in m3 or tonnes per productive
+machine hour (PMH). In this study, all delays that occurred during data collection were
+not considered as part of the productive time, which in harvesting studies, is referred as
+to PMH0. Piece and count studies represent a quick way to estimate the productivity of a
+piece of harvesting equipment and system, as they can easily be replicated across a range
+of forest and operational conditions (Acuna et al., 2012). These data points can then be
+
+                                                         16
+plotted and used to develop predictive models mainly by means of simple or multilinear
+regression techniques.
+        In the case of detailed time studies, the goal is to describe the relationship between
+the time required to perform a particular phase of work (time or work element) and
+the factors, e.g. tree volume, slope, tree form, etc.), influencing the work (Acuna et
+al., 2017). This relationship is usually expressed in the form of a simple or multilinear
+regression model. In addition, detailed time studies are used to compare the productivity
+of two or more different work methods and machines (Acuna, Kellogg, 2009). They
+provide elemental detail, can link results to site and operating conditions (e.g. piece size,
+terrain slope) and they can pinpoint inefficiencies.
+        Data in detailed time studies are recorded at cycle level and include all work
+elements in each cycle. In the case of harvesters, some common work elements collected
+during these studies are moving, positioning to cut a tree, felling, processing, clearing
+debris and travelling. Likewise, work elements for the forwarder include travelling empty,
+travelling loaded, loading and unloading. Once a regression model is developed for each
+work element, these are added up to get a model by cycle, which is then converted to a
+productivity model.
+        All time study data collected by the Australian Forest Operations Research Alliance
+(AFORA) in different case studies across Australia have been consolidated into a data base,
+which includes, among others, the time and location of data collection, machine type, place
+of data collection, site specifications (e.g. slope, average tree size, etc.) and measured machine
+productivity (from piece count or detailed time studies). The data base is the basis of general
+productivity-predicting models for harvesters and forwarders based on multilinear regression
+modelling included in ALPACA. For harvesters and forwarders, it is assumed that machine
+productivity is primarily a function of tree volume and extraction distance, respectively.
+Slope has been included as a productivity-reduction factor based on three classes including:
+<15%, from 15% to 25% and >25%. When working on ground slope varying from 15% to
+25%, the productivity will drop by 15%, while for slopes exceeding 85%, the productivity is
+estimated to decrease by 25%. The productivity-predicting models are presented in tables and
+Excel-based graphs for further spatial analysis at a national level.
+        For determining the cost per tonne, hourly machine costs (AUD$/PMH) were
+obtained from ALPACA and AFORA’s standard machine-costing models, which use
+standard costing methodologies used in harvesting studies (Miyata and Steinhilb 1981,
+Ackermann et al. 2014). The input parameters to calculate hourly costs in ALPACA are
+shown in Figure 4.
+
+                                          RESULTS
+
+        Harvester’s productivity and cost prediction
+        For harvesters, the machine productivity as a function of tree volume (over bark)
+is presented in Equation 1:
+
+       Productivity [m3/PMH0]=48.971*Tree volume [m3]0.6245                          (1)
+
+                                               17
+             Fig. 4. Input parameters used in ALPACA to calculate machine hourly costs.
+
+
+        The predicted productivity and cost for felling and processing trees using a
+medium-sized harvester working on slopes less than 15% is presented in Table 3. Larger
+tree size will result in higher machine productivity and reduced costs. As an indicator, if
+tree size increases from 0.5 m3 to 1.0 m3 the machine productivity will increase from 32.1
+m3/PMH0 to 48.2 m3/PMH0 (free delay productive machine hours), which consequently
+would drop the cost from 7.4 $/m3 to 4.9 $/m3 (34% cost reduction assuming an hourly
+cost of 236.9 $/PMH).
+   Table 3. Predicted productivity and cost of medium harvester in thinning operations (slope <15%)
+                                         for different tree sizes.
+
+     Tree volume (m3)               Predicted productivity (m3/PMH0)                Cost ($/m3)
+            0.1                                   11.4                                 20.7
+            0.5                                   32.1                                    7.4
+            1.0                                   48.2                                    4.9
+
+       Harvester productivity can also be impacted by slope. When harvesters work on
+steeper slopes (above 15%), the movement between trees and positioning the machine
+will require more time to be done safely, which will impact productivity negatively
+(Figure 5).
+       These models are implemented in the ALPACA tool (Figure 6). Additional factors
+(such as tree form, terrain and operator) can be included to adjust the productivity
+predictions made by the tool. In the figure, the bands correspond to variations in
+productivity of +-10% around the prediction curve.
+
+                                                 18
+Forwarder’s productivity and cost prediction
+       Two general models are included in the ALPACA tool, one for small forwarders
+(14 t capacity) and one for large forwarders (20 t capacity). Large-sized forwarders
+(12-18 t capacity) are commonly used in Australian native forest thinning operations
+to transport some of the large trees that are removed during the operations (Acuna,
+Kellogg, 2009).
+
+
+
+
+        Fig. 5. Predicting harvester productivity depending on tree volume and ground slope.
+
+
+
+
+             Fig. 6. ALPACA’s Productivity model for harvesters in thinning operations.
+
+
+                                                19
+       Model small forwarders
+       Productivity [m3/PMH0]=44.32-2.72*LN(Extraction distance [m])                        (2)
+       Model large forwarders
+       Productivity [m3/PMH0]=87.65/Extraction distance [m]0.126                            (3)
+
+       Forwarding distance is the most significant factor impacting forwarder’s
+productivity based on the model. Increasing forwarding distance increases the travel time
+of the machine, resulting in lower productivity for the forwarder. In addition, larger
+machines (20 t) have higher hourly operating cost than smaller machines (14 t) but can
+be more productive with larger load sizes.
+       Table 4 presents the summary of predicted productivity and cost of two forwarders
+for forwarding distances ranging from 100 m to 800 m on flat terrains (slope< 10%).
+From the table, the productivity and cost of a large forwarder for extracting logs at
+average distance of 100 m is predicted as 49.1 m3/PMH0 and 5.6 $/m3, respectively. As
+extraction distance increases to 400 m the productivity is reduced by up to 16% (41.2
+m3/PMH0) increasing the cost to 6.7 $/m3.
+       Slope of forwarding trails may impact the travelling time between the stand and
+road side (landing). When forwarding on ground with slope increasing from 10% to
+20%, the productivity drops by up to 75% and up to 85% as slopes increase beyond
+20%. Figures 7 and 8 illustrate the impact of forwarding distance on the productivity of
+forwarders for three different slope classes.
+
+Table 4. Estimating productivity and cost of forwarders in thinning operations (slope <10%) for different
+                                          forwarding distances.
+
+                Predicted productivity           Predicted
+ Forwarding                                                         Cost ($/m3) for     Cost ($/m3) for
+                 for small forwarder       productivity for large
+ distance (m)                                                       small forwarder     large forwarder
+                     (m3/PMH0)             forwarder (m3/PMH0)
+     100                  31.8                      49.1                   7.4                5.6
+     200                  29.9                      45.0                   7.9                6.1
+     300                  28.8                      42.7                   8.2                6.4
+     400                  28.1                      41.2                   8.4                6.7
+     500                  27.4                      40.1                   8.6                6.9
+     600                  26.9                      39.1                   8.8                7.0
+     700                  26.5                      38.4                   8.9                7.2
+     800                  26.2                      37.8                   9.1                7.3
+
+
+
+
+                                                  20
+Fig. 7. Predicting productivity of small forwarders, depending on forwarding distance and ground slope.
+
+
+
+
+Fig. 8. Predicting productivity of large forwarders, depending on forwarding distance and ground slope.
+
+
+
+
+                                                 21
+                                      DISCUSSION
+
+        The harvester productivity models in this study are based around the most
+common productivity-influencing variable for harvesters: tree size. Consistent with
+previous studies, the developed model shows a non-linear increase in productivity with
+increasing tree size (Kärä et al., 2004; Visser, Spinelli, 2012; Walsh, Strandgard, 2014;
+Ghaffariyan et al., 2015; Baek et al., 2017; Acuna et al., 2017). Given the shape of the
+harvesting productivity model and the fact that it shows an ongoing increasing trajectory,
+it is understood that the tree sizes included in the study area were well within the technical
+limits of the harvester.
+        The difference between predicted productivity in this general model versus other
+studies is likely influenced by the range of tree sizes included in the study area, tree form,
+operator experience and other site conditions, e.g. slope and roughness. Because forking
+of the stem did not present as a significant variable, like it did in the Acuna et al. (2017)
+case study, it is expected that the trees in the trial had significantly better form with less
+forking of the stems present. Given there were no specific issues observed during the
+study, operator experience and terrain conditions re likely to have had minimal, if any
+impact on the general model.
+        The productivity-predicting model of forwarders in this study is consistent with
+other studies (Tufts, Brinker, 1993; Kuitto et al., 1994; Nurminen et al., 2006) where
+extraction distance was used as an independent variable. As expected, increasing distance
+resulted in increased extraction time and reduced productivity. The predicted productivity
+for small forwarder falls within the range (from 8 to 36 m3/PMH0) reported by previous
+studies (Gullberg, 1997; Martin dos Santos et al., 1995; Saunders, 1996; Geolia et al.,
+1999; Horvat et al., 1990; Cordeo et al., 2006, Baek et al., 2017).
+        The productivity predicted by model for large forwarders is slightly higher than
+published international studies, which might be due to the larger size of machine (or
+other opreational factors, such as larger load volume, flatter terrains, etc.) assumed in our
+modelling. For both the small forwarders and the large forwarders, slope was found to have
+a significant impact on the productivity. For both, the productivity was typically reduced
+by 8 to 15 m3/PMH0 with the forwarder likely having to travel slower either due to
+climbing the reverse slope or to operate safely across the slope. The size of some of the trees
+removed during thinning operations in Australian native forests, calls for large-capacity
+(18-20 t) forwarders. These operations require careful planning to ensure productive and
+safe harvesting and extraction operations. Commercial thinning is normally conducted
+using an “outrow and bay” method. In this method, a whole row (~4.5 m strip) or access
+track is removed. For ease of working, thinning machinery often requires that outrows are
+at right angles to the contour. In natural regrowth, outrows are a maximum of 4.5. m wide
+and bays a minimum of 12 m wide (Acuna, Kellogg, 2009).
+        The general productivity-predicting models in this study are useful tools to
+harvesting managers and contactors for controlling and predicting the forwarders’ and
+harvesters’ productivity (and cost) in their operations. The size of the machine (forwarder
+
+                                             22
+studied in this trial) would impact the productivity and cost which needs to be considered
+by industry users in operation planning. Care should be taken because these predicting-
+productivity models were developed based on limited time studies. There is an error
+of estimation of regression models which needs to be considered when applying these
+models. In addition, to the error of regression models, the models’ application should
+be limited to the range of the parameters (tree size, extraction distance, etc.) used in this
+study. If operations/stands conditions are different, one would need to collect further
+time study data and update the predicting models to match with the working conditions.
+
+                                         CONCLUSIONS
+
+       The results of this study indicated that statistically it is possible to merge different
+time study data to develop a general model. The general models, developed for predicting
+productivity of harvesters and forwarders, were significant and provided consistent and
+reasonable outcomes. These models could be used for benchmarking work productivity
+of similar harvesting operations in Australia. In addition to tree size and forwarding
+distance, the slope factor was added to the developed models, which may be useful for
+industry users operating in various terrains.
+
+                                           REFERENCES
+
+ABARES (Australian Bureau of Agricultural and Resource Economics and Sciences). 2013. Australia’s state
+    of the forests report – executive summary. Canberra: Department of Agriculture, ABARES, 12 pp.
+Ackerman, P., H. Belbo, L. Eliasson, A. De Jong, A. Lazdins, J. Lyons. 2014. The COST model for calculation
+    of forest operations costs. International Journal of Forest Engineering, 25 (1), 75-81. Available from:
+    http://www.forestenergy.org/pages/costing-model-machine-cost-calculation/
+Acuna, M., M. Bigot, S. Guerra, B. Hartsough, C. Kanzian, K. Kärhä, O. Lindroos, N. Magagnotti, S.
+    Roux, R. Spinelli, B. Talbot, E. Tolosana, F. Zormaier. 2012. Good Practice guidelines for biomass
+    production studies. Cost Action FP-0902 WG2 Operations research and measurement methodologies.
+    Publisher: CNR IVALSA, ISBN 978-88-901660-4-4, 51 pp.
+Acuna, M., L. ellogg. 2009. Evaluation of alternative cut-to-length harvesting technology for native forest
+    thinning in Australia. – International Journal of Forest Engineering, 20, 19-27.
+Acuna, M., M. Strandgard. 2017. Impact of climate change on Australian forest operations. – Australian
+    Forestry, 80 (5), 299-308.
+Acuna, M., M. Strandgard, J. Wiedemann, R. Mitchell. 2017. Impacts of Early Thinning of a Eucalyptus
+    globulus Labill. – Pulplog Plantation in Western Australia on Economic Profitability and Harvester
+    Productivity. Forests, 8, 145. DOI:10.3390/f8110415.
+Akay, A., J. Sessions. 2001. Minimizing road construction plus forwarding costs under a maximum soil
+    disturbance constraint. – The International Mountain Logging and 11th Pacific Northwest Skyline
+    Symposium, December 10-12, Seattle, Washington, USA, 268-279.
+Baek, K-G, J. Bisson, H.-S. Han. 2017. Productivity and Cost of a Cut-To-Length commercial thinning
+    operation in a Northern California Redwood Forest. – In: Proceedings of the Council of Forest
+    Engineering 2017 Annual Meeting, July 30-August 2, 2017, Bangor, Maine, USA.
+Cordero, R., O. Mardones, M. Marticorena. 2006. Evaluation of forestry machinery performance in
+    harvesting operations using GPS technology. – In: Symposium Proceedings IUFRO Precision Forestry
+    Symposium, Stellenbosch, 163-173.
+
+
+                                                   23
+Goglia, V., D. Horvat, S. Sever. 1999. Technical characteristics and test of the forwarder Valmet 860
+     equipped with a Cranab 1200 crane. University of Zagreb, Faculty of Forest Sceince, Internal Report,
+     Zagreb, 23 pp.
+Ghaffariyan, M. R., M. Brown. 2013. Selecting the efficient harvesting method using multiple criteria
+     analysis: A case study in south-west Western Australia. – Journal of Forest Science, 59 (12), 479-486.
+Ghaffariyan, M. R., J. Sessions. 2012. Comparing the efficiency of four harvesting methods in a blue gum
+     plantation in south-west Western Australia. CRC for Forestry. Bulletin 29, 4 pp.
+Ghaffariyan, M. R., J. Sessions, M. Brown. 2012. Machine productivity and residual harvesting residues
+     associated with a cut-to-length harvest system in southern Tasmania. – Southern Forests: a Journal of
+     Forest Science, 74 (4), 229-235.
+Ghaffariyan, M. R., K. Stampfer, J. Sessions. 2007. Forwarding productivity in Southern Austria. – Croatian
+     Journal of Forest Engineering, 28 (2), 169-175.
+Glode, D. 1999. Single- and double-grip harvesters – productive measurements in final cutting of
+     shelterwood. – International Journal of Forest Engineering, 10, 63-74.
+Goglia, V., D. Horvat, S. Sever. 1999. Technical characteristics and test of the forwarder Valmet 860
+     equipped with a Cranab 1200 crane. University of Zagreb, Faculty of Forest Sceince, Internal Report,
+     Zagreb, 23 pp.
+Gulberg, T. 1997. Time consumption model of off-road extraction of shortwood. – Institutionen foer
+     Skogsteknik, Sveriges Lantbruksuniversitet, Uppsatser och Resultat, 297, 29 pp.
+Hanell, B., T. Nordfjell, L. Eliasson. 2000. Productivity and costs in shelterwood harvesting. – Scandinavian
+     Journal of Forest Research, 15, 561-569.
+Horvat, D., V. Goglia, S. Sever. 1999. Technical characteristics and test of the forwarder Timberjack 1410
+     and Timberjack 1710. University of Zagreb, Faculty of Forest Science, Internal Report, Zagreb, 32 pp.
+Hossain, M. M., E. D. Olsen. 1998. Comparison of commercial thinning production and costs between
+     silvicultural treatments, multiple sites, and logging systems in Central Oregon. – In: Proceedings of the
+     Council of Forest Engineering 1998 Annual Meeting, 19-23 July 1998, Portland, Oregon.
+Kärä, K, Ö. Rönkk, S. Gumse. 2004. Productivity and cutting costs of thinning harvesters. – International
+     Journal of Forest Engineering, 15 (2), 43-56
+Kellogg, L. D., P. Bettinger. 1994. Thinning productivity and cost for a mechanized cut-to-length system in
+     the Northwest Pacific Coast region of the USA. – International Journal of Forest Engineering, 5, 43-54.
+Kellogg, L. D., B. D. Spong. 2004. Cut-to-length thinning production and costs: experience from the
+     Willamette Young Stand Project. Research Contribution 47. Corvallis: Forest Research Laboratory,
+     Oregon State University.
+Kuitto, P. J., S. Keskinen, J. Lindroos, T. Oijiala, J. Rajamaeki, T. Rasanen, J. Terava. 1994. Mechanized
+     cutting and forest haulage. – Mestaeteho Report, 410, 38.
+Martin dos Santos, S., C. Machado, H. Leite. 1995. Techno-economical analysis of eucalyptus extraction
+     with forwarder in flat terrain. – Revista Arvore, Vicosa 19 (2), 213-227.
+Miyata, E. S., H. S. Steinhilb. 1981. Logging system cost analysis: comparison of methods used. USDAForest
+     Service Research Paper NC-208. North Central Forest Experiment Station, St. Paul, MN.
+Nurminen, T., K. Heikki, J. Uusitalo. 2006. Time consumption analysis of the mechanized cut-to-length
+     harvesting system. – Silva Fennica, 40 (2), 335-363.
+Rottensteiner, Ch., G. Affenzeller, K. Stampfer. 2008. Evaluation of the feller-buncher Moipu 400E for
+     energy wood harvesting. – Croatian Journal of Forest Engineering, 29, 117-128.
+Spinelli, R., P. M. Owende, S. M. Ward. 2002. Productivity and cost of CTL harvesting of Eucalyptus
+     globulus stands using excavator-based harvesters. – Forest Products Journal, 52 (1), 67-77.
+Saunders, C. 1996. West Argyll Valmet 890 forwarder trial 1996. Forestry Commission Research Division-
+     Technical Development Branch, Internet Project Information, Note 7/96, 9 pp.
+Spinelli, R., P. Owende, S. Ward, M. Torneo. 2003. Comparison of short-wood forwarding systems used in
+     Iberia. – Silvia Fennica, 38 (1), 85-94.
+Tufts, R. A., R. W. Brinker. 1993. Productivity of Scandinavian cut-to-length system while second thinning
+     pine plantations. – Forest Product Journal, 43 (11-12), 24-32.
+
+
+
+                                                     24
+Turner, D. R., H. S. Han. 2003. Productivity of a small cut-to-length harvester in northern Idaho, USA. – In:
+     Proceedings of the 2003 Annual Council of Forest Engineering Meeting, 7–10 September 2003, Bar
+     Harbor, Maine. UK Forestry Commission. 1995. Terrain classification. Technical, Note 16/95, 5 pp.
+Visser, R., R. Spinelli. 2012. Determining the shape of the productivity function for mechanized felling and
+     felling-processing. – Journal of Forest Research, 17, 397-402.
+Walsh, D., M. Strandgard. 2014. Productivity and cost of harvesting a stemwood biomass product from
+     integrated cut-to-length harvest operations in Australian Pinus radiata plantations. – Biomass and
+     Bioenergy, 66, 93-102.
+
+        E-mail: mghaffar@usc.edu.au
+
+
+
+
+                                                    25
+

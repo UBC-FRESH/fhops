@@ -4,6 +4,12 @@ from .eriksson2014 import (
     estimate_forwarder_productivity_final_felling,
     estimate_forwarder_productivity_thinning,
 )
+from .ghaffariyan2019 import (
+    estimate_forwarder_productivity_large_forwarder_thinning,
+    estimate_forwarder_productivity_small_forwarder_thinning,
+)
+from .kellogg_bettinger1994 import LoadType as KelloggLoadType
+from .kellogg_bettinger1994 import estimate_forwarder_productivity_kellogg_bettinger
 from .laitila2020 import estimate_brushwood_harwarder_productivity
 from .lahrsen2025 import (
     LahrsenModel,
@@ -27,6 +33,10 @@ __all__ = [
     "load_lahrsen_ranges",
     "estimate_forwarder_productivity_final_felling",
     "estimate_forwarder_productivity_thinning",
+    "estimate_forwarder_productivity_small_forwarder_thinning",
+    "estimate_forwarder_productivity_large_forwarder_thinning",
+    "estimate_forwarder_productivity_kellogg_bettinger",
+    "KelloggLoadType",
     "estimate_brushwood_harwarder_productivity",
     "estimate_skidder_harvester_productivity_delay_free",
     "estimate_skidder_harvester_productivity_with_delays",

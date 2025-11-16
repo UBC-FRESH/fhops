@@ -1,0 +1,433 @@
+                                                                                  Journal of Forest Engineering • 7
+
+
+    Modelling Harvester-Forwarder                        uneven-aged management are being introduced to
+                                                         achieve these conditions. One approach, the selec-
+      System Performance in a                            tion method of regeneration, is being used in many
+          Selection Harvest                              areas of the western United States and Canada to
+                                                         develop and maintain uneven aged conditions within
+                   J.F. McNeel 1                         the stand and to rapidly create late successional
+                USDA Forest Service                      conditions within treated stands.
+                   Seattle, USA
+                                                              Harvests based on the group selection method
+                   D. Rutherford                         of regeneration remove a representative number of
+            University of British Columbia               stems within specific diameter classes in a number of
+                 Vancouver, Canada                       small areas within the stand. Harvests are made at
+                                                         time intervals ranging from 10 to 40 years to promote
+                                                         regeneration within the stand and to insure a diver-
+ABSTRACT                                                 sity of growth within the stand.
+
+     A harvester - forwarder system was studied in a          Harvesting systems used for group selection
+selection harvest operation conducted in an interior     harvests require more control over machine opera-
+forest stand composed of Douglas fir (Pseudotsuga        tions during the harvest to minimize residual stand
+menziesii), Ponderosa pine (Pinus ponderosa), and        damage and site impacts. However, the harvest
+Grand fir (Abies grandis). A time-study analysis was     system options available to forest managers are rela-
+used to develop models for predicting individual         tively limited. Manual felling and processing re-
+machine productivity over time for both the har-         quire excessive time and labour, while conventional
+vester and forwarder involved in the study. Analy-       mechanized systems which harvest tree-length ma-
+sis indicates that harvester productivity (13.85 m 3     terial often produce more residual stand damage
+per SMH) closely matched forwarder production            than is acceptable from a management standpoint.
+(14.10 m 3 per SMH) during the study. Further analy-
+sis yielded models that can be used to predict system         One option that has received attention in west-
+productivity across the range of stand values ob-        ern North America is the harvester-forwarder sys-
+served during the study. The results suggest that        tem. This system holds a number of advantages over
+system productivity is balanced when operating in        conventional systems commonly used for thinning
+stands averaging 15 to 25 cm DBH. In stands of           operations. The system incorporates only two ma-
+larger or smaller average diameter, productivity for     chines throughout the harvest — a harvester de-
+the system becomes unbalanced and affects machine        signed to fell and process stems at the stump, and a
+operation, particularly the forwarder. Further re-       forwarder designed to transport processed logs from
+search is suggested to improve the developed pre-        the stump to the landing or roadside. Both machines
+dictor models and allow for prediction of system         are designed to minimize site and stand impacts
+performance over a broad range of stand and site         when used under proper conditions. This is achieved
+conditions.                                              primarily through compact and lightweight design
+                                                         features built into each machine [5].
+Keywords: harvest production, harvester, fonvarder,
+selection harvest, cut-to-length harvesting system.           The harvester strips the limbs from harvested
+                                                         stems and places this slash directly in the machine
+INTRODUCTION                                             path to reduce soil compaction and rutting. The
+                                                         forwarder typically follows in the tracks produced
+    As forest managers focus on different ways to        by the harvester, reducing the chance of creating
+introduce diversity into the forest, concepts such as    heavily compacted trails and minimizing the poten-
+                                                         tial damage to the stand [2,6, and 7]. In at least one
+                                                         study, this system was found to have minimal im-
+                                                         pact relative to soil disturbance, compaction, and
+1                                                        residual stand damage [5].
+ The authors are, respectively, Research Engineer, Pacific
+Northwest Research Station, and Research Assistant,
+Department of Harvesting and Wood Science, Faculty            The single-grip harvester works well in stands
+of Forestry.                                               where a residual component is left standing, due to
+8 • Journal of Forest Engineering
+
+the potential reduction in stand and site damage           harvester-forwarder system is appropriate for har-
+incurred during the harvest entry. Processing with         vesting many sites in the interior region of north-
+this machine is limited to stems with a maximum            western North America. The system can also be
+groundline diameter of 65 cm or less. Stem capacity        used on many coastal sites where the terrain is
+is limited by both the felling device—a hydraulically      rolling or flat and slope is minimal.
+driven chainsaw—and the delimbing device—a set
+of delimbing knives combined with two feedrollers               This study focuses on the productivity of the
+which draw the stem through the delimbing knives.          individual machines and the development of mod-
+The single-grip harvester fells, delimbs, bucks, and       els for estimating machine productivity in a selec-
+tops each stem using this boom-mounted head.               tion harvest. Specifically, this study attempted to
+                                                           determine individual machine productivity of a har-
+     After harvesting operations are completed, the        vester-forwarder system in a selection harvest, and
+forwarder moves along the harvester trail and re-          determine the operable productivity range of the
+trieves the piled logs with a small boom-mounted           system and estimate system productivity for a range
+grapple, placing them in a bunk or storage bay             of stand conditions under the studied silvicultural
+located at the back of the forwarder.                      prescription.
+
+     Bunk capacity can range up to 24 t. Although          METHODS
+intended for applications where the machine con-
+tinually travels on the same trail, smaller capacity            The study was conducted in a mixed stand com-
+machines are used which have a payload capacity of         posed of interior Douglas fir (Pseudotsuga menziesii),
+8 to 141 [3].                                              Ponderosa pine (Pinus ponderosa), and Grand fir
+                                                           (Abies grandis), located on a relatively flat to rolling
+     The system is limited to sites where stem diam-       site with few obstacles to mechanized operations.
+eter, slope, and terrain conditions are appropriate.       The stand was fire-origin second growth approxi-
+Even when these constraints are considered, the            mately 75 to 80 years old.
+
+
+
+     Table 1. Summary statistics for study plots.
+
+
+                    Plot        Mean        Std. Dev.   Range        Min          Max           N
+
+            Diameter at Breast Height (cm):
+
+                     1              28.4      13.6      48.5          8.0          56.5         49
+
+                     2              28.8      12.9      46.5         10.0         56.5          56
+
+                     3              23.7      11.9      48.0          7.0         55.0          80
+
+                 Grouped 1          26.5      12.9      49.5          7.0         56.5         185
+
+            Diameter at Groundline (cm):
+
+                  Grouped           28.9      11.4       44.5         9.0         53.5         106
+
+            Total Tree Height (m):
+
+                  Grouped           16.18      1.9       4.9         13.7         18.6          11
+            1
+                ANOVA indicated no significant difference among the means at the 0.05 alpha level.
+                                                                                    Journal of Forest Engineering • 9
+
+    The silvicultural objectives of the harvest were            Forwarder operations were also subjected to
+to increase the growth potential of medium- and            time studies with elemental operations being timed
+smaller-sized stems in the stand, and to recover pine      using the hand-held data recorder. Cycle elements
+infested with mountain pine beetle to minimize fur-        for the forwarder operations included travel empty,
+ther infestation. In addition, an effort was made to       load logs, move-woods, sort-woods, travel loaded,
+modify species composition within the stand to fa-         unload, move-landing, sort-landing, and delay.
+vour Ponderosa pine and to reduce the percentage of
+mature Douglas fir. Trees were not marked for                   Data related to each element collected during
+harvest prior to entry, and the harvester operator         the time study were subjected to regression analysis
+was responsible for selecting stems for removal.           to develop regression models relating elemental time
+                                                           to some independent variable(s) associated with the
+    Three plots of 800 m 2 (dimensions of 20 x 40 m)       stand or site. Estimates of total cycle time for each
+were selected within the stand. Each randomly              machine were then computed for a range of inde-
+selected plot was ribboned off, and all trees in the       pendent stand variables.
+plot were measured and tagged for later referenc-
+ing with time-study data. Summary statistics are           RESULTS
+provided in Table 1. Total stem height measure-
+ments were taken for a sub-sample of trees within              Of the 194 trees measured in the plots, over 58%
+these plots.                                               (113 stems) were harvested, leaving 81 trees as
+                                                           residuals in the stand. Mean DBH for the harvested
+     As suggested in Table 1, little variation existed     component was 22.5 cm with an estimated total
+between plots, although diameter ranged substan-           height of 15.7 m, suggesting that the harvest focused
+tially within each plot. An ANOVA comparing                on smaller-sized timber. No analysis of the residual
+mean diameter for the three plots indicated no sig-        component or site/stand impact was undertaken.
+nificant difference at an alpha level of 0.05. Stand
+density within the plots ranged from 612 stems per         Harvester
+ha for plot 1, to 1000 stems per ha for plot 3. The mean
+stand density for the site was estimated at 771 stems           Summary statistics detailing cycle element times
+per hectare. Slope on these sites ranged from 0 to         for harvester operations are provided in Table 2.
+10% across uniform or flat terrain.                        Figure 1 illustrates the proportion of time associated
+                                                           with an individual cycle for the harvester. The data
+     Data collection was separated into two compo-         suggest that each harvester cycle requires approxi-
+nents—harvester and forwarder operations. Each             mately 1.02 productive minutes, resulting in an av-
+machine was timed in a production environment for          erage production of 58.73 stems per PMH. Machine
+later development of regression equations to esti-         utilization was estimated to average 87%, based only
+mate individual machine productivity. In addition,         on the operational and mechanical delays observed
+independent variables associated with machine              during the study. The scheduled cycle time for
+performance were collected. These variables in-            harvester operations was estimated at 1.18 sched-
+cluded individual stem diameter at breast height           uled minutes per tree.
+and at the stump, slope, terrain class, and move
+distance for each machine. Timing and other data
+collection were conducted with a hand-held data
+recorder equipped with a timing program that al-
+lowed elemental times to be matched with corre-
+sponding independent variables. Recorded data
+were then down-loaded to a micro-computer for
+statistical analysis.
+
+    Cycle element times collected for the harvester
+operations included move, position head, cut tree,
+delimb, slash disposal, and delay. These production
+elements are common to most, if not all, single-grip
+harvesters, and define a complete machine cycle.           Figure 1. Elements of the harvester cycle.
+10 • Journal of Forest Engineering.
+
+Table 2. Summary statistics for harvester operations.     other cycle elements, since no significant correlation
+                                                          was noted for these variables during the statistical
+                                                          analysis.
+                            —(minutes per cycle)—
+  Element                   Mean    Std. Dev.    N        Fell Tree:
+  Delimb/Buck               0.3601    0.2634     106          CUT = 0.0283 +0.0019*DBH
+  Slash Disposal            0.1091    0.1686     140
+  Cut Tree                  0.0802    0.0647     113      Where:
+  Position Head             0.1890    0.1057     104         DBH = Diameter at breast height (cm)
+  Move                      0.2833    0.1921      66         CUT = Time required to sever a single tree once
+                                                                  sawhead is engaged (productive minutes).
+  Total Productive          1.0217                           r2 = 0.276
+  Cycle                                                      SE(y) = 0.0261
+  Delays                                                  Delimb:
+      Operational           0.0442    0.0077       5
+      Mechanical            0.1115    0.1679       3          DLIM = 0.3508*Ht - 5.1628
+  Total Scheduled           1.1774                        Where:
+  Cycle                                                      Ht = Total tree height (m)
+                                                             DLIM = Time required to delimb, buck, and top
+                                                                  stem (productive minutes)
+                                                             r2 = 0.463
+     Delimbing was the most time-consuming func-             SE(y) = 0.194
+tion, requiring approximately 34% of the cycle to
+complete. Moving the machine comprised 18% of a           Move Machine:
+typical cycle, as did positioning the harvester head.
+The cut element required the least amount of time,            MOV = 0.1944 + 0.0357*Dist
+comprising only 8% of a typical cycle.
+                                                          Where:
+     Distance moved during the move function aver-           Dist = Mean move distance (m)
+aged 8.14 m, or about the operating radius of the            MOV = Time required to move machine be-
+boom. Maximum boom extension was estimated to                    tween points in the stand (productive
+be 10 m. Observed machine performance in the                     minutes)
+stand suggests that the operator typically moved a           r2 = 0.873
+distance equal to the operating radius of the boom,          SE(y) = 0.118
+and felled stems located within the half-circle area to
+the front and sides of the machine. In this case, for          These elemental models were combined with
+every 100 m 2 half-circle, approximately 1.7 stems        observed mean values for the remaining cycle ele-
+were removed. The results also suggest that heavier       ments to generate a predictor equation for harvester
+stand densities would reduce the proportion of time       total cycle time per tree based on mean stand DBH,
+spent moving the machine during operations and            mean total height, and estimated mean move dis-
+increase the number of stems harvested from each          tance. Within the overall model, each elemental
+new point. The limited amount of data collected           predictor was adjusted to account for the productive
+during the study, however, does not allow for veri-       time required to harvest a single tree. The developed
+fication of this hypothesis.                              model follows:
+
+    Regression analysis was conducted for several         Harvester Total Cycle:
+elements of the harvester cycle: fell tree, delimb, and
+move machine. The resulting regression models to              TC(H) = - 4.6830 + 0.3508*Ht + 0.0208*Dist +
+predict these elemental times are presented below.                   0.0019*DBH
+Regression estimators were not developed for the
+                                                                                       Journal of Forest Engineering »11
+
+                                                           0.24 m3, based on volume equations provided by the
+                                                           British Columbia Forest Service (1976) and observed
+                                                           means for the harvested component, the average
+                                                           hourly production of the harvester is estimated at
+                                                           14.11 m 3 on a productive hour basis, or 12.23 m 3 o n a
+                                                           scheduled hour basis.
+
+                                                                Factors associated with the harvested stand com-
+                                                           ponent were varied to determine the effect of changes
+                                                           in diameter and mean move distance on machine
+                                                           productivity (Fig. 2). The graphed results indicate that
+Figure 2. Effect of diameter and mean move distance        mean move time plays a relatively minor role in defin-
+on harvester hourly production.                            ing productivity in stands with moderate to low stock-
+                                                           ing. As with most logging systems, however, average
+                                                           harvested tree diameter has a significant impact on
+Where:                                                     machine productivity. In this analysis, hourly produc-
+   TC(H) = Total cycle time per tree for single-grip       tivity increased by a factor of more than five when
+       harvester (productive minutes)                      mean stand diameter increased from 10 to 20 cm.
+
+    For the parameters observed in the harvested           Forwarder:
+stands, the mean harvester cycletimeis estimated at 1.04
+minutes per tree on a productive basis—excluding               Cycle element times observed for the forwarder
+delays—and 1.21 minutes per tree on a scheduled            operations are summarized in Table 3, while a sum-
+hour basis. Assuming a mean volume per stem of             mary of the observations associated with the inde-
+
+
+                                                           Table 4. Summary of independent variables associ-
+Table 3. Summary statistics for forwarder operations.      ated with forwarder operations.
+
+
+                           —(minutes per cycle)—            Element           Mean       Min     Max     Std.      N
+  Element                  Mean   Std. Dev.    N                                                         Dev.
+                                                            Distl -
+  Move-Woods              4.3688       2.4843      95       Move-Woods         10.93       1.5    38.0     9.50    95
+  Sort-Landing            2.1041       1.2582      59       (meters)
+  Unload                  5.3847       2.1158     193
+  Move-Landing            0.9584       0.3148      32       Dist2 -
+  Travel Empty            2.6444       1.2735       9       Move-Landing       10.34       1.5    32.0     7.59    32
+  Load Logs               9.4284       0.1502     267       (meters)
+  Sort-Woods              2.0543       1.2459      86
+  Travel Loaded           1.7585       0.7493       8       Dist3 -
+                                                            Travel Loaded 121.50         71.0    241.0 57.87        8
+  Total Productive       28.7016                            (meters)
+  Cycle
+                                                            Dist4 -
+  Delays 1                                                  Travel Empty      170.78     52.0    290.0 89.59        9
+      Operational         1.4046       2.8457        7      (meters)
+
+  Total Scheduled        30.1062                            Number of Logs -
+  Cycle                                                     Load Logs        2.03          1.0     7.0     0.96 267
+  1
+   No mechanical oi personnel delays were                   Number of Logs -
+  observed during the study.                                Unload Logs      3.14          1.0     8.0     1.74 193
+12 • Journal of Forest Engineering.
+
+
+                        5%                                                 Move-Landing:
+                   9%
+       3%                                  \   30%     __ Load Logs
+  7%     /                                                                     ML = 0.1763 + 0.0061*Dist2
+                                               \       •   Sort - Woods
+
+                                                   \   •   Travel Loaded
+
+                                                       d Move-Wood»
+                                                                           Where:
+                                                       •   Unload Logs
+
+                                                       _ Soil - Landing
+                                                                              Dist2 = Mean move distance between sorted
+   18%       \ ^
+                                                       H Move - Landing            products (m)
+                                           ^ 7 %
+                               —~~    6%
+                                                       H Travel Empty
+                                                                              ML = Time required to move machine between
+                                                       •   Delay
+                         15%
+                                                                                   points at landing or roadside (productive
+                                                                                   minutes)
+Figure 3. Elements of the forwarder cycle.                                    r2 = 0.348
+                                                                              SE(y) = 0.0646
+
+pendent variables collected during forwarder-tim-                          Travel Loaded:
+ing operations is provided in Table 4. Elements of
+the forwarder cycle and their proportional time re-                            TL = 0.2386 + 0.0125*Dist3
+quirements are illustrated in Figure 3.
+                                                                           Where:
+     Cycle times for the forwarder averaged 28.76                             Dist3 = Mean distance from point of loading to
+minutes per cycle on a productive basis, and 30.11                                 landing or roadside (m)
+minutes per cycle on a scheduled basis. The load                              TL = Time required to move machine from woods
+element comprised 30% of a typical cycle, while                                    to landing (productive minutes).
+unload and move-woods comprised 18 and 15% of                                 r2 = 0.933
+the cycle, respectively. Only minor operational de-                           SE(y) = 0.2089
+lays were observed during timing, suggesting a
+machine utilization of 95%.                                                Travel Empty:
+
+     No mechanical delays were noted during the                                TE = 0.3418 + 0.0135*Dist4
+data collection. The high utilization rate associated
+with this machine may be misleading, due to the                            Where:
+relatively short time spent observing its operation.                          Dist4 = Mean distance from landing or roadside
+Further studies, particularly long-term gross shift                                to point of loading (m)
+level studies, are suggested to quantify forwarder                            TE = Time required to move machine from
+utilization rates more accurately.                                                 landing or roadside to woods (productive
+                                                                                   minutes)
+     Regression equations were derived for 4 ele-                             r2 = 0.900
+ments—move-woods, move-landing, travel empty,                                 SE(y) = 0.4315
+and travel loaded. The regression equations are de-
+tailed below. No regression estimators were devel-                             Combining these regression models with the
+oped for the other elements, since no significant corre-                   observed means for the remaining elements and
+lation was detected during the statistical analysis.                       delays, a model was developed to estimate the total
+                                                                           cycle time per load for a forwarder operating in a
+Move-Woods:                                                                similar range of stand conditions. All time estimates
+                                                                           are provided in scheduled minutes with expected
+       MW = 0.2084 + 0.0146*Distl                                          delays incorporated into the model. The prediction
+                                                                           model follows:
+Where:
+   Distl = Mean move distance between log piles                            Forwarder Total Cycle:
+       in the woods (m).
+   MW = Time required to move machine between                                  TC(F) = 20.3761 + 0.1734*Distl + 0.0244*Dist2
+       points in the stand (productive minutes)                                + 0.0125*Dist3 + 0.0135*Dist4
+   r2 = 0.438
+   SE(y) = 0.1576
+                                                                                 Journal of Forest Engineering • 13
+
+Where:
+   TC(F) = Total cycle time per load for forwarder
+       (scheduled minutes)
+
+     For each machine cycle, the forwarder averaged
+12 moves between log piles to acquire a load of logs.
+At each log pile, approximately three grapple loads
+of two logs were loaded into the bunk before the
+forwarder moved to the next pile. This suggests a
+mean pile size of 6 logs, although sort constraints or
+bunk capacity limits meant that some logs were left
+in the pile for later acquisition. These facts suggest   Figure 4. Comparison of harvester and forwarder
+that the loading and move-woods elements for the         productivity relative to changing mean stand diam-
+machine cycle are affected to a large extent by the      eter—all other factors held constant.
+size and grade of the logs in the pile, the mean
+number of logs in each pile, and the number of piles
+per ha.                                                      Using the production equations derived for both
+                                                         machines, an analysis was conducted of the total
+     In this study, an average of 78 logs was carried    system performance. Plotting system performance
+by the forwarder during each cycle, translating into     over a range of harvested tree diameter values while
+an approximate payload of 7.48 m 3 (approximately        holding all other variables constant revealed that
+7.5 t) per cycle. This payload is based on volume        harvester productivity lags behind forwarder pro-
+estimates derived from equations used by the Brit-       ductivity when harvesting small diameter stems,
+ish Columbia Forest Service [1]. This estimate falls     and exceeds forwarder productivity when harvest-
+substantially below the expected payload of the          ing larger diameter stems (Fig. 4). The results
+forwarder, rated at 101, and suggests that payload       suggest that the optimal range of conditions for this
+capacity falls for smaller sized logs, probably due      system when conducting partial harvests is in stands
+the larger amount of wasted area between logs.           with a mean harvested stem DBH of 15 to 25 cm. On
+Based on the observed mean cycle time of 30.11           either side of this range, the system becomes unbal-
+scheduled minutes, however, estimated hourly             anced and machine utilization rates are affected.
+production from this forwarder on comparable
+sites should average 14.91 m 3 per SMH.                       Generally, system productivity under the
+                                                         silvicultural prescription evaluated in this study is
+     Comparison with estimated harvester produc-         limited by forwarder performance. Forwarder pro-
+tion (13.84 m 3 per SMH) suggests that system pro-       ductivity remains relatively constant while harvester
+ductivity is balanced when working in stands simi-       productivity increases. Variables associated with
+lar to those observed during the study. Further          both machines, such as mean travel distance for the
+research should be considered to quantify the effect     forwarder and mean move distance between process-
+of log size on forwarder payload limits.                 ing points for the harvester, would have significant
+                                                         impact on system balance. Generally, critical vari-
+     Mean harvested tree diameter and forwarding         ables related to productivity could be modified dur-
+distance were varied in the production model to          ing the harvest to improve system balance.
+examine their impact on machine productivity. Re-
+sults of this analysis suggest that changes in for-      CONCLUSIONS
+warding distance—at least those distances observed
+during data collection—have little effect on ma-             Production analysis of a harvester-forwarder
+chine productivity. These results are similar to those   system used to conduct a selection harvest in a
+derived by Makkonen [4] in a study of several small      mixed age Ponderosa pine stand indicates that the
+forwarders. However, the impact of diameter and          system was able to produce between 13 and 14 m 3
+log volume was found to be significant, with sub-        per SMH. Development of machine cycle time equa-
+stantial increases in forwarder productivity occur-      tions allowed for further analysis of the system
+ring with increases in log volume.                       within the range of collected data.
+14 • Journal of Forest Engineering.
+
+     The harvester-forwarder system evaluated in         [2] Baumgras, J. 1986. Production study of the
+this study can be used effectively in selection har-         Swedish Rottne Snoken 810 harvester/proces-
+vests to produce moderate volumes of cut-to-length           sor in Pennsylvania softwood plantations, in
+timber. In addition, the limited impact of this system       Proceedings of the Council on Forest Engineer-
+minimizes the amount of residual damage that can             ing 9th Annual Meeting, Sept. 29 - Oct. 2,1986.
+occur in partial harvests. The results, however,             Pp. 63-68.
+suggest that, when harvesting both extremely large
+and small diameter stems, the system may become          [3] Makkonen, I. 1988. Review of forwarders. For.
+unbalanced and more attention must be placed on              Eng. Res. Inst, of Canada Tech. Note TN-123. 12
+machine scheduling.                                          pp.
+
+    No attempt was made to estimate the unit cost of     [4] Makkonen, I. 1989. Evaluation of Timberjack
+production. The very low rates of production noted           230 8-ton forwarder. For. Eng. Res. Inst, of
+when harvesting small diameter (10 to 15 cm DBH)             Canada Tech. Note TN-140. 8 pp.
+stems suggest that little profit would be made when
+using a harvester-forwarder system.                      [5] McNeelJ. and T.Ballard. 1992. Analysis of site
+                                                             and stand impacts from thinning with a har-
+     The increasing need for raw wood products               vester - forwarder system. J. For. Eng. 4(1 ):23-29.
+from the forests of the Pacific Northwest will prob-
+ably create more opportunity for thinning, group         [6] Meyer, R.L. 1984. Rottne forwarder and har-
+selection harvests, and other types of partial harvest       vester/processor. American Pulpwood Asso-
+in the region. Harvester-forwarder systems can be            ciation Tech. Rise. 84-R-97. 2 pp.
+used for this purpose in many stands in a produc-
+tive, cost-effective manner.                             [7] Siren, M. 1989. Cost of mechanized thinning
+                                                             to the stand—how to evaluate, in Siren, M.
+LITERATURE CITED                                             (éd.). Machine design and working methods
+                                                             in thinnings: Proceedings of IUFRO P4.02.01
+[1] Anonymous. 1976. Whole stem cubic meter                  Conference, Sept. 17-22, Hyytiala, Finland. Pp.
+    volume equations. Internal Unpublished Re-               23-40.
+    port. Forest Inventory Division. B.C. Forest
+    Service, Department of Forests. 190 pp.
+
