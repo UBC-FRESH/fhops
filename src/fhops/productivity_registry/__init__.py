@@ -18,6 +18,7 @@ class ProductivityModel:
     form: str
     r_squared: float | None
     notes: str | None = None
+    reference: Mapping[str, str] | None = None
 
 
 class ProductivityRegistry:

@@ -13,6 +13,7 @@ APPENDIX8 = Path("notes/reference/arnvik_tables/appendix8/appendix8_aggregate.cs
 VARS_JSON = Path("notes/reference/arnvik_tables/appendix9/variables.json")
 PARAM_JSON = Path("notes/reference/arnvik_tables/appendix10/parameters.json")
 STAT_JSON = Path("notes/reference/arnvik_tables/appendix11/statistics.json")
+REF_JSON = Path("notes/reference/arnvik_tables/references.json")
 OUTPUT = Path("notes/reference/arnvik_tables/registry_models.json")
 
 with VARS_JSON.open() as fh:
@@ -21,6 +22,30 @@ with PARAM_JSON.open() as fh:
     PARAMETERS = json.load(fh)
 with STAT_JSON.open() as fh:
     STATS = json.load(fh)
+if REF_JSON.exists():
+    with REF_JSON.open() as fh:
+        REFERENCES = json.load(fh)
+else:
+    REFERENCES = {}
+
+MACHINE_TYPE_MAP = {
+    "H": "single_grip_harvester",
+    "H Sim": "single_grip_harvester_sim",
+    "FB": "feller_buncher",
+    "FB DT": "feller_buncher_drive_to_tree",
+    "FB Sim": "feller_buncher_sim",
+    "HW": "harwarder",
+    "HW Sim": "harwarder_sim",
+    "SH": "skidder_harvester",
+}
+
+HARVEST_METHOD_MAP = {
+    "CTL": "cut_to_length",
+    "FT": "full_tree",
+    "B (FT)": "bundle_full_tree",
+    "H (FT)": "hand_full_tree",
+    "": "",
+}
 
 
 def iter_rows(path: Path) -> Iterable[list[str]]:
@@ -42,29 +67,102 @@ def human_predictors(formula: str) -> list[str]:
     return seen
 
 
-def fetch_metadata(pub: str, nr: str) -> tuple[dict, dict, dict]:
+def fetch_metadata(pub: str, nr: str) -> tuple[dict, dict]:
     key = f"{pub} model {nr}"
     params = PARAMETERS.get(key, {})
     stats = STATS.get(key, {})
     return params, stats
 
 
-def parse_model_row(row: list[str]) -> ProductivityModel | None:
-    if len(row) < 14:
-        return None
-    prefix = " ".join(cell.strip() for cell in row[:5] if cell.strip())
-    match = re.search(r"(.*?)(\d+)$", prefix)
+def reference_key(publication: str) -> str | None:
+    match = re.search(r"([A-Za-zÄÅÖÆØÜÉáéíóúñç'`-]+)[^0-9]*(\d{4}[a-z]?)", publication)
     if not match:
         return None
-    publication = match.group(1).strip().rstrip(",")
-    model_nr = match.group(2)
-    harvest_method = row[5].strip()
-    machine_type = row[6].strip()
-    base_machine = row[7].strip()
-    system = row[8].strip()
-    dependent = row[9].strip()
-    units = " ".join(cell.strip() for cell in row[10:13] if cell.strip())
-    formula = " ".join(cell.strip() for cell in row[13:] if cell.strip())
+    surname = re.sub(r"[^A-Za-zÄÅÖÆØÜÉáéíóúñç'`-]", " ", match.group(1)).split()[-1]
+    year = match.group(2).lower()
+    if not surname:
+        return None
+    return f"{surname.lower()}_{year}"
+
+
+def fetch_reference(pub: str) -> dict | None:
+    key = reference_key(pub)
+    if not key:
+        return None
+    return REFERENCES.get(key)
+
+
+def normalize_machine_type(value: str) -> str:
+    if not value:
+        return "unknown"
+    return MACHINE_TYPE_MAP.get(value, value.lower().replace(" ", "_"))
+
+
+def normalize_harvest_method(value: str) -> str:
+    if not value:
+        return ""
+    base = HARVEST_METHOD_MAP.get(value)
+    if base is not None:
+        return base
+    return value.lower().replace(" ", "_")
+
+
+def parse_model_row(row: list[str]) -> ProductivityModel | None:
+    if len(row) < 6:
+        return None
+    cells = [cell.strip() for cell in row[2:] if cell and cell.strip()]
+    if not cells:
+        return None
+    if cells[0].startswith("Author"):
+        return None
+    tokens = cells
+    pub_tokens: list[str] = []
+    rest_tokens: list[str] | None = None
+    for idx, token in enumerate(tokens):
+        if ")" in token:
+            before, after = token.split(")", 1)
+            prefix = (before + ")").strip()
+            if prefix:
+                pub_tokens.append(prefix)
+            else:
+                pub_tokens.append(")")
+            remainder = after.strip()
+            rest_tokens = ([remainder] if remainder else []) + tokens[idx + 1 :]
+            break
+        pub_tokens.append(token)
+    if not pub_tokens or rest_tokens is None or not rest_tokens:
+        return None
+    publication = " ".join(pub_tokens).replace(" ,", ",").replace("( ", "(").replace(" )", ")").strip().rstrip(",")
+    if not publication:
+        return None
+    nr_token = rest_tokens[0]
+    nr_match = re.search(r"(\d+)", nr_token)
+    if not nr_match:
+        return None
+    model_nr = nr_match.group(1)
+    tokens_tail = rest_tokens[1:]
+    if len(tokens_tail) < 6:
+        return None
+    cursor = 0
+    harvest_method = normalize_harvest_method(tokens_tail[cursor])
+    cursor += 1
+    machine_type = normalize_machine_type(tokens_tail[cursor])
+    cursor += 1
+    base_machine = tokens_tail[cursor]
+    cursor += 1
+    propulsion = tokens_tail[cursor]
+    cursor += 1
+    dv_type = tokens_tail[cursor]
+    cursor += 1
+    units_tokens: list[str] = []
+    while cursor < len(tokens_tail):
+        tok = tokens_tail[cursor]
+        units_tokens.append(tok)
+        cursor += 1
+        if ")" in tok:
+            break
+    units = " ".join(units_tokens).replace(" )", ")").strip()
+    formula = " ".join(tokens_tail[cursor:]).strip()
     if not formula or not harvest_method:
         return None
     predictor_codes = human_predictors(formula)
@@ -77,6 +175,7 @@ def parse_model_row(row: list[str]) -> ProductivityModel | None:
         for code in predictor_codes
     ]
     params, stats = fetch_metadata(publication, model_nr)
+    ref = fetch_reference(publication)
     model = ProductivityModel(
         machine_type=machine_type or "unknown",
         system=harvest_method,
@@ -87,7 +186,8 @@ def parse_model_row(row: list[str]) -> ProductivityModel | None:
         intercept=params.get("a"),
         form=formula,
         r_squared=_parse_float(stats.get("r_squared")),
-        notes=build_notes(base_machine, system, dependent, units, stats),
+        notes=build_notes(base_machine, propulsion, dv_type, units, stats),
+        reference=ref,
     )
     return model
 
@@ -101,10 +201,10 @@ def _parse_float(value: str | None) -> float | None:
         return None
 
 
-def build_notes(base_machine: str, system: str, dependent: str, units: str, stats: dict) -> str:
+def build_notes(base_machine: str, propulsion: str, dependent: str, units: str, stats: dict) -> str:
     pieces = [
         f"Base machine: {base_machine}",
-        f"System: {system}",
+        f"Propulsion: {propulsion}",
         f"Dependent: {dependent} {units}",
     ]
     if stats:

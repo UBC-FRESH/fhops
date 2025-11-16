@@ -1,272 +1,3800 @@
 {
-  "Horváth et a model 10": {
+  "Ackerman et al. (2018) model 1": {
+    "observational_unit": "EL",
+    "observations": "436",
+    "structure": "Power law model",
+    "r_squared": "0.7531",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Ackerman et al. (2018) model 2": {
+    "observational_unit": "EL",
+    "observations": "428",
+    "structure": "Linear Model",
+    "r_squared": "0.712",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Ackerman et al. (2018) model 3": {
+    "observational_unit": "EL",
+    "observations": "436",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Ackerman et al. (2018) model 4": {
+    "observational_unit": "EL",
+    "observations": "428",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Ackerman et al. (2018) model 5": {
+    "observational_unit": "EL",
+    "observations": "436",
+    "structure": "Linear model with interaction term",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Ackerman et al. (2018) model 6": {
+    "observational_unit": "EL",
+    "observations": "428",
+    "structure": "Linear model with interaction term",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Ackerman et al. (2021) model 1": {
+    "observational_unit": "CL",
+    "observations": "140 465",
+    "structure": "Nonlinear model with exponential terms and division operation",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Ackerman et al. (2021) model 2": {
+    "observational_unit": "CL",
+    "observations": "140 465",
+    "structure": "Nonlinear model with exponential terms, division operations, and interaction effects",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Ackerman et al. (2022) model 1": {
+    "observational_unit": "EL",
+    "observations": "281",
+    "structure": "Power law model",
+    "r_squared": "0.58",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Ackerman et al. (2022) model 2": {
+    "observational_unit": "EL",
+    "observations": "284",
+    "structure": "Power law model",
+    "r_squared": "0.58",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Acosta et al. (2021) model 1": {
+    "observational_unit": "EL",
+    "observations": "259",
+    "structure": "Linear model",
+    "r_squared": "0.76",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Acuna et al. (2017) model 1": {
+    "observational_unit": "EL",
+    "observations": "1048",
+    "structure": "Exponential model with logarithmic transformation",
+    "r_squared": "-",
+    "r_squared_adj": "0.85",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Alam et al. (2014) model 1": {
     "observational_unit": "EL",
     "observations": "153",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Log-linear model",
+    "r_squared": "0.58",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
   },
-  "Horváth et a model 11": {
+  "Alam et al. (2014) model 2": {
     "observational_unit": "EL",
-    "observations": "1675",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "observations": "103",
+    "structure": "Log-linear model",
+    "r_squared": "0.33",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
   },
-  "Horváth et a model 12": {
+  "Alam et al. (2014) model 3": {
+    "observational_unit": "EL",
+    "observations": "153",
+    "structure": "Log-linear model",
+    "r_squared": "0.4",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Alam et al. (2014) model 4": {
+    "observational_unit": "EL",
+    "observations": "103",
+    "structure": "Log-linear model",
+    "r_squared": "0.15",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Apăfăian et al. (2017) model 1": {
+    "observational_unit": "EL",
+    "observations": "1045",
+    "structure": "Exponential model",
+    "r_squared": "0.46",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Apăfăian et al. (2017) model 2": {
+    "observational_unit": "EL",
+    "observations": "1045",
+    "structure": "Exponential model",
+    "r_squared": "0.49",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Apăfăian et al. (2017) model 3": {
+    "observational_unit": "EL",
+    "observations": "1045",
+    "structure": "Exponential model",
+    "r_squared": "0.25",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Apăfăian et al. (2017) model 4": {
+    "observational_unit": "EL",
+    "observations": "1045",
+    "structure": "Linear model",
+    "r_squared": "0.2",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Apăfăian et al. (2017) model 5": {
+    "observational_unit": "EL",
+    "observations": "1045",
+    "structure": "Power law model",
+    "r_squared": "0.62",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Berendt et al. (2020) model 1": {
+    "observational_unit": "EL",
+    "observations": "706",
+    "structure": "Power law model",
+    "r_squared": "0.515",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "-"
+  },
+  "Berg et al. (2014) model 1": {
+    "observational_unit": "-",
+    "observations": "800",
+    "structure": "Non-linear model with quadratic term and logarithmic transformation",
+    "r_squared": "0.985",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Berg et al. (2014) model 2": {
+    "observational_unit": "-",
+    "observations": "800",
+    "structure": "Non-linear model with quadratic term and logarithmic transformation",
+    "r_squared": "0.994",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Berg et al. (2014) model 3": {
+    "observational_unit": "-",
+    "observations": "800",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.981",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Berg et al. (2014) model 4": {
+    "observational_unit": "-",
+    "observations": "800",
+    "structure": "Non-linear model with quadratic term and logarithmic transformation",
+    "r_squared": "0.998",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Bergström & Di Fulvio (2014) model 1": {
+    "observational_unit": "EL",
+    "observations": "10",
+    "structure": "Linear model with division operation - 0.47 P",
+    "r_squared": "=",
+    "r_squared_adj": "0.017",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Bergström & Di Fulvio (2014) model 2": {
+    "observational_unit": "EL",
+    "observations": "7",
+    "structure": "Linear model with division operation - 0.78 P",
+    "r_squared": "=",
+    "r_squared_adj": "0.022",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Bergström et al. (2016) model 1": {
+    "observational_unit": "EL",
+    "observations": "26",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.6",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Bergström et al. (2016) model 2": {
+    "observational_unit": "EL",
+    "observations": "26",
+    "structure": "Linear model",
+    "r_squared": "0.7",
+    "r_squared_adj": "0.68",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Bergström et al. (2016) model 3": {
+    "observational_unit": "EL",
+    "observations": "26",
+    "structure": "Linear model",
+    "r_squared": "0.77",
+    "r_squared_adj": "0.75",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Bergström et al. (2022) model 1": {
+    "observational_unit": "EL",
+    "observations": "32",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.676",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Bergström et al. (2022) model 2": {
+    "observational_unit": "EL",
+    "observations": "32",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.676",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Bergström et al. (2022) model 3": {
+    "observational_unit": "EL",
+    "observations": "32",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.457",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Bergström et al. (2022) model 4": {
+    "observational_unit": "EL",
+    "observations": "32",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.457",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Bergström et al. (2022) model 5": {
+    "observational_unit": "EL",
+    "observations": "32",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.454",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Bergström et al. (2022) model 6": {
+    "observational_unit": "EL",
+    "observations": "32",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.454",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Bergström et al. (2022) model 7": {
+    "observational_unit": "EL",
+    "observations": "32",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.452",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Bergström et al. (2022) model 8": {
+    "observational_unit": "EL",
+    "observations": "32",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.452",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Bilici et al. (2019) model 1": {
+    "observational_unit": "EL",
+    "observations": "30",
+    "structure": "Linear model",
+    "r_squared": "0.7",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "30.968"
+  },
+  "Bilici et al. (2019) model 2": {
+    "observational_unit": "EL",
+    "observations": "30",
+    "structure": "Linear model",
+    "r_squared": "0.63",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "34.959"
+  },
+  "Bilici et al. (2019) model 3": {
+    "observational_unit": "EL",
+    "observations": "30",
+    "structure": "Linear model",
+    "r_squared": "0.6541",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Bilici et al. (2019) model 4": {
+    "observational_unit": "EL",
+    "observations": "30",
+    "structure": "Linear model",
+    "r_squared": "0.2844",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Bilici et al. (2019) model 5": {
+    "observational_unit": "EL",
+    "observations": "30",
+    "structure": "Linear model",
+    "r_squared": "0.7501",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Bilici et al. (2019) model 6": {
+    "observational_unit": "EL",
+    "observations": "30",
+    "structure": "Linear model",
+    "r_squared": "0.6814",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Brewer et al. (2018) model 1": {
+    "observational_unit": "CL",
+    "observations": "165",
+    "structure": "Linear model",
+    "r_squared": "0.37",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Brewer et al. (2018) model 2": {
+    "observational_unit": "CL",
+    "observations": "165",
+    "structure": "Linear model",
+    "r_squared": "0.47",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Brewer et al. (2018) model 3": {
+    "observational_unit": "CL",
+    "observations": "158",
+    "structure": "Linear model",
+    "r_squared": "0.21",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Brewer et al. (2018) model 4": {
+    "observational_unit": "CL",
+    "observations": "158",
+    "structure": "Linear model",
+    "r_squared": "0.25",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Brewer et al. (2018) model 5": {
+    "observational_unit": "CL",
+    "observations": "173",
+    "structure": "Linear model",
+    "r_squared": "0.39",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Brewer et al. (2018) model 6": {
+    "observational_unit": "CL",
+    "observations": "173",
+    "structure": "Linear model",
+    "r_squared": "0.34",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Brewer et al. (2018) model 7": {
+    "observational_unit": "CL",
+    "observations": "125",
+    "structure": "Linear model",
+    "r_squared": "0.18",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Brewer et al. (2018) model 8": {
+    "observational_unit": "CL",
+    "observations": "125",
+    "structure": "Linear model",
+    "r_squared": "0.2",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Brown et al. (2013) model 1": {
+    "observational_unit": "EL",
+    "observations": "124",
+    "structure": "Log-linear model",
+    "r_squared": "0.6",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "-"
+  },
+  "Brown et al. (2013) model 2": {
+    "observational_unit": "EL",
+    "observations": "126",
+    "structure": "Log-linear model",
+    "r_squared": "0.61",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "-"
+  },
+  "Carter et al. (2017) model 1": {
+    "observational_unit": "EL",
+    "observations": "84",
+    "structure": "Linear model 0.85 - P",
+    "r_squared": "=",
+    "r_squared_adj": "0.36",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Chakroun et al. (2016) model 1": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Power law model",
+    "r_squared": "0.73",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Chakroun et al. (2016) model 2": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Power law model",
+    "r_squared": "0.73",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Chakroun et al. (2016) model 3": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Power law model",
+    "r_squared": "0.58",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Chakroun et al. (2016) model 4": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Power law model",
+    "r_squared": "0.8",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Chakroun et al. (2016) model 5": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Power law model",
+    "r_squared": "0.66",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Chung et al. (2022) model 1": {
+    "observational_unit": "EL",
+    "observations": "220",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.67",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Chung et al. (2022) model 2": {
+    "observational_unit": "EL",
+    "observations": "87",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.89",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Di Fulvio & Bergström (2013) model 1": {
+    "observational_unit": "EL",
+    "observations": "9",
+    "structure": "Linear model",
+    "r_squared": "0.909",
+    "r_squared_adj": "0.855",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Erber et al. (2016) model 1": {
+    "observational_unit": "EL",
+    "observations": "598",
+    "structure": "Linear model - 0.007 P",
+    "r_squared": "=",
+    "r_squared_adj": "2.1×10-2",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Erber et al. (2016) model 2": {
+    "observational_unit": "EL",
+    "observations": "598",
+    "structure": "Non-linear model with power law and linear terms",
+    "r_squared": "-",
+    "r_squared_adj": "0.49",
+    "significance": "P <2×10-16",
+    "f_stat": "-"
+  },
+  "Erber et al. (2016) model 3": {
+    "observational_unit": "EL",
+    "observations": "598",
+    "structure": "Non-linear model with power law and linear terms",
+    "r_squared": "-",
+    "r_squared_adj": "0.21",
+    "significance": "P <2.0×10-16",
+    "f_stat": "-"
+  },
+  "Erber et al. (2016) model 4": {
+    "observational_unit": "EL",
+    "observations": "598",
+    "structure": "Non-linear model with power law and linear terms",
+    "r_squared": "-",
+    "r_squared_adj": "0.42",
+    "significance": "P <2×10-16",
+    "f_stat": "-"
+  },
+  "Eriksson & Lindroos (2014) model 1": {
+    "observational_unit": "PL",
+    "observations": "12350",
+    "structure": "Non-linear model with quadratic term and logarithmic transformation",
+    "r_squared": "-",
+    "r_squared_adj": "0.553",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Eriksson & Lindroos (2014) model 2": {
+    "observational_unit": "PL",
+    "observations": "12350",
+    "structure": "Non-linear model with quadratic term and logarithmic transformation",
+    "r_squared": "-",
+    "r_squared_adj": "0.6",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Eriksson & Lindroos (2014) model 3": {
+    "observational_unit": "PL",
+    "observations": "12350",
+    "structure": "Non-linear model with quadratic term, interaction term and logarithmic transformation",
+    "r_squared": "-",
+    "r_squared_adj": "0.617",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Eriksson & Lindroos (2014) model 4": {
+    "observational_unit": "PL",
+    "observations": "12350",
+    "structure": "Non-linear model with quadratic term, interaction term and logarithmic transformation",
+    "r_squared": "-",
+    "r_squared_adj": "0.625",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Eriksson & Lindroos (2014) model 5": {
+    "observational_unit": "PL",
+    "observations": "12350",
+    "structure": "Non-linear model with quadratic term, interaction term and logarithmic transformation",
+    "r_squared": "-",
+    "r_squared_adj": "0.626",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Eriksson & Lindroos (2014) model 6": {
+    "observational_unit": "PL",
+    "observations": "4851",
+    "structure": "Non-linear model with quadratic term and logarithmic transformation",
+    "r_squared": "-",
+    "r_squared_adj": "0.576",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Eriksson & Lindroos (2014) model 7": {
+    "observational_unit": "PL",
+    "observations": "4851",
+    "structure": "Linear model with logarithmic transformations",
+    "r_squared": "-",
+    "r_squared_adj": "0.581",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Eriksson & Lindroos (2014) model 8": {
+    "observational_unit": "PL",
+    "observations": "4851",
+    "structure": "Linear model with logarithmic transformations and interaction terms",
+    "r_squared": "-",
+    "r_squared_adj": "0.598",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Eriksson & Lindroos (2014) model 9": {
+    "observational_unit": "PL",
+    "observations": "4851",
+    "structure": "Linear model with logarithmic transformations and interaction terms",
+    "r_squared": "-",
+    "r_squared_adj": "0.612",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Fernandez-Lacruz et al. (2013) model 1": {
+    "observational_unit": "EL",
+    "observations": "13",
+    "structure": "Power law model - 0.617 P",
+    "r_squared": "=",
+    "r_squared_adj": "0.0009",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Fernandez-Lacruz et al. (2021) model 1": {
+    "observational_unit": "EL",
+    "observations": "9",
+    "structure": "Power law model",
+    "r_squared": "0.952",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Fernandez-Lacruz et al. (2021) model 2": {
+    "observational_unit": "EL",
+    "observations": "9",
+    "structure": "Power law model",
+    "r_squared": "0.897",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "George et al. (2022) model 1": {
+    "observational_unit": "EL",
+    "observations": "542",
+    "structure": "Linear model",
+    "r_squared": "0.57",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "-"
+  },
+  "Ghaffariyan (2013) model 1": {
+    "observational_unit": "EL",
+    "observations": "59",
+    "structure": "Log-linear model 0.32 - P",
+    "r_squared": "=",
+    "r_squared_adj": "0.05",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Ghaffariyan (2013) model 2": {
+    "observational_unit": "EL",
+    "observations": "65",
+    "structure": "Power law model 0.73 - P",
+    "r_squared": "=",
+    "r_squared_adj": "0.05",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Ghaffariyan et al. (2019) model 1": {
+    "observational_unit": "CL",
+    "observations": "-",
+    "structure": "Power law model",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Ghaffariyan et al. (2013) model 1": {
+    "observational_unit": "EL",
+    "observations": "80",
+    "structure": "Log-linear model 0.402 - P",
+    "r_squared": "=",
+    "r_squared_adj": "0.05",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Ghaffariyan et al. (2015) model 1": {
+    "observational_unit": "CL",
+    "observations": "562",
+    "structure": "Exponential model",
+    "r_squared": "0.519",
+    "r_squared_adj": "-",
+    "significance": "P <0.01",
+    "f_stat": "605.45"
+  },
+  "Green et al. (2020) model 1": {
+    "observational_unit": "EL",
+    "observations": "110",
+    "structure": "Linear model",
+    "r_squared": "0.5",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "35.53"
+  },
+  "Green et al. (2020) model 2": {
+    "observational_unit": "EL",
+    "observations": "168",
+    "structure": "Linear model",
+    "r_squared": "0.23",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "16.3"
+  },
+  "Grönlund & Eliasson (2019) model 1": {
+    "observational_unit": "EL",
+    "observations": "10",
+    "structure": "Linear model",
+    "r_squared": "0.942",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Gülci et al. (2021) model 1": {
+    "observational_unit": "EL",
+    "observations": "57",
+    "structure": "Linear model",
+    "r_squared": "0.45",
+    "r_squared_adj": "0.42",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Gülci et al. (2021) model 2": {
+    "observational_unit": "EL",
+    "observations": "57",
+    "structure": "Linear model",
+    "r_squared": "0.49",
+    "r_squared_adj": "0.46",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Gülci et al. (2021) model 3": {
+    "observational_unit": "EL",
+    "observations": "60",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.48",
+    "r_squared_adj": "0.42",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Gülci et al. (2021) model 4": {
+    "observational_unit": "EL",
+    "observations": "60",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.5",
+    "r_squared_adj": "0.44",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Han et al. (2018) model 1": {
+    "observational_unit": "EL",
+    "observations": "863",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.4329",
+    "significance": "P <0.01",
+    "f_stat": "-"
+  },
+  "Hiesl & Benjamin (2013) model 1": {
+    "observational_unit": "CL",
+    "observations": "481",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.4",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Hiesl & Benjamin (2015) model 1": {
+    "observational_unit": "CL",
+    "observations": "1154",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.2",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Hiesl et al. (2015) model 1": {
+    "observational_unit": "PL",
+    "observations": "12",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.36",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Hiesl et al. (2015) model 2": {
+    "observational_unit": "PL",
+    "observations": "9",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.14",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Holzleitner & Kanzian (2022) model 1": {
+    "observational_unit": "EL",
+    "observations": "390",
+    "structure": "Power law model",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Holzleitner & Kanzian (2022) model 2": {
+    "observational_unit": "EL",
+    "observations": "390",
+    "structure": "Non-linear model with power law and linear terms",
+    "r_squared": "0.553",
+    "r_squared_adj": "0.548",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Holzleitner & Kanzian (2022) model 3": {
+    "observational_unit": "EL",
+    "observations": "390",
+    "structure": "Power law model",
+    "r_squared": "0.521",
+    "r_squared_adj": "0.518",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Horváth et al. (2016) model 1": {
     "observational_unit": "EL",
     "observations": "392",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.58",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "108.614"
   },
-  "Horváth et a model 13": {
+  "Horváth et al. (2016) model 2": {
     "observational_unit": "EL",
     "observations": "135",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.54",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "30.61"
   },
-  "Horváth et a model 14": {
+  "Horváth et al. (2016) model 3": {
     "observational_unit": "EL",
     "observations": "593",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.48",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "110.199"
   },
-  "Horváth et a model 15": {
+  "Horváth et al. (2016) model 4": {
     "observational_unit": "EL",
     "observations": "275",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.57",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "71.622"
   },
-  "Horváth et a model 16": {
+  "Horváth et al. (2016) model 5": {
     "observational_unit": "EL",
     "observations": "1426",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.53",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "316.94"
   },
-  "Horváth et a model 17": {
+  "Horváth et al. (2016) model 6": {
     "observational_unit": "EL",
     "observations": "501",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.61",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "196.174"
   },
-  "Horváth et a model 18": {
+  "Horváth et al. (2016) model 7": {
     "observational_unit": "EL",
     "observations": "1928",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.35",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "207.455"
   },
-  "Horváth et a model 19": {
+  "Horváth et al. (2016) model 8": {
     "observational_unit": "EL",
     "observations": "496",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.61",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "150.526"
   },
-  "Horváth et a model 20": {
+  "Horváth et al. (2016) model 9": {
     "observational_unit": "EL",
     "observations": "1026",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.57",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "271.479"
   },
-  "Horváth et a model 21": {
+  "Horváth et al. (2016) model 10": {
     "observational_unit": "EL",
     "observations": "153",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.21",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "20.47"
   },
-  "Horváth et a model 22": {
+  "Horváth et al. (2016) model 11": {
     "observational_unit": "EL",
     "observations": "1675",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.61",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "522.7"
   },
-  "Horváth et a model 23": {
+  "Horváth et al. (2016) model 12": {
     "observational_unit": "EL",
     "observations": "392",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.25",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "25.645"
   },
-  "Horváth et a model 24": {
+  "Horváth et al. (2016) model 13": {
     "observational_unit": "EL",
     "observations": "135",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.19",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "6.152"
   },
-  "Horváth et a model 25": {
+  "Horváth et al. (2016) model 14": {
     "observational_unit": "EL",
     "observations": "593",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.12",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "15.813"
   },
-  "Horváth et a model 26": {
+  "Horváth et al. (2016) model 15": {
     "observational_unit": "EL",
     "observations": "275",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.31",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "24.361"
   },
-  "Horváth et a model 27": {
+  "Horváth et al. (2016) model 16": {
     "observational_unit": "EL",
     "observations": "1426",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.53",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "317.548"
   },
-  "Horváth et a model 28": {
+  "Horváth et al. (2016) model 17": {
     "observational_unit": "EL",
     "observations": "501",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.39",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "77.822"
   },
-  "Horváth et a model 29": {
+  "Horváth et al. (2016) model 18": {
     "observational_unit": "EL",
     "observations": "1928",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.52",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "423.266"
   },
-  "Horváth et a model 30": {
+  "Horváth et al. (2016) model 19": {
     "observational_unit": "EL",
     "observations": "496",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.77",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "319.957"
   },
-  "Horváth et a model 31": {
+  "Horváth et al. (2016) model 20": {
     "observational_unit": "EL",
     "observations": "1026",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.79",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "789.152"
   },
-  "Horváth et a model 32": {
+  "Horváth et al. (2016) model 21": {
     "observational_unit": "EL",
     "observations": "153",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.21",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "20.206"
   },
-  "Horváth et a model 33": {
+  "Horváth et al. (2016) model 22": {
     "observational_unit": "EL",
     "observations": "1675",
-    "structure": "Non-linear",
-    "r_squared": "model",
-    "r_squared_adj": "with",
-    "significance": "power",
-    "f_stat": "law"
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.8",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "1294.678"
   },
-  "Horváth et a model 1": {
+  "Horváth et al. (2016) model 23": {
+    "observational_unit": "EL",
+    "observations": "392",
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.25",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "25.66"
+  },
+  "Horváth et al. (2016) model 24": {
+    "observational_unit": "EL",
+    "observations": "135",
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.19",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "6.093"
+  },
+  "Horváth et al. (2016) model 25": {
+    "observational_unit": "EL",
+    "observations": "593",
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.12",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "15.835"
+  },
+  "Horváth et al. (2016) model 26": {
+    "observational_unit": "EL",
+    "observations": "275",
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.31",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "24.065"
+  },
+  "Horváth et al. (2016) model 27": {
+    "observational_unit": "EL",
+    "observations": "1426",
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.53",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "317.977"
+  },
+  "Horváth et al. (2016) model 28": {
+    "observational_unit": "EL",
+    "observations": "501",
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.39",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "77.676"
+  },
+  "Horváth et al. (2016) model 29": {
+    "observational_unit": "EL",
+    "observations": "1928",
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.52",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "422.684"
+  },
+  "Horváth et al. (2016) model 30": {
+    "observational_unit": "EL",
+    "observations": "496",
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.77",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "319.03"
+  },
+  "Horváth et al. (2016) model 31": {
+    "observational_unit": "EL",
+    "observations": "1026",
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.79",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "782.738"
+  },
+  "Horváth et al. (2016) model 32": {
+    "observational_unit": "EL",
+    "observations": "153",
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.21",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "20.205"
+  },
+  "Horváth et al. (2016) model 33": {
+    "observational_unit": "EL",
+    "observations": "1675",
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.79",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "1287.774"
+  },
+  "Jernigan et al. (2015) model 1": {
+    "observational_unit": "CL",
+    "observations": "186",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Jylhä & Bergström (2016) model 1": {
     "observational_unit": "EL",
     "observations": "17",
-    "structure": "Power law",
-    "r_squared": "model",
-    "r_squared_adj": "",
-    "significance": "",
-    "f_stat": ""
+    "structure": "Power law model",
+    "r_squared": "0.961",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "368.824"
   },
-  "Horváth et a model 2": {
+  "Jylhä & Bergström (2016) model 2": {
     "observational_unit": "EL",
     "observations": "17",
-    "structure": "Power law",
-    "r_squared": "model",
-    "r_squared_adj": "",
-    "significance": "",
-    "f_stat": ""
+    "structure": "Power law model",
+    "r_squared": "0.956",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "324.558"
   },
-  "Horváth et a model 3": {
+  "Jylhä & Bergström (2016) model 3": {
     "observational_unit": "EL",
     "observations": "17",
-    "structure": "Power law",
-    "r_squared": "model",
-    "r_squared_adj": "",
-    "significance": "",
-    "f_stat": ""
+    "structure": "Power law model",
+    "r_squared": "0.939",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "229.112"
   },
-  "Horváth et a model 4": {
+  "Jylhä & Bergström (2016) model 4": {
     "observational_unit": "EL",
     "observations": "17",
-    "structure": "Power law",
-    "r_squared": "model",
-    "r_squared_adj": "",
-    "significance": "",
-    "f_stat": ""
+    "structure": "Power law model",
+    "r_squared": "0.909",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "150.308"
   },
-  "Horváth et a model 5": {
+  "Jylhä & Bergström (2016) model 5": {
     "observational_unit": "EL",
     "observations": "17",
-    "structure": "Power law",
-    "r_squared": "model",
-    "r_squared_adj": "",
-    "significance": "",
-    "f_stat": ""
+    "structure": "Power law model",
+    "r_squared": "0.884",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "114.541"
   },
-  "Horváth et a model 6": {
+  "Jylhä & Bergström (2016) model 6": {
     "observational_unit": "EL",
     "observations": "17",
-    "structure": "Power law",
-    "r_squared": "model",
-    "r_squared_adj": "",
-    "significance": "",
-    "f_stat": ""
+    "structure": "Power law model",
+    "r_squared": "0.863",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "94.485"
+  },
+  "Jylhä & Bergström (2016) model 7": {
+    "observational_unit": "EL",
+    "observations": "17",
+    "structure": "Power law model",
+    "r_squared": "0.821",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "68.885"
+  },
+  "Jylhä & Bergström (2016) model 8": {
+    "observational_unit": "EL",
+    "observations": "17",
+    "structure": "Power law model",
+    "r_squared": "0.782",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "53.807"
+  },
+  "Kärhä et al. (2018a) model 1": {
+    "observational_unit": "EL",
+    "observations": "1088",
+    "structure": "Non-linear model with power law and linear terms",
+    "r_squared": "-",
+    "r_squared_adj": "0.636",
+    "significance": "P <0.001",
+    "f_stat": "155"
+  },
+  "Kärhä et al. (2018a) model 2": {
+    "observational_unit": "EL",
+    "observations": "1088",
+    "structure": "Non-linear model with power law and linear terms",
+    "r_squared": "-",
+    "r_squared_adj": "0.635",
+    "significance": "P <0.001",
+    "f_stat": "184"
+  },
+  "Kärhä et al. (2018a) model 3": {
+    "observational_unit": "EL",
+    "observations": "1088",
+    "structure": "Non-linear model with power law and linear terms",
+    "r_squared": "-",
+    "r_squared_adj": "0.709",
+    "significance": "P <0.001",
+    "f_stat": "190"
+  },
+  "Kärhä et al. (2018a) model 4": {
+    "observational_unit": "EL",
+    "observations": "1529",
+    "structure": "Linear model with division operation",
+    "r_squared": "-",
+    "r_squared_adj": "0.559",
+    "significance": "P <0.01",
+    "f_stat": "9.9"
+  },
+  "Kärhä et al. (2018b) model 1": {
+    "observational_unit": "PL",
+    "observations": "-",
+    "structure": "Log-linear model",
+    "r_squared": "0.13",
+    "r_squared_adj": "-",
+    "significance": "P <0.05",
+    "f_stat": "3.056"
+  },
+  "Kärhä et al. (2019) model 1": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "-",
+    "r_squared_adj": "0.561",
+    "significance": "P <0.001",
+    "f_stat": "634.5"
+  },
+  "Kärhä et al. (2019) model 2": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "-",
+    "r_squared_adj": "0.512",
+    "significance": "P <0.001",
+    "f_stat": "520.5"
+  },
+  "Kärhä et al. (2019) model 3": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "-",
+    "r_squared_adj": "0.524",
+    "significance": "P <0.001",
+    "f_stat": "544.6"
+  },
+  "Kärhä et al. (2019) model 4": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "-",
+    "r_squared_adj": "0.533",
+    "significance": "P <0.001",
+    "f_stat": "565.4"
+  },
+  "Kärhä et al. (2019) model 5": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "-",
+    "r_squared_adj": "0.528",
+    "significance": "P <0.001",
+    "f_stat": "554.2"
+  },
+  "Kärhä et al. (2019) model 6": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "-",
+    "r_squared_adj": "0.525",
+    "significance": "P <0.001",
+    "f_stat": "547.4"
+  },
+  "Kärhä et al. (2019) model 7": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "-",
+    "r_squared_adj": "0.517",
+    "significance": "P <0.001",
+    "f_stat": "530.0"
+  },
+  "Kärhä et al. (2019) model 8": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Kärhä et al. (2019) model 9": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Kärhä et al. (2019) model 10": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Kärhä et al. (2019) model 11": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Kärhä et al. (2019) model 12": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Kärhä et al. (2019) model 13": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Kärhä et al. (2019) model 14": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Karpachev & Bykovskiy (2019) model 1": {
+    "observational_unit": "-",
+    "observations": "-",
+    "structure": "Log-linear model",
+    "r_squared": "0.9955",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Karpachev & Bykovskiy (2019) model 2": {
+    "observational_unit": "-",
+    "observations": "-",
+    "structure": "Log-linear model",
+    "r_squared": "0.992",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Karpachev & Bykovskiy (2019) model 3": {
+    "observational_unit": "-",
+    "observations": "-",
+    "structure": "Log-linear model",
+    "r_squared": "0.9856",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Karpachev & Bykovskiy (2019) model 4": {
+    "observational_unit": "-",
+    "observations": "-",
+    "structure": "Linear model",
+    "r_squared": "0.9946",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Karpachev & Bykovskiy (2019) model 5": {
+    "observational_unit": "-",
+    "observations": "-",
+    "structure": "Linear model",
+    "r_squared": "0.991",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Karpachev & Bykovskiy (2019) model 6": {
+    "observational_unit": "-",
+    "observations": "-",
+    "structure": "Linear model",
+    "r_squared": "0.9827",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Karpachev & Bykovskiy (2019) model 7": {
+    "observational_unit": "-",
+    "observations": "-",
+    "structure": "Log-linear model",
+    "r_squared": "0.929",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Karpachev & Bykovskiy (2019) model 8": {
+    "observational_unit": "-",
+    "observations": "-",
+    "structure": "Log-linear model",
+    "r_squared": "0.9956",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Karpachev & Bykovskiy (2019) model 9": {
+    "observational_unit": "-",
+    "observations": "-",
+    "structure": "Log-linear model",
+    "r_squared": "0.9856",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Karpachev & Bykovskiy (2019) model 10": {
+    "observational_unit": "-",
+    "observations": "-",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Karpachev & Bykovskiy (2019) model 11": {
+    "observational_unit": "-",
+    "observations": "-",
+    "structure": "Log-linear model",
+    "r_squared": "0.9874",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Karpachev & Bykovskiy (2019) model 12": {
+    "observational_unit": "-",
+    "observations": "-",
+    "structure": "Log-linear model",
+    "r_squared": "0.9873",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Karpachev & Bykovskiy (2019) model 13": {
+    "observational_unit": "-",
+    "observations": "-",
+    "structure": "Log-linear model",
+    "r_squared": "0.9871",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Kim et al. (2017) model 1": {
+    "observational_unit": "EL",
+    "observations": "185",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.5406",
+    "significance": "P <0.0001",
+    "f_stat": "-"
+  },
+  "Kizha & Han (2016) model 1": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "approx. 200 Linear model",
+    "r_squared": "0.15",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Kizha & Han (2016) model 2": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "approx. 200 Linear model",
+    "r_squared": "0.19",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Kizha & Han (2016) model 3": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "approx. 200 Linear model",
+    "r_squared": "0.41",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Kizha & Han (2016) model 4": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "approx. 200 Linear model",
+    "r_squared": "0.1",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Kizha & Han (2016) model 5": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "approx. 200 Linear model",
+    "r_squared": "0.12",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Kizha & Han (2016) model 6": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "approx. 200 Linear model",
+    "r_squared": "0.39",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Kormanek & Baj (2018) model 1": {
+    "observational_unit": "EL",
+    "observations": "35",
+    "structure": "Linear model",
+    "r_squared": "0.1734",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Kormanek & Baj (2018) model 2": {
+    "observational_unit": "EL",
+    "observations": "35",
+    "structure": "Linear model",
+    "r_squared": "0.1138",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Kormanek & Kępa (2016) model 1": {
+    "observational_unit": "EL",
+    "observations": "75",
+    "structure": "Linear model",
+    "r_squared": "0.3455",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Krč et al. (2015) model 1": {
+    "observational_unit": "EL",
+    "observations": "229",
+    "structure": "Linear model 0.762 0.759 P",
+    "r_squared": "=",
+    "r_squared_adj": "0.000",
+    "significance": "-",
+    "f_stat": "240.439"
+  },
+  "Labelle et al. (2017) model 1": {
+    "observational_unit": "EL",
+    "observations": "338",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "0.6854",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Labelle et al. (2017) model 2": {
+    "observational_unit": "EL",
+    "observations": "365",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "0.7293",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Labelle et al. (2017) model 3": {
+    "observational_unit": "EL",
+    "observations": "42",
+    "structure": "Power law model",
+    "r_squared": "0.8322",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Labelle et al. (2017) model 4": {
+    "observational_unit": "EL",
+    "observations": "55",
+    "structure": "Power law model",
+    "r_squared": "0.8572",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Labelle et al. (2018) model 1": {
+    "observational_unit": "EL",
+    "observations": "56",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.35",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Labelle et al. (2018) model 2": {
+    "observational_unit": "EL",
+    "observations": "67",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.27",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Labelle et al. (2018) model 3": {
+    "observational_unit": "EL",
+    "observations": "48",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.24",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Labelle et al. (2018) model 4": {
+    "observational_unit": "EL",
+    "observations": "72",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.12",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Labelle & Huß (2018) model 1": {
+    "observational_unit": "EL",
+    "observations": "68",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.3196",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Labelle & Huß (2018) model 2": {
+    "observational_unit": "EL",
+    "observations": "135",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.4689",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Labelle et al. (2016) model 1": {
+    "observational_unit": "EL",
+    "observations": "54",
+    "structure": "Power law model",
+    "r_squared": "0.247",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Labelle et al. (2016) model 2": {
+    "observational_unit": "EL",
+    "observations": "55",
+    "structure": "Power law model",
+    "r_squared": "0.3215",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Labelle et al. (2019) model 1": {
+    "observational_unit": "EL",
+    "observations": "15",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.838",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Labelle et al. (2019) model 2": {
+    "observational_unit": "EL",
+    "observations": "15",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.295",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Labelle et al. (2019) model 3": {
+    "observational_unit": "EL",
+    "observations": "22",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.756",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Labelle et al. (2019) model 4": {
+    "observational_unit": "EL",
+    "observations": "30",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.082",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Labelle et al. (2019) model 5": {
+    "observational_unit": "EL",
+    "observations": "15",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.834",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Labelle et al. (2019) model 6": {
+    "observational_unit": "EL",
+    "observations": "15",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.259",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Labelle et al. (2019) model 7": {
+    "observational_unit": "EL",
+    "observations": "22",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.802",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Labelle et al. (2019) model 8": {
+    "observational_unit": "EL",
+    "observations": "30",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.461",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Laina et al. (2013) model 1": {
+    "observational_unit": "EL",
+    "observations": "6022",
+    "structure": "Non-linear model with power law terms and division operation",
+    "r_squared": "0.56",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Laina et al. (2013) model 2": {
+    "observational_unit": "EL",
+    "observations": "3507",
+    "structure": "Non-linear model with power law terms and division operation",
+    "r_squared": "0.79",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Laitila et al. (2016) model 1": {
+    "observational_unit": "EL",
+    "observations": "25",
+    "structure": "Log-linear model 0.141 - P",
+    "r_squared": "=",
+    "r_squared_adj": "0.070",
+    "significance": "-",
+    "f_stat": "3.626"
+  },
+  "Laitila et al. (2016) model 2": {
+    "observational_unit": "EL",
+    "observations": "40",
+    "structure": "Linear model with division operation",
+    "r_squared": "0.544",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "44.06"
+  },
+  "Laitila et al. (2016) model 3": {
+    "observational_unit": "EL",
+    "observations": "25",
+    "structure": "Linear model 0.032 - P",
+    "r_squared": "=",
+    "r_squared_adj": "0.400",
+    "significance": "-",
+    "f_stat": "0.738"
+  },
+  "Laitila et al. (2016) model 4": {
+    "observational_unit": "EL",
+    "observations": "40",
+    "structure": "Linear model 0.167 - P",
+    "r_squared": "=",
+    "r_squared_adj": "0.009",
+    "significance": "-",
+    "f_stat": "7.632"
+  },
+  "Laitila et al. (2016) model 5": {
+    "observational_unit": "EL",
+    "observations": "25",
+    "structure": "Linear model",
+    "r_squared": "0.514",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "23.298"
+  },
+  "Laitila et al. (2016) model 6": {
+    "observational_unit": "EL",
+    "observations": "40",
+    "structure": "Linear model",
+    "r_squared": "0.738",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "107.174"
+  },
+  "Laitila & Väätäinen (2014) model 1": {
+    "observational_unit": "EL",
+    "observations": "37",
+    "structure": "Log-linear model",
+    "r_squared": "0.12",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Laitila & Väätäinen (2014) model 2": {
+    "observational_unit": "EL",
+    "observations": "37",
+    "structure": "Linear model with division operation",
+    "r_squared": "0.369",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Laitila & Väätäinen (2014) model 3": {
+    "observational_unit": "EL",
+    "observations": "37",
+    "structure": "Log-linear model",
+    "r_squared": "0.775",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Laitila & Väätäinen (2020) model 1": {
+    "observational_unit": "EL",
+    "observations": "80",
+    "structure": "Linear model with division operation",
+    "r_squared": "0.881",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "576.779"
+  },
+  "Laitila & Väätäinen (2020) model 2": {
+    "observational_unit": "EL",
+    "observations": "80",
+    "structure": "Log-linear model",
+    "r_squared": "0.724",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "204.102"
+  },
+  "Laitila & Väätäinen (2020) model 3": {
+    "observational_unit": "EL",
+    "observations": "80",
+    "structure": "Linear model with division operation",
+    "r_squared": "0.848",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "434.187"
+  },
+  "Laitila & Väätäinen (2021) model 1": {
+    "observational_unit": "EL",
+    "observations": "17",
+    "structure": "Linear model 0.44 - P",
+    "r_squared": "=",
+    "r_squared_adj": "0.004",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Laitila & Väätäinen (2021) model 2": {
+    "observational_unit": "EL",
+    "observations": "17",
+    "structure": "Linear model",
+    "r_squared": "0.61",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Laitila & Väätäinen (2023) model 1": {
+    "observational_unit": "EL",
+    "observations": "16",
+    "structure": "Linear model",
+    "r_squared": "0.59",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "19.845"
+  },
+  "Laitila et al. (2013) model 1": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Log-linear model",
+    "r_squared": "0.46",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Laitila et al. (2013) model 2": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "0.6",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Laitila et al. (2013) model 3": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.58",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Laitila et al. (2020) model 1": {
+    "observational_unit": "EL",
+    "observations": "535",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.46",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "223.174"
+  },
+  "Lazdiņš et al. (2019) model 1": {
+    "observational_unit": "-",
+    "observations": "-",
+    "structure": "Power law model",
+    "r_squared": "0.93979",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Lazdiņš et al. (2019) model 2": {
+    "observational_unit": "-",
+    "observations": "-",
+    "structure": "Power law model",
+    "r_squared": "0.964",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Lazdiņš et al. (2019) model 3": {
+    "observational_unit": "-",
+    "observations": "-",
+    "structure": "Power law model",
+    "r_squared": "0.9784",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Lazdiņš (2014) model 1": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Exponential model",
+    "r_squared": "0.92",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Lazdiņš et al. (2021) model 1": {
+    "observational_unit": "PL",
+    "observations": "-",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "0.9717",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Lazdiņš et al. (2016) model 1": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Power law model",
+    "r_squared": "0.91094",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Lazdiņš et al. (2016) model 2": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Power law model",
+    "r_squared": "0.79425",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Leszczyński et al. (2021) model 1": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Power law model",
+    "r_squared": "0.91",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Leszczyński et al. (2021) model 2": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Power law model",
+    "r_squared": "0.82",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Leszczyński et al. (2021) model 3": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Leszczyński et al. (2021) model 4": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Power law model",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Leszczyński et al. (2021) model 5": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Power law model - 0.5192 P",
+    "r_squared": "=",
+    "r_squared_adj": "0.008",
+    "significance": "-",
+    "f_stat": "8.304"
+  },
+  "Leszczyński et al. (2021) model 6": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Power law model - 0.0291 P",
+    "r_squared": "=",
+    "r_squared_adj": "0.367",
+    "significance": "-",
+    "f_stat": "0.84"
+  },
+  "Liski et al. (2020) model 1": {
+    "observational_unit": "PL",
+    "observations": "1104",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.846",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Liski et al. (2020) model 2": {
+    "observational_unit": "PL",
+    "observations": "1104",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.822",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Louis & Kizha (2021) model 1": {
+    "observational_unit": "EL",
+    "observations": "390",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.34",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Louis & Kizha (2021) model 2": {
+    "observational_unit": "EL",
+    "observations": "160",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.18",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Magagnotti et al. (2021) model 1": {
+    "observational_unit": "PL",
+    "observations": "18",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.507",
+    "significance": "P <0.05",
+    "f_stat": "31.1"
+  },
+  "Magagnotti et al. (2021) model 2": {
+    "observational_unit": "PL",
+    "observations": "18",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.801",
+    "significance": "P <0.05",
+    "f_stat": "35.2"
+  },
+  "Magagnotti et al. (2021) model 3": {
+    "observational_unit": "PL",
+    "observations": "18",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.757",
+    "significance": "P <0.05",
+    "f_stat": "27.4"
+  },
+  "Magagnotti et al. (2021) model 4": {
+    "observational_unit": "PL",
+    "observations": "18",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.765",
+    "significance": "P <0.05",
+    "f_stat": "28.6"
+  },
+  "Manner et al. (2023) model 1": {
+    "observational_unit": "CL",
+    "observations": "115",
+    "structure": "Linear model",
+    "r_squared": "0.89",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Manner et al. (2023) model 2": {
+    "observational_unit": "CL",
+    "observations": "115",
+    "structure": "Power law model",
+    "r_squared": "0.86",
+    "r_squared_adj": "-",
+    "significance": "P <0.0001",
+    "f_stat": "1366.7"
+  },
+  "McEwan et al. (2016) model 1": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "-",
+    "r_squared_adj": "0.428",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "McEwan et al. (2016) model 2": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "-",
+    "r_squared_adj": "0.715",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "McEwan et al. (2016) model 3": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "-",
+    "r_squared_adj": "0.75",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Mederski et al. (2016) model 1": {
+    "observational_unit": "PL",
+    "observations": "56",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.7168",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Mederski et al. (2016) model 2": {
+    "observational_unit": "PL",
+    "observations": "56",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.3934",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Norihiro et al. (2018) model 1": {
+    "observational_unit": "EL",
+    "observations": "4388",
+    "structure": "Linear model",
+    "r_squared": "0.64",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Norihiro et al. (2018) model 2": {
+    "observational_unit": "EL",
+    "observations": "297",
+    "structure": "Linear model",
+    "r_squared": "0.45",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Norihiro et al. (2018) model 3": {
+    "observational_unit": "EL",
+    "observations": "2255",
+    "structure": "Linear model",
+    "r_squared": "0.61",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Norihiro et al. (2018) model 4": {
+    "observational_unit": "EL",
+    "observations": "181",
+    "structure": "Linear model",
+    "r_squared": "0.79",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Norihiro et al. (2018) model 5": {
+    "observational_unit": "EL",
+    "observations": "1478",
+    "structure": "Linear model",
+    "r_squared": "0.76",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Norihiro et al. (2018) model 6": {
+    "observational_unit": "EL",
+    "observations": "177",
+    "structure": "Linear model",
+    "r_squared": "0.75",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Norihiro et al. (2018) model 7": {
+    "observational_unit": "EL",
+    "observations": "4388",
+    "structure": "Linear model",
+    "r_squared": "0.68",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Norihiro et al. (2018) model 8": {
+    "observational_unit": "EL",
+    "observations": "1655",
+    "structure": "Linear model",
+    "r_squared": "0.76",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Norihiro et al. (2018) model 9": {
+    "observational_unit": "EL",
+    "observations": "2552",
+    "structure": "Linear model",
+    "r_squared": "0.6",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Norihiro et al. (2018) model 10": {
+    "observational_unit": "EL",
+    "observations": "181",
+    "structure": "Linear model",
+    "r_squared": "0.78",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Norihiro et al. (2018) model 11": {
+    "observational_unit": "EL",
+    "observations": "1478",
+    "structure": "Linear model",
+    "r_squared": "0.65",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Norihiro et al. (2018) model 12": {
+    "observational_unit": "EL",
+    "observations": "177",
+    "structure": "Linear model",
+    "r_squared": "0.76",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Norihiro et al. (2018) model 13": {
+    "observational_unit": "EL",
+    "observations": "1156",
+    "structure": "Linear model",
+    "r_squared": "0.56",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Norihiro et al. (2018) model 14": {
+    "observational_unit": "EL",
+    "observations": "1099",
+    "structure": "Linear model",
+    "r_squared": "0.64",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Norihiro et al. (2018) model 15": {
+    "observational_unit": "EL",
+    "observations": "297",
+    "structure": "Linear model",
+    "r_squared": "0.62",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Norihiro et al. (2018) model 16": {
+    "observational_unit": "EL",
+    "observations": "181",
+    "structure": "Linear model",
+    "r_squared": "0.56",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Norihiro et al. (2018) model 17": {
+    "observational_unit": "EL",
+    "observations": "4388",
+    "structure": "Linear model",
+    "r_squared": "0.624",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Nuutinen & Björheden (2016) model 1": {
+    "observational_unit": "EL",
+    "observations": "171",
+    "structure": "Log-linear model",
+    "r_squared": "0.252",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Olivera et al. (2016) model 1": {
+    "observational_unit": "CL",
+    "observations": "42690",
+    "structure": "Exponential model with logarithmic transformation",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Olivera et al. (2016) model 2": {
+    "observational_unit": "CL",
+    "observations": "42690",
+    "structure": "Exponential model with logarithmic transformation",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Olivera et al. (2016) model 3": {
+    "observational_unit": "CL",
+    "observations": "42690",
+    "structure": "Exponential model with logarithmic transformation",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Olivera et al. (2016) model 4": {
+    "observational_unit": "CL",
+    "observations": "42690",
+    "structure": "Exponential model with logarithmic transformation",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Olivera et al. (2016) model 5": {
+    "observational_unit": "CL",
+    "observations": "42690",
+    "structure": "Exponential model with logarithmic transformation",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Olivera et al. (2016) model 6": {
+    "observational_unit": "CL",
+    "observations": "42690",
+    "structure": "Exponential model with logarithmic transformation",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Olivera et al. (2016) model 7": {
+    "observational_unit": "CL",
+    "observations": "42690",
+    "structure": "Exponential model with logarithmic transformation",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Olivera et al. (2016) model 8": {
+    "observational_unit": "CL",
+    "observations": "42690",
+    "structure": "Exponential model with logarithmic transformation",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Olivera et al. (2016) model 9": {
+    "observational_unit": "CL",
+    "observations": "42690",
+    "structure": "Exponential model with logarithmic transformation",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Olivera et al. (2016) model 10": {
+    "observational_unit": "CL",
+    "observations": "42690",
+    "structure": "Exponential model with logarithmic transformation",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Olivera et al. (2016) model 11": {
+    "observational_unit": "CL",
+    "observations": "42690",
+    "structure": "Exponential model with logarithmic transformation",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Olivera et al. (2016) model 12": {
+    "observational_unit": "CL",
+    "observations": "42690",
+    "structure": "Exponential model with logarithmic transformation",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Olivera et al. (2016) model 13": {
+    "observational_unit": "CL",
+    "observations": "42690",
+    "structure": "Exponential model with logarithmic transformation",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Olivera et al. (2016) model 14": {
+    "observational_unit": "CL",
+    "observations": "42690",
+    "structure": "Exponential model with logarithmic transformation",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "-"
+  },
+  "Petitmermet et al. (2019) model 1": {
+    "observational_unit": "PL",
+    "observations": "45",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.9412",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Petitmermet et al. (2019) model 2": {
+    "observational_unit": "PL",
+    "observations": "45",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.9412",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Petitmermet et al. (2019) model 3": {
+    "observational_unit": "PL",
+    "observations": "45",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.9412",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Petitmermet et al. (2019) model 4": {
+    "observational_unit": "PL",
+    "observations": "45",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.9399",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Petitmermet et al. (2019) model 5": {
+    "observational_unit": "PL",
+    "observations": "45",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.9398",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Petitmermet et al. (2019) model 6": {
+    "observational_unit": "PL",
+    "observations": "45",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.9398",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Petitmermet et al. (2019) model 7": {
+    "observational_unit": "PL",
+    "observations": "45",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.9384",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Petitmermet et al. (2019) model 8": {
+    "observational_unit": "PL",
+    "observations": "45",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.9368",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Petty & Kärhä (2014) model 1": {
+    "observational_unit": "EL",
+    "observations": "374",
+    "structure": "Log-linear model",
+    "r_squared": "0.17",
+    "r_squared_adj": "0.16",
+    "significance": "P <0.0001",
+    "f_stat": "2117.84"
+  },
+  "Petty & Kärhä (2014) model 2": {
+    "observational_unit": "EL",
+    "observations": "332",
+    "structure": "Log-linear model",
+    "r_squared": "0.34",
+    "r_squared_adj": "0.33",
+    "significance": "P <0.0001",
+    "f_stat": "1282.24"
+  },
+  "Petty & Kärhä (2014) model 3": {
+    "observational_unit": "EL",
+    "observations": "366",
+    "structure": "Log-linear model",
+    "r_squared": "0.26",
+    "r_squared_adj": "0.25",
+    "significance": "P <0.0001",
+    "f_stat": "1669.85"
+  },
+  "Petty & Kärhä (2014) model 4": {
+    "observational_unit": "EL",
+    "observations": "262",
+    "structure": "Log-linear model",
+    "r_squared": "0.31",
+    "r_squared_adj": "0.3",
+    "significance": "P <0.0001",
+    "f_stat": "1458.32"
+  },
+  "Petty & Kärhä (2014) model 5": {
+    "observational_unit": "EL",
+    "observations": "364",
+    "structure": "Log-linear model",
+    "r_squared": "0.22",
+    "r_squared_adj": "0.21",
+    "significance": "P <0.0001",
+    "f_stat": "1904.89"
+  },
+  "Petty & Kärhä (2014) model 6": {
+    "observational_unit": "EL",
+    "observations": "334",
+    "structure": "Log-linear model",
+    "r_squared": "0.21",
+    "r_squared_adj": "0.2",
+    "significance": "P <0.0001",
+    "f_stat": "1570.91"
+  },
+  "Petty & Kärhä (2014) model 7": {
+    "observational_unit": "EL",
+    "observations": "22",
+    "structure": "Log-linear model 0.72 0.71 P",
+    "r_squared": "=",
+    "r_squared_adj": "0.000",
+    "significance": "-",
+    "f_stat": "53.48"
+  },
+  "Petty & Kärhä (2014) model 8": {
+    "observational_unit": "EL",
+    "observations": "6",
+    "structure": "Second-degree polynomial model 0.99 0.99 P",
+    "r_squared": "=",
+    "r_squared_adj": "0.000",
+    "significance": "-",
+    "f_stat": "14735.693"
+  },
+  "Petty & Kärhä (2014) model 9": {
+    "observational_unit": "EL",
+    "observations": "6",
+    "structure": "Second-degree polynomial model 0.99 0.99 P",
+    "r_squared": "=",
+    "r_squared_adj": "0.000",
+    "significance": "-",
+    "f_stat": "12169.468"
+  },
+  "Petty & Kärhä (2014) model 10": {
+    "observational_unit": "EL",
+    "observations": "7",
+    "structure": "Second-degree polynomial model 0.99 0.99 P",
+    "r_squared": "=",
+    "r_squared_adj": "0.000",
+    "significance": "-",
+    "f_stat": "7761.318"
+  },
+  "Petty & Kärhä (2014) model 11": {
+    "observational_unit": "EL",
+    "observations": "7",
+    "structure": "Second-degree polynomial model 0.99 0.99 P",
+    "r_squared": "=",
+    "r_squared_adj": "0.000",
+    "significance": "-",
+    "f_stat": "6176.361"
+  },
+  "Petty & Kärhä (2014) model 12": {
+    "observational_unit": "EL",
+    "observations": "7",
+    "structure": "Second-degree polynomial model 0.99 0.99 P",
+    "r_squared": "=",
+    "r_squared_adj": "0.000",
+    "significance": "-",
+    "f_stat": "6329.739"
+  },
+  "Petty & Kärhä (2014) model 13": {
+    "observational_unit": "EL",
+    "observations": "7",
+    "structure": "Second-degree polynomial model 0.99 0.99 P",
+    "r_squared": "=",
+    "r_squared_adj": "0.000",
+    "significance": "-",
+    "f_stat": "5401.736"
+  },
+  "Polowy & Molińska-Glura (2023) model 1": {
+    "observational_unit": "SL",
+    "observations": "108",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.897",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Polowy & Molińska-Glura (2023) model 2": {
+    "observational_unit": "SL",
+    "observations": "108",
+    "structure": "Linear model",
+    "r_squared": "0.846",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Polowy & Molińska-Glura (2023) model 3": {
+    "observational_unit": "SL",
+    "observations": "108",
+    "structure": "Linear model",
+    "r_squared": "0.942",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Prinz et al. (2021) model 1": {
+    "observational_unit": "EL",
+    "observations": "165",
+    "structure": "Exponential model",
+    "r_squared": "0.865",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "1047.137"
+  },
+  "Prinz et al. (2021) model 2": {
+    "observational_unit": "EL",
+    "observations": "126",
+    "structure": "Exponential model",
+    "r_squared": "0.909",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "1241.662"
+  },
+  "Prinz et al. (2021) model 3": {
+    "observational_unit": "EL",
+    "observations": "819",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "0.879",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "1980.297"
+  },
+  "Prinz et al. (2021) model 4": {
+    "observational_unit": "EL",
+    "observations": "612",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "0.934",
+    "r_squared_adj": "-",
+    "significance": "P <0.001",
+    "f_stat": "2860.012"
+  },
+  "Ramantswana et al. (2013) model 1": {
+    "observational_unit": "CL",
+    "observations": "724",
+    "structure": "Second-degree polynomial model 0.88 - P",
+    "r_squared": "=",
+    "r_squared_adj": "0.05",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Ramantswana et al. (2013) model 2": {
+    "observational_unit": "CL",
+    "observations": "485",
+    "structure": "Second-degree polynomial model 0.87 - P",
+    "r_squared": "=",
+    "r_squared_adj": "0.05",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Ramantswana et al. (2013) model 3": {
+    "observational_unit": "CL",
+    "observations": "542",
+    "structure": "Second-degree polynomial model 0.88 - P",
+    "r_squared": "=",
+    "r_squared_adj": "0.05",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Ramantswana et al. (2013) model 4": {
+    "observational_unit": "CL",
+    "observations": "724",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.884848",
+    "r_squared_adj": "-",
+    "significance": "SS",
+    "f_stat": "-"
+  },
+  "Ramantswana et al. (2013) model 5": {
+    "observational_unit": "CL",
+    "observations": "33",
+    "structure": "Linear model",
+    "r_squared": "0.67",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Ramantswana et al. (2013) model 6": {
+    "observational_unit": "CL",
+    "observations": "70",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.77",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Ramantswana et al. (2013) model 7": {
+    "observational_unit": "CL",
+    "observations": "13",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.92",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Ramantswana et al. (2013) model 8": {
+    "observational_unit": "CL",
+    "observations": "246",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.89",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Ramantswana et al. (2013) model 9": {
+    "observational_unit": "CL",
+    "observations": "485",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.873293",
+    "r_squared_adj": "-",
+    "significance": "SS",
+    "f_stat": "-"
+  },
+  "Rosińska et al. (2022) model 1": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Linear model",
+    "r_squared": "0.321",
+    "r_squared_adj": "0.32",
+    "significance": "P <0.0001",
+    "f_stat": "442.53"
+  },
+  "Rosińska et al. (2022) model 2": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.16",
+    "r_squared_adj": "0.158",
+    "significance": "P <0.0001",
+    "f_stat": "89.133"
+  },
+  "Rosińska et al. (2022) model 3": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Linear model",
+    "r_squared": "0.359",
+    "r_squared_adj": "0.357",
+    "significance": "P <0.001",
+    "f_stat": "169.66"
+  },
+  "Rosińska et al. (2022) model 4": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Linear model",
+    "r_squared": "0.271",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Rosińska et al. (2022) model 5": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Linear model",
+    "r_squared": "0.36",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Rosińska et al. (2022) model 6": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Second-degree polynomial model with interaction terms",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Santos et al. (2022) model 1": {
+    "observational_unit": "PL",
+    "observations": "80",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Santos et al. (2021) model 1": {
+    "observational_unit": "PL",
+    "observations": "-",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.86",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Santos et al. (2020) model 1": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Second-degree polynomial model with interaction terms",
+    "r_squared": "0.82",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Santos et al. (2020) model 2": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Second-degree polynomial model with interaction terms",
+    "r_squared": "0.69",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Santos et al. (2020) model 3": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Second-degree polynomial model with interaction terms",
+    "r_squared": "0.99",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Santos et al. (2020) model 4": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.82",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Santos et al. (2020) model 5": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.85",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Santos et al. (2020) model 6": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Second-degree polynomial model with interaction terms",
+    "r_squared": "0.9",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Santos et al. (2020) model 7": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Second-degree polynomial model with interaction terms",
+    "r_squared": "0.82",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Santos et al. (2020) model 8": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.89",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Schweier et al. (2015) model 1": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Linear model",
+    "r_squared": "0.733",
+    "r_squared_adj": "-",
+    "significance": "P <0.0001",
+    "f_stat": "126.511"
+  },
+  "Schweier et al. (2015) model 2": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Linear model",
+    "r_squared": "0.795",
+    "r_squared_adj": "-",
+    "significance": "P <0.0001",
+    "f_stat": "104.784"
+  },
+  "Schweier et al. (2015) model 3": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Linear model",
+    "r_squared": "0.379",
+    "r_squared_adj": "-",
+    "significance": "P <0.0001",
+    "f_stat": "63.573"
+  },
+  "Schweier et al. (2015) model 4": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Linear model",
+    "r_squared": "0.639",
+    "r_squared_adj": "-",
+    "significance": "P <0.0001",
+    "f_stat": "232.129"
+  },
+  "Schweier et al. (2015) model 5": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.415",
+    "r_squared_adj": "-",
+    "significance": "P <0.0001",
+    "f_stat": "103.779"
+  },
+  "Slugeň et al. (2014) model 1": {
+    "observational_unit": "EL",
+    "observations": "159",
+    "structure": "Linear model 0.4915 - P",
+    "r_squared": "=",
+    "r_squared_adj": "0.0000",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Soman et al. (2020) model 1": {
+    "observational_unit": "EL",
+    "observations": "99",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.18",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Soman et al. (2020) model 2": {
+    "observational_unit": "EL",
+    "observations": "104",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.19",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Soman et al. (2020) model 3": {
+    "observational_unit": "EL",
+    "observations": "106",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.34",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Soman et al. (2019) model 1": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.42",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Soman et al. (2019) model 2": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.45",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Sperandio et al. (2021) model 1": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Power law model",
+    "r_squared": "0.1014",
+    "r_squared_adj": "-",
+    "significance": "P <0.01",
+    "f_stat": "-"
+  },
+  "Sperandio et al. (2021) model 2": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Power law model",
+    "r_squared": "0.3842",
+    "r_squared_adj": "-",
+    "significance": "P <0.01",
+    "f_stat": "-"
+  },
+  "Sperandio et al. (2021) model 3": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Power law model",
+    "r_squared": "0.8751",
+    "r_squared_adj": "-",
+    "significance": "P <0.01",
+    "f_stat": "-"
+  },
+  "Sperandio et al. (2021) model 4": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Power law model",
+    "r_squared": "0.9377",
+    "r_squared_adj": "-",
+    "significance": "P <0.01",
+    "f_stat": "-"
+  },
+  "Spinelli et al. (2014) model 1": {
+    "observational_unit": "PL",
+    "observations": "24",
+    "structure": "Linear model",
+    "r_squared": "0.959",
+    "r_squared_adj": "-",
+    "significance": "P <0.0001",
+    "f_stat": "270.9"
+  },
+  "Spinelli & De Arruda Moura (2019) model 1": {
+    "observational_unit": "-",
+    "observations": "106",
+    "structure": "Log-linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.858",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Spinelli et al. (2022) model 1": {
+    "observational_unit": "PL",
+    "observations": "33",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.944",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Spinelli et al. (2023) model 1": {
+    "observational_unit": "PL",
+    "observations": "16",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.918",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Spinelli et al. (2020a) model 1": {
+    "observational_unit": "-",
+    "observations": "26",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "0.649",
+    "significance": "P <0.0001",
+    "f_stat": "24.12"
+  },
+  "Spinelli et al. (2020a) model 2": {
+    "observational_unit": "-",
+    "observations": "26",
+    "structure": "Linear model - 0.315 P",
+    "r_squared": "=",
+    "r_squared_adj": "0.0017",
+    "significance": "-",
+    "f_stat": "12.503"
+  },
+  "Spinelli et al. (2020b) model 1": {
+    "observational_unit": "PL",
+    "observations": "13",
+    "structure": "Linear model - 0.014 P",
+    "r_squared": "=",
+    "r_squared_adj": "0.3018",
+    "significance": "-",
+    "f_stat": "1.174"
+  },
+  "Spinelli et al. (2020b) model 2": {
+    "observational_unit": "PL",
+    "observations": "13",
+    "structure": "Linear model - 0.602 P",
+    "r_squared": "=",
+    "r_squared_adj": "0.0011",
+    "significance": "-",
+    "f_stat": "19.167"
+  },
+  "Spinelli et al. (2020b) model 3": {
+    "observational_unit": "PL",
+    "observations": "13",
+    "structure": "Linear model - 0.026 P",
+    "r_squared": "=",
+    "r_squared_adj": "0.2751",
+    "significance": "-",
+    "f_stat": "1.319"
+  },
+  "Stoilov et al. (2021) model 1": {
+    "observational_unit": "EL",
+    "observations": "31",
+    "structure": "Linear model",
+    "r_squared": "0.93",
+    "r_squared_adj": "0.92",
+    "significance": "P <0.05",
+    "f_stat": "69.54"
+  },
+  "Stoilov et al. (2021) model 2": {
+    "observational_unit": "EL",
+    "observations": "31",
+    "structure": "Linear model",
+    "r_squared": "0.86",
+    "r_squared_adj": "0.83",
+    "significance": "P <0.05",
+    "f_stat": "31.32"
+  },
+  "Stoilov et al. (2021) model 3": {
+    "observational_unit": "EL",
+    "observations": "31",
+    "structure": "Linear model",
+    "r_squared": "0.57",
+    "r_squared_adj": "0.49",
+    "significance": "P <0.05",
+    "f_stat": "6.5"
+  },
+  "Stoilov et al. (2021) model 4": {
+    "observational_unit": "EL",
+    "observations": "31",
+    "structure": "Linear model",
+    "r_squared": "0.37",
+    "r_squared_adj": "0.25",
+    "significance": "P <0.05",
+    "f_stat": "2.98"
+  },
+  "Strandgard & Mitchell (2018) model 1": {
+    "observational_unit": "EL",
+    "observations": "108",
+    "structure": "Exponential model",
+    "r_squared": "0.73",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Strandgard & Mitchell (2018) model 2": {
+    "observational_unit": "EL",
+    "observations": "106",
+    "structure": "Exponential model",
+    "r_squared": "0.3",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Strandgard & Mitchell (2018) model 3": {
+    "observational_unit": "EL",
+    "observations": "101",
+    "structure": "Exponential model",
+    "r_squared": "0.5",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Strandgard & Mitchell (2018) model 4": {
+    "observational_unit": "EL",
+    "observations": "101",
+    "structure": "Linear model",
+    "r_squared": "0.13",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Strandgard & Mitchell (2018) model 5": {
+    "observational_unit": "EL",
+    "observations": "108",
+    "structure": "Exponential model",
+    "r_squared": "0.73",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Strandgard & Mitchell (2018) model 6": {
+    "observational_unit": "EL",
+    "observations": "106",
+    "structure": "Exponential model",
+    "r_squared": "0.4",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Strandgard & Mitchell (2018) model 7": {
+    "observational_unit": "EL",
+    "observations": "136",
+    "structure": "Exponential model",
+    "r_squared": "0.36",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Strandgard & Mitchell (2019) model 1": {
+    "observational_unit": "EL",
+    "observations": "107",
+    "structure": "Exponential model",
+    "r_squared": "0.59",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Strandgard & Mitchell (2019) model 2": {
+    "observational_unit": "EL",
+    "observations": "107",
+    "structure": "Power law model",
+    "r_squared": "0.53",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Strandgard & Mitchell (2019) model 3": {
+    "observational_unit": "EL",
+    "observations": "104",
+    "structure": "Exponential model",
+    "r_squared": "0.41",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Strandgard & Mitchell (2019) model 4": {
+    "observational_unit": "EL",
+    "observations": "104",
+    "structure": "Power law model",
+    "r_squared": "0.6",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Strandgard & Mitchell (2020) model 1": {
+    "observational_unit": "EL",
+    "observations": "321",
+    "structure": "Power law model",
+    "r_squared": "-",
+    "r_squared_adj": "0.88",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Strandgard & Mitchell (2020) model 2": {
+    "observational_unit": "EL",
+    "observations": "378",
+    "structure": "Power law model",
+    "r_squared": "-",
+    "r_squared_adj": "0.32",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Strandgard & Mitchell (2020) model 3": {
+    "observational_unit": "EL",
+    "observations": "378",
+    "structure": "Power law model",
+    "r_squared": "-",
+    "r_squared_adj": "0.72",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Strandgard et al. (2016) model 1": {
+    "observational_unit": "-",
+    "observations": "47",
+    "structure": "Linear model",
+    "r_squared": "0.8",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Strandgard et al. (2016) model 2": {
+    "observational_unit": "-",
+    "observations": "47",
+    "structure": "Linear model",
+    "r_squared": "0.79",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Strandgard et al. (2015) model 1": {
+    "observational_unit": "CL",
+    "observations": "116",
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.75",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Tajbos & Messingerova (2014) model 1": {
+    "observational_unit": "EL",
+    "observations": "187",
+    "structure": "Linear model 0.35 - P",
+    "r_squared": "=",
+    "r_squared_adj": "0.0000",
+    "significance": "-",
+    "f_stat": "100.48"
+  },
+  "Tajbos & Messingerova (2014) model 2": {
+    "observational_unit": "EL",
+    "observations": "68",
+    "structure": "Linear model 0.23 - P",
+    "r_squared": "=",
+    "r_squared_adj": "0.0001",
+    "significance": "-",
+    "f_stat": "18.52"
+  },
+  "Tajbos & Messingerova (2014) model 3": {
+    "observational_unit": "EL",
+    "observations": "96",
+    "structure": "Linear model 0.52 - P",
+    "r_squared": "=",
+    "r_squared_adj": "0.0000",
+    "significance": "-",
+    "f_stat": "101.63"
+  },
+  "Tajbos & Messingerova (2014) model 4": {
+    "observational_unit": "EL",
+    "observations": "32",
+    "structure": "Linear model 0.9 - P",
+    "r_squared": "=",
+    "r_squared_adj": "0.0000",
+    "significance": "-",
+    "f_stat": "255.77"
+  },
+  "Tajbos & Messingerova (2014) model 5": {
+    "observational_unit": "EL",
+    "observations": "189",
+    "structure": "Linear model 0.25 - P",
+    "r_squared": "=",
+    "r_squared_adj": "0.0000",
+    "significance": "-",
+    "f_stat": "62.38"
+  },
+  "Tajbos & Messingerova (2014) model 6": {
+    "observational_unit": "EL",
+    "observations": "64",
+    "structure": "Linear model 0.48 - P",
+    "r_squared": "=",
+    "r_squared_adj": "0.0000",
+    "significance": "-",
+    "f_stat": "56.14"
+  },
+  "Tolosana et al. (2023) model 1": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Log-linear model",
+    "r_squared": "0.84",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Tolosana et al. (2023) model 2": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Log-linear model",
+    "r_squared": "0.27",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Tolosana et al. (2023) model 3": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Non-linear model with power law terms",
+    "r_squared": "0.73",
+    "r_squared_adj": "0.52",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Tolosana et al. (2018) model 1": {
+    "observational_unit": "CL",
+    "observations": "17",
+    "structure": "Linear model 0.901 0.878 P",
+    "r_squared": "=",
+    "r_squared_adj": "0.0000",
+    "significance": "-",
+    "f_stat": "39.31"
+  },
+  "Tolosana et al. (2018) model 2": {
+    "observational_unit": "CL",
+    "observations": "17",
+    "structure": "Linear model",
+    "r_squared": "-",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Townsend et al. (2019) model 1": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Linear model",
+    "r_squared": "0.52",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Townsend et al. (2019) model 2": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Linear model",
+    "r_squared": "0.51",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Townsend et al. (2019) model 3": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Linear model",
+    "r_squared": "0.51",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Townsend et al. (2019) model 4": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Linear model",
+    "r_squared": "0.48",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Townsend et al. (2019) model 5": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Linear model",
+    "r_squared": "0.54",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Walsh & Strandgard (2014) model 1": {
+    "observational_unit": "EL",
+    "observations": "48",
+    "structure": "Log-linear model",
+    "r_squared": "0.33",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Walsh & Strandgard (2014) model 2": {
+    "observational_unit": "EL",
+    "observations": "55",
+    "structure": "Log-linear model",
+    "r_squared": "0.61",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Walsh et al. (2014) model 1": {
+    "observational_unit": "EL",
+    "observations": "70",
+    "structure": "Log-linear model",
+    "r_squared": "0.39",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Walsh et al. (2014) model 2": {
+    "observational_unit": "EL",
+    "observations": "76",
+    "structure": "Log-linear model",
+    "r_squared": "0.47",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Williams & Ackerman (2016) model 1": {
+    "observational_unit": "EL",
+    "observations": "500",
+    "structure": "Linear model",
+    "r_squared": "0.8",
+    "r_squared_adj": "-",
+    "significance": "P <0.01",
+    "f_stat": "-"
+  },
+  "Zimelis et al. (2020) model 1": {
+    "observational_unit": "EL",
+    "observations": "18",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.88",
+    "r_squared_adj": "-",
+    "significance": "SV",
+    "f_stat": "-"
+  },
+  "Zimelis et al. (2020) model 2": {
+    "observational_unit": "EL",
+    "observations": "18",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.91",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Zimelis et al. (2018) model 1": {
+    "observational_unit": "EL",
+    "observations": "9985",
+    "structure": "Linear model 0.85 - P",
+    "r_squared": "=",
+    "r_squared_adj": "2.82×10-21",
+    "significance": "-",
+    "f_stat": "372"
+  },
+  "Zimelis et al. (2018) model 2": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.73",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Zimelis et al. (2019) model 1": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "0.96",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Zimelis et al. (2019) model 2": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "0.72",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Zimelis et al. (2017a) model 1": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Log-linear model",
+    "r_squared": "0.5444",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Zimelis et al. (2017a) model 2": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Log-linear model",
+    "r_squared": "0.695",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Zimelis et al. (2017a) model 3": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.6551",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Zimelis et al. (2017a) model 4": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.9091",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Zimelis et al. (2017b) model 1": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "0.98",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Zimelis et al. (2017b) model 2": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Third-degree polynomial model",
+    "r_squared": "0.93",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Zimelis et al. (2017b) model 3": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Linear model",
+    "r_squared": "0.5",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Zimelis & Spalva (2022) model 1": {
+    "observational_unit": "-",
+    "observations": "-",
+    "structure": "Second-degree polynomial model",
+    "r_squared": "0.9048",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Zimelis & Spalva (2022) model 2": {
+    "observational_unit": "-",
+    "observations": "-",
+    "structure": "Linear model",
+    "r_squared": "0.9236",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
+  },
+  "Zimelis et al. (2016) model 1": {
+    "observational_unit": "EL",
+    "observations": "-",
+    "structure": "Power law model",
+    "r_squared": "0.94734",
+    "r_squared_adj": "-",
+    "significance": "-",
+    "f_stat": "-"
   }
 }

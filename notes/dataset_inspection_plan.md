@@ -41,7 +41,10 @@
 - Initial costing helper CLI is in place: `fhops dataset estimate-cost` pairs Lahrsen productivity (deterministic or RV) with rental rates/utilisation to emit $/m³.
 - Candidate productivity models for single-grip harvesters/harwarders identified via Arnvik (2024) review (2013–2023 literature); next step is selecting/porting BC-appropriate regressions for those roles.
 - Appendix 8 tables from Arnvik (2024) exported (per-page CSVs + aggregate raw dump) via `scripts/extract_arnvik_models.py`; next step is normalising the rows into the productivity registry schema.
-- Initial pass at normalising Appendix 8 models landed ~200 provisional entries in `notes/reference/arnvik_tables/registry_models.json` via `scripts/build_productivity_registry.py`; follow-up needed to enrich entries with Appendix 9–11 metadata and cover remaining rows.
+- Appendix 8 extraction now targets the true section pages (101–116) so the aggregated CSV is clean; `scripts/build_productivity_registry.py` normalises those rows (currently 109 parsed models with citation metadata + coefficients/R² sourced from Appendices 9–11). Remaining Appendix 8 tables (forwarders, grapple skidders, shovel loggers, yarders, etc.) still need to be parsed so we can reach the full 422-model catalog.
+- Appendices 9–11 are now machine-readable: `scripts/parse_arnvik_{variables,parameters,statistics}.py` stream text directly from the PDF to capture variable definitions, per-model coefficients (a–t), and observational metadata (OB, observations, structure, R², significance, F). These JSONs (`notes/reference/arnvik_tables/appendix{9,10,11}/*.json`) power the registry builder/validator.
+- Machine-type labels coming out of Appendix 8 are now harmonised against FHOPS roles (e.g., `H` → `single_grip_harvester`, `FB` → `feller_buncher`, `HW` → `harwarder`), giving us immediate visibility into roles we already cover vs. gaps (harwarder, skidder_harvester) that need BC productivity functions + system support.
+- Appendix references are now parsed via `scripts/parse_arnvik_references.py`, producing `notes/reference/arnvik_tables/references.json` and letting the registry tag each model with its original citation for provenance checks.
 - Appendix 8 in Arnvik (2024) lists 422 productivity models (harvesters, feller-bunchers, harwarders). Need to digitise into a searchable registry (machine type, region, system, predictors, coefficients, R², etc.) so we can plug gaps for the remaining machine roles.
 
 ## BC Productivity Model Insights (Lahrsen 2025 thesis)
@@ -87,6 +90,12 @@
   - [ ] Extraction strategy: attempt Tabula/pandas parsing; if automated extraction fails due to formatting, fall back to semi-manual OCR or direct data entry.
   - [ ] Registry design: schema capturing publication metadata, machine type, harvest system, predictors, mathematical form, coefficients, fit metrics.
   - [ ] Ingestion pipeline: scripts to clean/normalise extracted rows (e.g., map machine type labels to FHOPS roles, convert units, note site conditions).
+  - [x] Capture Arnvik (2024) bibliography as structured JSON (`notes/reference/arnvik_tables/references.json`) and plumb it into the productivity registry so every model records its citation provenance.
+  - [x] Lock Appendix 8 page ranges to 101–116 and update the registry builder so it parses those tables into structured rows (currently 109 models pending coefficient/stat merges).
+  - [x] Parse Appendix 9 variable definitions into JSON and attach units/descriptions to predictor codes.
+  - [x] Parse Appendix 10 parameters + Appendix 11 statistical metadata straight from the PDF (text parsing to avoid CSV artefacts) and feed them into the registry builder so every model includes coefficients, OB context, R², significance, and F statistics.
+  - [ ] Extend Appendix 8 extraction to the remaining machine tables (forwarders, grapple skidders, shovel/shovel loggers, yarders, helicopters, etc.), targeting ~422 total models, and update role mappings accordingly.
+  - [ ] Add validation (unit tests or checksum scripts) that fail if the extracted model count, predictor metadata, or coefficient sets drift from the expected totals.
 
 ## Rollout Plan (3-level work breakdown)
 

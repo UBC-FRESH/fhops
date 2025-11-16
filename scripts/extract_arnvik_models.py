@@ -43,7 +43,7 @@ def find_section_ranges(pdf: pdfplumber.PDF) -> dict[str, tuple[int, int]]:
             positions = markers[name]
         if not positions:
             raise SystemExit(f"{name} not found in PDF")
-        start = positions[0]
+        start = positions[-1]
         prev_start = start
         end = len(pdf.pages)
         for other_name, _ in SECTIONS[idx + 1 :]:
