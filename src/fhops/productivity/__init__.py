@@ -7,6 +7,8 @@ from .eriksson2014 import (
 from .cable_logging import (
     estimate_cable_skidding_productivity_unver_robust,
     estimate_cable_skidding_productivity_unver_spss,
+    estimate_cable_yarder_productivity_lee2018_uphill,
+    estimate_cable_yarder_productivity_lee2018_downhill,
 )
 from .ghaffariyan2019 import (
     estimate_forwarder_productivity_large_forwarder_thinning,
@@ -53,6 +55,8 @@ __all__ = [
     "estimate_forwarder_productivity_thinning",
     "estimate_cable_skidding_productivity_unver_spss",
     "estimate_cable_skidding_productivity_unver_robust",
+    "estimate_cable_yarder_productivity_lee2018_uphill",
+    "estimate_cable_yarder_productivity_lee2018_downhill",
     "estimate_forwarder_productivity_small_forwarder_thinning",
     "estimate_forwarder_productivity_large_forwarder_thinning",
     "estimate_forwarder_productivity_kellogg_bettinger",
