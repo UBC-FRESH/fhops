@@ -1,0 +1,12 @@
+[
+  {
+    "machine_name": "placeholder",
+    "role": "TODO",
+    "ownership_cost_per_smh": 0.0,
+    "operating_cost_per_smh": 0.0,
+    "default_utilization": 0.0,
+    "move_in_cost": 0.0,
+    "source": "",
+    "notes": "Replace with actual machine rates from Dodson et al. (2015)/Hartley & Han (2007)."
+  }
+]
