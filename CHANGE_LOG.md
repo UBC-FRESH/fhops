@@ -5,6 +5,7 @@
 - Added regression tests reproducing the paper’s reported 6.5–8.4 m³/PMH cases to guard the helper against future refactors.
 - Logged the new helper + follow-on machine-role rollout plan in `notes/dataset_inspection_plan.md` and extracted the source PDF text into `notes/reference/article10379.txt` for future parsers.
 - Extended forwarder coverage with Ghaffariyan et al. (2019) thinning models (small/large ALPACA regressions) and Kellogg & Bettinger (1994) multi-product CTL regression, complete with slope toggles, distance-aware predictors, regression tests, and reference text dumps under `notes/reference/`.
+- Added `fhops dataset estimate-forwarder-productivity` so users can evaluate the new forwarder regressions from the CLI (Ghaffariyan small/large + Kellogg saw/pulp/mixed), with validation of required parameters and Typer-backed regression tests.
 
 ## 2025-11-15 — Dataset inspector & 24 h baseline
 - Added a new `fhops dataset` CLI app with `inspect-machine` / `inspect-block` commands, interactive selectors, Rich table output, and warnings whenever a machine advertises non‑24 h availability so dataset regressions surface immediately.

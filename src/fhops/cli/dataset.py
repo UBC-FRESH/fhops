@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Optional
 
 import typer
 from rich.console import Console
@@ -17,8 +18,12 @@ from fhops.costing import (
     estimate_unit_cost_from_stand,
 )
 from fhops.productivity import (
+    KelloggLoadType,
     LahrsenModel,
     ProductivityDistributionEstimate,
+    estimate_forwarder_productivity_kellogg_bettinger,
+    estimate_forwarder_productivity_large_forwarder_thinning,
+    estimate_forwarder_productivity_small_forwarder_thinning,
     estimate_productivity,
     estimate_productivity_distribution,
     load_lahrsen_ranges,
@@ -52,6 +57,23 @@ KNOWN_DATASETS: dict[str, DatasetRef] = {
     "synthetic-large": DatasetRef(
         "synthetic-large", Path("examples/synthetic/large/scenario.yaml")
     ),
+}
+
+
+class ForwarderProductivityModel(str, Enum):
+    """Supported forwarder productivity regressions exposed via the CLI."""
+
+    GHAFFARIYAN_SMALL = "ghaffariyan-small"
+    GHAFFARIYAN_LARGE = "ghaffariyan-large"
+    KELLOGG_SAWLOG = "kellogg-sawlog"
+    KELLOGG_PULPWOOD = "kellogg-pulpwood"
+    KELLOGG_MIXED = "kellogg-mixed"
+
+
+_KELLOGG_MODEL_TO_LOAD = {
+    ForwarderProductivityModel.KELLOGG_SAWLOG: KelloggLoadType.SAWLOG,
+    ForwarderProductivityModel.KELLOGG_PULPWOOD: KelloggLoadType.PULPWOOD,
+    ForwarderProductivityModel.KELLOGG_MIXED: KelloggLoadType.MIXED,
 }
 
 
@@ -482,6 +504,116 @@ def estimate_productivity_rv_cmd(
         ("PaCal Used", "yes" if result.pacal_used else "no"),
     ]
     _render_kv_table("Lahrsen Productivity (RV)", rows)
+
+
+@dataset_app.command("estimate-forwarder-productivity")
+def estimate_forwarder_productivity_cmd(
+    model: ForwarderProductivityModel = typer.Option(
+        ForwarderProductivityModel.GHAFFARIYAN_SMALL,
+        "--model",
+        case_sensitive=False,
+        help="Forwarder regression to evaluate.",
+    ),
+    extraction_distance: Optional[float] = typer.Option(
+        None,
+        "--extraction-distance",
+        min=0.0,
+        help="Mean forwarding distance (m). Required for Ghaffariyan models.",
+    ),
+    slope_factor: float = typer.Option(
+        1.0,
+        "--slope-factor",
+        min=0.0,
+        help="Multiplier to approximate slope penalties (>0). Applies to Ghaffariyan models.",
+    ),
+    volume_per_load: Optional[float] = typer.Option(
+        None,
+        "--volume-per-load",
+        min=0.0,
+        help="Per-load volume (m³). Required for Kellogg models.",
+    ),
+    distance_out: Optional[float] = typer.Option(
+        None,
+        "--distance-out",
+        min=0.0,
+        help="Distance from landing to the first loading point (m). Required for Kellogg models.",
+    ),
+    travel_in_unit: Optional[float] = typer.Option(
+        None,
+        "--travel-in-unit",
+        min=0.0,
+        help="Distance travelled while loading within the unit (m). Required for Kellogg models.",
+    ),
+    distance_in: Optional[float] = typer.Option(
+        None,
+        "--distance-in",
+        min=0.0,
+        help="Distance from final loading point back to the landing (m). Required for Kellogg models.",
+    ),
+):
+    """Estimate forwarder productivity (m³/PMH0) for thinning operations."""
+
+    if model in (ForwarderProductivityModel.GHAFFARIYAN_SMALL, ForwarderProductivityModel.GHAFFARIYAN_LARGE):
+        if extraction_distance is None:
+            raise typer.BadParameter("--extraction-distance is required for Ghaffariyan models.")
+        if slope_factor <= 0:
+            raise typer.BadParameter("--slope-factor must be > 0.")
+        if model is ForwarderProductivityModel.GHAFFARIYAN_SMALL:
+            value = estimate_forwarder_productivity_small_forwarder_thinning(
+                extraction_distance_m=extraction_distance,
+                slope_factor=slope_factor,
+            )
+            reference = "Ghaffariyan et al. 2019 (14 t forwarder)"
+        else:
+            value = estimate_forwarder_productivity_large_forwarder_thinning(
+                extraction_distance_m=extraction_distance,
+                slope_factor=slope_factor,
+            )
+            reference = "Ghaffariyan et al. 2019 (20 t forwarder)"
+        rows = [
+            ("Model", model.value),
+            ("Reference", reference),
+            ("Extraction Distance (m)", f"{extraction_distance:.1f}"),
+            ("Slope Factor", f"{slope_factor:.2f}"),
+            ("Predicted Productivity (m³/PMH0)", f"{value:.2f}"),
+        ]
+    else:
+        missing = []
+        if volume_per_load is None:
+            missing.append("--volume-per-load")
+        if distance_out is None:
+            missing.append("--distance-out")
+        if travel_in_unit is None:
+            missing.append("--travel-in-unit")
+        if distance_in is None:
+            missing.append("--distance-in")
+        if missing:
+            raise typer.BadParameter(f"{', '.join(missing)} required for Kellogg models.")
+        load_type = _KELLOGG_MODEL_TO_LOAD[model]
+        value = estimate_forwarder_productivity_kellogg_bettinger(
+            load_type=load_type,
+            volume_per_load_m3=volume_per_load,
+            distance_out_m=distance_out,
+            travel_in_unit_m=travel_in_unit,
+            distance_in_m=distance_in,
+        )
+        rows = [
+            ("Model", model.value),
+            ("Reference", "Kellogg & Bettinger 1994 (FMG 910)"),
+            ("Load Type", load_type.value),
+            ("Volume per Load (m³)", f"{volume_per_load:.2f}"),
+            ("Distance Out (m)", f"{distance_out:.1f}"),
+            ("Travel In Unit (m)", f"{travel_in_unit:.1f}"),
+            ("Distance In (m)", f"{distance_in:.1f}"),
+            ("Predicted Productivity (m³/PMH0)", f"{value:.2f}"),
+        ]
+
+    _render_kv_table("Forwarder Productivity Estimate", rows)
+    console.print("[dim]Values expressed in PMH0 (productive machine hours without delays).[/dim]")
+    if model in _KELLOGG_MODEL_TO_LOAD:
+        console.print("[dim]Regression from Kellogg & Bettinger (1994) western Oregon CTL thinning study.[/dim]")
+    else:
+        console.print("[dim]Regression from Ghaffariyan et al. (2019) ALPACA thinning dataset.[/dim]")
 
 
 @dataset_app.command("productivity-ranges")
