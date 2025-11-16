@@ -46,6 +46,7 @@
 - Machine-type labels coming out of Appendix 8 are now harmonised against FHOPS roles (e.g., `H` → `single_grip_harvester`, `FB` → `feller_buncher`, `HW` → `harwarder`), giving us immediate visibility into roles we already cover vs. gaps (harwarder, skidder_harvester) that need BC productivity functions + system support.
 - Added a Camelot-based extractor (`scripts/extract_arnvik_models_camelot.py`) that reads the Appendix 8 tables directly from the PDF using a tuned table region; it now normalises `(author, model, HM, machine, base, propulsion, DV, units, formula)` rows for pages 101–116 and produces a dedicated aggregate CSV for downstream tooling.
 - `scripts/build_productivity_registry.py` can ingest the Camelot aggregate, fall back to the legacy pdfplumber rows for any gaps, and now builds 392 enriched models (up from 109) covering harvesters, feller-bunchers, harwarders, and skidder-harvesters. Machine labels are harmonised (no more `fb_sim__pb` artefacts), and the builder automatically backfills missing formulas/units from the legacy source.
+- Added `scripts/parse_arnvik_table9.py` so Table 9 (machine types vs. dependent-variable counts) lives in `notes/reference/arnvik_tables/table9_machine_counts.csv`, making it easier to measure how far we are from Arnvik’s reported 422-model inventory.
 - Current machine-type coverage from Arnvik (Camelot + legacy): 260 `single_grip_harvester`, 94 `feller_buncher`, 14 `feller_buncher_sim`, 8 `harwarder`, 6 `single_grip_harvester_sim`, 5 `skidder_harvester`, 5 `feller_buncher_drive_to_tree`. No forwarders/grapple skidders yet – these are the next extraction targets.
 
 ### Arnvik Machine Coverage Snapshot
@@ -61,6 +62,8 @@
 | `skidder_harvester` | 5 |
 
 Covered FHOPS roles: `single_grip_harvester`, `feller-buncher`, `harwarder`, `skidder_harvester`. Missing FHOPS roles: `forwarder`, `grapple_skidder`, `shovel_logger`, `roadside_processor`, `loader`, `grapple_yarder`, `skyline_yarder`, `helicopter_longline`, `tethered_harvester`, `tethered_shovel_or_skidder`, `hand_faller`, etc. Candidate references mentioned in Arnvik’s literature appendix for these gaps include Eriksson & Lindroos (2014), Laitila & Väätäinen (2014, 2020), Han et al. (2018), and various yarder cost/productivity studies cited in Appendix 1 – need to mine these next.
+
+Quick comparison to Arnvik Table 9 (`scripts/parse_arnvik_table9.py`) shows why we still fall short of the stated 422 models: Table 9 only enumerates CTL harvesters, harwarders, skidder-harvesters, and full-tree feller-bunchers. Forwarders, grapple skidders, yarders, etc. never appear in Appendix 8 – so we must gather those regressions directly from the underlying literature (Appendix 1 references, FPInnovations datasets, etc.) rather than expecting them to show up in the official model tables.
 
 ### FHOPS Machine Role Coverage Matrix
 
@@ -81,6 +84,15 @@ Covered FHOPS roles: `single_grip_harvester`, `feller-buncher`, `harwarder`, `sk
 | tethered_shovel_or_skidder | ❌ | Winch-assist operations: mine FPInnovations trials. |
 | helicopter_longline / loader_or_water | ❌ | See Arnvik Appendix 1 (helicopter references) + FPInnovations helicopter cost modules. |
 | hand_faller / hand_or_mech_faller | ❌ | Manual falling regressions (historical BC/Quebec studies). |
+
+### Next Actions for Missing Machine Families
+
+1. **Forwarder** – Pull regressions from Eriksson & Lindroos (2014) and Laitila & Väätäinen (2014, 2020); capture predictor definitions and coefficients so CTL forwarder jobs (`forwarder`) get baseline productivity models.
+2. **Grapple Skidder / Shovel Logger** – Mine Han et al. (2018), George et al. (2022), and FPInnovations skidder/shovel logging studies for grapple-skidder cycle-time equations.
+3. **Yarder / Helicopter** – Use Aubuchon (1982) and Böhm & Kanzian (2023) to seed skyline/grapple yarder regressions, plus the helicopter references Arnvik cites.
+4. **Processor / Loader** – Extract landing processor/log loader models (e.g., Labelle et al. 2016/2018, FPDat loader datasets) so `roadside_processor` and `loader` roles have coverage.
+5. **Tethered systems** – Build interim regressions from Lahrsen’s BC tethered FPDat data for `tethered_harvester` and `tethered_shovel_or_skidder`, then validate against any published winch-assist studies.
+6. **Manual operations** – Locate BC/Quebec hand-falling time studies to cover `hand_faller`, `hand_or_mech_faller`, and `hand_buck_or_processor` jobs.
 - Appendix references are now parsed via `scripts/parse_arnvik_references.py`, producing `notes/reference/arnvik_tables/references.json` and letting the registry tag each model with its original citation for provenance checks.
 - Appendix 8 in Arnvik (2024) lists 422 productivity models (harvesters, feller-bunchers, harwarders). Need to digitise into a searchable registry (machine type, region, system, predictors, coefficients, R², etc.) so we can plug gaps for the remaining machine roles.
 

@@ -1,0 +1,16 @@
+Machine type,PV,PW,PU,TV,TW,TU
+CTL/Harvester/Excavator-Based/Tracked,44,,,,,
+CTL/Harvester/Purpose-Built/Tracked,28,2,,,,
+CTL/Harvester/Purpose-Built/Wheeled,91,4,2,3,2,10
+CTL/Harvester/Unknown/Unknown,15,,,11,,
+CTL/Harvester (Sim)/Purpose-Built/Wheeled,4,,,,,
+CTL/Harwarder/Purpose-Built/Wheeled,3,,,1,,
+CTL/Skidder-Harvester/Purpose-Built/Wheeled,2,,,,,
+FT/Feller-Buncher (SB)/Excavator-Based/Tracked,16,3,1,,,
+FT/Feller-Buncher (SB)/Purpose-Built/Tracked,3,4,,,,
+FT/Feller-Buncher (SB)/Purpose-Built/Wheeled,,17,,1,3,
+FT/Feller-Buncher (B)/Purpose-Built/Wheeled,,4,1,,,1
+FT/Feller-Buncher (DTT)/Purpose-Built/Wheeled,,2,,,,
+FT/Feller-Buncher (DTT)/Excavator-Based/Tracked,,1,,,,
+"FT/Feller-Buncher (SB), (Sim)/Purpose-Built/Wheeled",15,,,,,
+FT/Harwarder/Purpose-Built/Wheeled,,,,,,
