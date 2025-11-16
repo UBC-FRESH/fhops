@@ -177,6 +177,25 @@ costing consistent across scenarios:
   should normally use the curated rates (or CLI recomputed totals) so costing/evaluation tools
   stay aligned.
 
+Overriding the defaults follows two common paths:
+
+1. **Quick sensitivity checks** – keep the built-in role but pass overrides to the CLI, e.g.
+
+   .. code-block:: bash
+
+      fhops dataset estimate-cost --machine-role grapple_yarder \
+        --owning-rate 185 --operating-rate 260 --repair-rate 50 \
+        --avg-stem-size 0.5 --volume-per-ha 280 --stem-density 700 --ground-slope 40
+
+   This keeps the source/role metadata but swaps in your costs for the report/run only.
+
+2. **Persistent dataset changes** – clone ``data/machine_rates.json`` or edit your scenario’s
+   ``machines.csv``. For the JSON table, add a new entry (e.g., ``"role": "custom_grapple"``) and
+   point ``machines.csv.role`` at that slug; the loader will backfill operating_cost from your
+   entry. Alternatively, write the full $/SMH into ``machines.csv.operating_cost`` for the specific
+   machine if the rate is project-specific. Both approaches play nicely with the CLI helpers and
+   solver defaults.
+
 When authoring datasets set ``machines.csv.operating_cost`` to the all-in rental rate ($/SMH)
 for each machine/system. Use the CLI helper (deterministic or distribution-based) to turn
 Lahrsen stand descriptors and machine rates into comparable $/m³ for QA, reporting, or solver
