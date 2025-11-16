@@ -17,6 +17,11 @@ from fhops.costing import (
     estimate_unit_cost_from_distribution,
     estimate_unit_cost_from_stand,
 )
+from fhops.costing.machine_rates import (
+    MachineRate,
+    compose_rental_rate,
+    load_default_machine_rates,
+)
 from fhops.productivity import (
     KelloggLoadType,
     LahrsenModel,
@@ -35,6 +40,29 @@ from fhops.scheduling.systems import HarvestSystem, default_system_registry
 
 console = Console()
 dataset_app = typer.Typer(help="Inspect FHOPS datasets and bundled examples.")
+
+_MACHINE_RATES_BY_ROLE: dict[str, MachineRate] | None = None
+
+
+def _machine_rates_by_role() -> dict[str, MachineRate]:
+    global _MACHINE_RATES_BY_ROLE
+    if _MACHINE_RATES_BY_ROLE is None:
+        _MACHINE_RATES_BY_ROLE = {entry.role.lower(): entry for entry in load_default_machine_rates()}
+    return _MACHINE_RATES_BY_ROLE
+
+
+def _machine_rate_roles_help() -> str:
+    roles = ", ".join(sorted(_machine_rates_by_role().keys()))
+    return f"Available roles: {roles}"
+
+
+def _resolve_machine_rate(role: str) -> MachineRate:
+    role_key = role.lower()
+    lookup = _machine_rates_by_role()
+    if role_key not in lookup:
+        available = ", ".join(sorted(lookup.keys()))
+        raise typer.BadParameter(f"Unknown machine role '{role}'. Valid roles: {available}")
+    return lookup[role_key]
 
 
 @dataclass(frozen=True)
@@ -654,7 +682,36 @@ def show_productivity_ranges():
 __all__ = ["dataset_app"]
 @dataset_app.command("estimate-cost")
 def estimate_cost_cmd(
-    rental_rate: float = typer.Option(..., help="Rental rate ($/SMH)", min=0.0),
+    rental_rate: float | None = typer.Option(None, help="Rental rate ($/SMH)", min=0.0),
+    machine_role: str | None = typer.Option(
+        None,
+        "--machine-role",
+        "-r",
+        help="Load rental rate components from the FHOPS machine-rate table.",
+    ),
+    include_repair: bool = typer.Option(
+        True,
+        "--include-repair/--exclude-repair",
+        help="Include FPInnovations repair/maintenance allowance when deriving --machine-role rates.",
+    ),
+    owning_rate: float | None = typer.Option(
+        None,
+        "--owning-rate",
+        min=0.0,
+        help="Override owning component ($/SMH) when --machine-role is supplied.",
+    ),
+    operating_rate: float | None = typer.Option(
+        None,
+        "--operating-rate",
+        min=0.0,
+        help="Override operating component ($/SMH) when --machine-role is supplied.",
+    ),
+    repair_rate: float | None = typer.Option(
+        None,
+        "--repair-rate",
+        min=0.0,
+        help="Override repair/maintenance component ($/SMH). Requires --machine-role.",
+    ),
     utilisation: float = typer.Option(0.9, help="Utilisation coefficient (0-1)", min=0.0, max=1.0),
     productivity: float | None = typer.Option(None, help="Direct productivity (m³/PMH15)."),
     use_rv: bool = typer.Option(False, help="Treat stand inputs as random variates with stddevs."),
@@ -670,6 +727,33 @@ def estimate_cost_cmd(
     samples: int = typer.Option(5000, help="Monte Carlo samples (RV mode)", min=1),
 ):
     """Estimate $/m³ given rental rate, utilisation, and (optionally) Lahrsen stand inputs."""
+
+    overrides = [owning_rate, operating_rate, repair_rate]
+    if machine_role is None:
+        if any(value is not None for value in overrides):
+            raise typer.BadParameter("--owning-rate/--operating-rate/--repair-rate require --machine-role.")
+    else:
+        if rental_rate is not None:
+            raise typer.BadParameter("Use either --rental-rate or --machine-role (not both).")
+
+    machine_entry: MachineRate | None = None
+    rental_breakdown: dict[str, float] | None = None
+    repair_reference_hours: int | None = None
+
+    if machine_role is not None:
+        machine_entry = _resolve_machine_rate(machine_role)
+        rental_rate, rental_breakdown = compose_rental_rate(
+            machine_entry,
+            include_repair_maintenance=include_repair,
+            ownership_override=owning_rate,
+            operating_override=operating_rate,
+            repair_override=repair_rate,
+        )
+        if include_repair and machine_entry.repair_maintenance_cost_per_smh is not None:
+            repair_reference_hours = machine_entry.repair_maintenance_reference_hours
+
+    if rental_rate is None:
+        raise typer.BadParameter("Provide either --rental-rate or --machine-role.")
 
     if productivity is None:
         required = [avg_stem_size, volume_per_ha, stem_density, ground_slope]
@@ -691,6 +775,7 @@ def estimate_cost_cmd(
                 ground_slope_sigma=ground_slope_sigma,
                 model=model,
                 samples=samples,
+                rental_rate_breakdown=rental_breakdown,
             )
             productivity = prod.expected_m3_per_pmh
             prod_info = {
@@ -708,6 +793,7 @@ def estimate_cost_cmd(
                 stem_density=stem_density,
                 ground_slope=ground_slope,
                 model=model,
+                rental_rate_breakdown=rental_breakdown,
             )
             prod_info = {
                 "method": "deterministic",
@@ -722,6 +808,7 @@ def estimate_cost_cmd(
             productivity_m3_per_pmh=productivity,
             cost_per_m3=rental_rate / (utilisation * productivity),
             method="direct",
+            rental_rate_breakdown=rental_breakdown,
         )
         prod_info = {
             "method": "direct",
@@ -730,14 +817,35 @@ def estimate_cost_cmd(
             "samples": 0,
         }
 
-    rows = [
-        ("Rental Rate ($/SMH)", f"{cost.rental_rate_smh:.2f}"),
-        ("Utilisation", f"{cost.utilisation:.3f}"),
-        ("Productivity (m³/PMH15)", f"{cost.productivity_m3_per_pmh:.2f}"),
-        ("Cost ($/m³)", f"{cost.cost_per_m3:.2f}"),
-        ("Productivity Method", prod_info["method"]),
-    ]
+    rows = []
+    if machine_entry is not None:
+        rows.extend(
+            [
+                ("Machine Role", machine_entry.role),
+                ("Machine", machine_entry.machine_name),
+                ("Source", machine_entry.source),
+            ]
+        )
+    if rental_breakdown:
+        rows.append(("Owning Cost ($/SMH)", f"{rental_breakdown['ownership']:.2f}"))
+        rows.append(("Operating Cost ($/SMH)", f"{rental_breakdown['operating']:.2f}"))
+        repair_value = rental_breakdown.get("repair_maintenance")
+        if repair_value is not None:
+            rows.append(("Repair/Maint. ($/SMH)", f"{repair_value:.2f}"))
+    rows.extend(
+        [
+            ("Rental Rate ($/SMH)", f"{cost.rental_rate_smh:.2f}"),
+            ("Utilisation", f"{cost.utilisation:.3f}"),
+            ("Productivity (m³/PMH15)", f"{cost.productivity_m3_per_pmh:.2f}"),
+            ("Cost ($/m³)", f"{cost.cost_per_m3:.2f}"),
+            ("Productivity Method", prod_info["method"]),
+        ]
+    )
     if prod_info["productivity_std"] is not None:
         rows.append(("Productivity Std", f"{prod_info['productivity_std']:.2f}"))
-    rows.append(("Samples", str(prod_info["samples"])) )
+    rows.append(("Samples", str(prod_info["samples"])))
     _render_kv_table("Machine Cost Estimate", rows)
+    if machine_entry and repair_reference_hours:
+        console.print(
+            f"[dim]Repair/maintenance allowance derived from Advantage Vol. 4 No. 23 (usage class {repair_reference_hours / 1000:.0f}×1000 h).[/dim]"
+        )

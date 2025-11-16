@@ -60,4 +60,46 @@ def load_default_machine_rates() -> Sequence[MachineRate]:
     return tuple(rates)
 
 
-__all__ = ["MachineRate", "load_default_machine_rates"]
+def compose_rental_rate(
+    machine_rate: MachineRate,
+    *,
+    include_repair_maintenance: bool = True,
+    ownership_override: float | None = None,
+    operating_override: float | None = None,
+    repair_override: float | None = None,
+) -> tuple[float, dict[str, float]]:
+    """
+    Return the rental rate ($/SMH) and component breakdown for a machine.
+
+    Parameters
+    ----------
+    machine_rate:
+        Source machine rate entry (owning + operating + optional repair/maintenance).
+    include_repair_maintenance:
+        Whether to include the repair/maintenance allowance from FPInnovations (default True).
+    ownership_override, operating_override, repair_override:
+        Optional values that replace the corresponding component before totals are computed.
+    """
+
+    ownership = ownership_override if ownership_override is not None else machine_rate.ownership_cost_per_smh
+    operating = operating_override if operating_override is not None else machine_rate.operating_cost_per_smh
+
+    repair_candidate: float = 0.0
+    if repair_override is not None:
+        repair_candidate = repair_override
+    elif machine_rate.repair_maintenance_cost_per_smh is not None:
+        repair_candidate = machine_rate.repair_maintenance_cost_per_smh
+    repair = repair_candidate if include_repair_maintenance else 0.0
+
+    breakdown: dict[str, float] = {
+        "ownership": ownership,
+        "operating": operating,
+    }
+    if repair > 0:
+        breakdown["repair_maintenance"] = repair
+
+    total = ownership + operating + repair
+    return total, breakdown
+
+
+__all__ = ["MachineRate", "load_default_machine_rates", "compose_rental_rate"]

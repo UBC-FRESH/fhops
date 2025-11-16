@@ -1,5 +1,12 @@
 # Development Change Log
 
+# Development Change Log
+
+## 2025-11-18 — Machine-rate CLI + repair allowances
+- Wired the FPInnovations repair/maintenance multipliers into the costing workflow: `fhops.costing.machine_rates.compose_rental_rate()` now builds rental rates (owning + operating + optional repair) with override hooks, and `MachineCostEstimate` / helpers retain the per-component breakdown for downstream consumers.
+- Extended `fhops.dataset estimate-cost` so users can specify `--machine-role` instead of a raw rate; the command loads the role’s defaults from `data/machine_rates.json`, applies overrides (`--owning-rate`, `--operating-rate`, `--repair-rate`), toggles the FPInnovations allowance, and prints the source plus breakdown. Added regression tests in `tests/test_costing.py` to cover the new helper.
+- Documented the CPI assumption and CLI workflow in `notes/dataset_inspection_plan.md`, and queued the documentation/system-integration follow-ups in the planning section.
+
 ## 2025-11-17 — BC grapple yarder productivity helpers
 - Added `fhops.productivity.grapple_bc` implementing MacDonald (1988) SR-54 (Washington 118A on mechanically bunched second-growth) and Peterson (1987) TR-75 (Madill 084 on bunched vs. hand-felled turns) travel-time models so FHOPS can estimate grapple yarder productivity using BC datasets instead of plantation regressions.
 - Exported the new helpers via `fhops.productivity.__init__` and introduced unit coverage (`tests/test_productivity_grapple_bc.py`) that checks the regressions against the FERIC tables/figures and validates input semantics.

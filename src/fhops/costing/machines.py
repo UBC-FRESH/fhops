@@ -22,6 +22,7 @@ class MachineCostEstimate:
     cost_per_m3: float
     method: str
     productivity_std: float | None = None
+    rental_rate_breakdown: dict[str, float] | None = None
 
 
 def _validate_inputs(rental_rate_smh: float, utilisation: float, productivity: float) -> None:
@@ -40,6 +41,7 @@ def compute_unit_cost(
     productivity_m3_per_pmh: float,
     method: str = "deterministic",
     productivity_std: float | None = None,
+    rental_rate_breakdown: dict[str, float] | None = None,
 ) -> MachineCostEstimate:
     """Return unit cost ($/m³) given rental rate ($/SMH) and productivity."""
 
@@ -52,6 +54,7 @@ def compute_unit_cost(
         cost_per_m3=cost,
         method=method,
         productivity_std=productivity_std,
+        rental_rate_breakdown=rental_rate_breakdown,
     )
 
 
@@ -64,6 +67,7 @@ def estimate_unit_cost_from_stand(
     stem_density: float,
     ground_slope: float,
     model: LahrsenModel = LahrsenModel.DAILY,
+    rental_rate_breakdown: dict[str, float] | None = None,
 ) -> tuple[MachineCostEstimate, ProductivityEstimate]:
     productivity = estimate_productivity(
         avg_stem_size=avg_stem_size,
@@ -76,6 +80,7 @@ def estimate_unit_cost_from_stand(
         rental_rate_smh=rental_rate_smh,
         utilisation=utilisation,
         productivity_m3_per_pmh=productivity.predicted_m3_per_pmh,
+        rental_rate_breakdown=rental_rate_breakdown,
     )
     return cost, productivity
 
@@ -95,6 +100,7 @@ def estimate_unit_cost_from_distribution(
     model: LahrsenModel = LahrsenModel.DAILY,
     method: str = "auto",
     samples: int = 5000,
+    rental_rate_breakdown: dict[str, float] | None = None,
 ) -> tuple[MachineCostEstimate, ProductivityDistributionEstimate]:
     prod = estimate_productivity_distribution(
         avg_stem_size_mu=avg_stem_size_mu,
@@ -115,6 +121,7 @@ def estimate_unit_cost_from_distribution(
         productivity_m3_per_pmh=prod.expected_m3_per_pmh,
         method=f"rv:{prod.method}",
         productivity_std=prod.std_m3_per_pmh,
+        rental_rate_breakdown=rental_rate_breakdown,
     )
     return cost, prod
 

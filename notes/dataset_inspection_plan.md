@@ -243,10 +243,15 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
 - Pull skyline/tethered/partial-cut coefficients from TR119, TR125, TR2016N46, SR85, and HB12; keep Visser/McNeel/West/Renzie on deck for supplemental coverage.
 - **OpCost-style machine-rate dataset plan**
    - [x] Define the schema for a default machine-rate table (`machine_name`, `role`, `ownership_cost_per_smh`, `operating_cost_per_smh`, `default_utilization`, `move_in_cost`, `source`, `notes`). Store it under `data/machine_rates.json` and expose loader helpers.
-   - [ ] Transcribe core machine classes from Dodson et al. (2015) (feller-buncher, grapple skidder, processor, loader, road grader, etc.) and Hartley & Han (2007) (coastal grapple yarder, swing yarder, tower yarder) with FX/fuel adjustments to BC dollars (document CAD/USD rate and diesel price assumptions). 
-   - [ ] Layer in FPInnovations repair/maintenance survey (Advantage Vol. 4 No. 23: "Repair and maintenance costs of timber harvesting equipment") as optional coefficients so operating costs can be recomputed from utilization hours when users supply custom labour/fuel inputs. (PDF now available—need to transcribe the per-machine regressions/percentages.)
+   - [x] Transcribe core machine classes from Dodson et al. (2015) (feller-buncher, grapple skidder, processor, loader, road grader, etc.) and Hartley & Han (2007) (coastal grapple yarder, swing yarder, tower yarder) with FX/fuel adjustments to BC dollars (document CAD/USD rate and diesel price assumptions).
+   - [x] Layer in FPInnovations repair/maintenance survey (Advantage Vol. 4 No. 23: "Repair and maintenance costs of timber harvesting equipment") as optional coefficients so operating costs can be recomputed from utilization hours when users supply custom labour/fuel inputs. CLI: `fhops dataset estimate-cost --machine-role <role>` now assembles owning + operating + (optional) repair allowances, lets users override individual components, and shows the breakdown + FPInnovations reference hours (2002→2024 CPI factor ≈1.56). 
    - [x] Implement a costing helper that blends the default rates with scenario overrides (e.g., `fhops.costing.machine_rates.load_defaults()` → `MachineRate` dataclass). Include utilisation scaling and move-in amortization logic per block/system.
    - [ ] Document the defaults (sources, currency conversions, typical utilisation) in the costing how-to and note how users can override rates via CLI/JSON config before the costing helper ships.
+- **Task queue (current sprint)**
+   - [ ] Document the machine-rate workflow (default CAD assumptions, FPInnovations repair, CLI usage examples) in `docs/howto/data_contract.rst` + CHANGE_LOG entry.
+   - [ ] Wire machine-rate loader into scenario/system configs so costing/evaluation modules can pull role defaults without manual CLI glue (update `fhops/scheduling/systems` + dataset templates).
+   - [ ] Normalize Appendix 5 stand metadata (landscape orientation) into JSON with slope/ground descriptors so skyline/tethered helpers can consume it.
+   - [ ] Prioritize skyline/tethered helper implementation using Ünver-Okan 2020 + Lee et al. 2018 while TR112/TR127 remain unavailable; capture assumptions + TODOs for replacing the approximations later.
 - Park the DRM-locked “Effects of Alternative Silvicultural Systems…” PDF until bandwidth frees up; partial-cut modeling will rely on TR119/TR125/Renzie (2006) and other accessible sources in the interim.
 
 ## Machine-Role Productivity Rollout (Steps 1–6)
