@@ -4,6 +4,7 @@
 - Added `fhops.productivity.grapple_bc` implementing MacDonald (1988) SR-54 (Washington 118A on mechanically bunched second-growth) and Peterson (1987) TR-75 (Madill 084 on bunched vs. hand-felled turns) travel-time models so FHOPS can estimate grapple yarder productivity using BC datasets instead of plantation regressions.
 - Exported the new helpers via `fhops.productivity.__init__` and introduced unit coverage (`tests/test_productivity_grapple_bc.py`) that checks the regressions against the FERIC tables/figures and validates input semantics.
 - Updated `notes/dataset_inspection_plan.md` to record the implementation and next steps (wiring models into the registry/cost helper, mining TR112/TR127 skyline data).
+- Added University of British Columbia cable skidding helpers (`fhops.productivity.cable_logging`) based on Ünver-Okan (2020) regression equations (SPSS and robust variants) so the registry has a skyline/winch baseline until the TR112/TR127 coefficients are recovered. Exposed the functions via the productivity package and unit-tested the expected numeric outputs.
 
 ## 2025-11-16 — Brushwood harwarder productivity helper
 - Implemented the Laitila & Väätäinen (2020) brushwood harwarder equations (`fhops.productivity.laitila2020`) so the CLI/registry can model roadside biomass recovery productivity given tree density, piece size, and forwarding distance.

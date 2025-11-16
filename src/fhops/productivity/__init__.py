@@ -4,6 +4,10 @@ from .eriksson2014 import (
     estimate_forwarder_productivity_final_felling,
     estimate_forwarder_productivity_thinning,
 )
+from .cable_logging import (
+    estimate_cable_skidding_productivity_unver_robust,
+    estimate_cable_skidding_productivity_unver_spss,
+)
 from .ghaffariyan2019 import (
     estimate_forwarder_productivity_large_forwarder_thinning,
     estimate_forwarder_productivity_small_forwarder_thinning,
@@ -47,6 +51,8 @@ __all__ = [
     "load_lahrsen_ranges",
     "estimate_forwarder_productivity_final_felling",
     "estimate_forwarder_productivity_thinning",
+    "estimate_cable_skidding_productivity_unver_spss",
+    "estimate_cable_skidding_productivity_unver_robust",
     "estimate_forwarder_productivity_small_forwarder_thinning",
     "estimate_forwarder_productivity_large_forwarder_thinning",
     "estimate_forwarder_productivity_kellogg_bettinger",
