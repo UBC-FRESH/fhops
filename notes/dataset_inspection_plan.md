@@ -245,7 +245,7 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
    - [x] Define the schema for a default machine-rate table (`machine_name`, `role`, `ownership_cost_per_smh`, `operating_cost_per_smh`, `default_utilization`, `move_in_cost`, `source`, `notes`). Store it under `data/machine_rates.json` and expose loader helpers.
    - [ ] Transcribe core machine classes from Dodson et al. (2015) (feller-buncher, grapple skidder, processor, loader, road grader, etc.) and Hartley & Han (2007) (coastal grapple yarder, swing yarder, tower yarder) with FX/fuel adjustments to BC dollars (document CAD/USD rate and diesel price assumptions). 
    - [ ] Layer in FPInnovations repair/maintenance survey (SR54/SR85) as optional coefficients so operating costs can be recomputed from utilization hours when users supply custom labour/fuel inputs.
-   - [ ] Implement a costing helper that blends the default rates with scenario overrides (e.g., `fhops.costing.machine_rates.load_defaults()` → `MachineRate` dataclass). Include utilisation scaling and move-in amortization logic per block/system.
+   - [x] Implement a costing helper that blends the default rates with scenario overrides (e.g., `fhops.costing.machine_rates.load_defaults()` → `MachineRate` dataclass). Include utilisation scaling and move-in amortization logic per block/system.
    - [ ] Document the defaults (sources, currency conversions, typical utilisation) in the costing how-to and note how users can override rates via CLI/JSON config before the costing helper ships.
 - Park the DRM-locked “Effects of Alternative Silvicultural Systems…” PDF until bandwidth frees up; partial-cut modeling will rely on TR119/TR125/Renzie (2006) and other accessible sources in the interim.
 
