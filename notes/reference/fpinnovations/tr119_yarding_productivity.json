@@ -1,0 +1,54 @@
+[
+  {
+    "treatment": "clearcut",
+    "cycles_pmh": 7.7,
+    "cycles_smh": 6.7,
+    "pieces_pmh": 21.6,
+    "pieces_smh": 19.0,
+    "volume_pmh": 25.0,
+    "volume_smh": 21.0,
+    "yarding_equipment_cost_per_m3": null,
+    "yarding_labour_cost_per_m3": null,
+    "yarding_total_cost_per_m3": null,
+    "volume_multiplier": 1.0
+  },
+  {
+    "treatment": "strip_cut",
+    "cycles_pmh": 8.0,
+    "cycles_smh": 7.1,
+    "pieces_pmh": 18.0,
+    "pieces_smh": 14.2,
+    "volume_pmh": 18.0,
+    "volume_smh": 13.9,
+    "yarding_equipment_cost_per_m3": 8.61,
+    "yarding_labour_cost_per_m3": 17.45,
+    "yarding_total_cost_per_m3": 26.06,
+    "volume_multiplier": 0.72
+  },
+  {
+    "treatment": "70_retention",
+    "cycles_pmh": 7.5,
+    "cycles_smh": 6.8,
+    "pieces_pmh": 18.2,
+    "pieces_smh": 16.6,
+    "volume_pmh": 17.5,
+    "volume_smh": 16.0,
+    "yarding_equipment_cost_per_m3": 8.94,
+    "yarding_labour_cost_per_m3": 17.4,
+    "yarding_total_cost_per_m3": 26.34,
+    "volume_multiplier": 0.7
+  },
+  {
+    "treatment": "65_retention",
+    "cycles_pmh": 6.8,
+    "cycles_smh": 6.1,
+    "pieces_pmh": 15.6,
+    "pieces_smh": 13.7,
+    "volume_pmh": 16.4,
+    "volume_smh": 14.3,
+    "yarding_equipment_cost_per_m3": 10.62,
+    "yarding_labour_cost_per_m3": 18.79,
+    "yarding_total_cost_per_m3": 29.41,
+    "volume_multiplier": 0.656
+  }
+]
