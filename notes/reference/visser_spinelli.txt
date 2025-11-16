@@ -1,0 +1,344 @@
+J For Res (2012) 17:397–402
+DOI 10.1007/s10310-011-0313-2
+
+ ORIGINAL ARTICLE
+
+
+
+Determining the shape of the productivity function
+for mechanized felling and felling-processing
+Rien Visser • Raffaele Spinelli
+
+
+
+
+Received: 29 December 2010 / Accepted: 14 June 2011 / Published online: 8 October 2011
+Ó The Japanese Forest Society and Springer 2011
+
+
+Abstract Productivity studies in forest operations are               Introduction
+often carried out on new equipment, or on equipment being
+used in new conditions. Understanding how stand and                  Productivity studies in forest operations often produce
+terrain parameters impact the productivity of harvesting             empirical models used for many purposes, including wood-
+machines is important for determining their optimum use.             flow planning and harvesting cost calculation (Holtzscher
+Such information is normally presented as a productivity or          and Lanford 1997; Spinelli et al. 2002; Adebayo et al.
+efficiency function; that is, a regression equation that best        2007). At a more fundamental level, productivity studies
+represents the data. Most studies establish that piece size is       also allow us to understand the behaviour of harvesting
+the dominant predictor that impacts overall productivity. A          machines and/or systems under varying stand and terrain
+common concept known as the ‘‘piece-size law’’ is that               conditions (Visser and Stampfer 1998). That is particularly
+productivity increases at a decreasing rate with increasing          important when deploying mechanized felling-processing
+piece size. What is not well understood is the upper limit to        machinery, which is a specialized industrial technology
+this piece-size law. That is, as the trees get ‘‘too’’ large, we     (Chiorescu and Grönlund 2001), and is therefore much
+can expect the machine to start to struggle, resulting in a          less flexible than traditional general purpose equipment
+decrease in productivity. Four different data sets—two               (Spinelli and Magagnotti 2010a).
+based in New Zealand and two in Italy—are presented that                Mechanized felling is used whenever possible in New
+clearly show an ‘‘optimum’’ piece size for maximum pro-              Zealand as it increases productivity and cost effectiveness
+ductivity. On average, productivity tended to decrease               (McConchie and Evanson 1995), and can also reduce the
+gradually, not drop off suddenly beyond the optimum.                 occurrence of stem breakage and increase personal safety
+Using more complex statistical functions, it was possible to         (Bell 2002). For the same reason, a major technology shift
+correctly correlate piece size to productivity.                      is occurring in Italian forest operations, and has already
+                                                                     occurred further north in recent years (Spinelli and
+Keywords Economics  Harvester  Logging                            Magagnotti 2010b). Despite the challenging working condi-
+Mechanized felling  Productivity functions                          tions presented by Italian forestry, modern forest technology
+                                                                     has already made significant inroads, as witnessed by a small
+                                                                     yet substantial harvester and processor fleet, already counting
+                                                                     about 100 U (Spinelli et al. 2010).
+                                                                        A large number of variables can impact the productivity
+                                                                     of felling-processing machines. One can attempt to group
+R. Visser (&)
+Forest Engineering, Canterbury University,                           them as stand and terrain variables. Typical stand variables
+Christchurch, New Zealand                                            include piece size (e.g., Iwaoka et al. 1999; Wang and
+e-mail: rien.visser@canterbury.ac.nz                                 Haarla 2002; Visser and Stampfer 2003; Nurminen et al.
+                                                                     2006), stocking density and thinning intensity (Eliasson
+R. Spinelli
+CNR IVALSA, Sesto Fiorentino, Italy                                  1999), type of cut and total volume (Suadicani and Fjeld
+e-mail: spinelli@ivalsa.cnr.it                                       2001). Other variables proven to affect the productivity of
+
+
+                                                                                                                         123
+398                                                                                                  J For Res (2012) 17:397–402
+
+
+felling-processing machines are tree form (Evanson and               Logically, this interpretation is simplistic, as we know
+McConchie 1996), branch size (Glöde 1999), and selection         that felling machines struggle with trees larger than they are
+criteria of trees to harvest (Eliasson and Lageson 1999).         designed to handle, and at some upper limit simply cannot
+Typical terrain variables include slope, trafficability, and      cut them down. This leaves two important questions
+terrain roughness (Stampfer 1999). Again, there are other         unanswered: (a) how should one determine optimum piece
+parameters that interact with the harvest system, including       size, and (b) what happens after the optimum piece size has
+the layout of skid trails and landings.                           been reached. Most studies do not indicate what happens
+   As for all work tasks, productivity is also affected by the    after the optimum piece size has been passed, and especially
+human factor (Ovaskainen et al. 2004). Operator perfor-           whether productivity rapidly drops to zero or declines more
+mance can result in a 20–50% variation in machine pro-            slowly. If there is a clear optimum, and the decline past the
+ductivity (Bergstrand 1987; Murphy and Vanderberg                 optimum is not identical to the increasing phase, then fell-
+2007). To overcome such variation, productivity models            ing-processing productivity should be best described by
+should be based on large samples (Nurminen et al. 2006).          nonlinear functions, which are somewhat more complex
+Bergstrand (1987) suggested that to achieve a confidence          than the quadratic relationships already used by some
+level of 95%, approximately 400 operators would have to           authors. This would not only increase the accuracy of the
+be included in the study.                                         model but also help us to define an optimum that is not
+   Machine productivity determined in short-term time             necessarily at the maximum piece size.
+studies is typically higher than found in follow-up longer-          The goal of this study was to improve the understanding
+term studies (Sirén and Aaltio 2003). Kuitto et al. (1994)       of the piece size to productivity relationship, especially in
+suggested using coefficients from combined studies in             the optimum and decreasing phases. For this reason, it is
+order to convert short-term productivity estimates into           based on observing a number of felling-processing
+long-term productivity estimates, and such coefficients are       machines working in stands with large trees, including
+already available for specific time study elements, such as       some considered at the limit of machine capability.
+delays (Spinelli and Visser 2008).
+   Most studies establish that piece size has a dominant
+effect on overall felling-processing productivity (Nakagawa       Materials and methods
+et al. 2010). A common concept known as the ‘‘piece-size
+law’’ is that productivity increases at a decreasing rate with    Four mechanized felling-processing operations were chosen
+increasing piece size (Fig. 1). Some papers use a linear          to study the effect of piece size on productivity. Two of the
+(Sirén and Aaltio 2003; Nakagawa et al. 2007) or even a          operations were located in New Zealand and two in Italy, in
+quadratic (Kärhä et al. 2004; Nurminen et al. 2006) rela-       order to extend the study to very different work conditions
+tionship with piece size. Most common is a power function,        and give its eventual findings a more general validity. All
+whereby in a range of applied machine studies a power             operations were selected, because the machines were
+factor of approximately 0.6 describes the productivity to         working with a full range of tree sizes, including trees well
+piece size relationship very well (e.g., Jirousek et al. 2007).   above the rated capacity of the machines.
+Because of the monodirectional nature of these functions,            A general description of the studies is shown in Table 1,
+when used for productivity prediction, the ‘‘optimum’’            which reports both site characteristics and machine type.
+productivity is always at the maximum piece size limit.           All of the time studies were set up and carried out by the
+                                                                  same principal investigators and with the same methods.
+                                                                  Productive time was separated from delay time (Björheden
+                                                                  et al. 1995) and split into functional elements, which were
+                                                                  expected to react to different variables (Bergstrand 1987).
+                                                                  All time-motion data were recorded with Husky Hunter
+                                                                  handheld field computers running Siwork3 time-study
+                                                                  software (Kofman 1995).
+                                                                     The diameter at breast height (DBH) of each tree was
+                                                                  also recorded and associated with the observation data. For
+                                                                  this purpose, the DBHs of all trees to be felled were
+                                                                  measured in advance, and the trees were identified by
+                                                                  codes painted on the bark or flagged to the stem.
+                                                                     Units working in New Zealand performed felling and
+                                                                  delimbing only, and produced full-length delimbed stems.
+Fig. 1 Data points and compensation curves for test 1             The Italian units performed felling, delimbing, and
+
+
+123
+J For Res (2012) 17:397–402                                                                                                      399
+
+Table 1 Description of the
+                                 Test #                   1                   2                    3                   4
+four tests
+                                 Location                 Bottle Lake         Lowmount             Seren               Intelvi
+                                 Country                  New Zealand         New Zealand          Italy               Italy
+                                 Species                  Pinus radiata       Pinus radiata        Picea abies         Picea abies
+                                 Base machine             Excavator           Excavator            Dedicated           Dedicated
+                                 Head                     Waratah 622         Waratah 624          JD 758              JD 758
+                                 Max capacity (mm)        650                 760                  680                 680
+                                 Work process             FD                  FD                   FDC                 FDC
+                                 Mean DBH (cm)            39                  45                   29                  40
+                                 Mean height (m)          29                  32                   19                  24
+DBH diameter at breast height,   Min. tree size (m3)      0.3                 0.3                  0.1                 0.1
+FD felling and delimbing,        Max. tree size (m3)      3.8                 5.2                  4.4                 4.4
+FDC felling, delimbing, and      Observations (n)         70                  80                   330                 387
+crosscutting
+
+crosscutting, and produced cut-to-length logs. In this case,     monodirectional properties of such functions. It may be
+target lengths varied between 2.4 and 5.2 m, depending on        more appropriate to apply a quadratic function to the data,
+product type.                                                    as described below:
+   Approximately 20 trees were scaled at each test site by
+measuring the diameter at 5 m intervals along the stem, as       Prod ¼ a  PS + b  PS2 ;                                       ð1Þ
+well as a top length and DBH. A simple tapered cylindrical                                         3        -1
+                                                                 where Prod = productivity (m PMH ) and PS = piece
+volume equation was used to calculate the volume of each         size (m3).
+segment. Segments were then summed to derive a close                However, a quadratic function assumes that the
+approximation of the real overbark volume of the tree. A         decreasing phase is identical to the increasing phase, and
+simple exponential regression was used to correlate DBH          that the optimum is exactly in the middle. Quadratic
+to tree volume.                                                  functions are rarely preferred in statistics dealing with
+   Productivity information (volume time-1) was calcu-           complex real-world phenomena. Few such phenomena can
+lated based on the time it took the head to process different    be truly represented by the perfectly symmetrical structure
+piece sizes. The purpose of this study warrants using pro-       of a quadratic function, with its equally shaped increasing
+ductive machine hours (PMH) only, excluding nonpro-              and decreasing segments. In the specific case of harvesters,
+ductive work time and delays. That also explains the very        it does not seem reasonable to assume that productivity
+high productivity figures presented in this paper. In fact,      drops below zero beyond a certain value of piece size.
+such figures are only representative of net work produc-         Furthermore, quadratic equations with an intercept have the
+tivity, which can be exceptionally high, especially in           additional conceptual defect of implying positive produc-
+plantation forestry (tests 1 and 2). Combining all four          tivity in the absence of tree volume (i.e., piece size = 0),
+studies, approximately 40% of the time was spent felling-        and we know that productivity without product is an
+delimbing or felling-delimbing and crosscutting; the             essential contradiction. Of course, one can cut the curve at
+remaining 60% was spent on bunching, clearing, moving,           both tails and obtain a perfectly workable representation.
+or delays.                                                       However, our specific research is looking for a way to
+                                                                 understand the phenomenon, not just to represent it. We are
+                                                                 not just trying to fit a curve to the data, but rather to explain
+Results                                                          the phenomenon through the data. This is a subtle but
+                                                                 important conceptual point, and the main innovative aspect
+In all four studies, enough data were collected to clearly       of our paper.
+show the declining productivity phase. The tree samples             A more complex nonlinear equation can also be used
+ranged in piece size from 0.3 to 3.8 m3 in test 1, whereas       that provides an opportunity to identify an optimum, as
+they ranged from 0.3 up to 5.2 m3 in test 2. A very similar      well as to allow different shapes to fit the increasing and
+data set shape was also obtained from the Italian studies,       decreasing phases of the productivity relationship. In that
+where the piece sizes ranged from 0.1 to 4.4 m3, and from        case, the function would have the form described by the
+0.1 up to 4.4 m3.                                                following equation (and the same notations as Eq. 1):
+   It would be unreasonable to attempt to fit either a linear
+or power function to these data sets because of the              Prod ¼ a  PS  ebPS :                                         ð2Þ
+
+
+                                                                                                                       123
+400                                                                                                        J For Res (2012) 17:397–402
+
+
+Table 2   Main parameters calculated for the alternative equation
+types
+Test                             1       2         3       4
+
+Quadratic function (Eq. 1)
+ a                               235.2   199       54.1    54.3
+ b                               -54.8   -35.5     -15.6   -15.8
+ r2                              0.46    0.33      0.75    0.81
+ Optimum size (m3)               2.1     2.8       1.6     1.6
+ Max. productivity (m3 h-1)      252     280       47      46
+Exponential function (Eq. 3)
+ a                               240     203       155     70         Fig. 3 Data points and compensation curves for test 3
+ b                               -0.20   -0.14     -1.40   -0.55
+ c                               1.65    1.65      0.90    1.46
+ r2                              0.49    0.58      0.81    0.86
+ Optimum size (m3)               1.9     2.5       0.7     1.3
+ Max. productivity (m3 h-1)      256     269       39      41
+Maximum productivity is achieved at optimum size
+
+
+
+
+                                                                      Fig. 4 Data points and compensation curves for test 4
+
+
+
+                                                                         Furthermore, exponential equations indicate a different
+                                                                      optimum tree size and maximum productivity value
+                                                                      compared to quadratic equations. In all four cases, the
+                                                                      exponential equation peaks earlier and defines a lower
+                                                                      maximum productivity level compared to the quadratic
+Fig. 2 Data points and compensation curves for test 2
+                                                                      equation. In our study, shifting from a quadratic function
+                                                                      to an exponential function entailed a reduction in the
+                                                                      optimum tree size of between 10–50%, and a decrease in
+   Iterations run with the R statistical software suggested           maximum productivity of between 4 and 17% (except
+modifying Eq. 2 with an additional co-efficient, c, which             for test 1). In short, the exponential equations offer a
+leads to an improved version that provides a better fit:              more conservative estimate than the quadratic equations,
+                             ^                                        and may be more suited to long-term productivity
+Prod ¼ a  PS  ebPS c                                         ð3Þ
+                                                                      forecasts.
+   Table 2 reports the main parameters and the main                      It is worth noting that, in all cases, the exponential
+goodness-of-fit indicators obtained when Eqs. 1 (quadratic)           equation rises faster, peaks earlier and lower, and drops
+and 3 (exponential, three coefficients) were applied to the           more slowly than the quadratic equation. Most importantly,
+four tests. Clear views of the data points, the quadratic             the productivity values obtained with the exponential
+compensation curve (gray), and the three-coefficient                  equation never drop below zero within the full range of
+exponential compensation curve (black) are reported in                explored tree volumes, whereas those obtained with the
+Figs. 1, 2, 3, and 4, respectively, for tests 1–4. For all four       quadratic equation do drop below zero while still within the
+case studies, the goodness of fit is improved by using the            explored range, at least in tests 3 and 4. Of course, negative
+three coefficients: all of the exponential equations explain a        productivity values for observed tree volume figures are
+larger proportion of the variability than the alternative             highly unrealistic. Hence, one of the main benefits of
+quadratic equations. The average increase is about 10% of             exponential equations is that they better represent the
+the original value obtained with the quadratic equation.              actual phenomenon and the shape of the raw data.
+
+
+123
+J For Res (2012) 17:397–402                                                                                                        401
+
+
+Discussion                                                       tasks of felling and processing (Adebayo et al. 2007).
+                                                                 Furthermore, pure felling work may be more sensitive than
+Empirical models can be very useful for describing the           combined felling and processing to factors other than just
+relationship between machine performance and many dif-           tree volume, and possibly tree height and tree position.
+ferent stand and terrain parameters. Mechanized felling          These factors were not recorded in the study, but their
+machines are not frequently used to fell very large timber,      absence from our functions may explain the lower coeffi-
+and in many applications the use of a simple power func-         cients of determination of the regressions estimating pure
+tion will be appropriate to represent their productivity.        felling productivity compared to those of the regressions
+However, if one considers that such models may be used to        calculated from combined felling and processing data.
+predict performance, or even set logging rates, it is               While the more complex exponential function better
+important that they behave in a rational manner. Upper and       represents the data, and especially the behavior beyond the
+lower limits for the models are often not stated, or are         optimum, there is the risk of overparameterization of the
+ignored in such applications.                                    model. These models focus only on piece size; all other
+   The declining phase of the function that describes the        factors, such as travel time, are removed from the data sets.
+relationship between piece size and productivity can be          Using more parameters means that more data needs to be
+attributed to a number of factors. For example, it is com-       gathered to obtain model significance. The effects of
+mon practice to cut larger trees in two stages, performing a     branch size and tree form are also important, and have been
+back-cut first and then moving the head around the base of       included in other models (Spinelli et al. 2002).
+the tree to complete the cut. This is done even when the bar
+is longer than the diameter to be cut, because operator
+experience indicates that when cutting trees at the limit of     Conclusions
+machine capacity, the bar is likely to pinch or jam. Extra
+time is also required to delimb the larger branches, as well     Empirically based productivity functions are often used to
+as to manipulate a heavy stem.                                   describe the performance of forestry machinery as it relates
+   Exponential equations can offer a better representation       to varying stand and terrain variables. Such models can be
+of the declining phase than quadratic functions. In this         used to compare machinery, optimize work conditions, or
+respect, readers must note that the data sets used for this      formulate compensation rates. This study showed that
+study were heavily biased towards smaller piece sizes,           piece size has a nonlinear effect on productivity, and that
+which may have limited the increase in accuracy obtained         this effect should be considered when analyzing empirical
+by shifting to the exponential function. The study was           data or developing productivity models. It also provides
+based on commercial operations, where managers had               more conservative estimates than alternative quadratic
+deployed their machines in stands considered suitable for        models. The study is based on harvesting data sets col-
+their use, so that oversized trees represented a minority.       lected in New Zealand and Italy, but its base findings are
+Had they been dominant, the managers would have                  likely to be extended to other work environments.
+deployed larger machines. This may explain the relatively
+small difference between the coefficients of determination       Acknowledgments The authors thank Natascia Magagnotti (CNR
+                                                                 IVALSA), Simon Fairbrother, and Jacob Saathof (University of
+for the exponential and the quadratic functions, despite the     Canterbury) for the assistance with field data collection.
+dramatically superior performance of the former in fitting
+the declining phase.
+   Furthermore, readers must remember that the produc-           References
+tivity values reported in this study refer only to felling and
+processing, and represent theoretical figures. Actual work       Adebayo A, Han H, Johnson L (2007) Productivity and cost of cut-to-
+                                                                      length and whole-tree harvesting in a mixed-conifer stand. For
+includes a number of other tasks, so that the actual pro-             Prod J 57:59–69
+ductivity of a complete job is substantially lower than that     Bell J (2002) Changes in logging injury rates associated with use of
+indicated here. The dramatic difference between the New               feller-bunchers in West Virginia. J Saf Res 33:436–471
+Zealand and the Italian datasets is explained by several         Bergstrand K (1987) Planning and analysis of time studies on forest
+                                                                      technology (report no. 17). The Forest Operations Institute of
+factors: the larger sizes of the New Zealand machines and             Sweden, Kista
+trees; the easier working conditions presented by the New        Björheden R, Apel K, Shiba M, Thompson M (1995) IUFRO forest
+Zealand plantations compared to the Italian natural stands;           work study nomenclature. Swedish University of Agricultural
+and finally the simpler job performed by the New Zealand              Science, Department of Operational Efficiency, Garpenberg
+                                                                 Chiorescu S, Grönlund A (2001) Assessing the role of the harvester
+units, which just felled and delimbed, whereas the Italian            within the forestry-wood chain. For Prod J 51:77–84
+units felled, delimbed, measured, and crosscut. Pure felling     Eliasson L (1999) Simulation of thinning with a single-grip harvester.
+work is logically much more productive than the combined              For Sci 45:26–34
+
+
+                                                                                                                           123
+402                                                                                                               J For Res (2012) 17:397–402
+
+Eliasson L, Lageson H (1999) Simulation study of a single-grip            Nurminen T, Korpunen H, Uusitalo J (2006) Time consumption
+     harvester in thinning from below and thinning from above.                  analysis of mechanized cut-to-length harvesting systems. Silva
+     Scand J For Res 14:589–595                                                 Fenn 40:335–363
+Evanson T, McConchie M (1996) Productivity measurements of two            Ovaskainen H, Uusitalo J, Väätäinen K (2004) Characteristics and
+     Waratah 234 hydraulic tree harvesters in radiate pine in New               significance of a harvester operator’s working technique in
+     Zealand. J For Eng 7:41–52                                                 thinnings. Int J For Eng 15:67–77
+Glöde D (1999) Single- and double-grip harvesters: productive            Sirén M, Aaltio J (2003) Productivity and costs of thinning harvesters
+     measurements in final cutting of shelterwood. Int J For Eng                and harvester-forwarders. Int J For Eng 14:39–48
+     10:63–74                                                             Spinelli R, Magagnotti N (2010a) Performance and cost of a new
+Holtzscher M, Lanford B (1997) Tree diameter effects on cost and                mini-forwarder for use in thinning operations. J For Res
+     productivity of cut-to-length systems. For Prod J 47:25–30                 15:358–364
+Iwaoka M, Aruga K, Sakurai R, Cho K, Sakai H, Kobayashi H (1999)          Spinelli R, Magagnotti N (2010b) The effects of introducing modern
+     Performance of small harvester head in a thinning operation.               technology on the financial, labour and energy performance of
+     J For Res 4:195–200                                                        forest operations in the Italian Alps. For Pol Econ 13:520–524
+Jirousek R, Klvac R, Skoupy A (2007) Productivity and costs of the        Spinelli R, Visser R (2008) Analyzing and estimating delays in
+     mechanised cut-to-length wood harvesting system in clear-                  harvester operations. Int J For Eng 19:35–40
+     felling operations. J For Sci 53:476–482                             Spinelli R, Owende P, Ward S (2002) Productivity and cost of CTL
+Kärhä K, Rönkkö E, Gumse S (2004) Productivity and cutting costs of         harvesting of Eucalyptus globulus stands using excavator-based
+     thinning harvesters. Int J For Eng 15:43–56                                harvesters. For Prod J 52:67–77
+Kofman P (1995) Siwork 3: user guide. Danish Forest and Landscape         Spinelli R, Hartsough B, Magagnotti N (2010) Productivity standards
+     Research Institute, Vejle                                                  for harvesters and processors in Italy. For Prod J 60:226–235
+Kuitto P, Keskinen S, Lindroos J, Oijala T, Rajamäki J, Räsänen T,     Stampfer K (1999) Influence of terrain conditions and thinning
+     Terävä J (1994) Mechanised cutting and forest haulage (report            regimes on the productivity of a track-based steep-slope
+     410). Metsäteho, Helsinki (in Finnish with English summary)               harvester. In: Sessions J, Chung W (eds) Proc Int Mountain
+McConchie M, Evanson T (1995) An evaluation of a Waratah HTH                    Logging and 10th Pacific Northwest Skyline Symp, Corvallis,
+     Model 234 felling and tree-Length delimbing in radiata pine                OR, USA, 28 March–1 April 1999
+     clearfell (NZ LIRO report, vol. 20, no. 2). New Zealand Logging      Suadicani K, Fjeld D (2001) Single-tree and group selection in
+     Industry Research Organisation, Rotorua                                    montane Norway spruce stands: factors influencing operational
+Murphy G, Vanderberg M (2007) Modelling the economics of                        efficiency. Scand J For Res 16:79–87
+     extended shift and 24/7 forest harvesting. NZ J For 52:15–19         Visser R, Stampfer K (1998) Cable extraction of harvester felled
+Nakagawa M, Hamatsu J, Saitou T, Ishida H (2007) Effects of tree                thinnings: an Austrian case study. J For Eng 9:39–46
+     size on productivity and time required for work elements in          Visser R, Stampfer K (2003) Tree-length system evaluation of second
+     selective thinning by a harvester. Int J For Eng 18:24–28                  thinning in loblolly pine plantations. South J Appl For 27:77–82
+Nakagawa M, Hayashi N, Narushima T (2010) Effect of tree size on          Wang J, Haarla R (2002) Production analysis of an excavator-based
+     time of each work element and processing productivity using an             harvester: a case study in Finnish forest operations. For Prod J
+     excavator-based single-grip harvester or processor at a landing.           52:85–90
+     J For Res 15:226–233
+
+
+
+
+123
+

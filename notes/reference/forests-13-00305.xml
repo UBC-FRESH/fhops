@@ -1,0 +1,2442 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.3 20210610//EN" "JATS-journalpublishing1-3.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" article-type="research-article" dtd-version="1.3" xml:lang="en">
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="publisher-id">forests</journal-id>
+      <journal-title-group>
+        <journal-title>Forests</journal-title>
+        <abbrev-journal-title abbrev-type="publisher">Forests</abbrev-journal-title>
+        <abbrev-journal-title abbrev-type="pubmed">Forests</abbrev-journal-title>
+      </journal-title-group>
+      <issn pub-type="epub">1999-4907</issn>
+      <publisher>
+        <publisher-name>MDPI</publisher-name>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="doi">10.3390/f13020305</article-id>
+      <article-id pub-id-type="publisher-id">forests-13-00305</article-id>
+      <article-categories>
+        <subj-group>
+          <subject>Article</subject>
+        </subj-group>
+      </article-categories>
+      <title-group>
+        <article-title>Steep Slope Harvest System Models for Small to Large Trees</article-title>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <contrib-id contrib-id-type="orcid" authenticated="true">https://orcid.org/0000-0002-4036-7793</contrib-id>
+          <name>
+            <surname>West</surname>
+            <given-names>Todd</given-names>
+          </name>
+          <xref rid="af1-forests-13-00305" ref-type="aff">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Sessions</surname>
+            <given-names>John</given-names>
+          </name>
+          <xref rid="af1-forests-13-00305" ref-type="aff">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <contrib-id contrib-id-type="orcid" authenticated="true">https://orcid.org/0000-0002-9068-9010</contrib-id>
+          <name>
+            <surname>Strimbu</surname>
+            <given-names>Bogdan M.</given-names>
+          </name>
+          <xref rid="af1-forests-13-00305" ref-type="aff">1</xref>
+          <xref rid="af2-forests-13-00305" ref-type="aff">2</xref>
+          <xref rid="c1-forests-13-00305" ref-type="corresp">*</xref>
+        </contrib>
+      </contrib-group>
+      <contrib-group>
+        <contrib contrib-type="editor">
+          <name>
+            <surname>Laschi</surname>
+            <given-names>Andrea</given-names>
+          </name>
+          <role>Academic Editor</role>
+        </contrib>
+        <contrib contrib-type="editor">
+          <name>
+            <surname>Abbas</surname>
+            <given-names>Dalia</given-names>
+          </name>
+          <role>Academic Editor</role>
+        </contrib>
+        <contrib contrib-type="editor">
+          <name>
+            <surname>Mederski</surname>
+            <given-names>Piotr S.</given-names>
+          </name>
+          <role>Academic Editor</role>
+        </contrib>
+      </contrib-group>
+      <aff id="af1-forests-13-00305"><label>1</label>Department of Forest Engineering and Resource Management, Oregon State University, Corvallis, OR 97331, USA; <email>todd.west@oregonstate.edu</email> (T.W.); <email>john.sessions@oregonstate.edu</email> (J.S.)</aff>
+      <aff id="af2-forests-13-00305"><label>2</label>Faculty of Silviculture and Forest Engineering, Transilvania University of Brasov, 500036 Brasov, Romania</aff>
+      <author-notes>
+        <corresp id="c1-forests-13-00305"><label>*</label>Correspondence: <email>bogdan.strimbu@oregonstate.edu</email></corresp>
+      </author-notes>
+      <pub-date pub-type="epub">
+        <day>13</day>
+        <month>02</month>
+        <year>2022</year>
+      </pub-date>
+      <pub-date pub-type="collection">
+        <month>02</month>
+        <year>2022</year>
+      </pub-date>
+      <volume>13</volume>
+      <issue>2</issue>
+      <elocation-id>305</elocation-id>
+      <history>
+        <date date-type="received">
+          <day>20</day>
+          <month>01</month>
+          <year>2022</year>
+        </date>
+        <date date-type="accepted">
+          <day>09</day>
+          <month>02</month>
+          <year>2022</year>
+        </date>
+      </history>
+      <permissions>
+        <copyright-statement>&#xA9; 2022 by the authors.</copyright-statement>
+        <copyright-year>2022</copyright-year>
+        <license license-type="open-access">
+          <license-p>Licensee MDPI, Basel, Switzerland. This article is an open access article distributed under the terms and conditions of the Creative Commons Attribution (CC BY) license (<ext-link ext-link-type="uri" xlink:href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</ext-link>).</license-p>
+        </license>
+      </permissions>
+      <abstract>
+        <p><italic>Background</italic>: Tethered cut-to-length and cable yarding systems with tethered falling equipment are increasingly used to harvest trees from slopes exceeding 30&#x2013;60% more safely and at reduced financial cost than less mechanized harvest systems. Existing studies of harvest equipment typically isolate one or two pieces of equipment in a harvest system and often occur on sites with slopes below 50% and trees less than 60 cm in diameter. <italic>Methods</italic>: We analyzed machine capabilities and productivity regressions to extrapolate existing models to steep slope harvesting of trees up to 115 cm diameter. The resulting individual machine models are integrated into models of cut-to-length and long-log harvest system productivity. We estimated the financial operating costs of the harvest systems considered from equipment pricing and operator wages. <italic>Results</italic>: Analysis of even-age Douglas-fir (<italic>Pseudotsuga menziesii</italic>) and western hemlock (<italic>Tsuga heterophylla</italic>) rotations suggests eight-wheel forwarder productivity, swing yarder productivity, and mechanization of manual chainsaw labor with tethered harvesters as primary controls on harvest costs. <italic>Conclusions</italic>: The proposed model enables predictions across a greater range of slopes and tree sizes than those previously modeled, creating a foundation for future research into the cost and productivity of steep slope harvesting systems.</p>
+      </abstract>
+      <kwd-group>
+        <kwd>productivity and costs of forest operations</kwd>
+        <kwd>cut-to-length</kwd>
+        <kwd>winch-assist harvesting</kwd>
+        <kwd>cable logging</kwd>
+        <kwd>Douglas-fir</kwd>
+        <kwd>western hemlock</kwd>
+      </kwd-group>
+    </article-meta>
+  </front>
+  <body>
+    <sec id="sec1-forests-13-00305" sec-type="intro">
+      <title>1. Introduction</title>
+      <p>Models of timber harvest systems are used to support silvicultural decision-making. Silvicultural optimization systems (e.g., [<xref ref-type="bibr" rid="B1-forests-13-00305">1</xref>,<xref ref-type="bibr" rid="B2-forests-13-00305">2</xref>]) rely on harvest system models, along with other models, to guide land management planning. An inaccurate harvest model can lead to a poor plan and, if limits on harvest equipment capabilities are incorrectly represented, may result in infeasible plans. To implement a land management plan, forest harvest contractors need to determine if equipment in the harvest systems they operate is suitable for a given timber sale. Contractors also need to accurately predict stump to mill costs to bid sales competitively without incurring a financial loss. Harvest system models thus facilitate both land management and harvest contracting by describing the abilities, productivity, operating costs, and interactions of the individual machines in each harvest system of interest. Given an understanding of the trees offered in a timber sale and the logs that would be produced from those trees, a harvest cost model predicts each machine&#x2019;s utilization and the total financial cost for the harvest. Comparing cost estimates between models of different harvest systems helps identify the most appropriate harvest method based on ecological and financial considerations.</p>
+      <p>On harvest units with steep slopes, cable yarding systems have been used to remove felled trees, or logs cut from felled trees, since the late 1800s [<xref ref-type="bibr" rid="B3-forests-13-00305">3</xref>]. When a slope is too steep for mechanized harvesting equipment, trees are manually felled using chainsaws [<xref ref-type="bibr" rid="B4-forests-13-00305">4</xref>]. One or more logs are often bucked from these trees before yarding, also using chainsaws [<xref ref-type="bibr" rid="B5-forests-13-00305">5</xref>]. Because mechanization reduces risk to human operators and increases productivity compared to manual felling and bucking [<xref ref-type="bibr" rid="B6-forests-13-00305">6</xref>], commercial winch-assist systems enabled use of feller-bunchers, harvesters, and forwarders on steep slopes in the late 1990s [<xref ref-type="bibr" rid="B7-forests-13-00305">7</xref>]. Manufacturers introduced winch assist as a standard option on harvest equipment in the early 2010s [<xref ref-type="bibr" rid="B8-forests-13-00305">8</xref>,<xref ref-type="bibr" rid="B9-forests-13-00305">9</xref>] and indicate heavy equipment use on slopes up to 100% [<xref ref-type="bibr" rid="B10-forests-13-00305">10</xref>,<xref ref-type="bibr" rid="B11-forests-13-00305">11</xref>], substantially steeper than the 30&#x2013;40% often allowed for untethered equipment [<xref ref-type="bibr" rid="B12-forests-13-00305">12</xref>,<xref ref-type="bibr" rid="B13-forests-13-00305">13</xref>].</p>
+      <p>Currently, most winch-assisted harvesting uses one of three mechanized steep slope harvest systems (<xref ref-type="fig" rid="forests-13-00305-f001">Figure 1</xref>). Each of these harvest systems consists of either a feller-buncher or a harvester followed by an appropriate set of machines for moving wood to a road and then trucking it to a mill. In all three systems, chainsaws are used in a supporting role. Trees may also be swung short distances as in shovel logging (also called hoe chucking).</p>
+      <p>Each piece of heavy equipment in a harvest system has size or weight restrictions on the wood it can handle (<xref ref-type="sec" rid="sec2dot1-forests-13-00305">Section 2.1</xref>). Trees that are too large will not fit in felling or processing heads for cutting or may weigh too much for equipment booms to lift or drag. Logs too heavy for a forwarder&#x2019;s crane cannot be lifted into its bunk. Similarly, skyline deflection determines maximum payload weights in yarding. However, growing large trees on slopes of 50&#x2013;100% is a frequent silvicultural objective within western North America&#x2019;s temperate rainforests for reasons such as conserving biodiversity, restoring wildlife habitat, carbon sequestration, and raising the financial value of timber assortments [<xref ref-type="bibr" rid="B14-forests-13-00305">14</xref>,<xref ref-type="bibr" rid="B15-forests-13-00305">15</xref>,<xref ref-type="bibr" rid="B16-forests-13-00305">16</xref>]. Additionally, forest management considering the social cost of carbon favors increased tree size [<xref ref-type="bibr" rid="B17-forests-13-00305">17</xref>]. Since dominant individuals on productive rainforest sites can average diameter growth rates above 1 cm year <sup>&#x2212;1</sup> [<xref ref-type="bibr" rid="B18-forests-13-00305">18</xref>], trees can exceed small yarder payload capacities by age 40 and reach eight-wheel harvester limits by age 65 (<xref ref-type="sec" rid="sec2dot3-forests-13-00305">Section 2.3</xref>). In northwestern United States rainforests, coast Douglas-fir (<italic>Pseudotsuga menziesii</italic> var <italic>menziesii</italic> (Mirb.) Franco) and western hemlock (<italic>Tsuga heterophylla</italic> (Raf.) Sarg.) trees are commonly harvested from coastal and inland mountain ranges at ages 40&#x2013;50. Harvest at ages of 60&#x2013;100 years is also of regular interest [<xref ref-type="bibr" rid="B19-forests-13-00305">19</xref>,<xref ref-type="bibr" rid="B20-forests-13-00305">20</xref>,<xref ref-type="bibr" rid="B21-forests-13-00305">21</xref>]. This combination of rapid growth, large trees, and rugged terrain creates need for steep slope harvest system models that remain accurate for tree diameters up to 100 cm or larger.</p>
+      <p>Because existing models of heavy harvest equipment apply primarily to trees of 60 cm diameter or smaller on slopes less than 50% (<xref ref-type="sec" rid="sec2dot1-forests-13-00305">Section 2.1</xref>), this study models mechanized harvesting of larger trees on steeper slopes. We therefore (1) review and extend current equipment modeling approaches, (2) evaluate the proposed extensions by estimating uncertainty in predictions of harvest productivity and cost in two Douglas-fir and western hemlock case studies, (3) estimate harvest cost sensitivity to model input parameters, and (4) identify areas where additional research is needed to reduce uncertainty in harvest system models. The following sections describe the cost and productivity modeling approach used for the three steep slope harvest systems in <xref ref-type="fig" rid="forests-13-00305-f001">Figure 1</xref>, present harvest cost probability distributions for even-age coast Douglas-fir and western hemlock, and discuss limitations arising from the lack of large tree data and productivity models for some types of equipment.</p>
+    </sec>
+    <sec id="sec2-forests-13-00305">
+      <title>2. Materials and Methods</title>
+      <sec id="sec2dot1-forests-13-00305">
+        <title>2.1. Harvest Equipment Productivity Models</title>
+        <p>A literature search identified 20 sources (<xref ref-type="table" rid="forests-13-00305-t001">Table 1</xref>) with 44 productivity models of interest published in the last 25 years. Twenty-two of these models appeared to be error-free and we were able to identify and correct errors in the equations of six others, resulting in <xref ref-type="table" rid="forests-13-00305-t001">Table 1</xref>. Eight of the remaining 16 models had errors that we were unable to repair and eight had forms unsuited to prediction. Therefore, we excluded these 16 models. We also excluded models lacking goodness of fit information, models with adjusted R<sup>2</sup> &lt; 0.25, and sources older than 25 years. Among the resulting 20 sources, only the chainsaw productivity models included felling or bucking on slopes greater than 47%. No mechanized study indicated an average tree volume greater than 2.6 m<sup>3</sup>.</p>
+        <p>Lack of productivity models covering slopes of 47&#x2013;100% and trees with merchantable volumes up to 15 m<sup>3</sup> required these existing models be extended beyond their fitting ranges. We chose to extend cycle time models since most models that regressed productivity directly exhibited poor out of range behaviors, including prediction of negative m<sup>3</sup> PMh<sub>0</sub><sup>&#x2212;1</sup> (merchantable cubic meters of wood per delay-free productive machine hour) or implausibly high productivities for their machine type. For machines with stemwise cycles (<xref ref-type="table" rid="forests-13-00305-t001">Table 1</xref>), the most common model forms for predicting the total cutting time <italic>T<sub>c</sub></italic> for a given stem s were subsets of a per-stem equipment move time plus a power series of either the tree&#x2019;s merchantable volume <italic>V<sub>s</sub></italic> or a highly correlated measure of tree size such as diameter at breast height. The per-stem move time is determined by the distance <italic>D<sub>move,s</sub></italic> the equipment must move to reach stem <italic>s</italic> and the speed <italic>v</italic><sub>s</sub> at which the equipment moves as a function of the local slope <italic>S<sub>s</sub></italic>, traction <italic>T<sub>s</sub></italic> available due to surface conditions, the amount of brush B present, and possibly other factors. As only one source [<xref ref-type="bibr" rid="B57-forests-13-00305">57</xref>] found evidence for higher-order terms in volume, we assumed the quadratic model form
+        <disp-formula id="FD1-forests-13-00305"><label>(1)</label><mml:math id="mm1" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>T</mml:mi><mml:mrow><mml:mi>c</mml:mi><mml:mo>,</mml:mo><mml:mi>m</mml:mi><mml:mo>&#xA0;</mml:mo><mml:mi>s</mml:mi><mml:mi>t</mml:mi><mml:mi>e</mml:mi><mml:mi>m</mml:mi><mml:mi>w</mml:mi><mml:mi>i</mml:mi><mml:mi>s</mml:mi><mml:mi>e</mml:mi></mml:mrow></mml:msub><mml:mo>=</mml:mo><mml:mfrac><mml:mrow><mml:msub><mml:mi>D</mml:mi><mml:mrow><mml:mi>m</mml:mi><mml:mi>o</mml:mi><mml:mi>v</mml:mi><mml:mi>e</mml:mi><mml:mo>,</mml:mo><mml:mi>s</mml:mi></mml:mrow></mml:msub></mml:mrow><mml:mrow><mml:msub><mml:mi>v</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msub><mml:mi>S</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>,</mml:mo><mml:msub><mml:mi>T</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>,</mml:mo><mml:mi>B</mml:mi><mml:mo>,</mml:mo><mml:mo>&#x2026;</mml:mo></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow></mml:mfrac><mml:mo>+</mml:mo><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msub><mml:mi>b</mml:mi><mml:mrow><mml:mn>0</mml:mn><mml:mo>,</mml:mo><mml:mi>m</mml:mi></mml:mrow></mml:msub><mml:mo>+</mml:mo><mml:msub><mml:mi>b</mml:mi><mml:mrow><mml:mn>1</mml:mn><mml:mo>,</mml:mo><mml:mi>m</mml:mi></mml:mrow></mml:msub><mml:msub><mml:mi>V</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>+</mml:mo><mml:munderover><mml:mstyle mathsize="140%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>q</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:msub><mml:mi>n</mml:mi><mml:mi>q</mml:mi></mml:msub></mml:mrow></mml:munderover><mml:mrow><mml:mo>{</mml:mo><mml:mrow><mml:mtable><mml:mtr><mml:mtd><mml:mn>0</mml:mn></mml:mtd><mml:mtd><mml:mrow><mml:msub><mml:mi>V</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>&#x2264;</mml:mo><mml:msub><mml:mi>b</mml:mi><mml:mrow><mml:mn>3</mml:mn><mml:mo>,</mml:mo><mml:mi>q</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:mtd></mml:mtr><mml:mtr><mml:mtd><mml:mrow><mml:msub><mml:mi>b</mml:mi><mml:mrow><mml:mn>2</mml:mn><mml:mo>,</mml:mo><mml:mi>q</mml:mi></mml:mrow></mml:msub><mml:msup><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msub><mml:mi>V</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>&#x2212;</mml:mo><mml:msub><mml:mi>b</mml:mi><mml:mrow><mml:mn>3</mml:mn><mml:mo>,</mml:mo><mml:mi>m</mml:mi><mml:mo>,</mml:mo><mml:mi>q</mml:mi></mml:mrow></mml:msub></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mn>2</mml:mn></mml:msup></mml:mrow></mml:mtd><mml:mtd><mml:mrow><mml:msub><mml:mi>V</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>&gt;</mml:mo><mml:msub><mml:mi>b</mml:mi><mml:mrow><mml:mn>3</mml:mn><mml:mo>,</mml:mo><mml:mi>q</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:mtd></mml:mtr></mml:mtable></mml:mrow></mml:mrow></mml:mrow><mml:mo>)</mml:mo></mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:mn>1</mml:mn><mml:mo>+</mml:mo><mml:mrow><mml:mo>{</mml:mo><mml:mrow><mml:mtable><mml:mtr><mml:mtd><mml:mn>0</mml:mn></mml:mtd><mml:mtd><mml:mrow><mml:msub><mml:mi>S</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>&#x2264;</mml:mo><mml:msub><mml:mi>S</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>m</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:mtd></mml:mtr><mml:mtr><mml:mtd><mml:mrow><mml:msub><mml:mi>b</mml:mi><mml:mrow><mml:mn>4</mml:mn><mml:mo>,</mml:mo><mml:mi>m</mml:mi></mml:mrow></mml:msub><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msub><mml:mi>S</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>&#x2212;</mml:mo><mml:msub><mml:mi>S</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>m</mml:mi></mml:mrow></mml:msub></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow></mml:mtd><mml:mtd><mml:mrow><mml:msub><mml:mi>S</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>&gt;</mml:mo><mml:msub><mml:mi>S</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>m</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:mtd></mml:mtr></mml:mtable></mml:mrow></mml:mrow></mml:mrow><mml:mo>)</mml:mo></mml:mrow><mml:mo>&#xA0;</mml:mo></mml:mrow></mml:semantics></mml:math></disp-formula>
+        where <italic>b</italic><sub>{0,1,2,3},<italic>m</italic></sub> &#x2265; 0 are the felling and bucking coefficients for a particular machine of interest <italic>m</italic> and <italic>S<sub>t,m</sub></italic> is the slope at which machine productivity begins to decrease. Models with quadratic terms commonly assume <italic>b<sub>3,m</sub></italic> = 0 but we allow <italic>b<sub>3,m</sub></italic> &gt; 0 as in Hildt et al. [<xref ref-type="bibr" rid="B47-forests-13-00305">47</xref>] and use up to two quadratic terms (<italic>n<sub>q</sub></italic> &#x2264; 2) to obtain productivity curves with shapes similar to those found by Visser and Spinelli [<xref ref-type="bibr" rid="B30-forests-13-00305">30</xref>] for trees of volume up to 5.2 m<sup>3</sup>. The slope term <italic>b<sub>4,m</sub></italic>(<italic>S<sub>s</sub></italic>&#x2013;<italic>S<sub>t,m</sub></italic>) is a linearization used in industry and is consistent with published estimates of slope effects [<xref ref-type="bibr" rid="B33-forests-13-00305">33</xref>,<xref ref-type="bibr" rid="B62-forests-13-00305">62</xref>].</p>
+        <p>For machines with roundtrip cycle times, a majority of sources (<xref ref-type="table" rid="forests-13-00305-t001">Table 1</xref>) used models that implicitly or explicitly performed piecewise integration of mean unloaded and loaded travel speeds <inline-formula><mml:math id="mm5"><mml:semantics><mml:mrow><mml:msub><mml:mrow><mml:mover><mml:mi>v</mml:mi><mml:mo>&#xAF;</mml:mo></mml:mover></mml:mrow><mml:mi>s</mml:mi></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula> over a series of segments {<italic>s</italic>} with individual lengths <italic>D<sub>s</sub></italic>. With the inclusion of time <italic>t</italic> spent loading and unloading, a model for roundtrip cycle time <italic>T<sub>c</sub></italic> is
+        <disp-formula id="FD2-forests-13-00305"><label>(2)</label><mml:math id="mm2" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>T</mml:mi><mml:mrow><mml:mi>c</mml:mi><mml:mo>,</mml:mo><mml:mi>r</mml:mi><mml:mi>o</mml:mi><mml:mi>u</mml:mi><mml:mi>n</mml:mi><mml:mi>d</mml:mi><mml:mi>t</mml:mi><mml:mi>r</mml:mi><mml:mi>i</mml:mi><mml:mi>p</mml:mi></mml:mrow></mml:msub><mml:mo>=</mml:mo><mml:munderover><mml:mstyle mathsize="140%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>s</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:msub><mml:mi>n</mml:mi><mml:mi>u</mml:mi></mml:msub></mml:mrow></mml:munderover><mml:mfrac><mml:mrow><mml:msub><mml:mi>D</mml:mi><mml:mrow><mml:mi>s</mml:mi><mml:mo>,</mml:mo><mml:mi>u</mml:mi><mml:mi>n</mml:mi><mml:mi>l</mml:mi><mml:mi>o</mml:mi><mml:mi>a</mml:mi><mml:mi>d</mml:mi><mml:mi>e</mml:mi><mml:mi>d</mml:mi></mml:mrow></mml:msub></mml:mrow><mml:mrow><mml:msub><mml:mover accent="true"><mml:mi>v</mml:mi><mml:mo>&#xAF;</mml:mo></mml:mover><mml:mrow><mml:mi>s</mml:mi><mml:mo>,</mml:mo><mml:mi>u</mml:mi><mml:mi>n</mml:mi><mml:mi>l</mml:mi><mml:mi>o</mml:mi><mml:mi>a</mml:mi><mml:mi>d</mml:mi><mml:mi>e</mml:mi><mml:mi>d</mml:mi></mml:mrow></mml:msub><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msub><mml:mi>S</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>,</mml:mo><mml:msub><mml:mi>T</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>,</mml:mo><mml:mo>&#x2026;</mml:mo></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow></mml:mfrac><mml:mo>+</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mrow><mml:mi>l</mml:mi><mml:mi>o</mml:mi><mml:mi>a</mml:mi><mml:mi>d</mml:mi></mml:mrow></mml:msub><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msub><mml:mi>N</mml:mi><mml:mi>p</mml:mi></mml:msub><mml:mo>,</mml:mo><mml:msub><mml:mi>N</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>,</mml:mo><mml:mo>&#x2026;</mml:mo></mml:mrow><mml:mo>)</mml:mo></mml:mrow><mml:mo>+</mml:mo><mml:munderover><mml:mstyle mathsize="140%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>s</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:msub><mml:mi>n</mml:mi><mml:mi>l</mml:mi></mml:msub></mml:mrow></mml:munderover><mml:mfrac><mml:mrow><mml:msub><mml:mi>D</mml:mi><mml:mrow><mml:mi>s</mml:mi><mml:mo>,</mml:mo><mml:mi>l</mml:mi><mml:mi>o</mml:mi><mml:mi>a</mml:mi><mml:mi>d</mml:mi><mml:mi>e</mml:mi><mml:mi>d</mml:mi></mml:mrow></mml:msub></mml:mrow><mml:mrow><mml:msub><mml:mover accent="true"><mml:mi>v</mml:mi><mml:mo>&#xAF;</mml:mo></mml:mover><mml:mrow><mml:mi>s</mml:mi><mml:mo>,</mml:mo><mml:mi>l</mml:mi><mml:mi>o</mml:mi><mml:mi>a</mml:mi><mml:mi>d</mml:mi><mml:mi>e</mml:mi><mml:mi>d</mml:mi></mml:mrow></mml:msub><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msub><mml:mi>S</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>,</mml:mo><mml:msub><mml:mi>T</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>,</mml:mo><mml:msub><mml:mi>P</mml:mi><mml:mi>e</mml:mi></mml:msub><mml:mo>,</mml:mo><mml:msub><mml:mi>P</mml:mi><mml:mi>l</mml:mi></mml:msub><mml:mo>,</mml:mo><mml:mo>&#x2026;</mml:mo></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow></mml:mfrac><mml:mo>+</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mrow><mml:mi>u</mml:mi><mml:mi>n</mml:mi><mml:mi>l</mml:mi><mml:mi>o</mml:mi><mml:mi>a</mml:mi><mml:mi>d</mml:mi></mml:mrow></mml:msub><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msub><mml:mi>N</mml:mi><mml:mi>p</mml:mi></mml:msub><mml:mo>,</mml:mo><mml:msub><mml:mi>N</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>,</mml:mo><mml:mo>&#x2026;</mml:mo></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow></mml:semantics></mml:math></disp-formula></p>
+        <p>While loaded and unloaded travel is frequently simplified to an average roundtrip speed over a single segment, more detailed approaches recognize uphill travel may be constrained by engine power <italic>P<sub>e</sub></italic> and payload <italic>P<sub>l</sub></italic> [<xref ref-type="bibr" rid="B58-forests-13-00305">58</xref>,<xref ref-type="bibr" rid="B62-forests-13-00305">62</xref>] as well as slope (<italic>S<sub>s</sub></italic>) and traction (<italic>T<sub>s</sub></italic>) [<xref ref-type="bibr" rid="B29-forests-13-00305">29</xref>,<xref ref-type="bibr" rid="B48-forests-13-00305">48</xref>,<xref ref-type="bibr" rid="B63-forests-13-00305">63</xref>]. The use of winch assist may increase [<xref ref-type="bibr" rid="B62-forests-13-00305">62</xref>] or decrease [<xref ref-type="bibr" rid="B36-forests-13-00305">36</xref>] travel speeds, potentially requiring tethered segments be modelled separately from untethered segments where winch assist is not used. Load and unload times are likely to increase with the number of timber assortments <italic>N<sub>s</sub></italic> in the load [<xref ref-type="bibr" rid="B29-forests-13-00305">29</xref>] and the number of pieces (trees or logs) <italic>N<sub>p</sub></italic> [<xref ref-type="bibr" rid="B4-forests-13-00305">4</xref>,<xref ref-type="bibr" rid="B47-forests-13-00305">47</xref>] transported, though the latter is routinely mitigated by grappling multiple pieces simultaneously or by yarding and swinging whole trees.</p>
+        <p>In addition to being specific to machine capabilities [<xref ref-type="bibr" rid="B28-forests-13-00305">28</xref>,<xref ref-type="bibr" rid="B29-forests-13-00305">29</xref>] model coefficients are likely to be tree species specific, both due to crown architecture [<xref ref-type="bibr" rid="B25-forests-13-00305">25</xref>,<xref ref-type="bibr" rid="B29-forests-13-00305">29</xref>] and differences in stem density and bark losses [<xref ref-type="bibr" rid="B64-forests-13-00305">64</xref>,<xref ref-type="bibr" rid="B65-forests-13-00305">65</xref>], which alter the amount of merchantable wood volume in a given payload weight. We provide specifics of the model parameterizations we use for feller-bunchers, harvesters, chainsaws, forwarders, yarders, processors, loaders, and log trucks with Douglas-fir and western hemlock in the <xref ref-type="app" rid="app1-forests-13-00305">Supplementary Material (Section S1)</xref>. Since these parameters are extrapolated, we treat them as uncertain and include their uncertainty in estimates of harvest cost (<xref ref-type="sec" rid="sec2dot3-forests-13-00305">Section 2.3</xref>).</p>
+      </sec>
+      <sec id="sec2dot2-forests-13-00305">
+        <title>2.2. Equipment Operating Cost and Harvest Contracting Business Models</title>
+        <p>Most harvest cost studies (<xref ref-type="sec" rid="sec2dot1-forests-13-00305">Section 2.1</xref>) follow Miyata&#x2019;s method [<xref ref-type="bibr" rid="B66-forests-13-00305">66</xref>] for finding equipment operating costs. Under Miyata&#x2019;s method, costs are most sensitive to equipment depreciation, equipment utilization, and operator wages and compensation. We gathered a dataset of asking prices for harvest equipment offered for sale (n = 261) and, where sufficient data was available, estimated depreciation rates from nonlinear regressions of price versus operating hours. Machine utilization was estimated from figures reported in the literature review and operators&#x2019; total compensation was estimated from job postings for positions in Oregon and Washington&#x2019;s temperate rainforests (a region of the northwestern United States where tethered equipment is used). We then extended Miyata&#x2019;s method to the consider the taxes, profit, and risk of a harvest contracting business beyond the cost of its equipment and operators. Similar to the productivity model parameterizations, we provide details of the business cost estimates for the 11 types of equipment we consider in the <xref ref-type="app" rid="app1-forests-13-00305">Supplementary Material (Section S2)</xref>.</p>
+      </sec>
+      <sec id="sec2dot3-forests-13-00305">
+        <title>2.3. Harvest System Modeling and Uncertainty Estimation</title>
+        <p>A harvest system&#x2019;s financial cost is the total cost of its machines and their operators. In addition to the cost of operating the system to produce merchantable wood we included the costs <italic>C<sub>t</sub></italic> for moving equipment into and out of a harvest unit, reopening roads, and other harvest related tasks (<xref ref-type="app" rid="app1-forests-13-00305">Supplementary Material, Section S3</xref>). When using cycle time productivity models (<xref ref-type="sec" rid="sec2dot1-forests-13-00305">Section 2.1</xref>), a machine&#x2019;s wood production cost is found by multiplying the total cycle time <italic>T<sub>m</sub></italic> over the <italic>n<sub>c</sub></italic> cycles required to move the volume of wood harvested by the machine&#x2019;s cost per productive machine hour <italic>C<sub>m</sub></italic> (US$ PMh<sub>0</sub><sup>&#x2212;1</sup> in this study). The harvest cost for a system with <italic>n<sub>m</sub></italic> machines is therefore
+        <disp-formula id="FD3-forests-13-00305"><label>(3)</label><mml:math id="mm3" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>C</mml:mi><mml:mrow><mml:mi>s</mml:mi><mml:mi>y</mml:mi><mml:mi>s</mml:mi><mml:mi>t</mml:mi><mml:mi>e</mml:mi><mml:mi>m</mml:mi></mml:mrow></mml:msub><mml:mo>=</mml:mo><mml:munderover><mml:mstyle mathsize="140%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>m</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:msub><mml:mi>n</mml:mi><mml:mi>m</mml:mi></mml:msub></mml:mrow></mml:munderover><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:munderover><mml:mstyle mathsize="140%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>c</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:msub><mml:mi>n</mml:mi><mml:mi>c</mml:mi></mml:msub></mml:mrow></mml:munderover><mml:msub><mml:mi>T</mml:mi><mml:mrow><mml:mi>c</mml:mi><mml:mo>,</mml:mo><mml:mi>m</mml:mi><mml:mo>&#xA0;</mml:mo></mml:mrow></mml:msub></mml:mrow><mml:mo>)</mml:mo></mml:mrow><mml:msub><mml:mi>C</mml:mi><mml:mrow><mml:mi>m</mml:mi><mml:mo>,</mml:mo><mml:mi>P</mml:mi><mml:mi>M</mml:mi><mml:msub><mml:mi>h</mml:mi><mml:mn>0</mml:mn></mml:msub></mml:mrow></mml:msub><mml:mo>+</mml:mo><mml:munderover><mml:mstyle mathsize="140%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>t</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:msub><mml:mi>n</mml:mi><mml:mi>t</mml:mi></mml:msub></mml:mrow></mml:munderover><mml:msub><mml:mi>C</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>r</mml:mi><mml:mi>e</mml:mi><mml:mi>l</mml:mi><mml:mi>a</mml:mi><mml:mi>t</mml:mi><mml:mi>e</mml:mi><mml:mi>d</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:semantics></mml:math></disp-formula></p>
+        <p>Harvest costs are typically lowest when machines can operate independently of each other (also referred to as decoupled operation) as doing so maximizes their utilization and minimizes operating cost. We assume independent operation for feller-bunchers, harvesters, chainsaws, forwarders, and log trucks. Utilization of yarders, processors, and loaders, however, is likely interdependent. When one of these three machines restricted the productivity of the other two, we adjusted the costs of the affected machines accordingly (<xref ref-type="app" rid="app1-forests-13-00305">Section S3</xref>). When trees exceeded machine limits (<xref ref-type="app" rid="app1-forests-13-00305">Section S4</xref>), we included the cost of the chainsaw work needed to make wood accessible for mechanized movement.</p>
+        <p>We defined 72 productivity, 838 cost model, and 36 equipment limit parameters across the harvest systems considered (<xref ref-type="app" rid="app1-forests-13-00305">Sections S1&#x2013;S4</xref>). We estimated harvest cost probability distributions empirically using 10,000 Monte Carlo draws of 68 parameters (48 productivity, 14 cost, and six limit). Given the lack of previous studies, we treated parameter ranges as uninformative Bayesian priors with uniform probability distributions estimated by Uusitalo et al.&#x2019;s [<xref ref-type="bibr" rid="B67-forests-13-00305">67</xref>] expert judgement method. Simplification of Miyata models to uncertain operating costs per scheduled machine hour (US$ SMh<sup>&#x2212;1</sup>) caused 94% of the reduction from the 946 parameters defined to the 68 Monte Carlo parameters (<xref ref-type="app" rid="app1-forests-13-00305">Section S2</xref>). The rest of the reduction was due to overlap among and quantization of forwarder parameters (<xref ref-type="app" rid="app1-forests-13-00305">Section S1.2</xref>) and holding biometric or harvest unit properties, such as bark losses and available soil traction, constant to avoid confounding harvest system variability with biological, seasonal, or unit-specific sources of variability.</p>
+        <p>Finally, we estimated cost model sensitivity to the 68 Monte Carlo parameters using total Sobo&#x13E; indices [<xref ref-type="bibr" rid="B68-forests-13-00305">68</xref>] at N = 1500 (N(k + 2) = 105,000, Jansen estimator [<xref ref-type="bibr" rid="B69-forests-13-00305">69</xref>]) in order to prioritize model parameters for future investigation. We chose to use total Sobo&#x13E; indices as they provide a comprehensive, variance-based measure of model sensitivity by considering a parameter&#x2019;s direct effect and its interactions with all other parameters.</p>
+      </sec>
+      <sec id="sec2dot4-forests-13-00305">
+        <title>2.4. Growth and Yield Modeling, Taper Equation Interactions, and Thinning Intensities</title>
+        <p>We initialized the northwest Oregon variant of the nonspatial, individual tree growth model Organon [<xref ref-type="bibr" rid="B70-forests-13-00305">70</xref>,<xref ref-type="bibr" rid="B71-forests-13-00305">71</xref>] with measurements from 30-year-old, even-age Douglas-fir and western hemlock permanent sample plots [<xref ref-type="bibr" rid="B18-forests-13-00305">18</xref>] and projected stand growth over the next 55&#x2013;70 years. For each five-year timestep, we estimated per hectare harvest cost probability distributions for unthinned and thinned rotations by calculating stemwise cycle times for each individual tree present in the growth model and roundtrip cycle times for the volume of wood harvested per hectare. Stem cutting diameters and piece weights were estimated from using species specific taper equations, densities, and rates of bark loss [<xref ref-type="bibr" rid="B64-forests-13-00305">64</xref>,<xref ref-type="bibr" rid="B72-forests-13-00305">72</xref>,<xref ref-type="bibr" rid="B73-forests-13-00305">73</xref>,<xref ref-type="bibr" rid="B74-forests-13-00305">74</xref>]. Financially preferred rotations, thinning intensities, and timings were identified by classic Faustmann land expectation values [<xref ref-type="bibr" rid="B75-forests-13-00305">75</xref>] calculated from mean timber prices over the past decade [<xref ref-type="bibr" rid="B76-forests-13-00305">76</xref>] net of harvest costs at a 4% discount rate [<xref ref-type="bibr" rid="B77-forests-13-00305">77</xref>]. We considered even-age rotations with up to three proportional thins and harvest intensities from 20&#x2013;50% for each thin with step sizes of 1&#x2013;3%.</p>
+      </sec>
+    </sec>
+    <sec id="sec3-forests-13-00305" sec-type="results">
+      <title>3. Results</title>
+      <p>Physiological differences between coast Douglas-fir and western hemlock resulted in distinct silvicultural approaches, harvest cost distributions, and patterns of harvest equipment selection (<xref ref-type="fig" rid="forests-13-00305-f002">Figure 2</xref>, <xref ref-type="fig" rid="forests-13-00305-f003">Figure 3</xref>, <xref ref-type="fig" rid="forests-13-00305-f004">Figure 4</xref> and <xref ref-type="fig" rid="forests-13-00305-f005">Figure 5</xref>). Douglas-fir is a shade intermediate species capable of more rapid growth than the shade tolerant western hemlock (50-year site indices of 39.6 and 29.1 m, respectively, for the site used in this study [<xref ref-type="bibr" rid="B18-forests-13-00305">18</xref>]) has mean wood prices 22% higher [<xref ref-type="bibr" rid="B76-forests-13-00305">76</xref>], and log densities 9% lower [<xref ref-type="bibr" rid="B64-forests-13-00305">64</xref>] than hemlock. Douglas-fir rotations therefore supported up to three thins beginning at age 35, rather than at most one thinning for hemlock (<xref ref-type="fig" rid="forests-13-00305-f002">Figure 2</xref> and <xref ref-type="fig" rid="forests-13-00305-f004">Figure 4</xref>a,e). Douglas-fir trees grew to larger sizes and produced larger logs than western hemlock even though Douglas-fir rotations were 15 years shorter than hemlock rotations (<xref ref-type="fig" rid="forests-13-00305-f003">Figure 3</xref> and <xref ref-type="fig" rid="forests-13-00305-f005">Figure 5</xref>i&#x2013;k). Harvest equipment therefore encountered larger stemwise quadratic cycle time contributions (Equation (1)) in Douglas-fir. Douglas-firs were also more likely to exceed mechanized equipment limits (<xref ref-type="sec" rid="sec2dot3-forests-13-00305">Section 2.3</xref> and <xref ref-type="app" rid="app1-forests-13-00305">Section S4</xref>), resulting in greater costs for manual chainsaw labor beginning from age 45 (<xref ref-type="fig" rid="forests-13-00305-f006">Figure 6</xref>). Combined, these two effects led to well-defined minima in Douglas-fir harvest cost around age 50&#x2013;60 whereas minima were absent or shallow for western hemlock (<xref ref-type="fig" rid="forests-13-00305-f002">Figure 2</xref> and <xref ref-type="fig" rid="forests-13-00305-f004">Figure 4</xref>a,b,e,f). Despite these differences, overall ranges of harvest costs were similar between the two species, though thinning in hemlock tended to be somewhat more expensive (<xref ref-type="table" rid="forests-13-00305-t002">Table 2</xref>).</p>
+      <p>Both extraction distance and slope significantly impacted harvest costs (<italic>p</italic> &lt; 0.001). Increasing slope increased stemwise cycle times (Equation (1)), lowering productivity (<xref ref-type="fig" rid="forests-13-00305-f003">Figure 3</xref> and <xref ref-type="fig" rid="forests-13-00305-f005">Figure 5</xref>a,b,e,f) and, therefore, increased harvest cost as more machine hours were required to complete a harvest. Increasing slope from 65 to 80% decreased forwarder payload by 56% (<xref ref-type="fig" rid="forests-13-00305-f002">Figure 2</xref>k and <xref ref-type="fig" rid="forests-13-00305-f004">Figure 4</xref>k, <xref ref-type="app" rid="app1-forests-13-00305">Equation (S1)</xref>), requiring 1.8 times as many forwarder turns to extract a given volume of wood. The corresponding increase in harvester hours was 1.13 times. Decreased payload was thus the primary cause of increased thinning costs on steeper slopes. Engine power did not limit forwarding speeds because driving speed while loading is more constraining than engine power. Similarly, extracting wood from 500 m long corridors increased forwarding times compared to 200 m long corridors, lowering forwarding productivity (<xref ref-type="fig" rid="forests-13-00305-f003">Figure 3</xref> and <xref ref-type="fig" rid="forests-13-00305-f005">Figure 5</xref>a,e) and also increasing thinning costs. Additionally, 500 m corridors exceeded the 280&#x2013;350 m cable length limit of the add on winches available for use with eight-wheel harvesters and forwarders (<xref ref-type="app" rid="app1-forests-13-00305">Table S6</xref>). In such cases, harvesters and forwarders were supported by separate anchor machines, increasing costs compared to the use of an add-on winch powered by the harvester or forwarder.</p>
+      <p>The long log systems used with regeneration harvests were less sensitive to slope and distance than the cut-to-length, eight-wheel harvester-forwarder system we assumed for thinning. Since yarders, processors, and loaders were assumed to operate from landings or roadsides, their productivity was unaffected by the harvest unit&#x2019;s prevailing slope (<xref ref-type="fig" rid="forests-13-00305-f003">Figure 3</xref> and <xref ref-type="fig" rid="forests-13-00305-f005">Figure 5</xref>b&#x2013;d,f&#x2013;h). Similar to forwarding, yarding speeds did not appear to be constrained by engine power, possibly due to line speeds of partially suspended turns being limited by concern for hangups. Most cable yarders we surveyed could access the full length of 500 m corridors without cable extensions (<xref ref-type="app" rid="app1-forests-13-00305">Table S6</xref>). Additionally, the tracked feller-bunchers and harvesters considered were tethered by anchor machines and hence did require additional equipment to operate on corridors longer than 280&#x2013;350 m. As slope and extraction distance increased, the long log systems exhibited an increasing cost advantage compared to a harvester-forwarder, cut-to-length system.</p>
+      <p>Yarder productivity was influential to harvest equipment selection in long log systems. Despite its 45% higher operating cost on an hourly basis (<xref ref-type="app" rid="app1-forests-13-00305">Table S4</xref>), most Monte Carlo parameter draws selected a swing yarder over an excavator-based yarder. Higher yarder productivity on 200 m corridors was associated with increased selection of a feller-buncher, even though the use of a feller-buncher typically increased chainsaw costs (<xref ref-type="fig" rid="forests-13-00305-f002">Figure 2</xref> and <xref ref-type="fig" rid="forests-13-00305-f004">Figure 4</xref>c,d,g,h and <xref ref-type="fig" rid="forests-13-00305-f007">Figure 7</xref>). The more rapid yarding allowed greater processor and loader utilization, making it more likely operating a feller-buncher with manual chainsaw bucking and a processor would be more cost effective than operating a single harvester at lower productivity (<xref ref-type="fig" rid="forests-13-00305-f003">Figure 3</xref> and <xref ref-type="fig" rid="forests-13-00305-f005">Figure 5</xref>b,f). With 500 m corridors, this effect reversed and harvesters were generally preferred. Because we assumed tracked harvesters were equipped with higher capacity processing heads than those currently available on an eight-wheel harvester, tracked harvesters were more likely to be preferred at increasing stand ages due to lower chainsaw costs (<xref ref-type="fig" rid="forests-13-00305-f002">Figure 2</xref> and <xref ref-type="fig" rid="forests-13-00305-f004">Figure 4</xref>c,d,g,h and <xref ref-type="fig" rid="forests-13-00305-f006">Figure 6</xref>a,b,e,f).</p>
+      <p>Sensitivity analysis of the parameters for the harvest cost model, other than slope and extraction distance, found that log transport (<inline-formula><mml:math id="mm6"><mml:semantics><mml:mrow><mml:msub><mml:mrow><mml:mover><mml:mi>P</mml:mi><mml:mo>&#xAF;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>l</mml:mi><mml:mo>,</mml:mo><mml:mi mathvariant="italic">kg</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula>, <inline-formula><mml:math id="mm7"><mml:semantics><mml:mrow><mml:mover><mml:mi>v</mml:mi><mml:mo>&#xAF;</mml:mo></mml:mover></mml:mrow></mml:semantics></mml:math></inline-formula>, <italic>t<sub>roundtrip</sub></italic>) and equipment operating costs were consistently among the most influential parameters (<xref ref-type="fig" rid="forests-13-00305-f007">Figure 7</xref>). Other influential parameters were the eight-wheel harvester constant and linear cycle time coefficients (<italic>b<sub>0</sub></italic>, <italic>b<sub>1</sub></italic>) and the onset of slope induced decline in productivity (<italic>S<sub>t</sub></italic>). While eight-wheel harvesters were expected to be influential to thinning because other felling and processing machines were not considered, eight-wheel harvesters retained their influence in regeneration harvests where feller-bunchers, tracked harvesters, and processors were considered. Chainsaw parameters had limited influence because chainsaw costs were low in thinning and equipment selection for regeneration harvests limited chainsaw costs (<xref ref-type="fig" rid="forests-13-00305-f002">Figure 2</xref> and <xref ref-type="fig" rid="forests-13-00305-f004">Figure 4</xref>c,d,g,h and <xref ref-type="fig" rid="forests-13-00305-f006">Figure 6</xref>b,f).</p>
+    </sec>
+    <sec id="sec4-forests-13-00305" sec-type="discussion">
+      <title>4. Discussions</title>
+      <p>The harvest cost model developed here attempts to provide reasonable, default parameterizations across a range of steep slope harvest systems. However, it relies on extrapolation from a limited body of results obtained from smaller trees on lower angle slopes (<xref ref-type="sec" rid="sec2dot1-forests-13-00305">Section 2.1</xref>) and tethered harvesting equipment remains relatively new technology with some manufacturers, at least, making multiple changes per year [<xref ref-type="bibr" rid="B9-forests-13-00305">9</xref>]. Because all types of harvest equipment considered were sometimes selected, it appears likely which equipment is most preferred will depend on operating cost and productivity details of the specific crew members and harvest equipment available. It is also likely that the sizes, shapes, and slopes of harvest units will affect which harvest systems are preferred. In particular, the proposed model relies heavily on just two studies of yarders, one of excavator-based yarding on slopes less than 50% in Malaysia [<xref ref-type="bibr" rid="B51-forests-13-00305">51</xref>] and one of an older swing yarder operating in young Douglas-fir on slopes less than 60% [<xref ref-type="bibr" rid="B5-forests-13-00305">5</xref>]. In addition, the diversity of results for harvesters [<xref ref-type="bibr" rid="B26-forests-13-00305">26</xref>,<xref ref-type="bibr" rid="B28-forests-13-00305">28</xref>,<xref ref-type="bibr" rid="B31-forests-13-00305">31</xref>,<xref ref-type="bibr" rid="B32-forests-13-00305">32</xref>,<xref ref-type="bibr" rid="B33-forests-13-00305">33</xref>,<xref ref-type="bibr" rid="B34-forests-13-00305">34</xref>,<xref ref-type="bibr" rid="B36-forests-13-00305">36</xref>,<xref ref-type="bibr" rid="B38-forests-13-00305">38</xref>] suggests no single model is likely to accurately represent all machines. Notably, increasing selection of tracked harvesters at later stand ages results from assuming they are fitted with larger capacity processing heads than eight-wheel harvesters (<xref ref-type="app" rid="app1-forests-13-00305">Table S6</xref>). With heads of equal capacity, a wheeled harvester may be preferred.</p>
+      <p>Given observed model sensitivities (<xref ref-type="fig" rid="forests-13-00305-f002">Figure 2</xref> and <xref ref-type="fig" rid="forests-13-00305-f004">Figure 4</xref>c,d,g,h and <xref ref-type="fig" rid="forests-13-00305-f007">Figure 7</xref>), further study comparing productivity and operating costs of excavator-based and swing yarders appears likely to be effective in improving understanding of model uncertainty. Because their selection interacts with yarder productivity, comparative study of wheeled harvesters, tracked harvesters, and processors also seems likely to better quantify&#x2014;and possibly reduce&#x2014;model uncertainty. Understanding harvest contractors&#x2019; reasons for selecting excavator-based yarders over other options may be valuable since, for example, the potential for more cost effective operation with a swing yarder is irrelevant if its more expensive purchase cannot be financed. While only grapple yarding in regeneration harvests was considered here, lateral yarding with chokers allows cable yarders to be used in thinning. While choker yarding is higher cost (<xref ref-type="app" rid="app1-forests-13-00305">Table S4</xref>) and lower productivity [<xref ref-type="bibr" rid="B5-forests-13-00305">5</xref>] than grapple yarding, it may provide more cost effective thinning than harvester-forwarder systems when slopes are steep enough and corridors long enough.</p>
+      <p>More complete understanding of tethered forwarder payloads also appears important. While forwarder tractive force was excluded from this study&#x2019;s Monte Carlo parameter draws and sensitivity analysis because it is primarily a property of the harvest unit, surface conditions can affect forwarder travel speeds by a factor of two [<xref ref-type="bibr" rid="B63-forests-13-00305">63</xref>] and payload changes of &#xB1;20% or more appear plausible. Since cut-to-length harvest systems can be cost competitive with long log systems (<xref ref-type="fig" rid="forests-13-00305-f002">Figure 2</xref> and <xref ref-type="fig" rid="forests-13-00305-f004">Figure 4</xref>a,b), it appears likely that steep slope conditions exist where harvester-forwarder pairs are more cost effective than cable yarder-based systems for regeneration harvests. Some harvester-forwarder operators suggest this is the case [<xref ref-type="bibr" rid="B39-forests-13-00305">39</xref>] and preferentially schedule steeper slope operations for seasons where traction is greater [<xref ref-type="bibr" rid="B9-forests-13-00305">9</xref>].</p>
+      <p>The apparent lack of loader models prevented assessment of harvest cost sensitivity to loader productivity parameters and may affect sensitivity to loader costs. Since loader operating costs are among the most influential parameters for long log harvest costs (<xref ref-type="fig" rid="forests-13-00305-f007">Figure 7</xref>b,d) and would also occur when cut-to-length systems include loaders (<xref ref-type="fig" rid="forests-13-00305-f001">Figure 1</xref>a) this suggests log loaders are an understudied type of harvest equipment. It follows that time and motion studies to develop loader cycle time models would be valuable to the completeness of harvest system models, creating an ability to quantify and prioritize loader uncertainties.</p>
+      <p>We caution that the results presented here do not consider site, machine, or operator specific uncertainty due to the confidential nature of private harvest contractors&#x2019; operating costs. While contractors we work with have indicated consistency with their typical cut-to-length and cable yarding costs, they have declined to share details of their unit-level production targets needed for more complete model calibration. Productivities reported in the literature (<xref ref-type="table" rid="forests-13-00305-t001">Table 1</xref>) sometimes differ by a factor of two or more, even for apparently comparable equipment and sites, and utilization can differ by 20% or more among crews [<xref ref-type="bibr" rid="B51-forests-13-00305">51</xref>]. Where possible, it is therefore recommended to use specific, rather than generalized, parameter estimates and to consider the parameterization details discussed in the <xref ref-type="app" rid="app1-forests-13-00305">Supplementary Material</xref>.</p>
+      <p>As with harvest cost models, growth model parameters are uncertain. However, parameter uncertainty has not been expressed for the growth model used in this study and we did not consider taper equation uncertainty. Tree growth and mortality is also subject to future climate uncertainty as well as episodic disturbance. Broader analysis to place harvest cost uncertainties into context with biotic and other abiotic uncertainties therefore appears desirable.</p>
+    </sec>
+    <sec id="sec5-forests-13-00305" sec-type="conclusions">
+      <title>5. Conclusions</title>
+      <p>To our knowledge, this study is the first to propose a stump to mill harvest cost model enabling comparison of harvest systems across a range of tree sizes from 0&#x2013;15 merchantable m<sup>3</sup> and slopes of 0&#x2013;100%. While the model exhibits plausible behavior and we conducted both uncertainty and sensitivity analyses, it is subject to present limits in the knowledge of how tethered harvest equipment functions across tree size and slope. Therefore, the choices of model form and parameter values are somewhat speculative. Consequently, further study is needed to better understand the structure and parameterization of steep slope harvest cost models, particularly in regards to comparative interactions between harvest system types, harvest equipment types, specific machines, and operator abilities. Since the proposed model considers only internal harvest costs for labor and equipment, its extension to external harvest costs, such as the social cost of carbon, also appears desirable.</p>
+    </sec>
+  </body>
+  <back>
+    <app-group>
+      <app id="app1-forests-13-00305">
+        <title>Supplementary Materials</title>
+        <p>The following are available online at <uri>https://www.mdpi.com/article/10.3390/f13020305/s1</uri>, Sections S1&#x2013;S5 with Figure S1, Tables S1&#x2013;S6, and spreadsheet with Miyata operating cost model parameters, resulting estimated operating costs, model parameter counts, and listing of the 68 parameters varied in Monte Carlo and Sobol&#x2019; analysis. The Supplementary Material also cites sources [<xref ref-type="bibr" rid="B78-forests-13-00305">78</xref>,<xref ref-type="bibr" rid="B79-forests-13-00305">79</xref>,<xref ref-type="bibr" rid="B80-forests-13-00305">80</xref>,<xref ref-type="bibr" rid="B81-forests-13-00305">81</xref>,<xref ref-type="bibr" rid="B82-forests-13-00305">82</xref>,<xref ref-type="bibr" rid="B83-forests-13-00305">83</xref>,<xref ref-type="bibr" rid="B84-forests-13-00305">84</xref>].</p>
+        <supplementary-material xmlns:xlink="http://www.w3.org/1999/xlink" id="forests-13-00305-s001" xlink:href="forests-13-00305-s001.zip"/>
+      </app>
+    </app-group>
+    <notes>
+      <title>Author Contributions</title>
+      <p>Conceptualization, T.W. and J.S.; methodology, T.W. and J.S.; software, T.W.; validation, T.W. and J.S.; formal analysis, T.W.; investigation, T.W.; resources, B.M.S.; data curation, T.W.; writing&#x2014;original draft preparation, T.W.; writing&#x2014;review and editing, T.W., J.S. and B.M.S.; visualization, T.W.; supervision, B.M.S.; project administration, B.M.S.; funding acquisition, J.S. and B.M.S. All authors have read and agreed to the published version of the manuscript.</p>
+    </notes>
+    <notes>
+      <title>Funding</title>
+      <p>This research was funded by the Oregon State University Graduate School and U.S. Department of Agriculture, grant number 2019-67019-29462.</p>
+    </notes>
+    <notes>
+      <title>Data Availability Statement</title>
+      <p>Tree growth data was obtained from [<xref ref-type="bibr" rid="B18-forests-13-00305">18</xref>] and is available from <uri>https://www.mkrf.forestry.ubc.ca/research/research-projects-database/</uri> (accessed on 10 February 2022) with the permission of the University of British Columbia.</p>
+    </notes>
+    <ack>
+      <title>Acknowledgments</title>
+      <p>We thank Preston Green (Miller Timber Services) for information on operation of tethered cut-to-length harvest systems, Ken Hoffine and Eric Parazoo (Lone Rock Resources) for information on operation on cable yarder systems, Kathy Kihara (civil engineer, retired) for describing approaches to heavy equipment maintenance and operator compensation and scheduling, and Doug Maguire (Oregon State University, emeritus) for observations on taper equation behavior when predicting felling diameters.</p>
+    </ack>
+    <notes notes-type="COI-statement">
+      <title>Conflicts of Interest</title>
+      <p>The authors declare no conflict of interest. The funders had no role in the design of the study; in the collection, analyses, or interpretation of data; in the writing of the manuscript, or in the decision to publish the results.</p>
+    </notes>
+    <ref-list>
+      <title>References</title>
+      <ref id="B1-forests-13-00305">
+        <label>1.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Parkatti</surname>
+              <given-names>V.-P.</given-names>
+            </name>
+            <name>
+              <surname>Tahvonen</surname>
+              <given-names>O.</given-names>
+            </name>
+          </person-group>
+          <article-title>Optimizing continuous cover and rotation forestry in mixed-species boreal forests</article-title>
+          <source>Can. J. For. Res.</source>
+          <year>2020</year>
+          <volume>50</volume>
+          <fpage>1138</fpage>
+          <lpage>1151</lpage>
+          <pub-id pub-id-type="doi">10.1139/cjfr-2020-0056</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B2-forests-13-00305">
+        <label>2.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Fransson</surname>
+              <given-names>P.</given-names>
+            </name>
+            <name>
+              <surname>Franklin</surname>
+              <given-names>O.</given-names>
+            </name>
+            <name>
+              <surname>Lindroos</surname>
+              <given-names>O.</given-names>
+            </name>
+            <name>
+              <surname>Nilsson</surname>
+              <given-names>U.</given-names>
+            </name>
+            <name>
+              <surname>Br&#xE4;nnstr&#xF6;m</surname>
+              <given-names>&#xC5;.</given-names>
+            </name>
+          </person-group>
+          <article-title>A simulation-based approach to a near-optimal thinning strategy: Allowing harvesting times to be determined for individual trees</article-title>
+          <source>Can. J. For. Res.</source>
+          <year>2019</year>
+          <fpage>320</fpage>
+          <lpage>331</lpage>
+          <pub-id pub-id-type="doi">10.1139/cjfr-2019-0053</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B3-forests-13-00305">
+        <label>3.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Visser</surname>
+              <given-names>R.</given-names>
+            </name>
+            <name>
+              <surname>Harrill</surname>
+              <given-names>H.</given-names>
+            </name>
+          </person-group>
+          <article-title>Cable Yarding in North America and New Zealand: A Review of Developments and Practices</article-title>
+          <source>Croat. J. For. Eng.</source>
+          <year>2017</year>
+          <volume>38</volume>
+          <fpage>209</fpage>
+          <lpage>217</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B4-forests-13-00305">
+        <label>4.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Lindroos</surname>
+              <given-names>O.</given-names>
+            </name>
+            <name>
+              <surname>Cavalli</surname>
+              <given-names>R.</given-names>
+            </name>
+          </person-group>
+          <article-title>Cable yarding productivity models: A systematic review over the period 2000&#x2013;2011</article-title>
+          <source>Int. J. For. Eng.</source>
+          <year>2016</year>
+          <volume>27</volume>
+          <fpage>79</fpage>
+          <lpage>94</lpage>
+          <pub-id pub-id-type="doi">10.1080/14942119.2016.1198633</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B5-forests-13-00305">
+        <label>5.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Hartley</surname>
+              <given-names>D.S.</given-names>
+            </name>
+            <name>
+              <surname>Han</surname>
+              <given-names>H.-S.</given-names>
+            </name>
+          </person-group>
+          <article-title>Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington</article-title>
+          <source>West. J. Appl. For.</source>
+          <year>2007</year>
+          <volume>22</volume>
+          <fpage>204</fpage>
+          <lpage>212</lpage>
+          <pub-id pub-id-type="doi">10.1093/wjaf/22.3.204</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B6-forests-13-00305">
+        <label>6.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Visser</surname>
+              <given-names>R.</given-names>
+            </name>
+            <name>
+              <surname>Stampfer</surname>
+              <given-names>K.</given-names>
+            </name>
+          </person-group>
+          <article-title>Expanding Ground-based Harvesting onto Steep Terrain: A Review</article-title>
+          <source>Croat. J. For. Eng.</source>
+          <year>2015</year>
+          <volume>36</volume>
+          <fpage>321</fpage>
+          <lpage>331</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B7-forests-13-00305">
+        <label>7.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Holzleitner</surname>
+              <given-names>F.</given-names>
+            </name>
+            <name>
+              <surname>Kastner</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Stampfer</surname>
+              <given-names>K.</given-names>
+            </name>
+            <name>
+              <surname>H&#xF6;ller</surname>
+              <given-names>N.</given-names>
+            </name>
+            <name>
+              <surname>Kanzian</surname>
+              <given-names>C.</given-names>
+            </name>
+          </person-group>
+          <article-title>Monitoring Cable Tensile Forces of Winch-Assist Harvester and Forwarder Operations in Steep Terrain</article-title>
+          <source>Forests</source>
+          <year>2018</year>
+          <volume>9</volume>
+          <elocation-id>53</elocation-id>
+          <pub-id pub-id-type="doi">10.3390/f9020053</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B8-forests-13-00305">
+        <label>8.</label>
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Amishev</surname>
+              <given-names>D.</given-names>
+            </name>
+            <name>
+              <surname>Hunt</surname>
+              <given-names>J.</given-names>
+            </name>
+            <name>
+              <surname>Boswell</surname>
+              <given-names>B.</given-names>
+            </name>
+          </person-group>
+          <source>Best Management Practices for Winch-Assist Equipment, version 2.0.</source>
+          <publisher-name>FPInnovations</publisher-name>
+          <publisher-loc>Pointe-Claire, QC, Canada</publisher-loc>
+          <year>2019</year>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www2.bcforestsafe.org/node/3452" ext-link-type="uri">https://www2.bcforestsafe.org/node/3452</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2022-02-10">(accessed on 10 February 2022)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B9-forests-13-00305">
+        <label>9.</label>
+        <element-citation publication-type="web">
+          <article-title>Ponsse Solutions for Steep Slope Harvesting</article-title>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.youtube.com/watch?v=jz5nOIA-aSQ" ext-link-type="uri">https://www.youtube.com/watch?v=jz5nOIA-aSQ</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2021-08-26">(accessed on 26 August 2021)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B10-forests-13-00305">
+        <label>10.</label>
+        <element-citation publication-type="web">
+          <article-title>ClimbMAX Steep Slope Harvester</article-title>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.climbmax.co.nz/" ext-link-type="uri">http://www.climbmax.co.nz/</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2021-09-27">(accessed on 27 September 2021)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B11-forests-13-00305">
+        <label>11.</label>
+        <element-citation publication-type="web">
+          <article-title>Remote Operated Bulldozer for Steep Slope Felling</article-title>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://remotebulldozer.com/" ext-link-type="uri">https://remotebulldozer.com/</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2021-09-27">(accessed on 27 September 2021)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B12-forests-13-00305">
+        <label>12.</label>
+        <element-citation publication-type="gov">
+          <article-title>OR-OSHA Administrative Order 5-2003. OAR 437-007&#x2013;0935</article-title>
+          <year>2003</year>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://osha.oregon.gov/rules/final/Pages/division-7.aspx" ext-link-type="uri">https://osha.oregon.gov/rules/final/Pages/division-7.aspx</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2021-09-27">(accessed on 27 September 2021)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B13-forests-13-00305">
+        <label>13.</label>
+        <element-citation publication-type="gov">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Naillon</surname>
+              <given-names>T.</given-names>
+            </name>
+            <name>
+              <surname>Rappin</surname>
+              <given-names>C.</given-names>
+            </name>
+          </person-group>
+          <source>Best Management and Operating Practices for Steep Slope Machine Logging. Safety and Health Assessment and Research for Prevention (SHARP) Program</source>
+          <publisher-name>Washington State Department of Labor &amp; Industries</publisher-name>
+          <publisher-loc>Olympia, WA, USA</publisher-loc>
+          <year>2019</year>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.lni.wa.gov/safety-health/safety-research/ongoing-projects/logging" ext-link-type="uri">https://www.lni.wa.gov/safety-health/safety-research/ongoing-projects/logging</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2022-02-10">(accessed on 10 February 2022)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B14-forests-13-00305">
+        <label>14.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Bell</surname>
+              <given-names>D.M.</given-names>
+            </name>
+            <name>
+              <surname>Acker</surname>
+              <given-names>S.A.</given-names>
+            </name>
+            <name>
+              <surname>Gregory</surname>
+              <given-names>M.J.</given-names>
+            </name>
+            <name>
+              <surname>Davis</surname>
+              <given-names>R.J.</given-names>
+            </name>
+            <name>
+              <surname>Garcia</surname>
+              <given-names>B.A.</given-names>
+            </name>
+          </person-group>
+          <article-title>Quantifying regional trends in large live tree and snag availability in support of forest management</article-title>
+          <source>For. Ecol. Manag.</source>
+          <year>2021</year>
+          <volume>479</volume>
+          <fpage>118554</fpage>
+          <pub-id pub-id-type="doi">10.1016/j.foreco.2020.118554</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B15-forests-13-00305">
+        <label>15.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Puettmann</surname>
+              <given-names>K.</given-names>
+            </name>
+            <name>
+              <surname>Ares</surname>
+              <given-names>A.</given-names>
+            </name>
+            <name>
+              <surname>Burton</surname>
+              <given-names>J.</given-names>
+            </name>
+            <name>
+              <surname>Dodson</surname>
+              <given-names>E.</given-names>
+            </name>
+          </person-group>
+          <article-title>Forest Restoration Using Variable Density Thinning: Lessons from Douglas-Fir Stands in Western Oregon</article-title>
+          <source>Forests</source>
+          <year>2016</year>
+          <volume>7</volume>
+          <elocation-id>310</elocation-id>
+          <pub-id pub-id-type="doi">10.3390/f7120310</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B16-forests-13-00305">
+        <label>16.</label>
+        <element-citation publication-type="gov">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Barbour</surname>
+              <given-names>R.J.</given-names>
+            </name>
+            <name>
+              <surname>Parry</surname>
+              <given-names>D.L.</given-names>
+            </name>
+          </person-group>
+          <source>Log and Lumber Grades as Indicators of Wood Quality in 20- to 100-Year-old Douglas-Fir Trees from Thinned and Unthinned Stands</source>
+          <publisher-name>U.S. Department of Agriculture, Forest Service, Pacific Northwest Research Station</publisher-name>
+          <publisher-loc>Portland, OR, USA</publisher-loc>
+          <year>2001</year>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.fs.usda.gov/treesearch/pubs/2921" ext-link-type="uri">https://www.fs.usda.gov/treesearch/pubs/2921</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2022-02-10">(accessed on 10 February 2022)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B17-forests-13-00305">
+        <label>17.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Ekholm</surname>
+              <given-names>T.</given-names>
+            </name>
+          </person-group>
+          <article-title>Optimal forest rotation under carbon pricing and forest damage risk</article-title>
+          <source>For. Policy Econ.</source>
+          <year>2020</year>
+          <volume>115</volume>
+          <fpage>102131</fpage>
+          <pub-id pub-id-type="doi">10.1016/j.forpol.2020.102131</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B18-forests-13-00305">
+        <label>18.</label>
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <collab>Malcolm Knapp Research Forest</collab>
+          </person-group>
+          <source>Influence of Spacing on Growth of Douglas-Fir, Western hemlock, and Western Red Cedar in Plantations, [dataset] RP 1957-05</source>
+          <publisher-name>University of British Columbia</publisher-name>
+          <publisher-loc>Vancouver, BC, Canada</publisher-loc>
+          <year>2021</year>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.mkrf.forestry.ubc.ca/research/research-projects-database/" ext-link-type="uri">https://www.mkrf.forestry.ubc.ca/research/research-projects-database/</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2022-02-10">(accessed on 10 February 2022)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B19-forests-13-00305">
+        <label>19.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Kline</surname>
+              <given-names>J.D.</given-names>
+            </name>
+            <name>
+              <surname>Harmon</surname>
+              <given-names>M.E.</given-names>
+            </name>
+            <name>
+              <surname>Spies</surname>
+              <given-names>T.A.</given-names>
+            </name>
+            <name>
+              <surname>Morzillo</surname>
+              <given-names>A.T.</given-names>
+            </name>
+            <name>
+              <surname>Pabst</surname>
+              <given-names>R.J.</given-names>
+            </name>
+            <name>
+              <surname>McComb</surname>
+              <given-names>B.C.</given-names>
+            </name>
+            <name>
+              <surname>Schnekenburger</surname>
+              <given-names>F.</given-names>
+            </name>
+            <name>
+              <surname>Olsen</surname>
+              <given-names>K.A.</given-names>
+            </name>
+            <name>
+              <surname>Csuti</surname>
+              <given-names>B.</given-names>
+            </name>
+            <name>
+              <surname>Vogeler</surname>
+              <given-names>J.C.</given-names>
+            </name>
+          </person-group>
+          <article-title>Evaluating carbon storage, timber harvest, and habitat possibilities for a Western Cascades (USA) forest landscape</article-title>
+          <source>Ecol. Appl.</source>
+          <year>2016</year>
+          <volume>26</volume>
+          <fpage>2044</fpage>
+          <lpage>2059</lpage>
+          <pub-id pub-id-type="doi">10.1002/eap.1358</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B20-forests-13-00305">
+        <label>20.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Diaz</surname>
+              <given-names>D.</given-names>
+            </name>
+            <name>
+              <surname>Loreno</surname>
+              <given-names>S.</given-names>
+            </name>
+            <name>
+              <surname>Ettl</surname>
+              <given-names>G.</given-names>
+            </name>
+            <name>
+              <surname>Davies</surname>
+              <given-names>B.</given-names>
+            </name>
+          </person-group>
+          <article-title>Tradeoffs in Timber, Carbon, and Cash Flow under Alternative Management Systems for Douglas-Fir in the Pacific Northwest</article-title>
+          <source>Forests</source>
+          <year>2018</year>
+          <volume>9</volume>
+          <elocation-id>447</elocation-id>
+          <pub-id pub-id-type="doi">10.3390/f9080447</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B21-forests-13-00305">
+        <label>21.</label>
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <collab>Oregon State University College of Forestry</collab>
+          </person-group>
+          <source>OSU Elliott State Research Forest Proposal</source>
+          <publisher-name>Oregon State University College of Forestry</publisher-name>
+          <publisher-loc>Corvallis, OR, USA</publisher-loc>
+          <year>2021</year>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.forestry.oregonstate.edu/elliott-state-forest/" ext-link-type="uri">https://www.forestry.oregonstate.edu/elliott-state-forest/</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2021-09-27">(accessed on 27 September 2021)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B22-forests-13-00305">
+        <label>22.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Acuna</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Skinnell</surname>
+              <given-names>J.</given-names>
+            </name>
+            <name>
+              <surname>Evanson</surname>
+              <given-names>T.</given-names>
+            </name>
+            <name>
+              <surname>Mitchell</surname>
+              <given-names>R.</given-names>
+            </name>
+          </person-group>
+          <article-title>Bunching with a Self-levelling Feller-Buncher on Steep Terrain for Efficient Yarder Extraction</article-title>
+          <source>Croat. J. For. Eng.</source>
+          <year>2011</year>
+          <volume>23</volume>
+          <fpage>521</fpage>
+          <lpage>531</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B23-forests-13-00305">
+        <label>23.</label>
+        <element-citation publication-type="confproc">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Amishev</surname>
+              <given-names>D.</given-names>
+            </name>
+            <name>
+              <surname>Evanson</surname>
+              <given-names>T.</given-names>
+            </name>
+          </person-group>
+          <article-title>Innovative methods for steep terrain harvesting</article-title>
+          <source>Proceedings of the 43th International Symposium on Forestry Mechanisation: &#x201C;Forest Engineering: Meeting the Needs of the Society and the Environment&#x201D;</source>
+          <conf-loc>Padova, Italy</conf-loc>
+          <conf-date>11&#x2013;14 July 2010</conf-date>
+        </element-citation>
+      </ref>
+      <ref id="B24-forests-13-00305">
+        <label>24.</label>
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Dyson</surname>
+              <given-names>P.</given-names>
+            </name>
+            <name>
+              <surname>Boswell</surname>
+              <given-names>B.</given-names>
+            </name>
+          </person-group>
+          <source>Winch-Assisted Feller-Buncher Equipped with a Continuous-Rotation Disc Saw: Short-Term Productivity Assessment</source>
+          <publisher-name>FPInnovations</publisher-name>
+          <publisher-loc>Pointe-Claire, QC, Canada</publisher-loc>
+          <year>2016</year>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://library.fpinnovations.ca/en/permalink/fpipub40268" ext-link-type="uri">https://library.fpinnovations.ca/en/permalink/fpipub40268</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2021-09-27">(accessed on 27 September 2021)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B25-forests-13-00305">
+        <label>25.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Wang</surname>
+              <given-names>J.</given-names>
+            </name>
+            <name>
+              <surname>Long</surname>
+              <given-names>C.</given-names>
+            </name>
+            <name>
+              <surname>McNeel</surname>
+              <given-names>J.</given-names>
+            </name>
+          </person-group>
+          <article-title>Production and cost analysis of a feller-buncher and grapple skidder in central Appalachian hardwood forests</article-title>
+          <source>For. Prod. J. Madison</source>
+          <year>2004</year>
+          <volume>54</volume>
+          <fpage>159</fpage>
+          <lpage>167</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B26-forests-13-00305">
+        <label>26.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Eriksson</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Lindroos</surname>
+              <given-names>O.</given-names>
+            </name>
+          </person-group>
+          <article-title>Productivity of harvesters and forwarders in CTL operations in northern Sweden based on large follow-up datasets</article-title>
+          <source>Int. J. For. Eng.</source>
+          <year>2014</year>
+          <volume>25</volume>
+          <fpage>179</fpage>
+          <lpage>200</lpage>
+          <pub-id pub-id-type="doi">10.1080/14942119.2014.974309</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B27-forests-13-00305">
+        <label>27.</label>
+        <element-citation publication-type="thesis">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Heisl</surname>
+              <given-names>P.</given-names>
+            </name>
+          </person-group>
+          <article-title>Productivity Standards for Whole-Tree and Cut-To-Length Harvesting Systems in Maine</article-title>
+          <source>Master&#x2019;s Thesis</source>
+          <publisher-name>University of Maine</publisher-name>
+          <publisher-loc>Orono, ME, USA</publisher-loc>
+          <year>2013</year>
+        </element-citation>
+      </ref>
+      <ref id="B28-forests-13-00305">
+        <label>28.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>K&#xE4;rh&#xE4;</surname>
+              <given-names>K.</given-names>
+            </name>
+            <name>
+              <surname>R&#xF6;nkk&#xF6;</surname>
+              <given-names>E.</given-names>
+            </name>
+            <name>
+              <surname>Gumse</surname>
+              <given-names>S.-I.</given-names>
+            </name>
+          </person-group>
+          <article-title>Productivity and Cutting Costs of Thinning Harvesters</article-title>
+          <source>Int. J. For. Eng.</source>
+          <year>2004</year>
+          <volume>15</volume>
+          <fpage>43</fpage>
+          <lpage>56</lpage>
+          <pub-id pub-id-type="doi">10.1080/14942119.2004.10702496</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B29-forests-13-00305">
+        <label>29.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Nurminen</surname>
+              <given-names>T.</given-names>
+            </name>
+            <name>
+              <surname>Korpunen</surname>
+              <given-names>H.</given-names>
+            </name>
+            <name>
+              <surname>Uusitalo</surname>
+              <given-names>J.</given-names>
+            </name>
+          </person-group>
+          <article-title>Time consumption analysis of the mechanized cut-to-length harvesting system</article-title>
+          <source>Silva Fenn.</source>
+          <year>2006</year>
+          <volume>40</volume>
+          <fpage>346</fpage>
+          <pub-id pub-id-type="doi">10.14214/sf.346</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B30-forests-13-00305">
+        <label>30.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Visser</surname>
+              <given-names>R.</given-names>
+            </name>
+            <name>
+              <surname>Spinelli</surname>
+              <given-names>R.</given-names>
+            </name>
+          </person-group>
+          <article-title>Determining the shape of the productivity function for mechanized felling and felling-processing</article-title>
+          <source>J. For. Res.</source>
+          <year>2012</year>
+          <volume>17</volume>
+          <fpage>397</fpage>
+          <lpage>402</lpage>
+          <pub-id pub-id-type="doi">10.1007/s10310-011-0313-2</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B31-forests-13-00305">
+        <label>31.</label>
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Donald</surname>
+              <given-names>K.</given-names>
+            </name>
+            <name>
+              <surname>Boswell</surname>
+              <given-names>B.</given-names>
+            </name>
+            <name>
+              <surname>Amishev</surname>
+              <given-names>D.</given-names>
+            </name>
+            <name>
+              <surname>Hunt</surname>
+              <given-names>J.</given-names>
+            </name>
+          </person-group>
+          <source>Winch-Assist Harvester: Best Practices</source>
+          <publisher-name>FPInnovations</publisher-name>
+          <publisher-loc>Pointe-Claire, QC, Canada</publisher-loc>
+          <year>2018</year>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://library.fpinnovations.ca/en/permalink/fpipub52594" ext-link-type="uri">https://library.fpinnovations.ca/en/permalink/fpipub52594</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2021-09-27">(accessed on 27 September 2021)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B32-forests-13-00305">
+        <label>32.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Drews</surname>
+              <given-names>E.S.</given-names>
+            </name>
+            <name>
+              <surname>Hartsough</surname>
+              <given-names>B.R.</given-names>
+            </name>
+            <name>
+              <surname>Doyal</surname>
+              <given-names>J.A.</given-names>
+            </name>
+            <name>
+              <surname>Kellogg</surname>
+              <given-names>L.D.</given-names>
+            </name>
+          </person-group>
+          <article-title>Harvester-Forwarder and Harvester-Yarder Systems for Fuel Reduction Treatments</article-title>
+          <source>J. For. Eng.</source>
+          <year>2001</year>
+          <volume>12</volume>
+          <fpage>81</fpage>
+          <lpage>91</lpage>
+          <pub-id pub-id-type="doi">10.1080/08435243.2001.10702766</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B33-forests-13-00305">
+        <label>33.</label>
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Dyson</surname>
+              <given-names>P.</given-names>
+            </name>
+            <name>
+              <surname>Strimbu</surname>
+              <given-names>V.</given-names>
+            </name>
+          </person-group>
+          <source>Assessments of a Winch-Assisted John Deere Harvester and Forwarder</source>
+          <publisher-name>FPInnovations</publisher-name>
+          <publisher-loc>Pointe-Claire, QC, Canada</publisher-loc>
+          <year>2017</year>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://library.fpinnovations.ca/en/permalink/fpipub49568" ext-link-type="uri">https://library.fpinnovations.ca/en/permalink/fpipub49568</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2021-09-27">(accessed on 27 September 2021)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B34-forests-13-00305">
+        <label>34.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Green</surname>
+              <given-names>P.Q.</given-names>
+            </name>
+            <name>
+              <surname>Chung</surname>
+              <given-names>W.</given-names>
+            </name>
+            <name>
+              <surname>Leshchinsky</surname>
+              <given-names>B.</given-names>
+            </name>
+            <name>
+              <surname>Belart</surname>
+              <given-names>F.</given-names>
+            </name>
+            <name>
+              <surname>Sessions</surname>
+              <given-names>J.</given-names>
+            </name>
+            <name>
+              <surname>Fitzgerald</surname>
+              <given-names>S.A.</given-names>
+            </name>
+            <name>
+              <surname>Wimer</surname>
+              <given-names>J.A.</given-names>
+            </name>
+            <name>
+              <surname>Cushing</surname>
+              <given-names>T.</given-names>
+            </name>
+            <name>
+              <surname>Garland</surname>
+              <given-names>J.J.</given-names>
+            </name>
+          </person-group>
+          <article-title>Insight into the Productivity, Cost and Soil Impacts of Cable-assisted Harvester-forwarder Thinning in Western Oregon</article-title>
+          <source>For. Sci.</source>
+          <year>2020</year>
+          <volume>66</volume>
+          <fpage>82</fpage>
+          <lpage>96</lpage>
+          <pub-id pub-id-type="doi">10.1093/forsci/fxz049</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B35-forests-13-00305">
+        <label>35.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Holzleitner</surname>
+              <given-names>F.</given-names>
+            </name>
+            <name>
+              <surname>Stampfer</surname>
+              <given-names>K.</given-names>
+            </name>
+            <name>
+              <surname>Visser</surname>
+              <given-names>R.</given-names>
+            </name>
+          </person-group>
+          <article-title>Utilization Rates and Cost Factors in Timber Harvesting Based on Long-term Machine Data</article-title>
+          <source>Croat. J. For. Eng.</source>
+          <year>2011</year>
+          <volume>32</volume>
+          <fpage>501</fpage>
+          <lpage>508</lpage>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://hrcak.srce.hr/72653" ext-link-type="uri">https://hrcak.srce.hr/72653</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2022-02-10">(accessed on 10 February 2022)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B36-forests-13-00305">
+        <label>36.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Petitmermet</surname>
+              <given-names>J.</given-names>
+            </name>
+            <name>
+              <surname>Sessions</surname>
+              <given-names>J.</given-names>
+            </name>
+            <name>
+              <surname>Bailey</surname>
+              <given-names>J.</given-names>
+            </name>
+            <name>
+              <surname>Zamora-Cristales</surname>
+              <given-names>R.</given-names>
+            </name>
+          </person-group>
+          <article-title>Cost and Productivity of Tethered Cut-to-Length Systems in a Dry-Forest Fuel-Reduction Treatment: A Case Study</article-title>
+          <source>For. Sci.</source>
+          <year>2019</year>
+          <volume>65</volume>
+          <fpage>581</fpage>
+          <lpage>592</lpage>
+          <pub-id pub-id-type="doi">10.1093/forsci/fxz010</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B37-forests-13-00305">
+        <label>37.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Strandgard</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Alam</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Mitchell</surname>
+              <given-names>R.</given-names>
+            </name>
+          </person-group>
+          <article-title>Impact of Slope on Productivity of a Self-levelling Processor</article-title>
+          <source>Croat. J. For. Eng.</source>
+          <year>2014</year>
+          <volume>32</volume>
+          <fpage>193</fpage>
+          <lpage>200</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B38-forests-13-00305">
+        <label>38.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Ghaffariyan</surname>
+              <given-names>M.R.</given-names>
+            </name>
+            <name>
+              <surname>Acuna</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Brown</surname>
+              <given-names>M.W.</given-names>
+            </name>
+          </person-group>
+          <article-title>Machine productivity evaluation for harvesters and forwarders in thinning operations in Australia</article-title>
+          <source>Silva Balc.</source>
+          <year>2019</year>
+          <volume>20</volume>
+          <fpage>13</fpage>
+          <lpage>25</lpage>
+          <pub-id pub-id-type="doi">10.6084/m9.figshare.9929051</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B39-forests-13-00305">
+        <label>39.</label>
+        <element-citation publication-type="confproc">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Mattioda</surname>
+              <given-names>M.</given-names>
+            </name>
+          </person-group>
+          <article-title>CTL Cable-assisted Harvesting</article-title>
+          <source>Proceedings of the 2020 Spring Conference and Workshop; California Licensed Foresters Association</source>
+          <conf-loc>Anderson, CA, USA</conf-loc>
+          <conf-date>6&#x2013;7 March 2020</conf-date>
+        </element-citation>
+      </ref>
+      <ref id="B40-forests-13-00305">
+        <label>40.</label>
+        <element-citation publication-type="thesis">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Uffelman</surname>
+              <given-names>S.</given-names>
+            </name>
+          </person-group>
+          <article-title>The Impact of Understory Vegetation on the Productivity and Costs of Cut-to-length Thinning Harvest Systems in the Pacific Northwest</article-title>
+          <source>Master&#x2019;s Thesis</source>
+          <publisher-name>Oregon State University</publisher-name>
+          <publisher-loc>Corvallis, OR, USA</publisher-loc>
+          <year>2019</year>
+        </element-citation>
+      </ref>
+      <ref id="B41-forests-13-00305">
+        <label>41.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Renzie</surname>
+              <given-names>C.</given-names>
+            </name>
+            <name>
+              <surname>Han</surname>
+              <given-names>H.-S.</given-names>
+            </name>
+          </person-group>
+          <article-title>Harvesting Productivity and Cost of Clearcut and Partial Cut in Interior British Columbia, Canada</article-title>
+          <source>J. For. Environ. Sci.</source>
+          <year>2008</year>
+          <volume>24</volume>
+          <fpage>1</fpage>
+          <lpage>14</lpage>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.koreascience.or.kr/article/JAKO200822350101567.page" ext-link-type="uri">https://www.koreascience.or.kr/article/JAKO200822350101567.page</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2021-09-27">(accessed on 27 September 2021)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B42-forests-13-00305">
+        <label>42.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Jourgholami</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Majnounian</surname>
+              <given-names>B.</given-names>
+            </name>
+            <name>
+              <surname>Zargham</surname>
+              <given-names>N.</given-names>
+            </name>
+          </person-group>
+          <article-title>Performance, Capability and Costs of Motor-Manual Tree Felling in Hyrcanian Hardwood Forest</article-title>
+          <source>Croat. J. For. Eng.</source>
+          <year>2013</year>
+          <volume>34</volume>
+          <fpage>283</fpage>
+          <lpage>293</lpage>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://hrcak.srce.hr/116784" ext-link-type="uri">https://hrcak.srce.hr/116784</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2021-09-27">(accessed on 27 September 2021)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B43-forests-13-00305">
+        <label>43.</label>
+        <element-citation publication-type="thesis">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Jukes</surname>
+              <given-names>W.D.</given-names>
+            </name>
+          </person-group>
+          <article-title>Estimating Harvesting Productivity and Cost on Second-Growth Coastal Sites in British Columbia</article-title>
+          <source>Master&#x2019;s Thesis</source>
+          <publisher-name>University of British Columbia</publisher-name>
+          <publisher-loc>Vancouver, BC, Canada</publisher-loc>
+          <year>1995</year>
+        </element-citation>
+      </ref>
+      <ref id="B44-forests-13-00305">
+        <label>44.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Gagliardi</surname>
+              <given-names>K.</given-names>
+            </name>
+            <name>
+              <surname>Ackerman</surname>
+              <given-names>S.</given-names>
+            </name>
+            <name>
+              <surname>Ackerman</surname>
+              <given-names>P.</given-names>
+            </name>
+          </person-group>
+          <article-title>Multi-Product Forwarder-Based Timber Extraction: Time Consumption and Productivity Analysis of Two Forwarder Models Over Multiple Products and Extraction Distances</article-title>
+          <source>Croat. J. For. Eng.</source>
+          <year>2020</year>
+          <volume>41</volume>
+          <fpage>231</fpage>
+          <lpage>242</lpage>
+          <pub-id pub-id-type="doi">10.5552/crojfe.2020.736</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B45-forests-13-00305">
+        <label>45.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Adebayo</surname>
+              <given-names>A.B.</given-names>
+            </name>
+            <name>
+              <surname>Han</surname>
+              <given-names>H.-S.</given-names>
+            </name>
+            <name>
+              <surname>Johnson</surname>
+              <given-names>L.</given-names>
+            </name>
+          </person-group>
+          <article-title>Productivity and cost of cut-to-length and whole-tree harvesting in a mixed-conifer stand</article-title>
+          <source>For. Prod. J.</source>
+          <year>2007</year>
+          <volume>57</volume>
+          <fpage>59</fpage>
+          <lpage>69</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B46-forests-13-00305">
+        <label>46.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Ghaffariyan</surname>
+              <given-names>M.R.</given-names>
+            </name>
+            <name>
+              <surname>Sessions</surname>
+              <given-names>J.</given-names>
+            </name>
+            <name>
+              <surname>Brown</surname>
+              <given-names>M.</given-names>
+            </name>
+          </person-group>
+          <article-title>Machine productivity and residual harvesting residues associated with a cut-to-length harvest system in southern Tasmania</article-title>
+          <source>South. For. J. For. Sci.</source>
+          <year>2012</year>
+          <volume>74</volume>
+          <fpage>229</fpage>
+          <lpage>235</lpage>
+          <pub-id pub-id-type="doi">10.2989/20702620.2012.741770</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B47-forests-13-00305">
+        <label>47.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Hildt</surname>
+              <given-names>E.</given-names>
+            </name>
+            <name>
+              <surname>Leszczuk</surname>
+              <given-names>A.</given-names>
+            </name>
+            <name>
+              <surname>Mac Donagh</surname>
+              <given-names>P.</given-names>
+            </name>
+            <name>
+              <surname>Schlichter</surname>
+              <given-names>T.</given-names>
+            </name>
+          </person-group>
+          <article-title>Time Consumption Analysis of Forwarder Activities in Thinning</article-title>
+          <source>Croat. J. For. Eng.</source>
+          <year>2020</year>
+          <volume>41</volume>
+          <fpage>13</fpage>
+          <lpage>24</lpage>
+          <pub-id pub-id-type="doi">10.5552/crojfe.2020.615</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B48-forests-13-00305">
+        <label>48.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Strandgard</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Mitchell</surname>
+              <given-names>R.</given-names>
+            </name>
+            <name>
+              <surname>Acuna</surname>
+              <given-names>M.</given-names>
+            </name>
+          </person-group>
+          <article-title>Time consumption and productivity of a forwarder operating on a slope in a cut-to-length harvest system in a Pinus radiata D. Don pine plantation</article-title>
+          <source>J. For. Sci.</source>
+          <year>2017</year>
+          <volume>63</volume>
+          <fpage>324</fpage>
+          <lpage>330</lpage>
+          <pub-id pub-id-type="doi">10.17221/10/2017-JFS</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B49-forests-13-00305">
+        <label>49.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Akay</surname>
+              <given-names>A.E.</given-names>
+            </name>
+            <name>
+              <surname>Erdas</surname>
+              <given-names>O.</given-names>
+            </name>
+            <name>
+              <surname>Sessions</surname>
+              <given-names>J.</given-names>
+            </name>
+          </person-group>
+          <article-title>Determining Productivity of Mechanized Harvesting Machines</article-title>
+          <source>J. Appl. Sci.</source>
+          <year>2003</year>
+          <volume>4</volume>
+          <fpage>100</fpage>
+          <lpage>105</lpage>
+          <pub-id pub-id-type="doi">10.3923/jas.2004.100.105</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B50-forests-13-00305">
+        <label>50.</label>
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Donald</surname>
+              <given-names>K.</given-names>
+            </name>
+            <name>
+              <surname>Boswell</surname>
+              <given-names>B.</given-names>
+            </name>
+            <name>
+              <surname>Amishev</surname>
+              <given-names>D.</given-names>
+            </name>
+            <name>
+              <surname>Hunt</surname>
+              <given-names>J.</given-names>
+            </name>
+          </person-group>
+          <source>Winch-Assist Forwarder: Best Practices</source>
+          <publisher-name>FPInnovations</publisher-name>
+          <publisher-loc>Pointe-Claire, QC, Canada</publisher-loc>
+          <year>2018</year>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://library.fpinnovations.ca/en/permalink/fpipub52697" ext-link-type="uri">https://library.fpinnovations.ca/en/permalink/fpipub52697</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2021-09-27">(accessed on 27 September 2021)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B51-forests-13-00305">
+        <label>51.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Engelbrecht</surname>
+              <given-names>R.</given-names>
+            </name>
+            <name>
+              <surname>McEwan</surname>
+              <given-names>A.</given-names>
+            </name>
+            <name>
+              <surname>Spinelli</surname>
+              <given-names>R.</given-names>
+            </name>
+          </person-group>
+          <article-title>A Robust Productivity Model for Grapple Yarding in Fast-Growing Tree Plantations</article-title>
+          <source>Forests</source>
+          <year>2017</year>
+          <volume>8</volume>
+          <elocation-id>396</elocation-id>
+          <pub-id pub-id-type="doi">10.3390/f8100396</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B52-forests-13-00305">
+        <label>52.</label>
+        <element-citation publication-type="gov">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Howard</surname>
+              <given-names>A.F.</given-names>
+            </name>
+            <name>
+              <surname>Rutherford</surname>
+              <given-names>D.</given-names>
+            </name>
+            <name>
+              <surname>Young</surname>
+              <given-names>G.G.</given-names>
+            </name>
+          </person-group>
+          <source>The Productivity and Cost of Partial and Clear Cutting with Two Cable Yarding Systems in Second-Growth Forests of Coastal British Columbia</source>
+          <publisher-name>Natural Resources Canada</publisher-name>
+          <publisher-loc>Victoria, BC, Canada</publisher-loc>
+          <year>1996</year>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://scf.rncan.gc.ca/publications?id=4331" ext-link-type="uri">https://scf.rncan.gc.ca/publications?id=4331</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2021-09-27">(accessed on 27 September 2021)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B53-forests-13-00305">
+        <label>53.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Spinelli</surname>
+              <given-names>R.</given-names>
+            </name>
+            <name>
+              <surname>Marchi</surname>
+              <given-names>E.</given-names>
+            </name>
+            <name>
+              <surname>Visser</surname>
+              <given-names>R.</given-names>
+            </name>
+            <name>
+              <surname>Harrill</surname>
+              <given-names>H.</given-names>
+            </name>
+            <name>
+              <surname>Gallo</surname>
+              <given-names>R.</given-names>
+            </name>
+            <name>
+              <surname>Cambi</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Neri</surname>
+              <given-names>F.</given-names>
+            </name>
+            <name>
+              <surname>Lombardini</surname>
+              <given-names>C.</given-names>
+            </name>
+            <name>
+              <surname>Magagnotti</surname>
+              <given-names>N.</given-names>
+            </name>
+          </person-group>
+          <article-title>The effect of carriage type on yarding productivity and cost</article-title>
+          <source>Int. J. For. Eng.</source>
+          <year>2017</year>
+          <volume>28</volume>
+          <fpage>34</fpage>
+          <lpage>41</lpage>
+          <pub-id pub-id-type="doi">10.1080/14942119.2016.1267970</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B54-forests-13-00305">
+        <label>54.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Medved</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Olgris</surname>
+              <given-names>N.</given-names>
+            </name>
+            <name>
+              <surname>Klun</surname>
+              <given-names>J.</given-names>
+            </name>
+            <name>
+              <surname>Ko&#x161;ir</surname>
+              <given-names>B.</given-names>
+            </name>
+            <name>
+              <surname>Von&#x10D;ina</surname>
+              <given-names>R.</given-names>
+            </name>
+          </person-group>
+          <article-title>Koledarski &#x10D;as in u&#x10D;inki dela z &#x17E;i&#x10D;nimi napravami Syncrofalke na Tolminskem</article-title>
+          <source>Zb. Gozdarstva Lesar.</source>
+          <year>2005</year>
+          <volume>77</volume>
+          <fpage>113</fpage>
+          <lpage>142</lpage>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.forestry.bf.uni-lj.si/kazalo77.htm" ext-link-type="uri">https://www.forestry.bf.uni-lj.si/kazalo77.htm</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2021-08-08">(accessed on 8 August 2021)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B55-forests-13-00305">
+        <label>55.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Stampfer</surname>
+              <given-names>K.</given-names>
+            </name>
+            <name>
+              <surname>Visser</surname>
+              <given-names>R.</given-names>
+            </name>
+            <name>
+              <surname>Kanzian</surname>
+              <given-names>C.</given-names>
+            </name>
+          </person-group>
+          <article-title>Cable Corridor Installation Times for European Yarders</article-title>
+          <source>Int. J. For. Eng.</source>
+          <year>2006</year>
+          <volume>17</volume>
+          <fpage>71</fpage>
+          <lpage>77</lpage>
+          <pub-id pub-id-type="doi">10.1080/14942119.2006.10702536</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B56-forests-13-00305">
+        <label>56.</label>
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Kellogg</surname>
+              <given-names>L.D.</given-names>
+            </name>
+            <name>
+              <surname>Miller</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Olsen</surname>
+              <given-names>E.</given-names>
+            </name>
+          </person-group>
+          <source>Skyline Thinning Production and Costs: Experience from the Willamette Young Stand Projects</source>
+          <publisher-name>Oregon State University</publisher-name>
+          <publisher-loc>Corvallis, OR, USA</publisher-loc>
+          <year>1999</year>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://ir.library.oregonstate.edu/concern/technical_reports/6q182q69g" ext-link-type="uri">https://ir.library.oregonstate.edu/concern/technical_reports/6q182q69g</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2021-08-23">(accessed on 23 August 2021)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B57-forests-13-00305">
+        <label>57.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Tolan</surname>
+              <given-names>A.</given-names>
+            </name>
+            <name>
+              <surname>Visser</surname>
+              <given-names>R.</given-names>
+            </name>
+          </person-group>
+          <article-title>The effect of the number of log sorts on mechanized log processing productivity and value recovery</article-title>
+          <source>Int. J. For. Eng.</source>
+          <year>2015</year>
+          <volume>26</volume>
+          <fpage>36</fpage>
+          <lpage>47</lpage>
+          <pub-id pub-id-type="doi">10.1080/14942119.2015.1011404</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B58-forests-13-00305">
+        <label>58.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Mousavi</surname>
+              <given-names>R.</given-names>
+            </name>
+            <name>
+              <surname>Naghdi</surname>
+              <given-names>R.</given-names>
+            </name>
+          </person-group>
+          <article-title>Time consumption and productivity analysis of timber trucking using two kinds of trucks in northern Iran</article-title>
+          <source>J. For. Sci.</source>
+          <year>2013</year>
+          <volume>59</volume>
+          <fpage>211</fpage>
+          <lpage>221</lpage>
+          <pub-id pub-id-type="doi">10.17221/10/2013-JFS</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B59-forests-13-00305">
+        <label>59.</label>
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Mason</surname>
+              <given-names>C.L.</given-names>
+            </name>
+            <name>
+              <surname>Casavant</surname>
+              <given-names>K.L.</given-names>
+            </name>
+            <name>
+              <surname>Lippke</surname>
+              <given-names>B.R.</given-names>
+            </name>
+            <name>
+              <surname>Nguyen</surname>
+              <given-names>D.K.</given-names>
+            </name>
+            <name>
+              <surname>Jessup</surname>
+              <given-names>E.</given-names>
+            </name>
+          </person-group>
+          <source>The Washington Log Trucking Industry: Costs and Safety Analysis</source>
+          <publisher-name>The Rural Technology Initiative and the Transportation Research Group, Washington State University</publisher-name>
+          <publisher-loc>Seattle, WA, USA</publisher-loc>
+          <year>2008</year>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.ruraltech.org/pubs/reports/2008/log_trucks/" ext-link-type="uri">https://www.ruraltech.org/pubs/reports/2008/log_trucks/</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2021-08-30">(accessed on 30 August 2021)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B60-forests-13-00305">
+        <label>60.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Han</surname>
+              <given-names>S.-K.</given-names>
+            </name>
+            <name>
+              <surname>Murphy</surname>
+              <given-names>G.</given-names>
+            </name>
+          </person-group>
+          <article-title>Trucking Productivity and Costing Model for Transportation of Recovered Wood Waste in Oregon</article-title>
+          <source>For. Prod. J.</source>
+          <year>2011</year>
+          <volume>61</volume>
+          <fpage>552</fpage>
+          <lpage>560</lpage>
+          <pub-id pub-id-type="doi">10.13073/0015-7473-61.7.552</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B61-forests-13-00305">
+        <label>61.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Ghaffariyan</surname>
+              <given-names>M.R.</given-names>
+            </name>
+          </person-group>
+          <article-title>Reviewing productivity studies of skidders working in coniferous forests and plantations</article-title>
+          <source>Silva Balc.</source>
+          <year>2020</year>
+          <volume>21</volume>
+          <fpage>83</fpage>
+          <lpage>98</lpage>
+          <pub-id pub-id-type="doi">10.3897/silvabalcanica.21.e56071</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B62-forests-13-00305">
+        <label>62.</label>
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Strimbu</surname>
+              <given-names>V.</given-names>
+            </name>
+            <name>
+              <surname>Boswell</surname>
+              <given-names>B.</given-names>
+            </name>
+          </person-group>
+          <source>Adverse Skidding Using a Tigercat 635E Assisted by a T-Winch 10.1</source>
+          <publisher-name>FPInnovations</publisher-name>
+          <publisher-loc>Pointe-Claire, QC, Canada</publisher-loc>
+          <year>2018</year>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://library.fpinnovations.ca/en/permalink/fpipub49844" ext-link-type="uri">https://library.fpinnovations.ca/en/permalink/fpipub49844</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2021-09-27">(accessed on 27 September 2021)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B63-forests-13-00305">
+        <label>63.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Proto</surname>
+              <given-names>A.R.</given-names>
+            </name>
+            <name>
+              <surname>Macr&#xEC;</surname>
+              <given-names>G.</given-names>
+            </name>
+            <name>
+              <surname>Visser</surname>
+              <given-names>R.</given-names>
+            </name>
+            <name>
+              <surname>Harrill</surname>
+              <given-names>H.</given-names>
+            </name>
+            <name>
+              <surname>Russo</surname>
+              <given-names>D.</given-names>
+            </name>
+            <name>
+              <surname>Zimbalatti</surname>
+              <given-names>G.</given-names>
+            </name>
+          </person-group>
+          <article-title>Factors affecting forwarder productivity</article-title>
+          <source>Eur. J. For. Res.</source>
+          <year>2018</year>
+          <volume>137</volume>
+          <fpage>143</fpage>
+          <lpage>151</lpage>
+          <pub-id pub-id-type="doi">10.1007/s10342-017-1088-6</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B64-forests-13-00305">
+        <label>64.</label>
+        <element-citation publication-type="gov">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Miles</surname>
+              <given-names>P.D.</given-names>
+            </name>
+            <name>
+              <surname>Smith</surname>
+              <given-names>B.W.</given-names>
+            </name>
+          </person-group>
+          <source>Specific Gravity and Other Properties of Wood and Bark for 156 Tree Species Found in North America</source>
+          <publisher-name>U.S. Department of Agriculture, Forest Service, Northern Research Station</publisher-name>
+          <publisher-loc>Newtown Square, PA, USA</publisher-loc>
+          <year>2009</year>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.fs.usda.gov/treesearch/pubs/34185" ext-link-type="uri">https://www.fs.usda.gov/treesearch/pubs/34185</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2021-08-30">(accessed on 30 August 2021)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B65-forests-13-00305">
+        <label>65.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Murphy</surname>
+              <given-names>G.</given-names>
+            </name>
+            <name>
+              <surname>Acuna</surname>
+              <given-names>M.</given-names>
+            </name>
+          </person-group>
+          <article-title>Effect of harvesting season, system and equipment on in-forest <italic>Pinus radiata</italic> bark removal in Australia and New Zealand</article-title>
+          <source>Int. J. For. Eng.</source>
+          <year>2017</year>
+          <volume>28</volume>
+          <fpage>10</fpage>
+          <lpage>17</lpage>
+          <pub-id pub-id-type="doi">10.1080/14942119.2016.1253269</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B66-forests-13-00305">
+        <label>66.</label>
+        <element-citation publication-type="gov">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Miyata</surname>
+              <given-names>E.S.</given-names>
+            </name>
+          </person-group>
+          <source>Determining Fixed and Operating Costs of Logging Equipment</source>
+          <publisher-name>U.S. Department of Agriculture, Forest Service, North Central Forest Experiment Station</publisher-name>
+          <publisher-loc>St. Paul, MN, USA</publisher-loc>
+          <year>1980</year>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.fs.usda.gov/treesearch/pubs/10120" ext-link-type="uri">https://www.fs.usda.gov/treesearch/pubs/10120</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2021-09-27">(accessed on 27 September 2021)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B67-forests-13-00305">
+        <label>67.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Uusitalo</surname>
+              <given-names>L.</given-names>
+            </name>
+            <name>
+              <surname>Lehikoinen</surname>
+              <given-names>A.</given-names>
+            </name>
+            <name>
+              <surname>Helle</surname>
+              <given-names>I.</given-names>
+            </name>
+            <name>
+              <surname>Myrberg</surname>
+              <given-names>K.</given-names>
+            </name>
+          </person-group>
+          <article-title>An overview of methods to evaluate uncertainty of deterministic models in decision support</article-title>
+          <source>Environ. Model. Softw.</source>
+          <year>2015</year>
+          <volume>63</volume>
+          <fpage>24</fpage>
+          <lpage>31</lpage>
+          <pub-id pub-id-type="doi">10.1016/j.envsoft.2014.09.017</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B68-forests-13-00305">
+        <label>68.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Puy</surname>
+              <given-names>A.</given-names>
+            </name>
+            <name>
+              <surname>Lo Piano</surname>
+              <given-names>S.</given-names>
+            </name>
+            <name>
+              <surname>Saltelli</surname>
+              <given-names>A.</given-names>
+            </name>
+            <name>
+              <surname>Levin</surname>
+              <given-names>S.A.</given-names>
+            </name>
+          </person-group>
+          <article-title>Sensobol: Computation of Variance-Based Sensitivity Indices</article-title>
+          <source>arXiv</source>
+          <year>2021</year>
+          <pub-id pub-id-type="arxiv">2101.10103</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B69-forests-13-00305">
+        <label>69.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Puy</surname>
+              <given-names>A.</given-names>
+            </name>
+            <name>
+              <surname>Becker</surname>
+              <given-names>W.</given-names>
+            </name>
+            <name>
+              <surname>Lo Piano</surname>
+              <given-names>S.</given-names>
+            </name>
+            <name>
+              <surname>Saltelli</surname>
+              <given-names>A.</given-names>
+            </name>
+          </person-group>
+          <article-title>A comprehensive comparison of total-order estimators for global sensitivity analysis</article-title>
+          <source>Int. J. Uncertainity</source>
+          <year>2021</year>
+          <volume>12</volume>
+          <fpage>1</fpage>
+          <lpage>18</lpage>
+          <pub-id pub-id-type="doi">10.1615/Int.J.UncertaintyQuantification.2021038133</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B70-forests-13-00305">
+        <label>70.</label>
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Hann</surname>
+              <given-names>D.W.</given-names>
+            </name>
+            <name>
+              <surname>Marshall</surname>
+              <given-names>D.D.</given-names>
+            </name>
+            <name>
+              <surname>Hanus</surname>
+              <given-names>M.L.</given-names>
+            </name>
+          </person-group>
+          <source>Equations for Predicting Height-to-Crown-Base, 5-Year Diameter-Growth Rate, 5-Year Height-Growth Rate, 5-Year Mortality Rate, and Maximum Size-Density Trajectory for Douglas-fir and Western Hemlock in the Coastal Region of the Pacific Northwest</source>
+          <publisher-name>Research Contribution 40, Forest Research Laboratory Oregon State University</publisher-name>
+          <publisher-loc>Corvallis, OR, USA</publisher-loc>
+          <year>2003</year>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://ir.library.oregonstate.edu/concern/technical_reports/jd472 &#xD7; 893" ext-link-type="uri">https://ir.library.oregonstate.edu/concern/technical_reports/jd472 &#xD7; 893</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2021-12-22">(accessed on 22 December 2021)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B71-forests-13-00305">
+        <label>71.</label>
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Weiskittel</surname>
+              <given-names>A.R.</given-names>
+            </name>
+            <name>
+              <surname>Hann</surname>
+              <given-names>D.W.</given-names>
+            </name>
+            <name>
+              <surname>Kershaw</surname>
+              <given-names>J.A.</given-names>
+            </name>
+            <name>
+              <surname>Vanclay</surname>
+              <given-names>J.K.</given-names>
+            </name>
+          </person-group>
+          <source>Forest Growth and Yield Modeling</source>
+          <publisher-name>Wiley-Blackwell</publisher-name>
+          <publisher-loc>Chichester, UK</publisher-loc>
+          <year>2011</year>
+          <isbn>978-0-470-66500-8</isbn>
+        </element-citation>
+      </ref>
+      <ref id="B72-forests-13-00305">
+        <label>72.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Poudel</surname>
+              <given-names>K.P.</given-names>
+            </name>
+            <name>
+              <surname>Temesgen</surname>
+              <given-names>H.</given-names>
+            </name>
+            <name>
+              <surname>Gray</surname>
+              <given-names>A.N.</given-names>
+            </name>
+          </person-group>
+          <article-title>Estimating upper stem diameters and volume of Douglas-fir and Western hemlock trees in the Pacific northwest</article-title>
+          <source>For. Ecosyst.</source>
+          <year>2018</year>
+          <volume>5</volume>
+          <fpage>16</fpage>
+          <pub-id pub-id-type="doi">10.1186/s40663-018-0134-2</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B73-forests-13-00305">
+        <label>73.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Maguire</surname>
+              <given-names>D.A.</given-names>
+            </name>
+            <name>
+              <surname>Hann</surname>
+              <given-names>D.W.</given-names>
+            </name>
+          </person-group>
+          <article-title>Bark Thickness and Bark Volume in Southwestern Oregon Douglas-Fir</article-title>
+          <source>West. J. Appl. For.</source>
+          <year>1990</year>
+          <volume>5</volume>
+          <fpage>5</fpage>
+          <lpage>8</lpage>
+          <pub-id pub-id-type="doi">10.1093/wjaf/5.1.5</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B74-forests-13-00305">
+        <label>74.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Murphy</surname>
+              <given-names>G.</given-names>
+            </name>
+            <name>
+              <surname>Pilkerton</surname>
+              <given-names>S.J.</given-names>
+            </name>
+          </person-group>
+          <article-title>Seasonal Impacts on Bark Loss for Douglas-fir and Ponderosa Pine Harvested on the Pacific Northwest Coast of the USA</article-title>
+          <source>Int. J. For. Eng.</source>
+          <year>2011</year>
+          <volume>22</volume>
+          <fpage>35</fpage>
+          <lpage>41</lpage>
+          <pub-id pub-id-type="doi">10.1080/14942119.2011.10702602</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B75-forests-13-00305">
+        <label>75.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Chang</surname>
+              <given-names>S.J.</given-names>
+            </name>
+          </person-group>
+          <article-title>Twenty one years after the publication of the generalized Faustmann formula</article-title>
+          <source>For. Policy Econ.</source>
+          <year>2020</year>
+          <volume>118</volume>
+          <fpage>102238</fpage>
+          <pub-id pub-id-type="doi">10.1016/j.forpol.2020.102238</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B76-forests-13-00305">
+        <label>76.</label>
+        <element-citation publication-type="gov">
+          <person-group person-group-type="author">
+            <collab>Department of Natural Resources</collab>
+          </person-group>
+          <source>WA DNR Log Prices</source>
+          <publisher-name>Washington Department of Natural Resources</publisher-name>
+          <publisher-loc>Washington, DC, USA</publisher-loc>
+          <year>2021</year>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.dnr.wa.gov/programs-and-services/product-sales-and-leasing/timber-sales/timber-sale-querylog-prices" ext-link-type="uri">https://www.dnr.wa.gov/programs-and-services/product-sales-and-leasing/timber-sales/timber-sale-querylog-prices</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2022-01-13">(accessed on 13 January 2022)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B77-forests-13-00305">
+        <label>77.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Nalle</surname>
+              <given-names>D.J.</given-names>
+            </name>
+            <name>
+              <surname>Montgomery</surname>
+              <given-names>C.A.</given-names>
+            </name>
+            <name>
+              <surname>Arthur</surname>
+              <given-names>J.L.</given-names>
+            </name>
+            <name>
+              <surname>Polasky</surname>
+              <given-names>S.</given-names>
+            </name>
+            <name>
+              <surname>Schumaker</surname>
+              <given-names>N.H.</given-names>
+            </name>
+          </person-group>
+          <article-title>Modeling joint production of wildlife and timber</article-title>
+          <source>J. Environ. Econ. Manag.</source>
+          <year>2004</year>
+          <volume>48</volume>
+          <fpage>997</fpage>
+          <lpage>1017</lpage>
+          <pub-id pub-id-type="doi">10.1016/j.jeem.2004.01.001</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B78-forests-13-00305">
+        <label>78.</label>
+        <element-citation publication-type="thesis">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Baek</surname>
+              <given-names>K.</given-names>
+            </name>
+          </person-group>
+          <article-title>Productivity and Cost of a Cut-to-Length Commercial Thinning Operation in a Northern California Redwood Forest</article-title>
+          <source>Master&#x2019;s Thesis</source>
+          <publisher-name>Humboldt State University</publisher-name>
+          <publisher-loc>Arcata, CA, USA</publisher-loc>
+          <year>2018</year>
+        </element-citation>
+      </ref>
+      <ref id="B79-forests-13-00305">
+        <label>79.</label>
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Fonseca</surname>
+              <given-names>M.</given-names>
+            </name>
+          </person-group>
+          <source>Measurement of Roundwood: Methodologies and Conversion Ratios</source>
+          <publisher-name>United Nations Economic Commission for Europe, Trade and Timber Branch</publisher-name>
+          <publisher-loc>Geneva, Switzerland</publisher-loc>
+          <year>2005</year>
+          <isbn>978-0-85199-079-8</isbn>
+        </element-citation>
+      </ref>
+      <ref id="B80-forests-13-00305">
+        <label>80.</label>
+        <element-citation publication-type="gov">
+          <person-group person-group-type="author">
+            <collab>EIA</collab>
+          </person-group>
+          <source>Weekly Retail Gasoline and Diesel Prices and Refiner Petroleum Product Prices by Sales Type</source>
+          <comment>[dataset]</comment>
+          <publisher-name>United States Energy Information Administration</publisher-name>
+          <publisher-loc>Washington, DC, USA</publisher-loc>
+          <year>2021</year>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.eia.gov/petroleum/" ext-link-type="uri">https://www.eia.gov/petroleum/</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2021-09-27">(accessed on 27 September 2021)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B81-forests-13-00305">
+        <label>81.</label>
+        <element-citation publication-type="gov">
+          <person-group person-group-type="author">
+            <collab>BLS</collab>
+          </person-group>
+          <source>PPI Commodity Data for Final Demand, Not Seasonally Adjusted</source>
+          <publisher-name>Bureau of Labor Statistics</publisher-name>
+          <publisher-loc>Washington, DC, USA</publisher-loc>
+          <year>2021</year>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://data.bls.gov/cgi-bin/surveymost?bls" ext-link-type="uri">https://data.bls.gov/cgi-bin/surveymost?bls</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2021-11-08">(accessed on 8 November 2021)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B82-forests-13-00305">
+        <label>82.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Spinelli</surname>
+              <given-names>R.</given-names>
+            </name>
+            <name>
+              <surname>Magagnotti</surname>
+              <given-names>N.</given-names>
+            </name>
+            <name>
+              <surname>Picchi</surname>
+              <given-names>G.</given-names>
+            </name>
+          </person-group>
+          <article-title>Annual use, economic life and residual value of cut-to-length harvesting machines</article-title>
+          <source>J. For. Econ.</source>
+          <year>2011</year>
+          <volume>17</volume>
+          <fpage>378</fpage>
+          <lpage>387</lpage>
+          <pub-id pub-id-type="doi">10.1016/j.jfe.2011.03.003</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B83-forests-13-00305">
+        <label>83.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Spinelli</surname>
+              <given-names>R.</given-names>
+            </name>
+            <name>
+              <surname>Visser</surname>
+              <given-names>R.</given-names>
+            </name>
+          </person-group>
+          <article-title>Analyzing and Estimating Delays in Harvester Operations</article-title>
+          <source>Int. J. For. Eng.</source>
+          <year>2008</year>
+          <volume>19</volume>
+          <fpage>36</fpage>
+          <lpage>41</lpage>
+          <pub-id pub-id-type="doi">10.1080/14942119.2008.10702558</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B84-forests-13-00305">
+        <label>84.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Sessions</surname>
+              <given-names>J.</given-names>
+            </name>
+            <name>
+              <surname>Berry</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Sup-Han</surname>
+              <given-names>H.</given-names>
+            </name>
+          </person-group>
+          <article-title>Machine Rate Estimates and Equipment Utilization: A Modified Approach</article-title>
+          <source>Croat. J. For. Eng.</source>
+          <year>2021</year>
+          <volume>42</volume>
+          <fpage>437</fpage>
+          <lpage>443</lpage>
+          <pub-id pub-id-type="doi">10.5552/crojfe.2021.1026</pub-id>
+        </element-citation>
+      </ref>
+    </ref-list>
+    <sec sec-type="display-objects">
+      <title>Figures and Tables</title>
+      <fig id="forests-13-00305-f001" position="float">
+        <label>Figure 1</label>
+        <caption>
+          <p>Stump to mill flow of wood in three steep slope harvest systems. In system (<bold>a</bold>), a tethered harvester-forwarder pair provides cut-to-length harvesting suitable for thinning and continuous cover forestry, variable retention harvests, or clearfelling. Systems based on yarders (<bold>b</bold>,<bold>c</bold>) can be used for thinning but are most efficient in clearfelling [<xref ref-type="bibr" rid="B5-forests-13-00305">5</xref>].</p>
+        </caption>
+        <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="forests-13-00305-g001.tif"/>
+      </fig>
+      <fig id="forests-13-00305-f002" position="float">
+        <label>Figure 2</label>
+        <caption>
+          <p>Estimated range of coast Douglas-fir (<italic>Pseudotsuga menziesii</italic> var <italic>menziesii</italic> (Mirb.) Franco) harvest costs as a function of harvest unit slope, tethered corridor length (<bold>a</bold>,<bold>b</bold>,<bold>e</bold>,<bold>f</bold>), and the lowest cost regeneration harvest system (<bold>c</bold>,<bold>d</bold>,<bold>g</bold>,<bold>h</bold>) across 10,000 Monte Carlo draws of harvest cost model parameter sets. (<bold>i</bold>) and (<bold>j</bold>) indicate the corresponding harvest volumes and (<bold>k</bold>) the eight-wheel forwarder payload in merchantable m<sup>3</sup>. Rotations less than 50 years are unthinned, rotations of 50&#x2013;60 years include one proportional thin at age 35&#x2013;40, rotations of 65&#x2013;70 years have two proportional thins at ages 35 and 45&#x2013;50, and rotations of 75&#x2013;85 years have three proportional thins at ages 35, 45, and 55&#x2013;65 years. All things were performed by an eight-wheel harvester-forwarder pair.</p>
+        </caption>
+        <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="forests-13-00305-g002.tif"/>
+      </fig>
+      <fig id="forests-13-00305-f003" position="float">
+        <label>Figure 3</label>
+        <caption>
+          <p>Harvest equipment productivity (<bold>a</bold>&#x2013;<bold>h</bold>), coast Douglas-fir tree sizes (<bold>i</bold>,<bold>j</bold>), and log sizes (<bold>k</bold>) resulting in the harvest costs of <xref ref-type="fig" rid="forests-13-00305-f002">Figure 2</xref>. Insets in (<bold>b</bold>) and (<bold>f</bold>) show the full range of feller-buncher productivity. Productivity is measured in merchantable m<sup>3</sup> per delay-free productive machine hour (PMh<sub>0</sub>). Tree and log sizes are also in merchantable m<sup>3</sup> using the BC Firmwood scale with 7.3 m logs from thinning and 12.2 m logs from regeneration harvests. Dashed line in (<bold>k</bold>) indicates the upper bound imposed by cable yarding weight limits. Logs which would exceed this bound must instead be bucked to shorter, yardable lengths. Log loader productivity is not shown as no loader models were identified (<xref ref-type="sec" rid="sec2dot1-forests-13-00305">Section 2.1</xref>, <xref ref-type="app" rid="app1-forests-13-00305">Supplementary Material Table S1</xref>).</p>
+        </caption>
+        <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="forests-13-00305-g003.tif"/>
+      </fig>
+      <fig id="forests-13-00305-f004" position="float">
+        <label>Figure 4</label>
+        <caption>
+          <p>Estimated range of western hemlock (<italic>Tsuga heterophylla</italic> (Raf.) Sarg.) harvest costs as a function of slope and corridor length (<bold>a</bold>,<bold>b</bold>,<bold>e</bold>,<bold>f</bold>), lowest cost regeneration harvest system (<bold>c</bold>,<bold>d</bold>,<bold>g</bold>,<bold>h</bold>), and corresponding harvest volumes (<bold>i</bold>) and (<bold>j</bold>) in merchantable m<sup>3</sup> ha<sup>&#x2212;1</sup>. Rotations less than 90 years are unthinned and rotations of 90&#x2013;100 years include one proportional thin at age 45&#x2013;70. As with Douglas-fir, thins are performed by an eight-wheel harvester-forwarder pair with forwarder payload in merchantable m<sup>3</sup> shown in (<bold>k</bold>).</p>
+        </caption>
+        <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="forests-13-00305-g004.tif"/>
+      </fig>
+      <fig id="forests-13-00305-f005" position="float">
+        <label>Figure 5</label>
+        <caption>
+          <p>Harvest equipment productivity (<bold>a</bold>&#x2013;<bold>h</bold>), western hemlock tree sizes (<bold>i</bold>,<bold>j</bold>), and log sizes (<bold>k</bold>) resulting in the harvest costs of <xref ref-type="fig" rid="forests-13-00305-f004">Figure 4</xref>. Units, scaling, and insets are the same as for Douglas-fir (<xref ref-type="fig" rid="forests-13-00305-f003">Figure 3</xref>) with the yarding weight limit indicated by the dashed line in (<bold>k</bold>) being lower as central estimates of hemlock&#x2019;s green wood density are 10% higher than for Douglas-fir.</p>
+        </caption>
+        <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="forests-13-00305-g005.tif"/>
+      </fig>
+      <fig id="forests-13-00305-f006" position="float">
+        <label>Figure 6</label>
+        <caption>
+          <p>Distribution of harvest costs resulting from manual chainsaw bucking and felling of Douglas-fir (<bold>a</bold>,<bold>b</bold>) and western hemlock stems (<bold>e</bold>,<bold>f</bold>) exceeding the weight or diameter limits of mechanized equipment as a function of tree species and harvest equipment used. (<bold>c</bold>,<bold>d</bold>,<bold>g</bold>,<bold>h</bold>) indicate which approach to staffing manual chainsaw work is most likely to result in the lowest cost for thinning (<bold>c</bold>,<bold>g</bold>) and regeneration harvests (<bold>d</bold>,<bold>h</bold>). In most cases, felling trees using mechanized equipment prior to manual bucking by a member of the cable yarding crew is preferred (<xref ref-type="sec" rid="sec1-forests-13-00305">Section 1</xref>, <xref ref-type="sec" rid="sec2dot1-forests-13-00305">Section 2.1</xref>, <xref ref-type="app" rid="app1-forests-13-00305">Sections S2 and S4</xref>). Staffing bars do not reach a probability of one as chainsaw work is not always required. For example, no hemlock trees exceeded mechanized limits in thinning and regeneration harvests in hemlock did not exceed the assumed capabilities of a tracked harvester.</p>
+        </caption>
+        <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="forests-13-00305-g006.tif"/>
+      </fig>
+      <fig id="forests-13-00305-f007" position="float">
+        <label>Figure 7</label>
+        <caption>
+          <p>The 10 most influential harvest cost model parameters identified by Sobo&#x13E; sensitivity analysis for Douglas-fir (<bold>a</bold>,<bold>b</bold>) and western hemlock (<bold>c</bold>,<bold>d</bold>) as a function of stand age and harvest type. Harvest unit corridor length and slope influence harvest costs as well but were excluded from this analysis as their effects are displayed in <xref ref-type="fig" rid="forests-13-00305-f002">Figure 2</xref>, <xref ref-type="fig" rid="forests-13-00305-f003">Figure 3</xref>, <xref ref-type="fig" rid="forests-13-00305-f004">Figure 4</xref> and <xref ref-type="fig" rid="forests-13-00305-f005">Figure 5</xref>. <inline-formula><mml:math id="mm8"><mml:semantics><mml:mrow><mml:mover><mml:mi>v</mml:mi><mml:mo>&#xAF;</mml:mo></mml:mover></mml:mrow></mml:semantics></mml:math></inline-formula> = yarding line speed, both loaded and unloaded, or forwarding speed (Equation (2)). $ SMh <sup>&#x2212;1</sup> = operating cost per scheduled machine hour (<xref ref-type="app" rid="app1-forests-13-00305">Table S4</xref>). <italic>b<sub>0</sub></italic>, <italic>b<sub>1</sub></italic>, and <italic>S<sub>t</sub></italic> are stemwise cycle time coefficients (Equation (1)). <italic>P<sub>l,kg</sub></italic> = forwarding or yarding payload in kg (<xref ref-type="app" rid="app1-forests-13-00305">Section S1.2</xref>), <inline-formula><mml:math id="mm4"><mml:semantics><mml:mrow><mml:msubsup><mml:mi>P</mml:mi><mml:mrow><mml:mi>l</mml:mi><mml:mo>,</mml:mo><mml:mi>c</mml:mi></mml:mrow><mml:mrow><mml:mi>p</mml:mi><mml:mi>o</mml:mi><mml:mi>w</mml:mi><mml:mi>e</mml:mi><mml:mi>r</mml:mi></mml:mrow></mml:msubsup></mml:mrow></mml:semantics></mml:math></inline-formula> = power of forwarder payload in merchantable m<sup>3</sup> (<italic>P<sub>l,c</sub></italic>, <xref ref-type="app" rid="app1-forests-13-00305">Table S2</xref>). <italic>t<sub>roundtrip</sub></italic> = roundtrip trucking time (<xref ref-type="app" rid="app1-forests-13-00305">Table S3</xref>).</p>
+        </caption>
+        <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="forests-13-00305-g007.tif"/>
+      </fig>
+      <table-wrap id="forests-13-00305-t001" position="float">
+        <object-id pub-id-type="pii">forests-13-00305-t001_Table 1</object-id>
+        <label>Table 1</label>
+        <caption>
+          <p>Cycle time definitions for productivity of harvest equipment used in steep slope mechanized logging and maximum slopes considered by previous studies. We propose two unified forms for cycle time models, one for machines with stemwise cycles and one for machines with roundtrip cycles (Equations (1) and (2)).</p>
+        </caption>
+        <table>
+          <thead>
+            <tr>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Machine Type</th>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Cycle Type</th>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Winch-Assist</th>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Cycle Description(s)</th>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Model Sources</th>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Slopes Considered (%)</th>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Additional Sources</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">feller-buncher</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">stemwise</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">yes</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">move to, fell, and bunch one tree</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">[<xref ref-type="bibr" rid="B22-forests-13-00305">22</xref>]</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">32&#x2013;47</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">[<xref ref-type="bibr" rid="B23-forests-13-00305">23</xref>,<xref ref-type="bibr" rid="B24-forests-13-00305">24</xref>,<xref ref-type="bibr" rid="B25-forests-13-00305">25</xref>]</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">harvester</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">stemwise</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">yes</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">move to tree, fell, buck, and bunch all logs</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">[<xref ref-type="bibr" rid="B26-forests-13-00305">26</xref>,<xref ref-type="bibr" rid="B27-forests-13-00305">27</xref>,<xref ref-type="bibr" rid="B28-forests-13-00305">28</xref>,<xref ref-type="bibr" rid="B29-forests-13-00305">29</xref>,<xref ref-type="bibr" rid="B30-forests-13-00305">30</xref>]</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">likely <break/>&lt;30</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">[<xref ref-type="bibr" rid="B31-forests-13-00305">31</xref>,<xref ref-type="bibr" rid="B32-forests-13-00305">32</xref>,<xref ref-type="bibr" rid="B33-forests-13-00305">33</xref>,<xref ref-type="bibr" rid="B34-forests-13-00305">34</xref>,<xref ref-type="bibr" rid="B35-forests-13-00305">35</xref>,<xref ref-type="bibr" rid="B36-forests-13-00305">36</xref>,<xref ref-type="bibr" rid="B37-forests-13-00305">37</xref>,<xref ref-type="bibr" rid="B38-forests-13-00305">38</xref>,<xref ref-type="bibr" rid="B39-forests-13-00305">39</xref>,<xref ref-type="bibr" rid="B40-forests-13-00305">40</xref>]</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">chainsaw</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">stemwise</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">no</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">move to tree, variable cutting from bucking only first log to felling and bucking all logs</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">[<xref ref-type="bibr" rid="B41-forests-13-00305">41</xref>,<xref ref-type="bibr" rid="B42-forests-13-00305">42</xref>]</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">0&#x2013;130</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">[<xref ref-type="bibr" rid="B43-forests-13-00305">43</xref>]</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">forwarder</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">roundtrip</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">yes</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">load one bunkload of logs in unit and unload the bunk to roadside sort piles or to a truck, potentially also loading piled logs onto truck</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">[<xref ref-type="bibr" rid="B26-forests-13-00305">26</xref>,<xref ref-type="bibr" rid="B29-forests-13-00305">29</xref>,<xref ref-type="bibr" rid="B44-forests-13-00305">44</xref>,<xref ref-type="bibr" rid="B45-forests-13-00305">45</xref>,<xref ref-type="bibr" rid="B46-forests-13-00305">46</xref>,<xref ref-type="bibr" rid="B47-forests-13-00305">47</xref>,<xref ref-type="bibr" rid="B48-forests-13-00305">48</xref>]</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">very likely <break/>&#x2264;45</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">[<xref ref-type="bibr" rid="B32-forests-13-00305">32</xref>,<xref ref-type="bibr" rid="B33-forests-13-00305">33</xref>,<xref ref-type="bibr" rid="B34-forests-13-00305">34</xref>,<xref ref-type="bibr" rid="B35-forests-13-00305">35</xref>,<xref ref-type="bibr" rid="B36-forests-13-00305">36</xref>,<xref ref-type="bibr" rid="B38-forests-13-00305">38</xref>,<xref ref-type="bibr" rid="B39-forests-13-00305">39</xref>,<xref ref-type="bibr" rid="B40-forests-13-00305">40</xref>,<xref ref-type="bibr" rid="B49-forests-13-00305">49</xref>,<xref ref-type="bibr" rid="B50-forests-13-00305">50</xref>]</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">yarder</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">roundtrip</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">no</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">outhaul carriage, grapple or choke payload of trees and logs, inhaul carriage, drop payload on road or landing chute</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">[<xref ref-type="bibr" rid="B4-forests-13-00305">4</xref>,<xref ref-type="bibr" rid="B5-forests-13-00305">5</xref>,<xref ref-type="bibr" rid="B51-forests-13-00305">51</xref>,<xref ref-type="bibr" rid="B52-forests-13-00305">52</xref>,<xref ref-type="bibr" rid="B53-forests-13-00305">53</xref>]</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">typically <break/>&lt;80</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">[<xref ref-type="bibr" rid="B35-forests-13-00305">35</xref>,<xref ref-type="bibr" rid="B54-forests-13-00305">54</xref>,<xref ref-type="bibr" rid="B55-forests-13-00305">55</xref>,<xref ref-type="bibr" rid="B56-forests-13-00305">56</xref>]</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">processor</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">stemwise</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">no</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">(1) buck one tree and bunch logs <break/>(2) swing yarded log to bunch</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">[<xref ref-type="bibr" rid="B46-forests-13-00305">46</xref>]</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">&lt;10</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">[<xref ref-type="bibr" rid="B57-forests-13-00305">57</xref>]</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">loader</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">stemwise</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">no</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">(1) pile one bunch of logs from processor <break/>(2) load one grapple onto truck</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">none identified</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin"> </td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">[<xref ref-type="bibr" rid="B45-forests-13-00305">45</xref>,<xref ref-type="bibr" rid="B49-forests-13-00305">49</xref>]</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">log truck</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">roundtrip</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">no</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">drive to unit, load logs into one or more bunks, drive to mill, unload logs</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">[<xref ref-type="bibr" rid="B58-forests-13-00305">58</xref>]</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">unclear but &gt;11</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">[<xref ref-type="bibr" rid="B59-forests-13-00305">59</xref>,<xref ref-type="bibr" rid="B60-forests-13-00305">60</xref>]</td>
+            </tr>
+          </tbody>
+        </table>
+        <table-wrap-foot>
+          <fn>
+            <p>Log truck types considered in this study are mule trains with two bunks of logs, often &#x2264;7.6 m and &#x2264;10.1 m long, and long log trucks with one bunk of logs &#x2264; 12.5 m long. We also searched for sources on winch-assisted skidding but did not find published evidence of its uphill use on slopes above 35% [<xref ref-type="bibr" rid="B61-forests-13-00305">61</xref>,<xref ref-type="bibr" rid="B62-forests-13-00305">62</xref>].</p>
+          </fn>
+        </table-wrap-foot>
+      </table-wrap>
+      <table-wrap id="forests-13-00305-t002" position="float">
+        <object-id pub-id-type="pii">forests-13-00305-t002_Table 2</object-id>
+        <label>Table 2</label>
+        <caption>
+          <p>Means and 95% intervals (in parenthesis) observed across 10,000 Monte Carlo parameter draws for thinning and regeneration harvests in Douglas-fir and western hemlock. Time totals are PMh<sub>0</sub> sums across all machines in the harvest systems considered (<xref ref-type="fig" rid="forests-13-00305-f001">Figure 1</xref>), including trucking.</p>
+        </caption>
+        <table>
+          <thead>
+            <tr>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Summary Statistic</th>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Douglas-Fir</th>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Western Hemlock</th>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Hemlock Increase in Mean (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="center" valign="middle">thinning time (total PMh<sub>0</sub> ha <sup>&#x2212;1</sup>)</td>
+              <td align="center" valign="middle">36 (26&#x2013;53)</td>
+              <td align="center" valign="middle">38 (21&#x2013;55)</td>
+              <td align="center" valign="middle">5.1</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">thinning cost (US$ m <sup>&#x2212;3</sup>)</td>
+              <td align="center" valign="middle">45 (31&#x2013;68)</td>
+              <td align="center" valign="middle">48 (31&#x2013;74)</td>
+              <td align="center" valign="middle">7.1</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">regeneration harvest time (total PMh<sub>0</sub> ha <sup>&#x2212;1</sup>)</td>
+              <td align="center" valign="middle">115 (64&#x2013;163)</td>
+              <td align="center" valign="middle">153 (69&#x2013;220)</td>
+              <td align="center" valign="middle">33.6</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">regeneration harvest cost (US$ m <sup>&#x2212;3</sup>)</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">37 (30&#x2013;46)</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">38 (31&#x2013;47)</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">0.9</td>
+            </tr>
+          </tbody>
+        </table>
+      </table-wrap>
+    </sec>
+    <fn-group>
+      <fn>
+        <p><bold>Publisher&#x2019;s Note:</bold> MDPI stays neutral with regard to jurisdictional claims in published maps and institutional affiliations.</p>
+      </fn>
+    </fn-group>
+  </back>
+</article>
