@@ -244,7 +244,7 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
 ## Immediate Next Tasks (queue)
 - Extract grapple yarder/skidder regressions from SR54, TR75, TR112, and TR127 (turn length vs. payload) so we can replace the interim Spinelli yarder placeholder; only chase Han & George if BC/FPInnovations coverage still has gaps.
 - Expand Appendix 4/5 normalization to capture operator, machine weight, slope/payload applicability so the FPInnovations datasets map cleanly into the registry schema.
-- Pull skyline/tethered/partial-cut coefficients from TR119, TR125, TR2016N46, SR85, and HB12; keep Visser/McNeel/West/Renzie on deck for supplemental coverage.
+- Pull skyline/tethered/partial-cut coefficients from TR119, TR125, TR2016N46, SR85, and HB12; keep Visser/McNeel/West/Renzie on deck for supplemental coverage. (Next step: focus on TR119/TR125 for skyline travel regressions.)
 - **OpCost-style machine-rate dataset plan**
    - [x] Define the schema for a default machine-rate table (`machine_name`, `role`, `ownership_cost_per_smh`, `operating_cost_per_smh`, `default_utilization`, `move_in_cost`, `source`, `notes`). Store it under `data/machine_rates.json` and expose loader helpers.
    - [x] Transcribe core machine classes from Dodson et al. (2015) (feller-buncher, grapple skidder, processor, loader, road grader, etc.) and Hartley & Han (2007) (coastal grapple yarder, swing yarder, tower yarder) with FX/fuel adjustments to BC dollars (document CAD/USD rate and diesel price assumptions).

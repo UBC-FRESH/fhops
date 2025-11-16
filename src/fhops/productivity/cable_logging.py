@@ -69,6 +69,12 @@ def _m3_per_pmh(payload_m3: float, cycle_seconds: float) -> float:
     return payload_m3 * (3600.0 / cycle_seconds)
 
 
+def _m3_per_pmh_from_minutes(payload_m3: float, cycle_minutes: float) -> float:
+    _validate_positive(payload_m3, "payload_m3")
+    _validate_positive(cycle_minutes, "cycle_minutes")
+    return payload_m3 * (60.0 / cycle_minutes)
+
+
 def estimate_cable_yarder_productivity_lee2018_uphill(
     *,
     yarding_distance_m: float,
@@ -123,6 +129,56 @@ def estimate_cable_yarder_productivity_lee2018_downhill(
         + 3.057 * lateral_distance_m
     )
     return _m3_per_pmh(payload_m3, cycle_seconds)
+
+
+def estimate_cable_yarder_productivity_tr125_single_span(
+    *,
+    slope_distance_m: float,
+    lateral_distance_m: float,
+    payload_m3: float = 1.6,
+) -> float:
+    """
+    Estimate productivity (m³/PMH) for single-span skyline yarding (TR-125 Eq. 1).
+
+    Parameters
+    ----------
+    slope_distance_m:
+        Slope yarding distance (m). Regression calibrated for 10–350 m.
+    lateral_distance_m:
+        Lateral yarding distance (m). Regression calibrated for 0–50 m.
+    payload_m3:
+        Average payload per turn; TR-125 observed ≈1.6 m³ (3.4 logs × 0.47 m³/log).
+    """
+
+    _validate_positive(slope_distance_m, "slope_distance_m")
+    _validate_positive(lateral_distance_m, "lateral_distance_m")
+    cycle_minutes = 2.76140 + 0.00449 * slope_distance_m + 0.03750 * lateral_distance_m
+    return _m3_per_pmh_from_minutes(payload_m3, cycle_minutes)
+
+
+def estimate_cable_yarder_productivity_tr125_multi_span(
+    *,
+    slope_distance_m: float,
+    lateral_distance_m: float,
+    payload_m3: float = 1.6,
+) -> float:
+    """
+    Estimate productivity (m³/PMH) for multi-span skyline yarding (TR-125 Eq. 2).
+
+    Parameters
+    ----------
+    slope_distance_m:
+        Slope yarding distance (m). Regression calibrated for 10–420 m.
+    lateral_distance_m:
+        Lateral yarding distance (m). Regression calibrated for 0–50 m.
+    payload_m3:
+        Average payload per turn; TR-125 observed ≈1.6 m³.
+    """
+
+    _validate_positive(slope_distance_m, "slope_distance_m")
+    _validate_positive(lateral_distance_m, "lateral_distance_m")
+    cycle_minutes = 2.43108 + 0.00910 * slope_distance_m + 0.02563 * lateral_distance_m
+    return _m3_per_pmh_from_minutes(payload_m3, cycle_minutes)
 
 
 __all__ = [

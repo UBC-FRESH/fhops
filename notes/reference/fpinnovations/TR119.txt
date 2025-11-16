@@ -1,0 +1,2660 @@
+FOREST ENGINEERING
+RESEARCH INSTITUTE
+OF CANADA
+
+INSTITUT CANADIEN
+DE RECHERCHES
+EN GENIE FORESTIER
+
+P A R T I A L C U T T I N G IN M O U N T A I N O U S
+O L D - G R O W T H F O R E S T S IN
+C O A S T A L BRITISH C O L U M B I A :
+H A R V E S T I N G P R O D U C T I V I T Y A N D COST,
+AND RESIDUAL STAND IMPACTS
+D.M. B e n n e t t
+December 1997
+
+PARTIAL CUTTING IN MOUNTAINOUS OLD-GROWTH
+FORESTS IN COASTAL BRITISH COLUMBIA:
+HARVESTING PRODUCTIVITY AND COST, AND
+RESIDUAL STAND IMPACTS
+
+D.M. Bennett
+Forest Engineering Research Institute of Canada
+
+FERIC Technical Report No. TR-119
+December 1997
+
+KEYWORDS:
+
+Partial cutting systems, Harvesting, Felling, Manual method, Cable logging systems, Old-growth forests.
+Mountainous terrain. Steep slopes. Productivity, Costs, Residual stand impacts. Coastal British Columbia.
+
+© Copyright 1997, Forest Engineering Research Institute of Canada ISSN 0381-7733
+
+Abstract
+The Forest Engineering Research Institute of Canada ( F E R I C ) and Intemational Forest Products Limited developed
+and implemented a partial cutting trial at Chamiss Bay on the west coast of Vancouver Island in British Columbia.
+The 1995/96 study investigated the harvesting feasibiUty for partial cutting in old-growth stands on steep slopes.
+The productivity and cost results for engineering, tiee marking, manual falling, and cable yarding provide important
+new information to help forest operators plan, budget, and implement partial cutting trials and operations.
+
+Author
+Doug Bennett obtained B.S.F. and M.Sc. degrees in Forest Operations from the Faculty of Forestry at the University of
+British Columbia. Beginning in 1979, he was employed by Tahsis Co. Ltd., and other companies that preceded
+Pacific Forest Products Limited, on the west coast of Vancouver Island. He held positions in forest engineering and
+road constmction supervision. In late 1987, Doug joined F E R I C as a Senior Researcher in the Harvest Engineering
+Group. His project work has focused on forest road constmction and maintenance, and altemative harvesting systems.
+Doug is a Registered Professional Forester (R.P.F.) and a registered Professional Engineer (P.Eng.) in British Columbia.
+
+Acknowledgments
+F E R I C employees Marv Clark and Ray Krag advised the author, helped initiate the trial, and reviewed draft
+
+reports;
+Brian Boswell, Peter Dyson, and Gord Nienaber helped with the field work; Monique Kalmokoff produced the graphics
+in this report and Shelley Corradiru prepared the report for printing. The author is grateful for their assistance. The
+project was the basis for the author's M.Sc. thesis, and F E R I C ' s support of his graduate studies work is sincerely
+appreciated. Professors John Nelson, Glen Young, Andrew Howard, Gordon Weetman, Peter Marshall, and Joe
+McNeel, of U B C ' s Faculty of Forestry, provided valuable advice and review of study plans and draft reports.
+Many Intemational Forest Products employees helped plan and carry out the trial, including: B i l l Gilpin and Doug
+McMillan, General Manager of Coast Forest Operations and Chamiss Bay Woods Foreman, respectively, during the
+project period; Chris Nuim, Area Silviculturist in the company' s West Coast Operations; and the yarding and loading
+crews at Chamiss Bay. The cooperation and skill of the falling contractor, Donny Shiels, was also instmmental in
+successfully implementing the harvest plan.
+Funding assistance for the harvesting study was provided by the British Columbia Ministry of Forests (BCMOF)
+Silvicultural Systems Program, and the Forest Practices component of the Canadian Forest Service Green Plan. Brian
+D'Anjou of the B C M O F Vancouver Forest Sciences Section also provided advice during the plaiming stage.
+
+Disclaimer
+This report is pubUshed solely to disseminate information to F E R I C members and partners. It is not intended as an
+endorsement or approval by F E R I C of any product or service to the exclusion of others that may be suitable.
+
+Table of Contents
+Abstract
+Author
+Acknowledgements
+Disclaimer
+Summary
+Sommaire
+
+iii
+iii
+iii
+iii
+vii
+vii
+
+INTRODUCTION
+
+1
+
+BACKGROUND
+
+1
+
+STUDY METHODS
+Study Sites
+Cutting Treatments
+Harvesting Productivities and Costs
+
+2
+2
+3
+3
+
+DESCRIPTION OF OPERATIONS
+Engineering
+Tree Marking
+Falling and Bucking
+Yarding and Loading
+
+4
+4
+4
+5
+6
+
+RESULTS AND DISCUSSION
+Engineering
+Tree Marking
+Falling and Bucking
+Yarding and Loading
+Residual Stand Damage
+Soil Surface Conditions
+Other Observations
+
+7
+7
+8
+10
+11
+13
+14
+14
+
+CONCLUSIONS
+
+17
+
+REFERENCES
+
+18
+
+APPENDIX I
+Hourly Equipment Costs for Cable-Yarding Systems
+
+19
+19
+
+APPENDIX n
+Hourly Falling and Bucking Cost
+
+20
+20
+
+V
+
+List of Tables
+Table 1.
+Table 2.
+Table 3.
+Table 4.
+Table 5.
+Table 6.
+Table 7.
+Table 8.
+Table 9.
+Table 10.
+Table 11.
+
+Stand Conditions by Cutting Unit
+Field W o r k Required for Retention Units
+Post-Harvest Stand Descriptions for Retention Units
+Average Falling and Bucking Productivity by Cutting Unit
+Average Falling and B u c k i n g Cost by Cutting U n i t
+Average Cable Yarding Production: Summary
+Average Cable Yarding Productivity by Cutting U n i t
+Average Yarding and Loading Cost by Cutting Unit
+Damage to Residual Trees i n tihe 65% Retention U n i t
+Damage to Residual Trees in the 70% Retention U n i t
+Post-Harvest Soil Surface Conditions i n the 65 % and 70% Retention Units
+
+3
+8
+9
+10
+11
+11
+12
+13
+14
+14
+15
+
+List of Figures
+Figure 1.
+Figure 2.
+Figure 3.
+Figure 4.
+Figure 5.
+Figure 6.
+Figure 7.
+Figure 8.
+Figure 9.
+Figure 10.
+Figure 11.
+Figure 12.
+Figure 13.
+
+Location of the study sites.
+Layout of four of the five cutting treatments.
+Layout of the 65% retention unit.
+Faller wedging a tree i n the 65% retention unit.
+Cypress 7280B swing yarder.
+M S P (dropline) carriage used with the swing yarder.
+Yarding corridor i n the 65% retention unit immediately
+prior to yarding—tailhold stump in foreground.
+Yarding corridor i n the 65% retention unit after yarding
+was completed—ground level view, looking up the slope.
+Pre- and post-harvest diameter distributions for the 65% retention unit.
+Pre- and post-harvest diameter distributions for the 70% retention unit.
+Time distribution for cable yarding operations.
+65% retention unit following harvest.
+55 and 70% retention units during harvest (oblique angle).
+
+1
+2
+2
+6
+6
+6
+8
+8
+9
+9
+11
+15
+16
+
+Summary
+The Forest Engineering Research Institute of Canada ( F E R I C ) and Intemational Forest Products Limited (Interfor)
+developed and implemented a partial cutting trial at Chamiss Bay on the west coast of Vancouver Island. The smdy
+was conducted to investigate the harvesting feasibility of partijd cutting in old-growth stands on steep slopes. The
+study sites were located within the Very Wet Maritime subzone (Submontane variant) of the Coastal Westem Hemlock
+biogeoclimatic zone (CWHvml).
+Harvesting, using manual falling and cable-yarding systems, was done in the summers of 1995 and 1996. Two partial
+cuts (referred to £is retention uiuts), two strip cuts, and one clearcut were included in the harvesting study. The retention
+units had high levels of tree retention, 65 and 70% by basal area, with uniform dispersal of the retained trees.
+Harvesting productivities and costs were derived from shift-level production reports. Post-harvest surveys were
+conducted to quantify residual stand damage and soil-distiu-bance levels in the retention units.
+In the 65% retention imit, falling productivity was 31% lower and falling cost was 45% higher than in the clearcut.
+However, falling productivity was reduced by only 2% in the 70% retention unit, compared to the clearcut, mainly
+because of a marked difference in timber type between this urut and the clearcut.
+Cable-yarding productivity, measured in volume of logs per productive machine hoiu", was 34 and 30% lower in the
+65 and 70% retention units, respectively, than in the clearcut. Yarding costs, based on scheduled machine hoiu-s,
+were 46 and 32% higher in these same units. These are the relative differences in yarding productivity and cost for
+the Chamiss Bay trial where a clearcut in similar steep terrain, with no landings, was used for comparison.
+Post-harvest surveys showed that 34 and 37% of the residual stems had at least one scar of any size, and 12 and 10% of the
+residual stems had at least one scar that was >900 cm^, in the 65 and 70% retention uiuts, respectively. Exposed
+mineral soil was observed on only 1.4 and 1.5% of the soil surface area in the 65 and 70% retention units, respectively.
+The productivity and cost results for the retention units provide important new information to help forest operators plan,
+budget, and implement fumre partial-cutting trials and operations. The trial showed the potential to harvest timber
+on sensitive sites, with conventional equipment and crews, thus creating an opportunity to augment timber supplies.
+
+Sommaire
+L'Institut canadien de recherches en genie forestier (FERIC) et Intemational Forest Products Limited (Interfor) ont
+prepare et mis en oeuvre un essai de coupe partielle a Chamiss Bay sur la cote ouest de I'ile de Vancouver. L'etude
+avait pour but d'examiner la faisabilite de recolter par coupe partielle de vieux peuplements primitifs sur de fortes
+pentes. Les aires d'etude etaient situees dans la sous-zone maritime tres humide (variante submontagnarde) de la
+zone biogeoclimatique de la pmche de I'Ouest cotiere (CWHvml).
+L a recolte a ete effectuee par abattage manuel et telepherage durant les etes 1995 et 1996. Les aires d'etude
+comprenaient deux coupes partielles (designees comme unites de coupes avec reserves), deux coupes par bandes et
+une coupe rase. Dans les uiutes de coupe avec reserves, on conservait une proportion elevee des arbres, soit 65 et 70 %
+en surface terriere, avec dispersion uniforme. Les productivites et les couts de recolte ont ete derives des rapports
+de production par poste de travail. Des inventaires apres coupe ont permis de quantifier les niveaux de dommages
+au peuplement residuel et de perturbation du sol dans les unites avec reserves.
+Dans I'unite avec 65 % de reserves, la productivite a I'abattage etait de 31 % plus faible et le coiit de I'abattage y
+etait de 45 % plus eleve que dans la coupe rase. Cependant, la productivite a 1' abattage etait reduite de 2 % seulement
+dans I'unite avec 70 % de reserves, comparativement a la coupe rase, principalement a cause d'une difference marquee
+dans le type de peuplement entre ces deux unites.
+L a productivite du telepherage, mesuree en volume de billes par heure-machine productive, etait de 34 et de 30 %
+plus faible dans les unites avec 65 et 70 % de reserves, respectivement, que dans la coupe rase. Le coiit du telepherage,
+base sur le nombre d'heures-machines prevues, etait de 46 et de 32 % plus eleve dans ces memes unites. Ce sont les
+
+differences relatives dans la productivite et le cout du telepherage pour l'essai de Chamiss Bay oii une coupe rase
+dans un terrain escarpe similaire, sans jetees, a ete utilisee aux fins de comparaison.
+Les inventaires apres coupe ont montre que 34 et 37 % des tiges residuelles avaient au moins une blessiue de dimensions
+quelconques, et que 12 et 10 % des tiges residuelles avaient au moins une blessiu-e de 900 cm^, dans les unites avec
+65 et 70 % de reserves, respectivement. Une exposition du sol mineral a ete observee sur seulement 1,4 et 1,5 % de
+la surface du sol dans les unites avec 65 et 70 % de reserves, respectivement.
+Les resultats relatifs a la productivite et au cout dans les unites de coupe avec reserves representent une nouvelle
+information importante susceptible d'aider dorenavant les operateiu-s forestiers a planifier, a budgeter et a executer
+des essais et des operations de coupe partielle. L'essai a demontre la possibilite de recolter des arbres sur des sites
+fragiles, avec de I'equipement traditionnel et des equipes manuelles, offrant ainsi I'occasion d'augmenter les
+approvisionnements de matiere ligneuse.
+
+INTRODUCTION
+Several studies have examined cable yarding operations
+for commercial thinning and partial cutting prescriptions
+in second-grovvth forests (Kellogg et al. 1996; Kellogg
+et al. 1986; Tesch et al. 1986; Howard et al. 1996; Hedin
+1994). Others have assessed the opportunity to apply
+altemative silviculmral systems to mature forests in
+coastal British Columbia (Nelson et al. 1990; Weetman
+et al. 1990; Moore 1991; Sanders and Wilford 1986).
+However, there are few well-documented operational
+trials of partial cut harvesting using cable systems in
+mountainous old-growth forests of coastal British
+Columbia. Therefore the harvesting feasibility—in
+terms of harvesting productivity and cost, and impacts
+on residual stands and soils—of such operations is not
+well understood.
+In particular, no operational trials have been performed
+in the Very Wet Maritime subzone (Submontane variant)
+of the Coastal Westem Hemlock biogeocHmatic zone
+(CWHvml). This biogeoclimatic unit is very common
+along westem Vancouver Island and the outer mainland
+coast of British Coliunbia, and forms a critical component
+of the timber supply in these regions.
+This report describes the results of a cable harvesting
+trial involving the use of high-retention silvicultural
+systems on steep, environmentally sensitive slopes
+on the west coast of Vancouver Island. Harvesting
+operations were conducted between July 1995 and
+September 1996 at International Forest Products
+L i m i t e d ' s (Interfor) Chamiss B a y operation i n
+Kyuquot Sound.
+
+and other coastal forest companies began a series of
+meetings to discuss the feasibility of an operational
+trial. A trial of altemative harvesting systems was
+proposed by the group, and Interfor's operating area
+at Chamiss Bay in Kyuquot Sound was chosen as the
+location (Figure 1). The committee recognized that
+implementing altemative silviculmral systems in oldgrowth stands on steep, sensitive coastal sites would
+be a challenge for harvest planners and practioners,
+especially if high levels ofti-eeretention were required.
+However, an investigation into partial cutting under
+these conditions was needed because such sites are
+often permanently deferred from conventional clearcut
+harvesting (Sauder and Wellbum 1989). A successful
+demonstration of silvicultural systems that maintain
+high levels of tree retention might permit similar
+harvesting methods to be employed on previously
+deferred environmentally sensitive sites and thereby
+augment the coastal timber supply. More recently, the
+need for operational harvesting trials was recognized
+by the Clayoquot Sound Scientific Panel (CSP 1995).
+The steering committee felt strongly that it was essential
+to involve forest workers from the outset to ensiu-e that
+they gained direct experience with altemative harvesting
+practices. It was also important to determine whether
+' Shelterwood Forest Management Ltd., Courtenay, B.C.
+
+BACKGROUND
+In early 1992, Interfor was asked by local citizens and
+the Kyuquot/Checleset First Nations to explore
+alternatives to clearcutting in the Kyuquot Sound area
+on the west coast of Vancouver Island. Traditional
+clearcutting and plantation silviculture are proven,
+well-established practices for regenerating the
+forested ecosystems within Kyuquot Sound. However,
+the need to reduce the visual impact of harvesting,
+maintain the stability of steep slopes, and preserve the
+quality of water on sensitive sites were the primary
+reasons for the request.
+Subsequently, a steering committee composed of
+representatives of Interfor, the Forest Engineering
+Research Institute of Canada (FERIC), the University of
+British Columbia (UBC) Faculty of Forestry, a forest
+resources consultant,' the B.C. Ministry of Forests
+(BCMOF) Vancouver Region's Forest Sciences Section,
+
+Figure 1. Location of tiie study sites.
+
+conventional cable-yarding equipment currently
+used in coastal B . C could be successfully applied to
+partial cutting in old-growth stands. If so, investment
+in new alternative yarding equipment could be
+minimized.
+FERIC and Interfor worked together to plan and
+implement the trial, and designed a study to determine
+the feasibility of the harvesting operations. The study
+had the following objectives:
+• Develop and implement procedures for the
+engineering and tree-marking phases, and
+document the methods and costs for these phases.
+• Detennine harvesting productivities and costs for
+the partial cutting units in the trial, and compare
+them to a clearcut in similar terrain and stand
+conditions.
+
+Cutblock
+A - 5 5 % Retention
+B - 7 0 % Retention
+C - Clearcut
+D - Strip clearcuts
+
+—
+
+• Determine the levels of residual stand damage and
+soil dismrbance associated with harvesting in the
+partial cutting units.
+
+Figure 2.
+
+Yarding corridors
+Roads
+
+Layout of four of thefivecutting treatments.
+
+• Provide preliminary comment on the short-term
+effects of the partial cutting methods on visual
+quality and windthrow.
+
+STUDY METHODS
+Study Sites
+Two areas considered typical of the sites that were the
+focus of this trial were selected for harvesting. One area
+was a uniform sidehill interrupted by occasional gully
+complexes; this site was subdivided into four cutting
+units (A,B,C, and D) (Figure 2) with similar terrain
+conditions and aspects. Unit boundaries were located
+around stands of timber situated between the steep
+gullies; the sizes of the cutting units were dictated by
+gully spacings. The second site, consisting of one
+cutting unit (E), was located in a neighbouring valley
+(Figure 3). This cutting unit had the steepest terrain,
+with slopes on some portions exceeding 100%. The
+areas and average ground slopes for all cutting units are
+found in Table 1. Elevations ranged from 300-600 m
+above sea level, and ground slope varied from 55-1 (X)%.
+The stands represented old-growth forests on zonal sites
+within the C W H v m l biogeoclimatic unit. The
+predominant tree species were westem hemlock (Tsuga
+heterophylla) and amabilis fir (Abies amabilis) with a
+minor component of westem red cedar (Thuja plicata)
+(Table 1). The shmb layer was comprised mainly of
+huckleberry and blueberry (Vaccinium spp.).
+
+Cutblock E - 6 5 % Retention
+—
+
+— Yarding corridors
+Roads
+
+Figure 3.
+
+Layout of the 65% retention unit.
+
+Like many areas on the west coast of Vancouver Island,
+the trial sites are subject to storm-force winds in winter
+The high potential for windthrow influenced the choice
+of tree retention levels in the Chamiss Bay trial. A
+windthrow hazard assessment was conducted to provide
+baseline information about stand level characteristics
+(Mitchell 1993). Topographic exposure, rooting depth,
+and exposure to winds were used in conjunction with
+observed windthrow patterns to assess the relative
+windthrow risk in the cutting units.
+
+Table 1.
+
+Stand Conditions by Cutting Unit
+
+55%
+retention ^
+
+65%
+retention
+
+70%
+retention
+
+Stiip cuts
+
+Clearcut
+
+Area (ha)
+
+1.7
+
+5.1
+
+2.4
+
+2.8
+
+2.3
+
+Average ground slope (%)
+
+65
+
+81
+
+61
+
+58
+
+62
+
+Species composition
+Westem hemlock (%)
+Amabilis fir (%)
+Westem red cedar (%)
+Otiier species (%)
+
+55
+6
+
+m5
+
+71
+24
+4
+1
+
+65
+16
+14
+5
+
+56
+6
+33
+5
+
+72
+26
+2
+0
+
+Tree density (no./ha)
+
+441
+
+494
+
+435
+
+437
+
+503
+
+Basal area (m^/ha)
+
+62
+
+76
+
+84
+
+64
+
+75
+
+Net volume (m^/ha)
+
+616
+
+821
+
+893
+
+638
+
+809
+
+Cutting unit description
+
+'
+^
+
+This cutting unit is not included in the productivity and cost analysis.
+Two strip cuts, 1.4-ha each, were harvested.
+
+Cutting Treatments
+
+Harvesting Productivities and Costs
+
+Five cutting treatments were selected for the trial, and
+one treatment was assigned to each cutting unit. High
+levels of tree retention were prescribed for three cutting
+units and two variations of clearcutting were prescribed
+for the other two imits. The following basal area retention
+targets for live trees were set for the partial cutting
+units, hereafter referred to as "retention units":
+
+Engineering and tree marking. The cutting units were
+designed around existing roads. Standard forest
+engineering procedures were used to locate and
+traverse the external boundaries of the cutting units and
+were not included as part of this trial. Only the
+incremental time—i.e., the time spent on corridor layout
+and tree marking was used in the calculation of
+engineering and marking costs.
+
+• 55% retention.
+• 65% retention.
+• 70% retention.
+The otiier treatments were:
+• One small clearcut.
+• Two strip cuts, each 50-60 m in width.
+Four of the five cutting treatments (the 55 and 70%
+retention units, the small clearcut, and the strip cuts)
+were situated on one hillside (Figure 2), and the 65%
+retention treatment was assigned to the other site.
+Although three retention units were harvested in the
+Chamiss Bay trial, only the 65 and 70% units were
+included in the harvesting study. The 55% retention unit
+was located in a poor timber type and had only a small
+volume harvested from it. This unit provided Interfor
+with an opportunity to gain additional operational
+experience with partial cutting, but it was not a suitable
+source of data for the harvesting smdy.
+
+Falling, yarding, and loading. Productivities and costs for
+the falling and cable-yarding phases were determined for
+the 65 and 70% retention imits, the strip cuts, and clearcut.
+Shift reports, detailing time and production, were conq)leted
+daily by the falling and cable-yarding crews and collected
+for the shifts worked in each cutting unit—i.e., 100%
+of the shifts were sampled. These shift-level records
+formed the basis for the productivity and cost analyses.
+The total volume yarded (m^) from each cutting unit
+was tracked and scaled at the Chamiss Bay sortyard.
+Hourly owning and operating costs were developed
+using FERIC's standard costing methodology for examples
+of typical cable-yarding and log-loading equipment
+used in the study and for an individual faller (Appendix
+1 and 11) and applied to the productivity measures to
+generate unit harvesting costs for each phase. Costs for
+log loading were summarized together with the yarding
+phase because operating conditions in the steep terrain
+required the yarder and log loader to work as a team.
+
+Residual stand damage and soil surface conditions.
+Surveys were conducted to quantify the level of
+damage to residual trees and changes to soil surface
+conditions resulting from harvesting in the 65 and
+70% retention units. The sampling scheme was based
+on the principles of cluster sampling (Cochran 1977),
+combined with systematic selection of the clusters. A
+randomly oriented grid with grid points spaced on a
+35-m by 35-m pattern was superimposed over the
+site maps, providing 34 and 17 evenly distributed
+plot centers for the 65 and 70% retention units,
+respectively.
+Each grid point served as the center of a circular fixedarea plot, with a radius of 11.28 m and area of 0.04 ha,
+to document residual stand damage. The species and
+diameter of all trees in each plot were recorded. For
+trees with scarred boles, the diameter, width, and length
+of individual scars; scarring severity; and location of
+each scar were recorded.
+The grid points were also used as plot centers for
+assessing soil siuface conditions. At each grid point two
+17-m transects were estabUshed with dieir origins at the
+grid point. The first transect was mn on a random
+bearing and the second transect was mn on an offset
+bearing 90° clockwise from the first transect.
+Cluster sampling, using clusters of equal sizes, was
+applied to record soil conditions. The lengths occupied
+by each class of soil surface condition, along each
+transect, were recorded and then summed for both
+transects at each grid point. The proportion of total
+transect length (based on the combined 34-m length of
+both transects) was calculated for each class of soil
+surface condition at each grid point.
+
+DESCRIPTION O F OPERATIONS
+Engineering
+Prior to beginning the layout phase, the following
+harvest design specifications were developed to guide
+engineering activities:
+• A l l cutting units were designed for uphill yarding.
+• Yarding corridors were to be 4 m wide and spaced
+approximately 30 m apart.
+• Parallel yarding corridors, oriented perpendicular to
+the contours, were preferred.
+• Partial suspension of logs was required diuing lateral
+yarding and uphill yarding along the corridors.
+
+• The yarder's running lines were to be confined within
+the yarding corridor at an elevation of 10-15 m
+above the ground.
+• Backspar trees were to be used wherever possible to
+achieve desired line clearances and partial suspension.
+Field layout was performed in a series of steps. First,
+cutting unit boundaries were located, surveyed, and
+mapped at a scale of 1:2000. Second, potential backspar
+trees or tailhold stumps, and suitable tieback trees or
+stumps, were located; next, preferred yarder positions
+on the road were identified. These points were then
+connected in a closed tiaverse and mapped. Third, a
+centerline for each yarding corridor was located to
+match the preferred yarder position on the road with
+the selected backspar tree or stump that most closely
+met cable-deflection requirements and the desired
+spacing between corridors. Finally, deflection lines
+were surveyed and load path analyses were conducted
+for each corridor. Required rigging heights for the
+backspar trees were determined fi-om these analyses.
+The longest slope yarding distance and longest distance
+to a tailhold were 320 and 380 m, respectively. These
+distances were required for some yarding corridors in
+the 65% retention unit.
+Input from Interfor's woods foreman, the falling
+contractor, and the Worker's Compensation Board of
+British Columbia (WCB) was obtained in the field and
+incorporated into the design and engineering of cuttmg
+treatments and the ttee-marking criteria.
+
+Tree l\/larking
+Five goals were specified for the post-harvest condition
+of the stands:
+1. Maintain a continuous forest cover, and evaluate
+the need to plant any gaps, such as yarding
+corridors, after harvesting.
+2. Retain a high proportion of relatively uniformly
+distributed residual trees to prevent windthrow.
+3. Retain approximately the same proportion of tree
+species and diameter classes in the residual stands
+as in the natural untreated stands.
+4. Retain some of the forest stmctures, such as large
+trees and downed wood, for biological diversity.
+5 .Give priority to removing trees with hemlock
+dwarf mistletoe (Arceuthobium tsugense) or other
+diseases to improve forest health.
+
+These goals guided tree-marking in the retention units.
+Tree retention and removal targets were expressed in
+terms of live tree basal area (m^/ha). Total basal area
+in each retention unit was reduced by marking trees for
+cutting in all diameter classes such that the proportion
+of trees in each diameter class after harvesting was
+similar to that class's proportion in the original stand—
+i.e., trees were marked across the stand profile so that
+a similar diameter distribution was retained.
+Wherever possible, trees that appeared vigorous and
+well-formed were left to continue to grow. Trees given
+priority for cutting were:
+
+assisted the markers, thus providing a good opportunity
+to review the practical aspects of tree selection
+methodology.
+Trees were marked to cut in the following sequence:
+(1) two adjacent 4-m-wide yarding corridors were
+delineated by marking all trees within 2 m either side
+of the corridor centerline; and (2) the segment of the
+stand in between the two corridors was then marked.
+Because corridor centerlines had been previously plotted,
+individual areas for these stand segments were easily
+calculated on the 1:2000 scale maps. The areas were
+used to compute unit basal area as each segment of the
+stand was marked.
+
+• A l l snags, to comply with W C B safety regulations.
+• Westem hemlock infected with hemlock dwarf
+mistletoe, and all species displaying conk or other
+pathological indicators.
+• Trees displaying poor form, and those thought to
+be dying.
+• Trees judged to be susceptible to windthrow, based
+on criteria in Stathers et al. (1994).
+Inter-tree distance, crown width, and canopy closure
+were also considered during marking, but rigid criteria
+were not practical given the irregular stracture of the
+old-growth stands. A tree spacing of 5 m was occasionally
+used as a general mle when marking in dense clumps
+of trees.
+Falling feasibility, taking into account the adjacent
+residual trees and surrounding terrain, was a crucial
+factor in marking. Usually several trees were evaluated
+simultaneously because cutting one tree often meant
+that others had to be taken to prevent hang-ups and
+bmshing of residuals during falling.
+Species, diameter-at-breast-height (dbh), and
+pathological indicators were recorded for all marked
+live trees in each retention unit to control the marking
+process. Also, species, dbh, and estimated height were
+recorded for all snags. Tree data were entered into a
+datalogger in the field as tree marking progressed, and
+were downloaded and analyzed at the end of the day
+to ensure that the basal area retention targets were
+being met.
+Marking was done with a three-person team: two
+people measured diameters and marked the selected
+trees with paint, and one person entered data in the data
+logger. Forest engineering and forestry personnel
+collaborated in the tree-marking phase. Occasionally
+the operation's woods foreman and lead contract faller
+
+In the early stages of marking, ribbon was used to flag
+the selected trees and data were analyzed as each stand
+segment was completed. Tree marking with paint did
+not begin until markers were confident that the basal
+area targets for a cutting unit could be met. The
+retention units were under-marked by 3 to 5% of
+basal area to allow for additional tree removals during
+the falling phase for safety reasons, and to recover any
+stems damaged during falling or yarding.
+Although all snags within the cutting units were feUed for
+safety reasons, abundant snags remained in the "leave"
+areas and forested gullies adjacent to the trial's
+small cutting units. These snags, and the high numbers
+of trees within the retention units themselves, meant
+that much of the natural forest's structural diversity
+was retained in the vicinity of the retention units.
+
+Falling and Bucking
+One contractor^ was responsible for manual falling and
+bucking in all units. Except in the 65% retention unit,
+only one faller could work in each cutting unit because
+of their small sizes. However, the cutting units (except
+the 65% retention unit) were on a common hillside and
+close enough to each other that fallers could monitor
+one another as they worked in neighbouring units,
+thereby satisfying W C B requirements.
+The fallers used a chainsaw, an axe, and wedges to fall
+and buck trees in the retention units. Practices were the
+same as for conventional falling in clearcuts. Fallers
+worked up the slope progressing back and forth over a
+section of the stand, using the tree's natural lean to fall
+each tree across the slope, and trees were wedged over
+when necessary (Figure 4). The limbs were removed
+and the stems were bucked to Interfor's preferred
+lengths.
+
+^ Shiels Falling and Consulting Ltd., Nanaimo, B . C .
+
+Figure 4. Faller wedging a tree in the 65% retention
+unit.
+A l l trees within the yarding corridors were felled
+concurrently with the rest of the marked trees in the
+stand. Corridor trees were felled in the same maimer
+as other marked trees, across the slope, and bucked
+where they rested. Directional felling of timber toward
+yarding corridors in a herringbone pattern was not
+attempted because of the large tree sizes and steep
+slopes. The fallers were directed to use their discretion
+and substitute marked trees with similar unmarked
+trees if they felt uncomfortable about a faUing situation.
+
+Figure 5.
+
+Cypress 7280B swing yarder.
+
+Figure 6.
+
+MSP (dropline) carriage used with the
+swing yarder.
+
+Yarding and Loading
+Interfor's crews used company-owned equipment for
+the yarding and loading phases. A Cypress 7280B
+swing yarder (Figure 5) rigged in a running skyline
+configtu-ation harvested the tiiree retention units and the
+clearcut. A Johnson mechanical slackpulling (MSP)
+carriage was used to provide the necessary lateral
+yarding capability (Figure 6). The yarder worked on
+single-lane roads in the retention units and clearcut, and
+swoing logs onto the road surface for unhooking.
+The swing yarder, weighing 72 700 kg, is typical of the
+large yarders that are used extensively on the B.C. coast
+for harvesting clearcuts in old-growth timber The winch
+for the 7280B model is comprised of two side-by-side
+main drums (connected by a geared counter-rotating
+assembly), and a haulback drum. It is mechanically
+interlocked in both directions and, in this case, was
+retrofitted with water-cooled regenerative clutches.
+A system of yarding corridors was used in the retention
+units. Logs were pulled laterally into each skyline
+corridor and then yarded up the corridor to roadside.
+For each yarding corridor, the designated backspar tiee
+was rigged at the height needed to achieve the required
+deflection in the running lines and ground clearance.
+
+The four longest corridors in the 65% retention unit (see
+Figure 3) were rigged to stamps in a cutover across a
+gully, which provided the required deflection and
+running line clearance for yarding. Backspar trees were
+also used in the clearcut. The clearcut provided a good
+comparison to the retention units, in terms of yarding
+operations, because the swing yarder was again
+equipped with the M S P carriage, and the terrain and
+landing conditions were similar.
+A M a d i l l 171 tower yarder, rigged in a slackline
+configuration and equipped with an M S P carriage,
+was used to harvest the two strip clearcuts. The
+deflection lines run during the engineering phase had
+shown that timber in the lower portions of each strip
+
+could not be yarded by high-lead or running skyline
+systems. Good deflection was assured in each strip
+cut by anchoring the skyline on a ridge located 600
+m slope distance below the yarder. The tower yarder
+worked on large landings above each strip cut making
+it easy to land logs and unhook chokers in front of
+the machine.
+
+speed under which the yarding crews could safely work
+in the partially cut stands.
+
+The droplines used with the two M S P carriages were
+45 m long and 22 mm in diameter, while chokers were
+7.5 m long and 19 mm in diameter.
+
+Nine and five yarding corridors were laid out to
+harvest the 65 and 70% retention units, respectively
+(see Figures 2 and 3). The time and costs for corridor
+layout in the 65 and 70% retention units are shown in
+Table 2. Incremental engineering activities included in
+corridor layout are: locating and mapping backspars,
+tailholds, tie-backs, and yarder positions; locating and
+flagging corridor centerlines; miming deflection lines;
+and conducting load path analyses for each corridor.
+Person-hours represent the combined time for all
+members of the engineering crew. One-third of the
+total hours spent on corridor layout was charged at
+$56.25/h while two-thirds were charged at $31.25/h.
+This apportionment represents a crew of one field
+engineer/forester and two assistants. Costs were
+$2.57/m' and $2.66/m3 for the 65 and 70% retention
+units, respectively.
+
+Hydraulic log loaders were paired with the swing yarder
+and tower yarder in all the cutting units.
+The yarding crew complement for the retention units
+was slightly different than for the strip cuts and clearcut.
+A rigging slinger^ and one chokersetter hooked chokers
+in the retention units, while two chokersetters worked
+with the rigging slinger in the strip cuts and clearcut.
+Most of the time two chokers were attached to the
+dropline in the retention units; three chokers were used
+in the strip cuts and clearcut.
+In the retention units, the hooktender, swing yarder
+operator, and rigging slinger communicated with
+hand-held radios. The rigging slinger directed the
+yarder operator where to stop the carriage for log
+hookup; the rigging crew then pulled the dropline and
+chokers laterally to the logs. After the chokers were set
+and the crew was at a safe distance from the yarding
+lines, the rigging slinger directed the operator to yard
+the logs laterally into the corridor.
+The ability of swing yarders to operate within the width
+of a single-lane road is important when cable yarding
+on steep slopes because road widths must be kept to a
+minimum and opportunities to build landings are
+limited in this type of terrain. A swing yarder can move
+easily along such roads between parallel yarding
+corridors, and rig-up involves setting only two guylines.
+The running skyline configuration used for these
+yarders, combined with an M S P carriage, is a flexible
+system suitable for clearcuts or partial cuts (Lysons and
+Twito 1973; Mann 1977). A l s o , log handling is
+facilitated in steep terrain if the yarder can swing and
+land logs on the road for unhooking or pass them to an
+accompanying log loader as the logs reach roadside.
+These factors led to the choice of a swing yarder for
+the retention units in the Chamiss Bay trial.
+The region's W C B Occupational Safety Officer^ visited
+the sites on several occasions prior to and during
+engineering, falling, and cable yarding operations.
+Additional safe work procedures were developed for
+the trial, including guidelines for the maximum wind
+
+RESULTS AND DISCUSSION
+Engineering
+
+A n accurate cutting unit base map is imperative for
+yarding corridor layout. Roads, cutting boundaries,
+backspar locations, and yarder positions must be
+carefully surveyed. Because the corridors were narrow
+(4 m) and distances to the tailhold extended up to 380 m,
+the flagged line connecting the yarder's positions with
+the backspars had to be perfectly straight to ensure that
+after falling, the yarder's lines would ran without
+obstraction to the backspar. If bearings are not accurate,
+several attempts may be needed to connect corridor end
+points. The mapping scale of 1:2000 was found to be
+appropriate for this purpose. Key points could be
+plotted accurately, which in turn enabled correct bearings
+to be calculated for yarding corridor centerlines.
+The 4-m wide corridors used in this trial worked well.
+The narrow corridors were specified to reduce the
+visual impact of harvesting and to prevent wind from
+penetrating the stand. Figure 7 shows a corridor in the
+65% retention unit, viewed after falling but prior to
+yarding. The tailhold stump in the foreground was one
+of four located on a slope across the creek from the
+cutting tmit. Figure 8 shows a post-harvest view looking
+up the slope from within the corridor.
+
+' A "rigging slinger" supervises the chokersetters, chooses the
+logs for hookup, and participates in choker setting.
+* John Galuska, Occupational Safety Officer, Worker's Compensation Board of British Columbia, Courtenay, B . C .
+
+Table 2.
+
+Field Work Required for Retention Units
+
+Corridor layout
+Tree marking
+Total
+
+person-h
+
+65% retention
+S/m"
+
+$/ha
+
+person-h
+
+70% retention
+$/m^
+
+$/ha
+
+117
+91
+208
+
+2.57
+2.00
+4.57
+
+908
+706
+1 614
+
+60
+32
+92
+
+2.66
+1.42
+4.08
+
+990
+528
+1 517
+
+A relatively close corridor spacing of 30 m was chosen
+because the steep terrain and large trees raised a concem
+that logs would tend to roll downhill during lateral
+yarding and hang up behind residual trees. In most cases
+this spacing was achieved. In practice, a rigid
+specification for corridor spacing carmot be maintained
+on sites like those at Chamiss Bay. In a few cases the
+distance was increased up to 40 m when rock bluffs
+interfered with the desired corridor location or the
+preferred backspar trees were widely spaced.
+
+Figure 7.
+
+Yarding corridor in the 65% retention unit
+immediately prior to yarding—tailhold
+stump in foreground.
+^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^
+
+The trial showed that the target height above ground
+of 10-15 m for the mnning lines was correct. This
+provided enough clearance between the ground and the
+mniung lines to yard logs laterally and move them into
+the corridor without damaging the trees bordering the
+corridor Too much clearance would allow the lines to
+lift out of the corridor and damage tree tops. During
+lateral yarding, the mnning lines would often lightiy
+contact some tiees bordering the corridor. Logs turned
+easily from thek lateral cross-slope position into the
+corridor when the specified height of the mnning
+lines was maintained. Adhering to the engineering
+specifications for miming Une height is important when
+
+I^^^^^^^^H^^^^^^^^B
+
+yarding
+Parallel corridors, oriented perpendicular to the
+contours, were preferred to provide control of logs and
+to reduce hang-ups during yarding. A parallel corridor
+configuration was laid out on the 65% retention unit
+but ridges and gullies, and the orientation of the haul
+road and unit boundaries, dictated corridors in a
+fan-shape—i.e., several corridors radiating from one
+yarder position—in the other retention units. The
+number of fan-shaped corridors emanating from one
+landing was kept to two or three to minimize the amount
+of cross-slope yarding within the corridors. In fact,
+corridors in the fan-shaped configuration still ran
+roughly perpendicular to tiie contour because landings
+were positioned on ridges. Such positions enabled the
+yarder to bring logs directiy uphill on either side of a ridge.
+
+Figure 8.
+
+Yarding corridor in the 65% retention unit
+after yarding was completed—ground level
+view, looking up the slope.
+
+Downhill yarding was not considered for the Chamiss
+Bay trial because of the steep slopes and high cutbanks
+along the roads. The safety of the yarder operator and
+landing crew may be jeopardized when yarding downhill
+through a steep corridor if the yarder is positioned at tiie
+
+corridor's base, in the path of potential runaway logs
+and debris. Downhill yarding in partied cuts may be an
+option if the harvesting system is designed appropriately,
+for example, the yarder is positioned beyond the base
+of the slope, or yarding is restricted to gentle slopes.
+
+• Douglu fir
+• WMtamradcsdar
+• AmabJIa fir
+
+Tree Marking
+The marking procedures developed for the Chamiss Bay
+trial worked well operationally. On-site input from the
+falling contractor and the woods foreman was especially
+useful because by the time engineering and tree
+marking were completed, these individuals were assiu-ed
+
+20
+
+30
+
+40
+
+50
+
+60
+
+70
+
+80
+
+90
+
+100
+
+110
+
+120
+
+^130
+
+DBH clan (cm)
+
+• Douglaa fir
+
+Table 3.
+
+Post-Harvest
+Stand Descriptions
+Retention Units
+65%
+retention
+
+Species composition
+Westem hemlock (%)
+Amabilis fir (%)
+Westem red cedar (%)
+Otiier species (%)
+
+for
+
+• Amabiliafir
+
+70%
+retention
+20
+
+i'
+1
+
+m
+17
+n2
+
+Tree density (no./ha)
+
+381
+
+302
+
+Basal area (m^/ha)
+
+49
+
+57
+
+Net volume (m^/ha)
+
+518
+
+632
+
+71
+
+• Wsstsmradcadar
+• Arabila fir
+
+so
+
+70
+
+ao
+
+00
+
+100
+
+110
+
+120
+
+ai30
+
+DBH clua(cm}
+
+Post-Harvsst
+
+• WMtwn r»d cedar
+• AmabJIia fir
+• W f l B U m bamlocfc
+
+50
+
+60
+
+70
+
+80
+
+so
+
+100
+
+110
+
+120
+
+^ 130
+
+DBH cl>M(cm)
+
+Figure 9.
+
+• Waotam redcedar
+
+Preand post-harvest
+diameter
+distributions for the 65% retention unit.
+
+30
+
+40
+
+50
+
+60
+
+70
+
+80
+
+go
+
+100
+
+110
+
+120
+
+2130
+
+DBH c l a u (cm)
+
+Figure 10. Pre- and post-harvest diameter distributions
+for the 70% retention unit.
+that the harvest plan was workable and they were
+determined to make it succeed. Evidence of the success
+of the marking scheme is that the fallers substituted very
+few marked trees with altemate unmarked trees.
+Table 3 shows the post-harvest stand descriptions,
+and Figures 9 and 10 show the pre- and post-harvest
+diameter distributions for the 65 and 70% retention
+units, respectively. The retained trees were dispersed
+as uniformly as possible in each unit, although the
+pattem of retention was variable because the spatial
+distribution of trees in the untreated stands was irregular
+with numerous gaps.
+Tree marking costs were $2.00/m5 ($706/ha) and
+$ 1 .Allm' ($528/ha) for the 65 and 70% retention units,
+respectively (Table 2). The higher cost in the 65%
+retention unit is attributed to two factors. First, this unit
+had the longest yarding distances and the steepest, most
+mgged terrain, so a greater proportion of hiking time
+was required to complete the marking. Second, the
+tree-marking procedures were first used and refined in
+this unit, so the experience gained here reduced the
+marking time required for the 70% retention unit.
+Tree marking in old-growth is complex and unfamiliar
+to most foresters on the B . C . coast. It is difficult to
+balance all the tree marking criteria because a forester
+must weigh many objectives simultaneously and make
+tradeoffs during the process. The marking system must
+be coordinated with the natural lean of the trees to make
+
+the falling operation safe and to minimize damage to
+the residual stand. Perhaps most importantiy, markers
+must try to visualize the sequence and direction in
+which each tree will be felled. This means being able
+to gauge a tree's lean even when it is not obvious,
+something that is often difficult to do in such forests.
+The marker is not likely to have this skill and input from
+an experienced faller is invaluable at this stage. When
+marking has been done correctly, fallers should be able
+to fall trees, successively, into natural gaps in the stand,
+and into the openings created when snags and other
+marked trees have been felled. In the end, the fallers must
+have the option to exchange marked trees with similar
+urunarked trees for safety reasons.
+
+and the clearcut provide the best comparison of the
+relative difference in faUing productivity under the trial
+conditions (i.e., 31 % lower falling productivity for the
+retention unit compared to the clearcut) because
+species composition and volumes per ha were very
+similar in these units. The falling productivity in the
+70% retention unit (27.5 m^/h or 178.8 mVshift) was
+relatively high, only 1.6% lower than the falling
+productivity in the clearcut. This was attributed mainly
+to the tall, uruform timber and the high net volume per
+hectare in the 70% retention uiut (Table 1).
+The substantial difference in productivity between the
+two retention units probably resulted from a combination
+of factors. First, the terrain was steeper and yarding
+distances were longer in the 65% retention urut and
+therefore the proportion of faller's time needed to pack
+equipment into the uiut, and to hike in and out of the
+work area each day, was greater. Second, although
+average dbh of the marked stems was greater in the 65%
+retention unit, the trees appeared to be shorter and more
+limby compared to the tall, uniform timber and the
+higher volume per ha in 70% retention unit.
+
+The trial's planners marked each tree for cutting, with
+input from the fallers, because the novel silvicultiu-e
+prescriptions, developed for the structiu-ally complex
+old-growth stands, were untried. Tree marking forces
+planners to thoroughly review and implement their
+harvesting proposals on the ground. For several
+reasons, this is a prudent step when plarming partial
+cuts in challenging stand and tertain conditions. First,
+it ensures that planners deal with the practical aspects
+of tree selection and falling. Second, the marking
+process promotes a better understanding of long-term
+stand management goals. A n d finally, when advice
+from operations persoimel is drawn into the process,
+the possibility of an unworkable harvest plan being
+forced on an operation should be eliminated. A n
+acceptable altemative, for subsequent operations in
+similar stands, is to have experienced fallers select the
+trees as they carry out their faUing and bucking activities.
+
+The lower falling productivity in the strip cuts
+compared to the clearcut reflects in part the fact that
+when a working area is confined to a 50- to 60-m-wide
+strip, the faller must spend more time directing trees
+into the strip along each side boundary. Timber type was
+another factor Even though the clearcut and strip cuts
+were in close proximity on the same hillside, the strip
+cuts were in a relatively low-volume cedar-hemlock
+stand and the clearcut was in a higher voliune hemlockamabiUs fir stand.
+
+Falling and Bucking
+
+The costs per cubic metre for falling and bucking are
+shown in Table 5. Even for the retention units, these
+are quite low compared to most conventional falling
+operations in coastal B.C. because allowances for crew
+transportation, overhead, and profit were not included
+in the calculation of hourly falling cost, and falling
+
+Table 4 presents four productivity measures for falling
+and bucking by cutting unit. Compared to the trial's small
+clearcut, falling productivities were 31% lower in the
+65% retention uiut, 2% lower in the 70% retention unit,
+and 18% lower in the strip cuts. The 65% retention unit
+Table 4.
+
+Average Falling and Bucking Productivity by Cutting Unit
+
+Productivity
+
+"
+
+65% retention
+
+70% retention
+
+Strip cuts
+
+Clearcut
+
+Pieces"
+no./shift''
+no./h
+
+63.8
+9.8
+
+112.4
+17.3
+
+95.7
+14.7
+
+109.8
+16.9
+
+Volume
+mVshift
+m^/h
+
+125.1
+19.2
+
+178.8
+27.5
+
+149.3
+23.0
+
+181.7
+28.0
+
+A "piece" is a manufactured log, ready for yarding.
+A faller's shift length is 6.3 h.
+
+10
+
+Table 5.
+
+Average Falling and Bucking Cost by Cutting Unit"
+
+Activity
+
+65% retention
+
+70% retention
+
+Strip cuts
+
+Clearcut
+
+3.82
+
+2.67
+
+3.20
+
+2.63
+
+Falling and bucking ($/m^)
+"
+
+These costs are quite low compared to most conventional falhng operations in coastal B . C . because allowances for crew transportation,
+overhead, and profit were not included in the calculation of hourly falling cost, and falling productivities in the trial units were quite high.
+The cost results should therefore be used primarily to examine the relative differences in falling costs between the trial imits themselves.
+
+productivities in the trial units were quite high. The
+results should therefore be used p r i m a r i l y for
+examining the relative differences in falling costs
+between the trial units themselves. Compared to the
+trial's small clearcut, falling costs were 45% higher in
+the 65% retention unit, 2% higher in the 70% retention,
+and 22% higher in the strip cuts.
+
+activities during the study period including delays (with
+the exception of long-term mechanical delays), and
+includes productive yarding time plus mechanical and
+non-mechanical delays. Productive machine hours
+(PMH) includes ordy actual productive yarding time and
+the time required to change yarding roads or corridors.
+Figure 11 shows the distribution of total S M H for
+cable yarding in each cutting unit. The yarding logs
+component accounted for 78% of the total S M H in the
+65% retention unit, 83% in the 70% retention, 70% in
+the strip cuts, and 77% in the clearcut. In the strip cuts,
+the time available for yarding logs was lower because
+13% of S M H was taken up with other delays (failures
+of guyline stumps and a skyline anchor stump).
+
+Also, because Interfor's preferred log lengths were
+maintained in all cutting units, there were no negative
+impacts on log value associated with the retention units.
+Partial cutting prescriptions add to the complexities of
+falUng old-growth timber, and the fallers' paramount
+concem was maintaining safe work practices. A l l snags
+were felled concurrently with marked green trees.
+(There were 35 and 55 snags/ha in the 65 and 70%
+retention units, respectively.) Potential problems such
+as hang-ups, brushing of standing timber during
+falling, and limbs hanging up in the residual canopy
+were infrequent. Falling and bucking operations were
+completed without any safety incidents. The fact that
+high productivities were also achieved in all cutting
+units is evidence of the skill and hard work that the
+falling contractor brought to bear on this project.
+
+• other delays
+• Repeir r L r n t n g
+lines
+• Rig-up/dBmartle
+
+g
+
+B Change yarding
+corridors
+• Yarding logs
+
+65%
+retentkin
+
+Yarding and Loading
+
+*
+
+cuts
+
+Cutting unit
+
+Figure 11. Time distribution
+operations.
+
+Table 6 smnmarizes cable-yarding production. Scheduled
+machine hours (SMH) represent the time spent on all
+Table 6.
+
+70%
+retention
+
+for cable
+
+yarding
+
+Average Cable Yarding Production: Summary
+
+Production
+
+65% retention
+
+70% retention
+
+Strip cuts
+
+Clearcut
+
+Total time
+PMH"
+SMH''
+
+109.7
+125.4
+
+51.0
+56.0
+
+99.5
+128.8
+
+82.8
+98.5
+
+Yarding production
+Volume (m^)
+Volume (mVpiece)
+Pieces (no./cycle)
+
+1799
+1.1
+2.3
+
+894
+0.8
+2.4
+
+1791
+0-9
+2.6
+
+2 069
+0.8
+2.7
+
+P M H = productive machine hours.
+S M H = scheduled machine hours.
+
+Yarding road changes accounted for 9% of S M H in the
+65% retention unit, 8% in 70% retention, 7% in strip
+cuts, and 7% in the clearcut. For the retention units,
+each yarding corridor required a yarding road change;
+in the strip cuts, two skyUne yarding road changes were
+reqiured in each strip. The retention units required more
+road changes per unit volume of timber logged, but the
+average time per road change was longest in the strip
+cuts because the skyline anchor and the tower yarder
+were both repositioned.
+
+On the basis of S M H , yarding productivity ranged from
+a low of 13.9 mVSMH in the strip cuts to a high of
+21.0 mVSMH in tiie small clearcut. The 65 and 70%
+retention uiuts had yarding productivities of 14.3 and
+16.0 mVSMH, respectively. The lower production per
+S M H in the strip cuts compared to the retention units
+was due to the guyline and skyline anchor stump
+failures that occurred in the strips.
+Table 8 presents costs for the yarding and loading
+operations, calculated by dividing hourly costs by
+m V S M H . Total costs for the yarding phase were
+$26.86/m^ for tiie 65% retention unit, $24.12 for tiie
+70% retention, $24.00 for tiie stiip cuts and $18.34 for
+the clearcut. Compared to the clearcut, therefore, yarding
+costs were 46% higher in the 65% retention unit,
+32% higher in the 70% retention, and 31% higher in
+the strip cuts.
+
+Rig-up/dismantle, the time required for the iiutial setup
+and subsequent dismantiing of the cable yarder in each
+cutting unit, accounted for 4% of S M H in the 65%
+retention unit, 6% in 70% retention, 7% in the strip cuts,
+and 8% in the clearcut. There was one occurrence in
+each retention unit and the clearcut, and two occurrences
+in the strip cuts, i.e., one for each strip.
+The major category within mechanical delays was
+repair running lines, which included downtime
+associated with broken wire rope and subsequent
+splicing of the yarder's operating lines. The largest
+proportion of S M H for line repairs, at 8%, was recorded
+in the 65% retention unit. On several occasions the
+haulback' line broke at the point where it was secured
+to the drum. This occurred only at the start of the
+project, in the first and the longest corridors yarded, and
+the problem was eventually rectified.
+
+The costs for log loading depended on the productivity
+of the yarding machines because the yarders and log
+loaders have to work side-by-side in the steep terrain.
+Total loading costs were therefore $11.77/m^ for the
+65% retention unit, $10.57 for the 70% retention,
+$12.12 for the strip cuts and $8.03 for the clearcut.
+The study sites provided an opportunity to compare
+yarding productivity and costs in the retention imits and
+the clearcut for the same yarding system, under
+similar terrain and landing conditions. However, the
+reader is reminded that this study was conducted in
+difficult terrain. Thus the yarding phase cost for the
+
+Table 7 shows productivity results fortiiecable-yarding
+phase by cutting unit. On the basis of m^/PMH (excluding
+mechanical and non-mechanical delays), yarding
+productivities relative to the trial's clearcut were 34%
+lower in the 65% retention unit, 30% lower in the 70%
+retention, and 28% lower in the strip cuts.
+
+Table 7.
+
+' The "haulback" is the yarder's line that is used to outhaul the
+carriage, butt rigging, or grapple.
+
+Average Cable Yarding Productivity by Cutting Unit
+
+Productivity^''
+
+65% retention
+
+70% retention
+
+Cycles
+no./PMH
+no./SMH
+
+6.8
+6.1
+
+7.5
+6.8
+
+Pieces
+no./PMH
+no./SMH
+
+15.6
+13.7
+
+18.2
+16.6
+
+18.0
+14.2
+
+21.6
+19.0
+
+Volume
+m^/PMH
+mVSMH
+
+16.4
+14.3
+
+17.5
+16.0
+
+18.0
+13.9
+
+25.0
+21.0
+
+'
+
+P M H = productive machine hours.
+S M H = scheduled machine hours.
+
+12
+
+Strip cuts
+
+Clearcut
+7.7
+6.7
+
+Table 8.
+
+Average Yarding and Loading Cost by Cutting Unit
+65% retention
+
+70% retention
+
+Strip cuts
+
+Clearcut
+
+Yarding
+Equipment ($/m^)
+Labour (S/m^)
+Subtotal ($/m3)
+
+15.78
+11.08
+26.86
+
+14.17
+9.95
+24.12
+
+10.60
+13.40
+24.00
+
+10.77
+7.57
+18.34
+
+Loading
+Equipment ($/m^)
+Labour "($/m^)
+Subtotal ($/m3)
+
+6.95
+4.82
+11.77
+
+6.24
+4.33
+10.57
+
+7.16
+4.96
+12.12
+
+4.74
+3.29
+8.03
+
+Total ($/m3)
+
+38.63
+
+34.69
+
+36.12
+
+26.37
+
+Includes cost of full-time landing bucker.
+
+clearcut in this trial is higher than the average yarding
+phase cost for most coastal forest operations.
+
+log does not follow the anticipated path. The yarder's
+interlock mechanism facilitated positive carriage
+control and positioning.
+
+The supervisory personnel and harvesting crews
+responded positively to the new challenge of yarding
+in the retention units. Initially, two chokersetters
+accompanied the rigging slinger, and up to fotu" chokers
+were used in the 65% retention unit. This was the first
+retention unit to be yarded and crews were anxious to
+show traditional productivity levels under the new
+system. However, this arrangement was quickly
+abandoned when damage to residual trees occurred. A
+more controlled approach was then adopted using a
+rigging slinger and one chokersetter with two chokers,
+and steady production was achieved.
+
+Residual Stand Damage
+Tables 9 and 10 summarize residual stand damage levels
+for the 65 and 70% retention units, respectively, in terms
+of trees/ha and proportion of residual stems (%)
+with scarring of tree boles. Damage from the falUng and
+yarding phases is combined in the tables. Two levels
+of damage are shown: (1) all scarred trees regardless
+of scar size; (2) scarred trees having individual scars of
+900 cm^ or greater. (When scars exceed this threshold
+size, 60 to 85% of scars on westem hemlock and tme
+firs usually become infected by disease (Nevill, in press).)
+
+A l s o , some pre-setting of chokers* was initially
+attempted, again to maximize production. However,
+this practice too was quickly abandoned because, in the
+steep terrain, there was the risk of logs mnning away
+from the yarder or loader working on the road above.
+After setting the chokers, the crew would walk well
+beyond one side of the corridor, ensuring that they were
+not below the yarder or loader, and remain there until
+the carriage returned for the next cycle of log hookup.
+Yarding and loading operations were completed
+without any safety incidents.
+
+The proportion of trees with scars of any size was sunilar
+for the two retention units. In the 65% retention unit,
+88 trees/ha (34% of residual trees) were scarred and
+damage was evenly distributed over westem hemlock
+and amabilis frr. In the 70% retention unit, 147 ti-ees/ha
+(37%) were scarred and damage was concentrated on
+the westem hemlock. With approximately one-third of
+the trees in each tmit exhibiting at least one scar of any
+size, there is room for some improvement in damage
+levels as crews gain more experience with partial cutting.
+
+Rigging the yarding corridors and positioning the M S P
+carriage during each yarding cycle required additional
+skill and concentration on the part of the rigging crew
+in order to remove the logs without damaging the
+residual trees. The rigging slinger has a key role in this
+type of yarding operation. This worker must anticipate
+the path that the logs will take as they begin to move
+from their position on the slope. Patience is required
+to position the carriage accurately for lateral yarding,
+and time must be taken to reposition the carriage if a
+
+The proportion of residual trees with scars >900 cm^
+was similar for the two retention units (31 trees/ha and
+12% intiie65% retention unit, and 38ti-ees/haand 10%
+in the 70% retention tmit). This is considered a good result
+given the steep slopes and large timber of these units.
+The practice of "pre-setting" chokers requires two sets of
+chokers for the yarding operation; while logs are being yarded
+to the landing with one set, the crew works to hookup logs for
+the next yarding cycle with the second set.
+
+13
+
+Table 9.
+
+Damage to Residual Trees in the 65% Retention Unit"
+
+Damage
+
+Westem hemlock
+
+Amabilis fir
+
+Total
+
+43 (5)
+18(3)
+
+45(4)
+13(2)
+
+88 (7)
+31(3)
+
+16.5 (2.0)
+7.0(1.1)
+
+17.0(1.8)
+4.7 (1.0)
+
+33.5 (3.0)
+11.7(1.6)
+
+Residual trees
+W i t h scars of any size (no./ha)
+W i t h scars > 900 cm^ (no./ha)
+Proportion of residual trees
+W i t h scars of any size (%)
+W i t h scars > 900 cm^ (%)
+
+Means for the variables of interest are presented; standard errors are shown in parentheses.
+
+Table 10. Damage to Residual Trees in the 70% Retention Unit"
+Westem
+red cedar
+
+Other
+species
+
+Total
+
+12(5)
+4(3)
+
+31(8)
+7(4)
+
+1(1)
+1(1)
+
+147 (17)
+38 (6)
+
+3.0(1.4)
+1.1 (0.7)
+
+7.8 (2.1)
+1.9 (0.9)
+
+0.4 (0.3)
+0.4 (0.3)
+
+37.3 (4.8)
+9.7(1.7)
+
+Westem
+hemlock
+
+Amabilis
+
+Residual trees
+W i t h scars of any size (no./ha)
+W i t h scars > 900 cm^ (no./ha)
+
+103(16)
+25 (5)
+
+Proportion of residual trees
+W i t h scars o f any size (%)
+W i t h scars > 900 cm^ (%)
+
+26.1 (4.3)
+6.3(1.5)
+
+Damage
+
+Means for the variables of interest are presented; standard errors are shown in parentheses.
+
+and 70% retention units, respectively. Exposed mineral
+soil was observed on only 1.4 and 1.5% of the surface
+area in these same units.
+
+Diuing the yarding operations it was observed that the
+incidence of scarring increased when the yarder's running
+lines were too low. This was apparent in two corridors in
+the 70% retention unit when the haulback block was not
+hung at the optimal height in the backspar tiee. Low
+mnning lines made maneuvering logs into the corridor
+more difficult, resulting in more damage to residuals.
+
+Soil disturbance was observed only within the yarding
+corridors, and there, only in discontinuous patches.
+Yarding did not create linear gouges or channels in the
+yarding corridors. Because logs were partially suspended,
+the trailing ends of the logs often bounced and touched
+the ground at intermittent points as they were yarded
+uphill along a corridor In fact, full suspension of logs
+was achieved along many segments of the corridors and
+the soil surface was not disturbed in these areas.
+
+On rare occasions, severely damaged corridor trees were
+felled and yarded to roadside after cable yarding
+operations had been completed on a particular corridor
+
+Soil Surface Conditions
+Table 11 summarizes soil surface conditions following
+harvesting for the 65% and 70% retention units.
+Three classes of soil surface condition were identified:
+(1) forest floor displacement (exposed mineral soil),
+(2) mixed organic material and mineral soil, and
+(3) undisturbed soil. The undisturbed category dominated
+both units and accounted for 89.8 and 95.9% of the
+soil surface area in the 65 and 70% retention units,
+respectively. Mixed organic material and mineral soil
+(scuffing and mixing of soil surface layers where
+partially suspended logs were dragged over the soil)
+accounted for 8.8 and 2.6% of surface area in the 65
+
+Overdl, the impact of the harvesting operations on the
+soil appears to be minor It is not likely tiiat post-harvest
+soil surface conditions have increased the risks for mass
+wasting or surface erosion. The levels of forest floor
+displacement are well below the Umits specified for
+sensitive sites in B.C.'s Forest Practices Code Soil
+Conservation Guidebook ( B C M O F 1995a).
+
+Other Observations
+Changes to landscape visual conditions. To assess
+whether high-retention partial cutting with cable
+14
+
+Table 11. Post-Harvest Soil Surface Conditions in the 65% and 70% Retention Units
+
+Proportion of cutting unit area affected'
+65% retention unit
+70% retention unit
+(%)
+(%)
+
+Soil conditions
+Forest floor displacement (exposed mineral soil)
+
+1.4
+
+(0.6)
+
+1.5
+
+(1.0)
+
+Mixed organic material and mineral soil
+
+8.8
+
+(2.1)
+
+2.6
+
+(1.3)
+
+Undisturbed soil
+
+89.8
+
+(2.2)
+
+95.9
+
+(1.5)
+
+'
+
+Means for the variables of interest are presented; standard errors are shown in parentheses.
+
+systems has the potential to meet stringent Visual Quality
+Objectives (VQO) in visually sensitive areas, photographs were taken of the cutting units and surrounding
+landscape before and after harvesting, from aircraft,
+along forest roads within the operation, and from an
+inlet to the east of the operation. (Refer to B.C.'s Forest
+Practices Code Visual Impact Assessment Guidebook
+( B C M O F 1995b) for V Q O definitions.)
+Figures 12 and 13 show the trial uruts from an aerial
+viewpoint. Note that aerial views accentuate alterations
+to the landscape, and that conventional visual impact
+assessments are usually done from a terrestrial
+viewpoint. It is difficuh to detect any harvesting activity
+in the retention units in these photographs. The yarding
+corridors were visible from the air immediately after
+
+65% retention
+(yardiitg completec^.
+
+oundary
+
+Figure 12. 65% retention unit following harvest.
+
+yarding was completed, but only in direct overhead
+light conditions. The corridors were not visible at
+oblique lighting angles due to dense shadows. One year
+later, during another flight over the sites, the ground
+cover in these same corridors had blended into the
+landscape, making the corridors more difficult to
+discern.
+The narrow corridors in the retention units and the high
+levels of tree retention undoubtedly contributed to the
+minimal visual impact of the operations. The crowns
+of many trees adjacent to the 4-m-wide corridors
+overhung portions of the corridors, thus shielding them
+from view. Further, the irregular stmcture of typical
+coastal old-growth stands gives a "ragged" appearance
+compared to a uniform second-growth stand, which
+
+Figure 13. 55 and 70% retention units during harvest (oblique angle).
+most susceptible to windthrow—i.e., trees with defects
+and trees that appeared to be rooted on unstable
+substrates—were removed in the harvest. Finally, the
+retained trees represented the full natural stand profile
+and included both dominants and emergents. Mitchell
+(1993) noted that although the issue of leave tree
+selection is contentious, several studies have suggested
+that retaining both dominants and emergents improves
+the windfirmness of residual stands.
+
+further helps lessen the negative visual effects of
+harvesting operations (USDA Forest Service 1978).
+These results provide needed information about the
+visual inpact of high-retention partial cutting in old-growth
+on steep slopes within the C W H v m l biogeoclimatic
+uiut. Whether a cutting treatment will meet a particular
+V Q O is open to interpretation. However, it would
+appear that the retention units in the trial met a Partial
+Retention VQO—i.e., activities are visible but remain
+subordinate—when viewed from aircraft. If a terrestrial
+viewpoint was used, these units may satisfy a Retention
+VQO—i.e., activities are not visually evident.
+
+It must be stressed that these observations are only
+preliminary. M o r e time must elapse before the
+long-term windfirmness of these retention treatments
+can be evaluated.
+
+Windfirmness of the residual stands. Like many
+areas on the west coast of Vancouver Island, the
+Kyuquot Sound region is subject to frequent storm-force
+winds in winter months. Particularly severe storms hit
+the area during the winter of 1995/96 and caused many
+windthrow and mass wasting events in the region's
+natural forests. However, no windthrow occurred in the
+retention cutting units at Chamiss Bay, suggesting that
+the windthrow management sttategies adopted for these
+units may be appropriate and efTective, at least in the
+short term, for several reasons. First, the high retention
+levels chosen for the trial and the relatively uniform
+distribution of the retained trees maintained sufficient
+crown cover to prevent wind from penetrating the
+residual stands. Second, trees that were considered
+
+Planning and implementing partial cutting. Partial
+cutting is best planned in conjunction with clearcut
+operations in the same vicinity to make supervision and
+coordination of equipment between areas more
+efficient. In some areas, it may be possible to incorporate
+partial cuts into development plans without adding to
+road-development costs. This is because large areas of
+developed timber have already accumulated in coastal
+regions but are cmrently deferred from harvesting for
+environmental and other reasons. Also, forest operators
+are adding to the bank of deferred timber because they
+are building new roads through long sections of sensitive
+terrain to gain access to areas suitable for clearcutting.
+These sensitive areas are candidates for partial cutting.
+16
+
+The trial showed the potential to operate on such sites
+with conventional equipment and crews, thus creating
+an opportunity to augment timber supplies.
+
+was reduced by only 2% compared to the clearcut,
+mainly because of a marked difference in timber type
+between this unit and the trial's clearcut. Cable yarding
+productivity in this unit was 30% lower than in the
+clearcut, and yarding costs (based on SMH) were 32%
+higher. It must be stressed that these are the relative
+differences in falling and yarding productivity and cost
+for the Chamiss Bay trial in which a clearcut in similar
+steep terrain, with no landings, was used for comparison.
+The steep slopes and narrow roads meant that the yarder
+could not deck logs along the roads, so a log loader had
+to work beside the yarder in all the cutting units. The
+cable-yarding phase cost for the clearcut in this trial is
+higher than the average cable-yarding phase cost for
+most coastal forest operations.
+
+Also important are the intangible benefits that can
+flow from a high-retention partial cutting trial. For
+example, planners and operations personnel gain the
+skills and confidence needed to address other less
+difficult harvesting situations. They can apply the
+techniques to areas that need low or moderate levels
+of tree retention, where the trees are either dispersed
+or i n clumps, and to riparian zones with special
+prescriptions. Also, silviculturists can now think
+about altemative silviculmre prescriptions on sites
+where partial cutting was considered operationally
+unworkable. However, there is still much to learn
+about stand and regeneration responses to these cutting
+methods on the type of sites described in this trial.
+Treated stands need to be monitored over the long-term
+to generate the stand dynamics information that will
+strengthen fumre prescriptions.
+
+Post-harvest surveys showed that 34 and 37% of the
+residual trees had at least one scar of any size, and 12
+and 10% of the residual trees had at least one scar that
+was 900 cm^ or greater in the 65 and 70% retention
+units, respectively. Exposed mineral soil was observed
+on only 1.4 and 1.5% of the soil surface area in the 65
+and 70% retention units, respectively.
+
+CONCLUSIONS
+
+A strategy for falling timber in high-retention systems
+must be carefully prepared. In this trial the fallers were
+included from the beginning in the planning and
+tree-marking processes. When operations commenced
+they were familiar with the objectives of the trial. They
+felt assured that a workable plan was in place and were
+determined to follow the marking scheme productively
+and safely.
+
+This study investigated the harvesting feasibility of
+partial cutting in old-growth stands on the steep
+sensitive slopes of coastal British Columbia where
+clearcutting is restricted for environmental and/or
+visual quality reasons. The trial demonstrated that
+British Columbia forest workers have the skills needed
+to successfully implement high-retention partial-cutting
+systems in challenging terrain and timber conditions,
+and that industry-standard swing yarders are very
+effective in such operations. The productivity and cost
+results for the retention units provide important new
+information to help forest operators plan, budget, and
+implement futiu'e partial cutting trials and operations.
+
+The trial showed that a modem interlock swing yarder
+equipped with a mechanical slackpulling ( M S P )
+carriage is well-suited to uphill yarding in partial cuts
+on steep slopes. This type of machine can be moved
+between yarding corridors and rigged-up quickly, and
+its abiUty to swing and land logs on the road is essential.
+The M S P carriage is needed to provide a lateral
+yarding capability.
+
+Implementing high-retention partial cutting under these
+conditions requires close cooperation between foresters,
+forest engineers, harvesting supervisors, and loggers.
+A l l groups must contribute and coordinate their efforts
+if the stand management objectives are to be met. Safe
+work procedures must be reviewed and, when necessary,
+new procedures developed to suit the working
+conditions of the operation. Cooperation was achieved
+in the trial, and the fallers and yarding crews adapted
+well and worked hard to make the project a success.
+
+Although the benefits of swing yarders and mnning
+skyline systems have been proven for over two decades,
+traditionally these systems have been narrowly applied
+in B.C. where they are usuidly configured for grapple
+yarding. As this trial shows, these yarding cranes are
+technologically advanced machines capable of addressing
+a wide range of harvesting challenges on sensitive sites.
+Fitting swing yarders with M S P carriages, using them
+over extended yarding distances, and applying them to
+partial cutting prescriptions is an alternative for
+harvesting sensitive sites. By adapting existing yarding
+cranes to such applications, the B.C. forest industry can
+avoid large investments in new yarding equipment to
+address sensitive site harvesting needs.
+
+In the 65% retention unit, falling productivity was 31 %
+lower, and cable yarding productivity (expressed in
+m^/PMH) was 34% lower than in the clearcut. Falling
+costs therefore increased by 45% relative to the clearcut,
+while yarding costs (based on SMH) increased by 46%.
+In the 70% retention unit, however, falling productivity
+17
+
+Moore, K . 1991. Partial cutting and helicopter yarding
+on environmentally sensitive floodplains in oldgrowth hemlock/spmce forests. Research Branch,
+B . C . Ministry of Forestry, Victoria, B C . F R D A
+Report 166. 43 pp.
+
+REFERENCES
+British Columbia Ministry of Forests (BCMOF); B C
+Envu-onment. 1995a. Soil conservation guidebook
+(Forest Practices Code of British Columbia). 17 pp.
+
+Cochran, W.G. 1977. Sampling techniques. 3rd ed.
+John Wiley & Sons. 428 pp.
+
+Nelson, J.; Daust, D . ; Finn, S. 1990. A review of
+silvicultural systems and harvesting altematives for
+old-growth forests of coastal British Columbia.
+University of British Columbia, Faculty of Forestry,
+Vancouver, B . C . Contract report for MacMillan
+Bloedel Limited, Woodlands Services, Nanaimo,
+B C . 57 pp.
+
+CSP Scientific Panel for Sustainable Forest Practices
+in Clayoquot Sound. 1995. Sustainable ecosystem
+management in Clayoquot Sound. Planning and
+practices. Secretariat, Cortex Consultants Inc.,
+Victoria, B C . 296 pp.
+
+Nevill, R.J. (in press). A literature review on tree
+wounding and partial-cut harvesting. Contract
+report for the B r i t i s h C o l u m b i a M i n i s t r y of
+Forests, Prince Rupert Forest Region, Smithers,
+B C . 69 pp.
+
+Hedin, L B . 1994. Shelterwood harvesting in coastal
+second-growth Douglas-fir. F E R I C , Vancouver, B C .
+Technical Note TN-216. 10 pp.
+
+Sanders, P R . W . ; Wilford, D . J . 1986. Silvicultural
+altematives for the management of unstable sites in
+the Queen Charlotte Islands: a literature review and
+recommendations. British Columbia Ministry of
+Forests, Information Services Branch, Victoria,
+B.C. Land Management Report 42. 42 pp.
+
+British Columbia Mmistry of Forests (BCMOF); B C
+Environment. 1995b. Visual impact assessment
+guidebook (Forest Practices Code of British
+Columbia). 25 pp.
+
+Howard, A.F.; Rutherford, D . ; Young, G . G . 1996.
+Optimal skyline corridor spacing for partial cutting
+in second-growth stands of coastal British Columbia.
+Canadian Journal of Forestry Research 26
+(3):368-375.
+
+Sauder, E.A; Wellbum, G.V. 1989. Planning logging:
+two case studies on the Qaeen Charlotte Islands.
+British Columbia Ministry of Forests and Lands.
+Land Mjuiagement Report No. 59.47 pp.
+
+Kellogg, L.D.; Bettmger, P ; Edwards, R . M . 1996. A
+comparison of logging planning, felling, and
+skyline yarding costs between clearcutting and five
+group-selection harvesting methods. Western
+Journal of Applied Forestiy ll(3):90-96.
+
+Stathers, R.J.; Rollerson, T.R; Mitchell, S.J. 1994.
+Windthrow handbook for British Columbia forests.
+British Columbia Miiustry of Forests, Victoria, B C .
+Research Program Working Paper 9401. 31 pp.
+
+Kellogg, L . D . ; Olsen, E.D.; Hargrave, R . M . 1986.
+Skyline thinning in a westem hemlock-Sitka spmce
+stand: harvesting costs and stand damage. Oregon
+State University, College of Forestry, Forest Research
+Labratory, CorvaUis, OR. Research Bulletin 53.21 pp.
+
+Tesch, S.D.; Lysne, D.H.; Mann, J.W.; Helgerson, O.T.
+1986. Mortality of regeneration during skyline
+logging of a shelterwood overstory. Journal of
+Forestiy, 84(6):49-50.
+
+Lysons, H.H.; Twito, R.H. 1973. Skyline logging: an
+economical means of reducing environmental
+impact of logging. Journal of Forestry 71(9): 580-583.
+
+U . S . Department of Agriculture ( U S D A ) , Forest
+Service. 1978. National forest landscape management - timber. Washington, D C . Agriculture
+Handbook No. 559, Vol. 2. Chapters, pp. 174-185.
+
+Mann, C . N . 1977. Running skyline systems for
+harvesting timber on steep terrain. Society of
+Automotive Engineers, Earthmoving Industry
+Conference, Central Illinois Section, Peoria, IL.
+April 18-20, 1977.6 pp.
+
+Weetman, G.F.; Panozzo, E.; Jull, M . ; Marek, K . 1990.
+A n assessment of opportunities for altemative
+silvicultural systems in the SBS, I C H and ESSE
+biogeoclimatic zones of the Prince Rupert Forest
+Region. Contract report for the British Columbia
+Ministry of Forest, Prince Rupert Forest Region,
+Smitiiers, B C . 154 pp.
+
+M i t c h e l l , S. 1993. A n assessment of windthrow
+potential in proposed uniform shelterwood cuts in
+the Kyuquot Sound area. Contract report for F E R I C ,
+Vancouver, B C . 26 pp.
+18
+
+Appendix I
+Hourly Equipment Costs for Cable-Yarding Systems
+S w i n g yarder
+80 OOP k g class
+
+Tower yarder
+50 OOP k g class
+
+L o g loader
+50 OOP k g class
+
+1 35P POP
+9 0PP
+7
+1 6PP
+30
+IP.P
+2.5
+
+825 PPP
+9 PPP
+7
+I 600
+3P
+IP.P
+2.5
+
+6PP PPO
+
+4P7 7PP
+883 35P
+
+25P 2PP
+542 100
+
+18P00P
+39P PPP
+
+L o s s i n resale value ((P-S)/D«h) $/h
+Interest = ( ( I n f A V I ) / h ) $/h
+Insurance = ((Ins«AVI)/h) $/h
+
+84.94
+55.21
+13.8P
+
+52.13
+33.88
+8.47
+
+37.5P
+24.38
+6.09
+
+Total ownership costs ( O W )
+
+153.95
+
+94.48
+
+67.97
+
+5P
+0.4P
+10
+
+4P
+P.40
+IP
+
+4P
+P.4P
+IP
+
+I 2PP
+15 SPP
+3 5P0
+I P POP
+5P PPP
+
+9PP
+SPP
+6 lOP
+3 9PP
+I P PPP
+35 PPP
+
+2 5P0
+2PP0P
+
+24.P4
+26.71
+24.P4
+21.74
+20.61
+2P.41
+
+23.41
+26.P1
+24.P4
+21.74
+2P.61
+4P.82
+
+40
+
+4P
+
+20.PP
+2.PP
+12.81
+6.25
+31.25
+158.91
+231.22
+
+16.00
+1.6P
+7.31
+6.25
+21.88
+IS6.5P
+239.54
+
+1.56
+12.50
+69.P7
+1PP.73
+
+385.17
+
+334.P2
+
+168.701
+
+Y a r d i n g and L o a d i n g "
+OWNERSHIP COSTS
+
+Purchase price (?) $
+Machine
+M e c h a n i c a l s l a c k - p u l l i n g carriage
+Depreciation period ( D ) y
+Scheduled hours per year (h) h
+Salvage value as % o f P (s) %
+Interest rate (Int) %
+Insurance rate (Ins) %
+Salvage value (S)=(P»s/I0P) $
+Average investment (AVI)=((P+S)/2) $
+
+$/h
+
+~
+
+7
+1 60P
+3P
+IP.P
+2.5
+
+PERATING AND REPAIR COSTS
+
+F u e l consumption (F) L / h
+F u e l cost (fc) $ / L
+L u b e and o i l cost as % fiiel cost (fp) %
+Pro-rated annual w i r e rope cost (wc) $
+Skyline
+Mainline
+Haulback
+Other lines, chokers, etc.
+A n n u a l cost o f supplies and rigging materials (SR) $
+A n n u a l repair and maintenance cost (Rp) $
+Wages ( W ) $/h
+M a c h i n e operator
+i n c l u d i n g machine servicing allowance
+Hooktender
+R i g g i n g slinger
+Chaser
+Chokersetters
+T .anding bucker
+Wage benefit loading ( W B L ) %
+F u e l cost (F«fc) $/h
+L u b e and o i l cost ((fp/lPP)»(F«fc)) $/h
+W i r e rope cost (wc/h) $/h
+Supplies and rigging materials cost (SR/h) $/h
+Repair and maintenance cost (Rp/h) $/h
+L a b o u r cost (W»(1-^WBL/1PP)) $/h
+Total operating and repair costs (OP) $/h
+TOTAL OWNERSHIP AND OPERATING COSTS ( O W + O P ) $/h
+"
+
+22.77
+25.29
+
+24.P4
+40
+16.PP
+1.60
+
+These figures are based on FERIC's standard costing methodology for determining machine ownership and operating costs, and do not
+include such costs as crew transportation, supervision, profit, and office overhead. IWA rates effective June 15/96 have been used.
+^ Double mainlines on the swing yarder.
+' Armual costs for repairs and maintenance are estimated by FERIC, with input from Interfor.
+The machine servicing allowance for operators is 2/3 of 1 hour at the overtime rate. It is prorated over an average shift length of 9 hours
+for this analysis.
+One chokersetter was used on the swing yarder; two chokersetters were used on the tower yarder.
+
+19
+
+Appendix II
+Hourly Falling and Bucking Cost
+Falling and Bucking"
+Wages for one faller (W) $/shift
+Wage benefit loading (WBL) %
+Cost of saw, gas and oil, and supplies (Sw) $/shift
+Shift lengdi (SI) h
+
+284.44
+40
+80.00
+6.5
+
+Labour cost = ((W«(l+WBL/100))/sl)
+Saw, gas and oil, and supplies (Sw/Sl) $/h
+
+61.26
+12.31
+
+Total falling and bucking cost per faller $/h
+
+73.57
+
+^ These figures are based on FERIC's standard costing methodology, and do not include such costs as crew transportation, supervision,
+profit, and office overhead. The IWA rate effective June 15/96 has been used.
+
+20
+
+head office
+siege social
+
+western division
+division de I'ouest
+
+eastern division
+division de rest
+
+580 boul. Saint-Jean
+Pointe-Claire, Quebec
+Canada H9R 3J9
+1:514-694-1140
+F: 514-694-4351
+E: admin@mtl.feric.ca
+
+2601 East Mall
+Vancouver, BC
+Canada V6T1Z4
+1:604-228-1555
+F: 604-228-0999
+E: admin@vcr.feric.ca
+
+580 boul. Saint-Jean
+Pointe-Claire, Quebec
+Canada H9R 3J9
+7:514-694-1140
+F: 514-694-4351
+E: admin@mtl.feric.ca
+
+

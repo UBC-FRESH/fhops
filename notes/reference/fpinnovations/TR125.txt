@@ -1,0 +1,2780 @@
+INSTITUT CANADIEN
+DE RECHERCHES
+EN GENIE FORESTIER
+
+FOREST ENGINEERING
+RESEARCH INSTITUTE
+OF CANADA
+
+ANALYSIS OF A S K Y L I N E PARTIAL CUTTING
+O P E R A T I O N IN T H E I N T E R I O R
+C E D A R - H E M L O C K BIOGEOCLIMATIC ZONE
+M i h a i P a v e l , M.F.
+February 1999
+
+TR-125
+
+ANALYSIS OF A SKYLINE PARTIAL CUTTING
+OPERATION IN THE INTERIOR CEDARHEMLOCK BIOGEOCLIMATIC ZONE
+
+Mihai Pavel, M.F.
+
+Technical Report No. TR-125
+February 1999
+
+KEYWORDS: Cable logging, Skyline, Harvesting, Partial cutting systems, Westem hemlock, Westem red cedar. Prod
+Costs, Interior British Columbia, Skylead C40 16000 yarder, Mini-Maki II radio controlled carriage.
+
+© Copyright 1999, Forest Engineering Research Instimte of Canada ISSN 0318-7063
+
+Abstract
+In 1997, the Forest Engineering Research Institute of Canada ( F E R I C ) studied a partial cutting operation in the
+Interior Cedar-Hemlock biogeoclimatic zone, on a site west of Kitwanga, B.C. The operation used a Skylead C40
+16000 skidder-mounted yarder and Mini-Maki II radio-controlled carriage in a standing skyline configuration and in
+single- and multi-span applications. The study provided information on productivity and cost for the harvesting system,
+impact on soil surface conditions, and damage to the residual stand. Productivity functions were derived to predict
+yarding productivities and costs over a range of operating conditions.
+
+Author
+Mihai Pavel holds a Dipl. Eng. (1987) degree from the University Transilvania of Brasov, Romarua, and an M.F. (1997)
+degree from the University of British Columbia. He did forest resources management and forest engineering work in
+Romania from 1987 to 1993. In 1994 he worked for a forestry consulting company in British Columbia. Mihai joined
+F E R I C in 1996 as a Researcher in the Harvest Engineering group. He is a Forester in Training with the Association of
+British Columbia Professional Foresters.
+
+Acknowledgements
+F E R I C gratefully acknowledges the cooperation of the staff and machine operators at Kitwanga Lumber Co. Ltd. Special
+thanks go to Philip Carmthers, forestry superintendent, for his valuable assistance during this trial. Special gratitude
+for their support and active participation during the study is extended to Ed Hobenshield, V e m Hobenshield and
+their field crew: Hud Stokes, Pat Ranahan, Les Hobenshield, Sjoerd Pelsma, George Ward and Joe Jarrsma. The
+author would also like to thank F E R I C employees Michelle Bowden-Dunham and Kris Kosicki for assisting in the
+field work, and Yvonne Chu, Shelley Corradini, and Monique Kalmokoff (formerly of F E R I C ) for assisting with report
+preparation. This smdy was funded by Forest Renewal B C .
+
+Disclaimer
+This report is published solely to disseminate information to F E R I C members and partners. It is not intended as an
+endorsement or approval by F E R I C of any product or service to the exclusion of others that may be suitable.
+
+ii
+
+Table of Contents
+Abstract
+Author
+Acknowledgements
+Disclaimer
+Summary
+Sommaire
+
+ii
+ii
+ii
+ii
+v
+v
+
+INTRODUCTION
+
+1
+
+OBJECTIVES
+
+1
+
+SITE A N D S T A N D DESCRIPTIONS
+Silvicultural Prescription
+
+1
+2
+
+HARVESTING S Y S T E M A N D OPERATION
+Description o f Harvesting Phases
+Rigging Systems Used in the Study
+
+2
+3
+5
+
+METHODS
+Productivity and Cost o f Harvesting
+Impact of the Operation on Stand and Site
+
+6
+6
+8
+
+RESULTS A N D DISCUSSION
+Shift-Level Productivity
+Unit Costs
+Yarding Cycle Time
+Removal Levels
+Results for Site and Stand Damage
+Visual Quality
+
+8
+8
+9
+10
+11
+12
+13
+
+OTHER OBSERVATIONS
+
+13
+
+CONCLUSIONS
+
+15
+
+RECOMMENDATIONS
+
+15
+
+REFERENCES
+
+16
+
+APPENDIX I
+Cycle Element Definitions
+
+17
+17
+
+A P P E N D I X II
+Equipment Costs
+Labour Costs
+Harvesting Costs
+
+18
+18
+19
+20
+
+APPENDIX m
+Procedure for Using Results Obtained i n this Study to Calculate
+Yarding Productivity and Cost for Other Partial Cutting Operations
+
+21
+21
+
+List of Tables
+Table 1.
+Table 2.
+Tables.
+Table 4.
+Table 5.
+Table 6.
+
+Average Pre-harvest Stand Characteristics
+Rigging Configurations Used i n the B l o c k
+Summary of Productivity
+Summary of Harvesting Costs by Phase
+Detailed-Timing Summary of Yarding Cycle Elements
+Evaluation of Stand Damage
+
+3
+6
+8
+9
+10
+13
+
+List of Figures
+Figure 1.
+Figure 2.
+Figure 3.
+Figure 4.
+Figure 5.
+Figure 6.
+Figure 7.
+Figure 8.
+Figure 9.
+Figure 10.
+Figure 11.
+Figure 12.
+Figure 13.
+Figure 14.
+Figure 15.
+Figure 16.
+
+Location of study site.
+Logging map of the cutblock.
+The Skylead C 4 0 16000 yarder used i n this operation.
+M i n i - M a k i n carriage after passing the intermediate support.
+Loader clearing the landing during yarding.
+Excavator used as a mobile backspar.
+N y l o n guyline strap with self-tensioning clamp.
+Rigging configuration for intermediate support.
+Time distribution: all phases.
+Cycle time distribution: single-span yarding.
+Cycle time distribution: multi-span yarding.
+System productivity during scheduled yarding time:
+single-span yarding.
+System productivity during scheduled yarding time:
+multi-span yarding.
+Comparison of single- and multi-span yarding productivities,
+for lateral yarding distance of 25 m.
+Aerial view of the cutblock.
+View along Corridor 25.
+
+IV
+
+2
+4
+5
+5
+5
+6
+6
+7
+9
+10
+10
+11
+12
+12
+13
+13
+
+Summary
+In 1997, the Forest Engineering Research Institute of
+Canada (FERIC), in a project funded by Forest Renewal
+B C , studied a skyline yarding system over short and
+long yarding distances and with and without
+intermediate supports. The study site was an Interior
+Cedar-Hemlock stand near Kitwanga, B . C . The
+operation used a Skylead C40 16000 skidder-mounted
+yarder and a Mini-Maki II radio-controlled carriage in
+a standing skyline configuration. Partial cutting
+employing a combination of narrow strip-cuts and group
+selection was prescribed for the study site to address
+visual, recreational and silvicultiu-al objectives.
+The yarding pad:em applied in the block consisted of
+parallel yarding corridors spaced approximately 50 m
+apart and oriented perpendicular to the contours. To
+acconunodate the skyline system, a 10-m-wide corridor
+was clearfelled and group-selection or occasionally
+single-stem removals were applied to the 40-m-wide
+strips of residual stand between yarding corridors. A target
+removal of 40% was set for this entry, with future enuies
+at about 30-year intervals removing up to 30% of the
+stand basal area and volume at each subsequent entry.
+FERIC assessed the economic and operadonal feasibility
+
+of the harvesting system used and determined the
+overall productivity and cost for all phases of the
+operation; developed productivity functions to relate
+productivity and cost for the yarding phase to external
+and lateral yarding distances, use of intermediate
+supports and other significant variables; identified
+operational factors affecting system performance and
+recommended improvements where appropriate;
+documented damage to residual stems and changes to
+soil surface conditions resulting from falling and
+yarding activities; and evaluated the visual impact of
+the harvest.
+F E R I C found that falling
+
+productivity was 99 mVshift
+and yarding productivity was 102 mVshift. The total
+cost for falling, yarding, processing and loading was
+S32.95/m\ The post-harvest survey showed that 5.4% of
+the residual .stand was woimded; no pou:ntially detrimental
+site disturbance was found in the cable-yarded area.
+Operationally, falling was the most critical phase
+because the placement of stems directly affected
+yarding productivity and leave-tree damage. This study
+confirmed that it is essential to have a logging plan that
+considers all factors including backspar and landing
+locations, falling pattem and direction, location and
+loadpath analysis for yarding corridors, and other
+naturcd resource values. Clearly defined silvicultural
+
+objectives for locating skyline corridors and lateral rows
+were necessary to fulfil the objectives of this operation,
+and to mininuze the impact of harvesting on stand
+stmctiire while maximizing economic retums.
+
+Sommaire
+En 1997, dans le cadre d'un projet fmance par Forest
+Renewal B C , I'Instimt canadien de recherches en genie
+forestier (FERIC) a etudie un systeme de telepherage a
+cable porteur sur de coiutes et de longues distances de
+telepherage, ainsi qu'avec et sans pylones
+intermediaires. L'aire d'etude etait situee dans un
+peuplement de cedre-pmche de la zone interieure, pres
+de Kitwanga, C.-B. On utilisait un cable-gme Skylead
+C40 16000 monte sur debardeur, et un chariot MiniMaki n telecommande dans une configuration de cable
+porteur a tension fixe. Une coupe partielle combinant
+des coupes par bandes etroites avec un jardinage par
+bouquets etait prescrite pour l'aire d'etude, afin de
+satisfaire a des objectifs visuels, recreatifs et sylvicoles.
+Le schema de telepherage applique dans le bloc
+consistait en corridors de telepherage paralleles, espaces
+approximativement aux 50 m et orientes
+perpendiculairement aux courbes de niveau. Pour
+permettre 1'installation du telepherique, un corridor de
+10 m de largeur etait coupe a blanc, et on procedait au
+jardinage par bouquets et occasionnellement au
+prelevement d'arbres individuels dans les bandes
+residuelles de 40 m de largeur entre les corridors de
+telepherage. L'objectif de prelevement etait fixe a 40 %
+pour cette coupe, avec des coupes futures a intervalles
+d'environ 30 ans pour enlever jusqu'a 30 % de la
+surface terriere et du volume du peuplement a chaque
+passage subsequent.
+L'etude de F E R I C consistait a evaluer la faisabilite
+economique et operationnelle du systeme de recolte
+utilise et a determiner la productivitd et le cout
+d'ensemble pour toutes les phases dc I'operation; a
+developper des fonctions dc productivite pour etablir
+les relations entre la productivite ct le cout dc la phase
+dc telepherage d'une part, ct les distances extcmes ct
+laterales de telepherage, l'utilisation de pylones
+intermediaires et d'autres variables significatives
+d'autre part; a identifier les facteurs operationnels
+affectant la performance du systeme et a recommander
+des ameliorations quand c'etait approprie; a documenter
+les dommages aux tiges residuelles et les changements
+aux conditions de la surface du sol resultant des activites
+d'abattage et de telepherage; et a evaluer I'impact visuel
+de la recolte.
+
+FERIC a trouve que la productivite a I'abattage etait de
+99 m^/poste de travail et la productivite au telepherage
+de 102 mVposte. L e coiit total pour I'abattage, le
+telepherage, le fa9oruiage et le chargement s'elevait a
+32,95 $/m^. L'evaluation apres coupe a revele que 5,4 %
+des arbres residuels presentaient des blessures; aucune
+permrbation potentiellement nuisible du site n'a ete
+constatee dans l'aire de telepherage.
+A u plan operatiormel, I'abattage etait la phase la plus
+critique parce que la position des tiges affectait
+directement la productivite du telepherage et les
+donunages aux arbres residuels. Cette emde a confirme
+qu'il est essentiel d'avoir un plan d'exploitation tenant
+compte de tous les facteurs, y compris I'emplacement
+des pylones arriere et des jetees, le schema et la
+direction d'abattage, I'Euialyse de I'emplacement des
+corridors de telepherage et du trajet suivi par la charge,
+ainsi que d'autres valeurs liees aux ressources
+natarelles. Des objectifs sylvicoles clairement definis
+en situant les corridors du cable-grue et les allees
+laterales ont ete necessaires pour satisfaire aux objectifs
+de cette operation et reduire au minimum I'impact de
+la recolte sur la structure du peuplement tout en
+maximisant la rentabilite economique.
+
+INTRODUCTION
+
+OBJECTIVES
+
+Forest management practices in Britisli Columbia are
+changing rapidly to better accommodate the
+management of non-timber resources. Pjutial cutting
+prescriptions are encouraged, and in some cases
+required, to meet these management goals. Experience
+with partial cutting is still limited for many of British
+Columbia's forest ecosystems, and research is needed
+to learn how to conduct efficient harvesting operations
+under these regimes. In this operational trial, performed
+by Kitwanga Lumber Co. Ltd., the Forest Engineering
+Research Institute of Canada ( F E R I C ) examined the
+performance of a skyline yarding system in a partial
+cut in an Interior Cedar-Hemlock (ICH) stand. F E R I C
+observed the system over short and long yarding
+distances, and with and without intermediate supports.
+
+The primary goal of this stody was to assess the economic
+and operational feasibiUty of using a skyline-yarding
+system for partial cutting in an I C H stand. The
+following specific objectives were established to
+address this goal:
+
+The site for this trial was located at Wilson Creek, 22 km
+west of Kitwanga, B . C . Partial cutting employing a
+combination of narrow strip-cuts and group selection
+was prescribed for the study site to address visual,
+recreational and silviculmral objectives. Portions of the
+cutblock are visible from Highway 16 and the Visual
+Quedity Objective (VQO) for the site is Partial Retention.
+Hiking opportunities and the presence of a heritage trail
+nearby also favoured partial retention.
+
+• Develop productivity functions to relate
+productivity and cost for the yarding phase to
+external and lateral yarding distances, use of
+intermediate supports, and other significant
+variables.
+
+Although literamre about partial cutting is abundant
+(Daigle 1995), the ICH biogeoclimatic zone is not well
+represented. Trials near Kispiox, B . C . of groundbased harvesting systems (grapple skidders, line
+skidders and horses) in clearcut, heavy-removal and
+light-removal s i l v i c u l t u r a l treatments were
+documented by Thibodeau et al. (1996) for the same
+ecosystem as this study (ICHmc2). However, the
+application of cable yarding systems in partial cutting
+prescriptions in the ICH zone has not yet been studied.
+Also, while the yarder and carriage used in this trial have
+been studied in other ecosystems (Forrester 1993a, b;
+Hedin and DeLong 1993), it is not clear how reliably
+the results of these smdies can be extrapolated to the
+I C H zone. This study addresses this particular
+information gap.
+
+Although a fiill evaluation of the biological and aesthetic
+implications of the harvest prescription was beyond the
+scope of this study, the following secondary objectives
+were set to provide information on these topics:
+
+This project was funded by Forest Renewal B C and
+addresses one of its strategic investment priorities
+under its Land and Resource Research program, that
+of partial cutting. This study contributes information
+to the forest industry in its continuing effort to develop
+economically feasible and biologically acceptable
+harvesting practices for partial cutting prescriptions for
+the full range of site and stand conditions in British
+Columbia.
+
+The study site was located in the Kispiox Timber
+Supply Area, between Wilson and Duncan Creeks on
+the north side of the Skeena River (Figure 1). Of the
+total cutblock area of 79.2 ha, 48.7 ha were skylineyarded, 14.4 ha were skidded with low ground pressure
+skidders, and 16.1 ha were in reserves and deferred
+areas. The skyline-yarded area included 6.0 ha of haul
+roads, landings and rock-pits, leaving a net area of
+42.7 ha.
+
+• Determine overall productivity and cost for the
+falling, yarding, processing and loading phases of
+the partial cutting operation.
+• Analyze the effects on yarding productivity of
+external and lateral yju-ding distances, of using
+single skyline spans (no intermediate supports)
+and multiple spans (one or more intermediate
+supports), and of other site and stand variables.
+
+• Identify operational factors affecting system
+performance and recommend improvements
+where appropriate.
+
+• Document damage to residual stems and changes
+to soil surface conditions resulting from falling and
+yarding activities.
+• Illustrate the visual impact of the operation by
+photographing from selected viewpoints, the
+cutblock before, during and after harvesting.
+
+SITE AND STAND
+DESCRIPTIONS
+
+Figure 1. Location of study site.
+The 130-year-old, fire-origin stand, within the Hazelton
+• Retain a portion of the existing stand in unlogged
+variant of the Interior Cedar-Hemlock Moist Cold
+reserves for wildlife trees, snags and coarse woody
+subzone (ICHmc2) (Banner et al. 1993), contained
+debris.
+westem red cedar (Thuja plicata Dougl. ex D.Don),
+westem hemlock (Tsuga heterophylla [Raf.] Sarg.),
+• Establish and grow a continuous crop of sawlogs
+subalpine fir (Abies lasiocarpa [Hook.] Nutt.), hybrid
+that will produce approximately 300 m%a over a
+spmce (Picea sitchensis var. glauca), lodgepole pine
+100-year rotation.
+(Pinus contorta var. latifolia Engelm.), paper birch
+(Betula papyrifera Marsh.), and trembling aspen
+To achieve these goals, a group-selection system was
+(Populus tremuloides Michx.), plus amabilisfir(Abies prescribed. A target removal of 40% was set for this
+amabilis [Dougl.] Forbes) and black cottonwood
+initial entry, with future entries at about 30-year
+(Populus balsamifera ssp. trichocarpa Torr. & Gray) intervals each removing up to 30% of the stand basal
+at lower elevations. Two dmber types occurred within
+area and volume. The target of 40% was chosen to open
+this treatment (Table 1). Type I. a dense small-diameter
+the stand and promote recmitment of namral regeneration
+cedar-hemlock stand, occupied the lower part of the
+while maintaining windfirmness. The silvicultural
+block. Type II, a larger diameter, less dense hemlockprescription was to plant westem red cedar, subalpine
+balsam stand, occupied the upper part of the block.
+fir, hybrid spmce dsid lodgepole pine at a density of
+1000 trees per hectare, with natural regeneration to
+complement planted stock. The artificial regeneration
+Topography was relatively steep and broken, with
+option was selected to minimize the ingress of westem
+frequent benches throughout the area. In the skyline
+hemlock.
+unit, slopes ranged from 10 to 60% and averaged 32%.
+The elevation ranged from 440 to 680 m.
+
+Silvicultural Prescription
+The long-term management objectives fortius site were to:
+• Develop and maintain a mosaic of all-aged and
+even-aged stands, composed of multiple species
+with a diversity of age and height classes.
+
+HARVESTING S Y S T E M AND
+OPERATION
+The yarding pattern applied in this study consisted
+of parallel yarding corridors spaced approximately
+50 m apart and oriented perpendicular to the contours
+(Figure 2).
+
+Table 1.
+
+Average Pre-harvest Stand Characteristics
+Species
+
+Type 1 (18.0 ha)
+Net merch. vol./ha (m')
+Trees/ha (no.)
+Average dbh (cm)
+Ave. net merch. vol./tree (m^)
+ype II (24.7 ha)
+Net merch. vol./ha (m^)
+Trees/ha (no.)
+Average dbh (cm)
+Ave. net merch. voL/tree (m')
+btal treatment (42.7 ha)
+Net merch. vol./ha (m')
+Trees/ha (no.)
+Average dbh (cm)
+Ave. net merch. vol./tree (m')
+
+Western
+redcedar
+
+Westem
+hemlock
+
+Subalprne
+fir
+
+Hybrid
+spruce
+
+Lodgepole
+pine
+
+Paper
+birch
+
+Trembling
+aspen
+
+Total
+
+125
+
+157
+219
+31.4
+0.72
+
+54
+75
+29.5
+0.73
+
+68
+32
+46.6
+2.15
+
+23
+44
+27.9
+0.53
+
+7
+16
+29.7
+0.43
+
+7
+17
+31.6
+0.42
+
+441
+670
+30.7
+0.66
+
+0.51
+
+314
+470
+30.4
+0.67
+
+107
+114
+32.8
+0.94
+
+161
+76
+46.9
+2.12
+
+30
+33
+33.6
+0.9
+
+1
+3
+35.5
+0.46
+
+4
+16
+27.4
+0.23
+
+717
+909
+32.9
+0.79
+
+111
+226
+30.4
+0.49
+
+248
+364
+30.8
+0.69
+
+85
+97
+31.4
+0.85
+
+122
+57
+46.8
+2.13
+
+27
+38
+31.2
+0.74
+
+4
+8
+33.1
+0.45
+
+5
+17
+29.2
+0.31
+
+602
+807
+32.0
+0.74
+
+28.3
+0.47
+
+100
+
+m
+
+31.9
+
+To accommodate the skyline system, 10-m-wide yarding
+corridors (5 m on either side of the skyline) were
+clearfelled. Group-selection or, occasionally, single-stem
+removals were applied to the 40-m-wide strips of
+residual stand between yarding corridors. Corridor
+locations were determined by the engineering crew, and
+the centreline of each corridor was flagged (corridor
+boundaries were also flagged on a few corridors). Also,
+backspar and intermediate support trees were selected
+and marked while corridors were being located.
+
+Description of IHarvesting Pliases
+For the first two weeks, two fallers experienced in
+partial cutting were used. Thereafter, only one of them
+worked on the site. At the start of each corridor, the
+faller did a reconnaissance of the corridor centteline
+and measured 5 m on each side of it to determine its
+boundaries. The faller felled both the corridor and small
+pockets of 1 to 5 ttees off the corridor in a one-pass
+operation. Smmps were cut low to the ground and on
+an angle, to minimize hangups during yarding. No
+delimbing or bucking was done in the bush, except for
+very large ttees.
+Tables showing the existing and residual stand strucmre
+and the plaimed cut for each timber type were given to
+the faller by the forestry superintendent, as well as
+suggestions on how to select ttees within pockets.
+The cable-yarding operation was configured as a
+standing skyhne and employed a small tower yarder
+
+and radio-conttolled carriage. The yarder was a Skylead
+C4016000 skidder-moimted machine with a 12.2-m tower
+(Figiu-e 3), powered by a 124-kW Cummins engine, and
+used a 19-nmi (3/4") swaged skyline and 13-mm (1/2")
+IPS mainline. The yarding crew was comprised of a
+yarder operator, a chaser and one or two chokersetters.
+A Mini-Maki 11 motorized radio-controlled carriage
+was used (Figure 4). This is a clamping-type carriage,
+which can be locked to the skyline adjacent to the turns
+to be yarded. The carriage's on-board 6.7-kW motor
+powers a capstan which feeds slack from the mainline,
+and the chokersetters can then pull the chokers laterally
+to the hook-up site. When the tum is hooked, the
+chokersetter signals the yarding engineer to draw the
+tum laterally towards the skyline corridor. Once the
+tum is suspended under the carriage, the clamp is
+released and the carriage and mm are yarded to the
+landing. This carriage can tolerate changes in direction
+of up to 8 degrees in horizontal (plan) alignment of the
+skyline when yarding over intermediate supports.
+A Hitachi E X 270 L L log loader (Figure 5) worked with
+the yarder to clear the landing and also to load tmcks from
+decks of processed logs. This often required the loader
+to ttavel long distances, as relatively small piles of logs
+were widely dispersed along the haul roads. In some
+cases, yarder-assisting and truck-loading activities
+conflicted, resulting in delays in loading tmcks or in
+clearing the landing for the yarder Intiielatter case, large
+piles of logs accumulated under tiie skylme, which made
+unhooking of turns difficult and time-consuming.
+
+]
+
+L G P skid (soft track)
+Cable selection
+
+I
+
+Unlogged reserves
+
+I
+
+Machine-free zone
+
+-
+
+Road
+
+- • Block boundary
+-
+
+Single-span yarding uphill with a
+standing tree used as a backspar
+Single-span yarding uphill with a
+mobile backspar (excavator)
+
+-
+
+Figure 2. Logging map oftfie cutblock.
+
+Single-span yarding uphill with a
+stump used as a backspar
+-
+
+Single-span yarding downhill
+(with a haulback)
+
+-
+
+Multi-span yarding uphill (an intermediate
+support was rigged, and a standing tree
+used as a backspar)
+
+-
+
+Unfelled comdor
+
+Figures.
+
+Figures.
+
+The Skylead C40 16000 yarder used in
+this operation.
+
+Loader clearing the landing during
+yarding.
+
+and processor worked in both the ground-skidded and
+cable-yarded areas of the cutblock. Company highway
+tmcks hauled the logs to the Kitwanga Lumber Co. Ltd.
+mill, approximately 20 km from the study site.
+
+Rigging Systems Used in the Study
+A variety of rigging configurations was used to deal with
+the variable terrain conditions and yarding distances in
+the cable-yarded portion of the cutblock (Figure 2 and
+Table 2). The most fi-equently used configuration was
+single-span yarding uphill with a standing tree used as
+a backspar (i.e., gravity skyline or shotgun), which
+accounted for 39% of total corridor length.
+The layout presented in Figiu-e 2 was respected, except
+Corridor 51 could not be used because the designated
+intermediate support was not considered satisfactory.
+To compensate, lateral corridors aligned in a
+herringbone pattern were felled and yarded from
+Corridors 50 and 52.
+
+Figure 4.
+
+For single-span yarding uphill (with fixed or mobile
+backspars), corridor lengths ranged from 40 to 350 m.
+For multi-span yarding, lengths ranged from 200 to 420 m.
+The average external yarding distance was 65 m for
+single-sp£m ysu-ding and 146 m for multi-span yarding.
+Lateral yarding distances ranged fi-om 0 to 50 m.
+
+Mini-Maki II carriage after passing the
+intermediate support.
+
+Where yarding roads terminated at a haul road (33%
+of total corridor length), a Caterpillar E L 300 excavator
+was used as a mobile backspar (Figure 6) and this
+reduced the rigging time for corridor changes. Multispan yarding was required on only 6 corridors but these
+accounted for 21% of total corridor length. Stumps
+were used as tailholds on short uphill-yarding corridors
+(3% of corridor length), and the haulback line had to
+be used to pennit downhill yarding on 5 short corridors
+(4% of total corridor length).
+
+Occasionally, a Clark Ranger 668 grapple-skidder was
+used to clear the landing when the loader was not
+available.
+Logs were mechanically processed at roadside, initially
+by a wheeled Timberjack processor equipped with a
+Denis head, and later by a Pierce processor mounted
+on a Hyundai 290 L C tracked undercarriage. The loader
+5
+
+Table 2.
+
+Rigging Configurations Used in the Block
+Corridor length
+
+Corridors
+(no.)
+
+(m)
+
+Single-span yarding uphill with a standing tree used as a backspar
+
+25
+
+3296
+
+39
+
+Single-span yarding uphill with a mobile backspar (excavator)
+
+17
+
+2830
+
+33
+
+Single-span yarding uphill with a stump used as a backspar
+
+4
+
+240
+
+3
+
+Single-span yarding downhill (with a haulback)
+
+5
+
+310
+
+4
+
+Multi-span yarding uphill (an intermediate support was
+rigged, and a standing tree used as a backspar)
+
+6
+
+1760
+
+21
+
+Total
+
+57
+
+8436
+
+100
+
+Method
+
+(%)
+
+available support trees. The diameter at breast height
+(dbh) of the backspars ranged from 40 to 60 cm.
+
+Figure 6.
+
+Excavator used as a mobile backspar.
+
+Intermediate supports were alsoriggedwith three nylonstrap guylines. Like the backspars, these were attached
+between 0.5 and 1.5 m above the tree-strap rigging
+point. To support the skyline jack, a tree block was hung
+on the tree strap. The snake (i.e., the line that supports
+the skyline jack) passed through the tree block, then
+back to a tailhold tree perpendicular to the yarding
+corridor and opposite the guylines (Figure 8). The snake
+was then tensioned with a grip puller to raise the
+skyline jack into its working position and to pull it
+away from the intermediate support to provide yarding
+clearance. Intermediate supports were pre-rigged
+whenever possible.
+Constmction of landings was minimal in diis operation;
+whenever possible, logs were decked by the roadside.
+
+METHODS
+FERIC was on site almost full time for the duration of
+
+this smdy, collecting shift-level and detailed-timing data,
+evaluating removal levels, and assessing the impact of
+the harvest on the stand and site. In addition, researchers
+observed various factors that affected productivity and
+discussed with crew members possible ways of
+improving performance. Whenever possible, these
+Figure 7. Nylon guyline strap with self-tensioning results were qucuitified and presented in the report.
+clamp.
+Backspar trees were rigged with three (or occasionally
+four) guylines. The guylines were 102-mm-wide,
+double-ply nylon straps with self-tensioning clamps
+(Figure 7), and were attached to the backspar between
+0.5 and 1.5 m above the tree-strap rigging point.
+Rigging heights on the backspar trees varied from 8 to
+15 m, depending on deflection requirements and
+
+Productivity and Cost of Harvesting
+Shift-level and detailed-timing data were used to
+determine overall production rates for the skyline
+operation, and to assess the impacts of yarding
+distance and intermediate supports on yarding
+productivity. For shift-level analysis, the yarder was
+
+H
+Tree strap rigging point
+GH Guyline rigging point
+GS Guyline tailhold
+SNS Snake tailhold
+
+Figure 8.
+
+Rigging configuration for intermediate support.
+
+equipped with a D S R Servis Recorder and a
+supplemental shift-level form was completed daily by
+all machine operators. The shift-level form collected
+specific information about the activities performed that
+day (e.g., yarding road worked on that day and reasons
+and times of major delays). The faller also completed
+a shift-level form to document daily activities for the
+falling phase. These data were compiled to calculate
+availabilities, productivities and costs for the faller and
+machines used in this operation.
+Twenty-four yarding corridors, representing each of
+the rigging methods, were selected according to
+criteria presented by Howard (1988 and 1989), to
+obtain representative detailed-timing information for
+single- and multi-span yarding. On the corridors selected,
+more than 800 yarding cycles (turns) and associated
+delays were detailed-timed using a hand-held
+datalogger. For purposes of analysis, the dependent
+variable was total delay-free cycle time, and the
+independent variables were slope yarding distance,
+lateral yarding distance and number of logs per tum.
+For safety reasons, the volume per tum could not be
+measured at the landing during logging operations, so
+the number of logs per tum was chosen as a substitute
+independent variable. A n average tum volume was
+estimated by multiplying the average number of logs
+per tum by the average piece volume (from shift-level
+data and final scaled volumes).
+
+Each harvesting cycle was divided into the following
+cycle elements: outhaul, lateral out, hookup, lateral in,
+inhaul and unhook. See Appendix I for definitions of
+these cycle elements.
+The detailed-timing data were analyzed using multiple
+regression techniques. The relationship between total
+cycle time and each independent variable was estimated,
+and a complete model, including all terms, was written
+for the data. A 0.05 significance level was used to test
+the relationship and the contribution each term made
+to the model. The model was reduced using the
+elimination technique until every independent variable
+retained was significant. As a final check, a lack of fit
+test was performed by plotting the residuals. Separate
+productivity equations were developed for single- and
+multi-span yarding.
+System productivities expressed as volume of timber
+yarded per hour (m%) and cost per cubic metre ($/m^)
+were derived based on shift-level data. Productivity in
+mVSMH (scheduled machine hour) was determined for
+each phase based on volume harvested and time spent
+by the faller and each machine in the yarded area. Time
+distributions showing productive time, time spent for
+maintenance, moving machine and rigging (for yarder),
+and delays, were developed for all machines and for the
+faller. Hourly machine costs were calculated using
+FERIC's standard costing methodology (Appendix II),
+
+and labour costs were calculated using applicable
+coastal IWA labour rates. These costs do not include
+supervision, profit, overhead or crew transportation,
+and do not reflect the actual costs incurred by the company.
+Costs for block layout and engineering were estimated
+from information supplied by the licensee.' They do
+not include supervision costs, and do not include all
+costs of getting approvals and other paperwork
+accomplished.
+
+Impact of the Operation on Stand and Site
+Plot centres established for the operational timber
+cruise were relocated and permanently marked in the
+field. These plots were uniformly distributed throughout
+the cable-yarding treatment unit (systematic sampling),
+at a density of approximately one plot per hectare.
+Within the plots, sample trees were selected with a
+prism to determine removal level by basal area and
+to compare it with the original prescription (PPS Probability Proportional to Size). The intensity of the
+cut was also assessed with respect to total volume harvested from the cutblock.
+The same plots were used to assess site and stand
+conditions. Assessment of tree injuries (wounds,
+gouges, etc.) conformed to the standards described in
+the Tree Wounding and Decay Guidebook ( B C M O F ;
+B C Environment 1997) and assumed the stand
+management objective for the smdy block is long-term
+retention. Therefore, a tree was considered not acceptable
+as a residual crop tree i f it met or exceeded the
+following limits:
+• a wound that girdled more than a third of the stem
+circumference
+• a wound exceeding 400 cm^ on the stem
+• a wound on a supporting root within 1 m of the
+stem
+• a gouge in the stem
+Post-harvest soil disturbance was assessed by locating
+two 15-m transects at each plot centre. A random
+bearing was selected for the first transect and the
+second one was oriented at 90° to the first. Soil
+disturbance was sampled at 1-m intervals along each
+transect line. Each sample point was classified as either
+dismrbed or undisturbed, and surface condition was
+recorded. A point was considered disturbed if the litter
+was scuffed or i f the mineral soil was exposed by
+yarding or falling activities; otherwise, it was recorded
+as undisturbed.
+
+Finally, to supplement information about all phases of
+the logging process, including rigging of backspars and
+intermediate supports, FERIC videotaped the harvesting
+operations periodically.
+
+RESULTS AND DISCUSSION
+Kitwanga Lumber C o . L t d . began harvesting the
+study site in late May 1997. The harvesting operation
+continued without intermption throughout the summer
+and fall, until completion at the beginning of October.
+Generally favourable weather and higher-thanexpected machine availability and production during
+the study period shortened the harvesting operation
+significantly from initial forecasts.
+
+Shift-Level Productivity
+The total volume harvested from the cable-yarded area
+was 9650 m^ A summary of productivity parameters
+for the entire cutblock and for all phases is presented
+in Table 3.
+Table 3.
+
+Faller
+Yarder
+Loader
+Processor
+
+Summary of Productivity
+Shifts
+(no.)
+
+Hours
+(no.)
+
+Shift lengdi
+(h)
+
+Productivity
+(mVshift)
+
+84
+87
+69
+
+630
+754
+600
+
+7.5
+8.7
+8.7
+
+99% 115"
+102% I I I "
+-
+
+71
+
+616
+
+8.7
+
+140"
+
+^ For 6.5-h shift.
+" For 7.5-h shift.
+" For 8-h shift.
+" For 8.7-h shift
+
+For all three machines used in this operation, the average
+shift length was 8.7 h. During most of the operation they
+worked 9 h/day, but during periods of high fire hazard
+they worked only 7 h/day.
+The faller did not have a rigid daily schedule. Shift length
+ranged from 6.5 to 9 h/day on the cutblock and averaged 7.5 h/day in the cable-yarded area. The faller felled
+corridors, road rights-of-way, and some of the small
+clearcuts in the upper part of the cutblock.
+Figure 9 illustrates the distribution of time elements for
+all machines and people that worked in the cutblocks.
+For the yarder, changing roads took from 0.5 to 5.5 h.The
+Philip Carmthers, Forestry Superintendent, Kitwanga Lumber
+Co. Ltd., personal communications, February 1998.
+
+Faller
+
+Loader
+
+Yarder
+
+Processor
+
+26%
+W o r k at L a n d i n g
+
+55%
+Yarding Time
+
+70%
+Proceating Time
+
+87%
+Falling T i m e
+
+62%
+Sort L o g s &
+
+18%
+
+Load Trucks
+
+Change Corridors
+
+5% Fix Y a r d e r
+
+18% N o W o o d
+Available
+
+1 1 % Fix C a r r i a g e ?
+j r * Martt C o r r i d o r E d g e
+3% M e e t i n g s
+
+8% M o v e f r o m
+
+4% Fix U n e s
+
+L a n d i n g to P i l e s '
+7% Other
+
+12%
+
+Maintenance
+& Other
+
+4% other
+
+Figure 9. Time distribution: all phases.
+t i m e n e c e s s a r y w a s sliort w i i e n a m o b i l e b a c k s p a r w a s
+used o r w h e n stump rigging. Very long rigging times
+w e r e r e q u i r e d w h e n a tree w a s r i g g e d as a b a c k s p a r
+a n d / o r the c o r r i d o r w a s v e r y l o n g . A d d i t i o n a l t i m e ( u p
+t o 1.5 h o u r s ) w a s r e q u i r e d w h e n a n i n t e r m e d i a t e
+support w a s needed, because the grip p u l l e r used to
+tension the snake was a slow device. L i n e repairs
+i n c l u d e d f i x i n g the s k y l i n e w h e n b r o k e n ; s p l i c i n g n e w
+l i n e i n t o the s k y l i n e ; t i g h t e n i n g g u y l i n e s o n the t a i l tree,
+i n t e r m e d i a t e support a n d y a r d e r ; a n d c h a n g i n g l i n e s o n
+the m a c h i n e . M i s c e l l a n e o u s d e l a y s t o o k 7 % o f t o t a l
+time and i n c l u d e d w a i t i n g f o r a machine to clear the
+w a y w h e n changing roads, time o f f w h i l e w a i t i n g f o r
+the f a l l e r to f i n i s h the n e x t c o r r i d o r , a n d t i m e to f i x t h e
+v e h i c l e u s e d b y the y a r d i n g c r e w .
+A n a l y s i s o f the p r o c e s s i n g p h a s e u s e d p o o l e d d a t a f o r
+both machines used i n the cutblock. M e c h a n i c a l
+d o w n t i m e amounted to about 1 2 % (mainly related t o
+the f i r s t p r o c e s s o r ) , a n d o n c e p r o c e s s i n g c a u g h t u p w i t h
+the y a r d e r , the p r o c e s s o r w a s i d l e due to l a c k o f w o o d
+f o r a b o u t 1 8 % o f the t i m e .
+
+Unit Costs
+T h e cost for each phase is presented i n Table 4. T h e
+l o a d i n g c o s t i n c l u d e s a l l l o a d e r a c t i v i t i e s s u c h as
+a s s i s t i n g the y a r d e r a n d s o r t i n g l o g s , as w e l l as l o a d i n g
+trucks.
+
+Table 4.
+
+Summary of Harvesting Costs by Phase
+
+Description
+
+Cost
+($/m')
+
+Falling
+Labour
+Saw allowance
+Total f a l l i n g
+
+3.42
+0.24
+3.66
+
+Yarding
+Labour
+S k y l e a d C 4 0 16000 yarder
+M i n i - M a k i II carriage
+
+4.49
+0.79
+
+Caterpillar E L 300 O^ackspar)
+Total yarding
+
+0.39
+14.56
+
+Loading
+Labour
+H i t a c h i E X 270 L L log loader
+Total loading
+
+8.89
+
+2.05
+4.76
+6.81
+
+Processing
+Labour
+Pierce processor
+Total processing
+
+2.12
+5.80
+7.92
+
+Total labour cost
+Total machine cost
+Total harvesting cost
+
+16.48
+16.47
+32.95
+
+The total harvesting cost, including loading, for the
+cable-yarding portion of the cutblock was $32.95/ml
+Including the cost for block layout and engineering
+($3.23/m3), the total cost was $36.18/m^
+
+Outhaul
+8%
+
+Based on the results calculated in this report, a
+methodology for calculating productivity and cost for
+other partial cuts is presented in Appendix III.
+
+Yarding Cycle Time
+Table 5 presents time elements as a percentage of total
+cycle time. Figures 10 and 11 present time elements as
+a percentage of delay-free cycle time.
+Table 5.
+
+Lateral In
+16%
+
+Detailed-Timing Summary of Yarding
+Cycle Elements
+Single-span"
+Time/
+Ave. time/
+element
+element
+(min)
+(%)
+
+Figure 10. Cycle time distribution: single-span yarding.
+
+M u l t i -span"
+Ave. time/
+Time/
+element
+element
+(min)
+(%)
+
+Outhaul
+
+0.27
+
+8
+
+0.50
+
+13
+
+Lateral out
+
+0.34
+
+9
+
+0.33
+
+8
+
+Hookup
+
+0.80
+
+22
+
+0.81
+
+20
+
+Lateral in
+
+0.52
+
+14
+
+0.49
+
+12
+
+Inhaul
+
+0.51
+
+14
+
+0.86
+
+22
+
+Unhook
+
+0.81
+
+23
+
+0.83
+
+21
+
+cycle time
+
+3.25
+
+91
+
+3.82
+
+96
+
+In-cycle delays
+
+0.34
+
+9
+
+0.16
+
+4
+
+Total cycle time
+
+3.59
+
+100
+
+3.98
+
+100
+
+Outhaul
+
+Total delay-free
+
+*
+
+Lateral In
+13%
+
+Average yarding distance of 65 m.
+Average yarding distance of 146 m.
+
+Figure 11. Cycle time distribution: multi-span yarding.
+
+For single-span yarding, hookup and unhook were the
+most time-consuming elements, each accounting for
+25% of delay-free cycle time. For multi-span yarding,
+inhaul took a larger proportion of cycle time because
+external yarding distances were longer, and more care
+was required to pull the carriage over intermediate
+supports to ensure the skyline did not jump off the jack.
+The cycle elements "lateral out", "lateral in", "hookup"
+and "unhook" had similar values for both rigging
+configurations. Delays accounted for a larger
+proportion of total cycle time in single-span than in
+multi-span operation, although the reason is not clear.
+
+yarding distance and lateral yarding distance. The
+number of logs yarded per cycle was not a significant
+variable.
+Single-span yarding:
+[1]
+
+CycleTime = 2.76140 -i- 0.00449»SlopeDist +
+0.03750'LatDist
+n = 472
+
+R2 = 49%
+
+SEE =0.31
+
+Ranges for which the equation is applicable:
+
+Equations 1 and 2 give the delay-free cycle time for
+single- and multi-span yarding, determined from
+multiple regression analysis. Significant linear
+relationships were found between cycle time, slope
+
+• SlopeDist: 10-350 m
+• LatDist: 0-50 m
+10
+
+Figures 12 and 13 show that as yarding distance
+increases, productivity decreases faster for multi-span
+than single-span yarding. Also, when multi-span
+yarding, the influence of lateral yarding distance
+decreases as slope yarding distance increases, because
+phases related to lateral yarding (lateral out, hookup,
+lateral in) take a smaller proportion of total cycle
+time, and outhaul and inhaul become more timeconsuming.
+
+Multi-span yarding:
+[2]
+
+CycleTime = 2.43108 -I- 0.009 lO'SlopeDist -i0.02563'LatDist
+n = 307
+
+=86%
+
+SEE = 0.28
+
+Ranges for which the equation is applicable:
+• SlopeDist: 10-420 m
+• LatDist: 0-50 m
+
+Figure 14 compares estimated productivities for singleand multi-span yarding, for a typical average lateral
+yarding distance of 25 m. This graph shows that
+productivity is similar for both systems for short slope
+yarding distances. However, as slope yarding distance
+increases (up to the maximum distance feasible for
+single-span yarding), productivity is higher for singlespan than for multi-span yarding.
+
+where:
+CycleTime = Total delay-free cycle time (min)
+SlopeDist = Slope yarding distance (m)
+LatDist = Lateral yarding distance (m)
+
+Removal Levels
+
+R^ = Coefficient of multiple determination
+
+Based on measurement of the original cmise plots, the
+average removal level with respect to basal area was
+33%. Comparing the actual volume harvested (9650 m^)
+to the initial volume estimated for the stand (25 620 m^)
+yields a removal level of 38% by volume. Because the
+volume to be removed was calculated using a larger
+sample of cmise plots than the one used to estimate
+basal area removal after harvesting, it is concluded that
+the actual intensity of the cut was 38%, which
+corresponds to the silvicultural prescription (target
+removal of 40%).
+
+SEE = Standard error of the estimate
+Based on these equations, Figures 12 and 13 present
+system productivity for single- and multi-span
+configurations, respectively, as a function of slope and
+lateral yarding distances, based on 8-hour shifts,
+including delays. The average log size (calculated from
+total piece counts and scaled volume) was 0.47 m^ and
+average number of logs per mm was 3.4, yielding an
+estimated average mm size of 1.6 m^.
+
+Lateral y a r d i n g
+d i s t a n c e (m)
+
+50
+
+100
+
+150
+
+200
+
+250
+
+300
+
+350
+
+400
+
+450
+
+Slope Yarding Distance (m)
+Figure 12. System productivity during scheduled yarding time: single-span yarding.
+
+Lateral yarding
+distance (m)
+
+50
+
+100
+
+150
+
+200
+
+250
+
+300
+
+350
+
+Slope Yarding Distance (m)
+Figure 13. System productivity during scheduled yarding time: multi-span yarding.
+
+-
+
+50
+
+100
+
+150
+
+200
+
+250
+
+300
+
+350
+
+400
+
+Multi-span
+
+450
+
+Slope Yarding Distance (m)
+Figure 14. Comparison of single- and multi-span yarding productivities, for lateral yarding distance of 25
+
+Results for Site and Stand Damage
+
+27 trees/ha (5.4% of residual stand) were wounded.
+Most damage occurred by the hauling roads and close
+to yarding corridors.
+
+A n attempt was made to evaluate stand damage after
+falling. For safety reasons this was rarely possible, but
+limited visual evaluation suggests that falling damage
+was negligible. Stand damage after yarding is summarized
+in Table 6.
+
+A survey of soil surface conditions showed that this
+operation caused mirumal soil dismrbance. Only 1.5%
+of points analyzed were recorded as dismrbed; of these,
+1 % represented dismrbance in the organic layer only
+and 0.5% represented shallow disturbance into mineral
+soil. The survey found no potentially detrimental site
+dismrbance in the cable-yarded area.
+
+The residual stand had a density of 500 trees/ha. Results
+showed that 12 trees/ha (2.4% of residual stand) had
+wounds that made them unacceptable as residual crop
+trees. When considering all wounds regardless of size,
+12
+
+Table 6.
+
+Evaluation of Stand Damage
+
+Cause o f
+damage
+
+"
+
+Trees wounded
+under B C M O F criteria"
+(trees/ha)
+(%)
+
+A l l wounds
+(trees/ha)
+(%)
+
+A l l wounds considered
+Scars >400 cm^
+(trees/ha)
+(%)
+
+Scars >900 cm^
+(trees/ha)
+(%)
+
+Engineering
+
+1
+
+0.2
+
+1
+10
+
+0.2
+2
+
+1
+1
+
+0.2
+0.2
+
+_
+
+R o a d building
+Falling/yarding
+
+'75
+
+5.0
+
+8
+
+1.6
+
+1
+
+0.2
+
+Total
+
+12
+
+2.4
+
+11
+
+5.4
+
+8
+
+1.6
+
+1
+
+0.2
+
+-
+
+According to B C M O F Tree Wounding and Decay Guidebook.
+
+Visual Quality
+T h e visual quality objective w a s fulfilled: harvesting
+is n o t v i s i b l e f r o m H i g h w a y 16. F i g u r e 15 presents a n
+aerial v i e w o f the c u t b l o c k , s h o w i n g h o w the stand
+l o o k e d w h e n harvesting w a s c o m p l e t e d , a n d F i g u r e 16
+presents a v i e w f r o m i n s i d e t h e c u t b l o c k .
+
+Figure 16. View along Corridor 25.
+Figure 15. Aerial view of the cutblock.
+
+OTHER OBSERVATIONS
+B a s e d o n observations w h i l e o n site a n d frequent
+d i s c u s s i o n s w i t h c r e w m e m b e r s , FERIC i d e n t i f i e d factors
+that c o u l d p o t e n t i a l l y a f f e c t t h e h a r v e s t i n g o p e r a t i o n ,
+as w e l l as those that a c t u a l l y i n f l u e n c e d t h e o p e r a t i o n .
+T h e s e are d e s c r i b e d b e l o w a l o n g w i d i r e c o m m e n d a t i o n s
+o n h o w to account f o r t h e m i n similar operations.
+T h e relatively h i g h yarding productivity and l o w i n c i d e n c e
+o f d a m a g e t o r e s i d u a l trees w a s a t t r i b u t e d t o the h i g h
+q u a l i t y o f the f a l l i n g phase. D i r e c t i o n a l f a l l i n g h a d to be
+used f o r the entire c u t b l o c k a n d the f a l l e r w a s s u c c e s s f u l
+at c o n s i s t e n t l y a l i g n i n g stems f o r e f f i c i e n t y a r d i n g . T h e
+f a l l e r a l s o m a r k e d c o r r i d o r edges a n d t h e n s e l e c t e d a n d
+c u t t h e trees b e t w e e n c o r r i d o r s , i n a c c o r d a n c e w i t h the
+
+S i l v i c u l t u r e P r e s c r i p t i o n . B e c a u s e o f the c o n f i n e d space,
+the f a l l e r d e s c r i b e d f a l l i n g i n t h e c o r r i d o r as b e i n g as
+d i f f i c u l t as f a l l i n g
+right-of-way.
+T h e good quality o f
+f a l l i n g achieved i n this c u t b l o c k w a s attributed to the
+faller's skill, a n d g o o d c o m m u n i c a t i o n between the
+faller, foreman, a n d forestry superintendent. A l t h o u g h
+trees c o u l d b e p r e m a r k e d , f a l l e r s e l e c t i o n i s m o r e
+e f f i c i e n t i f the f a l l e r i s w e l l t r a i n e d a n d e x p e r i e n c e d .
+W h e n f a l l i n g a n d y a r d i n g are d o n e c o n c u r r e n t l y , a safe
+distance must be kept between w o r k e r s ; this requires
+p l a n n i n g the f a l l i n g a n d y a r d i n g s e q u e n c e o f c o r r i d o r s
+to r e d u c e i d l e t i m e f o r the y a r d i n g p h a s e .
+W i t h r e s p e c t t o the y a r d i n g p h a s e , t h i s t r i a l r e i n f o r c e d
+the w i d e l y h e l d v i e w that c a r e f u l p l a n n i n g i s e s s e n t i a l
+w h e n l a y i n g out a setting where intermediate supports
+f o r the s k y l i n e are r e q u i r e d . G o o d m a p s a n d n u m e r o u s
+g r o u n d profiles are necessary t o locate slope breaks
+
+where the intermediate supports w i l l be needed.
+Experienced people are required to identify adequate
+intermediate support and backspar trees in terms of
+size and location, and to ensure there are adequate
+guyline stomps before roads, landings and yarding
+corridors are finalized. During the falling of the unit,
+good communication with the fallers is needed so that
+the required support trees remain standing.
+
+However, for yarding distances longer than 300 m, the
+carriage had difficulty pulling slack. According to the
+technical specifications provided by the manufactorer,
+for the mainline used, the carriage should be able to pull
+slack at distances of greater than 700 m. Since the pads
+used on the carriage were almost new, the probable
+explanation for this problem was the overall wear of the
+carriage.
+
+Using intermediate supports requires more planning
+effort, implies greater risk due to the chance of a
+support failure, and produces slightly longer road
+change times. However, in the right circumstances, it
+may reduce the total cost of harvesting by:
+
+Although not encountered in this stody, in general when
+performing partial cuts, some downtime could be expected
+because of wind. This can happen because it is hazardous
+for crews to work under standing trees that may have
+broken branches caught in their crowns.
+
+• reducing the amount of road needed to log a
+cutblock
+
+One of the most important problems in harvest design
+is optimal spacing of haul roads, landings and, in partial
+cuts, yarding corridors. Important contributions to
+solving this problem were made by Matthews (1942) and
+Peters (1978), who attempted to develop a generaUzed
+solution. Sessions and L i (1987) presented the principles
+of optimizing road and landing spacing by using
+computer programs. With respect to spacing of yarding
+corridors, McNeel and Young (1994), Rutherford (1996)
+and Howard et al. (1996) have developed models specific
+to stands and sites in British Columbia, which predict
+optimal spacing from measurable stand and machine
+characteristics. Although this knowledge exists, it was
+not used in this trial to optimize corridor spacing, and in
+general is not considered when designing cable partial
+cuts. Forest engineers may not be aware of the existence
+of these models, or the models may not be presented in
+ways that are easy to apply even i f the supporting
+research was performed to a high academic standard.
+Finally, in this particular trial, the spacing of yarding
+corridors was probably influenced more by the need to
+meet the visual, recreational, silvicultoral and economic
+objectives for the site than to optimize yarding
+productivity. Cost savings might have been obtained by
+spacing skyline corridors according to these models, but
+these benefits would have to be weighed against the
+impacts of such changes on other management
+objectives.
+
+• improving skyline deflection on difficult yarding
+roads
+• increasing torn payloads by dividing a long span
+into two or more shorter spans
+• reducing the time required to yard a given setting
+by increasing average payloads
+• offsetting the extra time required to rig an
+intermediate support, by reducing the number of
+machine moves and rig-ups on a given cutblock
+In this stody, the use of intermediate supports on six
+long yarding corridors improved skyline deflection
+and increased the area harvested firom the cutblock's
+road system. Additional roads and landings would
+have been required to develop the same total area if
+only single-span yarding had been used. In addition
+to these features, it was observed that multi-span
+yarding provided additional control of the torn by
+limiting the lateral excursion of the skyline in the
+corridor, and thus reduced damage to the residual stand.
+Multi-span yarding generally works best when the
+skyline is kept relatively tight (i.e., in the range of 5-8%
+deflection). This is especially important if there is a sharp
+break in the slope of the skyline path at the intermediate
+support, or if the intermediate support is relatively
+close to the yarder If the skyline is not kept tight enough,
+excess slack accumulates in the lower span and the
+carriage tends to be pulled under the intermediate
+support during inhaul. The Mini-Maki II carriage used
+in this stody was designed to minimize this tendency
+and therefore was a good choice for this operation.
+
+At the beginning of the operation, the loader had to
+travel long distances between landings and different
+decks of logs to be loaded. In the second part of the
+cutblock, landings and piles were close and the work
+available was insufficient for the loader's capacity.
+Overall, the loader was under-utilized in this operation
+and could have handled a larger volume. However, it was
+a necessary component of the system and had to be
+available during the yarding operation.
+
+14
+
+CONCLUSIONS
+
+As this study demonstrated, multi-span yarding has
+several advantages, and in the right circumstances
+it may overcome many environmental and physical
+constraints to logging and achieve acceptable harvest
+costs.
+
+In the summer and fall of 1997, F E R I C monitored a
+partial cut in the I C H biogeoclimatic zone, near
+Kitwanga, B . C . Partial cutting was prescribed for
+the study site to address visual, recreational and
+silvicultural objectives.
+
+In general, for altemative silvicultural systems, the
+overall cost (harvesting and regeneration) may be
+lowered if free-to-grow standards can be met earUer and
+at less cost; however, the loss of the residual stand
+volume, additional supervision requirements, and
+higher engineering costs must also be included in the
+equation. Long-term assessment of windthrow
+occurtence and regeneration success will answer some
+of the remaining questions about the applicability of this
+silviculmral system in the ICH biogeoclimatic zone.
+
+The cutblock was manually felled and yarded with a
+Skylead C40 16000 yarder. The yarding pattern
+consisted of parallel 10-m-wide yarding corridors, spaced
+approximately 50 m apart and oriented perpendicular
+to the contours. Yarding corridors ranged from 40 to
+420 m in length and required rigging both in singleand multi-span configurations. The removal level
+specified in the Silviculture Prescription was 40% of
+basal area; the actual reduction achieved was 38%.
+Although the crew was not experienced in partial cutting,
+the members were motivated and interested in
+obtaining new skills. Good supervision and communication, and good operating conditions also contributed to a successful operation.
+
+RECOMMENDATIONS
+Effective engineering (layout and load path analysis)
+is critical to ensure good yarding performance with
+cable systems. During the study. Corridor 51 had to be
+abandoned because the intermediate support tree was
+unsuitable for the expected loading. Consequently,
+lateral yarding distance on Corridors 50 and 52 had to
+be extended, adversely affecting yarder productivity. It
+is recommended that field engineers have adequate
+training in the selection and marking of intermediate
+support trees for multi-span cable systems.
+
+Falling productivity was 99 mVshift and yarding
+productivity was 102 mVshift. The total cost for falling,
+yarding, processing and loading was $32.95/m^. The
+engineering cost was estimated at $3.23/m^ for a total
+cost of $36.18/m^ Productivity functions were
+developed for the yarder, in both configurations, and a
+procedure for extrapolating results obtained in this
+study for other partial cuts was developed.
+
+As falling in partial cutting operations can present
+more risk of hangups and demand more skill in stem
+placement, it is recommended that fallers should:
+
+Operationally, falling is the most critical phase because
+the placement of stems directly affects yarding
+productivity and leave-tree damage. Overall, this study
+confirmed that it is essential to have a logging plan that
+considers all factors including backspar and landing
+locations, falling pattem and direction, location and
+loadpath analysis for yarding corridors, and other
+natural resource values. During cutblock design, the
+size, strength, vigour and species of backspars and
+tailhold trees must be considered. Clearly defined
+silvicultural objectives for locating skyline corridors
+and lateral rows are necessary to minimize the impact
+of harvesting on stand structure while maximizing
+economic retums.
+
+• be well experienced with clearcutting before being
+exposed to partial cutting
+• receive additional training on the principles of
+partial cutting with emphasis on silvicultural
+prescriptions, prevention of hangups and residual
+stand damage, and on the implications of good
+stem alignment for the safety and productivity of
+the subsequent yarding phase
+To minimize yarding delays and residual stand damage,
+good carriage control when passing intermediate
+supports and precise carriage positioning when
+initiating lateral yarding are critical. Therefore, the
+rigging crew must have the ability and equipment to
+communicate effectively.
+
+Post-harvest survey showed that 5.4% of the residual
+stand was damaged by logging, and the impact of
+the operation on the site was negligible. Visual
+impact of the harvest was evaluated as well; the block
+was not visible from the highway. Narrow yarding
+corridors combined with an all-aged selection
+harvest meant canopy textures blended and the forest
+cover was maintained.
+
+Effective utilization of the loader during the operation
+is important to ensure that the landing is clear and safe,
+and that tmcks are loaded with minimum delay.
+
+15
+
+Rutherford, D.A. 1996. Productivity, costs and optimal
+spacing of skyline corridors of two cable yarding
+systems in partial cutting of second-growth forests
+of coastal British Columbia. Unpublished thesis
+prepared for University of British Columbia. 87 pp.
+
+REFERENCES
+Banner, A . ; MacKenzie, W.; Haeussler, S.; Thomson,
+S.; Pojar, J.; Trowbridge, R. 1993. A field guide to
+site identification and interpretation for the Prince
+Rupert Forest Region. Research Branch, Ministry
+of Forests, Victoria, B . C . Land Management
+Handbook No. 26.
+
+Sessions, J.; L i , G . 1987. Deriving optimal road and
+landing spacing with microcomputer programs.
+Westem Joumal of Applied Forestty 2(3):94-98.
+
+Daigle, P.W. 1995. Partcuts: a computerized annotated
+bibliography of partial-cutting methods in the
+Pacific Northwest (1995 Update). Forestry Canada;
+British Columbia Ministry of Forests. 25 pp.
+
+Thibodeau, E.D.; Krag, R.K.; Hedin, L B . 1996. The
+Date Creek smdy: productivity of ground-based
+harvesting methods in the Interior Cedar-Hemlock
+zone of British Columbia. FERIC, Vancouver, B.C.
+Special Report SR-114. 38 pp.
+
+Forrester, P.D. 1993a. Cable yarding using intermediate
+supports. FERIC, Vancouver, B.C. Field Note No.
+Cable Yarding-12. 2 pp.
+
+British Columbia Ministty of Forests (BCMOF); B C
+Environment. 1997. Tree wounding and decay
+guidebook (forest practices code of British
+Columbia), Victoria, B.C. 19 pp.
+
+Forrester, RD. 1993b. Observations of two Skylead C40
+cable yarders. FERIC, Vancouver, B.C. Technical
+Note TN-201. Spp.
+Hedin, L B . ; De Long, D . L . 1993. Comparison of
+harvesting phases in a case study of partial-cutting
+systems in southwestern British Columbia. FERIC,
+Vancouver, B.C. Special Report SR-85. 16 pp.
+Howard, A . F 1988. Development and use of production
+functions for harvesting operations. Pages 97-102
+in Proceedings: Intemational mountain logging and
+Pacific Northwest skyline symposium, 12-16 Dec.
+1988, Portland, Ore.
+Howard, A.F. 1989. A sequential approach to sampling
+design for time smdies of cable yarding op>erations.
+Canadian Joumal of Forest Research 19:973-980.
+Howard, A . F ; Rutherford, D . ; Young, G.G. 1996.
+Optimal skyline corridor spacing for partial cutting
+in second-growth stands of coastal British
+Columbia. National Research Council Canada.
+Reprinted from Canadian Journal of Forest
+Research 26:368-375.
+Matthews, D . M . 1942. Cost control in the logging
+industry. McGraw-Hill. New York. N.Y. 374 pp.
+McNeel, J.F; Young, G.G. 1994. Optimal yarding road
+width model for skyline yarding. Forest Products
+Joumal 44(2):45-50.
+Peters, P A . 1978. Spacing of roads and landings to
+minimize timber harvest cost. Forest Science
+24(2):209-217.
+
+16
+
+Appendix I
+Cycle Element Definitions
+Outhaul:
+
+Carriage travels along the skyline, from the landing to the hookup area.
+
+Lateral out:
+
+Pulling the machine's mainline laterally, from the carriage to the logs.
+
+Hookup:
+Lateral in:
+Inhaul:
+Unhook:
+
+Setting chokers on the logs.
+Yarding the logs laterally, until the logs are suspended under the skyline carriage.
+Carriage and logs travel along the skyline to the landing.
+Unhooking chokers at the landing.
+
+17
+
+Appendix II
+Equipment Costs"
+Skylead
+C 4 0 16000
+yarder & skidder
+
+M i n i - M a k i II
+carriage
+
+Caterpillar
+E L 300
+backspar (used)
+
+Hitachi
+EX270LL
+l o g loader
+
+Processor
+(tracked) with
+stroke delimber
+
+332 000
+
+49 950
+
+45 000
+
+410 000
+
+400 000
+
+O W N E R S H I P COSTS;
+
+Total purchase price (P) $
+
+10
+
+5
+
+5
+
+5
+
+5
+
+16 000
+I 600
+20
+10
+
+8 000
+1 600
+20
+10
+
+7 200
+1 440
+
+3
+
+3
+
+10 000
+2 000
+30
+10
+3
+
+10 000
+2 000
+20
+10
+3
+
+Salvage value (S)=((P»s)/100) S
+
+66 400
+
+9 990
+
+13 5 0 0
+
+123 000
+
+80 000
+
+Average investment
+(AVI)=((P+S)/2) $
+
+199 200
+
+29 970
+
+29 250
+
+266 500
+
+240 000
+
+L o s s i n resale value ( ( P - S ) / H ) $ / h
+Interest ( ( I n f A V I ) / h ) $/h
+Insurance ((Ins»AVI)/h) $/h
+
+16.60
+12.45
+3.74
+
+5.00
+1.87
+0.56
+
+4.38
+
+28.70
+
+32.00
+
+13.33
+4.00
+
+12.00
+3.60
+
+Total ownership costs ( O W ) $/h
+
+32.79
+
+7.43
+
+46.03
+
+47.60
+
+-
+
+--
+
+Expected Ufe ( Y ) y
+Expected life ( H ) h
+Scheduled hours/year (h)=(HA') h
+Salvage value as % o f P (s) %
+Interest rate (Int) %
+Insurance rate (Ins) %
+
+30
+10
+i
+
+•im
+mi
+
+3PERATING COSTS
+
+W i r e rope (wc) S
+
+15 100
+
+-
+
+-
+
+W i r e rope life (wh) h
+R i g g i n g and radio (rc)
+R i g g i n g and radio life (rh) h
+F u e l consumption (F) L / h
+
+1 600
+13 800
+2 400
+4
+0.40
+10
+
+-
+
+-
+
+-
+
+-
+
+-
+
+1
+0.40
+
+10
+0.40
+10
+
+32
+0.40
+10
+
+25
+0.40
+10
+
+8000
+
+25 000
+
+10 000
+32 800
+8.7
+
+10 000
+64 000
+
+--
+
+10.00
+1.00
+32.00
+
+Fuel (fc) $ / L
+L u b e and o i l as % o f fuel (fp) %
+Track and undercarriage
+
+_
+
+-
+
+replacement (Tc) S
+
+-
+
+-
+
+Track and undercarriage life (Th)
+A n n u a l repair & maintenance (Rp) S
+Shift length (si) h
+
+-
+
+-
+
+-
+
+12000
+
+3 500
+
+5 000
+
+8.7
+
+8.7
+
+8.7
+
+9.44
+
+-
+
+-
+
+W i r e rope (wc/wh) S/h
+R i g g i n g and radio (rc/rh) S/h
+Fuel ( F ' f c ) S/h
+L u b e and o i l ((fp/100)«(F»fc)) S/h
+Repair and maintenance (Rp/h) S/h
+
+5.75
+1.60
+0.16
+7.50
+
+Total operating costs ( O P ) S/h
+
+-
+
+-
+
+0.40
+
+8.7
+
+-
+
+-
+
+4.00
+0.40
+
+2.19
+
+3.47
+
+12.80
+1.28
+16.40
+
+24.45
+
+2.59
+
+7.87
+
+30.48
+
+43.00
+
+57.24
+
+10.02
+
+14.89
+
+76.51
+
+90.60
+
+TOTAL OWNERSHIP AND
+OPERATING COSTS (OW+OP) S/h
+
+These costs are based on FERIC's standard costing methodology for determining machine ownership and operating costs. These costs do
+not include supervision, profit and overhead and are not the actual costs for the contractor or the company studied.
+
+18
+
+Labour Costs
+
+Description °
+
+Hourtyrate"
+
+Shift length
+
+Shifts
+
+(S)
+
+(h)
+
+(no)
+
+($)
+
+Cost
+
+(S/my
+
+52.31
+-
+
+7.5
+-
+
+84
+-
+
+32 955
+32 955
+
+3.42
+3.42
+
+33.94
+34.86
+
+8.7
+8.7
+
+87
+87
+
+25 689
+26 386
+
+2.66
+2.73
+
+Chaser
+Chokersetter
+Total yarding
+
+29.88
+29.59
+-
+
+8.7
+8.7
+-
+
+87
+43
+-
+
+22 616
+11 070
+85 761
+
+2.34
+1.15
+8.89
+
+Loading
+Loader operator
+Total loading
+
+33.01
+-
+
+8.7
+-
+
+69
+-
+
+19 816
+19 816
+
+2.05
+2.05
+
+33.13
+~
+
+8.7
+-
+
+71
+-
+
+20 464
+20 464
+
+2.12
+2.12
+
+-
+
+-
+
+158 995
+
+16.48
+
+Falling
+Fallers
+Total f a l l i n g
+Yarding
+Yarding engineer
+H o o k and
+
+rig
+
+Processing
+Processor operator
+Total processing
+Total labour cost
+^
+'
+
+-
+
+The crew often performed tasks not described by their job tiUes. However, the rates did not change according to the task.
+Hourly rates are based on June 15, 1997 IWA rates, with 38% for fringe benefits and IWA standard prorated overtime allowance.
+Shift length excludes lunch.
+Based on a harvested volume of 9650 m^.
+
+19
+
+Harvesting Costs
+
+Description
+
+Falling
+Labour
+Saw allowance"
+Total f a l l i n g
+
+Shifts
+(no.)
+
+Shift length
+(SMH)
+
+Hourtyrate
+($/SMH)
+
+84
+84
+
+7.5
+
+Cost
+($)
+
+($/m')
+
+52.31
+
+32 955
+2 268
+35 223
+
+3.42
+0.24
+3.66
+
+129.70
+57.24
+10.02
+14.89
+
+85 761
+43 325
+7 584
+3 757
+
+8.89
+4.49
+0.79
+0.39
+
+-
+
+«.7
+8.7
+8.7
+8.7
+-
+
+-
+
+140 427
+
+14.56
+
+69
+69
+-
+
+8.7
+8.7
+-
+
+33.01
+76.51
+
+-
+
+19 816
+45 929
+65 745
+
+2.05
+4.76
+6.81
+
+71
+71
+
+8.7
+
+33.13
+90.60
+
+20 464
+55 964
+
+2.12
+5.80
+
+-
+
+-
+
+-
+
+76 428
+
+7.92
+
+-
+
+-
+
+-
+
+-
+
+-
+
+-
+
+158 995
+158 827
+317 822
+
+16.48
+16.47
+32.95
+
+-
+
+-
+
+-
+
+Yarding
+T ,abour ^
+S k y l e a d C 4 0 16000 yarder
+M i n i - M a k i II carriage
+Caterpillar E L 300 (backspar)
+Total yarding
+Loading
+Labour
+H i t a c h i E X 270 L L l o g loader
+Total loading
+Processing
+Labour
+Pierce processor
+Total processing
+Total labour cost
+Total machine cost
+Total harvesting cost
+'
+^
+
+76
+87
+87
+29
+
+8.7
+
+_
+
+Saw allowance is based on $27/shift.
+Based on three people working 87 shifts and one working 43 shifts.
+
+20
+
+Appendix III
+Procedure for Using Results Obtained in this Study to Calculate Yarding Productivity and
+Cost for other Partial Cutting Operations
+The productivity equations developed in this paper are specific to the block studied. However, with appropriate
+caution, these equations can be used as a guide to estimate productivities for other yarding operations in similar site
+and stand conditions. The steps to be taken are presented below:
+1. Choose the appropriate productivity equation, i.e., single- or multi-span yarding. If both methods are to be
+used, areas for each method should be calculated and each function used for its respective area.
+2. Define the stand and site variables:
+• average external yarding distance
+• average lateral yarding distance
+• average number of logs per mm
+• average volume per log
+3. Compute the mean time per tum (minutes).
+4. Compute theoretical productivity per hour, by converting torn time to hours and multiplying by the volume
+per mm.
+5. Compute acmal productivity by adjusting for in-cycle delays.
+6. Calculate theoretical productivity per shift by multiplying the value obtained at Step 5 by shift length.
+7. Calculate actual productivity per shift by applying coefficients for yarder availability and utilization.
+Based on these values and on the machine cost, the time necessary for the yarder to harvest the site and the cost of
+the operation can be estimated.
+Care should be exercised not to use the productivity equations outside the ranges for which they were developed,
+and when choosing the various coefficients (proportion of in-cycle delays, yarder availability and utilization) required
+by this procedure.
+
+The Forest Engineering Research Institute of Canada (FERIC) is a private
+non-profit research and development organization aimed at improving Canada's
+forest operations related to the harvesting and transportation of wood, and the
+growing of trees, within a framework of sustainable development.
+FERIC is funded through a growing partnership made up of more than 90 leading
+forest companies, the Government of Canada, and the provinces and territories.
+Our mission is to provide these members with the knowledge and technology to
+conduct cost-competitive, quality operations that respect the forest environment.
+
+head office
+siege social
+
+western division
+division de I'ouest
+
+eastern division
+division de rest
+
+580 boul. Saint-Jean
+Pointe-Claire, Quebec
+Canada H9R 3J9
+1:514-694-1140
+F: 514-694-4351
+E: admin@mtl.feric.ca
+
+2601 East Mall
+Vancouver, BC
+Canada V6T1Z4
+1:604-228-1555
+F: 604-228-0999
+E: admin@vcrferic.ca
+
+580 boul. Saint-Jean
+Pointe-Claire, Quebec
+Canada H9R 3J9
+1:514-694-1140
+F: 514-694-4351
+E: admin@mtl.feric.ca
+
+

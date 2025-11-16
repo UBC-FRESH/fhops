@@ -111,6 +111,15 @@ class CableSkiddingModel(str, Enum):
     UNVER_ROBUST = "unver-robust"
 
 
+class SkylineProductivityModel(str, Enum):
+    """Supported skyline productivity regressions."""
+
+    LEE_UPHILL = "lee-uphill"
+    LEE_DOWNHILL = "lee-downhill"
+    TR125_SINGLE = "tr125-single-span"
+    TR125_MULTI = "tr125-multi-span"
+
+
 def _candidate_roots() -> list[Path]:
     """Return candidate roots to resolve bundled dataset paths."""
     roots = [Path.cwd()]
@@ -927,3 +936,73 @@ def estimate_cable_skidding_cmd(
             ("Productivity (m³/h)", f"{value:.2f}"),
         ]
     _render_kv_table("Cable Skidding Productivity", rows)
+
+
+@dataset_app.command("estimate-skyline-productivity")
+def estimate_skyline_productivity_cmd(
+    model: SkylineProductivityModel = typer.Option(SkylineProductivityModel.LEE_UPHILL, case_sensitive=False),
+    slope_distance_m: float = typer.Option(..., min=1.0, help="Slope yarding distance (m)."),
+    lateral_distance_m: float = typer.Option(25.0, min=0.0, help="Lateral yarding distance (m)."),
+    payload_m3: float = typer.Option(None, help="Payload per turn (m³). Defaults per source."),
+    large_end_diameter_cm: float = typer.Option(
+        34.0, min=1.0, help="Required for Lee downhill (cm).", show_default=False
+    ),
+):
+    """Estimate skyline productivity (m³/PMH) using Lee et al. (2018) or TR-125 regressions."""
+
+    if payload_m3 is not None and payload_m3 <= 0:
+        raise typer.BadParameter("--payload-m3 must be > 0 when specified.")
+
+    if model is SkylineProductivityModel.LEE_UPHILL:
+        value = estimate_cable_yarder_productivity_lee2018_uphill(
+            yarding_distance_m=slope_distance_m,
+            payload_m3=payload_m3 or 0.57,
+        )
+        rows = [
+            ("Model", model.value),
+            ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
+            ("Payload (m³)", f"{(payload_m3 or 0.57):.2f}"),
+            ("Productivity (m³/PMH)", f"{value:.2f}"),
+        ]
+    elif model is SkylineProductivityModel.LEE_DOWNHILL:
+        value = estimate_cable_yarder_productivity_lee2018_downhill(
+            yarding_distance_m=slope_distance_m,
+            lateral_distance_m=lateral_distance_m,
+            large_end_diameter_cm=large_end_diameter_cm,
+            payload_m3=payload_m3 or 0.61,
+        )
+        rows = [
+            ("Model", model.value),
+            ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
+            ("Lateral Distance (m)", f"{lateral_distance_m:.1f}"),
+            ("Large-end Diameter (cm)", f"{large_end_diameter_cm:.1f}"),
+            ("Payload (m³)", f"{(payload_m3 or 0.61):.2f}"),
+            ("Productivity (m³/PMH)", f"{value:.2f}"),
+        ]
+    elif model is SkylineProductivityModel.TR125_SINGLE:
+        value = estimate_cable_yarder_productivity_tr125_single_span(
+            slope_distance_m=slope_distance_m,
+            lateral_distance_m=lateral_distance_m,
+            payload_m3=payload_m3 or 1.6,
+        )
+        rows = [
+            ("Model", model.value),
+            ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
+            ("Lateral Distance (m)", f"{lateral_distance_m:.1f}"),
+            ("Payload (m³)", f"{(payload_m3 or 1.6):.2f}"),
+            ("Productivity (m³/PMH)", f"{value:.2f}"),
+        ]
+    else:
+        value = estimate_cable_yarder_productivity_tr125_multi_span(
+            slope_distance_m=slope_distance_m,
+            lateral_distance_m=lateral_distance_m,
+            payload_m3=payload_m3 or 1.6,
+        )
+        rows = [
+            ("Model", model.value),
+            ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
+            ("Lateral Distance (m)", f"{lateral_distance_m:.1f}"),
+            ("Payload (m³)", f"{(payload_m3 or 1.6):.2f}"),
+            ("Productivity (m³/PMH)", f"{value:.2f}"),
+        ]
+    _render_kv_table("Skyline Productivity", rows)

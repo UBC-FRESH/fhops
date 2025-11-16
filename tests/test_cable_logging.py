@@ -9,6 +9,8 @@ from fhops.productivity import (
     estimate_cable_skidding_productivity_unver_spss_profile,
     estimate_cable_yarder_productivity_lee2018_downhill,
     estimate_cable_yarder_productivity_lee2018_uphill,
+    estimate_cable_yarder_productivity_tr125_single_span,
+    estimate_cable_yarder_productivity_tr125_multi_span,
 )
 
 
@@ -54,3 +56,11 @@ def test_unver_profile_helpers_match_manual_slope():
     value_robust = estimate_cable_skidding_productivity_unver_robust_profile(profile=profile, log_volume_m3=0.35)
     manual_robust = estimate_cable_skidding_productivity_unver_robust(0.35, 23.0)
     assert pytest.approx(value_robust, rel=1e-6) == manual_robust
+
+
+def test_tr125_productivity_declines_with_distance():
+    single_short = estimate_cable_yarder_productivity_tr125_single_span(slope_distance_m=100, lateral_distance_m=15)
+    single_long = estimate_cable_yarder_productivity_tr125_single_span(slope_distance_m=250, lateral_distance_m=15)
+    assert single_short > single_long
+    multi = estimate_cable_yarder_productivity_tr125_multi_span(slope_distance_m=250, lateral_distance_m=25)
+    assert multi < single_long
