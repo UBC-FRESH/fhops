@@ -1,0 +1,1136 @@
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+
+      1 of 1           Full Text | Scholarly Journal
+
+
+      Effects of Alternative Silvicultural Treatments on
+      Cable Harvesting Productivity and Cost in Western
+      Washington
+      Hartley, Damon S; Han-Sup Han.
+      Western Journal of Applied
+      Forestry; Bethesda Vol. 22, Iss. 3,
+      (Jul 2007): 204-212.
+
+           Full text            PDF         Details
+
+
+
+         Full text
+         Turn on search term navigation
+
+         Headnote
+         ABSTRACT
+
+         Increasingly, alternative silvicultural methods have
+         been considered to meet the demand for
+         nontimber values such as visual quality and
+         biodiversity in the Pacific Northwest. The
+         successful implementation of these alternative
+         silviculture treatments requires careful
+         consideration of economics and operational
+         efficiencies in timber harvesting. This study used
+         detailed time study and shift-level data to assess
+         the effect of alternative silvicultural treatments on
+         the production and cost of cable harvesting in
+         western Washington. Four silvicultural treatments
+         were examined: clearcut, two-age, patch cut and
+         thin, and group selection. Silvicultural treatments
+
+
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals          Page 1 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+         greatly affected the production and cost of timber
+         harvesting, especially in felling and yarding
+         processes. The average yarding cycle time (3.74
+         minutes/cycle) in the clearcut unit was shorter
+         than those in other partial cutting treatment units
+         because there were no residual trees to work
+         around and higher harvest volumes per acre,
+         compared with the partial cut units. The average
+         tree size greatly affected yarding cost: the
+         clearcut unit had the second-highest yarding cost
+         ($52.38/thousand board feet [mbf]) because of the
+         smallest piece size (69.6 board feet/piece). Stump-
+         to-truck cost for this study ranged from
+         $70.49/mbf for the patch cut and thin to
+         $120.19/mbf for the group selection. Carriage
+         types and yarding direction also had an impact on
+         yarding productivity.
+
+         Keywords: partial cutting, skyline yarding ,
+         alternative harvesting, skyline carriage
+
+         Forest management practices in the Pacific
+         Northwest are changing to reflect increased public
+         demands for addressing nontimber values such as
+         structural and biological diversity as well as
+         aesthetics and wildlife habitats (Curds et al. 1998,
+         Reutebuch et al. 2002). These demands often call
+         for implementing alternative silvicultural practices
+         (i.e., partial cutting) with less-intensive harvest of
+         trees (Johnson 2002, Reutebuch et al. 2002) and
+         more emphasis placed on the ecological
+         perspective (Keegan et al. 1995). Partial cutting
+         treatments are not new to forest management in
+         the Pacific Northwest, but land managers and
+         contract loggers often voice concerns about
+         increased logging costs and operational
+
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals          Page 2 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+         requirements resulting from the protection of
+         environmental values while producing timber
+         (Arnott and Breese 1997). This type of
+         management is complicated further by the fact that
+         there are no commonly accepted procedures that
+         dictate how partial harvest treatments are
+         implemented, administered, or evaluated (McNeel
+         and Dodd 1996).
+
+         Successful implementation of the alternative
+         silvicultural treatments is, in part, dependent on
+         the operations being economically efficient while
+         meeting the landowner's objectives for the stand
+         (Coulter 1999). Potential financial returns are
+         important criteria for forest managers to consider
+         when planning a timber harvest. Generally,
+         clearcutting is accepted as being less expensive
+         than partial cutting. Higher harvesting productivity
+         or low harvesting cost often is associated with
+         clearcuts because workers and machinery do not
+         have to maneuver around residual trees, machines
+         have to move less because of higher volumes
+         removed per area, and hooking times are shorter
+         because of higher concentrations of downed timber
+         (Kellogg etal. 1996a, 1996b, Howard et al. 1996).
+
+         Harvesting productivity commonly decreases with
+         partial cutting because care must be taken to
+         minimize damage to residual trees and equipment
+         travel times are longer when trees are spaced
+         farther apart. However, other factors such as an
+         increase in average tree size may make up for
+         productivity losses incurred due to reduced harvest
+         intensity per acre (Kluender et al. 1998). Planning
+         and layout is an integral part of timber harvesting
+         and the cost (dollars per acre) of planning and
+
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals          Page 3 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+         harvest layout is influenced by the amount of
+         harvest volume per acre and silvicultural
+         treatments. The planning of a partial harvest may
+         take anywhere from two to seven times longer
+         than planning a clearcut because of the amount of
+         detail needed in laying out the skyline corridors,
+         with the result that planning costs associated with
+         partial cutting are higher than those associated
+         with clearcutting (Kellogg et al. 1998).
+
+         Another challenge in the Pacific Northwest is that
+         the topography is often too steep (more than 35%)
+         to be harvested effectively by ground-based
+         harvesting systems. Although ground-based
+         harvesting systems can work on slopes of up to
+         50%, their production is considerably diminished
+         as the upper slope limit is approached (Conway
+         1982). Cable harvesting systems often are used to
+         harvest timber in steep terrain, but cable
+         harvesting costs are more sensitive to alternative
+         silvicultural treatments than ground-based
+         harvesting systems. For example, Daigle (1992)
+         found that the cost of tractor logging in partial
+         harvests was between O and 16% greater than the
+         cost of logging clearcuts. In contrast, cable
+         logging costs for partial cutting were 19 and 4%
+         above clearcutting costs. He suggested that several
+         factors contributed to the difference in the
+         increase in cable logging costs, including the large
+         amount of time spent during corridor changes and
+         the large labor inputs required for yarding
+         activities (i.e., typically three to four people are
+         directly related to yarding activities in a cable
+         logging). Increased number of landing and road
+         changes and smaller turn sizes also contribute to
+         higher cable logging costs in a partial cutting
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals         Page 4 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+         (Hochrein and Kellogg 1988). Economic concerns
+         become greater when alternative silvicultural
+         treatments are implemented using cable systems
+         because these systems have higher costs than
+         ground-based harvesting systems in a partial
+         harvesting (Daigle 1992).
+
+
+
+
+          Table 1. Stand description and
+          harvest volume in each
+          silviculture! treatment.
+
+
+
+         Implementing alternative silvicultural systems in
+         coastal conifer stands of the Pacific Northwest
+         using cable systems is being considered more
+         frequently, and there is a need to enhance our
+         knowledge of how to efficiently and economically
+         implement alternative harvesting practices. The
+         objectives of this study were to compare the
+         productivity and cost of cable harvesting among
+         four different silvicultural treatments and to
+         identify what factors influence them.
+
+         Study Area and Methods
+
+         Four different silvicultural treatments were located
+         on a 242-ac study area in the Capitol State Forest
+         in Olympia, Washington (latitude, 46.85° N;
+         longitude, 123.15° W). The stands were primarily
+         (89-97%) stocked with Douglas-fir (Pseudotsuga
+         menzesit), but also supported small components of
+         western hemlock (Tsuga heterophylla), western red
+         cedar (Thuja plicata), red alder (Alnus rubra), and
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals          Page 5 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+         bigleaf maple (Acer macrophyllum). The average
+         dbh of the merchantable (i.e., conifer) species was
+         19 in . The elevation of the site is approximately
+         500 ft above sea level and the slope ranged from
+         15 to 57%. All cutting units were located outside of
+         riparian management areas and were not required
+         to leave buffers. Table 1 summarizes the mean site
+         conditions for each of the four silvicultural
+         treatments. These treatments include
+
+         * Clearcut. Even-aged prescription that removed
+         100% of trees in the harvest unit. Because
+         clearcutting is the traditional and most common
+         harvesting practice in this area, we have chosen to
+         use it as the reference treatment for this study.
+         We will use this reference as the basis of all
+         comparisons between silvicultural treatments.
+
+         * Two-age. Uneven-aged prescription, in which
+         approximately 15 trees/ac are retained until the
+         next rotation.
+
+         * Patch cut and diin. Uneven-aged prescription that
+         removed about 20% of the overstory, in patches
+         of 1.5-5 ac with thinning in between the openings,
+         resulting in a stand that contains five separate age
+         classes. The patch cut and thinning operations
+         were not separated to analyze the overall effect of
+         this type of treatment.
+
+                                                                                * Group
+                                                                                selection.
+                                                                                Similar to
+                                                                                patch cut
+                                                                                and thin
+                                                                                except the
+
+
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals         Page 6 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+                                                                                openings
+          Table 2. Felling and processing                                       are limited
+          methods used in each silvicultural                                    to less than
+          treatment.                                                            1.5 ac that
+                                                                                are
+                                                                                scattered
+                                                                                over the
+         harvest unit.
+
+         One logging contractor conducted all four
+         silvicultural treatments. The contractor was familiar
+         with the use of cable harvesting systems in partial
+         cutting operations and he had been performing
+         partial harvest using these systems for 10 years.
+         Felling was done either by a Timbco 445-D feller-
+         buncher with a Quadco (Prince George, BC,
+         Ganada) hot saw head for flat or moderate slopes
+         (less than 40%), or by a contract faller using a
+         Stihl 064 chainsaw (Oceana West Industrial Park,
+         Virginia Beach, VA) with a 34- in . bar for steep
+         slopes (more than 40%). Both manual and
+         mechanical felling methods were used in the group
+         selection and patch cut, with the mechanical felling
+         used in the thinning sections and manual felling
+         was used in the clearcut patches. The clearcut unit
+         was felled mechanically, and the two-age unit was
+         felled manually (Table 2).
+
+         Yarding was done using a Washington 78SL swing
+         yarder (Trican Machinery, Ltd., New Westminster,
+         BC, Canada) run by a crew of four with 5-30 years
+         of experience: a yarder operator, a rigging slinger,
+         and two choker-setters. The yarder had a 47-ft
+         tower and was capable of yarding distances of
+         1,800 ft. The yarder was used in different
+         configurations (standing and running skyline
+
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals          Page 7 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+         systems and uphill and downhill yarding ) and with
+         an assortment of carnages to facilitate yarding of
+         the harvest units (Table 3). The equipment
+         configurations were determined by the contractor,
+         in accordance with his views on the most
+         productive setup for the site. During yarding
+         three carriage types were used: Eagle Eaglet
+         motorized clamping carriage, a mechanical slack
+         pulling (MSP) carriage and a grapple carriage.
+         The MSP carriage and the grapple carriage were
+         used in downhill yarding situations in one of the
+         clearcut patches with a running skyline setup. For
+         material smaller than 17 in ., large-end diameter,
+         whole trees were yarded to the landing where trees
+         were processed with an excavator-based Cat 32OD
+         with a Fabtec (Menomnee, MI) processing head in
+         all units. All material larger than a 17- in . small-
+         end diameter was processed at the stump using a
+         chainsaw. A Link-Belt heel boom loader was used
+         to load tree length logs onto the trucks at landing.
+
+                                                  A detailed
+                                                  time
+                                                  study was
+                                                  performed
+          Table 3. Yarder configuration,          on the
+          carriage type, yarding direction,       yarding
+          and average yarding distance for        phase of
+          each silvicultural treatment unit.      the
+                                                  operation
+                                                  for each
+         silvicultural unit between May and August of 2002.
+         All the productive elements and delays were
+         measured to develop predictive equations for
+         average cycle time for yarding operations. The
+         productive yarding cycle was divided into six
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals         Page 8 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+         elements: outhaul, lateral out, hooking, lateral in ,
+         inhaul, and unhooking. The elemental times in
+         seconds were collected using a Husky fex21 field
+         computer (Lexington, KY), with the Time Study
+         Data Logger program (Itronix, Spokane Valley, WA)
+         (Wang 2001). Along with the elemental times,
+         independent variables also were collected and
+         related to the average yarding cycle time models.
+         The independent variables collected were yarding
+         distance, lateral distance (except for when
+         grapple yarding was used in the patch cut and
+         thin unit where lateral distance was not collected),
+         number of pieces per cycle, carriage type, and
+         yarding direction. Delays in the productive cycle
+         were recorded also in three categories: (1)
+         operational-downtime during the cycle such as
+         hang-ups, losing logs, decking problems, and
+         others; (2) mechanical-downtime caused as a
+         result of machine failure; and (3) personal-
+         downtime caused for other than mechanical or
+         operational reasons.
+
+         Shift-level data are the daily production
+         information of a machine or person per shift
+         recorded by each operator at the end of the day
+         throughout the operation. A time log was kept on
+         all the machines for the entire harvest so that the
+         detailed information could be compared with the
+         daily production , to make sure that there were
+         no errors made. No detailed time study data were
+         collected for felling, processing, and loading. Shift-
+         level data were used to estimate production rates
+         for these activities. The daily production data
+         for each piece of equipment were used to derive a
+         cost per unit of volume for each piece of
+         machinery on each harvesting unit.
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals         Page 9 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+
+         The data collected in the detailed time studies
+         were entered into a Microsoft Excel spreadsheet,
+         where an initial screening of data was performed.
+         Outliers were screened and removed from the data
+         set if they were more than 3 SDs from the mean.
+         After the outliers were removed, the data were
+         transferred to SAS version 8.02 (SAS 2001) where
+         multivariate ordinary least squares regression
+         analysis was preformed to develop models of
+         delay-free cycle time. Tree and log size information
+         was calculated using the preharvest cruise and
+         scaling data. The scaling data were obtained from
+         the mill to which the logs were taken, where the
+         logs were scaled according to the westside Scribner
+         log rule. Logs were identified by truck scale tickets
+         and were able to be differentiated by sale unit. The
+         scaling data were used to determine average
+         volume per piece for each unit and also the
+         weighted average was used to determine average
+         piece size for the sale.
+
+         Machine rates were calculated for each machine
+         that was used in the harvesting of each of the
+         study units. The machine rates were calculated
+         using the method outlined by Miyata (1980).
+         Several assumptions were made to calculate
+         machine rates, and they are summarized in Table
+         4. The machine rates for all machinery are listed
+         in Table 5. For this study the yarder had the
+         highest total cost per scheduled machine hour
+         (SMH) because of high labor cost associated with a
+         four-person crew.
+
+                                                                               Results and
+                                                                               Discussion
+
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals         Page 10 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+                                                                               Felling,
+                                                                               Processing,
+                                                                               and Loading
+
+                                                                               Mechanical
+                                                                               felling
+                                                                               productivity
+          Table 4. Assumptions used for                                        varied
+          machine rate calculations.                                           greatly,
+                                                                               among
+                                                                               silvicultural
+         treatments because of the differences in density of
+         residual standing timber and felling methods (Table
+         6). Mechanical felling was used in the clearcut unit
+         as well as the thinning sections of the patch cut
+         and thin and group selection units. The average
+         production rates of the mechanical felling were
+         not statistically different in the patch cut and
+         group selection units with production rates of
+         32.4 trees/SMH and 28.0 trees/SMH, respectively,
+         and 65.7 trees/SMH in the clearcut. Mechanical
+         felling costs were 176% higher in the partial
+         cutting areas ($17.74/thousand board feet [mbf])
+         than in the clearcut unit ($6.42/mbf). The cost per
+         mbf was calculated by multiplying the trees per
+         hour production rate by the average standing
+         tree volume and dividing the machine rate for the
+         felling system by that product. Manual felling
+         productivity was approximately 12.01 trees/SMH
+         (or $15.78/mbf) in the clearcut sections of the
+         patch, group selection, and two-age treatments. It
+         was expected that manual felling production
+         would have decreased also because of the care
+         necessary to avoid hang-ups and undue damage to
+         the residual stand (Kellogg et al. 1996b). Felling
+         productivity, however, was not affected because of
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals         Page 11 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+         the high fraction of trees felled in the sections
+         where manual felling was used. In the calculation
+         of felling cost, an average tree volume of 263.41
+         board feet (bd ft) was used, which was estimated
+         from the presale cruise.
+
+         Processing productivity was consistent throughout
+         all the silvicultural treatment units because
+         processing occurred independently from the
+         yarding activities. There were no processing
+         production data collected from this study, and we
+         used the processing production information from
+         a previous study that used a similar processor in
+         comparable tree sizes (Coulter 1999). The
+         processing production rate used in the cost
+         calculation was 11.45 mbf/SMH, which resulted in
+         a unit processing cost of $10.99/mbf. Log trucks
+         were loaded from a cold deck, by a loader
+         dedicated to loading only, resulting in a consistent
+         production in loading for all the silvicultural
+         treatment units studied. On average, five trucks
+         were loaded per day 'with an average payload of
+         4.276 mbf/truck load. The hauling distance to the
+         mill was 250 mi one way, and each truck made
+         only one trip per day. This resulted in a loading
+         cost of $25.03/mbf.
+
+                                                                                    Skyline
+                                                                                    Yarding
+
+                                                                                    Yarding
+          Table 5. Breakdown of machine                                             Cycle
+          rates ($/SMH) for each machine                                            Time
+          including labor.
+
+
+
+
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals         Page 12 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+                                                                               The shortest
+                                                                               average
+                                                                               cycle time
+                                                                               was
+                                                                               observed in
+                                                                               the clearcut
+          Table 6. Mean felling production                                     unit (3.33
+          (trees/hr) by unit and felling                                       minutes),
+          method.                                                              followed by
+                                                                               the patch cut
+                                                                               (4.23
+         minutes) and twoage (4.44 minutes), and the
+         group selection (4.88 minutes) had the longest
+         average cycle time (Figure 1, Table 7). The outhaul
+         time was relatively similar throughout the
+         treatments, with significant differences between
+         the two-age and patch cut; and the clearcut and
+         group selection were caused' by the differences in
+         the external yarding distance of each unit.The
+         time spent pulling cable laterally was significandy
+         higher in the two-age unit (46.61 seconds/cycle; P
+         < 0.0001). This unit had a steeper ground slope
+         than the other units and a large amount of logging
+         slash on the ground, which resulted from
+         processing large trees at the stump. The slash
+         interfered with the choker-setter's movement.
+         Hooking time was the shortest for the clearcut and
+         the two-age units (clearcut, 42.88 seconds/cycle;
+         two-age, 47.69 seconds/cycle. The abundance of
+         timber on the ground, timber mechanically felled
+         and bunched (clearcut), and large trees (two-age)
+         attributed to the quick hooking time.
+
+         Time for lateral- in to the carriage was influenced
+         by residual trees and the felling method. The two-
+         age and group selection units, which required the
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals         Page 13 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+         greatest amount of yarding through standing
+         timber, had significantly higher cycle times for
+         lateral- in than clearcut and patch cut (Tukey's
+         honestly significant difference [HSD], P < 0.001).
+         The logs and trees in the group selection and two-
+         age units had to be worked around residual trees
+         during the lateral-cable- in process, slowing the
+         process of returning the cable to the carriage. In
+         the patch cut, the trees in the single tree selection
+         thinning area were mechanically felled and placed
+         in bunches near the skyline corridors to facilitate
+         the lateral- in process. In the areas that were
+         grapple yarded the lateral distance was recorded
+         as O ft; thus, there was no lateral-out or lateral- in
+         time. The residual trees in the two-age and group
+         selection units also caused longer times for the
+         inhaul process because the logs had to be pulled
+         through a residual stand. Unhooking time was
+         similar across the treatments with the exception of
+         the group selection. Although all units used the use
+         of electronic chokers, the unhooking time for the
+         group selection unit was longer because of
+         mechanical problems with the chokers. To facilitate
+         data analysis, the mean unhooking time for all the
+         turns recorded, excluding the unhooking times for
+         the group selection, was used to provide an
+         estimate of unhooking time for the group selection
+         unit.
+
+         Regression models for delay-free cycle time were
+         developed, using the common independent
+         variables of lateral yarding distance, yarding
+         distance, and number of pieces per cycle for all
+         the harvesting units (Table 8). For the models all
+         the coefficients were significant except for the
+         coefficient on pieces per cycle in the group
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals         Page 14 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+         selection model, which had a value of P = 0.351,
+         and the coefficient on lateral distance in the two-
+         age model, which had a value of P = 0.144. The
+         coefficient for pieces per cycle was positive and
+         statistically the same in magnitude, except that
+         the patch cut coefficient was significantly higher
+         than the clearcut. Similarly, the coefficient for the
+         lateral distance variable was positive with
+         statistically the same magnitude, except that the
+         patch cut variable was significantly higher than the
+         two-age unit. In the patch cut model, dummy
+         variables were used to examine the effect of
+         carnage type and position of the yarder (uphill
+         versus downhill yarding ). The coefficients that
+         were significant for the patch cut model in
+         addition to pieces per cycle, lateral distance, and
+         yarding distance were the coefficients for the
+         grapple carriage and yarding direction. Both
+         coefficients were found to have negative signs,
+         which signify that both the grapple carriage and
+         the uphill yarding resulted in lower cycle times
+         than downhill yarding and slack pulling carriages.
+         The combined model was developed based on all
+         the data from the different silvicultural units and
+         resulted in a general model for skyline yarding
+         productivity on this study, including dummy
+         variables to account for differences in silvicultural
+         treatment, carriage type, and position of the
+         yarder.
+
+         Delays
+
+         Delays caused significant differences in overall
+         cycle time (Figure 2, Table 9). During our field
+         observations, we found that mechanical
+         malfunctions of the old yarder constituted the
+
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals         Page 15 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+         majority of the total delay time, accounting for 43
+         and 85% of the delays for the two-age and patch
+         cut units, respectively. The patch cut unit had some
+         large mechanical problems with the yarder; in
+         addition, the carnage type was changed three
+         times. Consequently, over 50% of the average total
+         cycle time for the patch cut unit was made up by
+         delays. Twenty-seven percent of the average cycle
+         time for the patch cut was attributed to
+         mechanical delays. The clearcut and group
+         selection units had no appreciable mechanical
+         downtime observed in this study. Operational
+         delays such as hang-ups with residual trees and
+         deck management at landings were highest in the
+         two-age unit (7.33% of the observed time),
+         compared with 1.63% in clearcut, 0.43% in patch
+         cut, and 0.26% in group selection units.
+
+                                                                                    In the
+                                                                                   overall
+                                                                                   operation,
+                                                                                   road
+                                                                                   changes
+                                                                                   (moving
+                                                                                   the skyline
+                                                                                   cables to
+                                                                                   the next
+                                                                                   corridor)
+                                                                                   accounted
+                                                                                   for
+          Figure 1. Comparison of mean                                             between
+          productive cycle time (no delays)                                        11 and
+          among silviculture!                                                      20% of
+                                                                                   the total
+                                                                                   observed
+                                                                                   operating
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals         Page 16 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+          treatments.Table 7. Average                                              time. The
+          delay-free cycle time in minutes                                         time spent
+          for each treatment.                                                      to prerig
+                                                                                   the next
+                                                corridor
+         was not included in the road changes because it
+         was done independently from yarding activities.
+         Pulling the strawline was treated as a working
+         delay only if it interfered with yarding activities.
+         Less time was spent on road changes in the
+         clearcut unit than any of the other units (Figure 3).
+         Because there were no standing trees between the
+         corridors in a clearcut, the cables did not have to
+         be pulled all the way back to the yarder before
+         moving to the next corridor. The shorter yarding
+         distances in the clearcut and group selection units
+         contributed to fast road change times. The fast
+         road change times and the low delay times in the
+         clearcut resulted in the highest utilization rate
+         (productive machine hour [PMH]/SMH, 87%). In
+         contrast the two-age unit had the lowest utilization
+         (73%) because of increased operational delays
+         (i.e., hang-ups) and high percentage of road
+         change time. The patch cut and group selection
+         units had utilization rates of 76 and 85%,
+         respectively.
+
+         Carriage Type and Yarding Direction
+
+         In the patch cut unit, three different types of
+         carriage were used during the yarding operation
+         and this affected yarding production . The
+         grapple carriage required significantly (Tukey
+         HSD, P < 0.0001) lower average cycle time than
+         other carnages, and the motorized and MSP
+         carriage had similar average cycle times (Table 10).
+
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals         Page 17 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+         Although the cycle times for the grapple carriage
+         were lower, the production rate with that carriage
+         was low because the grapple carriage could yard
+         only 1 tree/cycle. The motorized and MSP carriages
+         yarded between 1 and 7 logs or trees/cycle. The
+         grapple carriage would have to reduce its average
+         cycle time by 1.16 minutes to equal the
+         productivity of the other types of carriages. Felling
+         pattern also affected the efficient use of carriages.
+         When the trees were felled perpendicular to the
+         contours of the hill, it was difficult for the
+         grapple carriage to be quickly positioned on a log.
+         If the trees had been felled parallel to the contour
+         it would have been more conducive for the use of
+         a grapple carriage.
+
+                                                                               This study
+                                                                               showed that
+                                                                               position of
+                                                                               the yarder at
+                                                                               either the
+                                                                               top or the
+                                                                               bottom of
+                                                                               the slope
+                                                                               had a
+                                                                               statistically
+                                                                               significant (P
+                                                                               < 0.0001)
+                                                                               impact on
+                                                                               yarder
+                                                                               productivity.
+          Table 8. Regression models for
+          average yarding cycle rime                                           The average
+
+          (estimates of rime in seconds) in                                    cycle time
+          alternative silviculhiral                                            for uphill
+                                                                               yarding
+                                                                               was on the
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals         Page 18 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+          treatments.Figura 2. Comparison                                      average
+          of average cycle rime with and
+          without delays.
+
+
+
+         approximately 37 seconds shorter than the average
+         cycle time for downhill yarding . This equated to
+         approximately an extra 16 turns/day, or an
+         additional 4.18 mbf/day, assuming an average
+         number of 2.6 logs/turn and an average log volume
+         of 100.6 bd ft. A lower harvesting cost might have
+         resulted if access to landings at the top of the slope
+         were built relatively inexpensively at a low
+         environmental impact.
+
+                                                                               Yarding
+                                                                               Cost
+
+                                                                               Yarding
+                                                                               costs ranged
+                                                                               from $37.19
+                                                                               to
+                                                                               76.51/mbf,
+                                                                               with the
+                                                                               patch cut
+                                                                               and thin
+                                                                               having the
+                                                                               lowest cost
+          Table 9. Comparison of average
+                                                                               per unit
+          cycle time with and without
+                                                                               volume
+          delays.Figure 3. Average time
+                                                                               (Table 11).
+          spent on skyline rood changes
+                                                                               The number
+          expressed as a percentage of
+                                                                               of pieces per
+          SMHs by silvicultural treatment.
+                                                                               turn was
+                                                                               consistent
+                                                                               for all units
+
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals         Page 19 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+                                                                               at
+
+
+
+
+          Table 10. Average cycle time
+          without delays by carriage types
+          used in the patch cut and thin
+          unit.
+
+
+
+         approximately 2.5 trees/turn, except when a
+         grapple carriage was used. The grapple carriage
+         yarded 1 tree/turn. Although the clearcut unit had
+         the fastest average cycle time, it had the second-
+         highest cost as it was observed in this study
+         because the average volume per piece was lowest
+         (69.6 bd ft/piece) in the clearcut unit. The average
+         piece sizes in the patch cut and two-age treatment
+         were nearly twice that of the clearcut (Table 11).
+
+         The stand conditions varied between silvicultural
+         treatment units (Table 1). To determine the effect
+         of silvicultural treatments on the harvesting cost,
+         we standardized the variables that were contained
+         within the parameters of the developed models. On
+         this standardized basis, the clearcut unit had the
+         lowest cost of $46.10/mbf (Table 12). The group
+         selection treatment had the highest cost because
+         of the highest average time per cycle and the
+         second-lowest volume per piece. This unit had a
+         relatively low harvest intensity (10.7 mbf/ac),
+
+
+
+
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals        Page 20 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+         which required increased time for moving and
+         setting up the yarder and minimizing residual stand
+         damage.
+
+                                                                               When all the
+                                                                               phases
+                                                                               (felling,
+                                                                               yarding ,
+                                                                               processing,
+                                                                               and loading)
+                                                                               of
+                                                                               harvesting
+                                                                               were
+                                                                               considered,
+          Table 11. Comparison of yarding
+                                                                               using the
+          cost ($/mbf) by silvicultural
+                                                                               standardized
+          treatment unit as observed.Table
+                                                                               harvesting
+          12. Comparison of yarding cost
+                                                                               variables
+          between silviculture! treatment
+                                                                               based on
+          units.Table 13. Comparison of the
+                                                                               potential
+          slump-to-truck harvesting cost
+          with the standardized cost for
+          yarding using the individual
+          regression equation for each
+          treatment.
+
+
+
+         production , the clearcut had a stump-to-truck
+         cost of $81.99. The group selection treatment had
+         the highest stump-to-truck cost of the four
+         treatments, 31% higher than the clearcut. In
+         between were the two-age treatment and the patch
+         cut, which were 22 and 13% higher, respectively
+         (Table 13). Potential production is used to
+         illustrate more clearly the differences between
+         silviculture treatments by removing the effects of
+
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals         Page 21 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+         downtime. This follows the pattern that was seen
+         in the yarding cost because yarding was the
+         most costly of the harvesting cost components.
+
+         Conclusion
+
+         The difference in silvicultural treatments greatly
+         affected the cost and production of harvest
+         operations, especially in felling and yarding
+         production . In silvicultural treatments that had
+         higher levels of residual trees and had those
+         residuals uniformly dispersed throughout the
+         cutting blocks (i.e., no large openings), the
+         production of both felling and yarding
+         operations was observed to decline due to the
+         increased care needed to avoid damage to residual
+         trees. This study clearly showed that there was an
+         increase in felling cost for both manual and
+         mechanical felling methods as the amount of
+         residual timber increased. Silvicultural treatment
+         had its biggest impact on yarding productivity and
+         cost because of increased time for skyline road
+         changes and yarding cycles. As expected, the
+         stand with the lowest number of residual trees per
+         acre resulted in the shortest amount of time spent
+         for road changes.
+
+         Average tree size, yarding direction, carriage
+         type, and felling patterns all interacted with
+         silvicultural treatment to influence total harvesting
+         cost. Because of different initial stand conditions or
+         smaller average tree diameters clearcut did not
+         result in the lowest costs, as would be expected.
+         In this study the patch cut had the lowest
+         yarding cost ($24.73/mbf) and lowest total
+         stump-to-truck cost ($70.49/mbf), and the
+
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals        Page 22 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+         clearcut had the third-lowest yarding cost
+         ($52.38/mbf) and second-lowest total stump-to-
+         truck cost ($89.22/mbf). This difference was
+         caused by mainly the differences in tree size of
+         the two units. As the size of the logs increase,
+         yarding productivity was significantly increased
+         without impacting on overall average yarding
+         cycle time.
+
+         The type of carriage used should be matched to
+         felling methods and operational conditions. The
+         data showed that the grapple carriage was less
+         productive than the other yarding systems used,
+         especially when trees were felled perpendicular to
+         the contour. The fellers assumed that a motorized
+         or MSP carriage was going to be used. Instead, the
+         yarding contractor decided to use a grapple
+         carriage and spent much time to cast or pivot the
+         grapple carriage to hook the logs. Had the timber
+         been felled along the contour rather than
+         perpendicular to the contour, the grapple carriage
+         would have been much more efficient and the
+         findings might have been different. Yarder location
+         was another factor that affected the total cost of
+         harvest. When yarding downhill, yarding
+         productivity was notably reduced because of the
+         care needed to keep the logs under control while
+         moving them downhill.
+
+         Under a scenario of uniform initial conditions
+         among the stands, we found that the clearcut, as
+         expected, would return the lowest logging cost,
+         followed by the two-age and patch cut harvest,
+         with a group selection harvest being the highest
+         cost alternative. Harvesting cost increased as tree
+         retention levels increased (i.e., decrease of the
+
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals        Page 23 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+         number of trees removed per acre) and as the
+         retained trees were more interspersed throughout
+         the cutting unit (i.e., large openings [≥ 1.5 ac]
+         were not used).
+
+         References
+         Literature Cited
+
+         ARNOTT, J.T., AND WJ. BREESE. 1997. Alternatives
+         to clearcutting in BC coastal montane forest.
+         For . Chron. 73(6):670-678.
+
+         CONWAY, S. 1982. Logging practices: Principles of
+         timber harvesting systems, revised edition. Miller
+         Freeman, Inc., San Francisco, CA. 432 p.
+
+         COULTER, K.M. 1999. The effects ofsilvicultural
+         treatments on harvesting production and cost.
+         MS thesis, Univ. of Idaho, Moscow, ID. 113 p.
+
+         CURTIS, R.O., D.S. DEBELL, C.A. HARRINGTON,
+         O.P. LAVENDER, J.B. ST. CLAIR, J.C. TAPPEINER,
+         AND J.D. WALSTAD. 1998. Silviculture far multiple
+         objectives in the Douglas-fir region. USDA For .
+         Serv. Gen. Tech. Rep. PNW-GTR-435, Pacific
+         Northwest Research Station, Portland, OR. 123 p.
+
+         DAIGLE, P.W. 1992. Financial aspects of alternative
+         harvest cutting methods and silvicultural
+         treatments: A literature review. FRDA II Rep.,
+         British Columbia Ministry of Forest, Victoria, BC.
+         51 p.
+
+         HOCHREIN, P.H., AND L.D. KELLOGG. 1988.
+         Production and cost comparison for three
+         skyline thinning systems. West. J. Appl. For .
+         3(4):120-123.
+
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals        Page 24 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+         HOWARD, A.F., D. RUTHERFORD, AND G.G.
+         YOUNG. 1996. The productivity and cost of partial
+         and clear cutting with two cable yarding systems
+         in second-growth forest of costal British
+         Columbia . WP-6-015, Univ. of British
+         Columbia , Vancouver, BC. 56 p.
+
+         JOHNSON, M. 2002. Combining social and
+         ecological needs on federal lands: A global
+         perspective. P. 104-108 in Proc. of the 2001
+         National Silviculture Workshop, May 6-10, 2001,
+         Hood River, OR, Parker, S., S.S. Hummel (comps.).
+         PNW-GTR-546, Portland, OR.
+
+         KEEGAN, C.E. Ill, C.E. FIEDLER, AND FJ. STEWART.
+         1995. Cost of timber harvest under traditional and
+         "new forestry" silvicultural prescriptions. West. J.
+         Appl. For . 10(l):36-42.
+
+         KELLOGG, L.D., P. BITTINGER, AND R.M.
+         EDWARDS. 1996a. A comparison of logging
+         planning, felling and skyline yarding cost between
+         clearcutting and five group selection harvesting
+         methods. West. J. Appl. For . 11(3):90-96.
+
+         KELLOGG, L.D., G.V. MILOTA, AND M. MILLERJR.
+         1996b. A comparison of skyline harvesting cost for
+         alternative commercial thinning prescriptions.
+         / For . Eng. 7(3):7-23.
+
+         KELLOGG, L.D., G.V. MILOTA, AND B. STRINGHAM.
+         1998. Logging planning and layout costs for
+         thinning: Experience from the Willamette Young
+         Stand Project. Forest Research Laboratory. Oregon
+         State Univ., Corvallis, OR. Res. Cont. 20. 20 p.
+
+
+
+
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals        Page 25 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+         KLUENDER, R., D. LORTZ, W. McCov, B. STOKES,
+         ANDJ. KLEPAC. 1998. Removal intensity and tree
+         size effects on harvesting cost and profitability.
+         For . Prod. J. 48(1):54-60.
+
+         McNEEL, J.F., AND K. DODD. 1996. A survey of
+         commercial thinning practices in the coastal
+         region of Washington State. For . Prod. J.
+         46(11/12):33-39.
+
+         MIYATA, E.S. 1980. Determining fixed and
+         operating cost of logging equipment, USDA For .
+         Serv. Gen. Tech. Rep. NC-55, North Central Forest
+         Experiment Station, St. Paul, MN. 16 p.
+
+         REUTEBUCH, S.E., C.A. HARRINGTON, D.D.
+         MARSHALL, AND R.O. CURTIS. 2002. Silvicultural
+         options for multipurpose management of west-
+         side Pacific Northwest forests. P. 38-46 in Proc. of
+         the 2001 National Silviculture Workshop. May 6-10,
+         2001, Hood River, OR, Parker, S., S.S. Hummel
+         (comps.). PNW-GTR-546, Portland, OR.
+
+         SAS. 2001. Statistical analysis system, version
+         8.02. SAS Institute, Inc., Cary, NC.
+
+         WANG, J. 2001. Time study data logger-computer
+         program. West Virginia Univ., Morgantown, WV.
+
+         AuthorAffiliation
+         Received May 15, 2006; accepted September 11,
+         2006.
+
+         Han-Sup Han (hanh@uidaho.edu). Department of
+         Forest Products, University of Idaho, Moscow, ID
+         83844-1132. Daman S. Hartley
+
+
+
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals        Page 26 of 27
+Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western Washington - ProQuest   2025-11-15, 21:51
+
+
+
+         (hanleyll8@ag.osu.edu), The Ohio State University,
+         Piketon, OH 45661.
+
+         Copyright © 2007 by the Society of American
+         Foresters.
+
+         Copyright Society of American Foresters Jul 2007
+
+
+
+
+   Provided by your library:                                                                            UBC Library
+    Need Help Now?
+
+
+
+
+                                                                                   Copyright © 2025 ProQuest LLC.
+
+
+
+
+https://www.proquest.com/docview/198664200/fulltext/FBFA34464329482DPQ/1?accountid=14656&sourcetype=Scholarly%20Journals        Page 27 of 27
+
