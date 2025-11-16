@@ -37,7 +37,7 @@ from fhops.productivity import (
     estimate_productivity_distribution,
     load_lahrsen_ranges,
 )
-from fhops.reference import load_appendix5_stands
+from fhops.reference import load_appendix5_stands, get_tr119_treatment
 from fhops.validation.ranges import validate_block_ranges
 from fhops.scenario.contract import Scenario
 from fhops.scenario.io import load_scenario
@@ -947,6 +947,11 @@ def estimate_skyline_productivity_cmd(
     large_end_diameter_cm: float = typer.Option(
         34.0, min=1.0, help="Required for Lee downhill (cm).", show_default=False
     ),
+    tr119_treatment: str | None = typer.Option(
+        None,
+        "--tr119-treatment",
+        help="Optional TR119 treatment (e.g., strip_cut, 70_retention, 65_retention) to scale output and show costs.",
+    ),
 ):
     """Estimate skyline productivity (m³/PMH) using Lee et al. (2018) or TR-125 regressions."""
 
@@ -962,7 +967,6 @@ def estimate_skyline_productivity_cmd(
             ("Model", model.value),
             ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
             ("Payload (m³)", f"{(payload_m3 or 0.57):.2f}"),
-            ("Productivity (m³/PMH)", f"{value:.2f}"),
         ]
     elif model is SkylineProductivityModel.LEE_DOWNHILL:
         value = estimate_cable_yarder_productivity_lee2018_downhill(
@@ -977,7 +981,6 @@ def estimate_skyline_productivity_cmd(
             ("Lateral Distance (m)", f"{lateral_distance_m:.1f}"),
             ("Large-end Diameter (cm)", f"{large_end_diameter_cm:.1f}"),
             ("Payload (m³)", f"{(payload_m3 or 0.61):.2f}"),
-            ("Productivity (m³/PMH)", f"{value:.2f}"),
         ]
     elif model is SkylineProductivityModel.TR125_SINGLE:
         value = estimate_cable_yarder_productivity_tr125_single_span(
@@ -990,7 +993,6 @@ def estimate_skyline_productivity_cmd(
             ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
             ("Lateral Distance (m)", f"{lateral_distance_m:.1f}"),
             ("Payload (m³)", f"{(payload_m3 or 1.6):.2f}"),
-            ("Productivity (m³/PMH)", f"{value:.2f}"),
         ]
     else:
         value = estimate_cable_yarder_productivity_tr125_multi_span(
@@ -1003,6 +1005,16 @@ def estimate_skyline_productivity_cmd(
             ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
             ("Lateral Distance (m)", f"{lateral_distance_m:.1f}"),
             ("Payload (m³)", f"{(payload_m3 or 1.6):.2f}"),
-            ("Productivity (m³/PMH)", f"{value:.2f}"),
         ]
+    if tr119_treatment:
+        try:
+            treatment = get_tr119_treatment(tr119_treatment)
+        except KeyError as exc:
+            raise typer.BadParameter(str(exc))
+        value *= treatment.volume_multiplier
+        rows.append(("TR119 Treatment", treatment.treatment))
+        rows.append(("TR119 Volume Multiplier", f"{treatment.volume_multiplier:.3f}"))
+        if treatment.yarding_total_cost_per_m3 is not None:
+            rows.append(("TR119 Yarding Cost ($/m³)", f"{treatment.yarding_total_cost_per_m3:.2f}"))
+    rows.append(("Productivity (m³/PMH)", f"{value:.2f}"))
     _render_kv_table("Skyline Productivity", rows)

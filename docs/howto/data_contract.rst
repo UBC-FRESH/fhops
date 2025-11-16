@@ -212,6 +212,9 @@ Arnvik (2024) Appendix 5 stand metadata is bundled under
   (``Level - Erasmus``) into approximate slope percentages.
 - ``fhops dataset estimate-cable-skidding`` evaluates the Ünver-Okan (2020) regressions. Supply either
   ``--slope-percent`` or a stand ``--profile`` (author name) to pull slope defaults directly from Appendix 5.
+- ``fhops dataset estimate-skyline-productivity`` wraps the Lee et al. (2018) and TR-125 regressions, with optional
+  ``--tr119-treatment`` multipliers (strip cut / retention levels) so partial-cut scenarios automatically apply the
+  published BC productivity and cost offsets.
 - Programmatically, ``fhops.reference.arnvik_appendix5`` exposes dataclasses and helper functions so skyline
   helpers and costing workflows can bind stand descriptors to the new cable productivity models.
 
