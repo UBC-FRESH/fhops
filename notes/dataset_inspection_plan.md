@@ -264,15 +264,15 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
 - [x] Extract coefficients from `/notes/reference/unver.pdf` (Ünver-Okan hill-skidding regressions already implemented) and `/notes/reference/Productivity and cost ... South Korea.pdf` (Lee et al. 2018 HAM300 uphill/downhill regressions live in `fhops.productivity.cable_logging`).
 - [x] The helpers already expose the estimators (Ünver cable skidding + Lee skyline); remaining work is to document assumptions/caveats, tie them into telemetry, and ensure CLI warnings for non-BC sources are clear.
 - [x] Add telemetry tagging when non-BC skyline models (Ünver/Lee) are selected so downstream consumers know the provenance (CLI now exposes `--telemetry-log` for cable/sk skyline commands, recording model + provenance + warning flag).
-- [ ] Update docs/how-to sections describing the non-BC skyline/tethered helpers and reiterate the assumptions (spruce uphill skidding in Turkey, South Korean tethered yarder case study, etc.).
+- [x] Update docs/how-to sections describing the non-BC skyline/tethered helpers and reiterate the assumptions (spruce uphill skidding in Turkey, South Korean tethered yarder case study, etc.).
 
 ### Appendix 5 normalization
 - [x] Re-extract the landscape pages (confirmed orientation issue) and normalize into `data/reference/arnvik/appendix5_stands.json` via `scripts/build_appendix5_reference.py` (numeric stand age/volume/DBH + slope percent now recorded alongside the original text).
 - [x] Updated `fhops.reference.arnvik_appendix5` to load the new dataset (dataclass carries both text + parsed numeric fields) and refreshed `appendix5-stands` CLI output to show age/volume/DBH/operator counts; new `tests/test_reference_appendix5.py` assertions cover slope percent + typed fields.
-- [ ] Add CLI command (`fhops reference appendix5-stands --filter ...`) plus unit tests verifying schema + sample rows. Refresh docs to explain how stand metadata feeds the skyline models.
+- [x] CLI coverage (`fhops dataset appendix5-stands --author ...`) and tests (`tests/test_reference_appendix5.py`) already exercise the normalized stand data; docs now describe how skyline/cable helpers consume the profiles.
 
 ### Cross-cutting tasks
-- [ ] Update planning docs (`notes/dataset_inspection_plan.md`) and roadmap to reflect the above milestones and dependencies (e.g., waiting on FPInnovations TR112 scans).
+- [ ] Update planning docs (`notes/dataset_inspection_plan.md`) and roadmap to reflect the above milestones and dependencies.
 - [ ] Expand docs/how-to sections describing the new productivity helpers and Appendix 5 loader; include assumptions table and CLI examples.
 - [ ] Refresh fixtures/tests impacted by new productivity defaults (playback/KPI outputs if production shifts) and document any non-BC source caveats in `CHANGE_LOG.md`.
 - [ ] After implementation, rerun `pytest` + CLI smoke commands (`fhops dataset estimate-productivity`, `fhops reference appendix5-stands`) and capture telemetry snapshots to ensure reporting hooks continue to work.

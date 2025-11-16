@@ -232,13 +232,15 @@ Arnvik (2024) Appendix 5 stand metadata is bundled under
 - ``fhops dataset appendix5-stands`` lists authors/species and the parsed slope/ground descriptors
   (filter with ``--author``). The parser converts ranges (e.g., ``23 (5-55)%``) and qualitative labels
   (``Level - Erasmus``) into approximate slope percentages.
-- ``fhops dataset estimate-cable-skidding`` evaluates the Ünver-Okan (2020) regressions. Supply either
-  ``--slope-percent`` or a stand ``--profile`` (author name) to pull slope defaults directly from Appendix 5.
+- ``fhops dataset estimate-cable-skidding`` evaluates the Ünver-Okan (2020) uphill skidding regressions (spruce
+  stands in north-east Turkey). Supply either ``--slope-percent`` or a stand ``--profile`` (author name) to pull
+  slope defaults directly from Appendix 5, and treat the results as non-BC placeholders unless you calibrate them.
 - ``fhops dataset estimate-skyline-productivity`` wraps the Lee et al. (2018), TR-125, and TR-127 regressions, with
   optional ``--tr119-treatment`` multipliers (strip cut / retention levels) so partial-cut scenarios automatically
-  apply the published BC productivity and cost offsets. TR-127 block-specific models (`tr127-block1` … `tr127-block6`)
-  use the Appendix VII coefficients from Technical Report 127; TR-112 only publishes descriptive productivity tables,
-  so no regression helper is available for that report yet.
+  apply the published BC productivity and cost offsets. Lee et al. (2018) regressions are small-scale tethered
+  yarder studies from South Korea (HAM300), while TR-127 block-specific models (`tr127-block1` … `block6`) use the
+  Appendix VII coefficients from the FPInnovations case studies in northwestern BC. TR-112 only publishes descriptive
+  productivity tables, so no regression helper is available for that report yet.
 - Programmatically, ``fhops.reference.arnvik_appendix5`` exposes dataclasses and helper functions so skyline
   helpers and costing workflows can bind stand descriptors to the new cable productivity models.
 
