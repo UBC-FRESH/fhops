@@ -234,13 +234,17 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
    - Rewrite sample dataset JSON/CSV templates and synthetic generator distributions to fall within Lahrsen-observed ranges; add validation rules rejecting out-of-band values unless explicitly overridden.
 3. **Plan costing workflow**
    - Combine the productivity helper with machine rental-rate inputs (in $/SMH) to produce BC-calibrated $/m³ estimates downstream in evaluation scripts; document how this links to the forthcoming machine-costing CLI.
+- **FPInnovations reference batch catalogued**
+   - `notes/fpinnovations_reference_log.md` now covers the Advantage, Special Report, Handbook, Technical Report, Field/Forest Note, and cable-yard (FNCY) series (all but the OCR-stubborn FNCY14). High-priority sources for the registry/costing helper include SR54 & TR75 (coastal grapple yarders), TR112/TR119/TR125 (skyline + partial-cut productivity/cost), TR106/TR108 (interior CTL vs. tree-length systems), TR2016N46 (modern winch-assist harvester), SR89/TR103 (steep-slope ground skidding + soil-disturbance mitigation), HB12 (system catalog), and SR49/SR85 (equipment planning + partial-cut comparisons). Next action: mine these reports for coefficients/metadata so grapple skidders/yarders, skyline partial cuts, tethered felling, and steep-slope skidders enter the registry without waiting on new field campaigns.
+- **BC grapple yarder helpers implemented**
+   - Added `fhops.productivity.grapple_bc` exposing SR54 (Washington 118A bunched) and TR75 (Madill 084, bunched vs. hand-felled) productivity equations and registered pytest coverage. These regressions now replace the plantation-derived Spinelli placeholder when estimating CTL grapple productivity; next follow-up is to wire them into the registry metadata and costing helper plus extend coverage with TR112/TR127 skyline data.
 
 ## Immediate Next Tasks (queue)
-- Track down Han & George grapple-skidder data (or equivalent BC datasets) so we can replace the interim Spinelli et al. yarder regression with an on-point grapple-skidder model.
-- Expand Appendix 4/5 normalization to include operator, machine weight, and slope applicability metadata needed for the remaining machine families.
-- Extract quantitative regressions from Visser et al. (2025), McNeel (2000), West et al. (2022), and Renzie (2006) to seed shovel-assist, longline yarding, steep-slope winch-assist, and partial-cut productivity helpers.
-- Implement an OpCost-style machine-rate dataset (e.g., defaults from Dodson et al. 2015) plus utilization + move-in logic so the costing helper’s $/SMH inputs mirror the Miyata/Bell approach.
-- Park the “Effects of Alternative Silvicultural Systems…” PDF (currently DRM-locked) until bandwidth frees up; partial-cut modeling will rely on Renzie (2006) + other accessible sources in the interim.
+- Extract grapple yarder/skidder regressions from SR54, TR75, TR112, and TR127 (turn length vs. payload) so we can replace the interim Spinelli yarder placeholder; only chase Han & George if BC/FPInnovations coverage still has gaps.
+- Expand Appendix 4/5 normalization to capture operator, machine weight, slope/payload applicability so the FPInnovations datasets map cleanly into the registry schema.
+- Pull skyline/tethered/partial-cut coefficients from TR119, TR125, TR2016N46, SR85, and HB12; keep Visser/McNeel/West/Renzie on deck for supplemental coverage.
+- Implement an OpCost-style machine-rate dataset (Dodson et al. 2015, Hartley & Han 2007, FPInnovations repair-maintenance survey) plus utilisation + move-in logic so the costing helper’s $/SMH inputs mirror the Miyata/Bell approach.
+- Park the DRM-locked “Effects of Alternative Silvicultural Systems…” PDF until bandwidth frees up; partial-cut modeling will rely on TR119/TR125/Renzie (2006) and other accessible sources in the interim.
 
 ## Machine-Role Productivity Rollout (Steps 1–6)
 1. [x] **Brushwood harwarder / forwarder variant**

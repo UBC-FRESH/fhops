@@ -18,6 +18,11 @@ from .lahrsen2025 import (
     estimate_productivity,
     estimate_productivity_distribution,
 )
+from .grapple_bc import (
+    estimate_grapple_yarder_productivity_sr54,
+    estimate_grapple_yarder_productivity_tr75_bunched,
+    estimate_grapple_yarder_productivity_tr75_handfelled,
+)
 from .ranges import load_lahrsen_ranges
 from .stoilov2021 import (
     estimate_skidder_harvester_productivity_delay_free,
@@ -49,6 +54,9 @@ __all__ = [
     "estimate_brushwood_harwarder_productivity",
     "estimate_skidder_harvester_productivity_delay_free",
     "estimate_skidder_harvester_productivity_with_delays",
+    "estimate_grapple_yarder_productivity_sr54",
+    "estimate_grapple_yarder_productivity_tr75_bunched",
+    "estimate_grapple_yarder_productivity_tr75_handfelled",
     "GrappleYarderInputs",
     "estimate_grapple_yarder_productivity",
     "ShovelLoggingParameters",

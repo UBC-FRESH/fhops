@@ -1,0 +1,37 @@
+from __future__ import annotations
+
+import math
+
+import pytest
+
+from fhops.productivity.grapple_bc import (
+    estimate_grapple_yarder_productivity_sr54,
+    estimate_grapple_yarder_productivity_tr75_bunched,
+    estimate_grapple_yarder_productivity_tr75_handfelled,
+)
+
+
+def test_sr54_matches_report_curve() -> None:
+    # 100 m yarding distance, 3 m³ turn volume (approx. Figure O).
+    prod = estimate_grapple_yarder_productivity_sr54(turn_volume_m3=3.0, yarding_distance_m=100.0)
+    assert math.isclose(prod, 83.9, rel_tol=0.02)
+
+
+def test_tr75_bunched_cycle_matches_table() -> None:
+    prod = estimate_grapple_yarder_productivity_tr75_bunched(turn_volume_m3=0.9, yarding_distance_m=50.0)
+    # Table 6 reports ~1.08 min/turn at 50 m => ~50 m³/PMH for 0.9 m³ turns.
+    assert math.isclose(prod, 50.0, rel_tol=0.05)
+
+
+def test_tr75_handfelled_slower_cycle() -> None:
+    prod = estimate_grapple_yarder_productivity_tr75_handfelled(turn_volume_m3=0.9, yarding_distance_m=50.0)
+    assert prod < estimate_grapple_yarder_productivity_tr75_bunched(0.9, 50.0)
+    assert math.isclose(prod, 49.0, rel_tol=0.05)
+
+
+def test_invalid_inputs_raise() -> None:
+    with pytest.raises(ValueError):
+        estimate_grapple_yarder_productivity_sr54(turn_volume_m3=-1.0, yarding_distance_m=50.0)
+    with pytest.raises(ValueError):
+        estimate_grapple_yarder_productivity_tr75_bunched(turn_volume_m3=1.0, yarding_distance_m=-5.0)
+
