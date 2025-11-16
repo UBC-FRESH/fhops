@@ -248,7 +248,7 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
    - [x] Implement a costing helper that blends the default rates with scenario overrides (e.g., `fhops.costing.machine_rates.load_defaults()` → `MachineRate` dataclass). Include utilisation scaling and move-in amortization logic per block/system.
    - [ ] Document the defaults (sources, currency conversions, typical utilisation) in the costing how-to and note how users can override rates via CLI/JSON config before the costing helper ships.
 - **Task queue (current sprint)**
-   - [ ] Document the machine-rate workflow (default CAD assumptions, FPInnovations repair, CLI usage examples) in `docs/howto/data_contract.rst` + CHANGE_LOG entry.
+   - [x] Document the machine-rate workflow (default CAD assumptions, FPInnovations repair, CLI usage examples) in `docs/howto/data_contract.rst` + CHANGE_LOG entry.
    - [ ] Wire machine-rate loader into scenario/system configs so costing/evaluation modules can pull role defaults without manual CLI glue (update `fhops/scheduling/systems` + dataset templates).
    - [ ] Normalize Appendix 5 stand metadata (landscape orientation) into JSON with slope/ground descriptors so skyline/tethered helpers can consume it.
    - [ ] Prioritize skyline/tethered helper implementation using Ünver-Okan 2020 + Lee et al. 2018 while TR112/TR127 remain unavailable; capture assumptions + TODOs for replacing the approximations later.
