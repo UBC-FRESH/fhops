@@ -12,6 +12,10 @@ from .lahrsen2025 import (
     estimate_productivity_distribution,
 )
 from .ranges import load_lahrsen_ranges
+from .stoilov2021 import (
+    estimate_skidder_harvester_productivity_delay_free,
+    estimate_skidder_harvester_productivity_with_delays,
+)
 
 __all__ = [
     "LahrsenModel",
@@ -22,4 +26,6 @@ __all__ = [
     "load_lahrsen_ranges",
     "estimate_forwarder_productivity_final_felling",
     "estimate_forwarder_productivity_thinning",
+    "estimate_skidder_harvester_productivity_delay_free",
+    "estimate_skidder_harvester_productivity_with_delays",
 ]
