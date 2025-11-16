@@ -1,7 +1,12 @@
 import pytest
 
 from fhops.costing import compute_unit_cost, estimate_unit_cost_from_stand
-from fhops.costing.machine_rates import MachineRate, compose_rental_rate, normalize_machine_role
+from fhops.costing.machine_rates import (
+    MachineRate,
+    compose_rental_rate,
+    get_machine_rate,
+    normalize_machine_role,
+)
 from fhops.productivity import LahrsenModel
 
 
@@ -63,3 +68,33 @@ def test_normalize_machine_role_synonyms():
     assert normalize_machine_role("Feller-Buncher") == "feller_buncher"
     assert normalize_machine_role("roadside processor") == "processor"
     assert normalize_machine_role(" Loader-Or-Water ") == "loader"
+
+
+def test_machine_rate_usage_multipliers_exposed():
+    rate = get_machine_rate("grapple_skidder")
+    assert rate is not None
+    assert rate.repair_maintenance_usage_multipliers is not None
+    assert pytest.approx(rate.repair_maintenance_usage_multipliers[5000], rel=1e-4) == 0.6949
+
+
+def test_compose_rental_rate_scales_repair_with_usage_hours():
+    rate = MachineRate(
+        machine_name="Test Loader",
+        role="loader",
+        ownership_cost_per_smh=80.0,
+        operating_cost_per_smh=90.0,
+        default_utilization=0.8,
+        move_in_cost=1000.0,
+        source="unit-test",
+        notes=None,
+        repair_maintenance_cost_per_smh=40.0,
+        repair_maintenance_reference_hours=10000,
+        repair_maintenance_usage_multipliers={5000: 0.5, 10000: 1.0},
+    )
+    total_young, breakdown_young = compose_rental_rate(rate, usage_hours=5000)
+    assert pytest.approx(breakdown_young["repair_maintenance"]) == 20.0
+    assert pytest.approx(total_young) == 80.0 + 90.0 + 20.0
+
+    total_mature, breakdown_mature = compose_rental_rate(rate, usage_hours=10000)
+    assert pytest.approx(breakdown_mature["repair_maintenance"]) == 40.0
+    assert pytest.approx(total_mature) == 80.0 + 90.0 + 40.0

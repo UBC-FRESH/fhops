@@ -11,6 +11,8 @@ from typing import TypedDict
 
 import typer
 
+from fhops.telemetry.machine_costs import summarize_machine_costs
+
 telemetry_app = typer.Typer(
     add_completion=False, no_args_is_help=True, help="Telemetry maintenance utilities."
 )
@@ -140,6 +142,8 @@ class _AggregateRecord(TypedDict):
     best_run_id: str
     best_started_at: str
     best_config: dict[str, object]
+    best_machine_costs_summary: str
+    best_repair_usage_alert: str
 
 
 def _collect_tuner_report(sqlite_path: Path) -> list[dict[str, object]]:
@@ -179,11 +183,13 @@ def _collect_tuner_report(sqlite_path: Path) -> list[dict[str, object]]:
                 runs.context_json,
                 runs.config_json,
                 runs.started_at,
-                metrics.value AS objective
+                metrics.value AS objective,
+                alert.value_text AS repair_usage_alert
             FROM runs
             JOIN run_metrics AS metrics
-                ON metrics.run_id = runs.run_id
-            WHERE metrics.name = 'objective'
+                ON metrics.run_id = runs.run_id AND metrics.name = 'objective'
+            LEFT JOIN run_kpis AS alert
+                ON alert.run_id = runs.run_id AND alert.name = 'repair_usage_alert'
             """
         ).fetchall()
     finally:
@@ -215,6 +221,8 @@ def _collect_tuner_report(sqlite_path: Path) -> list[dict[str, object]]:
                 best_run_id="",
                 best_started_at="",
                 best_config={},
+                best_machine_costs_summary="",
+                best_repair_usage_alert="",
             )
         record = aggregates[key]
         objective = row["objective"]
@@ -228,6 +236,10 @@ def _collect_tuner_report(sqlite_path: Path) -> list[dict[str, object]]:
             record["best_started_at"] = row["started_at"] or ""
             config = json.loads(row["config_json"] or "{}")
             record["best_config"] = config if isinstance(config, dict) else {}
+            machine_costs_summary = summarize_machine_costs(context.get("machine_costs"))
+            record["best_machine_costs_summary"] = machine_costs_summary
+            alert_value = row["repair_usage_alert"]
+            record["best_repair_usage_alert"] = alert_value or ""
 
     report_rows: list[dict[str, object]] = []
     for key, data in sorted(aggregates.items()):
@@ -244,6 +256,8 @@ def _collect_tuner_report(sqlite_path: Path) -> list[dict[str, object]]:
             "best_run_id": data["best_run_id"],
             "best_started_at": data["best_started_at"],
             "best_config": _summarise_config(data["best_config"]),
+            "machine_costs_summary": data["best_machine_costs_summary"],
+            "repair_usage_alert": data["best_repair_usage_alert"],
         }
         stats_entry.update(summary_map.get(key, {}))
         report_rows.append(stats_entry)
@@ -259,6 +273,8 @@ def _render_markdown(rows: list[dict[str, object]]) -> str:
         "Runs",
         "Summary Best",
         "Configurations",
+        "Machine Costs",
+        "Repair Usage Alert",
     ]
     lines = ["| " + " | ".join(headers) + " |", "| " + " | ".join(["---"] * len(headers)) + " |"]
     for row in rows:
@@ -277,6 +293,8 @@ def _render_markdown(rows: list[dict[str, object]]) -> str:
                     str(row["runs"]),
                     summary_best_str,
                     str(row.get("summary_configurations", "")),
+                    row.get("machine_costs_summary", ""),
+                    row.get("repair_usage_alert", ""),
                 ]
             )
             + " |"
@@ -331,6 +349,8 @@ def report(
             "summary_best",
             "summary_configurations",
             "summary_updated_at",
+            "machine_costs_summary",
+            "repair_usage_alert",
         ]
         with out_csv.open("w", encoding="utf-8", newline="") as handle:
             writer = csv.DictWriter(handle, fieldnames=headers)
@@ -354,6 +374,8 @@ def report(
                         ),
                         "summary_configurations": row.get("summary_configurations", ""),
                         "summary_updated_at": row.get("summary_updated_at", ""),
+                        "machine_costs_summary": row.get("machine_costs_summary", ""),
+                        "repair_usage_alert": row.get("repair_usage_alert", ""),
                     }
                 )
 
@@ -364,3 +386,17 @@ def report(
 
     if not out_csv and not out_markdown:
         typer.echo(markdown)
+
+    alert_rows = [row for row in rows if row.get("repair_usage_alert")]
+    if alert_rows:
+        alert_scenarios = ", ".join(
+            sorted(
+                {
+                    f"{row['scenario']} ({row['algorithm']})"
+                    for row in alert_rows
+                }
+            )
+        )
+        typer.echo(
+            f"WARNING: repair usage alerts detected for {alert_scenarios}. Review the `repair_usage_alert` column for details."
+        )

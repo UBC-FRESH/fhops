@@ -55,6 +55,7 @@ from fhops.optimization.mip import solve_mip
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
 from fhops.telemetry import RunTelemetryLogger, append_jsonl
+from fhops.telemetry.machine_costs import build_machine_cost_snapshots
 from fhops.telemetry.sqlite_store import persist_tuner_summary
 
 app = typer.Typer(add_completion=False, no_args_is_help=True)
@@ -185,6 +186,15 @@ def _print_kpi_summary(kpis: Any, mode: str = "extended") -> None:
         console.print(f"[bold]{title}[/bold]")
         for key, value in lines:
             console.print(f"  {key}: {_format_metric_value(value)}")
+    alert = data.get("repair_usage_alert")
+    if alert:
+        console.print(
+            f"[red]Repair Usage Alert:[/red] non-default FPInnovations usage bucket for {alert}"
+        )
+
+
+def _machine_cost_snapshot(sc) -> list[dict[str, Any]]:
+    return [snapshot.to_dict() for snapshot in build_machine_cost_snapshots(sc.machines)]
 
 
 def _discover_scenarios_from_path(path: Path) -> list[Path]:
@@ -311,6 +321,7 @@ def _collect_tuning_scenarios(
 def validate(scenario: Path):
     """Validate a scenario YAML and print summary."""
     sc = load_scenario(str(scenario))
+    machine_costs = _machine_cost_snapshot(sc)
     pb = Problem.from_scenario(sc)
     t = Table(title=f"Scenario: {sc.name}")
     t.add_column("Entities")
@@ -326,6 +337,7 @@ def validate(scenario: Path):
 def build_mip(scenario: Path):
     """Build the MIP and print basic stats (no solve)."""
     sc = load_scenario(str(scenario))
+    machine_costs = _machine_cost_snapshot(sc)
     pb = Problem.from_scenario(sc)
     try:
         from fhops.model.pyomo_builder import build_model
@@ -359,6 +371,7 @@ def solve_mip_cmd(
         )
 
     sc = load_scenario(str(scenario))
+    machine_costs = _machine_cost_snapshot(sc)
     pb = Problem.from_scenario(sc)
 
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -467,6 +480,7 @@ def solve_heur_cmd(
         raise typer.Exit()
 
     sc = load_scenario(str(scenario))
+    machine_costs = _machine_cost_snapshot(sc)
     pb = Problem.from_scenario(sc)
     try:
         weight_override = parse_operator_weights(operator_weight)
@@ -520,6 +534,7 @@ def solve_heur_cmd(
         base_telemetry_context = {
             "scenario_path": str(scenario),
             "source": "cli.solve-heur",
+            "machine_costs": machine_costs,
         }
         if selected_profile:
             base_telemetry_context["profile"] = selected_profile.name
@@ -631,6 +646,7 @@ def solve_heur_cmd(
             "operators_stats": stats,
             "batch_size": batch_neighbours,
             "max_workers": parallel_workers,
+            "machine_costs": machine_costs,
         }
         if tier_label:
             record["tier"] = tier_label
@@ -742,6 +758,7 @@ def solve_ils_cmd(
         raise typer.Exit()
 
     sc = load_scenario(str(scenario))
+    machine_costs = _machine_cost_snapshot(sc)
     pb = Problem.from_scenario(sc)
     try:
         weight_override = parse_operator_weights(operator_weight)
@@ -800,6 +817,7 @@ def solve_ils_cmd(
         base_context: dict[str, Any] = {
             "scenario_path": str(scenario),
             "source": "cli.solve-ils",
+            "machine_costs": machine_costs,
         }
         if selected_profile:
             base_context["profile"] = selected_profile.name
@@ -885,6 +903,7 @@ def solve_ils_cmd(
             "stall_limit": stall_limit,
             "hybrid_use_mip": hybrid_use_mip,
             "hybrid_mip_time_limit": hybrid_mip_time_limit,
+            "machine_costs": machine_costs,
         }
         if selected_profile:
             record["profile"] = selected_profile.name
@@ -966,6 +985,7 @@ def solve_tabu_cmd(
         raise typer.Exit()
 
     sc = load_scenario(str(scenario))
+    machine_costs = _machine_cost_snapshot(sc)
     pb = Problem.from_scenario(sc)
     try:
         weight_override = parse_operator_weights(operator_weight)
@@ -1016,6 +1036,7 @@ def solve_tabu_cmd(
         base_context: dict[str, Any] = {
             "scenario_path": str(scenario),
             "source": "cli.solve-tabu",
+            "machine_costs": machine_costs,
         }
         if selected_profile:
             base_context["profile"] = selected_profile.name
@@ -1095,6 +1116,7 @@ def solve_tabu_cmd(
             "stall_limit": stall_limit,
             "batch_size": batch_neighbours,
             "max_workers": parallel_workers,
+            "machine_costs": machine_costs,
         }
         if selected_profile:
             record["profile"] = selected_profile.name
@@ -1118,6 +1140,7 @@ def evaluate(
 ):
     """Evaluate a schedule CSV against the scenario."""
     sc = load_scenario(str(scenario))
+    machine_costs = _machine_cost_snapshot(sc)
     pb = Problem.from_scenario(sc)
     df = pd.read_csv(str(assignments_csv))
     kpis = compute_kpis(pb, df)
@@ -1234,6 +1257,7 @@ def eval_playback(
     """Run deterministic playback to produce shift/day summaries."""
 
     sc = load_scenario(str(scenario))
+    machine_costs = _machine_cost_snapshot(sc)
     pb = Problem.from_scenario(sc)
 
     df = pd.read_csv(assignments_csv)
@@ -1263,6 +1287,7 @@ def eval_playback(
         "command": "eval-playback",
         "source": "eval-playback",
         **scenario_features,
+        "machine_costs": machine_costs,
     }
     telemetry_logger: RunTelemetryLogger | None = None
     if telemetry_log:

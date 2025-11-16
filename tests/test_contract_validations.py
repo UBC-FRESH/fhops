@@ -1,6 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
+from fhops.costing.machine_rates import compose_default_rental_rate_for_role
 from fhops.scenario.contract.models import (
     Block,
     CalendarEntry,
@@ -102,3 +103,14 @@ def test_crew_assignments_validate_machine_links_and_uniqueness():
                 CrewAssignment(crew_id="C1", machine_id="M1"),
             ]
         )
+
+
+def test_machine_usage_hours_scales_operating_cost_defaults():
+    expected, _ = compose_default_rental_rate_for_role("grapple_skidder", usage_hours=5000)
+    machine = Machine(
+        id="M-role",
+        role="grapple_skidder",
+        operating_cost=0.0,
+        repair_usage_hours=5000,
+    )
+    assert machine.operating_cost == pytest.approx(expected)

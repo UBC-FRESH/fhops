@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
@@ -21,6 +22,7 @@ from fhops.costing.machine_rates import (
     MachineRate,
     compose_default_rental_rate_for_role,
     get_machine_rate,
+    select_usage_class_multiplier,
 )
 from fhops.productivity import (
     KelloggLoadType,
@@ -39,9 +41,10 @@ from fhops.productivity import (
 )
 from fhops.reference import load_appendix5_stands, get_tr119_treatment
 from fhops.validation.ranges import validate_block_ranges
-from fhops.scenario.contract import Scenario
+from fhops.scenario.contract import Machine, Scenario
 from fhops.scenario.io import load_scenario
 from fhops.scheduling.systems import HarvestSystem, default_system_registry
+from fhops.telemetry.machine_costs import build_machine_cost_snapshots
 
 console = Console()
 dataset_app = typer.Typer(help="Inspect FHOPS datasets and bundled examples.")
@@ -314,6 +317,13 @@ def inspect_machine(
         "--interactive/--no-interactive",
         help="Enable prompts when context is missing.",
     ),
+    json_out: Path | None = typer.Option(
+        None,
+        "--json-out",
+        help="Optional path to write machine metadata and rental breakdown as JSON.",
+        writable=True,
+        dir_okay=False,
+    ),
 ):
     """Inspect machine parameters within a dataset/system context."""
     dataset_name, scenario, path = _ensure_dataset(dataset, interactive)
@@ -330,6 +340,40 @@ def inspect_machine(
         ("Operating Cost", f"{selected_machine.operating_cost}"),
         ("Role", selected_machine.role or "—"),
     ]
+    default_snapshot = build_machine_cost_snapshots([selected_machine])[0]
+    default_rate_rows: list[tuple[str, str]] = []
+    default_rate_note: str | None = None
+    if default_snapshot.rental_rate_smh is not None:
+        default_rate_rows.append(
+            ("Default Rental Rate ($/SMH)", f"{default_snapshot.rental_rate_smh:.2f}")
+        )
+        if default_snapshot.ownership is not None:
+            default_rate_rows.append(("Default Owning ($/SMH)", f"{default_snapshot.ownership:.2f}"))
+        if default_snapshot.operating is not None:
+            default_rate_rows.append(("Default Operating ($/SMH)", f"{default_snapshot.operating:.2f}"))
+        if default_snapshot.repair_maintenance is not None:
+            default_rate_rows.append(
+                ("Default Repair/Maint. ($/SMH)", f"{default_snapshot.repair_maintenance:.2f}")
+            )
+        if default_snapshot.usage_bucket_hours is not None:
+            default_rate_rows.append(
+                (
+                    "Repair Usage Bucket",
+                    f"{default_snapshot.usage_bucket_hours:,} h (multiplier {default_snapshot.usage_multiplier:.3f})",
+                )
+            )
+            default_rate_note = (
+                f"[dim]Default rate derived from role '{selected_machine.role}' "
+                f"with repair usage {selected_machine.repair_usage_hours:,} h "
+                f"(closest bucket {default_snapshot.usage_bucket_hours / 1000:.0f}×1000 h).[/dim]"
+            )
+        elif selected_machine.repair_usage_hours is not None:
+            default_rate_rows.append(
+                (
+                    "Repair Usage Bucket",
+                    f"{selected_machine.repair_usage_hours:,} h (no FPInnovations bucket data)",
+                )
+            )
     if system_selection:
         system_id, system_model = system_selection
         job_matches = [
@@ -342,6 +386,10 @@ def inspect_machine(
             ("System Jobs Matched", ", ".join(job_matches) if job_matches else "—")
         )
     _render_kv_table(f"Machine Inspection — {selected_machine.id}", context_lines)
+    if default_rate_rows:
+        _render_kv_table("Default Rental Breakdown", default_rate_rows)
+        if default_rate_note:
+            console.print(default_rate_note)
     if abs(selected_machine.daily_hours - 24.0) > 1e-6:
         console.print(
             "[red]Warning:[/red] machine daily_hours="
@@ -350,6 +398,22 @@ def inspect_machine(
     console.print(
         "[yellow]* TODO: add derived statistics (utilisation, availability) once defined.[/yellow]"
     )
+    if json_out is not None:
+        payload = {
+            "dataset": dataset_name,
+            "scenario_path": str(path),
+            "machine": {
+                "id": selected_machine.id,
+                "crew": selected_machine.crew,
+                "daily_hours": selected_machine.daily_hours,
+                "operating_cost": selected_machine.operating_cost,
+                "role": selected_machine.role,
+                "repair_usage_hours": selected_machine.repair_usage_hours,
+            },
+            "default_rental": default_snapshot.to_dict(),
+        }
+        json_out.parent.mkdir(parents=True, exist_ok=True)
+        json_out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
 
 @dataset_app.command("inspect-block")
@@ -704,6 +768,15 @@ def estimate_cost_cmd(
         "-r",
         help="Load rental rate components from the FHOPS machine-rate table.",
     ),
+    dataset: str | None = typer.Option(
+        None,
+        "--dataset",
+        "-d",
+        help="Dataset name or scenario path to pull machine defaults (role, repair usage hours, $/SMH).",
+    ),
+    machine_id: str | None = typer.Option(
+        None, "--machine", "-m", help="Machine ID within --dataset used to auto-fill inputs."
+    ),
     include_repair: bool = typer.Option(
         True,
         "--include-repair/--exclude-repair",
@@ -726,6 +799,12 @@ def estimate_cost_cmd(
         "--repair-rate",
         min=0.0,
         help="Override repair/maintenance component ($/SMH). Requires --machine-role.",
+    ),
+    usage_hours: int | None = typer.Option(
+        None,
+        "--usage-hours",
+        min=0,
+        help="Approximate cumulative usage hours when applying FPInnovations repair multipliers (nearest 5k bucket).",
     ),
     utilisation: float = typer.Option(0.9, help="Utilisation coefficient (0-1)", min=0.0, max=1.0),
     productivity: float | None = typer.Option(None, help="Direct productivity (m³/PMH15)."),
@@ -751,9 +830,34 @@ def estimate_cost_cmd(
         if rental_rate is not None:
             raise typer.BadParameter("Use either --rental-rate or --machine-role (not both).")
 
+    dataset_name: str | None = None
+    dataset_path: Path | None = None
+    scenario_machine: Machine | None = None
+    if dataset is not None or machine_id is not None:
+        if dataset is None or machine_id is None:
+            raise typer.BadParameter("--dataset and --machine must be provided together.")
+        dataset_name, scenario, dataset_path = _ensure_dataset(dataset, interactive=False)
+        scenario_machine = next((m for m in scenario.machines if m.id == machine_id), None)
+        if scenario_machine is None:
+            raise typer.BadParameter(
+                f"Machine '{machine_id}' not found in dataset '{dataset_name}'. "
+                f"Options: {', '.join(sorted(machine.id for machine in scenario.machines))}"
+            )
+        if machine_role is None:
+            if scenario_machine.role is None:
+                raise typer.BadParameter(
+                    f"Machine '{machine_id}' has no role assigned; specify --machine-role explicitly."
+                )
+            machine_role = scenario_machine.role
+        if usage_hours is None and scenario_machine.repair_usage_hours is not None:
+            usage_hours = scenario_machine.repair_usage_hours
+        if rental_rate is None and machine_role is None and scenario_machine.operating_cost > 0:
+            rental_rate = float(scenario_machine.operating_cost)
+
     machine_entry: MachineRate | None = None
     rental_breakdown: dict[str, float] | None = None
     repair_reference_hours: int | None = None
+    repair_usage_bucket: tuple[int, float] | None = None
 
     if machine_role is not None:
         machine_entry = _resolve_machine_rate(machine_role)
@@ -763,15 +867,18 @@ def estimate_cost_cmd(
             ownership_override=owning_rate,
             operating_override=operating_rate,
             repair_override=repair_rate,
+            usage_hours=usage_hours if include_repair else None,
         )
         if composed is None:
             raise typer.BadParameter(f"No default rate available for role '{machine_role}'.")
         rental_rate, rental_breakdown = composed
         if include_repair and machine_entry.repair_maintenance_cost_per_smh is not None:
             repair_reference_hours = machine_entry.repair_maintenance_reference_hours
+            if usage_hours is not None:
+                repair_usage_bucket = select_usage_class_multiplier(machine_entry, usage_hours)
 
     if rental_rate is None:
-        raise typer.BadParameter("Provide either --rental-rate or --machine-role.")
+        raise typer.BadParameter("Provide either --rental-rate or --machine-role (or use --dataset/--machine).")
 
     if productivity is None:
         required = [avg_stem_size, volume_per_ha, stem_density, ground_slope]
@@ -836,6 +943,10 @@ def estimate_cost_cmd(
         }
 
     rows = []
+    if dataset_name:
+        rows.append(("Dataset", dataset_name))
+        if dataset_path:
+            rows.append(("Scenario Path", str(dataset_path)))
     if machine_entry is not None:
         rows.extend(
             [
@@ -844,12 +955,30 @@ def estimate_cost_cmd(
                 ("Source", machine_entry.source),
             ]
         )
+    if scenario_machine is not None:
+        rows.append(("Scenario Machine", scenario_machine.id))
+        rows.append(
+            (
+                "Repair Usage Hours (dataset)",
+                f"{scenario_machine.repair_usage_hours:,}"
+                if scenario_machine.repair_usage_hours is not None
+                else "—",
+            )
+        )
     if rental_breakdown:
         rows.append(("Owning Cost ($/SMH)", f"{rental_breakdown['ownership']:.2f}"))
         rows.append(("Operating Cost ($/SMH)", f"{rental_breakdown['operating']:.2f}"))
         repair_value = rental_breakdown.get("repair_maintenance")
         if repair_value is not None:
             rows.append(("Repair/Maint. ($/SMH)", f"{repair_value:.2f}"))
+            if repair_usage_bucket is not None:
+                bucket_hours, multiplier = repair_usage_bucket
+                rows.append(
+                    (
+                        "Repair Usage Bucket",
+                        f"{bucket_hours:,} h (multiplier {multiplier:.3f})",
+                    )
+                )
     rows.extend(
         [
             ("Rental Rate ($/SMH)", f"{cost.rental_rate_smh:.2f}"),
@@ -863,10 +992,16 @@ def estimate_cost_cmd(
         rows.append(("Productivity Std", f"{prod_info['productivity_std']:.2f}"))
     rows.append(("Samples", str(prod_info["samples"])))
     _render_kv_table("Machine Cost Estimate", rows)
-    if machine_entry and repair_reference_hours:
-        console.print(
-            f"[dim]Repair/maintenance allowance derived from Advantage Vol. 4 No. 23 (usage class {repair_reference_hours / 1000:.0f}×1000 h).[/dim]"
-        )
+    if machine_entry and include_repair:
+        if repair_usage_bucket is not None and usage_hours is not None:
+            bucket_hours, multiplier = repair_usage_bucket
+            console.print(
+                f"[dim]Repair/maintenance allowance derived from Advantage Vol. 4 No. 23 (closest usage class {bucket_hours / 1000:.0f}×1000 h, multiplier {multiplier:.3f} for requested {usage_hours:,} h).[/dim]"
+            )
+        elif repair_reference_hours:
+            console.print(
+                f"[dim]Repair/maintenance allowance derived from Advantage Vol. 4 No. 23 (usage class {repair_reference_hours / 1000:.0f}×1000 h).[/dim]"
+            )
 
 
 @dataset_app.command("appendix5-stands")

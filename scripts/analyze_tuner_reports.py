@@ -56,6 +56,14 @@ def _load_report(label: str, path: Path) -> pd.DataFrame:
         f"mean_{label}",
         f"runs_{label}",
     ]
+    if "machine_costs_summary" in df.columns:
+        column_name = f"machine_costs_{label}"
+        df.rename(columns={"machine_costs_summary": column_name}, inplace=True)
+        subset.append(column_name)
+    if "repair_usage_alert" in df.columns:
+        column_name = f"repair_usage_alert_{label}"
+        df.rename(columns={"repair_usage_alert": column_name}, inplace=True)
+        subset.append(column_name)
     return df[subset]
 
 

@@ -1,65 +1,11 @@
 {
-  "generated_at": "2025-11-14T10:35:07+00:00",
-  "light_mode": true,
+  "generated_at": "2025-11-16T19:37:57+00:00",
+  "light_mode": false,
   "notebooks": [
     {
-      "notebook": "docs/examples/analytics/playback_walkthrough.ipynb",
+      "notebook": "docs/examples/analytics/tuner_report_analysis.ipynb",
       "status": "ok",
-      "runtime_seconds": 3.73,
-      "message": ""
-    },
-    {
-      "notebook": "docs/examples/analytics/stochastic_robustness.ipynb",
-      "status": "ok",
-      "runtime_seconds": 3.78,
-      "message": ""
-    },
-    {
-      "notebook": "docs/examples/analytics/what_if_analysis.ipynb",
-      "status": "ok",
-      "runtime_seconds": 3.63,
-      "message": ""
-    },
-    {
-      "notebook": "docs/examples/analytics/landing_congestion.ipynb",
-      "status": "ok",
-      "runtime_seconds": 4.08,
-      "message": ""
-    },
-    {
-      "notebook": "docs/examples/analytics/system_mix.ipynb",
-      "status": "ok",
-      "runtime_seconds": 3.27,
-      "message": ""
-    },
-    {
-      "notebook": "docs/examples/analytics/kpi_decomposition.ipynb",
-      "status": "ok",
-      "runtime_seconds": 3.83,
-      "message": ""
-    },
-    {
-      "notebook": "docs/examples/analytics/telemetry_diagnostics.ipynb",
-      "status": "ok",
-      "runtime_seconds": 3.53,
-      "message": ""
-    },
-    {
-      "notebook": "docs/examples/analytics/ensemble_resilience.ipynb",
-      "status": "ok",
-      "runtime_seconds": 4.38,
-      "message": ""
-    },
-    {
-      "notebook": "docs/examples/analytics/operator_sweep.ipynb",
-      "status": "ok",
-      "runtime_seconds": 3.78,
-      "message": ""
-    },
-    {
-      "notebook": "docs/examples/analytics/benchmark_summary.ipynb",
-      "status": "ok",
-      "runtime_seconds": 3.07,
+      "runtime_seconds": 3.39,
       "message": ""
     }
   ]

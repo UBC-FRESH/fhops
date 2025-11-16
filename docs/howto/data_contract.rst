@@ -31,7 +31,9 @@ Each scenario references a set of CSV files. Required columns and notes:
         ≤15 min included). Convert to $/m³ post‑hoc using playback outputs or the costing helper.
         When ``operating_cost`` is omitted or set to ``0`` and a ``role`` is provided, FHOPS looks up
         the default machine-rate entry (owning + operating + optional repair) and auto-fills the
-        value during scenario validation.
+        value during scenario validation. Supply ``repair_usage_hours`` (nearest 5 000 h bucket)
+        to pick a different FPInnovations usage class when applying the repair/maintenance allowance;
+        omit the field to stick with the default 10 000 h bucket.
       - The `fhops dataset inspect-machine` CLI warns when a machine advertises non-24 h
         availability so you can catch accidental edits before shipping datasets.
    * - ``landings.csv``
@@ -158,7 +160,13 @@ costing consistent across scenarios:
 - Repair and maintenance allowances come from FPInnovations Advantage Vol. 4 No. 23 (2003).
   The report’s 2002 CAD regression averages are escalated to 2024 CAD using the Statistics
   Canada Machinery & Equipment CPI (Table 18-10-0005-01), giving a cumulative multiplier of
-  ≈1.56. These allowances are optional per role.
+  ≈1.56. FPInnovations reports the allowances at cumulative usage classes of 0–5k, 0–10k,
+  0–15k, 0–20k, and 0–25k operating hours; we treat the 10 000 h bucket as the default because
+  every machine class has data at that point and it best represents a “typical” fleet age.
+  Newer machines (≤5 000 h) and end-of-life machines (≥15 000 h) sit in the neighbouring buckets,
+  so supplying ``repair_usage_hours`` lets you scale the allowance up or down using the published
+  FPInnovations ratios when a scenario deviates from the baseline. These allowances remain optional
+  per role.
 - The CLI exposes the defaults via ``fhops dataset estimate-cost``::
 
       # Deterministic Lahrsen productivity with table defaults
@@ -167,7 +175,11 @@ costing consistent across scenarios:
 
   The command prints the chosen role, source, owning/operating/repair split, utilisation,
   productivity (m³/PMH15), and $/m³. Add ``--include-repair/--exclude-repair`` to toggle the
-  FPInnovations allowance or override components directly::
+  FPInnovations allowance or ``--usage-hours`` to select a different usage-class multiplier
+  (nearest 5 000 h bucket from Table 2). Supplying ``--dataset <scenario.yaml> --machine <ID>``
+  auto-loads the machine’s role, ``operating_cost`` (when already populated), and
+  ``repair_usage_hours`` so recurring reports always respect the dataset defaults. Override
+  components directly via::
 
       fhops dataset estimate-cost --machine-role feller_buncher \
         --owning-rate 95 --operating-rate 120 --repair-rate 40 \
@@ -176,6 +188,11 @@ costing consistent across scenarios:
 - Supplying ``--rental-rate`` bypasses the lookup for bespoke studies, but ``machines.csv`` rows
   should normally use the curated rates (or CLI recomputed totals) so costing/evaluation tools
   stay aligned.
+- `fhops dataset inspect-machine` prints the machine metadata and the same default owning/operating/repair
+  breakdown (honouring ``repair_usage_hours``) so you can audit scenario inputs without running a full cost estimate.
+  Add ``--json-out machine.json`` to capture the same payload for automated QA pipelines. Solver telemetry
+  (``solve-heur``, ``solve-ils``, ``solve-tabu``, ``eval-playback``) automatically embeds this ``machine_costs`` bundle
+  whenever ``--telemetry-log`` is used, so KPI histories and dashboards can trace the assumed repair buckets.
 
 Overriding the defaults follows two common paths:
 

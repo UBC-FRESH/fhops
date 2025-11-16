@@ -95,6 +95,8 @@ def test_telemetry_report_generates_outputs(tmp_path: Path):
         assert row["scenario"]
         if row["summary_best"]:
             float(row["summary_best"])
+        assert "machine_costs_summary" in row
+        assert "repair_usage_alert" in row
 
     markdown = md_path.read_text(encoding="utf-8")
     assert "| Algorithm | Scenario |" in markdown

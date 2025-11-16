@@ -30,6 +30,7 @@ from fhops.optimization.mip import build_model, solve_mip
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
 from fhops.telemetry import append_jsonl
+from fhops.telemetry.machine_costs import build_machine_cost_snapshots, summarize_machine_costs
 
 console = Console()
 
@@ -69,6 +70,7 @@ def _record_metrics(
     extra: dict[str, object] | None = None,
     operator_config: Mapping[str, float] | None = None,
     operator_stats: Mapping[str, Mapping[str, float]] | None = None,
+    machine_costs_summary: str | None = None,
 ) -> dict[str, object]:
     payload: dict[str, object] = {
         "scenario": scenario.name,
@@ -88,6 +90,8 @@ def _record_metrics(
         payload["operators_stats"] = json.dumps(
             {name: dict(sorted(stats.items())) for name, stats in sorted(operator_stats.items())}
         )
+    if machine_costs_summary:
+        payload["machine_costs_summary"] = machine_costs_summary
     return payload
 
 
@@ -155,6 +159,10 @@ def run_benchmark_suite(
         if not resolved_path.exists():
             raise FileNotFoundError(f"Scenario not found: {resolved_path}")
         sc = load_scenario(str(resolved_path))
+        machine_cost_dicts = [
+            snapshot.to_dict() for snapshot in build_machine_cost_snapshots(sc.machines)
+        ]
+        machine_costs_summary = summarize_machine_costs(machine_cost_dicts)
         pb = Problem.from_scenario(sc)
         scenario_out = out_dir / bench.name
         scenario_out.mkdir(parents=True, exist_ok=True)
@@ -180,6 +188,7 @@ def run_benchmark_suite(
                     kpis=mip_kpis,
                     runtime_s=mip_runtime,
                     extra={"build_time_s": build_time},
+                    machine_costs_summary=machine_costs_summary,
                 )
             )
 
@@ -277,6 +286,7 @@ def run_benchmark_suite(
                         extra=extra,
                         operator_config=resolved_weights,
                         operator_stats=operator_stats,
+                        machine_costs_summary=machine_costs_summary,
                     )
                 )
                 if telemetry_log:
@@ -293,6 +303,7 @@ def run_benchmark_suite(
                         "operators_config": resolved_weights,
                         "operators_stats": operator_stats,
                         "preset_label": preset_label,
+                        "machine_costs": machine_cost_dicts,
                     }
                     if profile:
                         log_record["profile"] = profile.name
@@ -388,6 +399,7 @@ def run_benchmark_suite(
                     extra=extra_ils,
                     operator_config=ils_weights or (ils_weight_config or {}),
                     operator_stats=ils_stats,
+                    machine_costs_summary=machine_costs_summary,
                 )
             )
             if telemetry_log:
@@ -407,6 +419,7 @@ def run_benchmark_suite(
                     "stall_limit": stall_limit_val,
                     "hybrid_use_mip": hybrid_use_mip_val,
                     "hybrid_mip_time_limit": hybrid_mip_time_limit_val,
+                    "machine_costs": machine_cost_dicts,
                 }
                 if profile:
                     record["profile"] = profile.name
@@ -488,6 +501,7 @@ def run_benchmark_suite(
                     extra=extra_tabu,
                     operator_config=tabu_weights or (tabu_weight_config or {}),
                     operator_stats=tabu_stats,
+                    machine_costs_summary=machine_costs_summary,
                 )
             )
             if telemetry_log:
@@ -505,6 +519,7 @@ def run_benchmark_suite(
                     "operators_stats": tabu_stats,
                     "tabu_tenure": tabu_meta.get("tabu_tenure", tabu_tenure_val),
                     "tabu_stall_limit": tabu_stall_limit_val,
+                    "machine_costs": machine_cost_dicts,
                 }
                 if profile:
                     record["profile"] = profile.name

@@ -84,9 +84,14 @@ machine-readable (CSV) and human-readable (Markdown) summaries:
 The command prints a Markdown table to stdout by default; passing ``--out-*``
 flags writes the same content to disk. The generated CSV columns include
 aggregated statistics (best/mean objective, run counts) plus any matching
-``tuner_summaries`` rows added by the CLI commands. Continuous integration
-executes this pipeline for **minitoy** and **med42** so the published artefacts
-already contain multiple scenarios.
+``tuner_summaries`` rows added by the CLI commands, along with a
+``machine_costs_summary`` column that captures the owning/operating/repair
+allowance (and FPInnovations usage bucket) applied during the best run. When
+the KPI layer detects a non-default FPInnovations bucket (``repair_usage_hours``
+≠ 10 000 h) the new ``repair_usage_alert`` column calls it out, and the CLI
+prints a warning summarising which scenarios/algorithms deviated. Continuous
+integration executes this pipeline for **minitoy** and **med42** so the
+published artefacts already contain multiple scenarios.
 
 Add ``--out-summary-csv`` / ``--out-summary-markdown`` to emit a per-scenario
 scoreboard showing the best algorithm/objective for each report label (baseline,

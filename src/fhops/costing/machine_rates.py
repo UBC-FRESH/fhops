@@ -24,6 +24,7 @@ class MachineRate:
     notes: str | None = None
     repair_maintenance_cost_per_smh: float | None = None
     repair_maintenance_reference_hours: int | None = None
+    repair_maintenance_usage_multipliers: dict[int, float] | None = None
 
     @property
     def total_cost_per_smh(self) -> float:
@@ -55,6 +56,11 @@ def load_default_machine_rates() -> Sequence[MachineRate]:
                 repair_maintenance_reference_hours=(
                     int(entry["repair_maintenance_reference_hours"])
                     if entry.get("repair_maintenance_reference_hours") is not None
+                    else None
+                ),
+                repair_maintenance_usage_multipliers=(
+                    {int(k): float(v) for k, v in entry["repair_maintenance_usage_multipliers"].items()}
+                    if entry.get("repair_maintenance_usage_multipliers") is not None
                     else None
                 ),
             )
@@ -102,6 +108,27 @@ def get_machine_rate(role: str) -> MachineRate | None:
     return load_machine_rate_index().get(normalised)
 
 
+def select_usage_class_multiplier(
+    machine_rate: MachineRate, usage_hours: int | None
+) -> tuple[int, float] | None:
+    """
+    Return the (usage_hours_bucket, multiplier) pair closest to the requested usage.
+
+    Buckets come from FPInnovations Advantage Vol. 4 No. 23 Table 2 (5k-hour increments).
+    """
+
+    if usage_hours is None:
+        return None
+    mapping = machine_rate.repair_maintenance_usage_multipliers
+    if not mapping:
+        return None
+    bucket, multiplier = min(
+        mapping.items(),
+        key=lambda item: (abs(usage_hours - item[0]), item[0]),
+    )
+    return bucket, multiplier
+
+
 def compose_rental_rate(
     machine_rate: MachineRate,
     *,
@@ -109,6 +136,7 @@ def compose_rental_rate(
     ownership_override: float | None = None,
     operating_override: float | None = None,
     repair_override: float | None = None,
+    usage_hours: int | None = None,
 ) -> tuple[float, dict[str, float]]:
     """
     Return the rental rate ($/SMH) and component breakdown for a machine.
@@ -131,6 +159,11 @@ def compose_rental_rate(
         repair_candidate = repair_override
     elif machine_rate.repair_maintenance_cost_per_smh is not None:
         repair_candidate = machine_rate.repair_maintenance_cost_per_smh
+        if usage_hours is not None:
+            selection = select_usage_class_multiplier(machine_rate, usage_hours)
+            if selection is not None:
+                _, multiplier = selection
+                repair_candidate *= multiplier
     repair = repair_candidate if include_repair_maintenance else 0.0
 
     breakdown: dict[str, float] = {
@@ -151,6 +184,7 @@ def compose_default_rental_rate_for_role(
     ownership_override: float | None = None,
     operating_override: float | None = None,
     repair_override: float | None = None,
+    usage_hours: int | None = None,
 ) -> tuple[float, dict[str, float]] | None:
     """Compose the rental rate for a machine role directly from the defaults."""
 
@@ -163,6 +197,7 @@ def compose_default_rental_rate_for_role(
         ownership_override=ownership_override,
         operating_override=operating_override,
         repair_override=repair_override,
+        usage_hours=usage_hours,
     )
 
 
@@ -171,6 +206,7 @@ __all__ = [
     "load_default_machine_rates",
     "load_machine_rate_index",
     "get_machine_rate",
+    "select_usage_class_multiplier",
     "compose_rental_rate",
     "compose_default_rental_rate_for_role",
     "normalize_machine_role",

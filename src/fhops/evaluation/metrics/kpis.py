@@ -224,6 +224,13 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
             if seq_reason_counts
             else "none"
         )
+    non_default_repairs = [
+        machine.id
+        for machine in pb.scenario.machines
+        if getattr(machine, "repair_usage_hours", None) not in (None, 10000)
+    ]
+    if non_default_repairs:
+        result["repair_usage_alert"] = ", ".join(sorted(non_default_repairs))
     from fhops.evaluation.playback import PlaybackConfig, run_playback
     from fhops.evaluation.playback.aggregates import day_dataframe, shift_dataframe
 

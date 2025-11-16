@@ -92,12 +92,20 @@ class Machine(BaseModel):
     daily_hours: float = 24.0
     operating_cost: float = 0.0
     role: str | None = None
+    repair_usage_hours: int | None = None
 
     @field_validator("daily_hours", "operating_cost")
     @classmethod
     def _machine_non_negative(cls, value: float) -> float:
         if value < 0:
             raise ValueError("Machine numerical fields must be non-negative")
+        return value
+
+    @field_validator("repair_usage_hours")
+    @classmethod
+    def _usage_non_negative(cls, value: int | None) -> int | None:
+        if value is not None and value < 0:
+            raise ValueError("Machine.repair_usage_hours must be non-negative")
         return value
 
     @field_validator("role")
@@ -112,10 +120,13 @@ class Machine(BaseModel):
     def _apply_role_defaults(self) -> "Machine":
         role = self.role
         if (self.operating_cost is None or self.operating_cost <= 0) and role:
-            composed = compose_default_rental_rate_for_role(role)
+            composed = compose_default_rental_rate_for_role(
+                role,
+                usage_hours=self.repair_usage_hours,
+            )
             if composed is not None:
                 operating_cost, _ = composed
-                return self.model_copy(update={"operating_cost": operating_cost})
+                object.__setattr__(self, "operating_cost", operating_cost)
         return self
 
 

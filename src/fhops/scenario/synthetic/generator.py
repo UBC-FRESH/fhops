@@ -37,11 +37,11 @@ _DEFAULT_CAPABILITY_POOL = ["harvester", "forwarder"]
 _LAHRSEN_RANGES = load_lahrsen_ranges()
 
 
-def _default_operating_cost_for_role(role: str | None) -> float:
+def _default_operating_cost_for_role(role: str | None, *, usage_hours: int | None = None) -> float:
     canonical = normalize_machine_role(role)
     if not canonical:
         return 0.0
-    composed = compose_default_rental_rate_for_role(canonical)
+    composed = compose_default_rental_rate_for_role(canonical, usage_hours=usage_hours)
     if composed is None:
         return 0.0
     return round(composed[0], 2)

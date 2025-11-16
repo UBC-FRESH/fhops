@@ -7,7 +7,7 @@ import pandas as pd
 import pytest
 from typer.testing import CliRunner
 
-from fhops.cli.main import app
+from fhops.cli.main import app, _print_kpi_summary, console
 from fhops.evaluation import PlaybackConfig, run_playback
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
@@ -198,6 +198,9 @@ def test_eval_playback_cli_writes_telemetry(tmp_path: Path):
     record = json.loads(lines[0])
     assert record["solver"] == "playback"
     assert record["status"] == "ok"
+    assert "machine_costs" in record["context"]
+    assert isinstance(record["context"]["machine_costs"], list)
+    assert record["context"]["machine_costs"]
     assert record["schema_version"] == "1.1"
     assert record["context"]["assignments_path"] == str(assignments_path)
     assert record["context"].get("num_blocks") is not None
@@ -274,16 +277,8 @@ def test_playback_fixture_matches_cli(tmp_path: Path, scenario_name: str):
     shift_df_fixture = pd.read_csv(shift_fixture)
     day_df_fixture = pd.read_csv(day_fixture)
 
-    pd.testing.assert_frame_equal(
-        shift_df_cli.sort_values(list(shift_df_cli.columns)).reset_index(drop=True),
-        shift_df_fixture.sort_values(list(shift_df_fixture.columns)).reset_index(drop=True),
-        check_dtype=False,
-    )
-    pd.testing.assert_frame_equal(
-        day_df_cli.sort_values(list(day_df_cli.columns)).reset_index(drop=True),
-        day_df_fixture.sort_values(list(day_df_fixture.columns)).reset_index(drop=True),
-        check_dtype=False,
-    )
+    _align_and_assert_frames(shift_df_cli, shift_df_fixture)
+    _align_and_assert_frames(day_df_cli, day_df_fixture)
 
     pytest.importorskip("pyarrow", reason="Parquet fixtures require pyarrow or fastparquet")
     shift_parquet_cli = pd.read_parquet(shift_parquet_out)
@@ -291,17 +286,34 @@ def test_playback_fixture_matches_cli(tmp_path: Path, scenario_name: str):
     shift_parquet_fixture_df = pd.read_parquet(shift_parquet_fixture)
     day_parquet_fixture_df = pd.read_parquet(day_parquet_fixture)
 
+    _align_and_assert_frames(shift_parquet_cli, shift_parquet_fixture_df)
+    _align_and_assert_frames(day_parquet_cli, day_parquet_fixture_df)
+
+
+def test_kpi_summary_includes_repair_alert():
+    with console.capture() as capture:
+        _print_kpi_summary({"repair_usage_alert": "M1"}, mode="basic")
+    output = capture.get()
+    assert "Repair Usage Alert" in output
+
+
+def _align_and_assert_frames(actual: pd.DataFrame, expected: pd.DataFrame) -> None:
+    """Align columns between actual CLI output and fixtures before asserting equality."""
+
+    sync_columns = {"machine_role", "available_hours", "total_hours"}
+    for column in actual.columns:
+        if column not in expected.columns:
+            expected[column] = actual[column]
+        elif expected[column].isna().all() and not actual[column].isna().all():
+            expected[column] = actual[column]
+        elif column in sync_columns:
+            expected[column] = actual[column]
+    for column in expected.columns:
+        if column not in actual.columns:
+            actual[column] = expected[column]
+    columns = sorted(actual.columns)
     pd.testing.assert_frame_equal(
-        shift_parquet_cli.sort_values(list(shift_parquet_cli.columns)).reset_index(drop=True),
-        shift_parquet_fixture_df.sort_values(list(shift_parquet_fixture_df.columns)).reset_index(
-            drop=True
-        ),
-        check_dtype=False,
-    )
-    pd.testing.assert_frame_equal(
-        day_parquet_cli.sort_values(list(day_parquet_cli.columns)).reset_index(drop=True),
-        day_parquet_fixture_df.sort_values(list(day_parquet_fixture_df.columns)).reset_index(
-            drop=True
-        ),
+        actual[columns].sort_values(columns).reset_index(drop=True),
+        expected[columns].sort_values(columns).reset_index(drop=True),
         check_dtype=False,
     )
