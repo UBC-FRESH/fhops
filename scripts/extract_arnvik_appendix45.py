@@ -10,7 +10,7 @@ import camelot
 
 PDF_PATH = Path("notes/reference/arnvik-w-20240926.pdf")
 OUT_DIR = Path("notes/reference/arnvik_tables")
-TABLE_REGION = "40,795,575,40"
+TABLE_REGION = "40,795,750,40"
 APPENDICES = {
     "appendix4_machines": range(80, 88),  # Appendix 4 pages 80-87
     "appendix5_stands": range(88, 98),    # Appendix 5 pages 88-97

@@ -5,6 +5,7 @@
 - Exported the new helpers via `fhops.productivity.__init__` and introduced unit coverage (`tests/test_productivity_grapple_bc.py`) that checks the regressions against the FERIC tables/figures and validates input semantics.
 - Updated `notes/dataset_inspection_plan.md` to record the implementation and next steps (wiring models into the registry/cost helper, mining TR112/TR127 skyline data).
 - Added University of British Columbia cable skidding helpers (`fhops.productivity.cable_logging`) based on Ünver-Okan (2020) regression equations (SPSS and robust variants) so the registry has a skyline/winch baseline until the TR112/TR127 coefficients are recovered. Exposed the functions via the productivity package and unit-tested the expected numeric outputs.
+- Expanded the Arnvik (2024) Appendix 4 extract/normalizer: widened the Camelot region (landscape pages) and now capture the "Time recorded" + "Operation" columns, parse the combined `HM M` field into harvest/machine type, and emit `time_recorded` / `operation` metadata in `appendix4_machines_normalized.json`. Appendix 5 was re-extracted with the same region for consistency.
 
 ## 2025-11-16 — Brushwood harwarder productivity helper
 - Implemented the Laitila & Väätäinen (2020) brushwood harwarder equations (`fhops.productivity.laitila2020`) so the CLI/registry can model roadside biomass recovery productivity given tree density, piece size, and forwarding distance.
