@@ -20,6 +20,8 @@ class MachineRate:
     move_in_cost: float
     source: str
     notes: str | None = None
+    repair_maintenance_cost_per_smh: float | None = None
+    repair_maintenance_reference_hours: int | None = None
 
     @property
     def total_cost_per_smh(self) -> float:
@@ -43,6 +45,16 @@ def load_default_machine_rates() -> Sequence[MachineRate]:
                 move_in_cost=float(entry.get("move_in_cost", 0.0)),
                 source=entry.get("source", ""),
                 notes=entry.get("notes"),
+                repair_maintenance_cost_per_smh=(
+                    float(entry["repair_maintenance_cost_per_smh"])
+                    if entry.get("repair_maintenance_cost_per_smh") is not None
+                    else None
+                ),
+                repair_maintenance_reference_hours=(
+                    int(entry["repair_maintenance_reference_hours"])
+                    if entry.get("repair_maintenance_reference_hours") is not None
+                    else None
+                ),
             )
         )
     return tuple(rates)
