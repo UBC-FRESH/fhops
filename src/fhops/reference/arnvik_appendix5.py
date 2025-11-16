@@ -10,10 +10,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 
-DATA_PATH = (
-    Path(__file__).resolve().parents[3]
-    / "notes/reference/arnvik_tables/appendix5_stands_normalized.json"
-)
+DATA_PATH = Path(__file__).resolve().parents[3] / "data/reference/arnvik/appendix5_stands.json"
 
 SLOPE_KEYWORDS = {
     "level": 0.0,
@@ -27,18 +24,24 @@ SLOPE_KEYWORDS = {
 class Appendix5Stand:
     author: str
     tree_species: str
-    stand_age: str
-    stem_volume: str
-    dbh: str
+    stand_age_text: str
+    stand_age_years: float | None
+    stem_volume_text: str
+    stem_volume_m3: float | None
+    dbh_text: str
+    dbh_cm: float | None
     ground_condition: str
     ground_roughness: str
     slope_text: str
-    num_operators: str
+    slope_percent: float | None
+    num_operators: int | None
     notes: str
     pages: Sequence[int]
 
     @property
     def average_slope_percent(self) -> float | None:
+        if self.slope_percent is not None:
+            return self.slope_percent
         return _parse_slope(self.slope_text)
 
 
@@ -56,15 +59,10 @@ def _parse_slope(value: str) -> float | None:
             before_paren = value.split("(", 1)[0]
             if re.search(r"\d", before_paren):
                 use_first_only = True
-        if use_first_only:
-            numbers = [abs(float(matches[0]))]
-        else:
-            numbers = [abs(float(m)) for m in matches]
-        # Degrees indicated by ° symbol
+        numbers = [abs(float(matches[0]))] if use_first_only else [abs(float(m)) for m in matches]
         if "°" in value:
             deg = sum(numbers) / len(numbers)
             return math.tan(math.radians(deg)) * 100.0
-        # Percentages default
         return sum(numbers) / len(numbers)
     return None
 
@@ -79,13 +77,17 @@ def load_appendix5_stands() -> Sequence[Appendix5Stand]:
         Appendix5Stand(
             author=entry.get("author", ""),
             tree_species=entry.get("tree_species", ""),
-            stand_age=entry.get("stand_age", ""),
-            stem_volume=entry.get("stem_volume", ""),
-            dbh=entry.get("dbh", ""),
+            stand_age_text=entry.get("stand_age_text", ""),
+            stand_age_years=entry.get("stand_age_years"),
+            stem_volume_text=entry.get("stem_volume_text", ""),
+            stem_volume_m3=entry.get("stem_volume_m3"),
+            dbh_text=entry.get("dbh_text", ""),
+            dbh_cm=entry.get("dbh_cm"),
             ground_condition=entry.get("ground_condition", ""),
             ground_roughness=entry.get("ground_roughness", ""),
-            slope_text=entry.get("slope", ""),
-            num_operators=entry.get("num_operators", ""),
+            slope_text=entry.get("slope_text", ""),
+            slope_percent=entry.get("slope_percent"),
+            num_operators=entry.get("num_operators"),
             notes=entry.get("notes", ""),
             pages=tuple(entry.get("pages", [])),
         )

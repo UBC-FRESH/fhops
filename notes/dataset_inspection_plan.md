@@ -267,9 +267,8 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
 - [ ] Update telemetry/KPI layers so skyline simulations store which regression family was used (new enum/field in machine cost snapshot).
 
 ### Appendix 5 normalization
-- [ ] Re-extract the landscape pages (confirmed orientation issue) and store raw CSV under `notes/reference/arnvik_tables/appendix5_raw.csv`.
-- [ ] Normalize into structured JSON (`data/reference/arnvik/appendix5_stands.json`) with schema: stand_id, slope_gradient, yarding_distance, lateral_distance, terrain class, treatment (cth, strip, partial).
-- [ ] Build loader (`fhops.reference.arnvik_appendix5`) and integration hooks so productivity helpers (skyline and cable skidding) can pull slope/landing metadata automatically.
+- [x] Re-extract the landscape pages (confirmed orientation issue) and normalize into `data/reference/arnvik/appendix5_stands.json` via `scripts/build_appendix5_reference.py` (numeric stand age/volume/DBH + slope percent now recorded alongside the original text).
+- [x] Updated `fhops.reference.arnvik_appendix5` to load the new dataset (dataclass carries both text + parsed numeric fields) and refreshed `appendix5-stands` CLI output to show age/volume/DBH/operator counts; new `tests/test_reference_appendix5.py` assertions cover slope percent + typed fields.
 - [ ] Add CLI command (`fhops reference appendix5-stands --filter ...`) plus unit tests verifying schema + sample rows. Refresh docs to explain how stand metadata feeds the skyline models.
 
 ### Cross-cutting tasks

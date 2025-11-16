@@ -1059,18 +1059,38 @@ def list_appendix5_stands(
     table = Table(title="Appendix 5 Stand Profiles")
     table.add_column("Author", style="bold")
     table.add_column("Species")
+    table.add_column("Age (y)")
+    table.add_column("Volume (m³)")
+    table.add_column("DBH (cm)")
     table.add_column("Slope (%)")
     table.add_column("Ground Condition")
     table.add_column("Roughness")
+    table.add_column("Operators")
     for entry in filtered[:limit]:
         slope = entry.average_slope_percent
         slope_text = f"{slope:.1f}" if slope is not None else entry.slope_text or "—"
+        age_text = (
+            f"{entry.stand_age_years:.1f}"
+            if entry.stand_age_years is not None
+            else entry.stand_age_text or "—"
+        )
+        volume_text = (
+            f"{entry.stem_volume_m3:.3f}"
+            if entry.stem_volume_m3 is not None
+            else entry.stem_volume_text or "—"
+        )
+        dbh_text = f"{entry.dbh_cm:.1f}" if entry.dbh_cm is not None else entry.dbh_text or "—"
+        operators_text = str(entry.num_operators) if entry.num_operators is not None else "—"
         table.add_row(
             entry.author,
             entry.tree_species or "—",
+            age_text,
+            volume_text,
+            dbh_text,
             slope_text,
             entry.ground_condition or "—",
             entry.ground_roughness or "—",
+            operators_text,
         )
     if not filtered:
         console.print("No matching profiles.")
