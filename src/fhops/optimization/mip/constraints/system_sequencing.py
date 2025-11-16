@@ -6,8 +6,8 @@ from collections import defaultdict
 
 import pyomo.environ as pyo
 
-from fhops.scenario.contract import Problem
 from fhops.costing.machine_rates import normalize_machine_role
+from fhops.scenario.contract import Problem
 
 
 def apply_system_sequencing_constraints(

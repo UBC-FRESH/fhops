@@ -44,7 +44,9 @@ def _productivity(turn_volume_m3: float, cycle_time_min: float) -> float:
     return 60.0 * turn_volume_m3 / cycle_time_min
 
 
-def estimate_grapple_yarder_productivity_sr54(turn_volume_m3: float, yarding_distance_m: float) -> float:
+def estimate_grapple_yarder_productivity_sr54(
+    turn_volume_m3: float, yarding_distance_m: float
+) -> float:
     """Estimate productivity (m³/PMH) for Washington 118A yarder on mechanically bunched wood.
 
     Derived from MacDonald (1988) SR-54, Table 9 and Table 10. Includes average move/minor delays.
@@ -55,7 +57,9 @@ def estimate_grapple_yarder_productivity_sr54(turn_volume_m3: float, yarding_dis
     return _productivity(turn_volume_m3, cycle_time)
 
 
-def estimate_grapple_yarder_productivity_tr75_bunched(turn_volume_m3: float, yarding_distance_m: float) -> float:
+def estimate_grapple_yarder_productivity_tr75_bunched(
+    turn_volume_m3: float, yarding_distance_m: float
+) -> float:
     """Estimate productivity for Madill 084 swing yarder on mechanically bunched second-growth.
 
     Regression coefficients from Peterson (1987) TR-75, Table 6.
@@ -73,7 +77,9 @@ def estimate_grapple_yarder_productivity_tr75_bunched(turn_volume_m3: float, yar
     return _productivity(turn_volume_m3, cycle_time)
 
 
-def estimate_grapple_yarder_productivity_tr75_handfelled(turn_volume_m3: float, yarding_distance_m: float) -> float:
+def estimate_grapple_yarder_productivity_tr75_handfelled(
+    turn_volume_m3: float, yarding_distance_m: float
+) -> float:
     """Estimate productivity for Madill 084 swing yarder on hand-felled second-growth timber."""
 
     _validate_inputs(turn_volume_m3, yarding_distance_m)
@@ -93,4 +99,3 @@ __all__ = [
     "estimate_grapple_yarder_productivity_tr75_bunched",
     "estimate_grapple_yarder_productivity_tr75_handfelled",
 ]
-

@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import csv
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 import pdfplumber
 
@@ -76,13 +76,11 @@ def extract_section(name: str, start: int, end: int, pdf: pdfplumber.PDF) -> Non
             continue
         for table_idx, table in enumerate(tables, start=1):
             cleaned = [[cell.strip() if cell else "" for cell in row] for row in table]
-            out_path = section_dir / f"{name}_page{page_index+1:03d}_table{table_idx}.csv"
+            out_path = section_dir / f"{name}_page{page_index + 1:03d}_table{table_idx}.csv"
             write_table(out_path, cleaned)
             for row in cleaned:
                 aggregated.append([str(page_index + 1), str(table_idx), *row])
-            print(
-                f"  {name}: page {page_index+1} -> table {table_idx} ({len(cleaned)} rows)"
-            )
+            print(f"  {name}: page {page_index + 1} -> table {table_idx} ({len(cleaned)} rows)")
     write_table(section_dir / f"{name}_aggregate.csv", aggregated)
 
 
@@ -94,7 +92,7 @@ def main() -> None:
         ranges = find_section_ranges(pdf)
         for name, _ in SECTIONS:
             start, end = ranges[name]
-            print(f"Extracting {name} pages {start+1}-{end}...")
+            print(f"Extracting {name} pages {start + 1}-{end}...")
             extract_section(name, start, end, pdf)
 
 

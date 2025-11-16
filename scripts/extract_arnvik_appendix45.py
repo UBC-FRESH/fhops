@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import csv
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 import camelot
 
@@ -13,7 +13,7 @@ OUT_DIR = Path("notes/reference/arnvik_tables")
 TABLE_REGION = "40,795,750,40"
 APPENDICES = {
     "appendix4_machines": range(80, 88),  # Appendix 4 pages 80-87
-    "appendix5_stands": range(88, 98),    # Appendix 5 pages 88-97
+    "appendix5_stands": range(88, 98),  # Appendix 5 pages 88-97
 }
 
 

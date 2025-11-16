@@ -16,7 +16,9 @@ class _ForwarderModel:
     coeff_ln_mfd_load: float
     rmse: float
 
-    def predict(self, mean_extraction_distance_m: float, mean_stem_size_m3: float, load_capacity_m3: float) -> float:
+    def predict(
+        self, mean_extraction_distance_m: float, mean_stem_size_m3: float, load_capacity_m3: float
+    ) -> float:
         if mean_extraction_distance_m <= 0:
             raise ValueError("mean_extraction_distance_m must be > 0")
         if mean_stem_size_m3 <= 0:
@@ -66,7 +68,9 @@ def estimate_forwarder_productivity_final_felling(
 ) -> float:
     """Estimate forwarder productivity (m^3/PMH) for final felling sites."""
 
-    return _FINAL_FELLING_MODEL.predict(mean_extraction_distance_m, mean_stem_size_m3, load_capacity_m3)
+    return _FINAL_FELLING_MODEL.predict(
+        mean_extraction_distance_m, mean_stem_size_m3, load_capacity_m3
+    )
 
 
 def estimate_forwarder_productivity_thinning(

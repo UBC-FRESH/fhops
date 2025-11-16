@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Mapping
 
 import numpy as np
 
@@ -217,7 +217,9 @@ def _pacal_available() -> bool:
     return pacal is not None
 
 
-def _build_pacal_var(mu: float, sigma: float, bounds: Mapping[str, float]):  # pragma: no cover - requires pacal
+def _build_pacal_var(
+    mu: float, sigma: float, bounds: Mapping[str, float]
+):  # pragma: no cover - requires pacal
     assert pacal is not None
     dist = pacal.NormalDistr(mu, sigma)
     lower = bounds.get("min")
@@ -280,7 +282,9 @@ def estimate_productivity_distribution(
     use_pacal = method == "pacal" or (method == "auto" and _pacal_available())
     if use_pacal:
         if not _pacal_available():  # pragma: no cover - depends on pacal
-            raise FHOPSValueError("PaCal not available; install 'pacal' or set method='monte-carlo'.")
+            raise FHOPSValueError(
+                "PaCal not available; install 'pacal' or set method='monte-carlo'."
+            )
         stem = _build_pacal_var(avg_stem_size_mu, avg_stem_size_sigma, bounds["avg_stem_size"])
         volume = _build_pacal_var(volume_per_ha_mu, volume_per_ha_sigma, bounds["volume_per_ha"])
         density = _build_pacal_var(stem_density_mu, stem_density_sigma, bounds["stem_density"])
@@ -304,10 +308,18 @@ def estimate_productivity_distribution(
         )
 
     samples = max(samples, 1)
-    stem_s = _sample_truncated_normal(avg_stem_size_mu, avg_stem_size_sigma, bounds["avg_stem_size"], samples)
-    volume_s = _sample_truncated_normal(volume_per_ha_mu, volume_per_ha_sigma, bounds["volume_per_ha"], samples)
-    density_s = _sample_truncated_normal(stem_density_mu, stem_density_sigma, bounds["stem_density"], samples)
-    slope_s = _sample_truncated_normal(ground_slope_mu, ground_slope_sigma, bounds["ground_slope"], samples)
+    stem_s = _sample_truncated_normal(
+        avg_stem_size_mu, avg_stem_size_sigma, bounds["avg_stem_size"], samples
+    )
+    volume_s = _sample_truncated_normal(
+        volume_per_ha_mu, volume_per_ha_sigma, bounds["volume_per_ha"], samples
+    )
+    density_s = _sample_truncated_normal(
+        stem_density_mu, stem_density_sigma, bounds["stem_density"], samples
+    )
+    slope_s = _sample_truncated_normal(
+        ground_slope_mu, ground_slope_sigma, bounds["ground_slope"], samples
+    )
     preds = (
         coeffs.intercept
         + coeffs.stem_size * stem_s

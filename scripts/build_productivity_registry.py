@@ -5,13 +5,15 @@ from __future__ import annotations
 import csv
 import json
 import re
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 from fhops.productivity_registry import ProductivityModel, registry
 
 APPENDIX8 = Path("notes/reference/arnvik_tables/appendix8/appendix8_aggregate.csv")
-APPENDIX8_CAMELOT = Path("notes/reference/arnvik_tables/appendix8_camelot/appendix8_camelot_aggregate.csv")
+APPENDIX8_CAMELOT = Path(
+    "notes/reference/arnvik_tables/appendix8_camelot/appendix8_camelot_aggregate.csv"
+)
 VARS_JSON = Path("notes/reference/arnvik_tables/appendix9/variables.json")
 PARAM_JSON = Path("notes/reference/arnvik_tables/appendix10/parameters.json")
 STAT_JSON = Path("notes/reference/arnvik_tables/appendix11/statistics.json")
@@ -113,7 +115,9 @@ def clean_token(value: str) -> str:
 
 def _normalize_publication(candidate: str) -> str:
     candidate = candidate.replace(" ,", ",").replace("( ", "(").replace(" )", ")")
-    candidate = re.sub(r"\((\d+)\s+(\d+[a-z]?)\)", lambda m: f"({m.group(1)}{m.group(2)})", candidate)
+    candidate = re.sub(
+        r"\((\d+)\s+(\d+[a-z]?)\)", lambda m: f"({m.group(1)}{m.group(2)})", candidate
+    )
     return candidate.strip().rstrip(",")
 
 
@@ -142,7 +146,14 @@ def decode_model_row(row: list[str]) -> tuple[str, str, str, str, str, str, str,
         pub_tokens.append(token)
     if not pub_tokens or rest_tokens is None or not rest_tokens:
         return None
-    publication = " ".join(pub_tokens).replace(" ,", ",").replace("( ", "(").replace(" )", ")").strip().rstrip(",")
+    publication = (
+        " ".join(pub_tokens)
+        .replace(" ,", ",")
+        .replace("( ", "(")
+        .replace(" )", ")")
+        .strip()
+        .rstrip(",")
+    )
     if not publication:
         return None
     nr_token = rest_tokens[0]
@@ -232,7 +243,9 @@ def parse_model_row(row: list[str]) -> ProductivityModel | None:
     return build_productivity_model(*payload)
 
 
-def parse_camelot_row(record: dict) -> tuple[ProductivityModel | None, bool, tuple[str, str] | None]:
+def parse_camelot_row(
+    record: dict,
+) -> tuple[ProductivityModel | None, bool, tuple[str, str] | None]:
     publication = record.get("author", "").strip()
     if not publication or "built;" in publication:
         return None, False, None
@@ -305,14 +318,18 @@ def build_notes(base_machine: str, propulsion: str, dependent: str, units: str, 
         f"Dependent: {dependent} {units}",
     ]
     if stats:
-        pieces.append(f"Observational unit: {stats.get('observational_unit')} ({stats.get('observations')})")
+        pieces.append(
+            f"Observational unit: {stats.get('observational_unit')} ({stats.get('observations')})"
+        )
         pieces.append(f"Structure: {stats.get('structure')}")
         if stats.get("significance"):
             pieces.append(f"Significance: {stats['significance']}")
     return "; ".join(filter(None, pieces))
 
 
-def build_legacy_lookup() -> dict[tuple[str, str], tuple[str, str, str, str, str, str, str, str, str]]:
+def build_legacy_lookup() -> dict[
+    tuple[str, str], tuple[str, str, str, str, str, str, str, str, str]
+]:
     lookup: dict[tuple[str, str], tuple[str, str, str, str, str, str, str, str, str]] = {}
     if not APPENDIX8.exists():
         return lookup

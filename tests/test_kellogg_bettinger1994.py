@@ -16,7 +16,9 @@ from fhops.productivity.kellogg_bettinger1994 import (
         (LoadType.MIXED, 9.3, 13.4),
     ],
 )
-def test_kellogg_forwarder_matches_table8(load_type: LoadType, volume_per_load_m3: float, expected: float) -> None:
+def test_kellogg_forwarder_matches_table8(
+    load_type: LoadType, volume_per_load_m3: float, expected: float
+) -> None:
     value = estimate_forwarder_productivity_kellogg_bettinger(
         load_type=load_type,
         volume_per_load_m3=volume_per_load_m3,

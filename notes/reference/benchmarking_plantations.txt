@@ -1720,4 +1720,3 @@ Table A1. (Continued).
                                                                       Manual selection           5              75            14.5
                                                                       Processor (on              17             80             5.3
                                                                         excavator)
-

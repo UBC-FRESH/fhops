@@ -28,7 +28,9 @@ def iter_lines() -> list[str]:
                     continue
                 if line.startswith("Appendix 10"):
                     continue
-                if line.startswith("Parameters in models") or line.startswith("values of productivity"):
+                if line.startswith("Parameters in models") or line.startswith(
+                    "values of productivity"
+                ):
                     continue
                 if line.startswith("At a certain threshold"):
                     continue

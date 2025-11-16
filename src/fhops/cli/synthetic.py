@@ -423,13 +423,13 @@ def generate_batch(
             raise typer.BadParameter("Batch entry 'flags' must be a mapping when provided.")
 
         cli_overrides = _resolve_cli_overrides(
-        cli_flags.get("blocks"),
-        cli_flags.get("machines"),
-        cli_flags.get("landings"),
-        cli_flags.get("days"),
-        cli_flags.get("shifts_per_day"),
-        cli_flags.get("machine_daily_hours"),
-    )
+            cli_flags.get("blocks"),
+            cli_flags.get("machines"),
+            cli_flags.get("landings"),
+            cli_flags.get("days"),
+            cli_flags.get("shifts_per_day"),
+            cli_flags.get("machine_daily_hours"),
+        )
 
         entry_preview = entry.get("preview", preview)
         entry_overwrite = entry.get("overwrite", overwrite)

@@ -1,5 +1,3 @@
-import pytest
-
 from fhops.validation.ranges import validate_block_ranges
 
 

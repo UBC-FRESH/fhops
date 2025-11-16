@@ -9,12 +9,16 @@ from fhops.productivity.stoilov2021 import (
 
 
 def test_delay_free_productivity_basic() -> None:
-    value = estimate_skidder_harvester_productivity_delay_free(skidding_distance_m=70, trees_per_cycle=2)
+    value = estimate_skidder_harvester_productivity_delay_free(
+        skidding_distance_m=70, trees_per_cycle=2
+    )
     assert value == pytest.approx(9.01, rel=1e-6)
 
 
 def test_delay_free_productivity_clipped() -> None:
-    value = estimate_skidder_harvester_productivity_delay_free(skidding_distance_m=500, trees_per_cycle=5)
+    value = estimate_skidder_harvester_productivity_delay_free(
+        skidding_distance_m=500, trees_per_cycle=5
+    )
     assert value == 0.0
 
 

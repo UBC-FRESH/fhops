@@ -56,6 +56,7 @@ class Block(BaseModel):
         if value < 0:
             raise ValueError("Block.work_required must be non-negative")
         return value
+
     @field_validator(
         "avg_stem_size_m3",
         "volume_per_ha_m3",
@@ -117,7 +118,7 @@ class Machine(BaseModel):
         return normalized
 
     @model_validator(mode="after")
-    def _apply_role_defaults(self) -> "Machine":
+    def _apply_role_defaults(self) -> Machine:
         role = self.role
         if (self.operating_cost is None or self.operating_cost <= 0) and role:
             composed = compose_default_rental_rate_for_role(

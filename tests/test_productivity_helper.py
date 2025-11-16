@@ -3,13 +3,13 @@ import math
 import numpy as np
 import pytest
 
+from fhops.core import FHOPSValueError
 from fhops.productivity import (
     LahrsenModel,
     estimate_productivity,
     estimate_productivity_distribution,
     load_lahrsen_ranges,
 )
-from fhops.core import FHOPSValueError
 
 
 def test_estimate_productivity_matches_coefficients():
@@ -20,12 +20,7 @@ def test_estimate_productivity_matches_coefficients():
         ground_slope=15.0,
         model=LahrsenModel.DAILY,
     )
-    expected = (
-        67.99345 * 0.4
-        + 0.05943 * 300.0
-        + 0.01236 * 900.0
-        - 0.46146 * 15.0
-    )
+    expected = 67.99345 * 0.4 + 0.05943 * 300.0 + 0.01236 * 900.0 - 0.46146 * 15.0
     assert math.isclose(result.predicted_m3_per_pmh, expected, rel_tol=1e-9)
 
 

@@ -18,30 +18,35 @@ Each scenario references a set of CSV files. Required columns and notes:
    * - Table
      - Required Columns
      - Notes
-    * - ``blocks.csv``
-      - ``id``, ``landing_id``, ``work_required``
-      - Optional: ``earliest_start``/``latest_finish`` (defaults 1 / ``num_days``); stand metrics (``avg_stem_size_m3``, ``volume_per_ha_m3``, ``stem_density_per_ha``, ``ground_slope_percent``) plus optional uncertainty columns (``volume_per_ha_m3_sigma``, ``stem_density_per_ha_sigma``) are supported and default to Lahrsen (2025) BC ranges in synthetic bundles.
-    * - ``machines.csv``
-      - ``id``
-      - Optional: ``role``, ``crew``; numeric fields must be non-negative. ``daily_hours`` defaults
-        to ``24`` — we assume machines are available around the clock unless explicitly constrained
-        by the calendar or shift-level availability. ``operating_cost`` is the machine rental rate in
-        $/SMH (scheduled machine hour), i.e., SMH = scheduled hours and PMH = productive hours;
-        Lahrsen (2025) productivity coefficients are calibrated in m³/PMH15 (PMH with short delays
-        ≤15 min included). Convert to $/m³ post‑hoc using playback outputs or the costing helper.
-        When ``operating_cost`` is omitted or set to ``0`` and a ``role`` is provided, FHOPS looks up
-        the default machine-rate entry (owning + operating + optional repair) and auto-fills the
-        value during scenario validation. Supply ``repair_usage_hours`` (nearest 5 000 h bucket)
-        to pick a different FPInnovations usage class when applying the repair/maintenance allowance;
-        omit the field to stick with the default 10 000 h bucket.
-      - The `fhops dataset inspect-machine` CLI warns when a machine advertises non-24 h
-        availability so you can catch accidental edits before shipping datasets.
+
+   * - ``blocks.csv``
+     - ``id``, ``landing_id``, ``work_required``
+     - Optional: ``earliest_start``/``latest_finish`` (defaults 1 / ``num_days``); stand metrics (``avg_stem_size_m3``, ``volume_per_ha_m3``, ``stem_density_per_ha``, ``ground_slope_percent``) plus optional uncertainty columns (``volume_per_ha_m3_sigma``, ``stem_density_per_ha_sigma``) are supported and default to Lahrsen (2025) BC ranges in synthetic bundles.
+
+   * - ``machines.csv``
+     - ``id``
+     - Optional: ``role``, ``crew``; numeric fields must be non-negative. ``daily_hours`` defaults
+       to ``24`` — we assume machines are available around the clock unless explicitly constrained
+       by the calendar or shift-level availability. ``operating_cost`` is the machine rental rate in
+       $/SMH (scheduled machine hour), i.e., SMH = scheduled hours and PMH = productive hours;
+       Lahrsen (2025) productivity coefficients are calibrated in m³/PMH15 (PMH with short delays
+       ≤15 min included). Convert to $/m³ post‑hoc using playback outputs or the costing helper.
+       When ``operating_cost`` is omitted or set to ``0`` and a ``role`` is provided, FHOPS looks up
+       the default machine-rate entry (owning + operating + optional repair) and auto-fills the
+       value during scenario validation. Supply ``repair_usage_hours`` (nearest 5 000 h bucket)
+       to pick a different FPInnovations usage class when applying the repair/maintenance allowance;
+       omit the field to stick with the default 10 000 h bucket.
+       The `fhops dataset inspect-machine` CLI warns when a machine advertises non-24 h
+       availability so you can catch accidental edits before shipping datasets.
+
    * - ``landings.csv``
      - ``id``
      - ``daily_capacity`` defaults to 2, must be ≥ 0
+
    * - ``calendar.csv``
      - ``machine_id``, ``day``
      - ``available`` ∈ {0,1}; days must lie within ``num_days``
+
    * - ``production_rates.csv``
      - ``machine_id``, ``block_id``, ``rate``
      - ``rate`` ≥ 0; IDs must exist in machines/blocks

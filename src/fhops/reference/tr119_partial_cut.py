@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Sequence
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
-from typing import Sequence
 
-DATA_PATH = Path(__file__).resolve().parents[3] / "notes/reference/fpinnovations/tr119_yarding_productivity.json"
+DATA_PATH = (
+    Path(__file__).resolve().parents[3]
+    / "notes/reference/fpinnovations/tr119_yarding_productivity.json"
+)
 
 
 @dataclass(frozen=True)

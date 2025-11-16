@@ -40,7 +40,9 @@ class ShovelLoggingResult:
     road_cost_per_day: float
 
 
-def estimate_shovel_logging_productivity(passes: int, params: ShovelLoggingParameters) -> ShovelLoggingResult:
+def estimate_shovel_logging_productivity(
+    passes: int, params: ShovelLoggingParameters
+) -> ShovelLoggingResult:
     """Evaluate shovel logging productivity/costs for a given number of passes.
 
     The formulation follows Sessions & Boston (2006), "Optimization of Road Spacing for
@@ -73,13 +75,7 @@ def estimate_shovel_logging_productivity(passes: int, params: ShovelLoggingParam
     v2 = minutes_per_meter(params.walking_speed_unit_kph)
     v3 = minutes_per_meter(params.walking_speed_serpentine_kph)
 
-    s_y = (
-        t0 * z * w / b0
-        + n * t1 * z * w / b1
-        + 0.5 * (n - 1) * n * t2 * z * w / b2
-        + v1
-        + n * v3
-    )
+    s_y = t0 * z * w / b0 + n * t1 * z * w / b1 + 0.5 * (n - 1) * n * t2 * z * w / b2 + v1 + n * v3
     s_const = n * z * (v2 + v3)
 
     if s_const >= params.work_minutes_per_day:

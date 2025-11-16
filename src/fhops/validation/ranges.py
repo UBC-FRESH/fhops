@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Iterable, List, Mapping
+from collections.abc import Mapping
 
 from fhops.productivity import load_lahrsen_ranges
 
@@ -29,7 +29,7 @@ def validate_block_ranges(
     """Return warnings when block metrics fall outside observed ranges."""
 
     ranges = load_lahrsen_ranges()[section]
-    warnings: List[str] = []
+    warnings: list[str] = []
     if stem_size is not None and not _within(ranges["avg_stem_size_m3"], stem_size):
         warnings.append(
             f"Block {block_id}: avg_stem_size={stem_size} outside [{ranges['avg_stem_size_m3']['min']}, {ranges['avg_stem_size_m3']['max']}]"

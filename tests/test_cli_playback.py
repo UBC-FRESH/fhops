@@ -7,7 +7,7 @@ import pandas as pd
 import pytest
 from typer.testing import CliRunner
 
-from fhops.cli.main import app, _print_kpi_summary, console
+from fhops.cli.main import _print_kpi_summary, app, console
 from fhops.evaluation import PlaybackConfig, run_playback
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario

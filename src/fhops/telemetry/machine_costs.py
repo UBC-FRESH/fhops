@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Any, Iterable
+from typing import Any
 
 from fhops.costing.machine_rates import (
     MachineRate,
@@ -50,7 +51,11 @@ def build_machine_cost_snapshots(machines: Iterable[Any]) -> list[MachineCostSna
         if machine_id is None:
             continue
         role = getattr(machine, "role", None)
-        operating_cost = float(getattr(machine, "operating_cost", 0.0)) if hasattr(machine, "operating_cost") else None
+        operating_cost = (
+            float(getattr(machine, "operating_cost", 0.0))
+            if hasattr(machine, "operating_cost")
+            else None
+        )
         repair_usage_hours = getattr(machine, "repair_usage_hours", None)
 
         rental_rate = None

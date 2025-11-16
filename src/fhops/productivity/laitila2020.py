@@ -54,7 +54,9 @@ def estimate_brushwood_harwarder_productivity(
     seconds_per_m3_from_forwarding = (2.0 * t_forwarding) / harwarder_payload_m3
 
     total_seconds_per_m3 = (
-        seconds_per_m3_from_tree_based_terms + seconds_per_m3_from_loading + seconds_per_m3_from_forwarding
+        seconds_per_m3_from_tree_based_terms
+        + seconds_per_m3_from_loading
+        + seconds_per_m3_from_forwarding
     )
 
     if total_seconds_per_m3 <= 0:

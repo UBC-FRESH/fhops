@@ -3,14 +3,15 @@
 from __future__ import annotations
 
 import json
-from functools import lru_cache
+from collections.abc import Mapping
+from functools import cache
 from importlib import resources
-from typing import Any, Mapping
+from typing import Any
 
 RangePayload = Mapping[str, Any]
 
 
-@lru_cache(maxsize=None)
+@cache
 def load_lahrsen_ranges() -> RangePayload:
     """Return Lahrsen (2025) descriptive ranges as a nested mapping."""
 

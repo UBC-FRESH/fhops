@@ -142,7 +142,7 @@ cients.                                                          b      regressi
 2.1 Regression Analysis                                            The regression coefficients were obtained with the
     The regression is a popular method that deter-               LSM method as:
 mines the correlation between one independent vari-
-                                                                                         (            ) A Py 		
+                                                                                         (            ) A Py
                                                                                                        -1
 able and one or more dependent variables with a                                   b = AT PA                 T
                                                                                                                              (8)
@@ -153,7 +153,7 @@ as, the least squares method (LSM) (Koch 1999),                  P       weight 
 weighted least squares (Draper and Smith 1998), ro-                The reverse weight matrix of the coefficients (Qbb)
 bust regression (Chen and Pinar 1998, Gross 2003,                was obtained with Eq. 8 as:
 Rousseeuw and Leroy 1987, Staudte and Sheater
-                                                                                                  (         ) 		
+                                                                                                  (         )
                                                                                                              −1
 1990), genetic algorithm (Pan et al. 1995) and artificial                           Qbb = AT PA                              (9)
 neural networks (Stern 1996).
@@ -587,4 +587,3 @@ Received: May 20, 2019
 Accepted: October 23, 2019                                      * Corresponding author
 
 Croat. j. for. eng. 41(2020)1                                                                                           117
-

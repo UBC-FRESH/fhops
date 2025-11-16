@@ -1312,4 +1312,3 @@ References
 83.   Spinelli, R.; Visser, R. Analyzing and Estimating Delays in Harvester Operations. Int. J. For. Eng. 2008, 19, 36–41. [CrossRef]
 84.   Sessions, J.; Berry, M.; Sup-Han, H. Machine Rate Estimates and Equipment Utilization: A Modified Approach. Croat. J. For. Eng.
       2021, 42, 437–443. [CrossRef]
-

@@ -14,7 +14,9 @@ from fhops.productivity.laitila2020 import estimate_brushwood_harwarder_producti
         (30.0, 400.0, 7.4257230621),
     ],
 )
-def test_laitila2020_matches_reported_productivity(avg_tree_volume_dm3: float, forwarding_distance_m: float, expected: float) -> None:
+def test_laitila2020_matches_reported_productivity(
+    avg_tree_volume_dm3: float, forwarding_distance_m: float, expected: float
+) -> None:
     value = estimate_brushwood_harwarder_productivity(
         harvested_trees_per_ha=6000.0,
         average_tree_volume_dm3=avg_tree_volume_dm3,

@@ -101,7 +101,7 @@ def normalize_table(df, page: int, table_idx: int) -> list[list[str]]:
             remainder.append("")
         hm = remainder[0]
         # Clean potential harvest token joined with next entry
-        if hm and not hm.strip() in HARVEST_TOKENS and " " in hm:
+        if hm and hm.strip() not in HARVEST_TOKENS and " " in hm:
             parts = hm.split()
             if parts[0] in HARVEST_TOKENS:
                 hm = parts[0]

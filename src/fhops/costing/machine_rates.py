@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
-from pathlib import Path
 import re
+from collections.abc import Sequence
+from dataclasses import dataclass
 from functools import lru_cache
-from typing import Sequence
+from pathlib import Path
 
 DATA_PATH = Path(__file__).resolve().parents[3] / "data/machine_rates.json"
 
@@ -59,7 +59,10 @@ def load_default_machine_rates() -> Sequence[MachineRate]:
                     else None
                 ),
                 repair_maintenance_usage_multipliers=(
-                    {int(k): float(v) for k, v in entry["repair_maintenance_usage_multipliers"].items()}
+                    {
+                        int(k): float(v)
+                        for k, v in entry["repair_maintenance_usage_multipliers"].items()
+                    }
                     if entry.get("repair_maintenance_usage_multipliers") is not None
                     else None
                 ),
@@ -151,8 +154,16 @@ def compose_rental_rate(
         Optional values that replace the corresponding component before totals are computed.
     """
 
-    ownership = ownership_override if ownership_override is not None else machine_rate.ownership_cost_per_smh
-    operating = operating_override if operating_override is not None else machine_rate.operating_cost_per_smh
+    ownership = (
+        ownership_override
+        if ownership_override is not None
+        else machine_rate.ownership_cost_per_smh
+    )
+    operating = (
+        operating_override
+        if operating_override is not None
+        else machine_rate.operating_cost_per_smh
+    )
 
     repair_candidate: float = 0.0
     if repair_override is not None:

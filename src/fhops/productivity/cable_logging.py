@@ -12,7 +12,9 @@ def _validate_inputs(log_volume_m3: float, route_slope_percent: float) -> None:
         raise ValueError("route_slope_percent must be > 0")
 
 
-def estimate_cable_skidding_productivity_unver_spss(log_volume_m3: float, route_slope_percent: float) -> float:
+def estimate_cable_skidding_productivity_unver_spss(
+    log_volume_m3: float, route_slope_percent: float
+) -> float:
     """Estimate productivity (m³/h) using the SPSS linear regression (Eq. 27)."""
 
     _validate_inputs(log_volume_m3, route_slope_percent)
@@ -20,7 +22,9 @@ def estimate_cable_skidding_productivity_unver_spss(log_volume_m3: float, route_
     return max(value, 0.0)
 
 
-def estimate_cable_skidding_productivity_unver_robust(log_volume_m3: float, route_slope_percent: float) -> float:
+def estimate_cable_skidding_productivity_unver_robust(
+    log_volume_m3: float, route_slope_percent: float
+) -> float:
     """Estimate productivity (m³/h) using the robust regression (Eq. 28)."""
 
     _validate_inputs(log_volume_m3, route_slope_percent)

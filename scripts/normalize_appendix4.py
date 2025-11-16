@@ -83,8 +83,7 @@ def normalize() -> None:
             author_cell = (row.get("c0") or "").strip()
             note_cell = (row.get("c1") or "").strip()
             data_cells = [
-                (row.get(col) or "").strip()
-                for col in ("c2", "c3", "c4", "c5", "c6", "c7")
+                (row.get(col) or "").strip() for col in ("c2", "c3", "c4", "c5", "c6", "c7")
             ]
             has_data = any(data_cells)
             if author_cell:

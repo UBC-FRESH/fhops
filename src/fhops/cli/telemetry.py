@@ -390,12 +390,7 @@ def report(
     alert_rows = [row for row in rows if row.get("repair_usage_alert")]
     if alert_rows:
         alert_scenarios = ", ".join(
-            sorted(
-                {
-                    f"{row['scenario']} ({row['algorithm']})"
-                    for row in alert_rows
-                }
-            )
+            sorted({f"{row['scenario']} ({row['algorithm']})" for row in alert_rows})
         )
         typer.echo(
             f"WARNING: repair usage alerts detected for {alert_scenarios}. Review the `repair_usage_alert` column for details."
