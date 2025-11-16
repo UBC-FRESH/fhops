@@ -1,0 +1,1315 @@
+Article
+Steep Slope Harvest System Models for Small to Large Trees
+Todd West 1 , John Sessions 1 and Bogdan M. Strimbu 1,2, *
+
+                                          1   Department of Forest Engineering and Resource Management, Oregon State University,
+                                              Corvallis, OR 97331, USA; todd.west@oregonstate.edu (T.W.); john.sessions@oregonstate.edu (J.S.)
+                                          2   Faculty of Silviculture and Forest Engineering, Transilvania University of Brasov, 500036 Brasov, Romania
+                                          *   Correspondence: bogdan.strimbu@oregonstate.edu
+
+
+                                          Abstract: Background: Tethered cut-to-length and cable yarding systems with tethered falling equip-
+                                          ment are increasingly used to harvest trees from slopes exceeding 30–60% more safely and at reduced
+                                          financial cost than less mechanized harvest systems. Existing studies of harvest equipment typically
+                                          isolate one or two pieces of equipment in a harvest system and often occur on sites with slopes below
+                                          50% and trees less than 60 cm in diameter. Methods: We analyzed machine capabilities and productiv-
+                                          ity regressions to extrapolate existing models to steep slope harvesting of trees up to 115 cm diameter.
+                                          The resulting individual machine models are integrated into models of cut-to-length and long-log
+                                          harvest system productivity. We estimated the financial operating costs of the harvest systems
+                                          considered from equipment pricing and operator wages. Results: Analysis of even-age Douglas-fir
+                                          (Pseudotsuga menziesii) and western hemlock (Tsuga heterophylla) rotations suggests eight-wheel for-
+                                          warder productivity, swing yarder productivity, and mechanization of manual chainsaw labor with
+                                          tethered harvesters as primary controls on harvest costs. Conclusions: The proposed model enables
+                                          predictions across a greater range of slopes and tree sizes than those previously modeled, creating a
+                                          foundation for future research into the cost and productivity of steep slope harvesting systems.
+
+
+                                Keywords: productivity and costs of forest operations; cut-to-length; winch-assist harvesting; cable
+                                   logging; Douglas-fir; western hemlock
+Citation: West, T.; Sessions, J.;
+Strimbu, B.M. Steep Slope Harvest
+System Models for Small to Large
+Trees. Forests 2022, 13, 305. https://    1. Introduction
+doi.org/10.3390/f13020305
+                                                Models of timber harvest systems are used to support silvicultural decision-making.
+Academic Editors: Andrea Laschi,          Silvicultural optimization systems (e.g., [1,2]) rely on harvest system models, along with
+Dalia Abbas and Piotr S. Mederski         other models, to guide land management planning. An inaccurate harvest model can lead
+                                          to a poor plan and, if limits on harvest equipment capabilities are incorrectly represented,
+Received: 20 January 2022
+Accepted: 9 February 2022
+                                          may result in infeasible plans. To implement a land management plan, forest harvest
+Published: 13 February 2022
+                                          contractors need to determine if equipment in the harvest systems they operate is suitable
+                                          for a given timber sale. Contractors also need to accurately predict stump to mill costs
+Publisher’s Note: MDPI stays neutral      to bid sales competitively without incurring a financial loss. Harvest system models
+with regard to jurisdictional claims in
+                                          thus facilitate both land management and harvest contracting by describing the abilities,
+published maps and institutional affil-
+                                          productivity, operating costs, and interactions of the individual machines in each harvest
+iations.
+                                          system of interest. Given an understanding of the trees offered in a timber sale and the logs
+                                          that would be produced from those trees, a harvest cost model predicts each machine’s
+                                          utilization and the total financial cost for the harvest. Comparing cost estimates between
+Copyright: © 2022 by the authors.
+                                          models of different harvest systems helps identify the most appropriate harvest method
+Licensee MDPI, Basel, Switzerland.        based on ecological and financial considerations.
+This article is an open access article          On harvest units with steep slopes, cable yarding systems have been used to remove
+distributed under the terms and           felled trees, or logs cut from felled trees, since the late 1800s [3]. When a slope is too steep
+conditions of the Creative Commons        for mechanized harvesting equipment, trees are manually felled using chainsaws [4]. One
+Attribution (CC BY) license (https://     or more logs are often bucked from these trees before yarding, also using chainsaws [5].
+creativecommons.org/licenses/by/          Because mechanization reduces risk to human operators and increases productivity com-
+4.0/).                                    pared to manual felling and bucking [6], commercial winch-assist systems enabled use of
+
+
+
+Forests 2022, 13, 305. https://doi.org/10.3390/f13020305                                                        https://www.mdpi.com/journal/forests
+Forests 2022, 13, x FOR PEER REVIEW                                                                                                                2 of 17
+
+
+Forests 2022, 13, 305                                                                                                                               2 of 16
+                                 Because mechanization reduces risk to human operators and increases productivity com-
+                                 pared to manual felling and bucking [6], commercial winch-assist systems enabled use of
+                                 feller-bunchers, harvesters,
+                                 feller-bunchers,    harvesters, and
+                                                                   andforwarders
+                                                                         forwarderson onsteep
+                                                                                          steepslopes
+                                                                                                 slopesininthe late
+                                                                                                             the    1990s
+                                                                                                                 late     [7].[7].
+                                                                                                                      1990s     Manufac-
+                                                                                                                                   Manu-
+                                 facturers introduced winch assist as a standard option on harvest equipment in the early
+                                 turers   introduced    winch    assist as a standard   option   on  harvest   equipment     in
+                                 2010s [8,9]
+                                 2010s   [8,9] and
+                                               and indicate
+                                                    indicate heavy
+                                                              heavy equipment
+                                                                       equipment use on slopes
+                                                                                            slopes up
+                                                                                                    up toto 100%
+                                                                                                            100% [10,11],
+                                                                                                                  [10,11], substantially
+                                                                                                                           substantially
+                                 steeper than
+                                 steeper   than the
+                                                 the 30–40%
+                                                     30–40% often
+                                                               often allowed
+                                                                      allowed for
+                                                                               for untethered
+                                                                                   untetheredequipment
+                                                                                                 equipment[12,13].
+                                                                                                               [12,13].
+                                        Currently,most
+                                       Currently,   most winch-assisted
+                                                           winch-assisted harvesting
+                                                                             harvesting uses
+                                                                                          uses one
+                                                                                               one ofof three
+                                                                                                        three mechanized
+                                                                                                               mechanized steep
+                                                                                                                              steep slope
+                                                                                                                                     slope
+                                 harvest systems
+                                 harvest   systems (Figure
+                                                     (Figure 1).
+                                                              1). Each
+                                                                  Each of these harvest systems consists
+                                                                                                    consists of either a feller-buncher
+                                                                                                                         feller-buncher
+                                 or aa harvester
+                                 or    harvester followed
+                                                  followed byby anan appropriate
+                                                                     appropriate set
+                                                                                   set of
+                                                                                       of machines
+                                                                                          machines forfor moving
+                                                                                                           moving wood
+                                                                                                                    wood toto aa road
+                                                                                                                                 road and
+                                                                                                                                       and
+                                 then trucking
+                                 then   trucking it to
+                                                     to aa mill.
+                                                           mill. In all three systems, chainsaws are used in a supporting role.
+                                 Treesmay
+                                 Trees   mayalso
+                                               alsobe
+                                                    beswung
+                                                       swungshortshortdistances
+                                                                        distancesas
+                                                                                  asin
+                                                                                     inshovel
+                                                                                        shovellogging
+                                                                                                logging(also
+                                                                                                           (alsocalled
+                                                                                                                 calledhoe
+                                                                                                                        hoechucking).
+                                                                                                                              chucking).
+
+
+
+
+                                 Figure 1. Stump to mill flow of wood in three steep slope harvest systems. In system (a), a tethered
+                                 Figure 1. Stump to mill flow of wood in three steep slope harvest systems. In system (a), a tethered
+                                 harvester-forwarder pair provides cut-to-length harvesting suitable for thinning and continuous
+                                 harvester-forwarder pair provides cut-to-length harvesting suitable for thinning and continuous
+                                 cover forestry, variable retention harvests, or clearfelling. Systems based on yarders (b,c) can be
+                                 cover  forestry,
+                                 used for         variable
+                                           thinning        retention
+                                                      but are        harvests,inor
+                                                              most efficient       clearfelling.
+                                                                                 clearfelling [5].Systems based on yarders (b,c) can be used
+                                 for thinning but are most efficient in clearfelling [5].
+                                        Each piece of heavy equipment in a harvest system has size or weight restrictions on
+                                       Each piece of heavy equipment in a harvest system has size or weight restrictions
+                                 the wood it can handle (Section 2.1). Trees that are too large will not fit in felling or pro-
+                                 on the wood it can handle (Section 2.1). Trees that are too large will not fit in felling or
+                                 cessing heads for cutting or may weigh too much for equipment booms to lift or drag.
+                                 processing heads for cutting or may weigh too much for equipment booms to lift or drag.
+                                 Logs too heavy for a forwarder’s crane cannot be lifted into its bunk. Similarly, skyline
+                                 Logs too heavy for a forwarder’s crane cannot be lifted into its bunk. Similarly, skyline
+                                 deflection determines maximum payload weights in yarding. However, growing large
+                                 deflection determines maximum payload weights in yarding. However, growing large
+                                 trees on
+                                 trees    onslopes
+                                              slopesofof   50–100%
+                                                        50–100%      is aisfrequent
+                                                                             a frequent       silvicultural
+                                                                                        silvicultural            objective
+                                                                                                          objective    withinwithin
+                                                                                                                                 westernwestern      North
+                                                                                                                                            North Amer-
+                                 America’s      temperate      rainforests      for   reasons     such    as  conserving
+                                 ica’s temperate rainforests for reasons such as conserving biodiversity, restoring wildlife  biodiversity,      restoring
+                                 wildlifecarbon
+                                 habitat,    habitat,   carbon sequestration,
+                                                     sequestration,      and raisingand    the raising
+                                                                                                financialthe    financial
+                                                                                                             value           value
+                                                                                                                     of timber        of timber[14–16].
+                                                                                                                                  assortments       assort-
+                                 ments     [14–16].  Additionally,       forest    management          considering      the
+                                 Additionally, forest management considering the social cost of carbon favors increased tree social  cost   of  carbon   fa-
+                                 vors   increased   tree   size  [17]. Since     dominant      individuals      on  productive
+                                 size [17]. Since dominant individuals on productive rainforest sites can average diameter          rainforest    sites can
+                                 averagerates
+                                 growth      diameter
+                                                   above growth     rates −above
+                                                             1 cm year        1 [18],1 trees
+                                                                                        cm year      −1 [18], trees can exceed small yarder pay-
+                                                                                                can exceed      small yarder payload capacities
+                                 by age 40 and reach eight-wheel harvester limits by age limits
+                                 load   capacities   by   age  40  and   reach     eight-wheel      harvester              by age2.3).
+                                                                                                                   65 (Section      65 (Section     2.3). In
+                                                                                                                                          In northwest-
+                                 northwestern       United     States   rainforests,      coast   Douglas-fir      (Pseudotsuga
+                                 ern United States rainforests, coast Douglas-fir (Pseudotsuga menziesii var menziesii (Mirb.)       menziesii   var   men-
+                                 ziesii  (Mirb.)  Franco)     and   western      hemlock      (Tsuga     heterophylla    (Raf.)
+                                 Franco) and western hemlock (Tsuga heterophylla (Raf.) Sarg.) trees are commonly harvested      Sarg.)  trees   are  com-
+                                 monly
+                                 from      harvested
+                                        coastal         from coastal
+                                                  and inland      mountain andranges
+                                                                                  inlandat  mountain
+                                                                                              ages 40–50.  ranges    at ages
+                                                                                                               Harvest         40–50.
+                                                                                                                           at ages   of Harvest
+                                                                                                                                        60–100 yearsat ages
+                                                                                                                                                          is
+                                 of 60–100
+                                 also          yearsinterest
+                                      of regular      is also of   regular
+                                                                [19–21].       interest
+                                                                            This           [19–21]. of
+                                                                                   combination         This  combination
+                                                                                                          rapid   growth, large of rapid
+                                                                                                                                     trees,growth,    large
+                                                                                                                                             and rugged
+                                 trees, and
+                                 terrain       rugged
+                                            creates need  terrain   creates
+                                                             for steep    slopeneed    for steep
+                                                                                   harvest     systemslope   harvest
+                                                                                                          models        system
+                                                                                                                     that   remain models    thatfor
+                                                                                                                                      accurate     remain
+                                                                                                                                                       tree
+                                 accurate for
+                                 diameters     uptree  diameters
+                                                   to 100             up to 100 cm or larger.
+                                                            cm or larger.
+                                        Because existing
+                                       Because     existingmodels
+                                                               modelsofofheavy heavyharvest
+                                                                                         harvest    equipment
+                                                                                                  equipment         apply
+                                                                                                                 apply       primarily
+                                                                                                                          primarily        to trees
+                                                                                                                                       to trees       ofcm
+                                                                                                                                                  of 60   60
+                                 cm   diameter     or  smaller    on   slopes     less  than   50%     (Section    2.1),
+                                 diameter or smaller on slopes less than 50% (Section 2.1), this study models mechanized  this  study   models     mecha-
+                                 nized harvesting
+                                 harvesting     of largerof trees
+                                                             largerontrees
+                                                                         steeperon steeper
+                                                                                     slopes. slopes.       We therefore
+                                                                                                We therefore       (1) review (1) and
+                                                                                                                                   review    andcurrent
+                                                                                                                                        extend      extend
+                                 current equipment
+                                 equipment      modelingmodeling
+                                                              approaches,  approaches,
+                                                                                 (2) evaluate(2) the
+                                                                                                   evaluate    the proposed
+                                                                                                        proposed      extensionsextensions
+                                                                                                                                     by estimating by esti-
+                                                                                                                                                        un-
+                                 mating uncertainty
+                                 certainty    in predictionsin predictions
+                                                                  of harvestof       harvest productivity
+                                                                                  productivity       and cost in  andtwocost  in two Douglas-fir
+                                                                                                                           Douglas-fir      and western and
+                                 western hemlock
+                                 hemlock                 case(3)
+                                              case studies,     studies,
+                                                                   estimate (3) harvest
+                                                                                 estimatecostharvest     cost sensitivity
+                                                                                                   sensitivity    to model to     model
+                                                                                                                               input       input param-
+                                                                                                                                       parameters,     and
+                                 (4) identify
+                                 eters,   and (4)areas   where
+                                                   identify        additional
+                                                               areas                research isresearch
+                                                                       where additional             neededistoneeded
+                                                                                                                   reducetouncertainty         in harvest
+                                                                                                                                reduce uncertainty        in
+                                 system models. The following sections describe the cost and productivity modeling ap-
+                                 proach used for the three steep slope harvest systems in Figure 1, present harvest cost
+Forests 2022, 13, 305                                                                                                                               3 of 16
+
+
+
+
+                                       probability distributions for even-age coast Douglas-fir and western hemlock, and discuss
+                                       limitations arising from the lack of large tree data and productivity models for some types
+                                       of equipment.
+
+                                       2. Materials and Methods
+                                       2.1. Harvest Equipment Productivity Models
+                                            A literature search identified 20 sources (Table 1) with 44 productivity models of
+                                       interest published in the last 25 years. Twenty-two of these models appeared to be error-
+                                       free and we were able to identify and correct errors in the equations of six others, resulting
+                                       in Table 1. Eight of the remaining 16 models had errors that we were unable to repair and
+                                       eight had forms unsuited to prediction. Therefore, we excluded these 16 models. We also
+                                       excluded models lacking goodness of fit information, models with adjusted R2 < 0.25, and
+                                       sources older than 25 years. Among the resulting 20 sources, only the chainsaw productivity
+                                       models included felling or bucking on slopes greater than 47%. No mechanized study
+                                       indicated an average tree volume greater than 2.6 m3 .
+
+                                       Table 1. Cycle time definitions for productivity of harvest equipment used in steep slope mechanized
+                                       logging and maximum slopes considered by previous studies. We propose two unified forms for
+                                       cycle time models, one for machines with stemwise cycles and one for machines with roundtrip
+                                       cycles (Equations (1) and (2)).
+
+                         Cycle                                                                                                                Additional
+  Machine Type                     Winch-Assist               Cycle Description(s)                  Model Sources     Slopes Considered (%)
+                         Type                                                                                                                  Sources
+  feller-buncher        stemwise       yes              move to, fell, and bunch one tree                [22]                32–47             [23–25]
+                                                                                                                              likely
+    harvester           stemwise       yes         move to tree, fell, buck, and bunch all logs        [26–30]                                 [31–40]
+                                                                                                                               <30
+                                                   move to tree, variable cutting from bucking
+    chainsaw            stemwise       no                                                               [41,42]              0–130               [43]
+                                                   only first log to felling and bucking all logs
+                                                      load one bunkload of logs in unit and
+                                                   unload the bunk to roadside sort piles or to                            very likely        [32–36,38–
+    forwarder       roundtrip          yes                                                           [26,29,44–48]
+                                                   a truck, potentially also loading piled logs                               ≤45              40,49,50]
+                                                                    onto truck
+                                                   outhaul carriage, grapple or choke payload
+                                                                                                                            typically
+      yarder        roundtrip          no            of trees and logs, inhaul carriage, drop         [4,5,51–53]                             [35,54–56]
+                                                                                                                              <80
+                                                        payload on road or landing chute
+                                                        (1) buck one tree and bunch logs
+    processor           stemwise       no                                                                [46]                 <10                [57]
+                                                         (2) swing yarded log to bunch
+                                                    (1) pile one bunch of logs from processor
+      loader            stemwise       no                                                           none identified                             [45,49]
+                                                         (2) load one grapple onto truck
+                                                    drive to unit, load logs into one or more
+     log truck      roundtrip          no                                                                [58]            unclear but >11        [59,60]
+                                                        bunks, drive to mill, unload logs
+                                       Log truck types considered in this study are mule trains with two bunks of logs, often ≤7.6 m and ≤10.1 m long,
+                                       and long log trucks with one bunk of logs ≤ 12.5 m long. We also searched for sources on winch-assisted skidding
+                                       but did not find published evidence of its uphill use on slopes above 35% [61,62].
+
+
+                                             Lack of productivity models covering slopes of 47–100% and trees with merchantable
+                                       volumes up to 15 m3 required these existing models be extended beyond their fitting
+                                       ranges. We chose to extend cycle time models since most models that regressed produc-
+                                       tivity directly exhibited poor out of range behaviors, including prediction of negative m3
+                                       PMh0 −1 (merchantable cubic meters of wood per delay-free productive machine hour)
+                                       or implausibly high productivities for their machine type. For machines with stemwise
+                                       cycles (Table 1), the most common model forms for predicting the total cutting time Tc for
+                                       a given stem s were subsets of a per-stem equipment move time plus a power series of
+                                       either the tree’s merchantable volume Vs or a highly correlated measure of tree size such as
+                                       diameter at breast height. The per-stem move time is determined by the distance Dmove,s the
+                                       equipment must move to reach stem s and the speed vs at which the equipment moves as a
+                                       function of the local slope Ss , traction Ts available due to surface conditions, the amount of
+                                       brush B present, and possibly other factors. As only one source [57] found evidence for
+                                       higher-order terms in volume, we assumed the quadratic model form
+Forests 2022, 13, 305                                                                                                                                          4 of 16
+
+
+
+
+                                                               nq
+                                                                      (                                       !        (                                   !
+                         Dmove,s                                          0                       Vs ≤ b3,q                0                   Ss ≤ St,m
+    Tc,m stemwise =                         +   b0,m + b1,m Vs + ∑                           2                   1+                                              (1)
+                    vs (Ss , Ts , B, . . .)                    q =1       b2,q Vs − b3,m,q        Vs > b3,q                b4,m (Ss − St,m )   Ss > St,m
+
+                                        where b{0,1,2,3},m ≥ 0 are the felling and bucking coefficients for a particular machine of
+                                        interest m and St,m is the slope at which machine productivity begins to decrease. Models
+                                        with quadratic terms commonly assume b3,m = 0 but we allow b3,m > 0 as in Hildt et al. [47]
+                                        and use up to two quadratic terms (nq ≤ 2) to obtain productivity curves with shapes
+                                        similar to those found by Visser and Spinelli [30] for trees of volume up to 5.2 m3 . The
+                                        slope term b4,m (Ss –St,m ) is a linearization used in industry and is consistent with published
+                                        estimates of slope effects [33,62].
+                                              For machines with roundtrip cycle times, a majority of sources (Table 1) used models
+                                        that implicitly or explicitly performed piecewise integration of mean unloaded and loaded
+                                        travel speeds vs over a series of segments {s} with individual lengths Ds . With the inclusion
+                                        of time t spent loading and unloading, a model for roundtrip cycle time Tc is
+
+                          nu                                                      nl
+                                  Ds,unloaded                                                 Ds,loaded
+       Tc,roundtrip = ∑                                + tload Np , Ns , . . . + ∑
+                                                                                                                                              
+                                                                                                                     + tunload Np , Ns , . . .                    (2)
+                            v          (S , T , . . .)
+                         s=1 s,unloaded s s
+                                                                                     v       (S , T , P , P , . . .)
+                                                                                 s=1 s,loaded s s e l
+
+                                               While loaded and unloaded travel is frequently simplified to an average roundtrip
+                                        speed over a single segment, more detailed approaches recognize uphill travel may be
+                                        constrained by engine power Pe and payload Pl [58,62] as well as slope (Ss ) and traction
+                                        (Ts ) [29,48,63]. The use of winch assist may increase [62] or decrease [36] travel speeds,
+                                        potentially requiring tethered segments be modelled separately from untethered segments
+                                        where winch assist is not used. Load and unload times are likely to increase with the
+                                        number of timber assortments Ns in the load [29] and the number of pieces (trees or logs)
+                                        Np [4,47] transported, though the latter is routinely mitigated by grappling multiple pieces
+                                        simultaneously or by yarding and swinging whole trees.
+                                               In addition to being specific to machine capabilities [28,29] model coefficients are likely
+                                        to be tree species specific, both due to crown architecture [25,29] and differences in stem
+                                        density and bark losses [64,65], which alter the amount of merchantable wood volume in
+                                        a given payload weight. We provide specifics of the model parameterizations we use for
+                                        feller-bunchers, harvesters, chainsaws, forwarders, yarders, processors, loaders, and log
+                                        trucks with Douglas-fir and western hemlock in the Supplementary Material (Section S1).
+                                        Since these parameters are extrapolated, we treat them as uncertain and include their
+                                        uncertainty in estimates of harvest cost (Section 2.3).
+
+                                        2.2. Equipment Operating Cost and Harvest Contracting Business Models
+                                              Most harvest cost studies (Section 2.1) follow Miyata’s method [66] for finding equip-
+                                        ment operating costs. Under Miyata’s method, costs are most sensitive to equipment
+                                        depreciation, equipment utilization, and operator wages and compensation. We gathered
+                                        a dataset of asking prices for harvest equipment offered for sale (n = 261) and, where
+                                        sufficient data was available, estimated depreciation rates from nonlinear regressions of
+                                        price versus operating hours. Machine utilization was estimated from figures reported in
+                                        the literature review and operators’ total compensation was estimated from job postings for
+                                        positions in Oregon and Washington’s temperate rainforests (a region of the northwestern
+                                        United States where tethered equipment is used). We then extended Miyata’s method to
+                                        the consider the taxes, profit, and risk of a harvest contracting business beyond the cost
+                                        of its equipment and operators. Similar to the productivity model parameterizations, we
+                                        provide details of the business cost estimates for the 11 types of equipment we consider in
+                                        the Supplementary Material (Section S2).
+Forests 2022, 13, 305                                                                                           5 of 16
+
+
+
+
+                        2.3. Harvest System Modeling and Uncertainty Estimation
+                             A harvest system’s financial cost is the total cost of its machines and their operators.
+                        In addition to the cost of operating the system to produce merchantable wood we included
+                        the costs Ct for moving equipment into and out of a harvest unit, reopening roads, and
+                        other harvest related tasks (Supplementary Material, Section S3). When using cycle time
+                        productivity models (Section 2.1), a machine’s wood production cost is found by multi-
+                        plying the total cycle time Tm over the nc cycles required to move the volume of wood
+                        harvested by the machine’s cost per productive machine hour Cm (US$ PMh0 −1 in this
+                        study). The harvest cost for a system with nm machines is therefore
+                                                                       !
+                                                         nm    nc                    nt
+                                              Csystem = ∑      ∑ Tc,m    Cm,PMh0 + ∑ Ct,related                    (3)
+                                                        m =1   c =1                 t =1
+
+                             Harvest costs are typically lowest when machines can operate independently of each
+                        other (also referred to as decoupled operation) as doing so maximizes their utilization
+                        and minimizes operating cost. We assume independent operation for feller-bunchers,
+                        harvesters, chainsaws, forwarders, and log trucks. Utilization of yarders, processors, and
+                        loaders, however, is likely interdependent. When one of these three machines restricted the
+                        productivity of the other two, we adjusted the costs of the affected machines accordingly
+                        (Section S3). When trees exceeded machine limits (Section S4), we included the cost of the
+                        chainsaw work needed to make wood accessible for mechanized movement.
+                             We defined 72 productivity, 838 cost model, and 36 equipment limit parameters across
+                        the harvest systems considered (Sections S1–S4). We estimated harvest cost probability
+                        distributions empirically using 10,000 Monte Carlo draws of 68 parameters (48 productivity,
+                        14 cost, and six limit). Given the lack of previous studies, we treated parameter ranges
+                        as uninformative Bayesian priors with uniform probability distributions estimated by
+                        Uusitalo et al.’s [67] expert judgement method. Simplification of Miyata models to uncertain
+                        operating costs per scheduled machine hour (US$ SMh−1 ) caused 94% of the reduction
+                        from the 946 parameters defined to the 68 Monte Carlo parameters (Section S2). The rest
+                        of the reduction was due to overlap among and quantization of forwarder parameters
+                        (Section S1.2) and holding biometric or harvest unit properties, such as bark losses and
+                        available soil traction, constant to avoid confounding harvest system variability with
+                        biological, seasonal, or unit-specific sources of variability.
+                             Finally, we estimated cost model sensitivity to the 68 Monte Carlo parameters using
+                        total Sobol’ indices [68] at N = 1500 (N(k + 2) = 105,000, Jansen estimator [69]) in order to
+                        prioritize model parameters for future investigation. We chose to use total Sobol’ indices as
+                        they provide a comprehensive, variance-based measure of model sensitivity by considering
+                        a parameter’s direct effect and its interactions with all other parameters.
+
+                        2.4. Growth and Yield Modeling, Taper Equation Interactions, and Thinning Intensities
+                             We initialized the northwest Oregon variant of the nonspatial, individual tree growth
+                        model Organon [70,71] with measurements from 30-year-old, even-age Douglas-fir and
+                        western hemlock permanent sample plots [18] and projected stand growth over the next
+                        55–70 years. For each five-year timestep, we estimated per hectare harvest cost probability
+                        distributions for unthinned and thinned rotations by calculating stemwise cycle times for
+                        each individual tree present in the growth model and roundtrip cycle times for the volume
+                        of wood harvested per hectare. Stem cutting diameters and piece weights were estimated
+                        from using species specific taper equations, densities, and rates of bark loss [64,72–74].
+                        Financially preferred rotations, thinning intensities, and timings were identified by classic
+                        Faustmann land expectation values [75] calculated from mean timber prices over the past
+                        decade [76] net of harvest costs at a 4% discount rate [77]. We considered even-age rotations
+                        with up to three proportional thins and harvest intensities from 20–50% for each thin with
+                        step sizes of 1–3%.
+           Forests
+Forests 2022,      2022, 13, x FOR PEER REVIEW
+              13, 305                                                                                                                         6 of 17      6 of 16
+
+
+
+                                            decade [76] net of harvest costs at a 4% discount rate [77]. We considered even-age rota-
+                                       3. Results
+                                           tions with up to three proportional thins and harvest intensities from 20–50% for each thin
+                                            with step sizes of differences
+                                            Physiological      1–3%.       between coast Douglas-fir and western hemlock resulted
+                                       in distinct silvicultural approaches, harvest cost distributions, and patterns of harvest
+                                            3. Results
+                                       equipment selection (Figures 2–5). Douglas-fir is a shade intermediate species capable
+                                                  Physiological differences between coast Douglas-fir and western hemlock resulted in
+                                       of more rapid growth than the shade tolerant western hemlock (50-year site indices of
+                                            distinct silvicultural approaches, harvest cost distributions, and patterns of harvest equip-
+                                       39.6 ment
+                                            and 29.1      m, respectively,
+                                                   selection    (Figures 2–5). for    the site isused
+                                                                                  Douglas-fir            in this
+                                                                                                   a shade          study [18])
+                                                                                                               intermediate        hascapable
+                                                                                                                               species  mean wood of moreprices 22%
+                                       higher
+                                            rapid growth than the shade tolerant western hemlock (50-year site indices of 39.6 and therefore
+                                                [76],   and    log  densities      9%   lower    [64]  than     hemlock.      Douglas-fir     rotations
+                                       supported       up to threefor
+                                            29.1 m, respectively,       thins
+                                                                           the beginning        at age
+                                                                                site used in this   study35,[18])
+                                                                                                               rather   than wood
+                                                                                                                   has mean    at most    one22%
+                                                                                                                                      prices    thinning
+                                                                                                                                                   higher for hem-
+                                            [76], and    log  densities   9%  lower    [64]  than  hemlock.     Douglas-fir
+                                       lock (Figures 2 and 4a,e). Douglas-fir trees grew to larger sizes and produced          rotations  therefore  sup-
+                                                                                                                                                        larger logs
+                                            ported    up  to three  thins  beginning     at age  35, rather   than  at most
+                                       than western hemlock even though Douglas-fir rotations were 15 years shorter than hem-one  thinning   for hemlock
+                                       lock(Figures
+                                             rotations  2 and   4a,e). Douglas-fir
+                                                            (Figures     3 and 5i–k). trees   grew to equipment
+                                                                                           Harvest     larger sizes and     produced
+                                                                                                                         therefore      larger logs than
+                                                                                                                                      encountered      larger stem-
+                                            western hemlock even though Douglas-fir rotations were 15 years shorter than hemlock
+                                       wise quadratic cycle time contributions (Equation (1)) in Douglas-fir. Douglas-firs were also
+                                            rotations (Figures 3 and 5i,j,k). Harvest equipment therefore encountered larger stemwise
+                                       morequadratic
+                                              likely tocycle
+                                                           exceedtimemechanized
+                                                                        contributionsequipment
+                                                                                          (Equation (1))limits    (Sections 2.3
+                                                                                                             in Douglas-fir.       and S4), resulting
+                                                                                                                                Douglas-firs   were alsoin greater
+                                       costsmore
+                                              for manual
+                                                    likely to exceed mechanized equipment limits (Sections 2.3 and S4), resulting inthese two
+                                                                chainsaw       labor    beginning       from     age   45  (Figure   6).  Combined,
+                                       effects  led to
+                                            greater        well-defined
+                                                       costs                  minima labor
+                                                              for manual chainsaw          in Douglas-fir
+                                                                                                  beginning from harvest     cost
+                                                                                                                        age 45     around
+                                                                                                                                (Figure       age 50–60 whereas
+                                                                                                                                          6). Combined,
+                                            these  two    effects led  to well-defined     minima    in Douglas-fir
+                                       minima were absent or shallow for western hemlock (Figures 2 and 4a,b,e,f).      harvest  cost around   age 50–60
+                                                                                                                                                     Despite these
+                                            whereas     minima    were    absent  or shallow    for  western    hemlock
+                                       differences, overall ranges of harvest costs were similar between the two species,  (Figures  2 and  4a,b,e,f). De- though
+                                            spite these differences, overall ranges of harvest costs were similar between the two spe-
+                                       thinning in hemlock tended to be somewhat more expensive (Table 2).
+                                            cies, though thinning in hemlock tended to be somewhat more expensive (Table 2).
+
+
+
+
+                                            Figure 2. Estimated range of coast Douglas-fir (Pseudotsuga menziesii var menziesii (Mirb.) Franco)
+                                       Figure  2. Estimated range of coast Douglas-fir (Pseudotsuga menziesii var menziesii (Mirb.) Franco)
+                                            harvest costs as a function of harvest unit slope, tethered corridor length (a,b,e,f), and the lowest
+                                       harvest costs as a function of harvest unit slope, tethered corridor length (a,b,e,f), and the lowest
+                                       cost regeneration harvest system (c,d,g,h) across 10,000 Monte Carlo draws of harvest cost model
+                                       parameter sets. (i) and (j) indicate the corresponding harvest volumes and (k) the eight-wheel
+                                       forwarder payload in merchantable m3 . Rotations less than 50 years are unthinned, rotations of
+                                       50–60 years include one proportional thin at age 35–40, rotations of 65–70 years have two proportional
+                                       thins at ages 35 and 45–50, and rotations of 75–85 years have three proportional thins at ages 35, 45,
+                                       and 55–65 years. All things were performed by an eight-wheel harvester-forwarder pair.
+                                     cost regeneration harvest system (c,d,g,h) across 10,000 Monte Carlo draws of harvest cost model
+                                     parameter sets. (i) and (j) indicate the corresponding harvest volumes and (k) the eight-wheel for-
+                                     warder payload in merchantable m3. Rotations less than 50 years are unthinned, rotations of 50–60
+Forests 2022, 13, 305                years include one proportional thin at age 35–40, rotations of 65–70 years have two proportional 7 of 16
+                                     thins at ages 35 and 45–50, and rotations of 75–85 years have three proportional thins at ages 35, 45,
+                                     and 55–65 years. All things were performed by an eight-wheel harvester-forwarder pair.
+
+
+
+
+                                  Figure 3.
+                                 Figure     3. Harvest
+                                                Harvestequipment
+                                                         equipmentproductivity
+                                                                       productivity   (a–h),  coast
+                                                                                         (a–h),     Douglas-fir
+                                                                                                coast  Douglas-firtreetree
+                                                                                                                        sizes  (i,j),(i,j),
+                                                                                                                             sizes    and and
+                                                                                                                                            log sizes (k)
+                                                                                                                                                 log sizes
+                                  resulting    in the harvest  costs of Figure  2.  Insets  in (b) and  (f) show   the  full range    of  feller-buncher
+                                 (k) resulting in the harvest costs of Figure 2. Insets in (b) and (f) show the full range of feller-buncher
+                                  productivity. Productivity is measured in merchantable m33per delay-free productive machine hour
+                                 productivity. Productivity is measured in merchantable              m per delay-free productive machine hour
+                                  (PMh0). Tree and log sizes are also in merchantable m33using the BC Firmwood scale with 7.3 m logs
+                                 (PMh  0 ).  Tree  and log sizes are also in merchantable       m
+                                  from thinning and 12.2 m logs from regeneration harvests. Dashed  using  the BC Firmwood        scale withthe
+                                                                                                                    line in (k) indicates       7.3upper
+                                                                                                                                                    m logs
+                                 from  thinning      and 12.2  m logs  from  regeneration      harvests.   Dashed    line in  (k)
+                                  bound imposed by cable yarding weight limits. Logs which would exceed this bound must instead    indicates    the upper
+                                 bound    imposed
+                                  be bucked           by cable
+                                                 to shorter,    yarding
+                                                             yardable    weightLog
+                                                                       lengths.    limits.  Logs
+                                                                                        loader     which would
+                                                                                                productivity       exceed
+                                                                                                               is not  shown thisasbound     mustmodels
+                                                                                                                                     no loader     instead
+                                  were
+                                 be     identified
+                                     bucked           (Section
+                                                to shorter,    2.1, Supplementary
+                                                             yardable  lengths. Log Material      Table S1). is not shown as no loader models
+                                                                                        loader productivity
+                                 were identified (Section 2.1, Supplementary Material Table S1).
+
+                                 Table 2. Means and 95% intervals (in parenthesis) observed across 10,000 Monte Carlo parameter
+                                 draws for thinning and regeneration harvests in Douglas-fir and western hemlock. Time totals are
+                                 PMh0 sums across all machines in the harvest systems considered (Figure 1), including trucking.
+
+                 Summary Statistic                     Douglas-Fir               Western Hemlock                Hemlock Increase in Mean (%)
+       thinning time (total PMh0     ha −1 )            36 (26–53)                   38 (21–55)                                  5.1
+           thinning cost (US$ m −3 )                    45 (31–68)                   48 (31–74)                                  7.1
+ regeneration harvest time (total PMh0 ha −1 )         115 (64–163)                 153 (69–220)                                 33.6
+     regeneration harvest cost (US$ m −3 )              37 (30–46)                   38 (31–47)                                  0.9
+Forests 2022, 13, 305                                                                                                                              8 of 16
+       Forests 2022, 13, x FOR PEER REVIEW                                                                                               8 of 17
+
+
+
+
+                                        Figure 4. Estimated range of western hemlock (Tsuga heterophylla (Raf.) Sarg.) harvest costs as a
+                                     Figure 4. Estimated range of western hemlock (Tsuga heterophylla (Raf.) Sarg.) harvest costs as a
+                                        function of slope and corridor length (a,b,e,f), lowest cost regeneration harvest system (c,d,g,h),
+                                     function  of slope andharvest
+                                        and corresponding     corridor  length(i)(a,b,e,f),
+                                                                    volumes       and (j) inlowest cost regeneration
+                                                                                             merchantable              harvest
+                                                                                                           m3 ha−1. Rotations     system
+                                                                                                                               less than 90(c,d,g,h), and
+                                     corresponding     harvest
+                                        years are unthinned  andvolumes
+                                                                  rotations(i)
+                                                                            of and
+                                                                               90–100(j)years
+                                                                                         in merchantable   m3 ha−1 . Rotations
+                                                                                              include one proportional               less than
+                                                                                                                        thin at age 45–70.  As 90 years
+                                        with Douglas-fir, thins are performed   by  an  eight-wheel harvester-forwarder   pair  with
+                                     are unthinned and rotations of 90–100 years include one proportional thin at age 45–70. As with forwarder
+                                        payload in merchantable m3 shown in (k).
+                                     Douglas-fir, thins are performed by an eight-wheel harvester-forwarder pair with forwarder payload
+                                     in merchantable m3 shown in (k).
+
+                                          Both extraction distance and slope significantly impacted harvest costs (p < 0.001).
+                                     Increasing slope increased stemwise cycle times (Equation (1)), lowering productivity
+                                     (Figures 3 and 5a,b,e,f) and, therefore, increased harvest cost as more machine hours were
+                                     required to complete a harvest. Increasing slope from 65 to 80% decreased forwarder
+                                     payload by 56% (Figures 2k and 4k, Equation (S1)), requiring 1.8 times as many forwarder
+                                     turns to extract a given volume of wood. The corresponding increase in harvester hours
+                                     was 1.13 times. Decreased payload was thus the primary cause of increased thinning
+                                     costs on steeper slopes. Engine power did not limit forwarding speeds because driving
+                                     speed while loading is more constraining than engine power. Similarly, extracting wood
+                                     from 500 m long corridors increased forwarding times compared to 200 m long corridors,
+                                     lowering forwarding productivity (Figures 3 and 5a,e) and also increasing thinning costs.
+                                     Additionally, 500 m corridors exceeded the 280–350 m cable length limit of the add on
+                                     winches available for use with eight-wheel harvesters and forwarders (Table S6). In such
+                                     cases, harvesters and forwarders were supported by separate anchor machines, increasing
+                                     costs compared to the use of an add-on winch powered by the harvester or forwarder.
+Forests 2022, 13, 305                                                                                                                                9 of 16
+        Forests 2022, 13, x FOR PEER REVIEW                                                                                                9 of 17
+
+
+
+
+                                         Figure
+                                     Figure  5. 5.Harvest
+                                                   Harvest equipment
+                                                            equipment productivity
+                                                                         productivity (a–h), western
+                                                                                         (a–h),       hemlock
+                                                                                                 western        tree sizes
+                                                                                                           hemlock     tree(i,j),
+                                                                                                                             sizesand(i,j),
+                                                                                                                                       log sizes
+                                                                                                                                            and (k)
+                                                                                                                                                 log sizes
+                                         resulting in the harvest costs of Figure 4. Units, scaling, and insets are the same as for Douglas-fir
+                                     (k) resulting  in the harvest  costs of Figure  4. Units,  scaling, and  insets  are the   same   as  for
+                                         (Figure 3) with the yarding weight limit indicated by the dashed line in (k) being lower as central   Douglas-fir
+                                     (Figure  3) with
+                                         estimates      the yarding
+                                                   of hemlock’s      weight
+                                                                 green        limit indicated
+                                                                        wood density             by thethan
+                                                                                       are 10% higher    dashed   line in (k) being lower as central
+                                                                                                            for Douglas-fir.
+                                     estimates of hemlock’s green wood density are 10% higher than for Douglas-fir.
+
+                                           The long log systems used with regeneration harvests were less sensitive to slope and
+                                     distance than the cut-to-length, eight-wheel harvester-forwarder system we assumed for
+                                     thinning. Since yarders, processors, and loaders were assumed to operate from landings
+                                     or roadsides, their productivity was unaffected by the harvest unit’s prevailing slope
+                                     (Figures 3 and 5b–d,f–h). Similar to forwarding, yarding speeds did not appear to be
+                                     constrained by engine power, possibly due to line speeds of partially suspended turns
+                                     being limited by concern for hangups. Most cable yarders we surveyed could access the
+                                     full length of 500 m corridors without cable extensions (Table S6). Additionally, the tracked
+                                     feller-bunchers and harvesters considered were tethered by anchor machines and hence did
+                                     require additional equipment to operate on corridors longer than 280–350 m. As slope and
+                                     extraction distance increased, the long log systems exhibited an increasing cost advantage
+                                     compared to a harvester-forwarder, cut-to-length system.
+                                           Yarder productivity was influential to harvest equipment selection in long log sys-
+                                     tems. Despite its 45% higher operating cost on an hourly basis (Table S4), most Monte
+                                     Carlo parameter draws selected a swing yarder over an excavator-based yarder. Higher
+                                     yarder productivity on 200 m corridors was associated with increased selection of a
+                                     feller-buncher, even though the use of a feller-buncher typically increased chainsaw costs
+                                     (Figures 2 and 4c,d,g,h and 7). The more rapid yarding allowed greater processor and
+                                     loader utilization, making it more likely operating a feller-buncher with manual chainsaw
+                                     bucking and a processor would be more cost effective than operating a single harvester at
+Forests 2022, 13, 305                                                                                                                             10 of 16
+
+
+
+
+                                   lower productivity (Figures 3 and 5b,f). With 500 m corridors, this effect reversed and har-
+                                  vesters were generally preferred. Because we assumed tracked harvesters were equipped
+                                  with higher capacity processing heads than those currently available on an eight-wheel
+Forests 2022, 13, x FOR PEER REVIEW                                                                                   10 of 17
+                                   harvester, tracked harvesters were more likely to be preferred at increasing stand ages due
+                                   to lower chainsaw costs (Figures 2, 4c,d,g,h and 6a,b,e,f).
+
+
+
+
+                                             Distribution
+                               Figure 6.6.Distribution
+                               Figure                         of harvest
+                                                           of harvest  costscosts  resulting
+                                                                              resulting   from from
+                                                                                                 manual manual    chainsaw
+                                                                                                           chainsaw    buckingbucking       andoffelling
+                                                                                                                                  and felling     Doug- of
+                               las-fir (a,b) and
+                               Douglas-fir     (a,b)western   hemlock
+                                                     and western         stems (e,f)
+                                                                     hemlock    stems  exceeding   the weight
+                                                                                         (e,f) exceeding         or diameter
+                                                                                                            the weight           limits oflimits
+                                                                                                                           or diameter      mechanized
+                                                                                                                                                 of mecha-
+                               equipment
+                               nized equipmentas a function    of treeofspecies
+                                                      as a function              and harvest
+                                                                          tree species            equipment
+                                                                                          and harvest           used. used.
+                                                                                                         equipment       (c,d,g,h) indicate
+                                                                                                                                (c,d,g,h)     whichwhich
+                                                                                                                                           indicate   ap-
+                               proach    to staffing  manual    chainsaw    work   is most   likely to  result in the   lowest
+                               approach to staffing manual chainsaw work is most likely to result in the lowest cost for thinningcost for thinning   (c,g)
+                               and regeneration harvests (d,h). In most cases, felling trees using mechanized equipment prior to
+                               (c,g) and regeneration harvests (d,h). In most cases, felling trees using mechanized equipment prior
+                               manual bucking by a member of the cable yarding crew is preferred (Sections 1, 2.1, S2, and S4).
+                               to manual bucking by a member of the cable yarding crew is preferred (Sections 1, 2.1, S2 and S4).
+                               Staffing bars do not reach a probability of one as chainsaw work is not always required. For exam-
+                               Staffing
+                               ple,       bars do trees
+                                    no hemlock      not reach   a probability
+                                                           exceeded   mechanizedof one   as chainsaw
+                                                                                      limits  in thinningwork
+                                                                                                            andisregeneration
+                                                                                                                  not always required.
+                                                                                                                                  harvests inFor  example,
+                                                                                                                                               hemlock
+                               no hemlock
+                               did  not exceed trees
+                                                  theexceeded
+                                                       assumedmechanized
+                                                                  capabilities oflimits   in thinning
+                                                                                    a tracked            and regeneration harvests in hemlock did
+                                                                                                 harvester.
+                               not exceed the assumed capabilities of a tracked harvester.
+                               Table 2. Means and 95% intervals (in parenthesis) observed across 10,000 Monte Carlo parameter
+                               drawsSensitivity
+                                        for thinninganalysis     of the parameters
+                                                        and regeneration     harvests infor     the harvest
+                                                                                             Douglas-fir    andcost   model,
+                                                                                                                 western         otherTime
+                                                                                                                             hemlock.    than totals
+                                                                                                                                               slopeare and
+                               extraction
+                               PMh             distance,
+                                     0 sums across           found that
+                                                       all machines   in thelog  transport
+                                                                              harvest    systems(Pl,kg , v, troundtrip
+                                                                                                   considered          ) and
+                                                                                                                 (Figure    1), equipment      operating
+                                                                                                                                including trucking.
+                               costs were consistently among the most influential      Douglas-
+                                                                                                    parameters    (Figure 7).
+                                                                                                             Western
+                                                                                                                               Other influen-
+                                                                                                                             Hemlock Increase
+                               tial parameters  Summary
+                                                      were Statistic
+                                                              the eight-wheel harvester         constant and linear    cycle time  coefficients
+                                                                                            fir             Hemlock            in Mean   (%)
+                               (b0 , b1 )thinning
+                                           and the    onset     of slope
+                                                   time (total PMh0 ha ) −1   induced decline
+                                                                                       36 (26–53)in productivity   (S
+                                                                                                            38 (21–55)t ). While  eight-wheel
+                                                                                                                                    5.1
+                               harvesters       were cost
+                                             thinning  expected
+                                                            (US$ m −3to) be influential45to(31–68)
+                                                                                             thinning because    other felling and
+                                                                                                            48 (31–74)              7.1 process-
+                                 regeneration    harvest time  (total PMh   0 ha −1)  115  (64–163)        153 (69–220)
+                               ing machines were not considered, eight-wheel harvesters retained their influence in                33.6
+                                     regeneration harvest cost (US$ m −3)              37 (30–46)           38 (31–47)
+                               regeneration       harvests where feller-bunchers,           tracked harvesters,    and processors0.9 were con-
+                               sidered. Chainsaw parameters had limited influence because chainsaw costs were low
+                                     Both extraction distance and slope significantly impacted harvest costs (p < 0.001).
+                               in thinning and equipment selection for regeneration harvests limited chainsaw costs
+                               Increasing slope increased stemwise cycle times (Equation (1)), lowering productivity
+                               (Figures 2, 4c,d,g,h and 6b,f).
+                               (Figures 3 and 5a,b,e,f) and, therefore, increased harvest cost as more machine hours were
+                               required to complete a harvest. Increasing slope from 65 to 80% decreased forwarder pay-
+                               load by 56% (Figures 2k and 4k, Equation (S1)), requiring 1.8 times as many forwarder
+                               turns to extract a given volume of wood. The corresponding increase in harvester hours
+                               was 1.13 times. Decreased payload was thus the primary cause of increased thinning costs
+                               on steeper slopes. Engine power did not limit forwarding speeds because driving speed
+                               while loading is more constraining than engine power. Similarly, extracting wood from
+                               500 m long corridors increased forwarding times compared to 200 m long corridors, low-
+ Forests2022,
+Forests  2022,13,
+              13, 305
+                  x FOR PEER REVIEW                                                                                                            12 of 17 16
+                                                                                                                                                  11 of
+
+
+
+
+                                 Figure 7.7.The
+                                 Figure        The1010   most
+                                                      most         influential
+                                                               influential       harvest
+                                                                             harvest  costcost
+                                                                                           modelmodel     parameters
+                                                                                                   parameters           identified
+                                                                                                                  identified         by sensitivity
+                                                                                                                              by Soboľ   Sobol’ sensitivity
+                                                                                                                                                     anal-
+                                 ysis   for Douglas-fir
+                                 analysis    for Douglas-fir(a,b) (a,b)
+                                                                     and western    hemlock
+                                                                            and western        (c,d) as(c,d)
+                                                                                           hemlock        a function   of stand
+                                                                                                               as a function   ofage  andage
+                                                                                                                                  stand     harvest  type.
+                                                                                                                                               and harvest
+                                 Harvest    unit corridor
+                                 type. Harvest                 lengthlength
+                                                   unit corridor        and slope
+                                                                                and influence   harvestharvest
+                                                                                    slope influence        costs as wellasbut
+                                                                                                                  costs        were
+                                                                                                                            well butexcluded     from this
+                                                                                                                                      were excluded    from
+                                 analysis   as  their  effects     are displayed   in  Figures
+                                 this analysis as their effects are displayed in Figures        2–5. v̅  =
+                                                                                                      2–5.  yarding
+                                                                                                              v =    line
+                                                                                                                  yarding speed,
+                                                                                                                            line  both
+                                                                                                                                 speed, loaded
+                                                                                                                                         both     and un-
+                                                                                                                                                loaded  and
+                                 loaded, or forwarding speed (Equation (2)). $ SMh −1 = operating        −  1       cost per scheduled machine hour
+                                 unloaded, or forwarding speed (Equation (2)). $ SMh                          = operating cost per scheduled machine
+                                 (Table S4). b0, b1, and St are stemwise cycle time coefficients (Equation (1)). Pl,kg = forwarding or yard-
+                                 hour    (Table  S4).  b  , b   , and
+                                 ing payload in kg (Section S1.2), 𝑃 ,
+                                                        0     1        S t are stemwise   cycle
+                                                                                        =power   time   coefficients
+                                                                                          power of forwarder payload  (Equation   (1)). Pl,kg = forwarding
+                                                                                                                              in merchantable      m3 (Pl,c,
+                                 or yarding     payload      in   kg  (Section  S1.2),
+                                 Table S2). troundtrip = roundtrip trucking time l,c   P       =  power
+                                                                                         (Table S3).        of forwarder   payload   in merchantable      m3
+                                 (Pl,c , Table S2). troundtrip = roundtrip trucking time (Table S3).
+                                       Sensitivity analysis of the parameters for the harvest cost model, other than slope and
+                                 4. Discussions
+                                 extraction   distance, found that log transport (P̅l,kg, v̅, troundtrip) and equipment operating costs
+                                 were The
+                                        consistently    among
+                                             harvest cost        the most
+                                                             model            influential
+                                                                       developed       hereparameters
+                                                                                              attempts to(Figure
+                                                                                                              provide  7).reasonable,
+                                                                                                                             Other influential
+                                                                                                                                           default  pa-pa-
+                                 rameters    were the
+                                 rameterizations        eight-wheel
+                                                      across  a range harvester       constant
+                                                                         of steep slope           andsystems.
+                                                                                             harvest   linear cycle      time coefficients
+                                                                                                                    However,                      0, b1)
+                                                                                                                                  it relies on(bextrap-
+                                 and   the from
+                                 olation    onsetaoflimited
+                                                      slope induced
+                                                              body of decline
+                                                                          results in   productivity
+                                                                                    obtained             (St). While
+                                                                                                 from smaller       treeseight-wheel      harvesters
+                                                                                                                             on lower angle      slopes
+                                 were   expected    to be influential    to thinning     because    other   felling  and
+                                 (Section 2.1) and tethered harvesting equipment remains relatively new technology with      processing    machines
+                                 were
+                                 somenot     considered, eight-wheel
+                                          manufacturers,     at least, makingharvesters
+                                                                                   multiple retained
+                                                                                                changestheirperinfluence
+                                                                                                                  year [9].inBecause
+                                                                                                                                regeneration      har-of
+                                                                                                                                           all types
+                                 vests
+                                 harvest where   feller-bunchers,
+                                            equipment    considered   tracked   harvesters,selected,
+                                                                        were sometimes          and processors
+                                                                                                           it appears were     considered.
+                                                                                                                           likely             Chain-
+                                                                                                                                  which equipment
+                                 saw   parameters
+                                 is most    preferred had  limited
+                                                         will depend  influence    becausecost
+                                                                          on operating         chainsaw      costs were low
+                                                                                                    and productivity              in thinning
+                                                                                                                              details              and
+                                                                                                                                       of the specific
+                                 equipment
+                                 crew members   selection   for regeneration
+                                                     and harvest       equipmentharvests
+                                                                                       available.limited    chainsaw
+                                                                                                     It is also   likelycosts      (Figures
+                                                                                                                             that the   sizes, 2shapes,
+                                                                                                                                                   and
+                                 4c,d,g,h
+                                 and slopes andofFigure
+                                                   harvest6b,f).
+                                                             units will affect which harvest systems are preferred. In particular,
+                                 the proposed model relies heavily on just two studies of yarders, one of excavator-based
+                                 4. Discussions
+                                 yarding    on slopes less than 50% in Malaysia [51] and one of an older swing yarder operating
+                                 in young     Douglas-fir
+                                       The harvest           on slopes
+                                                       cost model          less than
+                                                                      developed         60%
+                                                                                     here      [5]. In addition,
+                                                                                            attempts    to providethe       diversity of
+                                                                                                                        reasonable,         results
+                                                                                                                                         default    pa-for
+                                 harvesters [26,28,31–34,36,38]
+                                 rameterizations      across a rangesuggests
+                                                                          of steep no    single
+                                                                                     slope        model
+                                                                                              harvest      is likelyHowever,
+                                                                                                        systems.      to accurately      represent
+                                                                                                                                    it relies  on ex-all
+                                 machines. Notably,
+                                 trapolation               increasing
+                                                from a limited      bodyselection
+                                                                            of results  of obtained
+                                                                                           tracked harvesters
+                                                                                                       from smaller   at later
+                                                                                                                            treesstand
+                                                                                                                                  on lowerages angle
+                                                                                                                                                 results
+                                 from    assuming     they   are  fitted   with   larger    capacity    processing
+                                 slopes (Section 2.1) and tethered harvesting equipment remains relatively new technologyheads    than    eight-wheel
+                                 harvesters
+                                 with          (Table S6). Withatheads
+                                        some manufacturers,           least, of equalmultiple
+                                                                             making      capacity,changes
+                                                                                                     a wheeled  perharvester      may beall
+                                                                                                                     year [9]. Because       preferred.
+                                                                                                                                                types
+                                        Given  observed    model     sensitivities   (Figures    2, 4c,d,g,h   and   7),
+                                 of harvest equipment considered were sometimes selected, it appears likely which equip-  further  study   comparing
+                                 productivity
+                                 ment    is most and   operating
+                                                  preferred   will costs
+                                                                    depend  of excavator-based
+                                                                               on operating costand    andswing      yarders details
+                                                                                                              productivity      appearsoflikely     to be
+                                                                                                                                             the spe-
+                                 effective
+                                 cific crewinmembers
+                                               improving andunderstanding
+                                                               harvest equipment of model      uncertainty.
+                                                                                         available.   It is alsoBecause     theirthe
+                                                                                                                  likely that     selection    interacts
+                                                                                                                                      sizes, shapes,
+                                 with yarder productivity, comparative study of wheeled harvesters, tracked harvesters, and
+Forests 2022, 13, 305                                                                                           12 of 16
+
+
+
+
+                        processors also seems likely to better quantify—and possibly reduce—model uncertainty.
+                        Understanding harvest contractors’ reasons for selecting excavator-based yarders over
+                        other options may be valuable since, for example, the potential for more cost effective
+                        operation with a swing yarder is irrelevant if its more expensive purchase cannot be
+                        financed. While only grapple yarding in regeneration harvests was considered here, lateral
+                        yarding with chokers allows cable yarders to be used in thinning. While choker yarding is
+                        higher cost (Table S4) and lower productivity [5] than grapple yarding, it may provide more
+                        cost effective thinning than harvester-forwarder systems when slopes are steep enough
+                        and corridors long enough.
+                              More complete understanding of tethered forwarder payloads also appears important.
+                        While forwarder tractive force was excluded from this study’s Monte Carlo parameter
+                        draws and sensitivity analysis because it is primarily a property of the harvest unit, surface
+                        conditions can affect forwarder travel speeds by a factor of two [63] and payload changes of
+                        ±20% or more appear plausible. Since cut-to-length harvest systems can be cost competitive
+                        with long log systems (Figures 2 and 4a,b), it appears likely that steep slope conditions exist
+                        where harvester-forwarder pairs are more cost effective than cable yarder-based systems for
+                        regeneration harvests. Some harvester-forwarder operators suggest this is the case [39] and
+                        preferentially schedule steeper slope operations for seasons where traction is greater [9].
+                              The apparent lack of loader models prevented assessment of harvest cost sensitivity
+                        to loader productivity parameters and may affect sensitivity to loader costs. Since loader
+                        operating costs are among the most influential parameters for long log harvest costs
+                        (Figure 7b,d) and would also occur when cut-to-length systems include loaders (Figure 1a)
+                        this suggests log loaders are an understudied type of harvest equipment. It follows that
+                        time and motion studies to develop loader cycle time models would be valuable to the
+                        completeness of harvest system models, creating an ability to quantify and prioritize
+                        loader uncertainties.
+                              We caution that the results presented here do not consider site, machine, or operator
+                        specific uncertainty due to the confidential nature of private harvest contractors’ operating
+                        costs. While contractors we work with have indicated consistency with their typical
+                        cut-to-length and cable yarding costs, they have declined to share details of their unit-
+                        level production targets needed for more complete model calibration. Productivities
+                        reported in the literature (Table 1) sometimes differ by a factor of two or more, even for
+                        apparently comparable equipment and sites, and utilization can differ by 20% or more
+                        among crews [51]. Where possible, it is therefore recommended to use specific, rather than
+                        generalized, parameter estimates and to consider the parameterization details discussed in
+                        the Supplementary Material.
+                              As with harvest cost models, growth model parameters are uncertain. However,
+                        parameter uncertainty has not been expressed for the growth model used in this study and
+                        we did not consider taper equation uncertainty. Tree growth and mortality is also subject
+                        to future climate uncertainty as well as episodic disturbance. Broader analysis to place
+                        harvest cost uncertainties into context with biotic and other abiotic uncertainties therefore
+                        appears desirable.
+
+                        5. Conclusions
+                             To our knowledge, this study is the first to propose a stump to mill harvest cost model
+                        enabling comparison of harvest systems across a range of tree sizes from 0–15 merchantable
+                        m3 and slopes of 0–100%. While the model exhibits plausible behavior and we conducted
+                        both uncertainty and sensitivity analyses, it is subject to present limits in the knowledge
+                        of how tethered harvest equipment functions across tree size and slope. Therefore, the
+                        choices of model form and parameter values are somewhat speculative. Consequently,
+                        further study is needed to better understand the structure and parameterization of steep
+                        slope harvest cost models, particularly in regards to comparative interactions between
+                        harvest system types, harvest equipment types, specific machines, and operator abilities.
+Forests 2022, 13, 305                                                                                                                13 of 16
+
+
+
+
+                                   Since the proposed model considers only internal harvest costs for labor and equipment, its
+                                   extension to external harvest costs, such as the social cost of carbon, also appears desirable.
+
+                                   Supplementary Materials: The following are available online at https://www.mdpi.com/article/
+                                   10.3390/f13020305/s1, Sections S1–S5 with Figure S1, Tables S1–S6, and spreadsheet with Miyata
+                                   operating cost model parameters, resulting estimated operating costs, model parameter counts, and
+                                   listing of the 68 parameters varied in Monte Carlo and Sobol’ analysis. The Supplementary Material
+                                   also cites sources [78–84].
+                                   Author Contributions: Conceptualization, T.W. and J.S.; methodology, T.W. and J.S.; software, T.W.;
+                                   validation, T.W. and J.S.; formal analysis, T.W.; investigation, T.W.; resources, B.M.S.; data curation,
+                                   T.W.; writing—original draft preparation, T.W.; writing—review and editing, T.W., J.S. and B.M.S.;
+                                   visualization, T.W.; supervision, B.M.S.; project administration, B.M.S.; funding acquisition, J.S. and
+                                   B.M.S. All authors have read and agreed to the published version of the manuscript.
+                                   Funding: This research was funded by the Oregon State University Graduate School and U.S.
+                                   Department of Agriculture, grant number 2019-67019-29462.
+                                  Data Availability Statement: Tree growth data was obtained from [18] and is available from https:
+                                  //www.mkrf.forestry.ubc.ca/research/research-projects-database/ (accessed on 10 February 2022)
+                                  with the permission of the University of British Columbia.
+                                   Acknowledgments: We thank Preston Green (Miller Timber Services) for information on operation
+                                   of tethered cut-to-length harvest systems, Ken Hoffine and Eric Parazoo (Lone Rock Resources) for
+                                   information on operation on cable yarder systems, Kathy Kihara (civil engineer, retired) for describing
+                                   approaches to heavy equipment maintenance and operator compensation and scheduling, and Doug
+                                   Maguire (Oregon State University, emeritus) for observations on taper equation behavior when
+                                   predicting felling diameters.
+                                   Conflicts of Interest: The authors declare no conflict of interest. The funders had no role in the design
+                                   of the study; in the collection, analyses, or interpretation of data; in the writing of the manuscript, or
+                                   in the decision to publish the results.
+
+References
+1.    Parkatti, V.-P.; Tahvonen, O. Optimizing continuous cover and rotation forestry in mixed-species boreal forests. Can. J. For. Res.
+      2020, 50, 1138–1151. [CrossRef]
+2.    Fransson, P.; Franklin, O.; Lindroos, O.; Nilsson, U.; Brännström, Å. A simulation-based approach to a near-optimal thinning
+      strategy: Allowing harvesting times to be determined for individual trees. Can. J. For. Res. 2019, 320–331. [CrossRef]
+3.    Visser, R.; Harrill, H. Cable Yarding in North America and New Zealand: A Review of Developments and Practices. Croat. J. For.
+      Eng. 2017, 38, 209–217.
+4.    Lindroos, O.; Cavalli, R. Cable yarding productivity models: A systematic review over the period 2000–2011. Int. J. For. Eng. 2016,
+      27, 79–94. [CrossRef]
+5.    Hartley, D.S.; Han, H.-S. Effects of Alternative Silvicultural Treatments on Cable Harvesting Productivity and Cost in Western
+      Washington. West. J. Appl. For. 2007, 22, 204–212. [CrossRef]
+6.    Visser, R.; Stampfer, K. Expanding Ground-based Harvesting onto Steep Terrain: A Review. Croat. J. For. Eng. 2015, 36, 321–331.
+7.    Holzleitner, F.; Kastner, M.; Stampfer, K.; Höller, N.; Kanzian, C. Monitoring Cable Tensile Forces of Winch-Assist Harvester and
+      Forwarder Operations in Steep Terrain. Forests 2018, 9, 53. [CrossRef]
+8.    Amishev, D.; Hunt, J.; Boswell, B. Best Management Practices for Winch-Assist Equipment, version 2.0.; FPInnovations: Pointe-Claire,
+      QC, Canada, 2019. Available online: https://www2.bcforestsafe.org/node/3452 (accessed on 10 February 2022).
+9.    Ponsse Solutions for Steep Slope Harvesting. Available online: https://www.youtube.com/watch?v=jz5nOIA-aSQ (accessed on
+      26 August 2021).
+10.   ClimbMAX Steep Slope Harvester. Available online: http://www.climbmax.co.nz/ (accessed on 27 September 2021).
+11.   Remote Operated Bulldozer for Steep Slope Felling. Available online: https://remotebulldozer.com/ (accessed on 27 Septem-
+      ber 2021).
+12.   OR-OSHA Administrative Order 5-2003. OAR 437-007–0935. 2003. Available online: https://osha.oregon.gov/rules/final/
+      Pages/division-7.aspx (accessed on 27 September 2021).
+13.   Naillon, T.; Rappin, C. Best Management and Operating Practices for Steep Slope Machine Logging. Safety and Health Assessment and
+      Research for Prevention (SHARP) Program; Washington State Department of Labor & Industries: Olympia, WA, USA, 2019. Available
+      online: https://www.lni.wa.gov/safety-health/safety-research/ongoing-projects/logging (accessed on 10 February 2022).
+14.   Bell, D.M.; Acker, S.A.; Gregory, M.J.; Davis, R.J.; Garcia, B.A. Quantifying regional trends in large live tree and snag availability
+      in support of forest management. For. Ecol. Manag. 2021, 479, 118554. [CrossRef]
+Forests 2022, 13, 305                                                                                                                  14 of 16
+
+
+
+
+15.   Puettmann, K.; Ares, A.; Burton, J.; Dodson, E. Forest Restoration Using Variable Density Thinning: Lessons from Douglas-Fir
+      Stands in Western Oregon. Forests 2016, 7, 310. [CrossRef]
+16.   Barbour, R.J.; Parry, D.L. Log and Lumber Grades as Indicators of Wood Quality in 20- to 100-Year-old Douglas-Fir Trees from Thinned and
+      Unthinned Stands; U.S. Department of Agriculture, Forest Service, Pacific Northwest Research Station: Portland, OR, USA, 2001.
+      Available online: https://www.fs.usda.gov/treesearch/pubs/2921 (accessed on 10 February 2022).
+17.   Ekholm, T. Optimal forest rotation under carbon pricing and forest damage risk. For. Policy Econ. 2020, 115, 102131. [CrossRef]
+18.   Malcolm Knapp Research Forest. Influence of Spacing on Growth of Douglas-Fir, Western hemlock, and Western Red Cedar in Plantations,
+      [dataset] RP 1957-05; University of British Columbia: Vancouver, BC, Canada, 2021. Available online: https://www.mkrf.forestry.
+      ubc.ca/research/research-projects-database/ (accessed on 10 February 2022).
+19.   Kline, J.D.; Harmon, M.E.; Spies, T.A.; Morzillo, A.T.; Pabst, R.J.; McComb, B.C.; Schnekenburger, F.; Olsen, K.A.; Csuti, B.; Vogeler,
+      J.C. Evaluating carbon storage, timber harvest, and habitat possibilities for a Western Cascades (USA) forest landscape. Ecol. Appl.
+      2016, 26, 2044–2059. [CrossRef]
+20.   Diaz, D.; Loreno, S.; Ettl, G.; Davies, B. Tradeoffs in Timber, Carbon, and Cash Flow under Alternative Management Systems for
+      Douglas-Fir in the Pacific Northwest. Forests 2018, 9, 447. [CrossRef]
+21.   Oregon State University College of Forestry. OSU Elliott State Research Forest Proposal; Oregon State University College of
+      Forestry: Corvallis, OR, USA, 2021. Available online: https://www.forestry.oregonstate.edu/elliott-state-forest/ (accessed on 27
+      September 2021).
+22.   Acuna, M.; Skinnell, J.; Evanson, T.; Mitchell, R. Bunching with a Self-levelling Feller-Buncher on Steep Terrain for Efficient Yarder
+      Extraction. Croat. J. For. Eng. 2011, 23, 521–531.
+23.   Amishev, D.; Evanson, T. Innovative methods for steep terrain harvesting. In Proceedings of the 43th International Symposium
+      on Forestry Mechanisation: “Forest Engineering: Meeting the Needs of the Society and the Environment”, Padova, Italy, 11–14
+      July 2010.
+24.   Dyson, P.; Boswell, B. Winch-Assisted Feller-Buncher Equipped with a Continuous-Rotation Disc Saw: Short-Term Productivity Assessment;
+      FPInnovations: Pointe-Claire, QC, Canada, 2016. Available online: https://library.fpinnovations.ca/en/permalink/fpipub40268
+      (accessed on 27 September 2021).
+25.   Wang, J.; Long, C.; McNeel, J. Production and cost analysis of a feller-buncher and grapple skidder in central Appalachian
+      hardwood forests. For. Prod. J. Madison 2004, 54, 159–167.
+26.   Eriksson, M.; Lindroos, O. Productivity of harvesters and forwarders in CTL operations in northern Sweden based on large
+      follow-up datasets. Int. J. For. Eng. 2014, 25, 179–200. [CrossRef]
+27.   Heisl, P. Productivity Standards for Whole-Tree and Cut-To-Length Harvesting Systems in Maine. Master’s Thesis, University of
+      Maine, Orono, ME, USA, 2013.
+28.   Kärhä, K.; Rönkkö, E.; Gumse, S.-I. Productivity and Cutting Costs of Thinning Harvesters. Int. J. For. Eng. 2004, 15, 43–56.
+      [CrossRef]
+29.   Nurminen, T.; Korpunen, H.; Uusitalo, J. Time consumption analysis of the mechanized cut-to-length harvesting system. Silva
+      Fenn. 2006, 40, 346. [CrossRef]
+30.   Visser, R.; Spinelli, R. Determining the shape of the productivity function for mechanized felling and felling-processing. J. For.
+      Res. 2012, 17, 397–402. [CrossRef]
+31.   Donald, K.; Boswell, B.; Amishev, D.; Hunt, J. Winch-Assist Harvester: Best Practices; FPInnovations: Pointe-Claire, QC, Canada,
+      2018; Available online: https://library.fpinnovations.ca/en/permalink/fpipub52594 (accessed on 27 September 2021).
+32.   Drews, E.S.; Hartsough, B.R.; Doyal, J.A.; Kellogg, L.D. Harvester-Forwarder and Harvester-Yarder Systems for Fuel Reduction
+      Treatments. J. For. Eng. 2001, 12, 81–91. [CrossRef]
+33.   Dyson, P.; Strimbu, V. Assessments of a Winch-Assisted John Deere Harvester and Forwarder; FPInnovations: Pointe-Claire, QC,
+      Canada, 2017. Available online: https://library.fpinnovations.ca/en/permalink/fpipub49568 (accessed on 27 September 2021).
+34.   Green, P.Q.; Chung, W.; Leshchinsky, B.; Belart, F.; Sessions, J.; Fitzgerald, S.A.; Wimer, J.A.; Cushing, T.; Garland, J.J. Insight into
+      the Productivity, Cost and Soil Impacts of Cable-assisted Harvester-forwarder Thinning in Western Oregon. For. Sci. 2020, 66,
+      82–96. [CrossRef]
+35.   Holzleitner, F.; Stampfer, K.; Visser, R. Utilization Rates and Cost Factors in Timber Harvesting Based on Long-term Machine
+      Data. Croat. J. For. Eng. 2011, 32, 501–508. Available online: https://hrcak.srce.hr/72653 (accessed on 10 February 2022).
+36.   Petitmermet, J.; Sessions, J.; Bailey, J.; Zamora-Cristales, R. Cost and Productivity of Tethered Cut-to-Length Systems in a
+      Dry-Forest Fuel-Reduction Treatment: A Case Study. For. Sci. 2019, 65, 581–592. [CrossRef]
+37.   Strandgard, M.; Alam, M.; Mitchell, R. Impact of Slope on Productivity of a Self-levelling Processor. Croat. J. For. Eng. 2014, 32,
+      193–200.
+38.   Ghaffariyan, M.R.; Acuna, M.; Brown, M.W. Machine productivity evaluation for harvesters and forwarders in thinning operations
+      in Australia. Silva Balc. 2019, 20, 13–25. [CrossRef]
+39.   Mattioda, M. CTL Cable-assisted Harvesting. In Proceedings of the 2020 Spring Conference and Workshop; California Licensed
+      Foresters Association, Anderson, CA, USA, 6–7 March 2020.
+40.   Uffelman, S. The Impact of Understory Vegetation on the Productivity and Costs of Cut-to-length Thinning Harvest Systems in
+      the Pacific Northwest. Master’s Thesis, Oregon State University, Corvallis, OR, USA, 2019.
+Forests 2022, 13, 305                                                                                                                 15 of 16
+
+
+
+
+41.   Renzie, C.; Han, H.-S. Harvesting Productivity and Cost of Clearcut and Partial Cut in Interior British Columbia, Canada. J. For.
+      Environ. Sci. 2008, 24, 1–14. Available online: https://www.koreascience.or.kr/article/JAKO200822350101567.page (accessed on
+      27 September 2021).
+42.   Jourgholami, M.; Majnounian, B.; Zargham, N. Performance, Capability and Costs of Motor-Manual Tree Felling in Hyrcanian
+      Hardwood Forest. Croat. J. For. Eng. 2013, 34, 283–293. Available online: https://hrcak.srce.hr/116784 (accessed on 27
+      September 2021).
+43.   Jukes, W.D. Estimating Harvesting Productivity and Cost on Second-Growth Coastal Sites in British Columbia. Master’s Thesis,
+      University of British Columbia, Vancouver, BC, Canada, 1995.
+44.   Gagliardi, K.; Ackerman, S.; Ackerman, P. Multi-Product Forwarder-Based Timber Extraction: Time Consumption and Productiv-
+      ity Analysis of Two Forwarder Models Over Multiple Products and Extraction Distances. Croat. J. For. Eng. 2020, 41, 231–242.
+      [CrossRef]
+45.   Adebayo, A.B.; Han, H.-S.; Johnson, L. Productivity and cost of cut-to-length and whole-tree harvesting in a mixed-conifer stand.
+      For. Prod. J. 2007, 57, 59–69.
+46.   Ghaffariyan, M.R.; Sessions, J.; Brown, M. Machine productivity and residual harvesting residues associated with a cut-to-length
+      harvest system in southern Tasmania. South. For. J. For. Sci. 2012, 74, 229–235. [CrossRef]
+47.   Hildt, E.; Leszczuk, A.; Mac Donagh, P.; Schlichter, T. Time Consumption Analysis of Forwarder Activities in Thinning. Croat. J.
+      For. Eng. 2020, 41, 13–24. [CrossRef]
+48.   Strandgard, M.; Mitchell, R.; Acuna, M. Time consumption and productivity of a forwarder operating on a slope in a cut-to-length
+      harvest system in a Pinus radiata D. Don pine plantation. J. For. Sci. 2017, 63, 324–330. [CrossRef]
+49.   Akay, A.E.; Erdas, O.; Sessions, J. Determining Productivity of Mechanized Harvesting Machines. J. Appl. Sci. 2003, 4, 100–105.
+      [CrossRef]
+50.   Donald, K.; Boswell, B.; Amishev, D.; Hunt, J. Winch-Assist Forwarder: Best Practices; FPInnovations: Pointe-Claire, QC, Canada,
+      2018. Available online: https://library.fpinnovations.ca/en/permalink/fpipub52697 (accessed on 27 September 2021).
+51.   Engelbrecht, R.; McEwan, A.; Spinelli, R. A Robust Productivity Model for Grapple Yarding in Fast-Growing Tree Plantations.
+      Forests 2017, 8, 396. [CrossRef]
+52.   Howard, A.F.; Rutherford, D.; Young, G.G. The Productivity and Cost of Partial and Clear Cutting with Two Cable Yarding Systems
+      in Second-Growth Forests of Coastal British Columbia; Natural Resources Canada: Victoria, BC, Canada, 1996. Available online:
+      https://scf.rncan.gc.ca/publications?id=4331 (accessed on 27 September 2021).
+53.   Spinelli, R.; Marchi, E.; Visser, R.; Harrill, H.; Gallo, R.; Cambi, M.; Neri, F.; Lombardini, C.; Magagnotti, N. The effect of carriage
+      type on yarding productivity and cost. Int. J. For. Eng. 2017, 28, 34–41. [CrossRef]
+54.   Medved, M.; Olgris, N.; Klun, J.; Košir, B.; Vončina, R. Koledarski čas in učinki dela z žičnimi napravami Syncrofalke na
+      Tolminskem. Zb. Gozdarstva Lesar. 2005, 77, 113–142. Available online: https://www.forestry.bf.uni-lj.si/kazalo77.htm (accessed
+      on 8 August 2021).
+55.   Stampfer, K.; Visser, R.; Kanzian, C. Cable Corridor Installation Times for European Yarders. Int. J. For. Eng. 2006, 17, 71–77.
+      [CrossRef]
+56.   Kellogg, L.D.; Miller, M.; Olsen, E. Skyline Thinning Production and Costs: Experience from the Willamette Young Stand Projects; Oregon
+      State University: Corvallis, OR, USA, 1999. Available online: https://ir.library.oregonstate.edu/concern/technical_reports/6q1
+      82q69g (accessed on 23 August 2021).
+57.   Tolan, A.; Visser, R. The effect of the number of log sorts on mechanized log processing productivity and value recovery. Int. J.
+      For. Eng. 2015, 26, 36–47. [CrossRef]
+58.   Mousavi, R.; Naghdi, R. Time consumption and productivity analysis of timber trucking using two kinds of trucks in northern
+      Iran. J. For. Sci. 2013, 59, 211–221. [CrossRef]
+59.   Mason, C.L.; Casavant, K.L.; Lippke, B.R.; Nguyen, D.K.; Jessup, E. The Washington Log Trucking Industry: Costs and Safety Analysis;
+      The Rural Technology Initiative and the Transportation Research Group, Washington State University: Seattle, WA, USA, 2008.
+      Available online: https://www.ruraltech.org/pubs/reports/2008/log_trucks/ (accessed on 30 August 2021).
+60.   Han, S.-K.; Murphy, G. Trucking Productivity and Costing Model for Transportation of Recovered Wood Waste in Oregon. For.
+      Prod. J. 2011, 61, 552–560. [CrossRef]
+61.   Ghaffariyan, M.R. Reviewing productivity studies of skidders working in coniferous forests and plantations. Silva Balc. 2020, 21,
+      83–98. [CrossRef]
+62.   Strimbu, V.; Boswell, B. Adverse Skidding Using a Tigercat 635E Assisted by a T-Winch 10.1; FPInnovations: Pointe-Claire, QC,
+      Canada, 2018. Available online: https://library.fpinnovations.ca/en/permalink/fpipub49844 (accessed on 27 September 2021).
+63.   Proto, A.R.; Macrì, G.; Visser, R.; Harrill, H.; Russo, D.; Zimbalatti, G. Factors affecting forwarder productivity. Eur. J. For. Res.
+      2018, 137, 143–151. [CrossRef]
+64.   Miles, P.D.; Smith, B.W. Specific Gravity and Other Properties of Wood and Bark for 156 Tree Species Found in North America; U.S.
+      Department of Agriculture, Forest Service, Northern Research Station: Newtown Square, PA, USA, 2009. Available online:
+      https://www.fs.usda.gov/treesearch/pubs/34185 (accessed on 30 August 2021).
+65.   Murphy, G.; Acuna, M. Effect of harvesting season, system and equipment on in-forest Pinus radiata bark removal in Australia
+      and New Zealand. Int. J. For. Eng. 2017, 28, 10–17. [CrossRef]
+Forests 2022, 13, 305                                                                                                              16 of 16
+
+
+
+
+66.   Miyata, E.S. Determining Fixed and Operating Costs of Logging Equipment; U.S. Department of Agriculture, Forest Service, North
+      Central Forest Experiment Station: St. Paul, MN, USA, 1980. Available online: https://www.fs.usda.gov/treesearch/pubs/10120
+      (accessed on 27 September 2021).
+67.   Uusitalo, L.; Lehikoinen, A.; Helle, I.; Myrberg, K. An overview of methods to evaluate uncertainty of deterministic models in
+      decision support. Environ. Model. Softw. 2015, 63, 24–31. [CrossRef]
+68.   Puy, A.; Lo Piano, S.; Saltelli, A.; Levin, S.A. Sensobol: Computation of Variance-Based Sensitivity Indices. arXiv 2021, arXiv:
+      2101.10103.
+69.   Puy, A.; Becker, W.; Lo Piano, S.; Saltelli, A. A comprehensive comparison of total-order estimators for global sensitivity analysis.
+      Int. J. Uncertainity 2021, 12, 1–18. [CrossRef]
+70.   Hann, D.W.; Marshall, D.D.; Hanus, M.L. Equations for Predicting Height-to-Crown-Base, 5-Year Diameter-Growth Rate, 5-Year
+      Height-Growth Rate, 5-Year Mortality Rate, and Maximum Size-Density Trajectory for Douglas-fir and Western Hemlock in the Coastal
+      Region of the Pacific Northwest; Research Contribution 40, Forest Research Laboratory Oregon State University: Corvallis, OR,
+      USA, 2003. Available online: https://ir.library.oregonstate.edu/concern/technical_reports/jd472$\times$893 (accessed on 22
+      December 2021).
+71.   Weiskittel, A.R.; Hann, D.W.; Kershaw, J.A.; Vanclay, J.K. Forest Growth and Yield Modeling; Wiley-Blackwell: Chichester, UK, 2011;
+      ISBN 978-0-470-66500-8.
+72.   Poudel, K.P.; Temesgen, H.; Gray, A.N. Estimating upper stem diameters and volume of Douglas-fir and Western hemlock trees
+      in the Pacific northwest. For. Ecosyst. 2018, 5, 16. [CrossRef]
+73.   Maguire, D.A.; Hann, D.W. Bark Thickness and Bark Volume in Southwestern Oregon Douglas-Fir. West. J. Appl. For. 1990, 5, 5–8.
+      [CrossRef]
+74.   Murphy, G.; Pilkerton, S.J. Seasonal Impacts on Bark Loss for Douglas-fir and Ponderosa Pine Harvested on the Pacific Northwest
+      Coast of the USA. Int. J. For. Eng. 2011, 22, 35–41. [CrossRef]
+75.   Chang, S.J. Twenty one years after the publication of the generalized Faustmann formula. For. Policy Econ. 2020, 118, 102238.
+      [CrossRef]
+76.   Department of Natural Resources. WA DNR Log Prices; Washington Department of Natural Resources: Washington, DC, USA,
+      2021. Available online: https://www.dnr.wa.gov/programs-and-services/product-sales-and-leasing/timber-sales/timber-sale-
+      querylog-prices (accessed on 13 January 2022).
+77.   Nalle, D.J.; Montgomery, C.A.; Arthur, J.L.; Polasky, S.; Schumaker, N.H. Modeling joint production of wildlife and timber.
+      J. Environ. Econ. Manag. 2004, 48, 997–1017. [CrossRef]
+78.   Baek, K. Productivity and Cost of a Cut-to-Length Commercial Thinning Operation in a Northern California Redwood Forest.
+      Master’s Thesis, Humboldt State University, Arcata, CA, USA, 2018.
+79.   Fonseca, M. Measurement of Roundwood: Methodologies and Conversion Ratios; United Nations Economic Commission for Europe,
+      Trade and Timber Branch: Geneva, Switzerland, 2005; ISBN 978-0-85199-079-8.
+80.   EIA. Weekly Retail Gasoline and Diesel Prices and Refiner Petroleum Product Prices by Sales Type; [dataset]; United States Energy
+      Information Administration: Washington, DC, USA, 2021. Available online: https://www.eia.gov/petroleum/ (accessed on 27
+      September 2021).
+81.   BLS. PPI Commodity Data for Final Demand, Not Seasonally Adjusted; Bureau of Labor Statistics: Washington, DC, USA, 2021.
+      Available online: https://data.bls.gov/cgi-bin/surveymost?bls (accessed on 8 November 2021).
+82.   Spinelli, R.; Magagnotti, N.; Picchi, G. Annual use, economic life and residual value of cut-to-length harvesting machines. J. For.
+      Econ. 2011, 17, 378–387. [CrossRef]
+83.   Spinelli, R.; Visser, R. Analyzing and Estimating Delays in Harvester Operations. Int. J. For. Eng. 2008, 19, 36–41. [CrossRef]
+84.   Sessions, J.; Berry, M.; Sup-Han, H. Machine Rate Estimates and Equipment Utilization: A Modified Approach. Croat. J. For. Eng.
+      2021, 42, 437–443. [CrossRef]
+

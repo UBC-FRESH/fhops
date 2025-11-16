@@ -1,0 +1,539 @@
+      Journal of Forest Engineering
+
+
+
+
+      ISSN: 0843-5243 (Print) 2327-8897 (Online) Journal homepage: www.tandfonline.com/journals/tife19
+
+
+
+
+Modeling Production of Longline Yarding
+Operations in Coastal British Columbia
+
+Joseph F. McNeel
+
+To cite this article: Joseph F. McNeel (2000) Modeling Production of Longline Yarding
+Operations in Coastal British Columbia, Journal of Forest Engineering, 11:1, 29-38, DOI:
+10.1080/08435243.2000.10702742
+
+To link to this article: https://doi.org/10.1080/08435243.2000.10702742
+
+
+
+
+       Published online: 18 Jun 2013.
+
+
+
+       Submit your article to this journal
+
+
+
+       Article views: 23
+
+
+
+       View related articles
+
+
+
+
+                      Full Terms & Conditions of access and use can be found at
+             https://www.tandfonline.com/action/journalInformation?journalCode=tife20
+                                                                                       Journal ofForest Engineering. 29
+
+   Modeling Production of Longline Yarding                      distance of conventional grapple yarders, they are par-
+   Operations inCoastal BritishColumbia                         ticularly well suited for use in the undeveloped mountain-
+                                                                ous terrain common to coastal British Columbia.
+                   Joseph F. McNeel
+                 West Virginia University                        Longline systems generally reduce road building re-
+                 Morgantown, wv, USA                           quirements and minimize the environmental impacts com-
+                                                               mon to other harvesting systems, while maintaining high
+ ABSTRACT                                                      productivity and reasonable extraction costs [Peters, 1973;
+                                                               Hemphill, 1991; Letourneau and Rahn, 1997]. Modem
+   Two Madil 046 skyline yarders, rigged as slacldine sys-     longline systems are relatively new to British Columbia
+ tems and equipped with Ballenger motorized carriages,         and their potential is not well quantified under conditions
+ were studied by field crews from the University ofBritish     common to the coastal region where many have been
+ Columbia - Forest Operations Group for approximately six      placed into service. Concerns over productivity, stand
+ months at sites on the west coast of Vancouver Island in      and site effects, and other factors have encouraged fur-
+British Columbia. A continuous tum element time study,         ther study of these systems under actual field conditions.
+ using handheld data recorders was employed to collect
+ data throughout the study. Mean cycle times for the two          This study, conducted by the University of British Co-
+ operations ranged from 11.5 to 13.5 minutes per cycle.        lumbia - Forest Operations Group, evaluated two longline
+Delays contributed at least 20 percent ofthe cycle time for    systems operating in the Franklin River Division of
+both operations and were primarily caused by carriage          MacMillan Bloedel Limited near Port Alberni on Vancou-
+related problems. Average piece size differed by more          ver Island, British Columbia, Canada. Two Madill 046
+than 56 percent and created significant differences in over-   yarders configured as slackline systems and equipped
+all system productivity. While average cycle time for the      with similar radio-controlled, self-clamping Ballenger car-
+two systems differed by at least two minutes, the system       riages were subjected to a long-term study with the fol-
+with the longer cycle time had higher mean production          lowing objectives:
+due to the larger volume per piece and per cycle. The
+study results strongly suggest that maximizing volume          1) Define and compare productivity levels oftwo similar
+per cycle is critical to maintaining productivity and mini-       yarders operating on similar sites through detailed tim-
+mizing costs, even though cycle time may be increased.            ing study, and
+In this case, one system was able to capitalize on larger
+average piece size to significantly improve hourly pro-        2) Determine, through predictor models developed from
+duction, even though cycle times for this yarder were             the timing study, what effect changes in the operation
+higher. More effort is needed during operations to moni-          would have on productivity for these two machines.
+tor volume (or weight) per cycle and consistently main-
+tain the maximum volume per cycle for existing conditions.
+                                                               MEmODOFANALYSIS
+
+lNlRODUcnON                                                       Yarding operations were subjected to time and motion
+                                                               studies on three sites over a five-month period. Timing
+   Although longline yarding was common on the coast           operations were conducted using hand-held computers
+of British Columbia at the tum of the century, this ap-        programmed with a continuous timing program specifi-
+proach to yarding operations has declined in use, due to       cally designed to measure elemental yarding times and
+high manpower requirements and efficiencies available          record the data in DOS-based files for later analysis.
+through other systems, such as the grapple yarder
+[Conway, 1986;Howard, 1991]. However, longlineyarding          Site Conditions
+has recently received more attention in the coastal region
+of British Columbia, due in part to the environmental ad-         Site conditions were similar in all cases. The timber on
+vantages associated with its use [Milroy, 1991]. Longline      each ofthe three sites was mixed old-growth comprised of
+yarding systems are well suited for harvesting operations      western hemlock (Tsuga heterophylla), Douglas-fir
+on sensitive sites where roads or backspar trails are either   (Pseudotsuga menziesiii, and western red cedar (Thuja
+impractical or potentially detrimental to the site. Because    plicata) in varying concentrations. Terrain conditions
+these systems can reach well beyond the maximum yarding        were common for the region, with steep slopes that ranged
+                                                               from 40 to 100 percent on each site. Piece size varied
+The author is the Director, Division ofForestry, College       substantially between sites with average piece size rang-
+ofAgriculture and Forestry,                                    ing from 1.6 m' to 2.6 rn'. Falling and bucking operations
+30 + Journal ofForest Engineering
+
+had been completed on all sites prior to the study. Both        ing lateral yarding time in clearcut operations.
+sites were harvested using even-age silvicultural man-
+agement that emphasized clearcut harvesting.                       All yarding was laid out using a fan-shaped configura-
+                                                                tion as defined by Binkley [1965], with yarded logs being
+Machine Characteristics                                         deposited at a central landing located above the harvested
+                                                                site. A haulback line was required for all settings in the
+   The yarding was conducted with two Madill 046                study. In most cases the tension in the skyline was re-
+slacklineyarders mounted on rubber tire carriers and manu-      duced prior to setting the chokers, reducing the amount
+factured by S. Madill Logging Equipment of Kalama,              of time required to lower the empty tongline. After the
+Washington. This type of yarder is equipped with three          logs had been choked, or attached to the tongline, the
+yarding drums; a skyline, a mainline, and a haulback drum.      skyline and tongline were raised simultaneously. This
+Line sizes, capacities, and line pull estimates for the 046     reduced the amount oftime required to lower the tongline,
+are summarized in Table 1. The carriage used in the study       but made it difficult to completely separate lateral yarding
+was the Ballinger self-clamping carriage.                       times from inhaul times.
+
+Table 1. Approximate line length, line speed, and line          Data Collection and Analysis
+         pull characteristics of the Madill 046 skyline
+         skidders under study'.                                    Observations of cycle elements, components of the to-
+                                                                tal yarding cycle, were collected using handheld comput-
+                                       Dnun                     ers that timed each cycle element separately and auto-
+Item                     Skyline     Mainline Haulback          matically recorded the elapsed time and associated
+                                                                variable(s) for later downloading to a micro-computer. A
+LineSize(mm)                38            29          25        computer-based statistical package was then used to de-
+                                                                velop descriptive statistics and to conduct regression
+Line Capacity (m)          488          600         1200        analyses on the elemental times.
+
+Line Speed (m per min)     316          455          667          Productive cycle elements included Outhaul, Lower
+(Bare drum - Hi spd)                                            Tongline, Choke, Raise Tongline, Raise Skyline, Inhaul,
+                                                                Unhook, and Deck. Non-productive elements, those op-
+Line Pull (kg)        31,980           20,485      15,168       erations that do not contribute to productivity, included
+(Bare drum - Low spd)                                           Move and Delays. Details regarding the sequence of op-
+                                                                erations assigned to each cycle element are available from
+I   Source: S. Madill, Inc. Kalama, Washington.                 the author.
+
+   Both machines operated in an uphill yarding configura-          Each data set was subjected to statistical analysis. Re-
+tion with adequate deflection. Each system was rigged as        gression analysis was used to identify statistically sig-
+a live skyline, where the skyline may be lowered or raised      nificant relationships between elemental times and inde-
+as needed to improve clearance. A maximumofthree chok-          pendent site variables collected in conjunction with the
+ers per cycle was used for both systems throughout the          timing study.
+study.
+                                                                   Total cycle time equations, or models, were constructed
+   Each machine incorporated a crew of seven. These             using elemental regression equations where possible.
+included a hooktender, rigging slinger, yarder engineer,        Observed means were used for those elements where no
+landing chaser, and three choker setters. The rigging           regression equations could be obtained. These total cy-
+slinger would assist the choker setters. as needed, but         cle time models were used to predict production over
+typically, these three individuals had the primary respon-      scheduled time and to evaluate the effect ofdifferent vari-
+sibilityfor setting chokers during the study. Chokers were      ables, such as volume per cycle and outhaullinhaul dis-
+not pre-set during the study.                                   tance, on productivity for these yarders across different
+                                                                site and stand conditions.
+  The carriage used with both machines was the Ballinger
+radio controlled, hydraulically driven carriage weighing          No costing information was developed for the study. A
+approximately 2131 kg. The tongline drum contains ap-           machine cost of $400 (US) per scheduled hour was as-
+proximately 300 meters of22 mm diameter tongline. Logs          sumed for the cost analyses. This cost information is just
+can be yarded laterally to the carriage while the carriage is   an assumed cost used in the example and was not based
+simultaneously being hauled back to the landing, reduc-         on any observations.
+                                                                                   Journal ofForest Engineering" 31
+
+RESULTS                                                      Outhaul, Lower Tongline, Choke and Raise Tongline times.
+                                                             Generally, the observed times for these productive ele-
+  Table 2 details statistics for the independent variables   ments differed only slightly during the study, but high
+associated with the study of the two yarders. Moderate       variability did exist for the time elements Outhaul, Lower
+variations were noted in the values of most of the inde-     Tongline, Raise Tongline, Deck, and the non-productive
+pendent variables. However, the piece size for logs yarded   elements Delay and Move.
+with Yarder A averaged 56 percent larger than for logs
+yarded with Yarder B.                                           Delay time, defined as the unscheduled interruption of
+                                                             the productive cycle, was derived from intermittent obser-
+  Delays associated with carriage failure or breakdown       vations of the delay element. The maximum observed
+were substantially greater for Yarder A (Table 3). While     delay for Yarder A was 336 minutes and, for Yarder B, the
+no exact method exists for determining the cause of this     maximum was 223 minutes. The mean delay per occur-
+higher proportion of delays from field data, it should be    rence for Yarder A was 4.7 minutes with a standard devia-
+noted that both crews and the maintenance staff had little   tion of 14.6 minutes, while Yarder B had a mean observed
+experience with longline systems, generally increasing       delay time 00.6 minutes with a standard deviation of 15.2
+downtime for both yarders when mechanicalproblems were       minutes. Much of the additional delay associated with
+encountered.                                                 Yarder A was directly related to carriage breakdowns and
+                                                             repairs. A total of 143 delays were observed for Yarder A
+   Table 3 summarizes the mean elemental times observed      and 323 delays were observed for Yarder B. When con-
+from the data. In comparing the elemental times for the      verted to a "per cycle" basis, the means and standard
+two yarders, substantial differences were observed for       deviations are as presented in Table 3.
+
+
+
+
+Table 2. Summary of observations for independent variables in the study.
+
+Independent                                                  Std.                            Number
+Variable                               Mean                  Dev.                 ofObs.                  Range
+
+Outhaul Distance (m)'
+(Yarder A)                              256                   104                   120                  58-440
+(YarderB)                               206                    78                   483                  15 - 385
+
+Inhaul Distance (m)'
+(Yarder A)                              239                   109                   103                  50-470
+(YarderB)                               203                    78                   453                  15 -420
+
+VerticalDistance (m)
+(Yarder A)                               30                    12                   121                   6- 55
+(YarderB)                                27                    12                   471                   1- 66
+
+Lateral Distance (m)'
+(Yarder A)                               15                    7                    172                   5 - 35
+(YarderB)                                12                    6                    389                   4- 35
+
+Pieces per Cycle
+(Yarder A)                              2.8                   1.2                   184                   1-   6
+(YarderB)                               3.0                   1.2                   434                   1-   8
+
+Piece Size (m') 2
+(Yarder A)                              2.5                  N/A
+(YarderB)                               1.6                  N/A
+
+1   Horizontal Distance
+2   Piece size data was obtained from MacMillan Bloedel Research Division.
+32 + JOU171£l1 ofForest Engineering
+
+
+Table 3. Summaryofmean time elements.
+
+
+Timing                                  MeanTime          Std.       Number of
+Element                               per Cycle (min)   Dev.(min)   Observations
+
+Outhaul
+(YarderA)                                 0.798           0.324         123
+(YarderB)                                 0.676           0.222         492
+
+LowerTongline
+(YarderA)                                  1.260          0.637         124
+(YarderB)                                  0.903          0.468         485
+
+Choke
+(YarderA)                                 4.067           2.022         179
+(YarderB)                                 3.988           1.645         397
+
+Raise Tongline
+(YarderA)                                 0.528           0.420         192
+(YarderB)                                 0.344           0.182         898
+
+Raise Skyline
+(YarderA)                                 0.107           0.288         180
+(YarderB)                                 0.083           0.180         481
+
+Inhaul
+(YarderA)                                 1.237           0.442          77
+(YarderB)                                 1.223           0.436         457
+
+Unhook
+(YarderA)                                 0.888           0.373         185
+(YarderB)                                 0.900           0.386         445
+
+Deck
+(YarderA)                                 0.238           0.648         180
+(YarderB)                                 0.191           0.327         481
+
+Total Productive CycleTime(productive minutes):
+(YarderA)                             9.123
+(YarderB)                             8.308
+
+Delay 1
+(YarderA)                                 3.697          11.560         180
+(YarderB)                                 2.427          10.202         481
+
+Movel
+(YarderA)                                 0.520          6.977          180
+(YarderB)                                 0.237          8.373          481
+
+Total Scheduled CycleTime(scheduled minutes):
+(YarderA)        13.340
+(YarderB)        11.392
+
+I   Non-Productive Time (minutes)
+                                                                                         Journal ofForest Engineering + 33
+
+   Move times, times associated with moving the tailspar             All other cycle elements were found to be statistically
+to a new yarding path or road location, were derived in a         unrelated to the independent variables collected during
+manner similar to delay times. The maximum move time for          the study and no regression model could be developed
+Yarder A was 94 minutes, while Yarder B had a maximum             for these cycle components. In these cases, mean times
+move time of211 minutes. The mean move time for Yarder            were the best estimators ofelemental times and were used
+A on a "per cycle" basis was 0.52 minutes with a standard         to estimate four elements; Raise Tongline, Deck, Delay,
+deviation of7.0 minutes, while Yarder B averaged .65 min-         and Move. The mean values presented in Table 4 also
+utes per cycle with a standard deviation of 8.4 minutes           incorporate dummy variables to allow rapid estimation of
+(Table 3). Only eight observations were made of move              the mean time to complete an element ofthe yarding cycle
+time during the detailed timing study and times were highly       regardless of which machine is being analyzed. In those
+variable.                                                         cases where Yarder B is analyzed, the dummy variable, Z1,
+                                                                  is set to one (I) to adjust the estimated time to the appro-
+   A comparison ofthe distribution ofthe elemental times          priate value. Where Yarder A is being analyzed, the value
+for the two machines is provided in Figure 1. For both            for Z 1 is set to zero (0).
+machines, the elements comprising the largest percent-
+ages of total cycle time were the choke and delay ele-              Total cycle times in scheduled minutes for either Yarder
+ments.                                                            A or B can be predicted using the equation presented in
+                                                                  Table 4. The following variables are used to estimate total
+   The choke element for Yarder A contributed approxi-            cycle time:
+mately 30 percent ofthe total cycle time, while the choke
+element for Yarder B comprised 35 percent of the total            Dist        Horizontal distance in meters from the yarder
+cycle time. The delay element contributed to 27.7 percent                     to the point in the field where logs are to be
+ofthe cycle for Yarder A and 21. 3 percent ofthe cycle for                    choked,
+Yarder B. As indicated previously, delays produced sig-
+nificant differences in total cycle times for the two ma-         Latdist = Lateral horizontal distance in meters between
+chines. At least 65 percent of the difference in total cycle                 the point where the tongline drops from the
+time for the two machines is attributable to the delay ele-                  carriage to the logs being choked,
+ment.
+                                                                  Vdist      Vertical distance in meters between the sus-
+   Further illustration of the impact of delay on machine                    pended carriage and the ground,
+productivity is indicated when estimating machine utiliza-        Pieces = Number ofpieces being choked during the cycle.
+tion rates. When delay time is combined with the other
+non-productive component, Move, the average utiliza-                 Figure 2 illustrates how the total cycle time equation
+tion rate for Yarder A is 68 percent. In contrast, the utiliza-   can be used to model yarding productivity over a range of
+tion rate for Yarder B during the study averaged 73 per-          operating conditions for either machine. The model pro-
+cent, a difference of6.6 percent.                                 vides production estimates based on changes in distance,
+                                                                  number of pieces and changes in the average volume per
+  In most studies, regression or predictor models are             cycle. Distance was ranged from 50 to 300 meters, the
+unique to the machine for which they are developed -              number ofpieces varied from 2 to 4 per cycle, and volume
+which limits the utility of the model. The purpose of de-         per piece was assumed to equal the average observed
+veloping these models is to produce a single equation             values of 2.5 m' for Yarder A and 1.6 m3 for Yarder B.
+that can predict total cycle time for a given machine with        Thus, the range of volumes analyzed for each model dif-
+some level of accuracy.                                           fered slightly, with Yarder A having, on average, larger
+                                                                  volumes per cycle.
+   To minimize the need for separate elemental models,
+statistical testing using chi-square distribution tests was          A comparison of the graphed production rates indi-
+used to determine if data could be pooled to produce a            cates that the larger loads per cycle for Yarder A signifi-
+single model for both machines. Pooling was possible in           cantly improved production per scheduled machine hour.
+all but one case (Lower Tongline) and most ofthe models           Therefore, increasing the volume per cycle - within the
+for elemental times provided in Table 4 can be used to            limits of the yarder and the carriage - will substantially
+predict times for either machine. Where the data could            improve yarding productivity. This could be accomplished
+not be pooled, a dummy variable was incorporated to sepa-         in several ways, including the use of different bucking
+rate the models. Regression models were developed for             strategies that would produce greater volume in each piece,
+the elements Outhaul, Lower Tongline, Choke, Inhaul, and          or by increasing the number of pieces removed in each
+Unhook.                                                           cycle.
+34 + Journal ofForest Engineering
+
+
+
+
+                                                                     alloll:>
+                                                                    dn Bu0.L                        Q)
+
+                                                                     lI~aa                         ....o>
+                                                                                                   .-
+                                                                                                    ~
+                                                                     aAOII\I                       "tJ
+                                                                                                    o
+                                                                                                    ~
+                                                                                                    Co  (/)
+                                                                    UMOa Bu0J.                      I
+                                                                                                    c:
+                                                                                                       ....
+                                                                                                            c:
+                                                                                                    o       Q)
+
+                                                                    dn aU!l~lIS                    z E
+                                                                    Inell~no
+                                                                                                   "c: W~
+                                                                                                    eo
+                                                                                                    Q)
+
+                                                                     ~elaa                         ....>
+                                                                                                   .-
+                                                                                                    CJ
+                                                                                                    ~
+                                                                    lIooliun
+                                                                                                   "c,e
+                                                                    Inellul
+
+              011)011)011)011)0
+              ..qoMMNN~~
+
+
+                         (0/0) al~~:> le~o J.
+                                jO ~ua~Jad
+
+
+ Figure 1. Comparison of elemental time distributions for the two sJackline yarders under study.
+                                                                                  Journal ofForest Engineering « 35
+
+Table4. Regressionmodels to predict elemental times associated with two slackline yarders.
+
+Element                                                    Model
+
+Outhaul:                                         0.365052 + 0.001576*(Dist)                         0.302
+
+Lower
+Tongline:                                        0.705177 + 0.0 1836*(VDist)
+                                                 - 0.011080*(Zl *VDist)                             0.125
+
+Choke:                                           3.005095 + 0.080542*(Latdist)                      0.079
+
+Raise
+Tongline:                                       0.528490- 0.18430*(Zl)                              N/A
+
+Inhaul:                                         0.536403 + 0.OO3322*(Dist)                          0.404
+
+Unhook:                                         0.571783 +0.109484*(Pieces)                         0.126
+
+Deck:                                           0.238- 0.047*(Zl)                                   N/A
+
+Delay:                                          3.697 - 1.270*(ZI)                                  N/A
+
+Move:                     0.520+0.137*(Zl)                             N/A
+
+Where:
+Dist = HorizontalDistance(m)                Vdist = Vertical Distance(m)
+Latdist = LateralDistance(m)                Pieces = Number of Pieces
+Zl = Dummy Variable!
+
+
+Total Scheduled Cycle Time (scheduled minutes):
+
+lC = 10.167 +O.00490*(Dist) + 0.01836*(VDist) - O.Ol1080*(Zl *VDist)+ 0.080542*(Latdist)+ 0.109484*(Pieces)
+     -1.l8*(Zl)
+
+'DummyVariable: If evaluatingfor YarderB, then set Z1 equal to 1, otherwise set Z1 equal to O.
+36 + Journal ofForest Engineering
+
+
+
+
+        C)-
+            -E
+        c:: G>                      0      0           0
+       --
+
+       "L. "'
+             (J
+
+            c::
+                    0               0      0           0
+                    L()             ~      N           (V)
+       >-"'~
+           tn
+           --
+           C
+                    • •                    0           Ii!)
+                                                        ,(Y4,..
+
+
+
+
+                                                                              m
+                                                                               I-
+                                                                               CI)
+                                                                                  -
+                                                                              "ns o
+                                                                               l-
+                                                                                          G)
+                                                                                          (J
+                                                                                          ~
+                                                                              >           r-
+                                                                                          G)
+                                                                                          C.
+                                                                                          tn
+                                                                                          G)
+                                                                                          (J
+                                                                                          G)
+                                                                                        .-
+                                                                                         D.
+
+
+
+
+          o•               o•               o•                    o•
+          o                o                o                     o
+          CQ               'lll:t           N
+
+                      (J4 pejnpeqos Jad tW)
+                                    uO!J~npoJd
+
+Figure 2. Comparison of predicted hourly production for yarders A and B under study conditions.
+                                                                                       Journal ofForest Engineering. 37
+
+   Further, the results graphed in Figure 2 indicate that         In any yarding operation, significant effort should be
+Yarder A, even with similar cycle times, produced 46 per-      made to maximize payload. With long/ine systems, where
+cent more volume per cycle. IfYarder B could have at-          cycle times often average more than ten minutes or more
+tained these higher cycle volumes, the hourly production       per cycle, the effect of reduced payload can lead to sub-
+for these two machines would have been roughly equiva-         stantial added costs. Neither ofthe machines in this study
+lent. Instead, the modeled production suggests that            was equipped with a tension meter to measure payload
+Yarder A was able to generate approximately 37 percent         weight relative to the maximum allowable weight for exist-
+more volume per scheduled machine hour under the stud-         ing conditions. Nor was there any effort to increase the
+ied site conditions. While the observed difference was         number of chokers used per cycle to increase payload,
+due principally to the larger piece volumes yarded by          even on sites where average payload was known to be
+Yarder A, the results do suggest that yarding payloads         below the maximum.
+are rarely maximized in stands where average piece size is
+small. Where yarding equipment comprises a significant            Differences in volume per cycle resulted from differ-
+component ofharvesting costs, as in the case with longline     ences in the number of pieces yarded per cycle and the
+yarders, yarder payload should be a major concern.             piece size ofyarded logs. Regardless ofthese site-related
+                                                               differences, the model results suggest that these machines
+    The cost effectiveness of increased payload may be         are capable of yarding substantially larger volumes per
+illustrated in the following example using the study data.     cycle than was observed for Yarder B. More emphasis
+Assume that ownership and operating costs for the two          should be placed on maximizing the volume per cycle, as
+Madill 046 yarders averages $400 per scheduled machine         under-utilization of the yarder will lead to lower produc-
+hour and that all other factors in the example systems are     tion and higher costs.
+similar. The only difference from a production standpoint
+is the difference in machine cycle time and machine hourly        Cost estimates based on the developed regression equa-
+production as observed in the study. Based on the noted        tions suggest that even minor differences in yarded load
+differences, the cost per cycle ranges from $89 for Yarder     weight will substantially affect delivered wood costs. With
+A to $75 for Yarder B. However, payload differenceswould       these longline yarders, even small changes in productiv-
+yield an additional 6.2 cubic meters of wood per hour for      ity can affect the profitability of the harvest operation. In
+Yarder A. The added cost of yarding this additional vol-       cases where these systems might be used for partial har-
+ume per scheduled hour with Yarder A averages less than        vests, yarded load weight will be an even more critical
+$14 - or $2.25 per m'. Further, this load weight can be        factor and must be maximized to insure reasonable wood
+achieved in most settings where proper engineering and         costs.
+layout provides adequate deflection for yarding opera-
+tions.                                                            The combined regression model developed for these
+                                                               machines is applicable within the limits of the data pro-
+                                                               vided and should prove useful for operational planning,
+CONCLUSIONS                                                    scheduling, and estimating production on western coastal
+                                                               sites. While longline systems may also prove useful in
+   These study findings suggest that the cycle times for       partial harvests, the developed models should not be con-
+the two Madill 046 slackline machines, when using the          sidered accurate for predicting the productivity and cost
+same type of carriage and on similar sites, are relatively     of longline systems in this type of harvest.
+equal. Productive cycle times measured for the two ma-
+chines on similar settings in the Franklin River region were
+within 0.8 minutes of each other, with the difference in       UIERATURECITED
+time generally attributable to differences in observed times
+for the Lower Tongline and Delay elements.                     [IJ Binkley, V 1965. Economics and design ofa radio-
+                                                                   controlled skylineyarding system. USDA Forest Serv-
+   Study results suggest that reduction in cycle time may          ice, Pacific Northwest Research Station, Seattle, WA.
+be possible if efforts are focused on minimizing delays.           ResearchPaperPNW-25. 30p.
+Through improvements in preventive and emergency main-
+tenance activities, delays may be significantly reduced        [2J Conway, S. 1982. Logging Practices: Principles of
+and corresponding improvements in productivity may be              Timber Harvesting Systems. Miller Freeman Pub., San
+possible. However, the study also shows that longer cy-            Francisco, CA. p. 198.
+cle times are not necessarily bad, if volume per cycle can
+be increased to offset these higher cycle times.
+38 + Journal ofForest Engineering
+
+[3] Hemphill, D. 1991. Successful applications of sky-      [5] Letourneau, L. and D. Rahn. 1997. Back to the future.
+    line logging in British Columbia. IN Forest opera-          Business Logger. 7(9):34-37.
+    tions in the 1990's; Challenges and solutions - Pro-
+    ceedings of the 14th Annual Meeting of the Council      [6] Milroy, R. 1991. A giant in the woods. Canadian
+    on Forest Engineering. July 22-25, 1991, Nanaimo,           Forest Industries, April, 1991. pp. 9 - 10.
+    a.c pp. 89-91.
+                                                            [7] Peters, P. 1973. Estimating production of a skyline
+[4] Howard, AF. 1991. Production equations for grap-            yarding system. IN Planning and decision making as
+    ple yarding in coastal British Columbia. Western Jrnl       applied to forest harvesting: A Symposium. Septem-
+    AppliedFor. 6(1):7-10.                                      ber 11-12, 1972. School of Forestry, Oregon State
+                                                                University, Corvallis, Oregon. pp.7-14.
+

@@ -54,6 +54,13 @@
 - Captured the Kellogg & Bettinger (1994) CTL multi-product forwarder regression (`fhops.productivity.kellogg_bettinger1994`) so mixed/saw/pulp scenarios with explicit travel components can be estimated; tests mirror Table 8 productivity numbers.
 - Added Sessions & Boston (2006) shovel-logging helper (`fhops.productivity.sessions2006`) so we can inspect road-spacing trade-offs (productivity, cost/tonne, profit). Regression tests replicate the published 4-pass scenario.
 - Added Spinelli et al. (2017) excavator-based grapple yarder regression (`fhops.productivity.spinelli2017`) as an interim surrogate for the requested grapple-skidder model; still need Han & George field equations once available.
+- Added Visser et al. (2025) mechanical feeding study (CroJFE) to quantify shovel-assist productivity (25–100 m³/h), utilization (61%), and time-use splits for excavator feeders on NZ steep ground – informs combined shovel/yarder modeling.
+- Logged McNeel (2000) longline yarding regression (Journal of Forest Engineering) covering coastal BC systems plus piece-size/line-length effects; key source for grapple yarder helper calibration.
+- Captured West, Sessions & Strimbu (2022) winch-assist + swing yarder steep slope system model (Forests 13:305) for integrated cut-to-length/long-log comparisons up to 115 cm DBH on 30–60% slopes.
+- Added Conor Bell (2017) OpCost thesis (Univ. of Idaho) describing the development/validation of USFS OpCost machine-rate model—primary reference for upcoming costing helper inputs.
+- Archived Chad Renzie (2006) UNBC thesis comparing partial cut vs clearcut productivity/cost in cedar-hemlock stands (east-central BC); provides partial-cut machine-rate data for future scenario defaults.
+- Imported Onuma (1988) Japanese review of North American time/cost analysis (森利研 誌) summarizing standard North American time-study/cost accounting methods—good methodological reference for our analytics pipeline.
+- Noted that “Effects_of_Alternative_Silvicu.pdf” is DRM-protected; need an accessible copy before we can extract silviculture productivity impacts.
 - `fhops dataset estimate-forwarder-productivity` now exposes both sets of forwarder regressions (Ghaffariyan small/large + Kellogg saw/pulp/mixed) with parameter validation and Typer tests, so users can query productivity without writing Python.
 - Reviewed the new machine-productivity PDFs (Di Fulvio 2024, Eriksson & Lindroos 2014, Kellogg & Bettinger 1994, McNeel & Rutherford, Ghaffariyan et al. 2019, Stoilov et al. 2021, Laitila & Väätäinen 2020, Berry 2019, Lee et al. 2018, Ünver-Okan 2020, Spinelli et al. 2016). These cover forwarders, grapple skidders/shovel loggers, processors/landing ops, brushwood harwarders, small cable yarders, coppice harvesters, etc.—none appear in Arnvik Appendix 8, so we must ingest them manually to close the FHOPS machine-role gaps.
 - Current machine-type coverage from Arnvik (Camelot + legacy): 260 `single_grip_harvester`, 94 `feller_buncher`, 14 `feller_buncher_sim`, 8 `harwarder`, 6 `single_grip_harvester_sim`, 5 `skidder_harvester`, 5 `feller_buncher_drive_to_tree`. No forwarders/grapple skidders yet – these are the next extraction targets.
@@ -227,6 +234,9 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
 ## Immediate Next Tasks (queue)
 - Track down Han & George grapple-skidder data (or equivalent BC datasets) so we can replace the interim Spinelli et al. yarder regression with an on-point grapple-skidder model.
 - Expand Appendix 4/5 normalization to include operator, machine weight, and slope applicability metadata needed for the remaining machine families.
+- Extract quantitative regressions from Visser et al. (2025), McNeel (2000), West et al. (2022), and Renzie (2006) to seed shovel-assist, longline yarding, steep-slope winch-assist, and partial-cut productivity helpers.
+- Port critical OpCost parameters (Bell 2017) into the costing helper design so we can align machine-rate inputs with the USFS/FPInnovations convention; document any deltas vs current rental-rate workflow.
+- Secure an accessible copy of “Effects of Alternative Silvicultural Systems…” (PDF currently DRM-locked) or replace it with another silviculture-productivity reference so that partial-cut modeling has defensible data.
 
 ## Machine-Role Productivity Rollout (Steps 1–6)
 1. [x] **Brushwood harwarder / forwarder variant**

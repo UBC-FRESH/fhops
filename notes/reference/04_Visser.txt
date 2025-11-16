@@ -1,0 +1,543 @@
+Open access                                                                                                      Original scientific paper
+
+https://doi.org/10.5552/crojfe.2025.3425
+
+
+
+
+                Mechanical Feeding of Grapple Yarders:
+                     Productivity, Flexibility and Time
+                                         Use Efficiency
+                                                                   Rien Visser, Angus Howden, Raffaele Spinelli
+
+                     Abstract
+
+                     Excavator-based shovelling machines can be used on steep terrain to improve the safety and
+                     productivity of cable yarder extraction. Shovelling felled timber across to a yarding corridor
+                     limits the number of line-shifts required, and feeding the grapple carriage reduces cycle time
+                     and increases average payload. The study determined the productivity, utilization and time
+                     use of four excavator-based shovelling machines feeding a cable yarder operation using a
+                     grapple motorized carriage at four different sites in New Zealand’s South Island. The four
+                     machines were owned and operated by four different contractors, but they all worked on end-
+                     of-rotation radiata pine clearcuts. Productivity varied from approximately 25 to 100 m3 per
+                     hour, including waiting time for the grapple carriage to return, but excluding all other delays.
+                     Piece size had the strongest impact on productivity. Mean utilization was 61%. 20% of
+                     shovel worksite time was spent engaging with productive work other than feeding the grapple,
+                     such as felling, shovelling or tidying up the cutover.
+                     Keywords: cable, steep terrain, loader, excavator, time study
+
+
+                      1. Introduction                                       At the same time, economic and demographic
+                                                                        growth have caused a dramatic expansion of agricul-
+Two main drivers of progress in forest harvesting tech-                 ture and urban development, which are occupying all
+nology are work safety and the need to cope with in-                    the best sites (Nauhelhal et al. 2012). Forestry cannot
+creasingly steep terrain (Spinelli et al. 2019). Logging                compete economically, and it is being pushed to less
+has gained a dubious reputation as one of the most                      favorable terrain. Countless cities in Europe – from
+dangerous jobs in peacetime, with four times the fatal-                 Berlin to Ravenna – teach us that it is easier to drain a
+ity rates of other occupations in the agricultural sector               swamp than flatten a mountain, and therefore the main
+(Klun and Medved 2007). For that reason, work safety                    challenge confronting foresters across the globe is steep
+agencies worldwide have applied increasing pressure
+                                                                        terrain. From North America (Bennet 2016) to Europe
+onto all stakeholders to improve safety in forestry.
+                                                                        (Spinelli et al. 2017) logging crews are tackling stands
+Measures include enforcing the use of personal protec-
+                                                                        that have been planted on the lower value steep terrain
+tive equipment and promoting ad-hoc training
+                                                                        or were passed over in the past because they were con-
+(MacKay et al. 1996, Magagnotti et al. 2021). However
+                                                                        sidered too steep for cost-effective exploitation with
+significant, the effectiveness of safety training alone is
+                                                                        conventional ground-based equipment.
+not as definitive as hoped for (Bell and Grusheky
+2006). Manual forestry work remains a high-risk oc-                         While cable yarding is a long-proven technology for
+cupation and accounts for most of the fatal accidents                   harvesting on steep terrain, the application of grapple
+(Albizu et al. 2013). Mechanizing forestry work re-                     yarding systems, either mechanical or motorized, al-
+mains the only resolutive measure, whose effective-                     lows for higher levels of mechanization (Studier and
+ness has been demonstrated over and again (Axelsson                     Binkley 1974). Grapple yarders were very popular in
+1998, Bell 2002, Bonauto et al. 2019). This is especially               the past for tackling old-growth forests, whose large
+true on steep slopes where mechanization challenges                     trees could be turned into ideal single-piece loads, easy
+include not only machine stability but also environ-                    to grab even for the clumsy mechanical grapples of the
+mental performance (Visser et al. 2014).                                time (De Souza 1983). In contrast, secondary or
+
+Croat. j. for. eng. 46(2025)2                                                                                                        247
+R. Visser et al.        Mechanical Feeding of Grapple Yarders: Productivity, Flexibility and Time Use Efficiency (247–255)
+
+
+plantation forests offer smaller trees that cannot form a        The main characteristics of the four sites and of the
+suitable payload if taken singularly and require accu-           machines used at each site are shown in Table 1. Dif-
+mulation. Hence there was a general shift to using               ferent contractors were engaged at the different sites,
+choker slings that have remained dominant until re-              but they were all highly professional and relied on
+cently (Helton 1985). The issue with choker slings is that       experienced crews.
+they must be fastened manually by one or more work-                 The machines used at each site are also described
+ers (»choker-setters« or »breaker-outs«) sited on the            in Table 1. Two were powerful purpose-built feller-
+cutover – a task that is uncomfortable, tiresome and             bunchers that were self-levelling and winch-assisted,
+very hazardous. The alternative is to use a machine to           and two were excavator-based loaders working under
+prepare the loads and feed them to the yarder grapple,           easier terrain conditions.
+so that the operators tasked with such job may sit com-
+                                                                    Therefore, one may distinguish between two tech-
+fortably inside a certified safety cab (Chung et al. 2023,
+                                                                 nical levels: operations 1 and 2, where dedicated self-
+Engelbrecht et al. 2017) (Fig. 1). Today, winch-assist
+                                                                 levelling winch-assisted machines were tasked with
+technology makes it possible to introduce such ma-
+                                                                 feeding a motorized grapple carriage and worked on
+chines to steep terrain, for safe and effective operation
+                                                                 considerably steep terrain (>50% slope gradient); and
+(Visser and Stampfer 2015). As a matter of fact, more
+                                                                 operations 3 and 4, where excavator-based loaders
+and more loggers are now adopting the new work sys-
+                                                                 without leveling platform nor winch assistance were
+tem, whereby a suitably equipped machine is tasked
+                                                                 tasked with feeding the mechanical carriages of
+with preparing the loads and feeding them to the yard-
+                                                                 smaller yarders and worked on somewhat easier ter-
+er grapple, in order to boost productivity and remove
+                                                                 rain (<50% slope gradient).
+labour from hazardous workplaces (Harril et al. 2019).
+Since the system is relatively new, there is very little            Mechanized directional felling was applied to all
+quantitative information on its performance and effi-            worksites. All harvests were planned end-of-rotation
+ciency.                                                          clearcuts. Work data collection lasted 9 days for a total
+                                                                 of 43 hours or 665 complete cycles. For each cycle,
+    Therefore, the goal of this study was to observe a
+                                                                 researchers measured time consumption and esti-
+representative sample of commercial operations where
+                                                                 mated load size.
+grapple feeding is routinely applied and collect quan-
+titative information on the productivity and efficiency              Load size was estimated through a piece count.
+of grapple feeding work. That information can then be            The stem volume per site was obtained from the pro-
+used to assess the pros and cons of the new technique,           cessor operator, since the machine was regularly
+to develop guidelines for its effective deployment and           calibrated and kept a log of daily production that in-
+to address future research aimed at refining the knowl-          cluded total volume and number of stems (Visser and
+edge thus obtained, given the preliminary character              Spinelli 2023). Estimates were validated by cross-
+that is inevitable for all initial system developments.          checking with the company inventory information.
+                                                                 The number of pieces extracted with each cycle was
+                                                                 recorded and categorized as either »stem« or »top«.
+             2. Materials and Methods                            When harvesting NZ pine, most trees break during
+                                                                 the felling process at a height of approximately two-
+Four observational studies were conducted at four dif-
+                                                                 thirds of the total height (Fraser et al. 1997). The low-
+ferent pine plantations in New Zealand’s South Island.
+                                                                 er portion (»stem«) would represent 85% of the tree
+                                                                 volume and the upper one (»top«) the remaining 15%:
+                                                                 those proportions were used to estimate load size.
+                                                                     Cycle time was recorded manually with a stop-
+                                                                 watch (Magagnotti et al. 2013). The feeding cycle was
+                                                                 broken down into the following functional steps,
+                                                                 which were timed separately: bunching, feeding and
+                                                                 waiting. Bunching consisted in reaching out for the
+                                                                 stems and tops and moving them under the skyline
+                                                                 to form a bunch. That step often required covering up
+                                                                 to 50 m, which would be done according to the »shov-
+                                                                 elling« technique (Hemphill 1986); feeding consisted
+                                                                 in lifting the bunch and presenting it to the yarder
+Fig. 1 Typical grapple feeding system                            grapple, which would grab it and pull it to the land-
+
+248                                                                                             Croat. j. for. eng. 46(2025)2
+Mechanical Feeding of Grapple Yarders: Productivity, Flexibility and Time Use Efficiency (247–255)                 R. Visser et al.
+
+
+Table 1 Description of test sites
+                                                1                          2                      3                    4
+                Site
+                                        Herbert forest               Geraldine            Pidgeon valley        Golden downs
+Nearest town                                Oamaru                      Timaru                Nelson              Tapawera
+Species                                    P. radiata                 P. radiata             P. radiata           P. radiata
+Mean stem size, m3                             0.5                        3.5                    1.3                  2.0
+Slope gradient, %                              57                         51                     42                   45
+Extraction distance, m                         250                        126                    175                  190
+Extraction direction                         Uphill                      Uphill                Uphill               Uphill
+Yarder make                                  Madill                     Madill                 Madill               Madill
+Yarder model                                   171                        171                    124                  124
+Grapple carriage type                     Motorized                  Motorized             Mechanical            Mechanical
+Feeding unit type                       Feller-buncher             Feller-buncher           Excavator             Excavator
+Feeding unit make                           Tigercat                   Tigercat               Hitachi            Sumitomo
+Feeding unit model                            855E                     LS855E                  ZX290               SH220
+Feeding unit mass, t                            30                         30                     29                   23
+Feeding unit power, kW                         212                        212                    130                  112
+Winch-Assisted                                 Yes                        Yes                    No                   No
+Observations                                   149                        339                    134                   43
+Observation days                                 3                          3                      2                    1
+
+
+
+ing pad; waiting was the time spent under the skyline                    ed outliers and inspected: if the inspection could not
+with a bunch at the ready, before the yarder grapple                     find a reasonable explanation why the datapoint was
+would come and claim it. Furthermore, the research-                      so far off the cloud, then the datapoint would be re-
+er would separately record all the time the feeding                      moved. Then descriptive statistics were extracted,
+machine was engaged with other productive work,                          with the goal of finding solid indicators for centrality
+not directly related to feeding the grapple (e.g. felling,               and variability. Those are the main qualities used for
+tidying up the cutover, etc.). Delays were also record-                  assessing the value and reliability of the general
+ed separately and categorized as operational, me-                        benchmarks we wanted to obtain. The statistical sig-
+chanical or personal (Spinelli and Visser 2008).                         nificance of any difference found between the differ-
+    First, the data was checked for outliers and other                   ent test sites or machine types was tested with non-
+blatant errors. In particular all datapoints that were 2                 parametric techniques that are robust against
+times the interquartile range below the lower quartile                   violations of the normality assumption, such as the
+or above the upper quartile were considered suspect-                     Kruskal-Wallis test. The significance threshold was
+                                                                         set at α<0.05. Regression analysis was also used, with
+                                                                         the main purpose of testing the general relationship
+                                                                         between cycle time, load size and extraction distance
+                                                                         – the latter represented by the observation sequence,
+                                                                         as the grapple started picking the loads closest to the
+                                                                         landing and progressed outwards in the direction of
+                                                                         the tailhold.
+                                                                            The study included a subjective element, consist-
+                                                                         ing in direct interviews to the harvest planner, crew
+                                                                         boss or shovelling machine operator, designed to ob-
+                                                                         tain further insights on the benefits and limitations
+                                                                         of detaching a separate machine to feed the yarder
+                                                                         grapple. Survey questions were the same or followed
+                                                                         the same rationale as those used by Pedofsky and
+Fig. 2 Tigercat LS855E feeding a stem to Falcon 1750 at Site # 2         Visser (2019) for their survey of winch assisted skid-
+(Geraldine)                                                              der users.
+
+
+Croat. j. for. eng. 46(2025)2                                                                                                  249
+R. Visser et al.                Mechanical Feeding of Grapple Yarders: Productivity, Flexibility and Time Use Efficiency (247–255)
+
+
+                                3. Results
+The daily production data shows the dramatic effect
+of piece size on machine productivity (Table 2). While
+mean cycle time ranged from 104 to 233 s, mean pro-
+ductivity ranged from 23 to 114 m3/PMH and the
+smallest piece size systematically corresponded to the
+longest cycle time and the lowest productivity. At site
+#1, the machine negotiating the smallest piece size
+took a longer time than all the others in order to ac-
+cumulate an average three-pieces load, and yet could
+not match the load size achieved at the other sites,
+falling far behind in terms of productivity. The table
+also shows a very clear trend for load size, which con-
+tained an average three pieces for very small stems
+(0.5 m3), about two pieces for large stems (~2 m3) and
+only one piece for very large stems (>3 m3) that were
+close to reaching the payload capacity of the yarder.
+    The elemental time study provided further insights
+into the factors affecting work performance. Accumu-                                             Fig. 3 Mean cycle time by task and site
+lating a load (shovelling) was the fastest where stem
+size was the largest (Geraldine), and the longest where
+stem size was the lowest (Herbert) (Fig. 3). The figure                                          feeding cycle and ranged from 13% at site #3 and 54%
+also indicates that the task of feeding a load to the                                            at site #2.
+grapple took approximately the same time, regardless                                                 Table 3 reports the average duration of all elemen-
+of bunch size or machine type – which was confirmed                                              tal times, as well as the 5th and 95th percentiles, taken
+by regression analysis. Apparently, once a load had                                              as the actual range of variation after removing the ef-
+been formed, the time to pass it onto the yarder grap-                                           fect of erratic datapoints. The table also shows what
+ple was relatively constant.                                                                     values are statistically different from each other, ac-
+   As a typical interaction delay, waiting time would                                            cording to the Kruskall-Wallis non-parametric test.
+depend on the difference between the cycle times of                                                  All the machines deployed to feed the yarder grap-
+the feeding unit and of the yarder. Fig. 3 suggests that                                         ple were quite versatile and were used accordingly. As
+such difference was largest at sites #1 and #2, which                                            a general average, feeding the yarder grapple took ap-
+could be explained by the yarder at site #1 spanning                                             proximately 60% of total worksite time (Fig. 4). That
+the longest distance (hence a long yarding cycle),                                               60% included waiting for the grapple to show up,
+while at site #2 the feeding cycle was the shortest.                                             which represented 40% of grapple feeding time, or
+Overall, mean waiting time represented 39% of the                                                23% of total worksite time. Other productive work
+
+
+Table 2 Results: cycles, pieces, volumes, time consumption and productivity
+                                                                                         Pieces              m3              m3        Cycle      Piece        m3
+      Site              Day           Cycles           Pieces            m3
+                                                                                         cycle-1           piece-1         cycle-1    time, s      h-1         h-1
+Herbert                  1               51             102              51                2.0              0.50               1.00    157         46          23
+Herbert                  2               56             168              84                3.0              0.50               1.50    233         46          23
+Herbert                  3               42             126              63                3.0              0.50               1.50    204         53          27
+Geraldine                1              131             130             455                1.0              3.50               3.47    110         33         114
+Geraldine                2              150             149             522                1.0              3.50               3.48    132         27          95
+Geraldine                3              58               59             207                1.0              3.50               3.56    121         30         106
+Pidgeon                  1              39               93             121                2.4              1.30               3.10    112         77         100
+Pidgeon                  2              95              176             229                1.9              1.30               2.41    104         64          83
+Golden                   1              43              91              181                2.1              1.99               4.21    146         52         104
+Notes: m3 – solid volume over bark; h – hours of feeding machine work, including waiting time but excluding all other delays
+
+
+250                                                                                                                                      Croat. j. for. eng. 46(2025)2
+Mechanical Feeding of Grapple Yarders: Productivity, Flexibility and Time Use Efficiency (247–255)                                                                     R. Visser et al.
+
+
+Table 3 Results of elemental time study
+       Site                  1                                              2                                        3                                         4
+       Site               Herbert                                        Geraldine                                Pidgeon                                   Golden
+Metrics           Mean Median 5th                        95th     Mean Median 5th                 95th     Mean Median 5th                 95th     Mean Median 5th                   95th
+Shovel, s         107a  99       38                      193       36 b 27       12               115       75 a 77      31                116      102 a 108      35                 161
+Feed, s            26 a 23       14                       47       19 b 18       10               31        16 c 15       8                 28       15 c 14       9                  26
+Wait, s            66 a 67        0                      163       74 b 74       29               114       15 c  8       0                 52       32 d 30       0                  87
+Cycle, s          198 a 196      94                      298      122 b 125      44               165      106 c 99      66                160      146 d 148      87                 198
+Load size, pieces 2.6 a 2.4     2.0                      3.0      1.0 b 1.1      0.5              2.0      2.0 a 2.0    1.0                3.0      2.1 a 2.0     2.0                 3.0
+             3        a
+Load size, m      1.3   1.3     1.0                      1.5      3.5 b 3.4      1.6              7.0      2.6 c 2.5    1.3                3.9      4.2 d
+                                                                                                                                                          4.1     3.9                 5.9
+Notes: 5th – Fifth percentile; 95th – Ninety-fifth percentile; m3 – solid volume over bark; different superscript letters attached to the mean values on the same row indicate that the
+differences between the means were found statistically significant at the 5% level by the Kruskal-Wallis non-parametric comparison test
+
+
+
+represented an additional 20% of worksite time and                                                 chronized operations. Therefore, our inference is just
+consisted most often of felling and tidying up the                                                 suggestive and would require validation through a
+cutover. Delays accounted for 20% of worksite time,                                                parallel time study of both machines. Visual observa-
+excluding grapple feeding waiting time. If that was                                                tion during the study indicated that the main bottle-
+also included, then delay time expanded to 43% and                                                 neck in all operations was the processor sitting at the
+utilization reduced to 57%.                                                                        landing, which was often unable to clear the stems
+    Table 4 reports the same values for each site and                                              away from the yarder before the next turn showed up.
+day, in order to allow a better appreciation of local and                                          As a result, the yarder had to wait until the processor
+temporal variability. The same table also indicates the                                            had at least moved the stems away before releasing its
+proportion of cycles where waiting time was experi-                                                load and sending the grapple back to the loading site,
+enced, with the purpose of detecting system unbal-                                                 where the feeding unit also stood waiting.
+ance. Depending on the site and day, between 50%                                                       Ten professionals responded to the survey ques-
+and 90% of the feeding cycles contained a »waiting«                                                tions, including all the four machine operators ob-
+element, suggesting that the feeding unit had excess                                               served at the four study sites, and their foremen. Their
+capacity and could keep the more expensive yarder                                                  answers provided valuable insights on the reasons for
+going, instead of waiting itself. The mechanisms of                                                using a separate machine to feed the yarder grapple
+interaction are potentially more complex and mutual                                                and of its perceived advantages. Examples mentioned
+waiting is not impossible, especially in poorly syn-                                               where a grapple would struggle to perform included:
+                                                                                                   obstructed field of vision (back faces and gullies),
+                                                                                                   small tree size and excessive load scatter. Grapple
+                                                                                                   feeding under those conditions prevented the need to
+                                                                                                   using slings and thus removed the risky and tiresome
+                                                                                                   task of choker-setting (WorkSafe BC 1992, Howard
+                                                                                                   1991). Second, they believed that grapple feeding re-
+                                                                                                   sulted in a marked increase in yarder productivity,
+                                                                                                   which some respondents estimated at about 100 t of
+                                                                                                   additional extraction per day. Third, respondents
+                                                                                                   stressed that once on the cutover, the loader was also
+                                                                                                   used to tidy up the work site, resulting in a cleaner
+                                                                                                   slope that would be easier to replant and less prone to
+                                                                                                   slash mobilization. Finally, the use of an excavator-
+                                                                                                   based shovel machine allowed covering flatter areas
+                                                                                                   and back faces without building new roads and land-
+                                                                                                   ings, which would result in significant savings. Con-
+                                                                                                   cerning work conditions, respondents generally
+                                                                                                   agreed on 30° being the maximum slope gradient for
+Fig. 4 Time use breakdown of grapple feeding machines (general                                     unassisted feeding units, 45° for winch-assisted ones.
+average). Notes: approximately 40% of the »Feeding grapple« time                                   Maximum viable distance was estimated to 500 m,
+is represented by waiting for the grapple to show up                                               based on the cable capacity of the assisting winch.
+
+
+Croat. j. for. eng. 46(2025)2                                                                                                                                                             251
+R. Visser et al.                Mechanical Feeding of Grapple Yarders: Productivity, Flexibility and Time Use Efficiency (247–255)
+
+
+Table 4 Proportion of cycles with waiting time, other work, delays and utilization
+                                            Cycles w/        % Cycles w/ Grapple work Grapple wait                   Other work           Delays            Util         Other work
+    Site        Day      Total cycles
+                                              Wait              Wait           h            h                             h                  h              %                %
+Herbert          1            51               47                92          1.30         0.92                          0.00               0.07             57                0
+Herbert          2            56               49                88          2.29         1.33                          0.00               0.25             59                0
+Herbert          3            42               25                60          1.89         0.48                          1.21               1.32             63               39
+Geraldine        1           131              128                98          1.70         2.30                          1.16               0.27             53               41
+Geraldine        2           150              142                95          2.21         3.29                          1.30               0.75             46               37
+Geraldine        3            58               37                64          1.20         0.75                          2.23               0.27             77               65
+Pidgeon          1            39               21                54          1.09         0.11                          1.18               0.75             73               52
+Pidgeon          2            95               56                59          2.31         0.44                          1.84               1.86             64               44
+Golden           1            43               29                67          1.36         0.38                          1.99               1.44             65               59
+All                          665              534                80         15.35        10.00                         10.91               6.98             61               42
+Notes: Total Cycles – number of grapple feeding cycles recorded for that day and that site; Cycles w/ Wait – number of grapple feeding cycles where waiting time was recorded; Other
+work – productive work other than grapple feeding (e.g. felling, tidying up etc.); Delays – non-work time other than waiting (e.g. breakdowns, personal delays etc.); Utilization – work
+time / (work time + delays) expressed a percent value
+
+
+
+However, even if winch capacity was extended, work-                                             behind, for example it can shovel the easiest segments
+ing on longer distances would result in a severe de-                                            directly to the landing and/or a logging road where
+crease of yarder productivity and might not be profit-                                          ground-based equipment can pull it to the landing. As
+able. Of course, those are informed but subjective                                              a whole, the feeding machines in our study spent 20%
+statements and cannot be taken as scientific evidence                                           of their worksite time performing tasks other than feed-
+until validated by suitable studies.                                                            ing, such as felling or tidying up the cutover from scat-
+                                                                                                tered tops and slash. In New Zealand, a new law
+                                                                                                (National Environmental Standard for Commercial
+                             4. Discussion                                                      Forestry) requires the removal of larger woody debris
+Grapple feeding adds complexity to an already com-                                              (i.e. »tops«) from erosion prone areas (Parker and
+plex chain of tasks where interdependence can cause                                             Henare 2023). In those cases, a shovel must be intro-
+significant delays. Therefore, one of the main concerns                                         duced to the cutover to bunch residues and feed them
+is checking whether its inclusion will further decrease                                         to the grapple, so it would make sense to use it all along
+system stability and increase vulnerability to interac-                                         and facilitate the extraction of commercial stems. At the
+tion delays. Both the time study and the interviews                                             same time, the capacity to perform multiple tasks al-
+suggest that it may not be the case. The majority of the                                        lows the feeding unit to achieve good utilization levels,
+grapple feeding cycles included a sizable waiting com-                                          as demonstrated in our study. In this study two of the
+ponent, suggesting that the feeding unit had excess                                             machines used for feeding the grapple were actually the
+capacity to prevent lengthy yarder delays. One cannot                                           same feller-bunchers previously used to fell the trees
+exclude a certain lack of synchronicity, but the fact that                                      (Site #1 and Site #2). Therefore, the level of versatility of
+none of the interview respondents mentioned the ad-                                             the feeding unit depends on machine type. A feller-
+ditional risk for interaction delays eventually intro-                                          buncher is more expensive, but it is also more versatile,
+duced by the feeding machine is a good indicator that                                           and it might be a better option if frequent task changes
+it is not generally the case. In fact, the feeding machine                                      are required. Furthermore, using the feller-buncher for
+may act as a productivity stabilizer: it may occasion-                                          feeding the grapple allows increasing its utilization,
+ally fall behind on very short hauls where the yarder                                           thus lowering capital cost.
+is most productive, but it will boost yarder productiv-                                             Cost is certainly an important issue. Adding a ma-
+ity on longer hauls, effectively counterbalancing the                                           chine to shovel stems towards the yarding corridor can
+impact of extraction distance.                                                                  add 1200 USD to the daily cost of the operation and, if
+     A certain overcapacity of the feeding machine is                                           winch-assist is also required, then the amount will swell
+likely desirable as it will prevent operational yarder de-                                      to over 2000 USD per day (Forme 2023). This study was
+lays, which are the least desirable, since the yarder is                                        not designed to provide a conclusive answer to the
+the most expensive piece of equipment on site. As the                                           question of improved cost-effectiveness, but the few
+feeding machine is a versatile piece of equipment, it can                                       references available on the subject indicate it may be the
+also be used for other ancillary tasks if the yarder falls                                      case (Evanson and Amishev 2009, Acuna et al. 2011,
+
+
+252                                                                                                                                             Croat. j. for. eng. 46(2025)2
+Mechanical Feeding of Grapple Yarders: Productivity, Flexibility and Time Use Efficiency (247–255)            R. Visser et al.
+
+
+Chung et al. 2023). Further corroboration can be ob-                           Acknowledgments
+tained from the work of Engelbrecht et al. (2017), which
+shows how grapple feeding is a generalized practice in        Support was received from the University of
+the Malaysian forest plantations. In fact, none of the        Canterbury – Christchurch, New Zealand, through
+respondents to the interviews even questioned the prof-       the Erskine Programme.
+itability of grapple feeding, taking for granted that it
+was the way to go. Of course, that sample is biased be-
+cause it consists exclusively of operators who do resort
+                                                                                    6. References
+to grapple feeding, but they would have complained            Acuna, M., Skinnell, J., Evanson, T., Mitchell, R., 2011:
+about poor profitability if they thought grapple feeding      Bunching with a self-levelling feller-buncher on steep terrain
+was unprofitable and was forced upon them by some             for efficient yarder extraction. Croatian Journal of Forest En-
+additional consideration, other than cost effectiveness.      gineering 32(2): 521–531.
+    Profitability did not appear to be the most important     Albizu, P., Tolosana-Esteban, E., Roman-Jordan, E., 2013:
+driver: all respondents seemed to consider grapple            Safety and health in forest harvesting operations. Diagnosis
+feeding more as an enabler than as a cost saver. Deploy-      and preventive actions. A review. Forest Systems 22(3):
+ing a shovel to bunch and feed stems to the yarder            392–400. https://doi.org/10.5424/fs/2013223-02714
+grapple allows dispensing with choker-setters and             Axelsson, S., 1998: The mechanization of logging operations
+chasers, thus solving cogent labor safety and recruit-        in Sweden and its effect on occupational safety and health.
+ment issues (Evanson 2014).                                   Journal of Forest Engineering 9(2): 25–31. https://doi.org/10
+    Future research could address the effect of shovel-       .1080/08435243.1998.10702715
+ling distance on shovel production and line shift fre-        Bell, J., Grushecky, S., 2006: Evaluating the effectiveness of
+quency or - even better - explore the interaction between     a logger safety training program. Journal of Safety Research
+shovelling distance and yarding distance in order to          37(1): 53–61. https://doi.org/10.1016/j.jsr.2005.10.019
+develop effective operational guidelines. Yarding cor-
+                                                              Bennet, N., 2016: Timber supply crunch drives loggers to
+ridors tend to fan out from a central pivot represented       more dangerous terrain. Business Vancouver 2016/1. https://
+by the tower sitting at the landing. Therefore, the dis-      www.biv.com/article/2016/1/timber-supply-crunch-drives-
+tance between adjacent lines will become longer the           loggers-more-dangerous
+further one moves away from the yarder. As a conse-
+quence, shovelling distance should also become longer         Bonauto, D.K., Wuellner, S.E., Marcum, J.L., Adams, D.A.,
+                                                              2019: Injury rate comparisons for nonmechanized and mech-
+moving down towards the tailhold, which subsumes a
+                                                              anized logging operations, Washington State, 2005–2014.
+self-compensating mechanism where the shovel will
+                                                              Journal of Agromedicine 24(2): 205–214. https://doi.org/10.1
+need to cover longer distances when the yarder will also      080/1059924X.2019.1566106
+need to cover longer distances, thus giving the shovel
+enough lead time to accomplish its job before the car-        Chung, W., Morrissette, B., Green, P., Garrelts, B., Leshchin-
+riage returns. A future study could aim at developing         sky, B., Belart, F., Sessions, J., Wimer, J., Garland, J., 2022:
+                                                              Effects of pre-bunching trees with a tethered feller-buncher
+guidelines for optimizing such system, as well as to
+                                                              on cable logging productivity and costs: a case study in
+organize a better controlled experiment to conclusively
+                                                              southern Oregon. Forest Science 68(3): 325–333. https://doi.
+determine the cost-effectiveness of grapple feeding un-
+                                                              org/10.1093/forsci/fxac008
+der varying work conditions.
+                                                              De Souza, A., 1983: A study of production and ergonomic
+                                                              factors in grapple yarding operations using an electronic
+                    5. Conclusions                            data logger system. PhD Thesis, University of British Colum-
+                                                              bia, Vancouver, Canada, 231 p.
+Grapple yarding offers an effective solution to fully
+mechanized steep terrain wood extraction. Its applica-        Engelbrecht, R., McEwan, A., Spinelli, R., 2017: A robust pro-
+                                                              ductivity model for grapple yarding in fast-growing tree
+tion is greatly facilitated by stationing a machine at the
+                                                              plantations. Forests 8(10): 396. https://doi.org/10.3390/
+loading site on the cutover, for preparing the loads and
+                                                              f8100396
+feeding them to the yarder grapple. Such machine
+must be versatile and productive, with some overca-           Evanson, T., 2014: Alpine grapple carriage - from prototype
+pacity, so that the yarder does not need to sit waiting.      to production. Harvesting Technical Note HTN06-09, Future
+On slopes steeper than 30° that machine should be             Forests Research Ltd: Rotorua, New Zealand, 6 p.
+winch-assisted. If the yarder is stalled for some reason,     Evanson, T., Amishev, D., 2009: A New Method for Bunch-
+the feeding machine can be used for other tasks, such         ing Trees on Steep Terrain . Rotorua: Future Forests Re-
+as felling, shovelling and tidying up the cutover.            search.
+
+
+Croat. j. for. eng. 46(2025)2                                                                                            253
+R. Visser et al.        Mechanical Feeding of Grapple Yarders: Productivity, Flexibility and Time Use Efficiency (247–255)
+
+
+Forme, 2023: Informe Harvesting 2023. Forme Consulting,           Parker, D., Henare, P., 2023: Updated forestry regulations
+Tawa, Wellington, NZ.                                             increase council controls and require large slash removal.
+                                                                  Retrieved from Beehive.govt.nz: https://www.beehive.govt.
+Harrill, H., Visser, R., Raymond, K., 2019: New Zealand cable
+                                                                  nz/release/updated-forestry-regulations-increase-council-
+logging 2008–2018: a period of change. Current Forestry Re-
+                                                                  controls-and-require-large-slash-removal
+ports 5(3): 1–10. https://doi.org/10.1007/s40725-019-00092-5
+                                                                  Pedofsky, M., Visser, R., 2019: Assessment of Winch-Assist
+Helton, J., 1985: A comparison of grapple yarding and chok-
+                                                                  Skidder Case Study in Gisborne, New Zealand. Christ-
+er yarding in British Columbia. Master Thesis. University of
+                                                                  church: University of Canterbury, 30 p.
+New Brunswick, Fredericton, Canada, 88 p.
+                                                                  Spinelli, R., Visser, R., 2008: Analyzing and estimating delays
+Hemphill, D., 1986: Shovel Logging. New Zealand: Logging
+                                                                  in harvester operations. International Journal of Forest En-
+Industry Research Association 8(1): 1–4.
+                                                                  gineering 19(1): 36–41. https://doi.org/10.1080/14942119.200
+Howard, A., 1991: Production equations for grapple yarding        8.10702558
+in Coastal British Columbia. Western Journal of Applied
+                                                                  Spinelli, R., Visser, R., Riond, C., Magagnotti, N., 2017: A
+Forestry 6(1): 7–10. https://doi.org/10.1093/wjaf/6.1.7
+                                                                  survey of logging contract rates in the southern European
+Klun, J., Medved, M., 2007: Fatal accidents in forestry in        Alps. Small-scale Forestry 16: 179–193. https://doi.
+some European countries. Croatian Journal of Forest Engi-         org/10.1007/s11842-016-9350-1
+neering 28(1): 55–62.
+                                                                  Spinelli, R., Visser, R., Han, H.S., 2019: A decade of forest
+MacKay, D., Ellefson, P., Blinn, C., 1996: Registration, certi-   engineering: achievements and future directions. Forests
+fication and licensing – creating better timber harvesters.       10(9): 724. https://doi.org/10.3390/f10090724
+Journal of Forestry 94(7): 27–31.
+                                                                  Studier, D., Binkley, V., 1974: Cable Logging Systems. Divi-
+Magagnotti, N., Kanzian, C., Schulmeyer, F., Spinelli, R.,        sion of Timber Management, USDA Forest Service, Portland,
+2013: A new guide for work studies in forestry. Internation-      OR, USA, 190 p.
+al Journal of Forest Engineering 24(3): 249–253. https://doi.
+                                                                  Visser, R., Stampfer, K., 2015: Expanding ground-based har-
+org/10.1080/14942119.2013.856613
+                                                                  vesting onto steep terrain: a review. Croatian Journal of For-
+Magagnotti, N., Smidt, M., Spinelli, R., 2021: Trainee’s reac-    est Engineering 36(2): 321–331.
+tions to logger training course characteristics: data from 300
+                                                                  Visser, R., Raymond, K., Harrill, H., 2014: Mechanising steep
+courses held in Italy. International Journal of Forest Engi-
+                                                                  terrain harvesting operations. New Zealand Journal of For-
+neering 32(1): 67–76. https://doi.org/10.1080/14942119.2021.
+                                                                  estry 59(3): 3–8.
+1848165
+                                                                  Visser, R., Spinelli, R., 2023: Benefits and limitations of
+Nahuelhual, L., Carmona, A., Lara, A., Echeverría, C.,
+                                                                  winch-assist technology for skidding operations. Forests
+González, M., 2012: Land-cover change to forest plantations:
+                                                                  14(2): 296. https://doi.org/10.3390/f14020296
+Proximate causes and implications for the landscape in
+south-central Chile. Landscape and Urban Planning 107(1):         WorkSafe BC, 1992: Grapple yarder and supersnorkel hand-
+12–20. https://doi.org/10.1016/j.landurbplan.2012.04.006          book. Richmond, Canada, 196 p.
+
+
+
+                    2025 by the authors. Submitted for possible open access publication under the terms and conditions
+                   ©
+                   of the Creative Commons Attribution (CC BY) license (http://creativecommons.org/licenses/by/4.0/).
+
+
+
+
+254                                                                                                 Croat. j. for. eng. 46(2025)2
+Mechanical Feeding of Grapple Yarders: Productivity, Flexibility and Time Use Efficiency (247–255)     R. Visser et al.
+
+
+
+
+                                                              Authors’ addresses:
+                                                              Prof. Rien M. Visser, PhD
+                                                              e-mail: rien.visser@canterbury.ac.nz
+                                                              Angus Howden, MSc
+                                                              University of Canterbury, Christchurch
+                                                              New Zealand
+                                                              Faculty of Engineering
+                                                              School of Forestry
+                                                              Private Bag 4800
+                                                              8140 Christchurch
+                                                              NEW ZEALAND
+                                                              Raffaele Spinelli, PhD *
+                                                              e-mail: raffaele.spinelli@ibe.cnr.it
+                                                              National Research Council (CNR)
+                                                              Institute of Bio-Economy (IBE)
+                                                              Via Madonna del Piano 10
+                                                              I-50019 Sesto Fiorentino (FI)
+                                                              ITALY
+Received: July 28, 2024
+Accepted: October 08, 2024                                    * Corresponding author
+
+Croat. j. for. eng. 46(2025)2                                                                                     255
+

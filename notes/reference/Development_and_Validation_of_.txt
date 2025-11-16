@@ -1,0 +1,3569 @@
+                                                                      i
+
+
+
+
+               Development and Validation of the OpCost
+                     Forest Operations Cost Model
+
+
+
+                                 A Thesis
+       Presented in Partial Fulfillment of the Requirements for the
+                      Degree of Master of Science
+                                   with a
+                       Major in Natural Resources
+                                   in the
+                      College of Graduate Studies
+                            University of Idaho
+                                     by
+                              Conor K. Bell
+
+
+
+
+              Major Professor: Robert F. Keefe, Ph.D.
+Committee Members: Soren M. Newman, Ph.D.; Randall H. Brooks, Ph.D.
+        Department Administrator: Alistair M.S. Smith, Ph.D.
+
+
+
+
+                              August 2017
+
+
+
+
+                                 ProQuest Number: 10600104
+
+
+
+
+                                      All rights reserved
+
+                                  INFORMATION TO ALL USERS
+    The quality of this reproduction is dependent upon the quality of the copy submitted.
+
+          In the unlikely event that the author did not send a complete manuscript
+    and there are missing pages, these will be noted. Also, if material had to be removed,
+                                a note will indicate the deletion.
+
+
+
+
+
+
+
+
+
+                                     ProQuest 10600104
+
+    Published by ProQuest LLC (2019 ). Copyright of the Dissertation is held by the Author.
+
+
+                                       All rights reserved.
+    This work is protected against unauthorized copying under Title 17, United States Code
+                               Microform Edition © ProQuest LLC.
+
+
+                                     ProQuest LLC.
+                              789 East Eisenhower Parkway
+                                     P.O. Box 1346
+                               Ann Arbor, MI 48106 - 1346
+                                                                                              ii
+
+
+
+                              Authorization to Submit Thesis
+
+
+This thesis of Conor K. Bell, submitted for the degree of Master of Science with a major in
+
+Natural Resources and titled “Development and Validation of the OpCost Forest Operations
+
+Cost Model,” has been reviewed in final form. Permission, as indicated by the signatures and
+
+dates given below, is now granted to submit final copies to the College of Graduate Studies
+
+for approval.
+
+
+
+
+Major Professor:               _______________________________Date_______________
+                               Robert F. Keefe, Ph.D.
+
+
+
+
+Committee Members:            ________________________________Date_______________
+                               Randall H. Brooks, Ph.D.
+
+
+
+
+                              _______________________________Date_______________
+
+                               Soren M. Newman, Ph.D.
+
+
+
+
+Department Administrator: _______________________________Date_______________
+
+                               Alistair M.S. Smith, Ph.D.
+                                                                                                 iii
+
+                                           Abstract
+
+
+        OpCost is an open-source forest operations cost simulator written in the R statistical
+
+programming language. OpCost is an updated version of an earlier model, the Fuel Reduction
+
+Cost Simulator (FRCS), with increased functionality. OpCost also has faster processing
+
+speed when used within the landscape-scale analytical framework, Bioregional Inventory
+
+Originated Under Management (BioSum). In this thesis, after providing a brief background
+
+on cost modeling in operational forestry, I describe the development and structure of OpCost
+
+in Chapter 2, which is subsequently being published as a General Technical Report by the
+
+USDA Forest Service Pacific Northwest Research Station. In Chapter 3, I describe a study
+
+conducted to validate OpCost predictions using an independent data set, something which has
+
+not been common in the fields of forest operations or forest engineering. In order to validate
+
+model predictions, I used a mixed method survey approach to sample professional logging
+
+contractor estimates of logging costs at each of three regional logging conferences in Idaho,
+
+Washington and Oregon in 2016. Stand and site conditions for timber sales with a range of
+
+pre-treatment conditions were generated using the Forest Vegetation Simulator model
+
+coupled with GIS. This approach made it possible to obtain both OpCost-generated
+
+predictions of fuel reduction treatment costs, and contractor estimated costs for areas with
+
+identical conditions. OpCost predictions for total, system-wide treatment cost, were not
+
+different from contractor estimates when compared using equivalence testing. However, the
+
+production rates of individual pieces of equipment estimated by contractors differed from
+
+those predicted by OpCost. Our approach to model validation using contractor surveys was
+
+novel and useful because it facilitated standardized conditions provided as input to both the
+
+contractors and the model. Fuel treatment cost estimation is critical for determining the cost
+                                                                                            iv
+
+effectiveness of management decisions at the wildland urban interface (WUI) and beyond.
+
+This work will help to advance landscape-scale analysis of the cost-effectiveness of fuel
+
+treatments, guiding researchers and managers in better understanding the long-term
+
+implications of their management decisions.
+                                                                                                v
+
+                                    Acknowledgements
+
+
+I would like to thank my graduate advisor, Rob Keefe, and graduate committee members,
+
+Randy Brooks, and Soren Newman. I am also deeply indebted to the Joint Fire Science
+
+Program (JFSP) for providing the funding to complete the project. Nick Crookston and
+
+Terrie Jain from the Rocky Mountain Research Station were particularly helpful as I
+
+developed the OpCost SE interface in Shiny. Jeremy Fried at the Pacific Northwest Research
+
+Station, in addition to serving as PI on our JFSP project, has been a tremendous resource for
+
+me in developing OpCost and integrating it into BioSum. I am greatly appreciative of his
+
+patience, support, and willingness to see our project through to completion.
+                                                                                                                                                         vi
+
+                                                              Table of Contents
+
+
+Authorization to Submit Thesis ........................................................................................................... ii
+
+
+Abstract ................................................................................................................................................iii
+
+
+Acknowledgements ............................................................................................................................... v
+
+
+Table of Contents ................................................................................................................................. vi
+
+
+List of Figures ...................................................................................................................................... ix
+
+
+List of Tables ........................................................................................................................................ xi
+
+
+Chapter 1: .............................................................................................................................................. 1
+
+
+Chapter 2: .............................................................................................................................................. 5
+
+
+Abstract ................................................................................................................................................. 5
+
+
+Introduction........................................................................................................................................... 5
+
+
+OpCost Framework: Overview ........................................................................................................... 8
+
+
+   Estimating machine time required .................................................................................................. 9
+
+
+   Estimating machine cost................................................................................................................... 9
+
+
+   Estimating harvest system cost ...................................................................................................... 10
+
+
+Enhancements ..................................................................................................................................... 11
+
+
+How it works- in detail ....................................................................................................................... 12
+                                                                                                                                                        vii
+
+   Inputs ............................................................................................................................................... 13
+
+
+   Transformations ............................................................................................................................. 13
+
+
+   Filtering ........................................................................................................................................... 14
+
+
+   Size Class Specific versus Total/Average ...................................................................................... 15
+
+
+   OpCost Workflow ........................................................................................................................... 15
+
+
+   Putting It All together .................................................................................................................... 16
+
+
+OpCost Stand-alone Edition (SE)...................................................................................................... 16
+
+
+Future Directions ................................................................................................................................ 18
+
+
+English Equivalents ............................................................................................................................ 19
+
+
+References............................................................................................................................................ 20
+
+
+Chapter 3: ............................................................................................................................................ 40
+
+
+   Introduction..................................................................................................................................... 40
+
+
+   Materials and methods ................................................................................................................... 47
+
+
+   Results .............................................................................................................................................. 52
+
+
+   Discussion ........................................................................................................................................ 56
+
+
+   Conclusion ....................................................................................................................................... 67
+
+
+   References........................................................................................................................................ 69
+                                                                                                                                                     viii
+
+Chapter 4: ............................................................................................................................................ 77
+
+
+Appendix 1: Logging Cost Survey..................................................................................................... 79
+                                                                                                                             ix
+
+List of Figures
+
+
+Chapter 2 Figures
+
+
+Figure 2.1: Relationship between OpCost and the Forest Vegetation Simulator….………..36
+
+
+Figure 2.2: Initial “Tables” page in OpCost stand-alone……………………………………37
+
+
+Figure 2.3: “Custom Cost” page in OpCost stand-alone edition.............................................38
+
+
+Figure 2.4: “Plots” page of OpCost stand-alone edition..........................................................39
+
+
+Chapter 3 Figures
+
+
+Figure 3.1: Relationship between OpCost and the Forest Vegetation Simulator (FVS) …....43
+
+
+Figure 3.2: Scatterplot of OpCost estimated harvest cost v. logger estimated harvest costs..55
+
+
+Figure 3.3: Model residuals vs fitted values for all predicted costs per unit area…………...55
+
+
+Figure 3.4: Scatterplot of OpCost estimated production rates vs. logger estimated production
+
+rates for all timber sale prospectus vignettes by equipment type within the cable-based
+
+manual whole tree system……………………………………………………………………60
+
+
+Figure 3.5: Scatterplot of OpCost estimated production rates vs. logger estimated production
+
+rates for timber sale prospectus vignettes by equipment type within the ground-based
+
+mechanical cut-to-length system..............................................................................................61
+                                                                                                                                      x
+
+Figure 3.6: Scatterplot of OpCost estimated production rates vs. logger estimated production
+
+rates for timber sale prospectus vignettes by equipment type within the ground-based manual
+
+whole tree system.....................................................................................................................62
+
+
+Figure 3.7: Scatterplot of OpCost estimated production rates vs. logger estimated production
+
+rates for all timber sale prospectus vignettes by equipment type within the ground-based
+
+mechanical whole tree system..................................................................................................63
+                                                                                                                                      xi
+
+List of Tables
+
+Chapter 2 tables
+
+
+Table 2.1: Utilization of wood in tops and limbs varies by harvest system category..............26
+
+
+Table 2.2: Harvest systems options available in the OpCost model and the equipment types
+
+used in each system…..............................................................................................................27
+
+
+Table 2.3: Sources of equations relied on by OpCost to estimate machine time requirements
+
+for forest harvest operations, by machine type, and the set of input variables that these
+
+equations draw from as independent variables for use in predicting machine time per unit tree
+
+volume or mass........................................................................................................................28
+
+
+Table 2.4: OpCost inputs and what they mean........................................................................32
+
+
+
+
+Chapter 3 tables
+
+
+Table 3.1: Sources of production and cost functions used in OpCost.....................................45
+
+
+Table 3.2: Two One-Sided t-test of the similarity between OpCost-predicted cost per unit
+
+area ($US) and an estimate for the same stand and site conditions provided by a professional
+
+logging contractor for each of the four systems. Mean values are the mean difference
+
+between predicted and survey-based estimates. For the mean and standard deviation (SD),
+
+values in parentheses are the cost in $US ac−1 as reported in OpCost...................................54
+                                                                                                         xii
+
+Table 3.3: Two One-Sided t-test (TOST) evaluating similarity between OpCost predicted
+
+production rate in MBF hr−1 and the corresponding rate estimated by contractors for
+
+treatments with the same stand and site conditions. The corresponding rate in m3 SMH−1 is
+
+shown in parentheses for the mean and standard deviation (SD)............................................57
+                                                                                                  1
+
+
+                                           Chapter 1:
+
+
+                         Operational Planning and Cost Estimation
+
+
+Having accurate cost estimates of forest operations is essential for evaluating the economic
+
+feasibility of forest management alternatives. The need for accurate cost estimates becomes
+
+even greater when planning forest restoration activities as the cost of the operations
+
+frequently exceeds the revenue from recovered material. The Fuels Reduction Cost Simulator
+
+(FRCS, Hartsough, Fight, & Noordijk, 2006) sought to address this need with a macro-
+
+driven, multi-sheet Excel spreadsheet tool into which users could enter parameters involving
+
+a stand and the material to be harvested as part of fuel treatment operations. In FRCS, and in
+
+OpCost, a user chooses a harvest system appropriate for a given site and stand conditions,
+
+specifies the “cut list” that results from applying a silvicultural prescription designed to
+
+reduce fuel loadings, and obtains estimated costs associated with implementation of that
+
+prescription. As interest grew in obtaining such estimates for large numbers of stands treated
+
+via a range of alternative prescriptions simulated on the landscape simultaneously, as
+
+implemented in the BioSum model (Fried et al 2016), the inherent limitations of the
+
+spreadsheet-based paradigm for simulating operational costs became evident. Forest
+
+engineers at the University of Idaho, with support from the Joint Fire Sciences Program,
+
+undertook a complete revamp of current harvesting cost models. The products of their efforts
+
+include the OpCost forest operations cost model, programmed in R, and a validation study
+
+that compared OpCost estimates with expert judgment collected via a formally designed
+
+survey of logging professionals (Bell et al. 2016). In addition to updating currently available
+
+production functions and cost estimates based on recent literature, OpCost includes some
+                                                                                                2
+
+additional harvest system capabilities, such as simulation of shovel logging, and has
+
+improved methods for interfacing with BioSum.
+
+
+OpCost incorporates production rates from over 85 studies, many with a vintage more recent
+
+than the last version of FRCS, released in 2009, of both manual and mechanized operational
+
+systems. One edition, OpCost BioSum Edition (BE), is distributed with the BioSum software
+
+and implemented as a callable code package running under the R interpreter. OpCost BE is
+
+tightly integrated with BioSum to estimate the costs for modeled forest harvest operations
+
+simulated under that analysis framework. The other edition, OpCost Stand-alone Edition
+
+(SE), can be run directly from the R development environment (R Development Core Team,
+
+2016). OpCost is driven by the same variables used as inputs to its predecessor, FRCS. For
+
+trees simulated as harvested, 24 variables account for average volume per tree, number of
+
+trees harvested per acre, hardwood fraction, residue fraction and wood density for each of
+
+three user-defined tree size classes, along with trees per acre and average tree volume of
+
+small (“brush cut” size, in FRCS parlance) trees that are cut but not utilized. Other inputs
+
+include slope and average distance to the nearest landing.
+
+OpCost greatly streamlines workflow of a batch operation relative to FRCS by eliminating
+
+the need to export data to Microsoft Excel as an intermediate step prior to cost estimation.
+
+OpCost is also designed to operate in batch mode, but reads inputs from and writes outputs to
+
+MS Access database tables, making it equally easy for users to estimate costs for one stand
+
+and treatment or thousands of stands and dozens of treatment alternatives. The integration of
+
+OpCost with BioSum produces cost estimates for each analyst-specified combination of
+
+silvicultural prescription and harvest system on each inventory plot modeled in BioSum. This
+                                                                                                3
+
+facilitates estimates of cost-effectiveness for a wide range of fuel treatments on managed
+
+forests in the West. The system can also be used to estimate harvest costs for implementing
+
+any silvicultural prescription, not just those intended for hazardous fuel reductions.
+
+Models have long been used in research and land management planning to understand and
+
+predict processes and systems of interest (McHugh, 2006; Mitro, 2001; Vanclay &
+
+Skovsgaard, 1997). The importance of using models has been just as crucial in understanding
+
+the financial aspects of timber harvest operations and hazardous fuel reduction (Biesecker &
+
+Fight, 2006; M. C. Bolding, Lanford, & Kellogg, 2003; D. Matthews, 1942). Reliable
+
+estimates of the costs of implementing harvests, or any kind of mechanical manipulation of
+
+forest vegetation, is important when prescribing, evaluating or comparing such forest
+
+operations (D. M. Matthews, 1942; Pearce & Turner, 1990; Røpke, 2004), for example
+
+determining the extent to which anticipated sales of harvested material are likely to offset
+
+operations costs, and to predict how much area can be treated for a given budget or level of
+
+subsidy. Whether forest treatments are motivated by forest products, forest health, fuels
+
+reduction, or any other goal, the cost of operations can be difficult to predict with confidence
+
+(M. C. Bolding et al., 2003; Jain et al., 2012; Pearce & Turner, 1990). Reliable estimates of
+
+treatment cost provides land managers with information they need to understand the
+
+economic implications of alternative silvicultural prescriptions and implementation schedules
+
+(Agee & Skinner, 2005).
+
+A new forest operations cost model was developed that builds on the Fuels Reduction Cost
+
+Simulator (D. Dykstra, Hartsough, & Stokes, 2009; B. Hartsough, Fight, & Noordijk, 2006)
+
+and expands its functionality by adding new harvest systems and other enhancements,
+
+including newly published (since 2009) equipment production rate equations. As in other
+                                                                                                4
+
+areas of forestry, such as forest growth and yield modeling, model validation is an important
+
+process for informing model users about the performance and limitations of simulation
+
+models (Rykiel, 1996; Weiskittel, Hann, Jr, & Vanclay, 2011). Useful discussion of the
+
+advantages and disadvantages of alternative approaches to evaluating models is provided in
+
+Cawrse et al. (2010), Robinson & Froese (2004), Rykiel (1996), and Vanclay & Skovsgaard
+
+(1997). The purpose of this validation is to evaluate the correspondence between the cost
+
+estimates generated by OpCost and estimates obtained from logging professionals for
+
+hypothetical operations. Conducting a formal evaluation is somewhat novel given that model
+
+validation has not been deployed widely in forest operations (Kline, 2011; Vanclay &
+
+Skovsgaard, 1997).
+
+Like its predecessor, FRCS, OpCost is based on conventional, empirical cost control
+
+methods as described in Matthews (1942), but has been updated with recent peer reviewed
+
+production functions for many common harvesting systems. OpCost estimates costs
+
+associated with 11 harvesting systems as a function of stand characteristics, using descriptors
+
+of harvested trees derived from the CUTLIST table output of the Forest Vegetation Simulator
+
+(FVS) model (Dixon, 2002; Stage, 1973) as input. OpCost can also evaluate multiple
+
+management scenarios to estimate and facilitate comparison of economic implications of
+
+alternative treatments, including the present value of treatments conducted in the future.
+
+OpCost was developed to provide a user friendly, open-source, and transparent forest
+
+operations cost model to support both research and management (Bell et al. 2016). This paper
+
+describes a formal validation of OpCost with respect to both harvest systems (in terms of
+
+operations cost) and the individual equipment types that collectively comprise each harvest
+
+system.
+                                                                                                5
+
+                                          Chapter 2:
+
+
+      OpCost: an Open-Source System for Estimating Costs of Stand-Level Forest
+
+                                          Operations
+
+
+Abstract
+
+
+This report describes and documents the OpCost forest operations cost model, a key
+
+component of the BioSum analysis framework. OpCost is available in two editions: as a
+
+callable executable for use with BioSum, and in a stand-alone edition that can be run directly
+
+from R. OpCost model logic and assumptions for this open-source tool are explained,
+
+references to the literature used for all of the sub=models included in OpCost are provided,
+
+and guidance is offered on how to change the default hourly machine rates associated with
+
+overall logging cost calculations. OpCost enhancements such as cost component breakout,
+
+and identifying the least cost harvest system, are also described and explained.
+
+
+Introduction
+
+
+Estimating costs of forest operations is essential for evaluating the economic feasibility of
+
+forest management alternatives, especially those involving partial harvest conducted as a
+
+component of forest restoration, where costs may be a large fraction of, or exceed, revenues
+
+from sales of harvested wood. The Fuels Reduction Cost Simulator (FRCS) (Fight et al.
+
+2006), the development of which began over two decades ago, sought to address this need
+
+with a multi-sheet Excel®1 spreadsheet tool into which users could enter parameters
+
+associated with stand conditions and the material to be harvested as part of fuel treatment
+
+operations. In FRCS, and in OpCost, the user chooses a harvest system appropriate for a
+                                                                                               6
+
+given site and stand conditions, specifies the “cut list” that results from applying a
+
+silvicultural prescription designed to reduce fuel loadings, and obtains estimated costs
+
+associated with implementation of that prescription. As interest grew in obtaining treatment
+
+cost estimates for large numbers of stands treated via a range of alternative prescriptions
+
+simulated on the landscape simultaneously, as implemented in the BioSum model (Fried et
+
+al. 2016) and other approaches to modeling landscape-scale operational logistics (Jacobson et
+
+al. 2016), the inherent limitations of the spreadsheet-based paradigm for simulating
+
+operational costs became evident. Operations foresters at the University of Idaho, with
+
+support from the Joint Fire Sciences Program, undertook a revision and restructuring of the
+
+FRCS model. The products of their efforts include the OpCost forest operations cost model,
+
+programmed in R, and a validation study that compared OpCost estimates with expert
+
+judgments collected via a formally designed survey of logging professionals (Bell et al.
+
+2017). In addition to updating currently available production functions and cost estimates
+
+based on recent literature, OpCost includes some additional harvest system capabilities, such
+
+as simulation of shovel logging, and provides a more reliable interface to BioSum.
+
+
+OpCost incorporates production rates from over 85 studies, many with a vintage more recent
+
+than the last version of FRCS, released in 2009, of both manual and mechanized operational
+
+systems. One edition of the model, OpCost BioSum Edition (BE), is distributed with the
+
+BioSum software. OpCost BE is a callable code package, running under R (R Development
+
+Core Team 2016), that tightly integrates with BioSum to estimate the costs for modeled forest
+
+harvest operations simulated under that analysis framework. The other edition, OpCost
+
+Stand-alone Edition (SE), can be run directly from the R development environment. OpCost is
+
+driven by essentially the same variables used as inputs to its predecessor, FRCS. For trees
+                                                                                                7
+
+simulated as harvested, 35 variables account for average volume per tree, number of trees
+
+harvested per acre, hardwood fraction, merchantable volume as a percentage of total volume
+
+and wood density for each of three user-defined tree size classes, along with trees per acre
+
+and average tree volume of small (“brush cut” size, in FRCS parlance) trees that are cut but
+
+not utilized. Other inputs include slope and average distance to the nearest landing and, for
+
+small and large log trees, the percentage of wood volume transported to the landing that will
+
+be chipped owing to its derivation from trees of submerchantable size or noncommercial
+
+species. Average travel time, in hours, required to move-in a harvest system equipment
+
+component (e.g., a skidder) to the harvest site and operation size, in acres, are required to
+
+estimate move-in costs on a per acre basis.
+
+
+OpCost greatly streamlines workflow of a batch operation relative to FRCS by eliminating
+
+the need to export data to Microsoft Excel as an intermediate step prior to cost estimation.
+
+OpCost is also designed to operate in batch mode, but reads inputs from and writes outputs to
+
+MS Access database tables, making it equally easy for users to estimate costs for one stand
+
+and treatment or thousands of stands and dozens of treatment alternatives. The integration of
+
+OpCost with BioSum produces cost estimates for each analyst specified combination of
+
+silvicultural prescription and harvest system on each inventory plot modeled in BioSum. This
+
+facilitates estimates of cost-effectiveness for the wide range of fuel treatments on managed
+
+forests in the Western United States (see, e.g., Jain et al. 2012). The system can also estimate
+
+harvest costs for implementing any silvicultural prescription, not just those intended to
+
+reduce hazardous fuels.
+                                                                                                  8
+
+OpCost Framework: Overview
+
+
+Production functions in OpCost use, as inputs, the estimated amount of removed or altered
+
+material within forest stands based on summary metrics from simulated silvicultural
+
+prescriptions that generate a “cut list” in the FVS (Forest Vegetation Simulator) (Dixon 2002)
+
+format. These predict, on a per-acre basis, the time and expense required to harvest and
+
+process wood volume. In essence, OpCost is an equation filtering and aggregation engine
+
+that, considering the specifics of a stand, silvicultural treatment to be modeled, and harvest
+
+system to be implemented, applies several possible equations extracted from peer-reviewed
+
+forest operations literature. These are typically based on past elemental time analysis and
+
+work sampling studies that are identified as applicable to the stand and site under
+
+consideration; OpCost computes the average of the predictions of all applicable equations.
+
+By using the regression equations from descriptive studies, OpCost can predict the
+
+production rates of the equipment within certain conditions. Applicability is determined by
+
+whether an equation is eliminated from consideration by “rejection” criteria that differ among
+
+equations for a given harvesting, extraction, or processing machine. Examples of rejection
+
+criteria, which are evaluated for each operation based on whether or not the OpCost inputs
+
+fall within the acceptable range for an equation, include slope, average volume per tree,
+
+average distance to landing, whether hardwoods are part of the harvest, average tree
+
+diameter, average tree weight, and harvested trees per acre. Non-rejected equations for each
+
+machine used in a harvest system advance to the next computation phase. The rejection
+
+criteria are based on the range of data over which original studies were evaluated, in order to
+
+avoid extrapolation of production or cost functions beyond the range of their source data and
+
+intended application.
+                                                                                               9
+
+Estimating machine time required
+
+A harvest system can be thought of as a collection of the equipment, or machines, and labor
+
+required to implement operations under that system. For example, a Cable Manual Whole-
+
+tree system typically operates on steep slopes and, after manual tree felling by a sawyer,
+
+brings entire trees, including bole, branches and top (as opposed to previously-bucked logs)
+
+to the landing using a yarder. At the landing, whole trees are processed into merchantable
+
+logs and nonmerchantable residues with a processor, which may be either a stroke-boom
+
+delimber or danglehead processor. Logs are then loaded onto log trucks with a loader and
+
+residues are chipped and blown into a chip van. Thus, this system involves five machines:
+
+manual felling (sawyer with a chainsaw), yarder, processor, loader, and chipper, each of
+
+which may have up to a dozen or more published equations that could be used to predict the
+
+time required per unit of trees or volume handled. Given the diversity of study purposes and
+
+locales behind the published equations, and differences in the factors affecting costs for
+
+different machines, tree units differ among machines and among studies. Wood
+
+characteristics tracked by the model may be expressed on a volume or mass basis, depending
+
+on the relevant production function and study. Volumes may be expressed in cubic feet,
+
+board feet, cords or cubic meters, and mass values may be in pounds or kilograms. Times are
+
+summed across size classes, and these sums are then combined into the mean time in hours
+
+per acre.
+
+
+Estimating machine cost
+
+Once total machine working time has been adjusted into hours per acre, machine cost per
+
+acre is computed as the product of hours and machine cost rates, which are based on
+                                                                                               10
+
+conventional cost control processes (Matthews 1942). Calculations occur in productive
+
+machine hours (PMH) and following convention in forest operations studies, a utilization rate
+
+is assigned to distinguish between production and delay time. Because OpCost generates
+
+estimates at a stand level, without regard to stand location, it cannot assign location-specific
+
+move-in costs associated with each machine’s use. However, when using OpCost within a
+
+BioSum analysis, per acre move-in costs can be accounted for based on travel time to wood
+
+processing facilities (a parameter calculated as part of the BioSum workflow and a viable
+
+proxy for move-in time) and assumed stand area undergoing treatment. Move-in costs could
+
+also be affected by the locations of scheduled work in a particular year; however, this level of
+
+detail is beyond the scope of OpCost and BioSum and is not addressed. Wherever available,
+
+machine rates include fixed and variable costs associated with owning and operating the
+
+equipment. These have been updated with current estimates (Dodson et al. 2015). Default
+
+machine cost rates, developed for the Pacific Northwest region, are supplied in the OpCost
+
+code, but can be changed by the user, if desired and necessary, via a straightforward text edit
+
+to the open source model code (for OpCost BE) or to the appropriate input table (for OpCost
+
+SE).
+
+
+Estimating harvest system cost
+
+After machine cost estimates are complete, harvest cost per acre can be calculated as the sum
+
+of each of the predicted machine-specific treatment costs associated with the harvest system
+
+working in the BioSum-supplied site and stand conditions. For the cable manual whole-tree
+
+system example, this would be the sum of treatment costs per acre for sawyer, yarder and
+
+carriage combination, processor, loader, and chipper. Treatment cost accounts for both the
+
+machine rates and the production rates for each piece of equipment. Production rates are
+                                                                                              11
+
+typically expressed in tons per PMH or MBF per PMH and provide predictions of the total
+
+treatment time required by each piece of equipment to treat volume removed per acre. See,
+
+e.g. Keefe et al. (2014) for further description of the relationship between machine rates,
+
+production rates, and treatment costs. Move-in cost, derived from the number of machines
+
+transported to the harvest site and assumptions that account for delays in setting up
+
+equipment, when applicable, is added to obtain the final harvest cost reported in the table
+
+OpCost_Output. That table also contains calculated move-in cost in a separate column to
+
+better inform the analyst wishing to consider, for example, savings that might accrue from
+
+consolidating forest operations.
+
+
+Enhancements
+
+
+A significant enhancement compared to FRCS is the simultaneous estimation of costs for
+
+multiple, potentially more cost-efficient harvest systems. These estimates can be compared to
+
+the costs of the analyst- specified harvest system, replacing them if desired. By default, cost
+
+estimates for the lowest cost harvest system are output to a table called
+
+“OpCost_Ideal_Output.” Users wishing to prevent the creation of this table, thus slightly
+
+shortening execution time, can change the “1” to a “0” in the following OpCost statement:
+
+idealTable1 (currently line 20 in version 8.7.9) of the executable code.
+
+
+Another new feature is the reporting of chipping costs in a separate column in both the
+
+OpCost_Output and OpCost_ Ideal_Output tables. This could be useful when considering
+
+alternative approaches to disposal of harvest residues, as when a treatment leaves residues at
+
+the landing for collection as firewood or later burning— chipping cost might then be
+
+deducted from the harvest cost.
+                                                                                                 12
+
+How it works- in detail
+
+
+This section describes OpCost processing in greater detail, including the specific inputs and
+
+intermediate processing steps. This information is current as of version 8.7.9.
+
+
+OpCost predicts operations costs for 11 harvest systems. Each system can be thought of as an
+
+integrated sequence of activities utilizing several pieces of equipment, operating in a
+
+coordinated fashion, to move wood from trees to trucks, while accomplishing management
+
+objectives. For example, a harvest system may be used to transform a forest stand in terms of
+
+its density, tree species and size distribution, surface vegetation and fuels, and emergent
+
+properties such as forest health, resistance to fire, and overall resilience that derive from
+
+these. In addition to differences in how harvested material is felled and transported, harvest
+
+systems differ in the materials that are collected for utilization. OpCost provides for five
+
+harvest system categories to reflect these differences when estimating operations costs (table
+
+1). The 11 systems included in OpCost (table 2) cover nearly all forest management activities
+
+that involve mechanical fuel treatment and other harvest. To estimate the cost of applying
+
+these systems to implement particular prescriptions on specific stands, OpCost relies on 124
+
+equations extracted from 82 published articles (table 3) covering all 11 machine types used in
+
+these 11 harvest systems. For each equipment type, the available equations differ in the
+
+inputs that are required, so the “independent variables” column in table 3 is an exhaustive list
+
+of attributes used by any of the equations in the equipment category. The meaning of most of
+
+these attributes is straightforward. Piece volume is average volume per tree; total volume is
+
+volume per acre. Depending on the equation, species group is ultimately either a binary
+                                                                                                 13
+
+descriptor indicating whether hardwoods comprise more than 1 percent of the harvested
+
+material or the percentage of volume that is in hardwoods.
+
+
+Inputs
+
+BioSum initiates an instance of R, passing to it the OpCost BE filename and the name of an
+
+Access file that contains all input data in a table named opcost_input. This table consists of
+
+35 attributes per stand (table 4). In general, but with a few exceptions for size classes, where
+
+some are not needed, there is a quintet of harvested tree descriptors for each of four size
+
+classes defined by the user in BioSum, plus a few site descriptors. Note that the size class
+
+definitions themselves (in terms of minimum and maximum diameter at breast height
+
+[d.b.h.]) are not passed to, or needed by, OpCost. The four size classes are brush cut (BC),
+
+chip trees (CT), small log trees (SLT) and large log trees (LLT). Each of these size classes is
+
+determined by the analyst. The BC trees are harvested but not utilized, so OpCost accounts
+
+only for the costs of their felling. The CT boles are assumed to be utilized as “dirty” chips
+
+(with bark not removed before chipping) and have no merchantable value that would exceed
+
+their value as dirty chips; limbs are also utilized as chips when whole-tree harvest systems
+
+are used. Chip trees are the noncommercial trees and are accounted as a percentage of total
+
+volume for each size class. Note that average tree volumes provided as inputs to OpCost are
+
+total volumes, including tops and limbs.
+
+
+
+Transformations
+
+A comparison of the variables listed in table 3 (required input variables) and table 4 (OpCost
+
+inputs) shows that while most are aligned, there are some required variables not provided by
+                                                                                                 14
+
+BioSum. As each stand is processed, OpCost effects transformations to ensure that the input
+
+requirements for all 124 equations can be met. For example, OpCost estimates average d.b.h.,
+
+which is required by at least some production functions for most equipment types, by
+
+inverting formulas associated with common log scale rules such as the International ¼-inch
+
+rule (Grosenbaugh 1952) and Scribner’s Decimal C (Bruce and Schumacher 1950), to predict
+
+d.b.h. from BioSum-supplied average volume per tree. In several cases, it is necessary to
+
+estimate average interterm distance (which is required by at least some of the sawyer, CTL
+
+harvester, and feller-buncher equations) from TPA supplied by BioSum. Mean inter-tree
+
+distance is estimated from TPA as follows: Intertree distance = �(43560 ⁄ 𝑇𝑇𝑇𝑇𝑇𝑇)
+
+
+Because some equations estimate time required per unit mass, OpCost calculates mass per
+
+acre, by tree size class and in total, by multiplying BioSum-supplied average wood density by
+
+average tree volume and TPA. Depending on the referenced equations used, some volumes
+
+are converted to cubic feet, board feet, or cords per acre. All volumes and masses are also
+
+converted to metric units (cubic meters per hectare or kilograms per hectare) to fulfill the
+
+requirements of equations defined in metric units.
+
+
+Filtering
+
+When processing each stand, OpCost applies the rejection criteria associated with each of the
+
+124 equipment equations to eliminate equations deemed unsuitable for estimating costs for
+
+that stand. Typically, these rejection criteria are derived from the range of an attribute
+
+reflected in the empirical data on which an equation was fit. Any of the attributes may be the
+
+basis for rejection criteria. For CTL harvesters and feller-bunchers, D.B.H. is an important
+
+filter; for yarders, distance to landing and slope might be attributes with rejection criteria, but
+                                                                                                 15
+
+the criteria will differ among equipment types and among equations for a given equipment
+
+type, thus the sets of equations used for any two stands that are in some respects similar, may
+
+still differ.
+
+
+Size Class Specific versus Total/Average
+
+Equations differ as to whether or not they take stand-level- or size-class-specific inputs, even
+
+for a given equipment type. For those that operate with individual size classes (e.g., CT, SLT,
+
+and LLT), harvested tree descriptors such as average volume and TPA are processed for a
+
+specific size class to obtain equipment time associated with that size class. Ultimately, the
+
+equipment times for all size classes are summed. With mixed systems, for example when
+
+only large log trees are manually felled, sawyer equations would use only the LLT
+
+descriptors. Because the requirements differ among equations, OpCost calculates overall
+
+stand averages and totals for all harvested trees, as noted under “Transformations” above, so
+
+that these are available for the equations that rely on them.
+
+
+OpCost Workflow
+
+For a given equipment type, OpCost calls a machine-specific function. For a yarder time
+
+estimate, for example, it would call the yarder function, passing two arguments: the input
+
+variables generated by BioSum via the opcost_input table and the list of candidate production
+
+functions for that equipment. Parsing each opcost_input record, that function would reject
+
+inappropriate yarder equations, create the necessary transformed attributes, estimate yarder
+
+times per unit of material for all the appropriate equations, and adjust time per tree unit to
+
+time per acre for each tree size class separately, if necessary. It would then sum across size
+
+classes, compute the average over estimates from all yarder equations, multiply the estimated
+                                                                                                  16
+
+time per acre by yarder unit cost in dollars per hour and return that cost component to be used
+
+when adding up the cost of all machines used on that stand, at that time, with that harvest
+
+system.
+
+
+When using OpCost SE, harvest year can be included as an input and optionally, if a discount
+
+(interest) rate is provided, harvest cost estimates can be expressed in present or future value
+
+terms. When using OpCost BE with BioSum, discounting and inflation considerations are
+
+handled within the BioSum modeling framework.
+
+
+
+
+Putting It All together
+
+Figure 1 summarizes the seven major processing steps that occur within OpCost to compute
+
+the multiple components of harvest cost and combine them into an estimate of complete
+
+harvest cost per acre. Model output is deterministic in that a given set of stand inputs will
+
+always produce the same results as long as the same FVS stand projection (output) data are
+
+included. Note that, apart from BioSum, users sometimes choose to run FVS in a stochastic
+
+mode. Thus, OpCost users that repeat growth and yield predictions for the same stand
+
+multiple times in FVS prior to post processing with OpCost should expect that projected
+
+stand conditions may differ owing to inclusion of random numbers in underlying FVS code.
+
+This, in turn, may result in variability among associated OpCost treatment cost estimates.
+
+
+OpCost Stand-alone Edition (SE)
+
+
+OpCost SE is designed to operate without BioSum, and relies on an installed version of R 3.0
+
+or greater (R Development Core Team 2016), with the RODBC (Ripley and Lapsley 2016),
+                                                                                                  17
+
+Shiny (Chang et al. 2016), and ggplot2 (Wickham 2009) packages installed and loaded.
+
+There are three required script files that are available for download, and all three files should
+
+be saved to a single reference folder in the analyst’s computer. The files are called ui.r,
+
+server.r, and OpCostShiny.r. These files are available at the following URL:
+
+http://www.uidahoforestoperations.com/forest-operations-modeling.html. Each R script
+
+needs to be stored in the same directory on the user’s computer so the server code can locate
+
+the other files. After the files have been loaded, they are then available to open in the R
+
+environment using either the R console or a development environment such as RStudio. The
+
+user then runs the Shiny-based OpCost Graphical User Interface in R and the app will appear
+
+in the computer’s default web browser (tested with Internet Explorer) allowing for a simple,
+
+interactive and intuitive user interface. The inputs are the same as for OpCost BE and can be
+
+stored in either comma or space delimited text files.
+
+
+Once the application is open in the browser window, the user begins by navigating to and
+
+selecting the input file. A progress bar provides feedback as this data is loaded and processed,
+
+typically within seconds. When the progress bar achieves 100 percent, the estimated costs per
+
+acre using the harvest system chosen by the user will appear in a table, with one row per
+
+stand ID and prescription year. Each table generated by OpCost may be selected and copied
+
+or downloaded as a text file using the table buttons. After the table appears, the user also has
+
+the option of selecting the “ideal” table, present cost of future treatments, and ideal present
+
+costs of future treatments. The present cost and ideal present cost tables contain the
+
+discounted costs of harvest prescribed for a future year. The analyst also has the ability to
+
+select a different state, with different assumed machine rates, or can designate custom
+                                                                                               18
+
+machine rates using the third tab of the interface by selecting the designated check box,
+
+which activates the custom machine rate table.
+
+
+Each loaded table actively updates as an analyst adjusts prescription year or machine rates,
+
+streamlining the process for experimenting with different scenarios. After creating these
+
+tables, the analyst can proceed to the figures page where each of the tables previously created
+
+can be displayed graphically. The figures page also provides a graphical cost comparison of
+
+the analyst-defined harvest system and the system estimated by OpCost as the lowest cost
+
+alternative. Note that figures will only be viewable after tables have been created. Figures can
+
+be copied and pasted to a separate document, or saved to disk, using the menu options that
+
+appear when right-clicking on the image.
+
+
+To run another set of stand operations without starting a new session, save the output data, if
+
+desired, before loading a new dataset. OpCost SE does not automatically save outputs to files
+
+or maintain previous estimates in memory so any information from the previous analysis will
+
+be overwritten when new data are loaded. All output tables and figures will also be lost if
+
+exiting the program without first saving these to disk.
+
+
+Future Directions
+
+
+OpCost’s adaptable design enables it to handle a wide variety of systems and to accommodate
+
+new systems yet to be developed. Development is underway to enable production rates for new
+
+kinds of equipment to be implemented by entering the parameter and predictor variables
+
+associated with production and machine rates for new equipment and systems into a
+
+preformatted Excel table. The production function supplied should include output in total
+                                                                                               19
+
+treatment time (delay-free Productive Machine Hours), expressed on a per-acre basis. Users
+
+should also supply the key components of equipment machine rates: purchase price,
+
+utilization rate, etc. See, e.g., Brinker et al. 2002 for a description of machine rate
+
+calculations. The user-supplied production function parameters and machine rates will be
+
+incorporated into system-level logging cost predictions as described in, e.g., Keefe et al.
+
+(2014). A sample Excel table and details on how this table will be accessed by OpCost will
+
+be documented in the release notes accompanying a future OpCost version.
+
+
+One of the great benefits of providing OpCost in the open-source R framework is that it
+
+facilitates coordinated growth, development, and testing by a more expansive set of users
+
+than did earlier Excel and VBA-based versions of FRCS and related models. We anticipate
+
+making OpCost available as part of a package of R functions in the future in order to foster
+
+widespread distribution and use, especially for automated landscape-scale analyses. In its
+
+current incarnation, OpCost relies on stand-level FVS summaries of harvested trees. We
+
+envision refinements to the model that would base cost estimates on the full FVS tree list
+
+data, instead of summary metrics, potentially leading to greater accuracy and higher
+
+resolution simulation of operational logistics.
+
+
+English Equivalents
+ When you know:                   Multiply by:                     To find:
+
+
+ Acres                            0.4046                           Hectares
+
+
+ Cubic feet                       .0283                            Cubic meters
+                                                                                                      20
+
+References
+
+
+Acuna, M.; Kellogg, L.D. 2013. Evaluation of alternative cut-to-length harvesting technology for
+
+native forest thinning in Australia. International Journal of Forest Engineering. 20: 17–25.
+
+Adebayo, A.B.; Han, H.S.; Johnson, L. 2007. Productivity and cost of cut-to-length and whole-tree
+
+harvesting in a mixed-conifer stand. Forest Products Journal. 57: 59–69.
+
+Aubuchon, R. 1982. Compendium of cable yarding production equations. Corvallis, OR: Oregon
+
+State University.
+
+https://ir.library.oregonstate.edu/xmlui/bitstream/handle/1957/11234/Aubuchon%2c%20Richard%20
+
+MF.pdf?sequence=1. (February 16, 2017).
+
+Behjou, F.; Majnounian, B. 2009. Productivity and cost of manual felling with a chainsaw in
+
+Caspian forests. Journal of Forest Science. 55: 96–100.
+
+Berhongaray, G.; El Kasmioui, O.; Ceulemans, R. 2013. Comparative analysis of harvesting
+
+machines on an operational high-density short rotation woody crop (SRWC) culture: one-process
+
+versus two-process harvest operation. Biomass and Bioenergy. 58: 333–342.
+
+Bolding, M.; Lanford, B.L. 2001. Forest fuel reduction through energy wood production using a
+
+small chipper/CTL harvesting system. In: Wang, J.; Wolford, M.; McNeel, J., eds. Appalachian
+
+hardwoods: managing change. Proceedings of the 24th annual meeting of the Council on Forest
+
+Engineering. [CD-ROM]. Corvallis, OR: Council on Forest Engineering. : 65–70.
+
+Bolding, M.C.; Lanford, B.L.; Hall, M.W.S. 2002. Productivity of a Ponsse Ergo harvester working
+
+on steep terrain. In: Proceedings of the 25th annual meeting of the Council on Forest Engineering..
+
+Corvallis, OR: Council on Forest Engineering.
+
+Boswell, B. 1998. Vancouver Island mechanized thinning trials. Tech. Note TN-217. Pointe-Claire,
+
+Québec, Canada: Forest Engineering Research Institute of Canada. 15 p.
+                                                                                                     21
+
+Boswell, B. 2001. Partial cutting with a cable yarding system in coastal British Columbia. Res. Note
+
+2. Pointe-Claire, Québec, Canada: Forest Engineering Research Institute of Canada : 20.
+
+Brinker, R.W., Miller, D., Stokes, B.J. and Lanford, B.L. 1989. Machine rates for selected forest
+
+harvesting machines, Circular Vol. 296, 24. Alabama Agric. Exp. Station, Auburn University
+
+Bruce, D.; Schumacher, F.X. 1950. Forest mensuration. 3rd ed. New York: McGraw-Hill Book
+
+Company, Inc. 483 p.
+
+Chang, W.; Cheng, J.; Allaire, J.J.; Xie, Yihui; McPherson, J. 2016. shiny: Web Application
+
+Framework for R. R package version 0.13.2. http://CRAN.R-project.org/package=shiny
+
+Christian, L.E.; Brackley, A.M. 2007. Helicopter logging productivity on harvesting operations in
+
+southeast Alaska, using ecologically based silvicultural prescriptions. Western Journal of Applied
+
+Forestry. 22: 142–147.
+
+Cuchet, E. 2004. Performance of a logging residue bundler in the temperate forests of France.
+
+Biomass & Bioenergy. 27: 31–39.
+
+Dixon, G. 2002. Essential FVS: A user’s guide to the Forest Vegetation Simulator. Fort Collins, CO:
+
+U.S. Department of Agriculture, Forest Service, Forest Management Service Center. 226 p.
+
+Dodson, E.; Hayes, S.; Meek, J.; Keyes, C. 2015. Montana logging machine rates. International
+
+Journal of Forest Engineering. 26: 85-95.
+
+Drews, E.S.; Hartsough, B.R.; Doyal, J.A.; Kellogg, L.D. 2001. Harvester-forwarder and harvester-
+
+yarder ssystems for ffuel reduction treatments. Journal of Forest Engineering. 12: 81–91.
+
+Dykstra, D.P. 1976. Production rates and costs for yarding by cable, balloon, and helicopter
+
+compared for clearcuttings and partial cuttings. Research Bull. 22. Corvallis, OR: Oregon State
+
+University, School of Forestry, Forest Research Laboratory. 44 p.
+                                                                                                     22
+
+Eliasson, L. 1999. Simulation of thinning with a single-grip harvester. Forest Science. 45: 26–34.
+
+Fight, R.D.; Hartsough, B.R.; Noordijk, P. 2006. Users guide for FRCS: fuel reduction cost
+
+simulator software. Gen. Tech. Rep. PNW-GTR-668. Portland, OR: U.S. Department of Agriculture,
+
+Forest Service, Pacific Northwest Research Station. 23 p.
+
+Fisher, J.G. 1986. Logging with a hydraulic excavator: a case study. Corvallis, OR: Oregon State
+
+University.
+
+Flatten, L. 1991. The use of small helicopters for commercial thinning in steep, mountainous terrain.
+
+Corvallis, OR: Oregon State University. 90 p.
+
+Ghaffariyan, M.R.; Naghdi, R.; Ghajar, I.; Nikooy, M. 2012. Time prediction models and cost
+
+evaluation of cut-to-length (ctl) harvesting method in a mountainous forest. Small-Scale Forestry. 12:
+
+181–192.
+
+Goodman, J.S. 1996. assessing the non-random sampling effects of subject attrition in longitudinal
+
+research. Journal of Management. 22: 627–652.
+
+Goyder, J. 1985. Face-to-face interviews and mailed questionnaires: the net difference in response
+
+rate. Public Opinion Quarterly. 49: 234.
+
+Hartsough, B.R.; Drews, E.S.: McNeel, J.F.: Durston, T.A.; Stokes, B.J. 1997. Comparison of
+
+mechanized systems for thinning ponderosa pine and mixed conifer stands. Forest Products Journal.
+
+47: 59–68.
+
+Hartsough, B.R.; Zhang, X.; Fight, R.D. 2001. Harvesting cost model for small trees in natural
+
+stands in the interior Northwest. Forest Products Journal. 51(4): 54–61.
+
+Hiesl, P. 2013. Productivity standards for whole-tree and cut-to-length harvesting systems in Maine.
+
+Orono, ME: University of Maine. 150 p. M.S. thesis.
+                                                                                                      23
+
+Hiesl, P.; Benjamin, J.G. 2013. Cycle time analysis of harvesting equipment from an early
+
+commercial thinning treatment in Maine. International Journal of Forest Engineering. 24(2): 101–108.
+
+Huyler, N.K.; LeDoux, C.B. 1997. Cycle-time equation for the Koller K300 cable yarder operating
+
+on steep slopes in the Northeast. Res. Pap. NE-705. Radnor, PA: U.S. Department of Agriculture,
+
+Forest Service, Northeastern Forest Experiment Station. 8 p.
+
+Jacobson, R.A.; Keefe, R.F.; Smith, A.M.; Metlen, S.; Saul, D.A.; Newman, S.M.; Laninga, T.J.;
+
+Inman, D. 2016. Multi-spatial analysis of forest residue utilization for bioenergy. Biofuels,
+
+Bioproducts and Biorefining. 10: 560–575.
+
+Jain, T.B.; Battaglia, M.A.; Han, H.-S.; Graham, R.T.; Keyes, C.R.; Fried, J.S.; Sandquist, J.E.
+
+2012. A comprehensive guide to fuel management practices for dry mixed conifer forests in the
+
+northwestern United States. Gen. Tech. Rep. RMRS-GTR-292. Fort Collins, CO: U.S. Department of
+
+Agriculture, Forest Service, Rocky Mountain Research Station. 331 p.
+
+Jiroušek, R.; Klvač, R.; Skoupý, A. 2007. Productivity and costs of the mechanised cut-to-length
+
+wood harvesting system in clear-felling operations. Journal of Forest Science. 10: 476–482.
+
+Kärhä, K.; Rönkkö, E.; Gumse, S.-I. 2004. Productivity and cutting costs of thinning harvesters.
+
+International Journal of Forest Engineering. 15: 43–56.
+
+Keefe, R.; Anderson, N.; Hogland, J.; Muhlenfeld, K. 2014. Woody biomass logistics. In: Karlen,
+
+D.L., ed. Cellulosic energy cropping systems. Chichester, United Kingdom: John Wiley & Sons: 251–
+
+279. doi:10.1002/9781118676332.ch14.
+
+Keegan, C., III; Niccolucci, M.; Fiedler, C.; Jones, J.; Regel, R. 2002. Harvest cost collection
+
+approaches and associated equations for restoriation treaments on national forests. Forest Products
+
+Journal. 52: 96.
+                                                                                                    24
+
+Klepac, J.; Rummer, B.; Thompson, J. 2006. Evaluation of a cut-to-length system implementing
+
+fuel reduction treatments on the Coconino National Forest in Arizona. The 29th meeting of the
+
+Council on Forest Engineering: 405–414.
+
+Klepac, J.; Rummer, R.; Thompson, J. 2011. Harvesting small trees for bio-energy. Proceedings of
+
+the 34th annual meeting of the Council on Forest Engineering. Quebec City, QC: Council of Forest
+
+Engineering.11 p.
+
+Kluender, R.A.; Stokes, B.J. 1996. Felling and skidding productivity and harvesting cost in southern
+
+pine forests. Misc. Publ. In: Proceedings: Certification—environmental implications for forestry
+
+operations. [Place of publication unknown]: International Union of Forest Research Organizations:
+
+35–39.
+
+LeDoux, C.B. 1987. Estimating yarding costs for the Clearwater cable yarder. Res. Pap. NE-609.
+
+Broomall, PA: U.S. Department of Agriculture, Forest Service, Northeastern Forest Experiment
+
+Station. 4 p.
+
+Lortz, D.; Kluender, R.; McCoy, W. 1997. Manual felling time and productivity in southern pine
+
+forests. Forest Products Journal. 47: 59–63.
+
+Matthews, D.M. 1942. Cost control in the logging industry. New York: McGraw-Hill. 374 p.
+
+Numinen, T.; Korpunen, H.; Uusitalo, J. 2006. Time consumption analysis of the mechanized cut-
+
+to-length harvesting system. Silva Fennica. 40: 335–363.
+
+R Core Team (2016). R: A language and environment for statistical computing. R Foundation for
+
+Statistical Computing, Vienna, Austria. URL: https://www.R-project.org/
+
+Sessions, J., & Boston, K. (2013). Optimization of Road Spacing for Log Length Shovel Logging on
+
+Gentle Terrain. International Journal of Forest Engineering, 17: 67–75.
+                                                                                                      25
+
+Sirén, M.; Aaltio, H. 2003. Productivity and costs of thinning harvesters and harvester-forwarders.
+
+International Journal of Forest Engineering. 14: 39–48.
+
+Spinelli, R.; Cuchet, E.; Roux, P. 2007. A new feller-buncher for harvesting energy wood: results
+
+from a European test programme. Biomass and Bioenergy. 31: 205–210.
+
+Spinelli, R.; Magagnotti, N. 2010. A tool for productivity and cost forecasting of decentralised wood
+
+chipping. Forest Policy and Economics. 12: 194–198.
+
+Spinelli, R.; Magagnotti, N. 2014. Determining long-term chipper usage, productivity and fuel
+
+consumption. Biomass & Bioenergy. 66: 442–449.
+
+Visser, R.; Spinelli, R. 2012. Determining the shape of the productivity function for mechanized
+
+felling and felling-processing. Journal of Forest Research. 17: 397–402.
+
+Wang, J.; Haarlaa, R. 2002. Production analysis of an excavator-based harvester: a case study in
+
+Finnish forest operations. Forest Products Journal. 52: 85.
+
+Wang, J.; Long, C.; McNeel, J. 2004. Production and cost analysis of a feller-buncher and grapple
+
+skidder in central Appalachian hardwood forests. Forest Products Journal. 54: 159–167.
+                                                                                       26
+
+Table 2.1—Utilization of wood in tops and limbs varies by harvest system category
+
+and slope
+
+ Harvest system category
+                              Slope         Outcome for tops and limbs
+ 1                            Low           Left in the woods
+ 2                            Low           Forwarded to landing for chipping
+ 3                            High          Left in the woods
+ 4                            Any           Except for large log trees, forwarded to
+                                             landing for chipping
+ 5                            Any           Forwarded to landing for chipping only
+                                             when size is submerchantable or species
+                                             is noncommercial
+                                                                                        27
+
+Table 2.2—Harvest systems options available in the OpCost model and the equipment
+
+types used in each system
+
+
+                                                                                         Harvest
+
+                                                                                             system
+
+ Harvest system name          Equipment types used                                       category
+
+
+ Ground-based manual
+                              Sawyer, skidder, processor, loader, chipper
+ whole tree                                                                                    2
+
+
+ Ground-based Mechanical
+                              Feller-buncher, skidder, processor, loader, chipper
+ whole tree                                                                                    2
+
+
+ Ground-based cut-to-length
+                              CTL harvester, forwarder, loader, chipper
+ (CTL)                                                                                         1
+
+
+ Ground-based manual log      Sawyer, forwarder, loader, chipper
+                                                                                               1
+
+ Cable manual whole tree      Sawyer, yarder, processor, loader, chipper                       4
+                              Sawyer, feller-buncher, processor, loader, chipper
+ Cable manual whole
+                              Note: all large trees are assumed to be manually bucked          5
+ Tree/log
+                              into logs prior to yarding
+ Cable manual Log             Sawyer, yarder, loader, chipper                                  3
+ Cable CTL                    CTL harvester, yarder, loader, chipper                           1
+ Helicopter manual whole
+                              Helicopter, sawyer, processor, loader, chipper                   3
+ Tree
+ Helicopter CTL               Helicopter, CTL harvester, loader, chipper                       1
+ Shovel manual whole tree     Shovel, sawyer, processor, loader, chipper                       4
+                                                                                           28
+
+Table 2.3—Sources of equations relied on by OpCost to estimate machine time
+
+requirements for forest harvest operations, by machine type, and the set of input
+
+variables that these equations draw from as independent variables for use in predicting
+
+machine time per unit tree volume or mass
+
+ References for production equations, by machine type     Required independent variables
+ Sawyer:
+ Behjou and Majnounian 2009                              Diameter at breast height (DBH)
+ Ghaffariyan et al. 2012                                 Total volume
+ Hartsough et al. 2001                                   Piece volume
+ Klepac et al. 2011                                      Distance between trees
+ Kluender and Stokes 1996
+ Lortz et al. 1997                                       Slope
+ Visser and Spinelli 2012
+ Wang et al. 2004
+
+
+ Cut-to-length (CTL) harvester:
+ Acuna and Kellogg 2013                                  DBH
+ Adebayo et al. 2007                                     Slope
+ Berhongaray et al. 2013                                 Trees/acre
+ Bolding et al. 2002                                     Total volume
+ Bolding and Lanford 2001                                Piece volume
+
+
+ Drews et al. 2001
+ Eliasson 1999                                           Species group
+ Hiesl 2013
+ Hiesl and Benjamin 2012                                 Distance between trees
+ Jiroušek et al. 2007
+ Kärhäet et al. 2004
+ Jiroušek et al. 2007
+ Keegan et al. 2002
+ Klepac et al. 2006
+ Klepac et al. 2011
+                                                         29
+
+Numinen et al. 2006
+Visser and Spinelli 2012
+
+
+Skidder:
+Adebayoet al. 2007
+Bolding et al. 2002           DBH
+Boswell 1998                  Piece volume
+Ghaffariyan et al. 2012       Species group
+Hiesl and Benjamin 2012       One-way yarding distance
+Keegan et al. 2002            Total volume
+Kluender and Stokes 1996      Trees/acre
+Wang et al. 2004              Slope
+
+
+Feller-buncher:
+Adebayo et al. 2007
+Berhongaray et al. 2013       DBH
+Bolding and Lanford 2001
+Boswell 2001                  Distance between trees
+Dykstra 1976
+Hartsough et al. 1997         Piece volume
+Hartsough et al. 1997         Trees/acre
+Hartsough et al. 2001         Species group
+Hiesl 2013
+Hiesl and Benjamin 2012
+Kärhä et al. 2004
+Kluender and Stokes 1996      Trees/acre
+Spinelli et al. 2007          Slope
+Wang et al. 2004
+
+
+Helicopter:
+Christian and Brackley 2007   Piece weight
+Dykstra 1976                  One-way yarding distance
+Flatten 1991                  Elevation
+Flatten 1991                  Piece volume
+                              Trees/acre
+                                                          30
+
+Forwarder:
+Acuna and Kellogg 2013         One-way yarding distance
+Bolding et al. 2002            Piece volume
+Bolding and Lanford 2001       Slope
+Drews et al. 2001
+Dykstra 1976
+Hiesl 2013
+Jiroušek et al. 2007           Trees/acre
+Jiroušek et al. 2007           Total volume
+Kluender and Stokes 1996       DBH
+Numinen et al. 2006            Weight
+Sirén and Aaltio 2003
+
+
+Cable:
+Drews et al. 2001              Trees/acre
+Aubuchon 1982                  Slope
+Dykstra 1976                   Piece volume
+Boswell 2001                   Piece weight
+LeDoux 1987
+Hartsough et al. 2001
+Huyler and LeDoux 1997
+                               One-way yarding distance
+
+
+Chipper:
+Bolding et al. 2002            Piece volume
+Bolding and Lanford 2001       Species group
+Cuchet 2004
+Spinelli and Magagnotti 2014   DBH
+
+
+Shovel:
+Fisher 1986                    One-way yarding distance
+Sessions and Boston 2013       Elevation
+Wang and Haarlaa 2002          Piece volume
+                               Trees/acre
+                               Weight
+Stroke-boom delimber:
+                                               31
+
+Ghaffariyan et al. 2012        Piece volume
+Hartsough et al. 2006          DBH
+Hiesl 2013
+Spinelli and Magagnotti 2010   Species group
+                                                                                        32
+
+Table 2.4—OpCost inputs and what they mean
+Column Input Item                               Description
+
+
+                                                Stand identifier (condition id + rxPackage + rx
+1         Stand
+                                                 + rxCycle)
+
+
+2         Percent slope                         Slope
+
+
+                                                Distance in feet between volume centroid of
+3         One-way yarding distance
+                                                 the stand and nearest road
+
+
+                                                Year of harvest (used only in OpCost stand-
+4         YearCostCalc
+                                                 alone edition)
+
+
+5         Project elevation                     Stand elevation in feet above mean sea level
+
+
+6         Harvesting system                     Name of harvest system
+
+
+7         Chip trees per acre                   Trees per acre (TPA) of chip trees
+
+
+                                                Percentage of chip tree volume in
+
+8         Chip trees Merch As Pct Of Total       merchantable-size wood (used for harvest
+
+                                                 systems that do not utilize tops and limbs)
+
+
+9         Chip trees average volume(ft3)        TPA weighted average of total volume
+
+
+                                                TPA and volume weighted average wood
+10        Chip trees average density (lb/ft3)
+                                                 density of all chip trees
+                                                                             33
+
+                                       TPA and volume weighted percentage of chip
+11   Chip tree hardwood percent
+                                        tree volume that is in hardwoods
+
+
+12   Small log trees per acre          TPA of small log trees
+
+
+     Small log trees Merch As Pct Of   Percentage of small log volume in
+13
+      Total                             merchantable sized wood
+
+
+                                       Percentage of harvested small log volume that
+
+14   Small log trees ChipPct_Cat1_3     will be chipped under harvest systems in
+
+                                        category 1 or 3
+
+
+                                       Percentage of harvested small log volume that
+
+15   Small log trees ChipPct_Cat2_4     will be chipped under harvest systems in
+
+                                        category 2 or 4
+
+
+                                       Percentage of harvested small log volume that
+
+16   Small log trees ChipPct_Cat5       will be chipped under harvest systems in
+
+                                        category 5
+
+
+     Small log trees total average     TPA weighted average total volume per small
+17
+      volume(ft3)                       log tree
+
+
+     Small log trees average           TPA and volume weighted average wood
+18
+      density(lb/ft3)                   density of small log tree volume
+                                                                                       34
+
+                                              TPA and volume weighted percentage of small
+19   Small log trees hardwood percent
+                                               log tree volume that is in hardwoods
+
+
+20   Large log trees per acre                 TPA of large log trees
+
+
+     Large log trees Merch As Pct Of          Percentage of large log tree volume in
+21
+      Total                                    merchantable sized wood
+
+
+                                              Percentage of harvested large log tree volume
+
+23   Large log trees ChipPct_Cat1_3_4          that will be chipped under harvest systems in
+
+                                               category 1 or 3 or 4
+
+
+                                              Percentage of harvested large log tree volume
+
+24   Large log trees ChipPct_Cat2              that will be chipped under harvest systems in
+
+                                               category 2
+
+
+                                              Percentage of harvested large log tree volume
+
+25   Large log trees ChipPct_Cat5              that will be chipped under harvest systems in
+
+                                               category 5
+
+
+                                              TPA weighted average total volume per large
+26   Large log trees total average vol(ft3)
+                                               log tree
+
+
+     Large log trees average                  TPA and volume weighted average wood
+27
+      density(lb/ft3)                          density of all the large log tree volume
+                                                                                  35
+
+                                        TPA and volume weighted percentage of large
+28   Large log trees hardwood percent
+                                         log tree volume that is in hardwoods
+
+
+29   BrushCutTPA                        TPA of brush cut trees
+
+
+                                        TPA weighted average bole+branch volume of
+30   BrushCutAvgVol
+                                         brush cut trees
+
+
+                                        Code indicating silvicultural sequence,
+
+31   RxPackage_Rx_RxCycle                prescription and Forest Vegetation Simuator
+
+                                         cycle under which trees were harvested
+
+
+32   BioSum_cond_id                     Needed for table joins
+
+
+33   Rxpackage                          Needed for table joins
+
+
+34   Rx                                 Needed for table joins
+
+
+35   Rxcycle                            Needed for table joins
+
+
+                                        Time required to move-in and setup logging
+36   Move-in hours
+                                         equipment
+
+
+                                        Area assumed for the size of the harvest
+37   Harvest area assumed acres
+                                         operation
+                                                                                 36
+
+
+
+
+Figure 2.1—Example of work flow within OpCost to estimate complete harvest cost for
+
+a stand harvested via ground-based mechanical whole-tree harvest system.
+                                                          37
+
+
+
+
+Figure 2.2—Initial “Tables” page in OpCost stand-alone.
+                                                               38
+
+
+
+
+Figure 2.3—“Custom Cost” page in OpCost stand-alone edition.
+                                                                                               39
+
+
+
+
+Figure 2.4—“Plots” page of OpCost stand-alone edition.
+
+1
+    The use of trade or firm names in this publication are for reader information and do not
+
+imply endorsement of the U.S. Department of Agriculture of any product or service.
+                                                                                               40
+
+                                          Chapter 3:
+
+
+          Validation of the OpCost logging cost model using contractor surveys
+
+
+Introduction
+
+
+Models have long been used in research and land management planning to understand and
+
+predict processes and systems of interest (Stage 1973; Vanclay & Skovsgaard 1997; Mitro
+
+2001; McHugh 2006; Ackerman et al. 2014). The importance of using models has been just
+
+as crucial in understanding the financial aspects of timber harvest operations and hazardous
+
+fuel reduction (Matthews 1942; Bolding et al. 2003; Biesecker & Fight 2006). Reliable
+
+estimation of the costs of implementing harvests, or any kind of mechanical manipulation of
+
+forest vegetation, is important when prescribing, evaluating or comparing such forest
+
+operations (Matthews 1942; Pearce & Turner 1990; Røpke 2004). For example, accurate
+
+estimation of costs is needed to determine the extent to which anticipated sales of harvested
+
+material are likely to offset treatment expense, and to predict how much area can be treated
+
+for a given budget or level of subsidy. Whether forest treatments are motivated by forest
+
+products, forest health, fuels reduction, or any other goal, the cost of operations can be
+
+difficult to predict with confidence (Pearce & Turner 1990; Bolding et al. 2003; Jain et al.
+
+2012). Reliable estimates of treatment costs provide land managers with information they
+
+need to understand the economic implications of alternative silvicultural prescriptions and
+
+implementation schedules to reduce fuels (Agee & Skinner 2005).
+                                                                                              41
+
+OpCost is a new forest operations cost model that builds on the Fuels Reduction Cost Simulator
+
+(Hartsough et al. 2006; Dykstra et al. 2009) and expands its functionality by adding new harvest
+
+systems and other enhancements, including newly published (since 2009) equipment
+
+production rate equations. Increasingly, OpCost is being used to simulate landscape level
+
+analysis to meet hazardous fuel reduction objectives and evaluate woody biomass utilization
+
+planning scenarios (Bell & Keefe 2014). In other subject areas of forestry, such as forest growth
+
+and yield modeling, model validation is considered an impor-tant process for informing model
+
+users about the performance and limitations of simulation models (Rykiel 1996; Weiskittel et
+
+al. 2011). Useful discussion of the advantages and disadvantages of alternative approaches to
+
+evaluating models is provided in Cawrse et al. (2010), Robinson and Froese (2004), Rykiel
+
+(1996), and Vanclay and Skovsgaard (1997). Despite the wide-spread use of predictive
+
+modeling in forest engineering and forest operations, and particularly the application of
+
+productive cycle time regression models developed using elemental time analysis (see e.g.
+
+Olsen & Kellogg 1983 for commonly used methods), there has been comparatively little use
+
+of formal model validation techniques to evaluate the quality of predictions that result from
+
+use of these models in practice (see e.g. Vanclay & Skovsgaard 1997; Kline 2011). The purpose
+
+of this paper is to more formally validate and evaluate the correspondence between predicted
+
+cost estimates generated through simulation using the OpCost logging cost model, which
+
+integrates several dozen such published equations, and estimates obtained from professional
+
+logging contractors for fuel reduction treatments with identical conditions. Conducting a
+
+formal evaluation of this sort for fuel treatments across a range of stand and site conditions
+
+regionally is both novel and of high importance, given that OpCost is now included in regional
+
+modeling efforts that are at times used to inform management and policy related to forest
+                                                                                              42
+
+health, including recent deployment of OpCost as a component of the Bioregional Inventory
+
+Originated Simulation Under Management framework, or BioSum (Daugherty & Fried 2007;
+
+Barbour et al. 2008; Fried et al. 2016, 2017).
+
+
+
+Like its predecessor, FRCS, OpCost is based on conventional, empirical cost estimation
+
+methods (Matthews 1942; Miyata 1980), but has been updated with recent, peer-reviewed
+
+production functions for many common harvesting systems. OpCost estimates costs associated
+
+with 11 harvesting systems as a function of stand characteristics, using descriptors of harvested
+
+trees derived from the out-put tables of the Forest Vegetation Simulator (FVS) model (Stage
+
+1973; Dixon 2002) within the broader framework of landscape-level analysis of forest
+
+management and logistics in BioSum. U.S. Forest Inventory and Analysis (FIA) data are
+
+provided to FVS as input data. Stand growth based on those inventory data conditions are then
+
+projected over time using FVS. The resulting stand characteristics are interpreted within the
+
+BioSum framework (Fried et al. 2017). BioSum intermittently restructures and passes stand
+
+and site conditions to OpCost. OpCost then simulates harvesting for each stand prescription
+
+provided, and returns estimated treatment costs, often for several thou-sand stands on the
+
+landscape simultaneously (Fried et al. 2016, 2017). The resulting output is summarized by
+
+BioSum in the context of broader landscape forest management planning and logistics in ways
+
+that synthesize both forest health and renewable energy goals over large areas (Figure 1).
+
+The BioSum framework thus enables landscape-scale analyses of silvicultural management
+
+alternatives and their eco-logical and economic outcomes in both time and space. At various
+
+stages, OpCost transforms stand prescription
+                                                                                                43
+
+
+
+
+Figure 3.1. Relationship between OpCost and the Forest Vegetation Simulator (FVS) within the
+Bioregional Inventory Originated Simulation Under Management (BioSum) framework when
+conducting analysis of forest management scenarios over large, regional spatial extents (>1 million
+ac, or 404,685 ha) using the U.S. Forest Inventory and Analysis (FIA) database. Note that BioSum is
+an advanced simulation environment with many component models and this figure is intended only to
+highlight the role of OpCost within that framework.
+
+
+information into forms suitable as input to the many production and cost formulas referenced
+
+in Table 1 to simulate the costs of silvicultural activities. OpCost is designed to be used
+
+alternatively for individual stand treatment cost estimation by a model user, or to be run
+
+simultaneously for many stands within BioSum. With this latter approach, it is particularly
+
+important to represent the variability in costs for fuel treatments and associated woody biomass
+
+removals (e.g. chipping of small diameter stems removed in thinning operations). These vary
+
+widely on the landscape as a function of many factors, including stand productivity, species-
+
+specific defect, piece size, trees per acre being removed, and associated yarding distance (e.g.
+
+Keefe et al. 2014; Saralecos et al. 2015; Fried et al. 2016, 2017; Jacobson et al. 2016). These
+
+factors are known to affect how logging costs vary among regions, even within the Pacific
+
+Northwest USA (Dodson et al. 2015).
+                                                                                                44
+
+OpCost can operate in standalone mode to evaluate multiple management scenarios to estimate
+
+and facilitate comparison of economic implications of alternative treatments, including the
+
+present value of fuel reduction treatments conducted in the future. The model was developed
+
+to provide an open-source and transparent cost model to support both research and management
+
+with emphasis on forest health and bioenergy (Bell & Keefe 2014). This paper describes a
+
+formal validation of OpCost-simulated treatment costs expressed on a per unit area basis, and
+
+of the individual, equipment-specific production rates that influence those broader, system-
+
+level costs across a range of fuel treatments. Because many contractors are reluctant to share
+
+detailed logging cost information and it is difficult to otherwise obtain consistent cost data over
+
+the wide range of stand density, slope, yarding distance, and other conditions that are provided
+
+to OpCost as input data when modeling forest health treatments, we instead developed a new,
+
+survey-based methodology that leveraged the expertise of professional logging contractors to
+
+evaluate the accuracy of OpCost predictions.
+                                                                                          45
+
+Table 3.1. Sources of production and cost functions used in OpCost.
+OpCost
+Production equations
+Chainsaw
+Behjou & Majnounian (2009)
+Klepac et al. (2011)
+Ghaffariyan et al. (2012)
+Hartsough & Xiaoshan (2001)
+Lortz et al. (1997)
+Kluender & Stokes (1996)
+Visser & Spinelli (2012)
+Wang et al. (2004)
+Harvester
+Acuna & Kellogg (2013)
+Adebayo et al. (2007)
+Berhongaray et al. (2013) Eliasson (1999)
+Bolding et al. (2002)
+Bolding & Lanford (2001)
+Hiesl & Benjamin (2012)
+Numinen et al. (2006)
+Kärhä et al. (2004)
+Klepac et al. (2006)
+Klepac et al. (2011)
+Keegan et al. (2002)
+Drews et al. (2001)
+Jiroušek et al. (2007)
+Klepac et al. (2011)
+Hiesl (2013)
+Visser & Spinelli (2012)
+Skidder
+(Hiesl & Benjamin 2012)
+Boswell (1998)
+Ghaffariyan et al. (2012)
+Keegan et al. (2002)
+Kluender & Stokes (1996)
+Bolding et al. (2002)
+Wang et al. (2004)
+Adebayo et al. (2007)
+Wang et al. (2004)
+Feller-buncher
+Berhongaray et al. (2013)
+Hartsough et al. (2001)
+Boswell (2001)
+(Kluender & Stokes 1996) Hartsough et al. (1997) Hartsough et al. (1997) Dykstra (1976)
+Spinelli et al. (2007) Bolding et al. (2002 2001) Kärhä et al. (2004)
+Hiesl (2013)
+Hiesl & Benjamin (2012) Adebayo et al. (2007) Wang et al. (2004)
+Helicopter
+Flatten (1991)
+Dykstra (1976)
+(Christian & Brackley 2007) (Flatten 1991)
+Forwarder
+Acuna & Kellogg (2013)
+Jiroušek et al. (2007)
+Bolding (2001)
+Bolding et al. (2002 2001)
+Jiroušek et al. (2007)
+Numinen et al. (2006)
+Kluender & Stokes (1996)
+Sirén & Aaltio (2003)
+Dykstra (1976)
+Drews et al. (2001)
+Hiesl (2013)
+Cable
+Huyler & Ledoux (1997)
+Drews et al. (2001)
+Aubuchon (1982)
+Dykstra (1976) Huyler & Ledoux (1997)
+Boswell (2001)
+                               46
+
+LeDoux (1987)
+Hartsough et al. (2001)
+Hartsough & Xiaoshan (2001)
+Chipper
+Spinelli & Magagnotti (2014)
+Bolding (2001)
+Bolding & Lanford (2001)
+Cuchet (2004)
+Shovel
+Sessions & Boston (2013)
+Fisher (1986)
+Wang & Haarlaa (2002)
+Stroke-Boom Delimber
+Hartsough et al. (2006)
+Ghaffariyan et al. (2012)
+Spinelli & Magagnotti (2010)
+Hiesl (2013)
+                                                                                            47
+
+Materials and methods
+
+
+After receiving permission from the Institutional Review Board at the University of Idaho for
+
+survey sampling involving human subjects (University of Idaho IRB protocol #16–1212), a
+
+validation survey was deployed using a mixed method sampling approach that incorporated
+
+both mail surveys and face-to-face contact at three regional logging conferences to sample
+
+logging contractors with expert knowledge of production rates and operational costs. Only
+
+contractors with at least 3 years of work experience were included in the study. According to
+
+the Bureau of Labor Statistics, there are approximately 740 logging workers in Idaho, 2230 in
+
+Washington and 3850 in Oregon as of 2013 (Bureau of Labor Statistics 2015). Of that number,
+
+we assumed that the number of individuals familiar with production rates and costs for all
+
+equipment in a given system, typically company owners or experienced supervisors at larger
+
+companies, was in the range of 1000–2000 individuals.
+
+
+For the face-to-face component of the study, surveys were administered using a modified
+
+convenience sampling approach at three logging conferences in 2016: the Oregon Logging
+
+Conference in Eugene, OR; the Intermountain Logging Conference in Spokane, WA; and the
+
+Olympic Logging Conference in Victoria, BC. Convenience sampling is an effective method
+
+for surveying target populations of interest (Chein 1981; Singleton et al. 1993). Randomization
+
+can be introduced into sampling strategies for convenient populations by, for example,
+
+surveying at randomized times during events in order to reduce hidden biases (Tittle 1980;
+
+Dillman 2000). We modified this approach, as follows. After generating interest among
+
+potential respondents at each conference to consider completing a survey using the enticement
+
+of a chance to win a scale model of common logging equipment, we screened these individuals
+                                                                                            48
+
+for experience with estimating logging costs, and drew our interview sample from the resulting
+
+group of interested and qualified participants.
+
+
+Mail surveys were also sent to 248 contractors chosen randomly from lists of individuals
+
+registered with each state’s professional logging association. Contractors were again screened
+
+using the same criteria. Using both methods (mail survey and face-to-face), a total of 132
+
+completed surveys were received. Of these, 55 were excluded from the analysis reported in
+
+this paper because of missing information, unclear reporting of units or because the sample
+
+size was insufficient to evaluate logging systems that were not well represented in the surveys
+
+returned. For example, because a single survey was provided to each participant, several con-
+
+tractors who specialized primarily in one logging system (e.g. cable logging) received a survey
+
+designed for a different system (e.g. ground-based, cut-to-length) and only partially completed
+
+it. There was no defensible method for imputing missing values in logging system production
+
+rates or component cost estimates without confusing or adding bias to our model validation
+
+analysis. Consequently, if any component process (e.g. felling, skidding, processing or
+
+loading) was left blank or was unusable for other reasons, the entire survey was excluded from
+
+analysis. In this paper, data from 77 total completed surveys with high quality, complete
+
+estimates of individual equipment production rates and overall, system-level cost estimates for
+
+the four primary logging systems across the three state region were used in our analysis. This
+
+corresponds to approximately 20 surveys each for the four systems of interest. Assuming a
+
+population of contractors with logging cost expertise of approximately 1500 individuals
+
+regionally, the final sample size used in our study represents approximately 5.1% of the target
+
+population.
+                                                                                               49
+
+We relied on several techniques to reduce non-response, and the potential bias to which it could
+
+lead. These included personalized messages in the mail survey, use of the face-to-face survey
+
+approach at the three conference venues, and offering participants tokens of appreciation,
+
+which are known to reduce satisfice and non-response (Goyder 1985; Holbrook et al. 2003).
+
+The use of token prizes can also enhance the quality of data collected (Singleton et al. 1993;
+
+Holbrook et al. 2003; Aquilino 2009).
+
+
+Surveys used in the study included 24 mock timber sale prospectuses representing a range of
+
+stand and site conditions for four different primary harvest systems deployed in forest
+
+management focused primarily on thinning or reduction of hazardous fuels in each of the three
+
+states. A total of 288 unique possible vignettes to be evaluated were developed and distributed
+
+as part of the analysis reported here. Use of this artificial timber sale prospectus method as the
+
+basis for estimating treatment costs was inspired by the success of this approach in construction
+
+surveys (Morrison 1984), as well as prior experience of a coauthor surveying wildland
+
+firefighters to estimate fireline production rates for quantitative modeling (Fried & Gilless
+
+1989; Gilless & Fried 2000). The prospectus associated with each survey was tailored to
+
+conditions typical in the region where that contractor worked so that estimated production rates
+
+and costs could be used to distinguish fine resolution in model predictions across the ranges of
+
+several key input variables that vary considerably from coastal Oregon and Washington to dry
+
+sites in the Inland Northwest. Variability in local conditions, such as stem size (DBH), stand
+
+density, yarding distance, total stand volume, and biomass residue (logging slash) per acre are
+
+important factors affecting fuel reduction treatment costs and woody biomass logistics (Keefe
+
+et al. 2014; Jacobson et al. 2016). These predictors are important drivers of equipment-specific
+
+productive cycle times, and hence the treatment costs, for many of the time-and-motion studies
+                                                                                                50
+
+referenced in Table 1. These equations work together in OpCost to simulate forest operations
+
+in landscape-level analyses.
+
+
+For each mock timber sale prospectus, survey participants were asked to estimate the total
+
+treatment cost per acre, as well as the component production rates for each piece of equipment
+
+used in a given logging system, excluding move-in, move-out, and road development costs.
+
+Each participant developed estimates for a single prospectus corresponding to a single mock
+
+timber sale. Not all treatments were necessarily merchantable, as many included relatively
+
+small merchantable removal volumes typical of thinning operations. The majority of removals
+
+were less than 10 MBF ac−1. Each mock prospectus included type of harvest system, yarding
+
+distance (ft), slope (%), harvested trees per acre by size class, net volume per acre (thousand
+
+board feet), gross volume per acre (thou-sand board feet), species composition as a percentage
+
+of stand basal area, the number of logs per acre, basal area per acre (sq. ft.), a hillshade map of
+
+the harvest unit, and total area of the harvest unit (acres). The format and range of stand
+
+conditions used to create mock prospectuses for the surveys were patterned from 38 operational
+
+timber sale prospectus documents obtained from the Idaho Department of Lands, Oregon
+
+Department of Forestry, and Washington Department of Natural Resources forestry divisions,
+
+and USDA Forest Service Regions 1 and 6. These operational prospectuses pro-vided a basis
+
+for defining the ranges of variables considered as typical fuel treatments for the region and
+
+were generally partial harvests. Stand conditions for the mock prospectuses used in our surveys
+
+were generated using FVS, which ensured that OpCost predictions were based on conditions
+
+identical to those evaluated by logging contractors completing the surveys.
+                                                                                              51
+
+We assembled the survey-based stand treatment cost estimates and OpCost-simulated
+
+treatment costs for the identical stand conditions into a paired data set, and plotted all paired
+
+values. Quantile-quantile plots were used to evaluate the normality assumptions of linear
+
+regression (Singleton et al. 1993; Goodman 1996) and model residuals were plotted against
+
+OpCost predicted values. We then used model equivalence testing using the two one-sided t-
+
+test (TOST) to evaluate the similarity of OpCost predictions and survey-based estimates
+
+(Robinson & Froese 2004) for the same stand and site conditions. Equivalence testing provides
+
+a more conservative approach to validation of model predictions by shifting the burden of proof
+
+in statistical hypothesis testing. Rather than the usual statistical test indicating a lack of
+
+difference among two sample means, equivalence testing shifts the rejection region to provide
+
+evidence of similarity between observed and modeled (predicted) values (Robinson & Froese
+
+2004). Equivalence testing has been used previously to validate that predicted tree diameter
+
+growth rates over time correspond well with actual measured growth rates observed in forest
+
+inventory data (Robinson & Froese 2004) and to evaluate GNSS-based pre-dictions of loader
+
+swing cycle elements (Becker et al. 2017). In this study, we adapted the approach to formally
+
+test whether fuel treatment cost predictions from OpCost were statistically similar to those
+
+obtained via expert assessments by logging contractors.
+
+
+The collected surveys and OpCost estimates were analyzed using the equivalence package in
+
+R, which provides analytical methods for evaluating similarity of two samples (Robinson &
+
+Froese 2004; Robinson 2014). The null hypothesis tested was that the two populations of
+
+interest, in this case OpCost model predictions and contractor-provided estimates for the same
+
+stands and conditions, were dissimilar. We rejected dissimilarity with the alternative
+
+hypothesis that the populations were adequately similar, defined as having standardized
+                                                                                             52
+
+differences between mean cost and production rate of no more than a specified magnitude. A
+
+two one-sided t-test (TOST) was used with a power of alpha = 0.1 and a predetermined
+
+acceptance threshold within 20% of the observed standard deviation. This type of statistical
+
+test was chosen because it provides a more conservative test for model evaluation than the
+
+more commonly used standard t-test, and the significance of the test is less affected by sample
+
+size (Robinson & Froese 2004). For each survey response, the cost of the complete harvesting
+
+system, represented as total treatment cost per unit area, was compared to the corresponding
+
+cost estimate generated through simulation using OpCost for the same harvesting systems and
+
+prospectus. This same analysis was then repeated again for the production rates of individual
+
+pieces of equipment, in order to better understand components of error in overall system-wide
+
+predictions of logging costs in fuel reduction operations.
+
+
+
+
+Results
+
+
+The null hypothesis of non-equivalence (dissimilarity) was rejected and the alternative was
+
+accepted when comparing OpCost predicted treatment costs per hectare and survey-based
+
+estimates for all four primary harvesting systems evaluated (cable manual whole-tree, ground-
+
+based manual whole-tree, ground-based cut-to-length, and ground-based mechanical whole-
+
+tree). Thus, for all four systems, OpCost predictions were statistically similar to survey-based
+
+estimates of total treatment cost per hectare provided by professional logging contractors
+
+across the range of stand and site characteristics considered in the three state region. Results
+
+from the two one-sided t-test (TOST) validation are shown in Table 2. For each system shown,
+
+the mean value reported is the mean difference between OpCost-predicted treatment cost per
+                                                                                              53
+
+hectare and the corresponding, survey-based estimates from contractors. Estimates for ground-
+
+based mechanical whole-tree logging from OpCost had the greatest agreement with estimates
+
+provided by contractors, while they were least similar for cable-based manual whole-tree
+
+predictions.
+
+
+Plots of OpCost-predicted treatment cost per acre and the corresponding survey-based
+
+estimates for the same stand conditions for each logging system are shown in Figure 2. Costs
+
+for ground-based manual whole-tree treatments tended to be over-predicted; predictions were
+
+greater than the survey estimates, showing evidence of a small positive bias. The same was
+
+true for cable manual whole-tree. However, correspondence improved at higher costs per
+
+hectare. Predictions for ground-based mechanical whole-tree were the least variable, judging
+
+by the extent to which observations depart from the 1:1 line and have the smallest standard
+
+deviation of OpCost and survey-based differences in Table 2 (71.2 $US ac−1). Errors associated
+
+with ground-based cut-to-length system predictions had high variability but did not show
+
+obvious prediction bias when evaluated graphically. Overall model residuals for all OpCost
+
+predictions and all survey estimates of treatment cost per unit area are shown in Figure 3.
+
+
+Figures 2–5 show how OpCost-simulated production rates compare to logger estimated
+
+production rates for individual pieces of equipment operating within each harvest system.
+
+Using the same TOST validation method, the null hypothesis of dissimilarity was rejected for
+
+the predicted production rates of 5 out of 15 combinations of equipment and system, indicating
+
+accurate prediction of production rates for that subset. For the other 10 pieces of equipment,
+
+the null hypothesis could not be rejected, indicating that the model did not perform well.
+
+Dissimilarity between OpCost predicted and survey-generated individual equipment
+                                                                                                               54
+
+production rate was rejected for sawyers, processors, and loaders operating in a cable-based
+
+manual whole-tree system, indicating good correspondence between model predicted
+
+production rates and estimates provided by professional contractors for those types of
+
+equipment. Dissimilarity was also rejected for sawyers and skidders operating in the ground-
+
+based manual whole-tree system, as well as for feller-bunchers operating in the ground-based
+
+mechanical whole-tree system.
+
+
+
+
+Table 3.2. Two One-Sided t-test of the similarity between OpCost-predicted cost per unit area (in $US) and an
+estimate for the same stand and site conditions provided by a professional logging contractor for each of the four
+systems. Mean values are the mean difference between predicted and survey-based estimates. For the mean and
+standard deviation (SD), values in parentheses are the cost in $US ac−1 as reported in OpCost.
+Metric                             Cable manual WT                   Ground-based manual WT
+Dissimilarity                          Rejected                               Rejected
+Mean                              176 (71.2)                                218.3        (88.3)
+SD                                    564.6(228.5)                            311 (125.9)
+Epsilon                               530.2                                    295
+Alpha                                    0.1                                  0.1
+Cuttoff                                  2382                                967.5
+t statistic                              1.4                                2.8
+Power                                  1                                    1
+                               Ground-based cut-to-length           Ground-based mechanical WT
+Dissimilarity                          Rejected                               Rejected
+Mean                                    79.9(32.3)                          112.5        (45.5)
+SD                                    344.9(139.6)                          176.6          (71.5)
+Epsilon                               411.3                                  188.9
+Alpha                                    0.1                                  0.1
+Cuttoff                                  1464                               642.1
+t statistic                            1                                    2.6
+Power                                  1                                            1
+                                                                                                                  55
+
+
+
+
+Figure 3.2. Scatterplot of OpCost estimated harvest cost vs. logger estimated harvest costs for all timber sale
+prospectus vignettes
+
+
+
+
+Figure 3.3. Model residuals vs fitted values for all predicted costs per unit area, including all harvest systems
+evaluated in this study. Fitted values on the X-axis are the OpCost-simulated costs per unit area for each timber
+sale prospectus vignette; residuals are the difference between costs per unit area (ac) estimated by contractors and
+the corresponding treatment cost predicted using OpCost.
+                                                                                               56
+
+The null hypothesis of dissimilarity was not rejected for the yarder and loader in the cable
+
+manual whole-tree system; for the processor and loader operating in a ground-based manual
+
+whole-tree system; for harvesters, forwarders, and loaders operating under a ground-based cut-
+
+to-length system; or for skidders, loader, and the processor operating in a ground-based
+
+mechanical whole-tree system (Table 3). Analysis of the OpCost predictions and survey-based
+
+estimates in Figures 4–7 shows noticeable discrepancies in predicted production rates for
+
+individual equipment within some of these systems, particularly the cut-to-length.
+
+
+
+
+Discussion
+
+
+The equations used in StHarvest (Hartsough et al. 2001), a progenitor to FRCS (Hartsough et
+
+al. 2006) and OpCost have been widely used in a variety of studies to prioritize fuels
+
+reduction treatments (Bolding et al. 2003; Waltz et al. 2014) and to predict biomass
+
+harvesting costs at regional to national scales (Dykstra et al. 2009). When models are used to
+
+make predictions with policy implications, it is important to evaluate the behavior of the
+
+models used and to validate predictions against independent observations. Expert opinion
+
+surveys are useful as a proxy for observed rates when empirical measurement proves
+
+impractical or infeasible (Fried & Gilless 1989). Professional contract loggers are the pre-
+
+eminent experts cap-able of estimating costs for the broad range of specific stand conditions
+
+and harvest systems in the Pacific Northwest, and their cooperation enabled development of
+
+this independent validation data set. The comparisons between OpCost predictions and expert
+
+opinion are useful for informing model users about the accuracy of predicted fuel treatment
+
+costs and how these vary among harvest systems and stand conditions. OpCost currently
+                                                                                                                     57
+
+includes six other harvesting systems that were not evaluated in this study due to logistical
+
+constraints and our decision to focus on validating the most commonly used systems. This
+
+evaluation of OpCost produced information about model performance with respect to both
+
+costs associated with complete harvest systems and time requirements for individual
+
+equipment components of those.
+
+
+Table 3.3. Two One-Sided t-test (TOST) evaluating similarity between OpCost predicted production rate in MBF
+hr−1 and the corresponding rate estimated by contractors for treatments with the same stand and site conditions.
+The corresponding rate in m3 SMH−1 is shown in parentheses for the mean and standard deviation (SD).
+                                                Cable manual WT
+Metric          Sawyer                   Yarder                              Processor         Loader
+Dissimilarity   Rejected                 Not rejected                        Rejected          Not rejected
+Mean            −0.16 (−1.0)             −0.52 (−3.34)                       0.2       (1.3)   2.1        (13.5)
+SD              2.3 (14.8)               1.6     (10.3)                      0.8       (5.1)   0.96       (6.2)
+Epsilon         0.5                      0.5                                 0.7               0.25
+Alpha           0.1                      0.1                                 0.1               0.1
+Cutoff          0.8                      0.7                                 1.3               0.23
+t statistic     −0.26                    −1.1                                0.9               9.9
+Power           0.58                     0.5                                 0.8               0.18
+                                                Ground-based mechanical WT
+                Fellerbuncher                      Skidder                   Processor         Loader
+Dissimilarity   Rejected                         Not rejected                Not rejected      Not rejected
+Mean            0.008 (0.05)             −0.14 (−0.9)                        −0.22 (−1.4)      1.7        (10.9)
+SD              0.36 (2.3)               0.52 (3.3)                          0.23      (1.5)   0.83       (5.3)
+Epsilon         0.33                     0.52                                0.12              0.25
+Alpha           0.1                      0.1                                 0.1               0.1
+Cutoff          0.3                      0.79                                0.14              0.2
+t statistic     0.08                     −1.1                                −3.7              8.13
+Power           0.24                     0.56                                0.11              0.17
+                                                Ground-based manual WT
+                Sawyer                   Skidder                             Processor         Loader
+Dissimilarity   Rejected                 Rejected                            Not rejected      Not rejected
+Mean            0.7 (4.5)                0.07 (0.45)                         0.44      (2.8)   1.7                 (10.9)
+SD              1.5 (9.6)                0.5     (3.2)                       0.72      (4.6)   0.8                 (5.1)
+Epsilon         0.8                      0.47                                0.9               0.25
+Alpha           0.1                      0.1                                 0.1               0.05
+Cutoff          2                        0.67                                2.3               0.1
+t statistic     1.8                      0.61                                2.54              8.13
+Power           0.94                     0.49                                0.97              0.08
+                                         Ground-based cut-to-length
+                Harvester                Forwarder                           Loader
+Dissimilarity   Not rejected             Not rejected                        Not rejected
+Mean            −0.49 (−3.1)             −0.3 (−1.9)                         −0.29 (−1.9)
+SD              0.8 (5.1)                0.9     (5.8)                       0.5      (3.2)
+Epsilon         0.24                     0.4                                 0.15
+Alpha           0.1                      0.1                                 0.1
+Cutoff          0.19                     0.49                                0.15
+t statistic     −2.2                     −1.31                               −2.2
+Power           0.15                     0.37                                0.12
+                                                                                           58
+
+The latter provides additional insight into which kinds of equipment may be the greatest
+
+potential sources of error and are deserving of additional new model development or
+
+calibration.
+
+
+The OpCost model performed reasonably well for predicting overall treatment costs for the
+
+four complete harvesting systems evaluated in this study over a broad range of topographic
+
+and stand conditions representative of conventional fuel reduction treatments deployed in the
+
+northwestern United States. The null hypothesis that OpCost-simulated per-acre costs and
+
+contractor-provided estimates for the same stands were dissimilar was rejected in each case.
+
+However, users of OpCost should note where the model tends to predict the production rates
+
+for individual component equipment within each system poorly. This likely reflects biases
+
+associated with individual time studies used to develop OpCost, which have often been
+
+developed under fairly narrow, localized stand conditions. For cable manual whole-tree
+
+harvesting, many of the cost estimates generated by OpCost were higher than the expert
+
+estimates when those estimates are low (less expensive treatments). Results for the individual
+
+equipment components that comprise that system suggest that OpCost may also underestimate
+
+sawyer production rate, which could account for some of the overstatement of costs. OpCost
+
+also markedly over-predicted costs for the ground-based manual whole-tree system over the
+
+full range of treatment costs by 27%. However, there appears to be some over-prediction of
+
+skidding and sawing costs and underestimation of production rates for stands with higher
+
+overall harvest costs (15% and 40% respectively). Estimates for the ground-based mechanical
+
+whole-tree and ground-based cut-to-length systems do not strongly over- or under-predict, but
+
+the ground-based cut-to-length system does have noticeably more variability in the prediction
+
+error than the ground-based mechanical whole-tree system. However, the lower variability
+                                                                                          59
+
+shown with the ground-based mechanical whole-tree system could be partially attributed to the
+
+lower overall costs for that system.
+                                                                                                    60
+
+
+
+
+Figure 3.4. Scatterplot of OpCost estimated production rates vs. logger estimated production rates for
+all timber sale prospectus vignettes by equipment type within the cable-based manual whole tree
+system.
+                                                                                                    61
+
+
+
+
+Figure 3.5. Scatterplot of OpCost estimated production rates vs. logger estimated production rates for
+timber sale prospectus vignettes by equipment type within the ground-based mechanical cut-to-length
+system.
+                                                                                                   62
+
+
+
+
+Figure 3.6. Scatterplot of OpCost estimated production rates vs. logger estimated production rates for
+timber sale prospectus vignettes by equipment type within the ground-based manual whole tree system.
+                                                                                                   63
+
+
+
+
+Figure 3.7. Scatterplot of OpCost estimated production rates vs. logger estimated production rates for
+all timber sale prospectus vignettes by equipment type within the ground-based mechanical whole tree
+system.
+                                                                                               64
+
+
+Because OpCost’s system-level cost estimate is an accumulation of the time estimates and cost
+
+rates of the equipment involved, some of which may be over or under-predicted, the system
+
+cost estimates can show less variation than is seen for the individual equipment types owing to
+
+compensating errors. In addition to understanding OpCost performance relative to expert
+
+opinion, users must be aware of inherent limitations. For example, given that production rates
+
+can fluctuate greatly within a harvesting unit, and that OpCost does not account for within-unit
+
+variability in conditions that could materially affect production rates, users assessing actual or
+
+hypothetical fuel treatments on a specific piece of ground are advised to be selective about
+
+linking OpCost to appropriately scaled stand inventory data. Large, heterogeneous units are
+
+better partitioned into smaller, more homogeneous subunits for analysis with OpCost if
+
+inventory data are available for each subunit. This is especially true when modeling treatments
+
+in areas with mixed topography including both ground-based and cable operations. These and
+
+several key model assumptions available in forthcoming documentation of the development of
+
+OpCost are important to consider when using the model for research or to support operational
+
+planning. Users should also understand that actual costs may depart from OpCost predictions
+
+if OpCost’s inputs don’t accurately account for real world conditions.
+
+
+
+We believe that when OpCost is implemented with representative inputs at the stand level or
+
+for whole landscapes (e.g. for BioSum analyses), it will prove useful to researchers, land-
+
+owners, and managers because it allows automation of treatment cost estimation in a way that
+
+is linked seamlessly with forest inventory data and stand growth and yield. Integration with
+
+outputs from the Forest Vegetation Simulator (FVS), e.g. via the summary metrics generated
+
+by BioSum, significantly enhances the range of future simulation analyses that can reflect forest
+                                                                                             65
+
+succession, management and disturbance over decades, as well as a conscious strategy to
+
+implement an intentional sequence of silvicultural activities, for example, to achieve forest
+
+restoration through sustainable management (e.g. Fried et al. 2016), or to simulate impacts of
+
+management policies on bioenergy markets. Although additional evaluation will be beneficial
+
+for the harvest systems not included in this study, as well as any future systems that may be
+
+added, these results confirm a reasonable correspondence between treatment costs predicted by
+
+OpCost and those estimated by professional contractors. In general, referring to Figures 4– 7 in
+
+this article in order to evaluate equipment-specific models is the easiest way to gauge the
+
+expected quality of individual stand predictions when using OpCost for specialized projects.
+
+
+
+Validation is an important step in many fields of research that utilize simulation modeling. It
+
+provides model users with an understanding of the strengths and weaknesses of the analytical
+
+tools they use. Model validation has been deployed infrequently in the analysis of production
+
+and costs in forest operations and forest engineering. We have shown that validation using
+
+equivalence testing, particularly when coupled with survey sampling of professional logging
+
+contractors, provides a useful approach for evaluating logging cost models. Consistently
+
+developed logging cost data from a range of operational conditions is often difficult to obtain
+
+due to variability in methods used for cost-accounting by contractors and an understandable
+
+reluctance to publicly share sensitive information about forest business transactions. Using
+
+simulated stand conditions coupled with survey sampling proved to be a useful technique for
+
+standardizing logging cost information received from contractors. Doing so allowed us to
+
+validate OpCost across the range of stand and site conditions it is currently being used to make
+
+predictions for. Further, this method makes it possible to draw on the expertise of many
+                                                                                              66
+
+contractors while still retaining a high level of consistency in the assumptions and methods used
+
+to estimate treatment costs.
+                                                                                               67
+
+
+Conclusion
+
+
+Formal comparison of the outputs from the OpCost model to expert estimates provided by
+
+professional logging contractors provide support for the conclusion that total fuel treatment cost
+
+predictions from OpCost are sufficiently accurate for the kinds of landscape-scale applications
+
+for which the model is currently being used within BioSum. Overall OpCost model predictions
+
+were typically within 20% of costs predicted by experts for the four common harvesting systems
+
+we evaluated, across a range of stand and site conditions that are representative of expected
+
+variability in fuel treatments in the Pacific Northwest United States, particularly on state and
+
+federal lands. As noted, several equipment-specific models that make up some systems did not
+
+predict production rates well across conditions outside those for which they were originally
+
+developed. Consequently, model users should be cautious when using individual component
+
+models to predict piecewise costs (e.g. only forwarding costs in a CTL system) when using
+
+OpCost or BioSum for more localized or customized analyses. These sub-models should also
+
+be targeted for future model improvement. In general, referring to Figures 4–7 in this article in
+
+order to evaluate equipment-specific models is the easiest way to gauge the expected quality of
+
+individual stand predictions when using OpCost for specialized projects.
+
+
+
+Validation is an important step in many fields of research that utilize simulation modeling. It
+
+provides model users with an understanding of the strengths and weaknesses of the analytical
+
+tools they use. Model validation has been deployed infrequently in the analysis of production
+
+and costs in forest operations and forest engineering. We have shown that validation using
+
+equivalence testing, particularly when coupled with survey sampling of professional logging
+                                                                                              68
+
+contractors, provides a useful approach for evaluating logging cost models. Consistently
+
+developed logging cost data from a range of operational conditions is often difficult to obtain
+
+due to variability in methods used for cost-accounting by contractors and an understandable
+
+reluctance to publicly share sensitive information about forest business transactions. Using
+
+simulated stand conditions coupled with survey sampling proved to be a useful technique for
+
+standardizing logging cost information received from contractors. Doing so allowed us to
+
+validate OpCost across the range of stand and site conditions it is currently being used to make
+
+predictions for. Further, this method makes it possible to draw on the expertise of many
+
+contractors while still retaining a high level of consistency in the assumptions and methods used
+
+to estimate treatment costs.
+                                                                                                 69
+
+References
+
+
+Ackerman P, Belbo H, Eliasson L, de Jong A, Lazdins A, Lyons J. 2014. The COST model for
+
+calculation of forest operations costs. Int J Forest Eng. 25:75–81.
+
+Acuna M, Kellogg LD. 2013. Evaluation of alternative cut-to-length harvesting technology for native
+
+forest thinning in Australia. Int J Forest Eng. 20:17–25.
+
+Adebayo AB, Han HS, Johnson L. 2007. Productivity and cost of cut-to-length and whole-tree
+
+harvesting in a mixed-conifer stand. Forest Prod J. 57:59–69.
+
+Agee J, Skinner C. 2005. Basic principles of forest fuel reduction treat-ments. Forest Ecol Manag.
+
+211:83–96.
+
+Aquilino WS. 2009. Telephone versus face-to-face interviewing for household drug use surveys. Int J
+
+Addict. 271:71–91.
+
+Aubuchon R. 1982. Compendium of cable yarding production equations. Corvallis (OR): Oregon State
+
+University.
+
+Barbour RJ, Fried JS, Daugherty PJ, Fight R. 2008. Predicting the poten-tial mix of wood products
+
+available from timbershed scale fire hazard reduction treatments. For Policy Econ. 10:400–407.
+
+Becker RM, Keefe RF, Anderson NM. 2017. Use of real-time GNSS-RF data to characterize the swing
+
+movements of forestry equipment. Forests. 8:44.
+
+Behjou F, Majnounian B. 2009. Productivity and cost of manual felling with a chainsaw in Caspian
+
+forests. J Forest Sci. 55:96–100.
+
+Bell CK, Keefe RF. 2014. FVS-OpCost: a new forest operations cost simulator linked with FVS. 37th
+
+Council on Forest Engineering Annual Meeting; Moline, IL.
+
+Berhongaray G, El Kasmioui O, Ceulemans R. 2013. Comparative ana-lysis of harvesting machines
+
+on an operational high-density short rotation woody crop (SRWC) culture: one-process versus two-
+
+process harvest operation. Biomass Bioenerg. 58:333–342.
+                                                                                                     70
+
+Biesecker R, Fight R. 2006. My fuel treatment planner: a user guide. USDA Forest Service Pacific
+
+Northwest Research Station; Portland, Oregon. PNW-GTR-663. 31 p.
+
+Bolding MC, Landford BL. 2001. Forest fuel reduction and energywood production using a small
+
+chipper/CTL harvesting system. In: Proceedings of the 24th annual Council on Forest Engineering meet-
+
+ing: Appalachian hardwoods; managing change; Snowshoe, West Virginia; p. 65–70.
+
+Bolding MC, Lanford BL, Hall MWS. 2002. Productivity of a Ponsse Ergo harvester working on
+
+Steep Terrain. In: Proceedings, 25th Annual Council on Forest Engineering Meeting, Auburn, Alabama.
+
+Bolding MC, Lanford BL, Kellogg LD. 2003. Forest fuel reduction: current methods and future
+
+possibilities. In: Proceedings of the 2003 Council on Forest Engineering; 7–10 September 2003; Bar
+
+Harbor, Maine p. 7–10.
+
+Boswell B. 1998. Vancouver Island mechanized thinning trials. Technical Note. Forest Eng Research
+
+Inst of Canada. Pointe-Claire, British Columbia.
+
+Boswell B. 2001. Partial cutting with a cable yarding system in coastal British Columbia. Forest Eng
+
+Institute Can Res Note. 2:20.
+
+Bureau of Labor Statistics. 2015. Logging Workers: Occupational Employment Statistics.
+
+https://www.bls.gov/ooh/farming-fishing-and-forestry/logging-workers.htm. Last accessed 12 April
+
+2017
+
+Cawrse D, Keyser C, Keyser T, Sanchez A, Smith-Mateja E, Van Dyke M. 2010. Forest vegetation
+
+simulator: model validation protocols. Fort Collins (CO): USDA Forest Service.
+
+Chein I. 1981. Appendix: an introduction to sampling. In: L.H. Kidder (Ed.); Selitz, Wrightsman and
+
+Cook’s Research Methods in Social Relations (4th Ed.) 423–440. Thousand Oaks, California. Sage.
+
+Christian LE, Brackley. 2007. Helicopter logging productivity on harvesting operations in southeast
+
+Alaska, using ecologically based silvicultural prescriptions. West J of Appl Forestry. 22:142–147.
+
+Cuchet E. 2004. Performance of a logging residue bundler in the tempe-rate forests of France. Biomass
+
+Bioenerg. 27:31–39.
+                                                                                                    71
+
+Daugherty PJ, Fried JS. 2007. Jointly optimizing selection of fuel treat-ments and siting of forest
+
+biomass-based energy production facilities for landscape-scale fire hazard reduction. INFOR. 45:353–
+
+372.
+
+Dillman D. 2000. Mail and internet surveys: the tailored design method. New York: Wiley.
+
+Dixon G. 2002. Essential FVS: A user’s guide to the forest vegetation simulator. Fort Collins (CO):
+
+USDA Forest Service.
+
+Dodson E, Hayes S, Meek J, Keyes CR. 2015. Montana logging machine rates. Int J Forest Eng. 26:85–
+
+95.
+
+Drews ES, Hartsough BR, Doyal JA, Kellogg LD. 2001. Harvester-for-warder and harvester-yarder
+
+systems for fuel reduction treatments. J Forest Engin. 12:81–91.
+
+Dykstra D, Hartsough B, Stokes B. 2009. Updating FRCS, the fuel reduction cost simulator for
+
+national biomass assessments. In: Proceedings of Environmentally Sound Forest Operations, 32nd
+
+Annual Meeting of the Council on Forest Engineering. Davis, California; University of California.
+
+Dykstra DP. 1976. Production rates and cost for yarding by cable, balon, and helicopter compared for
+
+clearcutings and partial cutings. Corvallis (OR): Oregon State University.
+
+Eliasson L. 1999. Simulation of thinning with a single-grip harvester. Forest Sci. 45:26–34.
+
+Fisher JG. 1986. Logging with a hydraulic excavator: a case study. Corvallis (OR): Oregon State
+
+University.
+
+Flatten L. 1991. The use of small helicopters for commercial thinning in steep, Mountainous Terrain
+
+[MF thesis]. Corvallis (OR): Oregon State University.
+
+Fried JS, Gilless KJ. 1989. Notes: expert opinion estimation of fireline production rates. For Sci.
+
+35:870–877.
+
+Fried JS, Loreno S, Sharma B, Starrs C, Stewart W. 2016. Inventory based landscape-scale
+
+simulation to assess effectiveness and feasibility of reducing fire hazards and improving forest
+
+sustainability in California with BioSum. Alternative and Renewable Fuel and Vehicle Technology
+                                                                                                    72
+
+Program – Final Project Report to the California Energy Commission. USFS PNW Research Station,
+
+Portland, OR 214 p.
+
+Fried JS, Potts LD, Loreno SM, Christensen GA, Barbour RJ. 2017. Inventory-based landscape
+
+scale simulation of management effective-ness and economic feasibility with BioSum. J Forest. 114. (In
+
+press)
+
+Ghaffariyan MR, Naghdi R, Ghajar I, Nikooy M. 2012. Time prediction models and cost evaluation
+
+of cut-to-length (CTL) harvesting method in a mountainous forest. Small-Scale For. 12:181–192.
+
+Gilless JK, Fried JS. 2000. Generating beta random variables from prob-abilistic estimates of fireline
+
+production time. Ann Operations Res. 95:205–215.
+
+Goodman JS. 1996. Assessing the non-random sampling effects of sub-ject attrition in longitudinal
+
+research. J Manag. 22:627–652.
+
+Goyder J. 1985. Face-to-face interviews and mailed questionnaires: the net difference in response rate.
+
+Public Opin Q. 49:234.
+
+Hartsough B, Fight R, Noordijk P. 2006. Users guide for FRCS: fuel reduc-tion cost simulator
+
+software. PNW-GTR-668. USDA Forest Service Pacific Northwest Research Station; Portland, Oregon.
+
+23 p.
+
+Hartsough BR, Drews ES, McNeel JF, Durston TA, Stokes BJ. 1997. Comparison of mechanized
+
+systems for thinning Ponderosa pine and mixed conifer stands. Forest Prod J. 47:59–68.
+
+Hartsough BR, Xiaoshan Z. 2001. Harvesting cost model for small trees in natural stands in the interior
+
+Northwest. For Prod J. 51:54.
+
+Hartsough BR, Zhang X, Fight RD. 2001. Harvesting cost model for small trees in natural stands in
+
+the interior Northwest. For Prod J. 51:54–61.
+
+Hiesl P. 2013. Productivity standards for whole-tree and cut-to-length harvesting systems in Maine.
+
+Orono (ME): University of Maine.
+                                                                                                    73
+
+Hiesl P, Benjamin JG. 2012. Cycle time analysis of harvesting equipment from an early commercial
+
+thinning treatment in Maine. In: Proceedings of the 35th Council on Forest Engineering. New Bern,
+
+North Carolina.
+
+Holbrook AL, Green MC, Krosnick JA. 2003. Telephone versus face-to-face interviewing of national
+
+probability samples with long question-naires. Public Opin Q. 67:79–125.
+
+Huyler NK, LeDoux CB. 1997. Cycle-time equation for the Koller K300 cable yarder operating on
+
+steep slopes in the Northeast. NE-705. Northeastern Forest Experiment Station, USDA Forest Service.
+
+Jacobson RA, Keefe RF, Smith AMS, Metlen S, Saul DA, Newman SM, Laninga TJ, Inman D.
+
+2016. Multi-spatial analysis of forest residue utilization for bioenergy. Biofuel Bioprod Bior. 10:560–
+
+575.
+
+Jain TB, Battaglia, MA., Han, HS, Graham, RT., Keyes, CR., Fried, JS., Sandquist, JE. 2012. A
+
+comprehensive guide to fuel management practices for dry mixed conifer forests in the northwestern
+
+United States. RMRS-GTR-292. USDA Forest Service Rocky Mountain Research Station; Fort Collins,
+
+Colorado. 331 p.
+
+Jiroušek R, Klvač R, Skoupý A. 2007. Productivity and costs of the mechanised cut-to-length wood
+
+harvesting system in clear-felling operations. J Forest Sci. 10:476–482.
+
+Kärhä K, Rönkkö E, Gumse S-I. 2004. Productivity and cutting costs of thinning harvesters. Int J
+
+Forest Eng. 15:43–56.
+
+Keefe R, Anderson N, Hogland J, Muhlenfeld K. 2014. Woody biomass logistics. In: Karlen,
+
+Douglas, ed. Cellulosic Energy Cropping Systems. West Sussex, UK: John Wiley and Sons. p. 251–
+
+279.
+
+Keegan III C, Niccolucci M, Fiedler C, Jones J, Regel R. 2002. Harvest cost collection approaches
+
+and associated equations for restoriation treaments on national forests. Forest Prod J. 52:96.
+                                                                                                         74
+
+Klepac J, Rummer B, Thompson J. 2006. Evaluation of a cut-to-length system implementing fuel
+
+reduction treatments on the Coconino National Forest in Arizona. The 29th Council on Forest
+
+Engineering Conference; p. 405–414.
+
+Klepac J, Rummer R, Thompson J. 2011. Harvesting small trees for bio-energy. In: Proceedings of
+
+the 34th Council on Forest Engineering Annual Meeting; Quebec City, Quebec, Canada, June 2011. 11
+
+p.
+
+Kline JD. 2011. Issues in evaluating the costs and benefits of fuel treatments to reduce wildfire in the
+
+nation’s forests. PNW-RN-542. USDA Forest Service Pacific Northwest Research Station; Portland,
+
+Oregon. 46 p.
+
+Kluender RA, Stokes BJ. 1996. Felling and skidding productivity and harvesting cost in southern pine
+
+forests. In: Proceedings: certifica-tion–Environmental implications for forestry operations; p. 35–39.
+
+LeDoux CB. 1987. Estimating yarding costs for the clearwater cable yarder. NE-RP-609. USDA Forest
+
+Service, Northeastern Forest Experiment Station; Broomall, Pennsylvania. 4 p.
+
+Lortz D, Kluender R, McCoy W. 1997. Manual felling time and produc-tivity in southern pine forests.
+
+Forest Prod J. 47:59–63.
+
+Matthews DM. 1942. Cost control in the logging industry. McGraw-Hill. New York, New York and
+
+London, UK. 374 p.
+
+McHugh CW. 2006. Considerations in the use of models available for fuel treatment analysis. In:
+
+Andrews, PL, Butler, BW, comps. 2006. Fuels Management-How to Measure Success: Conference
+
+Proceedings. 28-30 March 2006; Portland, Oregon. RMRS-P-41. USDA Forest Service, Rocky
+
+Mountain Research Station. Fort Collins, Colorado. p. 81–105.
+
+Mitro M. 2001. Ecological model testing: verification, validation, or neither. Bull Ecol Soc Am.
+
+82:235–250.
+
+Morrison, N. 1984. The accuracy of quantity surveyors' cost estimating. Constr Manage Econ. 2: 57–
+
+75.
+                                                                                                   75
+
+Miyata ES. 1980. Determining fixed and operating costs of logging equipment. General Technical
+
+Report NC-55. St. Paul (MN). USDA Forest Service North Central Experiment Station
+
+Numinen T, Korpunen H, Uusitalo J. 2006. Time consumption analysis of the mechanized cut-to-
+
+length harvesting system. Silva Fennica. 40:335–363.
+
+Olsen ED, Kellogg LD. 1983. Comparison of time-study techniques for evaluating logging production.
+
+Trans ASAE. 26:1665–1668.
+
+Pearce DW, Turner RK. 1990. Economics of natural resources and the environment. JHU Press.
+
+Baltimore, Maryland. 392 p.
+
+Robinson A. 2014. Equivalence: provides tests and graphics for assessing tests of equivalence. R
+
+package version 0.7.2. https://CRAN.R-project. org/package=equivalence. Last accessed 4 May 2016.
+
+22 p.
+
+Robinson A, Froese R. 2004. Model validation using equivalence tests. Ecol Model. 176:349–358.
+
+Røpke I. 2004. The early history of modern ecological economics. Ecol Econ. 50:293–314.
+
+Rykiel E. 1996. Testing ecological models: the meaning of validation. Ecol Model. 90:229–244.
+
+Saralecos JD, Keefe RF, Tinkham WT, Brooks RH, Johnson LR. 2015. Operational influences
+
+affecting sawlog weight and volume relation-ships in the Intermountain West. For Prod J. 65:198–208.
+
+Sessions J, Boston K. 2013. Optimization of road spacing for log length shovel logging on gentle
+
+terrain. Int J of Forest Eng. 17:67–75.
+
+Sirén M, Aaltio H. 2003. Productivity and costs of thinning harvesters and harvester-forwarders. Int J
+
+Forest Eng. 14:39–48.
+
+Singleton Jr RA, Straits BC, Straits MM. 1993. Approaches to social research (2nd. ed.). Oxford
+
+University Press; New York, New York. 572 pp.
+
+Spinelli R, Cuchet E, Roux P. 2007. A new feller-buncher for harvesting energy wood: results from a
+
+European test programme. Biomass Bioenerg. 31:205–210.
+                                                                                                     76
+
+Spinelli R, Magagnotti N. 2010. A tool for productivity and cost forecasting of decentralised wood
+
+chipping. Forest Pol Econ. 12:194–198.
+
+Spinelli R, Magagnotti N. 2014. Determining long-term chipper usage, productivity and fuel
+
+consumption. Biomass Bioenerg. 66:442–449.
+
+Stage AR. 1973. Prognosis model for stand development. INT-173. UDSA Forest Service
+
+Intermountain Range and Forest Experiment Station; Ogden, Utah.
+
+Tittle, CR. 1980. Sanctions and Social Deviance - The Question of Deterrence. Praeger Publishers;
+
+Westport, Connecticut. 365 p.
+
+Vanclay JK, Skovsgaard JP. 1997. Evaluating forest growth models. Eco Model. 98:1–12.
+
+Visser R, Spinelli R. 2012. Determining the shape of the productivity function for mechanized felling
+
+and felling-processing. J Forest R. 17:397–402.
+
+Waltz AEM, Stoddard MT, Kalies EL, Springer JD, Huffman DW, Meador AS. 2014.
+
+Effectiveness of fuel reduction treatments: assessing metrics of forest resiliency and wildfire severity
+
+after the Wallow Fire, AZ. Forest Ecol Manag. 334:43–52.
+
+Wang J, Haarlaa R. 2002. Production analysis of an excavator-based har-vester: a case study in Finnish
+
+forest operations. Forest Prod J. 52:85.
+
+Wang J, Long C, McNeel J. 2004. Production and cost analysis of a feller-buncher and grapple skidder
+
+in central Appalachian hardwood for-ests. Forest Prod J. 54:159–167.
+
+Weiskittel A, Hann D, Vanclay Jr. JK. 2011. Forest growth and yield modeling. New York: Wiley.
+                                                                                                77
+
+                                          Chapter 4:
+
+
+                                         Conclusions
+
+
+Two of the most effective methods of reducing the density and the risk of catastrophic fire in
+
+western forests in the United States is by various physical active management. While many
+
+management activities have economic gain from the sale of harvested materials, all of them
+
+will have costs associated with the activities. To fully understand the economic impact of
+
+forestry activities managers, researchers, and the public need to have an estimate of what the
+
+operations will cost on the landscape. Previous designs at understanding the harvest costs
+
+associated with forestry activities (FRCS, Hartsough, Fight, & Noordijk, 2006) have provided
+
+vital economic information, but have lacked comparative testing and features required for
+
+comparative testing for the BioSum project. The Forest Operations Lab at the University of
+
+Idaho has addressed these needs with OpCost developed in the R statistical environment.
+
+
+Developing the OpCost environment required identifying production equations related to the
+
+harvesting systems most commonly used in modern day forestry. OpCost does include 11
+
+different harvesting systems, but the system is easily updatable to include novel system
+
+currently such as tethered harvesting, and remotely operated systems. This inherent flexibility
+
+is an advantage because as logging operations develop more streamlined systems, OpCost will
+
+be able to include these operations in a preconditioned analytical environment capable of
+
+producing comparative numbers and graphics. One of the most important developments in
+
+OpCost related to research and comparative analysis is its ability to simultaneously estimate
+
+each potential operation given the stand conditions and provide the cheapest estimation in an
+
+output table. By having the option to quickly compare different harvesting options appropriate
+                                                                                               78
+
+for the stand conditions allows the analyst to potentially pick a cheaper option to study
+
+further.
+
+
+To increase the faith in the numbers generated by the model, a sample dataset was needed to
+
+compare the estimates that were generated. By using a mixed method surveying technique
+
+involving mailed and face-to-face questionnaires representing simulated forest harvests with a
+
+fuels reduction component. Each of the different adaptions of the forest operations were run
+
+through OpCost and the generated estimates were compared to the cost estimates from
+
+surveyed professional loggers. This analysis provided observations of occurring trends within
+
+the model as well as the accuracy of the generated costs.
+                                                                                            79
+
+Appendix 1: Logging Cost Survey
+
+
+Oregon Survey
+
+
+Ground-Based Mechanical Cut-to-Length
+
+Contractor Costing Sheet
+General Instructions:
+For this questionnaire we ask that you bid on a forest harvesting operation that involves cut-
+to-length tree harvesting using a ground-based system with a cut-to-length processor,
+forwarder, and a loader at the landing. We want to know what you think the production rate
+would be for each part of the harvesting system, as well as the cost per MBF for the different
+components (e.g. sawing, yarding, processing, and loading). The stand information we
+provide below includes a stand characteristics table with additional details such as slope,
+topography, and yarding distances. After the map and harvest description you will find an
+area to write your estimates, as well as a place to provide any additional details you were
+thinking of while developing your estimate. For simplicity, assume that all the ground
+illustrated is ground-based terrain only. Please do your best to estimate what it would cost
+your crew to remove the material from the stand based on the information given. Also, please
+do not include any move-in costs in your estimate.
+
+
+Road Construction: We are assuming that all road construction is already complete with no
+other road developments required. However, after looking at the map do you feel that more
+road construction is required?
+       Yes: Please provide the amount and possible cost._____________________________
+       No: Please check:__________
+                                                                          80
+
+
+
+Stand and Harvest Description:
+
+
+
+
+                                 Stand Infromation
+                         Acres                        89
+                         Avg Slope                   14%
+                         Road Construction         0 Miles
+                         One-way Yarding Distance 0.3 Miles
+
+
+
+
+                                 Harvest Summary
+           Spp      Trees/Ac. Avg. DBH Net MBF/Ac. Logs/Ac. Basal Area
+           Doug Fir      72.1      19.1          22      148      143.8
+           Hemlock       38.9        17        8.9      85.8       61.3
+           Totals:        111     18.05       30.9     233.8      205.1
+81
+                                                                                             82
+
+Harvesting Operation Survey:
+
+
+Cut-to-Length Processer
+What is the make and model of the cut-to-length processor? _____________________________
+
+What is the expected production rate for the cut-to-length processor (MBF/Hour)___________
+
+What is the estimated total cost per MBF for the cut-to-length processor (excluding delay
+time)?____________________________________________________________________________
+What is the total number of expected productive hours per 8 hour working day?_____________
+What is the total number of hours of expected delay time (operational, mechanical, etc.) per 8
+hour work day?____________________________________________________________________
+
+
+Forwarder
+What is the make and model of the forwarder? _________________________________________
+What is the expected production rate for the forwarder (MBF/Hour) _______________________
+What is the estimated total cost per MBF for the forwarder (excluding delay time)? ___________
+What is the total number of expected productive hours per 8 hour working day? _____________
+What is the total number of hours of expected delay time (operational, mechanical, etc.) per 8
+hour work day?___________________________________________________________________
+
+
+
+
+Loader
+What is the make and model of the loader? ____________________________________________
+What is the expected production rate for this loader given these conditions?_________________
+What is the estimated total cost per MBF for the loader (excluding delay time)?______________
+What is the total number of expected productive hours per 8 hour working day?_____________
+What is the total number of hours of expected delay time (operational, mechanical, etc.) per 8
+hour work day?____________________________________________________________________
+                                                                                               83
+
+Are there any additional details you would like to add?
+__________________________________________________________________________________
+
+
+__________________________________________________________________________________
+
+
+__________________________________________________________________________________
+
+Approximately how many hours would it would take your operation to complete an acre of this
+operation?
+
+__________________________________________________________________________________
+
+
+
+
+Optimum Harvesting Equipment:
+After the initial survey, we also want to understand what the ideal machinery loggers would
+use given these conditions. Please take a moment and describe what kind of system and
+equipment you believe would result in the highest efficiency and lowest cost to complete the
+operation. Please be as detailed as possible, e.g. all the components (harvesting, transporting,
+processing) and make and models of machinery if possible.
+
+
+Ideal Harvesting System:
+__________________________________________________________________________________
+
+
+__________________________________________________________________________________
+
+
+__________________________________________________________________________________
+
+
+
+Are there any additional details you would like to add?
+
+
+__________________________________________________________________________________
+                                                                                84
+
+__________________________________________________________________________________
+
+
+__________________________________________________________________________________
+
+
+Please return the survey.
+
+We Thank You for Your Time and Effort!
+

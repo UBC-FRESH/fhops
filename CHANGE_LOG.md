@@ -6,6 +6,7 @@
 - Logged the new helper + follow-on machine-role rollout plan in `notes/dataset_inspection_plan.md` and extracted the source PDF text into `notes/reference/article10379.txt` for future parsers.
 - Extended forwarder coverage with Ghaffariyan et al. (2019) thinning models (small/large ALPACA regressions) and Kellogg & Bettinger (1994) multi-product CTL regression, complete with slope toggles, distance-aware predictors, regression tests, and reference text dumps under `notes/reference/`.
 - Added `fhops dataset estimate-forwarder-productivity` so users can evaluate the new forwarder regressions from the CLI (Ghaffariyan small/large + Kellogg saw/pulp/mixed), with validation of required parameters and Typer-backed regression tests.
+- Logged new planning references: Visser et al. (2025) mechanical grapple-feeding excavators, McNeel (2000) longline yarding, West et al. (2022) steep-slope winch-assist systems, Bell (2017) OpCost model thesis, Renzie (2006) partial-cut productivity, and Onuma (1988) NA time-study methodology, plus flagging the DRM-locked silviculture report for follow-up.
 - Ported the Sessions & Boston (2006) shovel-logging cost/productivity formulation and the Spinelli et al. (2017) grapple yarder regression into reusable helpers (`fhops.productivity.sessions2006` / `spinelli2017`) with unit coverage, so Step 3 work can build on working code while we continue hunting for the Han & George data.
 
 ## 2025-11-15 — Dataset inspector & 24 h baseline
