@@ -196,12 +196,16 @@ Use ``fhops.dataset estimate-skyline-productivity`` when the block’s harvest s
   regression compiled in Aubuchon (1982). Supply ``--logs-per-turn``, ``--average-log-volume-m3``, and
   ``--crew-size`` along with slope/lateral distance. The CLI reports turn minutes and payload so analysts can
   calibrate against local choking practices.
+* ``--machine-role helicopter_longline`` – **New** helicopter helper built from FPInnovations Advantage/TR helicopter
+  studies (Lama/K-Max/Bell 214B/S-64E). Give ``--helicopter-model`` plus ``--helicopter-flight-distance-m`` and optional payload/load-factor overrides to
+  estimate cycle minutes, turns per PMH, and m³/PMH₀ for light-, medium-, and heavy-lift longline work. Delay minutes can be added via
+  ``--helicopter-delay-minutes`` to capture weather/landing waits.
 
 Every skyline model emits the assumed payload and m³/PMH0 result; the McNeel helper also reports cycle
 minutes derived from the Table 4 regression so analysts can see how deflection or payload tweaks affect
 turn time. Telemetry rows now carry ``horizontal_distance_m``, ``vertical_distance_m``,
 ``pieces_per_cycle``, ``piece_volume_m3``, and the running-yarder variant whenever ``mcneel-running`` is used,
-along with the log/crew inputs when the Aubuchon model is selected.
+along with the log/crew inputs when the Aubuchon model is selected. Helicopter runs also log the chosen model and payload for downstream telemetry.
 
 CTL Harvester Productivity Models
 ---------------------------------

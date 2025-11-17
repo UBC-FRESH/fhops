@@ -6,6 +6,7 @@ import json
 import warnings
 from collections.abc import Mapping
 from dataclasses import dataclass
+from enum import Enum
 from functools import lru_cache
 from pathlib import Path
 
@@ -277,6 +278,155 @@ def estimate_running_skyline_productivity_mcneel2000(
         yarder_variant=yarder_variant,
     )
     return _m3_per_pmh_from_minutes(payload_m3, cycle_minutes)
+
+
+class HelicopterLonglineModel(str, Enum):
+    LAMA = "lama"
+    KMAX = "kmax"
+    BELL_214B = "bell214b"
+    S64E_AIRCRANE = "s64e_aircrane"
+
+
+@dataclass(frozen=True)
+class HelicopterSpec:
+    model: HelicopterLonglineModel
+    rated_payload_lb: float
+    default_load_factor: float
+    weight_to_volume_lb_per_m3: float
+    hook_breakout_minutes: float
+    unhook_minutes: float
+    fly_empty_speed_mps: float
+    fly_loaded_speed_mps: float
+
+    @property
+    def default_payload_lb(self) -> float:
+        return self.rated_payload_lb * self.default_load_factor
+
+
+_HELICOPTER_SPECS: dict[HelicopterLonglineModel, HelicopterSpec] = {
+    HelicopterLonglineModel.LAMA: HelicopterSpec(
+        model=HelicopterLonglineModel.LAMA,
+        rated_payload_lb=2_500.0,
+        default_load_factor=0.8,
+        weight_to_volume_lb_per_m3=2_972.0,
+        hook_breakout_minutes=0.8,
+        unhook_minutes=0.15,
+        fly_empty_speed_mps=22.0,
+        fly_loaded_speed_mps=18.0,
+    ),
+    HelicopterLonglineModel.KMAX: HelicopterSpec(
+        model=HelicopterLonglineModel.KMAX,
+        rated_payload_lb=6_000.0,
+        default_load_factor=0.75,
+        weight_to_volume_lb_per_m3=2_972.0,
+        hook_breakout_minutes=0.77,
+        unhook_minutes=0.14,
+        fly_empty_speed_mps=18.3,
+        fly_loaded_speed_mps=13.6,
+    ),
+    HelicopterLonglineModel.BELL_214B: HelicopterSpec(
+        model=HelicopterLonglineModel.BELL_214B,
+        rated_payload_lb=8_000.0,
+        default_load_factor=0.7,
+        weight_to_volume_lb_per_m3=2_375.0,
+        hook_breakout_minutes=1.1,
+        unhook_minutes=0.28,
+        fly_empty_speed_mps=23.5,
+        fly_loaded_speed_mps=19.3,
+    ),
+    HelicopterLonglineModel.S64E_AIRCRANE: HelicopterSpec(
+        model=HelicopterLonglineModel.S64E_AIRCRANE,
+        rated_payload_lb=20_000.0,
+        default_load_factor=0.7,
+        weight_to_volume_lb_per_m3=2_700.0,
+        hook_breakout_minutes=1.9,
+        unhook_minutes=0.22,
+        fly_empty_speed_mps=33.0,
+        fly_loaded_speed_mps=27.0,
+    ),
+}
+
+
+@dataclass(frozen=True)
+class HelicopterProductivityResult:
+    model: HelicopterLonglineModel
+    flight_distance_m: float
+    payload_lb: float
+    payload_m3: float
+    load_factor: float
+    cycle_minutes: float
+    turns_per_pmh0: float
+    productivity_m3_per_pmh0: float
+    additional_delay_minutes: float
+    spec: HelicopterSpec
+
+
+def _helicopter_spec(model: HelicopterLonglineModel) -> HelicopterSpec:
+    try:
+        return _HELICOPTER_SPECS[model]
+    except KeyError as exc:
+        raise ValueError(f"Unsupported helicopter model: {model}") from exc
+
+
+def estimate_helicopter_longline_productivity(
+    *,
+    model: HelicopterLonglineModel,
+    flight_distance_m: float,
+    payload_m3: float | None = None,
+    load_factor: float | None = None,
+    weight_to_volume_lb_per_m3: float | None = None,
+    additional_delay_minutes: float = 0.0,
+) -> HelicopterProductivityResult:
+    """Estimate helicopter longline productivity (m³/PMH0) using FPInnovations case studies."""
+
+    if flight_distance_m <= 0:
+        raise ValueError("flight_distance_m must be > 0")
+    if additional_delay_minutes < 0:
+        raise ValueError("additional_delay_minutes must be >= 0")
+
+    spec = _helicopter_spec(model)
+    conversion = weight_to_volume_lb_per_m3 or spec.weight_to_volume_lb_per_m3
+
+    if payload_m3 is not None and payload_m3 <= 0:
+        raise ValueError("payload_m3 must be > 0 when specified.")
+    if load_factor is not None and not (0.0 < load_factor <= 1.0):
+        raise ValueError("load_factor must lie in (0, 1].")
+
+    if payload_m3 is not None:
+        payload_lb = payload_m3 * conversion
+        load_factor_value = payload_lb / spec.rated_payload_lb
+    else:
+        load_factor_value = load_factor if load_factor is not None else spec.default_load_factor
+        payload_lb = spec.rated_payload_lb * load_factor_value
+        payload_m3 = payload_lb / conversion
+
+    if load_factor_value <= 0 or payload_lb <= 0:
+        raise ValueError("Computed payload is not positive; check inputs.")
+
+    fly_empty_minutes = (flight_distance_m / spec.fly_empty_speed_mps) / 60.0
+    fly_loaded_minutes = (flight_distance_m / spec.fly_loaded_speed_mps) / 60.0
+    cycle_minutes = (
+        spec.hook_breakout_minutes
+        + spec.unhook_minutes
+        + fly_empty_minutes
+        + fly_loaded_minutes
+        + additional_delay_minutes
+    )
+    turns_per_hour = 60.0 / cycle_minutes
+    productivity = payload_m3 * turns_per_hour
+
+    return HelicopterProductivityResult(
+        model=model,
+        flight_distance_m=flight_distance_m,
+        payload_lb=payload_lb,
+        payload_m3=payload_m3,
+        load_factor=load_factor_value,
+        cycle_minutes=cycle_minutes,
+        turns_per_pmh0=turns_per_hour,
+        productivity_m3_per_pmh0=productivity,
+        additional_delay_minutes=additional_delay_minutes,
+        spec=spec,
+    )
 
 
 def estimate_standing_skyline_turn_time_aubuchon1979(

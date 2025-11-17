@@ -38,10 +38,13 @@ from fhops.productivity import (
     SkidderProductivityResult,
     ShovelLoggerSessions2006Inputs,
     ShovelLoggerResult,
+    HelicopterLonglineModel,
+    HelicopterProductivityResult,
     alpaca_slope_multiplier,
     estimate_grapple_skidder_productivity_han2018,
     estimate_harvester_productivity_adv5n30,
     estimate_harvester_productivity_tn292,
+    estimate_helicopter_longline_productivity,
     estimate_cable_skidding_productivity_unver_robust,
     estimate_cable_skidding_productivity_unver_robust_profile,
     estimate_cable_skidding_productivity_unver_spss,
@@ -128,6 +131,7 @@ class ProductivityMachineRole(str, Enum):
     CTL_HARVESTER = "ctl_harvester"
     GRAPPLE_SKIDDER = "grapple_skidder"
     SHOVEL_LOGGER = "shovel_logger"
+    HELICOPTER_LONGLINE = "helicopter_longline"
 
 
 class ShovelSlopeClass(str, Enum):
@@ -245,6 +249,30 @@ def _render_shovel_logger_result(result: ShovelLoggerResult) -> None:
     _render_kv_table("Shovel Logger Productivity Estimate", rows)
     console.print(
         "[dim]Sessions & Boston (2006) serpentine shovel logging model with effective-time scaling.[/dim]"
+    )
+
+
+def _render_helicopter_result(result: HelicopterProductivityResult) -> None:
+    rows = [
+        ("Model", result.model.value.replace("_", "-")),
+        ("Flight Distance (m)", f"{result.flight_distance_m:.1f}"),
+        ("Cycle Time (min)", f"{result.cycle_minutes:.2f}"),
+        ("Rated Payload (lb)", f"{result.spec.rated_payload_lb:.0f}"),
+        ("Payload (lb)", f"{result.payload_lb:.0f}"),
+        ("Payload (m³)", f"{result.payload_m3:.2f}"),
+        ("Load Factor", f"{result.load_factor:.2f}"),
+        ("Turns per PMH0", f"{result.turns_per_pmh0:.2f}"),
+        ("Productivity (m³/PMH0)", f"{result.productivity_m3_per_pmh0:.2f}"),
+        ("Hook/Breakout (min)", f"{result.spec.hook_breakout_minutes:.2f}"),
+        ("Unhook (min)", f"{result.spec.unhook_minutes:.2f}"),
+        ("Additional Delay (min)", f"{result.additional_delay_minutes:.2f}"),
+        ("Fly Empty Speed (km/h)", f"{result.spec.fly_empty_speed_mps * 3.6:.1f}"),
+        ("Fly Loaded Speed (km/h)", f"{result.spec.fly_loaded_speed_mps * 3.6:.1f}"),
+        ("Weight→Volume (lb/m³)", f"{result.spec.weight_to_volume_lb_per_m3:.0f}"),
+    ]
+    _render_kv_table("Helicopter Longline Productivity Estimate", rows)
+    console.print(
+        "[dim]Defaults derived from FPInnovations helicopter logging studies (ADV3/4/5/6 series).[/dim]"
     )
 
 
@@ -1566,6 +1594,43 @@ def estimate_productivity_cmd(
         min=0.0,
         help="Custom multiplier to stack on top of slope/bunching adjustments.",
     ),
+    helicopter_model: HelicopterLonglineModel = typer.Option(
+        HelicopterLonglineModel.S64E_AIRCRANE,
+        "--helicopter-model",
+        case_sensitive=False,
+        help="Helicopter model for longline productivity (lama | kmax | bell214b | s64e_aircrane).",
+    ),
+    helicopter_flight_distance_m: float | None = typer.Option(
+        None,
+        "--helicopter-flight-distance-m",
+        min=0.0,
+        help="Slope flight distance per turn (m) for helicopter helpers.",
+    ),
+    helicopter_payload_m3: float | None = typer.Option(
+        None,
+        "--helicopter-payload-m3",
+        min=0.0,
+        help="Override payload per turn (m³). Defaults to model load factor × rated payload.",
+    ),
+    helicopter_load_factor: float | None = typer.Option(
+        None,
+        "--helicopter-load-factor",
+        min=0.0,
+        max=1.0,
+        help="Override load factor (0-1) for helicopter helpers.",
+    ),
+    helicopter_weight_to_volume: float | None = typer.Option(
+        None,
+        "--helicopter-weight-to-volume",
+        min=0.0,
+        help="Custom weight-to-volume conversion (lb/m³). Defaults per helicopter model.",
+    ),
+    helicopter_delay_minutes: float = typer.Option(
+        0.0,
+        "--helicopter-delay-minutes",
+        min=0.0,
+        help="Additional minutes per cycle (e.g., hooktender waits, weather holds).",
+    ),
     harvest_system_id: str | None = typer.Option(
         None,
         "--harvest-system-id",
@@ -1749,6 +1814,21 @@ def estimate_productivity_cmd(
             console.print(
                 f"[dim]Applied shovel-logger defaults from harvest system '{selected_system.system_id}'.[/dim]"
             )
+        return
+    if role == ProductivityMachineRole.HELICOPTER_LONGLINE.value:
+        if helicopter_flight_distance_m is None:
+            raise typer.BadParameter(
+                "--helicopter-flight-distance-m is required for helicopter_longline role."
+            )
+        result = estimate_helicopter_longline_productivity(
+            model=helicopter_model,
+            flight_distance_m=helicopter_flight_distance_m,
+            payload_m3=helicopter_payload_m3,
+            load_factor=helicopter_load_factor,
+            weight_to_volume_lb_per_m3=helicopter_weight_to_volume,
+            additional_delay_minutes=helicopter_delay_minutes,
+        )
+        _render_helicopter_result(result)
         return
 
     missing: list[str] = []

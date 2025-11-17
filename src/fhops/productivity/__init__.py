@@ -11,10 +11,13 @@ from .cable_logging import (
     estimate_cable_yarder_productivity_tr125_multi_span,
     estimate_cable_yarder_productivity_tr125_single_span,
     estimate_cable_yarder_productivity_tr127,
+    estimate_helicopter_longline_productivity,
     estimate_standing_skyline_productivity_aubuchon1979,
     estimate_standing_skyline_turn_time_aubuchon1979,
     estimate_running_skyline_cycle_time_mcneel2000_minutes,
     estimate_running_skyline_productivity_mcneel2000,
+    HelicopterLonglineModel,
+    HelicopterProductivityResult,
     running_skyline_variant_defaults,
 )
 from .eriksson2014 import (
@@ -100,6 +103,7 @@ __all__ = [
     "estimate_cable_yarder_productivity_tr125_multi_span",
     "estimate_cable_yarder_cycle_time_tr127_minutes",
     "estimate_cable_yarder_productivity_tr127",
+    "estimate_helicopter_longline_productivity",
     "estimate_standing_skyline_turn_time_aubuchon1979",
     "estimate_standing_skyline_productivity_aubuchon1979",
     "estimate_running_skyline_cycle_time_mcneel2000_minutes",
@@ -138,4 +142,6 @@ __all__ = [
     "TrailSpacingPattern",
     "DeckingCondition",
     "SkidderProductivityResult",
+    "HelicopterLonglineModel",
+    "HelicopterProductivityResult",
 ]
