@@ -7,6 +7,7 @@ from fhops.productivity import (
     estimate_cable_yarder_productivity_lee2018_uphill,
     estimate_cable_yarder_productivity_tr125_single_span,
     estimate_cable_yarder_productivity_tr127,
+    estimate_running_skyline_productivity_mcneel2000,
 )
 
 runner = CliRunner()
@@ -76,5 +77,40 @@ def test_cli_skyline_tr127_block5() -> None:
         slope_distance_m=365.0,
         lateral_distance_m=16.0,
         num_logs=3.0,
+    )
+    assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_skyline_mcneel_running() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "mcneel-running",
+            "--slope-distance-m",
+            "200",
+            "--horizontal-distance-m",
+            "240",
+            "--lateral-distance-m",
+            "25",
+            "--vertical-distance-m",
+            "40",
+            "--pieces-per-cycle",
+            "3.5",
+            "--piece-volume-m3",
+            "1.7",
+            "--running-yarder-variant",
+            "yarder_b",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_running_skyline_productivity_mcneel2000(
+        horizontal_distance_m=240.0,
+        lateral_distance_m=25.0,
+        vertical_distance_m=40.0,
+        pieces_per_cycle=3.5,
+        piece_volume_m3=1.7,
+        yarder_variant="yarder_b",
     )
     assert f"{expected:.2f}" in result.stdout

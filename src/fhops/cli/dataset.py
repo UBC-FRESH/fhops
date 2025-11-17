@@ -52,6 +52,9 @@ from fhops.productivity import (
     estimate_cable_yarder_productivity_tr125_multi_span,
     estimate_cable_yarder_productivity_tr125_single_span,
     estimate_cable_yarder_productivity_tr127,
+    estimate_running_skyline_cycle_time_mcneel2000_minutes,
+    estimate_running_skyline_productivity_mcneel2000,
+    running_skyline_variant_defaults,
     estimate_forwarder_productivity_bc,
     estimate_harvester_productivity_adv6n10,
     estimate_productivity,
@@ -164,6 +167,7 @@ class SkylineProductivityModel(str, Enum):
     TR127_BLOCK4 = "tr127-block4"
     TR127_BLOCK5 = "tr127-block5"
     TR127_BLOCK6 = "tr127-block6"
+    MCNEEL_RUNNING = "mcneel-running"
 
 
 _TR127_MODEL_TO_BLOCK = {
@@ -174,6 +178,13 @@ _TR127_MODEL_TO_BLOCK = {
     SkylineProductivityModel.TR127_BLOCK5: 5,
     SkylineProductivityModel.TR127_BLOCK6: 6,
 }
+
+
+class RunningSkylineVariant(str, Enum):
+    """Longline yarder variants from McNeel (2000)."""
+
+    YARDER_A = "yarder_a"
+    YARDER_B = "yarder_b"
 
 
 _FORWARDER_GHAFFARIYAN_MODELS = {
@@ -2456,6 +2467,38 @@ def estimate_skyline_productivity_cmd(
         min=0.0,
         help="Number of logs per turn (required for TR127 Blocks 5–6).",
     ),
+    horizontal_distance_m: float | None = typer.Option(
+        None,
+        "--horizontal-distance-m",
+        help="Horizontal span distance (m) for running skyline regressions (defaults to slope distance).",
+        show_default=False,
+    ),
+    vertical_distance_m: float | None = typer.Option(
+        None,
+        "--vertical-distance-m",
+        help="Vertical carriage deflection (m) for running skyline regressions.",
+        show_default=False,
+    ),
+    pieces_per_cycle: float | None = typer.Option(
+        None,
+        "--pieces-per-cycle",
+        min=0.1,
+        help="Pieces per cycle for running skyline regressions (defaults per yarder variant).",
+        show_default=False,
+    ),
+    piece_volume_m3: float | None = typer.Option(
+        None,
+        "--piece-volume-m3",
+        min=0.01,
+        help="Piece volume (m³) for running skyline regressions (defaults per yarder variant).",
+        show_default=False,
+    ),
+    running_yarder_variant: RunningSkylineVariant = typer.Option(
+        RunningSkylineVariant.YARDER_A,
+        "--running-yarder-variant",
+        case_sensitive=False,
+        help="Running skyline yarder variant from McNeel (2000).",
+    ),
     tr119_treatment: str | None = typer.Option(
         None,
         "--tr119-treatment",
@@ -2469,7 +2512,7 @@ def estimate_skyline_productivity_cmd(
         writable=True,
     ),
 ):
-    """Estimate skyline productivity (m³/PMH) using Lee et al. (2018) or TR-125 regressions."""
+    """Estimate skyline productivity (m³/PMH) using Lee et al. (2018), FPInnovations TR-125/TR-127, or McNeel (2000)."""
 
     if payload_m3 is not None and payload_m3 <= 0:
         raise typer.BadParameter("--payload-m3 must be > 0 when specified.")
@@ -2477,6 +2520,11 @@ def estimate_skyline_productivity_cmd(
     source_label = None
     console_warning = None
     cycle_minutes = None
+    telemetry_horizontal = horizontal_distance_m
+    telemetry_vertical = vertical_distance_m
+    telemetry_pieces = pieces_per_cycle
+    telemetry_piece_volume = piece_volume_m3
+    telemetry_running_variant = running_yarder_variant.value if running_yarder_variant else None
     if model is SkylineProductivityModel.LEE_UPHILL:
         value = estimate_cable_yarder_productivity_lee2018_uphill(
             yarding_distance_m=slope_distance_m,
@@ -2566,6 +2614,52 @@ def estimate_skyline_productivity_cmd(
             ("Cycle Time (min)", f"{cycle_minutes:.2f}"),
         ]
         source_label = f"FPInnovations TR-127 Block {block_id} regression (northwestern BC)."
+    elif model is SkylineProductivityModel.MCNEEL_RUNNING:
+        horizontal_span = horizontal_distance_m or slope_distance_m
+        if horizontal_span is None:
+            raise typer.BadParameter("--horizontal-distance-m is required (or supply --slope-distance-m).")
+        if vertical_distance_m is None:
+            raise typer.BadParameter("--vertical-distance-m is required for running skyline regressions.")
+        default_pieces, default_piece_volume = running_skyline_variant_defaults(
+            running_yarder_variant.value
+        )
+        resolved_pieces = pieces_per_cycle if pieces_per_cycle is not None else default_pieces
+        resolved_piece_volume = (
+            piece_volume_m3 if piece_volume_m3 is not None else default_piece_volume
+        )
+        cycle_minutes = estimate_running_skyline_cycle_time_mcneel2000_minutes(
+            horizontal_distance_m=horizontal_span,
+            lateral_distance_m=lateral_distance_m,
+            vertical_distance_m=vertical_distance_m,
+            pieces_per_cycle=resolved_pieces,
+            yarder_variant=running_yarder_variant.value,
+        )
+        value = estimate_running_skyline_productivity_mcneel2000(
+            horizontal_distance_m=horizontal_span,
+            lateral_distance_m=lateral_distance_m,
+            vertical_distance_m=vertical_distance_m,
+            pieces_per_cycle=resolved_pieces,
+            piece_volume_m3=resolved_piece_volume,
+            yarder_variant=running_yarder_variant.value,
+        )
+        payload_value = resolved_pieces * resolved_piece_volume
+        rows = [
+            ("Model", model.value),
+            ("Yarder Variant", running_yarder_variant.value),
+            ("Horizontal Distance (m)", f"{horizontal_span:.1f}"),
+            ("Lateral Distance (m)", f"{lateral_distance_m:.1f}"),
+            ("Vertical Distance (m)", f"{vertical_distance_m:.1f}"),
+            ("Pieces per Cycle", f"{resolved_pieces:.2f}"),
+            ("Piece Volume (m³)", f"{resolved_piece_volume:.2f}"),
+            ("Payload (m³)", f"{payload_value:.2f}"),
+            ("Cycle Time (min)", f"{cycle_minutes:.2f}"),
+        ]
+        source_label = "McNeel 2000 running skyline regression (Madill 046, coastal BC)."
+        telemetry_horizontal = horizontal_span
+        telemetry_vertical = vertical_distance_m
+        telemetry_pieces = resolved_pieces
+        telemetry_piece_volume = resolved_piece_volume
+        telemetry_running_variant = running_yarder_variant.value
     else:
         raise typer.BadParameter(f"Unsupported skyline model: {model}")
     if tr119_treatment:
@@ -2593,6 +2687,11 @@ def estimate_skyline_productivity_cmd(
             "lateral_distance_m": lateral_distance_m,
             "num_logs": num_logs,
             "payload_m3": payload_m3,
+            "horizontal_distance_m": telemetry_horizontal,
+            "vertical_distance_m": telemetry_vertical,
+            "pieces_per_cycle": telemetry_pieces,
+            "piece_volume_m3": telemetry_piece_volume,
+            "running_yarder_variant": telemetry_running_variant,
             "cycle_minutes": cycle_minutes,
             "productivity_m3_per_pmh": value,
             "tr119_treatment": tr119_treatment,

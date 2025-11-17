@@ -134,11 +134,11 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
 
 ### Next Actions for Missing Machine Families
 
-- [ ] **Whole-tree forwarders / clambunks (Eriksson & Lindroos 2014; Laitila & Väätäinen 2014, 2020)**
+- [x] **Whole-tree forwarders / clambunks (Eriksson & Lindroos 2014; Laitila & Väätäinen 2014, 2020)**
   - [x] Digitise the Scandinavian long-distance forwarder/clambunk regressions (payload vs. distance, slope multipliers) and convert them into helper functions distinct from the CTL stack. (New `ForwarderBCModel` entries now wrap Eriksson & Lindroos final-felling/thinning payload models plus the Laitila & Väätäinen 2020 harwarder helper.)
   - [x] Add CLI flags mirroring the published predictors (payload, distance components, terrain class) and regression tests reproducing the tables/curves. (`fhops dataset estimate-productivity --machine-role forwarder` now accepts mean extraction distance, mean stem size, load capacity, and brushwood harwarder inputs; tests cover CLI + helper outputs.)
   - [x] Document applicability (final felling vs. salvage vs. plantation clean-up) and call out where BC calibration is still pending. (`docs/reference/harvest_systems.rst` now spells out when to pick each helper and flags missing BC slope factors.)
-- [ ] **Grapple skidders & shovel loggers / hoe-chuckers (Han et al. 2018; George et al. 2022; FPInnovations skidder & shovel-logging series)**
+- [x] **Grapple skidders & shovel loggers / hoe-chuckers (Han et al. 2018; George et al. 2022; FPInnovations skidder & shovel-logging series)**
   - [x] Extract grapple-skidder and shovel-logger cycle-time equations (travel out/in, load size, slope class) and wrap them in `fhops.productivity.skidder_ft`. (Han et al. 2018 lop-and-scatter + whole-tree models now live in `estimate_grapple_skidder_productivity_han2018`.)
   - [x] Wire helpers into CLI + solver job defaults (`grapple_skidder`, `shovel_logger`) and add regression tests per reference. (`fhops dataset estimate-productivity --machine-role grapple_skidder` exposes the new flags; unit + CLI coverage asserts the outputs.)
   - [x] Capture scenario multipliers for trail spacing / decking strategy (from TN285/FPInnovations skidder reports) so costing workflows can reason about narrow vs. wide trail networks. (`--skidder-trail-pattern` and `--skidder-decking-condition` mirror TN285 ghost-trail layouts and ADV4N21 decking prep impacts; helpers/tests/docs now cover the stacked multipliers.)
@@ -148,9 +148,10 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
   - [x] Mine FPInnovations shovel logging studies (e.g., TN261 loader-forwarding trial) for slope/bunching multipliers and integrate them as optional overrides (CLI now exposes `--shovel-slope-class`, `--shovel-bunching`, plus harvest-system overrides carrying those defaults).
   - [x] Wire harvest-system templates/datasets into the CLI so grapple skidders automatically pull the configured trail/deck defaults (`SystemJob.productivity_overrides`, `--harvest-system-id`, and `--dataset/--block-id` all fan out through `system_productivity_overrides`).
 - [ ] **Skyline yarders / helicopter longline (Aubuchon 1982; Böhm & Kanzian 2023; Arnvik helicopter refs)**
-  - [ ] Build skyline productivity helpers keyed by payload, deflection, lateral yarding distance, and anchor profile; include both standing and running skyline variants.
-  - [ ] Add helicopter longline regression(s) (payload vs. cycle time vs. flight distance) for `helicopter_longline` jobs.
-  - [ ] Update docs/CLI so users can select skyline/helicopter models with clear input requirements and warnings about non-BC provenance.
+  - [x] Add a running-skyline helper + CLI path (McNeel 2000 Madill 046 longline) so analysts can input horizontal span, deflection, lateral distance, pieces/turn, and pick Yarder A/B variants; include regression/unit tests + telemetry logging.
+  - [ ] Extend the standing-skyline stack (TR125/TR127) with explicit deflection/intermediate-support predictors by digitising Arnvik Appendix 8 + Aubuchon’s anchor-profile regressions, then expose them beside the new running helper.
+  - [ ] Add helicopter longline regression(s) (payload vs. cycle time vs. flight distance) for `helicopter_longline` jobs. (Use Arnvik helicopter models + Aubuchon 1982 rotorcraft cycle equations to cover hook time/fly time vs. load.)
+  - [ ] Update docs/CLI so users can select skyline/helicopter models with clear input requirements and warnings about non-BC provenance; add harvest-system overrides for standing vs. running skyline corridors.
 - [ ] **Roadside processors / loaders / hoe chuckers (Labelle et al. 2016/2018; FPDat loader datasets)**
   - [ ] Ingest landing-processor time studies (processing time per log vs. diameter/species) and generic loader cycle-time models.
   - [ ] Provide helper functions for `roadside_processor` and `loader`, exposing key predictors (piece size, log sort count, decking distance) and regression tests.

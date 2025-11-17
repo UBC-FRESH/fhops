@@ -10,6 +10,7 @@
 - Added Sessions & Boston (2006) shovel logger helper for hoe-chucking primary transport, with full CLI coverage (`--machine-role shovel_logger`) so excavator-based forwarding no longer relies on surrogate models; planning/docs updated accordingly.
 - Harvest-system overrides now seed `ground_fb_shovel`/`ground_hand_shovel` with shovel-logger parameters so the CLI auto-populates swing counts/strip lengths when users reference a template or dataset block.
 - Incorporated FPInnovations TN-261 slope/bunching multipliers into the shovel logger helper/CLI so analysts can model uphill/downhill arcs and scattered vs. bunched stems (`--shovel-slope-class`, `--shovel-bunching`, `--shovel-productivity-multiplier`).
+- Added McNeel (2000) longline running-skyline helper + CLI model (`mcneel-running`) keyed to horizontal span, lateral distance, deflection, and pieces/turn with Yarder A/B defaults; telemetry now captures the new predictors and regression/CLI tests verify the outputs. Planning + docs updated so skyline coverage notes reflect the new BC reference and list the remaining Arnvik/Aubuchon digitization + helicopter follow-ups.
 
 # Development Change Log
 

@@ -170,6 +170,34 @@ adding ``productivity_overrides`` for site-specific swing counts. Templates such
 ``ground_fb_shovel`` already ship with overrides so the CLI automatically pulls their parameters when you pass
 ``--harvest-system-id`` or ``--dataset/--block-id``.
 
+Skyline Productivity Models
+---------------------------
+
+Use ``fhops.dataset estimate-skyline-productivity`` when the block’s harvest system references
+``skyline_yarder`` or ``helicopter_longline`` jobs. Available regressions:
+
+* ``lee-uphill`` / ``lee-downhill`` – HAM300 case study (Lee et al. 2018, South Korea). Uphill model
+  only needs ``--slope-distance-m`` and optional ``--payload-m3``; downhill adds
+  ``--lateral-distance-m`` and ``--large-end-diameter-cm``. The CLI prints warnings because these are
+  non-BC datasets intended for short spans (<130 m).
+* ``tr125-single-span`` / ``tr125-multi-span`` – Standing-skyline regressions from FPInnovations TR-125
+  (Skylead C40 with Mini-Maki carriage). Supply ``--slope-distance-m`` and ``--lateral-distance-m``;
+  payload defaults to 1.6 m³ (≈3.4 logs × 0.47 m³/log) but can be overridden via ``--payload-m3``.
+* ``tr127-block1`` … ``tr127-block6`` – Block-specific regressions from FPInnovations TR-127 (northwestern
+  BC). The command prompts for ``--num-logs`` when Blocks 5–6 require it and shows the computed
+  cycle minutes alongside productivity.
+* ``mcneel-running`` – **New** running-skyline helper based on McNeel (2000) Madill 046 longline yarders.
+  Provide the horizontal span (``--horizontal-distance-m`` or reuse ``--slope-distance-m``), deflection
+  (``--vertical-distance-m``), and lateral yarding distance. Pieces per cycle and piece volume default to the
+  paper’s Yarder A/B averages (2.8 pieces × 2.5 m³ or 3.0 × 1.6 m³), but you can override them with
+  ``--pieces-per-cycle`` / ``--piece-volume-m3``. Pick ``--running-yarder-variant yarder_a`` or ``yarder_b`` to
+  mirror the observed payload/cycle-time differences.
+
+Every skyline model emits the assumed payload and m³/PMH0 result; the McNeel helper also reports cycle
+minutes derived from the Table 4 regression so analysts can see how deflection or payload tweaks affect
+turn time. Telemetry rows now carry ``horizontal_distance_m``, ``vertical_distance_m``,
+``pieces_per_cycle``, ``piece_volume_m3``, and the running-yarder variant whenever ``mcneel-running`` is used.
+
 CTL Harvester Productivity Models
 ---------------------------------
 

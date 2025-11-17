@@ -12,6 +12,12 @@ from pathlib import Path
 from fhops.reference import get_appendix5_profile
 
 
+_RUNNING_SKYLINE_VARIANTS = {
+    "yarder_a": {"pieces_per_cycle": 2.8, "piece_volume_m3": 2.5, "z1": 0.0},
+    "yarder_b": {"pieces_per_cycle": 3.0, "piece_volume_m3": 1.6, "z1": 1.0},
+}
+
+
 def _validate_inputs(log_volume_m3: float, route_slope_percent: float) -> None:
     if log_volume_m3 <= 0:
         raise ValueError("log_volume_m3 must be > 0")
@@ -72,6 +78,11 @@ def estimate_cable_skidding_productivity_unver_robust_profile(
 def _validate_positive(value: float, name: str) -> None:
     if value <= 0:
         raise ValueError(f"{name} must be > 0")
+
+
+def _validate_non_negative(value: float, name: str) -> None:
+    if value < 0:
+        raise ValueError(f"{name} must be >= 0")
 
 
 def _m3_per_pmh(payload_m3: float, cycle_seconds: float) -> float:
@@ -190,6 +201,86 @@ def estimate_cable_yarder_productivity_tr125_multi_span(
     _validate_positive(lateral_distance_m, "lateral_distance_m")
     cycle_minutes = 2.43108 + 0.00910 * slope_distance_m + 0.02563 * lateral_distance_m
     return _m3_per_pmh_from_minutes(payload_m3, cycle_minutes)
+
+
+def _running_skyline_variant(key: str) -> dict[str, float]:
+    normalized = key.lower()
+    if normalized not in _RUNNING_SKYLINE_VARIANTS:
+        allowed = ", ".join(sorted(_RUNNING_SKYLINE_VARIANTS))
+        raise ValueError(f"Unknown running-skyline variant '{key}'. Expected one of: {allowed}.")
+    return _RUNNING_SKYLINE_VARIANTS[normalized]
+
+
+def estimate_running_skyline_cycle_time_mcneel2000_minutes(
+    *,
+    horizontal_distance_m: float,
+    lateral_distance_m: float,
+    vertical_distance_m: float,
+    pieces_per_cycle: float | None = None,
+    yarder_variant: str = "yarder_a",
+) -> float:
+    """
+    Estimate scheduled cycle time (minutes) for running skyline yarders (McNeel 2000).
+
+    Source: McNeel, J.F. 2000. "Modeling Production of Longline Yarding Operations in
+    Coastal British Columbia" (Journal of Forest Engineering 11(1):29–38) Table 4.
+    """
+
+    _validate_positive(horizontal_distance_m, "horizontal_distance_m")
+    _validate_non_negative(lateral_distance_m, "lateral_distance_m")
+    _validate_non_negative(vertical_distance_m, "vertical_distance_m")
+    variant = _running_skyline_variant(yarder_variant)
+    pieces = pieces_per_cycle if pieces_per_cycle is not None else variant["pieces_per_cycle"]
+    _validate_positive(pieces, "pieces_per_cycle")
+    z1 = variant["z1"]
+    cycle_minutes = (
+        10.167
+        + 0.00490 * horizontal_distance_m
+        + 0.01836 * vertical_distance_m
+        - 0.011080 * z1 * vertical_distance_m
+        + 0.080542 * lateral_distance_m
+        + 0.109484 * pieces
+        - 1.18 * z1
+    )
+    return max(cycle_minutes, 0.0)
+
+
+def estimate_running_skyline_productivity_mcneel2000(
+    *,
+    horizontal_distance_m: float,
+    lateral_distance_m: float,
+    vertical_distance_m: float,
+    pieces_per_cycle: float | None = None,
+    piece_volume_m3: float | None = None,
+    yarder_variant: str = "yarder_a",
+) -> float:
+    """
+    Estimate running skyline productivity (m³/PMH0) using McNeel (2000) regression.
+
+    Parameters mirror Table 4 predictors: horizontal span, lateral yarding distance,
+    deflection (vertical distance), and pieces per turn.
+    """
+
+    variant = _running_skyline_variant(yarder_variant)
+    pieces = pieces_per_cycle if pieces_per_cycle is not None else variant["pieces_per_cycle"]
+    volume = piece_volume_m3 if piece_volume_m3 is not None else variant["piece_volume_m3"]
+    _validate_positive(volume, "piece_volume_m3")
+    payload_m3 = pieces * volume
+    cycle_minutes = estimate_running_skyline_cycle_time_mcneel2000_minutes(
+        horizontal_distance_m=horizontal_distance_m,
+        lateral_distance_m=lateral_distance_m,
+        vertical_distance_m=vertical_distance_m,
+        pieces_per_cycle=pieces,
+        yarder_variant=yarder_variant,
+    )
+    return _m3_per_pmh_from_minutes(payload_m3, cycle_minutes)
+
+
+def running_skyline_variant_defaults(yarder_variant: str) -> tuple[float, float]:
+    """Return (pieces_per_cycle, piece_volume_m3) defaults for the given variant."""
+
+    variant = _running_skyline_variant(yarder_variant)
+    return variant["pieces_per_cycle"], variant["piece_volume_m3"]
 
 
 @dataclass(frozen=True)
