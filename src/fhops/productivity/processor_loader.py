@@ -164,6 +164,107 @@ def estimate_processor_productivity_labelle2019_dbh(
     )
 
 
+@dataclass(frozen=True)
+class Labelle2019VolumeProcessorProductivityResult:
+    species: Literal["spruce", "beech"]
+    treatment: Literal["clear_cut", "selective_cut"]
+    volume_m3: float
+    intercept: float
+    linear: float
+    quadratic: float
+    exponent: float
+    sample_trees: int
+    delay_multiplier: float
+    delay_free_productivity_m3_per_pmh: float
+    productivity_m3_per_pmh: float
+
+
+@dataclass(frozen=True)
+class _Labelle2019VolumePolynomial:
+    intercept: float
+    linear: float
+    quadratic: float
+    exponent: float
+    sample_trees: int
+
+
+_LABELLE2019_VOLUME_MODELS: dict[tuple[str, str], _Labelle2019VolumePolynomial] = {
+    ("spruce", "clear_cut"): _Labelle2019VolumePolynomial(
+        intercept=2.938,
+        linear=54.87,
+        quadratic=16.56,
+        exponent=2.0,
+        sample_trees=15,
+    ),
+    ("beech", "clear_cut"): _Labelle2019VolumePolynomial(
+        intercept=18.17,
+        linear=31.92,
+        quadratic=20.63,
+        exponent=2.0,
+        sample_trees=15,
+    ),
+    ("spruce", "selective_cut"): _Labelle2019VolumePolynomial(
+        intercept=5.573,
+        linear=20.18,
+        quadratic=1.835,
+        exponent=2.0,
+        sample_trees=22,
+    ),
+    ("beech", "selective_cut"): _Labelle2019VolumePolynomial(
+        intercept=4.743,
+        linear=17.44,
+        quadratic=2.445,
+        exponent=2.0,
+        sample_trees=30,
+    ),
+}
+
+
+def estimate_processor_productivity_labelle2019_volume(
+    *,
+    species: Literal["spruce", "beech"],
+    treatment: Literal["clear_cut", "selective_cut"],
+    volume_m3: float,
+    delay_multiplier: float = 1.0,
+) -> Labelle2019VolumeProcessorProductivityResult:
+    """Labelle et al. (2019) hardwood processor regressions keyed to recovered volume (m³/stem)."""
+
+    if volume_m3 <= 0:
+        raise ValueError("volume_m3 must be > 0")
+    if not (0.0 < delay_multiplier <= 1.0):
+        raise ValueError("delay_multiplier must lie in (0, 1]")
+
+    key = (species.lower(), treatment.lower())
+    if key not in _LABELLE2019_VOLUME_MODELS:
+        valid = ", ".join(
+            f"{spec}/{treatment}" for spec, treatment in sorted(_LABELLE2019_VOLUME_MODELS)
+        )
+        raise ValueError(f"Unknown species/treatment combination {key!r}. Valid pairs: {valid}")
+
+    coeffs = _LABELLE2019_VOLUME_MODELS[key]
+    delay_free = (
+        coeffs.intercept
+        + coeffs.linear * volume_m3
+        - coeffs.quadratic * (volume_m3**coeffs.exponent)
+    )
+    delay_free = max(0.0, delay_free)
+    productivity = delay_free * delay_multiplier
+
+    return Labelle2019VolumeProcessorProductivityResult(
+        species=key[0],
+        treatment=key[1],
+        volume_m3=volume_m3,
+        intercept=coeffs.intercept,
+        linear=coeffs.linear,
+        quadratic=coeffs.quadratic,
+        exponent=coeffs.exponent,
+        sample_trees=coeffs.sample_trees,
+        delay_multiplier=delay_multiplier,
+        delay_free_productivity_m3_per_pmh=delay_free,
+        productivity_m3_per_pmh=productivity,
+    )
+
+
 _LOADER_INTERCEPT = 6.89172291
 _LOADER_PIECE_EXP = 0.40841215
 _LOADER_DISTANCE_EXP = -0.60174944

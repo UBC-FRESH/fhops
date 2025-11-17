@@ -142,6 +142,12 @@ regressions:
   * ``--processor-species`` – ``spruce`` or ``beech`` (matching the reference plots).
   * ``--processor-treatment`` – ``clear_cut`` or ``selective_cut`` (group selection). Use
     ``--processor-delay-multiplier`` if you need to impose a local utilisation ratio.
+* ``--processor-model labelle2019_volume`` – same Bavarian dataset, but keyed to recovered tree volume
+  (m³/stem). Accepts the same species/treatment flags plus:
+  * ``--processor-volume-m3`` – recovered volume per stem (m³). The helper applies the
+    ``a + b·V₆ − c·V₆²`` polynomials published in Appendix 8/9 and still reports PMH₀ outputs.
+  * Continue using ``--processor-delay-multiplier`` for utilisation assumptions; CLI output reminds
+    users that this model is intended for hardwood-dominated export scenarios rather than BC norms.
 
 CLI output reports the base delay-free productivity, the applied multipliers, and the utilisation-adjusted
 m³/PMH so costing workflows can decide which value to pass downstream. Remember that the Labelle models

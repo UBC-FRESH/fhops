@@ -93,9 +93,11 @@ from .processor_loader import (
     LoaderForwarderProductivityResult,
     ProcessorProductivityResult,
     Labelle2019ProcessorProductivityResult,
+    Labelle2019VolumeProcessorProductivityResult,
     estimate_loader_forwarder_productivity_tn261,
     estimate_processor_productivity_berry2019,
     estimate_processor_productivity_labelle2019_dbh,
+    estimate_processor_productivity_labelle2019_volume,
 )
 
 __all__ = [
@@ -158,8 +160,10 @@ __all__ = [
     "estimate_shovel_logger_productivity_sessions2006",
     "estimate_processor_productivity_berry2019",
     "estimate_processor_productivity_labelle2019_dbh",
+    "estimate_processor_productivity_labelle2019_volume",
     "ProcessorProductivityResult",
     "Labelle2019ProcessorProductivityResult",
+    "Labelle2019VolumeProcessorProductivityResult",
     "estimate_loader_forwarder_productivity_tn261",
     "LoaderForwarderProductivityResult",
     "ADV6N10HarvesterInputs",

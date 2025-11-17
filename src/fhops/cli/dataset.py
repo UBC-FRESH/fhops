@@ -80,6 +80,8 @@ from fhops.productivity import (
     estimate_processor_productivity_berry2019,
     Labelle2019ProcessorProductivityResult,
     estimate_processor_productivity_labelle2019_dbh,
+    Labelle2019VolumeProcessorProductivityResult,
+    estimate_processor_productivity_labelle2019_volume,
     LoaderForwarderProductivityResult,
     estimate_loader_forwarder_productivity_tn261,
 )
@@ -205,6 +207,7 @@ class SkylineProductivityModel(str, Enum):
 class RoadsideProcessorModel(str, Enum):
     BERRY2019 = "berry2019"
     LABELLE2019_DBH = "labelle2019_dbh"
+    LABELLE2019_VOLUME = "labelle2019_volume"
 
 
 class LabelleProcessorSpecies(str, Enum):
@@ -324,7 +327,11 @@ def _render_helicopter_result(result: HelicopterProductivityResult) -> None:
 
 
 def _render_processor_result(
-    result: ProcessorProductivityResult | Labelle2019ProcessorProductivityResult,
+    result: (
+        ProcessorProductivityResult
+        | Labelle2019ProcessorProductivityResult
+        | Labelle2019VolumeProcessorProductivityResult
+    ),
 ) -> None:
     if isinstance(result, ProcessorProductivityResult):
         rows = [
@@ -347,14 +354,38 @@ def _render_processor_result(
         )
         return
 
+    elif isinstance(result, Labelle2019ProcessorProductivityResult):
+        rows = [
+            ("Model", "labelle2019_dbh"),
+            ("Species", result.species),
+            ("Treatment", result.treatment.replace("_", " ")),
+            ("DBH (cm)", f"{result.dbh_cm:.1f}"),
+            (
+                "Polynomial",
+                f"{result.intercept:+.2f} + {result.linear:.4f}·DBH + {result.quadratic:.5f}·DBH²",
+            ),
+            ("Sample Trees", str(result.sample_trees)),
+            (
+                "Delay-free Productivity (m³/PMH)",
+                f"{result.delay_free_productivity_m3_per_pmh:.2f}",
+            ),
+            ("Delay Multiplier", f"{result.delay_multiplier:.3f}"),
+            ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
+        ]
+        _render_kv_table("Roadside Processor Productivity Estimate", rows)
+        console.print(
+            "[dim]Labelle et al. (2019) Bavarian hardwood case study (TimberPro 620-E + LogMax 7000C); values are PMH₀—apply utilisation via --processor-delay-multiplier.[/dim]"
+        )
+        return
+
     rows = [
-        ("Model", "labelle2019_dbh"),
+        ("Model", "labelle2019_volume"),
         ("Species", result.species),
         ("Treatment", result.treatment.replace("_", " ")),
-        ("DBH (cm)", f"{result.dbh_cm:.1f}"),
+        ("Recovered Volume (m³)", f"{result.volume_m3:.3f}"),
         (
             "Polynomial",
-            f"{result.intercept:+.2f} + {result.linear:.4f}·DBH + {result.quadratic:.5f}·DBH²",
+            f"{result.intercept:+.2f} + {result.linear:.2f}·V - {result.quadratic:.3f}·V^{result.exponent:.0f}",
         ),
         ("Sample Trees", str(result.sample_trees)),
         ("Delay-free Productivity (m³/PMH)", f"{result.delay_free_productivity_m3_per_pmh:.2f}"),
@@ -363,7 +394,7 @@ def _render_processor_result(
     ]
     _render_kv_table("Roadside Processor Productivity Estimate", rows)
     console.print(
-        "[dim]Labelle et al. (2019) Bavarian hardwood case study (TimberPro 620-E + LogMax 7000C); values are PMH₀—apply utilisation via --processor-delay-multiplier.[/dim]"
+        "[dim]Labelle et al. (2019) hardwood volume regression (PMH₀); use --processor-delay-multiplier to apply utilisation when exporting beyond Bavaria.[/dim]"
     )
 
 
@@ -2041,6 +2072,12 @@ def estimate_productivity_cmd(
         min=0.0,
         help="Average piece size (m³/stem) for roadside processor helpers.",
     ),
+    processor_volume_m3: float | None = typer.Option(
+        None,
+        "--processor-volume-m3",
+        min=0.0,
+        help="Recovered tree volume (m³/stem) for Labelle (2019) hardwood volume models.",
+    ),
     processor_dbh_cm: float | None = typer.Option(
         None,
         "--processor-dbh-cm",
@@ -2408,19 +2445,27 @@ def estimate_productivity_cmd(
                 raise typer.BadParameter(
                     "--processor-piece-size-m3 is required when --processor-model berry2019."
                 )
+            if processor_volume_m3 is not None:
+                raise typer.BadParameter(
+                    "--processor-volume-m3 applies to the Labelle volume helper; omit it for berry2019."
+                )
             result_processor = estimate_processor_productivity_berry2019(
                 piece_size_m3=processor_piece_size_m3,
                 tree_form_category=processor_tree_form,
                 crew_multiplier=processor_crew_multiplier,
                 delay_multiplier=processor_delay_multiplier,
             )
-        else:
+        elif processor_model is RoadsideProcessorModel.LABELLE2019_DBH:
             if processor_piece_size_m3 is not None:
                 raise typer.BadParameter(
                     "--processor-piece-size-m3 applies to the Berry (2019) helper only."
                 )
+            if processor_volume_m3 is not None:
+                raise typer.BadParameter(
+                    "--processor-volume-m3 applies to the Labelle volume helper; use --processor-dbh-cm here."
+                )
             if processor_dbh_cm is None:
-                raise typer.BadParameter("--processor-dbh-cm is required for Labelle (2019) models.")
+                raise typer.BadParameter("--processor-dbh-cm is required for Labelle (2019) DBH models.")
             if processor_species is None:
                 raise typer.BadParameter(
                     "--processor-species (spruce | beech) is required for Labelle (2019) models."
@@ -2433,6 +2478,33 @@ def estimate_productivity_cmd(
                 species=processor_species.value,
                 treatment=processor_treatment.value,
                 dbh_cm=processor_dbh_cm,
+                delay_multiplier=processor_delay_multiplier,
+            )
+        else:
+            if processor_piece_size_m3 is not None:
+                raise typer.BadParameter(
+                    "--processor-piece-size-m3 applies to the Berry (2019) helper only."
+                )
+            if processor_dbh_cm is not None:
+                raise typer.BadParameter(
+                    "--processor-dbh-cm applies to the Labelle DBH helper; use --processor-volume-m3 instead."
+                )
+            if processor_volume_m3 is None:
+                raise typer.BadParameter(
+                    "--processor-volume-m3 is required when --processor-model labelle2019_volume."
+                )
+            if processor_species is None:
+                raise typer.BadParameter(
+                    "--processor-species (spruce | beech) is required for Labelle (2019) models."
+                )
+            if processor_treatment is None:
+                raise typer.BadParameter(
+                    "--processor-treatment (clear_cut | selective_cut) is required for Labelle (2019) models."
+                )
+            result_processor = estimate_processor_productivity_labelle2019_volume(
+                species=processor_species.value,
+                treatment=processor_treatment.value,
+                volume_m3=processor_volume_m3,
                 delay_multiplier=processor_delay_multiplier,
             )
         _render_processor_result(result_processor)
@@ -2563,6 +2635,26 @@ def estimate_productivity_cmd(
                 f"[dim]Applied helicopter defaults from harvest system '{selected_system.system_id}'.[/dim]"
             )
         return
+
+    else:
+        rows = [
+        ("Model", "labelle2019_volume"),
+        ("Species", result.species),
+        ("Treatment", result.treatment.replace("_", " ")),
+        ("Recovered Volume (m³)", f"{result.volume_m3:.3f}"),
+        (
+            "Polynomial",
+            f"{result.intercept:+.2f} + {result.linear:.2f}·V - {result.quadratic:.3f}·V^{result.exponent:.0f}",
+        ),
+        ("Sample Trees", str(result.sample_trees)),
+        ("Delay-free Productivity (m³/PMH)", f"{result.delay_free_productivity_m3_per_pmh:.2f}"),
+        ("Delay Multiplier", f"{result.delay_multiplier:.3f}"),
+        ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
+    ]
+        _render_kv_table("Roadside Processor Productivity Estimate", rows)
+        console.print(
+            "[dim]Labelle et al. (2019) hardwood volume regression (PMH₀); use --processor-delay-multiplier to apply utilisation when exporting beyond Bavaria.[/dim]"
+        )
 
     missing: list[str] = []
     if avg_stem_size is None:

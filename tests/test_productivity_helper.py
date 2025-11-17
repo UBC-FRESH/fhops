@@ -9,6 +9,7 @@ from fhops.productivity import (
     estimate_productivity,
     estimate_productivity_distribution,
     estimate_processor_productivity_labelle2019_dbh,
+    estimate_processor_productivity_labelle2019_volume,
     load_lahrsen_ranges,
 )
 
@@ -94,4 +95,24 @@ def test_labelle2019_invalid_species_pair_raises() -> None:
             species="pine",  # type: ignore[arg-type]
             treatment="clear_cut",
             dbh_cm=30.0,
+        )
+
+
+def test_labelle2019_volume_clearcut_spruce() -> None:
+    volume = 1.8
+    result = estimate_processor_productivity_labelle2019_volume(
+        species="spruce",
+        treatment="clear_cut",
+        volume_m3=volume,
+    )
+    expected = 2.938 + 54.87 * volume - 16.56 * (volume**2)
+    assert math.isclose(result.delay_free_productivity_m3_per_pmh, expected, rel_tol=1e-9)
+
+
+def test_labelle2019_volume_invalid_combo() -> None:
+    with pytest.raises(ValueError):
+        estimate_processor_productivity_labelle2019_volume(
+            species="spruce",
+            treatment="seed_tree",  # type: ignore[arg-type]
+            volume_m3=1.2,
         )
