@@ -186,8 +186,9 @@ Use ``fhops.dataset estimate-skyline-productivity`` when the block’s harvest s
   CLI now reports the underlying cycle time so you can see how intermediate supports (multi-span) drive
   the longer outhaul/inhaul legs.
 * ``tr127-block1`` … ``tr127-block6`` – Block-specific regressions from FPInnovations TR-127 (northwestern
-  BC). The command prompts for ``--num-logs`` when Blocks 5–6 require it and shows the computed
-  cycle minutes alongside productivity.
+  BC). Blocks 1 and 3 require two lateral-distance predictors (``--lateral-distance-m`` for the main lead and
+  ``--lateral-distance-2-m`` for the auxiliary lead), while Blocks 5 and 6 require ``--num-logs``. The CLI warns
+  when values fall outside the published ranges and reports the computed cycle minutes beside productivity.
 * ``mcneel-running`` – **New** running-skyline helper based on McNeel (2000) Madill 046 longline yarders.
   Provide the horizontal span (``--horizontal-distance-m`` or reuse ``--slope-distance-m``), deflection
   (``--vertical-distance-m``), and lateral yarding distance. Pieces per cycle and piece volume default to the
