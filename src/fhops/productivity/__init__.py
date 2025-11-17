@@ -34,6 +34,7 @@ from .forwarder_bc import (
 )
 from .harvester_ctl import (
     ADV6N10HarvesterInputs,
+    estimate_harvester_productivity_adv5n30,
     estimate_harvester_productivity_adv6n10,
 )
 from .kellogg_bettinger1994 import LoadType as KelloggLoadType
@@ -81,6 +82,7 @@ __all__ = [
     "estimate_cable_yarder_cycle_time_tr127_minutes",
     "estimate_cable_yarder_productivity_tr127",
     "estimate_harvester_productivity_adv6n10",
+    "estimate_harvester_productivity_adv5n30",
     "estimate_forwarder_productivity_small_forwarder_thinning",
     "estimate_forwarder_productivity_large_forwarder_thinning",
     "estimate_forwarder_productivity_kellogg_bettinger",

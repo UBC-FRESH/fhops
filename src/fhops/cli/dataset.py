@@ -32,6 +32,7 @@ from fhops.productivity import (
     LahrsenModel,
     ADV6N10HarvesterInputs,
     alpaca_slope_multiplier,
+    estimate_harvester_productivity_adv5n30,
     estimate_cable_skidding_productivity_unver_robust,
     estimate_cable_skidding_productivity_unver_robust_profile,
     estimate_cable_skidding_productivity_unver_spss,
@@ -112,6 +113,7 @@ class CTLHarvesterModel(str, Enum):
     """CTL harvester regressions."""
 
     ADV6N10 = "adv6n10"
+    ADV5N30 = "adv5n30"
 
 
 class CableSkiddingModel(str, Enum):
@@ -256,20 +258,32 @@ def _evaluate_forwarder_result(
 
 
 def _render_ctl_harvester_result(
-    model: CTLHarvesterModel, inputs: ADV6N10HarvesterInputs, productivity: float
+    model: CTLHarvesterModel, inputs: object, productivity: float
 ) -> None:
-    rows = [
-        ("Model", model.value),
-        ("Stem Volume (m³/stem)", f"{inputs.stem_volume_m3:.3f}"),
-        ("Number of Products", f"{inputs.products_count:.2f}"),
-        ("Stems per Cycle", f"{inputs.stems_per_cycle:.2f}"),
-        ("Mean Log Length (m)", f"{inputs.mean_log_length_m:.2f}"),
-        ("Predicted Productivity (m³/PMH)", f"{productivity:.2f}"),
-    ]
+    rows: list[tuple[str, str]] = [("Model", model.value)]
+    if model is CTLHarvesterModel.ADV6N10 and isinstance(inputs, ADV6N10HarvesterInputs):
+        rows.extend(
+            [
+                ("Stem Volume (m³/stem)", f"{inputs.stem_volume_m3:.3f}"),
+                ("Number of Products", f"{inputs.products_count:.2f}"),
+                ("Stems per Cycle", f"{inputs.stems_per_cycle:.2f}"),
+                ("Mean Log Length (m)", f"{inputs.mean_log_length_m:.2f}"),
+            ]
+        )
+        source = "Gingras & Favreau (2005) ADV6N10 boreal CTL sorting study"
+    elif model is CTLHarvesterModel.ADV5N30 and isinstance(inputs, dict):
+        rows.extend(
+            [
+                ("Removal Fraction", f"{inputs['removal_fraction']:.2f}"),
+                ("Brushed?", "yes" if inputs.get("brushed") else "no"),
+            ]
+        )
+        source = "Meek (2004) ADV5N30 Alberta white spruce thinning study"
+    else:
+        raise RuntimeError("Unhandled CTL harvester model payload.")
+    rows.append(("Predicted Productivity (m³/PMH)", f"{productivity:.2f}"))
     _render_kv_table("CTL Harvester Productivity Estimate", rows)
-    console.print(
-        "[dim]Regression from Gingras & Favreau (2005) ADV6N10 boreal CTL sorting study.[/dim]"
-    )
+    console.print(f"[dim]Regression from {source}.[/dim]")
 
 
 def _evaluate_ctl_harvester_result(
@@ -279,33 +293,46 @@ def _evaluate_ctl_harvester_result(
     products_count: float | None,
     stems_per_cycle: float | None,
     mean_log_length: float | None,
-) -> tuple[ADV6N10HarvesterInputs, float]:
-    if model is not CTLHarvesterModel.ADV6N10:
-        raise typer.BadParameter(f"Unsupported CTL harvester model: {model}")
-    missing = []
-    if stem_volume is None:
-        missing.append("--ctl-stem-volume")
-    if products_count is None:
-        missing.append("--ctl-products-count")
-    if stems_per_cycle is None:
-        missing.append("--ctl-stems-per-cycle")
-    if mean_log_length is None:
-        missing.append("--ctl-mean-log-length")
-    if missing:
-        raise typer.BadParameter(
-            f"{', '.join(missing)} required when --machine-role {ProductivityMachineRole.CTL_HARVESTER.value}."
+    removal_fraction: float | None,
+    brushed: bool,
+) -> tuple[object, float]:
+    if model is CTLHarvesterModel.ADV6N10:
+        missing = []
+        if stem_volume is None:
+            missing.append("--ctl-stem-volume")
+        if products_count is None:
+            missing.append("--ctl-products-count")
+        if stems_per_cycle is None:
+            missing.append("--ctl-stems-per-cycle")
+        if mean_log_length is None:
+            missing.append("--ctl-mean-log-length")
+        if missing:
+            raise typer.BadParameter(
+                f"{', '.join(missing)} required when --machine-role {ProductivityMachineRole.CTL_HARVESTER.value} with ADV6N10 model."
+            )
+        inputs = ADV6N10HarvesterInputs(
+            stem_volume_m3=stem_volume,
+            products_count=products_count,
+            stems_per_cycle=stems_per_cycle,
+            mean_log_length_m=mean_log_length,
         )
-    inputs = ADV6N10HarvesterInputs(
-        stem_volume_m3=stem_volume,
-        products_count=products_count,
-        stems_per_cycle=stems_per_cycle,
-        mean_log_length_m=mean_log_length,
-    )
-    try:
-        value = estimate_harvester_productivity_adv6n10(inputs)
-    except FHOPSValueError as exc:  # pragma: no cover - Typer surfaces error
-        raise typer.BadParameter(str(exc)) from exc
-    return inputs, value
+        try:
+            value = estimate_harvester_productivity_adv6n10(inputs)
+        except FHOPSValueError as exc:  # pragma: no cover - Typer surfaces error
+            raise typer.BadParameter(str(exc)) from exc
+        return inputs, value
+    if model is CTLHarvesterModel.ADV5N30:
+        if removal_fraction is None:
+            raise typer.BadParameter("--ctl-removal-fraction required for ADV5N30 model.")
+        try:
+            value = estimate_harvester_productivity_adv5n30(
+                removal_fraction=removal_fraction,
+                brushed=brushed,
+            )
+        except FHOPSValueError as exc:  # pragma: no cover
+            raise typer.BadParameter(str(exc)) from exc
+        return {"removal_fraction": removal_fraction, "brushed": brushed}, value
+    raise typer.BadParameter(f"Unsupported CTL harvester model: {model}")
 
 
 def _candidate_roots() -> list[Path]:
@@ -738,6 +765,18 @@ def estimate_productivity_cmd(
         min=0.0,
         help="Mean produced log length (m). Required for CTL harvester models.",
     ),
+    ctl_removal_fraction: float | None = typer.Option(
+        None,
+        "--ctl-removal-fraction",
+        min=0.0,
+        max=1.0,
+        help="Removal fraction (0-1) for ADV5N30 thinning model.",
+    ),
+    ctl_brushed: bool = typer.Option(
+        False,
+        "--ctl-brushed/--ctl-unbrushed",
+        help="ADV5N30 brushing scenario (adds 21% productivity).",
+    ),
     forwarder_model: ForwarderBCModel = typer.Option(
         ForwarderBCModel.GHAFFARIYAN_SMALL,
         "--forwarder-model",
@@ -845,6 +884,8 @@ def estimate_productivity_cmd(
             products_count=ctl_products_count,
             stems_per_cycle=ctl_stems_per_cycle,
             mean_log_length=ctl_mean_log_length,
+            removal_fraction=ctl_removal_fraction,
+            brushed=ctl_brushed,
         )
         _render_ctl_harvester_result(ctl_harvester_model, inputs, value)
         return

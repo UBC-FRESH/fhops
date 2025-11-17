@@ -5,6 +5,7 @@ from typer.testing import CliRunner
 from fhops.cli.dataset import dataset_app
 from fhops.productivity import (
     KelloggLoadType,
+    estimate_harvester_productivity_adv5n30,
     estimate_harvester_productivity_adv6n10,
     estimate_forwarder_productivity_kellogg_bettinger,
     estimate_forwarder_productivity_small_forwarder_thinning,
@@ -202,4 +203,23 @@ def test_cli_estimate_productivity_ctl_harvester_adv6n10() -> None:
             mean_log_length_m=4.8,
         )
     )
+    assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_estimate_productivity_ctl_harvester_adv5n30() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "ctl_harvester",
+            "--ctl-harvester-model",
+            "adv5n30",
+            "--ctl-removal-fraction",
+            "0.5",
+            "--ctl-brushed",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_harvester_productivity_adv5n30(removal_fraction=0.5, brushed=True)
     assert f"{expected:.2f}" in result.stdout

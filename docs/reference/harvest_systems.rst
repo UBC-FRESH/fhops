@@ -115,5 +115,8 @@ the ADV6N10 single-grip model:
   products per pass and need visibility into harvester-side penalties. Required CLI flags:
   ``--ctl-stem-volume`` (m³/stem), ``--ctl-products-count`` (number of products sorted per cycle),
   ``--ctl-stems-per-cycle``, and ``--ctl-mean-log-length`` (m). Invoke via
-  ``fhops dataset estimate-productivity --machine-role ctl_harvester`` (or the new CLI tests) to see
-  the ADV6N10 result. Future CTL harvester regressions will plug into the same interface.
+  ``fhops dataset estimate-productivity --machine-role ctl_harvester`` to see the ADV6N10 result.
+* ``adv5n30`` – Meek (2004) ADV5N30 Alberta white-spruce thinning. Provides removal-level
+  productivity (30/50/70 %) plus an optional ``--ctl-brushed`` flag (adds the observed 21 % boost
+  when brush crews pre-clear). Supply ``--ctl-removal-fraction`` (0–1 within the 0.30–0.70 window)
+  to interpolate between the published removal levels.

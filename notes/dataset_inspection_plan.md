@@ -256,7 +256,7 @@ Candidate references already in the repository; convert each into a helper/plan:
   - Publish the single-grip harvester regression (function of stem volume, number of products, stems/cycle, mean log length) beside the forwarder helper.
   - Add CLI switches paralleling ``adv6n10-shortwood`` so analysts can quantify harvester-side sorting penalties in boreal multi-product CTL.
   - Tests: numeric recreation of Appendix 1 values + CLI smoke.
-- [ ] `notes/reference/fpinnovations/ADV5N30.PDF`
+- [x] `notes/reference/fpinnovations/ADV5N30.PDF`
   - Encode removal-level modifiers (30/50/70 %) and brushing deltas, wrapping Timberjack 1270 data into a helper or scenario multiplier.
   - Document when to apply (white spruce commercial thinning, Alberta) and how to blend with forwarder models.
   - Tests verifying per-removal productivity against the tables.
