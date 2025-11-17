@@ -4,8 +4,10 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from typing import Mapping
 
 from fhops.costing.machine_rates import normalize_machine_role
+from fhops.productivity.skidder_ft import DeckingCondition, TrailSpacingPattern
 
 
 @dataclass(frozen=True)
@@ -15,6 +17,7 @@ class SystemJob:
     name: str
     machine_role: str
     prerequisites: Sequence[str]
+    productivity_overrides: Mapping[str, float | str] | None = None
 
     def __post_init__(self) -> None:
         normalised = normalize_machine_role(self.machine_role)
@@ -41,7 +44,15 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
             notes="Feller-buncher → grapple skidder → processor → loader/trucks.",
             jobs=[
                 SystemJob("felling", "feller-buncher", []),
-                SystemJob("primary_transport", "grapple_skidder", ["felling"]),
+                SystemJob(
+                    "primary_transport",
+                    "grapple_skidder",
+                    ["felling"],
+                    productivity_overrides={
+                        "skidder_trail_pattern": TrailSpacingPattern.SINGLE_GHOST_18M.value,
+                        "skidder_decking_condition": DeckingCondition.CONSTRAINED.value,
+                    },
+                ),
                 SystemJob("processing", "roadside_processor", ["primary_transport"]),
                 SystemJob("loading", "loader", ["processing"]),
             ],
@@ -125,4 +136,21 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
     }
 
 
-__all__ = ["SystemJob", "HarvestSystem", "default_system_registry"]
+def system_productivity_overrides(
+    system: HarvestSystem, machine_role: str
+) -> dict[str, float | str] | None:
+    normalized = normalize_machine_role(machine_role)
+    if normalized is None:
+        return None
+    for job in system.jobs:
+        if job.machine_role == normalized and job.productivity_overrides:
+            return dict(job.productivity_overrides)
+    return None
+
+
+__all__ = [
+    "SystemJob",
+    "HarvestSystem",
+    "default_system_registry",
+    "system_productivity_overrides",
+]

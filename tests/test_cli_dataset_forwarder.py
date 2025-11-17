@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from typer.testing import CliRunner
 
 from fhops.cli.dataset import dataset_app
@@ -20,6 +22,15 @@ from fhops.productivity.forwarder_bc import (
     ForwarderBCModel,
     estimate_forwarder_productivity_bc,
 )
+from fhops.scenario.contract import (
+    Block,
+    CalendarEntry,
+    Landing,
+    Machine,
+    ProductionRate,
+    Scenario,
+)
+from fhops.scheduling.systems import default_system_registry
 
 runner = CliRunner()
 
@@ -325,6 +336,103 @@ def test_cli_estimate_productivity_grapple_skidder_branch() -> None:
         trail_pattern=TrailSpacingPattern.NARROW_13_15M,
         decking_condition=DeckingCondition.CONSTRAINED,
         custom_multiplier=0.95,
+    ).predicted_m3_per_pmh
+    assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_grapple_skidder_harvest_system_defaults_registry() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_skidder",
+            "--grapple-skidder-model",
+            "lop_and_scatter",
+            "--skidder-pieces-per-cycle",
+            "18",
+            "--skidder-piece-volume",
+            "0.22",
+            "--skidder-empty-distance",
+            "140",
+            "--skidder-loaded-distance",
+            "120",
+            "--harvest-system-id",
+            "ground_fb_skid",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_grapple_skidder_productivity_han2018(
+        method=Han2018SkidderMethod.LOP_AND_SCATTER,
+        pieces_per_cycle=18.0,
+        piece_volume_m3=0.22,
+        empty_distance_m=140.0,
+        loaded_distance_m=120.0,
+        trail_pattern=TrailSpacingPattern.SINGLE_GHOST_18M,
+        decking_condition=DeckingCondition.CONSTRAINED,
+    ).predicted_m3_per_pmh
+    assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_grapple_skidder_dataset_inferred_defaults(monkeypatch) -> None:
+    scenario = Scenario(
+        name="cli-test",
+        num_days=1,
+        blocks=[
+            Block(
+                id="B1",
+                landing_id="L1",
+                work_required=10.0,
+                earliest_start=1,
+                latest_finish=1,
+                harvest_system_id="ground_fb_skid",
+            )
+        ],
+        machines=[Machine(id="M1")],
+        landings=[Landing(id="L1", daily_capacity=1)],
+        calendar=[CalendarEntry(machine_id="M1", day=1, available=1)],
+        production_rates=[ProductionRate(machine_id="M1", block_id="B1", rate=10.0)],
+        harvest_systems=default_system_registry(),
+    )
+
+    def fake_ensure(identifier: str | None, interactive: bool):  # pragma: no cover - test helper
+        assert identifier == "mock-dataset"
+        assert not interactive
+        return "mock-dataset", scenario, Path("/tmp/mock-dataset")
+
+    monkeypatch.setattr("fhops.cli.dataset._ensure_dataset", fake_ensure)
+
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_skidder",
+            "--grapple-skidder-model",
+            "lop_and_scatter",
+            "--skidder-pieces-per-cycle",
+            "18",
+            "--skidder-piece-volume",
+            "0.22",
+            "--skidder-empty-distance",
+            "140",
+            "--skidder-loaded-distance",
+            "120",
+            "--dataset",
+            "mock-dataset",
+            "--block-id",
+            "B1",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_grapple_skidder_productivity_han2018(
+        method=Han2018SkidderMethod.LOP_AND_SCATTER,
+        pieces_per_cycle=18.0,
+        piece_volume_m3=0.22,
+        empty_distance_m=140.0,
+        loaded_distance_m=120.0,
+        trail_pattern=TrailSpacingPattern.SINGLE_GHOST_18M,
+        decking_condition=DeckingCondition.CONSTRAINED,
     ).predicted_m3_per_pmh
     assert f"{expected:.2f}" in result.stdout
 

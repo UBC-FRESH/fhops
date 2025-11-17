@@ -142,6 +142,12 @@ reductions from 1.33 to 0.60 min/cycle after clearing the landing; we translate 
 penalty into the ``constrained_decking`` multiplier. Analysts can stack these with an optional
 ``--skidder-productivity-multiplier`` when site-specific data is available.
 
+Harvest-system templates can now supply these overrides automatically: pass
+``--harvest-system-id <system_id>`` (default registry or your scenario’s definitions) or
+``--dataset <scenario-path> --block-id <block>`` to pull the block’s harvest system and apply its
+``productivity_overrides`` for the grapple skidder job. The command prints when such defaults are
+applied so you can verify which template influenced the result.
+
 CTL Harvester Productivity Models
 ---------------------------------
 

@@ -59,7 +59,11 @@ from fhops.productivity import (
 from fhops.reference import get_appendix5_profile, get_tr119_treatment, load_appendix5_stands
 from fhops.scenario.contract import Machine, Scenario
 from fhops.scenario.io import load_scenario
-from fhops.scheduling.systems import HarvestSystem, default_system_registry
+from fhops.scheduling.systems import (
+    HarvestSystem,
+    default_system_registry,
+    system_productivity_overrides,
+)
 from fhops.telemetry import append_jsonl
 from fhops.telemetry.machine_costs import build_machine_cost_snapshots
 from fhops.validation.ranges import validate_block_ranges
@@ -196,6 +200,42 @@ def _render_grapple_skidder_result(result: SkidderProductivityResult) -> None:
     console.print(
         "[dim]Regression from Han et al. (2018) beetle-kill salvage study (delay-free cycle time).[/dim]"
     )
+
+
+def _apply_skidder_system_defaults(
+    *,
+    system: HarvestSystem | None,
+    trail_pattern: TrailSpacingPattern | None,
+    decking_condition: DeckingCondition | None,
+    custom_multiplier: float | None,
+) -> tuple[TrailSpacingPattern | None, DeckingCondition | None, float | None, bool]:
+    if system is None:
+        return trail_pattern, decking_condition, custom_multiplier, False
+    overrides = system_productivity_overrides(
+        system, ProductivityMachineRole.GRAPPLE_SKIDDER.value
+    )
+    if not overrides:
+        return trail_pattern, decking_condition, custom_multiplier, False
+    used = False
+    value = overrides.get("skidder_trail_pattern")
+    if trail_pattern is None and isinstance(value, str):
+        try:
+            trail_pattern = TrailSpacingPattern(value)
+            used = True
+        except ValueError as exc:  # pragma: no cover - validated by CI
+            raise ValueError(f"Unknown trail pattern override: {value}") from exc
+    value = overrides.get("skidder_decking_condition")
+    if decking_condition is None and isinstance(value, str):
+        try:
+            decking_condition = DeckingCondition(value)
+            used = True
+        except ValueError as exc:  # pragma: no cover - validated by CI
+            raise ValueError(f"Unknown decking condition override: {value}") from exc
+    value = overrides.get("skidder_productivity_multiplier")
+    if custom_multiplier is None and isinstance(value, (int, float)):
+        custom_multiplier = float(value)
+        used = True
+    return trail_pattern, decking_condition, custom_multiplier, used
 
 
 def _forwarder_parameters(result: ForwarderBCResult) -> list[tuple[str, str]]:
@@ -1130,8 +1170,52 @@ def estimate_productivity_cmd(
         min=0.0,
         help="Optional custom multiplier applied to grapple skidder productivity (stacked with pattern/decking).",
     ),
+    harvest_system_id: str | None = typer.Option(
+        None,
+        "--harvest-system-id",
+        help="Harvest system ID to pull productivity defaults from (scenario systems override registry).",
+    ),
+    dataset: str | None = typer.Option(
+        None,
+        "--dataset",
+        help="Dataset name or scenario path providing harvest system context.",
+    ),
+    block_id: str | None = typer.Option(
+        None,
+        "--block-id",
+        help="Block ID (requires --dataset) to infer harvest system defaults automatically.",
+    ),
 ):
     """Estimate productivity for Lahrsen (feller-buncher) or forwarder models."""
+
+    scenario_context: Scenario | None = None
+    dataset_name: str | None = None
+    systems_catalog = dict(default_system_registry())
+    if dataset is not None:
+        dataset_name, scenario_context, _ = _ensure_dataset(dataset, interactive=False)
+        systems_catalog = _scenario_systems(scenario_context)
+    if block_id is not None and scenario_context is None:
+        raise typer.BadParameter("--block-id requires --dataset to be specified.")
+    derived_system_id: str | None = None
+    if block_id and scenario_context is not None:
+        block = next((blk for blk in scenario_context.blocks if blk.id == block_id), None)
+        if block is None:
+            raise typer.BadParameter(
+                f"Block '{block_id}' not found in dataset {dataset_name or dataset}."
+            )
+        derived_system_id = block.harvest_system_id
+        if derived_system_id is None:
+            console.print(
+                f"[yellow]Block {block_id} does not declare a harvest system; system defaults will not apply.[/yellow]"
+            )
+    selected_system_id = harvest_system_id or derived_system_id
+    selected_system: HarvestSystem | None = None
+    if selected_system_id:
+        selected_system = systems_catalog.get(selected_system_id)
+        if selected_system is None:
+            raise typer.BadParameter(
+                f"Harvest system '{selected_system_id}' not found. Options: {', '.join(sorted(systems_catalog))}"
+            )
 
     role = machine_role.value
     if role == ProductivityMachineRole.FORWARDER.value:
@@ -1175,6 +1259,20 @@ def estimate_productivity_cmd(
         _render_ctl_harvester_result(ctl_harvester_model, inputs, value)
         return
     if role == ProductivityMachineRole.GRAPPLE_SKIDDER.value:
+        try:
+            (
+                skidder_trail_pattern,
+                skidder_decking_condition,
+                skidder_productivity_multiplier,
+                system_defaults_used,
+            ) = _apply_skidder_system_defaults(
+                system=selected_system,
+                trail_pattern=skidder_trail_pattern,
+                decking_condition=skidder_decking_condition,
+                custom_multiplier=skidder_productivity_multiplier,
+            )
+        except ValueError as exc:
+            raise typer.BadParameter(str(exc)) from exc
         result = _evaluate_grapple_skidder_result(
             model=grapple_skidder_model,
             pieces_per_cycle=skidder_pieces_per_cycle,
@@ -1186,6 +1284,10 @@ def estimate_productivity_cmd(
             custom_multiplier=skidder_productivity_multiplier,
         )
         _render_grapple_skidder_result(result)
+        if system_defaults_used and selected_system is not None:
+            console.print(
+                f"[dim]Applied productivity defaults from harvest system '{selected_system.system_id}'.[/dim]"
+            )
         return
 
     missing: list[str] = []

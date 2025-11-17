@@ -6,6 +6,7 @@
 - Updated `docs/reference/harvest_systems.rst` to spell out when to pick each helper (final felling vs. thinning vs. brushwood cleanup) and to flag the outstanding BC slope-calibration gap; planning notes now capture the completed work and remaining skyline/skidder tasks.
 - Added Han et al. (2018) grapple-skidder helpers (`fhops.productivity.skidder_ft`) and wired them into `fhops.dataset estimate-productivity --machine-role grapple_skidder`, including validation/tests plus documentation on the new CLI flags.
 - Trail-spacing and decking multipliers from FPInnovations TN285 and ADV4N21 can now be applied via `--skidder-trail-pattern`, `--skidder-decking-condition`, or a custom multiplier so scenario defaults capture ghost-trail layouts and landing-prep penalties.
+- Harvest-system templates (and dataset blocks) can now push those defaults automatically via `SystemJob.productivity_overrides`, `--harvest-system-id`, or `--dataset/--block-id` when calling the productivity CLI, paving the way for solver integrations.
 
 # Development Change Log
 
