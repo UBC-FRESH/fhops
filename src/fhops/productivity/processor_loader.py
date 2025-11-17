@@ -323,6 +323,63 @@ def estimate_processor_productivity_labelle2017(
 
 
 @dataclass(frozen=True)
+class Labelle2018ProcessorProductivityResult:
+    variant: str
+    dbh_cm: float
+    intercept: float
+    linear: float
+    quadratic: float
+    sample_trees: int
+    delay_multiplier: float
+    delay_free_productivity_m3_per_pmh: float
+    productivity_m3_per_pmh: float
+
+
+_LABELLE2018_MODELS: dict[str, tuple[float, float, float, int]] = {
+    "rw_poly1": (15.15, 2.53, 0.02, 56),
+    "rw_poly2": (42.42, 3.61, 0.04, 67),
+    "ct_poly1": (61.26, 4.56, 0.047, 48),
+    "ct_poly2": (42.72, 3.68, 0.04, 72),
+}
+
+
+def estimate_processor_productivity_labelle2018(
+    *,
+    variant: Literal["rw_poly1", "rw_poly2", "ct_poly1", "ct_poly2"],
+    dbh_cm: float,
+    delay_multiplier: float = 1.0,
+) -> Labelle2018ProcessorProductivityResult:
+    """Labelle et al. (2018) Bavarian hardwood processor regressions (DBH polynomial)."""
+
+    if dbh_cm <= 0:
+        raise ValueError("dbh_cm must be > 0")
+    if not (0.0 < delay_multiplier <= 1.0):
+        raise ValueError("delay_multiplier must lie in (0, 1]")
+
+    coeffs = _LABELLE2018_MODELS.get(variant.lower())
+    if coeffs is None:
+        valid = ", ".join(sorted(_LABELLE2018_MODELS))
+        raise ValueError(f"Unknown Labelle 2018 variant '{variant}'. Valid options: {valid}")
+
+    intercept, linear, quadratic, sample_trees = coeffs
+    delay_free = -intercept + linear * dbh_cm - quadratic * (dbh_cm**2)
+    delay_free = max(0.0, delay_free)
+    productivity = delay_free * delay_multiplier
+
+    return Labelle2018ProcessorProductivityResult(
+        variant=variant.lower(),
+        dbh_cm=dbh_cm,
+        intercept=intercept,
+        linear=linear,
+        quadratic=quadratic,
+        sample_trees=sample_trees,
+        delay_multiplier=delay_multiplier,
+        delay_free_productivity_m3_per_pmh=delay_free,
+        productivity_m3_per_pmh=productivity,
+    )
+
+
+@dataclass(frozen=True)
 class Labelle2019VolumeProcessorProductivityResult:
     species: Literal["spruce", "beech"]
     treatment: Literal["clear_cut", "selective_cut"]

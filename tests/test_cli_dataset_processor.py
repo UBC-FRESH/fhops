@@ -7,6 +7,7 @@ from fhops.productivity import (
     estimate_processor_productivity_berry2019,
     estimate_processor_productivity_labelle2016,
     estimate_processor_productivity_labelle2017,
+    estimate_processor_productivity_labelle2018,
     estimate_processor_productivity_labelle2019_dbh,
     estimate_processor_productivity_labelle2019_volume,
 )
@@ -153,5 +154,28 @@ def test_cli_processor_labelle2017_variant() -> None:
     expected = estimate_processor_productivity_labelle2017(
         variant="power1",
         dbh_cm=31.0,
+    )
+    assert f"{expected.productivity_m3_per_pmh:.2f}" in result.stdout
+
+
+def test_cli_processor_labelle2018_variant() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "roadside_processor",
+            "--processor-model",
+            "labelle2018",
+            "--processor-dbh-cm",
+            "35.0",
+            "--processor-labelle2018-variant",
+            "ct_poly1",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_processor_productivity_labelle2018(
+        variant="ct_poly1",
+        dbh_cm=35.0,
     )
     assert f"{expected.productivity_m3_per_pmh:.2f}" in result.stdout

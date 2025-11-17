@@ -10,6 +10,7 @@ from fhops.productivity import (
     estimate_productivity_distribution,
     estimate_processor_productivity_labelle2016,
     estimate_processor_productivity_labelle2017,
+    estimate_processor_productivity_labelle2018,
     estimate_processor_productivity_labelle2019_dbh,
     estimate_processor_productivity_labelle2019_volume,
     load_lahrsen_ranges,
@@ -153,4 +154,13 @@ def test_labelle2017_power_variant() -> None:
         dbh_cm=28.0,
     )
     expected = 0.005 * (28.0 ** 2.629)
+    assert math.isclose(result.delay_free_productivity_m3_per_pmh, expected, rel_tol=1e-9)
+
+
+def test_labelle2018_rw_poly() -> None:
+    result = estimate_processor_productivity_labelle2018(
+        variant="rw_poly1",
+        dbh_cm=33.0,
+    )
+    expected = -15.15 + 2.53 * 33.0 - 0.02 * (33.0**2)
     assert math.isclose(result.delay_free_productivity_m3_per_pmh, expected, rel_tol=1e-9)

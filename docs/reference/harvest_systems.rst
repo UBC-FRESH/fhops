@@ -141,6 +141,9 @@ regressions:
 * ``--processor-model labelle2017`` – Labelle et al. (2017) excavator-based CTL processor regressions (New Brunswick hardwoods). Includes two cubic polynomials and two power-law fits.
   * ``--processor-dbh-cm`` – diameter at breast height (cm).
   * ``--processor-labelle2017-variant`` – ``poly1``, ``poly2``, ``power1``, or ``power2`` (mirrors Appendix 8 table). Use the polynomial variants for large sample sizes (338/365 trees) or the power-law variants when matching the smaller subsets (42/55 trees).
+* ``--processor-model labelle2018`` – Labelle et al. (2018) Bavarian beech/spruce study (Ponsse Bear + H8) with separate regressions for rubber-tired (rw) vs. tracked (ct) processors.
+  * ``--processor-dbh-cm`` – diameter at breast height (cm).
+  * ``--processor-labelle2018-variant`` – ``rw_poly1``, ``rw_poly2``, ``ct_poly1``, or ``ct_poly2`` (Appendix 8 Table). Outputs are PMH₀; apply utilisation as needed.
 * ``--processor-model labelle2019_dbh`` – Labelle et al. (2019) Bavarian hardwood case study
   (TimberPro 620-E + LogMax 7000C) using DBH polynomials per species/treatment. These regressions
   output delay-free PMH₀ productivity for large-diameter, hardwood-dominated stands (rare in BC but
