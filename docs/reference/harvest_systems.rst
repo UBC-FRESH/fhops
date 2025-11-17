@@ -162,7 +162,9 @@ Primary-transport hoe chuckers are modeled through the Sessions & Boston (2006) 
 
 The helper reports cycle minutes, payload per cycle, and m³/PMH0 so you can test alternate swing counts or
 strip lengths. Hook it into harvest-system templates by assigning the ``shovel_logger`` job and, if needed,
-adding future ``productivity_overrides`` for site-specific swing counts.
+adding ``productivity_overrides`` for site-specific swing counts. Templates such as ``ground_hand_shovel`` and
+``ground_fb_shovel`` already ship with overrides so the CLI automatically pulls their parameters when you pass
+``--harvest-system-id`` or ``--dataset/--block-id``.
 
 CTL Harvester Productivity Models
 ---------------------------------

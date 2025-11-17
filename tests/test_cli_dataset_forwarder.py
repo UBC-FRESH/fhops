@@ -483,6 +483,87 @@ def test_cli_estimate_productivity_shovel_logger() -> None:
     assert f"{expected:.2f}" in result.stdout
 
 
+def test_cli_shovel_logger_harvest_system_defaults_registry() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "shovel_logger",
+            "--harvest-system-id",
+            "ground_hand_shovel",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_shovel_logger_productivity_sessions2006(
+        ShovelLoggerSessions2006Inputs(
+            passes=3,
+            swing_length_m=15.0,
+            strip_length_m=90.0,
+            volume_per_ha_m3=300.0,
+            travel_speed_index_kph=0.6,
+            travel_speed_return_kph=0.6,
+            travel_speed_serpentine_kph=0.6,
+            effective_minutes_per_hour=45.0,
+        )
+    ).predicted_m3_per_pmh
+    assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_shovel_logger_dataset_inferred_defaults(monkeypatch) -> None:
+    scenario = Scenario(
+        name="cli-shovel",
+        num_days=1,
+        blocks=[
+            Block(
+                id="B1",
+                landing_id="L1",
+                work_required=10.0,
+                earliest_start=1,
+                latest_finish=1,
+                harvest_system_id="ground_hand_shovel",
+            )
+        ],
+        machines=[Machine(id="M1")],
+        landings=[Landing(id="L1", daily_capacity=1)],
+        calendar=[CalendarEntry(machine_id="M1", day=1, available=1)],
+        production_rates=[ProductionRate(machine_id="M1", block_id="B1", rate=10.0)],
+        harvest_systems=default_system_registry(),
+    )
+
+    def fake_ensure(identifier: str | None, interactive: bool):  # pragma: no cover - helper
+        return "mock-shovel", scenario, Path("/tmp/mock-shovel")
+
+    monkeypatch.setattr("fhops.cli.dataset._ensure_dataset", fake_ensure)
+
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "shovel_logger",
+            "--dataset",
+            "mock-shovel",
+            "--block-id",
+            "B1",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_shovel_logger_productivity_sessions2006(
+        ShovelLoggerSessions2006Inputs(
+            passes=3,
+            swing_length_m=15.0,
+            strip_length_m=90.0,
+            volume_per_ha_m3=300.0,
+            travel_speed_index_kph=0.6,
+            travel_speed_return_kph=0.6,
+            travel_speed_serpentine_kph=0.6,
+            effective_minutes_per_hour=45.0,
+        )
+    ).predicted_m3_per_pmh
+    assert f"{expected:.2f}" in result.stdout
+
+
 def test_cli_estimate_productivity_ctl_harvester_adv6n10() -> None:
     result = runner.invoke(
         dataset_app,

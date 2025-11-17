@@ -259,6 +259,153 @@ def _apply_skidder_system_defaults(
     return trail_pattern, decking_condition, custom_multiplier, used
 
 
+def _apply_shovel_system_defaults(
+    *,
+    system: HarvestSystem | None,
+    passes: int | None,
+    swing_length_m: float | None,
+    strip_length_m: float | None,
+    volume_per_ha_m3: float | None,
+    swing_time_roadside_s: float | None,
+    payload_per_swing_roadside_m3: float | None,
+    swing_time_initial_s: float | None,
+    payload_per_swing_initial_m3: float | None,
+    swing_time_rehandle_s: float | None,
+    payload_per_swing_rehandle_m3: float | None,
+    travel_speed_index_kph: float | None,
+    travel_speed_return_kph: float | None,
+    travel_speed_serpentine_kph: float | None,
+    effective_minutes_per_hour: float | None,
+) -> tuple[
+    int | None,
+    float | None,
+    float | None,
+    float | None,
+    float | None,
+    float | None,
+    float | None,
+    float | None,
+    float | None,
+    float | None,
+    float | None,
+    float | None,
+    float | None,
+    float | None,
+    bool,
+]:
+    if system is None:
+        return (
+            passes,
+            swing_length_m,
+            strip_length_m,
+            volume_per_ha_m3,
+            swing_time_roadside_s,
+            payload_per_swing_roadside_m3,
+            swing_time_initial_s,
+            payload_per_swing_initial_m3,
+            swing_time_rehandle_s,
+            payload_per_swing_rehandle_m3,
+            travel_speed_index_kph,
+            travel_speed_return_kph,
+            travel_speed_serpentine_kph,
+            effective_minutes_per_hour,
+            False,
+        )
+    overrides = system_productivity_overrides(
+        system, ProductivityMachineRole.SHOVEL_LOGGER.value
+    )
+    if not overrides:
+        return (
+            passes,
+            swing_length_m,
+            strip_length_m,
+            volume_per_ha_m3,
+            swing_time_roadside_s,
+            payload_per_swing_roadside_m3,
+            swing_time_initial_s,
+            payload_per_swing_initial_m3,
+            swing_time_rehandle_s,
+            payload_per_swing_rehandle_m3,
+            travel_speed_index_kph,
+            travel_speed_return_kph,
+            travel_speed_serpentine_kph,
+            effective_minutes_per_hour,
+            False,
+        )
+
+    def coerce_float(value: object | None) -> float | None:
+        if value is None:
+            return None
+        if isinstance(value, (int, float)):
+            return float(value)
+        try:
+            return float(value)
+        except (TypeError, ValueError):  # pragma: no cover
+            raise ValueError(f"Invalid shovel override value: {value}")
+
+    used = False
+    if passes is None and overrides.get("shovel_passes") is not None:
+        passes = int(float(overrides["shovel_passes"]))
+        used = True
+    if swing_length_m is None:
+        swing_length_m = coerce_float(overrides.get("shovel_swing_length")) or swing_length_m
+        used = used or overrides.get("shovel_swing_length") is not None
+    if strip_length_m is None:
+        strip_length_m = coerce_float(overrides.get("shovel_strip_length")) or strip_length_m
+        used = used or overrides.get("shovel_strip_length") is not None
+    if volume_per_ha_m3 is None:
+        volume_per_ha_m3 = coerce_float(overrides.get("shovel_volume_per_ha")) or volume_per_ha_m3
+        used = used or overrides.get("shovel_volume_per_ha") is not None
+    if swing_time_roadside_s is None:
+        swing_time_roadside_s = coerce_float(overrides.get("shovel_swing_time_roadside")) or swing_time_roadside_s
+        used = used or overrides.get("shovel_swing_time_roadside") is not None
+    if payload_per_swing_roadside_m3 is None:
+        payload_per_swing_roadside_m3 = coerce_float(overrides.get("shovel_payload_roadside")) or payload_per_swing_roadside_m3
+        used = used or overrides.get("shovel_payload_roadside") is not None
+    if swing_time_initial_s is None:
+        swing_time_initial_s = coerce_float(overrides.get("shovel_swing_time_initial")) or swing_time_initial_s
+        used = used or overrides.get("shovel_swing_time_initial") is not None
+    if payload_per_swing_initial_m3 is None:
+        payload_per_swing_initial_m3 = coerce_float(overrides.get("shovel_payload_initial")) or payload_per_swing_initial_m3
+        used = used or overrides.get("shovel_payload_initial") is not None
+    if swing_time_rehandle_s is None:
+        swing_time_rehandle_s = coerce_float(overrides.get("shovel_swing_time_rehandle")) or swing_time_rehandle_s
+        used = used or overrides.get("shovel_swing_time_rehandle") is not None
+    if payload_per_swing_rehandle_m3 is None:
+        payload_per_swing_rehandle_m3 = coerce_float(overrides.get("shovel_payload_rehandle")) or payload_per_swing_rehandle_m3
+        used = used or overrides.get("shovel_payload_rehandle") is not None
+    if travel_speed_index_kph is None:
+        travel_speed_index_kph = coerce_float(overrides.get("shovel_speed_index")) or travel_speed_index_kph
+        used = used or overrides.get("shovel_speed_index") is not None
+    if travel_speed_return_kph is None:
+        travel_speed_return_kph = coerce_float(overrides.get("shovel_speed_return")) or travel_speed_return_kph
+        used = used or overrides.get("shovel_speed_return") is not None
+    if travel_speed_serpentine_kph is None:
+        travel_speed_serpentine_kph = coerce_float(overrides.get("shovel_speed_serpentine")) or travel_speed_serpentine_kph
+        used = used or overrides.get("shovel_speed_serpentine") is not None
+    if effective_minutes_per_hour is None:
+        effective_minutes_per_hour = coerce_float(overrides.get("shovel_effective_minutes")) or effective_minutes_per_hour
+        used = used or overrides.get("shovel_effective_minutes") is not None
+
+    return (
+        passes,
+        swing_length_m,
+        strip_length_m,
+        volume_per_ha_m3,
+        swing_time_roadside_s,
+        payload_per_swing_roadside_m3,
+        swing_time_initial_s,
+        payload_per_swing_initial_m3,
+        swing_time_rehandle_s,
+        payload_per_swing_rehandle_m3,
+        travel_speed_index_kph,
+        travel_speed_return_kph,
+        travel_speed_serpentine_kph,
+        effective_minutes_per_hour,
+        used,
+    )
+
+
 def _forwarder_parameters(result: ForwarderBCResult) -> list[tuple[str, str]]:
     rows: list[tuple[str, str]] = [
         ("Model", result.model.value),
@@ -472,44 +619,29 @@ def _evaluate_shovel_logger_result(
     travel_speed_serpentine_kph: float | None,
     effective_minutes_per_hour: float | None,
 ) -> ShovelLoggerResult:
-    fields = {
-        "--shovel-passes": passes,
-        "--shovel-swing-length": swing_length_m,
-        "--shovel-strip-length": strip_length_m,
-        "--shovel-volume-per-ha": volume_per_ha_m3,
-        "--shovel-swing-time-roadside": swing_time_roadside_s,
-        "--shovel-payload-roadside": payload_per_swing_roadside_m3,
-        "--shovel-swing-time-initial": swing_time_initial_s,
-        "--shovel-payload-initial": payload_per_swing_initial_m3,
-        "--shovel-swing-time-rehandle": swing_time_rehandle_s,
-        "--shovel-payload-rehandle": payload_per_swing_rehandle_m3,
-        "--shovel-speed-index": travel_speed_index_kph,
-        "--shovel-speed-return": travel_speed_return_kph,
-        "--shovel-speed-serpentine": travel_speed_serpentine_kph,
-        "--shovel-effective-minutes": effective_minutes_per_hour,
-    }
-    missing = [flag for flag, value in fields.items() if value is None]
-    if missing:
-        raise typer.BadParameter(
-            f"{', '.join(sorted(missing))} required when --machine-role {ProductivityMachineRole.SHOVEL_LOGGER.value}."
-        )
+    base = ShovelLoggerSessions2006Inputs().__dict__.copy()
+
+    def _set_if(value: float | int | None, key: str) -> None:
+        if value is not None:
+            base[key] = value
+
+    _set_if(passes, "passes")
+    _set_if(swing_length_m, "swing_length_m")
+    _set_if(strip_length_m, "strip_length_m")
+    _set_if(volume_per_ha_m3, "volume_per_ha_m3")
+    _set_if(swing_time_roadside_s, "swing_time_roadside_s")
+    _set_if(payload_per_swing_roadside_m3, "payload_per_swing_roadside_m3")
+    _set_if(swing_time_initial_s, "swing_time_initial_s")
+    _set_if(payload_per_swing_initial_m3, "payload_per_swing_initial_m3")
+    _set_if(swing_time_rehandle_s, "swing_time_rehandle_s")
+    _set_if(payload_per_swing_rehandle_m3, "payload_per_swing_rehandle_m3")
+    _set_if(travel_speed_index_kph, "travel_speed_index_kph")
+    _set_if(travel_speed_return_kph, "travel_speed_return_kph")
+    _set_if(travel_speed_serpentine_kph, "travel_speed_serpentine_kph")
+    _set_if(effective_minutes_per_hour, "effective_minutes_per_hour")
+
     try:
-        inputs = ShovelLoggerSessions2006Inputs(
-            passes=int(passes),
-            swing_length_m=float(swing_length_m),
-            strip_length_m=float(strip_length_m),
-            volume_per_ha_m3=float(volume_per_ha_m3),
-            swing_time_roadside_s=float(swing_time_roadside_s),
-            payload_per_swing_roadside_m3=float(payload_per_swing_roadside_m3),
-            swing_time_initial_s=float(swing_time_initial_s),
-            payload_per_swing_initial_m3=float(payload_per_swing_initial_m3),
-            swing_time_rehandle_s=float(swing_time_rehandle_s),
-            payload_per_swing_rehandle_m3=float(payload_per_swing_rehandle_m3),
-            travel_speed_index_kph=float(travel_speed_index_kph),
-            travel_speed_return_kph=float(travel_speed_return_kph),
-            travel_speed_serpentine_kph=float(travel_speed_serpentine_kph),
-            effective_minutes_per_hour=float(effective_minutes_per_hour),
-        )
+        inputs = ShovelLoggerSessions2006Inputs(**base)
     except ValueError as exc:  # pragma: no cover
         raise typer.BadParameter(str(exc)) from exc
     try:
@@ -1255,88 +1387,88 @@ def estimate_productivity_cmd(
         help="Optional custom multiplier applied to grapple skidder productivity (stacked with pattern/decking).",
     ),
     shovel_passes: int | None = typer.Option(
-        4,
+        None,
         "--shovel-passes",
         min=1,
-        help="Number of shovel passes (serpentine swings) between roads.",
+        help="Number of shovel passes (serpentine swings) between roads (default 4).",
     ),
     shovel_swing_length: float | None = typer.Option(
-        16.15,
+        None,
         "--shovel-swing-length",
         min=0.0,
-        help="Effective swing length (m) for the hoe-chucker.",
+        help="Effective swing length (m) for the hoe-chucker (default 16.15).",
     ),
     shovel_strip_length: float | None = typer.Option(
-        100.0,
+        None,
         "--shovel-strip-length",
         min=0.0,
-        help="Length along the road (m) yarded per period.",
+        help="Length along the road (m) yarded per period (default 100).",
     ),
     shovel_volume_per_ha: float | None = typer.Option(
-        375.0,
+        None,
         "--shovel-volume-per-ha",
         min=0.0,
-        help="Volume per hectare (m³) handled by the shovel logger.",
+        help="Volume per hectare (m³) handled by the shovel logger (default 375).",
     ),
     shovel_swing_time_roadside: float | None = typer.Option(
-        20.0,
+        None,
         "--shovel-swing-time-roadside",
         min=0.0,
-        help="Seconds per swing when straightening piles at roadside.",
+        help="Seconds per swing when straightening piles at roadside (default 20).",
     ),
     shovel_payload_roadside: float | None = typer.Option(
-        1.0,
+        None,
         "--shovel-payload-roadside",
         min=0.0,
-        help="Payload per swing (m³) when straightening piles at roadside.",
+        help="Payload per swing (m³) when straightening piles at roadside (default 1).",
     ),
     shovel_swing_time_initial: float | None = typer.Option(
-        30.0,
+        None,
         "--shovel-swing-time-initial",
         min=0.0,
-        help="Seconds per swing when handling logs for the first time away from the road.",
+        help="Seconds per swing when handling logs for the first time away from the road (default 30).",
     ),
     shovel_payload_initial: float | None = typer.Option(
-        1.0,
+        None,
         "--shovel-payload-initial",
         min=0.0,
-        help="Payload per swing (m³) for first handling away from the road.",
+        help="Payload per swing (m³) for first handling away from the road (default 1).",
     ),
     shovel_swing_time_rehandle: float | None = typer.Option(
-        30.0,
+        None,
         "--shovel-swing-time-rehandle",
         min=0.0,
-        help="Seconds per swing when rehandling logs already bunched.",
+        help="Seconds per swing when rehandling logs already bunched (default 30).",
     ),
     shovel_payload_rehandle: float | None = typer.Option(
-        2.0,
+        None,
         "--shovel-payload-rehandle",
         min=0.0,
-        help="Payload per swing (m³) for rehandled logs.",
+        help="Payload per swing (m³) for rehandled logs (default 2).",
     ),
     shovel_speed_index: float | None = typer.Option(
-        0.7,
+        None,
         "--shovel-speed-index",
         min=0.0,
-        help="Travel speed (kph) while working parallel to the road indexing butts.",
+        help="Travel speed (kph) while working parallel to the road indexing butts (default 0.7).",
     ),
     shovel_speed_return: float | None = typer.Option(
-        0.7,
+        None,
         "--shovel-speed-return",
         min=0.0,
-        help="Travel speed (kph) while walking to the back of the unit.",
+        help="Travel speed (kph) while walking to the back of the unit (default 0.7).",
     ),
     shovel_speed_serpentine: float | None = typer.Option(
-        0.7,
+        None,
         "--shovel-speed-serpentine",
         min=0.0,
-        help="Travel speed (kph) while following the serpentine pattern.",
+        help="Travel speed (kph) while following the serpentine pattern (default 0.7).",
     ),
     shovel_effective_minutes: float | None = typer.Option(
-        50.0,
+        None,
         "--shovel-effective-minutes",
         min=0.0,
-        help="Effective productive minutes per hour for the shovel logger.",
+        help="Effective productive minutes per hour for the shovel logger (default 50).",
     ),
     harvest_system_id: str | None = typer.Option(
         None,
@@ -1458,6 +1590,39 @@ def estimate_productivity_cmd(
             )
         return
     if role == ProductivityMachineRole.SHOVEL_LOGGER.value:
+        (
+            shovel_passes,
+            shovel_swing_length,
+            shovel_strip_length,
+            shovel_volume_per_ha,
+            shovel_swing_time_roadside,
+            shovel_payload_roadside,
+            shovel_swing_time_initial,
+            shovel_payload_initial,
+            shovel_swing_time_rehandle,
+            shovel_payload_rehandle,
+            shovel_speed_index,
+            shovel_speed_return,
+            shovel_speed_serpentine,
+            shovel_effective_minutes,
+            shovel_defaults_used,
+        ) = _apply_shovel_system_defaults(
+            system=selected_system,
+            passes=shovel_passes,
+            swing_length_m=shovel_swing_length,
+            strip_length_m=shovel_strip_length,
+            volume_per_ha_m3=shovel_volume_per_ha,
+            swing_time_roadside_s=shovel_swing_time_roadside,
+            payload_per_swing_roadside_m3=shovel_payload_roadside,
+            swing_time_initial_s=shovel_swing_time_initial,
+            payload_per_swing_initial_m3=shovel_payload_initial,
+            swing_time_rehandle_s=shovel_swing_time_rehandle,
+            payload_per_swing_rehandle_m3=shovel_payload_rehandle,
+            travel_speed_index_kph=shovel_speed_index,
+            travel_speed_return_kph=shovel_speed_return,
+            travel_speed_serpentine_kph=shovel_speed_serpentine,
+            effective_minutes_per_hour=shovel_effective_minutes,
+        )
         result = _evaluate_shovel_logger_result(
             passes=shovel_passes,
             swing_length_m=shovel_swing_length,
@@ -1475,6 +1640,10 @@ def estimate_productivity_cmd(
             effective_minutes_per_hour=shovel_effective_minutes,
         )
         _render_shovel_logger_result(result)
+        if shovel_defaults_used and selected_system is not None:
+            console.print(
+                f"[dim]Applied shovel-logger defaults from harvest system '{selected_system.system_id}'.[/dim]"
+            )
         return
 
     missing: list[str] = []
