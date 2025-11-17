@@ -34,6 +34,8 @@ from .forwarder_bc import (
 )
 from .skidder_ft import (
     Han2018SkidderMethod,
+    TrailSpacingPattern,
+    DeckingCondition,
     SkidderProductivityResult,
     estimate_grapple_skidder_productivity_han2018,
 )
@@ -115,5 +117,7 @@ __all__ = [
     "ADV6N10HarvesterInputs",
     "TN292HarvesterInputs",
     "Han2018SkidderMethod",
+    "TrailSpacingPattern",
+    "DeckingCondition",
     "SkidderProductivityResult",
 ]

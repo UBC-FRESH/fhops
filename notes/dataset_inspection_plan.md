@@ -141,7 +141,7 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
 - [ ] **Grapple skidders & shovel loggers (Han et al. 2018; George et al. 2022; FPInnovations skidder series)**
   - [x] Extract grapple-skidder and shovel-logger cycle-time equations (travel out/in, load size, slope class) and wrap them in `fhops.productivity.skidder_ft`. (Han et al. 2018 lop-and-scatter + whole-tree models now live in `estimate_grapple_skidder_productivity_han2018`.)
   - [x] Wire helpers into CLI + solver job defaults (`grapple_skidder`, `shovel_logger`) and add regression tests per reference. (`fhops dataset estimate-productivity --machine-role grapple_skidder` exposes the new flags; unit + CLI coverage asserts the outputs.)
-  - [ ] Capture scenario multipliers for trail spacing / decking strategy (from TN285/FPInnovations skidder reports) so costing workflows can reason about narrow vs. wide trail networks.
+  - [x] Capture scenario multipliers for trail spacing / decking strategy (from TN285/FPInnovations skidder reports) so costing workflows can reason about narrow vs. wide trail networks. (`--skidder-trail-pattern` and `--skidder-decking-condition` mirror TN285 ghost-trail layouts and ADV4N21 decking prep impacts; helpers/tests/docs now cover the stacked multipliers.)
 - [ ] **Skyline yarders / helicopter longline (Aubuchon 1982; Böhm & Kanzian 2023; Arnvik helicopter refs)**
   - [ ] Build skyline productivity helpers keyed by payload, deflection, lateral yarding distance, and anchor profile; include both standing and running skyline variants.
   - [ ] Add helicopter longline regression(s) (payload vs. cycle time vs. flight distance) for `helicopter_longline` jobs.

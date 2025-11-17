@@ -30,6 +30,8 @@ from fhops.productivity import (
     ForwarderBCModel,
     ForwarderBCResult,
     Han2018SkidderMethod,
+    TrailSpacingPattern,
+    DeckingCondition,
     LahrsenModel,
     ADV6N10HarvesterInputs,
     TN292HarvesterInputs,
@@ -178,8 +180,18 @@ def _render_grapple_skidder_result(result: SkidderProductivityResult) -> None:
         ("Loaded Distance (m)", f"{float(params['loaded_distance_m']):.1f}"),
         ("Cycle Time (s)", f"{result.cycle_time_seconds:.1f}"),
         ("Payload per Cycle (m³)", f"{result.payload_m3:.2f}"),
-        ("Predicted Productivity (m³/PMH0)", f"{result.predicted_m3_per_pmh:.2f}"),
     ]
+    if "trail_pattern" in params:
+        rows.append(("Trail Pattern", str(params["trail_pattern"]).replace("_", " ")))
+        rows.append(("Trail Multiplier", f"{float(params['trail_pattern_multiplier']):.2f}"))
+    if "decking_condition" in params:
+        rows.append(("Decking Condition", str(params["decking_condition"]).replace("_", " ")))
+        rows.append(("Decking Multiplier", f"{float(params['decking_multiplier']):.2f}"))
+    if "custom_multiplier" in params:
+        rows.append(("Custom Multiplier", f"{float(params['custom_multiplier']):.3f}"))
+    if "applied_multiplier" in params:
+        rows.append(("Applied Multiplier", f"{float(params['applied_multiplier']):.3f}"))
+    rows.append(("Predicted Productivity (m³/PMH0)", f"{result.predicted_m3_per_pmh:.2f}"))
     _render_kv_table("Grapple Skidder Productivity Estimate", rows)
     console.print(
         "[dim]Regression from Han et al. (2018) beetle-kill salvage study (delay-free cycle time).[/dim]"
@@ -345,6 +357,9 @@ def _evaluate_grapple_skidder_result(
     piece_volume_m3: float | None,
     empty_distance_m: float | None,
     loaded_distance_m: float | None,
+    trail_pattern: TrailSpacingPattern | None,
+    decking_condition: DeckingCondition | None,
+    custom_multiplier: float | None,
 ) -> SkidderProductivityResult:
     missing: list[str] = []
     if pieces_per_cycle is None:
@@ -371,6 +386,9 @@ def _evaluate_grapple_skidder_result(
             piece_volume_m3=piece_volume_m3,
             empty_distance_m=empty_distance_m,
             loaded_distance_m=loaded_distance_m,
+            trail_pattern=trail_pattern,
+            decking_condition=decking_condition,
+            custom_multiplier=custom_multiplier,
         )
     except ValueError as exc:  # pragma: no cover
         raise typer.BadParameter(str(exc)) from exc
@@ -1094,6 +1112,24 @@ def estimate_productivity_cmd(
         min=0.0,
         help="Loaded travel distance per cycle (m) for grapple skidder models.",
     ),
+    skidder_trail_pattern: TrailSpacingPattern | None = typer.Option(
+        None,
+        "--skidder-trail-pattern",
+        case_sensitive=False,
+        help="Trail spacing pattern (TN285) to apply productivity multipliers.",
+    ),
+    skidder_decking_condition: DeckingCondition | None = typer.Option(
+        None,
+        "--skidder-decking-condition",
+        case_sensitive=False,
+        help="Decking/landing preparation condition (ADV4N21 multipliers).",
+    ),
+    skidder_productivity_multiplier: float | None = typer.Option(
+        None,
+        "--skidder-productivity-multiplier",
+        min=0.0,
+        help="Optional custom multiplier applied to grapple skidder productivity (stacked with pattern/decking).",
+    ),
 ):
     """Estimate productivity for Lahrsen (feller-buncher) or forwarder models."""
 
@@ -1145,6 +1181,9 @@ def estimate_productivity_cmd(
             piece_volume_m3=skidder_piece_volume,
             empty_distance_m=skidder_empty_distance,
             loaded_distance_m=skidder_loaded_distance,
+            trail_pattern=skidder_trail_pattern,
+            decking_condition=skidder_decking_condition,
+            custom_multiplier=skidder_productivity_multiplier,
         )
         _render_grapple_skidder_result(result)
         return

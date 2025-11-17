@@ -5,6 +5,8 @@ from typer.testing import CliRunner
 from fhops.cli.dataset import dataset_app
 from fhops.productivity import (
     Han2018SkidderMethod,
+    TrailSpacingPattern,
+    DeckingCondition,
     KelloggLoadType,
     estimate_grapple_skidder_productivity_han2018,
     estimate_harvester_productivity_adv5n30,
@@ -305,6 +307,12 @@ def test_cli_estimate_productivity_grapple_skidder_branch() -> None:
             "140",
             "--skidder-loaded-distance",
             "120",
+            "--skidder-trail-pattern",
+            "narrow_13_15m",
+            "--skidder-decking-condition",
+            "constrained_decking",
+            "--skidder-productivity-multiplier",
+            "0.95",
         ],
     )
     assert result.exit_code == 0
@@ -314,6 +322,9 @@ def test_cli_estimate_productivity_grapple_skidder_branch() -> None:
         piece_volume_m3=0.22,
         empty_distance_m=140.0,
         loaded_distance_m=120.0,
+        trail_pattern=TrailSpacingPattern.NARROW_13_15M,
+        decking_condition=DeckingCondition.CONSTRAINED,
+        custom_multiplier=0.95,
     ).predicted_m3_per_pmh
     assert f"{expected:.2f}" in result.stdout
 

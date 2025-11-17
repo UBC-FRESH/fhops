@@ -13,6 +13,21 @@ class Han2018SkidderMethod(str, Enum):
     WHOLE_TREE = "whole_tree"
 
 
+class TrailSpacingPattern(str, Enum):
+    """Trail-network layouts from FPInnovations TN285 (ghost-trail study)."""
+
+    NARROW_13_15M = "narrow_13_15m"
+    SINGLE_GHOST_18M = "single_ghost_18m"
+    DOUBLE_GHOST_27M = "double_ghost_27m"
+
+
+class DeckingCondition(str, Enum):
+    """Decking/landing preparation states from ADV4N21 (loader-forward vs. skidder)."""
+
+    CONSTRAINED = "constrained_decking"
+    PREPARED = "prepared_decking"
+
+
 @dataclass(frozen=True)
 class SkidderProductivityResult:
     """Payload returned by the grapple skidder helper."""
@@ -24,6 +39,33 @@ class SkidderProductivityResult:
     pmh_basis: str = "PMH0"
     reference: str = "Han et al. 2018"
     parameters: dict[str, float | str] = field(default_factory=dict)
+
+
+_TRAIL_PATTERN_INFO: dict[TrailSpacingPattern, dict[str, float | str]] = {
+    TrailSpacingPattern.NARROW_13_15M: {
+        "multiplier": 0.75,
+        "reference": "FPInnovations TN285 (trail spacings 13–15 m raised extraction costs 20–40%).",
+    },
+    TrailSpacingPattern.SINGLE_GHOST_18M: {
+        "multiplier": 0.9,
+        "reference": "FPInnovations TN285 (18 m spacing with one ghost trail showed modest load penalties).",
+    },
+    TrailSpacingPattern.DOUBLE_GHOST_27M: {
+        "multiplier": 1.0,
+        "reference": "FPInnovations TN285 (27–30 m spacing with two ghost trails baseline).",
+    },
+}
+
+_DECKING_INFO: dict[DeckingCondition, dict[str, float | str]] = {
+    DeckingCondition.CONSTRAINED: {
+        "multiplier": 0.84,
+        "reference": "FPInnovations ADV4N21 (decking time 1.33 vs. 0.60 min/cycle added ~16% cycle penalty).",
+    },
+    DeckingCondition.PREPARED: {
+        "multiplier": 1.0,
+        "reference": "FPInnovations ADV4N21 (decking area cleared prior to skidding).",
+    },
+}
 
 
 def _han2018_cycle_time_seconds(
@@ -62,6 +104,9 @@ def estimate_grapple_skidder_productivity_han2018(
     piece_volume_m3: float,
     empty_distance_m: float,
     loaded_distance_m: float,
+    trail_pattern: TrailSpacingPattern | None = None,
+    decking_condition: DeckingCondition | None = None,
+    custom_multiplier: float | None = None,
 ) -> SkidderProductivityResult:
     """Estimate grapple-skidder productivity (m³/PMH0).
 
@@ -89,6 +134,7 @@ def estimate_grapple_skidder_productivity_han2018(
     cycles_per_hour = 3600.0 / cycle_time_seconds
     productivity = cycles_per_hour * payload_m3
 
+    applied_multiplier = 1.0
     parameters: dict[str, float | str] = {
         "method": method.value,
         "pieces_per_cycle": pieces_per_cycle,
@@ -96,6 +142,29 @@ def estimate_grapple_skidder_productivity_han2018(
         "empty_distance_m": empty_distance_m,
         "loaded_distance_m": loaded_distance_m,
     }
+
+    if trail_pattern is not None:
+        info = _TRAIL_PATTERN_INFO[trail_pattern]
+        applied_multiplier *= float(info["multiplier"])
+        parameters["trail_pattern"] = trail_pattern.value
+        parameters["trail_pattern_multiplier"] = info["multiplier"]
+        parameters["trail_pattern_reference"] = info["reference"]
+
+    if decking_condition is not None:
+        info = _DECKING_INFO[decking_condition]
+        applied_multiplier *= float(info["multiplier"])
+        parameters["decking_condition"] = decking_condition.value
+        parameters["decking_multiplier"] = info["multiplier"]
+        parameters["decking_reference"] = info["reference"]
+
+    if custom_multiplier is not None:
+        if custom_multiplier <= 0:
+            raise ValueError("custom_multiplier must be > 0")
+        applied_multiplier *= custom_multiplier
+        parameters["custom_multiplier"] = custom_multiplier
+
+    productivity *= applied_multiplier
+    parameters["applied_multiplier"] = applied_multiplier
 
     return SkidderProductivityResult(
         method=method,
@@ -108,6 +177,8 @@ def estimate_grapple_skidder_productivity_han2018(
 
 __all__ = [
     "Han2018SkidderMethod",
+    "TrailSpacingPattern",
+    "DeckingCondition",
     "SkidderProductivityResult",
     "estimate_grapple_skidder_productivity_han2018",
 ]

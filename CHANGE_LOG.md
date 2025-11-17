@@ -5,6 +5,7 @@
 - `fhops.dataset estimate-productivity --machine-role forwarder` and `fhops.dataset estimate-forwarder-productivity` gained dedicated flags for mean extraction distance, mean stem size, load capacity, harvested trees per hectare, average tree volume (dm³), forwarding distance, harwarder payload, and grapple-load size; tests cover the new CLI flows alongside the helper wiring.
 - Updated `docs/reference/harvest_systems.rst` to spell out when to pick each helper (final felling vs. thinning vs. brushwood cleanup) and to flag the outstanding BC slope-calibration gap; planning notes now capture the completed work and remaining skyline/skidder tasks.
 - Added Han et al. (2018) grapple-skidder helpers (`fhops.productivity.skidder_ft`) and wired them into `fhops.dataset estimate-productivity --machine-role grapple_skidder`, including validation/tests plus documentation on the new CLI flags.
+- Trail-spacing and decking multipliers from FPInnovations TN285 and ADV4N21 can now be applied via `--skidder-trail-pattern`, `--skidder-decking-condition`, or a custom multiplier so scenario defaults capture ghost-trail layouts and landing-prep penalties.
 
 # Development Change Log
 

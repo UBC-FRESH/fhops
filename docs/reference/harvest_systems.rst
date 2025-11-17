@@ -133,6 +133,15 @@ Ground-based full-tree systems can now call the Han et al. (2018) regressions vi
 Both helpers report cycle time, payload per turn, and predicted productivity so analysts can adjust
 the distance or payload assumptions directly.
 
+Trail spacing and decking multipliers (from FPInnovations TN285 and ADV4N21) can be applied via
+``--skidder-trail-pattern`` (``narrow_13_15m`` | ``single_ghost_18m`` | ``double_ghost_27m``) and
+``--skidder-decking-condition`` (``constrained_decking`` | ``prepared_decking``). The defaults follow
+TN285’s finding that 13–15 m trail spacing drove 20–40% higher extraction costs (≈25% productivity
+penalty) while double-ghost 27–30 m layouts serve as the baseline. ADV4N21 reported decking-time
+reductions from 1.33 to 0.60 min/cycle after clearing the landing; we translate that ~16% cycle-time
+penalty into the ``constrained_decking`` multiplier. Analysts can stack these with an optional
+``--skidder-productivity-multiplier`` when site-specific data is available.
+
 CTL Harvester Productivity Models
 ---------------------------------
 
