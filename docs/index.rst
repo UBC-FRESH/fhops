@@ -52,3 +52,4 @@ ensembles.
    contributing
    roadmap
    howto/mobilisation_geo
+   planning/productivity_gaps

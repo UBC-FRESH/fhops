@@ -108,10 +108,61 @@ Purpose: track each FPInnovations/FERIC PDF dropped under `notes/reference/fpinn
 | FNCY14.pdf | pending | Cable Yarding | PDF is image-based/garbled — needs OCR or replacement before summary possible. | Flag for re-scan; likely contains additional skyline guidance once readable. |
 | FNCY17.pdf | scanned | Cable Yarding | TLD Gauthier Telecarrier TL-3000C sled yarder demo for cedar salvage on Vancouver Island. | Shows two-person carriage system with remote controls; good for low-impact salvage modeling. |
 | BC16259.pdf | scanned | FPInnovations Report | 2014 Tigercat 635D steep-slope skidding study in southeastern BC (productivity, costs, site limits). | Adds ground-based steep-slope skidder benchmarks for comparison with skyline/tether systems. |
-
+| ADV1N12.PDF | pending | Advantage | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| ADV2N21.PDF | pending | Advantage | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| ADV2N39.PDF | pending | Advantage | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| ADV2N62.PDF | pending | Advantage | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| ADV2N9.PDF | pending | Advantage | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| ADV3N29.PDF | pending | Advantage | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| ADV3N37.PDF | pending | Advantage | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| ADV4N21.PDF | pending | Advantage | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| ADV4N22.PDF | pending | Advantage | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| ADV4N4.PDF | pending | Advantage | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| ADV5N2.PDF | pending | Advantage | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| ADV5N30.PDF | pending | Advantage | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| ADV5N37.PDF | pending | Advantage | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| ADV5N9.PDF | pending | Advantage | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| ADV6N10.PDF | pending | Advantage | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| ADV6N7.PDF | pending | Advantage | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| ADV7N6.PDF | pending | Advantage | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| ADV8N4.PDF | pending | Advantage | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| ADV9N1.PDF | pending | Advantage | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| FNPC17.pdf | pending | Field Note (Production) | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| FNPC19.pdf | pending | Field Note (Production) | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| FNPC21.pdf | pending | Field Note (Production) | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| FNPC28.pdf | pending | Field Note (Production) | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| FNSF11.PDF | pending | Field Note (Safety) | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| FNSF34.pdf | pending | Field Note (Safety) | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| FNSF8.PDF | pending | Field Note (Safety) | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| FNSF9.PDF | pending | Field Note (Safety) | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| SR107.pdf | pending | Special Report | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| SR114.pdf | pending | Special Report | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| SR126.pdf | pending | Special Report | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| SR129.pdf | pending | Special Report | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| TN123.PDF | pending | Technical Note | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| TN140.PDF | pending | Technical Note | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| TN219.pdf | pending | Technical Note | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| TN245.PDF | pending | Technical Note | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| TN255.PDF | pending | Technical Note | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| TN261.PDF | pending | Technical Note | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| TN269.PDF | pending | Technical Note | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| TN284.PDF | pending | Technical Note | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| TN285.PDF | pending | Technical Note | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| TN292.PDF | pending | Technical Note | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| TN296.PDF | pending | Technical Note | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| TR109.pdf | pending | Technical Report | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| TR2017N34.PDF | pending | Technical Report | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| TR2017N57.pdf | pending | Technical Report | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| TR2021N93.pdf | pending | Technical Report | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| TR2023N17.pdf | pending | Technical Report | Newly uploaded; needs scan + summary. | TBD — pending review. |
+| TR94.PDF | pending | Technical Report | Newly uploaded; needs scan + summary. | TBD — pending review. |
 _(Continue adding rows as additional files appear in `notes/reference/fpinnovations/`.)_
 
 ## Next Actions
 - Prioritize the Cable Yarding (FNCY) and Advantage issues targeting grapple yarders/swing yarders (e.g., ADV1N5, ADV5N28, ADV7N3) for productivity extraction.
-- As each PDF is reviewed, update the table with a short abstract and note any usable regression equations or cost tables.
+- Process the November 2025 FPInnovations drop in batches:
+  1. **Advantage wave** — skim ADV1N12 through ADV9N1 for coastal/interior forwarder or skyline datasets, flagging any explicit regressions.
+  2. **Field Notes** — review FNPC17/19/21/28 and FNSF8/9/11/34 for operational nuggets or safety constraints that impact productivity inputs.
+  3. **Technical Notes/Reports** — scan TN123–TN296 series plus TR94/109/2017N34/2017N57/2021N93/2023N17 for regression-ready cycle-time, especially anything referencing forwarders or clambunk systems.
+- After each batch, update the inventory rows with abstracts + productivity leads, and mirror any forwarder-ready findings into `notes/dataset_inspection_plan.md` (Forwarder coverage section) so we know when the helper module should expand.
 - Cross-reference promising reports back into `notes/dataset_inspection_plan.md` under the machine-role roadmap and the productivity registry backlog.

@@ -250,15 +250,28 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
 
 ### Forwarder / grapple-skidder coverage
 - [x] Parse Arnvik Appendix 8–11 JSON dumps (`notes/reference/arnvik_tables/`) to isolate forwarder/harwarder/grapple-skidder regressions; capture predictor ranges + units in a machine-readable table under `data/productivity/arnvik_forwarder.json` (script: `scripts/build_arnvik_forwarder_table.py`, currently surfaces harwarder + skidder-harvester rows—the appendices do not include standalone forwarder codes, so the forwarder role is proxied via harwarder models until additional data surfaces).
-- [ ] Acknowledge the Arnvik gap explicitly: document in docs/planning that Appendix 8 only covers harvesters/feller-bunchers/harwarders (per thesis title) and will not produce primary-transport regressions; use the dataset solely for harwarder validation.
-- [ ] Pick BC-appropriate equations (terrain / stem size ranges similar to Lahrsen + FPInnovations studies). Document gaps where coefficients are Scandinavian-centric and note pending FPInnovations confirmations.
-- [ ] Implement helper module (`fhops.productivity.forwarder_bc`) with thin wrappers per model; wire into CLI (`fhops dataset estimate-productivity --machine-role forwarder`) and add pytest coverage comparing against published PMH/m³ tables.
+- [x] Acknowledge the Arnvik gap explicitly: document in docs/planning that Appendix 8 only covers harvesters/feller-bunchers/harwarders (per thesis title) and will not produce primary-transport regressions; use the dataset solely for harwarder validation. (`docs/planning/productivity_gaps.rst`)
+- [x] Pick BC-appropriate equations (terrain / stem size ranges similar to Lahrsen + FPInnovations studies). Document gaps where coefficients are Scandinavian-centric and note pending FPInnovations confirmations. (same planning note outlines AFORA/ALPACA + Kellogg stack and FPInnovations asks)
+- [x] Implement helper module (`fhops.productivity.forwarder_bc`) with thin wrappers per model; wire into CLI (`fhops dataset estimate-productivity --machine-role forwarder`) and add pytest coverage comparing against published PMH/m³ tables.
 - [ ] Update dataset defaults/synthetic generator (`src/fhops/scenario/synthetic/generator.py`) so forwarder productivity references the new helper; refresh fixtures or tests that assert production totals.
 - Reference inventory for forwarder work:
   - `notes/reference/sb_202_2019_2.txt` — Ghaffariyan et al. (2019) AFORA/ALPACA models (Eq. 2–3) giving closed-form m³/PMH₀ curves for 14 t and 20 t forwarders as a function of extraction distance plus slope multipliers (10–20% → ×0.75, >20% → ×0.15). Best quick-win for coding because equations are already explicit.
   - `notes/reference/forests-13-00305-v2.txt` — West. Oregon tethered harvester-forwarder Monte Carlo (Allman et al. 2021) with Equation (1)/(2) for cycle time contributions and Appendix S1 payload-vs-slope/distance regressions (Pl,kg). Use these to derive slope penalties/payload caps for coastal BC steep-slope scenarios when we port the ALPACA functions.
   - `notes/reference/sb_202_2019_2.txt` Table 4 + Figures 7/8 and `tests/test_ghaffariyan2019.py` already provide expected outputs; need to wrap them in CLI/regression harnesses and document the assumptions (Australia pine/euc thinning, gentle terrain) before grafting BC-specific adjustments.
   - [x] CLI now exposes `--slope-class` buckets (flat, 10–20 %, >20 %) wired to the ALPACA multipliers so analysts can pick the published factors without manual math; unit tests cover the new path.
+
+  Next steps to close this section (per 2025-11-18 review):
+ 1. ✅ Document the Arnvik Appendix 8 gap in the planning docs so analysts understand it only covers harvesters/feller-bunchers/harwarders and should not be applied to primary transport.
+ 2. ✅ Capture the BC-ready forwarder equation mix (Ghaffariyan 14 t/20 t + slope multipliers, Kellogg saw/pulp/mixed, pending FPInnovations payload confirmations) with explicit caveats about Scandinavian/Australian coefficients.
+ 3. ✅ Add `fhops.productivity.forwarder_bc` as the canonical wrapper, wire it through `fhops dataset estimate-productivity --machine-role forwarder`, and extend pytest coverage to lock in the published PMH curves.
+  4. Update the dataset defaults and synthetic generator so forwarder machines pull productivity from the new helper and refresh any fixtures that assert production totals.
+
+  **FPInnovations November 2025 drop — review workflow**
+  - Batch the 46 newly filed FPInnovations PDFs (Advantage, Field Note, Technical Note, Technical Report) under `notes/reference/fpinnovations/` into three scanning waves:
+    1. Advantage issues (`ADV1N12` … `ADV9N1`) to mine for forwarder/clambunk/skid-forwarder cycle-time equations and any skyline/loader-forward hybrids.
+    2. Field Notes (`FNPC17/19/21/28`, `FNSF8/9/11/34`) to capture operational constraints (trail spacing, payload caps, safety-driven slope limits) that influence productivity model parameters.
+    3. Technical Notes/Reports (`TN123–TN296`, `TR94`, `TR109`, `TR2017N34`, `TR2017N57`, `TR2021N93`, `TR2023N17`) to extract regression-ready formulas (especially those with explicit forwarder/skid-forwarder models) plus any modern tethered-forwarding insights.
+  - After each wave, update `notes/fpinnovations_reference_log.md` with abstracts + productivity leads, then backlink actionable findings here (Forwarder coverage) so we know when to extend `fhops.productivity.forwarder_bc` beyond the current AFORA/ALPACA + Kellogg set.
 
 ### Skyline alternatives (Ünver-Okan 2020 / Lee et al. 2018)
 - [x] Extract coefficients from `/notes/reference/unver.pdf` (Ünver-Okan hill-skidding regressions already implemented) and `/notes/reference/Productivity and cost ... South Korea.pdf` (Lee et al. 2018 HAM300 uphill/downhill regressions live in `fhops.productivity.cable_logging`).

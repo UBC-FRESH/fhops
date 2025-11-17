@@ -27,7 +27,8 @@ from fhops.costing.machine_rates import (
 )
 from fhops.productivity import (
     ALPACASlopeClass,
-    KelloggLoadType,
+    ForwarderBCModel,
+    ForwarderBCResult,
     LahrsenModel,
     alpaca_slope_multiplier,
     estimate_cable_skidding_productivity_unver_robust,
@@ -40,9 +41,7 @@ from fhops.productivity import (
     estimate_cable_yarder_productivity_tr125_multi_span,
     estimate_cable_yarder_productivity_tr125_single_span,
     estimate_cable_yarder_productivity_tr127,
-    estimate_forwarder_productivity_kellogg_bettinger,
-    estimate_forwarder_productivity_large_forwarder_thinning,
-    estimate_forwarder_productivity_small_forwarder_thinning,
+    estimate_forwarder_productivity_bc,
     estimate_productivity,
     estimate_productivity_distribution,
     load_lahrsen_ranges,
@@ -99,21 +98,11 @@ KNOWN_DATASETS: dict[str, DatasetRef] = {
 }
 
 
-class ForwarderProductivityModel(str, Enum):
-    """Supported forwarder productivity regressions exposed via the CLI."""
+class ProductivityMachineRole(str, Enum):
+    """Machine roles supported by the productivity command."""
 
-    GHAFFARIYAN_SMALL = "ghaffariyan-small"
-    GHAFFARIYAN_LARGE = "ghaffariyan-large"
-    KELLOGG_SAWLOG = "kellogg-sawlog"
-    KELLOGG_PULPWOOD = "kellogg-pulpwood"
-    KELLOGG_MIXED = "kellogg-mixed"
-
-
-_KELLOGG_MODEL_TO_LOAD = {
-    ForwarderProductivityModel.KELLOGG_SAWLOG: KelloggLoadType.SAWLOG,
-    ForwarderProductivityModel.KELLOGG_PULPWOOD: KelloggLoadType.PULPWOOD,
-    ForwarderProductivityModel.KELLOGG_MIXED: KelloggLoadType.MIXED,
-}
+    FELLER_BUNCHER = "feller_buncher"
+    FORWARDER = "forwarder"
 
 
 class CableSkiddingModel(str, Enum):
@@ -146,6 +135,83 @@ _TR127_MODEL_TO_BLOCK = {
     SkylineProductivityModel.TR127_BLOCK5: 5,
     SkylineProductivityModel.TR127_BLOCK6: 6,
 }
+
+
+_FORWARDER_GHAFFARIYAN_MODELS = {
+    ForwarderBCModel.GHAFFARIYAN_SMALL,
+    ForwarderBCModel.GHAFFARIYAN_LARGE,
+}
+
+
+def _forwarder_parameters(result: ForwarderBCResult) -> list[tuple[str, str]]:
+    rows: list[tuple[str, str]] = [
+        ("Model", result.model.value),
+        ("Reference", result.reference or ""),
+    ]
+    params = result.parameters
+    if result.model in _FORWARDER_GHAFFARIYAN_MODELS:
+        extraction = params.get("extraction_distance_m")
+        slope_class = params.get("slope_class")
+        slope_factor = params.get("slope_factor")
+        rows.extend(
+            [
+                ("Extraction Distance (m)", f"{float(extraction):.1f}"),
+                ("Slope Class", str(slope_class)),
+                ("Slope Factor", f"{float(slope_factor):.2f}"),
+            ]
+        )
+    else:
+        rows.extend(
+            [
+                ("Load Type", str(params.get("load_type", ""))),
+                ("Volume per Load (m³)", f"{float(params['volume_per_load_m3']):.2f}"),
+                ("Distance Out (m)", f"{float(params['distance_out_m']):.1f}"),
+                ("Travel In Unit (m)", f"{float(params['travel_in_unit_m']):.1f}"),
+                ("Distance In (m)", f"{float(params['distance_in_m']):.1f}"),
+            ]
+        )
+    rows.append(("Predicted Productivity (m³/PMH0)", f"{result.predicted_m3_per_pmh:.2f}"))
+    return rows
+
+
+def _render_forwarder_result(result: ForwarderBCResult) -> None:
+    rows = _forwarder_parameters(result)
+    _render_kv_table("Forwarder Productivity Estimate", rows)
+    console.print("[dim]Values expressed in PMH0 (productive machine hours without delays).[/dim]")
+    if result.model in _FORWARDER_GHAFFARIYAN_MODELS:
+        console.print(
+            "[dim]Regression from Ghaffariyan et al. (2019) ALPACA thinning dataset.[/dim]"
+        )
+    else:
+        console.print(
+            "[dim]Regression from Kellogg & Bettinger (1994) western Oregon CTL study.[/dim]"
+        )
+
+
+def _evaluate_forwarder_result(
+    *,
+    model: ForwarderBCModel,
+    extraction_distance: float | None,
+    slope_class: ALPACASlopeClass,
+    slope_factor: float | None,
+    volume_per_load: float | None,
+    distance_out: float | None,
+    travel_in_unit: float | None,
+    distance_in: float | None,
+) -> ForwarderBCResult:
+    try:
+        return estimate_forwarder_productivity_bc(
+            model=model,
+            extraction_distance_m=extraction_distance,
+            slope_class=slope_class,
+            slope_factor=slope_factor,
+            volume_per_load_m3=volume_per_load,
+            distance_out_m=distance_out,
+            travel_in_unit_m=travel_in_unit,
+            distance_in_m=distance_in,
+        )
+    except ValueError as exc:  # pragma: no cover - Typer surfaces error text
+        raise typer.BadParameter(str(exc)) from exc
 
 
 def _candidate_roots() -> list[Path]:
@@ -507,29 +573,35 @@ def inspect_block(
 
 @dataset_app.command("estimate-productivity")
 def estimate_productivity_cmd(
-    avg_stem_size: float = typer.Option(
-        ...,
+    machine_role: ProductivityMachineRole = typer.Option(
+        ProductivityMachineRole.FELLER_BUNCHER,
+        "--machine-role",
+        case_sensitive=False,
+        help="Machine role to evaluate (feller_buncher | forwarder).",
+    ),
+    avg_stem_size: float | None = typer.Option(
+        None,
         "--avg-stem-size",
         min=0.0,
-        help="Average harvested stem size (m³/stem).",
+        help="Average harvested stem size (m³/stem). Required for feller-buncher models.",
     ),
-    volume_per_ha: float = typer.Option(
-        ...,
+    volume_per_ha: float | None = typer.Option(
+        None,
         "--volume-per-ha",
         min=0.0,
-        help="Average harvested volume per hectare (m³/ha).",
+        help="Average harvested volume per hectare (m³/ha). Required for feller-buncher models.",
     ),
-    stem_density: float = typer.Option(
-        ...,
+    stem_density: float | None = typer.Option(
+        None,
         "--stem-density",
         min=0.0,
-        help="Average stem density (trees/ha).",
+        help="Average stem density (trees/ha). Required for feller-buncher models.",
     ),
-    ground_slope: float = typer.Option(
-        ...,
+    ground_slope: float | None = typer.Option(
+        None,
         "--ground-slope",
         min=0.0,
-        help="Average ground slope (percent).",
+        help="Average ground slope (percent). Required for feller-buncher models.",
     ),
     model: LahrsenModel = typer.Option(
         LahrsenModel.DAILY,
@@ -542,8 +614,90 @@ def estimate_productivity_cmd(
         "--allow-out-of-range",
         help="Skip range validation (useful for exploratory synthetic data).",
     ),
+    forwarder_model: ForwarderBCModel = typer.Option(
+        ForwarderBCModel.GHAFFARIYAN_SMALL,
+        "--forwarder-model",
+        case_sensitive=False,
+        help="Forwarder regression to evaluate when --machine-role forwarder is used.",
+    ),
+    extraction_distance: float | None = typer.Option(
+        None,
+        "--extraction-distance",
+        min=0.0,
+        help="Mean forwarding distance (m). Required for Ghaffariyan forwarder models.",
+    ),
+    slope_class: ALPACASlopeClass = typer.Option(
+        ALPACASlopeClass.FLAT,
+        "--slope-class",
+        case_sensitive=False,
+        help="Slope bucket (<10, 10-20, >20 percent) for Ghaffariyan models.",
+    ),
+    slope_factor: float | None = typer.Option(
+        None,
+        "--slope-factor",
+        min=0.0,
+        help="Custom multiplier overriding --slope-class for Ghaffariyan models.",
+    ),
+    volume_per_load: float | None = typer.Option(
+        None,
+        "--volume-per-load",
+        min=0.0,
+        help="Per-load volume (m³). Required for Kellogg forwarder models.",
+    ),
+    distance_out: float | None = typer.Option(
+        None,
+        "--distance-out",
+        min=0.0,
+        help="Distance from landing to first loading point (m). Required for Kellogg models.",
+    ),
+    travel_in_unit: float | None = typer.Option(
+        None,
+        "--travel-in-unit",
+        min=0.0,
+        help="Distance while loading within the unit (m). Required for Kellogg models.",
+    ),
+    distance_in: float | None = typer.Option(
+        None,
+        "--distance-in",
+        min=0.0,
+        help="Return distance to the landing (m). Required for Kellogg models.",
+    ),
 ):
-    """Estimate productivity (m³/PMH15) via Lahrsen (2025) BC regression."""
+    """Estimate productivity for Lahrsen (feller-buncher) or forwarder models."""
+
+    role = machine_role.value
+    if role == ProductivityMachineRole.FORWARDER.value:
+        result = _evaluate_forwarder_result(
+            model=forwarder_model,
+            extraction_distance=extraction_distance,
+            slope_class=slope_class,
+            slope_factor=slope_factor,
+            volume_per_load=volume_per_load,
+            distance_out=distance_out,
+            travel_in_unit=travel_in_unit,
+            distance_in=distance_in,
+        )
+        _render_forwarder_result(result)
+        return
+
+    missing: list[str] = []
+    if avg_stem_size is None:
+        missing.append("--avg-stem-size")
+    if volume_per_ha is None:
+        missing.append("--volume-per-ha")
+    if stem_density is None:
+        missing.append("--stem-density")
+    if ground_slope is None:
+        missing.append("--ground-slope")
+    if missing:
+        raise typer.BadParameter(
+            f"{', '.join(missing)} required when --machine-role {ProductivityMachineRole.FELLER_BUNCHER.value}."
+        )
+    assert avg_stem_size is not None
+    assert volume_per_ha is not None
+    assert stem_density is not None
+    assert ground_slope is not None
+
     try:
         result = estimate_productivity(
             avg_stem_size=avg_stem_size,
@@ -642,8 +796,8 @@ def estimate_productivity_rv_cmd(
 
 @dataset_app.command("estimate-forwarder-productivity")
 def estimate_forwarder_productivity_cmd(
-    model: ForwarderProductivityModel = typer.Option(
-        ForwarderProductivityModel.GHAFFARIYAN_SMALL,
+    model: ForwarderBCModel = typer.Option(
+        ForwarderBCModel.GHAFFARIYAN_SMALL,
         "--model",
         case_sensitive=False,
         help="Forwarder regression to evaluate.",
@@ -693,82 +847,17 @@ def estimate_forwarder_productivity_cmd(
 ):
     """Estimate forwarder productivity (m³/PMH0) for thinning operations."""
 
-    if model in (
-        ForwarderProductivityModel.GHAFFARIYAN_SMALL,
-        ForwarderProductivityModel.GHAFFARIYAN_LARGE,
-    ):
-        if extraction_distance is None:
-            raise typer.BadParameter("--extraction-distance is required for Ghaffariyan models.")
-        slope_multiplier = (
-            slope_factor if slope_factor is not None else alpaca_slope_multiplier(slope_class)
-        )
-        if slope_multiplier <= 0:
-            raise typer.BadParameter("--slope-factor must be > 0.")
-        if model is ForwarderProductivityModel.GHAFFARIYAN_SMALL:
-            value = estimate_forwarder_productivity_small_forwarder_thinning(
-                extraction_distance_m=extraction_distance,
-                slope_factor=slope_multiplier,
-            )
-            reference = "Ghaffariyan et al. 2019 (14 t forwarder)"
-        else:
-            value = estimate_forwarder_productivity_large_forwarder_thinning(
-                extraction_distance_m=extraction_distance,
-                slope_factor=slope_multiplier,
-            )
-            reference = "Ghaffariyan et al. 2019 (20 t forwarder)"
-        rows = [
-            ("Model", model.value),
-            ("Reference", reference),
-            ("Extraction Distance (m)", f"{extraction_distance:.1f}"),
-            ("Slope Class", slope_class.value),
-            ("Slope Factor", f"{slope_multiplier:.2f}"),
-            ("Predicted Productivity (m³/PMH0)", f"{value:.2f}"),
-        ]
-    else:
-        missing = []
-        if volume_per_load is None:
-            missing.append("--volume-per-load")
-        if distance_out is None:
-            missing.append("--distance-out")
-        if travel_in_unit is None:
-            missing.append("--travel-in-unit")
-        if distance_in is None:
-            missing.append("--distance-in")
-        if missing:
-            raise typer.BadParameter(f"{', '.join(missing)} required for Kellogg models.")
-        assert volume_per_load is not None
-        assert distance_out is not None
-        assert travel_in_unit is not None
-        assert distance_in is not None
-        load_type = _KELLOGG_MODEL_TO_LOAD[model]
-        value = estimate_forwarder_productivity_kellogg_bettinger(
-            load_type=load_type,
-            volume_per_load_m3=volume_per_load,
-            distance_out_m=distance_out,
-            travel_in_unit_m=travel_in_unit,
-            distance_in_m=distance_in,
-        )
-        rows = [
-            ("Model", model.value),
-            ("Reference", "Kellogg & Bettinger 1994 (FMG 910)"),
-            ("Load Type", load_type.value),
-            ("Volume per Load (m³)", f"{volume_per_load:.2f}"),
-            ("Distance Out (m)", f"{distance_out:.1f}"),
-            ("Travel In Unit (m)", f"{travel_in_unit:.1f}"),
-            ("Distance In (m)", f"{distance_in:.1f}"),
-            ("Predicted Productivity (m³/PMH0)", f"{value:.2f}"),
-        ]
-
-    _render_kv_table("Forwarder Productivity Estimate", rows)
-    console.print("[dim]Values expressed in PMH0 (productive machine hours without delays).[/dim]")
-    if model in _KELLOGG_MODEL_TO_LOAD:
-        console.print(
-            "[dim]Regression from Kellogg & Bettinger (1994) western Oregon CTL thinning study.[/dim]"
-        )
-    else:
-        console.print(
-            "[dim]Regression from Ghaffariyan et al. (2019) ALPACA thinning dataset.[/dim]"
-        )
+    result = _evaluate_forwarder_result(
+        model=model,
+        extraction_distance=extraction_distance,
+        slope_class=slope_class,
+        slope_factor=slope_factor,
+        volume_per_load=volume_per_load,
+        distance_out=distance_out,
+        travel_in_unit=travel_in_unit,
+        distance_in=distance_in,
+    )
+    _render_forwarder_result(result)
 
 
 @dataset_app.command("productivity-ranges")

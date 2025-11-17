@@ -72,3 +72,33 @@ def test_cli_forwarder_productivity_kellogg_mixed() -> None:
         distance_in_m=259.0,
     )
     assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_estimate_productivity_forwarder_branch() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "forwarder",
+            "--forwarder-model",
+            "kellogg-mixed",
+            "--volume-per-load",
+            "9.3",
+            "--distance-out",
+            "274",
+            "--travel-in-unit",
+            "76",
+            "--distance-in",
+            "259",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_forwarder_productivity_kellogg_bettinger(
+        load_type=KelloggLoadType.MIXED,
+        volume_per_load_m3=9.3,
+        distance_out_m=274.0,
+        travel_in_unit_m=76.0,
+        distance_in_m=259.0,
+    )
+    assert f"{expected:.2f}" in result.stdout
