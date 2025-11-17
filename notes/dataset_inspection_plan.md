@@ -134,14 +134,32 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
 
 ### Next Actions for Missing Machine Families
 
-1. **Forwarder** – Pull regressions from Eriksson & Lindroos (2014) and Laitila & Väätäinen (2014, 2020); capture predictor definitions and coefficients so CTL forwarder jobs (`forwarder`) get baseline productivity models.
-2. **Grapple Skidder / Shovel Logger** – Mine Han et al. (2018), George et al. (2022), and FPInnovations skidder/shovel logging studies for grapple-skidder cycle-time equations.
-3. **Yarder / Helicopter** – Use Aubuchon (1982) and Böhm & Kanzian (2023) to seed skyline/grapple yarder regressions, plus the helicopter references Arnvik cites.
-4. **Processor / Loader** – Extract landing processor/log loader models (e.g., Labelle et al. 2016/2018, FPDat loader datasets) so `roadside_processor` and `loader` roles have coverage.
-5. **Tethered systems** – Build interim regressions from Lahrsen’s BC tethered FPDat data for `tethered_harvester` and `tethered_shovel_or_skidder`, then validate against any published winch-assist studies.
-6. **Manual operations** – Locate BC/Quebec hand-falling time studies to cover `hand_faller`, `hand_or_mech_faller`, and `hand_buck_or_processor` jobs.
-7. **Appendix 4/5 normalization** – Parse the new raw CSVs into structured schemas (machine specs per publication/model, stand/operator metadata), then attach the relevant snippets to each registry entry so we can report machine model defaults and stand/operator context in the CLI.
-8. **Appendix 7 abbreviations** – Ingest DV abbreviations into a dictionary so CLI output can show human-friendly descriptions for PV/PW/TV/TW/TU/etc.
+- [ ] **Whole-tree forwarders / clambunks (Eriksson & Lindroos 2014; Laitila & Väätäinen 2014, 2020)**
+  - [ ] Digitise the Scandinavian long-distance forwarder/clambunk regressions (payload vs. distance, slope multipliers) and convert them into helper functions distinct from the CTL stack.
+  - [ ] Add CLI flags mirroring the published predictors (payload, distance components, terrain class) and regression tests reproducing the tables/curves.
+  - [ ] Document applicability (final felling vs. salvage vs. plantation clean-up) and call out where BC calibration is still pending.
+- [ ] **Grapple skidders & shovel loggers (Han et al. 2018; George et al. 2022; FPInnovations skidder series)**
+  - [ ] Extract grapple-skidder and shovel-logger cycle-time equations (travel out/in, load size, slope class) and wrap them in `fhops.productivity.skidder_ft`.
+  - [ ] Wire helpers into CLI + solver job defaults (`grapple_skidder`, `shovel_logger`) and add regression tests per reference.
+  - [ ] Capture scenario multipliers for trail spacing / decking strategy (from TN285/FPInnovations skidder reports) so costing workflows can reason about narrow vs. wide trail networks.
+- [ ] **Skyline yarders / helicopter longline (Aubuchon 1982; Böhm & Kanzian 2023; Arnvik helicopter refs)**
+  - [ ] Build skyline productivity helpers keyed by payload, deflection, lateral yarding distance, and anchor profile; include both standing and running skyline variants.
+  - [ ] Add helicopter longline regression(s) (payload vs. cycle time vs. flight distance) for `helicopter_longline` jobs.
+  - [ ] Update docs/CLI so users can select skyline/helicopter models with clear input requirements and warnings about non-BC provenance.
+- [ ] **Roadside processors / loaders / hoe chuckers (Labelle et al. 2016/2018; FPDat loader datasets)**
+  - [ ] Ingest landing-processor time studies (processing time per log vs. diameter/species) and generic loader cycle-time models.
+  - [ ] Provide helper functions for `roadside_processor` and `loader`, exposing key predictors (piece size, log sort count, decking distance) and regression tests.
+  - [ ] Document how these interact with forwarder/skidder productivity so scenario cost rollups stay consistent.
+- [ ] **Tethered systems (FPDat Lahrsen subsets; winch-assist BMPs 2019)**
+  - [ ] Filter Lahrsen FPDat data to tethered harvesters/shovels and derive interim regressions (stem size vs. slope vs. tether load).
+  - [ ] Cross-validate against published winch-assist case studies (e.g., FPInnovations BMP v2, Kellogg winch trials) and add CLI flags for anchor slope limits.
+  - [ ] Note open items for payload/slope derating until more FPInnovations data arrives.
+- [ ] **Manual operations (BC/Quebec hand-fall time studies)**
+  - [ ] Gather historic hand-falling / bucking / processing time-motion studies and encode them as baseline productivity constants or simple regressions.
+  - [ ] Add documentation/CLI warnings that manual paths are placeholders pending modern data, and flag recommended use cases (e.g., retention islands, wildlife trees).
+- [ ] **Appendix 4/5/7 normalization follow-ups**
+  - [ ] Parse the new raw CSVs into structured schemas: machine specs per publication/model (Appendix 4), stand/operator metadata (Appendix 5), and DV abbreviations (Appendix 7).
+  - [ ] Attach these metadata blobs to each registry entry so CLI output can show machine defaults, stand context, and human-readable predictor descriptions (PV/PW/TV/TW/TU/etc.).
 - Appendix references are now parsed via `scripts/parse_arnvik_references.py`, producing `notes/reference/arnvik_tables/references.json` and letting the registry tag each model with its original citation for provenance checks.
 - Appendix 8 in Arnvik (2024) lists 422 productivity models (harvesters, feller-bunchers, harwarders). Need to digitise into a searchable registry (machine type, region, system, predictors, coefficients, R², etc.) so we can plug gaps for the remaining machine roles.
 
@@ -247,6 +265,12 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
    - Combine the productivity helper with machine rental-rate inputs (in $/SMH) to produce BC-calibrated $/m³ estimates downstream in evaluation scripts; document how this links to the forthcoming machine-costing CLI.
 
 ## Productivity Backlog Plan
+
+### FT System Primary Transport (stump to roadside)
+
+- various types of skidders
+- hoe chuckers
+- any "modifier" models to capture terrain or bunch size or piece size or species or prescription (e.g., commerical thinning intensity versus clearcuts) or whatever 
 
 ### CTL System Harvester productivity
 

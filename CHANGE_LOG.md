@@ -310,3 +310,7 @@
 - Integrated Tabu Search into the benchmarking harness (`fhops bench suite --include-tabu`) and recorded comparative results showing SA remains the default recommendation.
 - Introduced a synthetic scenario dataset generator (`generate_random_dataset`) with CSV/YAML bundle writer helpers, scenario plan updates, and regression coverage (`tests/test_synthetic_dataset.py`) to support Phase 3 benchmarking workflows.
 - Added optional Gurobi backend support (extra `fhops[gurobi]`, CLI `--driver gurobi`, fallback-friendly solver plumbing), documented Linux licence setup, and extended the MIP ingestion helper to accept driver overrides for heavier baselines.
+- Completed the CTL forwarder helper stack with Ghaffariyan small/large, Kellogg saw/pulp/mixed, and FPInnovations ADV6N10 models (`fhops.productivity.forwarder_bc`), wiring them into the dataset CLI and regression tests.
+- Added CTL harvester regressions for ADV6N10 (sorting penalties), ADV5N30 (removal-level/brushing modifiers), and TN292 (tree-size/density curves) under `fhops.productivity.harvester_ctl`, exposed via `fhops dataset estimate-productivity --machine-role ctl_harvester`, and updated docs/tests.
+- Documented the available forwarder/harvester models, inputs, and applicability ranges in `docs/reference/harvest_systems.rst`, linking back to `notes/dataset_inspection_plan.md`.
+- Captured TN285/ADV5N9/ADV2N21 scenario guidance (trail spacing, removal levels, trail reuse) in the planning notes and aligned the roadmap with the new deliverables.
