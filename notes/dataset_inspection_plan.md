@@ -264,12 +264,21 @@ Candidate references already in the repository; convert each into a helper/plan:
   - Build a harvester productivity function parameterised by mean tree volume and stand density (based on Kenmatt/Brinkman study).
   - Surface optional cost outputs or elasticities for pipeline integration.
   - Regression tests spanning the min/max tree-size brackets.
-- [ ] `notes/reference/fpinnovations/TN285.PDF`
+- [x] `notes/reference/fpinnovations/TN285.PDF`
   - Translate the observed impacts of trail spacing, removal intensity, and pre-cleaning into scenario multipliers (or helper flags).
   - Add documentation emphasising when pre-cleaning is uneconomic.
-- [ ] `notes/reference/fpinnovations/ADV5N9.PDF` / `ADV2N21.PDF`
+- [x] `notes/reference/fpinnovations/ADV5N9.PDF` / `ADV2N21.PDF`
   - Capture BC/QC second-thinning harvester productivity under alternate trail networks and removal intensities.
   - Provide quick-look tables or multiplier hooks so CTL blocks with existing trail networks can be modelled without manual spreadsheet work.
+
+#### CTL scenario multipliers (TN285 / ADV5N9 / ADV2N21)
+
+- TN285 (NB/QC thinning) takeaways:
+  - Pre-cleaning delivered a single 31 % harvester productivity bump in natural spruce but the labor cost (~$16.92/PH vs. observed $130/ha savings) rarely pencils out; treat chain-saw brushing as an optional scenario flag, not a default multiplier.
+  - Trail spacing: harvester output is insensitive to ghost trails, but narrow extraction spacing (≤18 m) drives 20–40 % higher forwarder costs because loads shrink to 0.10 m³/metre vs. 0.20 m³/metre at 27–30 m spacing. When modelling dense ghost-trail networks, include a +25 % extraction-cost alert.
+  - Removal intensity (30 % vs. 40 %) and two-pile product sorting showed no statistically significant productivity change inside the study noise; document that biological objectives should drive those choices.
+- ADV5N9 (Abitibi second thinning): 30 % vs. 50 % removal and “reuse old trails vs. cut new trails” produced comparable harvester/forwarder productivity; use this reference to justify keeping Lahrsen/TN292 baseline unless site biology demands otherwise.
+- ADV2N21 (Okanagan interior BC): productivity scales primarily with average tree size (80 % of variance explained) and site limitations (patch/partial vs. clearcut). Use Figure 6 slopes when back-calculating expected PMH for salvage/patch prescriptions, and flag cost ranges ($8.49/m³ clearcut base to $15.10/m³ patch cut) for interior planning scenarios.
 
 ### Forwarder / grapple-skidder coverage
 - [x] Parse Arnvik Appendix 8–11 JSON dumps (`notes/reference/arnvik_tables/`) to isolate forwarder/harwarder/grapple-skidder regressions; capture predictor ranges + units in a machine-readable table under `data/productivity/arnvik_forwarder.json` (script: `scripts/build_arnvik_forwarder_table.py`, currently surfaces harwarder + skidder-harvester rows—the appendices do not include standalone forwarder codes, so the forwarder role is proxied via harwarder models until additional data surfaces).

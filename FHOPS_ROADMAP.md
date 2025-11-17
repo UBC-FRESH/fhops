@@ -133,6 +133,12 @@ before proposing new work.
    - Add interpretation/playbook sections for each published dashboard, embed consolidated landing views (iframes or raw HTML) into Sphinx, and backfill testing/automation notes so CI coverage extends to the full notebook suite.
    - Automate a weekly “full” analytics notebook run (no `--light`) via a scheduled GitHub Actions workflow that uploads refreshed artefacts to the telemetry bundle and alerts if any notebook fails.
    - Capture operational expectations (rotation owners, notification channel, artifact retention) in `notes/metaheuristic_hyperparam_tuning.md` once the workflow lands.
+7. **Productivity Modeling & Helper Rollout (`notes/dataset_inspection_plan.md`, `docs/reference/harvest_systems.rst`)**
+   - [x] Ship CTL forwarder helper module (`fhops.productivity.forwarder_bc`) covering Ghaffariyan small/large, Kellogg mixed/saw/pulp, and FPInnovations ADV6N10 sorting models, with CLI/test coverage and planning notes.
+   - [x] Ship CTL harvester helpers (ADV6N10 regression + CLI, ADV5N30 removal/brushing modifiers, TN292 tree-size/density regression) and document applicability in the CLI/docs.
+   - [x] Record TN285 / ADV5N9 / ADV2N21 scenario guidance (ghost trails, removal levels, trail reuse) in the planning docs so scenario authors know when productivity stays flat vs. when to adjust costs.
+   - [ ] Integrate the new helpers into dataset inspection CLI defaults and synthetic generator presets; refresh fixtures/tests that assume legacy productivity values.
+   - [ ] Keep `FHOPS_ROADMAP.md` and `notes/dataset_inspection_plan.md` in sync as additional FPInnovations regressions are ported.
 
 ## Backlog & Ideas
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
