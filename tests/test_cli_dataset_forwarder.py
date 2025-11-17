@@ -16,6 +16,8 @@ from fhops.productivity import (
     estimate_harvester_productivity_tn292,
     estimate_forwarder_productivity_kellogg_bettinger,
     estimate_forwarder_productivity_small_forwarder_thinning,
+    ShovelLoggerSessions2006Inputs,
+    estimate_shovel_logger_productivity_sessions2006,
 )
 from fhops.productivity.harvester_ctl import ADV6N10HarvesterInputs, TN292HarvesterInputs
 from fhops.productivity.forwarder_bc import (
@@ -433,6 +435,50 @@ def test_cli_grapple_skidder_dataset_inferred_defaults(monkeypatch) -> None:
         loaded_distance_m=120.0,
         trail_pattern=TrailSpacingPattern.SINGLE_GHOST_18M,
         decking_condition=DeckingCondition.CONSTRAINED,
+    ).predicted_m3_per_pmh
+    assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_estimate_productivity_shovel_logger() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "shovel_logger",
+            "--shovel-passes",
+            "4",
+            "--shovel-swing-length",
+            "16.15",
+            "--shovel-strip-length",
+            "100",
+            "--shovel-volume-per-ha",
+            "375",
+            "--shovel-swing-time-roadside",
+            "20",
+            "--shovel-payload-roadside",
+            "1",
+            "--shovel-swing-time-initial",
+            "30",
+            "--shovel-payload-initial",
+            "1",
+            "--shovel-swing-time-rehandle",
+            "30",
+            "--shovel-payload-rehandle",
+            "2",
+            "--shovel-speed-index",
+            "0.7",
+            "--shovel-speed-return",
+            "0.7",
+            "--shovel-speed-serpentine",
+            "0.7",
+            "--shovel-effective-minutes",
+            "50",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_shovel_logger_productivity_sessions2006(
+        ShovelLoggerSessions2006Inputs()
     ).predicted_m3_per_pmh
     assert f"{expected:.2f}" in result.stdout
 

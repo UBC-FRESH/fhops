@@ -62,6 +62,11 @@ from .sessions2006 import (
     ShovelLoggingResult,
     estimate_shovel_logging_productivity,
 )
+from .shovel_logger import (
+    ShovelLoggerSessions2006Inputs,
+    ShovelLoggerResult,
+    estimate_shovel_logger_productivity_sessions2006,
+)
 from .spinelli2017 import (
     GrappleYarderInputs,
     estimate_grapple_yarder_productivity,
@@ -114,6 +119,9 @@ __all__ = [
     "ShovelLoggingParameters",
     "ShovelLoggingResult",
     "estimate_shovel_logging_productivity",
+    "ShovelLoggerSessions2006Inputs",
+    "ShovelLoggerResult",
+    "estimate_shovel_logger_productivity_sessions2006",
     "ADV6N10HarvesterInputs",
     "TN292HarvesterInputs",
     "Han2018SkidderMethod",
