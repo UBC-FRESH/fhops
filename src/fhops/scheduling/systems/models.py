@@ -138,7 +138,19 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
             notes="Hand/mech fall → skyline yarder with chokers → landing processor/hand buck → loader.",
             jobs=[
                 SystemJob("felling", "hand_or_mech_faller", []),
-                SystemJob("primary_transport", "skyline_yarder", ["felling"]),
+                SystemJob(
+                    "primary_transport",
+                    "skyline_yarder",
+                    ["felling"],
+                    productivity_overrides={
+                        "skyline_model": "aubuchon-kramer",
+                        "skyline_logs_per_turn": 3.8,
+                        "skyline_average_log_volume_m3": 0.45,
+                        "skyline_crew_size": 4.0,
+                        "skyline_carriage_height_m": 11.0,
+                        "skyline_chordslope_percent": -15.0,
+                    },
+                ),
                 SystemJob("processing", "landing_processor_or_hand_buck", ["primary_transport"]),
                 SystemJob("loading", "loader", ["processing"]),
             ],
@@ -149,7 +161,19 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
             notes="Hand/mech fall → grapple yarder → landing processor/hand buck → loader.",
             jobs=[
                 SystemJob("felling", "hand_or_mech_faller", []),
-                SystemJob("primary_transport", "grapple_yarder", ["felling"]),
+                SystemJob(
+                    "primary_transport",
+                    "grapple_yarder",
+                    ["felling"],
+                    productivity_overrides={
+                        "skyline_model": "mcneel-running",
+                        "skyline_horizontal_distance_m": 280.0,
+                        "skyline_vertical_distance_m": 40.0,
+                        "skyline_pieces_per_cycle": 3.0,
+                        "skyline_piece_volume_m3": 1.8,
+                        "skyline_running_variant": "yarder_a",
+                    },
+                ),
                 SystemJob("processing", "landing_processor_or_hand_buck", ["primary_transport"]),
                 SystemJob("loading", "loader", ["processing"]),
             ],
@@ -160,7 +184,18 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
             notes="Hand fallers → helicopter longline → landing/hand buck (or direct to water).",
             jobs=[
                 SystemJob("felling", "hand_faller", []),
-                SystemJob("primary_transport", "helicopter_longline", ["felling"]),
+                SystemJob(
+                    "primary_transport",
+                    "helicopter_longline",
+                    ["felling"],
+                    productivity_overrides={
+                        "helicopter_model": "bell214b",
+                        "helicopter_flight_distance_m": 900.0,
+                        "helicopter_load_factor": 0.7,
+                        "helicopter_delay_minutes": 0.5,
+                        "helicopter_weight_to_volume": 2700.0,
+                    },
+                ),
                 SystemJob("processing", "hand_buck_or_processor", ["primary_transport"]),
                 SystemJob("loading", "loader_or_water", ["processing"]),
             ],

@@ -30,3 +30,19 @@ def test_cli_helicopter_longline_default_kmax() -> None:
         flight_distance_m=400.0,
     )
     assert f"{expected.productivity_m3_per_pmh0:.2f}" in result.stdout
+
+
+def test_cli_helicopter_longline_harvest_system_defaults() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "helicopter_longline",
+            "--harvest-system-id",
+            "helicopter",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "bell214b" in result.stdout.lower()
+    assert "Applied helicopter defaults" in result.stdout

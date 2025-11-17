@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 import json
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 
+from click.core import ParameterSource
 import typer
 from rich.console import Console
 from rich.table import Table
@@ -287,6 +288,16 @@ def _render_helicopter_result(result: HelicopterProductivityResult) -> None:
     )
 
 
+def _parameter_supplied(ctx: typer.Context, name: str) -> bool:
+    if ctx is None:
+        return False
+    try:
+        source = ctx.get_parameter_source(name)
+    except AttributeError:  # pragma: no cover - defensive
+        return False
+    return source is not None and source is not ParameterSource.DEFAULT
+
+
 def _apply_skidder_system_defaults(
     *,
     system: HarvestSystem | None,
@@ -511,6 +522,302 @@ def _apply_shovel_system_defaults(
         slope_class,
         bunching,
         custom_multiplier,
+        used,
+    )
+
+
+def _apply_skyline_system_defaults(
+    *,
+    system: HarvestSystem | None,
+    model: SkylineProductivityModel,
+    logs_per_turn: float,
+    average_log_volume_m3: float,
+    crew_size: float,
+    horizontal_distance_m: float | None,
+    vertical_distance_m: float | None,
+    pieces_per_cycle: float | None,
+    piece_volume_m3: float | None,
+    running_variant: RunningSkylineVariant,
+    carriage_height_m: float | None,
+    chordslope_percent: float | None,
+    user_supplied: Mapping[str, bool],
+) -> tuple[
+    SkylineProductivityModel,
+    float,
+    float,
+    float,
+    float | None,
+    float | None,
+    float | None,
+    float | None,
+    RunningSkylineVariant,
+    float | None,
+    float | None,
+    bool,
+]:
+    if system is None:
+        return (
+            model,
+            logs_per_turn,
+            average_log_volume_m3,
+            crew_size,
+            horizontal_distance_m,
+            vertical_distance_m,
+            pieces_per_cycle,
+            piece_volume_m3,
+            running_variant,
+            carriage_height_m,
+            chordslope_percent,
+            False,
+        )
+    overrides = system_productivity_overrides(system, "skyline_yarder")
+    if not overrides:
+        overrides = system_productivity_overrides(system, "grapple_yarder")
+    if not overrides:
+        return (
+            model,
+            logs_per_turn,
+            average_log_volume_m3,
+            crew_size,
+            horizontal_distance_m,
+            vertical_distance_m,
+            pieces_per_cycle,
+            piece_volume_m3,
+            running_variant,
+            carriage_height_m,
+            chordslope_percent,
+            False,
+        )
+    used = False
+
+    def maybe_float(
+        key: str, current: float | None, supplied_flag: str, allow_zero: bool = False
+    ) -> tuple[float | None, bool]:
+        value = overrides.get(key)
+        if value is None or user_supplied.get(supplied_flag, False):
+            return current, False
+        try:
+            coerced = float(value)
+        except (TypeError, ValueError) as exc:  # pragma: no cover - validated via plan
+            raise ValueError(f"Invalid skyline override for '{key}': {value}") from exc
+        if not allow_zero and coerced == 0:
+            return current, False
+        return coerced, True
+
+    value = overrides.get("skyline_model")
+    if value and not user_supplied.get("model", False):
+        try:
+            model = SkylineProductivityModel(value)
+            used = True
+        except ValueError as exc:
+            raise ValueError(f"Unknown skyline model override '{value}'.") from exc
+
+    logs_per_turn, changed = maybe_float("skyline_logs_per_turn", logs_per_turn, "logs_per_turn", True)
+    used |= changed
+    average_log_volume_m3, changed = maybe_float(
+        "skyline_average_log_volume_m3", average_log_volume_m3, "average_log_volume_m3", True
+    )
+    used |= changed
+    crew_size, changed = maybe_float("skyline_crew_size", crew_size, "crew_size", True)
+    used |= changed
+    horizontal_distance_m, changed = maybe_float(
+        "skyline_horizontal_distance_m", horizontal_distance_m, "horizontal_distance_m", True
+    )
+    used |= changed
+    vertical_distance_m, changed = maybe_float(
+        "skyline_vertical_distance_m", vertical_distance_m, "vertical_distance_m", True
+    )
+    used |= changed
+    pieces_per_cycle, changed = maybe_float(
+        "skyline_pieces_per_cycle", pieces_per_cycle, "pieces_per_cycle", True
+    )
+    used |= changed
+    piece_volume_m3, changed = maybe_float(
+        "skyline_piece_volume_m3", piece_volume_m3, "piece_volume_m3", True
+    )
+    used |= changed
+    carriage_height_m, changed = maybe_float(
+        "skyline_carriage_height_m", carriage_height_m, "carriage_height_m", True
+    )
+    used |= changed
+    chordslope_percent, changed = maybe_float(
+        "skyline_chordslope_percent", chordslope_percent, "chordslope_percent", True
+    )
+    used |= changed
+
+    value = overrides.get("skyline_running_variant")
+    if value and not user_supplied.get("running_yarder_variant", False):
+        try:
+            running_variant = RunningSkylineVariant(value)
+            used = True
+        except ValueError as exc:
+            raise ValueError(f"Unknown running-skyline variant override '{value}'.") from exc
+
+    return (
+        model,
+        logs_per_turn,
+        average_log_volume_m3,
+        crew_size,
+        horizontal_distance_m,
+        vertical_distance_m,
+        pieces_per_cycle,
+        piece_volume_m3,
+        running_variant,
+        carriage_height_m,
+        chordslope_percent,
+        used,
+    )
+
+
+def _apply_helicopter_system_defaults(
+    *,
+    system: HarvestSystem | None,
+    model: HelicopterLonglineModel,
+    flight_distance_m: float | None,
+    payload_m3: float | None,
+    load_factor: float | None,
+    weight_to_volume_lb_per_m3: float | None,
+    delay_minutes: float,
+    user_supplied: Mapping[str, bool],
+) -> tuple[
+    HelicopterLonglineModel,
+    float | None,
+    float | None,
+    float | None,
+    float | None,
+    float,
+    bool,
+]:
+    if system is None:
+        return (
+            model,
+            flight_distance_m,
+            payload_m3,
+            load_factor,
+            weight_to_volume_lb_per_m3,
+            delay_minutes,
+            False,
+        )
+    overrides = system_productivity_overrides(
+        system, ProductivityMachineRole.HELICOPTER_LONGLINE.value
+    )
+    if not overrides:
+        return (
+            model,
+            flight_distance_m,
+            payload_m3,
+            load_factor,
+            weight_to_volume_lb_per_m3,
+            delay_minutes,
+            False,
+        )
+    used = False
+
+    value = overrides.get("helicopter_model")
+    if value and not user_supplied.get("helicopter_model", False):
+        try:
+            model = HelicopterLonglineModel(value)
+            used = True
+        except ValueError as exc:
+            raise ValueError(f"Unknown helicopter model override '{value}'.") from exc
+
+    def maybe_float(
+        key: str, current: float | None, supplied_flag: str, allow_zero: bool = False
+    ) -> tuple[float | None, bool]:
+        if user_supplied.get(supplied_flag, False):
+            return current, False
+        value = overrides.get(key)
+        if value is None:
+            return current, False
+        try:
+            coerced = float(value)
+        except (TypeError, ValueError) as exc:  # pragma: no cover
+            raise ValueError(f"Invalid helicopter override for '{key}': {value}") from exc
+        if not allow_zero and coerced == 0:
+            return current, False
+        return coerced, True
+
+    flight_distance_m, changed = maybe_float(
+        "helicopter_flight_distance_m", flight_distance_m, "helicopter_flight_distance_m"
+    )
+    used |= changed
+    payload_m3, changed = maybe_float(
+        "helicopter_payload_m3", payload_m3, "helicopter_payload_m3", allow_zero=True
+    )
+    used |= changed
+    load_factor, changed = maybe_float(
+        "helicopter_load_factor", load_factor, "helicopter_load_factor", allow_zero=True
+    )
+    used |= changed
+    weight_to_volume_lb_per_m3, changed = maybe_float(
+        "helicopter_weight_to_volume",
+        weight_to_volume_lb_per_m3,
+        "helicopter_weight_to_volume",
+        allow_zero=True,
+    )
+    used |= changed
+    delay_value = overrides.get("helicopter_delay_minutes")
+    if delay_value is not None and not user_supplied.get("helicopter_delay_minutes", False):
+        delay_minutes = float(delay_value)
+        used = True
+
+    return (
+        model,
+        flight_distance_m,
+        payload_m3,
+        load_factor,
+        weight_to_volume_lb_per_m3,
+        delay_minutes,
+        used,
+    )
+    used |= changed
+    crew_size, changed = maybe_float("skyline_crew_size", crew_size, "crew_size", True)
+    used |= changed
+    horizontal_distance_m, changed = maybe_float(
+        "skyline_horizontal_distance_m", horizontal_distance_m, "horizontal_distance_m", True
+    )
+    used |= changed
+    vertical_distance_m, changed = maybe_float(
+        "skyline_vertical_distance_m", vertical_distance_m, "vertical_distance_m", True
+    )
+    used |= changed
+    pieces_per_cycle, changed = maybe_float(
+        "skyline_pieces_per_cycle", pieces_per_cycle, "pieces_per_cycle", True
+    )
+    used |= changed
+    piece_volume_m3, changed = maybe_float(
+        "skyline_piece_volume_m3", piece_volume_m3, "piece_volume_m3", True
+    )
+    used |= changed
+    carriage_height_m, changed = maybe_float(
+        "skyline_carriage_height_m", carriage_height_m, "carriage_height_m", True
+    )
+    used |= changed
+    chordslope_percent, changed = maybe_float(
+        "skyline_chordslope_percent", chordslope_percent, "chordslope_percent", True
+    )
+    used |= changed
+
+    value = overrides.get("skyline_running_variant")
+    if value and not user_supplied.get("running_yarder_variant", False):
+        try:
+            running_variant = RunningSkylineVariant(value)
+            used = True
+        except ValueError as exc:
+            raise ValueError(f"Unknown running-skyline variant override '{value}'.") from exc
+
+    return (
+        model,
+        logs_per_turn,
+        average_log_volume_m3,
+        crew_size,
+        horizontal_distance_m,
+        vertical_distance_m,
+        pieces_per_cycle,
+        piece_volume_m3,
+        running_variant,
+        carriage_height_m,
+        chordslope_percent,
         used,
     )
 
@@ -1235,6 +1542,7 @@ def inspect_block(
 
 @dataset_app.command("estimate-productivity")
 def estimate_productivity_cmd(
+    ctx: typer.Context,
     machine_role: ProductivityMachineRole = typer.Option(
         ProductivityMachineRole.FELLER_BUNCHER,
         "--machine-role",
@@ -1827,6 +2135,34 @@ def estimate_productivity_cmd(
             )
         return
     if role == ProductivityMachineRole.HELICOPTER_LONGLINE.value:
+        heli_user_supplied = {
+            "helicopter_model": _parameter_supplied(ctx, "helicopter_model"),
+            "helicopter_flight_distance_m": _parameter_supplied(
+                ctx, "helicopter_flight_distance_m"
+            ),
+            "helicopter_payload_m3": _parameter_supplied(ctx, "helicopter_payload_m3"),
+            "helicopter_load_factor": _parameter_supplied(ctx, "helicopter_load_factor"),
+            "helicopter_weight_to_volume": _parameter_supplied(ctx, "helicopter_weight_to_volume"),
+            "helicopter_delay_minutes": _parameter_supplied(ctx, "helicopter_delay_minutes"),
+        }
+        (
+            helicopter_model,
+            helicopter_flight_distance_m,
+            helicopter_payload_m3,
+            helicopter_load_factor,
+            helicopter_weight_to_volume,
+            helicopter_delay_minutes,
+            helicopter_defaults_used,
+        ) = _apply_helicopter_system_defaults(
+            system=selected_system,
+            model=helicopter_model,
+            flight_distance_m=helicopter_flight_distance_m,
+            payload_m3=helicopter_payload_m3,
+            load_factor=helicopter_load_factor,
+            weight_to_volume_lb_per_m3=helicopter_weight_to_volume,
+            delay_minutes=helicopter_delay_minutes,
+            user_supplied=heli_user_supplied,
+        )
         if helicopter_flight_distance_m is None:
             raise typer.BadParameter(
                 "--helicopter-flight-distance-m is required for helicopter_longline role."
@@ -1840,6 +2176,10 @@ def estimate_productivity_cmd(
             additional_delay_minutes=helicopter_delay_minutes,
         )
         _render_helicopter_result(result)
+        if helicopter_defaults_used and selected_system is not None:
+            console.print(
+                f"[dim]Applied helicopter defaults from harvest system '{selected_system.system_id}'.[/dim]"
+            )
         return
 
     missing: list[str] = []
@@ -2546,6 +2886,7 @@ def estimate_cable_skidding_cmd(
 
 @dataset_app.command("estimate-skyline-productivity")
 def estimate_skyline_productivity_cmd(
+    ctx: typer.Context,
     model: SkylineProductivityModel = typer.Option(
         SkylineProductivityModel.LEE_UPHILL, case_sensitive=False
     ),
@@ -2644,6 +2985,21 @@ def estimate_skyline_productivity_cmd(
         help="Number of chokers for the Kellogg (1976) standing skyline regression.",
         show_default=False,
     ),
+    harvest_system_id: str | None = typer.Option(
+        None,
+        "--harvest-system-id",
+        help="Harvest system ID to pull skyline defaults from (registry or dataset).",
+    ),
+    dataset: str | None = typer.Option(
+        None,
+        "--dataset",
+        help="Dataset/scenario providing harvest system context for defaults.",
+    ),
+    block_id: str | None = typer.Option(
+        None,
+        "--block-id",
+        help="Block ID (requires --dataset) to infer harvest system defaults automatically.",
+    ),
     tr119_treatment: str | None = typer.Option(
         None,
         "--tr119-treatment",
@@ -2661,6 +3017,78 @@ def estimate_skyline_productivity_cmd(
 
     if payload_m3 is not None and payload_m3 <= 0:
         raise typer.BadParameter("--payload-m3 must be > 0 when specified.")
+
+    scenario_context: Scenario | None = None
+    dataset_name: str | None = None
+    systems_catalog = dict(default_system_registry())
+    if dataset is not None:
+        dataset_name, scenario_context, _ = _ensure_dataset(dataset, interactive=False)
+        systems_catalog = _scenario_systems(scenario_context)
+    if block_id is not None and scenario_context is None:
+        raise typer.BadParameter("--block-id requires --dataset to be specified.")
+    derived_system_id: str | None = None
+    if block_id and scenario_context is not None:
+        block = next((blk for blk in scenario_context.blocks if blk.id == block_id), None)
+        if block is None:
+            raise typer.BadParameter(
+                f"Block '{block_id}' not found in dataset {dataset_name or dataset}."
+            )
+        derived_system_id = block.harvest_system_id
+        if derived_system_id is None:
+            console.print(
+                f"[yellow]Block {block_id} does not declare a harvest system; skyline defaults will not apply.[/yellow]"
+            )
+    selected_system_id = harvest_system_id or derived_system_id
+    selected_system: HarvestSystem | None = None
+    if selected_system_id:
+        selected_system = systems_catalog.get(selected_system_id)
+        if selected_system is None:
+            raise typer.BadParameter(
+                f"Harvest system '{selected_system_id}' not found. Options: {', '.join(sorted(systems_catalog))}"
+            )
+
+    user_supplied = {
+        "model": _parameter_supplied(ctx, "model"),
+        "logs_per_turn": _parameter_supplied(ctx, "logs_per_turn"),
+        "average_log_volume_m3": _parameter_supplied(ctx, "average_log_volume_m3"),
+        "crew_size": _parameter_supplied(ctx, "crew_size"),
+        "horizontal_distance_m": _parameter_supplied(ctx, "horizontal_distance_m"),
+        "vertical_distance_m": _parameter_supplied(ctx, "vertical_distance_m"),
+        "pieces_per_cycle": _parameter_supplied(ctx, "pieces_per_cycle"),
+        "piece_volume_m3": _parameter_supplied(ctx, "piece_volume_m3"),
+        "running_yarder_variant": _parameter_supplied(ctx, "running_yarder_variant"),
+        "carriage_height_m": _parameter_supplied(ctx, "carriage_height_m"),
+        "chordslope_percent": _parameter_supplied(ctx, "chordslope_percent"),
+    }
+
+    (
+        model,
+        logs_per_turn,
+        average_log_volume_m3,
+        crew_size,
+        horizontal_distance_m,
+        vertical_distance_m,
+        pieces_per_cycle,
+        piece_volume_m3,
+        running_yarder_variant,
+        carriage_height_m,
+        chordslope_percent,
+        skyline_defaults_used,
+    ) = _apply_skyline_system_defaults(
+        system=selected_system,
+        model=model,
+        logs_per_turn=logs_per_turn,
+        average_log_volume_m3=average_log_volume_m3,
+        crew_size=crew_size,
+        horizontal_distance_m=horizontal_distance_m,
+        vertical_distance_m=vertical_distance_m,
+        pieces_per_cycle=pieces_per_cycle,
+        piece_volume_m3=piece_volume_m3,
+        running_variant=running_yarder_variant,
+        carriage_height_m=carriage_height_m,
+        chordslope_percent=chordslope_percent,
+        user_supplied=user_supplied,
+    )
 
     telemetry_payload_m3 = payload_m3
     source_label = None
@@ -2956,6 +3384,10 @@ def estimate_skyline_productivity_cmd(
         console.print(f"[dim]Source: {source_label}[/dim]")
     if console_warning:
         console.print(console_warning)
+    if skyline_defaults_used and selected_system is not None:
+        console.print(
+            f"[dim]Applied productivity defaults from harvest system '{selected_system.system_id}'.[/dim]"
+        )
     if telemetry_log:
         payload = {
             "timestamp": datetime.now(UTC).isoformat(),

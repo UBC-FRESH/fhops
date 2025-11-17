@@ -237,3 +237,39 @@ def test_cli_skyline_aubuchon_kellogg() -> None:
         chokers=2.0,
     )
     assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_skyline_harvest_system_running_defaults() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--slope-distance-m",
+            "280",
+            "--lateral-distance-m",
+            "20",
+            "--harvest-system-id",
+            "cable_running",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "mcneel-running" in result.stdout
+    assert "Applied productivity defaults from harvest system 'cable_running'" in result.stdout
+
+
+def test_cli_skyline_harvest_system_standing_defaults() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--slope-distance-m",
+            "320",
+            "--lateral-distance-m",
+            "30",
+            "--harvest-system-id",
+            "cable_standing",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "aubuchon-kramer" in result.stdout
+    assert "Carriage Height (m)" in result.stdout

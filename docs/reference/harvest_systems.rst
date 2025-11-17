@@ -174,49 +174,42 @@ Skyline Productivity Models
 ---------------------------
 
 Use ``fhops.dataset estimate-skyline-productivity`` when the block’s harvest system references
-``skyline_yarder`` or ``helicopter_longline`` jobs. Available regressions:
+``skyline_yarder`` jobs. The command now accepts ``--harvest-system-id``, ``--dataset``, and ``--block-id`` so
+defaults from the registry (e.g., ``cable_standing`` or ``cable_running``) or the current scenario flow directly
+into the regressions. Available models:
 
-* ``lee-uphill`` / ``lee-downhill`` – HAM300 case study (Lee et al. 2018, South Korea). Uphill model
-  only needs ``--slope-distance-m`` and optional ``--payload-m3``; downhill adds
-  ``--lateral-distance-m`` and ``--large-end-diameter-cm``. The CLI prints warnings because these are
-  non-BC datasets intended for short spans (<130 m).
-* ``tr125-single-span`` / ``tr125-multi-span`` – Standing-skyline regressions from FPInnovations TR-125
-  (Skylead C40 with Mini-Maki carriage). Supply ``--slope-distance-m`` and ``--lateral-distance-m``;
-  payload defaults to 1.6 m³ (≈3.4 logs × 0.47 m³/log) but can be overridden via ``--payload-m3``. The
-  CLI now reports the underlying cycle time so you can see how intermediate supports (multi-span) drive
-  the longer outhaul/inhaul legs.
-* ``tr127-block1`` … ``tr127-block6`` – Block-specific regressions from FPInnovations TR-127 (northwestern
-  BC). Blocks 1 and 3 require two lateral-distance predictors (``--lateral-distance-m`` for the main lead and
-  ``--lateral-distance-2-m`` for the auxiliary lead), while Blocks 5 and 6 require ``--num-logs``. The CLI warns
-  when values fall outside the published ranges and reports the computed cycle minutes beside productivity.
-* ``mcneel-running`` – **New** running-skyline helper based on McNeel (2000) Madill 046 longline yarders.
-  Provide the horizontal span (``--horizontal-distance-m`` or reuse ``--slope-distance-m``), deflection
-  (``--vertical-distance-m``), and lateral yarding distance. Pieces per cycle and piece volume default to the
-  paper’s Yarder A/B averages (2.8 pieces × 2.5 m³ or 3.0 × 1.6 m³), but you can override them with
-  ``--pieces-per-cycle`` / ``--piece-volume-m3``. Pick ``--running-yarder-variant yarder_a`` or ``yarder_b`` to
-  mirror the observed payload/cycle-time differences.
-* ``aubuchon-standing`` – standing-skyline helper derived from the Hensel et al. (1979) Wyssen system
-  regression compiled in Aubuchon (1982). Supply ``--logs-per-turn``, ``--average-log-volume-m3``, and
-  ``--crew-size`` along with slope/lateral distance. The CLI reports turn minutes and payload so analysts can
-  calibrate against local choking practices.
-* ``aubuchon-kramer`` – **New** Kramer (1978) standing-skyline regression that explicitly models carriage
-  height and chord slope (intermediate support/deflection proxy). Use ``--carriage-height-m`` and
-  ``--chordslope-percent`` alongside the standard slope/lateral/log inputs to quantify how additional lift or
-  downhill chord profiles influence cycle time. Defaults assume payload = ``logs × average-log-volume``.
-* ``aubuchon-kellogg`` – **New** Kellogg (1976) tower-yarder regression with lead-angle and choker-count
-  predictors, letting you test how fan-out at the hook point or extra chokers affect delay-free minutes. Provide
-  ``--lead-angle-deg`` and ``--chokers`` plus the usual log/volume fields; the helper automatically converts the
-  payload to the cubic-foot basis used in the original study.
-* ``--machine-role helicopter_longline`` – **New** helicopter helper built from FPInnovations Advantage/TR helicopter
-  studies (Lama/K-Max/Bell 214B/S-64E). Give ``--helicopter-model`` plus ``--helicopter-flight-distance-m`` and optional payload/load-factor overrides to
-  estimate cycle minutes, turns per PMH, and m³/PMH₀ for light-, medium-, and heavy-lift longline work. Delay minutes can be added via
-  ``--helicopter-delay-minutes`` to capture weather/landing waits.
+* ``lee-uphill`` / ``lee-downhill`` – HAM300 case study (Lee et al. 2018, South Korea). Uphill only needs
+  ``--slope-distance-m`` (calibrated 5–130 m); downhill also needs ``--lateral-distance-m`` (0–25 m) and
+  ``--large-end-diameter-cm`` (~34 cm). The CLI emits a warning because these are short-span non-BC studies.
+* ``tr125-single-span`` / ``tr125-multi-span`` – FPInnovations TR-125 standing skyline (Skylead C40 with Mini-Maki).
+  Provide slope distance (10–420 m) and lateral distance (0–50 m). Payload defaults to 1.6 m³ (≈3.4 logs × 0.47 m³/log)
+  but can be overridden; the CLI also prints the underlying cycle minutes so you can see the intermediate-support penalty.
+* ``tr127-block1`` … ``tr127-block6`` – FPInnovations TR-127 block-specific tower-yarders. Blocks 1 & 3 require two
+  lateral inputs (``--lateral-distance-m`` plus ``--lateral-distance-2-m``); Blocks 5 & 6 require ``--num-logs``.
+  Range checks match the publication and the table output shows cycle minutes alongside m³/PMH.
+* ``mcneel-running`` – McNeel (2000) Madill 046 longline running skyline. Requires horizontal span
+  (``--horizontal-distance-m`` or reuses ``--slope-distance-m``), deflection (``--vertical-distance-m``), lateral distance,
+  and optional ``--pieces-per-cycle`` / ``--piece-volume-m3`` plus ``--running-yarder-variant`` (Yarder A/B). Selecting
+  ``--harvest-system-id cable_running`` pre-populates those inputs automatically.
+* ``aubuchon-standing`` – Hensel et al. (1979) Wyssen standing skyline (Aubuchon 1982 Appendix A Eq. 15). Provide
+  ``--logs-per-turn``, ``--average-log-volume-m3``, ``--crew-size``, slope, and lateral distance. Calibrated for 45–75 %
+  corridors with 3.5–6 logs/turn; the CLI warns that it is a WA/ID dataset.
+* ``aubuchon-kramer`` – Kramer (1978) standing skyline with carriage-height and chord-slope predictors. Supply
+  ``--carriage-height-m`` and ``--chordslope-percent`` in addition to the Wyssen-style inputs; ``--harvest-system-id
+  cable_standing`` applies 3.8 logs/turn, 0.45 m³/log, and −15 % chord slope defaults for coastal chokers.
+* ``aubuchon-kellogg`` – Kellogg (1976) tower-yarder regression (Oregon) with lead-angle and choker-count predictors.
+  Provide ``--lead-angle-deg`` and ``--chokers`` with the usual log/volume inputs; payloads are converted to cubic feet
+  internally to match the source, and the CLI warns that it’s not BC data.
 
-Every skyline model emits the assumed payload and m³/PMH0 result; the McNeel and Aubuchon helpers also report
-cycle minutes derived from their regressions so analysts can see how deflection, lead angle, or chokers affect
-turn time. Telemetry rows now capture the new standing-skyline predictors (carriage height, chord slope, lead
-angle, chokers) in addition to ``horizontal_distance_m``, ``vertical_distance_m``, ``pieces_per_cycle``,
-``piece_volume_m3``, and the running-yarder variant. Helicopter runs also log the chosen model and payload for downstream telemetry.
+Helicopter longline work still lives under ``fhops.dataset estimate-productivity --machine-role helicopter_longline``.
+Those helpers wrap FPInnovations Advantage/TR studies (Lama, K-Max, Bell 214B, S-64E) with ``--helicopter-model``,
+``--helicopter-flight-distance-m``, payload/load-factor overrides, and per-cycle delay minutes. Selecting
+``--harvest-system-id helicopter`` auto-loads a Bell 214B preset for quick estimates.
+
+Every skyline model prints the assumed payload and m³/PMH0 result; the McNeel and Aubuchon helpers also show
+delay-free cycle minutes so you can see the impact of deflection, carriage height, lead angle, or extra chokers.
+Telemetry rows capture all skyline predictors (horizontal/vertical distance, pieces, piece volume, carriage height,
+chord slope, lead angle, chokers, running-yarder variant) so harvest-system overrides are traceable.
 
 CTL Harvester Productivity Models
 ---------------------------------
