@@ -32,6 +32,11 @@ from .forwarder_bc import (
     ForwarderBCResult,
     estimate_forwarder_productivity_bc,
 )
+from .skidder_ft import (
+    Han2018SkidderMethod,
+    SkidderProductivityResult,
+    estimate_grapple_skidder_productivity_han2018,
+)
 from .harvester_ctl import (
     ADV6N10HarvesterInputs,
     TN292HarvesterInputs,
@@ -90,6 +95,7 @@ __all__ = [
     "estimate_forwarder_productivity_large_forwarder_thinning",
     "estimate_forwarder_productivity_kellogg_bettinger",
     "estimate_forwarder_productivity_bc",
+    "estimate_grapple_skidder_productivity_han2018",
     "ALPACASlopeClass",
     "alpaca_slope_multiplier",
     "ForwarderBCModel",
@@ -108,4 +114,6 @@ __all__ = [
     "estimate_shovel_logging_productivity",
     "ADV6N10HarvesterInputs",
     "TN292HarvesterInputs",
+    "Han2018SkidderMethod",
+    "SkidderProductivityResult",
 ]

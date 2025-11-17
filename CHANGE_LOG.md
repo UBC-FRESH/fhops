@@ -1,5 +1,11 @@
 # Development Change Log
 
+# 2025-11-19 — Whole-tree forwarder/clambunk helpers
+- Extended `fhops.productivity.forwarder_bc` with the Eriksson & Lindroos (2014) final-felling/thinning payload regressions plus the Laitila & Väätäinen (2020) brushwood harwarder helper so whole-tree forwarder/clambunk coverage no longer piggybacks on CTL-only models.
+- `fhops.dataset estimate-productivity --machine-role forwarder` and `fhops.dataset estimate-forwarder-productivity` gained dedicated flags for mean extraction distance, mean stem size, load capacity, harvested trees per hectare, average tree volume (dm³), forwarding distance, harwarder payload, and grapple-load size; tests cover the new CLI flows alongside the helper wiring.
+- Updated `docs/reference/harvest_systems.rst` to spell out when to pick each helper (final felling vs. thinning vs. brushwood cleanup) and to flag the outstanding BC slope-calibration gap; planning notes now capture the completed work and remaining skyline/skidder tasks.
+- Added Han et al. (2018) grapple-skidder helpers (`fhops.productivity.skidder_ft`) and wired them into `fhops.dataset estimate-productivity --machine-role grapple_skidder`, including validation/tests plus documentation on the new CLI flags.
+
 # Development Change Log
 
 ## 2025-11-18 — Machine-rate CLI + repair allowances

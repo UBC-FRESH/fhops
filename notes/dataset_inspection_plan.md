@@ -135,12 +135,12 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
 ### Next Actions for Missing Machine Families
 
 - [ ] **Whole-tree forwarders / clambunks (Eriksson & Lindroos 2014; Laitila & Väätäinen 2014, 2020)**
-  - [ ] Digitise the Scandinavian long-distance forwarder/clambunk regressions (payload vs. distance, slope multipliers) and convert them into helper functions distinct from the CTL stack.
-  - [ ] Add CLI flags mirroring the published predictors (payload, distance components, terrain class) and regression tests reproducing the tables/curves.
-  - [ ] Document applicability (final felling vs. salvage vs. plantation clean-up) and call out where BC calibration is still pending.
+  - [x] Digitise the Scandinavian long-distance forwarder/clambunk regressions (payload vs. distance, slope multipliers) and convert them into helper functions distinct from the CTL stack. (New `ForwarderBCModel` entries now wrap Eriksson & Lindroos final-felling/thinning payload models plus the Laitila & Väätäinen 2020 harwarder helper.)
+  - [x] Add CLI flags mirroring the published predictors (payload, distance components, terrain class) and regression tests reproducing the tables/curves. (`fhops dataset estimate-productivity --machine-role forwarder` now accepts mean extraction distance, mean stem size, load capacity, and brushwood harwarder inputs; tests cover CLI + helper outputs.)
+  - [x] Document applicability (final felling vs. salvage vs. plantation clean-up) and call out where BC calibration is still pending. (`docs/reference/harvest_systems.rst` now spells out when to pick each helper and flags missing BC slope factors.)
 - [ ] **Grapple skidders & shovel loggers (Han et al. 2018; George et al. 2022; FPInnovations skidder series)**
-  - [ ] Extract grapple-skidder and shovel-logger cycle-time equations (travel out/in, load size, slope class) and wrap them in `fhops.productivity.skidder_ft`.
-  - [ ] Wire helpers into CLI + solver job defaults (`grapple_skidder`, `shovel_logger`) and add regression tests per reference.
+  - [x] Extract grapple-skidder and shovel-logger cycle-time equations (travel out/in, load size, slope class) and wrap them in `fhops.productivity.skidder_ft`. (Han et al. 2018 lop-and-scatter + whole-tree models now live in `estimate_grapple_skidder_productivity_han2018`.)
+  - [x] Wire helpers into CLI + solver job defaults (`grapple_skidder`, `shovel_logger`) and add regression tests per reference. (`fhops dataset estimate-productivity --machine-role grapple_skidder` exposes the new flags; unit + CLI coverage asserts the outputs.)
   - [ ] Capture scenario multipliers for trail spacing / decking strategy (from TN285/FPInnovations skidder reports) so costing workflows can reason about narrow vs. wide trail networks.
 - [ ] **Skyline yarders / helicopter longline (Aubuchon 1982; Böhm & Kanzian 2023; Arnvik helicopter refs)**
   - [ ] Build skyline productivity helpers keyed by payload, deflection, lateral yarding distance, and anchor profile; include both standing and running skyline variants.

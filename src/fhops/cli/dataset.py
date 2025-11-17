@@ -29,10 +29,13 @@ from fhops.productivity import (
     ALPACASlopeClass,
     ForwarderBCModel,
     ForwarderBCResult,
+    Han2018SkidderMethod,
     LahrsenModel,
     ADV6N10HarvesterInputs,
     TN292HarvesterInputs,
+    SkidderProductivityResult,
     alpaca_slope_multiplier,
+    estimate_grapple_skidder_productivity_han2018,
     estimate_harvester_productivity_adv5n30,
     estimate_harvester_productivity_tn292,
     estimate_cable_skidding_productivity_unver_robust,
@@ -109,6 +112,7 @@ class ProductivityMachineRole(str, Enum):
     FELLER_BUNCHER = "feller_buncher"
     FORWARDER = "forwarder"
     CTL_HARVESTER = "ctl_harvester"
+    GRAPPLE_SKIDDER = "grapple_skidder"
 
 
 class CTLHarvesterModel(str, Enum):
@@ -157,6 +161,29 @@ _FORWARDER_GHAFFARIYAN_MODELS = {
 }
 
 _FORWARDER_ADV6N10_MODELS = {ForwarderBCModel.ADV6N10_SHORTWOOD}
+_FORWARDER_ERIKSSON_MODELS = {
+    ForwarderBCModel.ERIKSSON_FINAL_FELLING,
+    ForwarderBCModel.ERIKSSON_THINNING,
+}
+_FORWARDER_BRUSHWOOD_MODELS = {ForwarderBCModel.LAITILA_VAATAINEN_BRUSHWOOD}
+
+
+def _render_grapple_skidder_result(result: SkidderProductivityResult) -> None:
+    params = result.parameters
+    rows = [
+        ("Method", result.method.value.replace("_", "-")),
+        ("Pieces per Cycle", f"{float(params['pieces_per_cycle']):.2f}"),
+        ("Piece Volume (m³)", f"{float(params['piece_volume_m3']):.3f}"),
+        ("Empty Distance (m)", f"{float(params['empty_distance_m']):.1f}"),
+        ("Loaded Distance (m)", f"{float(params['loaded_distance_m']):.1f}"),
+        ("Cycle Time (s)", f"{result.cycle_time_seconds:.1f}"),
+        ("Payload per Cycle (m³)", f"{result.payload_m3:.2f}"),
+        ("Predicted Productivity (m³/PMH0)", f"{result.predicted_m3_per_pmh:.2f}"),
+    ]
+    _render_kv_table("Grapple Skidder Productivity Estimate", rows)
+    console.print(
+        "[dim]Regression from Han et al. (2018) beetle-kill salvage study (delay-free cycle time).[/dim]"
+    )
 
 
 def _forwarder_parameters(result: ForwarderBCResult) -> list[tuple[str, str]]:
@@ -192,6 +219,33 @@ def _forwarder_parameters(result: ForwarderBCResult) -> list[tuple[str, str]]:
                 ),
             ]
         )
+    elif result.model in _FORWARDER_ERIKSSON_MODELS:
+        rows.extend(
+            [
+                (
+                    "Mean Extraction Distance (m)",
+                    f"{float(params['mean_extraction_distance_m']):.1f}",
+                ),
+                ("Mean Stem Size (m³)", f"{float(params['mean_stem_size_m3']):.3f}"),
+                ("Load Capacity (m³)", f"{float(params['load_capacity_m3']):.2f}"),
+            ]
+        )
+    elif result.model in _FORWARDER_BRUSHWOOD_MODELS:
+        rows.extend(
+            [
+                ("Harvested Trees (/ha)", f"{float(params['harvested_trees_per_ha']):.0f}"),
+                (
+                    "Average Tree Volume (dm³)",
+                    f"{float(params['average_tree_volume_dm3']):.1f}",
+                ),
+                ("Forwarding Distance (m)", f"{float(params['forwarding_distance_m']):.1f}"),
+                ("Harwarder Payload (m³)", f"{float(params['harwarder_payload_m3']):.2f}"),
+                (
+                    "Grapple Load (unloading, m³)",
+                    f"{float(params['grapple_load_unloading_m3']):.2f}",
+                ),
+            ]
+        )
     else:
         rows.extend(
             [
@@ -218,6 +272,14 @@ def _render_forwarder_result(result: ForwarderBCResult) -> None:
         console.print(
             "[dim]Regression from Gingras & Favreau (2005) CTL sorting study (ADV6N10).[/dim]"
         )
+    elif result.model in _FORWARDER_ERIKSSON_MODELS:
+        console.print(
+            "[dim]Regression from Eriksson & Lindroos (2014) Swedish follow-up study (700+ machines).[/dim]"
+        )
+    elif result.model in _FORWARDER_BRUSHWOOD_MODELS:
+        console.print(
+            "[dim]Regression from Laitila & Väätäinen (2020) Ponsse Buffalo Dual harwarder case study.[/dim]"
+        )
     else:
         console.print(
             "[dim]Regression from Kellogg & Bettinger (1994) western Oregon CTL study.[/dim]"
@@ -239,6 +301,14 @@ def _evaluate_forwarder_result(
     travel_speed: float | None,
     trail_length: float | None,
     products_per_trail: float | None,
+    mean_extraction_distance: float | None,
+    mean_stem_size: float | None,
+    load_capacity: float | None,
+    harvested_trees_per_ha: float | None,
+    avg_tree_volume_dm3: float | None,
+    forwarding_distance: float | None,
+    harwarder_payload: float | None,
+    grapple_load_unloading: float | None,
 ) -> ForwarderBCResult:
     try:
         return estimate_forwarder_productivity_bc(
@@ -255,8 +325,54 @@ def _evaluate_forwarder_result(
             travel_speed_m_per_min=travel_speed,
             trail_length_m=trail_length,
             products_per_trail=products_per_trail,
+            mean_extraction_distance_m=mean_extraction_distance,
+            mean_stem_size_m3=mean_stem_size,
+            load_capacity_m3=load_capacity,
+            harvested_trees_per_ha=harvested_trees_per_ha,
+            average_tree_volume_dm3=avg_tree_volume_dm3,
+            forwarding_distance_m=forwarding_distance,
+            harwarder_payload_m3=harwarder_payload,
+            grapple_load_unloading_m3=grapple_load_unloading,
         )
     except ValueError as exc:  # pragma: no cover - Typer surfaces error text
+        raise typer.BadParameter(str(exc)) from exc
+
+
+def _evaluate_grapple_skidder_result(
+    *,
+    model: Han2018SkidderMethod,
+    pieces_per_cycle: float | None,
+    piece_volume_m3: float | None,
+    empty_distance_m: float | None,
+    loaded_distance_m: float | None,
+) -> SkidderProductivityResult:
+    missing: list[str] = []
+    if pieces_per_cycle is None:
+        missing.append("--skidder-pieces-per-cycle")
+    if piece_volume_m3 is None:
+        missing.append("--skidder-piece-volume")
+    if empty_distance_m is None:
+        missing.append("--skidder-empty-distance")
+    if loaded_distance_m is None:
+        missing.append("--skidder-loaded-distance")
+    if missing:
+        raise typer.BadParameter(
+            f"{', '.join(sorted(missing))} required when --machine-role {ProductivityMachineRole.GRAPPLE_SKIDDER.value}."
+        )
+    assert pieces_per_cycle is not None
+    assert piece_volume_m3 is not None
+    assert empty_distance_m is not None
+    assert loaded_distance_m is not None
+
+    try:
+        return estimate_grapple_skidder_productivity_han2018(
+            method=model,
+            pieces_per_cycle=pieces_per_cycle,
+            piece_volume_m3=piece_volume_m3,
+            empty_distance_m=empty_distance_m,
+            loaded_distance_m=loaded_distance_m,
+        )
+    except ValueError as exc:  # pragma: no cover
         raise typer.BadParameter(str(exc)) from exc
 
 
@@ -900,6 +1016,84 @@ def estimate_productivity_cmd(
         min=0.0,
         help="Number of products separated on the trail (ADV6N10).",
     ),
+    mean_extraction_distance: float | None = typer.Option(
+        None,
+        "--mean-extraction-distance",
+        min=0.0,
+        help="Mean extraction distance (m) for Eriksson & Lindroos forwarder models.",
+    ),
+    mean_stem_size: float | None = typer.Option(
+        None,
+        "--mean-stem-size",
+        min=0.0,
+        help="Mean harvested stem size (m³) for Eriksson & Lindroos models.",
+    ),
+    load_capacity: float | None = typer.Option(
+        None,
+        "--load-capacity",
+        min=0.0,
+        help="Load capacity/payload (m³) for Eriksson & Lindroos models.",
+    ),
+    harvested_trees_per_ha: float | None = typer.Option(
+        None,
+        "--harvested-trees-per-ha",
+        min=0.0,
+        help="Harvested trees per hectare (required for Laitila & Väätäinen brushwood model).",
+    ),
+    avg_tree_volume_dm3: float | None = typer.Option(
+        None,
+        "--avg-tree-volume-dm3",
+        min=0.0,
+        help="Average harvested tree volume (dm³) for the brushwood harwarder.",
+    ),
+    forwarding_distance: float | None = typer.Option(
+        None,
+        "--forwarding-distance",
+        min=0.0,
+        help="Mean forwarding distance (m) for the brushwood harwarder.",
+    ),
+    harwarder_payload: float | None = typer.Option(
+        None,
+        "--harwarder-payload",
+        min=0.0,
+        help="Payload per harwarder trip (m³). Defaults to 7.1 m³ if omitted.",
+    ),
+    grapple_load_unloading: float | None = typer.Option(
+        None,
+        "--grapple-load-unloading",
+        min=0.0,
+        help="Grapple load during unloading (m³). Defaults to 0.29 m³ if omitted.",
+    ),
+    grapple_skidder_model: Han2018SkidderMethod = typer.Option(
+        Han2018SkidderMethod.LOP_AND_SCATTER,
+        "--grapple-skidder-model",
+        case_sensitive=False,
+        help="Grapple skidder regression (Han et al. 2018).",
+    ),
+    skidder_pieces_per_cycle: float | None = typer.Option(
+        None,
+        "--skidder-pieces-per-cycle",
+        min=0.0,
+        help="Logs/trees moved per cycle (depends on selected grapple skidder model).",
+    ),
+    skidder_piece_volume: float | None = typer.Option(
+        None,
+        "--skidder-piece-volume",
+        min=0.0,
+        help="Average log/tree volume (m³) for grapple skidder payload calculations.",
+    ),
+    skidder_empty_distance: float | None = typer.Option(
+        None,
+        "--skidder-empty-distance",
+        min=0.0,
+        help="Empty travel distance per cycle (m) for grapple skidder models.",
+    ),
+    skidder_loaded_distance: float | None = typer.Option(
+        None,
+        "--skidder-loaded-distance",
+        min=0.0,
+        help="Loaded travel distance per cycle (m) for grapple skidder models.",
+    ),
 ):
     """Estimate productivity for Lahrsen (feller-buncher) or forwarder models."""
 
@@ -919,6 +1113,14 @@ def estimate_productivity_cmd(
             travel_speed=travel_speed,
             trail_length=trail_length,
             products_per_trail=products_per_trail,
+            mean_extraction_distance=mean_extraction_distance,
+            mean_stem_size=mean_stem_size,
+            load_capacity=load_capacity,
+            harvested_trees_per_ha=harvested_trees_per_ha,
+            avg_tree_volume_dm3=avg_tree_volume_dm3,
+            forwarding_distance=forwarding_distance,
+            harwarder_payload=harwarder_payload,
+            grapple_load_unloading=grapple_load_unloading,
         )
         _render_forwarder_result(result)
         return
@@ -935,6 +1137,16 @@ def estimate_productivity_cmd(
             density_basis=ctl_density_basis,
         )
         _render_ctl_harvester_result(ctl_harvester_model, inputs, value)
+        return
+    if role == ProductivityMachineRole.GRAPPLE_SKIDDER.value:
+        result = _evaluate_grapple_skidder_result(
+            model=grapple_skidder_model,
+            pieces_per_cycle=skidder_pieces_per_cycle,
+            piece_volume_m3=skidder_piece_volume,
+            empty_distance_m=skidder_empty_distance,
+            loaded_distance_m=skidder_loaded_distance,
+        )
+        _render_grapple_skidder_result(result)
         return
 
     missing: list[str] = []
@@ -1131,6 +1343,54 @@ def estimate_forwarder_productivity_cmd(
         min=0.0,
         help="Number of products separated on the trail (ADV6N10).",
     ),
+    mean_extraction_distance: float | None = typer.Option(
+        None,
+        "--mean-extraction-distance",
+        min=0.0,
+        help="Mean extraction distance (m) for Eriksson & Lindroos forwarder models.",
+    ),
+    mean_stem_size: float | None = typer.Option(
+        None,
+        "--mean-stem-size",
+        min=0.0,
+        help="Mean harvested stem size (m³) for Eriksson & Lindroos models.",
+    ),
+    load_capacity: float | None = typer.Option(
+        None,
+        "--load-capacity",
+        min=0.0,
+        help="Load capacity/payload (m³) for Eriksson & Lindroos models.",
+    ),
+    harvested_trees_per_ha: float | None = typer.Option(
+        None,
+        "--harvested-trees-per-ha",
+        min=0.0,
+        help="Harvested trees per hectare (required for Laitila & Väätäinen brushwood model).",
+    ),
+    avg_tree_volume_dm3: float | None = typer.Option(
+        None,
+        "--avg-tree-volume-dm3",
+        min=0.0,
+        help="Average harvested tree volume (dm³) for the brushwood harwarder.",
+    ),
+    forwarding_distance: float | None = typer.Option(
+        None,
+        "--forwarding-distance",
+        min=0.0,
+        help="Mean forwarding distance (m) for the brushwood harwarder.",
+    ),
+    harwarder_payload: float | None = typer.Option(
+        None,
+        "--harwarder-payload",
+        min=0.0,
+        help="Payload per harwarder trip (m³). Defaults to 7.1 m³ if omitted.",
+    ),
+    grapple_load_unloading: float | None = typer.Option(
+        None,
+        "--grapple-load-unloading",
+        min=0.0,
+        help="Grapple load during unloading (m³). Defaults to 0.29 m³ if omitted.",
+    ),
 ):
     """Estimate forwarder productivity (m³/PMH0) for thinning operations."""
 
@@ -1148,6 +1408,14 @@ def estimate_forwarder_productivity_cmd(
         travel_speed=travel_speed,
         trail_length=trail_length,
         products_per_trail=products_per_trail,
+        mean_extraction_distance=mean_extraction_distance,
+        mean_stem_size=mean_stem_size,
+        load_capacity=load_capacity,
+        harvested_trees_per_ha=harvested_trees_per_ha,
+        avg_tree_volume_dm3=avg_tree_volume_dm3,
+        forwarding_distance=forwarding_distance,
+        harwarder_payload=harwarder_payload,
+        grapple_load_unloading=grapple_load_unloading,
     )
     _render_forwarder_result(result)
 

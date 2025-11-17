@@ -6,6 +6,10 @@ from collections.abc import Mapping
 from dataclasses import dataclass, field
 from enum import Enum
 
+from fhops.productivity.eriksson2014 import (
+    estimate_forwarder_productivity_final_felling,
+    estimate_forwarder_productivity_thinning,
+)
 from fhops.productivity.ghaffariyan2019 import (
     ALPACASlopeClass,
     alpaca_slope_multiplier,
@@ -16,6 +20,7 @@ from fhops.productivity.kellogg_bettinger1994 import (
     LoadType as KelloggLoadType,
     estimate_forwarder_productivity_kellogg_bettinger,
 )
+from fhops.productivity.laitila2020 import estimate_brushwood_harwarder_productivity
 
 
 class ForwarderBCModel(str, Enum):
@@ -27,6 +32,9 @@ class ForwarderBCModel(str, Enum):
     KELLOGG_PULPWOOD = "kellogg-pulpwood"
     KELLOGG_MIXED = "kellogg-mixed"
     ADV6N10_SHORTWOOD = "adv6n10-shortwood"
+    ERIKSSON_FINAL_FELLING = "eriksson-final-felling"
+    ERIKSSON_THINNING = "eriksson-thinning"
+    LAITILA_VAATAINEN_BRUSHWOOD = "laitila-vaatainen-brushwood"
 
 
 _MODEL_TO_LOAD: dict[ForwarderBCModel, KelloggLoadType] = {
@@ -36,6 +44,11 @@ _MODEL_TO_LOAD: dict[ForwarderBCModel, KelloggLoadType] = {
 }
 
 _ADV6N10_MODELS = {ForwarderBCModel.ADV6N10_SHORTWOOD}
+_ERIKSSON_MODELS = {
+    ForwarderBCModel.ERIKSSON_FINAL_FELLING,
+    ForwarderBCModel.ERIKSSON_THINNING,
+}
+_BRUSHWOOD_MODELS = {ForwarderBCModel.LAITILA_VAATAINEN_BRUSHWOOD}
 
 
 @dataclass(frozen=True)
@@ -64,8 +77,102 @@ def estimate_forwarder_productivity_bc(
     travel_speed_m_per_min: float | None = None,
     trail_length_m: float | None = None,
     products_per_trail: float | None = None,
+    mean_extraction_distance_m: float | None = None,
+    mean_stem_size_m3: float | None = None,
+    load_capacity_m3: float | None = None,
+    harvested_trees_per_ha: float | None = None,
+    average_tree_volume_dm3: float | None = None,
+    forwarding_distance_m: float | None = None,
+    harwarder_payload_m3: float | None = None,
+    grapple_load_unloading_m3: float | None = None,
 ) -> ForwarderBCResult:
     """Evaluate one of the BC forwarder regressions with validation."""
+
+    if model in _ERIKSSON_MODELS:
+        required_eriksson = {
+            "mean_extraction_distance_m": mean_extraction_distance_m,
+            "mean_stem_size_m3": mean_stem_size_m3,
+            "load_capacity_m3": load_capacity_m3,
+        }
+        missing_eriksson = [name for name, value in required_eriksson.items() if value is None]
+        if missing_eriksson:
+            raise ValueError(
+                "Missing parameters for Eriksson & Lindroos model: "
+                + ", ".join(sorted(missing_eriksson))
+            )
+        assert mean_extraction_distance_m is not None
+        assert mean_stem_size_m3 is not None
+        assert load_capacity_m3 is not None
+
+        if model is ForwarderBCModel.ERIKSSON_FINAL_FELLING:
+            value = estimate_forwarder_productivity_final_felling(
+                mean_extraction_distance_m=mean_extraction_distance_m,
+                mean_stem_size_m3=mean_stem_size_m3,
+                load_capacity_m3=load_capacity_m3,
+            )
+            reference = "Eriksson & Lindroos 2014 (Final Felling)"
+        else:
+            value = estimate_forwarder_productivity_thinning(
+                mean_extraction_distance_m=mean_extraction_distance_m,
+                mean_stem_size_m3=mean_stem_size_m3,
+                load_capacity_m3=load_capacity_m3,
+            )
+            reference = "Eriksson & Lindroos 2014 (Thinning)"
+
+        params = {
+            "mean_extraction_distance_m": mean_extraction_distance_m,
+            "mean_stem_size_m3": mean_stem_size_m3,
+            "load_capacity_m3": load_capacity_m3,
+        }
+        return ForwarderBCResult(
+            model=model,
+            predicted_m3_per_pmh=value,
+            reference=reference,
+            parameters=params,
+        )
+
+    if model in _BRUSHWOOD_MODELS:
+        required_brushwood = {
+            "harvested_trees_per_ha": harvested_trees_per_ha,
+            "average_tree_volume_dm3": average_tree_volume_dm3,
+            "forwarding_distance_m": forwarding_distance_m,
+        }
+        missing_brushwood = [
+            name for name, value in required_brushwood.items() if value is None
+        ]
+        if missing_brushwood:
+            raise ValueError(
+                "Missing parameters for Laitila & Väätäinen (2020) model: "
+                + ", ".join(sorted(missing_brushwood))
+            )
+        assert harvested_trees_per_ha is not None
+        assert average_tree_volume_dm3 is not None
+        assert forwarding_distance_m is not None
+
+        payload_value = 7.1 if harwarder_payload_m3 is None else harwarder_payload_m3
+        unloading_value = (
+            0.29 if grapple_load_unloading_m3 is None else grapple_load_unloading_m3
+        )
+        value = estimate_brushwood_harwarder_productivity(
+            harvested_trees_per_ha=harvested_trees_per_ha,
+            average_tree_volume_dm3=average_tree_volume_dm3,
+            forwarding_distance_m=forwarding_distance_m,
+            harwarder_payload_m3=payload_value,
+            grapple_load_unloading_m3=unloading_value,
+        )
+        params = {
+            "harvested_trees_per_ha": harvested_trees_per_ha,
+            "average_tree_volume_dm3": average_tree_volume_dm3,
+            "forwarding_distance_m": forwarding_distance_m,
+            "harwarder_payload_m3": payload_value,
+            "grapple_load_unloading_m3": unloading_value,
+        }
+        return ForwarderBCResult(
+            model=model,
+            predicted_m3_per_pmh=value,
+            reference="Laitila & Väätäinen 2020 (Brushwood Harwarder)",
+            parameters=params,
+        )
 
     if model in (ForwarderBCModel.GHAFFARIYAN_SMALL, ForwarderBCModel.GHAFFARIYAN_LARGE):
         if extraction_distance_m is None:

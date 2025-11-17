@@ -100,10 +100,38 @@ Pick the regression that matches the stand context:
   Requires ``--payload-per-trip``, ``--mean-log-length``, ``--travel-speed``, ``--trail-length``, and
   ``--products-per-trail``. Use this when you have explicit payload/log-length targets or need to
   quantify the productivity penalty of sorting several products per trail.
+* ``eriksson-final-felling`` / ``eriksson-thinning`` – Eriksson & Lindroos (2014) Swedish follow-up
+  dataset covering >700 CTL forwarders. Provide ``--mean-extraction-distance`` (m),
+  ``--mean-stem-size`` (m³), and ``--load-capacity`` (m³). The final-felling variant reflects larger
+  stems and long forwarding distances; the thinning variant should be used when stem sizes stay below
+  ~0.2 m³. These regressions omit explicit slope factors, so treat steep ground as an open action item
+  until BC-specific multipliers are published.
+* ``laitila-vaatainen-brushwood`` – Ponsse Buffalo Dual harwarder regression from Laitila &
+  Väätäinen (2020). Supply ``--harvested-trees-per-ha``, ``--avg-tree-volume-dm3``, and
+  ``--forwarding-distance``. Optional knobs ``--harwarder-payload`` (default 7.1 m³) and
+  ``--grapple-load-unloading`` (default 0.29 m³) match the study’s payload assumptions. This helper
+  is best suited for whole-tree/brushwood clean-up, light salvage, or plantation corridor clearing
+  where a single machine fells, accumulates, and shuttles material to the roadside.
 
 The commands surface identical arguments under both the dedicated forwarder CLI and the general
 ``estimate-productivity --machine-role forwarder`` path, so the same guidance applies to synthetic
 generators, scenario QA, and KPI workflows.
+
+Grapple Skidder Productivity Models
+-----------------------------------
+
+Ground-based full-tree systems can now call the Han et al. (2018) regressions via
+``fhops.dataset estimate-productivity --machine-role grapple_skidder``:
+
+* ``han2018-lop-scatter`` – delay-free cycle time for Tigercat 615C skidding delimbed logs in
+  lop-and-scatter salvage. Requires ``--skidder-pieces-per-cycle`` (logs/turn),
+  ``--skidder-piece-volume`` (m³/log), ``--skidder-empty-distance`` (m), and
+  ``--skidder-loaded-distance`` (m). Payload is derived automatically and converted into m³/PMH0.
+* ``han2018-whole-tree`` – same machine/stand, but moving whole trees to roadside decks. Replace the
+  log count with trees per turn (same CLI flag) and supply average tree volume.
+
+Both helpers report cycle time, payload per turn, and predicted productivity so analysts can adjust
+the distance or payload assumptions directly.
 
 CTL Harvester Productivity Models
 ---------------------------------
