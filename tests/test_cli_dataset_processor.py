@@ -5,6 +5,8 @@ from typer.testing import CliRunner
 from fhops.cli.dataset import dataset_app
 from fhops.productivity import (
     estimate_processor_productivity_berry2019,
+    estimate_processor_productivity_labelle2016,
+    estimate_processor_productivity_labelle2017,
     estimate_processor_productivity_labelle2019_dbh,
     estimate_processor_productivity_labelle2019_volume,
 )
@@ -105,5 +107,51 @@ def test_cli_processor_labelle2019_volume() -> None:
         species="beech",
         treatment="selective_cut",
         volume_m3=1.9,
+    )
+    assert f"{expected.productivity_m3_per_pmh:.2f}" in result.stdout
+
+
+def test_cli_processor_labelle2016_treeform() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "roadside_processor",
+            "--processor-model",
+            "labelle2016",
+            "--processor-dbh-cm",
+            "32.0",
+            "--processor-labelle2016-form",
+            "unacceptable",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_processor_productivity_labelle2016(
+        tree_form="unacceptable",
+        dbh_cm=32.0,
+    )
+    assert f"{expected.productivity_m3_per_pmh:.2f}" in result.stdout
+
+
+def test_cli_processor_labelle2017_variant() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "roadside_processor",
+            "--processor-model",
+            "labelle2017",
+            "--processor-dbh-cm",
+            "31.0",
+            "--processor-labelle2017-variant",
+            "power1",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_processor_productivity_labelle2017(
+        variant="power1",
+        dbh_cm=31.0,
     )
     assert f"{expected.productivity_m3_per_pmh:.2f}" in result.stdout

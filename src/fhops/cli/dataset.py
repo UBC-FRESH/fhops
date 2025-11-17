@@ -78,6 +78,11 @@ from fhops.productivity import (
     load_lahrsen_ranges,
     ProcessorProductivityResult,
     estimate_processor_productivity_berry2019,
+    Labelle2016ProcessorProductivityResult,
+    estimate_processor_productivity_labelle2016,
+    Labelle2017PolynomialProcessorResult,
+    Labelle2017PowerProcessorResult,
+    estimate_processor_productivity_labelle2017,
     Labelle2019ProcessorProductivityResult,
     estimate_processor_productivity_labelle2019_dbh,
     Labelle2019VolumeProcessorProductivityResult,
@@ -206,6 +211,8 @@ class SkylineProductivityModel(str, Enum):
 
 class RoadsideProcessorModel(str, Enum):
     BERRY2019 = "berry2019"
+    LABELLE2016 = "labelle2016"
+    LABELLE2017 = "labelle2017"
     LABELLE2019_DBH = "labelle2019_dbh"
     LABELLE2019_VOLUME = "labelle2019_volume"
 
@@ -218,10 +225,18 @@ class LabelleProcessorSpecies(str, Enum):
 class LabelleProcessorTreatment(str, Enum):
     CLEAR_CUT = "clear_cut"
     SELECTIVE_CUT = "selective_cut"
-    MCNEEL_RUNNING = "mcneel-running"
-    AUBUCHON_STANDING = "aubuchon-standing"
-    AUBUCHON_KRAMER = "aubuchon-kramer"
-    AUBUCHON_KELLOGG = "aubuchon-kellogg"
+
+
+class Labelle2016TreeForm(str, Enum):
+    ACCEPTABLE = "acceptable"
+    UNACCEPTABLE = "unacceptable"
+
+
+class Labelle2017Variant(str, Enum):
+    POLY1 = "poly1"
+    POLY2 = "poly2"
+    POWER1 = "power1"
+    POWER2 = "power2"
 
 
 _TR127_MODEL_TO_BLOCK = {
@@ -329,6 +344,9 @@ def _render_helicopter_result(result: HelicopterProductivityResult) -> None:
 def _render_processor_result(
     result: (
         ProcessorProductivityResult
+        | Labelle2016ProcessorProductivityResult
+        | Labelle2017PolynomialProcessorResult
+        | Labelle2017PowerProcessorResult
         | Labelle2019ProcessorProductivityResult
         | Labelle2019VolumeProcessorProductivityResult
     ),
@@ -351,6 +369,68 @@ def _render_processor_result(
         _render_kv_table("Roadside Processor Productivity Estimate", rows)
         console.print(
             "[dim]Regression from Berry (2019) Kinleith NZ time study; utilisation default accounts for <10 min delays.[/dim]"
+        )
+        return
+
+    elif isinstance(result, Labelle2016ProcessorProductivityResult):
+        rows = [
+            ("Model", "labelle2016_treeform"),
+            ("Tree Form Class", result.tree_form),
+            ("DBH (cm)", f"{result.dbh_cm:.1f}"),
+            ("Coefficient a", f"{result.coefficient_a:.4f}"),
+            ("Exponent b", f"{result.exponent_b:.4f}"),
+            ("Sample Trees", str(result.sample_trees)),
+            ("Delay-free Productivity (m³/PMH)", f"{result.delay_free_productivity_m3_per_pmh:.2f}"),
+            ("Delay Multiplier", f"{result.delay_multiplier:.3f}"),
+            ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
+        ]
+        _render_kv_table("Roadside Processor Productivity Estimate", rows)
+        console.print(
+            "[dim]Labelle et al. (2016) sugar maple processor study (New Brunswick, acceptable vs. unacceptable tree forms). Outputs are PMH₀—apply utilisation via --processor-delay-multiplier.[/dim]"
+        )
+        return
+
+    elif isinstance(result, Labelle2017PolynomialProcessorResult):
+        rows = [
+            ("Model", f"labelle2017_{result.variant}"),
+            ("DBH (cm)", f"{result.dbh_cm:.1f}"),
+            (
+                "Polynomial",
+                f"{result.intercept:+.2f} - {result.linear:.4f}·DBH "
+                f"+ {result.quadratic_coeff:.4f}·DBH^{result.quadratic_exponent:.0f} "
+                f"- {result.cubic_coeff:.4f}·DBH^{result.cubic_exponent:.0f}",
+            ),
+            ("Sample Trees", str(result.sample_trees)),
+            (
+                "Delay-free Productivity (m³/PMH)",
+                f"{result.delay_free_productivity_m3_per_pmh:.2f}",
+            ),
+            ("Delay Multiplier", f"{result.delay_multiplier:.3f}"),
+            ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
+        ]
+        _render_kv_table("Roadside Processor Productivity Estimate", rows)
+        console.print(
+            "[dim]Labelle et al. (2017) excavator-based CTL processors (power/polynomial DBH fits); outputs are PMH₀ from eastern Canadian hardwood blocks.[/dim]"
+        )
+        return
+
+    elif isinstance(result, Labelle2017PowerProcessorResult):
+        rows = [
+            ("Model", f"labelle2017_{result.variant}"),
+            ("DBH (cm)", f"{result.dbh_cm:.1f}"),
+            ("Coefficient", f"{result.coefficient:.6f}"),
+            ("Exponent", f"{result.exponent:.4f}"),
+            ("Sample Trees", str(result.sample_trees)),
+            (
+                "Delay-free Productivity (m³/PMH)",
+                f"{result.delay_free_productivity_m3_per_pmh:.2f}",
+            ),
+            ("Delay Multiplier", f"{result.delay_multiplier:.3f}"),
+            ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
+        ]
+        _render_kv_table("Roadside Processor Productivity Estimate", rows)
+        console.print(
+            "[dim]Labelle et al. (2017) excavator-based CTL processors (power/polynomial DBH fits); outputs are PMH₀ from eastern Canadian hardwood blocks.[/dim]"
         )
         return
 
@@ -2096,6 +2176,18 @@ def estimate_productivity_cmd(
         case_sensitive=False,
         help="Silvicultural treatment for Labelle (2019) hardwood models (clear_cut | selective_cut).",
     ),
+    processor_labelle2016_form: Labelle2016TreeForm = typer.Option(
+        Labelle2016TreeForm.ACCEPTABLE,
+        "--processor-labelle2016-form",
+        case_sensitive=False,
+        help="Tree-form class (Labelle 2016 sugar maple study).",
+    ),
+    processor_labelle2017_variant: Labelle2017Variant = typer.Option(
+        Labelle2017Variant.POLY1,
+        "--processor-labelle2017-variant",
+        case_sensitive=False,
+        help="Labelle (2017) variant (poly1, poly2, power1, power2).",
+    ),
     processor_tree_form: int = typer.Option(
         0,
         "--processor-tree-form",
@@ -2453,6 +2545,38 @@ def estimate_productivity_cmd(
                 piece_size_m3=processor_piece_size_m3,
                 tree_form_category=processor_tree_form,
                 crew_multiplier=processor_crew_multiplier,
+                delay_multiplier=processor_delay_multiplier,
+            )
+        elif processor_model is RoadsideProcessorModel.LABELLE2016:
+            if processor_piece_size_m3 is not None:
+                raise typer.BadParameter(
+                    "--processor-piece-size-m3 applies to the Berry (2019) helper only."
+                )
+            if processor_volume_m3 is not None:
+                raise typer.BadParameter(
+                    "--processor-volume-m3 applies to the Labelle 2019 volume helper only."
+                )
+            if processor_dbh_cm is None:
+                raise typer.BadParameter("--processor-dbh-cm is required for Labelle (2016) models.")
+            result_processor = estimate_processor_productivity_labelle2016(
+                tree_form=processor_labelle2016_form.value,
+                dbh_cm=processor_dbh_cm,
+                delay_multiplier=processor_delay_multiplier,
+            )
+        elif processor_model is RoadsideProcessorModel.LABELLE2017:
+            if processor_piece_size_m3 is not None:
+                raise typer.BadParameter(
+                    "--processor-piece-size-m3 applies to the Berry (2019) helper only."
+                )
+            if processor_volume_m3 is not None:
+                raise typer.BadParameter(
+                    "--processor-volume-m3 applies to the Labelle 2019 helper."
+                )
+            if processor_dbh_cm is None:
+                raise typer.BadParameter("--processor-dbh-cm is required for Labelle (2017) models.")
+            result_processor = estimate_processor_productivity_labelle2017(
+                variant=processor_labelle2017_variant.value,
+                dbh_cm=processor_dbh_cm,
                 delay_multiplier=processor_delay_multiplier,
             )
         elif processor_model is RoadsideProcessorModel.LABELLE2019_DBH:

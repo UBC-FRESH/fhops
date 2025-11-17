@@ -165,6 +165,164 @@ def estimate_processor_productivity_labelle2019_dbh(
 
 
 @dataclass(frozen=True)
+class Labelle2016ProcessorProductivityResult:
+    tree_form: Literal["acceptable", "unacceptable"]
+    dbh_cm: float
+    coefficient_a: float
+    exponent_b: float
+    sample_trees: int
+    delay_multiplier: float
+    delay_free_productivity_m3_per_pmh: float
+    productivity_m3_per_pmh: float
+
+
+_LABELLE2016_TREEFORM_MODELS: dict[str, tuple[float, float, int]] = {
+    "acceptable": (1.0273, 0.8319, 54),
+    "unacceptable": (0.7976, 0.8588, 55),
+}
+
+
+def estimate_processor_productivity_labelle2016(
+    *,
+    tree_form: Literal["acceptable", "unacceptable"],
+    dbh_cm: float,
+    delay_multiplier: float = 1.0,
+) -> Labelle2016ProcessorProductivityResult:
+    """Labelle et al. (2016) sugar maple processor regressions grouped by tree form."""
+
+    if dbh_cm <= 0:
+        raise ValueError("dbh_cm must be > 0")
+    if not (0.0 < delay_multiplier <= 1.0):
+        raise ValueError("delay_multiplier must lie in (0, 1]")
+
+    key = tree_form.lower()
+    if key not in _LABELLE2016_TREEFORM_MODELS:
+        valid = ", ".join(sorted(_LABELLE2016_TREEFORM_MODELS))
+        raise ValueError(f"Unknown tree form '{tree_form}'. Valid options: {valid}")
+
+    coeff_a, exponent_b, sample_count = _LABELLE2016_TREEFORM_MODELS[key]
+    delay_free = coeff_a * (dbh_cm**exponent_b)
+    productivity = delay_free * delay_multiplier
+
+    return Labelle2016ProcessorProductivityResult(
+        tree_form=key,
+        dbh_cm=dbh_cm,
+        coefficient_a=coeff_a,
+        exponent_b=exponent_b,
+        sample_trees=sample_count,
+        delay_multiplier=delay_multiplier,
+        delay_free_productivity_m3_per_pmh=delay_free,
+        productivity_m3_per_pmh=productivity,
+    )
+
+
+@dataclass(frozen=True)
+class Labelle2017PolynomialProcessorResult:
+    variant: str
+    dbh_cm: float
+    intercept: float
+    linear: float
+    quadratic_coeff: float
+    quadratic_exponent: float
+    cubic_coeff: float
+    cubic_exponent: float
+    sample_trees: int
+    delay_multiplier: float
+    delay_free_productivity_m3_per_pmh: float
+    productivity_m3_per_pmh: float
+
+
+@dataclass(frozen=True)
+class Labelle2017PowerProcessorResult:
+    variant: str
+    dbh_cm: float
+    coefficient: float
+    exponent: float
+    sample_trees: int
+    delay_multiplier: float
+    delay_free_productivity_m3_per_pmh: float
+    productivity_m3_per_pmh: float
+
+
+_LABELLE2017_POLY_MODELS: dict[str, tuple[float, float, float, float, float, int]] = {
+    "poly1": (27.67, 5.1784, 0.3017, 0.0039, 0.0, 338),
+    "poly2": (7.2145, 2.3227, 0.1802, 0.0023, 0.0, 365),
+}
+# tuple fields: intercept, linear_coeff (positive, subtract), quadratic_coeff, cubic_coeff, placeholder, sample count
+# NB: quadratic exponent = 2, cubic exponent = 3 per appendix values.
+
+_LABELLE2017_POWER_MODELS: dict[str, tuple[float, float, int]] = {
+    "power1": (0.0071, 2.4652, 42),
+    "power2": (0.005, 2.629, 55),
+}
+
+
+def estimate_processor_productivity_labelle2017(
+    *,
+    variant: Literal["poly1", "poly2", "power1", "power2"],
+    dbh_cm: float,
+    delay_multiplier: float = 1.0,
+) -> Labelle2017PolynomialProcessorResult | Labelle2017PowerProcessorResult:
+    """Labelle et al. (2017) hardwood processor regressions (power/polynomial DBH forms)."""
+
+    if dbh_cm <= 0:
+        raise ValueError("dbh_cm must be > 0")
+    if not (0.0 < delay_multiplier <= 1.0):
+        raise ValueError("delay_multiplier must lie in (0, 1]")
+
+    variant_key = variant.lower()
+    if variant_key in _LABELLE2017_POLY_MODELS:
+        (
+            intercept,
+            linear_coeff,
+            quadratic_coeff,
+            cubic_coeff,
+            _,
+            sample_count,
+        ) = _LABELLE2017_POLY_MODELS[variant_key]
+        delay_free = (
+            intercept
+            - linear_coeff * dbh_cm
+            + quadratic_coeff * (dbh_cm**2)
+            - cubic_coeff * (dbh_cm**3)
+        )
+        delay_free = max(0.0, delay_free)
+        productivity = delay_free * delay_multiplier
+        return Labelle2017PolynomialProcessorResult(
+            variant=variant_key,
+            dbh_cm=dbh_cm,
+            intercept=intercept,
+            linear=linear_coeff,
+            quadratic_coeff=quadratic_coeff,
+            quadratic_exponent=2.0,
+            cubic_coeff=cubic_coeff,
+            cubic_exponent=3.0,
+            sample_trees=sample_count,
+            delay_multiplier=delay_multiplier,
+            delay_free_productivity_m3_per_pmh=delay_free,
+            productivity_m3_per_pmh=productivity,
+        )
+
+    if variant_key in _LABELLE2017_POWER_MODELS:
+        coefficient, exponent, sample_count = _LABELLE2017_POWER_MODELS[variant_key]
+        delay_free = coefficient * (dbh_cm**exponent)
+        productivity = delay_free * delay_multiplier
+        return Labelle2017PowerProcessorResult(
+            variant=variant_key,
+            dbh_cm=dbh_cm,
+            coefficient=coefficient,
+            exponent=exponent,
+            sample_trees=sample_count,
+            delay_multiplier=delay_multiplier,
+            delay_free_productivity_m3_per_pmh=delay_free,
+            productivity_m3_per_pmh=productivity,
+        )
+
+    valid = ", ".join(sorted({* _LABELLE2017_POLY_MODELS.keys(), *_LABELLE2017_POWER_MODELS.keys()}))
+    raise ValueError(f"Unknown Labelle 2017 variant '{variant}'. Valid options: {valid}.")
+
+
+@dataclass(frozen=True)
 class Labelle2019VolumeProcessorProductivityResult:
     species: Literal["spruce", "beech"]
     treatment: Literal["clear_cut", "selective_cut"]

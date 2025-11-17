@@ -8,6 +8,8 @@ from fhops.productivity import (
     LahrsenModel,
     estimate_productivity,
     estimate_productivity_distribution,
+    estimate_processor_productivity_labelle2016,
+    estimate_processor_productivity_labelle2017,
     estimate_processor_productivity_labelle2019_dbh,
     estimate_processor_productivity_labelle2019_volume,
     load_lahrsen_ranges,
@@ -116,3 +118,39 @@ def test_labelle2019_volume_invalid_combo() -> None:
             treatment="seed_tree",  # type: ignore[arg-type]
             volume_m3=1.2,
         )
+
+
+def test_labelle2016_treeform_acceptible() -> None:
+    result = estimate_processor_productivity_labelle2016(
+        tree_form="acceptable",
+        dbh_cm=35.0,
+    )
+    expected = 1.0273 * (35.0 ** 0.8319)
+    assert math.isclose(result.delay_free_productivity_m3_per_pmh, expected, rel_tol=1e-9)
+
+
+def test_labelle2016_bad_treeform_raises() -> None:
+    with pytest.raises(ValueError):
+        estimate_processor_productivity_labelle2016(
+            tree_form="crooked",  # type: ignore[arg-type]
+            dbh_cm=30.0,
+        )
+
+
+def test_labelle2017_poly1_matches_formula() -> None:
+    dbh = 32.0
+    result = estimate_processor_productivity_labelle2017(
+        variant="poly1",
+        dbh_cm=dbh,
+    )
+    expected = 27.67 - 5.1784 * dbh + 0.3017 * (dbh**2) - 0.0039 * (dbh**3)
+    assert math.isclose(result.delay_free_productivity_m3_per_pmh, expected, rel_tol=1e-9)
+
+
+def test_labelle2017_power_variant() -> None:
+    result = estimate_processor_productivity_labelle2017(
+        variant="power2",
+        dbh_cm=28.0,
+    )
+    expected = 0.005 * (28.0 ** 2.629)
+    assert math.isclose(result.delay_free_productivity_m3_per_pmh, expected, rel_tol=1e-9)
