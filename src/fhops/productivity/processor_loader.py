@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
+from typing import Literal
 
 _TREE_FORM_PRODUCTIVITY_MULTIPLIERS = {
     0: 1.0,
@@ -58,6 +59,108 @@ def estimate_processor_productivity_berry2019(
         productivity_m3_per_pmh=productivity,
         piece_size_m3=piece_size_m3,
         tree_form_category=tree_form_category,
+    )
+
+
+@dataclass(frozen=True)
+class Labelle2019ProcessorProductivityResult:
+    species: Literal["spruce", "beech"]
+    treatment: Literal["clear_cut", "selective_cut"]
+    dbh_cm: float
+    intercept: float
+    linear: float
+    quadratic: float
+    sample_trees: int
+    delay_multiplier: float
+    delay_free_productivity_m3_per_pmh: float
+    productivity_m3_per_pmh: float
+
+
+@dataclass(frozen=True)
+class _Labelle2019Polynomial:
+    intercept: float
+    linear: float
+    quadratic: float
+    sample_trees: int
+    description: str
+
+
+_LABELLE2019_DBH_MODELS: dict[tuple[str, str], _Labelle2019Polynomial] = {
+    ("spruce", "clear_cut"): _Labelle2019Polynomial(
+        intercept=-70.18,
+        linear=5.301,
+        quadratic=-0.06052,
+        sample_trees=15,
+        description="Labelle et al. (2019) — clear-cut spruce (Bavaria, Germany)",
+    ),
+    ("beech", "clear_cut"): _Labelle2019Polynomial(
+        intercept=-7.87,
+        linear=2.638,
+        quadratic=-0.04544,
+        sample_trees=15,
+        description="Labelle et al. (2019) — clear-cut beech (Bavaria, Germany)",
+    ),
+    ("spruce", "selective_cut"): _Labelle2019Polynomial(
+        intercept=-22.24,
+        linear=1.482,
+        quadratic=-0.00433,
+        sample_trees=22,
+        description="Labelle et al. (2019) — group-selection spruce (Bavaria, Germany)",
+    ),
+    ("beech", "selective_cut"): _Labelle2019Polynomial(
+        intercept=1.12,
+        linear=0.891,
+        quadratic=-0.00783,
+        sample_trees=30,
+        description="Labelle et al. (2019) — group-selection beech (Bavaria, Germany)",
+    ),
+}
+
+
+def estimate_processor_productivity_labelle2019_dbh(
+    *,
+    species: Literal["spruce", "beech"],
+    treatment: Literal["clear_cut", "selective_cut"],
+    dbh_cm: float,
+    delay_multiplier: float = 1.0,
+) -> Labelle2019ProcessorProductivityResult:
+    """Labelle et al. (2019) Bavarian hardwood processor regressions (DBH polynomial).
+
+    The underlying time-and-motion study covered a TimberPro 620-E with a LogMax 7000C
+    harvesting head working in large-diameter, hardwood-dominated stands (clear-cut and
+    selection-cut prescriptions). Output units are delay-free m³/PMH₀; the optional
+    ``delay_multiplier`` lets analysts enforce utilisation assumptions when wiring the
+    results into costing models.
+    """
+
+    if dbh_cm <= 0:
+        raise ValueError("dbh_cm must be > 0")
+    if not (0.0 < delay_multiplier <= 1.0):
+        raise ValueError("delay_multiplier must lie in (0, 1]")
+
+    key = (species.lower(), treatment.lower())
+    if key not in _LABELLE2019_DBH_MODELS:
+        valid = ", ".join(
+            f"{spec}/{treatment}" for spec, treatment in sorted(_LABELLE2019_DBH_MODELS)
+        )
+        raise ValueError(f"Unknown species/treatment combination {key!r}. Valid pairs: {valid}")
+
+    coeffs = _LABELLE2019_DBH_MODELS[key]
+    delay_free = coeffs.intercept + coeffs.linear * dbh_cm + coeffs.quadratic * (dbh_cm**2)
+    delay_free = max(0.0, delay_free)
+    productivity = delay_free * delay_multiplier
+
+    return Labelle2019ProcessorProductivityResult(
+        species=key[0],
+        treatment=key[1],
+        dbh_cm=dbh_cm,
+        intercept=coeffs.intercept,
+        linear=coeffs.linear,
+        quadratic=coeffs.quadratic,
+        sample_trees=coeffs.sample_trees,
+        delay_multiplier=delay_multiplier,
+        delay_free_productivity_m3_per_pmh=delay_free,
+        productivity_m3_per_pmh=productivity,
     )
 
 

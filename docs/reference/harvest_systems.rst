@@ -120,22 +120,33 @@ generators, scenario QA, and KPI workflows.
 Roadside Processor Productivity Models
 --------------------------------------
 
-``fhops.dataset estimate-productivity --machine-role roadside_processor`` uses the Berry (2019)
-Kinleith time-study regression:
+``fhops.dataset estimate-productivity --machine-role roadside_processor`` now supports two
+regressions:
 
-* ``--processor-piece-size-m3`` – average piece size per stem (m³). Delay-free productivity is
-  computed via ``34.7 × piece_size + 11.3``.
-* ``--processor-tree-form`` – 0 (good), 1 (poor), 2 (bad). Tree-form penalties follow Berry’s
-  observed processing-time uplift (category 1 = +56 % time ⇒ productivity ×0.64, category 2 = +84 %
-  ⇒ ×0.54).
-* ``--processor-crew-multiplier`` – optional operator adjustment (crew A ≈ +16 % ⇒ 1.16, crew C
-  ≈ −25 % ⇒ 0.75, etc.).
-* ``--processor-delay-multiplier`` – utilisation factor (default 0.91 reflects delays <10 min logged
-  in the study). Adjust it if your PMH/SMH ratio differs.
+* ``--processor-model berry2019`` *(default)* – Berry (2019) Kinleith NZ processor study keyed to
+  piece size, tree form, and crew/utilisation multipliers.
+  * ``--processor-piece-size-m3`` – average piece size per stem (m³). Delay-free productivity is
+    computed via ``34.7 × piece_size + 11.3``.
+  * ``--processor-tree-form`` – 0 (good), 1 (poor), 2 (bad). Tree-form penalties follow Berry’s
+    observed processing-time uplift (category 1 = +56 % time ⇒ productivity ×0.64, category 2 = +84 %
+    ⇒ ×0.54).
+  * ``--processor-crew-multiplier`` – optional operator adjustment (crew A ≈ +16 % ⇒ 1.16, crew C
+    ≈ −25 % ⇒ 0.75, etc.).
+  * ``--processor-delay-multiplier`` – utilisation factor (default 0.91 reflects delays <10 min logged
+    in the study). Adjust it if your PMH/SMH ratio differs.
+* ``--processor-model labelle2019_dbh`` – Labelle et al. (2019) Bavarian hardwood case study
+  (TimberPro 620-E + LogMax 7000C) using DBH polynomials per species/treatment. These regressions
+  output delay-free PMH₀ productivity for large-diameter, hardwood-dominated stands (rare in BC but
+  useful when deploying FHOPS abroad).
+  * ``--processor-dbh-cm`` – diameter at breast height (cm).
+  * ``--processor-species`` – ``spruce`` or ``beech`` (matching the reference plots).
+  * ``--processor-treatment`` – ``clear_cut`` or ``selective_cut`` (group selection). Use
+    ``--processor-delay-multiplier`` if you need to impose a local utilisation ratio.
 
 CLI output reports the base delay-free productivity, the applied multipliers, and the utilisation-adjusted
-m³/PMH so costing workflows can decide which value to pass downstream. Loader helpers will follow the
-same pattern once the Labelle/FPInnovations regressions are digitised.
+m³/PMH so costing workflows can decide which value to pass downstream. Remember that the Labelle models
+were calibrated outside BC—treat them as hardwood export presets and rely on the Berry helper for mixed
+or conifer-dominated BC blocks.
 
 Loader-Forwarder Productivity Models
 ------------------------------------

@@ -1,0 +1,585 @@
+[
+  {
+    "machine_type": "single_grip_harvester",
+    "system": "cut_to_length",
+    "region": "",
+    "publication": "Labelle et al. (2017) model 1",
+    "predictors": [
+      {
+        "code": "D\u2081",
+        "description": "",
+        "unit": ""
+      },
+      {
+        "code": "D\u2081d",
+        "description": "",
+        "unit": ""
+      },
+      {
+        "code": "D\u2081f",
+        "description": "",
+        "unit": ""
+      }
+    ],
+    "coefficients": {
+      "a": "27.67",
+      "b": "5.1784",
+      "c": "0.3017",
+      "d": "2",
+      "e": "0.0039",
+      "f": "3"
+    },
+    "intercept": "27.67",
+    "form": "a-bD\u2081+cD\u2081d-eD\u2081f",
+    "r_squared": 0.6854,
+    "notes": "Base machine: EB; Propulsion: CT; Dependent: PV (m\u00b3 PMh0\u207b\u00b9); Observational unit: EL (338); Structure: Third-degree polynomial model; Significance: -",
+    "reference": null
+  },
+  {
+    "machine_type": "single_grip_harvester",
+    "system": "cut_to_length",
+    "region": "",
+    "publication": "Labelle et al. (2017) model 2",
+    "predictors": [
+      {
+        "code": "D\u2081",
+        "description": "",
+        "unit": ""
+      },
+      {
+        "code": "D\u2081d",
+        "description": "",
+        "unit": ""
+      },
+      {
+        "code": "D\u2081f",
+        "description": "",
+        "unit": ""
+      }
+    ],
+    "coefficients": {
+      "a": "7.2145",
+      "b": "2.3227",
+      "c": "0.1802",
+      "d": "2",
+      "e": "0.0023",
+      "f": "3"
+    },
+    "intercept": "7.2145",
+    "form": "a-bD\u2081+cD\u2081d-eD\u2081f",
+    "r_squared": 0.7293,
+    "notes": "Base machine: EB; Propulsion: CT; Dependent: PV (m\u00b3 PMh0\u207b\u00b9); Observational unit: EL (365); Structure: Third-degree polynomial model; Significance: -",
+    "reference": null
+  },
+  {
+    "machine_type": "single_grip_harvester",
+    "system": "cut_to_length",
+    "region": "",
+    "publication": "Labelle et al. (2017) model 3",
+    "predictors": [
+      {
+        "code": "D\u2081b",
+        "description": "",
+        "unit": ""
+      }
+    ],
+    "coefficients": {
+      "a": "0.0071",
+      "b": "2.4652"
+    },
+    "intercept": "0.0071",
+    "form": "aD\u2081b",
+    "r_squared": 0.8322,
+    "notes": "Base machine: EB; Propulsion: CT; Dependent: PV (m\u00b3 PMh0\u207b\u00b9); Observational unit: EL (42); Structure: Power law model; Significance: -",
+    "reference": null
+  },
+  {
+    "machine_type": "single_grip_harvester",
+    "system": "cut_to_length",
+    "region": "",
+    "publication": "Labelle et al. (2017) model 4",
+    "predictors": [
+      {
+        "code": "D\u2081b",
+        "description": "",
+        "unit": ""
+      }
+    ],
+    "coefficients": {
+      "a": "0.005",
+      "b": "2.629"
+    },
+    "intercept": "0.005",
+    "form": "aD\u2081b",
+    "r_squared": 0.8572,
+    "notes": "Base machine: EB; Propulsion: CT; Dependent: PV (m\u00b3 PMh0\u207b\u00b9); Observational unit: EL (55); Structure: Power law model; Significance: -",
+    "reference": null
+  },
+  {
+    "machine_type": "single_grip_harvester",
+    "system": "cut_to_length",
+    "region": "",
+    "publication": "Labelle et al. (2018) model 1",
+    "predictors": [
+      {
+        "code": "D\u2081",
+        "description": "",
+        "unit": ""
+      },
+      {
+        "code": "D\u2081d",
+        "description": "",
+        "unit": ""
+      }
+    ],
+    "coefficients": {
+      "a": "15.15",
+      "b": "2.53",
+      "c": "0.02",
+      "d": "2"
+    },
+    "intercept": "15.15",
+    "form": "-a+bD\u2081-cD\u2081d",
+    "r_squared": 0.35,
+    "notes": "Base machine: PB; Propulsion: RW; Dependent: PV (m\u00b3 PMh0\u207b\u00b9); Observational unit: EL (56); Structure: Second-degree polynomial model; Significance: -",
+    "reference": null
+  },
+  {
+    "machine_type": "single_grip_harvester",
+    "system": "cut_to_length",
+    "region": "",
+    "publication": "Labelle et al. (2018) model 2",
+    "predictors": [
+      {
+        "code": "D\u2081",
+        "description": "",
+        "unit": ""
+      },
+      {
+        "code": "D\u2081d",
+        "description": "",
+        "unit": ""
+      }
+    ],
+    "coefficients": {
+      "a": "42.42",
+      "b": "3.61",
+      "c": "0.04",
+      "d": "2"
+    },
+    "intercept": "42.42",
+    "form": "-a+bD\u2081-cD\u2081d",
+    "r_squared": 0.27,
+    "notes": "Base machine: PB; Propulsion: RW; Dependent: PV (m\u00b3 PMh0\u207b\u00b9); Observational unit: EL (67); Structure: Second-degree polynomial model; Significance: -",
+    "reference": null
+  },
+  {
+    "machine_type": "single_grip_harvester",
+    "system": "cut_to_length",
+    "region": "",
+    "publication": "Labelle et al. (2018) model 3",
+    "predictors": [
+      {
+        "code": "D\u2081",
+        "description": "",
+        "unit": ""
+      },
+      {
+        "code": "D\u2081d",
+        "description": "",
+        "unit": ""
+      }
+    ],
+    "coefficients": {
+      "a": "61.26",
+      "b": "4.56",
+      "c": "0.047",
+      "d": "2"
+    },
+    "intercept": "61.26",
+    "form": "-a+bD\u2081-cD\u2081d",
+    "r_squared": 0.24,
+    "notes": "Base machine: PB; Propulsion: CT; Dependent: PV (m\u00b3 PMh0\u207b\u00b9); Observational unit: EL (48); Structure: Second-degree polynomial model; Significance: -",
+    "reference": null
+  },
+  {
+    "machine_type": "single_grip_harvester",
+    "system": "cut_to_length",
+    "region": "",
+    "publication": "Labelle et al. (2018) model 4",
+    "predictors": [
+      {
+        "code": "D\u2081",
+        "description": "",
+        "unit": ""
+      },
+      {
+        "code": "D\u2081d",
+        "description": "",
+        "unit": ""
+      }
+    ],
+    "coefficients": {
+      "a": "42.72",
+      "b": "3.68",
+      "c": "0.04",
+      "d": "2"
+    },
+    "intercept": "42.72",
+    "form": "-a+bD\u2081-cD\u2081d",
+    "r_squared": 0.12,
+    "notes": "Base machine: PB; Propulsion: CT; Dependent: PV (m\u00b3 PMh0\u207b\u00b9); Observational unit: EL (72); Structure: Second-degree polynomial model; Significance: -",
+    "reference": null
+  },
+  {
+    "machine_type": "single_grip_harvester",
+    "system": "cut_to_length",
+    "region": "",
+    "publication": "Labelle & Hu\u00df (2018) model 1",
+    "predictors": [
+      {
+        "code": "V\u2083",
+        "description": "",
+        "unit": ""
+      },
+      {
+        "code": "V\u2083c",
+        "description": "",
+        "unit": ""
+      }
+    ],
+    "coefficients": {
+      "a": "48.204",
+      "b": "9.4579",
+      "c": "2"
+    },
+    "intercept": "48.204",
+    "form": "aV\u2083-bV\u2083c",
+    "r_squared": 0.3196,
+    "notes": "Base machine: PB; Propulsion: RW; Dependent: PV (m\u00b3ub PMh0\u207b\u00b9); Observational unit: EL (68); Structure: Second-degree polynomial model; Significance: -",
+    "reference": null
+  },
+  {
+    "machine_type": "single_grip_harvester",
+    "system": "cut_to_length",
+    "region": "",
+    "publication": "Labelle & Hu\u00df (2018) model 2",
+    "predictors": [
+      {
+        "code": "V\u2083",
+        "description": "",
+        "unit": ""
+      },
+      {
+        "code": "V\u2083c",
+        "description": "",
+        "unit": ""
+      }
+    ],
+    "coefficients": {
+      "a": "44.683",
+      "b": "9.3722",
+      "c": "2"
+    },
+    "intercept": "44.683",
+    "form": "aV\u2083-bV\u2083c",
+    "r_squared": 0.4689,
+    "notes": "Base machine: PB; Propulsion: RW; Dependent: PV (m\u00b3ub PMh0\u207b\u00b9); Observational unit: EL (135); Structure: Second-degree polynomial model; Significance: -",
+    "reference": null
+  },
+  {
+    "machine_type": "single_grip_harvester",
+    "system": "cut_to_length",
+    "region": "",
+    "publication": "Labelle et al. (2016) model 1",
+    "predictors": [
+      {
+        "code": "D\u2081b",
+        "description": "",
+        "unit": ""
+      }
+    ],
+    "coefficients": {
+      "a": "1.0273",
+      "b": "0.8319"
+    },
+    "intercept": "1.0273",
+    "form": "aD\u2081b",
+    "r_squared": 0.247,
+    "notes": "Base machine: PB; Propulsion: CT; Dependent: PV (m\u00b3 PMh\u207b\u00b9); Observational unit: EL (54); Structure: Power law model; Significance: -",
+    "reference": null
+  },
+  {
+    "machine_type": "single_grip_harvester",
+    "system": "cut_to_length",
+    "region": "",
+    "publication": "Labelle et al. (2016) model 2",
+    "predictors": [
+      {
+        "code": "D\u2081b",
+        "description": "",
+        "unit": ""
+      }
+    ],
+    "coefficients": {
+      "a": "0.7976",
+      "b": "0.8588"
+    },
+    "intercept": "0.7976",
+    "form": "aD\u2081b",
+    "r_squared": 0.3215,
+    "notes": "Base machine: PB; Propulsion: CT; Dependent: PV (m\u00b3 PMh\u207b\u00b9); Observational unit: EL (55); Structure: Power law model; Significance: -",
+    "reference": null
+  },
+  {
+    "machine_type": "single_grip_harvester",
+    "system": "cut_to_length",
+    "region": "",
+    "publication": "Labelle et al. (2019) model 1",
+    "predictors": [
+      {
+        "code": "D\u2081",
+        "description": "",
+        "unit": ""
+      },
+      {
+        "code": "D\u2081d",
+        "description": "",
+        "unit": ""
+      }
+    ],
+    "coefficients": {
+      "a": "70.18",
+      "b": "5.301",
+      "c": "0.06052",
+      "d": "2"
+    },
+    "intercept": "70.18",
+    "form": "-a+bD\u2081-cD\u2081d",
+    "r_squared": 0.838,
+    "notes": "Base machine: PB; Propulsion: RW; Dependent: PV (m\u00b3 PMh0\u207b\u00b9); Observational unit: EL (15); Structure: Second-degree polynomial model; Significance: -",
+    "reference": null
+  },
+  {
+    "machine_type": "single_grip_harvester",
+    "system": "cut_to_length",
+    "region": "",
+    "publication": "Labelle et al. (2019) model 2",
+    "predictors": [
+      {
+        "code": "D\u2081",
+        "description": "",
+        "unit": ""
+      },
+      {
+        "code": "D\u2081d",
+        "description": "",
+        "unit": ""
+      }
+    ],
+    "coefficients": {
+      "a": "7.87",
+      "b": "2.638",
+      "c": "0.04544",
+      "d": "2"
+    },
+    "intercept": "7.87",
+    "form": "-a+bD\u2081-cD\u2081d",
+    "r_squared": 0.295,
+    "notes": "Base machine: PB; Propulsion: RW; Dependent: PV (m\u00b3 PMh0\u207b\u00b9); Observational unit: EL (15); Structure: Second-degree polynomial model; Significance: -",
+    "reference": null
+  },
+  {
+    "machine_type": "single_grip_harvester",
+    "system": "cut_to_length",
+    "region": "",
+    "publication": "Labelle et al. (2019) model 3",
+    "predictors": [
+      {
+        "code": "D\u2081",
+        "description": "",
+        "unit": ""
+      },
+      {
+        "code": "D\u2081d",
+        "description": "",
+        "unit": ""
+      }
+    ],
+    "coefficients": {
+      "a": "22.24",
+      "b": "1.482",
+      "c": "0.00433",
+      "d": "2"
+    },
+    "intercept": "22.24",
+    "form": "-a+bD\u2081-cD\u2081d",
+    "r_squared": 0.756,
+    "notes": "Base machine: PB; Propulsion: RW; Dependent: PV (m\u00b3 PMh0\u207b\u00b9); Observational unit: EL (22); Structure: Second-degree polynomial model; Significance: -",
+    "reference": null
+  },
+  {
+    "machine_type": "single_grip_harvester",
+    "system": "cut_to_length",
+    "region": "",
+    "publication": "Labelle et al. (2019) model 4",
+    "predictors": [
+      {
+        "code": "D\u2081",
+        "description": "",
+        "unit": ""
+      },
+      {
+        "code": "D\u2081d",
+        "description": "",
+        "unit": ""
+      }
+    ],
+    "coefficients": {
+      "a": "1.12",
+      "b": "0.891",
+      "c": "0.00783",
+      "d": "2"
+    },
+    "intercept": "1.12",
+    "form": "a+bD\u2081-cD\u2081d",
+    "r_squared": 0.082,
+    "notes": "Base machine: PB; Propulsion: RW; Dependent: PV (m\u00b3 PMh0\u207b\u00b9); Observational unit: EL (30); Structure: Second-degree polynomial model; Significance: -",
+    "reference": null
+  },
+  {
+    "machine_type": "single_grip_harvester",
+    "system": "cut_to_length",
+    "region": "",
+    "publication": "Labelle et al. (2019) model 5",
+    "predictors": [
+      {
+        "code": "V\u2086",
+        "description": "",
+        "unit": ""
+      },
+      {
+        "code": "V\u2086d",
+        "description": "",
+        "unit": ""
+      }
+    ],
+    "coefficients": {
+      "a": "2.938",
+      "b": "54.87",
+      "c": "16.56",
+      "d": "2"
+    },
+    "intercept": "2.938",
+    "form": "a+bV\u2086-cV\u2086d",
+    "r_squared": 0.834,
+    "notes": "Base machine: PB; Propulsion: RW; Dependent: PV (m\u00b3 PMh0\u207b\u00b9); Observational unit: EL (15); Structure: Second-degree polynomial model; Significance: -",
+    "reference": null
+  },
+  {
+    "machine_type": "single_grip_harvester",
+    "system": "cut_to_length",
+    "region": "",
+    "publication": "Labelle et al. (2019) model 6",
+    "predictors": [
+      {
+        "code": "V\u2086",
+        "description": "",
+        "unit": ""
+      },
+      {
+        "code": "V\u2086d",
+        "description": "",
+        "unit": ""
+      }
+    ],
+    "coefficients": {
+      "a": "18.17",
+      "b": "31.92",
+      "c": "20.63",
+      "d": "2"
+    },
+    "intercept": "18.17",
+    "form": "a+bV\u2086-cV\u2086d",
+    "r_squared": 0.259,
+    "notes": "Base machine: PB; Propulsion: RW; Dependent: PV (m\u00b3 PMh0\u207b\u00b9); Observational unit: EL (15); Structure: Second-degree polynomial model; Significance: -",
+    "reference": null
+  },
+  {
+    "machine_type": "single_grip_harvester",
+    "system": "cut_to_length",
+    "region": "",
+    "publication": "Labelle et al. (2019) model 7",
+    "predictors": [
+      {
+        "code": "V\u2086",
+        "description": "",
+        "unit": ""
+      },
+      {
+        "code": "V\u2086d",
+        "description": "",
+        "unit": ""
+      }
+    ],
+    "coefficients": {
+      "a": "5.573",
+      "b": "20.18",
+      "c": "1.835",
+      "d": "2"
+    },
+    "intercept": "5.573",
+    "form": "a+bV\u2086-cV\u2086d",
+    "r_squared": 0.802,
+    "notes": "Base machine: PB; Propulsion: RW; Dependent: PV (m\u00b3 PMh0\u207b\u00b9); Observational unit: EL (22); Structure: Second-degree polynomial model; Significance: -",
+    "reference": null
+  },
+  {
+    "machine_type": "single_grip_harvester",
+    "system": "cut_to_length",
+    "region": "",
+    "publication": "Labelle et al. (2019) model 8",
+    "predictors": [
+      {
+        "code": "V\u2086",
+        "description": "",
+        "unit": ""
+      },
+      {
+        "code": "V\u2086d",
+        "description": "",
+        "unit": ""
+      }
+    ],
+    "coefficients": {
+      "a": "4.743",
+      "b": "17.44",
+      "c": "2.445",
+      "d": "2"
+    },
+    "intercept": "4.743",
+    "form": "a+bV\u2086-cV\u2086d",
+    "r_squared": 0.461,
+    "notes": "Base machine: PB; Propulsion: RW; Dependent: PV (m\u00b3 PMh0\u207b\u00b9); Observational unit: EL (30); Structure: Second-degree polynomial model; Significance: -",
+    "reference": null
+  },
+  {
+    "machine_type": "single_grip_harvester",
+    "system": "cut_to_length",
+    "region": "",
+    "publication": "Labelle & Hu \u00df (2018) model 1",
+    "predictors": [
+      {
+        "code": "V\u2083",
+        "description": "",
+        "unit": ""
+      }
+    ],
+    "coefficients": {},
+    "intercept": null,
+    "form": "aV\u2083-bV\u2083",
+    "r_squared": null,
+    "notes": "Base machine: PB; Propulsion: RW; Dependent: PV (m\u00b3ub P M h \u207b\u00b9)\n0",
+    "reference": null
+  }
+]

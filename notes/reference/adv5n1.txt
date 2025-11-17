@@ -1,0 +1,1143 @@
+                  Restricted to FERIC Members and Partners                                 Vol. 5 No. 1 January 2004
+
+
+
+     Contents         Using mechanized systems to harvest
+ 1
+ 1
+     Introduction
+     Objectives
+                      second-growth forests in coastal British
+ 2   Harvesting
+     systems
+                      Columbia: productivity and costs of
+ 2   Description of
+     sites and        loader-forwarding and grapple yarding
+                      operations
+     stands for
+     extraction
+     study
+ 3   Extraction
+     operations
+     and equip-
+     ment
+                        Abstract
+                            The Forest Engineering Research Institute of Canada (FERIC) monitored the
+ 5   Study
+     methods            operational and economic feasibility of using mechanized systems for clearcut harvesting
+ 6   Results and        of second-growth on steep slopes in coastal British Columbia. The results are being
+     discussion         presented in several “Advantage” reports. This report presents the results of the loader-
+ 15 Conclusions         forwarding and grapple yarding phases.
+ 16 Implementa-
+    tion                Keywords
+ 17 References              Coastal British Columbia, Second-growth, Extraction, Loader-forwarding, Grapple
+ 17 Acknowledge-        yarding, Costs, Productivity.
+    ments
+
+
+                        Introduction                                      report presents the results of the loader-
+                           Mechanical timber harvesting systems           forwarding and grapple yarding phases.
+Authors               comprised of feller-bunchers, processors,
+Kris T. Kosicki and
+Peter F. Dyson,
+                      loader-forwarders, and skidders—if used               Objectives
+Western Division      appropriately—offer opportunities to reduce             The primary goal of this study was to
+                      harvesting costs without exceeding the              assess the economic and operational feasibility
+                      limits of acceptable site impacts. At the request   of using mechanized systems for clearcut
+                      of its members, FERIC has been investigating        harvesting on steep slopes. The objectives of
+                      the use of this equipment in second-growth          this report on extraction methods were to:
+                      stands in coastal British Columbia.                   • Determine overall productivities and
+                           In the spring of 2002, TimberWest                   costs for loader-forwarding and grapple
+                      Forest Corp.’s Cowichan Woodlands                        yarding in second-growth stands.
+                      Operation and Honeymoon Bay Operation                 • Identify factors that influence the
+                      undertook a series of trials to investigate the          performance of the two extraction
+                      feasibility of using mechanized systems for              methods.
+                      clearcut harvesting on steep slopes. FERIC            • Evaluate swing yarders and loader-
+                      monitored the trials to determine the                    forwarders as components of roadside
+                      operational and economic feasibility of these            harvesting systems.
+                      systems. Because of the scope of this study,          • Develop productivity and cost functions
+                      the results will be presented in several                 for extraction equipment.
+                      “Advantage” reports. The first report presented       • Determine and compare the optimum
+                      the results for the mechanized felling                   extraction distances for loader-forward-
+                      operation (Kosicki and Dyson 2003). This                 ing and grapple yarding.
+                   Harvesting systems                                              approximately 50 km west of Duncan and
+                     An overview of harvesting systems and                         4 km north of Cowichan Lake. Block B was
+                 equipment used in this project is shown in                        located approximately 15 km south of
+                 Table 1. Both manual and mechanical felling                       Mesachie Lake in the Cowichan Woodlands
+                 with feller-bunchers were used. Depending                         Operation. The harvesting prescription for
+                 on block layout and terrain conditions, stems                     Blocks A and B was clearcutting with reserves,
+                 were extracted with loader-forwarders and/                        and for Blocks C and D it was clear-cutting.
+                 or swing yarders. At the roadside, the stems                      Table 2 summarizes the site and stand features.
+                 were decked for processing by mechanical                              The sites in Block A were classified as
+                 dangle-head processors.                                           the submontane variant of the Coastal
+                                                                                   Western Hemlock very wet maritime
+                                                                                   biogeoclimatic subzone (CWHvm1),
+                   Description of sites and                                        whereas those in Blocks B, C, and D were
+                   stands for extraction                                           classified as Coastal Western Hemlock very
+                   study                                                           dry maritime western subzone (CWHxm2)
+                      Extraction operations were observed in                       (Green and Klinka 1994). The terrain in all
+                 all four study blocks. Blocks A, C, and D were                    blocks ranged from almost level (0–10%)
+                 in the Honeymoon Bay Operation. Block A                           to very steep (more than 50%). The average
+                 was located approximately 65 km west of                           slope gradient in Block B was 35%, and was
+                 Duncan. Blocks C and D were located                               45% in the other three blocks.
+
+
+                                Table 1. Harvesting systems and equipment
+
+    Cutblock                                   A                          B                                 C                                D
+    Harvesting system                     Clearcut,                    Clearcut,                      Clearcut,                      Clearcut, cold
+                                          cold deck                    cold deck                      hot deck                       and hot deck
+
+    Felling equipment                   Madill T2200                Tigercat 860                  Feller-buncher                          Manual
+                                    feller-buncher with            feller-buncher
+                                     intermittent low-            with high-speed
+                                   speed circular saw a             circular saw a
+
+    Extraction equipment                 Snorkel,                   Madill 144                     Cypress 7280                    Cypress 7280
+                                    loader-forwarders,           yarder, uphill and                   yarder,                         yarder,
+                                       swing yarder              downhill yarding a               uphill yarding a               downhill yarding a
+
+                                                                    Madill 3800                Loader-forwarders
+                                                                 loader-forwarder a
+
+    Processing equipment               Madill 3800                  Madill 3800                    Madill 3800                      Madill 3800
+                                        carrier with                carrier with                   carrier with                     carrier with
+                                         Waratah                     Waratah                        Waratah                          Waratah
+                                     processing head             processing head a              processing head a                processing head a
+    a
+        Monitored by FERIC in shift-level and detailed-timing studies.
+
+
+
+                 Forest Engineering Research Institute of Canada (FERIC)
+                 Eastern Division and Head Office   Western Division               Disclaimer
+                 580 boul. St-Jean                  2601 East Mall                 Advantage is published solely to disseminate information to FERIC’s mem-
+                 Pointe-Claire, QC, H9R 3J9         Vancouver, BC, V6T 1Z4         bers and partners. It is not intended as an endorsement or approval of any
+                                                                                   product or service to the exclusion of others that may be suitable.
+                     (514) 694-1140                     (604) 228-1555
+                     (514) 694-4351                     (604) 228-0999                      Copyright 2004. Printed in Canada on recycled paper.
+                     admin@mtl.feric.ca                 admin@vcr.feric.ca
+                                                                                                                           Vol. 5 No. 1
+2                                                                                                                                           Advantage
+                                                                                                                          January 2004
+                                                                                                                                          ISSN 1493-3381
+                               Table 2. Site and stand descriptions
+                                                                           Block
+                                              A                B                     C                D
+ Total area (ha)                            43.0              29.9                  35.0             52.2
+ Study area (ha)                            17.4              29.9                   5.9              5.9
+
+ Site characteristics a
+   Ecological classification b           CWHvm1            CWHxm2                  CWHxm2         CWHxm2
+   Elevation range (m)                   150–300           300–400                   330          400–870
+   Terrain                             gentle to steep   gentle to steep            steep          steep
+   Slope
+     Range (%)                             10–70             10–70                  20–65           5–80
+     Average (%)                             45                35                     45             45
+   CPPA terrain classification c            2.3.4            1.2.4                  1.2.4           1.2.4
+
+ Species composition (%)
+  Douglas-fir                                81                89                    80               70
+  Western hemlock                            18                10                    20               30
+  Spruce, redcedar, alder, maple              1                 1                     -                -
+
+ Net merchantable volume (m3/ha)             500              513                   547              419
+ a
+   From Silviculture Plan.
+ b
+   Green and Klinka 1994.
+ c
+   Mellgren 1980.
+
+
+     Forest cover in all blocks included second-
+growth Douglas-fir (Pseudotsuga menziesii)
+and western hemlock (Tsuga heterophylla) in
+varying proportions. Blocks A and B also had                                                Figure 1. Layout of
+a small proportion of Sitka spruce (Picea                                                   Block A.
+sitchensis), western redcedar (Thuja plicata),
+red alder (Alnus rubra), and bigleaf maple
+(Acer macrophyllum).
+
+     Extraction operations
+     and equipment
+     The study area in Block A was located
+above a single haul road, and loader-
+forwarding in a downhill direction was
+prescribed (Figure 1).
+     Block B was accessible to harvesting equip-
+ment from in-block spur roads (Figure 2).
+Loader-forwarding in a downhill direction,
+and grapple yarding in both uphill and
+downhill directions, were prescribed.
+     In Block C, the steep ground beneath the
+single haul road was prescribed for grapple
+yarding in an uphill direction (Figure 3). A
+portion of the study area with insufficient
+deflection at the block’s backline was prescribed
+
+                Vol. 5 No. 1
+Advantage       January 2004                                                                                      3
+    Figure 2. Layout of
+    Block B.
+
+
+
+
+    Figure 3. Layout of
+    Block C.
+
+
+
+
+                           Vol. 5 No. 1
+4                         January 2004    Advantage
+for loader-forwarding and then grapple            occurrence), and TimberWest’s scale records
+yarding.                                          containing net harvest volumes. Forwarding
+    The study area in hand-felled Block D         and yarding cycles were detail-timed at frequent
+was located above a haul road and grapple         intervals throughout the study period.
+yarding in a downhill direction was prescribed        Shift-level and detailed-timing studies on
+(Figure 4).                                       the grapple yarding operation were conducted
+    In Blocks B and D, a grapple with a           in Blocks B, C, and D. The loader forwarding
+maximum opening of 288 cm was used. The           was studied in Block B. In Blocks A and C,
+grapple used in Block C was smaller and had       FERIC’s observations focused mainly on
+a 224-cm opening.                                 forwarding techniques.
+    At roadside, the stems were decked for            For the detailed-timing study of the
+hot and/or cold processing by dangle-head         loader-forwarder, five cycle elements were
+processors.1 In Blocks A and B, only cold         identified: swinging with empty grapple,
+processing was done. In Block C, because of       swinging loaded (this encompassed grappling,
+limited decking area, the hot processing          swinging, and placing the load), moving the
+system was the only option. In Block D,           machine, handling debris, and in-cycle delays.
+the majority of the yarded stems was cold         Slope class, swing distance, number of stems
+processed and only a small number of stems        per cycle, and reason for in-cycle delays were
+was hot processed.                                also recorded. The collected data were
+                                                  analyzed to determine the relationship between
+  Study methods                                   forwarding distance and forwarding cycle
+    FERIC observed the harvesting operation       1
+                                                      In a “hot processing” system, extraction and processing
+and collected shift-level and detailed-timing         phases occur simultaneously, and the supply buffer
+data. Shift-level data were obtained from data-       between these phases is generally small. In a “cold
+                                                      processing” system, processing usually starts after the
+logger charts, operators’ reports about daily         extraction phase has been completed, and the supply
+production and major delays (>15 min/                 buffer between both phases is generally large.
+
+
+
+
+                                                                           Figure 4. Layout of
+                                                                           Block D.
+
+
+
+
+              Vol. 5 No. 1
+Advantage     January 2004                                                                                      5
+                                                                         time. A one-way analysis of variance
+                   Table 3. Technical specifications for
+                                                                         (ANOVA) was used to test whether the
+                     the Madill 3800 loader-forwarder
+                                                                         forwarding cycle times and swing distances
+                                                       Madill 3800       were affected by slope class. The results were
+                   Engine                            Detroit Diesel 60   used to develop relationships between forward-
+                   Power (kW)                        242 @ 2200 rpm      ing distance and forwarding time for each slope
+                   Maximum boom reach (m)                  13.4          class, and then combined with shift-level data
+                   Lift capacity at 9 m reach (kg)        10 400         to derive productivity and cost functions.
+                   Carbody clearance (cm)                    76
+                   Track dimensions (m)                                       Detail-timed yarding cycles were divided
+                     Width                                 3.81          into six elements: outhaul, hookup, inhaul,
+                     Length                                5.18          deck, in-cycle delays, and move yarder and
+                   Travel speed (km/h)                   up to 4.5
+                   Mass (kg)                              35 300
+                                                                         backspar. Outhaul and inhaul distances,
+                   Ground pressure (kP)                     60           number of stems per cycle, and reasons for
+                                                                         observed delays were also recorded. Using
+                                                                         regression techniques, the timing data were
+    Figure 5.
+                                                                         analyzed to determine the relationship between
+    Madill 3800                                                          outhaul and inhaul times and distances. The
+    loader-forwarder in                                                  results of the regression analysis were then
+    Block B.                                                             combined with average values for hookup,
+                                                                         deck, and move yarder and backspar to
+                                                                         develop an equation for predicting delay-free
+                                                                         cycle time and to derive productivity and cost
+                                                                         functions.
+                                                                              Hourly loader-forwarder and yarder
+                                                                         costs were calculated using FERIC’s standard
+                                                                         costing methods (Appendix I). These costs
+                                                                         do not include supervision, profit, and
+                                                                         overhead, and are not the actual costs for the
+    Figure 6.                                                            contractor or the company studied.
+    Madill 144 swing
+    yarder in Block B.
+                                                                           Results and discussion
+                                                                         Overview of extraction
+                                                                         operations
+                                                                             Extraction operations in the four study
+                                                                         blocks (A, B, C, and D) were performed from
+                                                                         early May to late July 2002.
+                                                                             Study blocks A, B, and C were clearcut
+                                                                         with feller-bunchers except in a few small
+    Figure 7. Cypress
+                                                                         areas which had to be felled manually. All of
+    7280 swing yarder                                                    Block D was felled manually.
+    and Madill 3800                                                          Loader-forwarding in study blocks was
+    processor in                                                         performed with a Madill 3800 loader-
+    Block C.                                                             forwarder (Table 3 and Figure 5).
+                                                                             Grapple yarding was done in Block B by
+                                                                         a Madill 144 swing yarder (Figure 6) while
+                                                                         Cypress 7280 yarders were used in Blocks C
+                                                                         and D (Figures 7 and 8). Hitachi and John
+                                                                         Deere excavators were used as backspars in
+                                                                                                  Vol. 5 No. 1
+6                                                                                                January 2004    Advantage
+  Blocks B and C, respectively. In Block D,                                                         Figure 8. Cypress
+  the yarder’s running line was anchored to the                                                     7280 swing yarder
+  stumps along the backline of the block.                                                           in Block D.
+      All extraction equipment was operated
+  by TimberWest crews. The crews for the
+  grapple consisted of two or three workers,
+  depending on the terrain and yarding system.
+
+  Shift level study
+
+  Loader-forwarding
+      In study block B, the Madill 3800 loader-   delays were caused by mechanical problems
+  forwarder worked a total of 19 shifts, or       related to hydraulic components.
+  156 h, on a single-shift basis for five days        The total volume extracted by the loader-
+  per week. Table 4 summarizes shift structure,   forwarder was 7270 m³. At an average extrac-
+  productivities in cubic metre per productive    tion distance of 60 m, the Madill 3800’s
+  machine hour (PMH) and scheduled                overall productivity was 46.7 m3/PMH. For
+  machine hour (SMH), and costs per cubic         a utilization rate of 93%, this translated into
+  metre. Shift lengths ranged from 5 to 9 h       43.5 m3/SMH. The extraction cost with the
+  and averaged 8.8 h. For the monitoring          Madill 3800 was calculated at $3.36/m³,
+  period, utilization was 93%, and almost all     based on an hourly rate of $146/SMH
+                                                  (Appendix I).
+
+ Table 4. Shift-level summary and                 Grapple yarding
+  productivity for the Madill 3800                     Table 5 summarizes shift structures,
+    loader-forwarder in Block B                   productivities in cubic metre per PMH and
+                                                  SMH, and costs per cubic metre for yarders
+Description                               Total
+                                                  in three study blocks. All yarders were
+Productive shifts (no.)                      19   scheduled to work five days per week and
+Productive machine hours (PMH)            155.6
+Mechanical delays (MD) (h)                  9.4
+                                                  8.5 h per shift. The yarders in Blocks B and
+Non-mechanical delays (NMD) (h)             2.0   D were employed on a single shift basis, and
+Total all delays (h)                       11.4   the yarder in Block C periodically worked
+Scheduled machine hours (SMH)               167   two shifts per day. Actual shift lengths ranged
+Average shift length (h)                    8.8
+                                                  from 5.3 h to 9 h. The average shift lengths
+Utilization (PMH/SMH) (%)                    93   for Blocks B, C, and D were 7.9, 8.0, and
+Availability [(SMH-MD)/SMH] (%)              94   8.5 h, respectively. For the monitoring period,
+                                                  utilization varied from 77% (Block C) to
+Stems (no.)                                7670
+Total volume (m³)                          7270   90% (Block B).
+Average forwarding distance (m)              60        The highest productivity—78.8 m³/PMH
+Average volume (m³/stem)                   0.95   (71.0 m³/SMH) in Block B—can be
+Productivity
+                                                  attributed to good preparation of bunches
+  Stems/productive shift                    404   for yarding (mechanical felling with a fel-
+  Stems/PMH                                  49   ler-buncher), multiple-stem cycles, and the
+  Stems/SMH                                  46   high average volume of 0.95 m³/stem. The
+  m³/productive shift                       383
+  m³/PMH                                   46.7   lowest yarding productivity—22.1 m³/PMH
+  m³/SMH                                   43.5   (19.4 m³/SMH) in Block D—resulted from
+                                                  manual felling (dispersed stems), single-
+Hourly machine cost ($/SMH)              146.15   stem loads, and the small average volume of
+Cost ($/m³)                                3.36
+                                                  0.44 m³/stem. The yarding costs varied
+
+                 Vol. 5 No. 1
+   Advantage     January 2004                                                                                           7
+           Table 5. Shift-level summary and productivity for the Madill 144
+           swing yarder in Block B, and the Cypress 7280 swing yarders in
+                                   Blocks C and D
+            Element                                       Block B           Block C                    Block D
+            Productive shifts                                12                 16                        15
+            Productive machine hours (PMH)
+               Yarding (h)                                  84.9              96.2                     107.8
+               Road changes (h)                                -               2.7                       3.5
+               Total PMH                                    84.9              98.9                     111.3
+            Mechanical delays (MD) (h)                       8.2              14.1                       8.9
+            Non-mechanical delays (NMD) (h)                  1.2              15.7                       7.3
+            Total all delays (h)                             9.4              29.8                      16.2
+            Scheduled machine hours (SMH)                   94.3             128.7                     127.5
+            Average shift length (h)                         7.9               8.0                       8.5
+            Utilization (PMH/SMH) (%)                        90                 77                        87
+            Availability (SMH-MD)/SMH (%)                    91                 89                        93
+            Total volume (m³)                              6 692             4 304                     2 469
+            Total stems (no.)                              7 044             4 250                     5 662
+            Average volume (m3/stem)                        0.95              1.01                      0.44
+            Productivity
+               Stems/PMH                                      83                43                        51
+               Stems/SMH                                      75                33                        44
+               m³/productive shift                          558               269                       165
+               m³/PMH                                       78.8              43.5                      22.1
+               m³/SMH                                       71.0              33.4                      19.4
+            Hourly machine cost ($/SMH)                   323.79            335.30                    315.84
+            Cost ($/m3)                                     4.56             10.04                     16.28
+
+
+
+        Table 6. Summary of detailed
+                                                           from $4.56/m³ (Block B) to $16.28/m³
+          timing for the Madill 3800                       (Block D).
+              loader-forwarder
+                                                           Detailed-timing study
+    Description                                   Total
+    Productive time (min)                          993     Loader-forwarding
+    Productive machine hours (PMH)                16.6         The Madill 3800 loader-forwarder was
+    Total cycles (no.)                            1170
+                                                           detail-timed for 16.6 h, and the study results
+    Payload (stems/cycle)
+      Minimum                                        1
+                                                           are summarized in Table 6. Forwarded
+      Maximum                                       12     payloads consisted of 1–12 stems and averaged
+      Average                                     2.92     2.92 stems and 2.77 m3 per cycle. The forwarded
+    Average volume (m³/stem)                      0.95     payloads were moved over an average distance
+    Average payload (m3/cycle)                    2.77
+                                                           of 14.8 m/cycle. The average forwarding time
+    Swing distance (m/cycle)
+      Minimum                                        0
+                                                           and distribution of the cycle time elements
+      Maximum                                       35     were close to average times and distributions
+      Average                                     14.8     reported by Gillies (2001) and Sambo and
+    Average cycle time (min, %)                            Sutherland (2003) for loader-forwarding
+      Swing unloaded                          0.16, 19     operations.
+      Swing loaded                            0.39, 46
+      Move                                    0.18, 21         Results of the one-way analysis of
+      Debris                                  0.07, 8      variance (ANOVA) indicated that the dif-
+      Delays                                  0.05, 6      ferences in average cycle times for the first
+      Total                                   0.85, 100    two slope classes (0–10% and 11–20%) were
+
+                                                                                       Vol. 5 No. 1
+8                                                                                     January 2004    Advantage
+not significant. For these classes, the average                                                                                              Figure 9. Predicted
+                                                                                10
+
+
+
+
+                                                       Forwarding time (min)
+cycle time was 0.84 min. For the third                                                                                                       forwarding time for
+                                                                                   8
+slope class (21–30%), the cycle times were                                                                                                   the Madill 3800
+                                                                                                      Slope class 11–30%
+significantly greater and averaged 0.90 min.                                       6                                                         loader-forwarder
+The differences in average swing distances                                                                                                   as a function of
+                                                                                   4                                                         forwarding
+(16.8 m, 14.1 m, and 15.5 m for the first,                                                                  Slope class 0–10%                distance.
+second, and third slope classes, respectively)                                     2
+
+were significant. 2 Results of analyses for                                        0
+cycle times and swing distances were combined                                          20     40       60     80      100    120       140
+to derive a relationship between forwarding                                                         Forwarding distance (m)
+distance and forwarding time (Figure 9). For
+all forwarding distances and slope classes
+
+
+
+                                                  Forwarding prod. (m3 /SMH)
+11–20% and 21–30%, forwarding times                                            125
+were 18% greater than those for slope class                                                                                                  Figure 10.
+                                                                               100                                                           Predicted
+0–10%. Derived forwarding times, the                                                              Slope class 0–10%
+                                                                                                                                             forwarding
+                                                                                75
+average payload of 2.77 m3/cycle, and actual                                                                                                 productivity for the
+utilization of 93% were used to derive the                                      50                                                           Madill 3800
+relationship between forwarding distance                                                Slope class 11–30%                                   loader-forwarder
+                                                                                25
+and estimated forwarding productivity in                                                                                                     as a function of
+m3/SMH (Figure 10). For the slope class 0–                                         0                                                         forwarding
+                                                                                       20      40      60     80      100   120    140       distance.
+10%, forwarding productivities were 18%                                                             Forwarding distance (m)
+greater than those for the slope class 11–
+30%. Forwarding costs in $/m3 as a func-
+tion of forwarding distance are presented in
+                                                                               8
+Figure 11. For the slope class 0–10%, the                                                                                                    Figure 11.
+                                                   Forwarding cost ($/m 3)
+
+
+
+
+estimated forwarding costs are about 85%                                                                                                     Predicted
+                                                                               6                                                             forwarding cost for
+of those for the slope class 11–30%.
+                                                                                            Slope class 11–30%                               the Madill 3800
+     Forwarding productivity and cost were
+                                                                               4                                                             loader-forwarder
+very sensitive to forwarding distance.                                                                      Slope class 0–10%                as a function of
+Doubling the forwarding distance resulted                                      2                                                             forwarding
+in a 50% reduction in productivity and a 100%                                                                                                distance.
+increase in extraction cost per cubic metre.                                   0
+                                                                                   20        40       60     80    100   120       140
+Grapple yarding                                                                                     Forwarding distance (m)
+     The detailed-timing results for the
+yarding operation are summarized in Table 7.               When uphill yarding in mechanically
+The average yarding distances varied from             felled Block B, one-stem payloads made up
+about 100 m in Block B (uphill and down-              34% of all payloads, and those consisting of
+hill yarding combined), to 190 m in Block             four or more stems accounted for 28%. In
+C where a considerable portion of the yarding         this case, the average of 2.75 stems/cycle and
+that was detail-timed was done close to the           volume of 0.95 m³/stem produced an
+backline of the block. Average numbers of             average payload of 2.61 m³/cycle.
+stems per cycle were very different among                  In manually felled Block D, 82% of all
+the study blocks and had pronounced effects           payloads consisted of a single load, and
+on payload volumes and, consequently, on              payloads of three, four, or more stems made
+yarding productivity. An overview of the
+percent distribution in number of stems per           2
+                                                                               The reason for the shortest swing distance, of 14.1 m
+cycle is shown in Table 8.                                                     for the slope class 11–20%, is unknown.
+
+
+
+              Vol. 5 No. 1
+Advantage     January 2004                                                                                                                                          9
+          Table 7. Summary of detailed timing for the Madill 144 swing
+            yarder in Block B and for the Cypress 7280 swing yarder
+                               in Blocks C and D
+
+                                               Block B         Block B        Block C             Block D
+                                                uphill         downhill        uphill             downhill
+     Productive machine hours (PMH)              24.7            8.2            11.4                12.3
+     Productive time (min)
+       Yarding                                  1195            363             548                 685
+       Move yarder and backspar                  253             94              86                  18
+       Delays <15 min                             33             32              52                  37
+       Total productive time                    1481            489             686                 740
+
+     Total cycles (no.)                          740             286             336                548
+     Average cycle time (min)                    2.00           1.72            2.04                1.35
+     Distribution of cycle time (min/cycle)
+       Outhaul                                   0.29           0.28            0.45                0.36
+       Hookup                                    0.48           0.36            0.31                0.32
+       Inhaul                                    0.45           0.37            0.65                0.32
+       Deck                                      0.39           0.26            0.22                0.25
+       Move yarder                               0.34           0.34            0.26                0.03
+       Delays                                    0.04           0.11            0.15                0.07
+
+     Total stems (no.)                          2035             654             561                672
+     Average volume (m3/stem)                    0.95           0.95            1.01                0.44
+     Total volume (m3)                          1933             622             567                296
+     Average payload (stems/cycle)               2.75           2.29            1.67                1.23
+     Average payload volume (m 3/cycle)          2.61           2.18            1.69                0.54
+     Average yarding distance (m)                  94            106             190                140
+     Productivity
+       Stems/PMH                                   82            80               49                 54
+       m3/PMH                                      78            76               50                 24
+
+
+
+     Table 8. Summary of payload sizes of the Madill 144 swing yarder in
+      Block B and for the Cypress 7280 swing yarder in Blocks C and D
+
+                                               Block B        Block B         Block C             Block D
+                                                uphill        downhill         uphill             downhill
+     No. of stems in cycle payload (% dist.)
+       One                                         34             45              52                  82
+       Two                                         21             23              33                  14
+       Three                                       17             12              12                   3
+       Four or more                                28             20               3                   1
+     Average stems per cycle (no.)               2.75           2.29            1.67                1.23
+     Average volume (m3/stem)                    0.95           0.95            1.01                0.44
+     Average volume (m3/cycle)                   2.61           2.18            1.69                0.54
+
+
+      up only 4% of all payloads. Low average            number of stems per cycle (1.67) and low
+      number of stems (1.23 stems/cycle), combined       volume of 1.69 m³/cycle. Additionally, the
+      with an average volume of 0.44 m³/stem,            windrows prepared for yarding by the loader-
+      resulted in extremely small payloads averaging     forwarder were too tight to be penetrated by
+      0.54 m³/cycle.                                     the grapple. As a result, 85% of all payloads
+          In mechanically felled Block C, a small        consisted of one or two stems.
+      grapple with a maximum opening of 224 cm               In Block B, the difference in number of
+      was used. This resulted in the relatively small    stems per cycle for uphill and downhill
+                                                                                 Vol. 5 No. 1
+10                                                                              January 2004    Advantage
+yarding (2.75 and 2.29 stems/cycle, respec-                                             3
+                                                                                                 Block C uphill              Block B uphill                   Figure 12.
+tively) resulted because the sampling of                                                         and Block B downhill
+
+
+
+
+                                                      Cycle time (min)
+                                                                                                                                                              Predicted cycle
+downhill yarding included several cycles of                                             2                                                                     times for grapple
+manually felled stems.                                                                                                                                        yarding in study
+    In Block B, productivities for both                                                                                                Block D downhill       blocks as a
+                                                                                        1
+                                                                                                                                                              function of yarding
+yarding directions were similar and averaged
+                                                                                                                                                              distance.
+about 76 m³/PMH. In Block C, yarding of
+                                                                                        0
+payloads with an average volume of
+                                                                                             0            50        100          150       200          250
+1.69 m³/cycle resulted in a relatively small                                                                    Yarding distance (m)
+productivity of 50 m³/PMH. In Block D,
+the average cycle time of 1.35 min couldn’t
+
+
+
+
+                                                        Yarding productivity (m3/SMH)
+compensate for small payload volumes of                                                 100
+                                                                                                          Block B uphill                                      Figure 13.
+0.54 m³/cycle, and the recorded productiv-                                               80                                                                   Predicted
+ity was only 24 m³/PMH.                                                                                                                Block B downhill       productivity for the
+                                                                                         60                                                                   Madill 144 swing
+Cycle time, productivity, and cost                                                                                                                            yarder in Block B
+                                                                                         40
+of yarding                                                                                                                             Block C uphill         and Cypress 7280
+                                                                                         20                                                                   swing yarder in
+     Regression analysis based on the detailed-                                                                                   Block D downhill            Blocks C and D.
+timing data found a significant relationship                                                0
+between outhaul and inhaul times and                                                             0         50       100    150     200             250
+yarding distances (Equations 1 to 8, Appen-                                                                       Yarding distance (m)
+dix II). These equations, combined with the
+average hookup, deck, move yarder, and                                                  20
+delay times per cycle in Table 7, were used to                                                                                                                Figure 14.
+                                                   Yarding cost ($/m3)
+
+
+
+
+derive yarding cycle times for the four study                                                                                                                 Predicted yarding
+                                                                                        15
+areas (Equations 9 to 12, Appendix II).                                                              Block D downhill                                         costs for the Madill
+     Figure 12 presents predicted yarding cycle                                                                                                               144 swing yarder
+                                                                                        10                                                                    in Block B and
+times as functions of yarding distances. The                                                                    Block C uphill                                Cypress 7280
+differences in cycle times resulted mainly                                                                                                                    swing yarder in
+                                                                                         5
+from differences in terminal times (hookup                                                                                                                    Blocks C and D.
+                                                                                                                Block B uphill and downhill
+and unhook times). The almost parallel nature
+                                                                                         0
+of regression lines for yarding cycle time in
+                                                                                                 0         50       100      150         200      250
+all studied areas indicates that the average
+                                                                                                                 Yarding distance (m)
+outhaul and inhaul speeds were similar or
+even identical (as for Block C and downhill
+yarding in Block B where the lines coincided).          from the 20% difference in payload volumes.
+     The shift-level and detailed-timing results        For all yarding distances, productivities in
+were combined to estimate productivity                  Block C were 80% of those in the down-
+during scheduled yarding time, using an                 hill-yarded portion of Block B. In Block D,
+assumed long-term utilization rate of 90%               short cycle times were not able to compensate
+(Equation 13, Appendix II). As Figure 13                for small cycle loads, and the yarding pro-
+shows, for a given distance the four study              ductivity was far below the productivities
+areas showed substantial differences in                 achieved in Blocks B and C.
+yarding productivity. The highest                            Yarding costs in $/m³ were computed
+productivities were achieved in Block B, and            using Equation 14 in Appendix II. For the
+the difference between uphill and downhill              four study areas and a common distance of
+yarding was negligibly small. The difference            100 m, these costs ranged from $4.54/m³
+between productivities in Block C and in the            to $12.67/m³ (Figure 14). Because the
+downhill-yarded portion of Block B resulted             yarder costs in $/SMH varied only slightly
+
+               Vol. 5 No. 1
+Advantage      January 2004                                                                                                                                                          11
+     (Appendix I), the differences in costs in $/m³          payloads of hand-felled stems. Since the
+     reflected the differences in yarding pro-               hand-felling in Block B was necessary because
+     ductivities in m³/SMH.                                  of terrain (the slope gradient exceeded the
+                                                             capabilities of the feller-buncher) and not
+     Effect of felling phase on grapple                      because of tree size, it was assumed that the
+     yarding performance                                     volumes of hand- and mechanically felled
+          Yarding of manually and mechanically               stems did not differ significantly and averaged
+     felled stems in Block B gave an opportunity             0.95 m³/stem. Based on this assumption, the
+     to determine the effect of the felling system           average payload volumes for yarding of
+     on swing yarder performance (Table 9). For              hand- and mechanically felled stems were
+     each felling mode, the differences between              1.62 and 2.33 m³/cycle, respectively. Yarding
+     averages for hookup, deck, and cycle times were         productivities and costs for hand- and
+     very small and statistically not significant.           mechanical felling, using an assumed utiliza-
+     However, the average payload sizes in                   tion rate of 90%, are shown in Figures 15 and
+     numbers of stems per cycle differed signifi-            16. For all distances, yarding of mechanically
+     cantly. Payloads of stems felled and bunched            felled stems was about 38% more productive
+     by the feller-buncher averaged 2.45 stems/cycle         than for hand-felled stems, and yarding costs
+     and were about 43% greater than the cycle               were about 28% less.
+
+
+
+            Table 9. Summary of detailed timing for downhill yarding of
+               hand-felled and mechanically felled stems in Block B
+                                                                                                  Hand- and
+                                                       Hand-felled       Mechanically            mechanically
+                                                         stems           felled stems            felled stems
+        Productive time (min)                              114                 376                       489
+        Productive machine hours (PMH)                     1.9                 6.3                       8.2
+
+        Total cycles                                        66                 220                        286
+        Average cycle time (min)                          1.73 a              1.72 a                     1.72
+        Distribution of cycle time (min)
+           Outhaul b                                      0.32                0.26                       0.28
+           Hookup                                         0.32 a              0.38 a                     0.36
+           Inhaul b                                       0.39                0.36                       0.37
+           Deck                                           0.25 a              0.27 a                     0.26
+           Move yarder and backspar c                     0.34                0.34                       0.34
+           Delays c                                       0.11                0.11                       0.11
+
+        Load (stems/cycle)                                1.71 d              2.45 d                     2.29
+        Volume (m³/stem)                                  0.95                0.95                       0.95
+        Volume (m³/cycle)                                 1.62                2.33                       2.18
+        Average yarding distance (m)                       126                 100                        106
+        Productivity
+           Stems/PMH                                        59                  85                        80
+           m³/PMH                                           56                  81                        76
+        a
+          The difference between average element times for hand and mechanical felling is not significant at
+          α = 0.05.
+        b
+          Outhaul and inhaul times for both methods of felling are given by Equations 3 and 4 in Appendix II,
+          respectively.
+        c
+          Calculated as an average from the total element time and number of downhill yarding cycles.
+        d
+          The difference between average numbers of stems per cycle for hand and mechanical felling is
+          significant at α = 0.005.
+
+
+                                                                                          Vol. 5 No. 1
+12                                                                                       January 2004    Advantage
+Loader-forwarder vs. grapple                                                                                                                               Figure 15.
+
+
+
+
+                                                     Yarding productivity (m3/SMH)
+yarding                                                                              100                                                                   Predicted yarding
+     Figure 17 compares predicted extraction                                                                                                               productivities for
+                                                                                                                mechanically felled
+costs in $/m³ in Block B for the Madill 3800                                                                                                               hand- and
+                                                                                      80                                                                   mechanically
+loader-forwarder and the Madill 144 swing
+                                                                                                                                                           felled stems in
+yarder. The line for the loader-forwarder
+                                                                                      60                                                                   Block B.
+represents extraction costs for the slope class
+11–30%. Extraction costs for the Madill 144                                                                 hand-felled
+
+are plotted for both yarding directions. For                                          40
+short extraction distances, up to about 75 m,                                                0             50           100            150           200
+loader-forwarding is a cost-effective solution.                                                               Yarding distance (m)
+
+For distances longer than 75 m, grapple
+yarding has lower extraction costs.
+     The location of the coordinates of the                                          8
+intersection is moderately sensitive to changes                                                                                                            Figure 16.
+                                                  Yarding cost ($/m3)
+                                                                                                                hand-felled                                Predicted yarding
+in hourly machine costs and productivity of
+                                                                                     6                                                                     costs for hand- and
+the loader-forwarder. For example, a decrease
+                                                                                                                                                           mechanically
+of the Madill 3800’s extraction productivity                                                                                                               felled stems in
+by 20% would move the intersection point                                             4                                                                     Block B.
+of the cost lines for the loader-forwarder                                                                    mechanically felled
+
+and swing yarder from 75 m to 60 m (i.e.,
+                                                                                     2
+grapple yarding would become less costly than                                            0             50              100          150          200
+loader-forwarding at 60 m than at 75 m).                                                                Yarding distance (m)
+
+Loader-forwarding and grapple
+yarding combination compared
+to a single extraction mode only                                                     10
+                                                                                                                                                           Figure 17.
+                                                     Extraction cost ($/m3)
+
+
+
+
+    The potential use of a loader-forwarder                                              8                                                                 Predicted
+                                                                                                                              Yarding uphill
+and a swing yarder in the same block requires                                                                                                              extraction costs for
+                                                                                         6                                                                 the Madill 3800
+the operation planner to make a decision on                                                                                        Yarding downhill
+extraction modes and, if both machines are                                                                                                                 loader-forwarder
+                                                                                         4
+                                                                                                                                                           and the Madill 144
+chosen, the distribution of the block area
+                                                                                         2                                                                 swing yarder in
+extracted by each method. Consequently,                                                                                                                    Block B.
+                                                                                                 Forwarding
+these decisions will determine the block                                                 0
+volume extracted by the loader-forwarder                                                     0        50         100         150     200       250
+and yarder. Because the two machines have                                                                   Yarding distance (m)
+different hourly machine costs and
+productivities, the distribution of the block
+volume will affect the total extraction costs.      to extract the total volume of 8 250 m³, the
+    To examine this effect, a theoretical           maximum yarding distance would be 200 m,
+analysis was made, based on results of loader-      and the extraction costs would include the
+forwarding and grapple yarding in Block B.          yarder mobilization cost estimated at $786,
+Additional block characteristics assumed in         the direct yarding cost calculated at $37 923,
+this analysis are shown in Table 10.                and the road change cost calculated at $3 792.
+    The results of the cost analysis are shown      The total cost of $42 501 for this variant is
+in Figure 18. The bar diagram shows the cost        represented in Figure 18 by the bar for the
+components and total costs of yarding and           yarding distance of 200 m.
+forwarding by yarding distance. If the                  If the planner preferred to use a loader-
+planner decided to use only a swing yarder          forwarder only, the extraction costs would
+
+              Vol. 5 No. 1
+Advantage     January 2004                                                                                                                                                        13
+                                                                                                     include the loader mobilization cost of $300
+                                                                                                     and the direct forwarding cost of $45 833.
+                        Table 10. Assumed characteristics                                            The total forwarding cost of $46 133 is
+                       of Block B for theoretical extraction                                         represented in Figure 18 by the bar for the
+                                   cost analysis                                                     yarding distance of 0 m. This cost is about
+                                                                                                     9% greater than the yarding costs in the
+                        Description                                                   Total
+                                                                                                     previous variant.
+                        Harvested area (ha)                                              15              If the planner decided to forward the
+                        Extracted volume (m3)                                         8 250          60-m area adjacent to the road, the yarding
+                        Harvested volume (m3/ha)                                        550
+                        Road length (m)                                                 725          will occur over 140 m (from 60 m from the
+                        Extraction distance (m)                                         200          road to the backline of the block at 200 m).
+                                                                                                     For this option, 30% of the block volume
+                        Estimated mobilization cost ($) a
+                          Loader-forwarder                                               300
+                                                                                                     would be forwarded, and the remaining 70%
+                          Swing yarder                                                   786         would be yarded. Extraction costs, repre-
+                                                                                                     sented by the bar for the yarding distance of
+                        Worksite or yarding road change cost ($)                                     140 m, would be $37 976, which is less than
+                          Loader-forwarder                       negligible
+                          Swing yarder                               3 792                           the extraction costs for the yarder-only or the
+                                                                                                     loader-forwarder-only option.
+                       a
+                            Gord Vaughan, Coastal Pacific Logging Consultants Ltd.,                      Figure 18 demonstrates that the minimum
+                            Parkville, B.C., personal communication, July 2003.
+                                                                                                     extraction cost would be achieved when a
+                                                                                                     75-m-wide strip adjacent to the road is
+                                                                                                     loader-forwarded and the remaining portion
+
+
+                                                                           Forwarder mobilization         Yarder mobilization
+                                                          50 000
+     Figure 18. Total                                                      Road change                    Loader-forwarding
+     extraction costs as                                                   Grapple yarding
+     a function of                                        45 000
+     yarding distance.
+     Forwarding                                           40 000
+     distance may be
+     calculated as the
+     difference of the                                    35 000
+     block width of 200
+                                    Extraction cost ($)
+
+
+
+
+     m and selected                                       30 000
+     yarding distance
+     (e.g., for a yarding
+     distance of 160 m,                                   25 000
+     the forwarding
+     distance is 40 m).                                   20 000
+
+
+                                                          15 000
+
+
+                                                          10 000
+
+
+                                                           5 000
+
+
+                                                              0
+                                                                   200   180   160   140     125    120   100   80     60       40       20       0
+
+                                                                                           Yarding distance (m)
+
+                                                                                                                                 Vol. 5 No. 1
+14                                                                                                                              January 2004    Advantage
+of the block is grapple yarded.3 For this                         25                                                    Figure 19.
+option, the total cost of $37 734, represented                    20                                                    Downhill loader-
+
+
+
+
+                                                    Cost ($/m3)
+by the bar for the yarding distance of 125 m,                                                Total forwarding and       forwarding cost,
+                                                                  15                         road construction cost     road construction
+is 11% less than for the yarding-only option,
+                                                                              Road
+and 18% less than for the loader-forwarder-                       10 construction                                       cost, and their sum
+                                                                              cost                                      as functions of
+only option.                                                       5
+                                                                                            Forwarding cost
+                                                                                                                        road spacing.
+                                                                   0
+Optimum road spacing                                                   0     50       100      150       200      250
+      The impact of road spacing on extraction,                                      Road spacing (m)
+road construction, and total costs in $/m³ is
+shown in Figure 19 (loader-forwarding) and
+                                                                  20
+Figure 20 (grapple yarding). In these graphs,                                                                           Figure 20. Uphill
+forwarding and yarding cost trendlines in                                          Total yarding and                    grapple yarding
+                                                                  15
+                                                                                                                        cost, road
+
+
+                                                    Cost ($/m3)
+                                                                                   road construction cost
+$/m³ are based on study results in Block B,
+                                                                                                                        construction cost,
+and the road construction cost curves in                          10       Road                                         and their sum as
+$/m³ are plotted for a construction cost of                         construction
+                                                                                                                        functions of road
+                                                                   5       cost
+$52 000/km and an average volume of                                                                                     spacing.
+550 m³/ha. The total-cost curve for down-                                  Yarding cost
+                                                                   0
+hill loader-forwarding shows that its minimum
+                                                                       0   50 100 150 200 250 300 350 400
+is achieved for a road spacing of 180 m. For
+                                                                                     Road spacing (m)
+uphill grapple yarding, the optimum road
+spacing is 370 m. However, because the curves
+are very flat, even relatively large deviations          For the terrain and stand conditions
+from the optimum spacing result in small            observed in this study and an average extrac-
+changes to the total costs (e.g., for grapple       tion distance of 60 m, the Madill 3800’s
+yarding, reducing road spacing from 370 to          overall productivity was 43.5 m³/SMH at a
+250 m would result in a 5% increase in total        cost of $3.36/m³. For downhill extraction,
+costs). This low sensitivity of the total costs     loader-forwarding productivity for the slope
+gives a harvesting planner considerable             class 0–10% was 18% greater than for the slope
+flexibility in block layout and road location.      class 11–30%. Forwarding productivity and
+                                                    cost are very sensitive to forwarding distance.
+                                                    Doubling the forwarding distance resulted
+  Conclusions                                       in a 50% decrease in productivity and a
+     The study results indicate that a loader-      100% increase in extraction costs per cubic
+forwarder and swing yarder, used in the same        metre.
+block, can complement each other very well.              For the three study blocks, grapple
+The swing yarder’s fast outhaul and inhaul,         yarding productivities and costs were very
+lack of slope limitations, and ability to extract   different and strongly affected by the felling
+large-volume payloads make it very efficient        mode (manual or mechanical), number of
+for long-distance extraction on moderate to         stems in the payload, and average volume per
+very steep slopes with adequate deflection          stem. The greatest productivity and lowest
+and with few obstacles. Because of its low          cost (78.8 m³/PMH and $4.56/m³) were
+speed, the loader-forwarder is better suited        attributed to good preparation of bunches
+for short extraction distances. If slope permits,   for yarding (mechanical felling with a feller-
+it may be best employed to forward stems
+from strips adjacent to the roads and from
+areas inaccessible to grapple yarding (e.g.,        3
+                                                              Changes to the maximum extraction distance and to
+small confined pockets, areas with poor                       the mobilization and road change costs affect the total
+                                                              extraction costs, but the minimum total costs would
+deflection, or areas with heavy accumulation                  still be achieved when the width of the forwarded strip
+of obstacles).                                                is 75 m.
+
+               Vol. 5 No. 1
+Advantage      January 2004                                                                                                                   15
+     buncher), multiple-stem loads, and high            • If the block (or a portion of it) is suitable
+     average volume per stem. The lowest yarding          for forwarding as well as for yarding,
+     productivity and highest cost (22.1 m³/PMH           assign the 75-m-wide strips adjacent to
+     and $16.28/m³) resulted from manual felling          the roads to a loader-forwarder, and the
+     (dispersed stems), single-stem loads, and            remaining areas to swing yarders. This
+     small average volume per stem.                       will minimize total extraction costs.
+          The results of the study on loader-           • Grapple yarding in conjunction with hot
+     forwarding and grapple yarding in similar            processing is operationally feasible.
+     terrain and stand conditions showed that the         However, because of unavoidable inter-
+     extraction costs can be minimized by careful         actions between the yarder and processor
+     assignment of extraction modes to the block          and the subsequent loss in productivity,
+     area. For the terrain and stand conditions           hot processing should be used only when
+     observed in this study, the minimum extrac-          absolutely necessary (e.g., limited decking
+     tions costs are achieved if a 75-m-wide strip        area for yarded logs and safety require-
+     of felled timber adjacent to the road is loader-     ments).
+     forwarded, and the rest of the harvest area
+     is grapple yarded.
+
+        Implementation
+         During the observed harvesting operation,
+     FERIC identified conditions for successful
+     and effective use of the Madill 144 and
+     Cypress 7280 swing yarders and the Madill
+     3800 loader-forwarder to harvest second-
+     growth forests on steep slopes:
+       • Productive and cost-efficient extraction
+         with loader-forwarders and swing
+         yarders requires careful layout of the
+         block, detailed planning of all harvesting
+         phases, and careful assignment of the
+         extraction modes to the block area.
+       • Low sensitivity of the total extraction
+         and road construction costs in $/m³ to
+         road spacing gives harvest planners a high
+         degree of freedom in laying out blocks
+         and designing road systems. Reasonable
+         deviations from the optimum road
+         spacing, dictated by terrain or stand
+         features, should not unduly increase
+         the combined extraction and road
+         construction costs.
+       • If the terrain and stand conditions permit,
+         using feller-bunchers is recommended,
+         particularly in areas with low stand and
+         stem volumes. Bunches that are properly
+         oriented, aligned, and sized will improve
+         cycle load volumes, productivities, and
+         costs of both extraction systems.
+
+                                                                                Vol. 5 No. 1
+16                                                                             January 2004    Advantage
+ References
+Gillies, C. 2001. Loader-forwarding on moderately steep slopes in interior British Columbia.
+  FERIC, Vancouver, B.C. Advantage Report Vol. 2 No. 62. 12 pp.
+Green, R.N.; Klinka, K. 1994. A field guide to site identification and interpretation for the
+  Vancouver Forest Region. Research Branch, B.C. Ministry of Forests, Victoria, B.C. Land
+  Management Handbook No. 28. 285 pp.
+Kosicki, K.T.; Dyson, P.F. 2003. Using mechanized systems to harvest second-growth
+  forests in coastal British Columbia: evaluation of Madill T2200 and Tigercat 860
+  feller-bunchers. FERIC, Vancouver, B.C. Advantage Report Vol. 4 No. 28. 12 pp.
+Mellgren, P.G. 1980. Terrain classification for Canadian forestry. Woodland Section, CPPA,
+  Montreal, Que. 13 pp.
+Sambo, S.; Sutherland, B. 2003. Loader-forwarding on sensitive soils in the boreal forest: a
+  case study. FERIC, Vancouver, B.C. Advantage Report Vol. 4 No. 22. 18 pp.
+
+
+ Acknowledgements
+     The authors thank John Quinn, Rick Jaccard, the personnel of TimberWest, and all the
+operators and contractors who cooperated with FERIC for their assistance in providing
+information essential to the study.
+     The authors thank FERIC employees Marv Clark, Ingrid Hedin, and Ray Krag for project
+advice and for reviewing the draft report. Thanks also to Brian Boswell, Clayton Gillies, and
+Mihai Pavel for assisting with the data collection and to Yvonne Chu and Shelley Ker for
+assistance with report preparation.
+
+
+
+
+             Vol. 5 No. 1
+Advantage     January 2004                                                                      17
+                                                              Appendix I
+                                 Machine costsa ($/scheduled machine hour (SMH))
+
+                                                                    Madill 3800     Madill 144                       Cypress
+                                                                      loader-        swing           Hitachi       7280 swing         John Deere
+                                                                     forwarder       yarder         backspar          yarder           backspar
+
+     OWNERSHIP COSTS
+         Total purchase price (P) $                                 550 000         1 000 000        150 000        1 300 000           85 000
+         Expected life (Y) y                                               8               12              5                12               5
+         Expected life (H) h                                          16 000           24 360         10 150            23 027          10 000
+         Scheduled hours per year (h)=(H/Y) h                          2 000            2 030          2 030             1 919           2 000
+         Salvage value as % of P (s) %                                    30               30             20                30              20
+         Interest rate (Int) %                                             5                5              5                 5               5
+         Insurance rate (Ins) %                                            2                2              2                 2               2
+         Salvage value (S)=(s•P/100) $                               165 000          300 000         30 000          390 000           17 000
+         Average investment (AVI)=((P+s)/2) $                        357 500          650 000         90 000          845 000           51 000
+         Loss in resale value ((P-S)/H) $/h                            24.06            28.74          11.82               39.52          6.80
+         Interest=((Int•AVI)/h) $/h                                     8.94            16.01           2.22               22.02          1.27
+         Insurance=((Ins•AVI)/h) $/h                                    3.58             6.40           0.89                8.81          0.51
+         Total ownership costs (OW) $/h                                36.58            51.15          14.93               70.35          8.58
+     OPERATING COSTS
+         Wire rope (wc) $                                                  -           24 084              -           21 078                -
+         Wire rope life (wh) h                                             -              950              -              950                -
+         Rigging & radio (rc) $                                            -           14 000              -           14 000                -
+         Rigging & radio life (rh) h                                       -            5 700              -            5 700                -
+         Fuel consumption (F) L/h                                         40               55              5               55                5
+         Fuel (fc) $/L                                                  0.75             0.75           0.75             0.75             0.75
+         Lube and oil as % of fuel cost (fp) %                            10               10             10               10               10
+         Track & undercarriage replacement (Tc) $                     30 000           60 000         30 000           60 000                0b
+         Track & undercarriage life (Th) h                            20 000            8 000         20 000            8 000                -
+         Annual operating supplies (Oc) $                              2 000           10 000            500           10 000              500
+         Annual repair and maintenance (Rp) $                         82 000          100 000         18 000          110 000           13 000
+         Shift length (sl) h                                             8.5              9.0              -              8.5                -
+         Wages $/h
+           Operator                                                    23.80            26.80               -              26.80               -
+           Labourer No. 1                                                  -            26.10               -              26.10               -
+           Labourer No. 2                                                  -            22.97               -              22.97               -
+         Total wages (W) $/h                                           23.80            75.87               -              75.87               -
+         Wage benefit loading (WBL) %                                     35               35               -                 35               -
+         Wire rope (wc/wh) $/h                                          0.00            25.35              -             22.19               -
+         Rigging & radio (rc/rh) $/h                                    0.00             2.46              -              2.46               -
+         Fuel (F•fc) $/h                                               30.00            41.25           3.75             41.25            3.75
+         Lube and oil ((fp/100)•(F•fc)) $/h                             3.00             4.13           0.38              4.13            0.38
+         Track & undercarriage (Tc/Th) $/h                              1.50             7.50           1.50              7.50               -
+         Operating supplies (Oc/h) $/h                                  1.00             4.93           0.25              5.21            0.25
+         Repair and maintenance cost ((Rp/h) $/h                       41.00            49.26           8.87             57.32            6.50
+         Wages and benefits (W•(1+WBL/100)) $/h                        32.13           102.42              -            102.42               -
+         Prorated overtime ((1.5•W-W)•(sl-8)•(1+WBL/100))/sl) $/h       0.95             5.69              -              3.01               -
+         Total operating costs (OP) $/h                               109.58           242.98          14.74            245.49           10.88
+     TOTAL OWNERSHIP AND OPERATING COSTS (OW+OP) $/h                  146.15           294.13          29.66            315.84           19.46
+     a
+       The costs used in the study are not the actual costs incurred by the company, and do not include indirect costs such as crew and machine
+       transpor tation, overhead, profit, and risk.
+     b
+       No track and undercarriage replacement planned.
+
+
+
+
+                                                                                                                    Vol. 5 No. 1
+18                                                                                                                 January 2004    Advantage
+                                 Appendix II
+            Regression, productivity, and cost equations
+                        for grapple yarding
+
+
+Linear equations for outhaul and inhaul
+
+Equation 1: Outhaul, Block B, uphill yarding
+     OUT = 0.09 + 0.0020(YD)           n = 717    r2 = 0.563   S.E.E. = 0.080
+Equation 2: Inhaul, Block B, uphill yarding
+     IN = 0.06 + 0.0041(YD)             n = 720   r2 = 0.627   S.E.E. = 0.157
+Equation 3: Outhaul, Block B, downhill yarding
+     OUT = 0.06 + 0.0021(YD)         n = 285      r2 = 0.549   S.E.E. = 0.076
+Equation 4: Inhaul, Block B, downhill yarding
+     IN = 0.06 + 0.0028(YD)            n = 285    r2 = 0.473   S.E.E. = 0.124
+Equation 5: Outhaul, Block C, uphill yarding
+     OUT = 0.14 + 0.0016(YD)           n = 318    r2 = 0.412   S.E.E. = 0.101
+Equation 6: Inhaul, Block C, uphill yarding
+     IN = -0.02 + 0.0034(YD)            n = 321   r2 = 0.546   S.E.E. = 0.163
+Equation 7: Outhaul, Block D, downhill yarding
+     OUT = 0.05 + 0.0022(YD)         n = 493      r2 = 0.627   S.E.E. = 0.095
+Equation 8: Inhaul, Block D, downhill yarding
+     IN = 0.02 + 0.0021(YD)            n = 505    r2 = 0.623   S.E.E. = 0.088
+
+      Where
+        OUT = outhaul time (min)
+        IN     = inhaul time (min)
+        YD = yarding distance (m)
+        n      = number of observations
+          2
+        r      = coefficient of determination
+        S.E.E. = standard error of estimate
+
+
+
+
+             Vol. 5 No. 1
+Advantage    January 2004                                                       19
+     Cycle time equations
+
+     Equation 9: Block B, uphill yarding
+          CT = 1.41 + 0.0061(YD)
+     Equation 10: Block B, downhill yarding
+          CT = 1.10 + 0.0049(YD)
+     Equation 11: Block C
+          CT = 1.09 + 0.0050(YD)
+     Equation 12: Block D
+          CT = 0.74 + 0.0043(YD)
+
+           Where:
+             CT = cycle time (min)
+             YD = yarding distance (m)
+
+     Productivity and cost equations
+                                60(CV)(U)
+     Equation 13: Productivity =
+                                     CT
+                             HC
+     Equation 14: Cost =
+                         Productivity
+           Where:
+              HC = hourly cost ($/SMH)
+
+
+
+
+                                               Vol. 5 No. 1
+20                                            January 2004    Advantage
+

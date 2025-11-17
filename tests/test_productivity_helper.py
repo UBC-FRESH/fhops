@@ -8,6 +8,7 @@ from fhops.productivity import (
     LahrsenModel,
     estimate_productivity,
     estimate_productivity_distribution,
+    estimate_processor_productivity_labelle2019_dbh,
     load_lahrsen_ranges,
 )
 
@@ -75,3 +76,22 @@ def test_monte_carlo_distribution_matches_deterministic_mean():
         ground_slope=18.0,
     )
     assert pytest.approx(result.expected_m3_per_pmh, rel=1e-6) == deterministic.predicted_m3_per_pmh
+
+
+def test_labelle2019_clearcut_spruce_polynomial_matches_reference():
+    result = estimate_processor_productivity_labelle2019_dbh(
+        species="spruce",
+        treatment="clear_cut",
+        dbh_cm=34.3,
+    )
+    expected = (-70.18) + 5.301 * 34.3 + (-0.06052) * (34.3**2)
+    assert math.isclose(result.delay_free_productivity_m3_per_pmh, expected, rel_tol=1e-9)
+
+
+def test_labelle2019_invalid_species_pair_raises() -> None:
+    with pytest.raises(ValueError):
+        estimate_processor_productivity_labelle2019_dbh(
+            species="pine",  # type: ignore[arg-type]
+            treatment="clear_cut",
+            dbh_cm=30.0,
+        )

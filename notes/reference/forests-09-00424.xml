@@ -1,0 +1,1344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.1 20151215//EN" "JATS-journalpublishing1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" article-type="research-article" dtd-version="1.1" xml:lang="en">
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="publisher-id">forests</journal-id>
+      <journal-title-group>
+        <journal-title>Forests</journal-title>
+        <abbrev-journal-title abbrev-type="publisher">Forests</abbrev-journal-title>
+        <abbrev-journal-title abbrev-type="pubmed">Forests</abbrev-journal-title>
+      </journal-title-group>
+      <issn pub-type="epub">1999-4907</issn>
+      <publisher>
+        <publisher-name>MDPI</publisher-name>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="doi">10.3390/f9070424</article-id>
+      <article-id pub-id-type="publisher-id">forests-09-00424</article-id>
+      <article-categories>
+        <subj-group>
+          <subject>Article</subject>
+        </subj-group>
+      </article-categories>
+      <title-group>
+        <article-title>Exploring the Use of Harvesters in Large-Diameter Hardwood-Dominated Stands</article-title>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <contrib-id contrib-id-type="orcid" authenticated="true">https://orcid.org/0000-0002-6799-0788</contrib-id>
+          <name>
+            <surname>Labelle</surname>
+            <given-names>Eric R.</given-names>
+          </name>
+          <xref rid="c1-forests-09-00424" ref-type="corresp">*</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Breinig</surname>
+            <given-names>Lorenz</given-names>
+          </name>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Sycheva</surname>
+            <given-names>Ekaterina</given-names>
+          </name>
+        </contrib>
+      </contrib-group>
+      <aff id="af1-forests-09-00424">Department of Ecology and Ecosystem Management, Technical University of Munich, Hans-Carl-von-Carlowitz-Platz 2, 85354 Freising, Germany</aff>
+      <author-notes>
+        <corresp id="c1-forests-09-00424"><label>*</label>Correspondence: <email>eric.labelle@tum.de</email>; Tel.: +49-8161-71-4760</corresp>
+      </author-notes>
+      <pub-date pub-type="epub">
+        <day>15</day>
+        <month>07</month>
+        <year>2018</year>
+      </pub-date>
+      <pub-date pub-type="collection">
+        <month>07</month>
+        <year>2018</year>
+      </pub-date>
+      <volume>9</volume>
+      <issue>7</issue>
+      <elocation-id>424</elocation-id>
+      <history>
+        <date date-type="received">
+          <day>21</day>
+          <month>06</month>
+          <year>2018</year>
+        </date>
+        <date date-type="accepted">
+          <day>11</day>
+          <month>07</month>
+          <year>2018</year>
+        </date>
+      </history>
+      <permissions>
+        <copyright-statement>&#xA9; 2018 by the authors.</copyright-statement>
+        <copyright-year>2018</copyright-year>
+        <license license-type="open-access">
+          <license-p>Licensee MDPI, Basel, Switzerland. This article is an open access article distributed under the terms and conditions of the Creative Commons Attribution (CC BY) license (<ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link>).</license-p>
+        </license>
+      </permissions>
+      <abstract>
+        <p>The use of fully-mechanized operations, normally targeted at coniferous species, has also been on the rise in mixed-species and continuous-cover forests comprised of a strong share of deciduous species. With special form characteristics (complex crowns, large-diameter branches, forks and sweeps, high wood density, etc.), deciduous trees can lead to wide-ranging harvesting productivities, often divergent from those originally derived from coniferous species. Due to the importance and growing interest in mechanizing operations in close-to-nature mixedwood and deciduous stands, obtaining insight on harvesting productivity in large-diameter deciduous trees was of interest. This study located in Bavaria, Germany, monitored four harvesters (two wheeled and two tracked machines) operated in four distinct harvest blocks (case studies), all of which had a high percentage of large-diameter European beech and oak trees. Harvesting productivity and volume recovery was assessed and quantified. Based on the field inventory of European beech and oak trees and continuous time-and-motion study, average harvesting productivity ranged from 29 to 43 m<sup>3</sup>/PMH<sub>0</sub> (productive machine hours without delay), whereas volume recovery fluctuated between 73% and 85% for trees that were completely felled and processed by machines. Because of the rather limited sample size and the variable conditions between case studies, results should only be used as general orientation on the performance of the tested machines and additional research is suggested to further understand the influence of tree form characteristics on impediments to mechanized processing.</p>
+      </abstract>
+      <kwd-group>
+        <kwd>harvesting productivity</kwd>
+        <kwd>mechanized operations</kwd>
+        <kwd>wheeled and tracked harvesters</kwd>
+        <kwd>processing</kwd>
+        <kwd>volume recovery</kwd>
+        <kwd>work technique</kwd>
+        <kwd>time-and-motion study</kwd>
+        <kwd>deciduous species</kwd>
+      </kwd-group>
+    </article-meta>
+  </front>
+  <body>
+    <sec id="sec1-forests-09-00424" sec-type="intro">
+      <title>1. Introduction</title>
+      <p>The use of machines in forest operations has been on the rise in many countries. In German public forests, approximately half the wood volume harvested is with fully-mechanized systems, commonly comprised of (single-grip) harvesters and forwarders [<xref ref-type="bibr" rid="B1-forests-09-00424">1</xref>]. From the time of their development in the Nordic countries, single-grip harvesters and especially harvesting heads have been adapted to the characteristics of coniferous trees, for which they normally reach their highest productivity. With the higher shares of deciduous species being both naturally or artificially regenerated and managed under a close-to-nature forestry, the level of interest in expanding the use of mechanized cut-to-length (CTL) systems into mixedwood and deciduous stands is increasing. At a first glance, the advantages seem noteworthy; increased worker safety and improved ergonomics, but most of all, higher productivity compared to motor-manual operations. However, deciduous trees possess complex morphology exhibiting large branches, forks, severe crooks and sweeps, and overall more diverse crown architecture compared to coniferous species. Accordingly, Labelle et al. [<xref ref-type="bibr" rid="B2-forests-09-00424">2</xref>] reported a 20% reduction in harvesting productivity of a fully-mechanized CTL system operated in a sugar maple (<italic>Acer saccharum</italic> M.) stand with complex tree form as compared to those with simple architecture. Moreover, deciduous and coniferous trees have different physical characteristics, which significantly affect productivity of forest operations [<xref ref-type="bibr" rid="B3-forests-09-00424">3</xref>,<xref ref-type="bibr" rid="B4-forests-09-00424">4</xref>,<xref ref-type="bibr" rid="B5-forests-09-00424">5</xref>]. Specifically, deciduous trees have higher wood density: for example, for European beech (<italic>Fagus sylvatica</italic> L.), the most common deciduous species in Germany, a wood density in the order of 753 kg/m<sup>3</sup> at 12% moisture content was reported by Gryc et al. [<xref ref-type="bibr" rid="B6-forests-09-00424">6</xref>], whereas for Norway spruce (<italic>Picea abies</italic> (L.) Karst.), the most commercially significant softwood species in Europe, oven-dry wood densities of around 438 kg/m<sup>3</sup> have been found [<xref ref-type="bibr" rid="B7-forests-09-00424">7</xref>].</p>
+      <p>These considerable differences make the use of existing productivity functions, derived from coniferous species, misleading when attempting to anticipate the productivity of CTL harvesters operated in close-to-nature mixedwood or deciduous forest stands. While in recent decades, various studies of harvesting productivity under different conditions have been performed (e.g., [<xref ref-type="bibr" rid="B8-forests-09-00424">8</xref>,<xref ref-type="bibr" rid="B9-forests-09-00424">9</xref>,<xref ref-type="bibr" rid="B10-forests-09-00424">10</xref>,<xref ref-type="bibr" rid="B11-forests-09-00424">11</xref>,<xref ref-type="bibr" rid="B12-forests-09-00424">12</xref>]), studies on the performance of harvesters in central European hardwood-dominated stands are scarce, particularly when considering large-diameter trees. In a pilot study, Labelle and Windisch [<xref ref-type="bibr" rid="B13-forests-09-00424">13</xref>] investigated the performance and productivity of a high-powered harvester in a mixed beech/spruce stand, with a higher time required for beech processing compared to spruce. There is a need to further investigate the performance and, where applicable, the operational limits of available harvesting equipment more closely. Because of increased operational flexibility with regard to the time of harvesting, and especially because of work safety, the frequency of fully-mechanized operations in deciduous stands is increasing. The highest risks of life-threatening injuries occur during harvesting by motor-manual systems; therefore, the increased usage of machines makes the work conditions safer for the operators and reduces the amount of serious accidents [<xref ref-type="bibr" rid="B3-forests-09-00424">3</xref>]. The productivity of wood harvesting is affected by a number of factors such as tree size, tree characteristics, terrain, site conditions, operators&#x2019; skills [<xref ref-type="bibr" rid="B10-forests-09-00424">10</xref>,<xref ref-type="bibr" rid="B14-forests-09-00424">14</xref>], and machines or working techniques being used [<xref ref-type="bibr" rid="B4-forests-09-00424">4</xref>]. In this study, the objective was to quantify the harvesting productivity and volume recovery of four different CTL harvesters (two wheeled and two tracked machines) operated in mixed and pure beech stands in southern Germany.</p>
+    </sec>
+    <sec id="sec2-forests-09-00424">
+      <title>2. Materials and Methods</title>
+      <sec id="sec2dot1-forests-09-00424">
+        <title>2.1. Experimental Design and Tree Inventory</title>
+        <p>Four independent case studies were performed during regularly scheduled forest operations at four sites in Bavaria, Germany: Bad Br&#xFC;ckenau (BB), Hammelburg (HA), Heigenbr&#xFC;cken (HG), and Rothenbuch (RO). European beech and pedunculate or sessile oak (<italic>Quercus robur</italic> L. or <italic>Q. petraea</italic> (Matt.) Liebl.) were the target species. In all four sites, the silvicultural treatment selected was a regeneration cut aimed at removing approximately 25% of the standing volume.</p>
+        <p>In each case study, test plots ranging from 100 to 200 m in length and about 30 m in width were established on pre-existing machine operating trails. The aim of the experimental design was to provide approximately 110 target trees (100 target trees plus 10% as a reserve for operational difficulties) for each case study, thus requiring between five and seven plots per study site. Beech and oak trees that had a diameter at breast height (dbh) of at least 20 cm and that were selected and marked for removal by a district forester were given a unique alpha-numeric code that was painted on two sides of the tree at a height of 2&#x2013;3 m. The codes were oriented at about a 45-degree angle to the machine operating trail to facilitate visibility by the operator and the researcher performing time-and-motion studies. Additionally, every target tree was identified by species and measurements of dbh with centimeter accuracy done with a caliper, whereas total tree heights were recorded with a digital height, distance, and inclination instrument with meter accuracy. Standing merchantable volume per tree (&gt;7 cm diameter) was calculated according to the equation provided by Franz et al. [<xref ref-type="bibr" rid="B15-forests-09-00424">15</xref>] using tree dbh and height as inputs. Due to changes or disruptions of the work processes in the ongoing operations and the loss of data in the recording of work elements, the number of experimental trees remaining in the evaluation decreased to 79 in BB, 67 in HA, 104 in HG, and 72 in RO. Data loss mainly occurred since the researcher performing the time-and-motion study of the mechanized operations needed to manage his personal safety (keep a safe distance from the harvester) while maintaining adequate visibility of the harvesting head, which made it very difficult to correctly and completely capture all work elements for each removal trees. In the case of fragmented data collection, a comment was inserted in the hand-held computer to identify the incomplete cycle, which was later removed from analyses. In some other cases, reference quantities (volume) could not be retrieved.</p>
+      </sec>
+      <sec id="sec2dot2-forests-09-00424">
+        <title>2.2. Machines Tested</title>
+        <p>This project focused on two wheeled and two tracked machines operated in the four case studies previously mentioned. The wheeled machines were a TimberPro TF840-B (TimberPro Inc., Shawano, WI, USA) with SP861LF harvesting head (SP Maskiner, Ljungby, Sweden) equipped with a top-saw and a Rottne H20 (Rottne Industri AB, Rottne, Sweden) equipped with a Rottne EGS700 head (Rottne Industri AB, Rottne, Sweden) utilized at the BB and HA sites, respectively (<xref ref-type="table" rid="forests-09-00424-t001">Table 1</xref> and <xref ref-type="fig" rid="forests-09-00424-f001">Figure 1</xref>). Two tracked harvesters, specifically the Impex Hannibal T50 (Impex Forstmaschinen GmbH, Straubing, BY, Germany) with a Lako 1118 head (Lako Oy, Turku, Finland) as well as an Impex Hannibal T40 (Impex Forstmaschinen GmbH, Straubing, Germany) with a Ponsse H8 head (Ponsse Oyj, Vierem&#xE4;, Finland) were operated at the HG and RO sites, respectively. The harvesters were also equipped with different measuring and control systems; only the two wheeled machines had the same system (Dasa5). </p>
+      </sec>
+      <sec id="sec2dot3-forests-09-00424">
+        <title>2.3. Time Study and Operational Data </title>
+        <p>To collect detailed information during live forest operations, a conventional time-and-motion study was performed with a handheld Juniper Allegro computer using the FPInnovations TS1000 software (FPInnovations, Montreal, QC, Canada). Each cycle, referring to the combined tasks required to reach, fell, and process a target tree, was divided into several work elements; moving, boom-out, felling, processing, manipulation, operational delays, and nonoperational delays (<xref ref-type="table" rid="forests-09-00424-t002">Table 2</xref>). All delays were removed for data analysis, and thus time shares and harvesting productivity are presented based on productive machine hours without delay (PMH<sub>0</sub>). Sequences that were not attributable to the individual tree (cycle), such as moving or manipulation, were standardized for the individual case studies; i.e., the times were summed up and equally allocated to all trial trees in a case study. In addition to conventional time-and-motion study, a video camera was mounted in the cabin of each harvester and aimed so that both the display of the measurement and control system and, if possible, the harvester head lay in the field of view. This enabled us to link the alpha-numeric code of each target tree to the number assigned by the measuring and control system located in the cabin of the machine. For the (frequent) case that the tree number was not in the field of view of the video camera, the machine operators were asked to announce aloud the number on the target trees, so that they were recorded on the soundtrack of the video.</p>
+        <p>All of the reports produced by the harvesters&#x2019; harvesting and control systems (files according to Standard for Forest Data and communications ) were collected after the completion of the respective operations and single-volume production reports (PRI files) were used to determine the reference quantities, e.g., diameter, length, and assortment of all produced logs. Since no PRI files were stored in the HA case study, the reference quantities had to be determined from video recordings of the operator&#x2019;s cabin showing the display of the measurement and control system during the work.</p>
+      </sec>
+      <sec id="sec2dot4-forests-09-00424">
+        <title>2.4. Specifics of Case Studies and Data Groups</title>
+        <p>Because of the average spacing between adjacent machine operating trails (approximately 30 m) in conjunction with large tree dimensions in the BB and HG case studies, the TimberPro TF840-B and Impex Hannibal T50 harvesters required motor-manual operations outside the limits of the (usable) boom reach (<xref ref-type="table" rid="forests-09-00424-t003">Table 3</xref>). Time study data collected from the BB and HG test sites were therefore subdivided into two groups as these case studies also included trees harvested motor-manually. The &#x201C;fully-mechanized&#x201D; (FM) group includes data from all removal trees that were felled and processed entirely by the harvesters, whereas the &#x201C;motor-manual&#x201D; (MM) group summarizes the data of the removal trees that were motor-manually felled by forest workers and then processed by the harvesters. Because of stand and operational characteristics, work technique also varied between sites. In BB, trimming of butt flare and prenotching of larger diameter trees that were within harvester boom reach was performed by chainsaws to facilitate the felling process by the harvester.</p>
+        <p>Average tree dbh ranged from 35.6 to 46.9 cm for HA and HG sites, respectively, whereas average tree heights showed less variation and oscillated between 28.3 and 29.1 m for RO and BB sites, respectively (<xref ref-type="table" rid="forests-09-00424-t004">Table 4</xref>). Lowest average merchantable tree volume of 1.7 m<sup>3</sup> on bark (o.b.) was calculated for HA, while the highest average merchantable volume of 2.9 m<sup>3</sup> o.b. was calculated in HG.</p>
+      </sec>
+      <sec id="sec2dot5-forests-09-00424">
+        <title>2.5. Statistical Analyses</title>
+        <p>The statistic package IBM SPSS 21 was used for the statistical analyses. Prior to the analysis of the time study data, distributions of tree dbh in the individual case studies were examined for normality. Since normal distributions of dbh could not be assumed in all case studies, the nonparametric Kruskal&#x2013;Wallis test was used to test for differences in dbh distribution between case studies. For the post-hoc tests, i.e., pairwise comparisons, Dunn tests with Bonferroni significance correction were applied. Simple mean comparisons were made with the two-sided <italic>t</italic>-test. Differences in productivity between the case studies were tested for statistical significance using analysis of covariance with the variable dbh as a covariate. A significance level of 5% was used throughout all statistical analyses.</p>
+      </sec>
+    </sec>
+    <sec id="sec3-forests-09-00424" sec-type="results">
+      <title>3. Results and Discussion</title>
+      <sec id="sec3dot1-forests-09-00424">
+        <title>3.1. Preharvest Inventory of Removal Trees</title>
+        <p>The dbh distributions of the removal trees were found to be significantly different between the four case studies. In the FM group, dbh distribution in BB differed significantly from dbh distribution in HG, while dbh distribution in HA differed significantly from dbh distributions in both HG and RO (<xref ref-type="fig" rid="forests-09-00424-f002">Figure 2</xref>A). Concerning the MM group, dbh distributions in BB and HG differed significantly (<xref ref-type="fig" rid="forests-09-00424-f002">Figure 2</xref>B). Due to these differences between the individual case studies, an influence of tree size on measured harvester productivity has to be taken into account when comparing the results of the case studies.</p>
+        <p>Total harvested volume was approximately 354 m&#xB3; under bark (u.b.) in the FM group and 109 m&#xB3; u.b. in the MM group. In the case of the MM group in HG, sawlog volume (amounting to 69 m&#xB3; u.b.) was not regarded in the analysis, since the sawlogs (butt logs of variable lengths) had been bucked off motor-manually at the time of prefelling and thus were not processed by the tested CTL harvester.</p>
+      </sec>
+      <sec id="sec3dot2-forests-09-00424">
+        <title>3.2. Duration of Cycles and Work Elements</title>
+        <sec id="sec3dot2dot1-forests-09-00424">
+          <title>3.2.1. FM Group</title>
+          <p>The average time required for a complete cycle in the FM group ranged from 1.97 to 2.78 min for the different case studies (<xref ref-type="table" rid="forests-09-00424-t005">Table 5</xref>). The shortest cycle time was observed for the TF840-B in BB, while for the other three case studies, the spread of cycle times was considerably narrower, with durations of 2.49 min (HA) to 2.78 min (RO). The relative shares of mean cycle duration for the individual work elements are presented in <xref ref-type="fig" rid="forests-09-00424-f003">Figure 3</xref>. The most time-consuming work element was processing, which on average took between 54% and 65% of the entire cycle duration, while the least time-consuming was manipulation, with only 1&#x2013;5% of cycle duration. </p>
+          <p>Considering the work element boom-out, a difference between the tracked machines with their long-reach booms and the wheeled machines was noticeable: While the wheeled machines showed mean durations of this work element of 0.15 and 0.18 min (8% and 7% relative share of cycle duration), boom-out took on average about 0.10 min longer for the tracked machines (11% and 10% of cycle duration). Whether this difference was caused by frequently exploiting the boom length of the tracked machines to reach trees farther away from the machine operating trails or rather by a slower boom speed of the tracked harvesters could not be clearly isolated. Equal time consumption for moving was recorded for the tracked machines and the H20 with about 0.37 min, whereas for the TF840-B, this work element took slightly less time. At least, with the given distribution of removal trees in this study, no time-saving effect of a long boom reach (due to the machine reaching more trees from a single position) could thus be noted. For the work element felling, the lowest average duration could be observed in the case of the TF840-B (BB) with 0.22 min; this was markedly lower compared to the time consumption of this work element in the other case studies. To some extent, this observation can be explained by the working technique applied in BB: In addition to prefelling beyond boom reach, large trees within the boom zone were also motor-manually prepared for the harvester by trimming root flares, cutting a felling notch, and indicating the predefined felling direction on the tree trunk. Regarding time shares of work elements in general, our findings are in line with those from Labelle et al. [<xref ref-type="bibr" rid="B2-forests-09-00424">2</xref>], who for example, reported a 71% share for the work element processing when using a purpose-built single-grip harvester operated in a sugar maple stand (avg. dbh of 33 cm) in Eastern Canada.</p>
+        </sec>
+        <sec id="sec3dot2dot2-forests-09-00424">
+          <title>3.2.2. MM Group</title>
+          <p>In the MM group, mean cycle durations were 2.30 min in the case of BB and 1.82 min in the case of HG (<xref ref-type="table" rid="forests-09-00424-t006">Table 6</xref>). Since the work element felling was not present here, the relative share of processing was considerably higher than in the FM group, with 68% of mean cycle duration in the case of HG and 81% in the case of BB (<xref ref-type="fig" rid="forests-09-00424-f004">Figure 4</xref>). This large difference between the case studies, on average 0.62 min in absolute figures, can be largely attributed to the fact that in HG the butt logs, and thus a considerable part of the prefelled trees, were not processed by the harvester at all. Furthermore, a tendency to aim for short cycle times at the expense of wood recovery was observable in the video recordings from HG.</p>
+        </sec>
+      </sec>
+      <sec id="sec3dot3-forests-09-00424">
+        <title>3.3. Harvesting Productivity </title>
+        <p>Productivity was calculated for each case study or data group, respectively, as an average of the ratio of harvest volume and time required for each cycle, extrapolated to one hour.</p>
+        <sec id="sec3dot3dot1-forests-09-00424">
+          <title>3.3.1. FM Group</title>
+          <p>Overall, the harvesting productivities observed in the four case studies were on a considerably high level, ranging from 28 to 49 m&#xB3;/PMH<sub>0</sub> (<xref ref-type="table" rid="forests-09-00424-t007">Table 7</xref>). In all four case studies, productivity of the tested harvesters increased with greater tree size as reported in two dbh classes (20 to 39 cm and 40 cm and above). However, while productivity was 26% and 40% higher with the larger tree size (dbh) class for the TF840-B and T50, respectively, less pronounced increases of 14% and 6% were observed for the H20 and T40, respectively. No apparent cause for this observation could be identified; however, we assume a combined effect of the operators&#x2019; working techniques and, probably more important, the harvesting heads of the H20 and T40 reaching their capacity limits.</p>
+          <p>Regarding average harvesting productivity across all dbh classes, the TF840-B and T50 were on par with 43 m<sup>3</sup>/PMH<sub>0</sub> and at the same time considerably higher than the average productivities of the other two harvesters, these being 29 m<sup>3</sup>/PMH<sub>0</sub> for the H20 and 34 m<sup>3</sup>/PMH<sub>0</sub> for the T40. The subdivision of the tested harvesters into two groups in terms of productivity, that these observations implied, was confirmed by the analysis of covariance performed: the productivities of the H20 and the T40 were significantly different from the productivities of the TF840-B and the T50 (<xref ref-type="fig" rid="forests-09-00424-f005">Figure 5</xref>). Additionally, the analysis of covariance indicated that 31% of the variation of harvesting productivity (across all case studies) was explained by the combination of machine type (strictly speaking: case study) as factor and dbh as independent variable (covariate).</p>
+          <p>Given the constraint that sample size was rather low, the match in productivity by the TF840-B and the T50 can be explained, on the one hand, by the fact that the TF840-B was comparable to the tracked machines in terms of engine output and capacity of the harvesting head. On the other hand, the previously mentioned working technique of motor-manually preparing particularly large trees might also have contributed to the high productivity of this machine via the time savings during felling. The lower productivity observed for the H20 can be partly explained by the lowest average dbh of removal trees (35.8 cm) as compared to the other case studies and also due to the lowest capacity according to the technical specifications. However, no obvious explanation for the noticeable productivity difference between the very similar T40 and T50 harvesters could be found. The discrepancy, which was most pronounced for the larger trees, could be linked to the operators&#x2019; working technique and other factors difficult to capture quantitatively.</p>
+          <p>In the case of the TF840-B and the T50, regression curves show productivity maxima of approximately 50 m<sup>3</sup>/PMH<sub>0</sub> at a dbh slightly above or below 50 cm; while in the case of the H20 and the T40, the maxima of about 35 m<sup>3</sup>/PMH<sub>0</sub> were just below a dbh of 45 cm, as can be seen in <xref ref-type="fig" rid="forests-09-00424-f006">Figure 6</xref>. The rather low coefficients of determination are in line with other published works performed in deciduous stands [<xref ref-type="bibr" rid="B2-forests-09-00424">2</xref>], while remaining lower than those normally reported in coniferous stands [<xref ref-type="bibr" rid="B18-forests-09-00424">18</xref>,<xref ref-type="bibr" rid="B19-forests-09-00424">19</xref>]. In the case of deciduous trees, other factors (tree morphology, single-tree volume) aside from dbh seem to strongly influence harvesting productivity.</p>
+          <p>Higher-than-expected harvesting productivities can also be explained by the fact that the deciduous trees removed in all four case studies were relatively tall (avg. of 28.8 m) and that the majority of the first two-thirds of the merchantable sections rarely exhibited large branches or other form characteristics that would hinder processing.</p>
+          <p>For large trees (merchantable stem volume &gt; 1 m&#xB3;) of mixed species, but mainly spruce and pine, Gerasimov et al. [<xref ref-type="bibr" rid="B20-forests-09-00424">20</xref>] found productivities by a John Deere 1270 that were even substantially higher (by a factor of 2) than those observed in our study. However, these productivities were based on so-called &#x201C;stem processing time&#x201D; that excluded the work elements moving, boom-out and manipulation and are thus not directly comparable. In line with our findings, Pajko&#x161; et al. [<xref ref-type="bibr" rid="B21-forests-09-00424">21</xref>] reported average harvesting productivity of 35 m<sup>3</sup>/PMH (measured over bark) with two harvesters (Rottne H11 and John Deere 1270) operated in a spruce-dominated stand with an average stem volume of 1.3 m<sup>3</sup>. </p>
+        </sec>
+        <sec id="sec3dot3dot2-forests-09-00424">
+          <title>3.3.2. MM Group</title>
+          <p>Observed productivity in the MM group was higher than in the FM group in the case of the TF840-B, while it was lower in the case of the T50 (<xref ref-type="table" rid="forests-09-00424-t008">Table 8</xref>). At first glance, this seems contradictory to the cycle durations presented in <xref ref-type="table" rid="forests-09-00424-t006">Table 6</xref>, especially the low time consumption for the work element processing in the case of the T50; but the same explanation, that is, the fact that the sawlogs were not processed by the T50 at all, applies here: while the T50 thus achieved considerable time savings, at the same time, it did not exploit the part of a tree that usually yields the highest product volumes in the shortest processing time. Even more than with the data in the FM group, here the small sample size (23 trees in the case of BB) must be considered together with any interpretations, and as indicated in <xref ref-type="fig" rid="forests-09-00424-f007">Figure 7</xref>, the productivity difference between the two case studies was not significant.</p>
+          <p>Productivity curves derived from the results in the MM group are presented in <xref ref-type="fig" rid="forests-09-00424-f008">Figure 8</xref>. In the case of BB, the task of prefelling trees increased harvesting productivity compared to trees that were felled and processed entirely by the harvester. According to the highest vertex of the regression curve, maximum productivity reached 60 m<sup>3</sup>/PMH<sub>0</sub>, thus indicating a 20% increase compared to trees that were completely handled by the harvester. This finding is reasonable since with fully-mechanized operations, trees of this dimension (avg. dbh of 43.3 cm) would require one or several back-cuts prior to the final cut. As discussed previously, in the case of HG, observed productivity of the T50 with the prefelled trees was lower than with the trees in the FM group. This is also reflected in the corresponding productivity curves, which have their maxima at 45 m&#xB3;/PMH<sub>0</sub> as compared to 50 m&#xB3;/PMH<sub>0</sub> in the FM group. A potentially higher productivity of the harvester when processing only is thus masked by the fact that the sawlogs (i.e., butt logs) were not produced by the harvester, but rather motor-manually.</p>
+        </sec>
+      </sec>
+      <sec id="sec3dot4-forests-09-00424">
+        <title>3.4. Volume Recovery</title>
+        <p>Volume recovery in the FM group, expressed in relative terms based on the merchantable standing volumes from the preharvest inventory, varied between 73% and 85% in HA and BB, respectively (<xref ref-type="table" rid="forests-09-00424-t009">Table 9</xref>). Despite the range observed, the volume recovery is considerably high for deciduous trees with rather complex tree form. One reason for the high values could be potential inaccuracies of the height measurements performed during preharvest inventory, which in some cases could underestimate the stem volume and in turn provide a higher volume recovery. While for case study BB in the MM group also a noticeably high volume recovery of 80% was calculated, a comparison with HG is not possible, since in HG, the sawlog volume could not be considered as sawlogs were not produced by the harvester. Again, the assumption that an overestimation of volume recovery resulted from height inaccuracies, that is, too-low measurements of tree height during inventory, is somewhat supported by the observations on processing quality, expressed as the thoroughness of processing tree crowns. Particularly in the case of BB, only partly complete processing of crowns based on visual assessment coincides with high volume recovery in both data groups. Another important point to mention is the fact that volume recovery is comparing standing volume (with bark) to recovered volume (without bark). According to the Bayerische Forstverwaltung [<xref ref-type="bibr" rid="B22-forests-09-00424">22</xref>], a 6% bark volume reduction for European beech is commonly used. Current techniques for acquisition of more accurate data on tree volume and morphology such as terrestrial laser scanning might provide a better basis for assessment of volume recovery and the relationships between tree form and processing quality.</p>
+      </sec>
+    </sec>
+    <sec id="sec4-forests-09-00424" sec-type="conclusions">
+      <title>4. Conclusions </title>
+      <p>With increasing shares of deciduous trees being managed under mixed-species stands and close-to-nature forestry, the interest in using fully-mechanized systems to perform forest operations is on the rise. From this study, two main trends emerged:<list list-type="roman-lower"><list-item><label>(i)</label><p>Average harvesting productivities (29 to 43 m<sup>3</sup>/PMH<sub>0</sub>) were high and should only be used as a general orientation on the operational capabilities of these machines.</p></list-item><list-item><label>(ii)</label><p>Motor-manual preparation of the butt flare and prenotching allowed for trees of large dimensions to be handled efficiently by the harvesters and thus contributed to the high harvesting productivity reported.</p></list-item></list></p>
+      <p>Despite some promising findings that support the use of mechanized systems in large-diameter deciduous stands, further research is required to comprehend, in particular, the influence of certain tree form characteristics on processing time, since tree dbh explained only a rather low proportion of the harvesting variability.</p>
+    </sec>
+  </body>
+  <back>
+    <notes>
+      <title>Author Contributions</title>
+      <p>Conceptualization, E.R.L. and L.B.; Formal analysis, E.R.L., L.B. and E.S.; Funding acquisition, E.R.L. and L.B.; Investigation, E.R.L., L.B. and E.S.; Methodology, E.R.L. and L.B.; Project administration and supervision, E.R.L.; Writing, E.R.L., L.B. and E.S.</p>
+    </notes>
+    <ack>
+      <title>Acknowledgments</title>
+      <p>The authors wish to extend gratitude to operational managers, field supervisors, and machine operators who made this study possible. We also wish to thank FPInnovations for the use of the software TS1000 for time-and-motion studies. This publication was supported by the German Research Foundation (DFG) and the Technical University of Munich (TUM) in the framework of the Open Access Publishing Program.</p>
+    </ack>
+    <notes notes-type="COI-statement">
+      <title>Conflicts of Interest</title>
+      <p>The authors declare no conflict of interest.</p>
+    </notes>
+    <ref-list>
+      <title>References</title>
+      <ref id="B1-forests-09-00424">
+        <label>1.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Labelle</surname>
+              <given-names>E.R.</given-names>
+            </name>
+            <name>
+              <surname>Bergen</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Windisch</surname>
+              <given-names>J.</given-names>
+            </name>
+          </person-group>
+          <article-title>The effect of quality bucking and automatic bucking on harvesting productivity and product recovery in a pine-dominated stand</article-title>
+          <source>Eur. J. For. Res.</source>
+          <year>2017</year>
+          <volume>136</volume>
+          <fpage>639</fpage>
+          <lpage>652</lpage>
+          <pub-id pub-id-type="doi">10.1007/s10342-017-1061-4</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B2-forests-09-00424">
+        <label>2.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Labelle</surname>
+              <given-names>E.R.</given-names>
+            </name>
+            <name>
+              <surname>Soucy</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Cyr</surname>
+              <given-names>A.</given-names>
+            </name>
+            <name>
+              <surname>Pelletier</surname>
+              <given-names>G.</given-names>
+            </name>
+          </person-group>
+          <article-title>Effect of Tree Form on the Productivity of a Cut-to-Length Harvester in a Hardwood Dominated Stand</article-title>
+          <source>Croat. J. For. Eng.</source>
+          <year>2016</year>
+          <volume>37</volume>
+          <fpage>175</fpage>
+          <lpage>183</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B3-forests-09-00424">
+        <label>3.</label>
+        <element-citation publication-type="web">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Huyler</surname>
+              <given-names>N.K.</given-names>
+            </name>
+            <name>
+              <surname>LeDoux</surname>
+              <given-names>C.B.</given-names>
+            </name>
+          </person-group>
+          <article-title>Performance of a Cut-to-Length Harvester in a Single-Tree and Group-Selection Cut. Research Paper NE-711</article-title>
+          <year>1999</year>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.fs.fed.us/ne/newtown_square/publications/research_papers/pdfs/scanned/OCR/ne_rp711.pdf" ext-link-type="uri">https://www.fs.fed.us/ne/newtown_square/publications/research_papers/pdfs/scanned/OCR/ne_rp711.pdf</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2018-06-05">(accessed on 5 June 2018)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B4-forests-09-00424">
+        <label>4.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Nurminen</surname>
+              <given-names>T.</given-names>
+            </name>
+            <name>
+              <surname>Korpunen</surname>
+              <given-names>H.</given-names>
+            </name>
+            <name>
+              <surname>Uusitalo</surname>
+              <given-names>J.</given-names>
+            </name>
+          </person-group>
+          <article-title>Time consumption analysis of the mechanized cut-to-length harvesting system</article-title>
+          <source>Silva Fenn.</source>
+          <year>2006</year>
+          <volume>40</volume>
+          <fpage>335</fpage>
+          <lpage>363</lpage>
+          <pub-id pub-id-type="doi">10.14214/sf.346</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B5-forests-09-00424">
+        <label>5.</label>
+        <element-citation publication-type="thesis">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Hiesl</surname>
+              <given-names>P.</given-names>
+            </name>
+          </person-group>
+          <article-title>Productivity Standards for Whole-Tree and Cut-to-Length Harvesting Systems in Maine</article-title>
+          <source>Master&#x2019;s Thesis</source>
+          <publisher-name>University of Maine</publisher-name>
+          <publisher-loc>Orono, ME, USA</publisher-loc>
+          <year>2013</year>
+        </element-citation>
+      </ref>
+      <ref id="B6-forests-09-00424">
+        <label>6.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Gryc</surname>
+              <given-names>V.</given-names>
+            </name>
+            <name>
+              <surname>Vavr&#x10D;&#xED;k</surname>
+              <given-names>H.</given-names>
+            </name>
+            <name>
+              <surname>Gomola</surname>
+              <given-names>&#x160;.</given-names>
+            </name>
+          </person-group>
+          <article-title>Selected properties of European beech (<italic>Fagus sylvatica</italic> L.)</article-title>
+          <source>J. For. Sci.</source>
+          <year>2008</year>
+          <volume>54</volume>
+          <fpage>418</fpage>
+          <lpage>428</lpage>
+          <pub-id pub-id-type="doi">10.17221/59/2008-JFS</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B7-forests-09-00424">
+        <label>7.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Bergqvist</surname>
+              <given-names>G.</given-names>
+            </name>
+          </person-group>
+          <article-title>Wood density traits in Norway spruce understorey: Effects of growth rate and birch shelterwood density</article-title>
+          <source>Ann. Sci. For.</source>
+          <year>1998</year>
+          <volume>55</volume>
+          <fpage>809</fpage>
+          <lpage>821</lpage>
+          <pub-id pub-id-type="doi">10.1051/forest:19980705</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B8-forests-09-00424">
+        <label>8.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Gl&#xF6;de</surname>
+              <given-names>D.</given-names>
+            </name>
+          </person-group>
+          <article-title>Single- and double-grip harvesters&#x2014;Productive measurements in final cutting of shelterwood</article-title>
+          <source>Int. J. For. Eng.</source>
+          <year>1999</year>
+          <volume>10</volume>
+          <fpage>63</fpage>
+          <lpage>74</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B9-forests-09-00424">
+        <label>9.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>K&#xE4;rh&#xE4;</surname>
+              <given-names>K.</given-names>
+            </name>
+            <name>
+              <surname>R&#xF6;kk&#xF6;</surname>
+              <given-names>E.</given-names>
+            </name>
+            <name>
+              <surname>Gumse</surname>
+              <given-names>S.-I.</given-names>
+            </name>
+          </person-group>
+          <article-title>Productivity and cutting costs of thinning harvesters</article-title>
+          <source>Int. J. For. Eng.</source>
+          <year>2004</year>
+          <volume>15</volume>
+          <fpage>43</fpage>
+          <lpage>56</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B10-forests-09-00424">
+        <label>10.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Jirou&#x161;ek</surname>
+              <given-names>R.</given-names>
+            </name>
+            <name>
+              <surname>Klva&#x10D;</surname>
+              <given-names>R.</given-names>
+            </name>
+            <name>
+              <surname>Skoup&#xFD;</surname>
+              <given-names>A.</given-names>
+            </name>
+          </person-group>
+          <article-title>Productivity and costs of the mechanized cut-to-length wood harvesting system in clear-felling operations</article-title>
+          <source>J. For. Sci.</source>
+          <year>2007</year>
+          <volume>53</volume>
+          <fpage>476</fpage>
+          <lpage>482</lpage>
+          <pub-id pub-id-type="doi">10.17221/2088-JFS</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B11-forests-09-00424">
+        <label>11.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Eriksson</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Lindroos</surname>
+              <given-names>O.</given-names>
+            </name>
+          </person-group>
+          <article-title>Productivity of harvesters and forwarders in CTL operations in Northern Sweden based on large follow-up datasets</article-title>
+          <source>Int. J. For. Eng.</source>
+          <year>2014</year>
+          <volume>25</volume>
+          <fpage>179</fpage>
+          <lpage>200</lpage>
+          <pub-id pub-id-type="doi">10.1080/14942119.2014.974309</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B12-forests-09-00424">
+        <label>12.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Mederski</surname>
+              <given-names>P.S.</given-names>
+            </name>
+            <name>
+              <surname>Bembenek</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Karaszewski</surname>
+              <given-names>Z.</given-names>
+            </name>
+            <name>
+              <surname>&#x141;acka</surname>
+              <given-names>A.</given-names>
+            </name>
+            <name>
+              <surname>Szczepa&#x144;ska-&#xC1;lvarez</surname>
+              <given-names>A.</given-names>
+            </name>
+            <name>
+              <surname>Rosi&#x144;ska</surname>
+              <given-names>M.</given-names>
+            </name>
+          </person-group>
+          <article-title>Estimating and modelling harvester productivity in pine stands of different ages, densities and thinning intensities</article-title>
+          <source>Croat. J. For. Eng.</source>
+          <year>2016</year>
+          <volume>37</volume>
+          <fpage>27</fpage>
+          <lpage>36</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B13-forests-09-00424">
+        <label>13.</label>
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Labelle</surname>
+              <given-names>E.R.</given-names>
+            </name>
+            <name>
+              <surname>Windisch</surname>
+              <given-names>J.</given-names>
+            </name>
+          </person-group>
+          <article-title>Productivity of a single-grip TimberPro 620 harvester with a LogMax 7000 harvesting head in a beech dominated stand</article-title>
+          <source>From Theory to Practice: Challenges for Forest Engineering, Proceedings of the 49th Symposium on Forest Mechanization, Warsaw, Poland, 4&#x2013;7 September 2016</source>
+          <publisher-name>Warsaw University of Life Sciences</publisher-name>
+          <publisher-loc>Warsaw, Poland</publisher-loc>
+          <year>2016</year>
+          <size units="pages">9p</size>
+        </element-citation>
+      </ref>
+      <ref id="B14-forests-09-00424">
+        <label>14.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Purf&#xFC;rst</surname>
+              <given-names>F.T.</given-names>
+            </name>
+          </person-group>
+          <article-title>Learning curves of harvester operators</article-title>
+          <source>Croat. J. For. Eng.</source>
+          <year>2010</year>
+          <volume>31</volume>
+          <fpage>89</fpage>
+          <lpage>97</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B15-forests-09-00424">
+        <label>15.</label>
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Franz</surname>
+              <given-names>F.</given-names>
+            </name>
+            <name>
+              <surname>Bachler</surname>
+              <given-names>J.</given-names>
+            </name>
+            <name>
+              <surname>Deckelmann</surname>
+              <given-names>B.</given-names>
+            </name>
+            <name>
+              <surname>Kennel</surname>
+              <given-names>E.</given-names>
+            </name>
+            <name>
+              <surname>Kennel</surname>
+              <given-names>R.</given-names>
+            </name>
+            <name>
+              <surname>Schmidt</surname>
+              <given-names>A.</given-names>
+            </name>
+            <name>
+              <surname>Wotschikowsky</surname>
+              <given-names>U.</given-names>
+            </name>
+          </person-group>
+          <source>Bayerische Waldinventur 1970/71</source>
+          <comment>Inventurabschnitt I: Gro&#xDF;rauminventur Aufnahme- und Auswertungsverfahren</comment>
+          <publisher-name>Forstliche Versuchsanstalt</publisher-name>
+          <publisher-loc>Munich, Germany</publisher-loc>
+          <year>1973</year>
+          <volume>11</volume>
+          <size units="pages">143p</size>
+        </element-citation>
+      </ref>
+      <ref id="B16-forests-09-00424">
+        <label>16.</label>
+        <element-citation publication-type="web">
+          <article-title>Gebrauchte Landmaschinen und Traktoren&#x2014;Landwirt.com</article-title>
+          <comment>Available online: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.landwirt.com/" ext-link-type="uri">https://www.landwirt.com/</ext-link></comment>
+          <date-in-citation content-type="access-date" iso-8601-date="2018-05-17">(accessed on 17 May 2018)</date-in-citation>
+        </element-citation>
+      </ref>
+      <ref id="B17-forests-09-00424">
+        <label>17.</label>
+        <element-citation publication-type="commun">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Wimberger</surname>
+              <given-names>S.</given-names>
+            </name>
+            <aff>Technical University of Munich, Bavaria, Germany</aff>
+          </person-group>
+          <source>Personal communication</source>
+          <year>2017</year>
+        </element-citation>
+      </ref>
+      <ref id="B18-forests-09-00424">
+        <label>18.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Kellogg</surname>
+              <given-names>L.D.</given-names>
+            </name>
+            <name>
+              <surname>Bettinger</surname>
+              <given-names>P.</given-names>
+            </name>
+          </person-group>
+          <article-title>Thinning productivity and cost for a mechanized cut-to-length system in the northwest Pacific coast region of the USA</article-title>
+          <source>Int. J. For. Eng.</source>
+          <year>1994</year>
+          <volume>5</volume>
+          <fpage>43</fpage>
+          <lpage>54</lpage>
+          <pub-id pub-id-type="doi">10.1080/08435243.1994.10702659</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B19-forests-09-00424">
+        <label>19.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Sir&#xE9;n</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Aaltio</surname>
+              <given-names>H.</given-names>
+            </name>
+          </person-group>
+          <article-title>Productivity and costs of thinning harvesters and harvester-forwarders</article-title>
+          <source>Int. J. For. Eng.</source>
+          <year>2013</year>
+          <volume>14</volume>
+          <fpage>39</fpage>
+          <lpage>48</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B20-forests-09-00424">
+        <label>20.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Gerasimov</surname>
+              <given-names>Y.</given-names>
+            </name>
+            <name>
+              <surname>Senkin</surname>
+              <given-names>V.</given-names>
+            </name>
+            <name>
+              <surname>V&#xE4;&#xE4;t&#xE4;inen</surname>
+              <given-names>K.</given-names>
+            </name>
+          </person-group>
+          <article-title>Productivity of single-grip harvesters in clear-cutting operations in the northern European part of Russia</article-title>
+          <source>Eur. J. For. Res.</source>
+          <year>2012</year>
+          <volume>131</volume>
+          <fpage>647</fpage>
+          <lpage>654</lpage>
+          <pub-id pub-id-type="doi">10.1007/s10342-011-0538-9</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B21-forests-09-00424">
+        <label>21.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Pajko&#x161;</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Klva&#x10D;</surname>
+              <given-names>R.</given-names>
+            </name>
+            <name>
+              <surname>Neruda</surname>
+              <given-names>J.</given-names>
+            </name>
+            <name>
+              <surname>Mishra</surname>
+              <given-names>P.K.</given-names>
+            </name>
+          </person-group>
+          <article-title>Comparative time study of conventional cut-to-length and an integrated harvesting method&#x2014;A case study</article-title>
+          <source>Forests</source>
+          <year>2018</year>
+          <volume>9</volume>
+          <elocation-id>194</elocation-id>
+          <pub-id pub-id-type="doi">10.3390/f9040194</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B22-forests-09-00424">
+        <label>22.</label>
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <collab>Bayerische Forstverwaltung</collab>
+          </person-group>
+          <source>Hilfstafeln f&#xFC;r die Forsteinrichtung</source>
+          <publisher-name>Bayerisches Staatsministerium f&#xFC;r Ern&#xE4;hrung, Landwirtschaft und Forsten</publisher-name>
+          <publisher-loc>Munich, Germany</publisher-loc>
+          <year>2018</year>
+          <size units="pages">352p</size>
+        </element-citation>
+      </ref>
+    </ref-list>
+    <sec sec-type="display-objects">
+      <title>Figures and Tables</title>
+      <fig id="forests-09-00424-f001" position="float">
+        <label>Figure 1</label>
+        <caption>
+          <p>Harvesters used in the study: (<bold>A</bold>) TimberPro TF840-B, (<bold>B</bold>) Rottne H20, (<bold>C</bold>) Impex Hannibal T50, and (<bold>D</bold>) Impex Hannibal T40. Photo credit: (<bold>A</bold>) [<xref ref-type="bibr" rid="B16-forests-09-00424">16</xref>]; (<bold>B</bold>&#x2013;<bold>D</bold>) [<xref ref-type="bibr" rid="B17-forests-09-00424">17</xref>].</p>
+        </caption>
+        <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="forests-09-00424-g001.tif"/>
+      </fig>
+      <fig id="forests-09-00424-f002" position="float">
+        <label>Figure 2</label>
+        <caption>
+          <p>Boxplots of tree diameter at breast height (dbh) distributions in the individual case studies in the fully-mechanized (FM) (<bold>A</bold>) and motor-manual (MM) (<bold>B</bold>) groups. Bad Br&#xFC;ckenau (BB), Hammelburg (HA), Heigenbr&#xFC;cken (HG), Rothenbuch (RO). Different letters indicate significant differences in dbh between case studies (<italic>p</italic> &lt; 0.05).</p>
+        </caption>
+        <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="forests-09-00424-g002.tif"/>
+      </fig>
+      <fig id="forests-09-00424-f003" position="float">
+        <label>Figure 3</label>
+        <caption>
+          <p>Mean share of cycle duration for the individual work elements in the fully-mechanized (FM) group.</p>
+        </caption>
+        <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="forests-09-00424-g003.tif"/>
+      </fig>
+      <fig id="forests-09-00424-f004" position="float">
+        <label>Figure 4</label>
+        <caption>
+          <p>Mean share of cycle duration for the individual work elements in the motor-manual (MM) group.</p>
+        </caption>
+        <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="forests-09-00424-g004.tif"/>
+      </fig>
+      <fig id="forests-09-00424-f005" position="float">
+        <label>Figure 5</label>
+        <caption>
+          <p>Distribution of productivity for the four machines (case studies) in the fully-mechanized (FM) group. Different letters indicate significantly different productivities between case studies according to an analysis of covariance (<italic>p</italic> &lt; 0.05).</p>
+        </caption>
+        <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="forests-09-00424-g005.tif"/>
+      </fig>
+      <fig id="forests-09-00424-f006" position="float">
+        <label>Figure 6</label>
+        <caption>
+          <p>Productivity curves (2nd degree polynomial regressions) for the four machines (case studies) in the fully-mechanized (FM) group.</p>
+        </caption>
+        <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="forests-09-00424-g006.tif"/>
+      </fig>
+      <fig id="forests-09-00424-f007" position="float">
+        <label>Figure 7</label>
+        <caption>
+          <p>Distribution of productivity for the two machines (case studies) in the motor-manual (MM) group.</p>
+        </caption>
+        <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="forests-09-00424-g007.tif"/>
+      </fig>
+      <fig id="forests-09-00424-f008" position="float">
+        <label>Figure 8</label>
+        <caption>
+          <p>Productivity curves (2nd degree polynomial regressions) for the two machines (case studies) in the motor-manual (MM) group. Two plots are shown for the T50 where the abscissa is presented as dbh of harvested trees or mid diameter (MD) of the largest processed log by the machine.</p>
+        </caption>
+        <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="forests-09-00424-g008.tif"/>
+      </fig>
+      <table-wrap id="forests-09-00424-t001" position="float">
+        <object-id pub-id-type="pii">forests-09-00424-t001_Table 1</object-id>
+        <label>Table 1</label>
+        <caption>
+          <p>Specifications of harvesters and associated harvesting heads used at the four study sites.</p>
+        </caption>
+        <table>
+          <thead>
+            <tr>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Harvester <break/>(Case Study)</th>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">TimberPro TF840-B (BB)</th>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Rottne H20 <break/>(HA)</th>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Impex Hannibal T50 (HG)</th>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Impex Hannibal T40 (RO)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="center" valign="middle">Traction type</td>
+              <td align="center" valign="middle">8 wheels</td>
+              <td align="center" valign="middle">6 wheels</td>
+              <td align="center" valign="middle">Rigid tracks</td>
+              <td align="center" valign="middle">Rigid tracks</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">Total mass (t)</td>
+              <td align="center" valign="middle">26.1</td>
+              <td align="center" valign="middle">23.0</td>
+              <td align="center" valign="middle">54.0</td>
+              <td align="center" valign="middle">51.4</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">Engine power (kW)</td>
+              <td align="center" valign="middle">221</td>
+              <td align="center" valign="middle">187</td>
+              <td align="center" valign="middle">250</td>
+              <td align="center" valign="middle">194</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">Boom reach (m)</td>
+              <td align="center" valign="middle">7.9</td>
+              <td align="center" valign="middle">10.0</td>
+              <td align="center" valign="middle">15.0</td>
+              <td align="center" valign="middle">14.5</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">Harvesting head</td>
+              <td align="center" valign="middle">SP Maskiner SP861LF with top-saw</td>
+              <td align="center" valign="middle">Rottne EGS700</td>
+              <td align="center" valign="middle">Lako 1118</td>
+              <td align="center" valign="middle">Ponsse H8</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">Maximum felling diameter (cm)</td>
+              <td align="center" valign="middle">80</td>
+              <td align="center" valign="middle">75</td>
+              <td align="center" valign="middle">110</td>
+              <td align="center" valign="middle">80</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Measurement system</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Dasa5</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Dasa5</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Motomit IT 6.5</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Ponsse Opti 4G</td>
+            </tr>
+          </tbody>
+        </table>
+        <table-wrap-foot>
+          <fn>
+            <p>Bad Br&#xFC;ckenau (BB); Hammelburg (HA); Heigenbr&#xFC;cken (HG); Rothenbuch (RO).</p>
+          </fn>
+        </table-wrap-foot>
+      </table-wrap>
+      <table-wrap id="forests-09-00424-t002" position="float">
+        <object-id pub-id-type="pii">forests-09-00424-t002_Table 2</object-id>
+        <label>Table 2</label>
+        <caption>
+          <p>Description of work cycle elements (from Labelle et al. [<xref ref-type="bibr" rid="B1-forests-09-00424">1</xref>]).</p>
+        </caption>
+        <table>
+          <thead>
+            <tr>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Work Element</th>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Start</th>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">End</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Moving</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Traction system is activated</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Traction system is deactivated or other elements dominate</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Boom-out</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Boom extending towards tree</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Head is positioned at base of tree and saw is ready to be activated</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Felling</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Head is in vertical position and saw is activated</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Tree crown touches the ground or feed rollers are activated</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Processing</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Feed rollers are activated with stem in harvesting head</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Tree top is released</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Manipulation</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Other boom tasks (e.g., manipulating processed logs, building a brush mat, etc.)</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Other work elements dominate</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Operational delays</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Any delay linked to organizational issues lasting more than a few seconds</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Other work elements dominate</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Nonoperational delays</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Any delay linked to personal, mechanical, or study design issues lasting more than a few seconds</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Other work elements dominate</td>
+            </tr>
+          </tbody>
+        </table>
+      </table-wrap>
+      <table-wrap id="forests-09-00424-t003" position="float">
+        <object-id pub-id-type="pii">forests-09-00424-t003_Table 3</object-id>
+        <label>Table 3</label>
+        <caption>
+          <p>Description of the four case studies.</p>
+        </caption>
+        <table>
+          <thead>
+            <tr>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Case Study</th>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Felling and Processing </th>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Data Groups</th>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Work Technique <sup>a</sup></th>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Processing of Tree Crowns <sup>b</sup></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">BB</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Chainsaw and harvester</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">FM and MM</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Motor-manual felling of trees beyond boom reach as well as butt flare trimming and prenotching of larger diameter trees to be felled by harvester</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Partly complete</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">HA</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Harvester</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">FM</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">All tasks performed by the harvester</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Complete</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">HG</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Chainsaw and harvester</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">FM and MM</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Motor-manual felling and bucking of sawlogs of larger diameter trees at a longer distance from machine operating trail</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Incomplete</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">RO</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Harvester</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">FM</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">All tasks performed by the harvester</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Complete</td>
+            </tr>
+          </tbody>
+        </table>
+        <table-wrap-foot>
+          <fn>
+            <p><sup>a</sup> Not part of the experimental design, but occurred due to operational conditions (size of trees, distance to machine operating trail); <sup>b</sup> based on operational observations; fully-mechanized (FM); motor-manual (MM).</p>
+          </fn>
+        </table-wrap-foot>
+      </table-wrap>
+      <table-wrap id="forests-09-00424-t004" position="float">
+        <object-id pub-id-type="pii">forests-09-00424-t004_Table 4</object-id>
+        <label>Table 4</label>
+        <caption>
+          <p>Results of the preharvest inventory of removal trees in all four case studies. Arithmetic means and standard deviations are indicated for diameter at breast height (dbh), height, and volume of the trees within one group and as a total (all trees combined per case study).</p>
+        </caption>
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Case Study</th>
+              <th rowspan="2" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Group</th>
+              <th rowspan="2" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">N</th>
+              <th colspan="2" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Tree dbh (cm) <sup>a</sup></th>
+              <th colspan="2" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Tree Height (m)</th>
+              <th colspan="2" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Tree Volume (m<sup>3</sup> o.b.) <sup>b</sup></th>
+              <th rowspan="2" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Sum of Tree Volume (m<sup>3</sup> o.b.)</th>
+              <th rowspan="2" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Recovered Volume (m<sup>3</sup> u.b.) <sup>c</sup></th>
+            </tr>
+            <tr>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Mean</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Standard Deviation</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Mean</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Standard Deviation</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Mean</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Standard Deviation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td rowspan="3" align="center" valign="middle" style="border-bottom:solid thin">BB</td>
+              <td align="center" valign="middle">MM</td>
+              <td align="center" valign="middle">23</td>
+              <td align="center" valign="middle">43.3</td>
+              <td align="center" valign="middle">10.9</td>
+              <td align="center" valign="middle">30.6</td>
+              <td align="center" valign="middle">5.4</td>
+              <td align="center" valign="middle">2.7</td>
+              <td align="center" valign="middle">1.7</td>
+              <td align="center" valign="middle">61.7</td>
+              <td align="center" valign="middle">45.0</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">FM</td>
+              <td align="center" valign="middle">56</td>
+              <td align="center" valign="middle">36.6</td>
+              <td align="center" valign="middle">10.0</td>
+              <td align="center" valign="middle">28.5</td>
+              <td align="center" valign="middle">5.1</td>
+              <td align="center" valign="middle">1.8</td>
+              <td align="center" valign="middle">1.3</td>
+              <td align="center" valign="middle">100.6</td>
+              <td align="center" valign="middle">80.6</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Total</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">79</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">38.5</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">10.6</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">29.1</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">5.2</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">2.1</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">1.4</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">162.3</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">125.5</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">HA</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Total</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">67</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">35.6</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">10.0</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">29.0</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">4.2</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">1.7</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">1.2</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">114.9</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">80.6</td>
+            </tr>
+            <tr>
+              <td rowspan="3" align="center" valign="middle" style="border-bottom:solid thin">HG</td>
+              <td align="center" valign="middle">MM</td>
+              <td align="center" valign="middle">56</td>
+              <td align="center" valign="middle">50.8</td>
+              <td align="center" valign="middle">12.1</td>
+              <td align="center" valign="middle">29.2</td>
+              <td align="center" valign="middle">3.0</td>
+              <td align="center" valign="middle">3.4</td>
+              <td align="center" valign="middle">1.6</td>
+              <td align="center" valign="middle">189.6</td>
+              <td align="center" valign="middle">63.6</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">FM</td>
+              <td align="center" valign="middle">48</td>
+              <td align="center" valign="middle">42.4</td>
+              <td align="center" valign="middle">10.2</td>
+              <td align="center" valign="middle">28.2</td>
+              <td align="center" valign="middle">2.7</td>
+              <td align="center" valign="middle">2.3</td>
+              <td align="center" valign="middle">1.2</td>
+              <td align="center" valign="middle">109.3</td>
+              <td align="center" valign="middle">85.6</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Total</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">104</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">46.9</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">12.0</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">28.7</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">2.9</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">2.9</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">1.6</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">299.0</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">149.2</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">RO</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Total</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">72</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">39.3</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">6.9</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">28.3</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">2.7</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">1.9</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">0.7</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">134.6</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">107.6</td>
+            </tr>
+            <tr>
+              <td colspan="2" align="center" valign="middle" style="border-bottom:solid thin">All trees</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">322</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">40.8</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">11.1</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">28.8</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">3.8</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">2.2</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">1.4</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">710.8</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">462.9</td>
+            </tr>
+          </tbody>
+        </table>
+        <table-wrap-foot>
+          <fn>
+            <p><sup>a</sup> On bark; <sup>b</sup> tree volume (merchantable volume) was calculated according to the equation for European beech reported by Franz et al. [<xref ref-type="bibr" rid="B15-forests-09-00424">15</xref>]; <sup>c</sup> recovered volume was calculated from log mid-diameters and lengths in the harvester production reports; sample size (N); on bark (o.b.); under bark (u.b.).</p>
+          </fn>
+        </table-wrap-foot>
+      </table-wrap>
+      <table-wrap id="forests-09-00424-t005" position="float">
+        <object-id pub-id-type="pii">forests-09-00424-t005_Table 5</object-id>
+        <label>Table 5</label>
+        <caption>
+          <p>Mean duration of work elements per cycle (i.e., tree) in the fully-mechanized (FM) group.</p>
+        </caption>
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Machine (Case Study)</th>
+              <th colspan="6" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Mean Duration per Cycle (min)</th>
+            </tr>
+            <tr>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Moving</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Boom-Out</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Felling</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Processing</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Manipulation</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="center" valign="middle">TF840-B (BB)</td>
+              <td align="center" valign="middle">0.29</td>
+              <td align="center" valign="middle">0.15</td>
+              <td align="center" valign="middle">0.22</td>
+              <td align="center" valign="middle">1.29</td>
+              <td align="center" valign="middle">0.02</td>
+              <td align="center" valign="middle">1.97</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">H20 (HA)</td>
+              <td align="center" valign="middle">0.37</td>
+              <td align="center" valign="middle">0.18</td>
+              <td align="center" valign="middle">0.33</td>
+              <td align="center" valign="middle">1.58</td>
+              <td align="center" valign="middle">0.03</td>
+              <td align="center" valign="middle">2.49</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">T50 (HG)</td>
+              <td align="center" valign="middle">0.36</td>
+              <td align="center" valign="middle">0.27</td>
+              <td align="center" valign="middle">0.48</td>
+              <td align="center" valign="middle">1.36</td>
+              <td align="center" valign="middle">0.04</td>
+              <td align="center" valign="middle">2.51</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">T40 (RO)</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">0.37</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">0.28</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">0.46</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">1.52</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">0.15</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">2.78</td>
+            </tr>
+          </tbody>
+        </table>
+      </table-wrap>
+      <table-wrap id="forests-09-00424-t006" position="float">
+        <object-id pub-id-type="pii">forests-09-00424-t006_Table 6</object-id>
+        <label>Table 6</label>
+        <caption>
+          <p>Mean duration of work elements per cycle (i.e., tree) in the motor-manual (MM) group.</p>
+        </caption>
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Machine (Case Study)</th>
+              <th colspan="5" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Mean Duration per Cycle (min)</th>
+            </tr>
+            <tr>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Moving</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Boom-Out</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Processing</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Manipulation</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="center" valign="middle">TF840-B (BB)</td>
+              <td align="center" valign="middle">0.29</td>
+              <td align="center" valign="middle">0.13</td>
+              <td align="center" valign="middle">1.86</td>
+              <td align="center" valign="middle">0.02</td>
+              <td align="center" valign="middle">2.30</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">T50 (HG)</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">0.36</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">0.18</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">1.24</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">0.04</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">1.82</td>
+            </tr>
+          </tbody>
+        </table>
+      </table-wrap>
+      <table-wrap id="forests-09-00424-t007" position="float">
+        <object-id pub-id-type="pii">forests-09-00424-t007_Table 7</object-id>
+        <label>Table 7</label>
+        <caption>
+          <p>Mean harvesting productivity and standard deviation per dbh class for the four machines (case studies) in the fully-mechanized (FM) group.</p>
+        </caption>
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Machine (Case Study)</th>
+              <th colspan="6" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Productivity (m<sup>3</sup>/PMH<sub>0</sub>) Per dbh Class (cm) (Sample Size)</th>
+            </tr>
+            <tr>
+              <th colspan="2" align="center" valign="middle" style="border-bottom:solid thin">20&#x2013;39</th>
+              <th colspan="2" align="center" valign="middle" style="border-bottom:solid thin">40+</th>
+              <th colspan="2" align="center" valign="middle" style="border-bottom:solid thin">All dbh Classes</th>
+            </tr>
+            <tr>
+              <th align="center" valign="middle" style="border-bottom:solid thin"> </th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Mean</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Standard Deviation</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Mean</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Standard Deviation</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Mean</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Standard Deviation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="center" valign="middle">TF840-B (BB)</td>
+              <td align="center" valign="middle">39.2 (36)</td>
+              <td align="center" valign="middle">10.6</td>
+              <td align="center" valign="middle">48.7 (20)</td>
+              <td align="center" valign="middle">9.4</td>
+              <td align="center" valign="middle">42.6 (56)</td>
+              <td align="center" valign="middle">11.2</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">H20 (HA)</td>
+              <td align="center" valign="middle">27.9 (46)</td>
+              <td align="center" valign="middle">9.5</td>
+              <td align="center" valign="middle">31.7 (21)</td>
+              <td align="center" valign="middle">10.3</td>
+              <td align="center" valign="middle">29.1 (67)</td>
+              <td align="center" valign="middle">9.9</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">T50 (HG)</td>
+              <td align="center" valign="middle">35.3 (19)</td>
+              <td align="center" valign="middle">11.1</td>
+              <td align="center" valign="middle">48.7 (29)</td>
+              <td align="center" valign="middle">14.5</td>
+              <td align="center" valign="middle">43.4 (48)</td>
+              <td align="center" valign="middle">14.8</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">T40 (RO)</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">32.6 (39)</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">9.0</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">35.1 (33)</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">9.3</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">33.7 (72)</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">9.2</td>
+            </tr>
+          </tbody>
+        </table>
+      </table-wrap>
+      <table-wrap id="forests-09-00424-t008" position="float">
+        <object-id pub-id-type="pii">forests-09-00424-t008_Table 8</object-id>
+        <label>Table 8</label>
+        <caption>
+          <p>Mean productivity and standard deviations per dbh class for the two machines (case studies) in the motor-manual (MM) group.</p>
+        </caption>
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Machine (Case Study)</th>
+              <th colspan="6" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Productivity (m<sup>3</sup>/PMH<sub>0</sub>) per dbh Class (cm) (Sample Size)</th>
+            </tr>
+            <tr>
+              <th colspan="2" align="center" valign="middle" style="border-bottom:solid thin">20&#x2013;39</th>
+              <th colspan="2" align="center" valign="middle" style="border-bottom:solid thin">40+</th>
+              <th colspan="2" align="center" valign="middle" style="border-bottom:solid thin">All dbh Classes</th>
+            </tr>
+            <tr>
+              <th align="center" valign="middle" style="border-bottom:solid thin"> </th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Mean</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Standard Deviation</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Mean</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Standard Deviation</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Mean</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Standard Deviation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="center" valign="middle">TF840-B (BB)</td>
+              <td align="center" valign="middle">41.8 (8)</td>
+              <td align="center" valign="middle">16.5</td>
+              <td align="center" valign="middle">55.8 (15)</td>
+              <td align="center" valign="middle">15.0</td>
+              <td align="center" valign="middle">50.9 (23)</td>
+              <td align="center" valign="middle">16.9</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">T50 (HG)</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">29.8 (11)</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">8.3</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">41.5 (45)</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">14.9</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">39.2 (56)</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">14.6</td>
+            </tr>
+          </tbody>
+        </table>
+      </table-wrap>
+      <table-wrap id="forests-09-00424-t009" position="float">
+        <object-id pub-id-type="pii">forests-09-00424-t009_Table 9</object-id>
+        <label>Table 9</label>
+        <caption>
+          <p>Relative volume recovery in the different case studies, calculated as ratio of product volume (recovered volume under bark) and tree volume (merchantable volume on bark).</p>
+        </caption>
+        <table>
+          <thead>
+            <tr>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Machine (Case Study)</th>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Relative Volume Recovery in the FM Group (Sample Size)</th>
+              <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Relative Volume Recovery in the MM Group (Sample Size)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="center" valign="middle">TF840-B (BB)</td>
+              <td align="center" valign="middle">85% (56)</td>
+              <td align="center" valign="middle">80% (23)</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">H20 (HA)</td>
+              <td align="center" valign="middle">73% (67)</td>
+              <td align="center" valign="middle">-</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">T50 (HG)</td>
+              <td align="center" valign="middle">79% (48)</td>
+              <td align="center" valign="middle">42% <sup>a</sup> (56)</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">T40 (RO)</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">82% (72)</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">-</td>
+            </tr>
+          </tbody>
+        </table>
+        <table-wrap-foot>
+          <fn>
+            <p><sup>a</sup> Sawlogs are not considered since these were not processed by the harvester.</p>
+          </fn>
+        </table-wrap-foot>
+      </table-wrap>
+    </sec>
+  </back>
+</article>
