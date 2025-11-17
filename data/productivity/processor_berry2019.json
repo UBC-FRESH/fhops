@@ -1,0 +1,84 @@
+{
+  "source": {
+    "citation": "Berry, N. 2019. Investigating Factors that Influence Processor Productivity. B.For.Sc. (Hons) dissertation, University of Canterbury, NZ.",
+    "document_path": "notes/reference/Berry, Nick_Final-Dissertation.pdf",
+    "notes": [
+      "Five mechanised cut-to-length crews (A–F) working in Kinleith Forest during 2018/19. Piece size (m³/stem) derived from STICKS data; processing times from video analysis.",
+      "Utilisation calculated using delays <10 min; reported utilisation across all crews = 91 %."
+    ]
+  },
+  "piece_size_regression": {
+    "equation": "productivity_m3_per_hour = 34.7 * piece_volume_m3 + 11.3",
+    "slope_m3_per_hour_per_m3": 34.7,
+    "intercept_m3_per_hour": 11.3,
+    "r2": 0.70,
+    "piece_volume_range_m3": {
+      "min": 0.045,
+      "max": 4.45
+    },
+    "notes": [
+      "Intercept is not meaningful when piece size approaches zero but retained for completeness.",
+      "Reported crew-level average piece sizes ranged from 1.35 m³ (Crew C) to 2.05 m³ (Crews B and F)."
+    ]
+  },
+  "crew_expected_productivity_at_1p5_m3": [
+    {
+      "crew": "A",
+      "expected_m3_per_hour": 75.0,
+      "percent_diff_from_mean": 0.16
+    },
+    {
+      "crew": "B",
+      "expected_m3_per_hour": 72.0,
+      "percent_diff_from_mean": 0.13
+    },
+    {
+      "crew": "C",
+      "expected_m3_per_hour": 50.0,
+      "percent_diff_from_mean": -0.25
+    },
+    {
+      "crew": "D",
+      "expected_m3_per_hour": 58.0,
+      "percent_diff_from_mean": -0.08
+    },
+    {
+      "crew": "E",
+      "expected_m3_per_hour": 70.0,
+      "percent_diff_from_mean": 0.10
+    },
+    {
+      "crew": "F",
+      "expected_m3_per_hour": 52.0,
+      "percent_diff_from_mean": -0.20
+    }
+  ],
+  "tree_form": {
+    "categories": {
+      "0": "Good – no deformations.",
+      "1": "Poor – some large branching and/or slight sweep.",
+      "2": "Bad – large branching and/or severe sweep and/or multi-leader and/or forked stem."
+    },
+    "processing_time_regression": {
+      "equation": "seconds_per_stem = 34.2 * category + 81.6",
+      "slope_seconds_per_category": 34.2,
+      "intercept_seconds": 81.6,
+      "r2": 0.39
+    },
+    "relative_processing_time": {
+      "category_0_multiplier": 1.0,
+      "category_1_multiplier": 1.56,
+      "category_2_multiplier": 1.84,
+      "notes": [
+        "Berry (2019) reports that category 1 stems take 56 % longer than category 0, category 2 stems 84 % longer."
+      ]
+    },
+    "productivity_trend": {
+      "description": "Negative correlation between tree-form category and productivity (Figure 9). Regression not quantified beyond R² = 0.09; use processing-time multipliers to approximate penalties."
+    }
+  },
+  "utilisation": {
+    "productive_minutes_definition": "Boom swing + delimbing + processing time; delays <10 min treated as utilisation loss.",
+    "utilisation_percent": 91.0
+  }
+}

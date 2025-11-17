@@ -117,6 +117,26 @@ The commands surface identical arguments under both the dedicated forwarder CLI 
 ``estimate-productivity --machine-role forwarder`` path, so the same guidance applies to synthetic
 generators, scenario QA, and KPI workflows.
 
+Roadside Processor Productivity Models
+--------------------------------------
+
+``fhops.dataset estimate-productivity --machine-role roadside_processor`` uses the Berry (2019)
+Kinleith time-study regression:
+
+* ``--processor-piece-size-m3`` – average piece size per stem (m³). Delay-free productivity is
+  computed via ``34.7 × piece_size + 11.3``.
+* ``--processor-tree-form`` – 0 (good), 1 (poor), 2 (bad). Tree-form penalties follow Berry’s
+  observed processing-time uplift (category 1 = +56 % time ⇒ productivity ×0.64, category 2 = +84 %
+  ⇒ ×0.54).
+* ``--processor-crew-multiplier`` – optional operator adjustment (crew A ≈ +16 % ⇒ 1.16, crew C
+  ≈ −25 % ⇒ 0.75, etc.).
+* ``--processor-delay-multiplier`` – utilisation factor (default 0.91 reflects delays <10 min logged
+  in the study). Adjust it if your PMH/SMH ratio differs.
+
+CLI output reports the base delay-free productivity, the applied multipliers, and the utilisation-adjusted
+m³/PMH so costing workflows can decide which value to pass downstream. Loader helpers will follow the
+same pattern once the Labelle/FPInnovations regressions are digitised.
+
 Grapple Skidder Productivity Models
 -----------------------------------
 

@@ -1,0 +1,1629 @@
+Investigating Factors that Influence
+      Processor Productivity
+
+
+
+      A dissertation submitted in partial fulfilment of
+      the requirements for the degree of Bachelor of
+            Forestry Science with Honours by:
+
+                        Nick Berry
+
+
+
+       School of Forestry, University of Canterbury
+                       New Zealand
+                           2019
+    1. Abstract
+
+In the last decade, there has been a transition from motor-manual processing to mechanised
+processing. This transition occurred rapidly over the past eight years due to increased awareness
+of health and safety, with some 33% mechanisation (ground-based) in 2009, increasing rapidly to
+88% in 2017. Understanding factors that influence processor productivity is important to better
+estimate contractor rates and production targets.
+
+A time study was completed on behalf of Hancock Forest Management at five crews in six
+locations within Kinleith forest estate over the summer of 2018/19. Data was collected from
+detailed video footage and STICKS woodflow management system.
+
+Three factors were compared against processor productivity within this study, those being piece
+size, tree form, and skid size.
+
+Cycle times analysing processor work tasks demonstrated that the majority of time was spent
+processing stems (59%). An overall utilisation rate of 91% for all crews was estimated; however,
+this only accounted for delays less than ten minutes. The average productivity for these six
+locations ranged between 34.8 m3/hour and 79.1 m3/hour, with average productivity of 62.7
+m3/hour. Statistically significant differences were identified between locations, suggesting that
+crew productivity cannot be assumed to be uniform.
+
+A positive relationship could be observed between piece size and productivity for all crews in
+this study, suggesting that a larger piece size will yield a higher average productivity. Tree form
+categorised stems into one of three groups; 0 (Good), 1 (Poor) and 2 (Bad). A stem in category 1
+took 54% longer and a stem in category 2 took 84% longer to process than a ‘good’ stem (0). A
+negative trend between tree form and productivity was observed. Larger skid size reduced the
+average delay per stem while also increasing the productivity of the processor, but with only 6
+skids this result is not statistically significant.
+
+
+
+
+Keywords: processor productivity, piece size, tree form, skid size.
+
+                                                                                                      i
+   2. Acknowledgements
+
+Firstly, I would like to thank my supervisor Dr Hunter Harrill and Professor Rien Visser for their
+expertise, encouragement and guidance through my dissertation project.
+
+I would also like to thank Hancock Forest Management for the opportunity to undertake my
+dissertation. The expertise, support, and motivation provided by members of the HFM staff were
+much appreciated. The financial assistance provided, helped me to complete this project.
+
+Finally, I would like to acknowledge my family and close friends for all the motivation,
+reassurance and support they provided me throughout my time at the School of Forestry. I want
+to extend my thanks to my fellow colleagues and friends that made every day one to enjoy.
+
+
+
+
+                                                                                                 ii
+Table of Contents
+1.      Abstract................................................................................................................................................. i
+
+2.      Acknowledgements ............................................................................................................................. ii
+
+3.      Introduction ......................................................................................................................................... 1
+
+     3.1 Background ....................................................................................................................................... 1
+
+     3.1 Mechanisation ................................................................................................................................... 2
+
+     3.2 Productivity Studies .......................................................................................................................... 3
+
+     3.3 Previous Studies ................................................................................................................................ 4
+
+     3.4 Problem Statement............................................................................................................................ 6
+
+     3.5 Hypothesis.......................................................................................................................................... 7
+
+4.      Methods................................................................................................................................................ 8
+
+5. Results .................................................................................................................................................... 15
+
+     5.1 Utilisation ......................................................................................................................................... 15
+
+     5.2 Productivity ..................................................................................................................................... 16
+
+     5.3 Productivity and Piece Size ............................................................................................................ 19
+
+     5.4 Tree Form ........................................................................................................................................ 22
+
+     5.5 Skid Size ........................................................................................................................................... 25
+
+     5.6 Processing Time of Log Grades ..................................................................................................... 28
+
+6. Discussion............................................................................................................................................... 29
+
+7. Conclusion ............................................................................................................................................. 35
+
+8. References .............................................................................................................................................. 37
+
+9. Appendices ............................................................................................................................................. 41
+
+     Appendix 1: Questionnaire used to gain information from crew ........................................................... 41
+
+     Appendix 2: Illustration of a stem that falls within tree form category 0 .............................................. 42
+
+     Appendix 3: Illustration of a stem that falls within tree form category 1 .............................................. 42
+
+
+
+                                                                                                                                                                iii
+Appendix 4: Illustration of a stem that falls within tree form category 2 .............................................. 43
+
+Appendix 5: Percentage time spent by processor performing work tasks at crew A ............................. 43
+
+Appendix 6: Percentage time spent by processor performing work tasks at crew B ............................. 44
+
+Appendix 7: Percentage time spent by processor performing work tasks at crew C ............................. 44
+
+Appendix 8: Percentage time spent by processor performing work tasks at crew D ............................. 45
+
+Appendix 9: Percentage time spent by processor performing work tasks at crew E ............................. 45
+
+Appendix 10: Percentage time spent by processor performing work tasks at crew E ........................... 46
+
+Appendix 11: Emmeans test to illustrate statistically significant differences in mean productivities
+between crews ......................................................................................................................................... 46
+
+Appendix 12: ANOVA regression performed in RStudio to find statistically significant differences in
+the time to process log grades................................................................................................................. 48
+
+Appendix 13: Emmeans test to compare the statistical significance of time to cut log grades .............. 49
+
+
+
+
+                                                                                                                                                       iv
+   3. Introduction
+
+3.1 Background
+The way in which stems are processed at skid sites has changed significantly over the past
+decade from motor-manual to mechanised processing. This rapid transition came from
+improvements in technology, skill shortages impacting on harvest companies, an increased drive
+to improve productivity and health and safety performance in the forestry industry. In 2009, only
+33% of processing was mechanised. By 2017, this had increased to 88% (Visser, 2018).
+
+The use of mechanised processors has significantly improved the productivity of crews and
+provided better quality assurance and information on harvested stems. However, with increasing
+mechanisation came other challenges – high purchase costs, increased running costs and
+maintenance, and process challenges caused by machine unavailability, breakages and
+maintenance down time.
+
+Most productivity studies in a forestry context, investigate the entire harvesting system or study
+specific aspects of the operation, i.e. the entire crew or machinery involved. Many studies have
+investigated the productivity of felling, forwarding and skidder machinery. However, there is a
+lack of literature investigating processor machinery in New Zealand. Forest processor machines
+are used to delimb and cut stems into defined log grades typically operating in either in the cut-
+over or on the skid site. This is the stage in the harvesting operation where value is gained from
+the stem.
+
+Productivity incorporates both the cycle time of the machine and the volume of material that is
+handled in that time. The productivity of such machinery will influence contractor rates ($/ton)
+as well as the production targets for the crew (Visser, 2009a).
+
+With the changes in capital and operational costs, has come the need to clearly understand the
+factors that influence the productivity of the mechanised processor. This report provides a case
+study to identify and analyse these factors.
+
+
+
+
+                                                                                                     1
+3.1 Mechanisation
+Harvesting operations have rapidly transitioned from predominantly motor-manual to
+mechanised machines over the past 20 years (Riddle, 1995). Health and safety of forestry
+workers when processing stems (delimbing and log grading) and difficulties attaining skilled
+forest workers has accelerated the mechanised processing transition (Riddle, 1995). Increased
+log production is an unintended benefit associated with the forest processing mechanisation.
+
+Mechanisation in both ground-based and cable-based harvesting systems continues to increase
+throughout New Zealand. The task of log-making where stems were cut and processed into
+defined log grades using motor-manual chainsaws has been substituted mainly for mechanised
+machines (Riddle, 1995). This is evident with some 33% mechanised processing in 2009,
+increasing to 88% mechanised processing in 2017 (Visser, 2018). This represents a significant
+increase in mechanisation in a short eight-year window of time.
+
+The determination of log grades cut was previously done based on personal measurements and
+experience, which was both labour intensive and time-consuming. With the transition to
+mechanised processing, most of these log-making decisions are made using onboard computers
+to eliminate log grade error and reduce cost (Riddler, 1995).
+
+Processor machinery operating in New Zealand typically consists of an excavator base with a
+boom, to which the processing head is attached. Stems are seized and run through the processing
+head to attain length and diameter data; this is used to determine the appropriate cut to make. An
+onboard computer inside the cab of the machine displays the ‘suggested’ log grades to be cut, to
+which, the operator can change based on characteristics of the stem which the computer does not
+take into consideration.
+
+
+
+
+                                                                                                   2
+      Figure 1: Image of a processor in operation at crew F with identification of key machine components.
+
+The New Zealand forestry industry has been using mechanised processing machinery since the
+late 70's and early 80's (Riddle, 1995). The popularity of processing machinery has increased
+significantly over the past 40 years in both ground-based and cable-logging operations.
+Approximately 1,100 processing machines are operating in domestic forestry operations; this is
+assuming a total of 9,500 full-time workers in crews of 8 (Nixon et al. 2017), with 88% using
+mechanised processing (Visser, 2018).
+
+However, there is high variability in the assortment of processing machines in New Zealand
+operations. Crew owners must evaluate the economics; purchase, maintenance and running costs,
+available labour; skilled workers to operate machinery, technical restrictions; ability to process
+stems, and machine availability (Castro et al. 2016). In addition, there is a large variety of
+processing manufacturers selling into the New Zealand market; Southstar, Waratah, Satco, and
+Woodsman, to name a few. Machinery selection is generally made according to economic
+constraints and fitness for purpose for the harvesting operation.
+
+3.2 Productivity Studies
+The relationship between influential variables with work inputs and work outputs describes the
+intention of work measurement (Magagnotti & Spinelli, 2012). Time and motion studies are the
+most common and most accurate method to collect detailed data on forestry machinery, which
+examines production cycles (Olsen et al. 1998). For a processor, this would be the time taken to
+select, delimb and process a stem, considering any delays incurred. The use of comparative
+
+                                                                                                             3
+studies investigates the potential effects of fixed factors (covariates or continuous variables) on
+time consumption or productivity (Magagnotti & Spinelli, 2012). Such studies are commonly
+used in the forestry industry to better understand and improve on-site operations (Visser &
+Spinelli, 2008). However, the collection of data for time-motion studies can be hazardous due to
+the proximity needed to observe forest machinery (Strandgard & Mitchell, 2015).
+
+In order to attain accurate time-motion values, nuisance variables and other factors that are not
+being investigated need to be controlled or eliminated. To achieve this, variables should be kept
+constant or in perpetuity (e.g. ensuring that the same operator is performing the task).
+Alternatively, randomization or inclusion techniques could be used (Magagnotti & Spinelli,
+2012).
+
+3.3 Previous Studies
+The use of time studies to analyse processor productivity and utilisation are standard practice in
+many forest harvesting studies. Many of these studies assess factors that influence productivity,
+including operator experience (Ovaskainen et al, 2004; Spinelli et al, 2007; Visser, 2009b),
+machinery used (LeDoux & Huyler, 2001; Spinelli et al 2011), piece size (Nakagawa et al, 2010;
+Puttock et al, 2005; Spinelli et al, 2010; Tufts, 1997), tree form (Evanson & McConchie, 1996;
+Tolan, 2014; Ramantswana et al, 2012) and number of grades cut (Tolan, 2014). The
+comparability of these studies in a New Zealand context is challenging as many of the studies
+were carried out in forests with different characteristics to those found in New Zealand.
+
+         Operator Skill
+The influence of operator skill and experience when operating machinery is well documented
+within the forestry industry. Differences in productivity values for feller-buncher machinery may
+be due to the varying skill level of operators between sites (Spinelli et al. 2007). Mechanised
+harvesting productivity was found to be influenced by operator experience, with variation in
+machine productivity of 20-50% due to human performance (Murphy & Vanderberg, 2007). A
+similar conclusion was made in a study by Ovaskainen et al. (2004) stating that productivity
+levels between harvester operators varied up to 40% in a similar stand because of operator
+experience, motoric skills, decision processes and environmental effects.
+
+
+
+
+                                                                                                      4
+       Piece Size
+The relationship between forests of a low stocking per hectare and an increased piece size is well
+documented in scientific literature (Muñoz et al. 2008; Pinkard & Neilsen, 2003). The
+advantages of increased piece size is that larger logs typically attain a higher price in the
+marketplace (Cassidy et al. 2012). However, it should be noted that with increased spacing
+between trees the diameter of branches increased (Hébert et al. 2016). There is a trade-off
+between having a lower stocking with fewer larger stems compared to having a higher stocking
+with a greater number of small trees (D’Amato et al. 2011).
+
+Stem piece size is defined as being the average size (m3 or tonnes) of felled trees or extracted
+sections. A positive relationship can be observed between piece size and productivity in feller-
+buncher machinery with piece size being identified as an influential factor (Visser & Stamper,
+2003). Likewise, a positive relationship can be observed between productivity and piece size in
+felling operations (Hånell et al. 2000; Ramantswana et al. 2012) as well as when crosscutting
+into log grades and delimbing (Tufts 1997; Puttock et al. 2005). Harvesting operations in an
+Italian setting found that the time to process increased linearly with piece size to a point where
+tree size reached the capacity of the machine (Spinelli et al. 2010).
+
+The time taken to process larger trees is longer than that when processing smaller trees in respect
+to piece size (Nakagawa et al. 2010). Increases in piece size will result in increased production
+levels due to less work required to drag a given volume of stems to the landing (Anon, 2005).
+However, if stem piece size is too large for the processor head, it is expected to take longer to
+process and result in lower production (Nakagawa et al. 2007). This is phenomenon is known as
+the ‘piece size law’ (Visser & Spinelli, 2012).
+
+       Number of Grades Cut
+The number of log grades being cut in forest harvesting operations can vary depending on wood
+availability and market conditions. The number of log sorts produced in New Zealand forests is a
+result of both domestic and international requirements; more grades result in higher value
+recovery per stem (Cossens, 1991). With a higher number of log grades, processing operations
+can become more complicated, influencing machine productivity. This is demonstrated in a
+negative trend between productivity and the number of log grades (Tolan, 2014).
+
+
+                                                                                                     5
+       Tree Form
+Variability in tree form can arise as a result of stocking (Hébert et al. 2016), site and soil
+characteristics and a range of environmental factors (Zobel & Buijtenen, 1989). Deformations
+including stem forking, multi-leaders, sweep and large branchings can negatively influence
+processor productivity due to increased time required to process stems (Evanson & McConchie,
+1996; Muhummad et al. 2013; Tolan, 2014). Research conducted in South Africa identified that
+tree form was a significant influencing factor in acacia mearnsii felling operations
+(Ramantswana et al. 2012). From this research, a relationship was established, describing how
+productivity decreases with worsening tree form (Ramantswana et al. 2012).
+
+       Skid Size
+A skid site or forest landing is described as a cleared flat piece of land used to process stems,
+store logs and load out trucks (Visser et al. 2010; Stokes et al. 1989). Considerable costs can be
+incurred to construct skid sites, making their location and size crucial for efficient harvest
+operations. Skid layout and size is dependent on woodflow, extraction system, and other
+restrictions of the harvest area – e.g. nearby waterways, site access (Anon, 2005). The size of the
+skid site is influenced by the total and/or daily production for the crew and the number of log
+grades being cut (Visser et al. 2010). Skid sites with a poor layout or of insufficient size can
+result in delays which reduce productivity (Anon, 2005).
+
+3.4 Problem Statement
+The transition from motor manual processing to solely mechanised processing over the last
+decade in Hancock Forest Management (HFM) estates has provided a number of productivity
+benefits. These include reductions in operator-machine interactions, improved performance in
+health and safety and increased production. However, there is a lack of analysis of what factors
+most influence processor machinery due to the unique stand characteristics and forest structure
+found in New Zealand; prior international studies have limited relevance.
+
+For HFM, identification and quantification of factors that influence processor productivity is key
+to understanding constraints to harvesting operations and improving productivity. By setting
+production targets that exceed crew capabilities, there are increased safety risks and overworking
+crew and plant equipment. However, setting targets too low will result in higher costs and
+overpayment of logging rates. Getting the balance right is the key to efficient harvest
+                                                                                                     6
+management and this HFM case study will investigate three factors to better understand their
+effect and significance on HFM processor productivity:
+
+    1. Piece size
+    2. Tree form
+    3. Skid size
+In doing this research, HFM forest managers may better understand what factors they should
+focus on to influence the processor and machine productivity, allowing more accurate
+estimations for logging rates and production targets. Two research questions have been
+addressed for this study:
+
+    1. What is the average production level for processors in Kinleith forest estate?
+    2. Do piece size; tree form; and skid layout affect processor productivity?
+
+3.5 Hypothesis
+In order to answer these questions, the following hypotheses have developed to test for
+statistically significant differences:
+
+    1. H0: There is no statistical difference in processor productivity between crews.
+        H1: There are statistical differences in processor productivity between crews.
+    2. H0: The effect of factors measured are found not to influence processor productivity.
+        H1: The effect of factors measured are found to influence on processor productivity.
+
+
+
+
+                                                                                               7
+   4. Methods
+Study Sites
+The processor works on the skid site or in the cut over and is used to cut stems into defined log
+grades. For this study, all processor machines were operating on a skid site. A representation of
+how the processor fits into a harvesting operation is provided in Figure 2, below.
+
+
+
+
+                 Figure 2: Illustration of a typical skid site investigated as part of this study.
+
+Crews can operate with a range of different equipment depending on the characteristics of the
+stand and the production target set. Stems are felled in the cutover by a forestry worker via
+motor-manual chainsaw or mechanised machine. A skidder then retrieves these stems and
+transports them back to the skid site where they are stacked into surge piles for subsequent
+processing. The processing machine then picks up a stem and cuts it into logs, arranging logs
+into graded groupings for the loader to sort and stack.
+
+For this study, all processor machines operated with surge piles; a collection of stems brought to
+the landing by the skidder. This pile acts as a buffer to prevent delays, in case the felling machine
+or skidder breaks down. Processing machinery is typically operational every working day
+(subject to breakdowns).
+
+
+
+
+                                                                                                     8
+    To analyse factors that influence processor productivity, data was collected from five crews
+    operating at six locations in the Central North Island. All crews were operating on behalf of
+    HFM in the Kinleith forest estate. Machine configurations, skid site size and layout varied
+    amongst crews; however, all machinery was deemed to be ‘fit for purpose'. The characteristics
+    for each crew location have been summarised in Table 1, as shown below. Estimated skid size,
+    area to be harvested, stand age and volume throughput was gathered from pre-harvest
+    documentation for each location. Number of crew members, average piece size and site
+    descriptions were collected from surveys collected by crew members at each study location
+    (Appendix 1).
+
+                 Table 1: Summary of characteristics for each crew location investigated within this study.
+
+Crew     Skid        Area to be      Volume     Number of              Stand        Average         Description
+         size        harvested       throughput crew                   age          piece size
+         (m2)        (ha)            (m3)       members (#)            (years)      (m3)
+
+A        3,600       11 ha           7,172 m3        8                 26 years     1.81 m3         Operating in harvest
+         m2                                                                                         area for two weeks.
+B        3,150       5.6 ha          3,617 m3        8                 26 years     2.05 m3         Operating in harvest
+         m2                                                                                         area for four weeks.
+C        2,800       8.8 ha          4,980 m3        8                 25 years     1.35 m3         Operating in harvest
+         m2                                                                                         area for one week.
+
+D        2,800       10.8 ha         6,870 m3        6                 28 years     1.8 m3          Operating in harvest
+         m2                                                                                         area for three weeks.
+E        2,750       3.8 ha          2,580 m3        5                 29 years     1.7 m3          Operating in harvest
+         m2                                                                                         area for seven weeks.
+                                                                                                    Skid was split across
+                                                                                                    a secondary road.
+F        3,500       10.8 ha         7,333 m3        5                 29 years     2.05 m3         Operating in harvest
+         m2                                                                                         area for five weeks.
+
+
+    Operator
+    The experience of each operator varied slightly. However, all individuals had been working with
+    processor machinery for at least two years, as described in Table 2, below.
+
+
+
+
+                                                                                                                     9
+            Table 2: Summary of the number of years operating processor machinery by each crew.
+
+ Crew                                                 Years' operating processor
+ A                                                    4 years
+ B                                                    4 years
+ C                                                    2 years
+ D                                                    2 years
+ E                                                    4 years
+ F                                                    4 years
+
+HFM harvest managers were approached to determine the experience of processor operators. As
+the managers had an in-depth knowledge of the skill of each operator, their insight provided
+suitable individuals for this study. This was reinforced by an operator interview in which
+information concerning the time spent in the harvest area, experience, formal and informal
+training was gathered (The questionnaire is shown in Appendix 1).
+
+As well as many years' experience operating the machine, all operators possess the appropriate
+qualification/documented competencies to operate the machine. In harvesting operations, the
+person operating the processor is typically one of the most highly paid employees as the
+conversion of stems into logs maximises value recovery. Because of this, workers typically
+progress ‘through the ranks' with experience across a wide range of site machinery before
+becoming the processor operator. As a result, operators have multiple years working with heavy
+machinery before working with the processor.
+
+STICKS Data
+An integral part of a forest harvester’s role is to monitor and assess each crew with respect to
+their performance. One tool used to analyse this is STICKS harvest wood flow management and
+reports (provided by Interpine). This provides a system for receiving, processing, and examining
+Standard for Forest and Data Communication Data (StanForD). This is used to aid in managing
+forest woodflow and production. StanForD is the standard for communication between both
+machine computer and office analysis, providing a crucial link for information analysis.
+
+STICKS data provided a .PRI file for the daily production of the machine. This file was sourced
+from the processor's onboard computer which provided details surrounding the grades, volumes,
+small end diameter (SED), large end diameter (LED), log length and a forced cut description
+(manual or automatic). Data is typically uploaded at the end of the working day to a mediatory
+
+                                                                                                   10
+company who decrypts the code and reformats it into a structure for forestry companies to
+analyse. Using this data, harvest managers can compare the percentage and volumes of different
+log grades cut as well as comparing weekly or daily production to the agreed rate.
+
+Time and Motion Study
+A video camera was set up to attain footage concerning the time spent by the processor
+performing work tasks. Detailed video recordings were taken in grouped twenty-minute
+segments giving roughly two hours of footage per shift. The video footage had an associated
+timestamp which was used to calculate the time taken to perform each work task and therefore
+providing the total time associated with processing each stem. Documentation of this time was
+recorded and entered into a Microsoft Excel spreadsheet.
+
+Number of Replicates
+The number of replicates used when undertaking a time study experiment will influence the
+accuracy and variability of the study (Illumina, 2010). The number of replicates must be
+specified with the definition of the observational unit (Magagnotti & Spinelli, 2012). The
+traditional equation used to determine the sample size for cycle level analysis of harvesting
+operations are defined by Murphy (2005):
+
+                          Number of replicates = t2 * V/E*Mean/100)2
+        Where: t = Student’s t-value (=1.96 for a 95% confidence interval -> t2 = 3.842)
+                            V = expected variance of work cycle time
+                             E = level of precision required (e.g. 5%)
+                           Mean = expected mean of work cycle time
+
+However, using this methodology can exaggerate the number of replicates needed, which can
+make it infeasible due to time constraints. The scope and purpose of the study must be
+considered when estimating the required number of replicates. As a result, determination of the
+number of replicates for a study is often estimated on an educated guess or through a pilot study
+(Magagnotti & Spinelli, 2012).
+
+Segregation of operational tasks into clear groups allows the calculation of time consumption for
+production steps or work tasks within a harvest operation. The most common example of
+
+
+                                                                                                  11
+classification of forest work is taken from the Nordic Research Council, which were harmonised
+by the IUFRO (1995). However, some level of variation from this template will occur for unique
+production studies.
+
+Task classification for harvesting operations can vary depending on the scope and the machinery
+studied. For felling and felling/processing machinery, work tasks performed can be divided into
+six categories (Visser, 2009b):
+
+    Table 3: Classification and definition of work tasks performed by felling or felling/processing machinery.
+
+ Work Task                                                Description
+ Fell                                                     Severing the tree and bringing it to the
+                                                          ground.
+ Delimb                                                   Removing branches from the whole tree.
+ Bunch                                                    Aggregating stems for subsequent extraction.
+ Move                                                     Travelling to a new location or tree.
+ Clear                                                    Removing slash and woody debris from
+                                                          delimbing or felling.
+ Delay                                                    Operational and mechanical delays
+
+
+In order to evaluate the time spent by the processor, the specification of work tasks performed
+was needed (Table 4). The work tasks used were a variation of those used in literature published
+by Visser (2009b), as described in Table 3, above.
+
+            Table 4: Quantification of work tasks performed by the processor for subsequent timing.
+
+ Category                                                 Description
+ Boom swing                                               The time between the final cut and grappling
+                                                          next stem.
+ Delimbing                                                Time taken to Removing branches from the
+                                                          whole tree.
+ Processing                                               First cut made to stem until the final cut.
+ Delays                                                   Machine not processing or performing
+                                                          unrelated tasks, delays <10 min.
+
+
+With definitions of processor work tasks, the associated times could be recorded based on
+detailed video footage.
+
+
+                                                                                                                 12
+Tree Form
+Categorical number-based systems can be used to characterise differences in tree form and
+branch sizes (Puttock, 2005; Ramantswana et al. 2012). Evaluation of tree form was completed
+using a categorized numerical system which specified stems between 0-2 with quality decreasing
+with an increasing category. In order to quantify the quality of each stem, several factors were
+evaluated: branch size, frequency of branches, tree sweep, and the absence or presence of multi-
+leader or forking of the stems. Taking these into consideration, the following classification
+system was developed (Table 5):
+
+                   Table 5: Description of tree form categories used to classify tree form.
+
+ Category                                               Description
+ 0 (Good)                                               No deformations.
+ 1 (Poor)                                               Some large branching and/or slight sweep.
+ 2 (Bad)                                                Large branching and/or severe sweep and/or
+                                                        multi-leader and/or forked stem.
+
+
+Determination of tree form was completed in the office and on-site using both recorded video
+footage as well as written notes while the machine was operational; these were assigned to the
+specific stems later. Example of stems in each of the three tree form categories are shown in
+Appendix 2-4.
+
+Calculating Productivity and Utilisation
+To estimate the productivity of the processor for a given stem, the time to process each stem
+needed to be matched with the corresponding piece size (m3). STICKS data provided the piece
+size of each log rather than for each stem. The logs cut from each stem were combined in order
+to give the overall piece size for a given stem. With the time to process and piece size for each
+stem, the productivity could be calculated.
+
+For this study, productivity was calculated in m3/hour. Productivity was calculated based on the
+time to process and piece size for each stem; this was then scaled to give a m3/hour value. This
+scale factor divided 3,600 (the number of seconds in an hour) by the time to process for each
+stem, to demonstrate how many stems could be done per hour. The associated piece size for the
+stem would then be multiplied by this scale factor to calculate the cubic meters per hour.
+
+
+                                                                                                     13
+                                              Example:
+
+                                   Time to process: 158 seconds
+
+                                          Piece size: 2.5 m3
+
+                           3,600 seconds / time to process = scale factor
+
+                 3,600 seconds / 158 seconds = 22.8 cycles of that stem per hour
+
+                  22.8 cycles * piece size = productivity (cubic meters per hour)
+
+                                  22.8 cycles * 2.5 m3 = 57 m3/hr.
+
+
+
+The productivity of each stem was calculated using this methodology to give a spread of values
+for each crew. This method took into consideration the fact that smaller stems take less time to
+process on average, resulting in more cycles per hour. However, this would ultimately be
+cancelled out as the piece size was smaller, resulting in a reduced productivity value.
+
+Utilisation rate denotes the ratio of productive machine hours (PMH) against the scheduled
+machine hours (SMH) to estimate the percentage of productive time for a given machine. As
+such, PMH is the sum of all machine time spent performing work tasks, for this study tasks
+include time to swing the boom to collect stem, delimbing time, and time to process each stem
+into logs. The SMH uses the same ‘productive' times, however, includes downtime where the
+machine is not operational; such as delays or non-productive tasks. Calculation of the utilisation
+rate (%) is done using the following equation:
+
+                             Utilisation rate (%) = (PMH/SMH) * 100
+
+Forest managers and contractors can use this utilisation rate to better estimate associated running
+costs or evaluate the potential of buying or selling the machine. However, as this study is only
+considering delays less than ten minutes, the application of the utilisation rate is limited.
+
+Data Analysis
+RStudio statistical software was utilised to complete analysis of variance (ANOVA). Models
+within ANOVA were used to determine whether there were statistically significant differences
+
+
+                                                                                                   14
+between mean values. These tests were used to evaluate the presence or absence of statistically
+significant differences between average crew productivity. This was completed assuming a p-
+value of 5%, or P ≤ 0.05. Factors with p-values higher than this were deemed to be non-
+significant.
+
+Data analysed in RStudio was sourced from Microsoft Excel spreadsheets which contained data
+associated with time per stem and piece size. Microsoft Excel served as the template for the
+collection and recording of raw data from video footage and STICKS files. Data was input into
+spreadsheets for preliminary sorting, and values were subsequently transferred to RStudio for
+data to be further filtered. This data was used to develop graphs and tables to illustrate observed
+trends within the study.
+
+
+5. Results
+Data for this study were collected over the summer of 2018/19 from five crews operating in six
+locations within HFM Kinleith forest estate. Ten hours of detailed video footage was collected
+and analysed using approximately two hours of footage recorded at each site.
+
+5.1 Utilisation
+The analysis of video footage provided a means to identify and assess work tasks performed by
+the processor machine operator. The time spent was categorised into four groups: time to
+process, boom swing time, time to delimb and delay time (Table 4). The time associated with
+each task for all crews is shown in Figure 3, below.
+
+
+
+
+                                                                                                  15
+                                    All crews processor activity
+                        Delay time (<10 min)
+                                 9%
+
+
+
+
+                 Time to de-limb
+                      19%
+
+
+
+
+                                                                               Time to process
+                                                                                    59%
+
+                  Boom swing time
+                       13%
+
+
+
+                Time to process      Boom swing time     Time to de-limb    Delay time (<10 min)
+
+
+            Figure 3: Percentage of time spent by a processor performing work tasks for all crews.
+
+Aggregation of this data shows the 59% of time was spent processing stems into logs. This is to
+be expected as this task is where the value is added from stem assessment, to ensure that the
+optimal logs are cut. The time to delimb stems was 19% of the time. Delay time of 10 minutes or
+less accounted for 9% of all time spent by the processor. Based on this delay time, the utilisation
+rate estimated for all crews was 91%, suggesting that the processor is performing work tasks
+91% of the time. It should be noted that only delays less than ten minutes were used in this
+analysis as detailed video footage was used.
+
+There was considerable variability in the time spent performing tasks for each crew. The results
+from this analysis are demonstrated in Appendix 5-10.
+
+5.2 Productivity
+Productivity takes into account both the time taken to perform work tasks for a stem and the
+associated piece size. The average productivity estimated for each crew was derived from the
+average of all individual stems given in cubic meters per hour. There was significant variability
+within crews concerning their productivity, as demonstrated in Table 6, below.
+
+
+
+                                                                                                     16
+                       Table 6: Productivity statistics calculated for investigated crews.
+
+ Crew                              Average                    5th Percentile                 95th Percentile
+                                 Productivity                   (m3/hour)                      (m3/hour)
+                                  (m3/hour)
+ A                                  79.1                            11.2                         149.3
+ B                                  62.8                            14.3                         128.2
+ C                                  34.8                             4.3                          82.1
+ D                                  51.8                             5.7                         137.3
+ E                                  73.4                             9.2                         189.2
+ F                                  65.4                            21.0                         115.8
+
+
+The overall average for all crews was 62.7 m3/hour, however the range varied between a low of
+34.8 m3/hour at crew C, to a maximum of 79.1 m3/hour observed at crew A. This represents a
+maximum difference of 44.3 m3/hour between crews investigated in this study. The 5th and 95th
+percentiles demonstrate significant variability in the productivity values attained at each crew.
+This is further supported when looking at the ‘box and whisker’ distribution as shown in Figure
+4, below.
+
+
+
+
+        Figure 4: Box and whisker graph comparison of processor productivity values for crews studied.
+
+The broad distribution of productivity values achieved at each crew is highlighted in Figure 4,
+above. These trends suggest that there may be statistically significant differences in the mean
+
+                                                                                                               17
+productivity values for crews. To test this theory, an analysis of variance (ANOVA) test was
+completed in RStudio, assuming a p-value of 0.05 (5%). The ANOVA tested the following null
+(Ho) and alternative (Ha) hypotheses:
+
+        H0: There are no statistically significant differences in average productivity between
+        crews.
+
+        H1: There are statistically significant differences in average productivity between crews.
+
+For the null hypothesis to be rejected, the p-value associated with the relationship would need to
+be less than 0.05.
+
+The ANOVA test established that there were statistically significant differences in average crew
+productivity. The relationships that demonstrated p-values of less than 0.05, and therefore reject
+the null hypothesis, are shown in Table 7, below. It can be assumed that if the ANOVA test
+demonstrated a p-value greater than 0.05 between crews that the relationship or difference in
+means is not statistically significant, accepting the null hypothesis.
+
+             Table 7: ANOVA analysis demonstrating statistically significant differences (P<0.05).
+
+                                          Crew            P-value
+                                          A-C             0.0001
+                                          A-D             0.0438
+                                          B-C             0.0016
+                                          C-E             0.0001
+
+
+Statistically significant differences between average crew means occur when either crew A or C
+are involved. As shown in Figure 4 above, these crews demonstrate the highest average mean
+(crew A) and the lowest average mean (crew C).
+
+Furthermore, follow up analysis using an ‘emmeans’ (estimated marginal means) test was
+completed and graphed to demonstrate differences between crews (Appendix 11). Red arrows are
+for comparisons between crews, whereas the blue bars represent the associated confidence
+intervals. If an arrow from one crew fails to cross that of another crew, then the relationship is
+statistically significant. The graph illustrates that there are statistically significant differences
+between crews A-C, A-D, B-C, and C-E (these were between means of 79.1 – 34.8 m3/hour, 79.1
+
+
+
+                                                                                                        18
+- 51.8 m3/hour, 62.8 – 34.8 m3/hour, and 34.8 - 73.4 m3/hour respectively). These coincide with
+results produced from ANOVA testing (Table 7).
+
+5.3 Productivity and Piece Size
+Piece size was derived from STICKS data associated with the cumulative logs cut from each
+stem by the processor. The piece size study aimed to investigate to what extent (if any) piece size
+has on processor productivity. With this knowledge, productivity estimates can be tailored based
+on the piece size found within harvest areas.
+
+Machine productivity was derived from the time to process individual stems, scaled up to give a
+cubic meters per hour value. The average piece size for each crew varied from between 1.35 m3
+(crew C) to 2.05 m3 (crew B and F), quite large for New Zealand standards. However, there was
+considerable fluctuation in piece size around the mean; a maximum observed piece size of 4.45
+m3 with a minimum piece size of 0.045 for the crews studied. Productivity calculations
+considered the time to swing the machine boom, delimb the stem, process into logs and average
+delay per stem. The relationship between productivity and piece size for all crews (colour coded
+for each crew) is illustrated in Figure 5, below.
+
+
+
+
+  Figure 5: Illustration of productivity against piece size for all crews investigated in this study, colour coded to
+                                                  segregate crews.
+
+                                                                                                                        19
+A clear positive trend between piece size and productivity can be observed in Figure 5, above.
+The trend suggests that a larger piece size corresponds with increases in productivity;
+demonstrated in the associated equation below.
+
+                                             y = 34.7x + 11.3
+                                                 R2 = 0.70
+This equation demonstrates that with every cubic meter increase in piece size, the expected
+productivity of the processor increases by 34.7 m3/hour. The intercept of 11.3 has limited use for
+this study as productivity is dependent on piece size; when piece size is zero, there will be no
+productivity. The r-squared value or coefficient of determination explains the amount of
+variability in the dependent variable that is explained by the independent variable. An r-squared
+value of 0.70, a moderate to a strong relationship, means that the piece size can explain 70% of
+the variation of residuals from the mean.
+
+The individual relationships between productivity and piece size for each crew is difficult to
+identify from Figure 5. To further investigate these trends, Figure 6 illustrates the relationships
+between productivity and piece size for study crews.
+
+
+
+
+          Figure 6: Relationship between piece size and productivity observed for each crew studied.
+
+                                                                                                       20
+For all crews investigated, the same positive trend can be observed between piece size and
+processor productivity (Figure 5). However, the relationship of this increase is variable; the
+increase in productivity relative to the piece size is different for each crew. As a result, different
+productivity values for a given piece size are achieved by different crews. For example, using a
+piece size of 1.5 m3, the expected productivity based on the associated trend line will vary
+depending on the crew (Table 8). An average of 62.7 m3/ha was used to estimate differentiations
+from the mean; this average represents the expected productivity for all data at a piece size of 1.5
+m3 .
+
+  Table 8: Estimations of productivity using associated crew slope relationship assuming a piece size of 1.5m3 for
+                                                     each crew.
+
+                    Crew                      Expected                % Differentiation
+                                             productivity               from mean
+                                               m3/hour
+                    A                            75                            16%
+                    B                            72                            13%
+                    C                            50                           -25%
+                    D                            58                            -8%
+                    E                            70                            10%
+                    F                            52                           -20%
+
+
+It becomes clear that due to the unique relationship for each crew, the estimated productivity
+value can change considerably (Table 8). This is graphically illustrated in Figure 7, as shown
+below.
+
+
+
+
+                                                                                                                 21
+ Figure 7: Illustration of the expected productivity associated with the piece size and productivity relationship for
+                                                      each crew.
+
+There was considerable variability in relationships between piece size and productivity for each
+crew as demonstrated by the corresponding slope gradient. This indicates that although all
+processor operators were deemed to be ‘competent', there was still variability in the expected
+productivities, with some operators being more ‘productive' than others. This relationship
+demonstrated that assuming a piece size of 1.5 m3, the most productive operator would process
+50% more than that of the least productive operator (75 m3/hour and 50m3/hour respectively).
+
+5.4 Tree Form
+To investigate the effect of tree form on time to process and productivity analyses were
+completed on Crew D. Approximately 42% of all stems observed at this crew had some form of
+tree deformation; non-straight stem, double leader, branching, sweep, and forking. Other crews
+were not analysed due to a lack of different stem form (the majority of stems in category 0).
+Review of detailed video footage taken of crew D allowed each stem to be assessed individually,
+to which, the respective tree form category was assigned based on specifications in Table 5. The
+processing time associated with each stem was compared to the allocated tree form category
+(Figure 8).
+
+
+
+
+                                                                                                                    22
+             Figure 8: Comparison of time to process stems against assigned tree form category.
+
+There is a positive relationship between the time to process and tree form category, as shown by
+the trend observed in Figure 8, above. These results show that as tree form worsens (tree form
+category increases), the time to process those stems increase. The associated equation and r-
+squared value summarise the trend:
+
+                                            y = 34.2x + 81.6
+
+                                                R2 = 0.39
+
+This demonstrates that as the tree form category increases by one, the time to process will also
+increase by 34.6 seconds. The intercept of 48.6 seconds explains the average time to process a
+stem, given that it has a tree form category of zero. The r-squared value of 0.39, a
+moderate/weak trend, demonstrates that the tree form category can explain 39% of the variation
+of residuals from the mean.
+
+Assuming the average values are representative of the tree form category, the percentage
+differences were calculated. Given a stem was in category 1 (Poor), it would take 56% longer to
+process than a stem in category 0 (Good). Similarly, a stem that was in category 2 (Bad) would
+take 84% longer (almost double the time) to process than a stem in category 0 (Good).
+
+
+
+
+                                                                                                   23
+It is crucial to understand the relationship between tree form and productivity as shown in Figure
+12, below. This demonstrates a negative correlation between tree form category and productivity.
+
+
+
+
+         Figure 9: Comparison of tree form categories against the associated productivity for that stem.
+
+The negative relationship between tree form category and productivity indicates that as tree form
+worsens (increase in category), the expected hourly productivity decreases (Figure 9). However,
+there is considerable variability within each tree form category, demonstrated by the associated r-
+squared value of 0.09 (the trend can explain 9% of variability). The reason for this relates to the
+broad spread of productivity values within each tree form category as a result of large branches,
+forked stems and multi-leaders which make processing the stem more difficult to perform.
+
+Comparing the average productivity of category 0 against that of category 2 there is a 26.8
+m3/hour decrease (61.5 m3/hour and 34.7 m3/hour respectively). For crew D, some 13% of stems
+were in tree form category 1, and 30% of stems in tree form category 2 (the remaining 57% in
+category 0). Using the percentage of stems in each tree form category, the average weighted
+productivity was calculated to be 51 m3/hour. Therefore, it is expected that due to tree form crew
+D would have a lower productivity on average, coinciding with results demonstrated in Table 8
+(productivity 8% less than average for all crews).
+
+
+
+
+                                                                                                           24
+5.5 Skid Size
+Throughout the data collection process, delays and times when the machine was not performing
+work tasks were recorded. The delay study aimed to evaluate how skid size influenced both the
+crew delay and productivity. In order to compare the delay times against the skid size, the
+average delay per stem was calculated; scaling the overall delay by the number of stems
+processed over that period. These delay values were plotted against the skid size (m2), as shown
+in Figure 10, below.
+
+
+                                                                Skid size against delay time
+                                          25
+       Average delay per stem (seconds)
+
+
+
+
+                                          20
+
+
+                                          15
+
+
+                                          10
+
+
+                                          5
+
+
+                                          0
+                                           2500       2700           2900          3100           3300           3500   3700
+                                                                               Skid size (m2)
+
+                                                  Figure 10: Comparison of average delay per stem against skid size.
+
+The horizontal trend observed in Figure 10 is level with delay time staying relatively constant
+regardless of skid size. This indicates that there is no relationship between the size of the skid
+and the average delay per stem. However, one point has been highlighted (red) due to the high
+average delay per stem associated with a larger landing. This result was unexpected as the
+associated delay appeared to be much higher than what was assumed by the trend. As a result, an
+outlier test was performed to test this theory.
+
+For a point to be deemed an outlier, the suspected point must be greater than the mean plus one
+and a half times the interquartile range (IQR). The equation demonstrates the test used:
+
+
+
+
+                                                                                                                               25
+    Outlier = Mean + (1.5 * IQR)                                              Where:
+
+    IQR = Upper Quartile – Lower Quartile                                     Upper Quartile = Mean of Upper 25%
+                                                                              Lower Quartile = Mean of Lower 25%
+
+
+For this study, the following values were estimated, as shown in Table 9, below:
+                    Table 9: Summary statistics for average delay time per stem for determination of outlier points.
+
+                                                             Variable           Seconds
+                                                             Q1                 6.4
+                                                             Q3                 13.2
+                                                             IQR                6.9
+                                                             Average            10.9
+                                                             Outlier if         > 21.2 or < 0.3
+
+
+As the point in question demonstrates an average delay per stem of 23.4 seconds, which is above
+the upper outlier threshold of 21.2 seconds, it should be removed from the analysis. With the
+exclusion of the outlier point, Figure 11 illustrates the relationship between skid size and average
+delay per stem.
+
+
+                                                    Skid size against delay time excluding outlier
+                                           16
+
+                                           14
+        Average delay per stem (seconds)
+
+
+
+
+                                           12
+
+                                           10
+
+                                           8
+
+                                           6
+
+                                           4
+
+                                           2
+
+                                            0
+                                             2500     2700       2900            3100         3300      3500       3700
+                                           -2
+                                                                        Skid size (m2)
+
+       Figure 11: Comparison of average delay time per stem against skid size with outlier point removed.
+
+
+
+
+                                                                                                                          26
+A pronounced negative trend can be observed between the average delay per stem and skid size,
+demonstrated in Figure 11, above. The trend suggests that as the size of skid decreases in area,
+the average delay per stem increases. The corresponding equation and r-squared value
+summarise this relationship:
+
+                                                                  y = -0.015x + 53.
+                                                                       R2 = 0.94
+The equation states that every 53 m2 decrease in skid size will equate to a one-second increase in
+average delay time per stem. The high r-squared value demonstrates that the average delay per
+stem can explain 94% of the variation in residuals from the mean.
+
+The relationship between average crew productivity and skid size was also investigated within
+this study. The results of this analysis are shown in Figure 12, below.
+
+
+                                                 Average crew productivity against skid size
+                                      90.0
+
+                                      80.0
+          Average productivity (m3)
+
+
+
+
+                                      70.0
+
+                                      60.0
+
+                                      50.0
+
+                                      40.0
+
+                                      30.0
+
+                                      20.0
+
+                                      10.0
+
+                                       0.0
+                                          2500        2700         2900         3100         3300        3500   3700
+                                                                           Skid size (m2)
+
+                                             Figure 12: Comparison of average productivity against skid size.
+
+A positive trend can be observed between skid size and productivity, as shown in Figure 12,
+above. This suggests that as skid size increases, so too does the average productivity of the crew.
+The following equation and r-squared value summarize this relationship.
+
+                                                                  y = 0.024x - 13.3
+                                                                       R2 = 0.32
+
+
+                                                                                                                       27
+The equation states that for every ten meters squared increase in skid size, the expected
+productivity increases by 2.4 m3. However, as the r-squared value is only 0.32, a weak
+relationship which suggests that the size of the skid can explain only 32% of the variation in
+residuals from the mean. As a weak r-squared value is observed, it suggests that predictions
+made using the linear equation may be imprecise or non-representative of the actual value. This
+should be taken into consideration for the application of this relationship.
+
+5.6 Processing Time of Log Grades
+Time data in respect to the grades cut by the processor were calculated based off detailed video
+footage. This denoted the time it took to cut a defined log grade; this measured the time between
+the first and final cut. In total, some 1,657 individual log were cut with the corresponding times
+recorded. The average time to process each log grade is shown in Figure 13, below.
+
+
+                                                          Time to process by log grade
+                                    12
+
+                                    10
+        Time to process (seconds)
+
+
+
+
+                                    8
+
+                                    6
+
+                                    4
+
+                                    2
+
+                                    0
+
+
+
+                                                                              Log grade
+
+
+                                         Figure 13: Average time to process for all log grades observed in the study.
+
+There is considerable variability in the time taken to process different log grades, as shown in
+Figure 13, above. The log grade that took the longest time to process on average was UH at
+13.22 seconds, whereas, the shortest time was BHS (bin grade) at 6.60 seconds.
+
+Statistically significant differences where the p-value was less than 0.05 were observed between
+multiple log grades (Appendix 12). This indicates that there are significant differences in the
+
+
+                                                                                                                        28
+times to cut and process specific log grades. Estimated marginal means (emmeans) test found
+that there were indeed statistically significant differences between log grade means; failure of red
+arrows to intersect (Appendix 13). The graph illustrates that there are statistically significant
+differences in the time to process log grades, coinciding with ANOVA tests.
+
+
+   6. Discussion
+The main objective of this study was to identify factors that influenced the productivity of
+processor machinery.
+
+Three factors; piece size, tree form and skid size, were studied in detail to evaluate their effect on
+processor productivity. Data was collected from five crews at six locations through the recording
+of detailed video footage. Stem characteristics, including piece size, lengths, and grades cut,
+were provided by STICKS harvest woodflow management system. Through cross-referencing
+this data with detailed video recordings, the productivity associated with each stem could be
+calculated. This ensured that operator-machine interactions were kept to a minimum with
+automated data collection reducing health and safety risks associated with operating on an active
+skid. The use of automated processor data collection has the potential to be used in further
+related studies while aiding forest managers in monitoring and reconciliation of operations
+(Roth, 2016).
+
+Processing stems into log grades represented 59% of the total time the processor was undertaking
+work tasks. This was slightly higher than the 49% found by Tolan (2014) who was investigating
+the effect of the number of log sorts on processor productivity. This study found that the time
+spent in delays (less than 10 minutes) equated to 9% of total time, slightly less than the 16%
+reported by Tolan (2014).
+
+Delays less than 15 minutes in duration represent some 94% of all delays observed in a
+harvesting operation (Spinelli & Visser, 2008). This study found an average utilisation rate of
+91% for all six investigated crew locations. Similarly, a utilisation rate of 89% was observed
+when investigating harvest operation delays (Spinelli & Visser 2008), coinciding with results
+found in this study. This report assumed that only delays less than 15 minutes were included.
+
+
+
+
+                                                                                                    29
+Productivity
+A detailed productivity study was undertaken over the summer months of 2018/19 to understand
+factors that influence processor machinery. Productivity is defined as the number of outputs (m3)
+over a defined time frame (hour), derived from the time to process each stem.
+
+Productivity was calculated based on the total processing time per stem and the associated piece
+size. The average productivity for all crews of approximately 62.7 m3/hour was slightly less than
+the 66 m3/hour to 74 m3/hour range observed by Tolan (2014) assuming a piece size of 1.5 m3;
+the approximate average observed in this study. ANOVA identified that there were statistically
+significant differences between average crew productivities (assuming p-value of 0.05). These
+differences involved the maximum (crew A) and minimum (crew C) productivity values and
+other crews. This highlights that even processor machinery operating in the same forest estate
+may have varying productivities.
+
+Productivity and Piece Size
+A positive relationship was found between piece size and productivity for all crews investigated
+within this study. This suggests that increases in piece size correspond to increased processor
+productivity. Alternative studies investigating feller-buncher machinery in Australia
+(Ghaffariyan & Acuna, 2012) and mechanised cut-to-length systems in Ireland (Jiroušek et al.
+2007) demonstrated similar relationships between piece size and productivity. This trend was
+also observed in prior studies investigating processor productivity, however, above a piece size
+of 3.5 m3 there was a plateau then decline in processor productivity (Tolan, 2014; Ramantswaba
+et al. 2012). This trend is recognised as the "piece size law" in which piece size increases to the
+point that is too large for the processor resulting in decreased productivity (Visser & Spinelli,
+2011). Results within this study failed to demonstrate this law as no plateau occurred, suggesting
+that the optimum productivity was greater than 4 m3.
+
+However, the results demonstrated that the relationship between piece size and productivity vary
+among crews (differing gradients). Assuming a piece size of 1.5 m3, the expected productivity
+ranges from between 50 m3/hour to 75 m3/hour. This suggests that the most productive operator
+would process 50% more volume than the least productive operator. Assuming that 62.5 m3/hour
+
+
+                                                                                                    30
+is the average of all operators, this study demonstrates that there is some 20% variation in
+processor productivity around the mean. This variation may be due to operator factors which
+coincide with the 20 to 50% productivity range observed by Murphy and Vanderberg (2007).
+This demonstrates that for ‘competent' processor operators, there was a level of uncertainty in
+productivity.
+
+Tree Form
+Individual stems were classified into one of three tree form categories; 0 (Good stem), 1 (Poor
+stem), and 2 (Bad stem). The classification was made taking into consideration branch size,
+sweep, presence/absence of multi-leaders and stem forking. Some 64 stems were used in this
+analysis; 37 stems in category 0, 8 stems in category 1 and 19 stems in category 2 (42% of stems
+in category 1 or 2).
+
+This study found a positive trend between tree form category and time to process. This
+demonstrates that as tree form worsened, the time to process increases at a rate of 34.2 seconds
+per tree form category. Quantification of these results showed that a stem in category 1 took 56%
+longer and a stem in category 2 took 84% longer to process than a stem in category 0. This
+knowledge can then be applied by harvesting managers when estimating contractor rates.
+
+Furthermore, the relationship between tree form category and productivity suggests that as tree
+form worsens, the expected productivity decreases. This relationship coincides with findings
+from Ramantswana et al. (2012), who observed a similar trend in South African harvesting
+operations. However, the relationship between productivity and tree form category is weak as
+demonstrated with an r-squared value of 0.09.
+
+Skid Size
+Skids are used for the processing and storage of logs from a defined harvest area. Their size is
+determined from production targets, the number of log sorts and area constraints (Tolan, 2014;
+Visser et al. 2010). A strong negative relationship was observed between the average delay per
+stem and skid size, suggesting that as skid size decreases, the average delay per stem increases.
+When analysing the relationship between skid size and productivity, a positive trend was
+observed; higher productivity estimated at larger skids. However, this relationship is
+moderate/weak, as demonstrated with an r-squared value of 0.32. Crew interviews that were
+
+
+                                                                                                    31
+undertaken in a study by Visser et al. (2018) discussed how skid size might be a limiting factor
+to crew performance.
+
+Processing Times of Log Grades
+The UH log grade took the longest time to process, whereas, the BHS log grade took the shortest
+time to process (13.2 and 6.6 seconds respectively). ANOVA tests identified that there were
+statistically significant differences between the average time to process many of the log grades
+investigated. However, the application of this information is limited as grade selection is driven
+by both market demand and stem characteristics, including maximum sweep, diameter, and
+branch size (Whiteside & Manley, 1986). Instead, this information could act as a lead on from
+research published by Tolan (2014) who investigated the effect of the number of log sorts on log
+processor productivity.
+
+Benefits of this study
+Hancock Forest Management has undergone a transition from motor-manual processing to
+almost completely mechanised processing in the past decade. This both improved health and
+safety in the forestry workplace while also providing increased production. The results from this
+study provide information concerning the broad range of factors that can influence mechanised
+processing productivity, with a particular focus on the extent that piece size, tree form and skid
+size influence processor productivity.
+
+Quantification of the effect of these factors on productivity provides benefits to both HFM
+harvesting operations as well as the wider New Zealand forestry industry. The benefits of this
+study have been summarised and are as follows:
+
+      A greater understanding of the key factors that influence processor productivity and
+       possible areas for improvements in productivity.
+      Quantification of the effect that piece size, tree form and skid size have on productivity.
+      Information to better estimate harvesting operation contractor rates and characteristics of
+       the harvest area that could influence those rates.
+      A greater understanding of processor operations and how how tasks performed by
+       processor machinery influences productivity.
+
+
+
+                                                                                                     32
+The results of this study may prove to be useful for other forest management companies and
+contractors alike, as harvesting operations become increasingly mechanised.
+
+Limitations
+This study aimed to analyse three factors that influence processor productivity, these were piece
+size, tree form and skid size. However, due to the scope of the investigation, it was not feasible
+to investigate all factors that may influence productivity. During the planning phase of this study,
+attempts were made to identify many other factors that may influence productivity. There is a
+vast array of such factors that can influence processor productivity. These were not considered
+within this study - human behavioural factors, processor manufacturer, and processor power, to
+name a few. Future research may investigate these factors further to determine their level of
+influence (if any) on processor productivity.
+
+This study identified that piece size, tree form and skid size influenced processor productivity.
+However, the strength of these relationships varied. The r-squared value explained the amount of
+variability in the dependent variable that could be explained by the independent variable - the
+higher the value, the better the trend represents the data. The relationship between tree form and
+productivity could only explain 9% of the variation in the results, meaning that the trend may not
+be representative of the entire data set.
+
+The processor was the only machine that was observed in this study as it was identified as a key
+bottleneck to the harvesting operation. Members of the harvesting team reinforced that the
+processor machine was the bottleneck to the harvesting crew. However, this assumption may not
+apply to all crews in operation, with potential for other machinery operating, trucking frequency,
+and the cohesion of crew members to also be bottlenecks in the system.
+
+Before the automation of stem data collection, researchers were required to attain physical
+measurements. However, if these systems are not operating correctly, it can lead to difficulties in
+data analysis. For this study, STICKS data only provided information for each log grade rather
+than for each stem. As a result, log grades cut from each stem needed to be combined to provide
+the piece size for each stem with all times being provided from detailed video footage. This
+process took considerable amounts of time to complete and authenticate data. Due to these time
+constraints, the study was only able to investigate five crews in six locations.
+
+
+                                                                                                     33
+Future Research
+Given the limitations of this study, there is an opportunity for future investigations looking into
+processor productivity. These studies should take into consideration the following aspects:
+
+      Investigate other factors that influence processor productivity, i.e. Operator experience -
+       comparing an experienced operator to one that is new to the machine, processor head
+       manufacturer – are there any differences in productivity between manufacturers? And,
+       processor power – what is the relationship between power and productivity?
+      Study machines throughout New Zealand – benchmark against other regions.
+      Increased length of the investigation in order to gain a larger data pool from which
+       conclusions are made.
+      Investigate productivity for other species and countries – how does processor
+       productivity compare against Canadian operations, or when processing E.bosistoana
+       species.
+
+Research into these fields will help to identify additional influential factors to processor
+productivity allowing for greater knowledge about the limits of the machine.
+
+
+
+
+                                                                                                  34
+    7. Conclusion
+This study aimed to investigate three factors and their effect on processor productivity: piece
+size, tree form and skid size. Data was collected from HFM Kinleith forest estate in Tokoroa
+over the summer of 2018/19. Detailed video footage was recorded, providing times associated
+with work tasks and individual stems while STICKS harvest wood flow management specified
+stem details (piece size).
+
+On average, the processor machine spent the most substantial portion of time, 59% processing
+stems into defined log grades. However, this varied between 43% and 67% for each crew. Only
+delays of less than ten minutes were recorded within this study; as such, a utilisation rate of 91%
+was calculated.
+
+Productivity varied for ‘competent’ operators with a range of 34.8 m3/hour to 79.1 m3/hour
+between crews. This demonstrates that there can be a 50% difference in productivity for
+competent operators. There was also significant variation in productivity within each crew.
+ANOVA tests demonstrated that there were statistically significant differences in productivity
+between crews. As a result, it cannot be assumed that productivity is uniform amongst
+‘competent’ operators working in Kinleith forests.
+
+A positive trend between piece size and productivity was observed at all crews investigated
+within this study. This suggests that as piece size increases so too will processor productivity.
+For this study, the average piece size for each crew varied between 1.35 m3 and 2.05 m3.
+However, the relationship observed at each crew demonstrated that processor productivity varied
+up to 20% around the mean of 62.7 m3/hour (assuming 1.5 m3 piece size). This highlights that for
+‘competent’ operators, there is still a level of variability in their abilities.
+
+A categorical system was employed to analyse tree form; 0 (Good), 1 (Poor), and 2 (Bad). This
+study found that a stem in category 1 will take 56% longer and a stem in category 2 will take
+84% longer to process than a stem in category 0. Productivity decreases with increasing tree
+form category demonstrating that poor quality stems adversely influence processor productivity.
+However, as the associated r-squared value was only 0.09, this highlighted that there is
+considerable variability in productivity for each tree form category.
+
+
+
+                                                                                                    35
+Skid size was found to influence the average delay per stem; increased skid area resulted in
+reduced average delay per stem. A similar trend could be observed between skid size and
+productivity with larger skids having higher productivity values. However, this relationship was
+weak, with an r-squared value of only 0.32.
+
+Results and conclusions made within this study will allow harvest managers to better understand
+factors that affect processor productivity. This knowledge can be applied to estimate fair
+contractor rates given the characteristics of the stand.
+
+
+
+
+                                                                                               36
+   8. References
+
+
+Anon, (2005). Bets Practice Guidelines for Ground-based Logging. Forest Industry Training and
+       Education Council. Ground Based Basics. Competenz – Skills for industry. ISBN 0-
+       9582261-0-5.
+
+Cassidy, M., G. Palmer., K. Glencross., J.D Nicols., & R.G Smith. (2012). Stocking and intensity
+       of thinning affect log size and value in Eucalyptus pilularis. Forest Ecology and
+       Management 264: 220–227
+
+Castro, G.P., L. Nutto., J.R. Malinovski., & R.A. Malinovski. (2016). Harvesting Systems.
+       Tropical Forestry Handbook. Pages 2445 – 2485.
+
+Cossens, P. (1991). Operator Log Making Ability on a Mechanised Processor. LIRA Report Vol.
+       16 No. 14
+
+D’Amato, A.W., J.B. Bradford., S. Fraver., & B.J. Palik. (2011). Forest management for
+       mitigation and adaptation to climate change: Insights from long-term silviculture
+       experiments. Forest Ecology and Management. Volume 262, Issue 5: 803-816.
+
+Evanson, T., & McConchie, M. (1996). Productivity measurements of two Waratah 234
+       hydraulic tree harvesters in radiata pine in New Zealand. International Journal of Forest
+       Engineering, 7(3), 41-52.
+
+Ghaffariyan, R.M., & M. Acuna. (2012). Productivity of roadside processing system in Western
+       Australia. Department of Forest Engineering, Oregon State University.
+
+Hånell, B., T. Nordfjell., & L. Eliasson. (2000). Productivity and costs in shelterwood
+       harvesting. Scandinavian J. of Forest Research. 15(5): 561-569.
+
+Hébert, F., C. Krause., P.Y. Plourde., A. Achim., G. Prégent., & J. Ménétrier. (2016). Effect of
+       Tree Spacing on Tree Level Volume Growth, Morphology, and Wood Properties in a 25-
+       Year-Old Pinus banksiana Plantation in the Boreal Forest of Quebec. Forests 7.
+
+
+
+
+                                                                                                   37
+Jiroušek, R., R. Klvač., & A. Skoupý. (2007). Productivity and costs of the mechanised cut-to-
+       length wood harvesting system in clear-felling operations. Journal of Forest Science (10):
+       476–482.
+
+LeDoux, C.B., & N.K Huyler. (2001). Comparison of Two Cut-to-Length Harvesting Systems
+       Operating in Eastern Hardwoods. International Journal of Forest Engineering. USDA
+       Forest Service.
+
+Magagnotti, N., & R. Spinelli. (2012). Good practice guidelines for biomass production studies.
+       European Science Foundation. CNR-IVALSA: Trees and timber institute.
+
+Muhummad, M.A., M.N. Strandgard., M.W. Brown., & J.C. Fox. (2013). Improving the
+       productivity of mechanised harvesting systems using remote sensing. Australian Forestry.
+       ISSN: 0004-9158.
+
+Muñoz, F., Rubilar, R., Espinosa, M., Cancino, J., Toro, J., & Herrera, M. (2008). The effect of
+       pruning and thinning on above ground aerial biomass of Eucalyptus nitens (Deane &
+       Maiden) Maiden. Forest Ecology and Management 255, 365–373
+
+Murphy, G. (2005). Determining sample size for harvesting cost estimation. New Zealand
+       Journal of Forestry Science 35: 166-169.
+
+Nakagawa, M., J. Hamatsu, T. Saitou., & H. Ishida. (2007). Effect of tree Size on Productivity
+       and Time Required for Work Elements in Selective Thinning by a Harvester.
+       International Journal of Forest Engineering, Vol 18.
+
+Nakagawa, M., N. Hayashi., & T.Narushima. (2010). Effect of tree size on time of each work
+       element and processing productivity using an excavator-based single-grip harvester or
+       processor at a landing. Journal of Forest Research, Vol 15.
+
+Nixon, C., D. Gamperle., D. Pambudi., & P. Clough. (2017). National Institute of Economic
+       Research. Plantation Forestry Statistics: Contribution of forestry to New Zealand.
+
+Olsen, E., Hossain. M., & Miller, M. (1998). Statistical Comparison of Methods Used in
+       Harvesting Work Studies. Forest Research Labratory, Oregan State University.
+
+
+
+
+                                                                                                 38
+Ovaskainen, H., Uusitalo, J., & Väätäinen, K. (2004). Characteristics and significance of a
+       harvester operators’ working technique in thinnings. International Journal Forestry
+       Engineering: 67–77.
+
+Pinkard, E.A., & Neilsen, W.A. (2003). Crown and stand characteristics of Eucalyptus nitens in
+       response to initial spacing: implications for thinning. Forest Ecology and Management
+       172, 215–227.
+
+Puttock, D., R. Spinelli., & B.R. Hartsough. (2005). Operational trials of cut-to-length harvesting
+       of poplar in a mixed wood stand. International Journal of Forest Engineering. 16: 39-49.
+
+Ramantswaba, M., A McEwan., & J Pauw. (2012). Determining the effect of tree size, bark-
+       wood bond strength and tree form on the productivity of an excavator-based harvester in
+       Acacia mearnsii in the KwaZulu-Natal forestry region of South Africa. Southern Forests:
+       Journal of Forest Science.
+
+Riddle, A. (1995). Mechanisation of logging operations in New Zealand. New Zealand Forestry.
+       New Zealand Journal of Forestry: 17 - 21.
+
+Roth, G. (2016). StanForD as a data source for forest management: a forest stand reconciliation
+       implementation case study. School of Forestry. University of Canterbury.
+
+Spinelli, R., Cuchet. E., & Roux. P. (2007). A new feller-buncher for harvesting energy wood:
+       Results from a European test programme. Biomass Bioenergy 31: 205–210.
+
+Spinelli, R., N. Magagnotti., & B. Hartsough. (2010). Productivity Norms for Harvesters and
+       Processors Used in Italy. FORMEC Austria.
+
+Spinelli, R., & R. Visser. (2008). Analyzing and Estimating Delays in Harvester Operations.
+       International Journal of Forest Engineering, Volume 19.
+
+Strandgard, M., & Mitchell. R. (2015). Automated Time Study of Forwarders using GPS and a
+       vibration sensor. Croatian Journal of Forestry Engineering: 175 - 184.
+
+Stokes, B. J., C. Ashmore., C. L. Rawlins., & D. L. Sirois. (1989). Glossary of Terms Used in
+       Timber Hawesing and Forest. United States Department of Agriculture. Southern Forest
+       Experiment Station. Forest Service Engineering.
+
+
+                                                                                                39
+Tolan, A. C. (2014). The effect of the number of log sorts on mechanised log processing
+       productivity and value recovery in landing-based cable yarder harvesting operations.
+       Degree of Master of Forestry Science, School of Forestry, University of Canterbury.
+
+Tufts, R.A. (1997). Productivity and cost of the Ponsse 15-series, cut-to-length harvesting system
+       in southern pine plantations. Forest Productivity Journal 47: 39-46.
+
+Visser, R. (2009a). Benchmarking harvesting cost and productivity. Harvesting Technical Note,
+       Vol. 2 (6). Future Forests Research: Rotorua, New Zealand.
+
+Visser, R. (2009b). Effect of Piece Size on Felling Machine Productivity. Harvesting Technical
+       Note. Future Forests Research. Vol: 2 Number: 9.
+
+Visser, R. (2018). Trends in harvesting costs and productivity benchmarking. Future Foresters
+       Research, Rotorua. HTN10-02. Pages 1-5.
+
+Visser, R., & K. Stampder. (2003). Tree-Length system evaluation of second thinning in loblolly
+       pine plantations. Southern Journal of Applied Forestry 27(1): 77-82.
+
+Visser, R., & Spinelli. R. (2008). Analyzing and Estimating Delays in Harvester Operations.
+       International Journal of Forest Engineering 19(1): 36-41.
+
+Visser, R., R. Spinelli., & N. Magagnotti. (2010). Landing size and landing layout in whole-tree
+       harvesting operations in New Zealand. FORMEC.
+
+Visser, R., & R. Spinelli. (2011). Determining the shape of the productivity function for
+       mechanised felling and felling-processing. Journal of Forest Research 5: 397 – 402.
+
+Whiteside, I.D., & B.R. Manley. (1986). Radiata pine resource description by log-grade
+       specifications. In Kininmonth, J.A., ed. Proceedings of the conversion planning
+       conference, pp. 27–38. FRI Bulletin No. 128, Rotorua, New Zealand, Forest Research
+       Institute.
+
+Zobel, B., & Buijtenen. J.P. (1980). Wood variation: Its causes and controls. Springer Series in
+       Wood science. ISBN-13: 978-3-642-74071-8.
+
+
+
+
+                                                                                                   40
+ 9. Appendices
+
+
+
+
+Appendix 1: Questionnaire used to gain information from crew members about their experience operating the
+                              processor machine and stand characteristics.
+
+
+
+
+                                                                                                            41
+Appendix 2: Illustration of a stem that falls within tree form category 0 with no deformations observed.
+
+
+
+
+  Appendix 3: Illustration of a stem that falls within tree form category 1 as some large branches are
+                                           present on the stem.
+
+
+
+
+                                                                                                           42
+Appendix 4: Illustration of a stem that falls within tree form category 2 due to the multiple leaders observed at the
+                                                 quarter of the stem.
+
+
+
+
+                Appendix 5: Percentage time spent by processor performing work tasks at crew A.
+
+                                                                                                                   43
+Appendix 6: Percentage time spent by processor performing work tasks at crew B.
+
+
+
+
+Appendix 7: Percentage time spent by processor performing work tasks at crew C.
+
+
+
+
+                                                                                  44
+Appendix 8: Percentage time spent by processor performing work tasks at crew D.
+
+
+
+
+Appendix 9: Percentage time spent by processor performing work tasks at crew E.
+
+
+
+                                                                                  45
+               Appendix 10: Percentage time spent by processor performing work tasks at crew E.
+
+
+
+
+Appendix 11: Emmeans test to illustrate statistically significant differences in mean productivities between crews.
+
+
+
+                                                                                                                 46
+47
+Appendix 12: ANOVA regression performed in RStudio to find statistically significant differences in the time to
+                                         process log grades.
+
+
+                                                                                                                  48
+                                             .
+
+
+
+
+Appendix 13: Emmeans test to compare the statistical significance of time to cut log grades.
+
+
+
+
+                                                                                               49
+

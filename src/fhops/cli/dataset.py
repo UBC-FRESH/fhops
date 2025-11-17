@@ -76,6 +76,8 @@ from fhops.productivity import (
     estimate_productivity_distribution,
     estimate_shovel_logger_productivity_sessions2006,
     load_lahrsen_ranges,
+    ProcessorProductivityResult,
+    estimate_processor_productivity_berry2019,
 )
 from fhops.reference import get_appendix5_profile, get_tr119_treatment, load_appendix5_stands
 from fhops.scenario.contract import Machine, Scenario
@@ -141,6 +143,7 @@ class ProductivityMachineRole(str, Enum):
     CTL_HARVESTER = "ctl_harvester"
     GRAPPLE_SKIDDER = "grapple_skidder"
     GRAPPLE_YARDER = "grapple_yarder"
+    ROADSIDE_PROCESSOR = "roadside_processor"
     SHOVEL_LOGGER = "shovel_logger"
     HELICOPTER_LONGLINE = "helicopter_longline"
 
@@ -297,6 +300,24 @@ def _render_helicopter_result(result: HelicopterProductivityResult) -> None:
     _render_kv_table("Helicopter Longline Productivity Estimate", rows)
     console.print(
         "[dim]Defaults derived from FPInnovations helicopter logging studies (ADV3/4/5/6 series).[/dim]"
+    )
+
+
+def _render_processor_result(result: ProcessorProductivityResult) -> None:
+    rows = [
+        ("Model", "berry2019"),
+        ("Piece Size (m³)", f"{result.piece_size_m3:.3f}"),
+        ("Tree Form Category", str(result.tree_form_category)),
+        ("Base Productivity (m³/PMH)", f"{result.base_productivity_m3_per_pmh:.2f}"),
+        ("Tree-form Multiplier", f"{result.tree_form_multiplier:.3f}"),
+        ("Crew Multiplier", f"{result.crew_multiplier:.3f}"),
+        ("Delay-free Productivity (m³/PMH)", f"{result.delay_free_productivity_m3_per_pmh:.2f}"),
+        ("Delay Multiplier", f"{result.delay_multiplier:.3f}"),
+        ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
+    ]
+    _render_kv_table("Roadside Processor Productivity Estimate", rows)
+    console.print(
+        "[dim]Regression from Berry (2019) Kinleith NZ time study; utilisation default accounts for <10 min delays.[/dim]"
     )
 
 
@@ -1943,6 +1964,32 @@ def estimate_productivity_cmd(
         min=0.0,
         help="Yarding distance along the corridor (m) for grapple yarder helpers.",
     ),
+    processor_piece_size_m3: float | None = typer.Option(
+        None,
+        "--processor-piece-size-m3",
+        min=0.0,
+        help="Average piece size (m³/stem) for roadside processor helpers.",
+    ),
+    processor_tree_form: int = typer.Option(
+        0,
+        "--processor-tree-form",
+        min=0,
+        max=2,
+        help="Tree form category (0=good, 1=poor, 2=bad) per Berry (2019).",
+    ),
+    processor_crew_multiplier: float = typer.Option(
+        1.0,
+        "--processor-crew-multiplier",
+        min=0.1,
+        help="Crew-specific multiplier (e.g., 1.16 for crew A, 0.75 for crew C) to reflect operator productivity.",
+    ),
+    processor_delay_multiplier: float = typer.Option(
+        0.91,
+        "--processor-delay-multiplier",
+        min=0.01,
+        max=1.0,
+        help="Utilisation multiplier capturing delays (<10 min) relative to delay-free productivity (Berry 2019 default 0.91).",
+    ),
     shovel_passes: int | None = typer.Option(
         None,
         "--shovel-passes",
@@ -2236,6 +2283,19 @@ def estimate_productivity_cmd(
             console.print(
                 f"[dim]Applied grapple-yarder defaults from harvest system '{selected_system.system_id}'.[/dim]"
             )
+        return
+    if role == ProductivityMachineRole.ROADSIDE_PROCESSOR.value:
+        if processor_piece_size_m3 is None:
+            raise typer.BadParameter(
+                "--processor-piece-size-m3 is required when --machine-role roadside_processor."
+            )
+        result_processor = estimate_processor_productivity_berry2019(
+            piece_size_m3=processor_piece_size_m3,
+            tree_form_category=processor_tree_form,
+            crew_multiplier=processor_crew_multiplier,
+            delay_multiplier=processor_delay_multiplier,
+        )
+        _render_processor_result(result_processor)
         return
     if role == ProductivityMachineRole.SHOVEL_LOGGER.value:
         (

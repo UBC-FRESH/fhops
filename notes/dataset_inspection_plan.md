@@ -166,8 +166,18 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
 - [ ] **Roadside processors / loaders / hoe chuckers (Labelle et al. 2016/2018; FPDat loader datasets)**
   - [ ] Ingest landing-processor time studies (processing time per log vs. diameter/species) and generic loader cycle-time models. (`notes/reference/Berry, Nick_Final-Dissertation.pdf` is the first modern dataset; older comparisons live in `administrator,+jfe5_2tp04.pdf` and `notes/reference/unbc_15814.pdf`.)
   - [ ] Provide helper functions for `roadside_processor` and `loader`, exposing key predictors (piece size, log sort count, decking distance) and regression tests. Tie processor cost factors back to `notes/reference/Development_and_Validation_of_.pdf` (OpCost) and `notes/reference/harvestcost-woodstock.pdf` so CLI outputs match Woodstock/OpCost conventions.
+    - [ ] Processor helper interface sketch:
+        - CLI flags: `--processor-piece-size-m3`, `--processor-tree-form` (0/1/2 per Berry categories), `--processor-crew-factor` (defaults to 1.0; use Table 8 % adjustments), optional `--processor-delay-factor` to adjust utilisation from the 91 % default.
+        - Helper signature: `estimate_processor_productivity_berry2019(piece_size_m3, tree_form_category=0, crew_multiplier=1.0, delay_multiplier=1.0) -> ProcessorProductivityResult`.
+        - Result data: expose delay-free productivity (m³/PMH) + utilisation-adjusted value, log payload assumptions, and tree-form penalties so costing modules can choose which to consume.
+        - Tests: numeric recreation of Berry regression (e.g., 1.5 m³ piece returns ≈63 m³/PMH), tree-form penalty checks, crew multiplier coverage.
+    - [ ] Loader helper interface sketch:
+        - Identify the best baseline (Labelle 2016/2018 loader cycle datasets or FPInnovations loader FPDat). Extract predictors such as decking distance, grapple load size, number of sorts, and swing time.
+        - CLI flags: `--loader-cycle-distance-m`, `--loader-payload-m3`, `--loader-sorts`, `--loader-delay-minutes`, plus optional `--loader-multiplier` for landing-specific constraints.
+        - Helper signature: `estimate_loader_productivity_labelle2016(...) -> LoaderProductivityResult` returning cycle time + m³/PMH; include hooks for pallet vs. truck loading if the study differentiates.
   - [ ] Document how these interact with forwarder/skidder productivity so scenario cost rollups stay consistent (e.g., ghost-trail settings from TN285, loader-forward hybrids from `notes/reference/pnw_rp430.pdf`).
-  - [ ] Digitise the Berry/Labelle landing-processor datasets (`notes/reference/Berry, Nick_Final-Dissertation.pdf`, `administrator,+jfe5_2tp04.pdf`) into structured tables so helpers/tests can reuse the exact coefficients.
+  - [ ] Digitise the Berry/Labelle landing-processor datasets (`notes/reference/Berry, Nick_Final-Dissertation.pdf`, `administrator,+jfe5_2tp04.pdf`) into structured tables (CSV/JSON) with clear predictor definitions so helpers/tests can reuse the published coefficients.
+    - [x] Berry 2019 piece-size/tree-form regression captured in `data/productivity/processor_berry2019.json` (equation + utilisation + tree-form multipliers).
   - [ ] Wire the processor/loader helpers into `fhops.dataset estimate-productivity` with dedicated CLI flags/telemetry, and add docs/tests once the regressions land.
 - [ ] **Tethered systems (FPDat Lahrsen subsets; winch-assist BMPs 2019)**
   - [ ] Filter Lahrsen FPDat data to tethered harvesters/shovels and derive interim regressions (stem size vs. slope vs. tether load).

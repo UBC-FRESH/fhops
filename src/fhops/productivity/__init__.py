@@ -89,6 +89,10 @@ from .stoilov2021 import (
     estimate_skidder_harvester_productivity_delay_free,
     estimate_skidder_harvester_productivity_with_delays,
 )
+from .processor_loader import (
+    ProcessorProductivityResult,
+    estimate_processor_productivity_berry2019,
+)
 
 __all__ = [
     "LahrsenModel",
@@ -148,6 +152,8 @@ __all__ = [
     "ShovelLoggerSessions2006Inputs",
     "ShovelLoggerResult",
     "estimate_shovel_logger_productivity_sessions2006",
+    "estimate_processor_productivity_berry2019",
+    "ProcessorProductivityResult",
     "ADV6N10HarvesterInputs",
     "TN292HarvesterInputs",
     "Han2018SkidderMethod",
