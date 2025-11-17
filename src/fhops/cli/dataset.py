@@ -52,6 +52,8 @@ from fhops.productivity import (
     estimate_cable_yarder_cycle_time_tr127_minutes,
     estimate_cable_yarder_productivity_lee2018_downhill,
     estimate_cable_yarder_productivity_lee2018_uphill,
+    estimate_cable_yarder_cycle_time_tr125_single_span,
+    estimate_cable_yarder_cycle_time_tr125_multi_span,
     estimate_cable_yarder_productivity_tr125_multi_span,
     estimate_cable_yarder_productivity_tr125_single_span,
     estimate_cable_yarder_productivity_tr127,
@@ -2664,6 +2666,10 @@ def estimate_skyline_productivity_cmd(
             ("Payload (m³)", f"{(payload_m3 or 0.61):.2f}"),
         ]
     elif model is SkylineProductivityModel.TR125_SINGLE:
+        cycle_minutes = estimate_cable_yarder_cycle_time_tr125_single_span(
+            slope_distance_m=slope_distance_m,
+            lateral_distance_m=lateral_distance_m,
+        )
         value = estimate_cable_yarder_productivity_tr125_single_span(
             slope_distance_m=slope_distance_m,
             lateral_distance_m=lateral_distance_m,
@@ -2674,10 +2680,14 @@ def estimate_skyline_productivity_cmd(
             ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
             ("Lateral Distance (m)", f"{lateral_distance_m:.1f}"),
             ("Payload (m³)", f"{(payload_m3 or 1.6):.2f}"),
+            ("Cycle Time (min)", f"{cycle_minutes:.2f}"),
         ]
         source_label = "FPInnovations TR-125 single-span regression (coastal BC)."
-        cycle_minutes = None
     elif model is SkylineProductivityModel.TR125_MULTI:
+        cycle_minutes = estimate_cable_yarder_cycle_time_tr125_multi_span(
+            slope_distance_m=slope_distance_m,
+            lateral_distance_m=lateral_distance_m,
+        )
         value = estimate_cable_yarder_productivity_tr125_multi_span(
             slope_distance_m=slope_distance_m,
             lateral_distance_m=lateral_distance_m,
@@ -2688,9 +2698,9 @@ def estimate_skyline_productivity_cmd(
             ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
             ("Lateral Distance (m)", f"{lateral_distance_m:.1f}"),
             ("Payload (m³)", f"{(payload_m3 or 1.6):.2f}"),
+            ("Cycle Time (min)", f"{cycle_minutes:.2f}"),
         ]
-        source_label = "FPInnovations TR-125 multi-span regression (coastal BC)."
-        cycle_minutes = None
+        source_label = "FPInnovations TR-125 multi-span (intermediate support) regression (coastal BC)."
     elif model in _TR127_MODEL_TO_BLOCK:
         block_id = _TR127_MODEL_TO_BLOCK[model]
         if block_id in (5, 6) and num_logs is None:

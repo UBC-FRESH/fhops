@@ -182,7 +182,9 @@ Use ``fhops.dataset estimate-skyline-productivity`` when the block’s harvest s
   non-BC datasets intended for short spans (<130 m).
 * ``tr125-single-span`` / ``tr125-multi-span`` – Standing-skyline regressions from FPInnovations TR-125
   (Skylead C40 with Mini-Maki carriage). Supply ``--slope-distance-m`` and ``--lateral-distance-m``;
-  payload defaults to 1.6 m³ (≈3.4 logs × 0.47 m³/log) but can be overridden via ``--payload-m3``.
+  payload defaults to 1.6 m³ (≈3.4 logs × 0.47 m³/log) but can be overridden via ``--payload-m3``. The
+  CLI now reports the underlying cycle time so you can see how intermediate supports (multi-span) drive
+  the longer outhaul/inhaul legs.
 * ``tr127-block1`` … ``tr127-block6`` – Block-specific regressions from FPInnovations TR-127 (northwestern
   BC). The command prompts for ``--num-logs`` when Blocks 5–6 require it and shows the computed
   cycle minutes alongside productivity.

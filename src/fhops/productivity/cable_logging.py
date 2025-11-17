@@ -159,6 +159,14 @@ def estimate_cable_yarder_productivity_lee2018_downhill(
     return _m3_per_pmh(payload_m3, cycle_seconds)
 
 
+def estimate_cable_yarder_cycle_time_tr125_single_span(
+    *, slope_distance_m: float, lateral_distance_m: float
+) -> float:
+    _validate_positive(slope_distance_m, "slope_distance_m")
+    _validate_positive(lateral_distance_m, "lateral_distance_m")
+    return 2.76140 + 0.00449 * slope_distance_m + 0.03750 * lateral_distance_m
+
+
 def estimate_cable_yarder_productivity_tr125_single_span(
     *,
     slope_distance_m: float,
@@ -180,8 +188,19 @@ def estimate_cable_yarder_productivity_tr125_single_span(
 
     _validate_positive(slope_distance_m, "slope_distance_m")
     _validate_positive(lateral_distance_m, "lateral_distance_m")
-    cycle_minutes = 2.76140 + 0.00449 * slope_distance_m + 0.03750 * lateral_distance_m
+    cycle_minutes = estimate_cable_yarder_cycle_time_tr125_single_span(
+        slope_distance_m=slope_distance_m,
+        lateral_distance_m=lateral_distance_m,
+    )
     return _m3_per_pmh_from_minutes(payload_m3, cycle_minutes)
+
+
+def estimate_cable_yarder_cycle_time_tr125_multi_span(
+    *, slope_distance_m: float, lateral_distance_m: float
+) -> float:
+    _validate_positive(slope_distance_m, "slope_distance_m")
+    _validate_positive(lateral_distance_m, "lateral_distance_m")
+    return 2.43108 + 0.00910 * slope_distance_m + 0.02563 * lateral_distance_m
 
 
 def estimate_cable_yarder_productivity_tr125_multi_span(
@@ -205,7 +224,10 @@ def estimate_cable_yarder_productivity_tr125_multi_span(
 
     _validate_positive(slope_distance_m, "slope_distance_m")
     _validate_positive(lateral_distance_m, "lateral_distance_m")
-    cycle_minutes = 2.43108 + 0.00910 * slope_distance_m + 0.02563 * lateral_distance_m
+    cycle_minutes = estimate_cable_yarder_cycle_time_tr125_multi_span(
+        slope_distance_m=slope_distance_m,
+        lateral_distance_m=lateral_distance_m,
+    )
     return _m3_per_pmh_from_minutes(payload_m3, cycle_minutes)
 
 
@@ -661,6 +683,18 @@ __all__ = [
     "estimate_cable_skidding_productivity_unver_robust_profile",
     "estimate_cable_yarder_productivity_lee2018_uphill",
     "estimate_cable_yarder_productivity_lee2018_downhill",
+    "estimate_cable_yarder_cycle_time_tr125_single_span",
+    "estimate_cable_yarder_productivity_tr125_single_span",
+    "estimate_cable_yarder_cycle_time_tr125_multi_span",
+    "estimate_cable_yarder_productivity_tr125_multi_span",
+    "estimate_cable_yarder_cycle_time_tr127_minutes",
+    "estimate_cable_yarder_productivity_tr127",
     "estimate_standing_skyline_turn_time_aubuchon1979",
     "estimate_standing_skyline_productivity_aubuchon1979",
+    "estimate_running_skyline_cycle_time_mcneel2000_minutes",
+    "estimate_running_skyline_productivity_mcneel2000",
+    "running_skyline_variant_defaults",
+    "HelicopterLonglineModel",
+    "HelicopterProductivityResult",
+    "estimate_helicopter_longline_productivity",
 ]
