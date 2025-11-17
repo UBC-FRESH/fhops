@@ -38,3 +38,15 @@ def test_forwarder_bc_kellogg_matches_table8() -> None:
         distance_in_m=259.0,
     )
     assert result.predicted_m3_per_pmh == pytest.approx(13.4, rel=1e-2)
+
+
+def test_forwarder_bc_adv6n10_regression() -> None:
+    result = estimate_forwarder_productivity_bc(
+        model=ForwarderBCModel.ADV6N10_SHORTWOOD,
+        payload_m3=10.0,
+        mean_log_length_m=5.0,
+        travel_speed_m_per_min=40.0,
+        trail_length_m=300.0,
+        products_per_trail=2.0,
+    )
+    assert result.predicted_m3_per_pmh == pytest.approx(22.21, rel=5e-3)

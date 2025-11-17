@@ -80,3 +80,27 @@ Extending Systems
 To define custom systems, construct :class:`HarvestSystem` instances and supply them via the scenario
 contract. When adding optional or parallel tasks, document the intended precedence explicitly and
 consider updating this reference alongside any new data files.
+
+Forwarder Productivity Models
+-----------------------------
+
+Cut-to-length systems rely on the forwarder helper stack (``fhops.productivity.forwarder_bc``) when
+``fhops dataset estimate-productivity`` or ``fhops dataset estimate-forwarder-productivity`` is invoked.
+Pick the regression that matches the stand context:
+
+* ``ghaffariyan-small`` / ``ghaffariyan-large`` – ALPACA plantation thinning data (14 t and 20 t
+  forwarders). Requires ``--extraction-distance`` plus either ``--slope-class`` or
+  ``--slope-factor``. Use these when analysing Australian-style commercial thinning or when you
+  need quick distance/slope sensitivity without payload inputs.
+* ``kellogg-sawlog`` / ``kellogg-pulpwood`` / ``kellogg-mixed`` – FMG 910 regression from
+  Kellogg & Bettinger (1994) for western Oregon CTL operations. Supply ``--volume-per-load``,
+  ``--distance-out``, ``--travel-in-unit``, and ``--distance-in``. Ideal for moderate (≤350 m)
+  extraction distances and when you must distinguish sawlog vs. pulp payloads.
+* ``adv6n10-shortwood`` – FPInnovations ADV6N10 shortwood model for boreal multi-product sorting.
+  Requires ``--payload-per-trip``, ``--mean-log-length``, ``--travel-speed``, ``--trail-length``, and
+  ``--products-per-trail``. Use this when you have explicit payload/log-length targets or need to
+  quantify the productivity penalty of sorting several products per trail.
+
+The commands surface identical arguments under both the dedicated forwarder CLI and the general
+``estimate-productivity --machine-role forwarder`` path, so the same guidance applies to synthetic
+generators, scenario QA, and KPI workflows.

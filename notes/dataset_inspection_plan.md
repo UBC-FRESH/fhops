@@ -248,6 +248,29 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
 
 ## Productivity Backlog Plan
 
+### CTL System Harvester productivity
+
+Candidate references already in the repository; convert each into a helper/plan:
+
+- [ ] `notes/reference/fpinnovations/ADV6N10.PDF`
+  - Publish the single-grip harvester regression (function of stem volume, number of products, stems/cycle, mean log length) beside the forwarder helper.
+  - Add CLI switches paralleling ``adv6n10-shortwood`` so analysts can quantify harvester-side sorting penalties in boreal multi-product CTL.
+  - Tests: numeric recreation of Appendix 1 values + CLI smoke.
+- [ ] `notes/reference/fpinnovations/ADV5N30.PDF`
+  - Encode removal-level modifiers (30/50/70 %) and brushing deltas, wrapping Timberjack 1270 data into a helper or scenario multiplier.
+  - Document when to apply (white spruce commercial thinning, Alberta) and how to blend with forwarder models.
+  - Tests verifying per-removal productivity against the tables.
+- [ ] `notes/reference/fpinnovations/TN292.PDF`
+  - Build a harvester productivity function parameterised by mean tree volume and stand density (based on Kenmatt/Brinkman study).
+  - Surface optional cost outputs or elasticities for pipeline integration.
+  - Regression tests spanning the min/max tree-size brackets.
+- [ ] `notes/reference/fpinnovations/TN285.PDF`
+  - Translate the observed impacts of trail spacing, removal intensity, and pre-cleaning into scenario multipliers (or helper flags).
+  - Add documentation emphasising when pre-cleaning is uneconomic.
+- [ ] `notes/reference/fpinnovations/ADV5N9.PDF` / `ADV2N21.PDF`
+  - Capture BC/QC second-thinning harvester productivity under alternate trail networks and removal intensities.
+  - Provide quick-look tables or multiplier hooks so CTL blocks with existing trail networks can be modelled without manual spreadsheet work.
+
 ### Forwarder / grapple-skidder coverage
 - [x] Parse Arnvik Appendix 8–11 JSON dumps (`notes/reference/arnvik_tables/`) to isolate forwarder/harwarder/grapple-skidder regressions; capture predictor ranges + units in a machine-readable table under `data/productivity/arnvik_forwarder.json` (script: `scripts/build_arnvik_forwarder_table.py`, currently surfaces harwarder + skidder-harvester rows—the appendices do not include standalone forwarder codes, so the forwarder role is proxied via harwarder models until additional data surfaces).
 - [x] Acknowledge the Arnvik gap explicitly: document in docs/planning that Appendix 8 only covers harvesters/feller-bunchers/harwarders (per thesis title) and will not produce primary-transport regressions; use the dataset solely for harwarder validation. (`docs/planning/productivity_gaps.rst`)
@@ -259,6 +282,16 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
   - `notes/reference/forests-13-00305-v2.txt` — West. Oregon tethered harvester-forwarder Monte Carlo (Allman et al. 2021) with Equation (1)/(2) for cycle time contributions and Appendix S1 payload-vs-slope/distance regressions (Pl,kg). Use these to derive slope penalties/payload caps for coastal BC steep-slope scenarios when we port the ALPACA functions.
   - `notes/reference/sb_202_2019_2.txt` Table 4 + Figures 7/8 and `tests/test_ghaffariyan2019.py` already provide expected outputs; need to wrap them in CLI/regression harnesses and document the assumptions (Australia pine/euc thinning, gentle terrain) before grafting BC-specific adjustments.
   - [x] CLI now exposes `--slope-class` buckets (flat, 10–20 %, >20 %) wired to the ALPACA multipliers so analysts can pick the published factors without manual math; unit tests cover the new path.
+  - `notes/reference/fpinnovations/ADV2N21.PDF` — Okanagan (BC) Timberjack 1270/1010 partial-cut program (1996–1999) with nine block types; provides normalized 150 m forwarding cycle times, $/m³ deltas vs. clearcut baseline, and soil-compaction data for multi-pass forwarder trails. Useful for calibrating distance-penalty and disturbance constraints but does not add a closed-form regression.
+  - `notes/reference/fpinnovations/ADV2N39.PDF` — Lac Saint-Jean (QC) Timbco TF-820D harvester-forwarder combo (LogMax 750 + 15 m³ bunk) with 60 SMH harvesting / 40 SMH forwarding schedule. Captures 19 m³/PMH (harvest) and 25 m³/PMH (forward) at 175 m, changeover times, and optimal weekly production vs. extraction distance, informing utilization heuristics for single-machine hybrid systems.
+  - `notes/reference/fpinnovations/ADV2N62.PDF` — Interior BC loader-forwarding program (three excavator-based loaders on 33–41 % slopes) documenting 265 m³/shift throughput, $15.20/m³ extraction + loading cost, and trail-density/soil-disturbance metrics; use for steep-slope loader-forwarder role assumptions.
+  - `notes/reference/fpinnovations/ADV2N9.PDF` — Bowater (NB) shortwood forwarder productivity study (six products, 3.1 m and shorter logs) quantifying the impact of product counts, log length, slope, and pile size on cycle time via GPS-tagged piles; refreshes multi-product correction factors for shortwood roles.
+  - `notes/reference/fpinnovations/ADV3N29.PDF` — Fuel-consumption survey for western Canadian ground-based systems; provides diesel-equivalent L/m³ and GHG figures for forwarder/skidder/loader workflows to pair with productivity estimates when deriving PMH→fuel/CO₂ outputs.
+  - `notes/reference/fpinnovations/ADV5N30.PDF` — Alberta commercial-thinning trial (Timberjack 1270/1210B) with brushing crew assist; forwarder shift productivity 22–30 m³/PMH (30–70 % removal) and detailed timing up to 64 m³/PMH. Useful for calibrating removal-level multipliers once BC payloads are available.
+  - `notes/reference/fpinnovations/ADV6N10.PDF` — Boreal CTL sorting study that publishes explicit harvester + forwarder productivity equations (forwarder depends on payload, travel speed, number of products per trail, mean log length, trail length). First FPInnovations regression we can port into `fhops.productivity.forwarder_bc` to cover shortwood multi-product scenarios.
+  - `notes/reference/fpinnovations/ADV6N7.PDF` — Caterpillar 535B grapple skidder trial (northern Vancouver Island) paired with loader-forwarding; adds coastal grapple-skidder productivity/soil disturbance references for scenarios where we combine loader-forwarders with rubber-tired skidders.
+  - [x] Ported the ADV6N10 forwarder regression into `fhops.productivity.forwarder_bc` (`adv6n10-shortwood`), exposed CLI options for payload/log length/trail metrics, and added regression tests so analysts can evaluate shortwood multi-product cases directly.
+  - [x] Documented when to use each forwarder model (Ghaffariyan, Kellogg, ADV6N10) in `docs/reference/harvest_systems.rst` so CLI users can match blocks to the appropriate regression without digging through planning notes.
 
   Next steps to close this section (per 2025-11-18 review):
  1. ✅ Document the Arnvik Appendix 8 gap in the planning docs so analysts understand it only covers harvesters/feller-bunchers/harwarders and should not be applied to primary transport.
@@ -272,6 +305,7 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
     2. Field Notes (`FNPC17/19/21/28`, `FNSF8/9/11/34`) to capture operational constraints (trail spacing, payload caps, safety-driven slope limits) that influence productivity model parameters.
     3. Technical Notes/Reports (`TN123–TN296`, `TR94`, `TR109`, `TR2017N34`, `TR2017N57`, `TR2021N93`, `TR2023N17`) to extract regression-ready formulas (especially those with explicit forwarder/skid-forwarder models) plus any modern tethered-forwarding insights.
   - After each wave, update `notes/fpinnovations_reference_log.md` with abstracts + productivity leads, then backlink actionable findings here (Forwarder coverage) so we know when to extend `fhops.productivity.forwarder_bc` beyond the current AFORA/ALPACA + Kellogg set.
+  - remove duplicate fpinnovations reports lurking in `notes/reference` (cross reference with `notes/reference/fpinnovations` and `fpinnovations_reference_log.md` planning doc).
 
 ### Skyline alternatives (Ünver-Okan 2020 / Lee et al. 2018)
 - [x] Extract coefficients from `/notes/reference/unver.pdf` (Ünver-Okan hill-skidding regressions already implemented) and `/notes/reference/Productivity and cost ... South Korea.pdf` (Lee et al. 2018 HAM300 uphill/downhill regressions live in `fhops.productivity.cable_logging`).

@@ -8,6 +8,10 @@ from fhops.productivity import (
     estimate_forwarder_productivity_kellogg_bettinger,
     estimate_forwarder_productivity_small_forwarder_thinning,
 )
+from fhops.productivity.forwarder_bc import (
+    ForwarderBCModel,
+    estimate_forwarder_productivity_bc,
+)
 
 runner = CliRunner()
 
@@ -74,6 +78,37 @@ def test_cli_forwarder_productivity_kellogg_mixed() -> None:
     assert f"{expected:.2f}" in result.stdout
 
 
+def test_cli_forwarder_productivity_adv6n10() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-forwarder-productivity",
+            "--model",
+            "adv6n10-shortwood",
+            "--payload-per-trip",
+            "10",
+            "--mean-log-length",
+            "5",
+            "--travel-speed",
+            "40",
+            "--trail-length",
+            "300",
+            "--products-per-trail",
+            "2",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_forwarder_productivity_bc(
+        model=ForwarderBCModel.ADV6N10_SHORTWOOD,
+        payload_m3=10.0,
+        mean_log_length_m=5.0,
+        travel_speed_m_per_min=40.0,
+        trail_length_m=300.0,
+        products_per_trail=2.0,
+    ).predicted_m3_per_pmh
+    assert f"{expected:.2f}" in result.stdout
+
+
 def test_cli_estimate_productivity_forwarder_branch() -> None:
     result = runner.invoke(
         dataset_app,
@@ -101,4 +136,37 @@ def test_cli_estimate_productivity_forwarder_branch() -> None:
         travel_in_unit_m=76.0,
         distance_in_m=259.0,
     )
+    assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_estimate_productivity_forwarder_adv6n10_branch() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "forwarder",
+            "--forwarder-model",
+            "adv6n10-shortwood",
+            "--payload-per-trip",
+            "10",
+            "--mean-log-length",
+            "5",
+            "--travel-speed",
+            "40",
+            "--trail-length",
+            "300",
+            "--products-per-trail",
+            "2",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_forwarder_productivity_bc(
+        model=ForwarderBCModel.ADV6N10_SHORTWOOD,
+        payload_m3=10.0,
+        mean_log_length_m=5.0,
+        travel_speed_m_per_min=40.0,
+        trail_length_m=300.0,
+        products_per_trail=2.0,
+    ).predicted_m3_per_pmh
     assert f"{expected:.2f}" in result.stdout

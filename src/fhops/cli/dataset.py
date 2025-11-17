@@ -142,6 +142,8 @@ _FORWARDER_GHAFFARIYAN_MODELS = {
     ForwarderBCModel.GHAFFARIYAN_LARGE,
 }
 
+_FORWARDER_ADV6N10_MODELS = {ForwarderBCModel.ADV6N10_SHORTWOOD}
+
 
 def _forwarder_parameters(result: ForwarderBCResult) -> list[tuple[str, str]]:
     rows: list[tuple[str, str]] = [
@@ -158,6 +160,22 @@ def _forwarder_parameters(result: ForwarderBCResult) -> list[tuple[str, str]]:
                 ("Extraction Distance (m)", f"{float(extraction):.1f}"),
                 ("Slope Class", str(slope_class)),
                 ("Slope Factor", f"{float(slope_factor):.2f}"),
+            ]
+        )
+    elif result.model in _FORWARDER_ADV6N10_MODELS:
+        rows.extend(
+            [
+                ("Payload per Trip (m³)", f"{float(params['payload_m3']):.2f}"),
+                ("Mean Log Length (m)", f"{float(params['mean_log_length_m']):.2f}"),
+                ("Trail Length (m)", f"{float(params['trail_length_m']):.1f}"),
+                (
+                    "Travel Speed (m/min)",
+                    f"{float(params['travel_speed_m_per_min']):.1f}",
+                ),
+                (
+                    "Products per Trail",
+                    f"{float(params['products_per_trail']):.2f}",
+                ),
             ]
         )
     else:
@@ -182,6 +200,10 @@ def _render_forwarder_result(result: ForwarderBCResult) -> None:
         console.print(
             "[dim]Regression from Ghaffariyan et al. (2019) ALPACA thinning dataset.[/dim]"
         )
+    elif result.model in _FORWARDER_ADV6N10_MODELS:
+        console.print(
+            "[dim]Regression from Gingras & Favreau (2005) CTL sorting study (ADV6N10).[/dim]"
+        )
     else:
         console.print(
             "[dim]Regression from Kellogg & Bettinger (1994) western Oregon CTL study.[/dim]"
@@ -198,6 +220,11 @@ def _evaluate_forwarder_result(
     distance_out: float | None,
     travel_in_unit: float | None,
     distance_in: float | None,
+    payload_per_trip: float | None,
+    mean_log_length: float | None,
+    travel_speed: float | None,
+    trail_length: float | None,
+    products_per_trail: float | None,
 ) -> ForwarderBCResult:
     try:
         return estimate_forwarder_productivity_bc(
@@ -209,6 +236,11 @@ def _evaluate_forwarder_result(
             distance_out_m=distance_out,
             travel_in_unit_m=travel_in_unit,
             distance_in_m=distance_in,
+            payload_m3=payload_per_trip,
+            mean_log_length_m=mean_log_length,
+            travel_speed_m_per_min=travel_speed,
+            trail_length_m=trail_length,
+            products_per_trail=products_per_trail,
         )
     except ValueError as exc:  # pragma: no cover - Typer surfaces error text
         raise typer.BadParameter(str(exc)) from exc
@@ -662,6 +694,36 @@ def estimate_productivity_cmd(
         min=0.0,
         help="Return distance to the landing (m). Required for Kellogg models.",
     ),
+    payload_per_trip: float | None = typer.Option(
+        None,
+        "--payload-per-trip",
+        min=0.0,
+        help="Payload per forwarder trip (m³). Required for ADV6N10 model.",
+    ),
+    mean_log_length: float | None = typer.Option(
+        None,
+        "--mean-log-length",
+        min=0.0,
+        help="Mean log length (m). Required for ADV6N10 model.",
+    ),
+    travel_speed: float | None = typer.Option(
+        None,
+        "--travel-speed",
+        min=0.0,
+        help="Forwarder travel speed (m/min). Required for ADV6N10 model.",
+    ),
+    trail_length: float | None = typer.Option(
+        None,
+        "--trail-length",
+        min=0.0,
+        help="Trail length from landing to loading point (m). Required for ADV6N10 model.",
+    ),
+    products_per_trail: float | None = typer.Option(
+        None,
+        "--products-per-trail",
+        min=0.0,
+        help="Number of products separated on the trail (ADV6N10).",
+    ),
 ):
     """Estimate productivity for Lahrsen (feller-buncher) or forwarder models."""
 
@@ -676,6 +738,11 @@ def estimate_productivity_cmd(
             distance_out=distance_out,
             travel_in_unit=travel_in_unit,
             distance_in=distance_in,
+            payload_per_trip=payload_per_trip,
+            mean_log_length=mean_log_length,
+            travel_speed=travel_speed,
+            trail_length=trail_length,
+            products_per_trail=products_per_trail,
         )
         _render_forwarder_result(result)
         return
@@ -844,6 +911,36 @@ def estimate_forwarder_productivity_cmd(
         min=0.0,
         help="Distance from final loading point back to the landing (m). Required for Kellogg models.",
     ),
+    payload_per_trip: float | None = typer.Option(
+        None,
+        "--payload-per-trip",
+        min=0.0,
+        help="Payload per forwarder trip (m³). Required for ADV6N10 model.",
+    ),
+    mean_log_length: float | None = typer.Option(
+        None,
+        "--mean-log-length",
+        min=0.0,
+        help="Mean log length (m). Required for ADV6N10 model.",
+    ),
+    travel_speed: float | None = typer.Option(
+        None,
+        "--travel-speed",
+        min=0.0,
+        help="Forwarder travel speed (m/min). Required for ADV6N10 model.",
+    ),
+    trail_length: float | None = typer.Option(
+        None,
+        "--trail-length",
+        min=0.0,
+        help="Trail length from landing to loading point (m). Required for ADV6N10 model.",
+    ),
+    products_per_trail: float | None = typer.Option(
+        None,
+        "--products-per-trail",
+        min=0.0,
+        help="Number of products separated on the trail (ADV6N10).",
+    ),
 ):
     """Estimate forwarder productivity (m³/PMH0) for thinning operations."""
 
@@ -856,6 +953,11 @@ def estimate_forwarder_productivity_cmd(
         distance_out=distance_out,
         travel_in_unit=travel_in_unit,
         distance_in=distance_in,
+        payload_per_trip=payload_per_trip,
+        mean_log_length=mean_log_length,
+        travel_speed=travel_speed,
+        trail_length=trail_length,
+        products_per_trail=products_per_trail,
     )
     _render_forwarder_result(result)
 
