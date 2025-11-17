@@ -257,7 +257,9 @@ def _render_helicopter_result(result: HelicopterProductivityResult) -> None:
         ("Model", result.model.value.replace("_", "-")),
         ("Flight Distance (m)", f"{result.flight_distance_m:.1f}"),
         ("Cycle Time (min)", f"{result.cycle_minutes:.2f}"),
+        ("Rated Payload (kg)", f"{result.spec.rated_payload_kg:.0f}"),
         ("Rated Payload (lb)", f"{result.spec.rated_payload_lb:.0f}"),
+        ("Payload (kg)", f"{result.payload_kg:.0f}"),
         ("Payload (lb)", f"{result.payload_lb:.0f}"),
         ("Payload (m³)", f"{result.payload_m3:.2f}"),
         ("Load Factor", f"{result.load_factor:.2f}"),
@@ -268,7 +270,8 @@ def _render_helicopter_result(result: HelicopterProductivityResult) -> None:
         ("Additional Delay (min)", f"{result.additional_delay_minutes:.2f}"),
         ("Fly Empty Speed (km/h)", f"{result.spec.fly_empty_speed_mps * 3.6:.1f}"),
         ("Fly Loaded Speed (km/h)", f"{result.spec.fly_loaded_speed_mps * 3.6:.1f}"),
-        ("Weight→Volume (lb/m³)", f"{result.spec.weight_to_volume_lb_per_m3:.0f}"),
+        ("Weight→Volume (kg/m³)", f"{result.weight_to_volume_kg_per_m3:.0f}"),
+        ("Weight→Volume (lb/m³)", f"{result.weight_to_volume_lb_per_m3:.0f}"),
     ]
     _render_kv_table("Helicopter Longline Productivity Estimate", rows)
     console.print(
