@@ -12,6 +12,9 @@ from pathlib import Path
 from fhops.reference import get_appendix5_profile
 
 
+_FEET_PER_METER = 3.28084
+
+
 _RUNNING_SKYLINE_VARIANTS = {
     "yarder_a": {"pieces_per_cycle": 2.8, "piece_volume_m3": 2.5, "z1": 0.0},
     "yarder_b": {"pieces_per_cycle": 3.0, "piece_volume_m3": 1.6, "z1": 1.0},
@@ -276,6 +279,60 @@ def estimate_running_skyline_productivity_mcneel2000(
     return _m3_per_pmh_from_minutes(payload_m3, cycle_minutes)
 
 
+def estimate_standing_skyline_turn_time_aubuchon1979(
+    *,
+    slope_distance_m: float,
+    lateral_distance_m: float,
+    logs_per_turn: float,
+    crew_size: float,
+) -> float:
+    """Delay-free turn time (min) from Hensel et al. (1979) compiled by Aubuchon (1982).
+
+    Parameters use SI units for convenience but the regression was published in feet, so
+    conversions are applied internally. Valid for uphill Wyssen standing skyline trials
+    with slopes 45–75 %, 3.5–6 logs/turn, 1 000–3 000 ft slope distance, 50–150 ft lateral.
+    """
+
+    if logs_per_turn <= 0:
+        raise ValueError("logs_per_turn must be > 0")
+    if crew_size <= 0:
+        raise ValueError("crew_size must be > 0")
+    if slope_distance_m <= 0 or lateral_distance_m < 0:
+        raise ValueError("Distances must be >= 0 and slope distance must be > 0")
+    slope_distance_ft = slope_distance_m * _FEET_PER_METER
+    lateral_distance_ft = lateral_distance_m * _FEET_PER_METER
+    # Hensel et al. (1979) regression (minutes), Appendix A eq. 15 in Aubuchon (1982)
+    return (
+        5.102
+        + 0.970 * logs_per_turn
+        + 0.00000172 * (slope_distance_ft ** 2)
+        + 0.031 * lateral_distance_ft
+        - 0.194 * crew_size
+    )
+
+
+def estimate_standing_skyline_productivity_aubuchon1979(
+    *,
+    slope_distance_m: float,
+    lateral_distance_m: float,
+    logs_per_turn: float,
+    average_log_volume_m3: float,
+    crew_size: float,
+) -> float:
+    """Estimate standing skyline productivity (m³/PMH0) via Aubuchon (1982) tables."""
+
+    if average_log_volume_m3 <= 0:
+        raise ValueError("average_log_volume_m3 must be > 0")
+    turn_minutes = estimate_standing_skyline_turn_time_aubuchon1979(
+        slope_distance_m=slope_distance_m,
+        lateral_distance_m=lateral_distance_m,
+        logs_per_turn=logs_per_turn,
+        crew_size=crew_size,
+    )
+    payload_m3 = average_log_volume_m3 * logs_per_turn
+    return _m3_per_pmh_from_minutes(payload_m3, turn_minutes)
+
+
 def running_skyline_variant_defaults(yarder_variant: str) -> tuple[float, float]:
     """Return (pieces_per_cycle, piece_volume_m3) defaults for the given variant."""
 
@@ -436,4 +493,6 @@ __all__ = [
     "estimate_cable_skidding_productivity_unver_robust_profile",
     "estimate_cable_yarder_productivity_lee2018_uphill",
     "estimate_cable_yarder_productivity_lee2018_downhill",
+    "estimate_standing_skyline_turn_time_aubuchon1979",
+    "estimate_standing_skyline_productivity_aubuchon1979",
 ]

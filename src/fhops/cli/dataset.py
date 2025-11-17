@@ -52,6 +52,8 @@ from fhops.productivity import (
     estimate_cable_yarder_productivity_tr125_multi_span,
     estimate_cable_yarder_productivity_tr125_single_span,
     estimate_cable_yarder_productivity_tr127,
+    estimate_standing_skyline_productivity_aubuchon1979,
+    estimate_standing_skyline_turn_time_aubuchon1979,
     estimate_running_skyline_cycle_time_mcneel2000_minutes,
     estimate_running_skyline_productivity_mcneel2000,
     running_skyline_variant_defaults,
@@ -168,6 +170,7 @@ class SkylineProductivityModel(str, Enum):
     TR127_BLOCK5 = "tr127-block5"
     TR127_BLOCK6 = "tr127-block6"
     MCNEEL_RUNNING = "mcneel-running"
+    AUBUCHON_STANDING = "aubuchon-standing"
 
 
 _TR127_MODEL_TO_BLOCK = {
@@ -2499,6 +2502,24 @@ def estimate_skyline_productivity_cmd(
         case_sensitive=False,
         help="Running skyline yarder variant from McNeel (2000).",
     ),
+    logs_per_turn: float = typer.Option(
+        3.5,
+        "--logs-per-turn",
+        min=0.1,
+        help="Logs per turn for standing skyline regressions (used by Aubuchon/Hensel model).",
+    ),
+    average_log_volume_m3: float = typer.Option(
+        0.35,
+        "--average-log-volume-m3",
+        min=0.01,
+        help="Average log volume (m³) used to convert logs/turn to payload for Aubuchon model.",
+    ),
+    crew_size: float = typer.Option(
+        4.0,
+        "--crew-size",
+        min=1.0,
+        help="Crew size (people) for the Aubuchon standing skyline regression.",
+    ),
     tr119_treatment: str | None = typer.Option(
         None,
         "--tr119-treatment",
@@ -2660,6 +2681,39 @@ def estimate_skyline_productivity_cmd(
         telemetry_pieces = resolved_pieces
         telemetry_piece_volume = resolved_piece_volume
         telemetry_running_variant = running_yarder_variant.value
+    elif model is SkylineProductivityModel.AUBUCHON_STANDING:
+        cycle_minutes = estimate_standing_skyline_turn_time_aubuchon1979(
+            slope_distance_m=slope_distance_m,
+            lateral_distance_m=lateral_distance_m,
+            logs_per_turn=logs_per_turn,
+            crew_size=crew_size,
+        )
+        value = estimate_standing_skyline_productivity_aubuchon1979(
+            slope_distance_m=slope_distance_m,
+            lateral_distance_m=lateral_distance_m,
+            logs_per_turn=logs_per_turn,
+            average_log_volume_m3=average_log_volume_m3,
+            crew_size=crew_size,
+        )
+        payload_value = logs_per_turn * average_log_volume_m3
+        rows = [
+            ("Model", model.value),
+            ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
+            ("Lateral Distance (m)", f"{lateral_distance_m:.1f}"),
+            ("Logs per Turn", f"{logs_per_turn:.2f}"),
+            ("Average Log Volume (m³)", f"{average_log_volume_m3:.3f}"),
+            ("Crew Size", f"{crew_size:.1f}"),
+            ("Payload (m³)", f"{payload_value:.2f}"),
+            ("Cycle Time (min)", f"{cycle_minutes:.2f}"),
+        ]
+        source_label = "Hensel et al. 1979 (Wyssen standing skyline, compiled by Aubuchon 1982)."
+        console_warning = (
+            "[yellow]Warning:[/yellow] Regression derived from interior WA/ID trials using Wyssen standing skyline;"
+            " validate before applying to other regions."
+        )
+        telemetry_horizontal = slope_distance_m
+        telemetry_pieces = logs_per_turn
+        telemetry_piece_volume = average_log_volume_m3
     else:
         raise typer.BadParameter(f"Unsupported skyline model: {model}")
     if tr119_treatment:

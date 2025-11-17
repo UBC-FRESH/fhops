@@ -192,11 +192,16 @@ Use ``fhops.dataset estimate-skyline-productivity`` when the block’s harvest s
   paper’s Yarder A/B averages (2.8 pieces × 2.5 m³ or 3.0 × 1.6 m³), but you can override them with
   ``--pieces-per-cycle`` / ``--piece-volume-m3``. Pick ``--running-yarder-variant yarder_a`` or ``yarder_b`` to
   mirror the observed payload/cycle-time differences.
+* ``aubuchon-standing`` – **New** standing-skyline helper derived from the Hensel et al. (1979) Wyssen system
+  regression compiled in Aubuchon (1982). Supply ``--logs-per-turn``, ``--average-log-volume-m3``, and
+  ``--crew-size`` along with slope/lateral distance. The CLI reports turn minutes and payload so analysts can
+  calibrate against local choking practices.
 
 Every skyline model emits the assumed payload and m³/PMH0 result; the McNeel helper also reports cycle
 minutes derived from the Table 4 regression so analysts can see how deflection or payload tweaks affect
 turn time. Telemetry rows now carry ``horizontal_distance_m``, ``vertical_distance_m``,
-``pieces_per_cycle``, ``piece_volume_m3``, and the running-yarder variant whenever ``mcneel-running`` is used.
+``pieces_per_cycle``, ``piece_volume_m3``, and the running-yarder variant whenever ``mcneel-running`` is used,
+along with the log/crew inputs when the Aubuchon model is selected.
 
 CTL Harvester Productivity Models
 ---------------------------------

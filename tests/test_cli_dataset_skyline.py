@@ -8,6 +8,7 @@ from fhops.productivity import (
     estimate_cable_yarder_productivity_tr125_single_span,
     estimate_cable_yarder_productivity_tr127,
     estimate_running_skyline_productivity_mcneel2000,
+    estimate_standing_skyline_productivity_aubuchon1979,
 )
 
 runner = CliRunner()
@@ -112,5 +113,35 @@ def test_cli_skyline_mcneel_running() -> None:
         pieces_per_cycle=3.5,
         piece_volume_m3=1.7,
         yarder_variant="yarder_b",
+    )
+    assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_skyline_aubuchon_standing() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "aubuchon-standing",
+            "--slope-distance-m",
+            "610",
+            "--lateral-distance-m",
+            "30",
+            "--logs-per-turn",
+            "3",
+            "--average-log-volume-m3",
+            "0.5",
+            "--crew-size",
+            "4",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_standing_skyline_productivity_aubuchon1979(
+        slope_distance_m=610.0,
+        lateral_distance_m=30.0,
+        logs_per_turn=3.0,
+        average_log_volume_m3=0.5,
+        crew_size=4.0,
     )
     assert f"{expected:.2f}" in result.stdout

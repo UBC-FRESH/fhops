@@ -12,6 +12,7 @@
 - Incorporated FPInnovations TN-261 slope/bunching multipliers into the shovel logger helper/CLI so analysts can model uphill/downhill arcs and scattered vs. bunched stems (`--shovel-slope-class`, `--shovel-bunching`, `--shovel-productivity-multiplier`).
 - Added McNeel (2000) longline running-skyline helper + CLI model (`mcneel-running`) keyed to horizontal span, lateral distance, deflection, and pieces/turn with Yarder A/B defaults; telemetry now captures the new predictors and regression/CLI tests verify the outputs. Planning + docs updated so skyline coverage notes reflect the new BC reference and list the remaining Arnvik/Aubuchon digitization + helicopter follow-ups.
 - Converted the FPInnovations reference tracker into a general `notes/reference_log.md` and backfilled metadata for every non-FPI PDF under `notes/reference/` (Aubuchon 1982 skyline/helicopter compendium, Visser 2025 shovel-feeding study, global plantation benchmarking, Eriksson & Lindroos follow-up datasets, etc.), then wired those citations into the skyline/forwarder/processor planning tasks.
+- Added the first standing-skyline helper from the Aubuchon (1982) compilation (Hensel et al. Wyssen trials) and exposed it via `fhops dataset estimate-skyline-productivity --model aubuchon-standing`, including new CLI knobs for logs per turn, average log volume, and crew size plus regression/unit-test coverage and doc updates.
 
 # Development Change Log
 
