@@ -90,7 +90,9 @@ from .stoilov2021 import (
     estimate_skidder_harvester_productivity_with_delays,
 )
 from .processor_loader import (
+    LoaderForwarderProductivityResult,
     ProcessorProductivityResult,
+    estimate_loader_forwarder_productivity_tn261,
     estimate_processor_productivity_berry2019,
 )
 
@@ -154,6 +156,8 @@ __all__ = [
     "estimate_shovel_logger_productivity_sessions2006",
     "estimate_processor_productivity_berry2019",
     "ProcessorProductivityResult",
+    "estimate_loader_forwarder_productivity_tn261",
+    "LoaderForwarderProductivityResult",
     "ADV6N10HarvesterInputs",
     "TN292HarvesterInputs",
     "Han2018SkidderMethod",

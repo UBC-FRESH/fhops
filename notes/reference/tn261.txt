@@ -1,0 +1,561 @@
+WOOD HARVESTING
+                      NoteTN-261
+
+     HARVESTING COASTAL SECOND-GROWTH
+       FORESTS: LOADER-FORWARDING OF
+      HAND- AND MACHINE-FELLED TIMBER
+                          Bjorn Andersson, M.Sc.F.E., P.Eng.
+ Abstract                                                             by timber sort; and examine differences in post-
+                                                                      harvest wood residue and soil surface conditions
+ In the winter and spring of 1994, the Forest Engineering             between harvesting systems.
+ Research Institute of Canada (FERIC) monitored a
+ loader-forwarding operation extracting hand- and
+ machine-felled timber from second-growth stands on                   Site Descriptions
+ Vancouver Island in British Columbia. FERIC measured
+ worker and machine productivities, identified factors                The study was done at two locations (Figure 1). At
+ that influenced harvesting performance, and conducted                the main study site at Buckley Bay, the stand consisted
+ post-harvest site assessments.                                       of 80-year-old Douglas-fir (Pseudotsuga menziesii
+                                                                      [Mirb.] Franco) with minor components of western
+                                                                      hemlock {Tsuga heterophylla [Raf.] Sarg.) and
+  Introduction                                                        western red cedar {Thuja plicata Donn). The stand
+                                                                      had regenerated naturally following clearcut logging.
+ In 1991, the Forest Engineering Research Institute of                A selective cut to recover logs suitable for log houses
+ Canada (FERIC) and the Faculty of Forestry at the                    had been done on the site prior to the study.^ The site
+ University of British Columbia initiated a cooperative               was divided into three cutblocks (Bl, B2 and B3),
+ project to evaluate harvesting systems for clearcutting              each harvested with a different system.
+ second-growth stands in coastal British Columbia.
+ Funding for the project was obtained through the                      At the study site at Nanoose (Nl), the stand consisted
+ Canadian Forest Service under the Canada-British                      of 70-year-old Douglas-fir and western white pine
+ Columbia Forest Resource Development Agreement                        (Pinus monticola Dougl.), with some western
+ (FRDAII).                                                             hemlock and western red cedar. As at Buckley Bay,
+                                                                       the stand had regenerated naturally following clearcut
+  This report is the third in a series of FERic publications           logging. The Nanoose site was used only to conduct
+  on the performance of harvesting systems in coastal                  some detailed-timing studies on the loader-forwarder
+  second-growth forests (Andersson and Jukes 1995;                     and to collect soil compaction data.
+  Andersson and Warren 1996). It presents the results
+  of a study on hand and mechanical falling, loader-                   Based on the cruise information, the average stand
+  forwarding, and hand bucking at roadside. The study                  volumes of the Buckley Bay and Nanoose sites were 480
+  was done on Vancouver Island between January and
+  April 1994, in cooperation with MacMillan Bloedel
+  Limited, South Island Division.                                      ' Loader-forwarding is the use of hydrauhc log loaders to extract
+                                                                         stems from the falling site to the roadside. Also referred to as
+                                                                         excavator-forwarding, hoe-forwarding, hoe-chucking, or
+  The objectives of the study were to document falling                   shovel logging.
+  and loader-forwarding' productivities; identify factors              ^ Twenty-three percent of the total stand volume had been har-
+  influencing harvesting performance; record volume                      vested using hand fallers and rubber-tired skidders.
+
+
+  Keywords: Harvesting, Second-growth forests. Forwarding, Loaders, Felling, Manual methods. Mechanical methods, Productivity, Costs,
+            Site disturbance. Coastal British Columbia, A C L 771B feller-buncher.
+  Author: Bjorn Andersson is a Senior Researcher in the Harvesting Operations Group at FE'RIC'S Western Division.
+
+
+lfirSTITUTC7VNmEMEl8B©eEr®KIESlE«GlN
+                                                               Figure 2. ACL 77IB feller-buncher in Cutblock B3.
+
+                                                               EX400 hydraulic log loader. At roadside, the stems in
+                                                               Cutblocks B2, B3 and N l were manually bucked into
+                                                               preferred lengths by two buckers and loaded onto trucks.
+                                                               In Cutblock B l , some bucking and trimming were
+                                                               done by a landing bucker diuing the loading operation.
+                                                               All loading was done using a hydraulic log loader.
+
+                                                               The scheduled workdays for the hand fallers, buckers,
+                                                               and machine operators were 6.5, 8, and 8.5 h,
+                                                               respectively. The feller-buncher operated two shifts
+Table 1. Average Stand Characteristics
+                                                               per day. Two trainees, in addition to the regular
+                                                               operators, were assigned to the feller-buncher.
+                              Buckley Bay          Nanoose
+                              (Bl, B2, 33)          (Nl)       In Cutblocks N l and B l , loader-forwarding occurred
+Cutblock size (ha)                20.8                11.2     during day shifts. In Cutblocks B2 and B3,40% and
+Merchantable trees'                                            100%), respectively, of the loader-forwarding opera-
+ Tree dbh (cm)                      33                  31     tions were done during evening shifts.^ During
+ Total height (m)                   26                  27     evening shifts, a bucker worked at roadside and was
+ Tree volume (mVtree)             1.14                1.00     assisted by the loader-forwarder.
+ Stand density (trees/ha)         420                 450
+ Stand volume (m'/ha)             480                 450
+                                                               Study l\/lethods
+° Sound conifer with diameter at breast height (dbh) >13 cm.
+  Differences due to rotmding.                                 FERIC cruised the study sites at an intensity of two
+                                                               200-m^ plots/ha. The data were used to determine
+and 450 m'/ha, respectively (Table 1). All sites had           stand volimies, and to develop local dbh-gross voliraie
+good groiuid strength, few obstacles, and little woody         stand tables.
+material on the ground. Overall, the Buckley Bay site
+had a slight S-shaped profile, with slopes in Cutblocks        Machine data were collected using shift-level and
+B1 and B2 rangingfi-om0-5% and in B3 ranging fi-om             detailed-timing techniques. DSR Servis recorders were
+0-10%. B3 also contained some irregular knolls with            used to record feller-buncher and loader-forwarder
+pitches of up to 40%. The terrain profile at the Nanoose       shift-level data, while daily time sheets provided
+site was convex, with slopes rangingfi-om0-35%).               information on the hand falling and roadside bucking
+                                                               operations. Detailed-timing studies were done on the
+                                                               hand falling, mechanical falling, and loader-forwarding
+System Descriptions                                            operations. Each study recorded the operating
+                                                               conditions, duration of various work elements, and
+Cutblocks B l and B2 were both hand felled. In B l ,           number of stems produced.
+stems longer than 20 m were felled and bucked (fall-
+selective buck), while trees in B2 were felled only (fall      Harvesting productivities were determined based on the
+only). Cutblocks B3 and N l were felled with an ACL            shift-level data and recovered volume, as well as fiom
+771B feller-buncher (Figure 2). The stems and logs in all
+cutblocks were extracted to roadside vdth an Hitachi           ^ About 2 h of the evening shift were imder daylight conditions.
+the detailed-timing data and local dbh-gross volume stand     Results
+tables. The results from the two methods will often differ
+numerically because of the differences between cruise         Results presented in this report are based on limited
+and recovered volumes, and between operating machine          data for operating conditions in a specific coastal
+hours (OMH) and productive machine hours (PMH)."              second-growth stand. Therefore, caution must be
+                                                              exercised when interpreting the results of this
+Harvesting cost is based on FERIC's standard machine          study and when comparing them with those of
+costing methodology, and IWA-Canada labour rates              other studies.
+as of June 1994 (Appendix I).
+                                                              Harvesting Performance
+Post-harvest site assessments of wood residue and
+soil disturbance were sampled using the line intercept        Recovered volume and sorts. The recovered vol-
+method (Sutherland 1986) at an intensity of 2 plots/ha.       umes' from Cutblocks B l , B2 and B3 at Buckley Bay
+The wood residue survey was done prior to any wood            were 2 768, 3 484 and 4 266 m^ respectively. Based
+salvage operations. FERIC measured all sound pieces           on a sample of 978 m^ (1 176 pieces) of Douglas-fir,
+greater than 9.5 cm in diameter, regardless of                grades H and I sawlogs were 25% of the volume,
+length, and did not differentiate between avoidable           and grade J sawlogs were 59% of the volume. Peeler,
+and unavoidable logging waste. Each piece was graded          Utility and Chipper grades each accounted for
+using the industry-standard statutory grades (Watts           approximately 4-6% of the sampled volume (Figure 3).
+1983), and valued^ based on the assumption that the
+piece would have been part of a merchantable log.             Hand falling. As expected, the faller productivity of
+                                                              the fall-selective bucking operation (Cutblock B l )
+Site disturbance was defined as the occurrence of
+exposed mineral soil and depressions or gouges in the           OMH includes productivetime,minor delays, and an unknown
+organic layer greater than 15 cm in depth, regardless           amount of non-productive activities that cannot be separated
+                                                                from productive time with the Servis recorders used. PMH
+of the area disturbed, or impact (positive or negative)         includes only productive time and minor delays. In this study,
+on stand regeneration.* Soil compaction data were               minor delays are those delays <15 min/occurrence.
+collected with a Campbell Pacific nuclear moisture/             Supplied by Information Services, Council of Forest Indus-
+density gauge. Two samples, one on undisturbed                  tries (COFI), pers. comm., August 1994.
+ground and one on exposed soil with clear indications           The soil disturbance data were collected prior to the enactment
+                                                                of the British Columbia Forest Practices Code, and do not
+of machine travel, were taken near each plot. Thus,             reflect current Forest Practices Code standards. Both study
+the compacted soil samples are more representative              sites were on private land, thus not subject to the site disturbance
+of the "worst case scenario" than of the average                regulation under the Forest Practices Code.
+disturbance on the sites.                                       Converted to volume from weigh scale.
+
+
+
+
+                                               Chipper - 4%
+                                                          \
+                                                                    Peeler - 6%
+                                Utility - 6%
+
+
+                                                                                       Sawlog (H,l) - 25%
+
+
+
+
+                   Sawlog (J) - 59%
+
+
+
+
+Figure 3. Proportion of timber grades in a sample of Douglas-fir logs.
+Table 2. Summary of Shift-Level Data at Buckley Bay
+
+                                           Cutblock B l                     Cutblock B2                      Cutblock B3
+                                       Fall Extract Buck                Fall Extract Buck                Fall Extract Buck
+Labour (SMH)"                        174.0     66.0      85.2          133.0     56.0     138.8          42.5     66.5     175.8
+Machine (OMH)"                           —     61.5         ~                    51.5       5.5          31.0     57.0       9.5
+Production
+ Pieces (no.)                                 3 321         —               —   2 509         ~        3 266     3 120
+ Volume (m')                                  2 768"                            3 484"                           4 266"
+Productivity
+ Pieces/OMH (no.) ^                      —       54                         —     49          —          105        55
+ Volume/OMH (m^)                         ~     45.0                         —    67.7         —        137.6      74.8
+ Volume/worker-day (m^) =              103      336       260            170     498       201          803        513       194
+^ SMH = scheduled machine hours.
+  OMH = operating machine hours.
+  From feller-buncher and loader-forwarder operators' tree and stem counts.
+" Volume is for entire cutblock.
+^ 6.5 h/shift for hand falling operations, and 8 h/shift for all other operations. Hand falling and bucking operations may include an
+  unspecified amount of lost work time, which may differ between the operations.
+
+
+was considerably lower than that of the fall-only                     per hour. However, the increase in tree volume with
+operation (Cutblock B2). Based on the shift-level                     increased tree size more than offset the longer falling
+data, the fallers in the fall-only operation averaged                 time per tree. Thus productivity, expressed in m^/h,
+170 mVworker-day compared to 103 m^/worker-day in                     increased with tree size. Using least-square regression
+the fall-selective bucking operation (Table 2). However,              techniques, FERIC projected faller productivity as a
+an unspecified amount of lost work time (because of                   function of tree volume for fall-selective bucking and
+adverse weather, company meetings, etc.) is included                  fall-only operations (Figure 4). The results indicate
+and may be different for the two hand falling operations,             that the difference in productivity between the two
+as they were done during different time periods. The                  falling methods will increase with an increase in tree
+two sites were also felled by different fallers.                      size. This is expected, as more bucking is required as
+                                                                      tree size increases.
+Results of detailed-timing studies of the fall-selective
+bucking operation show that the faller averaged
+31ti-ees/PMHor 26.8 m^/PMH (Table 3). Twenty-six
+percent of the faUer's time was spent bucking 75% of                  Tables. Summary of Detailed-Timing Studies:
+the felled trees. Generally, only one bucking cut was made                    Fall-Selective Buck Operations
+per tree, but occasionally two logs were manufactured.
+                                                                                                                       All studies
+The productivity recorded in the detailed-timing study
+was considerably higher than that determined fom shift-               Observed time (h)                                     8.8
+level data (at 5.5 PMH/day, worker-day productivity                   Average stand characteristics
+would be 147 m^), but is in line with hand falling                      Merchantable tree dbh (cm)                          32
+productivities recorded by Peterson (1987) in second-                   Tree volume (mVtree)                              0.87
+growth timber of similar tree size. The shift-level data              Distribution of work elements
+may therefore have included an abnormally high                          Fall trees (min/tree)                             0.66
+amount of lost work time.                                               Process (min/tree)                                0.51
+                                                                        Walk in stand (min/tree)                          0.22
+No detailed-timing was done on the fall-only operation.                 Other work (min/tree)                             0.25
+However, if the faller in the fall-selective buck study                 Fuel/file saw (min/tree)                          0.19
+had not done any bucking, FERIC estimates that                          Minor delay (min/tree)                            0.13
+productivity would have averaged 46 trees/PMH. This                     Productive time (min/tree)'                       1.95
+is in line with the 50 trees/h that the fallers in the                Productivity
+fall-only operation thought they produced.                              Trees/PMH (no.)'                                    31
+                                                                        Volume/PMH (m^)"                                  26.8
+The time spent to fall and buck trees was found to
+increase with tree size, resulting in fewer felled trees                Differences due to rounding.
+                     0.0             0.5             1.0          1.5                        2.0              2.5
+                                                  Gross tree volume (m^)
+Figure 4. Projected productivity of hand falling operations, as a function of gross merchantable tree volum
+
+Mechanical falling. The average productivity of the                  The productivity of die feller-buncher recorded in five
+ACL 771B feller-buncher in Cutblock B3 was 137:6                     detailed-timing studies ranged between 102 and 130
+mVOMH or 803rnVS-hshift (Table 2). However, its                      trees/PMH, or 86.9 and 180.5 m^/PMH (Table 4). The
+overall productivity was hampered by the training of                 difference between the high and low productivity
+new operators. FERIC estimated that without training,                values expressed in trees/PMH compared to those
+the block would have been felled iii 25 OMH, resulting               expressed in m^/PMH clearly demonstrates the impact
+in a machine productivity of 171 m^/OMH.                             of tree volume on feller-buncher productivity. The
+                                                                     variation in trees/PMH performance appears to reflect
+During the two-and-a-half day study, the machine was                 differences in operator skill (e.g., efficient use of tree
+utilized 73% of its scheduled work time. While this                  accumulator arms before bunching) and terrain
+study was too short to assess long-term machine                      conditions (e.g., moving and clearing debris).
+utilization, the result was similar to the 74% utilization
+recorded by Andersson and Jukes (1995) during a                      Loader-forwarding, Overall, the productivity of the
+47-shift study.                                                      loader-forwarder was highest on the feller-bunched
+Table 4. Summary of Detailed-Timing Studies: ACL 771B Feller-Buncher
+
+                                                                                       Study number
+
+
+  Observed time (h)                                            1.4              2.1           2.6          2.3         3.5
+  Average stand characteristics
+    Tree dbh (cm)                                              38               33            28            28          35
+    Tree volume (mVtree)                                     1.62             1.16          0.85          0.85        1.28
+    Merchantable trees/ha (no.)                              500              420            310           310        390
+    Stand volume (m'/ha)'                                    816              486            255           255        503
+  Distribution of work elements
+    Fell and bunch (min/tree)                                0.40             0.44           0.40         0.32        0.35
+    Move (min/tree)                                          0.10             0.12           0.15         0.12        0.11
+    Other work (min/tree)                                    0.03             0.03           0.03         0.01        0.03
+    Minor delays (min/tree)                                  0.01             0.01           0.01         0.01        0.01
+    Total productive time (min/tree)'                        0.54             0.59           0.59         0.46        0.49
+  Machine productivity"
+    Trees/PMH (no.)                                            111             102            102          130         122
+    Volume/PMH (m^)                                          180.5           118.5           86.9        110.4       155.7
+  Average trees/cycle (no.)                                   1.16            1.03           1.20         1.55        1.25
+
+  Differences due to rounding.
+site (74.8 mVOMH), and lowest on the f a l l -                         boom swing. Compared to level ground, adverse (uphill)
+selective bucking site (45.0 m^/OMH) (Table 2). The                    slopes shorten the effective swing arc of the boom.
+external forwarding distance was similar (about                        On favourable (downhill) slopes, the operator can uti-
+100 m) on all three sites. Therefore, the variation in                 hze slope and gravity to sUde the logs aftutherdistance
+machine productivity is attributed to differences in                   with each swing.
+piece size, and the concentration and alignment of
+felled stems.                                                         Piece size affects the volume of wood that the machine
+                                                                      can grapple in each boom swing. However, the
+The machine utilization of the loader-forwarder                       relationship between piece size and productivity (or
+during the 22-shift study was 90%. This is slightly                   volume and swing) is not linear, because the amount
+higher than the machine utilization of 84% obtained                   of wood grappled in each swing also depends on the
+in a prior, 74-shift study (Andersson and Jukes 1995).                location and alignment of pieces within the boom
+                                                                      reach.
+The productivity of the loader-forwarder recorded in
+seven detailed-timing studies ranged between 48.4                     Loader-forwarders will likely perform best when the
+and 113.0 m^/PMH (Table 5). Analysis of the data                      stems are concentrated in bunches and aligned with
+showed that the variation in productivity of feller-                  butts facing the landing (Figure 5). This condition is
+bunched stems could be Unked primarily to differences                 likely more critical in operations extracting full-length
+in forwarding distance, and secondarily to differences                stems than manufactured logs. Stems with tops facing
+in stem size. More data are needed to quantify the                    the landing must initially be grabbed by their tops and
+impact of these and other factors on machine                          turned around, increasing handling time and risk of
+performance. However, observations and discussions                    stem breakage.
+with the machine operators provided FERlc with
+insight into some of the operating conditions                         System harvesting costs. The harvesting cost of the
+influencing the machine performance.                                  feller-buncher operation compared favourably with
+                                                                      that of the hand falling operations, with cost reductions
+Slope affects the productivity because it influences the              in both the falling and forwarding phases (Table 6).
+distance the logs can be moved (forwarded) in each                    In this study, the cost of the feller-buncher operation
+
+
+Table 5. Summary of Detailed-Timing Studies: Loader-Forwarder
+
+                                                                        Feller-bunched                        Hand felled
+                                                                        Study number                         Study number
+                                                          1           2        3       4           5          6        7
+  Observed time (h)                                     4.2          2.9      4.0       2.4       4.5         7.2       3.4
+  Study site (block)                                    Nl           Nl       Nl        B3        B3          Bl '      62"
+  Average operating condition
+     Tree dbh (cm)                                       36           41       37         ~        _           31       36
+     Volume/piece (m^)                                 1.09         1.48   . 1.27      1.00     1.20         0.80     1.16
+     External distance (m)                              180           60     120         70      100          120       90
+     Slope (%) •=                                         0            0     -20        -10     -1-10          +5     <-i-5
+  Distribution of work elements
+     Handle wood (min/tree)                           1.07         0.55      1.02      0.54     0.66         0.63     0.75
+     Move (min/tree)                                  0.17         0.16      0.18      0.15     0.22         0.09     0.15
+     Other work (min/tree)                            0.04         0.03      0.15      0.11     0.16         0.05     0.04
+     Minor delay (min/tree)                           0.07         0.04      0.07      0.04     0.06         0.04     0.05
+     Total productive time (min/tree)                 1.35         0.79      1.42      0.85     1.10         0.81     0.98
+  Machine productivity
+     Stems/PMH (no.)                                   44            76       42         71       54          74        61
+     Volume/PMH (m^)"                                 48.4         113.0     53.6      70.8     65.4         59.5     70.7
+^ B l was hand felled-selective bucked, B2 was hand felled only.
+^ Distance from roadside deck to end of out-turn.
+  + indicates favourable (downhill) slope.
+  - indicates adverse (uphill) forwarding.
+  Differences due to rounding.
+                                                                      plots on all three sites, and thus, the difference in wood
+                                                                      waste volume between harvesting sites could not be
+                                                                      determined to be statistically significant at the 95%
+                                                                      level of confidence. Therefore, no conclusion could
+                                                                      be made regarding differences in wood waste volumes
+                                                                      between the three harvesting systems.
+
+                                                                      FERIC estimates that if all the pieces of wood waste had
+                                                                      been recovered as part of merchantable logs (i.e., no
+                                                                      breakage), the harvesting operation would have yielded
+                                                                      approximately $1 400/ha in additional log revenue.
+
+                                                        Site disturbance. The site disturbance, as defined in
+                                                        this study, ranged from 21 to 38% of the harvested area
+Figure 5. Hitachi EX400 loaderforwarder extracting (Table 7). Both the highest and lowest site distiu-bances
+           mechanically felled full-length stems.       were found on the feller-bunched sites (Cutblocks B3
+was 12% and 33% lower than for the fall-only and        and N l , respectively), and the variation is attributed
+fall-selective bucking operations, respectively. Had    to the difference in ground conditions between the two
+the feller-buncher been operated by experienced         sites. Cutblock B3 contained areas with short steep
+operators only, the difference in harvesting cost       pitches   while at Cutblock N l the slope changed
+between this system and the hand falling systems        gradually.  FERic observed that tracks of the feller-buncher
+would have been even greater. The difference in bucking and  loader-forwarder   frequently exposed mineral soil
+cost between the feller-buncher and fall-only operation when   turning, or when   climbing steep pitches. When
+is believed to be purely coincidental.                  the  data  were combined     by harvesting system, i.e.,
+                                                        mechanical (B3 and N l ) versus hand falling (Bl and
+The cost difference between the two hand falling        B2), there was no difference in the site disturbance.
+operations reflects the difference in productivity
+between the fall-only and fall-selective bucking        Soil compaction. The bulk density of soil disturbed
+phases, and the higher loader-forwarding productivity   by  machine travel was on average 8-19% higher than
+of full-length stems compared to bucked logs. The       the bulk density of undisturbed soil (Table 8). However,
+cost difference was partly offset by the f a l l -      the  soil bulk density readings varied within a short
+selective bucking operation requiring less bucking      distance, due to natural variation in the soil structure
+at roadside.                                            (rocks, organic matter, etc.). As a result, differences
+                                                        in bulk density readings between paired disturbed and
+Post-harvest Site Assessment                            undisturbed sites may not entirely be the result of
+                                                        compaction from machine travel.
+Waste assessment. The intent of FERIC's post-harvest
+waste survey was to examine possible differences in     The increase in bulk density did not statistically differ
+residual wood waste between harvesting systems. The     between blocks. Thus, in this study, the feller-buncher
+survey recorded a higher volume of wood waste on        system was not found to cause a higher increase in soil
+the fall-selective buck harvesting site (B1) compared   bulk density than the hand faller systems. Observations
+to the other sites (Figure 6). However, the wood waste  suggest that the travel paths of the feller-buncher and
+volume varied considerably between individual sample    loader-forwarder on the feller-bunched sites
+
+Table 6. Projected Harvesting Costs
+
+                                                             Hand felled                                       Feller-
+                                                        Bl                     B2                             bunched
+    Falling (S/m^)                                      3.81 ^                2.31 "                          1.58 (1.26)"
+    Loader-forwarding ($/m')                            3.85                  2.56                                   2.31
+    Manual bucking ($/m^) ^                             0.92                  1.67^                                  1.84^
+    Total ($/m3)                                        8.58                  6.54                            5.73 (5.41)"
+
+" Includes labour rate (Appendix I), 35% fringe benefits, and $27/day chainsaw cost.
+" Estimated cost in parentheses assumes the block had been felled by experienced operators only.
+" Includes the machine cost of the loader (Appendix I) for time charged to the bucking operation (Table 2).
+                                                          Statutory grades:
+                                                                                       u       X        Y
+
+
+
+                I 20 --
+
+
+
+
+                                      B1                          82                               83
+                                                               Cutblock
+
+Figure 6. Results ofpost-harvest waste survey.
+
+
+
+Table 7. Summary of Soil Disturbance Assessment
+
+                                                                        Feller-bunched                         Hand felled
+                                                                       Nl             B3                    Bl            B2
+                                                                       (%)           (%)                    (%)           (%)
+    Disturbance
+       Organic layer >15-cm depth                                      1.7             4.2                9.8              8.9
+       Exposed mineral soil                                           19.5            33.8               16.5             17.8
+       Total                                                          21.2            38.0               26.3             26.7
+    Undisturbed                                                       76.3            60.2               71.6             70.9
+    Other (stumps, rocks, etc.)                                        2.5             1.8                2.1              2.4
+    Total =                                                          100.0           100.0              100.0            100.0
+' Excludes area covered by haul road and ditches.
+
+
+
+
+Table 8. Summary of Bulk Density Assessment
+
+                                                                       Feller-bunched                            Hand felled
+                                                                      Nl            B3                      Bl              B2
+    Average bulk density, 0-10 cm depth
+      Undisturbed site (g/cm^)                                        1.30             1.18              1.15             1.18
+      Disturbed site (g/cm^)                                          1.52             1.28              1.33             1.28
+    Average bulk density, 0-20 cm depth
+      Undisturbed site (g/cm^)                                        1.44             1.26              1.19             1.20
+      Disturbed site (g/cm^)                                          1.60             1.39              1.42             1.39
+    Average depth of disturbed plots (cm)"                              18               25                18               20
+
+' All disturbed site data were taken where the machine tracks had compressed the soil. The depth of depression was measured in relation
+  to adjacent undisturbed area.
+                 100   T                  Diameter class:
+                                          HI >20 cm              16-20 cm             11-15cm
+
+
+
+
+                                    B2                          B3                         Nl
+                                                             Cutblock
+Figure 7. Distribution of stem breakage by diameter class where breakage occurred.
+
+(Cutblocks B3 and N l ) were perpendicular to each             The feller-buncher had a lower falUng cost than the
+other, and thus only a small portion of the site would         hand fallers, and contributed to a lower forwarding
+have been subjected to multi-pass machine travel.              cost as it created more favourable operating conditions
+                                                               for the loader-forwarder.
+Stem breakage. FERIC found that hand felled stems
+had a higher frequency of breakage and generally               The fall-only operation was more cost effective than the
+broke at a larger diameter compared to mechanically            fall-selective bucking operation, and reflects the higher
+felled stems. Seventy-seven percent and 54% of stems           productivity of both the falling and loader-forwarding
+sampled in the hand felled and feller-buncher felled           phases. Recorded faller productivity in the fall-only
+cutblocks, respectively, had the stems broken at diameters     operation was 170 mVworker-day, compared to 103
+greater than 10 cm (Figure 7). As a result, the potential      m^/worker-day in the faU-selective bucking operation.
+fibre loss from stem breakage is higher in hand falling
+operations than in feller-buncher operations. In this          The productivities of the loader-forwarder, at 100 m
+study, FERIC recorded 6.7% fibre loss for hand felled          average external forwarding distance, were 74.8 mVOMH
+stems compared to 4.0% for mechanically felled stems           in feller-bunched wood, 67.7 mVOMH in hand felled,
+(before salvage operations).                                   full-length stems (fall-only), and 45.0 mVOMH in
+                                                               selectively bucked, hand felled stems.The higher
+                                                               loader-forwarder productivity is attributed to stems
+Conclusions                                                    not being bucked into logs in the fall-only operation,
+                                                               thus allowing the machine to handle fewer but larger
+In this study, using a large feUer-buncher (the ACL 771B)      stems compared to the fall-selective bucking operation.
+to harvest second-growth timber compared favourably            The difference in productivity between feller-bunched
+to using hand fallers in operations where the wood is          and hand felled timber was attributed to whether or
+extracted to roadside with loader-forwarders. The              not stems were bunched. The difference in productivity
+feller-buncher reduced harvesting costs and stem               between the hand falling operations was attributed to
+breakage, and did not appear to affect the harvested           variations in average piece size.
+site any differently than the two hand falling operations.
+                                                               No difference was found in the amount of site
+The harvesting cost of the feller-buncher operation            disturbance or degree of soil compaction between the
+was 12% and 33% lower than in the fall-only and fall-          harvesting systems. Both the highest and lowest site
+selective buck hand falling operations, respectively.          disturbances were found on the feller-bunched sites.
+and the variation was attributed to the difference in       Acknowledgments
+ground conditions between the two sites.
+                                                            FERIC gratefully acknowledges the cooperation of staff
+On sites where machine travel occurred, the increase        and machine operators at MacMillan Bloedel Limited's
+in soil bulk density was on average 8-19%, compared         Northwest Bay operation, and Antler Creek Logging
+to sites with no machine travel. However, this figure       of Port Albemi. Special thanks to Warren Gionet, Rick
+varied considerably between adjacent disturbed and          Traber, Joe Kovacs, Rod Banks, and Dwight
+undisturbed sample plots. Consequently, the increase        Giesbrecht for their valuable assistance during the
+in the soil bulk density on the feller-bunched sites        trials; Francois Warren (formerly of FERIC) and Mihai
+was not found to be statistically different than on the     Pavel of FERIC for assisting in the field work; and
+hand felled sites. A possible explanation is that only      Yvonne Chu, Monique Kalmokoff, and Shelley
+a small portion of the ground had been subjected to         Corradini of FERIC for their assistance in preparing
+multi-pass machine travel with the feller-buncher           this report. FERIC is grateful for the funding provided
+operations.                                                 through the Canadian Forest Service under the
+                                                            Canada-British Columbia Forest Resource Development
+Fibre losses from broken stems (measured prior to           Agreement (FRDAII).
+any salvage operations) were estimated to be 4.0%
+in the feller-buncher operation and 6.7% in the fall-only
+operation. Fewer stems broke in the feller-buncher          Disclaimer
+operation, and stem breakage generally occurred at
+a smaller diameter compared to the hand falling             This report is published solely to disseminate
+operations.                                                 information to FERIC members. It is not intended as
+                                                            an endorsement or approval by FERIC of any product
+                                                            or service to the exclusion of others that may be suited.
+References                                                  Results presented in this report are based on limited
+                                                            data for operating conditions in specific coastal
+Andersson, B.O.; Jukes, W. 1995. Harvesting coastal         second-growth stands; therefore, caution must be
+ second-growth forests: two case studies. FERIC,            exercised when comparing system performance.
+ Vancouver, B.C. Technical Note TN-232. 14 pp.
+
+Andersson, B.O.; Warren, F. 1996. Harvesting coastal
+ second-growth forests: hand falling and skyline
+ yarding. FERIC, Vancouver, B.C. Technical Note
+ TN-239. 14 pp.
+
+Peterson, J.T. 1987. Harvesting economics:
+ handfalling second-growth timber. FERIC, Vancouver,
+ B.C. Technical Note TN-98. 12 pp.
+
+Sutherland, B.J. 1986. Standard assessment procedures
+  for evaluating silvicultural equipment: a handbook.
+  Great Lakes Forestry Centre, Canadian Forestry
+  Service. 96 pp.
+
+Watts, S.B. (Editor). 1983. Forestry handbook for
+ British Columbia, 4th Ed. Forestry Undergraduate
+ Society, University of British Columbia, pp. 439^56.
+
+Williams, W.A. 1989. Predicting maintenance and
+ repair costs of woodlands machinery. FERIC, Pointe-
+ Claire, Que. Technical Note TN-142. 8 pp.
+                                                    Appendix I
+                                                        Costing
+
+Calculation of Machine Charge-Out Rates
+
+                                                                              A C L 771B            Hitachi EX400
+                                                                            feller-buncher         loader-forwarder
+   COST INPUT DATA
+      Purchase price (P) ($)                                                      750 000 ^              510 000
+      Salvage value (S) (% of P)                                                       20                     20
+      Depreciation period (D) (y)                                                       5                       5
+      Machine utilization (MU) (%)                                                     75                     85"
+      Operating days/year (no.)                                                       180                    180
+      Shifts/day (no.)                                                                  2                       1
+      SMH/shift(h)                                                                      9                       9
+      OMH/year (h)                                                                  2 430                  1 377
+      Average investment ($/y)                                                    450 000                306 000
+      Interest on investment (%)                                                        8                       8
+      Insurance (%)                                                                     3                       3
+      Fuel consumption (F) (L/OMH)                                                     30                     25
+      Fuel cost (FC) ($/L)                                                           0.45                   0.45
+      Oil consumption (% of F)                                                          6                       4
+      Oil cost ($/L)                                                                 2.50                   2.50
+      Repair cost (% of P/1000 O M H ) '                                             11.5                     7.3
+      Operator wage ($/SMH)"                                                        22.88                  22.88
+      Fringe benefits (% of wage)                                                      35                     35
+
+   OPERATING COSTS
+      Depreciation ($/OMH)                                                          49.38                   59.26
+      Interest on investment ($/OMH)                                                14.81                   17.78
+      Insurance ($/OMH)                                                              5.56                    6.67
+      Repair/maintenance ($/OMH)                                                    86.25                   37.23
+      Fuel cost ($/OMH)                                                             13.50                   11.25
+      Lubrication cost ($/OMH)                                                       4.50                    2.50
+      Operator wages ($/OMH)                                                        32.20                   28.41
+      Fringe benefits ($/OMH)                                                       11.27                    9.94
+
+      Charge-out rate ($/OMH)                                                      217.47                  173.04
+      Charge-out rate ($/SMH)                                                      163.10                  147.09
+
+^ The A C L 77IB feller-buncher is not commercially available; purchase price is estimated by comparing size and features with
+  commercially available feller-bunchers.
+" Average machine utilization of loader-forwarders recorded by FERIC (see page 5).
+  Repair cost estimate based on data from Williams (1989).
+  Based on IWA rates in June 1994. Regular rate for first 8 h/d, and overtime premium of 1.5 times the regular rate after 8 h.
+
+
+
+                                 Labour Rates (IWA-Canada) as of June 15, 1994
+
+                                 Position                                 Rate
+                                 Hand faller ($/day)                     270.76
+                                 Bucker ($/h)                             23.50
+                                 Landing bucker ($/h)                     19.61
+

@@ -78,6 +78,8 @@ from fhops.productivity import (
     load_lahrsen_ranges,
     ProcessorProductivityResult,
     estimate_processor_productivity_berry2019,
+    LoaderForwarderProductivityResult,
+    estimate_loader_forwarder_productivity_tn261,
 )
 from fhops.reference import get_appendix5_profile, get_tr119_treatment, load_appendix5_stands
 from fhops.scenario.contract import Machine, Scenario
@@ -144,6 +146,7 @@ class ProductivityMachineRole(str, Enum):
     GRAPPLE_SKIDDER = "grapple_skidder"
     GRAPPLE_YARDER = "grapple_yarder"
     ROADSIDE_PROCESSOR = "roadside_processor"
+    LOADER = "loader"
     SHOVEL_LOGGER = "shovel_logger"
     HELICOPTER_LONGLINE = "helicopter_longline"
 
@@ -318,6 +321,25 @@ def _render_processor_result(result: ProcessorProductivityResult) -> None:
     _render_kv_table("Roadside Processor Productivity Estimate", rows)
     console.print(
         "[dim]Regression from Berry (2019) Kinleith NZ time study; utilisation default accounts for <10 min delays.[/dim]"
+    )
+
+
+def _render_loader_result(result: LoaderForwarderProductivityResult) -> None:
+    rows = [
+        ("Model", "tn261"),
+        ("Piece Size (m³)", f"{result.piece_size_m3:.3f}"),
+        ("Distance (m)", f"{result.external_distance_m:.1f}"),
+        ("Slope (%)", f"{result.slope_percent:.1f}"),
+        ("Bunched", "Yes" if result.bunched else "No"),
+        ("Slope Multiplier", f"{result.slope_multiplier:.3f}"),
+        ("Bunching Multiplier", f"{result.bunched_multiplier:.3f}"),
+        ("Delay-free Productivity (m³/PMH)", f"{result.delay_free_productivity_m3_per_pmh:.2f}"),
+        ("Delay Multiplier", f"{result.delay_multiplier:.3f}"),
+        ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
+    ]
+    _render_kv_table("Loader-Forwarder Productivity Estimate", rows)
+    console.print(
+        "[dim]Regression calibrated from FERIC TN-261 (Vancouver Island loader-forwarding trials).[/dim]"
     )
 
 
@@ -1681,7 +1703,7 @@ def estimate_productivity_cmd(
         help=(
             "Machine role to evaluate "
             "(feller_buncher | forwarder | ctl_harvester | grapple_skidder | grapple_yarder | "
-            "shovel_logger | helicopter_longline)."
+            "roadside_processor | loader | shovel_logger | helicopter_longline)."
         ),
     ),
     avg_stem_size: float | None = typer.Option(
@@ -1990,6 +2012,35 @@ def estimate_productivity_cmd(
         max=1.0,
         help="Utilisation multiplier capturing delays (<10 min) relative to delay-free productivity (Berry 2019 default 0.91).",
     ),
+    loader_piece_size_m3: float | None = typer.Option(
+        None,
+        "--loader-piece-size-m3",
+        min=0.0,
+        help="Average piece size (m³) for loader-forwarder helper (TN261).",
+    ),
+    loader_distance_m: float | None = typer.Option(
+        None,
+        "--loader-distance-m",
+        min=0.0,
+        help="External forwarding distance (m) from deck to farthest stem for loader helper.",
+    ),
+    loader_slope_percent: float = typer.Option(
+        0.0,
+        "--loader-slope-percent",
+        help="Approximate slope (%) along the forwarding direction (positive = uphill).",
+    ),
+    loader_bunched: bool = typer.Option(
+        True,
+        "--loader-bunched/--loader-hand-felled",
+        help="Whether stems are mechanically bunched/aligned (default) or hand-felled/scattered.",
+    ),
+    loader_delay_multiplier: float = typer.Option(
+        1.0,
+        "--loader-delay-multiplier",
+        min=0.01,
+        max=1.0,
+        help="Optional utilisation multiplier for loader-forwarder helper (default assumes delay-free timing).",
+    ),
     shovel_passes: int | None = typer.Option(
         None,
         "--shovel-passes",
@@ -2296,6 +2347,20 @@ def estimate_productivity_cmd(
             delay_multiplier=processor_delay_multiplier,
         )
         _render_processor_result(result_processor)
+        return
+    if role == ProductivityMachineRole.LOADER.value:
+        if loader_piece_size_m3 is None:
+            raise typer.BadParameter("--loader-piece-size-m3 is required for loader role.")
+        if loader_distance_m is None:
+            raise typer.BadParameter("--loader-distance-m is required for loader role.")
+        loader_result = estimate_loader_forwarder_productivity_tn261(
+            piece_size_m3=loader_piece_size_m3,
+            external_distance_m=loader_distance_m,
+            slope_percent=loader_slope_percent,
+            bunched=loader_bunched,
+            delay_multiplier=loader_delay_multiplier,
+        )
+        _render_loader_result(loader_result)
         return
     if role == ProductivityMachineRole.SHOVEL_LOGGER.value:
         (

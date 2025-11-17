@@ -1,0 +1,30 @@
+{
+  "source": {
+    "citation": "Andersson, B. 1996. Harvesting Coastal Second-Growth Forests: Loader-Forwarding of Hand- and Machine-Felled Timber. FERIC TN-261.",
+    "document_path": "notes/reference/fpinnovations/TN261.PDF",
+    "notes": [
+      "Six-week study (January–April 1994) on Vancouver Island comparing loader-forwarding of feller-bunched vs. hand-felled stems across Buckley Bay (blocks B1–B3) and Nanoose (block N1).",
+      "Detailed timing spans 7 studies (5 mechanically bunched, 2 hand-felled) with piece sizes 0.8–1.48 m³, forwarding distances 60–180 m, slopes from −20 % (favourable) to +10 % (adverse)."
+    ]
+  },
+  "detailed_timing": [
+    {"study": 1, "bunched": true, "piece_size_m3": 1.09, "distance_m": 180, "slope_percent": 0, "productivity_m3_per_pmh": 48.4},
+    {"study": 2, "bunched": true, "piece_size_m3": 1.48, "distance_m": 60, "slope_percent": 0, "productivity_m3_per_pmh": 113.0},
+    {"study": 3, "bunched": true, "piece_size_m3": 1.27, "distance_m": 120, "slope_percent": -20, "productivity_m3_per_pmh": 53.6},
+    {"study": 4, "bunched": true, "piece_size_m3": 1.00, "distance_m": 70, "slope_percent": -10, "productivity_m3_per_pmh": 70.8},
+    {"study": 5, "bunched": true, "piece_size_m3": 1.20, "distance_m": 100, "slope_percent": 10, "productivity_m3_per_pmh": 65.4},
+    {"study": 6, "bunched": false, "piece_size_m3": 0.80, "distance_m": 120, "slope_percent": 5, "productivity_m3_per_pmh": 59.5},
+    {"study": 7, "bunched": false, "piece_size_m3": 1.16, "distance_m": 90, "slope_percent": 5, "productivity_m3_per_pmh": 70.7}
+  ],
+  "regression": {
+    "form": "productivity = exp(a) * piece_size^b * distance^c",
+    "coefficients": {
+      "a": 6.89172291,
+      "b": 0.40841215,
+      "c": -0.60174944
+    },
+    "bunched_multiplier": 1.0,
+    "hand_felled_multiplier": 0.9,
+    "slope_multiplier_rule": "Uphill productivity reduced by ~30% per 100% slope (≈3% per 10%); downhill boosts 15% per 100% (≈1.5% per 10%) with clamps [0.6, 1.15]."
+  }
+}

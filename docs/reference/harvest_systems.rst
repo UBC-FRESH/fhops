@@ -137,6 +137,26 @@ CLI output reports the base delay-free productivity, the applied multipliers, an
 m³/PMH so costing workflows can decide which value to pass downstream. Loader helpers will follow the
 same pattern once the Labelle/FPInnovations regressions are digitised.
 
+Loader-Forwarder Productivity Models
+------------------------------------
+
+``fhops.dataset estimate-productivity --machine-role loader`` wraps the loader-forwarder timing data from
+FERIC TN-261 (coastal BC second-growth, 1994). Provide:
+
+* ``--loader-piece-size-m3`` – mean stem volume per turn (m³).
+* ``--loader-distance-m`` – external distance from deck to the farthest stem (m).
+* ``--loader-slope-percent`` – approximate slope (%) along the forwarding direction. Positive values
+  represent adverse (uphill) travel; negative values represent favourable (downhill) travel.
+* ``--loader-bunched/--loader-hand-felled`` – indicates whether stems are mechanically bunched/aligned or
+  hand-felled/scattered (hand-felled defaults to a 0.90 multiplier).
+* ``--loader-delay-multiplier`` – optional utilisation factor (default 1.0 because TN-261 detailed timing was
+  delay-free).
+
+The helper uses a log-linear fit (piece-size exponent ≈0.41, distance exponent ≈−0.60) with gentle slope
+adjustments (≈3 % penalty per +10 % uphill, ≈1.5 % bump per −10 % downhill, clamped between 0.6 and 1.15).
+CLI output reports the delay-free vs. utilisation-adjusted productivity along with the applied multipliers so
+scenario costing flows can pick the appropriate value.
+
 Grapple Skidder Productivity Models
 -----------------------------------
 
