@@ -2545,6 +2545,13 @@ def estimate_skyline_productivity_cmd(
     ),
     slope_distance_m: float = typer.Option(..., min=1.0, help="Slope yarding distance (m)."),
     lateral_distance_m: float = typer.Option(25.0, min=0.0, help="Lateral yarding distance (m)."),
+    lateral_distance_2_m: float | None = typer.Option(
+        None,
+        "--lateral-distance-2-m",
+        min=0.0,
+        help="Optional second lateral distance input for TR127 blocks that require it.",
+        show_default=False,
+    ),
     payload_m3: float = typer.Option(None, help="Payload per turn (m³). Defaults per source."),
     large_end_diameter_cm: float = typer.Option(
         34.0, min=1.0, help="Required for Lee downhill (cm).", show_default=False
@@ -2710,6 +2717,7 @@ def estimate_skyline_productivity_cmd(
             slope_distance_m=slope_distance_m,
             lateral_distance_m=lateral_distance_m,
             num_logs=num_logs,
+            lateral_distance2_m=lateral_distance_2_m,
         )
         value = estimate_cable_yarder_productivity_tr127(
             block=block_id,
@@ -2717,6 +2725,7 @@ def estimate_skyline_productivity_cmd(
             slope_distance_m=slope_distance_m,
             lateral_distance_m=lateral_distance_m,
             num_logs=num_logs,
+            lateral_distance2_m=lateral_distance_2_m,
         )
         rows = [
             ("Model", model.value),

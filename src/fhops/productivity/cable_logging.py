@@ -582,6 +582,7 @@ def _ensure_tr127_inputs(
     slope_distance_m: float | None,
     lateral_distance_m: float | None,
     num_logs: float | None,
+    lateral_distance2_m: float | None = None,
 ) -> dict[str, float]:
     model = _load_tr127_models().get(block)
     if model is None:
@@ -600,6 +601,10 @@ def _ensure_tr127_inputs(
             if num_logs is None:
                 raise ValueError(f"Block {block} requires number of logs per turn.")
             values["logs"] = num_logs
+        elif predictor.name == "latd2":
+            if lateral_distance2_m is None:
+                raise ValueError(f"Block {block} requires lateral distance (m) (latd2).")
+            values["latd2"] = lateral_distance2_m
         else:
             raise ValueError(f"Unsupported TR127 predictor '{predictor.name}'.")
     return values
@@ -621,6 +626,7 @@ def estimate_cable_yarder_cycle_time_tr127_minutes(
     slope_distance_m: float | None = None,
     lateral_distance_m: float | None = None,
     num_logs: float | None = None,
+    lateral_distance2_m: float | None = None,
 ) -> float:
     """
     Estimate delay-free cycle time (minutes) using TR127 Appendix VII regressions.
@@ -637,7 +643,9 @@ def estimate_cable_yarder_cycle_time_tr127_minutes(
     model = _load_tr127_models().get(block)
     if model is None:
         raise ValueError(f"Unknown TR127 block: {block}")
-    values = _ensure_tr127_inputs(block, slope_distance_m, lateral_distance_m, num_logs)
+    values = _ensure_tr127_inputs(
+        block, slope_distance_m, lateral_distance_m, num_logs, lateral_distance2_m
+    )
     cycle_minutes = model.intercept_minutes
     for predictor in model.predictors:
         value = values[predictor.name]
@@ -653,6 +661,7 @@ def estimate_cable_yarder_productivity_tr127(
     slope_distance_m: float | None = None,
     lateral_distance_m: float | None = None,
     num_logs: float | None = None,
+    lateral_distance2_m: float | None = None,
 ) -> float:
     """
     Estimate TR127 skyline productivity (m³/PMH) using block-specific regressions.
@@ -672,6 +681,7 @@ def estimate_cable_yarder_productivity_tr127(
         slope_distance_m=slope_distance_m,
         lateral_distance_m=lateral_distance_m,
         num_logs=num_logs,
+        lateral_distance2_m=lateral_distance2_m,
     )
     return _m3_per_pmh_from_minutes(payload_m3, cycle_minutes)
 

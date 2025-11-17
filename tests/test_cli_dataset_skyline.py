@@ -82,6 +82,31 @@ def test_cli_skyline_tr127_block5() -> None:
     assert f"{expected:.2f}" in result.stdout
 
 
+def test_cli_skyline_tr127_block1_with_latd2() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "tr127-block1",
+            "--slope-distance-m",
+            "300",
+            "--lateral-distance-m",
+            "15",
+            "--lateral-distance-2-m",
+            "6",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_cable_yarder_productivity_tr127(
+        block=1,
+        slope_distance_m=300.0,
+        lateral_distance_m=15.0,
+        lateral_distance2_m=6.0,
+    )
+    assert f"{expected:.2f}" in result.stdout
+
+
 def test_cli_skyline_mcneel_running() -> None:
     result = runner.invoke(
         dataset_app,
