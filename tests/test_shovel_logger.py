@@ -35,5 +35,10 @@ def test_sessions2006_custom_parameters() -> None:
         travel_speed_serpentine_kph=0.9,
         effective_minutes_per_hour=55.0,
     )
-    result = estimate_shovel_logger_productivity_sessions2006(inputs)
+    result = estimate_shovel_logger_productivity_sessions2006(
+        inputs,
+        slope_multiplier=1.1,
+        bunching_multiplier=0.6,
+        custom_multiplier=0.95,
+    )
     assert result.predicted_m3_per_pmh > 0

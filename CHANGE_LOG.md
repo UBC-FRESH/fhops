@@ -9,6 +9,7 @@
 - Harvest-system templates (and dataset blocks) can now push those defaults automatically via `SystemJob.productivity_overrides`, `--harvest-system-id`, or `--dataset/--block-id` when calling the productivity CLI, paving the way for solver integrations.
 - Added Sessions & Boston (2006) shovel logger helper for hoe-chucking primary transport, with full CLI coverage (`--machine-role shovel_logger`) so excavator-based forwarding no longer relies on surrogate models; planning/docs updated accordingly.
 - Harvest-system overrides now seed `ground_fb_shovel`/`ground_hand_shovel` with shovel-logger parameters so the CLI auto-populates swing counts/strip lengths when users reference a template or dataset block.
+- Incorporated FPInnovations TN-261 slope/bunching multipliers into the shovel logger helper/CLI so analysts can model uphill/downhill arcs and scattered vs. bunched stems (`--shovel-slope-class`, `--shovel-bunching`, `--shovel-productivity-multiplier`).
 
 # Development Change Log
 

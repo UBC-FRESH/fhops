@@ -45,6 +45,10 @@ def _speed_to_time_per_m(speed_kph: float) -> float:
 
 def estimate_shovel_logger_productivity_sessions2006(
     inputs: ShovelLoggerSessions2006Inputs,
+    *,
+    slope_multiplier: float = 1.0,
+    bunching_multiplier: float = 1.0,
+    custom_multiplier: float = 1.0,
 ) -> ShovelLoggerResult:
     """Estimate shovel logger productivity (m³/PMH0) using Sessions & Boston model."""
 
@@ -109,6 +113,10 @@ def estimate_shovel_logger_productivity_sessions2006(
     predicted = (
         productivity_per_minute * inputs.effective_minutes_per_hour
     )
+    combined_multiplier = slope_multiplier * bunching_multiplier * custom_multiplier
+    if combined_multiplier <= 0:
+        raise ValueError("Combined multiplier must be > 0")
+    predicted *= combined_multiplier
     if predicted <= 0:
         raise ValueError("Derived productivity must be > 0")
 
@@ -127,6 +135,10 @@ def estimate_shovel_logger_productivity_sessions2006(
         "travel_speed_return_kph": inputs.travel_speed_return_kph,
         "travel_speed_serpentine_kph": inputs.travel_speed_serpentine_kph,
         "effective_minutes_per_hour": inputs.effective_minutes_per_hour,
+        "slope_multiplier": slope_multiplier,
+        "bunching_multiplier": bunching_multiplier,
+        "custom_multiplier": custom_multiplier,
+        "applied_multiplier": combined_multiplier,
     }
 
     return ShovelLoggerResult(

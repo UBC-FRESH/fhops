@@ -125,6 +125,17 @@ class ProductivityMachineRole(str, Enum):
     SHOVEL_LOGGER = "shovel_logger"
 
 
+class ShovelSlopeClass(str, Enum):
+    DOWNHILL = "downhill"
+    LEVEL = "level"
+    UPHILL = "uphill"
+
+
+class ShovelBunching(str, Enum):
+    FELLER_BUNCHED = "feller_bunched"
+    HAND_SCATTERED = "hand_scattered"
+
+
 class CTLHarvesterModel(str, Enum):
     """CTL harvester regressions."""
 
@@ -259,6 +270,21 @@ def _apply_skidder_system_defaults(
     return trail_pattern, decking_condition, custom_multiplier, used
 
 
+def _shovel_slope_multiplier(value: ShovelSlopeClass) -> float:
+    return {
+        ShovelSlopeClass.DOWNHILL: 1.1,
+        ShovelSlopeClass.LEVEL: 1.0,
+        ShovelSlopeClass.UPHILL: 0.9,
+    }[value]
+
+
+def _shovel_bunching_multiplier(value: ShovelBunching) -> float:
+    return {
+        ShovelBunching.FELLER_BUNCHED: 1.0,
+        ShovelBunching.HAND_SCATTERED: 0.6,
+    }[value]
+
+
 def _apply_shovel_system_defaults(
     *,
     system: HarvestSystem | None,
@@ -276,6 +302,9 @@ def _apply_shovel_system_defaults(
     travel_speed_return_kph: float | None,
     travel_speed_serpentine_kph: float | None,
     effective_minutes_per_hour: float | None,
+    slope_class: ShovelSlopeClass,
+    bunching: ShovelBunching,
+    custom_multiplier: float | None,
 ) -> tuple[
     int | None,
     float | None,
@@ -309,6 +338,9 @@ def _apply_shovel_system_defaults(
             travel_speed_return_kph,
             travel_speed_serpentine_kph,
             effective_minutes_per_hour,
+            slope_class,
+            bunching,
+            custom_multiplier,
             False,
         )
     overrides = system_productivity_overrides(
@@ -330,6 +362,9 @@ def _apply_shovel_system_defaults(
             travel_speed_return_kph,
             travel_speed_serpentine_kph,
             effective_minutes_per_hour,
+            slope_class,
+            bunching,
+            custom_multiplier,
             False,
         )
 
@@ -386,6 +421,24 @@ def _apply_shovel_system_defaults(
     if effective_minutes_per_hour is None:
         effective_minutes_per_hour = coerce_float(overrides.get("shovel_effective_minutes")) or effective_minutes_per_hour
         used = used or overrides.get("shovel_effective_minutes") is not None
+    slope_value = overrides.get("shovel_slope_class")
+    if slope_value is not None:
+        try:
+            slope_class = ShovelSlopeClass(str(slope_value))
+            used = True
+        except ValueError as exc:  # pragma: no cover
+            raise ValueError(f"Unknown shovel slope class override: {slope_value}") from exc
+    bunch_value = overrides.get("shovel_bunching")
+    if bunch_value is not None:
+        try:
+            bunching = ShovelBunching(str(bunch_value))
+            used = True
+        except ValueError as exc:  # pragma: no cover
+            raise ValueError(f"Unknown shovel bunching override: {bunch_value}") from exc
+    custom_value = overrides.get("shovel_productivity_multiplier")
+    if custom_multiplier is None and custom_value is not None:
+        custom_multiplier = float(custom_value)
+        used = True
 
     return (
         passes,
@@ -402,6 +455,9 @@ def _apply_shovel_system_defaults(
         travel_speed_return_kph,
         travel_speed_serpentine_kph,
         effective_minutes_per_hour,
+        slope_class,
+        bunching,
+        custom_multiplier,
         used,
     )
 
@@ -618,6 +674,9 @@ def _evaluate_shovel_logger_result(
     travel_speed_return_kph: float | None,
     travel_speed_serpentine_kph: float | None,
     effective_minutes_per_hour: float | None,
+    slope_class: ShovelSlopeClass,
+    bunching: ShovelBunching,
+    custom_multiplier: float | None,
 ) -> ShovelLoggerResult:
     base = ShovelLoggerSessions2006Inputs().__dict__.copy()
 
@@ -645,7 +704,12 @@ def _evaluate_shovel_logger_result(
     except ValueError as exc:  # pragma: no cover
         raise typer.BadParameter(str(exc)) from exc
     try:
-        return estimate_shovel_logger_productivity_sessions2006(inputs)
+        return estimate_shovel_logger_productivity_sessions2006(
+            inputs,
+            slope_multiplier=_shovel_slope_multiplier(slope_class),
+            bunching_multiplier=_shovel_bunching_multiplier(bunching),
+            custom_multiplier=custom_multiplier or 1.0,
+        )
     except ValueError as exc:  # pragma: no cover
         raise typer.BadParameter(str(exc)) from exc
 
@@ -1470,6 +1534,24 @@ def estimate_productivity_cmd(
         min=0.0,
         help="Effective productive minutes per hour for the shovel logger (default 50).",
     ),
+    shovel_slope_class: ShovelSlopeClass = typer.Option(
+        ShovelSlopeClass.LEVEL,
+        "--shovel-slope-class",
+        case_sensitive=False,
+        help="Slope class for hoe-chucker travel (TN261): downhill | level | uphill.",
+    ),
+    shovel_bunching: ShovelBunching = typer.Option(
+        ShovelBunching.FELLER_BUNCHED,
+        "--shovel-bunching",
+        case_sensitive=False,
+        help="Whether stems are feller-bunched (aligned) or hand-felled/scattered.",
+    ),
+    shovel_productivity_multiplier: float | None = typer.Option(
+        None,
+        "--shovel-productivity-multiplier",
+        min=0.0,
+        help="Custom multiplier to stack on top of slope/bunching adjustments.",
+    ),
     harvest_system_id: str | None = typer.Option(
         None,
         "--harvest-system-id",
@@ -1605,6 +1687,9 @@ def estimate_productivity_cmd(
             shovel_speed_return,
             shovel_speed_serpentine,
             shovel_effective_minutes,
+            shovel_slope_class,
+            shovel_bunching_class,
+            shovel_productivity_multiplier,
             shovel_defaults_used,
         ) = _apply_shovel_system_defaults(
             system=selected_system,
@@ -1622,6 +1707,9 @@ def estimate_productivity_cmd(
             travel_speed_return_kph=shovel_speed_return,
             travel_speed_serpentine_kph=shovel_speed_serpentine,
             effective_minutes_per_hour=shovel_effective_minutes,
+            slope_class=shovel_slope_class,
+            bunching=shovel_bunching,
+            custom_multiplier=shovel_productivity_multiplier,
         )
         result = _evaluate_shovel_logger_result(
             passes=shovel_passes,
@@ -1638,6 +1726,9 @@ def estimate_productivity_cmd(
             travel_speed_return_kph=shovel_speed_return,
             travel_speed_serpentine_kph=shovel_speed_serpentine,
             effective_minutes_per_hour=shovel_effective_minutes,
+            slope_class=shovel_slope_class,
+            bunching=shovel_bunching_class,
+            custom_multiplier=shovel_productivity_multiplier,
         )
         _render_shovel_logger_result(result)
         if shovel_defaults_used and selected_system is not None:

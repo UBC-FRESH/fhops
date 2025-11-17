@@ -159,6 +159,10 @@ Primary-transport hoe chuckers are modeled through the Sessions & Boston (2006) 
 * Key flags: ``--shovel-passes`` (number of swings), ``--shovel-swing-length``, ``--shovel-strip-length``,
   ``--shovel-volume-per-ha``, and the swing/velocity parameters. Defaults follow Table 1 of the paper
   (16.15 m swing, 375 m³/ha, 20–30 s swing times, 0.7 kph travel speeds, 50 productive minutes/hour).
+* FPInnovations TN-261 data introduced slope/bunching multipliers: use ``--shovel-slope-class`` to apply
+  downhill (×1.1), level (×1.0), or uphill (×0.9) adjustments, and ``--shovel-bunching`` to pick between
+  feller-bunched (×1.0) or hand-scattered (×0.6) stems. Stack an optional ``--shovel-productivity-multiplier``
+  for site-specific tweaks.
 
 The helper reports cycle minutes, payload per cycle, and m³/PMH0 so you can test alternate swing counts or
 strip lengths. Hook it into harvest-system templates by assigning the ``shovel_logger`` job and, if needed,

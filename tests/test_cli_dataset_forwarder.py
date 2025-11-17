@@ -505,7 +505,9 @@ def test_cli_shovel_logger_harvest_system_defaults_registry() -> None:
             travel_speed_return_kph=0.6,
             travel_speed_serpentine_kph=0.6,
             effective_minutes_per_hour=45.0,
-        )
+        ),
+        slope_multiplier=0.9,
+        bunching_multiplier=0.6,
     ).predicted_m3_per_pmh
     assert f"{expected:.2f}" in result.stdout
 
@@ -559,7 +561,34 @@ def test_cli_shovel_logger_dataset_inferred_defaults(monkeypatch) -> None:
             travel_speed_return_kph=0.6,
             travel_speed_serpentine_kph=0.6,
             effective_minutes_per_hour=45.0,
-        )
+        ),
+        slope_multiplier=0.9,
+        bunching_multiplier=0.6,
+    ).predicted_m3_per_pmh
+    assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_shovel_logger_slope_and_bunching_flags() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "shovel_logger",
+            "--shovel-slope-class",
+            "downhill",
+            "--shovel-bunching",
+            "hand_scattered",
+            "--shovel-productivity-multiplier",
+            "0.95",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_shovel_logger_productivity_sessions2006(
+        ShovelLoggerSessions2006Inputs(),
+        slope_multiplier=1.1,
+        bunching_multiplier=0.6,
+        custom_multiplier=0.95,
     ).predicted_m3_per_pmh
     assert f"{expected:.2f}" in result.stdout
 
