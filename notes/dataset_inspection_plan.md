@@ -167,6 +167,8 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
   - [ ] Ingest landing-processor time studies (processing time per log vs. diameter/species) and generic loader cycle-time models. (`notes/reference/Berry, Nick_Final-Dissertation.pdf` is the first modern dataset; older comparisons live in `administrator,+jfe5_2tp04.pdf` and `notes/reference/unbc_15814.pdf`.)
   - [ ] Provide helper functions for `roadside_processor` and `loader`, exposing key predictors (piece size, log sort count, decking distance) and regression tests. Tie processor cost factors back to `notes/reference/Development_and_Validation_of_.pdf` (OpCost) and `notes/reference/harvestcost-woodstock.pdf` so CLI outputs match Woodstock/OpCost conventions.
   - [ ] Document how these interact with forwarder/skidder productivity so scenario cost rollups stay consistent (e.g., ghost-trail settings from TN285, loader-forward hybrids from `notes/reference/pnw_rp430.pdf`).
+  - [ ] Digitise the Berry/Labelle landing-processor datasets (`notes/reference/Berry, Nick_Final-Dissertation.pdf`, `administrator,+jfe5_2tp04.pdf`) into structured tables so helpers/tests can reuse the exact coefficients.
+  - [ ] Wire the processor/loader helpers into `fhops.dataset estimate-productivity` with dedicated CLI flags/telemetry, and add docs/tests once the regressions land.
 - [ ] **Tethered systems (FPDat Lahrsen subsets; winch-assist BMPs 2019)**
   - [ ] Filter Lahrsen FPDat data to tethered harvesters/shovels and derive interim regressions (stem size vs. slope vs. tether load).
   - [ ] Cross-validate against published winch-assist case studies (e.g., FPInnovations BMP v2, Kellogg winch trials) and add CLI flags for anchor slope limits.
@@ -174,6 +176,15 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
 - [ ] **Manual operations (BC/Quebec hand-fall time studies)**
   - [ ] Gather historic hand-falling / bucking / processing time-motion studies and encode them as baseline productivity constants or simple regressions.
   - [ ] Add documentation/CLI warnings that manual paths are placeholders pending modern data, and flag recommended use cases (e.g., retention islands, wildlife trees).
+
+- [ ] **Helicopter helper follow-ups**
+  - [ ] Parse the Arnvik/Aubuchon helicopter appendices (payload vs. cycle time) and decide whether to add supplemental models or recalibrate load-factor defaults for the existing FPInnovations presets.
+  - [ ] Extend the `helicopter_longline` CLI/docs with provenance/warning text similar to the skyline section, plus harvest-system overrides for multiple aircraft (Bell 214B vs. S-64E vs. K-Max) once additional regressions are digitised.
+
+- [ ] **Grapple yarder system overrides**
+  - [x] Add `_apply_grapple_yarder_system_defaults` to the productivity CLI so harvest-system presets can populate grapple-yarder predictors when users only specify `--harvest-system-id`.
+  - [x] Expand `default_system_registry()` overrides for `cable_running` (and any other grapple corridors) with grapple-specific defaults (payload, travel distances, deflection) in addition to the skyline model swap.
+  - [x] Add regression/CLI tests proving the grapple-yarder overrides fire and document the behaviour in `docs/reference/harvest_systems.rst`.
 - [ ] **Appendix 4/5/7 normalization follow-ups**
   - [ ] Parse the new raw CSVs into structured schemas: machine specs per publication/model (Appendix 4), stand/operator metadata (Appendix 5), and DV abbreviations (Appendix 7).
   - [ ] Attach these metadata blobs to each registry entry so CLI output can show machine defaults, stand context, and human-readable predictor descriptions (PV/PW/TV/TW/TU/etc.).

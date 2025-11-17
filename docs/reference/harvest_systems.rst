@@ -148,6 +148,27 @@ Harvest-system templates can now supply these overrides automatically: pass
 ``productivity_overrides`` for the grapple skidder job. The command prints when such defaults are
 applied so you can verify which template influenced the result.
 
+Grapple Yarder Productivity Models
+----------------------------------
+
+Cable-running systems can now call the grapple yarder regressions bundled in
+``fhops.dataset estimate-productivity --machine-role grapple_yarder``:
+
+* ``sr54`` – MacDonald (1988) SR-54 regression for a Washington 118A grapple yarder on mechanically
+  bunched wood. Requires ``--grapple-turn-volume-m3`` and ``--grapple-yard-distance-m`` and includes
+  the minor delay allowance from Table 10.
+* ``tr75-bunched`` – Peterson (1987) TR-75 Madill 084 regression for mechanically bunched second
+  growth. Uses the same CLI inputs; the helper applies the published outhaul/inhaul coefficients plus
+  a fixed hook/unhook allowance.
+* ``tr75-handfelled`` – Madill 084 handling hand-felled timber (TR-75 hand-felled regression). Use
+  this when you need to reflect lower payload control or hand-bunched turns.
+
+Every helper prints the assumed turn volume, yarding distance, and resulting m³/PMH. The
+``cable_running`` harvest system autopopulates these inputs when you pass
+``--harvest-system-id cable_running`` (or reference a dataset block using that system), selecting the
+``tr75-bunched`` model with representative payload/distance values and printing a confirmation when
+the defaults are applied.
+
 Shovel Logger (Hoe-Chucker) Productivity
 ----------------------------------------
 

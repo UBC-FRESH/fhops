@@ -58,6 +58,9 @@ from fhops.productivity import (
     estimate_cable_yarder_productivity_tr125_multi_span,
     estimate_cable_yarder_productivity_tr125_single_span,
     estimate_cable_yarder_productivity_tr127,
+    estimate_grapple_yarder_productivity_sr54,
+    estimate_grapple_yarder_productivity_tr75_bunched,
+    estimate_grapple_yarder_productivity_tr75_handfelled,
     estimate_standing_skyline_productivity_aubuchon1979,
     estimate_standing_skyline_turn_time_aubuchon1979,
     estimate_standing_skyline_productivity_kramer1978,
@@ -137,6 +140,7 @@ class ProductivityMachineRole(str, Enum):
     FORWARDER = "forwarder"
     CTL_HARVESTER = "ctl_harvester"
     GRAPPLE_SKIDDER = "grapple_skidder"
+    GRAPPLE_YARDER = "grapple_yarder"
     SHOVEL_LOGGER = "shovel_logger"
     HELICOPTER_LONGLINE = "helicopter_longline"
 
@@ -165,6 +169,14 @@ class CableSkiddingModel(str, Enum):
 
     UNVER_SPSS = "unver-spss"
     UNVER_ROBUST = "unver-robust"
+
+
+class GrappleYarderModel(str, Enum):
+    """Supported grapple yarder regressions."""
+
+    SR54 = "sr54"
+    TR75_BUNCHED = "tr75-bunched"
+    TR75_HANDFELLED = "tr75-handfelled"
 
 
 class SkylineProductivityModel(str, Enum):
@@ -285,6 +297,25 @@ def _render_helicopter_result(result: HelicopterProductivityResult) -> None:
     _render_kv_table("Helicopter Longline Productivity Estimate", rows)
     console.print(
         "[dim]Defaults derived from FPInnovations helicopter logging studies (ADV3/4/5/6 series).[/dim]"
+    )
+
+
+def _render_grapple_yarder_result(
+    *,
+    model: GrappleYarderModel,
+    turn_volume_m3: float,
+    yarding_distance_m: float,
+    productivity_m3_per_pmh: float,
+) -> None:
+    rows = [
+        ("Model", model.value),
+        ("Turn Volume (m³)", f"{turn_volume_m3:.2f}"),
+        ("Yarding Distance (m)", f"{yarding_distance_m:.1f}"),
+        ("Productivity (m³/PMH)", f"{productivity_m3_per_pmh:.2f}"),
+    ]
+    _render_kv_table("Grapple Yarder Productivity Estimate", rows)
+    console.print(
+        "[dim]Regressions from MacDonald (1988) SR-54 and Peterson (1987) TR-75 (delay-free cycle times + minor delays).[/dim]"
     )
 
 
@@ -770,6 +801,52 @@ def _apply_helicopter_system_defaults(
         delay_minutes,
         used,
     )
+
+
+def _apply_grapple_yarder_system_defaults(
+    *,
+    system: HarvestSystem | None,
+    model: GrappleYarderModel,
+    turn_volume_m3: float | None,
+    yarding_distance_m: float | None,
+    user_supplied: Mapping[str, bool],
+) -> tuple[GrappleYarderModel, float | None, float | None, bool]:
+    if system is None:
+        return model, turn_volume_m3, yarding_distance_m, False
+    overrides = system_productivity_overrides(system, ProductivityMachineRole.GRAPPLE_YARDER.value)
+    if not overrides:
+        return model, turn_volume_m3, yarding_distance_m, False
+    used = False
+
+    value = overrides.get("grapple_yarder_model")
+    if value and not user_supplied.get("grapple_yarder_model", False):
+        try:
+            model = GrappleYarderModel(value)
+            used = True
+        except ValueError as exc:
+            raise ValueError(f"Unknown grapple yarder model override '{value}'.") from exc
+
+    def maybe_float(key: str, current: float | None, supplied_flag: str) -> tuple[float | None, bool]:
+        if user_supplied.get(supplied_flag, False):
+            return current, False
+        value = overrides.get(key)
+        if value is None:
+            return current, False
+        try:
+            return float(value), True
+        except (TypeError, ValueError) as exc:  # pragma: no cover
+            raise ValueError(f"Invalid grapple yarder override for '{key}': {value}") from exc
+
+    turn_volume_m3, changed = maybe_float(
+        "grapple_yarder_turn_volume_m3", turn_volume_m3, "grapple_turn_volume_m3"
+    )
+    used |= changed
+    yarding_distance_m, changed = maybe_float(
+        "grapple_yarder_yarding_distance_m", yarding_distance_m, "grapple_yarding_distance_m"
+    )
+    used |= changed
+
+    return model, turn_volume_m3, yarding_distance_m, used
     used |= changed
     crew_size, changed = maybe_float("skyline_crew_size", crew_size, "crew_size", True)
     used |= changed
@@ -1016,6 +1093,39 @@ def _evaluate_grapple_skidder_result(
         )
     except ValueError as exc:  # pragma: no cover
         raise typer.BadParameter(str(exc)) from exc
+
+
+def _evaluate_grapple_yarder_result(
+    *,
+    model: GrappleYarderModel,
+    turn_volume_m3: float | None,
+    yarding_distance_m: float | None,
+) -> float:
+    missing: list[str] = []
+    if turn_volume_m3 is None:
+        missing.append("--grapple-turn-volume-m3")
+    if yarding_distance_m is None:
+        missing.append("--grapple-yard-distance-m")
+    if missing:
+        raise typer.BadParameter(
+            f"{', '.join(sorted(missing))} required when --machine-role {ProductivityMachineRole.GRAPPLE_YARDER.value}."
+        )
+    assert turn_volume_m3 is not None
+    assert yarding_distance_m is not None
+
+    if model is GrappleYarderModel.SR54:
+        return estimate_grapple_yarder_productivity_sr54(
+            turn_volume_m3=turn_volume_m3, yarding_distance_m=yarding_distance_m
+        )
+    if model is GrappleYarderModel.TR75_BUNCHED:
+        return estimate_grapple_yarder_productivity_tr75_bunched(
+            turn_volume_m3=turn_volume_m3, yarding_distance_m=yarding_distance_m
+        )
+    if model is GrappleYarderModel.TR75_HANDFELLED:
+        return estimate_grapple_yarder_productivity_tr75_handfelled(
+            turn_volume_m3=turn_volume_m3, yarding_distance_m=yarding_distance_m
+        )
+    raise typer.BadParameter(f"Unsupported grapple yarder model: {model}")
 
 
 def _evaluate_shovel_logger_result(
@@ -1547,7 +1657,11 @@ def estimate_productivity_cmd(
         ProductivityMachineRole.FELLER_BUNCHER,
         "--machine-role",
         case_sensitive=False,
-        help="Machine role to evaluate (feller_buncher | forwarder | ctl_harvester).",
+        help=(
+            "Machine role to evaluate "
+            "(feller_buncher | forwarder | ctl_harvester | grapple_skidder | grapple_yarder | "
+            "shovel_logger | helicopter_longline)."
+        ),
     ),
     avg_stem_size: float | None = typer.Option(
         None,
@@ -1811,6 +1925,24 @@ def estimate_productivity_cmd(
         min=0.0,
         help="Optional custom multiplier applied to grapple skidder productivity (stacked with pattern/decking).",
     ),
+    grapple_yarder_model: GrappleYarderModel = typer.Option(
+        GrappleYarderModel.SR54,
+        "--grapple-yarder-model",
+        case_sensitive=False,
+        help="Grapple yarder regression (sr54 | tr75-bunched | tr75-handfelled).",
+    ),
+    grapple_turn_volume_m3: float | None = typer.Option(
+        None,
+        "--grapple-turn-volume-m3",
+        min=0.0,
+        help="Turn volume per cycle (m³) for grapple yarder helpers.",
+    ),
+    grapple_yarding_distance_m: float | None = typer.Option(
+        None,
+        "--grapple-yard-distance-m",
+        min=0.0,
+        help="Yarding distance along the corridor (m) for grapple yarder helpers.",
+    ),
     shovel_passes: int | None = typer.Option(
         None,
         "--shovel-passes",
@@ -2067,6 +2199,42 @@ def estimate_productivity_cmd(
         if system_defaults_used and selected_system is not None:
             console.print(
                 f"[dim]Applied productivity defaults from harvest system '{selected_system.system_id}'.[/dim]"
+            )
+        return
+    if role == ProductivityMachineRole.GRAPPLE_YARDER.value:
+        grapple_user_supplied = {
+            "grapple_yarder_model": _parameter_supplied(ctx, "grapple_yarder_model"),
+            "grapple_turn_volume_m3": _parameter_supplied(ctx, "grapple_turn_volume_m3"),
+            "grapple_yarding_distance_m": _parameter_supplied(ctx, "grapple_yarding_distance_m"),
+        }
+        (
+            grapple_yarder_model,
+            grapple_turn_volume_m3,
+            grapple_yarding_distance_m,
+            grapple_defaults_used,
+        ) = _apply_grapple_yarder_system_defaults(
+            system=selected_system,
+            model=grapple_yarder_model,
+            turn_volume_m3=grapple_turn_volume_m3,
+            yarding_distance_m=grapple_yarding_distance_m,
+            user_supplied=grapple_user_supplied,
+        )
+        value = _evaluate_grapple_yarder_result(
+            model=grapple_yarder_model,
+            turn_volume_m3=grapple_turn_volume_m3,
+            yarding_distance_m=grapple_yarding_distance_m,
+        )
+        assert grapple_turn_volume_m3 is not None
+        assert grapple_yarding_distance_m is not None
+        _render_grapple_yarder_result(
+            model=grapple_yarder_model,
+            turn_volume_m3=grapple_turn_volume_m3,
+            yarding_distance_m=grapple_yarding_distance_m,
+            productivity_m3_per_pmh=value,
+        )
+        if grapple_defaults_used and selected_system is not None:
+            console.print(
+                f"[dim]Applied grapple-yarder defaults from harvest system '{selected_system.system_id}'.[/dim]"
             )
         return
     if role == ProductivityMachineRole.SHOVEL_LOGGER.value:
