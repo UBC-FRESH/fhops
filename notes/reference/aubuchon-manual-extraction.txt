@@ -1,0 +1,271 @@
+Fhops scratch
+
+III. LARGE YARDERS: MAXIMUM 1AINIANE PUII 2 71,000 lbs.
+PRODUCTION DATA
+BASED ON
+DELAY REF
+REEERENcES REGRESSION EQUATION-TOTPI TURN TIME (MINUTES) TIME? DELAY % COMMENTS
+I)ykstra, 1915 4.61769 + 0.00051987 (BFV0Lj+ 0.00146182 (SYDIST) R=.126 to .63w Yes 9.D Total time equation obtained
+by sunuiiing outhaul, hook,
+inhaul and unhook equations.
+Any '1ateraU° onovertient of
+chokers was included in
+these four elemental
+equations.
+Curtis, l91l
+0GS/HR = 23.755 + 2.7716 (0GS) - 0.63694 (AYD)
+.13
+Yes
+l4.d
+Curtis, l971
+10G5/IlR = 11.138 + 7.1774 (10G5) - 0.59976 (AYD)
+.29
+Yes
+l2.(i 1J
+Sherar, 19?8 1.924 + 0.1927 (SYD) + 0.3111(IOGSJ+ 0.35 (V) .262 Yes
+Sherar, 1978 3.496 + 0.1014 (SYD) + 0.437 (V) .162 Yes
+Sherar, 1978 2.284 + 0.4943 (SYD) + 0.328 (Y) .402 Yes 23.6
+I.injala, 191w 10G5/HR = 5.78983 + 11.3255 (010K) - 0.0128329 (SYDIST) .2805 Yes s.4 03
+I.injala, l91- UIGS/IIR = 38.4141 - 0.0211831 (SYDIST) - 0.172377 (SoPE1) .3589 Yes 8.&f 03
+Linjala, l97 10G5/IIR = 35.7246 + 5.54309 (SETTERS) - 0.0567812 (SYDIST) .2798 Yes 12. 03
+I.injala, 191 10G5/IIR = 24.1710 + 8.34334 (010K) 0.03117 (SYDIST) .4054 Yes 6. 03
+I.inj&la, l91 0GS/HR = 44.9807 - 0.0329644 (SYDIST) + 0.446165 (510PJ1.) .3662 Yes 2. 03
+I.injala, l91 0GS/HR = 654010 - 0.0435101 (SYDIST) - 4.62756 (CH0K)'' .2618 Yes 6.J ©
+I.injala, l91 IOGS/HR = 54.6604 - 0.0331174 (SYDIST) + 0.382246 (SIOPEI) .1827 Yes 5.4 03
+LinjLla, l91 22,5023 + 7,51109 (CIlOK) - 0;0207704 (SYDISI) - 0.0912802 (SIJJPEI) .212 Yes 8. 03 See Footnotes
+on Machine
+Data Table for
+this Equation
+L.inj.la, l91 10G5/HR 41.9492 - 3.30186 (CREW) + 10.1666 (CIIOK) - 0.025554
+(SYDIST) .3180 Yes i.4 03
+III. I..ARGE YARDERS:
+PRODUCT ION DATA
+MAXIMUM MAINLINE PUU. 71,000 lbs.
+16. REFERENCE REGRESSION EQUATION-TOTAL TURN TIME (MINUTES) R2
+Linj1a, 197cR LOGS/hR = 16.9881 + 2.28639 (SETTERS) + 5.65854 (CHOK) - 0.0183524
+(SYIJIST)
+BASED ON
+DELAY FVEE
+TIME.? DELAY % COMMENT S
+.2781 Yes 8. Z1See Footnotes
+on Machine
+Data Table for
+this equation
+17. Liujo-la, 197 LOGS/HR = 23.1470 + 7.41064 (CHOK) - 0.0211132 (SYDIST) - 0.0816038
+(SLOPEI) .2558 Yes (b
+18. Linjala, 197db LOGS/MR = 32.2253 - 0.567472 (SLOPEI) .2204 Yes 7. ©
+19. Linj&la, l97 LOGS/MR = 69.2603 - 5.26513 (CREW) - 0.0353321 (SYDIST) .2523 Yes 1.9O,5.86 ©
+20. Linjala, l974 LOGS/MR 84.7407 - 7.6587 (CREW) - 0.0181058 (SYDIST) .1885 Yes 1.38, 5.66©1
+21. Linjala, l97 LOGS/MR = 51.6547 - 0.04839 (SYIJIST) + 0.598041 (SLOPEI) .2696 Yes O.84,3.7'
+22. Linj4.1a, 19l!P LOGS/MR -42.2686A 12.9092 (CREW) - 0.O32641 (SYDIST) +
+0.311246 (SLOPEI) 'Z .2734 Yes 1.58,3.9'"
+23. LinJ*la, l97 LOGS/HR = 65.1014 - 9.26667 (CREW) + 14.2265 (SETTERS)-
+5.31694 (CH0K) - 0.0258301 (SYDIST) .2659 Yes 8.0-' (7) 0
+24. Linj.1a. 197 LOGS/MR = 44.4590 - 3,40943 (CREW) + 5.43716 (SETTERS)-
+0.0236702 (SYDIST) .2442 Yes 8.N'
+25. Mann, 1979 0.61040 + O.O03l7ASYDIST) + 0.01958 (LATDIST) + 0.33913 (LOGS)
++ 0.00167 (VOLUME}W+ 0.33088 (RIGGERS) .4727 Yes 32.t"' I
+"Reposition" and "Reset" considered part of delay free time (not delays)
+FOOTNOTES
+Total Delay Time
+Excludes yarding road changes. Computed as Tota' Productive Time + Total IJelay Time
+Total turn time (excludthg yarding road changes)- Dehy Free Turn Time (Regression Equation)
+OO- eay
+100
+6
+e.g., D.F.T. = 6 minutes, Delay % = 6.2%, Total time
+= - 6.2) - 6.397 minutes
+100
+Regression equation results in number of logs yarded per productive hour (no delays, yarding or road changes).
+Excludes landing and yarding road changes.
+Range of "R" va'ues for eewenta1 equations. inhaul, unhook).
+Total time equation obtained by swwning eenenta equations of the system (outhaul, hook,
+Excludes landing and yarding road changes, major equipment repairs and general delays when the crew was at the landing and not performing
+productive work (e.g., crew waiting for the yarder to warm up in the morning - usuafly abouH5 minutes).
+Values are respectively mean total delay time per turn and mean net productive time per turn. operating and general delays (e.g., yarding and road changes, major equipment delays9 and walUng for machinery to warm up Total delay time includes operating, non-
+n the morning).
+All data recorded on a turn time or yarding cycle bss. not a delay. Time was measured to the nearest minute.
+Time spent in freeing hangups was considered part of the yarding cycle time and
+Cubic foot volume determined using two-end conic rule: C.V. = 0.001818 1((D + D) + (01)(D2)]
+where: CV. = log volume in cubic feet
+I = log length in feet
+D1 large end diameter inside bark in inches
+= Small end diameter Inside bark in inches
+FOOTNOTES (continued)
+4) fi skidder was required to swing logs from the landing to another area for loading to keep the haul road open. stopping the yarding operation to permit log truck traffic to pass since the yarder setting was on the haul road.
+Il major source of delay was
+Scribner volume was approximated with Knouf's Rule: [(D - 3DflO] [1/2]
+where: = small end diameter in inches
+I length in feet
+V = board foot volume
+logs over 40 feet long were scaled as two logs, one 40 feet long and the other 1-40 feet long.
+Source of data for these equations were gross (shift-level) time study records which the timber purchasers were required to keep.
+The regression coefficient associated with this variable was not found to be significantly different from zero at the 0.10 probability level.
+However, the addition of the variable increases R2 by more than one percent and does not increase the mean suai. error term.
+
+Appendix B. DEFINITIONS OF VARIABLES USED IN REGRESSION EQUATIONS.
+ANGLE The lead angle, in degrees, at which a turn of logs
+is lateral inhauled. The angle is measured as a
+deflection angle from the skyline corridor to the
+inhaul path of the logs. The angle is turned
+looking toward the landing.
+AYD The average slope yarding distance for the day,
+recorded in 100's of feet (i.e., 400 feet = 4).
+BFVOL The gross board-feet volume in the turn--includes
+unmerchantable pieces. Volumes given in board-feet.
+BLOCK A variable used by the author to help isolate
+variations which may have occurred between
+observations in Block I and Block II of the study
+area. Block equals "1" if the observation is
+from Block I, and equals "0" if from Block II.
+The author states that, for prediction purposes,
+"Block" can be set to zero in the equation.
+CH Height of the carriage above the ground at the
+position of lateral yarding in feet.
+CHOK The number of chokers flown.
+CHOKERS The number of chokers used in the turn.1 30
+CHORDSLOPE
+The slope, in percent, of a line segment that
+connects the support points of the skyline.
+Chordslope inclination is taken from the landing
+(i.e., for uphill yarding, chordslopes were
+negative). Percent values given as a whole
+number (e.g. 30.5% - 30.5).
+CREW The number of persons in the yarding crew.
+C RE Wl
+A zero-one dummy variable: HQII when the owner!
+operator was a chokersetter, and "1" when he was
+not. (NOTE: tn this study the crew with the
+more experienced owner/operator as a chokersetter
+averaged 54% more volume per hour than the crew
+with the less experienced alternate chokersetter).
+DKHT Height of the log deck on the landing after the
+turn was landed and decked in feet.
+DMYSKID
+A dumy variable to indicate the presence of a
+skidder used to keep the landing clear by sorting
+and decking logs along the road prior to loading
+by a self-loading truck. Skidder Present = 1.
+No Skidder Present = 0.
+HOOKLOG The number of logs hooked in a turn.
+LAN DL OG The number of logs landed in a turn.131
+LANGLE The angle, in degrees, formed by the winch line
+and a projected line travelling along the length
+of and through the center of the log (e.g., a
+Q0
+"LANGLE" implies the log and winch line are
+co-linear, a90° "LANGLE" implies the log is at
+right angles to the winch line).
+LATDIST The length on the slope measured in feet from the
+location of the furthest log in the turn to the
+skyline corridor. The distance measured is
+perpendicular to the skyline corridor.
+LATS D
+The actual lateral slope distance, in feet, from
+the pre-bunching spar to the first log in the
+turn (estimated to the nearest five feet).
+LDGCREW
+The number of people in the landing crew (e.g.,
+yarder operator and one chaser would result in a
+value of 2 for LDGCREW). The skidder operator is
+not considered.
+LD 1ST
+The lateral yarding distance in feet. This is the
+actual slope distance the log travels from hook
+point to corridor.
+LEADTURN The average lead angle, in degrees, of a turn.
+The lead angle is the angle formed between the line
+of sight down a log (in the direction of the1'
+landing), and a line parallel to the skyline
+corridor. If the line of sight is rotated
+toward the corridor in a counter-clockwise
+direction, the angle is negative. The
+possible range of angles is 900 to 9O°.
+LOGS The number of pieces yarded per turn.
+RIGGERS The number of chokersetters, including a rigging
+slinger if present.
+The slope distance down the corridor to the pre-
+bunching spar from the yarder measured to the
+nearest foot.
+SETTERS The number of chokersetters working on the yarding
+operation. The rigging slinger is not included.
+SIDIST
+The distance, in feet, a chokersetter had to reach
+from the lead of the mainline and haulback to
+the position of the farthest log when using the
+haulback to pull mainline out from the carriage.
+(A 'squirrel11 block was attached to the end of the
+haulback and the mainline was pulled through the
+"squirrel" block.)
+SI NANG
+The reciprocal of the sine siie of the lead
+angle (ANGLE).133
+SLO The groundslope at the carriage position in percent.
+The percentage is given as a whole number (e.g.
+60.5% -p 60.5).
+SLOPE
+The average groundslope in percent. The per-
+centage is given as a whole number (e.g., 60.5%-
+60.5). The groundslope inclination is taken
+looking toward the landing from the skyline road
+(i.e., uphill yarding - "slope" is positive, down-
+hill yarding - "slope" is negative).
+SLOP El
+The slope measured from the landing to the hook
+point in percent. Percentage given as a whole
+number (e.g., 65.5% = 65.5). For uphill yarding,
+the value is negative. For downhill yarding, the
+value is positive.
+SYD The slope yarding distance in 100-foot stations.
+SYDIST The slope yarding distance, in feet.
+TI The percentage of merchantable stems removed.
+Percentage given as a whole number (e.g., 35%=
+35.0).
+TN VOL The gross board foot volume per turn (Scribner
+decimal log rule). Volume given in 10's of
+board feet.134
+V The volume of logs per turn measured in cunits.
+VOL The gross board-foot volume in the turn. Volume
+given in board feet
+VOLUME The volume of logs per turn in cubic feet.,
+WEIGHT The turn weight in pounds.
+ZONE The average lead angle a turn of logs forms with
+the skyline. Angles are measured from the skyline
+and rotate in a downhill direction toward the
+log turn (egg., 00 - turn is parallel to the
+skyline). The possible range of angles is 00
+179°).
+
+Appendix D. Formulas for Computing Weighted Averages of Nonlinear Terms in Regression Equations For Two
+Types of Distributions.
+Name Regreson ternc Uniform Formulas for Weighted Averages, by Distribution Type
+TriangulaiLV
+Constant b b (1) b (8)
+Linear bx b(x1 x0) (2) 2bx1
+Squared bx2 b(x13- x03) xl - xO
+?bx 2 (10)
+Powe,
+n + (-1) bx n n+1 n+1
+b(x1 - x0 ) - x0) (4) 2b (n+2)
+(11)
+Inverse
+n (-1) b b(lnx1 - lnx0) xl _xO (5) 2b xl
+(12)
+Natural
+Logarithn blnx bt(x1lnx1 - x1) - (x0lnx0 - x0)] xl xO
+(6) b(lnx1 - 1/2) (13)
+Exponential aebX
+a(ebxl- ebxO)
+b(x1 - x0)
+(7) !_ [ebxl(x1_l/b) + 2] x12 E
+(14)
+LEGEND: n = power or exponent
+in natural logarithm
+e base of natural logarithm (approximately 2.72)
+maximum value
+x0 minimum value
+a = coefficient of "e'
+b = coefficients in regression equation
+'i)Assuming x0 = 0 simplifies the formulas.
+Corresponds to the widely known 2/3 correction for average yarding distance on circular settings
+Constant, linear, and squared functions are special cases of the general formula for power.

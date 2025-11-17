@@ -195,20 +195,28 @@ Use ``fhops.dataset estimate-skyline-productivity`` when the block’s harvest s
   paper’s Yarder A/B averages (2.8 pieces × 2.5 m³ or 3.0 × 1.6 m³), but you can override them with
   ``--pieces-per-cycle`` / ``--piece-volume-m3``. Pick ``--running-yarder-variant yarder_a`` or ``yarder_b`` to
   mirror the observed payload/cycle-time differences.
-* ``aubuchon-standing`` – **New** standing-skyline helper derived from the Hensel et al. (1979) Wyssen system
+* ``aubuchon-standing`` – standing-skyline helper derived from the Hensel et al. (1979) Wyssen system
   regression compiled in Aubuchon (1982). Supply ``--logs-per-turn``, ``--average-log-volume-m3``, and
   ``--crew-size`` along with slope/lateral distance. The CLI reports turn minutes and payload so analysts can
   calibrate against local choking practices.
+* ``aubuchon-kramer`` – **New** Kramer (1978) standing-skyline regression that explicitly models carriage
+  height and chord slope (intermediate support/deflection proxy). Use ``--carriage-height-m`` and
+  ``--chordslope-percent`` alongside the standard slope/lateral/log inputs to quantify how additional lift or
+  downhill chord profiles influence cycle time. Defaults assume payload = ``logs × average-log-volume``.
+* ``aubuchon-kellogg`` – **New** Kellogg (1976) tower-yarder regression with lead-angle and choker-count
+  predictors, letting you test how fan-out at the hook point or extra chokers affect delay-free minutes. Provide
+  ``--lead-angle-deg`` and ``--chokers`` plus the usual log/volume fields; the helper automatically converts the
+  payload to the cubic-foot basis used in the original study.
 * ``--machine-role helicopter_longline`` – **New** helicopter helper built from FPInnovations Advantage/TR helicopter
   studies (Lama/K-Max/Bell 214B/S-64E). Give ``--helicopter-model`` plus ``--helicopter-flight-distance-m`` and optional payload/load-factor overrides to
   estimate cycle minutes, turns per PMH, and m³/PMH₀ for light-, medium-, and heavy-lift longline work. Delay minutes can be added via
   ``--helicopter-delay-minutes`` to capture weather/landing waits.
 
-Every skyline model emits the assumed payload and m³/PMH0 result; the McNeel helper also reports cycle
-minutes derived from the Table 4 regression so analysts can see how deflection or payload tweaks affect
-turn time. Telemetry rows now carry ``horizontal_distance_m``, ``vertical_distance_m``,
-``pieces_per_cycle``, ``piece_volume_m3``, and the running-yarder variant whenever ``mcneel-running`` is used,
-along with the log/crew inputs when the Aubuchon model is selected. Helicopter runs also log the chosen model and payload for downstream telemetry.
+Every skyline model emits the assumed payload and m³/PMH0 result; the McNeel and Aubuchon helpers also report
+cycle minutes derived from their regressions so analysts can see how deflection, lead angle, or chokers affect
+turn time. Telemetry rows now capture the new standing-skyline predictors (carriage height, chord slope, lead
+angle, chokers) in addition to ``horizontal_distance_m``, ``vertical_distance_m``, ``pieces_per_cycle``,
+``piece_volume_m3``, and the running-yarder variant. Helicopter runs also log the chosen model and payload for downstream telemetry.
 
 CTL Harvester Productivity Models
 ---------------------------------

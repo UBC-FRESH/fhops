@@ -9,6 +9,8 @@ from fhops.productivity import (
     estimate_cable_yarder_productivity_tr127,
     estimate_running_skyline_productivity_mcneel2000,
     estimate_standing_skyline_productivity_aubuchon1979,
+    estimate_standing_skyline_productivity_kramer1978,
+    estimate_standing_skyline_productivity_kellogg1976,
 )
 
 runner = CliRunner()
@@ -168,5 +170,70 @@ def test_cli_skyline_aubuchon_standing() -> None:
         logs_per_turn=3.0,
         average_log_volume_m3=0.5,
         crew_size=4.0,
+    )
+    assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_skyline_aubuchon_kramer() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "aubuchon-kramer",
+            "--slope-distance-m",
+            "550",
+            "--lateral-distance-m",
+            "35",
+            "--logs-per-turn",
+            "4.2",
+            "--average-log-volume-m3",
+            "0.45",
+            "--carriage-height-m",
+            "10",
+            "--chordslope-percent",
+            "-12",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_standing_skyline_productivity_kramer1978(
+        slope_distance_m=550.0,
+        lateral_distance_m=35.0,
+        logs_per_turn=4.2,
+        average_log_volume_m3=0.45,
+        carriage_height_m=10.0,
+        chordslope_percent=-12.0,
+    )
+    assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_skyline_aubuchon_kellogg() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "aubuchon-kellogg",
+            "--slope-distance-m",
+            "480",
+            "--lateral-distance-m",
+            "25",
+            "--logs-per-turn",
+            "3.8",
+            "--average-log-volume-m3",
+            "0.4",
+            "--lead-angle-deg",
+            "20",
+            "--chokers",
+            "2",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_standing_skyline_productivity_kellogg1976(
+        slope_distance_m=480.0,
+        lead_angle_degrees=20.0,
+        logs_per_turn=3.8,
+        average_log_volume_m3=0.4,
+        chokers=2.0,
     )
     assert f"{expected:.2f}" in result.stdout

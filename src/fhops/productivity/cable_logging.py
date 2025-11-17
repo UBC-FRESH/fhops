@@ -14,6 +14,7 @@ from fhops.reference import get_appendix5_profile
 
 
 _FEET_PER_METER = 3.28084
+_CUBIC_FEET_PER_CUBIC_METER = 35.3146667
 _LB_TO_KG = 0.45359237
 _KG_TO_LB = 1.0 / _LB_TO_KG
 
@@ -518,6 +519,112 @@ def estimate_standing_skyline_productivity_aubuchon1979(
         lateral_distance_m=lateral_distance_m,
         logs_per_turn=logs_per_turn,
         crew_size=crew_size,
+    )
+    payload_m3 = average_log_volume_m3 * logs_per_turn
+    return _m3_per_pmh_from_minutes(payload_m3, turn_minutes)
+
+
+def estimate_standing_skyline_turn_time_kramer1978(
+    *,
+    slope_distance_m: float,
+    lateral_distance_m: float,
+    logs_per_turn: float,
+    carriage_height_m: float,
+    chordslope_percent: float,
+) -> float:
+    """Delay-free turn time (min) from Kramer (1978) standing-skyline trials (Aubuchon Appendix A)."""
+
+    if logs_per_turn <= 0:
+        raise ValueError("logs_per_turn must be > 0")
+    if slope_distance_m <= 0 or lateral_distance_m < 0:
+        raise ValueError("Distances must be >= 0 and slope distance must be > 0")
+    if carriage_height_m < 0:
+        raise ValueError("carriage_height_m must be >= 0")
+    slope_distance_ft = slope_distance_m * _FEET_PER_METER
+    lateral_distance_ft = lateral_distance_m * _FEET_PER_METER
+    carriage_height_ft = carriage_height_m * _FEET_PER_METER
+    minutes = (
+        0.68620
+        + 0.00525 * slope_distance_ft
+        + 0.01243 * lateral_distance_ft
+        + 0.27960 * logs_per_turn
+        + 0.01759 * carriage_height_ft
+        + 0.02521 * chordslope_percent
+    )
+    return max(minutes, 0.01)
+
+
+def estimate_standing_skyline_productivity_kramer1978(
+    *,
+    slope_distance_m: float,
+    lateral_distance_m: float,
+    logs_per_turn: float,
+    average_log_volume_m3: float,
+    carriage_height_m: float,
+    chordslope_percent: float,
+) -> float:
+    """Estimate standing skyline productivity (m³/PMH0) via Kramer (1978) regression."""
+
+    if average_log_volume_m3 <= 0:
+        raise ValueError("average_log_volume_m3 must be > 0")
+    turn_minutes = estimate_standing_skyline_turn_time_kramer1978(
+        slope_distance_m=slope_distance_m,
+        lateral_distance_m=lateral_distance_m,
+        logs_per_turn=logs_per_turn,
+        carriage_height_m=carriage_height_m,
+        chordslope_percent=chordslope_percent,
+    )
+    payload_m3 = average_log_volume_m3 * logs_per_turn
+    return _m3_per_pmh_from_minutes(payload_m3, turn_minutes)
+
+
+def estimate_standing_skyline_turn_time_kellogg1976(
+    *,
+    slope_distance_m: float,
+    lead_angle_degrees: float,
+    logs_per_turn: float,
+    average_log_volume_m3: float,
+    chokers: float,
+) -> float:
+    """Delay-free turn time (min) from Kellogg (1976) standing yarder study (Aubuchon Appendix A)."""
+
+    if logs_per_turn <= 0:
+        raise ValueError("logs_per_turn must be > 0")
+    if average_log_volume_m3 <= 0:
+        raise ValueError("average_log_volume_m3 must be > 0")
+    if chokers <= 0:
+        raise ValueError("chokers must be > 0")
+    if slope_distance_m <= 0:
+        raise ValueError("slope_distance_m must be > 0")
+    slope_distance_ft = slope_distance_m * _FEET_PER_METER
+    payload_m3 = average_log_volume_m3 * logs_per_turn
+    payload_ft3 = payload_m3 * _CUBIC_FEET_PER_CUBIC_METER
+    minutes = (
+        -2.8897
+        + 0.028864 * slope_distance_ft
+        + 0.010653 * lead_angle_degrees
+        + 0.036543 * payload_ft3
+        + 2.1101 * chokers
+    )
+    return max(minutes, 0.01)
+
+
+def estimate_standing_skyline_productivity_kellogg1976(
+    *,
+    slope_distance_m: float,
+    lead_angle_degrees: float,
+    logs_per_turn: float,
+    average_log_volume_m3: float,
+    chokers: float,
+) -> float:
+    """Estimate standing skyline productivity (m³/PMH0) via Kellogg (1976) regression."""
+
+    turn_minutes = estimate_standing_skyline_turn_time_kellogg1976(
+        slope_distance_m=slope_distance_m,
+        lead_angle_degrees=lead_angle_degrees,
+        logs_per_turn=logs_per_turn,
+        average_log_volume_m3=average_log_volume_m3,
+        chokers=chokers,
     )
     payload_m3 = average_log_volume_m3 * logs_per_turn
     return _m3_per_pmh_from_minutes(payload_m3, turn_minutes)

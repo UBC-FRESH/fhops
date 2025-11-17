@@ -59,6 +59,10 @@ from fhops.productivity import (
     estimate_cable_yarder_productivity_tr127,
     estimate_standing_skyline_productivity_aubuchon1979,
     estimate_standing_skyline_turn_time_aubuchon1979,
+    estimate_standing_skyline_productivity_kramer1978,
+    estimate_standing_skyline_turn_time_kramer1978,
+    estimate_standing_skyline_productivity_kellogg1976,
+    estimate_standing_skyline_turn_time_kellogg1976,
     estimate_running_skyline_cycle_time_mcneel2000_minutes,
     estimate_running_skyline_productivity_mcneel2000,
     running_skyline_variant_defaults,
@@ -177,6 +181,8 @@ class SkylineProductivityModel(str, Enum):
     TR127_BLOCK6 = "tr127-block6"
     MCNEEL_RUNNING = "mcneel-running"
     AUBUCHON_STANDING = "aubuchon-standing"
+    AUBUCHON_KRAMER = "aubuchon-kramer"
+    AUBUCHON_KELLOGG = "aubuchon-kellogg"
 
 
 _TR127_MODEL_TO_BLOCK = {
@@ -2612,6 +2618,32 @@ def estimate_skyline_productivity_cmd(
         min=1.0,
         help="Crew size (people) for the Aubuchon standing skyline regression.",
     ),
+    carriage_height_m: float | None = typer.Option(
+        None,
+        "--carriage-height-m",
+        min=0.0,
+        help="Carriage height above ground (m) for Kramer (1978) standing skyline regression.",
+        show_default=False,
+    ),
+    chordslope_percent: float | None = typer.Option(
+        None,
+        "--chordslope-percent",
+        help="Chord slope (%) measured from the landing (negative for uphill) for Kramer (1978).",
+        show_default=False,
+    ),
+    lead_angle_degrees: float | None = typer.Option(
+        None,
+        "--lead-angle-deg",
+        help="Lead angle (degrees) for the Kellogg (1976) standing skyline regression.",
+        show_default=False,
+    ),
+    chokers: float | None = typer.Option(
+        None,
+        "--chokers",
+        min=0.1,
+        help="Number of chokers for the Kellogg (1976) standing skyline regression.",
+        show_default=False,
+    ),
     tr119_treatment: str | None = typer.Option(
         None,
         "--tr119-treatment",
@@ -2630,6 +2662,7 @@ def estimate_skyline_productivity_cmd(
     if payload_m3 is not None and payload_m3 <= 0:
         raise typer.BadParameter("--payload-m3 must be > 0 when specified.")
 
+    telemetry_payload_m3 = payload_m3
     source_label = None
     console_warning = None
     cycle_minutes = None
@@ -2638,6 +2671,10 @@ def estimate_skyline_productivity_cmd(
     telemetry_pieces = pieces_per_cycle
     telemetry_piece_volume = piece_volume_m3
     telemetry_running_variant = running_yarder_variant.value if running_yarder_variant else None
+    telemetry_carriage_height = None
+    telemetry_chordslope = None
+    telemetry_lead_angle = None
+    telemetry_chokers = None
     if model is SkylineProductivityModel.LEE_UPHILL:
         value = estimate_cable_yarder_productivity_lee2018_uphill(
             yarding_distance_m=slope_distance_m,
@@ -2798,6 +2835,7 @@ def estimate_skyline_productivity_cmd(
             crew_size=crew_size,
         )
         payload_value = logs_per_turn * average_log_volume_m3
+        telemetry_payload_m3 = payload_value
         rows = [
             ("Model", model.value),
             ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
@@ -2816,6 +2854,90 @@ def estimate_skyline_productivity_cmd(
         telemetry_horizontal = slope_distance_m
         telemetry_pieces = logs_per_turn
         telemetry_piece_volume = average_log_volume_m3
+    elif model is SkylineProductivityModel.AUBUCHON_KRAMER:
+        if carriage_height_m is None:
+            raise typer.BadParameter("--carriage-height-m is required for aubuchon-kramer.")
+        if chordslope_percent is None:
+            raise typer.BadParameter("--chordslope-percent is required for aubuchon-kramer.")
+        cycle_minutes = estimate_standing_skyline_turn_time_kramer1978(
+            slope_distance_m=slope_distance_m,
+            lateral_distance_m=lateral_distance_m,
+            logs_per_turn=logs_per_turn,
+            carriage_height_m=carriage_height_m,
+            chordslope_percent=chordslope_percent,
+        )
+        value = estimate_standing_skyline_productivity_kramer1978(
+            slope_distance_m=slope_distance_m,
+            lateral_distance_m=lateral_distance_m,
+            logs_per_turn=logs_per_turn,
+            average_log_volume_m3=average_log_volume_m3,
+            carriage_height_m=carriage_height_m,
+            chordslope_percent=chordslope_percent,
+        )
+        payload_value = logs_per_turn * average_log_volume_m3
+        telemetry_payload_m3 = payload_value
+        rows = [
+            ("Model", model.value),
+            ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
+            ("Lateral Distance (m)", f"{lateral_distance_m:.1f}"),
+            ("Logs per Turn", f"{logs_per_turn:.2f}"),
+            ("Average Log Volume (m³)", f"{average_log_volume_m3:.3f}"),
+            ("Carriage Height (m)", f"{carriage_height_m:.1f}"),
+            ("Chord Slope (%)", f"{chordslope_percent:.2f}"),
+            ("Payload (m³)", f"{payload_value:.2f}"),
+            ("Cycle Time (min)", f"{cycle_minutes:.2f}"),
+        ]
+        source_label = "Kramer 1978 standing skyline (Aubuchon 1982 Appendix A)."
+        console_warning = (
+            "[yellow]Warning:[/yellow] Kramer (1978) regressions are US Pacific Northwest trials; "
+            "validate before using for BC costing."
+        )
+        telemetry_horizontal = slope_distance_m
+        telemetry_pieces = logs_per_turn
+        telemetry_piece_volume = average_log_volume_m3
+        telemetry_carriage_height = carriage_height_m
+        telemetry_chordslope = chordslope_percent
+    elif model is SkylineProductivityModel.AUBUCHON_KELLOGG:
+        if lead_angle_degrees is None:
+            raise typer.BadParameter("--lead-angle-deg is required for aubuchon-kellogg.")
+        if chokers is None:
+            raise typer.BadParameter("--chokers is required for aubuchon-kellogg.")
+        cycle_minutes = estimate_standing_skyline_turn_time_kellogg1976(
+            slope_distance_m=slope_distance_m,
+            lead_angle_degrees=lead_angle_degrees,
+            logs_per_turn=logs_per_turn,
+            average_log_volume_m3=average_log_volume_m3,
+            chokers=chokers,
+        )
+        value = estimate_standing_skyline_productivity_kellogg1976(
+            slope_distance_m=slope_distance_m,
+            lead_angle_degrees=lead_angle_degrees,
+            logs_per_turn=logs_per_turn,
+            average_log_volume_m3=average_log_volume_m3,
+            chokers=chokers,
+        )
+        payload_value = logs_per_turn * average_log_volume_m3
+        telemetry_payload_m3 = payload_value
+        rows = [
+            ("Model", model.value),
+            ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
+            ("Logs per Turn", f"{logs_per_turn:.2f}"),
+            ("Average Log Volume (m³)", f"{average_log_volume_m3:.3f}"),
+            ("Lead Angle (°)", f"{lead_angle_degrees:.1f}"),
+            ("Chokers", f"{chokers:.1f}"),
+            ("Payload (m³)", f"{payload_value:.2f}"),
+            ("Cycle Time (min)", f"{cycle_minutes:.2f}"),
+        ]
+        console_warning = (
+            "[yellow]Warning:[/yellow] Kellogg (1976) regression is based on small tower yarders in Oregon; "
+            "confirm applicability before BC deployment."
+        )
+        source_label = "Kellogg 1976 standing skyline regression (Aubuchon 1982 Appendix A)."
+        telemetry_horizontal = slope_distance_m
+        telemetry_pieces = logs_per_turn
+        telemetry_piece_volume = average_log_volume_m3
+        telemetry_lead_angle = lead_angle_degrees
+        telemetry_chokers = chokers
     else:
         raise typer.BadParameter(f"Unsupported skyline model: {model}")
     if tr119_treatment:
@@ -2842,12 +2964,16 @@ def estimate_skyline_productivity_cmd(
             "slope_distance_m": slope_distance_m,
             "lateral_distance_m": lateral_distance_m,
             "num_logs": num_logs,
-            "payload_m3": payload_m3,
+            "payload_m3": telemetry_payload_m3,
             "horizontal_distance_m": telemetry_horizontal,
             "vertical_distance_m": telemetry_vertical,
             "pieces_per_cycle": telemetry_pieces,
             "piece_volume_m3": telemetry_piece_volume,
             "running_yarder_variant": telemetry_running_variant,
+            "carriage_height_m": telemetry_carriage_height,
+            "chordslope_percent": telemetry_chordslope,
+            "lead_angle_degrees": telemetry_lead_angle,
+            "chokers": telemetry_chokers,
             "cycle_minutes": cycle_minutes,
             "productivity_m3_per_pmh": value,
             "tr119_treatment": tr119_treatment,
