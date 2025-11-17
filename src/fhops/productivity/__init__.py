@@ -32,6 +32,10 @@ from .forwarder_bc import (
     ForwarderBCResult,
     estimate_forwarder_productivity_bc,
 )
+from .harvester_ctl import (
+    ADV6N10HarvesterInputs,
+    estimate_harvester_productivity_adv6n10,
+)
 from .kellogg_bettinger1994 import LoadType as KelloggLoadType
 from .kellogg_bettinger1994 import estimate_forwarder_productivity_kellogg_bettinger
 from .lahrsen2025 import (
@@ -76,6 +80,7 @@ __all__ = [
     "estimate_cable_yarder_productivity_tr125_multi_span",
     "estimate_cable_yarder_cycle_time_tr127_minutes",
     "estimate_cable_yarder_productivity_tr127",
+    "estimate_harvester_productivity_adv6n10",
     "estimate_forwarder_productivity_small_forwarder_thinning",
     "estimate_forwarder_productivity_large_forwarder_thinning",
     "estimate_forwarder_productivity_kellogg_bettinger",
@@ -96,4 +101,5 @@ __all__ = [
     "ShovelLoggingParameters",
     "ShovelLoggingResult",
     "estimate_shovel_logging_productivity",
+    "ADV6N10HarvesterInputs",
 ]

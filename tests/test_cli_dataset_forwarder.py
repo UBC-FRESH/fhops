@@ -5,9 +5,11 @@ from typer.testing import CliRunner
 from fhops.cli.dataset import dataset_app
 from fhops.productivity import (
     KelloggLoadType,
+    estimate_harvester_productivity_adv6n10,
     estimate_forwarder_productivity_kellogg_bettinger,
     estimate_forwarder_productivity_small_forwarder_thinning,
 )
+from fhops.productivity.harvester_ctl import ADV6N10HarvesterInputs
 from fhops.productivity.forwarder_bc import (
     ForwarderBCModel,
     estimate_forwarder_productivity_bc,
@@ -169,4 +171,35 @@ def test_cli_estimate_productivity_forwarder_adv6n10_branch() -> None:
         trail_length_m=300.0,
         products_per_trail=2.0,
     ).predicted_m3_per_pmh
+    assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_estimate_productivity_ctl_harvester_adv6n10() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "ctl_harvester",
+            "--ctl-harvester-model",
+            "adv6n10",
+            "--ctl-stem-volume",
+            "0.12",
+            "--ctl-products-count",
+            "3",
+            "--ctl-stems-per-cycle",
+            "1.4",
+            "--ctl-mean-log-length",
+            "4.8",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_harvester_productivity_adv6n10(
+        ADV6N10HarvesterInputs(
+            stem_volume_m3=0.12,
+            products_count=3.0,
+            stems_per_cycle=1.4,
+            mean_log_length_m=4.8,
+        )
+    )
     assert f"{expected:.2f}" in result.stdout

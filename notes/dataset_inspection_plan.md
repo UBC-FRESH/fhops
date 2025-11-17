@@ -252,7 +252,7 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
 
 Candidate references already in the repository; convert each into a helper/plan:
 
-- [ ] `notes/reference/fpinnovations/ADV6N10.PDF`
+- [x] `notes/reference/fpinnovations/ADV6N10.PDF`
   - Publish the single-grip harvester regression (function of stem volume, number of products, stems/cycle, mean log length) beside the forwarder helper.
   - Add CLI switches paralleling ``adv6n10-shortwood`` so analysts can quantify harvester-side sorting penalties in boreal multi-product CTL.
   - Tests: numeric recreation of Appendix 1 values + CLI smoke.

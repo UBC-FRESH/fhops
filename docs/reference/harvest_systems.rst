@@ -104,3 +104,16 @@ Pick the regression that matches the stand context:
 The commands surface identical arguments under both the dedicated forwarder CLI and the general
 ``estimate-productivity --machine-role forwarder`` path, so the same guidance applies to synthetic
 generators, scenario QA, and KPI workflows.
+
+CTL Harvester Productivity Models
+---------------------------------
+
+``fhops.productivity.harvester_ctl`` hosts the shortwood harvester regressions. The inaugural entry is
+the ADV6N10 single-grip model:
+
+* ``adv6n10`` – Gingras & Favreau (2005) boreal multi-product study. Use when operators sort several
+  products per pass and need visibility into harvester-side penalties. Required CLI flags:
+  ``--ctl-stem-volume`` (m³/stem), ``--ctl-products-count`` (number of products sorted per cycle),
+  ``--ctl-stems-per-cycle``, and ``--ctl-mean-log-length`` (m). Invoke via
+  ``fhops dataset estimate-productivity --machine-role ctl_harvester`` (or the new CLI tests) to see
+  the ADV6N10 result. Future CTL harvester regressions will plug into the same interface.

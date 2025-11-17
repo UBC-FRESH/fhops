@@ -30,6 +30,7 @@ from fhops.productivity import (
     ForwarderBCModel,
     ForwarderBCResult,
     LahrsenModel,
+    ADV6N10HarvesterInputs,
     alpaca_slope_multiplier,
     estimate_cable_skidding_productivity_unver_robust,
     estimate_cable_skidding_productivity_unver_robust_profile,
@@ -42,6 +43,7 @@ from fhops.productivity import (
     estimate_cable_yarder_productivity_tr125_single_span,
     estimate_cable_yarder_productivity_tr127,
     estimate_forwarder_productivity_bc,
+    estimate_harvester_productivity_adv6n10,
     estimate_productivity,
     estimate_productivity_distribution,
     load_lahrsen_ranges,
@@ -103,6 +105,13 @@ class ProductivityMachineRole(str, Enum):
 
     FELLER_BUNCHER = "feller_buncher"
     FORWARDER = "forwarder"
+    CTL_HARVESTER = "ctl_harvester"
+
+
+class CTLHarvesterModel(str, Enum):
+    """CTL harvester regressions."""
+
+    ADV6N10 = "adv6n10"
 
 
 class CableSkiddingModel(str, Enum):
@@ -244,6 +253,59 @@ def _evaluate_forwarder_result(
         )
     except ValueError as exc:  # pragma: no cover - Typer surfaces error text
         raise typer.BadParameter(str(exc)) from exc
+
+
+def _render_ctl_harvester_result(
+    model: CTLHarvesterModel, inputs: ADV6N10HarvesterInputs, productivity: float
+) -> None:
+    rows = [
+        ("Model", model.value),
+        ("Stem Volume (m³/stem)", f"{inputs.stem_volume_m3:.3f}"),
+        ("Number of Products", f"{inputs.products_count:.2f}"),
+        ("Stems per Cycle", f"{inputs.stems_per_cycle:.2f}"),
+        ("Mean Log Length (m)", f"{inputs.mean_log_length_m:.2f}"),
+        ("Predicted Productivity (m³/PMH)", f"{productivity:.2f}"),
+    ]
+    _render_kv_table("CTL Harvester Productivity Estimate", rows)
+    console.print(
+        "[dim]Regression from Gingras & Favreau (2005) ADV6N10 boreal CTL sorting study.[/dim]"
+    )
+
+
+def _evaluate_ctl_harvester_result(
+    *,
+    model: CTLHarvesterModel,
+    stem_volume: float | None,
+    products_count: float | None,
+    stems_per_cycle: float | None,
+    mean_log_length: float | None,
+) -> tuple[ADV6N10HarvesterInputs, float]:
+    if model is not CTLHarvesterModel.ADV6N10:
+        raise typer.BadParameter(f"Unsupported CTL harvester model: {model}")
+    missing = []
+    if stem_volume is None:
+        missing.append("--ctl-stem-volume")
+    if products_count is None:
+        missing.append("--ctl-products-count")
+    if stems_per_cycle is None:
+        missing.append("--ctl-stems-per-cycle")
+    if mean_log_length is None:
+        missing.append("--ctl-mean-log-length")
+    if missing:
+        raise typer.BadParameter(
+            f"{', '.join(missing)} required when --machine-role {ProductivityMachineRole.CTL_HARVESTER.value}."
+        )
+    inputs = ADV6N10HarvesterInputs(
+        stem_volume_m3=stem_volume,
+        products_count=products_count,
+        stems_per_cycle=stems_per_cycle,
+        mean_log_length_m=mean_log_length,
+    )
+    try:
+        value = estimate_harvester_productivity_adv6n10(inputs)
+    except FHOPSValueError as exc:  # pragma: no cover - Typer surfaces error
+        raise typer.BadParameter(str(exc)) from exc
+    return inputs, value
 
 
 def _candidate_roots() -> list[Path]:
@@ -609,7 +671,7 @@ def estimate_productivity_cmd(
         ProductivityMachineRole.FELLER_BUNCHER,
         "--machine-role",
         case_sensitive=False,
-        help="Machine role to evaluate (feller_buncher | forwarder).",
+        help="Machine role to evaluate (feller_buncher | forwarder | ctl_harvester).",
     ),
     avg_stem_size: float | None = typer.Option(
         None,
@@ -645,6 +707,36 @@ def estimate_productivity_cmd(
         False,
         "--allow-out-of-range",
         help="Skip range validation (useful for exploratory synthetic data).",
+    ),
+    ctl_harvester_model: CTLHarvesterModel = typer.Option(
+        CTLHarvesterModel.ADV6N10,
+        "--ctl-harvester-model",
+        case_sensitive=False,
+        help="CTL harvester regression to evaluate when --machine-role ctl_harvester is used.",
+    ),
+    ctl_stem_volume: float | None = typer.Option(
+        None,
+        "--ctl-stem-volume",
+        min=0.0,
+        help="Mean stem volume (m³/stem). Required for CTL harvester models.",
+    ),
+    ctl_products_count: float | None = typer.Option(
+        None,
+        "--ctl-products-count",
+        min=0.0,
+        help="Number of products sorted per cycle. Required for CTL harvester models.",
+    ),
+    ctl_stems_per_cycle: float | None = typer.Option(
+        None,
+        "--ctl-stems-per-cycle",
+        min=0.0,
+        help="Average stems processed per cycle. Required for CTL harvester models.",
+    ),
+    ctl_mean_log_length: float | None = typer.Option(
+        None,
+        "--ctl-mean-log-length",
+        min=0.0,
+        help="Mean produced log length (m). Required for CTL harvester models.",
     ),
     forwarder_model: ForwarderBCModel = typer.Option(
         ForwarderBCModel.GHAFFARIYAN_SMALL,
@@ -745,6 +837,16 @@ def estimate_productivity_cmd(
             products_per_trail=products_per_trail,
         )
         _render_forwarder_result(result)
+        return
+    if role == ProductivityMachineRole.CTL_HARVESTER.value:
+        inputs, value = _evaluate_ctl_harvester_result(
+            model=ctl_harvester_model,
+            stem_volume=ctl_stem_volume,
+            products_count=ctl_products_count,
+            stems_per_cycle=ctl_stems_per_cycle,
+            mean_log_length=ctl_mean_log_length,
+        )
+        _render_ctl_harvester_result(ctl_harvester_model, inputs, value)
         return
 
     missing: list[str] = []
