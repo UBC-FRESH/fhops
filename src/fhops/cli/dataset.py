@@ -31,8 +31,10 @@ from fhops.productivity import (
     ForwarderBCResult,
     LahrsenModel,
     ADV6N10HarvesterInputs,
+    TN292HarvesterInputs,
     alpaca_slope_multiplier,
     estimate_harvester_productivity_adv5n30,
+    estimate_harvester_productivity_tn292,
     estimate_cable_skidding_productivity_unver_robust,
     estimate_cable_skidding_productivity_unver_robust_profile,
     estimate_cable_skidding_productivity_unver_spss,
@@ -114,6 +116,7 @@ class CTLHarvesterModel(str, Enum):
 
     ADV6N10 = "adv6n10"
     ADV5N30 = "adv5n30"
+    TN292 = "tn292"
 
 
 class CableSkiddingModel(str, Enum):
@@ -279,6 +282,15 @@ def _render_ctl_harvester_result(
             ]
         )
         source = "Meek (2004) ADV5N30 Alberta white spruce thinning study"
+    elif model is CTLHarvesterModel.TN292 and isinstance(inputs, TN292HarvesterInputs):
+        rows.extend(
+            [
+                ("Stem Volume (m³/stem)", f"{inputs.stem_volume_m3:.3f}"),
+                ("Stand Density (/ha)", f"{inputs.stand_density_per_ha:.0f}"),
+                ("Density Basis", inputs.density_basis),
+            ]
+        )
+        source = "Bulley (1999) TN292 Alberta thinning study"
     else:
         raise RuntimeError("Unhandled CTL harvester model payload.")
     rows.append(("Predicted Productivity (m³/PMH)", f"{productivity:.2f}"))
@@ -295,6 +307,8 @@ def _evaluate_ctl_harvester_result(
     mean_log_length: float | None,
     removal_fraction: float | None,
     brushed: bool,
+    density: float | None,
+    density_basis: str,
 ) -> tuple[object, float]:
     if model is CTLHarvesterModel.ADV6N10:
         missing = []
@@ -332,6 +346,26 @@ def _evaluate_ctl_harvester_result(
         except FHOPSValueError as exc:  # pragma: no cover
             raise typer.BadParameter(str(exc)) from exc
         return {"removal_fraction": removal_fraction, "brushed": brushed}, value
+    if model is CTLHarvesterModel.TN292:
+        missing = []
+        if stem_volume is None:
+            missing.append("--ctl-stem-volume")
+        if density is None:
+            missing.append("--ctl-density")
+        if missing:
+            raise typer.BadParameter(
+                f"{', '.join(missing)} required when --machine-role {ProductivityMachineRole.CTL_HARVESTER.value} with TN292 model."
+            )
+        inputs = TN292HarvesterInputs(
+            stem_volume_m3=stem_volume,
+            stand_density_per_ha=density,
+            density_basis=density_basis,
+        )
+        try:
+            value = estimate_harvester_productivity_tn292(inputs)
+        except FHOPSValueError as exc:  # pragma: no cover
+            raise typer.BadParameter(str(exc)) from exc
+        return inputs, value
     raise typer.BadParameter(f"Unsupported CTL harvester model: {model}")
 
 
@@ -777,6 +811,17 @@ def estimate_productivity_cmd(
         "--ctl-brushed/--ctl-unbrushed",
         help="ADV5N30 brushing scenario (adds 21% productivity).",
     ),
+    ctl_density: float | None = typer.Option(
+        None,
+        "--ctl-density",
+        min=0.0,
+        help="Stand density (trees/ha) for TN292 model.",
+    ),
+    ctl_density_basis: str = typer.Option(
+        "pre",
+        "--ctl-density-basis",
+        help="Density basis for TN292 model: pre or post (harvest).",
+    ),
     forwarder_model: ForwarderBCModel = typer.Option(
         ForwarderBCModel.GHAFFARIYAN_SMALL,
         "--forwarder-model",
@@ -886,6 +931,8 @@ def estimate_productivity_cmd(
             mean_log_length=ctl_mean_log_length,
             removal_fraction=ctl_removal_fraction,
             brushed=ctl_brushed,
+            density=ctl_density,
+            density_basis=ctl_density_basis,
         )
         _render_ctl_harvester_result(ctl_harvester_model, inputs, value)
         return

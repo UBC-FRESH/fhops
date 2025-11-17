@@ -34,8 +34,10 @@ from .forwarder_bc import (
 )
 from .harvester_ctl import (
     ADV6N10HarvesterInputs,
+    TN292HarvesterInputs,
     estimate_harvester_productivity_adv5n30,
     estimate_harvester_productivity_adv6n10,
+    estimate_harvester_productivity_tn292,
 )
 from .kellogg_bettinger1994 import LoadType as KelloggLoadType
 from .kellogg_bettinger1994 import estimate_forwarder_productivity_kellogg_bettinger
@@ -83,6 +85,7 @@ __all__ = [
     "estimate_cable_yarder_productivity_tr127",
     "estimate_harvester_productivity_adv6n10",
     "estimate_harvester_productivity_adv5n30",
+    "estimate_harvester_productivity_tn292",
     "estimate_forwarder_productivity_small_forwarder_thinning",
     "estimate_forwarder_productivity_large_forwarder_thinning",
     "estimate_forwarder_productivity_kellogg_bettinger",
@@ -104,4 +107,5 @@ __all__ = [
     "ShovelLoggingResult",
     "estimate_shovel_logging_productivity",
     "ADV6N10HarvesterInputs",
+    "TN292HarvesterInputs",
 ]

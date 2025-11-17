@@ -260,7 +260,7 @@ Candidate references already in the repository; convert each into a helper/plan:
   - Encode removal-level modifiers (30/50/70 %) and brushing deltas, wrapping Timberjack 1270 data into a helper or scenario multiplier.
   - Document when to apply (white spruce commercial thinning, Alberta) and how to blend with forwarder models.
   - Tests verifying per-removal productivity against the tables.
-- [ ] `notes/reference/fpinnovations/TN292.PDF`
+- [x] `notes/reference/fpinnovations/TN292.PDF`
   - Build a harvester productivity function parameterised by mean tree volume and stand density (based on Kenmatt/Brinkman study).
   - Surface optional cost outputs or elasticities for pipeline integration.
   - Regression tests spanning the min/max tree-size brackets.

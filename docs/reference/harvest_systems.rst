@@ -120,3 +120,7 @@ the ADV6N10 single-grip model:
   productivity (30/50/70 %) plus an optional ``--ctl-brushed`` flag (adds the observed 21 % boost
   when brush crews pre-clear). Supply ``--ctl-removal-fraction`` (0–1 within the 0.30–0.70 window)
   to interpolate between the published removal levels.
+* ``tn292`` – Bulley (1999) TN292 Alberta thinning (Kenmatt/Brinkman). Models harvester
+  productivity versus tree size and stand density. Requires ``--ctl-stem-volume`` (m³/stem),
+  ``--ctl-density`` (trees/ha), and ``--ctl-density-basis`` (``pre`` or ``post`` harvest) to match the
+  published regressions.

@@ -7,10 +7,11 @@ from fhops.productivity import (
     KelloggLoadType,
     estimate_harvester_productivity_adv5n30,
     estimate_harvester_productivity_adv6n10,
+    estimate_harvester_productivity_tn292,
     estimate_forwarder_productivity_kellogg_bettinger,
     estimate_forwarder_productivity_small_forwarder_thinning,
 )
-from fhops.productivity.harvester_ctl import ADV6N10HarvesterInputs
+from fhops.productivity.harvester_ctl import ADV6N10HarvesterInputs, TN292HarvesterInputs
 from fhops.productivity.forwarder_bc import (
     ForwarderBCModel,
     estimate_forwarder_productivity_bc,
@@ -222,4 +223,28 @@ def test_cli_estimate_productivity_ctl_harvester_adv5n30() -> None:
     )
     assert result.exit_code == 0
     expected = estimate_harvester_productivity_adv5n30(removal_fraction=0.5, brushed=True)
+    assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_estimate_productivity_ctl_harvester_tn292() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "ctl_harvester",
+            "--ctl-harvester-model",
+            "tn292",
+            "--ctl-stem-volume",
+            "0.12",
+            "--ctl-density",
+            "1500",
+            "--ctl-density-basis",
+            "post",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_harvester_productivity_tn292(
+        TN292HarvesterInputs(stem_volume_m3=0.12, stand_density_per_ha=1500, density_basis="post")
+    )
     assert f"{expected:.2f}" in result.stdout

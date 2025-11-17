@@ -4,6 +4,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from dataclasses import dataclass
+import math
+
 from fhops.core.errors import FHOPSValueError
 
 
@@ -81,8 +84,45 @@ def _lerp(y_a: float, y_b: float, t: float) -> float:
     return y_a + (y_b - y_a) * max(0.0, min(1.0, t))
 
 
+@dataclass(frozen=True)
+class TN292HarvesterInputs:
+    """Inputs for the TN292 harvester regression (tree size + density)."""
+
+    stem_volume_m3: float
+    stand_density_per_ha: float
+    density_basis: str = "pre"  # "pre" or "post"
+
+
+def estimate_harvester_productivity_tn292(inputs: TN292HarvesterInputs) -> float:
+    """Estimate harvester productivity (m³/PMH) based on TN292 regressions."""
+
+    _validate_positive("stem_volume_m3", inputs.stem_volume_m3)
+    _validate_positive("stand_density_per_ha", inputs.stand_density_per_ha)
+    density_basis = inputs.density_basis.lower()
+    if density_basis not in {"pre", "post"}:
+        raise FHOPSValueError("density_basis must be 'pre' or 'post'.")
+
+    # Stem volume component (linear regressions from Figure II-A).
+    if inputs.stem_volume_m3 < 0.05 or inputs.stem_volume_m3 > 0.30:
+        raise FHOPSValueError("stem_volume_m3 outside TN292 observed range (0.05–0.30).")
+    if density_basis == "pre":
+        vol_component = -5638.6 * inputs.stem_volume_m3 + 2949.6
+        density_ln = math.log(inputs.stand_density_per_ha)
+        density_component = -4.0842 * density_ln + 48.602
+    else:
+        vol_component = -4509.5 * inputs.stem_volume_m3 + 1864.6
+        density_ln = math.log(inputs.stand_density_per_ha)
+        density_component = -7.0706 * density_ln + 73.977
+    productivity = min(vol_component, density_component)
+    if productivity <= 0:
+        raise FHOPSValueError("Derived TN292 harvester productivity must be > 0.")
+    return productivity
+
+
 __all__ = [
     "ADV6N10HarvesterInputs",
+    "TN292HarvesterInputs",
     "estimate_harvester_productivity_adv6n10",
     "estimate_harvester_productivity_adv5n30",
+    "estimate_harvester_productivity_tn292",
 ]
