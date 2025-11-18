@@ -1,5 +1,10 @@
 # Development Change Log
 
+# 2025-11-22 — Berry (2019) skid-size scaling
+- `fhops.dataset estimate-productivity --machine-role roadside_processor` gained `--processor-skid-area-m2` so analysts can plug in the landing footprint from Berry (2019). The CLI now predicts the average <10 min delay seconds/stem, warns when areas fall outside the 2.5–3.7k m² Kinleith range, and auto-scales the utilisation multiplier when users haven’t supplied `--processor-delay-multiplier`.
+- `data/productivity/processor_berry2019.json` now houses the skid-size regressions, outlier thresholds, and log-grade timing anchors (UH/BHS), and the helper loads all Berry coefficients/multipliers/utilisation from that JSON (no more hard-coded constants).
+- Added regression tests for the new CLI flag so we don’t regress the auto-scaling/warning path when future processor helpers land.
+
 # 2025-11-21 — Loader harvest-system defaults
 - Harvest-system templates now push loader defaults the same way they do for shovel/skidder/skyline helpers. The built-in
   `ground_fb_skid`, `ground_fb_shovel`, and `steep_tethered` systems seed TN-261, ADV5N1, and ADV2N26 inputs respectively

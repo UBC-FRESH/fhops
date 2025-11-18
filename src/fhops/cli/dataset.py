@@ -87,6 +87,7 @@ from fhops.productivity import (
     Labelle2018ProcessorProductivityResult,
     estimate_processor_productivity_labelle2017,
     estimate_processor_productivity_labelle2018,
+    predict_berry2019_skid_effects,
     Labelle2019ProcessorProductivityResult,
     estimate_processor_productivity_labelle2019_dbh,
     Labelle2019VolumeProcessorProductivityResult,
@@ -2589,6 +2590,12 @@ def estimate_productivity_cmd(
         max=1.0,
         help="Utilisation multiplier capturing delays (<10 min) relative to delay-free productivity (Berry 2019 default 0.91).",
     ),
+    processor_skid_area_m2: float | None = typer.Option(
+        None,
+        "--processor-skid-area-m2",
+        min=0.0,
+        help="Approximate skid/landing area (m²). When using Berry (2019) this scales the utilisation multiplier using the published skid-size delay regression.",
+    ),
     loader_model: LoaderProductivityModel = typer.Option(
         LoaderProductivityModel.TN261,
         "--loader-model",
@@ -2971,6 +2978,9 @@ def estimate_productivity_cmd(
             )
         return
     if role == ProductivityMachineRole.ROADSIDE_PROCESSOR.value:
+        processor_delay_supplied = _parameter_supplied(ctx, "processor_delay_multiplier")
+        berry_skid_prediction: dict[str, Any] | None = None
+        berry_skid_auto_adjusted = False
         if processor_model is RoadsideProcessorModel.BERRY2019:
             if processor_piece_size_m3 is None:
                 raise typer.BadParameter(
@@ -2980,6 +2990,40 @@ def estimate_productivity_cmd(
                 raise typer.BadParameter(
                     "--processor-volume-m3 applies to the Labelle volume helper; omit it for berry2019."
                 )
+            if processor_skid_area_m2 is not None:
+                try:
+                    (
+                        predicted_delay_seconds,
+                        predicted_productivity_m3_per_hour,
+                        baseline_delay_seconds,
+                        skid_area_range,
+                        delay_r2,
+                        productivity_r2,
+                    ) = predict_berry2019_skid_effects(processor_skid_area_m2)
+                except ValueError as exc:
+                    raise typer.BadParameter(str(exc)) from exc
+                berry_skid_prediction = {
+                    "skid_area_m2": processor_skid_area_m2,
+                    "delay_seconds": predicted_delay_seconds,
+                    "predicted_productivity_m3_per_hour": predicted_productivity_m3_per_hour,
+                    "baseline_delay_seconds": baseline_delay_seconds,
+                    "out_of_range": bool(
+                        skid_area_range
+                        and (
+                            processor_skid_area_m2 < skid_area_range[0]
+                            or processor_skid_area_m2 > skid_area_range[1]
+                        )
+                    ),
+                    "delay_r2": delay_r2,
+                    "productivity_r2": productivity_r2,
+                }
+                if not processor_delay_supplied and predicted_delay_seconds > 0:
+                    scaled_multiplier = processor_delay_multiplier * (
+                        baseline_delay_seconds / predicted_delay_seconds
+                    )
+                    processor_delay_multiplier = max(min(scaled_multiplier, 1.0), 0.01)
+                    berry_skid_auto_adjusted = True
+
             result_processor = estimate_processor_productivity_berry2019(
                 piece_size_m3=processor_piece_size_m3,
                 tree_form_category=processor_tree_form,
@@ -3087,6 +3131,25 @@ def estimate_productivity_cmd(
                 delay_multiplier=processor_delay_multiplier,
             )
         _render_processor_result(result_processor)
+        if berry_skid_prediction is not None:
+            delay_line = (
+                f"[dim]Berry skid-size model predicts {berry_skid_prediction['delay_seconds']:.1f} s/stem "
+                f"at {berry_skid_prediction['skid_area_m2']:.0f} m²."
+            )
+            if berry_skid_prediction["out_of_range"]:
+                delay_line += " (Outside the published ~2.5–3.7k m² study range.)"
+            if berry_skid_auto_adjusted:
+                delay_line += f" Delay multiplier auto-adjusted to {processor_delay_multiplier:.3f}."
+            elif processor_delay_supplied:
+                delay_line += " Delay multiplier left unchanged because --processor-delay-multiplier was supplied."
+            console.print(delay_line + "[/dim]")
+            predicted_prod = berry_skid_prediction["predicted_productivity_m3_per_hour"]
+            if predicted_prod is not None:
+                r2_text = berry_skid_prediction["productivity_r2"]
+                r2_fragment = f"~R² {r2_text:.2f}" if isinstance(r2_text, (float, int)) else "weak fit"
+                console.print(
+                    f"[dim]Skid-size productivity regression ({r2_fragment}) suggests ≈{predicted_prod:.1f} m³/PMH for this landing size (informational only).[/dim]"
+                )
         return
     if role == ProductivityMachineRole.LOADER.value:
         loader_user_supplied = {

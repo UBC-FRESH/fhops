@@ -179,3 +179,51 @@ def test_cli_processor_labelle2018_variant() -> None:
         dbh_cm=35.0,
     )
     assert f"{expected.productivity_m3_per_pmh:.2f}" in result.stdout
+
+
+def test_cli_processor_berry2019_skid_area_auto_multiplier() -> None:
+    skid_area = 2600.0
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "roadside_processor",
+            "--processor-piece-size-m3",
+            "1.5",
+            "--processor-skid-area-m2",
+            str(skid_area),
+        ],
+    )
+    assert result.exit_code == 0
+    base_prod = 34.7 * 1.5 + 11.3
+    predicted_delay = -0.015 * skid_area + 53.0
+    expected_multiplier = max(min(0.91 * (10.9 / predicted_delay), 1.0), 0.01)
+    expected_productivity = base_prod * expected_multiplier
+    assert f"{expected_productivity:.2f}" in result.stdout
+    assert "Berry skid-size model predicts" in result.stdout
+
+
+def test_cli_processor_berry2019_skid_area_respects_manual_delay() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "roadside_processor",
+            "--processor-piece-size-m3",
+            "1.5",
+            "--processor-skid-area-m2",
+            "2600",
+            "--processor-delay-multiplier",
+            "0.8",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_processor_productivity_berry2019(
+        piece_size_m3=1.5,
+        delay_multiplier=0.8,
+    )
+    assert f"{expected.productivity_m3_per_pmh:.2f}" in result.stdout
+    assert "Delay multiplier left" in result.stdout
+    assert "unchanged because --processor-delay-multiplier was supplied" in result.stdout

@@ -116,6 +116,7 @@ from .processor_loader import (
     estimate_processor_productivity_labelle2016,
     estimate_processor_productivity_labelle2017,
     estimate_processor_productivity_labelle2018,
+    predict_berry2019_skid_effects,
 )
 
 __all__ = [
@@ -191,6 +192,7 @@ __all__ = [
     "Labelle2019VolumeProcessorProductivityResult",
     "estimate_loader_forwarder_productivity_tn261",
     "estimate_loader_forwarder_productivity_adv5n1",
+    "predict_berry2019_skid_effects",
     "LoaderForwarderProductivityResult",
     "LoaderAdv5N1ProductivityResult",
     "ClambunkProductivityResult",

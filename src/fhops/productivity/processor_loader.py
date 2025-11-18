@@ -56,6 +56,61 @@ def _load_default_utilisation() -> float:
     return float(percent) / 100.0
 
 
+def _load_skid_size_models() -> tuple[
+    dict[str, float],
+    dict[str, float] | None,
+    float,
+    tuple[float, float] | None,
+]:
+    data = _load_berry_dataset()
+    skid = data.get("skid_size")
+    if not skid:
+        raise KeyError("Berry (2019) dataset missing skid-size section.")
+    delay_model = skid.get("delay_per_stem_equation")
+    if not delay_model:
+        raise KeyError("Berry (2019) dataset missing skid delay model.")
+    productivity_model = skid.get("productivity_equation")
+    outlier = skid.get("outlier_test") or {}
+    baseline_delay = float(outlier.get("mean_seconds", 10.9))
+    area_range = skid.get("area_range_m2")
+    area_tuple = None
+    if isinstance(area_range, dict):
+        area_tuple = (
+            float(area_range.get("min", float("-inf"))),
+            float(area_range.get("max", float("inf"))),
+        )
+    return delay_model, productivity_model, baseline_delay, area_tuple
+
+
+def predict_berry2019_skid_effects(
+    skid_area_m2: float,
+) -> tuple[float, float | None, float, tuple[float, float] | None, float | None, float | None]:
+    if skid_area_m2 <= 0:
+        raise ValueError("Skid area must be > 0.")
+    delay_model, productivity_model, baseline_delay, area_range = _load_skid_size_models()
+    slope = float(delay_model.get("slope_seconds_per_m2", 0.0))
+    intercept = float(delay_model.get("intercept_seconds", 0.0))
+    delay_seconds = max(intercept + slope * skid_area_m2, 0.1)
+    delay_r2 = delay_model.get("r2")
+
+    predicted_productivity = None
+    productivity_r2 = None
+    if productivity_model:
+        prod_slope = float(productivity_model.get("slope_m3_per_hour_per_m2", 0.0))
+        prod_intercept = float(productivity_model.get("intercept_m3_per_hour", 0.0))
+        predicted_productivity = prod_intercept + prod_slope * skid_area_m2
+        productivity_r2 = productivity_model.get("r2")
+
+    return (
+        delay_seconds,
+        predicted_productivity,
+        baseline_delay,
+        area_range,
+        delay_r2,
+        productivity_r2,
+    )
+
+
 _TREE_FORM_PRODUCTIVITY_MULTIPLIERS = _load_tree_form_productivity_multipliers()
 _BERRY_BASE_SLOPE, _BERRY_BASE_INTERCEPT = _load_piece_size_regression()
 _BERRY_DEFAULT_UTILISATION = _load_default_utilisation()
