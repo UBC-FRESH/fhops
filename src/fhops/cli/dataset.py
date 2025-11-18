@@ -74,6 +74,7 @@ from fhops.productivity import (
     running_skyline_variant_defaults,
     estimate_forwarder_productivity_bc,
     estimate_harvester_productivity_adv6n10,
+    estimate_harvester_productivity_kellogg1994,
     estimate_productivity,
     estimate_productivity_distribution,
     estimate_shovel_logger_productivity_sessions2006,
@@ -455,6 +456,7 @@ class CTLHarvesterModel(str, Enum):
     ADV6N10 = "adv6n10"
     ADV5N30 = "adv5n30"
     TN292 = "tn292"
+    KELLOGG1994 = "kellogg1994"
 
 
 class CableSkiddingModel(str, Enum):
@@ -1788,6 +1790,13 @@ def _render_ctl_harvester_result(
             ]
         )
         source = "Bulley (1999) TN292 Alberta thinning study"
+    elif model is CTLHarvesterModel.KELLOGG1994 and isinstance(inputs, dict):
+        rows.extend(
+            [
+                ("DBH (cm)", f"{inputs['dbh_cm']:.1f}"),
+            ]
+        )
+        source = "Kellogg & Bettinger (1994) western Oregon CTL thinning study"
     else:
         raise RuntimeError("Unhandled CTL harvester model payload.")
     rows.append(("Predicted Productivity (m³/PMH)", f"{productivity:.2f}"))
@@ -1806,6 +1815,7 @@ def _evaluate_ctl_harvester_result(
     brushed: bool,
     density: float | None,
     density_basis: str,
+    dbh_cm: float | None,
 ) -> tuple[object, float]:
     if model is CTLHarvesterModel.ADV6N10:
         missing = []
@@ -1863,6 +1873,14 @@ def _evaluate_ctl_harvester_result(
         except FHOPSValueError as exc:  # pragma: no cover
             raise typer.BadParameter(str(exc)) from exc
         return inputs, value
+    if model is CTLHarvesterModel.KELLOGG1994:
+        if dbh_cm is None:
+            raise typer.BadParameter("--ctl-dbh-cm is required for Kellogg (1994) model.")
+        try:
+            value = estimate_harvester_productivity_kellogg1994(dbh_cm=dbh_cm)
+        except FHOPSValueError as exc:  # pragma: no cover
+            raise typer.BadParameter(str(exc)) from exc
+        return {"dbh_cm": dbh_cm}, value
     raise typer.BadParameter(f"Unsupported CTL harvester model: {model}")
 
 
@@ -2318,6 +2336,12 @@ def estimate_productivity_cmd(
         "--ctl-density",
         min=0.0,
         help="Stand density (trees/ha) for TN292 model.",
+    ),
+    ctl_dbh_cm: float | None = typer.Option(
+        None,
+        "--ctl-dbh-cm",
+        min=0.0,
+        help="Mean DBH (cm) for the Kellogg & Bettinger (1994) harvester model.",
     ),
     ctl_density_basis: str = typer.Option(
         "pre",
@@ -2907,6 +2931,7 @@ def estimate_productivity_cmd(
             brushed=ctl_brushed,
             density=ctl_density,
             density_basis=ctl_density_basis,
+            dbh_cm=ctl_dbh_cm,
         )
         _render_ctl_harvester_result(ctl_harvester_model, inputs, value)
         return

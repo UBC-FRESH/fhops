@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from dataclasses import dataclass
 import math
 
 from fhops.core.errors import FHOPSValueError
@@ -119,10 +118,23 @@ def estimate_harvester_productivity_tn292(inputs: TN292HarvesterInputs) -> float
     return productivity
 
 
+def estimate_harvester_productivity_kellogg1994(*, dbh_cm: float) -> float:
+    """Linear dbh → m³/PMH regression from Kellogg & Bettinger (1994)."""
+
+    _validate_positive("dbh_cm", dbh_cm)
+    if dbh_cm < 10.0 or dbh_cm > 50.0:
+        raise FHOPSValueError("dbh_cm outside Kellogg & Bettinger study range (10–50 cm).")
+    productivity = -17.48 + 2.11 * dbh_cm
+    if productivity <= 0:
+        raise FHOPSValueError("Derived Kellogg harvester productivity must be > 0.")
+    return productivity
+
+
 __all__ = [
     "ADV6N10HarvesterInputs",
     "TN292HarvesterInputs",
     "estimate_harvester_productivity_adv6n10",
     "estimate_harvester_productivity_adv5n30",
     "estimate_harvester_productivity_tn292",
+    "estimate_harvester_productivity_kellogg1994",
 ]

@@ -14,6 +14,7 @@ from fhops.productivity import (
     estimate_harvester_productivity_adv5n30,
     estimate_harvester_productivity_adv6n10,
     estimate_harvester_productivity_tn292,
+    estimate_harvester_productivity_kellogg1994,
     estimate_forwarder_productivity_kellogg_bettinger,
     estimate_forwarder_productivity_small_forwarder_thinning,
     ShovelLoggerSessions2006Inputs,
@@ -664,4 +665,22 @@ def test_cli_estimate_productivity_ctl_harvester_tn292() -> None:
     expected = estimate_harvester_productivity_tn292(
         TN292HarvesterInputs(stem_volume_m3=0.12, stand_density_per_ha=1500, density_basis="post")
     )
+    assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_estimate_productivity_ctl_harvester_kellogg1994() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "ctl_harvester",
+            "--ctl-harvester-model",
+            "kellogg1994",
+            "--ctl-dbh-cm",
+            "23",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_harvester_productivity_kellogg1994(dbh_cm=23.0)
     assert f"{expected:.2f}" in result.stdout

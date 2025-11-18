@@ -393,3 +393,6 @@ the ADV6N10 single-grip model:
   productivity versus tree size and stand density. Requires ``--ctl-stem-volume`` (m³/stem),
   ``--ctl-density`` (trees/ha), and ``--ctl-density-basis`` (``pre`` or ``post`` harvest) to match the
   published regressions.
+* ``kellogg1994`` – Kellogg & Bettinger (1994) western Oregon CTL thinning case (Timberjack 2518
+  harvester). Supply ``--ctl-dbh-cm`` (study range 10–50 cm). The helper outputs delay-free m³/PMH
+  so you can compare harvester productivity directly with the paired Kellogg forwarder models.
