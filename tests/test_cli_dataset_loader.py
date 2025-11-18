@@ -7,6 +7,7 @@ from typer.testing import CliRunner
 from fhops.cli.dataset import dataset_app
 from fhops.productivity import (
     estimate_loader_forwarder_productivity_adv5n1,
+    estimate_loader_productivity_barko450,
     estimate_clambunk_productivity_adv2n26,
     estimate_loader_forwarder_productivity_tn261,
 )
@@ -110,6 +111,24 @@ def test_cli_loader_adv5n1_slope_class() -> None:
         utilisation=0.9,
     )
     assert f"{expected.productivity_m3_per_smh:.2f}" in result.stdout
+
+
+def test_cli_loader_barko450_cable_yard() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "loader",
+            "--loader-model",
+            "barko450",
+            "--loader-barko-scenario",
+            "cable_yard_block",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    expected = estimate_loader_productivity_barko450(scenario="cable_yard_block")
+    assert f"{expected.avg_volume_per_shift_m3:.0f}" in result.stdout
 
 
 def test_cli_loader_telemetry(tmp_path) -> None:

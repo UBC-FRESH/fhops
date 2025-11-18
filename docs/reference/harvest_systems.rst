@@ -179,7 +179,7 @@ or conifer-dominated BC blocks.
 Loader-Forwarder Productivity Models
 ------------------------------------
 
-``fhops.dataset estimate-productivity --machine-role loader`` now supports two literature-backed presets:
+``fhops.dataset estimate-productivity --machine-role loader`` now supports three literature-backed presets:
 
 * ``--loader-model tn261`` (default) – the Vancouver Island loader-forwarder study (FERIC TN-261, 1994).
   Provide:
@@ -228,6 +228,11 @@ Loader-Forwarder Productivity Models
 
   CLI output reports the linear coefficients (intercept/slope), cycle time (minutes), delay-free m³/PMH, and
   utilisation-adjusted m³/SMH so corridor costing flows can adopt the ADV5N1 defaults immediately.
+* ``--loader-model barko450`` – FERIC TN-46 Barko 450 live-heel loader preset for interior roadside decks. No
+  predictors are required; instead pick ``--loader-barko-scenario`` (``ground_skid_block`` for the grapple-skid trial
+  or ``cable_yard_block`` for the Washington 78 yarder decks) to show the published ≈658 m³/shift averages,
+  availability (96 %), utilisation (79 %), and the ~17 % truck-wait/move penalty. This is ideal when you need a
+  BC loader baseline but lack a regression.
 
 Loader harvest-system overrides
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

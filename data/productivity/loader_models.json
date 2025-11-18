@@ -77,5 +77,22 @@
     "references": [
       "FPInnovations ADV-5 No. 1 (2004). Using mechanized systems to harvest second-growth forests in coastal BC."
     ]
+  },
+  "barko450": {
+    "description": "FERIC TN-46 Barko 450 live-heel loader (interior BC) handling grapple-skidded decks and Washington 78 yarder wood.",
+    "defaults": {
+      "utilisation_percent": 79.0,
+      "availability_percent": 96.0,
+      "wait_truck_move_sort_percent": 17.0,
+      "avg_volume_per_shift_ground_m3": 658.0,
+      "avg_volume_per_shift_yarder_m3": 654.0
+    },
+    "notes": [
+      "Production capped by truck supply (≈12 off-highway loads per day).",
+      "Live-heel grapple facilitated multi-stem handling but waits/moves dominated downtime."
+    ],
+    "references": [
+      "FERIC TN-46 (1982). Evaluation of Barko 450 Loader."
+    ]
   }
 }

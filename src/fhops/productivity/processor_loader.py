@@ -13,6 +13,7 @@ _DATA_ROOT = Path(__file__).resolve().parents[3] / "data" / "productivity"
 _BERRY_DATA_PATH = _DATA_ROOT / "processor_berry2019.json"
 _ADV5N6_DATA_PATH = _DATA_ROOT / "processor_adv5n6.json"
 _TN166_DATA_PATH = _DATA_ROOT / "processor_tn166.json"
+_BARKO450_DATA_PATH = _DATA_ROOT / "loader_barko450.json"
 @lru_cache(maxsize=1)
 def _load_berry_dataset() -> dict[str, object]:
     try:
@@ -35,6 +36,14 @@ def _load_tn166_dataset() -> dict[str, object]:
         return json.loads(_TN166_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
         raise FileNotFoundError(f"TN-166 processor data missing: {_TN166_DATA_PATH}") from exc
+
+
+@lru_cache(maxsize=1)
+def _load_barko450_dataset() -> dict[str, object]:
+    try:
+        return json.loads(_BARKO450_DATA_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:  # pragma: no cover - configuration error
+        raise FileNotFoundError(f"Barko 450 loader data missing: {_BARKO450_DATA_PATH}") from exc
 
 
 @lru_cache(maxsize=1)
@@ -156,6 +165,17 @@ def _load_tn166_scenarios() -> dict[str, dict[str, object]]:
             combined["cycle_time_minutes"] = cycle
         if accuracy and "accuracy" not in combined:
             combined["accuracy"] = accuracy
+        scenarios[entry["name"]] = combined
+    return scenarios
+
+
+@lru_cache(maxsize=1)
+def _load_barko450_scenarios() -> dict[str, dict[str, object]]:
+    payload = _load_barko450_dataset()
+    utilisation = payload.get("utilisation") or {}
+    scenarios: dict[str, dict[str, object]] = {}
+    for entry in payload.get("scenarios", []):
+        combined = {**utilisation, **entry}
         scenarios[entry["name"]] = combined
     return scenarios
 
@@ -719,6 +739,21 @@ class ClambunkProductivityResult:
     productivity_m3_per_smh: float
 
 
+@dataclass(frozen=True)
+class LoaderBarko450ProductivityResult:
+    scenario: str
+    description: str
+    avg_volume_per_shift_m3: float
+    avg_volume_per_load_m3: float | None
+    total_volume_m3: float | None
+    total_truck_loads: float | None
+    monitoring_days: float | None
+    utilisation_percent: float | None
+    availability_percent: float | None
+    wait_truck_move_sort_percent: float | None
+    notes: tuple[str, ...] | None
+
+
 def estimate_clambunk_productivity_adv2n26(
     *,
     travel_empty_distance_m: float,
@@ -946,5 +981,34 @@ def estimate_processor_productivity_tn166(
         cost_cad_per_m3=float(payload["cost_cad_per_m3"]),
         cost_cad_per_stem=_maybe("cost_cad_per_stem"),
         cycle_time_minutes=cycle_dict,
+        notes=tuple(notes) if notes else None,
+    )
+
+
+def estimate_loader_productivity_barko450(
+    *, scenario: Literal["ground_skid_block", "cable_yard_block"]
+) -> LoaderBarko450ProductivityResult:
+    scenarios = _load_barko450_scenarios()
+    payload = scenarios.get(scenario)
+    if payload is None:
+        valid = ", ".join(sorted(scenarios))
+        raise ValueError(f"Unknown Barko 450 scenario '{scenario}'. Valid options: {valid}.")
+
+    def _maybe_float(name: str) -> float | None:
+        value = payload.get(name)
+        return None if value is None else float(value)
+
+    notes = payload.get("notes")
+    return LoaderBarko450ProductivityResult(
+        scenario=payload.get("name", scenario),
+        description=payload.get("description", ""),
+        avg_volume_per_shift_m3=float(payload["avg_volume_per_shift_m3"]),
+        avg_volume_per_load_m3=_maybe_float("avg_volume_per_load_m3"),
+        total_volume_m3=_maybe_float("total_volume_m3"),
+        total_truck_loads=_maybe_float("total_truck_loads"),
+        monitoring_days=_maybe_float("monitoring_days"),
+        utilisation_percent=_maybe_float("utilisation_percent"),
+        availability_percent=_maybe_float("mechanical_availability_percent"),
+        wait_truck_move_sort_percent=_maybe_float("wait_truck_move_sort_percent"),
         notes=tuple(notes) if notes else None,
     )

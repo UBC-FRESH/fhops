@@ -101,6 +101,8 @@ from fhops.productivity import (
     estimate_loader_forwarder_productivity_tn261,
     estimate_loader_forwarder_productivity_adv5n1,
     LoaderAdv5N1ProductivityResult,
+    LoaderBarko450ProductivityResult,
+    estimate_loader_productivity_barko450,
     ADV5N1_DEFAULT_PAYLOAD_M3,
     ADV5N1_DEFAULT_UTILISATION,
     ClambunkProductivityResult,
@@ -193,6 +195,8 @@ def _apply_loader_system_defaults(
     in_cycle_supplied: bool,
     slope_class: LoaderAdv5N1SlopeClass,
     slope_class_supplied: bool,
+    barko_scenario: LoaderBarkoScenario,
+    barko_scenario_supplied: bool,
 ) -> tuple[
     LoaderProductivityModel,
     float | None,
@@ -207,6 +211,7 @@ def _apply_loader_system_defaults(
     float | None,
     float | None,
     LoaderAdv5N1SlopeClass,
+    LoaderBarkoScenario,
     bool,
 ]:
     if system is None:
@@ -224,6 +229,7 @@ def _apply_loader_system_defaults(
             utilisation,
             in_cycle_delay_minutes,
             slope_class,
+            barko_scenario,
             False,
         )
     overrides = system_productivity_overrides(system, ProductivityMachineRole.LOADER.value)
@@ -242,6 +248,7 @@ def _apply_loader_system_defaults(
             utilisation,
             in_cycle_delay_minutes,
             slope_class,
+            barko_scenario,
             False,
         )
     used = False
@@ -372,6 +379,14 @@ def _apply_loader_system_defaults(
         except ValueError as exc:  # pragma: no cover - validated via docs/tests
             raise ValueError(f"Unknown loader slope-class override '{value}'.") from exc
 
+    value = overrides.get("loader_barko_scenario")
+    if value is not None and not barko_scenario_supplied:
+        try:
+            barko_scenario = LoaderBarkoScenario(str(value))
+            used = True
+        except ValueError as exc:
+            raise ValueError(f"Unknown loader Barko scenario override '{value}'.") from exc
+
     return (
         loader_model,
         piece_size_m3,
@@ -386,6 +401,7 @@ def _apply_loader_system_defaults(
         utilisation,
         in_cycle_delay_minutes,
         slope_class,
+        barko_scenario,
         used,
     )
 
@@ -555,11 +571,17 @@ class LoaderProductivityModel(str, Enum):
     TN261 = "tn261"
     ADV2N26 = "adv2n26"
     ADV5N1 = "adv5n1"
+    BARKO450 = "barko450"
 
 
 class LoaderAdv5N1SlopeClass(str, Enum):
     ZERO_TO_TEN = "0_10"
     ELEVEN_TO_THIRTY = "11_30"
+
+
+class LoaderBarkoScenario(str, Enum):
+    GROUND_SKID_BLOCK = "ground_skid_block"
+    CABLE_YARD_BLOCK = "cable_yard_block"
 
 
 _TR127_MODEL_TO_BLOCK = {
@@ -916,7 +938,8 @@ def _render_processor_result(
 def _render_loader_result(
     result: LoaderForwarderProductivityResult
     | ClambunkProductivityResult
-    | LoaderAdv5N1ProductivityResult,
+    | LoaderAdv5N1ProductivityResult
+    | LoaderBarko450ProductivityResult,
 ) -> None:
     if isinstance(result, LoaderAdv5N1ProductivityResult):
         rows = [
@@ -968,6 +991,34 @@ def _render_loader_result(
                 f"[yellow]Trail impact reminder[/yellow]: {trail.get('occupancy_percent', 0)}% of the sampled area "
                 f"was occupied by unbladed trails ({summary}). Factor these into soil-disturbance constraints."
             )
+        return
+
+    if isinstance(result, LoaderBarko450ProductivityResult):
+        rows = [
+            ("Model", "barko450"),
+            ("Scenario", result.scenario.replace("_", " ")),
+            ("Avg Volume / Shift (m³)", f"{result.avg_volume_per_shift_m3:.0f}"),
+        ]
+        if result.avg_volume_per_load_m3 is not None:
+            rows.append(("Avg Volume / Load (m³)", f"{result.avg_volume_per_load_m3:.1f}"))
+        if result.total_truck_loads is not None:
+            rows.append(("Total Loads", f"{result.total_truck_loads:.0f}"))
+        if result.total_volume_m3 is not None:
+            rows.append(("Total Volume (m³)", f"{result.total_volume_m3:.0f}"))
+        if result.monitoring_days is not None:
+            rows.append(("Monitoring Days", f"{result.monitoring_days:.0f}"))
+        if result.utilisation_percent is not None:
+            rows.append(("Utilisation (%)", f"{result.utilisation_percent:.1f}"))
+        if result.availability_percent is not None:
+            rows.append(("Availability (%)", f"{result.availability_percent:.1f}"))
+        if result.wait_truck_move_sort_percent is not None:
+            rows.append(("Wait/Move/Sort (%)", f"{result.wait_truck_move_sort_percent:.1f}"))
+        _render_kv_table("Loader Productivity Estimate", rows)
+        console.print(
+            "[dim]FERIC TN-46 Barko 450 loader trial (ground-skid vs. yarder-fed decks). Production capped by truck supply; utilisation losses (~17%) reflect truck waits/moves. Use this preset for live-heel loader ops when regressions are unavailable.[/dim]"
+        )
+        if result.notes:
+            console.print(f"[dim]{' '.join(result.notes)}[/dim]")
         return
 
     rows = [
@@ -2758,7 +2809,7 @@ def estimate_productivity_cmd(
         LoaderProductivityModel.TN261,
         "--loader-model",
         case_sensitive=False,
-        help="Loader helper to use (`tn261` = Vancouver Island loader-forwarder, `adv2n26` = TG88 clambunk support).",
+        help="Loader helper to use (tn261 | adv2n26 | adv5n1 | barko450).",
     ),
     loader_piece_size_m3: float | None = typer.Option(
         None,
@@ -2832,6 +2883,12 @@ def estimate_productivity_cmd(
         "--loader-slope-class",
         case_sensitive=False,
         help="ADV5N1 slope class (0_10 vs 11_30).",
+    ),
+    loader_barko_scenario: LoaderBarkoScenario = typer.Option(
+        LoaderBarkoScenario.GROUND_SKID_BLOCK,
+        "--loader-barko-scenario",
+        case_sensitive=False,
+        help="Scenario for Barko 450 loader preset (ground_skid_block | cable_yard_block).",
     ),
     shovel_passes: int | None = typer.Option(
         None,
@@ -3363,6 +3420,7 @@ def estimate_productivity_cmd(
                 ctx, "loader_in_cycle_delay_minutes"
             ),
             "loader_slope_class": _parameter_supplied(ctx, "loader_slope_class"),
+            "loader_barko_scenario": _parameter_supplied(ctx, "loader_barko_scenario"),
         }
         (
             loader_model,
@@ -3378,6 +3436,7 @@ def estimate_productivity_cmd(
             loader_utilisation,
             loader_in_cycle_delay_minutes,
             loader_slope_class,
+            loader_barko_scenario,
             loader_defaults_used,
         ) = _apply_loader_system_defaults(
             system=selected_system,
@@ -3407,6 +3466,8 @@ def estimate_productivity_cmd(
             in_cycle_supplied=loader_user_supplied["loader_in_cycle_delay_minutes"],
             slope_class=loader_slope_class,
             slope_class_supplied=loader_user_supplied["loader_slope_class"],
+            barko_scenario=loader_barko_scenario,
+            barko_scenario_supplied=loader_user_supplied["loader_barko_scenario"],
         )
         loader_metadata = _loader_model_metadata(loader_model)
         if loader_model is LoaderProductivityModel.TN261:
@@ -3457,7 +3518,7 @@ def estimate_productivity_cmd(
                 "total_cycle_minutes": loader_result.total_cycle_minutes,
                 "productivity_m3_per_smh": loader_result.productivity_m3_per_smh,
             }
-        else:
+        elif loader_model is LoaderProductivityModel.ADV5N1:
             if loader_distance_m is None:
                 raise typer.BadParameter("--loader-distance-m is required when --loader-model adv5n1.")
             utilisation_value = (
@@ -3481,6 +3542,21 @@ def estimate_productivity_cmd(
                 "cycle_time_minutes": loader_result.cycle_time_minutes,
                 "productivity_m3_per_smh": loader_result.productivity_m3_per_smh,
             }
+        elif loader_model is LoaderProductivityModel.BARKO450:
+            result = estimate_loader_productivity_barko450(
+                scenario=loader_barko_scenario.value,
+            )
+            telemetry_inputs = {
+                "scenario": loader_barko_scenario.value,
+            }
+            telemetry_outputs = {
+                "avg_volume_per_shift_m3": result.avg_volume_per_shift_m3,
+                "utilisation_percent": result.utilisation_percent,
+                "availability_percent": result.availability_percent,
+            }
+            loader_result = result
+        else:  # pragma: no cover - defensive, all enums handled
+            raise RuntimeError(f"Unhandled loader model {loader_model}")
         _render_loader_result(loader_result)
         if telemetry_log:
             _append_loader_telemetry(
