@@ -158,6 +158,12 @@ regressions:
     ``a + b·V₆ − c·V₆²`` polynomials published in Appendix 8/9 and still reports PMH₀ outputs.
   * Continue using ``--processor-delay-multiplier`` for utilisation assumptions; CLI output reminds
     users that this model is intended for hardwood-dominated export scenarios rather than BC norms.
+* ``--processor-model adv5n6`` – FPInnovations Advantage Vol. 5 No. 6 coastal BC processor study
+  (Madill 3800 with Waratah HTH624). Use ``--processor-stem-source`` (``loader_forwarded`` or
+  ``grapple_yarded``) plus ``--processor-processing-mode`` (``cold``, ``hot``, or ``low_volume``) to
+  match the published cold-deck loader-forwarded scenario vs. the grapple-yarded hot/cold decks.
+  Outputs provide both PMH and SMH productivity along with the $/m³ cost figure from the report, so
+  analysts can keep BC roadside presets tied to local landing data.
 
 CLI output reports the base delay-free productivity, the applied multipliers, and the utilisation-adjusted
 m³/PMH so costing workflows can decide which value to pass downstream. Remember that the Labelle models

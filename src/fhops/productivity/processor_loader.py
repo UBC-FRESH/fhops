@@ -12,6 +12,9 @@ from typing import Literal
 _BERRY_DATA_PATH = (
     Path(__file__).resolve().parents[3] / "data" / "productivity" / "processor_berry2019.json"
 )
+_ADV5N6_DATA_PATH = (
+    Path(__file__).resolve().parents[3] / "data" / "productivity" / "processor_adv5n6.json"
+)
 
 
 @lru_cache(maxsize=1)
@@ -20,6 +23,14 @@ def _load_berry_dataset() -> dict[str, object]:
         return json.loads(_BERRY_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
         raise FileNotFoundError(f"Berry (2019) processor data missing: {_BERRY_DATA_PATH}") from exc
+
+
+@lru_cache(maxsize=1)
+def _load_adv5n6_dataset() -> dict[str, object]:
+    try:
+        return json.loads(_ADV5N6_DATA_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:  # pragma: no cover - configuration error
+        raise FileNotFoundError(f"ADV5N6 processor data missing: {_ADV5N6_DATA_PATH}") from exc
 
 
 def _load_tree_form_productivity_multipliers() -> dict[int, float]:
@@ -109,6 +120,15 @@ def predict_berry2019_skid_effects(
         delay_r2,
         productivity_r2,
     )
+
+
+@lru_cache(maxsize=1)
+def _load_adv5n6_scenarios() -> dict[str, dict[str, object]]:
+    payload = _load_adv5n6_dataset()
+    scenarios: dict[str, dict[str, object]] = {}
+    for entry in payload.get("scenarios", []):
+        scenarios[entry["name"]] = entry
+    return scenarios
 
 
 _TREE_FORM_PRODUCTIVITY_MULTIPLIERS = _load_tree_form_productivity_multipliers()
@@ -733,6 +753,24 @@ class LoaderAdv5N1ProductivityResult:
     productivity_m3_per_smh: float
 
 
+@dataclass(frozen=True)
+class ADV5N6ProcessorProductivityResult:
+    stem_source: str
+    processing_mode: str
+    description: str
+    productivity_m3_per_pmh: float
+    productivity_m3_per_smh: float
+    stems_per_pmh: float | None
+    stems_per_smh: float | None
+    mean_stem_volume_m3: float | None
+    utilisation_percent: float | None
+    availability_percent: float | None
+    shift_length_hours: float | None
+    cost_cad_per_m3: float
+    machine_rate_cad_per_smh: float | None
+    notes: tuple[str, ...] | None
+
+
 def estimate_loader_forwarder_productivity_adv5n1(
     *,
     forwarding_distance_m: float,
@@ -768,4 +806,53 @@ def estimate_loader_forwarder_productivity_adv5n1(
         cycle_time_minutes=cycle_minutes,
         delay_free_productivity_m3_per_pmh=delay_free,
         productivity_m3_per_smh=productivity_smh,
+    )
+
+
+def estimate_processor_productivity_adv5n6(
+    *,
+    stem_source: Literal["loader_forwarded", "grapple_yarded"],
+    processing_mode: Literal["cold", "hot", "low_volume"],
+) -> ADV5N6ProcessorProductivityResult:
+    scenarios = _load_adv5n6_scenarios()
+    if stem_source == "loader_forwarded":
+        if processing_mode != "cold":
+            raise ValueError(
+                "ADV5N6 only contains loader-forwarded data for cold processing decks."
+            )
+        scenario_key = "loader_forwarded_cold"
+    else:
+        if processing_mode == "cold":
+            scenario_key = "grapple_yarded_cold"
+        elif processing_mode == "hot":
+            scenario_key = "grapple_yarded_hot"
+        elif processing_mode == "low_volume":
+            scenario_key = "grapple_yarded_low_volume"
+        else:
+            raise ValueError(f"Unknown processing_mode '{processing_mode}'.")
+
+    payload = scenarios.get(scenario_key)
+    if payload is None:
+        raise ValueError(f"ADV5N6 scenario '{scenario_key}' unavailable.")
+
+    def _maybe(name: str) -> float | None:
+        value = payload.get(name)
+        return None if value is None else float(value)
+
+    notes = payload.get("notes")
+    return ADV5N6ProcessorProductivityResult(
+        stem_source=payload.get("stem_source", stem_source),
+        processing_mode=payload.get("processing_mode", processing_mode),
+        description=payload.get("description", ""),
+        productivity_m3_per_pmh=float(payload["productivity_m3_per_pmh"]),
+        productivity_m3_per_smh=float(payload["productivity_m3_per_smh"]),
+        stems_per_pmh=_maybe("stems_per_pmh"),
+        stems_per_smh=_maybe("stems_per_smh"),
+        mean_stem_volume_m3=_maybe("mean_stem_volume_m3"),
+        utilisation_percent=_maybe("utilisation_percent"),
+        availability_percent=_maybe("availability_percent"),
+        shift_length_hours=_maybe("shift_length_hours"),
+        cost_cad_per_m3=float(payload["cost_cad_per_m3"]),
+        machine_rate_cad_per_smh=_maybe("machine_rate_cad_per_smh"),
+        notes=tuple(notes) if notes else None,
     )

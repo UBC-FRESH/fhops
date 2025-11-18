@@ -88,6 +88,8 @@ from fhops.productivity import (
     Labelle2018ProcessorProductivityResult,
     estimate_processor_productivity_labelle2017,
     estimate_processor_productivity_labelle2018,
+    ADV5N6ProcessorProductivityResult,
+    estimate_processor_productivity_adv5n6,
     predict_berry2019_skid_effects,
     Labelle2019ProcessorProductivityResult,
     estimate_processor_productivity_labelle2019_dbh,
@@ -98,6 +100,7 @@ from fhops.productivity import (
     estimate_loader_forwarder_productivity_adv5n1,
     LoaderAdv5N1ProductivityResult,
     ADV5N1_DEFAULT_PAYLOAD_M3,
+    ADV5N1_DEFAULT_UTILISATION,
     ClambunkProductivityResult,
     estimate_clambunk_productivity_adv2n26,
     ADV2N26_DEFAULT_TRAVEL_EMPTY_M,
@@ -496,6 +499,18 @@ class RoadsideProcessorModel(str, Enum):
     LABELLE2018 = "labelle2018"
     LABELLE2019_DBH = "labelle2019_dbh"
     LABELLE2019_VOLUME = "labelle2019_volume"
+    ADV5N6 = "adv5n6"
+
+
+class ADV5N6StemSource(str, Enum):
+    LOADER_FORWARDED = "loader_forwarded"
+    GRAPPLE_YARDED = "grapple_yarded"
+
+
+class ADV5N6ProcessingMode(str, Enum):
+    COLD = "cold"
+    HOT = "hot"
+    LOW_VOLUME = "low_volume"
 
 
 class LabelleProcessorSpecies(str, Enum):
@@ -780,24 +795,63 @@ def _render_processor_result(
         )
         return
 
-    rows = [
-        ("Model", "labelle2019_volume"),
-        ("Species", result.species),
-        ("Treatment", result.treatment.replace("_", " ")),
-        ("Recovered Volume (m³)", f"{result.volume_m3:.3f}"),
-        (
-            "Polynomial",
-            f"{result.intercept:+.2f} + {result.linear:.2f}·V - {result.quadratic:.3f}·V^{result.exponent:.0f}",
-        ),
-        ("Sample Trees", str(result.sample_trees)),
-        ("Delay-free Productivity (m³/PMH)", f"{result.delay_free_productivity_m3_per_pmh:.2f}"),
-        ("Delay Multiplier", f"{result.delay_multiplier:.3f}"),
-        ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
-    ]
-    _render_kv_table("Roadside Processor Productivity Estimate", rows)
-    console.print(
-        "[dim]Labelle et al. (2019) hardwood volume regression (PMH₀); use --processor-delay-multiplier to apply utilisation when exporting beyond Bavaria.[/dim]"
-    )
+    elif isinstance(result, Labelle2019VolumeProcessorProductivityResult):
+        rows = [
+            ("Model", "labelle2019_volume"),
+            ("Species", result.species),
+            ("Treatment", result.treatment.replace("_", " ")),
+            ("Recovered Volume (m³)", f"{result.volume_m3:.3f}"),
+            (
+                "Polynomial",
+                f"{result.intercept:+.2f} + {result.linear:.2f}·V - {result.quadratic:.3f}·V^{result.exponent:.0f}",
+            ),
+            ("Sample Trees", str(result.sample_trees)),
+            (
+                "Delay-free Productivity (m³/PMH)",
+                f"{result.delay_free_productivity_m3_per_pmh:.2f}",
+            ),
+            ("Delay Multiplier", f"{result.delay_multiplier:.3f}"),
+            ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
+        ]
+        _render_kv_table("Roadside Processor Productivity Estimate", rows)
+        console.print(
+            "[dim]Labelle et al. (2019) hardwood volume regression (PMH₀); use --processor-delay-multiplier to apply utilisation when exporting beyond Bavaria.[/dim]"
+        )
+        return
+
+    elif isinstance(result, ADV5N6ProcessorProductivityResult):
+        rows = [
+            ("Model", "adv5n6"),
+            ("Stem Source", result.stem_source.replace("_", " ")),
+            ("Processing Mode", result.processing_mode.replace("_", " ")),
+            ("Scenario", result.description or "See ADV5N6 case notes"),
+            ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.1f}"),
+            ("Productivity (m³/SMH)", f"{result.productivity_m3_per_smh:.1f}"),
+            ("Cost ($/m³)", f"{result.cost_cad_per_m3:.2f}"),
+        ]
+        if result.mean_stem_volume_m3 is not None:
+            rows.append(("Mean Stem Volume (m³)", f"{result.mean_stem_volume_m3:.2f}"))
+        if result.stems_per_pmh is not None:
+            rows.append(("Stems per PMH", f"{result.stems_per_pmh:.1f}"))
+        if result.stems_per_smh is not None:
+            rows.append(("Stems per SMH", f"{result.stems_per_smh:.1f}"))
+        if result.utilisation_percent is not None:
+            rows.append(("Utilisation (%)", f"{result.utilisation_percent:.0f}"))
+        if result.availability_percent is not None:
+            rows.append(("Availability (%)", f"{result.availability_percent:.0f}"))
+        if result.shift_length_hours is not None:
+            rows.append(("Shift Length (h)", f"{result.shift_length_hours:.1f}"))
+        if result.machine_rate_cad_per_smh is not None:
+            rows.append(("Machine Rate ($/SMH)", f"{result.machine_rate_cad_per_smh:.2f}"))
+        _render_kv_table("Roadside Processor Productivity Estimate", rows)
+        console.print(
+            "[dim]FPInnovations Advantage Vol. 5 No. 6 (Madill 3800 + Waratah HTH624) landing processor study. Select stem source + processing mode to mirror loader-forwarded vs. grapple-yarded hot/cold decks.[/dim]"
+        )
+        if result.notes:
+            console.print(f"[dim]{' '.join(result.notes)}[/dim]")
+        return
+
+    raise TypeError(f"Unhandled processor result type: {type(result)!r}")
 
 
 def _render_loader_result(
@@ -2544,7 +2598,10 @@ def estimate_productivity_cmd(
         RoadsideProcessorModel.BERRY2019,
         "--processor-model",
         case_sensitive=False,
-        help="Roadside-processor regression to use (berry2019 vs. labelle2019_dbh hardwood).",
+        help=(
+            "Roadside-processor regression to use "
+            "(berry2019 | labelle2016/2017/2018 | labelle2019_dbh | labelle2019_volume | adv5n6)."
+        ),
     ),
     processor_piece_size_m3: float | None = typer.Option(
         None,
@@ -2575,6 +2632,18 @@ def estimate_productivity_cmd(
         "--processor-treatment",
         case_sensitive=False,
         help="Silvicultural treatment for Labelle (2019) hardwood models (clear_cut | selective_cut).",
+    ),
+    processor_stem_source: ADV5N6StemSource = typer.Option(
+        ADV5N6StemSource.LOADER_FORWARDED,
+        "--processor-stem-source",
+        case_sensitive=False,
+        help="Stem source for ADV5N6 (loader_forwarded | grapple_yarded).",
+    ),
+    processor_adv5n6_processing_mode: ADV5N6ProcessingMode = typer.Option(
+        ADV5N6ProcessingMode.COLD,
+        "--processor-processing-mode",
+        case_sensitive=False,
+        help="Processing mode for ADV5N6 (cold | hot | low_volume).",
     ),
     processor_labelle2016_form: Labelle2016TreeForm = typer.Option(
         Labelle2016TreeForm.ACCEPTABLE,
@@ -3127,6 +3196,30 @@ def estimate_productivity_cmd(
                 treatment=processor_treatment.value,
                 dbh_cm=processor_dbh_cm,
                 delay_multiplier=processor_delay_multiplier,
+            )
+        elif processor_model is RoadsideProcessorModel.ADV5N6:
+            if processor_piece_size_m3 is not None:
+                raise typer.BadParameter(
+                    "--processor-piece-size-m3 applies to the Berry (2019) helper only."
+                )
+            if processor_dbh_cm is not None or processor_volume_m3 is not None:
+                raise typer.BadParameter(
+                    "--processor-dbh-cm/--processor-volume-m3 apply to Labelle helpers; ADV5N6 is table-driven."
+                )
+            if processor_species is not None or processor_treatment is not None:
+                raise typer.BadParameter("--processor-species/--processor-treatment do not apply to ADV5N6.")
+            stem_source_value = processor_stem_source.value
+            processing_mode_value = processor_adv5n6_processing_mode.value
+            if (
+                stem_source_value == ADV5N6StemSource.LOADER_FORWARDED.value
+                and processing_mode_value != ADV5N6ProcessingMode.COLD.value
+            ):
+                raise typer.BadParameter(
+                    "ADV5N6 only reports loader-forwarded data for cold processing decks; use --processor-processing-mode cold."
+                )
+            result_processor = estimate_processor_productivity_adv5n6(
+                stem_source=stem_source_value,
+                processing_mode=processing_mode_value,
             )
         else:
             if processor_piece_size_m3 is not None:

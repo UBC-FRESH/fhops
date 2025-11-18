@@ -1,0 +1,92 @@
+{
+  "source": {
+    "citation": "Kosicki, J. & Dyson, S. 2004. Processing loaders show their advantage. FPInnovations Advantage Vol. 5 No. 6.",
+    "document_path": "notes/reference/fpinnovations/ADV5N6.PDF",
+    "notes": [
+      "Madill 3800 carrier + Waratah HTH624 danglehead processors working coastal BC clearcuts (Blocks B–D).",
+      "Block B = cold processing of loader-forwarded + grapple-yarded stems; Block C = hot processing of uphill yarded stems; Block D = mix of cold/hot yarded stems with low average piece size."
+    ]
+  },
+  "scenarios": [
+    {
+      "name": "loader_forwarded_cold",
+      "stem_source": "loader_forwarded",
+      "processing_mode": "cold",
+      "description": "Block B loader-forwarded stems processed from cold decks (May–July 2002).",
+      "mean_stem_volume_m3": 0.95,
+      "stems_per_pmh": 56.0,
+      "stems_per_smh": 47.0,
+      "productivity_m3_per_pmh": 56.0,
+      "productivity_m3_per_smh": 49.0,
+      "utilisation_percent": 88.0,
+      "availability_percent": 94.0,
+      "shift_length_hours": 7.6,
+      "total_volume_m3": 9531,
+      "machine_rate_cad_per_smh": 140.37,
+      "cost_cad_per_m3": 2.86,
+      "notes": [
+        "cold processing of long loader-forwarded decks allowed continuous grappling and minimal interaction delays."
+      ]
+    },
+    {
+      "name": "grapple_yarded_cold",
+      "stem_source": "grapple_yarded",
+      "processing_mode": "cold",
+      "description": "Block B grapple-yarded stems decked below the road (cold processing).",
+      "mean_stem_volume_m3": 0.95,
+      "stems_per_pmh": null,
+      "stems_per_smh": null,
+      "productivity_m3_per_pmh": 52.0,
+      "productivity_m3_per_smh": 46.0,
+      "utilisation_percent": 88.0,
+      "availability_percent": 94.0,
+      "shift_length_hours": 7.6,
+      "total_volume_m3": 9531,
+      "machine_rate_cad_per_smh": 140.37,
+      "cost_cad_per_m3": 3.05,
+      "notes": [
+        "Processing grapple-yarded stems was slower due to decking below road and repositioning effort."
+      ]
+    },
+    {
+      "name": "grapple_yarded_hot",
+      "stem_source": "grapple_yarded",
+      "processing_mode": "hot",
+      "description": "Block C uphill yarded stems processed hot (live deck) with occasional cold-loader forwarded top-ups.",
+      "mean_stem_volume_m3": 1.01,
+      "stems_per_pmh": 56.0,
+      "stems_per_smh": 47.0,
+      "productivity_m3_per_pmh": 56.0,
+      "productivity_m3_per_smh": 48.0,
+      "utilisation_percent": 85.0,
+      "availability_percent": null,
+      "shift_length_hours": 8.2,
+      "total_volume_m3": 3521,
+      "machine_rate_cad_per_smh": 140.37,
+      "cost_cad_per_m3": 2.92,
+      "notes": [
+        "Hot processing benefited from balanced yarder/processor cycle and direct road placement for hot loading."
+      ]
+    },
+    {
+      "name": "grapple_yarded_low_volume",
+      "stem_source": "grapple_yarded",
+      "processing_mode": "low_volume",
+      "description": "Block D downhill yarded stems (mixed cold/hot) with small piece size (0.44 m³/stem).",
+      "mean_stem_volume_m3": 0.44,
+      "stems_per_pmh": 87.0,
+      "stems_per_smh": 64.0,
+      "productivity_m3_per_pmh": 38.0,
+      "productivity_m3_per_smh": 28.0,
+      "utilisation_percent": 73.0,
+      "availability_percent": 92.0,
+      "shift_length_hours": 8.8,
+      "total_volume_m3": 1723,
+      "machine_rate_cad_per_smh": 140.37,
+      "cost_cad_per_m3": 5.01,
+      "notes": [
+        "Lower productivity driven by short pieces placed below the road; mix of hot/cold processing with high travel."
+      ]
+    }
+  ]
+}

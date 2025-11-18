@@ -1,5 +1,18 @@
 # Development Change Log
 
+# 2025-11-23 — ADV5N6 coastal processor preset
+- Added `estimate_processor_productivity_adv5n6` plus the structured dataset (`data/productivity/processor_adv5n6.json`)
+  extracted from FPInnovations Advantage Vol. 5 No. 6 (Madill 3800 + Waratah HTH624). The helper exposes the loader-forwarded
+  cold-deck productivity as well as the grapple-yarded hot/cold/low-volume scenarios, preserving the published PMH/SMH,
+  utilisation, and $/m³ values.
+- `fhops.dataset estimate-productivity --machine-role roadside_processor` gained `--processor-model adv5n6`
+  alongside new flags `--processor-stem-source` and `--processor-processing-mode` so analysts can flip between
+  loader-forwarded cold decks and yarder-fed hot decks without touching code. Validation prevents impossible combinations
+  (e.g., loader-forwarded hot processing) and CLI telemetry mirrors the published scenario notes.
+- Updated `docs/reference/harvest_systems.rst`, `notes/dataset_inspection_plan.md`, and `notes/reference_log.md`
+  to document the new preset, its BC provenance, and the fact that coeffs came straight from ADV5N6. Added CLI regression
+  tests covering the new helper plus a failure-path test for invalid stem-source/mode combinations.
+
 # 2025-11-22 — Berry (2019) skid-size scaling
 - `fhops.dataset estimate-productivity --machine-role roadside_processor` gained `--processor-skid-area-m2` so analysts can plug in the landing footprint from Berry (2019). The CLI now predicts the average <10 min delay seconds/stem, warns when areas fall outside the 2.5–3.7k m² Kinleith range, and auto-scales the utilisation multiplier when users haven’t supplied `--processor-delay-multiplier`.
 - `data/productivity/processor_berry2019.json` now houses the skid-size regressions, outlier thresholds, and log-grade timing anchors (UH/BHS), and the helper loads all Berry coefficients/multipliers/utilisation from that JSON (no more hard-coded constants).

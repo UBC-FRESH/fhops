@@ -10,6 +10,7 @@ from fhops.productivity import (
     estimate_processor_productivity_labelle2018,
     estimate_processor_productivity_labelle2019_dbh,
     estimate_processor_productivity_labelle2019_volume,
+    estimate_processor_productivity_adv5n6,
 )
 
 runner = CliRunner()
@@ -202,6 +203,48 @@ def test_cli_processor_berry2019_skid_area_auto_multiplier() -> None:
     expected_productivity = base_prod * expected_multiplier
     assert f"{expected_productivity:.2f}" in result.stdout
     assert "Berry skid-size model predicts" in result.stdout
+
+
+def test_cli_processor_adv5n6_loader_forwarded_cold() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "roadside_processor",
+            "--processor-model",
+            "adv5n6",
+            "--processor-stem-source",
+            "loader_forwarded",
+            "--processor-processing-mode",
+            "cold",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_processor_productivity_adv5n6(
+        stem_source="loader_forwarded",
+        processing_mode="cold",
+    )
+    assert f"{expected.productivity_m3_per_smh:.1f}" in result.stdout
+
+
+def test_cli_processor_adv5n6_rejects_loader_hot() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "roadside_processor",
+            "--processor-model",
+            "adv5n6",
+            "--processor-stem-source",
+            "loader_forwarded",
+            "--processor-processing-mode",
+            "hot",
+        ],
+    )
+    assert result.exit_code != 0
+    assert "ADV5N6 only reports loader-forwarded data for cold processing" in result.stdout
 
 
 def test_cli_processor_berry2019_skid_area_respects_manual_delay() -> None:
