@@ -7,6 +7,11 @@
       "Study compares performance in a grapple-skidded pine block vs. a hand-felled, Washington 78 yarder block (central processing yard)."
     ]
   },
+  "costing": {
+    "currency": "CAD",
+    "base_year": 1986,
+    "inflation_source": "Statistics Canada Table 18-10-0005-01"
+  },
   "machine": {
     "horizontal_reach_m": 10.1,
     "lift_capacity_kg_at_3m": 23600,
@@ -33,6 +38,9 @@
       "avg_volume_per_shift_m3": 658,
       "total_truck_loads": 349,
       "avg_volume_per_load_m3": 60.3,
+      "cost_per_shift_cad": 257.26,
+      "cost_per_m3_cad": 0.45,
+      "cost_per_piece_cad": 0.21,
       "notes": [
         "32-day period, 20.5 million kg translated to 21,057 m³ (349 off-highway loads).",
         "Daily production limited by available skidded wood (~12 loads ≈700 m³/day)."
@@ -47,6 +55,9 @@
       "avg_volume_per_shift_m3": 654,
       "total_truck_loads": 115,
       "avg_volume_per_load_m3": 62.6,
+      "cost_per_shift_cad": 257.26,
+      "cost_per_m3_cad": 0.45,
+      "cost_per_piece_cad": 0.21,
       "notes": [
         "Average tree size ≈0.8 m³; loader kept pace with yarder-delivered decks.",
         "Daily output effectively capped by truck dispatch (≈11 loads/day)."

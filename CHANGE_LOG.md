@@ -20,6 +20,9 @@
   `--loader-model barko450` / `--loader-barko-scenario` so the CLI can report those presets directly (docs/tests/telemetry updated).
 - Added a `ground_fb_loader_liveheel` harvest-system template so planners can pull the Barko defaults via
   `--harvest-system-id ground_fb_loader_liveheel` without retyping the overrides.
+- Introduced CPI-based cost scaling: pulled Statistics Canada Table 18-10-0005-01 (All-items CPI, 2002=100) into
+  `data/costing/cpi_canada_all_items_2002_100.json` and a new inflation helper so ADV5N6, TN-166, and Barko loader cost
+  figures are automatically inflated to 2024 CAD. CLI output now flags the source year, and docs highlight the CPI reference.
 
 # 2025-11-22 — Berry (2019) skid-size scaling
 - `fhops.dataset estimate-productivity --machine-role roadside_processor` gained `--processor-skid-area-m2` so analysts can plug in the landing footprint from Berry (2019). The CLI now predicts the average <10 min delay seconds/stem, warns when areas fall outside the 2.5–3.7k m² Kinleith range, and auto-scales the utilisation multiplier when users haven’t supplied `--processor-delay-multiplier`.

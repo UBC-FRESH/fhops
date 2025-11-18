@@ -9,6 +9,8 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
+from fhops.costing.inflation import inflate_value
+
 _DATA_ROOT = Path(__file__).resolve().parents[3] / "data" / "productivity"
 _BERRY_DATA_PATH = _DATA_ROOT / "processor_berry2019.json"
 _ADV5N6_DATA_PATH = _DATA_ROOT / "processor_adv5n6.json"
@@ -44,14 +46,6 @@ def _load_barko450_dataset() -> dict[str, object]:
         return json.loads(_BARKO450_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
         raise FileNotFoundError(f"Barko 450 loader data missing: {_BARKO450_DATA_PATH}") from exc
-
-
-@lru_cache(maxsize=1)
-def _load_adv5n6_dataset() -> dict[str, object]:
-    try:
-        return json.loads(_ADV5N6_DATA_PATH.read_text(encoding="utf-8"))
-    except FileNotFoundError as exc:  # pragma: no cover - configuration error
-        raise FileNotFoundError(f"ADV5N6 processor data missing: {_ADV5N6_DATA_PATH}") from exc
 
 
 def _load_tree_form_productivity_multipliers() -> dict[int, float]:
@@ -146,9 +140,13 @@ def predict_berry2019_skid_effects(
 @lru_cache(maxsize=1)
 def _load_adv5n6_scenarios() -> dict[str, dict[str, object]]:
     payload = _load_adv5n6_dataset()
+    cost_meta = payload.get("costing") or {}
+    base_year = cost_meta.get("base_year")
     scenarios: dict[str, dict[str, object]] = {}
     for entry in payload.get("scenarios", []):
-        scenarios[entry["name"]] = entry
+        scenario = dict(entry)
+        scenario.setdefault("cost_base_year", base_year)
+        scenarios[scenario["name"]] = scenario
     return scenarios
 
 
@@ -158,6 +156,8 @@ def _load_tn166_scenarios() -> dict[str, dict[str, object]]:
     defaults = payload.get("defaults") or {}
     cycle = payload.get("cycle_time_minutes")
     accuracy = payload.get("accuracy")
+    cost_meta = payload.get("costing") or {}
+    base_year = cost_meta.get("base_year")
     scenarios: dict[str, dict[str, object]] = {}
     for entry in payload.get("scenarios", []):
         combined = {**defaults, **entry}
@@ -165,6 +165,7 @@ def _load_tn166_scenarios() -> dict[str, dict[str, object]]:
             combined["cycle_time_minutes"] = cycle
         if accuracy and "accuracy" not in combined:
             combined["accuracy"] = accuracy
+        combined.setdefault("cost_base_year", base_year)
         scenarios[entry["name"]] = combined
     return scenarios
 
@@ -173,9 +174,12 @@ def _load_tn166_scenarios() -> dict[str, dict[str, object]]:
 def _load_barko450_scenarios() -> dict[str, dict[str, object]]:
     payload = _load_barko450_dataset()
     utilisation = payload.get("utilisation") or {}
+    cost_meta = payload.get("costing") or {}
+    base_year = cost_meta.get("base_year")
     scenarios: dict[str, dict[str, object]] = {}
     for entry in payload.get("scenarios", []):
         combined = {**utilisation, **entry}
+        combined.setdefault("cost_base_year", base_year)
         scenarios[entry["name"]] = combined
     return scenarios
 
@@ -183,6 +187,14 @@ def _load_barko450_scenarios() -> dict[str, dict[str, object]]:
 _TREE_FORM_PRODUCTIVITY_MULTIPLIERS = _load_tree_form_productivity_multipliers()
 _BERRY_BASE_SLOPE, _BERRY_BASE_INTERCEPT = _load_piece_size_regression()
 _BERRY_DEFAULT_UTILISATION = _load_default_utilisation()
+
+
+def _inflate_cost(value: float | None, base_year: int | None) -> float | None:
+    if value is None:
+        return None
+    if base_year is None:
+        return float(value)
+    return inflate_value(float(value), base_year)
 
 
 @dataclass(frozen=True)
@@ -751,7 +763,11 @@ class LoaderBarko450ProductivityResult:
     utilisation_percent: float | None
     availability_percent: float | None
     wait_truck_move_sort_percent: float | None
+    cost_per_shift_cad: float | None
+    cost_per_m3_cad: float | None
+    cost_per_piece_cad: float | None
     notes: tuple[str, ...] | None
+    cost_base_year: int | None
 
 
 def estimate_clambunk_productivity_adv2n26(
@@ -833,6 +849,7 @@ class ADV5N6ProcessorProductivityResult:
     cost_cad_per_m3: float
     machine_rate_cad_per_smh: float | None
     notes: tuple[str, ...] | None
+    cost_base_year: int | None
 
 
 @dataclass(frozen=True)
@@ -853,6 +870,7 @@ class TN166ProcessorProductivityResult:
     cost_cad_per_stem: float | None
     cycle_time_minutes: dict[str, float | str] | None
     notes: tuple[str, ...] | None
+    cost_base_year: int | None
 
 
 def estimate_loader_forwarder_productivity_adv5n1(
@@ -924,6 +942,9 @@ def estimate_processor_productivity_adv5n6(
         return None if value is None else float(value)
 
     notes = payload.get("notes")
+    cost_base_year = payload.get("cost_base_year")
+    cost_cad_per_m3 = _inflate_cost(float(payload["cost_cad_per_m3"]), cost_base_year)
+    machine_rate = _inflate_cost(_maybe("machine_rate_cad_per_smh"), cost_base_year)
     return ADV5N6ProcessorProductivityResult(
         stem_source=payload.get("stem_source", stem_source),
         processing_mode=payload.get("processing_mode", processing_mode),
@@ -936,9 +957,10 @@ def estimate_processor_productivity_adv5n6(
         utilisation_percent=_maybe("utilisation_percent"),
         availability_percent=_maybe("availability_percent"),
         shift_length_hours=_maybe("shift_length_hours"),
-        cost_cad_per_m3=float(payload["cost_cad_per_m3"]),
-        machine_rate_cad_per_smh=_maybe("machine_rate_cad_per_smh"),
+        cost_cad_per_m3=cost_cad_per_m3 if cost_cad_per_m3 is not None else float(payload["cost_cad_per_m3"]),
+        machine_rate_cad_per_smh=machine_rate,
         notes=tuple(notes) if notes else None,
+        cost_base_year=cost_base_year,
     )
 
 
@@ -965,6 +987,9 @@ def estimate_processor_productivity_tn166(
                 cycle_dict[key] = float(value)
             else:
                 cycle_dict[key] = value
+    cost_base_year = payload.get("cost_base_year")
+    cost_m3 = _inflate_cost(float(payload["cost_cad_per_m3"]), cost_base_year)
+    cost_stem = _inflate_cost(_maybe("cost_cad_per_stem"), cost_base_year)
     return TN166ProcessorProductivityResult(
         scenario=payload.get("name", scenario),
         description=payload.get("description", ""),
@@ -978,10 +1003,11 @@ def estimate_processor_productivity_tn166(
         utilisation_percent=_maybe("utilisation_percent"),
         availability_percent=_maybe("availability_percent"),
         shift_length_hours=_maybe("shift_length_hours"),
-        cost_cad_per_m3=float(payload["cost_cad_per_m3"]),
-        cost_cad_per_stem=_maybe("cost_cad_per_stem"),
+        cost_cad_per_m3=cost_m3 if cost_m3 is not None else float(payload["cost_cad_per_m3"]),
+        cost_cad_per_stem=cost_stem,
         cycle_time_minutes=cycle_dict,
         notes=tuple(notes) if notes else None,
+        cost_base_year=cost_base_year,
     )
 
 
@@ -999,6 +1025,10 @@ def estimate_loader_productivity_barko450(
         return None if value is None else float(value)
 
     notes = payload.get("notes")
+    cost_base_year = payload.get("cost_base_year")
+    cost_per_shift = _inflate_cost(_maybe_float("cost_per_shift_cad"), cost_base_year)
+    cost_per_m3 = _inflate_cost(_maybe_float("cost_per_m3_cad"), cost_base_year)
+    cost_per_piece = _inflate_cost(_maybe_float("cost_per_piece_cad"), cost_base_year)
     return LoaderBarko450ProductivityResult(
         scenario=payload.get("name", scenario),
         description=payload.get("description", ""),
@@ -1010,5 +1040,9 @@ def estimate_loader_productivity_barko450(
         utilisation_percent=_maybe_float("utilisation_percent"),
         availability_percent=_maybe_float("mechanical_availability_percent"),
         wait_truck_move_sort_percent=_maybe_float("wait_truck_move_sort_percent"),
+        cost_per_shift_cad=cost_per_shift,
+        cost_per_m3_cad=cost_per_m3,
+        cost_per_piece_cad=cost_per_piece,
         notes=tuple(notes) if notes else None,
+        cost_base_year=cost_base_year,
     )

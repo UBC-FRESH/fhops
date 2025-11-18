@@ -7,6 +7,11 @@
       "Block B = cold processing of loader-forwarded + grapple-yarded stems; Block C = hot processing of uphill yarded stems; Block D = mix of cold/hot yarded stems with low average piece size."
     ]
   },
+  "costing": {
+    "currency": "CAD",
+    "base_year": 2004,
+    "inflation_source": "Statistics Canada Table 18-10-0005-01"
+  },
   "scenarios": [
     {
       "name": "loader_forwarded_cold",

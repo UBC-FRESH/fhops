@@ -167,13 +167,15 @@ regressions:
   ``grapple_yarded``) plus ``--processor-processing-mode`` (``cold``, ``hot``, or ``low_volume``) to
   match the published cold-deck loader-forwarded scenario vs. the grapple-yarded hot/cold decks.
   Outputs provide both PMH and SMH productivity along with the $/m³ cost figure from the report, so
-  analysts can keep BC roadside presets tied to local landing data.
+  analysts can keep BC roadside presets tied to local landing data. Cost figures shown in the CLI are
+  escalated to 2024 CAD using Statistics Canada CPI (Table 18-10-0005-01) so they’re comparable with
+  newer references.
 * ``--processor-model tn166`` – FERIC TN-166 stroke-processor study (Denis D3000 telescopic boom) from
   interior BC. Choose ``--processor-tn166-scenario`` (``grapple_yarded``, ``right_of_way``, or
   ``mixed_shift``) to flip between the detailed timing splits or the overall shift-level average. The
   helper reports PMH/SMH productivity, stems per hour, and the published $/m³ + $/stem values. Pick
   this preset when you need an interior stroke-processor baseline rather than the hardwood-focused
-  Labelle regressions.
+  Labelle regressions. Costs are also escalated to 2024 CAD via the same Statistics Canada CPI series.
 
 CLI output reports the base delay-free productivity, the applied multipliers, and the utilisation-adjusted
 m³/PMH so costing workflows can decide which value to pass downstream. Remember that the Labelle models
@@ -236,7 +238,8 @@ Loader-Forwarder Productivity Models
   predictors are required; instead pick ``--loader-barko-scenario`` (``ground_skid_block`` for the grapple-skid trial
   or ``cable_yard_block`` for the Washington 78 yarder decks) to show the published ≈658 m³/shift averages,
   availability (96 %), utilisation (79 %), and the ~17 % truck-wait/move penalty. This is ideal when you need a
-  BC loader baseline but lack a regression.
+  BC loader baseline but lack a regression. CLI cost metrics are inflated to 2024 CAD using Statistics Canada CPI
+  (Table 18-10-0005-01) so they align with modern budgeting inputs.
 
 Loader harvest-system overrides
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

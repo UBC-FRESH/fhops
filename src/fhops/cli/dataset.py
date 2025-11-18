@@ -882,6 +882,10 @@ def _render_processor_result(
         )
         if result.notes:
             console.print(f"[dim]{' '.join(result.notes)}[/dim]")
+        if result.cost_base_year:
+            console.print(
+                f"[dim]Costs escalated from {result.cost_base_year} CAD to 2024 CAD using Statistics Canada CPI (Table 18-10-0005-01).[/dim]"
+            )
         return
 
     elif isinstance(result, TN166ProcessorProductivityResult):
@@ -930,6 +934,10 @@ def _render_processor_result(
             console.print(f"{prefix}{suffix}[/dim]")
         if result.notes:
             console.print(f"[dim]{' '.join(result.notes)}[/dim]")
+        if result.cost_base_year:
+            console.print(
+                f"[dim]Costs escalated from {result.cost_base_year} CAD to 2024 CAD using Statistics Canada CPI (Table 18-10-0005-01).[/dim]"
+            )
         return
 
     raise TypeError(f"Unhandled processor result type: {type(result)!r}")
@@ -1013,12 +1021,22 @@ def _render_loader_result(
             rows.append(("Availability (%)", f"{result.availability_percent:.1f}"))
         if result.wait_truck_move_sort_percent is not None:
             rows.append(("Wait/Move/Sort (%)", f"{result.wait_truck_move_sort_percent:.1f}"))
+        if result.cost_per_shift_cad is not None:
+            rows.append(("Cost ($/shift)", f"{result.cost_per_shift_cad:.2f}"))
+        if result.cost_per_m3_cad is not None:
+            rows.append(("Cost ($/m³)", f"{result.cost_per_m3_cad:.2f}"))
+        if result.cost_per_piece_cad is not None:
+            rows.append(("Cost ($/piece)", f"{result.cost_per_piece_cad:.2f}"))
         _render_kv_table("Loader Productivity Estimate", rows)
         console.print(
             "[dim]FERIC TN-46 Barko 450 loader trial (ground-skid vs. yarder-fed decks). Production capped by truck supply; utilisation losses (~17%) reflect truck waits/moves. Use this preset for live-heel loader ops when regressions are unavailable.[/dim]"
         )
         if result.notes:
             console.print(f"[dim]{' '.join(result.notes)}[/dim]")
+        if result.cost_base_year:
+            console.print(
+                f"[dim]Costs escalated from {result.cost_base_year} CAD to 2024 CAD using Statistics Canada CPI (Table 18-10-0005-01).[/dim]"
+            )
         return
 
     rows = [

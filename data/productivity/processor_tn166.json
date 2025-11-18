@@ -8,6 +8,11 @@
       "Cycle elements averaged 0.67 min/stem (0.22 pick, 0.18 process, 0.12 optional second process, 0.15 discharge) with <10 min delays accounting for 3.9% of time and 92% of length measurements within ±7.5 cm."
     ]
   },
+  "costing": {
+    "currency": "CAD",
+    "base_year": 1991,
+    "inflation_source": "Statistics Canada Table 18-10-0005-01"
+  },
   "defaults": {
     "utilisation_percent": 81.7,
     "availability_percent": 92.2,
