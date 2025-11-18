@@ -1,0 +1,17069 @@
+COMPARISON O F TWO LOGGING SYSTEMS
+IN
+INTERIOR BRITISH COLUMBIA:
+CENTRAL PROCESSING YARD vs CONVENTIONAL
+
+LB. HEDIN
+
+TECHNICAL REPORT No. TR-45
+NOVEMBER 1980
+
+ACKNOWLEDGEMENTS
+This
+This study
+study was
+was made
+made possible
+possible through
+through the
+the cooperation
+cooperation of
+of the
+the
+company
+company and
+and contractor
+contractor involved.
+involved. We
+We would
+would like
+like to
+to thank
+thank
+Ian
+Ian Dunlop,
+Dunlop, Bob
+Bob Harrison,
+Harrison, Brent
+Brent Przybille
+Przybille and
+and Fred
+Fred Swetitch
+Swetitch
+of
+of Crown
+Crown Zellerbach
+Zellerbach Canada
+Canada Ltd.,
+Ltd., (Interior
+(Interior Wood
+Wood Supply
+Supply and
+and
+Products
+and Mike
+Mike Curran
+Products Division)
+Division) ,
+, and
+and Norm
+Norm Duncan
+Duncan and
+Curran of
+of
+Duncan
+Duncan Logging
+Logging Ltd.
+Ltd.
+Data
+time, and
+and the
+the
+Data collection
+collection required
+required considerable
+considerable field
+field time,
+author
+author is
+is grateful
+grateful to
+to Eric
+Eric Phillips,
+Phillips, Patrick
+Patrick Forrester,
+Forrester, Don
+Don
+Smith
+Cameron of
+of Crown
+Smith and
+and Glen
+Glen Ganuelas
+Ganuelas of
+of FERIC
+FERIC and
+and Doug
+Doug Cameron
+Crown
+Zellerbach
+Zellerbach Canada
+Canada Ltd.
+Ltd. for
+for their
+their help,
+help, as
+as well
+well as
+as to
+to Paul
+Paul
+Tse
+Tse of
+of FERIC
+FERIC who
+who assisted
+assisted in
+in the
+the compilation
+compilation of
+of the
+the data.
+data.
+
+i
+i
+
+CONTENTS
+
+Page
+1
+1
+
+ABSTRACT
+ABSTRACT
+
+2
+2
+
+RESUME
+RESUME
+INTRODUCTION
+INTRODUCTION
+
+4
+4
+
+A.
+A.
+
+Organization and
+and Method
+Method of
+of Study
+Study
+Organization
+
+5
+5
+
+B.
+B.
+
+Productivity and
+and Cost
+Cost by
+by Phase
+Phase
+Productivity
+
+1
+
+1.
+1.
+2.
+2.
+3.
+3.
+4.
+4.
+
+Volume Produced
+Produced
+Volume
+Felling
+Felling
+Skidding
+Skidding
+Loading, Unloading,
+Unloading, Processing
+Processing and
+and
+Loading,
+Reloading
+Reloading
+Hauling
+Hauling
+Bulldozer Costs
+Costs
+Bulldozer
+Landing Rehabilitation
+Rehabilitation and
+and Debris
+Debris
+Landing
+Handling and
+and Disposal
+Disposal
+Handling
+Travel Time
+Time Cost
+Cost Estimates
+Estimates
+Travel
+Summary of
+of Productivity
+Productivity and
+and Costs
+Costs
+Summary
+
+5.
+5.
+6.
+6.
+7.
+7.
+8.
+8.
+9.
+9.
+C.
+C.
+
+Log Quality
+Quality
+Log
+
+D.
+D.
+
+Ways to
+to Improve
+Improve the
+the Central
+Central Processing
+Processing
+Ways
+Yard System
+System
+Yard
+1.
+1.
+
+?
+?
+
+29
+29
+29
+29
+30
+30
+31
+1
+3
+
+33
+3
+3
+
+Adjustment of
+of Loading
+Loading Time
+Time and
+and Yard
+Yard ThroughThroughAdjustment
+put—
+— Summer
+Summer Phase,
+Phase, C.P.Y.
+C.P.Y. System
+System
+35
+put
+35
+Effect of
+of Length
+Length of
+of Haul
+and Yard
+Yard Location
+Location
+Effect
+Haul and
+35
+5
+3
+on Hauling
+Hauling Cost
+Cost
+on
+Destination Sorting
+Sorting —
+— Effect
+Effect on
+on Hauling
+Hauling Cost
+Cost 37
+37
+Destination
+Other Advantages
+Advantages Offered
+Offered by
+by the
+the Central
+Central
+Other
+Processing Yard
+Yard System
+System
+38
+Processing
+38
+
+2.
+2.
+3.
+3.
+4.
+4.
+
+CONCLUSION
+CONCLUSION
+
+39
+9
+3
+
+APPENDIX
+APPENDIX
+I
+I
+
+Descriptions of
+of Central
+Central Processing
+Processing Yard
+Yard
+Descriptions
+Systems
+Systems
+
+42
+42
+
+II
+II
+
+Machine Rates
+Rates
+Machine
+
+49
+49
+
+FIGURES
+Figure
+
+Page
+
+A
+A
+
+Flow
+Flow of
+of Wood
+Wood for
+for the
+the Central
+Central Processing
+Processing
+Yard
+Yard and
+and Conventional
+Conventional Systems
+Systems
+
+6
+6
+
+B
+B
+
+Winter
+Winter Block
+Block Showing
+Showing Stand
+Stand and
+and Terrain
+Terrain
+
+10
+10
+
+C
+C
+
+Summer
+Summer Block
+Block Showing
+Showing Stand
+Stand and
+and Terrain
+Terrain
+
+10
+10
+
+D
+D
+
+Conventional
+Conventional System
+System Landing
+Landing Illustrating
+Illustrating
+Concentration
+Concentration of
+of Activity
+Activity —
+— Summer
+Summer Phase
+Phase
+
+14
+14
+
+E
+E
+
+Central
+Central Processing
+Processing Yard
+Yard System
+System Landing
+Landing
+—
+— Winter
+Winter Phase
+Phase
+
+14
+14
+
+F
+F
+
+Loading
+Loading Off-Highway
+Off-Highway Truck
+Truck at
+at Bush
+Bush Landing
+Landing
+—
+— Central
+Central Processing
+Processing Yard
+Yard System
+System —
+— Winter
+Winter
+Phase
+Phase
+
+22
+22
+
+G
+G
+
+Loading
+Loading Highway
+Highway Truck
+Truck at
+at Bush
+Bush Landing
+Landing
+—
+— Conventional
+Conventional System
+System —
+— Summer
+Summer Phase
+Phase
+
+22
+22
+
+H
+H
+
+Unloading
+Unloading Off-Highway
+Off-Highway Truck
+Truck at
+at Yard
+Yard —
+—
+Central
+Central Processing
+Processing Yard
+Yard System
+System
+
+24
+24
+
+I
+I
+
+Processing
+Processing in
+in Yard
+Yard —
+— Central
+Central Processing
+Processing
+Yard
+Yard System
+System —
+— Winter
+Winter Phase
+Phase
+
+25
+25
+
+J
+J
+
+Loading
+Loading Highway
+Highway Truck
+Truck in
+in Yard
+Yard —
+— Central
+Central
+Processing
+Processing Yard
+Yard System—
+System— Summer
+Summer Phase
+Phase
+
+26
+26
+
+TABLES
+
+Table
+Table
+
+Page
+Page
+
+1.
+1.
+
+Equipment
+Equipment
+
+and Labour
+Labour
+and
+
+2.
+2.
+
+Study
+Study
+
+3.
+3.
+
+Description
+Description
+
+4.
+4.
+
+Summary
+Summary
+
+of Weights
+Weights
+of
+
+5.
+5.
+
+Skidding
+Skidding
+
+Productivity
+Productivity
+
+6.
+6.
+
+Summary of
+of Man
+Man and
+Summary
+and Machine
+Machine Hours
+Hours
+— Loading,
+Loading,
+Unloading
+and Processing
+Processing
+—
+Unloading
+and
+
+16
+16
+
+7.
+7.
+
+Activity
+Activity
+
+and Cost
+Cost
+and
+
+of Buckermen
+Buckermen
+of
+
+17
+17
+
+8.
+8.
+
+Activity
+Activity
+
+and Cost
+Cost
+and
+
+of Flail
+Flail
+of
+
+19
+19
+
+9.
+9.
+
+Activity
+Activity
+
+and Cost
+Cost
+and
+
+of Loaders
+Loaders
+of
+
+20
+20
+
+10.
+10.
+
+Detailed
+Detailed
+
+Timing
+Timing
+
+11.
+11.
+
+Summary
+Summary
+
+of
+of Hauling
+Hauling
+
+12.
+12.
+
+Estimated
+Estimated
+
+Travel
+Travel
+
+13.
+13.
+
+Summary
+Summary of
+of Calculated
+Calculated
+Study Period
+Period
+Study
+
+14.
+14.
+
+Summary
+Summary of
+of Scale
+Scale
+— Sample
+Sample Loads
+Loads
+—
+
+Method
+Method
+
+on Site
+Site
+on
+
+8
+8
+
+by Phase
+Phase
+by
+of Study
+Study
+of
+
+8
+8
+Blocks
+Blocks
+
+9
+9
+
+and Volumes
+Volumes
+and
+
+11
+11
+
+and Cost
+Cost
+and
+
+of
+of Hauling
+Hauling
+
+13
+13
+
+Cycles
+Cycles
+
+23
+23
+
+Cost
+Cost
+
+27
+27
+
+Costs
+Costs
+
+29
+29
+Cost
+Cost
+
+Information
+Information
+
+($/m
+($/m
+
+)
+) for
+for
+
+32
+32
+34
+34
+
+ABSTRACT
+FERIC'
+FERIC's
+s member
+member companies
+companies in
+in the
+the Interior
+Interior of
+of British
+British Columbia
+Columbia
+requested
+requested an
+an examination
+examination and
+and evaluation
+evaluation of
+of the
+the Central
+Central ProProcessing
+cessing Yard
+Yard (C.P.Y.)
+(C.P.Y.) System.
+System. A
+A study
+study comparing
+comparing the
+the ConConventional
+necessary.
+ventional and
+and the
+the C.P.Y.
+C.P.Y. Systems
+Systems was
+was considered
+considered necessary.
+The
+The objectives
+objectives of
+of the
+the comparison
+comparison were
+were to
+to quantify
+quantify some
+some of
+of
+the
+the expected
+expected advantages
+advantages and
+and disadvantages
+disadvantages of
+of the
+the C.P.Y.
+C.P.Y.
+System;
+System; to
+to determine
+determine if
+if phase
+phase productivity
+productivity improved
+improved with
+with
+the
+the C.P.Y.
+C.P.Y. System
+System offsetting
+offsetting the
+the increased
+increased handling
+handling of
+of the
+the
+wood;
+quality improved.
+improved.
+wood; and
+and to
+to determine
+determine whether
+whether log
+log quality
+Alternate
+Alternate strips
+strips of
+of a
+a timber
+timber block
+block were
+were harvested
+harvested by
+by each
+each
+system
+monitored by
+FERIC
+system and
+and all
+all the
+the logging
+logging phases
+phases were
+were monitored
+by FERIC
+in
+and
+in both
+both winter
+winter and
+and summer.
+summer. Utilization
+Utilization of
+of equipment
+equipment and
+manpower
+manpower was
+was better
+better in
+in the
+the C.P.Y.
+C.P.Y. System
+System but
+but total
+total hours
+hours and
+and
+cost/m
+was
+cost/m increased.
+increased. The
+The total
+total cost
+cost of
+of the
+the C.P.Y.
+C.P.Y. System
+System was
+7%
+7% higher
+higher in
+in the
+the winter
+winter and
+and 14%
+14% higher
+higher in
+in the
+the summer.
+summer. Debris
+Debris
+was
+winter and
+and 17.6%
+17.6% in
+in the
+the
+was 12.3%
+12.3% of
+of full-tree
+full-tree weight
+weight in
+in the
+the winter
+summer.
+summer. Skidding
+Skidding production
+production increased
+increased 3.8%
+3.8% in
+in the
+the winter
+winter
+and
+and 10%
+10% in
+in the
+the summer
+summer with
+with the
+the C.P.Y.
+C.P.Y. System.
+System. Off-highway
+Off-highway
+trucks
+trucks were
+were less
+less expensive
+expensive per
+per volume-distance
+volume-distance than
+than highway
+highway
+trucks
+trucks on
+on gravel
+gravel roads.
+roads. Using
+Using the
+the winter
+winter data,
+data, with
+with an
+an
+off-highway
+cheaper off-highway
+off-highway
+off-highway haul
+haul of
+of over
+over 100
+100 km,
+km, the
+the cheaper
+hauling
+hauling can
+can offset
+offset the
+the increased
+increased loading
+loading and
+and unloading
+unloading
+costs
+costs of
+of two
+two fleets.
+fleets.
+The
+in either
+either syssysThe study
+study did
+did not
+not show
+show any
+any distinct
+distinct advantage
+advantage in
+tem,
+tem, indicating
+indicating that
+that the
+the choice
+choice of
+of central
+central processing
+processing must
+must
+be
+be made
+made after
+after considering
+considering the
+the specific
+specific timber
+timber conditions,
+conditions,
+logging
+logging chance,
+chance, haul
+haul route
+route and
+and mill
+mill requirements.
+requirements. The
+The yard
+yard
+in
+in this
+this operation
+operation processed
+processed small
+small pine
+pine and
+and spruce
+spruce trees
+trees with
+with
+low
+low potential
+potential for
+for quality
+quality improvement.
+improvement. If
+If higher
+higher value
+value
+trees
+trees had
+had been
+been processed
+processed there
+there may
+may have
+have been
+been a
+a quality
+quality adadvantage
+vantage in
+in the
+the yard.
+yard.
+The
+be used
+used as
+The data
+data collected
+collected in
+in this
+this study
+study can
+can be
+as a
+a base
+base by
+by
+operators
+operators considering
+considering the
+the installation
+installation of
+of a
+a Central
+Central ProcesProcessing
+sing Yard.
+Yard. The
+The data
+data is
+is presented
+presented in
+in such
+such a
+a way
+way that
+that the
+the
+reader
+opreader can
+can calculate
+calculate the
+the per-m
+per-m costs
+costs for
+for his
+his specific
+specific operation.
+eration. Although
+Although the
+the cost
+cost attractiveness
+attractiveness of
+of the
+the system
+system is
+is
+marginal
+marginal at
+at this
+this time,
+time, it
+it may
+may increase
+increase in
+in the
+the future.
+future. CenCentral
+tral Processing
+Processing Yards
+Yards permit
+permit greater
+greater use
+use of
+of forest
+forest debris
+debris
+for
+for byproducts
+byproducts and
+and fuel,
+fuel, provide
+provide an
+an opportunity
+opportunity for
+for fully
+fully
+mechanized
+mechanized processing,
+processing, and
+and divide
+divide the
+the truck
+truck haul
+haul into
+into "bush"
+"bush"
+and
+and "highway"
+"highway" where
+where specialized
+specialized equipment
+equipment could
+could be
+be used
+used to
+to
+advantage.
+advantage. FERIC
+FERIC is
+is continuing
+continuing to
+to explore
+explore methods
+methods to
+to imimprove
+systems in
+in the
+the Interior
+Interior of
+prove overall
+overall wood
+wood supply
+supply systems
+of BritBritish
+ish Columbia.
+Columbia.
+1
+1
+
+RESUME
+Les compagnies
+compagnies
+membres d
+de
+e FERIC,
+FERIC, qui
+qui exploitent
+exploitent
+dans
+Les
+membres
+dans la
+la
+zone intérieure
+intérieure
+de Colombie-Britannique,
+Colombie-Britannique,
+nous ont
+ont demandé
+demandé
+zone
+de
+nous
+d'étudier le
+le système
+système d'exploitation
+d'exploitation
+comportant
+un
+parc
+d'étudier
+comportant
+un parc
+central de
+de façonnage
+façonnage (C.P.Y.)
+(C.P.Y.) e
+et
+t d'en
+d'en faire
+faire l'évaluation.
+l'évaluation.
+central
+Nous avons
+avons jugé
+jugé nécessaire
+nécessaire
+d'effectuer une
+une étude
+étude comparacomparaNous
+d'effectuer
+tive de
+de ce
+ce système
+système e
+et
+t d
+du
+u système
+système traditionnel.
+traditionnel. La
+La comcomtive
+paraison avait
+avait pour
+pour but
+but de
+de quantifier
+quantifier quelques-uns
+quelques-uns
+des
+paraison
+des
+avantages e
+et
+t des
+des inconvénients
+inconvénients
+prévus du
+du système
+système C.P.Y.
+C.P.Y. ,
+,
+avantages
+prévus
+de déterminer
+déterminer s'il
+s'il contribuait
+contribuait
+à augmenter
+augmenter
+la productivité
+productivité
+de
+à
+la
+de cette
+cette phase
+phase de
+de l'exploitation,
+l'exploitation, contrebalançant
+contrebalançant
+ainsi la
+la
+de
+ainsi
+manutention
+accrue des
+des bois,
+bois, e
+et
+t d'établir
+d'établir s'il
+s'il y
+y avait
+avait
+manutention
+accrue
+amélioration de
+de l
+la
+a qualité
+qualité des
+des billes.
+billes.
+amélioration
+On a
+a coupé
+coupé selon
+selon chaque
+chaque système
+système des
+des bandes
+bandes alternées
+alternées
+d'un
+On
+d'un
+bloc forestier,
+forestier,
+et FERIC
+FERIC a
+a observé
+observé toutes
+toutes les
+les phases
+phases d
+bloc
+et
+de
+e la
+la
+récolte, en
+en hiver
+hiver comme
+comme en
+en été.
+été.
+On a
+a constaté
+constaté dans
+dans le
+le
+récolte,
+On
+système C.P.Y.
+C.P.Y. une
+une meilleure
+meilleure
+utilisation
+de
+e l'équipement
+l'équipement
+et
+système
+utilisation
+d
+et
+de
+e la
+la main-d
+main-d '
+'oeuvre
+oeuvre d'une
+d'une part,
+part, et
+et une
+une augmentation
+augmentation
+du
+d
+du
+nombre total
+total d'heures
+d'heures
+et du
+du coût
+coût au
+au mètre
+mètre cube
+cube d'autre
+d'autre
+nombre
+et
+part.
+Le coût
+coût total
+total du
+du système
+système C.P.Y.
+C.P.Y. était
+était plus
+plus élevé
+élevé de
+de
+part.
+Le
+7% en
+en hiver
+hiver et
+et d
+de
+e 14%
+14% en
+en été.
+été.
+Au cours
+cours de
+de l'hiver,
+l'hiver,
+les
+7%
+Au
+les
+déchets ligneux
+ligneux représentaient
+représentaient
+12.3% d
+du
+u poids
+poids de
+de l'arbre
+l'arbre
+déchets
+12.3%
+entier, alors
+alors qu'ils
+qu'ils s'élevaient
+s'élevaient
+à 17.3%
+17.3% en
+en été.
+été.
+La proproentier,
+à
+La
+duction au
+au débardage
+débardage
+augmentait
+de 3.8%
+3.8% en
+en hiver
+hiver et
+et d
+de
+e
+duction
+augmentait
+de
+17.6% e
+en
+n été.
+été.
+Les camions
+camions de
+de route
+route privée
+privée coûtaient
+coûtaient
+moins
+17.6%
+Les
+moins
+cher par
+par unité
+unité d
+de
+e volume
+volume et
+et de
+de distance
+distance
+sur les
+les routes
+routes de
+de
+cher
+sur
+gravier, alors
+alors que
+que les
+les camions
+camions de
+de route
+route publique
+publique étaient
+gravier,
+étaient
+plus économiques
+économiques
+sur les
+les routes
+routes pavées.
+pavées.
+Selon les
+les données
+données
+plus
+sur
+Selon
+obtenues
+en hiver,
+hiver, en
+en camionnant
+camionnant
+le bois
+bois en-dehors
+en-dehors
+des
+obtenues
+en
+le
+des
+routes publiques
+publiques
+sur plus
+plus de
+de 100
+100 k
+km
+m,
+, o
+on
+n peut
+peut économiser
+économiser
+routes
+sur
+suffisamment
+si
+i on
+on se
+se sert
+sert d'un
+d'un camion
+camion de
+de route
+privée,
+suffisamment
+s
+route privée,
+pour contrebalancer
+contrebalancer
+l'augmentation
+des coûts
+coûts due
+due au
+au chargechargepour
+l'augmentation
+des
+ment et
+et au
+au déchargement
+déchargement
+de deux
+deux camions
+camions au
+au lieu
+lieu d'un.
+d'un.
+ment
+de
+L'étude n'a
+n'a laissé
+laissé entrevoir
+entrevoir
+aucun avantage
+avantage frappant,
+frappant, ni
+ni
+L'étude
+aucun
+dans un
+un système
+système ni
+ni dans
+dans l'autre,
+l'autre, laissant
+laissant a
+a l'exploitant
+l'exploitant
+la
+dans
+la
+décision d'établir
+d'établir o
+ou
+u non
+non un
+un parc
+parc central
+central de
+de façonnage,
+façonnage,
+décision
+compte tenu
+tenu des
+des conditions
+conditions
+particulières
+de la
+la forêt,
+forêt, du
+du
+compte
+particulières
+de
+site de
+de la
+la coupe,
+coupe, d
+de
+e l
+la
+a route
+route de
+de camionnage
+camionnage
+et
+t des
+des exigences
+exigences
+site
+e
+de l'usine.
+l'usine. Le
+Le parc
+parc d
+de
+e façonnage
+façonnage
+étudié ne
+de
+étudié
+ne traitait
+traitait que
+que
+des pins
+pins e
+et
+t des
+des épinettes
+épinettes
+de
+e faible
+faible diamètre,
+diamètre, ayant
+ayant peu
+peu de
+de
+des
+d
+potentiel d'amélioration
+d'amélioration de
+de la
+la qualité.
+qualité. Si
+Si l'on
+l'on y
+y avait
+avait
+potentiel
+traité des
+des arbres
+arbres de
+de plus
+plus grande
+grande valeur,
+valeur, le
+le parc
+parc de
+de façonfaçontraité
+nage aurait
+aurait p
+pu
+u représenter
+représenter
+un avantage
+avantage a
+nage
+un
+au
+u point
+point de
+de vue
+vue
+qualité .
+.
+qualité
+2
+2
+
+Les
+a
+Les données
+données recueillies
+recueillies
+au
+u cours
+cours de
+de cette
+cette étude
+étude peuvent
+peuvent
+servir
+que
+à l'installation
+l'installation
+servir de
+de base
+base aux
+aux exploitants
+exploitants
+que songent
+songent à
+d'un
+façonnage.
+Elles sont
+sont présentées
+présentées
+de
+d'un parc
+parc central
+central de
+de façonnage.
+Elles
+de
+façon
+les
+façon à
+à ce
+ce que
+que le
+le lecteur
+lecteur puisse
+puisse calculer
+calculer
+les coûts
+coûts par
+par
+mètre
+à
+Bien qu'à
+qu'à
+mètre cube
+cube applicables
+applicables
+à s
+sa
+a propre
+propre exploitation.
+exploitation.
+Bien
+l'heure
+l'attrait
+économique
+du
+l'heure actuelle,
+actuelle,
+l'attrait
+économique
+du système
+système soit
+soit
+marginal,
+i
+dans
+Un parc
+parc central
+central
+marginal,
+il
+l peut
+peut augmenter
+augmenter
+dans l'avenir.
+l'avenir.
+Un
+de
+utilisation
+des
+de façonnage
+façonnage permet
+permet une
+une meilleure
+meilleure
+utilisation
+des déchets
+déchets
+ligneux
+et
+ligneux e
+en
+n sous-produits
+sous-produits
+et à
+à des
+des fins
+fins énergétiques,
+énergétiques,
+fournit
+idéale
+complètement
+le
+fournit l'occasion
+l'occasion
+idéale de
+de mécaniser
+mécaniser
+complètement
+le
+façonnage
+e
+façonnage et
+et divise
+divise le
+le camionnage
+camionnage
+en
+n une
+une section
+section "route
+"route
+publique"
+publique" et
+et une
+une section
+section "route
+"route privée,"
+privée," chacune
+chacune donnant
+donnant
+lieu
+à
+d'un
+lieu avantageusement
+avantageusement
+à l'utilisation
+l'utilisation
+d'un matériel
+matériel q
+qu
+ui
+i lui
+lui
+est
+FERIC
+visant
+est bien
+bien adapté.
+adapté.
+FERIC poursuit
+poursuit ses
+ses recherches
+recherches
+visant à
+à
+mettre
+le
+mettre a
+au
+u point
+point des
+des méthodes
+méthodes pour
+pour améliorer
+améliorer
+le système
+système
+global
+e
+la zone
+global d'approvisionnement
+d'approvisionnement
+en
+n bois
+bois dans
+dans la
+zone intérieure
+intérieure
+de
+de Colombie-Britannique.
+Colombie-Britannique.
+
+3
+
+INTRODUCTION
+FERIC's
+in
+FERIC's member
+member companies
+companies
+in the
+the Interior
+Interior of
+of British
+British Columbia
+Columbia
+requested
+an
+and
+of
+requested
+an examination
+examination
+and evaluation
+evaluation
+of the
+the Central
+Central ProProsessing
+to
+of
+sessing Yard
+Yard System
+System (C.P.Y.)
+(C.P.Y.)
+to help
+help resolve
+resolve questions
+questions
+of
+productivity
+and
+productivity
+and log
+log handling.
+handling.
+Most
+in
+Most harvesting
+harvesting
+in the
+the Interior
+Interior involves
+involves the
+the direct
+direct hauling
+hauling
+of
+Processing
+(bucking,
+sorting,
+of log
+log lengths
+lengths to
+to the
+the mill.
+mill.
+Processing
+(bucking,
+sorting,
+and
+is
+and delimbing)
+delimbing)
+is done
+done either
+either at
+at the
+the felling
+felling site
+site or
+or on
+on
+the
+The
+C.P.Y.
+the bush
+bush landing.
+landing.
+The alternate
+alternate
+C.P.Y. System
+System uses
+uses an
+an
+intermediate
+semipermanent
+processing
+yard
+intermediate
+semipermanent
+processing
+yard where
+where full
+full trees
+trees
+would
+on
+trucks.
+Delimbing
+and
+would be
+be delivered
+delivered
+on off-highway
+off-highway
+trucks.
+Delimbing
+and
+bucking
+lengths
+bucking to
+to required
+required
+lengths would
+would be
+be done
+done here,
+here, and
+and the
+the logs
+logs
+might
+The
+might also
+also be
+be scaled,
+scaled, sorted
+sorted and
+and stored.
+stored.
+The logs
+logs would
+would be
+be
+reloaded
+highway
+reloaded onto
+onto conventional
+conventional
+highway trucks
+trucks for
+for the
+the haul
+haul to
+to
+the
+the mill.
+mill.
+C.P.Y.
+for
+C.P.Y. Systems
+Systems appear
+appear to
+to offer
+offer advantages
+advantages
+for some
+some Interior
+Interior
+operations.
+Users
+location
+operations.
+Users feel
+feel the
+the larger
+larger processing
+processing
+location
+gives
+space
+gives the
+the delimber
+delimber and
+and buckerman
+buckerman more
+more time
+time and
+and space
+to
+lengths
+to perform
+perform their
+their tasks
+tasks safely
+safely and
+and more
+more accurate
+accurate
+lengths
+and
+and better
+better limbing
+limbing quality
+quality result.
+result.
+A
+of
+greater
+A second
+second advantage
+advantage
+of the
+the system
+system is
+is a
+a broader
+broader one:
+one:
+greater
+control
+over
+control and
+and supervision
+supervision
+over each
+each phase
+phase of
+of the
+the harvesting.
+harvesting.
+Removing
+from
+— with
+Removing the
+the processing
+processing
+from landings
+landings could
+could —
+with changes
+changes in
+in
+skidding
+skidding and
+and loading
+loading techniques
+techniques —
+— improve
+improve the
+the productivity
+productivity
+of
+of these
+these two
+two phases
+phases and
+and reduce
+reduce the
+the size
+size and
+and cost
+cost of
+of bush
+bush
+landings.
+landings.
+The
+of
+The main
+main disadvantage
+disadvantage
+of the
+the C.P.Y.
+C.P.Y. System
+System is
+is the
+the increase
+increase
+in
+The
+men
+machinery
+rein wood
+wood handling.
+handling.
+The additional
+additional
+men and
+and machinery
+required
+unloading
+and proquired increase
+increase the
+the cost
+cost of
+of loading,
+loading, unloading
+and
+processing.
+Another
+is
+cessing.
+Another cited
+cited disadvantage
+disadvantage
+is the
+the cost
+cost of
+of hauling
+hauling
+limbs
+limbs and
+and tops
+tops to
+to the
+the central
+central yard
+yard and
+and the
+the disposal
+disposal of
+of this
+this
+material
+material at
+at the
+the yard.
+yard.
+In
+yards
+In the
+the summer
+summer of
+of 1978,
+1978, FERIC
+FERIC visited
+visited established
+established
+yards in
+in
+the
+(Descriptions
+of
+the Cariboo
+Cariboo and
+and Okanagan.
+Okanagan.
+(Descriptions
+of these
+these and
+and other
+other
+C.P.Y.
+C.P.Y. Systems
+Systems FERIC
+FERIC has
+has seen
+seen in
+in the
+the past
+past two
+two years
+years are
+are
+given
+This
+examination
+estabgiven in
+in Appendix
+Appendix I.)
+I.)
+This preliminary
+preliminary
+examination
+established
+First,
+based
+lished two
+two facts.
+facts.
+First, comparisons
+comparisons
+based solely
+solely on
+on
+descriptions
+of
+using
+Systems
+descriptions
+of operations
+operations
+using Conventional
+Conventional
+Systems and
+and
+C.P.Y.
+C.P.Y. Systems
+Systems were
+were not
+not adequate
+adequate without
+without directly
+directly comparable
+comparable
+productivity
+data
+Second,
+cost and
+proproductivity
+data for
+for each
+each phase.
+phase.
+Second, cost
+and pro-
+
+44
+
+ductivity
+comparisons
+between
+ductivity
+comparisons
+between yards
+yards were
+were not
+not satisfactory
+satisfactory
+because
+in
+and actual
+actual
+because of
+of differences
+differences
+in stated
+stated objectives
+objectives
+and
+logging
+A
+logging conditions.
+conditions.
+A system
+system study
+study of
+of the
+the two
+two harvesting
+harvesting
+methods
+was
+methods at
+at the
+the same
+same operation
+operation
+was needed.
+needed.
+In
+Canada
+In December
+December 1978,
+1978, Crown
+Crown Zellerbach
+Zellerbach
+Canada Ltd.
+Ltd. in
+in Kelowna
+Kelowna
+offered
+in
+test
+offered their
+their cooperation
+cooperation
+in a
+a side-by-side
+side-by-side
+test of
+of the
+the two
+two
+systems.
+The
+of
+were
+systems.
+The objectives
+objectives
+of this
+this comparison
+comparison
+were to
+to quantify
+quantify
+some
+and
+of
+some of
+of the
+the stated
+stated advantages
+advantages
+and disadvantages
+disadvantages
+of the
+the
+C.P.Y.
+i
+improved
+C.P.Y. System;
+System; to
+to determine
+determine
+if
+f phase
+phase productivity
+productivity
+improved
+with
+offset
+with the
+the C.P.Y.
+C.P.Y. System
+System and
+and if
+if this
+this improvement
+improvement
+offset the
+the
+increased
+measure bucking
+bucking
+increased handling
+handling of
+of the
+the wood;
+wood; and
+and to
+to measure
+quality
+systems.
+quality and
+and visually
+visually assess
+assess limbing
+limbing under
+under both
+both systems.
+Crown
+in
+uses
+Crown Zellerbach'
+Zellerbach' s
+s operation
+operation
+in Peachland
+Peachland
+uses a
+a central
+central
+yard
+location.
+A
+agreed
+yard as
+as a
+a processing
+processing
+location.
+As
+s a
+a test,
+test, the
+the company
+company agreed
+to
+and
+to harvest
+harvest one-half
+one-half a
+a timber
+timber block
+block conventionally
+conventionally
+and the
+the
+other
+This
+other half
+half through
+through their
+their normal
+normal yard
+yard operation.
+operation.
+This
+comparison
+was
+comparison
+was carried
+carried out
+out in
+in January
+January 1979
+1979 and
+and repeated
+repeated
+for
+in
+for summer
+summer conditions
+conditions
+in June
+June and
+and has
+has provided
+provided the
+the basic
+basic
+data
+data for
+for this
+this report.
+report.
+The
+from
+The first
+first part
+part of
+of the
+the report
+report presents
+presents the
+the information
+information
+from
+the
+of
+the two
+two test
+test periods,
+periods, the
+the method
+method of
+of study,
+study, description
+description
+of
+operations,
+and
+of
+and cost.
+cost.
+These
+operations,
+and summaries
+summaries
+of productivity
+productivity
+and
+These
+data
+to
+the
+data are
+are then
+then interpreted
+interpreted
+to determine
+determine
+the probable
+probable effect
+effect
+of
+on
+and
+of modifications
+modifications
+on some
+some basic
+basic variables
+variables
+and changes
+changes in
+in
+the
+the function
+function of
+of the
+the yard.
+yard.
+A.
+A.
+
+Organization
+Organization
+
+and
+and Method
+Method
+
+of
+of Study
+Study
+
+The
+Division
+The Interior
+Interior Wood
+Wood Supply
+Supply and
+and Products
+Products
+Division
+Zellerbach
+Canada
+Zellerbach
+Canada Ltd.
+Ltd. in
+in Kelowna
+Kelowna arranged
+arranged the
+the
+its
+contractor,
+Duncan
+its Peachland
+Peachland
+contractor,
+Duncan Logging
+Logging Ltd.
+Ltd.
+between
+established
+between FERIC
+FERIC and
+and Crown
+Crown Zellerbach
+Zellerbach
+established
+quirements
+and
+quirements
+and scheduling.
+scheduling.
+
+of Crown
+Crown
+of
+study
+study with
+with
+Discussions
+Discussions
+study rerestudy
+
+The
+procedure
+was
+winter and
+The following
+following
+procedure
+was used
+used in
+in both
+both winter
+and summer.
+summer.
+Each
+serviced
+by
+Each timber
+timber block
+block was
+was divided
+divided into
+into six
+six strips
+strips
+serviced by
+three
+three landings
+landings in
+in the
+the winter
+winter and
+and four
+four in
+in the
+the summer
+summer phase
+phase
+(to
+more
+terrain)
+strips
+(to accommodate
+accommodate
+more difficult
+difficult
+terrain) .
+. Alternate
+Alternate
+strips
+were
+Systems.
+The
+were harvested
+harvested by
+by C.P.Y.
+C.P.Y. and
+and Conventional
+Conventional
+Systems.
+The
+stratification
+of
+stratification
+of the
+the block
+block gave
+gave similar
+similar ground
+ground and
+and timber
+timber
+conditions
+to
+Figure
+conditions
+to both
+both logging
+logging systems.
+systems.
+Figure A
+A shows
+shows the
+the flow
+flow
+of
+The
+used
+of wood
+wood for
+for the
+the two
+two systems.
+systems.
+The operation
+operation
+used fellerfeller-
+
+5
+
+Central
+Central
+
+Processing
+Processing
+
+Conventional
+Conventional
+
+Yard
+Yard System
+System
+
+FIGURE A.
+A.
+FIGURE
+
+System
+System
+
+Flow of
+of wood
+wood for
+for the
+the Central
+Central Processing
+Processing Yard
+Yard
+Flow
+and Conventional
+Conventional Systems
+Systems
+and
+
+6
+
+bunchers
+machinery and
+and crew
+crew
+bunchers and
+and grapple-skidders.
+grapple-skidders. The
+The same
+same machinery
+were
+were used
+used in
+in both
+both the
+the Conventional
+Conventional and
+and C.P.Y.
+C.P.Y. Systems
+Systems (with
+(with
+some
+some changes
+changes between
+between winter
+winter and
+and summer)
+summer).
+. Table
+Table 1
+1 outlines
+outlines
+the
+the machinery
+machinery and
+and labour
+labour used.
+used.
+FERIC
+FERIC monitored
+monitored the
+the operations
+operations throughout
+throughout the
+the study.
+study.
+2
+2 shows
+shows the
+the levels
+levels of
+of study
+study for
+for each
+each logging
+logging phase.
+phase.
+
+Table
+Table
+
+Table
+Table 3
+3 describes
+describes the
+the two
+two blocks.
+blocks. Figures
+Figures B
+B and
+and C
+C illusillustrate
+trate the
+the terrain
+terrain differences.
+differences. Unfortunately
+Unfortunately the
+the steepness
+steepness
+of
+of the
+the summer
+summer block
+block complicated
+complicated the
+the basic
+basic comparison.
+comparison.
+B.
+B.
+
+Productivity
+Productivity and
+and Cost
+Cost by
+by Phase
+Phase
+
+This
+This section
+section presents
+presents the
+the productivity
+productivity and
+and costs
+costs for
+for each
+each
+harvesting
+harvesting phase
+phase during
+during the
+the period
+period of
+of the
+the study.
+study. The
+The
+detailed
+detailed cost
+cost calculations
+calculations are
+are found
+found in
+in Appendix
+Appendix II.
+II. The
+The
+same
+winter and
+and summer
+summer
+same hourly
+hourly rates
+rates were
+were used
+used for
+for both
+both winter
+phases.
+phases.
+In
+In a
+a systems
+systems comparison
+comparison the
+the relationship
+relationship between
+between the
+the hourly
+hourly
+costs
+costs for
+for each
+each phase
+phase is
+is very
+very important
+important if
+if the
+the difference
+difference in
+in
+total
+total cost
+cost is
+is small.
+small. We
+We therefore
+therefore encourage
+encourage the
+the reader
+reader to
+to
+substitute
+substitute his
+his own
+own costs
+costs to
+to get
+get the
+the values
+values representative
+representative
+of
+here primarily
+primarily in
+in deof his
+his operation.
+operation. We
+We are
+are interested
+interested here
+delays
+specific
+lays caused
+caused by
+by system
+system function
+function rather
+rather than
+than by
+by the
+the specific
+machine
+machine or
+or operator.
+operator.
+1.
+1.
+
+Volume
+Volume Produced
+Produced
+
+Table
+and volumes
+volumes removed
+removed from
+Table 4
+4 summarizes
+summarizes the
+the weights
+weights and
+from the
+the
+two
+two cut
+cut blocks.
+blocks. The
+The weight
+weight figures
+figures were
+were obtained
+obtained from
+from the
+the
+B.C.
+B.C. Forest
+Forest Service
+Service weight
+weight scale
+scale sheets
+sheets and
+and converted
+converted to
+to
+volume
+type.
+volume using
+using conversion
+conversion ratios
+ratios for
+for the
+the species
+species type.
+Table
+Table 4
+4 shows
+shows several
+several interesting
+interesting comparisons.
+comparisons. In
+In the
+the
+winter
+winter part
+part of
+of the
+the study,
+study, 12.3%
+12.3% of
+of the
+the weight
+weight entering
+entering the
+the
+yard
+yard did
+did not
+not leave
+leave as
+as merchantable
+merchantable volume.
+volume. This
+This percentpercentage
+age increased
+increased to
+to 17.6%
+17.6% in
+in the
+the summer.
+summer. Hauling
+Hauling this
+this "dead"
+"dead"
+weight
+weight composed
+composed of
+of tops
+tops and
+and branches
+branches is
+is one
+one of
+of the
+the disadvandisadvantages
+tages of
+of the
+the C.P.Y.
+C.P.Y. System.
+System.
+
+7
+7
+
+TABLE 1.
+1.
+TABLE
+
+Equipment and
+and Labour
+Labour on
+on Site
+Site
+Equipment
+Summer
+Summer
+
+Winter
+Winter
+C.P.Y.
+C.P.Y.
+
+Conv.
+Conv.
+
+C.P.Y.
+C.P.Y.
+
+Conv.
+Conv.
+
+Feller-bunchers
+Feller-bunchers
+Grapple skidders
+skidders
+Grapple
+Line skidders*
+skidders*
+Line
+Loaders-bush
+Loaders-bush
+Loaders-yard
+Loaders-yard
+Buckermen
+Buckermen
+Bulldozer
+Bulldozer
+Flail
+Flail
+
+2
+2
+3
+3
+—
+—
+1
+1
+2
+2
+2
+2
+1
+1
+—
+—
+
+2
+2
+3
+3
+—
+—
+2
+2
+3
+3
+1
+1
+—
+—
+
+1
+1
+3
+3
+2
+2
+1
+1
+3
+3
+3
+3
+1
+1
+2
+2
+alternately
+alternately
+
+1
+1
+3
+3
+—
+—
+2
+2
+3
+3
+1
+1
+1
+1
+
+Off-highway trucks
+trucks
+Off-highway
+Av loads
+loads /day
+/day
+Av
+
+3
+3
+12
+12
+
+—
+—
+-
+
+3
+3
+9
+9
+
+-
+
+variable
+variable
+25
+25
+
+variable
+variable
+23
+23
+
+variable
+variable
+17
+17
+
+Highway trucks
+trucks
+Highway
+Av loads
+loads /day
+/day
+Av
+
+variable
+variable
+18
+18
+
+they were
+were
+not included
+included in
+in the
+the data
+data because
+because they
+*The line
+line skidders
+skidders are
+are not
+*The
+involved in
+in only
+only one
+one section
+section of
+of very
+very difficult
+difficult terrain.
+terrain.
+The system
+system
+involved
+The
+of logging
+logging was
+was not
+not a
+a variable;
+variable; therefore
+therefore the
+the volume
+volume and
+and costs
+costs were
+were
+of
+omitted.
+omitted.
+
+TABLE 2.
+2.
+TABLE
+
+Study Method
+Method by
+by Phase
+Phase
+Study
+
+Phase
+Phase
+
+Level
+Level
+
+Felling
+Felling
+
+Not studied
+studied
+Not
+
+Skidding
+Skidding
+
+Shift level
+level - Servis
+Servis
+Shift
+
+Bucking, limbing
+limbing
+Bucking,
+(bush &
+& yard)
+yard)
+(bush
+
+Work sample
+sample
+Work
+
+Loading
+Loading
+
+Work sample
+sample
+Work
+
+- bush
+bush
+-
+
+of Study
+Study
+of
+
+Detailed
+Detailed timing
+timing of
+of loading
+loading in
+in
+bush
+bush and
+and yard,
+yard, unloading
+unloading in
+in yard.
+yard.
+B.C.
+B.C. Forest
+Forest Service
+Service scale
+scale sheets
+sheets
+for
+for weight,
+weight, volume,
+volume, cycle
+cycle time,
+time,
+travel
+travel time
+time and
+and time
+time at
+at millyard.
+millyard.
+
+Hauling
+Hauling
+
+reloading
+reloading
+
+Work
+Work sample
+sample
+
+Handling
+Handling of
+of wood
+wood in
+in
+yard
+yard by
+by loader
+loader
+
+Work
+Work sample
+sample
+
+Unloading,
+Unloading,
+in
+in yard
+yard
+
+Recorder
+Recorder
+
+88
+
+TABLE
+TABLE 3.
+3.
+
+Description
+Description of
+of Study
+Study Blocks
+Blocks
+
+WINTER
+WINTER
+
+Dates
+Dates
+
+of
+of logging
+logging
+
+Average
+Average volume
+volume
+per
+per day*
+day*
+
+SUMMER
+SUMMER
+
+Central
+Central Processing
+Processing
+Yard
+Yard System
+System
+
+Conventional
+Conventional
+System
+System
+
+Central
+Central Processing
+Processing
+Yard
+Yard System
+System
+
+Conventional
+Conventional
+System
+System
+
+January
+January
+
+January
+January 23
+23
+to
+to 31,
+31, 1979
+1979
+
+July
+July 3
+3 to
+to 17,
+17,
+1979
+1979
+
+June
+June 21
+21 to
+to
+July
+July 5
+5,
+, 1979
+1979
+
+Bush
+Bush 820
+820 m
+m 33
+
+Bush
+Bush 540
+540 m
+m 33
+Yard
+Yard 575
+575 m
+m 33
+
+Bush
+Bush 630
+630 m
+m 33
+
+16
+16 to
+to 24,
+24,
+1979
+1979
+
+Bush
+Bush 835
+835 m
+m 33
+Yard
+Yard 820
+820 m
+m 33
+
+Block
+Block size
+size
+
+Total
+Total 28
+28 hectares
+hectares
+
+Total
+Total
+
+Forest
+Forest
+
+Lodgepole
+Lodgepole Pine
+Pine
+occasional
+occasional Spruce
+Spruce
+
+Lodgepole
+Lodgepole Pine
+Pine
+Aspen
+Aspen pocket
+pocket
+occasional
+occasional Spruce,
+Spruce,
+Douglas-f
+Douglas-f ir
+ir
+
+type
+type
+
+Terrain
+Terrain
+
+0
+0 to
+to 15%
+15% slope,
+slope,
+
+Landings
+Landings
+
+three
+three
+
+*
+* These
+These averages
+averages
+days.
+days.
+
+regular
+regular
+
+are
+part of
+the system,
+are based
+based on
+on days
+days worked
+worked for
+for each
+each part
+of the
+system,
+
+**
+Small
+** This
+This was
+was the
+the intended
+intended block
+block size.
+size.
+Small areas
+areas (less
+(less than
+than a
+a hectare)
+hectare)
+felled.
+The
+felled.
+The steepest
+steepest portions
+portions of
+of the
+the Central
+Central Processing
+Processing Yard
+Yard strips
+strips
+the
+the time
+time and
+and volume
+volume were
+were not
+not included
+included in
+in the
+the study.
+study.
+
+37
+37 hectares**
+hectares**
+
+Balsam,
+Balsam,
+
+0
+0 to
+to 45%
+45% slope,
+slope, occasional
+occasional
+pitches
+pitches exceeding
+exceeding 100%
+100% slope.
+slope.
+Steepest
+Steepest area
+area on
+on one
+one C.P.Y.
+C.P.Y.
+strip.
+strip.
+four
+four
+
+excluding
+excluding
+
+start-up
+start-up
+
+or
+or overlap
+overlap
+
+were
+were aspen
+aspen and
+and were
+were not
+not
+were
+were line-skidded
+line-skidded and
+and
+
+FIGURE B
+B.
+.
+FIGURE
+
+Winter block
+block showing
+showing stand
+stand and
+and terrain.
+terrain.
+The
+Winter
+The
+logs are
+are decked
+decked for
+for full-tree
+full-tree
+hauling (Central
+(Central
+logs
+hauling
+Processing
+Yard System)
+System) .
+.
+Processing
+Yard
+
+FIGURE C.
+C.
+FIGURE
+
+Summer block
+block showing
+showing stand
+stand and
+and terrain.
+terrain.
+Summer
+Conventional System
+System is
+is in
+in progress.
+progress.
+Conventional
+
+11 00
+
+The
+The
+
+TABLE
+TABLE 4.
+4.
+
+Summary
+Summary of
+of Weights
+Weights and
+and Volume
+Volume
+
+No.
+No.
+Loads
+Loads
+
+w
+w
+I
+I
+N
+N
+T
+T
+E
+E
+R
+R
+
+S
+S
+U
+U
+M
+M
+M
+M
+E
+E
+R
+R
+
+Total
+Total
+Weight
+Weight
+kg
+kg
+
+Av
+Av Weight
+Weight
+per
+per Load
+Load
+kg
+kg
+
+Total
+Total
+Volume
+Volume
+m
+m
+
+Average
+Average
+Load
+Load Size
+Size
+m3
+m3
+
+Off-highway
+Off-highway
+73
+73
+
+4
+4 778
+778 800
+800
+
+65
+65 463
+463
+
+5
+5 072*
+072*
+
+69.5
+69.5
+
+Transfer
+Transfer
+152
+152
+
+4
+4 190
+190 530
+530
+
+27
+27 662
+662
+
+5
+5 257*
+257*
+
+34.7
+34.7
+
+Highway
+Highway
+118
+118
+
+3
+3 346
+346 520
+520
+
+28
+28 360
+360
+
+4
+4 198
+198
+
+35.6
+35.6
+
+Off-highway
+Off-highway
+87
+87
+
+5
+5 119
+119 260
+260
+
+57
+57 650
+650
+
+5
+5 342*
+342*
+
+60.2
+60.2
+
+Transfer
+Transfer
+153
+153
+
+4
+4 218
+218 740
+740
+
+27
+27 392
+392
+
+5
+5 200*
+200*
+
+33.8
+33.8
+
+Highway
+Highway
+114
+114
+
+3
+3 239
+239 820
+820
+
+28
+28 419
+419
+
+3
+3 993
+993
+
+35.0
+35.0
+
+by
+by number
+number of
+of loads.
+loads.
+
+Some
+Some
+
+C.P.Y.
+C.P.Y.
+
+Conventional
+Conventional
+
+C.P.Y.
+C.P.Y.
+
+Conventional
+Conventional
+
+The
+The averages
+averages in
+in this
+this table
+table do
+do not
+not always
+always
+part
+part loads
+loads were
+were hauled.
+hauled.
+
+equal
+total divided
+divided
+equal total
+
+*
+* Off-highway
+Off-highway and
+and transfer
+transfer volumes
+volumes are
+are slightly
+slightly different
+different
+factors
+wood.
+factors were
+were used
+used for
+for fullfull- tree
+tree and
+and loglog- length
+length wood.
+
+because
+because
+
+different
+different
+
+conversion
+conversion
+
+The
+load
+about
+12%
+The average
+average weight
+weight per
+per off-highway
+off-highway
+load decreased
+decreased
+about 12%
+from
+This
+reduction
+from the
+the winter
+winter phase
+phase to
+to the
+the summer
+summer phase.
+phase.
+This reduction
+is
+due
+of
+is at
+at least
+least partially
+partially
+due to
+to the
+the inexperience
+inexperience
+of the
+the loader
+loader
+operator
+operator and
+and the
+the use
+use of
+of new
+new trucks
+trucks during
+during the
+the summer
+summer phase.
+phase.
+The
+The average
+average weight
+weight and
+and volume
+volume per
+per highway
+highway load
+load was
+was conconsistently
+in
+sistently higher
+higher for
+for the
+the trucks
+trucks originating
+originating
+in the
+the bush
+bush
+than
+in
+than for
+for those
+those originating
+originating
+in the
+the yard,
+yard, by
+by 3
+3 percent
+percent to
+to 4
+4
+percent.
+The
+Inaccuracies
+percent.
+The reason
+reason for
+for this
+this is
+is not
+not clear.
+clear.
+Inaccuracies
+of
+of bunk
+bunk scales
+scales on
+on uneven
+uneven ground
+ground at
+at bush
+bush landings
+landings may
+may have
+have
+led
+led to
+to slightly
+slightly larger
+larger loads
+loads than
+than intended.
+intended.
+2.
+2.
+
+Felling
+Felling
+
+As
+between
+As a
+a rule,
+rule, the
+the differences
+differences
+between these
+these two
+two systems
+systems have
+have no
+no
+effect
+however,
+effect on
+on felling
+felling pattern
+pattern or
+or felling
+felling productivity;
+productivity;
+however,
+during
+of
+during this
+this study
+study the
+the sectioning
+sectioning
+of the
+the block
+block into
+into strips
+strips
+interfered
+so productivity
+productivity
+interfered with
+with the
+the normal
+normal felling
+felling pattern,
+pattern, so
+for
+During the
+the summer
+summer
+for both
+both systems
+systems was
+was probably
+probably reduced.
+reduced.
+During
+part
+on
+part of
+of the
+the study,
+study, some
+some hand
+hand felling
+felling was
+was necessary
+necessary
+on the
+the
+steeper
+To
+the
+steeper areas
+areas and
+and for
+for the
+the bigger
+bigger trees.
+trees.
+To complete
+complete
+the
+costing,
+to us
+us by
+by the
+the company:
+company:
+costing, we
+we used
+used average
+average figures
+figures given
+given to
+$5.00/cunit
+($1.77/m3)'
+$5.00/cunit
+($1.77/m3)' on
+on the
+the easier
+easier terrain
+terrain of
+of the
+the winter
+winter
+block
+($1.94/m3)
+for
+block and
+and $5.50/cunit
+$5.50/cunit
+($1.94/m3)
+for the
+the steeper
+steeper summer
+summer block.
+block.
+3.
+3.
+
+Skidding
+Skidding
+
+Mixed
+were used
+used in
+this
+Mixed makes
+makes and
+and models
+models of
+of grapple
+grapple skidders
+skidders were
+in this
+operation.
+The
+here
+operation.
+The hourly
+hourly rate
+rate presented
+presented
+here is
+is based
+based on
+on the
+the
+price
+The
+important
+figures in
+in
+price average
+average for
+for these
+these machines.
+machines.
+The important
+figures
+this
+hours,
+volume per
+per
+this study
+study are
+are productive
+productive
+hours, total
+total volume,
+volume, volume
+productive
+hour,
+As
+productive
+hour, and
+and cost
+cost per
+per unit
+unit volume.
+volume.
+As Table
+Table 5
+5
+shows,
+shows, the
+the skidders
+skidders produced
+produced more
+more during
+during the
+the C.P.Y.
+C.P.Y. System
+System
+part
+System.
+The
+part of
+of the
+the study
+study than
+than during
+during the
+the Conventional
+Conventional
+System.
+The
+difference
+was
+but 10%
+10% more
+more in
+in
+difference
+was minimal
+minimal during
+during the
+the winter
+winter but
+the
+The
+for
+the summer.
+summer.
+The productivity
+productivity
+for both
+both systems
+systems was
+was much
+much
+less
+reflecting
+the
+proless in
+in the
+the summer
+summer (by
+(by more
+more than
+than 25%)
+25%) ,
+, reflecting
+the problems
+terrain.
+blems with
+with more
+more difficult
+difficult
+terrain.
+Reduced
+in
+the delay
+delay
+Reduced congestion
+congestion
+in the
+the C.P.Y.
+C.P.Y. landings
+landings reduced
+reduced the
+time
+Figure
+landtime of
+of the
+the skidder.
+skidder.
+Figure D
+D shows
+shows the
+the conventional
+conventional
+landing
+flail,
+and
+ing with
+with the
+the skidder,
+skidder,
+flail, buckerman
+buckerman
+and loader
+loader present.
+present.
+Compare
+Compare this
+this to
+to the
+the bush
+bush landing
+landing in
+in Figure
+Figure E
+E,
+, where
+where the
+the
+skidder
+was required
+skidder operator
+operator using
+using the
+the C.P.Y.
+C.P.Y. System
+System was
+required to
+to
+deck
+buckerman.
+deck the
+the logs
+logs but
+but did
+did not
+not work
+work with
+with a
+a buckerman.
+
+1
+12
+2
+
+TABLE
+TABLE 5.
+5.
+
+Skidding
+Skidding Productivity
+Productivity and
+and Cost
+Cost
+Cost/Hour
+Cost/Hour
+
+Cost/m
+Cost/m
+
+m3
+m3
+
+Volume/
+Volume/
+Prod.
+Prod. Hr
+Hr
+m
+m
+
+Total
+Total
+
+Prod.
+Prod.
+
+Volume
+Volume
+
+Hours
+Hours
+
+Hours*
+Hours*
+
+w
+w
+I
+I
+N
+N
+T
+T
+E
+E
+R
+R
+
+C.P.Y.
+C.P.Y.
+
+171.9
+171.9
+
+151.6
+151.6
+
+5
+5 033
+033
+
+33.2
+33.2
+
+$53.47
+$53.47
+
+$1.61
+$1.61
+
+ConvenConventional
+tional
+
+148.9
+148.9
+
+130.1
+130.1
+
+4
+4 179
+179
+
+32.0
+32.0
+
+$53.47
+$53.47
+
+$1.67
+$1.67
+
+S
+S
+U
+U
+M
+M
+M
+M
+E
+E
+R
+R
+
+C.P.Y.
+C.P.Y.
+
+251.9
+251.9
+
+184.4
+184.4
+
+4
+4 554
+554
+
+24.7
+24.7
+
+$53.47
+$53.47
+
+$2.16
+$2.16
+
+ConvenConventional
+tional
+
+210.4
+210.4
+
+178.5
+178.5
+
+3
+3 993
+993
+
+22.4
+22.4
+
+$53.47
+$53.47
+
+$2.39
+$2.39
+
+3
+3
+
+Productive
+These
+Productive hours
+hours are
+are obtained
+obtained from
+from the
+the Servis
+Servis Recorder
+Recorder charts.
+charts.
+These
+figures
+Service,
+figures are
+are the
+the sum
+sum of
+of moving
+moving time
+time plus
+plus short
+short delays.
+delays.
+Service, repair,
+repair,
+lunch
+Terminal
+lunch and
+and major
+major delays
+delays are
+are removed.
+removed.
+Terminal delays
+delays which
+which may
+may have
+have
+been
+been caused
+caused by
+by landing
+landing congestion
+congestion were
+were included
+included in
+in Productive
+Productive Hours.
+Hours.
+Right-of-way
+Right-of-way skidding
+skidding (hours
+(hours and
+and volumes)
+volumes) are
+are not
+not included
+included in
+in this
+this
+Table.
+Table.
+
+11 33
+
+FIGURE
+FIGURE D.
+D.
+
+Conventional
+Conventional System
+System landing
+landing illustrating
+illustrating
+concentration
+concentration of
+of activity
+activity (summer
+(summer phase)
+phase)
+
+FIGURE
+FIGURE E
+E
+
+Central
+Central Processing
+Processing Yard
+Yard System
+System landing
+landing
+(winter
+(winter phase)
+phase)
+11 44
+
+Time
+Time and
+and volume
+volume figures
+figures for
+for skidding
+skidding the
+the wood
+wood on
+on landings
+landings
+and
+are
+and rights-of-way
+rights-of-way
+are not
+not included
+included in
+in Table
+Table 5.
+5. The
+The rightrightof-way
+of-way wood
+wood was
+was skidded
+skidded at
+at the
+the beginning
+beginning of
+of the
+the study
+study and
+and
+removed
+For
+removed during
+during the
+the C.P.Y.
+C.P.Y. System.
+System.
+For complete
+complete costing,
+costing,
+estimates
+of
+estimates
+of $0.03/m3
+$0.03/m3 for
+for the
+the winter
+winter and
+and $0.05/m3
+$0.05/m3 f
+f oo rr the
+the
+summer
+cost of
+of the
+wood
+summer were
+were included
+included in
+in the
+the per-volume
+per-volume
+cost
+the wood
+under
+under both
+both systems.
+systems.
+Line
+on
+Line skidding
+skidding was
+was necessary
+necessary
+on one
+one steep
+steep section
+section of
+of the
+the
+summer
+Because
+summer block
+block during
+during the
+the C.P.Y.
+C.P.Y. System.
+System.
+Because this
+this
+skidding
+in
+skidding was
+was very
+very slow
+slow and
+and was
+was not
+not required
+required
+in the
+the ConvenConventional
+tional System,
+System, the
+the volume
+volume and
+and time
+time are
+are not
+not included
+included in
+in the
+the
+study.
+study.
+4.
+4.
+
+Loading,
+Loading,
+
+Unloading,
+Unloading,
+
+Processing
+Processing
+
+These
+These phases
+phases are
+are included
+included under
+under one
+one
+loader
+loader time
+time is
+is assigned
+assigned to
+to all
+all four
+four
+
+and
+and Reloading
+Reloading
+heading
+heading because
+because
+functions.
+functions.
+
+the
+the
+
+Table
+the
+buckermen,
+and
+Table 6
+6 summarizes
+summarizes
+the hours
+hours for
+for loaders,
+loaders,
+buckermen,
+and
+flail.
+Although
+flail.
+Although the
+the volume
+volume produced
+produced in
+in each
+each of
+of the
+the seasons
+seasons
+is
+and
+labour hours
+is roughly
+roughly equal,
+equal, the
+the equipment
+equipment
+and labour
+hours required
+required
+to
+to handle
+handle the
+the wood
+wood are
+are much
+much greater
+greater in
+in the
+the summer
+summer phase
+phase
+for
+The
+for both
+both systems.
+systems.
+The addition
+addition of
+of the
+the flail
+flail to
+to the
+the summer
+summer
+phase
+More
+phase accounts
+accounts for
+for part
+part of
+of the
+the increase.
+increase.
+More loader
+loader and
+and
+buckerman
+however.
+The
+buckerman time
+time was
+was required
+required for
+for processing,
+processing,
+however.
+The
+logs
+The
+logs were
+were limbier
+limbier and
+and more
+more debris
+debris was
+was produced.
+produced.
+The volume
+volume
+through
+through the
+the yard
+yard was
+was also
+also less
+less than
+than the
+the designed
+designed daily
+daily volvolume.
+This
+ume.
+This created
+created more
+more idle
+idle time
+time which
+which had
+had to
+to be
+be distribudistributed
+ted among
+among the
+the functions.
+functions.
+a)
+a)
+
+Buckermen
+Buckermen
+
+Table
+Table 7
+7 outlines
+outlines the
+the results
+results of
+of the
+the work
+work sampling
+sampling and
+and shows
+shows
+the
+of
+The
+the calculation
+calculation
+of the
+the buckerman
+buckerman costs.
+costs.
+The buckermen
+buckermen
+working
+working in
+in the
+the central
+central yard
+yard in
+in both
+both summer
+summer and
+and winter
+winter were
+were
+more
+than
+more productive
+productive
+than those
+those working
+working on
+on the
+the bush
+bush landings.
+landings.
+Improved
+resulted
+with
+Improved productivity
+productivity
+resulted from
+from reduced
+reduced interaction
+interaction
+with
+machinery
+machinery and
+and a
+a larger
+larger volume
+volume supplied
+supplied to
+to the
+the buckermen.
+buckermen.
+The
+per
+and cost
+cost per
+per
+The related
+related values
+values of
+of productivity
+productivity
+per hour
+hour and
+volume
+In
+winter study
+study the
+the volume
+volume
+volume are
+are also
+also important.
+important.
+In the
+the winter
+per
+per manhour
+manhour was
+was almost
+almost 100%
+100% higher
+higher for
+for the
+the central
+central yard
+yard
+with
+reduction
+in
+This
+with a
+a corresponding
+corresponding
+reduction
+in cost.
+cost.
+This dropped
+dropped to
+to
+50%
+50% in
+in the
+the summer
+summer when
+when the
+the yard
+yard was
+was under-utilized.
+under-utilized.
+The
+of
+The percentage
+percentage
+of time
+time spent
+spent by
+by the
+the buckerman
+buckerman in
+in travelling
+travelling
+within
+within the
+the work
+work area
+area (yard
+(yard or
+or cut
+cut block)
+block) is
+is slightly
+slightly greater
+greater
+15
+15
+
+TABLE
+TABLE
+
+w
+w
+I
+I
+N
+N
+T
+T
+E
+E
+R
+R
+S
+S
+U
+U
+M
+M
+M
+M
+E
+E
+R
+R
+
+6.
+6.
+
+Summary of
+of Man
+Man and
+and Machine
+Machine Hours
+Hours
+Summary
+(Loading,
+Unloading
+and Processing)
+Processing)
+(Loading,
+Unloading
+and
+
+Loaders
+Loaders
+Bush
+Bush
+
+Loaders
+Loaders
+Yard
+Yard
+
+Buckermen
+Buckermen
+
+Flail
+Flail
+
+Total
+Total
+
+C.P.Y.
+C.P.Y.
+
+55.2
+55.2
+
+120.4
+120.4
+
+90.3
+90.3
+
+—
+—
+
+265.9
+265.9
+
+ConvenConventional
+tional
+
+103.3
+103.3
+(9.5*)
+(9.5*)
+
+-
+
+149.5
+149.5
+
+-
+
+252.8
+252.8
+
+C.P.Y.
+C.P.Y.
+
+90.8
+90.8
+
+201.7
+201.7
+
+197.0
+197.0
+
+68.1
+68.1
+
+557.6
+557.6
+
+ConvenConventional
+tional
+
+116.8
+116.8
+
+-
+
+221.7
+221.7
+
+52.5**
+52.5**
+
+391.0
+391.0
+
+* Loader
+Loader broken
+broken down
+down
+*
+** Flail
+Flail only
+only operating
+operating part
+part of
+of the
+the time.
+time. Under
+Under full
+full conventional
+conventional
+**
+system with
+with the
+the flail
+flail utilized
+utilized full
+full time,
+time, it
+would have
+system
+it would
+have worked
+worked
+an additional
+additional 20
+20 hours.
+hours.
+an
+
+16
+16
+
+TABLE
+TABLE 7.
+7.
+
+Activity
+Activity and
+and Cost
+Cost of
+of Buckermen
+Buckermen
+Summer
+Summer
+
+Winter
+Winter
+C.P.Y.
+C.P.Y.
+
+ConvenConventional
+tional
+
+C.P.Y.
+C.P.Y.
+
+ConvenConventional
+tional
+
+Tape
+Tape
+Top/delimb/buck
+Top/delimb/buck
+
+8.4
+8.4
+47.0
+47.0
+
+2.2
+2.2
+35.6
+35.6
+
+5.0
+5.0
+43.2
+43.2
+
+5.1
+5.1
+38.5
+38.5
+
+"Productive"
+"Productive"
+-Processing
+-Processing
+
+55.4%
+55.4%
+
+37.8%
+37.8%
+
+48.2%
+48.2%
+
+43.6%
+43.6%
+
+Travel,
+Travel, move
+move
+Machines
+Machines in
+in
+working
+working area
+area
+"Idle"-no
+"Idle"-no work
+work
+
+4.5
+4.5
+4.5
+4.5
+
+2.3
+2.3
+9.5
+9.5
+
+5.9
+5.9
+6.7
+6.7
+
+3.5
+3.5
+11.1
+11.1
+
+19.3
+19.3
+
+36.1
+36.1
+
+18.5
+18.5
+
+23.6
+23.6
+
+Service,
+Service, repair
+repair
+Assist
+Assist others
+others
+Lunch
+Lunch /coffee
+/coffee
+Mise.
+Mise.
+
+9.7
+9.7
+0.7
+0.7
+4.9
+4.9
+1.0
+1.0
+
+6.1
+6.1
+4.1
+4.1
+3.0
+3.0
+1.1
+1.1
+
+11.9
+11.9
+0.4
+0.4
+7.0
+7.0
+1.4
+1.4
+
+7.1
+7.1
+1.4
+1.4
+7.7
+7.7
+2.0
+2.0
+
+100.0%
+100.0%
+
+100.0%
+100.0%
+
+100.0%
+100.0%
+
+100.0%
+100.0%
+
+Hours
+Hours
+
+90.3
+90.3
+
+149.5
+149.5
+
+197.0
+197.0
+
+221.7
+221.7
+
+Volume
+Volume m
+m
+m3
+m3 /hour
+/hour
+
+5
+5 072
+072
+56.2
+56.2
+
+4
+4 198
+198
+28.1
+28.1
+
+5
+5 342
+342
+27.1
+27.1
+
+3
+3 993
+993
+18.0
+18.0
+
+Wage/hour
+Wage/hour
+Chainsaw rental
+rental
+Chainsaw
+Total
+Total
+
+$12.06
+$12.06
+$ 1.25
+1.25
+$
+$13.31
+$13.31
+
+$12.06
+$12.06
+$ 1.25
+1.25
+$
+$13.31
+$13.31
+
+$12.06
+$12.06
+$ 1.25
+1.25
+$
+$13.31
+$13.31
+
+$12.06
+$12.06
+$ 1.25
+1.25
+$
+$13.31
+$13.31
+
+Cost/m3
+Cost/m3
+
+$ 0.24
+0.24
+$
+
+$ 0.47
+0.47
+$
+
+$ 0.49
+0.49
+$
+
+$ 0.74
+0.74
+$
+
+%
+% of
+of time
+time during
+during study
+study
+
+Total
+Total
+Production
+Production
+
+Cost
+Cost
+
+17
+17
+
+for
+interaction
+with machinery
+machinery
+for the
+the central
+central yard.
+yard. .
+. The
+The interaction
+with
+(loaders
+was
+Conventional
+(loaders and
+and skidders)
+skidders)
+was greater
+greater for
+for the
+the Conventional
+System,
+System, however.
+however.
+b)
+b)
+
+Flail
+Flail
+
+The
+The flail
+flail was
+was not
+not needed
+needed in
+in the
+the winter
+winter because
+because the
+the cold
+cold
+temperatures
+made
+temperatures
+made the
+the limbs
+limbs brittle
+brittle and
+and most
+most broke
+broke off
+off durduring
+During
+ing skidding
+skidding and
+and loading.
+loading.
+During the
+the summer,
+summer, however,
+however, the
+the
+limbs
+and
+limbs were
+were more
+more resilient
+resilient
+and the
+the flail
+flail was
+was used
+used in
+in both
+both
+systems.
+systems.
+Only
+"productive"
+in
+Only 20%
+20% of
+of flail
+flail time
+time was
+was classified
+classified
+"productive"
+in the
+the
+Conventional
+System,
+Conventional
+System, and
+and using
+using a
+a flail
+flail may
+may not
+not have
+have been
+been
+necessary
+(as
+work
+necessary during
+during this
+this experiment
+experiment
+(as shown
+shown by
+by the
+the work
+sample
+Table
+In
+sample information,
+information,
+Table 8).
+8).
+In the
+the C.P.Y.
+C.P.Y. System,
+System, 57.3%
+57.3%
+of
+of the
+the flail
+flail time
+time was
+was productive.
+productive.
+c
+c)
+)
+
+Loaders
+Loaders
+
+One
+on off-highway
+off-highway
+One bush
+bush loader
+loader was
+was used
+used to
+to load
+load full
+full trees
+trees on
+trucks
+Different
+loader-operators
+trucks in
+in the
+the C.P.Y.
+C.P.Y. System.
+System.
+Different
+loader-operators
+were
+The
+were used
+used in
+in the
+the winter
+winter and
+and summer
+summer phases.
+phases.
+The yard
+yard itself
+itself
+used
+summer.
+used two
+two loaders
+loaders in
+in the
+the winter
+winter and
+and three
+three in
+in the
+the summer.
+One
+This
+One loader
+loader loaded
+loaded highway
+highway trucks
+trucks almost
+almost fulltime.
+fulltime.
+This
+loader
+when
+loader also
+also performed
+performed other
+other functions
+functions
+when the
+the other
+other yardyardloaders
+The
+loaders were
+were busy
+busy and
+and it
+it had
+had no
+no trucks
+trucks to
+to load.
+load.
+The second
+second
+and
+trucks,
+and third
+third loaders
+loaders unloaded
+unloaded the
+the off-highway
+off-highway
+trucks, spread
+spread
+and
+and buttbutt- indexed
+indexed full
+full trees,
+trees, sorted
+sorted and
+and decked
+decked processed
+processed
+wood,
+wood, and
+and cleaned
+cleaned the
+the debris
+debris from
+from the
+the yard.
+yard.
+The
+on the
+The two
+two loaders
+loaders in
+in the
+the bush
+bush loaded
+loaded log-length
+log-length
+on
+the highhighway
+System.
+When time
+perway trucks
+trucks in
+in the
+the Conventional
+Conventional
+System.
+When
+time permitted,
+The
+mitted, they
+they helped
+helped to
+to process
+process the
+the wood.
+wood.
+The two
+two operators
+operators
+used
+used in
+in this
+this part
+part of
+of the
+the study
+study normally
+normally worked
+worked in
+in the
+the yard
+yard
+and
+both systems.
+systems.
+and were
+were present
+present both
+both winter
+winter and
+and summer
+summer for
+for both
+Table
+Table 9
+9 details
+details the
+the results
+results of
+of the
+the work
+work sampling
+sampling and
+and the
+the
+productivities
+and
+and location.
+productivities
+and costs
+costs for
+for each
+each system
+system and
+location.
+For
+time
+by
+For each
+each phase
+phase the
+the nonproductive
+nonproductive
+time was
+was proportioned
+proportioned
+by
+percentage
+to
+percentage
+to give
+give the
+the total
+total hours
+hours costed
+costed for
+for each.
+each.
+i.
+i.
+
+Loading
+Loading —
+— Bush
+Bush
+
+All
+to
+All of
+of the
+the bush
+bush loader's
+loader's time
+time and
+and cost
+cost was
+was attributed
+attributed
+to
+-highway
+The
+loaders in
+-highway loading.
+loading.
+The cost
+cost of
+of the
+the two
+two loaders
+in the
+the
+Conventional
+System
+between
+Conventional
+System was
+was divided
+divided proportionally
+proportionally
+between loadloading
+ing and
+and processing.
+processing.
+18
+18
+
+TABLE
+TABLE
+
+8.
+8.
+
+Activity
+Activity
+
+and Cost
+Cost
+and
+
+of Flail
+Flail
+of
+Summer
+Summer
+
+Winter
+Winter
+C.P.Y.
+C.P.Y.
+
+ConvenConventional
+tional
+
+38.6
+38.6
+12.5
+12.5
+1.7
+1.7
+
+9.3
+9.3
+—
+—
+2.9
+2.9
+
+—
+—
+4.5
+4.5
+
+3.3
+3.3
+4.5
+4.5
+
+"Productive"
+"Productive"
+
+57.3%
+57.3%
+
+20.0%
+20.0%
+
+Wait wood
+wood
+Wait
+Wait machines
+machines
+Wait
+Service/repair
+Service/repair
+Miscellaneous
+Miscellaneous
+
+17.2
+17.2
+1.6
+1.6
+7.9
+7.9
+16.0
+16.0
+
+26.9
+26.9
+15.9
+15.9
+16.2
+16.2
+21.0
+21.0
+
+100.0%
+100.0%
+
+100.0%
+100.0%
+
+68.1
+68.1
+5 342
+342
+5
+
+52.5
+52.5
+3 993
+993
+3
+
+$50.00
+$50.00
+$ 0.64
+0.64
+$
+
+$50.00
+$50.00
+$ 0.66
+0.66
+$
+
+% of
+of time
+time during
+during study
+study
+%
+Flail
+Flail
+Align butts
+butts
+Align
+Tape/deck/ spread/
+spread/
+Tape/deck/
+hand limb
+limb
+hand
+Clean area
+area
+Clean
+Travel
+Travel
+
+Not
+Not
+Present
+Present
+
+Production
+Production
+Hours
+Hours
+Volume m
+m
+Volume
+Cost
+Cost
+Cost/hour
+Cost/hour
+Cost/m
+Cost/m
+
+19
+19
+
+TABLE
+TABLE
+
+9.
+9.
+
+Activity
+Activity
+
+and
+and Cost
+Cost
+
+of
+of Loaders
+Loaders
+
+WINTER
+WINTER
+C.P.Y.
+C.P.Y.
+
+%
+% of
+of time
+time during
+during study
+study
+Load
+Load
+Unload
+Unload
+Sort/deck
+Sort/deck
+Spread/butt-index
+Spread/butt-index
+Clean
+Clean area
+area
+Hold
+Hold trees
+trees for
+for buckerman
+buckerman
+
+SUMMER
+SUMMER
+Conventional
+Conventional
+
+C.P.Y.
+C.P.Y.
+
+Conventional
+Conventional
+
+Loaders-Bush
+Loaders-Bush
+
+Loaders-Yard
+Loaders-Yard
+
+Loaders-Bush
+Loaders-Bush
+
+Loaders-Bush
+Loaders-Bush
+
+Loaders-Yard
+Loaders-Yard
+
+Loaders-Bush
+Loaders-Bush
+
+48.8
+48.8
+—
+—
+
+51.6
+51.6
+—
+—
+
+72.7
+72.7
+—
+—
+
+13.0
+13.0
+—
+—
+11.4
+11.4
+-
+
+2.7
+2.7
+0.6
+0.6
+8.4
+8.4
+-
+
+28.8
+28.8
+6.7
+6.7
+8.6
+8.6
+18.1
+18.1
+15.5
+15.5
+8.8
+8.8
+
+58.6
+58.6
+—
+—
+
+3.6
+3.6
+6.2
+6.2
+-
+
+39.2
+39.2
+7.3
+7.3
+7.3
+7.3
+20.1
+20.1
+12.1
+12.1
+-
+
+11.1
+11.1
+1.3
+1.3
+9.3
+9.3
+0.9
+0.9
+
+Travel
+Travel in
+in yard,
+yard,
+landings
+landings
+
+between
+between
+
+2.3
+2.3
+
+0.4
+0.4
+
+1.3
+1.3
+
+4.0
+4.0
+
+0.9
+0.9
+
+2.3
+2.3
+
+Service,
+Service, repair,
+repair,
+Machine
+Machine idle**
+idle**
+Miscellaneous
+Miscellaneous
+
+fuel*
+fuel*
+
+9.4
+9.4
+27.0
+27.0
+2.7
+2.7
+
+0.9
+0.9
+7.6
+7.6
+5.1
+5.1
+
+6.6
+6.6
+14.0
+14.0
+2.1
+2.1
+
+4.5
+4.5
+5.7
+5.7
+1.4
+1.4
+
+2.4
+2.4
+9.4
+9.4
+0.8
+0.8
+
+3.4
+3.4
+10.4
+10.4
+2.7
+2.7
+
+100%
+100%
+
+100%
+100%
+
+100%
+100%
+
+100%
+100%
+
+100%
+100%
+
+100%
+100%
+
+33.3%33.3%- 67.2
+67.2 hr
+hr
+7.7%=
+7.7%= 15.5
+15.5 hr
+hr
+59.0%-119.0
+hr
+59.0%-119.0
+hr
+
+72.2%=84.3
+72.2%=84.3
+
+hr
+hr
+
+27.8%=32.5
+27.8%=32.5
+
+hr
+hr
+
+Time
+Time attributed
+attributed
+Loading
+Loading
+Unloading
+Unloading
+Processing
+Processing
+
+to:***
+to:***
+100%-55.2
+100%-55.2
+
+hr
+hr
+
+43.5%-52.4
+hr
+43.5%-52.4
+hr
+8.1%8.1%- 9.7
+9.7 hr
+hr
+48.4%=58.3
+hr
+48.4%=58.3
+hr
+
+67.9%-7O.l
+67.9%-7O.l
+
+hr
+hr
+
+32.1%=33.2
+32.1%=33.2
+
+hr
+hr
+
+100%=90.8
+100%=90.8
+
+hr
+hr
+
+Cost/hour
+Cost/hour
+
+$57.17
+$57.17
+
+$57.17
+$57.17
+
+$57.17
+$57.17
+
+$57.17
+$57.17
+
+$57.17
+$57.17
+
+$57.17
+$57.17
+
+Volume
+Volume
+
+5
+5 072
+072
+
+5
+5 072
+072
+
+4
+4 198
+198
+
+5
+5 342
+342
+
+5
+5 342
+342
+
+3
+3 993
+993
+
+$
+$ 0.62
+0.62
+
+$
+$ 0.59
+0.59
+$
+$ 0.11
+0.11
+$
+$ 0.66
+0.66
+
+$
+$ 0.95
+0.95
+
+$
+$ 0.97
+0.97
+
+$
+$ 1.21
+1.21
+
+$
+$ 0.45
+0.45
+
+$
+$ 0.72
+0.72
+$
+$ 0.17
+0.17
+$
+$ 1.27
+1.27
+
+$
+$ 0.46
+0.46
+
+$
+$ 1.36
+1.36
+
+$
+$ 1.40
+1.40
+
+$
+$ 2.16
+2.16
+
+$
+$ 1.67
+1.67
+
+- m
+m
+
+Cost/m
+Cost/m
+Loading
+Loading
+Unloading
+Unloading
+Processing
+Processing
+Total
+Total
+
+$
+$ 0.62
+0.62
+
+*
+* Only
+Only included
+included when
+when performed
+performed during
+during the
+the day.
+day.
+**
+not
+** Stationary,
+Stationary,
+not performing
+performing tasks.
+tasks.
+***
+time
+productive
+*** "Nonproductive"
+"Nonproductive"
+time is
+is proportioned
+proportioned among
+among the
+the productive
+
+activities.
+activities.
+
+$
+$ 0.97
+0.97
+
+In the
+the winter
+winter section
+section of
+of the
+the study,
+study, both
+both conventional
+conventional
+and
+In
+and
+off-highway
+loaders spent
+spent roughly
+roughly 50%
+50% of
+of their
+their time
+time actually
+actually
+off-highway
+loaders
+loading trucks.
+trucks.
+Because the
+the conventional
+conventional
+loaders
+had
+loading
+Because
+loaders also
+also had
+buckermen
+on their
+their landings,
+landings,
+they spent
+spent part
+part of
+of the
+the remainremainbuckermen
+on
+they
+ing time
+time assisting
+assisting
+in spreading
+spreading wood,
+wood, cleaning
+cleaning debris,
+debris, and
+and
+ing
+in
+decking.
+They sorted
+sorted and
+and redecked
+redecked wood
+wood from
+from the
+the skidder
+skidder
+decking.
+They
+decks to
+to facilitate
+facilitate
+loading.
+These
+were not
+not necessary
+necessary
+decks
+loading.
+These tasks
+tasks were
+for the
+the off-highway
+off-highway
+loader and
+and it
+it had
+had more
+more idle
+for
+loader
+idle time
+time between
+between
+trucks.
+In both
+both systems
+systems loading
+loading bays
+bays were
+were used.
+used.
+Figures
+trucks.
+In
+Figures
+F and
+and G
+G show
+show the
+the bushbush- loading
+loading for
+for the
+the two
+two systems.
+systems.
+F
+In the
+the summer
+summer part
+part of
+of the
+the study,
+study, the
+the loader
+loader time
+distribuIn
+time distribution for
+for the
+the Conventional
+Conventional
+System was
+was similar
+similar to
+to the
+the winter
+winter
+tion
+System
+distribution
+with slightly
+slightly more
+more time
+time spent
+spent loading.
+loading.
+distribution
+with
+The off-highway
+off-highway
+loader spent
+spent a
+a larger
+larger part
+part of
+of its
+its time
+The
+loader
+time
+loading in
+in the
+the summer
+summer because
+because the
+the operator
+operator was
+was not
+not as
+as exexloading
+perienced as
+as the
+the winter
+winter operator.
+operator.
+The extra
+average loadloadperienced
+The
+extra average
+ing time
+time in
+in the
+the bush
+bush (see
+(see Table
+Table 10)
+10) caused
+increased delay
+delay
+ing
+caused increased
+times for
+for the
+the trucks,
+trucks, increased
+increased cycle
+cycle times
+times and
+and reduced
+times
+reduced
+volume delivered
+delivered
+to the
+the yard.
+yard.
+This resulted
+resulted in
+in a
+a snowsnowvolume
+to
+This
+balling effect
+effect throughout
+throughout
+the system
+system and
+and increased
+increased
+the
+balling
+the
+the
+per- volume
+volume cost
+cost at
+at each
+each phase.
+phase.
+perii.
+ii.
+
+Unloading —
+— Yard
+Yard
+Unloading
+
+Unloading was
+was required
+required in
+in the
+the C.P.Y.
+C.P.Y. System
+System but
+but not
+Unloading
+not in
+in the
+the
+Conventional
+System.
+Wood was
+was pushed
+pushed off
+off trucks
+trucks near
+near the
+the
+Conventional
+System.
+Wood
+processing
+area after
+after full-tree
+full-tree
+loads were
+were weigh-scaled.
+weigh-scaled.
+processing
+area
+loads
+In both
+both summer
+summer and
+and winter
+winter ,
+, the
+the percentage
+percentage
+of loader
+loader time
+time
+In
+of
+was similar
+similar but
+but in
+in the
+the summer
+summer it
+it involved
+involved a
+number
+was
+a larger
+larger number
+of manhours
+manhours and
+and an
+an increased
+increased
+cost.
+Figure H
+H shows
+shows the
+the
+of
+cost.
+Figure
+loader backing
+backing from
+from the
+the truck
+truck after
+after the
+the straps
+straps have
+have been
+been
+loader
+removed from
+from the
+the load.
+load.
+removed
+iii.
+iii.
+
+Processing
+Processing
+
+— Bush
+Bush
+—
+
+and Yard
+Yard
+and
+
+The processing
+processing
+functions
+of the
+the loaders
+loaders included
+included helping
+helping
+The
+functions
+of
+the buckermen,
+buckermen,
+spreading
+the wood,
+wood, buttindexing the
+the logs,
+logs,
+the
+spreading
+the
+butt- indexing
+decking and
+and sorting,
+sorting,
+and cleaning
+cleaning the
+the yard
+yard or
+or landing.
+landing.
+decking
+and
+Processing
+was not
+not a
+a primary
+primary part
+part of
+of the
+the loaders'
+loaders' activity
+activity
+Processing
+was
+in the
+the Conventional
+Conventional
+System because
+because the
+the skidders
+skidders were
+were
+in
+System
+expected to
+to perform
+perform most
+most of
+of these
+these tasks.
+tasks.
+The
+expected
+The total
+total time
+time
+attributed
+to processing
+processing
+(spread, deck,
+deck, clean,
+clean, sort)
+sort) i
+in
+n
+attributed
+to
+(spread,
+the Conventional
+Conventional
+System was
+was 24.4%
+24.4% in
+in the
+the winter
+winter and
+the
+System
+and 21.7%
+21.7%
+in the
+the summer.
+summer.
+The cost
+cost per
+per unit
+unit volume
+volume remained
+remained the
+in
+The
+the same.
+same.
+21
+21
+
+•a
+
+FIGURE F
+F.
+.
+FIGURE
+
+Loading
+Loading
+Central
+Central
+
+FIGURE
+FIGURE
+
+Loading
+Loading highway
+highway truck
+truck at
+at bush
+bush landing
+landing
+Conventional
+System,
+Conventional
+System, summer
+summer phase
+phase
+
+G
+G.
+.
+
+off-highway
+off-highway
+Processing
+Processing
+
+truck at
+at bush
+bush landing-landing-truck
+Yard System,
+System, winter
+phase
+Yard
+winter phase
+
+22
+
+TABLE 10.
+10.
+TABLE
+
+Detailed Timing
+Timing of
+of Hauling
+Hauling Cycles
+Cycles
+Detailed
+SUMMER
+SUMMER
+
+WINTER
+WINTER
+Central
+Central
+Processing
+Processing
+Yard System
+System
+Yard
+(minutes)
+(minutes)
+Off-highway
+Off-highway
+
+Truck
+Truck
+
+Conventional
+Conventional
+System
+System
+(minutes)
+(minutes)
+
+Central
+Central
+Processing
+Processing
+Yard System
+System
+Yard
+(minutes)
+(minutes)
+
+36.3
+36.3
+24.1
+24.1
+
+40.2
+40.2
+12.0
+12.0
+
+not
+not
+
+not
+not
+17.0
+17.0
+3.8
+3.8
+55.7
+55.7
+3.8
+3.8
+0.6
+0.6
+13.5
+13.5
+
+present
+present
+
+43.2
+43.2
+6.2
+6.2
+50.1
+50.1
+4.5
+4.5
+0.8
+0.8
+13.1
+13.1
+
+Total Cycle
+Cycle Time*
+Time*
+Total
+(leave scale
+scale to
+to leave
+leave scale)
+scale)
+(leave
+
+145.0
+145.0
+
+176.5
+176.5
+
+Haul
+Haul
+
+30 km
+km
+30
+
+26 km
+km
+26
+
+Highway
+Highway
+
+Truck
+Truck
+
+(one
+(one
+
+way)
+way)
+
+Total
+Total Cycle
+Cycle Time*
+Time*
+(leave
+(leave scale
+scale to
+to leave
+leave
+(exclude
+(exclude last
+last day)
+day)
+distance
+distance
+
+present
+present
+
+Phase
+Phase
+
+Travel empty
+empty
+Travel
+Delay in
+in yard
+yard or
+or landing
+landing
+Delay
+(exclude
+last day)
+day)
+(exclude
+last
+Load
+Load
+Position and
+and truck
+truck preparation
+preparation
+Position
+At
+At scales
+scales in
+in yard
+yard
+Travel
+Travel loaded
+loaded
+Time
+Time in
+in mill
+mill yard
+yard
+
+Haul
+Haul
+
+(minutes)
+(minutes)
+
+Phase
+Phase
+
+Travel empty
+empty
+Travel
+Delay at
+at landing,
+landing, truck
+truck
+Delay
+preparation
+preparation
+Load
+Load
+Truck preparation,
+preparation,
+delay
+Truck
+delay
+Travel loaded
+loaded
+Travel
+At scales
+scales (empty
+(empty and
+and loaded)
+loaded)
+At
+Delay in
+in yard
+yard
+Delay
+Time in
+in yard
+yard
+Time
+
+distance
+distance
+
+Convent ional
+ional
+Convent
+System
+System
+
+(one
+(one
+
+way)
+way)
+
+scale)
+scale)
+
+33.1
+33.1
+4.9
+4.9
+14.5
+14.5
+9.0
+9.0
+0.2
+0.2
+38.3
+38.3
+13.1
+13.1
+
+66.1
+66.1
+16.1
+16.1
+(2.3)
+(2.3)
+23.0
+23.0
+9.3
+9.3
+—
+—
+82.8
+82.8
+13.4
+13.4
+
+34.1
+34.1
+3.5
+3.5
+
+67.2
+67.2
+4.6
+4.6
+
+18.6
+18.6
+9.1
+9.1
+0.7
+0.7
+40.0
+40.0
+15.5
+15.5
+
+31.1
+31.1
+11.5
+11.5
+—
+—
+76.3
+76.3
+13.2
+13.2
+
+112.5
+112.5
+
+212.0
+212.0
+(193.0)
+(193.0)
+
+119.7
+119.7
+
+201.8
+201.8
+
+34
+34 km
+km
+
+64
+64 km
+km
+
+34
+34 km
+km
+
+60
+60 km
+km
+
+*
+* The
+The elements
+elements d
+do
+o not
+not sum
+sum exactly
+exactly because
+because this
+this figure
+figure is
+is calculated
+calculated
+sheets;
+sheets; the
+the others
+others are
+are calculated
+calculated from
+from on-site
+on-site timing.
+timing.
+
+from
+from
+
+scale
+scale
+
+FIGURE
+FIGURE H.
+H.
+
+Unloading
+Unloading off-highway
+off-highway truck
+truck at
+at the
+the yard,
+yard,
+Central
+Central Processing
+Processing Yard
+Yard System
+System
+
+The
+attributed to
+to processing
+processing
+The portion
+portion of
+of the
+the loader
+loader activity
+activity attributed
+in
+in the
+the C.P.Y.
+C.P.Y. System
+System increased
+increased from
+from 48%
+48% in
+in the
+the winter
+winter
+to
+cost was
+was double
+to 59%
+59% in
+in the
+the summer.
+summer. The
+The per-volume
+per-volume cost
+double in
+in
+the
+hours was
+was
+the summer,
+summer, however,
+however, because
+because the
+the total
+total number
+number of
+of hours
+greater.
+greater. This
+This increase
+increase was
+was due
+due to
+to a
+a reduced
+reduced volume
+volume throughthroughput
+put and
+and increased
+increased debris
+debris handling.
+handling.
+Figure
+processing activities
+activities
+Figure I
+I illustrates
+illustrates the
+the sequence
+sequence of
+of processing
+in
+in the
+the yard.
+yard. In
+In the
+the bottom
+bottom right
+right the
+the wood
+wood is
+is being
+being taped,
+taped,
+topped,
+treetopped, bucked
+bucked and
+and limbed.
+limbed. The
+The loader
+loader is
+is spreading
+spreading treelength
+length logs
+logs from
+from the
+the off-highway
+off-highway piles.
+piles. Note
+Note the
+the lift
+lift
+logs
+logs used
+used to
+to assist
+assist the
+the buckermen.
+buckermen. Three
+Three other
+other off-highway
+off-highway
+loads
+loads lie
+lie in
+in the
+the background.
+background. Debris
+Debris piles
+piles line
+line the
+the edge
+edge
+of
+across the
+yard
+of the
+the yard.
+yard. The
+The activity
+activity progresses
+progresses across
+the yard
+repeatedly.
+repeatedly.
+
+24
+24
+
+FIGURE I.
+I.
+FIGURE
+5.
+5.
+
+Processing
+in yard,
+yard, Central
+Central
+Processing
+in
+Yard System,
+System, winter
+winter phase
+phase
+Yard
+
+Processing
+Processing
+
+Hauling
+Hauling
+
+Table 10
+10 presents
+presents the
+the detailed
+detailed
+Table
+for the
+the two
+two systems.
+systems.
+for
+a)
+a)
+
+Central
+Central
+
+Processing
+Processing
+
+i.
+i.
+
+Off-highway
+Off-highway
+
+timing
+timing
+
+of the
+the hauling
+hauling
+of
+
+phases
+phases
+
+Yard System
+System
+Yard
+
+phase
+phase
+
+The positioning
+positioning
+and preparation
+preparation
+times for
+for the
+the off-highway
+off-highway
+The
+and
+times
+trucks are
+are included
+included in
+in the
+the delay
+delay time
+time a
+landing.
+The
+trucks
+at
+t the
+the landing.
+The
+off-highway
+trucks had
+had self-load
+self-load trailers.
+trailers.
+The drivers
+drivers
+off-highway
+trucks
+The
+often positioned
+positioned
+and prepared
+prepared the
+the trailers
+trailers away
+away from
+from the
+the
+often
+and
+active landing
+landing and
+and the
+the observer
+observer was
+was unable
+unable to
+to separate
+separate the
+the
+active
+elements .
+.
+elements
+Loading took
+took 2
+2 times
+times longer
+longer in
+in summer
+summer than
+Loading
+than it
+it did
+did in
+in
+winter.
+Part of
+of this
+this increase
+increase was
+was also
+also reflected
+reflected
+in the
+the
+winter.
+Part
+in
+increased delay
+delay time
+time prior
+prior to
+to loading.
+loading.
+Some increase
+increase would
+would
+increased
+Some
+normally be
+be expected
+expected in
+in the
+the summer.
+The
+limbiness of
+normally
+summer.
+The limbiness
+of the
+the
+material reduced
+reduced the
+the volume
+volume the
+the loader
+loader could
+could handle
+material
+handle in
+in one
+one
+pass and
+and made
+made the
+the positioning
+positioning
+of the
+the wood
+wood on
+on the
+the truck
+truck more
+more
+pass
+of
+difficult.
+difficult.
+25
+25
+
+The
+The average
+average total
+total cycle
+cycle time
+time shows
+shows an
+an overall
+overall increase
+increase of
+of
+22%
+This extra
+trans22% from
+from the
+the winter
+winter to
+to the
+the summer.
+summer.
+This
+extra time
+time translates
+per-volume
+cost
+(see Table
+Table 11)
+11) .
+. The
+The
+lates into
+into an
+an increased
+increased
+per-volume
+cost (see
+travel
+travel times,
+times, both
+both empty
+empty and
+and loaded,
+loaded, were
+were lower
+lower in
+in the
+the
+summer,
+the
+distance.
+summer, reflecting
+reflecting
+the reduced
+reduced hauling
+hauling distance.
+ii.
+ii.
+
+Transfer
+Transfer
+
+phase
+phase
+
+Delays,
+and
+Delays, truck
+truck preparation
+preparation
+and loading
+loading a
+at
+t the
+the yard
+yard were
+were
+timed
+phase
+The
+timed for
+for the
+the transfer
+transfer (highway)
+(highway)
+phase of
+of the
+the system.
+system.
+The
+remaining
+data
+remaining
+data were
+were obtained
+obtained from
+from entries
+entries on
+on the
+the B.C.
+B.C. Forest
+Forest
+Service
+"Travel
+Service scale
+scale sheets.
+sheets.
+"Travel Empty,"
+Empty," "Travel
+"Travel Loaded,"
+Loaded," and
+and
+"Mill
+times
+from
+"Mill Terminal"
+Terminal"
+times were
+were calculated
+calculated
+from these
+these figures.
+figures.
+Figure
+the
+Figure J
+J illustrates
+illustrates
+the loading
+loading of
+of a
+a transfer
+transfer truck.
+truck.
+The
+increased slightly
+The average
+average times
+times for
+for each
+each activity
+activity increased
+slightly
+(except
+28%
+(except delay
+delay time)
+time) and
+and loading
+loading time
+time increased
+increased
+28% from
+from
+winter
+N
+w
+winter to
+to summer.
+summer.
+No
+o reason
+reason for
+for this
+this difference
+difference
+wa
+as
+s
+observed.
+The
+slightly,
+observed.
+The travel
+travel times
+times increased
+increased
+slightly, perhaps
+perhaps
+related
+N
+related to
+to summer
+summer traffic
+traffic congestion.
+congestion.
+No
+o effect
+effect from
+from
+winter
+winter ice
+ice was
+was observed.
+observed.
+
+FIGURE
+FIGURE
+
+J
+J.
+.
+
+Loading
+Loading highway
+highway truck
+truck in
+in the
+the
+C.P.Y.
+C.P.Y. System
+System yard
+yard (summer
+(summer phase)
+phase)
+
+26
+26
+
+TABLE
+TABLE
+
+11.
+11.
+
+Summary
+Summary
+
+of Hauling
+Hauling
+of
+
+Cost
+Cost
+Total
+Total
+Volume
+Volume
+m3
+m3
+
+Average
+Average
+Load Size
+Size
+Load
+m
+m
+
+Cost/m3
+Cost/m3
+
+No. of
+of
+No.
+Loads
+Loads
+
+Cycle Time
+Time
+Cycle
+min
+min
+
+Cost/
+Cost/
+Hour
+Hour
+
+Off-highway haul
+haul
+Off-highway
+bush to
+to yard
+yard
+bush
+
+73.1
+73.1
+
+145.
+145.
+
+$53.73
+$53.73
+
+5 072
+072
+5
+
+69.5
+69.5
+
+$1.86
+$1.86
+
+Transfer haul
+haul
+Transfer
+yard to
+to mill
+mill
+yard
+
+152.1
+152.1
+
+112.5
+112.5
+
+$38.01
+$38.01
+
+5 072
+072
+5
+
+34.7
+34.7
+
+$2.13
+$2.13
+
+Central Processing
+Processing
+Central
+Yard System
+System _____
+_____
+Yard
+
+w
+w
+I
+I
+N
+N
+T
+T
+E
+E
+R
+R
+
+$3.99
+$3.99
+
+Total
+Total
+bush to
+to mill
+mill
+bush
+Conventional
+Conventional
+System
+System
+117.7
+117.7
+
+193.
+193.
+
+$38.01
+$38.01
+
+4 198
+198
+4
+
+35.6
+35.6
+
+$3.43
+$3.43
+
+Off-highway haul
+haul
+Off-highway
+bush to
+to yard
+yard
+bush
+
+88.6
+88.6
+
+176.5
+176.5
+
+$53.73
+$53.73
+
+5 342
+342
+5
+
+60.2
+60.2
+
+$2.62
+$2.62
+
+Transfer haul
+haul
+Transfer
+yard to
+to mill
+mill
+yard
+
+154.3
+154.3
+
+119.7
+119.7
+
+$38.01
+$38.01
+
+5 342
+342
+5
+
+33.8
+33.8
+
+$2.19
+$2.19
+
+Highway haul
+haul
+Highway
+bush to
+to mill
+mill
+bush
+Central Processing
+Processing
+Central
+Yard System
+System
+Yard
+
+S
+S
+U
+U
+M
+M
+M
+M
+E
+E
+R
+R
+
+$4.81
+$4.81
+
+Total
+Total
+bush to
+to mill
+mill
+bush
+Conventional
+Conventional
+System
+System
+Highway haul
+haul
+Highway
+bush to
+to mill
+mill
+bush
+
+113.7
+113.7
+
+201.8
+201.8
+
+$38.01
+$38.01
+
+3 993
+993
+3
+
+35.0
+35.0
+
+$3.64
+$3.64
+
+b)
+b)
+
+Conventional
+Conventional
+
+System
+System
+
+One
+One of
+of the
+the loaders
+loaders broke
+broke down
+down on
+on the
+the last
+last day
+day of
+of the
+the ConConventional
+ventional System
+System during
+during the
+the winter
+winter part
+part of
+of the
+the study
+study (see
+(see
+Table
+the
+Table 6
+6)
+).
+. The
+The delay
+delay times
+times from
+from this
+this day
+day increased
+increased
+the
+average
+The
+average delay
+delay from
+from 2
+2 minutes
+minutes to
+to 16
+16 minutes.
+minutes.
+The calculated
+calculated
+cycle
+was
+cycle time
+time omits
+omits this
+this day
+day because
+because the
+the breakdown
+breakdown
+was not
+not
+specific
+specific to
+to the
+the system.
+system.
+The
+by
+The loading
+loading time
+time increased
+increased
+by 35%
+35% between
+between winter
+winter and
+and summer
+summer
+phases
+The
+phases of
+of the
+the study.
+study.
+The loaders
+loaders performed
+performed more
+more sorting
+sorting
+activities
+within
+activities
+within the
+the loading
+loading phase
+phase to
+to improve
+improve the
+the load
+load
+structure
+and
+structure
+and to
+to set
+set aside
+aside logs
+logs needing
+needing further
+further delimbing
+delimbing
+or
+or bucking.
+bucking.
+c)
+c)
+
+Discussion
+Discussion
+
+Loading
+Loading time
+time for
+for highway
+highway trucks
+trucks in
+in the
+the bush
+bush is
+is longer
+longer than
+than
+loading
+The
+loading time
+time for
+for transfer
+transfer trucks
+trucks in
+in the
+the yard.
+yard.
+The yard
+yard had
+had
+better
+(i.e.,
+for
+the
+better loading
+loading conditions
+conditions
+(i.e., more
+more opportunity
+opportunity
+for the
+truck
+for
+truck to
+to be
+be positioned
+positioned
+for good
+good access
+access from
+from the
+the log
+log decks)
+decks) .
+.
+Table
+the
+Table 11
+11 summarizes
+summarizes
+the hauling
+hauling costs
+costs in
+in each
+each system.
+system. Costs
+Costs
+per
+per volume
+volume were
+were higher
+higher in
+in summer
+summer than
+than in
+in winter
+winter and
+and
+reflected
+increased
+cycle
+in some
+cases, reduced
+reduced
+reflected
+increased
+cycle times
+times and
+and in
+some cases,
+volume
+The
+volume per
+per load.
+load.
+The combined
+combined truck
+truck hauling
+hauling cost
+cost for
+for the
+the
+C.P.Y.
+C.P.Y. System
+System is
+is greater
+greater than
+than the
+the cost
+cost of
+of hauling
+hauling in
+in the
+the
+Conventional
+System.
+Conventional
+System.
+The
+cost
+from
+The largest
+largest per-volume
+per-volume
+cost increase,
+increase,
+from winter
+winter to
+to summer
+summer
+was
+hauling.
+Cycle
+was 40%
+40% for
+for off-highway
+off-highway
+hauling.
+Cycle time
+time increased
+increased and
+and
+volume
+to
+involume per
+per load
+load dropped
+dropped to
+to contribute
+contribute
+to this
+this large
+large increase.
+crease.
+6.
+6.
+
+Bulldozer
+Bulldozer
+
+Costs
+Costs
+
+We
+costs
+We assumed
+assumed bush
+bush landing
+landing construction
+construction
+costs to
+to be
+be equal
+equal for
+for
+both
+Twenty-six
+bulldozer
+both systems.
+systems.
+Twenty-six
+bulldozer hours
+hours in
+in the
+the winter
+winter and
+and
+40.5
+the
+40.5 hours
+hours in
+in the
+the summer
+summer were
+were required
+required to
+to construct
+construct
+the
+necessary
+The
+bulldozer's
+hourly
+necessary landings
+landings for
+for the
+the blocks.
+blocks.
+The bulldozer's
+hourly
+rate
+rate of
+of $58.52
+$58.52 gave
+gave costs
+costs of
+of $0.17/m
+$0.17/m 33 winter
+winter and
+and $0.25/m
+$0.25/m 33
+summer
+summer for
+for both
+both systems.
+systems.
+The
+spent
+was also
+measured.
+The time
+time the
+the bulldozer
+bulldozer
+spent on
+on the
+the site
+site was
+also measured.
+During
+During the
+the winter
+winter the
+the terrain
+terrain was
+was good
+good and
+and debris
+debris was
+was not
+not
+a
+The bulldozer
+bulldozer
+spent
+a major
+major problem
+problem on
+on the
+the bush
+bush landings.
+landings.
+The
+spent
+
+28
+28
+
+several hours
+hours per
+per day
+day handling
+handling debris
+debris in
+in the
+the Conventional
+Conventional
+several
+System. The
+The presence
+presence of
+of the
+the bulldozer
+bulldozer on
+on the
+the site
+site in
+in winwinSystem.
+ter accounted
+accounted for
+for 18.0
+18.0 hours
+hours ($0.55/m
+($0.55/m 33 )
+) for
+for the
+the C.P.Y.
+C.P.Y.
+ter
+System and
+and 44.0
+44.0 hours
+hours ($0.61/m
+($0.61/m 33 )
+) for
+for the
+the Conventional
+Conventional
+System
+System.
+System.
+The bulldozer
+bulldozer was
+was utilized
+utilized more
+more fully
+fully for
+durThe
+for both
+both systems
+systems during the
+the summer.
+summer. The
+The steepness
+steepness of
+of the
+the summer
+summer block
+block made
+made it
+it
+ing
+necessary for
+for both
+both systems
+systems to
+to use
+use the
+the bulldozer
+bulldozer for
+for trail
+trail
+necessary
+building. In
+In addition,
+addition, the
+the machine
+machine had
+had more
+more debris
+debris to
+to pile
+pile
+building.
+in the
+the summer
+summer—
+— especially
+especially in
+in the
+the Conventional
+Conventional System.
+System. OnOnin
+site hours
+hours in
+in the
+the summer
+summer totalled
+totalled 45.8
+45.8 at
+at a
+a cost
+cost of
+of $0.50/m
+$0.50/m
+site
+for the
+the C.P.Y.
+C.P.Y. System,
+System, and
+and 34.2
+34.2 at
+at a
+a cost
+cost of
+of $0.50/m
+$0.50/m 33 for
+for
+for
+the Conventional
+Conventional System.
+System.
+the
+7.
+7.
+
+Landing Rehabilitation
+Rehabilitation and
+and Debris
+Debris Handling
+Handling and
+and Disposal
+Disposal
+Landing
+
+The costs
+costs included
+included here
+here are
+are estimates
+estimates only.
+only. The
+The figures
+figures
+The
+reflect the
+the increase
+increase in
+in debris
+debris to
+to be
+be handled
+handled and
+and burned:
+burned:
+reflect
+$0.06/m 33 for
+for the
+the C.P.Y.
+C.P.Y. System
+System in
+in winter
+winter and
+and $0.13/m
+$0.13/m33 for
+for
+$0.06/m
+the Conventional
+Conventional System;
+System; $0.07/m
+$0.07/m 33 for
+for the
+the C.P.Y.
+C.P.Y. System
+System in
+in
+the
+summer and
+and $0.18/m
+$0.18/m 33 for
+for the
+the Conventional
+Conventional System.
+System.
+summer
+8.
+8.
+
+Travel Time
+Time Cost
+Cost Estimates
+Estimates
+Travel
+
+A daily
+daily travel
+travel time
+time of
+of one
+one hour
+hour was
+was allocated
+allocated to
+to the
+the operaoperaA
+tors who
+who were
+were required
+required on
+on the
+the bush
+bush landings.
+landings. The
+The estimated
+estimated
+tors
+costs are
+are contained
+contained in
+in Table
+Table 12.
+12. The
+The additional
+additional manpower
+manpower
+costs
+in the
+the bush
+bush landing
+landing resulted
+resulted in
+in additional
+additional travel
+travel cost
+cost in
+in
+in
+the Conventional
+Conventional System.
+System.
+the
+TABLE 12.
+12.
+TABLE
+
+Estimated Travel
+Travel Costs
+Costs
+Estimated
+
+w
+w
+I
+I
+N
+N
+T
+T
+E
+E
+R
+R
+
+Central Processing
+Processing
+Central
+Yard System
+System
+Yard
+
+Loader operator
+operator and
+and
+Loader
+bulldozer operator
+operator
+bulldozer
+
+12 hours
+hours
+12
+
+$0.03/m 33
+$0.03/m
+
+Conventional
+Conventional
+System
+System
+
+Two loader
+loader operators,
+operators,
+Two
+three buckermen
+buckermen ,
+, and
+and
+three
+bulldozer operator
+operator
+bulldozer
+
+33 hours
+hours
+33
+
+$0.09/m 33
+$0.09/m
+
+S
+S
+U
+U
+M
+M
+M
+M
+E
+E
+R
+R
+
+Central Processing
+Processing
+Central
+Yard System
+System
+Yard
+
+Loader operator
+operator and
+and
+Loader
+bulldozer operator
+operator
+bulldozer
+
+15 hours
+hours
+15
+
+$0.03/m
+$0.03/m
+
+Conventional
+Conventional
+System
+System
+
+Two loader
+loader operators,
+operators,
+Two
+three buckermen,
+buckermen,
+three
+flail operator,
+operator, and
+and
+flail
+bulldozer operator
+operator
+bulldozer
+
+50 hours
+hours
+50
+
+$0.15/m 33
+$0.15/m
+
+29
+29
+
+9.
+9.
+
+Summary
+Summary
+a)
+a)
+
+of
+of Productivity
+Productivity
+
+Productivity
+Productivity
+
+General
+General summary
+summary
+in
+in productivity
+productivity
+1.
+1.
+
+3.
+3.
+
+5.
+5.
+
+and
+and Costs
+Costs
+
+statements
+can
+statements
+can
+of
+of the
+the phases.
+phases.
+
+be
+be made
+made
+
+about
+about
+
+the
+the difference
+difference
+
+Felling
+was not
+not studied,
+studied, it
+it does
+does
+Felling .
+. Although
+Although felling
+felling was
+not
+by
+used.
+not appear
+appear to
+to be
+be affected
+affected
+by the
+the system
+system used.
+Skidding
+Skidding .
+. Because
+Because terminal
+terminal time
+time at
+at the
+the bush
+bush landing
+landing
+was
+skidding
+productivity
+definitely
+increased
+was reduced,
+reduced,
+skidding
+productivity
+definitely
+increased
+with
+A
+over
+with the
+the C.P.Y.
+C.P.Y. System.
+System.
+A 10%
+10% improvement
+improvement
+over the
+the
+Conventional
+System
+Conventional
+System was
+was measured
+measured in
+in the
+the summer
+summer study.
+study.
+The
+of
+The magnitude
+magnitude
+of the
+the increase
+increase depends
+depends upon
+upon the
+the season,
+season,
+the
+the amount
+amount of
+of debris,
+debris, the
+the presence
+presence and
+and activity
+activity of
+of a
+a
+flail,
+Size
+flail, and
+and the
+the size
+size of
+of the
+the landing.
+landing.
+Size of
+of landing
+landing
+may
+may be
+be the
+the most
+most critical
+critical variable
+variable because
+because it
+it affects
+affects
+organization
+and
+of
+Alorganization
+and interaction
+interaction
+of the
+the activities.
+activities.
+Although
+though skidding
+skidding directly
+directly to
+to roadside
+roadside rather
+rather than
+than to
+to
+spaced
+the
+spaced landings
+landings was
+was not
+not done
+done in
+in this
+this operation,
+operation,
+the
+shorter
+shorter average
+average skidding
+skidding distance
+distance with
+with this
+this technique
+technique
+would
+would increase
+increase productivity.
+productivity.
+Loading
+was greater
+Loading .
+. Total
+Total loading
+loading time
+time per
+per volume
+volume was
+greater
+for
+for the
+the C.P.Y.
+C.P.Y. System
+System which
+which required
+required loading
+loading both
+both
+off-highway
+and
+The
+off-highway
+and highway
+highway trucks.
+trucks.
+The loading
+loading time
+time
+for
+yard than
+than
+for the
+the highway
+highway trucks
+trucks was
+was less
+less in
+in the
+the yard
+in
+in the
+the bush
+bush landing,
+landing, however.
+however.
+Unloading
+component;
+it
+Unloading .
+. Unloading
+Unloading was
+was not
+not a
+a large
+large component;
+it
+occurred
+occurred only
+only in
+in the
+the C.P.Y.
+C.P.Y. System.
+System.
+Processing
+Processing .
+. The
+The buckermen
+buckermen and
+and flail
+flail were
+were significantly
+significantly
+more
+in
+more productive
+productive
+in the
+the yard
+yard than
+than in
+in the
+the bush
+bush landing.
+landing.
+They
+They were
+were supplied
+supplied with
+with a
+a larger
+larger volume
+volume and
+and utilized
+utilized
+their
+The
+their time
+time more
+more effectively.
+effectively.
+The loaders
+loaders had
+had more
+more
+processing
+functions
+in
+and spent
+spent
+processing
+functions
+in the
+the yard,
+yard, however,
+however, and
+more
+more time
+time in
+in this
+this capacity.
+capacity.
+Hauling.
+The
+Hauling.
+The doubling
+doubling of
+of terminal
+terminal times
+times (loading
+(loading and
+and
+unloading)
+in
+unloading)
+in the
+the C.P.Y.
+C.P.Y. System
+System was
+was partly
+partly offset
+offset
+by
+larger loads
+loads on
+on the
+the offoffby reduced
+reduced delay
+delay times
+times and
+and larger
+highway
+The
+highway trucks.
+trucks.
+The actual
+actual truck
+truck time
+time per
+per unitunitvolume
+but
+volume was
+was similar
+similar for
+for both
+both systems,
+systems,
+but some
+some of
+of this
+this
+time
+trucks.
+time involved
+involved more
+more costly
+costly off-highway
+off-highway
+trucks.
+
+30
+30
+
+b)
+b)
+
+Costs
+Costs
+
+The costs
+costs calculated
+calculated
+for the
+the winter
+winter and
+and summer
+summer study
+The
+for
+study
+are summarized
+summarized
+in Table
+Table 13.
+13.
+Some of
+of the
+the figures
+figures are
+are
+are
+in
+Some
+timates only
+only (indicated
+(indicated
+by asterisks)
+asterisks) .
+.
+timates
+by
+
+periods
+periods
+eses-
+
+During the
+the winter
+winter phase,
+phase, the
+the cost
+cost of
+of the
+Conventional
+During
+the Conventional
+System was
+was 7%
+7% less
+less than
+than the
+the cost
+cost of
+of the
+C.P.Y. System.
+This
+System
+the C.P.Y.
+System.
+This
+difference
+increased
+to 14%
+14% in
+in the
+the summer
+summer phase.
+The
+cost
+difference
+increased
+to
+phase.
+The cost
+per volume
+volume increased
+increased significantly
+significantly
+for both
+both systems
+systems from
+from
+per
+for
+the winter
+winter to
+to the
+the summer
+summer season
+season —
+— 35%
+35% for
+for the
+the C.P.Y.
+C.P.Y. System,
+System,
+the
+and 25%
+25% for
+for the
+the Conventional
+Conventional
+System.
+and
+System.
+The cost
+cost relationships
+relationships
+will change
+change with
+with the
+the per-hour
+per-hour rates
+rates
+The
+will
+used in
+in calculating
+calculating
+each phase.
+phase.
+Hauling costs
+costs may
+used
+each
+Hauling
+may be
+be
+affected most
+most because
+because the
+the size
+size and
+and type
+type of
+of truck
+truck and
+and trailer
+trailer
+affected
+used in
+in the
+the off-highway
+off-highway
+haul can
+can alter
+alter the
+the specific
+specific costs
+costs
+used
+haul
+significantly.
+The hourly
+hourly rates
+rates used
+used for
+for the
+the off-highway
+off-highway
+significantly.
+The
+trucks in
+in this
+this report
+report are
+are based
+based on
+on the
+trucks
+the large
+large heavy
+heavy duty
+duty
+trucks used
+used in
+in this
+this operation.
+operation.
+The difference
+difference
+in costs
+costs
+trucks
+The
+in
+for individual
+individual
+phases can
+can be
+be compared
+compared directly
+for
+phases
+directly in
+in Table
+Table 13.
+13.
+In general
+general the
+the costs
+costs follow
+follow the
+the same
+same trends
+described in
+in
+In
+trends described
+"Productivity. "
+"
+"Productivity.
+C.
+C.
+
+Log Quality
+Quality
+Log
+
+Although improved
+improved bucking
+bucking quality
+quality is
+is frequently
+frequently
+cited as
+as a
+a
+Although
+cited
+major advantage
+advantage
+of the
+the C.P.Y.
+C.P.Y. System,
+System, the
+the importance
+importance
+and
+major
+of
+and
+feasibility
+of this
+this objective
+objective
+need to
+to be
+be examined
+examined for
+for each
+each
+feasibility
+of
+need
+operation.
+There are
+are four
+four main
+main considerations
+considerations
+that affect
+operation.
+There
+that
+affect
+bucking- toto- length
+length objectives.
+objectives.
+bucking1.
+The length
+length and
+and diameter
+diameter of
+of the
+the full
+full trees
+1.
+The
+trees being
+being proprocessed affect
+affect the
+the number
+number of
+of logs
+logs that
+that will
+will actually
+actually be
+be
+cessed
+taped.
+If most
+most of
+of the
+the processing
+processing
+involves topping
+topping at
+at the
+the
+taped.
+If
+involves
+minimum diameter,
+diameter,
+only a
+a small
+small percentage
+percentage
+of the
+the volume
+volume
+minimum
+only
+of
+will be
+be affected
+affected by
+by the
+the length
+length standards.
+standards.
+will
+2.
+The mill
+mill may
+may specify
+specify differing
+differing
+log lengths,
+lengths, and
+and produce
+produce
+2.
+The
+log
+different
+products for
+for changing
+changing market
+market conditions.
+different
+products
+conditions.
+3.
+Improvement
+of log
+log length
+length accuracy
+accuracy may
+may add
+add significant
+significant
+3.
+Improvement
+of
+value depending
+depending
+on the
+the products.
+products.
+value
+on
+4.
+Better training
+training and
+and supervision
+supervision
+on a
+a bush
+landing may
+4.
+Better
+on
+bush landing
+may
+achieve the
+the same
+same results
+results as
+as switching
+switching
+to a
+a C.P.Y.
+C.P.Y. System.
+System.
+achieve
+to
+The mill
+mill produced
+produced peeler
+peeler and
+and chip'
+chip' n'
+n' saw
+saw bolts
+bolts in
+in this
+this
+The
+ation.
+The main
+main objective
+objective
+was to
+to prevent
+prevent peeler-grade
+peeler-grade
+ation.
+The
+was
+
+31
+31
+
+operoperwood
+wood
+
+TABLE
+TABLE 13.
+13.
+
+Summary
+Summary of
+of Calculated
+Calculated Costs
+Costs ($/m
+($/m 33 )
+)
+for
+for Study
+Study Period
+Period
+WINTER
+WINTER
+
+SUMMER
+SUMMER
+
+Central
+Central Processing
+Processing
+Yard
+Yard System
+System
+
+Conventional
+Conventional
+System
+System
+
+$
+$ 0.17
+0.17
+
+$
+$ 0.17
+0.17
+
+$
+$ 0.25
+0.25
+
+$
+$ 0.25
+0.25
+
+1.77
+1.77
+
+1.77
+1.77
+
+1.94
+1.94
+
+1.94
+1.94
+
+Skidding
+Skidding - block
+block
+- R/W
+R/W
+
+1.61
+1.61
+0.03
+0.03
+
+1.67
+1.67
+0.03
+0.03
+
+2.16
+2.16
+0.05
+0.05
+
+2.39
+2.39
+0.05
+0.05
+
+Loading
+Loading - bush
+bush
+
+0.62
+0.62
+
+0.95
+0.95
+
+0.97
+0.97
+
+1.21
+1.21
+
+Hauling
+Hauling - off-highway
+off-highway
+
+1.86
+1.86
+
+2.62
+2.62
+
+Unloading
+Unloading - yard
+yard
+
+0.11
+0.11
+
+0.17
+0.17
+
+Processing
+Processing - buckermen
+buckermen
+- loader
+loader
+- flail
+flail
+
+0.24
+0.24
+0.66
+0.66
+
+Reloading
+Reloading - yard
+yard
+
+0.59
+0.59
+
+Hauling
+Hauling - highway
+highway
+
+2.13
+2.13
+
+3.43
+3.43
+
+2.19
+2.19
+
+3.64
+3.64
+
+*
+* Pile
+Pile debris
+debris after
+after
+logging
+logging
+
+0.02
+0.02
+
+0.08
+0.08
+
+0.03
+0.03
+
+0.13
+0.13
+
+*
+* Yard
+Yard debris
+debris
+disposal
+disposal
+
+0.11
+0.11
+
+*
+* Landing
+Landing debris
+debris
+disposal
+disposal
+
+0.04
+0.04
+
+0.05
+0.05
+
+0.04
+0.04
+
+0.05
+0.05
+
+*
+* Travel
+Travel time
+time
+
+0.03
+0.03
+
+0.09
+0.09
+
+0.03
+0.03
+
+0.15
+0.15
+
+0.55
+0.55
+
+0.61
+0.61
+
+0.50
+0.50
+
+0.50
+0.50
+
+$10.54
+$10.54
+
+$
+$ 9.77
+9.77
+
+$14.18
+$14.18
+
+$12.17
+$12.17
+
+Phase
+Phase
+*
+* Landing
+Landing construction
+construction
+*
+* Felling
+Felling
+
+*
+*
+
+Bulldozer
+Bulldozer at
+at
+landing
+landing
+Total
+Total
+
+0.47
+0.47
+0.45
+0.45
+
+Central
+Central Processing
+Processing
+Yard
+Yard System
+System
+
+0.49
+0.49
+1.27
+1.27
+0.64
+0.64
+
+Conventional
+Conventional
+System
+System
+
+0.74
+0.74
+0.46
+0.46
+0.66
+0.66
+
+0.72
+0.72
+
+0.11
+0.11
+
+*Estimated
+*Estimated costs
+costs
+
+32
+32
+
+from being
+being degraded
+degraded to
+to sawlog
+sawlog or
+or chips.
+chips.
+Logs with
+from
+Logs
+with peeler
+peeler
+potential
+(usually butt
+butt logs
+logs of
+of two-log
+two-log trees)
+potential
+(usually
+trees) were
+were the
+the
+logs requiring
+requiring
+accuracy in
+in taping
+taping and
+and bucking.
+bucking.
+Over length
+length
+logs
+accuracy
+Over
+logs and
+and logs
+logs with
+with large
+large projecting
+projecting
+limbs were
+were unacceptable
+unacceptable
+logs
+limbs
+to the
+the mill.
+mill.
+to
+Five highway
+highway loads
+loads were
+were spread
+load
+Five
+spread and
+and scaled
+scaled to
+to compare
+compare load
+composition
+and accuracy
+accuracy of
+of bucking
+bucking for
+for each
+each system
+system and
+and
+composition
+and
+each season.
+season.
+Table 14
+14 summarizes
+summarizes
+the findings.
+findings.
+each
+Table
+the
+The conventional
+conventional
+loads included
+included fewer
+fewer tops
+tops and
+and chunks
+chunks
+The
+loads
+but more
+more cull
+cull logs
+logs than
+than the
+the yard
+yard loads
+loads during
+during the
+the winter.
+but
+winter.
+This reversed
+reversed during
+during the
+the summer
+summer phase
+phase —
+— the
+the yard
+yard loads
+loads then
+then
+This
+had fewer
+fewer tops
+tops and
+and chunks
+chunks and
+and more
+more cull
+cull logs.
+The
+had
+logs.
+The summer
+summer
+loads had
+had more
+more pieces
+pieces of
+of non-merchantable
+non-merchantable
+material
+in both
+both
+loads
+material
+in
+systems.
+systems.
+Small top
+top diameters
+diameters
+(less than
+than 9
+9 cm)
+cm) do
+do not
+not affect
+affect the
+the
+Small
+(less
+operation
+of the
+the mill.
+mill.
+The small
+small diameter
+diameter
+wood is
+is suitsuitoperation
+of
+The
+wood
+able for
+for chips
+chips and
+and is
+is of
+of low
+low value.
+value.
+During the
+the winter
+winter
+able
+During
+phase, the
+the C.P.Y.
+C.P.Y. loads
+loads contained
+contained
+15% small
+small tops
+tops compared
+compared
+phase,
+15%
+to 7%
+7% in
+in the
+the Conventional
+Conventional
+loads.
+The figures
+figures dropped
+dropped to
+to
+to
+loads.
+The
+2% and
+and 3%
+3% in
+in the
+the summer.
+summer.
+2%
+The Conventional
+Conventional
+System produced
+produced a
+a large
+large number
+number of
+The
+System
+of overlength
+overlength
+logs during
+during the
+the winter.
+winter.
+The buckermen
+buckermen were
+were not
+not familiar
+familiar
+logs
+The
+with working
+working on
+on the
+the bush
+bush landings
+landings and
+and the
+the problem
+problem could
+could have
+with
+have
+been corrected
+corrected
+with a
+a period
+period of
+of closer
+closer supervision.
+supervision.
+Overbeen
+with
+Overlength logs
+logs were
+were not
+not as
+as prevalent
+prevalent
+in the
+the summer.
+summer.
+length
+in
+A comparison
+comparison
+was made
+made of
+of the
+the measured
+measured
+length of
+of the
+the buttbuttA
+was
+length
+logs with
+with the
+the nearest
+nearest desired
+desired length.
+length.
+Top-logs
+(i.e., the
+the
+logs
+Top-logs
+(i.e.,
+second log
+log of
+of a
+a tree-length)
+tree-length)
+were not
+not included
+included because
+because
+second
+were
+they were
+were not
+not taped
+taped by
+by the
+the buckermen
+buckermen
+and were
+were not
+not expected
+expected
+they
+and
+to be
+be a
+a preferred
+preferred
+length.
+As
+s shown
+shown in
+in the
+the table,
+table, the
+the C.P.Y.
+C.P.Y.
+to
+length.
+A
+System produced
+produced more
+more logs
+logs within
+within the
+the tolerances.
+tolerances.
+In both
+both
+System
+In
+systems, however,
+however, the
+the percentage
+percentage
+of logs
+logs within
+within a
+a 15-cm
+15-cm toltolsystems,
+of
+erance was
+was small.
+small.
+Many short
+short trees
+trees contained
+contained
+only one
+one log
+log
+erance
+Many
+only
+and were
+were topped
+topped at
+at 10-cm
+10-cm diameter
+diameter regardless
+regardless
+of length.
+length.
+and
+of
+In addition
+addition to
+to the
+the comparison
+comparison
+scaling, several
+In
+scaling,
+several of
+of Crown
+Crown
+Zellerbach's
+mill personnel
+personnel
+measured and
+and visually
+visually examined
+examined
+Zellerbach's
+mill
+measured
+a subsample
+subsample
+of two
+two loads
+loads from
+from each
+each group.
+group.
+The results
+results
+a
+of
+The
+were inconclusive.
+inconclusive.
+Bucking and
+and delimbing
+delimbing
+quality varied
+varied
+were
+Bucking
+quality
+with the
+the loads
+loads examined
+examined and
+and both
+both good
+good and
+and poor
+poor quality
+quality were
+were
+with
+present in
+in both
+both systems.
+systems.
+present
+
+33
+33
+
+TABLE
+TABLE
+
+14
+14
+
+Summary
+Summary
+
+of Scale
+Scale
+of
+
+Information
+Information
+
+— Sample
+Sample
+—
+
+WINTER
+WINTER
+
+No. of
+of loads
+loads
+No.
+Total weight
+weight ,
+, kg
+kg
+Total
+No.
+No.
+No .
+.
+No
+No.
+No.
+No.
+No.
+
+of logs
+logs
+of
+of chunks
+chunks
+of
+of tree
+tree tops
+tops
+of
+of cull
+cull logs
+logs
+of
+
+Volume of
+of logs,
+logs,
+Volume
+Av
+Av
+Av
+Av
+Av
+Av
+Av
+Av
+
+m3
+3
+m
+
+vol butt
+butt log,
+log, m
+m3
+3
+vol
+vol top
+top log,
+log, m3
+m3
+vol
+log length,
+length, m
+m
+log
+butt diameter,
+diameter, cm
+cm
+butt
+
+No. of
+of top
+top diameters,
+diameters, <
+<9
+9 cm
+cm
+No.
+No. of
+of logs,
+logs, >15.75
+>15.75 m
+m
+No.
+
+Loads
+Loads
+SUMMER
+SUMMER
+
+C.P.Y.
+C.P.Y.
+
+ConvenConventional
+tional
+
+C.P.Y.
+C.P.Y.
+
+ConvenConventional
+tional
+
+5
+5
+138 136
+136
+138
+
+5
+5
+144 895
+895
+144
+
+5
+5
+141 140
+140
+141
+
+5
+5
+146 230
+230
+146
+
+727
+727
+30
+30
+30
+30
+0
+0
+
+610
+610
+25
+25
+23
+23
+5
+5
+
+579
+579
+53
+53
+30
+30
+21
+21
+
+639
+639
+69
+69
+32
+32
+11
+11
+
+180
+180
+
+194
+194
+
+186
+186
+
+198
+198
+
+0.29
+0.29
+0.13
+0.13
+10.5
+10.5
+19
+19
+
+0.35
+0.35
+0.19
+0.19
+11.4
+11.4
+21
+21
+
+0.37
+0.37
+0.19
+0.19
+10.3
+10.3
+22
+22
+
+0.35
+0.35
+0.15
+0.15
+10.5
+10.5
+22
+22
+
+112 (15%)
+(15%)
+112
+27 (4%)
+(4%)
+27
+
+43 (7%)
+(7%)
+43
+65 (11%)
+(11%)
+65
+
+14 (2%)
+(2%)
+14
+28 (5%)
+(5%)
+28
+
+21 (3%)
+(3%)
+21
+17 (3%)
+(3%)
+17
+
+No. butt
+butt logs*
+logs*
+No.
+
+537
+537
+
+487
+487
+
+413
+413
+
+502
+502
+
+No. &
+& %
+% within
+within 7.6
+7.6 cm
+cm
+No.
+of desired
+desired length
+length
+of
+
+134
+134
+25.0%
+25.0%
+
+83
+83
+17.0%
+17.0%
+
+112
+112
+27.1%
+27.1%
+
+112
+112
+22.3%
+22.3%
+
+No. &
+& %
+% within
+within 15.2
+15.2 cm
+cm
+No.
+of desired
+desired length
+length
+of
+
+211
+211
+39.3%
+39.3%
+
+126
+126
+25.9%
+25.9%
+
+142
+142
+34.4%
+34.4%
+
+159
+159
+31.6%
+31.6%
+
+No. &
+& %
+% outside
+outside 15.2
+15.2 cm
+cm
+No.
+of desired
+desired length
+length
+of
+
+326
+326
+60.7%
+60.7%
+
+361
+361
+74.1%
+74.1%
+
+271
+271
+65.6%
+65.6%
+
+343
+343
+68.4%
+68.4%
+
+*
+*
+
+In this
+this operation,
+operation, only
+only the
+the butt
+butt logs
+logs of
+of two-log
+two-log trees
+trees were
+were taped
+taped to
+to
+In
+specified length,
+length, although
+although this
+this figure
+figure includes
+includes untaped
+untaped one-log
+one-log trees
+trees
+specified
+
+D.
+D.
+
+Ways
+Ways to
+to Improve
+Improve the
+the Central
+Central Processing
+Processing Yard
+Yard System
+System
+1.
+1.
+
+Adjustment
+Yard Throughput
+Adjustment of
+of Loading
+Loading Time
+Time and
+and Yard
+Throughput
+Summer
+Summer Phase,
+Phase, C.P.Y.
+C.P.Y. System
+System
+
+The
+The daily
+daily throughput
+throughput of
+of the
+the yard
+yard in
+in the
+the summer
+summer phase
+phase was
+was
+lower
+the system.
+system. The
+The loading
+loading
+lower than
+than the
+the designed
+designed capacity
+capacity of
+of the
+time
+time for
+for off-highway
+off-highway trucks
+trucks was
+was much
+much higher
+higher than
+than expected.
+expected.
+A
+A reduction
+reduction of
+of ten
+ten minutes
+minutes would
+would not
+not be
+be unreasonable
+unreasonable to
+to
+achieve.
+achieve. An
+An improvement
+improvement in
+in loading
+loading time
+time would
+would also
+also reduce
+reduce
+the
+the delay
+delay time
+time for
+for the
+the trucks
+trucks in
+in the
+the bush
+bush and
+and produce
+produce the
+the
+planned
+planned volume
+volume of
+of 700
+700 m3
+m3 (12
+(12 off-highway
+off-highway loads).
+loads).
+Assuming
+(another
+Assuming that
+that skidding
+skidding was
+was not
+not a
+a limiting
+limiting factor
+factor (another
+machine
+machine would
+would be
+be added
+added if
+if it
+it were)
+were) ,
+, the
+the bush
+bush and
+and yard
+yard loaders
+loaders
+and
+and the
+the buckermen
+buckermen could
+could handle
+handle the
+the 12
+12 off-highway
+off-highway loads
+loads in
+in
+the
+the same
+same number
+number of
+of hours.
+hours. Working
+Working the
+the costs
+costs through
+through would
+would
+give
+give a
+a reduction
+reduction in
+in cost
+cost of
+of $0.24/m3
+$0.24/m3 for
+for off-highway
+off-highway haulhauling,
+ing, $0.12/m3
+$0.12/m3 for
+for bush
+bush loading,
+loading, and
+and $0.48/m3
+$0.48/m3 for
+for processing.
+processing.
+Men
+Men and
+and machinery
+machinery could
+could be
+be utilized
+utilized more
+more effectively
+effectively withwithout
+out increasing
+increasing total
+total hours.
+hours.
+Short-term
+Short-term reductions
+reductions in
+in volume
+volume from
+from the
+the bush
+bush can
+can be
+be bufbuffered
+fered by
+by an
+an inventory
+inventory in
+in the
+the yard
+yard in
+in the
+the C.P.Y.
+C.P.Y. System.
+System.
+Over
+additional equipment
+equipment
+Over a
+a sustained
+sustained period,
+period, however,
+however, the
+the additional
+necessary
+necessary in
+in this
+this system
+system requires
+requires full
+full bush
+bush production
+production to
+to
+operate
+operate economically.
+economically.
+2.
+2.
+
+Effect
+Effect of
+of Length
+Length of
+of Haul
+Haul and
+and Yard
+Yard Location
+Location on
+on
+Hauling
+Hauling Cost
+Cost
+
+For
+For each
+each of
+of the
+the three
+three truck
+truck fleets
+fleets —
+— off-highway,
+off-highway, transfer,
+transfer,
+and
+and conventional
+conventional highway
+highway —
+— the
+the terminal
+terminal times
+times and
+and travel
+travel
+times
+10. The
+The calculations
+calculations
+times can
+can be
+be calculated
+calculated from
+from Table
+Table 10.
+are
+using an
+an average
+are made
+made for
+for the
+the winter
+winter phase
+phase of
+of the
+the study,
+study, using
+average
+volume
+volume per
+per load
+load of
+of 70.0
+70.0 m3
+m3 for
+for off-highway
+off-highway and
+and 35.0
+35.0 m3
+m3 for
+for
+highway.
+highway. The
+The travel
+travel times
+times for
+for highway
+highway trucks
+trucks are
+are separated
+separated
+for
+for pavement
+pavement and
+and gravel
+gravel road
+road and
+and reflect
+reflect the
+the road
+road conditions
+conditions
+for
+for the
+the two
+two types
+types of
+of road.
+road.
+Three
+cost
+Three values
+values are
+are calculated:
+calculated: cost
+cost of
+of terminal
+terminal time,
+time, cost
+of
+and cost
+cost of
+of travel
+travel time
+time
+of travel
+travel time
+time per
+per km
+km on
+on pavement,
+pavement, and
+per
+per km
+km on
+on gravel
+gravel road.
+road.
+
+35
+35
+
+Cost of
+of
+Cost
+Terminal Time
+Time
+Terminal
+
+Off-highway
+Off-highway
+
+$0.63/m3
+$0.63/m3
+
+fleet
+fleet
+
+$0.74/m3
+$0.74/m3
+
+System
+System
+
+$1.37/m 33
+$1.37/m
+
+Transfer
+Transfer
+C.P.Y.
+C.P.Y.
+
+fleet
+fleet
+
+Conventional
+Conventional
+highway fleet
+fleet
+highway
+
+$0.80/m 33
+$0.80/m
+
+Cost of
+of
+Cost
+Travel Time
+Time
+Travel
+(Loaded and
+and Empty)
+Empty)
+(Loaded
+(Gravel)
+(Gravel)
+$0.041/m3
+$0.041/m3
+
+Cost of
+of
+Cost
+Travel Time
+Time
+Travel
+(Loaded and
+and Empty)
+Empty)
+(Loaded
+(Pavement)
+(Pavement)
+
+km
+km
+$0.038/m3
+$0.038/m3
+
+$0.047/m3
+$0.047/m3
+
+km
+km
+
+km
+km
+
+$0.038/m 33 km
+km
+$0.038/m
+
+The terminal
+terminal cost
+cost of
+of the
+the C.P.Y.
+C.P.Y. System
+System (combining
+(combining
+both fleets)
+fleets)
+The
+both
+is
+s significantly
+significantly
+higher than
+than for
+for the
+the Conventional
+Conventional
+System,
+i
+higher
+System,
+$1.37/m3 compared
+compared to
+to $0.80/m3.
+$0.80/m3.
+The off-highway
+off-highway
+terminal
+$1.37/m3
+The
+terminal
+time i
+is
+s the
+the least
+least expensive
+expensive
+on an
+an individual
+individual
+basis.
+time
+on
+basis.
+The travel
+travel cost
+cost was
+was least
+least expensive
+expensive
+for the
+the highway
+highway trucks
+trucks
+The
+for
+on pavement
+pavement (over
+(over the
+the specific
+specific road
+road section
+section our
+our trucks
+trucks
+on
+travelled) ,
+, and
+and most
+most expensive
+expensive
+for highway
+highway trucks
+trucks on
+on gravel.
+gravel.
+travelled)
+for
+Off-highway
+trucks took
+took larger
+larger loads
+loads (twice
+(twice the
+Off-highway
+trucks
+the highway
+highway
+truck volume)
+volume) and
+and this
+this offset
+offset their
+their higher
+higher hourly
+hourly rate.
+rate.
+truck
+The yard
+yard should
+should be
+be located
+located as
+as close
+close as
+as possible
+possible to
+to the
+the end
+end
+The
+of the
+the pavement.
+pavement.
+As
+s the
+the gravel
+gravel haul
+haul increases,
+increases,
+the differdifferof
+A
+the
+ence decreases
+decreases
+between the
+the C.P.Y.
+C.P.Y. System's
+System's
+total hauling
+hauling
+ence
+between
+total
+cost (the
+(the combined
+combined cost
+cost of
+of off-highway
+off-highway
+and highway
+highway hauling)
+hauling)
+cost
+and
+and the
+the Conventional
+Conventional
+System's
+hauling cost.
+cost.
+The
+and
+System's
+hauling
+The doubling
+doubling
+of C.P.Y.
+C.P.Y. System
+System terminal
+terminal
+costs (for
+(for two
+two truck
+truck fleets
+fleets ininof
+costs
+stead of
+of one)
+one) could
+could be
+be offset
+offset by
+by the
+the lower
+lower cost
+cost of
+of off-highoff-highstead
+way travel
+travel on
+on gravel
+gravel roads.
+roads.
+The equal
+equal point
+point (regardless
+of
+way
+The
+(regardless
+of
+pavement haul
+haul distance
+distance
+from the
+the mill)
+mill) is
+is 102
+102 km
+km gravel.
+gravel.
+pavement
+from
+The relationship
+relationship
+between the
+the truck
+truck fleets
+fleets will
+will differ,
+differ, parparThe
+between
+ticularly
+with road
+road quality
+quality and
+and truck
+truck sizes,
+sizes, costs,
+costs, and
+ticularly
+with
+and
+capacities.
+This will
+will affect
+affect hauling
+hauling cost
+cost and
+and influence
+influence
+capacities.
+This
+optimum yard
+yard location.
+location.
+Other objectives
+objectives
+may also
+influence
+optimum
+Other
+may
+also influence
+where the
+the yard
+yard i
+is
+s constructed.
+constructed.
+where
+
+36
+36
+
+3.
+3.
+
+Destination
+Destination
+
+Sorting
+Sorting —
+— Effect
+Effect
+
+on
+on Hauling
+Hauling
+
+Cost
+Cost
+
+Central
+yards
+Central processing
+processing
+yards are
+are often
+often described
+described as
+as "Central
+"Central
+Sorting
+If
+as a
+a sortsortSorting Yards."
+Yards."
+If in
+in fact
+fact the
+the yard
+yard functions
+functions as
+ing
+ing area,
+area, the
+the sorting
+sorting activity
+activity has
+has been
+been removed
+removed from
+from the
+the
+bush
+The
+may process
+bush landing
+landing or
+or the
+the mill.
+mill.
+The mill
+mill may
+process all
+all of
+of the
+the
+logs
+but
+may be
+be necessary
+necessary
+belogs within
+within its
+its operation
+operation
+but a
+a sort
+sort may
+before
+Lack
+fore the
+the logs
+logs enter
+enter the
+the system.
+system.
+Lack of
+of space
+space may
+may make
+make
+sorting
+sorting in
+in the
+the millyard
+millyard difficult.
+difficult.
+In
+the
+at
+In other
+other situations,
+situations,
+the wood
+wood may
+may be
+be processed
+processed
+at different
+different
+mill
+If
+mill locations.
+locations.
+If the
+the terrain
+terrain and
+and landings
+landings in
+in the
+the bush
+bush
+do
+to
+do not
+not lend
+lend themselves
+themselves
+to good
+good quality
+quality sorting
+sorting a
+a central
+central
+yard
+The
+yard may
+may provide
+provide this
+this service.
+service.
+The example
+example below
+below compares
+compares
+the
+with
+the hauling
+hauling costs
+costs for
+for a
+a yard
+yard operation
+operation
+with those
+those in
+in a
+a ConConventional
+System.
+It
+for
+ventional
+System.
+It shows
+shows there
+there is
+is a
+a potential
+potential
+for
+cost
+when
+cost saving
+saving as
+as well
+well as
+as for
+for convenience
+convenience
+when different
+different
+mills
+mills are
+are involved.
+involved.
+50%
+50% of
+of wood
+wood
+to
+to Mill
+Mill A
+A
+
+goes
+goes
+
+50%
+50% of
+of wood
+wood
+to
+to Mill
+Mill B
+B
+
+goes
+goes
+
+3
+3
+3
+3
+Using
+terminal
+Using the
+the per-m
+per-m
+terminal costs
+costs and
+and per-m
+per-m -km
+-km travel
+travel costs
+costs
+from
+the
+figfrom the
+the previous
+previous section,
+section, we
+we calculated
+calculated
+the following
+following
+figures
+ures for
+for the
+the two
+two systems.
+systems.
+"Central
+"Central
+
+Sorting
+Sorting Yard"
+Yard"
+
+Off-highway
+Off-highway to
+to yard
+yard
+Transfer
+Transfer to
+to Mill
+Mill A
+A
+Transfer
+Transfer to
+to Mill
+Mill B
+B
+Average
+Average Hauling
+Hauling Cost
+Cost
+
+System
+System
+
+Conventional
+Conventional
+
+$2.69/m3
+$2.69/m3
+$1.88/m3
+$1.88/m3
+$1.88/m
+$1.88/m
+$4.55/m
+$4.55/m
+
+Highway,
+Highway,
+Transfer
+Transfer
+
+System
+System
+
+bush
+$4.10/m3
+bush to
+to Mill
+Mill A
+A
+$4.10/m3
+Mill
+Mill A
+A to
+to Mill
+Mill B
+B $3.08/m3
+$3.08/m3
+
+Average
+Average Hauling
+Hauling
+
+37
+37
+
+Cost
+Cost
+
+$5.61/m3
+$5.61/m3
+
+This example
+example shows
+shows you
+you can
+can save
+save 19%
+19% in
+in hauling
+hauling cost
+cost by
+This
+by
+using the
+the Central
+Central Processing
+Processing
+Yard.
+The establishment
+establishment
+of
+using
+Yard.
+The
+of
+a C.P.Y.
+C.P.Y. System
+System might
+might even
+even decrease
+decrease
+the overall
+overall cost
+cost of
+of
+a
+the
+delivering
+the wood
+wood to
+to the
+the mill.
+mill.
+delivering
+the
+4.
+4.
+
+Other Advantages
+Advantages
+Offered
+Other
+Offered
+Processing
+Yard System
+System
+Processing
+Yard
+
+by the
+the Central
+by
+Central
+
+The concentration
+concentration
+of volume
+volume in
+in a
+a C.P.Y.
+C.P.Y. System
+The
+of
+System offers
+offers the
+the
+opportunity
+to change
+change the
+the method
+method of
+of bucking
+bucking and
+and delimbing.
+delimbing.
+opportunity
+to
+In most
+most operations
+operations
+the use
+use of
+of a
+a mechanical
+mechanical
+processor
+is not
+not
+In
+the
+processor
+is
+justified because
+because the
+the space
+space and
+and volume
+volume throughput
+throughput
+on a
+a bush
+bush
+justified
+on
+landing does
+does not
+not meet
+meet the
+the capacity
+capacity of
+of the
+the machine.
+machine.
+landing
+Machines of
+of this
+this type
+type have
+have failed
+failed in
+in many
+many trials
+trials because
+because
+Machines
+the potential
+potential
+volume is
+is not
+not achieved
+achieved in
+in a
+a Conventional
+Conventional
+the
+volume
+System.
+The environment
+environment
+offered by
+by a
+a yard
+yard —
+— large
+large available
+available
+System.
+The
+offered
+volume, a
+a semipermanent
+semipermanent
+installation,
+and the
+the opportunity
+opportunity
+volume,
+installation,
+and
+for doubledouble- shifting
+shifting
+might allow
+allow delimbing
+delimbing
+or bucking
+bucking mamafor
+might
+or
+chines to
+to be
+be effective.
+effective.
+This concept
+concept is
+is being
+being investigated
+chines
+This
+investigated
+by Crown
+Crown Zellerbach.
+Zellerbach.
+by
+The second
+second major
+major opportunity
+opportunity
+offered by
+by a
+a C.P.Y.
+C.P.Y. System
+System is
+is
+The
+offered
+utilization
+of limbs,
+limbs, tops,
+tops, and
+and broken
+broken material.
+material.
+This
+utilization
+of
+This
+function should
+should not
+not be
+be overlooked
+overlooked
+although it
+not be
+be
+function
+although
+it may
+may not
+the primary
+primary objective.
+objective.
+Such volume
+volume can
+can be
+be used
+used as
+as an
+an
+the
+Such
+energy source
+source by
+by firewood
+firewood cutters,
+cutters,
+hogged and
+and trucked
+trucked to
+to
+energy
+hogged
+be used
+used in
+in a
+a mill,
+mill, or
+or converted
+converted
+into posts
+posts or
+or other
+other small
+small
+be
+into
+dimension
+material.
+Firewood and
+and post
+post cutting
+cutting are
+are both
+both
+dimension
+material.
+Firewood
+being undertaken
+undertaken
+in existing
+existing yards.
+yards.
+being
+in
+The separation
+separation
+of gravel
+gravel (off-highway)
+(off-highway)
+and pavement
+pavement (high(highThe
+of
+and
+way) hauls
+hauls provide
+provide an
+an opportunity
+opportunity
+for using
+using specialized
+specialized
+way)
+for
+transportation
+equipment.
+Off-highway
+trucks (or
+(or even
+even forfortransportation
+equipment.
+Off-highway
+trucks
+warders) may
+may be
+be used
+used in
+in the
+the bush.
+bush.
+Vehicles
+warders)
+Vehicles designed
+designed spespecifically
+for highway
+highway transport
+transport
+may be
+be used
+used for
+for the
+the transfer
+transfer
+cifically
+for
+may
+phase.
+phase.
+Sorting specialty
+specialty
+products,
+house logs,
+logs, and
+and poles
+poles is
+is easier
+easier
+Sorting
+products,
+house
+in a
+a yard
+yard situation
+situation
+and occurs
+occurs in
+in many
+many of
+of them.
+them. While
+While no
+in
+and
+no
+single factor
+factor may
+may be
+be enough
+enough to
+to justify
+justify a
+a system
+system change,
+change, a
+a
+single
+series of
+of such
+such factors
+factors may
+may make
+make a
+a change
+change worthwhile.
+worthwhile.
+series
+
+38
+
+CONCLUSION
+The
+The study
+study did
+did not
+not show
+show any
+any distinct
+distinct advantages
+advantages of
+of either
+either
+system,
+system, indicating
+indicating that
+that the
+the choice
+choice of
+of central
+central processing
+processing
+must
+specific timber
+must be
+be made
+made locally,
+locally, considering
+considering the
+the specific
+timber concondition,
+dition, logging
+logging chance,
+chance, haul
+haul route
+route and
+and mill
+mill requirements.
+requirements.
+The
+The following
+following is
+is a
+a comparison
+comparison of
+of the
+the results
+results of
+of the
+the exexperiment
+periment with
+with some
+some of
+of the
+the commonly
+commonly held
+held advantages
+advantages and
+and
+disadvantages
+disadvantages of
+of central
+central processing
+processing yards.
+yards.
+1.
+The
+1.
+The belief
+belief that
+that central
+central processing
+processing would
+would improve
+improve log
+log
+quality
+quality by
+by providing
+providing better
+better work
+work conditions
+conditions and
+and supervision
+supervision
+was
+was not
+not proved
+proved in
+in the
+the experiment.
+experiment. The
+The yard
+yard processed
+processed pine
+pine
+and
+and small
+small spruce
+spruce trees
+trees with
+with low
+low potential
+potential for
+for quality
+quality
+improvement.
+had been
+been processed
+processed
+improvement. If
+If more
+more valuable
+valuable trees
+trees had
+there
+there might
+might have
+have been
+been more
+more significant
+significant improvement.
+improvement.
+2.
+The
+of men
+and equipment
+equipment
+2.
+The belief
+belief that
+that better
+better utilization
+utilization of
+men and
+in
+was not
+not proved.
+in the
+the yard
+yard would
+would lead
+lead to
+to lower
+lower costs
+costs was
+proved. UtiUtilization
+lization was
+was better
+better in
+in the
+the C.P.Y.
+C.P.Y. System
+System but
+but total
+total hours
+hours
+increased.
+7% higher
+increased. In
+In the
+the winter
+winter the
+the total
+total cost
+cost was
+was 7%
+higher
+using
+using the
+the yard
+yard and
+and in
+in the
+the summer
+summer 14%
+14% higher.
+higher. The
+The summer
+summer
+production
+production was
+was too
+too low
+low for
+for efficient
+efficient yard
+yard operation.
+operation.
+3.
+The
+of processing
+3.
+The belief
+belief that
+that the
+the elimination
+elimination of
+processing from
+from the
+the
+bush
+bush would
+would improve
+improve skidding
+skidding productivity
+productivity was
+was shown
+shown to
+to be
+be
+true.
+true. Skidding
+Skidding production
+production increased
+increased 3.8%
+3.8% in
+in the
+the winter
+winter and
+and
+10.1%
+10.1% in
+in the
+the summer.
+summer. Both
+Both systems
+systems tested
+tested worked
+worked from
+from the
+the
+same
+same bush
+bush landings.
+landings. There
+There is
+is usually
+usually less
+less equipment
+equipment on
+on
+C.P.Y.
+this system
+system alone
+alone would
+would
+C.P.Y. bush
+bush landings,
+landings, however,
+however, and
+and this
+not
+not normally
+normally require
+require the
+the large
+large landings
+landings used
+used during
+during this
+this
+test.
+test.
+4.
+The
+the bush
+the
+4.
+The belief
+belief that
+that separation
+separation of
+of the
+bush haul
+haul from
+from the
+highway
+highway haul
+haul in
+in the
+the C.P.Y.
+C.P.Y. System
+System would
+would reduce
+reduce total
+total haulhauling
+ing cost
+cost was
+was not
+not found
+found to
+to be
+be true
+true in
+in the
+the experiment.
+experiment. Total
+Total
+winter
+winter hauling
+hauling costs
+costs rose
+rose from
+from $3.43/m3
+$3.43/m3 for
+for the
+the Conventional
+Conventional
+System
+System to
+to $3.99/m
+$3.99/m when
+when the
+the C.P.Y.
+C.P.Y. was
+was used.
+used. Using
+Using the
+the terterminal
+minal and
+and travel
+travel times
+times derived
+derived from
+from the
+the winter
+winter data,
+data, we
+we
+found
+the C.P.Y.
+System would
+would
+found that
+that hauling
+hauling cost
+cost savings
+savings for
+for the
+C.P.Y. System
+occur
+occur only
+only for
+for off-highway
+off-highway hauls
+hauls over
+over 102
+102 km.
+km. Summer
+Summer hauling
+hauling
+costs
+costs were
+were $3.64/m
+$3.64/m for
+for the
+the Conventional
+Conventional System
+System compared
+compared to
+to
+$4.81/m3
+$4.81/m3 for
+for the
+the C.P.Y.
+C.P.Y. System.
+System.
+
+39
+39
+
+Lighter
+Lighter "highway-only"
+"highway-only" trucks
+trucks or
+or truck-trains
+truck-trains might
+might perform
+perform
+well
+well on
+on the
+the transfer
+transfer haul
+haul from
+from the
+the yard
+yard to
+to the
+the mill.
+mill. HeavyHeavyduty
+duty trucks
+trucks would
+would be
+be suitable
+suitable for
+for the
+the off-highway
+off-highway haul.
+haul.
+This
+This specialization
+specialization of
+of transportation
+transportation systems
+systems might
+might reduce
+reduce
+total
+total transportation
+transportation costs.
+costs.
+No
+No sorting
+sorting was
+was required
+required in
+in the
+the study
+study operation.
+operation. Where
+Where sortsorting
+to several
+several
+ing is
+is required
+required and
+and logs
+logs are
+are transported
+transported to
+destinations,
+destinations, the
+the yard
+yard provides
+provides an
+an opportunity
+opportunity to
+to reduce
+reduce
+overall
+overall hauling
+hauling costs
+costs by
+by eliminating
+eliminating double-hauling
+double-hauling of
+of some
+some
+of
+of the
+the wood.
+wood.
+5.
+The
+5.
+The belief
+belief that
+that the
+the large
+large weight
+weight of
+of debris
+debris carried
+carried by
+by
+the
+the off-highway
+off-highway trucks
+trucks would
+would reduce
+reduce the
+the cost-efficiency
+cost-efficiency of
+of
+these
+weight of
+of debris
+these larger
+larger trucks
+trucks was
+was not
+not proved.
+proved. The
+The weight
+debris
+was
+summer. Compared
+Compared
+was 12.3%
+12.3% in
+in the
+the winter
+winter and
+and 17.6%
+17.6% in
+in the
+the summer.
+to
+volume with
+with highway
+highway
+to the
+the cost
+cost of
+of hauling
+hauling merchantable
+merchantable volume
+trucks,
+using off-highway
+off-highway trucks
+trucks
+trucks, the
+the direct
+direct cost
+cost of
+of hauling
+hauling using
+on
+on the
+the gravel
+gravel roads
+roads was
+was 13.5%
+13.5% less
+less in
+in winter
+winter and
+and only
+only 2.3%
+2.3%
+more
+more in
+in summer.
+summer. The
+The potential
+potential hazard
+hazard of
+of very
+very large
+large loads
+loads
+of
+of full
+full trees
+trees could
+could present
+present a
+a problem
+problem on
+on some
+some haul
+haul routes.
+routes.
+6.
+The
+6.
+The belief
+belief that
+that the
+the yard
+yard provides
+provides an
+an opportunity
+opportunity to
+to
+utilize
+posts,
+utilize forest
+forest debris
+debris for
+for minor
+minor products
+products (fence
+(fence posts,
+chips
+the experiment
+experiment because
+chips or
+or hog
+hog fuel)
+fuel) was
+was not
+not tested
+tested in
+in the
+because
+the
+the material
+material was
+was not
+not utilized
+utilized for
+for profit.
+profit. The
+The cost
+cost of
+of disdisposal
+posal of
+of debris
+debris was
+was higher
+higher than
+than the
+the value
+value of
+of the
+the firewood
+firewood
+cut.
+yard
+cut. Byproducts
+Byproducts did
+did produce
+produce revenue
+revenue in
+in one
+one other
+other yard
+observed.
+will
+observed. This
+This advantage
+advantage of
+of central
+central processing
+processing yards
+yards will
+become
+become more
+more important
+important as
+as the
+the demand
+demand for
+for forest
+forest residues
+residues
+increases.
+increases.
+7.
+Other
+7.
+Other assumed
+assumed advantages
+advantages of
+of central
+central processing
+processing yards
+yards
+J
+J
+were
+were not
+not tested:
+tested:
+a)
+a) safety
+safety will
+will be
+be improved
+improved if
+if the
+the buckerman
+buckerman is
+is
+removed
+removed from
+from the
+the congestion
+congestion of
+of the
+the landing.
+landing. In
+In view
+view of
+of the
+the
+improved
+to be
+be true.
+improved working
+working environment,
+environment, this
+this appears
+appears to
+true.
+b)
+b) improved
+improved working
+working conditions
+conditions and
+and reduced
+reduced travel
+travel
+time
+stable crew.
+crew. The
+time will
+will attract
+attract a
+a better
+better and
+and more
+more stable
+The crew
+crew
+preferred
+preferred the
+the Central
+Central Processing
+Processing Yard
+Yard System.
+System.
+c)
+c) the
+the yard
+yard provides
+provides a
+a buffer
+buffer between
+between the
+the bush
+bush and
+and
+mill
+mill to
+to even
+even out
+out the
+the highway
+highway haul.
+haul. Log
+Log storage
+storage at
+at the
+the
+mill
+mill can
+can be
+be reduced,
+reduced, but
+but this
+this was
+was not
+not a
+a critical
+critical factor
+factor
+during
+during the
+the experiment.
+experiment.
+
+44 00
+
+d)
+d) there
+there may
+may be
+be differences
+differences in
+in log
+log breakage
+breakage between
+between
+the
+the study
+study period
+the two
+two systems.
+systems. Observation
+Observation during
+during the
+period
+favoured
+favoured the
+the C.P.Y.
+C.P.Y. System
+System for
+for reduced
+reduced breakage
+breakage but
+but corcorroborative
+roborative measurements
+measurements were
+were not
+not made.
+made.
+The
+The data
+data collected
+collected in
+in this
+this study
+study can
+can be
+be used
+used as
+as a
+a base
+base by
+by
+operators
+operators considering
+considering the
+the installation
+installation of
+of a
+a central
+central proprocessing
+cessing yard.
+yard. Although
+Although the
+the cost
+cost attractiveness
+attractiveness of
+of the
+the
+system
+may increase
+increase in
+in the
+system is
+is marginal
+marginal at
+at this
+this time,
+time, it
+it may
+the
+future.
+future. Central
+Central processing
+processing yards
+yards permit
+permit greater
+greater use
+use of
+of
+forest
+an opporforest debris
+debris for
+for byproducts
+byproducts and
+and fuel,
+fuel, provide
+provide an
+opportunity
+tunity for
+for fully
+fully mechanized
+mechanized processing,
+processing, and
+and divide
+divide the
+the
+truck
+where specialized
+specialized
+truck haul
+haul into
+into "bush"
+"bush" and
+and "highway"
+"highway" where
+equipment
+equipment could
+could be
+be used
+used to
+to advantage.
+advantage. FERIC
+FERIC is
+is continuing
+continuing
+to
+supply systems
+systems
+to explore
+explore methods
+methods to
+to improve
+improve overall
+overall wood
+wood supply
+in
+in the
+the Interior
+Interior of
+of British
+British Columbia.
+Columbia.
+
+44 11
+
+APPENDIX I
+
+1.
+1.
+
+Descriptions
+Descriptions
+
+of Central
+Central
+of
+
+Crown
+Crown Zellerbach
+Zellerbach
+Peachland
+Yard
+Peachland
+Yard
+
+Canada
+Canada
+
+Establishment:
+Establishment:
+Objectives
+Objectives
+1.
+1.
+2.
+2.
+3.
+3.
+
+November,
+November,
+
+Processing
+Processing
+
+Ltd.
+Ltd. ,
+, Kelowna
+Kelowna
+
+Yard
+Yard
+
+Systems
+Systems
+
+Division
+Division
+
+1976
+1976
+
+:
+:
+
+to
+to improve
+improve the
+the quality
+quality of
+of limbing
+limbing and
+and bucking;
+bucking; to
+to maxmaximize the
+the peeler
+peeler wood
+wood coming
+coming from
+from the
+the operation
+operation
+by
+imize
+by
+providing the
+the correct
+correct lengths
+lengths in
+in larger
+larger wood
+wood
+providing
+to
+or
+to eliminate
+eliminate
+or reduce
+reduce the
+the size
+size of
+of landings
+landings
+to
+phase
+by reto improve
+improve the
+the safety
+safety of
+of the
+the processing
+processing
+phase by
+removing it
+it from
+from the
+the landing
+landing
+moving
+
+Stands
+Stands :
+:
+Lodgepole
+pine
+Lodgepole
+pine and
+and spruce,
+spruce, average
+average volume
+volume 315
+315 m
+m /ha
+/ha to
+to 350
+350
+m3/ha
+to
+/piece to
+to
+m3/ha (45
+(45 cunits/acre
+cunits/acre
+to 50
+50 cunits/acre)
+cunits/acre) ;
+; 0.34
+0.34 m
+m 33 /piece
+0.38
+/piece) ;
+; terrain
+terrain
+0.38 m3/piece
+m3/piece (12
+(12 ft
+ft 33 /piece
+/piece to
+to 13
+13 f
+ft
+t33 /piece)
+mainly
+with steep
+sections.
+mainly flat,
+flat, gentle
+gentle slopes,
+slopes, some
+some broken
+broken with
+steep sections.
+Bush
+Bush
+
+Operation:
+Operation:
+
+Feller-bunchers
+and
+Feller-bunchers
+and grapple
+grapple skidders
+skidders are
+are used
+used on
+on most
+most sites
+sites
+with
+and
+The
+with hand-felling
+hand-felling
+and line
+line skidders
+skidders where
+where necessary.
+necessary.
+The
+wood
+decked.
+Twelve
+wood is
+is skidded
+skidded to
+to small
+small landings
+landings and
+and decked.
+Twelve offoffhighway
+the target
+target proprohighway loads
+loads (12-ft
+(12-ft bunks)
+bunks) per
+per day
+day provide
+provide the
+duction
+to
+duction of
+of 700
+700 m
+m 33 /day
+/day to
+to 790
+790 m
+m 33 /day
+/day (250
+(250 cunits/day
+cunits/day
+to 280
+280
+cunits/day)
+haul
+cunits/day) .
+. The
+The off-highway
+off-highway
+haul ranges
+ranges from
+from 25
+25 km
+km to
+to 58
+58
+km.
+km.
+In the
+the summer
+summer of
+of 1980,
+1980, the
+the 966
+966 front-end
+front-end loader
+was reIn
+loader was
+replaced by
+by a
+a Barko
+Barko with
+with a
+a Weldco
+Weldco grapple.
+grapple.
+This system
+system of
+of
+placed
+This
+loading allows
+allows skidding
+skidding to
+to roadside
+roadside and
+landloading
+and eliminates
+eliminates
+landings .
+.
+ings
+Yard
+Yard
+
+Operation:
+Operation:
+
+The full-tree
+full-tree wood
+wood is
+is weigh-scaled
+weigh-scaled
+for volume
+volume at
+at the
+the yard.
+yard.
+The
+for
+Two front-end
+front-end
+loaders and
+and two
+two buckermen
+buckermen
+process the
+the wood
+wood in
+in
+Two
+loaders
+process
+the winter
+winter with
+with an
+an additional
+additional
+loader, buckerman,
+buckerman,
+and flail
+flail
+the
+loader,
+and
+in the
+the summer.
+summer.
+Two- log
+log trees
+trees are
+are taped
+taped and
+and bucked;
+bucked; the
+the
+in
+Two-
+
+4
+43
+3
+
+others are
+are topped.
+topped.
+Occasionally
+pole sorting
+sorting is
+is done.
+done.
+The
+others
+Occasionally
+pole
+The
+yard i
+is
+s 4
+4 hectares
+hectares (10
+(10 acres)
+acres) in
+in size.
+size.
+The highway
+highway loads
+loads
+yard
+The
+are hauled
+hauled 34
+34 km
+km to
+to the
+the mill
+mill in
+in Kelowna
+Kelowna (20
+(20 loads/day
+to
+are
+loads/day
+to
+25 loads/day).
+loads/day).
+The annual
+annual production
+production
+is 127
+127 000
+000 m
+m 33 (45,000
+25
+The
+is
+(45,000
+cunits) .
+.
+cunits)
+During the
+the processing
+processing
+activities,
+the debris
+debris is
+is pushed
+pushed to
+to
+During
+activities,
+the
+the perimeter
+perimeter of
+of the
+the yard.
+yard.
+Firewood cutters
+cutters reduce
+the
+the
+Firewood
+reduce the
+amount of
+of debris
+debris and
+and the
+the rest
+rest is
+is burned
+burned in
+amount
+in the
+the fall.
+fall.
+A Hahn
+Hahn harvester
+harvester was
+was introduced
+introduced
+to the
+the yard
+yard operation
+operation
+in
+A
+to
+in
+1980.
+It performed
+performed the
+the limbing,
+limbing, topping
+topping and
+and bucking
+bucking funcfunc1980.
+It
+tions and
+and eliminated
+eliminated
+the need
+need for
+for spreading
+spreading
+and
+cleaning
+tions
+the
+and cleaning
+functions
+previously
+necessary
+to the
+the yard
+yard operation.
+operation.
+functions
+previously
+necessary
+to
+2.
+2.
+
+Crown Zellerbach
+Zellerbach
+Crown
+Four-Mile
+Yard
+Four-Mile
+Yard
+
+Establishment:
+Establishment:
+Objectives
+Objectives
+1.
+1.
+2.
+2.
+3.
+3.
+
+June,
+June,
+
+Canada
+Canada
+
+Ltd.,
+Ltd.,
+
+Kelowna
+Kelowna
+
+Division
+Division
+
+1978
+1978
+
+:
+:
+
+to improve
+improve the
+the quality
+quality of
+of limbing
+limbing and
+and bucking;
+bucking; to
+to maxmaxto
+imize the
+the peeler
+peeler wood
+wood coming
+coming from
+from the
+the operation
+operation
+by
+imize
+by
+providing the
+the correct
+correct lengths
+lengths in
+in larger
+larger wood
+providing
+wood
+to eliminate
+eliminate
+or reduce
+reduce the
+the size
+size of
+of landing
+landing
+to
+or
+to improve
+improve the
+the safety
+safety of
+of the
+the processing
+processing
+phase
+to
+phase by
+by
+removing it
+it from
+from the
+the landing
+landing
+removing
+
+Stands :
+:
+Stands
+
+(1) co
+O 4-»
+P M-l
+n
+am
+CD CM
+
+Bush
+Bush
+
+(0
+Xî
+\
+cn
+E
+
+Lodgepole
+pine at
+at 350
+350
+Lodgepole
+pine
+piece (15
+(15 ft
+ft 33 /piece)
+/piece) ;
+;
+piece
+acre); 0.71
+0.71 m
+m 33 /piece
+/piece
+acre);
+
+(50 cunits/acre)
+cunits/acre) ;
+; 0.42
+0.42 m
+m 33 /
+/
+(50
+3
+3
+balsam at
+at 315
+315 m
+m /ha
+/ha (45
+(45 cunits/
+cunits/
+balsam
+''piece);
+; variable
+variable
+terrain.
+''piece)
+terrain.
+
+Operation:
+Operation:
+
+The wood
+wood is
+is felled
+felled by
+by feller-buncher,
+feller-buncher,
+with hand-felling
+hand-felling
+The
+with
+where necessary.
+necessary.
+One side
+side consists
+consists of
+078
+where
+One
+of a
+a Washington
+Washington
+078
+yarder with
+with a
+a heel-boom
+heel-boom
+loader (Prentice
+(Prentice 600RT)
+600RT) .
+. Grapple
+Grapple
+yarder
+loader
+skidders with
+with a
+a 980
+980 front-end
+front-end loader
+loader handle
+skidders
+handle the
+the remaining
+remaining
+volume.
+The bush
+bush haul
+haul ranges
+ranges from
+from 13
+13 km
+km to
+to 50
+50 km.
+km.
+One
+volume.
+The
+One
+self-loading
+truck, four
+four off-highway
+off-highway
+trucks with
+self-loading
+truck,
+trucks
+with 12-ft
+12-ft
+bunks, and
+and 3
+3 heavy-duty
+heavy-duty
+highway trucks
+trucks with
+with 10-ft
+10-ft bunks
+bunks
+bunks,
+highway
+carry the
+the volume.
+volume.
+carry
+
+44
+44
+
+Yard
+Yard
+
+Operation:
+Operation:
+
+900 m
+m 33 /day
+/day to
+to 1
+1 250
+250 m3/day
+m3/day (320
+(320 cunits/day
+cunits/day
+to 440
+440 cunits/day)
+cunits/day)
+900
+to
+enter the
+the yard,
+yard, depending
+depending
+on the
+the bush
+bush operations.
+operations.
+The
+enter
+on
+The
+full-tree
+wood is
+is weigh-scaled
+weigh-scaled
+in the
+the yard.
+yard.
+Two buckermen,
+buckermen,
+full-tree
+wood
+in
+Two
+one flail,
+flail, and
+and three
+three loaders
+loaders handle
+handle the
+the unloading,
+processing
+one
+unloading,
+processing
+and loading
+loading onto
+onto transfer
+transfer trucks.
+trucks.
+The manpower
+manpower
+and number
+number
+and
+The
+and
+of loaders
+loaders adjust
+adjust with
+with the
+the volume
+volume entering
+entering the
+Two
+of
+the yard.
+yard.
+Two
+highway trucks
+trucks transfer
+transfer the
+the wood
+wood 6.7
+6.7 km
+km to
+to the
+the lake.
+lake.
+The
+highway
+The
+yard is
+is 11
+11 hectares
+hectares (28
+(28 acres)
+acres) in
+in size
+size and
+has capacity
+capacity
+for
+yard
+and has
+for
+storage when
+when it
+it is
+is needed.
+needed.
+There is
+is no
+no sorting.
+sorting.
+The debris
+storage
+There
+The
+debris
+is piled
+piled in
+in a
+a ditch
+ditch in
+in the
+the center
+center of
+of the
+the yard
+yard and
+and burned.
+burned.
+is
+3.
+3.
+
+Crown
+Crown
+Monte
+Monte
+
+Zellerbach
+Zellerbach
+Lake Yard
+Yard
+Lake
+
+Establishment
+Establishment
+Operated
+Operated
+logs.
+logs.
+
+Canada
+Canada
+
+Ltd.,
+Ltd.,
+
+Armstrong
+Armstrong
+
+Division
+Division
+
+:
+:
+
+in the
+the
+in
+
+1960s
+1960s
+
+as a
+a mill-site
+mill-site
+as
+
+processing
+processing
+
+tree-length
+tree-length
+
+Since 1974
+1974 it
+it has
+has been
+been run
+run as
+as a
+a reload
+reload and
+and processing
+processing
+yard,
+Since
+yard,
+first by
+by Crown
+Crown Zellerbach
+Zellerbach
+and now
+now by
+by a
+a contractor;
+contractor;
+it has
+has not
+not
+first
+and
+it
+operated continuously.
+continuously.
+operated
+Objectives
+Objectives
+1.
+1.
+2.
+2.
+3.
+3.
+
+:
+:
+
+to manufacture
+manufacture
+and sort
+sort poles,
+poles, chip-and-saw
+chip-and-saw
+logs, large
+large
+to
+and
+logs,
+sawlogs, and
+and peeler
+peeler logs
+logs
+sawlogs,
+to improve
+improve log
+log quality
+quality
+to
+to provide
+provide seasonal
+seasonal
+log storage
+storage capacity
+capacity for
+to
+log
+for the
+the ArmArmstrong and
+and Lumby
+Lumby mills
+mills by
+by decking
+decking scaled
+scaled logs
+logs
+strong
+
+Stands :
+:
+Stands
+Primarily
+lodgepole
+pine 280
+280 m
+m 33 /ha
+/ha (40
+(40 cunits/acre)
+Primarily
+lodgepole
+pine
+cunits/acre) ;
+;
+occasionally
+spruce balsam
+balsam 350
+350 m3/ha
+m3/ha (50
+(50 cunits/acre)
+cunits/acre) ;
+; and
+and
+occasionally
+spruce
+Dry-Belt Douglas-fir
+Douglas-fir
+175 m
+m 33 /ha
+/ha to
+to 210
+210 m3/ha
+m3/ha (
+(2
+25
+5 cunits/
+cunits/
+Dry-Belt
+175
+acre to
+to 30
+30 cunits/acre)
+cunits/acre) .
+.
+acre
+Bush
+Bush
+
+Operation:
+Operation:
+
+Felling is
+is by
+by feller-buncher
+feller-buncher
+with hand-felling
+hand-felling
+where necnecFelling
+with
+where
+essary.
+The wood
+wood is
+is skidded
+skidded by
+by three
+three grapple-skidders
+grapple-skidders
+with
+essary.
+The
+with
+two lineline- skidders
+skidders for
+for long
+long corners,
+corners,
+hand-felled,
+and righttwo
+hand-felled,
+and
+rightof-way wood.
+wood. Full-trees
+Full-trees
+are loaded
+loaded on
+on off-highway
+off-highway
+trucks
+of-way
+are
+trucks
+by a
+a 966
+966 front-end
+front-end loader.
+loader.
+A buckerman
+buckerman
+is on
+on site
+site for
+for
+by
+A
+is
+trimming the
+the loads.
+loads.
+Six medium-weight
+medium-weight
+off-highway
+trucks
+trimming
+Six
+off-highway
+trucks
+45
+45
+
+with 10-ft
+10-ft to
+to 14-ft
+14-ft bunks
+bunks are
+are used
+used for
+for the
+the 33-km
+33-km to
+to 50-km
+50-km
+with
+haul to
+to the
+the yard.
+yard.
+Twelve loads
+loads are
+are brought
+brought into
+into the
+the yard
+yard
+haul
+Twelve
+per day
+day for
+for unloading
+unloading and
+and spreading
+spreading
+with a
+a 988
+988 front-end
+front-end
+per
+with
+loader.
+Highway trucks
+trucks are
+are used
+used for
+for the
+the bush
+bush run
+run when
+when the
+the
+loader.
+Highway
+roads won’t
+won’t handle
+handle the
+the size
+size and
+and weight
+weight of
+of the
+the off-highway
+off-highway
+roads
+trucks .
+.
+trucks
+Yard Operation:
+Operation:
+Yard
+The wood
+wood is
+is weighweigh- scaled
+scaled at
+at the
+the yard
+yard and
+and unloaded
+The
+unloaded and
+and spread
+spread
+with a
+a 966
+966 front-end
+front-end
+loader.
+Four front-end
+front-end
+loaders
+with
+loader.
+Four
+loaders are
+are
+used in
+in the
+the yard,
+yard, one
+one using
+using a
+a flail
+flail attachment
+attachment
+when necessary.
+necessary.
+used
+when
+Four men
+men handle
+handle the
+the taping,
+taping, grading,
+grading,
+bucking, and
+and topping,
+topping,
+Four
+bucking,
+with an
+an additional
+additional
+man when
+when the
+the volume
+volume is
+The
+with
+man
+is higher.
+higher.
+The
+transfer loads
+loads (25/day)
+(25/day) go
+go 75
+75 km
+km into
+into Armstrong
+Armstrong
+or 115
+115 km
+km
+transfer
+or
+into Lumby.
+Lumby.
+The yard
+yard itself
+itself is
+is 14
+14 hectares
+hectares (35
+(35 acres)
+acres) with
+with
+into
+The
+a storage
+storage capacity
+capacity of
+of about
+about 56
+56 600
+600 m
+a
+m 33 (20,000
+(20,000 cunits)
+cunits) .
+. The
+The
+daily throughput
+throughput
+for the
+the yard
+daily
+for
+yard is
+is 650
+650 m
+m 33 to
+to 850
+850 m
+m 33 (230
+(230 cunits
+cunits
+to 300
+300 cunits)
+cunits) with
+with an
+an annual
+annual volume
+volume of
+of 113
+113 000
+000 m
+m 33 to
+to
+to
+3
+3
+184 000
+000 m
+m (40,000
+(40,000 cunits
+cunits to
+to 65,000
+65,000 cunits).
+cunits).
+Debris
+184
+Debris is
+is burnburned once
+once a
+a year.
+year.
+The yard
+yard is
+is accessible
+accessible
+to firewood
+firewood cutters.
+cutters.
+ed
+The
+to
+Post
+Post
+
+Operation:
+Operation:
+
+A post
+post operation
+operation
+is run
+run adjacent
+adjacent to
+to the
+the yard,
+yard, by
+by the
+the same
+same
+A
+is
+contractor
+who operates
+operates
+the yard.
+yard.
+Posts are
+are cut
+cut from
+from the
+the
+contractor
+who
+the
+Posts
+tops, using
+using the
+the portion
+portion 5-cm
+5-cm diameter
+diameter to
+to 10-cm
+10-cm diameter.
+diameter.
+tops,
+Eighty percent
+percent of
+of the
+the tops
+tops yield
+yield one
+one or
+or more
+more posts.
+About
+Eighty
+posts.
+About
+150,000 posts
+posts are
+are produced
+produced annually.
+annually.
+150,000
+4.
+4.
+
+Jacobson
+Jacobson
+Horsefly
+Horsefly
+
+Brothers
+Brothers
+Yard
+Yard
+
+Establishment:
+Establishment:
+
+Spring
+Spring
+
+Shutdown:
+Shutdown:
+
+of 1979
+1979
+of
+
+Objectives
+Objectives
+1.
+1.
+
+2.
+.
+2
+3.
+3.
+
+Fall
+Fall
+
+Forest
+Forest
+
+Products
+Products
+
+Ltd.
+Ltd.
+
+of 1976
+1976
+of
+
+:
+:
+
+to use
+use the
+the heel-boom
+heel-boom
+line-loader
+with the
+the highlead
+highlead
+to
+line-loader
+with
+system.
+The loader
+loader would
+would not
+not only
+only reduce
+reduce the
+the need
+need for
+for
+system.
+The
+landings (if
+(if loading
+loading full-tree)
+full-tree)
+but also
+also retrieve
+retrieve
+landings
+but
+logs sliding
+sliding below
+below the
+the road.
+road.
+logs
+to provide
+provide the
+the space
+space for
+for grading
+grading and
+and sorting
+to
+sorting cedar
+cedar and
+and
+for quality
+quality bucking
+bucking cedar
+cedar and
+and white
+white wood.
+wood.
+for
+to eliminate
+eliminate
+or reduce
+reduce the
+the necessity
+necessity
+for landings.
+landings.
+to
+or
+for
+The terrain
+terrain offered
+offered few
+few landing
+landing locations
+locations
+and increased
+increased
+The
+and
+the construction
+construction
+costs.
+Skidding and
+and hauling
+hauling were
+were
+the
+costs.
+Skidding
+interacting
+on the
+the same
+same roads.
+roads.
+interacting
+on
+46
+46
+
+4.
+4.
+
+to extend
+extend the
+the logging
+logging season
+season by
+by as
+as long
+long as
+as a
+a month.
+month.
+to
+The inventory
+inventory built
+built up
+up in
+in the
+the yard
+yard after
+after highway
+The
+highway rerestrictions were
+were enforced
+enforced could
+could be
+be removed
+removed to
+to feed
+feed the
+the
+strictions
+mill before
+before the
+the bush
+bush operations
+operations could
+could resume
+resume in
+in the
+the
+mill
+spring.
+spring.
+
+Stands :
+:
+Stands
+Mixed stands,
+stands, mainly
+mainly spruce
+spruce and
+and balsam,
+balsam, 315
+315 m
+m 33 /ha
+/ha to
+to 385
+385 m
+m 33 /
+/
+Mixed
+ha (45
+(45 cunits/acre
+cunits/acre to
+to 55
+55 cunits/acre)
+cunits/acre) ;
+; broken
+broken ground,
+ground, high
+high
+ha
+elevation, slopes
+slopes 10%
+10% to
+to 80%,
+80%, some
+some rock
+rock outcrops.
+outcrops.
+elevation,
+Bush Operation:
+Operation:
+Bush
+The felling
+felling is
+is completely
+completely by
+by hand.
+hand. The
+The
+The Skagit
+Skagit GT-3
+GT-3 yarder,
+yarder,
+double-shifted, produces
+produces an
+an average
+average of
+of 500
+500 m
+m 33 /day
+/day (180
+(180
+double-shifted,
+cunits).
+. Bush
+Bush loading
+loading was
+was full-tree,
+full-tree, without
+without landings,
+landings, by
+by
+cunits)
+an American
+American 599
+599 line-loader.
+line-loader. Lighter
+Lighter weight
+weight off-highway
+off-highway
+an
+trucks with
+with 12-ft
+12-ft bunks
+bunks were
+were found
+found to
+to be
+be most
+most successful
+successful
+trucks
+for the
+the bush
+bush haul.
+haul. The
+The average
+average load
+load size
+size was
+was 59
+59 m
+m 33 (21
+(21
+for
+cunits).
+. Off-highway
+Off-highway haul
+haul distance
+distance ranged
+ranged from
+from 27
+27 km
+km to
+to
+cunits)
+38 km.
+km.
+38
+Yard Operation:
+Operation:
+Yard
+The wood
+wood was
+was weigh-scaled
+weigh-scaled for
+for volume
+volume at
+at the
+the yard.
+yard. Two
+Two 966
+966
+The
+front-end loaders
+loaders and
+and three
+three buckermen
+buckermen handled
+handled the
+the volume
+volume
+front-end
+with two
+two buckermen
+buckermen working
+working exclusively
+exclusively on
+on grading
+grading and
+and buckbuckwith
+ing cedar.
+cedar. The
+The highway
+highway haul
+haul to
+to the
+the mill
+mill in
+in Williams
+Williams Lake
+Lake
+ing
+was 83
+83 km
+km of
+of gravel
+gravel road
+road and
+and 53
+53 km
+km of
+of pavement.
+pavement.
+was
+Cedar and
+and white
+white wood
+wood were
+were sorted
+sorted and
+and hauled
+hauled separately.
+separately.
+Cedar
+Sixteen to
+to 18
+18 transfer
+transfer loads
+loads per
+per day
+day were
+were hauled
+hauled using
+using longSixteen
+longlog highway
+highway trucks
+trucks for
+for the
+the white
+white wood
+wood and
+and hay-rack
+hay-rack trailers
+trailers
+log
+for the
+the cedar.
+cedar. Debris
+Debris was
+was burned
+burned in
+in the
+the winter
+winter and
+and early
+early
+for
+spring.
+spring.
+Reasons for
+for Shutdown:
+Shutdown:
+Reasons
+1.
+1.
+2.
+2.
+
+The cedar
+cedar volume
+volume decreased.
+decreased. White
+White wood
+has few
+few defects
+defects
+The
+wood has
+and doesn't
+doesn't need
+need the
+the yard's
+yard's quality
+quality bucking.
+bucking.
+and
+The line-loader
+line-loader was
+was experiencing
+experiencing breakdowns.
+breakdowns. It
+It was
+was
+The
+not possible
+possible to
+to get
+get an
+an acceptable
+acceptable operator.
+operator.
+not
+
+47
+47
+
+The yard
+yard has
+has not
+not been
+been shut
+shut down
+down permanently.
+permanently. It
+It may
+may be
+be
+The
+reopened if
+if the
+the volume
+volume of
+of cedar
+cedar increases
+increases and
+and quality
+quality buckbuckreopened
+ing is
+is again
+again necessary.
+necessary. At
+At present,
+present, the
+the wood
+wood from
+from the
+the
+ing
+yarder is
+is skidded
+skidded down
+down the
+the road
+road to
+to a
+a landing
+yarder
+landing where
+where it
+it is
+is
+processed and
+and loaded
+loaded with
+with a
+a front-end
+front-end loader
+loader onto
+onto highway
+highway
+processed
+trucks.
+.
+trucks
+5.
+5.
+
+Ainsworth Lumber
+Lumber Ltd.
+Ltd.
+Ainsworth
+Chasm Division
+Division
+Chasm
+
+Established:
+Established:
+
+Winter of
+of 1979
+1979
+Winter
+
+Objectives:
+:
+Objectives
+1.
+1.
+2.
+2.
+3.
+3.
+
+to improve
+improve the
+the quality
+quality of
+of the
+the wood
+wood delivered
+delivered to
+the
+to
+to the
+mill and
+and therefore
+therefore improve
+improve mill
+mill productivity
+productivity
+mill
+to aid
+aid the
+the move
+move into
+into phase
+phase contracting
+contracting
+to
+to eliminate
+eliminate the
+the need
+need for
+for landings
+landings
+to
+
+Stands:
+:
+Stands
+Primarily lodgepole
+lodgepole pine
+pine on
+on gentle
+gentle slopes.
+slopes.
+Primarily
+Bush Operation:
+Operation:
+Bush
+The operation
+operation uses
+uses feller-bunchers
+feller-bunchers and
+and grapple-skidders.
+grapple-skidders.
+The
+Since the
+the beginning
+beginning of
+of the
+the yard
+yard operation,
+operation, productivity
+Since
+productivity
+of the
+the skidding
+skidding phase
+phase has
+has increased
+increased noticeably.
+noticeably. At
+At the
+the
+of
+time FERIC
+FERIC visited
+visited the
+the operation
+operation in
+in January
+January 1980,
+1980, fullfulltime
+trees were
+were loaded
+loaded by
+by a
+a front-end
+front-end loader.
+loader. Two
+Two off-highway
+off-highway
+trees
+trucks with
+with 1212- ft
+ft bunks
+bunks carried
+carried the
+the wood
+wood 5
+5 km
+km to
+to the
+the yard.
+yard.
+trucks
+The bush
+bush loader
+loader has
+has since
+since been
+been replaced
+replaced by
+with
+The
+by a
+a Barko
+Barko with
+a Weldco
+Weldco grapple.
+grapple.
+a
+Yard Operation:
+Operation:
+Yard
+The yard
+yard (about
+(about 4
+4 hectares
+hectares (10
+(10 acres)
+acres) in
+in size)
+size) handles
+handles a
+a
+The
+daily throughput
+throughput of
+of 850
+850 m3
+daily
+m3 to
+to 990
+990 m3
+m3 (300
+(300 cunits
+cunits to
+to 350
+350
+cunits) .
+. It
+It maintains
+maintains a
+a buffer
+buffer inventory
+inventory of
+of about
+about 2
+2 800
+800 m3
+m3
+cunits)
+(1,000 cunits).
+cunits). Overlength
+Overlength and
+and Douglas-fir
+Douglas-fir logs
+logs are
+are bucked;
+bucked;
+(1,000
+the remainder
+remainder are
+are topped.
+topped. Three
+Three front-end
+front-end loaders
+loaders and
+and
+the
+three buckermen
+buckermen process
+process the
+the wood
+wood and
+and load
+three
+load the
+the transfer
+transfer
+trucks. The
+The transfer
+transfer trucks
+trucks are
+are mixed
+mixed size
+trucks.
+size with
+with 8-ft
+8-ft and
+and
+10-ft bunks.
+bunks. The
+The transfer
+transfer haul
+haul is
+is 55
+55 km
+km on
+on gravel
+gravel road.
+road.
+10-ft
+Weigh-scaling is
+is done
+done at
+at the
+the mill
+mill yard.
+yard. Debris
+Debris is
+is burned
+Weigh-scaling
+burned
+continuously in
+in the
+the winter.
+winter.
+continuously
+
+48
+48
+
+6.
+6.
+
+Weldwood Canada
+Canada Ltd.
+Ltd.
+Weldwood
+Wells Operation
+Operation
+Wells
+
+Established:
+Established:
+
+1977
+1977
+
+Objectives:
+:
+Objectives
+1.
+1.
+2.
+2.
+
+to reduce
+reduce or
+or eliminate
+eliminate landings
+landings as
+as the
+the terrain
+terrain makes
+makes
+to
+landing construction
+construction very
+very costly
+costly
+landing
+to provide
+provide short
+short logs
+logs for
+for the
+the Quesnel
+Quesnel mill
+to
+mill
+
+Stand:
+:
+Stand
+Spruce balsam
+balsam primarily;
+primarily; occasional
+occasional Douglas-fir;
+Douglas-fir; some
+some difSpruce
+difficult terrain
+terrain with
+with steep
+steep slopes
+slopes or
+or flat
+flat swampy
+swampy stands.
+stands.
+ficult
+Bush Operation:
+Operation:
+Bush
+Felling is
+is done
+done by
+by hand.
+hand. The
+The skidding
+skidding is
+is mixed
+mixed linelineFelling
+skidding, yarding
+yarding by
+by Ecologger,
+Ecologger, and
+and skidding
+skidding by
+by FMC.
+FMC. A
+A
+skidding,
+Barko heel-boom
+heel-boom loads
+loads full-tree
+full-tree on
+on off-highway
+off-highway trucks.
+trucks. The
+The
+Barko
+bush haul
+haul is
+is 20
+20 km
+km to
+to 33
+33 km
+km and
+and 10
+10 to
+to 12
+12 loads
+loads are
+are delivered
+delivered
+bush
+to the
+the yard
+yard daily.
+daily.
+to
+Yard Operation:
+Operation:
+Yard
+The yard
+yard (about
+(about 3.2
+3.2 hectares
+hectares (8
+(8 acres)
+acres) in
+in size)
+size) handles
+handles an
+an
+The
+average of
+of 700
+700 m
+m 33 (250
+(250 cunits)
+cunits) per
+per day.
+day. Two
+Two loaders
+loaders and
+average
+and
+two buckermen
+buckermen work
+work in
+in the
+the yard.
+yard. An
+An average
+average of
+of twelve
+twelve shorttwo
+shortlog loads
+loads leave
+leave for
+for Quesnel
+Quesnel each
+each day
+day on
+on a
+a 97-km
+log
+97-km trip.
+trip.
+Weigh-scaling is
+is done
+done at
+at the
+the mill
+burned
+Weigh-scaling
+mill yard.
+yard. Debris
+Debris is
+is burned
+in the
+the fall.
+fall.
+in
+
+49
+49
+
+APPENDIX
+Machine
+Machine
+Hourly
+Hourly
+
+Machine
+Machine
+
+II
+
+Rates
+Rates
+
+Rates
+Rates
+
+1.
+1.
+
+The
+for
+The machine
+machine rates
+rates calculated
+calculated
+for this
+this report
+report are
+are
+based
+estimated
+based on
+on the
+the purchase
+purchase price
+price of
+of new
+new equipment;
+equipment;
+estimated
+machine
+machine life;
+life; I.W.A.
+I.W.A. rates
+rates plus
+plus 30%
+30% fringe
+fringe benefits
+benefits
+for
+and
+for
+for the
+the operators
+operators
+and crew;
+crew; and
+and estimates
+estimates
+for repair
+repair
+and
+and
+No
+and maintenance,
+maintenance,
+and fuel.
+fuel.
+No profit
+profit or
+or risk
+risk margin
+margin
+is
+The
+is included.
+included.
+The figures
+figures are
+are for
+for January
+January 1979
+1979 conconditions,
+to
+ditions, to
+to correspond
+correspond
+to the
+the study
+study period.
+period.
+
+2.
+2.
+
+This
+is
+The
+This logging
+logging operation
+operation
+is contracted.
+contracted.
+The phase
+phase
+costing
+costing done
+done by
+by FERIC
+FERIC was
+was without
+without access
+access to
+to the
+the concontract
+independent
+tract rates
+rates in
+in order
+order to
+to provide
+provide completely
+completely
+independent
+figures.
+The
+figures.
+The rates
+rates for
+for felling
+felling and
+and debris
+debris disposal
+disposal
+were
+were based
+based on
+on company
+company experience.
+experience.
+
+3.
+3.
+
+The
+and
+is
+The productivity
+productivity
+and volume
+volume information
+information
+is presented
+presented
+in
+detail
+in sufficient
+sufficient
+detail to
+to allow
+allow the
+the reader
+reader to
+to substisubstitute
+tute his
+his own
+own local
+local costs.
+costs.
+
+4.
+4.
+
+The
+The same
+same hourly
+hourly
+summer
+summer phases.
+phases.
+
+Calculation
+Calculation
+
+figures
+figures
+
+of
+of Skidder
+Skidder
+
+were
+were
+
+Fuel,
+Fuel,
+
+Wages
+Wages
+
+(W)
+(W)
+
+Lubricant,
+Lubricant,
+
+etc.
+etc.
+
+Maintenance
+Maintenance Cost
+Cost (M)
+(M)
+
+=
+=(
+( -
+
+fl
+fl +
++
+
+1
+1(
+(
+
+and
+and
+
+$103,000
+$103,000 f.o.b.
+f.o.b. Vancouver
+Vancouver
+$
+$ 10,300
+10,300
+5
+5 years
+years straight
+straight line
+line
+0.13
+0.13 (13%
+(13% of
+of average
+average investinvestment)
+ment)
+$12.06
+$12.06 per
+per SMH
+SMH (including
+(including
+30%
+30% F.B.)
+F.B.)
+$
+$ 4.50
+4.50 per
+per PMH
+PMH
+
+(F)
+(F)
+
+100%
+100% of
+of owning
+owning cost
+cost
+$13.56
+$13.56 per
+per SMH
+SMH
+10,000
+10,000 hours
+hours
+80%
+80%
+
+Machine
+Machine Life
+Life (L)
+(L)
+Utilization
+Utilization (U)
+(U)
+$/PMH
+$/PMH
+
+for
+for the
+the winter
+winter
+
+Cost
+Cost
+
+Purchase
+Price
+Purchase
+Price (I)
+(I)
+Residual
+Residual Value
+Value (R)
+(R) (10%)
+(10%)
+Depreciation
+Period
+Depreciation
+Period (N)
+(N)
+Interest
+(i)
+Interest and
+and Insurance
+Insurance
+(i)
+Operator's
+Operator's
+
+used
+used
+
+N+1)
+N+1)
+
++
++
+
+L
+L
+
+5
+51
+1
+
++
++ M
+M +
++ W)
+W)
+
+U
+U
+
++
++ F
+F =
+= $53.47/PMH
+$53.47/PMH
+
+The
+The purchase
+purchase price
+price is
+is an
+an average
+average of
+of the
+the prices
+prices of
+of the
+the three
+three
+grapple—
+grapple— skidder
+skidder models
+models used
+used during
+during the
+the study
+study —
+— Clark
+Clark 667
+667 ,
+,
+John
+The
+cost i
+is
+s expressed
+expressed
+John Deere
+Deere 640
+640 and
+and John
+John Deere
+Deere 740.
+740.
+The cost
+per
+Machine
+per Productive
+Productive
+Machine Hour
+Hour in
+in order
+order that
+that the
+the per
+per cunit
+cunit
+costs
+in
+for
+costs reflect
+reflect the
+the differences
+differences
+in productivity
+productivity
+for the
+the two
+two
+systems
+systems .
+.
+Calculation
+Calculation
+
+of
+of Loader
+Loader
+
+Cost
+Cost
+$165,000
+$165,000 f.o.b.
+f.o.b. Vancouver
+Vancouver
+$
+$ 41,250
+41,250
+5
+5 years
+years straight
+straight line
+line
+0.13
+0.13 (13%
+(13% of
+of average
+average investinvestment)
+ment)
+$12.71
+$12.71 per
+per SMH
+SMH (including
+(including
+30%
+30% F.B.)
+F.B.)
+$
+$ 4.70
+4.70 per
+per SMH
+SMH
+100%
+100% of
+of owning
+owning cost
+cost
+$19.88
+$19.88 per
+per SMH
+SMH
+10,000
+10,000 hours
+hours
+
+Purchase
+Price
+Purchase
+Price (I)
+(I)
+Residual
+Residual Value
+Value (R)
+(R) (25%)
+(25%)
+Depreciation
+Period
+Depreciation
+Period (N)
+(N)
+Interest
+(i)
+Interest and
+and Insurance
+Insurance
+(i)
+Operator's
+Operator's
+
+Wages
+Wages
+
+(W)
+(W)
+
+Fuel,
+Fuel, Lubricant,
+Lubricant,
+Maintenance
+Cost
+Maintenance
+Cost
+
+etc.
+etc.
+(M)
+(M)
+
+Machine
+Machine
+$/SMH
+$/SMH
+
+Life
+Life
+=
+= —
+—
+
+(L)
+(L)
+fl
+fl +
++
+I
+I
+
+L
+L
+
+(F)
+(F)
+
+i
+i(
+(
+
+ll 1
+1)
+)
+N'
+]+
+N''
+'
+]+
+2
+1
+2
+1
+
+L
+L
+
++
++ M
+M +
++ W
+W +
++ F
+F =
+= $57.17/SMH
+$57.17/SMH
+
+Purchase
+price
+Purchase
+price is
+is for
+for a
+a Caterpillar
+Caterpillar
+for
+for loading
+loading trucks.
+trucks.
+Calculation
+Calculation
+
+of
+of Off-Highway
+Off-Highway
+
+Truck
+Truck
+
+Wages
+Wages
+
+(W)
+(W)
+
+Fuel,
+etc.
+Fuel, Lubricant,
+Lubricant,
+etc.
+Maintenance
+Cost
+Maintenance
+Cost (M)
+(M)
+Machine
+Machine
+$/SMH
+$/SMH
+
+=
+=
+
+Life
+Life
+
+(F)
+(F)
+
+(L)
+(L)
+1
+1 +
++
+
+i(N+l)
+i(N+l)
+2
+2
+
+loader
+loader
+
+equipped
+equipped
+
+Cost
+Cost
+
+$175,000
+$175,000 f.o.b.
+f.o.b. Vancouver
+Vancouver
+$
+$ 70,000
+70,000
+5
+5 years
+years straight
+straight line
+line
+0.14
+0.14 (14%
+(14% of
+of average
+average investinvestment)
+ment)
+$12.71
+30%
+$12.71 per
+per SMH
+SMH (including
+(including
+30%
+F.B.
+F.B. )
+)
+$
+$ 8.00
+8.00 per
+per SMH
+SMH
+100%
+100% of
+of owning
+owning cost
+cost
+$16.51
+$16.51 per
+per SMH
+SMH
+12,000
+12,000 hours
+hours
+
+Purchase
+Purchase Price
+Price (I)
+(I)
+Residual
+Residual Value
+Value (R)
+(R) (40%)
+(40%)
+Depreciation
+Period
+Depreciation
+Period (N)
+(N)
+Interest
+(i)
+Interest and
+and Insurance
+Insurance
+(i)
+Operator's
+Operator's
+
+966C
+966C
+
++
++ S.
+S.
+L
+L
+
++
++
+
+M
+M
+
++
++
+
+w
+w +
++ F
+F =
+= $53.73/SMH
+$53.73/SMH
+
+Purchase
+truck
+Purchase price
+price i
+is
+s for
+for a
+a Pacific
+Pacific P10
+P10 off-highway
+off-highway
+truck with
+with
+a
+In
+a Pacific
+Pacific 12-ft
+12-ft bunk
+bunk trailer.
+trailer.
+In some
+some Interior
+Interior operations
+operations
+the
+hauling
+trucks with
+with some
+some
+the off-highway
+off-highway
+hauling i
+is
+s done
+done by
+by highway
+highway trucks
+modifications
+to
+This
+less expensive
+modifications
+to handle
+handle bigger
+bigger loads.
+loads.
+This less
+expensive
+
+5
+52
+2
+
+alternative
+alternative
+example.
+example.
+
+would
+would
+
+not
+not
+
+Calculation
+Calculation
+
+of
+of Highway
+Highway
+
+have
+have
+
+the
+the
+
+Truck
+Truck
+
+Wages
+Wages
+
+(W)
+(W)
+
+Fuel,
+Fuel, Lubricant,
+Lubricant,
+Maintenance
+Cost
+Maintenance
+Cost
+
+etc.
+etc.
+(M)
+(M)
+
+Machine
+Machine
+
+Life
+Life
+
+load
+load
+
+capacity
+capacity
+
+as this
+as
+this
+
+Cost
+Cost
+$92,000
+$92,000 f.o.b.
+f.o.b. Vancouver
+Vancouver
+$36,000
+$36,000
+3
+line
+3 years
+years straight
+straight
+line
+0.15
+0.15 (15%
+(15% of
+of average
+average investinvestment)
+ment)
+$12.35
+$12.35 per
+per SMH
+SMH (including
+(including
+30%
+30% F.B.)
+F.B.)
+$
+$ 7.86
+7.86 per
+per SMH
+SMH
+100%
+100% owning
+owning cost
+cost
+$
+$ 8.90
+8.90 per
+per SMH
+SMH
+10,000
+10,000 hours
+hours
+
+Purchase
+Price
+Purchase
+Price (I)
+(I)
+Residual
+Residual Value
+Value (R)
+(R) (40%)
+(40%)
+Depreciation
+Period
+Depreciation
+Period (N)
+(N)
+Interest
+(i)
+Interest and
+and Insurance
+Insurance
+(i)
+Operator's
+Operator's
+
+same
+same
+
+(F)
+(F)
+
+(L)
+(L)
+
++
++
++
++ M
+M +
++ W
+W +
++ F
+F =
+= $38.14/SMH
+$38.14/SMH
+Fl
+Fl +
++
+L
+L
+jj
+L
+z
+j
+jj
+L
+z
+j
+Purchase
+price
+series high
+high
+Purchase
+price is
+is for
+for an
+an average
+average Pacific
+Pacific P500
+P500 series
+way
+trailer.
+way truck
+truck and
+and a
+a standard
+standard Columbia
+Columbia
+trailer.
+S/SMH
+S/SMH
+
+=
+=
+
+Calculation
+Calculation
+
+of
+of Bulldozer
+Bulldozer
+
+Cost
+Cost
+$170,000
+$170,000 f.o.b.
+f.o.b. Vancouver
+Vancouver
+$
+$ 42,500
+42,500
+5
+5 years
+years straight
+straight line
+line
+0.13
+0.13 (13%
+(13% of
+of average
+average investinvestment)
+ment)
+$12.06
+30%
+$12.06 per
+per SMH
+SMH (including
+(including
+30%
+F.B.
+F.B. )
+)
+$
+$ 4.50
+4.50 per
+per SMH
+SMH
+100%
+100% of
+of owning
+owning cost
+cost
+$20.48
+$20.48 per
+per SMH
+SMH
+10,000
+10,000 hours
+hours
+
+Purchase
+Purchase Price
+Price (I)
+(I)
+Residual
+Residual Value
+Value (R)
+(R) (25%)
+(25%)
+Depreciation
+Period
+Depreciation
+Period (N)
+(N)
+Interest
+(i)
+Interest and
+and Insurance
+Insurance
+(i)
+Operator's
+Operator's
+
+Wages
+Wages
+
+(W)
+(W)
+
+Fuel,
+Fuel, Lubricant,
+Lubricant,
+Maintenance
+Cost
+Maintenance
+Cost
+
+etc.
+etc.
+(M)
+(M)
+
+Machine
+Machine
+
+$/SMH
+$/SMH
+
+Life
+Life
+
+(F)
+(F)
+
+(L)
+(L)
+
+=
++
+= Zr*
+Zr*
++ iWtU
+iWtU
+J-i
+zz
+J-i Fl +
+
+L
+L
+
++
+
+m ++ WW ++ FF == $58.52/SMH
+$58.52/SMH
+
+Purchase
+Purchase price
+price is
+is for
+for a
+a Caterpillar
+Caterpillar
+winch
+blade.
+winch and
+and earth-moving
+earth-moving
+blade.
+Flail
+Flail
+
+D7G
+D7G
+
+bulldozer
+bulldozer
+
+with
+with
+
+a
+a
+
+Cost
+Cost
+
+The
+figures
+and have
+the
+The chain-life
+chain-life
+figures varied
+varied considerably
+considerably
+and
+have the
+largest
+A
+for
+largest bearing
+bearing on
+on the
+the cost.
+cost.
+A figure
+figure of
+of $50.00/hour
+$50.00/hour
+for
+the
+the flail
+flail was
+was used
+used in
+in the
+the calculations.
+calculations.
+
+53
+53
+
+

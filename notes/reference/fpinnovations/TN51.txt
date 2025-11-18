@@ -1,0 +1,1578 @@
+D
+r
+
+UKl
+
+FOREST ENGINEERING RESEARCH INSTITUTE OF CANADA
+INSTITUT CANADIEN DE RECHERCHES EN GÉNIE FORESTIER
+
+5/
+
+Interior Limbing, Bucking
+and Processing Study
+Evaluation of Hahn
+Tree- Length Delimber
+
+LESLIE H. POWELL
+
+Technical Note No. TN-51
+December 1981
+
+201 - 2112 West Broadway, Vancouver, B.C., Canada V6K 2C8
+143 Place Frontenac, Pointe Claire, Québec, Canada H9R 4Z7
+
+FOREWORD
+FERIC's project on Interior Limbing, Bucking and Processing
+represents an on-going search for machines and methods to
+solve the problems of achieving high quality logs at reasonable cost. This Technical Note describes the evaluation of
+one such machine , the Hahn Tree-Length De limber , which
+delimbs and bucks full trees. Further studies of processing
+machines will be made as new equipment is developed and
+introduced.
+FERIC wishes to thank personnel from the following companies
+for their assistance and cooperation during this study：
+Crown Zellerbach Canada Ltd. , Kelowna , B.C.
+Duncan Logging, Kelowna, B.C.
+Hahn Machinery Inc. , Two Harbors , Minnesota
+Crows Nest Industries , Elko, B.C.
+Crown Zellerbach Canada Ltd. , Courtenay, B.C.
+The author gratefully acknowledges the help and assistance
+of the other FERIC personnel who were involved with this
+study.
+
+i
+
+CONTENTS
+PAGE
+
+FOREWORD
+
+i
+
+SUMMARY
+
+S-l
+
+SOMMAIRE
+
+S-3
+
+INTRODUCTION
+
+1
+
+TECHNICAL DESCRIPTION
+
+1
+
+OPERATING SEQUENCE
+
+5
+
+YARD LAYOUT AND OPERATING CONDITIONS
+
+6
+
+STUDY PROCEDURES
+
+8
+
+STUDY RESULTS
+
+8
+
+Shift Level Monitoring
+Detailed Timing Results
+Bucking Quality
+Limbing Quality
+
+8
+10
+12
+13
+
+COMPARISON WITH OTHER HAHN TREE-LENGTH DELIMBERS
+IN B.C.
+
+13
+
+COST ESTIMATES
+
+17
+
+DISCUSSION
+
+19
+
+CONCLUSION
+
+21
+
+APPENDICES
+APPENDIX
+
+PAGE
+
+I
+
+Manufacturer's Specifications
+
+23
+
+II
+
+Limbing Quality Guide
+
+24
+
+TABLES
+TABLE
+
+PAGE
+
+1
+
+Shift-Level Monitoring Summary
+
+8
+
+2
+
+Summary of Repair Time
+
+9
+
+3
+
+Summary of Loading Activity
+
+1°
+
+4
+
+Summary of Processing Activity
+
+11
+
+5
+
+Summary of Bucked Log Lengths
+
+12
+
+6
+
+Comparison of Shift-Level Results
+
+14
+
+7
+
+Comparison of Detailed Timing Results
+for Processing Activities
+
+16
+
+FIGURES
+FIGURE
+A
+
+PAGE
+Hahn Tree-Length Delimber at
+Peachland Yard
+
+2
+
+B
+
+Infeed End of Hahn
+
+3
+
+C
+
+close Views of Machine Components
+
+4
+
+D
+
+Diagram of Yard Layout at Peachland
+
+1
+
+E
+
+Push Cat Moving Full Trees
+
+15
+
+F
+
+Hahn Tree-Length Delimber on
+Vancouver Island
+
+15
+
+SUMMARY
+The Hahn Tree-Length De limber is a delimbing and bucking
+machine , which has been introduced into the Interior of B.C.
+There are currently 5 units working in B .C. , four in the
+Interior and one on Vancouver Island. The machine studied
+was working in the central processing yard at Peachland,
+delimbing and bucking full trees into desired log lengths
+(usually 34 ft 8 in.) which were then trucked on-highway to
+the mill.
+The machine is a self-propelled rubber-tired unit. Its
+chassis forms the working deck for the wrap-around knifetype de limber. Bucking and topping is done by a hydraulically operated chain saw. An electronic measuring device is
+used to obtain accurate bucking. Full trees are fed into
+the de limber by a knuckle-boom loader. After de limbing and
+topping, logs are ejected onto the ground at the other end
+of the machine. A front-end loader (Caterpillar 966C)
+clears the processed logs and moves debris to the disposal
+ditch where it is burnt. A two-man crew operated the Hahn,
+one on the knuckle-boom loader and one controlling the delimbing and bucking. The machine weighs about 20 200 kg and
+costs approximately $200,000 f.o.b. Vancouver.
+This study collected both shift level information on actual
+performance and detailed timing data for estimating potential productivity. Bucking accuracy was also studied. Results are compared with those from a second unit in the
+Interior and the unit working on Vancouver Island.
+During the 48 days of the study period , the Hahn processed
+272 off-highway truckloads with a volume of 16 410 m 3
+(= 42.5 m 3 /PMH). Daily production averaged 342 m 3 (or 5.7
+truckloads) , which was almost one-half of the daily yard
+throughput. The remaining volume was de limbed by a flail
+and manually bucked. However , over the study period , the
+daily production increased slowly, and reached almost 7
+loads per day at the conclusion.
+Machine availability was high at 87% and utilization of 84%
+was also good. This latter shows that there were very few
+non-mechanical delays. In comparison , the other Hahn working in the Interior produced 15 260 m 3 in 65 days (= 40.7
+m 3 /PMH) and achieved a machine availability of 78% , with a
+
+S-l
+
+utilization of 67%. Some of the difference in production
+resulted from the smaller tree size (.3 m 3 per tree compared
+to .4 m 3 per tree at Peachland). Both machines were working
+with lodgepole pine as the major species.
+Detailed timing samples showed that the processing (delimbing and bucking) activity determines the potential productivity. An average off-highway truckload of 62.4 m 3 was
+processed in 65.5 minutes , which equals 57.2 m 3 per productive machine hour. The Hahn actually processed only 78%
+of the trees in a truckload. The remaining 22% did not need
+processing and were transferred by its loader from the full
+tree piles to the processed log pile.
+Potential productivity estimates for both machines in the
+Interior of B.C. were similar in terms of trees per PMH.
+Again the larger tree size at Peachland influenced volume in
+m 3 per PMH. The Hahn on Vancouver Island had longer cycle
+times because there was only one operator. Potential
+productivity for this machine was 85 trees per PMH. Average
+tree size was .71 m 3 , and volume per PMH was estimated at
+41.4 m 3 . Here also the effect of tree size was very noticeable , and offset the longer cycle times resulting from the
+single operator.
+This Technical Note presents some cost estimates for both
+favourable and unfavourable conditions. These suggest that
+with favourable conditions, the Hahn can process logs for a
+comparable price to flail limbing with manual bucking.
+There are also some general comments on all three machines
+and their operating set-ups.
+All three Hahns produced cleanly limbed and accurately
+bucked logs. Two of them reported good machine availability
+and utilization. These units have demonstrated their abilities to handle Interior wood , while the unit on Vancouver
+Island has worked equally well with the smaller sizes of
+coast timber.
+
+S-2
+
+SOMMAIRE
+L'ébrancheuse-tronçonneuse Hahn est un engin forestier qui
+a son apparition en Colombie-Britannique intérieure. Il y
+a actuellement cinq de ces machines à 1'oeuvre dans la province , quatre dans la zone intérieure et une sur 1'île de
+Vancouver. La machine étudiée, installée dans un parc central de façonnage à Peachland, ébranchait et tronçonnait des
+arbres entiers en grumes de la longueur voulue (généralement
+34 pi 8 po) , grumes qui étaient ensuite transportées par
+camion sur la grand 'route jusqu'à 1 * usine.
+L'engin est automoteur et monté sur des pneumatiques de
+caoutchouc. Son châssis forme la plate-forme où se trouve
+une tête d'ébranchage ă couteaux enveloppants. Le tronçonnage et 1'écimage sont effectués par une scie à chaîne a
+commande hydraulique. Un dispositif électronique de mesure
+des longueurs assure la précision du tronçonnage. Une
+flèche d 'alimentation articulée amène les arbres entiers
+jusqu'au dispositif d'ébranchage. Après 1 1 ébranchage et
+1'écimage, les billes sont éjectées au sol à 1'autre extrémité de la machine. Une chargeuse frontale (Caterpillar
+966 C) enlève les billes façonnées et porte les déchets
+jusqu'a la fosse d'élimination où ils sont brûlés. Le fonctionnement de 1'ébrancheuse Hahn demande une équipe de deux
+hommes, un à la flèche d 'alimentation articulée , et 1'autre
+pour commander 1 1 ébranchage et le tronçonnage. L'engin pèse
+environ 20 200 kg et son coût s'élève approximativement à
+200 000$ f.o.b. Vancouver.
+Au cours de 1'étude , on recueillit des données par poste de
+travail sur la performance réelle , ainsi que des chronométrages détaillés permettant d 'estimer le potentiel de productivité. L'étude porta aussi sur la précision du tronçonnage. On y compare les résultats obtenus avec ceux qui
+proviennent d'une seconde machine travaillant en Colombie
+intérieure et de celle qui se trouve sur 1'île de Vancouver.
+Durant les 48 jours que dura 1'étude , 1'ébrancheuse-tronçonneuse Hahn façonna 272 charges de camions de voie privée ,
+soit un volume de 16 410 m 3 (42,5 m 3 /HMP ). La production
+journalière s'élevait en moyenne à 342 m 3 (ou 5 ,7 charges
+de camion) , ce qui atteignait presque la moitié des arrivages
+journaliers du parc. Le volume de bois restant était ébranché par une ébrancheuse à fléaux et tronçonné à la main.
+
+S-3
+
+Cependant la production journalière augmenta peu à peu au
+cours de 1'étude pour atteindre presque 7 charges par jour
+vers la fin.
+La machine avait une disponibilité élevée de 87% et un bon
+taux d'utilisation de 84%. Ce dernier taux démontre qu'il
+y eut très peu de temps morts d'ordre non-mécanique. Comparativement, 1'autre Hahn travaillant en zone intérieure
+produisit 15 260 m 3 en 65 jours (= 40,7 m 3/HMP), soit une
+disponibilité de 78% et en taux d ’utilisation de 67%. Une
+part de la différence dans le volume produit résulte de la
+plus faible taille des arbres (0,3 m 3 a 1'arbre par rapport
+à 0,4 m 3 a Peachland). Dans les deux cas, le pin lodgepole
+constituait 1'essence principale.
+Des échantillons des chronométrages montraient que 1'ébranchage-tronçonnage constitue 1'activité déterminante du potentiel de productivité. Une charge moyenne de camion de
+voie privée de 62,4 m 3 était façonnée en 65,5 minutes, ce
+qui donne 57,2 m 3 par heure-machine productive. L'engin ne
+façonnait en fait que 78% des arbres de la charge. Le reste,
+soit 22% , n'avait pas besoin d'être façonné et passait, à
+1'aide de la flèche d ’alimentation, directement de la pile
+d 1 arbres entiers à la pile de grumes façonnées.
+Les estimations du potentiel de productivité des deux machines utilisées en Colombie intérieure étaient semblables,
+quant au nombre d 'arbres par HMP. Ici encore le volume plus
+élevé des arbres à Peachland influença le volume en m 3 par
+HMP. L* ébrancheuse-tronçonneuse Hahn se trouvant sur 1'île
+de Vancouver avait des temps plus longs parce qu'elle n'avait
+qu'un seul opérateur. Son potentiel de productivité atteignait 85 arbres par HMP. Le volume moyen des arbres était de
+0,71 m 3 , et le volume par HMP était estimé M 41,4 m 3 . Ici
+aussi 1'effet de la taille des arbres était remarquable, et
+compensait les temps de fonctionnement plus longs dus à la
+présence d'un seul opérateur.
+On trouvera dans la présente fiche technique quelques estimations de coût dans des conditions favorables et défavorables. Elles laissent entendre que dans des conditions
+favorables, 1'ébrancheuse-tronçonneuse Hahn peut façonner
+les grumes à un coût comparable à 1'ébranchage au fléau suivi
+d'un tronçonnage manuel. On trouvera également quelques
+commentaires généraux sur les trois machines et 1 1organisation de chaque site de façonnage.
+
+S-4
+
+Les trois ébrancheuses-tronçonneuses Hahn produisaient des
+grumes bien ébranchées et tronçonnées avec précision. Deux
+d'entre elles faisaient preuve d'une bonne disponibilité et
+d'un bon taux d'utilisation. Elles ont démontré leur aptitude
+a traiter les arbres de la Colombie intérieure , alors que
+celle qui se trouvait sur 1'île de Vancouver a également
+donneé de bons résultats avec les arbres plus petits de la
+région côtière.
+
+S-5
+
+INTRODUCTION
+This Technical Note describes the use of a Hahn tree-length
+delimbing and bucking machine in a central processing yard
+in the Interior of B.C. Productivity figures come from both
+shift-level and detailed time studies. Comparisons are made
+with two other Hahns, one working in Interior B.C. and the
+other in small timber on Vancouver Island.
+In Interior B.C. about 75 percent of the wood harvested is
+manually delimbed and bucked. The use of chain flail delimbers with manual bucking accounts for another 20 percent,
+and the remainder is mechanically delimbed, bucked and topped. There is considerable industry interest in improving
+the quality of delimbing and bucking. One approach to this
+problem is the introduction of mechanized systems. So far ,
+machines designed for eastern Canadian conditions are being
+introduced in experiments to solve the problems. Sliding
+boom delimbers and Hahn delimbers are handling the estimated
+five percent of the harvest which is processed mechanically.
+Sliding boom delimbers have been studied in Ontario and
+Quebec , and show definite potential for Interior B.C. These
+machines, however , only delimb and top. The Hahn includes a
+bucking capability as well and has aroused much interest,
+particularly in central processing yard applications.
+
+TECHNICAL DESCRIPTION
+The Hahn Tree-Length Delimber is a self-propelled machine.
+It is a 4-wheeled machine with one steering axle and one
+drive axle. The chassis forms the deck on which the delimbing head travels. There are four stabilizer legs which
+raise the wheels off the ground and provide a solid working
+position. The 119 kW engine is mounted off to one side
+between the axles. The operator's cab is mounted at the
+off-feed end of the unit. The knuckle-boom loader is
+mounted at the other end on the opposite side by the engine
+and fuel tanks. There is a second cab with the loader so
+that two operators run the machine.
+
+1
+
+The delimbing head travels the length of the machine. It
+is a wrap-around knife-type delimber, with 1 fixed and 4
+movable knives. Two hydrostatically-driven chains move the
+carriage back and forth. Below the operator's cab are the
+holding arms which secure the tree while delimbing takes
+place. Also there is a kick-out arm to eject the processed
+log. There is a hydraulically-operated chainsaw mounted by
+the engine house which bucks the trees or trims off butts
+and defects as required.
+The machine weighs 20 200 kg and the purchase price is
+approximately $200,000. Figures A to C show the machine and
+its main components. More detailed specifications are given
+in Appendix I «
+
+FIGURE A.
+
+Hahn Tree-Length Delimber at
+Peachland Yard.
+
+2
+
+MHH
+■Bn
+
+t
+X?
+
+i, ; ’‘k
+
+r;
+
+• ... *
+
+FIGURE B.
+
+A
+
+*
+
+,
+
+Infeed of machine showing return of
+carriage at end of delimbing. Details
+of knives and limbing head are hidden
+by limbs. Note the two trees being
+processed at one time.
+
+3
+
+I
+h
+ill
+
+I
+§
+
+FIGURE C.
+
+Close views of machine components:
+1) Limbing head
+2) Cut-off saw
+3) Holding arms
+4) Kick-off arm
+
+4
+
+OPERATING SEQUENCE
+The Hahn is positioned with the loader end close to the
+butts of the full-tree pile. The outriggers are extended to
+stabilize the machine. The loader then grapples a full
+tree, releasing it from the pile , and places the butt end in
+the de limber carriage. The limbing knives close firmly
+clamping the tree in the limbing carriage. This then moves
+to the opposite end of the machine and positions the tree on
+the deck. Holding arms positioned below the main operator's
+cab then clamp the butt of the tree. The pressure holding
+the limbing knives is reduced, relaxing the clamping effect
+but leaving the knives closed around the stem. Returning to
+the loader end the carriage performs the de limbing function,
+and carries the limbs and debris with it. Then the holding
+arms are released and the limbing knives reclamped, allowing
+the cycle to be repeated until all limbing is done. As the
+butt of the tree moves out beyond the holding arms , an
+electronic counter is tripped beginning measurement of log
+lengths. At the desired length, the carriage is halted (on
+the loader side of the cut-off saw) and bucking occurs. The
+bucked log is then ejected away from the machine by the
+kicker arm. Limbing continues until the desired top diameter is reached and the bucking saw then cuts off the top.
+This second log is similarly ejected onto the pile of logs.
+The top and limbs are carried back to the loader end and
+ejected onto the ground. The limber carriage then accepts
+the next tree and the cycle is repeated. With smaller trees
+which only require limbing and topping, two or three trees
+can be processed at the same time.
+Any trees in the pile which do not need processing are removed by the loader and piled on the opposite side of the
+machine, alongside the pile of processed logs. These are
+then removed by a front-end loader and decked to await rehauling to the mill. Tops and debris are removed by the
+same front-end loader , and stored along the edge of the yard
+for subsequent disposal.
+As each pile of full trees is processed, the Hahn will be
+repositioned several times , keeping the trees within reach
+of its knuckle-boom loader. At the end of processing a ~
+pile, the unit moves on to the next pile.
+
+5
+
+YARD LAYOUT AND OPERATING CONDITIONS
+Feller buncher wood was skidded to landings and roadside by
+grapple skidder. Full trees were loaded onto off-highway
+trucks by a Barko 450 Loader and hauled to the central processing yard at Peachland. Haul distance was about 35 km.
+At the yard, the full trees were off-loaded by a Cat 966
+wheeled front-end loader. The loads were simply pushed off.
+The Hahn then delimbed the full trees and bucked them into
+the required log lengths. The front-end loader removed the
+processed logs and stored them in decks or loaded them directly onto highway trucks for the haul to the mill at
+Kelowna. Limbs, tops and other cull material were moved by
+the loader to the debris ditch where it was subsequently
+burned.
+Figure D shows the basic layout of the yard at Peachland.
+In addition to the Hahn, some loads of full trees were
+spread out, limbed using a flail, manually topped and bucked, and then decked. This ensured that the daily production
+of the yard achieved the required 700 m 3.
+Species processed in the yard were predominately lodgepole
+pine, with some spruce and balsam. Tree size averaged
+0.38 m 3 . Branchiness* of the full trees before limbing was
+as follows:
+class 1
+class 2
+class 3
+
+82% of sample
+13% of sample
+5% of sample
+
+Branchiness classes 2 and 3 were associated mostly with
+spruce and balsam fir trees. Most of the pine exhibited
+branchiness class 1.
+
+*Tree branchiness is defined as follows:
+class 1:
+0 - 33% of stem bearing live branches
+class 2: 34 - 66% of stem bearing live branches
+class 3: 67 - 100% of stem bearing live branches
+
+6
+
+Mill at
+Kelowna
+
+Weight
+Scale
+
+I
+
+Deck
+
+Deck
+
+'
+
+966
+loader
+logs \
+
+I
+I
+I
+
+Deck
+
+Area for check-sealing
+off-highway loads
+
+L
+
+load highway trucks
+
+966 '
+loader
+Hahn
+
+FIGURE D.
+
+Diagram of Yard Layout at Peachland.
+
+Extra
+Storage
+Area
+
+STUDY PROCEDURES
+Shift level monitoring of machine time and production occurred over a three-month period. In addition , detailed timing
+of the Hahn's working cycles was carried out to determine
+the machine 1 s potential productivity. Log lengths were
+measured to determine the accuracy of bucking. More details
+of study procedures are available from FERIC on request.
+
+STUDY RESULTS
+SHIFT LEVEL MONITORING
+Table 1 presents the results of the shift level monitoring
+for the study period.
+
+TABLE 1.
+
+Shift Level Monitoring Sununary.
+
+No. of shifts reported
+No. of shifts worked
+
+49
+48
+
+Scheduled Machine Hours (SMH)
+Productive Machine Hours (PMH)
+Mechanical delay time - repair hours
+- service hours
+Non-mechanical delay time (hours)
+
+458.0
+386.25
+61.50
+
+hr/shift
+9.35
+7.90
+1.25
+
+10.25
+
+0.20
+
+CPPA Machine Availability
+CPPA Machine Utilization
+
+86.6%
+84.3%
+
+No. of off-highway truck loads processed
+
+272
+
+Volume processed (based on average
+truck volume of 60.3 m 3 )
+
+16 410 m 3
+
+Average piece size, m 3
+
+.38
+
+Average daily production
+Average number of truck loads processed
+
+342 m 3
+5.7
+
+8
+
+Results show a 9.35 hr shift length which is explained by
+the fact that this is a contractor operation , not a company
+crew. No service time was recorded separately during the
+study. Servicing of the machine was often performed during
+the lunch period or during repair time, which explains the
+zero hours reported.
+Productive time (PMH) includes the time spent limbing and
+bucking the full trees, and time spent moving , both while
+processing each pile and travelling from one pile to the
+next. It also includes minor delay times, such as waiting
+for loaders to clear debris and clear processed logs. These
+delays are normally expected to interrupt processing, but
+only for short intervals of time.
+Shift level monitoring shows an average time for limbing and
+bucking each off-highway truck load at 1.39 hours (or 83
+minutes). Average productivity based on these figures
+equals 43.3 m 3 per PMH.
+Table 2 shows a breakdown of the repair hours by machine
+assembly, and gives number of repairs. Average time per
+repair was 1.8 hours, and average time between repairs
+equalled 13.5 scheduled hours or 11.4 productive machine
+hours.
+Non-mechanical delays averaged only 12 minutes per shift.
+TABLE 2.
+
+Summary of Repair Time.
+
+Machine Assembly
+
+Repair Time
+hours
+%
+
+Limbing head
+Cable for limber head
+
+14.45
+14.05
+
+Kick-off arm
+Cut-off saw
+Loader
+Undercarriage
+Hydraulics
+
+Number of
+Repairs
+
+Average Repair
+Time, hr
+
+23
+23
+
+8
+7
+
+1.8
+2.0
+
+11.70
+5.00
+2.25
+10.65
+
+19
+8
+4
+17
+
+3
+4
+4
+5
+
+3.9
+1.2
+0.6
+2.1
+
+3.40
+
+6
+
+3
+
+1.1
+
+61.50
+
+100
+
+34
+
+1.8
+
+9
+
+DETAILED TIMING RESULTS
+
+To determine the potential productivity of the Hahn, a sample of 12 off-highway loads was timed. Since the machine is
+operated by 2 men , one feeding full trees into the limber
+head, and the other controlling the processing , both activities were timed individually. From the timing, we can
+see which function determines the machine's output.
+Table 3 gives the results of timing the feeding activity.
+
+TABLE 3.
+
+Summary of Feeding Activity.
+
+Activity
+
+Time Per Truck Load
+minutes
+%
+
+Time Per Tree
+minutes
+
+Feeding
+Assisting feed into limber
+Wait for limbing carriage
+Move,
+Delays
+
+24.36
+0.32
+22.23
+1.58
+14.97
+
+38.4
+0.5
+35.0
+2.5
+23.6
+
+0.19
+<0.01
+0.17
+0.01
+0.12
+
+Total loading time
+
+63.46
+
+100%
+
+0.50
+
+Assisting feed into limber occurred very infrequently. It
+is the time spent when the loader holds a tree while the
+limber carriage begins its processing cycle. It occurred
+when a tree was jammed in the pile and the loader had been
+unable to completely free it, and also for an occasional
+crooked tree which did not fit properly into the limber
+head. Delays include some mechanical downtime, but for the
+most part comprises the time spent transferring trees and
+logs which did not need processing from the full-tree piles
+to the opposite side of the machine. From here the loader
+would reclaim them for decking with the processed logs.
+Table 4 summarises the times for the processing activities.
+
+10
+
+TABLE 4.
+
+Sunmary of Processing Activity.
+
+Activity
+
+Time Per Truck Load
+%
+minutes
+
+Time Per Tree
+minutes
+
+Delimbing and bucking
+Waiting for trees
+Delays (including
+moving, clearing
+debris, etc.)
+
+51.61
+4.98
+8.91
+
+78.8
+7.6
+13.6
+
+0.40
+0.04
+0.07
+
+Total processing time
+
+65.50
+
+100%
+
+0.51
+
+From Tables 3 and 4, we see that the loader spent much more
+time waiting to put trees into the limbing carriage than the
+limbing carriage spent waiting for trees. Therefore , the
+processing activity , i.e. delimbing and bucking , determines
+the production of the machine.
+Average off-highway load volume was 62.4 m 3 (22 cunits).
+Using this volume and the average processing time per truck
+load from Table 4, potential productivity equals 57.2 m 3
+per productive machine hour (PMH) (or 20 cunits per PMH).
+Assuming the same level of machine utilization from Table 1 ,
+potential productivity per 8-hr shift equals 386 m 3 . To
+meet the required daily output (700 m 3 ) for the Peachland
+yard , the Hahn would have to operate for 12.25 productive
+machine hours each day. This would require 14.5 scheduled
+hours or 2 working shifts.
+Using the average total time per tree from Table 4 gives a
+processing rate of 118 trees per PMH. From the potential
+productivity of 57.2 m 3 per PMH a rate of 150 trees per PMH
+is calculated. The apparent difference in rates (32 trees
+per PMH) is explained by the trees which do not need processing. These logs are transferred by the Hahn's loader
+from the full tree piles directly to the processed log
+piles. For the study period, 22% of the trees arriving at
+the yard required no further processing.
+Comparing the potential productivity with the actual from
+the shift level monitoring, the Hahn is achieving almost 76%
+of its potential.
+
+11
+
+BUCKING QUALITY
+Crown Zellerbach's bucking requirements for the yard at
+Peachland are a 34 ft 8 in. log when possible , with top
+diameter not less than 3.5 inches. If trees are less than
+52 feet (i.e. small pine) , then the log is topped at 3
+inches. Quality control also required long butting to
+remove rot, root flare and damaged butts. Forked trees were
+normally topped at the fork, except where the fork was low
+enough to allow an extra log above it.
+A sample of 90 logs was measured to determine the accuracy
+of the bucking. Only those trees bucked to produce two logs
+were used; those topped to remove forks were usually of
+random lengths and were excluded. Table 5 shows the results.
+TABLE 5.
+
+Summary of Bucked Log Lengths.
+
+Length
+
+Tolerance
+
+Number of Logs
+
+% of Sample
+
+34 ft 2 in.
+34 ft 5 in.
+34 ft 8 in.
+34 ft 11 in.
+35 ft 2 in.
+over 35 ft 2 in.
+
+-6 in.
+-3 in.
+0 in.
++3 in.
++6 in.
+>+6 in.
+
+0
+1
+5
+3
+22
+59
+
+—
+1
+6
+3
+24
+66
+
+90
+
+100%
+
+A tolerance limit of ±6 inches was used to compare bucking
+accuracy with the company ’s allowance. None of the sample
+logs was more than 3 inches short of the desired length.
+Ten percent were within a tolerance of ±3 inches, and 34 percent were within a ±6 inch tolerance. The remaining 66 percent exceeded the +6 inch tolerance. The longest log measured 37 ft 8 in. , or 36 inches longer than the desired
+length.
+The Hahn was originally equipped with a roller device for
+measuring log lengths. At Peachland, this had been replaced
+with an electronic measuring device. Log lengths were more
+accurate, but it is desirable to improve the accuracy further to reduce the amount of extra trim and improve load
+volumes on the highway trucks. Assuming an average onhighway load of 100 trees , improving the bucking accuracy to
+the desired length would give about 2% more usable volume
+per truck load.
+
+12
+
+LIMBING QUALITY
+Using the limbing quality standard described in Appendix II ,
+the Hahn processed logs to class 1 standard. Figures C3 and
+C4 show the limbing quality achieved , which was considered
+excellent.
+
+COMPARISON WITH OTHER HAHN TREE-LENGTH DELIMBERS IN B.C.
+At the time of writing this report, there were 4 other Hahn
+Tree-Length Delimbers working in B.C. Two of these have
+been studied, one by the operating company and the other by
+FERIC briefly as part of a different project. Results from
+these 2 studies are compared with those for the machine at
+Peachland and the comparisons are presented below.
+The first machine has been operating since 1978 in the
+southeast region of B.C., and for the most part in small
+pine stands, heavily infested with mountain pine beetle. It
+operated on landings with trees brought by skidders to the
+machine. This Hahn was run by two operators, and there was
+a front-end loader removing logs and debris. The user
+company conducted a shift level study* and carried out detailed timing to determine the machine's actual and potential performance. Results from this study are presented
+below.
+Table 6 shows results from the shift level study with corresponding results for the Hahn at Peachland, taken from
+Table 1. Both machines had operated for similar lengths of
+time up to the dates of each study, which means that the
+comparison is not between an older and a more recent model
+of the Hahn.
+The comparison shows that both machines are producing at
+almost equal rates. Both had similar total productive machine hours in the period of the studies. At Peachland,
+tree size was larger by one-third, but volumes produced do
+
+*Murphy , D.G., 1979. Evaluation of a 'Hahn Harvester Full Tree DeLimb’ in the Flathead Valley of Southeastern British Columbia. Unpublished Thesis, School of Forestry, Lakehead University, Thunder
+Bay, Ontario.
+
+13
+
+TABLE 6.
+
+Comparison of Shift-Level Results.
+Southeastern B.C.
+
+Peachland
+
+Days reported
+Scheduled Machine Hours
+Productive Machine Hours
+Repair hours
+Service hours
+Non-mechanical delay hours
+
+65
+559
+375
+99
+8
+76
+
+49
+458
+386.25
+61.5
+—
+10.25
+
+CPPA Machine availability
+CPPA Machine utilization
+
+78%
+67%
+
+87%
+84%
+
+Volume produced , m 3
+
+15 260
+
+16 410
+
+Productivity, m 3 /PMH
+Volume per tree , m 3
+
+40.7
+0.3
+
+42.5
+0.4
+
+not reflect the same difference. The Hahn at Peachland was
+processing fewer trees to achieve the volume, and obviously
+had slower cycle times per tree. A major difference between
+the 2 machines is shown by the repair hours and non-mechanical delay times, and therefore reflected in the different
+machine availabilities and utilizations.
+The second machine used in these comparisons was working on
+Vancouver Island in small-sized old growth timber. The main
+species were balsam fir and hemlock , with some yellow
+cypress. The Hahn was operating in a sortyard, with full
+trees coming off-highway to the yard. Full trees were unloaded onto skid logs adjacent to the Hahn by a D-8 push
+Cat. Up to 4 off-highway loads could be placed on the skid
+logs to supply the Hahn. The push Cat would have to move
+the logs closer to the Hahn as processing continued (see
+Figure E). This Hahn was run by one operator, who controlled both the loader and the delimber from the main cab.
+Figure F shows this Hahn working at roadside on an earlier
+logging show.
+Three days of detailed timing of the processing activities
+were made by FERIC in June 1981. The results are compared
+with results from the other two machines and are presented
+below in Table 7.
+
+14
+
+FIGURE E.
+
+Push Cat moving full trees on skid
+logs to the Hahn.
+
+i
+A
+
+FIGURE F.
+
+Hahn Tree-Length Delimber working
+at roadside on Vancouver Island.
+
+15
+
+TABLE 7.
+
+Comparison of Detailed Timing Results
+for Processing Activities.
+
+Peachland
+Yard
+(2 operators)
+
+Vancouver Island
+Yard
+(1 operator)
+
+Southeastern B.C.
+Landing
+(2 operators)
+
+min/tree
+
+%
+
+min/tree
+
+%
+
+min/tree
+
+%
+
+Processing
+Wait for tree
+Delays (incl. move)
+
+.40
+.04
+.07
+
+79
+7
+14
+
+.42
+.17
+.12
+
+58
+24
+18
+
+.31
+.06
+.10
+
+65
+14
+21
+
+Total Time
+
+.51
+
+100
+
+.71
+
+100
+
+.47
+
+100
+
+No. of trees timed
+Average tree size, m 3
+
+1,511
+.38
+
+258
+.49 (estimated)
+
+1,228
+.28
+
+Potential Productivity
+trees/PMH
+m 3 /PMH
+
+118
+44.7
+
+85
+41.4
+
+128
+35.7
+
+6
+
+These results show that the two machines working in the
+Interior of B.C. are similar in potential productivity based
+on trees per PMH . The effect of tree size is clearly shown.
+For the Hahn on Vancouver Island the effect of having only
+one operator is shown by the high wait-for-tree time. This
+represents the time spent operating the loader to grapple
+and load a tree before processing can commence. The disadvantage of having only one man is more than offset by the
+larger tree size. Tree size was estimated using an average
+butt diameter for the sample of 32 cm and a tree height of
+15.2 m. (No loads into the Vancouver Island yard were
+scaled by weight or volume, as were the loads in the Interior.)
+Using a second operator on the Hahn's loader increases potential productivity in trees per PMH by over 40% more than
+that for only one operator.
+
+COST ESTIMATES
+The machine costs presented below show a realistic range of
+costs that may be expected with the Hahn Tree-Length De limber , in view of the uncertainties entering into some of the
+estimated values.
+The total cost in dollars per m 3 for the Hahn is calculated
+by the equation used in previous FERIC reports on machine
+evaluations. Known cost values include:
+Purchase price
+
+: $200,000 f.o.b. Vancouver
+
+Fuel & lubricants
+
+: $10.00/PMH (incl. hydraulic
+fluid)
+
+Operator ’s wage
+
+: $15.00/SMH (incl. fringe
+benefits) per man
+
+Depreciation period
+
+: 4 years
+
+Interest & insurance
+factor
+
+: 0.20
+
+Estimated values (based on western Canadian conditions) include:
+
+17
+
+Favourable
+
+Unfavourable
+
+Residual value , $
+
+20,000
+
+20,000
+
+Economic life of
+machine , SMH
+
+16,000
+
+12,000
+
+Utilization, %
+
+80%
+
+60%
+
+Maintenance cost (100%
+and 150% of fixed costs)
+$/SMH
+
+17.88
+
+35.74
+
+Productivity (based on
+tree volumes of .5 m 3
+and .3 m 3 ) - m 3 /PMH
+- cunits/PMH
+
+58.6
+20.7
+
+35.2
+12.4
+
+Using the above values in the cost equation gives the following results:
+Favourable
+
+Unfavourable
+
+Total cost, $/PMH
+
+92.20
+
+159.28
+
+Total cost, $/m 3
+$/cunit
+
+1.57
+4.45
+
+4.53
+12.85
+
+The calculations show that the Hahn can achieve acceptable
+processing costs when it operates at a high level of utilization with favourable tree sizes.
+Compared to manual delimbing and bucking or flail delimbing
+with manual bucking, the Hahn provides safer working conditions, improved limbing quality and more accurate log
+lengths (with their effect on hauling costs and mill recovery). Under favourable conditions, expected costs are
+comparable to those for manual and flail de limbing--estimated to be in the range of $3.50 to $5.00.
+Calculating an expected favourable cost for a Hahn with only
+one operator , and the 40 percent reduction in productivity
+as mentioned earlier , gives a total cost of $1.75 per m 3
+($4.96 per cunit). This is again comparable to manual or
+
+18
+
+flail costs, and only slightly more expensive than for a 2man crew. In this set-up , the need for favourable operation
+is very important.
+
+DISCUSSION
+The main objective behind introducing the Hahn Tree-Length
+Delimber into the central processing yard at Peachland was a
+reduction in loader time. FERIC ’s earlier study* of central
+processing yard versus conventional logging reported that in
+winter 2 Cat 966C front-end loaders handled a daily volume
+of 820 m 3 , but in summer there were 3 loaders handling 575
+m 3 through the yard. At that time, delimbing was done by
+chain flails, with manual bucking and topping. The report
+states:
+"The portion of the loader activity attributed to
+processing in the C.P.Y. System increased from 48%
+in the winter to 59% in the summer. The per-volume
+cost was double in the summer, however, because the
+total number of hours was greater. This increase
+was due to a reduced volume throughput and increased
+debris handling."
+Loader costs were given as $1.36 per m 3 in winter and $2.16
+per m 3 in summer , and around 50% of these costs related to
+the processing activities of the loaders.
+By modifying the processing method to a mechanized system,
+this phase of loader activity would be greatly reduced.
+During the study of the Hahn, there were 2 front-end loaders working in the yard. These 2 machines performed all the
+necessary functions to maintain the daily volume processed
+in the yard. As the Hahn was not processing the total volume of 700 m 3 , flail delimbing and manual bucking still
+occurred. One of the loaders spent time spreading loads
+for this and decking the processed logs, in addition to the
+unloading of off-highway trucks and loading of highway
+trucks.
+
+*Hedin, I.B., 1980. Comparison of Two Logging Systems in Interior
+British Columbia: Central Processing Yard vs Conventional. Forest
+Engineering Research Institute of Canada (FERIC) Technical Report
+No. TR-45.
+
+19
+
+To date, the company feels that it has succeeded in reducing
+loader time by introducing a Hahn. In changing from flail
+delimbing, they feel that the quality of chips produced from
+trim material at the mill has improved. The quality of log
+entering the mill has improved through better delimbing
+quality and more accurate log lengths. They also feel that
+it is now a safer operation, with the workers in the machine
+cabs.
+Since the study, the logging contractor has purchased a second Hahn Tree-Length Delimber. It commenced work in June.
+The 2 units are able to process the required daily volume.
+The crew on the second machine is still gaining experience
+and production should increase to the same level as the
+first unit.
+The machine studied showed an acceptable level of availability and utilization. Its production increased over the
+period of shift-level monitoring showing an increase in
+operator proficiency as experience increased. The level
+reached at the end of monitoring represented a very acceptable volume under the prevailing conditions. The ability to
+process more than one tree at a time for the smaller tree
+sizes was demonstrated. The machine does show the normal
+sensitivity to tree size. For effective delimbing and
+bucking of small trees, development of a multi-stem processor is needed.
+
+20
+
+CONCLUSIONS
+Introducing a Hahn Tree-Length De limber into its central
+processing yard at Peachland allowed the user company to
+achieve its objective of reduced loader time , and therefore
+a reduction in loader costs. The machine displayed a high
+level of machine availability (87%) and utilization (84%).
+Production averaged 5.7 off-highway truck loads per day (342
+m 3 ) , and showed an increase throughout the study up to 7
+loads per day (420 m 3 ). During the study, 22% of the trees
+arriving at the yard did not require limbing and bucking by
+the Hahn. In order to process the yard 's daily volume ,
+either a second shift was necessary or the addition of a
+second unit. The latter has occurred and the daily volume
+is now mechanically processed. Secondary benefits of improved log quality and worker safety have also been realized.
+The number of Hahn Tree-Length Delimbers in use in B.C. has
+grown, and its ability to handle small size coastal timber
+as well as Interior wood has been demonstrated.
+
+21
+
+APPENDIX I:
+
+MANUFACTURER'S SPECIFICATIONS
+
+MAX. LOADER SWIHG
+330*
+TOOL COMPARTMENT
+(4) STABILIZERS
+FOLDING ARM TVPE
+tr-9" STANCE AT GROUND LEVEL
+
+MAX. LOADER GROUND REACH
+
+9'-0” STANCE AT 10" LIFT
+
+M'-B"
+MAX. LOADER GROUND REACH
+
+HYDRAULIC OIL
+RESERVOIR (CAP. 100 GAL.)
+FUEL TANK (CAP. 69 GAL.)
+
+MAX. LOADER GROUW REACH
+24'0' BOOM
+
+CHAIN SAW
+
+DE-LIMB CARRIAGE TRAVEL 35 -6"
+SPEED: VARIABLE 0-600 FPM
+SPROCKETS C TO C
+MIN: 43'・2%" MAX. 43'・8%"
+
+OPERATOR CA8 AND
+HYDRAULK VALVE COMPARTMENT
+
+' HYDRAULIC LOADER
+
+ENGINE COMPARTMENT
+
+iri〇"
+
+HOLD DOWN ARMS
+KICK Oin ARM
+
+DE-LIMB CARRIAGy
+
+PLANETARY DRIVE AXLE
+
+SCALE: = 1'
+DATE: 1-25-77
+
+ZI
+-10" STABILIZER !
+LIFT
+( LOADER
+
+.lldP" WHEELBASE________I ________
+17'-8’
+_
+
+_
+
+J CHAIN SAW
+
+45' TOTAL LENGTH
+
+SPECIFICATIONS
+Weight: 44,500 lbs.
+Height: 12’-5"
+
+STANDARD ACCESSORIES
+
+BRAKES
+
+BASIC MACHINE
+Width: 1〇'-ָ "
+Length: 45'-0"
+
+ENGINE
+GM 4-71 Diesel, 160 hp at 2,100 rpm
+
+TIRES
+17.5 x 25 Traction Tread
+
+AXLES
+Drive: Franklin, n o - s p i n planetary,
+hydraulically propelled
+Steering: Hydraulically actuated
+
+Hydraulic operated chain saw
+Light package group
+’Fixed heel on loader
+Low oil level warning system
+Anti-slab arm
+
+Drive line m o u n t e d hydraulic disc caliper
+with brake lock for park.
+Power assist disc brakes on drive wheels.
+
+OPTIONS
+
+OPERATOR CAB
+Fully insulated with heater/defroster
+
+Additional control station tor loader operator
+Electronic log length measuring system
+
+LOADER
+Hahn 793. external gear turn-table bearing,
+hydraulic motor swing.
+Lift capacity: 15,200 lbs. @ 5 feet,
+3,300 lbs. @ 20 feet.
+Electro-Hydraulic joy stick controls.
+Continuous rotate grapple.
+
+The Hahn patented
+d e l i m b carriage ensures
+positive d e l i m b i n g down
+to four-inch diameter.
+
+DELIMB
+17,000 lbs. force @ 600 feet per minute
+
+CARRIAGE DRIVE
+Hydro Static
+
+In keeping with Hahn Machinery's policy of continuous product improvement,
+all specifications are subject to change without prior notice.
+
+Manufactured by
+
+HAHN MACHINERY, INC.
+
+23
+
+APPENDIX II
+LIMBING QUALITY GUIDE
+
+In order to assess the quality of delimbing full trees mechanically or manually , some standards are needed. A visual
+assessment of quality offers the best potential for fast
+effective examination. Some differentiation by classes is
+necessary, in order for effective comparisons between machines and methods. The four classes given below are derived from an earlier PAPRICAN study* which evaluated a delimbing machine which processed a whole skidder turn at one
+pass. Their use in appraising the quality of delimbing is
+recommended by FERIC , and will be used in future studies of
+delimbers.
+Description of Quality of Limbing Classes 1 to 4
+Quality of Limbing
+Class
+
+Description
+
+1
+
+No branches and branch stubs left on
+trees or logs.
+
+2
+
+A few branches and branch stubs left on
+trees or logs but no additional manual
+limbing is necessary.
+
+3
+
+About 50% of the trees or logs have some
+branches remaining. Additional manual
+limbing may be necessary.
+
+4
+
+Nearly all the trees or logs have some
+branches remaining. Bushy appearance.
+Additional manual limbing definitely
+necessary.
+
+Heidersdorf , E., 1973. Evaluation of New Logging Machines: Morard
+Delimber. Pulp & Paper Research Institute of Canada, Logging
+Research Report LRR 52.
+
+24
+
+

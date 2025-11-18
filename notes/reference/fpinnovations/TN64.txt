@@ -1,0 +1,4930 @@
+TJ TJ TJ T/
+FOREST ENGINEERING RESEARCH INSTITUTE OF CANADA
+r iLlil
+V-z INSTITUT CANADIEN DE RECHERCHES EN GËNIE FORESTIER
+
+Productivity of Five Coastal
+B.C. Log Sorting Systems
+Alex W.J. Sinclair
+
+Technical Note No. TN-64
+November
+
+1982
+
+201 - 2112 West Broadway, Vancouver, B.C., Canada V6K 2C8
+143 Place Frontenac, Pointe Claire, Québec, Canada H9R 4Z7
+
+PREFACE
+FERIC would like to thank four member companies for their
+cooperation and assistance on this project:
+British Columbia Forest Products Ltd.
+Canadian Forest Products Ltd.
+MacMillan Bloedel Ltd.
+Pacific Forest Products Ltd-
+
+In addition, the assistance of Kristi Knox, Tony Wong and Eric
+Phillips in data collection and analysis is acknowledged.
+
+i
+
+CONTENTS
+PAGE
+PREFACE
+SUMMARY AND CONCLUSIONS
+SOMMAIRE ET CONCLUSIONS
+INTRODUCTION
+TEST METHOD
+SORTING SYSTEM DESCRIPTION
+
+s-i
+S-5
+i
+i
+2
+
+A
+
+SORTING WITH FRONT-END LOADERS
+
+2
+
+B
+
+SORTING WITH TWO STATIONARY LOG LOADERS
+
+5
+
+C
+
+SORTING WITH A FRONT-END LOADER AND A MOBILE
+LOG LOADER WITH A TWO-BUNK LOG TRAILER
+
+8
+
+D
+
+SORTING WITH A FRONT-END LOADER AND A MOBILE
+LOG LOADER
+
+11
+
+E
+
+SORTING WITH A STATIONARY LOG LOADER, A
+FRONT-END LOADER AND A LOW-PROFILE
+GRADING AND SORTING TABLE
+
+F
+
+SUMMARY OF MACHINES STUDIED
+
+RESULTS AND DISCUSSION
+
+13
+15
+16
+16
+
+A
+
+SORTING MACHINE TIME DISTRIBUTION
+
+B.
+
+PRODUCTIVITY OF SORTING MACHINES
+
+17
+
+C
+
+PRODUCTIVITY OF NON-SORTING MACHINES
+
+18
+
+D
+
+OVERALL SYSTEM MACHINE PRODUCTIVITY
+
+E
+
+GRADER PRODUCTIVITY
+
+F
+
+LOG AVAILABILITY
+
+23
+
+G
+
+MANDAY PRODUCTIVITY
+
+24
+
+20
+21
+
+APPENDICES
+APPENDIX
+I
+
+II
+
+PAGE
+
+Individual Breakdown of Sorting Machine’s Time
+Distribution - Continuous Timing Results
+
+25
+
+Details on Random Sampling Results
+
+30
+
+TABLES
+TABLE
+
+PAGE
+
+1
+
+Summary of Machines Studied
+
+15
+
+2
+
+Percentage Distribution of Sorting Machine Time
+
+16
+
+3
+
+Productivity of Sorting Machines Continuous Timing Results
+
+18
+
+Productivity of Non-Sorting Machines - Random
+Sampling Results
+
+19
+
+5
+
+Overall System Productive Capacity
+
+20
+
+6
+
+Random Sampling Results - Graders
+
+21
+
+7
+
+Random Sampling Results - Log Volume in Deck
+
+23
+
+8
+
+Manday Productivity Comparison
+
+24
+
+4
+
+FIGURES
+FIGURE
+
+PAGE
+
+A
+
+Stacker Unloading
+
+Truck
+
+2
+
+B
+
+Front-End
+
+Sorting Logs
+
+3
+
+C
+
+Log Size at Shawnigan
+
+D
+
+Plan of Shawnigan
+
+E
+
+Pull-Unloading
+
+F
+
+Chapman 1825 Stationary
+
+G
+
+Plan of Caycuse
+
+H
+
+Stacker
+
+I
+
+Log Loader
+
+J
+
+Plan of Sooke Sortyard
+
+K
+
+Stacker Unloading
+
+L
+
+Barko 550 Log Loader
+
+M
+
+Plan of Beaver Cove Sortyard
+
+13
+
+N
+
+Grading
+
+14
+
+0
+
+Caterpillar
+
+Loaders
+
+Sortyard
+
+3
+
+Sortyard
+
+Trucks at Caycuse
+
+Sortyard
+
+3
+
+Log Loaders
+
+&
+
+Sortyard
+
+Unloading
+
+?
+
+Truck at Sooke
+
+®
+
+and Trailer
+
+Railway
+
+Car
+
+Sorting
+
+11
+and Bunching
+
+on the Table
+245/980
+
+Sorting
+
+System
+
+Logs
+
+12
+
+14
+
+SUMMARY AND CONCLUSIONS
+This study was undertaken to establish the actual and potential productivities of five log sorting systems common to Coastal British Columbia.
+The information will b e useful for log sortyard managers, operators and
+designers.
+In the sortyards selected for the study, the sorting machines are used primarily for sorting, not multipurpose functions.
+We noted differences in the efficiency and productivity of the five
+systems.
+However, no recommendations
+are made as to which is the best
+system because that depends on site specific conditions which were not
+evaluated.
+The data collected will b e used in the preparation of a
+sortyard design handbook.
+The maximum theoretical productivities of the sorting machines, with
+100% machine utilization, are given in Table S-l, together with observed
+productivities.
+
+TABLE S-l.
+
+Summary of Sorting
+
+System Productive
+
+Capacity
+
+Number of
+Sorting
+Machines
+
+Total Pieces
+Sorted
+
+Total Study
+Time (PMH)
+
+Observed Pieces
+Per Shift
+
+Productive
+Time/
+Total Time
+
+Sorting System
+Produc tive
+Capacity
+(Pieces/Shift)
+
+A- Three front-end loaders
+
+3
+
+2 410
+
+48.54
+
+1 192 1
+
+0.79
+
+1 508 2
+
+B- Two stationary
+loaders
+
+2
+
+5 048
+
+48.48
+
+1 666
+
+0.62
+
+2 698
+
+C— Front-end loader and
+mobile log loader with
+trailer
+
+2
+
+2 385
+
+43.16
+
+884
+
+0.57
+
+1 542
+
+D- Front-end loader and
+mobile log loader
+
+2
+
+2 813
+
+53.16
+
+847
+
+0.74
+
+1 139
+
+E- Front-end loader and
+stationary log loader
+at sorting table
+
+2
+
+2 314
+
+31.00
+
+1 194
+
+0.72
+
+1 662
+
+System
+
+log
+
+48 . 54 SMH
+2
+
+X 8 hours X 3 machines
+
+1 192 pieces/shift
+
+t
+
+= 1 192 pieces/shift
+
+0.79 = 1 508 pieces/shift
+
+The two stationary log loader system has the highest productive capacity. However, the operators will have the greatest difficulty achieving
+capacity because the yard does not have a log storage area to level the
+surges in log truck arrivals.
+The two sorting systems using mobile log
+loaders are different but it would appear that the addition of a sorting
+trailer increases the productive capacity by about 400 pieces per shift.
+
+S-l
+
+In this study it was noted that there was an imbalance in productivities
+between the log loaders sorting logs and the front-end loaders forwarding logs.
+A single front-end loader can not forward bunches of logs as
+fast as a mobile loader can sort and bunch logs and so the log loader
+has excessive idle time. However, if the mobile log loader is also
+putting some of the sorts into bunks as well as bunching them, the
+front-end loader has excessive idle time.
+The overall productivity of all the log handling
+yards was calculated and is given in Table S-2.
+
+TABLE S-2.
+
+Total
+
+Number of
+Log Handling
+Machines
+
+System
+
+System Productive
+
+Total Productive
+
+Time (hrs)
+
+Sorting
+Machines
+
+Other
+Machines
+
+Total
+
+machines
+
+in the sort-
+
+Capacity
+Total Pieces
+Sorted
+
+Total System
+Productive
+Capacity
+(Pieces/Shift)
+
+A- Three front-end loaders
+
+4
+
+38.4
+
+12.1
+
+50.5
+
+2 410
+
+1 526 1
+
+B- Two stationary
+loaders
+
+7
+
+30.0
+
+85.5
+
+115.5
+
+5 048
+
+2 447
+
+C- Front-end loader and
+mobile log loader with
+trailer
+
+4
+
+24.7
+
+28.6
+
+53.3
+
+2 385
+
+1 430
+
+D- Front-end loader and
+mobile log loader
+
+4
+
+39.5
+
+34.7
+
+74.2
+
+2 813
+
+1 213
+
+E- Front-end loader and
+stationary log loader
+at sorting table
+
+4
+
+22.3
+
+22.3
+
+44.6
+
+2 314
+
+1 661
+
+cn c
+50.5
+
+log
+
+C eS
+
+£
+~
+PMH
+
+X 8 hours
+
+X 4 machines
+
+= 1 526 pieces/shift
+
+The productivity of the log grading personnel
+sampling and is given in Table S-3.
+
+S-2
+
+was measured
+
+by random
+
+TABLE S-3.
+
+Productivity
+
+Study
+Time
+(PMH)
+
+Productive Time
+Total Time
+
+Observed
+Pieces
+Graded/
+Grader/
+Shift
+
+2 410
+
+16.37
+
+.664
+
+1 178
+
+6
+
+5 048
+
+25.77
+
+.519
+
+784 1
+
+18
+
+10
+
+2 385
+
+21.37
+
+.560
+
+446
+
+2
+
+22
+
+14
+
+2 813
+
+24.47
+
+.413
+
+456
+
+2
+
+22
+
+14
+
+2 314
+
+15.50
+
+.360
+
+597
+
+Normal
+Number
+of
+Graders
+
+Maximum
+Number
+of
+Sorts
+
+Average
+Number
+of
+Sorts
+
+A- Three front-end loaders
+
+1
+
+15
+
+12
+
+B- Two stationary
+loaders
+
+2
+
+14
+
+2
+
+System
+
+Total Pieces
+Graded
+
+log
+
+C- Front-end loader and
+mobile log loader with
+trailer
+D- Front-end loader and
+mobile log loader
+E- Front-end loader and
+stationary log loader
+a t sorting table
+
+x
+
+of Log Graders
+
+5 048 pieces
+25.77
+PMH
+
+8 hours
+2 graders
+
+= 784 pieces/shift
+
+Idle time is relatively high for graders because log decks are graded in
+batches and unless there is a continual supply of logs and several
+grading areas there will b e periods with nothing for the graders to do.
+As logging trucks arrive in surges and the area available for grading
+decks is expensive and limited, high idle time results.
+The number of sorts and the amount of detail on the specification for
+each sort affect log grader productivity.
+This is partially reflected
+in Table S-3.
+The overall sortyard manday productivity was calculated for the five
+sorting systems.
+The manday productivity includes all salaried and
+hourly sortyard personnel with the exception of the booming ground crew,
+rehaul drivers and heavy-duty mechanics.
+It is given in Table S-4.
+
+S-3
+
+TABLE S-4.
+
+Overall Sortyard Manday Productivities
+
+Mandays/Shift
+System
+
+Pieces/Manday
+(Actual)
+
+Pieces/Manday
+(Capacity)
+
+A- Three front- end loaders
+
+12
+
+99
+
+126 1
+
+B- Two stationary log loaders
+
+16
+
+104
+
+169
+
+C- Front-end loader and mobile log
+loader with trailer
+
+11
+
+80
+
+140
+
+D- Front-end loader and mobile log
+loader
+
+7.75
+
+109
+
+147
+
+E- Front-end loader and stationary
+log loader at sorting table
+
+9.25
+
+129
+
+180
+
+Pieces/Manday (Capacity) =
+Pieces/Manday (Actual)
+
+t
+
+(Productive Time/Total Time)
+
+The productivity study was done during March 1982. All yards reported
+that the log throughput would be greater later in the year and that some
+of the crews were just starting back to work after a three or four month
+winter closure. Consequently, the results of the study emphasize
+potential productive capacity rather than actual production during a
+period of low throughput.
+This is an informational report and does not recommend one sorting
+system relative to another. The best sorting system for a company is
+determined by site specific conditions. However, existing and planned
+sorting systems can be compared with those studied to determine relative
+efficiencies.
+
+S-4
+
+SOMMAIRE ET CONCLUSIONS
+La présente étude a été entreprise dans le but de déterminer les productivités
+réelles et potentielles d e cinq systèmes de triage de grumes
+communément employés sur la côte d e la Colombie-Britannique.
+L'information recueillie pourra être utile
+aux gérants des parcs à grumes,
+aux opérateurs et aux concepteurs d e ces parcs.
+Dans les parcs à grumes choisis pour cette étude, les machines utilisées servaient principalement au triage et n'étaient pas multifonctionnelles.
+Nous avons remarqué des différences dans l'efficacité et la productivité des cinq systèmes.
+Cependant nous ne faisons pas de recommandations
+quant au meilleur système à utiliser, car cela dépend des conditions
+particulières du site, lesquelles n'ont pas été évaluées.
+Les données
+recueillies serviront à la préparation d'un manuel portant sur la conception e t l’agencement des parcs d e triage.
+Le tableau S-l donne les productivités théoriques maximales des machines
+de triage, compte tenu d'un taux d'utilisation d e 100Z, d e même que
+les productivités observées.
+TABLEAU S-l.
+
+Sommaire
+systèmes
+nombre de
+machines
+de criage
+
+système
+
+de la capacité
+de triage.
+
+nombre cotai
+de pièces de
+bois criées
+
+temps total
+de l'étude
+(HMP)
+
+d e production
+
+nombre de pièces
+de bois observées
+par poste
+
+des
+
+temps productif/
+temps total
+
+capacité de
+production du
+système de triage
+(pièces/poste)
+
+3
+
+2 410
+
+48.54
+
+1 192 1
+
+0.79
+
+1 5O82
+
+B-deux grues forestières
+stationnaires
+
+2
+
+5 048
+
+48.48
+
+1 666
+
+0.62
+
+2 698
+
+C-chargeuse
+frontale
+et grue
+forestière mobile avec
+remorque
+
+2
+
+2 385
+
+43.16
+
+884
+
+0.57
+
+1 542
+
+D-chargauae
+frontale
+forestière mobile
+
+2
+
+2 813
+
+53.16
+
+847
+
+0.74
+
+1 139
+
+2
+
+2 314
+
+31.00
+
+1 194
+
+0.72
+
+1 662
+
+A- crois chargauses
+
+frontales
+
+et grue
+
+E-chargeuse
+frontale
+et grue
+forestière stationnaire
+à
+la cable de triage
+
+1
+
+2 410 pièces X 8 heures X 3 machines
+48.54 HMPv
+
+2
+
+1 192 pièces/poste
+
++ 0.79 =
+
+= 1 192 pièces de bois/poste
+d e travail
+
+1 508 pièces
+
+S-5
+
+de bois/poste
+
+de travail
+
+Le système comportant deux grues forestières stationnaires est celui
+qui offre la plus grande capacité de production. C’est aussi celui
+où les opérateurs auront la plus grande difficulté à atteindre cette
+capacité, car le parc ne possède pas d'aire de stockage permettant de
+pallier au rythme irrégulier d’arrivage des camions. Les deux systèmes utilisant des grues forestières mobiles sont différents mais il
+semble que l’ajout d'une remorque de triage augmenterait la capacité
+de production d’environ 400 pièces de bois par poste de travail.
+On nota au cours de l’étude qu’il existait un déséquilibre entre la
+productivité des grues forestières qui triaient les grumes et celle
+des chargeuses frontales qui les transportaient. Une seule chargeuse
+frontale ne peut pas apporter les tas de grumes aussi vite que la
+grue mobile peut les trier et les mettre en lots; la grue forestière
+a donc des temps morts beaucoup trop forts. Par contre, si en plus
+de mettre les grumes en lots, la grue forestière sert également à déposer certains lots dans des plateaux, c’est alors la chargeuse frontale qui éprouve des temps morts trop forts.
+On trouvera au tableau S— 2 la productivité globale de toutes les machines de manutention des billes dans chaque parc à grumes.
+TABLEAU S-2.
+
+Capacité de production globale du système
+nombre de machines
+de manutention des
+grumes
+
+système
+
+temps productif total/heure
+machines
+triage
+
+de autres
+machines
+
+total
+
+nombre total
+de pièces de
+bols triées
+
+capacité globale
+de production du
+système (pièces
+de bois/poste)
+
+4
+
+38.4
+
+12.1
+
+50.5
+
+2 410
+
+1 526 1
+
+B-deux grues forestières
+stationnaires
+
+7
+
+30.0
+
+85.5
+
+115.5
+
+5 048
+
+2 447
+
+C-chargeuse
+frontale et grue
+forestière mobile avec
+remorqua
+
+4
+
+24.7
+
+28.6
+
+53.3
+
+2 385
+
+1 430
+
+D-chargeuse
+frontale
+forestière mobile
+
+4
+
+39.5
+
+34.7
+
+74.2
+
+2 813
+
+1 213
+
+4
+
+22.3
+
+22.3
+
+44.6
+
+2 314
+
+1 661
+
+A- crois chargeuses
+
+frontales
+
+et grue
+
+E-chargeuse frontale et grue
+forestière stationnaire
+à
+la table de triage
+
+2 410 pièces X 8 heures X 4 machines = 1 526 pièces de bois/poste de
+50.5 HMP
+travail
+La productivité du personnel affecté au classement des grumes a été
+mesurée par un échantillonnage aléatoire et les résultats apparaissent au tableau S-3.
+
+S-6
+
+TABLEAU S-3.
+
+système
+
+b
+
+Productivité des classificateurs
+
+nombre normal
+de classificateurs
+
+nombre
+maximum
+de classes
+
+nombre
+moyen
+de classes
+
+nombre total
+de pièces
+classifiées
+
+temps de
+l'étude
+(HMP)
+
+de grumes.
+temps productif
+temps total
+
+nombre de
+pièces classifiées/
+classificateur/poste
+
+A- crois chargeuses frontales
+
+1
+
+15
+
+12
+
+2 410
+
+16.37
+
+.664
+
+1 178
+
+B-deux grues forestières
+stationnaires
+
+2
+
+14
+
+6
+
+5 048
+
+25.77
+
+.519
+
+784 1
+
+C-chargeuse frontale et grue
+forestière mobile avec
+remorque
+
+2
+
+18
+
+10
+
+2 385
+
+21.37
+
+.560
+
+446
+
+D-chargeuse frontale et grue
+forestière mobile
+
+2
+
+22
+
+14
+
+2 813
+
+24.47
+
+.413
+
+456
+
+E-chargeuse frontale et grue
+forestière stationnaire à
+la table de triage
+
+2
+
+22
+
+14
+
+2 314
+
+15.50
+
+.360
+
+597
+
+048 pièces X 8 heures
+25.77 HMP
+2 classificateurs
+
+=
+
+734 pièces de bois/poste
+
+de travail
+
+Les temps morts sont relativement élevés chez les classificateurs
+parce
+que les empilements sont classifiés en lots et à moins qu'il
+y ait un approvisionnement continu de grumes et plusieurs aires
+de classement, il se trouvera des périodes où les classificateurs
+n'auront rien à faire.
+Comme les arrivages des camions grumiers
+sont plutôt irréguliers et que les espaces disponibles pour la classification sont coûteux et restreints, il en résulte des temps morts
+élevés .
+Le nombre d e classes et les détails dont il faut tenir compte pour
+chaque classe affectent la productivité d u classificateur de grumes.
+Ceci se reflète partiellement dans le tableau S-3.
+On a calculé la productivité globale du parc par jour-homme pour
+chacun des cinq systèmes de triage.
+La productivité par jour-homme
+inclut tous les employés du parc, salariés ou payés à l'heure, à
+l'exception de l'équipe affectée à l'assemblage du bois en radeaux,
+des conducteurs d e camions qui transportent le bois trié au bord d e
+l'eau et des mécaniciens de machinerie lourde.
+Les résultats sont
+donnés au tableau S-4.
+
+S-7
+
+TABLEAU S-4.
+
+Productivité
+
+système
+
+globale
+
+nombre d e
+jours-homme /
+poste d e travail
+
+de chaque
+
+parc par jour-homme.
+
+nombre (réel) d e
+pièces de bois/
+j our-homme
+
+nombre (théorique)
+de pièces de bois/
+j our-homme
+
+12
+
+99
+
+12 6 1
+
+B-deux grues forestières
+s tationnaires
+
+16
+
+104
+
+169
+
+C-chargeuse frontale et grue
+forestière mobile avec
+remorque
+
+11
+
+80
+
+140
+
+D-chargeuse frontale
+forestière mobile
+
+7.75
+
+109
+
+147
+
+9.25
+
+129
+
+180
+
+A-trois chargeuses
+
+frontales
+
+e t grue
+
+E-chargeuse frontale et grue
+forestière stationnaire à
+la table de triage
+
+Nombre (théorique) de pièces d e bois/ jour-homme »
+nombre (réel) d e pièces/ jour-homme -J- (temps productif /temps total)
+L'étude de productivité a été effectuée en mars 1982.
+Tous les parcs
+ont mentionné que les arrivages de grumes seraient plus élevés plus
+tard dans l'année et que quelques-unes des équipes ne faisaient que
+reprendre le travail après une fermeture hivernale de trois ou quatre
+mois.
+Conséquemment les résultats d e l'étude s'attachent davantage
+à faire ressortir la capacité potentielle d e production plutôt que la
+production réelle à un moment de faible activité.
+Le présent rapport ne vise qu'à servir d e source d'information et ne
+recommande pas plus un système d e triage que l'autre.
+Le meilleur système pour une entreprise donnée dépend des conditions spécifiques du
+site.
+Cependant les systèmes actuels ou projetés pourront être comparés
+avec ceux qui ont été étudiés afin d'en déterminer l'efficatité relative.
+
+S-8
+
+INTRODUCTION
+This report describes five different sorting systems commonly used in
+B.C. Coastal dryland sortyards and presents the results of productivity
+studies.
+The data collected will b e used in a sortyard design handbook
+which will be published by FERIC in late 1982.
+This report gives more
+detail on the sorting systems than will be in the design handbook.
+Sortyards were selected where the sorting machines spend the majority of
+their time on the basic sorting and forwarding functions.
+All B.C.
+Coastal sortyards employ sorting systems similar to the five documented
+in the report but in some sortyards the sorting machines spend a greater
+proportion of the time unloading and loading trucks, dumping logs and
+transporting logs to storage.
+Productivity results are given for the sorting
+and for the log graders and yard crew.
+
+and non-sorting
+
+machines
+
+TEST METHOD
+Observers spent two or three days in each sortyard.
+One observer would
+continuously time the sorting machines and record the duration of all
+the sorting elements.
+The other observers would randomly sample the
+performance of the other machines, the ground personnel and the condition of the log decks.
+In addition, a record was kept of the number of
+loads and number of pieces processed.
+During continuous timing, the time of a sorting element was recorded to
+the nearest half minute.
+The random sampling program, which was designed
+for statistical accuracy, required more than 300 observations at each
+operation (an average of one observation every three minutes) .
+Prior to the start of the study, a meeting was held with the yard crew
+to explain the objectives of the study and to ask for their cooperation.
+The study was made in March 1982 and all operators stated that the
+production through the yard would be higher later in the year.
+Consequently, in our analysis we have calculated the productive capacity
+the system disregarding idle time.
+
+1
+
+of
+
+SORTING SYSTEM DESCRIPTION
+A.
+
+SORTING
+
+WITH FRONT-END
+
+LOADERS
+
+MacMillan Bloedel Ltd., Shawnigan
+Study Period:
+Two days.
+
+Division
+
+Trucks are unloaded by a L e Tourneau 2794 stacker (Figure A) or a
+Caterpillar 980 front-end loader.
+The stacker transfers the logs to
+unsorted log storage or to a grading, bucking and scaling area.
+Here
+the logs are laid out on the asphalt surface in one of three sub-areas
+or decks.
+A grader paints a sort mark on the log, then a bucker trims
+log ends and bucks to improve the grade and finally scalers scale the
+higher grades of logs (pulp and gang mill grades of logs are weighed to
+determine their volume) . Once a deck has been scaled it is pushed by
+the stacker or front-end loaders to an adjacent, asphalt-surfaced
+sorting area.
+Here, two Caterpillar 966 front-end loaders sort the logs
+(Figure B) and forward them to log bunks.
+On the average, twelve sorts
+are made but as many as fifteen may be made at one time.
+Once a bunk is
+full the logs are loaded onto a truck or put into sorted log storage.
+The loaded trucks are weighed before leaving for the 20 kilometer round
+trip to the booming ground in Cowichan Bay.
+A plan of the Shawnigan
+sortyard is given in Figure D.
+
+FIGURE A .
+
+Stacker
+
+Unloading
+
+2
+
+Truck
+
+FIGURE
+
+B.
+
+Front-End
+
+Loaders
+
+Sorting Logs
+
+The yard processes 250 000 m 3 of logs per year at a forecasted piece
+average of 0.91 m 3 . The yard operates 213 days per year with 12 men.
+At the time of the study the piece average was 0.99 m 3 (Figure 0) and
+the yard was forecasted to process 1 175 m 3 per day. This yard was
+processing the smallest-sized logs seen in the five sorting systems
+studied.
+
+FIGURE
+
+C.
+
+Log Size at Shawnigan
+
+3
+
+Sortyard
+
+0
+100
+I __________I
+FEET
+
+FIGURE D.
+
+Plan of Shawnigan
+
+4
+
+200
+— .J
+
+Sortyard
+
+B.
+
+SORTING WITH TWO STATIONARY
+
+LOG LOADERS
+
+British Columbia Forest Products - CowichanNitinat Division (Caycuse)
+.Study Period:
+Three days.
+Logs are pulled off of the log trucks and onto ramps by a L120 Raygo
+Wagner stacker (60 ton capacity) fitted with a 100-ton capacity log
+grapple (Figure E) . The stacker releases some logs onto the ramp and
+then transfers what logs it can lift from the ramp to a grading and
+scaling area.
+Once the logs have been spread on the asphalt surface,
+two graders paint sort marks on the logs and then three scalers scale
+the logs.
+One of two L90 Raygo Wagner stackers or a Caterpillar 980
+front-end loader forwards the logs to one of the two stationary Chapman
+1825 log loaders (Figure F) . The log loaders sort most of the logs into
+the six bunks and bunch the remainder.
+The bunches are forwarded to
+bunks by the Caterpillar 980 front-end loader.
+A mobile, fully automated banding machine travels to full bunks to band the logs together.
+A Raygo Wagner L90 stacker then moves the log bundles to the dumping
+area.
+A Clark 275 B front-end loader assists in log forwarding, serves
+as a utility machine and removes debris from the yard.
+Figure G is a
+plan of the yard.
+
+FIGURE
+
+E.
+
+Pull-Unloading
+
+Trucks at Caycuse
+
+5
+
+Sortyard
+
+3
+
+The Caycuse sortyard normally processes 764 700 m in 190 operating
+days. They use a partially-staffed
+second shift to unload late trucks,
+sort scaled logs left from the day shift, spread logs from late trucks
+and dump presorted truck loads from the Port Renfrew Division.
+The
+forecasted piece average for 1982 is 1.6 m 3 . The piece average during
+the study was 2.0 m 3 and the forecasted production was 3 100 m 3 per day.
+The yard can make up to 14 sorts at one time but the majority of the
+logs go into six sorts for shipment across the lake to the Youbou sawmill.
+The normal crew is 17.
+This yard uses the spare operator concept
+which permits continuous machine operation.
+
+FIGURE
+
+F.
+
+Chapman
+
+1825 Stationary
+
+6
+
+Log Loaders
+
+DELOAD RAMPS TO COWICHAN
+LAKE
+
+TO LOGGING
+OPERATION
+
+FEET
+
+FIGURE
+
+G.
+
+Plan of Caycuse
+
+7
+
+Sortyard
+
+G.
+
+SORTING WITH A FRONT-END
+
+wtTwADERlTrra
+
+LOADER
+
+AND A MOBILE
+
+Pacific Forest Products Ltd., Sooke Division
+Study Period:
+Three days.
+Trucks are unloaded by a L e Tourneau 2794 stacker (Figure H) . The
+stacker transfers the logs to one of three grading, bucking and scaling
+areas and spreads them on the asphalt surface.
+Once in a deck, the logs
+are marked by a grader.
+A bucker then trims shattered log ends and
+bucks any logs that can be up-graded.
+Following this, tags are attached
+and the logs are scaled by two scalers.
+A Linkbelt 5800 TL log loader
+sorts and bunches the logs.
+The smaller logs and/or high volume sorts
+are sorted into the two trailer bunks (Figure I) while the larger logs
+and/or lower volume sorts are bunched.
+The bunched logs are forwarded
+to bunks by a Caterpillar 988B front-end loader. A Le Tourneau 2694
+stacker periodically removes logs from the trailer.
+A three-man crew in
+a mobile wire-strapping machine travel to full bunks to strap the logs.
+The two stackers then put the bundles into a sorted log storage area.
+The bundles are reclaimed from storage during the afternoon shift,
+loaded onto trucks and transported 3 kilometers to the booming ground.
+Figure J is a plan of the Sooke sortyard.
+
+FIGURE
+
+H.
+
+Stacker
+
+Unloading
+
+8
+
+Truck
+
+at Sooke
+
+The Sooke sortyard is budgeted to process 306 000 m 3 in 160 operating
+days. During the study, the forecasted daily production was 1 865 m 3
+with a piece average of 1.66 m 3 . The annual piece average is forecasted
+at 1.36 m 3 . Although the sortyard can make up to 18 sorts at one time,
+it was making 10 sorts during the study.
+The normal crew is 11 men.
+
+FIGURE
+
+I.
+
+Log Loader
+
+9
+
+and Trailer
+
+TO LOGGING
+OPERATION
+
+FIGURE J.
+
+Plan of Sooke Sortyard
+
+10
+
+D.
+
+SORTING WITH A FRONT-END
+
+l6g~l3â5ëT“
+
+LOADER
+
+AND A MOBILE
+
+Canadian Forest Products Ltd., Englewood
+Study Period:
+Three days.
+
+Division
+
+The yard processes 1 360 000 m 3 per year in 217 double-shifted days.
+The budgeted daily production during the study was 6 320 m 3 with a piece
+average of 1.57 m 3 . The yearly piece average is forecasted at 1.38 m 3 .
+The total sorting crew is 35 men.
+This yard has two distinct sorting systems.
+The three day study of the
+mobile log loader which sorts approximately half the production is
+described here and the sorting table system is described in Section E
+following.
+A Raygo Wagner L120 stacker unloads railway cars or log trucks
+(Figure K) . The stacker and load is then weighed by the B.C. Forest
+Service.
+The load can then b e spread in the B.C. Forest Service sample
+scale area, taken to unsorted log storage or spread in one of three
+decks in the spread sort area.
+Logs placed in the spread sort area are
+marked for sorting by two graders.
+A Barko 550 log loader moves along a
+graded log deck and sorts and bunches the logs into piles (Figure L) . A
+Caterpillar 980C front-end loader forwards the sorted piles to log bunks
+
+FIGURE K.
+
+Stacker Unloading
+
+11
+
+Railway
+
+Car
+
+located in a U-shaped area at the end of the log decks.
+If the frontend loader can not process the bunches quickly enough then a second
+front-end loader will assist.
+The logs are moved by a stacker from the
+bunks to a company scaling area or to a bundling area.
+The bundles are
+weighed and dumped into the booming ground.
+Logs used within the company are weigh scaled in metric units and logs that are to be traded or
+sold are stick scaled in board feet. Figure M is a plan of the Beaver
+Cove sortyard.
+
+FIGURE L.
+
+Barko 550 Log Loader
+
+12
+
+Sorting and Bunching
+
+Logs
+
+E.
+
+SORTING WITH A STATIONARY LOG LOADER, A FRONT-END
+LOADER AND A LOW-PROFILE GRADING AND SORTING TABLE
+
+Log loads are removed from logging trucks or railway cars by a Raygo
+Wagner L120 stacker, weighed for stumpage and royalty charges and
+transported to the sorting table.
+After being spread on the table the
+logs are graded and marked (Figure N) . The chains advance the logs to
+the sorting area of the table.
+A Caterpillar 245 stationary log loader
+makes four different log sorts into bunks and sorts and bunches the
+remaining logs on the sorting table (Figure 0) . A Caterpillar 980C
+front-end loader forwards the sorted bunches to log bunks set in a Ushape around the end of the table.
+When a bunk is full a L120 Raygo
+Wagner stacker removes the logs for stick scaling or bundling.
+The
+stacker then transports the bundle for weighing and dumping into the
+booming ground.
+
+FIGURE
+
+M.
+
+Plan of Beaver
+
+13
+
+Cove Sortyard
+
+FIGURE N.
+
+FIGURE 0.
+
+Grading on the Table
+
+Caterpillar 245/980 Sorting System
+
+14
+
+F.
+
+SUMMARY
+
+OF MACHINES
+
+STUDIED
+
+A summary of the sorting and non-sorting
+studied is given in Table 1.
+
+TABLE 1.
+
+Summary
+
+machines
+
+of Machines
+
+in each of the systems
+
+Studied
+
+System
+Front- End
+Loaders
+(A)
+
+Stationary
+Log
+Loaders
+(B)
+
+Front-End
+Loader &
+Mobile
+Log Loader
+With Trailer
+(C)
+
+Front-End
+Loader &
+Mobile
+Log Loader
+(D)
+
+Front-End
+Loader &
+Stationary
+Log Loader
+With Sorting
+Table
+(E)
+
+966-Sized
+980-Sized
+988-Sized
+235-Sized
+245-Sized
+
+2
+1
+—
+-
+
+-
+
+—
+
+1
+—
+—
+—
+
+1
+
+1
+—
+—
+1
+-
+
+1
+
+Sub Total
+
+3
+
+2
+
+2
+
+2
+
+2
+
+1
+—
+
+1
+2
+—
+
+1.5
+—
+—
+
+1.5
+
+2
+
+1
+1
+—
+-
+
+0.5
+
+0.5
+
+Machines
+
+Sorting
+CAT
+CAT
+CAT
+CAT
+CAT
+
+—
+—
+2
+
+1
+—
+
+Non-Sorting
+60 Ton Size
+45-50 Ton Size
+CAT 966-Sized
+CAT 980-Sized
+
+-
+
+—
+
+Sub Total
+
+1
+
+5
+
+2
+
+2
+
+2
+
+GRAND
+
+4
+
+7
+
+4
+
+4
+
+4
+
+TOTAL
+
+15
+
+RESULTS AND DISCUSSION
+A.
+
+SORTING
+
+MACHINE
+
+TIME DISTRIBUTION
+
+The time distribution of the five different sorting systems
+Table 2. It is based on the continuous timing results.
+
+TABLE 2.
+
+Percentage
+
+Distribution
+
+of Sorting Machine
+
+is given in
+
+Time
+
+System
+Front-End
+Loaders
+(A)
+
+Productive
+
+Time
+
+Stationary
+Log
+Loaders
+(B)
+
+Front-End
+Loader &
+Mobile
+Log Loader
+With Trailer
+(C)
+
+Front-End
+Loader &
+Mobile
+Log Loader
+(D)
+
+Front-End
+Loader &
+Stationary
+Log Loader
+With Sorting
+Table
+(E)
+
+(%)
+61.5
+
+27.8
+
+33.4
+—
+
+35.9
+
+63.7
+—
+—
+5.5
+9.2
+0.1
+
+——
+—
+——
+—
+—
+
+21.0
+1.9
+—
+3.7
+2.9
+
+37.8
+—
+3.1
+—
+
+33.6
+—
+——
+2.4
+—
+
+78.5
+
+61.5
+
+57.3
+
+74.3
+
+71.9
+
+Wait - no wood
+Personal
+Idle - other
+
+5.9
+11.8
+3.2
+
+17.3
+20.9
+
+22.4
+17.8
+2.5
+
+11.8
+12.7
+1.1
+
+12.6
+15.5
+—
+
+Non-Productive
+Total (Z)
+
+20.9
+
+38.2
+
+42.7
+
+25.6
+
+28.1
+
+GRAND
+
+100.0
+
+100.0
+
+100.0
+
+100.0
+
+100.0
+
+breakdowns
+
+of the sorting
+
+Sort & Bunch
+Sort & Forward
+Forward Bunches
+Forward Bundles
+Reload Trucks
+Debris Cleanup
+Other
+Productive
+
+Total
+
+( Z)
+
+——
+
+—.
+
+Non-Productive
+Time (Z)
+
+TOTAL
+
+(Z)
+
+Appendix I gives individual
+distribution.
+
+16
+
+machine’s
+
+time
+
+There is a basic imbalance in time distribution between the mobile log
+loaders sorting logs and the front-end loaders forwarding them from the
+sorting area (Appendix I) . If the mobile log loader is only sorting and
+bunching logs (Beaver Cove - spread sort) then the front-end loader can
+not keep up and a second front-end loader must assist in forwarding the
+sorted bunches of logs.
+If the log loader (mobile or stationary) is
+sorting, bunching and putting some sorts in bunks (Beaver Cove - table,
+Sooke) then the front-end loader can forward bunches faster than they
+can b e bunched and has idle time.
+To reduce idle time in the latter
+case, the volume of the sorts being made into the bunks and being
+bunched should be examined.
+In the former case, the location and layout
+of the sorting bunks should be examined to see if travel time of the
+front-end loader can b e reduced.
+
+B.
+
+PRODUCTIVITY
+
+OF SORTING
+
+MACHINES
+
+From the piece count of logs sorted and the continuous timing results
+the productivities of the five sorting systems (Table 3) were calculated.
+The system productive capacity is an estimate of what the production
+would b e if the machines worked 100 percent of the available time.
+The
+stationary log loader system has the highest capacity.
+However, it will
+have the most difficulty achieving maximum capacity because the storage
+area for Incoming logs is too small to level the production surges
+caused by the irregular logging truck arrivals.
+With a varying input
+rate and no surge capacity, idle time on sorting machines is higher or
+the truck queue is longer.
+The other four systems all have storage for
+incoming logs and can level the flow of logs to the sorting machines
+more easily.
+However, incoming log storage requires more land and
+investment and the logs are handled an additional time.
+The two sorting systems using mobile log loaders are different but it
+would appear that the addition of a sorting trailer at Sooke has increased the productive capacity by 400 pieces per shift in comparison to
+Beaver Cove’s mobile log loader system.
+
+17
+
+TABLE 3.
+
+Productivity of Sorting Machines
+Continuous Timing Results
+
+-
+
+System
+Front-End
+Loaders
+(A)
+
+Stationary
+Log
+Loaders
+(B)
+
+Total Pieces
+Sorted
+
+2 410
+
+Total Machine
+Time (hrs)
+Total Productive
+Time (hrs)
+
+Front-End
+Loader &
+Mobile
+Log Loader
+With Trailer
+(C)
+
+Front-End
+Loader &
+Mobile
+Log Loader
+(D)
+
+Front-End
+Loader &
+Stationary
+Log Loader
+With Sorting
+Table
+(E)
+
+5 048
+
+2 385
+
+2 813
+
+2 314
+
+48.5
+
+48.5
+
+43.2
+
+53.2
+
+31.0
+
+38.4
+
+29.9
+
+24.7
+
+39.5
+
+22.3
+
+Utilization (Productive Time/
+Total Time)
+
+0.79
+
+0.62
+
+0.57
+
+0.74
+
+0.72
+
+Pieces/Total
+
+49.6
+
+104.1
+
+55.2
+
+52.9
+
+74.6
+
+Pieces/Productive
+Machine Hour
+
+62.8
+
+168.6
+
+96.4
+
+71.2
+
+103.8
+
+Number of Sorting
+Machines
+
+3
+
+2
+
+2
+
+2
+
+2
+
+1 508
+
+2 698
+
+1 542
+
+1 139
+
+1 662
+
+Hour
+
+Sorting System
+Productive 1 Capacity (Pieces/Shif t)
+
+System
+number
+C.
+
+Productive
+of sorting
+
+Capacity = Pieces /productive
+machines.
+
+PRODUCTIVITY
+
+OF NON- SORTING
+
+machine
+
+hour X 8 hours
+
+MACHINES
+
+The productivity of the machines used to unload trucks, spread logs,
+reclaim logs, transport logs and bundles, dump bundles and clean up the
+yard surface was measured by random sampling and is given in Table 4.
+The productivity of the stacker at Shawnigan is overstated somewhat
+because it is assisted from time to time by the front-end loaders.
+Caycuse has very little storage capability and it needs additional
+equipment to turn the logging trucks around quickly and minimize the
+queue.
+The result is a lower-than-normal
+productivity on the Caycuse
+equipment .
+
+18
+
+X
+
+TABLE 4.
+
+Productivity of Non-Sorting
+Random Sampling Results
+
+Machines
+
+-
+
+System
+Front-End
+Loaders
+(A)
+
+Number of NonSorting Stackers
+& Front-End
+Loaders
+Pieces
+
+Processed
+
+Total Time
+Observed (hrs)
+- Total Machine
+Time
+
+Front- End
+Loader &
+Mobile
+Log Loader
+With Trailer
+(C)
+
+Stationary
+Log
+Loaders
+(B)
+
+Front-End
+Loader &
+Mobile
+Log Loader
+(D)
+
+21
+
+Front-End
+Loader &
+Stationary
+Log Loader
+With Sorting
+Table
+(E)
+
+21
+
+1
+
+5
+
+2
+
+2 410
+
+5 048
+
+2 385
+
+2 813
+
+2 314
+
+24.5
+
+15.5
+
+16.4
+
+25. 8 2
+
+21.4
+
+74
+
+67
+
+71 3
+72
+
+72 3
+71
+
+74
+
+73
+68
+64
+60
+72
+67
+
+67
+
+71
+
+71
+
+Pieces/Total
+Machine Hours
+
+147
+
+196
+
+112
+
+115
+
+149
+
+Pieces/Productive
+Machine Hour 11
+
+199
+
+292
+
+167
+
+162
+
+208
+
+1 176
+
+314
+
+448
+
+460
+
+596
+
+1 592
+
+467
+
+668
+
+648
+
+832
+
+1 592
+
+2 335
+
+1 336
+
+1 296
+
+1 664
+
+Machine Utilization (%)
+Stacker
+Stacker
+Stacker
+FEL 1
+FEL 2
+Average
+
+1
+2
+3
+
+Observed Production (Pieces/
+Shift /Machine)
+Maximum Production (Pieces/
+Shif t/Machine)
+
+5
+
+Non-Sorting System
+Productive
+Capacity (Pieces/Shif t
+
+leaver
+Cove has three stackers and one front-end loader on reclaiming
+spreading, etc. duties.
+Allocate half of the machines to one sorting
+system and half to the other.
+2
+Front-end loader #1 was observed for 1 414 minutes not 1 546 minutes.
+3
+It was only possible to sample the unloading stacker at Beaver Cove.
+Assume the other machines have the same utilization ratios.
+**Pieces/Productive Machine Hour = Pieces processed/average
+productive
+hour.
+5
+Maximum production = pieces/production
+shif t/machine.
+
+19
+
+D.
+
+OVERALL
+
+SYSTEM MACHINE
+
+PRODUCTIVITY
+
+When the results of the sorting machine productivities (Table 3) are
+merged with the productivities of the non-sorting machines in the sortyard (Table 4) an overall system capacity can b e estimated (Table 5) .
+TABLE
+
+5.
+
+Overall
+
+System Productive
+
+Capacity
+
+System
+
+Total Pieces
+Sorted
+Productive
+(hrs)
+
+Front-End
+Loaders
+(A)
+
+Stationary
+Log
+Loaders
+(B)
+
+Front-End
+Loader &
+Mobile
+Log Loader
+With Trailer
+(C)
+
+Front-End
+Loader &
+Mobile
+Log Loader
+(D)
+
+Front-End
+Loader &
+Stationary
+Log Loader
+With Sorting
+Table
+(E)
+
+2 410
+
+5 048
+
+2 385
+
+2 813
+
+2 314
+
+Time
+
+Sorting Machines
+Non-Sorting
+Machines
+
+38.4
+
+29.9
+
+24.7
+
+39.5
+
+22.3
+
+12.1
+
+85.5
+
+28.6
+
+34.7
+
+22.3
+
+Total
+
+50.5
+
+115.4
+
+53.3
+
+74.2
+
+44.6
+
+10.2
+
+18.5
+
+18.4
+
+13.6
+
+8.7
+
+4.3
+
+42.6
+
+14.1
+
+14.2
+
+9.0
+
+Total Non-Productive
+
+14.5
+
+61.1
+
+32.5
+
+27.8
+
+17.7
+
+Grand Total
+
+65.0
+
+176.5
+
+85.8
+
+102.0
+
+62.3
+
+37.1
+
+28.8
+
+27.8
+
+27.6
+
+37.1
+
+47.7
+
+43.7
+
+44.7
+
+37.9
+
+51.9
+
+1 526
+
+2 447
+
+1 430
+
+1 213
+
+1 661 1
+
+Productive
+
+Non-Productive
+Time (hrs)
+Sorting Machines
+Non-Sorting
+Machines
+
+Pieces/To tai
+Machine Hour
+Pieces/Productive
+Machine Hour
+Total System Productive Capacity
+(Pieces/Shif t)
+
+he Beaver Cove Table productivity per machine hour is overstated
+somewhat because the sorting table results in less area being required
+to spread logs and this reduces travelling time for the stackers.
+Comparison of Table 3 and 4 with Table 5 will show whether the sorting
+or non-sorting machines limit the total system productive capacity
+given in Table 5.
+
+20
+
+E.
+
+GRADER PRODUCTIVITY
+
+For safety and other reasons most logs are graded when a deck is full
+and no machines are working in the immediate area.
+Consequently,
+grading becomes a batch process and unless there is a continual supply
+of logs and large grading decks, idle time is high.
+Also, most logging
+trucks arrive in surges and unloading is given priority.
+Table 6 lists
+the results of the random sampling of the graders.
+
+TABLE 6.
+
+Random
+
+Sampling
+
+Results
+
+- Graders
+
+System
+Front-End
+Loaders
+(A)
+
+Stationary
+Log
+Loaders
+(B)
+
+Front-End
+Loader &
+Mobile
+Log Loader
+With Trailer
+(C)
+
+Front- End
+Loader &
+Mobile
+Log Loader
+(D)
+
+Front-End
+Loader &
+Stationary
+Log Loader
+With Sorting
+Table
+(E)
+
+Total Pieces
+Graded
+
+2 410
+
+5 048
+
+2 385
+
+2 813
+
+2 314
+
+Total Observed
+Time (mins)
+
+982
+
+1 546
+
+1 282
+
+1 468
+
+930
+
+3
+
+2
+
+2
+
+Production
+Grading (%)
+Idle
+(%)
+Total
+(Z)
+
+66. 4 2
+33.6
+100.0
+
+51.9
+48.1
+100.0
+
+56.0
+44.0
+100.0
+
+41.3
+58.7
+100.0
+
+36.0
+64.0
+100.0
+
+Number of Graders
+In Deck At One
+Time (Z)
+0
+1
+2
+3
+4
+
+33. 6 2
+14.9
+22.4
+25.8
+3.3
+
+48.1
+20.8
+31.1
+——
+—
+
+44.0
+17.8
+38.2
+—
+
+58.7
+22.4
+11.0
+7.9
+—
+
+64.0
+2.0
+31.0
+1.0
+1.0
+
+147
+
+196
+
+112
+
+115
+
+149
+
+222 3
+
+378
+
+198
+
+276
+
+414
+
+1 178 3
+
+784
+
+446
+
+456
+
+597
+
+12
+
+6
+
+10
+
+14
+
+14
+
+15
+
+14
+
+18
+
+22
+
+22
+
+Normal Number of
+Graders
+
+Pieces/Total
+Hour
+Pieces/Productive Hour
+Pieces Graded/
+Grader/Shif t1*
+Average Number
+of Sorts
+Maximum Number
+of Sorts
+
+21
+
+21
+
+2‘
+
+(TABLE
+
+6 continued)
+
+1
+
+Graders are fully qualified as "Licensed Scaler - Industrial Grader".
+Sampled contract scalers not graders.
+Shawnigan has one grader.
+3
+Assumes grader has same productive time to total time ratio and works
+the same amount of time as the scalers.
+4
+Includes idle time and assumes 2 graders.
+Shift = 480 minutes.
+2
+
+The time required for grading depends on several factors including
+grader proficiency, grading standards, number of log sorts and end
+destination quality requirements.
+Some of the sortyards require that
+their graders be fully licensed, experienced scalers while others do
+not.
+Some end destinations require very specific grading while others
+accept estimates of grades.
+
+22
+
+F.
+
+LOG AVAILABILITY
+
+To illustrate the log throughput in the sortyards the relative degree of
+fullness of the grading and scaling decks was measured by random sampling. Table 7 shows the results of random sampling.
+TABLE 7.
+
+Random Sampling Results - Log Volume in Deck
+
+System
+
+Condition of
+
+Front-End
+Loaders
+(A)
+
+Log Deck (%)
+
+Stationary
+Log
+Loaders 1
+(B)
+
+Front-End
+Loader &
+Mobile
+Log Loader
+With Trailer
+(C)
+
+Full
+> 1/2 full
+< 1/2 full
+Empty
+
+35.5
+64.5
+
+—
+
+17.1
+78.7
+4.2
+
+To tai
+
+100
+
+—
+
+100
+
+Front-End
+Loader &
+Mobile
+Log Loader
+(D)
+
+Front-End
+Loader &
+Stationary
+Log Loader
+With Sorting
+Table
+(E)
+
+4.9
+67.9
+16.9
+10.4
+
+6.0
+50.0
+36.0
+8.0
+
+100
+
+100
+
+x
+
+It was not possible to measure the condition of the log decks at
+Caycuse.
+As can be seen from Table 6 , there were times when wood was not available for processing at Beaver Cove and Sooke (this was true at Caycuse
+also but not documented) . Although productive capacity is calculated in
+the report, lack of logs has an effect on the crew’s productivity by
+interrupting the rythmn that develops. This affected our measurements
+and if we had studied the yards later in the year we may have found
+higher productive capacities.
+
+23
+
+G.
+
+MANDAY PRODUCTIVITY
+
+The productivity per manday of the various sorting systems is shown in
+Table 8. Personnel associated with boomstick boring, debris disposal,
+booming and bundling were not included.
+Superintendants
+were excluded
+but foremen were included.
+
+TABLE 8.
+
+Manday Productivity
+
+Comparison
+
+System
+Front-End
+Loaders
+(A)
+
+Stationary
+Log
+Loaders
+(B)
+
+1
+
+1
+
+1
+
+O.75 1
+
+0.75 1
+
+4
+1
+3
+1
+1
+1
+
+9
+2
+3
+1
+-
+
+4
+2
+2
+1
+1
+
+4
+1
+1
+1
+—
+-
+
+4
+2
+1.5
+1
+—
+-
+
+12
+
+16
+
+11
+
+7.75
+
+9.25
+
+12
+
+16
+
+11
+
+7.75
+
+9.25
+
+1 508
+
+2 698
+
+1 542
+
+1 139
+
+1 662
+
+126
+
+169
+
+140
+
+147
+
+180
+
+99
+
+104
+
+80
+
+109
+
+129
+
+Front-End
+Loader &
+Mobile
+Log Loader
+With Trailer
+(C)
+
+Front-End
+Loader &
+Mobile
+Log Loader
+(D)
+
+Front-End
+Loader &
+Stationary
+Log Loader
+With Sorting
+Table
+(E)
+
+Man Power
+Foreman
+Machine Operators
+Graders
+Scalers
+Welghmasters
+Buckers
+Handymen
+TOTAL
+Mandays/Shif t
+Productive Capacity (Pieces/
+Shift)
+Pieces/Manday
+Productive
+Capacity
+Pieces/Manday
+(Actual)
+
+@
+
+x
+
+Beaver Cove crew is spread over two systems and two shifts.
+Allocation made after conversations with Beaver Cove manager.
+Includes
+scaling and grading supervisor.
+
+24
+
+APPENDIX I .
+
+1.
+
+INDIVIDUAL BREAKDOWN OF SORTING MACHINE'S TIME
+DISTRIBUTION - CONTINUOUS TIMING RESULTS
+
+Continuous Timing Results - Shawnigan Division (A)
+
+966C
+
+(L20)
+
+966C
+
+minutes
+
+Z
+
+minutes
+
+A. Sort & Forward
+
+734.5
+
+75.1
+
+B. Reload
+
+Trucks
+
+39.0
+
+1. Productive
+
+Loader
+
+Loader
+
+(L89)
+
+980B
+
+Loader
+
+Z
+
+minutes
+
+Z
+
+659.5
+
+68.2
+
+462.0
+
+47.7
+
+4.0
+
+59.0
+
+6.1
+
+61.5
+
+6.4
+
+Time:
+
+C. Debris
+
+Cleanup
+
+56.5
+
+5.8
+
+55.0
+
+5.7
+
+156.0
+
+16.1
+
+D. Travel
+
+Empty
+
+1.5
+
+0.1
+
+2.0
+
+0.2
+
+15.5
+
+1.6
+
+Productive
+
+Total
+
+831.5
+
+85.0
+
+775.5
+
+80.2
+
+695.0
+
+71.8
+
+2. Non-Productive
+
+Time:
+
+A. Idle
+
+(No Wood)
+
+36.0
+
+3.7
+
+32.0
+
+3.3
+
+104.0
+
+10.7
+
+B. Idle
+
+(Coffee/Lunch)
+
+88.0
+
+9.0
+
+133.0
+
+13.8
+
+124.0
+
+12.8
+
+(Other)
+
+22.5
+
+2.3
+
+26.0
+
+2.7
+
+45.0
+
+4.6
+
+146.5
+
+15.0
+
+191.0
+
+19.8
+
+273.0
+
+28.2
+
+978.0
+
+100.0
+
+966.5
+
+100.0
+
+968.0
+
+100.0
+
+C. Idle
+
+Non-Productive
+Grand
+
+Total
+
+Total
+
+25
+
+2
+
+Continuous
+
+Timing
+
+Results
+
+- Caycuse (B)
+
+Chapman
+
+1. Productive
+
+Chapman
+
+1825
+
+1825
+
+Loader
+
+Loader
+
+(#1)
+
+(#2)
+
+minutes
+
+%
+
+minutes
+
+2
+
+1 097.5
+
+70.8
+
+692.5
+
+51.0
+
+—
+
+—
+
+—
+
+—
+
+Time:
+
+A. Sorting
+
+& Bunching
+
+B. Forwarding
+
+.1
+
+C. Debris
+
+Cleanup
+
+5.0
+
+D. Travel
+
+Empty
+
+—
+
+—
+
+—
+
+—
+
+Productive
+
+Total
+
+1 102.5
+
+71.1
+
+694.0
+
+51.1
+
+262.0
+
+16.9
+
+240.5
+
+17.7
+
+2.5
+
+.2
+
+—
+
+—
+
+184.0
+
+11.9
+
+423.5
+
+31.2
+
+448.5
+
+28.9
+
+664.0
+
+48.9
+
+1 551.0
+
+100.0
+
+1 358.0
+
+100.0
+
+2. Non-Productive
+
+B. Idle (Cof fee/Lunch)
+C. Idle (Other)
+
+Grand Total
+
+1.5
+
+Time:
+
+A. Idle (No Wood)
+
+Non-Productive
+
+.3
+
+Total
+
+26
+
+3
+
+Continuous
+
+Timing
+
+Results
+
+- Sooke Division
+
+Travelling
+(5800
+
+1. Productive
+
+Log Loader
+
+(C)
+
+988B
+
+Loader
+
+T.L. Linkbelt)
+
+minutes
+
+%
+
+minutes
+
+720.5
+
+55.8
+
+—
+
+—
+
+Time:
+
+A. Sort & Bunch
+B. Forward
+C. Forward
+
+Bunches
+
+—
+
+—
+
+544.5
+
+41.9
+
+Bundles
+
+—
+
+—
+
+49.0
+
+3.8
+
+68.0
+
+5.3
+
+——
+
+——
+
+.5
+
+—
+
+—
+
+D. Travel
+E. Unload
+
+Trailer
+
+6.0
+
+F. Debris
+
+Cleanup
+
+—
+
+—
+
+96.0
+
+7.4
+
+Productive
+
+Total
+
+794.5
+
+61.5
+
+689.5
+
+53.1
+
+A. Idle (No Wood)
+
+228.5
+
+17.7
+
+350.5
+
+27.0
+
+B. Idle (Coffee/Lunch)
+
+237.0
+
+18.4
+
+223.5
+
+17.2
+
+C. Idle (Other)
+
+31.0
+
+2.4
+
+35.0
+
+2.7
+
+496.5
+
+38.5
+
+609.0
+
+46.9
+
+1 291.0
+
+100.0
+
+1 298.5
+
+100.0
+
+2. Non-Productive
+
+Non-Productive
+Grand Total
+
+Time:
+
+Total
+
+27
+
+4
+
+Continuous
+
+Timing
+
+Results
+
+- Beaver
+
+Cove Spread Sort (D)
+
+Barko 550 Loader
+
+980 Loaders
+
+minutes
+
+%
+
+minutes
+
+%
+
+1 065.0
+
+72.6
+
+—
+
+—
+
+B. Forward
+
+—
+
+—
+
+1 207.0
+
+70.1
+
+C. Debris Cleanup
+
+——
+
+—
+
+99.5
+
+5.8
+
+1 065.0
+
+72.6
+
+1 306.5
+
+75.9
+
+A. Idle (No Wood)
+
+188.5
+
+17.8
+
+188.5
+
+10.9
+
+B. Idle (Coffee/Lunch)
+
+195.5
+
+13.3
+
+209.5
+
+12.2
+
+C. Idle (Other)
+
+18.5
+
+1.3
+
+17.5
+
+1.0
+
+402.5
+
+27.4
+
+415.5
+
+24.1
+
+1 467.5
+
+100.0
+
+1 722.0
+
+100.0
+
+1. Productive
+
+Time:
+
+A. Sort & Bunch
+
+Productive
+
+Total
+
+2. Non-Productive
+
+Non-Productive
+Grand Total
+
+Time*.
+
+Total
+
+28
+
+5.
+
+Continuous Timing Results - Beaver Cove Table (E)
+
+245 Loader
+
+980 Loader
+minutes
+
+%
+
+minutes
+
+%
+
+—
+
+—
+
+667.0
+
+72
+—
+
+1. Productive Time:
+A. Sort & Bunch
+B. Forward
+
+625.0
+
+67
+
+—
+
+C. Debris Cleanup
+
+33.5
+
+4
+
+11.5
+
+1
+
+Productive Total
+
+658.5
+
+71
+
+678.5
+
+73
+
+A. Idle (No Wood)
+
+122.5
+
+13
+
+112.0
+
+12
+
+B. Idle (Cof ee/Lunch)
+
+149.0
+
+16
+
+139.5
+
+15
+
+C. Idle (Other)
+
+—
+
+—
+
+—
+
+--
+
+Non-Productive Total
+
+271.5
+
+29
+
+251.5
+
+27
+
+Grand Total
+
+930.0
+
+100
+
+930.0
+
+100
+
+2. Non-Productive Time:
+
+29
+
+APPENDIX
+1.
+
+II.
+
+DETAILS
+
+Random Sampling
+
+ON RANDOM
+Details
+
+SAMPLING
+
+RESULTS
+
+- Shawnigan
+
+Division
+
+(A)
+
+Stacker (LW 2794)
+
+Events
+
+%
+
+Productive Time
+Non-Productive Time :
+Idle (No Wood)
+Idle (Cof fee/Lunch)
+Idle (Other)
+
+242
+
+73.6
+
+72
+7
+8
+
+21.9
+2.3
+2.4
+
+Non-Productive
+
+87
+
+26.6
+
+Grand Total
+
+329
+
+100.0
+
+Grading & Scaling Decks
+
+Events
+
+%
+
+117
+213
+
+35.5
+64.5
+
+Total
+
+330
+
+100.0
+
+Scalers
+
+Events
+
+%
+
+219
+109
+2
+
+66.4
+33.0
+0.6
+
+330
+
+100.0
+
+Total
+
+Full
+>1/2 Full
+<1/2 Full
+Empty
+
+Scaling
+Not Scaling
+Other
+
+Total
+
+Total Elapsed Time:
+
+16 hours
+
+22 minutes.
+
+30
+
+Shawnigan
+
+Division
+
+Statistical
+
+(A)
+
+Significance
+
+Stacker
+Scalers
+
+2.
+
+Random
+
+Productive
+
+continued
+
+Sampling
+
+Time
+
+Non-Productive
+Time:
+Idle (No Wood)
+Idle (Coffee/Lunch)
+Idle (Other)
+
+Total
+
+Observed idle time
+during study:
+
+We are 95% confident
+idle time lies between:
+
+26.4%
+33.6%
+
+21.7% - 31.1%
+28.5% - 38.7%
+
+Results
+
+- Payeuse
+
+(B)
+
+Stacker #1
+L120
+
+Stacker #2
+L90
+
+Stacker #3
+L90
+
+Events
+
+%
+
+Events
+
+%
+
+Events
+
+%
+
+374
+
+72.8
+
+352
+
+68.1
+
+330
+
+64.2
+
+126
+
+14
+
+24.5
+—
+2.7
+
+155
+—
+10
+
+30.0
+—
+1.9
+
+159
+1
+24
+
+30.9
+.2
+4.7
+
+514
+
+100.0
+
+517
+
+100.0
+
+514
+
+100.0
+
+—.
+
+Events
+
+%
+
+309
+
+72.0
+
+Non-Productive
+Time:
+Idle (No Wood)
+Idle (Coffee/Lunch)
+Idle (Other)
+
+120
+——
+—
+
+28.0
+—
+—
+
+Total
+
+429
+
+100.0
+
+FEL (275B)
+Productive
+
+Time
+
+31
+
+Caycuse
+
+(B) - continued
+
+Events
+
+%
+
+201
+313
+
+39.1
+60.9
+
+Total
+
+514
+
+100.0
+
+Graders
+
+Events
+
+%
+
+267
+247
+
+51.9
+48.1
+
+514
+
+100.0
+
+Events
+
+%
+
+179
+
+34.6
+
+Scalers
+Scaling
+Not Scaling
+
+Grading
+Not Grading
+Total
+
+Banding
+
+Machine
+
+Productive
+
+Time
+
+Non-Productive Time:
+Idle (No Wood)
+Idle (Cof fee/Lunch)
+Idle (Other)
+
+71
+
+13.7
+
+267
+
+51.6
+
+Total
+
+517
+
+100.0
+
+Total
+
+Elapsed Time:
+
+Statistical
+
+25 hours
+
+46 minutes.
+
+Significance
+Observed idle time
+during study:
+
+Stacker
+Stacker
+Stacker
+275 B
+Banding
+Scalers
+Graders
+
+#1
+#2
+#3
+Machine
+
+27.2%
+31.9%
+35.8%
+28.0%
+65.4%
+60.9%
+48.1%
+
+We are 95% confident that
+the idle time lies between:
+23.4%
+27.9%
+37.7%
+23.8%
+61.3%
+56.7%
+43.8%
+
+32
+
+and
+and
+and
+and
+and
+and
+and
+
+31.0%
+35.9%
+39.9%
+32.2%
+69.5%
+65.1%
+52.4%
+
+3
+
+Random Sampling
+
+Details
+
+- Sooke Division
+
+(C)
+
+Stacker (2794)
+
+Events
+
+%
+
+Productive Time
+Non-Productive
+Time :
+Idle (No Wood)
+Idle (Coffee /Lunch)
+Idle (Other)
+
+290
+
+67.1
+
+87
+54
+1
+
+20.2
+12.5
+.2
+
+Total
+
+432
+
+100.0
+
+Stacker (2694)
+
+Events
+
+%
+
+Productive Time
+Non-Productive Time:
+Idle (No Wood)
+Idle (Coffee/Lunch)
+Idle (Other)
+
+290
+
+67.1
+
+84
+58
+
+19.5
+13.4
+
+Total
+
+432
+
+100.0
+
+Graders
+
+Events
+
+7»
+
+242
+169
+21
+
+56.0
+39.1
+4.9
+
+432
+
+100.0
+
+Grading
+Not Grading
+Other
+
+Total
+
+33
+
+Sooke Division
+
+Grading
+
+(C) - continued
+
+& Scaling Decks
+
+Full
+>1/2 Full
+<1/2 Full
+Empty
+Total
+
+Total Elapsed Time:
+Statistical
+
+74
+340
+18
+
+17.1
+78.7
+4.2
+
+432
+
+100.0
+
+Significance
+
+Stacker 2794
+Stacker 2694
+Graders
+
+Random
+
+%
+
+21 hours 22 minutes.
+
+Observed idle time
+during study:
+
+4.
+
+Events
+
+Sampling
+
+We are 95% confident
+idle time lies between:
+
+32.9%
+32.9%
+44.0%
+
+28.5% - 37.3%
+28.5% - 37.3%
+39.3% - 48.7%
+
+Results - Beaver Cove Spread (D)
+
+Unloading
+
+Stacker
+
+Events
+
+%
+
+Productive
+
+Time
+
+350
+
+71.1
+
+Non-Productive Time:
+Idle (No Wood)
+Idle (Coffee /Lunch)
+Idle (Other)
+
+96
+40
+6
+
+19.5
+8.1
+1.2
+
+Total
+
+492
+
+100.0
+
+34
+
+Beaver
+
+Cove Spread (D) - continued
+
+Events
+
+%
+
+24
+334
+83
+51
+
+4.9
+67.9
+16.9
+10.4
+
+Total
+
+492
+
+100.0
+
+Graders
+
+vents
+
+%
+
+203
+289
+
+41.3
+58.7
+
+492
+
+100.0
+
+Spread Area
+
+Full
+>1/2 Full
+<1/2 Full
+Empty
+
+Grading
+Not Grading
+Total
+
+Total Elapsed
+Statistical
+
+Stacker
+Graders
+
+Time:
+
+24 hours
+
+27.5 minutes.
+
+Significance
+Observed idle time
+during study:
+
+We are 95% confident
+that the idle time lies
+between:
+
+28.8%
+58.7%
+
+24.8% - 32.8%
+54.3% - 62.1%
+
+35
+
+5
+
+Random
+
+Sampling
+
+Results
+
+- Beaver Cove Table (E)
+
+Unloading
+
+Stacker
+
+Events
+
+Productive
+
+Time
+
+230
+
+72
+
+Non-Productive Time:
+Idle (No Wood)
+Idle (Coffee /Lunch)
+Idle (Other)
+
+54
+32
+5
+
+17
+10
+2
+
+Total
+
+321
+
+101
+
+Events
+
+%
+
+0
+1
+2
+3
+4
+
+207
+7
+100
+4
+3
+
+64
+2
+31
+1
+1
+
+Total
+
+321
+
+99
+
+Events
+
+Z
+
+19
+100
+121
+55
+10
+16
+
+6
+31
+38
+17
+3
+5
+
+321
+
+100
+
+Graders
+
+Grading
+
+Number
+
+At Table
+
+Sorting
+
+Table
+
+Full
+3/4 Full
+1/2 Full
+1/4 Full
+Empty
+Mechanical
+
+Downtime
+
+Total
+
+36
+
+Beaver
+
+Cove Table (E) - continued
+
+Total Elapsed Time:
+Statistical
+
+Unloading
+Graders
+
+15 hours
+
+30 minutes.
+
+Significance
+
+Stacker
+
+Observed idle time
+during study:
+
+We are 95% confident
+that idle time lies
+between:
+
+28%
+64%
+
+24.0% - 34.0%
+58.7% - 69.5%
+
+37
+
+

@@ -1,0 +1,4795 @@
+FOREST ENGINEERING
+RESEARCH INSTITUTE
+O F CANADA
+
+FERIC
+
+INSTITUT CANADIEN
+D E RECHERCHES
+E N GÉNIE FORESTIER
+
+COMRARISON OF
+THREE HARVESTING SYSTEMS
+I N A COASTAL BRITISH COLUMBIA
+SECOND-GROWTH STAND
+J.T. Peterson
+December 1986
+
+Technical Report
+
+TR-73
+
+TECHNICAL REPORT NO. TR-73
+COMPARISON OF
+THREE HARVESTING SYSTEMS
+I N A COASTAL BRITISH COLUMBIA
+SECOND-GROWTH STAND
+J.T. Peterson
+December 1986
+
+©Copyright 1987. Forest Engineering Research Institute of Canada ISSN 0318-7063
+
+ACKNOWLEDGEMENTS
+
+The author wishes to thank the crew, staff, and
+contractors of MacMillan Bloedel Limited, Northwest
+Bay Division , for their help and co-operation.
+Special thanks go to Pat Phillips for his assistance in answering questions and obtaining data.
+Technical assistance provided by FERIC employees
+P.D. Forrester , K . Kosicki , E.J. Phillips , S.R.
+Webb , and A.B. Wong , is also acknowledged.
+
+AUTHOR
+
+John Peterson received his B.Sc. in Forest Engineering from Oregon State University in 1965.
+Since that time, he has been involved with logging
+and transportation operations in Western Oregon,
+Coastal British Columbia, Saskatchewan, and
+Alberta. H e worked for MacMillan Bloedel Ltd.,
+Trimac Transportation Services, and as a private
+consultant before joining FERIC in 1985. H e is
+currently Group Supervisor- -Harvesting Economics
+and Silviculture.
+
+TABLE OF CONTENTS
+PAGE
+ACKNOWLEDGEMENTS
+
+ii
+
+AUTHOR
+
+ii
+
+SUMMARY
+
+S-1
+
+SOMMAIRE
+
+S-2
+
+INTRODUCTION
+
+1
+
+STUDY METHOD
+
+1
+
+DESCRIPTION OF STUDY AREA
+
+2
+
+RESULTS AND DISCUSSION
+
+3
+
+1.
+
+2.
+
+3.
+
+Falling
+
+3
+
+A.
+B.
+C.
+D.
+
+4
+6
+8
+10
+
+System 1
+System 2
+System 3
+System Comparison--Falling
+
+Skidding/Yarding
+
+11
+
+A.
+B.
+C.
+D.
+E.
+
+12
+12
+15
+16
+18
+
+System 1 (Mechanically Felled)
+System 2 (Handfelled)
+Grapple Yarding- -Grapple Comparison
+System 3 (Mechanically Felled)
+System Comparison--Skidding/Yarding
+
+Processing
+
+19
+
+A.
+
+System 1 (Mechanically Felled , Grapple Yarded)
+i.
+Roadside Processing- -Manual Processing
+ii. Landing Processing- -Hahn Harvester
+iii. Roadside Processing--Hahn I I Harvester
+
+19
+19
+21
+22
+
+B.
+
+System 2 (Handfelled, Grapple Yarded)
+i.
+Roadside Processing — Manual Processing
+ii. Landing Processing- -Hahn Harvester
+iii. Roadside Processing--Hahn II Harvester
+
+25
+25
+26
+27
+
+C.
+
+System 3 (Mechanically Felled , Skidded)
+i.
+Landing Processing- -Hahn Harvester
+
+29
+29
+
+D.
+
+System Comparison
+
+29
+
+iii
+
+PAGE
+4.
+
+Loading
+
+32
+
+A.
+
+System 1 (Mechanically Felled, Grapple Yarded)
+i.
+Loading--Manual Processing
+ii. Loading--Hahn Harvester
+iii. Loading--Hahn II Harvester
+
+32
+32
+32
+33
+
+B.
+
+System 2 (Handfelled, Grapple Yarded)
+i.
+Loading--Manual Processing
+ii. Loading--Hahn Harvester
+iii. Loading--Hahn II Harvester
+
+34
+34
+34
+35
+
+C.
+
+System 3 (Mechanically Felled, Skidded)
+i.
+Loading--Hahn Harvester
+
+36
+36
+
+D.
+
+System Comparison
+
+37
+
+5.
+
+Logging Residue from the Systems
+
+37
+
+6.
+
+Overall Comparison of the Three Systems
+
+38
+
+CONCLUSIONS
+
+4〇
+
+REFERENCES
+
+42
+
+LIST OF FIGURES
+FIGURE
+A
+B
+C
+D
+E
+F
+G
+H
+I
+J
+K
+L
+
+PAGE
+Falling Pattern
+Handfaller
+Drott 50 Feller-Buncher
+Skidding/Yarding Patterns
+Grapple Yarder Setup
+1982 Madill 084 Grapple Yarder
+Clarke 667 Grapple Skidder
+Manual Processing
+Typical Hahn II Harvester Setup
+Hahn II Harvester Pulling Trees Out of Windrow
+Hahn Harvester
+Typical Hahn Harvester Setup
+
+iv
+
+3
+6
+8
+11
+12
+13
+16
+19
+24
+28
+3〇
+3〇
+
+LIST OF TABLES
+PAGE
+
+TABLE
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+3〇
+31
+32
+33
+34
+35
+36
+37
+38
+39
+
+Case 1 18 7 Feller-Buncher--Timing Summary
+Case 1 18 7 Feller-Buncher — Productivity and Cost
+Summary
+Handfalling— Productivity and Cost Summary
+Combined Falling Costs
+Handfalling--Timing Summary
+Handfalling with Selective Bucking- -Productivity and
+Cost Summary
+Drott 50 Feller-Buncher--Timing Summary
+Drott 50 Feller-Buncher--Productivity and Cost
+Summary
+Handfalling— Productivity and Cost Summary
+Combined Falling Costs
+Falling- -Production and Costs
+Grapple Yarding (Bunched)- -System 1 --Timing Summary
+Grapple Yarding (Bunched)- -Productivity and Cost
+Summary
+Grapple Yarding (Handfelled)--System 2- -Timing Summary
+Grapple Yarding (Handfelled)--Productivity and Cost
+Summary
+Grapple Yarding--Grapple Comparisons
+Skidding--System 3— Timing Summary
+Choker Versus Grapple Skidder Production
+Skidding--Productivity and Cost Summary
+Skidding/Yarding--Production and Costs
+Manual Processing- -System 1 - -Timing Summary
+Poclain Log Loader (Manual Processing)--System 1- Timing Summary
+Manual Processing- -Productivity and Cost Summary
+Hahn Harvester--System 1 --Timing Summary
+Hahn Harvester--Productivity and Cost Summary
+Hahn II Harvester--System 1 --Timing Summary
+Hahn II Harvester--Productivity and Cost Summary
+Manual Processing- -System 2 Timing Summary
+Poclain Log Loader (Manual Processing)— System 2- Timing Summary
+Manual Processing- -Productivity and Cost Summary
+Hahn Harvester--System 2--Timing Summary
+Hahn Harvester--Productivity and Cost Summary
+Hahn II Harvester--System 2- -Timing Summary
+Hahn II Harvester--Productivity and Cost Summary
+Hahn Harvester--System 3--Timing Summary
+Hahn Harvester--Productivity and Cost Summary
+Roadside Processing Methods--Production and Costs
+Poclain Log Loader (Manual Processing)— Productivity
+and Cost Summary
+Barko 250 Log Loader (Hahn Harvester )--Productivity
+and Cost Summary
+
+v
+
+4
+5
+5
+6
+7
+7
+9
+9
+10
+10
+11
+13
+14
+14
+15
+15
+17
+17
+17
+18
+20
+20
+21
+21
+22
+23
+24
+25
+25
+26
+27
+27
+28
+29
+3〇
+31
+31
+33
+33
+
+PAGE
+
+TABLE
+40
+41
+42
+43
+44
+45
+46
+47
+48
+
+Poclain Log Loader (Hahn II Harvester)— Productivity
+and Cost Summary
+Poclain Log Loader (Manual Processing)--Productivity
+and Cost Summary
+Barko 250 Log Loader (Hahn Harvester)--Productivity
+and Cost Summary
+Poclain Log Loader (Hahn II Harvester)--Productivity
+and Cost Summary
+Barko Log Loader (Hahn Harvester )--Productivity and
+Cost Summary
+Loading--Production and Costs
+Close Utilization Residue Sampling
+System Comparison--All Methods (Cost per Cubic Metre)
+System Comparison--All Methods (Cost per Piece)
+
+34
+35
+35
+36
+36
+37
+38
+39
+39
+
+LIST OF APPENDICES
+PAGE
+
+APPENDIX
+I
+II
+III
+IV
+V
+VI
+VII
+
+Logging Costs
+Terrain Information
+Contour Map
+Area and Volume Information
+Y96 Choker Grapple
+Y106 Choker Grapple for Bunches
+Tree and Piece Size Statistics
+
+vi
+
+43
+45
+46
+47
+48
+49
+50
+
+SUMMARY
+
+The objective of this study was to monitor and evaluate the productivity and costs of falling , skidding , yarding, processing, and loading as a
+result of:
+-
+
+full-tree grapple yarding with roadside processing;
+bunch skidding with landing processing; and
+bunch grapple-yarding with roadside processing.
+
+The study block was located approximately 5 km west of Buckley Bay ,
+B.C. Stand composition was mainly second-growth Douglas-fir , with lesser
+amounts of hemlock and cedar. T o facilitate studying the different systems,
+the 34-ha study block was divided into three areas.
+The logging system found to be most efficient and cost-effective was
+bunch skidding with landing processing , combined with close supervision. On a
+cost-per-piece basis, this system was 1 3% cheaper than the other systems
+studied.
+The other two systems were full-tree grapple yarding and bunch
+grapple yarding. Yarding of bunches reduced the cost per piece by over $1 .50.
+Production increased more than 65% on a pieces-per-shift basis.
+The side-by-side system comparisons resulted in a number of other
+findings. First , grapple design and size is critical to yarding productivity.
+For example, there was a 42% improvement in productivity when a different
+grapple was introduced into the handfelled area.
+Second , falling patterns and methods play a decisive role in
+skidding , yarding, and roadside processing productivities. For instance ,
+yarding the handfelled area resulted in tree tops facing the road when
+windrowed. This reduced processing productivity.
+Third, there was a noticeable reduction in logging residue left on
+the site in the bunched-wood areas.
+Fourth , roadside processing offered the extra advantage of allowing
+presorting in the woods. This saved dollars o n those pieces which bypassed
+the dryland sortyard processing phases.
+One of the major problems still existing in coastal B.C. is the
+inability to remove full-tree wood efficiently from windrows for roadside
+processing. This must be solved in order to make roadside processing more
+cost effective in the future and permit the full gains of mechanization to be
+achieved.
+
+S-l
+
+SOMMAIRE
+
+L'objectif de cette étude fut d'enregistrer et d'évaluer l a productivité et les coûts d'abattage, de débusquage, de téléphérage , de transformation et de chargement résultant du:
+-
+
+téléphérage à grappins d'arbres entiers avec transformation au chemin;
+débusquage par ballot avec transformation à la jetée; et du
+téléphérage à grappins par ballot avec transformation au chemin.
+
+La zone étudiée était située à approximativement 5 km à l'ouest de
+Buckley Bay , C.B. Le peuplement était composé principalement de sapin de
+Douglas de second pousse , avec une moindre quantité de pruche et de cèdre.
+Afin de faciliter 1'étude des différents systèmes , les 34 ha de la zone
+d'étude furent divisés en trois parties.
+Le système d'exploitation qui s'est avéré le plus efficace avec les
+coûts les plus avantageux fut le débusquage par ballot avec transformation à
+la jetée, en combinaison avec une étroite surveillance. Sur une base de coûtpar-morceau , ce système était 13% moins cher que les autres systèmes étudiés.
+Les deux autres systèmes étaient le téléphérage à grappins d'arbres
+entiers et le téléphérage à grappins par ballot. Le téléphérage de ballots a
+réduit le coût par morceau de plus de $1 .50. La productivité fut augmentée de
+plus de 65% sur une base de morceau- par-quart de travail.
+D e nombreuses constatations résultèrent des comparaisons côte-à-côte
+des systèmes. Premièrement , la conception et les dimensions du grappin sont
+d'une importance majeure quant à la productivité par téléphérage. Par exemple,
+la productivité s'est accrue de 42% lorsqu'un grappin différent fut introduit
+dans l a zone d'abattage manuel.
+Deuxièmement, les méthodes et les modes d'abattage ont joué un rôle
+décisif dans la productivité du débusquage, de téléphérage et de transformation en bordure de chemin. En effet, le téléphérage des zones abattues manuelle'
+ment, avec l e mode en rangées au bordure de route , donnait lieu à des cîmes
+d'arbres face au chemin. Ceci réduisit l a productivité de la transformation.
+Troisièmement , il y eu une diminution importante de résidus de coupe
+sur les sites ou les arbres étaient assemblés par ballots.
+Quatrièmement , l a transformation en bordure de chemin offrit un
+avantage supplémentaire en permettant un triage préliminaire en forêt. Ceci
+occasionna des économies de coûts pour les billes évitant la voie du parc de
+triage pour les phases de transformation.
+Un des problèmes majeurs toujours persistant sur les côtes de l a
+C.B. est l'incapacité de sortir efficacement les arbres entiers abattus en
+rangées au bordure de route, pour ensuite être transformés en bordure de
+chemin. Ce problème doit être solutionné afin de rendre l a transformation en
+bordure de chemin plus rentable dans le futur et d'atteindre tous les bénéfices de l a mécanisation.
+S-2
+
+INTRODUCTION
+The objective of this study was to compare the cost, productivity,
+and operational factors of three different harvesting systems in a B.C.
+coastal second-growth stand.
+MacMillan Bloedel Ltd.'s Northwest Bay Division has been logging
+second-growth stands for several years. To increase profitability , fellerbunchers, skidders, and mechanical processors have been used to log these
+lower-value stands. However , it was recognized that ground-skidding systems
+are limited on the coast of B.C. because of site disturbance and mountainous
+terrain. Since the division also had experienced cable-yarding crews and
+equipment available, there was int erest in determining if conventional cablelogging systems could be modified to harvest second-growth stands economically
+in some areas. In 1985, a decision was made to harvest a second-growth stand
+on a test basis to determine the advantages and disadvantages of partially
+mechanizing a cable-logging system. FERIC was asked to monitor and evaluate
+the test. This report gives the results of the evaluation.
+FERIC also used this project to begin collecting detailed information on how productivity and cost are affected by tree size, terrain, distance , and other factors for the Harvesting Economics Project.
+The objective of the Harvesting Economics Project is to provide
+industry with a method to estimate more accurately the marginal costs of
+harvesting logs to determine economic utilization standards for various
+logging areas. The yarding and falling phases were examined intensively
+during this study. The results of the examination will be reported in more
+detail in subsequent reports.
+STUDY METHOD
+The study was conducted at MacMillan Bloedel Ltd.'s Northwest Bay
+Division o n the east coast of Vancouver Island. Falling started in April 1985
+and logging was completed in October 1985. The study area was a 34-ha opening
+in a 1 10-year-old second-growth stand. The area was divided into three parts
+and a different system was used in each. The systems were:
+System 1 - Mechanically fall and bunch
+- Grapple yard to roadside and windrow
+- Process at roadside fr om windrow
+- Load
+System 2 - Handfall with selective bucking
+- Grapple yard to roadside and windrow
+- Process at roadside from windrow
+- Load
+
+1
+
+System 3 ~ Mechanically fall and bunch
+- Ground skid to landing
+- Process in landing
+- Load
+In Systems 1 and 2, yarding preceded processing but in System 3, skidding and
+processing were concurrent.
+Prior divisional experience had shown that processing in a landing
+in conjunction with skidding was productive and cost-effective. However , the
+division had less experience in processing at roadside from windrowed logs.
+Consequently , it was decided to try a variety of roadside processing methods
+with Systems 1 and 2 to determine their cost and productivity. The roadside
+processing systems tested were:
+-
+
+Hahn Harvester
+Hahn Harvester II
+Log loader and hand buckers
+
+All production data were obtained by FERIC personnel using timing
+boards and stopwatches. The company supplied stand and log-volume information
+and conducted the waste-assessment survey after logging.
+The timing results , in which all mechanical and operational delays
+were recorded, were converted to an 8-hour-shift basis (6.5 hours in the case
+of the handfallers) to determine productivity. Delay time includes all
+delays, both major and minor. The utilization levels used were those observed
+during detailed timing. However , when making comparisons between the same
+machine used in different systems , a standard utilization level was used.
+The labour rates used in the cost analysis are current IWA rates
+plus 35% burden (Appendix I ). Machinery costs are FERIC estimates based on
+information from equipment distributors and a standard owning , repairing, and
+operating formula is used. Unless stated , costs such as supervision, overhead , and crew and equipment transportation are not included. Interest or
+opportunity costs are excluded from the machinery costs reported in the text,
+but are listed in Appendix I.
+
+DESCRIPTION OF STUDY AREA
+Forest cover maps show the establishment date of the present stand
+as 1874, following the blow down of the previous stand. Most remaining oldgrowth timber was logged in the late 1940s. A few old-growth trees and some
+sound , cedar windfalls were scattered’throughout the present stand.
+Terrain was rolling and sloped to the east. Slopes varied from 0 to
+52%, with an average of 17-5 percent. (More detail on the terrain can be
+found in Appendices II and III.) The only obstacles were old-growth stumps
+and windfalls. Understory was mainly sword fern and Oregon grape with some
+small salai patches in the northwest corner of the block.
+
+2
+
+Site index of the stand was 24 (BASE 50) and stocking was 89
+percent. Stand information was derived from MacMillan Bloedel Ltd.’s forest
+cover maps and local knowledge. Appendix IV gives area and volume information
+on the trial site.
+
+RESULTS AND DISCUSSION
+1.
+
+Falling
+
+Each area was felled to suit the harvesting system. As Figure A
+shows, the falling patterns were quite different for each system.
+
+MECHANICALLY
+
+SYSTEM 3
+
+LEGEND
+Setting Boundary
+Rood
+Property Line
+I
+
+SYSTEM 2
+
+MECHANICALLY
+
+N
+
+0
+
+FELLEO AND
+
+50100
+metrn
+
+FIGURE A.
+
+Falling Pattern.
+
+3
+
+A.
+
+System 1
+
+Trees were mechanically felled and bunched by a Case 1 18? fellerbuncher equipped with a 50-cm Drott shear head. Trees were laid in bunches at
+approximately a 45° angle to the yarding road to improve yarding efficiency.
+Trees with a butt diameter greater than 50 cm were handfelled and those under
+a 60-cm butt diameter were left full-tree. The bottom one or two logs were
+hand bucked from trees with more than a 60-cm butt diameter and the remainder
+of the tree was left for roadside processing. Ninety-seven percent of the
+trees ( 87% of the total volume) were within the cutting capacity of the Case
+1 18? feller-buncher.
+Terrain in the System 1 area was suited for mechanical falling.
+Slope ranged from 0 to 38%, with an average of 18% and there were f ew obstacles to travel. The Case 1 187 feller-buncher was able to traverse the entire
+area.
+Table 1 is a summary of the detailed timing study on the Case 1 187
+feller-buncher. The machine spent 77% of its time o n productive functions.
+The majority of maintenance time was for hydraulic hose repair , general
+servicing , and track repairs.
+TABLE 1.
+
+Case 1 187 Feller-Buncher — Timing Summary.
+Average Tree Volume
+Number of Trees Cut
+
+PHASE
+Productive
+Move
+Swing Empty
+Position & Cut
+Swing Loaded
+Bunch
+Brush
+Subtotal
+
+=
+-
+
+0.54 m’
+1877
+
+TOTAL
+TIME
+(MINUTES)
+
+Î
+
+400.6
+235.3
+395.2
+310.5
+39.8
+214.5
+1 595.9
+
+19
+12
+19
+15
+2
+10
+77
+
+39.5
+249.0
+179.0
+467.5
+
+2
+12
+9
+23
+
+2 063.4
+
+100
+
+Delay
+Move Windfall
+Mechanical
+Other
+Subtotal
+Total
+
+Table 2 summarizes the production results and presents the costs of
+felling and bunching with the Case 1 187 feller-buncher.
+
+4
+
+TABLE 2.
+
+Case 1 187 Feller-Buncher--Productivity and Cost Summary.
+
+No. trees per productive machine hour (PMH)
+No. trees per scheduled machine hour (SMH)
+
+70.6
+54.6
+
+Volume per shift ( 8 hours), m 3
+No. trees per shift
+
+235.8
+436.6
+
+Total equipment cost per shift*
+
+$674.08
+
+Cost per m 3
+Cost per tree
+
+$2.85
+$1.54
+
+*Cost includes machine and operator.
+
+Interest excluded.
+
+A butt-damage evaluation on mechanically felled trees was carried
+out by FERIC (see Guimier 1981 and McMorland 1985 for method). Based on all
+trees measured in the bunch-turn yarding area, the average loss was 1.89
+percent. The estimated mill loss, assuming all logs were cut into 2 x 6s,
+would be 2.54 percent.
+From the operational cruise data , the handfaller felled 3% of the
+stems (13% of the total volume). In addition, he felled snags and a few trees
+that were inaccessible to the feller-buncher and hand bucked some large windfalls. Table 3 gives the productivity and cost summary for the handfaller.
+TABLE 3.
+
+Handfalling--Productivity and Cost Summary.
+
+Average tree volume, m 3
+No. trees per productive hour
+
+2.50
+18.6
+
+Volume per shift (6.5 hours), m 3
+No. trees per shift
+
+151.3
+60.5
+$319.65
+
+Falling cost per shift*
+Cost per tn3
+Cost per tree
+
+$2.11
+$5.28
+
+»Cost Includes faller and saw at 50% utilization.
+
+When working directly with the feller-buncher , the handfaller
+experienced long delays while waiting for the machine to get into the clear.
+As a result , the faller would wait until the machine had felled a sizeable
+area and then he would fall the remaining standing trees. In addition to
+reducing delays, this freed the faller for more productive work in other
+cutting areas.
+Table 4 shows the combined falling costs for System 1.
+
+5
+
+TABLE 4.
+
+Combined Falling Costs.
+
+Cost per tree:
+Feller-buncher - 9 7 1 of pieces @ $1.54 per tree
+Faller - 3 1 of pieces @ $ 5.28 per tree
+Weighted average cost per tree = $1.65
+Cost per m 3 :
+Feller-buncher - 8 7 % of volume @ $2.85 per m 3
+Faller - 1 3J of volume @ $2.11 per m 3
+Weighted average cost per m 3 = $2.76
+
+B.
+
+System 2
+
+All trees were handfelled perpendicular to the yarding road to
+improve yarding efficiency (Figure B). Trees under 6〇-cm butt diameter were
+left as full trees. Selective bucking was done on those over 6 0 cm, e.g., the
+bottom one or two logs were hand bucked and the remainder left for roadside
+processing. Only 3% of the trees required hand bucking.
+
+FIGURE B.
+
+Handfaller.
+
+Table 5 is a summary of the detailed timing results on the handfallers. Move time includes walk-in and walk-out at the beginning and end of
+each shift and at lunch time. Delay time will normally be greater than shown
+because such delays as safety meetings and high-wind days are not included.
+
+TABLE 5.
+
+Handfalling--Timing Summary.
+
+TOTAL TIME
+(MINUTES)
+
+i
+
+MINUTES/
+TREE
+
+TREES/
+HOUR
+
+Productive
+Move*
+Brush
+Cut
+Limb & Buck
+Buck Windfall
+Subtotal
+
+3 708.0
+872.7
+4 252.1
+480.5
+74.5
+9 387.8
+
+3〇
+7
+34
+4
+1
+76
+
+0.53
+0.12
+0.60
+0.07
+0.01
+1.33
+
+45.2
+
+Delay
+Fuel & Oil
+File Chain
+S a w Repairs
+Other
+Subtotal
+
+668.5
+281 . 0
+435.1
+1 645.7
+3 030.3
+
+5
+2
+4
+13
+24
+
+0.10
+0.04
+0.06
+0.23
+0.43
+
+Total
+
+1 2 418.1
+
+100
+
+1.76
+
+No. Trees
+Merchantable
+Sapling
+Snag
+Total
+
+5 341
+1 100
+633
+7 074
+
+PHASE
+
+34.2
+
+♦Includes walk in and out time.
+
+Table 6 gives a productivity and cost summary for the handfalling
+required for System 2.
+
+TABLE 6.
+
+Handfalling with Selective Bucking-Productivity and Cost Summary.
+
+No. trees per PMH
+No. trees per SMH
+
+45.2
+34.2
+
+Volume per shift ( 6 . 5 hours), m 3
+Trees per shift
+
+204.5
+222.3
+
+Total cost per shift*
+
+$319.65
+
+Cost per m 3
+Cost per tree
+
+$1.56
+$1 .44
+
+♦Cost includes faller a t 7 6 % utilization.
+
+7
+
+C.
+
+System 3
+
+Trees under 5 0 cm were mechanically f elled and bunched by a Drott 50
+feller-buncher equipped with a 50-cm Drott shear head (Figure C ). Throughout
+the study period the machine operated o n a single-shift basis. Trees with a
+butt diameter greater than 5 0 cm were handfelled and those under a 6〇-cm butt
+diameter were left full-tree. The bottom one or two logs were hand bucked
+from trees with more than a 6〇-cm butt diameter and the remainder left for
+roadside processing .
+
+FIGURE C.
+
+Drott 5 0 Feller-Buncher.
+
+Terrain in the System 3 area was suited for mechanical falling.
+Slope ranged from 0 to 19%, with an average of 1 2 percent. The Drott 5 0
+feller-buncher had little difficulty traversing the area.
+There were many windfalls and a higher percentage of large stems in
+this area than in the other areas. This necessitated a handfaller working
+with the feller-buncher almost full time. Thirteen percent of the trees (45%
+
+8
+
+of the total volume) required handfalling and bucking. This reduced the
+efficiency of the feller-buncher as it had to work around these large trees.
+Bunches were laid with the butts facing the landing to achieve
+maximum skidding efficiency.
+Detailed timing data for the Drott 50 feller-buncher are shown in
+Table 7 and are based on approximately 55 hours of detailed timing information. Table 8 is a summary of productivity and cost for the Drott 50 fellerbuncher.
+
+TABLE 7.
+
+Drott 50 Feller-Buncher--Timing Summary.
+Average Tree Volume
+Number of Trees Cut
+
+-
+
+TOTAL
+TIME
+(MINUTES)
+
+%
+
+Productive
+Move
+Swing Empty
+Position & Cut
+Swing Loaded
+Bunch
+Brush
+Subtotal
+
+795.0
+437.0
+553.5
+466.1
+101 .6
+250.1
+2 603.3
+
+24
+13
+17
+14
+3
+8
+79
+
+Delay
+Move Windfall
+Mechanical
+Other
+Subtotal
+
+91 .7
+177.1
+404.5
+673.3
+
+3
+6
+12
+21
+
+3 276.6
+
+100
+
+PHASE
+
+Total
+
+TABLE 8.
+
+0.70 m’
+3050
+
+Drott 50 Feller-Buncher--Productivity and Cost Summary.
+No. trees per PMH
+No. trees per SMH
+
+70.3
+55.9
+
+Volume per shift ( 8 hours), m 3
+No. trees per shift
+
+313.0
+447.1
+
+Total equipment cost per shift*
+
+$674.08
+
+Cost per m 3
+Cost per tree
+
+$2.15
+$1 .51
+
+*Cost includes machine and operator.
+
+9
+
+Interest excluded.
+
+Based o n all trees measured , the average wood loss as a result of
+butt damage was 1 .34 percent. Estimated mill loss, assuming all logs were cut
+into 2 x 6 s , would be 1.92 percent.
+Handfalling was done o n 13% of the stems, which accounted for 45% of
+the total volume. The faller experienced long delays while waiting for the
+feller-buncher to get in the clear. H e also felled snags and trees that were
+inaccessible t o the feller-buncher , and bucked windfalls. Production data for
+handfalling are shown in Table 9 . Costs per cubic metre and per tree include
+a faller and saw at 50% utilization.
+Table 10 shows the combined mechanical and handfalling costs for
+System 3・
+
+TABLE 9 .
+
+Handfalling--Productivity and Cost Summary.
+
+Average t r e e volume , m 3
+No. t r e e s per p r o d u c t i v e hour
+
+3.62
+13.8
+
+Volume per s h i f t ( 6 . 5 h o u r s ) , tn 3
+No. t r e e s per s h i f t
+
+162.4
+44.9
+
+F a l l i n g c o s t per s h i f t *
+3
+
+$319.65
+$1.97
+$7.12
+
+Cost per m
+Cost per t r e e
+
+«Cost i n c l u d e s f a l l e r and saw a t 5 0 Í u t i l i z a t i o n .
+
+TABLE 1 0.
+
+Combined Falling Costs.
+
+Cost per t r e e :
+D r o t t - 87 Í of trees Q $1.51 per t r e e
+F a l l e r - 1 3 Í of t r e e s @ $ 7 . 1 2 per t r e e
+Weighted average c o s t per t r e e = $2.24
+Cost per m 3 :
+D r o t t - 55% of volume @ $2.15 p e r m 3
+F a l l e r - U5i of volume @ $1.97 per m 3
+Weighted a v e r a g e c o s t per m 3 = $2.07
+
+D.
+
+System Comparison- -Falling
+
+The high capital costs of the feller-bunchers make them the higher
+cost method (Table 11). The number of trees felled per shift for the two
+machines studied were about the same. The difference in cost per cubic metre
+between the two machines is mainly because of piece size variance. The
+average tree volume for the Case 1 18 7 was 0.54 m 3 versus 0.70 m 3 for the
+Drott 50. O n a long-term basis, handfalling costs will be higher than shown
+because delays such a s high-wind days and safety meetings are not included.
+
+10
+
+TABLE 1 1.
+
+Falling- -Production and Costs.
+
+SYSTEM
+1.
+2.
+3.
+
+m 3 /SHIFT
+
+TREES/SHIFT
+
+$/m’
+
+$/TREE
+
+387.1
+204.5
+475.4
+
+497.3
+222.3
+492.1
+
+$2.76
+$1.56
+$2.07
+
+$1.65
+$1.44
+$2.24
+
+Case 1 18 7 feller-buncher*
+Handfall
+Drott 5 0 feller-buncher*
+
+*Includes handfalling cost.
+
+2.
+
+Skidding/Yarding
+
+Each of the areas was yarded or skidded according to terrain and
+haul-road layout constraints. Figure D shows the yarding patterns.
+MECHANICALLY
+；
+FELLED AND .BUNCHED \
+SYSTEM 3
+GRAPPLE SKIOOER | Skidded to
+CHOKER SKIDDER
+2 landing and
+FMC
+) processed hot
+
+LEGEND
+— ► Yarding Direction
+------- Setting Boundary
+------- Road
+—
+Property Line
+®
+Landing
+
+HAND FELLED
+SYSTEM 2
+GRAPPLE YARDER
+Yarded to roodtide and
+cold decked i n windrow«
+
+MECHANICALLY
+FELLED AND
+BUNCHED
+
+SYSTEM I
+GRAPPLE YARDER
+Yarded Io roodtide and
+cold decked in windrows
+
+y
+”0
+metre*
+
+FIGURE D .
+
+Skidding/Yarding Patterns.
+
+11
+
+A.
+
+System 1 (Mechanically Felled)
+
+Yarding was done by a 1982 Madill 084 grapple yarder using a 1978
+Hitachi UHT4 mobile backspar (Figure E). Pieces were yarded to roadside and
+decked in Windrows. Yarding deflection was generally good , with a maximum
+yarding distance of 1 45 m. The bunching pattern resulted in good operator
+visibility and opportunity for the grapple to yard multiple pieces per turn.
+Bunching also resulted in all tree butts facing the road. This increased the
+efficiency of roadside processing.
+
+Haulback
+y— Mainline
+/
+Tagline
+Haulback
+
+Guyline
+
+Closing
+
+Line
+
+Backspar
+
+FIGURE E.
+
+Grapple Yarder Setup.
+
+The yarding crew averaged 2.75 men per shift. The operator and
+hooker were there all of the time and a utilityman was there when significant
+machine move time was involved. Figure F shows the grapple yarder studied.
+Table 12.
+yarder.
+B.
+
+The results of the detailed timing study of the yarder are given in
+Table 1 3 shows a summary of cost and productivity for the grapple
+
+System 2 (Handfelled)
+
+Yarding was done by the same crew and backspar as in System 1.
+Pieces were yarded to roadside and decked in windrows.
+Yarding deflection was generally good except for one section in the
+northwest corner of the block. The placement of the spur road created a
+situation where the yarder operator could not see many of the pieces he was
+hooking up. He was aided by the hooker giving directions by radio. Compared
+to the prior day, hookup time increased by 22% during the 2.5-hour period he
+yarded this area.
+
+12
+
+FIGURE F.
+
+TABLE 1 2.
+
+1982 Madill 084 Grapple Yarder.
+
+Grapple Yarding (Bunched)--System 1 --Timing Summary
+0.59 ms
+
+Average Piece S i z e
+Number of Pieces Yarded
+
+=
+=
+
+4380
+
+Number of Turns
+
+-
+
+201 1
+
+TOTAL
+TIME
+
+PHASE
+
+(MINUTES)
+
+%
+
+551 . 1
+1 765.8
+
+17
+56
+
+117.8
+2 434.7
+
+77
+
+PIECES/
+
+TURNS/
+
+m3/
+
+HOUR
+
+HOUR
+
+HOUR
+
+107.9
+
+4 9 .6
+
+63.7
+
+82.7
+
+38.0
+
+48.8
+
+Productive
+Move
+Yard
+Deck
+Subtotal
+Delay
+Mechanical
+Other
+Subtotal
+Total
+Average
+
+476.2
+265.1
+
+15
+8
+
+741.3
+
+23
+
+3 176.0
+
+100
+
+yarding time/turn, m i n
+Move
+
+0.27
+0.22
+
+Outhaul
+Hookup
+Inhaul
+
+0.29
+0.29
+0.07
+
+Unhook
+Deck
+
+0.06
+Total
+
+1. 2 0
+
+13
+
+TABLE 13.
+
+Grapple Yarding ( Bunched )--Productivity and Cost Summary.
+
+Average yarding distance , m
+Average no. pieces per turn
+Average move time , min
+No. moves per PMH
+
+70.7
+2.18
+3.16
+3.60
+
+Volume per shift ( 8 hours), m 3
+No. pieces per shift
+
+390.6
+661.6
+$1 650.24
+
+Total equipment cost per shift*
+Cost per m 3
+Cost per piece
+
+$4.22
+$2.U9
+
+»Costs include the machine and crew (operator , hooker , and
+75% of a utilityman) and the backspar. Interest excluded.
+
+The results of approximately 1 1 0 hours of detailed timing are given
+in Table 14. Table 15 summarizes the productivity and cost information for
+the grapple yarder in System 2.
+
+TABLE 14.
+
+Grapple Yarding (Handfelled)- -System 2--Timing Summary.
+Average Piece Size
+Number of Pieces Yarded
+Number of Turns
+
+0.91 m 3
+5071
+3592
+
+=
+
+TOTAL
+TIME
+(MINUTES)
+
+%
+
+PIECES/
+HOUR
+
+TURNS/
+HOUR
+
+m3 /
+HOUR
+
+Subtotal
+
+81 5 . 6
+3 295.3
+556.4
+4 6 6 7.3
+
+13
+51
+8
+72
+
+65.2
+
+46.2
+
+59.3
+
+Delay
+Mechanical
+Other
+Subtotal
+
+1 394.3
+409.9
+1 804.2
+
+22
+6
+28
+
+Total
+
+6 471 . 5
+
+100
+
+47.0
+
+33-3
+
+PHASE
+
+Productive
+Move
+Yard
+Deck
+
+Average yarding time/turn, min
+Move
+Outhaul
+Hookup
+Inhaul
+Unhook
+Deck
+Total
+
+0.23
+0.22
+0.34
+0.29
+0.07
+0.15
+1.3〇
+
+14
+
+42.8
+
+TABLE 15.
+
+Grapple Yarding (Handfelled)--Productivity and Cost Summary.
+
+Average yarding distance ,
+Average no. pieces per turn
+Average move time , min
+No. moves per PMH
+
+76.6
+1 .Ml
+6.64
+1. 5 0
+
+Volume per shift ( 8 hours), m 3
+Pieces per shift
+
+342.4
+376.0
+$1 650.24
+
+Total equipment cost per shift*
+Cost per m 3
+Cost per piece
+
+$4.82
+$4.39
+
+♦Costs include the machine and crew (operator , hooker , and
+75% o f a utilityman , and the backspar. Interest excluded.
+
+The falling pattern, with trees perpendicular to the yarding road,
+allowed the operator good opportunity to grab the trees. Some disadvantages
+were:
+-
+
+Tops lay both ways. To facilitate roadside processing , it is preferable
+to have all butts facing the road. This falling pattern does not make
+for efficient butt-first yarding.
+
+-
+
+If more than one piece was grappled , then quite often a piece would not
+stay in lead. This caused more hangups, more strain on the grapple, and
+longer decking time.
+
+Right-of-way logs were not picked up and loaded prior to yarding.
+This reduced yarder productivity as many of these pieces had to be pulled away
+from the road and aligned for windrowing.
+C.
+
+Grapple Yarding--Grapple Comparison
+
+Two different yarding grapples (Table 16 ) were used in the System 1
+area. The use of the larger Johnson Y 106 grapple resulted in a 20% increase
+in the number of pieces yarded per Productive Machine Hour (PMH)• This
+increase results from the size and design differences of the two grapples
+(Appendices V and VI).
+TABLE 1 6.
+
+Grapple Yarding--Grapple Comparisons.
+JOHNSON Y96
+(244 c m )
+
+MANTLE 6 5
+(165 cm)
+SYSTEM 1
+No. pieces per turn
+No. pieces per PMH
+
+JOHNSON Y106
+(269 c m )
+
+SYSTEM 2
+
+SYSTEM 1
+
+SYSTEM 2
+
+SYSTEM 1
+
+SYSTEM 2
+
+1.26
+46.1
+
+1 .75
+92.4
+
+1.40
+65.5
+
+2.36
+110.9
+
+1.85
+80.8
+
+15
+
+Three different yarding grapples were used in the System 2 area. As
+in System 1 , the use of the larger Johnson 1106 grapple resulted in increased
+productivity . It was 23% more productive than the Y96 grapple and 75% more
+productive than the Mantle 6 5 yarding grapple.
+D.
+
+System 3 (Mechanically Felled )
+
+All pieces were skidded by choker or grapple skidders. They were
+landed either at the Hahn Harvester for immediate processing or were decked
+for later forwarding to the Hahn. Bucked , oversize logs were skidded directly
+t o the Barko 250 log loader f or sorting and loading.
+
+y—
+
+.d _ _ _
+
+Figure G shows the skidding area and a Clark 66? grapple skidder
+with four full-tree pieces.
+
+■
+
+■'s
+HH
+
+FIGURE G.
+
+Clarke 667 Grapple Skidder.
+
+The bunched wood provided excellent hookup opportunity for the
+skidders. The fall ing pattern , wi th the butts f acing the landing , decreased
+the amount of breakage that woul d otherwise happen when pulling trees into lead .
+Three to four skidders were used daily in this system with an
+average of 3.5 per day for the study period . Six different skidders were
+timed during the project~-four were grapple and two were choker skidders.
+Table 1 7 gives a summary of detailed timing for all the machines. Table 18
+shows that on both a pieces-per -hour and a turns-per-hour basis , the grapple
+skidders outperformed the choker skidders. As derived from the Table , the
+choker skidder utilization was 89% compared to the grapple skidder utilization
+of 62%. This difference was mainly due to one gr apple skidder being used
+almost full time to forward wood from cold-decks and to do landing clean-up
+
+16
+
+work. Productivity and cost summary data for skidding are shown in Table 19
+and are based o n the detailed timing information.
+TABLE 17.
+
+Skidding--System 3 — Timing Summary.
+Number of Pieces Skidded
+Number of Turns
+
+=
+
+5963
+1507
+
+TOTAL
+TIME
+(MINUTES)
+
+%
+
+Productive
+Skid
+
+10 446.5
+
+71
+
+Delay
+Cleanup
+Mechanical
+Other
+Subtotal
+
+2 648.8
+618.4
+1 103.0
+M 370.2
+
+18
+4
+7
+~29
+
+Total
+
+14 816.7
+
+ÏÔÔ
+
+PHASE
+
+TABLE 18.
+
+Choker Versus Grapple Skidder Production.
+
+CHOKER
+
+GRAPPLE
+
+No. pieces per PMH
+No. pieces per S M H
+
+24.6
+22.0
+
+40.9
+25.2
+
+No. turns per PMH
+No. turns per SMH
+
+6.0
+5.4
+
+10.4
+6.4
+
+TABLE 19.
+
+Skidding--Productivity and Cost Summary.
+
+Average piece volume, m ’
+Average no. pieces per turn
+
+0.94
+3.96
+
+No. pieces per PMH
+No. pieces per SMH
+
+34.2
+24.1
+
+No. turns per PMH
+No. turns per SMH
+
+8.66
+6.10
+
+Volume per shift ( 8 hours), m 3
+No. pieces per shift
+
+181.2
+192.8
+
+Total equipment cost per shift*
+3
+
+Cost per m
+Cost per piece
+
+$495.12
+$2.73
+$2.57
+
+*Cost includes machine and operator.
+
+17
+
+Interest excluded.
+
+When the choker skidders fed the Hahn Harvester directly, it caused
+delay time for the harvester. This was because the Hahn loader had to wait
+for the skidder operator to unhook chokers before he could resume loading
+logs. The contractor corrected this problem by having the choker skidders
+cold-deck, and the harvester was fed by a grapple skidder only.
+E.
+
+System Comparison--Skidding/Yarding
+
+Table 20 compares the three methods used during the study. For
+comparative purposes , machine utilization is set at 75% for all three methods.
+TABLE 20.
+
+Skidding/Yarding--Production and Costs.
+
+SYSTEM
+
+m 3 /SHIFT*
+
+PIECES/SHIFT*
+
+$ / m3
+
+$/PIECE
+$2.55
+$4.22
+$2.41
+
+1.
+2.
+
+G r a p p l e yarding - bunches
+Grapple yarding - handfelled
+
+382.2
+
+647.4
+
+$4.32
+
+356.0
+
+$4.64
+
+3.
+
+S k i d d i n g - bunches
+
+192.9
+
+391 . 2
+205.2
+
+$2.57
+
+*75% utilization.
+
+Skidding resulted in the most economic cost. This was mainly
+because of the lower total equipment cost per hour for skidders. Skidders
+cost about $60 per hour whereas grapple yarders cost about $180 per hour.
+Also , the skidder area had the gentlest terrain and the highest piece size
+average.
+When grapple yarding of bunches was compared with grapple yarding of
+handfelled wood it was found that:
+-
+
+The cost of yarding bunches was $ 0.32/m 3 cheaper despite a piece size
+disadvantage averaging 0.32 m 3 /piece.
+
+-
+
+The cost of yarding bunches was $1 .67/piece less than yarding nonbunched wood.
+
+-
+
+Pieces yarded per shift increased by 65% for the bunched wood. The
+bunches resulted in better operator visibility ( a larger and more visible
+target), and thus a better chance for the grapple to yard multiple pieces
+per turn.
+
+-
+
+When windrowed, bunched wood results in all butts facing the road.
+facilitates subsequent roadside processing.
+
+18
+
+This
+
+3.
+
+Processing
+A.
+
+System 1 (Mechanically Felled, Grapple Yarded)
+
+Roadside processing was done both manually and mechanically. Two
+different models of Hahn Harvesters were tried for mechanical processing.
+i.
+
+Roadside Processing — Manual Processing
+
+A Poclain HC 300 hydraulic log loader was utilized to pull trees out
+of the windrow and place them on the road. Trees were then processed by one
+or two hand buckers using chain saws (Figure H ). The second bucker acted as a
+helper to the loader operator when he was not assisting with processing.
+Processing included taping for length , long butting , limbing , bucking , and
+topping. Pieces were then loaded onto trucks or decked for loading. Some
+sorting was occasionally done.
+
+FIGURE H.
+
+Manual Processing.
+
+Tables 21 and 22 give the results of detailed timing of the manual
+processing.
+When two buckers were utilized , there was a 37% increase in the
+number of trees per productive hour. This is because of the increased taping
+efficiency and less moving time per person.
+
+19
+
+TABLE 21.
+
+Manual Processing--System 1 --Timing Summary.
+1 BUCKER
+
+2 BUCKERS
+
+TOTAL
+
+Number of Trees
+
+386
+
+819
+
+1 205
+
+Number of Logs Produced
+
+635
+
+1 229
+
+1 864
+
+Productive Minutes
+
+278.5
+
+431.4
+
+709.9
+26.8
+
+t of Total Time Productive
+
+TABLE 22.
+
+Poclain Log Loader (Manual Processing)--System 1 —Timing Summary.
+
+TOTAL
+TIME
+(MINUTES)
+
+Î
+
+PIECES
+
+Productive
+Load
+Move
+Pile Logs
+Pull from Windrow
+Subtotal
+
+389
+46
+197
+345
+977
+
+3〇
+3
+15
+27
+75
+
+1261
+
+Delay
+Cleanup
+Mechanical
+Other
+Subtotal
+
+35
+50
+231
+316
+
+3
+4
+18
+25
+
+1 293
+
+100
+
+PHASE
+
+Total
+
+965
+792
+
+Manual processing productivity was largely dependent on the log
+loader. Normally, trees were pulled from the windrow and laid on the road
+(parallel to the road) to be processed. Because of frequent waiting for trees
+and logs to be moved, manual processing was productive only 26.8% of the time.
+Table 23 gives a cost and productivity summary for manual processing
+in System 1. The results are based on the detailed timing data.
+The cost of manual processing includes the Poclain log loader (64%
+of its time--operator and helper ), hand bucker , and chain saw costs. The
+remaining 36% of the loader’s time is accounted for under loading in System 1.
+
+20
+
+TABLE 23.
+
+Manual Processing--Productivity and Cost Summary
+
+Average Tree Volume
+
+No. of trees per productive hour
+No. logs per productive hour
+
+-
+
+0.53 m ’
+
+1 BUCKER
+
+2 BUCKERS
+
+COMBINED
+TOTAL
+
+83.2
+136.8
+
+113.9
+170.9
+
+101 . 8
+157.5
+
+Volume per shift ( 8 hours), m 3
+Pieces per shift
+
+115.7
+218.3
+
+Total equipment cost per shift*
+
+$861.49
+
+3
+
+Cost per m
+Cost per tree
+
+$7.45
+$3.95
+
+*Interest excluded.
+
+ii •
+
+Landing Processing--Hahn Harvester
+
+The Hahn Harvester operated only one day in System 1. The machine
+was set up in a landing. Table 24 gives the detailed timing results.
+
+TABLE 24.
+
+Hahn Harvestei— System 1 --Timing Summary.
+
+No. of Trees
+No. of Logs Produc ed -
+
+799
+1129
+
+TOTAL
+TIME
+(MINUTES)
+
+PHASE
+Productive
+Process
+Wait Hahn Loader
+
+248.0
+133-2
+
+48
+26
+
+Subtotal
+
+381 . 2
+
+74
+
+Delay
+Cleanup
+Mechanical
+Other
+
+28.8
+72.7
+35.9
+
+5
+14
+
+Subtotal
+
+137.4
+
+26
+
+518.6
+
+ÌÒÓ
+
+Total
+
+21
+
+1_
+
+Trees were pulled out of the grapple-yarded windrow by choker and
+grapple skidders and cold-decked o n the road. They were then placed alongside
+the Hahn Harvester infeed deck by a grapple skidder. Trees under 81 -cm butt
+diameter were put through the Hahn Harvester. Each piece was delimbed,
+measured for length , and bucked or topped. Long butting was done where
+required. Processed logs were loaded directly or sorted and decked for
+loading. Logs with greater than an 81 -cm butt diameter bypassed the harvester. Table 25 gives a summary of cost and productivity for the Hahn
+Harvester.
+
+TABLE 25.
+
+Hahn Harvester—Productivity and Cost Summary.
+
+Average tree volume , m 3
+
+0.53
+
+No. trees per PMH
+No. trees per SMH
+
+125.8
+92.4
+
+No. logs per PMH
+No. logs per SMH
+
+177.7
+130.6
+
+Volume per shift ( 8 hours), m 3
+Trees per shift
+
+391.8
+739.2
+
+Total equipment cost per shift*
+
+$ 2 420.58
+$6.18
+$3.27
+
+Cost per m 3
+Cost per tree
+
+»Interest excluded.
+
+Costs for the Hahn Harvester include the harvester itself (one
+operator), Barko log loader (one operator and machine 55% of the time), and
+three skidders. T h e remaining 45% of the log loader’s time i s accounted for
+under loading in System 1 .
+Delimbing efficiency and quality was good o n limbs up to 9 cm in
+diameter. O n those over 9 cm, the Hahn Harvester occasionally had t o process
+them two or more times. Length accuracy was not checked by FERJC.
+Skidders were observed t o be efficient in breaking down the grappleyarded windrows. The crew had several years of experience working together.
+This was evident by the continuous wood flow in the skidding, processing,
+sorting, and loading phases. There was also constant supervision which
+increased efficiency.
+iii.
+
+Roadside Processing — Hahn 】I Harvester
+
+T h e Hahn II Harvester was run by two operators—one o n the loader
+and one operating the processor.
+
+22
+
+Trees were either pulled out of the windrow by the Hahn II loader ,
+swung into lead , and placed in the delimbing carriage to start processing , or
+trees were lifted from predecked piles and placed in the delimbing carriage.
+Predecked piles were prepared by the Poclain HC 3〇〇 log loader , which would
+pull trees from windrows and deck them parallel to the road to facilitate
+processing. Trees under 81 -cm butt diameter were processed through the Hahn II
+Harvester. Oversize logs bypassed the processor. Processed logs were loaded
+direct or decked for loading by the Poclain log loader. Table 26 gives
+details of observed processor time.
+
+TABLE 26.
+
+Hahn II Harvester--System 1 --Timing Summary.
+
+No. of Trees
+No. of Logs Produced
+
+=
+=
+
+2607
+4436
+
+TOTAL
+TIME
+(MINUTES)
+
+PHASE
+Productive
+Process
+Wait Hahn Loader
+Subtotal
+
+1 485.2
+398.0
+
+43
+
+1 883.2
+
+55
+
+54.1
+253.3
+538.1
+706.7
+
+2
+7
+16
+20
+
+1 552.2
+
+45
+
+3 435.4
+
+100
+
+Delay
+Cleanup
+Mechanical
+Wait Poclain Loader
+Other
+Subtotal
+
+Total
+
+І
+
+12
+
+Normally , the Hahn II Harvester sat parallel to the road (Figure I ).
+This meant the trees had to be lifted from the windrow and swung approximately
+45 degrees to feed the machine. Much of the time , the Hahn II loader had
+trouble breaking trees loose (tops entangled) and lifting them from the
+windrow (piles up to 5~m high). This necessitated the assistance of the
+Poclain log loader in preparing predecked piles. This assistance is the main
+reason for the high delay time experienced in this system. The delay time
+also includes the time waiting for the Poclain log loader to clear away
+processed logs.
+Delimbing efficiency and quality were good on limbs up to 9 cm in
+diameter. On those over 9 cm, the Hahn II Harvester would sometimes have to
+process them two or more times. Length accuracy was not checked by FERIC.
+
+23
+
+Hohn II
+
+FIGURE I.
+
+Log
+Loader
+
+log
+Truck
+
+Typical Hahn II Harvester Setup.
+
+Wood flow in the Hahn II Harvester operation was not as smooth as in
+the Hahn Harvester operation. The crews had not worked together before and
+there was little supervision.
+A cost and productivity summary for the Hahn II Harvester is shown
+in Table 27. Figures are based on approximately 57 hours of detailed timing
+information.
+TABLE 27.
+
+Hahn II Harvester--Productivity and Cost Summary.
+
+Average tree volume, m 3
+
+0.53
+
+No. trees per PMH
+No. trees per SMH
+
+83.1
+45.5
+
+No. logs per PMH
+No. logs per SMH
+
+141.3
+77.5
+
+Volume per shift ( 8 hours), m 3
+Trees per shift
+
+192.9
+364.0
+
+Total equipment cost per shift*
+Cost per m 3
+Cost per tree
+
+$1 525.07
+$7.91
+$4.19
+
+*Interest excluded.
+
+Costs for the Hahn II Harvester include the harvester itself (two
+operators) and the Poclain log loader (one operator , a helper , and the machine
+for 56% of the time). The remaining 44% of the log loader's time is accounted
+for under loading in System 1.
+
+24
+
+B.
+
+System 2 (Handfelled, Grapple Yarded)
+i.
+
+Roadside Processing-Manual Processing
+
+The same method was used as in System 1 for manual processing.
+results of the detailed timing study are given in Tables 28 and 29.
+TABLE 28.
+
+Manual Processing--System 2 — Timing Summary.
+
+1 BUCKER
+
+2 BUCKERS
+
+COMBINED
+TOTAL
+
+Number of Trees
+
+445
+
+834
+
+1 279
+
+Number of Logs Produced
+
+723
+
+1 232
+
+1 955
+
+469.3
+
+5A7.2
+
+1 016.5
+
+Productive Minutes
+
+34.9
+
+% of Total Productive Time
+
+TABLE 29.
+
+The
+
+Poclain Log Loader (Manual Processing)--System 2--Timing Summary.
+
+TOTAL
+TIME
+(MINUTES)
+
+i
+
+PIECES
+
+Productive
+Load
+Move
+Pile Logs
+Pull from Windrow
+Subtotal
+
+1 087
+119
+536
+951
+2 693
+
+33
+3
+16
+29
+81
+
+3 295
+
+Delay
+Cleanup
+Mechanical
+Other
+Subtotal
+
+89
+84
+462
+635
+
+3
+3
+13
+19
+
+3 328
+
+100
+
+PHASE
+
+Total
+
+2 085
+2 044
+
+Because of long delays waiting for trees and logs to be moved ,
+manual processing was productive only 34.9% of the time. Manual processing
+productivity was very dependent on the Poclain log loader. Average piece size
+before manufacturing was 0.82 m 3 .
+Table 3〇 is a summary of the cost and productivity of manual
+processing in System 2.
+
+25
+
+TABLE 3〇. Manual Processing--Productivity and Cost Summary.
+Average Tree Volume
+
+No. o f trees per productive hour
+No. logs per productive hour
+
+•
+
+0.82 m ’
+
+1 BUCKER
+
+2 BUCKERS
+
+COMBINED
+TOTAL
+
+56.9
+92.4
+
+91.4
+135.1
+
+75.5
+115.4
+
+Volume per shift ( 8 hours), m ’
+Trees per shift
+
+172.9
+210.8
+
+Total equipment cost per shift*
+
+$861.49
+
+Cost per m 3
+Cost per tree
+
+$4.98
+$4.09
+
+♦Interest excluded.
+
+Cost of manual processing includes the Poclain log loader (64% of
+its time--operator and helper ), hand bucker , and chain saw costs. The remaining 36% of the loader’s time is accounted for under loading in System 2.
+Processing by two buckers increased production by 61 % (Table 28).
+ii.
+
+Landing Processing--Hahn Harvester
+
+The Hahn Harvester (one operator ) operated for two days in System 2.
+The same method was used to recover logs from the windrows and forward them to
+the Hahn Harvester as in System 1.
+The skidders had problems maintaining the production rates in
+System 1 because tree butts were facing both directions in the windrow. Much
+of the skidder's time was spent getting trees untangled from the windrow. As
+trees had to be skidded to the Hahn Harvester butt first , top ends were sorted
+out and left for skidding from the other side of the windrow.
+Table 31 gives the results of the detailed timing o n the Hahn Harvester
+in System 2. Table 32 is a cost and productivity summary for the Hahn
+Harvester, Barko log loader , and skidders used in this method of roadside
+processing.
+Costs for the Hahn Harvester include the harvester itself (one operator), Barko log loader (one operator and machine 55% of the time), and three
+skidders. The remaining 45% of the log loader's time is accounted for under
+loading in System '2.
+
+26
+
+TABLE 31 .
+
+Hahn Harvester--System 2- -Timing Summary.
+Number of Trees
+Number of Logs Produced
+
+1469
+2236
+
+TOTAL
+TIME
+(MINUTES)
+
+PHASE
+
+580.9
+277.8
+
+Subtotal
+
+858.7
+
+Delay
+Cleanup
+Mechanical
+Other
+
+63.8
+40.8
+117.0
+
+Subtotal
+
+221 .6
+
+J
+SSI S
+
+Productive
+Process
+Wait Hahn Loader
+
+1 080.3
+
+Total
+
+TABLE 32.
+
+=
+=
+
+Hahn Harvester- -Productivity and Cost Summary.
+
+Average piece volume, m 3
+
+0.82
+
+No. trees per PMH
+No. trees per SMH
+
+102.6
+81 .6
+
+No. logs per PMH
+No; logs per SMH
+
+156.2
+124.2
+
+Volume per shift ( 8 hours), m 3
+Trees per shift
+
+535.3
+652.8
+
+Total equipment cost per shift*
+Cost per m 3
+Cost per tree
+
+$ 2 420.58
+$4.52
+$3.71
+
+♦Inter est excluded.
+
+iii .
+
+Roadside Processing — Hahn I I Harvester
+
+T h e same method was used t o process trees a t roadside as in System 1.
+Table 3 3 gives the results of the detailed timing.
+The high delay time (Table 3 3 ) was partly because the Hahn II loader
+had trouble lifting and separating trees from the windrow (Figure J ) and
+partly because the Poclain log loader was not present to clear away logs
+processed by the harvester.
+
+27
+
+Hahn I I Harvester--System 2
+
+No. of Trees
+No. of Logs Produced
+
+584
+1116
+
+TOTAL
+TIME
+(MINUTES)
+
+365.1
+79.2
+
+Subtotal
+
+444.3
+
+Delay
+Cleanup
+Mechanical
+Wait Poclain Loader
+Other
+
+4.5
+76.8
+684.3
+203.6
+
+Subtotal
+
+969.2
+1 413.5
+
+Total
+
+L
+
+4
+
+|5 8 5
+
+1
+
+3
+2
+
+I 2
+|6 6
+
+Productive
+Process
+Wait Hahn Loader
+
+6
+
+%
+
+〇|
+〇|
+
+PHASE
+
+FIGURE J.
+
+=
+=
+
+Timing Summary .
+
+8
+
+TABLE 33•
+
+Hahn II Harvester Pulling Trees Out of Windrow.
+
+The harvester and the log loader crews had little experience working
+together. As in System 1 , it is f elt that closer supervision would have
+reduced delay time.
+Table 3 4 presents the cost and productivity results for
+this method.
+
+28
+
+TABLE 34.
+
+Hahn II Harvester--Productivity and Cost Summary.
+
+Average piece volume , m 3
+
+0.82
+
+No. trees per PMH
+No. trees per SMH
+
+78.9
+24.8
+
+No. logs per PMH
+No. logs per SMH
+
+150.7
+<47.*4
+
+Volume per shift ( 8 hours), m 3
+Trees per shift
+
+162.7
+198.4
+
+Total equipment cost per shift*
+3
+
+$1 525.07
+$9.37
+$7.69
+
+Cost per m
+Cost per tree
+♦Interest excluded.
+
+Costs for the Hahn II Harvester include the harvester itself (two
+operators) and the Poclain log loader (one operator , a helper , and machine for
+56% of the time). The remaining 44% of the log loader's time is accounted for
+under loading in System 2.
+C.
+
+System 3 (Mechanically Felled, Skidded)
+i.
+
+Landing Processing--Hahn Harvester
+
+Trees were skidded from feller-bunched piles and cold-decked or
+landed alongside the Hahn Harvester infeed deck. Figures K and L show a
+typical landing setup.
+The harvester often handled multiple stems which increased productivity. No decrease in delimbing quality was observed. A summary of detailed
+timing data is given in Table 35. Table 36 is a summary of cost and productivity information for this method.
+Costs for the Hahn Harvester include the harvester itself (one
+operator ) and the Barko log loader (one operator and machine 55% of the time ).
+The remaining 45% of the log loader's time is accounted for under loading in
+System 3•
+D.
+
+System Comparison
+
+Table 37 compares the various roadside processing methods tried in
+the three logging systems. For comparative purposes, machine utilization is
+set at 75% for all methods. Manual processing utilization is set at 35
+percent.
+
+29
+
+FIGURE K.
+
+Hahn Harvester.
+
+iìiìaWÌM
+Skidder
+
+Hahn
+
+FIGURE L.
+TABLE 35.
+
+Log
+\ Loader
+
+Typical Hahn Harvester Setup.
+
+Hahn Harvester ——System 3--Timing Summary.
+No. of Trees
+No. of Logs
+
+PHASE
+Productive
+Process and wait
+Hahn Loader
+
+=
+=
+
+5330
+8034
+
+TOTAL
+TIME
+(MINUTES)
+
+Ì
+
+3 3V.2
+
+68
+
+553-8
+172.6
+845.5
+1 571.9
+
+11
+4
+17
+32
+
+4 913-1
+
+100
+
+Delay
+Cleanup
+Mechanical
+Other
+Subtotal
+Total
+
+3〇
+
+Log Truck
+
+TABLE 36.
+
+Hahn Harvester—Productivity and Cost Summary.
+
+Average piece volume , m ’
+
+0.63
+
+No. trees per PMH
+No. trees per SMH
+
+95.7
+65.1
+
+No. logs per PMH
+No. logs per SMH
+
+144.3
+98.1
+
+Volume per shift ( 8 hours), m 3
+Trees per shift
+
+328.1
+520.8
+
+Total equipment cost per shift*
+
+$935.22
+$2.85
+$1 .80
+
+Cost per m 3
+Cost per tree
+»Interest excluded.
+
+TABLE 37.
+
+Roadside Processing Methods— Production and Costs.
+
+m’/SHIFT«
+
+TREES/SHIFT»
+
+$/m 3
+
+$/PIECE
+
+System 1 - Manual Processing
+- Hahn Harvester
+- H a h n I I Harvester
+
+151.1
+400.0
+264.3
+
+285.0
+754.8
+498.6
+
+$5.70
+$6.05
+$5.77
+
+$3-〇2
+$3.21
+$3-06
+
+System 2 - Manual Processing
+- Hahn Harvester
+- Hahn II Harvester
+
+173.3
+504.8
+388.2
+
+211.4
+615.6
+473.4
+
+$4.97
+$4.80
+$3.93
+
+$4.08
+$3.93
+$3.22
+
+System 3 - Hahn Harvester
+
+361 . 7
+
+574.2
+
+$2.59
+
+$1.63
+
+SYSTEM
+
+«Machine utilized a t 7 5 % and manual processing a t 35%.
+
+System 3 resulted in the most economic method of roadside processing. Skidding directly to the Hahn Harvester and then processing was $1 .34/m 3
+or $1.39/tree less than the next lowest costing system.
+On a cost-per-cubic-metre basis, System 2 is approximately 25%
+cheaper than System 1. This is due mainly to the piece size variance, e.g.,
+0.82 m 3 versus 0.53 m 3 .
+Within System 1 , manual processing results in the lowest costs, but
+also in the lowest production per manday. The lower cost reflects the high
+capital cost associated with the mechanical processors.
+In Systems 1 and 2, the Hahn Harvester cost includes three skidders
+to pull material out of the windrows. Further experimentation may show it is
+feasible to use only one or two skidders and reduce the cost.
+
+31
+
+In Systems 1 and 2, the Hahn II Harvester had problems with windrowed trees. Some of these problems were:
+-
+
+Trees were too large for the 9〇〇〇-kg lift loader.
+
+-
+
+Tops were tangled together--especially in the bunched-wood windrows.
+
+-
+
+Most trees had to be swung approximately 45 degrees for efficient infeed
+alignment.
+
+-
+
+Trees whose tops faced the road had to be turned around. The windrows in
+the handfelled area contained a lot of trees with tops facing the road.
+
+Other significant delays occurred with the Hahn II Harvester
+because processed logs were not cleared away and there was a lack of coordination between the log loader and the processor.
+4.
+
+Loading
+A.
+
+System 1 (Mechanically Felled, Grapple Yarded)
+i.
+
+Loading--Manual Processing
+
+Loading of manually processed logs was done by the Poclain log
+loader. Productivity and cost information is shown in Table 38 and is based
+on approximately 22 hours of detailed timing.
+Some cedar and pulp logs were sorted at roadside. The cedar was
+highway-hauled directly to a local sawmill. All other loads were highwayhauled to the dryland sortyard at Northwest Bay. The pulp loads bypassed the
+dryland sortyard processing area and were dumped directly into the water for
+booming.
+Production costs for loading include the Poclain log loader , operator , and helper for 36% of the time.
+ii.
+
+Loading--Hahn Harvester
+
+A Barko 250 log loader cleared away logs processed by the Hahn
+Harvester , sorted them four ways, and loaded them onto trucks. This did not
+cause significant delays to the Hahn Harvester. In fact , presorting improved
+loading productivity. When loading from presorted piles, the loader was able
+to consistently pick up two or more logs. Also , the presorted piles facilitated the efficient loading of trucks. Detailed timing results for the log
+loader are shown in Table 39.
+Production costs for the Barko 250 include the machine and operator
+for 45? of the time.
+All loads were highway hauled to the dryland sortyard at Northwest
+Bay. Pulp loads bypassed the sortyard processing phase and were put directly
+in the water.
+
+32
+
+TABLE 38.
+
+Poclain Log Loader (Manual Processing)—
+Productivity and Cost Summary.
+
+Truck loading
+No. loads
+No. pieces
+No. minutes
+
+62
+2 668
+1 053
+
+Average piece volume , m 3
+
+0.57
+
+No. pieces per load
+No. minutes per load
+
+43
+17
+
+No. loads per hour
+
+1.34
+
+Volume per shift ( 8 hours), m 3
+Pieces per shift
+
+262.7
+461.0
+
+Total equipment cost per shift*
+
+$371.43
+$1 .41
+$0.81
+
+Cost per m 3
+Cost per piece
+♦Interest excluded.
+
+TABLE 39.
+
+Barko 250 Log Loader (Hahn Harvester )—
+Productivity and Cost Summary.
+Truck loading
+No. loads
+No. pieces
+No. minutes
+
+21
+1 656
+367
+
+Average piece volume , m 3
+
+0.46
+
+No. pieces per load
+No. minutes per load
+
+79
+17
+
+No. loads per hour
+
+1.96
+
+Volume per shift ( 8 hours), m 3
+Pieces per shift
+
+569.8
+1 238.7
+
+Total equipment cost per shift*
+
+$257.26
+
+Cost per m 3
+Cost per piece
+
+$0.45
+$0.21
+
+♦Interest excluded.
+
+iii.
+
+Loading--Hahn II Harvester
+
+Loading was done with the Poclain HC 3〇〇 log loader.
+and cost information for the log loader is shown in Table 40.
+
+33
+
+Productivity
+
+TABLE 40.
+
+Poclain Log Loader (Hahn I I Harvester )-Productivity and Cost Summary.
+
+Truck loading
+No. loads
+No. pieces
+No. minutes
+
+54
+3 133
+956
+
+Average piece volume, m ’
+
+0.52
+
+No. pieces per load
+No. minutes per load
+
+58
+18
+
+No. loads per hour
+
+1 .24
+
+Volume per shift ( 8 hours), m 3
+Pieces per shift
+
+299.2
+575.4
+
+Total equipment cost per shift*
+
+$453.97
+
+3
+
+Cost per m
+Cost per piece
+
+$1 .52
+$0.79
+
+♦Interest excluded.
+
+Production costs for loading include the Poclain log loader ,
+operator , and helper for 44% of the time.
+With the exception of a few cedar loads , all loads were highwayhauled t o the dryland sortyard at Northwest Bay. The cedar was hauled
+directly to a local sawmill.
+B.
+
+System 2 (Handfelled, Grapple Yarded)
+i.
+
+Loading — Manual Processing
+
+The same loading method and equipment were used a s in System 1.
+Table 41 gives productivity and cost information.
+Costs for loading include the Poclain log loader , operator , and
+helper for 36% of the time.
+ii.
+
+Loading--Hahn Harvester
+
+The same loading method and equipment were used a s in System 1.
+Table 4 2 lists the productivity and cost information.
+Costs for loading include the Barko 250 log loader (one operator)
+for 45% of the time.
+
+34
+
+TABLE 41 .
+
+Poclain Log Loader (Manual Processing)—
+Productivity and Cost Summary.
+
+Truck loading
+No. loads
+No. pieces
+No. minutes
+
+80
+3 655
+1 205
+
+Average piece volume , m 3
+
+0.63
+
+No. pieces per load
+No. minutes per load
+
+46
+15
+
+No. loads per hour
+
+1.34
+
+Volume per shift ( 8 hours), m 3
+Pieces per shift
+
+310.7
+493.1
+
+Total equipment cost per shift*
+
+$371.43
+$1 .20
+$0.75
+
+Cost per m 3
+Cost per piece
+‘Interest excluded.
+
+TABLE 42.
+
+Barko 250 Log Loader (Hahn Harvester)—
+Productivity and Cost Summary.
+
+Truck loading
+No. loads
+No. pieces
+No. minutes
+
+38
+2 282
+574
+
+Average piece volume , m 3
+
+0.57
+
+No. pieces per load
+No. minutes per load
+
+60
+15
+
+No. loads per hour
+
+1 .95
+
+Volume per shift ( 8 hours), m 3
+Pieces per shift
+
+533.5
+936.0
+
+Total equipment cost per shift*
+
+$257.26
+$0.48
+$0.27
+
+Cost per m 3
+Cost per piece
+♦Interest excluded
+
+iii.
+
+Loading--Hahn II Harvester
+
+Logs were loaded by the Poclain log loader.
+data are shown in Table 43.
+
+Production and cost
+
+Costs for loading include the Poclain log loader , operator , and
+helper for 44% of the time.
+
+35
+
+TABLE 43.
+
+Poclain Log Loader (Hahn II Harvester )-Productivity and Cost Summary.
+
+Truck loading
+No. loads
+No. pieces
+No. minutes
+
+19
+844
+255
+
+Average piece volume, m 3
+
+0.70
+
+No. pieces per load
+No. minutes per load
+
+44
+13
+
+No. loads per hour
+
+1.33
+
+Volume per shift ( 8 hours), m 3
+Pieces per shift
+
+327.7
+468.2
+
+Total equipment cost per shift*
+
+$453.97
+
+3
+
+Cost per m
+Cost per piece
+
+$1.39
+$0.97
+
+♦Interest excluded.
+
+C.
+
+System 3 (Mechanically Felled, Skidded)
+i.
+
+Loading--Hahn Harvester
+
+A Barko 250 log loader cleared away logs processed by the Hahn
+Harvester , sorted them four ways, and loaded them onto trucks. Table 44 lists
+productivity and cost information.
+Costs for loading include the Barko log loader (one operator ) for
+45% of the time.
+TABLE 44.
+
+Barko Log Loader (Hahn Harvester)-Productivity and Cost Summary.
+
+Truck loading
+No. loads
+No. pieces
+No. minutes
+
+153
+7 937
+2 546
+
+Average piece volume , m 3
+
+0.57
+
+No. pieces per load
+No. minutes per load
+
+52
+17
+
+No. loads per hour
+
+1.85
+
+Volume per shift ( 8 hours), m 3
+Pieces per shift
+
+437.6
+767.8
+
+Total equipment cost per shift*
+
+$257.26
+
+Cost per m 3
+Cost per piece
+
+$0.59
+$0.34
+
+♦Interest excluded
+
+36
+
+D.
+
+System Comparison
+
+Table 45 compares the loading productivity and cost for the various
+roadside processing methods.
+
+TABLE 45.
+
+Loading--Production and Costs.
+
+SYSTEM
+
+m 3 /SHIFT
+
+PIECES
+/SHIFT
+
+$/m 3
+
+$/PIECE
+
+System 1
+- Manual Processing ( P o c l a i n HC 3〇〇)
+- Hahn Harvester (Barko 250)
+- Hahn I I Harvester ( P o c l a i n HC 3〇〇)
+
+262.7
+569.8
+299.2
+
+461 . 0
+1 238.7
+575.4
+
+$1.41
+$0.45
+$1 . 4 8
+
+$0.81
+$0.21
+$0.77
+
+System 2
+- Manual Processing ( P o c l a i n HC 3〇〇)
+- Hahn Harvester (Barko 250)
+- Hahn I I Harvester ( P o c l a i n HC 3〇〇)
+
+ЗЮ.7
+533.5
+327.7
+
+493.1
+936.0
+468.2
+
+$1 . 2 0
+$0.48
+$1.39
+
+$0.75
+$0.27
+$0.97
+
+System 3
+- Hahn Harvester (Barko 250)
+
+437.6
+
+767.8
+
+$0.59
+
+$0.34
+
+The smaller Barko log loader was less costly than the Poclain log
+loader in all three systems. The main reasons are:
+-
+
+lower capital cost of machine ($1 25 000 versus $475 〇〇〇) ;
+
+-
+
+one man on the Barko (operator ) versus two on the Poclain (operator and
+helper ); and
+
+-
+
+higher loading productivity (cubic metres and number of pieces).
+
+It should be noted that the Barko log loader sorted logs four ways
+as part of its normal function. This portion of its costs are included in the
+Hahn Harvester cost. The sorting function did not appear to affect processing
+or truck-loading productivity in any significant way. Similarly , the Poclain
+log-loader costs associated with manual and mechanical processing are included
+with those costs.
+
+5.
+
+Logging Residue from the Systems
+
+Residue sampling to close utilization logging standards was done by
+MacMillan Bloedel Ltd. , Woodland Services , in November and December , 1985. As
+shown in Table 46, System 2 (handfelled) resulted in the largest amount of
+residue left in the study areas. The System 2 residue volume was not necessarily the result of a machinery or system problem. Most of the volume was in
+the form of small logs which were left behind because they were hidden by
+debris and overlooked , or deliberately left because of their low value.
+
+37
+
+TABLE 46.
+
+Close Utilization Residue Sampling.
+SYSTEM 1
+
+SYSTEM 2
+
+SYSTEM 3
+
+23.21
+21 .41
+4L62
+
+71 .71
+8.63
+80.34
+
+IM.3 0
+19.09
+33.39
+
+Residue volume , m’/ha (Gross less decay)
+Avoidable 1
+Unavoidable
+Total
+
+‘Avoidable residue includes high stumps , bucking waste , chunks, and
+logs over 3 m i n length and 15 c m in diameter. Everything must be
+more than 5 0 1 sound.
+
+Breakage occurred in all logging phases--i.e., falling, skidding,
+yarding , processing , and loading. Falling breakage occurred as trees hit the
+ground and when hit by other falling trees. In the skidding and yarding
+phases, breakage occurred at the start of the inhaul and when hangups happened. Breakage also occurred when the backspar trail was being built and
+widened. In the processing and loading phases, breakage occurred as pieces
+were being pulled out of windrows. FERIC did not monitor breakage by phase
+during this study.
+Systems 1 and 3 resulted in less residue because:
+-
+
+Feller-buncher operators are able to direct and control the speed of
+falling trees and thus reduce breakage.
+
+-
+
+Yarding and skidding of bunches results in fewer hangups and the bunches
+retain their integrity as they are being yarded. Bunches also result in
+fewer logs being hidden by debris and overlooked in the yarding phase.
+
+System 3 had the best results because of the falling pattern and
+skidding methods used. In this system, the skidders pulled straight on the
+bunches at the beginning of the skidding phases. In System 1 , the grapple
+yarder pulled sideways on the bunches at the start of the inhaul phase, and
+more tops were broken.
+6.
+
+Overall Comparison of the Three Systems
+
+Tables 4? and 48 compare all three logging systems, by processing
+method, on a cost-per-cubic-metre and on a cost-per-piece basis.
+System 3 resulted in the lowest cost per cubic metre and cost per
+piece of the logging systems studied. The lower cost of skidding combined
+with immediate processing and close supervision, made this a very productive
+and cost-effective operation. On a per-cubic-metre basis, it was $3.66
+cheaper than the next lowest costing system. On a per-piece basis, it was 13%
+or $1 .00 cheaper.
+System 1 resulted in the highest cost per cubic metre, primarily
+because of the smaller piece size. When compared on a per-piece basis, it
+became less expensive than System 2.
+
+38
+
+TABLE 47.
+
+System Comparison--All Methods (Cost per Cubic Metre)
+
+SYSTEM - METHOD
+
+MANUAL
+PROCESSING
+($/m 3 )
+
+HAHN
+HARVESTER
+($/m3 )
+
+HAHN I I
+HARVESTER
+($/m 3 )
+
+1
+
+- Feller-buncher'
+- Grapple yard
+- Roadside process
+- Load
+Total
+
+2.76
+4.32
+5.70
+1.41
+14.19
+
+2.76
+4.32
+6.05
+0.45
+13.58
+
+2.76
+4.32
+5.77
+1.48
+14.33
+
+2
+
+- Handfall
+- Grapple yard
+- Roadside process
+- Load
+Total
+
+1 .56
+4.64
+4.97
+1.20
+12.37
+
+1 .56
+4.64
+4.80
+0.48
+11.48
+
+1. 5 6
+4.64
+3.93
+1.39
+11.52
+
+3
+
+- Feller-buncher'
+- Skidding
+- Landing process
+- Load
+Total
+
+2.07
+2.57
+2.59
+0.59
+7.82
+
+'Combined falling cost includes handfalling oversize trees.
+
+TABLE 48.
+
+System Comparison--All Methods (Cost per Piece).
+
+SYSTEM - METHOD
+
+MANUAL
+PROCESSING
+($/PIECE)
+
+HAHN
+HARVESTER
+($/PIECE)
+
+HAHN II
+HARVESTER
+($/PIECE)
+
+1
+
+- Feller-buncher‘
+- Grapple yard
+- Roadside process
+- Load
+Total
+
+1.65
+2.55
+3.02
+0.81
+8.03
+
+1.65
+2.55
+3.21
+0.21
+7.62
+
+1.65
+2.55
+3.06
+0.77
+8.03
+
+2
+
+- Handfall
+- Grapple yard
+- Roadside process
+- Load
+Total
+
+1.44
+4.22
+4.08
+0.75
+10.49
+
+1 .44
+4.22
+3.93
+0.27
+9.86
+
+1 .44
+4.22
+3.22
+0.97
+9.85
+
+3
+
+- Feller-buncher'
+- Skidding
+- Landing process
+- Load
+Total
+
+2.24
+2.41
+1.63
+0.34
+6.62
+
+'Combined falling cost includes handfalling oversize trees.
+
+39
+
+When comparing Systems 1 and 2, we find:
+-
+
+T h e $0.21 /piece higher cost of mechanical falling i s more than offset by
+the $1 .67 favourable effect of grapple yarding bunched wood.
+
+-
+
+Roadside processing of handfelled wood (System 2 ) averaged about
+$0.65/piece more than the bunched wood (System 1 ). This is mainly
+because of the extra handling required when tops face the road in
+windrows.
+
+I n all three systems, roadside processing makes it possible t o
+presort logs i n the woods. As shown in System 3 , this can be done very
+efficiently and cost effectively. Presorting can result in additional savings
+in the other logging phases, e.g ., booming , dryland sorting, and hauling
+(Peterson 1986).
+
+CONCLUSIONS
+The falling pattern and method used i s critical to the yarding and
+processing phases which follow. This i s shown i n the yarding phase where
+bunching results in more productive yarding , and in the processing phase where
+having all tree butts facing the road results in more productive processing.
+Future FERIC research might study the effect of falling pattern, bunching
+placement , and optimum bunch size.
+Study results show that grapple yarding i s an acceptable alternative
+when skidding i s not possible or if the company has yarders available. Grapple
+yarding bunched wood proved t o be more productive and cost efficient than
+grapple yarding handfelled full-tree material. There was a 6 5 % increase in
+pieces yarded per shift and a 40% reduction in cost per piece.
+The yarding grapple has a large effect on productivity. This report
+shows a 20% difference in pieces/PMH between the two grapples used in the
+bunched-wood area. Between the three grapples used in the handfelled area ,
+there was a 75% variance.
+Of the various processing methods studied, the Hahn Harvester operation was the most efficient and economical. Skidding to the Hahn Harvester
+and processing directly was $1 . S1*/™3 and $1 .39/piece less than the next lowest
+costing system. A s shown in the Hahn I I Harvester results , removing trees
+from grapple-yarded windrows i s difficult. This problem i s unresolved and i s
+a n area for further FERIC research. Experimentation with grapple skidders
+pulling trees out of windrows may also be advantageous.
+The smaller Barko log loader was less costly than the Poclain log
+loader in all three systems. The Barko cleared away logs processed by the
+Hahn Harvester , sorted them four ways , and loaded them onto trucks. The
+sorting function did not affect processing or truck loading productivity in
+any significant way.
+
+40
+
+Significantly less logging residue was left in the areas that were
+feller-bunched than in the handfelled area. It is felt that this is owing to
+the falling method, falling pattern, and the skidding/yarding methods used.
+This may result in cheaper site-preparation costs after logging.
+System 3 resulted in the lowest cost per cubic metre and cost per
+piece of the logging systems studied. The lower cost skidding of bunches,
+combined with immediate processing and close supervision, made this a very
+productive and cost-effective operation. On a per-cubic-metre basis, it was
+$3.66 cheaper than the next closest costing system and on a per-piece basis,
+it was 13% or $1 .00 cheaper.
+The large piece-size variance between Systems 1 and 2 makes the cost
+difference per cubic metre appear insignificant. The piece-size differences
+were caused by stand differences and the amount of residue volume left. For
+these areas , the comparisons per piece handled give a clear er picture of what
+is happening.
+When comparing System 1 (mechanical falling and bunching , grapple
+yarding) and System 2 (hand falling, grapple yarding), we find that the higher
+cost of mechanical falling ($0.21 /piece) is more than offset by the favourable
+effect of grapple yarding bunched wood ($1 .67/piece). Roadside processing of
+handfelled wood averaged about $0.65/piece more than the bunched wood.
+Historically , loggers have had a good grasp of their average logging
+phase costs, e.g., falling, skidding , yarding , etc. This information is
+useful and necessary , but more useful would be knowledge of the range of
+logging costs and comparison values related to log volume , tree diameter ,
+yarding distance , terrain features, and other variables (Adams 1965). T o fill
+this need, FERIC has a Harvesting Economics Project underway. Initial work
+has concentrated on falling and grapple yarding , and the first report will be
+published in early 1987.
+
+41
+
+REFERENCES
+Adams, T.C. 1965. High-lead logging costs as related to log size and other
+variables. U.S. Forest Service , Research Paper PNW-28.
+Guimier , D.Y.; McMorland, B.A. 1981. The bicycle-wheel method: A procedure
+to evaluate butt damage in the woods. FERIC Technical Note No. TN-52,
+Vancouver , B.C.
+McMorland, B.A. 1985. Factors influencing butt damage during felling:
+Conclusions from 35 studies. FERIC Technical Report No. TR-62,
+Vancouver , B.C.
+Peterson, J.T. ; Wong , A.B. 1986. Presorting--effect on dryland sortyard
+economics. FERIC Interim Report, Vancouver , B.C.
+
+42
+
+APPENDIX I
+LOGGING COSTS
+
+Costs used in this report are prepared by FERIC and are representative of the industry.
+Operating labour costs consist of the IWA hourly rate for a particular job plus 35% for fringe benefits. Machine operators’ rates include
+0.7 of an hour at overtime rates for machine servicing. For example, the IWA
+rate for a grapple yarder operator is $17.73/hour. The hourly rate charged to
+the job should be $17.73 x 1.35 = $23.94. To account for machine servicing,
+the $23.94 should be adjusted by:
+0.7 x $23-94 x 1.5
+“
+8
+
+=
+
+$3-14 + $23.94
+
+$27.〇8/hour
+
+=
+
+$3.14
+
+Chain saw costs are estimated at $25.00 per day.
+Operating Labour Rates
+RATE PER HOUR
+
+PHASE
+
+JOB POSITION
+
+Falling (6.5-hour day)
+
+Faller
+
+$45.33
+
+Feller-bunching
+
+Operator
+
+$27.08
+
+Grapple yarding
+
+Operator
+Hooker
+Utilityman
+
+$27.08
+$27.08
+$20.59
+
+Loading
+
+Operator
+Second Loader (Helper)
+
+$27.08
+$20.90
+
+Processing
+
+Operator
+Landing Bucker
+
+$27.08
+$23.94
+
+Skidding
+
+Operator
+
+$23.64
+
+43
+
+BARKO 250
+LOG LOADER
+(TRUCK MOUNT)
+
+CASE 1187
+FELLERBUNCHER
+
+DROTT 5 0
+FELLERBUNCHER
+
+HAHN
+HARVESTER
+
+HAHN II
+HARVESTER
+
+HITACHI UH14
+BACKSPAR
+
+POCLAIN HC 3〇〇
+LOG LOADER
+(TRACKED)
+
+MADILL 084
+GRAPPLE
+YARDER
+
+TIMBERJACK 31
+GRAPPLE
+SKIDDER
+
+$125 0 0 0
+$37 5 0 0
+11
+16 0 0 0
+12.5
+1
+$81 2 5 0
+
+$298 0 0 0
+$89 400
+6
+9 000
+12.5
+1
+$193 7 0 0
+
+$298 0 0 0
+$89 400
+6
+9 000
+12.5
+1
+$193 7 0 0
+
+$285 0 0 0
+$85 500
+7
+1 0 000
+12.5
+1
+$185 250
+
+$385 0 0 0
+$115 5 0 0
+7
+10 000
+12.5
+1
+$250 250
+
+$1 35 0 0 0
+$40 500
+7
+1 0 000
+12.5
+1
+$87 7 5 0
+
+$475 0 0 0
+$142 5 0 0
+14
+2 0 160
+12.5
+1
+$3〇8 750
+
+$700 0 0 0
+$210 0 0 0
+10
+14 400
+12.5
+1
+$455 000
+
+$1 45 0 0 0
+$43 5 0 0
+6
+9 000
+12.5
+1
+$94 250
+
+Loss i n Resale Vaiue ( $ / h ) * ( P-S)/h
+Interest ( $ / h ) - (I*AVI)/(h/yr)
+Insurance ( $ / h ) - (Ins*AVI)/(h/yr)
+
+$5.47/h
+$6.98/h
+$0.56/h
+
+$23.l8/h
+$l6.14/h
+$1 .29/h
+
+$23.l8/h
+$l6.14/h
+$1 .29/h
+
+$19.95/h
+$l6.21/h
+$1 .3〇/h
+
+$26.95/h
+$21 .90/h
+$1 .75/h
+
+$9.45/h
+$7.68/h
+$0.6l/h
+
+$1ó.49/h
+$26.80/h
+$2.14/h
+
+$34.〇3/h
+$39.50/h
+$3.16/h
+
+$1 1.28/h
+$7.85/h
+$〇.63/h
+
+OPERATING AND REPAIR COSTS
+Fuel Consumption ( L / h )
+Fuel Cost ( $ / L )
+Operating Supply Cost Per Year ( 0 )
+Annual Tire Consumption ( T ) ( y r s )
+Tire Replacement Cost ( $ / T )
+Annual Repair & Maintenance Cost ( R )
+Wages ( $ / h )
+Wage Benefit Loading ( % )
+
+23
+$0.36
+$5 000
+5
+$500
+$35 0 0 0
+$20.06
+35
+
+32
+$0.36
+$1 5 0 0
+0
+$0
+$28 5 0 0
+$20.06
+35
+
+32
+$0.36
+$1 5 0 0
+0
+$0
+$28 5 0 0
+$20.86
+35
+
+27
+$0.36
+$3 000
+2
+$250
+$23 000
+$20.06
+35
+
+40
+$0.36
+$4 000
+2
+$250
+$26 000
+$40.12
+35
+
+20
+$0.36
+$1 5 0 0
+0
+$0
+$10 0 0 0
+$0.00
+0
+
+32
+$0.36
+$1 500
+0
+$0
+$70 0 0 0
+$35.54
+35
+
+D5
+$0.36
+$25 0 0 0
+0
+$0
+$55 0 0 0
+$51 .56
+35
+
+21
+$0.36
+$1 5 0 0
+4
+$1 375
+$20 000
+$17.51
+35
+
+Fuel Cost - (L/h)»($/L)
+Lube & Oil Cost - 1〇X * Fuel Cost
+Operating Supply Cost » 〇/(h/yr )
+Tire Cost - T»($/T)/(h/yr)
+Repair & Maintenance Cost = R/(h/yr)
+Labour Cost - ($/h)»{1 +(Î/1 0 0 ))
+
+$8.3〇/h
+$〇.83/h
+$3.44/h
+$1.72/h
+$24.06/h
+$27.08/1
+
+$11.55/h
+$1 .16/h
+$1 .00/h
+$0.00/h
+$19.00/h
+$27.〇8/h'
+
+$1 1.55/h
+$1 ,16/h
+$1 .00/h
+$0.00/h
+$19.0 0 / h
+$27.00/h 1
+
+$9.75/h
+$0.97/h
+$2.10/h
+$〇.35/h
+$l6.10/h
+$27.08/h*
+
+$14.44/h
+$1 ,44/h
+$2.80/h
+$0.35/h
+$l8.20/h
+$54.l6/ha
+
+$7.22/h
+$0.72/h
+$1 .05/h
+$0.00/h
+$7.00/h
+$0.00/h a
+
+$1 1 .55/h
+$1 .16/h
+$1 .04/h
+$0.00/h
+$48.61/h
+$47.98/h>
+
+$l6.25/h
+$1 ,62/h
+$17.36/h
+$0.00/h
+$38.19/h
+$69.61/h 5
+
+$7.58/h
+$0.76/h
+$1 ,00/h
+$3.67/h
+$13.33/h
+$23.64/h 6
+
+Operating and Repair Costs ( $ / h )
+
+$65.43/h
+
+$59.79/h
+
+$59.79/h
+
+$56.35/h
+
+$91 .40/h
+
+$15.99/h
+
+$1 10.34/h
+
+$143.〇3/h
+
+$49.98/h
+
+TOTAL COSTS
+Operating and Repair Costs ( $ / h )
+Loss in Resale Value ( $ / h )
+Insurance ( $ / h )
+
+$65.43/h
+$5.47/h
+$〇.56/h
+
+$59.79/h
+$23.l8/h
+$"29/h
+
+$59.79/h
+$23.l8/h
+$1 .29/h
+
+$56.35/h
+$19.95/h
+$1 .3〇/h
+
+$91 .40/h
+$26.95/h
+$1 .75/h
+
+$15.9 9 / h
+$9.45/h
+$0.6l/h
+
+$1 10.34/h
+$l6.49/h
+$2.1 4/h
+
+$1 43.〇3/h
+$34.〇3/h
+$3.16/h
+
+$49.98/h
+$11 .28/h
+$〇.63/h
+
+TOTAL COST ( $ / h )
+Interest ( $ / h )
+
+$71 .46/h
+$6.98/h
+
+$84.26/h
+$16.14/h
+
+$84.26/h
+
+$77.6〇/h
+$l6.21/h
+
+$120.10/h
+$2"90/h
+
+$26.06/h
+$7.68/h
+
+$128.98/h
+$26.80/h
+
+$180.22/h
+$39.5〇/h
+
+$61 .88/h
+$7・85/h
+
+GRAND TOTAL ( $ / h )
+
+$78.44/h
+
+$100.40/h
+
+$100.40/h
+
+$93.8l/h
+
+$1 41 .99/h
+
+$33.73/h
+
+$155.78/h
+
+$21 9 .72/h
+
+$69.74/h
+
+OWNERSHIP COSTS
+Purchase Price ( P )
+Salvage Value (3〇% o f P )
+Expected Life ( y r )
+Expected Life ( h )
+Interest Rate ( I) $
+Insurance Rate ( I n s ) %
+Average Investment ( A V I ) = ( P+S)/2
+
+*
+2
+
+l
+
+l operator
+2 operators
+’Operator included wi th Grapple Yarder
+*Operator and helper
+’Operator, hooker and 3/4 utilityman
+‘ 1 operator
+2
+
+APPENDIX II
+TERRAIN INFORMATION
+
+Terrain factors were collected as part of the operational cruise
+activity. This terrain classification system is outlined i n the B.C. Ministry
+of Forests Appraisal Manual.
+Area information by system:
+System 1
+■
+
+- slope range = 0 t o 38%
+- average slope = east 18%
+- rolling terrain
+- 5 obstacles/ha in height range 0.25 t o 0.49 m
+- soil depth = 2.0 m
+- soil material is mainly loam, with some gravel
+- soil moisture = moist
+- no exposed rock
+- undergrowth i s medium to heavy
+
+System 2
+
+- slope range = 0 t o 52%
+- average slope = east 23%
+- rolling terrain
+- 5 obstacles/ha in height range 0.25 to 0.49 m
+- 3 obstacles/ha in height range 0.50 to 0.99 m
+- 3 obstacles/ha i n height range 1.00 t o 1.49 m
+- soil depth = 2.0 m
+- soil material is mainly loam, with some gravel
+- soil moisture = moist
+- no exposed rock
+- undergrowth i s medium to heavy
+
+System 3
+
+- slope range = 0 t o 19%
+- average slope = east 1 2%
+- rolling terrain
+- 10 obstacles/ha in height range 0.25 t o 0.49 m
+- 5 obstacles/ha in height range 0.50 t o 0.99 m
+- soil depth = 2.0 m
+- soil material is mainly loam, with some gravel
+- soil moisture = moist
+- no exposed rock
+- undergrowth i s medium to heavy
+
+45
+
+APPENDIX III
+CONTOUR MAP
+
+LEGEND
+Setting Boundary
+Road
+Property Line
+Contour Interval： 5 m
+
+N
+
+O5OIOO
+metres
+
+46
+
+APPENDIX I V
+AREA AND VOLUME INFORMATION 】
+
+SYSTEM 3
+Area
+Merch = 10.5 ha
+R/W
+= 0.5
+Total I I .Oha
+Volume
+Gross m 3 / h a
+
+•
+
+Net m3/ h a = 5 5 0
+Stems/ha - 5 6 0
+1.09
+Gross m 3 / s t e m
+
+LEGEND
+Setting Boundary
+SYSTEM 2
+
+Road
+
+Area
+
+Property Line
+
+Merch = l〇.3ha
+R/W
+= 0.6
+Total 1 0 . 9 ha
+Volume
+Gross m 5 / h a = 7 1 3
+\ Net m5 / h a = 6 6 5
+\ Stems/ha = 778
+\ Gross m 3 / s t e m = 0 . 9 2
+
+TOTAL
+Areo
+SYSTEM
+
+Merch = 3 2 . 0 ha
+R/W =
+2.0
+T o t a l 3 4 . 0 ho
+
+Area
+Merch = 1 1.2 ha
+； R/W
+= 0.9
+t
+Total ÍŽ. I hä
+
+Volume
+Gross m s / h a = 6 2 7 . 6
+Net m 5 / h a = 5 7 6 . 1
+S t e m s / ho = 7 6 3
+Gross m 3 / s t e m = 0 . 8 2
+
+. Volume
+\
+
+=〇
+
+100
+
+0
+
+metres
+
+1
+
+Gross m3 / h o
+・ Net m5 / h a =
+Gross
+
+<7
+
+0.60
+
+B A S E D ON O P E R A T I O N A L C R U I S E DATA
+
+47
+
+APPENDIX V
+Y96 CHOKER GRAPPLE
+
+DIMENSIONS AND REEVING
+
+Main Line
+
+LHaulback Line
+
+Three-way
+Dee
+Opening Cable
+
+Closing
+Cable
+
+В
+
+GENERAL SPECIFICATIONS
+MODEL
+Y-96
+
+MAXIMUM
+JAW
+THICK. CABLE SIZE
+
+51 mm
+
+2 5 mm
+
+LENGTH O F
+CLOS'G. CABLE
+
+5.6 m
+
+BASIC DIMENSIONS
+A
+
+В
+
+TOTAL WEIGHT
+CARRIAGE
+& GRAPPLE
+
+2.4 m 2.0 m
+
+919 kg
+
+Drawing C o u r t e s y o f :
+Johnson Industries L t d .
+Richmond, B . C .
+
+48
+
+APPENDIX VI
+Y106 CHOKER GRAPPLE FOR BUNCHES
+
+DIMENSIONS AND REEVING
+
+Main Line
+
+Three-way Slider
+Opening Cable
+
+Closing
+Cable -
+
+GENERAL SPECIFICATIONS
+MODEL
+
+MAXIMUM
+CABLE SIZE
+
+LENGTH OF
+CLOS'G. CABLE
+
+Y-106
+
+2 5 mm
+
+6.9 m
+
+BASIC DIMENSIONS
+A
+
+B
+
+2.7 m 2 .1 m
+
+TOTAL WEIGHT
+CARRIAGE
+& GRAPPLE
+
+IO25 kg
+
+Drawing Courtesy of:
+Johnson Industries Ltd,
+Richmond, B.C.
+
+49
+
+APPENDIX VII
+TREE AND PIECE SIZE STATISTICS 】
+
+SYSTEM
+
+1
+
+2
+
+3
+
+VOLUME
+PER TREE
+(GROSS m 3 )
+
+PHASE
+
+Falling - Handfalling
+- Case 1 187 Feller-buncher
+Yarding - Madill 0 8 4 Grapple Yarder
+Roadside Processing - Manual Processing
+- Hahn Harvester
+- Hahn I I Harvester
+Loading - Manual Processing
+- Hahn Harvester
+- Hahn I I Harvester
+
+2.50
+0.54
+
+Falling - Handfalling
+Yarding - Madill 0 8 4 Grapple Yarder
+Roadside Processing - Manual Processing
+- Hahn Harvester
+- Hahn I I Harvester
+Loading - Manual Processing
+- Hahn Harvester
+- Hahn I I Harvester
+
+0.92
+
+Falling - Handfalling
+- Drott 5 0 Feller-buncher
+Yarding - Choker and Grapple Skidder
+Roadside Processing - Hahn Harvester
+Loading - Hahn Harvester
+
+3.62
+0.70
+
+VOLUME
+PER PIECE
+(GROSS m 3 )
+
+0.59
+0.53
+0.53
+0.53
+0.57
+0.46
+0.52
+
+0.91
+0.82
+0.82
+0.82
+0.63
+0.57
+0.70
+
+0.94
+0.63
+0.57
+
+'Derived from operation cruise done by MacMillan Bloedel Ltd.,
+Woodland Services , in April 1985, and compiled by Reed , Collins
+Associates Limited and actual scale results.
+
+50
+
+
