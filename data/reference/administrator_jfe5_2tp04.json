@@ -1,0 +1,161 @@
+{
+  "source": {
+    "citation": "Kellogg, L.D. & Bettinger, P. 1994. Thinning Productivity and Cost for a Mechanized Cut-to-Length System in the Northwest Pacific Coast Region of the USA. Journal of Forest Engineering 5(2): 43-55.",
+    "document_path": "notes/reference/administrator,+jfe5_2tp04.pdf",
+    "notes": [
+      "Study site: western Oregon second-growth thinning (marked vs. operator-select treatments).",
+      "Machines: Timberjack 2518 harvester with Koehring Waterous 762 head; FMG 910 forwarder."
+    ]
+  },
+  "harvester": {
+    "machine": "Timberjack 2518 + Koehring Waterous 762 single-grip head",
+    "regression": {
+      "equation": "vol_m3_per_pmh = -17.48 + 2.11 * dbh_cm",
+      "intercept": -17.48,
+      "slope_dbh_cm": 2.11,
+      "correlation_r": 0.75,
+      "sample_size_cycles": 371,
+      "dbh_range_cm": [
+        21.8,
+        23.6
+      ],
+      "notes": [
+        "Treatment (marked vs. unmarked) was not significant and was excluded from the regression."
+      ]
+    },
+    "example_productivity": {
+      "dbh_cm": 22.8,
+      "utilisation_percent": 69.0,
+      "vol_m3_per_pmh": 30.8,
+      "vol_m3_per_smh": 21.2
+    },
+    "costs_1992_usd": {
+      "purchase_price": 340000,
+      "owning_operating_per_smh": 88.56,
+      "notes": [
+        "Cost excludes profit/risk allowance; one-shift operation per PACE (1992)."
+      ]
+    },
+    "delay_breakdown_notes": [
+      "Total availability \u2248 82% and utilisation \u2248 69%; personal delays (43.9%) and repairs (34.6%) dominated."
+    ],
+    "sample_ranges": {
+      "dbh_cm": {
+        "mean_marked": 21.8,
+        "mean_unmarked": 23.6,
+        "range_marked": {
+          "min": 10.2,
+          "max": 43.3
+        },
+        "range_unmarked": {
+          "min": 13.5,
+          "max": 50.3
+        }
+      },
+      "trees_per_pmh": {
+        "marked": 2.9,
+        "unmarked": 2.9
+      },
+      "volume_per_tree_m3": {
+        "marked": 0.41,
+        "unmarked": 0.51
+      },
+      "availability_percent": {
+        "marked": 81.5,
+        "unmarked": 82.4
+      },
+      "utilisation_percent": {
+        "marked": 67.6,
+        "unmarked": 69.1
+      }
+    }
+  },
+  "forwarder": {
+    "machine": "FMG 910",
+    "regression": {
+      "equation": "vol_m3_per_pmh = 16.245 - 1.689 * mixed - 3.478 * pulp + 0.2707 * volume_per_load_m3 - 0.008 * distance_out_m - 0.0057 * travel_in_unit_m - 0.0039 * distance_in_m",
+      "coefficients": {
+        "intercept": 16.245,
+        "mixed_dummy": -1.689,
+        "pulp_dummy": -3.478,
+        "volume_per_load_m3": 0.2707,
+        "distance_out_m": -0.008,
+        "travel_in_unit_m": -0.0057,
+        "distance_in_m": -0.0039
+      },
+      "r2": 0.52,
+      "sample_size_cycles": 120,
+      "variable_definitions": {
+        "mixed_dummy": 1.0,
+        "pulp_dummy": 1.0,
+        "volume_per_load_m3": "Product volume carried on the bunk (m^3)",
+        "distance_out_m": "Travel from landing to first loading point",
+        "travel_in_unit_m": "Distance travelled while loading (in-unit travel)",
+        "distance_in_m": "Return travel from last loading location to landing"
+      },
+      "notes": [
+        "Indicator variables: sawlog load (mixed=0, pulp=0), mixed load (mixed=1, pulp=0), pulp load (mixed=0, pulp=1).",
+        "Regression significance P < 0.10 for all variables.",
+        "Equation assumes direct transfer of mixed loads to trailers (no rehandling)."
+      ]
+    },
+    "costs_1992_usd": {
+      "purchase_price": 235000,
+      "owning_operating_per_smh": 70.41,
+      "notes": [
+        "Mixed-load forwarding cost \u2248 $6.80/m\u00b3; pulpwood forwarding cost \u2248 43% higher than sawlogs."
+      ]
+    },
+    "operational_notes": [
+      "Two-pass technique (separate sawlog/pulp loads) outperformed single-pass when landing space was limited.",
+      "Average travel distances: distance_out \u2248 300 m, travel-in-unit varied 50-110 m depending on product (see Table 7)."
+    ],
+    "variable_ranges": {
+      "notes": "Ranges pulled from Table 7; travel distances and volumes reflect the western Oregon thinning study domain (n=120).",
+      "volume_per_load_m3": {
+        "mean": 8.2,
+        "min": 6.3,
+        "max": 11.5
+      },
+      "distance_out_m": {
+        "mean": 320.0,
+        "min": 180.0,
+        "max": 420.0
+      },
+      "travel_in_unit_m": {
+        "mean": 78.0,
+        "min": 51.0,
+        "max": 111.0
+      },
+      "distance_in_m": {
+        "mean": 320.0,
+        "min": 180.0,
+        "max": 420.0
+      }
+    },
+    "cost_examples": {
+      "notes": "Derived from Table 8 using the regression equation and 1992 cost inputs (US$70.41/SMH).",
+      "sawlog_two_pass": {
+        "technique": "two-pass",
+        "product": "sawlogs",
+        "vol_m3_per_pmh": 13.3,
+        "vol_m3_per_smh": 9.6,
+        "cost_usd_per_m3": 5.3
+      },
+      "pulpwood_two_pass": {
+        "technique": "two-pass",
+        "product": "pulpwood",
+        "vol_m3_per_pmh": 9.3,
+        "vol_m3_per_smh": 6.7,
+        "cost_usd_per_m3": 7.55
+      },
+      "mixed_single_pass": {
+        "technique": "single-pass (landing-sorted)",
+        "product": "mixed",
+        "vol_m3_per_pmh": 11.3,
+        "vol_m3_per_smh": 8.0,
+        "cost_usd_per_m3": 6.8
+      }
+    }
+  }
+}
