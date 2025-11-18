@@ -18,6 +18,8 @@
 - Captured the Barko 450 loader study (FERIC TN-46) in `data/productivity/loader_barko450.json`, including the ground-skid vs.
   yarder block production (≈658 m³/shift), utilisation/availability stats, and truck wait-time notes, and exposed it via
   `--loader-model barko450` / `--loader-barko-scenario` so the CLI can report those presets directly (docs/tests/telemetry updated).
+- Added a `ground_fb_loader_liveheel` harvest-system template so planners can pull the Barko defaults via
+  `--harvest-system-id ground_fb_loader_liveheel` without retyping the overrides.
 
 # 2025-11-22 — Berry (2019) skid-size scaling
 - `fhops.dataset estimate-productivity --machine-role roadside_processor` gained `--processor-skid-area-m2` so analysts can plug in the landing footprint from Berry (2019). The CLI now predicts the average <10 min delay seconds/stem, warns when areas fall outside the 2.5–3.7k m² Kinleith range, and auto-scales the utilisation multiplier when users haven’t supplied `--processor-delay-multiplier`.

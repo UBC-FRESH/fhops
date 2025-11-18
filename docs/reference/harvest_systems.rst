@@ -34,6 +34,10 @@ Default Systems
      - ground-based
      - feller-buncher → grapple skidder → roadside processor → loader
      - Mechanised felling followed by grapple skidding to roadside processing and loading.
+   * - ``ground_fb_loader_liveheel``
+     - ground-based
+     - feller-buncher → grapple skidder → roadside processor → loader
+     - Same chain as ``ground_fb_skid`` but the loader job is pinned to the Barko 450 live-heel preset (TN-46) for interior operations.
    * - ``ground_hand_shovel``
      - ground-based
      - hand faller → shovel logger → roadside processor → loader
@@ -242,6 +246,9 @@ loader inputs the same way shovel, skyline, and helicopter presets work. The reg
 
 * ``ground_fb_skid`` – feller-buncher → grapple-skidder sequences automatically select the TN-261 helper with
   1.05 m³ piece size, 115 m forwarding distance, 8 % adverse slope, bunching enabled, and a 0.95 delay multiplier.
+* ``ground_fb_loader_liveheel`` – same chain as ``ground_fb_skid`` but the loader job switches to the Barko 450 preset
+  with ``--loader-barko-scenario ground_skid_block`` so interior live-heel loader ops inherit the TN-46 utilisation
+  warning (96 % availability, 79 % utilisation, 17 % truck waits) automatically.
 * ``ground_fb_shovel`` – coastal shovel-logging corridors pick the ADV5N1 helper (0–10 % slope class) with a 90 m
   forwarding distance plus the published payload/utilisation defaults (2.77 m³/cycle, 0.93 PMH/SMH).
 * ``steep_tethered`` – tethered hot-logging layouts wire in the ADV2N26 clambunk regression with 320 m travel-empty

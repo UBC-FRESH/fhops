@@ -69,6 +69,33 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
                 ),
             ],
         ),
+        "ground_fb_loader_liveheel": HarvestSystem(
+            system_id="ground_fb_loader_liveheel",
+            environment="ground-based",
+            notes="Feller-buncher → grapple skidder → processor → Barko live-heel loader (TN-46).",
+            jobs=[
+                SystemJob("felling", "feller-buncher", []),
+                SystemJob(
+                    "primary_transport",
+                    "grapple_skidder",
+                    ["felling"],
+                    productivity_overrides={
+                        "skidder_trail_pattern": TrailSpacingPattern.SINGLE_GHOST_18M.value,
+                        "skidder_decking_condition": DeckingCondition.CONSTRAINED.value,
+                    },
+                ),
+                SystemJob("processing", "roadside_processor", ["primary_transport"]),
+                SystemJob(
+                    "loading",
+                    "loader",
+                    ["processing"],
+                    productivity_overrides={
+                        "loader_model": "barko450",
+                        "loader_barko_scenario": "ground_skid_block",
+                    },
+                ),
+            ],
+        ),
         "ground_hand_shovel": HarvestSystem(
             system_id="ground_hand_shovel",
             environment="ground-based",
