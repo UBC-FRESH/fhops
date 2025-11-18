@@ -1,0 +1,3508 @@
+FOREST ENGINEERING
+RESEARCH INSTITUTE
+O F CANADA
+
+FERIC
+
+INSTITUT CANADIEN
+D E RECHERCHES
+E N GÉNIE FORESTIER
+
+HARVESTING LOW-VOLUME PINE STANDS
+I N THE WILLIAMS LAKE
+TIMBER SUPPLY AREA,
+BRITISH COLUMBIA
+Björn Andersson, M.Sc.FE, REng.
+December 1992
+
+Technical Report
+
+■■■■■
+■■■■■
+■■■■■
+TR-106
+
+HARVESTING LOW-VOLUME PINE STANDS
+IN THE WILLIAMS LAKE
+TIMBER SUPPLY AREA,
+BRITISH COLUMBIA
+
+Björn Andersson, M.Sc.FE, P.Eng.
+Senior Researcher
+Western Division
+Forest Engineering Research Institute of Canada
+
+Technical Report No. TR-106
+December 1992
+
+KEYWORDS: Harvesting, Feller-bunchers, Grapple skidders, Processors, Productivity, Costs, Lodgepole pine. British
+Columbia.
+
+© Copyright 1992, Forest Engineering Research Institute of Canada ISSN 0318-7063
+
+Abstract
+In the early 1980s, forest companies in the Williams Lake Timber Supply Area in the Interior of British Columbia
+began to harvest low-volume lodgepole pine stands previously considered as unmerchantable. What began as a salvage operation of insect-infested stands is now an important source of wood fibre for several forest companies in the
+area. However, information on productivity and costs is limited, thus making it difficult to determine the economics
+of harvesting these stands. The objectives of a study initiated by the Forest Engineering Research Institute of Canada
+(FERic) in 1988 were to provide forest companies with cost and productivity data associated with mechanical harvesting of low-volume pine stands.
+The study examines the performance of feller-bunchers, grapple skidders, and roadside processors in two operations
+west of Williams Lake. Productivities and costs are presented for a variety of stand conditions typical for the lowvolume lodgepole pine stands in the area. Operating factors influencing machine performance, and simple models
+for predicting productivity are also presented.
+
+Author
+Björn Andersson obtained B.Sc.FE (1973) and M.Sc.FE (1989) degrees from University of New Brunswick. H e
+worked for Eddy Forest Products Ltd. from 1973 to 1974 as a harvesting supervisor, and for Great Lakes Forest
+Products Ltd. from 1975 to 1981 as a harvesting supervisor and as a project engineer. H e also spent three years in
+Sweden operating a private woodlot. Björn joined FERIC in 1988 as a researcher in the Harvesting Operations Group.
+H e is a Registered Professional Engineer in British Columbia.
+
+Acknowledgements
+FERIC wishes to acknowledge with gratitude the assistance of Fred Hutchinson and David Schwartz of Fletcher
+Challenge Canada Limited, P & T (Williams Lake Division); and Eric Pascas and Ron Bremner of Lignum Ltd.,
+Williams Lake. Sincere thanks also g o to David Rankin of Jordef Enterprises Limited, and Joseph Marcotte of Rytz
+Contracting Limited, and their equipment operators for their cooperation during the several months of field trials;
+and to Keith Bontron and Reg Haggard for their assistance during the field trials.
+
+Disclaimer
+This report is published solely to disseminate information to FERic members. It is not intended as an endorsement or
+approval by FERic of any product or service to the exclusion of others that may be suitable.
+
+ii
+
+Table of Contents
+Abstract
+Author
+Acknowledgements
+Summary
+Sommaire
+INTRODUCTION
+BACKGROUND
+Objectives and Methodology
+Description of Study Sites and Harvesting Operations
+FELLER-BUNCHER STUDIES
+Machine Utilization
+Productivity
+GRAPPLE SKIDDER STUDIES
+Machine Utilization
+Productivity
+STROKE DELIMBER-SLASHER STUDIES: OPERATION A
+Machine Utilization
+Productivity
+Log Length: Measuring Accuracy
+STEYR KP40 PROCESSOR STUDIES: OPERATION B
+Machine Utilization
+Productivity
+Log Length: Measuring Accuracy
+SYSTEM PRODUCTIVITY AND COST ANALYSES
+System Analysis Assumptions
+Results
+Discussion
+CONCLUSION
+REFERENCES
+APPENDICES
+I Definitions
+II Procedures for Calculating Machine Charge-Out Rates
+
+iii
+
+List of Tables
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+
+Average Stand Characteristics of Cutblocks
+2
+Shift-Level Utilization: Feller-Bunchers
+3
+Long-Term Productivity: Case 1187B/Rotosaw Feller-Buncher 4
+Short-Term Productivity: Feller-Bunchers
+4
+Average Fell-and-Bunch Time per Tree
+5
+Shift-Level Utilization: John Deere 648D Grapple Skidder,
+Operation A
+6
+Long-Term Productivity: John Deere 648D Grapple Skidder,
+Operation A
+7
+Short-Term Productivity: John Deere 648D
+Grapple Skidders
+7
+Shift-Level Utilization: Case 1187B/Denis Stroke
+Delimber-Slasher
+9
+Short-Term Productivity: Case 1187B/Denis Stroke
+Delimber-Slasher
+9
+Shift-Level Utilization: Steyr KP40 Processors
+11
+Short-Term Productivity: Steyr KP40 Processors
+12
+Results of System Analyses
+16
+
+List of Figures
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+
+Locations of study areas
+Feller-buncher operating in typical terrain conditions in
+low-volume pine stands
+Case 1187B/Denis stroke delimber-slasher
+Steyr KP40 processors operating at roadside
+Estimated productivity: medium-sized, excavator-type
+feller-bunchers
+Predicted productivity: John Deere 648D grapple skidders
+Estimated productivity: Case 1187B/Denis stroke
+delimber-slasher
+Length-measuring accuracy: Case 1187B/Denis stroke
+delimber-slasher
+Estimated productivity: Steyr KP40 processors
+Estimated productivity: Steyr KP40 processors
+Length-measuring accuracy: Steyr KP40 processors
+Simplistic relationship of system wood cost to annual
+harvest quota
+Simplistic relationship of processing cost to machine
+utilization: Steyr KP40 processor
+
+1
+2
+2
+2
+6
+8
+10
+11
+13
+14
+15
+17
+17
+
+Summary
+In the fall and winter of 1988/89, the Forest Engineering Research Institute of Canada (FERIC) studied the
+performances of feller-bunchers, grapple skidders, and
+roadside processors in two harvesting operations (A and
+B) in the Williams Lake Timber Supply Area in the
+Interior of British Columbia. During the study, the two
+operations harvested six cutblocks of low-volume, insect-infested, lodgepole pine stands. The average gross
+volume of these cutblocks ranged between 9 2 and 165
+m 3/ha.
+The objectives of the study were to determine machine
+productivity levels, identify operating factors affecting
+machine performance, estimate harvesting costs, and
+develop simple prediction models for felling, skidding,
+and roadside processing operations in low-volume
+lodgepole pine stands in the Williams Lake TSA.
+Felling was done by four different feller-bunchers: Case
+1187B/Rotosaw 2100, John Deere 693D/Rotosaw
+1800, John Deere 693C/Harricana CS5000, and John
+Deere 693C/Bradeco. Their short-term productivities
+ranged between 116 and 228 trees/PMH (25.5 and 44,5
+m 3/PMH). However, these productivities include those
+stems that were lost, broken, or discarded in the subsequent skidding and processing operations; hence, the
+“realized production” of the feller-bunchers was less
+than recorded in the short-term studies. The long-term
+productivity (based on delivered volume and total operating time) for the Case/Rotosaw feller-buncher was
+found to range between 19.1 and 26.6 m 3/〇MH.
+The differences in the short-term productivities of the
+feller-bunchers were related to the tree-severing speed
+of their respective saw heads, and/or to the average
+number of trees being accumulated in the felling heads
+(trees/cycle) prior to bunching. The productivity was
+found to be affected by the number of merchantable
+trees per hectare and by the ratio of unmerchantableto-merchantable trees in the stand. The performance of
+the Harricana-equipped feller-buncher was found to be
+more sensitive to the stand conditions than the other
+feller-bunchers.
+Stems were skidded to roadside with John Deere 648D
+grapple skidders. T w o of the skidders had extended
+grapple tongs, and were able to take bigger loads per
+turn than the skidders with standard grapples. The shortterm skidder productivity ranged between 202 and 348
+stems/PMH (44.4 and 66.1 m3/PMH). However, the realized skidder production was lower due to volume
+losses that occurred during the subsequent processing
+phase. The long-term productivity of the grapple skidder in Operation A was found to range between 34.4
+and 44.6 m3/〇MH.
+
+Differences in the average skidding distances and the
+number of bunches loaded per turn were the main reasons for variations in the short-term skidder productivity. Variations in the number of bunches loaded per turn
+could not be correlated to either the original stand or
+the felled conditions. Differences in grapple sizes, skidding distances, and operators’ work habits likely influenced the number of bunches per load.
+In four of the six test blocks (Operation A), the stems
+at roadside were processed into 5.2-m and 7.6-m logs
+by a Case 1187B/Denis stroke delimber-slasher. The
+short-term productivity ranged between 5 9 and 149
+stems/PMH (net 12.2-24.6 m3/PMH). The low end of this
+range was recorded with inexperienced machine operators who had been hired only days prior to the start of
+the study. Long-term productivity was not established
+for the Denis delimber-slasher.
+Operator skill and stem size were the main reasons for
+the variation in the productivity of the Denis stroke
+delimber-slasher. The number of stems processed per
+hour decreased as the average stem size increased. This
+occurred because small stems were more often processed in multiples and yielded, on the average, fewer
+logs per stem than did large stems.
+In two of the test blocks (Operation B), the stems at
+roadside were processed into five different log lengths
+(between 3.8 and 6.2 m ) by Steyr KP40 processors
+mounted on excavator carriers. The short-term productivity of the processors ranged between 119 and 227
+stems/PMH (net 24.2-38.0 m 3/PMH). Productivity was
+influenced by operator experience, stem size, number
+of logs manufactured per stem, and stem quality (frequency of long-butting). Stem quality did not significantly affect the number of stems processed per hour,
+but had a major adverse impact on the machines’ net
+production (logs/h and net volume/h). Long-term productivity was not established for the Steyr processors.
+The study recorded little difference in the ability of the
+Denis and the Steyr KP40 to accurately measure the
+length of logs. For the Denis and Steyr KP40 respectively, 34% and 39% of the logs were within 2 cm of
+the target lengths, and 85% and 92% were within 10 cm
+of the target lengths.
+The estimated overall productivity of the harvesting
+systems, including road construction, felling, skidding,
+processing, cutover clearing, and debris piling, ranged
+between 4 4 and 6 0 m3/man-day. The total system cost
+was found to be in the magnitude of $10-15/m3. Cost
+and productivity were found to be adversely affected
+by small tree size and high losses of merchantable fi-
+
+marchands par rapport aux arbres marchands dans le
+peuplement. L a performance de 1’abatteuse-groupeuse
+équipée d’une tête Harricana se révéla plus sensible aux
+conditions du peuplement que celle des autres
+abatteuses-groupeuses.
+
+bre, especially when the losses occurred in the Processing phase.
+The wood cost was also shown to be affected by the
+operational utilization of individual machines, and by
+the ratio of the machines’ production capacity to the
+operation’s annual production quota. Under-utilizing
+machines, for either reason, increases the cost per m 3.
+
+Les arbres étaient débardés e n bordure de route au
+moyen de débardeurs à grappin John Deere 648D. Deux
+des débardeurs étaient dotés d’un grappin à dents
+allongées; ils étaient donc capables de prendre de plus
+grosses charges par voyage que les débardeurs à grappin
+standard. L a productivité à court terme des débardeurs
+variait entre 202 et 348 arbres/HMP (44,4 et 66,1 m3/
+HMP). Cependant, la production réelle des débardeurs
+était plus faible, étant donné les pertes de volume subies
+durant l a p h a s e s u b s é q u e n t e d e f a ç o n n a g e . L a
+productivité à long terme du débardeur à grappin dans
+l’exploitation A variait entre 34,4 et 44,6 m3/HMF.
+
+Sommaire
+Au cours de l’automne et de l’hiver 1988-89, l’institut
+canadien de recherches en génie forestier (FERic) étudia
+les performances d’abatteuses-groupeuses, de
+débardeurs à grappin et de façonneuses e n bordure de
+route dans deux exploitations (A et B) situées dans l’aire
+d’approvisionnement forestier (TSA) de Williams Lake
+en Colombie-Britannique intérieure. Durant l’étude, la
+récolte fut effectuée dans six blocs de coupe contenant
+des peuplements d e pin lodgepole d e faible volume,
+infestés d’insectes. Le volume brut moyen de ces blocs
+de coupe variait entre 9 2 et 165 m3/ha.
+
+Les différences dans la distance moyenne de débardage
+et le nombre de piles chargées par voyage étaient les
+principales raisons qui expliquaient les variations dans
+la productivité à court terme des débardeurs. Les variations dans le nombre de piles par voyage ne pouvaient
+être mises e n corrélation ni avec le peuplement d’origine ni avec les conditions d’abattage. Les différences
+dans l e s dimensions d e s grappins, la distance d e
+débardage et les habitudes de travail des opérateurs influençaient sans doute le nombre de piles par charge.
+
+L’étude avait pour objectifs d’établir les niveaux de
+productivité des machines, de déterminer les facteurs
+opérationnels qui e n affectent la performance, d’estimer
+les coûts d’exploitation et d e développer des modèles
+simples de prévision pour les opérations d’abattage, de
+débardage et de façonnage e n bordure de route dans les
+peuplements de pin lodgepole de faible volume situés
+dans Faire d’approvisionnement de Williams Lake.
+
+Dans quatre des six blocs d’essai (exploitation A), les
+tiges e n bordure de route étaient façonnées e n billes de
+5 , 2 m e t d e 7 , 6 m a u moyen d ’ u n e ébrancheusetronçonneuse à flèche C a s e 11 8 7 B / D e n i s . L a
+productivité à court terme variait entre 5 9 et 149 arbres/
+H M P (volume net d e 1 2 , 2 e t 2 4 , 6 m 3/HMP). L e s
+productivités les plus basses furent enregistrées avec des
+opérateurs inexpérimentés qui avaient été engagés
+quelques jours seulement avant le début de l’étude. La
+p r o d u c t i v i t é à l o n g terme d e l ’ é b r a n c h e u s e tronçonneuse Denis ne fut pas établie.
+
+Quatre abatteuses-groupeuses différentes procédaient à
+l’abattage: Case 1187B/Rotosaw 2100, John Deere
+693D/Rotosaw 1800, John Deere 693C/Harricana
+CS5000 et John Deere 693C/Bradeco. Les productivités
+à court terme variaient entre 116 et 228 arbres/HMP
+(25,5 et 44,5 m3/HMP). Cependant, ces productivités
+tiennent compte des tiges qui étaient perdues, brisées
+ou mises d e côté au cours des phases subséquentes de
+débardage et de façonnage; par conséquent, la production réelle des abatteuses-groupeuses était inférieure à
+celle enregistrée durant les études de courte durée. La
+productivité à long terme (basée sur le volume de bois
+livré e t sur le temps total d e fonctionnement) d e
+1’abatteuse-groupeuse Case/Rotosaw se situait entre
+19,1 et 26,6 m3/HMF.
+
+L’habileté de l’opérateur et les dimensions des tiges
+étaient les principales raisons de la variation dans la
+productivité de l’ébrancheuse-tronçonneuse Denis. Le
+nombre de tiges façonnées par heure diminuait à mesure
+que leurs dimensions moyennes augmentaient. E n effet,
+les petites tiges étaient plus souvent façonnées plusieurs
+à la fois et produisaient, e n moyenne, moins de billes
+par tige que les plus grosses.
+
+Les différences dans les productivités à court terme des
+abatteuses-groupeuses étaient liées à la vitesse avec
+laquelle chacune des têtes à scie sectionnait les arbres
+et a u nombre moyen d’arbres conservés dans la tête
+d ’ a b a t t a g e (arbres/cycle) avant l e g r o u p a g e . L a
+productivité était affectée par le nombre d’arbres
+marchands par hectare et par le ratio d’arbres non
+
+Dans deux des blocs d’essai (exploitation B), les tiges
+e n bordure de route étaient façonnées en cinq longueurs
+de billes différentes (entre 3,8 et 6,2 mètres) par des
+façonneuses Steyr KP40 montées sur des châssis d’exc a v a t r i c e s . L a p r o d u c t i v i t é à c o u r t terme d e s
+vi
+
+-----------------------------------------------------------------------
+
+façonneuses variait entre 119 et 227 tiges/HMP (volume
+net de 24,2 et 38,0 m 3/HMP). L a productivité était influencée par l’expérience de l’opérateur, les dimensions
+des arbres, le nombre de billes par tige et la qualité des
+tiges (nécessité plus ou moins fréquente d’enlever une
+section de la bille de pied). La qualité des tiges n’affectait pas de façon significative le nombre d’arbres
+façonnés par heure, mais elle avait un important effet
+négatif sur la production nette des machines (billes/h
+et volume net/h). L a productivité à long terme des
+façonneuses Steyr ne fut pas établie.
+L’étude enregistra peu de différence dans la capacité des
+façonneuses Denis et Steyr KP40 à mesurer avec
+précision la longueur des billes. Avec la Denis et la
+Steyr KP40 respectivement, 3 4 % et 39 % des billes
+obtenues étaient à moins de 2 c m des longueurs désirées,
+alors que 85 % et 9 2 % e n étaient à moins d e 1 0 cm.
+
+La productivité estimée pour l’ensemble des systèmes
+d’exploitation, y compris la construction des routes,
+l’abattage, le débardage, le façonnage, le nettoyage de
+la coupe et l’empilage des résidus variait entre 4 4 et
+6 0 m 3/jour-personne. Le coût total du système était de
+l’ordre de 10 à 15 $/m 3. Le coût et la productivité se
+révélèrent affectés négativement par les arbres de faibles
+dimensions et par les pertes élevées de fibre marchande,
+particulièrement quand ces pertes se produisaient durant
+la phase de façonnage.
+Le coût d u bois se montra aussi affecté par le taux
+d’utilisation des machines individuelles, ainsi que par
+le ratio de la capacité de production des machines par
+rapport au volume annuel total de production. Une sousutilisation des machines, pour l’une ou l’autre de ces
+raisons, augmente le coût par m3.
+
+INTRODUCTION
+
+In 1988/89 FERIC undertook further studies on two
+mechanized harvesting operations in the low-volume
+pine stands in the Williams Lake TSA to provide information to the forest industry in that region (Figure 1).
+
+Since the early 1980s, forest companies in the Williams
+Lake Timber Supply Area (TSA) in the Interior of British
+Columbia have been harvesting insect-infested, lowvolume, lodgepole pine (Pinus contorta Dougl.) stands.
+Harvesting has proceeded under Emergency Forest
+Licences for the purpose of controlling the mountain
+pine beetle (Dendroctonus ponderosae Hopk.) population and salvaging the damaged stands. As the beetle
+population is now under control and the Emergency
+Forest Licences will soon expire, the forest companies
+are looking for replacement wood to supplement their
+current normal Allowable Annual Cut. The only large
+source of uncommitted timber consists of other low-volume lodgepole pine stands, previously considered
+unmerchantable, and locally known as marginal pine
+stands.
+
+BACKGROUND
+Objectives and Methodology
+The objectives of this study were to determine machine
+productivity levels, identify operating factors affecting
+machine performance, estimate harvesting costs, and
+develop simple prediction models for felling, skidding,
+and roadside processing operations in low-volume
+lodgepole pine stands in the Williams Lake TSA. Field
+data were obtained through shift-level reports and detailed-timing studies of feller-bunchers, grapple skidders, and roadside processors operating at two different harvesting operations in the Williams Lake TSA. The
+relationships between machine performance and the
+operating conditions were determined through simple
+and multiple regression analyses using the detailed-timing data (definitions in Appendix I).
+
+In 1987, the Forest Engineering Research Institute of
+Canada (FERIC) was asked by its member companies
+in the Williams Lake area to determine the cost of harvesting low-volume pine stands. In FERIC’s initial marginal pine study, Peterson and Giles (1988) surveyed
+the potential fibre resources of these stands and interviewed forest company staff and timber-harvesting contractors. Respondents felt that operating in low-volume
+pine stands increased harvesting costs and lowered
+equipment productivities. Although the industry provided average cost and productivity figures, little information was available on how variations in stand conditions affect the cost and productivity of harvesting.
+Peterson and Giles recommended that detailed harvesting studies be undertaken to provide information for
+developing a stand-by-stand strategy for harvesting lowvolume pine stands.
+
+Harvesting costs for each test block were calculated
+using the average stand data from the company cruise
+summaries, the productivity prediction models, and the
+machine rental rates estimated using the standard FERIC
+machine costing format (Appendix II).
+
+Description of Study Sites and
+Harvesting Operations
+Field studies were carried out in low-volume lodgepole
+pine stands in six separate cutblocks identified as
+Blocks A:1 to A:4, and B:1 and B:2. Average stand
+characteristics of the cutblocks are presented in Table 1.
+
+Bowron
+Provincial Park
+
+to Prince
+George
+
+Quesnel
+Timber Supply Area
+
+Quesnel
+
+Tweedsmuir
+Provincial Park
+
+Wells Gray
+Provincial Park
+
+Operation B
+to Bella Coola
+Alexis Creek
+
+Cariboo
+Forest
+Region
+
+Operation A
+
+Hanceville
+
+*
+
+Williams Lake
+Timber Supply Area
+
+0 2 5 5 0 7 5 100
+Kilometres
+
+Figure 1 . Locations of study areas.
+1
+
+Williams Lake
+
+Riske Creek
+
+100 Mlle House
+Timber Supply Area
+100 Mila House
+
+to Little Fort
+
+three John Deere 648 D grapple skidders, two of which
+had their grapple tongs extended for accumulating
+larger payloads; and three Steyr KP40 processors
+mounted on different carriers, including a Caterpillar
+225, Caterpillar E L 180, and Linkbelt L-2800 (Figure 4).
+
+Terrain conditions were generally uniform and favourable in all blocks. The ground was typically flat, firm,
+and free from obstacles (Figure 2). Some areas in Block
+B:2, however, had slopes up to 3()%, and/or had slightly
+uneven ground.
+In Operation A (Blocks A: 1 to A:4), the trees were
+felled by a Case 1 187B/Rotosaw 2100 fellerbuncher
+and skidded to roadside with a John Deere 648 D grapple skidder. At roadside, a Case 1 1 87B/Denis stroke
+delimber-slasher (Figure 3) processed the stems into
+logs 5.2-m and 7.6-m long and sorted them by length.
+All major defects were removed during processing,
+while cat faces and minor butt rot were normally not
+removed.
+The harvesting equipment in Operation B (Blocks B: 1
+and B:2) varied throughout the study period, but the core
+equipment consisted of three feller-bunchers (a John
+Deere 693D/Rotosaw 1800, a John Deere 6 9 3 C /
+Harricana CS5000, and a John Deere 693C/Bradeco);
+
+■f
+
+Figure 3. Case 1187B!Denis stroke delimber-slasher.
+
+'
+
+Figure 2. Feller-buncher operating in typical terrain
+conditions in low-volume pine stands.
+
+Figure 4. Steyr KP40 processors operating at
+roadside.
+
+Table 1 . Average Stand Characteristics of Cutblocks “
+Cutblock
+
+Tree dbh
+Merchantable (cm)
+Snags (cm)
+Tree height
+Total (m)
+Merchantable (m)
+Gross merchantable volume/tree (m’)
+Trees/ha
+Merchantable (no.)
+Snags (no.)
+Gross merchantable volumc/ha (m’) h
+a
+
+From company cruise summaries.
+
+A:1
+
+A:2
+
+A:3
+
+A:4
+
+B:1
+
+B:2
+
+18.0
+18.1
+
+20.4
+25.4
+
+20.5
+21.6
+
+20.6
+21.6
+
+21.6
+18.2
+
+20.0
+19.7
+
+15.2
+9.7
+0.15
+
+15.5
+10.9
+0.2i
+
+15.5
+1 1.0
+0.21
+
+16.2
+1 1.7
+0.22
+
+16.3
+12.2
+0.24
+
+16.8
+12.1
+0.21
+
+749
+625
+1 14
+
+465
+194
+96
+
+440
+381
+92
+
+755
+30
+165
+
+380
+39
+92
+
+531
+51
+111
+
+b
+
+Does not include volume of snags.
+
+2
+
+worked one shift per day, but utilization dropped when
+the machine was rescheduled to work two shifts per day
+because more in-shift wait-for-parts and wait-for-repair
+times occurred during its double-shift operation. The
+low utilization of both the John Deere/Harricana and
+the John Deere/Bradeco feller-bunchers was primarily
+related to major mechanical failures of the undercarriers
+and engine components.
+
+The stems in Operation B were normally processed into
+five different log lengths—3.8 m, 4.4 m, 5.0 m, 5.6 m,
+and 6.2 m— ach with a minimum 10-cm top diameter.
+All visual defects were removed during processing.
+Sorting by length was not required.
+
+FELLER-BUNCHER STUDIES
+Machine Utilization
+
+Productivity
+
+The Servis recorders used in the study were not set up
+to differentiate between the time the machines travelled
+to and from work sites (machine travel time) and the
+time the machines harvested trees (productive machine
+hours, PMH). Therefore, the expression “operating machine hours” (OMH) is used to denote all time for which
+the machines were in motion. Delays less than 5 min
+in duration are also included in the OMH.
+
+Long-Term Productivity. The gross stand volume and
+the delivered volume for the individual cutblocks in the
+study showed considerable differences (Table 3). These
+volumes differed because of variations in stand quality
+and fibre recovery.
+Based on the delivered volume, the long-term productivity of the Case/Rotosaw feller-buncher in the four
+cutblocks ranged from 19.1 to 26.6 m3/〇MH (Table 3).
+No correlation of feller-buncher performance to stand
+characteristics (Table 1) could be found.
+
+Operational utilization of the feller-bunchers ranged
+between 5 8 and 82% (Table 2). Variation in utilization
+levels was caused by differences in machine scheduling, the mechanical condition of the machines, machine
+maintenance support, organization of the operations,
+and amount of supervision. The highest utilization was
+recorded for the Case/Rotosaw feller-buncher when it
+
+Short-Term Productivity. Productivities of the feller-bunchers determined from the detailed-timing studies are presented in Table 4. In several studies, the average diameter of standing merchantable trees and the
+
+Table 2. Shift-Level Utilization: Feller-Bunchers
+Operation A
+
+Operation B
+
+Case 1187B/
+Rotosaw
+
+Case 1187B/
+Rotosaw
+
+JD 693D/
+Rotosaw
+
+JD 693C/
+Harricana
+
+JD 693C/
+Bradeco
+
+3.5
+
+3.5
+
+0.5
+
+2.5
+
+2.5
+
+Normal shifts/day (no.)
+
+1
+
+2a
+
+2
+
+2
+
+2
+
+Shifts with available data (no.)
+Shifts with missing data (no.)
+
+38
+0
+
+29
+0
+
+179
+2
+
+135
+52
+
+148
+33
+
+Average shift composition b
+Scheduled (h)
+Operating (h)
+Repair and service (h)
+Operational delay (h)
+Unknown delays (h)
+
+10.4
+8.5
+0.7
+0.9
+0.3
+
+11.4
+8.3
+1.5
+0.5
+1.1
+
+12.0
+8.6
+1.7
+0.4
+1.3
+
+12.0
+7.1
+2.0
+0.8
+2.1
+
+12.0
+7.0
+1.9
+0.8
+2.3
+
+Operational utilization (%)
+Mechanical availability (%) c
+
+82
+90-93
+
+73
+77-87
+
+72
+75-86
+
+59
+66-83
+
+58
+65-84
+
+Machine age (yr)
+
+a One shift/day when working Saturdays and Sundays.
+b
+Based on shifts with available data.
+c
+Expressed as a range, due to unknown delays.
+
+3
+
+Table 3. Long-Term Productivity: Case 1187B/Rotosaw Feller-Buncher
+Test block
+A:1
+
+A:2
+
+A:3
+
+A:4
+
+All blocks
+
+Road“
+
+1 683
+1 450
+
+3 866
+5 117
+
+962
+1 322
+
+6 437
+4 678
+
+12 948
+12 567
+
+n/a
+606
+
+Volume difference (%) b
+
+-14
+
++32
+
++37
+
+-27
+
+-3
+
+n/a
+
+Size of cutblock (ha)
+
+14.8
+
+40.3
+
+10.5
+
+39.0
+
+104.6
+
+n/a
+
+Operating machine hours (OMH)
+
+76.0
+
+197.7
+
+49.7
+
+241.9
+
+565.3
+
+27.8
+
+Feller-buncher productivity based on:
+Gross stand volumes, excluding snags (m3/〇MH)
+Delivered volume (m3/〇MH)
+Cutblock size (ha/〇MH)
+
+22.1
+19.1
+0.19
+
+19.6
+25.9
+0.20
+
+19.4
+26.6
+0.21
+
+26.6
+19.3
+0.16
+
+22.9
+22.2
+0.19
+
+n/a
+21.8
+n/a
+
+Gross stand volume, excluding snags (m3)
+Delivered volume to mill (m3)
+
+a
+b
+
+Approximately 1.5 km long, built to access Block A:4.
+(delivered - gross stand) • 100/gross stand.
+
+Table 4. Short-Term Productivity: Feller-Bunchers
+Feller-buncher studies
+Case 1187B/Rotosaw
+
+JD 693D/Rotosaw
+
+JD 693C/
+Harricana
+
+JD 693C/
+Bradeco
+
+1
+
+2
+
+3
+
+1
+
+2
+
+3
+
+1
+
+2
+
+1
+
+Observed time (PMH)
+
+11.6
+
+8.5
+
+3.3
+
+2.1
+
+6.0
+
+4.3
+
+7.5
+
+2.8
+
+2.9
+
+Average stand characteristics
+Merchantable tree dbh (cm)
+Gross merchantable volume/tree (m3)
+Merchantable trees/ha (no.) a
+Unmerchantable trees/ha (no.)
+Gross merchantable volume/ha (m3)
+
+17.7 18.3 19.4
+0.16 0.18 0.20
+1100 950 800
+900 700 300
+176 171 160
+
+17.8 21.2 22.8
+0.17 0.26 0.29
+770 650 500
+600 550 300
+131 169 145
+
+18.4 20.9
+0.19 0.25
+850 550
+550 650
+162 138
+
+19.8
+0.22
+650
+600
+143
+
+Bunch characteristics
+Stems/bunch (no.)
+Average dbh of bunched stems (cm)
+Bunched merchantable volume/stem (m3)
+Gross merchantable volume/bunch (m3)
+
+7.2 8.8 8.0
+18.3 18.8 20.2
+0.17 0.19 0.21
+1.2 1.7 1.7
+
+9.0 5.6 5.2
+18.3 21.9 22.8
+0.18 0.28 0.29
+1.6 1.6 1.5
+
+7.0 6.0
+18.6 20.9
+0.19 0.25
+1.3 1.5
+
+6.7
+19.8
+0.22
+1.5
+
+Machine productivity b
+Trees/PMH (no.)
+Merchantable volume (m3/PMH)
+Area (ha/PMH)
+
+161 180 164
+27.5 34.2 34.4
+0.16 0.20 0.22
+
+161 155 138
+30.0 43.4 40.0
+0.25 0.26 0.30
+
+228 178
+43.3 44.5
+0.27 0.32
+
+116
+25.5
+0.18
+
+Average trees/cycle (no.)
+
+1.6
+
+1.8
+
+2.3
+
+1.8
+
+1.5
+
+2.0
+
+1.3
+
+1.4
+
+2.5
+
+Work element distribution
+Fell and bunch (min/tree)
+Fell-to-waste (min/tree)
+Move (min/tree)
+Other work (min/tree)
+Minor delay (min/tree)
+
+0.30 0.29 0.30
+0.02 0.01 0.02
+0.05 0.03 0.05
+<0.01 <0.01 <0.01
+<0.01 0.00 <0.01
+
+0.26 0.30 0.28
+0.05 0.02 0.02
+0.06 0.06 0.11
+<0.01 0.01 <0.01
+0.00 <0.01 0.02
+
+0.20 0.24
+0.01 0.02
+0.05 0.07
+<0.01 <0.01
+<0.01 0.01
+
+0.36
+0.02
+0.12
+0.01
+0.01
+
+Total time (min/tree)
+
+0.37 0.33 0.37
+
+0.37 0.39 0.43
+
+0.26 0.34
+
+0.52
+
+“ Merchantable stems per hectare includes all snags with firmly attached bark.
+b
+Machine productivity is based on the number and volume of bunched stems.
+
+4
+
+crease in the number of trees per hectare. All fellerbunchers in the study were equally affected by these
+stand factors.
+
+average diameter of bunched stems was significantly
+different. These differences occurred because a portion
+of the smaller merchantable trees (13-15 c m dbh) were
+not recovered by the feller-bunchers.
+
+M o d e l s for Estimating Productivity of FellerBunchers. Figure 5 presents simple models for predicting productivity of medium-sized excavator-type
+feller-bunchers in low-volume pine stands. The models use only the stand characteristic found to have the
+strongest influence on machine performance and, for
+that reason, caution must be exercised when applying
+these models to other operations.
+
+The short-term productivity established for the Case/
+Rotosaw feller-buncher is considerably higher than its
+long-term productivity (Table 3) because the short-term
+productivity is based on the gross merchantable volume
+bunched at the felling site and because PMH does not
+include machine travel time to and from the actual felling sites.
+Despite differences in the operating conditions among
+the feller-buncher studies, results clearly show that the
+trees/PMH differs considerably between machines
+equipped with different saw heads. The Harricanaequipped feller-buncher recorded the highest productivity (average 203 trees/PMH), followed by the Rotosawequipped machines (average 160 trees/PMH), and the
+Bradeco-equipped feller-buncher (116 trees/PMH). The
+variation in the feller-bunchers’ productivity levels resulted mainly from differences in their respective felland-bunch time per tree (Table 4). The fell-and-bunch
+time per tree was affected not only by the speed of actually felling trees, but also by the number of trees being accumulated in the felling head (trees/cycle) prior
+to bunching (Table 5). Analysis showed that the number
+of trees accumulated by the Harricana varied inversely
+with the number of stems per hectare 1 while the other
+heads were not influenced by this factor.
+
+GRAPPLE SKIDDER STUDIES
+Machine Utilization
+Although the mechanical availability of the John Deere
+648D grapple skidder in Operation A exceeded 86%
+during the study period, the skidder was utilized only
+67% of its scheduled working time (Table 6). The skidder's production capacity was considerably higher than
+that of the feller-buncher and processor and thus allowed the operator to take longer breaks or perform
+other tasks.
+
+Productivity
+Long-Term Productivity. The overall long-term productivity of the grapple skidder in Operation A (Table 7) was about 90% higher than that of the fellerbuncher (Table 3).
+Short-Term Productivity. The short-term productivity in the six skidder studies ranged from 44.4 to 66.1
+m 3/PMH (Table 8). The short-term productivity was
+approximately 30% higher than that determined in the
+long-term studies (Table 7). But the data from these two
+different study methods cannot be directly compared
+
+The productivity of the feller-bunchers was also affected
+by the ratio of unmerchantable to merchantable trees
+per hectare, and the number of merchantable trees per
+hectare. The machines’ fell-to-waste times increased in
+stands with a high content of unmerchantable trees,
+while the moving time per tree decreases with an in-
+
+Table 5 . Average Fell-and-Bunch Time per Tree
+Case 1187B/Rotosaw
+No. trees/cycle
+
+1
+
+JD 693D/Rotosaw
+
+JD 693C/Harricana
+
+JD 693C/Bradeco
+
+Frequency of
+Frequency of
+Frequency of
+Frequency of
+occurrence
+Time
+occurrence
+Time
+occurrence
+Time
+occurrence
+Time
+(min/tree)
+(min/tree)
+(min/tree)
+(min/tree)
+(%)
+(%)
+(%)
+(%)
+
+1
+
+39
+
+0.35
+
+66
+
+0.32
+
+27
+
+0.30
+
+23
+
+0.45
+
+2
+
+59
+
+0.27
+
+28
+
+0.25
+
+38
+
+0.22
+
+31
+
+0.37
+
+3
+
+2
+
+0.24
+
+5
+
+0.23
+
+25
+
+0.19
+
+36
+
+0.35
+
+4
+
+0
+
+-
+
+1
+
+0.22
+
+10
+
+0.16
+
+10
+
+0.31
+
+Typically, the average tree diameter in the stand also decreased as the number of trees per hectare increased.
+
+5
+
+Harricana-equipped
+feller-buncher
+
+Productivity (trees/ P MH)
+
+250 -
+
+225 -
+
+200 Rotosaw-equipped
+feller-bunchers
+
+175 -
+
+150 -
+
+Bradeco-equipped
+feller-buncher
+
+125 -
+
+100 —
+
+400
+
+600
+
+800
+
+1000
+
+1200
+
+Merchantable trees / h á (no.)
+Figure 5 . Estimated productivity: medium-sized, excavator-type feller-bunchers.
+
+Table 6. Shift-Level Utilization: John Deere 648D
+Grapple Skidder, Operation A
+
+for the same reasons discussed regarding the fellerbuncher in Operation A.
+
+Normal shifts/day (no.)
+
+1
+
+Shifts with available data (no.)
+Shifts with missing data (no.)
+
+50
+0
+
+Average shift composition
+Scheduled (h)
+Operating (h)
+Repair and service (h)
+Operating delay (h)
+Unknown delays (h)
+
+9.1
+6.1
+0.5
+1.7
+0.8
+
+Differences in the skidding distances and the average
+number of bunches loaded per turn explain most of the
+variations in the short-term grapple skidder productivity. However, variations in the number of bunches per
+load could not be correlated with either the original or
+the post-felling stand conditions. Differences in grapple size, skidding distance, and operators’ work habits
+likely influenced the number of bunches per load. Terrain conditions were similar in all studies.
+
+Operational utilization (%)
+Mechanical availability “ (%)
+
+67
+86-95
+
+a
+
+When operating at a n average skidding distance of
+7 0 m, the average turn-around times for the skidders
+with extended grapples were between 1.1 and 1.5 min
+
+Expressed as a range, due to unknown delays.
+
+6
+
+Table 7. Long-Term Productivity: John Deere 648D Grapple Skidder, Operation A
+Cutblock
+A:1
+
+A:2
+
+A:3
+
+A:4
+
+All blocks
+
+Road“
+
+Gross stand volume, excluding snags (m3)
+Delivered volume (m3)
+
+1 683
+1 450
+
+3 866
+5 117
+
+962
+1 322
+
+6 437
+4 678
+
+12 948
+12 567
+
+n/a
+606
+
+Size of cutblock (ha)
+
+14.8
+
+40.3
+
+10.5
+
+39.0
+
+104.6
+
+n/a
+
+Operating machine hours (OMH)
+
+42.2
+
+117.8
+
+30.1
+
+104.9
+
+295.0
+
+11.7
+
+Average skidding distance (m) b
+
+75
+
+75
+
+75
+
+75
+
+75
+
+50
+
+39.9
+34.4
+0.35
+
+32.8
+43.4
+0.34
+
+32.0
+43.9
+0.35
+
+61.4
+44.6
+0.37
+
+43.9
+42.6
+0.35
+
+51.8
+
+Skidder productivity based on:
+Gross stand volume, excluding snags (m3/〇MH)
+Delivered volume (m3/〇MH)
+Cutblock size (ha/OMH)
+a
+b
+
+Approximately 1.5-km long, built to access Block A:4.
+Visually estimated, based on the locations of roads and roadside decks.
+
+Table 8. Short-Term Productivity: John Deere 648D Grapple Skidders
+Grapple skidder studies
+Standard
+grapple
+
+a
+
+Extended
+grapple
+
+1
+
+2
+
+3
+
+4
+
+5
+
+1
+
+Observed time (PMH)
+
+4.3
+
+3.1
+
+2.2
+
+4.3
+
+2.0
+
+2.4
+
+Average operating conditions
+Stem dbh in bunch (cm)
+Bunched merchantable volume/stem (m3)
+Stems/bunch (no.)
+Merchantable volume/bunch (m3)
+Skidding distance (m)
+
+18.8
+0.19
+6.1
+1.16
+75
+
+19.7
+0.20
+6.7
+1.34
+75
+
+19.6
+0.20
+5.8
+1.16
+70
+
+18.9
+0.19
+8.9
+1.69
+65
+
+19.3
+0.22
+6.2
+1.36
+135
+
+22.4
+0.28
+6.0
+1.68
+75
+
+Machine productivity
+Stems/PMH (no.)
+Gross merchantable volume/PMH (m3)
+Area (ha/PMH)
+
+271
+51.5
+0.36
+
+243
+48.6
+0.32
+
+240
+48.0
+0.48
+
+348
+66.1
+0.43
+
+202
+44.4
+0.40
+
+236
+66.1
+0.67
+
+Load characteristics
+Stems/load (no.)
+Bunches/load (no.)
+Gross merchantable volume/load (m3)
+
+12.3
+2.02
+2.34
+
+11.4
+1.70
+2.28
+
+12.2
+2.10
+2.44
+
+15.7
+1.76
+2.98
+
+13.8
+2.23
+3.04
+
+16.5
+2.75
+4.62
+
+Work element distribution
+Travel empty (min/tum)
+Load (min/tum)
+Other work at stump (min/tum)
+Travel loaded a (min/tum)
+Unload and manoeuvre (min/tum)
+Decking (min/tum)
+Other work at roadside (min/tum)
+Minor delays (min/tum)
+
+0.76
+0.53
+0.02
+0.96
+0.15
+0.28
+0.02
+<0.01
+
+0.79
+0.48
+0.01
+1.00
+0.19
+0.31
+0.01
+0.02
+
+0.82
+0.51
+0.01
+1.08
+0.16
+0.30
+0.05
+0.12
+
+0.65
+0.44
+0.03
+0.94
+0.18
+0.25
+0.08
+0.14
+
+1.07
+0.90
+0.14
+1.45
+0.12
+0.42
+0.00
+0.00
+
+0.99
+0.93
+0.09
+1.46
+0.14
+0.58
+0.00
+0.00
+
+Total tum-around time (min/tum)
+
+2.72
+
+2.81
+
+3.05
+
+2.71
+
+4.10
+
+4.19
+
+Includes travel between bunches during the loading phase.
+
+7
+
+STROKE DELIMBER-SLASHER
+STUDIES: OPERAHON A
+
+longer than those for skidders with standard grapples
+(Table 8). The time difference translates into 25% more
+skidder turns per hour in Operation A (20 turns versus
+15 turns). In spite of this, the productivity of skidders
+with standard grapples was generally lower than that
+for skidders with extended grapples due to the differences in load sizes.
+
+Machine Utilization
+Because only 5 0 Servis recorder charts from a total of
+136 shifts could be used to calculate the operational
+utilization of the Case 1187B/Denis stroke delimberslasher, the accuracy of the results presented in Table 9
+as a measure of long-term utilization is uncertain.
+
+Models for Estimating Productivity of Grapple
+Skidders. Figure 6 presents simple models for estimating the productivity of grapple skidders operating
+in low-volume pine stands as a function of average skidding distance. The predicted productivity is shown in
+m3 MH for skidders with standard and extended grapples, respectively.
+
+Productivity
+Short-Term Productivity. The productivity of the
+machine is expressed in terms of both gross and net
+volumes (Table 10). Gross volume is based on the average gross volume of the stems in the deck and the
+
+120 -
+
+x 90
+Gross productivity ( m
+
+Q.
+rt
+
+60
+
+Skidder with
+standard grapple
+
+Skidder with
+extended grapple
+
+30
+
+25
+
+50
+
+75
+
+100
+
+125
+
+150
+
+Average skidding distance (m)
+Figure 6. Predicted productivity: John Deere 648D grapple skidders.
+8
+
+175
+
+200
+
+Table 9. Shift-Level Utilization: Case 1J87B/Denis Stroke Delimber-Slasher
+Study period
+Oct-Nov ‘88
+
+Feb ‘89
+
+Total
+
+2 o r 3a
+
+2
+
+2 or 3
+
+Shifts with available data (no.)
+Shifts with missing data (no.)
+
+25
+73
+
+25
+13
+
+50
+86
+
+Average shift composition b
+Scheduled (h)
+Operating (h)
+Repair and service (h)
+Operational delay (h)
+Unknown delays (h)
+
+8.4
+6.4
+0.7
+0.3
+1.0
+
+10.8
+8.0
+0.7
+0.5
+1.6
+
+9.6
+7.2
+0.7
+0.4
+1.3
+
+Operational utilization (%)
+Mechanical availability (%) c
+
+76
+80-92
+
+74
+79-94
+
+75
+79-93
+
+Normal shifts/day (no.)
+
+a Monday to Friday, 3 shifts/day; Saturday and Sunday, 2 shifts/day.
+b
+Based on shifts with available data.
+c Expressed as a range, due to unknown delays.
+
+Table 10. Short-Term Productivity: Case 1187B/Denis Stroke Delimber-Slasher
+Delimber-slasher studies
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+Observed time (PMH)
+
+3.7
+
+7.2
+
+2.2
+
+2.0
+
+3.6
+
+1.7
+
+Average operating conditions
+Merchantable stem dbh (cm)
+Total stem length (m)
+Gross merchantable volume/stem (m3)
+Snag content in deck (%)
+Broken stem content (%)
+
+20.2
+15.2
+0.21
+74
+1
+
+18.5
+15.2
+0.17
+63
+7
+
+21.4
+15.7
+0.24
+64
+8
+
+19.8
+15.7
+0.21
+56
+8
+
+19.6
+16.2
+0.21
+22
+8
+
+21.7
+16.2
+0.26
+6
+3
+
+Machine productivity
+Merchantable stems/PMH (no.)
+Gross merchantable stem volume/PMH (m3)
+Logs/PMH (no.)
+Net log volume/PMH (m3)
+
+59
+12.4
+94
+12.2
+
+109
+18.5
+127
+16.2
+
+76
+18.2
+112
+16.8
+
+109
+22.9
+145
+19.5
+
+149
+31.3
+173
+24.6
+
+121
+31.5
+166
+21.7
+
+Stems/process cycle (no.)
+Logs/merchantable stem (no.)
+Utilized stem length (m)
+
+1.1
+1.58
+9.3
+
+1.4
+1.17
+7.6
+
+1.1
+1.50
+8.9
+
+1.2
+1.33
+8.3
+
+1.2
+1.16
+6.2
+
+1.2
+1.38
+6.1
+
+71
+29
+
+34
+66
+
+67
+33
+
+58
+42
+
+78
+22
+
+63
+37
+
+Work elements
+Stem pickup (min/stem)
+Process (min/stem)
+Move (min/stem)
+Other work (min/stem)
+Minor delay (min/stem)
+
+0.28
+0.62
+0.02
+0.08
+0.01
+
+0.21
+0.24
+0.02
+0.06
+0.02
+
+0.24
+0.46
+0.01
+0.07
+0.01
+
+0.20
+0.29
+0.01
+0.05
+<0.01
+
+0.13
+0.22
+0.01
+0.04
+<0.01
+
+0.16
+0.27
+0.01
+0.04
+0.02
+
+Total time (min/stem)
+
+1.01
+
+0.55
+
+0.79
+
+0.55
+
+0.40
+
+0.50
+
+Log-length distribution
+5.2-m logs (%)
+7.6-m logs (%)
+
+9
+
+number of stems processed. Net volume is based on the
+average volume of sampled logs and the number of logs
+produced.
+
+because the average number of logs produced per stem
+increased, and because multistem processing of smaller
+stems occurred more frequently than with larger stems.
+
+Overall, the machine’s short-term gross productivity
+ranged between 5 9 and 149 stems/PMH. However, the
+results from earlier studies (1-3 in Table 10) are below
+the expected production level because the machine was
+operated by inexperienced workers who had been hired
+only days before the study began. A s the study progressed the operators became more proficient; productivity increased and stem pickup and process times decreased (Table 10). Therefore, the results from the February studies are more representative of the machine’s
+productive capability.
+
+Long-butting 2 typically increased the total cycle time
+by 0.20-0.25 min per stem. However, only about 5 %
+of the stems in Operation A were long-butted; therefore,
+the impact of long-butting on the overall productivity
+of the Denis stroke delimber-slasher was minimal.
+However, had the machine worked in a n operation with
+more frequent long-butting, the machine’s productivity would most likely have been significantly lower than
+recorded in this study.
+
+Machine productivity (stems and loas/PMH)
+
+The process time increased with stem size, primarily
+
+Models for Estimating Productivity of the Denis
+Stroke Delimber-Slasher. Figure 7 presents a simple
+model for predicting the productivity of the Denis de-
+
+175
+
+150
+
+Logs/PMH
+
+125
+
+100
+
+Stems/PMH
+
+-I~ I~ I~ I~ I~ I~ I~ I~ I~ r-
+
+20
+25
+Average stem diameter (cm)
+
+I
+
+30
+
+Figure 7. Estimated Productivity: Case 1187B/Denis stroke delimber-slasher.
+2
+
+Long-butting is a term that refers to cutting off the butt end of the stem to eliminate defect (e.g. rot, cat face, butt flare, stump pull).
+
+target lengths (Figure 8) indicate the machine’s lengthmeasuring system functioned well, and the deviation
+from the target length most likely related to the operator’s selection of the bucking location.
+
+limber-slasher when operating in low-volume pine
+stands. The model is based only on the results from the
+latter part of the project (November to February). The
+model is assumed to be valid only for processing 15to 16-m long stems into logs 5.2-m and 7.6-m in length,
+and sorting by length. The model shows that stem size
+significantly influences the stems/PMH, not the logs/
+PMH.
+
+STEYR KP40 PROCESSOR
+STUDIES: OPERATION B
+
+Log Length: Measuring Accuracy
+
+Machine Utilization
+
+Analysis of 494 logs sampled for length-measuring accuracy showed that 34%, 64%, and 85% of the logs were
+within 2 cm, 6 cm, and 1 0 c m of the target length, respectively. The distribution of length errors around the
+
+The operational utilization of the Steyr KP40 processors ranged from 6 8 to 76% of the scheduled machine
+time (Table 11).
+
+35
+
+Frequency (%)
+
+30-
+
+252015
+10-
+
+5~
+-14to -18
+
+- 1 0 to - 1 4
+
+- 6 to -10
+
+- 2 t o -6
+
+±2
+
++ 2 to +6
+
+Too short (cm)
+
++ 6 t o +10 +10 g +14
+
++14to+18
+
+> +18
+
+Too long (cm)
+
+Figure 8. Length-measuring accuracy: Case 1187B/Denis stroke delimber-slasher.
+Table 11. Shift-Level Utilization: Steyr KP40 Processors
+Carrier
+Caterpillar 225
+
+Linkbelt L-2800
+
+Caterpillar EL 180
+
+Normal shifts/day ‘ (no.)
+
+2
+
+2
+
+2
+
+Shifts with available data (no.)
+Shifts with missing data (no.)
+
+69
+39
+
+76
+39
+
+73
+40
+
+Average shift composition b
+Scheduled (h)
+Operating (h)
+Repair and service (h)
+Operational delay (h)
+Unknown delays (h)
+
+11.2
+7.6
+1.8
+1.3
+0.5
+
+11.4
+7.9
+2.2
+0.9
+0.4
+
+11.4
+8.7
+1.5
+1.0
+0.2
+
+Operational utilization (%)
+Mechanical availability (%) c
+
+68
+79-84
+
+69
+77-81
+
+76
+85-87
+
+“ Generally only one shi'ft/day operating on Saturday and Sunday.
+b
+Based on shifts with available data.
+c
+Expressed as a range, due to unknown delays.
+
+11
+
+Productivity
+
+all studies, with the exception of the stem pickup time
+which was influenced only by level of operator experience.
+
+Short-Term Productivity. The machine’s productivity is expressed in terms of both gross and net volumes.
+Gross volume is based on the average gross volume of
+the stems in the deck, and the number of stems processed. Net volume is based on the average volume of
+sampled logs and the number of logs produced. Overall, the machines’ short-term gross productivity ranged
+between 28.6 and 51.2 m3/PMH (Table 12). Their net
+productivity ranged between 24.2 and 38.0 m3/PMH.
+
+The process time per stem was found to be influenced
+by stem diameter, primarily because the number of logs
+per stem also changed with stem diameter. Long-butted
+stems often took longer to process than sound stems.
+However, the difference in processing times did not
+have a significant effect on the overall stems/PMH production. Long-butting, however, had an adverse effect
+on the net productivity in terms of logs per hour (Figure 9).
+
+The wide range of productivities, and the variation in
+the gross and net production ratios, reflect not only differences in the size and quality of stems but also differences in the processing criteria and the operator skill
+levels.
+
+Models for Estimating Productivity of the Steyr
+KP40 Processor. Figure 10 shows the predicted productivity of the Steyr KP40 when producing short logs
+from trees in low-volume pine stands. It shows that the
+machine’s stems/PMH productivity decreases with an
+increase in stem diameter, while the productivity in
+
+The studies show differences in stems/PMH because the
+process time per stem varied with stem size (Table 12).
+All other work element times were fairly constant in
+
+Table 12. Short-Term Productivity: Steyr KP40 Processors
+Processor studies
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+8
+
+9
+
+Observed time (PMH)
+
+1.1
+
+1.3
+
+1.0
+
+3.1
+
+2.0
+
+2.9
+
+1.7
+
+0.8
+
+1.5
+
+Average operating conditions
+Merchantable stem dbh (cm)
+Total stem length (m)
+Gross merchantable volume/stem (m3)
+Snag content in deck (%)
+Broken stem content (%)
+
+21.3
+16.5
+0.25
+46
+8
+
+22.2
+16.5
+0.27
+33
+0
+
+21.7
+16.5
+0.26
+50
+5
+
+20.6
+16.7
+0.24
+15
+8
+
+20.2
+16.7
+0.23
+40
+11
+
+21.0
+16.7
+0.25
+35
+11
+
+20.4
+16.7
+0.24
+21
+8
+
+24.0
+16.7
+0.33
+47
+12
+
+19.9
+16.7
+0.22
+49
+3
+
+Machine productivity
+Stems/PMH (no.)
+Gross merchantable volume/PMH (m3)
+Logs/PMH (no.)
+Net merchantable volume/PMH (m3)
+
+136
+120
+34.0 32.4
+206
+157
+26.4 . 24.7
+
+176
+45.8
+259
+36.8
+
+119
+28.6
+175
+24.2
+
+134
+30.8
+234
+29.3
+
+163
+40.8
+229
+32.1
+
+176
+42.2
+254
+34.5
+
+155
+51.2
+278
+38.0
+
+227
+49.9
+235
+27.5
+
+Logs/stem (no.)
+Utilized stem length (m)
+Stems long-butted (%)
+
+1.52
+8.5
+54
+
+1.30
+7.4
+85
+
+1.47
+7.8
+64
+
+1.47
+8.1
+57
+
+1.75
+10.3
+69
+
+1.40
+7.7
+51
+
+1.44
+8.3
+35
+
+1.80
+8.3
+57
+
+1.04
+4.8
+66
+
+Log-length distribution
+3.8-m logs (%)
+4.4-m logs (%)
+5.0-m logs (%)
+5.6-m logs (%)
+6.2-m logs (%)
+
+8
+12
+18
+3
+59
+
+5
+7
+13
+16
+59
+
+7
+11
+36
+1
+45
+
+17
+6
+11
+9
+59
+
+6
+4
+8
+7
+75
+
+10
+15
+20
+5
+50
+
+4
+13
+13
+4
+66
+
+31
+10
+59
+-
+
+13
+32
+55
+-
+
+Work elements
+Stem pickup (min/stem)
+Process (min/stem)
+Move (min/stem)
+Other work (min/stem)
+Minor delay (min/stem)
+Total time (min/stem)
+
+0.09 0.14
+0.08
+0.24
+0.28
+0.33
+0.02 0.01 <0.01
+0.02
+0.02
+0.0
+0.02 <0.01
+0.00
+0.44
+
+0.50
+
+0.34
+
+0.10
+0.11
+0.08
+0.34
+0.31
+0.25
+0.01
+0.01
+0.01
+0.04
+0.03
+0.03
+0.01 <0.01 <0.01
+
+0.07
+0.09 0.09
+0.23
+0.29 0.14
+0.02
+0.01
+0.01
+0.02 <0.01 0.02
+0.00
+0.00 <0.01
+
+0.51
+
+0.34
+
+0.45
+
+0.37
+
+0.39
+
+0.26
+
+Productivity (logs/PMH
+
+Stems not
+long-butted
+
+300 -
+
+250 Long-butted stems
+200 -
+
+1 5 0 —,
+15
+
+20
+
+25
+
+30
+
+35
+
+Average stem diameter (cm)
+Figure 9. Estimated productivity: Steyr KP40 processors.
+
+terms of logs/PMH initially increased until it reached a
+maximum at a stem diameter of about 2 2 cm, after
+which it began to decrease.
+
+Log Length: Measuring Accuracy
+A total of 733 logs were sampled to test the lengthmeasuring accuracy of the Steyr KP40 processors. The
+results showed that 39%, 79%, and 92% of the logs
+were within 2 cm, 6 cm, and 1 0 c m respectively of the
+target lengths (Figure 11). The majority of logs deviating from the target lengths were too short. FERTC’s general observations suggest this was primarily caused by
+slippage between the stem and the drive track when
+processing deformed stems and stems with large
+branches.
+
+SYSTEM PRODUCTIVITY AND
+COST ANALYSES
+The objectives of the system productivity and cost
+analyses were to determine, as realistically as possible,
+the machine requirements, productivities, and costs
+associated with harvesting low-volume pine stands in
+
+the Williams Lake TSA. The analyses are based on the
+equipment used by Operations A and B, and on their
+respective operating conditions. The results from the
+field studies were used when deemed appropriate, but
+certain assumptions about machine shift utilization,
+scheduling, merchantable fibre losses, and machine operating costs were necessary. Because of these assumptions, the results of the analyses might deviate
+from what the contractors actually experienced during
+the study period.
+
+System Analysis Assumptions
+Operation A is assumed to consist of one Case 1187B/
+Rotosaw 2100 feller-buncher, one John Deere 648D
+grapple skidder, and one Case 1187B/Denis stroke delimber-slasher. The operation’s annual quota is
+6 0 000 m 3, and its daily production requirement is
+360 m 3 of sorted 5.2-m and 7.6-m sawlogs.
+Operation B is assumed to consist of John Deere 693
+carriers equipped with either Rotosaw, Harricana, or
+Bradeco felling heads; John Deere 648D grapple skidders; and Steyr KP40 processors. The number of machines needed is based upon the timber quota require-
+
+Productivity (stems a n d logs/PMH)
+
+260 7
+
+240 7
+
+Logs/PMH
+
+220 -
+
+200
+
+180
+
+160
+
+140
+Stems/PMH
+
+120
+
+100
+
+15
+
+20
+25
+30
+Average stem diameter (cm)
+
+35
+
+Figure 10. Estimated productivity: Steyr KP40 processors.
+
+ment. Operation B’s annual quota is 160 000 m3, and
+its daily production requirement is 850 m3 of unsorted
+sawlogs, varying in length from 3.8 m to 6.2 m.
+The gross productivities ( m 3/PMH) for the fellerbunchers, grapple skidders, and processors were obtained from the various prediction models (Figures 5,
+6, 7, and 10) for the appropriate average operating conditions in the six different test blocks (Table 1). The
+analysis assumes that all snags in the cutblocks are us-
+
+able. The gross productivity was then converted to net
+productivity by including allowances for the estimated
+merchantable fibre losses that occurred in the subsequent phases of the operation, and the estimated time
+the machine spent travelling to and from work sites. The
+machine costing details are presented in Appendix II.
+In both operations, secondary haul roads are assumed
+to be spaced 300 m apart, resulting in an average skidding distance of 7 5 m and 1 k m of road per 3 0 ha of
+
+Frequency (%)
+
+40
+
+>-18
+
+-14 to -18
+
+-lOto -14
+
+-6to-10
+
+-2 to -6
+
+±2
+
++2 to +6 +6 t o +10
+
+Too short (cm)
+
++10 to +14 +14to +18
+
+>+18
+
+Too long (cm)
+
+Figure 11. Length-measuring accuracy: Steyr KP40 processors.
+
+harvested area. The roads are built by D7-sized bulldozers, which also build 5 km/yr of access roads to the
+cutblocks, maintain roads, and pile harvesting debris
+onto the haul roads for burning following harvesting.
+The bulldozers are assumed to build 6 0 m of secondary haul roads per 〇MH, and road-maintenance time is
+assumed to be 10% of the road-building time. The piling of harvesting debris is assumed to require 1 OMH/
+340 m 3 of merchantable wood (based on field studies).
+Because the bulldozer in Operation A would be required
+for only 550-600 OMH/year, it is assumed that the purchase of a used machine is adequate for that Operation,
+while Operation B would require the purchase of a new
+machine.
+The skidder will also be used to knock down residual
+unmerchantable trees (cutover clearing). While some
+of the cutover clearing is done during the skidding
+phase, the field studies showed that an additional 0.1
+OMH/ha was required.
+
+Results
+Operation A. The overall system productivity in Operation A ranged from 43.9 to 55.4 m 3/man-day, and
+the unit wood cost was found to range between $11.65
+and $15.05/m 3 (Table 13). The lowest productivity and
+the highest cost occurred in Block A:1 because of small
+tree size and higher-than-average fibre loss. Most adversely affected in this block was the processing phase,
+because two machines were required to fulfil the daily
+
+production of 360 m3 while in all other A-blocks only
+one processor was needed.
+Although the average stand characteristics in blocks
+A:2, A:3, and A:4 were relatively similar, the productivity and wood cost in Block A:4 differed. The differences were due to the higher amount of fibre losses
+observed in this block.
+Operation B. The analysis resulted in more favourable productivities and costs in Operation B than in A,
+largely due to differences in the performances of processors. However, direct comparisons of the two operations are not entirely appropriate because they produced
+different log products.
+The overall system productivity in Operation B ranged
+from 50.7 to 59.7 m 3/man-day, and the unit wood cost
+was found to range between $10.10 and $11.86/m 3 (Table 13). The two blocks showed only minor differences
+in cost and productivity, stemming primarily from the
+type of saw head used on the feller-buncher. The higher
+cost of using chain-saw type felling heads (Bradeco)
+resulted partly from the need to use three of these feller-buncher types to fulfil the daily production quota
+(850 m 3), compared with two units of either Rotosawor Harricana-equipped feller-bunchers.
+
+Discussion
+The analyses do not address all logistical problems as-
+
+Table 13. Results of System Analyses
+Cutblock
+A:1
+
+A:2
+
+A:3
+
+A:4
+
+B:1
+
+B:2
+
+Required average SMH/day a
+Bulldozer (h)
+Rotosaw feller-buncher (h)
+Harricana feller-buncher (h)
+Bradeco feller-buncher (h)
+Grapple skidder (h)
+Processor (h)
+
+4.5
+22.6
+11.4
+27. l b
+
+4.7
+17.4
+10.1
+20.6
+
+4.4
+16.7
+10.3
+20.6
+
+5.0
+19.0
+12.1
+23.2
+
+13.8
+45.7b
+40.7C
+55.6C
+21.2d
+38.2b
+
+11.3
+46.2b
+37.8 b
+559
+20.7d
+46.2b
+
+Costs e
+Road development ($/m3)
+Felling with Rotosaw ($/m3)
+Felling with Harricana ($/m3)
+Felling with Bradeco ($/m3)
+Grapple skidding ($/m3)
+Roadside processing ($/m3)
+Cutover clearing ($/m3)
+Debris piling ($/m3)
+
+1.18
+4.70
+2.00
+6.58
+0.05
+0.54
+
+1.24
+3.82
+1.85
+4.30
+0.06
+0.52
+
+1.16
+3.73
+1.85
+4.30
+0.05
+0.54
+
+1.29
+4.06
+2.08
+4.76
+0.06
+0.51
+
+1.29
+3.95
+3.57
+4.92
+1.51
+3.24
+0.11
+0.33
+
+1.06
+4.01
+3.34
+4.97
+1.51
+3.83
+0.08
+0.41
+
+Harvesting system cost
+With Rotosaw feller-buncher ($/m3)
+With Harricana feller-buncher ($/m3)
+With Bradeco feller-buncher ($/m3)
+
+15.05
+-
+
+11.80
+-
+
+11.65
+-
+
+12.76
+-
+
+10.48
+10.10
+11.45
+
+10.90
+10.23
+11.86
+
+System productivity f
+With Rotosaw feller-buncher (m’/man-day)
+With Harricana feller-buncher (m3/man-day)
+With Bradeco feller-buncher (m3/man-day)
+
+43.9
+-
+
+54.5
+-
+
+55.4
+-
+
+48.6
+-
+
+57.2
+59.7
+52.8
+
+54.7
+58.6
+50.7
+
+a
+
+Average total scheduled machine hours for all machines in each phase, assuming five working days per week.
+c
+Requires two machines, each operating 2 shifts/day.
+Requires three machines, each operating 2 shifts/day.
+e
+f
+d
+Unit wood cost for each phase.
+One man--day = 8 SMH.
+Requires two machines, each operating 1 shift/day.
+b
+
+sociated with the harvesting operations observed in the
+study. One such problem arises when a particular machine is only periodically needed. For example, the
+bulldozer in Operation A was required only 550-600
+〇MH/yr. Although the bulldozer was not used daily, its
+services were required periodically to build roads as
+harvesting progressed through the cutblocks. Low machine utilization results in high hourly operating costs.
+In addition to the higher cost, periodic use of a machine
+might also make it more difficult to find a n operator
+willing to work part time in a remote location.
+A similar problem would exist if a machine is required
+for more than one shift per day but for less than two
+shifts. One option is to continue with single-shift operation and let the operator work very long days, including weekends, thereby possibly reducing hourly output
+and increasing the risk of personal injuries and machine
+damage. Or, a second option is to change to a doubleshift operation and hire another operator on a part-time
+basis, although this can be difficult in a remote operation.
+
+Annual or daily production quotas will also affect the
+harvesting cost. Figure 12 shows, simplistically, how
+the unit wood cost in an operation would vary with annual quotas. As the quota initially increases, the utilization of individual machines will increase and reduce
+hourly machine costs and wood costs. However, at
+some point, the quota reaches a level at which the
+machine(s) in one phase (e.g. the processing phase)
+cannot handle all the wood, so a n additional machine
+must be purchased. Because the new machine cannot
+be fully utilized at that quota level, its hourly cost will
+be high, and total wood cost will increase.
+The operational utilization of individual machines also
+affects the wood cost. Figure 1 3 is a simplistic presentation of how the processing cost associated with using a Steyr KP40 would change with machine utilization levels, assuming production quota is not limited.3
+3
+
+The costs per hour of repairs, fuel, and lubrication are assumed
+to be constant, while the costs per hour for depreciation, interest
+on investment, and insurance vary with machine utilization.
+
+--------------------------------------------------------------------------- 16 ---------------------------------------------------------------------------
+
+Direct harvesting cost ($/m3)
+
+The operational utilization of the feller-bunchers ranged
+between 5 9 and 82%. Observations indicated that differences in scheduling, initial mechanical condition of
+the machines, and work organization were the main
+reasons for the variations in machine utilization.
+
+11.0-
+
+10.5 -
+
+Adding
+a skidder
+
+10.0 -
+
+Adding
+a feller-buncher
+
+Adding
+a processor
+
+40 000
+
+60 000
+80 000
+Harvest quota ( m3 /yr)
+
+Figure 12. Simplistic relationship of system wood
+cost to annual harvest quota.
+
+Processing cost ($ /rr?)
+
+4.00-
+
+3.75One processor eliminated
+from operation
+
+Short-term productivity of the feller-bunchers ranged
+from 116 to 228 trees/PMH (25.5-44.5 m 3/PMH). However, fibre losses in subsequent phases of the operations
+reduced considerably the volume credited to the fellerbunchers. The long-term productivity, based on delivered volume, ranged in Operation A between 19.1 and
+26.6 m 3/〇MH.
+Productivity of the Rotosaw, Harricana, and Bradecoequipped feller-bunchers differed, primarily because
+their felling speeds differ, as does their ability to
+accumulate trees before bunching. The number of
+m e r c h a n t a b l e t r e e s per h e c t a r e and the r a t i o of
+unmerchantable to merchantable trees had the strongest influences on feller-buncher productivity. Productivity of the Harricana-equipped feller-buncher was
+highly influenced by stand conditions, while the
+Rotosaw- and Bradeco-equipped machines were only
+moderately influenced by stand conditions.
+At an average skidding distance of about 75 m, shortterm productivity of the John Deere 648D grapple skidders ranged between 44.4 and 66.1 irP/PMH. However,
+fibre losses during the subsequent operational phases
+reduced considerably the volume credited to the skidding operation. The long-term productivity in Operation A ranged between 34.4 and 44.6 m 3/PMH.
+
+3.50-
+
+3.25-
+
+3.001
+
+50
+
+1
+I
+70
+Machine utilization (%)
+
+r
+90
+
+Figure 13. Simplistic relationship of processing cost
+to machine utilization: Steyr KP40
+processor.
+
+CONCLUSION
+In the fall and winter of 1988/89, FERIC studied the performances of feller-bunchers, grapple skidders, and
+roadside processors in two harvesting operations in the
+Williams Lake TSA, in the Interior of British Columbia.
+The objectives of the study were to determine machine
+productivity, harvesting costs, and operating factors affecting machine performances in low-volume lodgepole
+pine stands. The findings of the study are based on data
+collected in detailed-timing studies and shift-level
+studies.
+
+Average skidding distance and load size were the main
+factors associated with variation in skidder production.
+The number of bunches loaded per turn affected the total
+turn-around time, but fewer turns per hour with larger
+loads generally resulted in higher machine productivity.
+The objectives of the two operations and their processing criteria were sufficiently different to prevent a direct comparison of the performances of the Denis stroke
+delimber-slasher and the Steyr KP40 processors. The
+short-term productivity studies indicate Denis stroke delimber-slashers would be less cost efficient than Steyr
+KP40 processors in operations where stems are manufactured into several logs per stem, where multistem
+processing is not feasible, and where frequent longbutting is required. Alternatively, the Steyr KP40
+processor would likely be the less cost-efficient machine in operations where sorting logs is required, and
+where the stems frequently have either large branches
+or deformities.
+The potential performance of the Denis stroke delim-
+
+ber-slasher could not be fully evaluated during the study
+because inexperienced operators had been hired only
+days prior to the start of the study. The short-term
+productivity during the latter part of the study period
+ranged from 109 to 149 stems/PMH, or 19.5 to 24.6 m 3/
+PMH net volume, with variations in the stem size and
+the frequency of multistem handling being the main
+factors.
+Productivity of the Steyr KP40 processor, which was
+operated by experienced workers, ranged from 136 to
+227 stems/PMH, or 26.4 to 38.0 m3/PMH net volume,
+when stems are processed into log lengths averaging
+5.5 m and not sorted by length. The range in productivity was attributed mainly to variations in stem size
+and stem quality.
+The productivity analyses of the two feller-buncher
+
+systems resulted in overall productivities of between 4 4
+and 6 0 m3/man-day. These man-day productivity levels included felling, skidding, roadside processing, road
+building, cutover clearing with skidders, and debris
+piling (for subsequent burning) with bulldozers. The
+unit wood cost was found to be $l〇-15/m 3. The costs
+and productivities were adversely affected by small tree
+size and high levels of merchantable fibre losses. The
+type of saw head mounted on the feller-buncher also
+influenced the total harvesting cost.
+
+REFERENCES
+Peterson, J.T.; Giles, D.R. 1988. Economic Utilization
+Study of Poor-Quality Lodgepole Pine: Phase I.
+Vancouver, FERIC. Technical Report T R - 8 6 .
+2 8 pp.
+
+APPENDIX I
+
+SHIFT-LEVEL STUDIES
+
+Definitions
+
+Scheduled working time. That period of the day,
+week, or year during which a machine is intended to
+work, regardless of what actually occurs during the
+scheduled work period. Scheduled work time per shift
+is expressed in terms of scheduled machine hours
+(SMH). Where operators are paid hourly, SMH per shift
+equals the number of hours for which the operators are
+normally paid. In other operations, S M H per shift
+equals the number of hours the operator normally
+spends on the work site.
+
+STAND AND TREE CHARACTERISTICS
+
+Merchantable tree. Commercial tree species having
+a green crown, a minimum diameter at breast height
+(dbh) of 12.5 cm, and sufficiently tall to produce a log
+at least 5-m long with a minimum top diameter of
+10 cm.
+Unmerchantable tree. Noncommercial tree species of
+any size, or a commercial tree species too small to be
+classified as a merchantable tree.
+Snag. Commercial tree species sufficiently large to be
+classified as a merchantable tree, but with no green
+crown.
+Stem. Felled tree or snag, before being processed.
+Gross merchantable volume. Total stemwood volume of trees, snags, or stems down to a 10-cm top diameter, less the volume of a 30-cm high stump. Gross
+volume of sampled trees and stems in the detailed-timing studies was calculated with the formula
+log( gross volume ) = -4.3495 +1.82278 log(dbh)
++ 1.108142 log( total height)
+
+Operating time. That time of the scheduled work period during which the machine does any type of work
+or travels by its own power. Operating time per shift is
+expressed in the number of operating machine hours
+(OMH).
+Repair and service time. That time of the scheduled
+work period during which the machine does not operate because of mechanical failures (repairs, or wait for
+parts/mechanics), or regular maintenance activities.
+Operational delay time. That time of the scheduled
+work period during which the machine does not operate because of reasons other than mechanical failure or
+service.
+Unknown delay time. That time of the scheduled work
+period during which the machine does not operate for
+reasons that cannot be determined (i.e. information
+missing).
+
+less volume of stump and unmerchantable top.
+Net merchantable volume. Wood volume of logs
+processed from merchantable stems.
+Delivered volume. Wood volume of logs delivered to
+mill, based on mill’s scale records.
+Unmerchantable-to-merchantable tree ratio. The
+number of trees in the stand expressed as a relationship
+of unmerchantable to merchantable trees.
+Low-volume pine stand. Although there is no clear
+definition of a low-volume pine stand, woodlands managers in the Williams Lake TSA generally agree that
+the following criteria apply (Peterson and Giles 1988):
+
+Mechanical availability (%). That time of the scheduled work period during which the machine is mechanically fit to operate. Expressed as a percentage of scheduled time, and calculated as
+mechanical availability = (OMH +
+operational delay time) ■ 100/SMH.
+Operational (or machine) utilization (%). That part
+of the scheduled work time during which the machine
+operates. Expressed as a percentage of scheduled time,
+and calculated as
+operational utilization = OMH • 100/SMH.
+
+• Tree height less than 12 m , down to a 10-cm top.
+DETAILED-TIMING STUDIES
+3
+
+• Gross volume per hectare less than 100 m .
+• Gross volume per tree less than 0.20 m .
+
+Productive time. That part of the operating time during which the machine does the type of work for which
+
+---------------------------------------------------------------------------
+
+19 --------------------------------------------------------------------------
+
+3
+
+it is intended. Productive time is expressed in terms of
+productive machine hours (PMH), including all minor
+delays and machine movements, with durations less
+than 5.0 min/occurrence. The various activities performed by the machines during productive time are referred to as work elements.
+
+Unload and manoeuvre (at roadside). That time during which the operator drops stems at roadside, secures
+the grapple, and turns the machine around.
+
+Feller-Buncher Work Elements
+
+Other work at roadside. That time during which the
+machine is at the roadside decking area, and does other
+necessary work other than unloading, manoeuvring, or
+decking.
+
+Fell and bunch. That time during which the operator
+actively fells and bunches merchantable trees or snags.
+The element includes all boom movements needed to
+fell and bunch trees (grab, fell, swing to bunch, bunch,
+and swing back). The number of trees accumulated in
+the felling head prior to bunching, is referred to as trees/
+(felling) cycle.
+Fell-to-waste. That time during which the operator
+fells or knocks down (unmerchantable) trees with no
+intention to place them in bunches.
+
+Decking. That time during which the machine pushes
+stems up or into the deck, or time spent aligning stem
+butts in the deck.
+
+Minor delay. That time during which the operator does
+not perform any work with the machine, or when performing a machine activity that is not related to the
+objectives of the work cycle. Delays exceeding 5.0 min
+are classified as major delays, and not considered a time
+element in the productive time.
+Other Grapple Skidder Terms
+
+Move. That time during which the operator moves the
+machine in the stand.
+Other work. That time during which the operator performs activities other than those previously described
+to achieve the desired results in the felling operation.
+Minor delay. That time during which the operator does
+not perform any work with the machine, or when performing a machine activity that is not related to the
+objectives of the work cycle. Delays exceeding 5.0 min
+are classified as major delays, and not considered a time
+element in the productive time.
+Grapple Skidder Work Elements
+Travel empty. That time during which the machine
+travels without any load to the area from which stems
+are to be skidded.
+Travel loaded. That time during which the machine
+travels with a load to the (roadside) unloading area.
+Load. That time during which the operator grapples
+stems in bunches. The time includes preparing to load,
+moving between adjacent bunches, and securing the
+load. The number of complete bunches loaded during
+the same turn is referred to as bunches/load.
+Other work at stump. That time during which the
+machine is at the stump (loading) area, and does other
+necessary work not directly associated with loading or
+travelling.
+
+Skidding distance. Distance between the spot where
+the first bunch of each load is grappled and the roadside decking area, measured in a straight line regardless of the skidder’s actual travel path.
+Turn-around time. Total time of all machine activities during skidding, from the time the skidder leaves
+the roadside decking area to the time it again leaves the
+roadside decking area for the next trip.
+Processor Work Elements
+Stem get. That time during which the operator grabs
+merchantable stems, and places them in the position
+required for processing. The number of stems grabbed
+and processed simultaneously is referred to as stems/
+(processing) cycle.
+Process. That time during which the machine delimbs
+stems, bucks them into logs, decks the logs, and discharges the remaining unmerchantable stem top. It also
+includes removing part of the stems unsuitable for
+manufactured logs (long-butting).
+Move. That time during which the operator moves the
+machine to a new set-up for the purpose of continuing
+to process stems.
+Other work. That time during which the machine performs other necessary activities, such as align logs and
+clear debris, to achieve the desired results in the processing operations.
+
+Snag content. Percentage of stems in deck that do not
+have a green crown when they are picked up by the
+processor.
+
+Minor delay. That time during which the operator does
+not perform any work with the machine, or when performing a machine activity that is not related to the
+objectives of the work cycle. Delays exceeding 5.0 min
+are classified as major delays, and not considered a time
+element in the productive time.
+
+OTHER TERMS
+
+Other Processor Terms
+
+Cut-over clearing. Work that involves using the skidder to knock down (mostly unmerchantable) trees left
+standing on the site following completion of felling and
+skidding phases.
+
+Long-butting. Refers to cutting off the butt end of the
+stem to eliminate defect (e.g. rot, cat face, butt flare,
+stump pull).
+Broken stem content. Percentage of stems in deck
+that, at the time they are picked up by the processor,
+are broken at a diameter » 1 0 cm; this significantly
+affects the number or length of logs that can be processed from each stem.
+
+Debris piling. Work that involves using a bulldozer
+to push accumulated roadside processing debris onto
+temporary haul roads for subsequent burning, following completion of loading and hauling phases.
+
+21
+
+APPENDIX II
+Procedures for Calculating Machine
+Charge-Out Rates
+Purchase price. All machines, except the bulldozer in
+Operation A, are assumed to have been purchased new
+and operated throughout their respective useful lives.
+A reconditioned (used) bulldozer is assumed to be sufficient to do the limited work required in Operation A.
+Machine purchase prices (October 1989) include the
+cost of transportation from the closest equipment
+dealer.
+Useful life (depreciation period). Useful life in this
+analysis refers to the economical life of the machine
+rather than its mechanical life. As loans for purchasing
+new harvesting equipment are typically paid off over
+6 0 or fewer months, maximum useful life (depreciation
+period) is assumed to be five years. However, useful
+life is also assumed to be limited by the machine operating hours, and thus machine life can be shorter than
+five years when the machine is intensely used.
+Salvage value. In reality, a machine’s salvage value
+depends not only on the condition of the machine, but
+also on the market’s demand for used machines. Because it is difficult to estimate true machine salvage
+values, the analysis simply assumes the salvage value
+to be 20% of the purchase price.
+Average annual investment ($/yr). Average annual investment (AAI) is calculated using the formula below.
+It is used solely for the purpose of calculating the interest paid on borrowed money and the cost of insuring the equipment. However, it is an approximation and
+thus may not be the same as calculations made by commercial banks for business loans.
+AAI = purchase price + salvage value
+(2)
+Interest o n investment. Calculation of interest on investment is based on the average annual investment and
+an assumed interest rate of 15.5% (prime lending rate
++ 2%). The rate was obtained from two different commercial banks as the typical rate for small business loans
+(October 1989).
+
+---------------------------------------------------------------------------
+
+Insurance o n equipment. The analysis assumes the
+insurance on equipment to be 3 % of the average annual
+investment.
+Repair costs (parts and labour). There are no accurate long-term repair costs, noris there a reliable method
+for accurately predicting the repair costs of timber-harvesting machines in different operating conditions. The
+analysis assumes the repair cost to be 80% of the machine purchase price over its full mechanical life (in
+OMH). A s this rule of thumb typically assumes that
+repairs are done by mechanics (rather than operators or
+machine owners), calculated repair costs in this analysis may be significantly higher than what actually would
+occur in a well-run contractor operation where the contractor's own time is not usually considered “chargeable” to the machine.
+Fuel consumption and fuel cost. Fuel consumption
+is assumed to be 0.30 L/kw of average engine output.
+Average engine output was assumed to be 80% of the
+continuous engine rating for the feller-buncher and the
+bulldozer, 75% of the continuous engine rating for the
+grapple skidder, and 70% of the continuous engine rating for the roadside processor.
+The cost of fuel was assumed to be $0.36/L.
+Oil/lube consumption and cost. Oil and lube consumption is assumed to be 6% of fuel consumption for
+the feller-buncher and roadside processor, and 4% of
+fuel consumption for the grapple skidder and the bulldozer. Oil and lube cost per litre is assumed to be six
+times that of the fuel cost per litre, i.e. 6 • 0.36 = $2.16.
+Operator wages. The analysis assumes that all operators are paid an hourly wage of $18/SMH, with no allowance for night shift operations or overtime.
+Fringe benefits. The analysis assumes fringe benefits
+to be 25% of the operator’s wage. This is assumed to
+include the worker’s transportation or camp costs.
+In-shift utilization. Although in-shift utilization is
+likely to vary with scheduling (e.g. single-shift operation versus double-shift operation), insufficient data
+does not allow the analysis to show such differentiation. Therefore, the analysis assumes the following levels of utilizations, regardless of scheduling; fellerbunchers 74%; grapple skidders 81%; road-side processors 76%; used bulldozer 76%; new bulldozer 81%.
+
+2 3 --------------------------------------------------------------------------
+
+Table II-A. Machine Costs: Summary
+
+Cost component
+
+Fellerbuncher
+
+Grapple
+skidder
+
+Denis
+processor
+
+Steyr KP40
+processor
+
+Depreciation (S/OMH)
+Interest on investment ($/OMH)
+Insurance ($/OMH)
+Repair ($/OMH)
+Fuel ($/OMH)
+Oil and lube ($/OMH)
+Operator wages ($/OMH)
+Fringe benefits ($/OMH)
+
+26.40
+17.40
+3.40
+20.70
+8.60
+3.10
+24.30
+6.10
+
+17.80
+11.80
+2.30
+13.10
+5.80
+1.4022.20
+5.60
+
+23.90
+15.80
+3.10
+22.30
+7.60
+2.70
+23.70
+5.90
+
+Total charge-out rate ($/OMH)
+
+110.00
+
+80.00
+
+105.00
+
+’ Showing purchase prices and interest rates in effect October 1989.
+
+24
+
+Caterpillar D7 bulldozers
+New
+
+Used
+
+22.50
+14.70
+2.80
+20.10
+7.60
+2.70
+23.70 ■
+5.90
+
+36.50
+23.60
+4.60
+29.20
+12.10
+2.90
+22.50
+5.60 •
+
+45.00
+24.60
+4.80
+30.00
+12.10
+2.90
+23.70 .
+5.90
+
+100.00
+
+137.00
+
+149.00
+
+

@@ -1,0 +1,1285 @@
+Journal of Forest Engineering • 43
+
+Thinning Productivity and Cost
+for a Mechanized Cut-to-Length
+System in the Northwest
+Pacific Coast Region of the USA
+L.D. Kellogg and P. Bettinger1
+Oregon State University,
+Corvallis, USA
+
+ABSTRACT
+A production study of a single-grip harvester
+and forwarder was conducted in a second-growth
+thinning operation in western Oregon, USA. Production levels for the harvester exceeded 30 m 3 /
+PMH (productive machine hour, delay-free). There
+was no significant difference in harvester production between stands marked prior to logging and
+those in which the trees were selected by the operator. Production levels for the forwarder ranged from
+10.2 m3 to 14.5 mVPMH. When landing space was
+limited, a two-pass forwarding technique (separate
+loads of sawlogs and pulpwood) was more productive than a single-pass technique (products mixed on
+each load and sorted at the landing). Regression
+equations were developed to predict harvester production per PMH on the basis of tree dbh and to
+predict forwarder production per PMH on the basis
+of product type, volume per load, and travel distance. Thinning cost for this cut-to-length system
+wasUS$12.49/m 3 [US$35.37/cunit],excludinghauling and a profit-and-risk allowance.
+Keywords: mechanized logging, single-grip harvester,
+forwarder, logging cost, thinning productivity.
+INTRODUCTION
+Harvesting activities are rapidly shifting from
+old-growth to second-growth stands in the Pacific
+Northwest region of the USA. Approximately 60%
+of the commercial timberland in western Oregon
+could be operable for various types of in-woods
+mechanized equipment [5]. Of this operable timberland, about 58% of the sawtimber stands and about
+64% of the poletimber stands are on slopes of less
+
+1
+
+The authors are, respectively, Associate Professor and
+Faculty Research Assistant, Department of Forest
+Engineering, College of Forestry.
+
+than 35%. Information is lacking, however, on the
+productivity and environmental effects of certain
+machines, such as multi-function harvesters and
+forwarders, working in partial cutting operations
+with small timber (dbh < 30 cm [12 in.]) on such
+medium slopes (20-40%) [12].
+Mechanized logging provides end products of
+more consistent and higher quality, smaller crew
+sizes, and a safer work environment than does conventional logging [10]. Some ground-based harvesting equipment, however, may not be suitable for the
+large tree sizes and broken and steep terrain in parts
+of the Pacific Northwest. But where ground-based
+machinery is suitable and results in minimal environmental impacts, harvesting economics and logistics may favour it over cable systems.
+Various logging methods, from those with small
+skyline yarders to ground-based cut-to-length systems, can be used for thinnings in the Pacific Northwest. Cut-to-length systems are operations in which
+all of the processing (delimbing and bucking) occurs
+in the woods. These systems are derived from
+modern Nordic harvesting technology and offer a
+wide range of alternatives for thinnings and clearcuts
+[8]. Cut-to-length systems are different from conventional logging systems in that less labour, road
+construction, and landing areas are needed. They
+also produce end products of higher quality and
+more consistent dimension than do conventional
+systems, and they also allow for lower costs for
+woodyard management [1]. Furthermore, several
+states have recognized the safer work environment
+these systems provide and now offer lower worker's
+compensation rates for them than for conventional
+logging [7].
+Cut-to-length systems are generally comprised
+of two machines, a harvester (single-grip or doublegrip) and a forwarder. The harvester fells and processes trees in the direction of its path, and the
+forwarder transports cut-to-length logs to roadside.
+Both machines travel over a mat of limbs and tops,
+which potentially reduce soil compaction and erosion. The distribution of limbs and tops throughout
+the stand may also be more aesthetically pleasing
+and beneficial for nutrient recycling than would a
+residue pile at a landing.
+Harvester productivity may be highly variable,
+depending on individual tree size, operator skill and
+motivation, branch size, numbers of unmerchantable
+
+44 • Journal of Forest Engineering.
+
+and merchantable trees per unit area, slope and
+ground conditions, and undergrowth density [13,
+17]. A compilation of results from several similar
+harvesting studies [12] shows that harvester productivity generally is closely related to tree size.
+Baumgras [3] found that the cost per tree decreases
+rapidly as tree size increases and that the effect on
+productivity of equipment moves between trees and
+of the number of trees harvested per move is more
+pronounced in thinnings or when small trees are
+harvested than in clearcuts and harvests of larger
+trees. In another study [14], the number of
+unmerchantable trees in a harvest area had the greatest influence on productive time. Total product
+length has also been found to greatly influence the
+number of trees harvested per productive machine
+hour [20].
+A Swedish study of 35 medium-sized forwarders showed that primary transportation of sawlogs
+was faster than that of pulpwood and that primary
+transportation in clearcuts was faster than in partial
+cuts [11]. The average mechanical availability of the
+35 forwarders was 93% and utilization was 84%.
+Productivity averaged 10.3 m3 per gross effective
+hour. Other forwarder studies have reported production rates of 9.6 m 3 per operating hour [19] and
+12.7 tonnes per productive machine hour [16] for
+average forwarding distances of 170 m and 658 m,
+respectively.
+Steep slopes may pose difficulties to harvester
+and forwarder operations, because these machines
+must generally travel straight up and down a slope
+to maintain stability [17]. Equipment operators must
+spend extra time manoeuvring the machines in undulating terrain. When the operator faces downhill,
+the view of the harvester head may become blocked
+by the wheels of the chassis. Small trees and
+underbrush also affect visibility and may cause downtime by damaging the chain, bar, or hydraulic hoses
+[17]. High capital costs have also been noted as a
+disadvantage of harvesters and forwarders [15].
+This study was conducted to provide basic information on production and cost for a cut-to-length
+system applied by a logging contractor in thinnings
+in the Pacific Northwest. The objectives of the study
+were to detail harvester and forwarder production
+and cost, to develop regression equations to predict
+productivity on the basis of stand and operating
+conditions, and to determine overall thinning economics for these systems. Further objectives were to
+
+compare time elements for harvesters in premarked
+stands and in stands where the operators selected
+the trees and for two different forwarding techniques. Research on soil compaction [2] and stand
+damage [4] was also conducted but is not reported
+here.
+METHODS
+The study was located approximately 11 km
+south of Lyons, Oregon, in the Cascade Mountains.
+The operation consisted of thinning a 47-year-old
+Douglas fir (Pseudotsuga menziesii) and western hemlock (Tsuga heterophylla) stand with a Timberjack
+2518 harvester (equipped with a Koehring Wa terous
+762 head) and an FMG 910 forwarder. The entire
+thinning area was approximately 40.5 ha [100 acres];
+two harvester/forwarder systems were operating
+there. Only one of these systems was studied, and
+only on a portion of the thinning area—the forwarder on 5.7 ha [14 acres] and the harvester on
+0.90 ha [2.2 acres]. The harvester operator had approximately 18 months of experience in similar terrain, while the forwarder operator had approximately 9 months of experience. The products produced by the operation were sawlogs (5.4 m [17 ft
+10 in.] long, to a 15.2-cm [6-in.] top) and pulpwood
+(6.1m [20 ft] long, to a 5.1-cm [2-in.] top).
+Harvester
+The study area for the harvester was broken
+down into two treatment areas: one in which the
+trees to be left were marked by a forester and one in
+which they were unmarked and selected by the
+harvester operator. Each stand consisted of 3
+equipment trails with similar terrain and length.
+Each tree in the study area was measured for diameter at breast height (dbh) and successively numbered prior to the beginning of the study. The
+difference between the average values for dbh in the
+two stands prior to thinning was not statistically
+significant (P<0.05). Average stand conditions before
+and after harvesting are shown in Table 1. The
+average slope was 15° (26%) for the marked stand
+and 17° (31%) for the unmarked stand.
+A detailed time study was conducted on the
+harvester. All activities associated with harvesting
+each tree were considered collectively as one sample
+and were broken out into basic time elements (Table
+2). The data were recorded with a special program,
+called SIWORK3 [6], and run on a Husky Hunter 2
+
+Journal of Forest Engineering • 45
+
+Table 1. Average site conditions in the marked and unmarked stands, before and
+after thinning, for the harvester production study.
+
+Condition
+
+Marked
+Stand
+
+Unmarked
+Stand
+
+Area in ha [acres]
+
+0.46 [1.14]
+
+0.44 [1.08]
+
+Before thinning
+Total trees/ha [acre]
+Dbh in cm [in.]
+Volume/ha in m 3
+[/acre in ft3]
+Basal area/ha in m 2
+[/acre in ft2]
+
+998 [404]
+25.91 [10.2]
+663
+[9,479]
+60.8
+[264.7]
+
+914 [370]
+26.16 [10.3]
+633
+[9,044]
+57.1
+[248.9]
+
+After thinning
+Total trees/ha [acre]
+Dbh in cm [in.]
+Volume/ha in m 3
+[/acre in ft3]
+Basal area/ha in m 2
+[/acre in ft2]
+
+353 [143]
+35.31 [13.9]
+424
+[6,061]
+36.6
+[159.6]
+
+381 [154]
+33.78 [13.3]
+421
+[6,015]
+36.3
+[158.3]
+
+computer [9]. The SIWORK3 program records time
+elements to the centi-minute and allows the user to
+enter other numerical data such as tree number. The
+data were downloaded to a personal computer, imported into a spreadsheet program, and used for
+analysis. A simple linear regression equation was
+developed to predict productivity [m3 per productive machine hour, delay-free (PMH)] on the basis of
+tree dbh.
+Forwarder
+Average site conditions on the study area for the
+forwarder before and after thinning are shown in
+Table 3. Within the study area, 2 methods of
+forwarder operation were evaluated: (1) a two-pass
+technique that involved sorting in the woods and
+forwarding only one product type (pulpwood or
+sawlogs) in a load, and (2) a single-pass technique
+that involved forwarding both product types mixed
+in a load and sorting at the landing. The study area
+was not separated into 2 distinct stands (one for each
+method of forwarding operation) because the
+forwarder operator preferred to remain flexible about
+the products needed for trucking. Therefore, both
+
+methods were used throughout the stand; the goal
+was to obtain a representative sample for each method
+of operation. Ground slope for the study area ranged
+from 0 to 23° (0 to 42%). The north side of the area
+was bounded by a creek, the south side by steeper
+slopes (19 to 22° [35 to 40%]), and the east side by a
+previously thinned area. A flat bench ran east-west
+through the middle of the study area. Trails were
+flagged by an equipment operator before the harvester operation began (Figure 1); trail spacing was
+approximately 15 to 18 m [50 to 60 ft].
+A detailed time study was conducted on the
+forwarder. All activities associated with forwarding
+one load were considered one sample and were
+broken out into basic time elements (Table 4). Timestudy data on the forwarder were also collected by
+using the SIWORK3 program and analysed in a
+spreadsheet. In addition, a map of the equipment
+trails was used to detail the actual path of the forwarder during each cycle (Figure 1). This information was used to determine forwarding distances, as
+well as the number of machine passes on the trails for
+a soil compaction study [2].
+
+46 • Journal of Forest Engineering.
+
+Table 2. Activities (and an associated term) in the harvester time study.
+Moving machine: begins when the harvester tracks start moving, ends when the harvester stops
+moving to perform some other task.
+Positioning to cut: begins when the boom starts to swing toward a tree, ends when felling head rests on a
+tree.
+Felling and dropping: begins when the felling head is attached to a tree, ends when the tree hits the
+ground, or when processing begins.
+Processing: begins when the tree hits the ground, or when the felling head begins to pull the tree
+through the delimbing knives, ends when processing is complete.
+Brushing: removal of saplings and brush and felling of unmerchantable trees.
+Piling: piling or sorting logs in the woods.
+Planning: assessment by the harvester operator of area or trees to cut, while remaining in the stationary
+machine.
+Delays: operational, mechanical, and personal delays that interrupt the normal work activity of the
+harvester.
+Logs: the number of logs produced by the harvester from a particular tree.
+
+Table 3. Average site condil ions, before and after
+thinning, for the forwarder i >roduction study.
+
+Condition
+
+Unit
+
+Area in ha [acres]
+
+5.67 [14.0]
+
+Before thinning
+Total trees/ha [acre]
+Dbh in cm [in.]
+Volume/ha in m 3
+[/acre in ft3]
+Basal area/ha in m 2
+[/acre in ft2]
+
+1,327 [537]
+20.9 [8.2]
+520
+[7,430]
+55.1
+[240.1]
+
+After thinning
+Total trees/ ha [acre]
+Dbh in cm [in.]
+Volume/ha in m 3
+[/acre in ft3]
+Basal area /ha in m 2
+[/acre in ft2]
+
+427 [173] i
+29.9 [11.8]
+344
+[4,921]
+33.1
+[144.1]
+
+• Forwarding trails
+:
+Main haul road and
+landing area
+• Additional trails
+made during logging
+200
+
+400
+
+Figure 1: Trail layout of the study area for the
+forwarder.
+
+Journal of Forest Engineering • 47
+
+Table 4. Activities (and associated terms) in the forwarder time study.
+
+Travelling empty: begins when the forwarder leaves the landing area, ends when the forwarder stops
+to begin loading or some other task.
+Loading: begins when the forwarder starts to load logs, ends when the boom is rested in a stationary
+position, ready for a machine move.
+Moving between loading: begins when the boom is rested stationary on the bunk, ends when the
+forwarder stops moving.
+Travelling loaded: begins when the boom is rested stationary on the bunk, ends when the forwarder
+stops at the landing area.
+Unloading: begins when the forwarder raises the boom for unloading, ends when the boom is rested
+stationary on the bunk for a return trip to the woods or some other task.
+Sorting: sorting products (sawlogs or pulpwood) in the woods.
+Brushing: clearing brush (limbs and tops) from the bunk.
+Repositioning: movement from one corridor to another while loading in the woods.
+Delays: operational, mechanical, and personal delays that interrupt the normal work activity of the
+forwarder.
+Distance out: the distance travelled by the forwarder from the landing area to the location where
+loading begins.
+Travel in unit: the distance travelled in the unit while in the loading mode.
+Distance in: the distance from the last loading location to the landing area.
+Logs: the number of logs loaded.
+Product: the product of the load (sawlogs, pulpwood, or mixed).
+
+RESULTS
+Harvester Productivity and Cost
+The harvester was studied for approximately 12
+hours in the marked and unmarked stands. The
+average time per tree to harvest was slightly less in
+the marked than in the unmarked stand, and the
+harvester processed more trees per PMH in the
+marked stand (Table 5). There were no treatmentspecific delays; because the duration of the study
+was relatively short, all of the delays were averaged
+and a time was allocated to each individual tree
+harvested for calculating machine availability and
+utilization. Availability and utilization are therefore
+slightly lower for the marked than for the unmarked
+stand because of the differing cycle times per tree.
+However, availability and utilization would be expected to be the same for both stands. Most of the
+delays (43.9%) were for personal reasons, such as
+lunch and miscellaneous breaks. Repairs accounted
+for a substantial portion (34.6%) of the delay time.
+
+The most common repair delay consisted of chain
+and bar replacement, which averaged 6.90 minutes.
+The rest of the delay time consisted of miscellaneous
+operational delays, such as cutting away large stumps
+or old logs.
+Even though average dbh was similar in both
+stands prior to logging, average dbh of the harvested
+trees was 21.8 cm [8.6 in.] in the marked stand and
+23.6 cm [9.3 in.] in the unmarked stand. Thus, the
+average volume per tree harvested was 0.09 m3 [3.3
+ft3] higher in the unmarked than in the marked
+stand. This difference contributed to the higher
+volume productivity obtained in the unmarked stand.
+With the higher average volume per tree harvested in the unmarked stand, there were also slightly
+higher average positioning to cut and processing times
+in this stand than in the marked stand. There was
+also a greater planning time per tree in the unmarked
+stand.
+
+48 • Journal of Forest Engineering
+
+Table 5. Summary of productivity of the Timberjack 2518 equipped with a Koehring Waterous 762
+single-grip harvesting head, operating in a marked and an unmarked thinning in western Oregon.
+
+Time
+Element
+
+Marked Stand 3
+Average
+Proportion
+time
+of total
+(min.)
+time (%)
+
+Unmarked Stand b
+Average
+Proportion
+time
+of total
+(min.)
+time (%)
+
+Moving machine
+Positioning to cut
+Felling and dropping
+Processing
+Brushing
+Piling
+Planning
+Delays
+
+0.132
+0.182
+0.172
+0.335
+0.316
+0.009
+0.040
+0.315
+
+8.8
+12.1
+11.5
+22.3
+21.0
+0.6
+2.7
+21.0
+
+0.138
+0.211
+0.169
+0.364
+0.284
+0.004
+0.088
+0.315
+
+8.8
+13.4
+10.7
+23.1
+18.1
+0.3
+5.6
+20.0
+
+Total
+
+1.501
+
+100.0
+
+1.573
+
+100.0
+
+Tree and Log Condition
+or Productivity
+Measure
+
+Marked
+Stand
+(unit)
+
+Unmarked
+Stand
+(unit)
+
+Avg. dbh of trees in cm [in.]
+Range in dbh of trees in cm
+[in.]
+
+21.8 [8.6]
+10.2-43.3
+[4.0-17.1]
+
+23.6 [9.3]
+13.5-50.3
+[5.3-19.8]
+
+2.9
+
+2.9
+
+0.41 [14.6]
+73.1
+
+0.51 [17.9]
+68.0
+
+Machine availability, %
+Machine utilization, %
+
+81.5
+67.6
+
+82.4
+69.1
+
+Vol./PMHinm3[ft3]
+Vol./SMHd in m-3 [ft3]
+
+30.3 [1,070]
+20.5 [723]
+
+34.4(1,215]
+23.8 [839]
+
+Logs/tree
+Vol./tree in m 3 [ft3]
+Trees/PMHc
+
+•''Sample size = 211 trees.
+^Sample size = 160 trees.
+'Includes time elements for moving the machine, positioning to cut, felling and dropping, and
+processing.
+'^SMH = scheduled machine hour.
+
+Regression analysis of the time elements and volumes on production per PMH created an equation
+designed to predict production levels on the basis of
+dbh. Type of treatment (marked or unmarked stands)
+was not used in the regression equation because it did
+not result ina statistically si gnificantdifference(P<0.05)
+inproductivity(Vol./PMH). Forbothstands (combined
+sample size = 371 harvester cycles), the resulting regression equation was
+
+Vol./PMH (m3) =-17.48+ 2.11 dbh
+(cm)
+r = 0.75
+or
+
+Vol./PMH (ft1) = -617.22+ 189.31 dbh
+(in.)
+v- = 0.75
+
+Journal of Forest Engineering • 49
+Average dbh and the range in dbh for the stands
+studied are shown in Table 5. These conditions are
+fairly typical of second-growth stands in western
+Oregon.
+The purchase price of the Timberjack 2518 harvester is approximately US $340,000. The 1992 hourly
+owning and operating cost of this machine was
+calculated by the PACE program [18] tobe US$88.56/
+scheduled machine hour (SMH) for a one-shift operation. Costs per unit volume exclude a profit-andrisk allowance.
+If we assume that, on the average, the harvester
+processed trees 22.8 cm [9 in.] in dbh and had a
+machine-utilization rate of 69%, then productivity
+would be 30.8 mVPMH [1,087 ftVPMH] and 21.2
+mVSMH [750 ft 3 /SMH] for both the marked and
+unmarked stands. Cost per unit volume would then
+be US $4.17/m 3 [US $11.81/cunit] in the unmarked
+stand. Marking costs were determined by assuming
+a US $37.50 marking cost per hour (for labour, paint,
+etc.) and a production rate of 0.27 ha [0.67 acre] per
+hour; thus, the marking cost would be US $138.90/
+ha [US $56/acre]. Given that 239 m 3 /ha [3,418 ft 3 /
+acre] were harvested in the marked stand, the marking cost is US $0.58/m 3 [US $1.63/cunit]. Therefore,
+cost (including marking) per unit in the marked
+stand would be US $4.75/m 3 [US $13.45/cunit].
+Forwarder Productivity and Cost
+The forwarder was studied for approximately
+111 hours over a 3-week period. Production results
+for the two-pass and the single-pass techniques are
+shown in Tables 6 and 7. The average time per load
+ranged from a low of 46 minutes for pulpwood loads
+to a high of 67.62 minutes for mixed loads. While
+loading the bunk generally took longer with pulpwood than with sawlogs, there was little sorting
+involved because sawlogs were typically picked up
+in the first pass by the forwarder.
+Loading generally took less time with the mixedload technique than with either sawlogs or pulpwood. Unloading, however, took considerably longer
+with the mixed-load technique because the roadside
+landing was not wide enough to accommodate 2
+trailers for the sawlog and pulpwood sorts. Thus,
+because of the limited space available at the landing
+in this study, unloading with the mixed-load technique included sorting the products at the landing,
+loading one product onto a trailer, leaving the second product on the ground, and subsequently load-
+
+ing and moving the second product to another trailer,
+sometimes at another landing. The unloading time
+would have been substantially decreased with alternative landing operations such as using two trailers
+(one for each product) had the landing been wide
+enough, loading both product types on one trailer, or
+using an independent loader.
+Approximately 41% of the 120 loads studied
+consisted of sawlogs, 27% consisted of pulpwood,
+and 32% were mixed loads. The average distance
+travelled to a point where loading began (distance
+out) was similar among the treatments, as was the
+distance travelled back to the landing (distance in).
+However, substantial differences occurred in the
+travel distance during loading (travel in unit), which
+ranged from 51 m [166 ft] with mixed loads to 111 m
+[365 ft] with pulpwood loads. There was an inverse
+relationship between logs per load and volume per
+load, with fewer logs and higher volumes per load
+with sawlogs and a greater number of logs and lower
+volumes per load with pulpwood.
+Machine utilization was similar among the forwarding techniques. Productivity per PMH was
+greatest with sawlogs. The sawlog/pulpwood twopass technique was more productive per PMH and
+SMH than the mixed-load, single-pass technique.
+However, in situations where 2 trailers could be
+positioned side by side at a landing, we could estimate forwarder production by excluding the time
+required in our study to reload the sorted product
+from the ground and transport it to another trailer at
+a different location. In such a case, production with
+the mixed-load, single-pass technique would increase to 13.3 mVPMH [468 ftVPMH] and 9.6 m 7
+SMH [337 ft 3 /SMH], making the two techniques
+(two-pass and single-pass) similar in productivity.
+The following regression equation predicted productivity on the basis of indicator variables for product type, volume per load, and distances travelled
+(sample size = 120 forwarder cycles):
+Vol./PMH (m3) = 16.245
+- 1.689 mixed
+- 3.478 pulp
++ 0.2707 v o l . / l o a d
+
+- 0.008 DO
+- 0.0057 trav
+- 0.0039 DI
+r2 = 0.52
+
+50 • journal of Forest Engineering.
+
+Table 6. Summary of productivity in terms of work activities for the FMG 910 forwarder in a thinning in
+western Oregon.
+TwoPass ' rechnique 3
+
+Sawlogs
+
+Pulpwood
+
+Sawlogs and
+pulpwood b
+
+Sing] e-Pass
+Technique 0
+(mixed
+loads)
+
+All
+loads
+
+Time Element
+
+ProporProportion of
+tion of
+Avg. total
+Avg. total
+time time
+time time
+(min.) (%)
+(min.) (%)
+
+ProporProporProportion of
+tion of
+tion of
+Avg. total
+Avg.
+total
+Avg. total
+time time
+time
+time
+time time
+(min.) <%)
+(min.)
+(min.) (%)
+(%)
+
+Travelling empty
+Loading
+Moving
+Brushing
+Repositioning
+Sorting
+Travelling loaded
+Unloading
+Delays
+
+4.32
+16.75
+1.94
+0.29
+0.87
+8.62
+3.26
+6.10
+10.03
+
+4.39
+18.19
+1.99
+0.32
+1.08
+5.24
+3.33
+5.61
+9.62
+
+Total
+
+52.18 100.0
+
+8.3
+32.1
+3.7
+0.5
+1.7
+16.5
+6.2
+11.7
+19.2
+
+4.50
+20.40
+2.07
+0.37
+1.39
+0.07
+3.44
+4.86
+8.99
+
+9.8
+44.3
+4.5
+0.8
+3.0
+0.1
+7.5
+10.5
+19.5
+
+46.09 100.0
+
+8.8
+36.6
+4.0
+0.6
+2.2
+10.5
+6.7
+11.3
+19.3
+
+49.77 100.0
+
+4.52
+15.73
+1.67
+0.30
+0.71
+0.02
+4.14
+25.12
+15.42
+
+6.7
+23.3
+2.5
+0.4
+1.1
+0.0
+6.1
+37.1
+22.8
+
+67.62 100.0
+
+4.43
+17.39
+1.89
+0.31
+0.96
+3.54
+3.60
+11.95
+14.42
+
+8.0
+31.3
+3.4
+0.6
+1.7
+6.4
+6.5
+21.5
+20.7
+
+55.58 100.0
+
+a
+
+The two-pass technique involves sorting products in the woods and forwarding one product to the
+landing at a time.
+t>This column is the total data set for sawlog loads and pulpwood loads.
+T h e single-pass technique involves forwarding both products to the landing and sorting there.
+
+or
+Vol./PMH(ft 3 ) = 573.676
+- 59.659 mixed
+- 122.810 pulp
++ 0.2707 vol./load
+- 0.086 DO
+- 0.062 trav
+- 0.042 DI
+r2 = 0.52
+where
+In mixed loads, mixed = 1 and pulp = 0,
+In sawlog loads, mixed = 0 and pulp = 0,
+In pulp loads, mixed = 0 and pulp = 1,
+Vol./load = volume per load (m3 or ft3),
+DO = travel distance to where loading begins
+(m or ft),
+trav = travel distance during loading (m or ft),
+DI = travel distance to the landing after loading
+is completed (m or ft).
+
+Average values and the ranges for the variables in
+the regression equations are shown in Table 7. Results for mixed loads reflect landing conditions such
+that the 2 products can be transferred directly from
+the forwarder to trailers without rehandling.
+All variables were found to be statistically significant (P < 0.10) and useful in estimating the productivity of the forwarder under the conditions of
+this study. Productivities and costs among the various types of loads as predicted by the regression
+equation are shown in Table 8. The cost of the FMG
+910 forwarder is approximately US $235,000. The
+1992 hourly owning and operating cost of this machine was calculated by using PACE [18] to be US
+$70.41/SMH for a one-shift operation. Costs per
+unit volumes exclude a profit-and-risk allowance.
+Forwarding cost per m3 would be US $6.80 [US
+$19.26 per cunit] with the mixed-load technique
+(Table 8). Forwarding cost was approximately 43%
+higher for pulpwood than for sawlogs.
+
+Journal of Forest Engineering • 53
+
+Table 7. Summary of productivity measures for the FMG 910 forwarder in a thinning in western Oregon.
+
+ro-Pass Techni que 3
+
+Sawlogs
+
+Pulpwood
+
+Sawlogs
+and Pulpwood b
+
+Single-Pass
+Technique 0
+(mixed
+loads)
+
+49
+
+32
+
+81
+
+39
+
+120
+
+Avg. distance out in m [ft] 267 [877]
+77-728
+Range in m
+[252-2,387]
+[in ft]
+
+296 [971]
+83-632
+[271-2,075]
+
+279 [914]
+77-728
+[252-2,387]
+
+280 [918]
+115-612
+[378-2,008]
+
+279 [916]
+115-728
+[378-2,387]
+
+73 [241]
+5-206
+[15-676]
+
+111 [365]
+38-233
+[125-766]
+
+88 [290]
+38-233
+[125-766]
+
+51 [166]
+8-419
+[25-1,376]
+
+76 [250]
+5-419
+[15-1,376]
+
+Avg. distance in, in m [ft] 230 [754]
+47-643
+Range in m
+[155-2,108]
+[ft]
+
+280 [920]
+19-602
+[63-1,974]
+
+250 [820]
+19-643
+[63-2,108]
+
+265 [868]
+19-633
+[63-2,078]
+
+254 [835]
+19-643
+[63-2,108]
+
+Avg. logs/load
+Range
+
+60
+16-88
+
+109
+33-155
+
+79
+16-155
+
+86
+47-112
+
+82
+16-155
+
+Avg. vol./load in m 3 [ft3]
+Range in m 3
+[ft3]
+
+9.93 [351]
+3.0-15.1
+[105-534]
+
+5.99 [212]
+2.2-7.8
+[77-275]
+
+8.38 [296]
+2.2-15.1
+[77-534]
+
+9.34 [330]
+5.0-12.3
+[178-433]
+
+8.69 [307]
+2.2-15.1
+[77-534]
+
+Machine availability, %
+Machine utilization, %
+
+87.1
+78.6
+
+87.1
+76.7
+
+87.1
+77.9
+
+86.2
+75.7
+
+86.7
+77.0
+
+Vol./PMHinm3[ft3]
+
+14.5 [513]
+
+10.2 [359]
+
+13.0 [458]
+
+10.9 [386]
+
+12.2 [430]
+
+Vol./SMHinm 3 [ft 3 ]
+
+11.4 [403]
+
+7.8 [275]
+
+10.1 [357]
+
+8.3 [293]
+
+9.4 [331]
+
+Productivity
+measure
+Number of cycles
+
+Avg. travel in unit in m [ft
+Range in m
+[in ft]
+
+All
+Loads
+
+a
+
+The two-pass technique involves sorting products in the woods and forwarding one product to the
+landing at a time.
+t>This column is the total data set for sawlog loads and pulpwood loads.
+c
+The single-pass technique involves forwarding both products to the landing and sorting there.
+
+In our study, sawlogs comprised 60% of the total
+material harvested and pulpwood comprised 40%.
+Given this condition, the weighted average cost for
+the two-pass technique was the same as that for the
+single-pass technique.
+Productivity Variation and
+Support-Equipment Cost
+When the regression equations for the harvester
+and forwarder were used to indicate productivity
+
+rates over various values for tree dbh within the
+stand studied and distance travelled out by the
+forwarder (while other variables were held constant),
+harvester productivity ranged from 15.8 m 3 /PMH
+[558 ftVPMH] with a dbh of 15.76 cm [6.2 in.] to 43.2
+mVPMH [1,526 ftVPMH] with a dbh of 28.76 cm
+[11.3 in.] (Figure2). Forwarder productivity dropped
+almost 8 mVPMH [282 ftVPMH] within each type
+of load as the distance out increased from 60 to 720 m
+[200 to 2,360 ft] (Figure 3).
+
+52 • Journal of Forest Engineering.
+
+Table 8. Forwarding productivity and cost as predicted with the regression equation developed for
+forwarders. 3
+
+Productivity or
+Cost Measure
+
+Two-Pass Technique
+Sawlog
+Pulpwood
+
+Vol./PMHinm3[ft3]
+
+15.3 [540]
+
+10.7 [376]
+
+13.4 [475]
+
+Vol./SMHinm 3 [ft 3 ]
+
+11.8 [416]
+
+8.2 [290]
+
+10.4 [366]
+
+Cost/SMH in $ / m 3
+[$/cunit]
+
+5.98 [16.94]
+
+8.58 [24.29]
+
+6.80 [19.26]
+
+Single-Pass Technique
+(mixed loads)
+
+''Predictions based on the following assumptions (average rounded-off values for each variable):
+average load sizes are 9.9 m 3 [350 ft3] for sawlogs, 5.7 m 3 [200 ft3] for pulpwood, and 9.3 m 3 [330 ft3]
+for mixed loads; average distances are 274 m [900 ft] for distance out, 76 m [250 ft] for travel in unit, and
+259 m [850 ft] for distance in; utilization rate is 77%.
+
+The cost of support equipment for the cut-tolength thinning system is US $1.52/m 3 (US $4.30/
+cunit). This total is based on equipment usages of 10
+h r / d a y for trailers hauling sawlogs and pulpwood,
+2 h r / d a y for a crew truck, 2 h r / d a y for a fuel truck,
+and 1 h r / d a y for a small all-purpose tractor for
+
+manoeuvring trailers, as well as on a total cost per
+day for the support equipment of US $158.55 and a
+daily production of 9.4 m 1 [331 ft'] (Table 7).
+SUMMARY
+Production rates for the harvester in marked
+and unmarked stands were not significantly different in this study. The additional cost of tree painting
+made the marking technique slightly more costly
+than the operator-selection technique. (A subsequent study at this site revealed scarring of residual
+trees to be low, with no observable differences between marked and unmarked stands [4].)
+
+Dbh (cm)
+60
+
+Figure 2: Productivity of the Timberjack 2518
+single-grip harvester as it relates to tree dbh
+within the stand studied (productivity range is
+shown for one standard deviation around the
+mean dbh).
+
+120
+
+180
+
+240
+
+300
+
+360
+
+420
+
+480
+
+540
+
+600
+
+660
+
+720
+
+Travel Distance Out (m)
+
+Figure 3: Productivity of the FMG 910 forwarder
+as it relates to travel distances out to the start of
+loading the stand studied.
+
+journal of Forest Engineering • 53
+The two-pass forwarding technique evaluated
+in this study provided more flexibility in locating
+trailers along the side of the road and was more cost
+efficient than the mixed-load forwarding technique.
+The latter would be more efficient with side-by-side
+trailer locations. The forwarder operator could then
+sort products and load to either trailer.
+Study data on production and cost indicated an
+operation cost of US $4.17/m 3 [US $11.81/cunit] for
+the harvester in the unmarked stand and US $6.80/
+m 3 [US $19.26/cunit] for the forwarder. When the
+cost of support equipment was added, the total
+stump-to-track thinning cost (excluding hauling)
+was US $12.49/m 3 [US $35.37/cunit] for this study,
+excluding profit-and-risk allowance.
+ACKNOWLEDGEMENTS
+This research was supported by the USDA Wood
+Utilization Special Grant Program and by Oregon
+State University's Strachan Forestry Research Fund.
+The authors wish to thank Avery Properties and
+Mason, Bruce and Girard for their cooperation and
+for providing the study site; 4M Fiber, Sweet Home,
+OR, for their cooperation during the thinning operation; and Earl Eckley for assistance with data collection. This is Paper 2940 of the Forest Research
+Laboratory, Oregon State University.
+REFERENCES
+[1] Andersson,B. 1991. Evaluation of a Rottne cut-tolength harvesting system. Proceedings: Forestry
+Operations in the 1990's; Challenges and Solutions.
+Council on Forest Engineering Annual Meeting,
+Nanaimo, B.C., Canada, pp. 61-67.
+
+[5] Bettinger, P., J. Sessions and L. Kellogg. 1993.
+Potential timber availability for mechanized harvesting in Oregon. West. J. Appl. For. 8(l):l-5.
+[6] Danish Institute of Forest Technology. 1988.
+SIWORK3 version 1.1. Amalievaj 20, 1875
+Frederiksberg C, Denmark.
+[7] Garland, J.J. 1991. Mechanization and the logging labor force in the Northwest. Paper presented at a workshop: Mechanized Harvesting:
+The Future is Here. Department of Forest Engineering, College of Forestry, Oregon State University, Corvallis, OR. 5 p.
+[8] Hakkila, P. 1989. Logging in Finland. The
+Finnish Forest Research Institute—The Society
+of Forestry in Finland, Helsinki. Acta Forestalia
+Fennica 207. 39 p.
+[9] Husky Computers Limited. 1989. HuskyHunter
+2. P.O. Box 135, 345 Foleshill Road, Coventry
+CV6 5RW, England.
+[10]Jarmer, C. and L. Kellogg. 1991. Delimber/
+skyline tower: a reasonable choice in Northwest.
+For. Ind. 118(l):24-26.
+[ll]Kahala, M. and P.-J. Kuitto. 1986. Puutavaran
+metsàkuljetus keskikokoisella kuormatraktorilla. Metsëteho, Helsinki, Finland. Metsàtehon katsaus 10. 4 p.
+[12] Kellogg, L.D., P. Bettinger, S. Robe and A. Steffert.
+1992. Mechanized harvesting: a compendium of
+research. Forest Research Laboratory, College
+of Forestry, Oregon State University, Corvallis,
+OR. 401 p.
+
+[2] Armlovich, D. 1992. Study plan draft: soil compaction resulting from a shortwood cut-to-length
+harvesting system. Unpublished. Department of
+Forest Engineering, College of Forestry, Oregon
+State University, Corvallis, OR. 13 p.
+
+[13]Makkonen, I. 1991. Silver Streak single-grip
+harvester in Nova Scotia. Forest Engineering
+Research Institute of Canada, Pointe Claire, Que.
+Field Note No. Processing - 23. 2 p.
+
+[3] Baumgras, J.E. 1986. Production study of the
+Swedish Rottne Snoken 810 harvester/processor in Pennsylvania softwood plantations. Paper presented at Council of Forest Engineering
+Ninth Annual Meeting, Mobile, AL. pp. 63-68.
+
+[14] Nova Scotia Department of Lands and Forests.
+1991. Productivity of a Valmet 901 single-grip
+harvester in merchantable thinnings. Nova
+Scotia Department of Lands and Forests, Truro,
+N.S. Forest Research Report No. 27. 16 p.
+
+[4] Bettinger, P. and L.D. Kellogg. 1993. Residual
+stand damage from cut-to-length thinning of
+second-growth timber in the Cascade Range of
+western Oregon. In press.
+
+[15] Raymond, K. 1988. Forwarder operations in
+Australia. Report of Logging Industry Research
+Association, Rotorua, New Zealand. Vol. 13,
+No. 27. 6 p.
+
+54 • Journal of Forest Engineering.
+
+[16] Raymond, K. and T. Moore. 1989. Mechanized
+processing and extraction of shortwood thinning. Report of Logging Industry Research Association, Rotorua, New Zealand. Vol. 14,
+No. 5. 7 p.
+[17] Richardson, R. 1989. Evaluation of five processors and harvester. Forest Engineering Research
+Institute of Canada, Pointe Claire, Que. Technical Report No. TR-94. 18 p.
+[18] Sessions, J. and J.B. Sessions. 1986. PACE—The
+Production and Cost Evaluation Program. Department of Forest Engineering, College of Forestry, Oregon State University, Corvallis, OR.
+
+[19] Sirén, M. 1984. Tutkimustuloskia Norcar HT440 Turbo harven-nustraktorista. Folia Forestalia
+581. 10 p.
+[20] Stokes, B.J. and D.L. Sirois. 1983. Operational
+characteristics of a harvester in intermediate
+thinnings. Proceedings: Second Biennial Southern Silvicultural Research Conference, Atlanta,
+GA. USDA Forest Service, Southeastern Forest
+Experiment Station, Asheville, NC. GTR-SE-24.
+pp. 240-246.
+
+

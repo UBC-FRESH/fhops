@@ -1,0 +1,1007 @@
+r
+
+YC
+
+£1/11
+
+FOREST ENGINEERING RESEARCH INSTITUTE OF CANADA
+INSTITUT CANADIEN DE RECHERCHES EN GÉNIE FORESTIER
+
+Interior Limbing, Bucking
+and Processing Study
+Evaluation of Barko 450 Loader
+
+LESLIE H. POWELL
+
+Technical Note No. TN-46
+July 1981
+
+201 - 2112 West Broadway, Vancouver, B.C., Canada V6K 2C8
+143 Place Frontenac, Pointe Claire, Québec, Canada H9R 4Z7
+
+ACKNOWLEDGEMENTS
+
+FERIC wishes to thank personnel from the following companies for their assistance and cooperation during the
+study of the Barko 450 loader:
+Crown Zellerbach Canada Ltd. , Kelowna, B.C.
+Duncan Logging, Kelowna , B.C.
+Wajax Equipment Ltd. , Vancouver, B.C.
+
+i
+
+CONTENTS
+PAGE
+
+SUMMARY
+
+ST
+
+INTRODUCTION
+
+【
+
+TECHNICAL DESCRIPTION
+
+1
+
+DETAILS OF OPERATION
+
+3
+
+STUDY RESULTS
+
+5
+
+COMPARISON WITH FRONT-END LOADER
+
+7
+
+GENERAL COMMENTS
+
+8
+
+CONCLUSION
+
+n
+
+APPENDICES
+PAGE
+
+I
+
+Details of Manufacturer ’s Specifications
+
+13
+
+II
+
+Conversion Factors
+
+]_8
+
+TABLES
+TABLE
+
+PAGE
+
+1
+
+Summary of Shift-Level Monitoring
+
+5
+
+2
+
+Breakdown of Loader Activity
+
+6
+
+3
+
+Results of Detailed Timing Samples
+
+7
+
+FIGURES
+FIGURE
+
+PAGE
+
+A
+
+Barko 450 Loader
+
+2
+
+B
+
+Close-Up View of Grapple
+
+2
+
+C
+
+Loading Small Pine Logs From Roadside
+Piles on the Skidder Operation
+
+4
+
+Loading Spruce and Balsam Trees From
+Roadside on the Yarder Operation
+
+4
+
+D
+
+SUMMARY
+The Barko 450 Loader represented a modification to the central processing yard system reported in FERIC ’s Technical
+Report No. TR-45. The machine had replaced a Caterpillar
+966C front-end loader working at the bush landings.
+The machine is a track-mounted hydraulic knuckle-boom loader equipped with a 360° rotating grapple. The grapple (designed primarily for loading tree-length wood) features two
+outriggers (or live heels) for load levelling. The machine
+weighs approximately 30 000 kg and the purchase price is
+between $235,000 and $240,000.
+Wood from two areas was loaded during the study period. The
+first area was logged by feller buncher and grapple skidder,
+with full trees piled at roadside for loading. Average tree
+size equalled 0. 3 m 3 and the major species harvested was
+lodgepole pine. In 32 days the Barko 450 loaded 20.5 million
+kg , with a volume of 21 057 m 3 , for 349 off-highway truck
+loads. The average volume per truck load was 60.3 m 3 and
+the loader produced an average of 658 m 3 per shift.
+The second area in the study was hand felled and cable yarded with a Washington 78 yarder. The full trees (average
+tree size equalled 0.8 m’) had been piled along roadside.
+The Barko loaded on to off-highway trucks. Some 5.6 million
+kilograms (or 7 194 m 3 in volume) of wood was loaded onto 115
+trucks in 11 days. Average volume per load for the trucks
+was 62.6 m 3 and the daily loader production averaged 654 m 3 .
+In both areas, the loader worked well. There were few repairs and machine availability averaged 96%. Machine utilization averaged about 79%. The difference (17%) reflected
+the amount of time spent waiting for trucks , moving between
+loading areas, sorting and decking logs. Improving machine
+utilization would increase production and lower loading
+costs, but this would require a more constant supply of logs
+anQ trucks. For the ground skidding area of this study,
+d ily production was limited to about 700 m 3 (or 12 〇f f highway truckloads) and so no improvement in loader performance was possible. The Note discusses some areas where
+design changes to the operator 1 s cab are necessary. it also
+provides some general observations on the loader operation
+during the study.
+
+S-l
+
+BÁRKO 450 LOADER
+
+INTRODUCTION
+This Technical Note describes the use of the Barko 450
+loader at two different operations, a ground skidding area
+and a cable yarder setting. Productivity figures come from
+both shift level and detailed timing studies for both areas.
+The Barko uses a rotating grapple with live heels which
+allow it to load multiple stems each pass , in contrast to
+the normal heel-boom loader.
+
+TECHNICAL DESCRIPTION
+This machine is a hydraulic knuckle-boom loader (see Figure
+A.) It is mounted on a Chaptrac hydraulic undercarriage
+model 500 and is equipped with a Weldco model XG-125 360°
+rotating grapple. The loader has a horizontal reach of 10.1
+metres and a lifting capacity of 23 600 kg at 3-metre
+radius. The boom and cab assembly has continuous 360°
+swing capability, and the cab is equipped with joy-stick
+controls. The grapple also has a 360° continuous rotation
+and a 4.5 m 3 capacity. It is equipped with live heels on
+each side of the grapple for controlling the logs during
+loading (see Figure B.) The undercarriage is equipped with
+the EXPANDO feature allowing the width to be increased
+hydraulically from 3.7 m to 4.3 m to improve stability
+during loading. The undercarriage has travel speeds up to
+3.2 km per hour.
+More details of the machine specifications are presented in
+Appendix I.
+The machine weighs about 30 000 kg, and the purchase price
+is currently between $235 ,000 and $240 ,000.
+
+1
+
+FIGURE A.
+
+Bárko 450 Loader. Loading skidder wood
+from roadside decks.
+
+i
+»—
+MgiBjgSlwaB-a
+
+H|M
+#；『•‘
+
+i*
+
+FIGURE B.
+
+Close-up view of grapple. Note the chain
+drive for 360° grapple rotation and the
+two hydraulic live heels.
+
+2
+
+D E T A I L S OF O P E R A T I O N
+The loader worked at two different locations during the
+study period. The first of these was a feller-buncher and
+grapple-skidder operation in stands of small pine. The logs
+were piled at roadside (see Figure C) and loaded onto offhighway trucks. The truck haul was about 35 km to the
+Peachland yard, a central processing area. Here the full
+trees were limbed, bucked and topped using a Hahn Harvester
+and also a flail with manual bucking and topping. The
+processed logs were then reloaded and trucked on-highway to
+the mill. This operation (excluding the Hahn Harvester) is
+described in more detail in FERIC's Technical Report No. TR45*. Piece size averaged 0.31 m 3 per log.
+The second area consisted of a cable yarder operation located
+to the west of Kelowna. The stands of spruce and balsam fir
+were manually felled, and yarded to roadside by a Washington
+78 cable yarder (see Figure D). After loading by the
+Barko, full trees were hauled by off-highway trucks for
+about 30 km to the 4-Mile yard, a central processing area.
+Here the trees were flail or manually limbed, bucked, topped
+and then reloaded for a short 8-km haul, again off-highway ,
+to a water dump on Okanagan Lake. Piece size averaged 0.8
+m 3 per log.
+
+*"Comparison of Two Logging Operations in Interior British Columbia:
+Central Processing Yard vs Conventional", by I.B. Hedin, FERIC
+Technical Report No. TR-45 , November 1980.
+
+3
+
+-•ME
+■
+
+FIGURE C.
+
+Loading small pine logs from roadside piles on
+the skidder operation. Loader is working on a
+level site beside the road. The elevated position gives good visibility for loading offhighway trucks.
+
+FIGURE D.
+
+Loading spruce and balsam trees from roadside on
+the yarder operation. Note the larger tree size
+and branchier material.
+
+4
+
+STUDY RESULTS
+
+Table 1 shows the results of the shift-level monitoring of
+the Barko 450 Loader for September and October 1980.
+
+TABLE 1 .
+
+Summa ry of Shi f t - L e v e l Mon i tor i ng
+S k i d d e r Wood
+to
+Peachland Yard
+
+Yarder Wood
+to
+4-Mi le Yard
+
+Sh i f ts r e p o r t e d
+Shi f ts worked
+
+32
+32
+
+11
+11
+
+Scheduled mach i ne hours
+P r o d u c t i v e machine hours
+Repa i r hours
+S e r v i c e hours
+Non-mechanical d e l a y s
+
+335.7
+267.4
+3.1
+9.6
+55.6
+
+124.1
+97.8
+
+Machine a v a i l a b i l i t y *
+Machine u t i 1 i zat ion
+
+96.2
+79.7
+
+97.3
+78.8
+
+Number of t r u c k s loaded
+T o t a l w e i g h t loaded
+E q u i v a l e n t v o l u m e * * , m3
+
+3.3
+23.0
+
+349
+20 542 990 kg
+21 057 m 3
+
+115
+5 635 33〇 kg
+7 194 m3
+
+Average t r u c k load w e i g h t
+Average t r u c k volume
+
+58 862 kg
+60.3 m*
+
+49 〇〇3 k<
+62.6 m
+
+Loader p r o d u c t i vi ty - m 3 /PMH
+- m3 / s h i f t
+
+78.7
+658.0
+
+73.6
+654.0
+
+worked
+
+"The h i gh 1 evel s of machine avai l a b i l i t y r e f l e c t the f a c t that the
+machine was very new. 11 i s expected that avai l a b i l i t y wi 1 1 decrease to a more normal l e v e l (around 8〇 to 85%) as the number of
+hours worked i ncreases .
+“"Equ i va 1ent vol ume ca 1 cu 1 ated us i ng p e r t i nent convers i on f a c t o r s from
+scaled loads.
+
+5
+
+Work sampling was carried out at both locations to give
+more details of the loader activities for both skidder and
+yarder wood. Table 2 shows this breakdown of loader activities.
+
+TABLE 2.
+
+Breakdown of Loader A c t i v î ty
+S k i d d e r Wood
+to
+Peachland Yard
+
+Yarder Wood
+to
+4-Mi le Yard
+
+% of Time
+
+% of Time
+
+P r e p a r a t i o n of t r a i 1er b e f o r e
+and a f t e r l o a d i n g
+Loading
+A d j u s t i n g logs on load
+
+10
+28
+4
+
+13
+50
+12
+
+Delays d u r i n g l o a d i n g ( i n c l .
+move, s o r t i n g , c l e a n i n g e t c . )
+
+7
+
+16
+
+P r o d u c t i v e (move , s o r t , e t c . )
+
+21
+
+4
+
+Maintenance and repai r
+
+13
+
+-
+
+Idle
+
+12
+
+3
+
+Talk to foreman
+
+5
+
+2
+
+100
+
+100
+
+Truck P r e s e n t
+
+No Truck P r e s e n t
+
+TOTAL
+
+6
+
+Table 3 compares details of the loading in the two areas.
+TABLE 3.
+
+Resul ts from Detai led Timing Samples
+Skidder Wood
+
+Yarder Wood
+
+Average time to load truck
+
+32 minutes
+
+50 mi nutes
+
+No. of cycles to load t r u c k *
+
+25
+
+42
+
+No. of logs per load
+
+200
+
+88
+
+Average vo 1ume per load**
+
+62.6 m
+
+3
+
+63.4 m3
+
+Average piece size
+
+0.31 m3
+
+0.73 m3
+
+Average loading time per m3
+
+0.51 minutes
+
+0.79 minutes
+
+Average load weight
+
+61 021 kg
+
+48 854 kg
+
+Average loading r a t e ,
+kg per minute
+
+1 920
+
+97〇
+
+*A cycle involves the fol lowing: swing from truck to p i l e , p i c k i n g
+up log (s) from p i l e , swi ng i ng back to truck wi th log (s) and p l a c i n g
+log (s) on load.
+**Di f f e r e n t conversion f a c t o r s were used for the two areas to r e f l e c t
+the d i f f e r e n t types and qual 1 ties of wood processed i n the yards.
+
+COMPARISON WITH FRONT-END LOADER
+From Hedin's study of a central processing yard logging
+system, loading in the bush landings with a Caterpillar
+966C front-end loader gave different results for winter and
+summer.
+In winter, average time to load an off-highway truck was 22
+minutes per load, with an average load volume of 69.5 m 3 .
+In summer, a 60.2 m 3 load was assembled in 45 minutes. Most
+of this difference was attributed to the inexperience of the
+summer operator.
+
+7
+
+This operator switched to the Barko loader when it replaced
+the Caterpillar 966C for loading the skidder wood at Peach!>and. From Table 3 we see that his loading time with the
+Barko 450 was 32 minutes per load of 62.6 m 3 . These results
+show an improvement in operator performance as experience
+increased, and indicates also that the two machines have
+equivalent loading rates.
+The front-end loader has a lower purchase price than the
+Barko. It requires a landing to function efficiently, and
+the landing requires good supervision to ensure a smooth
+flow of wood through it. The Barko can operate from roadside piles without a need for landings. More wood can be
+decked at roadside than can be stored at normal sized landings. This permits cold decking of wood during break up.
+Also the problems associated with wet muddy landings are
+avoided. The Barko is more versatile than a regular heelboom loader because of the 360° rotating grapple. For
+loading yarder wood the Barko shows more promise because it
+does not need landings. It functions well with both small
+and large logs. Its major disadvantage occurs with ground
+skidded wood to landings, when the slow travel speed between
+landings reduces available loading time per shift.
+
+GENERAL COMMENTS
+The loader worked well during the period of the study.
+There were very few repairs made in that time. Therefore
+machine availability figures are high. A longer study
+period is necessary to predict a more normal level , expected
+to be in the 80 to 85% range. The amount of time reported
+as non-mechanical delay is accounted for by the following
+activities：
+-
+
+moving between loading points
+adjusting log piles prior to loading
+preparing positions for loading
+waiting for trucks to arrive at loading points.
+
+All of these activities can be considered as inherent in
+loader activity. Efforts to improve loader utilization and
+control loading costs would look at these as areas for improvement. At Peachland , there was no potential for improvement. Loader productivity is limited to 12 off-highway
+
+8
+
+loads per day. The loader must be there to load these
+trucks and any idle time between loading is unavoidable.
+The 12 off-highway loads provide the daily throughput for
+the yard — 250 cunits or 700 m 3.
+Logs from the yarder setting were larger than from the skidder shows, 0.8 m 3 compared to 0.3 m 3 per piece. They were
+piled more haphazardly and the loading area was not level.
+These points affected the loader in the following ways:
+-
+
+time was spent by the loader preparing loading
+points along the roadside.
+
+-
+
+from the loading points, it was not always possible to grapple the logs at a point close to the
+centre of gravity. This made it difficult to
+free long logs from the piles, especially if tops
+and branches were intertwined.
+
+-
+
+the variety of log lengths required careful selection and placement of the bunk logs on the
+truck and also of the final logs of the load.
+Frequently the truck driver assisted with positioning of the final few logs of each load.
+
+-
+
+at the beginning of the shift, lights were required. The lighting on the Barko gives good
+illumination around the grapple and close to the
+machine. With the long logs from the yarder,
+there was insufficient illumination of the tops
+of the logs. The operator, therefore, could not
+determine if a log was tangled with others and
+had difficulty extracting such logs from the
+pile. The addition of a swivelling spotlight on
+the cab would solve this problem.
+
+-
+
+the combined width of an off-highway truck and
+the loader was greater than the road width. Consequently the loader was often working from a low
+position straddling the ditch. This gave poor
+visibility of the logs in the pile and the logs
+on the truck , as a load neared completion. Slower loading times resulted.
+
+-
+
+the live heels were not powerful enough to stabilize long logs unless they had been grappled
+close to the centre of gravity. This weakness
+
+9
+
+was particularly evident when loading the yarder
+wood where the piling had been haphazard.
+the off-highway trucks used "cheater bars" to increase the height of the front stakes. A similar
+arrangement on the rear stakes would have helped
+loading of the yarder wood, which was light and
+required large loads to achieve good load weights
+for the trucking. The loader spent time adjusting the logs on the load to prevent them from
+falling off.
+Logs from the skidder area were smaller (0.3 m 3 per piece)
+and more neatly piled along the roadside. The terrain was
+flatter and the loader had a better working environment.
+Movement between loading points on the ground skidding show
+was slow due to the low travel speed of the loader.
+A full ergonomic evaluation of the loader was not made. The
+following comments refer to areas where design improvements
+are needed to enhance operator safety.
+~
+
+The flat deck area between the cab door and the
+top of the access ladder needs a nonslip surface.
+It is 2.7 m (9 ft) above the ground. Spilled
+fuel and oil, and ice accumulation in winter,
+could make the present surface extremely hazardous.
+
+“
+
+The operator's seat is adjustable for height and
+weight of operator. It does not swivel and the
+operator has to climb over the seat to get into
+position, using the cab heater as a foot rest.
+This causes undue wear and tear on the seat. it
+does not allow the operator to exit quickly in
+the event of an emergency.
+
+The user company hoped to achieve 3 main objectives by using
+the Barko 450 loader , as follows：
+-
+
+improved skidder productivity
+reduction (or elimination) of landing construction
+reduction of tree breakage during loading.
+
+Achievement of these 3 objectives was considered sufficient
+justification for the higher loading costs and longer loading times expected with the Barko. To date results show
+
+10
+
+that the first two objectives are being achieved. It is
+anticipated that the third objective will also be realized,
+although some breakage was noted when intertwined trees were
+freed from roadside piles during the loading of yarder wood.
+
+CONCLUSION
+
+The use of the Barko represented a modification to the central processing yard system, where it replaced a Caterpillar 966C front-end loader working at the bush landings.
+The Barko handled the required daily volume of wood (up to
+700 m 3 per day) efficiently and neatly. It achieved a high
+level of mechanical availability (96%). In comparison, the
+966C front-end loader averaged 835 m 3 per day in winter
+with an experienced operator , and 540 m 3 in summer with a
+less experienced operator.
+The Barko loader works without landings so trees can be
+skidded or yarded to roadside piles for loading onto trucks.
+During the study, it loaded off-highway trucks with both
+skidder wood and yarder wood at rates of 658 m 3 in a 10.5
+hour shift and 654 m 3 in an 11.3 hour shift, respectively.
+It compares favourably as an alternative to the front-end
+loader, and also to a heel-boom type loader for yarder wood.
+
+11
+
+APPENDIX I
+
+D E T A I L S OF M A N U F A C T U R E R ' S S P E C I F I C A T I O N S
+
+13
+
+BÁRKO 450 LOADER
+MANUFACTURERS' S P E C I F I C A T I O N S AND FEATURES
+
+AVERAGE LIFT CAPACITY (LESS ATTACHMENT)
+10' radius
+15 1 radius
+20' radius
+25' radius
+30 ’ radius
+
+56,000 lbs
+36,000 lbs
+27,000 lbs
+21,000 lbs
+17,000 lbs
+
+BOOM REACH
+.
+.
+•
+
+H〇riz〇ntal--33' 3"
+Vertical--40 ’ 2"
+Total overall height--12'
+
+BOOM DATA
+.
+•
+
+•
+
+Main boom length——18'
+Secondary boom length--16 ’
+Hi-tensile/100 ,000 PSI yield fabricated tube
+structure 12" wide x 16" high
+Tapered roller bearing at boom pivot points
+
+SWING SYSTEM
+•
+•
+
+Rotation continuous on 54" turntable bearing
+Swing speed 6.9 RPM--power transmitted by single
+piston type motor
+
+CYLINDERS
+•
+.
+.
+
+Barko built--double acting with extra heavy chromed
+rods — aircraft aluminum pistons and glands--microuniform walled tubing honed to exacting tolerances
+Main boom--twin 7" x 50" with 4" rods
+Secondary boom —— twin —— 6" by 50" with 4" rod
+
+14
+
+HYDRAULIC SYSTEM
+.
+.
+.
+.
+.
+.
+
+180 gallon multi-baffled reservoir with submerged
+suction and external return line filters
+Control valves--VDP-24 Parker with main system
+relief and safety port reliefs for each control
+function
+Pumps——one tandem vane, one single vane and one
+variable swing pump produce 182 GPM @ 2500 RPM
+Continuous rotation ——Barko designed and built
+hydraulic collector
+Heavy wall tubing and 4-wire braided hose throughout main system
+Operating pressure 2500 PSI
+
+CONTROL DECK
+.
+.
+
+Central console with engine instrumentation and
+start/stop controls
+Foot swing controls
+
+OPERATORS CAB
+.
+.
+.
+.
+
+50" x 65" with double insulation and roof vent
+Tinted windshield, wiper/washer , defroster fan,
+heater, dome light, and fire extinguisher
+Weldco guarded cab
+Equipped with joy stick controls and comfort package
+
+POWER SOURCE
+.
+.
+
+GM6V-53 diesel 184 HP @ 2500 RPM
+Fuel reservoir — 60 gallons
+
+UNDERCARRIAGE (Chaptrac hydraulic undercarriage)
+•
+.
+.
+•
+•
+.
+•
+.
+•
+
+Expando type--Hydraulically operated
+Width--12’ retracted/14’ operated
+Length—15' 8"
+Track pads--Tractor type 30" wide 3 bar semi-grouser
+Drive motors— 2 speed commercial gear motors
+Final drive--Planetary
+Brakes— Spring apply hydraulic release on each
+track. (Fail safe)
+Track Tensioner--Nitrogen cylinders with grease
+release
+Travel speed: low-.7 mph, high-2 mph
+
+15
+
+40
+35
+30
+
+-
+
+25
+
+/■：-
+
+/ '// !
+/ í/
+
+20
+
+Aï
+10
+5
+0
+
+О
+1363/g
+
+100'
+
+1445/6
+
+III ІІНІ±
+
+108 Øm "
+_
+
+24'2'«"‘"
+
+сс
+
+Ж
+
+=
+
+пн
+
+T
+387/16 i
+
+----------------------------- 191
+Tailswing 101 W —Ч
+<---------------------------- 181
+
+--------- 83"------143” Retracted
+167" Extended
+
+16
+
+30"4
+
+Weldco 360
+
+RETAINING CYLINDER
+
+Rotating Grapple
+
+K
+
+D
+B
+
+A
+G
+
+A
+
+B
+
+c
+
+D
+
+F
+
+E
+
+F
+
+G
+
+H
+
+J
+
+K
+
+Jaw & Retaining
+Stabilizer Cylinder
+
+Model
+in. mm in. mm in. mm in. mm tn. mm in. mm in. mm in. mm in. mm in. mm Cylinders
+XG 125
+
+62 1575 15 381 24 610 21 533 es 2159 115 2921 72 1829 34 864 39
+
+991 44 1118
+
+5"
+
+Rotation
+Output
+Torque
+ln./lb.
+
+5"
+
+Rotation
+
+Nm
+
+147,200 16,576
+
+cont.
+
+Capacity
+
+Weight
+
+corda
+
+m3
+
+lbs.
+
+1%
+
+4,5
+
+4000 1814
+
+kg
+
+APPENDIX II
+CONVERSION FACTORS
+
+The following conversion factors from Imperial units to
+S.I. (metric) units are provided because the machine specifications are given in Imperial units.
+
+1 inch
+1 foot
+
+=
+=
+
+2.54 centimetres
+0.3048 metres
+
+1 psi
+
+=
+
+6.8948 kilo Pascals
+
+1 pound
+
+=
+
+0.454 kilograms
+
+1 gallon (US)
+
+=
+
+3.7854 litres
+
+1 horse-power
+
+=
+
+0.746 kilowatts
+
+1 mph
+
+=
+
+1.6093 kilometres
+per hour
+
+1 gallon/minute
+
+=
+
+0.0631 litres/second
+
+18
+
+

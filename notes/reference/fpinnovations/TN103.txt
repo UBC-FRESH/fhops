@@ -1,0 +1,947 @@
+HARVESTING & PROCESSING
+Technical Note TN-103
+
+July 1987
+
+SURVEY OF
+MECHANIZED PROCESSING EQUIPMENT
+Evaluation of the
+Caterpillar DL221 Processor
+J.T Peterson*
+Summary and Conclusions
+The objective of this study was to measure the productivity and cost of a
+Caterpillar DL221 processor working in coastal old -growth timber. The study
+was done at MacMillan Bloedel Limited's Northwest Bay Division on Vancouver
+Island, B.C.
+FERIC monitored the machine's performance in two areas for five days in
+January 1987. The machine processed 26 trees per productive machine hour
+( PMH), for a volume produced per scheduled machine hour (SMH) of 20.4 m 3 .
+Costs were $5.44/m 3 or $8.〇6/tree.
+Machine utilization was low during the study period (52.6%) but our observations indicate a 73% utilization rate is achievable. This would result in a
+production rate of 226.4 m 3 per 8-hour shift for a cost of $3.93/m 3 . To
+achieve this utilization level, modifications must be made to the processor.
+Well prepared windrows of trees are critical for efficient, cost-effective
+mechanical processing. Trees should be presented with butts facing the road
+and piled parallel to each other. The absence of a dirt bank caused by road
+construction also facilitates processing efficiency. This was highlighted in
+the study when a well prepared windrow of trees and the absence of a dirt bank
+resulted in a 90% increase in the number of trees processed per PMH.
+
+Introduction
+Many coastal operations have smallwood old-growth stands in which 90% or more
+of the stems have a butt diameter of less than 60 cm. These stands could be
+mechanically processed with a suitable machine.
+
+Keywords:
+
+Delimbing , Slashing , Processors, Machine Evaluation, Productivity ,
+Costs, Downtime, Caterpillar DL221 Processor
+
+*Author:
+
+J.T. Peterson is Group Supervisor , Evaluation and Silviculture,
+FERIC Western Division.
+
+FOREST ENGINEERING RESEARCH INSTITUTE OF CANADA
+INSTITUT CANADIEN DE RECHERCHES EN GENIE FORESTIER
+
+PRINTED IN CANADA
+
+143 Place Frontenac
+pointe Claire, ouébec
+Canada H9R 4Z7
+(514) 694-1140
+
+201-2112 west Broadway
+Vancouver, B.C.
+Canada V6K 2C8
+(604) 732-3711
+
+(©Copyright 1987, Forest Engineering Research Institute of Canada ISSN 0381-7741
+
+The concept of the Caterpillar DL221 processor originated with Tanguay
+Industries Ltd. , St-Prime , Quebec , with the first prototype produced in 1 982.
+To assess the Caterpillar DL221 processor 's suitability for processing West
+Coast timber , Finning Tractor & Equipment Co. Ltd. of Vancouver , B.C. conducted initial f ield trials near Vancouver in 1 986. After some modifications
+to the processing head , the machine was transported to Vancouver Island for
+further f ield trials. In January 1987, FERIC was asked to monitor and report
+on a demonstration trial being conducted near Buckley Bay , B.C.
+
+S i t e a n d System D e s c r i p t i o n
+The study site was located on the east coast of Vancouver Island, 1 6 km west
+of Buckley Bay , B.C. Species composition, by volume , was 5〇E balsam fir, 39%
+western hemlock , and 11% western red cedar. The stand had 454 stems per
+hectare , with a net volume per hectare of 690 m 3 .
+A Madill 084 grapple yarder was used to yard timber which had been either
+handfelled or mechanically felled . Trees were yarded to the roadside and
+windrowed along the road (Figure A ). After processing , logs were loaded by a
+Caterpillar 225 log loader , and highway hauled to the dryland sortyard near
+Parksville , B.C.
+
+--：
+V
+
+FIGURE A.
+
+-■
+
+—rss
+
+Madill 〇84 Grapple Yarder
+and Windrowed Trees ( Area B).
+
+The study site included two different operating areas：
+Area A
+
+-
+
+wood was feller-bunched and grapple yarded to windrow
+level ground (±5%)
+most trees in the windrow had butts facing the road
+absence of dirt bank at roadside
+
+Area B
+
+-
+
+handfelled and grapple yarded to windrow
+windrow on downhill side of road
+windrow contained many bucked logs (some cedar logs up to
+1 50 cm in diameter )
+windrow also contained many trees with tops facing the road
+dirt bank, up to 3 m in height (Figure A), on downhill side
+of road ( caused by road construction)
+slope on lower side of road varied from 3〇 to 50%
+
+2
+
+The Caterpillar DL221 processor has a Tanguay EC200 processor upper section
+which is mounted on a Tanguay AC200 feller-buncher undercarriage. Table 1
+gives the processor specifications.
+
+TABLE 1.
+
+Caterpillar DL221 Processor Specifications.
+
+Upper Section
+Model
+Dellmblng
+Dellmblng Force
+Tree-Holding Grapple Opening
+Dellmblng Head Capacity
+Saw Capacity
+
+Tanguay EC200 Processor
+Boom Extension - 7.3 m
+Backward Stroke « 2.5 m
+6350 kg max from the holding grapple
+66 cm
+56 cm
+66-cm Bucking Bar
+53-cm Topping Bar
+
+Lower Section
+Model
+Engine
+Fuel Reservoir
+Tilt Capacity
+Rotation
+Weight
+
+Tanguay AC200 Feller-Buncher
+Caterpillar 3208 (122 kW)
+750 L
+Four -way tilt with capacity to adjust
+turntable up to 1 3 degrees from track
+Continuous Rotation
+Approximately 26 000 kg
+
+A knuckle-boom loader stroke , plus a backward stroke by a hydraulic cylinder ,
+is used to process trees. The full extension of the boom, in addition to the
+backward stroke of the tree-holding grapple , results in a total extended
+length of 12.2 m (Figure B). The processing sequence ( Folkema 1982) includes：
+1)
+
+Load Tree
+
+-
+
+(Figure C) the boom grapple is extended to a tree and the
+tree is drawn to the tree-holding grapple. The treeholding grapple then closes and secures the tree.
+
+2)
+
+Delimb/
+Measure/
+Buck
+
+-
+
+(Figure D) the knuckle-boom is extended, thereby
+delimbing the tree with the delimbing knives and
+grapples. For longer trees, the knuckle-boom and the
+backward stroke cylinder are extended simultaneously.
+At the maximum extension of the boom, the roles of
+the two sets of grapples are reversed and the boom is
+retracted. This reciprocating action is repeated
+until the desired log length is reached. The tree is
+then bucked or topped by the topping saw.
+
+3)
+
+Reverse Log to Unload
+
+The log is retracted and piled,
+
+FIGURE B.
+
+Machine Dimensions.
+3
+
+* "J WK
+
+FIGURE C.
+
+Load Sequence.
+
+FIGURE D.
+
+Delimb/Measure/Buck Sequence
+
+Table 2 shows the observed time-distribution summary. "Process" time includes
+the functions of loading the tree , delimbing , measuring , bucking , unloading
+the tree, and the required swinging time to do these functions. Processing
+time averaged 1 .2 min/tree in Area A and 1.6 min/tree in Area B. FERIC
+observed the delimbing efficiency and quality to be good on limbs up to 8 cm
+in diameter.
+
+TABLE 2.
+
+Observed Time-Distribution Summary.
+
+Phase
+
+Area
+Hours
+
+A
+Í
+
+Area B
+Hours
+i
+
+Combined
+Hours
+Í
+
+0. 1
+0.4
+3.2
+0. 1
+
+1 .7
+6.6
+53-3
+1.7
+63.3
+
+1. 0
+3.0
+8.3
+2.1
+TO
+
+50. y
+
+1 .1
+3.4
+11.5
+2.2
+18.2
+
+3.2
+9.8
+33.2
+6.4
+52.6
+
+1 .6
+0.6
+2.2
+
+26.7
+10.0
+36.7
+
+8.7
+5.5
+
+30.4
+19.2
+“Í9TK
+
+10.3
+6.1
+'6.4
+
+29.8
+17.6
+47.4
+
+6.0
+
+100.0
+
+28.6
+
+100.0
+
+3L6
+
+P r o d u c t i v e Time
+Move
+Move Logs
+Process
+Swing T r e e s
+Subtotal
+N o n - P r o d u c t i v e Time
+Mechanical
+Other
+Subtotal
+
+Total
+Number of
+Number of
+Number of
+Number of
+Number of
+
+100.0
+
+Trees P r o c e s s e d
+Logs P r o c e s s e d
+Logs Moved
+Trees Swung
+Long B u t t Cuts
+
+159
+260
+69
+9
+52
+
+317
+497
+371
+123
+43
+
+1476
+757
+440
+132
+95
+
+P r o c e s s Time per T r e e , min
+P r o c e s s Time per Log, min
+
+1.2
+0.7
+
+1 .6
+1.0
+
+1 .4
+0.9
+
+A v e r a g e Gross Volume per
+Tree P r o c e s s e d , m 3
+
+1 .32
+
+1.56
+
+1.48
+
+No. of T r e e s P r o c e s s e d per PMH
+No. of T r e e s P r o c e s s e d per SMH
+
+41 .8
+26.5
+
+22.0
+11.1
+
+26.2
+13.8
+
+No. of Logs P r o c e s s e d per PMH
+No. of Logs P r o c e s s e d per &1H
+
+68.4
+43.3
+
+34.5
+17.4
+
+41 .6
+21.9
+
+Volume P r o c e s s e d per PMH, m 3
+Volume P r o c e s s e d per SMH, m1
+
+55.2
+35.0
+
+34.3
+17.3
+
+38.8
+20.4
+
+P r o d u c t i o n per 8 - h o u r S h i f t
+Number T r e e s
+Volume , m 3
+
+21 2 . 0
+279.8
+
+88.8
+138-5
+
+110.4
+163.4
+
+T o t a l Equipment Cost per
+8-tiour Siift
+
+$889.52
+
+$889.52
+
+$889.52
+
+$4.20
+$3-18
+
+$10.02
+$6.42
+
+$8.06
+$5W
+
+Cost per Tree
+Cost per m 3
+
+4
+
+」
+
+3.5
+10.5
+29.0
+
+"Move Logs " is the time spent moving logs which were already processed by the
+handfaller. Ten percent of the combined total time was spent in this function. The handf elled windrow contained more bucked logs than the mechanically
+felled area.
+The "Swing Trees" category represents the time spent swinging trees whose tops
+faced the road ( Figure E). These trees were swung and placed in piles
+(parallel to the road) for subsequent processing. The windrow in the handfelled area contained significantly more trees that required swinging. As a
+result , 15% of productive time was spent swinging trees in the handfelled area
+(Area B) versus 3% in the feller-bunched area (Area A).
+
+*
+
+FIGURE E.
+
+Processor Swinging Tree.
+
+The limiting factor on the processor 's ability to lift and swing trees was the
+holding power of the delimbing grapple. A tree that approached the maximum
+lifting capacity was a Douglas-f ir , (62-cm diameter , 26-cm top diameter ,
+28.8-m long , and 3270 kg). The processor was only able to lift this tree
+slowly and swing it approximately 1 0 m before i t dropped out of the grapples.
+"Move" time is the time spent travelling along the windrow while processing.
+The dirt bank on the lower side of the road in Area B was up to 3 m in height
+in places. This dirt bank interfered with the operator 's ability to see and
+with the machine's ability to align itself with trees. Also , it caused the
+windrowed trees to lie at a steeper angle than was necessary and they tended
+to slide downhill when disturbed . In Area A , the trees were better aligned
+and most of the butts faced the road, so less moving was required by the
+processor. FERIC feels that a rotating-head featur e would significantly
+reduce the amount of machine move time involved .
+The mean values and the standard deviation for "Process" time were computed by
+tree diameter class to show the range of values observed in the study (Table 3)•
+Times ranged from a low of 0.35 min/tree to a high of 4.72 min/tree. Mean
+times progressively increased with increasing tree diameter size . The mean
+processing times in Area B were consistently higher than those in Area A.
+This was caused by the steeper angle of the windrow and the number of tangled
+trees. Volume produced per minute is also shown in this table. There is a
+progressive increase in production as the trees get larger.
+
+5
+
+TABLE 3.
+
+Productivity by Butt Diameter Class.
+Processing Tlme/Tree
+
+Number of
+Observations
+
+Standard
+Deviation
+
+Butt
+Diameter
+Class
+Midpoint
+(cm)
+
+Gross
+Mer ch
+Vo lume
+(m’/tree)
+
+Area A
+
+Area B
+
+Area A
+(mln)
+
+Area B
+(mln)
+
+Area A
+(min)
+
+Area B
+(mln)
+
+Area A
+(m")
+
+Area B
+(m‘)
+
+10
+
+0.06
+
+3
+
+6
+
+0.51
+
+0.79
+
+0.18
+
+0.30
+
+0.12
+
+0.08
+
+20
+
+0.23
+
+3〇
+
+26
+
+0.69
+
+0.84
+
+0.18
+
+0.24
+
+0.33
+
+0.27
+
+3〇
+
+0.77
+
+37
+
+H4
+
+1.02
+
+1.32
+
+0.21
+
+0.50
+
+0.75
+
+0.58
+
+40
+
+1.62
+
+53
+
+79
+
+1.35
+
+1.97
+
+0.58
+
+0.71
+
+1 .20
+
+0.82
+
+50
+
+2.84
+
+23
+
+45
+
+1.68
+
+2.45
+
+0.73
+
+0.87
+
+1 .69
+
+1.16
+
+60
+
+4.22
+
+2
+
+6
+
+2.65
+
+3.09
+
+0.18
+
+1.11
+
+1 .59
+
+1.37
+
+Mean
+
+Volume /Min
+
+Non-product ive time includes all delays no matter what their duration. A
+detailed summary of non-productive time is shown in Table 4. The majority of
+mechanical delays (66%) were in the saw category and included chains breaking,
+chains jumping off, and bent bars. The other major delay (19%) was caused by
+the boom-level-monitoring cable breaking.
+
+TABLE 4.
+
+Summary of Non-Productive Time.
+
+Area B
+
+Area A
+Phase
+Number of
+Occurrences
+
+Total
+Minutes
+
+Number of
+Occurrences
+
+Total
+Minutes
+
+6
+
+4
+
+3
+16
+1
+
+120
+17
+13
+
+1
+
+15
+2
+
+14
+
+Mechanical
+Boom-Level -Monitor Ing
+Cable Repair
+Clean Electronic Eyes
+Engine Cover - Tie Down
+Head Cover - Tie Down
+Hydraulic F i t t i n g s - Tighten
+Saws - Bar & Chain Service
+or Replace
+- Repa ir Bent Motor
+Mount
+Service
+Subtotal
+
+7
+
+68
+
+16
+
+141
+
+3
+
+_2
+
+9
+
+%
+
+200
+19
+
+16
+
+96
+
+44
+
+524
+
+18
+2
+1
+5
+5
+3
+2
+5
+7
+
+8
+10
+8
+16
+15
+28
+7
+6
+148
+82
+
+Other
+Clean Debris off Road
+Coffee Break
+Fuel
+Measurement Accuracy Check
+Other
+Phone
+Talk to Foreman
+Unknown
+Visitors
+Walt for Parts
+
+6
+
+1
+
+20
+
+1
+
+14
+
+1
+
+1
+
+Subtotal
+
+3
+
+35
+
+49
+
+328
+
+Total
+
+19
+
+131
+
+93
+
+852
+
+FERIC feels that improvements can be made which will increase machine utilization. Suggestions made to Finning Tractor & Equipment Co. Ltd. include:
+1)
+
+Boom-LevelMonitoring Cable
+
+increase cable size or monitor a different way
+(rods, electrical, electronic eye , other ).
+
+2)
+
+Engine Cover
+
+-
+
+change or modify the tie-down clamps to ensure
+they will not come undone while machine is
+operating.
+
+3)
+
+Saw Bar and
+Chains
+
+-
+
+change to a bar and chain more suited to highspeed service.
+modify head to allow bar to retract further into
+sheath and/or increase amount of guarding.
+
+-
+
+If the visitors time (148 min), the boom-level-monitor ing-cable repair time
+( 1 20 min), the engine cover time ( 1 3 min), and only one-third of the sawrepair time ( 1 36 min) is converted to productive time, the machine utilization
+increases to 73 percent. FERIC believes that this machine utilization level
+can be achieved if modifications are made to the processor. Finning Tractor &
+Equipment Co. Ltd. have advised FERIC that they are undertaking a program to
+improve this machine.
+The labour rate used in the cost analysis is the current B.C. IWA rate plus
+35% burden (Appendix). Machinery costs are estimated by FERIC and are based
+on information from equipment and supplies distributors and use a standard
+owning , repairing , and operating formula format. Costs such as supervision,
+overhead, and crew and equipment transportation are not included. Also ,
+interest or opportunity costs are excluded from the machinery costs reported
+in the text, but are listed in the Appendix. Tree volumes were based on FERIC
+measurements in the stand.
+The Area A operation produced costs of $3-1 8/m 3 or $4.20/tree, with a volume
+of 280 m 3 per 8-hour shift. With a utilization level of 73%, costs in Area A
+would be $2.73/m 3 . Area B produced costs of $6.42/m 3 or $10.02/tree, and a
+volume of 1 39 m 3 per 8-hour shift. Given a utilization level of 73%, the
+Area B cost would be $4.45/m 3 .
+
+REFERENCES
+Folkema, M.P. 1982. Evaluation of the Tanguay EC-200 delimber. Forest
+Engineering Research Institute of Canada. Technical Note. No. TN-63.
+
+7
+
+APPENDIX
+Machine Cost Analysis
+
+OWNERSHIP COSTS
+Purchase Price ( P)
+Salvage Value (S) , (20% of P)
+Expected Life (yr)
+Expected Life (h)
+Interest Rate (I) %
+Insurance Rate ( Ins) %
+Average Investment (AVI) = (P+S)/2
+
+$412 000
+$ 82 400
+6
+9 600
+12
+3
+$247 200
+
+Loss in Resale Value ($/h) = (P-S)/h
+Interest ($/h) = (I*AVI)/(h/yr )
+Insurance ($/h) = (Ins*AVI)/h/yr)
+
+$34.33/h
+$l8.54/h
+$ 4.64/h
+
+OPERATING AND REPAIR COSTS
+Fuel Consumption (L/h)
+Fuel Cost ($/L)
+Track & Undercarriage Life (h)
+Track & Undercarriage Replacement Costs (T)
+Annual Repair and Maintenance Cost (R)
+Wages ($/h)
+Wage Benefit Loading (%)
+
+25
+0.40
+5 000
+$ 12 000
+$ 55 000
+$ 17.73
+35
+
+Fuel Cost = (L/h)*($/L)
+Lube & Oil Cost = 1 5 % * Fuel Cost
+Track & Undercarriage Cost = (T/h)
+Annual Repair and Maintenance Cost = R/(h/yr)
+Labour Cost = ( $/h )*[1 +( %/1 00 )]
+
+$10.00/h
+$ 1 .5〇/h
+$ 2.40/h
+$34.38/h
+$23.94/h
+
+Operating and Repair Costs ($/h)
+
+$72.22/h
+
+$
+
+TOTAL COSTS
+Operating and Repair Cost ($/h)
+Loss in Resale Value ($/h)
+Insurance ($/h)
+
+8
+
+$ 72.22/h
+$ 34.33/h
+$ 4.64/h
+
+Total Cost ($/h)
+Interest ($/h)
+
+$1 1 1 .19/h
+$ 18.54/h
+
+Grand Total
+
+$129.73/h
+
+

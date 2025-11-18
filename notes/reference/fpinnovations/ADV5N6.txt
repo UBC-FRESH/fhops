@@ -1,0 +1,917 @@
+Restricted to FERIC Members and Partners
+Contents
+1
+
+Introduction
+
+1
+
+Objectives
+
+2
+
+Harvesting
+systems
+
+2
+
+Description of
+sites and
+stands for
+processing
+operation
+
+2
+
+Study
+methods
+
+3
+
+Results and
+discussion
+
+5
+
+Conclusions
+
+6
+
+Implementation
+
+7
+
+References
+
+7
+
+Acknowledgements
+
+Authors
+Kris T. Kosicki and
+Peter F. Dyson,
+Western Division
+
+Vol. 5 No. 6 February 2004
+
+Using mechanized systems to harvest
+second-growth forests in coastal British
+Columbia: productivity and costs of a
+processing operation
+Abstract
+
+The Forest Engineering Research Institute of Canada (FERIC) monitored the processing phase of a clearcut harvesting operation on Vancouver Island. This report is part of
+FERIC’s overall study on the operational and economic feasibility of using mechanized
+systems for clearcut harvesting of coastal second-growth stands on steep slopes. Two
+previous reports presented the results of the felling and extraction phases.
+Keywords
+
+Coastal British Columbia, Second-growth, Processing, Costs, Productivity.
+
+Introduction
+As forest companies in coastal British
+Columbia harvest more second-growth
+stands, opportunities to use mechanized harvesting systems often arise. Feller-bunchers,
+processors, loader-forwarders, and skidders—
+if used appropriately—offer opportunities to
+reduce harvesting costs with acceptable site
+impacts. At the request of its members,
+FERIC has been investigating the use of this
+equipment in coastal second-growth stands.
+In the spring of 2002, TimberWest Forest
+Corp.’s. Cowichan Woodlands Operation
+and Honeymoon Bay Operation undertook
+a series of trials to investigate the feasibility
+of using mechanized systems for clearcut
+harvesting on steep slopes. FERIC monitored
+the trials to determine the operational and
+economic feasibility of these systems. Because
+of the scope of this study, the results are
+presented in several “Advantage” reports. Two
+previous reports presented the results for
+the mechanized felling and extraction
+
+operations (Kosicki and Dyson 2003, 2004).
+This report presents the results for the
+processing phase.
+
+Objectives
+The primary goal of this study was to
+assess the economic and operational feasibility of using mechanized systems for clearcut
+harvesting on steep slopes. The objectives of
+this report on the processing phase were to:
+• Determine overall productivities and
+costs for roadside processing.
+• Evaluate processors as components of
+roadside harvesting systems.
+• Compare results of hot and cold
+processing options.1
+
+1
+
+In a “hot processing” system, extraction and processing
+phases occur simultaneously, and the supply buffer
+between these phases is generally small. In a “cold
+processing” system, processing usually starts after the
+extraction phase has been completed, and the supply
+buffer between both phases is generally large.
+
+Harvesting systems
+
+Study methods
+
+An overview of harvesting systems and
+equipment used in this project is shown in
+Table 1. Both manual and mechanized
+felling with feller-bunchers were used.
+Depending on block layout and terrain,
+stems were extracted with loader-forwarders
+or swing yarders. At roadside, the stems were
+decked for hot or cold processing by danglehead processors.
+
+Description of sites and
+stands for processing
+operation
+Processing operations were observed on
+three study blocks (Blocks B, C, and D).
+Descriptions of these blocks are given in
+Kosicki and Dyson (2003, 2004).
+
+FERIC observed the processing operation
+and collected shift-level and detailed-timing
+data. Shift-level data for the processing phase
+were collected in study blocks B, C, and D,
+and consisted of datalogger charts and
+operators’ reports about daily production
+and major delays (>15 min/occurrence).
+Processing cycles were detail-timed at frequent
+intervals throughout the study period. In
+Block B, the detailed-timing study focused
+on cold processing of loader-forwarded
+stems, and in Blocks C and D on hot
+processing of grapple yarded stems. Net
+volumes were obtained from TimberWest’s
+scale records. Hourly processor costs were
+calculated using FERIC’s standard costing
+methods (Appendix I).
+
+Table 1. Harvesting systems and equipment
+Cutblock
+
+A
+
+B
+
+C
+
+D
+
+Harvesting system
+
+Clearcut,
+cold deck
+
+Clearcut,
+cold deck
+
+Clearcut,
+hot deck
+
+Clearcut, cold
+and hot deck
+
+Felling equipment
+
+Madill T2200
+feller-buncher with
+intermittent lowspeed circular saw a
+
+Tigercat 860
+feller-buncher
+with high-speed
+circular saw a
+
+Feller-buncher
+
+Manual
+
+Extraction equipment
+
+Snorkel,
+loader-forwarders,
+swing yarder
+
+Madill 144
+yarder, uphill and
+downhill yarding a
+
+Cypress 7280
+yarder,
+uphill yarding a
+
+Cypress 7280
+yarder,
+downhill yarding a
+
+Madill 3800
+loader-forwarder a
+
+Loader-forwarders
+
+Madill 3800
+carrier with
+Waratah
+processing head a
+
+Madill 3800
+carrier with
+Waratah
+processing head a
+
+Processing equipment
+
+a
+
+Madill 3800
+carrier with
+Waratah
+processing head
+
+Madill 3800
+carrier with
+Waratah
+processing head a
+
+Monitored by FERIC in shift-level and detailed-timing studies (Kosicki and Dyson 2003, 2004).
+
+Forest Engineering Research Institute of Canada (FERIC)
+Eastern Division and Head Office
+
+580 boul. St-Jean
+Pointe-Claire, QC, H9R 3J9
+
+(514) 694-1140
+(514) 694-4351
+admin@mtl.feric.ca
+
+2
+
+Western Division
+
+2601 East Mall
+Vancouver, BC, V6T 1Z4
+
+(604) 228-1555
+(604) 228-0999
+admin@vcr.feric.ca
+
+Disclaimer
+Advantage is published solely to disseminate information to FERIC’s members and partners. It is not intended as an endorsement or approval of any
+product or service to the exclusion of others that may be suitable.
+ Copyright 2004. Printed in Canada on recycled paper.
+Vol. 5 No. 6
+February 2004
+
+Advantage
+ISSN 1493-3381
+
+Results and discussion
+
+Figure 1. Waratah
+HTH624
+processing head.
+
+Overview of processing
+operations
+
+Processing operations in the study blocks
+were performed from mid-May to late July
+2002. In all study blocks, roadside processing
+of loader-forwarded and/or grapple yarded
+stems was done with Waratah HTH624
+processor heads (Figure 1) mounted on
+Madill 3800 carriers. Table 2 presents the
+technical specifications for these machines.
+Depending on block layout and decking
+conditions, cold and/or hot processing
+systems were used (Table 3). The processors
+were operated by TimberWest crews and
+scheduled to work five days per week on a
+double-shift (Blocks B and C) or single-shift
+basis (Block D).
+Shift-level study
+
+The shift-level study was based on shifts
+with complete records (scheduled and
+productive machine hours, volume processed,
+etc.). Shifts with incomplete records were
+excluded from evaluation.
+In Block B, only cold processing of
+loader-forwarded and grapple yarded stems
+was done. The shift-level study was based
+on records for 26 productive shifts, or 197 h.
+Table 3 summarizes shift structure, productivity in cubic metres per productive machine
+hour (m3/PMH) and scheduled machine
+hour (m3/SMH), and cost in $/m3.
+Shift lengths ranged from 6.3 to 8.3 h
+and averaged 7.6 h. For the monitoring
+period, availability and utilization were 94
+and 88%, respectively. Almost all mechanical
+delays were caused by problems related to
+hydraulic components.
+The total volume processed in Block B
+during the monitoring period was 9531 m3.
+For single shifts, the processing productivity
+of loader-forwarded stems varied from 45
+to 79 m³/PMH and averaged 56 m³/PMH.
+Because of more difficult handling of
+grapple yarded stems decked below the
+road, processing of grapple yarded stems was
+less productive. For single shifts, it varied
+Advantage
+
+Vol. 5 No. 6
+February 2004
+
+Table 2. Technical specification for the
+Madill 3800 carrier and Waratah HTH624
+processing head
+Description
+Madill 3800 carrier
+Engine
+Power (kW)
+Max. boom reach (m)
+Lift capacity at 9-m reach (kg)
+Track dimensions (m)
+Travel speed (km/h)
+Mass (kg)
+
+Cummins 6CTA 8.3
+194 @ 2200 rpm
+11.8
+8 780
+3.60 wide, 5.18 long
+up to 4.5
+39 500
+
+Waratah HTH624 processing head
+Maximum delimbing diameter (mm)
+Maximum diameter saw cut (mm)
+Mass (kg)
+Measuring and control system
+
+640
+780
+3 414
+Logrite
+
+from 47 to 65 m³/PMH, and averaged
+52 m³/PMH. For a utilization rate of 88%,
+these average productivities translated into
+49 and 46 m³/SMH for the loader-forwarded
+and grapple yarded stems, respectively.
+The overall processing productivity of
+loader-forwarded and grapple yarded stems
+in Block B was 55 m³/PMH and 48 m³/SMH,
+respectively. At an hourly machine rate of
+$140.37/SMH (Appendix I), the average
+cost of processing was $2.92/m3. Processing
+of loader-forwarded stems was slightly less
+expensive than processing of grapple yarded
+stems ($2.86/m³ and $3.05/m³, respectively).
+In Block C, because of limited decking
+area, only hot processing of uphill yarded
+stems was done (Figure 2). A small number
+of loader-forwarded stems from an adjacent
+3
+
+Table 3. Shift-level summary and productivity for the Madill 3800/
+Waratah HTH624 processor in study blocks B, C, and D
+Description
+Extraction method
+Processing method
+Productive shifts (no.)
+Productive machine hours (PMH) (h)
+Mechanical delays (MD) (h)
+Non-mechanical delays (NMD) (h)
+Total all delays
+Scheduled machine hours (SMH) (h)
+Average shift length (h)
+Utilization (PMH/SMH) (%)
+Availability [(SMH-MD)/SMH] (%)
+Stems (no.)
+Total volume (m³)
+Average volume (m³/stem)
+Productivity
+stems/PMH
+stems/SMH
+m³/PMH
+m³/SMH
+Hourly machine cost ($/SMH)
+Cost ($/m³)
+
+Block B
+
+Block C
+
+Block D
+
+forwarding and
+yarding
+cold
+26
+173.0
+11.9
+11.9
+23.8
+196.8
+7.6
+88
+94
+10 030
+9 531
+0.95
+
+grapple
+yarding
+hot
+9
+62.7
+not available
+not available
+10.8
+73.5
+8.2
+85
+not available
+3 486
+3 521
+1.01
+
+grapple
+yarding
+cold and hot
+7
+45.0
+5.0
+11.5
+16.5
+61.5
+8.8
+73
+92
+3 916
+1 723
+0.44
+
+56
+47
+56
+48
+140.37
+2.92
+
+87
+64
+38
+28
+140.37
+5.01
+
+58
+51
+55
+48
+140.37
+2.92
+
+Figure 2. Hot
+processing in
+Block C. Stems
+grapple yarded with
+a Cypress 7280 (in
+the background) were
+processed by a
+Waratah HTH624/
+Madill 3800 and
+decked for hot
+loading by a
+Madill 3800 loader
+(in the foreground).
+
+area was cold processed during longer
+breaks in yarding activities (e.g., moving and
+repairing the yarder). All processed stems
+were decked for hot loading. The results for
+nine shifts with a full set of processing records
+are shown in Table 3.
+Shift lengths ranged from 5.5 to 8.5 h
+and averaged 8.2 h. The total volume
+processed during the monitoring period was
+3 521 m3. The overall processing productivity was 56 stems and 56 m3 per PMH.
+For a utilization rate of 85%, this translates
+into 47 stems and 48 m3 per SMH. Several
+4
+
+factors contributed to this relatively high
+processing productivity. The most important
+factor was a good balance between number
+of stems in yarded cycle loads and the
+processor’s production capabilities. Yarded
+stems were processed immediately, usually
+before the next yarded load arrived at the
+roadside. This prevented accumulation of
+stems and facilitated grappling of the stems
+for processing. Another important factor
+was that the processed logs could be placed
+directly on the road for hot loading instead
+of being decked beside or below the road. A
+supply of cold decked stems nearby allowed
+the processor to continue working during
+yarder downtime and maintain high overall
+productivity. A final contributing factor
+was the large volume of 1.01 m³/stem. For an
+hourly rate of $140.37/SMH (Appendix I), the
+processing cost in Block C was $2.92/m3.
+In Block D, the stems were grapple
+yarded downhill and decked. The majority
+of the stems was cold processed and only a
+small number of stems was hot processed.
+Vol. 5 No. 6
+February 2004
+
+Advantage
+
+shift-level productivities of 69 m³/PMH
+determined for shifts on which the detailed
+timing was conducted.
+In Block C, the average processing
+time of 1.04 min/stem included 0.16 min
+of interaction time between the swing yarder
+and processor. For an average volume of
+1.01 m3/stem, the processing productivity
+of 58 m 3/PMH in this detailed-timing
+study was almost identical with the productivity of 56 m3/PMH in the shift-level study
+(Table 2).
+In Block D, the average processing time
+was 1.16 min/stem. For an average volume
+of 0.44 m3/stem, the productivity of hot
+processing was 21 m3/PMH. This productivity
+was much less than the average productivity
+of 38 m³/PMH based on the shift-level study
+that was done primarily in a cold processing
+system.
+
+The results for seven shifts are shown in
+Table 3. The total volume processed during
+these shifts was 1 723 m3. The processor
+achieved very high productivity in numbers
+of stems per hour (87 stems/PMH and
+64 stems/SMH), but because of a very low
+average volume of 0.44 m3/stem, the average
+processing productivity of 38 m3/PMH
+(28 m3/SMH) was well below productivities
+achieved in Blocks B and C. For an hourly
+machine rate of $140.37/SMH (Appendix I),
+the processing cost was $5.01/m3.
+Detailed-timing study
+
+The detailed timing was performed on
+cold processing of loader-forwarded stems in
+Block B, and on hot processing of grapple
+yarded stems in Blocks C and D. The results
+of these studies are summarized in Table 4.
+The lowest average processing time
+(0.79 min/stem) and the highest productivity (72 m 3/PMH) were recorded in
+Block B. This high productivity can be
+attributed to the cold processing of loaderforwarded stems piled in long decks easily
+accessible to the processor. The productivity
+of 72 m³/PMH agreed well with the average
+
+Conclusions
+The results of the processing study
+suggest that a Waratah HTH624 dangle
+head processor on a Madill 3800 carrier is a
+suitable processing combination for roadside
+harvesting in second-growth forests in coastal
+
+Table 4. Summary of detailed timing for the Madill 3800/
+Waratah HTH624 processor in Blocks B, C and D
+Description
+
+Block B
+
+Block C
+
+Block D
+
+Extraction method
+Processing system
+Productive time (min)
+Productive machine hours (PMH)
+Total cycles (no.)
+Average cycle time (min)
+Distribution of cycle time (%)
+Processing
+Delays
+Interaction with yarder
+Other
+Total stems (no.)
+Average volume (m3/stem)
+Logs produced (no.)
+Logs per stem (no.)
+Total volume (m3)
+Productivity
+stems/PMH
+m³/PMH
+
+forwarding
+cold
+745
+12.4
+940
+0.79
+
+yarding
+hot
+539
+9.0
+317
+1.04
+
+yarding
+hot
+329
+5.5
+284
+1.16
+
+81
+7
+0
+12
+940
+0.95
+1 830
+1.9
+893
+
+74
+11
+15
+0
+517
+1.01
+828
+1.6
+522
+
+80
+15
+5
+0
+261
+0.44
+313
+1.2
+115
+
+76
+72
+
+57
+58
+
+47
+21
+
+Advantage
+
+Vol. 5 No. 6
+February 2004
+
+5
+
+British Columbia. This combination can
+effectively process loader-forwarded and
+grapple yarded stems in both cold and hot
+processing systems.
+The greatest processing productivity
+may be expected when processing loaderforwarded stems decked in continuous
+windrows with an easy access from the road
+and sufficient room for decking processed
+logs. For the working conditions observed
+in Block B, this yielded productivities of
+56 m3/PMH. For cold processing of grapple
+yarded stems, processing productivity was less,
+averaging 52 m³/PMH. For processing of
+loader-forwarded and grapple yarded stems,
+the average productivity was 48 m3/SMH
+at a cost of $2.92/m3.
+In Block C, where a hot processing
+system was used for grapple-yarded stems,
+the processing productivity was 48 m3/SMH
+at a cost of $2.92/m3. These results are
+identical to those for the cold processing
+system in Block B, and suggest that the hot
+processing system can be efficient even if
+unavoidable delays result from interaction
+between the yarder and processor.
+The lowest average productivity of
+28 m3/SMH for hot and cold processing
+combined was recorded in Block D. Although
+the processing productivity in number of
+stems per scheduled machine hour was the
+highest in the three study blocks, the small
+average volume of 0.44 m3/stem means the
+hourly productivity was 28 m³/SMH. At an
+hourly machine cost of $140.37/SMH
+(Appendix I), the processing cost in Block D
+was $5.01/m3.
+
+6
+
+Implementation
+During the observed processing operation,
+FERIC identified conditions for successful
+and effective use of the Waratah HTH624
+processor head on the Madill 3800 carrier:
+• If the haul road system and terrain
+permit unobstructed and safe decking
+of loader-forwarded and/or grapple
+yarded stems, a cold processing system is
+advantageous. It will eliminate interaction
+between the extraction and processing
+phases and will allow all machines to
+maximize their productivities.
+• Hot processing of grapple yarded stems
+is operationally feasible and, under certain
+conditions, may be highly productive.
+However, because yarding productivity
+varies with distance and other factors
+while processing productivity is relatively
+stable, production losses in processing
+are unavoidable and hot processing
+systems should be used only when
+necessary (e.g., limited decking area for
+yarded stems, safety requirements, need
+to minimize the duration of the total
+harvesting time).
+• If a hot processing system is used, try to
+minimize potential production losses in
+the processing phase by having a supply
+of cold-decked stems nearby for the
+processor to work on if the yarder is idle.
+
+Vol. 5 No. 6
+February 2004
+
+Advantage
+
+References
+Kosicki, K.T.; Dyson, P.F. 2003. Using mechanized systems to harvest second-growth
+forests in coastal British Columbia: evaluation of Madill T2200 and Tigercat 860 fellerbunchers. FERIC, Vancouver, B.C. Advantage Report Vol. 4 No. 28. 12 pp.
+Kosicki, K.T.; Dyson, P.F. 2004. Using mechanized systems to harvest second-growth
+forests in coastal British Columbia: productivity and costs of loader-forwarding and
+grapple yarding operations. FERIC, Vancouver, B.C. Advantage Report Vol. 5 No. 1. 20 pp.
+
+Acknowledgements
+The authors thank John Quinn, Rick Jaccard and the staff of TimberWest, and all the
+operators and contractors who cooperated with FERIC, for their assistance in providing
+information essential to the study.
+The authors thank FERIC employees Marv Clark, Ingrid Hedin, and Ray Krag for project
+advice and for reviewing the draft report. Thanks also to Brian Boswell, Clayton Gillies, and
+Mihai Pavel for assisting with the data collection and to Yvonne Chu for assistance with
+report preparation.
+
+Advantage
+
+Vol. 5 No. 6
+February 2004
+
+7
+
+Appendix I
+Machine costs, $/scheduled machine hour (SMH) a
+Madill
+3800 carrier
+
+Waratah HTH624
+processing head
+
+Total purchase price (P) $
+
+550 000
+
+250 000
+
+Expected life (Y) y
+Expected life (H) h
+Scheduled hours/year (h)=(H/Y) h
+Salvage value as % of P (s) %
+Interest rate (Int) %
+Insurance rate (Ins) %
+Salvage value (S)=((P•s)/100) $
+Average investment (AVI)=((P+S)/2) $
+Loss in resale value ((P-S)/H) $/h
+Interest ((Int•AVI)/h) $/h
+Insurance ((Ins•AVI)/h) $/h
+Total ownership costs (OW) $/h
+
+5
+20 000
+4 000
+30
+5.0
+2.0
+165 000
+357 500
+19.25
+4.47
+1.79
+25.51
+
+5
+20 000
+4 000
+30
+5.0
+2.0
+75 000
+162 500
+8.75
+2.03
+0.81
+11.59
+
+40.0
+0.75
+10
+30 000
+29 000
+5 000
+82 000
+8.5
+26.80
+35
+30.00
+3.00
+1.03
+1.25
+20.50
+36.18
+1.06
+
+1 000
+40 000
+0.25
+10.00
+-
+
+Total operating costs (OP) $/SMH
+
+93.02
+
+10.25
+
+TOTAL OWNERSHIP AND OPERATING COSTS (OW+OP) $/SMH
+
+118.53
+
+21.84
+
+OWNERSHIP COSTS
+
+OPERATING COSTS
+
+Fuel consumption (F) L/h
+Fuel (fc) $/L
+Lube & oil as % of fuel (fp) %
+Track & undercarriage replacement (Tc) $
+Track & undercarriage life (Th) h
+Annual operating supplies (Oc) $
+Annual repair & maintenance (Rp) $
+Shift length (sl) h
+Total wages (W) $/h
+Wage benefit loading (WBL) %
+Fuel (F•fc) $/h
+Lube & oil ((fp/100)•(F•fc)) $/h
+Track & undercarriage (Tc/Th) $/h
+Operating supplies (Oc/h) $/h
+Repair & maintenance (Rp/h) $/h
+Wages & benefits (W•(1+WBL/100)) $/h
+Prorated overtime (((1.5•W-W)•(sl-8)•(1+WBL/100))/sl) $/h
+
+a
+
+8
+
+The costs used in the study are not the actual costs incurred by the company or contractor, and do not include
+indirect costs such as crew and machine transpor tation, overhead, profit, and risk.
+
+Vol. 5 No. 6
+February 2004
+
+Advantage
+
+

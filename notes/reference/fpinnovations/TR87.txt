@@ -1,0 +1,3678 @@
+FOREST ENGINEERING
+RESEARCH INSTITUTE
+OF CANADA
+
+INSTITUT
+CANADIEN
+DE RECHERCHES
+EN GÉNIE FORESTIER
+
+FERIÇ
+
+A CASE STUDY OF
+ROADSIDE LOGGING IN THE
+CENTRAL INTERIOR OF
+BRITISH COLUMBIA
+A.J. MacDonald
+December
+
+1988
+
+Technical
+
+Report
+
+■■■■■
+
+TR-87
+
+A CASE STUDY OF
+ROADSIDE LOGGING IN THE
+CENTRAL INTERIOR OF
+BRITISH COLUMBIA
+
+A.J. MacDonald
+
+Technical Report No. TR-87
+December 1988
+
+KEYWORDS: Felling, Skidding, Processing, Loading, Logging Systems, Evaluation, Productivity,
+Costs, Caterpillar FB221 Feller-Buncher, John Deere 740A Grapple Skidder,
+Timberjack 90 Processor, Caterpillar LL229 Log Loader
+
+© Copyright 1988, Forest Engineering Research Institute of Canada
+
+ISSN 0318-7063
+
+Author
+Jack MacDonald graduated from the University of British Columbia Faculty of Forestry in 1976. He joined
+British Columbia Forest Products Limited and worked as a field engineer on Vancouver Island until joining FERIC
+in 1986. He is a Researcher in the Harvesting Operations Group.
+
+Acknowledgements
+The author wishes to thank the personnel of Quest Wood Products Ltd. and their contractors for their assistance
+during this project.
+
+i
+
+Table of Contents
+Page
+AUTHOR
+ACKNOWLEDGEMENTS
+SUMMARY
+
+iv
+
+SOMMAIRE
+
+iv
+
+INTRODUCTION
+
+1
+
+SITE AND SYSTEM DESCRIPTION
+
+1
+2
+2
+2
+2
+3
+
+Falling
+Road Building
+Skidding
+Processing
+Loading, Hauling, and Other Activities
+STUDY METHODS
+
+4
+
+RESULTS AND DISCUSSION
+
+4
+
+Scheduling Intensity
+
+4
+
+Shifts with Production
+Delay Times
+Production Allocation
+Summary of Productivity
+Comparisons of Day-Shift Productivity and Night-Shift Productivity
+Loader Productivity
+Detailed Timing of the TJ90 Processor
+
+5
+5
+5
+5
+7
+8
+8
+
+Repair and Service
+FB221 Feller-Buncher
+740A Skidder
+TJ90 Processors
+LL229 Loader
+
+9
+9
+9
+10
+11
+
+Cost Calculations
+
+11
+
+CONCLUSIONS
+
+11
+
+APPENDIX I
+
+13
+
+Summary of Activities During Production Shifts
+
+14
+
+APPENDIX II Machine Costs
+
+ii
+
+List of Tables
+Page
+1
+
+Site and Stand Description
+
+1
+
+2
+
+Log-Size Distribution
+
+1
+
+3
+
+Logging Equipment
+
+2
+
+4
+
+Scheduling Intensity
+
+5
+
+5
+
+Time Distribution for Productive Shifts
+
+6
+
+6
+
+Non-Mechanical Delay Times
+
+6
+
+7
+
+Production Allocation
+
+6
+
+8
+
+Productivity Summary
+
+7
+
+9
+
+Loading Summary
+
+8
+
+10
+
+TJ90#l Processor Detailed Timing - Total Time
+
+8
+
+11
+
+TJ90#l Processor Detailed Timing - Productive Time
+
+8
+
+12
+
+Summary of Processing Time by Butt-Diameter Class
+
+10
+
+13
+
+Repair and Service Summary
+
+10
+
+14
+
+Phase Costs per Cubic Metre
+
+11
+
+List of Figures
+
+A
+
+Typical Spruce and Pine Stand in the Study Block
+
+1
+
+B
+
+Study Block After Harvesting
+
+1
+
+C
+
+Study-Block Layout
+
+D
+
+FB221 Feller-Buncher
+
+3
+
+E
+
+740A Skidder
+
+3
+
+F
+
+Timberjack TJ90 Processor
+
+3
+
+G
+
+Processed Logs Ready for Loading
+
+3
+
+H
+
+Caterpillar LL229 Loader with Butt-and-Top Grapple Loading a
+Tractor-Jeep/Triaxle Trailer Log Truck
+
+4
+
+I
+
+Processed Logs and TJ90#l Processor
+
+8
+
+J
+
+TJ90#l Processor
+
+8
+
+Summary
+
+Sommaire
+
+FERIC monitored all phases of a roadside logging
+system in one block of old-growth timber in the
+British Columbia Interior. The study objectives were
+to determine the productivity and cost of each logging phase, and monitor the interactions between
+phases.
+
+FERIC a assuré le suivi technique de toutes les
+phases d’une exploitation par système en bordure de
+route, dans une parcelle d’un peuplement originel en
+Colombie-Britannique intérieure. L’étude avait pour
+but de déterminer la productivité et le coût de
+chacune des phases de la récolte, et d’étudier les
+interactions entre les phases.
+
+The prime logging equipment consisted of a Caterpillar FB221 feller-buncher, a John Deere 740A grapple skidder, two Timberjack 90 processors, and a
+Caterpillar LL229 butt-and-top log loader. The total
+volume logged was 24 146 m3, the piece average was
+0.29 m3, and the direct stump-to-truck logging cost
+was $8.1 1/m 3. Road construction accounted for a
+further $0.25/m 3 and bulldozer costs, to pull log
+trucks through muddy road sections, amounted to
+$0.06/m 3. Costs were derived by FERIC and are not
+the actual costs incurred by the company or the contractor.
+Study results showed that approximately 1.5 falling
+and processing hours were required for each skidding
+hour, and that about 1.5 skidding hours were required
+for each loading hour. Production by phase varied
+from 544 m 3 per 8-hour shift for the loader, to 240
+m 3 for the TJ90 processors. Falling and processing
+each accounted for 33% of direct logging costs, while
+skidding, and loading each accounted for about 17%.
+The utilization of machines ranged from 67% for one
+TJ90 processor to 92% for the LL229 loader. Major
+causes of delay were organizational delays and repair
+and service. Up to 10% of the skidder’s and processors’ total shifts and 7% of their time during production shifts was lost because of wait-for-wood delays
+when the FB221 feller-buncher was unable to fall
+sufficient trees for the other machines to maintain full
+production. A second feller-buncher was added and
+no further delays were caused by insufficient inventory.
+The machines’ repair requirements varied.
+The
+LL229 loader required the least time for repairs, at
+2.5 hours per 100 productive machine hours (PMH),
+and one TJ90 processor required the most time for
+repair at 23.8 hours per 100 PMH. In general, the
+falling and processing attachments required the most
+repairs.
+There was little variation in productivity per PMH
+between day and night shift. However, utilization on
+night shift was generally higher, so production per
+shift was higher. This was mainly because minor
+repairs were scheduled during the day and repair
+times per shift were 0.3-0.6 hours longer.
+
+L’équipement utilisé comprenait principalement une
+abatteuse-groupeuse Caterpillar FB221, un débardeur
+à pince John Deere 740A, deux ébrancheusestronçonneuses Timberjack 90, et une chargeuse
+Caterpillar LL229 dotée d’un grappin à talons jumelés
+pour le chargement bidirectionnel des grumes. Le
+volume total de coupe était de 24 146 m3, le volume
+moyen d’une pièce de bois de 0,29 irf, et le coût
+direct de débardage entre la souche et le camion de
+$8.1 1/m3. La construction des routes représentait
+$0.25/m 3, et le coût des bouteurs nécessaires pour
+tirer les camions sur les sections de routes boueuses,
+s’élevait à $0.06/nf. Ces coûts ont été calculés par
+FERIC et ne sont pas nécessairement les coûts réels
+encourus par la compagnie ou l’entrepreneur.
+Les résultats de l’étude montrent qu’il fallait
+approximativement 1,5 heure d’abattage et de
+façonnage pour chaque heure de débardage, et
+environ 1,5 heure de débardage pour chaque heure de
+chargement. La production pour une phase variait de
+544 m3 par poste de travail de 8 heures pour la
+chargeuse, à 240 m 3 pour les ébrancheusestronçonneuses TJ90.
+L’abattage et le façonnage
+représentaient chacun 33% des coûts directs
+d’exploitation, alors que le débardage et le
+chargement correspondaient chacun à environ 17%.
+Le taux d’utilisation des machines passait de 67%
+pour une ébrancheuse-tronçonneuse TJ90 à 92% pour
+la chargeuse LL229. Les principales causes de temps
+morts étaient les retards dus à une organisation
+déficiente, ainsi que les réparations et l’entretien.
+Dans le cas du débardeur et des ébrancheusestronçonneuses, jusqu’à 10% du temps total d’un poste
+de travail et 7% du temps productif étaient perdus à
+attendre du bois, parce que l’abatteuse-groupeuse était
+incapable d’abattre suffisamment d’arbres pour que les
+autres machines travaillent à pleine capacité.
+L’addition d’une seconde abatteuse-groupeuse mit un
+terme aux temps morts causés par l’insuffisance
+d’ approvisionnement.
+Les réparations nécessaires variaient d’une machine à
+l’autre. La chargeuse LL229 était celle qui demandait
+le moins de temps de réparation, soit 2,5 heures par
+100 heures-machines productives (HMP), et celle qui
+en demandait le plus était l’une des ébrancheusestronçonneuses TJ90, soit 23,8 heures par 100 HMP.
+En général, les accessoires d’abattage et de façonnage
+demandaient de nombreuses réparations.
+
+On constata peu de variation dans la productivité par
+HMP entre les postes de jour et de nuit. Toutefois,
+le taux d’utilisation était généralement plus élevé
+durant le poste de nuit, de sorte que la production
+par poste se trouvait plus forte. Cela s’explique
+principalement par le fait que les réparations
+mineures étaient prévues durant le jour, ce qui
+ajoutait de 0,3 à 0,6 heure au temps de réparation
+par poste.
+
+v
+
+Products’ operating areas west of Quesnel. Figure A
+shows a typical stand of spruce and pine within the
+block and Figure B shows tire study block.
+
+INTRODUCTION
+As part of its harvesting-systems evaluations project,
+FERIC undertook to monitor a roadside-logging system as a whole, rather than to isolate one machine
+for study. The objectives of this study were to determine equipment performance and costs, and to document how one machine’s productivity affects another’s
+performance.
+
+Table 3 lists the equipment used to harvest the study
+block. Trees were mechanically felled and bunched,
+then skidded to roadside with a grapple skidder
+where they were piled in windrows for processing
+and loading.
+Falling, skidding, and processing
+operated two shifts per day for five days per week,
+while loading and hauling operated one shift per day
+for five days per week. The operators alternated day
+and night shifts on a two-week cycle.
+
+Roadside logging has become an increasingly
+important system of logging in the Interior of British
+Columbia. Landings are not required for roadside
+logging, thus eliminating their cost, reducing site
+disturbance, and reducing the interference between
+logging phases caused by landing congestion.
+Instead of landings, stems are piled along the roadside (windrowed) for processing and loading. Safety
+is also improved because the workers are inside protective cabs at all times. However, capital costs are
+increased, and it becomes more important to ensure
+maximum machine utilization to ensure lowest costs.
+
+Table 2. Log-Size Distribution
+
+The study was conducted in cooperation with Quest
+Wood Products Ltd. of Quesnel, B.C. The company
+harvests much of its timber supply from low-volume
+pine stands where the average tree size is small and
+the logging system must be designed to process a
+large number of stems rapidly to minimize logging
+costs. The logging contractor employed during the
+study had used roadside logging since 1986. His
+fleet consisted of one feller-buncher, one grapple
+skidder, two stroke delimbers, and one butt-and-top
+log loader, plus miscellaneous other equipment.
+
+Buttdiameter
+class
+(cm)
+
+%
+distribution
+(by pieces)
+
+Avg log
+volume
+(m3)
+
+Avg log
+length
+(m3)
+
+10
+20
+30
+40
+
+8
+72
+18
+2
+
+0.06
+0.23
+0.59
+0.96
+
+5.4
+10.5
+14.1
+12.2
+
+All
+
+100
+
+0.29
+
+10.8
+
+SITE AND SYSTEM
+DESCRIPTION
+The study block was located approximately 85 km
+west of Quesnel, B.C. The species distribution information shown in Table 1 was obtained from the
+company’s operational cruise data and the total
+volume was derived from the weigh-scale of all production. The data in Table 2 on log-size distribution
+were obtained from four sample truck loads which
+were scaled for stumpage purposes. The site was on
+a gently rolling ridgetop and the slope averaged
+11%. The terrain was typical of Quest Wood
+
+Figure A. Typical Spruce and Pine Stand in the Study.
+
+Table 1. Site and Stand Description
+Area
+Total volume
+Volume/ha
+Species distribution
+Pine
+Spruce
+Balsam
+Aspect
+Average slope
+Terrain
+Underbrush
+
+97.5 ha
+24 146 m3
+248 m3/ha
+58%
+30%
+12%
+Ridgetop: North to
+south aspect
+11%
+Even to gently rolling
+Light
+
+Figure B. Study Block After Harvesting.
+
+1
+
+Table 3 . Logging Equipment
+Model year
+
+No. of
+shifts/day
+
+Current
+selling price
+
+Falling
+Caterpillar FB221
+John Deere 693B
+Caterpillar FB217
+
+1986
+n/a
+1987
+
+2
+1
+-
+
+$391 000
+$384 000
+$284 000
+
+Skidding
+John Deere 740 A
+
+1985
+
+2
+
+$220 000
+
+Processing
+Timberjack TJ90#l
+Timberjack TJ90#2
+
+1986
+1986
+
+2
+1 - 2
+
+$360 000
+$360 000
+
+Loading
+Caterpillar LL229
+
+1985
+
+1
+
+$420 000
+
+Trucking
+Various - 9 trucks
+
+Various
+
+1
+
+$130 000 to $165 000
+
+n/a
+n/a
+
+$100 000
+$ 40 000
+
+Model
+
+Other
+Caterpillar D8H bulldozer
+Clark Ranger 668 skidder
+
+n/a
+n/a
+
+The contractor usually preferred to maintain five to
+seven days’ inventory between logging phases for
+flexibility and to avoid interference between equipment
+However, start-up in the block was delayed
+for various reasons, and both the company and contractor were anxious to start each phase as quickly as
+possible when logging finally commenced. Therefore, skidding and processing both started four days
+after falling, and the loading five days after that.
+
+and skidding patterns, and Figure D shows the
+FB221 feller-buncher during operation.
+
+Road Building
+
+Truck roads were built with a Caterpillar D8H bulldozer after falling and prior to skidding. The contractor operated the D8H bulldozer in addition to
+doing his normal supervision duties. The study block
+was 97.5 ha, and had 4.9 km of road for a road
+density of 50 m/ha. The maximum skidding distance
+was about 300 m, with the average distance to the
+boundary approximately 220 m. Company crews did
+the engineering layout for the truck roads.
+
+Falling
+
+Falling was carried out mainly with a Caterpillar
+FB221 feller-buncher using a Koehring 51-cm-diameter circular-saw felling head. One operator was
+new to the feller-buncher but had several years of
+experience on other equipment, while the second
+operator had one year of experience on the fellerbuncher. The feller-buncher was approximately one
+year old.
+
+Skidding
+
+A two-year-old John Deere 740A grapple skidder was
+used for skidding. It operated for two shifts per day
+and both operators had several years of experience on
+the skidder.
+
+Since the FB221 feller-buncher was unable to provide
+sufficient felled inventory, a John Deere 693B with a
+Denis twin circular-saw felling head was hired on a
+subcontract basis. The owner/operator had several
+years of experience operating feller-bunchers.
+
+The skidder generally pulled two bunches per turn.
+Trees were dropped at the roadside and their butts
+aligned to the road edge with the skidder blade.
+Depending on stand density and skidding distance,
+the piles were up to 3 m high, although most were
+about 2 m high. The skidder operators left low
+openings in the piles to maintain access to the block.
+Figure E shows the 740A skidder pulling an uphill
+turn.
+
+A third feller-buncher was used for a short time on
+the study block. Finning Ltd. supplied a Caterpillar
+FB217 feller-buncher for a demonstration, but FERIC
+did not monitor its performance.
+The falling pattern was dictated by the preferred
+skidding direction which was directly up or down the
+slope. The feller-bunchers started by cutting a corridor along the back boundary or midway between
+the parallel roads, then working back and forth across
+the slope. Trees were grouped in bunches of six to
+ten stems, with the butts facing the truck road.
+Figure C shows the block layout, with typical falling
+
+Processing
+
+Two Timberjack TJ90 processors were used during
+the study. One worked two shifts per day, while the
+other was operated either one or two shifts per day.
+The TJ90 processors consisted of a Denis Model KS
+telescoping-boom stroke delimber mounted on a
+Timberjack rubber-tired carrier (Figure F).
+2
+
+Three of the four operators had from 6 to 8 months
+of experience on the processors, but the fourth operator had no machine experience and was considered a
+trainee operator.
+The processor operators varied their work patterns
+depending on the inventory of skidded stems. Where
+the inventory was adequate, the two machines
+worked 100-200 m apart, one on each side of the
+road. At other times, the stems were processed as
+soon as they were skidded. A typical windrow of
+processed logs is shown in Figure G.
+
+Loading, Hauling, & Other Activities
+
+Loading was carried out with a Caterpillar LL229
+butt-and-top log loader equipped with a Tanguay
+grapple and boom. The loader was about 18 months
+old. Two different operators were used during the
+study; the first was experienced on feller-bunchers
+but was new on the loader, and the second was fully
+experienced on the loader.
+The loader travelled to
+the far end of each spur road to begin loading, and
+required two passes to complete the loading from
+both sides of the road.
+
+Figure C . Study-Block Layout.
+
+Nine highway trucks were used to haul the logs to
+the mill, and each averaged about two trips per day.
+The average haul distance was 85 km. The main
+configuration was a cab-over tractor with a jeep and
+
+Figure D. FB221 Feller-Buncher.
+
+Figure F. Timberjack TJ90 Processor.
+
+Figure E. 740A Skidder.
+
+Figure G . Processed Logs Ready for Loading.
+
+3
+
+triaxle trailer. This truck configuration was a consideration in the loading pattern, i.e. commencing at the
+end of each spur, since the tractor-jeep/triaxle trailer
+configuration is very difficult to drive in reverse once
+the trailer is unloaded. This loading pattern had two
+disadvantages:
+
+STUDY METHODS
+Each machine was equipped with a Model DSR
+Servis Recorder to monitor working and delay times.
+The operators identified each delay over 10-min
+duration and provided an explanation of its cause.
+Delays under 10-min duration were considered part
+of productive time.
+FERIC grouped the delays
+according to their causes, and measured productive
+and non-productive times from the Servis Recorder
+charts using a digitizing tablet connected to an IBMcompatible computer.
+
+a) Cycle time was increased because the loader
+operator swung the logs over the back of the truck
+(Figure H). This was done to reduce the risk of
+truck damage that might result from swinging logs
+over the cab.
+b) The loader could not work on the same spur as
+the processors because access for the trucks would
+be blocked.
+
+The total harvested volume was derived from the
+actual weigh-scale of all production delivered to the
+mill. When more than one machine or machine shift
+was used for a phase, production was allocated
+between machines or shifts based on the operators’
+daily piece counts.
+
+The final piece of equipment used in this logging
+system was a Clark Ranger 668 line skidder which
+was used to pull trucks through muddy sections of
+road. It was operated by the contractor or another
+operator as the need arose.
+
+The 693B and the FB217 feller-bunchers were not
+equipped with Servis Recorders. The 693B fellerbuncher operator reported total trees cut and total
+cutting hours, and these were used to estimate production. The total cutting time for the FB217 fellerbuncher was reported, and its cutting volume was
+estimated based on the average number of trees per
+hour for the FB221 feller-buncher. Other than calculating their portion of total production, these machines are not used in the data analysis.
+
+Planned post-harvesting treatment involved piling and
+burning debris left at the roadside, and possibly scarifying the setting. The company planned to rely on
+natural regeneration and to check stocking levels in
+two to four years.
+
+The study was carried out over seven weeks, starting
+in late May 1987.
+
+RESULTS AND
+DISCUSSION
+Scheduling Intensity
+
+Every shift for each machine was recorded from the
+first day to the last day worked on the study block.
+Shifts were classified as production shifts, non-production shifts, or scheduled shifts off. Any amount
+of production classified a shift as a production shift.
+A non-production shift was one which was scheduled
+for production but where some event such as repairs,
+vacations, or a lack of raw materials prevented the
+machine from working. Scheduled shifts off were
+weekends and statutory holidays.
+Table 4 shows the scheduling intensity for the five
+main machines. Most machines averaged 26-30%
+scheduled shifts off, but the FB221 feller-buncher
+had only 20% scheduled shifts off because it was
+operated for several weekend shifts to increase the
+inventory of felled trees. It also had 79% production
+shifts compared to 61-70% for the other machines.
+Non-production shifts were divided into mechanical
+and non-mechanical classes.
+Non-mechanical lost
+shifts were due to the lack of stems to skid or
+process. The 740A skidder lost 7% of its shifts, the
+
+Figure H. Caterpillar LL229 Loader with Butt-and-Top
+Grapple Loading a Tractor-Jeep/Triaxle Trailer
+Log Truck.
+
+4
+
+Table 4 . Scheduling Intensity
+FB221Feller-buncher
+
+740A
+Skidder
+
+TJ90#l
+Processor
+
+TJ90#2
+Processor
+
+LL229
+Loader
+
+Shift
+
+%
+
+Shift
+
+%
+
+Shift
+
+%
+
+Shift
+
+%
+
+Shift
+
+%
+
+Scheduled shifts off
+
+16
+
+20
+
+23
+
+28
+
+23
+
+28
+
+16
+
+26
+
+13
+
+30
+
+Production shifts
+
+65
+
+79
+
+54
+
+65
+
+55
+
+67
+
+38
+
+61
+
+30
+
+70
+
+Non-production shifts
+Mechanical
+Non-mechanical
+
+1
+0
+
+1
+0
+
+0
+6
+
+0
+7
+
+0
+4
+
+0
+5
+
+2
+6
+
+3
+10
+
+0
+0
+
+0
+0
+
+Total
+
+82
+
+100
+
+83
+
+100
+
+82
+
+100
+
+62
+
+100
+
+43
+
+100
+
+TJ9O#1 processor 5%, and the TJ90#2 processor 10%
+of its potential shifts for this reason. These shifts
+were lost during the first half of the study. However,
+during the latter half of the study, the second fellerbuncher was hired and no further shifts were lost
+because of insufficient felled inventory.
+
+The remaining organizational delays were for such
+things as the LL229 loader waiting for trucks, movein time for the TJ90#l processor, and operators
+working on other duties. Other duties included operating the spare skidder to pull trucks through muddy
+sections of road, and using the TJ90#l processor to
+lift repair parts onto the FB221 feller-buncher. The
+main operational delay was for breaks. Meal times
+were excluded from machine times and are not
+shown in any summaries.
+
+The TJ90#2 processor was on-site about 20 shifts
+less than the other machines because:
+a) Its start-up was delayed until there was sufficient
+skidded inventory for a second processor.
+
+Production Allocation - The scaled volume for the
+study block was 24 146 m3. Table 7 shows the
+calculated volume distribution between shifts based
+on the operators’ daily tree counts for the falling and
+processing phases.
+
+b) It was initially scheduled for one shift per day to
+increase the inventory of skidded stems.
+c) Muddy conditions at the end of the study slowed
+skidder productivity.
+There was insufficient
+skidded inventory to operate two processors, and
+the TJ90#2 was shut down.
+
+Turn counts for the skidder were incomplete, and the
+day and night shifts were combined for analysis.
+There were no tree counts for the FB217 fellerbuncher. Its tree count was estimated from its total
+operating hours and the average cutting rate and
+utilization for the FB221 feller-buncher.
+
+The LL229 loader was scheduled for one shift per
+day, and it worked for every scheduled shift during
+the study period.
+
+The volumes for the trainee processor operator have
+been excluded from Table 7 and all subsequent production calculations. His average productivity was
+approximately 14.7 m 3/PMH and was not representative of the TJ90 processor’s potential productivity.
+
+Shifts with Production
+
+The scheduled time for shifts with production was
+divided into three categories: productive machine
+time, non-mechanical delay time, and mechanical
+delay time (Table 5). The average utilization for the
+five machines during the study was approximately
+78%. The LL229 loader had die highest utilization
+at 92%, and the TJ90#2 processor the lowest at 67%.
+
+Summary of Productivity - The production rates for
+the four main machines are shown in Table 8. The
+loading phase will be considered separately from the
+falling, skidding, and processing phases.
+
+Delay Times - The delay times were examined to
+explain the range in utilization. A major reason for
+the TJ90#2’s low utilization was high repair time, and
+this is discussed in a later section.
+
+The utilization for the 740A skidder was 80% during
+the study. However, if its wait-for-wood delays are
+eliminated, its scheduled machine hours (SMH)
+would be 534.6 and the utilization would be 84%.
+Similarly, the average utilization for the processors
+would be 76% if their wait-for-wood delays are
+removed.
+
+The non-mechanical delay times were further divided
+into two categories: organizational delays, which are
+generally controllable by company policy, and operational delays, which are not controllable by policy.
+Table 6 shows that, because the FB221 feller-buncher
+was unable to fall enough trees to maintain sufficient
+inventory, waiting for wood was the main organizational delay affecting the skidder and processors.
+
+The skidder had the highest productivity (m3/PMH)
+and the highest utilization as well. Using the calculated utilization when wait-for-wood delays are eliminated, its productivity was 361 m3/8-h shift. There
+5
+
+Table 5. Time Distribution for Productive Shifts
+TJ90#2
+Processor
+
+TJ90#l
+Processor
+
+740A
+Skidder
+
+FB221
+Feller-buncher
+
+LL229
+Loader
+
+Hours
+
+%
+
+Hours
+
+%
+
+Hours
+
+%
+
+Hours
+
+%
+
+Hours
+
+%
+
+Productive machine
+hours (PMH)
+
+547.0
+
+78
+
+449.5
+
+80
+
+434.6
+
+75
+
+264.6
+
+67
+
+329.1
+
+92
+
+Non-mechanical delay
+hours (NDH)
+Organizational
+Operational
+
+0.8
+24.7
+
+0
+4
+
+30.1
+19.8
+
+5
+4
+
+30.9
+12.4
+
+5
+2
+
+26.8
+5.5
+
+7
+1
+
+10.6
+1.0
+
+3
+0
+
+Mechanical delay
+hours (MDH)
+Wait mechanical
+Repair
+Service
+
+3.7
+80.8
+45.9
+
+0
+11
+7
+
+0.0
+26.4
+36.0
+
+0
+5
+6
+
+7.6
+53.2
+38.1
+
+1
+10
+7
+
+13.8
+54.9
+27.6
+
+4
+14
+7
+
+0.0
+8.2
+8.9
+
+0
+2
+3
+
+Scheduled machine
+hours (SMH)
+
+702.9
+
+100
+
+561.8
+
+100
+
+576.8
+
+100
+
+393.2
+
+100
+
+357.8
+
+100
+
+Average shift length (h)
+
+10.8
+
+10.4
+
+10.5
+
+10.4
+
+11.9
+
+PMH/shift (h)
+
+8.4
+
+8.3
+
+7.9
+
+7.0
+
+11.0
+
+Utilization* (%)
+
+78
+
+80
+
+75
+
+67
+
+92
+
+‘ Utilization
+
+= PMH/SMH
+
+Table 6. Non-Mechanical Delay Times
+Hours
+FB221
+Feller-buncher
+
+740A
+Skidder
+
+TJ90#l
+Processor
+
+TJ90#2
+Processor
+
+LL229
+Loader
+
+Organizational delay
+Wait-for-wood
+Wait other machine
+Other work for operator
+Move to new area
+Miscellaneous
+
+0.0
+0.0
+0.0
+0.0
+08
+
+27.2
+0.0
+2.5
+0.0
+04
+
+19.4
+0.9
+5.8
+4.8
+00
+
+25.2
+1.5
+0.1
+0.0
+O0
+
+0.0
+10.6
+0.0
+0.0
+00
+
+Total
+
+0.8
+
+30.1
+
+30.9
+
+26.8
+
+10.6
+
+Operational
+Break
+Plan work sequence
+Miscellaneous
+
+13.6
+3.4
+
+17.0
+0.0
+
+2»
+
+8.8
+0.4
+02
+
+5.4
+0.0
+
+01
+
+0.3
+0.0
+0.7
+
+Total
+
+24.7
+
+19.8
+
+12.4
+
+5.5
+
+1.0
+
+12
+
+Table 7. Production Allocation
+Processing
+
+Falling
+FB221
+Fellerbuncher
+
+JD693B
+Fellerbuncher
+
+FB217
+Fellerbuncher*
+
+TJ90#2
+Processor 1’
+
+TJ90#l
+Processor
+
+Day
+
+Night
+
+Day
+
+Day
+
+Day
+
+Night
+
+Day
+
+Night
+
+Stem count
+
+42 429
+
+40 070
+
+10 583
+
+4 450
+
+28 547
+
+27 858
+
+11 584
+
+3 092
+
+Production (%)
+
+43.5
+
+41.1
+
+10.9
+
+4.5
+
+36.7
+
+35.9
+
+14.9
+
+4.0
+
+Volume (m 3)
+
+10 503
+
+9 924
+
+2 632
+
+1 087
+
+8 866
+
+8 652
+
+3 598
+
+966
+
+* Estimated.
+* Trainee operator excluded.
+
+6
+
+Table 8. Productive Summary
+Falling
+
+Skidding
+
+FB221
+Feller-buncher
+
+740A
+Skidder
+
+Day
+
+Night
+
+Combined
+
+Combined
+
+Day
+
+Night
+
+Combined
+
+Day
+
+Night
+
+Combined
+
+Combined
+
+Production (m )
+
+10 503
+
+9 924
+
+20 427
+
+24 146
+
+8 866
+
+8 652
+
+17 518
+
+3 598
+
+966
+
+4 564
+
+22 082
+
+Production (trees)
+
+42 429
+
+40 070
+
+82 499
+
+n/a
+
+28 547
+
+27 858
+
+56 405
+
+11 584 3 092
+
+14 676
+
+71 081
+
+Shifts worked
+
+35
+
+30
+
+65
+
+54
+
+30
+
+25
+
+55
+
+14
+
+5
+
+19
+
+74
+
+PMH
+
+279.7
+
+267.3
+
+547.0
+
+449.5
+
+221.3
+
+213.3
+
+434.6
+
+98.7
+
+25.4
+
+124.1
+
+558.7
+
+m’/PMH
+
+37.6
+
+37.1
+
+37.3
+
+53.7
+
+40.1
+
+40.6
+
+40.3
+
+36.5
+
+38.0
+
+36.8
+
+39.5
+
+3
+
+Processing
+TJ90#l
+Processor
+
+TJ90#2
+Processor
+
+Both
+Processors"
+
+Trees/PMH
+
+152
+
+150
+
+151
+
+n/a
+
+129
+
+131
+
+130
+
+117
+
+122
+
+118
+
+127
+
+SMH
+
+374.6
+
+328.3
+
+702.9
+
+561.8
+
+315.4
+
+261.4
+
+576.8
+
+144.8
+
+53.4
+
+198.2
+
+775.0
+
+Utilization (%)
+
+75
+
+81
+
+78
+
+80
+
+70
+
+82
+
+75
+
+68
+
+48
+
+63
+
+72
+
+Production/
+8-h shift (m3)
+
+226
+
+240
+
+233
+
+344
+
+225
+
+266
+
+242
+
+199
+
+146
+
+185
+
+228
+
+Utilization - Wait-forwood delays removed
+
+75
+
+81
+
+78
+
+84
+
+74
+
+83
+
+78
+
+70
+
+63
+
+68
+
+76
+
+Production/
+8-h shift (m3)
+
+226
+
+240
+
+233
+
+361
+
+237
+
+270
+
+251
+
+204
+
+192
+
+200
+
+240
+
+• Trainee operator excluded.
+
+were no wait-for-wood delays for the FB221 fellerbuncher, and its productivity was 233 m3/8-h shift.
+The average productivity of the two processors was
+240 m3/8-h shift each when the wait-for-wood delays
+are eliminated.
+Using these production rates, 1.5
+feller-buncher and 1.5 processor hours are required
+for each skidder hour. Depending on equipment
+availability, mill requirements, fixed costs, and setting
+layout, the logging manager and contractor can use
+this number to plan the equipment fleet, production
+quota, and hours of work.
+
+As an example of the options available in choosing
+the amount of equipment to use, the system could be
+planned to have two skidder shifts, three feller-buncher, and three processor shifts per day. Alternatively, the feller-buncher and processor could each
+work two shifts per day and die skidder would be
+idled part-time. Another option would be to alter
+road spacing to match more closely the skidder’s
+productivity to the other machines. If the average
+skidding distance was reduced, road costs would
+increase, but the skidder could service two full-time
+feller-bunchers and processors. Conversely, if the
+average skidding distance was increased, road costs
+would decrease, and the skidder might service only
+one feller-buncher and processor. Clearly, there is
+flexibility in allocating equipment to meet various
+corporate and contractor objectives.
+
+Ideally, the production rates for all phases should be
+matched exactly, so that no phase is delayed by
+another. However this is very difficult to achieve
+under actual conditions where the balance between
+phases changes as operating conditions change.
+Inventories between phases can buffer production-rate
+differences, but eventually one phase will set the
+pace for the system.
+
+Comparisons of Day-Shift Productivity and NightShift Productivity - The productivity in cubic metres
+per PMH showed little variation between day and
+night shift. The FB221 feller-buncher’s productivity
+was approximately 1% higher during the day and the
+TJ90#l and TJ90#2 processors had higher productivity at night by 1% and 4% respectively.
+
+In the system studied, the FB221 feller-buncher was
+the critical machine until a second feller-buncher was
+added. Two processors were used, but not on a fulltime basis. Only one skidder was used, and it had
+some excess capacity, as shown by its wait-for-wood
+delays. It would have been the critical machine in
+the system if these delays had been eliminated, however, a second feller-buncher would have been
+required part-time. If a second feller-buncher had
+been fully utilized, an additional skidder would have
+been required part-time. Similarly, to fully utilize
+two processors, a second full-time feller-buncher and
+part-time skidder would be required.
+
+However, utilization varied between shifts with night
+shift generally having higher utilization than day
+shift. Repair hours were 0.3-0.6 hours per shift
+longer on day shift than night shift because, presumably, minor malfunctions were left unrepaired on
+night shift when no mechanic was available. The
+difference in utilization made the night shifts more
+productive on an 8-h basis. The exception was the
+7
+
+is held stationary with the rear grab-arms and, if
+necessary, is cut with the rear chain saw ("longbutted"). Stems larger than the maximum stroke
+length can be processed by using a reciprocating
+motion, or "second stroke."
+
+TJ90#2 processor. It lost 8.6 h one night and was
+down until the following morning with a breakdown
+in its hydraulic system. If this breakdown had not
+occurred, its utilization would have been 64% compared to its actual 48%, and closer to its day-shift
+utilization of 68%. The TJ90#2 processor also had
+several long wait-for-wood delays, and since only
+five night shifts were recorded, these delays disproportionately affected its utilization.
+
+A summary for the total detailed-timing period for
+the TJ90#l processor is shown in Table 10. The
+processor was observed handling up to three trees at
+a time, but it usually processed stems individually
+with an average of 1.07 stems per cycle. Six percent
+of the stems were forked and produced three logs per
+stem.
+Otherwise, each stem produced one log
+because the average stem size was small.
+
+Loader Productivity - The loading productivity is
+summarized in Table 9. The loader averaged 16.9
+loads with 47.7 m3/load over an average shift of 11.9
+hours. The average loading time was 0.65 PMH per
+load and included the time required to unload the
+truck trailers.
+The remaining time was evenly
+divided between repairs, service, and waiting for
+trucks.
+
+The productive time (Table 11) was divided into
+three components: net processing time, move time,
+and minor delay time. Net processing was further
+divided into three elements: grasp log time (which
+ended when the stem was secured in the rear grab
+arms), delimb and cut time (which ended when the
+final topping cut was made), and discharge time
+
+Detailed Timing of the TJ90 Processor - As mentioned, the TJ90 processor (Figures I and J) is a
+Denis Model KS stroke delimber mounted on a
+Timberjack rubber-tired carrier. FERIC made some
+detailed-timing observations of the TJ90#l processor
+to examine its work cycle.
+
+Table 9. Loading Summary
+
+The Denis stroke delimber consists of a telescoping
+boom, with two sets of grab-arms and two hydraulically driven chain saws. During processing, the stem
+
+Volume (m3)
+Truck loads
+Load average (m3)
+
+24 146
+506
+47.7
+
+Loader productive hours
+PMH/load
+Loader shifts
+Loads/shift
+Average shift length (h)
+
+329.1
+0.65
+30
+16.9
+11.9
+
+Loads/8-h shift
+Production/8-h shift (m3)
+
+11.4
+544
+
+Table 10. TJ90#l Processor Detailed Timing - Total Time
+187.0 min
+148.5 min
+
+Total time
+Productive time
+
+Figure I. Processed Logs and TJ90#l Processor.
+
+Processor cycles
+Stems processed
+Logs manufactured
+
+362
+386
+442
+
+Forked stems
+
+6%
+
+Table I I . TJ90#l Processor Detailed Timing - Productive
+Time
+
+Figure J. TJ90#l Processor.
+
+8
+
+Time Distribution
+
+Min/cycle
+
+Net processing
+Grasp log
+Delimb and cut
+Discharge
+Subtotal
+
+0.15
+0.15
+0.09
+
+0.39
+
+%
+36
+36
+23
+
+95
+
+Moving
+
+<0.01
+
+1
+
+Minor delay
+
+0.02
+
+4
+
+Productive time
+
+0.41
+
+100
+
+(which ended when the log was dropped from the
+processor).
+
+sors, and the loader.
+Summaries of all the machines’ activities, including
+the duration and frequency of all repair delays are
+shown in Appendix I.
+
+Move and minor delay times made up a small portion
+of the productive time. The minor delays were primarily for decking logs and moving debris.
+
+There was a wide range in Mechanical Downtime
+Ratio (MDR) for repairs on the various types of
+equipment, ranging from 2.5 for the LL229 loader to
+23.8 for the TJ90#2 processor. However, the MDR
+for service showed less variation, averaging from 8 to
+10, except for the LL229 loader which averaged 2.7.
+Time spent waiting for parts or mechanics is not
+included in the MDR.
+
+Nearly one quarter of the processor’s productive time
+was spend discharging the log. It may be possible to
+reduce discharge time by altering the operating technique. Normally, each stem was held with the rear
+grab-arms about 1 to 2 m from the butt, and had to
+be pulled out of the rear grab-arms after the final cut
+was made. If the stem were held closer to the butt,
+it could simply be dropped, eliminating the time
+required to pull the log out of the grab-arms. However, this would affect the alignment of the outfeed
+deck, and therefore might affect the loader’s productivity.
+
+FB221 Feller-Buncher - The boom and felling head
+accounted for 60% of repairs to the FB221 fellerbuncher. The boom knuckle pin broke twice, and
+15.6 hours were required to replace it. Hydraulic
+component repairs accounted for 15.5 hours of the
+repair time, and approximately 55% of this time was
+for structural damage to the tool and grab-arm cylinders (broken mountings). The remainder was for
+replacing hoses and fittings. The wiring for the grabarms was replaced, accounting for part of one lost
+shift, as well as 8.1 hours of on-shift repairs.
+Sharpening the saw blade accounted for 4.3 hours of
+repair time.
+
+Butt diameters were estimated to the nearest 10 cm
+as the stems were processed, and processing times
+calculated for each class (Table 12). In addition,
+whether or not the stem was long-butted or required
+a second stroke was recorded. The size-class distribution refers to the detailed-timing period and is not
+representative of the whole stand. The class volumes
+were calculated from four truck loads which were
+sample-scaled by the company and then adjusted to
+account for multiple logs per stem.
+
+The FB221 feller-buncher has a self-levelling cab,
+and the cab-tilt cylinders broke twice. Part of the
+lost shift was spent repairing the cab-tilt cylinder.
+Other frequent carrier repairs were to recharge the air
+conditioner and to repair lights.
+
+The processing time per stem and the volume processed per minute increased as butt diameter
+increased. This resulted in lower daily tree counts
+but higher daily volumes as stem size increased.
+Because the shift-level productivity was calculated
+using average tree volumes, the effect of stem size
+on productivity was lost in the shift-level analysis.
+
+Unspecified repair accounted for 14% of the mechanical delays. These all occurred during one week
+when the operators neglected to provide explanatory
+notes with the Servis Recorder charts.
+
+Four percent of the observed logs were long-butted,
+with an average increase in processing time of 0.07
+min/stem. The 10-cm diameter class had the highest
+increase in processing time - 0.13 minutes.
+
+The FB221 feller-buncher was serviced every shift,
+using a total of 8.4 hours per 100 PMH.
+740A Skidder - There were two recurring mechanical problems on the 740A skidder.
+
+A second stroke was required for 38% of the stems,
+and an extra 0.10 min/stem was required each time a
+second stroke was used. However, the processing
+times for the 30-cm-diameter-class stems actually
+decreased when a second stroke was used, the opposite of what might be expected. Possibly the boom
+slows down at full extension and increases the processing time when only one stroke is used. If so, it
+may be advantageous to make two short, quick
+strokes on the 30-cm diameter-class stems rather than
+one long stroke.
+
+a) Alternator. The alternator was replaced five
+times over eight working days. Once the short
+circuit which caused the problem was identified
+and repaired, there were no further electrical problems on the 740A skidder. Repairs totalled 8.6
+hours.
+b) Grapple brake. A hydraulically operated grapple brake, activated by the grapple-closing cylinder, was installed on the 740A skidder. The brake
+was engaged when the grapple was fully opened,
+and was released when the grapple was closed.
+This was the prototype of the brake and the concept worked well, keeping the grapple stationary
+while the brake was engaged.
+However, six
+repairs totalling 8.3 hours were required on the
+
+Repair and Service
+
+Repair and service time occupied from 5% to 21% of
+time during productive shifts, plus 0% to 3% of total
+shifts. This section highlights some of the repairs.
+Table 13 presents a summary of repairs and service
+for the FB221 feller-buncher, the skidder, the proces9
+
+Table 12. Summary of Processing Time by Butt-Diameter Class
+Second stroke
+
+Long-butting
+
+Overall
+
+With
+
+Without
+
+Without
+
+With
+
+Butt
+diameter
+class
+(cm)
+
+%
+
+m7
+stem
+
+Min/
+stem
+
+m/
+min
+
+%
+
+Min/
+stem
+
+%
+
+Min/
+stem
+
+%
+
+Min/
+stem
+
+%
+
+Min/
+stem
+
+10
+20
+30
+40
+
+38
+46
+14
+2
+
+0.06
+0.23
+0.61
+0.97
+
+0.30
+0.40
+0.52
+0.78
+
+0.20
+0.58
+1.17
+1.24
+
+97
+97
+93
+100
+
+0.30
+0.40
+0.52
+0.78
+
+3
+3
+7
+0
+
+0.43
+0.40
+0.59
+-
+
+92
+46
+27
+33
+
+0.30
+0.36
+0.61
+0.80
+
+8
+54
+73
+67
+
+0.39
+0.43
+0.49
+0.78
+
+All
+
+100
+
+0.23
+
+0.39
+
+0.58
+
+96
+
+0.39
+
+4
+
+0.46
+
+62
+
+0.35
+
+38
+
+0.45
+
+3
+
+Table 13. Repair and Service Summary
+740A
+Skidder
+
+FB221
+Feller-buncher
+
+TJ90#l
+Processor
+
+TJ90#2
+Processor
+
+LL229
+Loader
+
+Hours
+
+MDR"
+
+Hours
+
+MDR”
+
+Hours
+
+MDR"
+
+Hours
+
+MDRb
+
+Hours
+
+MDR b
+
+19.5
+3.1
+54.3
+11.9
+
+3.5
+0.6
+9.9
+2.2
+
+13.6
+0.2
+12.4
+0.2
+
+3.0
+0.1
+2.8
+0.0
+
+8.0
+9.5
+35.7
+0.0
+
+1.8
+2.2
+8.2
+0.0
+
+29.2
+0.9
+32.8
+0.0
+
+11.0
+0.4
+12.4
+0.0
+
+0.6
+3.6
+4.0
+0.0
+
+0.2
+1.1
+1.2
+0.0
+
+88.8
+
+16.2
+
+26.4
+
+5.9
+
+53.2
+
+12.2
+
+62.9
+
+23.8
+
+8.2
+
+2.5
+
+0.5
+4.5
+0.0
+40.9
+
+0.1
+0.8
+0.0
+7.5
+
+2.2
+1.0
+0.0
+32.8
+
+0.5
+0.2
+0.0
+7.3
+
+1.6
+2.3
+1.2
+33.0
+
+0.4
+0.5
+0.3
+7.6
+
+0.6
+0.9
+0.0
+26.1
+
+0.2
+0.3
+0.0
+9.9
+
+0.0
+0.5
+0.0
+8.4
+
+0.0
+0.2
+0.0
+2.5
+
+Subtotal
+
+45.9
+
+8.4
+
+36.0
+
+8.0
+
+38.1
+
+8.8
+
+27.6
+
+10.4
+
+8.9
+
+2.7
+
+Total
+
+134.7
+
+24.6
+
+62.4
+
+13.9
+
+91.3
+
+21.0
+
+90.5
+
+34.2
+
+17.1
+
+5.2
+
+Repair
+Carrier
+Motor/drive train
+Attachment?
+Unspecified
+Subtotal
+Service
+Carrier
+Motor/drive train
+Attachment?
+General
+
+PMH
+
+547.0
+
+449.5
+
+434.6
+
+264.6
+
+329.1
+
+* Includes both production and nan-production shifts.
+b
+MDR - Mechanical Downtime Ratio equals repair and service hours per 100 productive machine hours.
+c
+
+Attachments:
+FB221 Feller-buncher - Boom and felling head
+740A Skidder - Log grapple
+TJ90 Processor - Delimber
+LL229 Loader - Boom and grapple
+
+brake, indicating the design was inadequate to
+withstand operating stresses.
+Other repairs on the 740A were minor in nature.
+TJ90 Processors - The two processors had dissimilar
+repair experience:
+the TJ90#l processor had an
+MDR of 12.2, and the TJ90#2 processor had nearly
+twice that amount at 23.8. However, the TJ90#2
+processor had only 60% of the productive hours as
+the TJ90#l processor, thus each repair had a proportionately larger effect on the MDR.
+Most of the MDR difference was due to repairs on
+the carrier, which varied for each processor. The
+TJ90#l processor had four repair delays, totalling 6.8
+hours, when its transmission was sticking in gear.
+Other lengthy repair delays on the TJ90#l processor
+involved sealing the main hydraulic tank, repairing
+
+the rear-axle stabilizer arm, and refilling the radiator
+three separate times. The TJ90#2 processor had an
+intermittent problem in its electrical system. There
+were 13 delays, totalling 16 hours, plus one shift
+with no production, to find and correct the short
+circuit. The alternator, batteries, and solenoid were
+each replaced twice before the fault was corrected.
+Repairs on the delimber itself accounted for twothirds of repairs on the TJ90#l processor and onehalf on the TJ90#2 processor.
+The repairs for
+various components of the delimbers were examined,
+and the MDRs for structural repairs (approximately
+2.0), cutting tools (approximately 3.5), and miscellaneous parts (approximately 1.0) were found to be
+similar for the two machines. However, the rates of
+repairs for hydraulics and electronics for the TJ90#2
+processor were twice that of the TJ90#l processor
+(3.9 versus 1.9 for hydraulics, and 1.7 versus 0.8 for
+
+direct logging cost, which totalled $8.11/m 3.
+
+electronics).
+The hydraulic control block for the
+topping saw and grab-arms on the TJ90#2 processor
+was repaired twice, accounting for most of the difference in the hydraulic MDRs. Both machines had
+MDRs of approximately 2 for broken hydraulic lines
+and fittings. Replacing wiring and switches were the
+main electrical repair delays on both delimbers. The
+repairs were not specific to any single component.
+
+The falling and processing phases were roughly equal
+in productivity and costs, with each costing approximately $2.70/m 3, or 33% of direct logging cost.
+Skidding and loading each accounted for about 17%
+of the direct logging cost.
+The productivity ratio in Table 14 expresses each
+machine’s productivity relative to the loader’s productivity. The skidder worked approximately 1.5 hours,
+and the feller-buncher and processors approximately
+2.3 hours for each hour the loader worked.
+Expressed in other terms, the feller-buncher and
+processors included 1.5 shifts for each skidding shift.
+
+Both processors experienced numerous delays for
+repairing or replacing saw chains and bars. On
+average, the processors encountered a chain- or barrepair delay once every 1.5 shifts, and the average
+duration was 0.3 hours. Approximately 42% of the
+delays involved tightening the chain and 23% involved replacing broken chains. Thirty percent of the
+delays were caused by broken or bent bars and 5%
+by broken bar tips.
+
+The D8H bulldozer was used for approximately 75
+hours to build truck roads.
+At $78.88/h, this
+amounted to $0.25/m 3 for on-block road construction.
+An additional 17.5 hours were spent pulling trucks
+through soft sections of road, or $0.06/m 3. Hours for
+the 668 skidder were not recorded.
+
+In addition to repairs, the processors averaged
+approximately 0.2 hours per shift for servicing (fuelling, greasing, oil levels).
+LL229 Loader - The LL229 loader was found to be
+mechanically reliable during the study, with an MDR
+for repairs of only 2.5. Approximately one-half of
+the delays for the attachment occurred on the first
+shift after spring start-up. Some fittings in the grapple swivel had been left loose and required tightening. The remaining attachment repairs were for three
+broken hoses. The other long delay occurred when a
+mechanic from the equipment dealership was required
+to adjust the motor. Downtime was 3.6 hours.
+
+Table 14. Phase Costs per Cubic Metre
+Falling
+
+Skidding
+
+Processing
+
+Loading
+
+m’/Day
+
+233
+
+361
+
+240
+
+544
+
+$/Day
+
+$639
+
+$515
+
+$641
+
+$689
+
+3
+
+$2.74
+
+$1.43
+
+$2.67
+
+$1.24
+
+34
+
+17
+
+33
+
+16
+
+2.33
+
+1.51
+
+2.27
+
+1.00
+
+$/m
+
+Percent of cost
+Productivity ratio
+
+Service time for the LL229 loader was less than the
+other machines since the loader was usually serviced
+between trucks, during productive time. These service delays were less than 10 minutes in duration and
+they did not appear as separate activities on the
+Servis charts. Fuelling was done at the end of the
+shift and accounts for the service delays.
+
+3
+
+Total cost ($An )
+
+8.11
+
+CONCLUSIONS
+The machines in a logging system must be chosen to
+compliment the capacity and productivity of one
+another because system productivity is normally
+determined by the capacity of one phase. Delays
+will occur somewhere in the system if the total capacity of one phase is much different from any others
+for reasons such as individual machine productivity,
+the number of machines used in the phase, or their
+hours worked. Initially, in the system studied, falling
+was the critical phase and delays occurred for both
+skidding and processing. A second feller-buncher
+was added, falling capacity was increased, and skidding became the critical phase.
+
+Cost Calculations
+
+FERIC calculated hourly cost rates for each machine
+(Appendix II).
+These are not the actual costs
+incurred by the company or contractor, and do not
+include such costs as crew and machine transportation, supervision, office overhead, and profit and risk.
+Interest charges are shown in Appendix II, but are
+excluded from the cost of production. The labour
+rates are IWA rates, and include 35% burden for
+fringe benefits. Costs are shown on an 8-hour shift
+basis and include the net hourly cost of one hour
+labour at overtime wage rates.
+
+The organizational delays were primarily wait-forwood delays. The skidder and processors lost from
+5% to 10% of their potential shifts and up to 7% of
+their time during productive shifts because of insufficient inventory. When all delays were considered,
+utilization ranged from 67% for one TJ90 processor
+to and 92% for the LL229 loader.
+
+The production rates calculated in Tables 8 and 9
+were used to calculate the cost/m 3 for falling, skidding, processing, and loading. The costs are based
+on the productivity levels when the wait-for-wood
+delays were removed from the skidding and processing phases. Table 14 summarizes the daily productivities for each phase, as well as the percentage of
+11
+
+Study results showed that production was 233 m3/8-h
+shift for the feller-buncher, 361 m3/8-h shift for the
+skidder, and 240 m 3/8-h shift for the processors. In
+other words, approximately 1.5 falling and processing
+hours were required for each skidding hour. Waitfor-wood delays were removed to derive these
+figures. These results were also seen in the final
+equipment fleet used by the contractor: one fellerbuncher, one skidder, and one processor on two shifts
+per day each, and a second feller-buncher and processor on one shift per day. One log loader was used,
+and it averaged 544 m3/8-h shift. It is possible that
+productivity per PMH would have been higher for
+the skidder and processors if there were no wait-forwood delays because of an increase in operator motivation.
+The total volume logged was 24 146 m3 and the
+direct stump-to-truck logging cost was $8.11/m 3.
+Road construction added $0.25/m 3 and extra bulldozer
+costs were $0.06/m 3. Falling and processing each
+accounted for 33% of costs, while skidding and loading each accounted for about 17%. Costs were
+derived by FERIC and are not the actual costs
+incurred by the company or contractor. Costs such
+as interest, overhead, machine and crew transport,
+and profit are not included.
+Repair and service time accounted for 5% to 21% of
+scheduled machine time plus 0% to 3% of potential
+shifts. The LL229 loader required the fewest repairs,
+at 2.5 h/100 PMH, and the TJ90#2 processor the
+most at 23.8 h/100 PMH. Service time added from
+2.7 to 10.4 h/100 PMH. In general, the falling and
+processing attachments required the most repairs,
+accounting for 48% to 67% of repairs. Frequent
+repairs on the feller-buncher were to repair hydraulic
+components such as fittings and mountings.
+Hydraulics were also problem areas in the processors,
+although repairs to the chain saws were also quite
+frequent.
+There was little variation in productivity/PMH
+between day and night shifts. The TJ90#2 had the
+most variation, with 4% more productivity at night
+Also, utilization was generally higher on night shift
+so production per shift was higher. This was mainly
+because minor repairs were scheduled during the day
+where repair times were 0.3-0.6 h/shift longer.
+Some detailed-timing data were collected on one
+TJ90 processor to examine its work cycle. Nearly
+one quarter of its processing time was spent discharging the logs and it may be possible to reduce this
+time by altering the operating technique. Also, for
+stems in the 30-cm diameter class, processing time
+was less when two strokes per stem were used rather
+than one stroke. This knowledge may help operators
+reduce processing times for stems of this size.
+
+12
+
+APPENDIX I
+Summary of Activities During Production Shifts
+FB221 Feller-buncher
+Activity
+PRODUCTIVE TIME
+Prime fonction
+OPERATIONAL DELAYS
+Coffee break
+Rest break
+Visitors to job site
+Machine stuck or rolled over
+Recce/plan work sequence
+Discussion with supervisor
+Repair/service aux.
+Unexplained operational delay
+Mise, operational delay
+
+Total mechanical delays
+
+Processor
+Hours
+
+No. occ.
+
+253
+
+547.0
+
+198
+
+449.5
+
+264
+
+58
+2
+2
+1
+11
+2
+
+13.6
+0.7
+0.5
+0.6
+3.4
+0.5
+
+48
+
+17.0
+
+9
+2
+
+2.6
+.12
+24.8
+
+2.2
+0,5
+Jh2
+
+4
+2
+1
+
+Hours
+
+10
+
+1
+2
+
+1
+2
+2
+2
+
+7
+1
+6
+
+0.1
+02
+
+3
+5
+
+0.4
+2.5
+
+-
+
+_—
+
+0.8
+
+30.1
+
+3.7
+3.7
+3.7
+
+3.1
+-
+
+1.9
+3.6
+0.5
+■
+2.8
+
+3
+
+7
+1
+■
+4
+
+1
+
+0.8
+
+2
+
+0.6
+0.2
+
+1
+1
+7
+4
+
+«
+8.0
+0.6
+
+No. occ.
+
+Hours
+
+434.6
+
+163
+
+264.6
+
+78
+
+329.1
+
+44
+
+8.8
+
+26
+
+5.4
+
+2
+
+03
+
+1
+1
+2
+2
+4
+1
+-
+
+0.1
+0.2
+0.4
+0.9
+1.7
+0.3
+_ _2
+
+1
+-
+
+0.1
+
+i
+
+0.6
+
+12.4
+
+0.9
+
+1
+-
+
+0.2
+■
+
+19.4
+0.3
+
+8
+
+25.2
+
+1
+1
+1
+7
+1
+-
+
+0.6
+4.8
+1.8
+3.8
+
+1
+
+1.5
+
+0.2
+_ _*
+
+1
+-
+
+1
+1
+
+6.9
+8.6
+8.1
+0.3
+
+4
+
+15.6
+
+5
+
+4.5
+
+3
+-
+
+4.3
+
+9
+
+11x2
+84.6
+
+3.5
+
+1
+
+0.2
+
+6
+
+1
+1
+
+0.3
+0.2
+27.0
+
+-■ -
+
+26.8
+
+10.6
+
+2
+2
+1
+
+3.7
+10.1
+0.2
+
+2
+
+1
+
+1.8
+
+-
+
+5
+
+3.9
+-
+
+6
+4
+1
+
+9.1
+2.4
+1.5
+
+2
+
+3.0
+
+2
+
+3.2
+
+1
+
+0.2
+
+1
+
+0.5
+
+1
+
+0.2
+
+1
+
+3.3
+
+4
+1
+
+6.8
+1.0
+
+5
+
+1.8
+
+12
+2
+
+6.3
+1.9
+
+1
+5
+2
+2
+1
+2
+3
+
+1.0
+3.3
+2.5
+3.2
+1.2
+2.0
+2.5
+
+5.1
+5.0
+6.1
+2.9
+
+1
+1
+1
+2
+
+1.4
+1.7
+0.8
+0.7
+
+18
+8
+
+5.1
+4.5
+
+4
+
+2.9
+
+4
+
+3.0
+
+1
+1
+
+0.1
+0.2
+
+2
+2
+
+0.6
+0.3
+
+61.2
+
+0.6
+
+-
+
+0.4
+1.7
+0.9
+0.6
+1.9
+
+10.6
+
+0.1
+__
+
+3.2
+4.3
+
+8.3
+
+-
+
+37
+
+1
+1
+
+1
+3
+2
+1
+2
+•
+2
+2
+23
+7
+
+-
+
+0.9
+
+-
+
+30.9
+
+2.9
+4
+
+5.5
+
+8
+1
+
+1.0
+
+1
+
+LL229 Loader
+
+Hours
+
+27.2
+
+-
+
+TJ90#2 Processor
+No. occ.
+
+19.9
+
+-
+
+Total organizational delays
+MECHANICAL DELAYS
+Wait parts
+Wait repair personnel
+Hydraulic lines - carrier
+Hydraulic cylinders - carrier
+Hydraulic controls - carrier
+Hydraulic tank - carrier
+Altemator/generator
+Battery
+Electric controls - carrier
+Lights - carrier
+Unspecified - carrier electric
+Solenoid - carrier
+Minor welding - carrier
+Environmental system
+Radio repair
+Brake controls - carrier
+Brake actuators - carrier
+Suspension
+Wheels/tires
+Tracks
+Unspecified motor repair
+Motor controls
+Transmission - carrier
+Radiator
+Fan/belt
+Engine coolant
+Oil cooler
+Hydraulic lines - prime attachment
+Cylinders - prime attachment
+Hydraulic controls - prime attachment
+Unspecified hydraulic - prime attachment
+Wiring - prime attachment
+Electric controls - prime attachment
+Lights - prime attachment
+Minor welding - prime attachment
+Major welding - prime attachment
+Guarding - prime attachment
+Mise, structural - prime attachment
+Cable/choker
+Chain implement
+Bar implement
+Brakes - prime attachment
+Spring - prime attachment
+Drive chain - prime attachment
+P.A.W.P. - cutting edge
+P.A.W.P. - chain impionent
+P.A.W.P. - bar impionent
+Miscellaneous structural - secondary
+Unspecified repairs
+
+TJ90#l
+No. occ.
+
+Hours
+
+Total operational delays
+ORGANIZATIONAL DELAYS
+Delay caused by fallers
+Delay caused by skidder/yarder
+Delay caused by loader
+Delay caused by log haul
+Delay caused by road builder
+Move to new work area
+Assisting other equipment
+Operator on other activity
+On- job training
+New operator training period
+Shift change
+
+740A Skidder
+
+No. occ.
+
+68.8
+
+1
+
+3.6
+
+4
+
+3.4
+
+1
+
+0.6
+
+8.2
+...continued
+
+13
+
+App. I, Summary of Activities, cont’d
+Activity
+SERVICE DELAYS
+Clean carrier
+Power system service
+Clean power system
+Primary attachment service
+Warm-up
+Daily service
+Fuelling
+Hydraulic service
+
+FB221 Feller-buncher
+No. occ.
+Hours
+1
+1
+6
+»
+15
+71
+16
+1
+
+9
+•
+3
+23
+66
+4
+-
+
+46.0
+
+Total service delays
+CLOCK NOT RUNNING
+Meals
+
+0.5
+0.7
+3.8
+3.0
+32.7
+5.0
+0.3
+
+740A Skidder
+Hours
+No. occ.
+
+33
+
+15.6
+
+45
+
+14
+
+TJ90#l Processor
+Hours
+No. occ.
+
+2.3
+1.0
+5.9
+25.2
+1.7
+—r
+36.1
+
+5
+2
+3
+5
+11
+69
+17
+-
+
+20.4
+
+46
+
+TJ90#2 Processor
+Hours
+No. occ.
+
+1.6
+0.4
+1.9
+1.2
+3.1
+25.8
+4.2
+—'
+38.2
+
+2
+1
+1
+10
+44
+14
+1
+
+18.3
+
+34
+
+0.6
+0.5
+0.4
+35
+18.3
+4.0
+0.3
+
+11229
+No. occ.
+1
+•
+6
+24
+-
+
+0.5
+1.3
+7.1
+—
+8.9
+
+-
+
+-
+
+27.6
+14.1
+
+Loader
+Hours
+
+APPENDIX II
+Machine Costs
+FB221
+Fellerbuncher
+
+740A
+Skidder
+
+TJ90
+Processor
+
+LL229
+Loader
+
+D8
+Bulldozer
+
+$391 000
+6
+4
+3 000
+11
+2
+
+$220 000
+6
+4
+3 000
+11
+2
+
+$360 000
+6
+4
+3 000
+11
+2
+
+$420 000
+6
+6
+2 000
+11
+2
+
+$100 000
+6
+10
+600
+11
+2
+
+$414 460
+$82 892
+$248 676
+
+$233 200
+$46 640
+$139 920
+
+$381 600
+$76 320
+$228 960
+
+$445 200
+$89 040
+$267 120
+
+$106 000
+$21 200
+$63 600
+
+Loss in resale value = (Pt-S)/(y*h)
+Interest = (I*AVI)/h
+Insurance = (Ins*AVI)/h
+
+$27.63/h
+$9.12/h
+$1.66/h
+
+$15.55/h
+$5.13/h
+$0.93/h
+
+$25.44/h
+$8.40/h
+$1.53/h
+
+$29.68/h
+$14.69/h
+$2.67/h
+
+$14.13/h
+$11.66/h
+$2.12/h
+
+Total ownership costs
+
+$38.41/h
+
+$21.61/h
+
+$35.37/h
+
+$47.04/h
+
+$27.9 l/h
+
+25
+0.40
+$1 500
+$30 000
+$20 000
+6 000
+$17.73/h
+35
+
+25
+0.40
+$1 500
+$20 000
+$12 000
+3 000
+$17.73/h
+35
+
+25
+0.40
+$3 000
+$40 000
+$12 000
+6 000
+$17.73/h
+35
+
+34
+0.40
+$1 000
+$18 000
+$20 000
+6 000
+$17.73/h
+35
+
+45
+0.40
+$500
+$5 000
+$30 000
+4 000
+$17.73/h
+35
+
+Fuel cost (FC) = (F*f)
+Lube & oil cost = (0.15*FC)
+Operating supply cost = (O/h)
+Repair and maintenance cost = (R/h)
+Tire/track cost = (T/TL)
+Labour cost (LC) = [W*(1+WBL/100)]
+Overtime = (LC*0.5/9)
+
+$10.00/h
+$1.50/h
+$0.50/h
+$10.00/h
+$3.33/h
+$23.94/h
+$1.33/h
+
+$10.00/h
+$1.50/h
+$0.50/h
+$6.67/h
+$4.00/h
+$23.94/h
+$1.33/h
+
+$10.00/h
+$1.50/h
+$1.00/h
+$13.33/h
+$2.00/h
+$23.94/h
+$1.33/h
+
+$13.60/h
+$2.04/h
+$0.50/h
+$9.00/h
+$3.33/h
+$23.94/h
+$1.33/h
+
+$18.00/h
+$2.70/h
+$O.83/h
+$8.33/h
+$7.50/h
+$23.94/h
+$1.33/h
+
+Total operating costs
+
+$50.60/h
+
+$47.94/h
+
+$53.10/h
+
+$53.74/h
+
+$62.63/h
+
+$89.01/h
+$79.89/h
+$639.12
+
+$69.55/h
+$64.41/h
+$515.28
+
+$88.47/h
+$80.07/h
+$640.56
+
+$100.78/h
+$86.09/h
+$688.72
+
+$90.54/h
+$78.88/h
+$631.04
+
+OWNERSHIP COSTS
+Purchase price (P)
+Sales tax (t) %
+Expected life (y) yr
+Hours per year (h) h
+Interest rate (I) %
+Insurance rate (Ins) %
+Purchase price after tax (Pt)
+Salvage value (S) = (0.2*Pt)
+Average investment (AVI) = (Pt + S)/2
+
+OPERATING AND REPAIR COSTS
+Fuel consumption (F) L/h
+Fuel cost (f) $/L
+Operating supplies per year (O)
+Annual repair and maintenance (R)
+Tire/track replacement (T)
+Tire/track life (TL) h
+Wages (W)
+Wage benefit loading (WBL) %
+
+OWNERSHIP AND OPERATING COSTS
+Excluding interest
+8-hour shift cost
+
+15
+
+

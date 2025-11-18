@@ -1,0 +1,1178 @@
+WOOD HARVESTING
+Technical Note TN-166
+
+December 1991
+
+FERIC
+
+EVALUATION OF A DENIS D3000
+TELESCOPIC LOG PROCESSOR
+Darcy W. Moshenko, R.P.F.
+
+Abstract
+This study’s objectives were to evaluate the productivity and costs associated with operating a Denis
+D3000 telescopic processor, and to test the accuracy
+of its length-measuring device. The Denis D3000 is
+one of a series of log processors being studied by
+the Forest Engineering Research Institute of Canada
+(FERIC).
+
+The processor, employed by Fletcher Challenge
+Canada Limited in the Southern Interior of British
+Columbia, was monitored in early 1990. The net
+stand volume of the study block was 437.8 m 3/ha
+with an average net stem size of 0.53 m 3. Performance was evaluated under two different operating
+conditions: while processing roadside decks piled by
+a grapple yarder, and while processing hand-felled
+right-of-way wood.
+
+Introduction
+In recent years, mechanized delimbing and processing have improved the safety and efficiency of
+harvesting operations in the Interior of British
+Columbia. Interior operations are well suited to
+mechanical processing because the timber is generally less than 60 cm in diameter at the butt, and
+less than 30 m in length. One log processor that is
+designed to operate in timber of this size, as well as
+in timber witii butt diameters up to 66 cm, is the
+Denis D3000 telescopic boom processor. In early
+1990, the Forest Engineering Research Institute of
+Canada (FERic) studied the productivity and costs
+associated with operating a Denis D3000 telescopic
+processor, and tested the accuracy of its lengthmeasuring device.
+
+The Denis D3000, manufactured by Équipements
+Denis Inc. in St Hyacinthe, Quebec (with a branch
+office in Kamloops, British Columbia), is capable of
+delimbing, bucking, measuring, stacking, and sorting
+logs in a roadside or landing situation.
+
+Study Method
+The evaluation of the Denis D3000 included two
+methods of collecting timing data. For the shift-level
+study, a DSR Servis recorder was mounted on the
+processor to monitor machine activities. The operator was asked to place a recording chart in the
+recorder prior to every shift, tally the number of
+merchantable stems processed, and note all delays
+longer than 10 minutes. The total volume of logs
+produced from the block was determined from
+millyard weigh-scale returns. From this compiled
+information, figures on machine availability, utilization, production, and costs were calculated.
+A FERic researcher used a hand-held data logger to
+collect timing data, with accuracies to one-himdredth
+of a minute (Appendix I). Data concerning butt
+classes, species, long-butting,1 and number of logs
+per stem were also recorded.
+The butt classes were divided into 10-cm increments
+(Table 1). These increments made volume estimates
+more accurate than if overall volume estimates were
+made using one average stem volume for all the
+trees in the stand. By measuring a sample of stems
+
+1
+
+Long-butting is a term that refers to cutting off the butt end of
+the stem to eliminate defect (e.g. rot, flare, pistol grip, undercut
+notches, stump pull, etc.) before processing commences.
+
+Keywords: Delimbing, Slashing, Processors, Stroke delimbers, Machine evaluation. Productivity, Costs, Denis D3000 Processor.
+Author: Darcy W. Moshenko is a Researcher in the Harvesting Operations Group, Western Division.
+
+FOREST ENGINEERING RESEARCH INSTITUTE OF CANADA
+INSTITUT CANADIEN DE RECHERCHES EN GENIE FORESTIER
+PRINTED IN CANADA
+
+143 Place Frontenac
+Pointe Claire, Québec
+Canada H9R 4Z7
+(514) 694-1140
+
+2601 East Mall
+Vancouver, B.C.
+Canada V6T1W5
+(604)228-1555
+
+© Copyright 1991, Forest Engineering Research Institute of Canada ISSN 0381-7741
+
+Table 1. Butt Measurements
+Butt-diameter class,
+at mid-point
+(cm)
+
+Butt-diameter range
+(cm)
+
+10
+20
+30
+40
+50
+60
+
+<14.9
+15.0 - 24.9
+25.0 - 34.9
+35.0 - 44.9
+45.0 - 54.9
+>55.0
+
+in each diameter class, down to a 10-cm top, FERic
+was able to derive the average volume per stem for
+each diameter range. However, these volumes apply
+only to areas where the detailed timing occurred,
+and not to the entire block.
+
+Figure 1. Denis D3000 telescopic boom processor.
+
+cutblock before the subsequent felling and yarding
+phases commenced. This not only kept the processor
+busy, but also assisted the yarding phase by cleaning
+up the decking area. Timber one tree length from
+the road was directionally felled towards the road,
+thus enabling the processor to reach all felled stems.
+The stems were then processed (butt first), loaded,
+and hauled before the remaining trees were felled
+and yarded. Using the D3000 to yard and process
+this wood reduced the overall system cost because
+the yarder did not handle the wood.
+
+Also, the processor’s length-measuring device was
+evaluated for accuracy. The operator processed and
+measured a number of logs, then set them aside for
+manual measurement before placing them in the log
+deck. The manual measurements were then compared to the machine’s target lengths.
+
+Site anti System Description
+The study area was located approximately 50 km
+east of Kelowna, British Columbia. The block had
+a westerly aspect with an average slope of 45% and
+a stocking mix of lodgepole pine (attacked by
+mountain pine beetle), Engelmann spruce, sub- alpine
+fir, western red cedar, Douglas-fir, and western
+larch. The timber cruise compilation for the block
+identified a net stand volume of 437.8 m 3/ha. Also,
+a sample scale carried out by FERic during the
+detailed-timing study showed the average stem
+volume was 0.53 m 3.
+
+The Denis D3000 has a unique telescopic boom
+feature. The main boom tube is powered through the
+boom pedestal by a feed chain and drive sprocket
+mechanism while a smaller tube section telescopes
+inside the main boom by means of double cables
+and pulleys. Both boom sections are stroked simultaneously for rapid processing speed. The processing
+head is attached to the end of the smaller boom tube
+and includes a set of grapple arms with integral
+delimbing knives, and fixed front and rear delimbing
+knives. A chain saw for bucking and topping completes the set-up. The rear assembly is fixed to the
+boom pedestal and includes a larger set of holding
+arms; a butt plate; a second, larger, bucking chain
+saw (on the 81-cm funnel model); and an Entek
+length-measuring system. Figure 2 shows the Denis
+D3000 at work in the grapple-yarded wood.
+
+Harvesting on the study block was done by
+Armitage Contracting Limited of Armstrong, British
+Columbia for Fletcher Challenge Canada Limited.
+The operation utilized a Washington 108 grapple
+yarder, a Caterpillar D8 mobile backspar, an International TD20 tailhold for the yarder guylines, and
+the Denis D3000 telescopic processor mounted on a
+Komatsu PC220LC carrier (Figure 1). Loading and
+hauling functions were performed by two independent self-loading logging trucks. This system produced approximately 200 m 3/shift.
+
+Operation of the Denis D3000 is similar to that of
+other stroke delimbers. The front grapple arms
+secure a stem approximately three metres from the
+butt then pull it away from the deck towards the
+rear assembly. After the stem passes by the elec-
+
+Because the cutblock was felled by hand rather than
+by a feller-buncher, the grapple yarder could not
+produce sufficient volumes to keep the processor
+fully occupied. Consequently, the D3000 was used
+to daylight-process2 the right-of-way stems in the
+
+2
+Daylight-process is defined as delimbing, bucking, and
+decking unyarded stems felled one tree length from the road.
+
+2
+
+Figure 3. Denis D3000 long-butting a stem.
+
+Figure 2. Denis D3000 decking wood for grapple yarder.
+； tronic photo-eye of the length-measuring device
+(located between the rear holding arms and the butt
+plate), the rear holding arms secure it. The processor
+； head is then powered along the stem removing
+branches at speeds up to three metres per second
+until the minimum top diameter, or a pre-determined
+length, is reached. The top portion (waste) is bucked
+and dropped in the slash pile. After topping is
+completed, the machine’s front grapples are opened
+slightly and the boom is retracted. The front
+grapples then grasp the log again as it is released by
+the rear holding arms, and position it over the deck
+where it is finally released.
+
+were recorded during the study period from February 5 to March 29, 1990; 14 232 stems were
+processed, or approximately 8728 m 3 of wood. The
+total ownership and operating cost was $91.76/h.
+(Costs were derived by FERic and are not the actual
+costs incurred by the contractor, see Appendix III).
+
+Shift-Level Study
+The Denis D3000 was monitored for 38 productive
+shifts over a period of 53 days. The 15 non-productive shifts were weekends (operator off). Right-ofway and yarded wood could not be separated in the
+shift-level study; therefore, production figures are
+lower and costs are higher than if only yarded wood
+had been processed. Discussion with the operator
+revealed that relatively short move times from the
+yarded decks to right-of-way processing were also
+not recorded. Table 2 shows the shift-level results.
+
+Longer stems, comprising two logs, were pushed
+partially into the funnel, or tray. The funnel is
+located directly behind the rear assembly and prevents the stem from dropping onto the carrier
+shrouding. The same topping process as described
+earlier occurs, except the boom retracts to a predetermined length. The topping saw then cuts and
+drops the short log into the log deck. Finally, the
+butt log is retrieved from the funnel and decked.
+Occasionally, the delimber handled very large stems
+by processing and decking the butt log independently of the remaining log.
+
+Average hourly production for processing the
+combination of yarded and right-of-way wood was
+47.8 stems/h, or 29.3 m 3/h (total time). The total
+processing cost for all the wood in the study block
+was determined to be $3.13/m 3 , or $1.92/stem, when
+using the hourly machine costs derived in Appendix
+III. In addition, machine utilization for the processor
+was determined to be 81.7% with an availability of
+92.2%. A summary of delays in the shift-level study
+is provided in Appendix II.
+
+Long-butting is done with the topping saw, or with
+the chain saw mounted on the rear assembly. The
+operator preferred not to use the rear bucking saw
+because it was more efficient to retrieve the top after
+each long-butting cut than to use the rear chain saw
+and drop waste near the road and the machine
+(Figure 3).
+
+Detailed-Timing Study
+Almost 39 h of detailed timing were done randomly
+during the shift-level monitoring period. All productive time and delays less than 10 min were considered part of the detailed-timing study. The processing of grapple-yarded wood and right-of-way
+wood were timed separately and summarized
+(Table 3).
+
+Resute and Discusston
+The contractor operated the processor eight hours
+per shift, five shifts per week. A total of 38 shifts
+3
+
+Table 2. Shift-Level Study: Summary
+Elements
+
+Results
+
+Productive machine hours (PMH)
+Yarded wood (h)
+Right-of-way wood (h)
+
+176.00
+67.00
+
+Mechanical delay hours (MDH)
+Repairs (h)
+Service (h)
+Subtotal (h)
+
+13.20
+10.00
+23.20
+
+Nonmechanical delay hours (NDH)
+Operational (h)
+Organizational (h)
+Subtotal (h)
+
+18.20
+13.20
+31.40
+
+Total: All delays (h)
+
+54.60
+
+Total machine hours (TMH) (h)
+Utilization (PMH/TMH) (%)
+Mechanical availability [(TMH-MDH)/TMH] (%)
+
+297.60
+81.7
+92.2
+
+Total stems processed (no.)
+Volume produced (m3) a
+Shifts with production (no.)
+
+14 232
+8 728
+38
+
+Piece production
+StemsA>MH (no.)
+Stems/TMH (no.)
+
+58.6
+47.8
+
+Volume production
+m3/PMH
+m3/TMH
+
+35.9
+29.3
+
+Production/8-h shift
+Stems (no.)
+Volume (m3)
+
+382.4
+234.4
+
+a Volumes from millyard weigh-scale.
+
+Detailed-timing data were collected for the processing of 1780 stems of grapple-yarded wood (or 943
+m3). Analysis of these data indicates productivity
+was 84.4 stems/h or 44.8 m3/h (productive time). In
+comparison, timing analysis of 1142 stems (or 605
+m3) of right-of-way wood shows productivity was
+64.2 stems/h or 34.0 m3/h (productive time). As a
+result, costs for the yarded wood were $2.51/m3 or
+$1.33/stem, while costs for the right-of-way wood
+were $3.30/m3 or $1.75/stem. All costs associated
+with detailed timing assume a machine utilization of
+81.7% so that a direct comparison can be made with
+the cost results of the shift-level study.
+The data were separated to compare the results of
+processing yarded wood (decked by the yarder) and
+right-of-way wood. Productivity was lower for rightof-way processing because extra time was taken to
+sort and deck the logs along the road. Also, more
+time was associated with the moving and cleaning
+elements. Although it cost an extra $0.79/m3 to
+process this wood, it is important to remember there
+was no yarding cost.
+Although the processing of grapple-yarded decks
+was more productive than processing right-of-way
+wood, FERic observed two activities that increased
+processing time over that which wotild be expected
+if the machine was working on a roadside block
+harvested by a grapple skidder. Before the processor
+could begin work, those stems with butts directed
+away from the D3000 had to be turned around, and
+decks that were too high had to be broken down.
+Although a quantitative timing comparison was not
+available, FERic felt productivity increases could
+result from consistent butt orientation and lower
+
+Table 3. Detailed-Timing Study: Summary
+Yarded production
+wood
+
+Right-of-way
+wood
+
+Total
+
+Total productive time (min)
+Total aborted stems time (min)
+Total sum time (min)
+Total delays <10 min (min)
+
+1 048.79
+53.51
+114.41
+48.26
+
+921.61
+32.86
+70.82
+41.86
+
+1 970.40
+86.37
+185.23
+90.12
+
+Total study time
+Minutes
+Hours
+
+1 264.97
+21.08
+
+1 067.15
+17.79
+
+2 332.12
+38.87
+
+1 780
+943.40
+0.53
+84.4
+44.8
+
+1 142
+605.26
+0.53
+64.2
+34.0
+
+2 922
+1 548.66
+0.53
+75.2
+39.8
+
+Elements
+
+Total stems processed (no.)
+Total volume processed (m3)
+Average volume processed (m3/stem)
+Total stems/hour (no.)
+Total volume (m3/h)
+
+the processing cycle can vary from stem to stem. A
+description of the elements used during the detailedtiming study are found in Appendix I. Production
+figures are again broken down to show the influence
+of different species and diameter classes. A detailed
+summary is shown in Table 5. Predictably, the
+number of stems processed per hour decreased and
+
+log decks. However, orienting butts towards the road
+negatively affects the productivity of the yarder, and
+lower log decks arc possible only if more roads are
+built to shorten the yarding distance.
+The productive time is further broken down into
+separate elements in Table 4. Elements that affect
+
+Table 4. Breakdown of Productive-Timing Elements for All Cycles' 1
+Total
+
+Right-of-way wood
+
+Yarded wood
+Activity
+
+min
+
+%
+
+min
+
+%
+
+min
+
+%
+
+Pick
+Process
+Process 2
+Discharge
+Cut
+Move
+Clean
+Deck
+Subtotal
+Delay
+Sum Time
+
+338.02
+286.12
+137.98
+225.37
+11.13
+21.15
+32.98
+49.55
+1 102.30
+48.26
+114.41
+
+30.7
+26.0
+12.5
+20.4
+1.0
+1.9
+3.0
+4.5
+100.0
+
+226.48
+198.83
+75.63
+147.18
+10.2
+44.71
+82.06
+169.38
+954.47
+41.86
+70.82
+
+23.8
+20.8
+7.9
+15.4
+1.1
+4.7
+8.6
+17.7
+100.0
+
+564.50
+484.95
+213.60
+372.55
+21.33
+65.86
+115.04
+218.93
+2 056.77
+90.12
+185.23
+
+27.4
+23.6
+10.4
+18.1
+1.1
+3.2
+5.6
+10.6
+100.0
+
+Total
+
+1 264.97
+
+2 332.12
+
+1 067.15
+
+a See Appendix I for definitions of terms.
+
+Table 5. Production, by Species and Butt-Diameter Class
+Projected productivities
+
+Butt-diameter
+class at
+midpoint
+(cm)
+
+Gross
+merchantable
+volume
+(m 3 /stem)
+
+Total
+no. of
+stems
+
+Average
+processing
+time
+(min/stem)
+
+Stems
+(n〇./h)
+
+Volume
+(m3 /h)
+
+Pine
+
+10
+20
+30
+40
+50
+
+0.073
+0.368
+0.847
+1.505
+2.504
+
+48
+623
+554
+127
+7
+
+0.34
+0.55
+0.81
+1.01
+1.21
+
+177.1
+109.7
+74.4
+59.5
+49.6
+
+12.9
+40.4
+63.0
+89.6
+124.2
+
+Spruce
+
+10
+20
+30
+40
+50
+60
+
+0.059
+0.203
+0.645
+1.680
+2.506
+4.496
+
+113
+218
+95
+58
+21
+7
+
+0.32
+0.48
+0.83
+0.93
+1.15
+1.61
+
+187.8
+124.3
+72.4
+64.7
+52.1
+37.2
+
+11.1
+25.2
+46.7
+108.6
+130.5
+167.3
+
+Balsam
+
+10
+20
+30
+40
+50
+
+0.076
+0.184
+0.652
+1.375
+2.153
+
+102
+279
+63
+22
+3
+
+0.33
+0.46
+0.75
+0.93
+1.06
+
+183.8
+130.2
+79.8
+64.9
+56.6
+
+14.0
+24.0
+52.0
+89.2
+121.9
+
+All
+
+10
+20
+30
+40
+50
+60
+
+0.069
+0.286
+0.796
+1.531
+2.485
+4.309
+
+303
+1230
+745
+231
+37
+9
+
+0.33
+0.51
+0.80
+0.98
+1.16
+1.69
+
+181.7
+117.0
+74.6
+61.4
+51.7
+35.5
+
+12.5
+33.5
+59.4
+94.0
+128.5
+153.0
+
+Species
+
+5
+
+Table 6. Average Time Required to Process Stems from
+Roadside Grapple-Yarded Decks
+
+the volume processed per hour increased as butt
+diameter increased.
+The average time required to process a stem by the
+Denis D3000 in the study block was 0.67 min
+(Table 6). Not all stems that were processed had the
+Process 2 element (see Appendix I); therefore, both
+a prorated time and an actual time are given. Delay
+times less than 10 min were included in the
+detailed-timing study; these are described and
+summarized in Table 7. Delay times accounted for
+3.9% of the total detailed-timing elements.
+
+Activity
+
+Time
+(min)
+
+Pick
+Process
+Process 2 a
+Discharge
+
+.22
+.18
+.12 (.23)
+.15
+
+Total
+
+.67
+
+a This element did not occur on all of the stems, but the
+value shown is the average applied to all stems. The
+bracketed number is the average time for the stems that had
+the occurrence.
+
+Length-Measuring Summary
+A total of 50 logs were measured by hand to assess
+the length-measuring accuracy of the D3000. Measurements determined that 92% of the processed logs
+were within ±7.5 cm of the target length (Table 8).
+
+Table 7. Delay Time: Summary
+
+The four logs that had a high degree of measurement error may have resulted from slippage in the
+holding arms or from undercut notches on stump
+pulls left by hand-felling. Such butt irregularities
+would have caused the computer to start measuring
+too soon. Occasionally, the operator cut the jagged
+edge off the butt before processing, thus improving
+accuracy. At other times, the operator adjusted the
+log lengths visually if a jagged butt was present;
+small errors may have occurred from this action.
+
+Activity
+
+Time
+(%)
+
+Saw chain
+Personal
+Photo cell
+Discussion
+Unknown
+Clean windows
+Traffic
+
+20.5
+18.4
+17.2
+17.8
+14.0
+8.5
+
+3.6
+iööö
+
+Conclusions
+
+Table 8. Length-Measuring Accuracy
+
+In 1990, FERic evaluated the productivity and costs
+associated with operating a Denis D3000 processor,
+and the accuracy of its length-measuring device. The
+study occurred near Kelowna, British Columbia with
+cooperation from Fletcher Challenge Canada
+Limited.
+The overall productivity of the Denis D3000 was
+29.3 m3/h; however, this productivity value also
+reflects the other non-processing activities, e.g.
+longer moves and decking logs for the yarder. A
+productivity of 44.8 m3/h (productive time) was
+recorded during the detailed timing of the grappleyarded wood. This figure is significant because it
+shows that the Denis D3000 is capable of producing
+approximately 38 m3/h (with the test site tree size,
+species mix, and utilization of 81.7%), on a shiftlevel basis, if only yarded wood is processed. The
+overall processing cost of $3.13/m3 reduces to
+$2.51/m3 when analyzed only against the grappleyarded wood.
+
+Description
+
+No.
+
+%
+
+Exact length ± 1 cm
+Long
+By 1-5 cm
+By 5-7.5 cm
+By 7.5-10 cm
+By 12.5-15 cm
+By >15 cm
+Short
+By 1-5 cm
+By 5-7.5 cm
+By >15 cm
+
+17
+
+34
+
+8
+3
+1
+1
+1
+
+16
+6
+2
+2
+2
+
+14
+4
+J,
+50
+
+28
+8
+
+_2
+100
+
+in a conventional roadside system operating in the
+Interior of British Columbia. The D3000 helps
+improve productivity and costs associated with
+operating the yarder by allowing tree-length wood to
+be brought to roadside. Therefore, the overall system
+cost is less than using a yarding system without the
+processor.
+
+Because the machine worked in conjunction with a
+grapple yarder, productivity of the D3000 was lower
+and costs were higher than what would be expected
+
+Evaluation of the length-measuring device determined that 92% of the measurements were within
+6
+
+Timing Events
+long-butting - Gitting defects out of the log.
+
+the accepted tolerance of ±7.5 cm of the specified
+log length. Two main reasons for variation were:
+slippage of the stem in the holding arms during
+delimbing, which can be eliminated by adding more
+tension to the holding arms, and jagged butts associated with hand-felling undercuts.
+
+forktop - Stem with a fork or crook in merchantable
+part.
+abort - Unmerchantable stem that is discarded or not
+processed after it is picked up.
+
+Acknowledgements
+
+stuck - Processing is halted by stem stuck in the log
+deck.
+
+The author would like to thank the crew of Armitage Contracting Limited and the staff at the
+Kelowna Division of Fletcher Challenge Canada
+Limited for their help and cooperation. Research
+assistance provided by D. Araki and C. Evans of
+FERic is also acknowledged.
+
+stem number - Number of stems processed at one
+time.
+number of logs - Niunber of logs cut from each
+stem.
+
+Disclaimer
+
+reset - Length-measuring encoder being reset to
+remeasure a log length.
+
+This report is published solely to disseminate information to FERic members. It is not intended as an
+endorsement or approval by FERic of any product or
+service to the exclusion of others that may be
+suitable.
+
+slip - Stem being processed slips in the holding
+arms of the delimber.
+
+APPENDIX I
+
+APPENDIX II
+
+Definitions
+
+Shift-Level Delays: Summary
+
+Timing Elements
+pick - Time required from discharge of butt of
+previous stem to secure butt of next stem.
+
+Description
+
+process - Time required from the point when the
+stem begins moving in the delimber until first log is
+manufactured.
+
+Occurrences
+(no.)
+
+Time
+(h)
+
+55
+9
+2
+3
+
+12.2
+2.3
+1.9
+1.8
+
+7
+8
+1
+85
+
+4.9
+6.6
+1.7
+3L4
+
+3
+
+3.6
+
+3
+3
+18
+51
+78
+
+0.9
+3.8
+4.9
+10.0
+2Ï2
+
+163
+
+54.6
+
+Non-Mechanical Delays
+Operational
+Personal
+Planning
+Auxiliary equipment
+Miscellaneous
+
+process 2 - Time required from the end of cutting
+the first log to the end of cutting the second log.
+discharge - Time required to place the log onto the
+deck after processing.
+
+Organizational
+Wait for other phase
+Move to new area
+Miscellaneous
+
+cut- Time taken to long-butt (remove defects from)
+a stem.
+move - Time taken by the excavator to move into
+position to process more stems (tracks are in
+motion).
+
+Mechanical Delays
+Repairs to carrier
+
+clean - Time taken to clean debris aroxind working
+area.
+
+Repairs to prime attachment
+Hydraulics
+Structural
+Saw implement
+General service
+
+deck - Time taken to rearrange logs on the log deck.
+delay - Time when the delimber was not actively
+processing stems.
+
+Total Delays
+
+sumtime - Total processing time of a cycle when
+individual element times were missed.
+7
+
+APPENDIX III
+Machine Costs: Denis D3000 Processor
+and Komatsu PC220LC Carrier
+Ownership Costs
+Processor
+Total price, including measuring
+device8 (P) ($)
+Scheduled time (h/y)
+Expected life (H) (h)
+Insurance (Ins) (%)
+Interest (Int) (%)
+Salvage value (s) = (P • .25) ($)
+Average investment (AVI) = (P + S)/2 ($)
+Loss in resale (P - S)/H ($/h)
+Insurance cost (Ins/100 • AVi/h) ($/h)
+Interest cost (i/i〇〇 • AVi/h) ($/h)
+
+Carrier
+Total price, fully rigged for D30008 (P) ($)
+Scheduled h/y (h)
+Expected life (H) (h)
+Insurance (Ins) (%)
+Interest (Int) (%)
+Salvage value (s) = (P • .25) ($)
+Average investment (AVI) = (P + s)/2 ($)
+Loss in resale (P - S)/H ($/h)
+Insurance cost (Ins/100 • AVi/h) ($/h)
+Interest cost (l/l〇〇 • AVi/h) ($/h)
+Total
+Total ownership cost (〇c) ($/h)
+
+113 000
+2 100
+12 000
+3
+14
+28 250
+70 625
+7.06
+$1.01
+$4.71
+12.78
+
+205 000
+2 100
+12 000
+3
+14
+51 250
+128 125
+12.81
+1.83
+8.54
+23.18
+35.96
+
+Operating Costs
+Annual repairs @ 10% of p (R) ($)
+Fuel (F) (L/h)
+Fuel cost (f) ($/L)
+Lube & oil (% of F)
+Wages (w) ($/h)
+Benefits (% of W)
+Repairs (R/h) ($A)
+Fuel & lube cost ($/h)
+Wages & benefits W • [1 + (35/100)] ($/h)
+Overtime (2 h/8 h @ 1.5 • w • 1.35) ($/h)
+Total operating cost (op) ($/scheduled hour)
+
+31 800
+15
+0.42
+15
+18.00
+35
+15.14
+7.25
+24.30
+9.11
+55.80
+
+Total Ownership & Operating Costb ($/h)
+
+91.76
+
+Production (m 3/h)
+Cost ($/m3 )
+
+29.3
+3.13
+
+a
+Total price does not include taxes.
+b These figures are based on FERic's standard accounting
+formula for determining ownership, repair, and operating costs,
+and do not account for remote accommodation and machine
+support expenses. Actual hourly rates may vary.
+
+8
+
+
