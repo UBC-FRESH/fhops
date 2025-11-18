@@ -486,6 +486,18 @@ _LOADER_DISTANCE_EXP = -0.60174944
 _LOADER_BUNCHED_MULTIPLIER = 1.0
 _LOADER_HAND_MULTIPLIER = 0.90
 
+ADV2N26_DEFAULT_TRAVEL_EMPTY_M = 236.0
+ADV2N26_DEFAULT_STEMS_PER_CYCLE = 19.7
+ADV2N26_DEFAULT_STEM_VOLUME_M3 = 1.52
+ADV2N26_DEFAULT_UTILISATION = 0.77
+ADV2N26_IN_CYCLE_DELAY_RATIO = 0.05
+ADV5N1_DEFAULT_PAYLOAD_M3 = 2.77
+ADV5N1_DEFAULT_UTILISATION = 0.93
+_ADV5N1_COEFFICIENTS = {
+    "0_10": (1.00, 0.0432),
+    "11_30": (1.10, 0.0504),
+}
+
 
 @dataclass(frozen=True)
 class LoaderForwarderProductivityResult:
@@ -542,4 +554,119 @@ def estimate_loader_forwarder_productivity_tn261(
         slope_multiplier=slope_mult,
         bunched_multiplier=_LOADER_BUNCHED_MULTIPLIER if bunched else _LOADER_HAND_MULTIPLIER,
         delay_multiplier=delay_multiplier,
+    )
+
+
+@dataclass(frozen=True)
+class ClambunkProductivityResult:
+    travel_empty_distance_m: float
+    stems_per_cycle: float
+    average_stem_volume_m3: float
+    payload_m3_per_cycle: float
+    utilization: float
+    delay_free_cycle_minutes: float
+    in_cycle_delay_minutes: float
+    total_cycle_minutes: float
+    productivity_m3_per_pmh: float
+    productivity_m3_per_smh: float
+
+
+def estimate_clambunk_productivity_adv2n26(
+    *,
+    travel_empty_distance_m: float,
+    stems_per_cycle: float,
+    average_stem_volume_m3: float = ADV2N26_DEFAULT_STEM_VOLUME_M3,
+    payload_m3_per_cycle: float | None = None,
+    utilization: float = ADV2N26_DEFAULT_UTILISATION,
+    in_cycle_delay_minutes: float | None = None,
+) -> ClambunkProductivityResult:
+    """ADV2N26 clambunk regression (Kosicki 2001, Equation 1 & 2, coastal BC)."""
+
+    if travel_empty_distance_m <= 0:
+        raise ValueError("travel_empty_distance_m must be > 0")
+    if stems_per_cycle <= 0:
+        raise ValueError("stems_per_cycle must be > 0")
+    if average_stem_volume_m3 <= 0:
+        raise ValueError("average_stem_volume_m3 must be > 0")
+    if payload_m3_per_cycle is not None and payload_m3_per_cycle <= 0:
+        raise ValueError("payload_m3_per_cycle must be > 0 when specified.")
+    if not (0.0 < utilization <= 1.0):
+        raise ValueError("utilization must lie in (0, 1].")
+
+    payload = (
+        payload_m3_per_cycle
+        if payload_m3_per_cycle is not None
+        else stems_per_cycle * average_stem_volume_m3
+    )
+    delay_free_cycle = 7.17 + 0.0682 * travel_empty_distance_m + 0.396 * stems_per_cycle
+    dt = (
+        in_cycle_delay_minutes
+        if in_cycle_delay_minutes is not None
+        else delay_free_cycle * ADV2N26_IN_CYCLE_DELAY_RATIO
+    )
+    total_cycle = delay_free_cycle + dt
+    productivity_pmh = payload * (60.0 / total_cycle)
+    productivity_smh = productivity_pmh * utilization
+    return ClambunkProductivityResult(
+        travel_empty_distance_m=travel_empty_distance_m,
+        stems_per_cycle=stems_per_cycle,
+        average_stem_volume_m3=average_stem_volume_m3,
+        payload_m3_per_cycle=payload,
+        utilization=utilization,
+        delay_free_cycle_minutes=delay_free_cycle,
+        in_cycle_delay_minutes=dt,
+        total_cycle_minutes=total_cycle,
+        productivity_m3_per_pmh=productivity_pmh,
+        productivity_m3_per_smh=productivity_smh,
+    )
+
+
+@dataclass(frozen=True)
+class LoaderAdv5N1ProductivityResult:
+    forwarding_distance_m: float
+    slope_class: str
+    payload_m3_per_cycle: float
+    utilisation: float
+    intercept: float
+    slope: float
+    cycle_time_minutes: float
+    delay_free_productivity_m3_per_pmh: float
+    productivity_m3_per_smh: float
+
+
+def estimate_loader_forwarder_productivity_adv5n1(
+    *,
+    forwarding_distance_m: float,
+    slope_class: str = "0_10",
+    payload_m3_per_cycle: float = ADV5N1_DEFAULT_PAYLOAD_M3,
+    utilisation: float = ADV5N1_DEFAULT_UTILISATION,
+) -> LoaderAdv5N1ProductivityResult:
+    """ADV5N1 loader-forwarder regression (Figure 9, coefficients manually digitised by the project team)."""
+
+    if forwarding_distance_m <= 0:
+        raise ValueError("forwarding_distance_m must be > 0")
+    if payload_m3_per_cycle <= 0:
+        raise ValueError("payload_m3_per_cycle must be > 0")
+    if not (0.0 < utilisation <= 1.0):
+        raise ValueError("utilisation must lie in (0, 1].")
+
+    normalized_class = slope_class.lower().replace("-", "_")
+    if normalized_class not in _ADV5N1_COEFFICIENTS:
+        valid = ", ".join(sorted(_ADV5N1_COEFFICIENTS))
+        raise ValueError(f"Unknown ADV5N1 slope class '{slope_class}'. Valid options: {valid}")
+
+    intercept, slope = _ADV5N1_COEFFICIENTS[normalized_class]
+    cycle_minutes = intercept + slope * forwarding_distance_m
+    delay_free = payload_m3_per_cycle * (60.0 / cycle_minutes)
+    productivity_smh = delay_free * utilisation
+    return LoaderAdv5N1ProductivityResult(
+        forwarding_distance_m=forwarding_distance_m,
+        slope_class=normalized_class,
+        payload_m3_per_cycle=payload_m3_per_cycle,
+        utilisation=utilisation,
+        intercept=intercept,
+        slope=slope,
+        cycle_time_minutes=cycle_minutes,
+        delay_free_productivity_m3_per_pmh=delay_free,
+        productivity_m3_per_smh=productivity_smh,
     )

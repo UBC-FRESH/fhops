@@ -169,11 +169,26 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
     - [x] Processor helper interface now supports `--processor-model berry2019` (piece size, tree form, crew, utilisation), `--processor-model labelle2016` (acceptable vs. unacceptable tree-form classes), `--processor-model labelle2017` (poly/power DBH variants from the NB excavator-based trials), `--processor-model labelle2018` (rubber vs. tracked Ponsse regressions from Bavaria), and the Labelle 2019 DBH/volume hardwood presets. Docs/CLI explicitly warn that the Labelle regressions are PMH₀ outputs for hardwood-dominated blocks (rare in BC, handy for export scenarios).
     - [x] Added `--processor-model labelle2016` (sugar maple acceptable vs. unacceptable tree-form groups) via `estimate_processor_productivity_labelle2016(tree_form, dbh_cm, delay_multiplier)`, giving analysts a hardwood reference sourced from eastern Canada (Croat. J. For. Eng. 2016).
     - [ ] Loader helper interface sketch:
-        - Identify the best baseline (Labelle 2016/2018 loader cycle datasets or FPInnovations loader FPDat). Extract predictors such as decking distance, grapple load size, number of sorts, and swing time.
-        - CLI flags: `--loader-cycle-distance-m`, `--loader-payload-m3`, `--loader-sorts`, `--loader-delay-minutes`, plus optional `--loader-multiplier` for landing-specific constraints.
-        - Helper signature: `estimate_loader_productivity_labelle2016(...) -> LoaderProductivityResult` returning cycle time + m³/PMH; include hooks for pallet vs. truck loading if the study differentiates.
         - [x] Interim coverage: FERIC TN-261 loader-forwarder timing captured in `data/productivity/loader_tn261.json` and exposed via `estimate_loader_forwarder_productivity_tn261` (`--machine-role loader` with piece-size/distance/slope/bunching/delay knobs).
-        - [ ] When we ingest the Labelle models from Arnvik (2024), remember: Appendix 8 lists the models, Appendix 9 defines every predictor/variable code, Appendix 10 lists the coefficients. Pull the full reference from Arnvik’s bibliography when requesting the paper.
+        - [ ] Digitise ADV5N1 (loader-forwarding) productivity curves:
+            - [x] **(Greg)** Provide a manually digitised set of forwarding-distance vs. cycle-time points for Figure 9 (slope class 0–10 %) so we can fit the baseline regression and stash it in `data/productivity/loader_adv5n1_points.json` (coefficients supplied 2025‑11‑20).
+            - [x] Extract the forwarding time vs. distance curve (Figure 9) from `notes/reference/ADV5N1.PDF`—either via vector data or manual digitising—to recover the baseline linear equation (`CT = 1.00 + 0.0432·x`).
+            - [x] Convert the slope-class adjustments (0–10% baseline, +18% time for 11–30%) into explicit multipliers (manual extraction gives ``CT = 1.10 + 0.0504·x`` for 11–30%).
+            - [x] Reproduce the productivity/cost curves (Figures 10–11) using the extracted cycle-time equation, 2.77 m³ payload, and 93% utilisation so the helper can emit both m³/PMH and $/m³ (`--loader-model adv5n1` now mirrors the published curves).
+        - [ ] Encode ADV2N26 (Trans-Gesco TG 88 + John Deere 892D-LC loader-forwarder) so the clambunk/hoe-forwarding presets have a BC reference:
+            - [x] Port Appendix III’s regression (`CT = 7.17 + 0.0682·DE + 0.396·ST`, with DE = 35–550 m, ST = 3–42 stems/cycle) and productivity formula (`60·CV·U / (CT + DT)` with CV≈29.9 m³/cycle, util. from Table 3, DT≈5% of cycle) into a helper stub (`estimate_clambunk_productivity_adv2n26`).
+            - [x] Add loader-forwarder/landing loader defaults from Table 4 (41 m³/SMH at $2.88/m³ for the 892D-LC; 35 m³/SMH at $4.04/m³ for the Link-Belt LS-4300) so analysts can select a hoe-forwarding preset even while ADV5N1 digitization is in flight (`--loader-model adv2n26` plus new CLI knobs).
+            - [ ] Surface the soil-disturbance survey (20.4 % trail occupancy with class-specific widths and exposed-mineral-soil percentages) as planning defaults/CLI warnings for clambunk-assisted corridors.
+        - [ ] Catalogue additional loader references in the log (ADV2N62.PDF, ADV5N45.PDF, ADV15N2.PDF, FPDat loader traces):
+            - [ ] For each, pull loader timing details (predictors, sample sizes, slope/terrain) and record them in `notes/reference_log.md`.
+            - [ ] Identify which references include multi-predictor regressions (e.g., decking distance + sorts) to complement ADV5N1’s distance-only model.
+        - [ ] Stage structured data:
+            - [ ] Build `data/productivity/loader_adv5n1.json` (or similar) capturing the coefficients, slope multipliers, payload assumptions, and utilisation defaults.
+            - [ ] Add companion entries for any richer models that emerge so the helper can switch between variants.
+        - [ ] Helper implementation:
+            - [ ] Add `estimate_loader_productivity_adv5n1(...)` (and further variants as they’re digitised) returning productivity/cost with slope adjustments.
+            - [ ] Extend `fhops.dataset estimate-productivity --machine-role loader` with `--loader-model adv5n1`, `--loader-distance-m`, `--loader-slope-class`, etc., while keeping TN-261 as a fallback.
+            - [ ] Update docs/tests/planning so the loader path mirrors the processor coverage once the new helper is live.
   - [ ] Document how these interact with forwarder/skidder productivity so scenario cost rollups stay consistent (e.g., ghost-trail settings from TN285, loader-forward hybrids from `notes/reference/pnw_rp430.pdf`).
   - [ ] Digitise the Berry/Labelle landing-processor datasets (`notes/reference/Berry, Nick_Final-Dissertation.pdf`, `administrator,+jfe5_2tp04.pdf`) into structured tables (CSV/JSON) with clear predictor definitions so helpers/tests can reuse the published coefficients).
     - [x] Berry 2019 piece-size/tree-form regression captured in `data/productivity/processor_berry2019.json` (equation + utilisation + tree-form multipliers).

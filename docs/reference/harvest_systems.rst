@@ -167,22 +167,51 @@ or conifer-dominated BC blocks.
 Loader-Forwarder Productivity Models
 ------------------------------------
 
-``fhops.dataset estimate-productivity --machine-role loader`` wraps the loader-forwarder timing data from
-FERIC TN-261 (coastal BC second-growth, 1994). Provide:
+``fhops.dataset estimate-productivity --machine-role loader`` now supports two literature-backed presets:
 
-* ``--loader-piece-size-m3`` – mean stem volume per turn (m³).
-* ``--loader-distance-m`` – external distance from deck to the farthest stem (m).
-* ``--loader-slope-percent`` – approximate slope (%) along the forwarding direction. Positive values
-  represent adverse (uphill) travel; negative values represent favourable (downhill) travel.
-* ``--loader-bunched/--loader-hand-felled`` – indicates whether stems are mechanically bunched/aligned or
-  hand-felled/scattered (hand-felled defaults to a 0.90 multiplier).
-* ``--loader-delay-multiplier`` – optional utilisation factor (default 1.0 because TN-261 detailed timing was
-  delay-free).
+* ``--loader-model tn261`` (default) – the Vancouver Island loader-forwarder study (FERIC TN-261, 1994).
+  Provide:
 
-The helper uses a log-linear fit (piece-size exponent ≈0.41, distance exponent ≈−0.60) with gentle slope
-adjustments (≈3 % penalty per +10 % uphill, ≈1.5 % bump per −10 % downhill, clamped between 0.6 and 1.15).
-CLI output reports the delay-free vs. utilisation-adjusted productivity along with the applied multipliers so
-scenario costing flows can pick the appropriate value.
+  * ``--loader-piece-size-m3`` – mean stem volume per turn (m³).
+  * ``--loader-distance-m`` – external distance from deck to the farthest stem (m).
+  * ``--loader-slope-percent`` – approximate slope (%) along the forwarding direction. Positive values
+    represent adverse (uphill) travel; negative values represent favourable (downhill) travel.
+  * ``--loader-bunched/--loader-hand-felled`` – indicates whether stems are mechanically bunched/aligned or
+    hand-felled/scattered (hand-felled defaults to a 0.90 multiplier).
+  * ``--loader-delay-multiplier`` – optional utilisation factor (default 1.0 because TN-261 detailed timing was
+    delay-free).
+
+  The helper uses a log-linear fit (piece-size exponent ≈0.41, distance exponent ≈−0.60) with gentle slope
+  adjustments (≈3 % penalty per +10 % uphill, ≈1.5 % bump per −10 % downhill, clamped between 0.6 and 1.15).
+  CLI output reports the delay-free vs. utilisation-adjusted productivity along with the applied multipliers so
+  scenario costing flows can pick the appropriate value.
+
+* ``--loader-model adv2n26`` – the Kosicki (2001) clambunk/hoe-forwarding trial (FPInnovations ADV-2 No. 26)
+  with a Trans-Gesco TG88, John Deere 892D-LC loader-forwarder, and Link-Belt landing loader. You can use the
+  study defaults or override them with:
+
+  * ``--loader-travel-empty-m`` – travel empty distance (m) used in Equation 1 (default 236 m).
+  * ``--loader-stems-per-cycle`` – stems per cycle (default 19.7).
+  * ``--loader-stem-volume-m3`` – average stem volume per piece (default 1.52 m³/stem; payload is derived from
+    stems × volume unless you supply a custom payload via the helper).
+  * ``--loader-utilisation`` – PMH/SMH ratio (default 0.77 from the shift-level study).
+  * ``--loader-in-cycle-delay-minutes`` – optional override for in-cycle delay minutes (<10 min delays); omit it
+    to use the published 5 % ratio from Figure 9.
+
+  CLI output shows the delay-free vs. total cycle minutes, payload per turn, and both m³/PMH and m³/SMH so you
+  can pair the loader helper with the TG88 clambunk costs. This model is especially handy for “hot logging”
+  corridors where a loader-forwarder supports a clambunk or skyline operation.
+* ``--loader-model adv5n1`` – the Madill 3800 loader-forwarder regression from ADV-5 No. 1 (Figure 9). The
+  slope-class regressions (0–10 %, 11–30 %) were manually digitised from the report so you can recover the
+  original linear fits:
+
+  * ``--loader-distance-m`` – forwarding distance (m) for the regression.
+  * ``--loader-slope-class`` – ``0_10`` (baseline) or ``11_30`` (adds the 18 % penalty discussed in the text).
+  * ``--loader-payload-m3`` – payload per cycle (default 2.77 m³/cycle).
+  * ``--loader-utilisation`` – utilisation multiplier (default 0.93 per the ADV5N1 shift-level study).
+
+  CLI output reports the linear coefficients (intercept/slope), cycle time (minutes), delay-free m³/PMH, and
+  utilisation-adjusted m³/SMH so corridor costing flows can adopt the ADV5N1 defaults immediately.
 
 Grapple Skidder Productivity Models
 -----------------------------------

@@ -1,5 +1,19 @@
 # Development Change Log
 
+# 2025-11-20 — Loader/clambunk helper refresh
+- Added the FPInnovations ADV-2 No. 26 clambunk regression (Trans-Gesco TG88 + John Deere 892D-LC loader-forwarder)
+  to `fhops.productivity.processor_loader.estimate_clambunk_productivity_adv2n26`, including defaults for travel empty
+  distance, stems/cycle, payload, utilisation, and in-cycle delay ratios.
+- `fhops.dataset estimate-productivity --machine-role loader` now accepts ``--loader-model adv2n26`` along with
+  knobs for travel distance, stems/cycle, stem volume, utilisation, and in-cycle delays; the CLI output reports both
+  m³/PMH and m³/SMH so clambunk scenarios can wire the same helper into costing workflows.
+- Added `--loader-model adv5n1`, powered by the Madill 3800 loader-forwarder regressions manually digitised from
+  ADV-5 No. 1 (thank you Greg for extracting the coefficients). New CLI knobs (`--loader-slope-class`, `--loader-payload-m3`,
+  `--loader-utilisation`) control the two slope-class lines and payload assumptions, and the CLI reports both delay-free and
+  utilisation-adjusted productivity for the baseline and 18% penalty cases.
+- Documentation highlights the new ADV2N26 preset (alongside the existing TN-261 helper), and tests cover both loader
+  models (TN-261, ADV2N26, ADV5N1) to ensure we don't regress any path.
+
 # 2025-11-19 — Whole-tree forwarder/clambunk helpers
 - Extended `fhops.productivity.forwarder_bc` with the Eriksson & Lindroos (2014) final-felling/thinning payload regressions plus the Laitila & Väätäinen (2020) brushwood harwarder helper so whole-tree forwarder/clambunk coverage no longer piggybacks on CTL-only models.
 - `fhops.dataset estimate-productivity --machine-role forwarder` and `fhops.dataset estimate-forwarder-productivity` gained dedicated flags for mean extraction distance, mean stem size, load capacity, harvested trees per hectare, average tree volume (dm³), forwarding distance, harwarder payload, and grapple-load size; tests cover the new CLI flows alongside the helper wiring.

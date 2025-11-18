@@ -3,7 +3,11 @@ from __future__ import annotations
 from typer.testing import CliRunner
 
 from fhops.cli.dataset import dataset_app
-from fhops.productivity import estimate_loader_forwarder_productivity_tn261
+from fhops.productivity import (
+    estimate_loader_forwarder_productivity_adv5n1,
+    estimate_clambunk_productivity_adv2n26,
+    estimate_loader_forwarder_productivity_tn261,
+)
 
 runner = CliRunner()
 
@@ -56,3 +60,51 @@ def test_cli_loader_hand_felled_with_slope() -> None:
         delay_multiplier=0.85,
     )
     assert f"{expected.productivity_m3_per_pmh:.2f}" in result.stdout
+
+
+def test_cli_loader_adv2n26_defaults() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "loader",
+            "--loader-model",
+            "adv2n26",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_clambunk_productivity_adv2n26(
+        travel_empty_distance_m=236.0,
+        stems_per_cycle=19.7,
+    )
+    assert f"{expected.productivity_m3_per_smh:.2f}" in result.stdout
+
+
+def test_cli_loader_adv5n1_slope_class() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "loader",
+            "--loader-model",
+            "adv5n1",
+            "--loader-distance-m",
+            "80",
+            "--loader-slope-class",
+            "11_30",
+            "--loader-payload-m3",
+            "3.1",
+            "--loader-utilisation",
+            "0.9",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_loader_forwarder_productivity_adv5n1(
+        forwarding_distance_m=80.0,
+        slope_class="11_30",
+        payload_m3_per_cycle=3.1,
+        utilisation=0.9,
+    )
+    assert f"{expected.productivity_m3_per_smh:.2f}" in result.stdout

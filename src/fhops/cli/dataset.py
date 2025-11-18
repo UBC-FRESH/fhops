@@ -91,6 +91,15 @@ from fhops.productivity import (
     estimate_processor_productivity_labelle2019_volume,
     LoaderForwarderProductivityResult,
     estimate_loader_forwarder_productivity_tn261,
+    estimate_loader_forwarder_productivity_adv5n1,
+    LoaderAdv5N1ProductivityResult,
+    ADV5N1_DEFAULT_PAYLOAD_M3,
+    ClambunkProductivityResult,
+    estimate_clambunk_productivity_adv2n26,
+    ADV2N26_DEFAULT_TRAVEL_EMPTY_M,
+    ADV2N26_DEFAULT_STEMS_PER_CYCLE,
+    ADV2N26_DEFAULT_STEM_VOLUME_M3,
+    ADV2N26_DEFAULT_UTILISATION,
 )
 from fhops.reference import get_appendix5_profile, get_tr119_treatment, load_appendix5_stands
 from fhops.scenario.contract import Machine, Scenario
@@ -247,6 +256,17 @@ class Labelle2018Variant(str, Enum):
     RW_POLY2 = "rw_poly2"
     CT_POLY1 = "ct_poly1"
     CT_POLY2 = "ct_poly2"
+
+
+class LoaderProductivityModel(str, Enum):
+    TN261 = "tn261"
+    ADV2N26 = "adv2n26"
+    ADV5N1 = "adv5n1"
+
+
+class LoaderAdv5N1SlopeClass(str, Enum):
+    ZERO_TO_TEN = "0_10"
+    ELEVEN_TO_THIRTY = "11_30"
 
 
 _TR127_MODEL_TO_BLOCK = {
@@ -511,7 +531,47 @@ def _render_processor_result(
     )
 
 
-def _render_loader_result(result: LoaderForwarderProductivityResult) -> None:
+def _render_loader_result(
+    result: LoaderForwarderProductivityResult
+    | ClambunkProductivityResult
+    | LoaderAdv5N1ProductivityResult,
+) -> None:
+    if isinstance(result, LoaderAdv5N1ProductivityResult):
+        rows = [
+            ("Model", "adv5n1"),
+            ("Slope Class (%)", "0–10" if result.slope_class == "0_10" else "11–30"),
+            ("Forwarding Distance (m)", f"{result.forwarding_distance_m:.1f}"),
+            ("Payload / Cycle (m³)", f"{result.payload_m3_per_cycle:.2f}"),
+            ("Cycle Time (min)", f"{result.cycle_time_minutes:.2f}"),
+            ("Utilisation (PMH/SMH)", f"{result.utilisation:.3f}"),
+            ("Delay-free Productivity (m³/PMH)", f"{result.delay_free_productivity_m3_per_pmh:.2f}"),
+            ("Productivity (m³/SMH)", f"{result.productivity_m3_per_smh:.2f}"),
+        ]
+        _render_kv_table("Loader-Forwarder Productivity Estimate", rows)
+        console.print(
+            "[dim]Regression digitised from FPInnovations ADV-5 No. 1 Figure 9 (payload 2.77 m³, utilisation 93%).[/dim]"
+        )
+        return
+    if isinstance(result, ClambunkProductivityResult):
+        rows = [
+            ("Model", "adv2n26"),
+            ("Travel Empty (m)", f"{result.travel_empty_distance_m:.1f}"),
+            ("Stems / Cycle", f"{result.stems_per_cycle:.2f}"),
+            ("Average Stem Volume (m³)", f"{result.average_stem_volume_m3:.3f}"),
+            ("Payload / Cycle (m³)", f"{result.payload_m3_per_cycle:.2f}"),
+            ("Delay-free Cycle (min)", f"{result.delay_free_cycle_minutes:.2f}"),
+            ("In-cycle Delay (min)", f"{result.in_cycle_delay_minutes:.2f}"),
+            ("Total Cycle (min)", f"{result.total_cycle_minutes:.2f}"),
+            ("Utilisation (PMH/SMH)", f"{result.utilization:.3f}"),
+            ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
+            ("Productivity (m³/SMH)", f"{result.productivity_m3_per_smh:.2f}"),
+        ]
+        _render_kv_table("Loader / Clambunk Productivity Estimate", rows)
+        console.print(
+            "[dim]Regression from FPInnovations ADV-2 No. 26 (Trans-Gesco TG88 clambunk + JD 892D-LC loader-forwarder).[/dim]"
+        )
+        return
+
     rows = [
         ("Model", "tn261"),
         ("Piece Size (m³)", f"{result.piece_size_m3:.3f}"),
@@ -2247,6 +2307,12 @@ def estimate_productivity_cmd(
         max=1.0,
         help="Utilisation multiplier capturing delays (<10 min) relative to delay-free productivity (Berry 2019 default 0.91).",
     ),
+    loader_model: LoaderProductivityModel = typer.Option(
+        LoaderProductivityModel.TN261,
+        "--loader-model",
+        case_sensitive=False,
+        help="Loader helper to use (`tn261` = Vancouver Island loader-forwarder, `adv2n26` = TG88 clambunk support).",
+    ),
     loader_piece_size_m3: float | None = typer.Option(
         None,
         "--loader-piece-size-m3",
@@ -2258,6 +2324,12 @@ def estimate_productivity_cmd(
         "--loader-distance-m",
         min=0.0,
         help="External forwarding distance (m) from deck to farthest stem for loader helper.",
+    ),
+    loader_payload_m3: float = typer.Option(
+        ADV5N1_DEFAULT_PAYLOAD_M3,
+        "--loader-payload-m3",
+        min=0.01,
+        help="Payload per cycle (m³) for ADV5N1 regression (default 2.77 m³).",
     ),
     loader_slope_percent: float = typer.Option(
         0.0,
@@ -2275,6 +2347,44 @@ def estimate_productivity_cmd(
         min=0.01,
         max=1.0,
         help="Optional utilisation multiplier for loader-forwarder helper (default assumes delay-free timing).",
+    ),
+    loader_travel_empty_m: float = typer.Option(
+        ADV2N26_DEFAULT_TRAVEL_EMPTY_M,
+        "--loader-travel-empty-m",
+        min=0.0,
+        help="Travel empty distance (m) for ADV2N26 clambunk regression (default 236 m).",
+    ),
+    loader_stems_per_cycle: float = typer.Option(
+        ADV2N26_DEFAULT_STEMS_PER_CYCLE,
+        "--loader-stems-per-cycle",
+        min=0.1,
+        help="Stems per cycle for ADV2N26 clambunk regression (default 19.7).",
+    ),
+    loader_stem_volume_m3: float = typer.Option(
+        ADV2N26_DEFAULT_STEM_VOLUME_M3,
+        "--loader-stem-volume-m3",
+        min=0.01,
+        help="Average stem volume (m³) for ADV2N26 payload calculations (default 1.52).",
+    ),
+    loader_utilisation: float | None = typer.Option(
+        None,
+        "--loader-utilisation",
+        min=0.01,
+        max=1.0,
+        help="Utilisation (PMH/SMH) for loader helpers (defaults per model if omitted).",
+    ),
+    loader_in_cycle_delay_minutes: float | None = typer.Option(
+        None,
+        "--loader-in-cycle-delay-minutes",
+        min=0.0,
+        help="Override in-cycle delay minutes for ADV2N26 (defaults to 5% of delay-free cycle).",
+        show_default=False,
+    ),
+    loader_slope_class: LoaderAdv5N1SlopeClass = typer.Option(
+        LoaderAdv5N1SlopeClass.ZERO_TO_TEN,
+        "--loader-slope-class",
+        case_sensitive=False,
+        help="ADV5N1 slope class (0_10 vs 11_30).",
     ),
     shovel_passes: int | None = typer.Option(
         None,
@@ -2689,17 +2799,45 @@ def estimate_productivity_cmd(
         _render_processor_result(result_processor)
         return
     if role == ProductivityMachineRole.LOADER.value:
-        if loader_piece_size_m3 is None:
-            raise typer.BadParameter("--loader-piece-size-m3 is required for loader role.")
-        if loader_distance_m is None:
-            raise typer.BadParameter("--loader-distance-m is required for loader role.")
-        loader_result = estimate_loader_forwarder_productivity_tn261(
-            piece_size_m3=loader_piece_size_m3,
-            external_distance_m=loader_distance_m,
-            slope_percent=loader_slope_percent,
-            bunched=loader_bunched,
-            delay_multiplier=loader_delay_multiplier,
-        )
+        if loader_model is LoaderProductivityModel.TN261:
+            if loader_piece_size_m3 is None:
+                raise typer.BadParameter("--loader-piece-size-m3 is required when --loader-model tn261.")
+            if loader_distance_m is None:
+                raise typer.BadParameter("--loader-distance-m is required when --loader-model tn261.")
+            loader_result = estimate_loader_forwarder_productivity_tn261(
+                piece_size_m3=loader_piece_size_m3,
+                external_distance_m=loader_distance_m,
+                slope_percent=loader_slope_percent,
+                bunched=loader_bunched,
+                delay_multiplier=loader_delay_multiplier,
+            )
+        elif loader_model is LoaderProductivityModel.ADV2N26:
+            utilisation_value = (
+                loader_utilisation
+                if loader_utilisation is not None
+                else ADV2N26_DEFAULT_UTILISATION
+            )
+            loader_result = estimate_clambunk_productivity_adv2n26(
+                travel_empty_distance_m=loader_travel_empty_m,
+                stems_per_cycle=loader_stems_per_cycle,
+                average_stem_volume_m3=loader_stem_volume_m3,
+                utilization=utilisation_value,
+                in_cycle_delay_minutes=loader_in_cycle_delay_minutes,
+            )
+        else:
+            if loader_distance_m is None:
+                raise typer.BadParameter("--loader-distance-m is required when --loader-model adv5n1.")
+            utilisation_value = (
+                loader_utilisation
+                if loader_utilisation is not None
+                else ADV5N1_DEFAULT_UTILISATION
+            )
+            loader_result = estimate_loader_forwarder_productivity_adv5n1(
+                forwarding_distance_m=loader_distance_m,
+                slope_class=loader_slope_class.value,
+                payload_m3_per_cycle=loader_payload_m3,
+                utilisation=utilisation_value,
+            )
         _render_loader_result(loader_result)
         return
     if role == ProductivityMachineRole.SHOVEL_LOGGER.value:
