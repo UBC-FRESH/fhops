@@ -1,5 +1,21 @@
 # Development Change Log
 
+# 2025-11-21 — Loader harvest-system defaults
+- Harvest-system templates now push loader defaults the same way they do for shovel/skidder/skyline helpers. The built-in
+  `ground_fb_skid`, `ground_fb_shovel`, and `steep_tethered` systems seed TN-261, ADV5N1, and ADV2N26 inputs respectively
+  (piece size, forwarding distance, slope class/percent, stems-per-cycle, utilisation, etc.), and the CLI/telemetry log
+  whenever these presets are applied.
+- Added `_apply_loader_system_defaults` to `fhops.cli.dataset` so loader parameters honour harvest-system overrides,
+  including automatic model switching, slope-class/percent detection, bunched flags, payloads, and utilisation/delay
+  multipliers. Selecting a system now satisfies the required TN-261 inputs or switches to clambunk presets without
+  additional flags.
+- Updated `docs/reference/harvest_systems.rst` to document the new loader override keys and to describe how the templates
+  fill in TN-261/ADV5N1/ADV2N26 defaults for BC and steep-slope corridors.
+- Added a “Coordinating with forwarder / skidder models” section to the same doc so analysts keep ghost-trail spacing
+  (TN-285), clambunk payload splits (PNW-RP-430), and shovel-fed utilisation assumptions aligned across helpers.
+- Added CLI tests covering the new defaults and refreshed the harvest-system registry entries so future solver integrations
+  can reuse the same metadata.
+
 # 2025-11-20 — Loader/clambunk helper refresh
 - Added the FPInnovations ADV-2 No. 26 clambunk regression (Trans-Gesco TG88 + John Deere 892D-LC loader-forwarder)
   to `fhops.productivity.processor_loader.estimate_clambunk_productivity_adv2n26`, including defaults for travel empty

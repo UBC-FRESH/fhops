@@ -54,7 +54,19 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
                     },
                 ),
                 SystemJob("processing", "roadside_processor", ["primary_transport"]),
-                SystemJob("loading", "loader", ["processing"]),
+                SystemJob(
+                    "loading",
+                    "loader",
+                    ["processing"],
+                    productivity_overrides={
+                        "loader_model": "tn261",
+                        "loader_piece_size_m3": 1.05,
+                        "loader_distance_m": 115.0,
+                        "loader_slope_percent": 8.0,
+                        "loader_bunched": True,
+                        "loader_delay_multiplier": 0.95,
+                    },
+                ),
             ],
         ),
         "ground_hand_shovel": HarvestSystem(
@@ -81,7 +93,18 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
                     },
                 ),
                 SystemJob("processing", "roadside_processor", ["primary_transport"]),
-                SystemJob("loading", "loader", ["processing"]),
+                SystemJob(
+                    "loading",
+                    "loader",
+                    ["processing"],
+                    productivity_overrides={
+                        "loader_model": "adv5n1",
+                        "loader_distance_m": 90.0,
+                        "loader_slope_class": "0_10",
+                        "loader_payload_m3": 2.77,
+                        "loader_utilisation": 0.93,
+                    },
+                ),
             ],
         ),
         "ground_fb_shovel": HarvestSystem(
@@ -129,7 +152,18 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
                 SystemJob("felling", "tethered_harvester", []),
                 SystemJob("primary_transport", "tethered_shovel_or_skidder", ["felling"]),
                 SystemJob("processing", "roadside_processor", ["primary_transport"]),
-                SystemJob("loading", "loader", ["processing"]),
+                SystemJob(
+                    "loading",
+                    "loader",
+                    ["processing"],
+                    productivity_overrides={
+                        "loader_model": "adv2n26",
+                        "loader_travel_empty_m": 320.0,
+                        "loader_stems_per_cycle": 18.0,
+                        "loader_stem_volume_m3": 1.35,
+                        "loader_utilisation": 0.77,
+                    },
+                ),
             ],
         ),
         "cable_standing": HarvestSystem(

@@ -157,6 +157,232 @@ def _append_loader_telemetry(
     append_jsonl(log_path, payload)
 
 
+def _apply_loader_system_defaults(
+    *,
+    system: HarvestSystem | None,
+    loader_model: LoaderProductivityModel,
+    loader_model_supplied: bool,
+    piece_size_m3: float | None,
+    piece_size_supplied: bool,
+    external_distance_m: float | None,
+    distance_supplied: bool,
+    payload_m3: float,
+    payload_supplied: bool,
+    slope_percent: float,
+    slope_supplied: bool,
+    bunched: bool,
+    bunched_supplied: bool,
+    delay_multiplier: float,
+    delay_supplied: bool,
+    travel_empty_m: float,
+    travel_supplied: bool,
+    stems_per_cycle: float,
+    stems_supplied: bool,
+    stem_volume_m3: float,
+    stem_volume_supplied: bool,
+    utilisation: float | None,
+    utilisation_supplied: bool,
+    in_cycle_delay_minutes: float | None,
+    in_cycle_supplied: bool,
+    slope_class: LoaderAdv5N1SlopeClass,
+    slope_class_supplied: bool,
+) -> tuple[
+    LoaderProductivityModel,
+    float | None,
+    float | None,
+    float,
+    float,
+    bool,
+    float,
+    float,
+    float,
+    float,
+    float | None,
+    float | None,
+    LoaderAdv5N1SlopeClass,
+    bool,
+]:
+    if system is None:
+        return (
+            loader_model,
+            piece_size_m3,
+            external_distance_m,
+            payload_m3,
+            slope_percent,
+            bunched,
+            delay_multiplier,
+            travel_empty_m,
+            stems_per_cycle,
+            stem_volume_m3,
+            utilisation,
+            in_cycle_delay_minutes,
+            slope_class,
+            False,
+        )
+    overrides = system_productivity_overrides(system, ProductivityMachineRole.LOADER.value)
+    if not overrides:
+        return (
+            loader_model,
+            piece_size_m3,
+            external_distance_m,
+            payload_m3,
+            slope_percent,
+            bunched,
+            delay_multiplier,
+            travel_empty_m,
+            stems_per_cycle,
+            stem_volume_m3,
+            utilisation,
+            in_cycle_delay_minutes,
+            slope_class,
+            False,
+        )
+    used = False
+
+    def maybe_float(
+        key: str,
+        current: float | None,
+        supplied_flag: bool,
+        *,
+        allow_zero: bool = False,
+        allow_negative: bool = False,
+        max_value: float | None = None,
+    ) -> tuple[float | None, bool]:
+        if supplied_flag:
+            return current, False
+        value = overrides.get(key)
+        if value is None:
+            return current, False
+        try:
+            coerced = float(value)
+        except (TypeError, ValueError) as exc:  # pragma: no cover - defensive
+            raise ValueError(f"Invalid loader override for '{key}': {value}") from exc
+        if not allow_negative:
+            if allow_zero:
+                if coerced < 0:
+                    raise ValueError(
+                        f"Loader override '{key}' must be ≥ 0 (got {coerced})."
+                    )
+            else:
+                if coerced <= 0:
+                    raise ValueError(
+                        f"Loader override '{key}' must be > 0 (got {coerced})."
+                    )
+        if max_value is not None and coerced > max_value:
+            raise ValueError(
+                f"Loader override '{key}' must be ≤ {max_value} (got {coerced})."
+            )
+        return coerced, True
+
+    def maybe_bool(key: str, current: bool, supplied_flag: bool) -> tuple[bool, bool]:
+        if supplied_flag:
+            return current, False
+        value = overrides.get(key)
+        if value is None:
+            return current, False
+        if isinstance(value, bool):
+            return value, True
+        if isinstance(value, (int, float)):
+            return bool(value), True
+        if isinstance(value, str):
+            normalized = value.strip().lower()
+            truthy = {"true", "1", "yes", "y", "bunched", "mechanised", "mechanized", "machine"}
+            falsy = {"false", "0", "no", "n", "hand", "scattered"}
+            if normalized in truthy:
+                return True, True
+            if normalized in falsy:
+                return False, True
+        raise ValueError(f"Invalid loader override for '{key}': {value}")
+
+    value = overrides.get("loader_model")
+    if value is not None and not loader_model_supplied:
+        try:
+            loader_model = LoaderProductivityModel(str(value))
+            used = True
+        except ValueError as exc:  # pragma: no cover - validated via docs/tests
+            raise ValueError(f"Unknown loader model override '{value}'.") from exc
+
+    piece_size_m3, changed = maybe_float(
+        "loader_piece_size_m3", piece_size_m3, piece_size_supplied
+    )
+    used |= changed
+    external_distance_m, changed = maybe_float(
+        "loader_distance_m", external_distance_m, distance_supplied
+    )
+    used |= changed
+    payload_m3, changed = maybe_float(
+        "loader_payload_m3", payload_m3, payload_supplied
+    )
+    used |= changed
+    slope_percent, changed = maybe_float(
+        "loader_slope_percent",
+        slope_percent,
+        slope_supplied,
+        allow_zero=True,
+        allow_negative=True,
+    )
+    used |= changed
+    bunched, changed = maybe_bool("loader_bunched", bunched, bunched_supplied)
+    used |= changed
+    delay_multiplier, changed = maybe_float(
+        "loader_delay_multiplier",
+        delay_multiplier,
+        delay_supplied,
+        max_value=1.0,
+    )
+    used |= changed
+    travel_empty_m, changed = maybe_float(
+        "loader_travel_empty_m", travel_empty_m, travel_supplied
+    )
+    used |= changed
+    stems_per_cycle, changed = maybe_float(
+        "loader_stems_per_cycle", stems_per_cycle, stems_supplied
+    )
+    used |= changed
+    stem_volume_m3, changed = maybe_float(
+        "loader_stem_volume_m3", stem_volume_m3, stem_volume_supplied
+    )
+    used |= changed
+    utilisation, changed = maybe_float(
+        "loader_utilisation",
+        utilisation,
+        utilisation_supplied,
+        max_value=1.0,
+    )
+    used |= changed
+    in_cycle_delay_minutes, changed = maybe_float(
+        "loader_in_cycle_delay_minutes",
+        in_cycle_delay_minutes,
+        in_cycle_supplied,
+        allow_zero=True,
+    )
+    used |= changed
+    value = overrides.get("loader_slope_class")
+    if value is not None and not slope_class_supplied:
+        try:
+            slope_class = LoaderAdv5N1SlopeClass(str(value))
+            used = True
+        except ValueError as exc:  # pragma: no cover - validated via docs/tests
+            raise ValueError(f"Unknown loader slope-class override '{value}'.") from exc
+
+    return (
+        loader_model,
+        piece_size_m3,
+        external_distance_m,
+        payload_m3,
+        slope_percent,
+        bunched,
+        delay_multiplier,
+        travel_empty_m,
+        stems_per_cycle,
+        stem_volume_m3,
+        utilisation,
+        in_cycle_delay_minutes,
+        slope_class,
+        used,
+    )
+
+
 def _machine_rate_roles_help() -> str:
     from fhops.costing.machine_rates import load_machine_rate_index
 
@@ -2863,6 +3089,67 @@ def estimate_productivity_cmd(
         _render_processor_result(result_processor)
         return
     if role == ProductivityMachineRole.LOADER.value:
+        loader_user_supplied = {
+            "loader_model": _parameter_supplied(ctx, "loader_model"),
+            "loader_piece_size_m3": _parameter_supplied(ctx, "loader_piece_size_m3"),
+            "loader_distance_m": _parameter_supplied(ctx, "loader_distance_m"),
+            "loader_payload_m3": _parameter_supplied(ctx, "loader_payload_m3"),
+            "loader_slope_percent": _parameter_supplied(ctx, "loader_slope_percent"),
+            "loader_bunched": _parameter_supplied(ctx, "loader_bunched"),
+            "loader_delay_multiplier": _parameter_supplied(ctx, "loader_delay_multiplier"),
+            "loader_travel_empty_m": _parameter_supplied(ctx, "loader_travel_empty_m"),
+            "loader_stems_per_cycle": _parameter_supplied(ctx, "loader_stems_per_cycle"),
+            "loader_stem_volume_m3": _parameter_supplied(ctx, "loader_stem_volume_m3"),
+            "loader_utilisation": _parameter_supplied(ctx, "loader_utilisation"),
+            "loader_in_cycle_delay_minutes": _parameter_supplied(
+                ctx, "loader_in_cycle_delay_minutes"
+            ),
+            "loader_slope_class": _parameter_supplied(ctx, "loader_slope_class"),
+        }
+        (
+            loader_model,
+            loader_piece_size_m3,
+            loader_distance_m,
+            loader_payload_m3,
+            loader_slope_percent,
+            loader_bunched,
+            loader_delay_multiplier,
+            loader_travel_empty_m,
+            loader_stems_per_cycle,
+            loader_stem_volume_m3,
+            loader_utilisation,
+            loader_in_cycle_delay_minutes,
+            loader_slope_class,
+            loader_defaults_used,
+        ) = _apply_loader_system_defaults(
+            system=selected_system,
+            loader_model=loader_model,
+            loader_model_supplied=loader_user_supplied["loader_model"],
+            piece_size_m3=loader_piece_size_m3,
+            piece_size_supplied=loader_user_supplied["loader_piece_size_m3"],
+            external_distance_m=loader_distance_m,
+            distance_supplied=loader_user_supplied["loader_distance_m"],
+            payload_m3=loader_payload_m3,
+            payload_supplied=loader_user_supplied["loader_payload_m3"],
+            slope_percent=loader_slope_percent,
+            slope_supplied=loader_user_supplied["loader_slope_percent"],
+            bunched=loader_bunched,
+            bunched_supplied=loader_user_supplied["loader_bunched"],
+            delay_multiplier=loader_delay_multiplier,
+            delay_supplied=loader_user_supplied["loader_delay_multiplier"],
+            travel_empty_m=loader_travel_empty_m,
+            travel_supplied=loader_user_supplied["loader_travel_empty_m"],
+            stems_per_cycle=loader_stems_per_cycle,
+            stems_supplied=loader_user_supplied["loader_stems_per_cycle"],
+            stem_volume_m3=loader_stem_volume_m3,
+            stem_volume_supplied=loader_user_supplied["loader_stem_volume_m3"],
+            utilisation=loader_utilisation,
+            utilisation_supplied=loader_user_supplied["loader_utilisation"],
+            in_cycle_delay_minutes=loader_in_cycle_delay_minutes,
+            in_cycle_supplied=loader_user_supplied["loader_in_cycle_delay_minutes"],
+            slope_class=loader_slope_class,
+            slope_class_supplied=loader_user_supplied["loader_slope_class"],
+        )
         loader_metadata = _loader_model_metadata(loader_model)
         if loader_model is LoaderProductivityModel.TN261:
             if loader_piece_size_m3 is None:
@@ -2944,6 +3231,10 @@ def estimate_productivity_cmd(
                 inputs=telemetry_inputs,
                 outputs=telemetry_outputs,
                 metadata=loader_metadata,
+            )
+        if loader_defaults_used and selected_system is not None:
+            console.print(
+                f"[dim]Applied loader defaults from harvest system '{selected_system.system_id}'.[/dim]"
             )
         return
     if role == ProductivityMachineRole.SHOVEL_LOGGER.value:

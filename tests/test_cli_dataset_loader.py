@@ -132,3 +132,46 @@ def test_cli_loader_telemetry(tmp_path) -> None:
     data = json.loads(log_file.read_text().strip().splitlines()[0])
     assert data["loader_model"] == "tn261"
     assert data["inputs"]["piece_size_m3"] == 1.1
+
+
+def test_cli_loader_harvest_system_defaults_tn261() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "loader",
+            "--harvest-system-id",
+            "ground_fb_skid",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    expected = estimate_loader_forwarder_productivity_tn261(
+        piece_size_m3=1.05,
+        external_distance_m=115.0,
+        slope_percent=8.0,
+        bunched=True,
+        delay_multiplier=0.95,
+    )
+    assert f"{expected.productivity_m3_per_pmh:.2f}" in result.stdout
+
+
+def test_cli_loader_harvest_system_defaults_adv2n26() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "loader",
+            "--harvest-system-id",
+            "steep_tethered",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    expected = estimate_clambunk_productivity_adv2n26(
+        travel_empty_distance_m=320.0,
+        stems_per_cycle=18.0,
+        average_stem_volume_m3=1.35,
+        utilization=0.77,
+    )
+    assert f"{expected.productivity_m3_per_smh:.2f}" in result.stdout

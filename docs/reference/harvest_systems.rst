@@ -217,6 +217,48 @@ Loader-Forwarder Productivity Models
   CLI output reports the linear coefficients (intercept/slope), cycle time (minutes), delay-free m³/PMH, and
   utilisation-adjusted m³/SMH so corridor costing flows can adopt the ADV5N1 defaults immediately.
 
+Loader harvest-system overrides
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Referencing a harvest-system template (``--harvest-system-id`` or ``--dataset``/``--block-id``) now auto-fills
+loader inputs the same way shovel, skyline, and helicopter presets work. The registry currently includes:
+
+* ``ground_fb_skid`` – feller-buncher → grapple-skidder sequences automatically select the TN-261 helper with
+  1.05 m³ piece size, 115 m forwarding distance, 8 % adverse slope, bunching enabled, and a 0.95 delay multiplier.
+* ``ground_fb_shovel`` – coastal shovel-logging corridors pick the ADV5N1 helper (0–10 % slope class) with a 90 m
+  forwarding distance plus the published payload/utilisation defaults (2.77 m³/cycle, 0.93 PMH/SMH).
+* ``steep_tethered`` – tethered hot-logging layouts wire in the ADV2N26 clambunk regression with 320 m travel-empty
+  distance, 18 stems per cycle, 1.35 m³ stem volume, and a 0.77 utilisation factor.
+
+Overrides use the same keys as the CLI flags (``loader_model``, ``loader_piece_size_m3``, ``loader_distance_m``,
+``loader_slope_percent``, ``loader_bunched``, ``loader_travel_empty_m``, ``loader_slope_class``, etc.). When one of
+these presets applies, ``fhops.dataset`` prints a dimmed notice and telemetry captures the originating harvest system
+so downstream costing/solver workflows retain provenance.
+
+Coordinating with forwarder / skidder models
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Loader helpers should inherit the same assumptions as the upstream primary-transport phase so cost rollups stay
+consistent:
+
+* **Ground-based ghost trails (TN-261 + TN-285).** The TN-261 loader-forwarder study was paired with ghost-trail
+  spacing and pre-bunched decks described in FPInnovations TN-285. If you call the TN-261 helper outside the
+  harvest-system presets, mirror the same trail pattern you fed to the grapple-skidder helper
+  (``TrailSpacingPattern.SINGLE_GHOST_18M`` corresponds to TN-285’s 18 m ghost trail layout). That keeps loader
+  forwarding distance aligned with the average skid-trail spacing and prevents double counting of trail penalties.
+* **Clambunk + hoe-forwarding chains (ADV2N26 + PNW-RP-430).** The ADV2N26 helper represents the Trans-Gesco TG88 /
+  JD 892D-LC tandem documented again in Lambert & Howard’s PNW Research Paper 430. When modelling “hot logging”
+  corridors where the clambunk hands off to a loader-forwarder, use the same stems-per-cycle and payload splits for
+  both the clambunk helper and ADV2N26 loader helper so the landing payload is conserved. PNW-RP-430 also lists
+  travel-speed penalties for steep trail networks; use those multipliers to adjust the ADV2N26 travel-empty distance
+  before computing loader productivity.
+* **Shovel-fed landings (ADV5N1).** ADV5N1 assumes the landing loader is fed by shovel logging or short skyline
+  corridors. If the prior phase used the shovel logger helper, carry the same payload-per-swing and utilisation
+  targets into the loader defaults so only one phase absorbs the congestion penalty.
+
+These references are called out in ``notes/reference_log.md`` (entries for TN285.PDF and pnw_rp430.pdf) so analysts
+can trace the provenance when tuning harvest systems.
+
 Grapple Skidder Productivity Models
 -----------------------------------
 
