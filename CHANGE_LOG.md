@@ -13,6 +13,7 @@
   utilisation-adjusted productivity for the baseline and 18% penalty cases.
 - Documentation highlights the new ADV2N26 preset (alongside the existing TN-261 helper), and tests cover both loader
   models (TN-261, ADV2N26, ADV5N1) to ensure we don't regress any path.
+- Added structured loader metadata (`data/productivity/loader_models.json`) and telemetry support for the loader CLI so analysts can log TN-261/ADV2N26/ADV5N1 inputs/outputs (including trail-impact notes pulled from ADV2N26) via `--telemetry-log`.
 
 # 2025-11-19 — Whole-tree forwarder/clambunk helpers
 - Extended `fhops.productivity.forwarder_bc` with the Eriksson & Lindroos (2014) final-felling/thinning payload regressions plus the Laitila & Väätäinen (2020) brushwood harwarder helper so whole-tree forwarder/clambunk coverage no longer piggybacks on CTL-only models.

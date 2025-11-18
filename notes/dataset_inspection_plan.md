@@ -186,9 +186,9 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
             - [x] Build `data/productivity/loader_models.json` capturing coefficients, payload/utilisation defaults, and soil-disturbance metadata (TN-261, ADV2N26, ADV5N1 now covered).
             - [x] Add companion entries for richer models so the helper/CLI can switch between variants and print metadata-driven warnings.
         - [ ] Helper implementation:
-            - [ ] Add `estimate_loader_productivity_adv5n1(...)` (and further variants as they’re digitised) returning productivity/cost with slope adjustments.
-            - [ ] Extend `fhops.dataset estimate-productivity --machine-role loader` with `--loader-model adv5n1`, `--loader-distance-m`, `--loader-slope-class`, etc., while keeping TN-261 as a fallback.
-            - [ ] Update docs/tests/planning so the loader path mirrors the processor coverage once the new helper is live.
+            - [x] Add `estimate_loader_forwarder_productivity_adv5n1(...)` returning productivity/cost with slope adjustments (coefficients digitised manually by Greg on 2025‑11‑20).
+            - [x] Extend `fhops.dataset estimate-productivity --machine-role loader` with `--loader-model adv5n1`, slope-class/payload knobs, and metadata-driven warnings while keeping TN-261/ADV2N26 as fallbacks.
+            - [x] Update docs/tests/planning so the loader path mirrors the processor coverage once the new helper is live (docs now describe all three loader models + soil disturbance warnings; regression tests cover TN261/ADV2N26/ADV5N1).
   - [ ] Document how these interact with forwarder/skidder productivity so scenario cost rollups stay consistent (e.g., ghost-trail settings from TN285, loader-forward hybrids from `notes/reference/pnw_rp430.pdf`).
   - [ ] Digitise the Berry/Labelle landing-processor datasets (`notes/reference/Berry, Nick_Final-Dissertation.pdf`, `administrator,+jfe5_2tp04.pdf`) into structured tables (CSV/JSON) with clear predictor definitions so helpers/tests can reuse the published coefficients).
     - [x] Berry 2019 piece-size/tree-form regression captured in `data/productivity/processor_berry2019.json` (equation + utilisation + tree-form multipliers).

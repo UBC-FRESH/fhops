@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 from typer.testing import CliRunner
 
 from fhops.cli.dataset import dataset_app
@@ -108,3 +110,25 @@ def test_cli_loader_adv5n1_slope_class() -> None:
         utilisation=0.9,
     )
     assert f"{expected.productivity_m3_per_smh:.2f}" in result.stdout
+
+
+def test_cli_loader_telemetry(tmp_path) -> None:
+    log_file = tmp_path / "loader.jsonl"
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "loader",
+            "--loader-piece-size-m3",
+            "1.1",
+            "--loader-distance-m",
+            "120",
+            "--telemetry-log",
+            str(log_file),
+        ],
+    )
+    assert result.exit_code == 0
+    data = json.loads(log_file.read_text().strip().splitlines()[0])
+    assert data["loader_model"] == "tn261"
+    assert data["inputs"]["piece_size_m3"] == 1.1

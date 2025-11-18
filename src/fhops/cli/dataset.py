@@ -136,6 +136,27 @@ def _loader_model_metadata(model: LoaderProductivityModel | None) -> dict[str, A
     return data.get(model.value)
 
 
+def _append_loader_telemetry(
+    *,
+    log_path: Path,
+    model: LoaderProductivityModel,
+    inputs: dict[str, Any],
+    outputs: dict[str, Any],
+    metadata: dict[str, Any] | None = None,
+) -> None:
+    payload = {
+        "timestamp": datetime.now(tz=UTC).isoformat(),
+        "command": "dataset estimate-productivity",
+        "machine_role": "loader",
+        "loader_model": model.value,
+        "inputs": inputs,
+        "outputs": outputs,
+    }
+    if metadata:
+        payload["metadata"] = metadata
+    append_jsonl(log_path, payload)
+
+
 def _machine_rate_roles_help() -> str:
     from fhops.costing.machine_rates import load_machine_rate_index
 
@@ -2575,6 +2596,14 @@ def estimate_productivity_cmd(
         "--block-id",
         help="Block ID (requires --dataset) to infer harvest system defaults automatically.",
     ),
+    telemetry_log: Path | None = typer.Option(
+        None,
+        "--telemetry-log",
+        help="Append productivity inputs/output to a JSONL telemetry file.",
+        dir_okay=False,
+        writable=True,
+        show_default=False,
+    ),
 ):
     """Estimate productivity for Lahrsen (feller-buncher) or forwarder models."""
 
@@ -2834,6 +2863,7 @@ def estimate_productivity_cmd(
         _render_processor_result(result_processor)
         return
     if role == ProductivityMachineRole.LOADER.value:
+        loader_metadata = _loader_model_metadata(loader_model)
         if loader_model is LoaderProductivityModel.TN261:
             if loader_piece_size_m3 is None:
                 raise typer.BadParameter("--loader-piece-size-m3 is required when --loader-model tn261.")
@@ -2846,6 +2876,17 @@ def estimate_productivity_cmd(
                 bunched=loader_bunched,
                 delay_multiplier=loader_delay_multiplier,
             )
+            telemetry_inputs = {
+                "piece_size_m3": loader_piece_size_m3,
+                "distance_m": loader_distance_m,
+                "slope_percent": loader_slope_percent,
+                "bunched": loader_bunched,
+                "delay_multiplier": loader_delay_multiplier,
+            }
+            telemetry_outputs = {
+                "delay_free_m3_per_pmh": loader_result.delay_free_productivity_m3_per_pmh,
+                "productivity_m3_per_pmh": loader_result.productivity_m3_per_pmh,
+            }
         elif loader_model is LoaderProductivityModel.ADV2N26:
             utilisation_value = (
                 loader_utilisation
@@ -2859,6 +2900,18 @@ def estimate_productivity_cmd(
                 utilization=utilisation_value,
                 in_cycle_delay_minutes=loader_in_cycle_delay_minutes,
             )
+            telemetry_inputs = {
+                "travel_empty_m": loader_travel_empty_m,
+                "stems_per_cycle": loader_stems_per_cycle,
+                "average_stem_volume_m3": loader_stem_volume_m3,
+                "utilisation": utilisation_value,
+                "in_cycle_delay_minutes": loader_in_cycle_delay_minutes,
+            }
+            telemetry_outputs = {
+                "delay_free_cycle_minutes": loader_result.delay_free_cycle_minutes,
+                "total_cycle_minutes": loader_result.total_cycle_minutes,
+                "productivity_m3_per_smh": loader_result.productivity_m3_per_smh,
+            }
         else:
             if loader_distance_m is None:
                 raise typer.BadParameter("--loader-distance-m is required when --loader-model adv5n1.")
@@ -2873,7 +2926,25 @@ def estimate_productivity_cmd(
                 payload_m3_per_cycle=loader_payload_m3,
                 utilisation=utilisation_value,
             )
+            telemetry_inputs = {
+                "forwarding_distance_m": loader_distance_m,
+                "slope_class": loader_slope_class.value,
+                "payload_m3_per_cycle": loader_payload_m3,
+                "utilisation": utilisation_value,
+            }
+            telemetry_outputs = {
+                "cycle_time_minutes": loader_result.cycle_time_minutes,
+                "productivity_m3_per_smh": loader_result.productivity_m3_per_smh,
+            }
         _render_loader_result(loader_result)
+        if telemetry_log:
+            _append_loader_telemetry(
+                log_path=telemetry_log,
+                model=loader_model,
+                inputs=telemetry_inputs,
+                outputs=telemetry_outputs,
+                metadata=loader_metadata,
+            )
         return
     if role == ProductivityMachineRole.SHOVEL_LOGGER.value:
         (
