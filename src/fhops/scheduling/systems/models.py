@@ -139,8 +139,27 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
             environment="cut-to-length",
             notes="Harvester processes at stump, forwarder hauls shortwood direct to trucks.",
             jobs=[
-                SystemJob("felling_processing", "single_grip_harvester", []),
-                SystemJob("primary_transport", "forwarder", ["felling_processing"]),
+                SystemJob(
+                    "felling_processing",
+                    "single_grip_harvester",
+                    [],
+                    productivity_overrides={
+                        "ctl_harvester_model": "kellogg1994",
+                        "ctl_dbh_cm": 23.0,
+                    },
+                ),
+                SystemJob(
+                    "primary_transport",
+                    "forwarder",
+                    ["felling_processing"],
+                    productivity_overrides={
+                        "forwarder_model": "kellogg-sawlog",
+                        "forwarder_volume_per_load_m3": 8.2,
+                        "forwarder_distance_out_m": 320.0,
+                        "forwarder_travel_in_unit_m": 78.0,
+                        "forwarder_distance_in_m": 320.0,
+                    },
+                ),
                 SystemJob("loading", "loader", ["primary_transport"]),
             ],
         ),
