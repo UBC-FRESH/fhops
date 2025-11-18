@@ -77,6 +77,50 @@
       "description": "Negative correlation between tree-form category and productivity (Figure 9). Regression not quantified beyond R² = 0.09; use processing-time multipliers to approximate penalties."
     }
   },
+  "skid_size": {
+    "delay_per_stem_equation": {
+      "equation": "delay_seconds_per_stem = -0.015 * skid_area_m2 + 53",
+      "slope_seconds_per_m2": -0.015,
+      "intercept_seconds": 53.0,
+      "r2": 0.94,
+      "notes": [
+        "Valid only for the Kinleith landings (~2,600–3,700 m²). Smaller skids increase average delay per stem.",
+        "Based on Figure 11 (outlier removed)."
+      ]
+    },
+    "productivity_equation": {
+      "equation": "productivity_m3_per_hour = 0.024 * skid_area_m2 - 13.3",
+      "slope_m3_per_hour_per_m2": 0.024,
+      "intercept_m3_per_hour": -13.3,
+      "r2": 0.32,
+      "notes": [
+        "Weak fit (R² = 0.32); use as planning hint rather than deterministic adjustment."
+      ]
+    },
+    "outlier_test": {
+      "q1_seconds": 6.4,
+      "q3_seconds": 13.2,
+      "iqr_seconds": 6.9,
+      "mean_seconds": 10.9,
+      "upper_threshold_seconds": 21.2,
+      "lower_threshold_seconds": 0.3,
+      "notes": [
+        "Delay observations outside [0.3, 21.2] seconds/stem were considered outliers (Figure 10)."
+      ]
+    }
+  },
+  "grade_processing_time_seconds": [
+    {
+      "grade": "UH",
+      "description": "Unsawn high-grade",
+      "average_seconds": 13.22
+    },
+    {
+      "grade": "BHS",
+      "description": "Bin grade / short",
+      "average_seconds": 6.60
+    }
+  ],
   "utilisation": {
     "productive_minutes_definition": "Boom swing + delimbing + processing time; delays <10 min treated as utilisation loss.",
     "utilisation_percent": 91.0

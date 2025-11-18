@@ -2,19 +2,63 @@
 
 from __future__ import annotations
 
+import json
 import math
 from dataclasses import dataclass
+from functools import lru_cache
+from pathlib import Path
 from typing import Literal
 
-_TREE_FORM_PRODUCTIVITY_MULTIPLIERS = {
-    0: 1.0,
-    1: 1.0 / 1.56,  # 56 % longer processing time → productivity ↓ by 1/1.56
-    2: 1.0 / 1.84,  # 84 % longer processing time → productivity ↓ by 1/1.84
-}
+_BERRY_DATA_PATH = (
+    Path(__file__).resolve().parents[3] / "data" / "productivity" / "processor_berry2019.json"
+)
 
-_BERRY_BASE_SLOPE = 34.7
-_BERRY_BASE_INTERCEPT = 11.3
-_BERRY_DEFAULT_UTILISATION = 0.91
+
+@lru_cache(maxsize=1)
+def _load_berry_dataset() -> dict[str, object]:
+    try:
+        return json.loads(_BERRY_DATA_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:  # pragma: no cover - configuration error
+        raise FileNotFoundError(f"Berry (2019) processor data missing: {_BERRY_DATA_PATH}") from exc
+
+
+def _load_tree_form_productivity_multipliers() -> dict[int, float]:
+    data = _load_berry_dataset()
+    tree_form = data.get("tree_form") or {}
+    rel = tree_form.get("relative_processing_time")
+    if not rel:
+        raise KeyError("Berry (2019) dataset missing tree form multipliers.")
+    multipliers: dict[int, float] = {}
+    for category in (0, 1, 2):
+        key = f"category_{category}_multiplier"
+        time_multiplier = rel.get(key)
+        if time_multiplier is None or time_multiplier <= 0:
+            raise ValueError(f"Invalid tree form multiplier '{key}' in Berry dataset.")
+        multipliers[category] = 1.0 / time_multiplier
+    return multipliers
+
+
+def _load_piece_size_regression() -> tuple[float, float]:
+    data = _load_berry_dataset()
+    regression = data.get("piece_size_regression")
+    if not regression:
+        raise KeyError("Berry (2019) dataset missing piece-size regression.")
+    slope = regression.get("slope_m3_per_hour_per_m3")
+    intercept = regression.get("intercept_m3_per_hour")
+    if slope is None or intercept is None:
+        raise KeyError("Berry (2019) regression missing slope/intercept fields.")
+    return float(slope), float(intercept)
+
+
+def _load_default_utilisation() -> float:
+    utilisation = _load_berry_dataset().get("utilisation") or {}
+    percent = utilisation.get("utilisation_percent", 91.0)
+    return float(percent) / 100.0
+
+
+_TREE_FORM_PRODUCTIVITY_MULTIPLIERS = _load_tree_form_productivity_multipliers()
+_BERRY_BASE_SLOPE, _BERRY_BASE_INTERCEPT = _load_piece_size_regression()
+_BERRY_DEFAULT_UTILISATION = _load_default_utilisation()
 
 
 @dataclass(frozen=True)
