@@ -1,0 +1,1918 @@
+Restricted to FERIC Members and Partners
+Contents
+
+Vol. 5 No. 45 December 2004
+
+Mechanized processing on steep slopes
+in winter conditions to produce short logs
+
+1
+
+Introduction
+
+1
+
+Objectives
+
+2
+
+Site and
+stand
+description
+
+2
+
+Equipment
+and system
+descriptions
+
+3
+
+Study
+methods
+
+5
+
+Results
+
+7
+
+Discussion
+
+Keywords
+
+9
+
+Summary and
+conclusions
+
+Processing, Roadside, Steep slopes, Cable harvesting, Danglehead, Short-wood system, Productivity, Costs, Northern British Columbia.
+
+9
+
+Implementation
+
+10 References
+10 Acknowledgements
+
+Author
+B.J. Boswell,
+Western Division
+
+Abstract
+
+The Forest Engineering Research Institute of Canada (FERIC) studied mechanized
+processing in cable yarding operations in northern British Columbia. Two danglehead
+processors were monitored in five cutblocks to determine processing productivity and
+costs, the amount and cost of loader support required, and the effects of slope and other
+factors on productivity.
+
+Introduction
+Mechanized processing is the norm for
+most British Columbia interior operations
+and is becoming more prevalent in coastal
+British Columbia (Kosicki and Dyson
+2004a). Most mechanized processing takes
+place on gentle to moderate terrain harvested
+with ground-based extraction systems. Increasingly, however, companies are trying to
+find ways to use mechanized processing in
+steeper areas, often in conjunction with
+cable yarding. On steep slopes, mechanized
+processing at the stump is usually not
+feasible, so processing is performed at
+roadside after the stems are extracted.
+Canadian Forest Products Ltd.’s (Canfor)
+Mackenzie Operations1 asked FERIC to
+study its use of mechanized processing on
+cable yarding operations. Canfor uses a
+short-wood harvest system for all of its
+Mackenzie operations. On steep terrain, a
+swing yarder, loader, and processor are used
+in the operation. The yarder usually works
+independently while the loader usually sorts
+and piles the processed logs for the processor.
+Processing on steep slopes to produce
+short logs has many challenges not found in
+more moderate terrain or with a long-wood
+system. Because the yarder, loader, and
+
+processor must often work closely together,
+conflicts can result. In very steep areas, a
+loader is required to deck the stems for the
+yarder, while the processor may require the
+loader to reposition the stems before
+processing. As well, the short-wood system
+generates many logs and sorts with associated
+sorting and decking challenges. As this
+combination of equipment is relatively new,
+little is known about the factors that affect
+processor productivity and costs when
+working on steep slopes, or about the amount
+of loader assistance necessary to support a
+processor working on steep slopes.
+In the winter of 2003/04, FERIC
+monitored two danglehead processors
+working in five cutblocks in Canfor’s
+Mackenzie operations. This report presents
+productivity and cost information, the
+amount and cost of loader support required,
+and the effects of slope and other factors on
+productivity.
+
+Objectives
+The objectives of this study were to:
+• Determine the overall productivities and
+costs for processing in winter conditions.
+1
+
+Formerly Slocan Forest Products Ltd.
+
+• Determine the amount and type of
+assistance that the loader provided to the
+processor, and calculate the associated
+costs.
+• Determine the effects of slope and other
+site and stand factors on processor
+productivity.
+
+Site and stand
+descriptions
+Processing operations were studied in
+five cutblocks. Blocks 1, 2, 3, and 4 were
+located approximately 120 km north of
+Mackenzie, near the Ospika River. Block 5
+was located approximately 35 km southwest
+of Mackenzie, near the south end of Williston
+Lake. The harvesting prescription in all cases
+was clearcutting. The first four blocks were
+classified as the Graham variant of the
+Engelmann Spruce - Subalpine Fir moist very
+cold biogeoclimatic subzone (ESSFmv4)
+(DeLong et al. 1994). The fifth block was
+
+classified as the Mossvale variant of the
+Sub-Boreal Spruce moist cool biogeoclimatic
+subzone (SBSmk1) (Delong et al. 1993).
+Elevations ranged from 800 to 1250 m. Table
+1 summarizes the site and stand descriptions.
+The slopes in the blocks ranged from 0
+to 85%. The steepest terrain was in Blocks 1
+and 2 (Figure 1) and the gentlest terrain was
+in Block 4. Forest cover was dominated by
+mature subalpine fir (Abies lasiocarpa), hybrid
+white spruce (Picea glauca x engelmannii),
+and lodgepole pine (Pinus contorta), with
+minor amounts of paper birch (Betula
+papyrifera) and trembling aspen (Populus
+tremuloides).
+
+Equipment and system
+descriptions
+Trees were felled and bunched with a
+feller-buncher on slopes up to 60%. The
+remaining areas on steeper slopes were
+handfelled. Bunched and single stems were
+
+Table 1. Site and stand descriptions
+Block
+1
+
+2
+
+3
+
+4
+
+5
+
+Total area (ha)
+Cable yarded area (ha)
+
+150.4
+136.3
+
+108.1
+101.6
+
+22.2
+22.2
+
+29.5
+21.7
+
+255.2
+8.3
+
+Site characteristics
+Ecological classification
+Elevation range (m)
+
+ESSFmv4
+930–1250
+
+ESSFmv4
+940–1240
+
+ESSFmv4
+870–1090
+
+ESSFmv4
+890–980
+
+SBSmk1
+800–880
+
+25–85
+41
+
+25–85
+45
+
+8–71
+42
+
+0–35
+15
+
+5–55
+18
+
+20
+62
+17
+1
+
+32
+49
+19
+0
+
+2
+23
+71
+4
+
+12
+80
+4
+4
+
+17
+41
+40
+2
+
+294
+0.65
+
+325
+0.54
+
+377
+0.77
+
+377
+0.51
+
+385
+0.68
+
+Slope
+Range (%)
+Average (%)
+Stand characteristics
+Species composition (%)
+Subalpine fir
+Spruce
+Lodgepole pine
+Birch, aspen
+Net merchantable volume
+m³/ha
+m³/tree
+
+Forest Engineering Research Institute of Canada (FERIC)
+Eastern Division and Head Office
+
+580 boul. St-Jean
+Pointe-Claire, QC, H9R 3J9
+
+(514) 694-1140
+(514) 694-4351
+admin@mtl.feric.ca
+
+2
+
+Western Division
+
+2601 East Mall
+Vancouver, BC, V6T 1Z4
+
+(604) 228-1555
+(604) 228-0999
+admin@vcr.feric.ca
+
+Disclaimer
+Advantage is published solely to disseminate information to FERIC’s members and partners. It is not intended as an endorsement or approval of any
+product or service to the exclusion of others that may be suitable.
+ Copyright 2004. Printed in Canada on recycled paper.
+Vol. 5 No. 45
+December 2004
+
+Advantage
+ISSN 1493-3381
+
+yarded with swing yarders equipped with
+mechanical slackpulling carriages and
+radio-controlled chokers. Mobile backspars
+were used with the swing yarders wherever
+possible.
+All stems were yarded tree length to
+roadside, then delimbed and cut to length
+with danglehead processors (Figure 2). The
+machines processed the stems and sorted
+them into piles on the road for the loaders
+to clear away. The heelboom loaders piled
+the debris (tops and limbs) on the low side
+of the road to create flat areas where necessary,
+and then stacked the processed logs on the
+debris piles (Figure 3). The processors and
+loaders worked together, and they worked
+independently of the yarders whenever
+possible. However, on very steep slopes, the
+loaders were needed to deck the stems for the
+yarders and a yarder, loader and processor all
+worked together. The machines were scheduled
+to work 12-hour shifts, seven days per week,
+and were frequently double-shifted during
+the study period. Specifications for the processors and loaders are presented in Table 2.
+During processing, the stems were
+delimbed, manufactured into short logs, and
+then sorted by size and species. Generally, pine
+and spruce were combined into one species
+group and subalpine fir was placed in a
+separate sort. Up to 10% subalpine fir could
+be included in the pine-spruce sorts for the
+ground-based harvesting, while for cable
+harvesting the processors were not required
+to separate the subalpine fir but did so where
+feasible. Each species group was separated
+into three colour-coded sorts that were
+categorized by top diameter (yellow: 10–
+18 cm, blue: 18–23 cm, and red: 23–36 cm),
+while the largest logs were placed into a
+headrig sort (top diameter >36 cm) for a
+total of seven sorts. The target length was
+5.0 m for all logs except for the red sort where
+it was 6.2 m.
+Before settling on this current system for
+processing stems from steep slopes, Canfor
+experimented with hauling the stems tree
+length to a satellite yard for processing into
+short logs. However, this added approximately
+Advantage
+
+Vol. 5 No. 45
+December 2004
+
+Figure 1. Steep
+slopes in Block 2.
+
+Figure 2. John
+Deere 892 ELC/
+Waratah HTH624
+processor working
+in Block 4.
+
+Figure 3.
+Processed logs
+decked on steep
+slopes.
+
+$8/m3 to their logging cost compared to the
+current system, and proved to be too expensive.2
+
+Study methods
+FERIC observed the processing operation
+and collected shift-level, detailed-timing, and
+work sampling data. Shift-level data, consisting
+of Servis recorder charts and operators’ reports
+about operating time and delays (>10 min/
+occurrence) were collected for the processing
+phase over three months in four study blocks
+(Blocks 1, 2, 3, and 5) for one processor and
+four operators. Detailed-timing data were
+
+2
+
+Larry Clark, Operations Superintendent, Canfor,
+Mackenzie, B.C., personal communication, October
+2004.
+
+3
+
+Table 2. Equipment specifications
+Processors
+Carrier
+Engine
+Power (kW)
+Max. boom reach (m)
+Lift capacity at 6-m reach (kg)
+Undercarriage dimensions
+Width (m)
+Length (m)
+Travel speed (km/h)
+Mass (kg)
+Processing head
+Maximum delimbing diameter (mm)
+Maximum diameter saw cut (mm)
+Mass (kg)
+Measuring and control system
+Loaders
+Carrier
+Engine
+Power (kW)
+Max. boom reach (m)
+Lift capacity at 6-m reach (kg)
+Undercarriage dimensions (m)
+Width (m)
+Length (m)
+Travel speed (km/h)
+Mass (kg)
+Grapple size (mm)
+
+Hyundai 210LC
+Cummins B5.9-C
+112
+9.9
+6 060 a
+
+John Deere 892 ELC
+John Deere 6076A
+164
+11.1
+10 422 b
+
+3.40
+4.44
+up to 5.3
+23 700
+
+3.40
+4.90
+up to 5.5
+30 595
+
+Waratah HTH620
+560
+620
+2 210
+LogRrite
+
+Waratah HTH624
+640
+780
+3 414
+LogRite
+
+Hitachi EX 220LC
+Cummins H07C-TD
+118
+10.3
+6 620 c
+
+Hyundai 210LC
+Cummins B5.9-C
+112
+9.9
+6 060 a
+
+Hyundai 290LC
+Cummins QSB5.9-C
+159
+10.8
+9 550 d
+
+2.99
+4.27
+up to 5.5
+23 800
+
+3.40
+4.44
+up to 5.3
+23 700
+
+3.40
+4.95
+up to 5.2
+33 310
+
+1 270
+
+1 270
+
+1 524
+
+a
+
+For an arm length of 2.92 m and a load height of 0 m. b For an arm length of 3.20 m and a load height of 0 m.
+of 2.96 m and a load height of 0 m. d For an arm length of 3.05 m and a load height of 0 m.
+
+collected on 58 stem decks in the five study
+blocks for two processors and three operators.
+Average gross stem volumes were used to
+calculate gross processing productivity per
+productive machine hour (PMH) for each
+stem deck using standard FERIC short-term
+detailed-timing methods.3 Net productivity
+based on processed logs loaded out would
+be lower. Average processor utilization from
+the shift-level study was applied to the detailedtiming data to determine the productivity
+per scheduled machine hour (SMH). Work
+sampling at 2- and 4-minute intervals was
+Figure 4. Loader
+transports logs to
+decks.
+
+For an arm length
+
+done frequently throughout the study period
+to determine the loaders’ tasks and time spent
+assisting the processor.
+Hourly processor and loader costs were
+calculated using FERIC’s standard costing
+methods (Appendices I and II) and were
+applied to the productivity to determine costs
+per cubic metre. Equipment costs were calculated using a 12-hour shift, with provisions
+for overtime for time worked over 8 hours.
+Generic costs were used for the carriers based
+on the approximate weight classes of the
+machines used in the study. Although the
+loaders spent a substantial amount of time
+travelling back and forth between the
+processor and the log decks (Figure 4) and
+therefore undercarriage wear would be higher
+than in stationary applications, this was not
+accounted for in the costing.
+Correlation analysis and regression
+analysis (α = .05) were performed on the
+3
+
+4
+
+c
+
+More detail on the study methods can be obtained
+from the author upon request.
+Vol. 5 No. 45
+December 2004
+
+Advantage
+
+6 to 12 hours and averaged 11.8 hours, with
+machine availability from 93 to 98%.
+Machine utilization ranged from 70 to 93%
+of scheduled time by block and the overall
+utilization was 78%.
+
+detailed-timing data for one operator on one
+processor to test the effects of ground slope,
+deck slope, stem size, defects (measured as a
+percentage of the total number of stems
+processed that had fork or rot), and
+branchiness on productivity.
+
+Detailed-timing study
+
+Results
+
+The larger John Deere 892 ELC/Waratah
+HTH624 processor was 34% more
+productive in terms of gross m³/PMH than
+the smaller Hyundai 210LC/Waratah
+HTH620 processor (51 vs. 38 m³/PMH,
+respectively) (Table 4). Processing speed for
+the John Deere/Waratah was 31% faster at
+
+Shift-level study
+
+Shift-level data were collected for 75 shifts
+totalling 691 hours for the Hyundai 210LC/
+Waratah HTH620 processor in four study
+blocks (Table 3). Shift lengths ranged from
+
+Table 3. Shift-level summary for the
+Hyundai 210LC/Waratah HTH620 processor
+
+Productive shifts (no.)
+Productive machine hours (PMH) (h)
+Mechanical delays (MD) (h) b,c
+Non-mechanical delays (NMD) (h) b,d
+Unknown delays (UD) (h) b
+Total all delays (h) b
+Scheduled machine hours (SMH) (h)
+Average shift length (h) e
+Utilization (PMH/SMH) (%)
+Availability [(SMH-MD)/SMH] (%)
+
+1
+
+2
+
+Block a
+3
+
+10.5
+99.1
+7.6
+12.2
+5.6
+25.4
+124.5
+11.9
+80
+94
+
+39.5
+367.8
+30.8
+39.1
+25.4
+95.3
+463.1
+11.7
+79
+93
+
+19
+159.8
+14.3
+18.3
+35.0
+67.6
+227.4
+12.0
+70
+94
+
+5
+
+Overall
+
+6
+64.6
+1.7
+2.2
+1.1
+5.0
+69.6
+11.6
+93
+98
+
+75
+691.3
+54.4
+71.8
+67.1
+193.3
+884.6
+11.8
+78
+94
+
+a
+
+The Hyundai 210LC/Waratah HTH620 processor did not work in Block 4. b Includes delays ≥10 minutes.
+Including servicing and fuelling. d Examples of non-mechanical delays: waiting for loader, moving, checking
+log lengths, retrieving lost stems. e Scheduled shift length was usually 12 hours with no lunch break
+(operators would usually eat during their coffee breaks).
+c
+
+Table 4. Detailed-timing summary for the processors
+
+Hyundai 210LC/ Waratah HTH20 processor
+Hitachi EX220LC or Hyundai 210LC loader
+1
+2
+3
+5
+overall
+
+Block
+Sample stem decks timed (no.)
+Productive time (min)
+Productive machine hours (PMH)
+Total stems processed (no.)
+Total volume processed (m³)
+Total logs produced (no.)
+Average volume (m³/stem)
+Average time (min/stem)
+Average logs (no./stem)
+Productivity
+stems/PMH
+m³/PMHa
+a
+
+John Deere 892 ELC/ Waratah HTH624 processor
+Hyundai
+Hyundai
+210LC
+290LCi
+Both
+loader
+loader
+loaders
+2
+3
+4
+overall
+
+3
+238
+4.0
+170
+165
+470
+0.97
+1.40
+2.8
+
+18
+1 445
+24.1
+1301
+955
+3 539
+0.73
+1.11
+2.7
+
+6
+298
+5.0
+184
+226
+557
+1.23
+1.62
+3.0
+
+12
+1 196
+19.9
+1 000
+673
+2 809
+0.67
+1.20
+2.8
+
+39
+3 177
+53.0
+2 655
+2 019
+7 375
+0.76
+1.20
+2.8
+
+5
+373
+6.2
+297
+234
+801
+0.79
+1.26
+2.7
+
+1
+37
+0.6
+33
+37
+101
+1.12
+1.12
+3.1
+
+13
+1 196
+19.9
+1 595
+1 094
+4 612
+0.69
+0.75
+2.9
+
+19
+1 606
+26.7
+1 925
+1 365
+5 514
+0.71
+0.83
+2.9
+
+43
+41
+
+54
+40
+
+37
+45
+
+50
+34
+
+50
+38
+
+48
+38
+
+55
+62
+
+80
+55
+
+72
+51
+
+Productivities are based on gross stem volumes with no deductions for stem defects. Actual net productivity based on processed logs
+loaded out would be lower.
+
+Advantage
+
+Vol. 5 No. 45
+December 2004
+
+5
+
+only 0.83 min/stem compared to 1.20 min/
+stem for the Hyundai/Waratah. The average
+stem sizes were similar at 0.76 m³ for the
+Hyundai/Waratah and 0.71 m³ for the John
+Deere/Waratah. The productivity for the
+Hyundai/Waratah in m³/PMH was the
+lowest in Block 5, where the average stem
+size was the smallest and the processor
+spent much of the time working with the
+yarder. Productivity for both processors was
+highest in Block 3, which had the largest
+average stem size. Generally, productivity
+tended to increase as piece size increased. The
+regular operator of the Hyundai/Waratah
+considered himself to be average in ability,
+and he considered the regular operator of the
+John Deere/Waratah to be above average in
+ability.
+Figure 5. Loader
+time, work
+sampling results.
+
+Delays 11%
+
+Piling processed
+logs 42%
+
+Idle 1%
+
+Waiting for processor 8%
+
+The overall proportion of time spent
+performing the various elements of the
+processing cycle was similar for both machines
+(Table 5). The processors spent between 56
+and 90% of the time processing stems. Debris
+handling, decking, and sorting times were
+minimal as the loader usually performed
+these tasks. However, the Hyundai processor
+spent a substantial amount of time in Block
+3 waiting for the loader and the yarder
+because all three machines worked together
+on five of the six timing samples. The loader
+was required to grab the stems from the
+yarder to prevent them from sliding back
+down the hill due to steep terrain and icy
+conditions. The loader that loaded the
+logging trucks in Block 4 also assisted the
+processor, because the loader that usually
+assisted the processor was broken down. The
+terrain there was quite flat and provided
+ample room to deck the processed logs.
+Therefore, the processor did not spend much
+of its time waiting for the loader.
+Work sampling results
+
+The work sampling results for the loaders
+are shown in Figure 5 and include data for
+all three loaders. Overall, the loaders spent
+72% of their time assisting the processors.
+These activities consisted of the following:
+• piling processed logs
+• travelling—moving back and forth
+between the processor and the log decks
+
+Truck loading 5%
+Assisting yarder 3%
+Misc. productive time 2%
+Site maintenance 4%
+
+Repositioning unprocessed
+stems 8%
+Travelling 16%
+
+Table 5. Detailed-timing summary of cycle time distribution for the processors
+
+Block
+
+Hyundai 210LC/Waratah HTH620 processor
+(Hitachi EX220LC or Hyundai 210LC loader)
+1
+2
+3
+5
+overall
+
+Distribution of cycle time (%)
+Processing stems
+Debris handling
+Decking stems
+Sorting processed logs
+Moving the machine
+Waiting for the loader or yarder
+Delays ≤10 minutes a
+
+81
+1
+2
+1
+3
+0
+12
+
+a
+
+6
+
+75
+4
+5
+5
+3
+1
+7
+
+56
+2
+2
+5
+7
+18
+10
+
+74
+4
+4
+4
+3
+5
+6
+
+74
+4
+4
+4
+3
+4
+7
+
+John Deere 892 ELC/Waratah HTH624 processor
+Hyundai
+Hyundai
+210LC
+290LC
+Both
+loader
+loader
+loaders
+2
+3
+4
+overall
+61
+7
+3
+5
+5
+3
+16
+
+90
+0
+4
+1
+0
+0
+5
+
+80
+3
+4
+5
+3
+1
+4
+
+76
+4
+3
+5
+3
+2
+7
+
+Delays >10 minutes were removed from the detailed-timing data.
+
+Vol. 5 No. 45
+December 2004
+
+Advantage
+
+• repositioning unprocessed stems—
+breaking the pile apart, straightening and
+untangling the stems, and pulling the
+stems up closer to the road
+• site maintenance—building up areas to
+place the processed logs and clearing
+debris
+• other miscellaneous productive time
+The loaders spent 8% of their time
+assisting the yarder or loading trucks, and
+9% of their time waiting for the processor
+and being idle.4 They spent the remaining
+11% of their time in delays.
+The amount of decking space available
+had an influence on loader efficiency. The
+terrain and the number of log sorts dictated
+how far the loader had to travel from the
+processing site to the nearest suitable decking
+area. Because of the multiple log sorts and
+the generally steep ground, the loader often
+had to carry the logs substantial distances to
+find a decking location (up to 100 m and
+averaging 25 m).
+When the yarded stems were decked
+farther away from the edge of the road, the
+loader pulled the stems closer to the road so
+the processor could reach them. The large
+processor could reach farther than the small
+processor and, therefore, required less
+assistance for this task. However, it was also
+more productive, so the loader spent more
+time travelling and piling logs when working
+with the larger processor. The Hyundai
+290LC loader was more powerful and had a
+larger grapple than the other two loaders.
+Therefore, it was more efficient when
+assisting the processor. However, this loader
+was usually dedicated to loading trucks and
+was not involved much in the study.
+Overall productivity and system
+costs5
+
+Applying the study’s overall utilization
+rate of 78% for the Hyundai/Waratah
+processor6 to the detailed-timing results
+yielded overall productivities of 30 m³/SMH
+for the Hyundai/Waratah processor and
+40 m³/SMH for the John Deere/Waratah
+processor (Table 6). This resulted in
+Advantage
+
+Vol. 5 No. 45
+December 2004
+
+processing costs ranging from $2.94/m³ to
+$4.70/m³. The average cost for the John
+Deere/Waratah was 10% less than the
+Hyundai/Waratah, at $3.52/m³ and $3.90/m³,
+respectively. The higher productivity of the
+John Deere/Waratah offset its higher hourly
+machine cost. The cost of having a loader
+working full-time with a processor ranged
+from $2.02/m³ to $3.59/m³. This cost was
+less when the loader worked with the John
+Deere/Waratah processor because of this
+processor’s higher productivity. The combined
+system cost for the processor and loader averaged $6.30/m³ for the John Deere/Waratah
+and $7.13/m³ for the Hyundai/Waratah.
+Effects of slope and other factors
+on processing productivity
+
+The detailed-timing observations for the
+Hyundai/Waratah processor for one operator
+(29 stem decks) were analyzed to test the
+effects of slope and other variables on
+productivity. When correlation analysis was
+done on processing time only, processing time
+was moderately well-correlated with stem size
+and stem deck slope, and weakly correlated
+with ground slope. There was no correlation
+between processing time and branchiness
+or defects. Regression analysis was then
+performed to develop a relationship between
+time and the variables. The only significant
+variable was stem size (r2 = .25).
+
+Discussion
+The processing productivities reported
+in this study are within the range Kosicki
+and Dyson (2004a, b) found in a study on
+Vancouver Island for producing long logs
+from grapple-yarded decks using a Waratah
+4
+
+During the study, the loaders worked with the yarders
+on only 12 decks and performed truck loading duties
+on only 8 decks. For the rest of the time, they were
+dedicated to the processors.
+5
+Productivities and costs are based on gross stem volumes
+with no deductions for stem defects. Actual net
+productivity based on processed logs loaded out would
+be lower and costs would be higher.
+6
+Shift-level data was not available for the John Deere
+892 ELC/Waratah HTH624 processor
+
+7
+
+Table 6. Costs and productivitya
+
+Hyundai 210LC/Waratah HTH620 processor
+(Hitachi EX220LC or Hyundai 210LC loader)
+1
+2
+3
+5
+overall
+
+Block
+Productivity (m3/PMH) b
+Utilization (%) c
+Productivity (m3/SMH)
+Hourly machine cost ($/SMH) d
+Processor
+Loader
+Cost ($/m)
+Processor
+Loader assisting
+Total
+
+John Deere 892 ELC/Waratah HTH624 processor
+Hyundai
+Hyundai
+210LC
+290LC
+Both
+loader
+loader loaders
+2
+3
+4
+overall
+
+41
+78
+32
+
+40
+78
+31
+
+45
+78
+35
+
+34
+78
+27
+
+38
+78
+30
+
+38
+78
+30
+
+62
+78
+48
+
+55
+78
+43
+
+51
+78
+40
+
+116.93
+96.89
+
+116.93
+96.89
+
+116.93
+96.89
+
+116.93
+96.89
+
+116.93
+96.89
+
+140.99
+96.89
+
+140.99
+96.89
+
+140.99
+116.20
+
+140.99
+11.27 e
+
+3.65
+3.03
+6.68
+
+3.77
+3.13
+6.90
+
+3.34
+2.77
+6.11
+
+4.33
+3.59
+7.92
+
+3.90
+3.23
+7.13
+
+4.70
+3.23
+7.93
+
+2.94
+2.02
+4.96
+
+3.28
+2.70
+5.98
+
+3.52
+2.78
+6.30
+
+a
+Productivities and costs are based on gross stem volumes with no deductions for stem defects. Actual net productivity based on
+processed logs loaded out would be lower and costs would be higher. b From Table 4. c Overall average from shift-level study (Table 3).
+d
+From Appendix II. e Prorated by productive machine hours.
+
+HTH624 processing head mounted on a
+Madill 3800 carrier. Their study showed
+productivities of 56 and 38 m³/PMH for
+average stem sizes of 1.01 and 0.44 m³, respectively. The slopes for the blocks in their
+study ranged from 5 to 80%.
+While one of the objectives of this study
+was to look for a relationship between slope
+and processor productivity, it became evident
+that the following factors had a much greater
+effect on productivity than slope:
+• processor size—the larger processor was
+more productive than the smaller one
+• equipment combination—the processors
+were the most productive when working
+with just the loader, less productive when
+working with the loader and the yarder,
+and least productive when working
+alone7
+• stem size—of the variables tested
+(ground slope, deck slope, stem size,
+defects, and branchiness), only stem size
+had a significant effect on processing
+productivity
+Although the natural ground slope at
+the site occasionally affected processing, the
+effect was not consistent. On the steepest
+ground slopes, the stems would be piled either
+on a landing, in the ditch on the uphill side
+of the road, or on debris on the downhill
+8
+
+side of the road. This meant that the deck
+slope was a better predictor of productivity.
+However, the influence of deck slope on
+productivity could not be isolated because
+further analysis showed that deck slope
+was closely correlated with stem size which
+obscured its influence.
+The effect of deck height on processor
+productivity was not quantified, but FERIC
+observed that one operator preferred decks to
+be no higher than the bottom of the machine’s
+cab. Where feasible, the John Deere/Waratah
+operator would pull stems from the high
+decks to make a lower pile before he began
+processing. This seemed to be time well spent
+as the operator could then process the stems
+very quickly. Another operator said that he
+preferred the deck to be no higher than eye
+level from his position in the machine’s cab.
+If it was higher than the cab, he had to stoop
+to see the stems. Stems piled on the low side
+of the road and below the road surface level
+7
+
+Most of the timing samples were conducted when the
+processor and loader were working together. There
+were two samples when the processors were working
+alone because the loader was broken or working with
+the yarder. In these cases the loader returned later to
+help deck the processed logs. The average stem size
+varied in the different machine combinations working
+together.
+
+Vol. 5 No. 45
+December 2004
+
+Advantage
+
+were also difficult to see, especially at night,
+because the machine’s lights didn’t shine on
+these stems. The operator had to move the
+machine to the edge of the slope and sometimes off the road to illuminate these stems.
+Yarding distance and volume per hectare
+influence deck height, so the block layout
+can impact deck height.
+The position of the stem deck also affected
+processing efficiency. The processor needed
+the loader to clear the logs more frequently
+when the decks were parallel rather than
+perpendicular to the road, because the
+processor needed room to turn these logs
+during processing. This was more common
+on steep ground, where the stems were
+yarded from below the road and decked in
+the ditch on the high side.
+The short-wood system for this study
+used seven sorts, so finding adequate decking
+space for all the sorts was difficult on steep
+terrain. The number of sorts was consistent
+throughout the study, so it could not be
+determined whether the number of sorts
+affected productivity. Another FERIC study8
+has shown that the number of sorts affect
+processing productivity on steep slopes.
+This study occurred in the winter when
+many of the limbs were removed during
+yarding. In icy conditions, the stems became
+very slippery and sometimes slid off the
+decks, resulting in time lost to retrieve these
+logs. Productivity may be different during
+summer conditions
+
+Summary and
+conclusions
+The results of this study show that
+mechanized processing at roadside can be
+productive and cost effective when cable
+harvesting on steep slopes. The larger John
+Deere/Waratah processor with an above
+average operator was 34% more productive
+than the smaller Hyundai/Waratah processor
+with an average operator. The average cost of
+processing was $3.52/m³ (gross) for the John
+Deere/Waratah and $3.90/m³ (gross) for the
+Hyundai/Waratah. Operations were most
+Advantage
+
+Vol. 5 No. 45
+December 2004
+
+productive when the processor and loader
+were able to work independent of the yarder.
+Loaders spent 72% of their time assisting
+the processors. Most of this time involved
+piling processed logs and moving back and
+forth between the processor and the log
+decks. The combined system cost for a
+processor and a loader averaged $6.30/m³ for
+the John Deere/Waratah and $7.13/m³ for
+the Hyundai/Waratah .
+The influence of site and stand conditions
+on productivity was analyzed. However, a
+relationship could not be detected for most
+of the variables tested. Stem deck slope and
+stem size had the highest correlation with
+processing time, but stem size was the only
+variable that had a statistically significant
+effect.
+FERIC is currently studying processors
+working with cable yarders in summer
+conditions, and will publish the results in an
+upcoming report.
+Future studies could assess whether
+decking space and height affect productivity.
+
+Implementation
+The following recommendations
+should improve the efficiency and productivity of processing operations on steep
+cable-harvested slopes:
+• Wherever possible, the processor and
+loader should work independent of the
+yarder. Lay out and harvest blocks to
+minimize situations where a loader is
+required to assist the yarder with landing
+the logs. In very steep terrain, yard the
+stems to a landing instead of to roadside
+to prevent the decked stems from sliding
+back down the hill.
+• Deck the stems as close to the road edge
+as possible when yarding so they are
+within easy reach for the processor. This
+will reduce the need for a loader to pull
+the decked stems closer to the road. Also,
+deck the stems as straight as possible so
+8
+
+Peter Dyson, Researcher, FERIC, personal
+communication, October 2004.
+
+9
+
+the processor or loader does not have to
+straighten or untangle the logs before
+processing.
+• Yard the stems to areas where there is
+sufficient decking room nearby for the
+processed logs. If it is steep on the low
+side of the road, try to yard to areas with
+gentle slopes on the high side of the road
+where the processed logs can be decked.
+• Wherever it is possible to do so without
+compromising yarding chance, locate the
+haul roads to provide an abundance of
+adjacent flat areas for decking the
+processed logs. This will reduce the time
+required for the loader to travel to the
+decking areas with the processed logs.
+• When the yarder, loader, and processor
+are working together, more supervision
+will reduce conflicts and improve
+efficiency.
+• When the loader must work with the
+yarder, consider if it is more efficient for
+the processor to process alone in another
+location and move and sort its own
+logs, with the loader leaving the yarder
+periodically to service the processor.
+Organize the activities to keep the
+phases separate.
+• Reduce loader travel time by estimating
+which sorts will be the most common
+in a stem deck and then locate the most
+common sorts closest to the processor.
+• When the yarder is working in an area
+that has adequate space for it to land its
+own logs without assistance from a
+loader, the loader should work elsewhere
+with the processor, and return periodically
+to the yarder to clear the logs as necessary.
+
+References
+
+DeLong, C.; Tanner, D.; and Jull, M.; 1994.
+A field guide for site identification and
+interpretation for the northern rockies
+portion of the Prince George Forest Region,
+B.C. Ministry of Forests, Victoria, B.C.
+Land Management Handbook 29. 141 pp.
+http://www.for.gov.bc.ca/hfd/pubs/Docs/
+Lmh/LMH29A.pdf (accessed June 2004).
+Kosicki, K.T.; Dyson, P.F. 2004a. Using
+mechanized systems to harvest secondgrowth forests in coastal British Columbia:
+productivity and costs of a processing
+operation. FERIC, Vancouver, B.C.
+Advantage Report Vol. 5 No. 6. 8 pp.
+Kosicki, K.T.; Dyson, P.F. 2004b. Using
+mechanized systems to harvest secondgrowth forests in coastal British Columbia:
+productivity and costs of loader-forwarding
+and grapple yarding operations. FERIC,
+Vancouver, B.C. Advantage Report Vol. 5
+No. 1. 20 pp.
+
+Acknowledgements
+The author gratefully acknowledges the
+cooperation of Dale Vanderhook, Dan Heck,
+and the operators and crew of DWD Logging
+Limited; Larry Clark of Canadian Forest
+Products Limited; and Bernie Banovic of
+Timber Baron Contracting Limited.
+The author thanks FERIC employees
+Marv Clark, Ingrid Hedin, and Ray Krag for
+project advice and for reviewing the draft
+report; Mihai Pavel and Gregor Mueller for
+assisting with data analysis; Craig Evans for
+assisting with data collection; Michelle
+Dunham for assisting with machine costing;
+and Yvonne Chu for assistance with report
+preparation. The author also thanks former
+FERIC contractor Leanne McKinnon for
+assisting with data collection and data
+analysis.
+
+DeLong, C.; Tanner, D.; Jull, M. 1993. A
+field guide for site identification and interpretation for the southwest portion of the
+Prince George Forest Region. B.C. Ministry
+of Forests, Victoria, B.C. Land Management
+Handbook 24. 290 pp. http://
+www.for.gov.bc.ca/hfd/pubs/Docs/Lmh/
+LMH24-1.pdf (accessed June 2004).
+
+10
+
+Vol. 5 No. 45
+December 2004
+
+Advantage
+
+Appendix I
+Machine costs a
+Carrier b
+(20–25 tonne
+class)
+
+Carrier b
+(30–35 tonne
+class)
+
+Harvesting
+head c
+(508-mm
+capacity)
+
+Harvesting
+head d
+(610-mm
+capacity)
+
+Log loading
+grapple e
+(up to 1 524-mm
+capacity)
+
+Total purchase price (P) $
+
+305 000
+
+410 000
+
+185 000
+
+225 000
+
+22 000
+
+Expected life (Y) y
+Expected life (H) h
+Scheduled hours/year (h)=(H/Y) h
+Salvage value as % of P (s) %
+Interest rate (Int) %
+Insurance rate (Ins) %
+
+5
+15 000
+3 000
+25
+6.0
+3.0
+
+5
+15 000
+3 000
+25
+6.0
+3.0
+
+5
+15 000
+3 000
+25
+6.0
+3.0
+
+5
+15 000
+3000
+25
+6.0
+3.0
+
+5
+15 000
+3 000
+25
+6.0
+3.0
+
+Salvage value (S)=((P•s/100) $
+Average investment (AVI)=((P+S)/2) $
+
+76 250
+190 625
+
+102 500
+256 250
+
+46 250
+115 625
+
+56 250
+140 625
+
+5 500
+13 750
+
+Loss in resale value ((P-S)/H) $/h
+Interest ((Int•AVI)/h) $/h
+Insurance ((Ins•AVI)/h) $/h
+
+15.25
+3.81
+1.91
+
+20.50
+5.13
+2.56
+
+9.25
+2.31
+1.16
+
+11.25
+2.81
+1.41
+
+1.10
+0.28
+0.14
+
+Total ownership costs (OW) $/h
+
+20.97
+
+28.19
+
+12.72
+
+15.47
+
+1.51
+
+20.0
+0.55
+10
+
+30.0
+0.55
+10
+
+0.0
+0.00
+0
+
+0.0
+0.00
+0
+
+0.0
+0.00
+0
+
+16 000
+5 400
+49 000
+12.0
+
+20 000
+5 400
+66 000
+12.0
+
+0
+0
+30 000
+0.0
+
+0
+0
+36 000
+0.0
+
+0
+0
+3 500
+0.0
+
+25.99
+25.99
+38
+
+25.99
+25.99
+38
+
+0.00
+0.00
+38
+
+0.00
+0.00
+38
+
+0.00
+0.00
+38
+
+OWNERSHIP COSTS
+
+OPERATING COSTS
+
+Fuel consumption (F) L/h
+Fuel (fc) f $/L
+Lube & oil as % of fuel (fp) %
+Tire replacement (tc) $
+Track & undercarriage replacement (Tc) $
+Track & undercarriage life (Th) h
+Annual repair & maintenance (Rp) $
+Shift length (sl) h
+Wages g $/h
+Operator
+Total wages (W) $/h
+Wage benefit loading (WBL) %
+Fuel (F•fc) $/h
+Lube & oil ((fp/100)•(F•fc)) $/h
+Track & undercarriage (Tc/H) $/h
+Repair & maintenance (Rp/h) $/h
+Wages & benefits (W•(1+WBL/100)) $/h
+Prorated overtime ((((1.5•W-W)•(11-8)•(1+WBL/100))/sl)+
+(((2.0•W-W)•(sl-11)•(1+WBL/100))/sl)) ($/h) h
+Total operating costs (OP) $/h
+
+11.00
+1.10
+1.48
+16.33
+35.87
+7.46
+
+16.50
+1.65
+1.85
+22.00
+35.87
+7.46
+
+0.00
+0.00
+0.00
+10.00
+0.00
+0.00
+
+0.00
+0.00
+0.00
+12.00
+0.00
+0.00
+
+0.00
+0.00
+0.00
+1.17
+0.00
+0.00
+
+73.24
+
+85.33
+
+10.00
+
+12.00
+
+1.17
+
+TOTAL OWNERSHIP AND OPERATING COSTS (OW+OP) $/h
+
+94.21
+
+113.52
+
+22.72
+
+27.47
+
+2.68
+
+a
+These costs are estimated using FERIC’s standard costing methodology for determining machine ownership and operating costs for new
+machines. The costs shown here do not include supervision, travel time, profit, or overhead and are not the actual costs for the contractor.
+b
+Costs for carriers were calculated using generic machines for each class size. c Based on quote from Waratah Distribution for an HTH622B
+harvesting head. The HTH620 harvesting head is no longer manufactured. d Based on a quote from Waratah Distribution for an HTH624 Super
+harvesting head. e Based on quote from IMAC Attachments. f Diesel fuel unit price as per a quote from The National Industrial Transport Log
+for June 2004. g Wage rates are as per 2004 rates outlined in the IWA Southern Interior Master Agreement. h Prorated overtime rates are as
+per 2004 rates in the IWA Southern Interior Master Agreement and reflect time and one half for all shift hours in excess of 8.0 hours but not
+exceeding 11.0 hours. Double time was allotted for all shift hours worked in excess of 11.0 hours.
+
+Advantage
+
+Vol. 5 No. 45
+December 2004
+
+11
+
+Appendix II
+Equipment carrier and implement combinations and costs
+Equipment
+
+Carrier
+($/h)
+
+Implement
+($/h)
+
+Total
+($/h)
+
+Hyundai 210LC carrier with Waratah HTH620 processing head a
+John Deere 892 ELC carrier with Waratah HTH624 processing head b
+Hyundai 210LC carrier with 1 270-mm grapple c
+Hitachi EX220LC loader with 1 270-mm grapple c
+Hyundai 290LC loader with 1 524-mm grapple d
+
+94.21
+113.52
+94.21
+94.21
+113.52
+
+22.72
+27.47
+2.68
+2.68
+2.68
+
+116.93
+140.99
+96.89
+96.89
+116.20
+
+a
+b
+c
+d
+
+12
+
+Costs are based on a 20–25 tonne class generic carrier and a 508-mm capacity generic harvesting head.
+Costs are based on a 30–35 tonne class generic carrier and a 610-mm capacity generic harvesting head.
+Costs are based on a 20–25 class tonne generic carrier with a generic log loading grapple.
+Costs are based on a 30–35 tonne class generic carrier with a generic log loading grapple.
+
+Vol. 5 No. 45
+December 2004
+
+Advantage
+
+

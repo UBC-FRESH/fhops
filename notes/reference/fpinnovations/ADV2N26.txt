@@ -1,0 +1,2165 @@
+Restricted to FERIC Members and Partners
+Contents
+1
+
+Introduction
+
+2
+
+Objectives
+
+2
+
+Site and
+stand
+description
+
+3
+
+Harvesting
+system and
+equipment
+
+5
+
+Study
+methods
+
+6
+
+Results and
+discussion
+
+13 Conclusions
+13 Implementation
+15 References
+15 Acknowledgements
+
+Author
+Kris Kosicki,
+Western Division
+
+Vol. 2 No. 26 April 2001
+
+Evaluation of a Trans-Gesco TG 88
+clambunk skidder working in
+northwestern British Columbia
+Abstract
+
+During the fall of 1999, the Forest Engineering Research Institute of Canada (FERIC)
+performed a short-term study on a Trans-Gesco TG 88 clambunk skidder working near
+Terrace in northwestern British Columbia. The study provided information about the
+skidder’s productivity and cost. Production functions were derived to predict skidder
+performance over a range of operating conditions.
+Keywords
+
+Trans-Gesco TG 88 clambunk skidder, Skidding, Productivity, Costs, Soil disturbance,
+Northwestern British Columbia.
+
+Introduction
+Forest management objectives and
+practices in western Canada are changing
+rapidly to place stronger emphasis on
+environmental protection, and new operational
+strategies aimed at minimizing soil disturbance
+are being developed, tested, and introduced.
+They include flexible harvest scheduling to take
+advantage of dry weather or frozen ground;
+using designated skid trails instead of unrestricted
+skidding; substituting low ground pressure
+skidders for conventional skidding equipment;
+and changing harvesting systems (e.g.,
+substituting loader-forwarding for conventional
+skidding).1 For successful implementation of
+new strategies and technologies, however,
+reliable information about their effectiveness
+and cost is necessary. To address this need,
+FERIC conducts an ongoing program in
+western Canada that monitors and reports on
+trials of alternative harvesting strategies aimed
+at minimizing soil disturbance.
+One promising method suitable for
+harvesting sensitive sites is the clambunk
+system. Because of their track and wheel
+
+systems, clambunks can operate on weaker
+soils than conventional rubber-tired and track
+skidders. Clambunks travel over a portion
+of the skidding distance with only a partial
+payload due to their loading sequence. With
+proper planning and supervision, the partially
+loaded portion of the cycle can be matched
+to the weaker soils, thus reducing the ground
+impact. Clambunks do very little turning
+compared to conventional skidders, so they
+are not limited by the same slope constraints.
+Furthermore, the weight of the load bears
+down on the machines and improves their
+stability. Clambunks can be operated safely
+on slopes up to 60% (MacDonald 1999).
+In 1999, Skeena Cellulose Inc., Terrace
+Operations (SCI), undertook a trial to
+investigate the feasibility of using a clambunk
+skidder to harvest a portion of a cutblock
+that was orginally laid out exclusively for cable
+yarding. SCI uses cable yarding systems
+1
+
+Loader-forwarding is the use of hydraulic log loaders
+to extract stems from the falling site to the roadside or
+skid trail. Also referred to as excavator-forwarding,
+hoe-forwarding, hoe-chucking, or shovel logging.
+
+extensively because of the generally steep and
+broken terrain in its operating area. However,
+portions of many of its cable cutblocks are
+potentially suitable for skidding with
+clambunk skidders. These sites represent
+opportunities to reduce overall harvesting
+costs by substituting lower-cost ground-based
+systems for cable systems. FERIC monitored
+the trial, which took place on a clearcut
+block in the Kiteen River watershed from
+August to October 1999. This report
+presents the results of the trial.
+
+Objectives
+The primary goal of this study was to
+assess the economic and operational feasibility
+
+Figure 1. Location
+of study site.
+
+of using a clambunk to skid timber over long
+distances in a steep, clearcut block. The
+following specific objectives were established
+to address this goal:
+• Determine overall productivities and
+costs for the falling, bunching, skidding,
+processing and loading phases of the
+harvesting operation.
+• Identify factors that influence productivity
+and cost of the skidding operation.
+• Develop productivity and cost functions
+for the skidding phase.
+• Identify operational factors affecting
+performance of the harvesting system,
+and recommend improvements where
+appropriate.
+• Evaluate the clambunk performance as a
+component of a “hot logging” system.2
+• Examine financial consequences of using
+the clambunk in a block designated
+initially for cable yarding.
+• Determine the proportion of area disturbed
+by skidding and loader-forwarding
+activities.
+
+Site and stand
+description
+The study block monitored by FERIC
+was located in the Kalum Forest District
+(Figure 1). It is located in the Wet
+Submaritime subzone, Montane variant, of
+the CWH biogeoclimatic zone (CWHws2)
+in the Prince Rupert Forest Region (Banner
+et al. 1993). Table 1 summarizes site and stand
+information for the study block. Initially,
+cable yarding was prescribed exclusively for
+the study site. However, in an amendment
+to the prescription, a portion of the block
+area with moderate slopes was approved for
+2
+
+A hot logging system is one where the harvesting
+operations occur simultaneously.
+
+Forest Engineering Research Institute of Canada (FERIC)
+Eastern Division and Head Office
+
+580 boul. St-Jean
+Pointe-Claire, QC, H9R 3J9
+
+(514) 694-1140
+(514) 694-4351
+admin@mtl.feric.ca
+
+2
+
+Western Division
+
+2601 East Mall
+Vancouver, BC, V6T 1Z4
+
+(604) 228-1555
+(604) 228-0999
+admin@vcr.feric.ca
+
+Disclaimer
+Advantage is published solely to disseminate information to FERIC’s members and partners. It is not intended as an endorsement or approval of any
+product or service to the exclusion of others that may be suitable.
+ Copyright 2001. Printed in Canada on recycled paper.
+Vol. 2 No. 26
+April 2001
+
+Advantage
+ISSN 1493-3381
+
+extraction with a clambunk skidder. Long
+skidding distances and frequent slope breaks
+and steep pitches favoured the clambunk
+skidder over other ground-based options such
+as loader-forwarders or conventional skidders.
+The use of the clambunk eliminated a
+planned 1 170-m spur road and the need
+for backspar trails along the east and south
+boundaries of the block.
+
+Harvesting system
+and equipment
+The 54-ha block was manually clear-felled
+before the yarding and skidding phases
+started. No delimbing or bucking was done
+at the stump, except for very large trees. The
+steeper portion of the block, consisting of
+about 33 ha, was harvested with a Madill 123
+swing yarder. It was teamed with an MDI/
+Yutani MD320 loader used as a backspar, and
+a Link-Belt LS-4300 hydraulic log loader. The
+remaining area, about 21 ha, was harvested with
+a Trans-Gesco TG 88 clambunk (Figure 2).
+Two hydraulic log loaders assisted the
+
+Table 1. Site and stand characteristics
+Elevation (m)
+Range
+Average
+Slope (%)
+Range
+Average
+Terrain
+Stand composition (% by net volume)
+Western hemlock
+Amabilis fir
+Stand parameters
+Net merchantable volume (m3/ha)
+Tree density (no./ha)
+Avg volume (m3/tree)
+Avg diameter at breast height (cm)
+Avg tree height (m)
+
+500–650
+600
+20–45
+35
+Broken
+63
+37
+586
+436
+1.34
+46.6
+36
+
+clambunk. A John Deere 892D-LC loader
+used as a loader-forwarder moved stems over
+short distances and bunched them along the
+skid trails for subsequent skidding by the
+clambunk. The second Link-Belt LS-4300 log
+loader, assigned exclusively to the clambunk,
+Figure 2. Layout of
+study block.
+
+Advantage
+
+Vol. 2 No. 26
+Arpil 2001
+
+3
+
+cleared the unloading area, spread the stems
+on the road for manual processing, sorted
+the logs, and loaded trucks.
+The Trans-Gesco TG-88 is an 8-wheeldrive, rubber-tired, double-bogie clambunk
+designed to skid large loads of tree-length
+stems over long distances (Figure 3). It is
+10.52 m long and 3.6 m wide, has a 5.66-m
+wheelbase and 0.86 m of ground clearance,
+and has an operating weight of approximately
+29 320 kg with basic equipment. It is
+powered by a 246-kW diesel engine and
+driven by a hydrostatic transmission and four
+hydrostatic pumps that power each tandem
+wheel set. The hydraulic system for the
+loader, grapple, steering, front blade and
+clambunk grapple is powered by two load
+sensing pumps. The clambunk is fitted with
+a knuckle-boom loader with Trans-Gesco
+grapple and Rotobec rotator. The loader has
+a maximum reach of 7.6 m, and a lifting
+capacity of 2495 kg at a distance of 6.1 m.
+The hydraulically operated clambunk has a
+cross-sectional area of 3.53 m², a maximum
+opening of 4.19 m, and maximum load
+capacity of 31 750 kg.
+The cutblock was originally laid out for
+cable yarding only and most of the road
+system was located on steep slopes. As a
+result, the clambunk could access ground
+skidding areas at only a few locations along
+the road, where the road cutbanks were low
+and gentle enough for the clambunk to climb.
+These locations effectively served as the
+landing areas for the clambunk. Logs were
+unloaded from the clambunk at these nodes
+and then sorted, processed, decked and loaded
+onto log trucks by the hydraulic log loader.
+Figure 3. Fully
+loaded TransGesco TG 88
+travelling to the
+landing.
+
+4
+
+In the typical skidding cycle observed in this
+study, the clambunk travelled in reverse from
+the roadside to the furthest point of the
+skidding cycle. Travelling in reverse eliminated
+the need to turn the machine around at either
+end of its trip. The operator faced the rear of
+the machine, and looked over his shoulder
+when the machine travelled forward—the low
+travel speed made this workable.
+The clambunk built its full payload in
+stages from several smaller piles. At the first
+loading site (the most distant point from the
+landing), the butt ends of the stems were lifted
+with the loading boom and dropped into the
+open clambunk grapple. When all stems
+within the reach of the boom had been
+loaded, the clambunk grapple was tightened
+to secure the load, the machine drove in the
+direction of the landing, and then stopped at
+the next loading site. This loading process
+was repeated until a full load had been
+accumulated. The clambunk then skidded
+the entire load the remaining distance to the
+roadside landing. The direction of all loaded
+travel was favourable (downhill). At the
+landing, five unloading modes were used:
+• Dropping the load by opening the
+grapple and driving forward and out
+from under the load.
+• Unload with the clambunk’s own loading
+boom.
+• Unload with the hydraulic log loader.
+• Unload with both clambunk loading
+boom and hydraulic log loader.
+• Unload initially by dropping the load
+and then with the clambunk’s boom.
+To minimize soil disturbance and
+facilitate the loading phase of the skidding
+operation, the John Deere loader-forwarder
+assisted the clambunk by retrieving stems
+from the areas located between the trails. The
+loader-forwarder bunched the stems in
+continuous windrows along the skid trails,
+forming a herringbone pattern (Figure 4).
+Occasionally, the loader-forwarder helped the
+clambunk to load large stems (Figure 5). The
+Link-Belt log loader worked on the landing
+(Figure 6) and frequently helped unload the
+clambunk. On the landing, the skidded
+Vol. 2 No. 26
+April 2001
+
+Advantage
+
+stems were processed manually by a twoperson team.
+
+Figure 4. Stems
+bunched along
+skid trail by the
+John Deere
+loader-forwarder.
+
+Study methods
+During the trial, FERIC and SCI
+representatives observed the harvesting
+operations and collected time and production
+information for the skidding phase. The field
+study involved collecting shift-level data,
+detail-timing the skidding operation, and
+gathering information on numbers of extracted
+stems and skidding cycles.
+The shift-level data were collected daily
+and were complemented with the contractor’s
+monthly work reports which documented
+shift times for all components of the harvesting
+operation. Net volumes of produced logs
+were obtained from the monthly weigh-scale
+records provided by SCI. Productivities were
+calculated for each harvesting phase based on
+net harvest volumes and total scheduled
+machine hours (SMH) for each phase.
+Skidding cycles were detail-timed at
+frequent intervals throughout the study
+period. Each timed skidding cycle was
+subdivided into five timing elements:
+travelling unloaded; loading and moving to
+load; travelling fully loaded; unloading; and
+in-cycle delays (see Appendix I for definitions
+of timing elements). Additional data recorded
+for each cycle were travelling distances unloaded
+and fully loaded, number of stems per cycle,
+average slope of the skid trail, mode of
+unloading, and reasons for observed delays.
+The detailed-timing data were analyzed
+using multiple regression techniques to
+determine relationships between total cycle
+time and skidding distances, slope of the
+skidding trail, and number of stems per turn.
+A .05 significance level was used to test the
+relationship and the contribution each
+independent variable made to the model. The
+results of the regression analysis were then
+used to develop equations to predict delay-free
+cycle time and to derive production functions.
+Production functions in this report were
+developed to predict hourly skidding
+productivity, unit skidding cost, and total
+Advantage
+
+Vol. 2 No. 26
+Arpil 2001
+
+Figure 5. John
+Deere loaderforwarder
+assisting
+clambunk with
+loading large
+stems (photo
+courtesy of
+Woodima Forestry
+Services).
+
+Figure 6. Link-Belt
+LS-4300 loader on
+the landing.
+
+unit cost for the Trans-Gesco harvesting
+system. Production functions for the skidding
+phase were derived by using an average
+payload per cycle, and adjusting predicted
+cycle times to reflect both in-cycle and
+shift-level delays encountered in the skidding
+phase. Costs for the loader-forwarding,
+skidding, processing and yarding phases were
+calculated using FERIC’s standard costing
+methods (Appendix II). Labour costs were
+based on Industrial Wood and Allied Workers
+of Canada rates. Information on falling unit
+costs, road construction costs, productivity
+for the grapple yarding operation, and
+post-harvest rehabilitation costs was supplied
+by SCI.
+5
+
+Following harvesting, a survey was
+conducted on a portion of the clambunkskidded area to estimate the level of soil
+disturbance caused by clambunk and loaderforwarder trails.3 Areas occupied by clambunk
+and loader-forwarder trails were determined
+by surveying all visible trails. For the purpose
+of FERIC’s survey, skid trail segments were
+visually classified into one of three classes:
+• First-class trails: Unbladed skid trails
+ending at the roadside landings and
+showing evidence of high levels of machine
+traffic, including extensive compaction,
+churning and/or exposure of mineral
+soil, and well-defined track ruts. From
+observations made during the detailedtiming phase, the typical first-class trail
+was estimated to have received from 15
+to 25 passes by the clambunk. These
+trails correspond to “compacted areas”
+under the Forest Practices Code (FPC)
+(BCMOF 2000).
+• Second-class trails: Unbladed skid trails
+characterized by extensive but
+discontinuous patches of exposed
+mineral soil and/or well-defined track
+impressions in crushed slash or litter
+Table 2. Shift and productivity
+data for the clambunk
+Description
+Available shifts (no.)
+Productive shifts (no.)
+Weekends and holidays (no.)
+Mechanical downtime shifts (no.)
+Total productive shift time (SMH)
+Volume (m3)
+Stems (no.)
+Truck loads (no.)
+Average shift time (h)
+Skidding cycles (no.)
+Average load
+stems/cycle (no.)
+m3/cycle
+Productivity
+m3/SMH
+m3/shift
+truck loads/10-h shift
+Cost ($/SMH)
+Unit skidding cost ($/m3)
+6
+
+Total
+49
+25
+14
+10
+247
+10 536
+6 930
+242
+9.9
+353
+19.6
+29.8
+42.7
+421
+9.8
+164.71
+3.86
+
+layers. Second-class trails were usually less
+heavily travelled extensions of first-class
+trails, but still showed evidence of several
+machine passes. These trails were estimated
+to have received from 6 to 10 machine
+passes on average. Most of the second-class
+skid trails would meet the definition of
+“dispersed disturbance” under the FPC.
+• Third-class trails: Lightly travelled trail
+segments characterized by occasional
+isolated patches of exposed mineral soil
+or other evidence of machine travel (e.g.,
+track marks on the forest floor or slash).
+Third-class trails were estimated to have
+received from 1 to 3 machine passes.
+Most of these trails were used exclusively
+by the loader-forwarder. Except for
+isolated gouges or scrapes, third-class
+skid trails would not meet the definition
+of “dispersed disturbance”.
+For each trail segment, the dimensions
+(slope distance, width, and slope gradient) and
+traffic intensity were assessed and recorded. As
+an added check on the visual traffic intensity
+classification, the proportion of exposed
+mineral soil was estimated and recorded (to the
+nearest 5%) for each trail segment.
+
+Results and discussion
+Shift-level study
+
+Skidding
+The clambunk was scheduled to work
+one 12-h shift per day (except 9.5 h on Fridays),
+six days per week. During the monitoring
+period, 25 productive shifts were recorded.
+The shift lengths ranged from 6 to 13 h, and
+averaged 9.9 h.
+Shift structure and productivities
+summarized in Table 2 are based on the
+contractor’s monthly work reports. Overall,
+the skidding productivity was 42.7 m³/SMH,
+at a cost of $3.86/m³.
+More detailed information on shift time
+structure, summarized in Table 3, was obtained
+3
+
+All skidding activities on the study site were done using
+unbladed skid trails.
+Vol. 2 No. 26
+April 2001
+
+Advantage
+
+from shift-level data collected over 11 shifts.
+For this period, the clambunk’s utilization
+and availability were 77% and 85%, respectively.
+Half of the delays were caused by mechanical
+problems related to hydraulic components.4
+No delays related to an interaction between
+skidding and yarding operations were observed.
+
+Table 3. Summary of shift-level
+time for the clambunk
+
+Associated operations
+Shift structure and productivities for
+loader-forwarding with the John Deere
+892D-LC loader-forwarder, processing by
+the two-person bucking team, and loading
+with the Link-Belt LS-4300 loader are summarized in Table 4.
+
+4
+
+The Trans-Gesco clambunk documented in this report
+had over 7000 hours and was in need of repair and
+hydraulic adjustment (per Scott Dorrett, Trans-Gesco
+Inc., personal communication, December 2000).
+
+3
+
+All phases of the Trans-Gesco system
+achieved similar productivities except for
+processing (Figure 7). Small differences in
+productivities resulted mainly from differing
+utilizations. Processing productivity per
+bucker of 24 m³/SMH was far below the
+skidding and loading productivities. Therefore,
+two buckers were employed to keep pace with
+
+Productivity (m /SMH)
+
+Summary of productivities and
+costs
+
+Description
+
+Total
+
+Productive machine hours (PMH)
+Mechanical delays (h)
+Hydraulic repairs
+Other repairs
+Total mechanical delays (MD) (h)
+Non-mechanical delays (h)
+Interaction with other equipment
+Refueling
+Stuck on stumps and reloading
+Discussion with supervisors
+Other non-mechanical delays
+Total non-mechanical delays (NMD) (h)
+Total delays (MD+NMD) (h)
+Scheduled machine hours (SMH)
+Utilization PMH/SMH (%)
+Availability (SMH-MD)/SMH) (%)
+
+69.9
+
+50
+40
+30
+20
+10
+0
+
+10.0
+3.8
+13.8
+0.9
+2.5
+1.2
+0.9
+1.0
+6.5
+20.3
+90.2
+77
+85
+
+Figure 7.
+Clambunk
+system
+productivities
+by phase.
+LoaderSkidding Processing Loading
+forwarding
+
+Table 4. Summary of shift-level time for
+loader-forwarding, processing and loading
+Description
+Available shifts (no.)
+Productive shifts (no.)
+Holidays (no.)
+Other-duty shifts (no.)
+Total productive shift time (SMH) (h)
+Haul truck loads (no.)
+Average shift time (h)
+Volume (m3)
+Volume/truck load (m3)
+Productivity
+m3/SMH
+m3/shift
+truck loads/11-h shift
+unit cost ($/m3)
+Advantage
+
+Vol. 2 No. 26
+Arpil 2001
+
+Loaderforwarding
+
+Manual
+processing
+
+Loading
+
+36
+21
+10
+6
+256
+242
+12.2
+10 536
+44
+
+89
+39
+24
+26
+447
+242
+11.5
+10 536
+44
+
+47
+27
+12
+8
+300
+242
+11.1
+10 536
+44
+
+41.2
+502
+10
+2.88
+
+23.6
+270
+6
+1.62
+
+35.1
+390
+9
+4.04
+7
+
+these operations. One bucker worked full-time,
+and the second spent about half of the daily
+shift working with the clambunk operation.
+The second bucker occasionally improved
+skid trails for the Trans-Gesco by reducing
+the heights of the stumps.
+
+Loaderforwarding
+18%
+
+Falling
+23%
+
+Figure 8.
+Distribution of
+harvesting costs
+for the clambunk
+system.
+
+$3.75/m
+
+3
+
+$4.04/m
+
+Loading
+25%
+
+$2.88/m
+
+3
+3
+
+$3.86/m
+
+3
+3
+
+$1.62/m
+
+Processing
+10%
+
+Skidding
+24%
+
+Table 5. Summary of detailed
+timing for the clambunk
+Description
+
+Total
+
+Productive time (min)
+Productive machine hours (PMH)
+Total cycles (no.)
+Stems (no.)
+Estimated volume (m3) a
+Average cycle time (min)
+Stems/cycle (no.)
+minimum
+maximum
+average
+Average volume/cycle (m3) a
+Travel distance empty (m)
+minimum
+maximum
+average
+Travel distance fully loaded (m)
+minimum
+maximum
+average
+Productivity
+stems/PMH
+m3/PMH
+
+4 192
+69.9
+121
+2 379
+3 616
+34.6
+
+a
+
+8
+
+3
+42
+19.7
+29.9
+35
+550
+236
+20
+310
+123
+34.0
+51.7
+
+Using average piece size (from shift-level study) of 1.52 m3.
+
+Overall costs for falling, loader-forwarding,
+skidding, processing, and loading were
+estimated at $16.15/m³ (Figure 8).
+Detailed-timing study:
+Trans-Gesco clambunk
+
+Results of the detailed-timing study are
+summarized in Table 5. Using the average
+net piece volume of 1.52 m³ from the shiftlevel study, 3 616 m³ were skidded in 69.9
+PMH, or 51.7 m³/PMH. Figure 9 presents
+the distribution of cycle time for the
+clambunk. “Loading and moving to load”
+was the longest element of the skidding
+cycle, accounting for 13.3 min/cycle.
+Timing results for the unloading phase
+are summarized in Table 6. The unloading
+times differed significantly for the five
+unloading methods. “Open clambunk and
+drive forward to drop the load” was the
+fastest unloading technique, but it left the
+stems somewhat tangled for subsequent
+processing. Unloading with the clambunk’s
+boom was the most time-consuming method.
+Cycle time, productivity, and cost
+of skidding
+
+Multiple regression analysis was performed
+on 101 detail-timed cycles. The analysis
+found a significant linear relationship between
+delay-free cycle time for the Trans-Gesco
+clambunk and the variables of travelling
+empty distance and number of stems per
+cycle (Equation 1, Appendix III). Travel fully
+loaded distance and unloading method were
+not significant variables.
+Figure 10 presents predicted delay-free
+cycle time for the clambunk as a function of
+skidding distance and number of stems per
+cycle. Both variables have a strong impact
+on cycle time. For example, cycle time increases
+by 8 min as the number of stems per load
+increases from 20 to 40. For a skidding
+distance of 236 m (the average for this study),
+this represents a 25% increase in cycle time.
+The impact of the number of stems per load
+is even greater for shorter skidding distances.
+
+Vol. 2 No. 26
+April 2001
+
+Advantage
+
+Table 6. Summary of unloading time by unloading technique
+
+Description
+
+Observations
+(no.)
+
+Average
+stems/load
+(no.)a
+
+Average
+unloading
+time
+(min)
+
+12
+70
+14
+5
+10
+
+19.2
+19.7
+20.6
+23.0
+15.7
+
+0.30
+6.17
+3.80
+5.51
+2.10
+
+Open grapple and drive forward
+Clambunk boom only
+Hydraulic log loader only
+Clambunk boom + hydraulic log loader
+Open grapple and drive forward + clambunk boom
+a
+
+No significant differences between means at α=.05.
+
+For a payload of 19.7 stems per cycle (also
+the average in this study), doubling skidding
+distance from 250 to 500 m results in a 50%
+increase in cycle time.
+The shift-level and detailed-timing results
+were combined to estimate productivity
+during scheduled skidding time (Equation
+2, Appendix III). This can be used to predict
+wood flow and schedule processing and
+hauling activities on a shift-level basis.
+Since the payload volumes skidded by
+the clambunk in each cycle were consistent and
+reasonably close to the study’s average volume
+of 30 m³/cycle, the predicted productivity
+was developed as a function of the average
+stem volumes. Four classes were arbitrarily
+chosen for the average stem volumes: 0.75, 1.00,
+1.50, and 2.00 m³. For a payload of
+30 m³/cycle, the chosen volumes corresponded
+to 40, 30, 20, and 15 stems/cycle.
+
+Delays <10 min
+Travelling empty
+
+Unloading
+15%
+
+5%
+
+27%
+
+15%
+38%
+
+Travelling fully
+loaded
+
+Loading and
+moving to load
+
+Figure 11 shows predicted skidding
+productivity for the clambunk as a function
+of skidding distance and payload size
+(number of stems per cycle or, interchangeably,
+average stem volume). Because of the relatively
+low travel speed of the clambunk and high
+proportion of time for loading and unloading
+phases, the productivity is very sensitive to
+skidding distances and average stem volumes.
+For example, doubling skidding distance
+
+70
+Stems per
+cycle (no.)
+
+60
+Cycle time (min)
+
+Figure 9.
+Distribution of
+cycle time for the
+Trans-Gesco
+clambunk.
+
+40
+
+50
+
+30
+20
+
+40
+
+15
+
+Figure 10.
+Predicted delayfree cycle time as
+a function of
+skidding distance
+and number of
+stems per cycle.
+
+30
+20
+10
+100
+
+150
+
+200
+
+250
+
+300
+
+350
+
+400
+
+450
+
+500
+
+Skidding distance (m)
+
+Advantage
+
+Vol. 2 No. 26
+Arpil 2001
+
+9
+
+70
+
+60
+
+3
+
+Productivity (m /SMH)
+
+Figure 11.
+Predicted
+skidding
+productivity as a
+function of
+skidding distance
+and number of
+stems per cycle.
+
+Stems per
+cycle (no.)
+
+Average
+volume
+(m³/stem)
+
+40
+30
+20
+10
+
+0.75
+1.00
+1.50
+2.00
+
+42.7 m³/SMH study average
+
+50
+
+40
+
+30
+
+20
+100
+
+200
+
+300
+
+400
+
+500
+
+Skidding distance (m)
+
+from 200 to 400 m results, depending on
+the average stem volume, in a 25–32%
+reduction of the skidding productivity. For
+all skidding distances, productivity increases
+as the average stem volume increases. This
+effect is especially apparent for short
+skidding distances.
+For the values recorded in this study,
+Equation 2, Appendix III predicts a
+skidding productivity of 41.7 m³/SMH.
+This agrees well with the average skidding
+productivity of 42.7 m³/SMH from the
+shift-level study (Table 2).
+Figure 12 shows unit skidding cost for
+the Trans-Gesco clambunk as a function of
+skidding distance and payload size (number
+of stems per cycle or, interchangeably,
+average stem volume). For all payload size
+
+Skidding and cable yarding
+compared to cable yarding only
+
+The use of the clambunk system to harvest
+a portion of a cutblock that was initially
+designed for cable yarding results in changes
+to the equipment complement, redistribution
+of the harvest volume between extraction
+modes, time to complete harvesting operations,
+and length of required haul roads. Some of
+these changes have the potential to reduce
+overall harvesting costs (e.g., reduction in
+
+8.00
+7.00
+6.00
+
+3
+
+Cost ($/m )
+
+Figure 12.
+Predicted unit
+skidding cost as a
+function of
+skidding distance
+and number of
+stems per cycle.
+
+classes, the unit skidding cost increases at a
+rate of $0.81/m³ for each 100-m increase in
+skidding distance. The predicted unit skidding
+cost of $3.95/m³ for the values recorded in
+this study is very close to the average cost of
+$3.86/m³ calculated for the shift-level study.
+
+Stems per
+cycle (no.)
+
+Average
+volume
+(m³/stem)
+
+40
+30
+20
+10
+
+0.75
+1.00
+1.50
+2.00
+
+5.00
+4.00
+3.00
+2.00
+100
+
+$3.86/m³ study average
+
+200
+
+300
+
+400
+
+500
+
+Skidding distance (m)
+
+10
+
+Vol. 2 No. 26
+April 2001
+
+Advantage
+
+road construction), while others have the
+potential to increase costs. To evaluate the
+financial consequences of these changes, an
+analysis was performed for two harvesting
+systems: a cable-yarding-only system (as
+originally planned); and a clambunk-andyarder system (as observed in this trial). The
+following differences between the two
+options were assumed:
+• The total block volume was distributed
+between two extraction systems.
+• Using the Trans-Gesco clambunk
+eliminated a planned 1170-m spur road.
+• An additional loader was required to
+align and bunch stems to improve the
+efficiency of the skidding operation.
+• Skidding productivity exceeded cableyarding productivity, resulting in reduced
+loader time and landing operation costs.
+• Some skid trails in the portion of the
+block extracted with the clambunk had
+to be rehabilitated.
+• There were no substantial differences in
+falling and processing costs between the
+two systems.
+In the financial analysis, productivities
+and costs of the skidding system were based
+on the shift-level study results. Information
+on road construction costs, yarding
+productivities, and post-harvest rehabilitation
+cost was supplied by SCI. The results of the
+analysis are summarized in Appendix IV.
+The use of the clambunk system resulted
+in a new volume distribution between both
+systems and in a substantial saving of $70,000
+on road construction. Skidding of 10 536 m³
+reduced the cable-yarded volume from
+30 037 to 19 501 m³. Because the skidding
+productivity was much greater than yarding
+productivity, the total extraction time was
+reduced from 1 306 to 1 095 SMH. With
+the yarder and backspar costs of $343/SMH,
+reduced yarding time resulted in a 38%
+yarding cost reduction, from $470,602 to
+$290,598. In the clambunk-and-yarder
+system, the total hours worked by the two
+Link-Belt loaders was only 1 148 SMH,
+which was less than 1 306 SMH in the
+
+Advantage
+
+Vol. 2 No. 26
+Arpil 2001
+
+yarder-only system. It resulted in a cost
+reduction of $22,398. The new cost
+subcategories emerging with the introduction
+of the Trans-Gesco system included skidding
+cost of $40,683, bunching cost of $30,350,
+and skid trail rehabilitation cost of $3,320.
+The sums of the selected cost
+subcategories for the yarder-only and
+clambunk-and-yarder systems were
+$864,078 and $689,029, respectively, so
+using the Trans-Gesco clambunk resulted in
+a savings of $175,049 or $5.83/m³. Even if
+the spur road construction ($70,000) was
+considered as a site-specific cost, savings
+would be $105,049 or $3.50/m³.
+Soil disturbance
+
+After skidding was completed and before
+the skid trails were rehabilitated, a 9.33- ha
+clambunk-skidded area in the southern part
+of the block was surveyed to estimate skid
+trail occupancy and soil disturbance levels
+(Table 7). This sub-unit was considered
+representative of the entire ground-skidded
+area.
+The clambunk and loader-forwarder
+developed a total of 3 906 m (horizontal
+distance) of unbladed skid trail to harvest
+this unit, for an average of 419 lineal m/ha.
+Of this total, 867 m were first-class (heavy
+use) trails, 1 841 m were second-class trails,
+and 1 198 m were third-class (light use)
+trails.
+Skid trail widths varied from 3 to 10.7 m
+and averaged 4.8 m overall. Average skid trail
+width increased with traffic intensity, from
+4 m for third-class trails to 4.7 m for secondclass trails, and to 6.2 m for first-class trails.
+Most of the third-class trails were probably
+made and used only by the loader-forwarder,
+since the average width of these trails is
+narrower than the Trans-Gesco clambunk
+(4.5 m when equipped with 1.37-m-wide
+tracks, as in this study).
+A total of 1.9 ha, or 20.4% of the
+harvested area, was occupied by all classes of
+skid trails. First-class trails accounted for
+0.54 ha, second-class trails for 0.87 ha, and
+
+11
+
+Table 7. Summary of the skid trail survey
+Skid trail characteristics
+
+1st
+
+Skid trail class
+2nd
+
+3rd
+
+All classes
+
+Length (m)
+Area (ha)
+Width (m)
+minimum
+maximum
+mean a
+Slope (%)
+minimum
+maximum
+mean b
+Proportion of trail area with
+exposed mineral soil (%)
+minimum
+maximum
+mean c
+
+867
+0.54
+
+1 841
+0.87
+
+1 198
+0.49
+
+3 906
+1.90
+
+4.4
+10.7
+6.2
+
+3.3
+6.2
+4.7
+
+3.0
+5.8
+4.0
+
+3.0
+10.7
+4.8
+
+5
+50
+28
+
+5
+47
+29
+
+(20)
+47
+26
+
+(20)
+50
+28
+
+30
+100
+91
+
+5
+100
+39
+
+0
+60
+14
+
+0
+100
+42
+
+a
+
+Differences between means significant at α=.01
+No significant differences between means at α=.05
+c
+Differences between means significant at α=.01
+b
+
+third-class trails for 0.49 ha. All of the firstclass trails were heavily disturbed due to
+repeated machine traffic. The surfaces of these
+skid trails consisted almost entirely of exposed
+mineral soil (average 91%), usually heavily
+churned and mixed with broken slash and
+woody debris, with deep continuous impressions
+created by the skidder’s tracks and the
+dragging ends of large logs.5
+Second-class trails represented a gradient
+of disturbance conditions. This ranged from
+extensive stretches of exposed and churned
+mineral soil suggesting numerous machine
+passes, to shallow track impressions in
+otherwise intact forest floor indicating only
+a few passes. A typical second-class trail
+consisted of well-defined track impressions
+in crushed slash and forest floor material,
+interspersed with discontinuous patches of
+exposed mineral soil. While it was obvious
+that second-class trails were used for skidding,
+overall these trails were much less heavily
+disturbed than first-class trails. Exposed
+mineral soil averaged only 39%, considerably
+less than that of first-class trails.
+
+12
+
+Most of the third-class trails were
+thought to have been created by the loaderforwarder as it aligned logs for the clambunk,
+and were not used for skidding. For the most
+part, these trails were identified by faint track
+impressions on slash or forest floor layers.
+Exposed mineral soil averaged 14% and
+occurred in small, isolated patches at points
+where the loader-forwarder changed direction
+of travel.
+This survey was not done to measure
+compliance with the FPC. However, the
+skid-trail classes as defined for this study
+correspond generally with FPC definitions
+of “compacted areas” and “dispersed disturbance”
+(BCMOF 2000). First- and second-class
+trails occupied 5.8% and 9.3%, respectively,
+of the harvested area. In the author’s opinion,
+virtually all of the first-class trails and perhaps
+three-quarters of the second-class trails
+qualify as “compacted area” and “dispersed
+5
+
+“Exposed mineral soil” was one of the criteria used in
+this study to differentiate between first-, second-, and
+third-class skid trails, and is not equivalent to “soil
+disturbance” as defined in the FPC.
+
+Vol. 2 No. 26
+April 2001
+
+Advantage
+
+disturbance”, respectively, while lightlytravelled segments of second-class trails and
+all of the third-class trails would not count
+as soil disturbance. Thus, total soil disturbance
+using FPC definitions is probably about
+12–13% of the Net Area to be Reforested
+(NAR), whereas the maximum disturbance
+level allowed for a site with a moderate to
+high soil sensitivity rating is 10%. Although
+the clambunk probably exceeded the allowable
+limit on this particular sub-unit, this survey
+suggests that it should be possible to satisfy
+soil disturbance objectives by carefully
+planning skidding patterns and subsequently
+rehabilitating the heavily-travelled skid trails
+after harvesting.6
+
+Conclusions
+The study demonstrated that the TransGesco TG 88 clambunk was capable of
+working efficiently in a clearcut block designed
+initially for cable yarding only. The clambunk
+met all basic expectations: it was able to
+negotiate steep terrain, build its full payloads
+from smaller piles, and skid these payloads
+over long distances without a dramatic loss
+in production.
+The clambunk’s cycle time was strongly
+correlated with skidding distances and number
+of stems per cycle. The clambunk’s payloads
+averaged 20 stems and 30 m³ per cycle, based
+on the average volume of 1.5 m³ for this study.
+The average skidding productivity was
+42.7 m³/SMH, and the skidding cost of
+$3.86/m³ constituted 24% of the total cost
+to put the logs on the truck (estimated at
+$16.15/m³). Repairs to components of the
+hydraulic system of the machine were the
+main source of all delays.
+The clambunk was able to work as part
+of a hot logging system. Delays resulting
+from the interaction between the clambunk
+and other components of the harvesting
+system were rare and constituted a very low
+portion of the shift time.
+The financial analysis showed that the
+introduction of the Trans-Gesco system to
+the study block resulted in considerable time
+and financial savings, up to $5.83/m³.
+Advantage
+
+Vol. 2 No. 26
+Arpil 2001
+
+Results of the soil disturbance survey
+suggest that with careful planning and
+commitment to rehabilitating heavily travelled
+skid trails, the clambunk can meet soil
+disturbance objectives in this type of
+application.
+The use of easily recognized, designated
+skid trails facilitated identification and
+post-harvest rehabilitation of disturbed areas.
+
+Implementation
+During the observed harvesting operation,
+FERIC identified conditions for successful
+and efficient use of the Trans-Gesco
+clambunk:
+• The Trans-Gesco clambunk can be
+employed in clearcut blocks with slopes
+up to 50%.
+• Skidding with a clambunk is especially
+advantageous in blocks with high
+average stem volumes. Skidding
+productivity and cost strongly depend
+on average stem volumes.
+• To build up large loads and to use its
+full payload capacity, the clambunk
+requires cutblocks with relatively long
+distances between roads and block
+boundaries.
+• To achieve an efficient skidding operation
+in manually felled cutblocks, and to
+facilitate the loading phase of the skidding
+operation, felled trees should be retrieved
+from the areas in between the trails with
+a loader and bunched along the skid trails
+in continuous windrows. Windrowed
+timber should be oriented in a “herringbone” arrangement. Stems should be
+located close to the skid trail, within the
+reach of the clambunk’s boom, and with
+butts pointing toward the trail. The angle
+between the skid trail and stems should
+be in the range of 30–45°. Placing the
+stems parallel to the skid trail should be
+avoided.
+6
+
+The FPC allows soil disturbance limits to be
+temporarily exceeded if certain conditions are met and
+the disturbed area is appropriately rehabilitated after
+harvesting, as was done in this study (BCMOF 2000).
+
+13
+
+• To avoid unnecessary soil disturbance, a
+system of skid trails for the clambunk
+should be laid out. Skid trail sections
+should be as long as possible, oriented
+perpendicular to the contour lines,
+connected by gentle curves, and free of
+ground obstacles. The location of the
+skid trails has to be known to the loader
+operator bunching the stems for the
+skidding operation. Stumps on the skid
+trail and its vicinity should be kept low
+to avoid machine hang-ups. After
+several passes of the clambunk, the
+height of the stumps usually has to be
+reduced with a power saw.
+• Retrieving and bunching stems along
+skid trails should start early enough to
+avoid delays resulting from loader and
+clambunk interaction. For cutblocks
+with limited access to the haul road and
+limited landing capacities, a hot logging
+system is recommended.
+• Unloading the clambunk with a loader
+facilitates preliminary sorting of stems,
+keeps the landing area clean, and creates
+safer working conditions on the landing
+for the processing team.
+• The loader-forwarder should be utilized
+whenever possible. In blocks harvested
+with clambunks, the loader-forwarder
+can be used to extract timber from the
+block area close to the road.
+• The Trans-Gesco system can be combined
+with a cable yarding system and may
+result in considerable financial savings.
+With proper planning and layout of
+yarding roads, skid trails, and landings,
+no delays related to the interaction
+between the two extraction systems
+should occur. If two or more extraction
+systems are employed in the same block,
+landing and loading activities of these
+systems should be supported with one
+hydraulic log loader to increase its
+utilization and reduce costs.
+
+14
+
+• Employment of two or more extraction
+systems in the same block requires more
+elaborate site reconnaissance, planning
+and layout because the requirements of
+the systems on the shape of the cutblock,
+location of roads, falling and extraction
+directions, etc. may be in conflict with
+each other. Final decisions may be based
+on prioritization of extraction systems
+or on study results of several possible
+solutions.
+• Strategic planning is necessary to
+determine the long-term capability of
+the company to support the Trans-Gesco
+system as a substitute for cable systems.
+It should identify suitable locations,
+timber volumes, and predicted finanical
+outcomes for potential employment of
+the clambunk. The planning span should
+not be shorter than one year but it would
+be advantageous if it was equal to the
+expected machine life.
+
+Vol. 2 No. 26
+April 2001
+
+Advantage
+
+References
+Banner, A.; MacKenzie, W.; Haeussler, S.; Thompson, S.; Pojar, J.; Trowbridge, R. 1993. A
+field guide to site identification and interpretation for the Prince Rupert Forest Region.
+Part I. Research Branch, British Columbia Ministry of Forests, Victoria, B.C. 280 pp.
+British Columbia Ministry of Forests (BCMOF). 2000. Forest practices code of British
+Columbia: Soil conservation guidebook. 24 pp.
+MacDonald, A.J. 1999. Harvesting systems and equipment in British Columbia. B.C.
+Ministry of Forests, Forestry Division Services Branch, Victoria, B.C. Co-published by
+FERIC, Vancouver. Handbook No. HB-12. 197 pp.
+
+Acknowledgements
+The author gratefully acknowledges the cooperation of Trevor Jobb of Skeena Cellulose
+Inc.; Robert Hovey, formerly of Skeena Cellulose Inc.; Gerry Kranrod of GK Enterprises,
+Prince George; and Dave Kofoed of Woodima Forestry Services, Terrace.
+The author thanks FERIC employees Ingrid Hedin and Ray Krag for project advice and
+draft report review, and Yvonne Chu and Shelley Corradini for assistance with report preparation.
+
+Advantage
+
+Vol. 2 No. 26
+Arpil 2001
+
+15
+
+Appendix I
+Cycle elements for detailed timing of
+skidding operation
+
+16
+
+Travel unloaded:
+
+Begins when the clambunk starts moving away from the
+deck, and ends when the clambunk stops to load the first
+stem.
+
+Loading and moving to load:
+
+Begins after travel unloaded is completed, and ends when
+the last stem of the full cycle load is placed on the machine
+and the clambunk grapple is closed to secure the load.
+
+Travel fully loaded:
+
+Begins after loading and moving the load is completed, and
+ends when the clambunk opens the grapple for dropping
+the load or stops on the landing for unloading.
+
+Unloading:
+
+Begins after travel fully loaded is completed, and ends when
+the clambunk starts moving away from the deck.
+
+Delay:
+
+Begins when a productive function is interrupted, and ends
+when a productive function is recommenced. In-cycle
+delays include mechanical and non-mechanical delays of
+10 min or less that occur sporadically in the skidding cycles.
+
+Vol. 2 No. 26
+April 2001
+
+Advantage
+
+Appendix II
+Machine costs a
+
+OWNERSHIP COSTS
+
+Total purchase price (P) $
+Expected life (Y) y
+Expected life (H) h
+Scheduled hours per year (h)=(H/Y) h
+Salvage value as % of P (s) %
+Interest rate (Int) %
+Insurance rate (Ins) %
+Salvage value (S)=(s•P/100) $
+Average investment (AVI)=((P+s)/2) $
+Loss in resale value ((P-S)/H) $/h
+Interest=((Int•AVI)/h) $/h
+Insurance=((Ins•AVI)/h) $/h
+Total ownership costs (OW) $/h
+OPERATING COSTS
+
+Trans-Gesco
+TG 88
+clambunk
+
+Link-Belt
+LS-4300
+loader
+
+John Deere
+892D-LC
+loader b
+
+Madill 124
+swing yarder
+with grapple c
+
+MDI/Yutani
+MD320
+loader
+
+742 000
+10
+18 000
+1 800
+20
+9.0
+3.0
+148 400
+445 200
+32.98
+22.26
+7.42
+62.66
+
+450 000
+6
+10 800
+1 800
+30
+9.0
+3.0
+135 000
+292 500
+29.17
+14.63
+4.88
+48.67
+
+310 000
+6
+10 800
+1 800
+30
+9.0
+3.0
+93 000
+201 500
+20.09
+10.08
+3.36
+33.53
+
+1 315 000
+12
+17 280
+1 440
+30
+9.0
+3.0
+394 500
+854 750
+53.27
+53.42
+17.81
+124.50
+
+100 000
+10
+14 400
+1 440
+30
+9.0
+3.0
+30 000
+65 000
+4.86
+4.06
+1.35
+10.28
+
+Wire rope (wc) $
+Wire rope life (wh) h
+Rigging and radio (rc) $
+Rigging and radio life (rh) hy
+Fuel consumption (F) L/h
+Fuel (fc) $/L
+Lube & oil as % of fuel (fp) %
+Annual tire consumption (t) no.
+Tire replacement (tc) $
+Track & undercarriage replacement (Tc) $
+Track & undercarriage life (Th) h
+Annual operating supplies (Oc) $
+Annual repair & maintenance (Rp) $
+Shift length (sl) h
+Wages $/h
+Operator
+Hooktender
+Total wages (W) $/h
+Wage benefit loading (WBL) %
+Wire rope (wc/wh) $/h
+Rigging and radio (rc/rh) $/h
+Fuel (F•fc) $/h
+Lube & oil ((fp/100)•(F•fc)) $/h
+Tires (t•tc/h)
+Track & undercarriage (Tc/Th) $/h
+Operating supplies (Oc/h) $/h
+Repair & maintenance (Rp/h) $/h
+Wages & benefits (W•(1+WBL/100)) $/h
+Overtime (0.5W(sl-8)(1+WBL/100)/sl) $/h
+Total operating costs (OP) $/h
+
+38
+0.55
+15
+4
+4 000
+12 000
+9 000
+59 400
+10
+
+30
+0.55
+15
+35 000
+8 000
+60 000
+11
+
+30
+0.55
+15
+30 000
+8 000
+44 800
+12
+
+40 000
+1 440
+12 500
+5 760
+36
+0.55
+15
+63 000
+8 000
+10 000
+116 000
+11
+
+8
+0.55
+15
+5 000
+11
+
+22.92
+22.92
+38
+20.90
+3.14
+8.89
+1.33
+33.00
+31.63
+3.16
+102.05
+
+23.24
+23.24
+38
+16.50
+2.48
+4.38
+33.33
+32.07
+4.37
+93.13
+
+23.24
+23.24
+38
+16.50
+2.48
+3.75
+24.89
+32.07
+5.35
+85.03
+
+25.58
+24.87
+50.45
+38
+2.17
+19.80
+2.97
+7.88
+6.94
+80.56
+69.62
+9.49
+199.43
+
+4.40
+0.66
+3.47
+8.53
+
+TOTAL OWNERSHIP AND
+OPERATING COSTS (OW+OP) $/h
+
+164.71
+
+141.79
+
+118.56
+
+323.93
+
+18.81
+
+a
+
+These costs are based on FERIC’s standard costing method for determining machine ownership and operating costs. These costs do not
+include supervision, profit, or overhead, and are not the actual costs incurred by the contractor or company.
+b
+The John Deere 892D-LC is not available any longer. Purchase prices used in the cost analysis is based on John Deere 330 LC.
+c
+The Madill 123 is not available any longer. Purchase price used in the cost anaysis is based on Madill 124. An allowance of $15,000 was used
+for the grapple.
+
+Advantage
+
+Vol. 2 No. 26
+Arpil 2001
+
+17
+
+Appendix III
+Results of regression analysis
+Equation 1: CT = 7.17 + 0.0682 DE + 0.396 ST
+n = 101 cycles
+R2 = 80.7%
+where:
+CT
+DE
+ST
+n
+R2
+S.E.E.
+
+=
+=
+=
+=
+=
+=
+
+S.E.E. = 4.916
+
+Delay-free cycle time (min)
+Travel empty distance (m)
+Stems in payload (no./cycle)
+Number of cycles used in the regression analysis
+Multiple coefficient of determination
+Standard error of estimate
+
+This equation is applicable for the following ranges:
+• DE: 35–550 m
+• ST: 3–42 stems/cycle
+Equation 2: Productivity =
+
+60(CV)(U)
+CT + DT
+
+where:
+Productivity
+CV
+U
+CT
+DT
+
+18
+
+=
+=
+=
+=
+=
+
+Predicted productivity measured in m3/SMH
+Average volume per skidding cycle (m3)
+Utilization (from Table 3)
+Cycle time from Equation 1 (min)
+“In-cycle” delay time/cycle from Figure 9 (min)
+
+Vol. 2 No. 26
+April 2001
+
+Advantage
+
+Appendix IV
+Summary of harvesting costs for cable-yarding-only
+and clambunk
+-and-cable-yarding systems
+clambunk-and-cable-yarding
+
+Cable yarding
+
+Clambunk and
+cable yarding
+
+Volume yarded (m3)
+Volume skidded (m3)
+Yarding productivity (m3/SMH) a
+Skidding productivity (m3/SMH)
+
+30 037
+23
+-
+
+19 501
+10 536
+23
+43
+
+Yarding time (SMH)
+Skidding time (SMH)
+Total extraction time (SMH)
+
+1 306
+1 306
+
+848
+247
+1 095
+
+John Deere loader time (SMH)
+Link-Belt loader time (SMH)
+Yarder and backspar costs ($/SMH) d
+Clambunk cost ($/SMH)
+John Deere loader cost ($/SMH)
+Link-Belt loader cost ($/SMH)
+Falling unit cost ($/m3)
+Processing unit cost ($/m3
+
+1 306 b
+342.74
+141.79
+3.75
+1.62
+
+256
+1 148 c
+342.74
+164.71
+118.56
+141.79
+3.75
+1.62
+
+Falling cost ($)
+Yarding cost ($)
+Skidding cost ($)
+John Deere loader cost ($)
+Link-Belt loader cost ($)
+Processing cost
+Road construction cost ($) f
+Area rehabilitation cost
+Total cost ($)
+
+112 639
+470 602
+185 178
+48 660
+70 000
+864 078
+
+112 639
+290 598
+40 683
+30 350
+162 780 e
+48 660
+3 320
+689 029
+
+28.77
+
+22.94
+
+Description
+
+Cost ($/m3)
+a
+
+Yarding productivity information supplied by Skeena Cellulose.
+Working time for the loader was assumed to be equal to the yarding time.
+c
+Sum of the employment time in yarded and skidded portions of the block (848 and 300 h, respectively).
+d
+Hourly yarder cost calculated by FERIC.
+e
+Sum of loader costs in yarded and skidded portions of the block.
+f
+Road construction cost based on information supplied by Skeena Cellulose.
+b
+
+Advantage
+
+Vol. 2 No. 26
+Arpil 2001
+
+19
+
+

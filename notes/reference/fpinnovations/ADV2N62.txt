@@ -1,0 +1,1453 @@
+Restricted to FERIC Members and Partners
+Contents
+
+Vol. 2 No. 62 December 2001
+
+Loader-forwarding on moderately steep
+slopes in interior British Columbia
+
+1
+
+Introduction
+
+1
+
+Objectives
+
+1
+
+Site
+description
+
+2
+
+Silviculture
+prescription
+
+3
+
+Harvesting
+system and
+equipment
+
+5
+
+Study
+methods
+
+In 1999, the Forest Engineering Research Institute of Canada (FERIC) performed a
+study on a loader-forwarding operation in interior British Columbia. The study provided
+information about the harvesting operation’s productivity and costs. Loader-forwarding
+trails were surveyed and the proportion of cutblock area occupied by trails and mapped
+extraction routes are presented.
+
+6
+
+Results and
+discussion
+
+Keywords
+
+9
+
+Conclusions
+
+9
+
+Implementation
+
+10 References
+10 Acknowledgements
+
+Author
+Clayton Gillies,
+Western Division
+
+Abstract
+
+Harvesting systems, Loader-forwarding, Soil disturbance, Productivity, Costs, Interior
+British Columbia.
+
+Introduction
+To provide information on costs and
+productivities for alternative harvesting
+techniques aimed at minimizing soil
+disturbance, FERIC has an ongoing program
+to study ground-based harvesting on steep
+and/or sensitive sites. Two case studies that
+have been completed include a Trans-Gesco
+clambunk skidder working with a loaderforwarder on moderately steep slopes
+(Kosicki 2001), and low ground-pressure
+skidders working in northwestern B.C.
+(Henderson 2001). In the summer of 1999,
+FERIC and Ainsworth Lumber Co. Ltd.
+studied a loader-forwarding operation on
+moderately steep ground as an alternative to
+cable extraction on three cutblocks in the
+interior of British Columbia. Both hand
+falling with loader-forwarding and hand
+falling with cable yarding were used during
+harvesting. For the purpose of this report,
+only the loader-forwarding operations were
+studied.
+
+Objectives
+The primary goal of this study was to
+assess the economic and operational feasibility
+of using hydraulic log loaders to forward
+timber in moderately steep clearcut blocks.
+The following specific objectives were set:
+• Determine overall productivities and
+costs for the loader-forwarding operation.
+• Determine the proportion of cutblock
+area occupied by loader-forwarding trails.
+• Identify operational factors affecting
+performance of the harvesting phase
+and recommend improvements where
+appropriate.
+
+Site description
+The study sites were located approximately
+40 km southwest of Lillooet in Ainsworth’s
+Timber Supply Area within the Kamloops
+Forest Region (Figure 1). The sites were
+classified as dry very cold (dv) and moist warm
+(mw) subzones within the Engelmann
+Spruce-Subalpine Fir (ESSF) biogeoclimatic
+zone (Lloyd et al. 1990). Table 1 summarizes
+site and stand attributes for the three
+cutblocks.
+
+Silviculture
+prescription
+
+Figure 1. Location
+of study sites.
+
+The silvicultural system for all three
+cutblocks was clearcut with the preferred
+harvest method stated as cable yarding, and
+with hoe chucking (loader-forwarding) as an
+alternative. Cutblock 21 was harvested entirely
+by loader-forwarding, whereas Cutblocks 24
+and 13 utilized both cable yarding and loaderforwarding timber extraction methods.
+Cutblock 21 had low to moderate ratings
+for site sensitivity to soil degrading processes,
+and had a maximum soil disturbance level
+of 10% as stated within the silviculture
+Table 1. Site and stand attributes
+Boulder Creek
+Cutblock 21
+Cutblock 24
+Elevation range (m) a
+
+Blowdown Creek
+Cutblock 13
+
+1600–1680
+
+1500–1585
+
+1160–1285
+
+Slope (%) b
+Range
+Average
+
+15–39
+30
+
+15–41
+35
+
+10–39
+35
+
+Area harvested by
+loader-forwarding (ha)
+
+3.8
+
+3.3
+
+9.6
+
+Maximum forwarding distance (m)
+
+205
+
+195
+
+155 favourable
+160 adverse
+
+Species composition (%) c
+Engelmann/white spruce
+Amabilis fir
+Lodgepole pine
+White pine
+Douglas-fir
+Western red cedar
+Western hemlock
+
+84
+12
+3
+1
+-
+
+52
+29
+6
+1
+2
+10
+
+Stand parameters c
+Net merchantable volume (m3/ha)
+Stand density (stems/ha)
+Average net volume (m3/tree)
+Average dbh of live trees (cm)
+Average tree height (m)
+
+662
+946
+0.70
+32
+28
+
+672
+628
+1.07
+38
+36
+
+a
+
+For entire cutblocks.
+For loader-forwarding por tion of cutblocks only, cable yarding portions are slightly steeper.
+c
+Taken from operational cruise summary.
+b
+
+Forest Engineering Research Institute of Canada (FERIC)
+Eastern Division and Head Office
+
+580 boul. St-Jean
+Pointe-Claire, QC, H9R 3J9
+
+(514) 694-1140
+(514) 694-4351
+admin@mtl.feric.ca
+
+2
+
+Western Division
+
+2601 East Mall
+Vancouver, BC, V6T 1Z4
+
+(604) 228-1555
+(604) 228-0999
+admin@vcr.feric.ca
+
+Disclaimer
+Advantage is published solely to disseminate information to FERIC’s members and partners. It is not intended as an endorsement or approval of any
+product or service to the exclusion of others that may be suitable.
+ Copyright 2001. Printed in Canada on recycled paper.
+Vol. 2 No. 62
+December 2001
+
+Advantage
+ISSN 1493-3381
+
+prescription. Cutblocks 24 and 13 had
+high to very high ratings, and each had a
+maximum soil disturbance level of 5%.
+Streams within the cutblocks were
+classified as S5 and S61 and had riparian
+management zones of 30 and 20 m, respectively.
+The two drainages had numerous avalanche
+chutes used by foraging mammals including
+grizzly bear. Wildlife tree patches 1.9 to
+3.2 ha in size were established adjacent to
+or near the avalanche chutes to provide
+shelter and habitat.
+
+Harvesting system and
+equipment
+Pietila and Sons Logging Ltd. of Lillooet,
+B.C. harvested the loader-forwarding portion
+of all three cutblocks. This harvest method
+was new to the crew. The cutblocks were
+manually clear-felled and only the high-value
+peeler logs were bucked to length and
+delimbed at the stump. The forwarding was
+done primarily by two Kobelco SK 300-LC
+hydraulic log loaders working independent
+of each other. Occasionally, either machine
+would be used to load the trucks.
+Truck loading was done primarily by a
+Kobelco SK 220-LC hydraulic log loader,
+but this machine also forwarded stems to
+roadside occasionally. A landing bucker
+bucked and delimbed the stems as they were
+spread out at the decking areas (Figure 2).
+When time permitted, the bucker delimbed
+stems within the cutblock and/or reduced
+the height of stumps along the loaderforwarding travel path.
+The Kobelco SK 300-LC has an
+operating weight of approximately 33 tonnes.
+The width of the machine is 3.6 m, with
+each track measuring 80 cm wide. The
+standard configuration has a static ground
+pressure of 0.48 kg/cm 2. The clearance
+below the machine is approximately 80 cm.
+The grapples on the two machines are
+slightly different in size; one opens to a width
+of 1.32 m, and the other to a width of
+1.64 m. Both machines have a reach of
+approximately 10 m.
+Advantage
+
+Vol. 2 No. 62
+December 2001
+
+Figure 2. Final
+forwarding pass to
+roadside.
+
+The Kobelco SK 220-LC is slightly smaller,
+with an operating weight of approximately
+25 tonnes and width of 3.5 m. The track width
+is 80 cm wide, and static ground pressure is
+0.39 kg/cm2 for the standard configuration.
+The clearance below the machine is
+approximately 72 cm. The grapple has an
+opening of 1.45 m, and the reach of the
+machine is approximately 9.5 m.
+The cutblocks and roads were laid out
+for cable yarding. Although sections of the
+road had steep cutbanks and fill slopes, the
+excavators were able to access the cutblocks
+in various locations (Figure 3). The most
+difficult area was along the road at the adverse
+sections of Cutblock 13, where the fill slopes
+were consistently steep. Loaders are highly
+mobile machines that can traverse a wide
+variety of terrain, and can use their grapple
+to help stabilize the machine on steep or
+difficult ground (MacDonald 1999).
+The timber extraction routes/trails
+(Figure 4) are described as a modified upand-down pattern. Up-and-down and
+Figure 3. Loader
+entering Cutblock
+21 at a location
+with low cutbank
+height.
+
+1
+
+S5 and S6 classifications are streams without fish and
+are not community watershed streams. Class S5 streams
+are >3 m wide, and S6 streams are <3 m wide.
+
+3
+
+Figure 4. Cutblock
+maps showing the
+timber extraction
+routes for the
+loader-forwarding
+portions of the
+cutblocks.
+
+serpentine working patterns have been used
+successfully where the forwarding distance
+and terrain permit (Andersson and Jukes
+1995; Phillips 1996). There was no attempt
+to forward the stems using a serpentine pattern
+during this study. Machine travel within the
+cutblocks was typically perpendicular to the
+contours, except when ground obstacles such
+as large boulders, or steep terrain features such
+as ridges, altered direction of travel. Trees were
+felled parallel to the contours, as for a cable
+yarding operation.
+Loader-forwarding trails were travelled
+on more than once. The loaders first roughbunched and windrowed the stems while
+forwarding them a short distance. When a
+continuous length of windrowed stems was
+prepared, the loaders forwarded these stems
+to roadside and then prepared the next wood
+further along the travel route. This resulted
+4
+
+in more machine travel closer to the haul road
+than at the back of the cutblock. Preparing
+and forwarding the stems into windrowed
+bunches was more time consuming than
+forwarding the prepared windrows.
+When forwarding the windrowed stems,
+the loaders were positioned between the
+stems and the road, 10 m (i.e., full reach)
+from the stems. This allowed the machines
+to forward the maximum distance each time
+they handled the stems. The loaders grappled
+up to 7 logs at one time (average 3 to 4), and
+forwarded them approximately 20 m per pass
+(Figure 5). Limbs were often knocked off
+during the multiple handling, leaving a
+random brush mat within the cutblock. As
+well, limbs were removed by holding a stem
+loosely in the grapple and sliding the grapple
+along the length of the stem.
+
+Vol. 2 No. 62
+December 2001
+
+Advantage
+
+The streams within the cutblocks were
+identified on field maps. One stream in
+Cutblock 21 and one in Cutblock 13 were
+buffered. Small-diameter (i.e., less than 17.5 cm
+dbh) co-dominant trees, saplings, and advanced
+regeneration were retained within the riparian
+management zones to provide streambank
+stability. Within Cutblock 21, the loaders
+built a corduroy trail of logs before crossing
+the in-block stream, and dismantled it after
+use. The loaders extracted felled trees from
+within the riparian buffers with minimal
+damage to the residual trees (Figure 6).
+Loader-forwarders can work safely around
+riparian zones without affecting the actual
+watercourse (MacDonald 1999).
+Cutblocks 21 and 24 had favourable
+forwarding conditions with slopes up to
+39% and 41%, respectively. Cutblock 13
+contained both adverse and favourable
+forwarding conditions, with adverse pitches
+reaching 33% and favourable pitches
+reaching 39%. On occasion, the smaller and
+lighter Kobelco SK 220-LC was utilized on
+the steeper pitches, as the larger machines
+tended to slip downhill while maneuvering
+to reach these areas.
+Boulders up to 2.8 m in diameter were
+present throughout all three cutblocks, and
+hindered machine travel (Figure 7). Angular
+colluvium was beneath and near the surface
+of the cutblocks. The combination of
+continued track movement, maneuvering
+around boulders, and the summer heat (up
+to 35°C) caused the machines to overheat or
+become very close to overheating. When this
+occurred, the operator stopped to allow the
+machine to cool down and left the engine
+either idling or turned off completely.
+
+Study methods
+The shift-level data were collected daily
+from the three loaders and were used to
+obtain total scheduled machine hours (SMH)
+for the forwarding and loading phases.
+Harvest volumes were supplied by
+Ainsworth and presented with SMH to show
+productivities. The loader-forwarding and
+loading times were combined during the
+Advantage
+
+Vol. 2 No. 62
+December 2001
+
+Figure 5. Loaderforwarding
+showing numerous
+stems per pass.
+
+Figure 6. Loaderforwarder working
+near a riparian
+management zone
+to extract stems
+from between the
+residual saplings.
+
+Figure 7. Loaderforwarding in the
+adverse section of
+Cutblock 13. Note
+the surface
+boulders.
+
+shift-level data collection. Therefore,
+productivity calculations include both
+loader-forwarding and loading.
+Loader-forwarding cycles were detail-timed
+throughout the study, and included samples
+from all three cutblocks representing both
+adverse and favourable forwarding (see
+Appendix I for definitions of timing elements).
+Factors affecting the performance of the
+loader-forwarding were recorded.
+Timber extraction and loading
+productivities were generated using shift-level
+and detailed-timing study methods. The
+hourly machine costs were calculated using
+FERIC’s standard machine costing method
+(Appendix II) and were used to generate a
+cost per harvested volume.
+5
+
+Following harvesting, the three cutblocks
+were surveyed to estimate the proportion of
+site occupied by the loader-forwarding trails.
+A randomly oriented grid was superimposed
+over the entire loader-forwarding area of the
+three study sites. Grids 35 m by 35 m were used
+on Cutblocks 21 and 24, and 50 m by 50 m
+on Cutblock 13. At each plot centre, two
+perpendicular random line transects were
+established, and ground characteristics were
+tallied. Data were summarized as a percentage
+of total harvested area for each cutblock.
+The survey collected data for undisturbed
+and harvest-generated surface conditions.
+Harvesting disturbance included primary and
+secondary loader-forwarding trails, corduroy
+or stem mat trails, and gouges. The primary
+and secondary trails were further classified as
+being compressed slash, mixed organic, exposed
+mineral, or exposed colluvium. Primary and
+secondary loader-forwarding trails are
+described by the following attributes:
+• Primary trail: Evidence of numerous
+machine passes. Travel paths for both
+machine tracks are continuous and easily
+Figure 8. Primary
+loader-forwarding
+trail with
+researchers
+standing within
+each track
+location.
+
+followed for at least 4 m from the
+transect sample area, with obvious track
+impressions and a mound between the
+two track locations. These trails would
+have had an estimated 6 to 15 passes
+and were often located within 50 to
+75 m of the haul road and decking area
+(Figure 8).
+• Secondary trail: Less heavily travelled
+extensions of the primary trails, and not
+always obvious if observed independent
+of the approaching track path. Only one
+track path may be present, and the
+mound between track travel paths may
+not be evident. These trails would have
+had an estimated 1 to 5 passes, and were
+often located toward the back of the
+cutblock as compared to the front.
+
+Results and discussion
+Shift-level study
+
+Table 2 summarizes the shift-level results
+by machine and cutblock. Cutblock 21
+was harvested first followed by Cutblocks
+24 and 13. The average shift length at
+Cutblocks 21 and 13 was approximately 9 h,
+whereas at Cutblock 24 the average shift
+length was approximately 10 h. Mechanical
+and non-mechanical delays increased as the
+study progressed.
+The harsh environment (boulders) and
+resulting wear on the undercarriage caused
+extended delays, especially within Cutblock
+13 where Kobelco SK 300-LC #1 and #2
+
+Table 2. Shift-level summary by cutblock and machine
+21
+Scheduled shifts (no.)
+11
+Scheduled machine hours (h) 102.0
+Average shift length (h)
+9.3
+Mechanical delays (h)
+0.0
+Non-mechanical delays (h)
+0.0
+Service and other (h)
+5.0
+Productive machine time (h) 97.0
+Availability (%)
+100
+Utilization (%)
+95
+
+6
+
+Kobelco 300 #1
+24
+13
+4
+40.0
+10.0
+2.5
+2.0
+0.5
+35.0
+94
+88
+
+24
+217.0
+9.0
+15.0
+1.0
+9.0
+192.0
+93
+88
+
+21
+5
+44.0
+8.8
+4.0
+0.0
+2.0
+38.0
+91
+86
+
+Kobelco 300 #2
+24
+13
+4
+41.5
+10.4
+1.3
+3.7
+0.5
+36.0
+97
+87
+
+22
+195.0
+8.9
+29.5
+15.2
+4.0
+146.3
+85
+75
+
+21
+
+Kobelco 220
+24
+
+13
+
+21
+
+All
+24
+
+13
+
+4
+37.0
+9.3
+0.0
+1.0
+2.0
+34.0
+100
+92
+
+4
+40.0
+10.0
+0.0
+3.5
+0.5
+36.0
+100
+90
+
+23
+208.5
+9.1
+1.0
+18.0
+9.5
+180.0
+99.5
+86
+
+20
+183.0
+9.2
+4.0
+1.0
+9.0
+169.0
+98
+92
+
+12
+121.5
+10.1
+3.8
+9.2
+1.5
+107.0
+97
+88
+
+69
+620.5
+9.0
+45.5
+34.2
+22.5
+518.3
+93
+84
+
+Vol. 2 No. 62
+December 2001
+
+Advantage
+
+waited a total of 14 shifts for undercarriage
+and turntable parts. These 14 shifts were not
+included in scheduled machine time.
+The productive machine time is generated
+from the scheduled machine time less
+mechanical, non-mechanical, servicing, and
+other downtime (including meals). Delays
+greater than 15 minutes were recorded within
+the shift-level data. Availability and utilization
+decreased as the harvesting progressed.2
+Table 3 shows the productivites for all three
+machines working together to complete the
+combined phases of loader-forwarding,
+processing and loading in the loaderforwarding system. The production per
+SMH was highest for Cutblock 21 (first
+harvested), and lowest for Cutblock 24.
+Production per PMH was highest for the
+last cutblock harvested. The loader-forwarding
+technique likely improved over time and
+Cutblock 13 had a larger piece size and higher
+volume per hectare. Using an average shift
+length of 9.2 h for all three cutblocks
+gives an average productivity of 265 m3/
+loader-forwarding system shift.
+The process of the three loaders loaderforwarding the stems to roadside, the landing
+bucker processing the stems, and the haul
+trucks being loaded cost an average of
+$15.20/m3.
+
+for “all 3 machines” are weighted averages.
+These are heavily influenced by Kobelco
+SK 300-LC #2 which had 22 h of the 26 h
+total timing samples. The swing empty
+cycle element was consistently the shortest
+of all the elements.
+On average, for every 5.6 times a machine
+handled wood and swung empty, the machine
+moved, and for approximately every five
+moves there was a delay. Using the calculated
+ratios, an average time of 5.1 minutes was
+required to move 20 logs a distance of 20 m,
+including a delay of 1 minute.
+Figure 9 shows the proportion of time
+each machine spent within the detailed-timing
+cycle elements. On average, the machines
+spent four-fifths of the time performing a
+productive function (move, swing empty, or
+handle wood), and the remaining time in
+delays.
+Soil disturbance
+
+Cutblock 13 had proportionately the least
+amount of total trail area at 9.3%, and
+Cutblock 21 had the most at 11.3% (Table 5).
+In this study, the more heavily used primary
+trails occupied less area than the secondary
+trails. The primary trail occupied up to a
+
+2
+
+Detailed timing
+
+Results of the detailed-timing study are
+summarized in Table 4. The numbers shown
+
+Availability shows the proportion of scheduled time
+outside of mechanical delay time, and therefore the
+time the machine was available to perform productive
+functions. Utilization shows the proportion of
+scheduled time spent performing productive functions.
+
+Table 3. Productivities and costs for loader-forwarding,
+processing, and loading (loader-forwarding system) a
+
+Scheduled machine hours (SMH)
+Productive machine hours (PMH)
+Volume harvested (m3)
+Productivity
+m3/SMH
+m3/PMH
+m3/average loader-forwarding system shift
+$/m3 (based on SMH)
+a
+b
+
+Cutblock 21
+
+Cublock 24
+
+Cutblock 13
+
+All 3 cutblocks
+
+183
+169
+1 861
+
+121.5
+107
+1 014
+
+620.5
+518.3
+6 033
+
+925
+794.3
+8 908
+
+10.2
+11.0
+281
+14.23
+
+8.3
+9.5
+252
+17.57
+
+9.7
+11.6
+262
+15.09
+
+9.6
+11.2
+265 b
+15.20
+
+Differences due to rounding.
+Average shift length for all three cublocks is 9.2 h.
+
+Advantage
+
+Vol. 2 No. 62
+December 2001
+
+7
+
+Table 4. Summary of detailed timing showing the average
+element time per occurrance
+
+a
+
+Handle wood
+(min)
+
+Swing empty
+(min)
+
+Move
+(min)
+
+Delay
+(min)
+
+Total timed
+(h)
+
+Kobelco SK 300-LC #1
+occurrence
+
+0.36
+170
+
+0.13
+166
+
+1.12
+44
+
+5.81
+3
+
+2.5
+
+Kobelco SK 300-LC #2
+occurrence
+
+0.31
+1 434
+
+0.16
+1 432
+
+1.60
+240
+
+4.62
+59
+
+22.1
+
+Kobelco SK 220-LC
+occurrence
+
+0.23
+108
+
+0.12
+108
+
+1.44
+23
+
+0.87
+1
+
+1.2
+
+All 3 machines
+occurrence
+ratio a
+
+0.31
+1 712
+5.6
+
+0.15
+1 706
+5.6
+
+1.52
+307
+1
+
+4.62
+63
+0.21
+
+25.8
+
+Ratio describes the number of handles, swings, and delays per move.
+
+Table 5. Proportion of cutblock occupied by loader-forwarding trails
+Soil surface conditions
+
+Proportion of cutblock area affected (%) a
+Cutblock 21
+Cutblock 24
+Cutblock 13
+
+Primary trail
+Primary trail with exposed mineral
+
+1.7
+0.6
+
+(0.8)
+
+2.4
+1.4
+
+(1.1)
+
+1.3
+0.0
+
+(0.6)
+
+Secondary trail
+Secondary trail with exposed mineral
+
+9.7
+0.5
+
+(2.2)
+
+7.0
+2.2
+
+(1.3)
+
+8.0
+<0.1
+
+(1.3)
+
+Total trail
+Total trail with exposed mineral
+
+11.3
+1.1
+
+(2.4)
+
+9.5
+3.6
+
+(1.5)
+
+9.3
+<0.1
+
+(1.4)
+
+Gouge b
+Undisturbed
+
+0.1
+88.6
+
+a
+b
+
+80%
+60%
+40%
+20%
+0%
+Kobelco
+300 #1
+Handl e wood
+
+8
+
+0.2
+90.3
+
+(1.4)
+
+0.1
+90.6
+
+(1.3)
+
+Means for the variables of interest are presented with standard errors shown in parentheses. Differences due to rounding.
+Gouges are surface conditions where the machines’ grapple or the end of a log have indented or dispersed the forest floor into
+mineral soil during the harvesting activity.
+
+100%
+
+Figure 9.
+Proportion of time
+spent within each
+detailed-timing
+cycle element.
+
+(2.4)
+
+Kobelco
+300 #2
+
+Kobelco
+220
+
+Swing empty
+
+Move
+
+All 3
+machines
+Delay
+
+quarter of the total trail area by cutblock.
+Undisturbed portions of the cutblocks
+accounted for 89 to 91% of the cutblock
+area. By comparison, Kosicki (2001) reported
+that 20.4% of a tandem loader-forwarding
+and clambunk skidding harvested cutblock
+was occupied by trails.
+The amount of exposed mineral soil
+within the trails varied by cutblock, from less
+than 1% to 4%. Exposed mineral soil was
+not a criterion for primary and secondary trail
+Vol. 2 No. 62
+December 2001
+
+Advantage
+
+classification. Within the continuous
+impressions of the primary trails, exposed
+mineral soil was not prevalent, but there was
+usually a mat of compressed slash. The
+operators were careful not to spin the machine
+tracks, and therefore minimized the churning
+of the soil.
+Although the survey was not done to
+measure compliance with the Forest Practices
+Code (FPC), the primary trails can be
+considered 100% disturbed by FPC
+definition (either dispersed trail: wheel/track
+rut or dispersed trail: repeated machine
+traffic [BCMOF and BC Environment
+2001a, 2001b]). About one-third of the
+secondary trails would correspond to the
+dispersed trail: repeated machine traffic
+disturbance. This equates to 4–5% total soil
+disturbance for each cutblock. All three
+cutblocks are within the maximum acceptable
+disturbance levels specified in their silviculture
+prescriptions.
+The entrance and exit locations of the
+cutblocks were utilized and travelled over
+many times, and were subject to soil churning
+and scalping. The loader operators were
+careful to reduce this disturbance by using
+their grapples to assist the machines’ movement
+while carefully engaging the tracks.
+
+Conclusions
+Operators that had no experience with
+loader-forwarding were able to forward treelength stems to roadside using 25- and
+33-tonne loaders, within areas of a clearcut
+block designed for cable yarding, at a cost of
+$15.20/m3 which included processing and
+loading. The loaders forwarded the stems for
+a maximum distance of 155–205 m, on slopes
+up to 41% favourable and 33% adverse.
+Productivity averaged 265 m3/average loaderforwarding system shift (three machines harvesting three cutblocks including processing
+and loading). Loader-forwarding was new to
+the crew and some time was required to learn
+the technique.
+Availability of the loader-forwarding
+machines averaged 98% in the first harvested
+Advantage
+
+Vol. 2 No. 62
+December 2001
+
+cutblock, and declined to 93% in the last
+cutblock. Utilization averaged 92% in the
+first harvested cutblock, and also declined in
+the last cutblock, to 84%. Detailed timing
+showed delays accounted for nearly one-fifth
+of the productive machine time.
+The bouldery conditions were thought
+to have caused one of the machines to lose
+its track and initiate the extended waitfor-part delay. Undercarriage repairs and
+delays may occur more frequently during
+loader-forwarding operations than compared
+to typical loading duties.
+Results of the soil disturbance survey
+showed that loader-forwarding trails occupied
+9–11% of the cutblock area, and when
+extrapolated to FPC standards for soil
+disturbance, the three cutblocks were all
+within their stated acceptable limits.
+
+Implementation
+During the study, FERIC identified
+conditions for successful and efficient use of
+loader-forwarding operations:
+• Thirty-five-tonne loaders can forward
+stems within clearcut blocks with slopes
+up to 41% favourable and 33% adverse.
+These slopes may be close to the limits
+for this size of machine. The 25-tonne
+loader was able to negotiate the 41%
+favourable slope slightly easier than the
+larger machines.
+• Using a feller-buncher to fall and bunch
+the harvested stems may be beneficial
+with respect to productivity. The loaders
+spent more time preparing and forwarding
+the stems into windrowed bunches than
+forwarding the prepared bunches.
+• Terrain with large or numerous boulders
+should be noted when field layout is
+done. Split lines can divide areas between
+those compatible with loader-forwarding
+and those for cable yarding. The boulders
+encountered during this study were hard
+on the machines and were thought to
+be a main source of the gradual decline
+in availability and utilization.
+
+9
+
+• Locations where the machines enter and
+exit the cutblocks are vulnerable to site
+disturbance. The best locations to enter
+and/or exit the cutblock may be identified during planning and marked after
+road construction. Protective matting,
+chunks of wood, or corduroyed stems
+may also lessen the impact at these locations.
+
+References
+Andersson, B.; Jukes, W. 1995. Harvesting
+coastal second-growth forests: two case
+studies. FERIC, Vancouver, B.C. Technical
+Note TN-232. 14 pp.
+British Columbia Ministry of Forests
+(BCMOF); BC Environment. 2001a.
+Forest Practices Code of British Columbia:
+Soil conservation guidebook. (2nd ed.)
+Victoria, B.C. 24 pp.
+British Columbia Ministry of Forests
+(BCMOF); BC Environment. 2001b.
+Forest Practices Code of British Columbia:
+Soil conservation surveys guidebook. (2nd
+ed.) Victoria, B.C. 63 pp.
+Henderson, B. 2001. Roadside harvesting
+with low ground-pressure skidders in
+northwestern British Columbia. FERIC,
+Vancouver, B.C. Advantage Report Vol. 2
+No. 54. 24 pp.
+Kosicki, K. 2001. Evaluation of a Trans-Gesco
+TG 88 clambunk skidder working in
+northwestern British Columbia. FERIC,
+Vancouver, B.C. Advantage Report Vol. 2
+No. 26. 19 pp.
+
+10
+
+Lloyd, D.; Angove, K.; Hope, G.;
+Thompson, C. 1990. A guide to site
+identification and interpretation for the
+Kamloops Forest Region. Land management
+handbook no. 23. Research Branch, British
+Columbia Ministry of Forests, Victoria,
+B.C. 399 pp.
+MacDonald, A.J. 1999. Harvesting systems
+and equipment in British Columbia. B.C.
+Ministry of Forests, Forestry Division
+Services Branch, Victoria, B.C. Copublished by FERIC, Vancouver, B.C. as
+Handbook No. HB-12. 197 pp.
+Phillips, E.J. 1996. Comparing silvicultural
+systems in a coastal montane forest:
+productivity and cost of harvesting
+operations. Canada-British Columbia
+Partnership Agreement on Forest Resource
+Developement: FRDA II and B.C.
+Ministry of Forests, Victoria, B.C.
+Published as FRDA report 247 and
+FERIC Special Report No. SR-109. 42 pp.
+
+Acknowledgements
+The author expresses his appreciation
+to the following individuals for their
+cooperation and assistance during the course
+of this project: Dave Rennie of Ainsworth
+Lumber Co. Ltd., Lillooet Division; Peter
+Scharf, formerly of Ainsworth Lumber Co.
+Ltd.; Bill Pietila and the crew of Pietila &
+Sons Logging Ltd.; Doug Bennett, Ingrid
+Hedin, Stephanie Sambo, Shelley Corradini,
+and Yvonne Chu of FERIC; and Claus
+Listmann, forestry student from the University
+of Freiburg, Germany.
+
+Vol. 2 No. 62
+December 2001
+
+Advantage
+
+Appendix I
+Cycle elements for detailed timing of
+loader-forwarding operation
+Handle wood:
+
+Begins when “swing empty” is finished and grapple is used to grasp logs
+to be forwarded, and ends when grapple releases log(s). Includes bunching
+and double handling to make neat windrowed decks within the cutblock,
+re-handling dropped pick-ups, positioning grapple after swing empty
+stops, aborted handles, and handling wood while moving.
+
+Swing empty:
+
+Begins when “handle wood” or “move” stops. Typically occurs after each
+handling of a forwarded grapple of stems. There is no track movement
+during “swing empty”. Includes turning machine 360° to look for
+appropriate placement of machine.
+
+Move:
+
+Begins when tracks are engaged and the loader travels or re-positions
+itself (with an empty grapple). Includes moving obstacles in the path of
+machine travel, pushing heel of grapple into the ground to lift and twist
+the tracks, and preparing travel path over streams and boulders by
+placing logs as corduroy trails or lift logs.
+
+Delay:
+
+Begins when a productive element is interrupted and ends when a
+productive element is recommenced. Includes mechanical and personnel
+delays.
+
+Advantage
+
+Vol. 2 No. 62
+December 2001
+
+11
+
+Appendix II
+Cost estimates for loader-forwarding equipment a
+Loader
+25 000–30 000 kg
+Kobelco SK 220-LC
+
+Loader
+30 000–35 000 kg
+Kobelco SK 300-LC
+
+Purchase price (P) $
+Ownership period (D) y
+Scheduled hours per year (h) h
+Salvage value as % of P (s) %
+Interest rate (Int) %
+Insurance rate (Ins) %
+
+380 000
+5
+1 800
+33
+9.0
+3.0
+
+490 000
+5
+1 800
+33
+9.0
+3.0
+
+Salvage value (S)=(P•s/100) $
+Average investment (AVI)=((P+S)/2) $
+
+125 400
+252 700
+
+161 700
+325 850
+
+Loss in resale value ((P-S)/(D•h)) $/h
+Interest=((Int•AVI)/h) $/h
+Insurance+((Ins•AVI)/h) $/h
+
+28.29
+12.64
+4.21
+
+36.48
+16.29
+5.43
+
+Total ownership costs (OW) $/h
+
+45.14
+
+58.20
+
+Fuel consumption (F) L/h
+Fuel cost (fc) $/L
+Lube and oil cost as % fuel cost (fp) %
+Track & undercarriage life (h)
+Track & undercarriage replacement cost (Tr) $
+Annual operating supply cost (Op) $
+Annual repair and maintenance cost (Rp) $
+Wages (W) $/h
+Machine operator base rate
+Total machine operator rate
+Wage benefit loading (WBL) %
+Fuel cost (F•fc) $/h
+Lube and oil cost ((fp/100)•(F•fc)) $/h
+Track and undercarriage cost (Tr/h) $/h
+Operating supply cost (Op/h) $/h
+Repair and maintenance cost (Rp/h) $/h
+Labour cost (W•(1+WBL/100)) $/h
+
+25
+0.55
+10
+4 500
+28 000
+5 000
+35 000
+
+30
+0.55
+10
+4 500
+32 000
+5 000
+40 000
+
+24.01
+24.01
+38
+13.75
+1.38
+6.22
+2.78
+19.44
+33.13
+
+24.01
+24.01
+38
+16.50
+1.65
+7.11
+2.78
+22.22
+33.13
+
+Total operating and repair costs (OP) $/h
+
+76.70
+
+83.39
+
+121.84
+
+141.59
+
+OWNERSHIP COSTS
+
+OPERATING AND REPAIR COSTS
+
+TOTAL OWNERSHIP AND OPERATING COSTS (OW+OP) $/h
+a
+
+12
+
+These costs are based on FERIC’s standard costing methodology for determining machine ownership and operating
+costs, and do not include such costs as crew transportation, supervision, profit, and office overhead. IWA labour rates
+effective June 15/99 have been used. Note: Costs per hour for the landing bucker are calculated using IWA labour rates,
+38% wage beneifit loading, and $18/day saw allowance, equalling $35.13.
+
+Vol. 2 No. 62
+December 2001
+
+Advantage
+
+

@@ -1,0 +1,933 @@
+Evaluation of two loader-forwarder
+configurations on steep slopes
+Advantage Report
+
+Vol. 15 No. 2
+
+June 2014
+
+By:
+Vladimir Strimbu, Researcher, Harvesting Operations
+A.J. MacDonald, Research Leader, Harvesting Operations
+
+FPInnovations ─ Report Title
+
+fpinnovations.ca
+
+1
+
+FPInnovations is a not-for-profit world
+
+301009132: fiscal rollover
+
+leader that specializes in the creation of
+
+301007905: Innovative technologies for
+
+scientific solutions in support of the
+
+steep-slope harvesting
+
+Canadian forest sector’s global
+
+Advantage Report – Vol. 15 No. 2
+
+competitiveness and responds to the
+
+Not Restricted to Members and Partners of
+
+priority needs of its industry members and
+
+FPInnovations
+
+government partners. It is ideally
+positioned to perform research, innovate,
+and deliver state-of-the-art solutions for
+every area of the sector’s value chain,
+from forest operations to consumer and
+industrial products. FPInnovations’ staff
+numbers more than 525. Its R&D
+laboratories are located in Québec City,
+Ottawa, Montréal, Thunder Bay,
+Edmonton and Vancouver, and it has
+technology transfer offices across
+Canada. For more information about
+FPInnovations, visit:
+
+ACKNOWLEDGEMENTS
+This project was financially supported by the
+Transformative Technologies Program
+agreement between Natural Resources Canada
+and FPInnovations.
+The authors would like to thank Island
+Timberlands and Roga Contracting for their
+help during the project.
+
+CONTACT
+Vladimir Strimbu
+Researcher
+Harvesting Operations
+(6040 222-5746
+vladimir.strimbu@fpinnovations.ca
+
+www.fpinnovations.ca.
+Follow us on:
+
+© 2014 FPInnovations. All rights reserved. Unauthorized copying or redistribution prohibited.
+Disclosure for Commercial Application: If you require assistance to implement these research findings, please
+contact FPInnovations at info@fpinnovations.ca.
+
+Table of contents
+Introduction ................................................................................................................................ 1
+Objectives .................................................................................................................................. 1
+Site, stand, and harvesting system............................................................................................. 1
+Study method ............................................................................................................................. 3
+Results ....................................................................................................................................... 3
+Extensive detailed timing ........................................................................................................ 3
+Intensive detailed timing ......................................................................................................... 6
+Reach ..................................................................................................................................... 7
+Shift-level results and forwarding costs................................................................................... 7
+Other observations ..................................................................................................................... 8
+Implementation .......................................................................................................................... 9
+Appendix 1. Costs per scheduled machine hour .......................................................................10
+
+List of figures
+Figure 1. Tigercat LS855C forwarding on adverse slope. ........................................................... 2
+Figure 2. Productivity for LS855C for standardized 100-m forwarding distance. ......................... 4
+Figure 3. Productivity versus forwarding distance by slope class. .............................................. 5
+Figure 4. Productivity versus forwarding distance by felling method classes. ............................. 5
+Figure 5. Productivity versus forwarding distance by forwarding direction. ................................. 6
+Figure 6. Time element proportion for LS855C in different harvesting conditions. ...................... 6
+
+List of tables
+Table 1. Site and stand description ............................................................................................ 2
+Table 2. Harvesting system and equipment used in the cutblock ............................................... 2
+Table 3. EDT productivity summary for LS855C loader-forwarder .............................................. 4
+Table 4. Productivity comparison of LS855C and 880 loader-forwarders ................................... 7
+Table 5. Summary of shift-level timing ....................................................................................... 7
+Table 6. LS855C forwarding cost for 100-m standardized forwarding distance ($/m3) ................ 8
+Table 7. Productivity and forwarding cost for the 880 ................................................................. 8
+
+FPInnovations
+
+iii
+
+Abstract
+Ground-based harvesting systems typically provide lower operating costs than cable systems
+on steep terrain. Expanding the operating range of ground-based equipment on steeper slopes
+is critical to the sustained economic health of the forest industry.
+FPInnovations monitored the productivities of two loader-forwarders, a levelling-cab Tigercat
+LS855C and non-levelling cab Tigercat 880, operating on an old-growth coastal cutblock. The
+study indicated that both machines were capable of negotiating all the slopes in the operating
+area which averaged 34%. Productivity was primarily influenced by forwarding distance. The
+effect of forwarding distance on productivity remained almost the same with varying slope.
+Felling method and forwarding direction had the next largest effects on loader-forwarder
+productivity. Mechanical falling improved productivity most when used on short forwarding
+distances. The average measured reach of the LS855C was about 89% that of the 880,
+compared to the nominal ratio of 73% based on machine specifications. The smaller, levellingcab machine was less productive than the larger machine in all situations, although the
+differences in machine productivities decreased as slope increased and was minor on the
+steepest slopes.
+
+Keywords
+Steep slopes, Harvesting, Equipment, Loaders, Forwarders, Productivity, Costs.
+
+INTRODUCTION
+Significant volumes of fibre are available on slopes normally considered inaccessible to groundbased harvesting systems. A levelling-cab loader-forwarder may expand the range of sites
+where ground-based equipment can replace cable yarding equipment, thus improving fibre
+access. Knowledge about this recent innovation and its suitability to coastal conditions is
+lacking, and is required to enable implementation.
+
+OBJECTIVES
+Assess the productivity and cost of a levelling-cab loader-forwarder while operating under
+coastal British Columbia steep-slope conditions.
+
+SITE, STAND, AND HARVESTING SYSTEM
+The study site was located on Island Timberlands’ Oyster River operation near
+Campbell River, B.C. The contractor was Roga Contracting Ltd. The site was a high-elevation,
+old-growth stand, with a high proportion of hemlock and yellow cedar (Table 1).
+
+FPInnovations
+
+1
+
+Table 1. Site and stand description
+Study area parameters
+
+Sample values
+
+Average elevation (m)
+
+1180
+
+Average slope (%)
+
+34
+
+Average extraction/external distance (m)
+
+37.6/67.1
+
+Stand density (stems/ha)
+
+694
+3
+
+Gross merchantable volume (m /ha)
+
+526
+
+3
+
+Gross average stem size (m )
+
+0.76
+
+Average dbh (cm)
+
+32.4
+
+Average tree height (m)
+
+21.9
+
+Approximately 50% of the cutblock was felled with a feller-buncher while the remainder was
+hand-felled. The study area included both felling systems. The extraction equipment used in the
+study area was a levelling-cab Tigercat LS855C (Figure 1 and Table 2) that was teamed with a
+non-levelling Tigercat 880. The LS855C was smaller than the 880; its grapple had a smaller
+opening, and its boom reach was 10.3 m compared to 14.2 m for the 880.
+Table 2. Harvesting system and equipment used in the cutblock
+Item
+a
+Extracting
+
+Description
+loader-forwarder and grapple yarder
+
+Equipment make and model
+
+Tigercat LS855CLS855C / Tigercat 880
+
+Nominal boom reach (maximum, m)
+Grapple size
+a
+
+10.3 / 14.2
+122 (Rotobec 4048)/152 (T-mar HD60)
+
+Study was limited to loader forwarding phase only.
+
+Figure 1. Tigercat LS855C forwarding on adverse slope.
+
+FPInnovations
+
+2
+
+STUDY METHOD
+The study used shift-level timing and detailed timing methods, with the detailed timing data
+collected with two intensities. Extensive detailed timing (EDT), which was conducted only for the
+LS855C, measured the time and volume for each full chuck, i.e., “one trip per cycle”, from the
+time the machine left the road until the final stem from that area was decked at roadside. It
+measured the total time for all the activities required to forward the stems to the road. Additional
+data consisted of the external (i.e., from road to felling boundary) and average forwarding
+distance of each sample area, number of stems delivered to roadside, slope, forwarding
+direction, felling method, machine travelling/moving distance, and number of setups required to
+complete the area.
+A second level of detailed timing, called intensive detailed timing (IDT), was based on “one
+swing per cycle”. Data collected during IDT comprised the load–unload time per cycle; travel–
+move time; delay time; and number of stems per load by felling method, slope, and forwarding
+direction. It also recorded the “handle class”, i.e., 1st touch, intermediate, and final handling of
+the stem. The “1st touch” cycles occurred when the machine initially moved the stem, and the
+“final” cycles occurred when it placed the stem in the roadside pile. IDT data were collected for
+the Tigercat LS855C covering all combinations of slope, felling method, and forwarding direction
+except for hand-felled wood on adverse slopes under 35%. IDT data were also collected for the
+Tigercat 880, but for a limited number of operating conditions.
+MultiDAT data loggers were used to record working and delay time to calculate machine
+utilization based on productive machine hours (PMH) and delay times.
+
+RESULTS
+Extensive detailed timing
+The EDT data for the Tigercat LS855C are summarized in Table 3. The average productivity
+from the 28 sample areas was 59.2 m3/PMH, or about 600 m3/shift, and the average forwarding
+distance was 37.6 m.
+Since productivity is strongly influenced by forwarding distance, FPInnovations calculated
+productivity rates for the average forwarding distance of the cutblock and a standardized 100-m
+distance. The average forwarding distance for the entire cutblock was 69.0 m and the average
+productivity was 29.5 m3/PMH. The productivity for a standardized 100-m average forwarding
+distance was 20.3 m3/PMH.
+
+FPInnovations
+
+3
+
+Table 3. EDT productivity summary for LS855C loader-forwarder
+Parameter
+
+Study area
+
+Cutblock
+
+Standardized
+
+Average forwarding distance (m)
+
+37.6
+
+69
+
+100
+
+External distance (m)
+
+67.1
+
+133
+
+-
+
+Stems/PMH
+
+78.2
+
+38.9
+
+26.8
+
+59.2
+
+29.5
+
+20.3
+
+3
+
+Productivity (m /PMH)
+
+Figure 2 shows the productivities under different operating conditions based on a standardized
+forwarding distance of 100 m. Of the three factors that were measured against productivity,
+felling method caused the greatest difference in productivity, followed by forwarding direction
+with hand-felling on slopes over 35%. Slope class had some effect on productivity (Figure 3) but
+less than felling method. The highest productivity occurred with downhill forwarding of
+mechanically felled wood on slopes under 35%, while the lowest productivity occurred with
+hand-felled stems on slopes over 35%.
+
+Productivity by slope class, felling method, and
+forwarding direction for 100-m forwarding distance
+30
+
+downhill
+
+adverse
+
+Productivity (m3/PMH)
+
+25
+20
+15
+10
+5
+0
+
+Figure 2. Productivity for LS855C for standardized 100-m forwarding distance.
+
+Figure 4 shows a 10–15 m3/PMH difference between the trend lines for mechanically and handfelled datasets. The largest difference occurs with short forwarding distances, with a gradual
+decrease for longer forwarding distances because longer forwarding distances have a lower
+proportion of “1st touch” cycles; such cycles require more time for hand-felled stems. For cycles
+after the “1st touch”, there is no difference between the time required to move a hand-felled stem
+or a machine-felled stem.
+
+FPInnovations
+
+4
+
+The productivity trend line for downhill forwarding in Figure 5 had the highest R2 value of all the
+observations. However, 70% of the “downhill” observed wood was also mechanically felled.
+Together, these indicate that productivity is most predictable for downhill, mechanically felled
+timber. By contrast, the adverse trend line had among the lowest R2 value, which indicates that
+productivity for adverse forwarding is dependent on other factors besides forwarding distance.
+
+Productivity vs. distance by slope class
+Productivity (m3/PMH)
+
+100
+80
+60
+
+slope <35
+
+R² = 0.3321
+
+40
+
+slope>35
+
+20
+
+R² = 0.4945
+
+0
+0
+
+20
+
+40
+60
+80
+Forwarding distance (m)
+
+100
+
+Figure 3. Productivity versus forwarding distance by slope class.
+
+Productivity vs. distance by felling method
+Productivity (m3/PMH)
+
+100
+hand
+
+80
+
+mechanical
+60
+40
+
+R² = 0.7275
+
+R² = 0.3268
+20
+0
+0
+
+20
+
+40
+
+60
+
+80
+
+100
+
+Forwarding distance (m)
+Figure 4. Productivity versus forwarding distance by felling method classes.
+
+FPInnovations
+
+5
+
+Intensive detailed timing
+The distribution of time elements for the various combinations of slope, felling method, and
+forwarding direction is shown in Figure 6. Positioning time is the time required to build a flat
+working area after moving.
+The 880 had shorter cycles: 0.47 min vs. 0.51 min in mechanically felled wood on slopes under
+35%, and 0.55 min vs. 0.62 min in hand-felled wood on slopes over 35%. Part of the difference
+was attributed to operator skill level; the LS855C operator had less than two months’ experience
+on a levelling-cab machine while the 880 operator was highly experienced.
+
+Figure 5. Productivity versus forwarding distance by forwarding direction.
+
+Cycle time elements
+100%
+80%
+Delay
+60%
+
+Loading
+
+40%
+
+Unloading
+
+20%
+
+Re-decking
+Move to road
+
+0%
+≤35 % >35 % ≤35 % >35 % ≤35 % >35 % ≤35 % >35 %
+
+Travel to back
+
+Mechanical
+felled
+
+Positioning
+
+Hand felled
+
+Downhill
+
+Mechanical
+felled
+
+Hand felled
+
+Adverse
+
+Average
+
+Figure 6. Time element proportion for LS855C in different harvesting conditions.
+
+FPInnovations
+
+6
+
+The proportion of travel–move time was slightly higher for the levelling-cab LS855C (29.2%)
+than for the non-levelling 880 (24.1%). This difference could be partially explained by the
+different size or reach of the machines (10.2 vs 14.3 m), which provided an advantage to the
+880, especially when working near the road on short chucks.
+
+Reach
+The average reach of the two machines was calculated by dividing the length of the GPS track
+for each sample area by the number of setups. This value provides a measurement of the
+distance the logs are moved on each setup, independent of its nominal reach (Table 2). The
+average reach of the LS855C was about 89% of the 880’s reach, while its nominal reach was
+10.3 m versus 14.2 m for the 880, a ratio of 73%. It is unknown whether this relative increase in
+reach for the LS855C was attributed to its levelling-cab capability or to some other operating
+conditions.
+The LS855C reach was about 1.6 m shorter for hand-felled stems on slopes over 35% than with
+mechanically felled stems on slopes under 35% (Table 4). For similar conditions, the reach loss
+for the 880 was 2.0 m.
+
+Shift-level results and forwarding costs
+Shift-level timing (Table 5) was used only to calculate the machine utilization.
+Table 4. Productivity comparison of LS855C and 880 loader-forwarders
+Downhill forwarding
+
+Mech. felled ≤35%
+
+Hand felled >35%
+
+LS855C
+
+880
+
+LS855C
+
+880
+
+LS855C
+
+880
+
+Cycle time (min)
+
+0.51
+
+0.47
+
+0.62
+
+0.55
+
+0.57
+
+0.52
+
+Handle wood (%)
+
+75.0
+
+83.1
+
+67.3
+
+69.1
+
+70.8
+
+75.9
+
+Travel–move (%)
+
+24.9
+
+14.8
+
+32.7
+
+30.9
+
+29.2
+
+24.1
+
+Stems/minute
+
+5.90
+
+6.61
+
+3.15
+
+3.10
+
+4.53
+
+4.69
+
+16.3
+
+18.5
+
+14.7
+
+16.5
+
+15.5
+
+17.5
+
+72.97
+
+92.73
+
+35.12
+
+38.69
+
+53.20
+
+62.12
+
+Average reach (m)
+3
+
+Productivity index (m /min x m)
+
+Average
+
+Table 5. Summary of shift-level timing
+Parameter
+
+LS855C
+
+880
+
+Working time (h)
+
+45
+
+38.4
+
+Short delay time (h)
+
+0.3
+
+1.8
+
+Total productive time (PMH)
+
+45.3
+
+40.2
+
+Scheduled time (SMH)
+
+50
+
+44
+
+Machine utilization (%)
+
+90.6%
+
+91.4%
+
+FPInnovations
+
+7
+
+Machine costs were calculated using FPInnovations’ standard method (Appendix 1). Machine
+life for the LS855C was assumed to be 93% of the 880’s life based on discussions and analysis
+with various equipment dealers and operating personnel, resulting in machine costs of
+$149.88/SMH and $159.36/SMH for the LS855C and 880, respectively. The average
+productivity for the LS855C in the sampled area was 59.2 m3/PMH, or 53.3 m3/SMH based on
+the 37.6-m average extraction distance and 90% utilization, resulting in an average forwarding
+cost of $2.81/m3. The corresponding costs were $5.66/m3 for the cutblock average forwarding
+distance (69.0 m), and $8.20/m3 for the standardized 100-m forwarding distance. Using
+productivity from Figure 2, costs for various forwarding conditions using the 100-m forwarding
+distance at 90% machine utilization are shown in Table 6.
+3
+
+Table 6. LS855C forwarding cost for 100-m standardized forwarding distance ($/m )
+Downhill forwarding
+
+Adverse forwarding
+
+Slope class
+
+≤35%
+
+>35%
+
+≤35%
+
+>35%
+
+Mechanically felled
+
+6.13
+
+6.92
+
+6.93
+
+8.01
+
+Hand-felled
+
+8.03
+
+8.06
+
+9.56
+
+16.27
+
+For comparison, the forwarding cost of the 880 was derived for the operating conditions where it
+was monitored, i.e., mechanically felled on downhill slopes under 35% and manually felled on
+downhill slopes over 35%. The estimated productivity and corresponding forwarding cost are
+presented in Table 7 based on 90% machine utilization.
+Table 7. Productivity and forwarding cost for the 880
+
+a
+
+Downhill/mech. felled/<35% slope
+
+Downhill/man. felled/>35% slope
+
+31.07
+
+20.49
+
+5.13
+
+7.78
+
+3
+
+Productivity (m /PMH)
+a
+
+3
+
+Forwarding cost ($/m )
+a
+
+100-m standardized forwarding distance.
+
+OTHER OBSERVATIONS
+FPInnovations observed both machines operating on very steep slopes during the study; the
+LS855C climbed short sections with slopes over 75%. According to the operator, the onboard
+inclinometer indicated a maximum inclination of 42o (90%). Although the LS855C was observed
+to climb steeper slopes than the 880 during the study period, the data do not show that the
+levelling-cab machine can negotiate steeper terrain than the non-levelling machine. Operator
+skill may have had a major role in the terrain ability of the two machines since the LS855C
+operator had only a few months’ experience on the machine, while the 880 operator had many
+years of experience.
+
+FPInnovations
+
+8
+
+Both operators commented that either machine was capable of negotiating the slopes in the
+operating area, but that the levelling-cab machine provided a more comfortable environment.
+However, the 880 operator mentioned that he preferred the better feedback about the terrain
+and undercarriage performance from a non-levelling machine, based on his previous
+experience. Uphill visibility from the raised cab of the 880 was better than that of the LS855C,
+especially when forwarding hand-felled stems on downhill slopes.
+
+IMPLEMENTATION
+FPInnovations monitored the productivity of a levelling-cab Tigercat LS855C loader-forwarder
+and non-levelling cab Tigercat 880 operating in an old-growth coastal cutblock. The study
+revealed the following:
+
+
+Productivity was primarily influenced by forwarding distance, and its effect on
+productivity was nearly identical for slope classes over and under 35%. For either slope
+class, productivity was reduced by about 27% when the forwarding distance was
+increased from 40 m to 60 m.
+
+
+
+After forwarding distance, felling method had the most effect on productivity. For
+example, productivity with hand-felled stems was 49–86% of the productivity with
+mechanically felled stems. The impact of felling method was greatest for short
+forwarding distances, i.e., mechanical felling improves loader-forwarding productivity
+most when used near the road. The average measured reach of the LS855C was about
+89% that of the 880, compared to the nominal ratio of 73% based on their specifications.
+This is likely related to its levelling-cab capability although this cannot be proven
+conclusively. The reach for both machines was reduced by 1.6–2.0 m when forwarding
+hand-felled stems compared to mechanically felled stems.
+
+
+
+The lowest forwarding cost for the LS855C was obtained when working with
+mechanically felled wood on slopes under 35%, while the most costly operating
+conditions occurred when hand-felled stems were forwarded on adverse slopes over
+35%. The forwarding cost of the LS855C working on mechanically felled wood and
+downhill slopes under 35% was $1.00/m3 higher than the 880’s cost under the same
+conditions The smaller, levelling-cab machine was less productive than the larger
+machine in all situations, but it regained some advantage in the more difficult conditions.
+
+
+
+Both machines were capable of negotiating all the slopes in the operating area. The
+levelling-cab machine operator commented that this machine was more comfortable to
+operate, and was perhaps less fatiguing, which could contribute to a long-term
+productivity benefit. Conversely, the non-levelling cab machine operator mentioned that
+he preferred the better feedback about the terrain and undercarriage performance from a
+non-levelling machine
+
+FPInnovations
+
+9
+
+APPENDIX 1. COSTS PER SCHEDULED MACHINE HOUR
+
+Tigercat LS855C
+Tigercat 880
+Model carrier:
+Attachment:
+Rotobec 4048
+T-Mar HD60
+Ownership costs
+Total purchase price (P) $
+535 000
+605 000
+Expected life (Y) y
+6
+6
+Expected life (H) h
+15 600
+16 800
+Scheduled hours/year (h)=(H/Y) h
+2 600
+2 800
+Salvage value as % of P (s) %
+25
+25
+Interest rate (Int) %
+5.0
+5.0
+Insurance rate (Ins) %
+3.0
+3.0
+Salvage value (S)=((P•s)/100) $
+133 750
+151 250
+Average investment (AVI)=((P+S)/2) $
+334 375
+378 125
+Loss in resale value ((P-S)/H) $/h
+25.72
+27.01
+Interest ((Int•AVI)/h) $/h
+6.43
+6.75
+Insurance ((Ins•AVI)/h) $/h
+3.86
+4.05
+Total ownership costs (OW) $/h
+36.01
+37.81
+Operating costs
+Fuel consumption (F) L/h
+27.2
+33.3
+Fuel (fc) $/L
+1.20
+1.20
+Lube & oil as % of fuel (fp) %
+10
+10
+Track & undercarriage replacement (Tc) $
+41 000
+41 000
+Track & undercarriage life (Th) h
+8 000
+8 000
+Annual operating supplies (Oc) $
+1 000
+1 000
+Annual repair & maintenance (Rp) $
+75 792
+80 667
+Shift length (sl) h
+10.0
+10.0
+Operator wage $/h
+28.32
+28.32
+Total wages (W) $/h
+28.32
+28.32
+Wage benefit loading (WBL) %
+39
+39
+Fuel (F•fc) $/h
+32.64
+39.96
+Lube & oil ((fp/100)•(F•fc)) $/h
+3.26
+4.00
+Track & undercarriage (Tc/Th) $/h
+5.13
+5.13
+Operating supplies (Oc/h) $/h
+0.38
+0.36
+Repair & maintenance (Rp/h) $/h
+29.15
+28.81
+Wages & benefits (W•(1+WBL/100)) $/h
+39.36
+39.36
+Prorated overtime (((1.5•W-W)•(sl-8)•(1+WBL/100))/sl) $/h
+3.94
+3.94
+Total operating costs (OP) $/SMH
+113.87
+121.55
+Total ownership and operating costs (OW+OP) $/SMH
+149.88
+159.36
+These costs use FPInnovations' standard methodology for estimating machine ownership and operating
+costs of new machines. Costs do not include supervision, profit and overhead, and are not the actual costs
+for the contractor or the company.
+
+FPInnovations
+
+10
+
+Head Office
+Pointe-Claire
+570 Saint-Jean Blvd
+Pointe-Claire, QC
+Canada H9R 3J9
+T 514 630-4100
+
+Vancouver
+
+Québec
+
+2665 East Mall
+
+319 Franquet
+
+Vancouver, BC
+
+Québec, QC
+
+Canada V6T 1Z4
+
+Canada G1P 4R4
+
+T 604 224-3221
+
+T 418 659-2647
+
+© 2014 FPInnovations. All rights reserved. Copying and redistribution prohibited.
+® FPInnovations, its marks and logos are trademarks of FPInnovations
+
+
