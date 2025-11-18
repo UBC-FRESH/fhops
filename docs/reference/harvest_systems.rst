@@ -164,6 +164,12 @@ regressions:
   match the published cold-deck loader-forwarded scenario vs. the grapple-yarded hot/cold decks.
   Outputs provide both PMH and SMH productivity along with the $/m³ cost figure from the report, so
   analysts can keep BC roadside presets tied to local landing data.
+* ``--processor-model tn166`` – FERIC TN-166 stroke-processor study (Denis D3000 telescopic boom) from
+  interior BC. Choose ``--processor-tn166-scenario`` (``grapple_yarded``, ``right_of_way``, or
+  ``mixed_shift``) to flip between the detailed timing splits or the overall shift-level average. The
+  helper reports PMH/SMH productivity, stems per hour, and the published $/m³ + $/stem values. Pick
+  this preset when you need an interior stroke-processor baseline rather than the hardwood-focused
+  Labelle regressions.
 
 CLI output reports the base delay-free productivity, the applied multipliers, and the utilisation-adjusted
 m³/PMH so costing workflows can decide which value to pass downstream. Remember that the Labelle models

@@ -109,6 +109,7 @@ from .processor_loader import (
     Labelle2017PowerProcessorResult,
     Labelle2018ProcessorProductivityResult,
     ADV5N6ProcessorProductivityResult,
+    TN166ProcessorProductivityResult,
     estimate_clambunk_productivity_adv2n26,
     estimate_loader_forwarder_productivity_adv5n1,
     estimate_loader_forwarder_productivity_tn261,
@@ -119,6 +120,7 @@ from .processor_loader import (
     estimate_processor_productivity_labelle2017,
     estimate_processor_productivity_labelle2018,
     estimate_processor_productivity_adv5n6,
+    estimate_processor_productivity_tn166,
     predict_berry2019_skid_effects,
 )
 
@@ -193,6 +195,7 @@ __all__ = [
     "Labelle2017PowerProcessorResult",
     "Labelle2018ProcessorProductivityResult",
     "ADV5N6ProcessorProductivityResult",
+    "TN166ProcessorProductivityResult",
     "Labelle2019ProcessorProductivityResult",
     "Labelle2019VolumeProcessorProductivityResult",
     "estimate_loader_forwarder_productivity_tn261",
@@ -202,6 +205,7 @@ __all__ = [
     "LoaderAdv5N1ProductivityResult",
     "ClambunkProductivityResult",
     "estimate_processor_productivity_adv5n6",
+    "estimate_processor_productivity_tn166",
     "estimate_clambunk_productivity_adv2n26",
     "ADV2N26_DEFAULT_TRAVEL_EMPTY_M",
     "ADV2N26_DEFAULT_STEMS_PER_CYCLE",

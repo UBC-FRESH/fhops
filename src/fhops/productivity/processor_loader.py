@@ -9,20 +9,32 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-_BERRY_DATA_PATH = (
-    Path(__file__).resolve().parents[3] / "data" / "productivity" / "processor_berry2019.json"
-)
-_ADV5N6_DATA_PATH = (
-    Path(__file__).resolve().parents[3] / "data" / "productivity" / "processor_adv5n6.json"
-)
-
-
+_DATA_ROOT = Path(__file__).resolve().parents[3] / "data" / "productivity"
+_BERRY_DATA_PATH = _DATA_ROOT / "processor_berry2019.json"
+_ADV5N6_DATA_PATH = _DATA_ROOT / "processor_adv5n6.json"
+_TN166_DATA_PATH = _DATA_ROOT / "processor_tn166.json"
 @lru_cache(maxsize=1)
 def _load_berry_dataset() -> dict[str, object]:
     try:
         return json.loads(_BERRY_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
         raise FileNotFoundError(f"Berry (2019) processor data missing: {_BERRY_DATA_PATH}") from exc
+
+
+@lru_cache(maxsize=1)
+def _load_adv5n6_dataset() -> dict[str, object]:
+    try:
+        return json.loads(_ADV5N6_DATA_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:  # pragma: no cover - configuration error
+        raise FileNotFoundError(f"ADV5N6 processor data missing: {_ADV5N6_DATA_PATH}") from exc
+
+
+@lru_cache(maxsize=1)
+def _load_tn166_dataset() -> dict[str, object]:
+    try:
+        return json.loads(_TN166_DATA_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:  # pragma: no cover - configuration error
+        raise FileNotFoundError(f"TN-166 processor data missing: {_TN166_DATA_PATH}") from exc
 
 
 @lru_cache(maxsize=1)
@@ -128,6 +140,23 @@ def _load_adv5n6_scenarios() -> dict[str, dict[str, object]]:
     scenarios: dict[str, dict[str, object]] = {}
     for entry in payload.get("scenarios", []):
         scenarios[entry["name"]] = entry
+    return scenarios
+
+
+@lru_cache(maxsize=1)
+def _load_tn166_scenarios() -> dict[str, dict[str, object]]:
+    payload = _load_tn166_dataset()
+    defaults = payload.get("defaults") or {}
+    cycle = payload.get("cycle_time_minutes")
+    accuracy = payload.get("accuracy")
+    scenarios: dict[str, dict[str, object]] = {}
+    for entry in payload.get("scenarios", []):
+        combined = {**defaults, **entry}
+        if cycle and "cycle_time_minutes" not in combined:
+            combined["cycle_time_minutes"] = cycle
+        if accuracy and "accuracy" not in combined:
+            combined["accuracy"] = accuracy
+        scenarios[entry["name"]] = combined
     return scenarios
 
 
@@ -771,6 +800,26 @@ class ADV5N6ProcessorProductivityResult:
     notes: tuple[str, ...] | None
 
 
+@dataclass(frozen=True)
+class TN166ProcessorProductivityResult:
+    scenario: str
+    description: str
+    stem_source: str
+    processing_mode: str
+    mean_stem_volume_m3: float | None
+    productivity_m3_per_pmh: float
+    productivity_m3_per_smh: float
+    stems_per_pmh: float | None
+    stems_per_smh: float | None
+    utilisation_percent: float | None
+    availability_percent: float | None
+    shift_length_hours: float | None
+    cost_cad_per_m3: float
+    cost_cad_per_stem: float | None
+    cycle_time_minutes: dict[str, float | str] | None
+    notes: tuple[str, ...] | None
+
+
 def estimate_loader_forwarder_productivity_adv5n1(
     *,
     forwarding_distance_m: float,
@@ -854,5 +903,48 @@ def estimate_processor_productivity_adv5n6(
         shift_length_hours=_maybe("shift_length_hours"),
         cost_cad_per_m3=float(payload["cost_cad_per_m3"]),
         machine_rate_cad_per_smh=_maybe("machine_rate_cad_per_smh"),
+        notes=tuple(notes) if notes else None,
+    )
+
+
+def estimate_processor_productivity_tn166(
+    *, scenario: Literal["grapple_yarded", "right_of_way", "mixed_shift"]
+) -> TN166ProcessorProductivityResult:
+    scenarios = _load_tn166_scenarios()
+    payload = scenarios.get(scenario)
+    if payload is None:
+        valid = ", ".join(sorted(scenarios))
+        raise ValueError(f"Unknown TN-166 scenario '{scenario}'. Valid options: {valid}.")
+
+    def _maybe(name: str) -> float | None:
+        value = payload.get(name)
+        return None if value is None else float(value)
+
+    notes = payload.get("notes")
+    cycle_minutes = payload.get("cycle_time_minutes")
+    cycle_dict: dict[str, float | str] | None = None
+    if isinstance(cycle_minutes, dict):
+        cycle_dict = {}
+        for key, value in cycle_minutes.items():
+            if isinstance(value, (int, float)):
+                cycle_dict[key] = float(value)
+            else:
+                cycle_dict[key] = value
+    return TN166ProcessorProductivityResult(
+        scenario=payload.get("name", scenario),
+        description=payload.get("description", ""),
+        stem_source=payload.get("stem_source", scenario),
+        processing_mode=payload.get("processing_mode", ""),
+        mean_stem_volume_m3=_maybe("mean_stem_volume_m3"),
+        productivity_m3_per_pmh=float(payload["productivity_m3_per_pmh"]),
+        productivity_m3_per_smh=float(payload["productivity_m3_per_smh"]),
+        stems_per_pmh=_maybe("stems_per_pmh"),
+        stems_per_smh=_maybe("stems_per_smh"),
+        utilisation_percent=_maybe("utilisation_percent"),
+        availability_percent=_maybe("availability_percent"),
+        shift_length_hours=_maybe("shift_length_hours"),
+        cost_cad_per_m3=float(payload["cost_cad_per_m3"]),
+        cost_cad_per_stem=_maybe("cost_cad_per_stem"),
+        cycle_time_minutes=cycle_dict,
         notes=tuple(notes) if notes else None,
     )

@@ -12,6 +12,9 @@
 - Updated `docs/reference/harvest_systems.rst`, `notes/dataset_inspection_plan.md`, and `notes/reference_log.md`
   to document the new preset, its BC provenance, and the fact that coeffs came straight from ADV5N6. Added CLI regression
   tests covering the new helper plus a failure-path test for invalid stem-source/mode combinations.
+- Structured the FERIC TN-166 Denis D3000 processor study into `data/productivity/processor_tn166.json` and exposed it via
+  `--processor-model tn166` (with `--processor-tn166-scenario`). CLI output now reports the grapple-yarded, right-of-way,
+  and mixed-shift productivity/cost figures, and docs/logs/tests were updated to cover the new interior stroke-processor preset.
 
 # 2025-11-22 — Berry (2019) skid-size scaling
 - `fhops.dataset estimate-productivity --machine-role roadside_processor` gained `--processor-skid-area-m2` so analysts can plug in the landing footprint from Berry (2019). The CLI now predicts the average <10 min delay seconds/stem, warns when areas fall outside the 2.5–3.7k m² Kinleith range, and auto-scales the utilisation multiplier when users haven’t supplied `--processor-delay-multiplier`.

@@ -1,0 +1,82 @@
+{
+  "source": {
+    "citation": "Moshenko, D.W. 1991. Evaluation of a Denis D3000 Telescopic Log Processor. FERIC Technical Note TN-166.",
+    "document_path": "notes/reference/fpinnovations/TN166.PDF",
+    "notes": [
+      "Processor: Denis D3000 telescopic boom (Fletcher Challenge Canada, southern interior BC, 1990 study).",
+      "Detailed timing split yarder-decked vs. right-of-way stems; shift-level study mixes both feedstocks (8 h shifts, 5x per week).",
+      "Cycle elements averaged 0.67 min/stem (0.22 pick, 0.18 process, 0.12 optional second process, 0.15 discharge) with <10 min delays accounting for 3.9% of time and 92% of length measurements within ±7.5 cm."
+    ]
+  },
+  "defaults": {
+    "utilisation_percent": 81.7,
+    "availability_percent": 92.2,
+    "shift_length_hours": 8.0
+  },
+  "scenarios": [
+    {
+      "name": "grapple_yarded",
+      "description": "Roadside processing of grapple-yarded decks (Block yarder decks).",
+      "stem_source": "grapple_yarded",
+      "processing_mode": "roadside_deck",
+      "mean_stem_volume_m3": 0.53,
+      "stems_per_pmh": 84.4,
+      "stems_per_smh": 68.95,
+      "productivity_m3_per_pmh": 44.8,
+      "productivity_m3_per_smh": 36.60,
+      "cost_cad_per_m3": 2.51,
+      "cost_cad_per_stem": 1.33,
+      "notes": [
+        "Detailed timing includes delays <10 min; assume same utilisation (81.7%) as shift-level comparisons when converting to SMH.",
+        "Deck prep included turning stems and breaking down piles when yarder orientation was inconsistent."
+      ]
+    },
+    {
+      "name": "right_of_way",
+      "description": "Processing hand-felled right-of-way wood (no yarding stage).",
+      "stem_source": "right_of_way",
+      "processing_mode": "roadside_row",
+      "mean_stem_volume_m3": 0.53,
+      "stems_per_pmh": 64.2,
+      "stems_per_smh": 52.45,
+      "productivity_m3_per_pmh": 34.0,
+      "productivity_m3_per_smh": 27.78,
+      "cost_cad_per_m3": 3.30,
+      "cost_cad_per_stem": 1.75,
+      "notes": [
+        "Lower productivity reflects added time to sort/deck along the road; no yarding cost incurred for this wood.",
+        "Use when the processor is handling right-of-way stems or other mixed-sort roadside piles rather than clean grapple decks."
+      ]
+    },
+    {
+      "name": "mixed_shift",
+      "description": "Shift-level average combining yarded and right-of-way feedstocks (38 monitored shifts).",
+      "stem_source": "mixed",
+      "processing_mode": "shift_average",
+      "mean_stem_volume_m3": 0.61,
+      "stems_per_pmh": 58.6,
+      "stems_per_smh": 47.88,
+      "productivity_m3_per_pmh": 35.9,
+      "productivity_m3_per_smh": 29.33,
+      "cost_cad_per_m3": 3.13,
+      "cost_cad_per_stem": 1.92,
+      "notes": [
+        "Totals: 14,232 stems, 8,728 m³ over 297.6 TMH (PMH 243.0) with utilisation 81.7% and availability 92.2% across 38 productive shifts.",
+        "Use when mix of feedstocks or additional organizational delays (moves between ROW/yarded decks) mirror the study conditions."
+      ]
+    }
+  ],
+  "cycle_time_minutes": {
+    "pick": 0.22,
+    "process": 0.18,
+    "process_optional": 0.12,
+    "process_optional_condition": "applied when a second process pass was required (0.23 min when it occurred)",
+    "discharge": 0.15,
+    "total": 0.67,
+    "short_delay_ratio_percent": 3.9
+  },
+  "accuracy": {
+    "length_within_0_075m_percent": 92.0,
+    "sample_logs": 50
+  }
+}

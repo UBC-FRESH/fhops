@@ -11,6 +11,7 @@ from fhops.productivity import (
     estimate_processor_productivity_labelle2019_dbh,
     estimate_processor_productivity_labelle2019_volume,
     estimate_processor_productivity_adv5n6,
+    estimate_processor_productivity_tn166,
 )
 
 runner = CliRunner()
@@ -245,6 +246,24 @@ def test_cli_processor_adv5n6_rejects_loader_hot() -> None:
     )
     assert result.exit_code != 0
     assert "ADV5N6 only reports loader-forwarded data for cold processing" in result.stdout
+
+
+def test_cli_processor_tn166_right_of_way() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "roadside_processor",
+            "--processor-model",
+            "tn166",
+            "--processor-tn166-scenario",
+            "right_of_way",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_processor_productivity_tn166(scenario="right_of_way")
+    assert f"{expected.productivity_m3_per_smh:.1f}" in result.stdout
 
 
 def test_cli_processor_berry2019_skid_area_respects_manual_delay() -> None:

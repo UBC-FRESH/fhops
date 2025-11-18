@@ -89,7 +89,9 @@ from fhops.productivity import (
     estimate_processor_productivity_labelle2017,
     estimate_processor_productivity_labelle2018,
     ADV5N6ProcessorProductivityResult,
+    TN166ProcessorProductivityResult,
     estimate_processor_productivity_adv5n6,
+    estimate_processor_productivity_tn166,
     predict_berry2019_skid_effects,
     Labelle2019ProcessorProductivityResult,
     estimate_processor_productivity_labelle2019_dbh,
@@ -500,6 +502,7 @@ class RoadsideProcessorModel(str, Enum):
     LABELLE2019_DBH = "labelle2019_dbh"
     LABELLE2019_VOLUME = "labelle2019_volume"
     ADV5N6 = "adv5n6"
+    TN166 = "tn166"
 
 
 class ADV5N6StemSource(str, Enum):
@@ -511,6 +514,12 @@ class ADV5N6ProcessingMode(str, Enum):
     COLD = "cold"
     HOT = "hot"
     LOW_VOLUME = "low_volume"
+
+
+class TN166Scenario(str, Enum):
+    GRAPPLE_YARDED = "grapple_yarded"
+    RIGHT_OF_WAY = "right_of_way"
+    MIXED_SHIFT = "mixed_shift"
 
 
 class LabelleProcessorSpecies(str, Enum):
@@ -664,6 +673,8 @@ def _render_processor_result(
         | Labelle2018ProcessorProductivityResult
         | Labelle2019ProcessorProductivityResult
         | Labelle2019VolumeProcessorProductivityResult
+        | ADV5N6ProcessorProductivityResult
+        | TN166ProcessorProductivityResult
     ),
 ) -> None:
     if isinstance(result, ProcessorProductivityResult):
@@ -847,6 +858,54 @@ def _render_processor_result(
         console.print(
             "[dim]FPInnovations Advantage Vol. 5 No. 6 (Madill 3800 + Waratah HTH624) landing processor study. Select stem source + processing mode to mirror loader-forwarded vs. grapple-yarded hot/cold decks.[/dim]"
         )
+        if result.notes:
+            console.print(f"[dim]{' '.join(result.notes)}[/dim]")
+        return
+
+    elif isinstance(result, TN166ProcessorProductivityResult):
+        rows = [
+            ("Model", "tn166"),
+            ("Scenario", result.scenario.replace("_", " ")),
+            ("Stem Source", result.stem_source.replace("_", " ")),
+            ("Processing Mode", result.processing_mode.replace("_", " ")),
+            ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.1f}"),
+            ("Productivity (m³/SMH)", f"{result.productivity_m3_per_smh:.1f}"),
+            ("Cost ($/m³)", f"{result.cost_cad_per_m3:.2f}"),
+        ]
+        if result.stems_per_pmh is not None:
+            rows.append(("Stems per PMH", f"{result.stems_per_pmh:.1f}"))
+        if result.stems_per_smh is not None:
+            rows.append(("Stems per SMH", f"{result.stems_per_smh:.1f}"))
+        if result.mean_stem_volume_m3 is not None:
+            rows.append(("Mean Stem Volume (m³)", f"{result.mean_stem_volume_m3:.2f}"))
+        if result.utilisation_percent is not None:
+            rows.append(("Utilisation (%)", f"{result.utilisation_percent:.1f}"))
+        if result.availability_percent is not None:
+            rows.append(("Availability (%)", f"{result.availability_percent:.1f}"))
+        if result.shift_length_hours is not None:
+            rows.append(("Shift Length (h)", f"{result.shift_length_hours:.1f}"))
+        if result.cost_cad_per_stem is not None:
+            rows.append(("Cost ($/stem)", f"{result.cost_cad_per_stem:.2f}"))
+        _render_kv_table("Roadside Processor Productivity Estimate", rows)
+        console.print(
+            "[dim]FERIC TN-166 (Denis D3000 telescopic processor) shift/detailed timing study in interior BC; use this preset for stroke processors working grapple-yarded decks or ROW stems.[/dim]"
+        )
+        cycle = result.cycle_time_minutes or {}
+        numeric_entries = [
+            (name, value)
+            for name, value in cycle.items()
+            if name != "total" and isinstance(value, (int, float))
+        ]
+        if numeric_entries or isinstance(cycle.get("total"), (int, float)):
+            prefix = "[dim]Cycle breakdown"
+            total_value = cycle.get("total")
+            if isinstance(total_value, (int, float)):
+                prefix = f"[dim]Cycle breakdown (avg {total_value:.2f} min)"
+            suffix = ""
+            if numeric_entries:
+                pieces = ", ".join(f"{name} {float(value):.2f} min" for name, value in numeric_entries)
+                suffix = f": {pieces}"
+            console.print(f"{prefix}{suffix}[/dim]")
         if result.notes:
             console.print(f"[dim]{' '.join(result.notes)}[/dim]")
         return
@@ -2600,7 +2659,7 @@ def estimate_productivity_cmd(
         case_sensitive=False,
         help=(
             "Roadside-processor regression to use "
-            "(berry2019 | labelle2016/2017/2018 | labelle2019_dbh | labelle2019_volume | adv5n6)."
+            "(berry2019 | labelle2016/2017/2018 | labelle2019_dbh | labelle2019_volume | adv5n6 | tn166)."
         ),
     ),
     processor_piece_size_m3: float | None = typer.Option(
@@ -2644,6 +2703,12 @@ def estimate_productivity_cmd(
         "--processor-processing-mode",
         case_sensitive=False,
         help="Processing mode for ADV5N6 (cold | hot | low_volume).",
+    ),
+    processor_tn166_scenario: TN166Scenario = typer.Option(
+        TN166Scenario.GRAPPLE_YARDED,
+        "--processor-tn166-scenario",
+        case_sensitive=False,
+        help="TN-166 scenario (grapple_yarded | right_of_way | mixed_shift).",
     ),
     processor_labelle2016_form: Labelle2016TreeForm = typer.Option(
         Labelle2016TreeForm.ACCEPTABLE,
@@ -3220,6 +3285,18 @@ def estimate_productivity_cmd(
             result_processor = estimate_processor_productivity_adv5n6(
                 stem_source=stem_source_value,
                 processing_mode=processing_mode_value,
+            )
+        elif processor_model is RoadsideProcessorModel.TN166:
+            if processor_piece_size_m3 is not None or processor_volume_m3 is not None:
+                raise typer.BadParameter(
+                    "--processor-piece-size-m3/--processor-volume-m3 apply to other helpers; TN-166 is table-driven."
+                )
+            if processor_dbh_cm is not None:
+                raise typer.BadParameter("--processor-dbh-cm applies to the Labelle helpers, not TN-166.")
+            if processor_species is not None or processor_treatment is not None:
+                raise typer.BadParameter("--processor-species/--processor-treatment do not apply to TN-166.")
+            result_processor = estimate_processor_productivity_tn166(
+                scenario=processor_tn166_scenario.value,
             )
         else:
             if processor_piece_size_m3 is not None:
