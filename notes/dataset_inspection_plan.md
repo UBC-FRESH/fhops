@@ -180,8 +180,8 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
             - [x] Add loader-forwarder/landing loader defaults from Table 4 (41 m³/SMH at $2.88/m³ for the 892D-LC; 35 m³/SMH at $4.04/m³ for the Link-Belt LS-4300) so analysts can select a hoe-forwarding preset even while ADV5N1 digitization is in flight (`--loader-model adv2n26` plus new CLI knobs).
             - [x] Surface the soil-disturbance survey (20.4 % trail occupancy with class-specific widths and exposed-mineral-soil percentages) as planning defaults/CLI warnings for clambunk-assisted corridors (CLI now prints the trail-width/exposed-mineral-soil stats when `adv2n26` is selected and docs reference the same).
         - [ ] Catalogue additional loader references in the log (ADV2N62.PDF, ADV5N45.PDF, ADV15N2.PDF, FPDat loader traces):
-            - [ ] For each, pull loader timing details (predictors, sample sizes, slope/terrain) and record them in `notes/reference_log.md`.
-            - [ ] Identify which references include multi-predictor regressions (e.g., decking distance + sorts) to complement ADV5N1’s distance-only model.
+            - [x] For each, pull loader timing details (predictors, sample sizes, slope/terrain) and record them in `notes/reference_log.md` (entries added for ADV2N62 loader-forwarding, ADV5N45 mechanized processors + loader support, and ADV15N2 steep-slope loader-forwarders).
+            - [x] Identify which references include multi-predictor regressions (e.g., decking distance + sorts) to complement ADV5N1’s distance-only model (ADV15N2 documents slope/felling-direction multipliers; ADV2N62 provides trail occupancy/loader-processing cost splits for combo systems).
         - [ ] Stage structured data:
             - [x] Build `data/productivity/loader_models.json` capturing coefficients, payload/utilisation defaults, and soil-disturbance metadata (TN-261, ADV2N26, ADV5N1 now covered).
             - [x] Add companion entries for richer models so the helper/CLI can switch between variants and print metadata-driven warnings.
