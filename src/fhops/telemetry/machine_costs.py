@@ -26,6 +26,7 @@ class MachineCostSnapshot:
     repair_maintenance: float | None = None
     usage_bucket_hours: int | None = None
     usage_multiplier: float | None = None
+    cost_base_year: int | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -39,6 +40,7 @@ class MachineCostSnapshot:
             "repair_maintenance": self.repair_maintenance,
             "usage_bucket_hours": self.usage_bucket_hours,
             "usage_multiplier": self.usage_multiplier,
+            "cost_base_year": self.cost_base_year,
         }
 
 
@@ -65,6 +67,7 @@ def build_machine_cost_snapshots(machines: Iterable[Any]) -> list[MachineCostSna
         usage_bucket_hours = None
         usage_multiplier = None
 
+        cost_base_year = getattr(machine, "cost_base_year", None)
         if role:
             composed = compose_default_rental_rate_for_role(role, usage_hours=repair_usage_hours)
             if composed is not None:
@@ -78,6 +81,8 @@ def build_machine_cost_snapshots(machines: Iterable[Any]) -> list[MachineCostSna
                     bucket = select_usage_class_multiplier(rate_entry, repair_usage_hours)
                     if bucket is not None:
                         usage_bucket_hours, usage_multiplier = bucket
+                if rate_entry and cost_base_year is None:
+                    cost_base_year = rate_entry.cost_base_year
 
         snapshots.append(
             MachineCostSnapshot(
@@ -91,6 +96,7 @@ def build_machine_cost_snapshots(machines: Iterable[Any]) -> list[MachineCostSna
                 repair_maintenance=repair,
                 usage_bucket_hours=usage_bucket_hours,
                 usage_multiplier=usage_multiplier,
+                cost_base_year=cost_base_year,
             )
         )
     return snapshots
@@ -120,6 +126,9 @@ def summarize_machine_costs(machine_costs: object) -> str:
             parts.append(f"rep={repair}")
         if usage is not None:
             parts.append(f"usage={usage:,}h")
+        base_year = entry.get("cost_base_year")
+        if base_year:
+            parts.append(f"base={base_year} CAD")
         if not parts:
             continue
         fragments.append(f"{role}: " + ", ".join(parts))

@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 
+from fhops.costing.inflation import TARGET_YEAR, inflate_value
 DATA_PATH = Path(__file__).resolve().parents[3] / "data/machine_rates.json"
 
 
@@ -22,6 +23,7 @@ class MachineRate:
     move_in_cost: float
     source: str
     notes: str | None = None
+    cost_base_year: int = TARGET_YEAR
     repair_maintenance_cost_per_smh: float | None = None
     repair_maintenance_reference_hours: int | None = None
     repair_maintenance_usage_multipliers: dict[int, float] | None = None
@@ -38,18 +40,26 @@ def load_default_machine_rates() -> Sequence[MachineRate]:
         data = json.load(fh)
     rates = []
     for entry in data:
+        base_year = int(entry.get("cost_base_year", TARGET_YEAR))
+
+        def adjust(value: float | int | None) -> float:
+            if value is None:
+                return 0.0
+            return float(inflate_value(float(value), base_year))
+
         rates.append(
             MachineRate(
                 machine_name=entry["machine_name"],
                 role=entry["role"],
-                ownership_cost_per_smh=float(entry["ownership_cost_per_smh"]),
-                operating_cost_per_smh=float(entry["operating_cost_per_smh"]),
+                ownership_cost_per_smh=adjust(entry["ownership_cost_per_smh"]),
+                operating_cost_per_smh=adjust(entry["operating_cost_per_smh"]),
                 default_utilization=float(entry["default_utilization"]),
-                move_in_cost=float(entry.get("move_in_cost", 0.0)),
+                move_in_cost=adjust(entry.get("move_in_cost", 0.0)),
                 source=entry.get("source", ""),
                 notes=entry.get("notes"),
+                cost_base_year=base_year,
                 repair_maintenance_cost_per_smh=(
-                    float(entry["repair_maintenance_cost_per_smh"])
+                    float(inflate_value(entry["repair_maintenance_cost_per_smh"], base_year))
                     if entry.get("repair_maintenance_cost_per_smh") is not None
                     else None
                 ),

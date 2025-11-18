@@ -1,6 +1,7 @@
 # Development Change Log
 
 # 2025-11-23 — ADV5N6 coastal processor preset
+- Normalised all helper and machine-rate cost outputs to 2024 CAD by introducing the Statistics Canada CPI dataset (`data/costing/cpi_canada_all_items_2002_100.json`), adding `fhops.costing.inflation`, threading `cost_base_year` metadata through machine rates/telemetry, and extending the CLI `--show-costs` path (including the Lahrsen feller-buncher workflow) so every cost table cites the CPI source when inflation is applied.
 - Added `estimate_processor_productivity_adv5n6` plus the structured dataset (`data/productivity/processor_adv5n6.json`)
   extracted from FPInnovations Advantage Vol. 5 No. 6 (Madill 3800 + Waratah HTH624). The helper exposes the loader-forwarded
   cold-deck productivity as well as the grapple-yarded hot/cold/low-volume scenarios, preserving the published PMH/SMH,

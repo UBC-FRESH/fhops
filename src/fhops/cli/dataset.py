@@ -22,10 +22,12 @@ from fhops.costing import (
     estimate_unit_cost_from_distribution,
     estimate_unit_cost_from_stand,
 )
+from fhops.costing.inflation import TARGET_YEAR
 from fhops.costing.machine_rates import (
     MachineRate,
     compose_default_rental_rate_for_role,
     get_machine_rate,
+    load_machine_rate_index,
     select_usage_class_multiplier,
 )
 from fhops.productivity import (
@@ -407,7 +409,6 @@ def _apply_loader_system_defaults(
 
 
 def _machine_rate_roles_help() -> str:
-    from fhops.costing.machine_rates import load_machine_rate_index
 
     roles = ", ".join(sorted(load_machine_rate_index().keys()))
     return f"Available roles: {roles}"
@@ -416,8 +417,6 @@ def _machine_rate_roles_help() -> str:
 def _resolve_machine_rate(role: str) -> MachineRate:
     rate = get_machine_rate(role)
     if rate is None:
-        from fhops.costing.machine_rates import load_machine_rate_index
-
         available = ", ".join(sorted(load_machine_rate_index().keys()))
         raise typer.BadParameter(f"Unknown machine role '{role}'. Valid roles: {available}")
     return rate
@@ -941,6 +940,39 @@ def _render_processor_result(
         return
 
     raise TypeError(f"Unhandled processor result type: {type(result)!r}")
+
+
+def _render_machine_cost_summary(role: str, *, label: str | None = None) -> None:
+    try:
+        rate = _resolve_machine_rate(role)
+    except typer.BadParameter:
+        console.print(f"[dim]No default machine rate available for role '{role}'.[/dim]")
+        return
+    composed = compose_default_rental_rate_for_role(role)
+    if composed is None:
+        console.print(f"[dim]Unable to build cost summary for role '{role}'.[/dim]")
+        return
+    rental_rate, breakdown = composed
+    rows = [
+        ("Default Rental Rate ($/SMH)", f"{rental_rate:.2f}"),
+    ]
+    if "ownership" in breakdown:
+        rows.append(("Owning ($/SMH)", f"{breakdown['ownership']:.2f}"))
+    if "operating" in breakdown:
+        rows.append(("Operating ($/SMH)", f"{breakdown['operating']:.2f}"))
+    if "repair_maintenance" in breakdown:
+        rows.append(("Repair/Maint. ($/SMH)", f"{breakdown['repair_maintenance']:.2f}"))
+    title = label or f"{role.replace('_', ' ').title()} Cost Reference"
+    _render_kv_table(title, rows)
+    if getattr(rate, "cost_base_year", TARGET_YEAR) != TARGET_YEAR:
+        console.print(
+            f"[dim]Default machine rate escalated from {rate.cost_base_year} CAD to {TARGET_YEAR} CAD using Statistics Canada CPI (Table 18-10-0005-01).[/dim]"
+        )
+
+
+def _maybe_render_costs(show_costs: bool, role: str) -> None:
+    if show_costs:
+        _render_machine_cost_summary(role)
 
 
 def _render_loader_result(
@@ -2265,6 +2297,11 @@ def inspect_machine(
         writable=True,
         dir_okay=False,
     ),
+    show_costs: bool = typer.Option(
+        False,
+        "--show-costs/--hide-costs",
+        help="Display the default machine-rate breakdown (owning/operating/repair) inflated to 2024 CAD.",
+    ),
 ):
     """Inspect machine parameters within a dataset/system context."""
     dataset_name, scenario, path = _ensure_dataset(dataset, interactive)
@@ -2311,6 +2348,16 @@ def inspect_machine(
                 f"[dim]Default rate derived from role '{selected_machine.role}' "
                 f"with repair usage {selected_machine.repair_usage_hours:,} h "
                 f"(closest bucket {default_snapshot.usage_bucket_hours / 1000:.0f}×1000 h).[/dim]"
+            )
+        if (
+            default_snapshot.cost_base_year is not None
+            and default_snapshot.cost_base_year != TARGET_YEAR
+        ):
+            default_rate_rows.append(
+                (
+                    "Cost Base Year",
+                    f"{default_snapshot.cost_base_year} CAD (inflated to {TARGET_YEAR})",
+                )
             )
         elif selected_machine.repair_usage_hours is not None:
             default_rate_rows.append(
@@ -3128,6 +3175,7 @@ def estimate_productivity_cmd(
             grapple_load_unloading=grapple_load_unloading,
         )
         _render_forwarder_result(result)
+        _maybe_render_costs(show_costs, ProductivityMachineRole.FORWARDER.value)
         return
     if role == ProductivityMachineRole.CTL_HARVESTER.value:
         inputs, value = _evaluate_ctl_harvester_result(
@@ -3143,6 +3191,7 @@ def estimate_productivity_cmd(
             dbh_cm=ctl_dbh_cm,
         )
         _render_ctl_harvester_result(ctl_harvester_model, inputs, value)
+        _maybe_render_costs(show_costs, ProductivityMachineRole.CTL_HARVESTER.value)
         return
     if role == ProductivityMachineRole.GRAPPLE_SKIDDER.value:
         try:
@@ -3174,6 +3223,7 @@ def estimate_productivity_cmd(
             console.print(
                 f"[dim]Applied productivity defaults from harvest system '{selected_system.system_id}'.[/dim]"
             )
+        _maybe_render_costs(show_costs, ProductivityMachineRole.GRAPPLE_SKIDDER.value)
         return
     if role == ProductivityMachineRole.GRAPPLE_YARDER.value:
         grapple_user_supplied = {
@@ -3210,6 +3260,7 @@ def estimate_productivity_cmd(
             console.print(
                 f"[dim]Applied grapple-yarder defaults from harvest system '{selected_system.system_id}'.[/dim]"
             )
+        _maybe_render_costs(show_costs, ProductivityMachineRole.GRAPPLE_YARDER.value)
         return
     if role == ProductivityMachineRole.ROADSIDE_PROCESSOR.value:
         processor_delay_supplied = _parameter_supplied(ctx, "processor_delay_multiplier")
@@ -3401,6 +3452,7 @@ def estimate_productivity_cmd(
                 delay_multiplier=processor_delay_multiplier,
             )
         _render_processor_result(result_processor)
+        _maybe_render_costs(show_costs, ProductivityMachineRole.ROADSIDE_PROCESSOR.value)
         if berry_skid_prediction is not None:
             delay_line = (
                 f"[dim]Berry skid-size model predicts {berry_skid_prediction['delay_seconds']:.1f} s/stem "
@@ -3588,6 +3640,7 @@ def estimate_productivity_cmd(
             console.print(
                 f"[dim]Applied loader defaults from harvest system '{selected_system.system_id}'.[/dim]"
             )
+        _maybe_render_costs(show_costs, ProductivityMachineRole.LOADER.value)
         return
     if role == ProductivityMachineRole.SHOVEL_LOGGER.value:
         (
@@ -3653,6 +3706,7 @@ def estimate_productivity_cmd(
             console.print(
                 f"[dim]Applied shovel-logger defaults from harvest system '{selected_system.system_id}'.[/dim]"
             )
+        _maybe_render_costs(show_costs, ProductivityMachineRole.SHOVEL_LOGGER.value)
         return
     if role == ProductivityMachineRole.HELICOPTER_LONGLINE.value:
         heli_user_supplied = {
@@ -3700,6 +3754,7 @@ def estimate_productivity_cmd(
             console.print(
                 f"[dim]Applied helicopter defaults from harvest system '{selected_system.system_id}'.[/dim]"
             )
+        _maybe_render_costs(show_costs, ProductivityMachineRole.HELICOPTER_LONGLINE.value)
         return
 
     else:
@@ -3790,6 +3845,8 @@ def estimate_productivity_cmd(
     console.print(
         "[dim]Coefficients sourced from Lahrsen, 2025 (UBC PhD) — whole-tree feller-buncher dataset.[/dim]"
     )
+    _maybe_render_costs(show_costs, ProductivityMachineRole.FELLER_BUNCHER.value)
+    return
 
 
 @dataset_app.command("estimate-productivity-rv")
