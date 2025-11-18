@@ -178,13 +178,13 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
         - [ ] Encode ADV2N26 (Trans-Gesco TG 88 + John Deere 892D-LC loader-forwarder) so the clambunk/hoe-forwarding presets have a BC reference:
             - [x] Port Appendix III’s regression (`CT = 7.17 + 0.0682·DE + 0.396·ST`, with DE = 35–550 m, ST = 3–42 stems/cycle) and productivity formula (`60·CV·U / (CT + DT)` with CV≈29.9 m³/cycle, util. from Table 3, DT≈5% of cycle) into a helper stub (`estimate_clambunk_productivity_adv2n26`).
             - [x] Add loader-forwarder/landing loader defaults from Table 4 (41 m³/SMH at $2.88/m³ for the 892D-LC; 35 m³/SMH at $4.04/m³ for the Link-Belt LS-4300) so analysts can select a hoe-forwarding preset even while ADV5N1 digitization is in flight (`--loader-model adv2n26` plus new CLI knobs).
-            - [ ] Surface the soil-disturbance survey (20.4 % trail occupancy with class-specific widths and exposed-mineral-soil percentages) as planning defaults/CLI warnings for clambunk-assisted corridors.
+            - [x] Surface the soil-disturbance survey (20.4 % trail occupancy with class-specific widths and exposed-mineral-soil percentages) as planning defaults/CLI warnings for clambunk-assisted corridors (CLI now prints the trail-width/exposed-mineral-soil stats when `adv2n26` is selected and docs reference the same).
         - [ ] Catalogue additional loader references in the log (ADV2N62.PDF, ADV5N45.PDF, ADV15N2.PDF, FPDat loader traces):
             - [ ] For each, pull loader timing details (predictors, sample sizes, slope/terrain) and record them in `notes/reference_log.md`.
             - [ ] Identify which references include multi-predictor regressions (e.g., decking distance + sorts) to complement ADV5N1’s distance-only model.
         - [ ] Stage structured data:
-            - [ ] Build `data/productivity/loader_adv5n1.json` (or similar) capturing the coefficients, slope multipliers, payload assumptions, and utilisation defaults.
-            - [ ] Add companion entries for any richer models that emerge so the helper can switch between variants.
+            - [x] Build `data/productivity/loader_models.json` capturing coefficients, payload/utilisation defaults, and soil-disturbance metadata (TN-261, ADV2N26, ADV5N1 now covered).
+            - [x] Add companion entries for richer models so the helper/CLI can switch between variants and print metadata-driven warnings.
         - [ ] Helper implementation:
             - [ ] Add `estimate_loader_productivity_adv5n1(...)` (and further variants as they’re digitised) returning productivity/cost with slope adjustments.
             - [ ] Extend `fhops.dataset estimate-productivity --machine-role loader` with `--loader-model adv5n1`, `--loader-distance-m`, `--loader-slope-class`, etc., while keeping TN-261 as a fallback.

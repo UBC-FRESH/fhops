@@ -200,7 +200,11 @@ Loader-Forwarder Productivity Models
 
   CLI output shows the delay-free vs. total cycle minutes, payload per turn, and both m³/PMH and m³/SMH so you
   can pair the loader helper with the TG88 clambunk costs. This model is especially handy for “hot logging”
-  corridors where a loader-forwarder supports a clambunk or skyline operation.
+  corridors where a loader-forwarder supports a clambunk or skyline operation. The ADV2N26 study also documented
+  soil disturbance: 20.4% of the harvested area was covered by unbladed trails (0.54 ha first-class at 6.2 m mean
+  width with 91% exposed mineral soil, 0.87 ha second-class at 4.7 m / 39%, 0.49 ha third-class at 4.0 m / 14%).
+  FHOPS prints these stats as a reminder when you select ``adv2n26`` so you can mirror the disturbance footprint
+  in planning or compliance reports.
 * ``--loader-model adv5n1`` – the Madill 3800 loader-forwarder regression from ADV-5 No. 1 (Figure 9). The
   slope-class regressions (0–10 %, 11–30 %) were manually digitised from the report so you can recover the
   original linear fits:

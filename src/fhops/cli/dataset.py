@@ -8,6 +8,8 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
+from functools import lru_cache
+from typing import Any
 
 from click.core import ParameterSource
 import typer
@@ -115,6 +117,23 @@ from fhops.validation.ranges import validate_block_ranges
 
 console = Console()
 dataset_app = typer.Typer(help="Inspect FHOPS datasets and bundled examples.")
+
+_LOADER_METADATA_PATH = Path(__file__).resolve().parents[2] / "data" / "productivity" / "loader_models.json"
+
+
+@lru_cache(maxsize=None)
+def _load_loader_model_metadata() -> dict[str, Any]:
+    try:
+        return json.loads(_LOADER_METADATA_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError:  # pragma: no cover - defensive
+        return {}
+
+
+def _loader_model_metadata(model: LoaderProductivityModel | None) -> dict[str, Any] | None:
+    if model is None:
+        return None
+    data = _load_loader_model_metadata()
+    return data.get(model.value)
 
 
 def _machine_rate_roles_help() -> str:
@@ -548,9 +567,13 @@ def _render_loader_result(
             ("Productivity (m³/SMH)", f"{result.productivity_m3_per_smh:.2f}"),
         ]
         _render_kv_table("Loader-Forwarder Productivity Estimate", rows)
-        console.print(
-            "[dim]Regression digitised from FPInnovations ADV-5 No. 1 Figure 9 (payload 2.77 m³, utilisation 93%).[/dim]"
+        metadata = _loader_model_metadata(LoaderProductivityModel.ADV5N1)
+        note = (
+            metadata.get("notes")[0]
+            if metadata and metadata.get("notes")
+            else "Regression digitised from FPInnovations ADV-5 No. 1 Figure 9 (payload 2.77 m³, utilisation 93%)."
         )
+        console.print(f"[dim]{note}[/dim]")
         return
     if isinstance(result, ClambunkProductivityResult):
         rows = [
@@ -567,9 +590,21 @@ def _render_loader_result(
             ("Productivity (m³/SMH)", f"{result.productivity_m3_per_smh:.2f}"),
         ]
         _render_kv_table("Loader / Clambunk Productivity Estimate", rows)
+        metadata = _loader_model_metadata(LoaderProductivityModel.ADV2N26) or {}
         console.print(
             "[dim]Regression from FPInnovations ADV-2 No. 26 (Trans-Gesco TG88 clambunk + JD 892D-LC loader-forwarder).[/dim]"
         )
+        trail = metadata.get("trail_impact", {})
+        classes = trail.get("classes", [])
+        if classes:
+            summary = ", ".join(
+                f"{cls['class']}:{cls['average_width_m']:.1f} m avg width / {cls['exposed_mineral_soil_percent']}% exposed"
+                for cls in classes
+            )
+            console.print(
+                f"[yellow]Trail impact reminder[/yellow]: {trail.get('occupancy_percent', 0)}% of the sampled area "
+                f"was occupied by unbladed trails ({summary}). Factor these into soil-disturbance constraints."
+            )
         return
 
     rows = [

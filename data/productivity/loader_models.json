@@ -1,0 +1,81 @@
+{
+  "tn261": {
+    "description": "FERIC TN-261 loader-forwarder regression (Vancouver Island, 1994) for Madill 3800 support machines.",
+    "defaults": {
+      "slope_percent": 0.0,
+      "delay_multiplier": 1.0,
+      "bunched_multiplier": 1.0,
+      "hand_multiplier": 0.9
+    },
+    "notes": [
+      "Delay-free detailed timing; apply utilisation separately if needed.",
+      "Log-linear fit with piece-size exponent ≈0.41 and distance exponent ≈−0.60."
+    ],
+    "references": [
+      "FERIC TN-261 (1994). Loader-forwarding productivity study, coastal BC."
+    ]
+  },
+  "adv2n26": {
+    "description": "ADV-2 No. 26 (Kosicki 2001) Trans-Gesco TG88 clambunk and John Deere 892D-LC loader-forwarder support role.",
+    "defaults": {
+      "travel_empty_m": 236.0,
+      "stems_per_cycle": 19.7,
+      "average_stem_volume_m3": 1.52,
+      "payload_m3_per_cycle": 29.9,
+      "utilisation": 0.77,
+      "in_cycle_delay_ratio": 0.05
+    },
+    "trail_impact": {
+      "harvest_area_sampled_ha": 9.33,
+      "total_trail_area_ha": 1.90,
+      "occupancy_percent": 20.4,
+      "classes": [
+        {
+          "class": "first",
+          "area_ha": 0.54,
+          "average_width_m": 6.2,
+          "exposed_mineral_soil_percent": 91
+        },
+        {
+          "class": "second",
+          "area_ha": 0.87,
+          "average_width_m": 4.7,
+          "exposed_mineral_soil_percent": 39
+        },
+        {
+          "class": "third",
+          "area_ha": 0.49,
+          "average_width_m": 4.0,
+          "exposed_mineral_soil_percent": 14
+        }
+      ]
+    },
+    "references": [
+      "FPInnovations ADV-2 No. 26 (2001). Evaluation of a Trans-Gesco TG88 clambunk skidder working in northwestern BC."
+    ]
+  },
+  "adv5n1": {
+    "description": "ADV-5 No. 1 (Kosicki & Dyson 2004) Madill 3800 loader-forwarder regressions by slope class.",
+    "defaults": {
+      "payload_m3_per_cycle": 2.77,
+      "utilisation": 0.93,
+      "slope_classes": {
+        "0_10": {
+          "intercept": 1.00,
+          "slope": 0.0432
+        },
+        "11_30": {
+          "intercept": 1.10,
+          "slope": 0.0504
+        }
+      }
+    },
+    "notes": [
+      "Coefficients manually digitised from Figure 9 (Greg, 2025-11-20).",
+      "Payload and utilisation sourced from Table 6 (2.77 m³/cycle, 93 %)."
+    ],
+    "references": [
+      "FPInnovations ADV-5 No. 1 (2004). Using mechanized systems to harvest second-growth forests in coastal BC."
+    ]
+  }
+}
