@@ -26,6 +26,10 @@
   Nakagawa et al. (2010), Borz et al. (2023), and Bertone & Manzone (2025), along with the
   `--processor-carrier` flag. Berry (2019) estimates now apply the appropriate utilisation/productivity penalty and
   surface carrier-specific fuel notes when users toggle between purpose-built and excavator-based processors.
+- Added GNSS-backed grapple-skidder speeds from Zurita & Borz (2025); `--skidder-speed-profile` lets analysts flip
+  between the original Han et al. (2018) regression coefficients and the GNSS medians (cable skidder or farm tractor).
+  Distance terms now convert to travel time using the selected profile, and harvest-system overrides can set the profile
+  automatically.
 - Added the Visser & Tolan (2015) log-sort complexity helper: `data/productivity/processor_visser2015.json`
   captures the 5/9/12/15-sort curves (1–3 m³ stems) and `--processor-model visser2015` exposes them via the
   new `--processor-log-sorts` flag. The CLI now reports the delay-free vs. utilisation-adjusted m³/PMH as well

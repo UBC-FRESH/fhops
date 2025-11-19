@@ -11,6 +11,7 @@ from fhops.productivity import (
     DeckingCondition,
     KelloggLoadType,
     estimate_grapple_skidder_productivity_han2018,
+    get_skidder_speed_profile,
     estimate_harvester_productivity_adv5n30,
     estimate_harvester_productivity_adv6n10,
     estimate_harvester_productivity_tn292,
@@ -327,6 +328,8 @@ def test_cli_estimate_productivity_grapple_skidder_branch() -> None:
             "constrained_decking",
             "--skidder-productivity-multiplier",
             "0.95",
+            "--skidder-speed-profile",
+            "gnss_skidder",
         ],
     )
     assert result.exit_code == 0
@@ -339,6 +342,7 @@ def test_cli_estimate_productivity_grapple_skidder_branch() -> None:
         trail_pattern=TrailSpacingPattern.NARROW_13_15M,
         decking_condition=DeckingCondition.CONSTRAINED,
         custom_multiplier=0.95,
+        speed_profile=get_skidder_speed_profile("SK"),
     ).predicted_m3_per_pmh
     assert f"{expected:.2f}" in result.stdout
 

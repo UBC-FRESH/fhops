@@ -4,6 +4,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
+from functools import lru_cache
+from pathlib import Path
+import json
 
 
 class Han2018SkidderMethod(str, Enum):
@@ -41,6 +44,47 @@ class SkidderProductivityResult:
     parameters: dict[str, float | str] = field(default_factory=dict)
 
 
+@dataclass(frozen=True)
+class SkidderSpeedProfile:
+    key: str
+    description: str
+    empty_speed_kmh: float
+    loaded_speed_kmh: float
+    notes: tuple[str, ...]
+
+
+@lru_cache(maxsize=1)
+def _load_skidder_speed_profiles() -> dict[str, dict[str, object]]:
+    try:
+        data = json.loads(_SKIDDER_SPEED_PROFILE_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:  # pragma: no cover - configuration error
+        raise FileNotFoundError(
+            f"Skidder speed profile data missing: {_SKIDDER_SPEED_PROFILE_PATH}"
+        ) from exc
+    return (data or {}).get("events") or {}
+
+
+def get_skidder_speed_profile(key: str) -> SkidderSpeedProfile:
+    payload = _load_skidder_speed_profiles().get(key)
+    if payload is None:
+        valid = ", ".join(sorted(_load_skidder_speed_profiles()))
+        raise ValueError(f"Unknown skidder speed profile '{key}'. Valid: {valid}")
+    description = "GNSS-derived speed profile"
+    if key == "SK":
+        description = "GNSS cable skidder median speeds (Zurita & Borz 2025)"
+    elif key == "FT":
+        description = "GNSS farm-tractor skidder median speeds (Zurita & Borz 2025)"
+    notes_payload = payload.get("notes") if isinstance(payload.get("notes"), list) else []
+    notes = tuple(str(n) for n in notes_payload)
+    return SkidderSpeedProfile(
+        key=key,
+        description=description,
+        empty_speed_kmh=float((payload.get("drive_empty_forest_road") or {}).get("median_kmh")),
+        loaded_speed_kmh=float((payload.get("drive_loaded_forest_road") or {}).get("median_kmh")),
+        notes=notes,
+    )
+
+
 _TRAIL_PATTERN_INFO: dict[TrailSpacingPattern, dict[str, float | str]] = {
     TrailSpacingPattern.NARROW_13_15M: {
         "multiplier": 0.75,
@@ -74,26 +118,56 @@ def _han2018_cycle_time_seconds(
     pieces_per_cycle: float,
     empty_distance_m: float,
     loaded_distance_m: float,
+    speed_profile: SkidderSpeedProfile | None = None,
 ) -> float:
     if pieces_per_cycle <= 0:
         raise ValueError("pieces_per_cycle must be > 0")
     if empty_distance_m < 0 or loaded_distance_m < 0:
         raise ValueError("Skidding distances must be >= 0")
 
+    def _segment_time(
+        distance_m: float,
+        coefficient_seconds_per_m: float,
+        profile_speed_kmh: float | None,
+    ) -> float:
+        if distance_m <= 0:
+            return 0.0
+        if profile_speed_kmh and profile_speed_kmh > 0:
+            speed_m_per_s = profile_speed_kmh * (1000.0 / 3600.0)
+            if speed_m_per_s > 0:
+                return distance_m / speed_m_per_s
+        return coefficient_seconds_per_m * distance_m
+
     if method is Han2018SkidderMethod.LOP_AND_SCATTER:
         # Delay-free seconds per cycle regression from Table 6.
         return (
             71.779
             + (3.033 * pieces_per_cycle)
-            + (0.493 * empty_distance_m)
-            + (0.053 * loaded_distance_m)
+            + _segment_time(
+                empty_distance_m,
+                0.493,
+                speed_profile.empty_speed_kmh if speed_profile else None,
+            )
+            + _segment_time(
+                loaded_distance_m,
+                0.053,
+                speed_profile.loaded_speed_kmh if speed_profile else None,
+            )
         )
 
     return (
         25.125
         + (1.881 * pieces_per_cycle)
-        + (0.632 * empty_distance_m)
-        + (0.477 * loaded_distance_m)
+        + _segment_time(
+            empty_distance_m,
+            0.632,
+            speed_profile.empty_speed_kmh if speed_profile else None,
+        )
+        + _segment_time(
+            loaded_distance_m,
+            0.477,
+            speed_profile.loaded_speed_kmh if speed_profile else None,
+        )
     )
 
 
@@ -107,6 +181,7 @@ def estimate_grapple_skidder_productivity_han2018(
     trail_pattern: TrailSpacingPattern | None = None,
     decking_condition: DeckingCondition | None = None,
     custom_multiplier: float | None = None,
+    speed_profile: SkidderSpeedProfile | None = None,
 ) -> SkidderProductivityResult:
     """Estimate grapple-skidder productivity (m³/PMH0).
 
@@ -123,6 +198,7 @@ def estimate_grapple_skidder_productivity_han2018(
         pieces_per_cycle=pieces_per_cycle,
         empty_distance_m=empty_distance_m,
         loaded_distance_m=loaded_distance_m,
+        speed_profile=speed_profile,
     )
     if cycle_time_seconds <= 0:
         raise ValueError("Derived cycle time must be > 0")
@@ -142,6 +218,9 @@ def estimate_grapple_skidder_productivity_han2018(
         "empty_distance_m": empty_distance_m,
         "loaded_distance_m": loaded_distance_m,
     }
+    if speed_profile is not None:
+        parameters["speed_profile"] = speed_profile.key
+        parameters["speed_profile_description"] = speed_profile.description
 
     if trail_pattern is not None:
         info = _TRAIL_PATTERN_INFO[trail_pattern]
@@ -180,5 +259,8 @@ __all__ = [
     "TrailSpacingPattern",
     "DeckingCondition",
     "SkidderProductivityResult",
+    "SkidderSpeedProfile",
     "estimate_grapple_skidder_productivity_han2018",
+    "get_skidder_speed_profile",
 ]
+_SKIDDER_SPEED_PROFILE_PATH = Path(__file__).resolve().parents[3] / "data" / "reference" / "skidder_speed_zurita2025.json"

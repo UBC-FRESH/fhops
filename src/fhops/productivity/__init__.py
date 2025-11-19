@@ -51,7 +51,9 @@ from .skidder_ft import (
     TrailSpacingPattern,
     DeckingCondition,
     SkidderProductivityResult,
+    SkidderSpeedProfile,
     estimate_grapple_skidder_productivity_han2018,
+    get_skidder_speed_profile,
 )
 from .harvester_ctl import (
     ADV6N10HarvesterInputs,
@@ -253,6 +255,8 @@ __all__ = [
     "TrailSpacingPattern",
     "DeckingCondition",
     "SkidderProductivityResult",
+    "SkidderSpeedProfile",
+    "get_skidder_speed_profile",
     "HelicopterLonglineModel",
     "HelicopterProductivityResult",
     "get_labelle_huss_automatic_bucking_adjustment",

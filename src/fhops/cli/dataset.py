@@ -41,12 +41,14 @@ from fhops.productivity import (
     ADV6N10HarvesterInputs,
     TN292HarvesterInputs,
     SkidderProductivityResult,
+    SkidderSpeedProfile,
     ShovelLoggerSessions2006Inputs,
     ShovelLoggerResult,
     HelicopterLonglineModel,
     HelicopterProductivityResult,
     alpaca_slope_multiplier,
     estimate_grapple_skidder_productivity_han2018,
+    get_skidder_speed_profile,
     estimate_harvester_productivity_adv5n30,
     estimate_harvester_productivity_tn292,
     estimate_helicopter_longline_productivity,
@@ -685,6 +687,12 @@ class LoaderBarkoScenario(str, Enum):
 class LoaderHotColdMode(str, Enum):
     HOT = "hot"
     COLD = "cold"
+
+
+class SkidderSpeedProfileOption(str, Enum):
+    LEGACY = "legacy"
+    GNSS_SKIDDER = "gnss_skidder"
+    GNSS_FARM_TRACTOR = "gnss_farm_tractor"
 
 
 _LOADER_MODEL_COST_ROLES = {
@@ -1416,14 +1424,21 @@ def _apply_skidder_system_defaults(
     trail_pattern: TrailSpacingPattern | None,
     decking_condition: DeckingCondition | None,
     custom_multiplier: float | None,
-) -> tuple[TrailSpacingPattern | None, DeckingCondition | None, float | None, bool]:
+) -> tuple[
+    TrailSpacingPattern | None,
+    DeckingCondition | None,
+    float | None,
+    SkidderSpeedProfileOption,
+    bool,
+]:
+    speed_profile = SkidderSpeedProfileOption.LEGACY
     if system is None:
-        return trail_pattern, decking_condition, custom_multiplier, False
+        return trail_pattern, decking_condition, custom_multiplier, speed_profile, False
     overrides = system_productivity_overrides(
         system, ProductivityMachineRole.GRAPPLE_SKIDDER.value
     )
     if not overrides:
-        return trail_pattern, decking_condition, custom_multiplier, False
+        return trail_pattern, decking_condition, custom_multiplier, speed_profile, False
     used = False
     value = overrides.get("skidder_trail_pattern")
     if trail_pattern is None and isinstance(value, str):
@@ -1443,7 +1458,14 @@ def _apply_skidder_system_defaults(
     if custom_multiplier is None and isinstance(value, (int, float)):
         custom_multiplier = float(value)
         used = True
-    return trail_pattern, decking_condition, custom_multiplier, used
+    value = overrides.get("skidder_speed_profile")
+    if value is not None:
+        try:
+            speed_profile = SkidderSpeedProfileOption(str(value))
+            used = True
+        except ValueError as exc:  # pragma: no cover - validated elsewhere
+            raise ValueError(f"Unknown skidder speed profile override: {value}") from exc
+    return trail_pattern, decking_condition, custom_multiplier, speed_profile, used
 
 
 def _shovel_slope_multiplier(value: ShovelSlopeClass) -> float:
@@ -2142,6 +2164,7 @@ def _evaluate_grapple_skidder_result(
     trail_pattern: TrailSpacingPattern | None,
     decking_condition: DeckingCondition | None,
     custom_multiplier: float | None,
+    speed_profile_option: SkidderSpeedProfileOption = SkidderSpeedProfileOption.LEGACY,
 ) -> SkidderProductivityResult:
     missing: list[str] = []
     if pieces_per_cycle is None:
@@ -2161,6 +2184,12 @@ def _evaluate_grapple_skidder_result(
     assert empty_distance_m is not None
     assert loaded_distance_m is not None
 
+    profile_data: SkidderSpeedProfile | None = None
+    if speed_profile_option is SkidderSpeedProfileOption.GNSS_SKIDDER:
+        profile_data = get_skidder_speed_profile("SK")
+    elif speed_profile_option is SkidderSpeedProfileOption.GNSS_FARM_TRACTOR:
+        profile_data = get_skidder_speed_profile("FT")
+
     try:
         return estimate_grapple_skidder_productivity_han2018(
             method=model,
@@ -2171,6 +2200,7 @@ def _evaluate_grapple_skidder_result(
             trail_pattern=trail_pattern,
             decking_condition=decking_condition,
             custom_multiplier=custom_multiplier,
+            speed_profile=profile_data,
         )
     except ValueError as exc:  # pragma: no cover
         raise typer.BadParameter(str(exc)) from exc
@@ -3256,6 +3286,12 @@ def estimate_productivity_cmd(
         min=0.0,
         help="Optional custom multiplier applied to grapple skidder productivity (stacked with pattern/decking).",
     ),
+    skidder_speed_profile: SkidderSpeedProfileOption = typer.Option(
+        SkidderSpeedProfileOption.LEGACY,
+        "--skidder-speed-profile",
+        case_sensitive=False,
+        help="Travel-speed profile for grapple skidders (legacy regression vs. GNSS cable skidder/farm tractor medians).",
+    ),
     grapple_yarder_model: GrappleYarderModel = typer.Option(
         GrappleYarderModel.SR54,
         "--grapple-yarder-model",
@@ -3749,6 +3785,7 @@ def estimate_productivity_cmd(
                 skidder_trail_pattern,
                 skidder_decking_condition,
                 skidder_productivity_multiplier,
+                system_speed_profile,
                 system_defaults_used,
             ) = _apply_skidder_system_defaults(
                 system=selected_system,
@@ -3758,6 +3795,12 @@ def estimate_productivity_cmd(
             )
         except ValueError as exc:
             raise typer.BadParameter(str(exc)) from exc
+        skidder_speed_profile_option = skidder_speed_profile
+        if (
+            skidder_speed_profile_option is SkidderSpeedProfileOption.LEGACY
+            and system_speed_profile is not SkidderSpeedProfileOption.LEGACY
+        ):
+            skidder_speed_profile_option = system_speed_profile
         result = _evaluate_grapple_skidder_result(
             model=grapple_skidder_model,
             pieces_per_cycle=skidder_pieces_per_cycle,
@@ -3767,6 +3810,7 @@ def estimate_productivity_cmd(
             trail_pattern=skidder_trail_pattern,
             decking_condition=skidder_decking_condition,
             custom_multiplier=skidder_productivity_multiplier,
+            speed_profile_option=skidder_speed_profile_option,
         )
         _render_grapple_skidder_result(result)
         if system_defaults_used and selected_system is not None:

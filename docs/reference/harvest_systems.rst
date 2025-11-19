@@ -358,6 +358,16 @@ reductions from 1.33 to 0.60 min/cycle after clearing the landing; we translate 
 penalty into the ``constrained_decking`` multiplier. Analysts can stack these with an optional
 ``--skidder-productivity-multiplier`` when site-specific data is available.
 
+Travel-speed assumptions now support GNSS data via ``--skidder-speed-profile``:
+
+* ``legacy`` (default) – use the Han et al. (2018) regression coefficients for empty/loaded travel.
+* ``gnss_skidder`` – replace the distance terms with the GNSS median speeds observed for cable skidders in Zurita &
+  Borz (2025) (≈4.1 km/h empty, 3.9 km/h loaded).
+* ``gnss_farm_tractor`` – same GNSS dataset but using the farm-tractor skidders (≈5.1 km/h empty, 3.6 km/h loaded).
+
+CLI output notes which profile was used, and harvest-system templates can override the profile the same way they do
+for trail/decking multipliers.
+
 Harvest-system templates can now supply these overrides automatically: pass
 ``--harvest-system-id <system_id>`` (default registry or your scenario’s definitions) or
 ``--dataset <scenario-path> --block-id <block>`` to pull the block’s harvest system and apply its

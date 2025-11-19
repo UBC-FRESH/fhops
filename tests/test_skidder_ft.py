@@ -6,6 +6,7 @@ from fhops.productivity.skidder_ft import (
     Han2018SkidderMethod,
     TrailSpacingPattern,
     DeckingCondition,
+    get_skidder_speed_profile,
     estimate_grapple_skidder_productivity_han2018,
 )
 
@@ -52,3 +53,23 @@ def test_han2018_with_trail_and_decking_multipliers() -> None:
         decking_condition=DeckingCondition.CONSTRAINED,
     )
     assert adjusted.predicted_m3_per_pmh < baseline.predicted_m3_per_pmh
+
+
+def test_han2018_with_speed_profile() -> None:
+    profile = get_skidder_speed_profile("SK")
+    result = estimate_grapple_skidder_productivity_han2018(
+        method=Han2018SkidderMethod.LOP_AND_SCATTER,
+        pieces_per_cycle=16.0,
+        piece_volume_m3=0.2,
+        empty_distance_m=120.0,
+        loaded_distance_m=100.0,
+        speed_profile=profile,
+    )
+    legacy = estimate_grapple_skidder_productivity_han2018(
+        method=Han2018SkidderMethod.LOP_AND_SCATTER,
+        pieces_per_cycle=16.0,
+        piece_volume_m3=0.2,
+        empty_distance_m=120.0,
+        loaded_distance_m=100.0,
+    )
+    assert result.cycle_time_seconds != legacy.cycle_time_seconds
