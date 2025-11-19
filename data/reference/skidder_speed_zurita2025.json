@@ -1,0 +1,29 @@
+{
+  "source": {
+    "citation": "Zurita Vintimilla, M.C. & Borz, S.A. 2025. Operational Speed in Skidding Operations by Cable Skidders and Farm Tractors: Results of a Nationwide Assessment. Applied Sciences 15(18):9921.",
+    "document_path": "notes/reference/Operational_Speed_in_Skidding_Operations_by_Cable_.pdf",
+    "notes": [
+      "GNSS + video data from 98 field days across 14 Romanian sites; 1.74M seconds recorded, 1.2M seconds analyzed.",
+      "Event-level speeds reported for cable skidders (SK) and farm tractors (FT) across driving/maneuvering phases." ]
+  },
+  "events": {
+    "SK": {
+      "drive_to_pre_skid": {"median_kmh": 5.00},
+      "drive_empty_forest_road": {"median_kmh": 4.10},
+      "drive_loaded_forest_road": {"median_kmh": 3.90},
+      "maneuver_pre_skid": {"median_kmh": 1.60},
+      "maneuver_forest_road": {"median_kmh": 2.10}
+    },
+    "FT": {
+      "drive_to_pre_skid": {"median_kmh": 6.00},
+      "drive_empty_forest_road": {"median_kmh": 5.10},
+      "drive_loaded_forest_road": {"median_kmh": 3.60},
+      "maneuver_pre_skid": {"median_kmh": 2.20},
+      "maneuver_forest_road": {"median_kmh": 2.90}
+    }
+  },
+  "notes": [
+    "Median speeds differ significantly between cable skidders and farm tractors for most events (Mann–Whitney U tests).",
+    "Use these medians to override default travel speeds in grapple-skidder helpers when GNSS-backed data is preferred."
+  ]
+}
