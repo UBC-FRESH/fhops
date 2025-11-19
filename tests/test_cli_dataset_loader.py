@@ -10,6 +10,7 @@ from fhops.productivity import (
     estimate_loader_productivity_barko450,
     estimate_clambunk_productivity_adv2n26,
     estimate_loader_forwarder_productivity_tn261,
+    estimate_loader_hot_cold_productivity,
 )
 
 runner = CliRunner()
@@ -129,6 +130,25 @@ def test_cli_loader_barko450_cable_yard() -> None:
     assert result.exit_code == 0, result.stdout
     expected = estimate_loader_productivity_barko450(scenario="cable_yard_block")
     assert f"{expected.avg_volume_per_shift_m3:.0f}" in result.stdout
+
+
+def test_cli_loader_kizha_cold_mode() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "loader",
+            "--loader-model",
+            "kizha2020",
+            "--loader-hot-cold-mode",
+            "cold",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    expected = estimate_loader_hot_cold_productivity(mode="cold")
+    assert f"{expected.utilisation_percent:.1f}" in result.stdout
+    assert "Kizha et al. (2020)" in result.stdout
 
 
 def test_cli_loader_telemetry(tmp_path) -> None:

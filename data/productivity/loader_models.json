@@ -94,5 +94,16 @@
     "references": [
       "FERIC TN-46 (1982). Evaluation of Barko 450 Loader."
     ]
+  },
+  "kizha2020": {
+    "description": "Kizha et al. (2020) northern California biomass landing loader study (Thunderbird 840W) comparing hot vs. cold loading.",
+    "notes": [
+      "Hot loading: utilisation ≈55 %, delays driven by yarder rigging and log-truck batches (33 % of time, $33/PMH).",
+      "Cold loading: utilisation ≈7 %, loader idled 77 % of the time waiting for empty roll-off bins (delay cost ≈$89/PMH).",
+      "Use this preset to gauge the utilisation penalty when biomass hauling is decoupled from sawlog loading."
+    ],
+    "references": [
+      "Kizha, A.R. et al. 2020. Comparing Hot and Cold Loading in an Integrated Biomass Recovery Operation. Forests 11(385)."
+    ]
   }
 }

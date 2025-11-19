@@ -112,7 +112,9 @@ from fhops.productivity import (
     estimate_loader_forwarder_productivity_adv5n1,
     LoaderAdv5N1ProductivityResult,
     LoaderBarko450ProductivityResult,
+    LoaderHotColdProductivityResult,
     estimate_loader_productivity_barko450,
+    estimate_loader_hot_cold_productivity,
     ADV5N1_DEFAULT_PAYLOAD_M3,
     ADV5N1_DEFAULT_UTILISATION,
     ClambunkProductivityResult,
@@ -218,6 +220,8 @@ def _apply_loader_system_defaults(
     slope_class_supplied: bool,
     barko_scenario: LoaderBarkoScenario,
     barko_scenario_supplied: bool,
+    hot_cold_mode: LoaderHotColdMode,
+    hot_cold_mode_supplied: bool,
 ) -> tuple[
     LoaderProductivityModel,
     float | None,
@@ -233,6 +237,7 @@ def _apply_loader_system_defaults(
     float | None,
     LoaderAdv5N1SlopeClass,
     LoaderBarkoScenario,
+    LoaderHotColdMode,
     bool,
 ]:
     if system is None:
@@ -251,6 +256,7 @@ def _apply_loader_system_defaults(
             in_cycle_delay_minutes,
             slope_class,
             barko_scenario,
+            hot_cold_mode,
             False,
         )
     overrides = system_productivity_overrides(system, ProductivityMachineRole.LOADER.value)
@@ -270,6 +276,7 @@ def _apply_loader_system_defaults(
             in_cycle_delay_minutes,
             slope_class,
             barko_scenario,
+            hot_cold_mode,
             False,
         )
     used = False
@@ -408,6 +415,14 @@ def _apply_loader_system_defaults(
         except ValueError as exc:
             raise ValueError(f"Unknown loader Barko scenario override '{value}'.") from exc
 
+    value = overrides.get("loader_hot_cold_mode")
+    if value is not None and not hot_cold_mode_supplied:
+        try:
+            hot_cold_mode = LoaderHotColdMode(str(value))
+            used = True
+        except ValueError as exc:
+            raise ValueError(f"Unknown loader hot/cold mode override '{value}'.") from exc
+
     return (
         loader_model,
         piece_size_m3,
@@ -423,6 +438,7 @@ def _apply_loader_system_defaults(
         in_cycle_delay_minutes,
         slope_class,
         barko_scenario,
+        hot_cold_mode,
         used,
     )
 
@@ -646,6 +662,7 @@ class LoaderProductivityModel(str, Enum):
     ADV2N26 = "adv2n26"
     ADV5N1 = "adv5n1"
     BARKO450 = "barko450"
+    KIZHA2020 = "kizha2020"
 
 
 class LoaderAdv5N1SlopeClass(str, Enum):
@@ -656,6 +673,11 @@ class LoaderAdv5N1SlopeClass(str, Enum):
 class LoaderBarkoScenario(str, Enum):
     GROUND_SKID_BLOCK = "ground_skid_block"
     CABLE_YARD_BLOCK = "cable_yard_block"
+
+
+class LoaderHotColdMode(str, Enum):
+    HOT = "hot"
+    COLD = "cold"
 
 
 _LOADER_MODEL_COST_ROLES = {
@@ -1288,6 +1310,39 @@ def _render_loader_result(
             console.print(
                 f"[dim]Costs escalated from {result.cost_base_year} CAD to 2024 CAD using Statistics Canada CPI (Table 18-10-0005-01).[/dim]"
             )
+        return
+    if isinstance(result, LoaderHotColdProductivityResult):
+        rows = [
+            ("Model", "kizha2020"),
+            ("Mode", result.mode),
+            ("Utilisation (%)", f"{result.utilisation_percent:.1f}"),
+            ("Operational Delay (% of total time)", f"{result.operational_delay_percent_of_total_time:.1f}"),
+            ("Delay Cost ($/PMH)", f"{result.delay_cost_per_pmh:.2f} {result.currency or 'USD'}"),
+            ("Machine Rate ($/PMH)", f"{result.machine_rate_per_pmh:.2f} {result.currency or 'USD'}"),
+            ("Effective Cost ($/PMH)", f"{result.effective_cost_per_pmh:.2f} {result.currency or 'USD'}"),
+        ]
+        if result.observed_days is not None:
+            rows.append(("Observed Days", str(result.observed_days)))
+        if result.dominant_delay_breakdown_percent_of_delay:
+            breakdown = ", ".join(
+                f"{label}: {value:.0f}%"
+                for label, value in result.dominant_delay_breakdown_percent_of_delay
+            )
+            rows.append(("Delay Breakdown", breakdown))
+        _render_kv_table("Loader Productivity Estimate", rows)
+        note_lines = [
+            "Kizha et al. (2020) northern California biomass landing study (Thunderbird 840W loader).",
+            "Hot = integrated sawlog+biomass loading (utilisation ~55%); Cold = decoupled biomass loading (utilisation ~7% with insufficient trucks).",
+        ]
+        if result.bottleneck:
+            note_lines.append(f"Bottleneck: {result.bottleneck}")
+        if result.notes:
+            note_lines.extend(result.notes)
+        if result.cost_base_year:
+            note_lines.append(
+                f"Costs referenced to {result.cost_base_year} {result.currency or 'USD'} (no CPI scaling applied)."
+            )
+        console.print(f"[dim]{' '.join(note_lines)}[/dim]")
         return
 
     rows = [
@@ -3339,7 +3394,7 @@ def estimate_productivity_cmd(
         LoaderProductivityModel.TN261,
         "--loader-model",
         case_sensitive=False,
-        help="Loader helper to use (tn261 | adv2n26 | adv5n1 | barko450).",
+        help="Loader helper to use (tn261 | adv2n26 | adv5n1 | barko450 | kizha2020).",
     ),
     loader_piece_size_m3: float | None = typer.Option(
         None,
@@ -3419,6 +3474,12 @@ def estimate_productivity_cmd(
         "--loader-barko-scenario",
         case_sensitive=False,
         help="Scenario for Barko 450 loader preset (ground_skid_block | cable_yard_block).",
+    ),
+    loader_hot_cold_mode: LoaderHotColdMode = typer.Option(
+        LoaderHotColdMode.HOT,
+        "--loader-hot-cold-mode",
+        case_sensitive=False,
+        help="Hot vs. cold mode for the Kizha et al. (2020) loader preset.",
     ),
     shovel_passes: int | None = typer.Option(
         None,
@@ -4059,6 +4120,7 @@ def estimate_productivity_cmd(
             ),
             "loader_slope_class": _parameter_supplied(ctx, "loader_slope_class"),
             "loader_barko_scenario": _parameter_supplied(ctx, "loader_barko_scenario"),
+            "loader_hot_cold_mode": _parameter_supplied(ctx, "loader_hot_cold_mode"),
         }
         (
             loader_model,
@@ -4075,6 +4137,7 @@ def estimate_productivity_cmd(
             loader_in_cycle_delay_minutes,
             loader_slope_class,
             loader_barko_scenario,
+            loader_hot_cold_mode,
             loader_defaults_used,
         ) = _apply_loader_system_defaults(
             system=selected_system,
@@ -4106,6 +4169,8 @@ def estimate_productivity_cmd(
             slope_class_supplied=loader_user_supplied["loader_slope_class"],
             barko_scenario=loader_barko_scenario,
             barko_scenario_supplied=loader_user_supplied["loader_barko_scenario"],
+            hot_cold_mode=loader_hot_cold_mode,
+            hot_cold_mode_supplied=loader_user_supplied["loader_hot_cold_mode"],
         )
         loader_metadata = _loader_model_metadata(loader_model)
         loader_cost_role = ProductivityMachineRole.LOADER.value
@@ -4198,6 +4263,15 @@ def estimate_productivity_cmd(
             }
             loader_result = result
             loader_cost_role = "loader_barko450"
+        elif loader_model is LoaderProductivityModel.KIZHA2020:
+            loader_result = estimate_loader_hot_cold_productivity(mode=loader_hot_cold_mode.value)
+            telemetry_inputs = {
+                "mode": loader_hot_cold_mode.value,
+            }
+            telemetry_outputs = {
+                "utilisation_percent": loader_result.utilisation_percent,
+                "operational_delay_percent": loader_result.operational_delay_percent_of_total_time,
+            }
         else:  # pragma: no cover - defensive, all enums handled
             raise RuntimeError(f"Unhandled loader model {loader_model}")
         _render_loader_result(loader_result)

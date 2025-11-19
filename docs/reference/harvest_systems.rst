@@ -278,6 +278,12 @@ Loader-Forwarder Productivity Models
   rescales the Barko production and $/m³ outputs so you can model different truck-supply assumptions. This preset
   now draws its $257.26/shift (1986 CAD) cost baseline directly from the TR‑73/TN‑64/TN‑51 roadside sort studies;
   run with ``--show-costs`` to see the CPI-inflated owning/operating/repair breakdown that feeds the costing CLI.
+* ``--loader-model kizha2020`` – Loader utilisation/delay reference from Kizha et al. (2020) northern California
+  biomass landings (Thunderbird 840W supporting a Madill yarder). Use ``--loader-hot-cold-mode`` (``hot`` = integrated
+  sawlog/biomass loading, ``cold`` = decoupled biomass-only loading) to see how utilisation collapses when the roll-off
+  truck fleet is undersized. CLI output reports the 55 % vs. 7 % utilisation, the dominant delay contributors, and the
+  $/PMH penalty attributable to waiting so you can size truck fleets/landing space before committing to a hot or cold
+  biomass workflow.
 
 Loader harvest-system overrides
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

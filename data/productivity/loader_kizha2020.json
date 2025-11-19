@@ -1,0 +1,54 @@
+{
+  "source": {
+    "citation": "Kizha, A.R. et al. 2020. Comparing hot and cold loading in an integrated biomass recovery operation. Forests 11(385).",
+    "document_path": "notes/reference/forests-11-00385.pdf",
+    "notes": [
+      "Thunderbird 840W loader (1980s) supporting a Madill cable yarder in northern California biomass + sawlog operations (April 2015).",
+      "Hot loading: sawlogs and biomass handled concurrently at the landing; cold loading: biomass handled later with roll-off trucks/containers." ]
+  },
+  "costing": {
+    "currency": "USD",
+    "base_year": 2015,
+    "machine_rate_per_pmh": 99.66,
+    "utilisation_reference": "Machine rates calculated for 2000 SMH/year, 10% interest, 3% insurance (company data).",
+    "fuel_price_usd_per_l": 1.02
+  },
+  "scenarios": [
+    {
+      "mode": "hot",
+      "description": "Loader clears sawlogs and biomass concurrently; biomass placed in detached roll-off bins while yarder cycles continue.",
+      "observed_days": 11,
+      "utilisation_percent": 55.0,
+      "operational_delay_percent_of_total_time": 33.0,
+      "delay_cost_usd_per_pmh": 33.08,
+      "dominant_delay_breakdown_percent_of_delay": {
+        "log_truck_congestion": 53.0,
+        "chaser_interference": 20.0,
+        "yarder_rigging_cycle": 27.0
+      },
+      "bottleneck": "Yarder rigging/hang-ups and log-truck batches forced the loader to idle; OSHA crew-in-zone rules compounded the delay.",
+      "notes": [
+        "Loader movement between multiple sawlog decks counted as productive time; delay tracked separately.",
+        "Rigging new corridors averaged 49 minutes, idling loader/chaser.",
+        "Roll-off trucks occasionally waited 10–15 minutes to enter landing during peak sawlog loading." ]
+    },
+    {
+      "mode": "cold",
+      "description": "Biomass removed after sawlog machines left; loader fills roll-off containers while a single truck hauls bins to centralized landing.",
+      "observed_days": 3,
+      "utilisation_percent": 7.0,
+      "operational_delay_percent_of_total_time": 89.0,
+      "delay_cost_usd_per_pmh": 88.99,
+      "dominant_delay_breakdown_percent_of_delay": {
+        "waiting_for_trucks": 77.0,
+        "truck_positioning": 13.0,
+        "loader_movement": 10.0
+      },
+      "bottleneck": "Roll-off truck supply (one truck serving 11 bins with ~2 h round trip, 15 min turnaround delays).",
+      "notes": [
+        "Loader typically filled three bins within 30 minutes then idled for incoming empties.",
+        "Landing space had to accommodate all biomass prior to haul; sawlog equipment already demobbed.",
+        "Cold loading reduced sawlog congestion but magnified loader delays when truck fleet was undersized." ]
+    }
+  ]
+}

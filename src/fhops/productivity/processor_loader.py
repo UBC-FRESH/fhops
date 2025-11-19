@@ -21,6 +21,7 @@ _TR87_DATA_PATH = _DATA_ROOT / "processor_tr87.json"
 _TR106_DATA_PATH = _DATA_ROOT / "processor_tr106.json"
 _TN166_DATA_PATH = _DATA_ROOT / "processor_tn166.json"
 _VISSER2015_DATA_PATH = _DATA_ROOT / "processor_visser2015.json"
+_KIZHA2020_DATA_PATH = _DATA_ROOT / "loader_kizha2020.json"
 _BARKO450_DATA_PATH = _DATA_ROOT / "loader_barko450.json"
 _LABELLE_HUSS_DATA_PATH = _REFERENCE_ROOT / "processor_labelle_huss2018.json"
 @lru_cache(maxsize=1)
@@ -53,6 +54,14 @@ def _load_barko450_dataset() -> dict[str, object]:
         return json.loads(_BARKO450_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
         raise FileNotFoundError(f"Barko 450 loader data missing: {_BARKO450_DATA_PATH}") from exc
+
+
+@lru_cache(maxsize=1)
+def _load_kizha2020_dataset() -> dict[str, object]:
+    try:
+        return json.loads(_KIZHA2020_DATA_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:  # pragma: no cover - configuration error
+        raise FileNotFoundError(f"Kizha et al. (2020) loader data missing: {_KIZHA2020_DATA_PATH}") from exc
 
 
 @lru_cache(maxsize=1)
@@ -1146,6 +1155,23 @@ class LoaderBarko450ProductivityResult:
     cost_base_year: int | None
 
 
+@dataclass(frozen=True)
+class LoaderHotColdProductivityResult:
+    mode: Literal["hot", "cold"]
+    description: str
+    utilisation_percent: float
+    operational_delay_percent_of_total_time: float
+    delay_cost_per_pmh: float
+    machine_rate_per_pmh: float
+    effective_cost_per_pmh: float
+    currency: str | None
+    cost_base_year: int | None
+    dominant_delay_breakdown_percent_of_delay: tuple[tuple[str, float], ...]
+    bottleneck: str | None
+    notes: tuple[str, ...]
+    observed_days: int | None
+
+
 def estimate_clambunk_productivity_adv2n26(
     *,
     travel_empty_distance_m: float,
@@ -1613,4 +1639,74 @@ def estimate_loader_productivity_barko450(
         cost_per_piece_cad=cost_per_piece,
         notes=tuple(notes) if notes else None,
         cost_base_year=cost_base_year,
+    )
+
+
+@lru_cache(maxsize=1)
+def _load_kizha2020_scenarios() -> dict[str, dict[str, object]]:
+    payload = _load_kizha2020_dataset()
+    cost_meta = payload.get("costing") or {}
+    machine_rate = float(cost_meta.get("machine_rate_per_pmh", 0.0) or 0.0)
+    currency = cost_meta.get("currency")
+    base_year = cost_meta.get("base_year")
+    scenarios: dict[str, dict[str, object]] = {}
+    for entry in payload.get("scenarios", []):
+        mode = entry.get("mode")
+        if not mode:
+            continue
+        combined = {**entry}
+        combined.setdefault("machine_rate_per_pmh", machine_rate)
+        combined.setdefault("currency", currency)
+        combined.setdefault("cost_base_year", base_year)
+        scenarios[str(mode).lower()] = combined
+    return scenarios
+
+
+def estimate_loader_hot_cold_productivity(
+    *,
+    mode: Literal["hot", "cold"],
+) -> LoaderHotColdProductivityResult:
+    scenarios = _load_kizha2020_scenarios()
+    payload = scenarios.get(mode.lower())
+    if payload is None:
+        valid = ", ".join(sorted(scenarios))
+        raise ValueError(f"Unknown Kizha et al. (2020) mode '{mode}'. Valid options: {valid}.")
+
+    def _maybe_float(key: str) -> float | None:
+        value = payload.get(key)
+        return None if value is None else float(value)
+
+    breakdown_input = payload.get("dominant_delay_breakdown_percent_of_delay") or {}
+    breakdown: list[tuple[str, float]] = []
+    if isinstance(breakdown_input, dict):
+        for k, v in breakdown_input.items():
+            try:
+                breakdown.append((str(k).replace("_", " "), float(v)))
+            except (TypeError, ValueError):
+                continue
+    machine_rate = float(payload.get("machine_rate_per_pmh", 0.0) or 0.0)
+    delay_cost = _maybe_float("delay_cost_usd_per_pmh") or 0.0
+    effective = machine_rate + delay_cost
+
+    notes = payload.get("notes") or ()
+    return LoaderHotColdProductivityResult(
+        mode=payload.get("mode", mode).lower(),  # type: ignore[arg-type]
+        description=payload.get("description", ""),
+        utilisation_percent=float(payload.get("utilisation_percent", 0.0) or 0.0),
+        operational_delay_percent_of_total_time=float(
+            payload.get("operational_delay_percent_of_total_time", 0.0) or 0.0
+        ),
+        delay_cost_per_pmh=delay_cost,
+        machine_rate_per_pmh=machine_rate,
+        effective_cost_per_pmh=effective,
+        currency=payload.get("currency"),
+        cost_base_year=payload.get("cost_base_year"),
+        dominant_delay_breakdown_percent_of_delay=tuple(breakdown),
+        bottleneck=payload.get("bottleneck"),
+        notes=tuple(str(n) for n in notes),
+        observed_days=(
+            int(payload["observed_days"])
+            if payload.get("observed_days") is not None
+            else None
+        ),
     )

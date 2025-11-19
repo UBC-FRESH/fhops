@@ -19,6 +19,9 @@
   alongside new flags `--processor-stem-source` and `--processor-processing-mode` so analysts can flip between
   loader-forwarded cold decks and yarder-fed hot decks without touching code. Validation prevents impossible combinations
   (e.g., loader-forwarded hot processing) and CLI telemetry mirrors the published scenario notes.
+- Added the Kizha et al. (2020) hot vs. cold loader preset (`data/productivity/loader_kizha2020.json`,
+  `--loader-model kizha2020` + `--loader-hot-cold-mode`). CLI output now reports the 55 % vs. 7 % utilisation split,
+  dominant delay causes, and the $/PMH penalty so truck-supply planning can weigh integrated vs. decoupled biomass loading.
 - Added the Visser & Tolan (2015) log-sort complexity helper: `data/productivity/processor_visser2015.json`
   captures the 5/9/12/15-sort curves (1–3 m³ stems) and `--processor-model visser2015` exposes them via the
   new `--processor-log-sorts` flag. The CLI now reports the delay-free vs. utilisation-adjusted m³/PMH as well
