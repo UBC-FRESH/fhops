@@ -24,6 +24,7 @@ _VISSER2015_DATA_PATH = _DATA_ROOT / "processor_visser2015.json"
 _KIZHA2020_DATA_PATH = _DATA_ROOT / "loader_kizha2020.json"
 _BARKO450_DATA_PATH = _DATA_ROOT / "loader_barko450.json"
 _LABELLE_HUSS_DATA_PATH = _REFERENCE_ROOT / "processor_labelle_huss2018.json"
+_CARRIER_PROFILE_PATH = Path(__file__).resolve().parents[3] / "data" / "reference" / "processor_carrier_profiles.json"
 @lru_cache(maxsize=1)
 def _load_berry_dataset() -> dict[str, object]:
     try:
