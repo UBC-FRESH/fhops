@@ -15,6 +15,7 @@ _DATA_ROOT = Path(__file__).resolve().parents[3] / "data" / "productivity"
 _BERRY_DATA_PATH = _DATA_ROOT / "processor_berry2019.json"
 _ADV5N6_DATA_PATH = _DATA_ROOT / "processor_adv5n6.json"
 _TN103_DATA_PATH = _DATA_ROOT / "processor_tn103.json"
+_TR87_DATA_PATH = _DATA_ROOT / "processor_tr87.json"
 _TN166_DATA_PATH = _DATA_ROOT / "processor_tn166.json"
 _BARKO450_DATA_PATH = _DATA_ROOT / "loader_barko450.json"
 @lru_cache(maxsize=1)
@@ -55,6 +56,14 @@ def _load_tn103_dataset() -> dict[str, object]:
         return json.loads(_TN103_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
         raise FileNotFoundError(f"TN-103 processor data missing: {_TN103_DATA_PATH}") from exc
+
+
+@lru_cache(maxsize=1)
+def _load_tr87_dataset() -> dict[str, object]:
+    try:
+        return json.loads(_TR87_DATA_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:  # pragma: no cover - configuration error
+        raise FileNotFoundError(f"TR-87 processor data missing: {_TR87_DATA_PATH}") from exc
 
 
 def _load_tree_form_productivity_multipliers() -> dict[int, float]:
@@ -202,6 +211,20 @@ def _load_barko450_scenarios() -> dict[str, dict[str, object]]:
     scenarios: dict[str, dict[str, object]] = {}
     for entry in payload.get("scenarios", []):
         combined = {**utilisation, **entry}
+        combined.setdefault("cost_base_year", base_year)
+        scenarios[entry["name"]] = combined
+    return scenarios
+
+
+@lru_cache(maxsize=1)
+def _load_tr87_scenarios() -> dict[str, dict[str, object]]:
+    payload = _load_tr87_dataset()
+    defaults = payload.get("defaults") or {}
+    cost_meta = payload.get("costing") or {}
+    base_year = cost_meta.get("base_year")
+    scenarios: dict[str, dict[str, object]] = {}
+    for entry in payload.get("scenarios", []):
+        combined = {**defaults, **entry}
         combined.setdefault("cost_base_year", base_year)
         scenarios[entry["name"]] = combined
     return scenarios
@@ -914,6 +937,23 @@ class TN166ProcessorProductivityResult:
     cost_base_year: int | None
 
 
+@dataclass(frozen=True)
+class TR87ProcessorProductivityResult:
+    scenario: str
+    description: str
+    stem_source: str
+    shift_type: str | None
+    mean_stem_volume_m3: float | None
+    trees_per_pmh: float | None
+    productivity_m3_per_pmh: float | None
+    productivity_m3_per_smh: float | None
+    utilisation_percent: float | None
+    volume_per_shift_m3: float | None
+    cost_cad_per_m3: float | None
+    notes: tuple[str, ...] | None
+    cost_base_year: int | None
+
+
 def estimate_loader_forwarder_productivity_adv5n1(
     *,
     forwarding_distance_m: float,
@@ -1089,6 +1129,46 @@ def estimate_processor_productivity_tn166(
         cost_cad_per_m3=cost_m3 if cost_m3 is not None else float(payload["cost_cad_per_m3"]),
         cost_cad_per_stem=cost_stem,
         cycle_time_minutes=cycle_dict,
+        notes=tuple(notes) if notes else None,
+        cost_base_year=cost_base_year,
+    )
+
+
+def estimate_processor_productivity_tr87(
+    *,
+    scenario: Literal[
+        "tj90_day_shift",
+        "tj90_night_shift",
+        "tj90_combined_observed",
+        "tj90_both_processors_observed",
+        "tj90_both_processors_wait_adjusted",
+    ],
+) -> TR87ProcessorProductivityResult:
+    scenarios = _load_tr87_scenarios()
+    payload = scenarios.get(scenario)
+    if payload is None:
+        valid = ", ".join(sorted(scenarios))
+        raise ValueError(f"Unknown TR-87 scenario '{scenario}'. Valid options: {valid}.")
+
+    def _maybe(name: str) -> float | None:
+        value = payload.get(name)
+        return None if value is None else float(value)
+
+    notes = payload.get("notes")
+    cost_base_year = payload.get("cost_base_year")
+    cost_cad_per_m3 = _inflate_cost(_maybe("cost_cad_per_m3"), cost_base_year)
+    return TR87ProcessorProductivityResult(
+        scenario=payload.get("name", scenario),
+        description=payload.get("description", ""),
+        stem_source=payload.get("stem_source", "grapple_yarded"),
+        shift_type=payload.get("shift_type"),
+        mean_stem_volume_m3=_maybe("mean_stem_volume_m3"),
+        trees_per_pmh=_maybe("trees_per_pmh"),
+        productivity_m3_per_pmh=_maybe("productivity_m3_per_pmh"),
+        productivity_m3_per_smh=_maybe("productivity_m3_per_smh"),
+        utilisation_percent=_maybe("utilisation_percent"),
+        volume_per_shift_m3=_maybe("volume_per_shift_m3"),
+        cost_cad_per_m3=cost_cad_per_m3,
         notes=tuple(notes) if notes else None,
         cost_base_year=cost_base_year,
     )

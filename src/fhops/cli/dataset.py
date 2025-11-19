@@ -93,9 +93,11 @@ from fhops.productivity import (
     ADV5N6ProcessorProductivityResult,
     TN103ProcessorProductivityResult,
     TN166ProcessorProductivityResult,
+    TR87ProcessorProductivityResult,
     estimate_processor_productivity_adv5n6,
     estimate_processor_productivity_tn103,
     estimate_processor_productivity_tn166,
+    estimate_processor_productivity_tr87,
     predict_berry2019_skid_effects,
     Labelle2019ProcessorProductivityResult,
     estimate_processor_productivity_labelle2019_dbh,
@@ -524,6 +526,7 @@ class RoadsideProcessorModel(str, Enum):
     LABELLE2019_VOLUME = "labelle2019_volume"
     ADV5N6 = "adv5n6"
     TN103 = "tn103"
+    TR87 = "tr87"
     TN166 = "tn166"
 
 
@@ -543,6 +546,14 @@ class TN103Scenario(str, Enum):
     AREA_B = "area_b_handfelled"
     COMBINED_OBSERVED = "combined_observed"
     COMBINED_HIGH_UTIL = "combined_high_util"
+
+
+class TR87Scenario(str, Enum):
+    DAY_SHIFT = "tj90_day_shift"
+    NIGHT_SHIFT = "tj90_night_shift"
+    COMBINED_OBSERVED = "tj90_combined_observed"
+    BOTH_PROCESSORS = "tj90_both_processors_observed"
+    BOTH_PROCESSORS_WAIT_ADJUSTED = "tj90_both_processors_wait_adjusted"
 
 
 class TN166Scenario(str, Enum):
@@ -928,6 +939,40 @@ def _render_processor_result(
         _render_kv_table("Roadside Processor Productivity Estimate", rows)
         console.print(
             "[dim]FERIC TN-103 (Caterpillar DL221 stroke processor) coastal old-growth study; select scenarios to mirror windrow prep (feller-bunched Area A vs. hand-felled Area B) or the combined/73% utilisation cases.[/dim]"
+        )
+        if result.notes:
+            console.print(f"[dim]{' '.join(result.notes)}[/dim]")
+        if result.cost_base_year:
+            console.print(
+                f"[dim]Costs escalated from {result.cost_base_year} CAD to 2024 CAD using Statistics Canada CPI (Table 18-10-0005-01).[/dim]"
+            )
+        return
+
+    elif isinstance(result, TR87ProcessorProductivityResult):
+        rows = [
+            ("Model", "tr87"),
+            ("Scenario", result.scenario.replace("_", " ")),
+            ("Stem Source", result.stem_source.replace("_", " ")),
+        ]
+        if result.shift_type:
+            rows.append(("Shift", result.shift_type.replace("_", " ")))
+        if result.mean_stem_volume_m3 is not None:
+            rows.append(("Mean Stem Volume (m³)", f"{result.mean_stem_volume_m3:.2f}"))
+        if result.trees_per_pmh is not None:
+            rows.append(("Trees per PMH", f"{result.trees_per_pmh:.1f}"))
+        if result.productivity_m3_per_pmh is not None:
+            rows.append(("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.1f}"))
+        if result.productivity_m3_per_smh is not None:
+            rows.append(("Productivity (m³/SMH)", f"{result.productivity_m3_per_smh:.1f}"))
+        if result.volume_per_shift_m3 is not None:
+            rows.append(("Volume per 8h Shift (m³)", f"{result.volume_per_shift_m3:.1f}"))
+        if result.utilisation_percent is not None:
+            rows.append(("Utilisation (%)", f"{result.utilisation_percent:.1f}"))
+        if result.cost_cad_per_m3 is not None:
+            rows.append(("Cost ($/m³)", f"{result.cost_cad_per_m3:.2f}"))
+        _render_kv_table("Roadside Processor Productivity Estimate", rows)
+        console.print(
+            "[dim]FERIC TR-87 roadside logging case study (Timberjack TJ90 stroke processors). Use `--processor-tr87-scenario` to reflect day vs. night shift or the two-processor system averages with/without wait-for-wood delays.[/dim]"
         )
         if result.notes:
             console.print(f"[dim]{' '.join(result.notes)}[/dim]")
@@ -2881,6 +2926,12 @@ def estimate_productivity_cmd(
         case_sensitive=False,
         help="TN-103 scenario (area_a_feller_bunched | area_b_handfelled | combined_observed | combined_high_util).",
     ),
+    processor_tr87_scenario: TR87Scenario = typer.Option(
+        TR87Scenario.BOTH_PROCESSORS,
+        "--processor-tr87-scenario",
+        case_sensitive=False,
+        help="TR-87 scenario for TJ90 processors (tj90_day_shift | tj90_night_shift | tj90_combined_observed | tj90_both_processors_observed | tj90_both_processors_wait_adjusted).",
+    ),
     processor_tn166_scenario: TN166Scenario = typer.Option(
         TN166Scenario.GRAPPLE_YARDED,
         "--processor-tn166-scenario",
@@ -3486,6 +3537,18 @@ def estimate_productivity_cmd(
                 raise typer.BadParameter("--processor-species/--processor-treatment do not apply to TN-103.")
             result_processor = estimate_processor_productivity_tn103(
                 scenario=processor_tn103_scenario.value,
+            )
+        elif processor_model is RoadsideProcessorModel.TR87:
+            if processor_piece_size_m3 is not None or processor_volume_m3 is not None:
+                raise typer.BadParameter(
+                    "--processor-piece-size-m3/--processor-volume-m3 apply to Berry/Labelle helpers; TR-87 is table-driven."
+                )
+            if processor_dbh_cm is not None:
+                raise typer.BadParameter("--processor-dbh-cm applies to the Labelle helpers, not TR-87.")
+            if processor_species is not None or processor_treatment is not None:
+                raise typer.BadParameter("--processor-species/--processor-treatment do not apply to TR-87.")
+            result_processor = estimate_processor_productivity_tr87(
+                scenario=processor_tr87_scenario.value,
             )
         elif processor_model is RoadsideProcessorModel.TN166:
             if processor_piece_size_m3 is not None or processor_volume_m3 is not None:

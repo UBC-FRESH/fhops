@@ -176,6 +176,11 @@ regressions:
   whether the 73 % utilisation improvement has been implemented. The helper reports trees/PMH,
   m³/PMH, and the published $/m³ and $/tree costs; CLI output also notes windrow prep guidance so
   analysts can match conditions to their landing prep.
+* ``--processor-model tr87`` – FERIC TR-87 roadside CTL case study (two Timberjack TJ90 processors
+  plus LL229 loader). Use ``--processor-tr87-scenario`` to choose day shift, night shift, the observed
+  combined average, or the “wait-for-wood removed” system scenario (240 m³/shift target). Outputs list
+  trees per PMH, m³/PMH/SMH, utilisation, and the $2.67/m³ processing cost so you can benchmark historic
+  TJ90 fleets or sanity-check inland roadside plans.
 * ``--processor-model tn166`` – FERIC TN-166 stroke-processor study (Denis D3000 telescopic boom) from
   interior BC. Choose ``--processor-tn166-scenario`` (``grapple_yarded``, ``right_of_way``, or
   ``mixed_shift``) to flip between the detailed timing splits or the overall shift-level average. The

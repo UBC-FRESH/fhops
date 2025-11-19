@@ -1,0 +1,122 @@
+{
+  "source": {
+    "citation": "Peterson, J.T. 1988. A Case Study of Roadside Logging in the Central Interior of British Columbia. FERIC Technical Report TR-87.",
+    "document_path": "notes/reference/fpinnovations/TR87.PDF",
+    "notes": [
+      "Roadside CTL-style system west of Quesnel: FB221 feller-buncher, JD 740A grapple skidder, two Timberjack TJ90 processors, and a Caterpillar LL229 loader.",
+      "Study captured day vs. night shift performance plus combined averages (22 082 m³ processed, 24 146 m³ harvested).",
+      "Processing costs derived by FERIC (Table 14) exclude interest/overhead and were reported at $2.67/m³ with $641/day machine rates in 1987 CAD."
+    ]
+  },
+  "costing": {
+    "currency": "CAD",
+    "base_year": 1987,
+    "inflation_source": "Statistics Canada Table 18-10-0005-01"
+  },
+  "defaults": {
+    "shift_length_hours": 8.0
+  },
+  "scenarios": [
+    {
+      "name": "tj90_day_shift",
+      "description": "TJ90 #1 processor on day shift handling feller-bunched, grapple-yarded windrows (aligned stems, level ground).",
+      "stem_source": "grapple_yarded",
+      "shift_type": "day",
+      "production_m3": 3598.0,
+      "production_trees": 11584,
+      "shifts_observed": 14,
+      "pmh": 98.7,
+      "smh": 144.8,
+      "productivity_m3_per_pmh": 36.5,
+      "productivity_m3_per_smh": 24.86,
+      "trees_per_pmh": 117.0,
+      "utilisation_percent": 68.0,
+      "volume_per_shift_m3": 199.0,
+      "cost_cad_per_m3": 2.67,
+      "notes": [
+        "Includes waits for wood when the single feller-buncher could not keep ahead of processing demand.",
+        "Tree mix averaged 1.32 m³/stem (spruce/pine) with single-log outputs per stem."
+      ]
+    },
+    {
+      "name": "tj90_night_shift",
+      "description": "TJ90 #1 processor on night shift; higher per-PMH output but low utilisation because felled inventory starved the processor.",
+      "stem_source": "grapple_yarded",
+      "shift_type": "night",
+      "production_m3": 966.0,
+      "production_trees": 3092,
+      "shifts_observed": 5,
+      "pmh": 25.4,
+      "smh": 53.4,
+      "productivity_m3_per_pmh": 38.0,
+      "productivity_m3_per_smh": 18.09,
+      "trees_per_pmh": 122.0,
+      "utilisation_percent": 48.0,
+      "volume_per_shift_m3": 146.0,
+      "cost_cad_per_m3": 2.67,
+      "notes": [
+        "Night shift suffered long wait-for-wood delays until a second feller-buncher was added later in the study."
+      ]
+    },
+    {
+      "name": "tj90_combined_observed",
+      "description": "Observed average for TJ90 #1 across day + night shifts (52.6% utilisation overall).",
+      "stem_source": "grapple_yarded",
+      "shift_type": "mixed",
+      "production_m3": 4564.0,
+      "production_trees": 14676,
+      "shifts_observed": 19,
+      "pmh": 124.1,
+      "smh": 198.2,
+      "productivity_m3_per_pmh": 36.8,
+      "productivity_m3_per_smh": 23.03,
+      "trees_per_pmh": 118.0,
+      "utilisation_percent": 63.0,
+      "volume_per_shift_m3": 185.0,
+      "cost_cad_per_m3": 2.67,
+      "notes": [
+        "Matches Table 8 combined column for TJ90 #1 (m³/PMH 36.8, utilisation 63%)."
+      ]
+    },
+    {
+      "name": "tj90_both_processors_observed",
+      "description": "Combined throughput of both TJ90 processors (22 082 m³ over 74 tracked shifts).",
+      "stem_source": "grapple_yarded",
+      "shift_type": "system",
+      "production_m3": 22082.0,
+      "production_trees": 71081,
+      "shifts_observed": 74,
+      "pmh": 558.7,
+      "smh": 775.0,
+      "productivity_m3_per_pmh": 39.5,
+      "productivity_m3_per_smh": 28.49,
+      "trees_per_pmh": 127.0,
+      "utilisation_percent": 72.0,
+      "volume_per_shift_m3": 228.0,
+      "cost_cad_per_m3": 2.67,
+      "notes": [
+        "Represents the actual two-processor configuration before wait-for-wood mitigation."
+      ]
+    },
+    {
+      "name": "tj90_both_processors_wait_adjusted",
+      "description": "Same as combined scenario but with wait-for-wood delays removed (FERIC’s planning recommendation).",
+      "stem_source": "grapple_yarded",
+      "shift_type": "system",
+      "production_m3": 22082.0,
+      "production_trees": 71081,
+      "shifts_observed": 74,
+      "pmh": 558.7,
+      "smh": 775.0,
+      "productivity_m3_per_pmh": 39.5,
+      "productivity_m3_per_smh": 30.00,
+      "trees_per_pmh": 127.0,
+      "utilisation_percent": 76.0,
+      "volume_per_shift_m3": 240.0,
+      "cost_cad_per_m3": 2.67,
+      "notes": [
+        "Aligns with Table 8’s ‘Utilization — wait-for-wood removed’ line (76%) and the recommended 240 m³/shift processor target once a second feller-buncher balances the system."
+      ]
+    }
+  ]
+}
