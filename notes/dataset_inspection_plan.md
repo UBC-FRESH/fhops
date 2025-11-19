@@ -213,7 +213,7 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
         - [ ] Catalogue additional loader references in the log (ADV2N62.PDF, ADV5N45.PDF, ADV15N2.PDF, FPDat loader traces):
             - [x] For each, pull loader timing details (predictors, sample sizes, slope/terrain) and record them in `notes/reference_log.md` (entries added for ADV2N62 loader-forwarding, ADV5N45 mechanized processors + loader support, and ADV15N2 steep-slope loader-forwarders).
             - [x] Identify which references include multi-predictor regressions (e.g., decking distance + sorts) to complement ADV5N1’s distance-only model (ADV15N2 documents slope/felling-direction multipliers; ADV2N62 provides trail occupancy/loader-processing cost splits for combo systems).
-            - [ ] **(Greg)** Flag FPDat loader traces for Phase 5 (raw datapack not yet available; revisit once Lahrsen/FPDat exports are shared with the project).
+            - [ ] **(Greg)** FPDat loader traces remain out-of-reach unless FPInnovations explicitly shares a datapack with us. Do not schedule any extraction tasks until I confirm access (“rolling deep” with FPInnovations is not our situation). Leave this flagged for a future phase only if data becomes available.
         - [ ] Stage structured data:
             - [x] Build `data/productivity/loader_models.json` capturing coefficients, payload/utilisation defaults, and soil-disturbance metadata (TN-261, ADV2N26, ADV5N1 now covered).
             - [x] Add companion entries for richer models so the helper/CLI can switch between variants and print metadata-driven warnings.
@@ -228,7 +228,7 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
     - [x] TN-261 loader-forwarding detailed timings captured in `data/productivity/loader_tn261.json` (piece size, distance, slope, productivity pairs).
     - [x] Labelle et al. productivity models staged via Arnvik (2024) Appendices 8–10 (see `data/productivity/processor_labelle_models.json`); DBH and volume (`V₆/V₆d`) variants now power the hardwood helper. Next step: expose the earlier Labelle (2016/2017/2018) regressions and map their predictor codes so analysts can pick the study that best matches their prescription.
   - [x] Wire the processor/loader helpers into `fhops.dataset estimate-productivity` with dedicated CLI flags/telemetry, and add docs/tests once the regressions land (done for Berry/Labelle DBH + TN-261 loader).
-  - [ ] Filter Lahrsen FPDat data to tethered harvesters/shovels and derive interim regressions (stem size vs. slope vs. tether load).
+  - [ ] Filter Lahrsen FPDat data to tethered harvesters/shovels and derive interim regressions (stem size vs. slope vs. tether load). *(Blocked until FPDat exports are furnished—current collaboration level does not include raw FPDat access; wait for explicit go-ahead.)*
   - [ ] Cross-validate against published winch-assist case studies (e.g., FPInnovations BMP v2, Kellogg winch trials) and add CLI flags for anchor slope limits.
   - [ ] Note open items for payload/slope derating until more FPInnovations data arrives.
 - [ ] **Manual operations (BC/Quebec hand-fall time studies)**
