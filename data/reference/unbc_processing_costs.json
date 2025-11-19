@@ -1,0 +1,73 @@
+{
+  "source": {
+    "citation": "Renzie, C. 2006. A Comparison of Partial Cut and Clearcut Harvesting Productivity and Cost in Old Cedar-Hemlock Forests in East Central British Columbia. UNBC MSc Thesis.",
+    "document_path": "notes/reference/unbc_15814.pdf",
+    "notes": [
+      "Table 20 (East Twin summary) lists costs per cubic metre for each harvesting phase by silvicultural treatment.",
+      "Costs reflect scheduled machine hours (SMH)."
+    ]
+  },
+  "currency": "CAD",
+  "cost_base_year": 2004,
+  "scenarios": [
+    {
+      "harvesting_system": "ground_based",
+      "treatment": "group_selection",
+      "layout_planning_cost_cad_per_m3": 2.62,
+      "felling_cost_cad_per_m3": 2.14,
+      "skidding_yarding_cost_cad_per_m3": 4.47,
+      "processing_cost_cad_per_m3": 1.54,
+      "loading_cost_cad_per_m3": 5.32,
+      "total_cost_cad_per_m3": 16.09
+    },
+    {
+      "harvesting_system": "ground_based",
+      "treatment": "clearcut",
+      "layout_planning_cost_cad_per_m3": 0.53,
+      "felling_cost_cad_per_m3": 1.94,
+      "skidding_yarding_cost_cad_per_m3": 4.13,
+      "processing_cost_cad_per_m3": 1.02,
+      "loading_cost_cad_per_m3": 3.33,
+      "total_cost_cad_per_m3": 10.95
+    },
+    {
+      "harvesting_system": "cable",
+      "treatment": "clearcut",
+      "layout_planning_cost_cad_per_m3": 0.68,
+      "felling_cost_cad_per_m3": 1.12,
+      "skidding_yarding_cost_cad_per_m3": 7.74,
+      "processing_cost_cad_per_m3": 1.15,
+      "loading_cost_cad_per_m3": 5.01,
+      "total_cost_cad_per_m3": 15.7
+    }
+  ],
+  "notes": [
+    "Tables 20-21 (East Twin) list SMH-based costs per m\u00b3 by harvesting phase."
+  ],
+  "construction": [
+    {
+      "harvesting_system": "ground_based",
+      "treatment": "group_selection",
+      "time_hours": 15.0,
+      "hourly_rate_cad": 145.09,
+      "final_net_volume_m3": 733.0,
+      "cost_cad_per_m3": 2.97
+    },
+    {
+      "harvesting_system": "ground_based",
+      "treatment": "clearcut",
+      "time_hours": 1.05,
+      "hourly_rate_cad": 145.09,
+      "final_net_volume_m3": 485.8,
+      "cost_cad_per_m3": 0.31
+    },
+    {
+      "harvesting_system": "cable",
+      "treatment": "clearcut",
+      "time_hours": 6.45,
+      "hourly_rate_cad": 145.09,
+      "final_net_volume_m3": 2987.9,
+      "cost_cad_per_m3": 0.31
+    }
+  ]
+}

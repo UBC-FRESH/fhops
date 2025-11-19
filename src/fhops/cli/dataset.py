@@ -129,6 +129,8 @@ from fhops.reference import (
     get_tr119_treatment,
     load_appendix5_stands,
     load_unbc_hoe_chucking_data,
+    load_unbc_processing_costs,
+    load_unbc_construction_costs,
 )
 from fhops.scenario.contract import Machine, Scenario
 from fhops.scenario.io import load_scenario
@@ -2509,6 +2511,63 @@ def _render_unbc_hoe_chucking_table() -> None:
     )
 
 
+def _render_unbc_processing_table() -> None:
+    scenarios = load_unbc_processing_costs()
+    if not scenarios:
+        console.print("[dim]No UNBC processing cost data available.[/dim]")
+        return
+    table = Table(title="UNBC Manual Processing Cost (Table 20)", header_style="bold cyan", expand=True)
+    table.add_column("System", style="bold")
+    table.add_column("Treatment")
+    table.add_column("Layout $/m³", justify="right")
+    table.add_column("Felling $/m³", justify="right")
+    table.add_column("Skid/Yard $/m³", justify="right")
+    table.add_column("Processing $/m³", justify="right")
+    table.add_column("Loading $/m³", justify="right")
+    table.add_column("Total $/m³", justify="right")
+    for scenario in scenarios:
+        table.add_row(
+            scenario.harvesting_system.replace("_", " "),
+            scenario.treatment.replace("_", " "),
+            f"{scenario.layout_planning_cost_cad_per_m3:.2f}",
+            f"{scenario.felling_cost_cad_per_m3:.2f}",
+            f"{scenario.skidding_yarding_cost_cad_per_m3:.2f}",
+            f"{scenario.processing_cost_cad_per_m3:.2f}",
+            f"{scenario.loading_cost_cad_per_m3:.2f}",
+            f"{scenario.total_cost_cad_per_m3:.2f}",
+        )
+    console.print(table)
+    console.print(
+        "[dim]Source: UNBC MSc thesis (Renzie 2006), Table 20/21 (East Twin). Costs are per SMH." 
+    )
+
+
+def _render_unbc_construction_table() -> None:
+    scenarios = load_unbc_construction_costs()
+    if not scenarios:
+        return
+    table = Table(title="UNBC Skid Trail + Landing Construction (Table 20)", header_style="bold cyan", expand=True)
+    table.add_column("System", style="bold")
+    table.add_column("Treatment")
+    table.add_column("Hours", justify="right")
+    table.add_column("Rate $/h", justify="right")
+    table.add_column("Volume (m³)", justify="right")
+    table.add_column("Cost $/m³", justify="right")
+    for entry in scenarios:
+        table.add_row(
+            entry.harvesting_system.replace("_", " "),
+            entry.treatment.replace("_", " "),
+            f"{entry.time_hours:.2f}",
+            f"{entry.hourly_rate_cad:.2f}",
+            f"{entry.final_net_volume_m3:.1f}",
+            f"{entry.cost_cad_per_m3:.2f}",
+        )
+    console.print(table)
+    console.print(
+        "[dim]Source: UNBC MSc thesis (Renzie 2006), Table 20 (skid trail & landing construction). Costs per SMH." 
+    )
+
+
 @dataset_app.command("inspect-machine")
 def inspect_machine(
     dataset: str | None = typer.Option(
@@ -2793,9 +2852,11 @@ def berry_log_grades_cmd() -> None:
 
 @dataset_app.command("unbc-hoe-chucking")
 def unbc_hoe_chucking_cmd() -> None:
-    """Show the UNBC hoe-chucking cost/productivity summary."""
+    """Show the UNBC hoe-chucking and manual processing references."""
 
     _render_unbc_hoe_chucking_table()
+    _render_unbc_processing_table()
+    _render_unbc_construction_table()
 
 
 @dataset_app.command("estimate-productivity")

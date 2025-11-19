@@ -8,11 +8,18 @@ from functools import lru_cache
 from pathlib import Path
 
 
-_DATA_PATH = (
+_HOE_DATA_PATH = (
     Path(__file__).resolve().parents[3]
     / "data"
     / "reference"
     / "unbc_hoe_chucking.json"
+)
+
+_PROC_DATA_PATH = (
+    Path(__file__).resolve().parents[3]
+    / "data"
+    / "reference"
+    / "unbc_processing_costs.json"
 )
 
 
@@ -31,9 +38,9 @@ class UNBCHoeChuckingScenario:
 
 @lru_cache(maxsize=1)
 def load_unbc_hoe_chucking_data() -> tuple[UNBCHoeChuckingScenario, ...]:
-    if not _DATA_PATH.exists():  # pragma: no cover - configuration error
-        raise FileNotFoundError(f"Missing UNBC hoe-chucking data: {_DATA_PATH}")
-    payload = json.loads(_DATA_PATH.read_text(encoding="utf-8"))
+    if not _HOE_DATA_PATH.exists():  # pragma: no cover - configuration error
+        raise FileNotFoundError(f"Missing UNBC hoe-chucking data: {_HOE_DATA_PATH}")
+    payload = json.loads(_HOE_DATA_PATH.read_text(encoding="utf-8"))
     scenarios: list[UNBCHoeChuckingScenario] = []
     for entry in payload.get("scenarios", []):
         scenarios.append(
@@ -62,3 +69,67 @@ def load_unbc_hoe_chucking_data() -> tuple[UNBCHoeChuckingScenario, ...]:
             )
         )
     return tuple(scenarios)
+
+
+@dataclass(frozen=True)
+class UNBCProcessingCostScenario:
+    harvesting_system: str
+    treatment: str
+    layout_planning_cost_cad_per_m3: float
+    felling_cost_cad_per_m3: float
+    skidding_yarding_cost_cad_per_m3: float
+    processing_cost_cad_per_m3: float
+    loading_cost_cad_per_m3: float
+    total_cost_cad_per_m3: float
+
+
+@dataclass(frozen=True)
+class UNBCConstructionCost:
+    harvesting_system: str
+    treatment: str
+    time_hours: float
+    hourly_rate_cad: float
+    final_net_volume_m3: float
+    cost_cad_per_m3: float
+
+
+@lru_cache(maxsize=1)
+def load_unbc_processing_costs() -> tuple[UNBCProcessingCostScenario, ...]:
+    if not _PROC_DATA_PATH.exists():  # pragma: no cover - configuration error
+        raise FileNotFoundError(f"Missing UNBC processing cost data: {_PROC_DATA_PATH}")
+    payload = json.loads(_PROC_DATA_PATH.read_text(encoding="utf-8"))
+    scenarios: list[UNBCProcessingCostScenario] = []
+    for entry in payload.get("scenarios", []):
+        scenarios.append(
+            UNBCProcessingCostScenario(
+                harvesting_system=str(entry.get("harvesting_system", "")),
+                treatment=str(entry.get("treatment", "")),
+                layout_planning_cost_cad_per_m3=float(entry.get("layout_planning_cost_cad_per_m3", 0.0) or 0.0),
+                felling_cost_cad_per_m3=float(entry.get("felling_cost_cad_per_m3", 0.0) or 0.0),
+                skidding_yarding_cost_cad_per_m3=float(entry.get("skidding_yarding_cost_cad_per_m3", 0.0) or 0.0),
+                processing_cost_cad_per_m3=float(entry.get("processing_cost_cad_per_m3", 0.0) or 0.0),
+                loading_cost_cad_per_m3=float(entry.get("loading_cost_cad_per_m3", 0.0) or 0.0),
+                total_cost_cad_per_m3=float(entry.get("total_cost_cad_per_m3", 0.0) or 0.0),
+            )
+        )
+    return tuple(scenarios)
+
+
+@lru_cache(maxsize=1)
+def load_unbc_construction_costs() -> tuple[UNBCConstructionCost, ...]:
+    if not _PROC_DATA_PATH.exists():  # pragma: no cover - configuration error
+        raise FileNotFoundError(f"Missing UNBC processing cost data: {_PROC_DATA_PATH}")
+    payload = json.loads(_PROC_DATA_PATH.read_text(encoding="utf-8"))
+    entries = []
+    for entry in payload.get("construction", []):
+        entries.append(
+            UNBCConstructionCost(
+                harvesting_system=str(entry.get("harvesting_system", "")),
+                treatment=str(entry.get("treatment", "")),
+                time_hours=float(entry.get("time_hours", 0.0) or 0.0),
+                hourly_rate_cad=float(entry.get("hourly_rate_cad", 0.0) or 0.0),
+                final_net_volume_m3=float(entry.get("final_net_volume_m3", 0.0) or 0.0),
+                cost_cad_per_m3=float(entry.get("cost_cad_per_m3", 0.0) or 0.0),
+            )
+        )
+    return tuple(entries)

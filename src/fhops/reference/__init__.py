@@ -2,7 +2,14 @@
 
 from .arnvik_appendix5 import Appendix5Stand, get_appendix5_profile, load_appendix5_stands
 from .tr119_partial_cut import Tr119Treatment, get_tr119_treatment, load_tr119_treatments
-from .unbc_hoe_chucking import UNBCHoeChuckingScenario, load_unbc_hoe_chucking_data
+from .unbc_hoe_chucking import (
+    UNBCHoeChuckingScenario,
+    UNBCProcessingCostScenario,
+    UNBCConstructionCost,
+    load_unbc_hoe_chucking_data,
+    load_unbc_processing_costs,
+    load_unbc_construction_costs,
+)
 
 __all__ = [
     "Appendix5Stand",
@@ -13,4 +20,8 @@ __all__ = [
     "get_tr119_treatment",
     "UNBCHoeChuckingScenario",
     "load_unbc_hoe_chucking_data",
+    "UNBCProcessingCostScenario",
+    "load_unbc_processing_costs",
+    "UNBCConstructionCost",
+    "load_unbc_construction_costs",
 ]
