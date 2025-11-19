@@ -195,7 +195,11 @@ costing consistent across scenarios:
   stay aligned.
 - `fhops dataset inspect-machine` prints the machine metadata and the same default owning/operating/repair
   breakdown (honouring ``repair_usage_hours``) so you can audit scenario inputs without running a full cost estimate.
-  Add ``--json-out machine.json`` to capture the same payload for automated QA pipelines. Solver telemetry
+  You can also inspect the rental table directly via ``--machine-role`` (e.g., ``fhops dataset inspect-machine
+  --machine-role loader_barko450`` dumps the TN-46 Barko 450 live-heel loader rate CPI-scaled from TR-73/TN-64/TN-51).
+  When you pair the command with a harvest system such as ``ground_fb_loader_liveheel``, the loader job automatically
+  swaps its cost role to ``loader_barko450`` so budgeting outputs stay aligned with the TN-46 preset. Add
+  ``--json-out machine.json`` to capture the same payload for automated QA pipelines. Solver telemetry
   (``solve-heur``, ``solve-ils``, ``solve-tabu``, ``eval-playback``) automatically embeds this ``machine_costs`` bundle
   whenever ``--telemetry-log`` is used, so KPI histories and dashboards can trace the assumed repair buckets.
 

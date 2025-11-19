@@ -415,6 +415,21 @@ def _apply_loader_system_defaults(
     )
 
 
+def _derive_cost_role_override(
+    machine_role: str | None, overrides: Mapping[str, float | str] | None
+) -> str | None:
+    if machine_role != "loader" or not overrides:
+        return None
+    model_value = overrides.get("loader_model")
+    if model_value is None:
+        return None
+    if isinstance(model_value, str):
+        key = model_value.lower()
+    else:
+        key = str(model_value).lower()
+    return _LOADER_MODEL_COST_ROLES.get(key)
+
+
 def _machine_rate_roles_help() -> str:
 
     roles = ", ".join(sorted(load_machine_rate_index().keys()))
@@ -628,6 +643,11 @@ class LoaderAdv5N1SlopeClass(str, Enum):
 class LoaderBarkoScenario(str, Enum):
     GROUND_SKID_BLOCK = "ground_skid_block"
     CABLE_YARD_BLOCK = "cable_yard_block"
+
+
+_LOADER_MODEL_COST_ROLES = {
+    LoaderProductivityModel.BARKO450.value: "loader_barko450",
+}
 
 
 _TR127_MODEL_TO_BLOCK = {
@@ -2440,6 +2460,14 @@ def inspect_machine(
         "--interactive/--no-interactive",
         help="Enable prompts when context is missing.",
     ),
+    machine_role_override: str | None = typer.Option(
+        None,
+        "--machine-role",
+        help=(
+            "Inspect the default rental-rate entry for a machine role without loading a dataset. "
+            + _machine_rate_roles_help()
+        ),
+    ),
     json_out: Path | None = typer.Option(
         None,
         "--json-out",
@@ -2454,11 +2482,47 @@ def inspect_machine(
     ),
 ):
     """Inspect machine parameters within a dataset/system context."""
+    if dataset is None:
+        if machine_role_override is None:
+            if not interactive:
+                raise typer.BadParameter(
+                    "Provide --dataset/--machine or specify --machine-role to inspect the rate table."
+                )
+            raise typer.BadParameter("Dataset identifier is required when prompts are disabled.")
+        _render_machine_cost_summary(machine_role_override)
+        if json_out is not None:
+            rate = _resolve_machine_rate(machine_role_override)
+            composed = compose_default_rental_rate_for_role(machine_role_override)
+            if composed is None:
+                raise typer.BadParameter(
+                    f"Unable to compose rental rate for role '{machine_role_override}'."
+                )
+            rental_rate, breakdown = composed
+            payload = {
+                "machine_role": machine_role_override,
+                "machine_name": rate.machine_name,
+                "rental_rate_smh": rental_rate,
+                "breakdown": breakdown,
+                "cost_base_year": rate.cost_base_year,
+                "source": rate.source,
+                "notes": rate.notes,
+            }
+            json_out.parent.mkdir(parents=True, exist_ok=True)
+            json_out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        return
+
     dataset_name, scenario, path = _ensure_dataset(dataset, interactive)
     system_selection = _select_system(scenario, system, interactive)
     selected_machine = _select_machine(
         scenario, machine, interactive, system_selection[1] if system_selection else None
     )
+    cost_role_hint = machine_role_override
+    cost_role_note: str | None = None
+    if cost_role_hint:
+        cost_role_note = (
+            f"[dim]Cost role manually overridden to '{cost_role_hint}' for rental-rate lookup.[/dim]"
+        )
+
     context_lines = [
         ("Dataset", dataset_name),
         ("Scenario Path", str(path)),
@@ -2468,7 +2532,6 @@ def inspect_machine(
         ("Operating Cost", f"{selected_machine.operating_cost}"),
         ("Role", selected_machine.role or "—"),
     ]
-    default_snapshot = build_machine_cost_snapshots([selected_machine])[0]
     default_rate_rows: list[tuple[str, str]] = []
     default_rate_note: str | None = None
     if default_snapshot.rental_rate_smh is not None:
@@ -2494,9 +2557,14 @@ def inspect_machine(
                     f"{default_snapshot.usage_bucket_hours:,} h (multiplier {default_snapshot.usage_multiplier:.3f})",
                 )
             )
+            effective_role = machine_for_snapshot.role or selected_machine.role
+            usage_hours = selected_machine.repair_usage_hours
+            usage_text = (
+                f"{usage_hours:,} h" if usage_hours is not None else f"{default_snapshot.usage_bucket_hours:,} h"
+            )
             default_rate_note = (
-                f"[dim]Default rate derived from role '{selected_machine.role}' "
-                f"with repair usage {selected_machine.repair_usage_hours:,} h "
+                f"[dim]Default rate derived from role '{effective_role}' "
+                f"with repair usage {usage_text} "
                 f"(closest bucket {default_snapshot.usage_bucket_hours / 1000:.0f}×1000 h).[/dim]"
             )
         if (
@@ -2518,20 +2586,49 @@ def inspect_machine(
             )
     if system_selection:
         system_id, system_model = system_selection
-        job_matches = [
-            job.name
-            for job in system_model.jobs
-            if selected_machine.role and job.machine_role == selected_machine.role
-        ]
+        job_matches: list[str] = []
+        for job in system_model.jobs:
+            if selected_machine.role and job.machine_role == selected_machine.role:
+                job_matches.append(job.name)
+                if cost_role_hint is None:
+                    hint = _derive_cost_role_override(
+                        selected_machine.role, job.productivity_overrides
+                    )
+                    if hint:
+                        cost_role_hint = hint
+                        cost_role_note = (
+                            f"[dim]Harvest system '{system_id}' pins loader_model="
+                            f"{job.productivity_overrides.get('loader_model')} so "
+                            f"machine-rate role '{hint}' is used for cost summaries.[/dim]"
+                        )
         context_lines.append(("Harvest System", system_id))
         context_lines.append(
             ("System Jobs Matched", ", ".join(job_matches) if job_matches else "—")
         )
+
+    if cost_role_hint and cost_role_hint != selected_machine.role:
+        context_lines.append(("Cost Role Override", cost_role_hint))
+
+    machine_for_snapshot = selected_machine
+    if cost_role_hint and hasattr(selected_machine, "model_copy"):
+        try:
+            machine_for_snapshot = selected_machine.model_copy(update={"role": cost_role_hint})
+        except Exception:  # pragma: no cover - defensive fallback
+            machine_for_snapshot = selected_machine
+    default_snapshot = build_machine_cost_snapshots([machine_for_snapshot])[0]
+
+    default_rate_rows: list[tuple[str, str]] = []
     _render_kv_table(f"Machine Inspection — {selected_machine.id}", context_lines)
+    note_lines: list[str] = []
+    if default_rate_note:
+        note_lines.append(default_rate_note)
+    if cost_role_note:
+        note_lines.append(cost_role_note)
+
     if default_rate_rows:
         _render_kv_table("Default Rental Breakdown", default_rate_rows)
-        if default_rate_note:
-            console.print(default_rate_note)
+        for line in note_lines:
+            console.print(line)
     if abs(selected_machine.daily_hours - 24.0) > 1e-6:
         console.print(
             "[red]Warning:[/red] machine daily_hours="
@@ -2554,6 +2651,8 @@ def inspect_machine(
             },
             "default_rental": default_snapshot.to_dict(),
         }
+        if cost_role_hint and cost_role_hint != selected_machine.role:
+            payload["machine"]["role_override"] = cost_role_hint
         json_out.parent.mkdir(parents=True, exist_ok=True)
         json_out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
