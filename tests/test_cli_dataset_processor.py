@@ -182,6 +182,35 @@ def test_cli_processor_labelle2019_volume() -> None:
     assert f"{expected.productivity_m3_per_pmh:.2f}" in result.stdout
 
 
+def test_cli_processor_spinelli2010_process() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "roadside_processor",
+            "--processor-model",
+            "spinelli2010",
+            "--processor-piece-size-m3",
+            "0.45",
+            "--processor-machine-power-kw",
+            "125",
+            "--processor-slope-percent",
+            "14",
+            "--processor-spinelli-operation",
+            "process",
+            "--processor-spinelli-carrier",
+            "excavator",
+            "--processor-spinelli-head",
+            "roller",
+            "--processor-spinelli-species",
+            "other_hardwood",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "Spinelli (2010)" in result.stdout
+
+
 def test_cli_processor_labelle2016_treeform() -> None:
     result = runner.invoke(
         dataset_app,

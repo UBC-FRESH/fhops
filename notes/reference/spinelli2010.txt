@@ -1,0 +1,1699 @@
+Productivity Standards for Harvesters
+and Processors in Italy
+Raffaele Spinelli
+Bruce R. Hartsough
+Natascia Magagnotti
+
+Abstract
+The authors developed a general productivity model for the harvesters and processors currently used in Italy. The model
+consists of a set of mathematical relationships that can estimate the productivity of these machines under the whole range of
+specific work conditions faced in Italy. Such relationships can provide general directions to prospective users and can
+contribute to the development of scenario predictions. The original data pool contained more than 15,000 individual timestudy records, each representing a single harvesting cycle (most often one tree). The records were extracted from 38 studies
+conducted with the same methods and by the same principal investigators between 1998 and 2008. Statistically significant
+models were developed for all cyclic work phases, such as moving, brushing, felling, and processing. Accessory time and
+delay time were added as percent factors, also estimated from the same studies. Model development aimed at achieving the
+best compromise solution between accuracy and easy use, avoiding the introduction of an excessively large number of input
+variables. Selected independent variables were tree volume, tree species, task type (harvesting or processing), machine power
+and type, density of residual stand and of harvest trees, stand type, and slope gradient. These models could predict a large
+proportion of the variability in the data and were successfully validated using reserved cycle records, extracted from the same
+data pool and not used for model development. Comparison with similar Nordic and German standards confirmed the sound
+structure of the Italian models while highlighting the need for specific productivity norms due to the different work
+conditions faced by Italian operators.
+
+O
+
+riginating from a purely Scandinavian background,
+the mechanized cut-to-length (CTL) system has gained
+worldwide acceptance, expanding far beyond the limits of
+boreal forestry. The advantages of harvesters and processors
+are so attractive that loggers all over the world have adopted
+the new technology, applying it to close-to-nature forestry
+(Suadicani and Fjeld 2001) and hardwood stands (Wang et
+al. 2005). Today, the use of these machines is no longer
+limited to gentle terrain (e.g., slope gradient , 25%) and
+conifer forests, as demonstrated by their massive deployment in the Austrian (Stampfer 1999) and Swiss (Frutig et
+al. 2007) mountain forests. Harvesters and processors also
+are very popular in Mediterranean countries, such as Spain,
+Portugal (Spinelli et al. 2002), and Italy (Cielo and Zanuttini
+2004), where they perform much of the harvesting in the
+industrial pine, eucalypt, and poplar plantations.
+Such rapid expansion is helped by the remarkable
+ﬂexibility of the mechanized CTL concept: cheap, general-purpose prime movers can be converted into effective
+CTL units by adding a harvester or processor head
+(Johansson 1995). In this respect, earthmoving machinery
+provides a good alternative to dedicated forestry units,
+offering a robust, multifunctional, and low-cost base (Wang
+226
+
+and Haarlaa 2002). Its versatile character allows good
+economic results also when the harvester function is used
+for a relatively short proportion of the annual work time
+(Väätäinen et al. 2004), making it ideal for part-time users.
+For this reason, excavator-based CTL units are the ﬁrst
+choice when the new technology is being introduced to a
+developing market, whereas mature markets prefer highoutput dedicated units (Gellerstedt and Dahlin 1999).
+Regardless of application details, mechanized CTL
+harvesting brings the industry to the forest, with strong
+effects on value recovery (Sondell et al. 2002) and labor
+productivity (Chiorescu and Grönlund 2001), hence the
+keen interest toward machine performance, whose correct
+evaluation is crucial when prospecting the introduction of
+The authors are, respectively, Researcher, CNR IVALSA, Via
+Madonna del Piano 10, Sesto Fiorentino (FI), Italy (spinelli@ivalsa.
+cnr.it); Professor, Biological and Agric. Engineering, Univ. of
+California, Davis (brhartsough@ucdavis.edu); and Researcher, CNR
+IVALSA, Via Biasi 75, S. Michele all’Adige (TN), Italy
+(magagnotti@ivalsa.cnr.it). This paper was received for publication
+in February 2010. Article no. 10735.
+ÓForest Products Society 2010.
+Forest Prod. J. 60(3):226–235.
+SPINELLI ET AL.
+
+CTL harvesting to a new environment (Spinelli and
+Magagnotti, in press). The performance of harvesters and
+processors has been documented by many studies, conducted over the past decade in almost all the places where these
+machines have been deployed. However, most of these
+studies offer limited help when making overall predictions
+because of their episodic character, which makes them
+representative of a speciﬁc case rather than of a general
+condition. In particular, single studies are heavily affected
+by the erratic variations of the human factor, which may
+cause meaningful differences in performance levels: different operators can possess very different abilities (Ovaskainen and Heikkilä 2007) so that overall productivity models
+should be based on very large samples where variation
+caused by the human factor can be leveled out by including
+several professional operators in the same general study
+(Nurminen et al. 2006). To date, very few such studies are
+available to the international scholar, and they all concern
+Nordic operations. Productivity standards have been developed in Sweden (Brunberg 1995, 1997), and a similar
+reference is now available for thinning in Finland (Sirén and
+Aaltio 2003).
+No overall productivity reference is yet available for
+central and southern Europe, where the extrapolation of
+Nordic results might lead to signiﬁcant errors since working
+conditions, operator training, and technological solutions are
+quite different and are likely to affect machine performance
+(Spinelli et al. 2009a). One typical example is the tree
+species: those harvested in central and southern Europe
+generally have heavy branching, which is known to decrease
+harvester productivity (Glöde 1999).
+Hence, there is a need for developing overall productivity
+references that may be used for general predictions or
+integrated into system simulation models, thus expanding
+their scope and increasing their reliability. In fact, a number
+of existing spreadsheet models for harvesting simulation
+already include the CTL option (Holtzscher and Lanford
+1997, Spinelli et al. 2009b), but their extended application is
+constrained by the limits of the original data.
+The goal of this study was to develop a general
+productivity model for the harvesters and processors
+currently used in Italy, where mechanized CTL harvesting
+was introduced more than 10 years ago and is now
+spreading to a large variety of operations (Spinelli et al.,
+submitted for publication). Here, the conditions encountered by CTL units are very different from those found in
+the Nordic countries and include mountain forests,
+hardwoods, close-to-nature forestry, and industrial poplar
+plantations. This study aims at calculating a set of
+mathematical relationships that can estimate the productivity of CTL units under the whole range of speciﬁc work
+conditions faced in Italy. Such relationships can provide
+general directions to prospective users and can contribute
+to the development of scenario predictions. Furthermore,
+the comparison between these eventual standards and
+those developed for northern Europe can help gauge the
+differences between the Nordic and the southern European working environment, thus addressing the main issues
+for future technical developments. Finally, the information obtained from the models can easily be extended to
+countries in which work conditions are similar to those in
+Italy, at least until speciﬁc local models become
+available.
+FOREST PRODUCTS JOURNAL
+
+Vol. 60, No. 3
+
+Materials and Methods
+The authors compiled the raw data from 38 complete time
+studies, conducted between 1998 and 2008 by the
+researchers of the Italian National Council for Research. A
+general description of the studies is shown in Table 1, which
+reports both site characteristics and machine type. All of the
+time studies were set up and carried out by the same
+principal investigators and with the same methods. Productive time was separated from delay time (Björheden et al.
+1995) and split into functional elements, expected to react to
+different variables (Bergstrand 1991).
+Delay-free time per tree was subdivided into ﬁve basic
+elements: move (at roadside or within the stand), brush
+(occurring only if operating within the stand), grab (if
+processing at the deck) or fell (if harvesting within the
+stand), and process (delimbing and bucking). Move activity
+within the stand is inherently different from that at the road,
+so the two cases were recorded and analyzed separately.
+Grabbing a stem from a pile is also different than felling a
+standing tree, justifying separate evaluation. On the other
+hand, processing was considered to be similar in character
+whether conducted in the stand or at the landing, so the data
+were combined for analysis, and an indicator variable was
+used to check for differences between the two cases, as
+suggested for harvesting work studies (Olsen et al. 1998).
+The merchantable overbark volume processed during
+each cycle was also recorded and associated to the
+observation data. All time-motion data were recorded with
+Husky Hunter handheld ﬁeld computers running Siwork3
+time-study software (Kofman 1995).
+Clear-cuts are most heavily represented in the database,
+but the proportion of partial cuts is still meaningful (28%).
+The stronger representation of clear-cuts is the logical
+consequence of their higher proﬁtability, which entails a
+better investment capability and therefore favors the
+application of mechanized harvesting. Besides, the Italian
+mechanized ﬁrms are still comparatively few and can often
+choose their work, generally opting for the most proﬁtable
+opportunities.
+Almost 60 percent of the studies concern general-purpose
+prime movers, such as tracked or wheeled excavators,
+ﬂexible-legs excavators (so-called spiders), and farm
+tractors. In Italy, most loggers are relatively new to
+mechanized CTL harvesting and are afraid of the strong
+commitment required by the purchase of a dedicated
+harvester. Besides, the superior agility of such units might
+be unnecessary if they are to be deployed in ﬂatland row
+plantations or by the roadside under a yarder.
+Some studies investigated the harvesting (felling, delimbing, and crosscutting) of standing trees, while others focused
+on the processing (delimbing and crosscutting) of previously
+felled trees windrowed or piled at roadside or on the
+cutover.
+The database represents 19 different professional operators, generally experienced and proﬁcient. Each operator,
+however, was a potential source of individual variability,
+which must be taken into account when evaluating the
+results (Gellerstedt 2002). No attempt was made to
+normalize individual performances by means of productivity
+ratings (Scott 1973), recognizing that all kinds of normalization or corrections can introduce new sources of errors
+and uncontrolled variation in the data (Gullberg 1995). All
+operators worked single shifts with occasional overtime so
+227
+
+Table 1.—General description of the time studies.
+Site no.
+
+Stand type
+
+Speciesa
+
+Age (y)
+
+Density
+(trees/ha)b
+
+DBH
+(cm)c
+
+Treatment
+
+Removal
+(m3/ha)
+
+Base
+type/model
+
+Head
+model
+
+Work
+task
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+
+Plantation
+Plantation
+Plantation
+Plantation
+Plantation
+Coppice
+Coppice
+Plantation
+Plantation
+Plantation
+Coppice
+Plantation
+Coppice
+Coppice
+Coppice
+Plantation
+Coppice
+Plantation
+Plantation
+Plantation
+Plantation
+Plantation
+Plantation
+Plantation
+Plantation
+Plantation
+Plantation
+Plantation
+Plantation
+Forest
+Plantation
+Forest
+Plantation
+Plantation
+Plantation
+Plantation
+Plantation
+Forest
+
+Ash-alder
+Spruce
+Spruce
+Austrian pine
+Austrian pine
+Beech
+Beech
+Douglas-fir
+Fir
+Spruce
+Ash
+Austrian pine
+Chestnut
+Chestnut
+Chestnut
+Fir
+Oak
+Poplar
+Poplar
+Poplar
+Poplar
+Poplar
+Poplar
+Poplar
+Poplar
+Radiata pine
+Sequoia
+Spruce
+Spruce
+Spruce
+Spruce
+Spruce
+White pine
+White pine
+White pine
+White pine
+White pine
+Mix fir-beech
+
+9
+40
+42
+43
+45
+45
+45
+39
+65
+35
+45
+46
+55
+20
+30
+43
+30
+23
+5
+11
+15
+12
+11
+14
+11
+28
+36
+70
+45
+150
+45
+53
+21
+22
+23
+33
+22
+120
+
+800
+320
+365
+949
+678
+2,020
+2,020
+820
+474
+1,135
+325
+708
+1,213
+1,600
+2,722
+494
+1,650
+364
+1,158
+333
+625
+238
+278
+278
+238
+1,150
+1,100
+300
+494
+199
+504
+84
+1,710
+1,570
+950
+680
+1,333
+73
+
+13
+22
+23
+17
+21
+13
+13
+20
+26
+18
+16
+22
+19
+15
+10
+27
+15
+42
+12
+35
+26
+29
+29
+33
+32
+21
+27
+39
+26
+41
+25
+24
+18
+24
+25
+31
+25
+41
+
+Thinning
+Thinning
+Thinning
+Thinning
+Thinning
+Thinning
+Thinning
+Thinning
+Thinning
+Thinning
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Clear-cut
+Selection
+
+23
+64
+100
+81
+68
+153
+153
+61
+53
+76
+35
+175
+261
+143
+67
+208
+234
+520
+148
+236
+302
+186
+233
+216
+218
+263
+388
+230
+136
+283
+169
+25
+344
+460
+331
+669
+440
+125
+
+Excav. 13 t
+JD1270 C
+JD1270 C
+Spider 9 t
+Spider 9 t
+Excav. 5 t
+JD1470 C
+Spider 11 t
+JD1070 B
+Spider 9 t
+Spider 9 t
+Spider 9 t
+JD1270 B
+Excav. 18 t
+Excav. 15 t
+JD1070 B
+Excav. 15 t
+Excav, 25 t
+Farm tractor
+JD870 B
+JD870 B
+Excav. 15 t
+Excav. 15 t
+Excav, 25 t
+Excav, 25 t
+Excav. 30 t
+Excav. 13 t
+JD1270 C
+JD1270 C
+Excav. 20 t
+Spider 9 t
+JD1270 C
+JD1270 B
+JD1270 B
+JD1270 B
+JD1270 B
+Farm tractor
+Excav. 15 t
+
+Keto 100
+JD758 B
+JD758 B
+Woody 50
+Woody 50
+Arbro 400
+JD290 H
+Woody 50
+JD745
+Woody 50
+Woody 50
+Woody 50
+JD762 B
+Lako 55
+Kesla 25 H
+JD745
+Kesla 25 H
+JD762 B
+Arbro 400
+JD746
+JD746
+Patu 560
+Patu 560
+JD762 B
+JD762 B
+AFM 80
+JD743
+JD758 B
+JD758 B
+Woody 60
+Woody 50
+JD758 B
+JD762 B
+JD762 B
+JD762 B
+JD762 B
+Keto 50
+Patu 560
+
+Harvest
+Process
+Process
+Harvest
+Harvest
+Process
+Process
+Harvest
+Harvest
+Harvest
+Process
+Harvest
+Process
+Process
+Process
+Harvest
+Process
+Process
+Harvest
+Harvest
+Harvest
+Process
+Process
+Process
+Process
+Process
+Harvest
+Harvest
+Process
+Process
+Harvest
+Harvest
+Harvest
+Harvest
+Harvest
+Harvest
+Harvest
+Process
+
+a
+
+Ash = Fraxinus ornus L.; alder = Alnus cordata (Loisel.) Desf.; spruce = Picea abies L. (Karst.); Austrian pine = Pinus nigra J. F. Arnold; beech = Fagus
+sylvatica L.; Douglas-fir = Pseudotsuga menziesii Mirbel.; fir = Abies alba Mill.; chestnut = Castanea sativa Mill.; oak = Quercus cerris L.; poplar =
+Populus 3euroamericana (different hybrids); radiata pine = Pinus radiata D. Don.; sequoia = Sequoia sempervirens (D. Don.) Endl.; white pine = Pinus
+strobus L.
+b
+Density is the initial density before cut.
+c
+DBH = diameter at breast height.
+
+that fatigue was unlikely to signiﬁcantly affect performance
+(Nicholls et al. 2004).
+The overall data set contains 15,148 cycle observations
+corresponding to 15,366 trees. Multitree handling (i.e.,
+handling more than one tree per cycle) was observed on rare
+occasions, exclusively when processing felled trees from a
+deck. Tree volume ranged from 0.010 to 7 m3, with an
+average value of 0.346 m3. Total study volume amounts to
+5,239 m3, and study time to 329 hours of net work,
+excluding all delays. Average productivity is 46 trees or
+15.9 m3 per net hour, excluding all delays.
+We used regression analysis of the time-study data to
+develop a set of equations capable of predicting cycle time
+(and therefore productivity) as a function of statistically
+signiﬁcant independent variables. Documented validation is
+a prerequisite of production models derived from time-study
+data (Howard 1992), and it was conducted according to the
+same procedure recently used by Adebayo et al. (2007) for a
+228
+
+similar modeling study. The data set was partitioned at
+random into two subsets: the ﬁrst subset, containing 70
+percent of the observation number, was used to calculate
+appropriate productivity relationships through regression
+analysis; the second subset, with the remaining 30 percent of
+the observations (reserved data), was used to validate the
+regressions obtained above. To this purpose, the time
+consumption equations were used to predict the reserved
+data, then the predicted cycle times were correlated with the
+observed cycle times, and the resulting r2 (validated r2) was
+used as a measure for the predictive capacity of the
+equations. Furthermore, two-sample t tests were used to test
+the differences between predicted and observed cycle times.
+Table 2 shows a regression matrix for the independent
+variables used in conducting the regression analysis of each
+time element. Transformations of the independent variables
+were chosen on the basis of theoretical as well as empirical
+considerations. For example, move time per tree was
+SPINELLI ET AL.
+
+Table 2.—Regression analysis matrix.
+Dependent variablesa
+Independent variables
+
+Move (at deck)
+
+Move (in stand)
+
+Brush (in stand)
+
+Grab (at deck)
+
+Fell (in stand)
+
+Process
+
+**
+NS
+
+**
+
+NS
+NS
+
+NS
+
+**
+*
+**
+
+NS
+NS
+NS
+
+**
+**
+NS
+NS
+
+**
+**
+NS
+**
+NS
+NS
+
+**
+**
+NS
+**
+NS
+NS
+
+NS
+
+**
+
+NS
+
+**
+NS
+
+**
+NS
+
+b
+
+b
+
+NS
+
+NS
+NS
+NS
+
+**
+**
+NS
+NS
+NS
+**
+
+Continuous
+Tree vol. (m3)
+Carrier power (kW)
+Head size, max. cut diam. (cm)
+Gradient (%)
+Removals (trees/ha)
+Residuals (trees/ha)
+Discrete
+Carrier type
+Head type (roller, stroke)
+Work task (process, harvest)
+Operation (clear-fell, thinning)
+Stand (coppice, forest, plantation)c
+Species (seven species or combinations)
+
+b
+
+b
+
+b
+
+NS
+
+NS
+NS
+NS
+
+NS
+**
+NS
+
+a
+
+* = significant (P , 0.05); ** = highly significant (P , 0.01); NS = not significant in addition to other factors.
+Activities at the deck (process) were analyzed separately from those in the woods (harvest).
+c
+Only processing at the deck was observed in coppice stands.
+b
+
+expected to be related to distance between trees to be
+removed; therefore, the inverse of trees removed per hectare
+was used when developing the regression model.
+If machine power limits throughput, as it probably does
+for at least some portion of each of the time elements, time
+to complete a given task is related to power available in the
+following fashion: power = work/time or time = work/
+power. If more power is available, say, by increasing the
+size of the machine’s engine, time for a given task should
+decrease. There are likely to be diminishing returns as
+power is increased, however, so the transformation of power
+included in the regression models for time was power0.5
+rather than power1.
+Grab and fell are piece-handling activities, so time per
+tree would be expected to increase somewhat as tree volume
+increased but at a linear or smaller rate until tree size
+approached the machine capacity. Processing is a lengthhandling activity, so time per tree should increase less than
+linearly with tree volume, again until the machine was
+overly taxed. The transformations of tree volume selected
+for the regression model were based on these theoretical
+considerations as well as the empirical trends.
+
+Results
+Table 3 reports the average time consumption per tree, as
+extracted from the entire data pool. Data are subdivided by
+basic element and refer to a very similar average tree
+
+volume: 0.341 and 0.350 m3, respectively, for processing at
+the deck and harvesting within the stand.
+Regression analysis of 70 percent of the original data pool
+allowed estimating six equations, capable of predicting the
+time consumption for each individual work phase, namely,
+move time at deck, move time in the stand, brushing time,
+felling time, time for grabbing a tree from a deck, and
+processing time. Table 4 deﬁnes the dummy (indicator)
+variables found to be signiﬁcant for one or more of the time
+elements.
+Move time at deck when processing prefelled trees was
+not signiﬁcantly related to tree volume and was highly
+variable. This can be expected because when processing
+trees from a deck, the machine can reach many stems from
+the same position. Therefore, most of the observations will
+have zero move time associated with them. Move time also
+depends on a number of factors that could not be included in
+the model, such as decking layout and operator ability to
+organize the work in the most effective way. The predictive
+equation is reported below (n = 5,693, predicted r2 =
+0.008). It includes tree volume because the full crane reach
+can be used only with smaller trees, whereas larger trees
+must be handled at a closer distance. This, as well as the fact
+that more small trees can be piled per length of deck,
+theoretically justiﬁes more frequent moving when processing larger trees and the consequently longer moving time
+per tree:
+2
+
+Move at deck; 10 min tree
+Table 3.—Mean values and standard deviations for the time
+elements and for the total net cycle time.
+Mean (SD)
+Work phase
+
+At deck
+
+In stand
+
+Move
+Brush
+Grab/fell
+Process
+
+7.3 (25.4)
+0.0 (0.0)
+21.3 (24.3)
+70.9 (101.1)
+
+19.7 (47.9)
+2.5 (18.8)
+28.4 (30.6)
+63.6 (68.6)
+
+Total
+
+99.5 (117.4)
+
+114.2 (109.9)
+
+FOREST PRODUCTS JOURNAL
+
+Vol. 60, No. 3
+
+1
+
+= 5:6 þ 4:26 tree volume; m
+
+3
+
+ð1Þ
+
+Move time within the stand while harvesting increased
+with slope and the number of residual trees per hectare and
+decreased with the number of removed trees per hectare and
+with the power of the prime mover. Time per tree was
+substantially longer for spider- or tractor-based harvesters,
+which are somewhat awkward compared with dedicated
+harvesters and excavator base units. The predictive equation
+shows a weak correlation (n = 5,643, predicted r2 = 0.091)
+although stronger than for Equation 1. Nevertheless, the
+229
+
+Table 4.—Definitions of dummy (indicator) variables.
+Variable
+
+Definition
+
+Chestnut or poplar
+Excavator
+Forest
+Nonspider
+Other hardwood
+Spider
+Stroker
+Tractor
+
+1 if species is chestnut or poplar, 0 for other species
+1 for excavator-based machines, 0 for other types (dedicated, spider, or farm tractor)
+1 for naturally regenerated forests, 0 for plantations
+1 for any base other than a spider (dedicated, excavator, or farm tractor), 0 for spider
+1 if species is a hardwood other than chestnut or poplar, 0 for chestnut, poplar, or conifer
+1 for spider-based machines, 0 for other types (dedicated, excavator, or farm tractor)
+1 for heads utilizing short-stroke advance mechanisms, 0 for other types (roller or track advance mechanisms)
+1 for farm tractor-based machines, 0 for other types (dedicated, excavator, or spider)
+
+terms in the equation are highly signiﬁcant, and the
+relationship is logical, so it was decided to retain the
+regression, as follows:
+2
+
+Move within stand; 10 min tree
+
+1
+
+= 7:5 þ ð12;412 þ 771 Slope gradient; %
+þ 46;706 Spider dummy
+
+þ 63;153 Farm tractor dummyÞ
+
+4ðRemovals; tree ha
+
+1
+
+0:5
+
+3 ðMachine power; kWÞ Þ
+
+þ 0:204 3 Residuals; tree ha
+4ðMachine power; kWÞ
+
+2
+
+1
+
+Fell; 10 min tree
+
+0:5
+
+ð2Þ
+
+Brush time is the time needed to clean the undergrowth
+from around removal trees and applies only to harvest (vs.
+processing), which involves access to the stand. No brush
+time is needed when processing trees from a deck. Brush
+time per tree was greater under forest conditions than in
+plantations, the latter generally presenting much sparser
+undergrowth. This element also had inherently high
+variability, as brushing is performed only when necessary,
+and therefore more than 95 percent of the observations had
+zero brushing time associated with them (n = 5,641,
+predicted r2 = 0.020). The predictive equation is as follows:
+Brush; 10
+
+2
+
+1
+
+min tree =1:8 þ 9:2 Forest dummy
+
+ð3Þ
+
+Grab time from a deck increased with tree size and
+decreased with machine power. Spider-based machines took
+roughly twice as long as others of the same power to grab a
+tree. The coefﬁcient of determination is much higher than in
+the previous equations because of a much more stable work
+routine. Residuals show a generally good ﬁt (n = 5,693,
+predicted r2 = 0.162) across the range of tree volume, which
+conﬁrms the overall reliability of the equation reported
+below:
+Grab; 10
+
+2
+
+min tree
+
+1
+
+= 15:2 þ 153:1 tree volume; m
+4ðMachine power; kWÞ
+
+3
+
+0:5
+
+þ Spider dummy 3ð13:9 þ 274:9 tree volume; m
+
+3
+
+0:5
+
+4ðMachine power; kWÞ Þ ð4Þ
+Fell time within the stand increased almost linearly
+across the observed ranges of tree volume for most
+230
+
+machines. Time decreased with machine power and
+increased with gradient for all but the spider-based
+harvesters, which seem insensitive to slope gradient during
+the felling operation, within the limits explored by the
+study. Time consumption was greater for the excavator-,
+tractor-, and spider-based machines compared with the
+dedicated harvesters. Residuals are a bit low at the upper
+end of the volume range, although the magnitudes are
+miniscule compared with the mean felling time per tree.
+The equation below is highly signiﬁcant (n = 5,122,
+predicted r2 = 0.472) and explained almost half the
+variability recorded for felling time:
+1
+3
+
+= 3:8 þ 156:5 tree volume; m
+0:5
+
+4ðMachine power; kWÞ
+
+þ 1:18 Nonspider dummy 3 Slope gradient; %
+
+þ 6:5 Excavator dummy
+
+þ 24:8 Farm tractor dummy
+
+þ Spider dummyð25:5 þ 188:5 3 tree volume; m
+
+3
+
+0:5
+
+4ðMachine power; kWÞ Þ ð5Þ
+
+Process (delimbing and bucking) time per tree increased
+with tree volume, number of logs, and gradient, while it
+decreased with machine power. Stroke processors (vs.
+roller or track-type heads) and tractor-based machines
+required more time than other types. There was no
+signiﬁcant difference between the processing times recorded for roadside work and for work within the stand, other
+factors being equal. The mean residuals plot evenly
+distributed around the ﬁtted values across the range of
+tree volume, indicating that the linear term is appropriate.
+There is more scatter of the means at the upper volumes,
+although this is due to there being only 45 observations of
+trees larger than 3 m3 compared with 8,300 smaller. A
+further explanation can be the branching, which is very
+variable on large trees and may combine with overall tree
+size in making processing particularly difﬁcult. Processing
+of chestnut and poplar required less time than for conifers,
+other factors being equal. This is logical because poplar
+clones are selected for straight stems and are usually
+pruned, whereas chestnut is always in the form of coppice
+sprouts, generally slender and with few branches. Other
+hardwoods—generally branchy and badly formed—took
+more time to process than did the conifers. The regression
+shown below is highly signiﬁcant (n = 11,324, predicted r2
+SPINELLI ET AL.
+
+= 0.670) and explained two-thirds of the variability
+recorded for processing time:
+2
+
+Process; 10 min tree
+
+1
+
+= 22:7 þ 1:433 tree volume; m
+
+3
+
+3 Slope gradient; %
+
+þ ð1;115 þ 446 Stroker dummy
+
+þ 2;244 Farm tractor dummy
+
+ 362 Chestnut or Poplar dummy
+
+þ 1;118 Other Hardwood dummyÞ
+3
+
+3 tree volume; m =ðMachine power; kWÞ
+
+0:5
+
+ð6Þ
+
+The validity of all the equations was checked by
+comparing the predictions and the actual values for the
+second subset, speciﬁcally reserved for the purpose. Table 5
+reports the actual and predicted values, the percent error for
+the estimates, the results of the paired t test conducted
+between the two groups of data (actual and predicted), and
+the coefﬁcients of variation for the respective regressions
+(actual vs. predicted). Where the paired t test indicated that
+the difference between the two groups was not signiﬁcant,
+the prediction was accepted as valid. The limit for
+signiﬁcance was assumed to be the usual P , 0.05. The
+coefﬁcient of variation was taken instead as a measure for
+the reliability of individual predictions conducted at cycle
+level. The trend was considered valid whenever the
+coefﬁcient of variation for the actual versus predicted was
+of the same magnitude as the coefﬁcient of variation
+recorded for the predictive equations. Four equations out of
+six appear to be validated, whereas correction factors should
+be applied to the predictions obtained from Equation 2
+(Move in stand) and Equation 5 (Fell). The predicted and
+actual time elements were summed to obtain total cycle
+time. The predicted value for total cycle time is valid for
+processing at a deck, whereas it should be corrected for
+harvesting. In any case, the error is limited and represents,
+respectively, 2 and 3.5 percent. In general, the predictive
+equations tend to slightly underestimate time consumption
+for the reserved data set, presumably because of random
+variation, including that which might be explained by
+factors that were not included in the data collection. In the
+case of felling, for instance, tree position and tree lean may
+have played signiﬁcant roles, but appropriate estimators
+were not included in the original record, and therefore it was
+
+not possible to capture and represent the effects of these
+variables.
+The equations presented above allow estimating cyclic
+net time, which can be transformed into scheduled time
+consumption by adding appropriate estimates for accessory
+time and delay time. In the cases observed, accessory time
+consisted mostly of tasks such as slash piling, log stacking,
+and log sorting, which are also known to have a signiﬁcant
+impact on productivity (Gingras 1996). These tasks are not
+cyclic and occur every so often after harvesting or
+processing a certain number of trees. Therefore, inaccurate
+results can derive from attaching the time consumption for a
+speciﬁc occurrence to one speciﬁc observation; for instance,
+the amount of slash handled during slash piling generally
+belongs to a number of previous cycles and not just to the
+cycle during which the action occurs. The allocation of this
+time to the respective cycles is laborious and does not
+necessarily produce reliable results so that many researchers
+simply calculate a constant time consumption per cycle and
+add it to the sum of cyclic time (e.g., Nurminen et al. 2006).
+As an alternative, one can develop percent coefﬁcients that
+relate the duration of accessory time to the duration of
+cumulative cyclic time in order to reﬂect the indirect effect
+of tree size and shape on accessory time, on the assumption
+that bigger trees are likely to produce more slash and that
+the redistribution of slash piling time should be proportional
+to the amount of slash handled (e.g., Spinelli et al 2009a).
+That was the approach followed in this study, where 2
+percent coefﬁcients were developed, equal to 14.7 percent
+(SD = 34.3) and 29.6 percent (SD = 81.8), respectively, for
+harvesting in the stand and processing at the deck. The
+development of different coefﬁcients for the two different
+work types was justiﬁed by a t test, demonstrating that the
+two work types actually presented a signiﬁcantly different
+incidence of accessory time (t = 14.5, P , 0.0001, df =
+15,138).
+Delay time can be added to productive time using
+appropriate coefﬁcients in order to reﬂect actual scheduled
+time, which is the time to be paid for. This practice is
+common in Nordic studies (Kuitto et al. 1994), and speciﬁc
+coefﬁcients have recently been developed for harvesters and
+processors operating in Italy (Spinelli and Visser 2008).
+Such coefﬁcients represent a percent incidence and are
+applied to the sum of productive and accessory time to
+calculate the duration of delay time. Different coefﬁcients
+were developed for harvesting work in natural forests,
+
+Table 5.—Results of the validation tests.
+Eq. no.a
+
+Element
+
+Actual
+
+Predicted
+
+D %b
+
+t test P
+
+r2 val.c
+
+r2 pred.c
+
+1
+2
+3
+4
+5
+6
+—
+—
+
+Move (at deck)
+Move (in stand)
+Brush
+Grab
+Fell
+Process
+Total at deck
+Total in stand
+
+7.5
+19.6
+1.2
+22.0
+29.2
+67.6
+99.7
+114.5
+
+7.1
+14.4
+1.1
+21.2
+26.8
+68.2
+97.8
+110.5
+
+5.3
+26.5
+8.3
+3.6
+8.2
+0.9
+1.9
+3.5
+
+0.559
+,0.0001
+0.458
+0.158
+,0.0001
+0.701
+0.068
+0.002
+
+0.009
+0.098
+0.051
+0.121
+0.401
+0.685
+0.684
+0.558
+
+0.008
+0.091
+0.020
+0.162
+0.472
+0.670
+—
+—
+
+a
+
+Equation number as reported in the text.
+Bold values represent significant differences between actual and predicted values (P , 0.05) to be adopted as correction factors.
+c 2
+r val. and r2 pred. are the coefficients of determination for the regression of actual versus predicted values and of the original predictive equations (1
+through 6), respectively.
+b
+
+FOREST PRODUCTS JOURNAL
+
+Vol. 60, No. 3
+
+231
+
+Figure 1.—Predicted overall productivity in m3 per scheduled
+machine hour (SMH) for three typical cases.
+
+harvesting work in plantation forests and processing work
+from decks.
+An example of the possible use of the models presented in
+this article is shown in Figure 1, representing an estimate of
+overall productivity for three of the most common cases in
+Italy, namely, the harvesting of spruce with a dedicated
+harvester (160 kW), the harvesting of plantation poplar with
+an excavator-mounted harvester (130 kW), and the processing of hardwood stems at the roadside, with an excavatorbased processor (75 kW). The delay coefﬁcients were 50,
+21, and 44 percent, respectively, and the assumed slope
+gradients were 25, 2, and 2 percent. The dedicated harvester
+was assumed to be working in a spruce selection cut, with a
+prescribed removal of 150 trees per ha representing 50
+percent of the original tree density. Tree volume has been
+adjusted for the respective ranges, and productivity is
+reported in cubic meters per scheduled machine hour.
+
+Discussion and Conclusions
+This study is unique because of the wide range of
+equipment observed and the very substantial size of the data
+set, with observations exceeding several times the reference
+values presented in a bibliography (Murphy 2005), and
+therefore suitable for representing a large variety of
+machines and operations. A further asset of the study is
+that all data were collected by the same principal
+investigators, limiting errors caused by different interpretations of the same data collection protocol (Nuutinen et al.
+2008). In fact, the collection of such a large data pool
+required approximately 10 years and was a rare endeavor. In
+recent years, new automatic data collection techniques have
+appeared that will allow for the automatic recording of large
+data sets within a relatively short time (Peltola 2003). Even
+so, the intervention of the researcher will often be needed
+because of the limited ﬂexibility of the automatic data
+collection procedure (Väätäinen et al. 2003), hence the
+intrinsic value of the present study.
+As in numerous previous studies, tree volume was found
+to be a primary variable affecting the total time to harvest or
+process a tree. Following careful analysis of source data,
+this study elected a linear model to represent the relationship
+between time consumption and tree volume, as already done
+by other authors (Hånell et al. 2000, Sirén and Aaltio 2003,
+Nakagawa et al. 2007). However, it is important to
+232
+
+remember that not all authors agree on the choice of linear
+models, and some prefer to use quadratic equations (Wang
+and Haarlaa 2002, Kärhä et al. 2004, Nurminen et al. 2006),
+which have also proved acceptable. A quadratic equation
+would ﬁrmly establish the concept of diminishing returns,
+with productivity inevitably decreasing beyond a certain
+point. This could be a logical consequence of the size
+limitation inherent to any speciﬁc model, and under this
+light quadratic models are conceptually safer, hence the
+importance of using the linear models presented in this
+article with caution, avoiding extrapolation beyond the
+range of tree volumes contained in the origin data, which is,
+however, quite wide and ranges from 0.005 to 7 m3. Again,
+we note that the trends were clearly linear rather than
+quadratic for the observations in this study, indicating that
+machine limits had not been reached.
+The models also include several other independent
+variables, such as slope gradient, stand type, and tree
+density, all of which are known to affect time consumption,
+especially moving. On the other hand, the models did not
+integrate tree selection criteria, which impact productivity
+both in thinning (Eliasson 1999) and in ﬁnal cuts (Hånell et
+al. 2000). However, the same authors also indicate that the
+effect of different selection criteria is often mediated
+through variations in tree size so that our models can
+indirectly reﬂect tree selection criteria (Eliasson and
+Lageson 1999). Like most other models, ours are indifferent
+to tree position in the stand, which may explain the
+relatively poor accuracy of the equation developed for
+felling time.
+The study also allowed us to quantify some important
+effects of machine type and size, the latter indicated by the
+rated power of the prime mover. More power resulted in less
+time consumption for the same task, which applied to most
+work phases. Head size, as indicated by felling diameter
+capacity, did not have any signiﬁcant effect on productivity
+when considered in addition to machine power. This is due
+in large part to the strong correlation between felling
+capacity and machine power, as machine owners generally
+selected heads that were well matched to the carriers. On the
+other hand, stroke-type heads proved signiﬁcantly less
+productive than roller- or track-type heads, as expected.
+The analysis also showed that dedicated carriers had
+higher productivity than others and in particular that tractors
+and spider bases were particularly slow in most tasks,
+possibly because of less effective design for the observed
+tasks. In particular, the loaders on these machines lack the
+agility of the parallel cranes mounted on dedicated
+harvesters and the power of excavator booms. On the other
+hand, spider-based units were the only ones to be found
+indifferent to slope gradient when felling, which makes
+them an interesting option for steep-terrain harvesting. In
+fact, the models developed with the study can help
+determine a breakeven slope gradient above which a
+spider-based harvester will offer better results than a
+dedicated unit, thanks to its superior steep-terrain mobility.
+In this respect, Figure 2 shows the results of a simulation
+conducted for a hypothetical spruce stand with removals of
+150 trees per ha (50% of the original stocking), and an
+average tree size of 0.3 m3. The simulation included the
+same 160-kW dedicated unit described earlier and an 88-kW
+spider-based harvester. Slope gradient varied from 0 to 50
+percent—the simulation indicates that beyond a 40 percent
+SPINELLI ET AL.
+
+Figure 2.—Comparison of dedicated and spider-based harvesters in a selection cut of young spruce (average volume per tree
+= 0.3 m3).
+
+slope gradient, the spider is more productive than the
+dedicated harvester.
+In contrast to some other studies, we did not ﬁnd any
+explicit productivity effects of clear-fell versus thinning,
+although these discrete differences may have been partly
+covered by the signiﬁcant effects of removal and residual
+trees per hectare on move time and by the pervasive effect
+of tree size, which is strongly correlated to silvicultural
+treatment. In fact, clear-fell is being progressively banned
+from Italian forests by limiting the area of clear-cuts. Group
+or single-tree selection represents the main type of maturity
+cut applied to Italian forests, with the exception of coppice
+stands and short-rotation plantations. Coppice trees are
+generally felled by chainsaw because of the inherent
+difﬁculty of cutting multiple trees sprouting from the same
+stump so that processors rather than harvesters are used in
+coppice harvesting operations. Therefore, the only real
+clear-fell work performed by Italian harvesters is in poplar
+and pine plantations.
+The models presented in this study are relatively accurate
+and can explain a large proportion of the variability in the
+process. The remaining error most likely depends on a
+number of other variables that were not included in the
+study. Some of these were difﬁcult to introduce because
+their translation into suitable indicators would have required
+a subjective judgment by the researcher. This would be the
+typical case of such factors as working technique, operator
+proﬁciency, and operator experience, which do have a
+signiﬁcant impact on productivity (Ovaskainen et al. 2004,
+Dvořák et al. 2008). Other variables were easier to record,
+and some of them were indeed recorded for at least part of
+the 38 origin studies. These are the number of logs, the
+number of log sorts, and a tree form coefﬁcient. The number
+of logs sorts may have a signiﬁcant effect on productivity
+(Brunberg and Arlinger 2001) and is not difﬁcult to record.
+Tree form can be represented by appropriate numeric codes,
+as already done by other authors over the years (Raymond et
+al. 1988, Emeyriat et al. 1997, Puttock et al. 2005).
+However, it was estimated that the inclusion of these
+further factors into the model would have complicated its
+use more than it would have increased its value. The risk
+was that users could be overwhelmed by the number of
+FOREST PRODUCTS JOURNAL
+
+Vol. 60, No. 3
+
+input data necessary for the model to return its estimate and
+would provide approximate ﬁgures, thus canceling the
+beneﬁt of increased model accuracy. Requiring only a few
+and relatively simple input data, this model was designed to
+offer a best-compromise solution and prove both user
+friendly and reasonably accurate.
+Finally, it may be interesting to see how the Italian
+productivity standards, tentatively developed with this
+study, compare with the standards reported by other authors
+for other countries. To this purpose, three general models
+were selected, all designed to represent a cross section of
+mechanized operations in a given country and generally
+based on large data sets. Two models were those developed
+for Sweden and Finland, respectively, by Brunberg (1995)
+and Nurminen et al. (2006), already mentioned in the
+introduction of this article. A third and very interesting
+model was developed by Purfürst (2007) in Germany, using
+an extremely large data pool made of the records extracted
+from the onboard computers of about 30 machines. All three
+models calculate productivity after excluding delays longer
+than 15 minutes, and their results are not directly
+comparable to those obtained from the Italian model, which
+estimates productivity after including all delay time.
+Therefore, the delay factors on the Italian model were
+changed for the purpose, by applying a reduction factor of
+0.39, also calculated from Spinelli and Visser (2008). The
+Italian comparison treatments were clear-fell harvesting of
+spruce and poplar, performed with a dedicated harvester, in
+order to reﬂect conditions similar to those in the foreign
+studies. The results are reported in Figure 3. The estimated
+productivity for the harvesting of Italian spruce is the
+lowest, and it is somewhat nearer to the estimate for
+Germany than to those for Finland and Sweden. That may
+partly depend on the heavier branching of Alpine spruce so
+that the descending southern gradient of spruce harvesting
+productivity might be related to a comparable and
+increasing branching gradient. In a way, Nordic softwood
+stands may offer conditions that are more similar to Italian
+poplar plantations than to alpine spruce forest, which might
+be the reason for the very similar productivities achieved in
+both stand types. In fact, the estimated productivity for
+Italian poplar is extremely close to that obtained for
+Swedish spruce, with the two graph lines almost overlap-
+
+Figure 3.—Comparing the estimates for Italian spruce and
+Italian poplar with those obtained from some other popular
+models for softwood harvesting.
+233
+
+ping. The results of this comparison are a good witness to
+the sound structure of the Italian models, which return
+reasonable and justiﬁable ﬁgures. At the same time, they
+highlight the speciﬁc conditions of Italian forest operations
+and support the need for speciﬁc models.
+
+Acknowledgments
+This work was sponsored by the Provincia Autonoma di
+Trento, within the scope of the research project ‘‘SOFIE.’’
+The authors gratefully acknowledge the support of the
+Italian logging entrepreneurs who granted access to their
+operations and offered much useful advice.
+
+Literature Cited
+Adebayo, A., H. Han, and L. Johnson. 2007. Productivity and cost of cutto-length and whole-tree harvesting in a mixed-conifer stand. Forest
+Prod. J. 57(6):59–69.
+Bergstrand, K. G. 1991. Planning and analysis of forestry operation
+studies. Skogsarbeten Bull. 17. 63 pp.
+Björheden, R., K. Apel, M. Shiba, and M. A. Thompson. 1995. IUFRO
+forest work study nomenclature. Swedish University of Agricultural
+Science, Department of Operational Efﬁciency, Garpenberg. 16 pp.
+Brunberg, T. 1995. Basic data for productivity norms for heavy-duty
+single-grip harvesters in ﬁnal felling. Report 7/1995. Forestry
+Research Institute of Sweden, Uppsala. 22 pp. (In Swedish with
+English summary.)
+Brunberg, T. 1997. Basic data for productivity norms for single-grip
+harvesters in thinning. Report 8/1997. Forestry Research Institute of
+Sweden, Uppsala. 18 pp. (In Swedish with English summary.)
+Brunberg, T. and J. Arlinger. 2001. What does it cost to sort timber at the
+stump? Skogforsk Results no. 3. Skogforsk, Uppsala. 4 pp. (In
+Swedish with English summary.)
+Chiorescu, S. and A. Grönlund. 2001. Assessing the role of the harvester
+within the forestry-wood chain. Forest Prod. J. 51(2):77–84.
+Cielo, P. and R. Zanuttini. 2004. Wood harvesting in poplar plantations.
+L’Ital. Forestale Mont. 6:467–483. (In Italian with English
+summary.)
+Dvořák, J., Z. Malkovskyı̀, and J. Macků. 2008. Inﬂuence of human
+factor on the time of work stages of harvesters and crane-equipped
+forwarders. J. Forest Sci. 54:24–30.
+Eliasson, L. 1999. Simulation of thinning with a single-grip harvester.
+Forest Sci. 45(1):26–34.
+Eliasson, L. and H. Lageson. 1999. Simulation of a single-grip harvester
+in thinning from below and thinning from above. Scand. J. Forest Res.
+14(6):589–595.
+Emeyriat, R., C. Picorit, and D. Reuling. 1997. Perspectives of
+mechanised harvesting of maritime pine. Information Forèt. Fiche
+561. AFOCEL, Paris. 6 pp. (In French.)
+Frutig, F., F. Fahmi, A. Settler, and A. Egger. 2007. Mechanisierte
+Holzernte in Hanglagen. Wald Holz 5/07:47–52. (In German.)
+Gellerstedt, S. 2002. Operation of the single-grip harvester: Motorsensory and cognitive work. Int. J. Forest Eng. 13(2):35–47.
+Gellerstedt, S. and B. Dahlin. 1999. Cut-to-length: The next decade. J.
+Forest Eng. 10(2):17–25.
+Gingras, J. 1996. The cost of product sorting during harvesting. FERIC
+Technical Notes 245. FERIC, Pointe Claire, Canada. 12 pp.
+Glöde, D. 1999. Single- and double-grip harvesters: Productive
+measurements in ﬁnal cutting of shelterwood. J. Forest Eng. 10(2):
+63–74.
+Gullberg, T. 1995. Evaluating operator-machine interactions in comparative time studies. J. Forest Eng. 7(1):51–61.
+Hånell, B., T. Nordfjell, and L. Eliasson. 2000. Productivity and costs in
+shelterwood harvesting. Scand. J. Forest Res. 15(5):561–569.
+Holtzscher, M. and B. Lanford. 1997. Tree diameter effects on cost and
+productivity of cut-to-length systems. Forest Prod. J. 47(3):25–30.
+Howard, A. 1992. Validating forest harvesting production equations.
+Trans. ASAE 35:1683–1687.
+Johansson, J. 1995. Backhoe loaders as base machines in logging
+operations. Silva Fenn. 29(4):297–309.
+234
+
+Kärhä, K., E. Rönkkö, and S. Gumse. 2004. Productivity and cutting
+costs of thinning harvesters. Int. J. Forest Eng. 15(2):43–56.
+Kofman, P. 1995. Siwork 3: User Guide. Danish Forest and Landscape
+Research Institute, Vejle, Denmark. 37 pp.
+Kuitto, P., S. Keskinen, J. Lindroos, T. Oijala, J. Rajamäki, T. Räsänen,
+and J. Terävä. 1994. Mechanised cutting and forest haulage. Metsäteho
+Report 410. Helsinki. 38 pp. (In Finnish with English summary.)
+Murphy, G. 2005. Determining sample size for harvesting cost
+estimation. N. Z. J. Forestry Sci. 35:166–169.
+Nakagawa, M., J. Hamatsu, T. Saitou, and H. Ishida. 2007. Effects of tree
+size on productivity and time required for work elements in selective
+thinning by a harvester. Int. J. Forest Eng. 18(2):24–28.
+Nicholls, A., L. Bren, and N. Humphreys. 2004. Harvester productivity
+and operator fatigue: Working extended hours. Int. J. Forest Eng.
+15(2):57–65.
+Nurminen, T., H. Korpunen, and J. Uusitalo. 2006. Time consumption
+analysis of mechanized cut-to-length harvesting systems. Silva Fenn.
+40(2):335–363.
+Nuutinen, Y., K. Väätäinen, J. Heinonen, A. Asikainen, and D. Röser.
+2008. The accuracy of manually recorded time study data for harvester
+operations shown via simulator screen. Silva Fenn. 42:63–72.
+Olsen, E., M. Hossain, and M. Miller. 1998. Statistical comparison of
+methods used in harvesting work studies. Research Contribution 23.
+Forest Research Laboratory, Oregon State University, Corvallis. 31
+pp.
+Ovaskainen, H. and M. Heikkilä. 2007. Visuospatial cognitive abilities in
+cut-to-length single-grip harvester work. Int. J. Ind. Ergon. 37:
+771–780.
+Ovaskainen, H., J. Uusitalo, and K. Väätäinen. 2004. Characteristics and
+signiﬁcance of a harvester operator’s working technique in thinnings.
+Int. J. Forest Eng. 15(2):67–77.
+Peltola, A. 2003. IT-time for mechanised forest work study. In: Second
+Forest Engineering Conference, May 12–15, 2003, Växjö, Sweden.
+Skogforsk Arbetsrappor 536:107–112.
+Purfürst, F. 2007. Human inﬂuences on harvest operations. In:
+Proceedings of Austro 2007/FORMEC’07 Meeting the Needs of
+Tomorrows’ Forests—New Development in Forest Engineering,
+October 7–11, 2007, Vienna and Heiligenkreuz, Austria. University
+of Vienna, Vienna. 9 pp.
+Puttock, D., R. Spinelli, and B. Hartsough. 2005. Operational trials of
+cut-to-length harvesting of poplar in a mixed wood stand. Int. J. Forest
+Eng. 16(1):39–49.
+Raymond, K., M. McConchie, and T. Evanson. 1988. Tree length
+thinning with the Lako harvester. LIRA Report 13. Logging Industry
+Research Association, Rotorua, New Zealand. 6 pp.
+Scott, A. 1973. Work measurement: Observed time to standard time. In:
+Work Study in Forestry. W. Wittering (Ed.). Forestry Comm. Bull. 47:
+26–39.
+Sirén, M. and H. Aaltio. 2003. Productivity and costs of thinning
+harvesters and harvester-forwarders. Int. J. Forest Eng. 14(1):
+39–48.
+Sondell, J., J. Möller, and J. Arlinger. 2002 Third-generation merchandising computers. Skogforsk Results no. 2. Skogforsk, Uppsala. 6 pp.
+Spinelli, R. and N. Magagnotti. The effects of introducing modern
+technology on the ﬁnancial, labour and energy performance of forest
+operations in the Italian Alps. Forest Pol. and Econ. (in press).
+Spinelli, R., N. Magagnotti, and C. Nati. 2009a. Options for the
+mechanised processing of hardwood trees in Mediterranean forests.
+Int. J. Forest Eng. 20(1):39–44.
+Spinelli, R., N. Magagnotti, and G. Picchi. The introduction of
+mechanized cut-to-length technology to a Mediterranean country:
+Fleet size, utilization and costs for the Italian harvester and processor
+ﬂeet. (Submitted for publication.)
+Spinelli, R., P. Owende, and S. Ward. 2002. Productivity and cost of
+CTL harvesting of Eucalyptus globulus stands using excavator-based
+harvesters. Forest Prod. J. 52(1):67–77.
+Spinelli, R. and R. Visser. 2008. Analyzing and estimating delays in
+harvester operations. Int. J. Forest Eng. 19(1):35–40.
+Spinelli, R., S. Ward, and P. Owende. 2009b. A harvest and transport cost
+model for Eucalyptus spp.: Fast growing plantations. Biomass
+Bioenergy 33(9):1265–1270.
+Stampfer, K. 1999. Inﬂuence of terrain conditions and thinning regimes
+SPINELLI ET AL.
+
+on the productivity of a track-based steep-slope harvester. In:
+Proceedings of the International Mountain Logging and 10th Paciﬁc
+Northwest Skyline Symposium, J. Sessions and J. Chung (Eds.),
+March 20–April 1, 1999, Corvallis, Oregon; Oregon State University,
+Corvallis.
+Suadicani, K. and D. Fjeld. 2001. Single-tree and group selection in
+montane Norway spruce stands: Factors inﬂuencing operational
+efﬁciency. Scand. J. Forest Res. 16(1):79–87.
+Väätäinen, K., H. Ovaskainen, A. Asikainen, and L. Sikanen. 2003.
+Chasing the tacit knowledge—Automated data collection to ﬁnd the
+characteristics of a skillful harvester operator. Second Forest
+
+FOREST PRODUCTS JOURNAL
+
+Vol. 60, No. 3
+
+Engineering Conference, May 12–15, 2003, Växjö, Sweden. Skogforsk Arbetsrappor 536:3–10.
+Väätäinen, K., L. Sikanen, and A. Asikainen. 2004. Feasibility of
+excavator-based harvester in thinnings of peatland forests. Int. J.
+Forest Eng. 15(2):103–111.
+Wang, J. and R. Haarlaa. 2002. Production analysis of an excavatorbased harvester: A case study in Finnish forest operations. Forest
+Prod. J. 52(3):85–90.
+Wang, J., C. B. LeDoux, and Y. Li. 2005. Simulating cut-to-length
+harvesting operations in Appalachian hardwoods. Int. J. Forest Eng.
+16(2):11–27.
+
+235
+
+Copyright of Forest Products Journal is the property of Forest Products Society and its content may not be
+copied or emailed to multiple sites or posted to a listserv without the copyright holder's express written
+permission. However, users may print, download, or email articles for individual use.
+
+

@@ -1,0 +1,100 @@
+{
+  "source": {
+    "citation": "Spinelli, R., Hartsough, B. & Magagnotti, N. 2010. Productivity standards for harvesters and processors in Italy. Forest Products Journal 60(3):226-235.",
+    "document": "notes/reference/EBSCO-FullText-2025-11-19.pdf",
+    "notes": [
+      "Regression dataset derived from 15,148 cycles recorded in 38 Italian CTL studies (1998–2008), covering harvesters and processors working in plantations, coppice, and forests.",
+      "Equations predict cycle-element time (10^-2 minutes per tree) using tree volume, slope, removals/residuals per hectare, carrier power/type, head type, and species dummies (chestnut/poplar, other hardwood).",
+      "Accessory time coefficients (relative to cyclic time): 14.7% for harvesting in natural forests, 29.6% for processing at landing decks.",
+      "Delay coefficients (relative to productive + accessory time) from Spinelli & Visser (2008): 50% for forest harvesting, 21% for plantation harvesting, 44% for deck processing." 
+    ]
+  },
+  "inputs": {
+    "tree_volume_m3": {
+      "description": "Merchantable stem volume per tree (m³). Validated range 0.005–7 m³.",
+      "min": 0.005,
+      "max": 7.0
+    },
+    "carrier_power_kw": {
+      "description": "Prime mover gross power (kW). Dataset medians ≈75–160 kW.",
+      "min": 50,
+      "max": 200
+    },
+    "slope_percent": {
+      "description": "Mean slope gradient (%).",
+      "min": 0,
+      "max": 60
+    },
+    "removals_per_ha": {
+      "description": "Trees removed per hectare (harvest).",
+      "min": 50,
+      "max": 200
+    },
+    "residuals_per_ha": {
+      "description": "Residual trees per hectare after treatment (used in harvest move equation).",
+      "min": 100,
+      "max": 2000
+    },
+    "carrier_type": {
+      "description": "Primary carrier (purpose-built, excavator, spider, tractor).",
+      "values": ["purpose_built", "excavator", "spider", "tractor"]
+    },
+    "head_type": {
+      "description": "Processing head type (roller/track vs. stroke).",
+      "values": ["roller", "stroke"]
+    },
+    "species_group": {
+      "description": "Species dummy capturing poplar/chestnut vs. other hardwoods vs. conifers.",
+      "values": ["conifer", "chestnut_poplar", "other_hardwood"]
+    },
+    "stand_type": {
+      "description": "Stand classification: forest (natural), plantation, or coppice.",
+      "values": ["forest", "plantation", "coppice"]
+    },
+    "operation_type": {
+      "description": "Operation (harvest standing trees vs. process decked timber).",
+      "values": ["harvest", "process"]
+    }
+  },
+  "equations": {
+    "move_deck": {
+      "expression": "5.6 + 4.26 * tree_volume_m3",
+      "units": "1e-2 minutes per tree",
+      "context": "Processing decked stems."
+    },
+    "move_stand": {
+      "expression": "7.5 + (12412 + 771 * slope_percent + 46706 * spider + 63153 * tractor) / removals_per_ha + 0.204 * residuals_per_ha / carrier_power_kw**0.5",
+      "note": "Dummy variables spider/tractor equal 1 when applicable.",
+      "units": "1e-2 minutes per tree"
+    },
+    "brush": {
+      "expression": "max(0, -1.8 + 9.2 * forest)",
+      "note": "Brush only applied to harvest operations in forests.",
+      "units": "1e-2 minutes per tree"
+    },
+    "grab": {
+      "expression": "15.2 + 153.1 * tree_volume_m3 / carrier_power_kw**0.5 + spider * (13.9 + 274.9 * tree_volume_m3) / carrier_power_kw**0.5",
+      "units": "1e-2 minutes per tree"
+    },
+    "fell": {
+      "expression": "3.8 + 156.5 * tree_volume_m3 / carrier_power_kw**0.5 + 1.18 * non_spider * slope_percent + 6.5 * excavator + 24.8 * tractor + spider * (25.5 + 188.5 * tree_volume_m3) / carrier_power_kw**0.5",
+      "units": "1e-2 minutes per tree"
+    },
+    "process": {
+      "expression": "22.7 + 1.433 * tree_volume_m3**(-1) * slope_percent + (1115 + 446 * stroke + 2244 * tractor - 362 * chestnut_poplar + 1118 * other_hardwood) * tree_volume_m3 / carrier_power_kw**0.5",
+      "units": "1e-2 minutes per tree",
+      "note": "Equation simplified placeholder; actual implementation coded in Python for clarity."
+    }
+  },
+  "coefficients": {
+    "accessory_ratio": {
+      "harvest_forest": 0.147,
+      "process_deck": 0.296
+    },
+    "delay_ratio": {
+      "harvest_forest": 0.50,
+      "harvest_plantation": 0.21,
+      "process_deck": 0.44
+    }
+  }
+}

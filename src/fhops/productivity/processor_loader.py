@@ -21,11 +21,14 @@ _TR87_DATA_PATH = _DATA_ROOT / "processor_tr87.json"
 _TR106_DATA_PATH = _DATA_ROOT / "processor_tr106.json"
 _TN166_DATA_PATH = _DATA_ROOT / "processor_tn166.json"
 _VISSER2015_DATA_PATH = _DATA_ROOT / "processor_visser2015.json"
+_SPINELLI2010_DATA_PATH = _DATA_ROOT / "processor_spinelli2010.json"
 _KIZHA2020_DATA_PATH = _DATA_ROOT / "loader_kizha2020.json"
 _BARKO450_DATA_PATH = _DATA_ROOT / "loader_barko450.json"
 _HYPRO775_DATA_PATH = _DATA_ROOT / "processor_hypro775.json"
 _LABELLE_HUSS_DATA_PATH = _REFERENCE_ROOT / "processor_labelle_huss2018.json"
 _CARRIER_PROFILE_PATH = _REFERENCE_ROOT / "processor_carrier_profiles.json"
+
+
 @lru_cache(maxsize=1)
 def _load_berry_dataset() -> dict[str, object]:
     try:
@@ -63,7 +66,9 @@ def _load_kizha2020_dataset() -> dict[str, object]:
     try:
         return json.loads(_KIZHA2020_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
-        raise FileNotFoundError(f"Kizha et al. (2020) loader data missing: {_KIZHA2020_DATA_PATH}") from exc
+        raise FileNotFoundError(
+            f"Kizha et al. (2020) loader data missing: {_KIZHA2020_DATA_PATH}"
+        ) from exc
 
 
 @lru_cache(maxsize=1)
@@ -115,6 +120,16 @@ def _load_visser_dataset() -> dict[str, object]:
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
         raise FileNotFoundError(
             f"Visser & Tolan (2015) processor data missing: {_VISSER2015_DATA_PATH}"
+        ) from exc
+
+
+@lru_cache(maxsize=1)
+def _load_spinelli2010_dataset() -> dict[str, object]:
+    try:
+        return json.loads(_SPINELLI2010_DATA_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:  # pragma: no cover - configuration error
+        raise FileNotFoundError(
+            f"Spinelli et al. (2010) processor data missing: {_SPINELLI2010_DATA_PATH}"
         ) from exc
 
 
@@ -227,6 +242,7 @@ def get_processor_carrier_profile(key: str) -> ProcessorCarrierProfile:
         raise ValueError(f"Unknown processor carrier '{key}'. Valid options: {valid}.")
     notes = payload.get("notes") or ()
     references = payload.get("references") or ()
+
     def _coerce_float(value: object | None) -> float | None:
         if value is None:
             return None
@@ -234,6 +250,7 @@ def get_processor_carrier_profile(key: str) -> ProcessorCarrierProfile:
             return float(value)
         except (TypeError, ValueError):
             return None
+
     return ProcessorCarrierProfile(
         key=key,
         name=str(payload.get("name", key)),
@@ -244,10 +261,11 @@ def get_processor_carrier_profile(key: str) -> ProcessorCarrierProfile:
         yarder_delay_percent=_coerce_float(payload.get("yarder_delay_percent")),
         notes=tuple(str(n) for n in notes),
         references=tuple(
-            str(ref.get("citation")) if isinstance(ref, dict) else str(ref)
-            for ref in references
+            str(ref.get("citation")) if isinstance(ref, dict) else str(ref) for ref in references
         ),
-        nakagawa=payload.get("nakagawa_regression") if isinstance(payload.get("nakagawa_regression"), dict) else None,
+        nakagawa=payload.get("nakagawa_regression")
+        if isinstance(payload.get("nakagawa_regression"), dict)
+        else None,
     )
 
 
@@ -623,9 +641,7 @@ def estimate_processor_productivity_visser2015(
         )
     if log_sort_count not in tables:
         valid = ", ".join(str(sort) for sort in sorted(tables))
-        raise ValueError(
-            f"log_sort_count={log_sort_count} is unsupported. Choose one of: {valid}."
-        )
+        raise ValueError(f"log_sort_count={log_sort_count} is unsupported. Choose one of: {valid}.")
     baseline_points = tables.get(5)
     if not baseline_points:
         raise KeyError("Visser dataset missing baseline 5-sort curve.")
@@ -944,7 +960,7 @@ def estimate_processor_productivity_labelle2017(
             productivity_m3_per_pmh=productivity,
         )
 
-    valid = ", ".join(sorted({* _LABELLE2017_POLY_MODELS.keys(), *_LABELLE2017_POWER_MODELS.keys()}))
+    valid = ", ".join(sorted({*_LABELLE2017_POLY_MODELS.keys(), *_LABELLE2017_POWER_MODELS.keys()}))
     raise ValueError(f"Unknown Labelle 2017 variant '{variant}'. Valid options: {valid}.")
 
 
@@ -1178,8 +1194,8 @@ def estimate_loader_forwarder_productivity_tn261(
     base = math.exp(_LOADER_INTERCEPT)
     delay_free = (
         base
-        * (piece_size_m3 ** _LOADER_PIECE_EXP)
-        * (external_distance_m ** _LOADER_DISTANCE_EXP)
+        * (piece_size_m3**_LOADER_PIECE_EXP)
+        * (external_distance_m**_LOADER_DISTANCE_EXP)
         * slope_mult
         * (_LOADER_BUNCHED_MULTIPLIER if bunched else _LOADER_HAND_MULTIPLIER)
     )
@@ -1265,6 +1281,30 @@ class Hypro775ProcessorProductivityResult:
     notes: tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class Spinelli2010ProcessorProductivityResult:
+    operation: Literal["harvest", "process"]
+    tree_volume_m3: float
+    slope_percent: float
+    machine_power_kw: float
+    carrier_type: str
+    head_type: str
+    species_group: str
+    stand_type: str
+    removals_per_ha: float | None
+    residuals_per_ha: float | None
+    cycle_components_minutes: tuple[tuple[str, float], ...]
+    delay_free_minutes_per_tree: float
+    trees_per_pmh_delay_free: float
+    delay_free_productivity_m3_per_pmh: float
+    accessory_ratio: float
+    delay_ratio: float
+    delay_multiplier: float
+    productivity_m3_per_pmh: float
+    utilisation_percent: float
+    notes: tuple[str, ...]
+
+
 @lru_cache(maxsize=1)
 def _load_hypro775_scenario() -> dict[str, object]:
     payload = _load_hypro775_dataset()
@@ -1279,7 +1319,9 @@ def _load_hypro775_scenario() -> dict[str, object]:
         "delay_free_productivity_m3_per_pmh": float(
             scenario.get("delay_free_productivity_m3_per_pmh", 21.4) or 21.4
         ),
-        "fuel_consumption_l_per_hour": float(scenario.get("fuel_consumption_l_per_hour", 21.0) or 21.0),
+        "fuel_consumption_l_per_hour": float(
+            scenario.get("fuel_consumption_l_per_hour", 21.0) or 21.0
+        ),
         "fuel_consumption_l_per_m3": float(scenario.get("fuel_consumption_l_per_m3", 0.78) or 0.78),
         "utilisation_percent": float(scenario.get("utilisation_percent", 73.0) or 73.0),
         "noise_db": scenario.get("noise_db"),
@@ -1310,11 +1352,233 @@ def estimate_processor_productivity_hypro775(
         utilisation_percent=data["utilisation_percent"],
         noise_db=(None if data["noise_db"] is None else float(data["noise_db"])),
         cardio_workload_percent_of_max=(
-            None if data["cardio_workload_percent_of_max"] is None else float(data["cardio_workload_percent_of_max"])
+            None
+            if data["cardio_workload_percent_of_max"] is None
+            else float(data["cardio_workload_percent_of_max"])
         ),
         delay_multiplier=multiplier,
         productivity_m3_per_pmh=productivity,
         notes=data["notes"],
+    )
+
+
+def _spinelli_move_deck(tree_volume_m3: float) -> float:
+    return 5.6 + 4.26 * tree_volume_m3
+
+
+def _spinelli_move_stand(
+    *,
+    slope_percent: float,
+    removals_per_ha: float,
+    residuals_per_ha: float,
+    machine_power_kw: float,
+    is_spider: bool,
+    is_tractor: bool,
+) -> float:
+    power_term = math.sqrt(machine_power_kw)
+    numerator = 12_412 + 771 * slope_percent
+    if is_spider:
+        numerator += 46_706
+    if is_tractor:
+        numerator += 63_153
+    return 7.5 + numerator / (removals_per_ha * power_term) + 0.204 * residuals_per_ha / power_term
+
+
+def _spinelli_brush(is_forest: bool) -> float:
+    return max(0.0, -1.8 + 9.2 * (1 if is_forest else 0))
+
+
+def _spinelli_grab(
+    *,
+    tree_volume_m3: float,
+    machine_power_kw: float,
+    is_spider: bool,
+) -> float:
+    power_term = math.sqrt(machine_power_kw)
+    value = 15.2 + 153.1 * tree_volume_m3 / power_term
+    if is_spider:
+        value += (13.9 + 274.9 * tree_volume_m3) / power_term
+    return value
+
+
+def _spinelli_fell(
+    *,
+    tree_volume_m3: float,
+    machine_power_kw: float,
+    slope_percent: float,
+    carrier_type: str,
+) -> float:
+    power_term = math.sqrt(machine_power_kw)
+    is_spider = carrier_type == "spider"
+    is_excavator = carrier_type == "excavator"
+    is_tractor = carrier_type == "tractor"
+    value = 3.8 + 156.5 * tree_volume_m3 / power_term
+    if not is_spider:
+        value += 1.18 * slope_percent
+    if is_excavator:
+        value += 6.5
+    if is_tractor:
+        value += 24.8
+    if is_spider:
+        value += (25.5 + 188.5 * tree_volume_m3) / power_term
+    return value
+
+
+def _spinelli_process(
+    *,
+    tree_volume_m3: float,
+    slope_percent: float,
+    machine_power_kw: float,
+    head_type: str,
+    carrier_type: str,
+    species_group: str,
+) -> float:
+    coeff = 1_115.0
+    if head_type == "stroke":
+        coeff += 446.0
+    if carrier_type == "tractor":
+        coeff += 2_244.0
+    if species_group == "chestnut_poplar":
+        coeff -= 362.0
+    elif species_group == "other_hardwood":
+        coeff += 1_118.0
+    power_term = math.sqrt(machine_power_kw)
+    return 22.7 + 1.433 * tree_volume_m3 * slope_percent + coeff * tree_volume_m3 / power_term
+
+
+def estimate_processor_productivity_spinelli2010(
+    *,
+    operation: Literal["harvest", "process"],
+    tree_volume_m3: float,
+    slope_percent: float,
+    machine_power_kw: float,
+    carrier_type: str,
+    head_type: str,
+    species_group: str,
+    stand_type: str,
+    removals_per_ha: float | None = None,
+    residuals_per_ha: float | None = None,
+) -> Spinelli2010ProcessorProductivityResult:
+    if tree_volume_m3 <= 0:
+        raise ValueError("tree_volume_m3 must be > 0.")
+    if machine_power_kw <= 0:
+        raise ValueError("machine_power_kw must be > 0.")
+    slope_value = max(0.0, slope_percent)
+    is_spider = carrier_type == "spider"
+    is_tractor = carrier_type == "tractor"
+    dataset = _load_spinelli2010_dataset()
+    cycle_entries: list[tuple[str, float]] = []
+
+    if operation == "harvest":
+        if removals_per_ha is None or removals_per_ha <= 0:
+            raise ValueError("--processor-removals-per-ha must be > 0 for harvest mode.")
+        if residuals_per_ha is None or residuals_per_ha < 0:
+            raise ValueError("--processor-residuals-per-ha must be >= 0 for harvest mode.")
+        move = _spinelli_move_stand(
+            slope_percent=slope_value,
+            removals_per_ha=removals_per_ha,
+            residuals_per_ha=residuals_per_ha,
+            machine_power_kw=machine_power_kw,
+            is_spider=is_spider,
+            is_tractor=is_tractor,
+        )
+        brush = _spinelli_brush(is_forest=stand_type == "forest")
+        fell = _spinelli_fell(
+            tree_volume_m3=tree_volume_m3,
+            machine_power_kw=machine_power_kw,
+            slope_percent=slope_value,
+            carrier_type=carrier_type,
+        )
+        process = _spinelli_process(
+            tree_volume_m3=tree_volume_m3,
+            slope_percent=slope_value,
+            machine_power_kw=machine_power_kw,
+            head_type=head_type,
+            carrier_type=carrier_type,
+            species_group=species_group,
+        )
+        cycle_entries.extend(
+            [
+                ("Move in stand (Eq.2)", move * 0.01),
+                ("Brush (Eq.3)", brush * 0.01),
+                ("Fell (Eq.5)", fell * 0.01),
+                ("Process (Eq.6)", process * 0.01),
+            ]
+        )
+        accessory_ratio = float(
+            (dataset.get("coefficients") or {})
+            .get("accessory_ratio", {})
+            .get("harvest_forest", 0.147)
+        )
+        delay_ratio_map = (dataset.get("coefficients") or {}).get("delay_ratio", {})
+        delay_ratio = float(
+            delay_ratio_map.get(
+                "harvest_plantation" if stand_type == "plantation" else "harvest_forest", 0.50
+            )
+        )
+    else:
+        move = _spinelli_move_deck(tree_volume_m3)
+        grab = _spinelli_grab(
+            tree_volume_m3=tree_volume_m3,
+            machine_power_kw=machine_power_kw,
+            is_spider=is_spider,
+        )
+        process = _spinelli_process(
+            tree_volume_m3=tree_volume_m3,
+            slope_percent=slope_value,
+            machine_power_kw=machine_power_kw,
+            head_type=head_type,
+            carrier_type=carrier_type,
+            species_group=species_group,
+        )
+        cycle_entries.extend(
+            [
+                ("Move @ deck (Eq.1)", move * 0.01),
+                ("Grab (Eq.4)", grab * 0.01),
+                ("Process (Eq.6)", process * 0.01),
+            ]
+        )
+        coeffs = dataset.get("coefficients") or {}
+        accessory_ratio = float((coeffs.get("accessory_ratio") or {}).get("process_deck", 0.296))
+        delay_ratio = float((coeffs.get("delay_ratio") or {}).get("process_deck", 0.44))
+
+    delay_free_minutes_per_tree = sum(value for _, value in cycle_entries)
+    if delay_free_minutes_per_tree <= 0:
+        raise ValueError("Computed delay-free minutes per tree must be > 0.")
+    trees_per_pmh_delay_free = 60.0 / delay_free_minutes_per_tree
+    delay_free_productivity = tree_volume_m3 * trees_per_pmh_delay_free
+    minutes_with_accessory = delay_free_minutes_per_tree * (1.0 + accessory_ratio)
+    minutes_with_delay = minutes_with_accessory * (1.0 + delay_ratio)
+    delay_multiplier = delay_free_minutes_per_tree / minutes_with_delay
+    productivity_with_delay = delay_free_productivity * delay_multiplier
+    utilisation_percent = delay_multiplier * 100.0
+    notes = [
+        "Spinelli, Hartsough & Magagnotti (2010) CTL regression (Forest Products Journal 60(3):226–235).",
+        "Accessory (14.7% harvest / 29.6% process) and delay ratios (Spinelli & Visser 2008) follow the published benchmarks.",
+    ]
+    for extra in (dataset.get("source") or {}).get("notes") or []:
+        notes.append(str(extra))
+    return Spinelli2010ProcessorProductivityResult(
+        operation=operation,
+        tree_volume_m3=tree_volume_m3,
+        slope_percent=slope_value,
+        machine_power_kw=machine_power_kw,
+        carrier_type=carrier_type,
+        head_type=head_type,
+        species_group=species_group,
+        stand_type=stand_type,
+        removals_per_ha=removals_per_ha,
+        residuals_per_ha=residuals_per_ha,
+        cycle_components_minutes=tuple(cycle_entries),
+        delay_free_minutes_per_tree=delay_free_minutes_per_tree,
+        trees_per_pmh_delay_free=trees_per_pmh_delay_free,
+        delay_free_productivity_m3_per_pmh=delay_free_productivity,
+        accessory_ratio=accessory_ratio,
+        delay_ratio=delay_ratio,
+        delay_multiplier=delay_multiplier,
+        productivity_m3_per_pmh=productivity_with_delay,
+        utilisation_percent=utilisation_percent,
+        notes=tuple(notes),
     )
 
 
@@ -1557,7 +1821,9 @@ def estimate_processor_productivity_adv5n6(
         utilisation_percent=_maybe("utilisation_percent"),
         availability_percent=_maybe("availability_percent"),
         shift_length_hours=_maybe("shift_length_hours"),
-        cost_cad_per_m3=cost_cad_per_m3 if cost_cad_per_m3 is not None else float(payload["cost_cad_per_m3"]),
+        cost_cad_per_m3=cost_cad_per_m3
+        if cost_cad_per_m3 is not None
+        else float(payload["cost_cad_per_m3"]),
         machine_rate_cad_per_smh=machine_rate,
         notes=tuple(notes) if notes else None,
         cost_base_year=cost_base_year,
@@ -1851,8 +2117,6 @@ def estimate_loader_hot_cold_productivity(
         bottleneck=payload.get("bottleneck"),
         notes=tuple(str(n) for n in notes),
         observed_days=(
-            int(payload["observed_days"])
-            if payload.get("observed_days") is not None
-            else None
+            int(payload["observed_days"]) if payload.get("observed_days") is not None else None
         ),
     )

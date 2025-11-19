@@ -16,6 +16,7 @@ from fhops.productivity import (
     estimate_processor_productivity_labelle2019_volume,
     estimate_processor_productivity_visser2015,
     estimate_processor_productivity_hypro775,
+    estimate_processor_productivity_spinelli2010,
     get_processor_carrier_profile,
     get_labelle_huss_automatic_bucking_adjustment,
     load_lahrsen_ranges,
@@ -131,7 +132,7 @@ def test_labelle2016_treeform_acceptible() -> None:
         tree_form="acceptable",
         dbh_cm=35.0,
     )
-    expected = 1.0273 * (35.0 ** 0.8319)
+    expected = 1.0273 * (35.0**0.8319)
     assert math.isclose(result.delay_free_productivity_m3_per_pmh, expected, rel_tol=1e-9)
 
 
@@ -158,7 +159,7 @@ def test_labelle2017_power_variant() -> None:
         variant="power2",
         dbh_cm=28.0,
     )
-    expected = 0.005 * (28.0 ** 2.629)
+    expected = 0.005 * (28.0**2.629)
     assert math.isclose(result.delay_free_productivity_m3_per_pmh, expected, rel_tol=1e-9)
 
 
@@ -173,13 +174,65 @@ def test_labelle2018_rw_poly() -> None:
 
 def test_hypro775_delay_multiplier_scales_output() -> None:
     result = estimate_processor_productivity_hypro775(delay_multiplier=0.5)
-    assert math.isclose(result.delay_free_productivity_m3_per_pmh * 0.5, result.productivity_m3_per_pmh)
+    assert math.isclose(
+        result.delay_free_productivity_m3_per_pmh * 0.5, result.productivity_m3_per_pmh
+    )
     assert math.isclose(result.mean_cycle_time_seconds, 45.0)
 
 
 def test_hypro775_invalid_multiplier_raises() -> None:
     with pytest.raises(ValueError):
         estimate_processor_productivity_hypro775(delay_multiplier=1.2)
+
+
+def test_spinelli2010_harvest_matches_formulas() -> None:
+    params = dict(
+        operation="harvest",
+        tree_volume_m3=0.55,
+        slope_percent=18.0,
+        machine_power_kw=150.0,
+        carrier_type="purpose_built",
+        head_type="roller",
+        species_group="conifer",
+        stand_type="forest",
+        removals_per_ha=380.0,
+        residuals_per_ha=250.0,
+    )
+    result = estimate_processor_productivity_spinelli2010(**params)
+    power_term = math.sqrt(150.0)
+    move = 7.5 + (12_412 + 771 * 18.0) / (380.0 * power_term) + 0.204 * 250.0 / power_term
+    brush = max(0.0, -1.8 + 9.2)
+    fell = 3.8 + 156.5 * 0.55 / power_term + 1.18 * 18.0
+    process = 22.7 + 1.433 * 0.55 * 18.0 + (1_115.0) * 0.55 / power_term
+    expected_minutes = 0.01 * (move + brush + fell + process)
+    expected_delay_free = 0.55 * 60.0 / expected_minutes
+    assert math.isclose(
+        result.delay_free_productivity_m3_per_pmh, expected_delay_free, rel_tol=1e-9
+    )
+    expected_multiplier = 1.0 / ((1.0 + 0.147) * (1.0 + 0.5))
+    assert math.isclose(
+        result.productivity_m3_per_pmh,
+        expected_delay_free * expected_multiplier,
+        rel_tol=1e-9,
+    )
+
+
+def test_spinelli2010_process_cycle_components() -> None:
+    result = estimate_processor_productivity_spinelli2010(
+        operation="process",
+        tree_volume_m3=0.4,
+        slope_percent=12.0,
+        machine_power_kw=135.0,
+        carrier_type="excavator",
+        head_type="stroke",
+        species_group="other_hardwood",
+        stand_type="plantation",
+    )
+    component_sum = sum(minutes for _, minutes in result.cycle_components_minutes)
+    assert math.isclose(component_sum, result.delay_free_minutes_per_tree)
+    assert result.removals_per_ha is None
+    assert result.residuals_per_ha is None
+    assert result.productivity_m3_per_pmh < result.delay_free_productivity_m3_per_pmh
 
 
 def test_automatic_bucking_multiplier_scales_delay_free_output() -> None:

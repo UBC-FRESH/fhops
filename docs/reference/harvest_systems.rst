@@ -181,6 +181,13 @@ regressions:
   (~45 s), gross/net trees per hour, delay-free m³/PMH (~21.4), fuel use (≈21 L/h or 0.78 L/m³), and ergonomic notes
   (≈85 dB(A), heavy-work cardiovascular load). Use this when modelling tractor-mounted landing processors in
   small-diameter thinnings or low-investment deployments.
+* ``--processor-model spinelli2010`` – Spinelli, Hartsough & Magagnotti’s Italian CTL productivity standards
+  (Forest Products Journal 60(3):226–235). Choose between harvest (in-stand) and landing-processing modes via
+  ``--processor-spinelli-operation`` and supply the tree volume (``--processor-piece-size-m3``), carrier power
+  (``--processor-machine-power-kw``), slope (``--processor-slope-percent``), stand type, carrier/head/species flags,
+  and (for harvest) the removals/residuals per hectare. The helper applies the published accessory (14.7/29.6 %)
+  and delay (50/21/44 %) ratios automatically and prints the per-element cycle times so you can see how slope,
+  carrier choice, and species mix influence delay-free PMH outputs.
 * ``--processor-model visser2015`` – Visser & Tolan (2015) NZ cable-yarder landings (Cat 330DL +
   Waratah HTH626) comparing 5/9/12/15 log sorts. The helper interpolates the published piece-size
   curves (1–3 m³ stems) and reports both the delay-free m³/PMH and the delta versus the 5-sort baseline.

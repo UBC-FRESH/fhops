@@ -33,6 +33,10 @@
 - Added a HYPRO 775 tractor-processor preset (`--processor-model hypro775`) based on Castro Pérez (2020) and
   Zurita Vintimilla (2021). CLI output now reports the cycle time, gross/net trees per hour, fuel (≈21 L/h), and ergonomic
   warnings (noise/cardiovascular load) for small-diameter landing processing scenarios.
+- Added the Spinelli, Hartsough & Magagnotti (2010) Italian CTL regression as `--processor-model spinelli2010`.
+  Users provide tree volume, slope, carrier power/type, head type, species group, stand context, and (for harvest mode)
+  removals/residuals per hectare; the helper applies the published accessory/delay ratios automatically and surfaces
+  the cycle-element table so planners can benchmark European-style harvester/processor deployments.
 - Added the Visser & Tolan (2015) log-sort complexity helper: `data/productivity/processor_visser2015.json`
   captures the 5/9/12/15-sort curves (1–3 m³ stems) and `--processor-model visser2015` exposes them via the
   new `--processor-log-sorts` flag. The CLI now reports the delay-free vs. utilisation-adjusted m³/PMH as well

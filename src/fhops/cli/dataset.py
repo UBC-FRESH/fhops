@@ -94,6 +94,7 @@ from fhops.productivity import (
     estimate_processor_productivity_labelle2018,
     VisserLogSortProductivityResult,
     Hypro775ProcessorProductivityResult,
+    Spinelli2010ProcessorProductivityResult,
     ADV5N6ProcessorProductivityResult,
     TN103ProcessorProductivityResult,
     TR106ProcessorProductivityResult,
@@ -106,6 +107,7 @@ from fhops.productivity import (
     estimate_processor_productivity_tr87,
     estimate_processor_productivity_visser2015,
     estimate_processor_productivity_hypro775,
+    estimate_processor_productivity_spinelli2010,
     predict_berry2019_skid_effects,
     Labelle2019ProcessorProductivityResult,
     estimate_processor_productivity_labelle2019_dbh,
@@ -156,7 +158,9 @@ from fhops.validation.ranges import validate_block_ranges
 console = Console()
 dataset_app = typer.Typer(help="Inspect FHOPS datasets and bundled examples.")
 
-_LOADER_METADATA_PATH = Path(__file__).resolve().parents[2] / "data" / "productivity" / "loader_models.json"
+_LOADER_METADATA_PATH = (
+    Path(__file__).resolve().parents[2] / "data" / "productivity" / "loader_models.json"
+)
 
 
 @lru_cache(maxsize=None)
@@ -308,18 +312,12 @@ def _apply_loader_system_defaults(
         if not allow_negative:
             if allow_zero:
                 if coerced < 0:
-                    raise ValueError(
-                        f"Loader override '{key}' must be ≥ 0 (got {coerced})."
-                    )
+                    raise ValueError(f"Loader override '{key}' must be ≥ 0 (got {coerced}).")
             else:
                 if coerced <= 0:
-                    raise ValueError(
-                        f"Loader override '{key}' must be > 0 (got {coerced})."
-                    )
+                    raise ValueError(f"Loader override '{key}' must be > 0 (got {coerced}).")
         if max_value is not None and coerced > max_value:
-            raise ValueError(
-                f"Loader override '{key}' must be ≤ {max_value} (got {coerced})."
-            )
+            raise ValueError(f"Loader override '{key}' must be ≤ {max_value} (got {coerced}).")
         return coerced, True
 
     def maybe_bool(key: str, current: bool, supplied_flag: bool) -> tuple[bool, bool]:
@@ -350,17 +348,13 @@ def _apply_loader_system_defaults(
         except ValueError as exc:  # pragma: no cover - validated via docs/tests
             raise ValueError(f"Unknown loader model override '{value}'.") from exc
 
-    piece_size_m3, changed = maybe_float(
-        "loader_piece_size_m3", piece_size_m3, piece_size_supplied
-    )
+    piece_size_m3, changed = maybe_float("loader_piece_size_m3", piece_size_m3, piece_size_supplied)
     used |= changed
     external_distance_m, changed = maybe_float(
         "loader_distance_m", external_distance_m, distance_supplied
     )
     used |= changed
-    payload_m3, changed = maybe_float(
-        "loader_payload_m3", payload_m3, payload_supplied
-    )
+    payload_m3, changed = maybe_float("loader_payload_m3", payload_m3, payload_supplied)
     used |= changed
     slope_percent, changed = maybe_float(
         "loader_slope_percent",
@@ -379,9 +373,7 @@ def _apply_loader_system_defaults(
         max_value=1.0,
     )
     used |= changed
-    travel_empty_m, changed = maybe_float(
-        "loader_travel_empty_m", travel_empty_m, travel_supplied
-    )
+    travel_empty_m, changed = maybe_float("loader_travel_empty_m", travel_empty_m, travel_supplied)
     used |= changed
     stems_per_cycle, changed = maybe_float(
         "loader_stems_per_cycle", stems_per_cycle, stems_supplied
@@ -465,7 +457,6 @@ def _derive_cost_role_override(
 
 
 def _machine_rate_roles_help() -> str:
-
     roles = ", ".join(sorted(load_machine_rate_index().keys()))
     return f"Available roles: {roles}"
 
@@ -583,6 +574,7 @@ class RoadsideProcessorModel(str, Enum):
     TR87 = "tr87"
     TN166 = "tn166"
     HYPRO775 = "hypro775"
+    SPINELLI2010 = "spinelli2010"
 
 
 _AUTOMATIC_BUCKING_SUPPORTED_MODELS = {
@@ -667,6 +659,35 @@ class Labelle2018Variant(str, Enum):
 class ProcessorCarrier(str, Enum):
     PURPOSE_BUILT = "purpose_built"
     EXCAVATOR = "excavator"
+
+
+class SpinelliOperation(str, Enum):
+    HARVEST = "harvest"
+    PROCESS = "process"
+
+
+class SpinelliStandType(str, Enum):
+    FOREST = "forest"
+    PLANTATION = "plantation"
+    COPPICE = "coppice"
+
+
+class SpinelliCarrier(str, Enum):
+    PURPOSE_BUILT = "purpose_built"
+    EXCAVATOR = "excavator"
+    SPIDER = "spider"
+    TRACTOR = "tractor"
+
+
+class SpinelliHead(str, Enum):
+    ROLLER = "roller"
+    STROKE = "stroke"
+
+
+class SpinelliSpecies(str, Enum):
+    CONIFER = "conifer"
+    CHESTNUT_POPLAR = "chestnut_poplar"
+    OTHER_HARDWOOD = "other_hardwood"
 
 
 class LoaderProductivityModel(str, Enum):
@@ -837,9 +858,7 @@ def _render_processor_result(
         if result.carrier_profile:
             rows.append(("Carrier", result.carrier_profile.name))
             if result.carrier_profile.fuel_l_per_m3 is not None:
-                rows.append(
-                    ("Carrier Fuel (L/m³)", f"{result.carrier_profile.fuel_l_per_m3:.2f}")
-                )
+                rows.append(("Carrier Fuel (L/m³)", f"{result.carrier_profile.fuel_l_per_m3:.2f}"))
         _render_kv_table("Roadside Processor Productivity Estimate", rows)
         note = "Regression from Berry (2019) Kinleith NZ time study; utilisation default accounts for <10 min delays."
         if result.carrier_profile:
@@ -856,7 +875,10 @@ def _render_processor_result(
             ("Model", "visser2015"),
             ("Piece Size (m³)", f"{result.piece_size_m3:.3f}"),
             ("Log Sort Count", str(result.log_sort_count)),
-            ("Delay-free Productivity (m³/PMH)", f"{result.delay_free_productivity_m3_per_pmh:.2f}"),
+            (
+                "Delay-free Productivity (m³/PMH)",
+                f"{result.delay_free_productivity_m3_per_pmh:.2f}",
+            ),
             ("Delay Multiplier", f"{result.delay_multiplier:.3f}"),
             ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
             ("Baseline (5 sorts, m³/PMH)", f"{result.baseline_productivity_m3_per_pmh:.2f}"),
@@ -892,7 +914,10 @@ def _render_processor_result(
             ("Logs per Tree", f"{result.mean_logs_per_tree:.1f}"),
             ("Gross Trees/h", f"{result.gross_trees_per_hour:.1f}"),
             ("Net Trees/h", f"{result.net_trees_per_hour:.1f}"),
-            ("Delay-free Productivity (m³/PMH)", f"{result.delay_free_productivity_m3_per_pmh:.2f}"),
+            (
+                "Delay-free Productivity (m³/PMH)",
+                f"{result.delay_free_productivity_m3_per_pmh:.2f}",
+            ),
             ("Delay Multiplier", f"{result.delay_multiplier:.3f}"),
             ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
             ("Fuel (L/h)", f"{result.fuel_consumption_l_per_hour:.1f}"),
@@ -902,7 +927,9 @@ def _render_processor_result(
         if result.noise_db is not None:
             rows.append(("Noise (dB[A])", f"{result.noise_db:.0f}"))
         if result.cardio_workload_percent_of_max is not None:
-            rows.append(("Cardio Workload (% max HR)", f"{result.cardio_workload_percent_of_max:.0f}"))
+            rows.append(
+                ("Cardio Workload (% max HR)", f"{result.cardio_workload_percent_of_max:.0f}")
+            )
         _render_kv_table("Roadside Processor Productivity Estimate", rows)
         note_lines = [
             "HYPRO 775 tractor-mounted double-grip processor reference (Castro Pérez 2020; Zurita 2021).",
@@ -910,6 +937,50 @@ def _render_processor_result(
         ]
         if result.notes:
             note_lines.extend(result.notes)
+        console.print(f"[dim]{' '.join(note_lines)}[/dim]")
+        return
+    elif isinstance(result, Spinelli2010ProcessorProductivityResult):
+        rows = [
+            ("Model", "spinelli2010"),
+            ("Operation", result.operation),
+            ("Tree Volume (m³)", f"{result.tree_volume_m3:.3f}"),
+            ("Machine Power (kW)", f"{result.machine_power_kw:.1f}"),
+            ("Slope (%)", f"{result.slope_percent:.1f}"),
+            ("Stand", result.stand_type),
+            ("Carrier / Head", f"{result.carrier_type} / {result.head_type}"),
+            ("Species Group", result.species_group),
+        ]
+        if result.removals_per_ha is not None:
+            rows.append(("Removals (trees/ha)", f"{result.removals_per_ha:.1f}"))
+        if result.residuals_per_ha is not None:
+            rows.append(("Residuals (trees/ha)", f"{result.residuals_per_ha:.1f}"))
+        rows.extend(
+            [
+                ("Delay-free Trees/PMH", f"{result.trees_per_pmh_delay_free:.1f}"),
+                (
+                    "Delay-free Productivity (m³/PMH₀)",
+                    f"{result.delay_free_productivity_m3_per_pmh:.2f}",
+                ),
+                ("Accessory Ratio (%)", f"{result.accessory_ratio * 100:.1f}"),
+                ("Delay Ratio (%)", f"{result.delay_ratio * 100:.1f}"),
+                ("Utilisation (%)", f"{result.utilisation_percent:.1f}"),
+                ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
+            ]
+        )
+        _render_kv_table("Roadside Processor Productivity Estimate", rows)
+        cycle_table = Table(title="Spinelli (2010) Cycle Breakdown", header_style="bold")
+        cycle_table.add_column("Element")
+        cycle_table.add_column("Minutes / Tree")
+        for name, minutes in result.cycle_components_minutes:
+            cycle_table.add_row(name, f"{minutes:.3f}")
+        console.print(cycle_table)
+        note_lines = [
+            "Spinelli, Hartsough & Magagnotti (2010) Italian CTL study (Forest Products Journal 60(3):226–235).",
+            "Accessory/delay ratios follow Spinelli & Visser (2008); outputs already include those penalties.",
+        ]
+        for note in result.notes:
+            if note not in note_lines:
+                note_lines.append(note)
         console.print(f"[dim]{' '.join(note_lines)}[/dim]")
         return
 
@@ -921,7 +992,10 @@ def _render_processor_result(
             ("Coefficient a", f"{result.coefficient_a:.4f}"),
             ("Exponent b", f"{result.exponent_b:.4f}"),
             ("Sample Trees", str(result.sample_trees)),
-            ("Delay-free Productivity (m³/PMH)", f"{result.delay_free_productivity_m3_per_pmh:.2f}"),
+            (
+                "Delay-free Productivity (m³/PMH)",
+                f"{result.delay_free_productivity_m3_per_pmh:.2f}",
+            ),
             ("Delay Multiplier", f"{result.delay_multiplier:.3f}"),
             ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
         ]
@@ -1225,7 +1299,9 @@ def _render_processor_result(
                 prefix = f"[dim]Cycle breakdown (avg {total_value:.2f} min)"
             suffix = ""
             if numeric_entries:
-                pieces = ", ".join(f"{name} {float(value):.2f} min" for name, value in numeric_entries)
+                pieces = ", ".join(
+                    f"{name} {float(value):.2f} min" for name, value in numeric_entries
+                )
                 suffix = f": {pieces}"
             console.print(f"{prefix}{suffix}[/dim]")
         if result.notes:
@@ -1287,7 +1363,10 @@ def _render_loader_result(
             ("Payload / Cycle (m³)", f"{result.payload_m3_per_cycle:.2f}"),
             ("Cycle Time (min)", f"{result.cycle_time_minutes:.2f}"),
             ("Utilisation (PMH/SMH)", f"{result.utilisation:.3f}"),
-            ("Delay-free Productivity (m³/PMH)", f"{result.delay_free_productivity_m3_per_pmh:.2f}"),
+            (
+                "Delay-free Productivity (m³/PMH)",
+                f"{result.delay_free_productivity_m3_per_pmh:.2f}",
+            ),
             ("Productivity (m³/SMH)", f"{result.productivity_m3_per_smh:.2f}"),
         ]
         _render_kv_table("Loader-Forwarder Productivity Estimate", rows)
@@ -1373,10 +1452,19 @@ def _render_loader_result(
             ("Model", "kizha2020"),
             ("Mode", result.mode),
             ("Utilisation (%)", f"{result.utilisation_percent:.1f}"),
-            ("Operational Delay (% of total time)", f"{result.operational_delay_percent_of_total_time:.1f}"),
+            (
+                "Operational Delay (% of total time)",
+                f"{result.operational_delay_percent_of_total_time:.1f}",
+            ),
             ("Delay Cost ($/PMH)", f"{result.delay_cost_per_pmh:.2f} {result.currency or 'USD'}"),
-            ("Machine Rate ($/PMH)", f"{result.machine_rate_per_pmh:.2f} {result.currency or 'USD'}"),
-            ("Effective Cost ($/PMH)", f"{result.effective_cost_per_pmh:.2f} {result.currency or 'USD'}"),
+            (
+                "Machine Rate ($/PMH)",
+                f"{result.machine_rate_per_pmh:.2f} {result.currency or 'USD'}",
+            ),
+            (
+                "Effective Cost ($/PMH)",
+                f"{result.effective_cost_per_pmh:.2f} {result.currency or 'USD'}",
+            ),
         ]
         if result.observed_days is not None:
             rows.append(("Observed Days", str(result.observed_days)))
@@ -1465,9 +1553,7 @@ def _apply_skidder_system_defaults(
     speed_profile = SkidderSpeedProfileOption.LEGACY
     if system is None:
         return trail_pattern, decking_condition, custom_multiplier, speed_profile, False
-    overrides = system_productivity_overrides(
-        system, ProductivityMachineRole.GRAPPLE_SKIDDER.value
-    )
+    overrides = system_productivity_overrides(system, ProductivityMachineRole.GRAPPLE_SKIDDER.value)
     if not overrides:
         return trail_pattern, decking_condition, custom_multiplier, speed_profile, False
     used = False
@@ -1572,9 +1658,7 @@ def _apply_shovel_system_defaults(
             custom_multiplier,
             False,
         )
-    overrides = system_productivity_overrides(
-        system, ProductivityMachineRole.SHOVEL_LOGGER.value
-    )
+    overrides = system_productivity_overrides(system, ProductivityMachineRole.SHOVEL_LOGGER.value)
     if not overrides:
         return (
             passes,
@@ -1621,34 +1705,54 @@ def _apply_shovel_system_defaults(
         volume_per_ha_m3 = coerce_float(overrides.get("shovel_volume_per_ha")) or volume_per_ha_m3
         used = used or overrides.get("shovel_volume_per_ha") is not None
     if swing_time_roadside_s is None:
-        swing_time_roadside_s = coerce_float(overrides.get("shovel_swing_time_roadside")) or swing_time_roadside_s
+        swing_time_roadside_s = (
+            coerce_float(overrides.get("shovel_swing_time_roadside")) or swing_time_roadside_s
+        )
         used = used or overrides.get("shovel_swing_time_roadside") is not None
     if payload_per_swing_roadside_m3 is None:
-        payload_per_swing_roadside_m3 = coerce_float(overrides.get("shovel_payload_roadside")) or payload_per_swing_roadside_m3
+        payload_per_swing_roadside_m3 = (
+            coerce_float(overrides.get("shovel_payload_roadside")) or payload_per_swing_roadside_m3
+        )
         used = used or overrides.get("shovel_payload_roadside") is not None
     if swing_time_initial_s is None:
-        swing_time_initial_s = coerce_float(overrides.get("shovel_swing_time_initial")) or swing_time_initial_s
+        swing_time_initial_s = (
+            coerce_float(overrides.get("shovel_swing_time_initial")) or swing_time_initial_s
+        )
         used = used or overrides.get("shovel_swing_time_initial") is not None
     if payload_per_swing_initial_m3 is None:
-        payload_per_swing_initial_m3 = coerce_float(overrides.get("shovel_payload_initial")) or payload_per_swing_initial_m3
+        payload_per_swing_initial_m3 = (
+            coerce_float(overrides.get("shovel_payload_initial")) or payload_per_swing_initial_m3
+        )
         used = used or overrides.get("shovel_payload_initial") is not None
     if swing_time_rehandle_s is None:
-        swing_time_rehandle_s = coerce_float(overrides.get("shovel_swing_time_rehandle")) or swing_time_rehandle_s
+        swing_time_rehandle_s = (
+            coerce_float(overrides.get("shovel_swing_time_rehandle")) or swing_time_rehandle_s
+        )
         used = used or overrides.get("shovel_swing_time_rehandle") is not None
     if payload_per_swing_rehandle_m3 is None:
-        payload_per_swing_rehandle_m3 = coerce_float(overrides.get("shovel_payload_rehandle")) or payload_per_swing_rehandle_m3
+        payload_per_swing_rehandle_m3 = (
+            coerce_float(overrides.get("shovel_payload_rehandle")) or payload_per_swing_rehandle_m3
+        )
         used = used or overrides.get("shovel_payload_rehandle") is not None
     if travel_speed_index_kph is None:
-        travel_speed_index_kph = coerce_float(overrides.get("shovel_speed_index")) or travel_speed_index_kph
+        travel_speed_index_kph = (
+            coerce_float(overrides.get("shovel_speed_index")) or travel_speed_index_kph
+        )
         used = used or overrides.get("shovel_speed_index") is not None
     if travel_speed_return_kph is None:
-        travel_speed_return_kph = coerce_float(overrides.get("shovel_speed_return")) or travel_speed_return_kph
+        travel_speed_return_kph = (
+            coerce_float(overrides.get("shovel_speed_return")) or travel_speed_return_kph
+        )
         used = used or overrides.get("shovel_speed_return") is not None
     if travel_speed_serpentine_kph is None:
-        travel_speed_serpentine_kph = coerce_float(overrides.get("shovel_speed_serpentine")) or travel_speed_serpentine_kph
+        travel_speed_serpentine_kph = (
+            coerce_float(overrides.get("shovel_speed_serpentine")) or travel_speed_serpentine_kph
+        )
         used = used or overrides.get("shovel_speed_serpentine") is not None
     if effective_minutes_per_hour is None:
-        effective_minutes_per_hour = coerce_float(overrides.get("shovel_effective_minutes")) or effective_minutes_per_hour
+        effective_minutes_per_hour = (
+            coerce_float(overrides.get("shovel_effective_minutes")) or effective_minutes_per_hour
+        )
         used = used or overrides.get("shovel_effective_minutes") is not None
     slope_value = overrides.get("shovel_slope_class")
     if slope_value is not None:
@@ -1777,7 +1881,9 @@ def _apply_skyline_system_defaults(
         except ValueError as exc:
             raise ValueError(f"Unknown skyline model override '{value}'.") from exc
 
-    logs_per_turn, changed = maybe_float("skyline_logs_per_turn", logs_per_turn, "logs_per_turn", True)
+    logs_per_turn, changed = maybe_float(
+        "skyline_logs_per_turn", logs_per_turn, "logs_per_turn", True
+    )
     used |= changed
     average_log_volume_m3, changed = maybe_float(
         "skyline_average_log_volume_m3", average_log_volume_m3, "average_log_volume_m3", True
@@ -1960,7 +2066,9 @@ def _apply_grapple_yarder_system_defaults(
         except ValueError as exc:
             raise ValueError(f"Unknown grapple yarder model override '{value}'.") from exc
 
-    def maybe_float(key: str, current: float | None, supplied_flag: str) -> tuple[float | None, bool]:
+    def maybe_float(
+        key: str, current: float | None, supplied_flag: str
+    ) -> tuple[float | None, bool]:
         if user_supplied.get(supplied_flag, False):
             return current, False
         value = overrides.get(key)
@@ -2658,7 +2766,9 @@ def _render_unbc_hoe_chucking_table() -> None:
     if not scenarios:
         console.print("[dim]No UNBC hoe-chucking data available.[/dim]")
         return
-    table = Table(title="UNBC Hoe-Chucking Cost/Productivity", header_style="bold cyan", expand=True)
+    table = Table(
+        title="UNBC Hoe-Chucking Cost/Productivity", header_style="bold cyan", expand=True
+    )
     table.add_column("Treatment", style="bold")
     table.add_column("Hours", justify="right")
     table.add_column("Volume (m³)", justify="right")
@@ -2675,7 +2785,9 @@ def _render_unbc_hoe_chucking_table() -> None:
             f"{scenario.volume_m3:.1f}",
             productivity,
             f"{scenario.observed_cost_cad_per_m3:.2f}",
-            f"{scenario.weighted_cost_cad_per_m3:.2f}" if scenario.weighted_cost_cad_per_m3 else "—",
+            f"{scenario.weighted_cost_cad_per_m3:.2f}"
+            if scenario.weighted_cost_cad_per_m3
+            else "—",
         )
     console.print(table)
     console.print(
@@ -2688,7 +2800,9 @@ def _render_unbc_processing_table() -> None:
     if not scenarios:
         console.print("[dim]No UNBC processing cost data available.[/dim]")
         return
-    table = Table(title="UNBC Manual Processing Cost (Table 20)", header_style="bold cyan", expand=True)
+    table = Table(
+        title="UNBC Manual Processing Cost (Table 20)", header_style="bold cyan", expand=True
+    )
     table.add_column("System", style="bold")
     table.add_column("Treatment")
     table.add_column("Layout $/m³", justify="right")
@@ -2710,7 +2824,7 @@ def _render_unbc_processing_table() -> None:
         )
     console.print(table)
     console.print(
-        "[dim]Source: UNBC MSc thesis (Renzie 2006), Table 20/21 (East Twin). Costs are per SMH." 
+        "[dim]Source: UNBC MSc thesis (Renzie 2006), Table 20/21 (East Twin). Costs are per SMH."
     )
 
 
@@ -2718,7 +2832,11 @@ def _render_unbc_construction_table() -> None:
     scenarios = load_unbc_construction_costs()
     if not scenarios:
         return
-    table = Table(title="UNBC Skid Trail + Landing Construction (Table 20)", header_style="bold cyan", expand=True)
+    table = Table(
+        title="UNBC Skid Trail + Landing Construction (Table 20)",
+        header_style="bold cyan",
+        expand=True,
+    )
     table.add_column("System", style="bold")
     table.add_column("Treatment")
     table.add_column("Hours", justify="right")
@@ -2736,7 +2854,7 @@ def _render_unbc_construction_table() -> None:
         )
     console.print(table)
     console.print(
-        "[dim]Source: UNBC MSc thesis (Renzie 2006), Table 20 (skid trail & landing construction). Costs per SMH." 
+        "[dim]Source: UNBC MSc thesis (Renzie 2006), Table 20 (skid trail & landing construction). Costs per SMH."
     )
 
 
@@ -2818,9 +2936,7 @@ def inspect_machine(
     cost_role_hint = machine_role_override
     cost_role_note: str | None = None
     if cost_role_hint:
-        cost_role_note = (
-            f"[dim]Cost role manually overridden to '{cost_role_hint}' for rental-rate lookup.[/dim]"
-        )
+        cost_role_note = f"[dim]Cost role manually overridden to '{cost_role_hint}' for rental-rate lookup.[/dim]"
 
     context_lines = [
         ("Dataset", dataset_name),
@@ -2866,7 +2982,9 @@ def inspect_machine(
             effective_role = machine_for_snapshot.role or selected_machine.role
             usage_hours = selected_machine.repair_usage_hours
             usage_text = (
-                f"{usage_hours:,} h" if usage_hours is not None else f"{default_snapshot.usage_bucket_hours:,} h"
+                f"{usage_hours:,} h"
+                if usage_hours is not None
+                else f"{default_snapshot.usage_bucket_hours:,} h"
             )
             default_rate_note = (
                 f"[dim]Default rate derived from role '{effective_role}' "
@@ -3347,7 +3465,8 @@ def estimate_productivity_cmd(
         case_sensitive=False,
         help=(
             "Roadside-processor regression to use "
-            "(berry2019 | labelle2016/2017/2018 | labelle2019_dbh | labelle2019_volume | adv5n6 | visser2015 | tn103 | tr106 | tr87 | tn166 | hypro775)."
+            "(berry2019 | labelle2016/2017/2018 | labelle2019_dbh | labelle2019_volume | "
+            "adv5n6 | visser2015 | tn103 | tr106 | tr87 | tn166 | hypro775 | spinelli2010)."
         ),
     ),
     processor_piece_size_m3: float | None = typer.Option(
@@ -3420,6 +3539,59 @@ def estimate_productivity_cmd(
         "--processor-tn166-scenario",
         case_sensitive=False,
         help="TN-166 scenario (grapple_yarded | right_of_way | mixed_shift).",
+    ),
+    processor_machine_power_kw: float | None = typer.Option(
+        None,
+        "--processor-machine-power-kw",
+        min=1.0,
+        help="Carrier gross power (kW) for Spinelli (2010).",
+    ),
+    processor_slope_percent: float | None = typer.Option(
+        None,
+        "--processor-slope-percent",
+        help="Average slope (%) for Spinelli (2010) helper.",
+    ),
+    processor_removals_per_ha: float | None = typer.Option(
+        None,
+        "--processor-removals-per-ha",
+        min=0.0,
+        help="Trees removed per hectare (required for Spinelli harvest mode).",
+    ),
+    processor_residuals_per_ha: float | None = typer.Option(
+        None,
+        "--processor-residuals-per-ha",
+        min=0.0,
+        help="Residual trees per hectare (Spinelli harvest mode).",
+    ),
+    processor_spinelli_operation: SpinelliOperation = typer.Option(
+        SpinelliOperation.HARVEST,
+        "--processor-spinelli-operation",
+        case_sensitive=False,
+        help="Spinelli (2010) mode (harvest | process).",
+    ),
+    processor_spinelli_stand_type: SpinelliStandType = typer.Option(
+        SpinelliStandType.FOREST,
+        "--processor-spinelli-stand-type",
+        case_sensitive=False,
+        help="Stand type for Spinelli (forest | plantation | coppice).",
+    ),
+    processor_spinelli_carrier: SpinelliCarrier = typer.Option(
+        SpinelliCarrier.PURPOSE_BUILT,
+        "--processor-spinelli-carrier",
+        case_sensitive=False,
+        help="Carrier for Spinelli (purpose_built | excavator | spider | tractor).",
+    ),
+    processor_spinelli_head: SpinelliHead = typer.Option(
+        SpinelliHead.ROLLER,
+        "--processor-spinelli-head",
+        case_sensitive=False,
+        help="Head type for Spinelli (roller | stroke).",
+    ),
+    processor_spinelli_species: SpinelliSpecies = typer.Option(
+        SpinelliSpecies.CONIFER,
+        "--processor-spinelli-species",
+        case_sensitive=False,
+        help="Species group for Spinelli (conifer | chestnut_poplar | other_hardwood).",
     ),
     processor_labelle2016_form: Labelle2016TreeForm = typer.Option(
         Labelle2016TreeForm.ACCEPTABLE,
@@ -3895,7 +4067,9 @@ def estimate_productivity_cmd(
         automatic_bucking_multiplier_value: float | None = None
         if processor_automatic_bucking:
             if processor_model not in _AUTOMATIC_BUCKING_SUPPORTED_MODELS:
-                valid_models = ", ".join(sorted(m.value for m in _AUTOMATIC_BUCKING_SUPPORTED_MODELS))
+                valid_models = ", ".join(
+                    sorted(m.value for m in _AUTOMATIC_BUCKING_SUPPORTED_MODELS)
+                )
                 raise typer.BadParameter(
                     f"--processor-automatic-bucking is supported for these models only: {valid_models}."
                 )
@@ -3910,12 +4084,16 @@ def estimate_productivity_cmd(
             ):
                 processor_delay_multiplier = processor_carrier_profile.default_delay_multiplier
         elif processor_carrier is not ProcessorCarrier.PURPOSE_BUILT:
-            raise typer.BadParameter("--processor-carrier currently applies to --processor-model berry2019 only.")
+            raise typer.BadParameter(
+                "--processor-carrier currently applies to --processor-model berry2019 only."
+            )
         if (
             processor_log_sorts is not None
             and processor_model is not RoadsideProcessorModel.VISSER2015
         ):
-            raise typer.BadParameter("--processor-log-sorts applies to --processor-model visser2015.")
+            raise typer.BadParameter(
+                "--processor-log-sorts applies to --processor-model visser2015."
+            )
         if processor_model is RoadsideProcessorModel.BERRY2019:
             if processor_piece_size_m3 is None:
                 raise typer.BadParameter(
@@ -3977,7 +4155,9 @@ def estimate_productivity_cmd(
                     "--processor-volume-m3 applies to the Labelle 2019 volume helper only."
                 )
             if processor_dbh_cm is None:
-                raise typer.BadParameter("--processor-dbh-cm is required for Labelle (2016) models.")
+                raise typer.BadParameter(
+                    "--processor-dbh-cm is required for Labelle (2016) models."
+                )
             result_processor = estimate_processor_productivity_labelle2016(
                 tree_form=processor_labelle2016_form.value,
                 dbh_cm=processor_dbh_cm,
@@ -3994,7 +4174,9 @@ def estimate_productivity_cmd(
                     "--processor-volume-m3 applies to the Labelle 2019 helper."
                 )
             if processor_dbh_cm is None:
-                raise typer.BadParameter("--processor-dbh-cm is required for Labelle (2017) models.")
+                raise typer.BadParameter(
+                    "--processor-dbh-cm is required for Labelle (2017) models."
+                )
             result_processor = estimate_processor_productivity_labelle2017(
                 variant=processor_labelle2017_variant.value,
                 dbh_cm=processor_dbh_cm,
@@ -4011,7 +4193,9 @@ def estimate_productivity_cmd(
                     "--processor-volume-m3 applies to the Labelle 2019 volume helper."
                 )
             if processor_dbh_cm is None:
-                raise typer.BadParameter("--processor-dbh-cm is required for Labelle (2018) models.")
+                raise typer.BadParameter(
+                    "--processor-dbh-cm is required for Labelle (2018) models."
+                )
             result_processor = estimate_processor_productivity_labelle2018(
                 variant=processor_labelle2018_variant.value,
                 dbh_cm=processor_dbh_cm,
@@ -4028,7 +4212,9 @@ def estimate_productivity_cmd(
                     "--processor-volume-m3 applies to the Labelle volume helper; use --processor-dbh-cm here."
                 )
             if processor_dbh_cm is None:
-                raise typer.BadParameter("--processor-dbh-cm is required for Labelle (2019) DBH models.")
+                raise typer.BadParameter(
+                    "--processor-dbh-cm is required for Labelle (2019) DBH models."
+                )
             if processor_species is None:
                 raise typer.BadParameter(
                     "--processor-species (spruce | beech) is required for Labelle (2019) models."
@@ -4054,7 +4240,9 @@ def estimate_productivity_cmd(
                     "--processor-dbh-cm/--processor-volume-m3 apply to Labelle helpers; ADV5N6 is table-driven."
                 )
             if processor_species is not None or processor_treatment is not None:
-                raise typer.BadParameter("--processor-species/--processor-treatment do not apply to ADV5N6.")
+                raise typer.BadParameter(
+                    "--processor-species/--processor-treatment do not apply to ADV5N6."
+                )
             stem_source_value = processor_stem_source.value
             processing_mode_value = processor_adv5n6_processing_mode.value
             if (
@@ -4082,17 +4270,56 @@ def estimate_productivity_cmd(
                     "--processor-volume-m3/--processor-dbh-cm apply to the Labelle helpers; omit them for visser2015."
                 )
             if processor_species is not None or processor_treatment is not None:
-                raise typer.BadParameter("--processor-species/--processor-treatment do not apply to visser2015.")
+                raise typer.BadParameter(
+                    "--processor-species/--processor-treatment do not apply to visser2015."
+                )
             result_processor = estimate_processor_productivity_visser2015(
                 piece_size_m3=processor_piece_size_m3,
                 log_sort_count=processor_log_sorts,
                 delay_multiplier=processor_delay_multiplier,
             )
         elif processor_model is RoadsideProcessorModel.HYPRO775:
-            if processor_piece_size_m3 is not None or processor_volume_m3 is not None or processor_dbh_cm is not None:
-                raise typer.BadParameter("--processor-piece-size/volume/dbh do not apply to hypro775 preset.")
+            if (
+                processor_piece_size_m3 is not None
+                or processor_volume_m3 is not None
+                or processor_dbh_cm is not None
+            ):
+                raise typer.BadParameter(
+                    "--processor-piece-size/volume/dbh do not apply to hypro775 preset."
+                )
             result_processor = estimate_processor_productivity_hypro775(
                 delay_multiplier=processor_delay_multiplier,
+            )
+        elif processor_model is RoadsideProcessorModel.SPINELLI2010:
+            if processor_piece_size_m3 is None:
+                raise typer.BadParameter(
+                    "--processor-piece-size-m3 (tree volume) is required for --processor-model spinelli2010."
+                )
+            if processor_machine_power_kw is None:
+                raise typer.BadParameter(
+                    "--processor-machine-power-kw is required for --processor-model spinelli2010."
+                )
+            slope_value = processor_slope_percent or 0.0
+            if processor_spinelli_operation is SpinelliOperation.HARVEST:
+                if processor_removals_per_ha is None or processor_removals_per_ha <= 0:
+                    raise typer.BadParameter(
+                        "--processor-removals-per-ha must be provided (>0) for Spinelli harvest scenarios."
+                    )
+                if processor_residuals_per_ha is None or processor_residuals_per_ha < 0:
+                    raise typer.BadParameter(
+                        "--processor-residuals-per-ha must be provided (>=0) for Spinelli harvest scenarios."
+                    )
+            result_processor = estimate_processor_productivity_spinelli2010(
+                operation=processor_spinelli_operation.value,
+                tree_volume_m3=processor_piece_size_m3,
+                slope_percent=slope_value,
+                machine_power_kw=processor_machine_power_kw,
+                carrier_type=processor_spinelli_carrier.value,
+                head_type=processor_spinelli_head.value,
+                species_group=processor_spinelli_species.value,
+                stand_type=processor_spinelli_stand_type.value,
+                removals_per_ha=processor_removals_per_ha,
+                residuals_per_ha=processor_residuals_per_ha,
             )
         elif processor_model is RoadsideProcessorModel.TN103:
             if processor_piece_size_m3 is not None:
@@ -4104,7 +4331,9 @@ def estimate_productivity_cmd(
                     "--processor-dbh-cm/--processor-volume-m3 apply to Labelle helpers; TN-103 is table-driven."
                 )
             if processor_species is not None or processor_treatment is not None:
-                raise typer.BadParameter("--processor-species/--processor-treatment do not apply to TN-103.")
+                raise typer.BadParameter(
+                    "--processor-species/--processor-treatment do not apply to TN-103."
+                )
             result_processor = estimate_processor_productivity_tn103(
                 scenario=processor_tn103_scenario.value,
             )
@@ -4114,9 +4343,13 @@ def estimate_productivity_cmd(
                     "--processor-piece-size-m3/--processor-volume-m3 apply to Berry/Labelle helpers; TR-106 is table-driven."
                 )
             if processor_dbh_cm is not None:
-                raise typer.BadParameter("--processor-dbh-cm applies to the Labelle helpers, not TR-106.")
+                raise typer.BadParameter(
+                    "--processor-dbh-cm applies to the Labelle helpers, not TR-106."
+                )
             if processor_species is not None or processor_treatment is not None:
-                raise typer.BadParameter("--processor-species/--processor-treatment do not apply to TR-106.")
+                raise typer.BadParameter(
+                    "--processor-species/--processor-treatment do not apply to TR-106."
+                )
             result_processor = estimate_processor_productivity_tr106(
                 scenario=processor_tr106_scenario.value,
             )
@@ -4126,9 +4359,13 @@ def estimate_productivity_cmd(
                     "--processor-piece-size-m3/--processor-volume-m3 apply to Berry/Labelle helpers; TR-87 is table-driven."
                 )
             if processor_dbh_cm is not None:
-                raise typer.BadParameter("--processor-dbh-cm applies to the Labelle helpers, not TR-87.")
+                raise typer.BadParameter(
+                    "--processor-dbh-cm applies to the Labelle helpers, not TR-87."
+                )
             if processor_species is not None or processor_treatment is not None:
-                raise typer.BadParameter("--processor-species/--processor-treatment do not apply to TR-87.")
+                raise typer.BadParameter(
+                    "--processor-species/--processor-treatment do not apply to TR-87."
+                )
             result_processor = estimate_processor_productivity_tr87(
                 scenario=processor_tr87_scenario.value,
             )
@@ -4138,9 +4375,13 @@ def estimate_productivity_cmd(
                     "--processor-piece-size-m3/--processor-volume-m3 apply to other helpers; TN-166 is table-driven."
                 )
             if processor_dbh_cm is not None:
-                raise typer.BadParameter("--processor-dbh-cm applies to the Labelle helpers, not TN-166.")
+                raise typer.BadParameter(
+                    "--processor-dbh-cm applies to the Labelle helpers, not TN-166."
+                )
             if processor_species is not None or processor_treatment is not None:
-                raise typer.BadParameter("--processor-species/--processor-treatment do not apply to TN-166.")
+                raise typer.BadParameter(
+                    "--processor-species/--processor-treatment do not apply to TN-166."
+                )
             result_processor = estimate_processor_productivity_tn166(
                 scenario=processor_tn166_scenario.value,
             )
@@ -4206,14 +4447,18 @@ def estimate_productivity_cmd(
             if berry_skid_prediction["out_of_range"]:
                 delay_line += " (Outside the published ~2.5–3.7k m² study range.)"
             if berry_skid_auto_adjusted:
-                delay_line += f" Delay multiplier auto-adjusted to {processor_delay_multiplier:.3f}."
+                delay_line += (
+                    f" Delay multiplier auto-adjusted to {processor_delay_multiplier:.3f}."
+                )
             elif processor_delay_supplied:
                 delay_line += " Delay multiplier left unchanged because --processor-delay-multiplier was supplied."
             console.print(delay_line + "[/dim]")
             predicted_prod = berry_skid_prediction["predicted_productivity_m3_per_hour"]
             if predicted_prod is not None:
                 r2_text = berry_skid_prediction["productivity_r2"]
-                r2_fragment = f"~R² {r2_text:.2f}" if isinstance(r2_text, (float, int)) else "weak fit"
+                r2_fragment = (
+                    f"~R² {r2_text:.2f}" if isinstance(r2_text, (float, int)) else "weak fit"
+                )
                 console.print(
                     f"[dim]Skid-size productivity regression ({r2_fragment}) suggests ≈{predicted_prod:.1f} m³/PMH for this landing size (informational only).[/dim]"
                 )
@@ -4292,9 +4537,13 @@ def estimate_productivity_cmd(
         loader_cost_role = ProductivityMachineRole.LOADER.value
         if loader_model is LoaderProductivityModel.TN261:
             if loader_piece_size_m3 is None:
-                raise typer.BadParameter("--loader-piece-size-m3 is required when --loader-model tn261.")
+                raise typer.BadParameter(
+                    "--loader-piece-size-m3 is required when --loader-model tn261."
+                )
             if loader_distance_m is None:
-                raise typer.BadParameter("--loader-distance-m is required when --loader-model tn261.")
+                raise typer.BadParameter(
+                    "--loader-distance-m is required when --loader-model tn261."
+                )
             loader_result = estimate_loader_forwarder_productivity_tn261(
                 piece_size_m3=loader_piece_size_m3,
                 external_distance_m=loader_distance_m,
@@ -4340,11 +4589,11 @@ def estimate_productivity_cmd(
             }
         elif loader_model is LoaderProductivityModel.ADV5N1:
             if loader_distance_m is None:
-                raise typer.BadParameter("--loader-distance-m is required when --loader-model adv5n1.")
+                raise typer.BadParameter(
+                    "--loader-distance-m is required when --loader-model adv5n1."
+                )
             utilisation_value = (
-                loader_utilisation
-                if loader_utilisation is not None
-                else ADV5N1_DEFAULT_UTILISATION
+                loader_utilisation if loader_utilisation is not None else ADV5N1_DEFAULT_UTILISATION
             )
             loader_result = estimate_loader_forwarder_productivity_adv5n1(
                 forwarding_distance_m=loader_distance_m,
@@ -4530,19 +4779,22 @@ def estimate_productivity_cmd(
 
     else:
         rows = [
-        ("Model", "labelle2019_volume"),
-        ("Species", result.species),
-        ("Treatment", result.treatment.replace("_", " ")),
-        ("Recovered Volume (m³)", f"{result.volume_m3:.3f}"),
-        (
-            "Polynomial",
-            f"{result.intercept:+.2f} + {result.linear:.2f}·V - {result.quadratic:.3f}·V^{result.exponent:.0f}",
-        ),
-        ("Sample Trees", str(result.sample_trees)),
-        ("Delay-free Productivity (m³/PMH)", f"{result.delay_free_productivity_m3_per_pmh:.2f}"),
-        ("Delay Multiplier", f"{result.delay_multiplier:.3f}"),
-        ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
-    ]
+            ("Model", "labelle2019_volume"),
+            ("Species", result.species),
+            ("Treatment", result.treatment.replace("_", " ")),
+            ("Recovered Volume (m³)", f"{result.volume_m3:.3f}"),
+            (
+                "Polynomial",
+                f"{result.intercept:+.2f} + {result.linear:.2f}·V - {result.quadratic:.3f}·V^{result.exponent:.0f}",
+            ),
+            ("Sample Trees", str(result.sample_trees)),
+            (
+                "Delay-free Productivity (m³/PMH)",
+                f"{result.delay_free_productivity_m3_per_pmh:.2f}",
+            ),
+            ("Delay Multiplier", f"{result.delay_multiplier:.3f}"),
+            ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
+        ]
         _render_kv_table("Roadside Processor Productivity Estimate", rows)
         console.print(
             "[dim]Labelle et al. (2019) hardwood volume regression (PMH₀); use --processor-delay-multiplier to apply utilisation when exporting beyond Bavaria.[/dim]"
@@ -5214,10 +5466,14 @@ def estimate_cable_skidding_cmd(
             raise typer.BadParameter(
                 "Provide --slope-percent or --profile to supply slope defaults."
             )
-        source_label = "Ünver-Okan 2020 (SPSS linear regression, North-East Turkey spruce uphill skidding)."
+        source_label = (
+            "Ünver-Okan 2020 (SPSS linear regression, North-East Turkey spruce uphill skidding)."
+        )
         if model is CableSkiddingModel.UNVER_ROBUST:
             value = estimate_cable_skidding_productivity_unver_robust(log_volume_m3, slope_percent)
-            source_label = "Ünver-Okan 2020 (robust regression, North-East Turkey spruce uphill skidding)."
+            source_label = (
+                "Ünver-Okan 2020 (robust regression, North-East Turkey spruce uphill skidding)."
+            )
         else:
             value = estimate_cable_skidding_productivity_unver_spss(log_volume_m3, slope_percent)
         rows = [
@@ -5540,7 +5796,9 @@ def estimate_skyline_productivity_cmd(
             ("Payload (m³)", f"{(payload_m3 or 1.6):.2f}"),
             ("Cycle Time (min)", f"{cycle_minutes:.2f}"),
         ]
-        source_label = "FPInnovations TR-125 multi-span (intermediate support) regression (coastal BC)."
+        source_label = (
+            "FPInnovations TR-125 multi-span (intermediate support) regression (coastal BC)."
+        )
     elif model in _TR127_MODEL_TO_BLOCK:
         block_id = _TR127_MODEL_TO_BLOCK[model]
         if block_id in (5, 6) and num_logs is None:
@@ -5573,9 +5831,13 @@ def estimate_skyline_productivity_cmd(
     elif model is SkylineProductivityModel.MCNEEL_RUNNING:
         horizontal_span = horizontal_distance_m or slope_distance_m
         if horizontal_span is None:
-            raise typer.BadParameter("--horizontal-distance-m is required (or supply --slope-distance-m).")
+            raise typer.BadParameter(
+                "--horizontal-distance-m is required (or supply --slope-distance-m)."
+            )
         if vertical_distance_m is None:
-            raise typer.BadParameter("--vertical-distance-m is required for running skyline regressions.")
+            raise typer.BadParameter(
+                "--vertical-distance-m is required for running skyline regressions."
+            )
         default_pieces, default_piece_volume = running_skyline_variant_defaults(
             running_yarder_variant.value
         )
