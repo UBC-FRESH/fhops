@@ -1,0 +1,31 @@
+{
+  "source": {
+    "citation": "Castro P\u00e9rez, S.N. et al. 2020; Zurita Vintimilla, M.C. et al. 2021. HYPRO 775 double-grip processor case studies (Bulletin Transilvania Univ. 13(2); Forests 12:213).",
+    "documents": [
+      "notes/reference/02-castro-perez.pdf",
+      "notes/reference/Processing_Small-Sized_Trees_at_Landing_by_a_Doubl.pdf"
+    ],
+    "notes": [
+      "Castro P\u00e9rez (2020) provided cycle-element breakdowns and sample-size guidance for a HYPRO 775 working in Ecuadorian pine thinnings (~45 s per cycle, ~4 logs/tree).",
+      "Zurita et al. (2021) measured productivity, fuel (21 L/h \u2248 0.78 L/m\u00b3), noise, and cardiovascular load for the same HYPRO 775 platform processing small pine at landing (gross 45 trees/h, net 18 trees/h)."
+    ]
+  },
+  "scenario": {
+    "description": "HYPRO 775 tractor-mounted double-grip processor working at roadside/landing on small-diameter pine thinning wood.",
+    "mean_cycle_time_seconds": 45.0,
+    "mean_logs_per_tree": 4.0,
+    "gross_trees_per_hour": 45.1,
+    "net_trees_per_hour": 18.2,
+    "delay_free_productivity_m3_per_pmh": 21.4,
+    "fuel_consumption_l_per_hour": 21.0,
+    "fuel_consumption_l_per_m3": 0.78,
+    "utilisation_percent": 73.0,
+    "noise_db": 85.0,
+    "cardio_workload_percent_of_max": 41.0,
+    "notes": [
+      "Average work cycle comprised fast gripping, feeding, cutting events (\u22481.5 s per elemental cut).",
+      "Operators experienced roughly 85 dB(A) noise exposure; cardio workload averaged about 40 % of max heart rate (classified as heavy work).",
+      "Fuel and productivity figures align with Borz et al. (2023) landing-harvester study; adjust utilisation when modelling multi-shift ops."
+    ]
+  }
+}
