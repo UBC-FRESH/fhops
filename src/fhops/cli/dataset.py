@@ -124,7 +124,12 @@ from fhops.productivity import (
     get_berry_log_grade_stats,
     get_labelle_huss_automatic_bucking_adjustment,
 )
-from fhops.reference import get_appendix5_profile, get_tr119_treatment, load_appendix5_stands
+from fhops.reference import (
+    get_appendix5_profile,
+    get_tr119_treatment,
+    load_appendix5_stands,
+    load_unbc_hoe_chucking_data,
+)
 from fhops.scenario.contract import Machine, Scenario
 from fhops.scenario.io import load_scenario
 from fhops.scheduling.systems import (
@@ -2474,6 +2479,36 @@ def _render_berry_log_grade_table() -> None:
         console.print(f"[dim]{note}[/dim]")
 
 
+def _render_unbc_hoe_chucking_table() -> None:
+    scenarios = load_unbc_hoe_chucking_data()
+    if not scenarios:
+        console.print("[dim]No UNBC hoe-chucking data available.[/dim]")
+        return
+    table = Table(title="UNBC Hoe-Chucking Cost/Productivity", header_style="bold cyan", expand=True)
+    table.add_column("Treatment", style="bold")
+    table.add_column("Hours", justify="right")
+    table.add_column("Volume (m³)", justify="right")
+    table.add_column("Productivity (m³/SMH)", justify="right")
+    table.add_column("Observed $/m³", justify="right")
+    table.add_column("Weighted $/m³", justify="right")
+    for scenario in scenarios:
+        productivity = (
+            f"{scenario.productivity_m3_per_smh:.2f}" if scenario.productivity_m3_per_smh else "—"
+        )
+        table.add_row(
+            scenario.treatment.replace("_", " "),
+            f"{scenario.time_hours:.1f}",
+            f"{scenario.volume_m3:.1f}",
+            productivity,
+            f"{scenario.observed_cost_cad_per_m3:.2f}",
+            f"{scenario.weighted_cost_cad_per_m3:.2f}" if scenario.weighted_cost_cad_per_m3 else "—",
+        )
+    console.print(table)
+    console.print(
+        "[dim]Source: UNBC MSc thesis (Renzie 2006), Table 33 (Minnow block hoe-chucking shift summary)."
+    )
+
+
 @dataset_app.command("inspect-machine")
 def inspect_machine(
     dataset: str | None = typer.Option(
@@ -2754,6 +2789,13 @@ def berry_log_grades_cmd() -> None:
     """Show the digitised Berry (2019) log-grade cycle-time emmeans."""
 
     _render_berry_log_grade_table()
+
+
+@dataset_app.command("unbc-hoe-chucking")
+def unbc_hoe_chucking_cmd() -> None:
+    """Show the UNBC hoe-chucking cost/productivity summary."""
+
+    _render_unbc_hoe_chucking_table()
 
 
 @dataset_app.command("estimate-productivity")

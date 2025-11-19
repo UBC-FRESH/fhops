@@ -68,6 +68,14 @@ def test_cli_berry_log_grades_command() -> None:
     assert "Z40" in result.stdout
 
 
+def test_cli_unbc_hoe_chucking_command() -> None:
+    result = runner.invoke(dataset_app, ["unbc-hoe-chucking"])
+    assert result.exit_code == 0, result.stdout
+    assert "UNBC Hoe-Chucking" in result.stdout
+    assert "group" in result.stdout.lower()
+    assert "clearcut" in result.stdout.lower()
+
+
 def test_cli_processor_tree_form_penalty() -> None:
     result = runner.invoke(
         dataset_app,

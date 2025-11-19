@@ -195,6 +195,10 @@ regressions:
   helper reports PMH/SMH productivity, stems per hour, and the published $/m³ + $/stem values. Pick
   this preset when you need an interior stroke-processor baseline rather than the hardwood-focused
   Labelle regressions. Costs are also escalated to 2024 CAD via the same Statistics Canada CPI series.
+* `fhops dataset unbc-hoe-chucking` – reference command that prints the UNBC (Renzie 2006) Table 33
+  hoe-chucking shift summary (time, volume, productivity, observed/weighted $/m³ for group selection,
+  group retention, and clearcut treatments). Useful when budgeting manual hoe-chucking support around
+  landing processors in cedar–hemlock partial cuts.
 * ``--processor-automatic-bucking`` – Optional switch for *Berry*/*Labelle* helpers that applies the
   +12.4 % delay-free productivity multiplier from Labelle & Huß (2018, Silva Fennica 52(3):9947) and
   prints the associated €3.3/m³ revenue delta (2018 EUR) for traceability. The flag is ignored for the

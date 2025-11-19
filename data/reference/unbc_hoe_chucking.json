@@ -1,0 +1,47 @@
+{
+  "source": {
+    "citation": "Renzie, C. 2006. A Comparison of Partial Cut and Clearcut Harvesting Productivity and Cost in Old Cedar-Hemlock Forests in East Central British Columbia. UNBC MSc Thesis.",
+    "document_path": "notes/reference/unbc_15814.pdf",
+    "notes": [
+      "Table 33 (Minnow block) summarises hoe-chucking shift inputs for group selection, group retention, and clearcut treatments.",
+      "Costs derived from $103.48 CAD/hour equipment + operator rate; totals represent scheduled machine hours (SMH)."
+    ]
+  },
+  "currency": "CAD",
+  "cost_base_year": 2004,
+  "scenarios": [
+    {
+      "treatment": "group_selection",
+      "time_hours": 13.0,
+      "hourly_rate_cad": 103.48,
+      "trees": 202,
+      "net_volume_per_tree_m3": 1.05,
+      "volume_m3": 212.1,
+      "observed_cost_cad_per_m3": 6.34,
+      "weighted_cost_cad_per_m3": 1.02,
+      "productivity_m3_per_smh": 16.315384615384616
+    },
+    {
+      "treatment": "group_retention",
+      "time_hours": 0.0,
+      "hourly_rate_cad": 103.48,
+      "trees": 0,
+      "net_volume_per_tree_m3": 1.07,
+      "volume_m3": 0.0,
+      "observed_cost_cad_per_m3": 0.0,
+      "weighted_cost_cad_per_m3": 0.0,
+      "productivity_m3_per_smh": null
+    },
+    {
+      "treatment": "clearcut",
+      "time_hours": 30.0,
+      "hourly_rate_cad": 103.48,
+      "trees": 730,
+      "net_volume_per_tree_m3": 0.91,
+      "volume_m3": 664.3,
+      "observed_cost_cad_per_m3": 4.67,
+      "weighted_cost_cad_per_m3": 1.17,
+      "productivity_m3_per_smh": 22.14333333333333
+    }
+  ]
+}
