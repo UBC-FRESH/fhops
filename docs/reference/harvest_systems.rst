@@ -181,6 +181,11 @@ regressions:
   combined average, or the “wait-for-wood removed” system scenario (240 m³/shift target). Outputs list
   trees per PMH, m³/PMH/SMH, utilisation, and the $2.67/m³ processing cost so you can benchmark historic
   TJ90 fleets or sanity-check inland roadside plans.
+* ``--processor-model tr106`` – FERIC TR-106 lodgepole pine shelterwood study near Williams Lake. Pick
+  ``--processor-tr106-scenario`` (Case 1187 Oct–Nov vs. Feb, or the Steyr KP40 carriers on Cat 225 /
+  Link-Belt L-2800 / Cat EL180) to see the published PMH vs. net-PMH productivity, stems per hour, cycle
+  minutes, utilisation, and CPI-scaled cost metadata. Handy when you need an interior partial-cut preset
+  to complement the coastal TR-87 helper.
 * ``--processor-model tn166`` – FERIC TN-166 stroke-processor study (Denis D3000 telescopic boom) from
   interior BC. Choose ``--processor-tn166-scenario`` (``grapple_yarded``, ``right_of_way``, or
   ``mixed_shift``) to flip between the detailed timing splits or the overall shift-level average. The

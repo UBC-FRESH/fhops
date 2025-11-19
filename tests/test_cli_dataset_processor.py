@@ -12,7 +12,9 @@ from fhops.productivity import (
     estimate_processor_productivity_labelle2019_volume,
     estimate_processor_productivity_adv5n6,
     estimate_processor_productivity_tn103,
+    estimate_processor_productivity_tr106,
     estimate_processor_productivity_tn166,
+    estimate_processor_productivity_tr87,
 )
 
 runner = CliRunner()
@@ -265,6 +267,24 @@ def test_cli_processor_tn103_area_a() -> None:
     assert result.exit_code == 0
     expected = estimate_processor_productivity_tn103(scenario="area_a_feller_bunched")
     assert f"{expected.productivity_m3_per_smh:.1f}" in result.stdout
+
+
+def test_cli_processor_tr106_kp40() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "roadside_processor",
+            "--processor-model",
+            "tr106",
+            "--processor-tr106-scenario",
+            "kp40_caterpillar_el180",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_processor_productivity_tr106(scenario="kp40_caterpillar_el180")
+    assert f"{expected.productivity_m3_per_pmh:.1f}" in result.stdout
 
 
 def test_cli_processor_tn166_right_of_way() -> None:

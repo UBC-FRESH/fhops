@@ -1,0 +1,100 @@
+{
+  "source": {
+    "citation": "Medeiros, J. 1992. Harvesting Lodgepole Pine in Partial Cuts (Steyr KP40 & Case 1187B/Denis processor evaluations). FERIC Technical Report TR-106.",
+    "document_path": "notes/reference/fpinnovations/TR106.pdf",
+    "notes": [
+      "Operation A: Case 1187B carrier with Denis stroke delimber-slasher processing roadside decks in lodgepole pine shelterwood blocks (Oct-Nov 1988 vs. Feb 1989 operators).",
+      "Operation B: Steyr KP40 processors mounted on multiple carriers (Cat 225, Link-Belt L-2800, Cat EL180) working low-volume pine stands—Table 11/12 report utilisation and short-term productivity ranges."
+    ]
+  },
+  "costing": {
+    "currency": "CAD",
+    "base_year": 1992,
+    "inflation_source": "Statistics Canada Table 18-10-0005-01"
+  },
+  "defaults": {
+    "shift_length_hours": 8.0
+  },
+  "scenarios": [
+    {
+      "name": "case1187_octnov",
+      "description": "Case 1187B + Denis stroke delimber (Oct–Nov 1988) with new operators handling high-snags decks.",
+      "machine": "Denis stroke delimber-slasher",
+      "stem_source": "grapple_yarded",
+      "mean_stem_volume_m3": 0.207,
+      "stems_per_pmh": 81.3,
+      "productivity_m3_per_pmh": 16.4,
+      "net_productivity_m3_per_pmh": 15.1,
+      "logs_per_stem": 1.42,
+      "cycle_minutes_per_stem": 0.78,
+      "utilisation_percent": 75.0,
+      "notes": [
+        "Based on Table 10 averages for studies 1–3 (snag-rich decks, inexperienced operators)."
+      ]
+    },
+    {
+      "name": "case1187_feb",
+      "description": "Case 1187B + Denis stroke delimber (Feb 1989) after operator experience and windrow prep improvements.",
+      "machine": "Denis stroke delimber-slasher",
+      "stem_source": "grapple_yarded",
+      "mean_stem_volume_m3": 0.227,
+      "stems_per_pmh": 126.3,
+      "productivity_m3_per_pmh": 28.6,
+      "net_productivity_m3_per_pmh": 21.9,
+      "logs_per_stem": 1.29,
+      "cycle_minutes_per_stem": 0.48,
+      "utilisation_percent": 75.0,
+      "notes": [
+        "Table 10 averages for studies 4–6 (experienced operators, minimal snags)."
+      ]
+    },
+    {
+      "name": "kp40_caterpillar225",
+      "description": "Steyr KP40 on Caterpillar 225 carrier (Operation B) – Table 11/12 averages with 68% utilisation.",
+      "machine": "Steyr KP40 processor",
+      "stem_source": "grapple_yarded",
+      "mean_stem_volume_m3": 0.254,
+      "stems_per_pmh": 156.2,
+      "productivity_m3_per_pmh": 39.5,
+      "net_productivity_m3_per_pmh": 30.4,
+      "logs_per_stem": 1.47,
+      "cycle_minutes_per_stem": 0.40,
+      "utilisation_percent": 68.0,
+      "notes": [
+        "Productivity derived from Table 12 averages; utilisation from Table 11 (Caterpillar 225 carrier)."
+      ]
+    },
+    {
+      "name": "kp40_linkbelt_l2800",
+      "description": "Steyr KP40 on Link-Belt L-2800 carrier, similar short-log prescription (69% utilisation).",
+      "machine": "Steyr KP40 processor",
+      "stem_source": "grapple_yarded",
+      "mean_stem_volume_m3": 0.254,
+      "stems_per_pmh": 156.2,
+      "productivity_m3_per_pmh": 39.5,
+      "net_productivity_m3_per_pmh": 30.4,
+      "logs_per_stem": 1.47,
+      "cycle_minutes_per_stem": 0.40,
+      "utilisation_percent": 69.0,
+      "notes": [
+        "Uses the same short-term per-PMH stats as the Caterpillar carrier; only utilisation differs (Table 11)."
+      ]
+    },
+    {
+      "name": "kp40_caterpillar_el180",
+      "description": "Steyr KP40 on Caterpillar EL180 carrier with higher shift utilisation (76%).",
+      "machine": "Steyr KP40 processor",
+      "stem_source": "grapple_yarded",
+      "mean_stem_volume_m3": 0.254,
+      "stems_per_pmh": 156.2,
+      "productivity_m3_per_pmh": 39.5,
+      "net_productivity_m3_per_pmh": 30.4,
+      "logs_per_stem": 1.47,
+      "cycle_minutes_per_stem": 0.40,
+      "utilisation_percent": 76.0,
+      "notes": [
+        "Shift composition follows Table 11 for the EL180 carrier; short-term productivity from Table 12 averages."
+      ]
+    }
+  ]
+}
