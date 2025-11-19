@@ -13,6 +13,7 @@ from fhops.productivity import (
     estimate_processor_productivity_labelle2018,
     estimate_processor_productivity_labelle2019_dbh,
     estimate_processor_productivity_labelle2019_volume,
+    get_labelle_huss_automatic_bucking_adjustment,
     load_lahrsen_ranges,
 )
 
@@ -164,3 +165,18 @@ def test_labelle2018_rw_poly() -> None:
     )
     expected = -15.15 + 2.53 * 33.0 - 0.02 * (33.0**2)
     assert math.isclose(result.delay_free_productivity_m3_per_pmh, expected, rel_tol=1e-9)
+
+
+def test_automatic_bucking_multiplier_scales_delay_free_output() -> None:
+    adjustment = get_labelle_huss_automatic_bucking_adjustment()
+    baseline = estimate_processor_productivity_labelle2016(
+        tree_form="acceptable",
+        dbh_cm=32.0,
+    )
+    boosted = estimate_processor_productivity_labelle2016(
+        tree_form="acceptable",
+        dbh_cm=32.0,
+        automatic_bucking_multiplier=adjustment.multiplier,
+    )
+    ratio = boosted.delay_free_productivity_m3_per_pmh / baseline.delay_free_productivity_m3_per_pmh
+    assert math.isclose(ratio, adjustment.multiplier, rel_tol=1e-9)

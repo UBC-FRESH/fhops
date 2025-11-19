@@ -120,6 +120,7 @@ from fhops.productivity import (
     ADV2N26_DEFAULT_STEM_VOLUME_M3,
     ADV2N26_DEFAULT_UTILISATION,
 )
+from fhops.productivity import get_labelle_huss_automatic_bucking_adjustment
 from fhops.reference import get_appendix5_profile, get_tr119_treatment, load_appendix5_stands
 from fhops.scenario.contract import Machine, Scenario
 from fhops.scenario.io import load_scenario
@@ -531,6 +532,16 @@ class RoadsideProcessorModel(str, Enum):
     TR106 = "tr106"
     TR87 = "tr87"
     TN166 = "tn166"
+
+
+_AUTOMATIC_BUCKING_SUPPORTED_MODELS = {
+    RoadsideProcessorModel.BERRY2019,
+    RoadsideProcessorModel.LABELLE2016,
+    RoadsideProcessorModel.LABELLE2017,
+    RoadsideProcessorModel.LABELLE2018,
+    RoadsideProcessorModel.LABELLE2019_DBH,
+    RoadsideProcessorModel.LABELLE2019_VOLUME,
+}
 
 
 class ADV5N6StemSource(str, Enum):
@@ -3032,6 +3043,11 @@ def estimate_productivity_cmd(
         min=0.0,
         help="Approximate skid/landing area (m²). When using Berry (2019) this scales the utilisation multiplier using the published skid-size delay regression.",
     ),
+    processor_automatic_bucking: bool = typer.Option(
+        False,
+        "--processor-automatic-bucking/--no-processor-automatic-bucking",
+        help="Apply the Labelle & Huß (2018) automatic bucking multiplier (Berry/Labelle helpers only).",
+    ),
     loader_model: LoaderProductivityModel = typer.Option(
         LoaderProductivityModel.TN261,
         "--loader-model",
@@ -3428,6 +3444,16 @@ def estimate_productivity_cmd(
         processor_delay_supplied = _parameter_supplied(ctx, "processor_delay_multiplier")
         berry_skid_prediction: dict[str, Any] | None = None
         berry_skid_auto_adjusted = False
+        automatic_bucking_info = None
+        automatic_bucking_multiplier_value: float | None = None
+        if processor_automatic_bucking:
+            if processor_model not in _AUTOMATIC_BUCKING_SUPPORTED_MODELS:
+                valid_models = ", ".join(sorted(m.value for m in _AUTOMATIC_BUCKING_SUPPORTED_MODELS))
+                raise typer.BadParameter(
+                    f"--processor-automatic-bucking is supported for these models only: {valid_models}."
+                )
+            automatic_bucking_info = get_labelle_huss_automatic_bucking_adjustment()
+            automatic_bucking_multiplier_value = automatic_bucking_info.multiplier
         if processor_model is RoadsideProcessorModel.BERRY2019:
             if processor_piece_size_m3 is None:
                 raise typer.BadParameter(
@@ -3476,6 +3502,7 @@ def estimate_productivity_cmd(
                 tree_form_category=processor_tree_form,
                 crew_multiplier=processor_crew_multiplier,
                 delay_multiplier=processor_delay_multiplier,
+                automatic_bucking_multiplier=automatic_bucking_multiplier_value,
             )
         elif processor_model is RoadsideProcessorModel.LABELLE2016:
             if processor_piece_size_m3 is not None:
@@ -3492,6 +3519,7 @@ def estimate_productivity_cmd(
                 tree_form=processor_labelle2016_form.value,
                 dbh_cm=processor_dbh_cm,
                 delay_multiplier=processor_delay_multiplier,
+                automatic_bucking_multiplier=automatic_bucking_multiplier_value,
             )
         elif processor_model is RoadsideProcessorModel.LABELLE2017:
             if processor_piece_size_m3 is not None:
@@ -3508,6 +3536,7 @@ def estimate_productivity_cmd(
                 variant=processor_labelle2017_variant.value,
                 dbh_cm=processor_dbh_cm,
                 delay_multiplier=processor_delay_multiplier,
+                automatic_bucking_multiplier=automatic_bucking_multiplier_value,
             )
         elif processor_model is RoadsideProcessorModel.LABELLE2018:
             if processor_piece_size_m3 is not None:
@@ -3524,6 +3553,7 @@ def estimate_productivity_cmd(
                 variant=processor_labelle2018_variant.value,
                 dbh_cm=processor_dbh_cm,
                 delay_multiplier=processor_delay_multiplier,
+                automatic_bucking_multiplier=automatic_bucking_multiplier_value,
             )
         elif processor_model is RoadsideProcessorModel.LABELLE2019_DBH:
             if processor_piece_size_m3 is not None:
@@ -3549,6 +3579,7 @@ def estimate_productivity_cmd(
                 treatment=processor_treatment.value,
                 dbh_cm=processor_dbh_cm,
                 delay_multiplier=processor_delay_multiplier,
+                automatic_bucking_multiplier=automatic_bucking_multiplier_value,
             )
         elif processor_model is RoadsideProcessorModel.ADV5N6:
             if processor_piece_size_m3 is not None:
@@ -3650,8 +3681,26 @@ def estimate_productivity_cmd(
                 treatment=processor_treatment.value,
                 volume_m3=processor_volume_m3,
                 delay_multiplier=processor_delay_multiplier,
+                automatic_bucking_multiplier=automatic_bucking_multiplier_value,
             )
         _render_processor_result(result_processor)
+        if automatic_bucking_info is not None:
+            pct_gain = (automatic_bucking_info.multiplier - 1.0) * 100.0
+            console.print(
+                "[dim]Applied Labelle & Huß (2018, Silva Fennica 52(3):9947) automatic bucking multiplier "
+                f"(+{pct_gain:.1f}% delay-free productivity ≈ {automatic_bucking_info.delta_m3_per_pmh:.1f} m³/PMH₀ uplift).[/dim]"
+            )
+            if automatic_bucking_info.revenue_delta_per_m3 is not None:
+                currency = automatic_bucking_info.currency or "EUR"
+                base_year = (
+                    str(automatic_bucking_info.base_year)
+                    if automatic_bucking_info.base_year is not None
+                    else "2018"
+                )
+                console.print(
+                    "[dim]Reference revenue delta: "
+                    f"+{automatic_bucking_info.revenue_delta_per_m3:.1f} {currency}/m³ ({base_year}).[/dim]"
+                )
         _maybe_render_costs(show_costs, ProductivityMachineRole.ROADSIDE_PROCESSOR.value)
         if berry_skid_prediction is not None:
             delay_line = (

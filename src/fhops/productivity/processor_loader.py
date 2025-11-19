@@ -12,6 +12,7 @@ from typing import Literal
 from fhops.costing.inflation import inflate_value
 
 _DATA_ROOT = Path(__file__).resolve().parents[3] / "data" / "productivity"
+_REFERENCE_ROOT = Path(__file__).resolve().parents[3] / "data" / "reference"
 _BERRY_DATA_PATH = _DATA_ROOT / "processor_berry2019.json"
 _ADV5N6_DATA_PATH = _DATA_ROOT / "processor_adv5n6.json"
 _TN103_DATA_PATH = _DATA_ROOT / "processor_tn103.json"
@@ -19,6 +20,7 @@ _TR87_DATA_PATH = _DATA_ROOT / "processor_tr87.json"
 _TR106_DATA_PATH = _DATA_ROOT / "processor_tr106.json"
 _TN166_DATA_PATH = _DATA_ROOT / "processor_tn166.json"
 _BARKO450_DATA_PATH = _DATA_ROOT / "loader_barko450.json"
+_LABELLE_HUSS_DATA_PATH = _REFERENCE_ROOT / "processor_labelle_huss2018.json"
 @lru_cache(maxsize=1)
 def _load_berry_dataset() -> dict[str, object]:
     try:
@@ -52,6 +54,16 @@ def _load_barko450_dataset() -> dict[str, object]:
 
 
 @lru_cache(maxsize=1)
+def _load_labelle_huss_dataset() -> dict[str, object]:
+    try:
+        return json.loads(_LABELLE_HUSS_DATA_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:  # pragma: no cover - configuration error
+        raise FileNotFoundError(
+            f"Labelle & Huß (2018) automatic bucking data missing: {_LABELLE_HUSS_DATA_PATH}"
+        ) from exc
+
+
+@lru_cache(maxsize=1)
 def _load_tn103_dataset() -> dict[str, object]:
     try:
         return json.loads(_TN103_DATA_PATH.read_text(encoding="utf-8"))
@@ -73,6 +85,37 @@ def _load_tr106_dataset() -> dict[str, object]:
         return json.loads(_TR106_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
         raise FileNotFoundError(f"TR-106 processor data missing: {_TR106_DATA_PATH}") from exc
+
+
+@dataclass(frozen=True)
+class AutomaticBuckingAdjustment:
+    multiplier: float
+    delta_m3_per_pmh: float
+    revenue_delta_per_m3: float | None
+    currency: str | None
+    base_year: int | None
+
+
+@lru_cache(maxsize=1)
+def get_labelle_huss_automatic_bucking_adjustment() -> AutomaticBuckingAdjustment:
+    data = _load_labelle_huss_dataset()
+    productivity = (data.get("productivity") or {}).get("aggregate") or {}
+    revenue = (data.get("revenue") or {}).get("aggregate") or {}
+    metadata = data.get("metadata") or {}
+    percent_gain = float(productivity.get("percent_gain", 0.0) or 0.0)
+    multiplier = 1.0 + percent_gain
+    delta_m3 = float(productivity.get("difference_m3_per_pmh", 0.0) or 0.0)
+    revenue_delta = revenue.get("difference_eur_per_m3")
+    revenue_delta_value = None if revenue_delta is None else float(revenue_delta)
+    base_year = metadata.get("base_year")
+    base_year_value = int(base_year) if isinstance(base_year, (int, float)) else base_year
+    return AutomaticBuckingAdjustment(
+        multiplier=multiplier,
+        delta_m3_per_pmh=delta_m3,
+        revenue_delta_per_m3=revenue_delta_value,
+        currency=metadata.get("currency"),
+        base_year=base_year_value,
+    )
 
 
 def _load_tree_form_productivity_multipliers() -> dict[int, float]:
@@ -284,6 +327,7 @@ def estimate_processor_productivity_berry2019(
     tree_form_category: int = 0,
     crew_multiplier: float = 1.0,
     delay_multiplier: float = _BERRY_DEFAULT_UTILISATION,
+    automatic_bucking_multiplier: float | None = None,
 ) -> ProcessorProductivityResult:
     if piece_size_m3 <= 0:
         raise ValueError("piece_size_m3 must be > 0")
@@ -294,9 +338,15 @@ def estimate_processor_productivity_berry2019(
     if not (0.0 < delay_multiplier <= 1.0):
         raise ValueError("delay_multiplier must lie in (0, 1]")
 
+    auto_multiplier = 1.0
+    if automatic_bucking_multiplier is not None:
+        if automatic_bucking_multiplier <= 0:
+            raise ValueError("automatic_bucking_multiplier must be > 0")
+        auto_multiplier = automatic_bucking_multiplier
+
     base_productivity = _BERRY_BASE_SLOPE * piece_size_m3 + _BERRY_BASE_INTERCEPT
     tree_multiplier = _TREE_FORM_PRODUCTIVITY_MULTIPLIERS[tree_form_category]
-    delay_free = base_productivity * tree_multiplier * crew_multiplier
+    delay_free = base_productivity * tree_multiplier * crew_multiplier * auto_multiplier
     productivity = delay_free * delay_multiplier
 
     return ProcessorProductivityResult(
@@ -372,6 +422,7 @@ def estimate_processor_productivity_labelle2019_dbh(
     treatment: Literal["clear_cut", "selective_cut"],
     dbh_cm: float,
     delay_multiplier: float = 1.0,
+    automatic_bucking_multiplier: float | None = None,
 ) -> Labelle2019ProcessorProductivityResult:
     """Labelle et al. (2019) Bavarian hardwood processor regressions (DBH polynomial).
 
@@ -386,6 +437,11 @@ def estimate_processor_productivity_labelle2019_dbh(
         raise ValueError("dbh_cm must be > 0")
     if not (0.0 < delay_multiplier <= 1.0):
         raise ValueError("delay_multiplier must lie in (0, 1]")
+    auto_multiplier = 1.0
+    if automatic_bucking_multiplier is not None:
+        if automatic_bucking_multiplier <= 0:
+            raise ValueError("automatic_bucking_multiplier must be > 0")
+        auto_multiplier = automatic_bucking_multiplier
 
     key = (species.lower(), treatment.lower())
     if key not in _LABELLE2019_DBH_MODELS:
@@ -397,6 +453,7 @@ def estimate_processor_productivity_labelle2019_dbh(
     coeffs = _LABELLE2019_DBH_MODELS[key]
     delay_free = coeffs.intercept + coeffs.linear * dbh_cm + coeffs.quadratic * (dbh_cm**2)
     delay_free = max(0.0, delay_free)
+    delay_free *= auto_multiplier
     productivity = delay_free * delay_multiplier
 
     return Labelle2019ProcessorProductivityResult(
@@ -436,6 +493,7 @@ def estimate_processor_productivity_labelle2016(
     tree_form: Literal["acceptable", "unacceptable"],
     dbh_cm: float,
     delay_multiplier: float = 1.0,
+    automatic_bucking_multiplier: float | None = None,
 ) -> Labelle2016ProcessorProductivityResult:
     """Labelle et al. (2016) sugar maple processor regressions grouped by tree form."""
 
@@ -449,8 +507,15 @@ def estimate_processor_productivity_labelle2016(
         valid = ", ".join(sorted(_LABELLE2016_TREEFORM_MODELS))
         raise ValueError(f"Unknown tree form '{tree_form}'. Valid options: {valid}")
 
+    auto_multiplier = 1.0
+    if automatic_bucking_multiplier is not None:
+        if automatic_bucking_multiplier <= 0:
+            raise ValueError("automatic_bucking_multiplier must be > 0")
+        auto_multiplier = automatic_bucking_multiplier
+
     coeff_a, exponent_b, sample_count = _LABELLE2016_TREEFORM_MODELS[key]
     delay_free = coeff_a * (dbh_cm**exponent_b)
+    delay_free *= auto_multiplier
     productivity = delay_free * delay_multiplier
 
     return Labelle2016ProcessorProductivityResult(
@@ -511,6 +576,7 @@ def estimate_processor_productivity_labelle2017(
     variant: Literal["poly1", "poly2", "power1", "power2"],
     dbh_cm: float,
     delay_multiplier: float = 1.0,
+    automatic_bucking_multiplier: float | None = None,
 ) -> Labelle2017PolynomialProcessorResult | Labelle2017PowerProcessorResult:
     """Labelle et al. (2017) hardwood processor regressions (power/polynomial DBH forms)."""
 
@@ -518,6 +584,11 @@ def estimate_processor_productivity_labelle2017(
         raise ValueError("dbh_cm must be > 0")
     if not (0.0 < delay_multiplier <= 1.0):
         raise ValueError("delay_multiplier must lie in (0, 1]")
+    auto_multiplier = 1.0
+    if automatic_bucking_multiplier is not None:
+        if automatic_bucking_multiplier <= 0:
+            raise ValueError("automatic_bucking_multiplier must be > 0")
+        auto_multiplier = automatic_bucking_multiplier
 
     variant_key = variant.lower()
     if variant_key in _LABELLE2017_POLY_MODELS:
@@ -536,6 +607,7 @@ def estimate_processor_productivity_labelle2017(
             - cubic_coeff * (dbh_cm**3)
         )
         delay_free = max(0.0, delay_free)
+        delay_free *= auto_multiplier
         productivity = delay_free * delay_multiplier
         return Labelle2017PolynomialProcessorResult(
             variant=variant_key,
@@ -555,6 +627,7 @@ def estimate_processor_productivity_labelle2017(
     if variant_key in _LABELLE2017_POWER_MODELS:
         coefficient, exponent, sample_count = _LABELLE2017_POWER_MODELS[variant_key]
         delay_free = coefficient * (dbh_cm**exponent)
+        delay_free *= auto_multiplier
         productivity = delay_free * delay_multiplier
         return Labelle2017PowerProcessorResult(
             variant=variant_key,
@@ -597,6 +670,7 @@ def estimate_processor_productivity_labelle2018(
     variant: Literal["rw_poly1", "rw_poly2", "ct_poly1", "ct_poly2"],
     dbh_cm: float,
     delay_multiplier: float = 1.0,
+    automatic_bucking_multiplier: float | None = None,
 ) -> Labelle2018ProcessorProductivityResult:
     """Labelle et al. (2018) Bavarian hardwood processor regressions (DBH polynomial)."""
 
@@ -604,6 +678,11 @@ def estimate_processor_productivity_labelle2018(
         raise ValueError("dbh_cm must be > 0")
     if not (0.0 < delay_multiplier <= 1.0):
         raise ValueError("delay_multiplier must lie in (0, 1]")
+    auto_multiplier = 1.0
+    if automatic_bucking_multiplier is not None:
+        if automatic_bucking_multiplier <= 0:
+            raise ValueError("automatic_bucking_multiplier must be > 0")
+        auto_multiplier = automatic_bucking_multiplier
 
     coeffs = _LABELLE2018_MODELS.get(variant.lower())
     if coeffs is None:
@@ -613,6 +692,7 @@ def estimate_processor_productivity_labelle2018(
     intercept, linear, quadratic, sample_trees = coeffs
     delay_free = -intercept + linear * dbh_cm - quadratic * (dbh_cm**2)
     delay_free = max(0.0, delay_free)
+    delay_free *= auto_multiplier
     productivity = delay_free * delay_multiplier
 
     return Labelle2018ProcessorProductivityResult(
@@ -690,6 +770,7 @@ def estimate_processor_productivity_labelle2019_volume(
     treatment: Literal["clear_cut", "selective_cut"],
     volume_m3: float,
     delay_multiplier: float = 1.0,
+    automatic_bucking_multiplier: float | None = None,
 ) -> Labelle2019VolumeProcessorProductivityResult:
     """Labelle et al. (2019) hardwood processor regressions keyed to recovered volume (m³/stem)."""
 
@@ -697,6 +778,11 @@ def estimate_processor_productivity_labelle2019_volume(
         raise ValueError("volume_m3 must be > 0")
     if not (0.0 < delay_multiplier <= 1.0):
         raise ValueError("delay_multiplier must lie in (0, 1]")
+    auto_multiplier = 1.0
+    if automatic_bucking_multiplier is not None:
+        if automatic_bucking_multiplier <= 0:
+            raise ValueError("automatic_bucking_multiplier must be > 0")
+        auto_multiplier = automatic_bucking_multiplier
 
     key = (species.lower(), treatment.lower())
     if key not in _LABELLE2019_VOLUME_MODELS:
@@ -712,6 +798,7 @@ def estimate_processor_productivity_labelle2019_volume(
         - coeffs.quadratic * (volume_m3**coeffs.exponent)
     )
     delay_free = max(0.0, delay_free)
+    delay_free *= auto_multiplier
     productivity = delay_free * delay_multiplier
 
     return Labelle2019VolumeProcessorProductivityResult(

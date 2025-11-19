@@ -1,0 +1,129 @@
+{
+  "source": {
+    "citation": "Labelle, E.R. & Huß, L. 2018. Creation of value through a harvester on-board bucking optimization system operated in a spruce stand. Silva Fennica 52(3):9947.",
+    "document_path": "notes/reference/article9947.pdf",
+    "doi": "10.14214/sf.9947",
+    "notes": [
+      "Case study: 80-year-old Norway spruce/beech stand in southern Germany (regenerative cutting).",
+      "Machine: 8-wheel Ponsse Bear harvester with H8 head; treatments compare manual quality bucking (OFF) vs. automatic bucking recommendations (ON) from the on-board computer.",
+      "Productivity measured as delay-free PMH\u2080; revenue derived from local price matrix (EUR, 2018)."
+    ]
+  },
+  "metadata": {
+    "currency": "EUR",
+    "base_year": 2018,
+    "units": {
+      "productivity": "m3_per_pmh0",
+      "revenue": "EUR_per_m3"
+    }
+  },
+  "productivity": {
+    "aggregate": {
+      "manual_m3_per_pmh": 49.2,
+      "automatic_m3_per_pmh": 55.3,
+      "difference_m3_per_pmh": 6.1,
+      "percent_gain": 0.124
+    },
+    "scenarios": [
+      {
+        "name": "fully_mechanized_undamaged",
+        "manual_m3_per_pmh": 43.3,
+        "automatic_m3_per_pmh": 50.3,
+        "difference_m3_per_pmh": 7.0,
+        "percent_gain": 0.162
+      },
+      {
+        "name": "fully_mechanized_damaged",
+        "manual_m3_per_pmh": 45.9,
+        "automatic_m3_per_pmh": 48.6,
+        "difference_m3_per_pmh": 2.7,
+        "percent_gain": 0.059
+      },
+      {
+        "name": "semi_mechanized_undamaged",
+        "manual_m3_per_pmh": 53.9,
+        "automatic_m3_per_pmh": 60.6,
+        "difference_m3_per_pmh": 6.7,
+        "percent_gain": 0.124
+      },
+      {
+        "name": "semi_mechanized_damaged",
+        "manual_m3_per_pmh": 58.3,
+        "automatic_m3_per_pmh": 54.9,
+        "difference_m3_per_pmh": -3.4,
+        "percent_gain": -0.058
+      },
+      {
+        "name": "fully_mechanized_all",
+        "manual_m3_per_pmh": 43.9,
+        "automatic_m3_per_pmh": 50.0,
+        "difference_m3_per_pmh": 6.1,
+        "percent_gain": 0.139
+      },
+      {
+        "name": "semi_mechanized_all",
+        "manual_m3_per_pmh": 55.2,
+        "automatic_m3_per_pmh": 59.1,
+        "difference_m3_per_pmh": 3.9,
+        "percent_gain": 0.071
+      },
+      {
+        "name": "undamaged_all",
+        "manual_m3_per_pmh": 48.0,
+        "automatic_m3_per_pmh": 56.0,
+        "difference_m3_per_pmh": 8.0,
+        "percent_gain": 0.167
+      },
+      {
+        "name": "damaged_all",
+        "manual_m3_per_pmh": 52.9,
+        "automatic_m3_per_pmh": 52.6,
+        "difference_m3_per_pmh": -0.3,
+        "percent_gain": -0.006
+      }
+    ]
+  },
+  "revenue": {
+    "aggregate": {
+      "manual_eur_per_m3": 96.6,
+      "automatic_eur_per_m3": 99.9,
+      "difference_eur_per_m3": 3.3,
+      "percent_gain": 0.034
+    },
+    "scenarios": [
+      {
+        "name": "fully_mechanized",
+        "manual_eur_per_m3": 95.8,
+        "automatic_eur_per_m3": 99.7,
+        "difference_eur_per_m3": 3.9,
+        "percent_gain": 0.040
+      },
+      {
+        "name": "semi_mechanized",
+        "manual_eur_per_m3": 97.8,
+        "automatic_eur_per_m3": 100.0,
+        "difference_eur_per_m3": 2.2,
+        "percent_gain": 0.022
+      },
+      {
+        "name": "undamaged_all",
+        "manual_eur_per_m3": 95.9,
+        "automatic_eur_per_m3": 100.0,
+        "difference_eur_per_m3": 4.1,
+        "percent_gain": 0.043
+      },
+      {
+        "name": "damaged_all",
+        "manual_eur_per_m3": 98.3,
+        "automatic_eur_per_m3": 99.5,
+        "difference_eur_per_m3": 1.2,
+        "percent_gain": 0.012
+      }
+    ]
+  },
+  "implementation_notes": [
+    "Productivity uplifts are relative to delay-free PMH\u2080 productivity; utilisation multipliers still need to be applied for PMH\u2081/SMH conversions.",
+    "Revenue deltas are in nominal 2018 EUR from the study-specific price matrix; convert to CAD using Bank of Canada FX + CPI if required.",
+    "Automatic bucking shows the clearest benefit in undamaged, fully mechanized stems (+16% productivity, +4.9 \u20ac/m\u00b3 revenue)."
+  ]
+}

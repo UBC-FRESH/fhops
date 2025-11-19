@@ -91,6 +91,7 @@ from .stoilov2021 import (
     estimate_skidder_harvester_productivity_with_delays,
 )
 from .processor_loader import (
+    AutomaticBuckingAdjustment,
     ADV2N26_DEFAULT_STEM_VOLUME_M3,
     ADV2N26_DEFAULT_STEMS_PER_CYCLE,
     ADV2N26_DEFAULT_TRAVEL_EMPTY_M,
@@ -130,6 +131,7 @@ from .processor_loader import (
     estimate_processor_productivity_tr106,
     estimate_processor_productivity_tn166,
     predict_berry2019_skid_effects,
+    get_labelle_huss_automatic_bucking_adjustment,
 )
 
 __all__ = [
@@ -198,6 +200,7 @@ __all__ = [
     "estimate_processor_productivity_labelle2019_dbh",
     "estimate_processor_productivity_labelle2019_volume",
     "ProcessorProductivityResult",
+    "AutomaticBuckingAdjustment",
     "Labelle2016ProcessorProductivityResult",
     "Labelle2017PolynomialProcessorResult",
     "Labelle2017PowerProcessorResult",
@@ -238,4 +241,5 @@ __all__ = [
     "SkidderProductivityResult",
     "HelicopterLonglineModel",
     "HelicopterProductivityResult",
+    "get_labelle_huss_automatic_bucking_adjustment",
 ]

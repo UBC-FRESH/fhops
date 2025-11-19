@@ -15,6 +15,7 @@ from fhops.productivity import (
     estimate_processor_productivity_tr106,
     estimate_processor_productivity_tn166,
     estimate_processor_productivity_tr87,
+    get_labelle_huss_automatic_bucking_adjustment,
 )
 
 runner = CliRunner()
@@ -36,6 +37,28 @@ def test_cli_processor_berry2019_basic() -> None:
     assert result.exit_code == 0
     expected = estimate_processor_productivity_berry2019(piece_size_m3=1.5)
     assert f"{expected.productivity_m3_per_pmh:.2f}" in result.stdout
+
+
+def test_cli_processor_automatic_bucking_flag() -> None:
+    adjustment = get_labelle_huss_automatic_bucking_adjustment()
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "roadside_processor",
+            "--processor-piece-size-m3",
+            "1.5",
+            "--processor-automatic-bucking",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_processor_productivity_berry2019(
+        piece_size_m3=1.5,
+        automatic_bucking_multiplier=adjustment.multiplier,
+    )
+    assert f"{expected.productivity_m3_per_pmh:.2f}" in result.stdout
+    assert "Labelle & Huß (2018" in result.stdout
 
 
 def test_cli_processor_tree_form_penalty() -> None:
