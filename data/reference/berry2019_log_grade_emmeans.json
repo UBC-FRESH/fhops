@@ -6,20 +6,20 @@
     "Calibrated using Z40 mean ± CI provided by user (7.4 s, 9.9 s, 12.4 s)."
   ],
   "grades": [
-    {"grade": "Z40", "mean_seconds": 9.9, "lo_seconds": 7.4, "hi_seconds": 12.4},
-    {"grade": "Waste", "mean_seconds": 9.6, "lo_seconds": 7.86, "hi_seconds": 11.28},
-    {"grade": "Unclassified", "mean_seconds": 8.1, "lo_seconds": 7.4, "hi_seconds": 9.52},
-    {"grade": "UH", "mean_seconds": 12.18, "lo_seconds": 11.06, "hi_seconds": 12.4},
-    {"grade": "UA", "mean_seconds": 8.56, "lo_seconds": 8.17, "hi_seconds": 9.06},
-    {"grade": "U2", "mean_seconds": 9.23, "lo_seconds": 7.91, "hi_seconds": 10.53},
-    {"grade": "U1", "mean_seconds": 9.49, "lo_seconds": 9.01, "hi_seconds": 10.1},
-    {"grade": "S25", "mean_seconds": 9.39, "lo_seconds": 9.04, "hi_seconds": 9.88},
-    {"grade": "RUH", "mean_seconds": 8.96, "lo_seconds": 7.4, "hi_seconds": 11.39},
-    {"grade": "RUA", "mean_seconds": 7.99, "lo_seconds": 7.4, "hi_seconds": 8.54},
-    {"grade": "PT40", "mean_seconds": 10.82, "lo_seconds": 7.8, "hi_seconds": 12.4},
-    {"grade": "P35", "mean_seconds": 10.96, "lo_seconds": 9.81, "hi_seconds": 12.09},
-    {"grade": "BHS", "mean_seconds": 7.63, "lo_seconds": 7.39, "hi_seconds": 8.31},
-    {"grade": "A40", "mean_seconds": 9.5, "lo_seconds": 7.4, "hi_seconds": 12.4},
-    {"grade": "A", "mean_seconds": 11.56, "lo_seconds": 10.95, "hi_seconds": 12.17}
+    {"grade": "Z40", "mean_minutes": 9.9, "lo_minutes": 7.4, "hi_minutes": 12.4},
+    {"grade": "Waste", "mean_minutes": 9.6, "lo_minutes": 7.86, "hi_minutes": 11.28},
+    {"grade": "Unclassified", "mean_minutes": 8.1, "lo_minutes": 7.4, "hi_minutes": 9.52},
+    {"grade": "UH", "mean_minutes": 12.18, "lo_minutes": 11.06, "hi_minutes": 12.4},
+    {"grade": "UA", "mean_minutes": 8.56, "lo_minutes": 8.17, "hi_minutes": 9.06},
+    {"grade": "U2", "mean_minutes": 9.23, "lo_minutes": 7.91, "hi_minutes": 10.53},
+    {"grade": "U1", "mean_minutes": 9.49, "lo_minutes": 9.01, "hi_minutes": 10.1},
+    {"grade": "S25", "mean_minutes": 9.39, "lo_minutes": 9.04, "hi_minutes": 9.88},
+    {"grade": "RUH", "mean_minutes": 8.96, "lo_minutes": 7.4, "hi_minutes": 11.39},
+    {"grade": "RUA", "mean_minutes": 7.99, "lo_minutes": 7.4, "hi_minutes": 8.54},
+    {"grade": "PT40", "mean_minutes": 10.82, "lo_minutes": 7.8, "hi_minutes": 12.4},
+    {"grade": "P35", "mean_minutes": 10.96, "lo_minutes": 9.81, "hi_minutes": 12.09},
+    {"grade": "BHS", "mean_minutes": 7.63, "lo_minutes": 7.39, "hi_minutes": 8.31},
+    {"grade": "A40", "mean_minutes": 9.5, "lo_minutes": 7.4, "hi_minutes": 12.4},
+    {"grade": "A", "mean_minutes": 11.56, "lo_minutes": 10.95, "hi_minutes": 12.17}
   ]
 }

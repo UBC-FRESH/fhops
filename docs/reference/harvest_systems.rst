@@ -128,7 +128,10 @@ Roadside Processor Productivity Models
 regressions:
 
 * ``--processor-model berry2019`` *(default)* – Berry (2019) Kinleith NZ processor study keyed to
-  piece size, tree form, and crew/utilisation multipliers.
+  piece size, tree form, and crew/utilisation multipliers. ``fhops dataset berry-log-grades`` (or
+  ``--processor-show-grade-stats``) dumps the digitised Appendix 13 emmeans table so you can see the
+  per-grade mean ±2σ cycle times we extracted from the thesis image. Treat those values as qualitative
+  cues only—they came from a screenshot, not a raw table.
   * ``--processor-piece-size-m3`` – average piece size per stem (m³). Delay-free productivity is
     computed via ``34.7 × piece_size + 11.3``.
   * ``--processor-tree-form`` – 0 (good), 1 (poor), 2 (bad). Tree-form penalties follow Berry’s

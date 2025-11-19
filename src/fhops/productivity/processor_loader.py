@@ -14,6 +14,7 @@ from fhops.costing.inflation import inflate_value
 _DATA_ROOT = Path(__file__).resolve().parents[3] / "data" / "productivity"
 _REFERENCE_ROOT = Path(__file__).resolve().parents[3] / "data" / "reference"
 _BERRY_DATA_PATH = _DATA_ROOT / "processor_berry2019.json"
+_BERRY_LOG_GRADES_PATH = _REFERENCE_ROOT / "berry2019_log_grade_emmeans.json"
 _ADV5N6_DATA_PATH = _DATA_ROOT / "processor_adv5n6.json"
 _TN103_DATA_PATH = _DATA_ROOT / "processor_tn103.json"
 _TR87_DATA_PATH = _DATA_ROOT / "processor_tr87.json"
@@ -96,6 +97,14 @@ class AutomaticBuckingAdjustment:
     base_year: int | None
 
 
+@dataclass(frozen=True)
+class BerryLogGradeStat:
+    grade: str
+    mean_minutes: float
+    lo_minutes: float
+    hi_minutes: float
+
+
 @lru_cache(maxsize=1)
 def get_labelle_huss_automatic_bucking_adjustment() -> AutomaticBuckingAdjustment:
     data = _load_labelle_huss_dataset()
@@ -116,6 +125,45 @@ def get_labelle_huss_automatic_bucking_adjustment() -> AutomaticBuckingAdjustmen
         currency=metadata.get("currency"),
         base_year=base_year_value,
     )
+
+
+@lru_cache(maxsize=1)
+def _load_berry_log_grade_payload() -> dict[str, object]:
+    try:
+        return json.loads(_BERRY_LOG_GRADES_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:  # pragma: no cover - configuration error
+        raise FileNotFoundError(
+            f"Berry (2019) log grade emmeans data missing: {_BERRY_LOG_GRADES_PATH}"
+        ) from exc
+
+
+@lru_cache(maxsize=1)
+def get_berry_log_grade_stats() -> tuple[BerryLogGradeStat, ...]:
+    payload = _load_berry_log_grade_payload()
+    grades = []
+    for entry in payload.get("grades", []):
+        grade = entry.get("grade")
+        if not grade:
+            continue
+        grades.append(
+            BerryLogGradeStat(
+                grade=str(grade),
+                mean_minutes=float(entry.get("mean_minutes", 0.0) or 0.0),
+                lo_minutes=float(entry.get("lo_minutes", 0.0) or 0.0),
+                hi_minutes=float(entry.get("hi_minutes", 0.0) or 0.0),
+            )
+        )
+    return tuple(grades)
+
+
+@lru_cache(maxsize=1)
+def get_berry_log_grade_metadata() -> dict[str, object]:
+    payload = _load_berry_log_grade_payload()
+    return {
+        "source": payload.get("source"),
+        "description": payload.get("description"),
+        "notes": tuple(payload.get("notes" or [])),
+    }
 
 
 def _load_tree_form_productivity_multipliers() -> dict[int, float]:

@@ -119,8 +119,11 @@ from fhops.productivity import (
     ADV2N26_DEFAULT_STEMS_PER_CYCLE,
     ADV2N26_DEFAULT_STEM_VOLUME_M3,
     ADV2N26_DEFAULT_UTILISATION,
+    BerryLogGradeStat,
+    get_berry_log_grade_metadata,
+    get_berry_log_grade_stats,
+    get_labelle_huss_automatic_bucking_adjustment,
 )
-from fhops.productivity import get_labelle_huss_automatic_bucking_adjustment
 from fhops.reference import get_appendix5_profile, get_tr119_treatment, load_appendix5_stands
 from fhops.scenario.contract import Machine, Scenario
 from fhops.scenario.io import load_scenario
@@ -1124,6 +1127,7 @@ def _render_machine_cost_summary(role: str, *, label: str | None = None) -> None
         return
     rental_rate, breakdown = composed
     rows = [
+        ("Machine Role", role),
         ("Default Rental Rate ($/SMH)", f"{rental_rate:.2f}"),
     ]
     if "ownership" in breakdown:
@@ -2441,6 +2445,35 @@ def _render_kv_table(title: str, rows: Iterable[tuple[str, str]]) -> None:
     console.print(table)
 
 
+def _render_berry_log_grade_table() -> None:
+    stats = get_berry_log_grade_stats()
+    if not stats:
+        console.print("[dim]No Berry (2019) log-grade statistics are available.[/dim]")
+        return
+    table = Table(title="Berry (2019) Log-Grade Cycle Times", header_style="bold cyan", expand=True)
+    table.add_column("Grade", style="bold")
+    table.add_column("Mean (min)", justify="right")
+    table.add_column("-2 (min)", justify="right")
+    table.add_column("+2 (min)", justify="right")
+    for stat in stats:
+        table.add_row(
+            stat.grade,
+            f"{stat.mean_minutes:.2f}",
+            f"{stat.lo_minutes:.2f}",
+            f"{stat.hi_minutes:.2f}",
+        )
+    console.print(table)
+    metadata = get_berry_log_grade_metadata()
+    source = metadata.get("source")
+    description = metadata.get("description")
+    if description:
+        console.print(f"[dim]{description}[/dim]")
+    if source:
+        console.print(f"[dim]Source: {source}[/dim]")
+    for note in metadata.get("notes", ()):  # type: ignore[arg-type]
+        console.print(f"[dim]{note}[/dim]")
+
+
 @dataset_app.command("inspect-machine")
 def inspect_machine(
     dataset: str | None = typer.Option(
@@ -2532,6 +2565,13 @@ def inspect_machine(
         ("Operating Cost", f"{selected_machine.operating_cost}"),
         ("Role", selected_machine.role or "—"),
     ]
+    machine_for_snapshot = selected_machine
+    if cost_role_hint and hasattr(selected_machine, "model_copy"):
+        try:
+            machine_for_snapshot = selected_machine.model_copy(update={"role": cost_role_hint})
+        except Exception:  # pragma: no cover - defensive fallback
+            machine_for_snapshot = selected_machine
+    default_snapshot = build_machine_cost_snapshots([machine_for_snapshot])[0]
     default_rate_rows: list[tuple[str, str]] = []
     default_rate_note: str | None = None
     if default_snapshot.rental_rate_smh is not None:
@@ -2608,16 +2648,6 @@ def inspect_machine(
 
     if cost_role_hint and cost_role_hint != selected_machine.role:
         context_lines.append(("Cost Role Override", cost_role_hint))
-
-    machine_for_snapshot = selected_machine
-    if cost_role_hint and hasattr(selected_machine, "model_copy"):
-        try:
-            machine_for_snapshot = selected_machine.model_copy(update={"role": cost_role_hint})
-        except Exception:  # pragma: no cover - defensive fallback
-            machine_for_snapshot = selected_machine
-    default_snapshot = build_machine_cost_snapshots([machine_for_snapshot])[0]
-
-    default_rate_rows: list[tuple[str, str]] = []
     _render_kv_table(f"Machine Inspection — {selected_machine.id}", context_lines)
     note_lines: list[str] = []
     if default_rate_note:
@@ -2717,6 +2747,13 @@ def inspect_block(
     console.print(
         "[yellow]* TODO: add derived statistics (windows, production rates) once defined.[/yellow]"
     )
+
+
+@dataset_app.command("berry-log-grades")
+def berry_log_grades_cmd() -> None:
+    """Show the digitised Berry (2019) log-grade cycle-time emmeans."""
+
+    _render_berry_log_grade_table()
 
 
 @dataset_app.command("estimate-productivity")
@@ -3141,6 +3178,11 @@ def estimate_productivity_cmd(
         "--processor-skid-area-m2",
         min=0.0,
         help="Approximate skid/landing area (m²). When using Berry (2019) this scales the utilisation multiplier using the published skid-size delay regression.",
+    ),
+    processor_show_grade_stats: bool = typer.Option(
+        False,
+        "--processor-show-grade-stats/--processor-hide-grade-stats",
+        help="With Berry (2019) helper, print the digitised log-grade emmeans table (Appendix 13).",
     ),
     processor_automatic_bucking: bool = typer.Option(
         False,
@@ -3783,6 +3825,13 @@ def estimate_productivity_cmd(
                 automatic_bucking_multiplier=automatic_bucking_multiplier_value,
             )
         _render_processor_result(result_processor)
+        if processor_show_grade_stats:
+            if processor_model is RoadsideProcessorModel.BERRY2019:
+                _render_berry_log_grade_table()
+            else:
+                console.print(
+                    "[dim]--processor-show-grade-stats applies to the Berry (2019) helper only.[/dim]"
+                )
         if automatic_bucking_info is not None:
             pct_gain = (automatic_bucking_info.multiplier - 1.0) * 100.0
             console.print(

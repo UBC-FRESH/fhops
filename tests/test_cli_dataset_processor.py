@@ -61,6 +61,13 @@ def test_cli_processor_automatic_bucking_flag() -> None:
     assert "Labelle & Huß (2018" in result.stdout
 
 
+def test_cli_berry_log_grades_command() -> None:
+    result = runner.invoke(dataset_app, ["berry-log-grades"])
+    assert result.exit_code == 0, result.stdout
+    assert "Berry (2019) Log-Grade" in result.stdout
+    assert "Z40" in result.stdout
+
+
 def test_cli_processor_tree_form_penalty() -> None:
     result = runner.invoke(
         dataset_app,
@@ -86,6 +93,23 @@ def test_cli_processor_tree_form_penalty() -> None:
         delay_multiplier=0.8,
     )
     assert f"{expected.productivity_m3_per_pmh:.2f}" in result.stdout
+
+
+def test_cli_processor_show_grade_stats() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "roadside_processor",
+            "--processor-piece-size-m3",
+            "1.2",
+            "--processor-show-grade-stats",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "Berry (2019) Log-Grade" in result.stdout
+    assert "Z40" in result.stdout
 
 
 def test_cli_processor_labelle2019_dbh() -> None:

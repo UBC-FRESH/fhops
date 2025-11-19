@@ -132,6 +132,9 @@ from .processor_loader import (
     estimate_processor_productivity_tn166,
     predict_berry2019_skid_effects,
     get_labelle_huss_automatic_bucking_adjustment,
+    BerryLogGradeStat,
+    get_berry_log_grade_stats,
+    get_berry_log_grade_metadata,
 )
 
 __all__ = [
@@ -242,4 +245,7 @@ __all__ = [
     "HelicopterLonglineModel",
     "HelicopterProductivityResult",
     "get_labelle_huss_automatic_bucking_adjustment",
+    "BerryLogGradeStat",
+    "get_berry_log_grade_stats",
+    "get_berry_log_grade_metadata",
 ]
