@@ -1012,13 +1012,17 @@ def estimate_processor_productivity_tn166(
 
 
 def estimate_loader_productivity_barko450(
-    *, scenario: Literal["ground_skid_block", "cable_yard_block"]
+    *,
+    scenario: Literal["ground_skid_block", "cable_yard_block"],
+    utilisation_override: float | None = None,
 ) -> LoaderBarko450ProductivityResult:
     scenarios = _load_barko450_scenarios()
     payload = scenarios.get(scenario)
     if payload is None:
         valid = ", ".join(sorted(scenarios))
         raise ValueError(f"Unknown Barko 450 scenario '{scenario}'. Valid options: {valid}.")
+    if utilisation_override is not None and not (0.0 < utilisation_override <= 1.0):
+        raise ValueError("utilisation_override must lie in (0, 1].")
 
     def _maybe_float(name: str) -> float | None:
         value = payload.get(name)
@@ -1029,15 +1033,30 @@ def estimate_loader_productivity_barko450(
     cost_per_shift = _inflate_cost(_maybe_float("cost_per_shift_cad"), cost_base_year)
     cost_per_m3 = _inflate_cost(_maybe_float("cost_per_m3_cad"), cost_base_year)
     cost_per_piece = _inflate_cost(_maybe_float("cost_per_piece_cad"), cost_base_year)
+    avg_volume_per_shift = float(payload["avg_volume_per_shift_m3"])
+    utilisation_percent = _maybe_float("utilisation_percent")
+    scale = 1.0
+    if utilisation_override is not None:
+        if utilisation_percent is not None and utilisation_percent > 0:
+            base_fraction = utilisation_percent / 100.0
+            scale = utilisation_override / base_fraction if base_fraction > 0 else 1.0
+        utilisation_percent = utilisation_override * 100.0
+    if scale != 1.0:
+        avg_volume_per_shift *= scale
+        if cost_per_m3 is not None and scale != 0:
+            cost_per_m3 /= scale
+        if cost_per_piece is not None and scale != 0:
+            cost_per_piece /= scale
+
     return LoaderBarko450ProductivityResult(
         scenario=payload.get("name", scenario),
         description=payload.get("description", ""),
-        avg_volume_per_shift_m3=float(payload["avg_volume_per_shift_m3"]),
+        avg_volume_per_shift_m3=avg_volume_per_shift,
         avg_volume_per_load_m3=_maybe_float("avg_volume_per_load_m3"),
         total_volume_m3=_maybe_float("total_volume_m3"),
         total_truck_loads=_maybe_float("total_truck_loads"),
         monitoring_days=_maybe_float("monitoring_days"),
-        utilisation_percent=_maybe_float("utilisation_percent"),
+        utilisation_percent=utilisation_percent,
         availability_percent=_maybe_float("mechanical_availability_percent"),
         wait_truck_move_sort_percent=_maybe_float("wait_truck_move_sort_percent"),
         cost_per_shift_cad=cost_per_shift,

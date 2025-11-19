@@ -94,6 +94,17 @@
     }
   },
   {
+    "machine_name": "Barko 450 Heel-boom Loader",
+    "role": "loader_barko450",
+    "ownership_cost_per_smh": 0.0,
+    "operating_cost_per_smh": 32.16,
+    "default_utilization": 0.79,
+    "move_in_cost": 0.0,
+    "cost_base_year": 1986,
+    "source": "FERIC TR-73 (1986) Table 39 Barko 250 log loader (Hahn Harvester) + TN-64/TN-51 roadside sort studies, all reporting $257.26/shift ($0.45/m³, $0.21/piece, interest excluded). Shift throughput 570 m³ with 0.46 m³ average piece; TN-46 supplies the 79% utilisation (17% truck-wait penalty) for the Barko 450 upgrade.",
+    "notes": "Hourly rate derived from $257.26/8 h = $32.16/SMH (1986 CAD). Entire value placed under operating cost because the FERIC tables only publish total equipment cost per shift (owning + wages + fuel) with interest excluded."
+  },
+  {
     "machine_name": "Swing Yarder (Cypress 7230 class)",
     "role": "swing_yarder",
     "ownership_cost_per_smh": 150.0,

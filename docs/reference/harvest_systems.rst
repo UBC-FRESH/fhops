@@ -237,9 +237,10 @@ Loader-Forwarder Productivity Models
 * ``--loader-model barko450`` – FERIC TN-46 Barko 450 live-heel loader preset for interior roadside decks. No
   predictors are required; instead pick ``--loader-barko-scenario`` (``ground_skid_block`` for the grapple-skid trial
   or ``cable_yard_block`` for the Washington 78 yarder decks) to show the published ≈658 m³/shift averages,
-  availability (96 %), utilisation (79 %), and the ~17 % truck-wait/move penalty. This is ideal when you need a
-  BC loader baseline but lack a regression. CLI cost metrics are inflated to 2024 CAD using Statistics Canada CPI
-  (Table 18-10-0005-01) so they align with modern budgeting inputs.
+  availability (96 %), utilisation (79 %), and the ~17 % truck-wait/move penalty. Supplying ``--loader-utilisation``
+  rescales the Barko production and $/m³ outputs so you can model different truck-supply assumptions. This preset
+  now draws its $257.26/shift (1986 CAD) cost baseline directly from the TR‑73/TN‑64/TN‑51 roadside sort studies;
+  run with ``--show-costs`` to see the CPI-inflated owning/operating/repair breakdown that feeds the costing CLI.
 
 Loader harvest-system overrides
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

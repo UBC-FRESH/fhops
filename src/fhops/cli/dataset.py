@@ -499,6 +499,7 @@ class SkylineProductivityModel(str, Enum):
 
     LEE_UPHILL = "lee-uphill"
     LEE_DOWNHILL = "lee-downhill"
+    MCNEEL_RUNNING = "mcneel-running"
     TR125_SINGLE = "tr125-single-span"
     TR125_MULTI = "tr125-multi-span"
     TR127_BLOCK1 = "tr127-block1"
@@ -507,6 +508,9 @@ class SkylineProductivityModel(str, Enum):
     TR127_BLOCK4 = "tr127-block4"
     TR127_BLOCK5 = "tr127-block5"
     TR127_BLOCK6 = "tr127-block6"
+    AUBUCHON_STANDING = "aubuchon-standing"
+    AUBUCHON_KRAMER = "aubuchon-kramer"
+    AUBUCHON_KELLOGG = "aubuchon-kellogg"
 
 
 class RoadsideProcessorModel(str, Enum):
@@ -2483,6 +2487,11 @@ def estimate_productivity_cmd(
             "roadside_processor | loader | shovel_logger | helicopter_longline)."
         ),
     ),
+    show_costs: bool = typer.Option(
+        False,
+        "--show-costs/--hide-costs",
+        help="Display the default machine-rate breakdown (owning/operating/repair) inflated to 2024 CAD.",
+    ),
     avg_stem_size: float | None = typer.Option(
         None,
         "--avg-stem-size",
@@ -3540,6 +3549,7 @@ def estimate_productivity_cmd(
             barko_scenario_supplied=loader_user_supplied["loader_barko_scenario"],
         )
         loader_metadata = _loader_model_metadata(loader_model)
+        loader_cost_role = ProductivityMachineRole.LOADER.value
         if loader_model is LoaderProductivityModel.TN261:
             if loader_piece_size_m3 is None:
                 raise typer.BadParameter("--loader-piece-size-m3 is required when --loader-model tn261.")
@@ -3615,6 +3625,9 @@ def estimate_productivity_cmd(
         elif loader_model is LoaderProductivityModel.BARKO450:
             result = estimate_loader_productivity_barko450(
                 scenario=loader_barko_scenario.value,
+                utilisation_override=(
+                    loader_utilisation if loader_user_supplied["loader_utilisation"] else None
+                ),
             )
             telemetry_inputs = {
                 "scenario": loader_barko_scenario.value,
@@ -3625,9 +3638,18 @@ def estimate_productivity_cmd(
                 "availability_percent": result.availability_percent,
             }
             loader_result = result
+            loader_cost_role = "loader_barko450"
         else:  # pragma: no cover - defensive, all enums handled
             raise RuntimeError(f"Unhandled loader model {loader_model}")
         _render_loader_result(loader_result)
+        if (
+            loader_model is LoaderProductivityModel.BARKO450
+            and loader_user_supplied["loader_utilisation"]
+            and loader_utilisation is not None
+        ):
+            console.print(
+                f"[dim]Adjusted Barko utilisation to {loader_utilisation * 100:.1f}% (scaled shift volume/cost per m³ accordingly).[/dim]"
+            )
         if telemetry_log:
             _append_loader_telemetry(
                 log_path=telemetry_log,
@@ -3640,7 +3662,7 @@ def estimate_productivity_cmd(
             console.print(
                 f"[dim]Applied loader defaults from harvest system '{selected_system.system_id}'.[/dim]"
             )
-        _maybe_render_costs(show_costs, ProductivityMachineRole.LOADER.value)
+        _maybe_render_costs(show_costs, loader_cost_role)
         return
     if role == ProductivityMachineRole.SHOVEL_LOGGER.value:
         (
