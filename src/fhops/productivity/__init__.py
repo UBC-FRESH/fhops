@@ -105,6 +105,7 @@ from .processor_loader import (
     LoaderBarko450ProductivityResult,
     LoaderHotColdProductivityResult,
     ProcessorProductivityResult,
+    ProcessorCarrierProfile,
     Labelle2019ProcessorProductivityResult,
     Labelle2019VolumeProcessorProductivityResult,
     Labelle2016ProcessorProductivityResult,
@@ -139,6 +140,7 @@ from .processor_loader import (
     BerryLogGradeStat,
     get_berry_log_grade_stats,
     get_berry_log_grade_metadata,
+    get_processor_carrier_profile,
 )
 
 __all__ = [
@@ -208,6 +210,7 @@ __all__ = [
     "estimate_processor_productivity_labelle2019_dbh",
     "estimate_processor_productivity_labelle2019_volume",
     "ProcessorProductivityResult",
+    "ProcessorCarrierProfile",
     "AutomaticBuckingAdjustment",
     "Labelle2016ProcessorProductivityResult",
     "Labelle2017PolynomialProcessorResult",
@@ -256,4 +259,5 @@ __all__ = [
     "BerryLogGradeStat",
     "get_berry_log_grade_stats",
     "get_berry_log_grade_metadata",
+    "get_processor_carrier_profile",
 ]

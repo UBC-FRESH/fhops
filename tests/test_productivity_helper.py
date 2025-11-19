@@ -8,12 +8,14 @@ from fhops.productivity import (
     LahrsenModel,
     estimate_productivity,
     estimate_productivity_distribution,
+    estimate_processor_productivity_berry2019,
     estimate_processor_productivity_labelle2016,
     estimate_processor_productivity_labelle2017,
     estimate_processor_productivity_labelle2018,
     estimate_processor_productivity_labelle2019_dbh,
     estimate_processor_productivity_labelle2019_volume,
     estimate_processor_productivity_visser2015,
+    get_processor_carrier_profile,
     get_labelle_huss_automatic_bucking_adjustment,
     load_lahrsen_ranges,
 )
@@ -208,3 +210,22 @@ def test_visser2015_interpolates_between_piece_sizes() -> None:
 def test_visser2015_invalid_piece_size_raises() -> None:
     with pytest.raises(ValueError):
         estimate_processor_productivity_visser2015(piece_size_m3=0.5, log_sort_count=9)
+
+
+def test_berry2019_excavator_carrier_adjustment() -> None:
+    profile_excavator = get_processor_carrier_profile("excavator")
+    profile_purpose = get_processor_carrier_profile("purpose_built")
+    base = estimate_processor_productivity_berry2019(
+        piece_size_m3=1.5,
+        carrier_profile=profile_purpose,
+    )
+    excavator = estimate_processor_productivity_berry2019(
+        piece_size_m3=1.5,
+        carrier_profile=profile_excavator,
+    )
+    ratio = excavator.delay_free_productivity_m3_per_pmh / base.delay_free_productivity_m3_per_pmh
+    assert math.isclose(
+        ratio,
+        profile_excavator.productivity_ratio / profile_purpose.productivity_ratio,
+        rel_tol=1e-9,
+    )

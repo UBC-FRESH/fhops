@@ -24,7 +24,7 @@ _VISSER2015_DATA_PATH = _DATA_ROOT / "processor_visser2015.json"
 _KIZHA2020_DATA_PATH = _DATA_ROOT / "loader_kizha2020.json"
 _BARKO450_DATA_PATH = _DATA_ROOT / "loader_barko450.json"
 _LABELLE_HUSS_DATA_PATH = _REFERENCE_ROOT / "processor_labelle_huss2018.json"
-_CARRIER_PROFILE_PATH = Path(__file__).resolve().parents[3] / "data" / "reference" / "processor_carrier_profiles.json"
+_CARRIER_PROFILE_PATH = _REFERENCE_ROOT / "processor_carrier_profiles.json"
 @lru_cache(maxsize=1)
 def _load_berry_dataset() -> dict[str, object]:
     try:
@@ -126,6 +126,20 @@ class BerryLogGradeStat:
     hi_minutes: float
 
 
+@dataclass(frozen=True)
+class ProcessorCarrierProfile:
+    key: str
+    name: str
+    description: str
+    productivity_ratio: float
+    default_delay_multiplier: float | None
+    fuel_l_per_m3: float | None
+    yarder_delay_percent: float | None
+    notes: tuple[str, ...]
+    references: tuple[str, ...]
+    nakagawa: dict[str, float] | None = None
+
+
 @lru_cache(maxsize=1)
 def get_labelle_huss_automatic_bucking_adjustment() -> AutomaticBuckingAdjustment:
     data = _load_labelle_huss_dataset()
@@ -185,6 +199,47 @@ def get_berry_log_grade_metadata() -> dict[str, object]:
         "description": payload.get("description"),
         "notes": tuple(payload.get("notes" or [])),
     }
+
+
+@lru_cache(maxsize=1)
+def _load_carrier_profiles_raw() -> dict[str, dict[str, object]]:
+    try:
+        data = json.loads(_CARRIER_PROFILE_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:  # pragma: no cover - configuration error
+        raise FileNotFoundError(f"Carrier profile data missing: {_CARRIER_PROFILE_PATH}") from exc
+    return data.get("carriers") or {}
+
+
+def get_processor_carrier_profile(key: str) -> ProcessorCarrierProfile:
+    profiles = _load_carrier_profiles_raw()
+    payload = profiles.get(key)
+    if payload is None:
+        valid = ", ".join(sorted(profiles))
+        raise ValueError(f"Unknown processor carrier '{key}'. Valid options: {valid}.")
+    notes = payload.get("notes") or ()
+    references = payload.get("references") or ()
+    def _coerce_float(value: object | None) -> float | None:
+        if value is None:
+            return None
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return None
+    return ProcessorCarrierProfile(
+        key=key,
+        name=str(payload.get("name", key)),
+        description=str(payload.get("description", "")),
+        productivity_ratio=float(payload.get("productivity_ratio", 1.0) or 1.0),
+        default_delay_multiplier=_coerce_float(payload.get("default_delay_multiplier")),
+        fuel_l_per_m3=_coerce_float(payload.get("fuel_l_per_m3")),
+        yarder_delay_percent=_coerce_float(payload.get("yarder_delay_percent")),
+        notes=tuple(str(n) for n in notes),
+        references=tuple(
+            str(ref.get("citation")) if isinstance(ref, dict) else str(ref)
+            for ref in references
+        ),
+        nakagawa=payload.get("nakagawa_regression") if isinstance(payload.get("nakagawa_regression"), dict) else None,
+    )
 
 
 def _load_tree_form_productivity_multipliers() -> dict[int, float]:
@@ -472,6 +527,7 @@ class ProcessorProductivityResult:
     productivity_m3_per_pmh: float
     piece_size_m3: float
     tree_form_category: int
+    carrier_profile: ProcessorCarrierProfile | None = None
 
 
 def estimate_processor_productivity_berry2019(
@@ -481,6 +537,7 @@ def estimate_processor_productivity_berry2019(
     crew_multiplier: float = 1.0,
     delay_multiplier: float = _BERRY_DEFAULT_UTILISATION,
     automatic_bucking_multiplier: float | None = None,
+    carrier_profile: ProcessorCarrierProfile | None = None,
 ) -> ProcessorProductivityResult:
     if piece_size_m3 <= 0:
         raise ValueError("piece_size_m3 must be > 0")
@@ -499,7 +556,12 @@ def estimate_processor_productivity_berry2019(
 
     base_productivity = _BERRY_BASE_SLOPE * piece_size_m3 + _BERRY_BASE_INTERCEPT
     tree_multiplier = _TREE_FORM_PRODUCTIVITY_MULTIPLIERS[tree_form_category]
-    delay_free = base_productivity * tree_multiplier * crew_multiplier * auto_multiplier
+    productivity_ratio = 1.0
+    if carrier_profile and carrier_profile.productivity_ratio:
+        productivity_ratio = max(carrier_profile.productivity_ratio, 0.0)
+    delay_free = (
+        base_productivity * tree_multiplier * crew_multiplier * auto_multiplier * productivity_ratio
+    )
     productivity = delay_free * delay_multiplier
 
     return ProcessorProductivityResult(
@@ -511,7 +573,10 @@ def estimate_processor_productivity_berry2019(
         productivity_m3_per_pmh=productivity,
         piece_size_m3=piece_size_m3,
         tree_form_category=tree_form_category,
+        carrier_profile=carrier_profile,
     )
+
+
 @dataclass(frozen=True)
 class VisserLogSortProductivityResult:
     piece_size_m3: float

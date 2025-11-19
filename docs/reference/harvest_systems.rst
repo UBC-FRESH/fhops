@@ -141,6 +141,9 @@ regressions:
     ≈ −25 % ⇒ 0.75, etc.).
   * ``--processor-delay-multiplier`` – utilisation factor (default 0.91 reflects delays <10 min logged
     in the study). Adjust it if your PMH/SMH ratio differs.
+  * ``--processor-carrier`` – ``purpose_built`` (default) or ``excavator``. Excavator carriers apply the
+    utilisation/productivity penalty observed by Magagnotti et al. (2017) and surface the higher fuel
+    consumption + yarder-wait behaviour noted by Nakagawa (2010) / Bertone & Manzone (2025).
 * ``--processor-model labelle2016`` – Labelle et al. (2016) sugar maple study (New Brunswick) grouped by tree form quality (acceptable vs. unacceptable). Outputs are PMH₀.
   * ``--processor-dbh-cm`` – diameter at breast height (cm).
   * ``--processor-labelle2016-form`` – ``acceptable`` or ``unacceptable`` form class (matches the NHRI tree-form groupings).

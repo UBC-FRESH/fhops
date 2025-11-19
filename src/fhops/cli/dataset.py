@@ -112,8 +112,10 @@ from fhops.productivity import (
     estimate_loader_forwarder_productivity_adv5n1,
     LoaderAdv5N1ProductivityResult,
     LoaderBarko450ProductivityResult,
+    ProcessorCarrierProfile,
     LoaderHotColdProductivityResult,
     estimate_loader_productivity_barko450,
+    get_processor_carrier_profile,
     estimate_loader_hot_cold_productivity,
     ADV5N1_DEFAULT_PAYLOAD_M3,
     ADV5N1_DEFAULT_UTILISATION,
@@ -657,6 +659,11 @@ class Labelle2018Variant(str, Enum):
     CT_POLY2 = "ct_poly2"
 
 
+class ProcessorCarrier(str, Enum):
+    PURPOSE_BUILT = "purpose_built"
+    EXCAVATOR = "excavator"
+
+
 class LoaderProductivityModel(str, Enum):
     TN261 = "tn261"
     ADV2N26 = "adv2n26"
@@ -816,10 +823,21 @@ def _render_processor_result(
             ("Delay Multiplier", f"{result.delay_multiplier:.3f}"),
             ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
         ]
+        if result.carrier_profile:
+            rows.append(("Carrier", result.carrier_profile.name))
+            if result.carrier_profile.fuel_l_per_m3 is not None:
+                rows.append(
+                    ("Carrier Fuel (L/m³)", f"{result.carrier_profile.fuel_l_per_m3:.2f}")
+                )
         _render_kv_table("Roadside Processor Productivity Estimate", rows)
-        console.print(
-            "[dim]Regression from Berry (2019) Kinleith NZ time study; utilisation default accounts for <10 min delays.[/dim]"
-        )
+        note = "Regression from Berry (2019) Kinleith NZ time study; utilisation default accounts for <10 min delays."
+        if result.carrier_profile:
+            carrier_note = (
+                f"Carrier profile '{result.carrier_profile.name}' captures utilisation/fuel differences "
+                "reported by Magagnotti et al. (2017) and related studies."
+            )
+            note = f"{note} {carrier_note}"
+        console.print(f"[dim]{note}[/dim]")
         return
 
     elif isinstance(result, VisserLogSortProductivityResult):
@@ -3374,6 +3392,12 @@ def estimate_productivity_cmd(
         max=1.0,
         help="Utilisation multiplier capturing delays (<10 min) relative to delay-free productivity (Berry 2019 default 0.91).",
     ),
+    processor_carrier: ProcessorCarrier = typer.Option(
+        ProcessorCarrier.PURPOSE_BUILT,
+        "--processor-carrier",
+        case_sensitive=False,
+        help="Carrier profile for the Berry helper (purpose_built | excavator).",
+    ),
     processor_skid_area_m2: float | None = typer.Option(
         None,
         "--processor-skid-area-m2",
@@ -3802,6 +3826,16 @@ def estimate_productivity_cmd(
                 )
             automatic_bucking_info = get_labelle_huss_automatic_bucking_adjustment()
             automatic_bucking_multiplier_value = automatic_bucking_info.multiplier
+        processor_carrier_profile: ProcessorCarrierProfile | None = None
+        if processor_model is RoadsideProcessorModel.BERRY2019:
+            processor_carrier_profile = get_processor_carrier_profile(processor_carrier.value)
+            if (
+                not processor_delay_supplied
+                and processor_carrier_profile.default_delay_multiplier is not None
+            ):
+                processor_delay_multiplier = processor_carrier_profile.default_delay_multiplier
+        elif processor_carrier is not ProcessorCarrier.PURPOSE_BUILT:
+            raise typer.BadParameter("--processor-carrier currently applies to --processor-model berry2019 only.")
         if (
             processor_log_sorts is not None
             and processor_model is not RoadsideProcessorModel.VISSER2015
@@ -3856,6 +3890,7 @@ def estimate_productivity_cmd(
                 crew_multiplier=processor_crew_multiplier,
                 delay_multiplier=processor_delay_multiplier,
                 automatic_bucking_multiplier=automatic_bucking_multiplier_value,
+                carrier_profile=processor_carrier_profile,
             )
         elif processor_model is RoadsideProcessorModel.LABELLE2016:
             if processor_piece_size_m3 is not None:

@@ -4,6 +4,7 @@
       "name": "Purpose-built carrier",
       "description": "Dedicated harvester/processor bases (e.g., TimberPro, Ponsse) working roadside or at landings.",
       "default_delay_multiplier": 0.78,
+      "productivity_ratio": 1.0,
       "fuel_l_per_m3": 0.70,
       "reference_productivity_m3_per_pmh": 21.41,
       "references": [
@@ -24,15 +25,16 @@
     "excavator": {
       "name": "Excavator-based carrier",
       "description": "Tracked excavators fitted with processing heads (shovel processors, stroke processors).",
+      "productivity_ratio": 0.65,
+      "default_delay_multiplier": 0.54,
+      "fuel_l_per_m3": 1.71,
+      "yarder_delay_percent": 48.0,
       "nakagawa_regression": {
         "form": "power",
         "coefficient": 0.363,
         "exponent": 1.116,
         "units": "m3_per_pmh = 0.363 * DBH_cm^1.116"
       },
-      "default_delay_multiplier": 0.54,
-      "fuel_l_per_m3": 1.71,
-      "yarder_delay_percent": 48.0,
       "notes": [
         "Productivity regression from Nakagawa et al. (2010) landing processor study (Hokkaido excavator + single-grip head).",
         "Utilisation and fuel ratios from Magagnotti et al. (2017): excavator carriers averaged 54 % utilisation, 1.71 L/m³ (≈2.4× purpose-built).",
@@ -41,19 +43,15 @@
       "references": [
         {
           "citation": "Nakagawa, M. et al. 2010. Effect of tree size on time of each work element and processing productivity using an excavator-based single-grip harvester or processor at a landing. J. For. Res. 15:226–233.",
-          "notes": "Delay-free productivity (m³/PMH) = 0.363 × DBH^1.116 for excavator-based landing processor." 
+          "notes": "Delay-free productivity (m³/PMH) = 0.363 × DBH^1.116 for excavator-based landing processor."
         },
         {
           "citation": "Magagnotti, N. et al. 2017. Forests 8(485).",
-          "notes": "Medians across excavator-based units: utilisation 54 %, productivity 8.7 m³/PMH, fuel 1.71 L/m³ (≈2.4× purpose-built)."
+          "notes": "Medians across excavator-based units: utilisation 54 %, productivity 8.7 m³/PMH (~65 % of purpose-built), fuel 1.71 L/m³ (≈2.4× purpose-built)."
         },
         {
           "citation": "Bertone, F. & Manzone, M. 2025. Productivity and costs of a tracked excavator-based processor at the cable yarder landing in the North-western Italian Alps. Int. J. Forest Engineering 36(1).",
           "notes": "Observed productivity 25.7 m³/PMH with 48 % delays due to yarder wait; shift cost ≈€103/SMH."
-        },
-        {
-          "citation": "Borz, S.A. et al. 2023. Forests 14(465).",
-          "notes": "Use as a counterpoint: purpose-built landing harvester achieved 21.41 m³/PMH with 0.78 L/m³ fuel." 
         }
       ]
     }

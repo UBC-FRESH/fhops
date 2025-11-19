@@ -22,6 +22,10 @@
 - Added the Kizha et al. (2020) hot vs. cold loader preset (`data/productivity/loader_kizha2020.json`,
   `--loader-model kizha2020` + `--loader-hot-cold-mode`). CLI output now reports the 55 % vs. 7 % utilisation split,
   dominant delay causes, and the $/PMH penalty so truck-supply planning can weigh integrated vs. decoupled biomass loading.
+- Added processor carrier profiles (purpose-built vs. excavator) derived from Magagnotti et al. (2017),
+  Nakagawa et al. (2010), Borz et al. (2023), and Bertone & Manzone (2025), along with the
+  `--processor-carrier` flag. Berry (2019) estimates now apply the appropriate utilisation/productivity penalty and
+  surface carrier-specific fuel notes when users toggle between purpose-built and excavator-based processors.
 - Added the Visser & Tolan (2015) log-sort complexity helper: `data/productivity/processor_visser2015.json`
   captures the 5/9/12/15-sort curves (1–3 m³ stems) and `--processor-model visser2015` exposes them via the
   new `--processor-log-sorts` flag. The CLI now reports the delay-free vs. utilisation-adjusted m³/PMH as well

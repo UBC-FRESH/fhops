@@ -17,6 +17,7 @@ from fhops.productivity import (
     estimate_processor_productivity_tr87,
     estimate_processor_productivity_visser2015,
     get_labelle_huss_automatic_bucking_adjustment,
+    get_processor_carrier_profile,
 )
 
 runner = CliRunner()
@@ -36,7 +37,12 @@ def test_cli_processor_berry2019_basic() -> None:
         ],
     )
     assert result.exit_code == 0
-    expected = estimate_processor_productivity_berry2019(piece_size_m3=1.5)
+    profile = get_processor_carrier_profile("purpose_built")
+    expected = estimate_processor_productivity_berry2019(
+        piece_size_m3=1.5,
+        delay_multiplier=profile.default_delay_multiplier or 0.91,
+        carrier_profile=profile,
+    )
     assert f"{expected.productivity_m3_per_pmh:.2f}" in result.stdout
 
 
@@ -54,9 +60,12 @@ def test_cli_processor_automatic_bucking_flag() -> None:
         ],
     )
     assert result.exit_code == 0
+    profile = get_processor_carrier_profile("purpose_built")
     expected = estimate_processor_productivity_berry2019(
         piece_size_m3=1.5,
         automatic_bucking_multiplier=adjustment.multiplier,
+        delay_multiplier=profile.default_delay_multiplier or 0.91,
+        carrier_profile=profile,
     )
     assert f"{expected.productivity_m3_per_pmh:.2f}" in result.stdout
     assert "Labelle & Huß (2018" in result.stdout
@@ -286,6 +295,24 @@ def test_cli_processor_visser2015_requires_log_sorts() -> None:
     assert "processor-log-sorts" in result.stdout
 
 
+def test_cli_processor_excavator_carrier() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "roadside_processor",
+            "--processor-piece-size-m3",
+            "1.8",
+            "--processor-carrier",
+            "excavator",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "Carrier" in result.stdout
+    assert "excavator" in result.stdout.lower()
+
+
 def test_cli_processor_berry2019_skid_area_auto_multiplier() -> None:
     skid_area = 2600.0
     result = runner.invoke(
@@ -301,9 +328,16 @@ def test_cli_processor_berry2019_skid_area_auto_multiplier() -> None:
         ],
     )
     assert result.exit_code == 0
-    base_prod = 34.7 * 1.5 + 11.3
+    profile = get_processor_carrier_profile("purpose_built")
+    base_result = estimate_processor_productivity_berry2019(
+        piece_size_m3=1.5,
+        delay_multiplier=1.0,
+        carrier_profile=profile,
+    )
+    base_prod = base_result.delay_free_productivity_m3_per_pmh
     predicted_delay = -0.015 * skid_area + 53.0
-    expected_multiplier = max(min(0.91 * (10.9 / predicted_delay), 1.0), 0.01)
+    base_multiplier = profile.default_delay_multiplier or 0.91
+    expected_multiplier = max(min(base_multiplier * (10.9 / predicted_delay), 1.0), 0.01)
     expected_productivity = base_prod * expected_multiplier
     assert f"{expected_productivity:.2f}" in result.stdout
     assert "Berry skid-size model predicts" in result.stdout
