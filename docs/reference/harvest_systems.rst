@@ -170,6 +170,12 @@ regressions:
   analysts can keep BC roadside presets tied to local landing data. Cost figures shown in the CLI are
   escalated to 2024 CAD using Statistics Canada CPI (Table 18-10-0005-01) so they’re comparable with
   newer references.
+* ``--processor-model tn103`` – FERIC TN-103 Caterpillar DL221 evaluation in coastal old growth.
+  Pick ``--processor-tn103-scenario`` (``area_a_feller_bunched``, ``area_b_handfelled``,
+  ``combined_observed``, or ``combined_high_util``) to reflect how well windrows are prepared and
+  whether the 73 % utilisation improvement has been implemented. The helper reports trees/PMH,
+  m³/PMH, and the published $/m³ and $/tree costs; CLI output also notes windrow prep guidance so
+  analysts can match conditions to their landing prep.
 * ``--processor-model tn166`` – FERIC TN-166 stroke-processor study (Denis D3000 telescopic boom) from
   interior BC. Choose ``--processor-tn166-scenario`` (``grapple_yarded``, ``right_of_way``, or
   ``mixed_shift``) to flip between the detailed timing splits or the overall shift-level average. The

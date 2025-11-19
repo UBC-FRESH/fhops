@@ -14,6 +14,7 @@ from fhops.costing.inflation import inflate_value
 _DATA_ROOT = Path(__file__).resolve().parents[3] / "data" / "productivity"
 _BERRY_DATA_PATH = _DATA_ROOT / "processor_berry2019.json"
 _ADV5N6_DATA_PATH = _DATA_ROOT / "processor_adv5n6.json"
+_TN103_DATA_PATH = _DATA_ROOT / "processor_tn103.json"
 _TN166_DATA_PATH = _DATA_ROOT / "processor_tn166.json"
 _BARKO450_DATA_PATH = _DATA_ROOT / "loader_barko450.json"
 @lru_cache(maxsize=1)
@@ -46,6 +47,14 @@ def _load_barko450_dataset() -> dict[str, object]:
         return json.loads(_BARKO450_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
         raise FileNotFoundError(f"Barko 450 loader data missing: {_BARKO450_DATA_PATH}") from exc
+
+
+@lru_cache(maxsize=1)
+def _load_tn103_dataset() -> dict[str, object]:
+    try:
+        return json.loads(_TN103_DATA_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:  # pragma: no cover - configuration error
+        raise FileNotFoundError(f"TN-103 processor data missing: {_TN103_DATA_PATH}") from exc
 
 
 def _load_tree_form_productivity_multipliers() -> dict[int, float]:
@@ -147,6 +156,20 @@ def _load_adv5n6_scenarios() -> dict[str, dict[str, object]]:
         scenario = dict(entry)
         scenario.setdefault("cost_base_year", base_year)
         scenarios[scenario["name"]] = scenario
+    return scenarios
+
+
+@lru_cache(maxsize=1)
+def _load_tn103_scenarios() -> dict[str, dict[str, object]]:
+    payload = _load_tn103_dataset()
+    defaults = payload.get("defaults") or {}
+    cost_meta = payload.get("costing") or {}
+    base_year = cost_meta.get("base_year")
+    scenarios: dict[str, dict[str, object]] = {}
+    for entry in payload.get("scenarios", []):
+        combined = {**defaults, **entry}
+        combined.setdefault("cost_base_year", base_year)
+        scenarios[entry["name"]] = combined
     return scenarios
 
 
@@ -853,6 +876,24 @@ class ADV5N6ProcessorProductivityResult:
 
 
 @dataclass(frozen=True)
+class TN103ProcessorProductivityResult:
+    scenario: str
+    description: str
+    stem_source: str
+    mean_stem_volume_m3: float | None
+    trees_per_pmh: float | None
+    trees_per_smh: float | None
+    productivity_m3_per_pmh: float | None
+    productivity_m3_per_smh: float | None
+    utilisation_percent: float | None
+    volume_per_shift_m3: float | None
+    cost_cad_per_m3: float | None
+    cost_cad_per_tree: float | None
+    notes: tuple[str, ...] | None
+    cost_base_year: int | None
+
+
+@dataclass(frozen=True)
 class TN166ProcessorProductivityResult:
     scenario: str
     description: str
@@ -959,6 +1000,48 @@ def estimate_processor_productivity_adv5n6(
         shift_length_hours=_maybe("shift_length_hours"),
         cost_cad_per_m3=cost_cad_per_m3 if cost_cad_per_m3 is not None else float(payload["cost_cad_per_m3"]),
         machine_rate_cad_per_smh=machine_rate,
+        notes=tuple(notes) if notes else None,
+        cost_base_year=cost_base_year,
+    )
+
+
+def estimate_processor_productivity_tn103(
+    *,
+    scenario: Literal[
+        "area_a_feller_bunched",
+        "area_b_handfelled",
+        "combined_observed",
+        "combined_high_util",
+    ],
+) -> TN103ProcessorProductivityResult:
+    scenarios = _load_tn103_scenarios()
+    payload = scenarios.get(scenario)
+    if payload is None:
+        valid = ", ".join(sorted(scenarios))
+        raise ValueError(f"Unknown TN-103 scenario '{scenario}'. Valid options: {valid}.")
+
+    def _maybe(name: str) -> float | None:
+        value = payload.get(name)
+        return None if value is None else float(value)
+
+    notes = payload.get("notes")
+    cost_base_year = payload.get("cost_base_year")
+    cost_cad_per_m3 = _inflate_cost(_maybe("cost_cad_per_m3"), cost_base_year)
+    cost_cad_per_tree = _inflate_cost(_maybe("cost_cad_per_tree"), cost_base_year)
+
+    return TN103ProcessorProductivityResult(
+        scenario=payload.get("name", scenario),
+        description=payload.get("description", ""),
+        stem_source=payload.get("stem_source", "mixed"),
+        mean_stem_volume_m3=_maybe("mean_stem_volume_m3"),
+        trees_per_pmh=_maybe("trees_per_pmh"),
+        trees_per_smh=_maybe("trees_per_smh"),
+        productivity_m3_per_pmh=_maybe("productivity_m3_per_pmh"),
+        productivity_m3_per_smh=_maybe("productivity_m3_per_smh"),
+        utilisation_percent=_maybe("utilisation_percent"),
+        volume_per_shift_m3=_maybe("volume_per_shift_m3"),
+        cost_cad_per_m3=cost_cad_per_m3,
+        cost_cad_per_tree=cost_cad_per_tree,
         notes=tuple(notes) if notes else None,
         cost_base_year=cost_base_year,
     )

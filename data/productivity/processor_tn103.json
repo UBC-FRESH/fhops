@@ -1,0 +1,99 @@
+{
+  "source": {
+    "citation": "Peterson, J.T. 1987. Survey of Mechanized Processing Equipment: Evaluation of the Caterpillar DL221 Processor. FERIC Technical Note TN-103.",
+    "document_path": "notes/reference/fpinnovations/TN103.PDF",
+    "notes": [
+      "Coastal old-growth study (MacMillan Bloedel Northwest Bay Division, Vancouver Island) with Caterpillar DL221 processor handling Madill 084 grapple-yarded windrows in January 1987.",
+      "Area A windrows were feller-bunched with butts toward the road on level ground; Area B windrows were hand-felled below road grade with dirt banks and misaligned tops, resulting in slower cycles and higher costs.",
+      "FERIC recorded low observed utilisation (52.6%) due to mechanical tweaks; analysis includes an achievable 73% utilisation scenario once the recommended modifications are in place."
+    ]
+  },
+  "costing": {
+    "currency": "CAD",
+    "base_year": 1987,
+    "inflation_source": "Statistics Canada Table 18-10-0005-01"
+  },
+  "defaults": {
+    "shift_length_hours": 8.0,
+    "availability_percent": null,
+    "utilisation_percent": 52.6
+  },
+  "scenarios": [
+    {
+      "name": "area_a_feller_bunched",
+      "description": "Feller-bunched, grapple-yarded windrows (butts facing road, level ground, no dirt bank).",
+      "stem_source": "feller_bunched_grapple_yarded",
+      "mean_stem_volume_m3": 1.32,
+      "trees_per_pmh": 41.8,
+      "trees_per_smh": 26.5,
+      "logs_per_pmh": 68.4,
+      "logs_per_smh": 43.3,
+      "productivity_m3_per_pmh": 55.2,
+      "productivity_m3_per_smh": 35.0,
+      "volume_per_shift_m3": 279.8,
+      "utilisation_percent": 63.3,
+      "cost_cad_per_m3": 3.18,
+      "cost_cad_per_tree": 4.20,
+      "notes": [
+        "Windrow prep aligned stems and avoided dirt banks, so truck loading and processor slewing were efficient.",
+        "Use when windrows are prepared by bunchers or live-heel loaders with butts oriented to the road."
+      ]
+    },
+    {
+      "name": "area_b_handfelled",
+      "description": "Hand-felled windrows below the road grade with dirt banks and tops toward traffic.",
+      "stem_source": "handfelled_grapple_yarded",
+      "mean_stem_volume_m3": 1.56,
+      "trees_per_pmh": 22.0,
+      "trees_per_smh": 11.1,
+      "logs_per_pmh": 34.5,
+      "logs_per_smh": 17.4,
+      "productivity_m3_per_pmh": 34.3,
+      "productivity_m3_per_smh": 17.3,
+      "volume_per_shift_m3": 138.5,
+      "utilisation_percent": 50.8,
+      "cost_cad_per_m3": 6.42,
+      "cost_cad_per_tree": 10.02,
+      "notes": [
+        "Dirt banks and misaligned stems forced extra swing/handling time; cedar logs up to 1.5 m diameter were present in the piles.",
+        "Use when roadside prep is poor or windrows sit below grade, requiring more swing time and cleanup."
+      ]
+    },
+    {
+      "name": "combined_observed",
+      "description": "Observed average across Areas A and B at 52.6% utilisation (study baseline).",
+      "stem_source": "mixed",
+      "mean_stem_volume_m3": 1.48,
+      "trees_per_pmh": 26.2,
+      "trees_per_smh": 13.8,
+      "productivity_m3_per_pmh": 38.8,
+      "productivity_m3_per_smh": 20.4,
+      "volume_per_shift_m3": 163.4,
+      "utilisation_percent": 52.6,
+      "cost_cad_per_m3": 5.44,
+      "cost_cad_per_tree": 8.06,
+      "notes": [
+        "Matches the five-day monitored average cited in the TN-103 summary (26 trees/PMH, 20.4 m³/SMH).",
+        "Cost basis excludes supervision/overhead and interest, mirroring the original FERIC analysis."
+      ]
+    },
+    {
+      "name": "combined_high_util",
+      "description": "FERIC’s achievable utilisation scenario (73%) once DL221 modifications and windrow prep improvements are implemented.",
+      "stem_source": "mixed",
+      "mean_stem_volume_m3": 1.48,
+      "trees_per_pmh": 26.2,
+      "trees_per_smh": 19.1,
+      "productivity_m3_per_pmh": 38.8,
+      "productivity_m3_per_smh": 28.3,
+      "volume_per_shift_m3": 226.4,
+      "utilisation_percent": 73.0,
+      "cost_cad_per_m3": 3.93,
+      "cost_cad_per_tree": 5.82,
+      "notes": [
+        "Shift-level production increases to 226 m³/8 h with the recommended boom-level monitor fix, engine cover clamps, and saw-bar upgrades.",
+        "Cost per tree assumes the combined average stem volume (1.48 m³) noted in Table 2."
+      ]
+    }
+  ]
+}
