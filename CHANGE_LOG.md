@@ -19,6 +19,11 @@
   alongside new flags `--processor-stem-source` and `--processor-processing-mode` so analysts can flip between
   loader-forwarded cold decks and yarder-fed hot decks without touching code. Validation prevents impossible combinations
   (e.g., loader-forwarded hot processing) and CLI telemetry mirrors the published scenario notes.
+- Added the Visser & Tolan (2015) log-sort complexity helper: `data/productivity/processor_visser2015.json`
+  captures the 5/9/12/15-sort curves (1–3 m³ stems) and `--processor-model visser2015` exposes them via the
+  new `--processor-log-sorts` flag. The CLI now reports the delay-free vs. utilisation-adjusted m³/PMH as well
+  as the study’s value-per-PMH deltas, so analysts can quantify the productivity penalty of chasing extra log
+  sorts alongside ADV5N6/TN106 presets.
 - Updated `docs/reference/harvest_systems.rst`, `notes/dataset_inspection_plan.md`, and `notes/reference_log.md`
   to document the new preset, its BC provenance, and the fact that coeffs came straight from ADV5N6. Added CLI regression
   tests covering the new helper plus a failure-path test for invalid stem-source/mode combinations.

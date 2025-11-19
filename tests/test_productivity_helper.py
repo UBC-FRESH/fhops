@@ -13,6 +13,7 @@ from fhops.productivity import (
     estimate_processor_productivity_labelle2018,
     estimate_processor_productivity_labelle2019_dbh,
     estimate_processor_productivity_labelle2019_volume,
+    estimate_processor_productivity_visser2015,
     get_labelle_huss_automatic_bucking_adjustment,
     load_lahrsen_ranges,
 )
@@ -180,3 +181,30 @@ def test_automatic_bucking_multiplier_scales_delay_free_output() -> None:
     )
     ratio = boosted.delay_free_productivity_m3_per_pmh / baseline.delay_free_productivity_m3_per_pmh
     assert math.isclose(ratio, adjustment.multiplier, rel_tol=1e-9)
+
+
+def test_visser2015_exact_piece_size_values() -> None:
+    result = estimate_processor_productivity_visser2015(
+        piece_size_m3=2.0,
+        log_sort_count=15,
+    )
+    assert math.isclose(result.delay_free_productivity_m3_per_pmh, 82.0)
+    assert math.isclose(result.baseline_productivity_m3_per_pmh, 91.0)
+    assert result.relative_difference_percent == pytest.approx(-9.8901098901)
+
+
+def test_visser2015_interpolates_between_piece_sizes() -> None:
+    result = estimate_processor_productivity_visser2015(
+        piece_size_m3=1.25,
+        log_sort_count=9,
+        delay_multiplier=0.8,
+    )
+    # Linear interpolation between 1.0 m3 (54 m3/PMH) and 1.5 m3 (73 m3/PMH)
+    expected_delay_free = 54.0 + (0.25 / 0.5) * (73.0 - 54.0)
+    assert math.isclose(result.delay_free_productivity_m3_per_pmh, expected_delay_free)
+    assert math.isclose(result.productivity_m3_per_pmh, expected_delay_free * 0.8)
+
+
+def test_visser2015_invalid_piece_size_raises() -> None:
+    with pytest.raises(ValueError):
+        estimate_processor_productivity_visser2015(piece_size_m3=0.5, log_sort_count=9)

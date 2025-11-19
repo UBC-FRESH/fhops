@@ -20,6 +20,7 @@ _TN103_DATA_PATH = _DATA_ROOT / "processor_tn103.json"
 _TR87_DATA_PATH = _DATA_ROOT / "processor_tr87.json"
 _TR106_DATA_PATH = _DATA_ROOT / "processor_tr106.json"
 _TN166_DATA_PATH = _DATA_ROOT / "processor_tn166.json"
+_VISSER2015_DATA_PATH = _DATA_ROOT / "processor_visser2015.json"
 _BARKO450_DATA_PATH = _DATA_ROOT / "loader_barko450.json"
 _LABELLE_HUSS_DATA_PATH = _REFERENCE_ROOT / "processor_labelle_huss2018.json"
 @lru_cache(maxsize=1)
@@ -86,6 +87,16 @@ def _load_tr106_dataset() -> dict[str, object]:
         return json.loads(_TR106_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
         raise FileNotFoundError(f"TR-106 processor data missing: {_TR106_DATA_PATH}") from exc
+
+
+@lru_cache(maxsize=1)
+def _load_visser_dataset() -> dict[str, object]:
+    try:
+        return json.loads(_VISSER2015_DATA_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:  # pragma: no cover - configuration error
+        raise FileNotFoundError(
+            f"Visser & Tolan (2015) processor data missing: {_VISSER2015_DATA_PATH}"
+        ) from exc
 
 
 @dataclass(frozen=True)
@@ -349,6 +360,90 @@ _BERRY_BASE_SLOPE, _BERRY_BASE_INTERCEPT = _load_piece_size_regression()
 _BERRY_DEFAULT_UTILISATION = _load_default_utilisation()
 
 
+@lru_cache(maxsize=1)
+def _get_visser_tables() -> tuple[
+    dict[int, tuple[tuple[float, float], ...]],
+    float,
+    float,
+    dict[int, dict[str, float]],
+    str | None,
+    int | None,
+    float | None,
+    tuple[str, ...],
+]:
+    dataset = _load_visser_dataset()
+    entries = dataset.get("piece_size_productivity") or []
+    if not entries:
+        raise KeyError("Visser & Tolan (2015) dataset missing piece-size table.")
+    by_sort: dict[int, list[tuple[float, float]]] = {}
+    pieces: list[float] = []
+    for entry in entries:
+        piece = float(entry.get("piece_size_m3", 0.0) or 0.0)
+        pieces.append(piece)
+        mapping = entry.get("productivity_m3_per_pmh_by_sort_count") or {}
+        for sort_key, value in mapping.items():
+            sort_count = int(sort_key)
+            by_sort.setdefault(sort_count, []).append((piece, float(value)))
+    if not by_sort:
+        raise KeyError("Visser & Tolan (2015) dataset missing sort-count productivity entries.")
+    by_sort_sorted: dict[int, tuple[tuple[float, float], ...]] = {}
+    for sort_count, points in by_sort.items():
+        points.sort()
+        by_sort_sorted[sort_count] = tuple(points)
+    min_piece = min(points[0][0] for points in by_sort_sorted.values())
+    max_piece = max(points[-1][0] for points in by_sort_sorted.values())
+    value_map: dict[int, dict[str, float]] = {}
+    for summary in dataset.get("sort_count_summaries", []):
+        log_sorts = summary.get("log_sorts")
+        if log_sorts is None:
+            continue
+        log_sorts_int = int(log_sorts)
+        value_map[log_sorts_int] = {
+            "gross_value_per_2m3": summary.get("gross_value_usd_per_2m3"),
+            "value_per_pmh": summary.get("value_usd_per_pmh"),
+        }
+    notes = tuple(dataset.get("source", {}).get("notes") or dataset.get("notes") or [])
+    if not notes and dataset.get("source"):
+        notes = tuple(dataset["source"].get("notes") or [])
+    currency = dataset.get("currency")
+    base_year = dataset.get("base_year")
+    value_reference = dataset.get("value_summary_piece_size_m3")
+    base_year_int = int(base_year) if isinstance(base_year, (int, float)) else None
+    return (
+        by_sort_sorted,
+        float(min_piece),
+        float(max_piece),
+        value_map,
+        currency,
+        base_year_int,
+        float(value_reference) if value_reference is not None else None,
+        tuple(notes),
+    )
+
+
+def _interpolate_visser_productivity(
+    points: tuple[tuple[float, float], ...],
+    piece_size_m3: float,
+) -> float:
+    if not points:
+        raise ValueError("Visser dataset missing required productivity points.")
+    if piece_size_m3 < points[0][0] or piece_size_m3 > points[-1][0]:
+        raise ValueError(
+            f"piece_size_m3={piece_size_m3:.3f} outside supported range {points[0][0]:.2f}–{points[-1][0]:.2f} m³."
+        )
+    for idx, (piece, value) in enumerate(points):
+        if abs(piece_size_m3 - piece) < 1e-6:
+            return value
+        if piece_size_m3 < piece and idx > 0:
+            prev_piece, prev_value = points[idx - 1]
+            span = piece - prev_piece
+            if span <= 0:
+                return value
+            ratio = (piece_size_m3 - prev_piece) / span
+            return prev_value + ratio * (value - prev_value)
+    return points[-1][1]
+
+
 def _inflate_cost(value: float | None, base_year: int | None) -> float | None:
     if value is None:
         return None
@@ -406,6 +501,83 @@ def estimate_processor_productivity_berry2019(
         productivity_m3_per_pmh=productivity,
         piece_size_m3=piece_size_m3,
         tree_form_category=tree_form_category,
+    )
+@dataclass(frozen=True)
+class VisserLogSortProductivityResult:
+    piece_size_m3: float
+    log_sort_count: int
+    delay_free_productivity_m3_per_pmh: float
+    delay_multiplier: float
+    productivity_m3_per_pmh: float
+    baseline_productivity_m3_per_pmh: float
+    relative_difference_percent: float
+    gross_value_per_2m3: float | None
+    value_per_pmh: float | None
+    value_currency: str | None
+    value_base_year: int | None
+    value_reference_piece_size_m3: float | None
+    notes: tuple[str, ...]
+
+
+def estimate_processor_productivity_visser2015(
+    *,
+    piece_size_m3: float,
+    log_sort_count: int,
+    delay_multiplier: float = 1.0,
+) -> VisserLogSortProductivityResult:
+    if piece_size_m3 <= 0:
+        raise ValueError("piece_size_m3 must be > 0")
+    if delay_multiplier <= 0 or delay_multiplier > 1.0:
+        raise ValueError("delay_multiplier must lie in (0, 1].")
+    tables, min_piece, max_piece, value_map, currency, value_base_year, value_reference, notes = (
+        _get_visser_tables()
+    )
+    if not (min_piece <= piece_size_m3 <= max_piece):
+        raise ValueError(
+            f"piece_size_m3 must lie within the Visser & Tolan (2015) study range "
+            f"{min_piece:.2f}–{max_piece:.2f} m³."
+        )
+    if log_sort_count not in tables:
+        valid = ", ".join(str(sort) for sort in sorted(tables))
+        raise ValueError(
+            f"log_sort_count={log_sort_count} is unsupported. Choose one of: {valid}."
+        )
+    baseline_points = tables.get(5)
+    if not baseline_points:
+        raise KeyError("Visser dataset missing baseline 5-sort curve.")
+    delay_free_productivity = _interpolate_visser_productivity(
+        tables[log_sort_count], piece_size_m3
+    )
+    baseline_productivity = _interpolate_visser_productivity(baseline_points, piece_size_m3)
+    relative = (
+        0.0
+        if baseline_productivity == 0
+        else (delay_free_productivity - baseline_productivity) / baseline_productivity * 100.0
+    )
+    value_summary = value_map.get(log_sort_count) or {}
+    productivity = delay_free_productivity * delay_multiplier
+    return VisserLogSortProductivityResult(
+        piece_size_m3=piece_size_m3,
+        log_sort_count=log_sort_count,
+        delay_free_productivity_m3_per_pmh=delay_free_productivity,
+        delay_multiplier=delay_multiplier,
+        productivity_m3_per_pmh=productivity,
+        baseline_productivity_m3_per_pmh=baseline_productivity,
+        relative_difference_percent=relative,
+        gross_value_per_2m3=(
+            None
+            if value_summary.get("gross_value_per_2m3") is None
+            else float(value_summary["gross_value_per_2m3"])
+        ),
+        value_per_pmh=(
+            None
+            if value_summary.get("value_per_pmh") is None
+            else float(value_summary["value_per_pmh"])
+        ),
+        value_currency=currency,
+        value_base_year=value_base_year,
+        value_reference_piece_size_m3=value_reference,
+        notes=tuple(notes),
     )
 
 

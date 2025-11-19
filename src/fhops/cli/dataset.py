@@ -90,6 +90,7 @@ from fhops.productivity import (
     Labelle2018ProcessorProductivityResult,
     estimate_processor_productivity_labelle2017,
     estimate_processor_productivity_labelle2018,
+    VisserLogSortProductivityResult,
     ADV5N6ProcessorProductivityResult,
     TN103ProcessorProductivityResult,
     TR106ProcessorProductivityResult,
@@ -100,6 +101,7 @@ from fhops.productivity import (
     estimate_processor_productivity_tr106,
     estimate_processor_productivity_tn166,
     estimate_processor_productivity_tr87,
+    estimate_processor_productivity_visser2015,
     predict_berry2019_skid_effects,
     Labelle2019ProcessorProductivityResult,
     estimate_processor_productivity_labelle2019_dbh,
@@ -553,6 +555,7 @@ class RoadsideProcessorModel(str, Enum):
     LABELLE2019_DBH = "labelle2019_dbh"
     LABELLE2019_VOLUME = "labelle2019_volume"
     ADV5N6 = "adv5n6"
+    VISSER2015 = "visser2015"
     TN103 = "tn103"
     TR106 = "tr106"
     TR87 = "tr87"
@@ -765,6 +768,7 @@ def _render_helicopter_result(result: HelicopterProductivityResult) -> None:
 def _render_processor_result(
     result: (
         ProcessorProductivityResult
+        | VisserLogSortProductivityResult
         | Labelle2016ProcessorProductivityResult
         | Labelle2017PolynomialProcessorResult
         | Labelle2017PowerProcessorResult
@@ -794,6 +798,40 @@ def _render_processor_result(
         console.print(
             "[dim]Regression from Berry (2019) Kinleith NZ time study; utilisation default accounts for <10 min delays.[/dim]"
         )
+        return
+
+    elif isinstance(result, VisserLogSortProductivityResult):
+        rows = [
+            ("Model", "visser2015"),
+            ("Piece Size (m³)", f"{result.piece_size_m3:.3f}"),
+            ("Log Sort Count", str(result.log_sort_count)),
+            ("Delay-free Productivity (m³/PMH)", f"{result.delay_free_productivity_m3_per_pmh:.2f}"),
+            ("Delay Multiplier", f"{result.delay_multiplier:.3f}"),
+            ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
+            ("Baseline (5 sorts, m³/PMH)", f"{result.baseline_productivity_m3_per_pmh:.2f}"),
+            ("Δ vs. 5 sorts (%)", f"{result.relative_difference_percent:+.1f}"),
+        ]
+        if result.gross_value_per_2m3 is not None:
+            rows.append(
+                (
+                    "Gross Value ($/2 m³)",
+                    f"{result.gross_value_per_2m3:.2f} {result.value_currency or 'USD'} "
+                    f"(piece size {result.value_reference_piece_size_m3 or 2.0:.1f} m³)",
+                )
+            )
+        if result.value_per_pmh is not None:
+            value_row = f"{result.value_per_pmh:.0f} {result.value_currency or 'USD'}/PMH"
+            if result.value_base_year:
+                value_row += f" (base {result.value_base_year})"
+            rows.append(("Value per PMH", value_row))
+        _render_kv_table("Roadside Processor Productivity Estimate", rows)
+        note_lines = [
+            "Visser & Tolan (2015) NZ cable landing processors (Cat 330DL + Waratah HTH626) comparing 5/9/12/15 log sorts.",
+            "CLI applies your utilisation multiplier to the published delay-free m³/PMH.",
+        ]
+        if result.notes:
+            note_lines.append(" ".join(result.notes))
+        console.print(f"[dim]{' '.join(note_lines)}[/dim]")
         return
 
     elif isinstance(result, Labelle2016ProcessorProductivityResult):
@@ -3178,6 +3216,11 @@ def estimate_productivity_cmd(
         min=0.0,
         help="Average piece size (m³/stem) for roadside processor helpers.",
     ),
+    processor_log_sorts: int | None = typer.Option(
+        None,
+        "--processor-log-sorts",
+        help="Log-sort count for Visser & Tolan (2015) scenarios (choose 5, 9, 12, or 15).",
+    ),
     processor_volume_m3: float | None = typer.Option(
         None,
         "--processor-volume-m3",
@@ -3698,6 +3741,11 @@ def estimate_productivity_cmd(
                 )
             automatic_bucking_info = get_labelle_huss_automatic_bucking_adjustment()
             automatic_bucking_multiplier_value = automatic_bucking_info.multiplier
+        if (
+            processor_log_sorts is not None
+            and processor_model is not RoadsideProcessorModel.VISSER2015
+        ):
+            raise typer.BadParameter("--processor-log-sorts applies to --processor-model visser2015.")
         if processor_model is RoadsideProcessorModel.BERRY2019:
             if processor_piece_size_m3 is None:
                 raise typer.BadParameter(
@@ -3848,6 +3896,26 @@ def estimate_productivity_cmd(
             result_processor = estimate_processor_productivity_adv5n6(
                 stem_source=stem_source_value,
                 processing_mode=processing_mode_value,
+            )
+        elif processor_model is RoadsideProcessorModel.VISSER2015:
+            if processor_piece_size_m3 is None:
+                raise typer.BadParameter(
+                    "--processor-piece-size-m3 is required when --processor-model visser2015."
+                )
+            if processor_log_sorts is None:
+                raise typer.BadParameter(
+                    "--processor-log-sorts must be provided for the Visser & Tolan (2015) helper."
+                )
+            if processor_volume_m3 is not None or processor_dbh_cm is not None:
+                raise typer.BadParameter(
+                    "--processor-volume-m3/--processor-dbh-cm apply to the Labelle helpers; omit them for visser2015."
+                )
+            if processor_species is not None or processor_treatment is not None:
+                raise typer.BadParameter("--processor-species/--processor-treatment do not apply to visser2015.")
+            result_processor = estimate_processor_productivity_visser2015(
+                piece_size_m3=processor_piece_size_m3,
+                log_sort_count=processor_log_sorts,
+                delay_multiplier=processor_delay_multiplier,
             )
         elif processor_model is RoadsideProcessorModel.TN103:
             if processor_piece_size_m3 is not None:

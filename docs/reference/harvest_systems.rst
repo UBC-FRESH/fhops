@@ -173,6 +173,16 @@ regressions:
   analysts can keep BC roadside presets tied to local landing data. Cost figures shown in the CLI are
   escalated to 2024 CAD using Statistics Canada CPI (Table 18-10-0005-01) so they’re comparable with
   newer references.
+* ``--processor-model visser2015`` – Visser & Tolan (2015) NZ cable-yarder landings (Cat 330DL +
+  Waratah HTH626) comparing 5/9/12/15 log sorts. The helper interpolates the published piece-size
+  curves (1–3 m³ stems) and reports both the delay-free m³/PMH and the delta versus the 5-sort baseline.
+  * ``--processor-piece-size-m3`` – mean stem volume per piece (must fall within the 1–3 m³ study
+    range).
+  * ``--processor-log-sorts`` – number of log sorts to cut (``5``, ``9``, ``12``, ``15``). CLI output
+    includes the gross-value and value-per-PMH figures from the paper (2.0 m³ reference, 2014 USD).
+  * ``--processor-delay-multiplier`` – optional utilisation scaling (default 0.91). The CLI applies
+    this multiplier to the Visser delay-free values so you can simulate longer shifts or landing
+    congestion.
 * ``--processor-model tn103`` – FERIC TN-103 Caterpillar DL221 evaluation in coastal old growth.
   Pick ``--processor-tn103-scenario`` (``area_a_feller_bunched``, ``area_b_handfelled``,
   ``combined_observed``, or ``combined_high_util``) to reflect how well windrows are prepared and

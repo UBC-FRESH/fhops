@@ -15,6 +15,7 @@ from fhops.productivity import (
     estimate_processor_productivity_tr106,
     estimate_processor_productivity_tn166,
     estimate_processor_productivity_tr87,
+    estimate_processor_productivity_visser2015,
     get_labelle_huss_automatic_bucking_adjustment,
 )
 
@@ -239,6 +240,50 @@ def test_cli_processor_labelle2018_variant() -> None:
         dbh_cm=35.0,
     )
     assert f"{expected.productivity_m3_per_pmh:.2f}" in result.stdout
+
+
+def test_cli_processor_visser2015() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "roadside_processor",
+            "--processor-model",
+            "visser2015",
+            "--processor-piece-size-m3",
+            "2.0",
+            "--processor-log-sorts",
+            "15",
+            "--processor-delay-multiplier",
+            "0.8",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    expected = estimate_processor_productivity_visser2015(
+        piece_size_m3=2.0,
+        log_sort_count=15,
+        delay_multiplier=0.8,
+    )
+    assert f"{expected.productivity_m3_per_pmh:.2f}" in result.stdout
+    assert "Visser & Tolan (2015)" in result.stdout
+
+
+def test_cli_processor_visser2015_requires_log_sorts() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "roadside_processor",
+            "--processor-model",
+            "visser2015",
+            "--processor-piece-size-m3",
+            "2.0",
+        ],
+    )
+    assert result.exit_code != 0
+    assert "processor-log-sorts" in result.stdout
 
 
 def test_cli_processor_berry2019_skid_area_auto_multiplier() -> None:

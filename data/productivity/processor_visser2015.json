@@ -1,0 +1,30 @@
+{
+  "source": {
+    "citation": "Tolan, A. & Visser, R. 2015. The effect of the number of log sorts on mechanized log processing productivity and value recovery. International Journal of Forest Engineering 26(1):36-47.",
+    "document_path": "notes/reference/The effect of the number of log sorts on mechanized log processing productivity and value recovery.pdf",
+    "notes": [
+      "Study instrumented two radiata pine cable-yarder landings (Madill 124 swing yarder & Madill 171 tower) processing 2.1–2.4 m³ stems with Cat 330DL + Waratah HTH626 processors.",
+      "Cut plans with 5, 9, 12, and 15 log sorts were uploaded via TimberRite/StanForD to test productivity and value impacts across piece-size classes (1.0–3.0 m³)."]
+  },
+  "currency": "USD",
+  "base_year": 2014,
+  "piece_size_productivity": [
+    {"piece_size_m3": 1.0, "productivity_m3_per_pmh_by_sort_count": {"5": 55.0, "9": 54.0, "12": 51.0, "15": 48.0}},
+    {"piece_size_m3": 1.5, "productivity_m3_per_pmh_by_sort_count": {"5": 74.0, "9": 73.0, "12": 69.0, "15": 66.0}},
+    {"piece_size_m3": 2.0, "productivity_m3_per_pmh_by_sort_count": {"5": 91.0, "9": 90.0, "12": 86.0, "15": 82.0}},
+    {"piece_size_m3": 2.5, "productivity_m3_per_pmh_by_sort_count": {"5": 104.0, "9": 103.0, "12": 98.0, "15": 95.0}},
+    {"piece_size_m3": 3.0, "productivity_m3_per_pmh_by_sort_count": {"5": 113.0, "9": 112.0, "12": 107.0, "15": 103.0}}
+  ],
+  "value_summary_piece_size_m3": 2.0,
+  "sort_count_summaries": [
+    {"log_sorts": 5, "productivity_m3_per_pmh": 91.0, "gross_value_usd_per_2m3": 170.0, "value_usd_per_pmh": 7728.0},
+    {"log_sorts": 9, "productivity_m3_per_pmh": 90.0, "gross_value_usd_per_2m3": 176.0, "value_usd_per_pmh": 7928.0},
+    {"log_sorts": 12, "productivity_m3_per_pmh": 86.0, "gross_value_usd_per_2m3": 179.0, "value_usd_per_pmh": 7677.0},
+    {"log_sorts": 15, "productivity_m3_per_pmh": 82.0, "gross_value_usd_per_2m3": 181.0, "value_usd_per_pmh": 7417.0}
+  ],
+  "assumptions": [
+    "Piece-size classes represent average stem volumes (1.0–3.0 m³) typical of coastal NZ radiata pine.",
+    "Value per PMH figures assume a reference piece size of 2.0 m³ and market pricing from the 2014 study period.",
+    "Productivity numbers exclude delay adjustments beyond those inherent in the study (processors clearing hauler chutes, balancing hot vs. cold decks)."
+  ]
+}
