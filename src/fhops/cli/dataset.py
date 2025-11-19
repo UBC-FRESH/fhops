@@ -93,6 +93,7 @@ from fhops.productivity import (
     estimate_processor_productivity_labelle2017,
     estimate_processor_productivity_labelle2018,
     VisserLogSortProductivityResult,
+    Hypro775ProcessorProductivityResult,
     ADV5N6ProcessorProductivityResult,
     TN103ProcessorProductivityResult,
     TR106ProcessorProductivityResult,
@@ -104,6 +105,7 @@ from fhops.productivity import (
     estimate_processor_productivity_tn166,
     estimate_processor_productivity_tr87,
     estimate_processor_productivity_visser2015,
+    estimate_processor_productivity_hypro775,
     predict_berry2019_skid_effects,
     Labelle2019ProcessorProductivityResult,
     estimate_processor_productivity_labelle2019_dbh,
@@ -580,6 +582,7 @@ class RoadsideProcessorModel(str, Enum):
     TR106 = "tr106"
     TR87 = "tr87"
     TN166 = "tn166"
+    HYPRO775 = "hypro775"
 
 
 _AUTOMATIC_BUCKING_SUPPORTED_MODELS = {
@@ -879,6 +882,34 @@ def _render_processor_result(
         ]
         if result.notes:
             note_lines.append(" ".join(result.notes))
+        console.print(f"[dim]{' '.join(note_lines)}[/dim]")
+        return
+    elif isinstance(result, Hypro775ProcessorProductivityResult):
+        rows = [
+            ("Model", "hypro775"),
+            ("Description", result.description),
+            ("Mean Cycle Time (s)", f"{result.mean_cycle_time_seconds:.1f}"),
+            ("Logs per Tree", f"{result.mean_logs_per_tree:.1f}"),
+            ("Gross Trees/h", f"{result.gross_trees_per_hour:.1f}"),
+            ("Net Trees/h", f"{result.net_trees_per_hour:.1f}"),
+            ("Delay-free Productivity (m³/PMH)", f"{result.delay_free_productivity_m3_per_pmh:.2f}"),
+            ("Delay Multiplier", f"{result.delay_multiplier:.3f}"),
+            ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
+            ("Fuel (L/h)", f"{result.fuel_consumption_l_per_hour:.1f}"),
+            ("Fuel (L/m³)", f"{result.fuel_consumption_l_per_m3:.2f}"),
+            ("Utilisation (%)", f"{result.utilisation_percent:.1f}"),
+        ]
+        if result.noise_db is not None:
+            rows.append(("Noise (dB[A])", f"{result.noise_db:.0f}"))
+        if result.cardio_workload_percent_of_max is not None:
+            rows.append(("Cardio Workload (% max HR)", f"{result.cardio_workload_percent_of_max:.0f}"))
+        _render_kv_table("Roadside Processor Productivity Estimate", rows)
+        note_lines = [
+            "HYPRO 775 tractor-mounted double-grip processor reference (Castro Pérez 2020; Zurita 2021).",
+            "Use for small-diameter landing bucking where ergonomic limits (noise/heavy workload) and lower utilisation apply.",
+        ]
+        if result.notes:
+            note_lines.extend(result.notes)
         console.print(f"[dim]{' '.join(note_lines)}[/dim]")
         return
 
@@ -3316,7 +3347,7 @@ def estimate_productivity_cmd(
         case_sensitive=False,
         help=(
             "Roadside-processor regression to use "
-            "(berry2019 | labelle2016/2017/2018 | labelle2019_dbh | labelle2019_volume | adv5n6 | tn103 | tr106 | tr87 | tn166)."
+            "(berry2019 | labelle2016/2017/2018 | labelle2019_dbh | labelle2019_volume | adv5n6 | visser2015 | tn103 | tr106 | tr87 | tn166 | hypro775)."
         ),
     ),
     processor_piece_size_m3: float | None = typer.Option(
@@ -4055,6 +4086,12 @@ def estimate_productivity_cmd(
             result_processor = estimate_processor_productivity_visser2015(
                 piece_size_m3=processor_piece_size_m3,
                 log_sort_count=processor_log_sorts,
+                delay_multiplier=processor_delay_multiplier,
+            )
+        elif processor_model is RoadsideProcessorModel.HYPRO775:
+            if processor_piece_size_m3 is not None or processor_volume_m3 is not None or processor_dbh_cm is not None:
+                raise typer.BadParameter("--processor-piece-size/volume/dbh do not apply to hypro775 preset.")
+            result_processor = estimate_processor_productivity_hypro775(
                 delay_multiplier=processor_delay_multiplier,
             )
         elif processor_model is RoadsideProcessorModel.TN103:

@@ -23,6 +23,7 @@ _TN166_DATA_PATH = _DATA_ROOT / "processor_tn166.json"
 _VISSER2015_DATA_PATH = _DATA_ROOT / "processor_visser2015.json"
 _KIZHA2020_DATA_PATH = _DATA_ROOT / "loader_kizha2020.json"
 _BARKO450_DATA_PATH = _DATA_ROOT / "loader_barko450.json"
+_HYPRO775_DATA_PATH = _DATA_ROOT / "processor_hypro775.json"
 _LABELLE_HUSS_DATA_PATH = _REFERENCE_ROOT / "processor_labelle_huss2018.json"
 _CARRIER_PROFILE_PATH = _REFERENCE_ROOT / "processor_carrier_profiles.json"
 @lru_cache(maxsize=1)
@@ -63,6 +64,14 @@ def _load_kizha2020_dataset() -> dict[str, object]:
         return json.loads(_KIZHA2020_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
         raise FileNotFoundError(f"Kizha et al. (2020) loader data missing: {_KIZHA2020_DATA_PATH}") from exc
+
+
+@lru_cache(maxsize=1)
+def _load_hypro775_dataset() -> dict[str, object]:
+    try:
+        return json.loads(_HYPRO775_DATA_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:  # pragma: no cover - configuration error
+        raise FileNotFoundError(f"HYPRO 775 processor data missing: {_HYPRO775_DATA_PATH}") from exc
 
 
 @lru_cache(maxsize=1)
@@ -1236,6 +1245,77 @@ class LoaderHotColdProductivityResult:
     bottleneck: str | None
     notes: tuple[str, ...]
     observed_days: int | None
+
+
+@dataclass(frozen=True)
+class Hypro775ProcessorProductivityResult:
+    description: str
+    mean_cycle_time_seconds: float
+    mean_logs_per_tree: float
+    gross_trees_per_hour: float
+    net_trees_per_hour: float
+    delay_free_productivity_m3_per_pmh: float
+    fuel_consumption_l_per_hour: float
+    fuel_consumption_l_per_m3: float
+    utilisation_percent: float
+    noise_db: float | None
+    cardio_workload_percent_of_max: float | None
+    delay_multiplier: float
+    productivity_m3_per_pmh: float
+    notes: tuple[str, ...]
+
+
+@lru_cache(maxsize=1)
+def _load_hypro775_scenario() -> dict[str, object]:
+    payload = _load_hypro775_dataset()
+    scenario = payload.get("scenario") or {}
+    notes = tuple(str(n) for n in scenario.get("notes") or [])
+    return {
+        "description": scenario.get("description", "HYPRO 775 landing processor"),
+        "mean_cycle_time_seconds": float(scenario.get("mean_cycle_time_seconds", 45.0) or 45.0),
+        "mean_logs_per_tree": float(scenario.get("mean_logs_per_tree", 4.0) or 4.0),
+        "gross_trees_per_hour": float(scenario.get("gross_trees_per_hour", 45.0) or 45.0),
+        "net_trees_per_hour": float(scenario.get("net_trees_per_hour", 18.0) or 18.0),
+        "delay_free_productivity_m3_per_pmh": float(
+            scenario.get("delay_free_productivity_m3_per_pmh", 21.4) or 21.4
+        ),
+        "fuel_consumption_l_per_hour": float(scenario.get("fuel_consumption_l_per_hour", 21.0) or 21.0),
+        "fuel_consumption_l_per_m3": float(scenario.get("fuel_consumption_l_per_m3", 0.78) or 0.78),
+        "utilisation_percent": float(scenario.get("utilisation_percent", 73.0) or 73.0),
+        "noise_db": scenario.get("noise_db"),
+        "cardio_workload_percent_of_max": scenario.get("cardio_workload_percent_of_max"),
+        "notes": notes,
+    }
+
+
+def estimate_processor_productivity_hypro775(
+    *, delay_multiplier: float | None = None
+) -> Hypro775ProcessorProductivityResult:
+    data = _load_hypro775_scenario()
+    base = data["delay_free_productivity_m3_per_pmh"]
+    utilisation = data["utilisation_percent"] / 100.0
+    multiplier = delay_multiplier if delay_multiplier is not None else utilisation
+    if not (0.0 < multiplier <= 1.0):
+        raise ValueError("delay_multiplier must lie in (0, 1].")
+    productivity = base * multiplier
+    return Hypro775ProcessorProductivityResult(
+        description=data["description"],
+        mean_cycle_time_seconds=data["mean_cycle_time_seconds"],
+        mean_logs_per_tree=data["mean_logs_per_tree"],
+        gross_trees_per_hour=data["gross_trees_per_hour"],
+        net_trees_per_hour=data["net_trees_per_hour"],
+        delay_free_productivity_m3_per_pmh=base,
+        fuel_consumption_l_per_hour=data["fuel_consumption_l_per_hour"],
+        fuel_consumption_l_per_m3=data["fuel_consumption_l_per_m3"],
+        utilisation_percent=data["utilisation_percent"],
+        noise_db=(None if data["noise_db"] is None else float(data["noise_db"])),
+        cardio_workload_percent_of_max=(
+            None if data["cardio_workload_percent_of_max"] is None else float(data["cardio_workload_percent_of_max"])
+        ),
+        delay_multiplier=multiplier,
+        productivity_m3_per_pmh=productivity,
+        notes=data["notes"],
+    )
 
 
 def estimate_clambunk_productivity_adv2n26(

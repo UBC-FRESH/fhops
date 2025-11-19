@@ -30,6 +30,9 @@
   between the original Han et al. (2018) regression coefficients and the GNSS medians (cable skidder or farm tractor).
   Distance terms now convert to travel time using the selected profile, and harvest-system overrides can set the profile
   automatically.
+- Added a HYPRO 775 tractor-processor preset (`--processor-model hypro775`) based on Castro Pérez (2020) and
+  Zurita Vintimilla (2021). CLI output now reports the cycle time, gross/net trees per hour, fuel (≈21 L/h), and ergonomic
+  warnings (noise/cardiovascular load) for small-diameter landing processing scenarios.
 - Added the Visser & Tolan (2015) log-sort complexity helper: `data/productivity/processor_visser2015.json`
   captures the 5/9/12/15-sort curves (1–3 m³ stems) and `--processor-model visser2015` exposes them via the
   new `--processor-log-sorts` flag. The CLI now reports the delay-free vs. utilisation-adjusted m³/PMH as well

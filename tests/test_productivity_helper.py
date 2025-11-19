@@ -15,6 +15,7 @@ from fhops.productivity import (
     estimate_processor_productivity_labelle2019_dbh,
     estimate_processor_productivity_labelle2019_volume,
     estimate_processor_productivity_visser2015,
+    estimate_processor_productivity_hypro775,
     get_processor_carrier_profile,
     get_labelle_huss_automatic_bucking_adjustment,
     load_lahrsen_ranges,
@@ -168,6 +169,17 @@ def test_labelle2018_rw_poly() -> None:
     )
     expected = -15.15 + 2.53 * 33.0 - 0.02 * (33.0**2)
     assert math.isclose(result.delay_free_productivity_m3_per_pmh, expected, rel_tol=1e-9)
+
+
+def test_hypro775_delay_multiplier_scales_output() -> None:
+    result = estimate_processor_productivity_hypro775(delay_multiplier=0.5)
+    assert math.isclose(result.delay_free_productivity_m3_per_pmh * 0.5, result.productivity_m3_per_pmh)
+    assert math.isclose(result.mean_cycle_time_seconds, 45.0)
+
+
+def test_hypro775_invalid_multiplier_raises() -> None:
+    with pytest.raises(ValueError):
+        estimate_processor_productivity_hypro775(delay_multiplier=1.2)
 
 
 def test_automatic_bucking_multiplier_scales_delay_free_output() -> None:

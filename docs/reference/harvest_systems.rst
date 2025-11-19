@@ -176,6 +176,11 @@ regressions:
   analysts can keep BC roadside presets tied to local landing data. Cost figures shown in the CLI are
   escalated to 2024 CAD using Statistics Canada CPI (Table 18-10-0005-01) so they’re comparable with
   newer references.
+* ``--processor-model hypro775`` – HYPRO 775 tractor-mounted double-grip processor preset sourced from Castro
+  Pérez (2020) and Zurita Vintimilla (2021). No additional predictors are needed; the helper reports mean cycle time
+  (~45 s), gross/net trees per hour, delay-free m³/PMH (~21.4), fuel use (≈21 L/h or 0.78 L/m³), and ergonomic notes
+  (≈85 dB(A), heavy-work cardiovascular load). Use this when modelling tractor-mounted landing processors in
+  small-diameter thinnings or low-investment deployments.
 * ``--processor-model visser2015`` – Visser & Tolan (2015) NZ cable-yarder landings (Cat 330DL +
   Waratah HTH626) comparing 5/9/12/15 log sorts. The helper interpolates the published piece-size
   curves (1–3 m³ stems) and reports both the delay-free m³/PMH and the delta versus the 5-sort baseline.
