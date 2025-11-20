@@ -22,7 +22,7 @@ from fhops.costing import (
     estimate_unit_cost_from_distribution,
     estimate_unit_cost_from_stand,
 )
-from fhops.costing.inflation import TARGET_YEAR
+from fhops.costing.inflation import TARGET_YEAR, inflate_value
 from fhops.costing.machine_rates import (
     MachineRate,
     compose_default_rental_rate_for_role,
@@ -1660,9 +1660,28 @@ def _render_grapple_yarder_result(
         rows.insert(1, ("TN157 Case", tn157_case.label))
         rows.append(("Logs/Turn", f"{tn157_case.logs_per_turn:.2f}"))
         rows.append(("Observed Cost (1991 CAD $/m³)", f"{tn157_case.cost_per_m3_cad_1991:.2f}"))
+        inflated_cost_m3 = inflate_value(
+            tn157_case.cost_per_m3_cad_1991, tn157_case.cost_base_year
+        )
+        rows.append(
+            (
+                f"Cost ({TARGET_YEAR} CAD $/m³)",
+                f"{inflated_cost_m3:.2f}",
+            )
+        )
+        inflated_cost_per_log = inflate_value(
+            tn157_case.cost_per_log_cad_1991, tn157_case.cost_base_year
+        )
+        rows.append(
+            (
+                f"Cost ({TARGET_YEAR} CAD $/log)",
+                f"{inflated_cost_per_log:.2f}",
+            )
+        )
         note = (
             "[dim]Observed productivity/costs from FERIC TN-157 (Cypress 7280B swing yarder + "
-            "Hitachi UH14 backspar, 1987–1988 case studies).[/dim]"
+            "Hitachi UH14 backspar, 1987–1988 case studies) with CPI-adjusted $/m³ and $/log "
+            f"expressed in {TARGET_YEAR} CAD.[/dim]"
         )
     _render_kv_table("Grapple Yarder Productivity Estimate", rows)
     console.print(note)

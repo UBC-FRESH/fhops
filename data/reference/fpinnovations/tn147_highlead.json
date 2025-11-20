@@ -1,0 +1,338 @@
+{
+  "source": {
+    "id": "TN147",
+    "title": "Harvesting Economics: Seven Case Studies of Coastal Highlead Yarding",
+    "authors": [
+      "R.A. Kooistra",
+      "N.G. Marshall"
+    ],
+    "publisher": "FERIC",
+    "publication_date": "1990-07",
+    "currency": "CAD_1989",
+    "notes": "Madill 009 highlead yarder; costs exclude supervision/overhead and interest; labour based on 1989 IWA rates +35% benefits."
+  },
+  "machine_configuration": {
+    "yarder": {
+      "make_model": "Madill 009 highlead",
+      "model_years": [
+        1973,
+        1974
+      ],
+      "engine": "Cummins KTA 525 hp / Caterpillar 1693 360 hp",
+      "tower_height_m": 27.4,
+      "guylines": 6,
+      "weight_kg": 45249
+    },
+    "crew_size": 6
+  },
+  "case_studies": [
+    {
+      "id": 1,
+      "falling_method": "hand_felled",
+      "stand_type": "old_growth",
+      "yarding_direction": "downhill",
+      "slope_percent_range": [
+        40,
+        110
+      ],
+      "slope_percent_average": 60,
+      "terrain": "broken_gullied",
+      "exposed_rock_percent": "10-20",
+      "volume_per_ha_m3": 620,
+      "yarding_minutes": 918.9,
+      "yarding_percent": 84,
+      "road_change_minutes": 82.3,
+      "road_change_percent": 7,
+      "nonproductive_mechanical_minutes": 56.9,
+      "nonproductive_other_minutes": 41.5,
+      "total_scheduled_minutes": 1099.6,
+      "per_turn_minutes": {
+        "outhaul": 0.7,
+        "choke": 3.7,
+        "inhaul": 1.6,
+        "unhook": 1.4
+      },
+      "road_change_minutes_range": [
+        2.9,
+        27.8
+      ],
+      "road_change_minutes_avg": 16.5,
+      "avg_piece_volume_m3": 2.83,
+      "total_logs": 254,
+      "total_turns": 125,
+      "logs_per_turn": 2.0,
+      "avg_turn_volume_m3": 5.75,
+      "avg_yarding_distance_m": 198.5,
+      "max_yarding_distance_m": 300.0,
+      "logs_per_shift_8h": 110.9,
+      "volume_per_shift_m3": 313.8,
+      "cost_per_log_cad_1989": 17.18,
+      "cost_per_m3_cad_1989": 6.07
+    },
+    {
+      "id": 2,
+      "falling_method": "hand_felled",
+      "stand_type": "old_growth",
+      "yarding_direction": "downhill",
+      "slope_percent_range": [
+        30,
+        75
+      ],
+      "slope_percent_average": 45,
+      "terrain": "gullied",
+      "exposed_rock_percent": "0-10",
+      "volume_per_ha_m3": 700,
+      "yarding_minutes": 1638.7,
+      "yarding_percent": 80,
+      "road_change_minutes": 187.5,
+      "road_change_percent": 9,
+      "nonproductive_mechanical_minutes": 92.8,
+      "nonproductive_other_minutes": 142.0,
+      "total_scheduled_minutes": 2061.0,
+      "per_turn_minutes": {
+        "outhaul": 0.4,
+        "choke": 3.3,
+        "inhaul": 1.1,
+        "unhook": 1.3
+      },
+      "road_change_minutes_range": [
+        8.2,
+        53.5
+      ],
+      "road_change_minutes_avg": 14.4,
+      "avg_piece_volume_m3": 3.63,
+      "total_logs": 561,
+      "total_turns": 266,
+      "logs_per_turn": 2.1,
+      "avg_turn_volume_m3": 7.66,
+      "avg_yarding_distance_m": 125.3,
+      "max_yarding_distance_m": 255.0,
+      "logs_per_shift_8h": 130.7,
+      "volume_per_shift_m3": 474.4,
+      "cost_per_log_cad_1989": 14.58,
+      "cost_per_m3_cad_1989": 4.02
+    },
+    {
+      "id": 3,
+      "falling_method": "hand_felled",
+      "stand_type": "old_growth",
+      "yarding_direction": "downhill",
+      "slope_percent_range": [
+        30,
+        85
+      ],
+      "slope_percent_average": 45,
+      "terrain": "rolling_gullied",
+      "exposed_rock_percent": "10-20",
+      "volume_per_ha_m3": 1027,
+      "yarding_minutes": 935.8,
+      "yarding_percent": 75,
+      "road_change_minutes": 130.7,
+      "road_change_percent": 10,
+      "nonproductive_mechanical_minutes": 25.0,
+      "nonproductive_other_minutes": 165.4,
+      "total_scheduled_minutes": 1256.9,
+      "per_turn_minutes": {
+        "outhaul": 0.4,
+        "choke": 3.1,
+        "inhaul": 0.8,
+        "unhook": 1.0
+      },
+      "road_change_minutes_range": [
+        7.6,
+        25.8
+      ],
+      "road_change_minutes_avg": 11.9,
+      "avg_piece_volume_m3": 2.07,
+      "total_logs": 359,
+      "total_turns": 177,
+      "logs_per_turn": 2.0,
+      "avg_turn_volume_m3": 4.2,
+      "avg_yarding_distance_m": 97.0,
+      "max_yarding_distance_m": 160.0,
+      "logs_per_shift_8h": 137.1,
+      "volume_per_shift_m3": 283.8,
+      "cost_per_log_cad_1989": 13.9,
+      "cost_per_m3_cad_1989": 6.71
+    },
+    {
+      "id": 4,
+      "falling_method": "hand_felled",
+      "stand_type": "old_growth",
+      "yarding_direction": "downhill",
+      "slope_percent_range": [
+        25,
+        80
+      ],
+      "slope_percent_average": 40,
+      "terrain": "rolling_gullied",
+      "exposed_rock_percent": "10-20",
+      "volume_per_ha_m3": 1027,
+      "yarding_minutes": 415.7,
+      "yarding_percent": 75,
+      "road_change_minutes": 20.3,
+      "road_change_percent": 4,
+      "nonproductive_mechanical_minutes": 62.8,
+      "nonproductive_other_minutes": 55.9,
+      "total_scheduled_minutes": 554.7,
+      "per_turn_minutes": {
+        "outhaul": 0.5,
+        "choke": 4.0,
+        "inhaul": 1.2,
+        "unhook": 0.7
+      },
+      "road_change_minutes_range": [
+        20.4,
+        20.4
+      ],
+      "road_change_minutes_avg": 20.4,
+      "avg_piece_volume_m3": 2.07,
+      "total_logs": 180,
+      "total_turns": 64,
+      "logs_per_turn": 2.8,
+      "avg_turn_volume_m3": 5.82,
+      "avg_yarding_distance_m": 157.2,
+      "max_yarding_distance_m": 240.0,
+      "logs_per_shift_8h": 155.8,
+      "volume_per_shift_m3": 322.5,
+      "cost_per_log_cad_1989": 12.23,
+      "cost_per_m3_cad_1989": 5.91
+    },
+    {
+      "id": 5,
+      "falling_method": "hand_felled",
+      "stand_type": "old_growth",
+      "yarding_direction": "downhill",
+      "slope_percent_range": [
+        15,
+        65
+      ],
+      "slope_percent_average": 30,
+      "terrain": "rolling_ridge",
+      "exposed_rock_percent": "10-15",
+      "volume_per_ha_m3": 687,
+      "yarding_minutes": 299.4,
+      "yarding_percent": 74,
+      "road_change_minutes": 70.6,
+      "road_change_percent": 17,
+      "nonproductive_mechanical_minutes": 9.6,
+      "nonproductive_other_minutes": 25.5,
+      "total_scheduled_minutes": 405.1,
+      "per_turn_minutes": {
+        "outhaul": 0.5,
+        "choke": 3.6,
+        "inhaul": 0.9,
+        "unhook": 1.1
+      },
+      "road_change_minutes_range": [
+        24.3,
+        46.3
+      ],
+      "road_change_minutes_avg": 35.3,
+      "avg_piece_volume_m3": 1.46,
+      "total_logs": 129,
+      "total_turns": 49,
+      "logs_per_turn": 2.6,
+      "avg_turn_volume_m3": 3.84,
+      "avg_yarding_distance_m": 120.5,
+      "max_yarding_distance_m": 190.0,
+      "logs_per_shift_8h": 152.9,
+      "volume_per_shift_m3": 223.2,
+      "cost_per_log_cad_1989": 12.46,
+      "cost_per_m3_cad_1989": 8.54
+    },
+    {
+      "id": 6,
+      "falling_method": "hand_felled",
+      "stand_type": "old_growth",
+      "yarding_direction": "across_slope",
+      "slope_percent_range": [
+        40,
+        85
+      ],
+      "slope_percent_average": 55,
+      "terrain": "gullied_ridge",
+      "exposed_rock_percent": "10-15",
+      "volume_per_ha_m3": 687,
+      "yarding_minutes": 849.9,
+      "yarding_percent": 78,
+      "road_change_minutes": 133.2,
+      "road_change_percent": 12,
+      "nonproductive_mechanical_minutes": 0.0,
+      "nonproductive_other_minutes": 102.8,
+      "total_scheduled_minutes": 1085.9,
+      "per_turn_minutes": {
+        "outhaul": 0.7,
+        "choke": 4.8,
+        "inhaul": 1.6,
+        "unhook": 0.6
+      },
+      "road_change_minutes_range": [
+        10.6,
+        67.4
+      ],
+      "road_change_minutes_avg": 33.3,
+      "avg_piece_volume_m3": 2.0,
+      "total_logs": 216,
+      "total_turns": 110,
+      "logs_per_turn": 2.0,
+      "avg_turn_volume_m3": 3.93,
+      "avg_yarding_distance_m": 159.1,
+      "max_yarding_distance_m": 250.0,
+      "logs_per_shift_8h": 95.5,
+      "volume_per_shift_m3": 191.0,
+      "cost_per_log_cad_1989": 19.95,
+      "cost_per_m3_cad_1989": 9.98
+    },
+    {
+      "id": 7,
+      "falling_method": "hand_felled",
+      "stand_type": "old_growth",
+      "yarding_direction": "uphill",
+      "slope_percent_range": [
+        30,
+        60
+      ],
+      "slope_percent_average": 45,
+      "terrain": "even_broken",
+      "exposed_rock_percent": "10-15",
+      "volume_per_ha_m3": 687,
+      "yarding_minutes": 372.9,
+      "yarding_percent": 86,
+      "road_change_minutes": 60.9,
+      "road_change_percent": 14,
+      "nonproductive_mechanical_minutes": 0.0,
+      "nonproductive_other_minutes": 1.7,
+      "total_scheduled_minutes": 435.5,
+      "per_turn_minutes": {
+        "outhaul": 0.6,
+        "choke": 4.1,
+        "inhaul": 1.2,
+        "unhook": 0.4
+      },
+      "road_change_minutes_range": [
+        17.1,
+        22.7
+      ],
+      "road_change_minutes_avg": 20.3,
+      "avg_piece_volume_m3": 1.64,
+      "total_logs": 100,
+      "total_turns": 59,
+      "logs_per_turn": 1.7,
+      "avg_turn_volume_m3": 2.78,
+      "avg_yarding_distance_m": 136.6,
+      "max_yarding_distance_m": 185.0,
+      "logs_per_shift_8h": 110.2,
+      "volume_per_shift_m3": 180.7,
+      "cost_per_log_cad_1989": 17.29,
+      "cost_per_m3_cad_1989": 10.54
+    }
+  ],
+  "costs": {
+    "ownership_cost_per_smh": 44.54,
+    "operating_cost_per_smh": 220.13,
+    "total_cost_per_smh": 264.67,
+    "cost_base_year": 1989,
+    "notes": "Feric Appendix I machine-cost analysis (interest excluded)."
+  }
+}

@@ -126,6 +126,7 @@ class TN157Case:
     logs_per_yarding_hour: float
     cost_per_log_cad_1991: float
     cost_per_m3_cad_1991: float
+    cost_base_year: int = 1991
 
     @property
     def cycle_time_minutes(self) -> float:

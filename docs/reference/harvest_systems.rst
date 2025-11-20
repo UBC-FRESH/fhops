@@ -497,6 +497,10 @@ Cable-running systems can now call the grapple yarder regressions bundled in
   a fixed hook/unhook allowance.
 * ``tr75-handfelled`` – Madill 084 handling hand-felled timber (TR-75 hand-felled regression). Use
   this when you need to reflect lower payload control or hand-bunched turns.
+* ``tn157`` – Observed productivity/costs from TN-157 (Cypress 7280B swing yarder + Hitachi UH14 backspar).
+  Select a case with ``--tn157-case`` (``combined`` default, or ``1``–``7`` to pull an individual study).
+  The helper reports the observed turn volume, yarding distance, m³/PMH, and both 1991 CAD and CPI-inflated $/m³
+  so costing workflows can drop the Cypress preset in immediately.
 
 Every helper prints the assumed turn volume, yarding distance, and resulting m³/PMH. The
 ``cable_running`` harvest system autopopulates these inputs when you pass

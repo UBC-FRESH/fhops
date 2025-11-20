@@ -1,0 +1,203 @@
+{
+  "source": {
+    "id": "TR122",
+    "title": "Productivity comparison of clearcut vs alternative silviculture systems (Roberts Creek)",
+    "authors": [
+      "B. Earle",
+      "FERIC"
+    ],
+    "publisher": "FERIC",
+    "publication_date": "1997",
+    "currency": "CAD_1996",
+    "notes": "Washington SLH 78 swing yarder with Berger slackpulling carriage; costs derived with 1996 IWA wage scale +35% benefits; excludes supervision/overhead/mobilisation."
+  },
+  "machine_configuration": {
+    "yarder": {
+      "make_model": "Washington SLH 78 swing yarder",
+      "carriage": "Berger mechanical slackpulling (running skyline)"
+    }
+  },
+  "treatments": [
+    {
+      "id": "extended_rotation",
+      "yarder_production_hours": 46.6,
+      "yarder_road_change_hours": 15.0,
+      "yarder_downtime_hours": 17.4,
+      "yarder_total_hours": 79.0,
+      "loader_hours": 79.0,
+      "volume_yarded_m3": 1792,
+      "cycles": 878,
+      "pieces": 1928,
+      "avg_piece_m3": 0.93,
+      "avg_pieces_per_cycle": 2.2,
+      "avg_cycles_per_shift": 89,
+      "cycle_volume_m3": 2.04,
+      "volume_per_shift_m3": 182,
+      "road_changes": {
+        "count": 10,
+        "time_per_change_hours": 1.54,
+        "volume_per_change_m3": 163,
+        "pre_rigged": 10,
+        "pre_rig_time_hours": 0.6
+      },
+      "costs": {
+        "yarder_per_m3": 7.42,
+        "yarding_labour_per_m3": 5.36,
+        "loader_per_m3": 4.04,
+        "loading_labour_per_m3": 1.36,
+        "saw_allowance_per_m3": 0.15,
+        "total_yarding_loading_per_m3": 18.33
+      }
+    },
+    {
+      "id": "uniform_shelterwood",
+      "yarder_production_hours": 262.1,
+      "yarder_road_change_hours": 19.9,
+      "yarder_downtime_hours": 49.8,
+      "yarder_total_hours": 331.8,
+      "loader_hours": 410.4,
+      "volume_yarded_m3": 8282,
+      "cycles": 3797,
+      "pieces": 12096,
+      "avg_piece_m3": 0.69,
+      "avg_pieces_per_cycle": 3.2,
+      "avg_cycles_per_shift": 92,
+      "cycle_volume_m3": 2.18,
+      "volume_per_shift_m3": 201,
+      "road_changes": {
+        "count": 21,
+        "time_per_change_hours": 0.84,
+        "volume_per_change_m3": 376,
+        "pre_rigged": 12,
+        "pre_rig_time_hours": 1.5
+      },
+      "costs": {
+        "yarder_per_m3": 6.73,
+        "yarding_labour_per_m3": 4.86,
+        "loader_per_m3": 4.53,
+        "loading_labour_per_m3": 1.52,
+        "saw_allowance_per_m3": 0.14,
+        "total_yarding_loading_per_m3": 17.78
+      }
+    },
+    {
+      "id": "clearcut",
+      "yarder_production_hours": 417.3,
+      "yarder_road_change_hours": 26.1,
+      "yarder_downtime_hours": 78.2,
+      "yarder_total_hours": 521.6,
+      "loader_hours": 466.4,
+      "volume_yarded_m3": 9311,
+      "cycles": 6476,
+      "pieces": 14776,
+      "avg_piece_m3": 0.63,
+      "avg_pieces_per_cycle": 2.3,
+      "avg_cycles_per_shift": 99,
+      "cycle_volume_m3": 1.45,
+      "volume_per_shift_m3": 143,
+      "road_changes": {
+        "count": 40,
+        "time_per_change_hours": 0.64,
+        "volume_per_change_m3": 227,
+        "pre_rigged": 0,
+        "pre_rig_time_hours": null
+      },
+      "costs": {
+        "yarder_per_m3": 9.4,
+        "yarding_labour_per_m3": 6.79,
+        "loader_per_m3": 4.58,
+        "loading_labour_per_m3": 1.54,
+        "saw_allowance_per_m3": 0.19,
+        "total_yarding_loading_per_m3": 22.5
+      }
+    }
+  ],
+  "cycle_distribution": {
+    "extended_rotation": {
+      "overall": {
+        "outhaul_min": 0.93,
+        "hook_min": 1.98,
+        "inhaul_min": 1.99,
+        "unhook_min": 0.73,
+        "reposition_min": 0.05,
+        "delay_min": 1.01,
+        "total_cycle_min": 6.69,
+        "cycle_min_at_100m": 6.43,
+        "yarding_distance_m": 104,
+        "pieces_per_cycle": 2.2,
+        "crew_size": 4.2,
+        "chokersetters": 1.5,
+        "chokers": 2.0,
+        "sample_cycles": 452
+      }
+    },
+    "uniform_shelterwood": {
+      "overall": {
+        "outhaul_min": 0.78,
+        "hook_min": 1.87,
+        "inhaul_min": 1.6,
+        "unhook_min": 0.76,
+        "reposition_min": 0.04,
+        "delay_min": 0.74,
+        "total_cycle_min": 5.79,
+        "cycle_min_at_100m": 5.97,
+        "yarding_distance_m": null,
+        "pieces_per_cycle": 3.2,
+        "crew_size": 5.0,
+        "chokersetters": 2.0,
+        "chokers": 3.0,
+        "sample_cycles": 343
+      },
+      "corridors": {
+        "outhaul_min": 0.81,
+        "hook_min": 1.37,
+        "inhaul_min": 1.57,
+        "unhook_min": 0.74,
+        "reposition_min": 0.03,
+        "delay_min": 0.64,
+        "total_cycle_min": 5.16,
+        "cycle_min_at_100m": 4.91,
+        "yarding_distance_m": 105,
+        "pieces_per_cycle": 3.0,
+        "crew_size": 5.0,
+        "chokersetters": 2.0,
+        "chokers": 3.0,
+        "sample_cycles": 172
+      },
+      "between_corridors": {
+        "outhaul_min": 0.75,
+        "hook_min": 2.38,
+        "inhaul_min": 1.63,
+        "unhook_min": 0.77,
+        "reposition_min": 0.06,
+        "delay_min": 0.84,
+        "total_cycle_min": 6.43,
+        "cycle_min_at_100m": 7.22,
+        "yarding_distance_m": 89,
+        "pieces_per_cycle": 3.3,
+        "crew_size": 5.0,
+        "chokersetters": 2.0,
+        "chokers": 3.0,
+        "sample_cycles": 171
+      }
+    },
+    "clearcut": {
+      "overall": {
+        "outhaul_min": 0.8,
+        "hook_min": 1.91,
+        "inhaul_min": 1.3,
+        "unhook_min": 0.84,
+        "reposition_min": 0.26,
+        "delay_min": 0.53,
+        "total_cycle_min": 5.63,
+        "cycle_min_at_100m": 5.31,
+        "yarding_distance_m": 106,
+        "pieces_per_cycle": 2.6,
+        "crew_size": 4.0,
+        "chokersetters": 1.8,
+        "chokers": 2.3,
+        "sample_cycles": 326
+      }
+    }
+  }
+}
