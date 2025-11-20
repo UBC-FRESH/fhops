@@ -23,6 +23,7 @@ from fhops.scenario.contract import (
     Landing,
     Machine,
     ProductionRate,
+    SalvageProcessingMode,
     Scenario,
 )
 from fhops.scheduling.systems import HarvestSystem, default_system_registry
@@ -171,9 +172,13 @@ def generate_with_systems(
     else:
         machines = base.machines
     blocks = []
+    salvage_system_ids = {"ground_salvage_grapple", "cable_salvage_grapple"}
     for idx, block in enumerate(base.blocks):
         system_id = system_ids[idx % len(system_ids)]
-        blocks.append(block.model_copy(update={"harvest_system_id": system_id}))
+        updates: dict[str, object] = {"harvest_system_id": system_id}
+        if system_id in salvage_system_ids:
+            updates["salvage_processing_mode"] = SalvageProcessingMode.STANDARD_MILL
+        blocks.append(block.model_copy(update=updates))
 
     return base.model_copy(
         update={"blocks": blocks, "machines": machines, "harvest_systems": systems}
@@ -773,12 +778,21 @@ def generate_random_dataset(
             if any(weight > 0 for weight in available_mix.values()):
                 system_weights = [available_mix[system_id] for system_id in system_ids]
             # zero-weight fallback -> round robin
+        salvage_system_ids = {"ground_salvage_grapple", "cable_salvage_grapple"}
         for idx, block in enumerate(scenario.blocks):
             if system_weights:
                 system_id = feature_rng.choices(system_ids, weights=system_weights, k=1)[0]
             else:
                 system_id = system_ids[idx % len(system_ids)]
-            updated_blocks.append(block.model_copy(update={"harvest_system_id": system_id}))
+            block_updates: dict[str, object] = {"harvest_system_id": system_id}
+            if system_id in salvage_system_ids:
+                block_updates["salvage_processing_mode"] = SalvageProcessingMode.STANDARD_MILL
+            updated_blocks.append(block.model_copy(update=block_updates))
+            blocks_records[idx]["harvest_system_id"] = system_id
+            if system_id in salvage_system_ids:
+                blocks_records[idx][
+                    "salvage_processing_mode"
+                ] = SalvageProcessingMode.STANDARD_MILL.value
         scenario = scenario.model_copy(
             update={"blocks": updated_blocks, "harvest_systems": systems}
         )

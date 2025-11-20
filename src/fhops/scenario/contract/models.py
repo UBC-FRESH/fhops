@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import date
+from enum import Enum
 
 from pydantic import BaseModel, ValidationInfo, field_validator, model_validator
 
@@ -34,6 +35,12 @@ class ObjectiveWeights(BaseModel):
 Day = int  # 1..D
 
 
+class SalvageProcessingMode(str, Enum):
+    STANDARD_MILL = "standard_mill"
+    PORTABLE_MILL = "portable_mill"
+    IN_WOODS_CHIPPING = "in_woods_chipping"
+
+
 class Block(BaseModel):
     """Harvest block metadata and scheduling window."""
 
@@ -49,6 +56,7 @@ class Block(BaseModel):
     stem_density_per_ha: float | None = None
     stem_density_per_ha_sigma: float | None = None
     ground_slope_percent: float | None = None
+    salvage_processing_mode: SalvageProcessingMode | None = None
 
     @field_validator("work_required")
     @classmethod

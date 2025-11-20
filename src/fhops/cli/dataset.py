@@ -182,7 +182,7 @@ from fhops.reference import (
     load_unbc_processing_costs,
     load_unbc_construction_costs,
 )
-from fhops.scenario.contract import Machine, Scenario
+from fhops.scenario.contract import Machine, SalvageProcessingMode, Scenario
 from fhops.scenario.io import load_scenario
 from fhops.scheduling.systems import (
     HarvestSystem,
@@ -643,14 +643,6 @@ class GrappleYarderModel(str, Enum):
     TR122_CLEARCUT = "tr122-clearcut"
     ADV5N28_CLEARCUT = "adv5n28-clearcut"
     ADV5N28_SHELTERWOOD = "adv5n28-shelterwood"
-
-
-class SalvageProcessingMode(str, Enum):
-    """Processing modes for ADV1N5 salvage workflows."""
-
-    STANDARD_MILL = "standard_mill"
-    PORTABLE_MILL = "portable_mill"
-    IN_WOODS_CHIPPING = "in_woods_chipping"
 
 
 _TR122_MODEL_TO_TREATMENT: dict[GrappleYarderModel, str] = {
@@ -4950,6 +4942,7 @@ def estimate_productivity_cmd(
             )
     selected_system_id = harvest_system_id or derived_system_id
     selected_system: HarvestSystem | None = None
+    telemetry_salvage_mode: str | None = None
     if selected_system_id:
         selected_system = systems_catalog.get(selected_system_id)
         if selected_system is None:
@@ -4963,6 +4956,7 @@ def estimate_productivity_cmd(
             mode=salvage_processing_mode,
             system_id=selected_system_id,
         )
+        telemetry_salvage_mode = salvage_processing_mode.value
     elif (
         salvage_processing_mode is not SalvageProcessingMode.STANDARD_MILL
         and selected_system_id not in salvage_system_ids
@@ -5360,6 +5354,7 @@ def estimate_productivity_cmd(
             "tn147_case": grapple_tn147_case if grapple_yarder_model is GrappleYarderModel.TN147 else None,
             "harvest_system_id": selected_system.system_id if selected_system else None,
             "harvest_system_defaults_used": grapple_defaults_used,
+            "salvage_processing_mode": telemetry_salvage_mode,
         }
         _render_grapple_yarder_result(
             model=grapple_yarder_model,

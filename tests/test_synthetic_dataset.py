@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 import yaml
 
+from fhops.scenario.contract import SalvageProcessingMode
 from fhops.scenario.io import load_scenario
 from fhops.scenario.synthetic import (
     BlackoutBias,
@@ -127,7 +128,38 @@ def test_random_dataset_statistics_within_bounds():
             num_days = config.num_days
         expected = config.blackout_probability * num_days
         assert avg_blackouts <= expected + 2
-        assert any(length >= 2 for length in blackout_durations)
+    assert any(length >= 2 for length in blackout_durations)
+
+
+def test_salvage_blocks_round_trip_through_bundle(tmp_path: Path):
+    config = SyntheticDatasetConfig(
+        name="synthetic-salvage",
+        num_blocks=(3, 3),
+        num_days=(4, 4),
+        num_machines=(2, 2),
+        num_landings=(1, 1),
+        blackout_probability=0.0,
+        system_mix={"ground_salvage_grapple": 1.0},
+    )
+    systems = default_system_registry()
+    salvage_system = {"ground_salvage_grapple": systems["ground_salvage_grapple"]}
+    bundle = generate_random_dataset(config, seed=99, systems=salvage_system)
+
+    assert set(bundle.blocks["harvest_system_id"]) == {"ground_salvage_grapple"}
+    assert set(bundle.blocks["salvage_processing_mode"].dropna().unique()) == {
+        SalvageProcessingMode.STANDARD_MILL.value
+    }
+    assert all(
+        block.salvage_processing_mode == SalvageProcessingMode.STANDARD_MILL
+        for block in bundle.scenario.blocks
+    )
+
+    scenario_yaml = bundle.write(tmp_path / "synthetic_salvage")
+    loaded = load_scenario(scenario_yaml)
+    assert all(
+        block.salvage_processing_mode == SalvageProcessingMode.STANDARD_MILL
+        for block in loaded.blocks
+    )
 
 
 def test_tier_defaults_drive_blackouts_and_crews():

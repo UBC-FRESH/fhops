@@ -10,6 +10,7 @@ from .models import (
     Problem,
     ProductionRate,
     Scenario,
+    SalvageProcessingMode,
 )
 
 __all__ = [
@@ -22,4 +23,5 @@ __all__ = [
     "Scenario",
     "Problem",
     "CrewAssignment",
+    "SalvageProcessingMode",
 ]

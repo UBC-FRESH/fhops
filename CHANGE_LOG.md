@@ -1,5 +1,11 @@
 # Development Change Log
 
+# 2025-11-28 — Scenario salvage-mode threading
+- Added `Block.salvage_processing_mode` handling to the scenario contract end-to-end: CSV loaders now treat the column as an optional enum (blank/NaN entries are stripped), and the synthetic dataset generator records the new field whenever a salvage harvest system (`ground_salvage_grapple`, `cable_salvage_grapple`) is assigned to a block so bundles persist the ADV1N5 portable-mill vs. in-woods-chipping choice.
+- Updated docs (`docs/howto/data_contract.rst`, `docs/reference/harvest_systems.rst`) so the scenario data contract explicitly calls out the new column and clarifies how to thread it through CLI calls/telemetry.
+- Extended the synthetic scenario tests to lock in the behaviour: salvage-enabled `generate_with_systems` invocations now assert that `STANDARD_MILL` is the default, and `generate_random_dataset` smoketests confirm the CSV/Scenario/loader path round-trips the enum without dropping the value.
+- Planning notes now flag the skyline costing defaults as the next queued action (Madill 009 CPI-aware machine-rate entry sourced from TN147/TN157) so the harvest-system backlog knows Item 1 after the salvage schema work shipped.
+
 # 2025-11-27 — ADV1N12 forwarder/skidder integration
 - Digitised the Advantage Vol. 1 No. 12 extraction-distance curves into `data/productivity/forwarder_skidder_adv1n12.json`
   (Valmet 646 forwarder plus Timberjack 240 skidder in both integrated and two-phase thinning systems) so the coefficients

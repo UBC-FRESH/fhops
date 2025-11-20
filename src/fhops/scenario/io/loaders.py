@@ -72,6 +72,29 @@ def _validate_geojson(path: Path, expected_key: str, expected_ids: set[str], roo
         return str(path)
 
 
+def _as_optional_string(value: object) -> str | None:
+    if value is None:
+        return None
+    if isinstance(value, str):
+        stripped = value.strip()
+        return stripped or None
+    if pd.isna(value):
+        return None
+    return str(value)
+
+
+def _normalise_optional_block_fields(rows: list[dict[str, object]]) -> None:
+    optional_fields = ("harvest_system_id", "salvage_processing_mode")
+    for row in rows:
+        for field in optional_fields:
+            value = row.get(field)
+            normalised = _as_optional_string(value)
+            if normalised is None:
+                row.pop(field, None)
+            else:
+                row[field] = normalised
+
+
 def load_scenario(yaml_path: str | Path) -> Scenario:
     base_path = Path(yaml_path).resolve()
     with base_path.open("r", encoding="utf-8") as handle:
@@ -86,6 +109,7 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
         return candidate
 
     blocks_raw = read_csv(require("blocks")).to_dict("records")
+    _normalise_optional_block_fields(blocks_raw)
     blocks = TypeAdapter(list[Block]).validate_python(blocks_raw)
     machines = TypeAdapter(list[Machine]).validate_python(
         read_csv(require("machines")).to_dict("records")

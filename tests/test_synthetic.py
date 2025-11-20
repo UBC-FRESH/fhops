@@ -1,8 +1,10 @@
+from fhops.scenario.contract import SalvageProcessingMode
 from fhops.scenario.synthetic import (
     SyntheticScenarioSpec,
     generate_basic,
     generate_with_systems,
 )
+from fhops.scheduling.systems import default_system_registry
 
 
 def test_generate_basic_produces_consistent_counts():
@@ -37,3 +39,23 @@ def test_generate_with_systems_assigns_system_ids():
     assert len(system_ids) >= 2
     machine_roles = {machine.role for machine in scenario.machines}
     assert None not in machine_roles
+
+
+def test_generate_with_systems_assigns_salvage_processing_mode():
+    spec = SyntheticScenarioSpec(num_blocks=3, num_days=3, num_machines=2)
+    systems = default_system_registry()
+    salvage_only = {
+        system_id: systems[system_id]
+        for system_id in ("ground_salvage_grapple", "cable_salvage_grapple")
+    }
+    scenario = generate_with_systems(spec, systems=salvage_only)
+    salvage_blocks = [
+        block
+        for block in scenario.blocks
+        if block.harvest_system_id in salvage_only and block.salvage_processing_mode is not None
+    ]
+    assert salvage_blocks, "Expected salvage blocks to be tagged with a processing mode."
+    assert all(
+        block.salvage_processing_mode == SalvageProcessingMode.STANDARD_MILL
+        for block in salvage_blocks
+    )

@@ -401,7 +401,9 @@ checklists whenever you point `cable_running*`, `ground_fb_*`, or custom salvage
 * **Processing capacity** – deploy portable mills at satellite yards or in-woods chip plants for small stems
   when permanent mills cannot expand fast enough; burn or isolate slab/char waste so pulp furnish stays clean. Use
   ``--salvage-processing-mode`` (``standard_mill`` | ``portable_mill`` | ``in_woods_chipping``) when calling
-  ``ground_salvage_grapple`` or ``cable_salvage_grapple`` to print the appropriate reminder in the CLI output.
+  ``ground_salvage_grapple`` or ``cable_salvage_grapple`` to print the appropriate reminder in the CLI output, and
+  store the selected mode in ``blocks.csv`` via the ``salvage_processing_mode`` column so downstream scenario tooling
+  and telemetry inherit the same warning set automatically.
 
 Document any of these mitigations in scenario metadata (telemetry note, `--harvest-system-id` description, etc.)
 when you model salvage corridors so downstream QA knows why costs/utilisation differ from green-timber runs. The
