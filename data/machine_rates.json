@@ -188,6 +188,20 @@
         "repair_maintenance_usage_multipliers": null
     },
     {
+        "machine_name": "Skylead C40 skyline (TN-201)",
+        "role": "grapple_yarder_skyleadc40",
+        "ownership_cost_per_smh": 18.85,
+        "operating_cost_per_smh": 125.99,
+        "default_utilization": 0.84,
+        "move_in_cost": 5000.0,
+        "cost_base_year": 1991,
+        "source": "FERIC TN-201 (1993) Skylead C40 cable yarder cost analysis (Model 16000 near Vernon, BC).",
+        "notes": "Standing-skyline yarder with Mini-Maki carriage; costs exclude supervision/overhead/interest and bundle the hooktender/chokers, fuel/lube, and carrier upkeep. Use for Skylead C40 intermediate-support corridors (FNCY12/TN-201) until dedicated harvest systems land.",
+        "repair_maintenance_cost_per_smh": null,
+        "repair_maintenance_reference_hours": null,
+        "repair_maintenance_usage_multipliers": null
+    },
+    {
         "machine_name": "Grapple Yarder (Cypress 7280B + UH14 backspar)",
         "role": "grapple_yarder",
         "ownership_cost_per_smh": 109.99,

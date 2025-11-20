@@ -682,6 +682,9 @@ into the regressions. Available models:
 * ``tr125-single-span`` / ``tr125-multi-span`` – FPInnovations TR-125 standing skyline (Skylead C40 with Mini-Maki).
   Provide slope distance (10–420 m) and lateral distance (0–50 m). Payload defaults to 1.6 m³ (≈3.4 logs × 0.47 m³/log)
   but can be overridden; the CLI also prints the underlying cycle minutes so you can see the intermediate-support penalty.
+  Pair these presets with ``inspect-machine --machine-role grapple_yarder_skyleadc40`` (FERIC TN-201 cost entry) or
+  use ``--show-costs`` to pull the same Skylead C40 owning/operating split when modelling Thunderbird/Skylead
+  intermediate-support corridors like the FNCY12 case study.
 * ``tr127-block1`` … ``tr127-block6`` – FPInnovations TR-127 block-specific tower-yarders. Blocks 1 & 3 require two
   lateral inputs (``--lateral-distance-m`` plus ``--lateral-distance-2-m``); Blocks 5 & 6 require ``--num-logs``.
   Range checks match the publication and the table output shows cycle minutes alongside m³/PMH.
