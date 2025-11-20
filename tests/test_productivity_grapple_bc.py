@@ -5,6 +5,7 @@ import math
 import pytest
 
 from fhops.productivity.grapple_bc import (
+    estimate_grapple_yarder_productivity_adv5n28,
     estimate_grapple_yarder_productivity_sr54,
     estimate_grapple_yarder_productivity_tr75_bunched,
     estimate_grapple_yarder_productivity_tr75_handfelled,
@@ -14,6 +15,7 @@ from fhops.productivity.grapple_bc import (
     get_tn157_case,
     get_tn147_case,
     get_tr122_treatment,
+    get_adv5n28_block,
 )
 
 
@@ -69,3 +71,15 @@ def test_tr122_clearcut_productivity_matches_dataset() -> None:
     treatment = get_tr122_treatment("clearcut")
     prod = estimate_grapple_yarder_productivity_tr122("clearcut")
     assert math.isclose(prod, treatment.productivity_m3_per_pmh, rel_tol=1e-9)
+
+
+def test_adv5n28_clearcut_matches_dataset() -> None:
+    block_id = "block_1_clearcut_with_reserves"
+    block = get_adv5n28_block(block_id)
+    prod = estimate_grapple_yarder_productivity_adv5n28(block_id)
+    assert math.isclose(prod, block.productivity_m3_per_pmh, rel_tol=1e-9)
+
+
+def test_adv5n28_invalid_block() -> None:
+    with pytest.raises(ValueError):
+        get_adv5n28_block("not-a-block")

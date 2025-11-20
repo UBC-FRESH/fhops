@@ -1,5 +1,13 @@
 # Development Change Log
 
+# 2025-11-25 — ADV5N28 skyline conversion presets
+- Structured ADV5N28 (Madill 071 + Acme 200 Pow’-R Block) into `data/reference/fpinnovations/adv5n28_skyline_conversion.json`, including falling/yarding shift studies, cycle-element tables, and the observed vs. projected skyline/helicopter cost splits.
+- Added an ADV5N28 loader in `fhops.productivity.grapple_bc` (`ADV5N28Block`, `get_adv5n28_block`, `estimate_grapple_yarder_productivity_adv5n28`) and exposed the presets via two new grapple-yarder models: `adv5n28-clearcut` and `adv5n28-shelterwood`.
+- `fhops.dataset estimate-productivity --machine-role grapple_yarder` now accepts the new models; the CLI backfills turn volume/distance from the dataset, reports the 2002 CAD actual/projected/heli unit costs, and cites the Advantage reference alongside the existing SR54/TR75/TN157/TN147/TR122 presets.
+- Telemetry now captures the preset cost metadata (base-year + CPI-inflated values) whenever the grapple-yarder helper runs, so ADV5N28 skyline-vs-helicopter savings are logged automatically in JSONL outputs.
+- Added long-span harvest-system presets (`cable_running_adv5n28_clearcut` / `cable_running_adv5n28_shelterwood`) so `--harvest-system-id …` auto-selects the ADV5N28 helper (with representative payload/distance defaults) whenever heli blocks are converted to skyline corridors.
+- Updated docs (`docs/reference/harvest_systems.rst`), planning notes, reference log entries, and CLI/production tests so the ADV5N28 helper is documented, exercised, and queued for harvest-system override integration.
+
 # 2025-11-24 — TN157 Cypress swing yarder preset
 - Digitised FERIC TN-157 into `data/reference/fpinnovations/tn157_cypress7280b.json` (7 case studies + weighted combined stats) and added the `tn157` grapple-yarder model with an optional `--tn157-case` selector. `fhops.dataset estimate-productivity --machine-role grapple_yarder --grapple-yarder-model tn157` now reports the observed turn volume, yarding distance, productivity, and 1991 CAD $/m³ from the Cypress 7280B + Hitachi UH14 trials, and harvest-system overrides (`cable_running`) default to the combined case so skyline corridors auto-populate realistic payloads.
 - `fhops.productivity.grapple_bc` exposes `TN157Case`, `get_tn157_case`, and `estimate_grapple_yarder_productivity_tn157`, enabling helpers/tests to reuse the dataset programmatically.

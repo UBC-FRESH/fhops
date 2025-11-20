@@ -1,0 +1,986 @@
+                   Restricted to FERIC Members and Partners                                  Vol. 5 No. 28 July 2004
+
+
+
+     Contents         Substituting a skyline harvesting
+ 1
+ 1
+     Introduction
+     Site, stand,
+                      system on sites originally planned for
+     and
+     silvicultural
+     system
+                      helicopter harvesting: two case studies
+ 3   Harvesting
+     system,
+     equipment,
+                        Abstract
+     and crew               At the request of Ainsworth Lumber Company Limited, the Forest Engineering
+ 5   Study              Research Institute of Canada (FERIC) monitored harvesting of two blocks in south-
+     methods            western British Columbia that had originally been designed for helicopter harvesting
+ 5   Results and        but were converted to skyline harvesting. This report describes the planning and layout
+     discussion
+                        involved in the conversion; presents productivities and costs for falling, skyline yarding,
+ 12 Conclusions
+                        and loading; compares these costs with those for helicopter harvesting; and makes
+ 13 Implementa-
+    tion
+                        suggestions for improvements.
+ 15 References          Keywords
+ 15 Acknowledge-             Skyline yarding, Cable yarding, Long line, Helicopter yarding, Madill 071 yarder,
+    ments               Acme 200 Pow’-R Block motorized slackpulling carriage, Intermediate supports, Hand
+                        falling, Harvest planning, Cost, Productivity, Clearcut, Irregular shelterwood, Partial
+                        cutting, British Columbia.
+
+Author                  Introduction                                      The specific objectives of FERIC’s study
+Brian Boswell,                                                         were to:
+                           Although helicopter harvesting is
+Western Division
+                      expensive to conduct, in British Columbia         • Document the changes necessary to
+                      it is often prescribed where logging-road            convert the blocks from helicopter
+                      construction is not economically feasible            harvesting to skyline harvesting.
+                      or environmentally viable. In an effort to        • For the skyline system, determine
+                      minimize overall harvesting costs, forest            productivity and unit costs for falling,
+                      companies are taking a closer look at using          yarding, and loading.
+                      less expensive harvesting systems on these        • Compare the costs of skyline harvesting
+                      sites. One important consideration when              with those of helicopter harvesting.
+                      examining the cost of harvesting systems is       • Identify any problems associated with
+                      the stumpage rate. When stumpage is at the           substituting skyline harvesting for heli-
+                      minimum value,1 the higher costs of some             copter harvesting, and make suggestions
+                      harvesting systems cannot be offset. Two             for improving the process.
+                      cutblocks within the operating area of
+                      Lillooet Division of Ainsworth Lumber                Site, stand, and
+                      Company Limited in southwestern British              silvicultural system
+                      Columbia were initially designated and laid         The two blocks were located in south-
+                      out for yarding by helicopter. Because           western British Columbia approximately
+                      stumpage assessed for both helicopter and        160 km northeast of Vancouver, near the
+                      cable methods was already at the minimum,        town of Lillooet.
+                      Ainsworth Lumber asked FERIC to help             1
+                                                                           Generally, minimum stumpage is assessed when the
+                      determine the feasibility of substituting            appraised cost of harvesting is equal to or above the
+                      long-distance skyline systems on these blocks.       appraised value of the end product.
+Figure 1. Block 1,
+                                                                                     Block 1: Clearcut with reserves
+clearcut with                                                                             Block 1 (Figure 1) is located in the dry
+reserves.                                                                            cold subzone of the Montane Spruce
+Approximate                                                                          biogeoclimatic zone (MSdc) (Lloyd et al.
+boundary                                                                             1990) between 1300 m and 1580 m elevation.
+(outlined),
+                                                                                     Slope averages 55% and ranges from 35 to
+intermediate
+support trees
+                                                                                     75%; aspect is easterly. The net stand volume
+(arrow), and                                                                         was 336 m³/ha, and the stand was comprised
+previously logged                                                                    of 94% Douglas-fir with minor components
+area (foreground).                                                                   of spruce and lodgepole pine (Table 1). The
+The landing is                                                                       average net tree volume was 0.74 m³, and
+behind the trees in
+                                                                                     the average tree diameter was 36 cm. The
+the foreground of
+the photo.
+                                                                                     silviculture prescription specified a clearcut
+                                                                                     with reserves, with 2–3 Douglas-fir trees/ha
+                                                                                     to be left as wildlife trees and as sources of
+                                                                                     future coarse woody debris.
+
+
+                                                   Table 1. Descriptions of study blocks
+
+                                                                                              Clearcut block                          Partial cut block
+                          Original block size a (ha)                                                      9                                       13
+                          Net volume (m³/ha)                                                             336                                     386 b
+                          Species composition
+                            Douglas-fir (%)                                                               94                                        90
+                            Spruce (%)                                                                    3                                         5
+                            Lodgepole pine (%)                                                            3                                         5
+
+                          Stand density (no. trees/ha)                                               454                                      549 c
+                          Tree diameter (cm)                                                          36                                        35
+                          Net volume/tree (m³)                                                       0.74                                      0.67
+                          Total tree height (m)                                                       27                                     Not avail.
+                          Ground slope, range (average) (%)                                       35–75 (55)                                45–75 (60)
+                          Planned yarding distance (m)                                            200–725 d                                 200–530 e
+                          Yarding over previously harvested area                                     Yes                                        No
+                          Intermediate supports                                                      Yes                                        No
+                          Cross-stream yarding                                                        No                                       Yes
+                          Yarding direction                                                        Downhill                                  Downhill
+                         a
+                           Includes areas deleted from final harvesting plan.
+                         b
+                           Planned harvest volume was 200 m 3/ha.
+                         c
+                           Planned harvest was 200 trees/ha.
+                         d
+                           Logs were yarded over a 200-m-wide area, located between the landing and the lower boundary of the block, that had
+                           been previously harvested.
+                         e
+                           Logs were yarded over a riparian reserve zone and through an unharvested area (totaling 200 m wide) between the
+                           landing and the lower boundary of the block.
+
+
+
+                      Forest Engineering Research Institute of Canada (FERIC)
+                      Eastern Division and Head Office   Western Division            Disclaimer
+                      580 boul. St-Jean                  2601 East Mall              Advantage is
+                                                                                     Advantage      is published
+                                                                                                       published solely
+                                                                                                                    solely to
+                                                                                                                           to disseminate
+                                                                                                                              disseminate information
+                                                                                                                                            information to
+                                                                                                                                                        to FERIC’s
+                                                                                                                                                           FERIC’s mem-
+                                                                                                                                                                   mem-
+                      Pointe-Claire, QC, H9R 3J9         Vancouver, BC, V6T 1Z4      bers and
+                                                                                     bers and partners.
+                                                                                              partners. ItIt is
+                                                                                                              is not
+                                                                                                                 not intended
+                                                                                                                     intended as as an
+                                                                                                                                    an endorsement
+                                                                                                                                       endorsement or or approval
+                                                                                                                                                         approval of
+                                                                                                                                                                   of any
+                                                                                                                                                                      any
+                                                                                     product or
+                                                                                     product or service
+                                                                                                service to
+                                                                                                         to the
+                                                                                                             the exclusion
+                                                                                                                  exclusion ofof others
+                                                                                                                                 others that
+                                                                                                                                        that may
+                                                                                                                                             may be
+                                                                                                                                                  be suitable.
+                                                                                                                                                     suitable.
+                          (514) 694-1140                     (604) 228-1555
+                          (514) 694-4351                     (604) 228-0999                     Copyright
+                                                                                                Copyright 2004.
+                                                                                                           2004. Printed
+                                                                                                                 Printed in
+                                                                                                                         in Canada
+                                                                                                                            Canada on
+                                                                                                                                   on recycled
+                                                                                                                                      recycled paper.
+                                                                                                                                               paper.
+
+                          admin@mtl.feric.ca                 admin@vcr.feric.ca
+
+                                                                                                                                                ISSN 1493-3381
+    The nearest haul road was located 200 m                                                                   Figure 2. Block 2,
+slope distance below the clearcut block,                                                                      partial cut
+and the area between the road and the lower                                                                   (irregular
+edge of the study block had recently been                                                                     shelterwood).
+harvested with a highlead system. New road                                                                    Madill 071 yarder
+                                                                                                              and skyline
+construction was prohibited to protect
+                                                                                                              corridors.
+mountain goat habitat; this block had
+therefore been designated for helicopter
+harvesting.
+    The new plan for skyline harvesting
+required downhill yarding and external
+horizontal yarding distances of 375–725 m,        leave a cross section of diameter classes up to
+and that logs be yarded over the recently         72.5 cm, and, where operationally feasible,
+harvested area. A break in slope was situated     provide wildlife habitat by leaving trees
+at the boundary of the study block and the        >72.5 cm in diameter. Douglas-fir accounted
+recently harvested area. The long yarding         for 45 m2/ha of basal area, and of this a
+distances and the terrain break made inter-       minimum of 18 m2/ha were to be retained;
+mediate supports necessary. Three skyline roads   all other species were to be harvested.
+were required to harvest the clearcut block.      Openings were limited in size to 2000 m2
+                                                  with maximum dimensions of 25 m up the
+Block 2: Partial cut (Irregular shelterwood)      hill and 80 m along the contour. In order to
+     Block 2 (Figure 2) is located in the         reduce visual impact, openings were designed
+Okanagan very dry hot variant of the Inte-        to follow the contours.
+rior Douglas-fir biogeoclimatic zone (IDFxh1)          Dry site conditions required the use of
+(Lloyd et al. 1990). Elevation extends from       partial cutting to facilitate reforestation.
+900 m to 1200 m. The average slope within         The silviculture prescription required the
+the block is 60% and ranges from 45 to            logs to be fully suspended when yarding
+75%; the aspect is southerly. Net stand           over the creek. Yarding was limited to narrow
+volume was 368 m³/ha, and the stand was           (10-m-wide) corridors through a 20–30 m
+comprised of 90% Douglas-fir with minor           riparian reserve zone adjacent to the creek and
+components of spruce and lodgepole pine.          within a 100-m-wide timbered area be-
+The average net tree volume was 0.67 m³,          tween the landing and the creek. All yarding
+and the average tree diameter was 35 cm.          in this block was downhill and three skyline
+     The area is adjacent to Highway 99 and       corridors were required. Horizontal yarding
+is highly visible to tourists traveling between   distance was as much as 530 m.
+Whistler and Lillooet. As well, a recreation           To minimize impacts on the goats,
+site is located directly across the highway       harvesting activities were permitted from
+from the block. A large creek with class S2       May to November only.
+and S3 reaches2 is located between the
+block and the landing. The area includes
+critical winter habitat for mountain goats.
+                                                      Harvesting system,
+     Partial cutting was required on the steep        equipment, and crew
+terrain to accommodate silvicultural and              Trees were hand felled and bucked by
+visual quality objectives and helicopter          four fallers from June to August. One to
+harvesting had been prescribed.
+     The silviculture prescription specified an   2
+                                                      Fish streams and community watershed streams are
+irregular shelterwood with a combination of           classified S1 to S4. Class S1 streams are >20 m wide;
+                                                      S2 streams are >5 to 20 m wide, S3 streams are 1.5 to
+uniform and group removal. The objectives             5 m wide; and S4 streams are <1.5 m wide (BCMOF
+were to produce an irregular stem distribution,       1998).
+
+              Vol. 5 No. 28
+Advantage     July 2004                                                                                                            3
+    Figure 3. Opening
+                                                                                   three fallers worked per shift; an observer was
+    in the partial cut,                                                            on site for safety whenever a faller worked
+    approximately 20                                                               alone. In the partial cut block, the engineering
+    m by 50 m.                                                                     crew located and marked the skyline corridors
+                                                                                   but the fallers measured and marked the
+                                                                                   openings. The long axis of each opening was
+                                                                                   oriented approximately perpendicular to
+                                                                                   the skyline corridors and following the
+                                                                                   contours; 20-m-wide openings (Figure 3)
+                                                                                   were alternated with 20-m-wide leave
+                                                                                   strips. Ainsworth Lumber believed falling
+    Figure 4. Madill                                                               would be safer and more efficient if the
+    071 yarder and                                                                 fallers selected the openings.
+    Barko 450 loader
+                                                                                        Yarding took place from June to August.
+    working in partial
+    cut block.                                                                     In both blocks, yarding was conducted
+                                                                                   with a Madill 071 yarder (Figure 4) rigged
+                                                                                   as a standing skyline system. Smaller-than-
+                                                                                   usual lines, with extensions (Table 2), were
+                                                                                   required to enable the Madill to yard the long
+                                                                                   distances. The 21-kW Acme 200 carriage
+                                                                                   (Figure 5), which was equipped with a
+                                                                                   hydraulic “Pow’-R Block” slackpulling
+    Figure 5. Acme
+                                                                                   system with dual tension wraps, was chosen
+    200 Pow’-R Block
+    motorized                                                                      for its ability to pull slack uphill on steep
+    slackpulling                                                                   slopes at long distances. The use of this type
+    carriage.                                                                      of carriage made it possible to yard long
+                                                                                   distances downhill plus yard laterally in the
+                                                                                   partial cut block, while the carriage’s ability
+                                                                                   to pass intermediate supports was required
+                                                                                   for the clearcut block.
+                                                                                        The harvesting contractor and crew had
+                                                                                   considerable experience using highlead and
+                                                                                   skyline systems. However, this was the first
+                                                                                   time they had tried downhill yarding at such
+                                                                                   long distances, and it was also the first time
+                                                                                   they had used an Acme motorized carriage.
+
+                                           Table 2. Wire rope specifications for yarder a
+
+                                                                Line   Wire rope         Drum            Line                 Total
+                                                                size     type           capacity      extensions             length
+                  Line                                         (mm)                       (m)             (m)                  (m)
+                  Skyline                                       25     Power pac         589             326                   915
+                  Mainline                                      16     Power pac         960                -                  915
+                  Haulback                                      16     Power pac       1 341           1 098                 2 439
+                  Strawline                                     11          EIPS         745           2 304                 3 049
+                  Guylines and utility line                     16          EIPS             -              -                1 524
+                  Slackpulling                                             Not required for this cable system
+                  a
+                      Based on consultant’s recommendations.
+
+
+                                                                                                            Vol. 5 No. 28
+4                                                                                                              July 2004    Advantage
+    The six-person yarding and loading             hours (YH), and time distributions. Along
+crew consisted of a loader operator/foreman,       with Ainsworth Lumber’s log scale data, these
+hooktender, yarder operator, rigging slinger,      data were used to calculate yarding produc-
+chaser, and chokersetter. The loader operator/     tivity. Detailed timing was performed for five
+foreman rigged the intermediate supports           days to determine average times for yarding
+and tail trees. Sorting and loading were done      cycle elements. Loader productivity was as-
+by a Barko 450 hydraulic loader with a             sumed to be equal to yarder productivity
+butt-’n-top grapple (Figure 4).                    because the loader and the yarder always
+                                                   worked together.
+  Study methods                                         Yarding and loading costs per cubic
+    The falling contractor kept a log of daily     metre were estimated by applying the study
+activities. Because the fallers’ records did not   productivities to hourly machine costs as
+include the exact time to hike in and out of       determined by FERIC’s standard costing
+the blocks, this time was estimated. When          method (Appendix II). The results were
+an observer was on site to ensure safety, the      compared with helicopter harvesting costs
+observer’s time was not considered in the cost     that are representative of the area.
+and productivity calculations. FERIC met
+with the falling contractor at the site on a         Results and discussion
+weekly basis to discuss falling progress and
+to obtain detailed information about non-          Accommodating skyline
+productive time and working conditions.            harvesting
+Ainsworth Lumber provided log scale volumes            Ainsworth Lumber hired a skyline har-
+for both blocks and estimated the area and         vesting consultant to assess the blocks and
+volumes that had been felled but not cable         recommend harvesting plans that would
+yarded. This information was used to esti-         convert the sites from helicopter to long-
+mate falling productivity and to determine         distance skyline yarding. Potential tail trees,
+the time distribution of falling activities.       anchor stumps, and intermediate support
+Detailed timing was performed on three of          trees were identified, and ground profiles
+the four fallers over six days to determine        were run in the field. Payload analyses were
+average times for the falling cycle elements.      performed on the profiles to determine
+The results for Faller No. 1, the only faller      maximum turn sizes; this information was
+timed in both blocks, were compared for the        then used to estimate productivity and costs
+two areas. Falling costs per cubic metre were      on each planned skyline road and corridor. The
+estimated by applying the study                    consultant made several recommendations
+productivities to the IWA’s hourly rate for        including sizes and lengths of line for the
+fallers including benefit loading and              yarder (Table 2), rigging supplies, minimum
+powersaw costs (Appendix I).                       and maximum rigging heights for tail trees
+    A Servis recorder installed on the yarder      and intermediate supports, skyline pre-
+recorded operating and non-operating time          tensions for each skyline corridor and road,
+within each scheduled shift. On a daily            and, in the case of the partial cutting block,
+basis, the loader operator/foreman filled in       minimum corridor widths for lateral yarding.
+forms to record the date, block, crew size,            The consultant’s analyses showed that
+daily piece counts, and yarding time. He also      portions of the blocks would be difficult or
+recorded times ≥30 min for rigging changes,        impossible to yard from existing roads with
+road and corridor changes, maintenance,            the proposed cable system. Some deletions
+mechanical delays, and other non-mechani-          were necessary, which substantially reduced
+cal delays. This information was used to de-       the volume available for cable yarding.
+termine the scheduled machine hours (SMH),         Other logistical changes were also needed as
+productive machine hours (PMH), yarding            harvesting progressed.
+               Vol. 5 No. 28
+Advantage      July 2004                                                                             5
+                             In the clearcut block, turn size in the             wood was re-designated for helicopter
+                         southwest corner (Figure 6) would be very               yarding. Deletion of this area reduced the
+                         small (about half of the average payload                maximum yarding distance in the block to
+                         for the rest of the block). To improve the              500 m (Figure 6).
+                         harvesting economics, this 2.5-ha area was                  In the partial cut block (Figure 7), two
+                         removed from the planned cable harvest area.            landings had already been built outside the
+                         During yarding of the middle skyline                    block boundary for helicopter harvesting, one
+                         road, the tail tree was pulled over. Because            for landing logs and one for servicing the
+                         no suitable large trees were available beyond           helicopter. The consultant chose the lower
+                         the block boundary, the area could not be               landing to situate the yarder in order to
+                         cable yarded, and about 1100 m³ of felled               maximize payloads, and the yarding corridors
+
+
+    Figure 6.
+    Map of Block 1,
+    clearcut with
+    reserves, showing                                                                        N
+                                                                                                                                  Previously logged
+                                                                                                                                  area
+    implementation of
+                                                                                                                                 Falling problems
+    the new harvesting   725 m                                                          Not to scale                             within this area
+
+    plan.                                                     375 m                                                              Harvested with
+                                                                                                                                 skyline without
+                                                                                                                                 difficulty
+                             650 m
+                                                                                                                                  Area left for
+                                                                                                                                  helicopter
+
+                                                                                                                                 Low payload
+                                                                                                                                 area - deleted from
+                                                                                                                                 skyline harvest area
+
+                                                                                                                                 Landing
+
+
+                                                                                                                                 Planned tail tree
+                                                                                                                                 locations
+
+
+
+
+    Figure 7.                                                           530 m
+
+    Map of Block 2,                                             500 m
+    partial cut,
+    showing changes
+                                                                                375 m                      N
+    to the harvesting
+    plan.
+                                                                                                       Not to scale
+
+
+
+
+                                        Planned openings
+
+                                        Block area
+                                                                                                                            Cayoosh Creek
+                                        Area deleted from
+                                        original plan
+
+                                        Area deleted during
+                                        falling
+
+                                        Recreation site
+
+                                        Landing used
+                                        by contractor                                                             Highway 99
+
+
+                                        Orginal landing
+
+                                        Stream
+
+                                        Planned tail tree
+                                        locations
+
+
+
+
+                                                                                                                      Vol. 5 No. 28
+6                                                                                                                        July 2004    Advantage
+were laid out accordingly. Instead, the
+                                                                      Table 3. Falling productivity
+contractor decided to use the upper landing
+to shorten the yarding distances and because                                               Clearcut       Partial cut
+deflection from this location was good and                                                  block           block
+payloads were adequate. However, the                Felled volume (m³)                      2992              1189
+corridors did not converge at the upper             Scheduled man hours (SMH)               340.9            197.3
+landing and the yarder had to be re-aligned         Productive man hours (PMH)              208.0            140.0
+at each corridor change. During the planning        Mandays worked (no.)                       45               29
+stage, a 5-ha area in the northwest corner of       Average shift length (h)                  7.6              6.8
+                                                    Productivity
+the partial cut block was determined to be             (m³/manday a)                          57.1             39.2
+inoperable for the skyline system and was              (m³/SMH)                                8.8              6.0
+deleted. This area was later yarded by heli-           (m³/PMH)                               14.4              8.5
+copter. Also, during falling, it was determined
+                                                    a
+that the southeast corner of the partial cut             Based on a 6.5-h/shift.
+block could not be yarded as laid out, so this
+portion of the block was removed from the         access trail, took an additional 90 min of hike
+harvesting plan before it was felled.             in/out time over the first two days of falling.
+     In the partial cut block, corridors had to       Fallers were paid for time to hike into
+be created through the 100 m of timber that       the block but not for time to hike out.
+stood between the landing and the lower           However, all time, including all hiking time,
+boundary of the block.                            was used to calculate productivity and costs.
+                                                  Two-way hiking time was 19% of the total
+Falling                                           time for the clearcut block and 9% for the
+                                                  partial cut block (Figures 8 and 9).
+Shift-level study                                     Including hiking time in the data in-
+     In the clearcut block, 19 shifts and         creased the fallers’ average shift length to
+45 mandays were required to fell 2992 m³.         more than the standard 6.5 h/shift. If all the
+The average shift length was 7.6 h, including     hike in/out had been done within the 6.5-h
+time to hike in and out of the block.
+Productivity was 57.1 m³/6.5-h manday.
+     For the partial cut block, 14 shifts and
+29 mandays were required to fall 1189 m3.
+                                                                19% Wind delays
+                                                                                                      Figure 8. Falling
+Average shift length was 6.8 h and produc-                                                            time distribution,
+                                                  1% Reconnaissance                                   clearcut.
+tivity was 39.2 m³/6.5-h manday (Table 3).                                                61% Fall
+
+     Falling in the southwest corner of the
+clearcut block was complicated by a change              19% Hike in & out
+
+in block boundary such that the area created
+was too narrow and steep for two fallers to
+cut trees safely (see the 725-m road in
+Figure 6). Instead, one worker felled the
+trees and the other bucked and limbed them.                     16% Marking strips
+                                                                                                      Figure 9. Falling
+This required a lot of coordination between
+                                                                                                      time distribution,
+the fallers to ensure safe conditions. Often         3% Medical delays                                partial cut.
+                                                    1% Reconnaisance
+one faller was idle while waiting for the other                                           71% Fall
+to complete his task, and productivity was              9% Hike in & out
+
+
+reduced as a result.
+     For the clearcut block, moving equipment,
+fuel, and oil into the block, and cutting an
+
+
+              Vol. 5 No. 28
+Advantage     July 2004                                                                                                    7
+                                period, then more mandays would have                          2 shifts and 5 mandays of faller time. Dur-
+                                been needed to complete the work. FERIC                       ing falling, a faller discovered that one corri-
+                                estimated that falling would have taken                       dor was not straight, resulting in a delay.
+                                an extra 9.6 mandays for the clearcut
+                                block and an extra 1.5 mandays for the                        Detailed-timing study
+                                partial cut block; this would have reduced                         During the detailed timing study, Faller
+                                productivity to 54.8 m³/manday and                            No. 1 felled a total of 138 trees in both
+                                39.0 m³/manday, respectively.                                 blocks. Analysis of the data (Table 4) showed
+                                     For the clearcut block, 19% of the time                  that average falling time per tree was much
+                                was taken up by wind delays. No wind                          longer for the partial cut block (6.74 min)
+                                delays were recorded for the partial cut                      than for the clearcut block (3.26 min).
+                                block. On days when the fallers went home                     Average move time between trees was higher
+                                early due to high winds, the time remaining                   for the partial cut than for the clearcut likely
+                                in the shift was recorded as wind delay.                      due to the steeper ground and lower stand
+                                This occurred on 6 days and ranged from                       density in the partial cut. The steeper ground
+                                0.5 to 5 h/occurrence. Two full days were                     and the additional bucking required to
+                                also lost due to wind when the crew came to                   facilitate yarding from the corridors and
+                                the site but were unable to work.                             openings may have influenced the longer
+                                     For both blocks, delays occurred when                    bucking/limbing times observed for the
+                                fallers went to check on the safety of their                  partial cut. Fallers spent almost twice as much
+                                partners. These delays could have been                        time cutting brush (i.e., to access the base of
+                                shortened or eliminated if all fallers had been               a tree) in the partial cut than in the clearcut
+                                equipped with two-way radios.                                 because the partial cut block contained
+                                     For the partial cut block, measuring and                 many small saplings.
+                                marking the openings and leave strips required
+                                                                                              Yarding
+                  Table 4. Falling: detailed timing
+                                                                                              Shift-level study
+                                                             Faller No. 1 only                    Clearcut block
+                                                          Clearcut        Partial                  A total of 31 shifts were required to yard
+                                                           block        cut block             1892 m³; average shift length was 8.7 h.
+                                                         (min/tree)     (min/tree)            Productivity averaged 61.0 m3/shift worked
+    Falling cycle elements                                                                    (56.3 m³/8-h shift) (Table 5). Hourly
+        Move between trees                                  0.44                1.10          productivity averaged 8.7 m³/PMH and
+        Cut bush                                            0.57                0.32          7.0 m³/SMH. Average turn size was 2.9 pieces
+        Cut tree                                            0.74                0.89          or 2.2 m³/turn.
+        Wedge tree                                          0.15                0.13              Expressing productivity in terms of
+        Buck/limb tree                                      0.68                3.35          PMH does not give a complete picture of a
+    Operational delays <15 min a                                                              skyline system’s productive yarding capacity.
+        Refuel powersaw                                     0.27                0.34          Set-up, tear-down, and road and corridor
+        File chain, repair powersaw                         0.12                0.16          changes are included in PMH; these times
+        Move equipment or fuel                              0.24                0.32          can account for a substantial proportion of
+        Miscellaneous b                                     0.05                0.13          total productive time for skyline yarding,
+    Total falling cycle time                                3.26                6.74          and they can vary greatly between sites and
+    Ground slope (%)                                     45–60               65–90            between crews, depending on the crew’s
+    Sample size (trees)                                    113                  25            experience and competence. Yarding hours
+    a
+        Prorated over cycles timed.                                                           (YH) is therefore a better measure of a skyline
+    b
+        Includes buck windfall, rest break, fall snag (non-merchantable), wait for partner,   system’s productive yarding capacity because
+        wind delay, cut stump, and cut trail.                                                 set-up, tear-down, and road and corridor
+
+                                                                                                                       Vol. 5 No. 28
+8                                                                                                                         July 2004    Advantage
+changes are excluded. For the clearcut block,
+                                                      Table 5. Yarding: productivity, shift-level study
+the skyline system’s yarding productivity
+averaged 15.2 m³/YH.                                                                                      Clearcut   Partial cut
+     Walking the machine into the block and                                                                block       block
+rigging-up for the first time took 5 shifts.          Yarded volume (m³)                                   1892          1189
+Rigging up was difficult owing to the long            Scheduled time (SMH) (h)                             269.0        132.5
+yarding distance and steep slopes. The con-           Productive time (PMH) (h)                            216.8        131.5
+tractor attempted to pull the strawline to the        Yarding hours (YH) (h)                               124.3        102.5
+end of the block with a helicopter, but the           Shifts worked (no.)                                     31           15
+                                                      Average shift length (h)                               8.7          8.8
+line was too heavy and the helicopter had to          Average crew size (no. people)                         5.8          5.9
+release the line before it reached the tailhold.      Average turn size (m³/turn)                            2.2          1.8
+The rigging crew then had to untangle the
+strawline and pull it manually to the tailhold.       Productivity
+It was also necessary to install haulback and           (m³/shift a)                                        56.3         71.8
+skyline extensions. Finally, poor alignment             (m³/SMH)                                             7.0          9.0
+                                                        (m³/PMH)                                             8.7          9.0
+between the intermediate support, the                   (m³/YH)                                             15.2         11.6
+yarder, and the tail tree caused the carriage         a
+                                                          Based on an 8.0-h/shift.
+to fall off the jack whenever it tried to pass
+the intermediate support, so the contractor
+had to select and rig another tree for the
+intermediate support.                               road, because of the recently harvested area
+     The contractor also experienced numer-         between the road and the block, the deletion
+ous rigging-related delays during yarding. The      of the area with inadequate payload on the
+haulback line broke twice, and two tail trees,      southernmost road, and the decision after the
+the skyline anchor, and a haulback anchor           tailhold failed to leave the remaining felled
+failed in separate incidents, resulting in 29.3 h   and bucked timber on one yarding road for
+of delay time. As well, another broken              helicopter harvesting.
+haulback and another tailhold failure were               Yarding downhill over the slope break at
+included in road-change times. These                the lower boundary of the block resulted in
+incidents were not classified as delays by the      the mainline dragging on the ground and
+yarder operator because the roads were not          rubbing on logs near the break.
+re-rigged after the failures. (The unyarded              Leaving wildlife trees at the prescribed
+wood remaining on one road was later                level posed no problems to yarding.
+yarded by helicopter.)                                   Partial cut block
+     In addition to these rigging problems,              In the partial cut block, a total of 15 shifts
+the contractor experienced 23.0 h of me-            were required to yard 1189 m³. The average
+chanical delays for a total downtime of             shift length was 8.8 h. Productivity averaged
+52.3 h or 19% of total time. The two road           79.3 m³/shift worked (71.8 m³/8-h shift).
+changes took an average of 18 h or two shifts
+each.
+     Due to these many problems, long rig-up
+                                                          19% Downtime
+times, and the small volume yarded, only                                                                     Figure 10. Yarding
+46% of all time (or 14 shifts) (Figure 10),                                                                  time distribution,
+was spent yarding logs.                             1% Service                                               clearcut.
+     Overall, the proportion of total working
+                                                                                              46% Yard
+time spent yarding on the clearcut block
+was low, resulting in low productivity. The
+volume available to yard per road was too
+small relative to the time spent rigging each              34% Move
+
+
+
+               Vol. 5 No. 28
+Advantage      July 2004                                                                                                           9
+                          Hourly productivity averaged 9.0 m³/PMH,                Although the openings and leave strips in
+                          9.0 m³/SMH (only 1 h of mechanical                  the partial cut block were to be approximately
+                          downtime was recorded), and 11.6 m³/YH.             20 m wide, a post-harvest survey (Figure 12)
+                          Average turn size was 2.6 pieces or 1.8 m³.         showed that the width of the 28 openings
+                              Rigging up for the first time took only         ranged from 7 to 26 m (average 16 m), and
+                          9 h for the partial cut block because no            that the width of leave strips averaged 25 m.
+                          problems were encountered and intermediate          The length of the openings ranged from 10
+                          supports were not required. The two corridor        to 82 m (average 37 m), and the overall size
+                          changes averaged 10 h each. Seventy-seven           ranged from 100 to 1400 m2 (average 600 m2).
+                          percent of the time was spent yarding logs in       Corridor widths ranged from 7 to 28 m
+                          this block (Figure 11).                             (average 15 m). The total area of the corridors
+                              Overall productivity per SMH was                and openings was 2.7 ha, which was only
+                          higher for the partial cut block than for the       21% of the original 13-ha block. An
+                          clearcut block, but productivity per YH             additional 0.2 ha of corridor was cut in the
+                          was lower, even though the average yarding          area below the block to facilitate yarding
+                          distance was shorter in the partial cut block.      between the landing and the block.
+                                                                                  The average opening size in the partial cut
+                                  1% Downtime
+                                                                              block was within the maximum allowable
+     Figure 11. Yarding
+                                                                              size stated in the silviculture prescription.
+     time distribution,
+     partial cut.                                                             Even the largest opening was smaller than
+                          22% Move
+                                                                              the maximum prescribed size (200 m2). This
+                                                                              yarding system was very successful in
+                                                                  77% Yard    creating the prescribed small openings and
+                                                                              preventing a negative visual impact from the
+                                                                              highway. However, because the openings
+                                                                              were smaller than prescribed, less volume
+                                                                              was harvested than planned and costs were
+                                                                              therefore higher.
+                                          0 20 40 60 m
+
+                                         Approximate                                        530 m
+                                            scale         N
+                                                                             500 m
+
+     Figure 12. Actual
+     logged area in
+     Block 2, partial
+     cut.                                                                                            375 m
+
+
+
+
+                                                 Area logged
+                                                 Stream
+                                                 Actual landing
+                                                 locations
+                                                 Proposed landing
+                                                 Actual tail tree
+                                                 locations
+
+
+
+
+                                                                                                      Vol. 5 No. 28
+10                                                                                                       July 2004    Advantage
+Detailed-timing study                                            The proportion of time in delays was
+    Detailed timing was performed on the                     very similar, at 6% for the clearcut and 4%
+clearcut block for 9.6 h over 3 days and                     for the partial cut. Most of the delay time
+70 cycles, and on the partial cut block for                  was due to hang-ups or resetting chokers.
+9.6 h over 2 days and 101 cycles (Table 6).                      The overall average cycle time at the
+Outhaul and inhaul times were standardized                   standardized distance of 400 m was 12%
+to 400 m slope distance using average inhaul                 shorter for the partial cut compared with the
+and outhaul speeds to compare the two                        clearcut. This difference may reflect the crew
+blocks.                                                      becoming more familiar with the carriage and
+    All cycle elements except breakout                       long-distance yarding, rather than support the
+time were shorter for the partial cut block.                 notion that yarding in a partial cut is faster.
+Breakout time was longer for the partial cut
+where the lateral yarding distances were                     Projected costs for re-engineered
+greater than for the clearcut. Inhaul and                    helicopter harvesting blocks
+outhaul speeds were slower for the clearcut                      Table 7 presents estimated harvesting
+block, where intermediate supports were                      costs for the two study blocks and compares
+used.                                                        these with typical helicopter-harvesting costs
+
+
+
+                      Table 6. Yarding: summary of detailed-timing
+
+                                                                               Clearcut                    Partial cut
+                                                                                block                        block
+ Time (min)                                                                       577                           576
+ Cycles (no.)                                                                      70                           101
+
+ Average yarding cycle elements (min/cycle)
+   Outhaul (standardized a)                                               1.36 (1.17)                  0.88 (1.05)
+   Drop chokers to ground                                                        0.32                         0.23
+   Hook b                                                                        1.74                         1.44
+   Breakout c                                                                    0.45                         0.52
+   Inhaul (standardized a)                                                1.65 (1.36)                  1.09 (1.29)
+   Unhook                                                                        0.92                         0.86
+   Delays <15 min                                                                0.41                         0.20
+ Total cycle time (min/cycle) (standardized a)                            6.85 (6.37)                  5.22 (5.59)
+
+ Average inhaul speed (m/min)                                                     293                           309
+ Average outhaul speed (m/min)                                                    343                           382
+
+ Yarding study, average parameters (range)
+   Slope yarding distance (m)                                       479 (100–562 d)               331 (216–480)
+   Lateral yarding distance (m)                                             2 (0–8)                    13 (0–42)
+   Height of carriage at hook point (m)                                  13 (5–19)                     15 (4–31)
+   Turn size (no. logs/turn)                                              2.7 (1–4)                     3.1 (1–5)
+   Piece size (m³) e                                                           0.76                          0.71
+   Volume yarded/cycle (m³) f                                                  2.05                           2.2
+ a
+   Standardized to 400 m slope distance using the average inhaul and outhaul speeds.
+ b
+   Includes lateral out, setting chokers, and getting in the clear.
+ c
+   Includes freeing the logs, lateral in, and raising turn to the carriage.
+ d
+   Turns yarded between 100 and 200 m were “clean-up turns” to pick up pieces dropped in the previously harvested area.
+ e
+   From shift-level study.
+ f
+   Calculated from turn size and piece size.
+
+
+                Vol. 5 No. 28
+Advantage        July 2004                                                                                                11
+                                                                                                       because these were the very first sites to be
+        Table 7. Harvesting costs, based on actual
+            productivity in the study: summary                                                         harvested by the company with this modified
+                                                                                                       cable system, several major delays occurred,
+                                                            Clearcut                Partial cut        most of which were attributed to lack of ex-
+                                                             block                    block            perience with harvesting under these particular
+                                                             ($/m³)                  ($/m³)
+                                                                                                       conditions. As a result, the falling and yarding
+ Harvesting phase                                                                                      productivities in this study were lower and
+   Falling                                                      8.83                   12.87 a         costs were higher than the company and the
+   Yarding                                                     42.99                   33.70           contractors had hoped, especially for the
+   Helicopter for set-up b                                      0.79                    1.26
+   Loading                                                     21.90                   17.17           clearcut block. However, as the results for
+   Total                                                       74.51                   65.00           the partial cut block indicate, the loggers
+ Estimated future costs c                                      47.68                   69.30 c         were able to adapt quickly and find effective
+ Local helicopter harvesting rate d                                         60.00                      solutions to most of the difficulties experienced
+ a
+                                                                                                       on the first block. It is therefore reasonable
+   Fallers spent 16% of the time measuring and marking openings, which equates to
+   $2.06/m³.                                                                                           to expect that delays should decrease and that
+ b
+   Estimated time of 1 h/block @ $1500/h.                                                              productivities and costs should improve as
+ c
+   The estimated future costs for a partial cut are higher than the costs for the block in the study   more experience is gained.
+   because the estimated yarding delay time (11%) is higher than the reported yarding delay
+   time (1%).                                                                                               Using the study’s shift-level information
+ d
+   Included falling, yarding, bucking, and loading (Dave Rennie, Operations Superintendent             and productivity results as a basis, FERIC
+   Lillooet Division, Ainsworth Lumber Company Limited, Lillooet, BC; personal communication,          estimated that future harvesting costs for
+   December 19, 2002).
+                                                                                                       the study conditions could be reduced to
+                                                                                                       $47.68 for a clearcut and $69.30/m³ for a
+                                     for similar sites and conditions in the area.                     partial cut.3 These adjusted costs compare fa-
+                                     The study costs are based on the actual                           vourably with average helicopter harvesting
+                                     shift-level productivity results for this study                   costs of $60/m³ in the area at the time of the
+                                     and include all the delays and non-falling                        study. In fact, Ainsworth Lumber reported
+                                     and non-yarding activities described earlier.                     that the skyline contractor was routinely
+                                     In this scenario, estimated falling costs were                    producing 170–200 m³/day in similar
+                                     $8.83/m³ for the clearcut block and                               sites and stands three months after finishing
+                                     $12.87/m³ for the partial cut block, and                          this study. 4 Ainsworth Lumber is now re-
+                                     yarding costs were $42.99/m³ for the clearcut                     alizing savings of $20–25/m³ by converting
+                                     and $33.70/m³ for the partial cut. Total                          helicopter blocks to long-distance skyline
+                                     costs—including falling, yarding, loading,                        blocks.5
+                                     and helicopter time for set-up—were
+                                     $74.51/m³ for the clearcut and $65.00/m³                              Conclusions
+                                     for the partial cut. The typical rate for helicop-                    FERIC conducted a study in south-
+                                     ter harvesting in the area was $60/m³ at the                      western British Columbia that followed the
+                                     time of the study, which included falling,                        planning and harvesting of a clearcut block
+                                     yarding, bucking, and loading; however, this                      and a partial cut block which were originally
+                                     rate may be a little low for a partial cut.                       planned for helicopter harvesting and were
+                                          The decision to substitute cable harvesting
+                                     for helicopter harvesting required that the
+                                                                                                       3
+                                     skyline system be adapted to the site conditions,                   The assumptions used to generate expected costs can
+                                                                                                         be obtained from the author.
+                                     e.g., to accommodate long-distance downhill                       4
+                                                                                                         Peter Scharf, Area Manager, International Forest
+                                     yarding and intermediate supports on the                            Products Limited, Terrace, BC (formerly with Lillooet
+                                     clearcut block, and to accommodate long-                            Division, Ainsworth Lumber Company Limited);
+                                                                                                         personal communication, August 2003.
+                                     distance downhill yarding, cross-stream                           5
+                                                                                                         Dave Rennie, Operations Superintendent, Ainsworth
+                                     yarding, and partial cutting prescription on                        Lumber Company Limited, Lillooet, BC; personal
+                                     the partial cut block. Not unexpectedly,                            communication, August 2003.
+
+                                                                                                                                    Vol. 5 No. 28
+12                                                                                                                                     July 2004    Advantage
+then converted to long-distance skyline            overall log costs including stumpage. As this
+harvesting. FERIC documented the layout            study demonstrated, changing to a new
+changes associated with the conversion; and        system can be difficult, but productivity
+determined productivities and costs for            improves as experience is gained.
+falling, yarding, and loading. Finally, by
+factoring out some of the unusual events that        Implementation
+occurred during this study, FERIC estimated            Based on observations made during the
+future skyline harvesting costs, and compared      study, and on the study’s outcomes, FERIC
+these adjusted costs with helicopter har-          has compiled a number of suggestions for
+vesting costs typical for the area.                assisting forest companies implementing
+     Mistakes in planning, small block sizes,      skyline harvesting. Many of these suggestions
+high set-up costs, and start-up problems           are good practices for any skyline system, re-
+associated with adapting the cable configu-        gardless of whether one is converting from
+ration to the particular conditions of this        helicopter harvesting. The suggestions are
+study site resulted in lower productivity and      grouped by area of responsibility; some
+higher costs than necessary. However, as ex-       overlap occurs, so all parties need to com-
+perience in substituting cable harvesting for      municate and work together to make the
+helicopter harvesting is gained, productivities    operation successful.
+and costs should improve. Although actual
+overall skyline harvesting costs were              Planners
+$74.51/m³ for the clearcut block and                 • A thorough investigation is necessary to
+$65.00/m³ for the partial cut block, FERIC             determine the operational feasibility of
+estimates that it would be feasible to achieve         the harvesting system. Include an evalu-
+overall harvesting costs of $47.68/m³ and              ation of the amount of wood available
+$69.30/m³ respectively for similar clearcut            and of the effects of deleting any area
+and partial cut blocks. These adjusted costs           that cannot be harvested by the proposed
+compare favourably with typical helicopter             system. Ensure the harvestable wood
+harvesting costs of $60/m³ for similar sites           volume is sufficient on each skyline
+and conditions.                                        road or corridor to economically justify
+     Although helicopter harvesting may be a           the set-up times. The time to set up a
+quick and simple solution for harvesting               skyline system and the time to change
+difficult sites, it may not always be the most         corridors or roads can vary greatly by
+economical alternative, especially when                location; more complex situations will
+stumpage rates are at minimums. As                     require greater volumes of wood to make
+stumpage rates change so may the lowest-               the operation economically viable. Avoid
+cost method of harvesting. While skyline               areas where the entire skyline corridor
+systems require a higher level of expertise            or road cannot be harvested, such as
+and more detailed planning, potential cost             yarding over previously harvested ground
+savings warrant their consideration by forest          and leave areas.
+companies and harvesting contractors.                • In partial cuts, employ block layout per-
+Ainsworth Lumber is now realizing savings              sonnel rather than fallers to measure and
+of $20–25/m³ by converting helicopter                  mark the openings because their hourly
+blocks to long-distance skyline blocks.                cost is usually lower. Ensure these peo-
+     It is important to consider whether               ple are properly trained regarding falling
+environmental, silvicultural, and visual               safety issues.
+quality goals can be achieved by substituting
+a cable system for a helicopter system. If these
+objectives can be met, implementation of a
+well-planned cable system may reduce
+
+               Vol. 5 No. 28
+Advantage      July 2004                                                                            13
+     Layout personnel                                Loggers
+      • Engineering of skyline systems must be        • All fallers should be equipped with
+        conducted to a high standard, especially        two-way radios.
+        in complex situations such as those in-       • Where hiking distances are long,
+        volving partial cuts and intermediate           consider transporting fallers to the
+        supports.                                       falling site by helicopter.
+      • To improve falling and yarding produc-        • If yarding payloads permit, consider
+        tivity in partial cuts, ensure that layout      limbing and bucking the stems at the
+        is precise; all yarding corridors must be       landing rather than on the hillside.
+        straight and correctly located before         • Leave some extra tail and intermediate
+        falling starts, and intermediate support        support trees standing in case replace-
+        trees, tail trees, and landings must be         ments are needed.
+        properly aligned. Ensure corridors line       • Ensure all anchors are adequately in-
+        up with the yarder’s position, especially       stalled and tied back such that they can
+        if corridors are narrow. Consider using         withstand the forces of skyline harvesting.
+        GPS to improve the accuracy of corridor       • Pre-rig as much as possible to reduce the
+        location. Ensure openings are large             downtime for set-up and corridor and
+        enough or spaced closely enough to              road changes.
+        allow two or more fallers to work             • Using a helicopter to pull the strawline
+        independently in the block, but within          can be fast and economical (Palmer
+        easy reach of each other in the event of        1998). Make sure the helicopter’s
+        an emergency.                                   capacity is sufficient for the intended
+      • Because skyline yarding develops much           load with allowances for drum friction
+        higher line stresses than other cable           and possible hangups. When pulling
+        systems, ensure primary anchors and             cable uphill, tie off the cable before it is
+        backup anchors are strong enough to             released from the helicopter. If pulling
+        permit the system to operate safely and         the cable off the drum is not feasible,
+        with sufficient payloads.                       the helicopter can place bundles of coiled
+                                                        strawline at intervals along the yarding
+                                                        corridor or road instead.
+
+
+
+
+                                                                             Vol. 5 No. 28
+14                                                                              July 2004    Advantage
+ References
+British Columbia Ministry of Forests (BCMOF); BC Environment. 1998. Forest practices
+  code of British Columbia: fish-stream identification guidebook, second edition, version
+  2.1. Victoria, B.C. 70 pp.
+Lloyd, D.; Angove, K.; Hope, G.; Thompson, C. 1990. A guide to site identification and
+  interpretation for the Kamloops Forest Region. B.C. Ministry of Forests, Victoria, B.C.
+  Land Management Handbook 23. 399 pp.
+Palmer, D. 1998. Using a helicopter to pull strawline. LIRO Forestry Solutions, Roturua,
+  New Zealand, Technical Note TN-42. 3 pp.
+
+
+ Acknowledgements
+    The author gratefully acknowledges the cooperation of Bill DeGraff, Barry Gilmore,
+and Jim Carey of BDG Falling Contracting; Kelly Beattie and the yarder crew of Hillside
+Harvesters Limited; Peter Scharf of International Forest Products Limited (formerly with
+Lillooet Division, Ainsworth Lumber Company Limited); Dave Rennie, of Lillooet
+Division, Ainsworth Lumber Company Limited; and Wayne Van Damme of Acme
+Manufacturing, Inc.
+
+
+
+
+                                            Appendix I
+                                             Falling costs
+
+                                                                     Falling costs
+                                                                       ($/SMH)
+                             Faller’s wages a                             48.79
+                             Wage benefit loading at 40%                  19.52
+                             Powersaw costs b                              9.23
+                             Total cost c                                 77.54
+                             a
+                               IWA rate for coastal British Columbia, effective June
+                               15, 2002.
+                             b
+                               Includes powersaw, repairs, gas, oil, and falling
+                               supplies.
+                             c
+                               Excludes transportation, supervision, overhead, profit,
+                               and risk.
+
+
+
+
+             Vol. 5 No. 28
+Advantage    July 2004                                                                      15
+                                                               Appendix II
+                                                             Machine costs a
+
+                                                                                       Yarder,            Carriage,          Hydraulic log loader,
+                                                                                      Madill 071,         Acme 200,            30 000-kg class,
+                                                                                        used                new                      new
+     OWNERSHIP COSTS
+      Total purchase price (P) $                                                      175 000 b             80 000 c                    500 000
+      Expected life (Y) y                                                                    5                    5                           5
+      Expected life (H) h                                                               8 880                8 880                        8 880
+      Scheduled hours/year (h)=(H/Y) h                                                  1 776                1 776                        1 776
+      Salvage value as % of P (s) %                                                         20                   20                          25
+      Interest rate (Int) %                                                                9.0                  9.0                         9.0
+      Insurance rate (Ins) %                                                               2.0                  2.0                         2.0
+      Salvage value (S)=((P•s)/100) $                                                  35 000               16 000                      125 000
+      Average investment (AVI)=((P+S)/2) $                                            105 000               48 000                      312 500
+      Loss in resale value ((P-S)/H) $/h                                                15.77                 7.21                        42.23
+      Interest ((Int•AVI)/h) $/h                                                          5.32                2.43                        15.84
+      Insurance ((Ins•AVI)/h) $/h                                                        1.18                 0.54                         3.52
+      Total ownership costs (OW) $/h                                                    22.27                10.18                        61.59
+     OPERATING COSTS
+      Wire rope-total (wc) $                                                            68 400 d                 -                                -
+      Wire rope life-average (wh) h                                                      2 530 e                 -                                -
+      Rigging & radio (rc) $                                                            31 400 f                 -                                -
+      Rigging & radio life (rh) h                                                        8 880                   -                                -
+      Other equipment (oc) $                                                            13 700 g                 -                                -
+      Other equipment life (oh) h                                                        3 552                   -                                -
+      Fuel consumption (F) L/h                                                            17.0                 1.0                             27.0
+      Fuel (fc) $/L                                                                       0.44                0.44                             0.44
+      Lube & oil as % of fuel (fp) %                                                         10                 10                               10
+      Track & undercarriage replacement (Tc) $                                          22 500                   -                           30 000
+      Track & undercarriage life (Th) h                                                  6 000                   -                            5 400
+      Annual operating supplies (Oc) $                                                  32 000 h                 -                                -
+      Annual repair & maintenance (Rp) $                                                43 800 i             3 500                           68 000
+      Shift length (sl) h                                                                     8                  -                                8
+      Total wages (W) $/h                                                               127.43 j                 -                            25.39
+      Wage benefit loading (WBL) %                                                           40                  -                               40
+      Wire rope (wc/wh) $/h                                                              27.04                   -                                -
+      Rigging & radio (rc/rh) $/h                                                         3.54                   -                                -
+      Other equipment (oc/oh) $/h                                                          3.86                  -                                -
+      Fuel (F•fc) $/h                                                                     7.48                0.44                            11.88
+      Lube & oil ((fp/100)•(F•fc)) $/h                                                     0.75               0.04                             1.19
+      Track & undercarriage (Tc/Th) $/h                                                   3.75                   -                             5.56
+      Operating supplies (Oc/h) $/h                                                      18.02                   -                                -
+      Repair & maintenance (Rp/h) $/h                                                    24.66                1.97                            38.29
+      Wages & benefits (W•(1+WBL/100)) $/h                                              178.40                   -                            35.55
+     Total operating costs (OP) $/SMH                                                   267.50                 2.45                           92.47
+     TOTAL OWNERSHIP AND OPERATING COSTS (OW+OP) $/SMH                                  289.77               12.63                           154.06
+      a
+        Costs exclude taxes, freight, crew transportation, first-aid coverage, fire protection, supervision, profit and overhead, and are not the actual
+      costs incurred by the contractor. Annual costs for repairs and maintenance were estimated by FERIC. b Purchase of used machine for
+      $100 000 plus $75 000 for refurbishing. c US$51 500, Dec 2002. C$ 1.55 = US$1.00. d Includes wire rope with extensions for yarding up
+      to 900 m. e Weighted average. Life varies by line type: skyline and mainline (2 y @ 1776 h/y), haulback and strawline (1 y @ 1776 h/y), guylines
+      and utility lines (5 y @ 1776 h/y). f Rigging includes tree jacks, climbing gear, line spooler, blocks, and misc. hardware and tools.
+      Portable radios (5 @ $1000 each). g Powersaws, saw winches, saw wire cutters, straps, hooks, and shoes. h Chokers, rock anchors,
+      powersaw fuel, and misc. supplies. i For yarder ($35 000), powersaws, powersaw winches, cutters, radios, etc. j IWA rates for coastal
+      British Columbia, effective June 15, 2002, for long-line yarding: operator, hook & rig, rigging slinger, chaser, and chokersetter.
+
+
+
+                                                                                                                             Vol. 5 No. 28
+16                                                                                                                              July 2004     Advantage
+

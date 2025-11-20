@@ -62,6 +62,14 @@ Default Systems
      - cable-running skyline
      - hand/mech faller → grapple yarder → landing processor/hand buck → loader
      - Grapple yarder variant with landing finishing.
+   * - ``cable_running_adv5n28_clearcut``
+     - cable-running skyline
+     - hand/mech faller → long-span skyline → landing processor/hand buck → loader
+     - ADV5N28 clearcut conversion (Madill 071 + Pow'-R Block replacing helicopter yarding).
+   * - ``cable_running_adv5n28_shelterwood``
+     - cable-running skyline
+     - hand/mech faller → long-span skyline → landing processor/hand buck → loader
+     - ADV5N28 irregular shelterwood conversion threading riparian corridors with full suspension.
    * - ``helicopter``
      - helicopter
      - hand faller → helicopter longline → hand buck/processor → loader/water
@@ -508,6 +516,10 @@ Cable-running systems can now call the grapple yarder regressions bundled in
   productivity from TR-122 (Roberts Creek alternative silviculture project). These presets don’t require new inputs:
   the CLI reports the published cycle volume, m³/PMH, and the yarder/loader/labour cost breakdowns (1996 CAD plus
   CPI-inflated 2024 CAD equivalents) so you can reference the extended-rotation vs. shelterwood vs. clearcut costs.
+* ``adv5n28-clearcut`` / ``adv5n28-shelterwood`` – Long-distance skyline conversions from ADV5N28 (Madill 071 +
+  Acme 200 Pow’-R Block carriage substituting helicopter plans near Lillooet). These presets pull the observed turn
+  volume, 375–725 m downhill yarding distances, m³/PMH, and the 2002 CAD costs for both the actual study and the
+  projected skyline-vs-helicopter scenarios so you can quantify the savings relative to the $60/m³ heli baseline.
 
 Every helper prints the assumed turn volume, yarding distance (when available), and resulting m³/PMH. Dataset-driven
 presets (TN-147/TN-157/TR-122) also surface the observed case name and CPI-adjusted costs so you can drop them directly
@@ -515,7 +527,10 @@ into costing workflows without reopening the PDFs. The
 ``cable_running`` harvest system autopopulates these inputs when you pass
 ``--harvest-system-id cable_running`` (or reference a dataset block using that system), selecting the
 ``tr75-bunched`` model with representative payload/distance values and printing a confirmation when
-the defaults are applied.
+the defaults are applied. Use ``cable_running_adv5n28_clearcut`` or
+``cable_running_adv5n28_shelterwood`` when modelling the ADV5N28 long-span conversions—those presets
+swap in the new helper automatically and reuse the same skyline defaults, so you can flip helicopter
+blocks to skyline without retyping payload/cost assumptions.
 
 Shovel Logger (Hoe-Chucker) Productivity
 ----------------------------------------

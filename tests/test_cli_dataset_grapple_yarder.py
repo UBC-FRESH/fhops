@@ -92,3 +92,35 @@ def test_cli_grapple_yarder_tn157_case() -> None:
     assert result.exit_code == 0
     assert "Case 4" in result.stdout
     assert "Observed Cost" in result.stdout
+
+
+def test_cli_grapple_yarder_adv5n28_clearcut() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_yarder",
+            "--grapple-yarder-model",
+            "adv5n28-clearcut",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "ADV5N28" in result.stdout
+    assert "2002 CAD" in result.stdout
+
+
+def test_cli_grapple_yarder_adv5n28_harvest_system_defaults() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_yarder",
+            "--harvest-system-id",
+            "cable_running_adv5n28_clearcut",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "ADV5N28" in result.stdout
+    assert "Applied grapple-yarder defaults" in result.stdout

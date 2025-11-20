@@ -70,15 +70,18 @@ from fhops.productivity import (
     estimate_grapple_yarder_productivity_tn157,
     estimate_grapple_yarder_productivity_tn147,
     estimate_grapple_yarder_productivity_tr122,
+    estimate_grapple_yarder_productivity_adv5n28,
     get_tn157_case,
     get_tn147_case,
     get_tr122_treatment,
+    get_adv5n28_block,
     list_tn157_case_ids,
     list_tn147_case_ids,
     list_tr122_treatment_ids,
     TN157Case,
     TN147Case,
     TR122Treatment,
+    ADV5N28Block,
     estimate_standing_skyline_productivity_aubuchon1979,
     estimate_standing_skyline_turn_time_aubuchon1979,
     estimate_standing_skyline_productivity_kramer1978,
@@ -214,6 +217,63 @@ def _append_loader_telemetry(
     }
     if metadata:
         payload["metadata"] = metadata
+    append_jsonl(log_path, payload)
+
+
+def _extract_preset_costs(meta: Mapping[str, Any] | None) -> dict[str, float] | None:
+    if not meta:
+        return None
+    costs: dict[str, float] = {}
+    base_year = meta.get("cost_base_year")
+    cost_per_m3 = meta.get("cost_per_m3")
+    if base_year and isinstance(cost_per_m3, (int, float)):
+        costs["observed_cost_per_m3_cad_base"] = float(cost_per_m3)
+        costs["observed_cost_per_m3_cad_2024"] = float(inflate_value(cost_per_m3, int(base_year)))
+    cost_per_log = meta.get("cost_per_log")
+    if base_year and isinstance(cost_per_log, (int, float)):
+        costs["observed_cost_per_log_cad_base"] = float(cost_per_log)
+        costs["observed_cost_per_log_cad_2024"] = float(inflate_value(cost_per_log, int(base_year)))
+    projected = meta.get("projected_cost_per_m3")
+    projected_target = meta.get("projected_cost_per_m3_target")
+    if isinstance(projected, (int, float)):
+        costs["projected_cost_per_m3_cad_base"] = float(projected)
+        if isinstance(projected_target, (int, float)):
+            costs["projected_cost_per_m3_cad_2024"] = float(projected_target)
+    heli = meta.get("helicopter_cost_per_m3")
+    heli_target = meta.get("helicopter_cost_per_m3_target")
+    if isinstance(heli, (int, float)):
+        costs["helicopter_cost_per_m3_cad_base"] = float(heli)
+        if isinstance(heli_target, (int, float)):
+            costs["helicopter_cost_per_m3_cad_2024"] = float(heli_target)
+    return costs or None
+
+
+def _append_grapple_yarder_telemetry(
+    *,
+    log_path: Path,
+    model: GrappleYarderModel,
+    inputs: Mapping[str, Any],
+    productivity_m3_per_pmh: float,
+    preset_meta: Mapping[str, Any] | None,
+) -> None:
+    payload: dict[str, Any] = {
+        "timestamp": datetime.now(tz=UTC).isoformat(),
+        "command": "dataset estimate-productivity",
+        "machine_role": "grapple_yarder",
+        "grapple_model": model.value,
+        "inputs": dict(inputs),
+        "outputs": {
+            "productivity_m3_per_pmh": productivity_m3_per_pmh,
+            "costs": _extract_preset_costs(preset_meta),
+        },
+    }
+    if preset_meta:
+        preset_summary: dict[str, Any] = {}
+        for key in ("label", "note", "cost_base_year"):
+            if key in preset_meta:
+                preset_summary[key] = preset_meta[key]
+        if preset_summary:
+            payload["preset"] = preset_summary
     append_jsonl(log_path, payload)
 
 
@@ -562,12 +622,19 @@ class GrappleYarderModel(str, Enum):
     TR122_EXTENDED = "tr122-extended"
     TR122_SHELTERWOOD = "tr122-shelterwood"
     TR122_CLEARCUT = "tr122-clearcut"
+    ADV5N28_CLEARCUT = "adv5n28-clearcut"
+    ADV5N28_SHELTERWOOD = "adv5n28-shelterwood"
 
 
 _TR122_MODEL_TO_TREATMENT: dict[GrappleYarderModel, str] = {
     GrappleYarderModel.TR122_EXTENDED: "extended_rotation",
     GrappleYarderModel.TR122_SHELTERWOOD: "uniform_shelterwood",
     GrappleYarderModel.TR122_CLEARCUT: "clearcut",
+}
+
+_ADV5N28_MODEL_TO_BLOCK: dict[GrappleYarderModel, str] = {
+    GrappleYarderModel.ADV5N28_CLEARCUT: "block_1_clearcut_with_reserves",
+    GrappleYarderModel.ADV5N28_SHELTERWOOD: "block_2_irregular_shelterwood",
 }
 
 def _tn157_case_choices() -> tuple[str, ...]:
@@ -3678,7 +3745,11 @@ def estimate_productivity_cmd(
         GrappleYarderModel.SR54,
         "--grapple-yarder-model",
         case_sensitive=False,
-        help="Grapple yarder regression (sr54 | tr75-bunched | tr75-handfelled | tn157).",
+        help=(
+            "Grapple yarder regression "
+            "(sr54 | tr75-bunched | tr75-handfelled | tn157 | tn147 | tr122-extended | "
+            "tr122-shelterwood | tr122-clearcut | adv5n28-clearcut | adv5n28-shelterwood)."
+        ),
     ),
     grapple_turn_volume_m3: float | None = typer.Option(
         None,
@@ -4316,6 +4387,7 @@ def estimate_productivity_cmd(
         tn157_case_metadata: TN157Case | None = None
         tn147_case_metadata: TN147Case | None = None
         tr122_treatment_metadata: TR122Treatment | None = None
+        adv5n28_block_metadata: ADV5N28Block | None = None
         if grapple_yarder_model is GrappleYarderModel.TN157:
             tn157_case_metadata = get_tn157_case(grapple_tn157_case)
             if grapple_turn_volume_m3 is None:
@@ -4390,6 +4462,64 @@ def estimate_productivity_cmd(
                     "(Roberts Creek SLH 78 running skyline treatments, 1996).[/dim]"
                 ),
             }
+        elif grapple_yarder_model in _ADV5N28_MODEL_TO_BLOCK:
+            block_id = _ADV5N28_MODEL_TO_BLOCK[grapple_yarder_model]
+            adv5n28_block_metadata = get_adv5n28_block(block_id)
+            if grapple_turn_volume_m3 is None:
+                grapple_turn_volume_m3 = adv5n28_block_metadata.average_turn_volume_m3
+            if grapple_yarding_distance_m is None:
+                grapple_yarding_distance_m = adv5n28_block_metadata.average_yarding_distance_m
+            value = adv5n28_block_metadata.productivity_m3_per_pmh
+            base_year = adv5n28_block_metadata.cost_base_year
+            extra_rows: list[tuple[str, str]] = []
+            projected = adv5n28_block_metadata.cost_total_estimated_per_m3_cad_2002
+            if projected is not None:
+                extra_rows.extend(
+                    [
+                        (
+                            f"Projected Cost ({base_year} CAD $/m³)",
+                            f"{projected:.2f}",
+                        ),
+                        (
+                            f"Projected Cost ({TARGET_YEAR} CAD $/m³)",
+                            f"{inflate_value(projected, base_year):.2f}",
+                        ),
+                    ]
+                )
+            heli_cost = adv5n28_block_metadata.cost_helicopter_reference_per_m3_cad_2002
+            if heli_cost is not None:
+                extra_rows.extend(
+                    [
+                        (
+                            f"Helicopter Baseline ({base_year} CAD $/m³)",
+                            f"{heli_cost:.2f}",
+                        ),
+                        (
+                            f"Helicopter Baseline ({TARGET_YEAR} CAD $/m³)",
+                            f"{inflate_value(heli_cost, base_year):.2f}",
+                        ),
+                    ]
+                )
+            preset_meta = {
+                "label": adv5n28_block_metadata.label.title(),
+                "logs_per_turn": adv5n28_block_metadata.logs_per_turn,
+                "cost_per_m3": adv5n28_block_metadata.cost_total_actual_per_m3_cad_2002,
+                "cost_per_log": None,
+                "cost_base_year": base_year,
+                "extra_rows": extra_rows,
+                "projected_cost_per_m3": projected,
+                "projected_cost_per_m3_target": (
+                    inflate_value(projected, base_year) if projected is not None else None
+                ),
+                "helicopter_cost_per_m3": heli_cost,
+                "helicopter_cost_per_m3_target": (
+                    inflate_value(heli_cost, base_year) if heli_cost is not None else None
+                ),
+                "note": (
+                    "[dim]Observed skyline conversion metrics from FPInnovations ADV5N28 "
+                    "(Madill 071 + Acme 200 Pow'-R Block, 2002).[/dim]"
+                ),
+            }
         else:
             value = _evaluate_grapple_yarder_result(
                 model=grapple_yarder_model,
@@ -4398,6 +4528,14 @@ def estimate_productivity_cmd(
             )
         assert grapple_turn_volume_m3 is not None
         assert grapple_yarding_distance_m is not None
+        telemetry_inputs: dict[str, Any] = {
+            "turn_volume_m3": grapple_turn_volume_m3,
+            "yarding_distance_m": grapple_yarding_distance_m,
+            "tn157_case": grapple_tn157_case if grapple_yarder_model is GrappleYarderModel.TN157 else None,
+            "tn147_case": grapple_tn147_case if grapple_yarder_model is GrappleYarderModel.TN147 else None,
+            "harvest_system_id": selected_system.system_id if selected_system else None,
+            "harvest_system_defaults_used": grapple_defaults_used,
+        }
         _render_grapple_yarder_result(
             model=grapple_yarder_model,
             turn_volume_m3=grapple_turn_volume_m3,
@@ -4405,6 +4543,14 @@ def estimate_productivity_cmd(
             productivity_m3_per_pmh=value,
             preset_meta=preset_meta,
         )
+        if telemetry_log:
+            _append_grapple_yarder_telemetry(
+                log_path=telemetry_log,
+                model=grapple_yarder_model,
+                inputs=telemetry_inputs,
+                productivity_m3_per_pmh=value,
+                preset_meta=preset_meta,
+            )
         if grapple_defaults_used and selected_system is not None:
             console.print(
                 f"[dim]Applied grapple-yarder defaults from harvest system '{selected_system.system_id}'.[/dim]"

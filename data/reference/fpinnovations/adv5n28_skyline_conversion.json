@@ -1,0 +1,334 @@
+{
+  "source": {
+    "id": "ADV5N28",
+    "title": "Substituting a skyline harvesting system on sites originally planned for helicopter harvesting: two case studies",
+    "authors": [
+      "Brian Boswell"
+    ],
+    "publisher": "FERIC Advantage Report",
+    "publication_date": "2004-07",
+    "currency": "CAD_2002",
+    "notes": "Study monitored two Ainsworth Lumber blocks near Lillooet, BC that were converted from helicopter layouts to long-distance standing skyline corridors. Costs use 2002 IWA wages (plus 40% benefits) and FERIC owning/operating rates; supervision, overhead, and profit are excluded."
+  },
+  "machine_configuration": {
+    "yarder": {
+      "make_model": "Madill 071",
+      "configuration": "standing skyline rigged for long downhill corridors",
+      "slackpulling": "Hydraulic Pow'-R Block integrated into carriage",
+      "wire_ropes": {
+        "skyline": {"diameter_mm": 25, "type": "Power Pac", "drum_capacity_m": 589, "extensions_m": 326, "total_length_m": 915},
+        "mainline": {"diameter_mm": 16, "type": "Power Pac", "drum_capacity_m": 960, "extensions_m": 0, "total_length_m": 915},
+        "haulback": {"diameter_mm": 16, "type": "Power Pac", "drum_capacity_m": 1341, "extensions_m": 1098, "total_length_m": 2439},
+        "strawline": {"diameter_mm": 11, "type": "EIPS", "drum_capacity_m": 745, "extensions_m": 2304, "total_length_m": 3049},
+        "guylines_utility": {"diameter_mm": 16, "type": "EIPS", "total_length_m": 1524}
+      },
+      "notes": "Smaller-than-usual lines plus extensions were required to reach 375–725 m external yarding distances."
+    },
+    "carriage": {
+      "make_model": "Acme 200 Pow'-R Block",
+      "power": "21 kW hydraulic motor",
+      "capabilities": [
+        "motorized slackpulling with dual tension wraps",
+        "handles steep downhill spans and long lateral pulls",
+        "passes intermediate supports"
+      ]
+    },
+    "loader": {
+      "make_model": "Barko 450 butt-n-top loader",
+      "role": "sorting and loading at landing shared between skyline roads"
+    },
+    "crew": {
+      "size": 6,
+      "roles": [
+        "loader operator / foreman",
+        "hooktender",
+        "yarder operator",
+        "rigging slinger",
+        "chaser",
+        "chokersetter"
+      ],
+      "notes": "Loader foreman also rigged intermediate supports and tail trees."
+    },
+    "machine_costs_cad_2002_per_smh": {
+      "yarder_madill_071": 289.77,
+      "carriage_acme_200": 12.63,
+      "loader_barko_450": 154.06
+    }
+  },
+  "blocks": [
+    {
+      "id": "block_1_clearcut_with_reserves",
+      "silviculture_system": "clearcut_with_wildlife_reserves (2-3 Douglas-fir trees/ha retained)",
+      "location": {
+        "region": "Dry cold Montane Spruce (MSdc), ~160 km NE of Vancouver, near Lillooet",
+        "elevation_m_range": [1300, 1580],
+        "aspect": "easterly"
+      },
+      "area_ha": 9,
+      "net_volume_m3_per_ha": 336,
+      "species_percent": {"douglas_fir": 94, "spruce": 3, "lodgepole_pine": 3},
+      "stand_density_trees_per_ha": 454,
+      "average_dbh_cm": 36,
+      "average_tree_volume_m3": 0.74,
+      "average_height_m": 27,
+      "slope_percent_range": [35, 75],
+      "slope_percent_average": 55,
+      "planned_external_yarding_distance_m": [375, 725],
+      "yarding_direction": "downhill over recently harvested highlead ground",
+      "intermediate_supports_required": true,
+      "cross_stream": false,
+      "notes": [
+        "Logs crossed a break in slope at the boundary between the helicopter setup and the previously harvested area, forcing intermediate supports and skyline/mainline extensions.",
+        "Walking the yarder in and rigging initially consumed five full shifts.",
+        "One skyline corridor was left unfinished and later cleaned up by helicopter after anchor failures."
+      ],
+      "falling": {
+        "volume_felled_m3": 2992,
+        "scheduled_man_hours": 340.9,
+        "productive_man_hours": 208.0,
+        "mandays": 45,
+        "average_shift_hours": 7.6,
+        "productivity_m3_per_6_5h_manday": 57.1,
+        "productivity_m3_per_smh": 8.8,
+        "productivity_m3_per_pmh": 14.4,
+        "hike_time_percent": 19,
+        "wind_delay_percent": 19,
+        "time_distribution_percent": {
+          "fall_cut_limb": 61,
+          "wind_delay": 19,
+          "hike_in_out": 19,
+          "reconnaissance": 1
+        },
+        "extra_mandays_if_hike_outside_shift": 9.6,
+        "adjusted_productivity_m3_per_manday_without_overtime": 54.8,
+        "detailed_cycle_time_min_per_tree": {
+          "move_between_trees": 0.44,
+          "cut_bush": 0.57,
+          "cut_tree": 0.74,
+          "wedge": 0.15,
+          "buck_limb": 0.68,
+          "refuel": 0.27,
+          "file_or_repair_saw": 0.12,
+          "move_equipment_fuel": 0.24,
+          "miscellaneous": 0.05,
+          "total_cycle": 3.26,
+          "sample_trees": 113,
+          "ground_slope_percent_range": [45, 60]
+        }
+      },
+      "yarding": {
+        "volume_yarded_m3": 1892,
+        "scheduled_machine_hours": 269.0,
+        "productive_machine_hours": 216.8,
+        "yarding_hours": 124.3,
+        "shifts": 31,
+        "average_shift_hours": 8.7,
+        "average_crew_size": 5.8,
+        "average_turn_pieces": 2.9,
+        "average_turn_volume_m3": 2.2,
+        "productivity_m3_per_shift_8h": 56.3,
+        "productivity_m3_per_smh": 7.0,
+        "productivity_m3_per_pmh": 8.7,
+        "productivity_m3_per_yarding_hour": 15.2,
+        "setup_and_move": {
+          "initial_rigging_shifts": 5,
+          "corridor_changes_hours_each": 18,
+          "corridor_changes_count": 2,
+          "haulback_or_anchor_failures_hours": 29.3,
+          "mechanical_delay_hours": 23.0,
+          "downtime_percent_of_total": 19
+        },
+        "time_distribution_percent": {
+          "yard_logs": 46,
+          "move_reposition": 34,
+          "downtime": 19,
+          "service": 1
+        },
+        "detailed_cycle": {
+          "sample_cycles": 70,
+          "sample_time_minutes": 577,
+          "slope_yarding_distance_m_range": [100, 562],
+          "average_slope_yarding_distance_m": 479,
+          "lateral_distance_m_range": [0, 8],
+          "average_lateral_distance_m": 2,
+          "carriage_height_at_hook_point_m_range": [5, 19],
+          "average_carriage_height_m": 13,
+          "average_logs_per_turn": 2.7,
+          "average_piece_volume_m3": 0.76,
+          "volume_per_cycle_m3": 2.05,
+          "element_times_min": {
+            "outhaul": 1.36,
+            "drop_chokers": 0.32,
+            "hook": 1.74,
+            "breakout": 0.45,
+            "inhaul": 1.65,
+            "unhook": 0.92,
+            "delays_under_15_min": 0.41,
+            "total_cycle": 6.85
+          },
+          "element_times_min_standardized_400m": {
+            "outhaul": 1.17,
+            "inhaul": 1.36,
+            "total_cycle": 6.37
+          }
+        },
+        "operational_observations": [
+          "Helicopter attempt to pull strawline failed due to cable weight; crew hand-pulled and untangled the line.",
+          "Multiple haulback and anchor failures (two tail trees, skyline anchor, haulback anchor) reduced productive hours and left one road partially unyarded until helicopter cleanup.",
+          "Mainline rubbed along ground while crossing the slope break between the landing and the older highlead setting."
+        ]
+      },
+      "loading": {
+        "notes": "Barko 450 loader mirrored yarding output; yarder + loader always paired so loader hours equal yarder scheduled hours."
+      },
+      "costs_cad_2002_per_m3": {
+        "falling_actual": 8.83,
+        "yarding_actual": 42.99,
+        "helicopter_support_for_setup": 0.79,
+        "loading_actual": 21.90,
+        "total_actual": 74.51,
+        "estimated_future_total": 47.68,
+        "local_helicopter_reference_total": 60.00
+      }
+    },
+    {
+      "id": "block_2_irregular_shelterwood",
+      "silviculture_system": "irregular_shelterwood (group + uniform removals)",
+      "location": {
+        "region": "Okanagan very dry hot Interior Douglas-fir variant (IDFxh1), Hwy 99 corridor near Lillooet",
+        "elevation_m_range": [900, 1200],
+        "aspect": "southerly",
+        "adjacent_constraints": ["Highway 99 recreational viewscape", "Class S2/S3 creek between landing and block", "Mountain goat winter habitat (operations May–Nov only)"]
+      },
+      "area_ha": 13,
+      "harvested_corridor_area_ha": 2.7,
+      "net_volume_m3_per_ha": 386,
+      "planned_harvest_volume_m3_per_ha": 200,
+      "species_percent": {"douglas_fir": 90, "spruce": 5, "lodgepole_pine": 5},
+      "stand_density_trees_per_ha": 549,
+      "planned_removal_trees_per_ha": 200,
+      "average_dbh_cm": 35,
+      "average_tree_volume_m3": 0.67,
+      "slope_percent_range": [45, 75],
+      "slope_percent_average": 60,
+      "planned_external_yarding_distance_m": [200, 530],
+      "yarding_direction": "downhill through riparian reserve with full suspension over creek",
+      "intermediate_supports_required": false,
+      "cross_stream": true,
+      "notes": [
+        "Openings limited to <=2000 m²; post-harvest measurements showed actual opening widths 7–26 m (avg 16 m) with leave strips averaging 25 m.",
+        "Corridors had to traverse 100 m of standing timber between the landing and the creek plus 20–30 m riparian reserve where yarding corridors were narrowed to ~10 m.",
+        "Crew deleted a southeast corner and 5 ha northwestern spur after determining skyline payloads were insufficient; those areas remained for helicopter cleanup."
+      ],
+      "falling": {
+        "volume_felled_m3": 1189,
+        "scheduled_man_hours": 197.3,
+        "productive_man_hours": 140.0,
+        "mandays": 29,
+        "average_shift_hours": 6.8,
+        "productivity_m3_per_6_5h_manday": 39.2,
+        "productivity_m3_per_smh": 6.0,
+        "productivity_m3_per_pmh": 8.5,
+        "hike_time_percent": 9,
+        "wind_delay_percent": 0,
+        "time_distribution_percent": {
+          "fall_cut_limb": 71,
+          "mark_openings_leave_strips": 16,
+          "hike_in_out": 9,
+          "medical_delay": 3,
+          "reconnaissance": 1
+        },
+        "extra_mandays_if_hike_outside_shift": 1.5,
+        "adjusted_productivity_m3_per_manday_without_overtime": 39.0,
+        "detailed_cycle_time_min_per_tree": {
+          "move_between_trees": 1.10,
+          "cut_bush": 0.32,
+          "cut_tree": 0.89,
+          "wedge": 0.13,
+          "buck_limb": 3.35,
+          "refuel": 0.34,
+          "file_or_repair_saw": 0.16,
+          "move_equipment_fuel": 0.32,
+          "miscellaneous": 0.13,
+          "total_cycle": 6.74,
+          "sample_trees": 25,
+          "ground_slope_percent_range": [65, 90]
+        },
+        "notes": [
+          "Fallers spent 16% of time measuring and marking openings, adding $2.06/m³ to falling cost.",
+          "Two-way radios for all fallers were recommended to reduce partner-check delays."
+        ]
+      },
+      "yarding": {
+        "volume_yarded_m3": 1189,
+        "scheduled_machine_hours": 132.5,
+        "productive_machine_hours": 131.5,
+        "yarding_hours": 102.5,
+        "shifts": 15,
+        "average_shift_hours": 8.8,
+        "average_crew_size": 5.9,
+        "average_turn_pieces": 2.6,
+        "average_turn_volume_m3": 1.8,
+        "productivity_m3_per_shift_8h": 71.8,
+        "productivity_m3_per_smh": 9.0,
+        "productivity_m3_per_pmh": 9.0,
+        "productivity_m3_per_yarding_hour": 11.6,
+        "setup_and_move": {
+          "initial_rigging_hours": 9,
+          "corridor_changes_hours_each": 10,
+          "corridor_changes_count": 2,
+          "mechanical_delay_hours": 1.0,
+          "downtime_percent_of_total": 1
+        },
+        "time_distribution_percent": {
+          "yard_logs": 77,
+          "move_reposition": 22,
+          "downtime": 1
+        },
+        "detailed_cycle": {
+          "sample_cycles": 101,
+          "sample_time_minutes": 576,
+          "average_slope_yarding_distance_m": 331,
+          "slope_yarding_distance_m_range": [216, 480],
+          "average_lateral_distance_m": 13,
+          "lateral_distance_m_range": [0, 42],
+          "carriage_height_at_hook_point_m_range": [4, 31],
+          "average_carriage_height_m": 15,
+          "average_logs_per_turn": 3.1,
+          "average_piece_volume_m3": 0.71,
+          "volume_per_cycle_m3": 2.20,
+          "element_times_min": {
+            "outhaul": 0.88,
+            "drop_chokers": 0.23,
+            "hook": 1.44,
+            "breakout": 0.52,
+            "inhaul": 1.09,
+            "unhook": 0.86,
+            "delays_under_15_min": 0.20,
+            "total_cycle": 5.22
+          },
+          "element_times_min_standardized_400m": {
+            "outhaul": 1.05,
+            "inhaul": 1.29,
+            "total_cycle": 5.59
+          }
+        },
+        "operational_observations": [
+          "Openings averaged 600 m² (100–1400 m² range) with corridors averaging 15 m wide; the resulting harvest volume was only 21% of the block, raising unit costs despite strong per-SMH productivity.",
+          "Full suspension across the S2/S3 creek was maintained by narrowing corridors to 10 m in the riparian reserve.",
+          "Three skyline corridors handled the entire partial cut; no intermediate supports were needed, which kept rigging times short."
+        ]
+      },
+      "costs_cad_2002_per_m3": {
+        "falling_actual": 12.87,
+        "yarding_actual": 33.70,
+        "helicopter_support_for_setup": 1.26,
+        "loading_actual": 17.17,
+        "total_actual": 65.00,
+        "estimated_future_total": 69.30,
+        "local_helicopter_reference_total": 60.00,
+        "notes": "Estimated future partial-cut cost assumes 11% yarding delay versus the observed 1%, hence the modeled cost exceeds the study’s measured total."
+      }
+    }
+  ]
+}

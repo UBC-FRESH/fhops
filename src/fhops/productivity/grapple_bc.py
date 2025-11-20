@@ -144,6 +144,9 @@ _TN147_PATH = (
 _TR122_PATH = (
     Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/tr122_swingyarder.json"
 )
+_ADV5N28_PATH = (
+    Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/adv5n28_skyline_conversion.json"
+)
 
 
 def _weighted_average(
@@ -513,6 +516,109 @@ def estimate_grapple_yarder_productivity_tr122(treatment_id: str) -> float:
     return treatment.productivity_m3_per_pmh
 
 
+@dataclass(frozen=True)
+class ADV5N28Block:
+    block_id: str
+    label: str
+    silviculture_system: str
+    area_ha: float
+    net_volume_m3_per_ha: float
+    slope_percent_average: float
+    yarding_direction: str
+    average_turn_volume_m3: float
+    average_yarding_distance_m: float
+    logs_per_turn: float
+    productivity_m3_per_shift_8h: float
+    productivity_m3_per_smh: float
+    productivity_m3_per_pmh: float
+    productivity_m3_per_yarding_hour: float
+    cost_total_actual_per_m3_cad_2002: float
+    cost_total_estimated_per_m3_cad_2002: float | None
+    cost_helicopter_reference_per_m3_cad_2002: float | None
+    notes: tuple[str, ...]
+    cost_base_year: int = 2002
+
+
+def _maybe_float(value: object | None) -> float | None:
+    if value is None:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):  # pragma: no cover - dataset controlled
+        return None
+
+
+@lru_cache(maxsize=1)
+def _load_adv5n28_blocks() -> Mapping[str, ADV5N28Block]:
+    if not _ADV5N28_PATH.exists():
+        raise FileNotFoundError(f"ADV5N28 dataset not found: {_ADV5N28_PATH}")
+    with _ADV5N28_PATH.open(encoding="utf-8") as fh:
+        payload = json.load(fh)
+
+    blocks: dict[str, ADV5N28Block] = {}
+    for entry in payload.get("blocks", []):
+        block_id = entry.get("id")
+        if not block_id:
+            continue
+        yarding = entry.get("yarding", {}) or {}
+        costs = entry.get("costs_cad_2002_per_m3", {}) or {}
+        label = entry.get("silviculture_system") or block_id.replace("_", " ").title()
+        blocks[block_id.lower()] = ADV5N28Block(
+            block_id=block_id,
+            label=label,
+            silviculture_system=label,
+            area_ha=float(entry.get("area_ha") or 0.0),
+            net_volume_m3_per_ha=float(entry.get("net_volume_m3_per_ha") or 0.0),
+            slope_percent_average=float(entry.get("slope_percent_average") or 0.0),
+            yarding_direction=entry.get("yarding_direction", "downhill"),
+            average_turn_volume_m3=float(yarding.get("average_turn_volume_m3") or 0.0),
+            average_yarding_distance_m=float(
+                yarding.get("average_slope_yarding_distance_m")
+                or yarding.get("average_yarding_distance_m")
+                or 0.0
+            ),
+            logs_per_turn=float(
+                yarding.get("average_turn_pieces")
+                or yarding.get("average_logs_per_turn")
+                or 0.0
+            ),
+            productivity_m3_per_shift_8h=float(yarding.get("productivity_m3_per_shift_8h") or 0.0),
+            productivity_m3_per_smh=float(yarding.get("productivity_m3_per_smh") or 0.0),
+            productivity_m3_per_pmh=float(yarding.get("productivity_m3_per_pmh") or 0.0),
+            productivity_m3_per_yarding_hour=float(
+                yarding.get("productivity_m3_per_yarding_hour") or 0.0
+            ),
+            cost_total_actual_per_m3_cad_2002=float(costs.get("total_actual") or 0.0),
+            cost_total_estimated_per_m3_cad_2002=_maybe_float(costs.get("estimated_future_total")),
+            cost_helicopter_reference_per_m3_cad_2002=_maybe_float(
+                costs.get("local_helicopter_reference_total")
+            ),
+            notes=tuple(entry.get("notes", [])),
+        )
+    return blocks
+
+
+def list_adv5n28_block_ids() -> tuple[str, ...]:
+    return tuple(sorted(_load_adv5n28_blocks()))
+
+
+def get_adv5n28_block(block_id: str) -> ADV5N28Block:
+    if not block_id:
+        raise ValueError("Block identifier is required for ADV5N28 presets.")
+    blocks = _load_adv5n28_blocks()
+    normalized = block_id.strip().lower()
+    if normalized not in blocks:
+        raise ValueError(
+            f"Unknown ADV5N28 block '{block_id}'. Valid options: {', '.join(sorted(blocks))}."
+        )
+    return blocks[normalized]
+
+
+def estimate_grapple_yarder_productivity_adv5n28(block_id: str) -> float:
+    block = get_adv5n28_block(block_id)
+    return block.productivity_m3_per_pmh
+
+
 __all__ += [
     "TN157Case",
     "estimate_grapple_yarder_productivity_tn157",
@@ -526,4 +632,8 @@ __all__ += [
     "estimate_grapple_yarder_productivity_tr122",
     "get_tr122_treatment",
     "list_tr122_treatment_ids",
+    "ADV5N28Block",
+    "estimate_grapple_yarder_productivity_adv5n28",
+    "get_adv5n28_block",
+    "list_adv5n28_block_ids",
 ]
