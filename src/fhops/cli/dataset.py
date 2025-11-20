@@ -71,11 +71,13 @@ from fhops.productivity import (
     estimate_grapple_yarder_productivity_tr75_handfelled,
     estimate_grapple_yarder_productivity_tn157,
     estimate_grapple_yarder_productivity_adv1n35,
+    estimate_grapple_yarder_productivity_adv1n40,
     estimate_grapple_yarder_productivity_tn147,
     estimate_grapple_yarder_productivity_tr122,
     estimate_grapple_yarder_productivity_adv5n28,
     get_tn157_case,
     get_adv1n35_metadata,
+    get_adv1n40_metadata,
     get_tn147_case,
     get_tr122_treatment,
     get_adv5n28_block,
@@ -625,6 +627,7 @@ class GrappleYarderModel(str, Enum):
     TR75_BUNCHED = "tr75-bunched"
     TR75_HANDFELLED = "tr75-handfelled"
     ADV1N35 = "adv1n35"
+    ADV1N40 = "adv1n40"
     TN157 = "tn157"
     TN147 = "tn147"
     TR122_EXTENDED = "tr122-extended"
@@ -4963,6 +4966,29 @@ def estimate_productivity_cmd(
                 in_cycle_delay_minutes=grapple_in_cycle_delay_minutes,
             )
             preset_note = metadata.note
+        elif grapple_yarder_model is GrappleYarderModel.ADV1N40:
+            metadata = get_adv1n40_metadata()
+            if grapple_turn_volume_m3 is None:
+                grapple_turn_volume_m3 = metadata.default_turn_volume_m3
+            if grapple_yarding_distance_m is None:
+                grapple_yarding_distance_m = metadata.default_yarding_distance_m
+            if grapple_in_cycle_delay_minutes is None:
+                grapple_in_cycle_delay_minutes = metadata.default_delay_minutes
+            value = estimate_grapple_yarder_productivity_adv1n40(
+                turn_volume_m3=grapple_turn_volume_m3,
+                yarding_distance_m=grapple_yarding_distance_m,
+                in_cycle_delay_minutes=grapple_in_cycle_delay_minutes,
+            )
+            preset_note = metadata.note
+            preset_meta = {
+                "label": "ADV1N40 Madill 071 (downhill running/scab)",
+                "cost_per_m3": 12.11,
+                "cost_base_year": 2000,
+                "extra_rows": [
+                    ("Total Harvest Cost (2000 CAD $/m³)", f"{22.25:.2f}"),
+                    ("Total Harvest Cost (2024 CAD $/m³)", f"{inflate_value(22.25, 2000):.2f}"),
+                ],
+            }
         else:
             value = _evaluate_grapple_yarder_result(
                 model=grapple_yarder_model,

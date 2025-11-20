@@ -151,3 +151,23 @@ def test_cli_grapple_yarder_adv1n35_regression() -> None:
     assert "adv1n35" in result.stdout
     assert "Owren 400" in result.stdout
     assert "Lateral Distance" in result.stdout
+
+
+def test_cli_grapple_yarder_adv1n40_regression() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_yarder",
+            "--grapple-yarder-model",
+            "adv1n40",
+            "--grapple-yard-distance-m",
+            "120",
+            "--grapple-turn-volume-m3",
+            "3.0",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "Madill 071" in result.stdout
+    assert "ADV1N40" in result.stdout or "downhill running" in result.stdout

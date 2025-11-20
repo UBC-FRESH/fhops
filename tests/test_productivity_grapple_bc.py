@@ -6,6 +6,7 @@ import pytest
 
 from fhops.productivity.grapple_bc import (
     estimate_grapple_yarder_productivity_adv1n35,
+    estimate_grapple_yarder_productivity_adv1n40,
     estimate_grapple_yarder_productivity_adv5n28,
     estimate_grapple_yarder_productivity_sr54,
     estimate_grapple_yarder_productivity_tr75_bunched,
@@ -18,6 +19,7 @@ from fhops.productivity.grapple_bc import (
     get_tr122_treatment,
     get_adv5n28_block,
     get_adv1n35_metadata,
+    get_adv1n40_metadata,
 )
 
 
@@ -97,3 +99,13 @@ def test_adv1n35_regression_matches_reported_cycle() -> None:
         in_cycle_delay_minutes=metadata.default_in_cycle_delay_min,
     )
     assert math.isclose(prod, 19.3, rel_tol=0.03)
+
+
+def test_adv1n40_regression_matches_reported_cycle() -> None:
+    metadata = get_adv1n40_metadata()
+    prod = estimate_grapple_yarder_productivity_adv1n40(
+        turn_volume_m3=metadata.default_turn_volume_m3,
+        yarding_distance_m=metadata.default_yarding_distance_m,
+        in_cycle_delay_minutes=metadata.default_delay_minutes,
+    )
+    assert math.isclose(prod, 30.0, rel_tol=0.05)

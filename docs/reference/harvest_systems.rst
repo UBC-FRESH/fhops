@@ -506,6 +506,10 @@ the distance or payload assumptions directly.
   ``--grapple-in-cycle-delay-minutes`` lets you override the observed 0.69 min delay allowance. The CLI
   reports the assumed values and productivity so you can mirror the 200–350 m two-span corridors
   featured in the study when exploring interior skyline layouts.
+* ``adv1n40`` – Madill 071 running/scab skyline regression (Advantage Vol. 1 No. 40). Supply
+  ``--grapple-yard-distance-m`` (default 103 m) and optional ``--grapple-in-cycle-delay-minutes`` (default
+  1.10 min). Turn volume defaults to 2.9 m³ unless overridden. Designed for downhill group-selection
+  blocks in ICHvk1; the helper prints the CPI-adjusted $/m³ yarding cost from the publication.
 
 Trail spacing and decking multipliers (from FPInnovations TN285 and ADV4N21) can be applied via
 ``--skidder-trail-pattern`` (``narrow_13_15m`` | ``single_ghost_18m`` | ``double_ghost_27m``) and

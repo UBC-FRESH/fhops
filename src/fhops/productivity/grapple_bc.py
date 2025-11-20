@@ -151,6 +151,9 @@ _ADV5N28_PATH = (
 _ADV1N35_PATH = (
     Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/adv1n35_owren400.json"
 )
+_ADV1N40_PATH = (
+    Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/adv1n40_madill071.json"
+)
 
 
 def _weighted_average(
@@ -698,6 +701,69 @@ def estimate_grapple_yarder_productivity_adv1n35(
     return _productivity(turn_volume_m3, cycle_time_min)
 
 
+@dataclass(frozen=True)
+class ADV1N40Metadata:
+    outhaul_intercept: float
+    outhaul_distance_coeff: float
+    inhaul_intercept: float
+    inhaul_distance_coeff: float
+    hook_minutes: float
+    unhook_minutes: float
+    default_delay_minutes: float
+    default_turn_volume_m3: float
+    default_yarding_distance_m: float
+    note: str
+
+
+@lru_cache(maxsize=1)
+def get_adv1n40_metadata() -> ADV1N40Metadata:
+    if not _ADV1N40_PATH.exists():
+        raise FileNotFoundError(f"ADV1N40 dataset not found: {_ADV1N40_PATH}")
+    with _ADV1N40_PATH.open(encoding="utf-8") as fh:
+        payload = json.load(fh)
+    coeffs = payload["regressions"]["cycle_time"]["coefficients"]
+    defaults = payload["regressions"]["productivity"]["defaults"]
+    note = (
+        "[dim]Regression from FPInnovations Advantage Vol. 1 No. 40 "
+        "(Madill 071 running/scab downhill skyline for group selection blocks).[/dim]"
+    )
+    return ADV1N40Metadata(
+        outhaul_intercept=float(coeffs.get("outhaul_intercept", 0.0)),
+        outhaul_distance_coeff=float(coeffs.get("outhaul_distance", 0.0)),
+        inhaul_intercept=float(coeffs.get("inhaul_intercept", 0.0)),
+        inhaul_distance_coeff=float(coeffs.get("inhaul_distance", 0.0)),
+        hook_minutes=float(coeffs.get("hook_minutes", 0.0)),
+        unhook_minutes=float(coeffs.get("unhook_minutes", 0.0)),
+        default_delay_minutes=float(payload["regressions"]["cycle_time"].get("delay_default_minutes", 0.0)),
+        default_turn_volume_m3=float(defaults.get("turn_volume_m3", 2.9)),
+        default_yarding_distance_m=float(defaults.get("yarding_distance_m", 103.0)),
+        note=note,
+    )
+
+
+def estimate_grapple_yarder_productivity_adv1n40(
+    *,
+    turn_volume_m3: float,
+    yarding_distance_m: float,
+    in_cycle_delay_minutes: float | None = None,
+) -> float:
+    """Estimate productivity (m³/PMH) for the Madill 071 downhill running/scab skyline (ADV1N40)."""
+
+    _validate_inputs(turn_volume_m3, yarding_distance_m)
+    if in_cycle_delay_minutes is not None and in_cycle_delay_minutes < 0:
+        raise ValueError("in_cycle_delay_minutes must be >= 0")
+
+    metadata = get_adv1n40_metadata()
+    delay = metadata.default_delay_minutes if in_cycle_delay_minutes is None else in_cycle_delay_minutes
+
+    outhaul = metadata.outhaul_intercept + metadata.outhaul_distance_coeff * yarding_distance_m
+    inhaul = metadata.inhaul_intercept + metadata.inhaul_distance_coeff * yarding_distance_m
+    cycle = metadata.hook_minutes + metadata.unhook_minutes + outhaul + inhaul + delay
+    if cycle <= 0:
+        raise ValueError("Derived cycle time must be > 0")
+    return _productivity(turn_volume_m3, cycle)
+
+
 __all__ += [
     "TN157Case",
     "estimate_grapple_yarder_productivity_tn157",
@@ -718,4 +784,7 @@ __all__ += [
     "ADV1N35Metadata",
     "estimate_grapple_yarder_productivity_adv1n35",
     "get_adv1n35_metadata",
+    "ADV1N40Metadata",
+    "estimate_grapple_yarder_productivity_adv1n40",
+    "get_adv1n40_metadata",
 ]

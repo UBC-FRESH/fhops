@@ -34,6 +34,9 @@
   expose the Advantage Vol. 1 No. 35 inputs (defaults 11 m lateral, 2.6–2.8 stems/turn, 0.69 min delay). The helper lives in
   `data/reference/fpinnovations/adv1n35_owren400.json`, docs/tests/logs were updated, and telemetry now records the extra
   predictors for skyline QA.
+- Added the Madill 071 running/scab skyline preset (`--grapple-yarder-model adv1n40`) sourced from
+  `data/reference/fpinnovations/adv1n40_madill071.json`. The CLI reuses the new per-turn delay flag,
+  reports CPI-adjusted yarding/total costs, and tests/docs/planning capture the ICHvk1 group-selection context.
 
 # 2025-11-26 — ADV7N3 processor/loader presets
 - Digitised the ADV7N3 summer short-log processor study into `data/productivity/processor_adv7n3.json`

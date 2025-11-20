@@ -1,0 +1,83 @@
+{
+  "source": {
+    "id": "ADV1N40",
+    "title": "Skyline partial cutting in the Interior Cedar-Hemlock biogeoclimatic zone: harvesting productivity and cost",
+    "publication": "FPInnovations / FERIC Advantage Vol. 1 No. 40",
+    "publication_date": "2000-11",
+    "authors": ["Michelle Dunham", "Clayton Gillies"],
+    "region": "Goldstream River Valley (north of Revelstoke, BC)",
+    "operations_summary": "Madill 071 multi-drum yarder (northbend, shotgun, running/scab skyline configs) performing group-selection partial cutting (ICHvk1)."
+  },
+  "site": {
+    "biogeoclimatic_zone": "ICHvk1",
+    "block_area_ha": 131.9,
+    "harvest_area_cable_ha": 7.0,
+    "slope_percent_range": [40, 55],
+    "average_slope_percent": 45,
+    "average_volume_m3_per_ha": 441,
+    "average_volume_m3_per_tree": 1.65,
+    "treatment_system": "Group selection (first of three entries, 0.4–1.5 ha openings)"
+  },
+  "machine": {
+    "name": "Madill 071 multi-drum skyline yarder",
+    "carriages": [
+      {"name": "Custom shotgun carriage", "application": "single-span uphill"},
+      {"name": "Butt rigging", "application": "northbend"}
+    ],
+    "support_equipment": ["John Deere 892D-LC log loader", "Dresser TD-15C crawler tractor"],
+    "crew_size": 5
+  },
+  "regressions": {
+    "cycle_time": {
+      "equation": "CT = hook + unhook + (a_o + b_o * SYD) + (a_i + b_i * SYD) + delay",
+      "coefficients": {
+        "outhaul_intercept": -0.013904178,
+        "outhaul_distance": 0.003488175,
+        "inhaul_intercept": 0.301384463,
+        "inhaul_distance": 0.005219824,
+        "hook_minutes": 2.63,
+        "unhook_minutes": 0.89
+      },
+      "ranges": {
+        "SYD_m": [60, 190]
+      },
+      "delay_default_minutes": 1.10
+    },
+    "productivity": {
+      "equation": "Prod = 60 * turn_volume / cycle_time",
+      "defaults": {
+        "turn_volume_m3": 2.9,
+        "yarding_distance_m": 103.0
+      }
+    }
+  },
+  "costs": {
+    "unit_costs": {
+      "falling_processing_per_m3_cad_2000": 2.40,
+      "yarding_per_m3_cad_2000": 12.11,
+      "loading_per_m3_cad_2000": 7.74,
+      "total_per_m3_cad_2000": 22.25
+    },
+    "hourly_components": {
+      "yarder_total_per_smh_cad_2000": 137.85,
+      "yarder_labour_per_smh_cad_2000": 152.92,
+      "loader_total_per_smh_cad_2000": 83.37,
+      "crawler_total_per_smh_cad_2000": 23.15
+    },
+    "notes": "Costs based on 1998 IWA interior wages; carriage cost $2.20/SMH included in yarder total."
+  },
+  "observed_productivity": {
+    "falling_m3_per_shift": 222,
+    "yarding_m3_per_shift": 192,
+    "yarding_cycles_per_shift": 69,
+    "yarding_turn_volume_m3": 2.8,
+    "yarding_m3_per_cycle_downhill": 2.9,
+    "yarding_cycles_timed": 104,
+    "loading_m3_per_shift": 39.1
+  },
+  "notes": [
+    "Regression valid for downhill running/scab skyline configuration (single-span).",
+    "Hook/unhook times from Table 5; delay allowance reflects 19% in-cycle delay share.",
+    "Northbend and shotgun uphill data lacked significant distance relationships; use ADV1N35/other presets for uphill."
+  ]
+}
