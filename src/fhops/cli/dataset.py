@@ -37,17 +37,20 @@ from fhops.productivity import (
     Han2018SkidderMethod,
     TrailSpacingPattern,
     DeckingCondition,
+    ADV6N7DeckingMode,
     LahrsenModel,
     ADV6N10HarvesterInputs,
     TN292HarvesterInputs,
     SkidderProductivityResult,
     SkidderSpeedProfile,
+    ADV6N7SkidderResult,
     ShovelLoggerSessions2006Inputs,
     ShovelLoggerResult,
     HelicopterLonglineModel,
     HelicopterProductivityResult,
     alpaca_slope_multiplier,
     estimate_grapple_skidder_productivity_han2018,
+    estimate_grapple_skidder_productivity_adv6n7,
     estimate_cable_skidder_productivity_adv1n12_full_tree,
     estimate_cable_skidder_productivity_adv1n12_two_phase,
     get_skidder_speed_profile,
@@ -78,6 +81,7 @@ from fhops.productivity import (
     get_tn157_case,
     get_adv1n35_metadata,
     get_adv1n40_metadata,
+    get_adv6n7_metadata,
     get_tn147_case,
     get_tr122_treatment,
     get_adv5n28_block,
@@ -918,6 +922,7 @@ class GrappleSkidderModel(str, Enum):
     HAN_WHOLE_TREE = "whole_tree"
     ADV1N12_FULLTREE = "adv1n12-fulltree"
     ADV1N12_TWO_PHASE = "adv1n12-two-phase"
+    ADV6N7 = "adv6n7"
 
 
 _FORWARDER_GHAFFARIYAN_MODELS = {
@@ -963,6 +968,58 @@ def _render_grapple_skidder_result(
         console.print(
             "[dim]Regression from Han et al. (2018) beetle-kill salvage study (delay-free cycle time).[/dim]"
         )
+        return
+    if isinstance(result, ADV6N7SkidderResult):
+        metadata = result.metadata
+        base_year = metadata.cost_base_year
+        rows = [
+            ("Model", GrappleSkidderModel.ADV6N7.value),
+            ("Decking Mode", result.decking_mode.value.replace("_", " ")),
+            ("Skidding Distance (m)", f"{result.skidding_distance_m:.1f}"),
+            ("Payload per Cycle (m³)", f"{result.payload_m3:.2f}"),
+            ("Utilisation (fraction)", f"{result.utilisation:.2f}"),
+            ("Delay per Turn (min)", f"{result.delay_minutes:.2f}"),
+            ("Cycle Time (min)", f"{result.cycle_time_minutes:.2f}"),
+            ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
+            (
+                f"Skidding Cost ({base_year} CAD $/m³)",
+                f"{result.skidder_cost_per_m3_cad_2004:.2f}",
+            ),
+            (
+                f"Skidding Cost ({TARGET_YEAR} CAD $/m³)",
+                f"{inflate_value(result.skidder_cost_per_m3_cad_2004, base_year):.2f}",
+            ),
+        ]
+        if result.support_ratio is not None and result.combined_cost_per_m3_cad_2004 is not None:
+            rows.append(("Loader Support Ratio", f"{result.support_ratio:.2f}"))
+            rows.append(
+                (
+                    f"Combined Skid+Deck ({base_year} CAD $/m³)",
+                    f"{result.combined_cost_per_m3_cad_2004:.2f}",
+                )
+            )
+            rows.append(
+                (
+                    f"Combined Skid+Deck ({TARGET_YEAR} CAD $/m³)",
+                    f"{inflate_value(result.combined_cost_per_m3_cad_2004, base_year):.2f}",
+                )
+            )
+        loader_cost = metadata.loader_forwarding_cost_per_m3_at_85m_cad_2004
+        if loader_cost:
+            rows.append(
+                (
+                    f"Loader-Forwarding Baseline ({base_year} CAD $/m³)",
+                    f"{loader_cost:.2f}",
+                )
+            )
+            rows.append(
+                (
+                    f"Loader-Forwarding Baseline ({TARGET_YEAR} CAD $/m³)",
+                    f"{inflate_value(loader_cost, base_year):.2f}",
+                )
+            )
+        _render_kv_table("Grapple Skidder Productivity Estimate", rows)
+        console.print(result.note)
         return
 
     model_label = str(result.get("model", "adv1n12")).replace("_", "-")
@@ -1973,6 +2030,11 @@ def _apply_skidder_system_defaults(
     decking_condition: DeckingCondition | None,
     custom_multiplier: float | None,
     extraction_distance_m: float | None,
+    adv6n7_decking_mode: ADV6N7DeckingMode,
+    adv6n7_payload_m3: float | None,
+    adv6n7_utilisation: float | None,
+    adv6n7_delay_minutes: float | None,
+    adv6n7_support_ratio: float | None,
     user_supplied: Mapping[str, bool],
 ) -> tuple[
     GrappleSkidderModel,
@@ -1980,6 +2042,11 @@ def _apply_skidder_system_defaults(
     DeckingCondition | None,
     float | None,
     SkidderSpeedProfileOption,
+    float | None,
+    ADV6N7DeckingMode,
+    float | None,
+    float | None,
+    float | None,
     float | None,
     bool,
 ]:
@@ -1992,6 +2059,11 @@ def _apply_skidder_system_defaults(
             custom_multiplier,
             speed_profile,
             extraction_distance_m,
+            adv6n7_decking_mode,
+            adv6n7_payload_m3,
+            adv6n7_utilisation,
+            adv6n7_delay_minutes,
+            adv6n7_support_ratio,
             False,
         )
     overrides = system_productivity_overrides(system, ProductivityMachineRole.GRAPPLE_SKIDDER.value)
@@ -2003,6 +2075,11 @@ def _apply_skidder_system_defaults(
             custom_multiplier,
             speed_profile,
             extraction_distance_m,
+            adv6n7_decking_mode,
+            adv6n7_payload_m3,
+            adv6n7_utilisation,
+            adv6n7_delay_minutes,
+            adv6n7_support_ratio,
             False,
         )
     used = False
@@ -2044,6 +2121,44 @@ def _apply_skidder_system_defaults(
     ):
         extraction_distance_m = float(value)
         used = True
+    if not user_supplied.get("skidder_adv6n7_decking_mode", False):
+        override_mode = overrides.get("skidder_adv6n7_decking_mode")
+        if override_mode is not None:
+            try:
+                adv6n7_decking_mode = ADV6N7DeckingMode(str(override_mode))
+                used = True
+            except ValueError as exc:  # pragma: no cover - validated via CI
+                raise ValueError(f"Unknown ADV6N7 decking mode override: {override_mode}") from exc
+
+    def maybe_float_override(
+        key: str, current: float | None, supplied_flag: str
+    ) -> tuple[float | None, bool]:
+        if user_supplied.get(supplied_flag, False):
+            return current, False
+        override_value = overrides.get(key)
+        if override_value is None:
+            return current, False
+        try:
+            return float(override_value), True
+        except (TypeError, ValueError) as exc:  # pragma: no cover
+            raise ValueError(f"Invalid grapple skidder override for '{key}': {override_value}") from exc
+
+    adv6n7_payload_m3, changed = maybe_float_override(
+        "skidder_adv6n7_payload_m3", adv6n7_payload_m3, "skidder_adv6n7_payload_m3"
+    )
+    used |= changed
+    adv6n7_utilisation, changed = maybe_float_override(
+        "skidder_adv6n7_utilisation", adv6n7_utilisation, "skidder_adv6n7_utilisation"
+    )
+    used |= changed
+    adv6n7_delay_minutes, changed = maybe_float_override(
+        "skidder_adv6n7_delay_minutes", adv6n7_delay_minutes, "skidder_adv6n7_delay_minutes"
+    )
+    used |= changed
+    adv6n7_support_ratio, changed = maybe_float_override(
+        "skidder_adv6n7_support_ratio", adv6n7_support_ratio, "skidder_adv6n7_support_ratio"
+    )
+    used |= changed
     return (
         model,
         trail_pattern,
@@ -2051,6 +2166,11 @@ def _apply_skidder_system_defaults(
         custom_multiplier,
         speed_profile,
         extraction_distance_m,
+        adv6n7_decking_mode,
+        adv6n7_payload_m3,
+        adv6n7_utilisation,
+        adv6n7_delay_minutes,
+        adv6n7_support_ratio,
         used,
     )
 
@@ -2923,6 +3043,11 @@ def _evaluate_grapple_skidder_result(
     custom_multiplier: float | None,
     speed_profile_option: SkidderSpeedProfileOption = SkidderSpeedProfileOption.LEGACY,
     extraction_distance_m: float | None,
+    adv6n7_decking_mode: ADV6N7DeckingMode,
+    adv6n7_payload_m3: float | None,
+    adv6n7_utilisation: float | None,
+    adv6n7_delay_minutes: float | None,
+    adv6n7_support_ratio: float | None,
 ) -> SkidderProductivityResult | Mapping[str, object]:
     if model in {
         GrappleSkidderModel.ADV1N12_FULLTREE,
@@ -2950,6 +3075,20 @@ def _evaluate_grapple_skidder_result(
             "productivity_m3_per_pmh": value,
             "note": note,
         }
+    if model is GrappleSkidderModel.ADV6N7:
+        if extraction_distance_m is None:
+            raise typer.BadParameter("--skidder-extraction-distance is required for the ADV6N7 model.")
+        try:
+            return estimate_grapple_skidder_productivity_adv6n7(
+                skidding_distance_m=extraction_distance_m,
+                decking_mode=adv6n7_decking_mode,
+                payload_m3=adv6n7_payload_m3,
+                utilisation=adv6n7_utilisation,
+                delay_minutes=adv6n7_delay_minutes,
+                support_ratio=adv6n7_support_ratio,
+            )
+        except ValueError as exc:  # pragma: no cover - Typer surfaces message
+            raise typer.BadParameter(str(exc)) from exc
 
     missing: list[str] = []
     if pieces_per_cycle is None:
@@ -4043,7 +4182,10 @@ def estimate_productivity_cmd(
         GrappleSkidderModel.HAN_LOP_AND_SCATTER,
         "--grapple-skidder-model",
         case_sensitive=False,
-        help="Grapple skidder regression (Han et al. 2018 or ADV1N12 extraction curves).",
+        help=(
+            "Grapple skidder regression (Han et al. 2018 | adv1n12-fulltree | "
+            "adv1n12-two-phase | adv6n7)."
+        ),
     ),
     skidder_pieces_per_cycle: float | None = typer.Option(
         None,
@@ -4073,7 +4215,40 @@ def estimate_productivity_cmd(
         None,
         "--skidder-extraction-distance",
         min=0.0,
-        help="Average extraction distance (m) for ADV1N12 skidder models.",
+        help="Average extraction distance (m) for ADV1N12 and ADV6N7 skidder models.",
+    ),
+    skidder_adv6n7_decking_mode: ADV6N7DeckingMode = typer.Option(
+        ADV6N7DeckingMode.SKIDDER_LOADER,
+        "--skidder-adv6n7-decking-mode",
+        case_sensitive=False,
+        help="Decking variant for ADV6N7 (skidder | skidder_loader | loader | hot_processing).",
+    ),
+    skidder_adv6n7_payload_m3: float | None = typer.Option(
+        None,
+        "--skidder-adv6n7-payload-m3",
+        min=0.0,
+        help="Override payload per cycle (m³) for ADV6N7. Defaults to 7.69 m³ from the study.",
+    ),
+    skidder_adv6n7_delay_minutes: float | None = typer.Option(
+        None,
+        "--skidder-adv6n7-delay-minutes",
+        min=0.0,
+        help="In-cycle delay minutes per turn for ADV6N7 (default 0.12 min/turn).",
+    ),
+    skidder_adv6n7_utilisation: float | None = typer.Option(
+        None,
+        "--skidder-adv6n7-utilisation",
+        min=0.0,
+        help="Utilisation fraction (SMH basis) for ADV6N7 (default 0.85).",
+    ),
+    skidder_adv6n7_support_ratio: float | None = typer.Option(
+        0.4,
+        "--skidder-adv6n7-support-ratio",
+        min=0.0,
+        help=(
+            "Loader support ratio for ADV6N7 combined costs (0 = skidder decks everything, "
+            "1 = loader decks full-time). Defaults to 0.4 per the study."
+        ),
     ),
     skidder_trail_pattern: TrailSpacingPattern | None = typer.Option(
         None,
@@ -4717,6 +4892,21 @@ def estimate_productivity_cmd(
             "skidder_extraction_distance": _parameter_supplied(
                 ctx, "skidder_extraction_distance"
             ),
+            "skidder_adv6n7_decking_mode": _parameter_supplied(
+                ctx, "skidder_adv6n7_decking_mode"
+            ),
+            "skidder_adv6n7_payload_m3": _parameter_supplied(
+                ctx, "skidder_adv6n7_payload_m3"
+            ),
+            "skidder_adv6n7_utilisation": _parameter_supplied(
+                ctx, "skidder_adv6n7_utilisation"
+            ),
+            "skidder_adv6n7_delay_minutes": _parameter_supplied(
+                ctx, "skidder_adv6n7_delay_minutes"
+            ),
+            "skidder_adv6n7_support_ratio": _parameter_supplied(
+                ctx, "skidder_adv6n7_support_ratio"
+            ),
         }
         try:
             (
@@ -4726,6 +4916,11 @@ def estimate_productivity_cmd(
                 skidder_productivity_multiplier,
                 system_speed_profile,
                 skidder_extraction_distance,
+                skidder_adv6n7_decking_mode,
+                skidder_adv6n7_payload_m3,
+                skidder_adv6n7_utilisation,
+                skidder_adv6n7_delay_minutes,
+                skidder_adv6n7_support_ratio,
                 system_defaults_used,
             ) = _apply_skidder_system_defaults(
                 system=selected_system,
@@ -4734,6 +4929,11 @@ def estimate_productivity_cmd(
                 decking_condition=skidder_decking_condition,
                 custom_multiplier=skidder_productivity_multiplier,
                 extraction_distance_m=skidder_extraction_distance,
+                adv6n7_decking_mode=skidder_adv6n7_decking_mode,
+                adv6n7_payload_m3=skidder_adv6n7_payload_m3,
+                adv6n7_utilisation=skidder_adv6n7_utilisation,
+                adv6n7_delay_minutes=skidder_adv6n7_delay_minutes,
+                adv6n7_support_ratio=skidder_adv6n7_support_ratio,
                 user_supplied=skidder_user_supplied,
             )
         except ValueError as exc:
@@ -4755,6 +4955,11 @@ def estimate_productivity_cmd(
             custom_multiplier=skidder_productivity_multiplier,
             speed_profile_option=skidder_speed_profile_option,
             extraction_distance_m=skidder_extraction_distance,
+            adv6n7_decking_mode=skidder_adv6n7_decking_mode,
+            adv6n7_payload_m3=skidder_adv6n7_payload_m3,
+            adv6n7_utilisation=skidder_adv6n7_utilisation,
+            adv6n7_delay_minutes=skidder_adv6n7_delay_minutes,
+            adv6n7_support_ratio=skidder_adv6n7_support_ratio,
         )
         _render_grapple_skidder_result(result)
         if system_defaults_used and selected_system is not None:

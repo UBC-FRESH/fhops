@@ -557,6 +557,42 @@ def test_cli_grapple_skidder_adv1n12_requires_distance() -> None:
     assert "--skidder-extraction-distance" in result.stdout
 
 
+def test_cli_grapple_skidder_adv6n7_regression() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_skidder",
+            "--grapple-skidder-model",
+            "adv6n7",
+            "--skidder-extraction-distance",
+            "90",
+            "--skidder-adv6n7-support-ratio",
+            "0",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "adv6n7" in result.stdout
+    assert "Caterpillar 535B" in result.stdout
+
+
+def test_cli_grapple_skidder_harvest_system_adv6n7_defaults() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_skidder",
+            "--harvest-system-id",
+            "ground_fb_skid",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "adv6n7" in result.stdout
+    assert "Applied productivity defaults from harvest system 'ground_fb_skid'." in result.stdout
+
+
 def test_cli_estimate_productivity_shovel_logger() -> None:
     result = runner.invoke(
         dataset_app,

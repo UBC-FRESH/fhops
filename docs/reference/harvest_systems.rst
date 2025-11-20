@@ -439,11 +439,14 @@ Loader harvest-system overrides
 Referencing a harvest-system template (``--harvest-system-id`` or ``--dataset``/``--block-id``) now auto-fills
 loader inputs the same way shovel, skyline, and helicopter presets work. The registry currently includes:
 
-* ``ground_fb_skid`` – feller-buncher → grapple-skidder sequences automatically select the TN-261 helper with
-  1.05 m³ piece size, 115 m forwarding distance, 8 % adverse slope, bunching enabled, and a 0.95 delay multiplier.
+* ``ground_fb_skid`` – feller-buncher → grapple-skidder sequences now pin the ADV6N7 Caterpillar 535B preset
+  (85 m extraction distance, loader-supported decking mode, 0.4 support ratio, 7.69 m³ payload, 0.12 min delays,
+  0.85 utilisation) and the loader job still defaults to the TN-261 helper with 1.05 m³ logs, 115 m forwarding
+  distance, 8 % adverse slope, bunching enabled, and a 0.95 delay multiplier.
 * ``ground_fb_loader_liveheel`` – same chain as ``ground_fb_skid`` but the loader job switches to the Barko 450 preset
-  with ``--loader-barko-scenario ground_skid_block`` so interior live-heel loader ops inherit the TN-46 utilisation
-  warning (96 % availability, 79 % utilisation, 17 % truck waits) automatically.
+  with ``--loader-barko-scenario ground_skid_block`` so coastal/interior live-heel conversions inherit the TN-46
+  utilisation warning (96 % availability, 79 % utilisation, 17 % truck waits) automatically while the grapple-skidder
+  leg still leverages the ADV6N7 defaults.
 * ``ground_fb_shovel`` – coastal shovel-logging corridors pick the ADV5N1 helper (0–10 % slope class) with a 90 m
   forwarding distance plus the published payload/utilisation defaults (2.77 m³/cycle, 0.93 PMH/SMH).
 * ``steep_tethered`` – tethered hot-logging layouts wire in the ADV2N26 clambunk regression with 320 m travel-empty
@@ -500,6 +503,11 @@ the distance or payload assumptions directly.
   scatter crew) or logarithmic (decoupled second-phase skidder) regression. Use these when spacing
   roads 100–350 m apart in commercial thinnings and you want the published productivity-distance
   relationships without retyping the equations.
+* ``adv6n7`` – Caterpillar 535B grapple skidder regression (Advantage Vol. 6 No. 7). Provide
+  ``--skidder-extraction-distance`` plus optional ``--skidder-adv6n7-*`` flags (decking mode, payload,
+  utilisation, delay, support ratio). Defaults mirror the Englewood case study (7.69 m³ turns, 0.85
+  utilisation, 0.12 min delay, loader support ratio 0.4). The CLI prints CPI-adjusted skidding cost and
+  combined skid+deck cost so you can compare directly with loader-forwarding baselines.
 * ``adv1n35`` – Owren 400 hydrostatic yarder regression (Advantage Vol. 1 No. 35). Provide
   ``--grapple-yard-distance-m`` plus the new knobs ``--grapple-lateral-distance-m`` and
   ``--grapple-stems-per-cycle`` (defaults 11 m and ≈2.6–2.8 stems/turn). Optional

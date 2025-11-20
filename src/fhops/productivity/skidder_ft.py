@@ -5,9 +5,9 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import lru_cache
-from pathlib import Path
 import json
 import math
+from pathlib import Path
 
 
 class Han2018SkidderMethod(str, Enum):
@@ -32,6 +32,15 @@ class DeckingCondition(str, Enum):
     PREPARED = "prepared_decking"
 
 
+class ADV6N7DeckingMode(str, Enum):
+    """Decking variants from FPInnovations Advantage Vol. 6 No. 7."""
+
+    SKIDDER = "skidder"
+    SKIDDER_LOADER = "skidder_loader"
+    LOADER = "loader"
+    HOT_PROCESSING = "hot_processing"
+
+
 @dataclass(frozen=True)
 class SkidderProductivityResult:
     """Payload returned by the grapple skidder helper."""
@@ -54,6 +63,44 @@ class SkidderSpeedProfile:
     notes: tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class ADV6N7Metadata:
+    cycle_distance_coeff: float
+    cycle_intercepts: dict[ADV6N7DeckingMode, float]
+    default_payload_m3: float
+    default_utilisation: float
+    default_delay_minutes: float
+    default_support_ratio: float
+    default_skidding_distance_m: float
+    skidder_hourly_cost_per_smh_cad_2004: float
+    loader_hourly_cost_per_smh_cad_2004: float
+    loader_forwarding_cost_per_m3_at_85m_cad_2004: float | None
+    distance_range_m: tuple[float, float]
+    cost_base_year: int
+    note: str
+
+
+@dataclass(frozen=True)
+class ADV6N7SkidderResult:
+    decking_mode: ADV6N7DeckingMode
+    skidding_distance_m: float
+    payload_m3: float
+    utilisation: float
+    delay_minutes: float
+    cycle_time_minutes: float
+    productivity_m3_per_pmh: float
+    skidder_cost_per_m3_cad_2004: float
+    combined_cost_per_m3_cad_2004: float | None
+    support_ratio: float | None
+    metadata: ADV6N7Metadata
+    note: str
+
+
+_ADV6N7_PATH = (
+    Path(__file__).resolve().parents[3] / "data" / "reference" / "fpinnovations" / "adv6n7_caterpillar535b.json"
+)
+
+
 @lru_cache(maxsize=1)
 def _load_skidder_speed_profiles() -> dict[str, dict[str, object]]:
     try:
@@ -65,6 +112,54 @@ def _load_skidder_speed_profiles() -> dict[str, dict[str, object]]:
     return (data or {}).get("events") or {}
 
 
+@lru_cache(maxsize=1)
+def get_adv6n7_metadata() -> ADV6N7Metadata:
+    if not _ADV6N7_PATH.exists():
+        raise FileNotFoundError(f"ADV6N7 dataset not found: {_ADV6N7_PATH}")
+    payload = json.loads(_ADV6N7_PATH.read_text(encoding="utf-8"))
+    regressions = payload["regressions"]
+    cycle_entries: dict[str, dict[str, object]] = regressions["cycle_time"]["equations"]
+    intercepts: dict[ADV6N7DeckingMode, float] = {}
+    distance_coeff = None
+    mapping = {
+        "skidder_only": ADV6N7DeckingMode.SKIDDER,
+        "skidder_loader": ADV6N7DeckingMode.SKIDDER_LOADER,
+        "loader_only": ADV6N7DeckingMode.LOADER,
+        "hot_processing": ADV6N7DeckingMode.HOT_PROCESSING,
+    }
+    for key, mode in mapping.items():
+        entry = cycle_entries.get(key) or {}
+        coeffs = entry.get("coefficients") or {}
+        intercepts[mode] = float(coeffs.get("intercept", 0.0))
+        if distance_coeff is None:
+            distance_coeff = float(coeffs.get("distance", 0.0))
+    defaults = regressions["productivity"]["defaults"]
+    range_payload = regressions["cycle_time"].get("range_m") or [0.0, 0.0]
+    costs = payload["costs"]["hourly_components"]
+    loader_costs = costs.get("loader_forwarder") or {}
+    skidder_costs = costs.get("skidder") or {}
+    note = (
+        "[dim]Regression from FPInnovations Advantage Vol. 6 No. 7 "
+        "(Caterpillar 535B grapple skidder supporting Englewood loader-forwarding).[/dim]"
+    )
+    return ADV6N7Metadata(
+        cycle_distance_coeff=float(distance_coeff or 0.0),
+        cycle_intercepts=intercepts,
+        default_payload_m3=float(defaults.get("payload_m3", 7.69)),
+        default_utilisation=float(defaults.get("utilisation", 0.85)),
+        default_delay_minutes=float(defaults.get("delay_minutes", 0.12)),
+        default_support_ratio=0.4,
+        default_skidding_distance_m=float(defaults.get("skidding_distance_m", 85.0)),
+        skidder_hourly_cost_per_smh_cad_2004=float(skidder_costs.get("total_per_smh_cad_2004", 115.21)),
+        loader_hourly_cost_per_smh_cad_2004=float(loader_costs.get("total_per_smh_cad_2004", 144.46)),
+        loader_forwarding_cost_per_m3_at_85m_cad_2004=float(
+            (payload["costs"]["unit_costs"].get("loader_forwarding_per_m3_at_85m_cad_2004") or 0.0)
+        )
+        or None,
+        distance_range_m=(float(range_payload[0]), float(range_payload[1])),
+        cost_base_year=2004,
+        note=note,
+    )
 def get_skidder_speed_profile(key: str) -> SkidderSpeedProfile:
     payload = _load_skidder_speed_profiles().get(key)
     if payload is None:
@@ -111,6 +206,73 @@ _DECKING_INFO: dict[DeckingCondition, dict[str, float | str]] = {
         "reference": "FPInnovations ADV4N21 (decking area cleared prior to skidding).",
     },
 }
+
+
+def estimate_grapple_skidder_productivity_adv6n7(
+    *,
+    skidding_distance_m: float,
+    decking_mode: ADV6N7DeckingMode,
+    payload_m3: float | None = None,
+    utilisation: float | None = None,
+    delay_minutes: float | None = None,
+    support_ratio: float | None = None,
+) -> ADV6N7SkidderResult:
+    """Estimate productivity/cost for the Caterpillar 535B grapple skidder (ADV6N7)."""
+
+    if skidding_distance_m <= 0:
+        raise ValueError("Skidding distance must be > 0")
+    metadata = get_adv6n7_metadata()
+    payload = metadata.default_payload_m3 if payload_m3 is None else float(payload_m3)
+    if payload <= 0:
+        raise ValueError("Payload per cycle must be > 0")
+    utilised = metadata.default_utilisation if utilisation is None else float(utilisation)
+    if utilised <= 0:
+        raise ValueError("Utilisation must be > 0")
+    delay = metadata.default_delay_minutes if delay_minutes is None else float(delay_minutes)
+    if delay < 0:
+        raise ValueError("Delay minutes must be >= 0")
+    sr = metadata.default_support_ratio if support_ratio is None else float(support_ratio)
+    if sr < 0:
+        raise ValueError("Support ratio must be >= 0")
+    if sr > 1:
+        raise ValueError("Support ratio must be <= 1")
+    intercept = metadata.cycle_intercepts[decking_mode]
+    cycle_minutes = intercept + metadata.cycle_distance_coeff * skidding_distance_m
+    if cycle_minutes <= 0:
+        raise ValueError("Derived cycle time must be > 0")
+    productivity = 60.0 * payload * utilised / (cycle_minutes + delay)
+    if productivity <= 0:
+        raise ValueError("Derived productivity must be > 0")
+    skidder_cost_per_m3 = metadata.skidder_hourly_cost_per_smh_cad_2004 / productivity
+    combined_cost: float | None = None
+    support_value: float | None = None
+    if sr > 0:
+        if decking_mode is ADV6N7DeckingMode.SKIDDER:
+            raise ValueError("Set --skidder-adv6n7-decking-mode to a supported option when using a support ratio.")
+        skidder_only_cycle = metadata.cycle_intercepts[ADV6N7DeckingMode.SKIDDER] + (
+            metadata.cycle_distance_coeff * skidding_distance_m
+        )
+        skidder_only_prod = 60.0 * payload * utilised / (skidder_only_cycle + delay)
+        combined_productivity = skidder_only_prod * (1.0 - sr) + productivity * sr
+        combined_cost = (
+            metadata.skidder_hourly_cost_per_smh_cad_2004
+            + metadata.loader_hourly_cost_per_smh_cad_2004 * sr
+        ) / combined_productivity
+        support_value = sr
+    return ADV6N7SkidderResult(
+        decking_mode=decking_mode,
+        skidding_distance_m=skidding_distance_m,
+        payload_m3=payload,
+        utilisation=utilised,
+        delay_minutes=delay,
+        cycle_time_minutes=cycle_minutes,
+        productivity_m3_per_pmh=productivity,
+        skidder_cost_per_m3_cad_2004=skidder_cost_per_m3,
+        combined_cost_per_m3_cad_2004=combined_cost,
+        support_ratio=support_value,
+        metadata=metadata,
+        note=metadata.note,
+    )
 
 
 def _han2018_cycle_time_seconds(
@@ -289,10 +451,15 @@ __all__ = [
     "Han2018SkidderMethod",
     "TrailSpacingPattern",
     "DeckingCondition",
+    "ADV6N7DeckingMode",
     "SkidderProductivityResult",
     "SkidderSpeedProfile",
+    "ADV6N7Metadata",
+    "ADV6N7SkidderResult",
     "estimate_grapple_skidder_productivity_han2018",
+    "estimate_grapple_skidder_productivity_adv6n7",
     "get_skidder_speed_profile",
+    "get_adv6n7_metadata",
     "estimate_cable_skidder_productivity_adv1n12_full_tree",
     "estimate_cable_skidder_productivity_adv1n12_two_phase",
 ]

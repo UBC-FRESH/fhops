@@ -37,6 +37,16 @@
 - Added the Madill 071 running/scab skyline preset (`--grapple-yarder-model adv1n40`) sourced from
   `data/reference/fpinnovations/adv1n40_madill071.json`. The CLI reuses the new per-turn delay flag,
   reports CPI-adjusted yarding/total costs, and tests/docs/planning capture the ICHvk1 group-selection context.
+- Structured ADV6N7 (Caterpillar 535B grapple skidder paired with loader-forwarding) into
+  `data/reference/fpinnovations/adv6n7_caterpillar535b.json` and exposed it via
+  `--grapple-skidder-model adv6n7`. The CLI adds ADV6N7-specific knobs
+  (`--skidder-adv6n7-decking-mode|payload|delay|utilisation|support-ratio`), reports CPI-adjusted skidding and
+  combined skid+deck costs, and documents/tests the loader-support ratio output so skyline→skidder conversions have
+  a BC coastal reference.
+- Harvest-system presets `ground_fb_skid` / `ground_fb_loader_liveheel` now auto-select the ADV6N7 defaults
+  (85 m extraction distance, loader-supported decking with a 0.4 support ratio, 7.69 m³ payload, 0.12 min in-cycle delay,
+  0.85 utilisation) so coastal cable→skid conversions pick up the Caterpillar 535B preset without extra CLI flags;
+  docs/tests/logs were updated to highlight the new defaults.
 
 # 2025-11-26 — ADV7N3 processor/loader presets
 - Digitised the ADV7N3 summer short-log processor study into `data/productivity/processor_adv7n3.json`

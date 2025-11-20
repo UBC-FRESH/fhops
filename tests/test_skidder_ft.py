@@ -8,8 +8,10 @@ from fhops.productivity.skidder_ft import (
     Han2018SkidderMethod,
     TrailSpacingPattern,
     DeckingCondition,
+    ADV6N7DeckingMode,
     get_skidder_speed_profile,
     estimate_grapple_skidder_productivity_han2018,
+    estimate_grapple_skidder_productivity_adv6n7,
     estimate_cable_skidder_productivity_adv1n12_full_tree,
     estimate_cable_skidder_productivity_adv1n12_two_phase,
 )
@@ -93,3 +95,23 @@ def test_adv1n12_two_phase_regression() -> None:
     assert estimate_cable_skidder_productivity_adv1n12_two_phase(distance) == pytest.approx(
         expected, rel=1e-6
     )
+
+
+def test_adv6n7_default_productivity_and_cost() -> None:
+    result = estimate_grapple_skidder_productivity_adv6n7(
+        skidding_distance_m=85.0,
+        decking_mode=ADV6N7DeckingMode.SKIDDER_LOADER,
+        support_ratio=0.0,
+    )
+    assert result.productivity_m3_per_pmh == pytest.approx(92.672, rel=1e-3)
+    assert result.skidder_cost_per_m3_cad_2004 == pytest.approx(115.21 / 92.672, rel=1e-3)
+
+
+def test_adv6n7_loader_support_combined_cost() -> None:
+    result = estimate_grapple_skidder_productivity_adv6n7(
+        skidding_distance_m=85.0,
+        decking_mode=ADV6N7DeckingMode.HOT_PROCESSING,
+        support_ratio=0.4,
+    )
+    assert result.combined_cost_per_m3_cad_2004 == pytest.approx(1.98, rel=0.05)
+    assert result.support_ratio == pytest.approx(0.4)

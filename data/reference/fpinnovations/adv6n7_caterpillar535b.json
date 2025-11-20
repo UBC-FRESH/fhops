@@ -1,0 +1,219 @@
+{
+  "source": {
+    "id": "ADV6N7",
+    "title": "Evaluation of a Caterpillar 535B grapple skidder in a second-growth forest in coastal British Columbia",
+    "publication": "FPInnovations / FERIC Advantage Vol. 6 No. 7",
+    "publication_date": "2005-03",
+    "authors": [
+      "Kris T. Kosicki"
+    ],
+    "region": "Englewood (13 km south of Port McNeill), northern Vancouver Island, BC",
+    "operations_summary": "Caterpillar 535B grapple skidder supporting a loader-forwarding/roadside-processing system across clearcut-with-retention bands (CWHvm1) on 5–25% slopes."
+  },
+  "site": {
+    "total_area_ha": 45.3,
+    "retention_percent": 15,
+    "biogeoclimatic_zone": "CWHvm1",
+    "terrain": "Hummocky benches with short steep pitches (0–40% slopes).",
+    "average_slope_percent": 15,
+    "soil_compaction_hazard": "moderate",
+    "soil_erosion_hazard": "moderate to high",
+    "soil_displacement_hazard": "low to moderate",
+    "cppt_terrain_class": "1.3.2",
+    "decking_strategy": "Skidder decks when space allows; loader-forwarder or hot processing clears roads in confined sections.",
+    "species_composition": [
+      {
+        "name": "western hemlock",
+        "percent": 94
+      },
+      {
+        "name": "amabilis fir",
+        "percent": 3
+      },
+      {
+        "name": "other conifers",
+        "percent": 3
+      }
+    ],
+    "average_volume_m3_per_ha": 670,
+    "average_volume_m3_per_tree": 1.52
+  },
+  "machine": {
+    "name": "Caterpillar 535B grapple skidder",
+    "engine": "Cat 3126 DITA (134 kW net)",
+    "dimensions_m": {
+      "length": 6.20,
+      "width": 3.39,
+      "wheelbase": 3.53,
+      "ground_clearance": 0.58
+    },
+    "operating_mass_kg": 16920,
+    "tires": "35.5L-32 (0.9 m wide) with ring chains on both axles",
+    "attachments": [
+      "Dual-function arch (2.89 m reach past rear axle)",
+      "Hydraulic bunching grapple with 3.1 m opening / 1.34 m² accumulation"
+    ],
+    "support_equipment": [
+      "John Deere 892E LC loader-forwarder (converted excavator)",
+      "Denharco stroke delimbers on Cat 322C excavators",
+      "Risley TK-1162 feller-buncher with Rotosaw HF2229 head"
+    ],
+    "crew_notes": "Single-shift skidder (5 days/week) paired with loader-forwarder (7 days/week) and hot-processing stroke delimbers."
+  },
+  "regressions": {
+    "travel_time": {
+      "unloaded": {
+        "equation": "TE = 0.364 + 0.0109 * SD",
+        "variables": {
+          "TE": "Travel time unloaded (min)",
+          "SD": "Skidding distance (m)"
+        },
+        "range_m": [
+          15,
+          170
+        ],
+        "statistics": {
+          "n": 355,
+          "r_squared": 0.60
+        }
+      },
+      "loaded": {
+        "equation": "TL = 0.206 + 0.0123 * SD",
+        "variables": {
+          "TL": "Travel time loaded (min)",
+          "SD": "Skidding distance (m)"
+        },
+        "range_m": [
+          15,
+          170
+        ],
+        "statistics": {
+          "n": 358,
+          "r_squared": 0.67
+        }
+      }
+    },
+    "cycle_time": {
+      "equations": {
+        "skidder_only": {
+          "equation": "CT = 2.64 + 0.0232 * SD",
+          "description": "Skidder decks its own turns.",
+          "coefficients": {
+            "intercept": 2.64,
+            "distance": 0.0232
+          }
+        },
+        "skidder_loader": {
+          "equation": "CT = 2.14 + 0.0232 * SD",
+          "description": "Skidder unloads, loader-forwarder repiles.",
+          "coefficients": {
+            "intercept": 2.14,
+            "distance": 0.0232
+          }
+        },
+        "loader_only": {
+          "equation": "CT = 2.02 + 0.0232 * SD",
+          "description": "Skidder drops loads, loader-forwarder decks.",
+          "coefficients": {
+            "intercept": 2.02,
+            "distance": 0.0232
+          }
+        },
+        "hot_processing": {
+          "equation": "CT = 2.08 + 0.0232 * SD",
+          "description": "Stems processed immediately at roadside.",
+          "coefficients": {
+            "intercept": 2.08,
+            "distance": 0.0232
+          }
+        }
+      },
+      "variables": {
+        "CT": "Delay-free cycle time (min)",
+        "SD": "Skidding distance (m)"
+      },
+      "range_m": [
+        15,
+        170
+      ]
+    },
+    "productivity": {
+      "equation": "Prod = 60 * CV * U / (CT + DT)",
+      "variables": {
+        "Prod": "Predicted skidding productivity (m³/SMH)",
+        "CV": "Payload volume per cycle (m³)",
+        "U": "Utilisation fraction (SMH basis)",
+        "CT": "Cycle time from the selected cycle-time equation (min)",
+        "DT": "In-cycle delay allowance per turn (min)"
+      },
+      "defaults": {
+        "payload_m3": 7.69,
+        "stems_per_cycle": 5.06,
+        "utilisation": 0.85,
+        "delay_minutes": 0.12,
+        "skidding_distance_m": 85
+      }
+    },
+    "combined_cost": {
+      "equation": "CS+D = (SC + LC * SR) / (SPUS * (1 - SR) + SPS * SR)",
+      "variables": {
+        "CS+D": "Combined skidding + decking cost ($/m³)",
+        "SC": "Skidder hourly cost ($/SMH)",
+        "LC": "Loader-forwarder hourly cost ($/SMH)",
+        "SR": "Loader support ratio (0 = skidder decks itself, 1 = loader decks full-time)",
+        "SPUS": "Skidder productivity when decking its own turns (m³/SMH)",
+        "SPS": "Skidder productivity when loader-forwarder decks (m³/SMH)"
+      },
+      "notes": "Loader support ratio represents the share of the skidder’s work shift that requires the loader-forwarder to re-pile stems. In the case study, a 0.4 ratio (4 h of loader support per 10 h skidder shift) dropped total extraction cost to ~57% of loader-forwarding alone."
+    }
+  },
+  "costs": {
+    "hourly_components": {
+      "skidder": {
+        "ownership_per_smh_cad_2004": 28.38,
+        "operating_per_smh_cad_2004": 86.83,
+        "total_per_smh_cad_2004": 115.21
+      },
+      "loader_forwarder": {
+        "ownership_per_smh_cad_2004": 36.58,
+        "operating_per_smh_cad_2004": 107.88,
+        "total_per_smh_cad_2004": 144.46
+      }
+    },
+    "unit_costs": {
+      "skidding_per_m3_cad_2004": 2.02,
+      "loader_forwarding_per_m3_at_85m_cad_2004": 4.38,
+      "skidding_hot_processing_per_m3_cad_2004": 1.51
+    },
+    "assumptions": "Costs derived from FERIC Appendix I (0.90 CAD/L diesel, 51% wage loading, 8.5 h skidder shift, 10 h loader-forwarder shift). Indirect costs excluded."
+  },
+  "observed_productivity": {
+    "volume_skidded_m3": 16179,
+    "cycles": 2217,
+    "stems": 10678,
+    "volume_per_cycle_m3": 7.30,
+    "stems_per_cycle": 4.8,
+    "productivity_m3_per_pmh": 62.0,
+    "productivity_m3_per_smh": 57.0,
+    "utilisation_fraction": 0.93,
+    "average_skidding_distance_m": 85,
+    "detail_study_productivity_m3_per_pmh": 107.0
+  },
+  "soil_disturbance": {
+    "disturbed_points_percent": 4.1,
+    "survey_method": "BC FPC soil conservation guidebook transects (2 375 points).",
+    "dominant_disturbance_types": [
+      "Shallow gouges (48%)",
+      "Compaction evidence (27%)",
+      "Wide gouges (2%)"
+    ],
+    "mitigation_notes": "Moderately dry soils, 0.9 m tires with chains, and loader-forwarder re-decking limited rutting; wet depressions still showed deep ruts."
+  },
+  "notes": [
+    "Total harvested volume was 20 343 m³; the Caterpillar 535B handled 16 179 m³ while a Morgan SX-706 SB skidder covered 952 m³ of short shifts.",
+    "Most skidding was uphill on 5–25% slopes with travel distances up to 300 m; loader-forwarder pre-positioned bunches beyond 60 m or on steep backline benches.",
+    "Average bunch prepared by the feller-buncher contained 4.7 stems; skidder payloads of two or more bunches were rare because bunch size already matched grapple capacity.",
+    "Skidding/l deck coordination (hot processing, loader-supported decking, or alternating short/long pulls) minimized deck congestion and kept skidder utilization near 93%.",
+    "Recommended planning limits: keep grapple skidder distances below ~250–300 m, avoid uphill skidding on gentle slopes when downhill corridors exist, and reserve moist/fine-textured pockets for loader-forwarding or dry-season skidding."
+  ]
+}
