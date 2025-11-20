@@ -2080,6 +2080,38 @@ def _apply_forwarder_system_defaults(
     return model, extraction_distance_m, used
 
 
+def _apply_processor_system_defaults(
+    *,
+    system: HarvestSystem | None,
+    processor_model: RoadsideProcessorModel,
+    processor_adv7n3_machine: ADV7N3Machine,
+    user_supplied: Mapping[str, bool],
+) -> tuple[RoadsideProcessorModel, ADV7N3Machine, bool]:
+    if system is None:
+        return processor_model, processor_adv7n3_machine, False
+    overrides = system_productivity_overrides(
+        system, ProductivityMachineRole.ROADSIDE_PROCESSOR.value
+    )
+    if not overrides:
+        return processor_model, processor_adv7n3_machine, False
+    used = False
+    value = overrides.get("processor_model")
+    if value and not user_supplied.get("processor_model", False):
+        try:
+            processor_model = RoadsideProcessorModel(value)
+            used = True
+        except ValueError as exc:
+            raise ValueError(f"Unknown processor model override: {value}") from exc
+    value = overrides.get("processor_adv7n3_machine")
+    if value and not user_supplied.get("processor_adv7n3_machine", False):
+        try:
+            processor_adv7n3_machine = ADV7N3Machine(value)
+            used = True
+        except ValueError as exc:
+            raise ValueError(f"Unknown ADV7N3 processor override: {value}") from exc
+    return processor_model, processor_adv7n3_machine, used
+
+
 def _apply_shovel_system_defaults(
     *,
     system: HarvestSystem | None,
@@ -4846,6 +4878,20 @@ def estimate_productivity_cmd(
         _maybe_render_costs(show_costs, ProductivityMachineRole.GRAPPLE_YARDER.value)
         return
     if role == ProductivityMachineRole.ROADSIDE_PROCESSOR.value:
+        processor_user_supplied = {
+            "processor_model": _parameter_supplied(ctx, "processor_model"),
+            "processor_adv7n3_machine": _parameter_supplied(ctx, "processor_adv7n3_machine"),
+        }
+        (
+            processor_model,
+            processor_adv7n3_machine,
+            processor_defaults_used,
+        ) = _apply_processor_system_defaults(
+            system=selected_system,
+            processor_model=processor_model,
+            processor_adv7n3_machine=processor_adv7n3_machine,
+            user_supplied=processor_user_supplied,
+        )
         processor_delay_supplied = _parameter_supplied(ctx, "processor_delay_multiplier")
         berry_skid_prediction: dict[str, Any] | None = None
         berry_skid_auto_adjusted = False
@@ -5265,6 +5311,10 @@ def estimate_productivity_cmd(
                     f"+{automatic_bucking_info.revenue_delta_per_m3:.1f} {currency}/m³ ({base_year}).[/dim]"
                 )
         _maybe_render_costs(show_costs, ProductivityMachineRole.ROADSIDE_PROCESSOR.value)
+        if processor_defaults_used and selected_system is not None:
+            console.print(
+                f"[dim]Applied productivity defaults from harvest system '{selected_system.system_id}'.[/dim]"
+            )
         if berry_skid_prediction is not None:
             delay_line = (
                 f"[dim]Berry skid-size model predicts {berry_skid_prediction['delay_seconds']:.1f} s/stem "

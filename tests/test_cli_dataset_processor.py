@@ -183,6 +183,42 @@ def test_cli_processor_labelle2019_volume() -> None:
     assert f"{expected.productivity_m3_per_pmh:.2f}" in result.stdout
 
 
+def test_cli_processor_harvest_system_defaults_cable_running() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "roadside_processor",
+            "--harvest-system-id",
+            "cable_running",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "adv7n3" in result.stdout
+    assert "Hyundai 210LC" in result.stdout
+    assert "Applied productivity defaults from harvest system" in result.stdout
+    assert "'cable_running'" in result.stdout
+
+
+def test_cli_processor_harvest_system_defaults_adv5n28_clearcut() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "roadside_processor",
+            "--harvest-system-id",
+            "cable_running_adv5n28_clearcut",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "adv7n3" in result.stdout
+    assert "John Deere 892" in result.stdout
+    assert "Applied productivity defaults from harvest system" in result.stdout
+    assert "'cable_running_adv5n28_clearcut'" in result.stdout
+
+
 def test_cli_processor_spinelli2010_process() -> None:
     result = runner.invoke(
         dataset_app,

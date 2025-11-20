@@ -290,6 +290,12 @@ regressions:
   $/m³ costs (2004 CAD and CPI-adjusted 2024 CAD). CLI output also prints the loader task breakdown,
   non-processing time penalties when the processor works without a loader, and the average travel
   distances so you can decide when a loader is mandatory on short-wood cable decks.
+
+  Harvest-system presets `cable_running`, `cable_running_adv5n28_clearcut`, and
+  `cable_running_adv5n28_shelterwood` now default to this model (Hyundai 210LC for the base/shelterwood
+  runs, John Deere 892 for the clearcut conversion). Invoke ``--harvest-system-id <id>`` (or point to a
+  dataset block using those systems) and the CLI auto-selects the right ADV7N3 machine, prints the
+  Advantage citation, and emits the CPI-adjusted processor + loader costs without retyping any flags.
 * ``--processor-model hypro775`` – HYPRO 775 tractor-mounted double-grip processor preset sourced from Castro
   Pérez (2020) and Zurita Vintimilla (2021). No additional predictors are needed; the helper reports mean cycle time
   (~45 s), gross/net trees per hour, delay-free m³/PMH (~21.4), fuel use (≈21 L/h or 0.78 L/m³), and ergonomic notes

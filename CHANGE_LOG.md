@@ -26,6 +26,9 @@
 - Updated `data/machine_rates.json` with the Advantage Appendix 1 owning/operating splits (base year 1999 CAD) so forwarder
   and grapple-skidder cost tables default to the same values referenced in the study; `inspect-machine --machine-role forwarder`
   (or `grapple_skidder`) now prints the inflated Valmet/Timberjack breakdown instead of the generic Dodson rates.
+- Skyline harvest systems now seed the ADV7N3 deck processor/loader preset automatically: `cable_running` and the
+  `cable_running_adv5n28_*` variants override the roadside processor job to `adv7n3` (Hyundai 210LC vs. John Deere 892),
+  so `--harvest-system-id ...` runs both the skyline helper and the CPI-adjusted deck costs without extra CLI flags.
 
 # 2025-11-26 — ADV7N3 processor/loader presets
 - Digitised the ADV7N3 summer short-log processor study into `data/productivity/processor_adv7n3.json`
