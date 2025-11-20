@@ -239,10 +239,4 @@ _(Continue adding rows as additional files appear in `notes/reference/fpinnovati
 | Bucking_at_Landing_by_a_Single-Grip_Harvester_Fuel.pdf | scanned | Forests 14(465) (2023) | Borz et al. detail landing bucking with a single-grip harvester: 27 bunches, 232 stems → 21.41 m³/PMH, 0.78 L/m³ fuel, €10–11/m³ cost, 95 % recovery. | Confirms the purpose-built landing processor fuel/productivity values used in the carrier profiles; use as a citation when surfacing purpose-built vs. excavator comparisons. |
 
 ## Next Actions
-- Prioritize the Cable Yarding (FNCY) and Advantage issues targeting grapple yarders/swing yarders (e.g., ADV1N5, ADV5N28, ADV7N3) for productivity extraction.
-- Process the November 2025 FPInnovations drop in batches:
-  1. **Advantage wave** — skim ADV1N12 through ADV9N1 for coastal/interior forwarder or skyline datasets, flagging any explicit regressions.
-  2. **Field Notes** — review FNPC17/19/21/28 and FNSF8/9/11/34 for operational nuggets or safety constraints that impact productivity inputs.
-  3. **Technical Notes/Reports** — scan TN123–TN296 series plus TR94/109/2017N34/2017N57/2021N93/2023N17 for regression-ready cycle-time, especially anything referencing forwarders or clambunk systems.
-- After each batch, update the inventory rows with abstracts + productivity leads, and mirror any forwarder-ready findings into `notes/dataset_inspection_plan.md` (Forwarder coverage section) so we know when the helper module should expand.
-- Cross-reference promising reports back into `notes/dataset_inspection_plan.md` under the machine-role roadmap and the productivity registry backlog.
+- Skyline backlog tracking now lives under “Skyline action plan (refresh)” in `notes/dataset_inspection_plan.md`. See that section for the current FNCY/Advantage/Field Note/TN batch plan and status; update both files together when new references are mined.

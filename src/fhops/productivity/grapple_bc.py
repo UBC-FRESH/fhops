@@ -6,7 +6,7 @@ import json
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
-from typing import Mapping
+from typing import Mapping, Sequence
 
 
 def _validate_inputs(turn_volume_m3: float, yarding_distance_m: float) -> None:
@@ -137,6 +137,12 @@ class TN157Case:
 
 _TN157_PATH = (
     Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/tn157_cypress7280b.json"
+)
+_TN147_PATH = (
+    Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/tn147_highlead.json"
+)
+_TR122_PATH = (
+    Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/tr122_swingyarder.json"
 )
 
 
@@ -284,9 +290,240 @@ def estimate_grapple_yarder_productivity_tn157(case_id: str = "combined") -> flo
     return case.productivity_m3_per_pmh
 
 
+@dataclass(frozen=True)
+class TN147Case:
+    case_id: str
+    label: str
+    average_turn_volume_m3: float | None
+    average_yarding_distance_m: float | None
+    logs_per_turn: float | None
+    logs_per_shift_8h: float
+    volume_per_shift_m3: float
+    cost_per_log_cad_1989: float | None
+    cost_per_m3_cad_1989: float | None
+    cost_base_year: int = 1989
+
+    @property
+    def productivity_m3_per_pmh(self) -> float:
+        return self.volume_per_shift_m3 / 8.0
+
+
+def _tn147_weighted_average(
+    values: Mapping[str, float], weights: Mapping[str, float], default: float | None = None
+) -> float | None:
+    total_weight = sum(weights.values())
+    if total_weight <= 0:
+        return default
+    return sum(values[key] * weights[key] for key in values) / total_weight
+
+
+@lru_cache(maxsize=1)
+def _load_tn147_cases() -> Mapping[str, TN147Case]:
+    if not _TN147_PATH.exists():
+        raise FileNotFoundError(f"TN147 dataset not found: {_TN147_PATH}")
+    with _TN147_PATH.open(encoding="utf-8") as fh:
+        payload = json.load(fh)
+    entries: Sequence[Mapping[str, object]] = payload.get("case_studies", [])
+    cases: dict[str, TN147Case] = {}
+    for entry in entries:
+        case_id = str(entry["id"])
+        cases[case_id] = TN147Case(
+            case_id=case_id,
+            label=f"Case {case_id}",
+            average_turn_volume_m3=float(entry.get("avg_turn_volume_m3") or 0.0),
+            average_yarding_distance_m=float(entry.get("avg_yarding_distance_m") or 0.0),
+            logs_per_turn=float(entry.get("logs_per_turn") or 0.0),
+            logs_per_shift_8h=float(entry.get("logs_per_shift_8h") or 0.0),
+            volume_per_shift_m3=float(entry.get("volume_per_shift_m3") or 0.0),
+            cost_per_log_cad_1989=float(entry.get("cost_per_log_cad_1989") or 0.0),
+            cost_per_m3_cad_1989=float(entry.get("cost_per_m3_cad_1989") or 0.0),
+        )
+
+    if entries:
+        total_turns = {
+            str(entry["id"]): float(entry.get("total_turns") or 0.0) for entry in entries
+        }
+        combined_turns = sum(total_turns.values())
+        avg_turn_volume = _tn147_weighted_average(
+            {str(entry["id"]): float(entry.get("avg_turn_volume_m3") or 0.0) for entry in entries},
+            total_turns,
+            default=0.0,
+        )
+        avg_distance = _tn147_weighted_average(
+            {str(entry["id"]): float(entry.get("avg_yarding_distance_m") or 0.0) for entry in entries},
+            total_turns,
+            default=0.0,
+        )
+        avg_logs_per_turn = _tn147_weighted_average(
+            {str(entry["id"]): float(entry.get("logs_per_turn") or 0.0) for entry in entries},
+            total_turns,
+            default=0.0,
+        )
+        total_volume = sum(float(entry.get("volume_per_shift_m3") or 0.0) for entry in entries)
+        total_logs = sum(float(entry.get("logs_per_shift_8h") or 0.0) for entry in entries)
+
+        volume_weights = {
+            str(entry["id"]): float(entry.get("volume_per_shift_m3") or 0.0) for entry in entries
+        }
+        log_weights = {
+            str(entry["id"]): float(entry.get("logs_per_shift_8h") or 0.0) for entry in entries
+        }
+
+        cost_per_m3 = _tn147_weighted_average(
+            {str(entry["id"]): float(entry.get("cost_per_m3_cad_1989") or 0.0) for entry in entries},
+            volume_weights,
+            default=0.0,
+        )
+        cost_per_log = _tn147_weighted_average(
+            {str(entry["id"]): float(entry.get("cost_per_log_cad_1989") or 0.0) for entry in entries},
+            log_weights,
+            default=0.0,
+        )
+
+        cases["combined"] = TN147Case(
+            case_id="combined",
+            label="Combined (7-case average)",
+            average_turn_volume_m3=avg_turn_volume,
+            average_yarding_distance_m=avg_distance,
+            logs_per_turn=avg_logs_per_turn,
+            logs_per_shift_8h=total_logs,
+            volume_per_shift_m3=total_volume,
+            cost_per_log_cad_1989=cost_per_log,
+            cost_per_m3_cad_1989=cost_per_m3,
+        )
+        cases["combined_turns"] = TN147Case(
+            case_id="combined_turns",
+            label="Combined (turn-weighted)",
+            average_turn_volume_m3=avg_turn_volume,
+            average_yarding_distance_m=avg_distance,
+            logs_per_turn=avg_logs_per_turn,
+            logs_per_shift_8h=total_logs / len(entries) if entries else 0.0,
+            volume_per_shift_m3=total_volume / len(entries) if entries else 0.0,
+            cost_per_log_cad_1989=cost_per_log,
+            cost_per_m3_cad_1989=cost_per_m3,
+        )
+
+    return cases
+
+
+def list_tn147_case_ids() -> tuple[str, ...]:
+    cases = _load_tn147_cases()
+    ordered = [cid for cid in cases if cid != "combined_turns"]
+    return tuple(sorted(ordered, key=lambda cid: (cid != "combined", cid)))
+
+
+def get_tn147_case(case_id: str) -> TN147Case:
+    normalized = (case_id or "combined").strip().lower()
+    if normalized in {"", "combined"}:
+        normalized = "combined"
+    cases = _load_tn147_cases()
+    if normalized not in cases:
+        raise ValueError(f"Unknown TN147 case '{case_id}'. Valid options: {', '.join(sorted(cases))}.")
+    case = cases[normalized]
+    if normalized == "combined_turns":
+        return cases["combined"]
+    return case
+
+
+def estimate_grapple_yarder_productivity_tn147(case_id: str = "combined") -> float:
+    case = get_tn147_case(case_id)
+    return case.productivity_m3_per_pmh
+
+
+@dataclass(frozen=True)
+class TR122Treatment:
+    treatment_id: str
+    label: str
+    volume_per_shift_m3: float
+    yarder_production_hours: float
+    yarder_total_hours: float
+    loader_hours: float
+    avg_piece_m3: float
+    avg_pieces_per_cycle: float
+    cycle_volume_m3: float
+    yarding_distance_m: float | None
+    cycle_minutes: float | None
+    cost_total_per_m3_cad_1996: float
+    yarder_cost_per_m3_cad_1996: float
+    loader_cost_per_m3_cad_1996: float
+    yarding_labour_per_m3_cad_1996: float
+    loading_labour_per_m3_cad_1996: float
+    cost_base_year: int = 1996
+
+    @property
+    def productivity_m3_per_pmh(self) -> float:
+        return self.volume_per_shift_m3 / 8.0
+
+
+@lru_cache(maxsize=1)
+def _load_tr122_treatments() -> Mapping[str, TR122Treatment]:
+    if not _TR122_PATH.exists():
+        raise FileNotFoundError(f"TR122 dataset not found: {_TR122_PATH}")
+    with _TR122_PATH.open(encoding="utf-8") as fh:
+        payload = json.load(fh)
+    treatments: dict[str, TR122Treatment] = {}
+    cycle_data = payload.get("cycle_distribution", {})
+    for entry in payload.get("treatments", []):
+        treatment_id = entry["id"]
+        label = treatment_id.replace("_", " ").title()
+        costs = entry.get("costs", {})
+        cycle_info = cycle_data.get(treatment_id, {}).get("overall", {})
+        yarding_distance = cycle_info.get("yarding_distance_m")
+        if yarding_distance is None:
+            yarding_distance = cycle_data.get(treatment_id, {}).get("corridors", {}).get(
+                "yarding_distance_m"
+            )
+        treatments[treatment_id] = TR122Treatment(
+            treatment_id=treatment_id,
+            label=label,
+            volume_per_shift_m3=float(entry.get("volume_per_shift_m3") or 0.0),
+            yarder_production_hours=float(entry.get("yarder_production_hours") or 0.0),
+            yarder_total_hours=float(entry.get("yarder_total_hours") or 0.0),
+            loader_hours=float(entry.get("loader_hours") or 0.0),
+            avg_piece_m3=float(entry.get("avg_piece_m3") or 0.0),
+            avg_pieces_per_cycle=float(entry.get("avg_pieces_per_cycle") or 0.0),
+            cycle_volume_m3=float(entry.get("cycle_volume_m3") or 0.0),
+            yarding_distance_m=float(yarding_distance) if yarding_distance is not None else None,
+            cycle_minutes=float(cycle_info.get("total_cycle_min")) if cycle_info else None,
+            cost_total_per_m3_cad_1996=float(costs.get("total_yarding_loading_per_m3") or 0.0),
+            yarder_cost_per_m3_cad_1996=float(costs.get("yarder_per_m3") or 0.0),
+            loader_cost_per_m3_cad_1996=float(costs.get("loader_per_m3") or 0.0),
+            yarding_labour_per_m3_cad_1996=float(costs.get("yarding_labour_per_m3") or 0.0),
+            loading_labour_per_m3_cad_1996=float(costs.get("loading_labour_per_m3") or 0.0),
+        )
+    return treatments
+
+
+def list_tr122_treatment_ids() -> tuple[str, ...]:
+    return tuple(sorted(_load_tr122_treatments()))
+
+
+def get_tr122_treatment(treatment_id: str) -> TR122Treatment:
+    treatments = _load_tr122_treatments()
+    normalized = treatment_id.strip().lower()
+    if normalized not in treatments:
+        raise ValueError(
+            f"Unknown TR122 treatment '{treatment_id}'. Valid options: {', '.join(sorted(treatments))}."
+        )
+    return treatments[normalized]
+
+
+def estimate_grapple_yarder_productivity_tr122(treatment_id: str) -> float:
+    treatment = get_tr122_treatment(treatment_id)
+    return treatment.productivity_m3_per_pmh
+
+
 __all__ += [
     "TN157Case",
     "estimate_grapple_yarder_productivity_tn157",
     "get_tn157_case",
     "list_tn157_case_ids",
+    "TN147Case",
+    "estimate_grapple_yarder_productivity_tn147",
+    "get_tn147_case",
+    "list_tn147_case_ids",
+    "TR122Treatment",
+    "estimate_grapple_yarder_productivity_tr122",
+    "get_tr122_treatment",
+    "list_tr122_treatment_ids",
 ]

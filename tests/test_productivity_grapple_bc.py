@@ -9,7 +9,11 @@ from fhops.productivity.grapple_bc import (
     estimate_grapple_yarder_productivity_tr75_bunched,
     estimate_grapple_yarder_productivity_tr75_handfelled,
     estimate_grapple_yarder_productivity_tn157,
+    estimate_grapple_yarder_productivity_tn147,
+    estimate_grapple_yarder_productivity_tr122,
     get_tn157_case,
+    get_tn147_case,
+    get_tr122_treatment,
 )
 
 
@@ -53,3 +57,15 @@ def test_tn157_combined_productivity_matches_case() -> None:
 def test_tn157_invalid_case() -> None:
     with pytest.raises(ValueError):
         get_tn157_case("case99")
+
+
+def test_tn147_combined_productivity_matches_case() -> None:
+    case = get_tn147_case("combined")
+    prod = estimate_grapple_yarder_productivity_tn147()
+    assert math.isclose(prod, case.productivity_m3_per_pmh, rel_tol=1e-9)
+
+
+def test_tr122_clearcut_productivity_matches_dataset() -> None:
+    treatment = get_tr122_treatment("clearcut")
+    prod = estimate_grapple_yarder_productivity_tr122("clearcut")
+    assert math.isclose(prod, treatment.productivity_m3_per_pmh, rel_tol=1e-9)

@@ -68,9 +68,17 @@ from fhops.productivity import (
     estimate_grapple_yarder_productivity_tr75_bunched,
     estimate_grapple_yarder_productivity_tr75_handfelled,
     estimate_grapple_yarder_productivity_tn157,
+    estimate_grapple_yarder_productivity_tn147,
+    estimate_grapple_yarder_productivity_tr122,
     get_tn157_case,
+    get_tn147_case,
+    get_tr122_treatment,
     list_tn157_case_ids,
+    list_tn147_case_ids,
+    list_tr122_treatment_ids,
     TN157Case,
+    TN147Case,
+    TR122Treatment,
     estimate_standing_skyline_productivity_aubuchon1979,
     estimate_standing_skyline_turn_time_aubuchon1979,
     estimate_standing_skyline_productivity_kramer1978,
@@ -550,7 +558,17 @@ class GrappleYarderModel(str, Enum):
     TR75_BUNCHED = "tr75-bunched"
     TR75_HANDFELLED = "tr75-handfelled"
     TN157 = "tn157"
+    TN147 = "tn147"
+    TR122_EXTENDED = "tr122-extended"
+    TR122_SHELTERWOOD = "tr122-shelterwood"
+    TR122_CLEARCUT = "tr122-clearcut"
 
+
+_TR122_MODEL_TO_TREATMENT: dict[GrappleYarderModel, str] = {
+    GrappleYarderModel.TR122_EXTENDED: "extended_rotation",
+    GrappleYarderModel.TR122_SHELTERWOOD: "uniform_shelterwood",
+    GrappleYarderModel.TR122_CLEARCUT: "clearcut",
+}
 
 def _tn157_case_choices() -> tuple[str, ...]:
     return list_tn157_case_ids()
@@ -575,6 +593,33 @@ def _normalize_tn157_case(case_id: str | None) -> str:
     if candidate not in choices:
         raise ValueError(
             f"TN157 case must be one of {', '.join(sorted(choices))}; received '{case_id}'."
+        )
+    return candidate
+
+
+def _tn147_case_choices() -> tuple[str, ...]:
+    return list_tn147_case_ids()
+
+
+def _tn147_case_help_text() -> str:
+    numeric = ", ".join(cid for cid in _tn147_case_choices() if cid != "combined")
+    return (
+        "TN147 case identifier (combined, "
+        f"{numeric}) when selecting --grapple-yarder-model tn147. "
+        "Ignored for other models."
+    )
+
+
+def _normalize_tn147_case(case_id: str | None) -> str:
+    candidate = (case_id or "combined").strip().lower()
+    if candidate in {"", "combined", "avg", "average"}:
+        return "combined"
+    if candidate.startswith("case"):
+        candidate = candidate[4:].strip()
+    choices = set(_tn147_case_choices())
+    if candidate not in choices:
+        raise ValueError(
+            f"TN147 case must be one of {', '.join(sorted(choices))}; received '{case_id}'."
         )
     return candidate
 
@@ -1641,47 +1686,53 @@ def _render_loader_result(
 def _render_grapple_yarder_result(
     *,
     model: GrappleYarderModel,
-    turn_volume_m3: float,
-    yarding_distance_m: float,
+    turn_volume_m3: float | None,
+    yarding_distance_m: float | None,
     productivity_m3_per_pmh: float,
-    tn157_case: TN157Case | None = None,
+    preset_meta: Mapping[str, object] | None = None,
 ) -> None:
-    rows = [
-        ("Model", model.value),
-        ("Turn Volume (m³)", f"{turn_volume_m3:.2f}"),
-        ("Yarding Distance (m)", f"{yarding_distance_m:.1f}"),
-        ("Productivity (m³/PMH)", f"{productivity_m3_per_pmh:.2f}"),
-    ]
+    rows = [("Model", model.value)]
+    if turn_volume_m3 is not None:
+        rows.append(("Turn Volume (m³)", f"{turn_volume_m3:.2f}"))
+    if yarding_distance_m is not None:
+        rows.append(("Yarding Distance (m)", f"{yarding_distance_m:.1f}"))
+    rows.append(("Productivity (m³/PMH)", f"{productivity_m3_per_pmh:.2f}"))
     note = (
         "[dim]Regressions from MacDonald (1988) SR-54 and Peterson (1987) TR-75 "
         "(delay-free cycle times + minor delays).[/dim]"
     )
-    if tn157_case is not None:
-        rows.insert(1, ("TN157 Case", tn157_case.label))
-        rows.append(("Logs/Turn", f"{tn157_case.logs_per_turn:.2f}"))
-        rows.append(("Observed Cost (1991 CAD $/m³)", f"{tn157_case.cost_per_m3_cad_1991:.2f}"))
-        inflated_cost_m3 = inflate_value(
-            tn157_case.cost_per_m3_cad_1991, tn157_case.cost_base_year
-        )
-        rows.append(
-            (
-                f"Cost ({TARGET_YEAR} CAD $/m³)",
-                f"{inflated_cost_m3:.2f}",
+    if preset_meta is not None:
+        label = preset_meta.get("label")
+        if label:
+            rows.insert(1, ("Preset", str(label)))
+        logs_per_turn = preset_meta.get("logs_per_turn")
+        if isinstance(logs_per_turn, (int, float)):
+            rows.append(("Logs/Turn", f"{float(logs_per_turn):.2f}"))
+        base_year = int(preset_meta.get("cost_base_year", TARGET_YEAR))
+        cost_per_m3 = preset_meta.get("cost_per_m3")
+        if isinstance(cost_per_m3, (int, float)):
+            rows.append((f"Observed Cost ({base_year} CAD $/m³)", f"{float(cost_per_m3):.2f}"))
+            rows.append(
+                (
+                    f"Cost ({TARGET_YEAR} CAD $/m³)",
+                    f"{inflate_value(float(cost_per_m3), base_year):.2f}",
+                )
             )
-        )
-        inflated_cost_per_log = inflate_value(
-            tn157_case.cost_per_log_cad_1991, tn157_case.cost_base_year
-        )
-        rows.append(
-            (
-                f"Cost ({TARGET_YEAR} CAD $/log)",
-                f"{inflated_cost_per_log:.2f}",
+        cost_per_log = preset_meta.get("cost_per_log")
+        if isinstance(cost_per_log, (int, float)):
+            rows.append((f"Observed Cost ({base_year} CAD $/log)", f"{float(cost_per_log):.2f}"))
+            rows.append(
+                (
+                    f"Cost ({TARGET_YEAR} CAD $/log)",
+                    f"{inflate_value(float(cost_per_log), base_year):.2f}",
+                )
             )
-        )
-        note = (
-            "[dim]Observed productivity/costs from FERIC TN-157 (Cypress 7280B swing yarder + "
-            "Hitachi UH14 backspar, 1987–1988 case studies) with CPI-adjusted $/m³ and $/log "
-            f"expressed in {TARGET_YEAR} CAD.[/dim]"
+        extra_rows = preset_meta.get("extra_rows") or []
+        for label, value in extra_rows:
+            rows.append((label, value))
+        note = preset_meta.get(
+            "note",
+            "[dim]Observed productivity/cost preset.[/dim]",
         )
     _render_kv_table("Grapple Yarder Productivity Estimate", rows)
     console.print(note)
@@ -2210,13 +2261,14 @@ def _apply_grapple_yarder_system_defaults(
     turn_volume_m3: float | None,
     yarding_distance_m: float | None,
     tn157_case: str,
+    tn147_case: str,
     user_supplied: Mapping[str, bool],
-) -> tuple[GrappleYarderModel, float | None, float | None, str, bool]:
+) -> tuple[GrappleYarderModel, float | None, float | None, str, str, bool]:
     if system is None:
-        return model, turn_volume_m3, yarding_distance_m, tn157_case, False
+        return model, turn_volume_m3, yarding_distance_m, tn157_case, tn147_case, False
     overrides = system_productivity_overrides(system, ProductivityMachineRole.GRAPPLE_YARDER.value)
     if not overrides:
-        return model, turn_volume_m3, yarding_distance_m, tn157_case, False
+        return model, turn_volume_m3, yarding_distance_m, tn157_case, tn147_case, False
     used = False
 
     value = overrides.get("grapple_yarder_model")
@@ -2259,7 +2311,17 @@ def _apply_grapple_yarder_system_defaults(
             except ValueError as exc:  # pragma: no cover - validated via unit tests
                 raise ValueError(f"Unknown TN157 case override '{override_case}'.") from exc
 
-    return model, turn_volume_m3, yarding_distance_m, tn157_case_value, used
+    tn147_case_value = tn147_case
+    if not user_supplied.get("tn147_case", False):
+        override_case = overrides.get("grapple_yarder_tn147_case")
+        if override_case is not None:
+            try:
+                tn147_case_value = _normalize_tn147_case(str(override_case))
+                used = True
+            except ValueError as exc:  # pragma: no cover - validated via unit tests
+                raise ValueError(f"Unknown TN147 case override '{override_case}'.") from exc
+
+    return model, turn_volume_m3, yarding_distance_m, tn157_case_value, tn147_case_value, used
     used |= changed
     crew_size, changed = maybe_float("skyline_crew_size", crew_size, "crew_size", True)
     used |= changed
@@ -3636,6 +3698,12 @@ def estimate_productivity_cmd(
         help=_tn157_case_help_text(),
         show_default=False,
     ),
+    tn147_case: str = typer.Option(
+        "combined",
+        "--tn147-case",
+        help=_tn147_case_help_text(),
+        show_default=False,
+    ),
     processor_model: RoadsideProcessorModel = typer.Option(
         RoadsideProcessorModel.BERRY2019,
         "--processor-model",
@@ -4218,9 +4286,14 @@ def estimate_productivity_cmd(
             "grapple_turn_volume_m3": _parameter_supplied(ctx, "grapple_turn_volume_m3"),
             "grapple_yarding_distance_m": _parameter_supplied(ctx, "grapple_yarding_distance_m"),
             "tn157_case": _parameter_supplied(ctx, "tn157_case"),
+            "tn147_case": _parameter_supplied(ctx, "tn147_case"),
         }
         try:
             tn157_case = _normalize_tn157_case(tn157_case)
+        except ValueError as exc:
+            raise typer.BadParameter(str(exc)) from exc
+        try:
+            tn147_case = _normalize_tn147_case(tn147_case)
         except ValueError as exc:
             raise typer.BadParameter(str(exc)) from exc
         (
@@ -4228,6 +4301,7 @@ def estimate_productivity_cmd(
             grapple_turn_volume_m3,
             grapple_yarding_distance_m,
             grapple_tn157_case,
+            grapple_tn147_case,
             grapple_defaults_used,
         ) = _apply_grapple_yarder_system_defaults(
             system=selected_system,
@@ -4235,9 +4309,13 @@ def estimate_productivity_cmd(
             turn_volume_m3=grapple_turn_volume_m3,
             yarding_distance_m=grapple_yarding_distance_m,
             tn157_case=tn157_case,
+            tn147_case=tn147_case,
             user_supplied=grapple_user_supplied,
         )
+        preset_meta: dict[str, Any] | None = None
         tn157_case_metadata: TN157Case | None = None
+        tn147_case_metadata: TN147Case | None = None
+        tr122_treatment_metadata: TR122Treatment | None = None
         if grapple_yarder_model is GrappleYarderModel.TN157:
             tn157_case_metadata = get_tn157_case(grapple_tn157_case)
             if grapple_turn_volume_m3 is None:
@@ -4245,6 +4323,73 @@ def estimate_productivity_cmd(
             if grapple_yarding_distance_m is None:
                 grapple_yarding_distance_m = tn157_case_metadata.average_yarding_distance_m
             value = tn157_case_metadata.productivity_m3_per_pmh
+            preset_meta = {
+                "label": tn157_case_metadata.label,
+                "logs_per_turn": tn157_case_metadata.logs_per_turn,
+                "cost_per_m3": tn157_case_metadata.cost_per_m3_cad_1991,
+                "cost_per_log": tn157_case_metadata.cost_per_log_cad_1991,
+                "cost_base_year": 1991,
+                "note": (
+                    "[dim]Observed productivity/costs from FERIC TN-157 "
+                    "(Cypress 7280B swing yarder + Hitachi UH14 backspar, 1987–1988 case studies).[/dim]"
+                ),
+            }
+        elif grapple_yarder_model is GrappleYarderModel.TN147:
+            tn147_case_metadata = get_tn147_case(grapple_tn147_case)
+            if grapple_turn_volume_m3 is None:
+                grapple_turn_volume_m3 = tn147_case_metadata.average_turn_volume_m3
+            if grapple_yarding_distance_m is None:
+                grapple_yarding_distance_m = tn147_case_metadata.average_yarding_distance_m
+            value = tn147_case_metadata.productivity_m3_per_pmh
+            preset_meta = {
+                "label": tn147_case_metadata.label,
+                "logs_per_turn": tn147_case_metadata.logs_per_turn,
+                "cost_per_m3": tn147_case_metadata.cost_per_m3_cad_1989,
+                "cost_per_log": tn147_case_metadata.cost_per_log_cad_1989,
+                "cost_base_year": 1989,
+                "note": (
+                    "[dim]Observed productivity/costs from FERIC TN-147 "
+                    "(Madill 009 highlead trials near Lake Cowichan, 1989).[/dim]"
+                ),
+            }
+        elif grapple_yarder_model in _TR122_MODEL_TO_TREATMENT:
+            treatment_id = _TR122_MODEL_TO_TREATMENT[grapple_yarder_model]
+            tr122_treatment_metadata = get_tr122_treatment(treatment_id)
+            if grapple_turn_volume_m3 is None:
+                grapple_turn_volume_m3 = tr122_treatment_metadata.cycle_volume_m3
+            if grapple_yarding_distance_m is None:
+                grapple_yarding_distance_m = tr122_treatment_metadata.yarding_distance_m
+            value = tr122_treatment_metadata.productivity_m3_per_pmh
+            base_year = tr122_treatment_metadata.cost_base_year
+            preset_meta = {
+                "label": tr122_treatment_metadata.label,
+                "logs_per_turn": tr122_treatment_metadata.avg_pieces_per_cycle,
+                "cost_per_m3": tr122_treatment_metadata.cost_total_per_m3_cad_1996,
+                "cost_per_log": None,
+                "cost_base_year": base_year,
+                "extra_rows": [
+                    (
+                        f"Yarder Cost ({base_year} CAD $/m³)",
+                        f"{tr122_treatment_metadata.yarder_cost_per_m3_cad_1996:.2f}",
+                    ),
+                    (
+                        f"Loader Cost ({base_year} CAD $/m³)",
+                        f"{tr122_treatment_metadata.loader_cost_per_m3_cad_1996:.2f}",
+                    ),
+                    (
+                        f"Yarding Labour ({base_year} CAD $/m³)",
+                        f"{tr122_treatment_metadata.yarding_labour_per_m3_cad_1996:.2f}",
+                    ),
+                    (
+                        f"Loading Labour ({base_year} CAD $/m³)",
+                        f"{tr122_treatment_metadata.loading_labour_per_m3_cad_1996:.2f}",
+                    ),
+                ],
+                "note": (
+                    "[dim]Observed productivity/costs from FERIC TR-122 "
+                    "(Roberts Creek SLH 78 running skyline treatments, 1996).[/dim]"
+                ),
+            }
         else:
             value = _evaluate_grapple_yarder_result(
                 model=grapple_yarder_model,
@@ -4258,7 +4403,7 @@ def estimate_productivity_cmd(
             turn_volume_m3=grapple_turn_volume_m3,
             yarding_distance_m=grapple_yarding_distance_m,
             productivity_m3_per_pmh=value,
-            tn157_case=tn157_case_metadata,
+            preset_meta=preset_meta,
         )
         if grapple_defaults_used and selected_system is not None:
             console.print(

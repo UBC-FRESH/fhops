@@ -501,8 +501,17 @@ Cable-running systems can now call the grapple yarder regressions bundled in
   Select a case with ``--tn157-case`` (``combined`` default, or ``1``–``7`` to pull an individual study).
   The helper reports the observed turn volume, yarding distance, m³/PMH, and both 1991 CAD and CPI-inflated $/m³
   so costing workflows can drop the Cypress preset in immediately.
+* ``tn147`` – Observed productivity/costs from TN-147 (seven Madill 009 highlead case studies around Lake Cowichan).
+  Pick a case with ``--tn147-case`` (``combined`` default) to pull the corresponding logs/turn, turn volume, and
+  1989 CAD cost per log/m³; the CLI inflates the costs to 2024 CAD alongside the original values.
+* ``tr122-extended`` / ``tr122-shelterwood`` / ``tr122-clearcut`` – Observed Washington SLH 78 running-skyline
+  productivity from TR-122 (Roberts Creek alternative silviculture project). These presets don’t require new inputs:
+  the CLI reports the published cycle volume, m³/PMH, and the yarder/loader/labour cost breakdowns (1996 CAD plus
+  CPI-inflated 2024 CAD equivalents) so you can reference the extended-rotation vs. shelterwood vs. clearcut costs.
 
-Every helper prints the assumed turn volume, yarding distance, and resulting m³/PMH. The
+Every helper prints the assumed turn volume, yarding distance (when available), and resulting m³/PMH. Dataset-driven
+presets (TN-147/TN-157/TR-122) also surface the observed case name and CPI-adjusted costs so you can drop them directly
+into costing workflows without reopening the PDFs. The
 ``cable_running`` harvest system autopopulates these inputs when you pass
 ``--harvest-system-id cable_running`` (or reference a dataset block using that system), selecting the
 ``tr75-bunched`` model with representative payload/distance values and printing a confirmation when
