@@ -97,6 +97,7 @@ from fhops.productivity import (
     Spinelli2010ProcessorProductivityResult,
     Bertone2025ProcessorProductivityResult,
     Borz2023ProcessorProductivityResult,
+    Nakagawa2010ProcessorProductivityResult,
     ADV5N6ProcessorProductivityResult,
     TN103ProcessorProductivityResult,
     TR106ProcessorProductivityResult,
@@ -112,6 +113,7 @@ from fhops.productivity import (
     estimate_processor_productivity_spinelli2010,
     estimate_processor_productivity_bertone2025,
     estimate_processor_productivity_borz2023,
+    estimate_processor_productivity_nakagawa2010,
     predict_berry2019_skid_effects,
     Labelle2019ProcessorProductivityResult,
     estimate_processor_productivity_labelle2019_dbh,
@@ -581,6 +583,7 @@ class RoadsideProcessorModel(str, Enum):
     SPINELLI2010 = "spinelli2010"
     BERTONE2025 = "bertone2025"
     BORZ2023 = "borz2023"
+    NAKAGAWA2010 = "nakagawa2010"
 
 
 _AUTOMATIC_BUCKING_SUPPORTED_MODELS = {
@@ -844,6 +847,11 @@ def _render_processor_result(
         | Labelle2019VolumeProcessorProductivityResult
         | ADV5N6ProcessorProductivityResult
         | TN166ProcessorProductivityResult
+        | Hypro775ProcessorProductivityResult
+        | Spinelli2010ProcessorProductivityResult
+        | Bertone2025ProcessorProductivityResult
+        | Borz2023ProcessorProductivityResult
+        | Nakagawa2010ProcessorProductivityResult
     ),
 ) -> None:
     if isinstance(result, ProcessorProductivityResult):
@@ -1046,6 +1054,31 @@ def _render_processor_result(
         ]
         for note in result.notes:
             note_lines.append(note)
+        console.print(f"[dim]{' '.join(note_lines)}[/dim]")
+        return
+    elif isinstance(result, Nakagawa2010ProcessorProductivityResult):
+        rows = [("Model", "nakagawa2010"), ("Regression", result.model_used)]
+        if result.dbh_cm is not None:
+            rows.append(("DBH (cm)", f"{result.dbh_cm:.1f}"))
+        if result.piece_volume_m3 is not None:
+            rows.append(("Piece Volume (m³)", f"{result.piece_volume_m3:.3f}"))
+        rows.extend(
+            [
+                (
+                    "Delay-free Productivity (m³/PMH₀)",
+                    f"{result.delay_free_productivity_m3_per_pmh:.2f}",
+                ),
+                ("Delay Multiplier", f"{result.delay_multiplier:.3f}"),
+                ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
+            ]
+        )
+        _render_kv_table("Roadside Processor Productivity Estimate", rows)
+        note_lines = [
+            "Nakagawa et al. (2010) excavator-based landing processor (Hokkaido thinning, Timberjack 746B + Komatsu PC138US).",
+            "Delay multiplier lets you fold in site-specific waits (default assumes PMH₀ only).",
+        ]
+        if result.notes:
+            note_lines.extend(result.notes)
         console.print(f"[dim]{' '.join(note_lines)}[/dim]")
         return
 
@@ -3532,7 +3565,7 @@ def estimate_productivity_cmd(
             "Roadside-processor regression to use "
             "(berry2019 | labelle2016/2017/2018 | labelle2019_dbh | labelle2019_volume | "
             "adv5n6 | visser2015 | tn103 | tr106 | tr87 | tn166 | hypro775 | spinelli2010 | "
-            "bertone2025 | borz2023)."
+            "bertone2025 | borz2023 | nakagawa2010)."
         ),
     ),
     processor_piece_size_m3: float | None = typer.Option(
@@ -4420,6 +4453,20 @@ def estimate_productivity_cmd(
         elif processor_model is RoadsideProcessorModel.BORZ2023:
             result_processor = estimate_processor_productivity_borz2023(
                 tree_volume_m3=processor_piece_size_m3,
+            )
+        elif processor_model is RoadsideProcessorModel.NAKAGAWA2010:
+            if processor_volume_m3 is not None:
+                raise typer.BadParameter(
+                    "--processor-volume-m3 applies to the Labelle 2019 volume helper, not Nakagawa (2010)."
+                )
+            if processor_dbh_cm is None and processor_piece_size_m3 is None:
+                raise typer.BadParameter(
+                    "--processor-dbh-cm or --processor-piece-size-m3 must be provided for nakagawa2010."
+                )
+            result_processor = estimate_processor_productivity_nakagawa2010(
+                dbh_cm=processor_dbh_cm,
+                piece_volume_m3=processor_piece_size_m3,
+                delay_multiplier=processor_delay_multiplier,
             )
         elif processor_model is RoadsideProcessorModel.TN103:
             if processor_piece_size_m3 is not None:

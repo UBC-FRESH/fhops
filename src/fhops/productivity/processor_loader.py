@@ -28,6 +28,7 @@ _HYPRO775_DATA_PATH = _DATA_ROOT / "processor_hypro775.json"
 _LABELLE_HUSS_DATA_PATH = _REFERENCE_ROOT / "processor_labelle_huss2018.json"
 _BERTONE2025_DATA_PATH = _DATA_ROOT / "processor_bertone2025.json"
 _BORZ2023_DATA_PATH = _DATA_ROOT / "processor_borz2023.json"
+_NAKAGAWA2010_DATA_PATH = _DATA_ROOT / "processor_nakagawa2010.json"
 _CARRIER_PROFILE_PATH = _REFERENCE_ROOT / "processor_carrier_profiles.json"
 
 
@@ -152,6 +153,16 @@ def _load_borz2023_dataset() -> dict[str, object]:
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
         raise FileNotFoundError(
             f"Borz et al. (2023) landing processor data missing: {_BORZ2023_DATA_PATH}"
+        ) from exc
+
+
+@lru_cache(maxsize=1)
+def _load_nakagawa2010_dataset() -> dict[str, object]:
+    try:
+        return json.loads(_NAKAGAWA2010_DATA_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:  # pragma: no cover - configuration error
+        raise FileNotFoundError(
+            f"Nakagawa et al. (2010) processor data missing: {_NAKAGAWA2010_DATA_PATH}"
         ) from exc
 
 
@@ -1364,6 +1375,17 @@ class Borz2023ProcessorProductivityResult:
     notes: tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class Nakagawa2010ProcessorProductivityResult:
+    dbh_cm: float | None
+    piece_volume_m3: float | None
+    model_used: Literal["dbh", "piece_volume"]
+    delay_free_productivity_m3_per_pmh: float
+    delay_multiplier: float
+    productivity_m3_per_pmh: float
+    notes: tuple[str, ...]
+
+
 @lru_cache(maxsize=1)
 def _load_hypro775_scenario() -> dict[str, object]:
     payload = _load_hypro775_dataset()
@@ -1709,6 +1731,49 @@ def estimate_processor_productivity_borz2023(
         cost_base_year=(None if cost_base_year is None else int(cost_base_year)),
         recovery_percent=float(metrics.get("recovery_percent", 95.0) or 95.0),
         utilisation_percent=float(metrics.get("utilisation_percent", 79.0) or 79.0),
+        notes=notes,
+    )
+
+
+def estimate_processor_productivity_nakagawa2010(
+    *,
+    dbh_cm: float | None = None,
+    piece_volume_m3: float | None = None,
+    delay_multiplier: float = 1.0,
+) -> Nakagawa2010ProcessorProductivityResult:
+    if dbh_cm is None and piece_volume_m3 is None:
+        raise ValueError("Provide either dbh_cm or piece_volume_m3 for the Nakagawa (2010) helper.")
+    if dbh_cm is not None and dbh_cm <= 0:
+        raise ValueError("dbh_cm must be > 0.")
+    if piece_volume_m3 is not None and piece_volume_m3 <= 0:
+        raise ValueError("piece_volume_m3 must be > 0.")
+    if not (0.0 < delay_multiplier <= 1.0):
+        raise ValueError("delay_multiplier must lie in (0, 1].")
+    dataset = _load_nakagawa2010_dataset()
+    models = dataset.get("models") or {}
+    notes = tuple(str(n) for n in (dataset.get("source") or {}).get("notes") or [])
+    base_productivity: float | None = None
+    model_used: Literal["dbh", "piece_volume"]
+    if dbh_cm is not None:
+        dbh_model = models.get("dbh") or {}
+        coeff = float(dbh_model.get("coefficient", 0.363) or 0.363)
+        exponent = float(dbh_model.get("exponent", 1.116) or 1.116)
+        base_productivity = coeff * (dbh_cm**exponent)
+        model_used = "dbh"
+    else:
+        piece_model = models.get("piece_volume") or {}
+        coeff = float(piece_model.get("coefficient", 20.46) or 20.46)
+        exponent = float(piece_model.get("exponent", 0.482) or 0.482)
+        base_productivity = coeff * (piece_volume_m3**exponent)
+        model_used = "piece_volume"
+    productivity = base_productivity * delay_multiplier
+    return Nakagawa2010ProcessorProductivityResult(
+        dbh_cm=dbh_cm,
+        piece_volume_m3=piece_volume_m3,
+        model_used=model_used,
+        delay_free_productivity_m3_per_pmh=base_productivity,
+        delay_multiplier=delay_multiplier,
+        productivity_m3_per_pmh=productivity,
         notes=notes,
     )
 

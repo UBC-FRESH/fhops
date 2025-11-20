@@ -196,6 +196,11 @@ regressions:
   inputs are needed beyond the optional ``--processor-piece-size-m3`` for reference; the helper reports the observed
   averages (≈21.4 m³/PMH, 18.8 m³/SMH, 0.047 PMH/m³, 0.78 L/m³ fuel, 10–11 EUR/m³ cost, 95 % recovery) so planners can
   benchmark “harvester-as-processor” landing operations against manual or excavator-based options.
+* ``--processor-model nakagawa2010`` – Nakagawa et al. (2010) excavator-based processor (Timberjack 746B carrier with Komatsu PC138US) working at a Hokkaido landing. Supply at least one predictor:
+  * ``--processor-dbh-cm`` – applies the published delay-free regression 0.363·DBH\ :sup:`1.116` (DBH in cm).
+  * ``--processor-piece-size-m3`` – applies the alternative regression 20.46·V\ :sup:`0.482` (tree volume in m³).
+  * ``--processor-delay-multiplier`` – optional utilisation factor so you can fold landing waits into the PMH₀ baseline (defaults to the global processor multiplier; set to ``1.0`` to stay delay-free).
+  CLI output states which regression ran, prints the delay-free m³/PMH alongside your utilisation-adjusted result, and cites the Japanese thinning context so you can benchmark excavator-based landing processors handling ≈0.25 m³ stems.
 * ``--processor-model visser2015`` – Visser & Tolan (2015) NZ cable-yarder landings (Cat 330DL +
   Waratah HTH626) comparing 5/9/12/15 log sorts. The helper interpolates the published piece-size
   curves (1–3 m³ stems) and reports both the delay-free m³/PMH and the delta versus the 5-sort baseline.

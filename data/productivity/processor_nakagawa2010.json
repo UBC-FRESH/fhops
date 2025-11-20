@@ -1,0 +1,29 @@
+{
+  "source": {
+    "citation": "Nakagawa, M. et al. 2010. Effect of tree size on time of each work element and processing productivity using an excavator-based single-grip harvester or processor at a landing. Journal of Forest Research 15(4):287-295.",
+    "document": "notes/reference/Effect of tree size on time of each work element and processing productivity using an excavator-based single-grip harvester or processor at a landing.pdf",
+    "notes": [
+      "Study site: 43-year-old Sachalin fir thinning near Takinoue, Hokkaido; 41 stems processed with a 12 t Timberjack 746B + Komatsu PC138US carrier.",
+      "Mean DBH 19.6 cm (range 10–28 cm), mean height 13.7 m; mean piece volume 0.25 m³ (range 0.056–0.529 m³).",
+      "Delay-free productivity model: 0.363 * DBH^1.116 m³/PMH (DBH in cm). Alternative model: 20.46 * volume^0.482 m³/PMH (volume in m³).",
+      "Observed average productivity = 10.78 m³/PMH (0.093 PMH/m³). Feeding/measuring + swing consumed ~68% of cycle time." 
+    ]
+  },
+  "models": {
+    "dbh": {
+      "coefficient": 0.363,
+      "exponent": 1.116,
+      "units": "m3_per_pmh"
+    },
+    "piece_volume": {
+      "coefficient": 20.46,
+      "exponent": 0.482,
+      "units": "m3_per_pmh"
+    }
+  },
+  "defaults": {
+    "mean_dbh_cm": 19.6,
+    "mean_piece_volume_m3": 0.25,
+    "observed_productivity_m3_per_pmh": 10.78
+  }
+}

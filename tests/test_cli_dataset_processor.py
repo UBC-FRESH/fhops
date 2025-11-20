@@ -16,6 +16,7 @@ from fhops.productivity import (
     estimate_processor_productivity_tn166,
     estimate_processor_productivity_tr87,
     estimate_processor_productivity_visser2015,
+    estimate_processor_productivity_nakagawa2010,
     get_labelle_huss_automatic_bucking_adjustment,
     get_processor_carrier_profile,
 )
@@ -345,6 +346,46 @@ def test_cli_processor_visser2015() -> None:
     )
     assert f"{expected.productivity_m3_per_pmh:.2f}" in result.stdout
     assert "Visser & Tolan (2015)" in result.stdout
+
+
+def test_cli_processor_nakagawa2010_with_dbh() -> None:
+    delay_multiplier = 0.82
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "roadside_processor",
+            "--processor-model",
+            "nakagawa2010",
+            "--processor-dbh-cm",
+            "20.0",
+            "--processor-delay-multiplier",
+            str(delay_multiplier),
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    expected = estimate_processor_productivity_nakagawa2010(
+        dbh_cm=20.0,
+        delay_multiplier=delay_multiplier,
+    )
+    assert f"{expected.productivity_m3_per_pmh:.2f}" in result.stdout
+    assert "nakagawa2010" in result.stdout
+
+
+def test_cli_processor_nakagawa2010_requires_inputs() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "roadside_processor",
+            "--processor-model",
+            "nakagawa2010",
+        ],
+    )
+    assert result.exit_code != 0
+    assert "processor-piece-size-m3" in result.stdout or "processor-dbh-cm" in result.stdout
 
 
 def test_cli_processor_visser2015_requires_log_sorts() -> None:

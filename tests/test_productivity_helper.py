@@ -19,6 +19,7 @@ from fhops.productivity import (
     estimate_processor_productivity_spinelli2010,
     estimate_processor_productivity_bertone2025,
     estimate_processor_productivity_borz2023,
+    estimate_processor_productivity_nakagawa2010,
     get_processor_carrier_profile,
     get_labelle_huss_automatic_bucking_adjustment,
     load_lahrsen_ranges,
@@ -261,6 +262,31 @@ def test_borz2023_returns_expected_means() -> None:
     assert math.isclose(result.productivity_m3_per_pmh, 21.41, rel_tol=1e-9)
     assert math.isclose(result.fuel_l_per_m3, 0.78, rel_tol=1e-9)
     assert result.cost_per_m3 == pytest.approx(10.5, rel=1e-2)
+
+
+def test_nakagawa2010_dbh_and_volume_paths() -> None:
+    dbh_cm = 19.6
+    piece_volume = 0.25
+    result_dbh = estimate_processor_productivity_nakagawa2010(
+        dbh_cm=dbh_cm,
+        delay_multiplier=0.85,
+    )
+    expected_dbh = 0.363 * (dbh_cm**1.116)
+    assert math.isclose(result_dbh.delay_free_productivity_m3_per_pmh, expected_dbh, rel_tol=1e-9)
+    assert math.isclose(result_dbh.productivity_m3_per_pmh, expected_dbh * 0.85, rel_tol=1e-9)
+    result_piece = estimate_processor_productivity_nakagawa2010(
+        piece_volume_m3=piece_volume,
+    )
+    expected_piece = 20.46 * (piece_volume**0.482)
+    assert math.isclose(
+        result_piece.delay_free_productivity_m3_per_pmh, expected_piece, rel_tol=1e-9
+    )
+    assert math.isclose(result_piece.delay_multiplier, 1.0, rel_tol=1e-9)
+
+
+def test_nakagawa2010_missing_inputs_raise() -> None:
+    with pytest.raises(ValueError):
+        estimate_processor_productivity_nakagawa2010()  # type: ignore[call-arg]
 
 
 def test_automatic_bucking_multiplier_scales_delay_free_output() -> None:
