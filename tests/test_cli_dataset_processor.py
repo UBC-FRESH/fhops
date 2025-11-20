@@ -549,6 +549,24 @@ def test_cli_processor_tn166_right_of_way() -> None:
     assert f"{expected.productivity_m3_per_smh:.1f}" in result.stdout
 
 
+def test_cli_processor_adv7n3_john_deere() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "roadside_processor",
+            "--processor-model",
+            "adv7n3",
+            "--processor-adv7n3-machine",
+            "john_deere_892",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "John Deere 892" in result.stdout
+    assert "Processor + Loader (2024 CAD" in result.stdout
+
+
 def test_cli_processor_berry2019_skid_area_respects_manual_delay() -> None:
     result = runner.invoke(
         dataset_app,

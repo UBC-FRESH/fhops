@@ -1,0 +1,1010 @@
+                   Restricted to FERIC Members and Partners                              Vol. 7 No. 3 February 2006
+
+
+
+     Contents         Mechanized processing on steep
+ 1
+ 1
+     Introduction
+     Objectives
+                      slopes in summer conditions to
+ 1   Site and
+     stand
+     descriptions
+                      produce short logs
+ 2   Equipment          Abstract
+     and system
+     descriptions           The Forest Engineering Research Institute of Canada (FERIC) studied mechanized
+ 3   Study              processing in cable yarding operations in summer conditions in northern British Columbia.
+     methods            Two danglehead processors were monitored in seven cutblocks to determine processing
+ 4   Results and        productivity and costs, the amount and cost of loader support required, and the effects of
+     discussion
+                        slope and other factors on productivity.
+ 12 Summary and
+    conclusions
+                        Keywords
+ 13 Implementa-             Processing, Roadside, Steep slopes, Cable harvesting, Danglehead, Short-wood
+    tion
+                        system, Productivity, Costs, Northern British Columbia.
+ 13 References
+ 13 Acknowledge-
+    ments
+                        Introduction                                    support required, and the effects of slope and
+Author                     In response to member interest in            other factors on productivity, and compares
+B.J. Boswell,         mechanized processing with cable yarding,         these results to those from the winter study.
+Western Division
+                      FERIC conducted winter and summer
+                      studies of these operations in northern             Objectives
+                      British Columbia. The cooperator, Canadian            The objectives of this study were to:
+                      Forest Products Ltd.’s (Canfor) Mackenzie           • Determine processing productivity in
+                      Operations, used a short-wood harvest                 summer conditions.
+                      system on steep terrain consisting of loaders,      • Determine the effects of site and stand
+                      processors, and a swing yarder.                       factors on processing productivity.
+                           After the winter study was completed           • Compare processing productivity in
+                      (Boswell 2004), Canfor asked FERIC to                 summer and winter.
+                      conduct a follow-up study under summer              • Determine the effects of stem size on
+                      conditions. Canfor was concerned that                 processor selection.
+                      productivity may be different in the summer         • Determine the amount and type of
+                      because fewer limbs may break off during              assistance that the loaders provided to
+                      yarding when the stems are not frozen. They           the processors and compare the
+                      also expected fewer runaway stems on the steep        processors working with and without
+                      slopes in the summer than in the winter               loaders.
+                      because more limbs would be on the stems,           • Determine the system costs in summer
+                      and snow and ice would not be present.                conditions.
+                      Therefore, in the summer of 2004, FERIC
+                      monitored the same two danglehead                   Site and stand
+                      processors and operators that had worked in
+                      the winter study, on seven cutblocks.
+                                                                          descriptions
+                                                                           The seven cutblocks were located approxi-
+                           This report presents productivity and cost
+                                                                        mately 60 km northwest of Mackenzie,
+                      information, the amount and cost of loader
+                                   near the Nation and Manson Rivers. The                              flatter than those in the winter blocks
+                                   harvesting prescription in all cases was                            (Boswell 2004). The steepest terrain was in
+                                   clearcutting. Table 1 summarizes the site and                       Block 7 (Figure 1) while the flattest terrain
+                                   stand descriptions. All blocks were classified                      was in Block 1. Forest cover was dominated
+                                   as the Omenica variant of the Engelmann                             by mature subalpine fir (Abies lasiocarpa),
+                                   Spruce - Subalpine Fir moist very cold                              hybrid white spruce (Picea glauca x
+                                   biogeoclimatic subzone (ESSFmv3)                                    engelmannii), and lodgepole pine (Pinus
+                                   (DeLong 2004). Elevations ranged from                               contorta), with minor amounts of trembling
+                                   1040 to 1280 m. Although the slopes ranged                          aspen (Populus tremuloides).
+                                   from 10 to 70% and averaged about 35%,
+                                   decking and processing locations were much                             Equipment and system
+        Figure 1. Block 7
+                                                                                                          descriptions
+        had the steepest                                                                                   A feller-buncher with cab levelling
+        slopes.                                                                                        worked on slopes up to 60% and the
+                                                                                                       remaining areas were handfelled. Bunched
+                                                                                                       and single stems were yarded with a swing
+                                                                                                       yarder equipped with a mechanical
+                                                                                                       slackpulling carriage and radio-controlled
+                                                                                                       chokers. A mobile backspar was used with
+                                                                                                       the swing yarder wherever possible.
+                                                                                                           A Hyundai 210LC carrier equipped with
+                                                                                                       a Waratah HTH620 processing head could
+
+
+                                                 Table 1. Site and stand descriptions
+
+                                                                                                      Block
+                                                1                     2                3                4                    5                      6                    7
+
+    Total area (ha)                           60.0               17.3                20.6             33.8                 26.5                   34.6                208.8
+    Cable yarded area (ha)                    8.8                7.2                 8.2              23.3                 12.8                   10.4                25.6
+
+    Site characteristics
+       Ecological classification          ESSFmv3            ESSFmv3              ESSFmv3            ESSFmv3           ESSFmv3               ESSFmv3               ESSFmv3
+       Elevation range (m)               1 080–1 140        1 150–1 220          1 090–1 200       1 120–1 240       1 040–1 150            1 170–1 250          1 120–1 280
+
+    Slope
+       Range (%)                             10–40              15–45               20–50            15–40                20–60                 25–45                10–70
+       Average (%)                            32                  33                  41               33                   37                    31                   38
+
+    Stand characteristics
+      Species composition (%)
+        Amabalis fir                           11                 12                   12              11                   10                     30                   20
+        Spruce                                 44                 10                   54              29                   42                     47                   39
+        Lodgepole pine                         45                 75                   34              60                   48                     23                   41
+        Aspen                                   0                  3                    0               0                    0                      0                    0
+      Net merchantable volume
+        m³/ha                                 385                355                 356              382                  441                    374                 384
+        m³/tree                               1.08               0.58                0.59             0.35                 0.54                   0.69                0.33
+
+
+
+                                   Forest Engineering Research Institute of Canada (FERIC)
+                                   Eastern Division and Head Office       Western Division             Disclaimer
+                                   580 boul. St-Jean                      2601 East Mall               Advantage is published solely to disseminate information to FERIC’s mem-
+                                   Pointe-Claire, QC, H9R 3J9             Vancouver, BC, V6T 1Z4       bers and partners. It is not intended as an endorsement or approval of any
+                                                                                                       product or service to the exclusion of others that may be suitable.
+                                       (514) 694-1140                         (604) 228-1555
+                                       (514) 694-4351                         (604) 228-0999                   © Copyright 2006. Printed in Canada on recycled paper.
+                                       admin@mtl.feric.ca                     admin@vcr.feric.ca
+                                                                                                                                               Vol. 7 No. 3
+2                                                                                                                                                               Advantage
+                                                                                                                                             February 2006
+                                                                                                                                                              ISSN 1493-3381
+cut a maximum stem diameter of 620 mm                                                                         Figure 2. The
+while a larger John Deere 892 ELC carrier                                                                     loader moving
+equipped with a larger Waratah HTH624                                                                         processed logs to
+processing head could cut a maximum stem                                                                      a suitable decking
+diameter of 780 mm. Specifications for the                                                                    area.
+processors and loaders are presented in
+Appendix I.
+     All stems were yarded tree length to
+roadside, then delimbed and cut to length
+with danglehead processors. The processors
+also sorted the logs into piles on the road.
+Heelboom loaders moved the processed                shift-level hours and Canfor’s scale data were
+logs to suitable decking areas (Figure 2). The      used to calculate net processing productivity
+processors and loaders worked together, and         per productive machine hour (PMH) and per
+independently of the yarder, whenever               scheduled machine hour (SMH), summarized
+possible. However, when the yarder’s produc-        by block and by machine. Average
+tivity was low, the processor had to wait for       availability and utilization rates were also
+stems to process and the three machines             calculated from these data.
+worked together. Unlike in the winter study,             Detailed timing data were collected on
+the slopes adjacent to the road were never so       51 stem decks in the four study blocks
+steep that a loader was needed to deck the          (Blocks 3, 4, 5, and 7) for two processors and
+stems for the yarder.                               two operators. Average gross stem volumes
+     On some occasions, the loaders moved           and detailed timing data were used to calculate
+the yarded stems before they were processed.        gross processing productivity per productive
+When the yarded decks were high, the loaders        machine hour for each stem deck and
+pulled the stems down to a location where the       summarized by block by machine as in the
+processors could reach them. On other occa-         winter study. Correlation and regression
+sions, the yarder decked the stems on top of        analyses were performed on the detailed
+a high bank and the loader moved them to            timing data to test the effects of site and stand
+an accessible location for the processor. A         factors (i.e., ground slope, deck slope, stem
+loader also needed to move the stems when           size, defects,1 branchiness,2 and deck height)
+they were yarded to a location near a creek.        on productivity. The detailed timing results
+     The processors were scheduled to work          were compared to those from the first study
+12-hour shifts, seven days per week. However,       (Boswell 2004) to determine if differences
+the lack of stems due to low yarder produc-         in processor productivity could be attributed
+tivity and afternoon shutdowns due to high          to the operating season (winter versus
+fire hazards resulted in night shifts and split     summer). Field observations and plotting of
+shifts. During processing the stems were            trend lines of the detailed timing data were
+delimbed, manufactured into short logs, and         used to evaluate the suitability of each of the
+then sorted by top diameter size into four sorts.   two processor sizes and the cost of working
+The target log length was 5 m for most sorts.       with and without the loaders. Work sampling
+                                                    at 2-minute intervals was done frequently
+                                                    throughout the study period to determine
+  Study methods                                     the loaders’ tasks and time spent assisting the
+    FERIC collected shift-level data consist-       processor.
+ing of Servis recorder charts and operators’
+                                                    1
+reports about operating time and delays               Defects were measured as a percentage of the total
+                                                      number of stems processed that had fork or rot.
+(greater than 10 min/occurrence) over three         2
+                                                      Branchiness was an estimate of the number and size of
+months in six study blocks (Blocks 1–6) for           branches on a stem before processing, and classified
+two processors and two operators. The                 according to a five-point scale shown in Appendix IV.
+
+               Vol. 7 No. 3
+Advantage      February 2006                                                                                                       3
+                                Hourly processor and loader costs were              Machine utilization ranged from 66 to 78%
+                            calculated using FERIC’s standard costing               of scheduled time and the overall utilization
+                            methods (Appendices II and III) and were                was 73%.
+                            applied to the productivity to determine                     The John Deere 892 ELC/Waratah
+                            costs per cubic metre. Equipment costs were             HTH624 processor was 31% more produc-
+                            calculated using a 12-hour shift, with                  tive than the smaller Hyundai 210LC/
+                            provisions for overtime for time worked over            Waratah HTH620 processor, in terms of net
+                            8 hours. Generic costs were used for the                m³/PMH (Table 3).3 This pattern was very
+                            carriers based on the approximate weight                similar to the winter study where the larger
+                            classes of the machines used in the study.              machine was 34% more productive (Boswell
+                                                                                    2004). However, the weighted average size
+                              Results and discussion                                of trees processed was larger for the John
+                                                                                    Deere 892 ELC/Waratah HTH624 at 0.78
+                            Shift-level processing productivity
+                                                                                    m3/tree compared to 0.47 m3/tree for the
+                                Shift-level data were collected for 74 shifts       Hyundai 210LC/Waratah HTH620.4
+                            totalling 595 productive machine hours and                   For each of the two processors, the shift-
+                            810 scheduled machine hours for both                    level data showed very little variation in
+                            processors in six study blocks (Table 2). Three         productivity per productive machine hour
+                            shifts were excluded because one of the                 for different blocks (Table 2). There was,
+                            processors did not work due to mechanical               however, a trend for each machine to have
+                            problems. Shift lengths ranged from 3.0 to              slightly higher productivity in blocks with
+                            16.2 hours and averaged 10.9 hours, with                3
+                                                                                        Based on net volume loaded out.
+                            machine availability from 77 to 93%. The                4
+                                                                                        The cruise’s average tree size was weighted by the
+                            older John Deere 892 ELC/Waratah                            estimated total number of trees processed by each
+                            HTH624 had lower machine availability.                      processor.
+
+
+                                     Table 2. Shift-level summary by block a
+                                                John Deere 892                Hyundai 210                       Hyundai 210
+                                                 ELC/Waratah                  LC/Waratah                        LC/Waratah
+    Processor                                      HTH624                       HTH620                Both        HTH620             Both
+    Block                                       1            2              3            4             5            6               Overall
+
+    Productive shifts (no.)                     9            6b              14             17 c       16             12 d             74
+    Productive machine hours (PMH) (h)       74.9          60 e          105.5          146.4       122.5           85.1            594.4
+    Mechanical delays (MD) (h) f,g           17.1          15 b           20.9           14.0        19.3           29.4            115.7
+    Non-mechanical delays (NMD) (h) f,h       1.7          1.7 b          17.4           31.4        22.1            9.9             84.2
+    Unknown delays (UD) (h) f                 2.5          0.0              2.9            3.1        2.9            4.3             15.7
+    Total all delays (h) f                   21.3        16.7 b           41.2           48.5        44.3           43.6            215.6
+    Scheduled machine hours (SMH) (h)        96.2        76.7 b          146.7          194.9       166.8          128.7            810.0
+    Average shift length (h)i                10.7        12.8             10.5           11.5        10.4           10.7             10.9
+    Utilization (PMH/SMH) (%)                  78          78                72             75         73             66               73
+    Availability [(SMH-MD)/SMH] (%)            82          80                86             93         88             77               86
+    Total volume processed (m3)             3 036       2 379            3 178          4 369       4 915          2 788           20 665
+    Productivity
+        m3/PMH                               40.5         39.7            30.1           29.8        40.1           32.8             34.8
+        m3/SMH                               31.6         31.0            21.7           22.4        29.5           21.7             25.5
+    a
+      Block 7 was not completed before the study ended.
+    b
+      Estimate.
+    c
+      Excludes one day with no production because of computer problem.
+    d
+      Excludes two days with no production because of pump problems and cleaning.
+    e
+      Provided by the contractor.
+    f
+      Includes delays >10 minutes.
+    g
+      Includes service, fuelling, and yarder and loader mechanical delays that delayed the processor.
+    h
+      Most non-mechanical delay time consisted of waiting for the yarder, waiting for the loader, and moving the machine.
+    i
+      Operators usually did not stop for a lunch break; they ate during their coffee breaks or delays.
+
+
+                                                                                                                  Vol. 7 No. 3
+4                                                                                                               February 2006    Advantage
+                        Table 3. Shift-level summary by machine
+                                                  John Deere 892ELC/           Hyundai 210LC/
+                                                   Waratah HTH624 a           Waratah HTH620 b,c
+
+          Productive shifts (no.) d                         15                        43
+          Productive machine hours (PMH) (h)             134.9                     337.0
+          Mechanical delays (MD) (h)                      32.1                      64.3
+          Non-mechanical delays (NMD) (h)                  3.4                      58.7
+          Unknown delays (UD) (h)                          2.5                      10.3
+          Total all delays (h)                            38.0                     133.3
+          Scheduled machine hours (SMH) (h)              172.9                     470.3
+          Average shift length (h)                        11.5                      10.9
+          Utilization (PMH/SMH) (%)                         78                        72
+          Availability [(SMH-MD)/SMH] (%)                   81                        86
+          Total volume processed (m3)                    5 415                    10 335
+          Productivity
+               m3/PMH                                     40.1                       30.7
+               m3/SMH                                     31.3                       22.0
+          a
+            All Operator 1.
+          b
+            Operator 1 = 22 shifts; Operator 2 = 21 shifts.
+          c
+            Includes John Deere data for 3 shifts that could not be separated.
+          d
+            Excludes data for 16 shifts where the scale data could not be separated by machine.
+
+
+
+      Table 4. Shift-level time distribution and delays by machine
+                                                                     Time distribution (%)
+                                                        John Deere 892 ELC/        Hyundai 210 LC/
+                                                          Waratah HTH624           Waratah HTH620
+
+       Productive time a                                         76.7                        71.7
+       Mechanical delays
+        Processor                                                 8.5                         5.0
+        Loader                                                    0.6                         0.1
+        Yarder                                                    1.9                         1.6
+        Service and fuel                                          5.7                         6.3
+
+       Waiting delays                                             2.9                         4.4
+       Waiting for loader                                         0.0                         0.2
+       Waiting for trucks and other equipment                     0.0                         6.7
+       Waiting for yarder                                         1.8                         0.7
+
+       Moving delays
+       Miscellaneous and unknown delays
+        Handbucking oversized stems                               0.0                         0.2
+        Measuring logs to check accuracy                          0.0                         0.3
+        Running loader (loader operator absent)                   0.0                         0.4
+        Other miscellaneous and unknown                           1.9                         2.3
+      a
+          Includes delays <10 min.
+
+
+higher average tree sizes. The productivity for            The John Deere 892 ELC/Waratah
+the Hyundai 210LC/Waratah HTH620 in                    HTH624 spent a greater proportion of its
+m³/PMH was lowest in Block 4 where the                 scheduled time performing productive activi-
+tree size was smallest, and highest in Block 6         ties compared to the Hyundai 210LC/
+where the tree size was largest. Similarly, the        Waratah HTH620 (Table 4) because the
+productivity for the John Deere 892 ELC/               Hyundai 210LC/Waratah HTH620 spent a
+Waratah HTH624 was lowest in Block 2                   large portion of scheduled time waiting for
+and highest in Block 1, again reflecting the           other equipment, mainly the yarder. Delays
+differences in tree size. There was no obvious         included time when this processor quit early
+effect of slope apparent in the shift-level            because no wood was available to process.
+analysis.
+                Vol. 7 No. 3
+Advantage       February 2006                                                                         5
+                          Detail-timed processing                             the two machines. The productivity of the
+                          productivity                                        Hyundai 210LC/Waratah HTH620 was the
+                               Productivities were also determined from       lowest in Block 7 where the stem size was
+                          75.2 hours of detailed timing (Table 5). Due        the smallest and the processor worked with-
+                          to operational constraints, the majority of         out a loader in six out of ten of the samples,
+                          the detailed timing was done on the Hyundai         and it was highest in Block 5 where the stem
+                          210LC/Waratah HTH620 processor.                     size was largest. The John Deere 892 ELC/
+                          Productivities were higher than shift-level         Waratah HTH624 had less variability than
+                          study productivities because they were              the Hyundai 210LC/Waratah HTH620 in
+                          based on a sub-sample of the population,            both average stem size and average pro-
+                          the volumes processed were determined from          ductivity by block. Its individual timing
+                          the gross stem sizes, and average stem sizes        samples showed little variability in processing
+                          were larger.                                        time per stem regardless of stem size, resulting
+                               The productivity of the John Deere 892         in a strong relationship between stem size
+                          ELC/Waratah HTH624 based on detailed                and productivity.
+                          timing data was much higher than that                    The proportion of time spent processing
+                          based on shift-level data. This is possibly a       stems varied by 11% between the two
+                          result of lower stem utilization, a greater         processors (Table 6). This proportion for the
+                          difference in stem size, and a smaller sample       Hyundai 210LC/Waratah HTH620’s is
+                          in the detailed timing study. The John Deere        lower mainly because in Block 7 it worked
+                          892 ELC/Waratah HTH624 processor was                without a loader and piled its own processed
+                          67% more productive in terms of gross               logs, and in Block 3 it spent much time
+                          m³/PMH than the smaller Hyundai 210LC/              waiting for the loader or the yarder.
+                          Waratah HTH620 processor.5
+                               Processing times per stem were very            Effects of site and stand factors
+                          similar at 0.90 min/stem for the Hyundai            on processing productivity
+                          210LC/Waratah HTH620 compared to                       Detailed timing observations from
+                          0.88 min/stem for the John Deere 892 ELC/           processing 51 stem decks were used to
+                          Waratah HTH624. However, the average
+                          stem sizes were quite different and this resulted   5
+                                                                                  Gross productivity is based on gross stem volumes
+                          in the large difference in productivity between         with no deductions for stem defects.
+
+
+
+                          Table 5. Detailed-timing summary for the processors
+                                                                                                          John Deere 892
+                                                      Hyundai 210LC/Waratah HTH620                      ELC/Waratah HTH624
+    Block a                                     3          4          5           7         all         3                    5    all
+
+    Sample stem decks timed (no.)               12          8          6         10          36          4                11        15
+    Productive time (min)                      850        594        741      1 484       3 669       365                479       845
+    Productive machine hours (PMH)            14.2        9.9       12.4       24.7        61.1        6.1               8.0      14.1
+    Total stems processed (no.)                799        943        729      1588         4059       456                503       959
+    Total volume processed (m³)                688        364        633        513        2198       382                471       853
+    Total logs produced (no.)                2 084      2 222      1 994      3 084       9 383       996              1 198     2 194
+    Average volume (m³/stem)                  0.86       0.39       0.87       0.32        0.54       0.84              0.94      0.89
+    Average time (min/stem)                   1.06       0.63       1.02       0.93        0.90       0.80              0.95      0.88
+    Average logs (no./stem)                   2.61       2.36       2.74       1.94        2.31       2.18              2.38      2.29
+    Productivity
+     stems/PMH                                  56         95         59         64          66         75                 63       68
+     m³/PMH b                                 48.5       36.8       51.0       20.8        36.0       62.6               58.9     60.5
+
+     a
+         No detailed timing was done on Blocks 1, 2, and 6.
+     b
+         Productivities are based on gross stem volumes with no deductions for stem defects. Actual net productivity based on
+         processed logs loaded out would be lower.
+
+
+                                                                                                              Vol. 7 No. 3
+6                                                                                                           February 2006    Advantage
+     Table 6. Detailed timing: distribution of productive time for the processors
+
+                                                                                                          John Deere 892
+                                                    Hyundai 210LC/Waratah HTH620                        ELC/Waratah HTH624
+ Block a                                    3          4          5          7      overall         3           5     overall
+
+ Distribution of cycle time (%)
+  Processing stems                         63          79        82         60        68            78         80        79
+  Debris handling                           2           4         2          3         2             5          2         3
+  Decking stems                             4           3         2          4         4             2          5         4
+  Sorting processed logs                    5           1         4          2         3             2          2         2
+  Piling logs                               0           0         0         23 b       9             0          0         0
+  Moving the machine                        4           1         1          1         2             2          2         3
+  Waiting for the loader or yarder         17           7         1          2         6             5          0         2
+  Delays =< 10 minutes c                    5           5         8          5         6             6          9         7
+ a
+   No detailed timing was done on Blocks 1, 2, and 6.
+ b
+   In Block 7 the processor worked without a loader about 70% of the time and piled its own logs.
+ c
+   Delays <10 minutes were removed from the detailed timing data.
+
+
+
+
+investigate the influence of site and stand            statistical analysis was not able to consider how
+factors on processing. Only one of three               deck height affects the other time elements.
+operator-machine combinations provided
+good data. In the other two combinations,              Effects of season on processing
+either the factors tested were strongly                productivity
+correlated and thus obscured the influence                 The average productivity in the summer
+of some factors, or no significant relationship        was higher than in the winter for the John
+could be developed.                                    Deere 892 ELC/Waratah HTH624 with
+     For the combination John Deere 892                Operator 2 (62.3 m3/PMH compared to
+ELC/Waratah HTH624 with Operator 2                     50.8 m3/PMH, based on detailed timing data
+(15 decks), statistical analyses proved that           for both studies) but the stem size was also
+productivity was influenced by only stem               larger in the summer (0.95 m3 vs 0.70 m3).
+size and deck slope (R2 = .79). Productivity           Summer productivity was slightly lower for
+increased with stem size and as deck slope             the Hyundai 210LC/Waratah HTH620
+increased from negative to positive values.            with Operator 1 (34.1 m3/PMH vs 38.3 m3/
+This may be because gravity hinders                    PMH in the winter) but stem size was
+processing below the road but aids for decks           smaller in the summer (0.50 m3 vs 0.66 m3).
+above the road. Also, in the winter study,                 Statistical analysis showed no significant
+operators stated that it was harder to see and         difference between winter and summer
+grab stems that were below grade. The John             productivity for the Hyundai 210LC/
+Deere 892 ELC/Waratah HTH624 rarely                    Waratah HTH620 with Operator 1, even
+had problems pulling large stems uphill for            without considering the influence of stem
+processing, while the smaller Hyundai
+210LC/Waratah HTH620 required a                                                                                 Figure 3. The
+loader’s assistance for this task (Figure 3). The                                                               loader assisting
+                                                                                                                the processor by
+stem sizes ranged from 0.58 to 1.32 m3, and                                                                     pulling a large
+the deck slopes ranged from -45 to +40%.                                                                        stem into position
+     The previous study hypothesized that                                                                       for processing.
+deck height affected productivity. While there
+was a trend between processing time and deck
+height, further analyses showed that the
+relationship was not significant. However, the
+
+               Vol. 7 No. 3
+Advantage      February 2006                                                                                                         7
+             size. It did show a significant difference be-        ELC/Waratah HTH624 processor as much
+             tween winter and summer productivity for              as the smaller Hyundai 210LC/Waratah
+             the John Deere 892 ELC/Waratah HTH624                 HTH620. As there was a very low proportion
+             with Operator 2. However, when the results            of stems in the higher categories, these stems
+             were adjusted to account for differences in           had no substantial effect on the overall
+             stem size, the difference was not significant.        productivity in these timber types. Results
+                   Availability (86%) and utilization (72%)        may differ in other stand types.
+             for the Hyundai 210LC/Waratah HTH620                       In the winter, stems sometimes slid off
+             were both lower in the summer than in the             the deck during processing and had to be
+             winter (94% and 78%, respectively).6                  retrieved by a loader. This did not occur
+                   Canfor had hypothesized that produc-            during the summer, but the time and cost to
+             tivity might be higher in the winter because          retrieve these logs were not determined in
+             frozen limbs may break off during yarding.            the winter study.
+             FERIC rated the amount of limbs on each stem
+             processed during detailed timing according            Effects of stem size on processor
+             to categories defined in Appendix IV. The             selection
+             results showed that over 90% of all stems                   Processing time (grab and process only)
+             fell in Category 1 (negligible) for both seasons      per stem was consistently faster with the
+             (Table 7). Slightly more stems were present           John Deere 892 ELC/Waratah HTH624
+             in Categories 3 and 4 (moderate and high)             compared to the Hyundai 210LC/Waratah
+             in the summer. Overall, the average ratings           HTH620 over the range of stem sizes observed.
+             for branchiness were the same in the summer           However, the total productive time (i.e.,
+             and winter (1.1). The previous statistical            processing, move, sort, deck, pile, debris, and
+             analysis indicated that branchiness does not          delays less than 10 min) per stem was faster
+             affect productivity. Even though frozen limbs         with the Hyundai 210LC/Waratah HTH620
+             may be broken off during yarding, the breaks          for stems smaller than about 0.7 m3.
+             may not be clean and the processor may need                 The productivity in m3/PMH was in-
+             to remove the stubs. Also, in order to buck a         fluenced by some of the same factors that
+             stem into logs the processor must still pass the      influenced the processing time per stem, but
+             entire stem through its head. It was observed         it was not as sensitive to these factors. When
+             that the delimbing was highly efficient               the size of the piece processed is considered,
+             most of the time. Only the largest limbs              it is estimated that productivity in m3/PMH
+             (Categories 3 and 4) slowed the processing            is higher for the John Deere 892 ELC/
+             but they didn’t affect the John Deere 892             Waratah HTH624 than the Hyundai
+                                                                   210LC/Waratah HTH620 for stems larger
+                                                                   than about 0.6 m3. However, because the
+             Table 7. Comparision of                               John Deere 892 ELC/Waratah HTH624 is
+        branchiness in summer and winter                           a larger machine, it is more expensive to own
+                       No. of stems            % of stems          and operate so this must be considered in
+    Rating a         winter   summer         winter summer         determining the lowest overall cost.
+    1                4 373     4 942           94        92              Costs per cubic metre for comparable
+    2                  247       244            5         5        conditions (i.e., equal piece sizes, loader
+    3                   34       136            1         3
+    4                   17        46            0         1        assisting, and no yarder) were more similar
+    Total            4 671 b   5 368 b        100       100        for the two machines than the average costs
+    a
+        Rating definitions are provided in Appendix IV.            would indicate because of the varying
+    b
+        These values are greater than the total stems in Table 5
+        and Boswell (2004) because this table includes
+        unmerchantable stems and samples with too few stems        6
+                                                                       Availability and utilization were not measured for the
+        to analyze the productivity data that were deleted from        John Deere 892ELC/Waratah HTH624 for the winter
+        Table 5 and Boswell (2004).                                    study.
+
+                                                                                                   Vol. 7 No. 3
+8                                                                                                February 2006    Advantage
+                                6.00
+conditions, piece sizes,                                                                                                Figure 4.
+and utilization factors for              Hyundai 210LC/Waratah HTH620
+                                                                                                                        Relationship
+                                5.00
+the samples. Further                                                                                                    between predicted
+
+
+
+
+                               Processor cost ($/m3)
+                                                                John Deere 892 ELC/Waratah HTH624
+
+analysis indicates that the                                                                                             processor cost and
+                                4.00
+Hyundai 210LC/Waratah                                                                                                   average stem size
+                                                                                                                        for the two
+HTH620’s cost in $/m3 is        3.00
+                                                                                                                        processors.
+lower than the John
+Deere’s when the piece          2.00
+
+size is smaller than 0.83
+m3/stem, while the John         1.00
+
+Deere 892 ELC/Waratah
+                                0.00
+HTH624’s cost is lower               0.0     0.2          0.4         0.6          0.8          1.0 1.2           1.4
+
+for larger pieces (Figure 4).                                    Average stem size (m )3
+
+
+
+This breakeven point changed to a stem size
+                                                      two loaders on-site assisting the yarder and
+of about 1 m 3 when the same machine
+                                                      processor. The loaders’ activities consisted
+utilization factor (0.78) was used for both
+                                                      of the following:
+machines. However, when considering the
+                                                        • piling processed logs
+system cost (processor plus loader assisting),
+                                                        • travelling—moving back and forth
+the breakeven point drops to a stem size of
+                                                            between the processor and the log decks
+0.8 m3, using the same size loader for both
+                                                        • repositioning unprocessed stems—
+processors. These results are based on the
+                                                            breaking the pile apart, straightening and
+equipment costs shown in Appendices II and
+                                                            untangling the stems, and pulling the
+III, and may vary as fuel or other operating
+                                                            stems up closer to the road
+costs change.
+                                                        • site maintenance—building up areas to
+     The contractor did a good job of
+                                                            place the processed logs and clearing
+matching the machines to the stem size
+                                                            debris
+during the study. During detailed timing,
+                                                            The ground slopes were less than in the
+the average stem processed by the Hyundai
+                                                      winter study and the loaders spent much less
+210LC/Waratah HTH620 was 0.54 m3
+                                                      time building mats (part of site maintenance)
+while the average stem processed by the John
+                                                      in the summer (0.2%) than in the winter
+Deere 892 ELC/Waratah HTH624 was
+                                                      study (2%). The loaders spent less time
+0.89 m3. Because the John Deere 892 ELC/
+                                                      piling logs in the summer and more time
+Waratah HTH624 mainly worked with
+                                                      loading trucks, assisting the yarder, and main-
+larger stems, its overall cost was lower. If
+                                                      taining the site. In the summer study, only
+both machines had worked with the same
+                                                      62% of the loaders’ time was spent assisting
+size of stems and the stems were smaller than
+                                                      the processor compared to 72% in the
+0.8 m 3, the Hyundai 210LC/Waratah
+HTH620 would have been the most cost-
+                                                                                   Other delays,
+effective.                                                                             12%                              Figure 5. Loader
+                                                          Waiting for the                                               time, work
+Loader support                                            processor or                                                  sampling results.
+                                                          yarder, or idle                      Piling processed
+     Work sampling was performed on the                       11%                                 logs, 29%
+
+loaders for 58.5 hours over 19 days. The                   Loading trucks,
+results for the loaders assisting the processors                9%
+
+are shown in Figure 5 and include data for
+three loaders. Another loader was usually              Assisting yarder,
+                                                              6%
+                                                                                                     Travelling, 16%
+
+dedicated to loading trucks, but on three days                                   Site
+                                                                                             Repositioning
+the loader supporting the processor and yarder                               maintenance,
+                                                                                            unprocessed
+                                                                                8%
+                                                                                             stems, 9%
+also loaded trucks. On two days, there were
+
+               Vol. 7 No. 3
+Advantage      February 2006                                                                                                                 9
+                          winter. The delay or idle time was similar in                            for these seven samples ranged from 18 to
+                          both seasons at 23% in the summer and 20%                                30%.
+                          in the winter.                                                                Non-processing time (i.e., waiting,
+                              The loaders usually had no trouble                                   moving, sorting, decking, and minor delays)
+                          finding a location to pile the logs. The                                 averaged 28% of PMH overall but increased
+                          average travel distance to pile the logs was                             to 50% when no loader was present (with or
+                          about the same in the summer (26 m) as in                                without a yarder). Non-processing time
+                          the winter (25 m), and the proportion of time                            increased from an average of 0.21 min/cycle
+                          spent travelling was the same in both seasons.                           when the processor was working with a loader
+                          The distance the loaders had to carry the logs                           but no yarder, to 0.59 min/cycle when work-
+                          was influenced by when the loading took                                  ing alone. Non-processing time also increased
+                          place. If trucks were loaded concurrently                                to 0.29 min/cycle when working with a
+                          with processing, more space was available for                            yarder and with a loader. Working with a
+                          piling logs. In Block 5, some right-of-way                               yarder but no loader increased the non-process-
+                          wood was not removed before the block wood                               ing time to 0.72 min/cycle or 58% of PMH.
+                          was processed, resulting in less decking space                                In order to remove the effects of stem size
+                          and a longer average travel distance (33 m).                             in the analysis, productivity and costs were
+                                                                                                   plotted against stem size for the samples.
+                          Comparison of processing costs                                           Overall productivity increased when working
+                          with and without loader support                                          with a loader. For example, for a 0.5 m3 stem
+                              On fairly flat ground where it is                                    size, productivity increased from about 25 m3/
+                          physically possible for the processor to work                            PMH without a loader to about 50 m3/PMH
+                          alone, it may be more economical to work                                 with a loader. Correspondingly, processing
+                          without a loader. During detailed timing,                                costs rose from about $4/m3 with a loader to
+                          there were seven samples where the Hyundai                               $7/m3 without (Figure 6 and Table 8). If the
+                          210LC/Waratah HTH620 processor worked                                    loader cost was $3/m3 or less, it would be
+                          without a loader due to mechanical problems.                             neutral or cost-effective to work with a loader.
+                          Here, the processor sorted and piled its own                             In this study, the loader cost ranged from
+                          logs, which provided an opportunity to                                   $4.33 to 5.35/m3. The amount available to
+                          compare the cost of working with and with-                               cover the cost of a loader varied with stem size
+                          out a loader. Note that it is not possible for                           and ranged from about $2/m3 for stems of
+                          the processor to deck its own logs when the                              1.2 m3 to almost $4/m3 for stems of 0.3 m3.
+                          ground slope is very steep. While the maximum                            It appears that using a loader will increase
+                          sideslope where the processor could work                                 processor productivity but will increase the
+                          alone was not determined, the ground slope                               overall costs, although with very small stem
+
+                                                               12.00
+     Figure 6.
+     Relationship                                              10.00
+     between predicted
+                                       Processor cost ($/m3)
+
+
+
+
+     Hyundai 210LC/                                            8.00
+     Waratah HTH620
+     processor cost and                                        6.00
+     average stem size                                                                                                   without loader
+     working with and                                          4.00
+     without a loader.                                                                                                   with loader
+
+                                                               2.00
+
+
+
+                                                               0.00
+                                                                       0.0   0.2   0.4       0.6       0.8        1.0    1.2             1.4
+
+                                                                                         Average stem size (m3)
+
+
+                                                                                                                               Vol. 7 No. 3
+10                                                                                                                         February 2006       Advantage
+                                    Table 8. Costs and productivity a
+
+  Processor                               Hyundai 210LC/Waratah HTH620                         John Deere 892 ELC/Waratah HTH624
+                                    Hyundai       Hitachi       Hyundai           All             Hyundai        Hyundai    Hyundai
+  Loader                             290LC        EX220          210LC         loaders            290LC b        290LC b    290LC b
+  Blockc,d                             3             4             6            overall              1              2       overall
+
+  Productivity (m³/PMH) e             30.1        29.8            32.8           30.7               40.5             39.7     40.1
+  Utilization (%) e                     72          75              66             72                 78               78       78
+  Productivity (m³/SMH) e             21.7        22.4            21.7           22.0               31.6             31.0     31.3
+  Hourly machine cost ($/SMH) f
+   Processor                        116.93     116.93          116.93         116.93             140.99         140.99      140.99
+   Loader                           116.20      96.89           96.89         103.33 g           116.20         116.20      116.20
+  Cost ($/m)                                                                                                                      .
+   Processor                          5.39        5.22            5.39           5.32               4.46             4.55     4.50
+   Loader assisting                   5.35        4.33            4.46           4.70               3.68             3.75     3.71
+   Total                             10.74        9.55            9.85          10.02               8.14             8.30     8.21
+ a
+   Productivities and costs are based on net volumes loaded out and shift-level timing.
+ b
+   Assumed, loader used for these blocks not known.
+ c
+   Stems in Block 5 were processed by both machines and scale data could not be separated by machine.
+ d
+   Block 7 was not complete when the study ended.
+ e
+   From Table 2.
+ f
+   From Appendix III.
+ g
+   Average loader cost.
+
+
+
+sizes there may be a cost benefit. If, however,      This cost was less when a loader worked with
+higher productivity is required or the ground        the John Deere 892 ELC/Waratah HTH624
+slope is steep, a loader will be needed.             processor because of this processor’s higher
+                                                     productivity. The combined system cost for
+Overall productivity and system                      the processor and loader averaged $8.21/m³
+costs7                                               for the John Deere 892 ELC/Waratah
+    The individual utilization rates by block        HTH624 and $10.02/m³ for the Hyundai
+were applied to the processors’ shift-level          210LC/Waratah HTH620.
+productivity, resulting in overall
+productivities of 22 m³/SMH for the                  Other factors
+Hyundai 210LC/Waratah HTH620 processor                   The processors’ boom location on the
+and 31 m³/SMH for the John Deere 892                 right of the machines hindered the operators’
+ELC/Waratah HTH624 processor (Table 8).              visibility, so the processors would always
+The John Deere 892 ELC/Waratah HTH624                swing the stems to the left when processing
+was 43% more productive than the Hyundai             and drop the logs on the road to the left of
+210LC/Waratah HTH620 in terms of                     the machine (Figure 7). As a result, when a
+m 3/SMH, partly because of its higher                loader was working with a processor to clear
+utilization rate. Processing costs ranged from       and pile the logs, it could only deck the
+$4.46/m³ to $5.39/m³. The average cost for           logs in areas to the left of the processor.
+the John Deere 892 ELC/Waratah HTH624                Processing and decking operations ran the
+was 15% less than the Hyundai 210LC/                 smoothest when the processors were able to
+Waratah HTH620, at $4.50/m³ and                      work continuously from left to right (as the
+$5.32/m³, respectively.                              processor faced the stem deck) and where
+    The higher productivity of the John
+Deere 892 ELC/Waratah HTH624 offset its              7
+                                                         Note that these productivities and costs are not directly
+higher hourly machine cost. The cost of a                comparable to those from the winter study, because
+                                                         the winter study was based on gross volumes whereas
+loader working full-time with a processor                these figures are based on net volumes. See the detailed
+added an additional $3.68/m³ to $5.35/m³.                timing results to make comparisons.
+
+
+               Vol. 7 No. 3
+Advantage      February 2006                                                                                                          11
+                                                                                In several blocks, the terrain and layout
+     Figure 7. The
+     processor always                                                      affected processing negatively. In Block 4, a
+     processed and                                                         large area was yarded to one location, resulting
+     placed the logs on                                                    in a very large deck of stems (Figure 8). This
+     the left side of the                                                  slowed processing as the pile had to be pulled
+     machine due to                                                        down first. Yarding a large amount of stems
+     visibility.
+                                                                           to one spot also made it more difficult to
+                                                                           find adequate space for the processed logs and
+                                                                           processing debris.
+                                                                                In Block 5, the road was located below a
+                                                                           creek. Many stems were yarded to the creek
+     Figure 8. The                                                         and then loader-forwarded to the road for
+     loader pulling                                                        processing (Figure 9). The processor
+     down stems in a                                                       experienced delays as these stems were
+     high yarder deck                                                      moved to roadside.
+     for the processor
+                                                                                 In a steep area of Block 5, the yarder
+     in Block 4.
+                                                                           landed stems on a high bank above the road.
+                                                                           The processor could not reach them so the
+                                                                           loader had to move them to the low side of
+                                                                           the road before processing.
+
+                                                                             Summary and
+     Figure 9. The
+     loader moving the
+                                                                             conclusions
+     stems to roadside                                                          The John Deere 892 ELC/Waratah
+     before processing                                                     HTH624 processor was 31% more
+     due to a creek in                                                     productive than the smaller Hyundai
+     Block 5.                                                              210LC/Waratah HTH620 processor, in
+                                                                           terms of m3/PMH. This result is similar to
+                                                                           the winter study where it was 34% more
+                                                                           productive. In terms of m3/SMH, the John
+                                                                           Deere 892 ELC/Waratah HTH624 was
+                                                                           43% more productive than the Hyundai
+                            there was adequate decking space to the        210LC/Waratah HTH620, partly because of
+                            left of the processor.                         its higher utilization.
+                                 Processing productivity was low some-          Analysis of the influence of site and stand
+                            times because the yarder’s productivity was    conditions on productivity proved that most
+                            low and wood was not available to keep the     variables are not significant. Only stem deck
+                            processor busy. The contractor would have      slope and stem size had a significant effect on
+                            preferred to operate the yarder two shifts     productivity. In both studies, productivity
+                            per day as in the winter study which would     was affected by stem size. The summer study
+                            have helped the yarder to stay ahead of the    determined that deck slope was also an
+                            processor. However, difficulties obtaining     influence sometimes.
+                            crew prevented this. Hot weather in                 There was no statistically significant
+                            summer resulted in fire closures during the    difference between winter and summer
+                            day which also prevented running two shifts    productivity after the effect of stem size was
+                            on the yarder. As well, delays in completion   taken into account.
+                            of in-block roads reduced the wood available        The analysis indicated that the John Deere
+                            for yarding.                                   892 ELC/Waratah HTH624 processor is
+
+                                                                                                     Vol. 7 No. 3
+12                                                                                                 February 2006    Advantage
+more cost-effective for processing the stems           • Where space for decking is limited,
+larger than 1 m3, whereas the Hyundai                    process and load right-of-way wood
+210LC/Waratah HTH620 is more cost-                       before yarding and processing the in-
+effective processing the smaller stems. When             block stems.
+the cost of the processor plus loader assisting        • In locations where a loader must prepare
+is considered, the breakeven stem size drops             the stem deck for the processor, complete
+to 0.8 m3.                                               this preparation before the processor
+     Loaders spent 63% of their time assisting           arrives to reduce delays for the
+the processors. Most of this time involved               processor.
+piling processed logs and moving back and              • Lay out the block so that the yarder’s
+forth between the processor and the log                  landing areas are distributed along the
+decks. The combined system cost for a                    road instead of yarding many stems to
+processor and a loader averaged $8.21/m³ for             one location. This will reduce stem
+the John Deere 892 ELC/Waratah HTH624                    deck heights and roadside machine
+and $10.02/m³ for the Hyundai 210LC/                     congestion, and improve processing
+Waratah HTH620. Working with a loader                    productivity.
+increases the processor’s productivity, but            • Wherever possible, separate the
+when a processor works on fairly flat ground             processing phase from the yarding phase
+where assistance is not required, then                   to reduce machine conflicts and to provide
+working alone is more economical.                        adequate volume for the processor.
+     The average net cost of processing was
+$4.50/m³ for the John Deere 892 ELC/                   References
+Waratah HTH624 and $5.32/m³ for the                  Boswell, B.J. 2004. Mechanized processing
+Hyundai 210LC/Waratah HTH620.                          on steep slopes in winter conditions to
+Operations were most productive when a                 produce short logs. FERIC, Vancouver,
+processor worked with a loader.                        B.C. Advantage 5(45). 12 pp.
+     Several logistical issues affected processing
+productivity during this study. Double-              DeLong, C. 2004. A field guide to site
+shifting the yarder would have been advan-             identification and interpretation for the
+tageous. However, in-block roads were not              north central portion of the northern
+completed so volume was not available, the             interior forest region. B.C. Ministry of
+contractor could not get enough crew to run            Forests, Victoria, B.C. Land Management
+two shifts per day on the yarder, and fire shut-       Handbook 54.
+downs reduced the operating time available.
+As well, in some areas yarding productivity            Acknowledgements
+was low because of the terrain and block                 The author gratefully acknowledges the
+layout. The processor’s productivity was             cooperation of Dale Vanderhook, Dan Heck,
+often tied directly to that of the yarder.           and the operators and crew of DWD Logging
+                                                     Limited; and Larry Clark and Ingo Hinz of
+  Implementation                                     Canadian Forest Products Ltd.
+                                                         The author thanks FERIC employees
+     In addition to the recommendations in           Ingrid Hedin and Ray Krag for project advice
+the report on the winter study (Boswell              and for reviewing the draft report; Mihai
+2004), the following should improve the              Pavel for statistical analysis and assisting with
+efficiency and productivity of processing            data collection; Clayton Gillies and former
+operations on steep cable-harvested slopes:          FERIC employee Kate Andersson for
+  • Ensure yarder productivity is adequate           assisting with data collection; Michelle
+      to keep the processor busy or that stems       Dunham for assisting with machine costing;
+      are ready for processing before the            and Yvonne Chu and Shelley Ker for
+      processor is brought on-site.                  assisting with report preparation.
+               Vol. 7 No. 3
+Advantage      February 2006                                                                             13
+                                                  Appendix I
+                                      Equipment specifications
+     Processors
+       Carrier                                     Hyundai 210LC     John Deere 892 ELC
+        Engine                                     Cummins B5.9-C     John Deere 6076A
+        Power (kW)                                      112                  164
+        Maximum boom reach (m)                          9.9                  11.1
+        Lift capacity at 6-m reach (kg)               6 060 a              10 422 b
+        Undercarriage dimensions
+          Width (m)                                     3.40               3.40
+          Length (m)                                    4.44                4.90
+        Travel speed (km/h)                           up to 5.3          up to 5.5
+        Mass (kg)                                      23 700             30 595
+       Processing head                             Waratah HTH620     Waratah HTH624
+        Maximum delimbing diameter (mm)                  560                640
+        Maximum diameter saw cut (mm)                    620                780
+        Mass (kg)                                       2 210              3 414
+        Measuring and control system                  LogRrite            LogRite
+
+     Loaders
+       Carrier                                    Hitachi EX 220LC    Hyundai 210LC             Hyundai 290LC
+        Engine                                    Cummins H07C-TD     Cummins B5.9-C          Cummins QSB5.9-C
+        Power (kW)                                       118               112                       159
+        Maximum boom reach (m)                          10.3               9.9                      10.8
+        Lift capacity at 6-m reach (kg)                6 620 c           6 060 a                   9 550 d
+        Undercarriage dimensions (m)
+         Width (m)                                        2.99               3.40                         3.40
+         Length (m)                                      4.27                4.44                         4.95
+        Travel speed (km/h)                            up to 5.5          up to 5.3                    up to 5.2
+        Mass (kg)                                       23 800             23 700                       33 310
+        Grapple size (mm)                                1 270              1 270                        1 524
+
+     a
+       For an arm length of 2.92 m and a 0 m load height.
+     b
+       For an arm length of 3.20 m and a 0 m load height.
+     c
+       For an arm length of 2.96 m and a 0 m load height.
+     d
+       For an arm length of 3.05 m and a 0 m load height.
+
+
+
+
+                                                                                            Vol. 7 No. 3
+14                                                                                        February 2006    Advantage
+                                                       Appendix II
+                                                      Machine costs a
+
+                                                                                              Harvesting     Harvesting      Log loading
+                                                             Carrier b        Carrier b         head c         head d          grapple e
+                                                           (20–25 tonne     (30–35 tonne       (508-mm        (610-mm      (up to 1 524-mm
+                                                              class)           class)         capacity)      capacity)        capacity)
+
+Ownership Costs
+ Total purchase price (P) $                                  305 000          410 000          185 000        225 000          22 000
+ Expected life (Y) y                                                5                5                5              5               5
+ Expected life (H) h                                          15 000           15 000           15 000         15 000          15 000
+ Scheduled hours/year (h)=(H/Y) h                              3 000            3 000            3 000          3 000           3 000
+ Salvage value as % of P (s) %                                     25               25               25             25              25
+ Interest rate (Int) %                                            6.0              6.0              6.0            6.0             6.0
+ Insurance rate (Ins) %                                           3.0              3.0              3.0            3.0             3.0
+ Salvage value (S)=((P•s/100) $                               76 250          102 500           46 250         56 250           5 500
+ Average investment (AVI)=((P+S)/2) $                        190 625          256 250          115 625        140 625          13 750
+ Loss in resale value ((P-S)/H) $/h                            15.25            20.50             9.25          11.25            1.10
+ Interest ((Int•AVI)/h) $/h                                     3.81             5.13             2.31           2.81            0.28
+ Insurance ((Ins•AVI)/h) $/h                                    1.91             2.56             1.16           1.41            0.14
+ Total ownership costs (OW) $/h                                20.97            28.19            12.72          15.47            1.51
+
+Operating Costs
+ Fuel consumption (F) L/h                                       20.0              30.0               0.0           0.0            0.0
+ Fuel (fc) f $/L                                                0.55              0.55             0.00          0.00            0.00
+ Lube & oil as % of fuel (fp) %                                   10                10                 0             0              0
+ Track & undercarriage replacement g (Tc) $                   16 000            20 000                 0             0              0
+ Track & undercarriage life (Th) h                             5 400             5 400                 0             0              0
+ Annual repair & maintenance (Rp) $                           49 000            66 000           30 000        36 000           3 500
+ Shift length (sl) h                                            12.0              12.0               0.0           0.0            0.0
+ Operator wages h $/h                                          25.99             25.99             0.00          0.00            0.00
+ Wage benefit loading (WBL) %                                     38                38                38            38             38
+ Fuel (F•fc) $/h                                               11.00             16.50             0.00          0.00            0.00
+ Lube & oil ((fp/100)•(F•fc)) $/h                               1.10              1.65             0.00          0.00            0.00
+ Track & undercarriage (Tc/H) $/h                               1.48              1.85             0.00          0.00            0.00
+ Repair & maintenance (Rp/h) $/h                               16.33             22.00            10.00         12.00            1.17
+ Wages & benefits (W•(1+WBL/100)) $/h                          35.87             35.87             0.00          0.00            0.00
+ Prorated overtime ((((1.5•W-W)•(11-8)•
+   (1+WBL/100))/sl)+ (((2.0•W-W)•
+   (sl-11)•(1+WBL/100))/sl)) ($/h) i                             7.46             7.46             0.00           0.00            0.00
+
+  Total operating costs (OP) $/h                                73.24            85.33            10.00          12.00            1.17
+Total Ownership and Operating Costs (OW+OP) $/h                 94.21           113.52            22.72          27.47            2.68
+
+
+ a
+   These costs are estimated using FERIC’s standard costing methodology for determining machine ownership and operating costs for
+   new machines. The costs shown here do not include supervision, travel time, profit or overhead and are not the actual costs for the
+   contractor.
+ b
+   Costs for carriers were calculated using generic machines for each class size.
+ c
+   Based on quote from Waratah Distribution for a HTH 622B harvesting head. The HTH 620 harvesting head is no longer manufactured.
+ d
+   Based on a quote from Waratah Distribution for a HTH 624 Super harvesting head.
+ e
+   Based on quote from IMAC Attachments.
+ f
+   Diesel fuel unit price as per a quote from The National Industrial Transport Log for June 2004.
+ g
+   Although the loaders spent a substantial amount of time travelling back and forth between the processor and the log decks, and
+   therefore undercarriage wear would be higher than in stationary applications, this was not accounted for in the costing.
+ h
+   Wage rates are as per 2004 rates outlined in the IWA Southern Interior Master Agreement.
+ i
+   Prorated overtime rates are as per 2004 rates in the IWA Southern Interior Master Agreement and reflect time and one-half for all shift
+   hours in excess of 8 hours but not exceeding 11 hours. Double time was allotted for all shift hours worked in excess of 11 hours.
+
+
+
+
+              Vol. 7 No. 3
+Advantage     February 2006                                                                                                              15
+                                           Appendix III
+                           Equipment carrier and implement
+                               combinations and costs
+     Equipment                                                                Carrier            Implement   Total
+                                                                               ($/h)               ($/h)     ($/h)
+
+     Hyundai 210LC carrier with Waratah HTH620 processing head a               94.21                 22.72   116.93
+     John Deere 892 ELC carrier with Waratah HTH624 processing head b         113.52                 27.47   140.99
+     Hyundai 210LC carrier with 1 270-mm grapple c                             94.21                  2.68    96.89
+     Hitachi EX220LC loader with 1 270-mm grapple c                            94.21                  2.68    96.89
+     Hyundai 290LC loader with 1 524-mm grapple d                             113.52                  2.68   116.20
+     a
+       Costs are based on a 20–25 tonne class generic carrier and a 508 mm capacity generic harvesting head.
+     b
+       Costs are based on a 30–35 tonne class generic carrier and a 610 mm capacity generic harvesting head.
+     c
+       Costs are based on a 20–25 tonne class generic carrier with a generic log loading grapple.
+     d
+       Costs are based on a 30–35 tonne class generic carrier with a generic log loading grapple.
+
+
+
+
+                                            Appendix IV
+                                        Branchiness rating
+          Branchiness rating                                            Description
+
+          1 = negligible                                no branches or very few at the top
+          2 = light                                     branches <4 cm diameter
+          3 = moderate                                  some branches >4 cm diameter over 1/3 of the stem
+          4 = high                                      many branches >4 cm diameter over 2/3 of the stem
+          5 = very high                                 very limby tolerant hardwoods
+
+
+
+
+                                                                                      Vol. 7 No. 3
+16                                                                                February 2006      Advantage
+

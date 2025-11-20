@@ -268,6 +268,12 @@ regressions:
   analysts can keep BC roadside presets tied to local landing data. Cost figures shown in the CLI are
   escalated to 2024 CAD using Statistics Canada CPI (Table 18-10-0005-01) so they’re comparable with
   newer references.
+* ``--processor-model adv7n3`` – FPInnovations Advantage Vol. 7 No. 3 (Canfor Mackenzie summer
+  skyline settings). Set ``--processor-adv7n3-machine`` to ``hyundai_210`` or ``john_deere_892`` to
+  pull the observed shift/detailed productivity plus the processor-only vs. loader-only vs. combined
+  $/m³ costs (2004 CAD and CPI-adjusted 2024 CAD). CLI output also prints the loader task breakdown,
+  non-processing time penalties when the processor works without a loader, and the average travel
+  distances so you can decide when a loader is mandatory on short-wood cable decks.
 * ``--processor-model hypro775`` – HYPRO 775 tractor-mounted double-grip processor preset sourced from Castro
   Pérez (2020) and Zurita Vintimilla (2021). No additional predictors are needed; the helper reports mean cycle time
   (~45 s), gross/net trees per hour, delay-free m³/PMH (~21.4), fuel use (≈21 L/h or 0.78 L/m³), and ergonomic notes

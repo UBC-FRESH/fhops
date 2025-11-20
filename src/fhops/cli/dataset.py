@@ -114,11 +114,13 @@ from fhops.productivity import (
     Borz2023ProcessorProductivityResult,
     Nakagawa2010ProcessorProductivityResult,
     ADV5N6ProcessorProductivityResult,
+    ADV7N3ProcessorProductivityResult,
     TN103ProcessorProductivityResult,
     TR106ProcessorProductivityResult,
     TN166ProcessorProductivityResult,
     TR87ProcessorProductivityResult,
     estimate_processor_productivity_adv5n6,
+    estimate_processor_productivity_adv7n3,
     estimate_processor_productivity_tn103,
     estimate_processor_productivity_tr106,
     estimate_processor_productivity_tn166,
@@ -718,6 +720,7 @@ class RoadsideProcessorModel(str, Enum):
     LABELLE2019_DBH = "labelle2019_dbh"
     LABELLE2019_VOLUME = "labelle2019_volume"
     ADV5N6 = "adv5n6"
+    ADV7N3 = "adv7n3"
     VISSER2015 = "visser2015"
     TN103 = "tn103"
     TR106 = "tr106"
@@ -749,6 +752,11 @@ class ADV5N6ProcessingMode(str, Enum):
     COLD = "cold"
     HOT = "hot"
     LOW_VOLUME = "low_volume"
+
+
+class ADV7N3Machine(str, Enum):
+    HYUNDAI_210 = "hyundai_210"
+    JOHN_DEERE_892 = "john_deere_892"
 
 
 class TN103Scenario(str, Enum):
@@ -1389,6 +1397,101 @@ def _render_processor_result(
         console.print(
             "[dim]FPInnovations Advantage Vol. 5 No. 6 (Madill 3800 + Waratah HTH624) landing processor study. Select stem source + processing mode to mirror loader-forwarded vs. grapple-yarded hot/cold decks.[/dim]"
         )
+        if result.notes:
+            console.print(f"[dim]{' '.join(result.notes)}[/dim]")
+        if result.cost_base_year:
+            console.print(
+                f"[dim]Costs escalated from {result.cost_base_year} CAD to 2024 CAD using Statistics Canada CPI (Table 18-10-0005-01).[/dim]"
+            )
+        return
+    elif isinstance(result, ADV7N3ProcessorProductivityResult):
+        rows = [
+            ("Model", "adv7n3"),
+            ("Machine", result.machine_label),
+            ("Shift Productivity (m³/PMH)", f"{result.shift_productivity_m3_per_pmh:.1f}"),
+            ("Shift Productivity (m³/SMH)", f"{result.shift_productivity_m3_per_smh:.1f}"),
+            ("Utilisation (%)", f"{result.utilisation_percent:.0f}"),
+            ("Availability (%)", f"{result.availability_percent:.0f}"),
+            ("Total Volume (m³)", f"{result.total_volume_m3:,.0f}"),
+        ]
+        if result.detailed_avg_stem_volume_m3 is not None:
+            rows.append(("Avg Stem Volume (m³)", f"{result.detailed_avg_stem_volume_m3:.2f}"))
+        if result.detailed_productivity_m3_per_pmh is not None:
+            rows.append(
+                ("Detailed Productivity (m³/PMH)", f"{result.detailed_productivity_m3_per_pmh:.1f}")
+            )
+        if result.detailed_stems_per_pmh is not None:
+            rows.append(("Stems per PMH", f"{result.detailed_stems_per_pmh:.1f}"))
+        if result.processor_cost_cad_per_m3_base_year is not None and result.cost_base_year:
+            rows.append(
+                (
+                    f"Processor Cost ({result.cost_base_year} CAD $/m³)",
+                    f"{result.processor_cost_cad_per_m3_base_year:.2f}",
+                )
+            )
+        rows.append(
+            (
+                "Processor Cost (2024 CAD $/m³)",
+                f"{result.processor_cost_cad_per_m3:.2f}",
+            )
+        )
+        if result.loader_cost_cad_per_m3_base_year is not None and result.cost_base_year:
+            rows.append(
+                (
+                    f"Loader Cost ({result.cost_base_year} CAD $/m³)",
+                    f"{result.loader_cost_cad_per_m3_base_year:.2f}",
+                )
+            )
+        if result.loader_cost_cad_per_m3 is not None:
+            rows.append(
+                (
+                    "Loader Cost (2024 CAD $/m³)",
+                    f"{result.loader_cost_cad_per_m3:.2f}",
+                )
+            )
+        if result.system_cost_cad_per_m3_base_year is not None and result.cost_base_year:
+            rows.append(
+                (
+                    f"Processor + Loader ({result.cost_base_year} CAD $/m³)",
+                    f"{result.system_cost_cad_per_m3_base_year:.2f}",
+                )
+            )
+        if result.system_cost_cad_per_m3 is not None:
+            rows.append(
+                (
+                    "Processor + Loader (2024 CAD $/m³)",
+                    f"{result.system_cost_cad_per_m3:.2f}",
+                )
+            )
+        if result.processor_hourly_cost_cad_per_smh is not None:
+            rows.append(
+                (
+                    "Processor Rate ($/SMH)",
+                    f"{result.processor_hourly_cost_cad_per_smh:.2f}",
+                )
+            )
+        if result.loader_hourly_cost_cad_per_smh is not None:
+            rows.append(("Loader Rate ($/SMH)", f"{result.loader_hourly_cost_cad_per_smh:.2f}"))
+        if result.loader_support_percent is not None:
+            rows.append(("Loader Assist Time (%)", f"{result.loader_support_percent:.0f}"))
+        _render_kv_table("Roadside Processor Productivity Estimate", rows)
+        console.print(
+            "[dim]FPInnovations Advantage Vol. 7 No. 3 (Hyundai 210LC vs. John Deere 892 summer processors feeding short-log skyline decks near Mackenzie, BC).[/dim]"
+        )
+        if result.loader_task_distribution_percent:
+            summary = ", ".join(
+                f"{label.replace('_', ' ')} {value:.0f}%"
+                for label, value in result.loader_task_distribution_percent.items()
+            )
+            console.print(f"[dim]Loader task distribution: {summary}.[/dim]")
+        if result.non_processing_time_minutes_per_cycle:
+            summary = ", ".join(
+                f"{label.replace('_', ' ')} = {value:.2f} min"
+                for label, value in result.non_processing_time_minutes_per_cycle.items()
+            )
+            console.print(
+                f"[dim]Non-processing time per cycle (loader/yarder combinations): {summary}.[/dim]"
+            )
         if result.notes:
             console.print(f"[dim]{' '.join(result.notes)}[/dim]")
         if result.cost_base_year:
@@ -3782,7 +3885,7 @@ def estimate_productivity_cmd(
         help=(
             "Roadside-processor regression to use "
             "(berry2019 | labelle2016/2017/2018 | labelle2019_dbh | labelle2019_volume | "
-            "adv5n6 | visser2015 | tn103 | tr106 | tr87 | tn166 | hypro775 | spinelli2010 | "
+            "adv5n6 | adv7n3 | visser2015 | tn103 | tr106 | tr87 | tn166 | hypro775 | spinelli2010 | "
             "bertone2025 | borz2023 | nakagawa2010)."
         ),
     ),
@@ -3844,6 +3947,12 @@ def estimate_productivity_cmd(
         "--processor-processing-mode",
         case_sensitive=False,
         help="Processing mode for ADV5N6 (cold | hot | low_volume).",
+    ),
+    processor_adv7n3_machine: ADV7N3Machine = typer.Option(
+        ADV7N3Machine.HYUNDAI_210,
+        "--processor-adv7n3-machine",
+        case_sensitive=False,
+        help="ADV7N3 processor selection (hyundai_210 | john_deere_892). Applies when --processor-model adv7n3.",
     ),
     processor_tn103_scenario: TN103Scenario = typer.Option(
         TN103Scenario.COMBINED_OBSERVED,
@@ -4753,6 +4862,10 @@ def estimate_productivity_cmd(
             result_processor = estimate_processor_productivity_adv5n6(
                 stem_source=stem_source_value,
                 processing_mode=processing_mode_value,
+            )
+        elif processor_model is RoadsideProcessorModel.ADV7N3:
+            result_processor = estimate_processor_productivity_adv7n3(
+                machine=processor_adv7n3_machine.value
             )
         elif processor_model is RoadsideProcessorModel.VISSER2015:
             if processor_piece_size_m3 is None:

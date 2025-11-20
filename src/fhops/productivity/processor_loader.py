@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import math
+from collections.abc import Mapping
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
@@ -16,6 +17,7 @@ _REFERENCE_ROOT = Path(__file__).resolve().parents[3] / "data" / "reference"
 _BERRY_DATA_PATH = _DATA_ROOT / "processor_berry2019.json"
 _BERRY_LOG_GRADES_PATH = _REFERENCE_ROOT / "berry2019_log_grade_emmeans.json"
 _ADV5N6_DATA_PATH = _DATA_ROOT / "processor_adv5n6.json"
+_ADV7N3_DATA_PATH = _DATA_ROOT / "processor_adv7n3.json"
 _TN103_DATA_PATH = _DATA_ROOT / "processor_tn103.json"
 _TR87_DATA_PATH = _DATA_ROOT / "processor_tr87.json"
 _TR106_DATA_PATH = _DATA_ROOT / "processor_tr106.json"
@@ -46,6 +48,14 @@ def _load_adv5n6_dataset() -> dict[str, object]:
         return json.loads(_ADV5N6_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
         raise FileNotFoundError(f"ADV5N6 processor data missing: {_ADV5N6_DATA_PATH}") from exc
+
+
+@lru_cache(maxsize=1)
+def _load_adv7n3_dataset() -> dict[str, object]:
+    try:
+        return json.loads(_ADV7N3_DATA_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:  # pragma: no cover - configuration error
+        raise FileNotFoundError(f"ADV7N3 processor data missing: {_ADV7N3_DATA_PATH}") from exc
 
 
 @lru_cache(maxsize=1)
@@ -1861,6 +1871,37 @@ class ADV5N6ProcessorProductivityResult:
 
 
 @dataclass(frozen=True)
+class ADV7N3ProcessorProductivityResult:
+    machine_id: str
+    machine_label: str
+    description: str
+    shift_productivity_m3_per_pmh: float
+    shift_productivity_m3_per_smh: float
+    utilisation_percent: float
+    availability_percent: float
+    total_volume_m3: float
+    detailed_productivity_m3_per_pmh: float | None
+    detailed_stems_per_pmh: float | None
+    detailed_avg_stem_volume_m3: float | None
+    processor_cost_cad_per_m3: float
+    processor_cost_cad_per_m3_base_year: float | None
+    loader_cost_cad_per_m3: float | None
+    loader_cost_cad_per_m3_base_year: float | None
+    system_cost_cad_per_m3: float | None
+    system_cost_cad_per_m3_base_year: float | None
+    processor_hourly_cost_cad_per_smh: float | None
+    loader_hourly_cost_cad_per_smh: float | None
+    cost_base_year: int | None
+    loader_support_percent: float | None = None
+    loader_task_distribution_percent: Mapping[str, float] | None = None
+    loader_avg_travel_distance_m: float | None = None
+    loader_travel_distance_block5_m: float | None = None
+    non_processing_time_minutes_per_cycle: Mapping[str, float] | None = None
+    cycle_distribution_percent: Mapping[str, float] | None = None
+    notes: tuple[str, ...] | None = None
+
+
+@dataclass(frozen=True)
 class TN103ProcessorProductivityResult:
     scenario: str
     description: str
@@ -2023,6 +2064,80 @@ def estimate_processor_productivity_adv5n6(
         machine_rate_cad_per_smh=machine_rate,
         notes=tuple(notes) if notes else None,
         cost_base_year=cost_base_year,
+    )
+
+
+def estimate_processor_productivity_adv7n3(
+    *, machine: Literal["hyundai_210", "john_deere_892"]
+) -> ADV7N3ProcessorProductivityResult:
+    dataset = _load_adv7n3_dataset()
+    processors = {
+        str(entry["id"]).lower(): entry for entry in dataset.get("processors", []) if entry.get("id")
+    }
+    normalized = machine.lower()
+    payload = processors.get(normalized)
+    if payload is None:
+        valid = ", ".join(sorted(processors))
+        raise ValueError(f"Unknown ADV7N3 machine '{machine}'. Valid options: {valid}.")
+
+    loader_support = dataset.get("loader_support") or {}
+
+    def _float(value: object | None) -> float | None:
+        if value is None:
+            return None
+        return float(value)
+
+    def _float_mapping(mapping: Mapping[str, object] | None) -> Mapping[str, float] | None:
+        if not mapping:
+            return None
+        return {key: float(value) for key, value in mapping.items()}
+
+    shift = payload.get("shift_summary") or {}
+    detailed = payload.get("detailed_timing") or {}
+    cycle_distribution = payload.get("cycle_distribution_percent") or {}
+    costs = payload.get("costs") or {}
+    base_year = costs.get("cost_base_year")
+
+    processor_cost_base = _float(costs.get("processor_cost_per_m3_cad_2004"))
+    loader_cost_base = _float(costs.get("loader_cost_per_m3_cad_2004"))
+    system_cost_base = _float(costs.get("system_cost_per_m3_cad_2004"))
+
+    processor_cost = _inflate_cost(processor_cost_base, base_year) or processor_cost_base or 0.0
+    loader_cost = _inflate_cost(loader_cost_base, base_year) or loader_cost_base
+    system_cost = _inflate_cost(system_cost_base, base_year) or system_cost_base
+
+    loader_task_distribution = _float_mapping(loader_support.get("task_distribution_percent"))
+    non_processing = _float_mapping(loader_support.get("non_processing_time_minutes_per_cycle"))
+
+    notes = payload.get("notes")
+    return ADV7N3ProcessorProductivityResult(
+        machine_id=payload["id"],
+        machine_label=payload.get("label", payload["id"]),
+        description=payload.get("description", ""),
+        shift_productivity_m3_per_pmh=float(shift.get("productivity_m3_per_pmh") or 0.0),
+        shift_productivity_m3_per_smh=float(shift.get("productivity_m3_per_smh") or 0.0),
+        utilisation_percent=float(shift.get("utilisation_percent") or 0.0),
+        availability_percent=float(shift.get("availability_percent") or 0.0),
+        total_volume_m3=float(shift.get("total_volume_m3") or 0.0),
+        detailed_productivity_m3_per_pmh=_float(detailed.get("productivity_m3_per_pmh")),
+        detailed_stems_per_pmh=_float(detailed.get("stems_per_pmh")),
+        detailed_avg_stem_volume_m3=_float(detailed.get("average_stem_volume_m3")),
+        processor_cost_cad_per_m3=processor_cost,
+        processor_cost_cad_per_m3_base_year=processor_cost_base,
+        loader_cost_cad_per_m3=loader_cost,
+        loader_cost_cad_per_m3_base_year=loader_cost_base,
+        system_cost_cad_per_m3=system_cost,
+        system_cost_cad_per_m3_base_year=system_cost_base,
+        processor_hourly_cost_cad_per_smh=_float(costs.get("processor_hourly_cost_cad_per_smh")),
+        loader_hourly_cost_cad_per_smh=_float(costs.get("loader_hourly_cost_cad_per_smh")),
+        cost_base_year=int(base_year) if base_year is not None else None,
+        loader_support_percent=_float(loader_support.get("assist_time_percent")),
+        loader_task_distribution_percent=loader_task_distribution,
+        loader_avg_travel_distance_m=_float(loader_support.get("avg_travel_distance_m")),
+        loader_travel_distance_block5_m=_float(loader_support.get("block5_travel_distance_m")),
+        non_processing_time_minutes_per_cycle=non_processing,
+        cycle_distribution_percent=_float_mapping(cycle_distribution),
+        notes=tuple(notes) if notes else None,
     )
 
 

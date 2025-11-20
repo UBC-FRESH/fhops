@@ -1,0 +1,132 @@
+{
+  "source": {
+    "id": "ADV7N3",
+    "title": "Mechanized processing on steep slopes in summer conditions to produce short logs",
+    "authors": ["B.J. Boswell"],
+    "publisher": "FPInnovations / FERIC Advantage Vol. 7 No. 3",
+    "publication_date": "2006-02",
+    "currency": "CAD_2004",
+    "notes": "Summer follow-up to the Mackenzie (BC) cable-yard processor study comparing Hyundai 210LC/Waratah 620 and John Deere 892 ELC/Waratah 624 processors with loader support on short-wood decks."
+  },
+  "loader_support": {
+    "assist_time_percent": 62.0,
+    "avg_travel_distance_m": 26.0,
+    "block5_travel_distance_m": 33.0,
+    "task_distribution_percent": {
+      "piling_processed_logs": 29.0,
+      "traveling": 16.0,
+      "repositioning_unprocessed_stems": 9.0,
+      "site_maintenance": 8.0,
+      "assisting_yarder": 6.0,
+      "waiting_or_idle": 11.0,
+      "loading_trucks": 9.0,
+      "other_delays": 12.0
+    },
+    "non_processing_time_minutes_per_cycle": {
+      "loader_only": 0.21,
+      "loader_and_yarder": 0.29,
+      "no_loader": 0.59,
+      "yarder_no_loader": 0.72
+    },
+    "notes": [
+      "58.5 hours of work sampling captured loader behaviour across three machines; another loader focused on truck loading.",
+      "Loaders spent substantially more time piling processed logs in summer because processors occasionally worked without support (Block 7)."
+    ]
+  },
+  "processors": [
+    {
+      "id": "hyundai_210",
+      "label": "Hyundai 210LC + Waratah HTH620",
+      "description": "Smaller carrier/head combination handling mixed lodgepole pine, spruce, and subalpine fir at Mackenzie (Blocks 1–7)",
+      "shift_summary": {
+        "productive_shifts": 43,
+        "productive_machine_hours": 337.0,
+        "scheduled_machine_hours": 470.3,
+        "utilisation_percent": 72.0,
+        "availability_percent": 86.0,
+        "total_volume_m3": 10335.0,
+        "productivity_m3_per_pmh": 30.7,
+        "productivity_m3_per_smh": 22.0
+      },
+      "detailed_timing": {
+        "sample_decks": 36,
+        "productive_minutes": 3669.0,
+        "productive_machine_hours": 61.1,
+        "stems_processed": 4059,
+        "volume_processed_m3": 2198.0,
+        "average_stem_volume_m3": 0.54,
+        "stems_per_pmh": 66.0,
+        "productivity_m3_per_pmh": 36.0
+      },
+      "cycle_distribution_percent": {
+        "processing": 68.0,
+        "debris_handling": 2.0,
+        "decking": 4.0,
+        "sorting": 3.0,
+        "piling": 9.0,
+        "moving": 2.0,
+        "waiting": 6.0,
+        "minor_delays": 6.0
+      },
+      "costs": {
+        "processor_hourly_cost_cad_per_smh": 116.93,
+        "loader_hourly_cost_cad_per_smh": 103.33,
+        "processor_cost_per_m3_cad_2004": 5.32,
+        "loader_cost_per_m3_cad_2004": 4.70,
+        "system_cost_per_m3_cad_2004": 10.02,
+        "cost_base_year": 2004
+      },
+      "notes": [
+        "Shift-level utilisation dropped to 66% in Block 6 when processor waited for yarder production and fire closures shortened shifts.",
+        "Non-processing time doubled to ~50% of PMH when the processor had to pile its own logs due to loader downtime (Block 7)."
+      ]
+    },
+    {
+      "id": "john_deere_892",
+      "label": "John Deere 892 ELC + Waratah HTH624",
+      "description": "Larger carrier/head combination for heavier stems (>0.8 m³) on the same cable-yarded settings",
+      "shift_summary": {
+        "productive_shifts": 15,
+        "productive_machine_hours": 134.9,
+        "scheduled_machine_hours": 172.9,
+        "utilisation_percent": 78.0,
+        "availability_percent": 81.0,
+        "total_volume_m3": 5415.0,
+        "productivity_m3_per_pmh": 40.1,
+        "productivity_m3_per_smh": 31.3
+      },
+      "detailed_timing": {
+        "sample_decks": 15,
+        "productive_minutes": 845.0,
+        "productive_machine_hours": 14.1,
+        "stems_processed": 959,
+        "volume_processed_m3": 853.0,
+        "average_stem_volume_m3": 0.89,
+        "stems_per_pmh": 68.0,
+        "productivity_m3_per_pmh": 60.5
+      },
+      "cycle_distribution_percent": {
+        "processing": 79.0,
+        "debris_handling": 3.0,
+        "decking": 4.0,
+        "sorting": 2.0,
+        "piling": 0.0,
+        "moving": 3.0,
+        "waiting": 2.0,
+        "minor_delays": 7.0
+      },
+      "costs": {
+        "processor_hourly_cost_cad_per_smh": 140.99,
+        "loader_hourly_cost_cad_per_smh": 116.20,
+        "processor_cost_per_m3_cad_2004": 4.50,
+        "loader_cost_per_m3_cad_2004": 3.71,
+        "system_cost_per_m3_cad_2004": 8.21,
+        "cost_base_year": 2004
+      },
+      "notes": [
+        "Detailed timing showed productivity above 60 m³/PMH for stems averaging 0.9 m³, but combined shift-level utilisation settled at 78% because the yarder could not keep up during fire closures.",
+        "Loader assistance primarily involved pulling large stems down from high decks so the larger head could grab them without exceeding lateral limits."
+      ]
+    }
+  ]
+}

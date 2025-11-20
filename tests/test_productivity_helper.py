@@ -20,6 +20,7 @@ from fhops.productivity import (
     estimate_processor_productivity_bertone2025,
     estimate_processor_productivity_borz2023,
     estimate_processor_productivity_nakagawa2010,
+    estimate_processor_productivity_adv7n3,
     get_processor_carrier_profile,
     get_labelle_huss_automatic_bucking_adjustment,
     load_lahrsen_ranges,
@@ -186,6 +187,14 @@ def test_hypro775_delay_multiplier_scales_output() -> None:
 def test_hypro775_invalid_multiplier_raises() -> None:
     with pytest.raises(ValueError):
         estimate_processor_productivity_hypro775(delay_multiplier=1.2)
+
+
+def test_adv7n3_processor_summary_matches_report() -> None:
+    result = estimate_processor_productivity_adv7n3(machine="john_deere_892")
+    assert math.isclose(result.shift_productivity_m3_per_pmh, 40.1, rel_tol=1e-6)
+    assert result.machine_label.lower().startswith("john deere 892")
+    assert result.system_cost_cad_per_m3_base_year is not None
+    assert math.isclose(result.system_cost_cad_per_m3_base_year, 8.21, rel_tol=1e-4)
 
 
 def test_spinelli2010_harvest_matches_formulas() -> None:

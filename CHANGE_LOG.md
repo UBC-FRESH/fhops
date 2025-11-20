@@ -1,5 +1,20 @@
 # Development Change Log
 
+# 2025-11-26 — ADV7N3 processor/loader presets
+- Digitised the ADV7N3 summer short-log processor study into `data/productivity/processor_adv7n3.json`
+  (Hyundai 210LC/Waratah 620 vs. John Deere 892/Waratah 624) including shift-level utilisation,
+  detailed timing, loader task distributions, and the processor/loader/system cost splits (2004 CAD).
+- Added `estimate_processor_productivity_adv7n3` + `ADV7N3ProcessorProductivityResult` so helpers/tests
+  can pull the Mackenzie summer metrics programmatically; ``fhops.productivity`` now exposes the new
+  dataclass.
+- `fhops.dataset estimate-productivity --machine-role roadside_processor --processor-model adv7n3`
+  (with ``--processor-adv7n3-machine hyundai_210|john_deere_892``) prints the observed shift/detailed
+  productivity plus CPI-adjusted processor vs. loader vs. combined costs, loader-support percentages,
+  and the non-processing penalties when no loader is present. Telemetry already captured for grapple
+  yarders continues to log CPI-adjusted costs.
+- Docs/reference/harvest_systems.rst now documents the ADV7N3 preset and the new CLI option; planning
+  notes/log entries were updated to mark ADV7N3 as extracted.
+
 # 2025-11-25 — ADV5N28 skyline conversion presets
 - Structured ADV5N28 (Madill 071 + Acme 200 Pow’-R Block) into `data/reference/fpinnovations/adv5n28_skyline_conversion.json`, including falling/yarding shift studies, cycle-element tables, and the observed vs. projected skyline/helicopter cost splits.
 - Added an ADV5N28 loader in `fhops.productivity.grapple_bc` (`ADV5N28Block`, `get_adv5n28_block`, `estimate_grapple_yarder_productivity_adv5n28`) and exposed the presets via two new grapple-yarder models: `adv5n28-clearcut` and `adv5n28-shelterwood`.
