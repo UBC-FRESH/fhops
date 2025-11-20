@@ -124,6 +124,86 @@ generators, scenario QA, and KPI workflows.
 Roadside Processor Productivity Models
 --------------------------------------
 
+Landing processor and loader coverage cheat sheet
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following tables summarise which preset to grab for common BC case-study scenarios. Use them as
+a quick index before diving into the per-model notes.
+
+.. list-table:: Landing processor presets (region + utilisation snapshot)
+   :header-rows: 1
+   :widths: 18 30 20 32
+
+   * - Model flag
+     - Region / primary deployment
+     - Key inputs & utilisation
+     - Notes
+   * - ``adv5n6``
+     - Coastal BC – Madill 3800 + Waratah HTH624 (loader-forwarded cold decks vs. grapple-fed hot decks).
+     - Stem source + processing mode select PMH/SMH and CPI-scaled $/m³ (≈0.73 utilisation baked in).
+     - Use when replaying ADV Vol. 5 No. 6 landings; hot decks mirror yarder waits, low-volume mode captures small swing camps.
+   * - ``tn166``
+     - Interior BC – Denis D3000 telescopic boom stroke processor (grapple-yarded vs. right-of-way vs. mixed shift).
+     - Scenario flag picks utilisation (≈0.78–0.87) and CPI-normalised costs.
+     - Handy for stroke-processor partial cuts or right-of-way clean-up.
+   * - ``tr87`` / ``tr106`` / ``tn103``
+     - Legacy BC roadside CTL / partial cut (TJ90 twin processors, Steyr KP40 variants, Cat DL221 stroke).
+     - Scenario selector prints PMH, SMH, and CPI-normalised costs; no extra numeric inputs.
+     - Pair coastal TR-87/TN-103 for Vancouver Island/Haida Gwaii studies and TR-106 for Cariboo shelterwoods.
+   * - ``berry2019``
+     - Kinleith, NZ (purpose-built processor baseline). Useful surrogate when BC dimensions match Berry’s 1–3 m³ stems.
+     - Needs piece size, tree-form, crew multiplier, delay multiplier (default 0.91); carrier option auto-adjusts utilisation.
+     - Serves as general landing processor baseline when local BC data is unavailable but piece-size inputs are known.
+   * - ``labelle2016``/``2017``/``2018``/``2019_*``
+     - Eastern Canadian / Bavarian hardwoods (DBH or recovered volume regressions, PMH₀ only).
+     - Require DBH or recovered volume plus species/treatment/variant; always supply a utilisation multiplier for BC use.
+     - Treat outputs as delay-free references for export markets or hardwood-heavy BC trials; not calibrated for conifer landings.
+   * - ``visser2015``
+     - NZ cable landings (Cat 330DL + Waratah) focused on log-sort complexity.
+     - Requires piece size (1–3 m³) and log-sort count; utilisation multiplier defaults to 0.91.
+     - Quick way to quantify productivity loss when chasing >5 log sorts at coastal BC cable yards.
+   * - ``hypro775``
+     - Tractor-mounted processor (Castro Pérez 2020; Zurita 2021) for thin-wood landings.
+     - No extra inputs; default utilisation ≈0.73 with noise/ergonomic warnings.
+     - Use for small private-land salvage or community forest pilots where capital limits rule out large processors.
+   * - ``bertone2025`` / ``spinelli2010``
+     - European excavator processors at cable landings (Italian Alps) with heavy yarder waits.
+     - Need DBH/height/log count/piece size (Bertone) or tree volume + machine power + slope + stand info (Spinelli); utilisations baked in.
+     - Helpful for steep-slope BC pilots with winch-assist yarders or when benchmarking against European CTL standards.
+   * - ``borz2023`` / ``nakagawa2010``
+     - Landing harvester-as-processor (Romania) and excavator-based processor (Hokkaido thinning).
+     - Borz needs no inputs (optionally piece size); Nakagawa accepts DBH or per-tree volume plus a delay multiplier.
+     - Use to bound harvester bucking scenarios or shovel-processor deployments when only tree dimensions are known.
+
+.. list-table:: Loader / hoe-forwarder presets (BC defaults)
+   :header-rows: 1
+   :widths: 18 30 20 32
+
+   * - Model flag
+     - Region / primary deployment
+     - Key inputs & utilisation
+     - Notes
+   * - ``tn261``
+     - Interior BC loader-forwarder (Hoe-chucking) reference.
+     - Requires piece size, forwarding distance, slope %, bunched flag, and delay multiplier (utilisation default = delay-free).
+     - Baseline for hoe-chucking between road and landing; pair with TN285 trail spacing notes.
+   * - ``adv5n1``
+     - Coastal BC Madill 3800 shovel-forwarder (ADV5N1 Figure 9).
+     - Inputs: forwarding distance, slope class (0–10 % vs. 11–30 %), payload, optional utilisation override (default ≈0.93).
+     - Captures shovel-fed loader operations for roadside decking or short forwarding legs.
+   * - ``adv2n26``
+     - Clambunk/hoe-forwarding combo (Trans-Gesco TG88 + JD 892D-LC) from ADV2N26.
+     - Needs travel empty distance, stems per cycle, stem volume, utilisation (default 0.87) plus optional in-cycle delays.
+     - CLI prints soil-disturbance stats (20.4 % trail occupancy) so planners can track disturbance budgets.
+   * - ``barko450``
+     - TN-46 Barko 450 heel-boom loader (ground-skid vs. cable block).
+     - Scenario flag selects utilisation (0.79 default) and CPI-inflated machine rate; optional `--loader-utilisation` rescales cost per m³.
+     - Use for live-heel truck loading at coastal BC landings; cost role flows through `inspect-machine`.
+   * - ``kizha2020``
+     - Biomass/bucket loader reference (hot vs. cold loading) from Maine study.
+     - Mode flag sets utilisation (55 % hot vs. 7 % cold) and costs; no other inputs.
+     - Handy for demonstrating hot-deck decoupling costs or biomass operations; not BC-calibrated but informative.
+
 ``fhops.dataset estimate-productivity --machine-role roadside_processor`` now supports two
 regressions:
 
@@ -144,6 +224,10 @@ regressions:
   * ``--processor-carrier`` – ``purpose_built`` (default) or ``excavator``. Excavator carriers apply the
     utilisation/productivity penalty observed by Magagnotti et al. (2017) and surface the higher fuel
     consumption + yarder-wait behaviour noted by Nakagawa (2010) / Bertone & Manzone (2025).
+  * ``--processor-skid-area-m2`` – optional landing skid-area flag. When provided, the CLI evaluates Berry’s
+    Figure 11 regression (≈2,600–3,700 m² range) to predict delay seconds per stem and, if you have not supplied
+    ``--processor-delay-multiplier``, auto-scales utilisation to reflect the larger/smaller landing. The command
+    also prints the predicted m³/PMH hint and warns when your skid area lies outside the study range.
 * ``--processor-model labelle2016`` – Labelle et al. (2016) sugar maple study (New Brunswick) grouped by tree form quality (acceptable vs. unacceptable). Outputs are PMH₀.
   * ``--processor-dbh-cm`` – diameter at breast height (cm).
   * ``--processor-labelle2016-form`` – ``acceptable`` or ``unacceptable`` form class (matches the NHRI tree-form groupings).

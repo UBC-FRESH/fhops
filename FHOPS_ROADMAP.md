@@ -137,7 +137,7 @@ before proposing new work.
    - [x] Ship CTL forwarder helper module (`fhops.productivity.forwarder_bc`) covering Ghaffariyan small/large, Kellogg mixed/saw/pulp, and FPInnovations ADV6N10 sorting models, with CLI/test coverage and planning notes.
    - [x] Ship CTL harvester helpers (ADV6N10 regression + CLI, ADV5N30 removal/brushing modifiers, TN292 tree-size/density regression) and document applicability in the CLI/docs.
    - [x] Record TN285 / ADV5N9 / ADV2N21 scenario guidance (ghost trails, removal levels, trail reuse) in the planning docs so scenario authors know when productivity stays flat vs. when to adjust costs.
-   - [ ] Integrate the new helpers into dataset inspection CLI defaults and synthetic generator presets; refresh fixtures/tests that assume legacy productivity values.
+   - [x] Integrate the new helpers into dataset inspection CLI defaults and synthetic generator presets; refresh fixtures/tests that assume legacy productivity values (landing processor/loader coverage now fully wired, docs/tests refreshed).
    - [ ] Keep `FHOPS_ROADMAP.md` and `notes/dataset_inspection_plan.md` in sync as additional FPInnovations regressions are ported.
 
 ## Backlog & Ideas
