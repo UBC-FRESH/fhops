@@ -112,6 +112,24 @@ def test_cli_grapple_yarder_tn157_case() -> None:
     assert "Observed Cost" in result.stdout
 
 
+def test_cli_grapple_yarder_tn157_show_costs_uses_cypress_rate() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_yarder",
+            "--grapple-yarder-model",
+            "tn157",
+            "--tn157-case",
+            "combined",
+            "--show-costs",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "grapple_yarder_cypress7280" in result.stdout
+
+
 def test_cli_grapple_yarder_adv5n28_clearcut() -> None:
     result = runner.invoke(
         dataset_app,

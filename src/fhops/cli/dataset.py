@@ -662,6 +662,7 @@ _ADV5N28_MODEL_TO_BLOCK: dict[GrappleYarderModel, str] = {
 
 _GRAPPLE_YARDER_COST_ROLES: dict[GrappleYarderModel, str] = {
     GrappleYarderModel.TN147: "grapple_yarder_madill009",
+    GrappleYarderModel.TN157: "grapple_yarder_cypress7280",
 }
 
 def _tn157_case_choices() -> tuple[str, ...]:

@@ -615,7 +615,10 @@ Cable-running systems can now call the grapple yarder regressions bundled in
 * ``tn157`` – Observed productivity/costs from TN-157 (Cypress 7280B swing yarder + Hitachi UH14 backspar).
   Select a case with ``--tn157-case`` (``combined`` default, or ``1``–``7`` to pull an individual study).
   The helper reports the observed turn volume, yarding distance, m³/PMH, and both 1991 CAD and CPI-inflated $/m³
-  so costing workflows can drop the Cypress preset in immediately.
+  so costing workflows can drop the Cypress preset in immediately. Adding ``--show-costs`` now references the
+  `grapple_yarder_cypress7280` machine-rate entry (FERIC TN-157 Appendix II) so the CLI prints the BC swing-yarder
+  owning/operating split inline; ``inspect-machine --machine-role grapple_yarder_cypress7280`` surfaces the same table
+  for planning docs.
 * ``tn147`` – Observed productivity/costs from TN-147 (seven Madill 009 highlead case studies around Lake Cowichan).
   Pick a case with ``--tn147-case`` (``combined`` default) to pull the corresponding logs/turn, turn volume, and
   1989 CAD cost per log/m³; the CLI inflates the costs to 2024 CAD alongside the original values and, when you add

@@ -216,6 +216,20 @@
         "repair_maintenance_usage_multipliers": null
     },
     {
+        "machine_name": "Cypress 7280B + UH14 backspar (TN-157)",
+        "role": "grapple_yarder_cypress7280",
+        "ownership_cost_per_smh": 109.99,
+        "operating_cost_per_smh": 180.08,
+        "default_utilization": 0.79,
+        "move_in_cost": 9000.0,
+        "cost_base_year": 1991,
+        "source": "FERIC TN-157 (1991) Appendix II cost tables for Cypress 7280B swing yarder with Hitachi UH14 backspar.",
+        "notes": "Standing running-skyline preset (trail spar + mobile backspar). Costs exclude supervision/overhead/interest; labour reflects 1991 coastal IWA rates +38% benefits. Use when modelling TN157 or `cable_running`/`cable_salvage_grapple` presets to pull the BC swing-yard skyline rental rate.",
+        "repair_maintenance_cost_per_smh": null,
+        "repair_maintenance_reference_hours": null,
+        "repair_maintenance_usage_multipliers": null
+    },
+    {
         "machine_name": "Shovel Logger",
         "role": "shovel_logger",
         "ownership_cost_per_smh": 65.0,
