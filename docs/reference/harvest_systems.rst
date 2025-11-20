@@ -631,7 +631,10 @@ Cable-running systems can now call the grapple yarder regressions bundled in
 * ``adv5n28-clearcut`` / ``adv5n28-shelterwood`` – Long-distance skyline conversions from ADV5N28 (Madill 071 +
   Acme 200 Pow’-R Block carriage substituting helicopter plans near Lillooet). These presets pull the observed turn
   volume, 375–725 m downhill yarding distances, m³/PMH, and the 2002 CAD costs for both the actual study and the
-  projected skyline-vs-helicopter scenarios so you can quantify the savings relative to the $60/m³ heli baseline.
+  projected skyline-vs-helicopter scenarios so you can quantify the savings relative to the $60/m³ heli baseline. When
+  you add ``--show-costs`` (or call ``inspect-machine --machine-role grapple_yarder_adv5n28``) the CLI now references
+  the ADV5N28 Madill 071 owning/operating split (289.77 $/SMH total from the Appendix II cost table) instead of the
+  generic swing-yarder placeholder, keeping the skyline costing consistent with the study.
 
 Every helper prints the assumed turn volume, yarding distance (when available), and resulting m³/PMH. Dataset-driven
 presets (TN-147/TN-157/TR-122) also surface the observed case name and CPI-adjusted costs so you can drop them directly

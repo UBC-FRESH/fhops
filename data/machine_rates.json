@@ -216,6 +216,20 @@
         "repair_maintenance_usage_multipliers": null
     },
     {
+        "machine_name": "Madill 071 skyline (ADV5N28)",
+        "role": "grapple_yarder_adv5n28",
+        "ownership_cost_per_smh": 22.27,
+        "operating_cost_per_smh": 267.5,
+        "default_utilization": 0.94,
+        "move_in_cost": 10000.0,
+        "cost_base_year": 2002,
+        "source": "FPInnovations Advantage Vol. 5 No. 28 (2004) Madill 071 + Acme 200 Pow'-R Block skyline conversion.",
+        "notes": "Standing skyline conversion of heli corridors (Madill 071 + Acme 200 Pow'-R Block). Costs exclude supervision/overhead/interest; labour = 2002 coastal IWA rates +40% benefits. Use when modelling ADV5N28 clearcut/shelterwood presets or `cable_running_adv5n28_*` harvest systems.",
+        "repair_maintenance_cost_per_smh": null,
+        "repair_maintenance_reference_hours": null,
+        "repair_maintenance_usage_multipliers": null
+    },
+    {
         "machine_name": "Cypress 7280B + UH14 backspar (TN-157)",
         "role": "grapple_yarder_cypress7280",
         "ownership_cost_per_smh": 109.99,

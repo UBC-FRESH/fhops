@@ -8,6 +8,7 @@
 - Added a TN-147 Madill 009 machine-rate entry (`grapple_yarder_madill009`) plus a refreshed `tower_yarder` default so `--show-costs` and harvest-system presets report the BC highlead owning/operating split whenever the TN147 grapple-yarder helper is selected; docs/tests now highlight the new cost mapping.
 - Captured the Skylead C40/TMY45 cost study (FERIC TN-201) as `grapple_yarder_skyleadc40` so TR125/FNCY12 intermediate-support corridors can pull CPI-aware skyline rentals; the skyline docs now point at `inspect-machine --machine-role grapple_yarder_skyleadc40` for those presets.
 - Added the Cypress 7280B + UH14 trail-spar rental rate from TN-157 (new `grapple_yarder_cypress7280` entry) and mapped the TN157 helper/`cable_running*` harvest systems to it so skyline costing outputs cite the published $/SMH split instead of the generic swing-yarder placeholder. Docs/tests updated accordingly.
+- Introduced the ADV5N28 Madill 071 skyline machine-rate role (`grapple_yarder_adv5n28`, 22.27 $/SMH owning + 267.50 $/SMH operating, 2002 CAD) and taught the ADV5N28 grapple-yarder models/harvest systems to reference it so the long-span helicopter-to-skyline conversions surface the Advantage cost structure in CLI/docs/tests.
 
 # 2025-11-27 — ADV1N12 forwarder/skidder integration
 - Digitised the Advantage Vol. 1 No. 12 extraction-distance curves into `data/productivity/forwarder_skidder_adv1n12.json`

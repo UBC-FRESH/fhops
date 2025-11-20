@@ -146,6 +146,22 @@ def test_cli_grapple_yarder_adv5n28_clearcut() -> None:
     assert "2002 CAD" in result.stdout
 
 
+def test_cli_grapple_yarder_adv5n28_show_costs() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_yarder",
+            "--grapple-yarder-model",
+            "adv5n28-clearcut",
+            "--show-costs",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "grapple_yarder_adv5n28" in result.stdout
+
+
 def test_cli_grapple_yarder_adv5n28_harvest_system_defaults() -> None:
     result = runner.invoke(
         dataset_app,
