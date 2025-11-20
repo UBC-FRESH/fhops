@@ -5,6 +5,7 @@
 - Updated docs (`docs/howto/data_contract.rst`, `docs/reference/harvest_systems.rst`) so the scenario data contract explicitly calls out the new column and clarifies how to thread it through CLI calls/telemetry.
 - Extended the synthetic scenario tests to lock in the behaviour: salvage-enabled `generate_with_systems` invocations now assert that `STANDARD_MILL` is the default, and `generate_random_dataset` smoketests confirm the CSV/Scenario/loader path round-trips the enum without dropping the value.
 - Planning notes now flag the skyline costing defaults as the next queued action (Madill 009 CPI-aware machine-rate entry sourced from TN147/TN157) so the harvest-system backlog knows Item 1 after the salvage schema work shipped.
+- Added a TN-147 Madill 009 machine-rate entry (`grapple_yarder_madill009`) plus a refreshed `tower_yarder` default so `--show-costs` and harvest-system presets report the BC highlead owning/operating split whenever the TN147 grapple-yarder helper is selected; docs/tests now highlight the new cost mapping.
 
 # 2025-11-27 — ADV1N12 forwarder/skidder integration
 - Digitised the Advantage Vol. 1 No. 12 extraction-distance curves into `data/productivity/forwarder_skidder_adv1n12.json`

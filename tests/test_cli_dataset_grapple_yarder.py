@@ -60,6 +60,24 @@ def test_cli_grapple_yarder_tn147_case() -> None:
     assert "Case 2" in result.stdout
 
 
+def test_cli_grapple_yarder_tn147_show_costs_uses_madill_rate() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_yarder",
+            "--grapple-yarder-model",
+            "tn147",
+            "--tn147-case",
+            "1",
+            "--show-costs",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "grapple_yarder_madill009" in result.stdout
+
+
 def test_cli_grapple_yarder_tr122_extended() -> None:
     result = runner.invoke(
         dataset_app,

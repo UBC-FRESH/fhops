@@ -162,21 +162,30 @@
     {
         "machine_name": "Tower Yarder (Madill 009)",
         "role": "tower_yarder",
-        "ownership_cost_per_smh": 170.0,
-        "operating_cost_per_smh": 250.0,
-        "default_utilization": 0.68,
-        "move_in_cost": 10000.0,
-        "cost_base_year": 2024,
-        "source": "Hartley & Han (2007) + Forrester (1995) cost study. Converted to CAD 2024.",
-        "notes": "Covers highlead/tower system including guylines + loader support. FPInnovations Advantage Vol. 4 No. 23 (2003) Table 2 yarding crane large class (covers swing/tower systems) gives CAD 43.63/SMH at 10 000 h (2002 dollars); CPI 2002\u21922024 \u22481.56 \u21d2 \u2248CAD 68.1/SMH repair+maintenance allowance.",
-        "repair_maintenance_cost_per_smh": 68.06,
-        "repair_maintenance_reference_hours": 10000,
-        "repair_maintenance_usage_multipliers": {
-            "5000": 0.9251,
-            "10000": 1.0,
-            "20000": 1.3628,
-            "25000": 1.4907
-        }
+        "ownership_cost_per_smh": 44.54,
+        "operating_cost_per_smh": 220.13,
+        "default_utilization": 0.79,
+        "move_in_cost": 9000.0,
+        "cost_base_year": 1989,
+        "source": "FERIC TN-147 (1990) Appendix I machine-cost analysis (Madill 009 highlead yarder).",
+        "notes": "Costs exclude supervision/overhead/interest; labour = 1989 IWA rates +35% benefits. Ownership bundles yarder depreciation/insurance; operating cost covers hooktender/rigging crew, fuel/lube, and backspar upkeep. Use for standing-skyline/tower corridors without motorized grapples.",
+        "repair_maintenance_cost_per_smh": null,
+        "repair_maintenance_reference_hours": null,
+        "repair_maintenance_usage_multipliers": null
+    },
+    {
+        "machine_name": "Madill 009 highlead (TN-147)",
+        "role": "grapple_yarder_madill009",
+        "ownership_cost_per_smh": 44.54,
+        "operating_cost_per_smh": 220.13,
+        "default_utilization": 0.79,
+        "move_in_cost": 9000.0,
+        "cost_base_year": 1989,
+        "source": "FERIC TN-147 (1990) Appendix I machine-cost analysis (Madill 009 highlead yarder).",
+        "notes": "Six-person crew (yarder engineer, hooktender, two chokersetters, utility, landing support). Costs exclude supervision/overhead/interest; labour = 1989 IWA wages +35% benefits. Use when selecting the TN147 grapple-yarder preset or skyline harvest systems that rely on Madill 009 highlead corridors.",
+        "repair_maintenance_cost_per_smh": null,
+        "repair_maintenance_reference_hours": null,
+        "repair_maintenance_usage_multipliers": null
     },
     {
         "machine_name": "Grapple Yarder (Cypress 7280B + UH14 backspar)",

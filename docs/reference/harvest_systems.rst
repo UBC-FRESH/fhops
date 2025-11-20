@@ -618,7 +618,9 @@ Cable-running systems can now call the grapple yarder regressions bundled in
   so costing workflows can drop the Cypress preset in immediately.
 * ``tn147`` – Observed productivity/costs from TN-147 (seven Madill 009 highlead case studies around Lake Cowichan).
   Pick a case with ``--tn147-case`` (``combined`` default) to pull the corresponding logs/turn, turn volume, and
-  1989 CAD cost per log/m³; the CLI inflates the costs to 2024 CAD alongside the original values.
+  1989 CAD cost per log/m³; the CLI inflates the costs to 2024 CAD alongside the original values and, when you add
+  ``--show-costs``, it now references the TN-147 machine-rate entry ``grapple_yarder_madill009`` so the owning/operating
+  split matches the Madill 009 helper automatically.
 * ``tr122-extended`` / ``tr122-shelterwood`` / ``tr122-clearcut`` – Observed Washington SLH 78 running-skyline
   productivity from TR-122 (Roberts Creek alternative silviculture project). These presets don’t require new inputs:
   the CLI reports the published cycle volume, m³/PMH, and the yarder/loader/labour cost breakdowns (1996 CAD plus

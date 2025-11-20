@@ -551,6 +551,10 @@ def _derive_cost_role_override(
     return _LOADER_MODEL_COST_ROLES.get(key)
 
 
+def _grapple_yarder_cost_role(model: GrappleYarderModel) -> str:
+    return _GRAPPLE_YARDER_COST_ROLES.get(model, "grapple_yarder")
+
+
 def _machine_rate_roles_help() -> str:
     roles = ", ".join(sorted(load_machine_rate_index().keys()))
     return f"Available roles: {roles}"
@@ -654,6 +658,10 @@ _TR122_MODEL_TO_TREATMENT: dict[GrappleYarderModel, str] = {
 _ADV5N28_MODEL_TO_BLOCK: dict[GrappleYarderModel, str] = {
     GrappleYarderModel.ADV5N28_CLEARCUT: "block_1_clearcut_with_reserves",
     GrappleYarderModel.ADV5N28_SHELTERWOOD: "block_2_irregular_shelterwood",
+}
+
+_GRAPPLE_YARDER_COST_ROLES: dict[GrappleYarderModel, str] = {
+    GrappleYarderModel.TN147: "grapple_yarder_madill009",
 }
 
 def _tn157_case_choices() -> tuple[str, ...]:
@@ -5379,7 +5387,10 @@ def estimate_productivity_cmd(
             console.print(
                 f"[dim]Applied grapple-yarder defaults from harvest system '{selected_system.system_id}'.[/dim]"
             )
-        _maybe_render_costs(show_costs, ProductivityMachineRole.GRAPPLE_YARDER.value)
+        _maybe_render_costs(
+            show_costs,
+            _grapple_yarder_cost_role(grapple_yarder_model),
+        )
         return
     if role == ProductivityMachineRole.ROADSIDE_PROCESSOR.value:
         processor_user_supplied = {
