@@ -793,6 +793,95 @@ def estimate_cable_yarder_productivity_tr127(
     return _m3_per_pmh_from_minutes(payload_m3, cycle_minutes)
 
 
+LEDOUX_COEFFICIENTS: dict[str, dict[str, float]] = {
+    "skagit_shotgun": {
+        "intercept": 2.74983,
+        "x1": 0.00177,
+        "x2": 0.12664,
+        "x3": 0.00317,
+        "x4": 0.20023,
+        "x5": 0.00930,
+    },
+    "skagit_highlead": {
+        "intercept": 3.08365,
+        "x1": 0.00197,
+        "x2": 0.16855,
+        "x3": 0.00300,
+        "x4": 0.12621,
+        "x5": 0.00530,
+    },
+    "washington_208e": {
+        "intercept": 3.77856,
+        "x1": 0.00290,
+        "x2": -0.11982,
+        "x3": 0.00265,
+        "x4": 0.48923,
+        "x5": -0.00272,
+    },
+    "tmy45": {
+        "intercept": 1.92641,
+        "x1": 0.00423,
+        "x2": 0.18713,
+        "x3": 0.00674,
+        "x4": 0.22898,
+        "x5": 0.00482,
+    },
+}
+
+FT_PER_M = 3.28084
+CUBIC_FT_PER_CUBIC_M = 35.3147
+
+
+def estimate_residue_cycle_time_ledoux_minutes(
+    *,
+    profile: str,
+    slope_distance_m: float,
+    merchantable_logs_per_turn: float,
+    merchantable_volume_m3: float,
+    residue_pieces_per_turn: float,
+    residue_volume_m3: float,
+) -> float:
+    coeffs = LEDOUX_COEFFICIENTS[profile]
+    x1 = slope_distance_m * FT_PER_M
+    x2 = merchantable_logs_per_turn
+    x3 = merchantable_volume_m3 * CUBIC_FT_PER_CUBIC_M
+    x4 = residue_pieces_per_turn
+    x5 = residue_volume_m3 * CUBIC_FT_PER_CUBIC_M
+    cycle = (
+        coeffs["intercept"]
+        + coeffs["x1"] * x1
+        + coeffs["x2"] * x2
+        + coeffs["x3"] * x3
+        + coeffs["x4"] * x4
+        + coeffs["x5"] * x5
+    )
+    return max(cycle, 0.01)
+
+
+def estimate_residue_productivity_ledoux_m3_per_pmh(
+    *,
+    profile: str,
+    slope_distance_m: float,
+    merchantable_logs_per_turn: float,
+    merchantable_volume_m3: float,
+    residue_pieces_per_turn: float,
+    residue_volume_m3: float,
+) -> tuple[float, float]:
+    cycle_minutes = estimate_residue_cycle_time_ledoux_minutes(
+        profile=profile,
+        slope_distance_m=slope_distance_m,
+        merchantable_logs_per_turn=merchantable_logs_per_turn,
+        merchantable_volume_m3=merchantable_volume_m3,
+        residue_pieces_per_turn=residue_pieces_per_turn,
+        residue_volume_m3=residue_volume_m3,
+    )
+    total_volume_m3 = merchantable_volume_m3 + residue_volume_m3
+    if total_volume_m3 <= 0:
+        raise ValueError("Total volume per turn must be > 0 for LeDoux regressions")
+    productivity = (total_volume_m3 * 60.0) / cycle_minutes
+    return productivity, cycle_minutes
+
+
 __all__ = [
     "estimate_cable_skidding_productivity_unver_spss",
     "estimate_cable_skidding_productivity_unver_robust",
@@ -811,6 +900,8 @@ __all__ = [
     "estimate_running_skyline_cycle_time_mcneel2000_minutes",
     "estimate_running_skyline_productivity_mcneel2000",
     "running_skyline_variant_defaults",
+    "estimate_residue_cycle_time_ledoux_minutes",
+    "estimate_residue_productivity_ledoux_m3_per_pmh",
     "HelicopterLonglineModel",
     "HelicopterProductivityResult",
     "estimate_helicopter_longline_productivity",

@@ -101,6 +101,8 @@ from fhops.productivity import (
     estimate_standing_skyline_turn_time_kellogg1976,
     estimate_running_skyline_cycle_time_mcneel2000_minutes,
     estimate_running_skyline_productivity_mcneel2000,
+    estimate_residue_productivity_ledoux_m3_per_pmh,
+    estimate_residue_cycle_time_ledoux_minutes,
     running_skyline_variant_defaults,
     estimate_forwarder_productivity_bc,
     estimate_harvester_productivity_adv6n10,
@@ -738,6 +740,18 @@ class SkylineProductivityModel(str, Enum):
     AUBUCHON_STANDING = "aubuchon-standing"
     AUBUCHON_KRAMER = "aubuchon-kramer"
     AUBUCHON_KELLOGG = "aubuchon-kellogg"
+    LEDOUX_SKAGIT_SHOTGUN = "ledoux-skagit-shotgun"
+    LEDOUX_SKAGIT_HIGHLEAD = "ledoux-skagit-highlead"
+    LEDOUX_WASHINGTON_208E = "ledoux-washington-208e"
+    LEDOUX_TMY45 = "ledoux-tmy45"
+
+
+_LEDOUX_MODEL_TO_PROFILE: dict[SkylineProductivityModel, str] = {
+    SkylineProductivityModel.LEDOUX_SKAGIT_SHOTGUN: "skagit_shotgun",
+    SkylineProductivityModel.LEDOUX_SKAGIT_HIGHLEAD: "skagit_highlead",
+    SkylineProductivityModel.LEDOUX_WASHINGTON_208E: "washington_208e",
+    SkylineProductivityModel.LEDOUX_TMY45: "tmy45",
+}
 
 
 class RoadsideProcessorModel(str, Enum):
@@ -6971,6 +6985,34 @@ def estimate_skyline_productivity_cmd(
         min=0.01,
         help="Average log volume (m³) used to convert logs/turn to payload for Aubuchon model.",
     ),
+    merchantable_logs_per_turn: float | None = typer.Option(
+        None,
+        "--merchantable-logs-per-turn",
+        min=0.0,
+        help="Merchantable logs per turn (LeDoux 1984 residue regressions).",
+        show_default=False,
+    ),
+    merchantable_volume_m3: float | None = typer.Option(
+        None,
+        "--merchantable-volume-m3",
+        min=0.0,
+        help="Merchantable volume per turn (m³) for LeDoux regressions.",
+        show_default=False,
+    ),
+    residue_pieces_per_turn: float | None = typer.Option(
+        None,
+        "--residue-pieces-per-turn",
+        min=0.0,
+        help="Residue pieces per turn (LeDoux regressions).",
+        show_default=False,
+    ),
+    residue_volume_m3: float | None = typer.Option(
+        None,
+        "--residue-volume-m3",
+        min=0.0,
+        help="Residue volume per turn (m³) for LeDoux regressions.",
+        show_default=False,
+    ),
     crew_size: float = typer.Option(
         4.0,
         "--crew-size",
@@ -7077,6 +7119,10 @@ def estimate_skyline_productivity_cmd(
         "running_yarder_variant": _parameter_supplied(ctx, "running_yarder_variant"),
         "carriage_height_m": _parameter_supplied(ctx, "carriage_height_m"),
         "chordslope_percent": _parameter_supplied(ctx, "chordslope_percent"),
+        "merchantable_logs_per_turn": _parameter_supplied(ctx, "merchantable_logs_per_turn"),
+        "merchantable_volume_m3": _parameter_supplied(ctx, "merchantable_volume_m3"),
+        "residue_pieces_per_turn": _parameter_supplied(ctx, "residue_pieces_per_turn"),
+        "residue_volume_m3": _parameter_supplied(ctx, "residue_volume_m3"),
     }
 
     (
@@ -7121,6 +7167,10 @@ def estimate_skyline_productivity_cmd(
     telemetry_chordslope = None
     telemetry_lead_angle = None
     telemetry_chokers = None
+    telemetry_merch_logs = None
+    telemetry_merch_volume = None
+    telemetry_residue_pieces = None
+    telemetry_residue_volume = None
     if model is SkylineProductivityModel.LEE_UPHILL:
         value = estimate_cable_yarder_productivity_lee2018_uphill(
             yarding_distance_m=slope_distance_m,
@@ -7272,6 +7322,45 @@ def estimate_skyline_productivity_cmd(
         telemetry_pieces = resolved_pieces
         telemetry_piece_volume = resolved_piece_volume
         telemetry_running_variant = running_yarder_variant.value
+    elif model in _LEDOUX_MODEL_TO_PROFILE:
+        profile = _LEDOUX_MODEL_TO_PROFILE[model]
+        if merchantable_logs_per_turn is None:
+            raise typer.BadParameter("--merchantable-logs-per-turn is required for LeDoux models.")
+        if merchantable_volume_m3 is None:
+            raise typer.BadParameter("--merchantable-volume-m3 is required for LeDoux models.")
+        if residue_pieces_per_turn is None:
+            raise typer.BadParameter("--residue-pieces-per-turn is required for LeDoux models.")
+        if residue_volume_m3 is None:
+            raise typer.BadParameter("--residue-volume-m3 is required for LeDoux models.")
+        value, cycle_minutes = estimate_residue_productivity_ledoux_m3_per_pmh(
+            profile=profile,
+            slope_distance_m=slope_distance_m,
+            merchantable_logs_per_turn=merchantable_logs_per_turn,
+            merchantable_volume_m3=merchantable_volume_m3,
+            residue_pieces_per_turn=residue_pieces_per_turn,
+            residue_volume_m3=residue_volume_m3,
+        )
+        total_payload = merchantable_volume_m3 + residue_volume_m3
+        rows = [
+            ("Model", model.value),
+            ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
+            ("Merchantable Logs/Turn", f"{merchantable_logs_per_turn:.2f}"),
+            ("Merchantable Volume (m³)", f"{merchantable_volume_m3:.3f}"),
+            ("Residue Pieces/Turn", f"{residue_pieces_per_turn:.2f}"),
+            ("Residue Volume (m³)", f"{residue_volume_m3:.3f}"),
+            ("Total Payload (m³)", f"{total_payload:.3f}"),
+            ("Cycle Time (min)", f"{cycle_minutes:.2f}"),
+        ]
+        source_label = "LeDoux (1984) residue yarding regressions (Willamette/Mt. Hood experimental trials)."
+        console_warning = (
+            "[yellow]Warning:[/yellow] LeDoux regressions are based on US residue logging (1984 USD); validate before using for BC skyline costing."
+        )
+        telemetry_payload_m3 = total_payload
+        telemetry_horizontal = slope_distance_m
+        telemetry_merch_logs = merchantable_logs_per_turn
+        telemetry_merch_volume = merchantable_volume_m3
+        telemetry_residue_pieces = residue_pieces_per_turn
+        telemetry_residue_volume = residue_volume_m3
     elif model is SkylineProductivityModel.AUBUCHON_STANDING:
         cycle_minutes = estimate_standing_skyline_turn_time_aubuchon1979(
             slope_distance_m=slope_distance_m,
@@ -7430,6 +7519,10 @@ def estimate_skyline_productivity_cmd(
             "chordslope_percent": telemetry_chordslope,
             "lead_angle_degrees": telemetry_lead_angle,
             "chokers": telemetry_chokers,
+            "merchantable_logs_per_turn": telemetry_merch_logs,
+            "merchantable_volume_m3": telemetry_merch_volume,
+            "residue_pieces_per_turn": telemetry_residue_pieces,
+            "residue_volume_m3": telemetry_residue_volume,
             "cycle_minutes": cycle_minutes,
             "productivity_m3_per_pmh": value,
             "tr119_treatment": tr119_treatment,

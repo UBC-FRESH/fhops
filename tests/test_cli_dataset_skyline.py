@@ -11,6 +11,7 @@ from fhops.productivity import (
     estimate_standing_skyline_productivity_aubuchon1979,
     estimate_standing_skyline_productivity_kramer1978,
     estimate_standing_skyline_productivity_kellogg1976,
+    estimate_residue_productivity_ledoux_m3_per_pmh,
 )
 
 runner = CliRunner()
@@ -237,6 +238,52 @@ def test_cli_skyline_aubuchon_kellogg() -> None:
         chokers=2.0,
     )
     assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_skyline_ledoux_tmy45() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "ledoux-tmy45",
+            "--slope-distance-m",
+            "120",
+            "--merchantable-logs-per-turn",
+            "1.5",
+            "--merchantable-volume-m3",
+            "4.2",
+            "--residue-pieces-per-turn",
+            "1.0",
+            "--residue-volume-m3",
+            "0.8",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    expected, _ = estimate_residue_productivity_ledoux_m3_per_pmh(
+        profile="tmy45",
+        slope_distance_m=120.0,
+        merchantable_logs_per_turn=1.5,
+        merchantable_volume_m3=4.2,
+        residue_pieces_per_turn=1.0,
+        residue_volume_m3=0.8,
+    )
+    assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_skyline_ledoux_requires_inputs() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "ledoux-skagit-shotgun",
+            "--slope-distance-m",
+            "90",
+        ],
+    )
+    assert result.exit_code != 0
+    assert "merchantable-logs" in result.stdout.lower()
 
 
 def test_cli_skyline_harvest_system_running_defaults() -> None:

@@ -10,6 +10,7 @@
 - Added the Cypress 7280B + UH14 trail-spar rental rate from TN-157 (new `grapple_yarder_cypress7280` entry) and mapped the TN157 helper/`cable_running*` harvest systems to it so skyline costing outputs cite the published $/SMH split instead of the generic swing-yarder placeholder. Docs/tests updated accordingly.
 - Introduced the ADV5N28 Madill 071 skyline machine-rate role (`grapple_yarder_adv5n28`, 22.27 $/SMH owning + 267.50 $/SMH operating, 2002 CAD) and taught the ADV5N28 grapple-yarder models/harvest systems to reference it so the long-span helicopter-to-skyline conversions surface the Advantage cost structure in CLI/docs/tests.
 - Added a LeDoux (1984) residue yarder cost block (Skagit BU-94 shotgun/highlead, Washington 208E, Thunderbird TMY-45). The hourly rates now live in `data/machine_rates.json` (1984 USD base) so upcoming skyline regressions or harvest-system presets can cite CPI-adjusted values via `inspect-machine`/`--show-costs`.
+- Wired the LeDoux (1984) residue skyline regressions into `fhops.dataset estimate-skyline-productivity` via four new models (`ledoux-skagit-shotgun`, `ledoux-skagit-highlead`, `ledoux-washington-208e`, `ledoux-tmy45`). The CLI now accepts merchantable/residue turn metrics, prints cycle minutes, and can reference the new 1984 USD machine-rate entries for CPI-adjusted costing context. Tests/docs updated accordingly.
 
 # 2025-11-27 — ADV1N12 forwarder/skidder integration
 - Digitised the Advantage Vol. 1 No. 12 extraction-distance curves into `data/productivity/forwarder_skidder_adv1n12.json`
