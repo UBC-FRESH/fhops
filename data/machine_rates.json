@@ -176,23 +176,18 @@
         }
     },
     {
-        "machine_name": "Grapple Yarder (Madill 124 swing)",
+        "machine_name": "Grapple Yarder (Cypress 7280B + UH14 backspar)",
         "role": "grapple_yarder",
-        "ownership_cost_per_smh": 180.0,
-        "operating_cost_per_smh": 270.0,
-        "default_utilization": 0.7,
+        "ownership_cost_per_smh": 109.99,
+        "operating_cost_per_smh": 180.08,
+        "default_utilization": 0.79,
         "move_in_cost": 9000.0,
-        "cost_base_year": 2024,
-        "source": "Hartley & Han (2007) + SR54 yarding cost tables. Converted to CAD.",
-        "notes": "Total \u2248 CAD 450/SMH; assumes backspar + loader deployed on same cost centre. FPInnovations Advantage Vol. 4 No. 23 (2003) Table 2 yarding crane large class (covers swing/tower systems) gives CAD 43.63/SMH at 10 000 h (2002 dollars); CPI 2002\u21922024 \u22481.56 \u21d2 \u2248CAD 68.1/SMH repair+maintenance allowance.",
-        "repair_maintenance_cost_per_smh": 68.06,
-        "repair_maintenance_reference_hours": 10000,
-        "repair_maintenance_usage_multipliers": {
-            "5000": 0.9251,
-            "10000": 1.0,
-            "20000": 1.3628,
-            "25000": 1.4907
-        }
+        "cost_base_year": 1991,
+        "source": "FERIC TN-157 (1991) Appendix II cost tables; CPI-adjusted to 2024 CAD.",
+        "notes": "Ownership includes yarder + backspar interest, insurance, and depreciation; operating costs bundle rigging, rope, labour (operator + hooktender + utility), fuel/lube, and repair/maintenance (R=$60k/yr yarder + $10k/yr backspar). Total shift cost = $259/h + $31/h (1991 CAD) before CPI.",
+        "repair_maintenance_cost_per_smh": null,
+        "repair_maintenance_reference_hours": null,
+        "repair_maintenance_usage_multipliers": null
     },
     {
         "machine_name": "Shovel Logger",

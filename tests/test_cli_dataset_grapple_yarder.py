@@ -41,3 +41,22 @@ def test_cli_grapple_yarder_harvest_system_defaults() -> None:
     )
     assert result.exit_code == 0
     assert "Applied grapple-yarder defaults" in result.stdout
+    assert "tn157" in result.stdout.lower()
+
+
+def test_cli_grapple_yarder_tn157_case() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_yarder",
+            "--grapple-yarder-model",
+            "tn157",
+            "--tn157-case",
+            "4",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "Case 4" in result.stdout
+    assert "Observed Cost" in result.stdout

@@ -8,6 +8,8 @@ from fhops.productivity.grapple_bc import (
     estimate_grapple_yarder_productivity_sr54,
     estimate_grapple_yarder_productivity_tr75_bunched,
     estimate_grapple_yarder_productivity_tr75_handfelled,
+    estimate_grapple_yarder_productivity_tn157,
+    get_tn157_case,
 )
 
 
@@ -40,3 +42,14 @@ def test_invalid_inputs_raise() -> None:
         estimate_grapple_yarder_productivity_tr75_bunched(
             turn_volume_m3=1.0, yarding_distance_m=-5.0
         )
+
+
+def test_tn157_combined_productivity_matches_case() -> None:
+    case = get_tn157_case("combined")
+    prod = estimate_grapple_yarder_productivity_tn157()
+    assert math.isclose(prod, case.productivity_m3_per_pmh, rel_tol=1e-9)
+
+
+def test_tn157_invalid_case() -> None:
+    with pytest.raises(ValueError):
+        get_tn157_case("case99")

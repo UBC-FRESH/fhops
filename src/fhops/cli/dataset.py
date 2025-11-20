@@ -67,6 +67,10 @@ from fhops.productivity import (
     estimate_grapple_yarder_productivity_sr54,
     estimate_grapple_yarder_productivity_tr75_bunched,
     estimate_grapple_yarder_productivity_tr75_handfelled,
+    estimate_grapple_yarder_productivity_tn157,
+    get_tn157_case,
+    list_tn157_case_ids,
+    TN157Case,
     estimate_standing_skyline_productivity_aubuchon1979,
     estimate_standing_skyline_turn_time_aubuchon1979,
     estimate_standing_skyline_productivity_kramer1978,
@@ -545,6 +549,34 @@ class GrappleYarderModel(str, Enum):
     SR54 = "sr54"
     TR75_BUNCHED = "tr75-bunched"
     TR75_HANDFELLED = "tr75-handfelled"
+    TN157 = "tn157"
+
+
+def _tn157_case_choices() -> tuple[str, ...]:
+    return list_tn157_case_ids()
+
+
+def _tn157_case_help_text() -> str:
+    numeric = ", ".join(cid for cid in _tn157_case_choices() if cid != "combined")
+    return (
+        "TN157 case identifier (combined, "
+        f"{numeric}) when selecting --grapple-yarder-model tn157. "
+        "Ignored for other models."
+    )
+
+
+def _normalize_tn157_case(case_id: str | None) -> str:
+    candidate = (case_id or "combined").strip().lower()
+    if candidate in {"", "combined", "avg", "average"}:
+        return "combined"
+    if candidate.startswith("case"):
+        candidate = candidate[4:].strip()
+    choices = set(_tn157_case_choices())
+    if candidate not in choices:
+        raise ValueError(
+            f"TN157 case must be one of {', '.join(sorted(choices))}; received '{case_id}'."
+        )
+    return candidate
 
 
 class SkylineProductivityModel(str, Enum):
@@ -1612,6 +1644,7 @@ def _render_grapple_yarder_result(
     turn_volume_m3: float,
     yarding_distance_m: float,
     productivity_m3_per_pmh: float,
+    tn157_case: TN157Case | None = None,
 ) -> None:
     rows = [
         ("Model", model.value),
@@ -1619,10 +1652,20 @@ def _render_grapple_yarder_result(
         ("Yarding Distance (m)", f"{yarding_distance_m:.1f}"),
         ("Productivity (m³/PMH)", f"{productivity_m3_per_pmh:.2f}"),
     ]
-    _render_kv_table("Grapple Yarder Productivity Estimate", rows)
-    console.print(
-        "[dim]Regressions from MacDonald (1988) SR-54 and Peterson (1987) TR-75 (delay-free cycle times + minor delays).[/dim]"
+    note = (
+        "[dim]Regressions from MacDonald (1988) SR-54 and Peterson (1987) TR-75 "
+        "(delay-free cycle times + minor delays).[/dim]"
     )
+    if tn157_case is not None:
+        rows.insert(1, ("TN157 Case", tn157_case.label))
+        rows.append(("Logs/Turn", f"{tn157_case.logs_per_turn:.2f}"))
+        rows.append(("Observed Cost (1991 CAD $/m³)", f"{tn157_case.cost_per_m3_cad_1991:.2f}"))
+        note = (
+            "[dim]Observed productivity/costs from FERIC TN-157 (Cypress 7280B swing yarder + "
+            "Hitachi UH14 backspar, 1987–1988 case studies).[/dim]"
+        )
+    _render_kv_table("Grapple Yarder Productivity Estimate", rows)
+    console.print(note)
 
 
 def _parameter_supplied(ctx: typer.Context, name: str) -> bool:
@@ -2147,13 +2190,14 @@ def _apply_grapple_yarder_system_defaults(
     model: GrappleYarderModel,
     turn_volume_m3: float | None,
     yarding_distance_m: float | None,
+    tn157_case: str,
     user_supplied: Mapping[str, bool],
-) -> tuple[GrappleYarderModel, float | None, float | None, bool]:
+) -> tuple[GrappleYarderModel, float | None, float | None, str, bool]:
     if system is None:
-        return model, turn_volume_m3, yarding_distance_m, False
+        return model, turn_volume_m3, yarding_distance_m, tn157_case, False
     overrides = system_productivity_overrides(system, ProductivityMachineRole.GRAPPLE_YARDER.value)
     if not overrides:
-        return model, turn_volume_m3, yarding_distance_m, False
+        return model, turn_volume_m3, yarding_distance_m, tn157_case, False
     used = False
 
     value = overrides.get("grapple_yarder_model")
@@ -2186,7 +2230,17 @@ def _apply_grapple_yarder_system_defaults(
     )
     used |= changed
 
-    return model, turn_volume_m3, yarding_distance_m, used
+    tn157_case_value = tn157_case
+    if not user_supplied.get("tn157_case", False):
+        override_case = overrides.get("grapple_yarder_tn157_case")
+        if override_case is not None:
+            try:
+                tn157_case_value = _normalize_tn157_case(str(override_case))
+                used = True
+            except ValueError as exc:  # pragma: no cover - validated via unit tests
+                raise ValueError(f"Unknown TN157 case override '{override_case}'.") from exc
+
+    return model, turn_volume_m3, yarding_distance_m, tn157_case_value, used
     used |= changed
     crew_size, changed = maybe_float("skyline_crew_size", crew_size, "crew_size", True)
     used |= changed
@@ -3543,7 +3597,7 @@ def estimate_productivity_cmd(
         GrappleYarderModel.SR54,
         "--grapple-yarder-model",
         case_sensitive=False,
-        help="Grapple yarder regression (sr54 | tr75-bunched | tr75-handfelled).",
+        help="Grapple yarder regression (sr54 | tr75-bunched | tr75-handfelled | tn157).",
     ),
     grapple_turn_volume_m3: float | None = typer.Option(
         None,
@@ -3556,6 +3610,12 @@ def estimate_productivity_cmd(
         "--grapple-yard-distance-m",
         min=0.0,
         help="Yarding distance along the corridor (m) for grapple yarder helpers.",
+    ),
+    tn157_case: str = typer.Option(
+        "combined",
+        "--tn157-case",
+        help=_tn157_case_help_text(),
+        show_default=False,
     ),
     processor_model: RoadsideProcessorModel = typer.Option(
         RoadsideProcessorModel.BERRY2019,
@@ -4138,24 +4198,40 @@ def estimate_productivity_cmd(
             "grapple_yarder_model": _parameter_supplied(ctx, "grapple_yarder_model"),
             "grapple_turn_volume_m3": _parameter_supplied(ctx, "grapple_turn_volume_m3"),
             "grapple_yarding_distance_m": _parameter_supplied(ctx, "grapple_yarding_distance_m"),
+            "tn157_case": _parameter_supplied(ctx, "tn157_case"),
         }
+        try:
+            tn157_case = _normalize_tn157_case(tn157_case)
+        except ValueError as exc:
+            raise typer.BadParameter(str(exc)) from exc
         (
             grapple_yarder_model,
             grapple_turn_volume_m3,
             grapple_yarding_distance_m,
+            grapple_tn157_case,
             grapple_defaults_used,
         ) = _apply_grapple_yarder_system_defaults(
             system=selected_system,
             model=grapple_yarder_model,
             turn_volume_m3=grapple_turn_volume_m3,
             yarding_distance_m=grapple_yarding_distance_m,
+            tn157_case=tn157_case,
             user_supplied=grapple_user_supplied,
         )
-        value = _evaluate_grapple_yarder_result(
-            model=grapple_yarder_model,
-            turn_volume_m3=grapple_turn_volume_m3,
-            yarding_distance_m=grapple_yarding_distance_m,
-        )
+        tn157_case_metadata: TN157Case | None = None
+        if grapple_yarder_model is GrappleYarderModel.TN157:
+            tn157_case_metadata = get_tn157_case(grapple_tn157_case)
+            if grapple_turn_volume_m3 is None:
+                grapple_turn_volume_m3 = tn157_case_metadata.average_turn_volume_m3
+            if grapple_yarding_distance_m is None:
+                grapple_yarding_distance_m = tn157_case_metadata.average_yarding_distance_m
+            value = tn157_case_metadata.productivity_m3_per_pmh
+        else:
+            value = _evaluate_grapple_yarder_result(
+                model=grapple_yarder_model,
+                turn_volume_m3=grapple_turn_volume_m3,
+                yarding_distance_m=grapple_yarding_distance_m,
+            )
         assert grapple_turn_volume_m3 is not None
         assert grapple_yarding_distance_m is not None
         _render_grapple_yarder_result(
@@ -4163,6 +4239,7 @@ def estimate_productivity_cmd(
             turn_volume_m3=grapple_turn_volume_m3,
             yarding_distance_m=grapple_yarding_distance_m,
             productivity_m3_per_pmh=value,
+            tn157_case=tn157_case_metadata,
         )
         if grapple_defaults_used and selected_system is not None:
             console.print(

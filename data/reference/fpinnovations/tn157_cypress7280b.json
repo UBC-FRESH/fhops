@@ -1,0 +1,423 @@
+{
+  "source": {
+    "id": "TN157",
+    "title": "Harvesting Economics: Case Studies of a Cypress 7280B Swing Yarder and Mobile Backspar",
+    "authors": [
+      "J.T. Peterson",
+      "N.G. Marshall",
+      "R.A. Kooistra"
+    ],
+    "publisher": "FERIC",
+    "publication_date": "1991-03",
+    "currency": "CAD_1991",
+    "notes": "Costs exclude supervision/overhead/transport and interest; labor uses IWA +38% benefits. Data collected Nov 1987-Apr 1988."
+  },
+  "machine_configuration": {
+    "yarder": {
+      "make_model": "Cypress 7280B",
+      "years": [
+        1984,
+        1985
+      ],
+      "engine": "GM 12V71 (525 hp) or KTA Cummins (450 hp)",
+      "tower_height_m": [
+        19.8,
+        20.4
+      ],
+      "guylines": 2,
+      "weight_kg": [
+        72575,
+        77112
+      ],
+      "grapple": [
+        "Homemade 240 cm",
+        "Johnson 182 cm"
+      ]
+    },
+    "backspar": {
+      "make_model": "Hitachi UH14",
+      "tower_height_m": 5.5,
+      "role": "mobile backspar / trail spar"
+    },
+    "crew_size": 3
+  },
+  "case_studies": [
+    {
+      "id": 1,
+      "falling_method": "hand_felled",
+      "stand_type": "old_growth",
+      "yarding_direction": "uphill",
+      "slope_percent_range": [
+        40,
+        80
+      ],
+      "slope_percent_average": 65,
+      "terrain": "broken",
+      "underbrush": "medium",
+      "obstacles": [
+        "blowdown",
+        "rock_outcrops"
+      ],
+      "gross_volume_m3_per_ha": 687,
+      "stems_per_ha": 294,
+      "species_percent": {
+        "douglas_fir": 46,
+        "western_redcedar": 21,
+        "western_hemlock": 21,
+        "amabilis_fir": 9,
+        "sitka_spruce": 3
+      },
+      "average_yarding_distance_m": 123,
+      "maximum_yarding_distance_m": 211,
+      "logs_per_shift_8h": 193,
+      "volume_per_shift_m3": 540,
+      "cost_per_log_cad_1991": 9.62,
+      "cost_per_m3_cad_1991": 3.44,
+      "average_log_size_m3": 2.8,
+      "logs_per_turn": 1.1,
+      "average_turn_volume_m3": 3.1,
+      "yarding_minutes": 455.6,
+      "yarding_road_change_minutes": 38.9,
+      "productive_time_percent": 64,
+      "total_logs": 313,
+      "total_turns": 273,
+      "logs_per_yarding_hour": 41.2,
+      "m3_per_yarding_hour": 115.4,
+      "road_changes": {
+        "yarder_occurrences": 15,
+        "yarder_minutes_range": [
+          0.5,
+          6.3
+        ],
+        "yarder_minutes_average": 2.4,
+        "backspar_occurrences": 1,
+        "backspar_minutes_range": [
+          2.9,
+          2.9
+        ],
+        "backspar_minutes_average": 2.9
+      }
+    },
+    {
+      "id": 2,
+      "falling_method": "hand_felled",
+      "stand_type": "old_growth",
+      "yarding_direction": "downhill",
+      "slope_percent_range": [
+        25,
+        70
+      ],
+      "slope_percent_average": 40,
+      "terrain": "rolling_broken",
+      "underbrush": "medium",
+      "obstacles": [
+        "blowdown",
+        "rock_outcrops"
+      ],
+      "gross_volume_m3_per_ha": 687,
+      "stems_per_ha": 294,
+      "species_percent": {
+        "douglas_fir": 46,
+        "western_redcedar": 21,
+        "western_hemlock": 21,
+        "amabilis_fir": 9,
+        "sitka_spruce": 3
+      },
+      "average_yarding_distance_m": 85,
+      "maximum_yarding_distance_m": 170,
+      "logs_per_shift_8h": 286,
+      "volume_per_shift_m3": 744,
+      "cost_per_log_cad_1991": 6.49,
+      "cost_per_m3_cad_1991": 2.5,
+      "average_log_size_m3": 2.6,
+      "logs_per_turn": 1.2,
+      "average_turn_volume_m3": 3.1,
+      "yarding_minutes": 412.2,
+      "yarding_road_change_minutes": 92.4,
+      "productive_time_percent": 60,
+      "total_logs": 502,
+      "total_turns": 411,
+      "logs_per_yarding_hour": 73.1,
+      "m3_per_yarding_hour": 190.1,
+      "road_changes": {
+        "yarder_occurrences": 21,
+        "yarder_minutes_range": [
+          1.4,
+          20.1
+        ],
+        "yarder_minutes_average": 4.2,
+        "backspar_occurrences": 4,
+        "backspar_minutes_range": [
+          0.8,
+          1.6
+        ],
+        "backspar_minutes_average": 1.2
+      }
+    },
+    {
+      "id": 3,
+      "falling_method": "hand_felled",
+      "stand_type": "mixed",
+      "yarding_direction": "downhill",
+      "slope_percent_range": [
+        0,
+        30
+      ],
+      "slope_percent_average": 15,
+      "terrain": "rolling",
+      "underbrush": "medium",
+      "obstacles": [
+        "blowdown"
+      ],
+      "gross_volume_m3_per_ha": 961,
+      "stems_per_ha": 658,
+      "species_percent": {
+        "western_hemlock": 83,
+        "amabilis_fir": 12,
+        "sitka_spruce": 3,
+        "western_redcedar": 2
+      },
+      "average_yarding_distance_m": 55,
+      "maximum_yarding_distance_m": 100,
+      "logs_per_shift_8h": 536,
+      "volume_per_shift_m3": 1233,
+      "cost_per_log_cad_1991": 3.47,
+      "cost_per_m3_cad_1991": 1.51,
+      "average_log_size_m3": 2.3,
+      "logs_per_turn": 1.4,
+      "average_turn_volume_m3": 3.2,
+      "yarding_minutes": 392.0,
+      "yarding_road_change_minutes": 199.1,
+      "productive_time_percent": 85,
+      "total_logs": 777,
+      "total_turns": 566,
+      "logs_per_yarding_hour": 118.9,
+      "m3_per_yarding_hour": 273.1,
+      "road_changes": {
+        "yarder_occurrences": 6,
+        "yarder_minutes_range": [
+          1.0,
+          34.7
+        ],
+        "yarder_minutes_average": 14.0,
+        "backspar_occurrences": 52,
+        "backspar_minutes_range": [
+          0.4,
+          25.7
+        ],
+        "backspar_minutes_average": 2.2
+      }
+    },
+    {
+      "id": 4,
+      "falling_method": "hand_felled",
+      "stand_type": "mixed",
+      "yarding_direction": "uphill",
+      "slope_percent_range": [
+        0,
+        20
+      ],
+      "slope_percent_average": 15,
+      "terrain": "rolling",
+      "underbrush": "medium",
+      "obstacles": [
+        "blowdown"
+      ],
+      "gross_volume_m3_per_ha": 774,
+      "stems_per_ha": 197,
+      "species_percent": {
+        "amabilis_fir": 50,
+        "western_hemlock": 48,
+        "western_redcedar": 2
+      },
+      "average_yarding_distance_m": 88,
+      "maximum_yarding_distance_m": 170,
+      "logs_per_shift_8h": 365,
+      "volume_per_shift_m3": 1496,
+      "cost_per_log_cad_1991": 5.09,
+      "cost_per_m3_cad_1991": 1.24,
+      "average_log_size_m3": 4.1,
+      "logs_per_turn": 1.3,
+      "average_turn_volume_m3": 5.3,
+      "yarding_minutes": 764.0,
+      "yarding_road_change_minutes": 254.6,
+      "productive_time_percent": 89,
+      "total_logs": 867,
+      "total_turns": 683,
+      "logs_per_yarding_hour": 68.1,
+      "m3_per_yarding_hour": 279.2,
+      "road_changes": {
+        "yarder_occurrences": 20,
+        "yarder_minutes_range": [
+          0.5,
+          50.2
+        ],
+        "yarder_minutes_average": 8.6,
+        "backspar_occurrences": 22,
+        "backspar_minutes_range": [
+          0.7,
+          8.1
+        ],
+        "backspar_minutes_average": 3.8
+      }
+    },
+    {
+      "id": 5,
+      "falling_method": "hand_felled",
+      "stand_type": "mixed",
+      "yarding_direction": "downhill",
+      "slope_percent_range": [
+        0,
+        15
+      ],
+      "slope_percent_average": 5,
+      "terrain": "rolling",
+      "underbrush": "medium",
+      "obstacles": [
+        "blowdown"
+      ],
+      "gross_volume_m3_per_ha": 986,
+      "stems_per_ha": 528,
+      "species_percent": {
+        "western_hemlock": 63,
+        "amabilis_fir": 37
+      },
+      "average_yarding_distance_m": 94,
+      "maximum_yarding_distance_m": 180,
+      "logs_per_shift_8h": 520,
+      "volume_per_shift_m3": 1352,
+      "cost_per_log_cad_1991": 3.57,
+      "cost_per_m3_cad_1991": 1.37,
+      "average_log_size_m3": 2.6,
+      "logs_per_turn": 1.3,
+      "average_turn_volume_m3": 3.4,
+      "yarding_minutes": 1277.5,
+      "yarding_road_change_minutes": 175.1,
+      "productive_time_percent": 84,
+      "total_logs": 1874,
+      "total_turns": 1393,
+      "logs_per_yarding_hour": 88.0,
+      "m3_per_yarding_hour": 228.8,
+      "road_changes": {
+        "yarder_occurrences": 10,
+        "yarder_minutes_range": [
+          0.2,
+          33.1
+        ],
+        "yarder_minutes_average": 4.8,
+        "backspar_occurrences": 67,
+        "backspar_minutes_range": [
+          0.2,
+          7.0
+        ],
+        "backspar_minutes_average": 1.9
+      }
+    },
+    {
+      "id": 6,
+      "falling_method": "hand_felled",
+      "stand_type": "mixed",
+      "yarding_direction": "downhill",
+      "slope_percent_range": [
+        0,
+        20
+      ],
+      "slope_percent_average": 5,
+      "terrain": "rolling",
+      "underbrush": "medium",
+      "obstacles": [
+        "blowdown"
+      ],
+      "gross_volume_m3_per_ha": 986,
+      "stems_per_ha": 528,
+      "species_percent": {
+        "western_hemlock": 63,
+        "amabilis_fir": 37
+      },
+      "average_yarding_distance_m": 51,
+      "maximum_yarding_distance_m": 75,
+      "logs_per_shift_8h": 440,
+      "volume_per_shift_m3": 1144,
+      "cost_per_log_cad_1991": 4.22,
+      "cost_per_m3_cad_1991": 1.83,
+      "average_log_size_m3": 2.6,
+      "logs_per_turn": 1.4,
+      "average_turn_volume_m3": 3.6,
+      "yarding_minutes": 544.5,
+      "yarding_road_change_minutes": 141.9,
+      "productive_time_percent": 74,
+      "total_logs": 843,
+      "total_turns": 609,
+      "logs_per_yarding_hour": 92.9,
+      "m3_per_yarding_hour": 241.5,
+      "road_changes": {
+        "yarder_occurrences": 12,
+        "yarder_minutes_range": [
+          0.2,
+          6.8
+        ],
+        "yarder_minutes_average": 1.7,
+        "backspar_occurrences": 53,
+        "backspar_minutes_range": [
+          0.2,
+          6.4
+        ],
+        "backspar_minutes_average": 2.3
+      }
+    },
+    {
+      "id": 7,
+      "falling_method": "feller_director",
+      "stand_type": "mixed",
+      "yarding_direction": "downhill",
+      "slope_percent_range": [
+        0,
+        15
+      ],
+      "slope_percent_average": 10,
+      "terrain": "even",
+      "underbrush": "medium",
+      "obstacles": [
+        "blowdown"
+      ],
+      "gross_volume_m3_per_ha": 961,
+      "stems_per_ha": 658,
+      "species_percent": {
+        "western_hemlock": 83,
+        "amabilis_fir": 12,
+        "sitka_spruce": 3,
+        "western_redcedar": 2
+      },
+      "average_yarding_distance_m": 86,
+      "maximum_yarding_distance_m": 135,
+      "logs_per_shift_8h": 615,
+      "volume_per_shift_m3": 1353,
+      "cost_per_log_cad_1991": 3.02,
+      "cost_per_m3_cad_1991": 1.37,
+      "average_log_size_m3": 2.2,
+      "logs_per_turn": 1.5,
+      "average_turn_volume_m3": 3.3,
+      "yarding_minutes": 924.7,
+      "yarding_road_change_minutes": 164.4,
+      "productive_time_percent": 83,
+      "total_logs": 1684,
+      "total_turns": 1122,
+      "logs_per_yarding_hour": 109.3,
+      "m3_per_yarding_hour": 240.5,
+      "road_changes": {
+        "yarder_occurrences": 3,
+        "yarder_minutes_range": [
+          0.1,
+          1.9
+        ],
+        "yarder_minutes_average": 0.8,
+        "backspar_occurrences": 66,
+        "backspar_minutes_range": [
+          0.4,
+          19.8
+        ],
+        "backspar_minutes_average": 2.5
+      }
+    }
+  ]
+}
