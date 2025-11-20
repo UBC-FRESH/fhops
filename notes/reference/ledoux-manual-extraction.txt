@@ -1,0 +1,38 @@
+Table 3. prediction equations
+
+
+Skagit BU-94 Shotgun
+
+Y = 2.74983 + 0.00177 * X1 + 0.12664 * X2 + 0.00317 * X3 + 0.20023 * X4 + 0.00930 * X5
+R^2 = 16.4
+N = 904
+
+
+Skagit BU-94 Highlead
+
+Y = 3.08365 + 0.00197 * X1 + 0.16855 * X2 + 0.00300 * X3 + 0.12621 * X4 + 0.00530 * X5
+R^2 = 18.9
+N = 224
+
+
+Washington 208E
+
+Y = 3.77856 + 0.00290 * X1 - 0.11982 * X2 + 0.00265 * X3 + 0.48923 * X4 - 0.00272 * X5
+R^2 = 58.2
+N = 891
+
+
+Thunderbird TMY-45
+
+Y = 1.92641 + 0.00423 * X1 + 0.18713 * X2 + 0.00674 * X3 + 0.22898 * X4 + 0.00482 * X5
+R^2 = 32.4
+N = 223
+
+
+'All partial regression coeficients signllicant at 5% level.
+X1 = slope yarding distance in feet.
+X2 = a number of merchantable logs. integer.
+X3 = volume of merchantable logs. ft^3.
+X4 = number of residue logs. integer.
+X5 = volume of residue logs. ft^3.
+N = Number of yarding cycles.
