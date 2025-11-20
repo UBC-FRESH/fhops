@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from enum import Enum
+import math
 
 from fhops.productivity.eriksson2014 import (
     estimate_forwarder_productivity_final_felling,
@@ -32,6 +33,7 @@ class ForwarderBCModel(str, Enum):
     KELLOGG_PULPWOOD = "kellogg-pulpwood"
     KELLOGG_MIXED = "kellogg-mixed"
     ADV6N10_SHORTWOOD = "adv6n10-shortwood"
+    ADV1N12_SHORTWOOD = "adv1n12-shortwood"
     ERIKSSON_FINAL_FELLING = "eriksson-final-felling"
     ERIKSSON_THINNING = "eriksson-thinning"
     LAITILA_VAATAINEN_BRUSHWOOD = "laitila-vaatainen-brushwood"
@@ -44,6 +46,7 @@ _MODEL_TO_LOAD: dict[ForwarderBCModel, KelloggLoadType] = {
 }
 
 _ADV6N10_MODELS = {ForwarderBCModel.ADV6N10_SHORTWOOD}
+_ADV1N12_MODELS = {ForwarderBCModel.ADV1N12_SHORTWOOD}
 _ERIKSSON_MODELS = {
     ForwarderBCModel.ERIKSSON_FINAL_FELLING,
     ForwarderBCModel.ERIKSSON_THINNING,
@@ -201,6 +204,20 @@ def estimate_forwarder_productivity_bc(
             model=model,
             predicted_m3_per_pmh=value,
             reference=reference,
+            parameters=params,
+        )
+
+    if model in _ADV1N12_MODELS:
+        if extraction_distance_m is None:
+            raise ValueError("extraction_distance_m is required for ADV1N12 model")
+        if extraction_distance_m <= 0:
+            raise ValueError("extraction_distance_m must be > 0")
+        value = 8.4438 * math.exp(-0.004 * extraction_distance_m)
+        params = {"extraction_distance_m": extraction_distance_m}
+        return ForwarderBCResult(
+            model=model,
+            predicted_m3_per_pmh=value,
+            reference="FPInnovations Advantage Vol. 1 No. 12 (Valmet 646 shortwood forwarder)",
             parameters=params,
         )
 

@@ -69,6 +69,8 @@ from .skidder_ft import (
     SkidderProductivityResult,
     SkidderSpeedProfile,
     estimate_grapple_skidder_productivity_han2018,
+    estimate_cable_skidder_productivity_adv1n12_full_tree,
+    estimate_cable_skidder_productivity_adv1n12_two_phase,
     get_skidder_speed_profile,
 )
 from .harvester_ctl import (
@@ -214,6 +216,8 @@ __all__ = [
     "estimate_forwarder_productivity_kellogg_bettinger",
     "estimate_forwarder_productivity_bc",
     "estimate_grapple_skidder_productivity_han2018",
+    "estimate_cable_skidder_productivity_adv1n12_full_tree",
+    "estimate_cable_skidder_productivity_adv1n12_two_phase",
     "ALPACASlopeClass",
     "alpaca_slope_multiplier",
     "ForwarderBCModel",

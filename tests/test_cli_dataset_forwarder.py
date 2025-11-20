@@ -11,6 +11,8 @@ from fhops.productivity import (
     DeckingCondition,
     KelloggLoadType,
     estimate_grapple_skidder_productivity_han2018,
+    estimate_cable_skidder_productivity_adv1n12_full_tree,
+    estimate_cable_skidder_productivity_adv1n12_two_phase,
     get_skidder_speed_profile,
     estimate_harvester_productivity_adv5n30,
     estimate_harvester_productivity_adv6n10,
@@ -305,6 +307,27 @@ def test_cli_estimate_productivity_forwarder_brushwood_branch() -> None:
     assert f"{expected:.2f}" in result.stdout
 
 
+def test_cli_estimate_productivity_forwarder_adv1n12() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "forwarder",
+            "--forwarder-model",
+            "adv1n12-shortwood",
+            "--extraction-distance",
+            "400",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_forwarder_productivity_bc(
+        model=ForwarderBCModel.ADV1N12_SHORTWOOD,
+        extraction_distance_m=400.0,
+    ).predicted_m3_per_pmh
+    assert f"{expected:.2f}" in result.stdout
+
+
 def test_cli_estimate_productivity_grapple_skidder_branch() -> None:
     result = runner.invoke(
         dataset_app,
@@ -442,6 +465,59 @@ def test_cli_grapple_skidder_dataset_inferred_defaults(monkeypatch) -> None:
         decking_condition=DeckingCondition.CONSTRAINED,
     ).predicted_m3_per_pmh
     assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_grapple_skidder_adv1n12_fulltree() -> None:
+    distance = 200.0
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_skidder",
+            "--grapple-skidder-model",
+            "adv1n12-fulltree",
+            "--skidder-extraction-distance",
+            f"{distance}",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_cable_skidder_productivity_adv1n12_full_tree(distance)
+    assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_grapple_skidder_adv1n12_two_phase() -> None:
+    distance = 150.0
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_skidder",
+            "--grapple-skidder-model",
+            "adv1n12-two-phase",
+            "--skidder-extraction-distance",
+            f"{distance}",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_cable_skidder_productivity_adv1n12_two_phase(distance)
+    assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_grapple_skidder_adv1n12_requires_distance() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_skidder",
+            "--grapple-skidder-model",
+            "adv1n12-fulltree",
+        ],
+    )
+    assert result.exit_code != 0
+    assert "--skidder-extraction-distance" in result.stdout
 
 
 def test_cli_estimate_productivity_shovel_logger() -> None:

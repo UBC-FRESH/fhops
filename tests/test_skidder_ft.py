@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import math
+
 import pytest
 
 from fhops.productivity.skidder_ft import (
@@ -8,6 +10,8 @@ from fhops.productivity.skidder_ft import (
     DeckingCondition,
     get_skidder_speed_profile,
     estimate_grapple_skidder_productivity_han2018,
+    estimate_cable_skidder_productivity_adv1n12_full_tree,
+    estimate_cable_skidder_productivity_adv1n12_two_phase,
 )
 
 
@@ -73,3 +77,19 @@ def test_han2018_with_speed_profile() -> None:
         loaded_distance_m=100.0,
     )
     assert result.cycle_time_seconds != legacy.cycle_time_seconds
+
+
+def test_adv1n12_full_tree_regression() -> None:
+    distance = 200.0
+    expected = 5.4834 * math.exp(-0.0013 * distance)
+    assert estimate_cable_skidder_productivity_adv1n12_full_tree(distance) == pytest.approx(
+        expected, rel=1e-6
+    )
+
+
+def test_adv1n12_two_phase_regression() -> None:
+    distance = 150.0
+    expected = -4.9339 * math.log(distance) + 35.202
+    assert estimate_cable_skidder_productivity_adv1n12_two_phase(distance) == pytest.approx(
+        expected, rel=1e-6
+    )

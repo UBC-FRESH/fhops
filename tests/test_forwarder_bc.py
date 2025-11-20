@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import math
+
 import pytest
 
 from fhops.productivity import ALPACASlopeClass
@@ -71,6 +73,16 @@ def test_forwarder_bc_eriksson_thinning() -> None:
         load_capacity_m3=12.0,
     )
     assert result.predicted_m3_per_pmh == pytest.approx(14.7539962472, rel=1e-3)
+
+
+def test_forwarder_bc_adv1n12_regression() -> None:
+    distance = 400.0
+    result = estimate_forwarder_productivity_bc(
+        model=ForwarderBCModel.ADV1N12_SHORTWOOD,
+        extraction_distance_m=distance,
+    )
+    expected = 8.4438 * math.exp(-0.004 * distance)
+    assert result.predicted_m3_per_pmh == pytest.approx(expected, rel=1e-6)
 
 
 def test_forwarder_bc_brushwood_matches_helper() -> None:

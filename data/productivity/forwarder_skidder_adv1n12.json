@@ -1,0 +1,62 @@
+{
+  "source": {
+    "id": "ADV1N12",
+    "title": "Optimizing the spacing between extraction trails in commercial thinning",
+    "publisher": "FPInnovations / FERIC Advantage Vol. 1 No. 12",
+    "publication_date": "2000-03",
+    "currency": "CAD_1999",
+    "study_location": "Abitibi, Québec (balsam fir / white spruce 2nd-growth)",
+    "machines": {
+      "forwarder": "Valmet 646 (10 m³ shortwood bunk)",
+      "skidder_fulltree": "Timberjack 240 cable skidder (semi-mechanized lop-and-scatter)",
+      "skidder_two_phase": "Same Timberjack 240 operated as the second-phase extractor"
+    },
+    "notes": [
+      "Road-spacing experiments compared $100/m building costs vs. extraction distances from 50–650 m.",
+      "Appendix 2 published delay-free productivity regressions relating extraction distance (m) to m³/PMH0 for both the forwarder and cable skidder scenarios.",
+      "Full-tree scenario included lop-and-scatter delays because feller-buncher and skidder worked as an integrated crew; the two-phase scenario isolated the extraction skidder once felling was decoupled."
+    ]
+  },
+  "forwarder_shortwood": {
+    "regression": "P = 8.4438 × e^(−0.004 × d)",
+    "variables": {
+      "P": "Productivity (m³/PMH0)",
+      "d": "Average forwarding distance (m)"
+    },
+    "valid_distance_m": [150, 600],
+    "optimum_distance_m": 400,
+    "payload_m3": 10.0,
+    "utilisation_percent": 77.0,
+    "observed_range_m3_per_pmh": [6.2, 8.4],
+    "notes": [
+      "Regression derived from Valmet 646 shortwood forwarder operating on 40 m trail spacing.",
+      "Report recommends keeping forwarding distances below 550 m when road costs stay under $12,000/km in similar stands."
+    ]
+  },
+  "skidders": {
+    "full_tree_integrated": {
+      "regression": "P = 5.4834 × e^(−0.0013 × d)",
+      "variables": {
+        "P": "Productivity (m³/PMH0)",
+        "d": "Average extraction distance (m)"
+      },
+      "valid_distance_m": [50, 350],
+      "notes": [
+        "Semi-mechanized crew (feller-buncher + skidder) where the skidder waited for the buncher at longer distances.",
+        "Use when modelling lop-and-scatter thinning where the skidder’s delays include felling coordination."
+      ]
+    },
+    "two_phase_extraction": {
+      "regression": "P = −4.9339 × ln(d) + 35.202",
+      "variables": {
+        "P": "Productivity (m³/PMH0)",
+        "d": "Average extraction distance (m)"
+      },
+      "valid_distance_m": [80, 400],
+      "notes": [
+        "Represents the second phase after felling/slashing crews pre-bunched stems to trails.",
+        "Productivity declines logarithmically once trails exceed ~220 m, matching the report’s guidance to cap spacing at 200–250 m."
+      ]
+    }
+  }
+}

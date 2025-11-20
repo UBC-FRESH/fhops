@@ -1,4 +1,4 @@
-"""Grapple skidder productivity helpers (Han et al. 2018)."""
+"""Grapple skidder productivity helpers (Han 2018 + Advantage regressions)."""
 
 from __future__ import annotations
 
@@ -7,6 +7,7 @@ from enum import Enum
 from functools import lru_cache
 from pathlib import Path
 import json
+import math
 
 
 class Han2018SkidderMethod(str, Enum):
@@ -254,6 +255,36 @@ def estimate_grapple_skidder_productivity_han2018(
     )
 
 
+def estimate_cable_skidder_productivity_adv1n12_full_tree(
+    extraction_distance_m: float,
+) -> float:
+    """Return m³/PMH for the semi-mechanized full-tree system (lop-and-scatter integrated with skidding).
+
+    Regression derived from FPInnovations Advantage Vol. 1 No. 12 Appendix 2:
+        P = 5.4834 · e^(−0.0013·d)
+    where ``d`` is the average extraction distance (m).
+    """
+
+    if extraction_distance_m <= 0:
+        raise ValueError("extraction_distance_m must be > 0")
+    return 5.4834 * math.exp(-0.0013 * extraction_distance_m)
+
+
+def estimate_cable_skidder_productivity_adv1n12_two_phase(
+    extraction_distance_m: float,
+) -> float:
+    """Return m³/PMH for the second-phase extraction skidder in the two-phase system.
+
+    Regression from Advantage Vol. 1 No. 12:
+        P = -4.9339 · ln(d) + 35.202
+    ``d`` = average extraction distance (m). Only valid for d > 0.
+    """
+
+    if extraction_distance_m <= 0:
+        raise ValueError("extraction_distance_m must be > 0")
+    return -4.9339 * math.log(extraction_distance_m) + 35.202
+
+
 __all__ = [
     "Han2018SkidderMethod",
     "TrailSpacingPattern",
@@ -262,5 +293,7 @@ __all__ = [
     "SkidderSpeedProfile",
     "estimate_grapple_skidder_productivity_han2018",
     "get_skidder_speed_profile",
+    "estimate_cable_skidder_productivity_adv1n12_full_tree",
+    "estimate_cable_skidder_productivity_adv1n12_two_phase",
 ]
 _SKIDDER_SPEED_PROFILE_PATH = Path(__file__).resolve().parents[3] / "data" / "reference" / "skidder_speed_zurita2025.json"

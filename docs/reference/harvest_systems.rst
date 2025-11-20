@@ -112,6 +112,11 @@ Pick the regression that matches the stand context:
   Requires ``--payload-per-trip``, ``--mean-log-length``, ``--travel-speed``, ``--trail-length``, and
   ``--products-per-trail``. Use this when you have explicit payload/log-length targets or need to
   quantify the productivity penalty of sorting several products per trail.
+* ``adv1n12-shortwood`` – Advantage Vol. 1 No. 12 extraction-distance regression for the Valmet 646
+  forwarder (formula stored in ``data/productivity/forwarder_skidder_adv1n12.json``). Provide
+  ``--extraction-distance`` (m); the helper reports the decay curve (8.4438·e^(−0.004·d)) plus the
+  usual PMH0 output. Use when road spacing dictates forwarding distances between roughly 150–600 m
+  and you want the published optimum (~400 m) reflected in your sensitivity runs.
 * ``eriksson-final-felling`` / ``eriksson-thinning`` – Eriksson & Lindroos (2014) Swedish follow-up
   dataset covering >700 CTL forwarders. Provide ``--mean-extraction-distance`` (m),
   ``--mean-stem-size`` (m³), and ``--load-capacity`` (m³). The final-felling variant reflects larger
@@ -472,6 +477,13 @@ Ground-based full-tree systems can now call the Han et al. (2018) regressions vi
 Both helpers report cycle time, payload per turn, and predicted productivity so analysts can adjust
 the distance or payload assumptions directly.
 
+* ``adv1n12-fulltree`` / ``adv1n12-two-phase`` – Delay-free extraction curves from Advantage Vol. 1
+  No. 12 (see ``data/productivity/forwarder_skidder_adv1n12.json``). Supply
+  ``--skidder-extraction-distance`` (m) and the CLI evaluates the exponential (integrated lop-and-
+  scatter crew) or logarithmic (decoupled second-phase skidder) regression. Use these when spacing
+  roads 100–350 m apart in commercial thinnings and you want the published productivity-distance
+  relationships without retyping the equations.
+
 Trail spacing and decking multipliers (from FPInnovations TN285 and ADV4N21) can be applied via
 ``--skidder-trail-pattern`` (``narrow_13_15m`` | ``single_ghost_18m`` | ``double_ghost_27m``) and
 ``--skidder-decking-condition`` (``constrained_decking`` | ``prepared_decking``). The defaults follow
@@ -490,6 +502,10 @@ Travel-speed assumptions now support GNSS data via ``--skidder-speed-profile``:
 
 CLI output notes which profile was used, and harvest-system templates can override the profile the same way they do
 for trail/decking multipliers.
+
+The new ADV1N12 options ignore the trail/decking multipliers (the regressions already embed those
+effects). When the CLI detects an ADV1N12 model it switches the output table to a condensed format
+that simply lists the model, extraction distance, and predicted m³/PMH for the selected regression.
 
 Harvest-system templates can now supply these overrides automatically: pass
 ``--harvest-system-id <system_id>`` (default registry or your scenario’s definitions) or

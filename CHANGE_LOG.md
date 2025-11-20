@@ -1,5 +1,25 @@
 # Development Change Log
 
+# 2025-11-27 — ADV1N12 forwarder/skidder integration
+- Digitised the Advantage Vol. 1 No. 12 extraction-distance curves into `data/productivity/forwarder_skidder_adv1n12.json`
+  (Valmet 646 forwarder plus Timberjack 240 skidder in both integrated and two-phase thinning systems) so the coefficients
+  and study metadata live alongside the other FPInnovations datasets.
+- Added `ForwarderBCModel.ADV1N12_SHORTWOOD` to `estimate_forwarder_productivity_bc`; the CLI now accepts
+  `--forwarder-model adv1n12-shortwood` with the existing `--extraction-distance` flag and renders the FPInnovations
+  reference + distance in both the `estimate-productivity` and `estimate-forwarder-productivity` commands. New unit +
+  CLI tests cover the regression to keep the 8.4438·e^(−0.004·d) curve pinned to the publication.
+- Introduced Advantage-backed skidder presets (`--grapple-skidder-model adv1n12-fulltree|adv1n12-two-phase`) plus a new
+  `--skidder-extraction-distance` flag. The CLI detects these models, skips the Han-specific trail/decking parameters,
+  and prints the exponential/logarithmic productivity output along with the Advantage citation; tests ensure both models
+  honour the published formulas and that the missing-distance validation fires.
+- Refactored the grapple-skidder CLI rendering path so it can display either the detailed Han et al. cycle table or the
+  condensed Advantage-style productivity row, updated docs (`docs/reference/harvest_systems.rst`) with the new model
+  guidance, and extended the Typer/App tests (`tests/test_cli_dataset_forwarder.py`, `tests/test_forwarder_bc.py`,
+  `tests/test_skidder_ft.py`) to lock in the behaviour.
+- Planning + reference artefacts now record the work: `notes/reference_log.md` marks ADV1N12 as extracted (with the new
+  dataset path), `notes/dataset_inspection_plan.md` calls out ADV1N12 completion, queues ADV1N35/ADV1N40/ADV6N7 as the
+  next Advantage focus, and adds a follow-up task to push the new presets into harvest-system/costing workflows.
+
 # 2025-11-26 — ADV7N3 processor/loader presets
 - Digitised the ADV7N3 summer short-log processor study into `data/productivity/processor_adv7n3.json`
   (Hyundai 210LC/Waratah 620 vs. John Deere 892/Waratah 624) including shift-level utilisation,

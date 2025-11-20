@@ -48,6 +48,8 @@ from fhops.productivity import (
     HelicopterProductivityResult,
     alpaca_slope_multiplier,
     estimate_grapple_skidder_productivity_han2018,
+    estimate_cable_skidder_productivity_adv1n12_full_tree,
+    estimate_cable_skidder_productivity_adv1n12_two_phase,
     get_skidder_speed_profile,
     estimate_harvester_productivity_adv5n30,
     estimate_harvester_productivity_tn292,
@@ -902,12 +904,22 @@ class RunningSkylineVariant(str, Enum):
     YARDER_B = "yarder_b"
 
 
+class GrappleSkidderModel(str, Enum):
+    """Supported grapple-skidder regressions."""
+
+    HAN_LOP_AND_SCATTER = "lop_and_scatter"
+    HAN_WHOLE_TREE = "whole_tree"
+    ADV1N12_FULLTREE = "adv1n12-fulltree"
+    ADV1N12_TWO_PHASE = "adv1n12-two-phase"
+
+
 _FORWARDER_GHAFFARIYAN_MODELS = {
     ForwarderBCModel.GHAFFARIYAN_SMALL,
     ForwarderBCModel.GHAFFARIYAN_LARGE,
 }
 
 _FORWARDER_ADV6N10_MODELS = {ForwarderBCModel.ADV6N10_SHORTWOOD}
+_FORWARDER_ADV1N12_MODELS = {ForwarderBCModel.ADV1N12_SHORTWOOD}
 _FORWARDER_ERIKSSON_MODELS = {
     ForwarderBCModel.ERIKSSON_FINAL_FELLING,
     ForwarderBCModel.ERIKSSON_THINNING,
@@ -915,32 +927,50 @@ _FORWARDER_ERIKSSON_MODELS = {
 _FORWARDER_BRUSHWOOD_MODELS = {ForwarderBCModel.LAITILA_VAATAINEN_BRUSHWOOD}
 
 
-def _render_grapple_skidder_result(result: SkidderProductivityResult) -> None:
-    params = result.parameters
+def _render_grapple_skidder_result(
+    result: SkidderProductivityResult | Mapping[str, object]
+) -> None:
+    if isinstance(result, SkidderProductivityResult):
+        params = result.parameters
+        rows = [
+            ("Model", result.method.value.replace("_", "-")),
+            ("Pieces per Cycle", f"{float(params['pieces_per_cycle']):.2f}"),
+            ("Piece Volume (m³)", f"{float(params['piece_volume_m3']):.3f}"),
+            ("Empty Distance (m)", f"{float(params['empty_distance_m']):.1f}"),
+            ("Loaded Distance (m)", f"{float(params['loaded_distance_m']):.1f}"),
+            ("Cycle Time (s)", f"{result.cycle_time_seconds:.1f}"),
+            ("Payload per Cycle (m³)", f"{result.payload_m3:.2f}"),
+        ]
+        if "trail_pattern" in params:
+            rows.append(("Trail Pattern", str(params["trail_pattern"]).replace("_", " ")))
+            rows.append(("Trail Multiplier", f"{float(params['trail_pattern_multiplier']):.2f}"))
+        if "decking_condition" in params:
+            rows.append(("Decking Condition", str(params["decking_condition"]).replace("_", " ")))
+            rows.append(("Decking Multiplier", f"{float(params['decking_multiplier']):.2f}"))
+        if "custom_multiplier" in params:
+            rows.append(("Custom Multiplier", f"{float(params['custom_multiplier']):.3f}"))
+        if "applied_multiplier" in params:
+            rows.append(("Applied Multiplier", f"{float(params['applied_multiplier']):.3f}"))
+        rows.append(("Predicted Productivity (m³/PMH0)", f"{result.predicted_m3_per_pmh:.2f}"))
+        _render_kv_table("Grapple Skidder Productivity Estimate", rows)
+        console.print(
+            "[dim]Regression from Han et al. (2018) beetle-kill salvage study (delay-free cycle time).[/dim]"
+        )
+        return
+
+    model_label = str(result.get("model", "adv1n12")).replace("_", "-")
+    distance = float(result.get("extraction_distance_m") or 0.0)
     rows = [
-        ("Method", result.method.value.replace("_", "-")),
-        ("Pieces per Cycle", f"{float(params['pieces_per_cycle']):.2f}"),
-        ("Piece Volume (m³)", f"{float(params['piece_volume_m3']):.3f}"),
-        ("Empty Distance (m)", f"{float(params['empty_distance_m']):.1f}"),
-        ("Loaded Distance (m)", f"{float(params['loaded_distance_m']):.1f}"),
-        ("Cycle Time (s)", f"{result.cycle_time_seconds:.1f}"),
-        ("Payload per Cycle (m³)", f"{result.payload_m3:.2f}"),
+        ("Model", model_label),
+        ("Extraction Distance (m)", f"{distance:.1f}"),
+        ("Predicted Productivity (m³/PMH)", f"{float(result['productivity_m3_per_pmh']):.2f}"),
     ]
-    if "trail_pattern" in params:
-        rows.append(("Trail Pattern", str(params["trail_pattern"]).replace("_", " ")))
-        rows.append(("Trail Multiplier", f"{float(params['trail_pattern_multiplier']):.2f}"))
-    if "decking_condition" in params:
-        rows.append(("Decking Condition", str(params["decking_condition"]).replace("_", " ")))
-        rows.append(("Decking Multiplier", f"{float(params['decking_multiplier']):.2f}"))
-    if "custom_multiplier" in params:
-        rows.append(("Custom Multiplier", f"{float(params['custom_multiplier']):.3f}"))
-    if "applied_multiplier" in params:
-        rows.append(("Applied Multiplier", f"{float(params['applied_multiplier']):.3f}"))
-    rows.append(("Predicted Productivity (m³/PMH0)", f"{result.predicted_m3_per_pmh:.2f}"))
     _render_kv_table("Grapple Skidder Productivity Estimate", rows)
-    console.print(
-        "[dim]Regression from Han et al. (2018) beetle-kill salvage study (delay-free cycle time).[/dim]"
+    note = result.get(
+        "note",
+        "[dim]FPInnovations Advantage 1N12 (commercial-thinning extraction distance optimization).[/dim]",
     )
+    console.print(str(note))
 
 
 def _render_shovel_logger_result(result: ShovelLoggerResult) -> None:
@@ -2561,6 +2591,12 @@ def _forwarder_parameters(result: ForwarderBCResult) -> list[tuple[str, str]]:
                 ("Slope Factor", f"{float(slope_factor):.2f}"),
             ]
         )
+    elif result.model in _FORWARDER_ADV1N12_MODELS:
+        rows.extend(
+            [
+                ("Extraction Distance (m)", f"{float(params['extraction_distance_m']):.1f}"),
+            ]
+        )
     elif result.model in _FORWARDER_ADV6N10_MODELS:
         rows.extend(
             [
@@ -2625,6 +2661,10 @@ def _render_forwarder_result(result: ForwarderBCResult) -> None:
     if result.model in _FORWARDER_GHAFFARIYAN_MODELS:
         console.print(
             "[dim]Regression from Ghaffariyan et al. (2019) ALPACA thinning dataset.[/dim]"
+        )
+    elif result.model in _FORWARDER_ADV1N12_MODELS:
+        console.print(
+            "[dim]Regression from FPInnovations Advantage Vol. 1 No. 12 (Valmet 646 forwarder).[/dim]"
         )
     elif result.model in _FORWARDER_ADV6N10_MODELS:
         console.print(
@@ -2698,7 +2738,7 @@ def _evaluate_forwarder_result(
 
 def _evaluate_grapple_skidder_result(
     *,
-    model: Han2018SkidderMethod,
+    model: GrappleSkidderModel,
     pieces_per_cycle: float | None,
     piece_volume_m3: float | None,
     empty_distance_m: float | None,
@@ -2707,7 +2747,35 @@ def _evaluate_grapple_skidder_result(
     decking_condition: DeckingCondition | None,
     custom_multiplier: float | None,
     speed_profile_option: SkidderSpeedProfileOption = SkidderSpeedProfileOption.LEGACY,
-) -> SkidderProductivityResult:
+    extraction_distance_m: float | None,
+) -> SkidderProductivityResult | Mapping[str, object]:
+    if model in {
+        GrappleSkidderModel.ADV1N12_FULLTREE,
+        GrappleSkidderModel.ADV1N12_TWO_PHASE,
+    }:
+        if extraction_distance_m is None:
+            raise typer.BadParameter(
+                "--skidder-extraction-distance is required for ADV1N12 skidder models."
+            )
+        if model is GrappleSkidderModel.ADV1N12_FULLTREE:
+            value = estimate_cable_skidder_productivity_adv1n12_full_tree(extraction_distance_m)
+            note = (
+                "[dim]Integrated felling + skidding (semi-mechanized) from Advantage Vol. 1 No. 12. "
+                "Productivity includes feller wait time effects.[/dim]"
+            )
+        else:
+            value = estimate_cable_skidder_productivity_adv1n12_two_phase(extraction_distance_m)
+            note = (
+                "[dim]Two-phase thinning (dedicated extraction skidder) from Advantage Vol. 1 No. 12. "
+                "Felling and extraction analyzed separately.[/dim]"
+            )
+        return {
+            "model": model.value,
+            "extraction_distance_m": extraction_distance_m,
+            "productivity_m3_per_pmh": value,
+            "note": note,
+        }
+
     missing: list[str] = []
     if pieces_per_cycle is None:
         missing.append("--skidder-pieces-per-cycle")
@@ -2732,9 +2800,15 @@ def _evaluate_grapple_skidder_result(
     elif speed_profile_option is SkidderSpeedProfileOption.GNSS_FARM_TRACTOR:
         profile_data = get_skidder_speed_profile("FT")
 
+    mapped_method = (
+        Han2018SkidderMethod.LOP_AND_SCATTER
+        if model is GrappleSkidderModel.HAN_LOP_AND_SCATTER
+        else Han2018SkidderMethod.WHOLE_TREE
+    )
+
     try:
         return estimate_grapple_skidder_productivity_han2018(
-            method=model,
+            method=mapped_method,
             pieces_per_cycle=pieces_per_cycle,
             piece_volume_m3=piece_volume_m3,
             empty_distance_m=empty_distance_m,
@@ -3674,7 +3748,7 @@ def estimate_productivity_cmd(
         None,
         "--extraction-distance",
         min=0.0,
-        help="Mean forwarding distance (m). Required for Ghaffariyan forwarder models.",
+        help="Mean forwarding distance (m). Required for Ghaffariyan and ADV1N12 forwarder models.",
     ),
     slope_class: ALPACASlopeClass = typer.Option(
         ALPACASlopeClass.FLAT,
@@ -3790,11 +3864,11 @@ def estimate_productivity_cmd(
         min=0.0,
         help="Grapple load during unloading (m³). Defaults to 0.29 m³ if omitted.",
     ),
-    grapple_skidder_model: Han2018SkidderMethod = typer.Option(
-        Han2018SkidderMethod.LOP_AND_SCATTER,
+    grapple_skidder_model: GrappleSkidderModel = typer.Option(
+        GrappleSkidderModel.HAN_LOP_AND_SCATTER,
         "--grapple-skidder-model",
         case_sensitive=False,
-        help="Grapple skidder regression (Han et al. 2018).",
+        help="Grapple skidder regression (Han et al. 2018 or ADV1N12 extraction curves).",
     ),
     skidder_pieces_per_cycle: float | None = typer.Option(
         None,
@@ -3819,6 +3893,12 @@ def estimate_productivity_cmd(
         "--skidder-loaded-distance",
         min=0.0,
         help="Loaded travel distance per cycle (m) for grapple skidder models.",
+    ),
+    skidder_extraction_distance: float | None = typer.Option(
+        None,
+        "--skidder-extraction-distance",
+        min=0.0,
+        help="Average extraction distance (m) for ADV1N12 skidder models.",
     ),
     skidder_trail_pattern: TrailSpacingPattern | None = typer.Option(
         None,
@@ -4452,6 +4532,7 @@ def estimate_productivity_cmd(
             decking_condition=skidder_decking_condition,
             custom_multiplier=skidder_productivity_multiplier,
             speed_profile_option=skidder_speed_profile_option,
+            extraction_distance_m=skidder_extraction_distance,
         )
         _render_grapple_skidder_result(result)
         if system_defaults_used and selected_system is not None:
@@ -5575,7 +5656,7 @@ def estimate_forwarder_productivity_cmd(
         None,
         "--extraction-distance",
         min=0.0,
-        help="Mean forwarding distance (m). Required for Ghaffariyan models.",
+        help="Mean forwarding distance (m). Required for Ghaffariyan and ADV1N12 models.",
     ),
     slope_class: ALPACASlopeClass = typer.Option(
         ALPACASlopeClass.FLAT,
