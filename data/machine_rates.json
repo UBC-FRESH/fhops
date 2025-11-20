@@ -21,21 +21,24 @@
     {
         "machine_name": "Grapple Skidder",
         "role": "grapple_skidder",
-        "ownership_cost_per_smh": 70.0,
-        "operating_cost_per_smh": 91.0,
-        "default_utilization": 0.8,
-        "move_in_cost": 2000.0,
-        "cost_base_year": 2024,
-        "source": "Dodson et al. (2015) + FX adjustment (1.33 CAD/USD).",
-        "notes": "Total \u2248 CAD 161/SMH (ownership 43%, operating 57%). FPInnovations Advantage Vol. 4 No. 23 (2003) Table 2 large (>16 t) grapple-skidder class gives CAD 20.68/SMH at 10 000 h (2002 dollars); CPI 2002\u21922024 \u22481.56 \u21d2 \u2248CAD 32.3/SMH repair+maintenance allowance.",
-        "repair_maintenance_cost_per_smh": 32.26,
-        "repair_maintenance_reference_hours": 10000,
-        "repair_maintenance_usage_multipliers": {
-            "5000": 0.6949,
-            "10000": 1.0,
-            "15000": 1.1794,
-            "20000": 1.3472
-        }
+        "ownership_cost_per_smh": 12.33,
+        "operating_cost_per_smh": 63.28,
+        "default_utilization": 0.9,
+        "move_in_cost": 0.0,
+        "cost_base_year": 1999,
+        "source": "FPInnovations Advantage Vol. 1 No. 12 Appendix 1 (Timberjack 240 cable skidder, semi-mechanized thinning).",
+        "notes": "Direct hourly costs include operator wages and fuel but exclude supervision/overhead. Sum of fixed (12.33 $/SMH) and variable + labour (63.28 $/SMH) from Appendix 1; utilisation 90% reflects integrated lop-and-scatter crew."
+    },
+    {
+        "machine_name": "Valmet 646 shortwood forwarder",
+        "role": "forwarder",
+        "ownership_cost_per_smh": 18.85,
+        "operating_cost_per_smh": 45.73,
+        "default_utilization": 0.85,
+        "move_in_cost": 0.0,
+        "cost_base_year": 1999,
+        "source": "FPInnovations Advantage Vol. 1 No. 12 Appendix 1 (Valmet 646 shortwood forwarder, commercial thinning).",
+        "notes": "Appendix 1 lists 18.85 $/SMH fixed cost and 20.73 $/SMH variable cost plus 25 $/SMH operator wages (total 45.73) for the Valmet 646 working 20 m trail spacing with 8 m\u00b3 payloads."
     },
     {
         "machine_name": "Processor (single-grip)",

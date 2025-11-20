@@ -161,6 +161,52 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
                 SystemJob("loading", "loader", ["processing"]),
             ],
         ),
+        "thinning_adv1n12_forwarder": HarvestSystem(
+            system_id="thinning_adv1n12_forwarder",
+            environment="commercial thinning",
+            notes="Valmet 901C + 646 shortwood thinning (ADV1N12) with extended forwarding distances.",
+            jobs=[
+                SystemJob(
+                    "felling_processing",
+                    "single_grip_harvester",
+                    [],
+                    productivity_overrides={
+                        "ctl_harvester_model": "adv5n30",
+                        "ctl_removal_fraction": 0.5,
+                    },
+                ),
+                SystemJob(
+                    "primary_transport",
+                    "forwarder",
+                    ["felling_processing"],
+                    productivity_overrides={
+                        "forwarder_model": "adv1n12-shortwood",
+                        "forwarder_extraction_distance_m": 350.0,
+                    },
+                ),
+                SystemJob("loading", "loader", ["primary_transport"]),
+            ],
+        ),
+        "thinning_adv1n12_fulltree": HarvestSystem(
+            system_id="thinning_adv1n12_fulltree",
+            environment="commercial thinning",
+            notes="Semi-mechanized lop-and-scatter thinning (ADV1N12) with Timberjack 240 cable skidder.",
+            jobs=[
+                SystemJob("felling", "hand_faller", []),
+                SystemJob(
+                    "primary_transport",
+                    "grapple_skidder",
+                    ["felling"],
+                    productivity_overrides={
+                        "grapple_skidder_model": "adv1n12-fulltree",
+                        "skidder_extraction_distance_m": 225.0,
+                        "skidder_trail_pattern": TrailSpacingPattern.SINGLE_GHOST_18M.value,
+                    },
+                ),
+                SystemJob("processing", "roadside_processor", ["primary_transport"]),
+                SystemJob("loading", "loader", ["processing"]),
+            ],
+        ),
         "ctl": HarvestSystem(
             system_id="ctl",
             environment="cut-to-length",

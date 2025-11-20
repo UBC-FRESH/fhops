@@ -134,6 +134,17 @@ The commands surface identical arguments under both the dedicated forwarder CLI 
 ``estimate-productivity --machine-role forwarder`` path, so the same guidance applies to synthetic
 generators, scenario QA, and KPI workflows.
 
+Harvest-system templates now include two ADV1N12 presets:
+
+* ``thinning_adv1n12_forwarder`` – sets the forwarder model to ``adv1n12-shortwood`` with a default
+  350 m extraction distance (mirroring the Advantage curves) and uses the Valmet 646 machine-rate
+  entry (owning 18.85 $/SMH + operating 45.73 $/SMH in 1999 CAD, automatically inflated to the
+  CLI target year). Selecting this system via ``--harvest-system-id`` or dataset blocks pre-fills
+  the forwarder CLI inputs and `--show-costs` reports the CPI-adjusted Appendix 1 cost split.
+* ``thinning_adv1n12_fulltree`` – wires the lop-and-scatter Timberjack 240 skidder preset (see
+  the grapple-skidder section) so planners can contrast the shortwood vs. full-tree options without
+  retyping the Advantage extraction distances.
+
 Roadside Processor Productivity Models
 --------------------------------------
 
@@ -506,6 +517,10 @@ for trail/decking multipliers.
 The new ADV1N12 options ignore the trail/decking multipliers (the regressions already embed those
 effects). When the CLI detects an ADV1N12 model it switches the output table to a condensed format
 that simply lists the model, extraction distance, and predicted m³/PMH for the selected regression.
+
+Select ``--harvest-system-id thinning_adv1n12_fulltree`` to auto-populate the ``adv1n12-fulltree``
+model, a representative 225 m extraction distance, and the Timberjack 240 machine-rate entry
+(12.33 $/SMH owning + 63.28 $/SMH operating in 1999 CAD, CPI-adjusted inside ``--show-costs``).
 
 Harvest-system templates can now supply these overrides automatically: pass
 ``--harvest-system-id <system_id>`` (default registry or your scenario’s definitions) or

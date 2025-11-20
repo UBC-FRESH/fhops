@@ -19,6 +19,13 @@
 - Planning + reference artefacts now record the work: `notes/reference_log.md` marks ADV1N12 as extracted (with the new
   dataset path), `notes/dataset_inspection_plan.md` calls out ADV1N12 completion, queues ADV1N35/ADV1N40/ADV6N7 as the
   next Advantage focus, and adds a follow-up task to push the new presets into harvest-system/costing workflows.
+- Added two harvest-system presets (`thinning_adv1n12_forwarder` / `thinning_adv1n12_fulltree`) so CLI calls or dataset
+  blocks can auto-populate the ADV1N12 forwarder/skidder models and representative extraction distances; `--show-costs`
+  now reports the CPI-adjusted Valmet 646 and Timberjack 240 rates derived from Appendix 1 and docs describe how to pick
+  the presets via `--harvest-system-id`.
+- Updated `data/machine_rates.json` with the Advantage Appendix 1 owning/operating splits (base year 1999 CAD) so forwarder
+  and grapple-skidder cost tables default to the same values referenced in the study; `inspect-machine --machine-role forwarder`
+  (or `grapple_skidder`) now prints the inflated Valmet/Timberjack breakdown instead of the generic Dodson rates.
 
 # 2025-11-26 — ADV7N3 processor/loader presets
 - Digitised the ADV7N3 summer short-log processor study into `data/productivity/processor_adv7n3.json`

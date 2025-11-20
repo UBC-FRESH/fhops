@@ -1951,23 +1951,51 @@ def _parameter_supplied(ctx: typer.Context, name: str) -> bool:
 def _apply_skidder_system_defaults(
     *,
     system: HarvestSystem | None,
+    model: GrappleSkidderModel,
     trail_pattern: TrailSpacingPattern | None,
     decking_condition: DeckingCondition | None,
     custom_multiplier: float | None,
+    extraction_distance_m: float | None,
+    user_supplied: Mapping[str, bool],
 ) -> tuple[
+    GrappleSkidderModel,
     TrailSpacingPattern | None,
     DeckingCondition | None,
     float | None,
     SkidderSpeedProfileOption,
+    float | None,
     bool,
 ]:
     speed_profile = SkidderSpeedProfileOption.LEGACY
     if system is None:
-        return trail_pattern, decking_condition, custom_multiplier, speed_profile, False
+        return (
+            model,
+            trail_pattern,
+            decking_condition,
+            custom_multiplier,
+            speed_profile,
+            extraction_distance_m,
+            False,
+        )
     overrides = system_productivity_overrides(system, ProductivityMachineRole.GRAPPLE_SKIDDER.value)
     if not overrides:
-        return trail_pattern, decking_condition, custom_multiplier, speed_profile, False
+        return (
+            model,
+            trail_pattern,
+            decking_condition,
+            custom_multiplier,
+            speed_profile,
+            extraction_distance_m,
+            False,
+        )
     used = False
+    value = overrides.get("grapple_skidder_model")
+    if value and not user_supplied.get("grapple_skidder_model", False):
+        try:
+            model = GrappleSkidderModel(value)
+            used = True
+        except ValueError as exc:  # pragma: no cover - validated by CI
+            raise ValueError(f"Unknown grapple skidder model override: {value}") from exc
     value = overrides.get("skidder_trail_pattern")
     if trail_pattern is None and isinstance(value, str):
         try:
@@ -1993,7 +2021,21 @@ def _apply_skidder_system_defaults(
             used = True
         except ValueError as exc:  # pragma: no cover - validated elsewhere
             raise ValueError(f"Unknown skidder speed profile override: {value}") from exc
-    return trail_pattern, decking_condition, custom_multiplier, speed_profile, used
+    value = overrides.get("skidder_extraction_distance_m")
+    if not user_supplied.get("skidder_extraction_distance", False) and isinstance(
+        value, (int, float)
+    ):
+        extraction_distance_m = float(value)
+        used = True
+    return (
+        model,
+        trail_pattern,
+        decking_condition,
+        custom_multiplier,
+        speed_profile,
+        extraction_distance_m,
+        used,
+    )
 
 
 def _shovel_slope_multiplier(value: ShovelSlopeClass) -> float:
@@ -2009,6 +2051,33 @@ def _shovel_bunching_multiplier(value: ShovelBunching) -> float:
         ShovelBunching.FELLER_BUNCHED: 1.0,
         ShovelBunching.HAND_SCATTERED: 0.6,
     }[value]
+
+
+def _apply_forwarder_system_defaults(
+    *,
+    system: HarvestSystem | None,
+    model: ForwarderBCModel,
+    extraction_distance_m: float | None,
+    user_supplied: Mapping[str, bool],
+) -> tuple[ForwarderBCModel, float | None, bool]:
+    if system is None:
+        return model, extraction_distance_m, False
+    overrides = system_productivity_overrides(system, ProductivityMachineRole.FORWARDER.value)
+    if not overrides:
+        return model, extraction_distance_m, False
+    used = False
+    value = overrides.get("forwarder_model")
+    if value and not user_supplied.get("forwarder_model", False):
+        try:
+            model = ForwarderBCModel(value)
+            used = True
+        except ValueError as exc:
+            raise ValueError(f"Unknown forwarder model override: {value}") from exc
+    value = overrides.get("forwarder_extraction_distance_m")
+    if not user_supplied.get("extraction_distance", False) and isinstance(value, (int, float)):
+        extraction_distance_m = float(value)
+        used = True
+    return model, extraction_distance_m, used
 
 
 def _apply_shovel_system_defaults(
@@ -4458,6 +4527,20 @@ def estimate_productivity_cmd(
 
     role = machine_role.value
     if role == ProductivityMachineRole.FORWARDER.value:
+        forwarder_user_supplied = {
+            "forwarder_model": _parameter_supplied(ctx, "forwarder_model"),
+            "extraction_distance": _parameter_supplied(ctx, "extraction_distance"),
+        }
+        (
+            forwarder_model,
+            extraction_distance,
+            forwarder_defaults_used,
+        ) = _apply_forwarder_system_defaults(
+            system=selected_system,
+            model=forwarder_model,
+            extraction_distance_m=extraction_distance,
+            user_supplied=forwarder_user_supplied,
+        )
         result = _evaluate_forwarder_result(
             model=forwarder_model,
             extraction_distance=extraction_distance,
@@ -4482,6 +4565,10 @@ def estimate_productivity_cmd(
             grapple_load_unloading=grapple_load_unloading,
         )
         _render_forwarder_result(result)
+        if forwarder_defaults_used and selected_system is not None:
+            console.print(
+                f"[dim]Applied productivity defaults from harvest system '{selected_system.system_id}'.[/dim]"
+            )
         _maybe_render_costs(show_costs, ProductivityMachineRole.FORWARDER.value)
         return
     if role == ProductivityMachineRole.CTL_HARVESTER.value:
@@ -4501,18 +4588,29 @@ def estimate_productivity_cmd(
         _maybe_render_costs(show_costs, ProductivityMachineRole.CTL_HARVESTER.value)
         return
     if role == ProductivityMachineRole.GRAPPLE_SKIDDER.value:
+        skidder_user_supplied = {
+            "grapple_skidder_model": _parameter_supplied(ctx, "grapple_skidder_model"),
+            "skidder_extraction_distance": _parameter_supplied(
+                ctx, "skidder_extraction_distance"
+            ),
+        }
         try:
             (
+                grapple_skidder_model,
                 skidder_trail_pattern,
                 skidder_decking_condition,
                 skidder_productivity_multiplier,
                 system_speed_profile,
+                skidder_extraction_distance,
                 system_defaults_used,
             ) = _apply_skidder_system_defaults(
                 system=selected_system,
+                model=grapple_skidder_model,
                 trail_pattern=skidder_trail_pattern,
                 decking_condition=skidder_decking_condition,
                 custom_multiplier=skidder_productivity_multiplier,
+                extraction_distance_m=skidder_extraction_distance,
+                user_supplied=skidder_user_supplied,
             )
         except ValueError as exc:
             raise typer.BadParameter(str(exc)) from exc

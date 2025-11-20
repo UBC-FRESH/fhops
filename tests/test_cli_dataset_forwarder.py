@@ -328,6 +328,26 @@ def test_cli_estimate_productivity_forwarder_adv1n12() -> None:
     assert f"{expected:.2f}" in result.stdout
 
 
+def test_cli_forwarder_harvest_system_adv1n12_defaults() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "forwarder",
+            "--harvest-system-id",
+            "thinning_adv1n12_forwarder",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_forwarder_productivity_bc(
+        model=ForwarderBCModel.ADV1N12_SHORTWOOD,
+        extraction_distance_m=350.0,
+    ).predicted_m3_per_pmh
+    assert f"{expected:.2f}" in result.stdout
+    assert "Applied productivity defaults from harvest system 'thinning_adv1n12_forwarder'." in result.stdout
+
+
 def test_cli_estimate_productivity_grapple_skidder_branch() -> None:
     result = runner.invoke(
         dataset_app,
@@ -465,6 +485,23 @@ def test_cli_grapple_skidder_dataset_inferred_defaults(monkeypatch) -> None:
         decking_condition=DeckingCondition.CONSTRAINED,
     ).predicted_m3_per_pmh
     assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_grapple_skidder_harvest_system_adv1n12_defaults() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_skidder",
+            "--harvest-system-id",
+            "thinning_adv1n12_fulltree",
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_cable_skidder_productivity_adv1n12_full_tree(225.0)
+    assert f"{expected:.2f}" in result.stdout
+    assert "Applied productivity defaults from harvest system 'thinning_adv1n12_fulltree'." in result.stdout
 
 
 def test_cli_grapple_skidder_adv1n12_fulltree() -> None:
