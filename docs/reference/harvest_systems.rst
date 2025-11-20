@@ -500,6 +500,12 @@ the distance or payload assumptions directly.
   scatter crew) or logarithmic (decoupled second-phase skidder) regression. Use these when spacing
   roads 100–350 m apart in commercial thinnings and you want the published productivity-distance
   relationships without retyping the equations.
+* ``adv1n35`` – Owren 400 hydrostatic yarder regression (Advantage Vol. 1 No. 35). Provide
+  ``--grapple-yard-distance-m`` plus the new knobs ``--grapple-lateral-distance-m`` and
+  ``--grapple-stems-per-cycle`` (defaults 11 m and ≈2.6–2.8 stems/turn). Optional
+  ``--grapple-in-cycle-delay-minutes`` lets you override the observed 0.69 min delay allowance. The CLI
+  reports the assumed values and productivity so you can mirror the 200–350 m two-span corridors
+  featured in the study when exploring interior skyline layouts.
 
 Trail spacing and decking multipliers (from FPInnovations TN285 and ADV4N21) can be applied via
 ``--skidder-trail-pattern`` (``narrow_13_15m`` | ``single_ghost_18m`` | ``double_ghost_27m``) and

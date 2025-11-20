@@ -1,0 +1,165 @@
+{
+  "source": {
+    "id": "ADV1N35",
+    "title": "Productivity and cost of an Owren 400 hydrostatic yarder",
+    "publication": "FPInnovations / FERIC Advantage Vol. 1 No. 35",
+    "publication_date": "2000-11",
+    "authors": [
+      "K. Kosicki"
+    ],
+    "region": "Kispiox Forest District (ICHmc2), British Columbia",
+    "operations_summary": "Owren 400 hydrostatic skyline yarder (running + standing configurations with single-tree intermediate supports) extracting hand-felled stems (615 m\u00b3/ha, 1.02 m\u00b3/tree)."
+  },
+  "site": {
+    "biogeoclimatic_zone": "ICHmc2",
+    "block_area_ha": 7.5,
+    "slope_percent_range": [
+      30,
+      60
+    ],
+    "average_slope_percent": 45,
+    "average_volume_m3_per_ha": 615,
+    "average_volume_m3_per_tree": 1.02,
+    "dominant_species": [
+      {
+        "name": "western hemlock",
+        "percent": 45
+      },
+      {
+        "name": "hybrid spruce",
+        "percent": 40
+      },
+      {
+        "name": "western red cedar",
+        "percent": 10
+      }
+    ]
+  },
+  "machine": {
+    "name": "Owren 400 hydrostatic yarder",
+    "carrier": "Kockum 850 6x6",
+    "carriages": [
+      {
+        "name": "Koller SKA 2.5",
+        "mode": "standing skyline, gravity return"
+      },
+      {
+        "name": "Owren mechanical slackpulling carriage",
+        "mode": "running skyline"
+      }
+    ],
+    "crew_size": 3,
+    "intermediate_supports": {
+      "type": "single leaning tree with bypass jack",
+      "rigging_time_hours_per_road": {
+        "single_span": 3.0,
+        "two_span": 6.0
+      }
+    }
+  },
+  "regressions": {
+    "cycle_time": {
+      "equation": "CT = 1.94 + 0.0151 * SYD + 0.0511 * LYD + 0.147 * SL",
+      "variables": {
+        "CT": "Delay-free cycle time (min)",
+        "SYD": "Slope yarding distance (m)",
+        "LYD": "Lateral yarding distance (m)",
+        "SL": "Stems per turn"
+      },
+      "ranges": {
+        "SYD_m": [
+          20,
+          290
+        ],
+        "LYD_m": [
+          0,
+          30
+        ],
+        "SL": [
+          1,
+          6
+        ]
+      },
+      "statistics": {
+        "n": 345,
+        "r_squared": 0.68,
+        "standard_error_minutes": 0.71
+      },
+      "coefficients": {
+        "intercept": 1.94,
+        "slope_distance": 0.0151,
+        "lateral_distance": 0.0511,
+        "stems_per_turn": 0.147
+      }
+    },
+    "productivity": {
+      "equation": "Prod = 60 * CV * U / (CT + DT)",
+      "variables": {
+        "Prod": "Predicted productivity (m\u00b3/h) excluding rigging",
+        "CV": "Average payload volume per turn (m\u00b3)",
+        "U": "Utilisation (fraction of SMH)",
+        "CT": "Cycle time from cycle-time regression (min)",
+        "DT": "Average in-cycle delay per turn (min)"
+      },
+      "defaults": {
+        "payload_volume_m3": 1.97,
+        "payload_stems": 2.63,
+        "utilisation": 0.94,
+        "in_cycle_delay_minutes": 0.69,
+        "lateral_distance_m": 11.0
+      }
+    },
+    "productivity_with_rigging": {
+      "equations": {
+        "road_time": "RoadTime = (RoadVolume / Prod) + RiggingTime",
+        "ypirt": "YPIRT = RoadVolume / RoadTime"
+      },
+      "defaults": {
+        "rigging_hours_per_road_two_span": 6.0,
+        "rigging_hours_per_road_single_span": 3.0,
+        "volume_per_hectare_m3": 760.0
+      }
+    }
+  },
+  "costs": {
+    "hourly_components": {
+      "yarder_total_per_smh": 178.7,
+      "yarder_labour_per_smh": 101.12,
+      "yarder_machine_per_smh": 74.61,
+      "carriage_per_smh": 2.97,
+      "faller_per_smh": 49.56,
+      "loader_total_per_smh": 99.89
+    },
+    "unit_costs": {
+      "falling_processing_per_m3": 3.23,
+      "yarding_per_m3": 10.96,
+      "loading_per_m3": 6.24,
+      "total_per_m3": 20.43,
+      "labour_fraction": 0.55
+    },
+    "assumptions": "Costs expressed in 2000 CAD; falling wage based on IWA-Canada June 1997 rates with 38% fringe."
+  },
+  "observed_productivity": {
+    "falling_processing_m3_per_smh": 16.7,
+    "yarding_m3_per_smh": 16.3,
+    "loading_m3_per_smh": 16.0,
+    "yarding_m3_per_shift": 134,
+    "yarding_m3_per_pmh_detail": 19.2
+  },
+  "recommended_road_design": {
+    "road_length_m": [
+      200,
+      350
+    ],
+    "road_width_m_optimum": [
+      45,
+      60
+    ],
+    "configuration_notes": "Standing skyline with one tree intermediate support for >150 m; rig skyline through jack on backspar and anchor to second tree."
+  },
+  "notes": [
+    "Detailed timing: 388 cycles (1099 stems, 824 m\u00b3) with average slope distance 165 m and lateral pull 11 m.",
+    "Intermittent loader interference (sorting/loading) produced ~32% of in-cycle delay time (average 0.69 min/turn).",
+    "Unit harvesting cost curve indicates $19\u201321/m\u00b3 over 20\u201360 m road widths with two-span rigging and 200\u2013350 m road lengths."
+  ]
+}

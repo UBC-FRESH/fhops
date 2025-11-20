@@ -29,6 +29,11 @@
 - Skyline harvest systems now seed the ADV7N3 deck processor/loader preset automatically: `cable_running` and the
   `cable_running_adv5n28_*` variants override the roadside processor job to `adv7n3` (Hyundai 210LC vs. John Deere 892),
   so `--harvest-system-id ...` runs both the skyline helper and the CPI-adjusted deck costs without extra CLI flags.
+- Added the Owren 400 hydrostatic yarder regression (`--grapple-yarder-model adv1n35`). New CLI knobs
+  `--grapple-lateral-distance-m`, `--grapple-stems-per-cycle`, and `--grapple-in-cycle-delay-minutes`
+  expose the Advantage Vol. 1 No. 35 inputs (defaults 11 m lateral, 2.6–2.8 stems/turn, 0.69 min delay). The helper lives in
+  `data/reference/fpinnovations/adv1n35_owren400.json`, docs/tests/logs were updated, and telemetry now records the extra
+  predictors for skyline QA.
 
 # 2025-11-26 — ADV7N3 processor/loader presets
 - Digitised the ADV7N3 summer short-log processor study into `data/productivity/processor_adv7n3.json`

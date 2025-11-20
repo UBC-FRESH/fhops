@@ -70,10 +70,12 @@ from fhops.productivity import (
     estimate_grapple_yarder_productivity_tr75_bunched,
     estimate_grapple_yarder_productivity_tr75_handfelled,
     estimate_grapple_yarder_productivity_tn157,
+    estimate_grapple_yarder_productivity_adv1n35,
     estimate_grapple_yarder_productivity_tn147,
     estimate_grapple_yarder_productivity_tr122,
     estimate_grapple_yarder_productivity_adv5n28,
     get_tn157_case,
+    get_adv1n35_metadata,
     get_tn147_case,
     get_tr122_treatment,
     get_adv5n28_block,
@@ -84,6 +86,7 @@ from fhops.productivity import (
     TN147Case,
     TR122Treatment,
     ADV5N28Block,
+    ADV1N35Metadata,
     estimate_standing_skyline_productivity_aubuchon1979,
     estimate_standing_skyline_turn_time_aubuchon1979,
     estimate_standing_skyline_productivity_kramer1978,
@@ -621,6 +624,7 @@ class GrappleYarderModel(str, Enum):
     SR54 = "sr54"
     TR75_BUNCHED = "tr75-bunched"
     TR75_HANDFELLED = "tr75-handfelled"
+    ADV1N35 = "adv1n35"
     TN157 = "tn157"
     TN147 = "tn147"
     TR122_EXTENDED = "tr122-extended"
@@ -1890,14 +1894,24 @@ def _render_grapple_yarder_result(
     yarding_distance_m: float | None,
     productivity_m3_per_pmh: float,
     preset_meta: Mapping[str, object] | None = None,
+    lateral_distance_m: float | None = None,
+    stems_per_cycle: float | None = None,
+    in_cycle_delay_minutes: float | None = None,
+    note: str | None = None,
 ) -> None:
     rows = [("Model", model.value)]
     if turn_volume_m3 is not None:
         rows.append(("Turn Volume (m³)", f"{turn_volume_m3:.2f}"))
     if yarding_distance_m is not None:
         rows.append(("Yarding Distance (m)", f"{yarding_distance_m:.1f}"))
+    if lateral_distance_m is not None:
+        rows.append(("Lateral Distance (m)", f"{lateral_distance_m:.1f}"))
+    if stems_per_cycle is not None:
+        rows.append(("Stems per Turn", f"{stems_per_cycle:.2f}"))
+    if in_cycle_delay_minutes is not None:
+        rows.append(("In-cycle Delay (min)", f"{in_cycle_delay_minutes:.2f}"))
     rows.append(("Productivity (m³/PMH)", f"{productivity_m3_per_pmh:.2f}"))
-    note = (
+    default_note = (
         "[dim]Regressions from MacDonald (1988) SR-54 and Peterson (1987) TR-75 "
         "(delay-free cycle times + minor delays).[/dim]"
     )
@@ -1930,12 +1944,12 @@ def _render_grapple_yarder_result(
         extra_rows = preset_meta.get("extra_rows") or []
         for label, value in extra_rows:
             rows.append((label, value))
-        note = preset_meta.get(
+        default_note = preset_meta.get(
             "note",
             "[dim]Observed productivity/cost preset.[/dim]",
         )
     _render_kv_table("Grapple Yarder Productivity Estimate", rows)
-    console.print(note)
+    console.print(note or default_note)
 
 
 def _parameter_supplied(ctx: typer.Context, name: str) -> bool:
@@ -2561,15 +2575,48 @@ def _apply_grapple_yarder_system_defaults(
     model: GrappleYarderModel,
     turn_volume_m3: float | None,
     yarding_distance_m: float | None,
+    lateral_distance_m: float | None,
+    stems_per_cycle: float | None,
+    in_cycle_delay_minutes: float | None,
     tn157_case: str,
     tn147_case: str,
     user_supplied: Mapping[str, bool],
-) -> tuple[GrappleYarderModel, float | None, float | None, str, str, bool]:
+) -> tuple[
+    GrappleYarderModel,
+    float | None,
+    float | None,
+    float | None,
+    float | None,
+    float | None,
+    str,
+    str,
+    bool,
+]:
     if system is None:
-        return model, turn_volume_m3, yarding_distance_m, tn157_case, tn147_case, False
+        return (
+            model,
+            turn_volume_m3,
+            yarding_distance_m,
+            lateral_distance_m,
+            stems_per_cycle,
+            in_cycle_delay_minutes,
+            tn157_case,
+            tn147_case,
+            False,
+        )
     overrides = system_productivity_overrides(system, ProductivityMachineRole.GRAPPLE_YARDER.value)
     if not overrides:
-        return model, turn_volume_m3, yarding_distance_m, tn157_case, tn147_case, False
+        return (
+            model,
+            turn_volume_m3,
+            yarding_distance_m,
+            lateral_distance_m,
+            stems_per_cycle,
+            in_cycle_delay_minutes,
+            tn157_case,
+            tn147_case,
+            False,
+        )
     used = False
 
     value = overrides.get("grapple_yarder_model")
@@ -2601,6 +2648,20 @@ def _apply_grapple_yarder_system_defaults(
         "grapple_yarder_yarding_distance_m", yarding_distance_m, "grapple_yarding_distance_m"
     )
     used |= changed
+    lateral_distance_m, changed = maybe_float(
+        "grapple_yarder_lateral_distance_m", lateral_distance_m, "grapple_lateral_distance_m"
+    )
+    used |= changed
+    stems_per_cycle, changed = maybe_float(
+        "grapple_yarder_stems_per_cycle", stems_per_cycle, "grapple_stems_per_cycle"
+    )
+    used |= changed
+    in_cycle_delay_minutes, changed = maybe_float(
+        "grapple_yarder_in_cycle_delay_minutes",
+        in_cycle_delay_minutes,
+        "grapple_in_cycle_delay_minutes",
+    )
+    used |= changed
 
     tn157_case_value = tn157_case
     if not user_supplied.get("tn157_case", False):
@@ -2622,7 +2683,17 @@ def _apply_grapple_yarder_system_defaults(
             except ValueError as exc:  # pragma: no cover - validated via unit tests
                 raise ValueError(f"Unknown TN147 case override '{override_case}'.") from exc
 
-    return model, turn_volume_m3, yarding_distance_m, tn157_case_value, tn147_case_value, used
+    return (
+        model,
+        turn_volume_m3,
+        yarding_distance_m,
+        lateral_distance_m,
+        stems_per_cycle,
+        in_cycle_delay_minutes,
+        tn157_case_value,
+        tn147_case_value,
+        used,
+    )
     used |= changed
     crew_size, changed = maybe_float("skyline_crew_size", crew_size, "crew_size", True)
     used |= changed
@@ -4047,6 +4118,24 @@ def estimate_productivity_cmd(
         min=0.0,
         help="Yarding distance along the corridor (m) for grapple yarder helpers.",
     ),
+    grapple_lateral_distance_m: float | None = typer.Option(
+        None,
+        "--grapple-lateral-distance-m",
+        min=0.0,
+        help="Lateral yarding distance (m). Required for ADV1N35 when not using harvest-system defaults.",
+    ),
+    grapple_stems_per_cycle: float | None = typer.Option(
+        None,
+        "--grapple-stems-per-cycle",
+        min=0.0,
+        help="Stems per turn for grapple yarder models that require it (e.g., ADV1N35 Owren 400).",
+    ),
+    grapple_in_cycle_delay_minutes: float | None = typer.Option(
+        None,
+        "--grapple-in-cycle-delay-minutes",
+        min=0.0,
+        help="In-cycle delay minutes per turn (ADV1N35 default 0.69).",
+    ),
     tn157_case: str = typer.Option(
         "combined",
         "--tn157-case",
@@ -4676,6 +4765,11 @@ def estimate_productivity_cmd(
             "grapple_yarder_model": _parameter_supplied(ctx, "grapple_yarder_model"),
             "grapple_turn_volume_m3": _parameter_supplied(ctx, "grapple_turn_volume_m3"),
             "grapple_yarding_distance_m": _parameter_supplied(ctx, "grapple_yarding_distance_m"),
+            "grapple_lateral_distance_m": _parameter_supplied(ctx, "grapple_lateral_distance_m"),
+            "grapple_stems_per_cycle": _parameter_supplied(ctx, "grapple_stems_per_cycle"),
+            "grapple_in_cycle_delay_minutes": _parameter_supplied(
+                ctx, "grapple_in_cycle_delay_minutes"
+            ),
             "tn157_case": _parameter_supplied(ctx, "tn157_case"),
             "tn147_case": _parameter_supplied(ctx, "tn147_case"),
         }
@@ -4691,6 +4785,9 @@ def estimate_productivity_cmd(
             grapple_yarder_model,
             grapple_turn_volume_m3,
             grapple_yarding_distance_m,
+            grapple_lateral_distance_m,
+            grapple_stems_per_cycle,
+            grapple_in_cycle_delay_minutes,
             grapple_tn157_case,
             grapple_tn147_case,
             grapple_defaults_used,
@@ -4699,6 +4796,9 @@ def estimate_productivity_cmd(
             model=grapple_yarder_model,
             turn_volume_m3=grapple_turn_volume_m3,
             yarding_distance_m=grapple_yarding_distance_m,
+            lateral_distance_m=grapple_lateral_distance_m,
+            stems_per_cycle=grapple_stems_per_cycle,
+            in_cycle_delay_minutes=grapple_in_cycle_delay_minutes,
             tn157_case=tn157_case,
             tn147_case=tn147_case,
             user_supplied=grapple_user_supplied,
@@ -4708,6 +4808,7 @@ def estimate_productivity_cmd(
         tn147_case_metadata: TN147Case | None = None
         tr122_treatment_metadata: TR122Treatment | None = None
         adv5n28_block_metadata: ADV5N28Block | None = None
+        preset_note: str | None = None
         if grapple_yarder_model is GrappleYarderModel.TN157:
             tn157_case_metadata = get_tn157_case(grapple_tn157_case)
             if grapple_turn_volume_m3 is None:
@@ -4840,6 +4941,28 @@ def estimate_productivity_cmd(
                     "(Madill 071 + Acme 200 Pow'-R Block, 2002).[/dim]"
                 ),
             }
+        elif grapple_yarder_model is GrappleYarderModel.ADV1N35:
+            if grapple_yarding_distance_m is None:
+                raise typer.BadParameter(
+                    "--grapple-yard-distance-m is required for the ADV1N35 model."
+                )
+            metadata = get_adv1n35_metadata()
+            if grapple_turn_volume_m3 is None:
+                grapple_turn_volume_m3 = metadata.default_turn_volume_m3
+            if grapple_lateral_distance_m is None:
+                grapple_lateral_distance_m = metadata.default_lateral_distance_m
+            if grapple_stems_per_cycle is None:
+                grapple_stems_per_cycle = metadata.default_stems_per_turn
+            if grapple_in_cycle_delay_minutes is None:
+                grapple_in_cycle_delay_minutes = metadata.default_in_cycle_delay_min
+            value = estimate_grapple_yarder_productivity_adv1n35(
+                turn_volume_m3=grapple_turn_volume_m3,
+                yarding_distance_m=grapple_yarding_distance_m,
+                lateral_distance_m=grapple_lateral_distance_m,
+                stems_per_turn=grapple_stems_per_cycle,
+                in_cycle_delay_minutes=grapple_in_cycle_delay_minutes,
+            )
+            preset_note = metadata.note
         else:
             value = _evaluate_grapple_yarder_result(
                 model=grapple_yarder_model,
@@ -4851,6 +4974,9 @@ def estimate_productivity_cmd(
         telemetry_inputs: dict[str, Any] = {
             "turn_volume_m3": grapple_turn_volume_m3,
             "yarding_distance_m": grapple_yarding_distance_m,
+            "lateral_distance_m": grapple_lateral_distance_m,
+            "stems_per_turn": grapple_stems_per_cycle,
+            "in_cycle_delay_minutes": grapple_in_cycle_delay_minutes,
             "tn157_case": grapple_tn157_case if grapple_yarder_model is GrappleYarderModel.TN157 else None,
             "tn147_case": grapple_tn147_case if grapple_yarder_model is GrappleYarderModel.TN147 else None,
             "harvest_system_id": selected_system.system_id if selected_system else None,
@@ -4862,6 +4988,10 @@ def estimate_productivity_cmd(
             yarding_distance_m=grapple_yarding_distance_m,
             productivity_m3_per_pmh=value,
             preset_meta=preset_meta,
+            lateral_distance_m=grapple_lateral_distance_m,
+            stems_per_cycle=grapple_stems_per_cycle,
+            in_cycle_delay_minutes=grapple_in_cycle_delay_minutes,
+            note=preset_note,
         )
         if telemetry_log:
             _append_grapple_yarder_telemetry(

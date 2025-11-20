@@ -104,6 +104,7 @@ __all__ = [
     "estimate_grapple_yarder_productivity_sr54",
     "estimate_grapple_yarder_productivity_tr75_bunched",
     "estimate_grapple_yarder_productivity_tr75_handfelled",
+    "estimate_grapple_yarder_productivity_adv1n35",
 ]
 
 
@@ -146,6 +147,9 @@ _TR122_PATH = (
 )
 _ADV5N28_PATH = (
     Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/adv5n28_skyline_conversion.json"
+)
+_ADV1N35_PATH = (
+    Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/adv1n35_owren400.json"
 )
 
 
@@ -619,6 +623,81 @@ def estimate_grapple_yarder_productivity_adv5n28(block_id: str) -> float:
     return block.productivity_m3_per_pmh
 
 
+@dataclass(frozen=True)
+class ADV1N35Metadata:
+    intercept: float
+    slope_distance_coeff: float
+    lateral_distance_coeff: float
+    stems_coeff: float
+    default_turn_volume_m3: float
+    default_stems_per_turn: float
+    default_lateral_distance_m: float
+    default_in_cycle_delay_min: float
+    utilisation: float
+    note: str
+
+
+@lru_cache(maxsize=1)
+def get_adv1n35_metadata() -> ADV1N35Metadata:
+    if not _ADV1N35_PATH.exists():
+        raise FileNotFoundError(f"ADV1N35 dataset not found: {_ADV1N35_PATH}")
+    with _ADV1N35_PATH.open(encoding="utf-8") as fh:
+        payload = json.load(fh)
+    coeffs = payload["regressions"]["cycle_time"].get("coefficients", {})
+    defaults = payload["regressions"]["productivity"]["defaults"]
+    note = (
+        "[dim]Regression from FPInnovations Advantage Vol. 1 No. 35 "
+        "(Owren 400 hydrostatic yarder with single-tree intermediate supports).[/dim]"
+    )
+    return ADV1N35Metadata(
+        intercept=float(coeffs.get("intercept", 1.94)),
+        slope_distance_coeff=float(coeffs.get("slope_distance", 0.0151)),
+        lateral_distance_coeff=float(coeffs.get("lateral_distance", 0.0511)),
+        stems_coeff=float(coeffs.get("stems_per_turn", 0.147)),
+        default_turn_volume_m3=float(defaults.get("payload_volume_m3", 1.97)),
+        default_stems_per_turn=float(defaults.get("payload_stems", 2.63)),
+        default_lateral_distance_m=float(defaults.get("lateral_distance_m", 11.0)),
+        default_in_cycle_delay_min=float(defaults.get("in_cycle_delay_minutes", 0.69)),
+        utilisation=float(defaults.get("utilisation", 0.94)),
+        note=note,
+    )
+
+
+def estimate_grapple_yarder_productivity_adv1n35(
+    *,
+    turn_volume_m3: float,
+    yarding_distance_m: float,
+    lateral_distance_m: float | None = None,
+    stems_per_turn: float | None = None,
+    in_cycle_delay_minutes: float | None = None,
+) -> float:
+    """Estimate productivity (m³/PMH) for the Owren 400 hydrostatic yarder (ADV1N35)."""
+
+    _validate_inputs(turn_volume_m3, yarding_distance_m)
+    if lateral_distance_m is not None and lateral_distance_m < 0:
+        raise ValueError("lateral_distance_m must be >= 0")
+    if stems_per_turn is not None and stems_per_turn <= 0:
+        raise ValueError("grapple_stems_per_cycle must be > 0")
+    if in_cycle_delay_minutes is not None and in_cycle_delay_minutes < 0:
+        raise ValueError("grapple_in_cycle_delay_minutes must be >= 0")
+
+    metadata = get_adv1n35_metadata()
+    lateral = metadata.default_lateral_distance_m if lateral_distance_m is None else lateral_distance_m
+    stems = metadata.default_stems_per_turn if stems_per_turn is None else stems_per_turn
+    delay = metadata.default_in_cycle_delay_min if in_cycle_delay_minutes is None else in_cycle_delay_minutes
+
+    cycle_time_min = (
+        metadata.intercept
+        + metadata.slope_distance_coeff * yarding_distance_m
+        + metadata.lateral_distance_coeff * lateral
+        + metadata.stems_coeff * stems
+    )
+    cycle_time_min += delay
+    if cycle_time_min <= 0:
+        raise ValueError("Derived cycle time must be > 0")
+    return _productivity(turn_volume_m3, cycle_time_min)
+
+
 __all__ += [
     "TN157Case",
     "estimate_grapple_yarder_productivity_tn157",
@@ -636,4 +715,7 @@ __all__ += [
     "estimate_grapple_yarder_productivity_adv5n28",
     "get_adv5n28_block",
     "list_adv5n28_block_ids",
+    "ADV1N35Metadata",
+    "estimate_grapple_yarder_productivity_adv1n35",
+    "get_adv1n35_metadata",
 ]

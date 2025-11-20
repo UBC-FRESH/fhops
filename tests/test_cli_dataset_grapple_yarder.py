@@ -124,3 +124,30 @@ def test_cli_grapple_yarder_adv5n28_harvest_system_defaults() -> None:
     assert result.exit_code == 0
     assert "ADV5N28" in result.stdout
     assert "Applied grapple-yarder defaults" in result.stdout
+
+
+def test_cli_grapple_yarder_adv1n35_regression() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_yarder",
+            "--grapple-yarder-model",
+            "adv1n35",
+            "--grapple-turn-volume-m3",
+            "1.97",
+            "--grapple-yard-distance-m",
+            "165",
+            "--grapple-lateral-distance-m",
+            "11",
+            "--grapple-stems-per-cycle",
+            "2.83",
+            "--grapple-in-cycle-delay-minutes",
+            "0.69",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "adv1n35" in result.stdout
+    assert "Owren 400" in result.stdout
+    assert "Lateral Distance" in result.stdout
