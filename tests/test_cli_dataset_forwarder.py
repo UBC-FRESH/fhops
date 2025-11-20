@@ -593,6 +593,22 @@ def test_cli_grapple_skidder_harvest_system_adv6n7_defaults() -> None:
     assert "Applied productivity defaults from harvest system 'ground_fb_skid'." in result.stdout
 
 
+def test_cli_grapple_skidder_harvest_system_salvage_defaults() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_skidder",
+            "--harvest-system-id",
+            "ground_salvage_grapple",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "adv6n7" in result.stdout
+    assert "ground_salvage_grapple" in result.stdout
+
+
 def test_cli_adv2n21_summary_treatment() -> None:
     result = runner.invoke(
         dataset_app,

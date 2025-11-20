@@ -47,6 +47,10 @@
   (85 m extraction distance, loader-supported decking with a 0.4 support ratio, 7.69 m³ payload, 0.12 min in-cycle delay,
   0.85 utilisation) so coastal cable→skid conversions pick up the Caterpillar 535B preset without extra CLI flags;
   docs/tests/logs were updated to highlight the new defaults.
+- Added salvage-focused harvest systems (`ground_salvage_grapple`, `cable_salvage_grapple`) so burned-timber corridors
+  can reuse ADV6N7/TN157 defaults while surfacing the ADV1N5 cautions (buck/sort damaged fibre, double-ring debarkers,
+  charcoal dust controls, grapple yarding on sensitive slopes). Docs, planning notes, and CLI tests now reference the
+  dedicated salvage presets alongside the general guidance.
 
 # 2025-11-26 — ADV7N3 processor/loader presets
 - Digitised the ADV7N3 summer short-log processor study into `data/productivity/processor_adv7n3.json`

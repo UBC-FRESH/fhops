@@ -46,6 +46,10 @@ Default Systems
      - ground-based
      - feller-buncher → shovel logger → roadside processor → loader
      - Mix of mechanised felling and shovel logging before roadside processing.
+   * - ``ground_salvage_grapple``
+     - ground-based salvage
+     - feller-buncher → grapple skidder → roadside processor → loader
+     - ADV1N5 burned-timber salvage defaults (buck/sort fire damage, double-ring debarkers, charcoal controls) threaded into the grapple-skidder chain.
    * - ``ctl``
      - cut-to-length
      - single-grip harvester → forwarder → loader
@@ -58,6 +62,10 @@ Default Systems
      - cable-standing skyline
      - hand/mech faller → skyline yarder → landing processor/hand buck → loader
      - Standing skyline with chokers feeding landing processing.
+   * - ``cable_salvage_grapple``
+     - cable-running salvage
+     - hand/mech faller → grapple yarder → landing processor → loader
+     - ADV1N5 salvage workflows for steep burned slopes (parallel bunching, grapple yarding, charcoal-aware processing) bundled into a cable-running preset.
    * - ``cable_running``
      - cable-running skyline
      - hand/mech faller → grapple yarder → landing processor/hand buck → loader
@@ -394,7 +402,9 @@ checklists whenever you point `cable_running*`, `ground_fb_*`, or custom salvage
   when permanent mills cannot expand fast enough; burn or isolate slab/char waste so pulp furnish stays clean.
 
 Document any of these mitigations in scenario metadata (telemetry note, `--harvest-system-id` description, etc.)
-when you model salvage corridors so downstream QA knows why costs/utilisation differ from green-timber runs.
+when you model salvage corridors so downstream QA knows why costs/utilisation differ from green-timber runs. The
+new ``ground_salvage_grapple`` and ``cable_salvage_grapple`` harvest systems simply bundle the same checklist so you
+can select them via ``--harvest-system-id`` without rewriting the warnings.
 
 Loader-Forwarder Productivity Models
 ------------------------------------
@@ -476,6 +486,9 @@ loader inputs the same way shovel, skyline, and helicopter presets work. The reg
   with ``--loader-barko-scenario ground_skid_block`` so coastal/interior live-heel conversions inherit the TN-46
   utilisation warning (96 % availability, 79 % utilisation, 17 % truck waits) automatically while the grapple-skidder
   leg still leverages the ADV6N7 defaults.
+* ``ground_salvage_grapple`` – pairs the ADV6N7 grapple-skidder preset with the ADV1N5 salvage guidance (buck out
+  catfaces, raise minimum tops, double-ring debarkers, charcoal-dust controls). Use this when modelling burned-timber
+  corridors that follow the salvage checklist in the section below.
 * ``ground_fb_shovel`` – coastal shovel-logging corridors pick the ADV5N1 helper (0–10 % slope class) with a 90 m
   forwarding distance plus the published payload/utilisation defaults (2.77 m³/cycle, 0.93 PMH/SMH).
 * ``steep_tethered`` – tethered hot-logging layouts wire in the ADV2N26 clambunk regression with 320 m travel-empty
@@ -621,6 +634,11 @@ the defaults are applied. Use ``cable_running_adv5n28_clearcut`` or
 ``cable_running_adv5n28_shelterwood`` when modelling the ADV5N28 long-span conversions—those presets
 swap in the new helper automatically and reuse the same skyline defaults, so you can flip helicopter
 blocks to skyline without retyping payload/cost assumptions.
+
+Use ``cable_salvage_grapple`` when those skyline corridors are salvaging burned timber: it mirrors the
+``cable_running`` payload defaults (TN-157 combined preset + ADV7N3 deck costs) but tags the scenario as a salvage
+operation so the ADV1N5 cautions (parallel bunching, grapple yarding rough ground, charcoal controls) are baked into
+the harvest-system notes and telemetry.
 
 Shovel Logger (Hoe-Chucker) Productivity
 ----------------------------------------

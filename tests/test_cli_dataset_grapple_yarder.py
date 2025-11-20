@@ -171,3 +171,19 @@ def test_cli_grapple_yarder_adv1n40_regression() -> None:
     assert result.exit_code == 0, result.stdout
     assert "Madill 071" in result.stdout
     assert "ADV1N40" in result.stdout or "downhill running" in result.stdout
+
+
+def test_cli_grapple_yarder_harvest_system_salvage() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_yarder",
+            "--harvest-system-id",
+            "cable_salvage_grapple",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "Cypress 7280B" in result.stdout
+    assert "Applied grapple-yarder defaults" in result.stdout
