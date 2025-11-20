@@ -30,9 +30,19 @@
   between the original Han et al. (2018) regression coefficients and the GNSS medians (cable skidder or farm tractor).
   Distance terms now convert to travel time using the selected profile, and harvest-system overrides can set the profile
   automatically.
+- Exposed the historic TR-45 Appendix II machine rates via the CLI: `data/costing/tr45_appendixii_1979.json` feeds new
+  roles (`loader_cat966c_tr45`, `skidder_tr45`, `bulldozer_tr45`) and `loader_barko450` now draws its owning/operating
+  split from the Cat 966C table. `fhops dataset inspect-machine --machine-role ...` can dump any of these CPI-normalized
+  presets for budgeting QA or telemetry snapshots.
 - Added a HYPRO 775 tractor-processor preset (`--processor-model hypro775`) based on Castro Pérez (2020) and
   Zurita Vintimilla (2021). CLI output now reports the cycle time, gross/net trees per hour, fuel (≈21 L/h), and ergonomic
   warnings (noise/cardiovascular load) for small-diameter landing processing scenarios.
+- Added an Alpine excavator-processor preset (`--processor-model bertone2025`) derived from Bertone & Manzone (2025).
+  Supply DBH/height/log-count/tree-volume inputs and the CLI evaluates the published cycle-time regression, reports
+  delay-free vs. SMH productivity (≈25.9 vs. 14.8 m³/h), and surfaces the € cost/fuel figures with an optional
+  `--processor-delay-multiplier` override for different yarder-wait ratios.
+- Added Borz et al. (2023) landing-harvester preset (`--processor-model borz2023`) so planners can model single-grip
+  harvesters bucking cable-delivered stems at the landing (≈21.4 m³/PMH, 0.78 L/m³ fuel, €10–11/m³ cost, 95 % recovery).
 - Added the Spinelli, Hartsough & Magagnotti (2010) Italian CTL regression as `--processor-model spinelli2010`.
   Users provide tree volume, slope, carrier power/type, head type, species group, stand context, and (for harvest mode)
   removals/residuals per hectare; the helper applies the published accessory/delay ratios automatically and surfaces

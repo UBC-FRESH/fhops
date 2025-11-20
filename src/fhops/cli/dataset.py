@@ -95,6 +95,8 @@ from fhops.productivity import (
     VisserLogSortProductivityResult,
     Hypro775ProcessorProductivityResult,
     Spinelli2010ProcessorProductivityResult,
+    Bertone2025ProcessorProductivityResult,
+    Borz2023ProcessorProductivityResult,
     ADV5N6ProcessorProductivityResult,
     TN103ProcessorProductivityResult,
     TR106ProcessorProductivityResult,
@@ -108,6 +110,8 @@ from fhops.productivity import (
     estimate_processor_productivity_visser2015,
     estimate_processor_productivity_hypro775,
     estimate_processor_productivity_spinelli2010,
+    estimate_processor_productivity_bertone2025,
+    estimate_processor_productivity_borz2023,
     predict_berry2019_skid_effects,
     Labelle2019ProcessorProductivityResult,
     estimate_processor_productivity_labelle2019_dbh,
@@ -575,6 +579,8 @@ class RoadsideProcessorModel(str, Enum):
     TN166 = "tn166"
     HYPRO775 = "hypro775"
     SPINELLI2010 = "spinelli2010"
+    BERTONE2025 = "bertone2025"
+    BORZ2023 = "borz2023"
 
 
 _AUTOMATIC_BUCKING_SUPPORTED_MODELS = {
@@ -981,6 +987,65 @@ def _render_processor_result(
         for note in result.notes:
             if note not in note_lines:
                 note_lines.append(note)
+        console.print(f"[dim]{' '.join(note_lines)}[/dim]")
+        return
+    elif isinstance(result, Bertone2025ProcessorProductivityResult):
+        rows = [
+            ("Model", "bertone2025"),
+            ("DBH (cm)", f"{result.dbh_cm:.1f}"),
+            ("Height (m)", f"{result.height_m:.1f}"),
+            ("Logs per Tree", f"{result.logs_per_tree:.1f}"),
+            ("Tree Volume (m³)", f"{result.tree_volume_m3:.2f}"),
+            ("Delay-free Cycle (s)", f"{result.delay_free_cycle_seconds:.1f}"),
+            (
+                "Delay-free Productivity (m³/PMH₀)",
+                f"{result.delay_free_productivity_m3_per_pmh:.2f}",
+            ),
+            ("Delay Multiplier", f"{result.delay_multiplier:.3f}"),
+            ("Productivity (m³/SMH)", f"{result.productivity_m3_per_smh:.2f}"),
+            ("Utilisation (%)", f"{result.utilisation_percent:.1f}"),
+            ("Fuel (L/SMH)", f"{result.fuel_l_per_smh:.1f}"),
+            ("Fuel (L/m³)", f"{result.fuel_l_per_m3:.2f}"),
+            ("Cost (/SMH)", f"{result.cost_per_smh:.2f} {result.cost_currency}"),
+            ("Cost (/m³)", f"{result.cost_per_m3:.2f} {result.cost_currency}"),
+        ]
+        if result.cost_base_year is not None:
+            rows.append(("Cost Base Year", str(result.cost_base_year)))
+        _render_kv_table("Roadside Processor Productivity Estimate", rows)
+        note_lines = [
+            "Bertone & Manzone (2025) excavator-based processor at a cable landing (Italian Alps, spruce).",
+            "Default delay multiplier (≈57%) reflects yarder-supply waits; override --processor-delay-multiplier if your landing has different utilisation.",
+        ]
+        for note in result.notes:
+            note_lines.append(note)
+        console.print(f"[dim]{' '.join(note_lines)}[/dim]")
+        return
+    elif isinstance(result, Borz2023ProcessorProductivityResult):
+        rows = [
+            ("Model", "borz2023"),
+            (
+                "Tree Volume (m³)",
+                f"{result.tree_volume_m3:.2f}" if result.tree_volume_m3 else "n/a",
+            ),
+            ("Efficiency (PMH/m³)", f"{result.efficiency_pmh_per_m3:.3f}"),
+            ("Efficiency (SMH/m³)", f"{result.efficiency_smh_per_m3:.3f}"),
+            ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
+            ("Productivity (m³/SMH)", f"{result.productivity_m3_per_smh:.2f}"),
+            ("Recovery (%)", f"{result.recovery_percent:.1f}"),
+            ("Fuel (L/h)", f"{result.fuel_l_per_h:.1f}"),
+            ("Fuel (L/m³)", f"{result.fuel_l_per_m3:.2f}"),
+            ("Cost (/m³)", f"{result.cost_per_m3:.2f} {result.cost_currency}"),
+        ]
+        if result.cost_base_year is not None:
+            rows.append(("Cost Base Year", str(result.cost_base_year)))
+        rows.append(("Utilisation (%)", f"{result.utilisation_percent:.1f}"))
+        _render_kv_table("Roadside Processor Productivity Estimate", rows)
+        note_lines = [
+            "Borz et al. (2023) single-grip harvester bucking cable-fed stems at a landing (Romania): averages only (21.4 m³/PMH, 0.78 L/m³, 10–11 EUR/m³).",
+            "Use this preset when modelling full mechanization of landing bucking to replace manual chainsaw crews.",
+        ]
+        for note in result.notes:
+            note_lines.append(note)
         console.print(f"[dim]{' '.join(note_lines)}[/dim]")
         return
 
@@ -3466,7 +3531,8 @@ def estimate_productivity_cmd(
         help=(
             "Roadside-processor regression to use "
             "(berry2019 | labelle2016/2017/2018 | labelle2019_dbh | labelle2019_volume | "
-            "adv5n6 | visser2015 | tn103 | tr106 | tr87 | tn166 | hypro775 | spinelli2010)."
+            "adv5n6 | visser2015 | tn103 | tr106 | tr87 | tn166 | hypro775 | spinelli2010 | "
+            "bertone2025 | borz2023)."
         ),
     ),
     processor_piece_size_m3: float | None = typer.Option(
@@ -3491,6 +3557,18 @@ def estimate_productivity_cmd(
         "--processor-dbh-cm",
         min=0.0,
         help="DBH (cm) for Labelle (2019) hardwood processor helper.",
+    ),
+    processor_tree_height_m: float | None = typer.Option(
+        None,
+        "--processor-tree-height-m",
+        min=0.0,
+        help="Tree height (m) for landing processor presets that require it (e.g., Bertone 2025).",
+    ),
+    processor_logs_per_tree: float | None = typer.Option(
+        None,
+        "--processor-logs-per-tree",
+        min=0.0,
+        help="Average number of logs per tree (Bertone 2025 helper).",
     ),
     processor_species: LabelleProcessorSpecies | None = typer.Option(
         None,
@@ -4290,6 +4368,24 @@ def estimate_productivity_cmd(
             result_processor = estimate_processor_productivity_hypro775(
                 delay_multiplier=processor_delay_multiplier,
             )
+        elif processor_model is RoadsideProcessorModel.BERTONE2025:
+            if processor_piece_size_m3 is None:
+                raise typer.BadParameter(
+                    "--processor-piece-size-m3 (tree volume) is required for --processor-model bertone2025."
+                )
+            if processor_dbh_cm is None:
+                raise typer.BadParameter("--processor-dbh-cm is required for bertone2025.")
+            if processor_tree_height_m is None:
+                raise typer.BadParameter("--processor-tree-height-m is required for bertone2025.")
+            if processor_logs_per_tree is None:
+                raise typer.BadParameter("--processor-logs-per-tree is required for bertone2025.")
+            result_processor = estimate_processor_productivity_bertone2025(
+                dbh_cm=processor_dbh_cm,
+                height_m=processor_tree_height_m,
+                logs_per_tree=processor_logs_per_tree,
+                tree_volume_m3=processor_piece_size_m3,
+                delay_multiplier=processor_delay_multiplier,
+            )
         elif processor_model is RoadsideProcessorModel.SPINELLI2010:
             if processor_piece_size_m3 is None:
                 raise typer.BadParameter(
@@ -4320,6 +4416,10 @@ def estimate_productivity_cmd(
                 stand_type=processor_spinelli_stand_type.value,
                 removals_per_ha=processor_removals_per_ha,
                 residuals_per_ha=processor_residuals_per_ha,
+            )
+        elif processor_model is RoadsideProcessorModel.BORZ2023:
+            result_processor = estimate_processor_productivity_borz2023(
+                tree_volume_m3=processor_piece_size_m3,
             )
         elif processor_model is RoadsideProcessorModel.TN103:
             if processor_piece_size_m3 is not None:

@@ -211,6 +211,46 @@ def test_cli_processor_spinelli2010_process() -> None:
     assert "Spinelli (2010)" in result.stdout
 
 
+def test_cli_processor_bertone2025() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "roadside_processor",
+            "--processor-model",
+            "bertone2025",
+            "--processor-piece-size-m3",
+            "1.0",
+            "--processor-dbh-cm",
+            "35",
+            "--processor-tree-height-m",
+            "21",
+            "--processor-logs-per-tree",
+            "3",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "bertone2025" in result.stdout
+
+
+def test_cli_processor_borz2023() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "roadside_processor",
+            "--processor-model",
+            "borz2023",
+            "--processor-piece-size-m3",
+            "1.0",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "borz2023" in result.stdout
+
+
 def test_cli_processor_labelle2016_treeform() -> None:
     result = runner.invoke(
         dataset_app,

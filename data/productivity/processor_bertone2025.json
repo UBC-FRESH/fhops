@@ -1,0 +1,24 @@
+{
+  "source": {
+    "citation": "Bertone, F. & Manzone, M. 2025. Productivity and costs of a tracked excavator-based processor at the cable yarder landing in the North-western Italian Alps. International Journal of Forest Engineering 36(1):67-75.",
+    "document": "notes/reference/Productivity and costs of a tracked excavator-based processor at the cable yarder landing in the North-western Italian Alps.pdf",
+    "notes": [
+      "Field study of a Hyundai R210LC-9 tracked excavator with a Keto Forst processor head working at a cable-yard landing in Picea abies (100 trees, 0.2\u20132.5 m\u00b3).",
+      "Mean delay-free cycle = 131.4 s (moving 1%, positioning 5%, processing 21%, stacking 19%, clearing 6%); total cycle with delays = 254.2 s (48% wait-for-yarders).",
+      "Delay-free productivity 25.9 m\u00b3/PMH, observed 14.8 m\u00b3/SMH; mean fuel 16.5 L/SMH (1.1 L/m\u00b3); cost 103.46 EUR/SMH (\u22484.95 EUR/m\u00b3) in 2023 euros.",
+      "Regression: Cycle_time_seconds = -8.1893 + 2.3810\u00b7DBH_cm + 1.8789\u00b7Height_m + 5.6562\u00b7Logs_per_tree (R\u00b2=0.882)."
+    ]
+  },
+  "defaults": {
+    "dbh_cm": 34.7,
+    "height_m": 20.7,
+    "logs_per_tree": 3.2,
+    "tree_volume_m3": 1.0,
+    "delay_fraction": 0.459,
+    "fuel_l_per_smh": 16.5,
+    "fuel_l_per_m3": 1.1,
+    "cost_per_smh_eur": 103.46,
+    "cost_per_m3_eur": 4.95,
+    "cost_base_year": 2023
+  }
+}

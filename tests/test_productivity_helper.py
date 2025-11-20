@@ -17,6 +17,8 @@ from fhops.productivity import (
     estimate_processor_productivity_visser2015,
     estimate_processor_productivity_hypro775,
     estimate_processor_productivity_spinelli2010,
+    estimate_processor_productivity_bertone2025,
+    estimate_processor_productivity_borz2023,
     get_processor_carrier_profile,
     get_labelle_huss_automatic_bucking_adjustment,
     load_lahrsen_ranges,
@@ -233,6 +235,32 @@ def test_spinelli2010_process_cycle_components() -> None:
     assert result.removals_per_ha is None
     assert result.residuals_per_ha is None
     assert result.productivity_m3_per_pmh < result.delay_free_productivity_m3_per_pmh
+    assert result.productivity_m3_per_pmh < result.delay_free_productivity_m3_per_pmh
+
+
+def test_bertone2025_matches_reference_cycle() -> None:
+    dbh = 34.7
+    height = 20.7
+    logs = 3.2
+    volume = 1.0
+    result = estimate_processor_productivity_bertone2025(
+        dbh_cm=dbh,
+        height_m=height,
+        logs_per_tree=logs,
+        tree_volume_m3=volume,
+    )
+    expected_cycle = -8.1893 + 2.3810 * dbh + 1.8789 * height + 5.6562 * logs
+    assert math.isclose(result.delay_free_cycle_seconds, expected_cycle, rel_tol=1e-9)
+    delay_free_prod = volume * (3600.0 / expected_cycle)
+    assert math.isclose(result.delay_free_productivity_m3_per_pmh, delay_free_prod, rel_tol=1e-9)
+    assert result.productivity_m3_per_smh == pytest.approx(14.8, rel=1e-2)
+
+
+def test_borz2023_returns_expected_means() -> None:
+    result = estimate_processor_productivity_borz2023(tree_volume_m3=1.0)
+    assert math.isclose(result.productivity_m3_per_pmh, 21.41, rel_tol=1e-9)
+    assert math.isclose(result.fuel_l_per_m3, 0.78, rel_tol=1e-9)
+    assert result.cost_per_m3 == pytest.approx(10.5, rel=1e-2)
 
 
 def test_automatic_bucking_multiplier_scales_delay_free_output() -> None:

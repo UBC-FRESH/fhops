@@ -196,8 +196,9 @@ costing consistent across scenarios:
 - `fhops dataset inspect-machine` prints the machine metadata and the same default owning/operating/repair
   breakdown (honouring ``repair_usage_hours``) so you can audit scenario inputs without running a full cost estimate.
   You can also inspect the rental table directly via ``--machine-role`` (e.g., ``fhops dataset inspect-machine
-  --machine-role loader_barko450`` dumps the TN-46 Barko 450 live-heel loader rate CPI-scaled from TR-73/TN-64/TN-51).
-  When you pair the command with a harvest system such as ``ground_fb_loader_liveheel``, the loader job automatically
+  --machine-role loader_barko450`` dumps the TN-46 Barko 450 live-heel loader rate). Historical Appendix II presets
+  such as ``loader_cat966c_tr45``, ``skidder_tr45``, and ``bulldozer_tr45`` are exposed the same way so you can compare
+  CPI-normalized 1979 CAD rates against modern entries. When you pair the command with a harvest system such as ``ground_fb_loader_liveheel``, the loader job automatically
   swaps its cost role to ``loader_barko450`` so budgeting outputs stay aligned with the TN-46 preset. Add
   ``--json-out machine.json`` to capture the same payload for automated QA pipelines. Solver telemetry
   (``solve-heur``, ``solve-ils``, ``solve-tabu``, ``eval-playback``) automatically embeds this ``machine_costs`` bundle

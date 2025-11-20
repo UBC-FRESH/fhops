@@ -1,0 +1,24 @@
+{
+  "source": {
+    "citation": "Borz, S.A. et al. 2023. Bucking at Landing by a Single-Grip Harvester: Fuel Consumption, Productivity, Cost and Recovery Rate. Forests 14:465.",
+    "document": "notes/reference/Bucking_at_Landing_by_a_Single-Grip_Harvester_Fuel.pdf",
+    "notes": [
+      "27 cable-delivered bunches (232 stems, 913 logs) processed at a Romanian landing using a Ponsse Bear harvester.",
+      "Work cycles averaged 1.5 min; productive share ≈79 %, with swinging and piling accounting for 86 % of productive time.",
+      "Efficiency 0.047 PMH/m³ (≈0.053 SMH/m³); productivity 21.41 m³/PMH (18.81 m³/SMH); recovery rate 95 %.",
+      "Fuel 21 L/h (0.78 L/m³); cost simulations (200–230 working days/year) yielded 10–11 EUR/m³ at 2023 price levels."
+    ]
+  },
+  "metrics": {
+    "efficiency_pmh_per_m3": 0.047,
+    "efficiency_smh_per_m3": 0.053,
+    "productivity_m3_per_pmh": 21.41,
+    "productivity_m3_per_smh": 18.81,
+    "fuel_l_per_h": 21.0,
+    "fuel_l_per_m3": 0.78,
+    "cost_per_m3_eur": 10.5,
+    "recovery_percent": 95.0,
+    "utilisation_percent": 79.0,
+    "cost_base_year": 2023
+  }
+}

@@ -1,0 +1,51 @@
+{
+    "source": "FPInnovations TR-45 Appendix II (January 1979)",
+    "currency": "CAD",
+    "base_year": 1979,
+    "notes": "Machine rates derived from Appendix II formulas (no profit/risk).",
+    "machines": {
+        "loader_caterpillar_966c": {
+            "purchase_price_cad": 165000,
+            "residual_value_cad": 41250,
+            "depreciation_years": 5,
+            "interest_rate": 0.13,
+            "operator_wage_per_smh": 12.71,
+            "fuel_lube_per_smh": 4.7,
+            "maintenance_per_smh": 19.88,
+            "owning_cost_per_smh": 19.88,
+            "operating_cost_per_smh": 37.29,
+            "total_cost_per_smh": 57.17,
+            "machine_life_hours": 10000,
+            "utilization": 0.79
+        },
+        "skidder_clark_jd_blend": {
+            "purchase_price_cad": 103000,
+            "residual_value_cad": 10300,
+            "depreciation_years": 5,
+            "interest_rate": 0.13,
+            "operator_wage_per_smh": 12.06,
+            "fuel_lube_per_pmh": 4.5,
+            "maintenance_per_smh": 13.56,
+            "owning_cost_per_smh": 13.56,
+            "operating_cost_per_smh": 29.22,
+            "total_cost_per_smh": 42.78,
+            "total_cost_per_pmh": 53.47,
+            "machine_life_hours": 10000,
+            "utilization": 0.8
+        },
+        "bulldozer_cat_d7g": {
+            "purchase_price_cad": 170000,
+            "residual_value_cad": 42500,
+            "depreciation_years": 5,
+            "interest_rate": 0.13,
+            "operator_wage_per_smh": 12.06,
+            "fuel_lube_per_smh": 4.5,
+            "maintenance_per_smh": 20.48,
+            "owning_cost_per_smh": 21.48,
+            "operating_cost_per_smh": 37.04,
+            "total_cost_per_smh": 58.52,
+            "machine_life_hours": 10000,
+            "utilization": 1.0
+        }
+    }
+}

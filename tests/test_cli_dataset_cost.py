@@ -155,6 +155,21 @@ def test_inspect_machine_role_shortcut() -> None:
     assert "Default Rental Rate" in result.stdout
 
 
+def test_inspect_machine_tr45_roles() -> None:
+    for role in ("loader_cat966c_tr45", "skidder_tr45", "bulldozer_tr45"):
+        result = runner.invoke(
+            dataset_app,
+            [
+                "inspect-machine",
+                "--machine-role",
+                role,
+            ],
+        )
+        assert result.exit_code == 0, result.stdout
+        assert role in result.stdout
+        assert "Default Rental Rate" in result.stdout
+
+
 def test_inspect_machine_ground_fb_loader_liveheel_cost_role(tmp_path: Path) -> None:
     scenario_yaml = _build_loader_dataset(tmp_path)
     result = runner.invoke(

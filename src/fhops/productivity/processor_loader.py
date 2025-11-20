@@ -26,6 +26,8 @@ _KIZHA2020_DATA_PATH = _DATA_ROOT / "loader_kizha2020.json"
 _BARKO450_DATA_PATH = _DATA_ROOT / "loader_barko450.json"
 _HYPRO775_DATA_PATH = _DATA_ROOT / "processor_hypro775.json"
 _LABELLE_HUSS_DATA_PATH = _REFERENCE_ROOT / "processor_labelle_huss2018.json"
+_BERTONE2025_DATA_PATH = _DATA_ROOT / "processor_bertone2025.json"
+_BORZ2023_DATA_PATH = _DATA_ROOT / "processor_borz2023.json"
 _CARRIER_PROFILE_PATH = _REFERENCE_ROOT / "processor_carrier_profiles.json"
 
 
@@ -130,6 +132,26 @@ def _load_spinelli2010_dataset() -> dict[str, object]:
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
         raise FileNotFoundError(
             f"Spinelli et al. (2010) processor data missing: {_SPINELLI2010_DATA_PATH}"
+        ) from exc
+
+
+@lru_cache(maxsize=1)
+def _load_bertone2025_dataset() -> dict[str, object]:
+    try:
+        return json.loads(_BERTONE2025_DATA_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:  # pragma: no cover - configuration error
+        raise FileNotFoundError(
+            f"Bertone & Manzone (2025) processor data missing: {_BERTONE2025_DATA_PATH}"
+        ) from exc
+
+
+@lru_cache(maxsize=1)
+def _load_borz2023_dataset() -> dict[str, object]:
+    try:
+        return json.loads(_BORZ2023_DATA_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:  # pragma: no cover - configuration error
+        raise FileNotFoundError(
+            f"Borz et al. (2023) landing processor data missing: {_BORZ2023_DATA_PATH}"
         ) from exc
 
 
@@ -1305,6 +1327,43 @@ class Spinelli2010ProcessorProductivityResult:
     notes: tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class Bertone2025ProcessorProductivityResult:
+    dbh_cm: float
+    height_m: float
+    logs_per_tree: float
+    tree_volume_m3: float
+    delay_free_cycle_seconds: float
+    delay_free_productivity_m3_per_pmh: float
+    delay_multiplier: float
+    productivity_m3_per_smh: float
+    utilisation_percent: float
+    fuel_l_per_smh: float
+    fuel_l_per_m3: float
+    cost_per_smh: float
+    cost_per_m3: float
+    cost_currency: str
+    cost_base_year: int | None
+    notes: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class Borz2023ProcessorProductivityResult:
+    tree_volume_m3: float | None
+    efficiency_pmh_per_m3: float
+    efficiency_smh_per_m3: float
+    productivity_m3_per_pmh: float
+    productivity_m3_per_smh: float
+    fuel_l_per_h: float
+    fuel_l_per_m3: float
+    cost_per_m3: float
+    cost_currency: str
+    cost_base_year: int | None
+    recovery_percent: float
+    utilisation_percent: float
+    notes: tuple[str, ...]
+
+
 @lru_cache(maxsize=1)
 def _load_hypro775_scenario() -> dict[str, object]:
     payload = _load_hypro775_dataset()
@@ -1579,6 +1638,78 @@ def estimate_processor_productivity_spinelli2010(
         productivity_m3_per_pmh=productivity_with_delay,
         utilisation_percent=utilisation_percent,
         notes=tuple(notes),
+    )
+
+
+def estimate_processor_productivity_bertone2025(
+    *,
+    dbh_cm: float,
+    height_m: float,
+    logs_per_tree: float,
+    tree_volume_m3: float,
+    delay_multiplier: float | None = None,
+) -> Bertone2025ProcessorProductivityResult:
+    if dbh_cm <= 0 or height_m <= 0 or logs_per_tree <= 0 or tree_volume_m3 <= 0:
+        raise ValueError("dbh_cm, height_m, logs_per_tree, and tree_volume_m3 must be > 0.")
+    dataset = _load_bertone2025_dataset()
+    defaults = dataset.get("defaults") or {}
+    cycle_seconds = -8.1893 + 2.3810 * dbh_cm + 1.8789 * height_m + 5.6562 * logs_per_tree
+    cycle_seconds = max(cycle_seconds, 10.0)
+    delay_free_productivity = tree_volume_m3 * (3600.0 / cycle_seconds)
+    base_multiplier = 1.0 - float(defaults.get("delay_fraction", 0.429))
+    multiplier = delay_multiplier if delay_multiplier is not None else base_multiplier
+    if not (0.0 < multiplier <= 1.0):
+        raise ValueError("delay_multiplier must lie in (0, 1].")
+    productivity_smh = delay_free_productivity * multiplier
+    utilisation_percent = multiplier * 100.0
+    fuel_l_per_smh = float(defaults.get("fuel_l_per_smh", 16.5))
+    fuel_l_per_m3 = float(defaults.get("fuel_l_per_m3", 1.1))
+    cost_per_smh = float(defaults.get("cost_per_smh_eur", 103.46))
+    cost_per_m3 = float(defaults.get("cost_per_m3_eur", 4.95))
+    cost_currency = "EUR"
+    cost_base_year = defaults.get("cost_base_year")
+    notes = tuple(str(n) for n in (dataset.get("source") or {}).get("notes") or [])
+    return Bertone2025ProcessorProductivityResult(
+        dbh_cm=dbh_cm,
+        height_m=height_m,
+        logs_per_tree=logs_per_tree,
+        tree_volume_m3=tree_volume_m3,
+        delay_free_cycle_seconds=cycle_seconds,
+        delay_free_productivity_m3_per_pmh=delay_free_productivity,
+        delay_multiplier=multiplier,
+        productivity_m3_per_smh=productivity_smh,
+        utilisation_percent=utilisation_percent,
+        fuel_l_per_smh=fuel_l_per_smh,
+        fuel_l_per_m3=fuel_l_per_m3,
+        cost_per_smh=cost_per_smh,
+        cost_per_m3=cost_per_m3,
+        cost_currency=cost_currency,
+        cost_base_year=(None if cost_base_year is None else int(cost_base_year)),
+        notes=notes,
+    )
+
+
+def estimate_processor_productivity_borz2023(
+    *, tree_volume_m3: float | None = None
+) -> Borz2023ProcessorProductivityResult:
+    dataset = _load_borz2023_dataset()
+    metrics = dataset.get("metrics") or {}
+    cost_base_year = metrics.get("cost_base_year")
+    notes = tuple(str(n) for n in (dataset.get("source") or {}).get("notes") or [])
+    return Borz2023ProcessorProductivityResult(
+        tree_volume_m3=tree_volume_m3,
+        efficiency_pmh_per_m3=float(metrics.get("efficiency_pmh_per_m3", 0.047) or 0.047),
+        efficiency_smh_per_m3=float(metrics.get("efficiency_smh_per_m3", 0.053) or 0.053),
+        productivity_m3_per_pmh=float(metrics.get("productivity_m3_per_pmh", 21.41) or 21.41),
+        productivity_m3_per_smh=float(metrics.get("productivity_m3_per_smh", 18.81) or 18.81),
+        fuel_l_per_h=float(metrics.get("fuel_l_per_h", 21.0) or 21.0),
+        fuel_l_per_m3=float(metrics.get("fuel_l_per_m3", 0.78) or 0.78),
+        cost_per_m3=float(metrics.get("cost_per_m3_eur", 10.5) or 10.5),
+        cost_currency="EUR",
+        cost_base_year=(None if cost_base_year is None else int(cost_base_year)),
+        recovery_percent=float(metrics.get("recovery_percent", 95.0) or 95.0),
+        utilisation_percent=float(metrics.get("utilisation_percent", 79.0) or 79.0),
+        notes=notes,
     )
 
 

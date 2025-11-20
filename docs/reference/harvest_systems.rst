@@ -181,6 +181,10 @@ regressions:
   (~45 s), gross/net trees per hour, delay-free m³/PMH (~21.4), fuel use (≈21 L/h or 0.78 L/m³), and ergonomic notes
   (≈85 dB(A), heavy-work cardiovascular load). Use this when modelling tractor-mounted landing processors in
   small-diameter thinnings or low-investment deployments.
+* ``--processor-model bertone2025`` – Bertone & Manzone (2025) excavator-processor case study serving a cable yarder landing in the
+  Italian Alps. Provide ``--processor-dbh-cm``, ``--processor-tree-height-m``, ``--processor-logs-per-tree`` (2–5), and
+  ``--processor-piece-size-m3`` for the tree volume; the helper evaluates the published cycle-time regression and reports delay-free vs.
+  observed productivity (≈25.9 vs. 14.8 m³/h), fuel (~16.5 L/SMH), and €-denominated owning costs with the 48 % yarder-wait penalty.
 * ``--processor-model spinelli2010`` – Spinelli, Hartsough & Magagnotti’s Italian CTL productivity standards
   (Forest Products Journal 60(3):226–235). Choose between harvest (in-stand) and landing-processing modes via
   ``--processor-spinelli-operation`` and supply the tree volume (``--processor-piece-size-m3``), carrier power
@@ -188,6 +192,10 @@ regressions:
   and (for harvest) the removals/residuals per hectare. The helper applies the published accessory (14.7/29.6 %)
   and delay (50/21/44 %) ratios automatically and prints the per-element cycle times so you can see how slope,
   carrier choice, and species mix influence delay-free PMH outputs.
+* ``--processor-model borz2023`` – Borz et al. (2023) single-grip harvester bucking at a Romanian landing. No extra
+  inputs are needed beyond the optional ``--processor-piece-size-m3`` for reference; the helper reports the observed
+  averages (≈21.4 m³/PMH, 18.8 m³/SMH, 0.047 PMH/m³, 0.78 L/m³ fuel, 10–11 EUR/m³ cost, 95 % recovery) so planners can
+  benchmark “harvester-as-processor” landing operations against manual or excavator-based options.
 * ``--processor-model visser2015`` – Visser & Tolan (2015) NZ cable-yarder landings (Cat 330DL +
   Waratah HTH626) comparing 5/9/12/15 log sorts. The helper interpolates the published piece-size
   curves (1–3 m³ stems) and reports both the delay-free m³/PMH and the delta versus the 5-sort baseline.
