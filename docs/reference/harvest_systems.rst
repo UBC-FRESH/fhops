@@ -371,6 +371,31 @@ m³/PMH so costing workflows can decide which value to pass downstream. Remember
 were calibrated outside BC—treat them as hardwood export presets and rely on the Berry helper for mixed
 or conifer-dominated BC blocks.
 
+Burned-Timber Salvage Guidance (ADV1N5)
+---------------------------------------
+
+`fhops.dataset adv1n5` does not exist because the study is qualitative, but the skyline/forwarder presets
+inherit the following cautions from ADV1N5 (Alberta 2000 salvaging workshop + case studies). Use these
+checklists whenever you point `cable_running*`, `ground_fb_*`, or custom salvage systems at burned timber:
+
+* **Log preparation** – buck out catfaces, scars, rotten butts, and heavily charred sections; raise the
+  acceptable minimum top diameter; sort log decks by burn severity so dirty sorts can be chipped or wasted
+  separately.
+* **Debarking** – double-ring (counter-rotating) debarkers or a Cambio + Nicholson tandem remove charcoal
+  reliably; alternate cutter/winter tips, slow the infeed ≥10 %, and recycle logs for multiple passes when
+  residue remains.
+* **Charcoal dust** – spray logs pre-debarker when temperatures allow, otherwise install vac/baffle systems,
+  pressurize MCC rooms, and mandate PPE + aggressive greasing schedules to keep dust from destroying rings,
+  bearings, and control panels.
+* **Priorities** – harvest small-diameter or severely burned stands first (moisture loss + insect attack),
+  and route environmentally sensitive slopes/gullies to grapple yarders (e.g., the Madill 122 case delivered
+  300–400 m³/10 h once stems were bunched parallel to the slope).
+* **Processing capacity** – deploy portable mills at satellite yards or in-woods chip plants for small stems
+  when permanent mills cannot expand fast enough; burn or isolate slab/char waste so pulp furnish stays clean.
+
+Document any of these mitigations in scenario metadata (telemetry note, `--harvest-system-id` description, etc.)
+when you model salvage corridors so downstream QA knows why costs/utilisation differ from green-timber runs.
+
 Loader-Forwarder Productivity Models
 ------------------------------------
 
