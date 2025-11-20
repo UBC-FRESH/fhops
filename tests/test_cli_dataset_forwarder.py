@@ -609,6 +609,40 @@ def test_cli_grapple_skidder_harvest_system_salvage_defaults() -> None:
     assert "ground_salvage_grapple" in result.stdout
 
 
+def test_cli_salvage_processing_mode_portable() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_skidder",
+            "--harvest-system-id",
+            "ground_salvage_grapple",
+            "--salvage-processing-mode",
+            "portable_mill",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "portable-mill mode" in result.stdout
+
+
+def test_cli_salvage_processing_mode_warning_when_not_salvage() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_skidder",
+            "--harvest-system-id",
+            "ground_fb_skid",
+            "--salvage-processing-mode",
+            "in_woods_chipping",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "ignored" in result.stdout
+
+
 def test_cli_adv2n21_summary_treatment() -> None:
     result = runner.invoke(
         dataset_app,

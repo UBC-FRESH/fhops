@@ -399,7 +399,9 @@ checklists whenever you point `cable_running*`, `ground_fb_*`, or custom salvage
   and route environmentally sensitive slopes/gullies to grapple yarders (e.g., the Madill 122 case delivered
   300–400 m³/10 h once stems were bunched parallel to the slope).
 * **Processing capacity** – deploy portable mills at satellite yards or in-woods chip plants for small stems
-  when permanent mills cannot expand fast enough; burn or isolate slab/char waste so pulp furnish stays clean.
+  when permanent mills cannot expand fast enough; burn or isolate slab/char waste so pulp furnish stays clean. Use
+  ``--salvage-processing-mode`` (``standard_mill`` | ``portable_mill`` | ``in_woods_chipping``) when calling
+  ``ground_salvage_grapple`` or ``cable_salvage_grapple`` to print the appropriate reminder in the CLI output.
 
 Document any of these mitigations in scenario metadata (telemetry note, `--harvest-system-id` description, etc.)
 when you model salvage corridors so downstream QA knows why costs/utilisation differ from green-timber runs. The

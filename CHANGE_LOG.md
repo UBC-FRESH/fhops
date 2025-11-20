@@ -49,8 +49,9 @@
   docs/tests/logs were updated to highlight the new defaults.
 - Added salvage-focused harvest systems (`ground_salvage_grapple`, `cable_salvage_grapple`) so burned-timber corridors
   can reuse ADV6N7/TN157 defaults while surfacing the ADV1N5 cautions (buck/sort damaged fibre, double-ring debarkers,
-  charcoal dust controls, grapple yarding on sensitive slopes). Docs, planning notes, and CLI tests now reference the
-  dedicated salvage presets alongside the general guidance.
+  charcoal dust controls, grapple yarding on sensitive slopes). Introduced `--salvage-processing-mode` so analysts can
+  toggle portable-mill vs. in-woods chipping vs. standard mill reminders directly from the CLI. Docs, planning notes,
+  and CLI tests now reference the dedicated salvage presets alongside the new toggle.
 
 # 2025-11-26 — ADV7N3 processor/loader presets
 - Digitised the ADV7N3 summer short-log processor study into `data/productivity/processor_adv7n3.json`

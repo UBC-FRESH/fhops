@@ -645,6 +645,14 @@ class GrappleYarderModel(str, Enum):
     ADV5N28_SHELTERWOOD = "adv5n28-shelterwood"
 
 
+class SalvageProcessingMode(str, Enum):
+    """Processing modes for ADV1N5 salvage workflows."""
+
+    STANDARD_MILL = "standard_mill"
+    PORTABLE_MILL = "portable_mill"
+    IN_WOODS_CHIPPING = "in_woods_chipping"
+
+
 _TR122_MODEL_TO_TREATMENT: dict[GrappleYarderModel, str] = {
     GrappleYarderModel.TR122_EXTENDED: "extended_rotation",
     GrappleYarderModel.TR122_SHELTERWOOD: "uniform_shelterwood",
@@ -3653,6 +3661,28 @@ def _render_unbc_construction_table() -> None:
     )
 
 
+def _print_salvage_processing_guidance(
+    *,
+    mode: SalvageProcessingMode,
+    system_id: str,
+) -> None:
+    if mode is SalvageProcessingMode.PORTABLE_MILL:
+        console.print(
+            "[dim]Salvage system '%s' in portable-mill mode: rough cants stay near the satellite yard, keeping "
+            "char-laden slabs onsite per ADV1N5. Remember to segregate chip furnish from dirty sorts before hauling." % system_id
+        )
+    elif mode is SalvageProcessingMode.IN_WOODS_CHIPPING:
+        console.print(
+            "[dim]Salvage system '%s' in in-woods chipping mode: separate pulp logs at the stump, feed the portable "
+            "chip plant, screen fines, and truck chips directly so small charred stems never hit the mill deck." % system_id
+        )
+    else:
+        console.print(
+            "[dim]Salvage system '%s' using standard mill flow. Apply the ADV1N5 checklist (raise top diameters, "
+            "buck out catfaces, double-ring debarkers, charcoal dust controls) before chips enter the regular furnish." % system_id
+        )
+
+
 @dataset_app.command("inspect-machine")
 def inspect_machine(
     dataset: str | None = typer.Option(
@@ -4877,6 +4907,16 @@ def estimate_productivity_cmd(
         "--block-id",
         help="Block ID (requires --dataset) to infer harvest system defaults automatically.",
     ),
+    salvage_processing_mode: SalvageProcessingMode = typer.Option(
+        SalvageProcessingMode.STANDARD_MILL,
+        "--salvage-processing-mode",
+        case_sensitive=False,
+        help=(
+            "ADV1N5 salvage processing mode (standard_mill | portable_mill | in_woods_chipping). "
+            "When a salvage harvest system is selected, the CLI prints the corresponding portable mill or "
+            "in-woods chipping reminder; ignored for non-salvage systems."
+        ),
+    ),
     telemetry_log: Path | None = typer.Option(
         None,
         "--telemetry-log",
@@ -4916,6 +4956,21 @@ def estimate_productivity_cmd(
             raise typer.BadParameter(
                 f"Harvest system '{selected_system_id}' not found. Options: {', '.join(sorted(systems_catalog))}"
             )
+
+    salvage_system_ids = {"ground_salvage_grapple", "cable_salvage_grapple"}
+    if selected_system_id in salvage_system_ids:
+        _print_salvage_processing_guidance(
+            mode=salvage_processing_mode,
+            system_id=selected_system_id,
+        )
+    elif (
+        salvage_processing_mode is not SalvageProcessingMode.STANDARD_MILL
+        and selected_system_id not in salvage_system_ids
+    ):
+        console.print(
+            "[yellow]--salvage-processing-mode ignored because '%s' is not a salvage harvest system.[/yellow]"
+            % (selected_system_id or "(none)")
+        )
 
     role = machine_role.value
     if role == ProductivityMachineRole.FORWARDER.value:
