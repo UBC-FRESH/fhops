@@ -171,8 +171,12 @@ from fhops.productivity import (
     get_labelle_huss_automatic_bucking_adjustment,
 )
 from fhops.reference import (
+    ADV2N21StandSnapshot,
     get_appendix5_profile,
     get_tr119_treatment,
+    adv2n21_cost_base_year,
+    get_adv2n21_treatment,
+    load_adv2n21_treatments,
     load_appendix5_stands,
     load_unbc_hoe_chucking_data,
     load_unbc_processing_costs,
@@ -3938,6 +3942,95 @@ def unbc_hoe_chucking_cmd() -> None:
     _render_unbc_hoe_chucking_table()
     _render_unbc_processing_table()
     _render_unbc_construction_table()
+
+
+@dataset_app.command("adv2n21-summary")
+def adv2n21_summary_cmd(
+    treatment: str | None = typer.Option(
+        None,
+        "--treatment",
+        "-t",
+        help="Treatment ID to inspect (e.g., partial_cut_2). Omit to list all ADV2N21 treatments.",
+    ),
+) -> None:
+    """Summarize ADV2N21 Timberjack 1270/1010 partial-cut cost & stand context."""
+
+    treatments = load_adv2n21_treatments()
+    base_year = adv2n21_cost_base_year()
+    if treatment:
+        entry = get_adv2n21_treatment(treatment)
+        rows = [
+            ("Label", entry.label),
+            ("Treatment ID", entry.id),
+            ("Type", entry.treatment_type.replace("_", " ")),
+            ("Objective", entry.objective),
+            ("Area (ha)", f"{entry.area_ha:.2f}" if entry.area_ha is not None else "—"),
+            (f"Cost ({base_year} CAD $/m³)", f"{entry.cost_per_m3_cad_1997:.2f}"),
+            (
+                "Increase vs. Clearcut 1 (%)",
+                f"{entry.cost_increase_percent_vs_clearcut1:.0f}",
+            ),
+            ("Site Limitations", entry.site_limitations or "—"),
+            ("CPPA Class", entry.cppt_classification or "—"),
+        ]
+        _render_kv_table(f"ADV2N21 Treatment — {entry.label}", rows)
+        if entry.pre_harvest:
+            _render_adv2n21_stand("Pre-harvest Stand Metrics", entry.pre_harvest)
+        if entry.post_harvest:
+            _render_adv2n21_stand("Post-harvest Stand Metrics", entry.post_harvest)
+        console.print(
+            "[dim]Costs follow FERIC 1997 ownership/operating assumptions (Advantage Vol. 2 No. 21).[/dim]"
+        )
+        return
+
+    table = Table(title="ADV2N21 Treatment Cost Summary")
+    table.add_column("Treatment ID", style="cyan", no_wrap=True)
+    table.add_column("Type")
+    table.add_column(f"Cost ({base_year} CAD $/m³)", justify="right")
+    table.add_column("Δ vs. Clearcut 1 (%)", justify="right")
+    table.add_column("Site Limitations", overflow="fold")
+    for entry in treatments:
+        table.add_row(
+            entry.id,
+            entry.treatment_type.replace("_", " "),
+            f"{entry.cost_per_m3_cad_1997:.2f}",
+            f"{entry.cost_increase_percent_vs_clearcut1:.0f}",
+            entry.site_limitations,
+        )
+    console.print(table)
+    console.print(
+        "[dim]Use --treatment to drill into pre/post stand tables or cite scenario constraints.[/dim]"
+    )
+
+
+def _render_adv2n21_stand(title: str, snapshot: ADV2N21StandSnapshot) -> None:
+    rows: list[tuple[str, str]] = []
+    if snapshot.merchantable_basal_area_m2_per_ha is not None:
+        rows.append(
+            (
+                "Merchantable Basal Area (m²/ha)",
+                f"{snapshot.merchantable_basal_area_m2_per_ha:.1f}",
+            )
+        )
+    if snapshot.live_trees_per_ha is not None:
+        rows.append(("Live Trees (/ha)", f"{snapshot.live_trees_per_ha:.0f}"))
+    if snapshot.dead_trees_per_ha is not None:
+        rows.append(("Dead Trees (/ha)", f"{snapshot.dead_trees_per_ha:.0f}"))
+    if snapshot.total_trees_per_ha is not None:
+        rows.append(("Total Trees (/ha)", f"{snapshot.total_trees_per_ha:.0f}"))
+    if snapshot.live_volume_m3_per_ha is not None:
+        rows.append(("Live Volume (m³/ha)", f"{snapshot.live_volume_m3_per_ha:.1f}"))
+    if snapshot.dead_volume_m3_per_ha is not None:
+        rows.append(("Dead Volume (m³/ha)", f"{snapshot.dead_volume_m3_per_ha:.1f}"))
+    if snapshot.total_volume_m3_per_ha is not None:
+        rows.append(("Total Volume (m³/ha)", f"{snapshot.total_volume_m3_per_ha:.1f}"))
+    if snapshot.avg_dbh_cm is not None:
+        rows.append(("Average DBH (cm)", f"{snapshot.avg_dbh_cm:.1f}"))
+    if snapshot.avg_height_m is not None:
+        rows.append(("Average Height (m)", f"{snapshot.avg_height_m:.1f}"))
+    if snapshot.avg_tree_volume_m3 is not None:
+        rows.append(("Average Tree Volume (m³)", f"{snapshot.avg_tree_volume_m3:.2f}"))
+    _render_kv_table(title, rows or [("Note", "Stand metrics not published for this treatment.")])
 
 
 @dataset_app.command("estimate-productivity")

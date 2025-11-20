@@ -593,6 +593,20 @@ def test_cli_grapple_skidder_harvest_system_adv6n7_defaults() -> None:
     assert "Applied productivity defaults from harvest system 'ground_fb_skid'." in result.stdout
 
 
+def test_cli_adv2n21_summary_treatment() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "adv2n21-summary",
+            "--treatment",
+            "partial_cut_2",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "Partial Cut 2" in result.stdout
+    assert "Cost (1997 CAD" in result.stdout
+
+
 def test_cli_estimate_productivity_shovel_logger() -> None:
     result = runner.invoke(
         dataset_app,

@@ -357,6 +357,10 @@ regressions:
   hoe-chucking shift summary (time, volume, productivity, observed/weighted $/m³ for group selection,
   group retention, and clearcut treatments). Useful when budgeting manual hoe-chucking support around
   landing processors in cedar–hemlock partial cuts.
+* `fhops dataset adv2n21-summary --treatment partial_cut_2` – surfaces the ADV2N21 Timberjack 1270/1010
+  partial-cut costs (1997 CAD $/m³), CPPA terrain classes, and pre/post stand metrics for each patch/partial/
+  clearcut block. Handy when you need to cite the +11 %…+78 % cost penalties for patch cuts or quantify
+  the wildlife-corridor snow constraints before tuning forwarder defaults.
 * ``--processor-automatic-bucking`` – Optional switch for *Berry*/*Labelle* helpers that applies the
   +12.4 % delay-free productivity multiplier from Labelle & Huß (2018, Silva Fennica 52(3):9947) and
   prints the associated €3.3/m³ revenue delta (2018 EUR) for traceability. The flag is ignored for the

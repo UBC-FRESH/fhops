@@ -1,0 +1,255 @@
+{
+  "source": {
+    "id": "ADV2N21",
+    "title": "Partial cutting with a Timberjack harvester and forwarder in southern British Columbia",
+    "publication": "FPInnovations / FERIC Advantage Vol. 2 No. 21",
+    "publication_date": "2001-04",
+    "authors": ["Eric Phillips"],
+    "region": "Okanagan Valley near Kelowna, BC",
+    "operations_summary": "Timberjack 1270 harvester + 1010 forwarder operating in patch cuts, partial cuts, and clearcuts (bark beetle control, windthrow salvage, wildlife corridor maintenance) between 1996 and 1999."
+  },
+  "machine": {
+    "harvester": {
+      "model": "Timberjack 1270",
+      "head": "FMG 762B",
+      "power_kw": 114,
+      "weight_kg": 16410
+    },
+    "forwarder": {
+      "model": "Timberjack 1010 (11 t)",
+      "power_kw": 82,
+      "weight_kg": 11690,
+      "notes": "Travel distances up to ~300 m; normalized travel-time calculations use a 150 m reference span."
+    }
+  },
+  "costs": {
+    "base_year": 1997,
+    "treatments": [
+      {
+        "id": "clearcut_1",
+        "label": "Clearcut 1",
+        "treatment_type": "clearcut",
+        "objective": "Bark beetle control (Year 1)",
+        "area_ha": 2.8,
+        "cost_per_m3_cad": 8.49,
+        "cost_increase_percent_vs_clearcut1": 0,
+        "site_limitations": "Gentle terrain; good access; well drained soil.",
+        "cppt_classification": "2.1.1",
+        "pre_harvest": {
+          "merchantable_basal_area_m2_per_ha": 40,
+          "live_trees_per_ha": 534,
+          "dead_trees_per_ha": 141,
+          "total_trees_per_ha": 675,
+          "live_volume_m3_per_ha": 264,
+          "dead_volume_m3_per_ha": 66,
+          "total_volume_m3_per_ha": 330,
+          "avg_dbh_cm": 26.7,
+          "avg_height_m": 23.2,
+          "avg_tree_volume_m3": 0.49
+        }
+      },
+      {
+        "id": "patch_cut_1",
+        "label": "Patch Cut 1",
+        "treatment_type": "patch_cut",
+        "objective": "Bark beetle control (Year 1)",
+        "area_ha": 0.4,
+        "cost_per_m3_cad": 9.39,
+        "cost_increase_percent_vs_clearcut1": 11,
+        "site_limitations": "Gentle terrain with small wet area.",
+        "cppt_classification": "2.1.2",
+        "pre_harvest": {
+          "merchantable_basal_area_m2_per_ha": 36,
+          "live_trees_per_ha": 650,
+          "dead_trees_per_ha": 133,
+          "total_trees_per_ha": 783,
+          "live_volume_m3_per_ha": 194,
+          "dead_volume_m3_per_ha": 44,
+          "total_volume_m3_per_ha": 238,
+          "avg_dbh_cm": 23.3,
+          "avg_height_m": 18.9,
+          "avg_tree_volume_m3": 0.30
+        }
+      },
+      {
+        "id": "partial_cut_1",
+        "label": "Partial Cut 1",
+        "treatment_type": "partial_cut",
+        "objective": "Bark beetle control (Year 1)",
+        "area_ha": 2.7,
+        "cost_per_m3_cad": 11.68,
+        "cost_increase_percent_vs_clearcut1": 38,
+        "site_limitations": "Gentle terrain, irregularly shaped block fragmented by swamp.",
+        "cppt_classification": "3.3.1",
+        "pre_harvest": {
+          "merchantable_basal_area_m2_per_ha": 32,
+          "live_trees_per_ha": 411,
+          "dead_trees_per_ha": 63,
+          "total_trees_per_ha": 474,
+          "live_volume_m3_per_ha": 225,
+          "dead_volume_m3_per_ha": 40,
+          "total_volume_m3_per_ha": 265,
+          "avg_dbh_cm": 28.3,
+          "avg_height_m": 23.6,
+          "avg_tree_volume_m3": 0.56
+        },
+        "post_harvest": {
+          "merchantable_basal_area_m2_per_ha": 18,
+          "live_trees_per_ha": 264,
+          "dead_trees_per_ha": 3,
+          "total_trees_per_ha": 267,
+          "live_volume_m3_per_ha": 149,
+          "dead_volume_m3_per_ha": 2,
+          "total_volume_m3_per_ha": 151,
+          "avg_dbh_cm": 28.4,
+          "avg_height_m": 23.4,
+          "avg_tree_volume_m3": 0.57
+        }
+      },
+      {
+        "id": "patch_cut_2",
+        "label": "Patch Cut 2",
+        "treatment_type": "patch_cut",
+        "objective": "Bark beetle control (Year 1)",
+        "area_ha": 0.4,
+        "cost_per_m3_cad": 15.10,
+        "cost_increase_percent_vs_clearcut1": 78,
+        "site_limitations": "Gentle adverse slope; mechanical problems slowed harvesting; irregular block boundary.",
+        "cppt_classification": "1.3.3",
+        "pre_harvest": {
+          "merchantable_basal_area_m2_per_ha": 37,
+          "live_trees_per_ha": 600,
+          "dead_trees_per_ha": 117,
+          "total_trees_per_ha": 717,
+          "live_volume_m3_per_ha": 158,
+          "dead_volume_m3_per_ha": 116,
+          "total_volume_m3_per_ha": 274,
+          "avg_dbh_cm": 23.9,
+          "avg_height_m": 20.4,
+          "avg_tree_volume_m3": 0.38
+        }
+      },
+      {
+        "id": "partial_cut_2",
+        "label": "Partial Cut 2",
+        "treatment_type": "partial_cut",
+        "objective": "Bark beetle control (Year 1)",
+        "area_ha": 3.0,
+        "cost_per_m3_cad": 12.55,
+        "cost_increase_percent_vs_clearcut1": 48,
+        "site_limitations": "Steep favourable slope with benches.",
+        "cppt_classification": "1.3.3",
+        "pre_harvest": {
+          "merchantable_basal_area_m2_per_ha": 33,
+          "live_trees_per_ha": 631,
+          "dead_trees_per_ha": 152,
+          "total_trees_per_ha": 783,
+          "live_volume_m3_per_ha": 194,
+          "dead_volume_m3_per_ha": 48,
+          "total_volume_m3_per_ha": 242,
+          "avg_dbh_cm": 22.3,
+          "avg_height_m": 21.5,
+          "avg_tree_volume_m3": 0.31
+        },
+        "post_harvest": {
+          "merchantable_basal_area_m2_per_ha": 18,
+          "live_trees_per_ha": 388,
+          "dead_trees_per_ha": 0,
+          "total_trees_per_ha": 388,
+          "live_volume_m3_per_ha": 138,
+          "dead_volume_m3_per_ha": 0,
+          "total_volume_m3_per_ha": 138,
+          "avg_dbh_cm": 23.5,
+          "avg_height_m": 21.8,
+          "avg_tree_volume_m3": 0.36
+        }
+      },
+      {
+        "id": "clearcut_2",
+        "label": "Clearcut 2",
+        "treatment_type": "clearcut",
+        "objective": "Windthrow salvage (Year 2)",
+        "area_ha": null,
+        "cost_per_m3_cad": 11.74,
+        "cost_increase_percent_vs_clearcut1": 38,
+        "site_limitations": "Steep favourable slopes with some adverse sections; wet areas; small non-merchantable material; windthrow salvage.",
+        "cppt_classification": "3.3.4"
+      },
+      {
+        "id": "partial_cut_3",
+        "label": "Partial Cut 3",
+        "treatment_type": "partial_cut",
+        "objective": "Windthrow salvage (Year 2)",
+        "area_ha": 2.8,
+        "cost_per_m3_cad": 11.93,
+        "cost_increase_percent_vs_clearcut1": 41,
+        "site_limitations": "Moderate/steep favourable slopes with wet patches; windthrow salvage corridor.",
+        "cppt_classification": "3.3.3",
+        "post_harvest": {
+          "merchantable_basal_area_m2_per_ha": 23,
+          "live_trees_per_ha": 420,
+          "dead_trees_per_ha": 15,
+          "total_trees_per_ha": 435,
+          "live_volume_m3_per_ha": 185,
+          "dead_volume_m3_per_ha": 2,
+          "total_volume_m3_per_ha": 187,
+          "avg_dbh_cm": 25.3,
+          "avg_height_m": 23.1,
+          "avg_tree_volume_m3": 0.43
+        }
+      },
+      {
+        "id": "patch_cut_3",
+        "label": "Patch Cut 3",
+        "treatment_type": "patch_cut",
+        "objective": "Windthrow salvage (Year 2)",
+        "area_ha": null,
+        "cost_per_m3_cad": 13.94,
+        "cost_increase_percent_vs_clearcut1": 64,
+        "site_limitations": "Gentle slope with steep margin drop-off, feathered edge, large non-merchantable material; windthrow salvage.",
+        "cppt_classification": "2.2.2"
+      },
+      {
+        "id": "partial_cut_4",
+        "label": "Partial Cut 4",
+        "treatment_type": "partial_cut",
+        "objective": "Wildlife corridor (Year 3)",
+        "area_ha": 29.2,
+        "cost_per_m3_cad": 13.42,
+        "cost_increase_percent_vs_clearcut1": 58,
+        "site_limitations": "Gentle slopes with deep snow (winter operation).",
+        "cppt_classification": "2b.2.2",
+        "pre_harvest": {
+          "merchantable_basal_area_m2_per_ha": 45,
+          "live_trees_per_ha": 724,
+          "dead_trees_per_ha": 126,
+          "total_trees_per_ha": 850,
+          "live_volume_m3_per_ha": 266,
+          "dead_volume_m3_per_ha": 28,
+          "total_volume_m3_per_ha": 294,
+          "avg_dbh_cm": 34.0,
+          "avg_height_m": 24.3,
+          "avg_tree_volume_m3": 0.35
+        },
+        "post_harvest": {
+          "merchantable_basal_area_m2_per_ha": 18,
+          "live_trees_per_ha": 145,
+          "dead_trees_per_ha": 0,
+          "total_trees_per_ha": 415,
+          "live_volume_m3_per_ha": 127,
+          "dead_volume_m3_per_ha": 0,
+          "total_volume_m3_per_ha": 127,
+          "avg_dbh_cm": 22.2,
+          "avg_height_m": 20.8,
+          "avg_tree_volume_m3": 0.31
+        }
+      }
+    ]
+  },
+  "notes": [
+    "Shift-level harvester productivity ranged from ~17 to 32 m³/SMH (forwarder ~18–31 m³/SMH) depending on treatment; Figure 4 provides the detailed values.",
+    "Combined falling+processing time follows: t = 0.1607 * e^(1.7439 * volume_per_tree) with R² ≈ 0.86 for the observed tree sizes (Figure 8).",
+    "Forwarder cycle times were normalized to a 150 m extraction distance when comparing treatments; travel-time adjustments used observed empty/loaded speeds collected during detailed-timing (164 PMH sample).",
+    "Costs reflect FERIC’s 1997 ownership/operating assumptions (Appendix III) and exclude supervision, profit, and overhead."
+  ]
+}
