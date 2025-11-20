@@ -691,6 +691,7 @@ into the regressions. Available models:
   Pair these presets with ``inspect-machine --machine-role grapple_yarder_skyleadc40`` (FERIC TN-201 cost entry) or
   use ``--show-costs`` to pull the same Skylead C40 owning/operating split when modelling Thunderbird/Skylead
   intermediate-support corridors like the FNCY12 case study.
+* **Upcoming** – LeDoux (1984) residue yarder regressions (`Skagit BU-94 shotgun/highlead`, `Washington 208E slack skyline`, `Thunderbird TMY-45 running skyline`). The cost portion is already digitised (see ``inspect-machine --machine-role grapple_yarder_skagit_shotgun|_highlead|_washington_208e|_tmy45_residue`` for CPI-adjusted 1984 USD rates); once the regression coefficients land, these will become selectable skyline models for comparison against the BC presets.
 * ``tr127-block1`` … ``tr127-block6`` – FPInnovations TR-127 block-specific tower-yarders. Blocks 1 & 3 require two
   lateral inputs (``--lateral-distance-m`` plus ``--lateral-distance-2-m``); Blocks 5 & 6 require ``--num-logs``.
   Range checks match the publication and the table output shows cycle minutes alongside m³/PMH.
