@@ -89,6 +89,46 @@
     "lateral_yarding_limit_m": 30,
     "notes": "Skyline configured to harvest second-growth thinning corridors (clearcut history) where natural deflection was limited or convex."
   },
+  "intermediate_supports": {
+    "tree_pair_spacing_max_m": 6.0,
+    "dbh_cm_range": [
+      50.0,
+      60.0
+    ],
+    "min_dib_cm_at_block": 38.0,
+    "rigging_height_m_range": [
+      12.0,
+      22.0
+    ],
+    "guyline_anchor_offset_m": [
+      0.5,
+      1.5
+    ],
+    "snake_configuration": "Skyline support cable ('snake') threaded through a tree block and tensioned back to a perpendicular tailhold, lifting the jack into an M-shaped support.",
+    "lateral_limit_m": 30.0,
+    "notes": [
+      "Carriage passes intermediate supports by transferring load to the snake; skyline tension drops to empty-carriage levels while crossing.",
+      "Longer lateral reaches (>30 m) produced hang-ups that spiked skyline/guyline tensions."
+    ]
+  },
+  "support_cost_proxies": {
+    "cat_d8_backspar": {
+      "source": "FERIC TN-157 road-change study (Cypress 7280B + UH14 trail spar) blended with FNCY12 equipment list.",
+      "assumed_ratio_support_smh_per_yarder_smh": 0.25,
+      "ratio_method": "Average of TN-157 road-change minutes ÷ yarding minutes (0.2466) treated as Cat D8 backspar duty cycle.",
+      "cost_reference_role": "bulldozer_tr45",
+      "cost_base_year_cad": 1979,
+      "notes": "Cat D8 (with winch) assumed to mirror the TR-45 D7G owning/operating split; CPI helper inflates 1979 CAD to target year."
+    },
+    "timberjack_450_trail_support": {
+      "source": "FERIC TN-157 road-change study (cases with heavy backspar moves) and FNCY12 support-equipment description.",
+      "assumed_ratio_support_smh_per_yarder_smh": 0.14,
+      "ratio_method": "Lower-quartile TN-157 road-change ÷ yarding ratio (0.137) used as Timberjack 450 standby allowance for landing cleanup and strawline assists.",
+      "cost_reference_role": "skidder_tr45",
+      "cost_base_year_cad": 1979,
+      "notes": "Timberjack 450 grapple skidder treated as equivalent to the TR-45 grapple-skidder cost entry; CPI helper inflates to target year."
+    }
+  },
   "productivity": {
     "observation_period": "July–October 1992 (67.5 productive shifts including early shutdowns)",
     "volumes_m3_per_month": [
@@ -138,6 +178,96 @@
     ],
     "guyline_tension_notes": [
       "Critical guylines peaked during aborted loads (hang-ups or choked stumps). Crossed upper guylines helped limit lateral swing-induced loading."
+    ]
+  },
+  "tension_observations": {
+    "skyline_kN": [
+      {
+        "turn_size": "small",
+        "samples": 5,
+        "empty_carriage": 88.2,
+        "breakout": null,
+        "lateral_yarding": 100.8,
+        "suspended_under_carriage": 109.0,
+        "over_intermediate_support": 93.4,
+        "between_support_and_yarder": 102.3
+      },
+      {
+        "turn_size": "medium",
+        "samples": 3,
+        "empty_carriage": 92.3,
+        "breakout": null,
+        "lateral_yarding": 109.0,
+        "suspended_under_carriage": 120.0,
+        "over_intermediate_support": 95.6,
+        "between_support_and_yarder": 111.2
+      },
+      {
+        "turn_size": "large",
+        "samples": 2,
+        "empty_carriage": 88.7,
+        "breakout": 146.8,
+        "lateral_yarding": 129.0,
+        "suspended_under_carriage": 140.1,
+        "over_intermediate_support": 102.3,
+        "between_support_and_yarder": 115.6
+      },
+      {
+        "turn_size": "choked_stump",
+        "samples": 1,
+        "empty_carriage": 106.8,
+        "breakout": null,
+        "lateral_yarding": null,
+        "suspended_under_carriage": null,
+        "over_intermediate_support": null,
+        "between_support_and_yarder": null
+      }
+    ],
+    "guyline_kN": [
+      {
+        "turn_size": "small",
+        "samples": 1,
+        "empty_carriage": 12.5,
+        "breakout": null,
+        "lateral_yarding": 17.3,
+        "suspended_under_carriage": 17.3,
+        "over_intermediate_support": 12.0,
+        "between_support_and_yarder": 13.3,
+        "notes": "Typical lateral distances; no major hang-ups."
+      },
+      {
+        "turn_size": "medium",
+        "samples": 1,
+        "empty_carriage": 12.6,
+        "breakout": null,
+        "lateral_yarding": 24.0,
+        "suspended_under_carriage": 15.1,
+        "over_intermediate_support": null,
+        "between_support_and_yarder": 14.2,
+        "notes": "24 kN spike caused by a hang-up on a longer lateral reach."
+      },
+      {
+        "turn_size": "large",
+        "samples": 1,
+        "empty_carriage": 12.5,
+        "breakout": null,
+        "lateral_yarding": 19.6,
+        "suspended_under_carriage": 23.1,
+        "over_intermediate_support": null,
+        "between_support_and_yarder": 20.0,
+        "notes": "Higher suspended load kept tensions elevated until the carriage cleared the support."
+      },
+      {
+        "turn_size": "large_aborted",
+        "samples": 1,
+        "empty_carriage": 12.5,
+        "breakout": 21.4,
+        "lateral_yarding": 37.4,
+        "suspended_under_carriage": null,
+        "over_intermediate_support": null,
+        "between_support_and_yarder": null,
+        "notes": "Aborted load/choked stump drove the highest recorded guyline tension."
+      }
     ]
   },
   "costing_status": {

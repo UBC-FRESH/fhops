@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import json
+
+import pytest
 from typer.testing import CliRunner
 
 from fhops.cli.dataset import dataset_app
@@ -58,6 +61,32 @@ def test_cli_skyline_tr125_single() -> None:
         payload_m3=1.6,
     )
     assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_skyline_tr125_multi_warning_and_telemetry(tmp_path) -> None:
+    telemetry_log = tmp_path / "skyline.jsonl"
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "tr125-multi-span",
+            "--slope-distance-m",
+            "250",
+            "--lateral-distance-m",
+            "40",
+            "--telemetry-log",
+            str(telemetry_log),
+        ],
+    )
+    assert result.exit_code == 0
+    assert "TN258 envelope" in result.stdout
+    assert "Support reminder" in result.stdout
+    payload = json.loads(telemetry_log.read_text(encoding="utf-8").strip())
+    assert payload["tn258_lateral_limit_exceeded"] is True
+    assert payload["support_cat_d8_smhr_per_yarder_smhr"] == pytest.approx(0.25)
+    assert payload["support_timberjack450_smhr_per_yarder_smhr"] == pytest.approx(0.14)
+    assert payload["non_bc_source"] is False
 
 
 def test_cli_skyline_tr127_block5() -> None:

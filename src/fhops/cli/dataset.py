@@ -200,6 +200,13 @@ from fhops.telemetry import append_jsonl
 from fhops.telemetry.machine_costs import build_machine_cost_snapshots
 from fhops.validation.ranges import validate_block_ranges
 
+_TMY45_SUPPORT_MACHINE_RATIOS = {
+    "cat_d8_smhr_per_yarder_smhr": 0.25,
+    "timberjack_450_smhr_per_yarder_smhr": 0.14,
+}
+_TN258_LATERAL_LIMIT_M = 30.0
+_TN258_MAX_SKYLINE_TENSION_KN = 147.0
+
 console = Console()
 dataset_app = typer.Typer(help="Inspect FHOPS datasets and bundled examples.")
 
@@ -7107,6 +7114,9 @@ def estimate_skyline_productivity_cmd(
     if hi_skid_include_haul and model is not SkylineProductivityModel.HI_SKID:
         raise typer.BadParameter("--hi-skid-include-haul is only valid when --model hi-skid.")
 
+    def _append_warning(existing: str | None, message: str) -> str:
+        return f"{existing}\n{message}" if existing else message
+
     scenario_context: Scenario | None = None
     dataset_name: str | None = None
     systems_catalog = dict(default_system_registry())
@@ -7200,6 +7210,10 @@ def estimate_skyline_productivity_cmd(
     telemetry_merch_volume = None
     telemetry_residue_pieces = None
     telemetry_residue_volume = None
+    telemetry_support_cat_d8_ratio = None
+    telemetry_support_timberjack_ratio = None
+    tn258_limit_exceeded = False
+    non_bc_warning = False
     if model is SkylineProductivityModel.LEE_UPHILL:
         value = estimate_cable_yarder_productivity_lee2018_uphill(
             yarding_distance_m=slope_distance_m,
@@ -7210,6 +7224,7 @@ def estimate_skyline_productivity_cmd(
             "[yellow]Warning:[/yellow] Lee et al. (2018) regressions are non-BC small-scale skyline "
             "studies (South Korea). Validate before using for BC costing."
         )
+        non_bc_warning = True
         rows = [
             ("Model", model.value),
             ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
@@ -7227,6 +7242,7 @@ def estimate_skyline_productivity_cmd(
             "[yellow]Warning:[/yellow] Lee et al. (2018) regressions are non-BC small-scale skyline "
             "studies (South Korea). Validate before using for BC costing."
         )
+        non_bc_warning = True
         rows = [
             ("Model", model.value),
             ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
@@ -7252,6 +7268,14 @@ def estimate_skyline_productivity_cmd(
             ("Cycle Time (min)", f"{cycle_minutes:.2f}"),
         ]
         source_label = "FPInnovations TR-125 single-span regression (coastal BC)."
+        if lateral_distance_m > _TN258_LATERAL_LIMIT_M:
+            tn258_limit_exceeded = True
+            tension_warning = (
+                f"[yellow]TN258 envelope:[/yellow] Thunderbird TMY45 trials recorded skyline tension spikes up "
+                f"to {_TN258_MAX_SKYLINE_TENSION_KN:.0f} kN once lateral pulls exceeded "
+                f"{_TN258_LATERAL_LIMIT_M:.0f} m. Trim lateral distance or add anchors/intermediate supports."
+            )
+            console_warning = _append_warning(console_warning, tension_warning)
     elif model is SkylineProductivityModel.TR125_MULTI:
         cycle_minutes = estimate_cable_yarder_cycle_time_tr125_multi_span(
             slope_distance_m=slope_distance_m,
@@ -7272,6 +7296,26 @@ def estimate_skyline_productivity_cmd(
         source_label = (
             "FPInnovations TR-125 multi-span (intermediate support) regression (coastal BC)."
         )
+        if lateral_distance_m > _TN258_LATERAL_LIMIT_M:
+            tn258_limit_exceeded = True
+            tension_warning = (
+                f"[yellow]TN258 envelope:[/yellow] Thunderbird TMY45 trials recorded skyline tension spikes up "
+                f"to {_TN258_MAX_SKYLINE_TENSION_KN:.0f} kN once lateral pulls exceeded "
+                f"{_TN258_LATERAL_LIMIT_M:.0f} m. Trim lateral distance or add supports before trusting the output."
+            )
+            console_warning = _append_warning(console_warning, tension_warning)
+        telemetry_support_cat_d8_ratio = _TMY45_SUPPORT_MACHINE_RATIOS[
+            "cat_d8_smhr_per_yarder_smhr"
+        ]
+        telemetry_support_timberjack_ratio = _TMY45_SUPPORT_MACHINE_RATIOS[
+            "timberjack_450_smhr_per_yarder_smhr"
+        ]
+        support_note = (
+            "[yellow]Support reminder:[/yellow] TN-157/TN-258 proxies bundle Cat D8 backspar standby "
+            f"{telemetry_support_cat_d8_ratio:.2f} SMH/SMH and Timberjack 450 trail support "
+            f"{telemetry_support_timberjack_ratio:.2f} SMH/SMH—override if your support plan differs."
+        )
+        console_warning = _append_warning(console_warning, support_note)
     elif model in _TR127_MODEL_TO_BLOCK:
         block_id = _TR127_MODEL_TO_BLOCK[model]
         if block_id in (5, 6) and num_logs is None:
@@ -7393,6 +7437,7 @@ def estimate_skyline_productivity_cmd(
         console_warning = (
             "[yellow]Warning:[/yellow] LeDoux regressions are based on US residue logging (1984 USD); validate before using for BC skyline costing."
         )
+        non_bc_warning = True
         if residue_pieces_per_turn > 0 and residue_delay_minutes > merch_delay_minutes:
             residue_warning = (
                 "[yellow]Residue-heavy turn:[/yellow] residue wood is consuming "
@@ -7569,6 +7614,7 @@ def estimate_skyline_productivity_cmd(
                 f"{system.yarding_distance_min_m:.0f} m."
             )
         console_warning = "[yellow]Warning:[/yellow] " + " ".join(warning_parts)
+        non_bc_warning = True
         telemetry_payload_m3 = resolved_payload
         telemetry_pieces = resolved_pieces
         telemetry_piece_volume = resolved_piece_volume
@@ -7604,6 +7650,7 @@ def estimate_skyline_productivity_cmd(
             "[yellow]Warning:[/yellow] Regression derived from interior WA/ID trials using Wyssen standing skyline;"
             " validate before applying to other regions."
         )
+        non_bc_warning = True
         telemetry_horizontal = slope_distance_m
         telemetry_pieces = logs_per_turn
         telemetry_piece_volume = average_log_volume_m3
@@ -7645,6 +7692,7 @@ def estimate_skyline_productivity_cmd(
             "[yellow]Warning:[/yellow] Kramer (1978) regressions are US Pacific Northwest trials; "
             "validate before using for BC costing."
         )
+        non_bc_warning = True
         telemetry_horizontal = slope_distance_m
         telemetry_pieces = logs_per_turn
         telemetry_piece_volume = average_log_volume_m3
@@ -7685,6 +7733,7 @@ def estimate_skyline_productivity_cmd(
             "[yellow]Warning:[/yellow] Kellogg (1976) regression is based on small tower yarders in Oregon; "
             "confirm applicability before BC deployment."
         )
+        non_bc_warning = True
         source_label = "Kellogg 1976 standing skyline regression (Aubuchon 1982 Appendix A)."
         telemetry_horizontal = slope_distance_m
         telemetry_pieces = logs_per_turn
@@ -7739,9 +7788,12 @@ def estimate_skyline_productivity_cmd(
             "productivity_m3_per_pmh": value,
             "tr119_treatment": tr119_treatment,
             "source": source_label,
-            "non_bc_source": bool(console_warning),
+            "non_bc_source": non_bc_warning,
             "hi_skid_include_haul": hi_skid_include_haul
             if model is SkylineProductivityModel.HI_SKID
             else None,
+            "support_cat_d8_smhr_per_yarder_smhr": telemetry_support_cat_d8_ratio,
+            "support_timberjack450_smhr_per_yarder_smhr": telemetry_support_timberjack_ratio,
+            "tn258_lateral_limit_exceeded": tn258_limit_exceeded,
         }
         append_jsonl(telemetry_log, payload)
