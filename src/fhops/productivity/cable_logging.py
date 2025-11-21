@@ -831,6 +831,14 @@ LEDOUX_COEFFICIENTS: dict[str, dict[str, float]] = {
 FT_PER_M = 3.28084
 CUBIC_FT_PER_CUBIC_M = 35.3147
 
+MICRO_MASTER_DEFAULTS = {
+    "constant_minutes": 5.108,  # Hookup + decking + unhook + road-change + minor delays (TN-54)
+    "outhaul_speed_m_per_s": 4.1,
+    "inhaul_speed_m_per_s": 2.1,
+    "pieces_per_turn": 3.2,
+    "piece_volume_m3": 0.46,
+}
+
 
 def estimate_residue_cycle_time_ledoux_minutes(
     *,
@@ -902,6 +910,46 @@ def ledoux_delay_component_minutes(
     return max(0.0, merch_minutes), max(0.0, residue_minutes)
 
 
+def estimate_micro_master_cycle_minutes(
+    *,
+    slope_distance_m: float,
+    constant_minutes: float = MICRO_MASTER_DEFAULTS["constant_minutes"],
+    outhaul_speed_m_per_s: float = MICRO_MASTER_DEFAULTS["outhaul_speed_m_per_s"],
+    inhaul_speed_m_per_s: float = MICRO_MASTER_DEFAULTS["inhaul_speed_m_per_s"],
+) -> float:
+    """Return total minutes per turn for the Model 9 Micro Master yarder (FERIC TN-54)."""
+
+    if slope_distance_m <= 0:
+        raise ValueError("Slope distance must be > 0 for the Micro Master regression")
+    distance_minutes = (
+        (slope_distance_m / outhaul_speed_m_per_s) + (slope_distance_m / inhaul_speed_m_per_s)
+    ) / 60.0
+    return constant_minutes + distance_minutes
+
+
+def estimate_micro_master_productivity_m3_per_pmh(
+    *,
+    slope_distance_m: float,
+    payload_m3: float | None = None,
+    pieces_per_turn: float | None = None,
+    piece_volume_m3: float | None = None,
+) -> tuple[float, float, float, float, float]:
+    """Return (productivity, cycle_minutes, pieces, piece_volume, payload)."""
+
+    resolved_pieces = pieces_per_turn or MICRO_MASTER_DEFAULTS["pieces_per_turn"]
+    resolved_piece_volume = piece_volume_m3 or MICRO_MASTER_DEFAULTS["piece_volume_m3"]
+    if resolved_pieces <= 0:
+        raise ValueError("Pieces per turn must be > 0 for the Micro Master regression")
+    if resolved_piece_volume <= 0:
+        raise ValueError("Piece volume must be > 0 for the Micro Master regression")
+    resolved_payload = payload_m3 if payload_m3 is not None else resolved_pieces * resolved_piece_volume
+    if resolved_payload <= 0:
+        raise ValueError("Payload must be > 0 for the Micro Master regression")
+    cycle_minutes = estimate_micro_master_cycle_minutes(slope_distance_m=slope_distance_m)
+    productivity = (resolved_payload * 60.0) / cycle_minutes
+    return productivity, cycle_minutes, resolved_pieces, resolved_piece_volume, resolved_payload
+
+
 __all__ = [
     "estimate_cable_skidding_productivity_unver_spss",
     "estimate_cable_skidding_productivity_unver_robust",
@@ -923,6 +971,8 @@ __all__ = [
     "estimate_residue_cycle_time_ledoux_minutes",
     "estimate_residue_productivity_ledoux_m3_per_pmh",
     "ledoux_delay_component_minutes",
+    "estimate_micro_master_cycle_minutes",
+    "estimate_micro_master_productivity_m3_per_pmh",
     "HelicopterLonglineModel",
     "HelicopterProductivityResult",
     "estimate_helicopter_longline_productivity",

@@ -12,6 +12,7 @@ from fhops.productivity import (
     estimate_standing_skyline_productivity_kramer1978,
     estimate_standing_skyline_productivity_kellogg1976,
     estimate_residue_productivity_ledoux_m3_per_pmh,
+    estimate_micro_master_productivity_m3_per_pmh,
 )
 
 runner = CliRunner()
@@ -309,6 +310,55 @@ def test_cli_skyline_ledoux_requires_inputs() -> None:
     )
     assert result.exit_code != 0
     assert "merchantable-logs" in result.stdout.lower()
+
+
+def test_cli_skyline_micro_master_defaults() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "micro-master",
+            "--slope-distance-m",
+            "70",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    expected, cycle_minutes, _, _, _ = estimate_micro_master_productivity_m3_per_pmh(
+        slope_distance_m=70.0
+    )
+    assert f"{expected:.2f}" in result.stdout
+    assert f"{cycle_minutes:.2f}" in result.stdout
+    assert "Micro Master" in result.stdout
+
+
+def test_cli_skyline_micro_master_overrides() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "micro-master",
+            "--slope-distance-m",
+            "90",
+            "--pieces-per-cycle",
+            "2.5",
+            "--piece-volume-m3",
+            "0.5",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    expected, _, resolved_pieces, resolved_piece_volume, payload = (
+        estimate_micro_master_productivity_m3_per_pmh(
+            slope_distance_m=90.0,
+            pieces_per_turn=2.5,
+            piece_volume_m3=0.5,
+        )
+    )
+    assert f"{expected:.2f}" in result.stdout
+    assert f"{resolved_pieces:.2f}" in result.stdout
+    assert f"{resolved_piece_volume:.3f}" in result.stdout
+    assert f"{payload:.2f}" in result.stdout
 
 
 def test_cli_skyline_harvest_system_running_defaults() -> None:

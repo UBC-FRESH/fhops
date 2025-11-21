@@ -103,6 +103,7 @@ from fhops.productivity import (
     estimate_running_skyline_productivity_mcneel2000,
     estimate_residue_cycle_time_ledoux_minutes,
     estimate_residue_productivity_ledoux_m3_per_pmh,
+    estimate_micro_master_productivity_m3_per_pmh,
     ledoux_delay_component_minutes,
     running_skyline_variant_defaults,
     estimate_forwarder_productivity_bc,
@@ -745,6 +746,7 @@ class SkylineProductivityModel(str, Enum):
     LEDOUX_SKAGIT_HIGHLEAD = "ledoux-skagit-highlead"
     LEDOUX_WASHINGTON_208E = "ledoux-washington-208e"
     LEDOUX_TMY45 = "ledoux-tmy45"
+    MICRO_MASTER = "micro-master"
 
 
 _LEDOUX_MODEL_TO_PROFILE: dict[SkylineProductivityModel, str] = {
@@ -7380,6 +7382,31 @@ def estimate_skyline_productivity_cmd(
         telemetry_merch_volume = merchantable_volume_m3
         telemetry_residue_pieces = residue_pieces_per_turn
         telemetry_residue_volume = residue_volume_m3
+    elif model is SkylineProductivityModel.MICRO_MASTER:
+        (
+            value,
+            cycle_minutes,
+            resolved_pieces,
+            resolved_piece_volume,
+            payload_value,
+        ) = estimate_micro_master_productivity_m3_per_pmh(
+            slope_distance_m=slope_distance_m,
+            payload_m3=payload_m3,
+            pieces_per_turn=pieces_per_cycle,
+            piece_volume_m3=piece_volume_m3,
+        )
+        rows = [
+            ("Model", model.value),
+            ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
+            ("Pieces per Turn", f"{resolved_pieces:.2f}"),
+            ("Piece Volume (m³)", f"{resolved_piece_volume:.3f}"),
+            ("Payload (m³)", f"{payload_value:.2f}"),
+            ("Cycle Time (min)", f"{cycle_minutes:.2f}"),
+        ]
+        source_label = "FERIC TN-54 (1982) Model 9 Micro Master yarder (Vancouver Island clearcut)."
+        telemetry_payload_m3 = payload_value
+        telemetry_pieces = resolved_pieces
+        telemetry_piece_volume = resolved_piece_volume
     elif model is SkylineProductivityModel.AUBUCHON_STANDING:
         cycle_minutes = estimate_standing_skyline_turn_time_aubuchon1979(
             slope_distance_m=slope_distance_m,

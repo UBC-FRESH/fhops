@@ -15,6 +15,8 @@ from .cable_logging import (
     estimate_cable_yarder_productivity_tr127,
     estimate_residue_cycle_time_ledoux_minutes,
     estimate_residue_productivity_ledoux_m3_per_pmh,
+    estimate_micro_master_cycle_minutes,
+    estimate_micro_master_productivity_m3_per_pmh,
     ledoux_delay_component_minutes,
     estimate_helicopter_longline_productivity,
     estimate_standing_skyline_productivity_aubuchon1979,
