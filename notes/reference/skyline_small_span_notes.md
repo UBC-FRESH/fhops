@@ -78,7 +78,8 @@ Sources: `notes/reference/fpinnovations/FNCY12.pdf`, `notes/reference/fpinnovati
 - Crew & learning curve: yarder operator, chaser, full-time rigger, part-time rigger, two chokersetters (rigging crew time inflated man-day costs vs. standard skyline presets). July output (no supports yet) averaged 102 m³/shift while the crew learned the Mini-Mak; by September/October the system averaged 171–189 m³/shift even when supports were in play.
 - Productivity record (Bell Pole Co., July–Oct 1992): 10 139 m³ over 67.5 productive shifts (150 m³/shift overall). Removing the July learning curve and fire-hazard delays yields 166–177 m³/shift. Ten-hour shifts; nine early shifts plus three fire shut-down days included in totals.
 - Dataset: `data/reference/fpinnovations/fncy12_tmy45_mini_mak.json` now captures the equipment specs, rigging geometry, lateral limits, skyline/guyline tensions (from TN-258), and month-by-month productivity so long-span/Intermediate-support presets can consume these numbers without re-opening the PDFs.
-- Costing status: FNCY12/TN-258 provide geometry and productivity only—no owning/operating split for the Thunderbird TMY45 + Mini-Mak II combination. We still need a historical machine-rate appendix (or reconstructed rate using payroll/fuel data) before a dedicated `grapple_yarder_tmy45` entry can replace the current Skylead proxy in `--show-costs`, harvest-system overrides, and synthetic datasets.
+- Costing status: `grapple_yarder_tmy45` now captures the owning/operating split by converting the LeDoux (1984) TMY-45 hourly charges from USD 1984 → CAD 1992 (StatCan Table 18-10-0005-01 CPI + vector v37426 FX), scaling the labour column to the FNCY12 5.5-person crew (vs. the nine-person residue trial), and amortising the CAD 33.5 k Mini-Mak II + skyline support jack bundle over five years (1 200 SMH/year) so the attachment lives in owning cost. Loader/chainsaw/radio allowances stay aligned with the LeDoux breakout; Cat D8 and Timberjack 450 standby time remains outside the rate.
+- Remaining wish list: secure an authentic 1992 BC payroll/fuel/repair worksheet for the Thunderbird fleet plus any Jay-Vee Yarding accounting that allocates intermediate-support moves to the D8 vs. rigging crew. Those artefacts would let us replace the reconstructed labour/fuel split and add the dozer/skidder standby charges directly into the preset instead of documenting them as follow-on adjustments.
 
 ## TN-173 – Eastern Canada compact skyline fleet (Ecologger, Gabriel, Christie, Télétransporteur, Timbermaster)
 
@@ -97,9 +98,9 @@ Source: `notes/reference/fpinnovations/TN173.pdf`
 - Harvest-system coverage: `default_system_registry()` now exposes `cable_micro_ecologger|gabriel|christie|teletransporteur|timbermaster` (TN173 presets) plus `cable_micro_hi_skid`, so `--harvest-system-id` (or dataset blocks referencing those IDs) auto-select the correct skyline model + machine-rate role.
 - Helper TODOs:
   - Feed the new micro presets into the synthetic/contract generators (so sample scenarios rotate among the TN173/Hi-Skid systems) once the `skyline_hi_skid` CPI audit trail is documented.
-  - Move on to TN258/FNCY12 to unlock Thunderbird TMY45 + Mini-Mak costing and span-penalty wiring after the micro-yard suite is fully costed.
+  - Move on to TN258/FNCY12 span-penalty wiring now that Thunderbird TMY45 + Mini-Mak costing exists; need intermediate-support timing + Cat D8 standby assumptions before presets/scenarios can auto-toggle the support penalty.
 
 ## Pending extractions
 
-- **TN258 – Thunderbird TMY45 + Mini-Mak II:** need the intermediate-support timing, guyline tension envelope, and any embedded costing references so the TMY45 preset can inherit productivity and owning/operating splits without relying on Skylead proxies.
+- **TN258 – Thunderbird TMY45 + Mini-Mak II:** costing gap is closed (see `grapple_yarder_tmy45`), but we still need the detailed intermediate-support timing + D8/Timberjack utilisation notes so span-penalty wiring can differentiate between “supports up” vs. “no supports” cycles and so the dozer standby cost can move from a narrative reminder into the preset.
 - **TN82 / TN98 – small skyline and manual support studies:** triage for additional compact-span payload distributions and slack-puller labour requirements to round out the micro-yarder helper backlog.

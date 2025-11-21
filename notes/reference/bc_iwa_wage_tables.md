@@ -51,6 +51,6 @@ Key points:
 
 ### Outstanding wish list
 
-- Locate a **pre-1990 BC IWA wage card** for Thunderbird TMY-45 style crews (FNCY12/TN258) to replace the current LeDoux (US) proxy.
+- Locate a **pre-1990 BC IWA wage card** for Thunderbird TMY-45 style crews (FNCY12/TN258) so the new `grapple_yarder_tmy45` rate (currently LeDoux 1984 USD costs scaled to a 5.5-person crew) can be validated or replaced with authentic payroll numbers.
 - Capture **residue vs. merchantable utilisation penalties** from BC sources (e.g., TR112 addenda, regional residue studies) to refine labour split when yarding waste wood.
 - Document a **CPI/FX trail** for each era (1979, 1989, 1994, 1997, 2002, 2004) so machine-rate inflation steps are reproducible without ad-hoc notes.

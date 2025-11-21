@@ -141,7 +141,7 @@
     ]
   },
   "costing_status": {
-    "machine_rate_entry": "Pending",
-    "notes": "FNCY12 provides productivity and rigging geometry but no owning/operating breakdown for the TMY45 + Mini-Mak II combination. Cost reconstruction requires supplemental data (e.g., payroll records, historical lease rates) before a `grapple_yarder_tmy45` role can replace the current Skylead proxy."
+    "machine_rate_entry": "grapple_yarder_tmy45",
+    "notes": "Owning/operating split reconstructed from LeDoux (1984) TMY-45 hourly costs (USD base) converted to CAD_1992 via StatCan CPI/FX and scaled to the FNCY12 5.5-person crew. Mini-Mak II + skyline support jacks treated as a CAD 33.5k attachment amortised over five years (1,200 SMH/year). Still lacks direct FERIC payroll/fuel logs—treat as interim BC rate until authentic 1992 bookkeeping surfaces."
   }
 }
