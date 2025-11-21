@@ -1,5 +1,14 @@
 # Development Change Log
 
+# 2025-11-30 — TR28 road-cost reference surfacing
+- Added a dedicated TR-28 helper (`fhops.reference.tr28_subgrade`) that parses `data/reference/fpinnovations/tr28_subgrade_machines.json`
+  into typed records so future road-cost presets can reuse the movement/cycle/cost/roughness values without reopening the PDF.
+- Introduced `fhops.dataset tr28-subgrade`, a CLI summary that filters/sorts the TR-28 machines (Cat 235 backhoe, D8H dozer,
+  American 750C shovel, Poclain HC300) and prints unit cost, stations-per-shift, movement surcharge, and roughness indicators
+  alongside the publication metadata so planners can pull roadbuilding references directly from FHOPS.
+- Updated `docs/reference/harvest_systems.rst` and the dataset inspection plan to point at the new command, marking the TR28
+  “expose via CLI” backlog item as done while leaving the helper-design/FNRB3/ADV15N3 follow-ups queued.
+
 # 2025-11-28 — Scenario salvage-mode threading
 - Added `Block.salvage_processing_mode` handling to the scenario contract end-to-end: CSV loaders now treat the column as an optional enum (blank/NaN entries are stripped), and the synthetic dataset generator records the new field whenever a salvage harvest system (`ground_salvage_grapple`, `cable_salvage_grapple`) is assigned to a block so bundles persist the ADV1N5 portable-mill vs. in-woods-chipping choice.
 - Updated docs (`docs/howto/data_contract.rst`, `docs/reference/harvest_systems.rst`) so the scenario data contract explicitly calls out the new column and clarifies how to thread it through CLI calls/telemetry.

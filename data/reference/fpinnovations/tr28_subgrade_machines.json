@@ -1,0 +1,326 @@
+{
+  "source": {
+    "id": "TR28",
+    "title": "Productivity and Cost of Four Subgrade Construction Machines",
+    "publisher": "FERIC",
+    "publication_date": "1978-12",
+    "currency": "CAD_1976",
+    "notes": "Costs/time values pulled from Tables PC-1 through PC-3 (Imperial + SI columns) and Appendix V of FERIC TR-28. Roughness indicators from Table DC-2."
+  },
+  "machines": [
+    {
+      "case_id": 1,
+      "machine_name": "Caterpillar 235 hydraulic backhoe",
+      "role": "subgrade_backhoe",
+      "working_speed_minutes": 0.63,
+      "walking_speed_mph": 2.3,
+      "walking_speed_kmh": 3.7,
+      "excavation_rate_yd3_per_hr": 187.2,
+      "excavation_rate_m3_per_hr": 143.1,
+      "movement": {
+        "machine_hours": 3.0,
+        "machine_cost_cad": 190.47,
+        "lowbed_hours": 3.0,
+        "lowbed_cost_cad": 165.0,
+        "truck_hours": 0.0,
+        "truck_cost_cad": 0.0,
+        "total_move_cost_cad": 355.47
+      },
+      "subgrading_phases": {
+        "logging": {
+          "rate_min_per_log": 1.35,
+          "time_hours": 4.88
+        },
+        "stumping": {
+          "rate_min_per_stump": 1.8,
+          "time_hours": 6.24
+        },
+        "clearing": {
+          "rate_acres_per_hr": 0.24,
+          "rate_hectares_per_hr": 0.10,
+          "time_hours": 5.41
+        },
+        "excavation": {
+          "segments": [
+            {
+              "material": "mineral",
+              "rate_yd3_per_hr": 227.8,
+              "rate_m3_per_hr": 174.2,
+              "time_hours": 13.17
+            },
+            {
+              "material": "overburden",
+              "rate_yd3_per_hr": 166.8,
+              "rate_m3_per_hr": 127.5,
+              "time_hours": 10.0
+            }
+          ]
+        }
+      },
+      "utilization": {
+        "utilized_time_hours": 39.7,
+        "utilization_percent": 83.0,
+        "total_time_hours": 47.83
+      },
+      "costs": {
+        "subgrading_cost_cad": 3036.73,
+        "total_subgrade_time_hours": 50.83,
+        "total_subgrade_cost_cad": 3392.2,
+        "station_cost_cad": 169.61,
+        "unit_cost_cad_per_meter": 5.56
+      },
+      "shift_production": {
+        "stations_per_shift": 3.15,
+        "meters_per_shift": 95.9
+      },
+      "unit_costs": {
+        "logging_cost_cad_per_log": 1.36,
+        "logging_minutes_per_log": 1.29,
+        "stumping_cost_cad_per_stump": 2.48,
+        "stumping_minutes_per_stump": 2.34,
+        "clearing_cost_cad_per_acre": 264.54,
+        "clearing_cost_cad_per_hectare": 653.69,
+        "clearing_acres_per_hr": 0.24,
+        "clearing_hectares_per_hr": 0.097,
+        "excavation_cost_cad_per_yd3": 0.34,
+        "excavation_cost_cad_per_m3": 0.44
+      },
+      "machine_hourly_rate_cad": 63.49,
+      "roughness_indicator": {
+        "ft2_per_station": 5.85,
+        "m2_per_100m": 1.78
+      }
+    },
+    {
+      "case_id": 2,
+      "machine_name": "Caterpillar D8H bulldozer",
+      "role": "subgrade_bulldozer",
+      "working_speed_minutes": 0.83,
+      "walking_speed_mph": 6.5,
+      "walking_speed_kmh": 10.5,
+      "excavation_rate_yd3_per_hr": 173.8,
+      "excavation_rate_m3_per_hr": 132.9,
+      "movement": {
+        "machine_hours": 3.0,
+        "machine_cost_cad": 182.22,
+        "lowbed_hours": 3.0,
+        "lowbed_cost_cad": 165.0,
+        "truck_hours": 0.0,
+        "truck_cost_cad": 0.0,
+        "total_move_cost_cad": 347.22
+      },
+      "subgrading_phases": {
+        "logging": {
+          "rate_min_per_log": 3.0,
+          "time_hours": 10.85
+        },
+        "stumping": {
+          "rate_min_per_stump": 1.73,
+          "time_hours": 6.0
+        },
+        "clearing": {
+          "rate_acres_per_hr": 0.28,
+          "rate_hectares_per_hr": 0.11,
+          "time_hours": 4.64
+        },
+        "excavation": {
+          "segments": [
+            {
+              "material": "combined",
+              "rate_yd3_per_hr": 173.8,
+              "rate_m3_per_hr": 132.9,
+              "time_hours": 26.85
+            }
+          ]
+        }
+      },
+      "utilization": {
+        "utilized_time_hours": 48.34,
+        "utilization_percent": 83.0,
+        "total_time_hours": 58.24
+      },
+      "costs": {
+        "subgrading_cost_cad": 3537.5,
+        "total_subgrade_time_hours": 61.24,
+        "total_subgrade_cost_cad": 3884.72,
+        "station_cost_cad": 194.24,
+        "unit_cost_cad_per_meter": 6.37
+      },
+      "shift_production": {
+        "stations_per_shift": 2.61,
+        "meters_per_shift": 79.6
+      },
+      "unit_costs": {
+        "logging_cost_cad_per_log": null,
+        "logging_minutes_per_log": null,
+        "stumping_cost_cad_per_stump": 2.45,
+        "stumping_minutes_per_stump": 2.42,
+        "clearing_cost_cad_per_acre": 216.93,
+        "clearing_cost_cad_per_hectare": 536.05,
+        "clearing_acres_per_hr": 0.28,
+        "clearing_hectares_per_hr": 0.113,
+        "excavation_cost_cad_per_yd3": 0.35,
+        "excavation_cost_cad_per_m3": 0.46
+      },
+      "machine_hourly_rate_cad": 60.74,
+      "roughness_indicator": {
+        "ft2_per_station": 6.03,
+        "m2_per_100m": 1.84
+      }
+    },
+    {
+      "case_id": 3,
+      "machine_name": "American 750C line (dipper) shovel",
+      "role": "subgrade_line_shovel",
+      "working_speed_minutes": 0.74,
+      "walking_speed_mph": 0.9,
+      "walking_speed_kmh": 1.4,
+      "excavation_rate_yd3_per_hr": 212.5,
+      "excavation_rate_m3_per_hr": 162.5,
+      "movement": {
+        "machine_hours": 5.0,
+        "machine_cost_cad": 321.55,
+        "lowbed_hours": 4.0,
+        "lowbed_cost_cad": 220.0,
+        "truck_hours": 4.0,
+        "truck_cost_cad": 168.0,
+        "total_move_cost_cad": 709.55
+      },
+      "subgrading_phases": {
+        "logging": {
+          "rate_min_per_log": 1.8,
+          "time_hours": 6.51
+        },
+        "stumping": {
+          "rate_min_per_stump": 0.88,
+          "time_hours": 3.05
+        },
+        "clearing": {
+          "rate_acres_per_hr": 0.23,
+          "rate_hectares_per_hr": 0.09,
+          "time_hours": 5.65
+        },
+        "excavation": {
+          "segments": [
+            {
+              "material": "combined",
+              "rate_yd3_per_hr": 212.5,
+              "rate_m3_per_hr": 162.5,
+              "time_hours": 21.96
+            }
+          ]
+        }
+      },
+      "utilization": {
+        "utilized_time_hours": 37.17,
+        "utilization_percent": 79.0,
+        "total_time_hours": 47.05
+      },
+      "costs": {
+        "subgrading_cost_cad": 3025.78,
+        "total_subgrade_time_hours": 52.05,
+        "total_subgrade_cost_cad": 3735.33,
+        "station_cost_cad": 186.77,
+        "unit_cost_cad_per_meter": 6.13
+      },
+      "shift_production": {
+        "stations_per_shift": 3.07,
+        "meters_per_shift": 93.7
+      },
+      "unit_costs": {
+        "logging_cost_cad_per_log": 1.67,
+        "logging_minutes_per_log": 1.56,
+        "stumping_cost_cad_per_stump": 1.39,
+        "stumping_minutes_per_stump": 1.3,
+        "clearing_cost_cad_per_acre": 279.61,
+        "clearing_cost_cad_per_hectare": 690.93,
+        "clearing_acres_per_hr": 0.23,
+        "clearing_hectares_per_hr": 0.093,
+        "excavation_cost_cad_per_yd3": 0.3,
+        "excavation_cost_cad_per_m3": 0.4
+      },
+      "machine_hourly_rate_cad": 64.31,
+      "roughness_indicator": {
+        "ft2_per_station": 8.32,
+        "m2_per_100m": 2.54
+      }
+    },
+    {
+      "case_id": 4,
+      "machine_name": "Poclain HC300 hydraulic shovel (loader)",
+      "role": "subgrade_hydraulic_shovel",
+      "working_speed_minutes": 0.98,
+      "walking_speed_mph": 0.7,
+      "walking_speed_kmh": 1.2,
+      "excavation_rate_yd3_per_hr": 98.5,
+      "excavation_rate_m3_per_hr": 75.3,
+      "movement": {
+        "machine_hours": 3.5,
+        "machine_cost_cad": 250.22,
+        "lowbed_hours": 3.0,
+        "lowbed_cost_cad": 165.0,
+        "truck_hours": 0.0,
+        "truck_cost_cad": 0.0,
+        "total_move_cost_cad": 415.22
+      },
+      "subgrading_phases": {
+        "logging": {
+          "rate_min_per_log": 1.75,
+          "time_hours": 6.33
+        },
+        "stumping": {
+          "rate_min_per_stump": 1.96,
+          "time_hours": 6.79
+        },
+        "clearing": {
+          "rate_acres_per_hr": 0.17,
+          "rate_hectares_per_hr": 0.07,
+          "time_hours": 7.65
+        },
+        "excavation": {
+          "segments": [
+            {
+              "material": "combined",
+              "rate_yd3_per_hr": 98.5,
+              "rate_m3_per_hr": 75.3,
+              "time_hours": 47.38
+            }
+          ]
+        }
+      },
+      "utilization": {
+        "utilized_time_hours": 68.15,
+        "utilization_percent": 79.0,
+        "total_time_hours": 86.27
+      },
+      "costs": {
+        "subgrading_cost_cad": 6167.44,
+        "total_subgrade_time_hours": 89.77,
+        "total_subgrade_cost_cad": 6582.66,
+        "station_cost_cad": 329.13,
+        "unit_cost_cad_per_meter": 10.8
+      },
+      "shift_production": {
+        "stations_per_shift": 1.78,
+        "meters_per_shift": 54.3
+      },
+      "unit_costs": {
+        "logging_cost_cad_per_log": 2.02,
+        "logging_minutes_per_log": 1.7,
+        "stumping_cost_cad_per_stump": 3.1,
+        "stumping_minutes_per_stump": 2.6,
+        "clearing_cost_cad_per_acre": 420.53,
+        "clearing_cost_cad_per_hectare": 1039.15,
+        "clearing_acres_per_hr": 0.17,
+        "clearing_hectares_per_hr": 0.069,
+        "excavation_cost_cad_per_yd3": 0.3,
+        "excavation_cost_cad_per_m3": 0.4
+      },
+      "machine_hourly_rate_cad": 71.49,
+      "roughness_indicator": {
+        "ft2_per_station": 13.2,
+        "m2_per_100m": 4.02
+      }
+    }
+  ]
+}

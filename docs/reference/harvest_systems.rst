@@ -726,7 +726,10 @@ into the regressions. Available models:
   ``grapple_yarder_tmy45``—its operating column now bundles the LeDoux (1984) yarder cost *plus* proxy support-machine
   surcharges (0.25 SMH Cat D8 backspar + 0.14 SMH Timberjack 450 trail support per productive yarder hour, calibrated with
   TN-157 road-change ratios and TR-45 machine-rate tables) so ``--show-costs`` reflects the extra gear those corridors
-  require.
+  require. Whenever lateral pulls exceed ~30 m or skyline tension approaches the 140 kN ceiling documented in TN-258,
+  ``estimate-skyline-productivity`` now prints a TN-258 warning and logs the skyline/guyline ratios (data lives in
+  ``data/reference/fpinnovations/fncy12_tmy45_mini_mak.json``) so analysts can flag hang-up risks alongside the costing
+  output.
 * ``ledoux-skagit-shotgun`` / ``ledoux-skagit-highlead`` / ``ledoux-washington-208e`` / ``ledoux-tmy45`` – LeDoux (1984) residue yarding regressions (Willamette & Mt. Hood studies). Supply slope distance plus ``--merchantable-logs-per-turn``, ``--merchantable-volume-m3``, ``--residue-pieces-per-turn``, and ``--residue-volume-m3``. Outputs report total payload, cycle minutes, and CPI-adjusted 1984 USD cost references (see ``inspect-machine --machine-role grapple_yarder_skagit_shotgun|_highlead|_washington_208e|_tmy45_residue``). These models represent US residue trials—treat as comparative benchmarks rather than BC defaults.
 * ``micro-master`` – Model 9 Micro Master yarder regression (FERIC TN-54, 1982). Defaults assume 3.2 pieces per turn (0.46 m³/piece) and the observed 5.96 min cycle at the 70 m spans logged on Vancouver Island. Supply ``--slope-distance-m`` (and optionally ``--pieces-per-cycle``, ``--piece-volume-m3``, or ``--payload-m3``) to see the computed payload, cycle minutes, and productivity; useful for compact skyline/thinning setups where Madill/Cypress presets are overkill.
 * ``tr127-block1`` … ``tr127-block6`` – FPInnovations TR-127 block-specific tower-yarders. Blocks 1 & 3 require two
@@ -755,6 +758,33 @@ Every skyline model prints the assumed payload and m³/PMH0 result; the McNeel a
 delay-free cycle minutes so you can see the impact of deflection, carriage height, lead angle, or extra chokers.
 Telemetry rows capture all skyline predictors (horizontal/vertical distance, pieces, piece volume, carriage height,
 chord slope, lead angle, chokers, running-yarder variant) so harvest-system overrides are traceable.
+
+Road & Subgrade Construction References
+---------------------------------------
+
+Roadbuilding presets are still in flight, but the foundational FPInnovations dataset is now captured in
+``data/reference/fpinnovations/tr28_subgrade_machines.json`` (FERIC TR-28 “Productivity and Cost of Four Subgrade
+Construction Machines”). Each machine entry includes movement costs, phase-level cycle rates (logging, stumping, clearing,
+excavation), utilization, per-station cost, and roughness indicators so the upcoming road-cost helper can quote realistic
+BC numbers without reopening the PDF.
+
+- **Cat 235 hydraulic backhoe** – 3.15 stations/shift (≈96 m), 5.56 CAD/m subgrade cost, 0.63 min working cycle, and
+  separate mineral vs. overburden excavation rates (174 vs. 127 m³/h) for cut/fill planning.
+- **Cat D8H bulldozer** – 2.61 stations/shift (≈80 m), 6.37 CAD/m, and higher walking speed (10.5 km/h) that will feed the
+  cut-and-fill vs. push distance toggles; logging/stumping cost per stem already stored for landing-clearing presets.
+- **American 750C line shovel** – 3.07 stations/shift, 6.13 CAD/m with lower utilization (79 %) and steeper movement costs
+  (two trucks + 4 h lowbed) to cover dipper-shovel mobilization cases.
+- **Poclain HC300 hydraulic shovel** – 1.78 stations/shift, 10.8 CAD/m, high excavation time (47 h) and the worst
+  roughness indicator (4.02 m²/100 m), making it the default cautionary example for wet-site subgrade finishing.
+
+Use these entries when drafting the road-cost helper schema (owning/operating split, movement surcharge, quality index) and
+tie the soil-protection warnings back to TR-28’s roughness indicators plus ADV4N7/FNRB3 once those documents are staged.
+Until the helper ships, cite this section in planning docs whenever roadbuilding data is required so we avoid redundant
+TR-28 rescans.
+
+For a quick terminal summary, run ``fhops dataset tr28-subgrade``. The command reads the structured JSON, lets you
+filter by role (e.g., bulldozer vs. backhoe), sort by unit cost/stations/roughness, and prints the CPI-base metadata so road
+cost planning sessions can pull the TR-28 numbers without reopening the PDF.
 
 CTL Harvester Productivity Models
 ---------------------------------

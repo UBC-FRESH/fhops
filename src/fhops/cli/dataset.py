@@ -180,10 +180,13 @@ from fhops.reference import (
     ADV2N21StandSnapshot,
     get_appendix5_profile,
     get_tr119_treatment,
+    get_tr28_source_metadata,
     adv2n21_cost_base_year,
     get_adv2n21_treatment,
     load_adv2n21_treatments,
     load_appendix5_stands,
+    load_tr28_machines,
+    TR28Machine,
     load_unbc_hoe_chucking_data,
     load_unbc_processing_costs,
     load_unbc_construction_costs,
@@ -6855,6 +6858,91 @@ def list_appendix5_stands(
         console.print("No matching profiles.")
         return
     console.print(table)
+
+
+_TR28_SORT_FIELDS: tuple[str, ...] = ("case", "unit_cost", "stations", "roughness")
+
+
+@dataset_app.command("tr28-subgrade")
+def list_tr28_subgrade_machines(
+    role_filter: str | None = typer.Option(
+        None, "--role", help="Filter by machine role substring (e.g., bulldozer)."
+    ),
+    sort_by: str = typer.Option(
+        "case",
+        "--sort-by",
+        help="Sort output by case id, unit_cost, stations, or roughness indicator.",
+    ),
+    limit: int = typer.Option(10, "--limit", min=1, max=20, help="Maximum rows to display."),
+):
+    """Summarize FERIC TR-28 subgrade construction machines."""
+
+    machines = load_tr28_machines()
+    filtered = [
+        machine
+        for machine in machines
+        if not role_filter or role_filter.lower() in machine.role.lower()
+    ]
+    if not filtered:
+        console.print("No TR-28 machines matched the filters.")
+        return
+
+    sort_key = sort_by.lower()
+    if sort_key not in _TR28_SORT_FIELDS:
+        raise typer.BadParameter(
+            f"Invalid sort field '{sort_by}'. Choose from {', '.join(_TR28_SORT_FIELDS)}."
+        )
+
+    def _sort_key(machine: TR28Machine):
+        match sort_key:
+            case "unit_cost":
+                return machine.unit_cost_cad_per_meter or float("inf")
+            case "stations":
+                return -(machine.stations_per_shift or float("-inf"))
+            case "roughness":
+                return machine.roughness_m2_per_100m or float("inf")
+            case _:
+                return machine.case_id or 0
+
+    sorted_rows = sorted(filtered, key=_sort_key)
+    limited_rows = sorted_rows[:limit]
+    table = Table(title="TR-28 Subgrade Machine Summary")
+    table.add_column("Case", justify="right", style="bold")
+    table.add_column("Machine")
+    table.add_column("Role")
+    table.add_column("Unit Cost ($/m)", justify="right")
+    table.add_column("Station Cost ($)", justify="right")
+    table.add_column("Stations/Shift", justify="right")
+    table.add_column("m/Shift", justify="right")
+    table.add_column("Hourly Rate ($/h)", justify="right")
+    table.add_column("Move Cost ($)", justify="right")
+    table.add_column("Roughness (m²/100 m)", justify="right")
+
+    def _fmt(value: float | None, precision: int = 2) -> str:
+        return f"{value:.{precision}f}" if value is not None else "—"
+
+    for machine in limited_rows:
+        table.add_row(
+            str(machine.case_id or "—"),
+            machine.machine_name,
+            machine.role or "—",
+            _fmt(machine.unit_cost_cad_per_meter),
+            _fmt(machine.station_cost_cad),
+            _fmt(machine.stations_per_shift),
+            _fmt(machine.meters_per_shift),
+            _fmt(machine.machine_hourly_rate_cad),
+            _fmt(machine.movement_total_cost_cad),
+            _fmt(machine.roughness_m2_per_100m),
+        )
+    console.print(table)
+    source = get_tr28_source_metadata()
+    title = source.get("title", "FERIC TR-28")
+    year = source.get("publication_date", "1978")
+    currency = source.get("currency", "CAD")
+    console.print(
+        f"[dim]Source: {title} ({year}, {source.get('publisher', 'FPInnovations/FERIC')}), "
+        f"currency {currency}. Data file: data/reference/fpinnovations/tr28_subgrade_machines.json[/dim]"
+    )
 
 
 @dataset_app.command("estimate-cable-skidding")

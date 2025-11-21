@@ -17,6 +17,11 @@ from .unbc_hoe_chucking import (
     load_unbc_processing_costs,
     load_unbc_construction_costs,
 )
+from .tr28_subgrade import (
+    TR28Machine,
+    get_tr28_source_metadata,
+    load_tr28_machines,
+)
 
 __all__ = [
     "Appendix5Stand",
@@ -36,4 +41,7 @@ __all__ = [
     "load_unbc_processing_costs",
     "UNBCConstructionCost",
     "load_unbc_construction_costs",
+    "TR28Machine",
+    "load_tr28_machines",
+    "get_tr28_source_metadata",
 ]
