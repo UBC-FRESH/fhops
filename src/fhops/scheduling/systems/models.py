@@ -549,7 +549,7 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
                 SystemJob("felling", "hand_faller", []),
                 SystemJob(
                     "primary_transport",
-                    "skyline_gabriel_tn173",
+                    "skyline_hi_skid",
                     ["felling"],
                     productivity_overrides={
                         "skyline_model": "hi-skid",
