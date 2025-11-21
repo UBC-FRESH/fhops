@@ -17,6 +17,7 @@ except ModuleNotFoundError:  # pragma: no cover
 import yaml
 
 from fhops.scenario.synthetic import SyntheticDatasetConfig, generate_random_dataset
+from fhops.scheduling.systems import default_system_registry
 
 console = Console()
 synth_app = typer.Typer(no_args_is_help=True, help="Generate synthetic FHOPS scenarios.")
@@ -276,7 +277,8 @@ def _generate_dataset(
         cli_overrides or {},
         seed,
     )
-    bundle = generate_random_dataset(merged_config, seed=seed_value)
+    system_registry = dict(default_system_registry())
+    bundle = generate_random_dataset(merged_config, seed=seed_value, systems=system_registry)
 
     metadata = bundle.metadata or {}
     metadata = {

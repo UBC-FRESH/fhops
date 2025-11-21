@@ -349,6 +349,12 @@ TIER_DEFAULTS: dict[str, dict[str, object]] = {
         "blackout_probability": 0.0,
         "blackout_duration": (1, 1),
         "blackout_biases": [],
+        "system_mix": {
+            "ground_fb_skid": 0.35,
+            "ctl": 0.3,
+            "cable_micro_ecologger": 0.2,
+            "cable_micro_hi_skid": 0.15,
+        },
     },
     "medium": {
         "terrain_pool": ["rolling", "mixed", "steep"],
@@ -363,6 +369,15 @@ TIER_DEFAULTS: dict[str, dict[str, object]] = {
         "blackout_biases": [
             BlackoutBias(start_day=8, end_day=10, probability=0.35, duration=(1, 2)),
         ],
+        "system_mix": {
+            "ground_fb_skid": 0.3,
+            "ctl": 0.25,
+            "steep_tethered": 0.15,
+            "cable_running": 0.15,
+            "cable_micro_gabriel": 0.05,
+            "cable_micro_teletransporteur": 0.05,
+            "cable_micro_hi_skid": 0.05,
+        },
     },
     "large": {
         "terrain_pool": ["steep", "mixed", "snow"],
@@ -378,7 +393,17 @@ TIER_DEFAULTS: dict[str, dict[str, object]] = {
             BlackoutBias(start_day=5, end_day=7, probability=0.4, duration=(2, 3)),
             BlackoutBias(start_day=12, end_day=14, probability=0.35, duration=(2, 3)),
         ],
-        "system_mix": {"ground_fb_skid": 0.4, "ctl": 0.35, "steep_tethered": 0.25},
+        "system_mix": {
+            "ground_fb_skid": 0.25,
+            "ctl": 0.2,
+            "steep_tethered": 0.15,
+            "cable_running": 0.15,
+            "cable_running_adv5n28_clearcut": 0.05,
+            "cable_running_adv5n28_shelterwood": 0.05,
+            "cable_micro_christie": 0.05,
+            "cable_micro_timbermaster": 0.05,
+            "cable_micro_hi_skid": 0.05,
+        },
     },
 }
 
