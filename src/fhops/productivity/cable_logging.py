@@ -840,6 +840,15 @@ MICRO_MASTER_DEFAULTS = {
     "piece_volume_m3": 0.46,
 }
 
+HI_SKID_DEFAULTS = {
+    "constant_minutes": 2.6,  # Hookup + alignment + minor delays (derived from 4.16 m³/h @ 30 m, 0.24 m³ payload)
+    "line_speed_m_per_min": 69.0,
+    "pieces_per_cycle": 1.0,
+    "piece_volume_m3": 0.24,
+    "payload_per_load_m3": 12.0,
+    "travel_to_dump_minutes": 30.0,
+    "max_distance_m": 100.0,
+}
 
 @dataclass(frozen=True)
 class TN173System:
@@ -1040,6 +1049,75 @@ def estimate_micro_master_productivity_m3_per_pmh(
     return productivity, cycle_minutes, resolved_pieces, resolved_piece_volume, resolved_payload
 
 
+def estimate_hi_skid_cycle_minutes(
+    *,
+    slope_distance_m: float,
+    constant_minutes: float = HI_SKID_DEFAULTS["constant_minutes"],
+    line_speed_m_per_min: float = HI_SKID_DEFAULTS["line_speed_m_per_min"],
+) -> float:
+    """Return minutes per yarding cycle for the Hi-Skid truck (FNG73)."""
+
+    if slope_distance_m <= 0:
+        raise ValueError("Slope distance must be > 0 for the Hi-Skid regression")
+    if line_speed_m_per_min <= 0:
+        raise ValueError("Line speed must be > 0 for the Hi-Skid regression")
+    travel_minutes = 2.0 * slope_distance_m / line_speed_m_per_min
+    return constant_minutes + travel_minutes
+
+
+def estimate_hi_skid_productivity_m3_per_pmh(
+    *,
+    slope_distance_m: float,
+    include_travel_minutes: float | None = None,
+    load_volume_m3: float | None = None,
+    payload_per_cycle_m3: float | None = None,
+    pieces_per_cycle: float | None = None,
+    piece_volume_m3: float | None = None,
+) -> tuple[float, float | None, float, float, float, float]:
+    """
+    Estimate yarding productivity for the Hi-Skid short-yard truck.
+
+    Returns (yarding_productivity_m3_per_pmh, overall_productivity_m3_per_pmh, cycle_minutes, pieces_per_cycle, piece_volume_m3, payload_per_cycle_m3)
+    where overall productivity includes travel/unloading when include_travel_minutes is provided.
+    """
+
+    resolved_pieces = pieces_per_cycle or HI_SKID_DEFAULTS["pieces_per_cycle"]
+    resolved_piece_volume = piece_volume_m3 or HI_SKID_DEFAULTS["piece_volume_m3"]
+    if resolved_pieces <= 0:
+        raise ValueError("Pieces per cycle must be > 0 for the Hi-Skid regression")
+    if resolved_piece_volume <= 0:
+        raise ValueError("Piece volume must be > 0 for the Hi-Skid regression")
+    resolved_payload_cycle = (
+        payload_per_cycle_m3
+        if payload_per_cycle_m3 is not None
+        else resolved_pieces * resolved_piece_volume
+    )
+    if resolved_payload_cycle <= 0:
+        raise ValueError("Payload per cycle must be > 0 for the Hi-Skid regression")
+    cycle_minutes = estimate_hi_skid_cycle_minutes(slope_distance_m=slope_distance_m)
+    yarding_productivity = (resolved_payload_cycle * 60.0) / cycle_minutes
+
+    overall_productivity = None
+    if include_travel_minutes is not None and include_travel_minutes >= 0:
+        resolved_load_volume = (
+            load_volume_m3 if load_volume_m3 is not None else HI_SKID_DEFAULTS["payload_per_load_m3"]
+        )
+        if resolved_load_volume <= 0:
+            raise ValueError("Load volume must be > 0 for Hi-Skid travel calculations")
+        hours_to_fill_load = resolved_load_volume / yarding_productivity
+        total_cycle_hours = hours_to_fill_load + include_travel_minutes / 60.0
+        overall_productivity = resolved_load_volume / total_cycle_hours
+
+    return (
+        yarding_productivity,
+        overall_productivity,
+        cycle_minutes,
+        resolved_pieces,
+        resolved_piece_volume,
+        resolved_payload_cycle,
+    )
+
+
 __all__ = [
     "estimate_cable_skidding_productivity_unver_spss",
     "estimate_cable_skidding_productivity_unver_robust",
@@ -1063,6 +1141,9 @@ __all__ = [
     "ledoux_delay_component_minutes",
     "estimate_micro_master_cycle_minutes",
     "estimate_micro_master_productivity_m3_per_pmh",
+    "estimate_hi_skid_cycle_minutes",
+    "estimate_hi_skid_productivity_m3_per_pmh",
+    "HI_SKID_DEFAULTS",
     "get_tn173_system",
     "list_tn173_system_ids",
     "HelicopterLonglineModel",

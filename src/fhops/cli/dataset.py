@@ -104,6 +104,7 @@ from fhops.productivity import (
     estimate_residue_cycle_time_ledoux_minutes,
     estimate_residue_productivity_ledoux_m3_per_pmh,
     estimate_micro_master_productivity_m3_per_pmh,
+    estimate_hi_skid_productivity_m3_per_pmh,
     get_tn173_system,
     ledoux_delay_component_minutes,
     running_skyline_variant_defaults,
@@ -187,6 +188,7 @@ from fhops.reference import (
     load_unbc_processing_costs,
     load_unbc_construction_costs,
 )
+from fhops.productivity.cable_logging import HI_SKID_DEFAULTS
 from fhops.scenario.contract import Machine, SalvageProcessingMode, Scenario
 from fhops.scenario.io import load_scenario
 from fhops.scheduling.systems import (
@@ -748,6 +750,7 @@ class SkylineProductivityModel(str, Enum):
     LEDOUX_WASHINGTON_208E = "ledoux-washington-208e"
     LEDOUX_TMY45 = "ledoux-tmy45"
     MICRO_MASTER = "micro-master"
+    HI_SKID = "hi-skid"
     TN173_ECOLOGGER = "tn173-ecologger"
     TN173_GABRIEL = "tn173-gabriel"
     TN173_CHRISTIE = "tn173-christie"
@@ -7079,6 +7082,11 @@ def estimate_skyline_productivity_cmd(
         "--block-id",
         help="Block ID (requires --dataset) to infer harvest system defaults automatically.",
     ),
+    hi_skid_include_haul: bool = typer.Option(
+        False,
+        "--hi-skid-include-haul/--hi-skid-yard-only",
+        help="For the hi-skid model, include the 30 min travel/unload cycle when reporting productivity.",
+    ),
     tr119_treatment: str | None = typer.Option(
         None,
         "--tr119-treatment",
@@ -7096,6 +7104,8 @@ def estimate_skyline_productivity_cmd(
 
     if payload_m3 is not None and payload_m3 <= 0:
         raise typer.BadParameter("--payload-m3 must be > 0 when specified.")
+    if hi_skid_include_haul and model is not SkylineProductivityModel.HI_SKID:
+        raise typer.BadParameter("--hi-skid-include-haul is only valid when --model hi-skid.")
 
     scenario_context: Scenario | None = None
     dataset_name: str | None = None
@@ -7423,6 +7433,51 @@ def estimate_skyline_productivity_cmd(
         telemetry_payload_m3 = payload_value
         telemetry_pieces = resolved_pieces
         telemetry_piece_volume = resolved_piece_volume
+    elif model is SkylineProductivityModel.HI_SKID:
+        include_minutes = (
+            HI_SKID_DEFAULTS["travel_to_dump_minutes"] if hi_skid_include_haul else None
+        )
+        (
+            yarding_productivity,
+            overall_productivity,
+            cycle_minutes,
+            resolved_pieces,
+            resolved_piece_volume,
+            payload_value,
+        ) = estimate_hi_skid_productivity_m3_per_pmh(
+            slope_distance_m=slope_distance_m,
+            include_travel_minutes=include_minutes,
+            payload_per_cycle_m3=payload_m3,
+            pieces_per_cycle=pieces_per_cycle,
+            piece_volume_m3=piece_volume_m3,
+        )
+        rows = [
+            ("Model", model.value),
+            ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
+            ("Pieces per Cycle", f"{resolved_pieces:.2f}"),
+            ("Piece Volume (m³)", f"{resolved_piece_volume:.3f}"),
+            ("Payload per Cycle (m³)", f"{payload_value:.2f}"),
+            ("Cycle Time (min)", f"{cycle_minutes:.2f}"),
+            ("Yarding Productivity (m³/PMH)", f"{yarding_productivity:.2f}"),
+        ]
+        if hi_skid_include_haul and overall_productivity is not None:
+            rows.append(
+                ("Overall Productivity incl. travel (m³/PMH)", f"{overall_productivity:.2f}")
+            )
+            value = overall_productivity
+        else:
+            value = yarding_productivity
+        source_label = "FERIC FNG73 (1999) Hi-Skid short-yarding, self-loading truck."
+        max_distance = HI_SKID_DEFAULTS.get("max_distance_m")
+        if max_distance and slope_distance_m > max_distance:
+            console_warning = (
+                "[yellow]Warning:[/yellow] Hi-Skid trials only covered spans up to "
+                f"{max_distance:.0f} m (80 m observed). Validate performance for longer corridors."
+            )
+        telemetry_payload_m3 = payload_value
+        telemetry_pieces = resolved_pieces
+        telemetry_piece_volume = resolved_piece_volume
+        telemetry_horizontal = slope_distance_m
     elif model in _TN173_MODEL_TO_SYSTEM_ID:
         system_id = _TN173_MODEL_TO_SYSTEM_ID[model]
         system = get_tn173_system(system_id)
@@ -7685,5 +7740,8 @@ def estimate_skyline_productivity_cmd(
             "tr119_treatment": tr119_treatment,
             "source": source_label,
             "non_bc_source": bool(console_warning),
+            "hi_skid_include_haul": hi_skid_include_haul
+            if model is SkylineProductivityModel.HI_SKID
+            else None,
         }
         append_jsonl(telemetry_log, payload)

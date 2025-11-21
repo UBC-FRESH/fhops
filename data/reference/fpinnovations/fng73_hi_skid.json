@@ -1,0 +1,57 @@
+{
+  "source": {
+    "id": "FNG73",
+    "title": "Development of the Hi-Skid Log Forwarder: A Short-Yarding, Self-Loading Truck",
+    "authors": [
+      "J. L. Mitchell",
+      "J. Ewart"
+    ],
+    "publication_date": "1999-06",
+    "publisher": "FERIC",
+    "currency": "CAD_1999",
+    "notes": "Demonstration occurred November 1998 on BCIT Woodlot 007 (Maple Ridge, BC)."
+  },
+  "machine": {
+    "configuration": "Truck-mounted travelling fairlead + hydraulic winch + self-dumping log deck",
+    "line_speed_m_per_min": 69.0,
+    "line_pull_kN": 18.8,
+    "line_length_m": 100.0,
+    "max_log_length_m": 6.5,
+    "load_capacity_m3": 12.0,
+    "gvw_kg": 15250,
+    "price_range_cad_1999": [
+      50000,
+      60000
+    ],
+    "notes": "Includes remote control, breakaway block, chain-based unloading system."
+  },
+  "site": {
+    "location": "BCIT Woodlot 007 (Maple Ridge, BC)",
+    "stand": "70-year CWHdm second-growth (Douglas-fir, western redcedar, western hemlock)",
+    "dbh_cm": 22,
+    "height_m": 35,
+    "slope_percent_range": [
+      0,
+      10
+    ],
+    "ground_conditions": "Frequent obstacles (stumps, windthrow), uneven ground, thick moss"
+  },
+  "observations": {
+    "timed_cycles": 20,
+    "average_yarding_distance_m": 30.0,
+    "maximum_yarding_distance_m": 80.0,
+    "max_recommended_distance_m": 100.0,
+    "average_piece_volume_m3": 0.24,
+    "yarding_loading_productivity_m3_per_pmh": 4.16,
+    "load_cycle_hours_including_travel": 4.0,
+    "shift_payload_m3_per_8h": 24.0,
+    "travel_to_dump_minutes": 30.0,
+    "notes": "Includes yarding + loading at 4.16 m³/h; with 30 min travel/unload per 12 m³ load the system can deliver ~24 m³ per 8 h shift."
+  },
+  "operational_tips": [
+    "Use breakaway block to snake turns around obstacles and increase lift.",
+    "Anchor truck to adjacent tree until payload counterweights skyline forces.",
+    "Partially activate dumping chains during loading to realign slippery logs.",
+    "Tree-length logs should be bucked at roadside before loading to avoid deck fouling."
+  ]
+}

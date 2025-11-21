@@ -13,6 +13,7 @@ from fhops.productivity import (
     estimate_standing_skyline_productivity_kellogg1976,
     estimate_residue_productivity_ledoux_m3_per_pmh,
     estimate_micro_master_productivity_m3_per_pmh,
+    estimate_hi_skid_productivity_m3_per_pmh,
     get_tn173_system,
 )
 
@@ -163,6 +164,58 @@ def test_cli_skyline_tn173_ecologger() -> None:
     assert system.payload_m3 is not None
     expected = (system.payload_m3 * 60.0) / system.cycle_minutes
     assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_skyline_hi_skid_yard_only() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "hi-skid",
+            "--slope-distance-m",
+            "30",
+        ],
+    )
+    assert result.exit_code == 0
+    expected, _, _, _, _, _ = estimate_hi_skid_productivity_m3_per_pmh(slope_distance_m=30.0)
+    assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_skyline_hi_skid_include_travel() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "hi-skid",
+            "--slope-distance-m",
+            "30",
+            "--hi-skid-include-haul",
+        ],
+    )
+    assert result.exit_code == 0
+    _, overall, _, _, _, _ = estimate_hi_skid_productivity_m3_per_pmh(
+        slope_distance_m=30.0,
+        include_travel_minutes=30.0,
+    )
+    assert overall is not None
+    assert f"{overall:.2f}" in result.stdout
+
+
+def test_cli_skyline_hi_skid_flag_validation() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "lee-uphill",
+            "--slope-distance-m",
+            "100",
+            "--hi-skid-include-haul",
+        ],
+    )
+    assert result.exit_code != 0
 
 
 def test_cli_skyline_aubuchon_standing() -> None:
