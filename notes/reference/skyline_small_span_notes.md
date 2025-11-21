@@ -67,7 +67,24 @@ Source: `notes/reference/fpinnovations/FNG73.pdf`
 - Use cases: short-corridor salvage or riparian/machine-free buffers where corridor construction is forbidden; urban tree removal; micro blocks <100 m from roads/trails. Breakaway block protects leave trees, remote control keeps operator on road.
 - Helper TODO: build a `hi_skid` preset capturing payload (12 m³), base yarding productivity (4.16 m³/h across 30 m spans), optional obstacle/terrain multipliers, and travel/dump allowances (≈0.5 h per haul). Need ownership/operating cost assumptions (truck + attachment) before linking to `--show-costs`.
 
+## TN-173 – Eastern Canada compact skyline fleet (Ecologger, Gabriel, Christie, Télétransporteur, Timbermaster)
+
+Source: `notes/reference/fpinnovations/TN173.pdf`
+
+- Study scope: 1991 time-and-motion review of five light cable systems working short spans (mostly 90–240 m) in eastern Canada partial cuts. Each case logs yarding distances, payload, crew mix, availability, and a full cost build (1991 CAD) split into owning vs. operating.
+- RMS Ecologger: radio-controlled tractor carriage with skyline + mainline drums, two-person rigging crew. Average payload 0.34 m³, cycles dominated by hookup (38 %) at short distances. Delivered ≈24 m³/PMH₀ with direct costs ~$22.40/m³. Excels in tight corridors where guyline anchoring options are limited.
+- Gabriel truck yarder: rear-mounted tower with 150 m skyline, payload 0.16 m³ (pre-commercial stems). Productivity capped near 14 m³/PMH₀ because chokers seldom exceed two pieces per turn, but road mobility keeps move-in cost low. Operating cost floor ~$20.69/m³; ideal for quick salvage or ROW brushing.
+- Christie monorail skyline: structural mast plus self-propelled carriage; larger 0.49 m³ pieces from patch cuts. Highest payload in the study and ~30 m³/PMH₀ on ≤180 m spans, but requires longer road-change/setup (guyline plan + intermediate supports). Costs climb to $27.92/m³ when spans push beyond 220 m due to extra anchors.
+- Télétransporteur: truck-mounted tower with carriage that can shuttle logs over road gaps. Turn volume 0.21 m³, labour-intensive outhaul (three rigging crew) but excellent deflection control for riparian buffers. When spans stay <150 m it matches Ecologger productivity; beyond that, outhaul delay knocks utilisation down to 0.63.
+- Smith Timbermaster: trailer tower paired with 5/8″ skyline and 1/2″ mainline; piece size 0.28–0.54 m³ depending on block. Achieved 26–32 m³/PMH₀ on 120 m spans and maintained hook times by using mechanical slack-pullers. Mobility is slower than truck yarders but still <3 h per road change.
+- Cross-system takeaways: labour-corrected (“hot”) productivity averaged ~3 m³/PMH per worker, so presets need to scale output with crew size if analysts deviate from the study crews. Direct costs ranged $20.69–$27.92/m³; most variance came from setup/move frequency rather than mechanical utilisation. The data provides payload + distance envelopes for non-BC micro-yard presets (e.g., `ecologger_short_span`, `timbermaster_patch_cut`) and cost references for when BC CPI-adjusted rates are missing.
+- Dataset: `data/reference/fpinnovations/tn173_compact_yarders.json` now holds the per-system cycle stats, distance/slope ranges, crew sizes, productivity, and $/PMH components so the skyline helper can consume these cases directly (Ecologger, Gabriel, Christie, Télétransporteur, Timbermaster 1984/1985).
+- Helper TODOs:
+  - Thread the TN173 $/m³ owning vs. operating splits into `data/machine_rates.json` as interim “non-BC reference” entries, tagged so `--show-costs` can cite the regional origin.
+  - Wire the new JSON cases into skyline presets/harvest-system overrides (`ecologger_short_span`, `gabriel_salvage`, `teletransporteur_hot_yard`, `timbermaster_patch_cut`) and surface the recommended span caps.
+  - Flag the span sensitivity (productivity drop beyond ~200 m) inside harvest-system overrides so scenario generator warns when analysts stretch these systems past the tested envelope.
+
 ## Pending extractions
 
-- **FNG73 – Hi-Skid self-loading truck:** extract winch cycle times, payload (12 m³), 100 m reach—useful for short-yard/forwarder hybrid modelling.
-- **TN-173 – Eastern Canada cable yarding (Ecologger, Christie, Télétransporteur, etc.):** capture per-system spans, payloads, productivity, and cost ($/m³) to benchmark non-BC micro-yarders; these can become alternative presets or validation cases.
+- **TN258 – Thunderbird TMY45 + Mini-Mak II:** need the intermediate-support timing, guyline tension envelope, and any embedded costing references so the TMY45 preset can inherit productivity and owning/operating splits without relying on Skylead proxies.
+- **TN82 / TN98 – small skyline and manual support studies:** triage for additional compact-span payload distributions and slack-puller labour requirements to round out the micro-yarder helper backlog.

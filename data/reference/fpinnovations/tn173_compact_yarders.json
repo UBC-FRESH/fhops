@@ -1,0 +1,352 @@
+{
+  "source": {
+    "id": "TN173",
+    "title": "Cable Yarding in Eastern Canada – 5 Case Studies",
+    "authors": [
+      "J. Courteau",
+      "E. Heidersdorf"
+    ],
+    "publisher": "FERIC",
+    "publication_date": "1991-12",
+    "currency": "CAD_1991",
+    "notes": "Cycles were timed during 1990 field studies (except Timbermaster trials from 1984–85). Costs follow the McNally revised method with wages/fuel normalized by FERIC."
+  },
+  "systems": [
+    {
+      "id": "tn173_ecologger",
+      "name": "RMS Ecologger + Maki gravity carriage",
+      "location": "Kedgwick, NB (Fraser Inc.)",
+      "operating_range_m": 300,
+      "yarding_direction": "uphill",
+      "activities": [
+        "yarding_only"
+      ],
+      "hot_yarding": false,
+      "labour": {
+        "crew_size_operational": 4,
+        "crew_roles": [
+          "yarder operator",
+          "swing-skidder operator",
+          "two chokersetters (also handled D6 tailhold)"
+        ],
+        "m3_per_worker_hour": 2.6
+      },
+      "study": {
+        "sample_cycles": 162,
+        "study_duration_hours": 15.0,
+        "average_cycle_time_minutes": 5.56,
+        "trees_per_pmh": 33,
+        "productivity_m3_per_pmh": 10.6
+      },
+      "turn_profile": {
+        "average_trees_per_turn": 2.9,
+        "trees_per_turn_range": [
+          1,
+          7
+        ],
+        "average_turn_volume_m3": 0.97,
+        "turn_volume_range_m3": [
+          0.10,
+          2.98
+        ],
+        "average_tree_volume_m3": 0.34
+      },
+      "layout": {
+        "average_yarding_distance_m": 127,
+        "yarding_distance_range_m": [
+          20,
+          277
+        ],
+        "average_slope_percent": 37,
+        "slope_percent_range": [
+          15,
+          53
+        ]
+      },
+      "costs": {
+        "combined_felling_yarding_cost_per_m3": 26.2,
+        "yarder_cost_per_pmh": 196.52,
+        "support_costs_per_pmh": {
+          "skidder": 49.81,
+          "bulldozer": 6.34
+        },
+        "notes": "Felling cost not included in the PMH figure; values exclude supervision and road work."
+      },
+      "notes": "Pre-felled full trees, carriage stop lowered between roads, chokers occasionally fell off during outhaul on convex hummocks; large crew drives cost per m3."
+    },
+    {
+      "id": "tn173_gabriel",
+      "name": "Gabriel truck yarder (prototype skid-pan highlead)",
+      "location": "Cold Brook, NL (Abitibi-Price)",
+      "operating_range_m": 350,
+      "yarding_direction": "uphill_and_downhill",
+      "activities": [
+        "yarding_only"
+      ],
+      "hot_yarding": false,
+      "labour": {
+        "crew_size_operational": 4,
+        "crew_roles": [
+          "yarder operator (also unhooked loads)",
+          "swing-skidder operator",
+          "two chokersetters"
+        ],
+        "crew_size_productive": 2,
+        "m3_per_worker_hour": 1.8,
+        "notes": "Time-study productivity only counted the yarder operator + one chokerman even though a four-person crew supported the road changes."
+      },
+      "study": {
+        "sample_cycles": 95,
+        "study_duration_hours": 9.12,
+        "average_cycle_time_minutes": 5.76,
+        "trees_per_pmh": 23,
+        "productivity_m3_per_pmh": 3.7
+      },
+      "turn_profile": {
+        "average_trees_per_turn": 2.2,
+        "trees_per_turn_range": [
+          1,
+          5
+        ],
+        "average_turn_volume_m3": 0.35,
+        "turn_volume_range_m3": [
+          0.05,
+          1.17
+        ],
+        "average_tree_volume_m3": 0.16
+      },
+      "layout": {
+        "average_yarding_distance_m": 99,
+        "yarding_distance_range_m": [
+          10,
+          236
+        ],
+        "average_slope_percent": 22,
+        "slope_percent_range": [
+          2,
+          46
+        ]
+      },
+      "costs": {
+        "combined_felling_yarding_cost_per_m3": 27.79,
+        "yarder_cost_per_pmh": 94.51,
+        "support_costs_per_pmh": {},
+        "notes": "Low owning/operating cost offset by labour-intensive chokering and frequent tailhold failures."
+      },
+      "notes": "Truck-mounted drumset hauled a skid pan/butt rigging; chokers frequently fought slack over 150–200 m hauls, making this best suited to short salvage corridors."
+    },
+    {
+      "id": "tn173_christie",
+      "name": "Christie tower yarder + gravity carriage",
+      "location": "Brookfield, NS (Scott Worldwide)",
+      "operating_range_m": 250,
+      "yarding_direction": "uphill",
+      "activities": [
+        "felling_and_yarding"
+      ],
+      "hot_yarding": true,
+      "labour": {
+        "crew_size_operational": 2,
+        "crew_roles": [
+          "yarder operator (also unhooked)",
+          "faller-chokerman"
+        ],
+        "m3_per_worker_hour": 3.0
+      },
+      "study": {
+        "sample_cycles": 151,
+        "study_duration_hours": 15.74,
+        "average_cycle_time_minutes": 6.26,
+        "trees_per_pmh": 12,
+        "productivity_m3_per_pmh": 6.0
+      },
+      "turn_profile": {
+        "average_trees_per_turn": 1.3,
+        "trees_per_turn_range": [
+          1,
+          3
+        ],
+        "average_turn_volume_m3": 0.63,
+        "turn_volume_range_m3": [
+          0.05,
+          1.83
+        ],
+        "average_tree_volume_m3": 0.49
+      },
+      "layout": {
+        "average_yarding_distance_m": 80,
+        "yarding_distance_range_m": [
+          33,
+          145
+        ],
+        "average_slope_percent": 51,
+        "slope_percent_range": [
+          8,
+          101
+        ]
+      },
+      "costs": {
+        "combined_felling_yarding_cost_per_m3": 27.92,
+        "yarder_cost_per_pmh": 114.45,
+        "support_costs_per_pmh": {
+          "skidder": 49.81,
+          "chainsaw": 3.31
+        },
+        "notes": "Feller-director hot-yarding kept per-worker productivity high but added delay minutes from carriage impacts at the skyline stop."
+      },
+      "notes": "Two-person hot-yarding kept worker productivity near 3 m³/PMH; capacity limited by guyline moves and moderate lift."
+    },
+    {
+      "id": "tn173_teletransporteur",
+      "name": "TLD Gauthier Télétransporteur (self-propelled carriage)",
+      "location": "Montmorency Forest, QC",
+      "operating_range_m": 200,
+      "yarding_direction": "downhill",
+      "activities": [
+        "felling_and_yarding"
+      ],
+      "hot_yarding": true,
+      "labour": {
+        "crew_size_operational": 2,
+        "crew_roles": [
+          "chaser/carriage operator",
+          "faller-chokerman"
+        ],
+        "m3_per_worker_hour": 3.2
+      },
+      "study": {
+        "sample_cycles": 119,
+        "study_duration_hours": 15.35,
+        "average_cycle_time_minutes": 7.74,
+        "trees_per_pmh": 30,
+        "productivity_m3_per_pmh": 6.5
+      },
+      "turn_profile": {
+        "average_trees_per_turn": 3.9,
+        "trees_per_turn_range": [
+          1,
+          7
+        ],
+        "average_turn_volume_m3": 0.83,
+        "turn_volume_range_m3": [
+          0.08,
+          2.95
+        ],
+        "average_tree_volume_m3": 0.21
+      },
+      "layout": {
+        "average_yarding_distance_m": 104,
+        "yarding_distance_range_m": [
+          20,
+          260
+        ],
+        "average_slope_percent": 46,
+        "slope_percent_range": [
+          3,
+          86
+        ]
+      },
+      "costs": {
+        "combined_felling_yarding_cost_per_m3": 20.69,
+        "yarder_cost_per_pmh": 109.81,
+        "support_costs_per_pmh": {
+          "skidder_anchor": 5.87,
+          "excavator_anchor": 15.51,
+          "chainsaw": 3.31
+        },
+        "notes": "Radio-controlled carriage had minor electronics delays; still lowest $/m³ in the study thanks to high lift and mobility."
+      },
+      "notes": "Self-propelled carriage shuttled over road gaps with excellent deflection; productivity drops sharply beyond ~150 m spans as outhaul time balloons."
+    },
+    {
+      "id": "tn173_timbermaster_1984",
+      "name": "Smith Timbermaster (Hauterive, QC trial)",
+      "location": "Rexfor concessions near Hauterive, QC",
+      "operating_range_m": 450,
+      "yarding_direction": "downhill",
+      "activities": [
+        "yarding_only"
+      ],
+      "hot_yarding": false,
+      "labour": {
+        "crew_size_operational": 4,
+        "crew_roles": [
+          "yarder operator",
+          "swing-skidder operator",
+          "two chokermen (shared between twin yarders)"
+        ],
+        "m3_per_worker_hour": 2.0
+      },
+      "study": {
+        "sample_cycles": 246,
+        "study_duration_hours": 30.75,
+        "average_cycle_time_minutes": 7.5,
+        "trees_per_pmh": 24,
+        "productivity_m3_per_pmh": 8.2
+      },
+      "turn_profile": {
+        "average_trees_per_turn": 3.6,
+        "average_turn_volume_m3": 1.0,
+        "average_tree_volume_m3": 0.28
+      },
+      "layout": {
+        "average_yarding_distance_m": 150,
+        "average_slope_percent": 51
+      },
+      "costs": {
+        "combined_felling_yarding_cost_per_m3": 21.2,
+        "yarder_cost_per_pmh": 164.83,
+        "support_costs_per_pmh": {
+          "skidder": 43.76
+        },
+        "notes": "Includes allowance for shared swing skidder; cost excludes felling."
+      },
+      "notes": "Trailer-mounted tower with standing skyline; productivity constrained by roadside landings in 1984 and cable interference from shared swing skidder."
+    },
+    {
+      "id": "tn173_timbermaster_1985",
+      "name": "Smith Timbermaster (Matane, QC trial)",
+      "location": "Rexfor concessions near Matane, QC",
+      "operating_range_m": 450,
+      "yarding_direction": "downhill",
+      "activities": [
+        "yarding_only"
+      ],
+      "hot_yarding": false,
+      "labour": {
+        "crew_size_operational": 4,
+        "crew_roles": [
+          "yarder operator",
+          "swing-skidder operator",
+          "two chokermen"
+        ],
+        "m3_per_worker_hour": 3.7
+      },
+      "study": {
+        "sample_cycles": 122,
+        "study_duration_hours": 10.17,
+        "average_cycle_time_minutes": 5.0,
+        "trees_per_pmh": 24,
+        "productivity_m3_per_pmh": 15.0
+      },
+      "turn_profile": {
+        "average_trees_per_turn": 2.2,
+        "average_turn_volume_m3": 1.2,
+        "average_tree_volume_m3": 0.54
+      },
+      "layout": {
+        "average_yarding_distance_m": 70,
+        "average_slope_percent": 42
+      },
+      "costs": {
+        "combined_felling_yarding_cost_per_m3": 21.2,
+        "yarder_cost_per_pmh": 164.83,
+        "support_costs_per_pmh": {
+          "skidder": 43.76
+        },
+        "notes": "Purpose-built landings and larger timber doubled productivity over 1984 despite identical machine costs."
+      },
+      "notes": "Shorter spans and better planning cut cycle time to 5 minutes; provides upper bound for Timbermaster-style presets when spans drop below 100 m."
+    }
+  ]
+}
