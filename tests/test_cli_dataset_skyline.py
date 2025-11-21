@@ -13,6 +13,7 @@ from fhops.productivity import (
     estimate_standing_skyline_productivity_kellogg1976,
     estimate_residue_productivity_ledoux_m3_per_pmh,
     estimate_micro_master_productivity_m3_per_pmh,
+    get_tn173_system,
 )
 
 runner = CliRunner()
@@ -143,6 +144,24 @@ def test_cli_skyline_mcneel_running() -> None:
         piece_volume_m3=1.7,
         yarder_variant="yarder_b",
     )
+    assert f"{expected:.2f}" in result.stdout
+
+
+def test_cli_skyline_tn173_ecologger() -> None:
+    system = get_tn173_system("tn173_ecologger")
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "tn173-ecologger",
+            "--slope-distance-m",
+            "120",
+        ],
+    )
+    assert result.exit_code == 0
+    assert system.payload_m3 is not None
+    expected = (system.payload_m3 * 60.0) / system.cycle_minutes
     assert f"{expected:.2f}" in result.stdout
 
 

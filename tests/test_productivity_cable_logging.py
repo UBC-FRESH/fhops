@@ -1,6 +1,8 @@
 from fhops.productivity.cable_logging import (
     estimate_cable_skidding_productivity_unver_robust,
     estimate_cable_skidding_productivity_unver_spss,
+    get_tn173_system,
+    list_tn173_system_ids,
 )
 
 
@@ -16,3 +18,11 @@ def test_unver_robust_positive() -> None:
         log_volume_m3=0.5, route_slope_percent=30.0
     )
     assert prod > 0
+
+
+def test_tn173_system_loader() -> None:
+    system_ids = list_tn173_system_ids()
+    assert "tn173_ecologger" in system_ids
+    system = get_tn173_system("tn173_ecologger")
+    assert system.cycle_minutes > 0
+    assert system.payload_m3 is not None and system.payload_m3 > 0

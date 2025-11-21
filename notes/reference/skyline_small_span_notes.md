@@ -79,10 +79,12 @@ Source: `notes/reference/fpinnovations/TN173.pdf`
 - Smith Timbermaster: trailer tower paired with 5/8″ skyline and 1/2″ mainline; piece size 0.28–0.54 m³ depending on block. Achieved 26–32 m³/PMH₀ on 120 m spans and maintained hook times by using mechanical slack-pullers. Mobility is slower than truck yarders but still <3 h per road change.
 - Cross-system takeaways: labour-corrected (“hot”) productivity averaged ~3 m³/PMH per worker, so presets need to scale output with crew size if analysts deviate from the study crews. Direct costs ranged $20.69–$27.92/m³; most variance came from setup/move frequency rather than mechanical utilisation. The data provides payload + distance envelopes for non-BC micro-yard presets (e.g., `ecologger_short_span`, `timbermaster_patch_cut`) and cost references for when BC CPI-adjusted rates are missing.
 - Dataset: `data/reference/fpinnovations/tn173_compact_yarders.json` now holds the per-system cycle stats, distance/slope ranges, crew sizes, productivity, and $/PMH components so the skyline helper can consume these cases directly (Ecologger, Gabriel, Christie, Télétransporteur, Timbermaster 1984/1985).
+- Machine-rate coverage: `data/machine_rates.json` ships matching entries (`skyline_ecologger_tn173`, `skyline_gabriel_tn173`, `skyline_christie_tn173`, `skyline_teletransporteur_tn173`, `skyline_timbermaster_tn173`) so `--show-costs`/harvest-system overrides can cite the Eastern hourly rates (ownership column = yarder total, operating column = support gear from TN-173 Table 4).
+- CLI coverage: `fhops dataset estimate-skyline-productivity --model tn173-ecologger|tn173-gabriel|tn173-christie|tn173-teletransporteur|tn173-timbermaster-1984|tn173-timbermaster-1985` now pulls the structured defaults, prints observed vs. computed productivity, and warns when slope distances exceed the recorded TN173 span envelope.
 - Helper TODOs:
-  - Thread the TN173 $/m³ owning vs. operating splits into `data/machine_rates.json` as interim “non-BC reference” entries, tagged so `--show-costs` can cite the regional origin.
-  - Wire the new JSON cases into skyline presets/harvest-system overrides (`ecologger_short_span`, `gabriel_salvage`, `teletransporteur_hot_yard`, `timbermaster_patch_cut`) and surface the recommended span caps.
-  - Flag the span sensitivity (productivity drop beyond ~200 m) inside harvest-system overrides so scenario generator warns when analysts stretch these systems past the tested envelope.
+  - Finish the FNG73 Hi-Skid dataset/helper (payload, travel/dump allowances, cost reference) so the micro-yard suite covers the truck-mounted short-corridor option alongside TN173.
+  - Wire the small-span presets into harvest-system overrides + scenario generator once the FNG73 helper lands (so `cable_running_micro_*` jobs auto-select the right skyline model + cost role).
+  - Move on to TN258/FNCY12 to unlock Thunderbird TMY45 + Mini-Mak costing and span-penalty wiring once the TN173/FNG73 presets are live.
 
 ## Pending extractions
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import json
 import warnings
 from collections.abc import Mapping
@@ -840,6 +841,95 @@ MICRO_MASTER_DEFAULTS = {
 }
 
 
+@dataclass(frozen=True)
+class TN173System:
+    system_id: str
+    label: str
+    operating_range_m: float | None
+    crew_size: float | None
+    pieces_per_turn: float | None
+    piece_volume_m3: float | None
+    payload_m3: float | None
+    cycle_minutes: float
+    productivity_m3_per_pmh: float
+    average_yarding_distance_m: float | None
+    yarding_distance_min_m: float | None
+    yarding_distance_max_m: float | None
+    average_slope_percent: float | None
+    slope_percent_min: float | None
+    slope_percent_max: float | None
+    notes: str | None
+
+
+_TN173_PATH = (
+    Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/tn173_compact_yarders.json"
+)
+
+
+@lru_cache(maxsize=1)
+def _load_tn173_systems() -> Mapping[str, TN173System]:
+    if not _TN173_PATH.exists():
+        raise FileNotFoundError(f"TN173 dataset not found: {_TN173_PATH}")
+    with _TN173_PATH.open(encoding="utf-8") as fh:
+        payload = json.load(fh)
+
+    systems: dict[str, TN173System] = {}
+    for entry in payload.get("systems", []):
+        system_id = str(entry["id"])
+        study = entry.get("study", {})
+        turn_profile = entry.get("turn_profile", {})
+        layout = entry.get("layout", {})
+        labour = entry.get("labour", {})
+
+        avg_turn_volume = turn_profile.get("average_turn_volume_m3")
+        avg_pieces = turn_profile.get("average_trees_per_turn")
+        piece_volume = turn_profile.get("average_piece_volume_m3")
+        if piece_volume is None and avg_turn_volume and avg_pieces:
+            with contextlib.suppress(ZeroDivisionError):
+                piece_volume = avg_turn_volume / avg_pieces
+
+        yarding_range = layout.get("yarding_distance_range_m") or (None, None)
+        slope_range = layout.get("slope_percent_range") or (None, None)
+
+        systems[system_id] = TN173System(
+            system_id=system_id,
+            label=entry.get("name", entry.get("description", system_id)),
+            operating_range_m=entry.get("operating_range_m"),
+            crew_size=labour.get("crew_size_operational")
+            or labour.get("crew_size_productive"),
+            pieces_per_turn=float(avg_pieces) if avg_pieces is not None else None,
+            piece_volume_m3=float(piece_volume) if piece_volume is not None else None,
+            payload_m3=float(avg_turn_volume) if avg_turn_volume is not None else None,
+            cycle_minutes=float(study.get("average_cycle_time_minutes", 0.0)),
+            productivity_m3_per_pmh=float(study.get("productivity_m3_per_pmh", 0.0)),
+            average_yarding_distance_m=float(layout.get("average_yarding_distance_m", 0.0))
+            if layout.get("average_yarding_distance_m") is not None
+            else None,
+            yarding_distance_min_m=float(yarding_range[0]) if yarding_range[0] is not None else None,
+            yarding_distance_max_m=float(yarding_range[1]) if len(yarding_range) > 1 and yarding_range[1] is not None else None,
+            average_slope_percent=float(layout.get("average_slope_percent", 0.0))
+            if layout.get("average_slope_percent") is not None
+            else None,
+            slope_percent_min=float(slope_range[0]) if slope_range[0] is not None else None,
+            slope_percent_max=float(slope_range[1]) if len(slope_range) > 1 and slope_range[1] is not None else None,
+            notes=entry.get("notes"),
+        )
+    return systems
+
+
+def list_tn173_system_ids() -> tuple[str, ...]:
+    systems = _load_tn173_systems()
+    return tuple(sorted(systems))
+
+
+def get_tn173_system(system_id: str) -> TN173System:
+    systems = _load_tn173_systems()
+    try:
+        return systems[system_id]
+    except KeyError as exc:
+        raise KeyError(f"Unknown TN173 system '{system_id}'. Available: {', '.join(sorted(systems))}") from exc
+
+
 def estimate_residue_cycle_time_ledoux_minutes(
     *,
     profile: str,
@@ -973,6 +1063,8 @@ __all__ = [
     "ledoux_delay_component_minutes",
     "estimate_micro_master_cycle_minutes",
     "estimate_micro_master_productivity_m3_per_pmh",
+    "get_tn173_system",
+    "list_tn173_system_ids",
     "HelicopterLonglineModel",
     "HelicopterProductivityResult",
     "estimate_helicopter_longline_productivity",

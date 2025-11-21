@@ -104,6 +104,7 @@ from fhops.productivity import (
     estimate_residue_cycle_time_ledoux_minutes,
     estimate_residue_productivity_ledoux_m3_per_pmh,
     estimate_micro_master_productivity_m3_per_pmh,
+    get_tn173_system,
     ledoux_delay_component_minutes,
     running_skyline_variant_defaults,
     estimate_forwarder_productivity_bc,
@@ -747,6 +748,12 @@ class SkylineProductivityModel(str, Enum):
     LEDOUX_WASHINGTON_208E = "ledoux-washington-208e"
     LEDOUX_TMY45 = "ledoux-tmy45"
     MICRO_MASTER = "micro-master"
+    TN173_ECOLOGGER = "tn173-ecologger"
+    TN173_GABRIEL = "tn173-gabriel"
+    TN173_CHRISTIE = "tn173-christie"
+    TN173_TELETRANSPORTEUR = "tn173-teletransporteur"
+    TN173_TIMBERMASTER_1984 = "tn173-timbermaster-1984"
+    TN173_TIMBERMASTER_1985 = "tn173-timbermaster-1985"
 
 
 _LEDOUX_MODEL_TO_PROFILE: dict[SkylineProductivityModel, str] = {
@@ -754,6 +761,15 @@ _LEDOUX_MODEL_TO_PROFILE: dict[SkylineProductivityModel, str] = {
     SkylineProductivityModel.LEDOUX_SKAGIT_HIGHLEAD: "skagit_highlead",
     SkylineProductivityModel.LEDOUX_WASHINGTON_208E: "washington_208e",
     SkylineProductivityModel.LEDOUX_TMY45: "tmy45",
+}
+
+_TN173_MODEL_TO_SYSTEM_ID: dict[SkylineProductivityModel, str] = {
+    SkylineProductivityModel.TN173_ECOLOGGER: "tn173_ecologger",
+    SkylineProductivityModel.TN173_GABRIEL: "tn173_gabriel",
+    SkylineProductivityModel.TN173_CHRISTIE: "tn173_christie",
+    SkylineProductivityModel.TN173_TELETRANSPORTEUR: "tn173_teletransporteur",
+    SkylineProductivityModel.TN173_TIMBERMASTER_1984: "tn173_timbermaster_1984",
+    SkylineProductivityModel.TN173_TIMBERMASTER_1985: "tn173_timbermaster_1985",
 }
 
 
@@ -7407,6 +7423,101 @@ def estimate_skyline_productivity_cmd(
         telemetry_payload_m3 = payload_value
         telemetry_pieces = resolved_pieces
         telemetry_piece_volume = resolved_piece_volume
+    elif model in _TN173_MODEL_TO_SYSTEM_ID:
+        system_id = _TN173_MODEL_TO_SYSTEM_ID[model]
+        system = get_tn173_system(system_id)
+        resolved_pieces = pieces_per_cycle or system.pieces_per_turn
+        if resolved_pieces is None or resolved_pieces <= 0:
+            raise typer.BadParameter(
+                "--pieces-per-cycle is required for TN173 presets when the dataset "
+                "entry does not declare a default pieces/turn."
+            )
+        resolved_piece_volume = piece_volume_m3 or system.piece_volume_m3
+        if resolved_piece_volume is None:
+            if system.payload_m3 is not None and resolved_pieces > 0:
+                resolved_piece_volume = system.payload_m3 / resolved_pieces
+        if resolved_piece_volume is None or resolved_piece_volume <= 0:
+            raise typer.BadParameter(
+                "--piece-volume-m3 must be > 0 for TN173 presets when no dataset default exists."
+            )
+        if payload_m3 is not None and payload_m3 <= 0:
+            raise typer.BadParameter("--payload-m3 must be > 0 for TN173 presets.")
+        resolved_payload = (
+            payload_m3
+            if payload_m3 is not None
+            else (system.payload_m3 if system.payload_m3 is not None else resolved_pieces * resolved_piece_volume)
+        )
+        cycle_minutes = system.cycle_minutes
+        if cycle_minutes <= 0:
+            raise typer.BadParameter(f"TN173 system '{system_id}' is missing a valid cycle time.")
+        value = (resolved_payload * 60.0) / cycle_minutes
+        rows = [
+            ("Model", model.value),
+            ("System", system.label),
+            ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
+            ("Pieces per Turn", f"{resolved_pieces:.2f}"),
+            ("Piece Volume (m³)", f"{resolved_piece_volume:.3f}"),
+            ("Payload (m³)", f"{resolved_payload:.2f}"),
+            ("Cycle Time (min)", f"{cycle_minutes:.2f}"),
+            ("Recorded Productivity (m³/PMH)", f"{system.productivity_m3_per_pmh:.2f}"),
+        ]
+        if system.crew_size:
+            rows.insert(2, ("Crew Size", f"{system.crew_size:.1f}"))
+        if system.average_yarding_distance_m:
+            rows.append(
+                ("Observed Avg Distance (m)", f"{system.average_yarding_distance_m:.1f}")
+            )
+        if system.yarding_distance_min_m is not None or system.yarding_distance_max_m is not None:
+            min_label = (
+                f"{system.yarding_distance_min_m:.0f}"
+                if system.yarding_distance_min_m is not None
+                else "–"
+            )
+            max_label = (
+                f"{system.yarding_distance_max_m:.0f}"
+                if system.yarding_distance_max_m is not None
+                else "–"
+            )
+            rows.append(("Observed Distance Range (m)", f"{min_label}–{max_label}"))
+        if system.average_slope_percent:
+            rows.append(("Observed Avg Slope (%)", f"{system.average_slope_percent:.1f}"))
+        if system.slope_percent_min is not None or system.slope_percent_max is not None:
+            min_slope = (
+                f"{system.slope_percent_min:.0f}"
+                if system.slope_percent_min is not None
+                else "–"
+            )
+            max_slope = (
+                f"{system.slope_percent_max:.0f}"
+                if system.slope_percent_max is not None
+                else "–"
+            )
+            rows.append(("Observed Slope Range (%)", f"{min_slope}–{max_slope}"))
+        source_label = f"FERIC TN-173 (1991) {system.label} case study."
+        warning_parts = [
+            "TN-173 trials are Eastern Canada small-span skyline systems; confirm applicability for BC modelling."
+        ]
+        if (
+            system.yarding_distance_max_m is not None
+            and slope_distance_m > system.yarding_distance_max_m
+        ):
+            warning_parts.append(
+                f"Slope distance {slope_distance_m:.0f} m exceeds observed max "
+                f"{system.yarding_distance_max_m:.0f} m."
+            )
+        if (
+            system.yarding_distance_min_m is not None
+            and slope_distance_m < system.yarding_distance_min_m
+        ):
+            warning_parts.append(
+                f"Slope distance {slope_distance_m:.0f} m is below observed min "
+                f"{system.yarding_distance_min_m:.0f} m."
+            )
+        console_warning = "[yellow]Warning:[/yellow] " + " ".join(warning_parts)
+        telemetry_payload_m3 = resolved_payload
+        telemetry_pieces = resolved_pieces
+        telemetry_piece_volume = resolved_piece_volume
+        telemetry_horizontal = slope_distance_m
     elif model is SkylineProductivityModel.AUBUCHON_STANDING:
         cycle_minutes = estimate_standing_skyline_turn_time_aubuchon1979(
             slope_distance_m=slope_distance_m,
