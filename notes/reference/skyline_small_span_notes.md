@@ -65,8 +65,8 @@ Source: `notes/reference/fpinnovations/FNG73.pdf`
 - Productivity snapshot (20 timed cycles): average yarding distance 30 m (max 80 m), piece volume 0.24 m³, yard+load rate 4.16 m³/h. Including 15 min haul to dump + unload, expect one 12 m³ load roughly every 4 h (~24 m³ per 8 h shift). Anchoring strap + breakaway block mitigate hang-ups, but operator occasionally frees logs manually when obstacles pinch the turn.
 - Operating tips: partially activating the chain-dump cylinders during loading recentres slippery logs so they clear the lateral track members; tree-length stems must be unhooked/bucked roadside before loading. Wrappers applied before travel; pivoting stakes released during dump so chains slide the load off.
 - Use cases: short-corridor salvage or riparian/machine-free buffers where corridor construction is forbidden; urban tree removal; micro blocks <100 m from roads/trails. Breakaway block protects leave trees, remote control keeps operator on road.
-- Dataset/helper coverage: `data/reference/fpinnovations/fng73_hi_skid.json` stores the observed payload, line speeds, cycle elements, and travel allowances; `estimate_hi_skid_productivity_m3_per_pmh` + `fhops dataset estimate-skyline-productivity --model hi-skid [--hi-skid-include-haul]` now expose the yarding vs. haul-adjusted productivity (defaults to 4.16 m³/PMH at 30 m spans, warns past the 80–100 m envelope).
-- Helper TODO: derive ownership/operating splits (no machine-rate entry yet—need either Alfa Fab invoices or proxy truck + attachment rates) before wiring the Hi-Skid into `--show-costs` and harvest-system overrides.
+- Dataset/helper coverage: `data/reference/fpinnovations/fng73_hi_skid.json` stores the observed payload, line speeds, cycle elements, and travel allowances; `estimate_hi_skid_productivity_m3_per_pmh` + `fhops dataset estimate-skyline-productivity --model hi-skid [--hi-skid-include-haul]` now expose the yarding vs. haul-adjusted productivity (defaults to 4.16 m³/PMH at 30 m spans, warns past the 80–100 m envelope). The `cable_micro_hi_skid` harvest system reuses these defaults (and currently points at the Gabriel truck rate until a dedicated Hi-Skid cost entry is derived).
+- Helper TODO: derive ownership/operating splits (no `skyline_hi_skid` machine-rate entry yet—need either Alfa Fab invoices or proxy truck + attachment rates) so `--show-costs`, `cable_micro_hi_skid`, and scenario logs can cite the actual short-yard truck rental rate.
 
 ## TN-173 – Eastern Canada compact skyline fleet (Ecologger, Gabriel, Christie, Télétransporteur, Timbermaster)
 
@@ -82,10 +82,11 @@ Source: `notes/reference/fpinnovations/TN173.pdf`
 - Dataset: `data/reference/fpinnovations/tn173_compact_yarders.json` now holds the per-system cycle stats, distance/slope ranges, crew sizes, productivity, and $/PMH components so the skyline helper can consume these cases directly (Ecologger, Gabriel, Christie, Télétransporteur, Timbermaster 1984/1985).
 - Machine-rate coverage: `data/machine_rates.json` ships matching entries (`skyline_ecologger_tn173`, `skyline_gabriel_tn173`, `skyline_christie_tn173`, `skyline_teletransporteur_tn173`, `skyline_timbermaster_tn173`) so `--show-costs`/harvest-system overrides can cite the Eastern hourly rates (ownership column = yarder total, operating column = support gear from TN-173 Table 4).
 - CLI coverage: `fhops dataset estimate-skyline-productivity --model tn173-ecologger|tn173-gabriel|tn173-christie|tn173-teletransporteur|tn173-timbermaster-1984|tn173-timbermaster-1985` now pulls the structured defaults, prints observed vs. computed productivity, and warns when slope distances exceed the recorded TN173 span envelope.
+- Harvest-system coverage: `default_system_registry()` now exposes `cable_micro_ecologger|gabriel|christie|teletransporteur|timbermaster` (TN173 presets) plus `cable_micro_hi_skid`, so `--harvest-system-id` (or dataset blocks referencing those IDs) auto-select the correct skyline model + machine-rate role.
 - Helper TODOs:
-  - Finish the FNG73 Hi-Skid dataset/helper (payload, travel/dump allowances, cost reference) so the micro-yard suite covers the truck-mounted short-corridor option alongside TN173.
-  - Wire the small-span presets into harvest-system overrides + scenario generator once the FNG73 helper lands (so `cable_running_micro_*` jobs auto-select the right skyline model + cost role).
-  - Move on to TN258/FNCY12 to unlock Thunderbird TMY45 + Mini-Mak costing and span-penalty wiring once the TN173/FNG73 presets are live.
+  - Derive a dedicated Hi-Skid owning/operating split (`skyline_hi_skid`) so the harvest system can stop reusing the Gabriel truck rate when `--show-costs` is enabled.
+  - Feed the new micro presets into the synthetic/contract generators (so sample scenarios rotate among the TN173/Hi-Skid systems) once the cost entry lands.
+  - Move on to TN258/FNCY12 to unlock Thunderbird TMY45 + Mini-Mak costing and span-penalty wiring after the micro-yard suite is fully costed.
 
 ## Pending extractions
 

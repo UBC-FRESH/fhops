@@ -74,14 +74,38 @@ Default Systems
      - cable-running skyline
      - hand/mech faller → long-span skyline → landing processor/hand buck → loader
      - ADV5N28 clearcut conversion (Madill 071 + Pow'-R Block replacing helicopter yarding).
-   * - ``cable_running_adv5n28_shelterwood``
-     - cable-running skyline
-     - hand/mech faller → long-span skyline → landing processor/hand buck → loader
-     - ADV5N28 irregular shelterwood conversion threading riparian corridors with full suspension.
-   * - ``helicopter``
-     - helicopter
-     - hand faller → helicopter longline → hand buck/processor → loader/water
-     - Helicopter longline with on-landing processing or direct-to-water transfer.
+  * - ``cable_running_adv5n28_shelterwood``
+    - cable-running skyline
+    - hand/mech faller → long-span skyline → landing processor/hand buck → loader
+    - ADV5N28 irregular shelterwood conversion threading riparian corridors with full suspension.
+  * - ``cable_micro_ecologger``
+    - cable-short-span skyline
+    - hand faller → RMS Ecologger skyline → hand buck/processor → loader
+    - TN173 NB case study (2.9 logs/turn, 0.34 m³ pieces, four-person crew) for compact skyline corridors.
+  * - ``cable_micro_gabriel``
+    - cable-short-span skyline
+    - hand faller → Gabriel truck yarder → hand buck/processor → loader
+    - TN173 Stephenville prototype skid-pan yarder (0.16 m³ stems, road-portable) with chokers and manual processing.
+  * - ``cable_micro_christie``
+    - cable-short-span skyline
+    - hand faller → Christie tower yarder → hand buck/processor → loader
+    - TN173 Christie hot-yarding configuration (two-person crew, 0.49 m³ pieces) for patch cuts.
+  * - ``cable_micro_teletransporteur``
+    - cable-short-span skyline
+    - hand faller → Télétransporteur carriage → hand buck/processor → loader
+    - TN173 Télétransporteur downhill hot-yarding (0.21 m³ pieces, self-propelled carriage) for riparian buffers.
+  * - ``cable_micro_timbermaster``
+    - cable-short-span skyline
+    - hand faller → Smith Timbermaster skyline → hand buck/processor → loader
+    - TN173 Timbermaster downhill skyline (0.54 m³ pieces, trailer tower) for small shortwood corridors.
+  * - ``cable_micro_hi_skid``
+    - cable-short-span skyline
+    - hand faller → Hi-Skid yard/load/haul (direct to dump)
+    - FNG73 Hi-Skid short-yard truck (100 m reach, 12 m³ deck); use ``--model hi-skid`` and optionally ``--hi-skid-include-haul`` when this system is selected.
+  * - ``helicopter``
+    - helicopter
+    - hand faller → helicopter longline → hand buck/processor → loader/water
+    - Helicopter longline with on-landing processing or direct-to-water transfer.
 
 Using the Registry
 ------------------
@@ -646,6 +670,15 @@ the defaults are applied. Use ``cable_running_adv5n28_clearcut`` or
 ``cable_running_adv5n28_shelterwood`` when modelling the ADV5N28 long-span conversions—those presets
 swap in the new helper automatically and reuse the same skyline defaults, so you can flip helicopter
 blocks to skyline without retyping payload/cost assumptions.
+
+Short-span presets ``cable_micro_ecologger``, ``cable_micro_gabriel``, ``cable_micro_christie``,
+``cable_micro_teletransporteur``, and ``cable_micro_timbermaster`` now drive the TN173 skyline
+models (crew size, pieces/turn, and the correct machine-rate role) automatically, so selecting one of
+those systems drops the matching Eastern Canada helper into the CLI without retyping parameters. The
+``cable_micro_hi_skid`` preset does the same for the FNG73 Hi-Skid truck—selecting that harvest
+system funnels ``--model hi-skid`` defaults into the skyline CLI, and you can append
+``--hi-skid-include-haul`` when you want the reported productivity to fold in the 30 min haul/unload
+leg per 12 m³ load.
 
 Use ``cable_salvage_grapple`` when those skyline corridors are salvaging burned timber: it mirrors the
 ``cable_running`` payload defaults (TN-157 combined preset + ADV7N3 deck costs) but tags the scenario as a salvage

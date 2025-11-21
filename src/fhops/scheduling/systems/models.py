@@ -436,6 +436,130 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
                 SystemJob("loading", "loader", ["processing"]),
             ],
         ),
+        "cable_micro_ecologger": HarvestSystem(
+            system_id="cable_micro_ecologger",
+            environment="cable-short-span skyline",
+            notes="TN173 RMS Ecologger uphill skyline (≈0.34 m³ pieces, 2.9 logs/turn, four-person crew).",
+            jobs=[
+                SystemJob("felling", "hand_faller", []),
+                SystemJob(
+                    "primary_transport",
+                    "skyline_ecologger_tn173",
+                    ["felling"],
+                    productivity_overrides={
+                        "skyline_model": "tn173-ecologger",
+                        "skyline_pieces_per_cycle": 2.9,
+                        "skyline_piece_volume_m3": 0.34,
+                        "skyline_crew_size": 4.0,
+                    },
+                ),
+                SystemJob("processing", "hand_buck_or_processor", ["primary_transport"]),
+                SystemJob("loading", "loader", ["processing"]),
+            ],
+        ),
+        "cable_micro_gabriel": HarvestSystem(
+            system_id="cable_micro_gabriel",
+            environment="cable-short-span skyline",
+            notes="TN173 Gabriel truck yarder (0.16 m³ pieces, skid-pan highlead, road-portable).",
+            jobs=[
+                SystemJob("felling", "hand_faller", []),
+                SystemJob(
+                    "primary_transport",
+                    "skyline_gabriel_tn173",
+                    ["felling"],
+                    productivity_overrides={
+                        "skyline_model": "tn173-gabriel",
+                        "skyline_pieces_per_cycle": 2.2,
+                        "skyline_piece_volume_m3": 0.16,
+                        "skyline_crew_size": 4.0,
+                    },
+                ),
+                SystemJob("processing", "hand_buck_or_processor", ["primary_transport"]),
+                SystemJob("loading", "loader", ["processing"]),
+            ],
+        ),
+        "cable_micro_christie": HarvestSystem(
+            system_id="cable_micro_christie",
+            environment="cable-short-span skyline",
+            notes="TN173 Christie tower yarder hot-yarding (0.49 m³ pieces, two-person crew).",
+            jobs=[
+                SystemJob("felling", "hand_faller", []),
+                SystemJob(
+                    "primary_transport",
+                    "skyline_christie_tn173",
+                    ["felling"],
+                    productivity_overrides={
+                        "skyline_model": "tn173-christie",
+                        "skyline_pieces_per_cycle": 1.3,
+                        "skyline_piece_volume_m3": 0.49,
+                        "skyline_crew_size": 2.0,
+                    },
+                ),
+                SystemJob("processing", "hand_buck_or_processor", ["primary_transport"]),
+                SystemJob("loading", "loader", ["processing"]),
+            ],
+        ),
+        "cable_micro_teletransporteur": HarvestSystem(
+            system_id="cable_micro_teletransporteur",
+            environment="cable-short-span skyline",
+            notes="TN173 Télétransporteur self-propelled carriage (0.21 m³ pieces, two-person chaser/faller crew).",
+            jobs=[
+                SystemJob("felling", "hand_faller", []),
+                SystemJob(
+                    "primary_transport",
+                    "skyline_teletransporteur_tn173",
+                    ["felling"],
+                    productivity_overrides={
+                        "skyline_model": "tn173-teletransporteur",
+                        "skyline_pieces_per_cycle": 3.9,
+                        "skyline_piece_volume_m3": 0.21,
+                        "skyline_crew_size": 2.0,
+                    },
+                ),
+                SystemJob("processing", "hand_buck_or_processor", ["primary_transport"]),
+                SystemJob("loading", "loader", ["processing"]),
+            ],
+        ),
+        "cable_micro_timbermaster": HarvestSystem(
+            system_id="cable_micro_timbermaster",
+            environment="cable-short-span skyline",
+            notes="TN173 Smith Timbermaster downhill skyline (0.54 m³ pieces, trailer tower).",
+            jobs=[
+                SystemJob("felling", "hand_faller", []),
+                SystemJob(
+                    "primary_transport",
+                    "skyline_timbermaster_tn173",
+                    ["felling"],
+                    productivity_overrides={
+                        "skyline_model": "tn173-timbermaster-1985",
+                        "skyline_pieces_per_cycle": 2.2,
+                        "skyline_piece_volume_m3": 0.54,
+                        "skyline_crew_size": 4.0,
+                    },
+                ),
+                SystemJob("processing", "hand_buck_or_processor", ["primary_transport"]),
+                SystemJob("loading", "loader", ["processing"]),
+            ],
+        ),
+        "cable_micro_hi_skid": HarvestSystem(
+            system_id="cable_micro_hi_skid",
+            environment="cable-short-span skyline",
+            notes="FERIC FNG73 Hi-Skid truck (100 m reach, self-loading/hauling).",
+            jobs=[
+                SystemJob("felling", "hand_faller", []),
+                SystemJob(
+                    "primary_transport",
+                    "skyline_gabriel_tn173",
+                    ["felling"],
+                    productivity_overrides={
+                        "skyline_model": "hi-skid",
+                        "skyline_pieces_per_cycle": 1.0,
+                        "skyline_piece_volume_m3": 0.24,
+                        "skyline_crew_size": 1.0,
+                    },
+                ),
+            ],
+        ),
         "cable_salvage_grapple": HarvestSystem(
             system_id="cable_salvage_grapple",
             environment="cable-running salvage",
@@ -503,7 +627,14 @@ def system_productivity_overrides(
     if normalized is None:
         return None
     for job in system.jobs:
-        if job.machine_role == normalized and job.productivity_overrides:
+        job_role = job.machine_role
+        role_matches = job_role == normalized
+        if not role_matches:
+            if normalized == "skyline_yarder" and job_role.startswith("skyline_"):
+                role_matches = True
+            elif normalized == "grapple_yarder" and job_role.startswith("grapple_yarder"):
+                role_matches = True
+        if role_matches and job.productivity_overrides:
             return dict(job.productivity_overrides)
     return None
 

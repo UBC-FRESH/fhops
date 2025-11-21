@@ -218,6 +218,36 @@ def test_cli_skyline_hi_skid_flag_validation() -> None:
     assert result.exit_code != 0
 
 
+def test_cli_skyline_harvest_system_micro_defaults() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--slope-distance-m",
+            "120",
+            "--harvest-system-id",
+            "cable_micro_ecologger",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "tn173-ecologger" in result.stdout
+
+
+def test_cli_skyline_harvest_system_hi_skid() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--slope-distance-m",
+            "40",
+            "--harvest-system-id",
+            "cable_micro_hi_skid",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "hi-skid" in result.stdout
+
+
 def test_cli_skyline_aubuchon_standing() -> None:
     result = runner.invoke(
         dataset_app,
