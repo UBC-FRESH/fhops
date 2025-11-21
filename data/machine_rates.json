@@ -378,7 +378,7 @@
         "move_in_cost": 2000.0,
         "cost_base_year": 1999,
         "source": "FERIC FNG73 Field Note (1999) prototype; ownership/operating split derived from CAD 50–60k truck attachment cost, single-operator wage (1999 BC IWA +35% benefits), diesel @0.65 CAD/L, and light-maintenance allowance.",
-        "notes": "Ownership reflects a CAD 60k attachment amortized over 5 years/1,200 SMH with 10% salvage plus 8% interest/insurance (≈11.5 $/SMH). Operating bundles one operator (25 $/h +35% benefits ≈33.8 $/SMH), diesel (8 L/h × 0.65 $/L ≈5.2 $/SMH), and maintenance/tires/consumables (~16 $/SMH). Move-in cost assumes short lowbed haul for the truck-mounted attachment.",
+        "notes": "Ownership reflects a CAD 60k attachment amortized over 5 years/1,200 SMH with 10% salvage plus 8% interest/insurance (≈11.5 $/SMH). Operating bundles one operator using the June 15, 1999 IWA log-truck/yarder-driver wage (24.01 $/h +38% benefits = 33.13 $/SMH per ADV2N62 Appendix II), diesel (8 L/h × 0.65 $/L ≈5.2 $/SMH), and a 16 $/SMH allowance for tires/hydraulics/rigging. Move-in cost assumes a short lowbed haul for the truck-mounted attachment.",
         "repair_maintenance_cost_per_smh": null,
         "repair_maintenance_reference_hours": null,
         "repair_maintenance_usage_multipliers": null
