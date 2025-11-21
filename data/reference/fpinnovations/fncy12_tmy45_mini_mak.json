@@ -1,0 +1,147 @@
+{
+  "source": {
+    "id": "FNCY12",
+    "title": "Cable Yarding Using Intermediate Supports",
+    "authors": [
+      "P.D. Forrester"
+    ],
+    "publisher": "FERIC",
+    "publication_date": "1993-11",
+    "currency": "CAD_1993",
+    "notes": "Observed Thunderbird TMY45 skyline with Maki Mini-Mak II carriage near Salmon Arm, BC (Bell Pole Company / Jay-Vee Yarding)."
+  },
+  "equipment": {
+    "yarder": {
+      "make_model": "Thunderbird TMY45",
+      "tower_height_m": 13.7,
+      "engine": "Cummins 220 kW diesel",
+      "winch_configuration": {
+        "skyline_m_length_m": 549.0,
+        "mainline_m_length_m": 670.0,
+        "haulback_m_length_m": 1536.0,
+        "strawline_m_length_m": 1219.0,
+        "guyline_lengths_m": [
+          61.0,
+          61.0,
+          61.0
+        ],
+        "skyline_diameter_mm": 25.4,
+        "mainline_diameter_mm": 19.1,
+        "haulback_diameter_mm": 15.9,
+        "strawline_diameter_mm": 9.5,
+        "guyline_diameter_mm": 28.6
+      }
+    },
+    "carriage": {
+      "make_model": "Maki Mini-Mak II",
+      "engine_power_kw": 7.5,
+      "slack_pulling_speed_m_per_min": [
+        46,
+        91
+      ],
+      "weight_kg": 568,
+      "payload_capacity_t": 6.8,
+      "features": [
+        "Slack pulling capstan (13–19 mm lines)",
+        "Passes intermediate supports",
+        "Designed for clamping and lateral yarding with skyline support jacks"
+      ],
+      "attachments_estimated_cost_cad": 33500
+    },
+    "supporting_equipment": [
+      "Drott tracked hydraulic loader",
+      "Timberjack 450 grapple skidder",
+      "Caterpillar D8 bulldozer"
+    ]
+  },
+  "site": {
+    "location": "Stukemapten Lake (north of Salmon Arm, BC)",
+    "slope_percent_range": [
+      30,
+      70
+    ],
+    "slope_percent_average": 55,
+    "gross_volume_m3_per_ha": 372,
+    "species_mix_percent": {
+      "douglas_fir": 81.0,
+      "western_hemlock": 3.0,
+      "western_redcedar": 13.0,
+      "spruce": 7.6,
+      "white_pine": 3.0
+    },
+    "stems_per_ha": 318.5,
+    "average_stem_volume_m3": 1.17,
+    "area_with_intermediate_support_percent": 23
+  },
+  "operation": {
+    "crew": {
+      "description": "Yarder operator, chaser, full-time rigger, part-time rigger, two chokersetters (rigging crew often doubled when supports installed).",
+      "size_full_time": 5.0,
+      "notes": "Part-time rigger brought to site for intermediate-support moves."
+    },
+    "rigging_notes": [
+      "Standing skyline (shotgun) with gravity outhaul; skyline rigged behind backspar.",
+      "Intermediate supports built from two 50–60 cm DBH second-growth stems ~6 m apart; rigging height 12–22 m.",
+      "Upper guylines crossed to provide lateral stability; skyline support cable tensioned with chain-saw winch forming an 'M' configuration.",
+      "Lateral yarding constrained to ~30 m each side of skyline to minimize hang-ups.",
+      "Guylines typically attached 0.5–1.5 m above tree-strap rigging point."
+    ],
+    "lateral_yarding_limit_m": 30,
+    "notes": "Skyline configured to harvest second-growth thinning corridors (clearcut history) where natural deflection was limited or convex."
+  },
+  "productivity": {
+    "observation_period": "July–October 1992 (67.5 productive shifts including early shutdowns)",
+    "volumes_m3_per_month": [
+      {
+        "month": "July",
+        "volume_m3": 1743.32,
+        "productive_shifts": 17.0,
+        "avg_shift_m3": 102.5
+      },
+      {
+        "month": "August",
+        "volume_m3": 2247.89,
+        "productive_shifts": 16.0,
+        "avg_shift_m3": 140.5
+      },
+      {
+        "month": "September",
+        "volume_m3": 3596.61,
+        "productive_shifts": 21.0,
+        "avg_shift_m3": 171.3
+      },
+      {
+        "month": "October",
+        "volume_m3": 2551.40,
+        "productive_shifts": 13.5,
+        "avg_shift_m3": 189.0
+      }
+    ],
+    "totals": {
+      "volume_m3": 10139.22,
+      "productive_shifts": 67.5,
+      "avg_shift_m3": 150.5,
+      "avg_shift_m3_last_three_months": 166.0,
+      "avg_shift_m3_last_three_months_no_fire_delays": 176.8
+    },
+    "shift_hours": 10.0,
+    "observations": [
+      "Learning curve in July reduced output; productivity stabilized at 166–189 m³/shift once intermediate-support rigging routines matured.",
+      "Man-day productivity ~32 m³ when including rigging crew; removing rigging-only personnel raises productivity to ~44 m³ per crew member."
+    ]
+  },
+  "tensions_and_clearance": {
+    "reference": "FERIC TN-258 backspar stress pilot study (Thunderbird TMY45 + Mini-Mak II).",
+    "skyline_tension_notes": [
+      "Maximum skyline tension occurs when the turn is fully suspended; tension drops as carriage passes over intermediate supports because the snake bears the load.",
+      "Hang-ups during long lateral pulls significantly increase skyline tension; recommended to limit lateral distance and maintain clearance."
+    ],
+    "guyline_tension_notes": [
+      "Critical guylines peaked during aborted loads (hang-ups or choked stumps). Crossed upper guylines helped limit lateral swing-induced loading."
+    ]
+  },
+  "costing_status": {
+    "machine_rate_entry": "Pending",
+    "notes": "FNCY12 provides productivity and rigging geometry but no owning/operating breakdown for the TMY45 + Mini-Mak II combination. Cost reconstruction requires supplemental data (e.g., payroll records, historical lease rates) before a `grapple_yarder_tmy45` role can replace the current Skylead proxy."
+  }
+}
