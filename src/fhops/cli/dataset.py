@@ -101,8 +101,9 @@ from fhops.productivity import (
     estimate_standing_skyline_turn_time_kellogg1976,
     estimate_running_skyline_cycle_time_mcneel2000_minutes,
     estimate_running_skyline_productivity_mcneel2000,
-    estimate_residue_productivity_ledoux_m3_per_pmh,
     estimate_residue_cycle_time_ledoux_minutes,
+    estimate_residue_productivity_ledoux_m3_per_pmh,
+    ledoux_delay_component_minutes,
     running_skyline_variant_defaults,
     estimate_forwarder_productivity_bc,
     estimate_harvester_productivity_adv6n10,
@@ -7340,6 +7341,13 @@ def estimate_skyline_productivity_cmd(
             residue_pieces_per_turn=residue_pieces_per_turn,
             residue_volume_m3=residue_volume_m3,
         )
+        merch_delay_minutes, residue_delay_minutes = ledoux_delay_component_minutes(
+            profile=profile,
+            merchantable_logs_per_turn=merchantable_logs_per_turn,
+            merchantable_volume_m3=merchantable_volume_m3,
+            residue_pieces_per_turn=residue_pieces_per_turn,
+            residue_volume_m3=residue_volume_m3,
+        )
         total_payload = merchantable_volume_m3 + residue_volume_m3
         rows = [
             ("Model", model.value),
@@ -7350,11 +7358,22 @@ def estimate_skyline_productivity_cmd(
             ("Residue Volume (m³)", f"{residue_volume_m3:.3f}"),
             ("Total Payload (m³)", f"{total_payload:.3f}"),
             ("Cycle Time (min)", f"{cycle_minutes:.2f}"),
+            ("Merchantable Delay Component (min)", f"{merch_delay_minutes:.2f}"),
+            ("Residue Delay Component (min)", f"{residue_delay_minutes:.2f}"),
         ]
         source_label = "LeDoux (1984) residue yarding regressions (Willamette/Mt. Hood experimental trials)."
         console_warning = (
             "[yellow]Warning:[/yellow] LeDoux regressions are based on US residue logging (1984 USD); validate before using for BC skyline costing."
         )
+        if residue_pieces_per_turn > 0 and residue_delay_minutes > merch_delay_minutes:
+            residue_warning = (
+                "[yellow]Residue-heavy turn:[/yellow] residue wood is consuming "
+                f"{residue_delay_minutes:.2f} min/turn vs. {merch_delay_minutes:.2f} min from merchantable logs. "
+                "Consider breaking slash out separately or bundling to maintain productivity."
+            )
+            console_warning = (
+                f"{console_warning}\n{residue_warning}" if console_warning else residue_warning
+            )
         telemetry_payload_m3 = total_payload
         telemetry_horizontal = slope_distance_m
         telemetry_merch_logs = merchantable_logs_per_turn

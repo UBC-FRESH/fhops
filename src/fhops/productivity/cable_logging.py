@@ -882,6 +882,26 @@ def estimate_residue_productivity_ledoux_m3_per_pmh(
     return productivity, cycle_minutes
 
 
+def ledoux_delay_component_minutes(
+    *,
+    profile: str,
+    merchantable_logs_per_turn: float,
+    merchantable_volume_m3: float,
+    residue_pieces_per_turn: float,
+    residue_volume_m3: float,
+) -> tuple[float, float]:
+    """Return delay contributions (minutes) attributed to merchantable vs residue payload."""
+
+    coeffs = LEDOUX_COEFFICIENTS[profile]
+    x2 = merchantable_logs_per_turn
+    x3 = merchantable_volume_m3 * CUBIC_FT_PER_CUBIC_M
+    x4 = residue_pieces_per_turn
+    x5 = residue_volume_m3 * CUBIC_FT_PER_CUBIC_M
+    merch_minutes = coeffs["x2"] * x2 + coeffs["x3"] * x3
+    residue_minutes = coeffs["x4"] * x4 + coeffs["x5"] * x5
+    return max(0.0, merch_minutes), max(0.0, residue_minutes)
+
+
 __all__ = [
     "estimate_cable_skidding_productivity_unver_spss",
     "estimate_cable_skidding_productivity_unver_robust",
@@ -902,6 +922,7 @@ __all__ = [
     "running_skyline_variant_defaults",
     "estimate_residue_cycle_time_ledoux_minutes",
     "estimate_residue_productivity_ledoux_m3_per_pmh",
+    "ledoux_delay_component_minutes",
     "HelicopterLonglineModel",
     "HelicopterProductivityResult",
     "estimate_helicopter_longline_productivity",

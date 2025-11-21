@@ -269,6 +269,31 @@ def test_cli_skyline_ledoux_tmy45() -> None:
         residue_volume_m3=0.8,
     )
     assert f"{expected:.2f}" in result.stdout
+    assert "Merchantable Delay Component" in result.stdout
+    assert "Residue Delay Component" in result.stdout
+
+
+def test_cli_skyline_ledoux_residue_warning() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "ledoux-tmy45",
+            "--slope-distance-m",
+            "150",
+            "--merchantable-logs-per-turn",
+            "1.0",
+            "--merchantable-volume-m3",
+            "2.0",
+            "--residue-pieces-per-turn",
+            "5.0",
+            "--residue-volume-m3",
+            "2.5",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "Residue-heavy turn" in result.stdout
 
 
 def test_cli_skyline_ledoux_requires_inputs() -> None:

@@ -36,3 +36,18 @@ X3 = volume of merchantable logs. ft^3.
 X4 = number of residue logs. integer.
 X5 = volume of residue logs. ft^3.
 N = Number of yarding cycles.
+
+
+Table 4. hourly yarding costs
+
+yarding system, yarder, labour, chain saws, carriage, radio signal, loader, total hourly
+Washington 208E, 140.58, 141.11, 2.21, 10.80, 0.87, 61.78, 357.35
+Thunderbird TMY-45, 54.25, 141.11, 2.21, 0.88, 0.87, 69.13, 268.45
+Skagit BU-94, 112.24, 126.85, 2.21, 0.45, 0.87, 59.46, 302.08
+
+'Hourly costj reflect all new equipment: equipment costs were obtained from equipment dealers.
+blncludes depreciation. insurance. interest, operating costs (fuel. oil lubricants. maintenance, repair. and taxes1 and rigging.
+'Labor rates were obtained from the cost guide for empirical appraisals. CSDA Forest Service. Pacific Northwest Region 6. Revision 10.
+dHourly costs for three chainsaws.
+eIncludes radio signal with three transmitters.
+'The camage used on the Skagit BL'-94 appeared to be homemade: it resembled a Danebo Mini-G and was so appraise
