@@ -790,6 +790,46 @@ delay-free cycle minutes so you can see the impact of deflection, carriage heigh
 Telemetry rows capture all skyline predictors (horizontal/vertical distance, pieces, piece volume, carriage height,
 chord slope, lead angle, chokers, running-yarder variant) so harvest-system overrides are traceable.
 
+TR-127 predictor ranges
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Use the table below when selecting the block-specific TR-127 presets. Blocks differ in their required inputs and the
+calibrated ranges of those inputs (from Appendix VII of TR-127). Values outside these ranges still compute but the CLI
+emits calibration warnings and telemetry flags the deviation.
+
+.. list-table:: TR-127 block summary
+   :widths: 10 20 35 35
+   :header-rows: 1
+
+   * - Block
+     - Scenario
+     - Required predictors
+     - Calibrated range(s)
+   * - 1
+     - Cedar partial cut (two lateral pulls)
+     - ``latd`` (primary lateral), ``latd2`` (secondary lateral)
+     - ``latd`` 0–8 m; ``latd2`` 0–8 m
+   * - 2
+     - Spruce clearcut
+     - ``sd`` (slope distance)
+     - ``sd`` 225–770 m
+   * - 3
+     - Steep partial cut
+     - ``latd`` (lateral distance)
+     - ``latd`` 0–65 m
+   * - 4
+     - Small lateral, coastal block
+     - ``latd`` (lateral distance)
+     - ``latd`` 0–40 m
+   * - 5
+     - Mixed partial cut (IFN block)
+     - ``sd`` (slope distance), ``latd`` (lateral), ``logs`` (logs/turn)
+     - ``sd`` 70–650 m; ``latd`` 0–80 m; ``logs`` 1–10
+   * - 6
+     - Long-span partial cut (north block)
+     - ``sd`` (slope distance), ``latd`` (lateral), ``logs`` (logs/turn)
+     - ``sd`` 265–716 m; ``latd`` 0–75 m; ``logs`` 1–7
+
 Skyline cost matrix
 -------------------
 
