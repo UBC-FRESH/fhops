@@ -394,13 +394,13 @@
     {
         "machine_name": "Hi-Skid short-yard truck (FNG73)",
         "role": "skyline_hi_skid",
-        "ownership_cost_per_smh": 11.5,
-        "operating_cost_per_smh": 55.0,
+        "ownership_cost_per_smh": 11.2,
+        "operating_cost_per_smh": 54.33,
         "default_utilization": 0.75,
         "move_in_cost": 2000.0,
         "cost_base_year": 1999,
         "source": "FERIC FNG73 Field Note (1999) prototype; ownership/operating split derived from CAD 50–60k truck attachment cost, single-operator wage (1999 BC IWA +35% benefits), diesel @0.65 CAD/L, and light-maintenance allowance.",
-        "notes": "Ownership reflects a CAD 60k attachment amortized over 5 years/1,200 SMH with 10% salvage plus 8% interest/insurance (≈11.5 $/SMH). Operating bundles one operator using the June 15, 1999 IWA log-truck/yarder-driver wage (24.01 $/h +38% benefits = 33.13 $/SMH per ADV2N62 Appendix II), diesel (8 L/h × 0.65 $/L ≈5.2 $/SMH), and a 16 $/SMH allowance for tires/hydraulics/rigging. Move-in cost assumes a short lowbed haul for the truck-mounted attachment.",
+        "notes": "Ownership = (CAD 60k attachment −10% salvage)/6 000 SMH (9.0 $/SMH depreciation) + 8% interest/insurance on the average investment (2.2 $/SMH). Operating = single operator at June 15, 1999 IWA wage (24.01 $/h +38% benefits = 33.13 $/SMH, ADV2N62 Appendix II) + diesel (8 L/h × 0.65 $/L = 5.2 $/SMH) + 16 $/SMH for tires/hydraulics/rigging. Rounded total ≈11.2/54.33 $/SMH; move-in covers a short lowbed haul for the truck-mounted attachment.",
         "repair_maintenance_cost_per_smh": null,
         "repair_maintenance_reference_hours": null,
         "repair_maintenance_usage_multipliers": null

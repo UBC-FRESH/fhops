@@ -807,7 +807,10 @@ into the regressions. Available models:
   Timberjack support ratios derived from FNCY12 Tables 2–3 (see :ref:`tn258_support_method` for the full derivation). Use
   ``--fncy12-variant`` to swap between ``overall``, ``steady_state``, or ``steady_state_no_fire`` averages, and keep
   ``--lateral-distance-m`` at or below 30 m if you want to stay inside the measured tension envelope—lateral pulls beyond
-  that trigger the TN-258 warning automatically and mark the telemetry row so downstream costing knows hang-ups are likely.
+  that trigger the TN-258 warning automatically and mark the telemetry row so downstream costing knows hang-ups are likely. The
+  dataset’s ``support_monthly_summary`` enumerates July (learning/no supports) versus the August–October support months with yarder
+  SMH and the inferred Cat D8/Timberjack SMH, giving analysts a reproducible “supports vs. no supports” split even though TN-258
+  never published stopwatch utilisation.
 * ``ledoux-skagit-shotgun`` / ``ledoux-skagit-highlead`` / ``ledoux-washington-208e`` / ``ledoux-tmy45`` – LeDoux (1984) residue yarding regressions (Willamette & Mt. Hood studies). Supply slope distance plus ``--merchantable-logs-per-turn``, ``--merchantable-volume-m3``, ``--residue-pieces-per-turn``, and ``--residue-volume-m3``. Outputs report total payload, cycle minutes, and CPI-adjusted 1984 USD cost references (see ``inspect-machine --machine-role grapple_yarder_skagit_shotgun|_highlead|_washington_208e|_tmy45_residue``). These models represent US residue trials—treat as comparative benchmarks rather than BC defaults.
 * ``micro-master`` – Model 9 Micro Master yarder regression (FERIC TN-54, 1982). Defaults assume 3.2 pieces per turn (0.46 m³/piece) and the observed 5.96 min cycle at the 70 m spans logged on Vancouver Island. Supply ``--slope-distance-m`` (and optionally ``--pieces-per-cycle``, ``--piece-volume-m3``, or ``--payload-m3``) to see the computed payload, cycle minutes, and productivity; useful for compact skyline/thinning setups where Madill/Cypress presets are overkill.
 * ``tr127-block1`` … ``tr127-block6`` – FPInnovations TR-127 block-specific tower-yarders. Blocks 1 & 3 require two

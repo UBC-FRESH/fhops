@@ -42,7 +42,7 @@
       "weight_kg": 568,
       "payload_capacity_t": 6.8,
       "features": [
-        "Slack pulling capstan (13–19 mm lines)",
+        "Slack pulling capstan (13\u201319 mm lines)",
         "Passes intermediate supports",
         "Designed for clamping and lateral yarding with skyline support jacks"
       ],
@@ -81,10 +81,10 @@
     },
     "rigging_notes": [
       "Standing skyline (shotgun) with gravity outhaul; skyline rigged behind backspar.",
-      "Intermediate supports built from two 50–60 cm DBH second-growth stems ~6 m apart; rigging height 12–22 m.",
+      "Intermediate supports built from two 50\u201360 cm DBH second-growth stems ~6 m apart; rigging height 12\u201322 m.",
       "Upper guylines crossed to provide lateral stability; skyline support cable tensioned with chain-saw winch forming an 'M' configuration.",
       "Lateral yarding constrained to ~30 m each side of skyline to minimize hang-ups.",
-      "Guylines typically attached 0.5–1.5 m above tree-strap rigging point."
+      "Guylines typically attached 0.5\u20131.5 m above tree-strap rigging point."
     ],
     "lateral_yarding_limit_m": 30,
     "notes": "Skyline configured to harvest second-growth thinning corridors (clearcut history) where natural deflection was limited or convex."
@@ -113,9 +113,9 @@
   },
   "support_cost_proxies": {
     "cat_d8_backspar": {
-      "source": "FERIC FNCY12 Table 3 crew comparison (TMY45 vs Skylead) scaled by the 23% support-area share and TN-157 backspar duty fraction (≈58%).",
+      "source": "FERIC FNCY12 Table 3 crew comparison (TMY45 vs Skylead) scaled by the 23% support-area share and TN-157 backspar duty fraction (\u224858%).",
       "assumed_ratio_support_smh_per_yarder_smh": 0.3335,
-      "ratio_method": "Crew delta (5.5 vs 3.0 persons = 2.5 man-days) × support_area_fraction (0.23) × backspar_share (0.58) ⇒ 0.3335 yarder-SMH-equivalent of Cat D8 time per yarder SMH.",
+      "ratio_method": "Crew delta (5.5 vs 3.0 persons = 2.5 man-days) \u00d7 support_area_fraction (0.23) \u00d7 backspar_share (0.58) \u21d2 0.3335 yarder-SMH-equivalent of Cat D8 time per yarder SMH.",
       "cost_reference_role": "bulldozer_tr45",
       "cost_base_year_cad": 1979,
       "notes": "Treats the Cat D8 operator as the primary intermediate-support machine whenever supports are active; CPI helper inflates the TR-45 D7G rate."
@@ -123,7 +123,7 @@
     "timberjack_450_trail_support": {
       "source": "Same derivation as Cat D8: Table 3 crew delta scaled by support-area share with TN-157 non-backspar share (~42%) assigned to the Timberjack 450 helper.",
       "assumed_ratio_support_smh_per_yarder_smh": 0.2415,
-      "ratio_method": "Crew delta (2.5 man-days) × support_area_fraction (0.23) × trail_support_share (0.42) ⇒ 0.2415 yarder-SMH-equivalent of Timberjack time per yarder SMH.",
+      "ratio_method": "Crew delta (2.5 man-days) \u00d7 support_area_fraction (0.23) \u00d7 trail_support_share (0.42) \u21d2 0.2415 yarder-SMH-equivalent of Timberjack time per yarder SMH.",
       "cost_reference_role": "skidder_tr45",
       "cost_base_year_cad": 1979,
       "notes": "Represents the Timberjack 450 grapple skidder trail-support allowance for landing cleanup and strawline assists."
@@ -138,7 +138,7 @@
     "tn157_cases_analyzed": 7
   },
   "productivity": {
-    "observation_period": "July–October 1992 (67.5 productive shifts including early shutdowns)",
+    "observation_period": "July\u2013October 1992 (67.5 productive shifts including early shutdowns)",
     "volumes_m3_per_month": [
       {
         "month": "July",
@@ -160,7 +160,7 @@
       },
       {
         "month": "October",
-        "volume_m3": 2551.40,
+        "volume_m3": 2551.4,
         "productive_shifts": 13.5,
         "avg_shift_m3": 189.0
       }
@@ -174,8 +174,8 @@
     },
     "shift_hours": 10.0,
     "observations": [
-      "Learning curve in July reduced output; productivity stabilized at 166–189 m³/shift once intermediate-support rigging routines matured.",
-      "Man-day productivity ~32 m³ when including rigging crew; removing rigging-only personnel raises productivity to ~44 m³ per crew member."
+      "Learning curve in July reduced output; productivity stabilized at 166\u2013189 m\u00b3/shift once intermediate-support rigging routines matured.",
+      "Man-day productivity ~32 m\u00b3 when including rigging crew; removing rigging-only personnel raises productivity to ~44 m\u00b3 per crew member."
     ]
   },
   "tensions_and_clearance": {
@@ -280,6 +280,84 @@
   },
   "costing_status": {
     "machine_rate_entry": "grapple_yarder_tmy45",
-    "notes": "Owning/operating split reconstructed from LeDoux (1984) TMY-45 hourly costs (USD base) converted to CAD_1992 via StatCan CPI/FX and scaled to the FNCY12 5.5-person crew. Mini-Mak II + skyline support jacks treated as a CAD 33.5k attachment amortised over five years (1,200 SMH/year). Still lacks direct FERIC payroll/fuel logs—treat as interim BC rate until authentic 1992 bookkeeping surfaces."
+    "notes": "Owning/operating split reconstructed from LeDoux (1984) TMY-45 hourly costs (USD base) converted to CAD_1992 via StatCan CPI/FX and scaled to the FNCY12 5.5-person crew. Mini-Mak II + skyline support jacks treated as a CAD 33.5k attachment amortised over five years (1,200 SMH/year). Still lacks direct FERIC payroll/fuel logs\u2014treat as interim BC rate until authentic 1992 bookkeeping surfaces."
+  },
+  "support_monthly_summary": {
+    "assumptions": {
+      "support_months": [
+        "August",
+        "October",
+        "September"
+      ],
+      "shift_hours": 10.0,
+      "cat_d8_ratio_per_yarder_smh": 0.3335,
+      "timberjack450_ratio_per_yarder_smh": 0.2415,
+      "allocation_method": "support_month_share_of_support_yarder_smh"
+    },
+    "months": [
+      {
+        "month": "July",
+        "productive_shifts": 17.0,
+        "yarder_smh": 170.0,
+        "support_active": false,
+        "cat_d8_support_smh": 0.0,
+        "timberjack450_support_smh": 0.0
+      },
+      {
+        "month": "August",
+        "productive_shifts": 16.0,
+        "yarder_smh": 160.0,
+        "support_active": true,
+        "cat_d8_support_smh": 71.32277227722773,
+        "timberjack450_support_smh": 51.64752475247524
+      },
+      {
+        "month": "September",
+        "productive_shifts": 21.0,
+        "yarder_smh": 210.0,
+        "support_active": true,
+        "cat_d8_support_smh": 93.61113861386139,
+        "timberjack450_support_smh": 67.78737623762376
+      },
+      {
+        "month": "October",
+        "productive_shifts": 13.5,
+        "yarder_smh": 135.0,
+        "support_active": true,
+        "cat_d8_support_smh": 60.1785891089109,
+        "timberjack450_support_smh": 43.57759900990099
+      }
+    ],
+    "totals": {
+      "yarder_smh_all": 675.0,
+      "yarder_smh_support_months": 505.0,
+      "yarder_smh_without_support": 170.0,
+      "cat_d8_support_smh_total": 225.1125,
+      "timberjack450_support_smh_total": 163.0125
+    },
+    "buckets": {
+      "without_support": {
+        "months": [
+          "July"
+        ],
+        "productive_shifts": 17.0,
+        "yarder_smh": 170.0,
+        "volume_m3": 1743.32,
+        "avg_shift_m3": 102.54823529411765,
+        "avg_smh_m3": 10.254823529411764
+      },
+      "with_support": {
+        "months": [
+          "August",
+          "September",
+          "October"
+        ],
+        "productive_shifts": 50.5,
+        "yarder_smh": 505.0,
+        "volume_m3": 8395.9,
+        "avg_shift_m3": 166.25544554455445,
+        "avg_smh_m3": 16.625544554455445
+      }
+    }
   }
 }

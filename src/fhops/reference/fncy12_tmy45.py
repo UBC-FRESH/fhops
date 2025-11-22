@@ -35,6 +35,7 @@ class Fncy12Dataset:
     max_guyline_tension_kn: float | None
     support_cat_d8_ratio: float | None
     support_timberjack_ratio: float | None
+    support_monthly_summary: Mapping[str, Any] | None
 
 
 def _parse_month(entry: Mapping[str, Any]) -> Fncy12MonthlyProductivity:
@@ -108,6 +109,7 @@ def load_fncy12_dataset() -> Fncy12Dataset:
         max_guyline_tension_kn=max_guyline,
         support_cat_d8_ratio=_support_ratio(payload, "cat_d8_backspar"),
         support_timberjack_ratio=_support_ratio(payload, "timberjack_450_trail_support"),
+        support_monthly_summary=payload.get("support_monthly_summary"),
     )
 
 
