@@ -1140,9 +1140,161 @@ def system_productivity_overrides(
     return None
 
 
+_ROAD_SOIL_PROFILES = ("fnrb3_d7h", "adv4n7_compaction")
+
+SYSTEM_ROAD_DEFAULTS: dict[str, dict[str, object]] = {
+    "cable_running": {
+        "machine_slug": "caterpillar_235_hydraulic_backhoe",
+        "road_length_m": 150.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+    "cable_highlead_tn147": {
+        "machine_slug": "caterpillar_235_hydraulic_backhoe",
+        "road_length_m": 120.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+    "cable_running_tr122_extended": {
+        "machine_slug": "caterpillar_235_hydraulic_backhoe",
+        "road_length_m": 130.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+    "cable_running_tr122_shelterwood": {
+        "machine_slug": "caterpillar_235_hydraulic_backhoe",
+        "road_length_m": 140.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+    "cable_running_tr122_clearcut": {
+        "machine_slug": "caterpillar_235_hydraulic_backhoe",
+        "road_length_m": 110.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+    "cable_standing": {
+        "machine_slug": "caterpillar_235_hydraulic_backhoe",
+        "road_length_m": 90.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+    "cable_standing_tr125_single": {
+        "machine_slug": "caterpillar_235_hydraulic_backhoe",
+        "road_length_m": 95.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+    "cable_standing_tr125_strip": {
+        "machine_slug": "caterpillar_235_hydraulic_backhoe",
+        "road_length_m": 110.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+    "cable_partial_tr127_block1": {
+        "machine_slug": "caterpillar_235_hydraulic_backhoe",
+        "road_length_m": 100.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+    "cable_partial_tr127_block5": {
+        "machine_slug": "caterpillar_235_hydraulic_backhoe",
+        "road_length_m": 120.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+    "cable_running_adv5n28_clearcut": {
+        "machine_slug": "american_750c_line_dipper_shovel",
+        "road_length_m": 420.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+    "cable_running_adv5n28_shelterwood": {
+        "machine_slug": "american_750c_line_dipper_shovel",
+        "road_length_m": 320.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+    "cable_running_fncy12": {
+        "machine_slug": "caterpillar_235_hydraulic_backhoe",
+        "road_length_m": 220.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+    "cable_running_sr54": {
+        "machine_slug": "caterpillar_235_hydraulic_backhoe",
+        "road_length_m": 130.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+    "cable_running_tr75_bunched": {
+        "machine_slug": "caterpillar_235_hydraulic_backhoe",
+        "road_length_m": 110.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+    "cable_running_tr75_handfelled": {
+        "machine_slug": "caterpillar_235_hydraulic_backhoe",
+        "road_length_m": 110.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+    "cable_salvage_grapple": {
+        "machine_slug": "caterpillar_235_hydraulic_backhoe",
+        "road_length_m": 160.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+    "cable_micro_ecologger": {
+        "machine_slug": "caterpillar_d8h_bulldozer",
+        "road_length_m": 60.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+    "cable_micro_gabriel": {
+        "machine_slug": "caterpillar_d8h_bulldozer",
+        "road_length_m": 60.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+    "cable_micro_christie": {
+        "machine_slug": "caterpillar_d8h_bulldozer",
+        "road_length_m": 60.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+    "cable_micro_teletransporteur": {
+        "machine_slug": "caterpillar_d8h_bulldozer",
+        "road_length_m": 60.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+    "cable_micro_timbermaster": {
+        "machine_slug": "caterpillar_d8h_bulldozer",
+        "road_length_m": 60.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+    "cable_micro_hi_skid": {
+        "machine_slug": "caterpillar_d8h_bulldozer",
+        "road_length_m": 45.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
+}
+
+
+def get_system_road_defaults(system_id: str) -> Mapping[str, object] | None:
+    defaults = SYSTEM_ROAD_DEFAULTS.get(system_id)
+    if defaults is None:
+        return None
+    return dict(defaults)
+
+
 __all__ = [
     "SystemJob",
     "HarvestSystem",
     "default_system_registry",
     "system_productivity_overrides",
+    "get_system_road_defaults",
 ]

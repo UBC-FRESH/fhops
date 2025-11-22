@@ -7,20 +7,1148 @@ data:
   landings: data/landings.csv
   calendar: data/calendar.csv
   prod_rates: data/prod_rates.csv
+  road_construction: data/road_construction.csv
   crew_assignments: data/crew_assignments.csv
 timeline:
   shifts:
   - name: S1
-    hours: 9.145076361143277
+    hours: 8.816655211256588
     shifts_per_day: 2
   blackouts:
+  - start_day: 2
+    end_day: 4
+    reason: synthetic-blackout
   - start_day: 6
-    end_day: 8
+    end_day: 7
     reason: synthetic-blackout
-  - start_day: 10
-    end_day: 12
+  - start_day: 12
+    end_day: 14
     reason: synthetic-blackout
-  - start_day: 14
-    end_day: 15
+  - start_day: 16
+    end_day: 18
     reason: synthetic-blackout
   days_per_week: 7
+harvest_systems:
+  ground_fb_skid:
+    system_id: ground_fb_skid
+    jobs:
+    - name: felling
+      machine_role: feller_buncher
+      prerequisites: []
+      productivity_overrides: null
+    - name: primary_transport
+      machine_role: grapple_skidder
+      prerequisites:
+      - felling
+      productivity_overrides:
+        grapple_skidder_model: adv6n7
+        skidder_trail_pattern: single_ghost_18m
+        skidder_decking_condition: constrained_decking
+        skidder_extraction_distance_m: 85.0
+        skidder_adv6n7_decking_mode: skidder_loader
+        skidder_adv6n7_payload_m3: 7.69
+        skidder_adv6n7_utilisation: 0.85
+        skidder_adv6n7_delay_minutes: 0.12
+        skidder_adv6n7_support_ratio: 0.4
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides:
+        loader_model: tn261
+        loader_piece_size_m3: 1.05
+        loader_distance_m: 115.0
+        loader_slope_percent: 8.0
+        loader_bunched: true
+        loader_delay_multiplier: 0.95
+    environment: ground-based
+    notes: "Feller-buncher \u2192 grapple skidder \u2192 processor \u2192 loader/trucks."
+  ground_fb_loader_liveheel:
+    system_id: ground_fb_loader_liveheel
+    jobs:
+    - name: felling
+      machine_role: feller_buncher
+      prerequisites: []
+      productivity_overrides: null
+    - name: primary_transport
+      machine_role: grapple_skidder
+      prerequisites:
+      - felling
+      productivity_overrides:
+        grapple_skidder_model: adv6n7
+        skidder_trail_pattern: single_ghost_18m
+        skidder_decking_condition: constrained_decking
+        skidder_extraction_distance_m: 85.0
+        skidder_adv6n7_decking_mode: skidder_loader
+        skidder_adv6n7_payload_m3: 7.69
+        skidder_adv6n7_utilisation: 0.85
+        skidder_adv6n7_delay_minutes: 0.12
+        skidder_adv6n7_support_ratio: 0.4
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides:
+        loader_model: barko450
+        loader_barko_scenario: ground_skid_block
+    environment: ground-based
+    notes: "Feller-buncher \u2192 grapple skidder \u2192 processor \u2192 Barko live-heel\
+      \ loader (TN-46)."
+  ground_hand_shovel:
+    system_id: ground_hand_shovel
+    jobs:
+    - name: felling
+      machine_role: hand_faller
+      prerequisites: []
+      productivity_overrides: null
+    - name: primary_transport
+      machine_role: shovel_logger
+      prerequisites:
+      - felling
+      productivity_overrides:
+        shovel_passes: 3
+        shovel_swing_length: 15.0
+        shovel_strip_length: 90.0
+        shovel_volume_per_ha: 300.0
+        shovel_speed_index: 0.6
+        shovel_speed_return: 0.6
+        shovel_speed_serpentine: 0.6
+        shovel_effective_minutes: 45.0
+        shovel_slope_class: uphill
+        shovel_bunching: hand_scattered
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides:
+        loader_model: adv5n1
+        loader_distance_m: 90.0
+        loader_slope_class: '0_10'
+        loader_payload_m3: 2.77
+        loader_utilisation: 0.93
+    environment: ground-based
+    notes: "Hand fall \u2192 shovel logger \u2192 processor \u2192 loader/trucks."
+  ground_fb_shovel:
+    system_id: ground_fb_shovel
+    jobs:
+    - name: felling
+      machine_role: feller_buncher
+      prerequisites: []
+      productivity_overrides: null
+    - name: primary_transport
+      machine_role: shovel_logger
+      prerequisites:
+      - felling
+      productivity_overrides:
+        shovel_passes: 4
+        shovel_swing_length: 16.15
+        shovel_strip_length: 100.0
+        shovel_volume_per_ha: 375.0
+        shovel_speed_index: 0.7
+        shovel_speed_return: 0.7
+        shovel_speed_serpentine: 0.7
+        shovel_effective_minutes: 50.0
+        shovel_slope_class: level
+        shovel_bunching: feller_bunched
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: ground-based
+    notes: "Feller-buncher \u2192 shovel logger \u2192 processor \u2192 loader/trucks."
+  ground_salvage_grapple:
+    system_id: ground_salvage_grapple
+    jobs:
+    - name: felling
+      machine_role: feller_buncher
+      prerequisites: []
+      productivity_overrides: null
+    - name: primary_transport
+      machine_role: grapple_skidder
+      prerequisites:
+      - felling
+      productivity_overrides:
+        grapple_skidder_model: adv6n7
+        skidder_trail_pattern: single_ghost_18m
+        skidder_decking_condition: constrained_decking
+        skidder_extraction_distance_m: 85.0
+        skidder_adv6n7_decking_mode: skidder_loader
+        skidder_adv6n7_payload_m3: 7.69
+        skidder_adv6n7_utilisation: 0.85
+        skidder_adv6n7_delay_minutes: 0.12
+        skidder_adv6n7_support_ratio: 0.4
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides:
+        loader_model: tn261
+        loader_piece_size_m3: 1.05
+        loader_distance_m: 115.0
+        loader_slope_percent: 8.0
+        loader_bunched: true
+        loader_delay_multiplier: 0.95
+    environment: ground-based salvage
+    notes: ADV1N5 salvage chain (buck/burn sorting, double-ring debarkers, charcoal
+      dust controls) with grapple skidding feeding roadside processing.
+  thinning_adv1n12_forwarder:
+    system_id: thinning_adv1n12_forwarder
+    jobs:
+    - name: felling_processing
+      machine_role: single_grip_harvester
+      prerequisites: []
+      productivity_overrides:
+        ctl_harvester_model: adv5n30
+        ctl_removal_fraction: 0.5
+    - name: primary_transport
+      machine_role: forwarder
+      prerequisites:
+      - felling_processing
+      productivity_overrides:
+        forwarder_model: adv1n12-shortwood
+        forwarder_extraction_distance_m: 350.0
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    environment: commercial thinning
+    notes: Valmet 901C + 646 shortwood thinning (ADV1N12) with extended forwarding
+      distances.
+  thinning_adv1n12_fulltree:
+    system_id: thinning_adv1n12_fulltree
+    jobs:
+    - name: felling
+      machine_role: hand_faller
+      prerequisites: []
+      productivity_overrides: null
+    - name: primary_transport
+      machine_role: grapple_skidder
+      prerequisites:
+      - felling
+      productivity_overrides:
+        grapple_skidder_model: adv1n12-fulltree
+        skidder_extraction_distance_m: 225.0
+        skidder_trail_pattern: single_ghost_18m
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: commercial thinning
+    notes: Semi-mechanized lop-and-scatter thinning (ADV1N12) with Timberjack 240
+      cable skidder.
+  ctl:
+    system_id: ctl
+    jobs:
+    - name: felling_processing
+      machine_role: single_grip_harvester
+      prerequisites: []
+      productivity_overrides:
+        ctl_harvester_model: kellogg1994
+        ctl_dbh_cm: 23.0
+    - name: primary_transport
+      machine_role: forwarder
+      prerequisites:
+      - felling_processing
+      productivity_overrides:
+        forwarder_model: kellogg-sawlog
+        forwarder_volume_per_load_m3: 8.2
+        forwarder_distance_out_m: 320.0
+        forwarder_travel_in_unit_m: 78.0
+        forwarder_distance_in_m: 320.0
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    environment: cut-to-length
+    notes: Harvester processes at stump, forwarder hauls shortwood direct to trucks.
+  steep_tethered:
+    system_id: steep_tethered
+    jobs:
+    - name: felling
+      machine_role: tethered_harvester
+      prerequisites: []
+      productivity_overrides: null
+    - name: primary_transport
+      machine_role: tethered_shovel_or_skidder
+      prerequisites:
+      - felling
+      productivity_overrides: null
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides:
+        loader_model: adv2n26
+        loader_travel_empty_m: 320.0
+        loader_stems_per_cycle: 18.0
+        loader_stem_volume_m3: 1.35
+        loader_utilisation: 0.77
+    environment: steep-slope mechanised
+    notes: "Winch-assist harvester/feller \u2192 tethered shovel/skidder \u2192 processor\
+      \ \u2192 loader."
+  cable_standing:
+    system_id: cable_standing
+    jobs:
+    - name: felling
+      machine_role: hand_or_mech_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: douglas_fir
+        manual_falling_dbh_cm: 42.5
+    - name: primary_transport
+      machine_role: skyline_yarder
+      prerequisites:
+      - felling
+      productivity_overrides:
+        skyline_model: aubuchon-kramer
+        skyline_logs_per_turn: 3.8
+        skyline_average_log_volume_m3: 0.45
+        skyline_crew_size: 4.0
+        skyline_carriage_height_m: 11.0
+        skyline_chordslope_percent: -15.0
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-standing skyline
+    notes: "Hand/mech fall \u2192 skyline yarder with chokers \u2192 landing processor/hand\
+      \ buck \u2192 loader."
+  cable_standing_tr125_single:
+    system_id: cable_standing_tr125_single
+    jobs:
+    - name: felling
+      machine_role: hand_or_mech_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: douglas_fir
+        manual_falling_dbh_cm: 42.5
+    - name: primary_transport
+      machine_role: skyline_yarder
+      prerequisites:
+      - felling
+      productivity_overrides:
+        skyline_model: tr125-single-span
+        skyline_lateral_distance_m: 25.0
+        skyline_payload_m3: 1.6
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-standing skyline
+    notes: TR125 single-span standing skyline (Skylead C40) for clearcut corridors.
+  cable_standing_tr125_strip:
+    system_id: cable_standing_tr125_strip
+    jobs:
+    - name: felling
+      machine_role: hand_or_mech_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: douglas_fir
+        manual_falling_dbh_cm: 42.5
+    - name: primary_transport
+      machine_role: skyline_yarder
+      prerequisites:
+      - felling
+      productivity_overrides:
+        skyline_model: tr125-multi-span
+        skyline_lateral_distance_m: 40.0
+        skyline_payload_m3: 1.6
+        tr119_treatment: strip_cut
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-standing skyline
+    notes: TR125 multi-span standing skyline with intermediate supports for strip
+      cuts (TR119).
+  cable_running:
+    system_id: cable_running
+    jobs:
+    - name: felling
+      machine_role: hand_or_mech_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: douglas_fir
+        manual_falling_dbh_cm: 52.5
+    - name: primary_transport
+      machine_role: grapple_yarder
+      prerequisites:
+      - felling
+      productivity_overrides:
+        skyline_model: mcneel-running
+        skyline_horizontal_distance_m: 280.0
+        skyline_vertical_distance_m: 40.0
+        skyline_pieces_per_cycle: 3.0
+        skyline_piece_volume_m3: 1.8
+        skyline_running_variant: yarder_a
+        grapple_yarder_model: tn157
+        grapple_yarder_tn157_case: combined
+        grapple_yarder_turn_volume_m3: 3.8
+        grapple_yarder_yarding_distance_m: 83.0
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides:
+        processor_model: adv7n3
+        processor_adv7n3_machine: hyundai_210
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-running skyline
+    notes: TN-157 combined (Cypress 7280B + UH14 backspar) defaults for running skyline
+      corridors.
+  cable_running_tn157_combined:
+    system_id: cable_running_tn157_combined
+    jobs:
+    - name: felling
+      machine_role: hand_or_mech_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: douglas_fir
+        manual_falling_dbh_cm: 52.5
+    - name: primary_transport
+      machine_role: grapple_yarder
+      prerequisites:
+      - felling
+      productivity_overrides:
+        skyline_model: mcneel-running
+        skyline_horizontal_distance_m: 280.0
+        skyline_vertical_distance_m: 40.0
+        skyline_pieces_per_cycle: 3.0
+        skyline_piece_volume_m3: 1.8
+        skyline_running_variant: yarder_a
+        grapple_yarder_model: tn157
+        grapple_yarder_tn157_case: combined
+        grapple_yarder_turn_volume_m3: 3.8
+        grapple_yarder_yarding_distance_m: 83.0
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides:
+        processor_model: adv7n3
+        processor_adv7n3_machine: hyundai_210
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-running skyline
+    notes: Explicit TN-157 combined preset (alias of cable_running) so datasets can
+      reference the case directly.
+  cable_highlead_tn147:
+    system_id: cable_highlead_tn147
+    jobs:
+    - name: felling
+      machine_role: hand_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: douglas_fir
+        manual_falling_dbh_cm: 50.0
+    - name: primary_transport
+      machine_role: grapple_yarder
+      prerequisites:
+      - felling
+      productivity_overrides:
+        grapple_yarder_model: tn147
+        grapple_yarder_tn147_case: combined
+        grapple_yarder_turn_volume_m3: 5.48
+        grapple_yarder_yarding_distance_m: 138.0
+        grapple_yarder_stems_per_cycle: 2.1
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides:
+        processor_model: adv7n3
+        processor_adv7n3_machine: hyundai_210
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-highlead skyline
+    notes: "TN-147 Madill 009 highlead cases (hand fall \u2192 highlead grapple \u2192\
+      \ landing processor \u2192 loader)."
+  cable_running_tr122_extended:
+    system_id: cable_running_tr122_extended
+    jobs:
+    - name: felling
+      machine_role: hand_or_mech_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: douglas_fir
+        manual_falling_dbh_cm: 40.0
+    - name: primary_transport
+      machine_role: grapple_yarder
+      prerequisites:
+      - felling
+      productivity_overrides:
+        grapple_yarder_model: tr122-extended
+        grapple_yarder_turn_volume_m3: 2.04
+        grapple_yarder_yarding_distance_m: 104.0
+        grapple_yarder_stems_per_cycle: 2.2
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-running skyline
+    notes: TR-122 Roberts Creek extended-rotation treatment (SLH 78 running skyline).
+  cable_running_tr122_shelterwood:
+    system_id: cable_running_tr122_shelterwood
+    jobs:
+    - name: felling
+      machine_role: hand_or_mech_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: douglas_fir
+        manual_falling_dbh_cm: 40.0
+    - name: primary_transport
+      machine_role: grapple_yarder
+      prerequisites:
+      - felling
+      productivity_overrides:
+        grapple_yarder_model: tr122-shelterwood
+        grapple_yarder_turn_volume_m3: 2.18
+        grapple_yarder_yarding_distance_m: 97.0
+        grapple_yarder_stems_per_cycle: 3.2
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-running skyline
+    notes: TR-122 Roberts Creek uniform shelterwood running skyline defaults.
+  cable_running_tr122_clearcut:
+    system_id: cable_running_tr122_clearcut
+    jobs:
+    - name: felling
+      machine_role: hand_or_mech_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: douglas_fir
+        manual_falling_dbh_cm: 40.0
+    - name: primary_transport
+      machine_role: grapple_yarder
+      prerequisites:
+      - felling
+      productivity_overrides:
+        grapple_yarder_model: tr122-clearcut
+        grapple_yarder_turn_volume_m3: 1.45
+        grapple_yarder_yarding_distance_m: 106.0
+        grapple_yarder_stems_per_cycle: 2.6
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-running skyline
+    notes: "TR-122 Roberts Creek clearcut (short 106 m spans, 1.45 m\xB3 cycle volume)."
+  cable_partial_tr127_block1:
+    system_id: cable_partial_tr127_block1
+    jobs:
+    - name: felling
+      machine_role: hand_or_mech_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: douglas_fir
+        manual_falling_dbh_cm: 42.5
+    - name: primary_transport
+      machine_role: skyline_yarder
+      prerequisites:
+      - felling
+      productivity_overrides:
+        skyline_model: tr127-block1
+        skyline_lateral_distance_m: 15.0
+        skyline_lateral_distance2_m: 6.0
+        tr119_treatment: 65_retention
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-standing skyline
+    notes: TR127 Block 1 standing skyline (two lateral distances) representing 65%
+      retention trials.
+  cable_partial_tr127_block5:
+    system_id: cable_partial_tr127_block5
+    jobs:
+    - name: felling
+      machine_role: hand_or_mech_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: douglas_fir
+        manual_falling_dbh_cm: 42.5
+    - name: primary_transport
+      machine_role: skyline_yarder
+      prerequisites:
+      - felling
+      productivity_overrides:
+        skyline_model: tr127-block5
+        skyline_lateral_distance_m: 16.0
+        skyline_num_logs: 3.0
+        skyline_payload_m3: 1.6
+        tr119_treatment: 70_retention
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-standing skyline
+    notes: TR127 Block 5 (partial cut) with 70% retention defaults and TN-258 lateral
+      guidance.
+  cable_running_adv5n28_clearcut:
+    system_id: cable_running_adv5n28_clearcut
+    jobs:
+    - name: felling
+      machine_role: hand_or_mech_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: douglas_fir
+        manual_falling_dbh_cm: 52.5
+    - name: primary_transport
+      machine_role: grapple_yarder
+      prerequisites:
+      - felling
+      productivity_overrides:
+        skyline_model: mcneel-running
+        skyline_horizontal_distance_m: 400.0
+        skyline_vertical_distance_m: 60.0
+        skyline_pieces_per_cycle: 3.0
+        skyline_piece_volume_m3: 1.8
+        skyline_running_variant: yarder_a
+        grapple_yarder_model: adv5n28-clearcut
+        grapple_yarder_turn_volume_m3: 2.2
+        grapple_yarder_yarding_distance_m: 480.0
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides:
+        processor_model: adv7n3
+        processor_adv7n3_machine: john_deere_892
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-running skyline
+    notes: ADV5N28 clearcut conversion (Madill 071 + motorized carriage replacing
+      helicopter layout).
+  cable_running_adv5n28_shelterwood:
+    system_id: cable_running_adv5n28_shelterwood
+    jobs:
+    - name: felling
+      machine_role: hand_or_mech_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: douglas_fir
+        manual_falling_dbh_cm: 42.5
+    - name: primary_transport
+      machine_role: grapple_yarder
+      prerequisites:
+      - felling
+      productivity_overrides:
+        skyline_model: mcneel-running
+        skyline_horizontal_distance_m: 350.0
+        skyline_vertical_distance_m: 55.0
+        skyline_pieces_per_cycle: 3.0
+        skyline_piece_volume_m3: 1.6
+        skyline_running_variant: yarder_a
+        grapple_yarder_model: adv5n28-shelterwood
+        grapple_yarder_turn_volume_m3: 1.8
+        grapple_yarder_yarding_distance_m: 330.0
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides:
+        processor_model: adv7n3
+        processor_adv7n3_machine: hyundai_210
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-running skyline
+    notes: ADV5N28 irregular-shelterwood conversion (long downhill spans through riparian
+      corridors).
+  cable_running_sr54:
+    system_id: cable_running_sr54
+    jobs:
+    - name: felling
+      machine_role: feller_buncher
+      prerequisites: []
+      productivity_overrides: null
+    - name: primary_transport
+      machine_role: grapple_yarder
+      prerequisites:
+      - felling
+      productivity_overrides:
+        grapple_yarder_model: sr54
+        grapple_yarder_turn_volume_m3: 3.1
+        grapple_yarder_yarding_distance_m: 82.0
+        grapple_yarder_stems_per_cycle: 2.9
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides:
+        processor_model: adv7n3
+        processor_adv7n3_machine: hyundai_210
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-running skyline
+    notes: SR-54 Washington 118A grapple yarder on mechanically bunched coastal second-growth.
+  cable_running_tr75_bunched:
+    system_id: cable_running_tr75_bunched
+    jobs:
+    - name: felling
+      machine_role: feller_buncher
+      prerequisites: []
+      productivity_overrides: null
+    - name: primary_transport
+      machine_role: grapple_yarder
+      prerequisites:
+      - felling
+      productivity_overrides:
+        grapple_yarder_model: tr75-bunched
+        grapple_yarder_turn_volume_m3: 1.29
+        grapple_yarder_yarding_distance_m: 71.0
+        grapple_yarder_stems_per_cycle: 2.18
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides:
+        processor_model: adv7n3
+        processor_adv7n3_machine: hyundai_210
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-running skyline
+    notes: TR-75 System 1 (mechanically felled/bunched Madill 084 + Hitachi UH14 backspar).
+  cable_running_tr75_handfelled:
+    system_id: cable_running_tr75_handfelled
+    jobs:
+    - name: felling
+      machine_role: hand_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: douglas_fir
+        manual_falling_dbh_cm: 45.0
+    - name: primary_transport
+      machine_role: grapple_yarder
+      prerequisites:
+      - felling
+      productivity_overrides:
+        grapple_yarder_model: tr75-handfelled
+        grapple_yarder_turn_volume_m3: 1.28
+        grapple_yarder_yarding_distance_m: 76.6
+        grapple_yarder_stems_per_cycle: 1.41
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides:
+        processor_model: adv7n3
+        processor_adv7n3_machine: hyundai_210
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-running skyline
+    notes: TR-75 System 2 (hand-felled second-growth yarded by Madill 084).
+  cable_running_fncy12:
+    system_id: cable_running_fncy12
+    jobs:
+    - name: felling
+      machine_role: hand_or_mech_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: douglas_fir
+        manual_falling_dbh_cm: 52.5
+    - name: primary_transport
+      machine_role: skyline_yarder
+      prerequisites:
+      - felling
+      productivity_overrides:
+        skyline_model: fncy12-tmy45
+        skyline_logs_per_turn: 3.6
+        skyline_average_log_volume_m3: 1.15
+        skyline_crew_size: 5.5
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides:
+        processor_model: adv7n3
+        processor_adv7n3_machine: john_deere_892
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-running skyline
+    notes: Thunderbird TMY45 + Mini-Mak II (FNCY12/TN258) intermediate-support skyline
+      corridors.
+  cable_micro_ecologger:
+    system_id: cable_micro_ecologger
+    jobs:
+    - name: felling
+      machine_role: hand_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: hemlock
+        manual_falling_dbh_cm: 32.5
+    - name: primary_transport
+      machine_role: skyline_ecologger_tn173
+      prerequisites:
+      - felling
+      productivity_overrides:
+        skyline_model: tn173-ecologger
+        skyline_pieces_per_cycle: 2.9
+        skyline_piece_volume_m3: 0.34
+        skyline_crew_size: 4.0
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-short-span skyline
+    notes: "TN173 RMS Ecologger uphill skyline (\u22480.34 m\xB3 pieces, 2.9 logs/turn,\
+      \ four-person crew)."
+  cable_micro_gabriel:
+    system_id: cable_micro_gabriel
+    jobs:
+    - name: felling
+      machine_role: hand_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: hemlock
+        manual_falling_dbh_cm: 32.5
+    - name: primary_transport
+      machine_role: skyline_gabriel_tn173
+      prerequisites:
+      - felling
+      productivity_overrides:
+        skyline_model: tn173-gabriel
+        skyline_pieces_per_cycle: 2.2
+        skyline_piece_volume_m3: 0.16
+        skyline_crew_size: 4.0
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-short-span skyline
+    notes: "TN173 Gabriel truck yarder (0.16 m\xB3 pieces, skid-pan highlead, road-portable)."
+  cable_micro_christie:
+    system_id: cable_micro_christie
+    jobs:
+    - name: felling
+      machine_role: hand_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: hemlock
+        manual_falling_dbh_cm: 34.0
+    - name: primary_transport
+      machine_role: skyline_christie_tn173
+      prerequisites:
+      - felling
+      productivity_overrides:
+        skyline_model: tn173-christie
+        skyline_pieces_per_cycle: 1.3
+        skyline_piece_volume_m3: 0.49
+        skyline_crew_size: 2.0
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-short-span skyline
+    notes: "TN173 Christie tower yarder hot-yarding (0.49 m\xB3 pieces, two-person\
+      \ crew)."
+  cable_micro_teletransporteur:
+    system_id: cable_micro_teletransporteur
+    jobs:
+    - name: felling
+      machine_role: hand_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: hemlock
+        manual_falling_dbh_cm: 30.0
+    - name: primary_transport
+      machine_role: skyline_teletransporteur_tn173
+      prerequisites:
+      - felling
+      productivity_overrides:
+        skyline_model: tn173-teletransporteur
+        skyline_pieces_per_cycle: 3.9
+        skyline_piece_volume_m3: 0.21
+        skyline_crew_size: 2.0
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-short-span skyline
+    notes: "TN173 T\xE9l\xE9transporteur self-propelled carriage (0.21 m\xB3 pieces,\
+      \ two-person chaser/faller crew)."
+  cable_micro_timbermaster:
+    system_id: cable_micro_timbermaster
+    jobs:
+    - name: felling
+      machine_role: hand_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: hemlock
+        manual_falling_dbh_cm: 35.0
+    - name: primary_transport
+      machine_role: skyline_timbermaster_tn173
+      prerequisites:
+      - felling
+      productivity_overrides:
+        skyline_model: tn173-timbermaster-1985
+        skyline_pieces_per_cycle: 2.2
+        skyline_piece_volume_m3: 0.54
+        skyline_crew_size: 4.0
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-short-span skyline
+    notes: "TN173 Smith Timbermaster downhill skyline (0.54 m\xB3 pieces, trailer\
+      \ tower)."
+  cable_micro_hi_skid:
+    system_id: cable_micro_hi_skid
+    jobs:
+    - name: felling
+      machine_role: hand_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: hemlock
+        manual_falling_dbh_cm: 22.5
+    - name: primary_transport
+      machine_role: skyline_hi_skid
+      prerequisites:
+      - felling
+      productivity_overrides:
+        skyline_model: hi-skid
+        skyline_pieces_per_cycle: 1.0
+        skyline_piece_volume_m3: 0.24
+        skyline_crew_size: 1.0
+    environment: cable-short-span skyline
+    notes: FERIC FNG73 Hi-Skid truck (100 m reach, self-loading/hauling).
+  cable_salvage_grapple:
+    system_id: cable_salvage_grapple
+    jobs:
+    - name: felling
+      machine_role: hand_or_mech_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: douglas_fir
+        manual_falling_dbh_cm: 40.0
+    - name: primary_transport
+      machine_role: grapple_yarder
+      prerequisites:
+      - felling
+      productivity_overrides:
+        skyline_model: mcneel-running
+        skyline_horizontal_distance_m: 280.0
+        skyline_vertical_distance_m: 40.0
+        skyline_pieces_per_cycle: 3.0
+        skyline_piece_volume_m3: 1.8
+        skyline_running_variant: yarder_a
+        grapple_yarder_model: tn157
+        grapple_yarder_tn157_case: combined
+        grapple_yarder_turn_volume_m3: 3.8
+        grapple_yarder_yarding_distance_m: 83.0
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides:
+        processor_model: adv7n3
+        processor_adv7n3_machine: hyundai_210
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: cable-running salvage
+    notes: ADV1N5 salvage workflow for burned slopes (parallel bunching + grapple
+      yarding, charcoal handling, portable mill prep).
+  helicopter:
+    system_id: helicopter
+    jobs:
+    - name: felling
+      machine_role: hand_faller
+      prerequisites: []
+      productivity_overrides:
+        manual_falling_enabled: true
+        manual_falling_species: cedar
+        manual_falling_dbh_cm: 52.5
+    - name: primary_transport
+      machine_role: helicopter_longline
+      prerequisites:
+      - felling
+      productivity_overrides:
+        helicopter_model: bell214b
+        helicopter_flight_distance_m: 900.0
+        helicopter_load_factor: 0.7
+        helicopter_delay_minutes: 0.5
+        helicopter_weight_to_volume: 2700.0
+    - name: processing
+      machine_role: processor
+      prerequisites:
+      - primary_transport
+      productivity_overrides: null
+    - name: loading
+      machine_role: loader
+      prerequisites:
+      - processing
+      productivity_overrides: null
+    environment: helicopter
+    notes: "Hand fallers \u2192 helicopter longline \u2192 landing/hand buck (or direct\
+      \ to water)."

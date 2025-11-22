@@ -322,6 +322,35 @@ def test_estimate_cost_selects_named_road_job(tmp_path: Path) -> None:
     assert "90.0 m" in result.stdout
 
 
+def test_estimate_cost_logs_telemetry_with_road_defaults(tmp_path: Path) -> None:
+    scenario_yaml = _build_dataset_with_road(tmp_path)
+    telemetry_log = tmp_path / "telemetry.jsonl"
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-cost",
+            "--dataset",
+            str(scenario_yaml),
+            "--machine",
+            "Y1",
+            "--productivity",
+            "25",
+            "--utilisation",
+            "0.85",
+            "--telemetry-log",
+            str(telemetry_log),
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    payload = json.loads(telemetry_log.read_text(encoding="utf-8").strip())
+    assert payload["command"] == "dataset estimate-cost"
+    outputs = payload["outputs"]
+    assert outputs["road"] is not None
+    assert outputs["road"]["machine_slug"] == "caterpillar_235_hydraulic_backhoe"
+    assert outputs["road"]["road_length_m"] == 150.0
+    assert payload["inputs"]["road_job_id"] == "RC1"
+
+
 def test_estimate_cost_with_road_addon() -> None:
     result = runner.invoke(
         dataset_app,

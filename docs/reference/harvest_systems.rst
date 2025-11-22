@@ -974,7 +974,10 @@ implied number of stations (30.48 m each) and estimated shifts so you can sani
 into a planning sheet. When a scenario carries a ``road_construction`` table (id, TR-28 slug, length, mobilisation flag, soil profile
 IDs), ``fhops.dataset estimate-cost --dataset …`` will pull those defaults automatically (use ``--road-job-id`` if multiple entries
 exist) and print the structured FNRB3/ADV4N7 soil profiles defined in ``data/reference/soil_protection_profiles.json`` so planners
-see exactly which compaction or ground-pressure constraints were assumed.
+see exactly which compaction or ground-pressure constraints were assumed. Skyline/cable harvest-system templates now push those
+road defaults for you: any block that references a preset listed in ``fhops.scheduling.systems.SYSTEM_ROAD_DEFAULTS`` causes the
+scenario (and the synthetic dataset bundles) to emit the matching ``road_construction`` row, so ``estimate-cost`` and telemetry
+immediately reflect the paired TR-28 machine, length, mobilisation flag, and soil-profile IDs without touching the CSVs.
 
 Handfalling Cost Reference
 --------------------------

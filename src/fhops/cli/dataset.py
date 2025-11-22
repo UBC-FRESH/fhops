@@ -6889,6 +6889,11 @@ def estimate_cost_cmd(
         "--road-soil-profile",
         help="Soil profile ID (e.g., fnrb3_d7h). Repeat flag to include multiple profiles.",
     ),
+    telemetry_log: Path | None = typer.Option(
+        None,
+        "--telemetry-log",
+        help="Append machine-cost inputs/output (including road add-ons) to a JSONL telemetry file.",
+    ),
 ):
     """Estimate $/m³ given rental rate, utilisation, and (optionally) Lahrsen stand inputs."""
 
@@ -6971,6 +6976,7 @@ def estimate_cost_cmd(
     repair_usage_bucket: tuple[int, float] | None = None
     road_cost_estimate: TR28CostEstimate | None = None
     road_soil_profiles: list[SoilProfile] = []
+    resolved_road_include: bool | None = None
 
     if machine_role is not None:
         machine_entry = _resolve_machine_rate(machine_role)
@@ -7010,6 +7016,7 @@ def estimate_cost_cmd(
             if selected_road_entry
             else True
         )
+        resolved_road_include = include_flag
         try:
             road_cost_estimate = estimate_tr28_road_cost(
                 resolved_machine,
@@ -7096,6 +7103,58 @@ def estimate_cost_cmd(
             "samples": 0,
         }
 
+    telemetry_inputs: dict[str, object | None] = {
+        "dataset": dataset_name,
+        "scenario_name": scenario.name if scenario else None,
+        "machine_id": scenario_machine.id if scenario_machine else None,
+        "machine_role": machine_role,
+        "machine_role_source": "dataset" if dataset_name else "cli",
+        "usage_hours": usage_hours,
+        "include_repair": include_repair,
+        "utilisation": utilisation,
+        "productivity_mode": prod_info["method"],
+        "productivity_direct": productivity if prod_info["method"] == "direct" else None,
+        "avg_stem_size_m3": avg_stem_size,
+        "volume_per_ha_m3": volume_per_ha,
+        "stem_density_per_ha": stem_density,
+        "ground_slope_percent": ground_slope,
+        "use_random_variates": use_rv,
+        "samples": samples if use_rv else 0,
+        "road_job_id": selected_road_entry.id if selected_road_entry else None,
+        "road_machine": road_machine,
+        "road_length_m": road_length_m,
+        "road_include_mobilisation": resolved_road_include,
+        "road_soil_profile_ids": [profile.id for profile in road_soil_profiles] or None,
+    }
+    telemetry_outputs: dict[str, object | None] = {
+        "cost_per_m3": cost.cost_per_m3,
+        "rental_rate_smh": cost.rental_rate_smh,
+        "utilisation": cost.utilisation,
+        "productivity_m3_per_pmh": cost.productivity_m3_per_pmh,
+        "rental_breakdown": rental_breakdown,
+        "productivity_method": prod_info["method"],
+        "productivity_std": prod_info["productivity_std"],
+        "samples": prod_info["samples"],
+    }
+    if road_cost_estimate:
+        telemetry_outputs["road"] = {
+            "road_job_id": selected_road_entry.id if selected_road_entry else None,
+            "machine_slug": road_cost_estimate.machine.slug,
+            "machine_name": road_cost_estimate.machine.machine_name,
+            "road_length_m": road_cost_estimate.road_length_m,
+            "include_mobilisation": road_cost_estimate.mobilisation_included,
+            "unit_cost_target_cad_per_m": road_cost_estimate.unit_cost_target_cad_per_m,
+            "total_cost_target_cad": road_cost_estimate.total_with_mobilisation_target_cad,
+            "base_year": road_cost_estimate.base_year,
+            "target_year": road_cost_estimate.target_year,
+            "soil_profiles": [
+                {"id": profile.id, "source": profile.source} for profile in road_soil_profiles
+            ]
+            or None,
+        }
+    else:
+        telemetry_outputs["road"] = None
+
     rows: list[tuple[str, str]] = []
     if dataset_name is not None:
         rows.append(("Dataset", dataset_name))
@@ -7170,6 +7229,17 @@ def estimate_cost_cmd(
                 "by 20–30% while boosting stripping/ditching productivity; ADV4N7 cautions that more than ~20% compacted area on moist soils "
                 "requires mitigation (slash mats, limited traffic)."
             )
+
+    if telemetry_log:
+        telemetry_payload: dict[str, object] = {
+            "timestamp": datetime.now(tz=UTC).isoformat(),
+            "command": "dataset estimate-cost",
+            "inputs": telemetry_inputs,
+            "outputs": telemetry_outputs,
+        }
+        if dataset_path is not None:
+            telemetry_payload["scenario_path"] = str(dataset_path)
+        append_jsonl(telemetry_log, telemetry_payload)
 
 
 @dataset_app.command("appendix5-stands")

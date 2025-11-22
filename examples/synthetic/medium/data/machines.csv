@@ -1,5 +1,5 @@
-id,role,crew,daily_hours
-M1,harvester,crew-1,24
-M2,forwarder,crew-2,24
-M3,harvester,crew-3,24
-M4,forwarder,crew-1-2,24
+id,role,crew,daily_hours,operating_cost
+M1,harvester,crew-1,24.0,0.0
+M2,forwarder,crew-2,24.0,111.85
+M3,harvester,crew-3,24.0,0.0
+M4,forwarder,crew-1-2,24.0,111.85

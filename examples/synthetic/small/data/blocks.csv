@@ -1,5 +1,5 @@
-id,landing_id,work_required,earliest_start,latest_finish,terrain,prescription
-B1,L1,13.225,3,6,gentle,selection
-B2,L1,9.948,4,4,gentle,selection
-B3,L1,8.319,1,4,mixed,thinning
-B4,L1,8.299,3,4,gentle,selection
+id,landing_id,work_required,earliest_start,latest_finish,avg_stem_size_m3,volume_per_ha_m3,volume_per_ha_m3_sigma,stem_density_per_ha,stem_density_per_ha_sigma,ground_slope_percent,terrain,prescription,harvest_system_id
+B1,L1,13.225,3,6,0.838,738.753,147.751,2940.951,588.19,46.063,gentle,selection,cable_micro_hi_skid
+B2,L1,9.948,4,4,1.168,261.108,52.222,2259.486,451.897,20.835,gentle,thinning,cable_running_tr75_bunched
+B3,L1,8.319,1,4,0.645,217.183,43.437,427.092,85.418,44.589,gentle,selection,ctl
+B4,L1,8.299,3,4,1.168,684.415,136.883,1033.546,206.709,29.637,gentle,selection,cable_micro_timbermaster

@@ -162,6 +162,27 @@ def test_salvage_blocks_round_trip_through_bundle(tmp_path: Path):
     )
 
 
+def test_synthetic_bundle_writes_road_construction(tmp_path: Path):
+    systems = default_system_registry()
+    config = SyntheticDatasetConfig(
+        name="synthetic-road",
+        num_blocks=(3, 3),
+        num_days=(4, 4),
+        num_machines=(2, 2),
+        num_landings=(1, 1),
+        blackout_probability=0.0,
+        system_mix={"cable_running": 1.0},
+    )
+    bundle = generate_random_dataset(config, seed=5, systems={"cable_running": systems["cable_running"]})
+    out_dir = tmp_path / "synthetic_road"
+    scenario_yaml = bundle.write(out_dir)
+    road_csv = out_dir / "data" / "road_construction.csv"
+    assert road_csv.exists()
+    scenario = load_scenario(scenario_yaml)
+    assert scenario.road_construction is not None
+    assert any(entry.machine_slug == "caterpillar_235_hydraulic_backhoe" for entry in scenario.road_construction)
+
+
 def test_tier_defaults_drive_blackouts_and_crews():
     config = SyntheticDatasetConfig(
         name="synthetic-large-tier",

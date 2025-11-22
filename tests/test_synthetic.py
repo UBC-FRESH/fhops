@@ -59,3 +59,15 @@ def test_generate_with_systems_assigns_salvage_processing_mode():
         block.salvage_processing_mode == SalvageProcessingMode.STANDARD_MILL
         for block in salvage_blocks
     )
+
+
+def test_generate_with_systems_attaches_road_construction_defaults():
+    systems = default_system_registry()
+    cable_only = {"cable_running": systems["cable_running"]}
+    spec = SyntheticScenarioSpec(num_blocks=2, num_days=2, num_machines=2)
+    scenario = generate_with_systems(spec, systems=cable_only)
+    assert scenario.road_construction is not None
+    assert len(scenario.road_construction) == 1
+    entry = scenario.road_construction[0]
+    assert entry.machine_slug == "caterpillar_235_hydraulic_backhoe"
+    assert entry.road_length_m > 0

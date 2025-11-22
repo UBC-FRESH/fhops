@@ -27,7 +27,15 @@
         "move_in_cost": 0.0,
         "cost_base_year": 1999,
         "source": "FPInnovations Advantage Vol. 1 No. 12 Appendix 1 (Timberjack 240 cable skidder, semi-mechanized thinning).",
-        "notes": "Direct hourly costs include operator wages and fuel but exclude supervision/overhead. Sum of fixed (12.33 $/SMH) and variable + labour (63.28 $/SMH) from Appendix 1; utilisation 90% reflects integrated lop-and-scatter crew."
+        "notes": "Direct hourly costs include operator wages and fuel but exclude supervision/overhead. Sum of fixed (12.33 $/SMH) and variable + labour (63.28 $/SMH) from Appendix 1; utilisation 90% reflects integrated lop-and-scatter crew. Repair/maintenance allowance backfilled from Advantage Vol. 4 No. 23 Table 2 (tracked grapple skidder class) and scaled to CAD 1999 for consistency with Appendix 1.",
+        "repair_maintenance_cost_per_smh": 24.68,
+        "repair_maintenance_reference_hours": 10000,
+        "repair_maintenance_usage_multipliers": {
+            "5000": 0.6949,
+            "10000": 1.0,
+            "15000": 1.2473,
+            "20000": 1.3684
+        }
     },
     {
         "machine_name": "Valmet 646 shortwood forwarder",

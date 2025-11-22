@@ -23,10 +23,15 @@ from fhops.scenario.contract import (
     Landing,
     Machine,
     ProductionRate,
+    RoadConstruction,
     SalvageProcessingMode,
     Scenario,
 )
-from fhops.scheduling.systems import HarvestSystem, default_system_registry
+from fhops.scheduling.systems import (
+    HarvestSystem,
+    default_system_registry,
+    get_system_road_defaults,
+)
 from fhops.scheduling.timeline import BlackoutWindow, ShiftDefinition, TimelineConfig
 
 T = TypeVar("T")
@@ -180,9 +185,10 @@ def generate_with_systems(
             updates["salvage_processing_mode"] = SalvageProcessingMode.STANDARD_MILL
         blocks.append(block.model_copy(update=updates))
 
-    return base.model_copy(
+    scenario = base.model_copy(
         update={"blocks": blocks, "machines": machines, "harvest_systems": systems}
     )
+    return _attach_system_road_entries(scenario)
 
 
 def _as_range(value: tuple[int, int] | int) -> tuple[int, int]:
@@ -216,6 +222,49 @@ def _deep_merge(base: dict[str, object], updates: dict[str, object]) -> dict[str
         else:
             result[key] = value
     return result
+
+
+def _derive_road_construction_entries(blocks: Sequence[Block]) -> list[RoadConstruction]:
+    entries: list[RoadConstruction] = []
+    seen_systems: set[str] = set()
+    for block in blocks:
+        system_id = block.harvest_system_id
+        if not system_id or system_id in seen_systems:
+            continue
+        defaults = get_system_road_defaults(system_id)
+        if defaults is None:
+            continue
+        entry_id = str(defaults.get("id") or system_id)
+        machine_slug = str(defaults["machine_slug"])
+        road_length = float(defaults["road_length_m"])
+        include_mobilisation = bool(defaults.get("include_mobilisation", True))
+        soil_profiles = defaults.get("soil_profile_ids")
+        soil_profile_ids = (
+            [str(profile) for profile in soil_profiles] if soil_profiles is not None else None
+        )
+        notes_value = defaults.get("notes")
+        notes = str(notes_value) if isinstance(notes_value, str) else None
+        entries.append(
+            RoadConstruction(
+                id=entry_id,
+                machine_slug=machine_slug,
+                road_length_m=road_length,
+                include_mobilisation=include_mobilisation,
+                soil_profile_ids=soil_profile_ids,
+                notes=notes,
+            )
+        )
+        seen_systems.add(system_id)
+    return entries
+
+
+def _attach_system_road_entries(scenario: Scenario) -> Scenario:
+    if scenario.road_construction:
+        return scenario
+    entries = _derive_road_construction_entries(scenario.blocks)
+    if not entries:
+        return scenario
+    return scenario.model_copy(update={"road_construction": entries})
 
 
 @dataclass
@@ -289,6 +338,18 @@ class SyntheticDatasetBundle:
         self.landings.to_csv(data_dir / "landings.csv", index=False)
         self.calendar.to_csv(data_dir / "calendar.csv", index=False)
         self.production_rates.to_csv(data_dir / "prod_rates.csv", index=False)
+        road_entries = list(self.scenario.road_construction or [])
+        if road_entries:
+            road_records: list[dict[str, object]] = []
+            for entry in road_entries:
+                record = entry.model_dump(exclude_none=True)
+                profiles = record.get("soil_profile_ids")
+                if isinstance(profiles, list):
+                    record["soil_profile_ids"] = "|".join(str(pid) for pid in profiles)
+                road_records.append(record)
+            pd.DataFrame.from_records(road_records).to_csv(
+                data_dir / "road_construction.csv", index=False
+            )
 
         scenario_path = out_dir / "scenario.yaml"
         if include_yaml:
@@ -299,6 +360,8 @@ class SyntheticDatasetBundle:
                 "calendar": "data/calendar.csv",
                 "prod_rates": "data/prod_rates.csv",
             }
+            if road_entries:
+                data_section["road_construction"] = "data/road_construction.csv"
             if self.scenario.crew_assignments is not None:
                 crew_path = data_dir / "crew_assignments.csv"
                 crew_records = [
@@ -857,7 +920,7 @@ def generate_random_dataset(
         scenario = scenario.model_copy(
             update={"blocks": updated_blocks, "harvest_systems": systems}
         )
-
+    scenario = _attach_system_road_entries(scenario)
     sampling_config = sampling_config_for(config)
 
     metadata: dict[str, object] = {

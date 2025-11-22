@@ -219,6 +219,10 @@ costing consistent across scenarios:
   so the CLI can print structured reminders (ground-pressure multipliers, compaction thresholds, recommended mitigation). When a
   scenario contains exactly one row, ``estimate-cost --dataset ...`` pulls that entry automatically; specify ``--road-job-id RC1``
   if multiple road jobs exist or pass ``--road-machine`` / ``--road-length-m`` to override everything from the command line.
+  Harvest-system templates now infer these rows from the skyline/cable presets they assign: any block that references a preset with
+  defined road defaults (see ``fhops.scheduling.systems.SYSTEM_ROAD_DEFAULTS``) gains the matching TR-28 slug/length automatically,
+  and the synthetic dataset generator writes ``data/road_construction.csv`` alongside the other tables so downstream tooling picks up
+  the entries without manual edits.
 
 - Supplying ``--rental-rate`` bypasses the lookup for bespoke studies, but ``machines.csv`` rows
   should normally use the curated rates (or CLI recomputed totals) so costing/evaluation tools
