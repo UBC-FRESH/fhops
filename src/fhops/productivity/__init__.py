@@ -1,6 +1,7 @@
 """Productivity helpers (calibrated on BC whole-tree datasets)."""
 
 from .cable_logging import (
+    Fncy12ProductivityVariant,
     estimate_cable_skidding_productivity_unver_robust,
     estimate_cable_skidding_productivity_unver_robust_profile,
     estimate_cable_skidding_productivity_unver_spss,
@@ -31,6 +32,7 @@ from .cable_logging import (
     estimate_standing_skyline_turn_time_kellogg1976,
     estimate_running_skyline_cycle_time_mcneel2000_minutes,
     estimate_running_skyline_productivity_mcneel2000,
+    estimate_tmy45_productivity_fncy12,
     HelicopterLonglineModel,
     HelicopterProductivityResult,
     running_skyline_variant_defaults,

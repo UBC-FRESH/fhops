@@ -11,7 +11,7 @@ from enum import Enum
 from functools import lru_cache
 from pathlib import Path
 
-from fhops.reference import get_appendix5_profile
+from fhops.reference import get_appendix5_profile, load_fncy12_dataset
 
 
 _FEET_PER_METER = 3.28084
@@ -24,6 +24,20 @@ _RUNNING_SKYLINE_VARIANTS = {
     "yarder_a": {"pieces_per_cycle": 2.8, "piece_volume_m3": 2.5, "z1": 0.0},
     "yarder_b": {"pieces_per_cycle": 3.0, "piece_volume_m3": 1.6, "z1": 1.0},
 }
+
+
+class Fncy12ProductivityVariant(str, Enum):
+    OVERALL = "overall"
+    STEADY_STATE = "steady_state"
+    STEADY_STATE_NO_FIRE = "steady_state_no_fire"
+
+
+@dataclass(frozen=True)
+class Fncy12ProductivityResult:
+    variant: Fncy12ProductivityVariant
+    shift_productivity_m3: float
+    shift_hours: float
+    productivity_m3_per_pmh: float
 
 
 def _validate_inputs(log_volume_m3: float, route_slope_percent: float) -> None:
@@ -638,6 +652,31 @@ def running_skyline_variant_defaults(yarder_variant: str) -> tuple[float, float]
     return variant["pieces_per_cycle"], variant["piece_volume_m3"]
 
 
+def estimate_tmy45_productivity_fncy12(
+    variant: Fncy12ProductivityVariant = Fncy12ProductivityVariant.STEADY_STATE,
+) -> Fncy12ProductivityResult:
+    dataset = load_fncy12_dataset()
+    totals = dataset.productivity_totals or {}
+    variant_map = {
+        Fncy12ProductivityVariant.OVERALL: totals.get("avg_shift_m3"),
+        Fncy12ProductivityVariant.STEADY_STATE: totals.get("avg_shift_m3_last_three_months"),
+        Fncy12ProductivityVariant.STEADY_STATE_NO_FIRE: totals.get(
+            "avg_shift_m3_last_three_months_no_fire_delays"
+        ),
+    }
+    shift_m3 = variant_map.get(variant)
+    if not isinstance(shift_m3, (int, float)):
+        raise ValueError(f"FNCY12 dataset missing shift output for variant '{variant.value}'.")
+    shift_hours = dataset.shift_hours or 10.0
+    productivity = float(shift_m3) / shift_hours
+    return Fncy12ProductivityResult(
+        variant=variant,
+        shift_productivity_m3=float(shift_m3),
+        shift_hours=shift_hours,
+        productivity_m3_per_pmh=productivity,
+    )
+
+
 @dataclass(frozen=True)
 class _TR127Predictor:
     name: str
@@ -1135,6 +1174,9 @@ __all__ = [
     "estimate_standing_skyline_productivity_aubuchon1979",
     "estimate_running_skyline_cycle_time_mcneel2000_minutes",
     "estimate_running_skyline_productivity_mcneel2000",
+    "Fncy12ProductivityVariant",
+    "Fncy12ProductivityResult",
+    "estimate_tmy45_productivity_fncy12",
     "running_skyline_variant_defaults",
     "estimate_residue_cycle_time_ledoux_minutes",
     "estimate_residue_productivity_ledoux_m3_per_pmh",

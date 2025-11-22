@@ -34,6 +34,11 @@ from .adv6n25_helicopters import (
     ADV6N25Helicopter,
     load_adv6n25_dataset,
 )
+from .fncy12_tmy45 import (
+    Fncy12Dataset,
+    Fncy12MonthlyProductivity,
+    load_fncy12_dataset,
+)
 
 __all__ = [
     "Appendix5Stand",
@@ -67,4 +72,7 @@ __all__ = [
     "ADV6N25Dataset",
     "ADV6N25Helicopter",
     "load_adv6n25_dataset",
+    "Fncy12Dataset",
+    "Fncy12MonthlyProductivity",
+    "load_fncy12_dataset",
 ]

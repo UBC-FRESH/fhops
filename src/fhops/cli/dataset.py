@@ -108,6 +108,8 @@ from fhops.productivity import (
     get_tn173_system,
     ledoux_delay_component_minutes,
     running_skyline_variant_defaults,
+    Fncy12ProductivityVariant,
+    estimate_tmy45_productivity_fncy12,
     estimate_forwarder_productivity_bc,
     estimate_harvester_productivity_adv6n10,
     estimate_harvester_productivity_kellogg1994,
@@ -893,6 +895,7 @@ class SkylineProductivityModel(str, Enum):
     TN173_TELETRANSPORTEUR = "tn173-teletransporteur"
     TN173_TIMBERMASTER_1984 = "tn173-timbermaster-1984"
     TN173_TIMBERMASTER_1985 = "tn173-timbermaster-1985"
+    FNCY12_TMY45 = "fncy12-tmy45"
 
 
 _LEDOUX_MODEL_TO_PROFILE: dict[SkylineProductivityModel, str] = {
@@ -7542,6 +7545,13 @@ def estimate_skyline_productivity_cmd(
         help="DBH midpoint (cm) for the TN98 manual falling estimate. Defaults to harvest system or 32.5 cm.",
         show_default=False,
     ),
+    fncy12_variant: Fncy12ProductivityVariant | None = typer.Option(
+        None,
+        "--fncy12-variant",
+        case_sensitive=False,
+        help="Only used with --model fncy12-tmy45. Select observed shift average: overall, steady_state, or steady_state_no_fire.",
+        show_default=False,
+    ),
     telemetry_log: Path | None = typer.Option(
         None,
         "--telemetry-log",
@@ -7595,6 +7605,8 @@ def estimate_skyline_productivity_cmd(
                 f"Harvest system '{selected_system_id}' not found. Options: {', '.join(sorted(systems_catalog))}"
             )
 
+    fncy12_variant_supplied = _parameter_supplied(ctx, "fncy12_variant")
+
     user_supplied = {
         "model": _parameter_supplied(ctx, "model"),
         "logs_per_turn": _parameter_supplied(ctx, "logs_per_turn"),
@@ -7644,6 +7656,8 @@ def estimate_skyline_productivity_cmd(
         chordslope_percent=chordslope_percent,
         user_supplied=user_supplied,
     )
+    if fncy12_variant_supplied and model is not SkylineProductivityModel.FNCY12_TMY45:
+        raise typer.BadParameter("--fncy12-variant is only valid when --model fncy12-tmy45.")
     manual_overrides = _manual_falling_overrides(selected_system)
     manual_defaults_used = False
     manual_falling_enabled = manual_falling
@@ -7708,6 +7722,7 @@ def estimate_skyline_productivity_cmd(
     telemetry_residue_volume = None
     telemetry_support_cat_d8_ratio = None
     telemetry_support_timberjack_ratio = None
+    telemetry_fncy12_variant = None
     tn258_limit_exceeded = False
     non_bc_warning = False
     if model is SkylineProductivityModel.LEE_UPHILL:
@@ -7841,6 +7856,47 @@ def estimate_skyline_productivity_cmd(
             ("Cycle Time (min)", f"{cycle_minutes:.2f}"),
         ]
         source_label = f"FPInnovations TR-127 Block {block_id} regression (northwestern BC)."
+    elif model is SkylineProductivityModel.FNCY12_TMY45:
+        resolved_variant = fncy12_variant or Fncy12ProductivityVariant.STEADY_STATE
+        fncy12_result = estimate_tmy45_productivity_fncy12(resolved_variant)
+        value = fncy12_result.productivity_m3_per_pmh
+        telemetry_payload_m3 = None
+        telemetry_fncy12_variant = resolved_variant.value
+        cycle_minutes = None
+        rows = [
+            ("Model", model.value),
+            ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
+            ("Lateral Distance (m)", f"{lateral_distance_m:.1f}"),
+            ("Variant", resolved_variant.value.replace("_", " ")),
+            ("Shift Hours", f"{fncy12_result.shift_hours:.1f}"),
+            (
+                "Shift Productivity (m³/shift)",
+                f"{fncy12_result.shift_productivity_m3:.1f}",
+            ),
+        ]
+        source_label = (
+            "FERIC FNCY-12 / TN-258 Thunderbird TMY45 with Mini-Mak II intermediate supports."
+        )
+        telemetry_support_cat_d8_ratio = _TMY45_SUPPORT_MACHINE_RATIOS[
+            "cat_d8_smhr_per_yarder_smhr"
+        ]
+        telemetry_support_timberjack_ratio = _TMY45_SUPPORT_MACHINE_RATIOS[
+            "timberjack_450_smhr_per_yarder_smhr"
+        ]
+        support_note = (
+            "[yellow]Support reminder:[/yellow] TN-157/TN-258 proxies bundle Cat D8 backspar standby "
+            f"{telemetry_support_cat_d8_ratio:.2f} SMH/SMH and Timberjack 450 trail support "
+            f"{telemetry_support_timberjack_ratio:.2f} SMH/SMH—override if your support plan differs."
+        )
+        console_warning = _append_warning(console_warning, support_note)
+        if lateral_distance_m > _TN258_LATERAL_LIMIT_M:
+            tn258_limit_exceeded = True
+            tension_warning = (
+                f"[yellow]TN258 envelope:[/yellow] Thunderbird TMY45 trials recorded skyline tension spikes up "
+                f"to {_TN258_MAX_SKYLINE_TENSION_KN:.0f} kN once lateral pulls exceeded "
+                f"{_TN258_LATERAL_LIMIT_M:.0f} m. Trim lateral distance or add support trees before trusting the output."
+            )
+            console_warning = _append_warning(console_warning, tension_warning)
     elif model is SkylineProductivityModel.MCNEEL_RUNNING:
         horizontal_span = horizontal_distance_m or slope_distance_m
         if horizontal_span is None:
@@ -8348,6 +8404,7 @@ def estimate_skyline_productivity_cmd(
             "support_cat_d8_smhr_per_yarder_smhr": telemetry_support_cat_d8_ratio,
             "support_timberjack450_smhr_per_yarder_smhr": telemetry_support_timberjack_ratio,
             "tn258_lateral_limit_exceeded": tn258_limit_exceeded,
+            "fncy12_variant": telemetry_fncy12_variant,
             "manual_falling": manual_falling_summary is not None,
             "manual_falling_species": manual_falling_summary.get("species")
             if manual_falling_summary

@@ -18,6 +18,8 @@ from fhops.productivity import (
     estimate_micro_master_productivity_m3_per_pmh,
     estimate_hi_skid_productivity_m3_per_pmh,
     get_tn173_system,
+    estimate_tmy45_productivity_fncy12,
+    Fncy12ProductivityVariant,
 )
 
 runner = CliRunner()
@@ -87,6 +89,37 @@ def test_cli_skyline_tr125_multi_warning_and_telemetry(tmp_path) -> None:
     assert payload["support_cat_d8_smhr_per_yarder_smhr"] == pytest.approx(0.25)
     assert payload["support_timberjack450_smhr_per_yarder_smhr"] == pytest.approx(0.14)
     assert payload["non_bc_source"] is False
+
+
+def test_cli_skyline_fncy12_variant_and_warning(tmp_path) -> None:
+    telemetry_log = tmp_path / "fncy12.jsonl"
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "fncy12-tmy45",
+            "--slope-distance-m",
+            "320",
+            "--lateral-distance-m",
+            "35",
+            "--fncy12-variant",
+            "steady_state_no_fire",
+            "--telemetry-log",
+            str(telemetry_log),
+        ],
+    )
+    assert result.exit_code == 0
+    expected = estimate_tmy45_productivity_fncy12(
+        Fncy12ProductivityVariant.STEADY_STATE_NO_FIRE
+    ).productivity_m3_per_pmh
+    assert f"{expected:.2f}" in result.stdout
+    assert "TN258 envelope" in result.stdout
+    payload = json.loads(telemetry_log.read_text(encoding="utf-8").strip())
+    assert payload["tn258_lateral_limit_exceeded"] is True
+    assert payload["fncy12_variant"] == "steady_state_no_fire"
+    assert payload["support_cat_d8_smhr_per_yarder_smhr"] == pytest.approx(0.25)
+    assert payload["support_timberjack450_smhr_per_yarder_smhr"] == pytest.approx(0.14)
 
 
 def test_cli_skyline_tr127_block5() -> None:
