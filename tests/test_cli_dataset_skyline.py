@@ -184,6 +184,49 @@ def test_cli_skyline_tr127_block5_defaults(tmp_path) -> None:
     assert payload["tr119_treatment"] == "70_retention"
 
 
+def test_cli_skyline_tr125_show_costs() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "tr125-single-span",
+            "--slope-distance-m",
+            "250",
+            "--lateral-distance-m",
+            "30",
+            "--show-costs",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "grapple_yarder_skyleadc40" in result.stdout
+    assert "Default Rental Rate" in result.stdout
+
+
+def test_cli_skyline_show_costs_missing_role() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "aubuchon-standing",
+            "--slope-distance-m",
+            "305",
+            "--lateral-distance-m",
+            "30",
+            "--logs-per-turn",
+            "4",
+            "--average-log-volume-m3",
+            "0.45",
+            "--crew-size",
+            "4",
+            "--show-costs",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "No default skyline machine rate" in result.stdout
+
+
 def test_cli_skyline_aubuchon_range_warning(tmp_path) -> None:
     telemetry_log = tmp_path / "aub_range.jsonl"
     result = runner.invoke(

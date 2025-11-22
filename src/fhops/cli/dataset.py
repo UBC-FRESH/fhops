@@ -933,6 +933,34 @@ _TN173_MODEL_TO_SYSTEM_ID: dict[SkylineProductivityModel, str] = {
     SkylineProductivityModel.TN173_TIMBERMASTER_1985: "tn173_timbermaster_1985",
 }
 
+_SKYLINE_COST_ROLES: dict[SkylineProductivityModel, str] = {
+    SkylineProductivityModel.TR125_SINGLE: "grapple_yarder_skyleadc40",
+    SkylineProductivityModel.TR125_MULTI: "grapple_yarder_skyleadc40",
+    SkylineProductivityModel.TR127_BLOCK1: "grapple_yarder_skyleadc40",
+    SkylineProductivityModel.TR127_BLOCK2: "grapple_yarder_skyleadc40",
+    SkylineProductivityModel.TR127_BLOCK3: "grapple_yarder_skyleadc40",
+    SkylineProductivityModel.TR127_BLOCK4: "grapple_yarder_skyleadc40",
+    SkylineProductivityModel.TR127_BLOCK5: "grapple_yarder_skyleadc40",
+    SkylineProductivityModel.TR127_BLOCK6: "grapple_yarder_skyleadc40",
+    SkylineProductivityModel.FNCY12_TMY45: "grapple_yarder_tmy45",
+    SkylineProductivityModel.MCNEEL_RUNNING: "grapple_yarder_cypress7280",
+    SkylineProductivityModel.TN173_ECOLOGGER: "skyline_ecologger_tn173",
+    SkylineProductivityModel.TN173_GABRIEL: "skyline_gabriel_tn173",
+    SkylineProductivityModel.TN173_CHRISTIE: "skyline_christie_tn173",
+    SkylineProductivityModel.TN173_TELETRANSPORTEUR: "skyline_teletransporteur_tn173",
+    SkylineProductivityModel.TN173_TIMBERMASTER_1984: "skyline_timbermaster_tn173",
+    SkylineProductivityModel.TN173_TIMBERMASTER_1985: "skyline_timbermaster_tn173",
+    SkylineProductivityModel.HI_SKID: "skyline_hi_skid",
+    SkylineProductivityModel.LEDOUX_SKAGIT_SHOTGUN: "grapple_yarder_skagit_shotgun",
+    SkylineProductivityModel.LEDOUX_SKAGIT_HIGHLEAD: "grapple_yarder_skagit_highlead",
+    SkylineProductivityModel.LEDOUX_WASHINGTON_208E: "grapple_yarder_washington_208e",
+    SkylineProductivityModel.LEDOUX_TMY45: "grapple_yarder_tmy45_residue",
+}
+
+
+def _skyline_cost_role(model: SkylineProductivityModel) -> str | None:
+    return _SKYLINE_COST_ROLES.get(model)
+
 
 class RoadsideProcessorModel(str, Enum):
     BERRY2019 = "berry2019"
@@ -7621,6 +7649,11 @@ def estimate_skyline_productivity_cmd(
         help="Only used with --model fncy12-tmy45. Select observed shift average: overall, steady_state, or steady_state_no_fire.",
         show_default=False,
     ),
+    show_costs: bool = typer.Option(
+        False,
+        "--show-costs",
+        help="Print the CPI-adjusted skyline machine-rate summary for the selected model.",
+    ),
     telemetry_log: Path | None = typer.Option(
         None,
         "--telemetry-log",
@@ -8540,6 +8573,11 @@ def estimate_skyline_productivity_cmd(
     if calibration_notes:
         for note in calibration_notes:
             console.print(f"[dim]{note}[/dim]")
+    skyline_cost_role = _skyline_cost_role(model)
+    if skyline_cost_role is not None:
+        _maybe_render_costs(show_costs, skyline_cost_role)
+    elif show_costs:
+        console.print("[dim]No default skyline machine rate is published for this preset.[/dim]")
     if source_label:
         console.print(f"[dim]Source: {source_label}[/dim]")
     if console_warning:

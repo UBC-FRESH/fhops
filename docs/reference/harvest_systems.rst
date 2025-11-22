@@ -789,6 +789,8 @@ Every skyline model prints the assumed payload and m³/PMH0 result; the McNeel a
 delay-free cycle minutes so you can see the impact of deflection, carriage height, lead angle, or extra chokers.
 Telemetry rows capture all skyline predictors (horizontal/vertical distance, pieces, piece volume, carriage height,
 chord slope, lead angle, chokers, running-yarder variant) so harvest-system overrides are traceable.
+Append ``--show-costs`` to print the CPI-adjusted machine-rate summary for any preset that has a matching entry in
+the Skyline cost matrix below.
 
 TR-127 predictor ranges
 ~~~~~~~~~~~~~~~~~~~~~~~
