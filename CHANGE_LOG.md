@@ -1,9 +1,11 @@
 # Development Change Log
 
-# 2025-12-07 — Shift-based scheduling refactor planning
+# 2025-11-22 — Shift-based scheduling refactor planning
 - Reopened the Phase 2 shift-based scheduling milestone in `FHOPS_ROADMAP.md` and added a detailed next-steps bullet so the roadmap reflects the pending shift refactor instead of marking it complete prematurely.
 - Captured the refactor plan in `notes/modular_reorg_plan.md` (goals, workstreams, dependencies) and pushed supporting punch lists into `notes/mip_model_plan.md`, `notes/data_contract_enhancements.md`, `notes/simulation_eval_plan.md`, and `notes/cli_docs_plan.md` so each owner document now describes how it will adopt shift-indexed data and solvers.
 - Logged the new migration checklist (data contract updates, solver re-indexing, playback alignment, docs/fixtures) to guide the upcoming implementation work.
+- Authored `notes/sphinx-documentation.md`, a Phase 4 Sphinx coverage audit summarising current docs (how-tos, references, API pages) and capturing a TODO list for weak/missing sections ahead of release prep.
+- Expanded `docs/howto/heuristic_presets.rst` with solver-specific parameter guides (SA/ILS/Tabu), preset comparison workflow, and instructions for interpreting the `operators_stats` telemetry so the operator registry documentation now meets the Phase 4 audit goals.
 
 # 2025-12-06 — Conversation log dedup helper
 - Added `scripts/dedup_conversation_log.py`, a windowed rolling-hash utility that reports duplicate multi-line chunks (default 32-line windows, 80-line minimum) and can rewrite `notes/coding-agent-conversation-log.txt` with the later copies removed. The script supports dry-run summaries, optional snippet previews, and an `--apply` flag for in-place cleanup so the long-form conversation notes no longer accumulate repeated headers when entire transcripts get pasted multiple times.

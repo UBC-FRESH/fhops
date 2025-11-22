@@ -57,6 +57,41 @@ Presets can be combined with ``--operator`` (to restrict the enabled set) and
         --operator-weight mobilisation_shake=0.5 \
         --operator swap --operator move --operator block_insertion
 
+Solver-Specific Parameters
+--------------------------
+
+All heuristics share the registry, but each solver exposes additional knobs alongside the preset
+controls:
+
+* **Simulated Annealing (`fhops solve-heur`)**
+
+  - ``--sa-iters`` / ``--iters`` – iteration budget (default 5000).
+  - ``--sa-seed`` / ``--seed`` – RNG seed for reproducible runs.
+  - ``--batch-neighbours`` – proposals per iteration (pair with ``--parallel-workers`` to evaluate in parallel).
+  - ``--parallel-multistart`` – launch multiple runs in parallel; each honours the same presets/weights.
+  - ``--profile NAME`` – apply bundled configs (operators + batching). List via ``--list-profiles``.
+
+* **Iterated Local Search (`fhops solve-ils`)**
+
+  - ``--ils-iters`` – number of ILS iterations between perturbations.
+  - ``--ils-seed`` – RNG seed.
+  - ``--ils-batch-neighbours`` / ``--ils-workers`` – batched evaluation controls.
+  - ``--ils-perturbation-strength`` – number of random moves during perturbation phases.
+  - ``--ils-stall-limit`` – iterations without improvement before perturbing.
+  - ``--ils-hybrid-use-mip`` / ``--ils-hybrid-mip-time-limit`` – optional MIP warm start when a small budget can improve the seed.
+
+* **Tabu Search (`fhops solve-tabu`)**
+
+  - ``--tabu-iters`` – number of iterations.
+  - ``--tabu-seed`` – RNG seed (controls candidate sampling).
+  - ``--tabu-tenure`` – explicit tabu tenure (0 = auto).
+  - ``--tabu-stall-limit`` – restarts when no improvement occurs.
+  - ``--tabu-batch-neighbours`` / ``--tabu-workers`` – batched move evaluation.
+
+All three share ``--operator``, ``--operator-weight``, ``--operator-preset``, and ``--profile`` so you can keep
+the same operator mix while experimenting with solver parameters. The shortcut ``fhops bench suite`` wires
+these flags through ``--sa-*``, ``--ils-*``, and ``--tabu-*`` options when comparing solvers side-by-side.
+
 Parallel & Advanced Features
 ----------------------------
 
@@ -112,6 +147,27 @@ ratios). Generate visualisations with:
 
     fhops bench suite --include-ils --include-tabu --no-include-mip --out-dir tmp/bench_compare
     python scripts/render_benchmark_plots.py tmp/bench_compare/summary.csv
+
+When you add ``--compare-preset`` the benchmark suite replays the same scenario with multiple preset
+labels and records the results in ``preset_label``. The summary also embeds two JSON blobs:
+
+``operators_config``
+    Final weight mapping for the run (after presets + overrides).
+``operators_stats``
+    Per-operator telemetry (``proposals``, ``accepted``, ``skipped``, ``weight``, ``acceptance_rate``).
+
+Inspect them directly with ``jq`` or load them into Pandas for analysis:
+
+.. code-block:: bash
+
+    fhops bench suite --compare-preset explore --compare-preset mobilisation \
+        --include-ils --include-tabu --out-dir tmp/bench_compare
+    python - <<'PY'
+    import pandas as pd
+    df = pd.read_csv("tmp/bench_compare/summary.csv")
+    stats = df[df["solver"] == "sa"]["operators_stats"].iloc[0]
+    print(stats)
+    PY
 
 Next Steps
 ----------

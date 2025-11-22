@@ -114,6 +114,36 @@ Add a top-level ``timeline`` block in your scenario YAML to describe shifts and 
 
 The loader converts this into a ``TimelineConfig`` instance available via ``scenario.timeline``.
 
+Shift Calendars & Defaults
+--------------------------
+
+When you need per-machine shift availability (for example, night crews that only run certain
+machines), add a ``shift_calendar`` CSV and reference it under ``data.shift_calendar``:
+
+.. code-block:: text
+
+   machine_id,day,shift_id,available
+   H1,1,day,1
+   H1,1,night,0
+   H2,1,day,1
+   H2,1,night,1
+
+``shift_id`` values must match names declared in the timeline’s ``shifts`` section; the loader
+rejects unknown labels or days outside ``num_days``. Supplying multiple rows for the same
+machine/day lets you model overlapping shifts with different availability flags, and you can
+leave individual rows at ``available=0`` to block a specific crew without editing the base
+timeline. When a ``shift_calendar`` is omitted entirely, FHOPS synthesises a single shift named
+``S1`` for every day so legacy day-indexed scenarios continue to work without edits.
+
+Run ``fhops validate`` to confirm the calendar files and shift labels line up before solving:
+
+.. code-block:: bash
+
+   fhops validate examples/minitoy/scenario.yaml
+
+The CLI surfaces precise validation errors (missing columns, bad shift IDs, horizon overruns)
+so you can correct the dataset without spelunking through Pydantic stack traces.
+
 Schedule Locking
 ----------------
 
@@ -206,7 +236,10 @@ costing consistent across scenarios:
   --dataset …`` auto-selects the only row or lets you pick via ``--road-job-id``; attach additional soil warnings by
   referencing ``data/reference/soil_protection_profiles.json`` through ``--road-soil-profile`` (or via the CSV).
 
-- To keep road-building metadata alongside the rest of the scenario, add an optional ``road_construction`` table:
+Road Construction Tables & Validation
+-------------------------------------
+
+To keep road-building metadata alongside the rest of the scenario, add an optional ``road_construction`` table:
 
   .. code-block:: text
 
@@ -219,10 +252,11 @@ costing consistent across scenarios:
   so the CLI can print structured reminders (ground-pressure multipliers, compaction thresholds, recommended mitigation). When a
   scenario contains exactly one row, ``estimate-cost --dataset ...`` pulls that entry automatically; specify ``--road-job-id RC1``
   if multiple road jobs exist or pass ``--road-machine`` / ``--road-length-m`` to override everything from the command line.
-  Harvest-system templates now infer these rows from the skyline/cable presets they assign: any block that references a preset with
-  defined road defaults (see ``fhops.scheduling.systems.SYSTEM_ROAD_DEFAULTS``) gains the matching TR-28 slug/length automatically,
-  and the synthetic dataset generator writes ``data/road_construction.csv`` alongside the other tables so downstream tooling picks up
-  the entries without manual edits.
+Harvest-system templates now infer these rows from the skyline/cable presets they assign: any block that references a preset with
+defined road defaults (see ``fhops.scheduling.systems.SYSTEM_ROAD_DEFAULTS``) gains the matching TR-28 slug/length automatically,
+and the synthetic dataset generator writes ``data/road_construction.csv`` alongside the other tables so downstream tooling picks up
+the entries without manual edits. Run ``fhops validate`` after editing the table to catch duplicate IDs or malformed slugs before
+passing the scenario to solvers or costing helpers.
 
 - Supplying ``--rental-rate`` bypasses the lookup for bespoke studies, but ``machines.csv`` rows
   should normally use the curated rates (or CLI recomputed totals) so costing/evaluation tools
