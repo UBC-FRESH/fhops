@@ -25,6 +25,10 @@ _RUNNING_SKYLINE_VARIANTS = {
     "yarder_b": {"pieces_per_cycle": 3.0, "piece_volume_m3": 1.6, "z1": 1.0},
 }
 
+_TR125_SINGLE_SLOPE_RANGE = (10.0, 350.0)
+_TR125_MULTI_SLOPE_RANGE = (10.0, 420.0)
+_TR125_LATERAL_RANGE = (0.0, 50.0)
+
 
 class Fncy12ProductivityVariant(str, Enum):
     OVERALL = "overall"
@@ -180,6 +184,8 @@ def estimate_cable_yarder_cycle_time_tr125_single_span(
 ) -> float:
     _validate_positive(slope_distance_m, "slope_distance_m")
     _validate_positive(lateral_distance_m, "lateral_distance_m")
+    _warn_if_out_of_range("slope_distance_m", slope_distance_m, _TR125_SINGLE_SLOPE_RANGE)
+    _warn_if_out_of_range("lateral_distance_m", lateral_distance_m, _TR125_LATERAL_RANGE)
     return 2.76140 + 0.00449 * slope_distance_m + 0.03750 * lateral_distance_m
 
 
@@ -216,6 +222,8 @@ def estimate_cable_yarder_cycle_time_tr125_multi_span(
 ) -> float:
     _validate_positive(slope_distance_m, "slope_distance_m")
     _validate_positive(lateral_distance_m, "lateral_distance_m")
+    _warn_if_out_of_range("slope_distance_m", slope_distance_m, _TR125_MULTI_SLOPE_RANGE)
+    _warn_if_out_of_range("lateral_distance_m", lateral_distance_m, _TR125_LATERAL_RANGE)
     return 2.43108 + 0.00910 * slope_distance_m + 0.02563 * lateral_distance_m
 
 

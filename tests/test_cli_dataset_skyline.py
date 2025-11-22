@@ -122,6 +122,125 @@ def test_cli_skyline_fncy12_variant_and_warning(tmp_path) -> None:
     assert payload["support_timberjack450_smhr_per_yarder_smhr"] == pytest.approx(0.14)
 
 
+def test_cli_skyline_harvest_system_fncy12_defaults() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--slope-distance-m",
+            "320",
+            "--lateral-distance-m",
+            "25",
+            "--harvest-system-id",
+            "cable_running_fncy12",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "fncy12-tmy45" in result.stdout
+    assert "Support reminder" in result.stdout
+
+
+def test_cli_skyline_tr125_strip_defaults(tmp_path) -> None:
+    telemetry_log = tmp_path / "tr125_strip.jsonl"
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--slope-distance-m",
+            "280",
+            "--harvest-system-id",
+            "cable_standing_tr125_strip",
+            "--telemetry-log",
+            str(telemetry_log),
+        ],
+    )
+    assert result.exit_code == 0
+    assert "tr125-multi-span" in result.stdout
+    assert "Lateral Distance (m)" in result.stdout and "40.0" in result.stdout
+    assert "TR119 Treatment" in result.stdout and "strip_cut" in result.stdout
+    payload = json.loads(telemetry_log.read_text(encoding="utf-8").strip())
+    assert payload["lateral_distance_m"] == pytest.approx(40.0)
+    assert payload["tr119_treatment"] == "strip_cut"
+
+
+def test_cli_skyline_tr127_block5_defaults(tmp_path) -> None:
+    telemetry_log = tmp_path / "tr127_block5.jsonl"
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--slope-distance-m",
+            "365",
+            "--harvest-system-id",
+            "cable_partial_tr127_block5",
+            "--telemetry-log",
+            str(telemetry_log),
+        ],
+    )
+    assert result.exit_code == 0
+    assert "tr127-block5" in result.stdout
+    payload = json.loads(telemetry_log.read_text(encoding="utf-8").strip())
+    assert payload["num_logs"] == pytest.approx(3.0)
+    assert payload["tr119_treatment"] == "70_retention"
+
+
+def test_cli_skyline_aubuchon_range_warning(tmp_path) -> None:
+    telemetry_log = tmp_path / "aub_range.jsonl"
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "aubuchon-standing",
+            "--slope-distance-m",
+            "100",
+            "--lateral-distance-m",
+            "40",
+            "--logs-per-turn",
+            "4",
+            "--average-log-volume-m3",
+            "0.45",
+            "--crew-size",
+            "4",
+            "--telemetry-log",
+            str(telemetry_log),
+        ],
+    )
+    assert result.exit_code == 0
+    assert "Wyssen trials" in result.stdout
+    payload = json.loads(telemetry_log.read_text(encoding="utf-8").strip())
+    assert payload["calibration_warnings"]
+    assert payload["calibration_warnings"][0]["field"] == "Slope distance"
+
+
+def test_cli_skyline_kellogg_range_warning(tmp_path) -> None:
+    telemetry_log = tmp_path / "kellogg_range.jsonl"
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "aubuchon-kellogg",
+            "--slope-distance-m",
+            "250",
+            "--logs-per-turn",
+            "3",
+            "--average-log-volume-m3",
+            "0.5",
+            "--lead-angle-deg",
+            "120",
+            "--chokers",
+            "3",
+            "--telemetry-log",
+            str(telemetry_log),
+        ],
+    )
+    assert result.exit_code == 0
+    payload = json.loads(telemetry_log.read_text(encoding="utf-8").strip())
+    warnings = payload["calibration_warnings"]
+    assert {entry["field"] for entry in warnings} == {"Lead angle", "Chokers"}
+
+
 def test_cli_skyline_tr127_block5() -> None:
     result = runner.invoke(
         dataset_app,

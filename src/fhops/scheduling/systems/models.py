@@ -342,6 +342,65 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
                 SystemJob("loading", "loader", ["processing"]),
             ],
         ),
+        "cable_standing_tr125_single": HarvestSystem(
+            system_id="cable_standing_tr125_single",
+            environment="cable-standing skyline",
+            notes="TR125 single-span standing skyline (Skylead C40) for clearcut corridors.",
+            jobs=[
+                SystemJob(
+                    "felling",
+                    "hand_or_mech_faller",
+                    [],
+                    productivity_overrides={
+                        "manual_falling_enabled": True,
+                        "manual_falling_species": "douglas_fir",
+                        "manual_falling_dbh_cm": 42.5,
+                    },
+                ),
+                SystemJob(
+                    "primary_transport",
+                    "skyline_yarder",
+                    ["felling"],
+                    productivity_overrides={
+                        "skyline_model": "tr125-single-span",
+                        "skyline_lateral_distance_m": 25.0,
+                        "skyline_payload_m3": 1.6,
+                    },
+                ),
+                SystemJob("processing", "roadside_processor", ["primary_transport"]),
+                SystemJob("loading", "loader", ["processing"]),
+            ],
+        ),
+        "cable_standing_tr125_strip": HarvestSystem(
+            system_id="cable_standing_tr125_strip",
+            environment="cable-standing skyline",
+            notes="TR125 multi-span standing skyline with intermediate supports for strip cuts (TR119).",
+            jobs=[
+                SystemJob(
+                    "felling",
+                    "hand_or_mech_faller",
+                    [],
+                    productivity_overrides={
+                        "manual_falling_enabled": True,
+                        "manual_falling_species": "douglas_fir",
+                        "manual_falling_dbh_cm": 42.5,
+                    },
+                ),
+                SystemJob(
+                    "primary_transport",
+                    "skyline_yarder",
+                    ["felling"],
+                    productivity_overrides={
+                        "skyline_model": "tr125-multi-span",
+                        "skyline_lateral_distance_m": 40.0,
+                        "skyline_payload_m3": 1.6,
+                        "tr119_treatment": "strip_cut",
+                    },
+                ),
+                SystemJob("processing", "roadside_processor", ["primary_transport"]),
+                SystemJob("loading", "loader", ["processing"]),
+            ],
+        ),
         "cable_running": HarvestSystem(
             system_id="cable_running",
             environment="cable-running skyline",
@@ -383,6 +442,67 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
                         "processor_adv7n3_machine": "hyundai_210",
                     },
                 ),
+                SystemJob("loading", "loader", ["processing"]),
+            ],
+        ),
+        "cable_partial_tr127_block1": HarvestSystem(
+            system_id="cable_partial_tr127_block1",
+            environment="cable-standing skyline",
+            notes="TR127 Block 1 standing skyline (two lateral distances) representing 65% retention trials.",
+            jobs=[
+                SystemJob(
+                    "felling",
+                    "hand_or_mech_faller",
+                    [],
+                    productivity_overrides={
+                        "manual_falling_enabled": True,
+                        "manual_falling_species": "douglas_fir",
+                        "manual_falling_dbh_cm": 42.5,
+                    },
+                ),
+                SystemJob(
+                    "primary_transport",
+                    "skyline_yarder",
+                    ["felling"],
+                    productivity_overrides={
+                        "skyline_model": "tr127-block1",
+                        "skyline_lateral_distance_m": 15.0,
+                        "skyline_lateral_distance2_m": 6.0,
+                        "tr119_treatment": "65_retention",
+                    },
+                ),
+                SystemJob("processing", "roadside_processor", ["primary_transport"]),
+                SystemJob("loading", "loader", ["processing"]),
+            ],
+        ),
+        "cable_partial_tr127_block5": HarvestSystem(
+            system_id="cable_partial_tr127_block5",
+            environment="cable-standing skyline",
+            notes="TR127 Block 5 (partial cut) with 70% retention defaults and TN-258 lateral guidance.",
+            jobs=[
+                SystemJob(
+                    "felling",
+                    "hand_or_mech_faller",
+                    [],
+                    productivity_overrides={
+                        "manual_falling_enabled": True,
+                        "manual_falling_species": "douglas_fir",
+                        "manual_falling_dbh_cm": 42.5,
+                    },
+                ),
+                SystemJob(
+                    "primary_transport",
+                    "skyline_yarder",
+                    ["felling"],
+                    productivity_overrides={
+                        "skyline_model": "tr127-block5",
+                        "skyline_lateral_distance_m": 16.0,
+                        "skyline_num_logs": 3.0,
+                        "skyline_payload_m3": 1.6,
+                        "tr119_treatment": "70_retention",
+                    },
+                ),
+                SystemJob("processing", "roadside_processor", ["primary_transport"]),
                 SystemJob("loading", "loader", ["processing"]),
             ],
         ),
@@ -467,6 +587,44 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
                     productivity_overrides={
                         "processor_model": "adv7n3",
                         "processor_adv7n3_machine": "hyundai_210",
+                    },
+                ),
+                SystemJob("loading", "loader", ["processing"]),
+            ],
+        ),
+        "cable_running_fncy12": HarvestSystem(
+            system_id="cable_running_fncy12",
+            environment="cable-running skyline",
+            notes="Thunderbird TMY45 + Mini-Mak II (FNCY12/TN258) intermediate-support skyline corridors.",
+            jobs=[
+                SystemJob(
+                    "felling",
+                    "hand_or_mech_faller",
+                    [],
+                    productivity_overrides={
+                        "manual_falling_enabled": True,
+                        "manual_falling_species": "douglas_fir",
+                        "manual_falling_dbh_cm": 52.5,
+                    },
+                ),
+                SystemJob(
+                    "primary_transport",
+                    "skyline_yarder",
+                    ["felling"],
+                    productivity_overrides={
+                        "skyline_model": "fncy12-tmy45",
+                        "skyline_logs_per_turn": 3.6,
+                        "skyline_average_log_volume_m3": 1.15,
+                        "skyline_crew_size": 5.5,
+                    },
+                ),
+                SystemJob(
+                    "processing",
+                    "roadside_processor",
+                    ["primary_transport"],
+                    productivity_overrides={
+                        "processor_model": "adv7n3",
+                        "processor_adv7n3_machine": "john_deere_892",
                     },
                 ),
                 SystemJob("loading", "loader", ["processing"]),

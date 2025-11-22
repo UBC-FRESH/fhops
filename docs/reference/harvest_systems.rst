@@ -58,10 +58,18 @@ Default Systems
      - steep-slope mechanised
      - tethered harvester → tethered shovel/skidder → roadside processor → loader
      - Winch-assist equipment across the full sequence.
-   * - ``cable_standing``
-     - cable-standing skyline
-     - hand/mech faller → skyline yarder → landing processor/hand buck → loader
-     - Standing skyline with chokers feeding landing processing.
+  * - ``cable_standing``
+    - cable-standing skyline
+    - hand/mech faller → skyline yarder → landing processor/hand buck → loader
+    - Standing skyline with chokers feeding landing processing.
+  * - ``cable_standing_tr125_single``
+    - cable-standing skyline
+    - hand/mech faller → standing skyline (TR125 single span) → landing processor → loader
+    - Skylead C40 single-span defaults (1.6 m³ payload, 25 m lateral). Use when you want the TR125 helper and `grapple_yarder_skyleadc40` cost role.
+  * - ``cable_standing_tr125_strip``
+    - cable-standing skyline (intermediate supports)
+    - hand/mech faller → standing skyline (TR125 multi-span) → landing processor → loader
+    - Strip-cut defaults pulling the TR119 strip-cut treatment multiplier and setting lateral distance to 40 m (TN-258 warning auto-fires).
    * - ``cable_salvage_grapple``
      - cable-running salvage
      - hand/mech faller → grapple yarder → landing processor → loader
@@ -70,14 +78,19 @@ Default Systems
      - cable-running skyline
      - hand/mech faller → grapple yarder → landing processor/hand buck → loader
      - Grapple yarder variant with landing finishing.
-   * - ``cable_running_adv5n28_clearcut``
-     - cable-running skyline
-     - hand/mech faller → long-span skyline → landing processor/hand buck → loader
-     - ADV5N28 clearcut conversion (Madill 071 + Pow'-R Block replacing helicopter yarding).
+  * - ``cable_running_adv5n28_clearcut``
+    - cable-running skyline
+    - hand/mech faller → long-span skyline → landing processor/hand buck → loader
+    - ADV5N28 clearcut conversion (Madill 071 + Pow'-R Block replacing helicopter yarding).
   * - ``cable_running_adv5n28_shelterwood``
     - cable-running skyline
     - hand/mech faller → long-span skyline → landing processor/hand buck → loader
     - ADV5N28 irregular shelterwood conversion threading riparian corridors with full suspension.
+  * - ``cable_running_fncy12``
+    - cable-running skyline (intermediate supports)
+    - hand/mech faller → skyline yarder → landing processor/hand buck → loader
+    - Thunderbird TMY45 + Mini-Mak II preset (FNCY12/TN258). Selecting this system preloads the ``fncy12-tmy45`` helper so TN-258 lateral-distance warnings and Cat D8/Timberjack support ratios flow automatically.
+    - Cost reference: see the Skyline cost matrix below (``grapple_yarder_tmy45``).
   * - ``cable_micro_ecologger``
     - cable-short-span skyline
     - hand faller → RMS Ecologger skyline → hand buck/processor → loader
@@ -102,6 +115,15 @@ Default Systems
     - cable-short-span skyline
     - hand faller → Hi-Skid yard/load/haul (direct to dump)
     - FNG73 Hi-Skid short-yard truck (100 m reach, 12 m³ deck); use ``--model hi-skid`` and optionally ``--hi-skid-include-haul`` when this system is selected.
+    - Cost reference: ``skyline_hi_skid`` entry in the Skyline cost matrix.
+  * - ``cable_partial_tr127_block1``
+    - cable-standing skyline partial cut
+    - hand/mech faller → standing skyline (TR127 Block 1) → landing processor → loader
+    - Provides the dual lateral-distance defaults (15 m + 6 m) and applies the TR119 65 % retention multiplier so block files automatically match the study.
+  * - ``cable_partial_tr127_block5``
+    - cable-standing skyline partial cut
+    - hand/mech faller → standing skyline (TR127 Block 5) → landing processor → loader
+    - Sets 16 m lateral, 3 logs/turn, 1.6 m³ payload, and applies the TR119 70 % retention multiplier so block-specific warnings fire without manual flags.
   * - ``helicopter``
     - helicopter
     - hand faller → helicopter longline → hand buck/processor → loader/water
@@ -750,10 +772,13 @@ into the regressions. Available models:
   corridors with 3.5–6 logs/turn; the CLI warns that it is a WA/ID dataset.
 * ``aubuchon-kramer`` – Kramer (1978) standing skyline with carriage-height and chord-slope predictors. Supply
   ``--carriage-height-m`` and ``--chordslope-percent`` in addition to the Wyssen-style inputs; ``--harvest-system-id
-  cable_standing`` applies 3.8 logs/turn, 0.45 m³/log, and −15 % chord slope defaults for coastal chokers.
+  cable_standing`` applies 3.8 logs/turn, 0.45 m³/log, and −15 % chord slope defaults for coastal chokers. The trials only
+  observed chord slopes between −22 % (downhill) and +3 % (slight uphill), so the helper now warns/flags telemetry when
+  you stray outside that envelope.
 * ``aubuchon-kellogg`` – Kellogg (1976) tower-yarder regression (Oregon) with lead-angle and choker-count predictors.
   Provide ``--lead-angle-deg`` and ``--chokers`` with the usual log/volume inputs; payloads are converted to cubic feet
-  internally to match the source, and the CLI warns that it’s not BC data.
+  internally to match the source, and the CLI warns that it’s not BC data. Lead angles were limited to ±90° and the study
+  only used 1–2 chokers per turn, so the helper now prints/telemeters calibration warnings whenever those values drift.
 
 Helicopter longline work still lives under ``fhops.dataset estimate-productivity --machine-role helicopter_longline``.
 Those helpers wrap FPInnovations Advantage/TR studies (Lama, K-Max, Bell 214B, S-64E) with ``--helicopter-model``,
@@ -764,6 +789,51 @@ Every skyline model prints the assumed payload and m³/PMH0 result; the McNeel a
 delay-free cycle minutes so you can see the impact of deflection, carriage height, lead angle, or extra chokers.
 Telemetry rows capture all skyline predictors (horizontal/vertical distance, pieces, piece volume, carriage height,
 chord slope, lead angle, chokers, running-yarder variant) so harvest-system overrides are traceable.
+
+Skyline cost matrix
+-------------------
+
+When you need CPI-adjusted hourly costs, run ``fhops.dataset inspect-machine --machine-role <role>`` (or reference
+``data/machine_rates.json``) using the role associated with your preset. The table below summarizes which machine-rate
+entry lines up with each skyline helper. Presets without BC cost coverage are flagged so you know to supply your own
+rates.
+
+.. list-table:: Skyline preset → machine-rate mapping
+   :widths: 26 24 20 30
+   :header-rows: 1
+
+   * - Preset(s)
+     - Source/system
+     - Machine-rate role
+     - Notes
+   * - ``tr125-single-span`` / ``tr125-multi-span`` / ``tr127-block1``–``block6``
+     - FPInnovations TR-125/127 Skylead C40 corridors
+     - ``grapple_yarder_skyleadc40``
+     - 1991 CAD rate (FERIC TN-201). Reuse this CPI-aware entry for both single- and multi-span corridors until dedicated TR-127 costs surface.
+   * - ``fncy12-tmy45``
+     - Thunderbird TMY45 + Mini-Mak II intermediate supports (FNCY12/TN258)
+     - ``grapple_yarder_tmy45``
+     - 1992 CAD LeDoux-derived rate with Cat D8/Timberjack standby baked in (0.25/0.14 SMH). Telemetry logs the support ratios automatically.
+   * - ``mcneel-running``
+     - McNeel (2000) Madill 046 running skyline
+     - ``grapple_yarder_cypress7280``
+     - Uses the TN-157 Cypress swing-yard rate (1991 CAD) for long-span running skyline conversions.
+   * - ``tn173-ecologger`` / ``tn173-gabriel`` / ``tn173-christie`` / ``tn173-teletransporteur`` / ``tn173-timbermaster-1984`` / ``tn173-timbermaster-1985``
+     - TN-173 compact skyline fleet (Eastern Canada)
+     - ``skyline_ecologger_tn173`` / ``skyline_gabriel_tn173`` / ``skyline_christie_tn173`` / ``skyline_teletransporteur_tn173`` / ``skyline_timbermaster_tn173``
+     - Each preset has a dedicated 1991 CAD entry mirroring the original FERIC case study; CPI helper inflates to 2024.
+   * - ``hi-skid``
+     - FNG73 Hi-Skid short-yarding truck
+     - ``skyline_hi_skid``
+     - 1999 CAD attachment + operator (ADV2N62 wage). ``inspect-machine`` reports the CPI-adjusted rate.
+   * - ``ledoux-skagit-shotgun`` / ``ledoux-skagit-highlead`` / ``ledoux-washington-208e`` / ``ledoux-tmy45``
+     - LeDoux (1984) residue skyline trials (Skagit BU-94, Washington 208E, Thunderbird TMY-45)
+     - ``grapple_yarder_skagit_shotgun`` / ``grapple_yarder_skagit_highlead`` / ``grapple_yarder_washington_208e`` / ``grapple_yarder_tmy45_residue``
+     - 1984 USD owning/operating splits converted via the CPI helper for the residue presets.
+   * - Presets without dedicated BC rates (``lee-uphill``, ``lee-downhill``, ``aubuchon-*``, ``micro-master``)
+     - South Korea / US Pacific Northwest studies outside the FPInnovations catalog
+     - —
+     - Supply your own rate (or reuse ``grapple_yarder`` generic) when running costing workflows; these remain non-BC references.
 
 Road & Subgrade Construction References
 ---------------------------------------

@@ -217,6 +217,25 @@ _TMY45_SUPPORT_MACHINE_RATIOS = {
 _TN258_LATERAL_LIMIT_M = 30.0
 _TN258_MAX_SKYLINE_TENSION_KN = 147.0
 _TN98_SPECIES = ("cedar", "douglas_fir", "hemlock", "all_species")
+_AUBUCHON_SLOPE_M_RANGE = (304.8, 914.4)
+_AUBUCHON_LATERAL_M_RANGE = (15.24, 45.72)
+_AUBUCHON_LOGS_RANGE = (3.5, 6.0)
+_AUBUCHON_CREW_RANGE = (4.0, 5.0)
+_AUBUCHON_RANGE_TEXT = (
+    "Hensel et al. (1977) Wyssen trials: slope 305–914 m (1 000–3 000 ft); lateral 15–46 m "
+    "(50–150 ft); logs/turn 3.5–6; crew size 4–5; slopes 45–75 %."
+)
+_KRAMER_CHORDSLOPE_RANGE = (-22.0, 3.0)
+_KRAMER_RANGE_TEXT = (
+    "Kramer (1978) standing skyline: chord slopes observed between −22% (downhill) and +3% "
+    "(slight uphill); other predictors followed the Skagit/Koller multi-span trials."
+)
+_KELLOGG_LEAD_ANGLE_RANGE = (-90.0, 90.0)
+_KELLOGG_CHOKERS_RANGE = (1.0, 2.0)
+_KELLOGG_RANGE_TEXT = (
+    "Kellogg (1976) tower yarder: lead angles ±90° (log vs. skyline) and 1–2 chokers per turn "
+    "during the coastal Oregon trials."
+)
 
 console = Console()
 dataset_app = typer.Typer(help="Inspect FHOPS datasets and bundled examples.")
@@ -2638,6 +2657,9 @@ def _apply_skyline_system_defaults(
     *,
     system: HarvestSystem | None,
     model: SkylineProductivityModel,
+    slope_distance_m: float,
+    lateral_distance_m: float,
+    lateral_distance_2_m: float | None,
     logs_per_turn: float,
     average_log_volume_m3: float,
     crew_size: float,
@@ -2648,9 +2670,15 @@ def _apply_skyline_system_defaults(
     running_variant: RunningSkylineVariant,
     carriage_height_m: float | None,
     chordslope_percent: float | None,
+    payload_m3: float | None,
+    num_logs: float | None,
     user_supplied: Mapping[str, bool],
 ) -> tuple[
     SkylineProductivityModel,
+    float,
+    float,
+    float | None,
+    float,
     float,
     float,
     float,
@@ -2661,11 +2689,17 @@ def _apply_skyline_system_defaults(
     RunningSkylineVariant,
     float | None,
     float | None,
+    float | None,
+    float | None,
     bool,
+    str | None,
 ]:
     if system is None:
         return (
             model,
+            slope_distance_m,
+            lateral_distance_m,
+            lateral_distance_2_m,
             logs_per_turn,
             average_log_volume_m3,
             crew_size,
@@ -2676,7 +2710,10 @@ def _apply_skyline_system_defaults(
             running_variant,
             carriage_height_m,
             chordslope_percent,
+            payload_m3,
+            num_logs,
             False,
+            None,
         )
     overrides = system_productivity_overrides(system, "skyline_yarder")
     if not overrides:
@@ -2684,6 +2721,9 @@ def _apply_skyline_system_defaults(
     if not overrides:
         return (
             model,
+            slope_distance_m,
+            lateral_distance_m,
+            lateral_distance_2_m,
             logs_per_turn,
             average_log_volume_m3,
             crew_size,
@@ -2694,9 +2734,13 @@ def _apply_skyline_system_defaults(
             running_variant,
             carriage_height_m,
             chordslope_percent,
+            payload_m3,
+            num_logs,
             False,
+            None,
         )
     used = False
+    tr119_override: str | None = None
 
     def maybe_float(
         key: str, current: float | None, supplied_flag: str, allow_zero: bool = False
@@ -2754,6 +2798,20 @@ def _apply_skyline_system_defaults(
         "skyline_chordslope_percent", chordslope_percent, "chordslope_percent", True
     )
     used |= changed
+    lateral_distance_m, changed = maybe_float(
+        "skyline_lateral_distance_m", lateral_distance_m, "lateral_distance_m", True
+    )
+    used |= changed
+    lateral_distance_2_m, changed = maybe_float(
+        "skyline_lateral_distance2_m", lateral_distance_2_m, "lateral_distance_2_m", True
+    )
+    used |= changed
+    payload_m3, changed = maybe_float(
+        "skyline_payload_m3", payload_m3, "payload_m3", True
+    )
+    used |= changed
+    num_logs, changed = maybe_float("skyline_num_logs", num_logs, "num_logs", True)
+    used |= changed
 
     value = overrides.get("skyline_running_variant")
     if value and not user_supplied.get("running_yarder_variant", False):
@@ -2763,8 +2821,16 @@ def _apply_skyline_system_defaults(
         except ValueError as exc:
             raise ValueError(f"Unknown running-skyline variant override '{value}'.") from exc
 
+    if not user_supplied.get("tr119_treatment", False):
+        override_treatment = overrides.get("tr119_treatment")
+        if isinstance(override_treatment, str):
+            tr119_override = override_treatment
+
     return (
         model,
+        slope_distance_m,
+        lateral_distance_m,
+        lateral_distance_2_m,
         logs_per_turn,
         average_log_volume_m3,
         crew_size,
@@ -2775,7 +2841,10 @@ def _apply_skyline_system_defaults(
         running_variant,
         carriage_height_m,
         chordslope_percent,
+        payload_m3,
+        num_logs,
         used,
+        tr119_override,
     )
 
 
@@ -7576,6 +7645,37 @@ def estimate_skyline_productivity_cmd(
     def _append_warning(existing: str | None, message: str) -> str:
         return f"{existing}\n{message}" if existing else message
 
+    telemetry_calibration_flags: list[dict[str, Any]] = []
+    calibration_notes: list[str] = []
+
+    def _check_calibration_range(
+        *,
+        model_label: str,
+        field: str,
+        value: float | None,
+        range_min: float,
+        range_max: float,
+        units: str = "",
+    ) -> None:
+        if value is None:
+            return
+        if value < range_min or value > range_max:
+            units_suffix = units if units else ""
+            warning = (
+                f"[yellow]Calibration warning ({model_label}):[/yellow] {field} {value:.2f}{units_suffix} "
+                f"lies outside the {range_min:.2f}–{range_max:.2f}{units_suffix} study range."
+            )
+            nonlocal console_warning
+            console_warning = _append_warning(console_warning, warning)
+            telemetry_calibration_flags.append(
+                {
+                    "model": model_label,
+                    "field": field,
+                    "value": value,
+                    "range": [range_min, range_max],
+                }
+            )
+
     scenario_context: Scenario | None = None
     dataset_name: str | None = None
     systems_catalog = dict(default_system_registry())
@@ -7609,9 +7709,12 @@ def estimate_skyline_productivity_cmd(
 
     user_supplied = {
         "model": _parameter_supplied(ctx, "model"),
+        "slope_distance_m": True,  # required option always supplied
         "logs_per_turn": _parameter_supplied(ctx, "logs_per_turn"),
         "average_log_volume_m3": _parameter_supplied(ctx, "average_log_volume_m3"),
         "crew_size": _parameter_supplied(ctx, "crew_size"),
+        "lateral_distance_m": _parameter_supplied(ctx, "lateral_distance_m"),
+        "lateral_distance_2_m": _parameter_supplied(ctx, "lateral_distance_2_m"),
         "horizontal_distance_m": _parameter_supplied(ctx, "horizontal_distance_m"),
         "vertical_distance_m": _parameter_supplied(ctx, "vertical_distance_m"),
         "pieces_per_cycle": _parameter_supplied(ctx, "pieces_per_cycle"),
@@ -7619,6 +7722,8 @@ def estimate_skyline_productivity_cmd(
         "running_yarder_variant": _parameter_supplied(ctx, "running_yarder_variant"),
         "carriage_height_m": _parameter_supplied(ctx, "carriage_height_m"),
         "chordslope_percent": _parameter_supplied(ctx, "chordslope_percent"),
+        "payload_m3": _parameter_supplied(ctx, "payload_m3"),
+        "num_logs": _parameter_supplied(ctx, "num_logs"),
         "merchantable_logs_per_turn": _parameter_supplied(ctx, "merchantable_logs_per_turn"),
         "merchantable_volume_m3": _parameter_supplied(ctx, "merchantable_volume_m3"),
         "residue_pieces_per_turn": _parameter_supplied(ctx, "residue_pieces_per_turn"),
@@ -7626,10 +7731,14 @@ def estimate_skyline_productivity_cmd(
         "manual_falling": manual_falling is not None,
         "manual_falling_species": _parameter_supplied(ctx, "manual_falling_species"),
         "manual_falling_dbh_cm": _parameter_supplied(ctx, "manual_falling_dbh_cm"),
+        "tr119_treatment": tr119_treatment is not None,
     }
 
     (
         model,
+        slope_distance_m,
+        lateral_distance_m,
+        lateral_distance_2_m,
         logs_per_turn,
         average_log_volume_m3,
         crew_size,
@@ -7640,10 +7749,16 @@ def estimate_skyline_productivity_cmd(
         running_yarder_variant,
         carriage_height_m,
         chordslope_percent,
+        payload_m3,
+        num_logs,
         skyline_defaults_used,
+        tr119_override,
     ) = _apply_skyline_system_defaults(
         system=selected_system,
         model=model,
+        slope_distance_m=slope_distance_m,
+        lateral_distance_m=lateral_distance_m,
+        lateral_distance_2_m=lateral_distance_2_m,
         logs_per_turn=logs_per_turn,
         average_log_volume_m3=average_log_volume_m3,
         crew_size=crew_size,
@@ -7654,10 +7769,14 @@ def estimate_skyline_productivity_cmd(
         running_variant=running_yarder_variant,
         carriage_height_m=carriage_height_m,
         chordslope_percent=chordslope_percent,
+        payload_m3=payload_m3,
+        num_logs=num_logs,
         user_supplied=user_supplied,
     )
     if fncy12_variant_supplied and model is not SkylineProductivityModel.FNCY12_TMY45:
         raise typer.BadParameter("--fncy12-variant is only valid when --model fncy12-tmy45.")
+    if tr119_treatment is None and tr119_override is not None:
+        tr119_treatment = tr119_override
     manual_overrides = _manual_falling_overrides(selected_system)
     manual_defaults_used = False
     manual_falling_enabled = manual_falling
@@ -8197,6 +8316,39 @@ def estimate_skyline_productivity_cmd(
             ("Payload (m³)", f"{payload_value:.2f}"),
             ("Cycle Time (min)", f"{cycle_minutes:.2f}"),
         ]
+        calibration_notes.append(_AUBUCHON_RANGE_TEXT)
+        _check_calibration_range(
+            model_label="aubuchon-standing",
+            field="Slope distance",
+            value=slope_distance_m,
+            range_min=_AUBUCHON_SLOPE_M_RANGE[0],
+            range_max=_AUBUCHON_SLOPE_M_RANGE[1],
+            units=" m",
+        )
+        _check_calibration_range(
+            model_label="aubuchon-standing",
+            field="Lateral distance",
+            value=lateral_distance_m,
+            range_min=_AUBUCHON_LATERAL_M_RANGE[0],
+            range_max=_AUBUCHON_LATERAL_M_RANGE[1],
+            units=" m",
+        )
+        _check_calibration_range(
+            model_label="aubuchon-standing",
+            field="Logs per turn",
+            value=logs_per_turn,
+            range_min=_AUBUCHON_LOGS_RANGE[0],
+            range_max=_AUBUCHON_LOGS_RANGE[1],
+            units="",
+        )
+        _check_calibration_range(
+            model_label="aubuchon-standing",
+            field="Crew size",
+            value=crew_size,
+            range_min=_AUBUCHON_CREW_RANGE[0],
+            range_max=_AUBUCHON_CREW_RANGE[1],
+            units="",
+        )
         source_label = "Hensel et al. 1979 (Wyssen standing skyline, compiled by Aubuchon 1982)."
         console_warning = (
             "[yellow]Warning:[/yellow] Regression derived from interior WA/ID trials using Wyssen standing skyline;"
@@ -8239,6 +8391,15 @@ def estimate_skyline_productivity_cmd(
             ("Payload (m³)", f"{payload_value:.2f}"),
             ("Cycle Time (min)", f"{cycle_minutes:.2f}"),
         ]
+        calibration_notes.append(_KRAMER_RANGE_TEXT)
+        _check_calibration_range(
+            model_label="aubuchon-kramer",
+            field="Chord slope",
+            value=chordslope_percent,
+            range_min=_KRAMER_CHORDSLOPE_RANGE[0],
+            range_max=_KRAMER_CHORDSLOPE_RANGE[1],
+            units="%",
+        )
         source_label = "Kramer 1978 standing skyline (Aubuchon 1982 Appendix A)."
         console_warning = (
             "[yellow]Warning:[/yellow] Kramer (1978) regressions are US Pacific Northwest trials; "
@@ -8281,6 +8442,23 @@ def estimate_skyline_productivity_cmd(
             ("Payload (m³)", f"{payload_value:.2f}"),
             ("Cycle Time (min)", f"{cycle_minutes:.2f}"),
         ]
+        calibration_notes.append(_KELLOGG_RANGE_TEXT)
+        _check_calibration_range(
+            model_label="aubuchon-kellogg",
+            field="Lead angle",
+            value=lead_angle_degrees,
+            range_min=_KELLOGG_LEAD_ANGLE_RANGE[0],
+            range_max=_KELLOGG_LEAD_ANGLE_RANGE[1],
+            units="°",
+        )
+        _check_calibration_range(
+            model_label="aubuchon-kellogg",
+            field="Chokers",
+            value=chokers,
+            range_min=_KELLOGG_CHOKERS_RANGE[0],
+            range_max=_KELLOGG_CHOKERS_RANGE[1],
+            units="",
+        )
         console_warning = (
             "[yellow]Warning:[/yellow] Kellogg (1976) regression is based on small tower yarders in Oregon; "
             "confirm applicability before BC deployment."
@@ -8359,6 +8537,9 @@ def estimate_skyline_productivity_cmd(
             rows.append(("TR119 Yarding Cost ($/m³)", f"{treatment.yarding_total_cost_per_m3:.2f}"))
     rows.append(("Productivity (m³/PMH)", f"{value:.2f}"))
     _render_kv_table("Skyline Productivity", rows)
+    if calibration_notes:
+        for note in calibration_notes:
+            console.print(f"[dim]{note}[/dim]")
     if source_label:
         console.print(f"[dim]Source: {source_label}[/dim]")
     if console_warning:
@@ -8430,5 +8611,6 @@ def estimate_skyline_productivity_cmd(
             "manual_falling_cost_per_m3_cad_2024": manual_falling_summary.get("cost_per_m3_cad_2024")
             if manual_falling_summary
             else None,
+            "calibration_warnings": telemetry_calibration_flags or None,
         }
         append_jsonl(telemetry_log, payload)
