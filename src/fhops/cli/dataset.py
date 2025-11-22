@@ -179,6 +179,7 @@ from fhops.productivity import (
 from fhops.reference import (
     ADV2N21StandSnapshot,
     TN98DiameterRecord,
+    TN82Dataset,
     get_appendix5_profile,
     get_tr119_treatment,
     get_tr28_source_metadata,
@@ -188,6 +189,7 @@ from fhops.reference import (
     load_appendix5_stands,
     load_tr28_machines,
     load_tn98_dataset,
+    load_tn82_dataset,
     TR28Machine,
     load_unbc_hoe_chucking_data,
     load_unbc_processing_costs,
@@ -6988,6 +6990,55 @@ def _render_tn98_table(records: Sequence[TN98DiameterRecord]) -> None:
             f"{record.cost_per_m3_cad:.2f}" if record.cost_per_m3_cad is not None else "—",
         )
     console.print(table)
+
+
+@dataset_app.command("tn82-ft180")
+def tn82_ft180_cmd(
+    show_notes: bool = typer.Option(False, "--show-notes", help="Display the system-level notes.")
+):
+    """Summarize the TN82 FMC FT-180 vs. John Deere 550 productivity datasets."""
+
+    dataset = load_tn82_dataset()
+    site_lookup = {site["id"]: site for site in dataset.sites}
+    for machine in dataset.machines:
+        title = f"{machine.name} ({machine.machine_type})"
+        table = Table(title=title, header_style="bold cyan", expand=True)
+        table.add_column("Site", style="bold")
+        table.add_column("Description")
+        table.add_column("Prod. m³/PMH", justify="right")
+        table.add_column("Trees/PMH", justify="right")
+        table.add_column("Turns/PMH", justify="right")
+        table.add_column("m³/8h shift", justify="right")
+        table.add_column("Trees/shift", justify="right")
+        table.add_column("Turns/shift", justify="right")
+        table.add_column("Prod. hrs (%)", justify="right")
+        table.add_column("Avail. (%)", justify="right")
+        for area in machine.areas:
+            site = site_lookup.get(area.site_id, {})
+            desc = site.get("description", area.site_id.replace("_", " "))
+            table.add_row(
+                area.site_id.replace("_", " "),
+                desc,
+                f"{area.volume_m3_per_pmh:.2f}",
+                f"{area.trees_per_pmh:.1f}",
+                f"{area.turns_per_pmh:.1f}",
+                f"{area.volume_m3_per_shift:.1f}",
+                f"{area.trees_per_shift:.0f}",
+                f"{area.turns_per_shift:.1f}",
+                f"{area.productive_hours_percent:.1f}" if area.productive_hours_percent is not None else "—",
+                f"{area.availability_percent:.1f}" if area.availability_percent is not None else "—",
+            )
+        console.print(table)
+        if machine.notes:
+            console.print(f"[dim]{machine.notes}[/dim]")
+    if show_notes and dataset.system_notes:
+        console.print("[bold]Study Notes[/bold]")
+        for note in dataset.system_notes:
+            console.print(f"- {note}")
+    if dataset.source:
+        console.print(
+            f"[dim]Source: {dataset.source.get('title', 'TN-82')} (FERIC TN-82, Columbia Valley FMC FT-180 vs. JD 550 study).[/dim]"
+        )
 
 
 @dataset_app.command("tn98-handfalling")

@@ -18,6 +18,8 @@
   `--manual-falling-dbh-cm` so TN-98 cost/time outputs appear alongside skyline productivity. Harvest systems with `hand_faller`
   or `hand_or_mech_faller` jobs auto-apply their DBH/species defaults (e.g., `cable_micro_*` uses hemlock 32.5 cm, `cable_running`
   uses Douglas-fir 52.5 cm), and telemetry records the manual falling inputs/costs.
+- Added the TN-82 FMC FT-180 vs. John Deere 550 dataset (`data/reference/fpinnovations/tn82_ft180_jd550.json`) plus a CLI summary
+  (`fhops.dataset tn82-ft180`) so steep-ground ground-based alternatives can be benchmarked without reopening the PDF.
 
 # 2025-11-28 — Scenario salvage-mode threading
 - Added `Block.salvage_processing_mode` handling to the scenario contract end-to-end: CSV loaders now treat the column as an optional enum (blank/NaN entries are stripped), and the synthetic dataset generator records the new field whenever a salvage harvest system (`ground_salvage_grapple`, `cable_salvage_grapple`) is assigned to a block so bundles persist the ADV1N5 portable-mill vs. in-woods-chipping choice.

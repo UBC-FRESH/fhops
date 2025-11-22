@@ -798,6 +798,10 @@ Add ``--show-table`` when you want to review the observed per-diameter rows befo
 job auto-enable those settings (e.g., ``cable_micro_*`` presets default to hemlock @ 32.5 cm, ``cable_running`` presets default to
 Douglas-fir @ 52.5 cm) and print a reminder when the defaults kick in.
 
+Use ``fhops dataset tn82-ft180`` to compare the FMC FT-180 vs. John Deere 550 tracked skidders from TN-82 (clearcut vs. winter
+right-of-way). The command prints m³/PMH and per-shift stats for each site, making it easy to benchmark steep-slope ground
+alternatives alongside the skyline helpers.
+
 CTL Harvester Productivity Models
 ---------------------------------
 

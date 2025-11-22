@@ -28,6 +28,7 @@ from .tn98_handfalling import (
     TN98DiameterRecord,
     load_tn98_dataset,
 )
+from .tn82_ft180 import TN82Dataset, TN82Machine, TN82AreaSummary, load_tn82_dataset
 
 __all__ = [
     "Appendix5Stand",
@@ -54,4 +55,8 @@ __all__ = [
     "TN98Regression",
     "TN98DiameterRecord",
     "load_tn98_dataset",
+    "TN82Dataset",
+    "TN82Machine",
+    "TN82AreaSummary",
+    "load_tn82_dataset",
 ]

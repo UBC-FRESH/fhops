@@ -1,0 +1,102 @@
+{
+  "source": {
+    "id": "TN82",
+    "title": "Evaluation of the FMC FT-180 Fast Track Log Skidder",
+    "authors": [
+      "M. D. Mather"
+    ],
+    "publisher": "FERIC",
+    "publication_date": "1984-09",
+    "currency": "CAD_1984",
+    "notes": "Performance comparison of an FMC FT-180 tracked skidder and a John Deere 550 crawler on 35–60% clearcut slopes and a winter right-of-way (≤9% running slope) in the Columbia Valley."
+  },
+  "sites": [
+    {
+      "id": "clearcut",
+      "description": "Summer clearcut, sidehill slopes 35–60%. Prepared skid trails; average tree volume 0.39 m³.",
+      "season": "summer 1983",
+      "slope_percent_range": [
+        35,
+        60
+      ],
+      "average_tree_volume_m3": 0.39
+    },
+    {
+      "id": "right_of_way",
+      "description": "Winter road right-of-way (maximum running-surface slope 9%). Average tree volume 1.70 m³.",
+      "season": "winter 1984",
+      "slope_percent_range": [
+        0,
+        9
+      ],
+      "average_tree_volume_m3": 1.70
+    }
+  ],
+  "machines": [
+    {
+      "id": "fmc_ft180",
+      "name": "FMC FT-180 Fast Track skidder",
+      "type": "tracked skidder",
+      "notes": "Prototype small tracked skidder intended to work on 30–50% slopes. Contractor kept it focused on larger skids; JD 550 bunched/cleaned in the clearcut.",
+      "areas": [
+        {
+          "site_id": "clearcut",
+          "productive_hours_percent": 89.1,
+          "availability_percent": 92.5,
+          "volume_m3_per_pmh": 8.0,
+          "trees_per_pmh": 20.5,
+          "turns_per_pmh": 2.4,
+          "volume_m3_per_shift": 55.6,
+          "trees_per_shift": 143.0,
+          "turns_per_shift": 16.8
+        },
+        {
+          "site_id": "right_of_way",
+          "productive_hours_percent": 79.1,
+          "availability_percent": 83.4,
+          "volume_m3_per_pmh": 17.1,
+          "trees_per_pmh": 10.1,
+          "turns_per_pmh": 2.7,
+          "volume_m3_per_shift": 108.0,
+          "trees_per_shift": 64.0,
+          "turns_per_shift": 16.9
+        }
+      ]
+    },
+    {
+      "id": "john_deere_550",
+      "name": "John Deere 550 crawler tractor",
+      "type": "crawler tractor",
+      "notes": "Performed trail construction, landing cleanup, short skids, and bunching for the FT-180 during clearcut cleanup.",
+      "areas": [
+        {
+          "site_id": "clearcut",
+          "productive_hours_percent": 83.4,
+          "availability_percent": 92.4,
+          "volume_m3_per_pmh": 5.2,
+          "trees_per_pmh": 13.3,
+          "turns_per_pmh": 2.2,
+          "volume_m3_per_shift": 16.3,
+          "trees_per_shift": 42.0,
+          "turns_per_shift": 6.9
+        },
+        {
+          "site_id": "right_of_way",
+          "productive_hours_percent": 79.4,
+          "availability_percent": 87.7,
+          "volume_m3_per_pmh": 11.4,
+          "trees_per_pmh": 6.7,
+          "turns_per_pmh": 2.8,
+          "volume_m3_per_shift": 43.2,
+          "trees_per_shift": 26.0,
+          "turns_per_shift": 10.7
+        }
+      ]
+    }
+  ],
+  "system_notes": [
+    "FT-180 maintained ≥50% higher m³/PMH than the JD 550 on both areas. Contractor emphasized longer skids for the FT-180 while the JD handled short hauls, trail building, and landing tasks.",
+    "Right-of-way figures cover winter operations with 1.7 m³ trees; clearcut figures cover smaller 0.39 m³ stems.",
+    "No separate owning/operating cost splits published; treat these values as productivity benchmarks for steep ground tracked skidders."
+  ]
+}
