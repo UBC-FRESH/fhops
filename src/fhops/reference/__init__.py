@@ -48,6 +48,11 @@ from .soil_protection import (
     get_soil_profiles,
     load_soil_profiles,
 )
+from .partial_cut_profiles import (
+    PartialCutProfile,
+    get_partial_cut_profile,
+    load_partial_cut_profiles,
+)
 from .support_penalties import (
     TractorDriveEfficiency,
     CompactionRisk,
@@ -101,6 +106,9 @@ __all__ = [
     "load_soil_profiles",
     "get_soil_profile",
     "get_soil_profiles",
+    "PartialCutProfile",
+    "load_partial_cut_profiles",
+    "get_partial_cut_profile",
     "TractorDriveEfficiency",
     "CompactionRisk",
     "adv15n3_baseline_drive_id",

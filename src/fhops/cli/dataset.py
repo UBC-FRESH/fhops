@@ -183,7 +183,9 @@ from fhops.reference import (
     ADV2N21StandSnapshot,
     TN98DiameterRecord,
     TN82Dataset,
+    PartialCutProfile,
     get_appendix5_profile,
+    get_partial_cut_profile,
     get_tr119_treatment,
     get_tr28_source_metadata,
     get_soil_profile,
@@ -205,6 +207,7 @@ from fhops.reference import (
     load_unbc_construction_costs,
     load_adv6n25_dataset,
     load_fncy12_dataset,
+    load_partial_cut_profiles,
     adv15n3_baseline_drive_id,
     adv15n3_drive_ids,
     get_adv15n3_drive,
@@ -240,6 +243,21 @@ def _get_tmy45_support_ratios() -> dict[str, float]:
         "timberjack_450_smhr_per_yarder_smhr": float(timber_ratio),
     }
 
+
+try:
+    _PARTIAL_CUT_PROFILE_CHOICES = ", ".join(
+        sorted(profile.profile_id for profile in load_partial_cut_profiles().values())
+    )
+except FileNotFoundError:
+    _PARTIAL_CUT_PROFILE_CHOICES = ""
+if _PARTIAL_CUT_PROFILE_CHOICES:
+    _PARTIAL_CUT_PROFILE_HELP = (
+        f"Partial-cut profile ID (options: {_PARTIAL_CUT_PROFILE_CHOICES})."
+    )
+else:
+    _PARTIAL_CUT_PROFILE_HELP = (
+        "Partial-cut profile ID (see data/reference/partial_cut_profiles.json)."
+    )
 
 _TN258_LATERAL_LIMIT_M = 30.0
 _TN258_MAX_SKYLINE_TENSION_KN = 147.0
@@ -2042,7 +2060,13 @@ def _render_processor_result(
     raise TypeError(f"Unhandled processor result type: {type(result)!r}")
 
 
-def _render_machine_cost_summary(role: str, *, label: str | None = None) -> None:
+def _render_machine_cost_summary(
+    role: str,
+    *,
+    label: str | None = None,
+    cost_multiplier: float | None = None,
+    cost_multiplier_label: str | None = None,
+) -> None:
     try:
         rate = _resolve_machine_rate(role)
     except typer.BadParameter:
@@ -2063,6 +2087,10 @@ def _render_machine_cost_summary(role: str, *, label: str | None = None) -> None
         rows.append(("Operating ($/SMH)", f"{breakdown['operating']:.2f}"))
     if "repair_maintenance" in breakdown:
         rows.append(("Repair/Maint. ($/SMH)", f"{breakdown['repair_maintenance']:.2f}"))
+    if cost_multiplier and cost_multiplier > 0:
+        adjusted = rental_rate * cost_multiplier
+        label_text = cost_multiplier_label or "Adjusted"
+        rows.append((f"{label_text} Rental Rate ($/SMH)", f"{adjusted:.2f}"))
     title = label or f"{role.replace('_', ' ').title()} Cost Reference"
     _render_kv_table(title, rows)
     if getattr(rate, "cost_base_year", TARGET_YEAR) != TARGET_YEAR:
@@ -2772,6 +2800,7 @@ def _apply_skyline_system_defaults(
     float | None,
     bool,
     str | None,
+    str | None,
 ]:
     if system is None:
         return (
@@ -2792,6 +2821,7 @@ def _apply_skyline_system_defaults(
             payload_m3,
             num_logs,
             False,
+            None,
             None,
         )
     overrides = system_productivity_overrides(system, "skyline_yarder")
@@ -2817,9 +2847,11 @@ def _apply_skyline_system_defaults(
             num_logs,
             False,
             None,
+            None,
         )
     used = False
     tr119_override: str | None = None
+    partial_profile_override: str | None = None
 
     def maybe_float(
         key: str, current: float | None, supplied_flag: str, allow_zero: bool = False
@@ -2905,6 +2937,11 @@ def _apply_skyline_system_defaults(
         if isinstance(override_treatment, str):
             tr119_override = override_treatment
 
+    if not user_supplied.get("partial_cut_profile", False):
+        profile_override = overrides.get("partial_cut_profile")
+        if isinstance(profile_override, str):
+            partial_profile_override = profile_override
+
     return (
         model,
         slope_distance_m,
@@ -2924,6 +2961,7 @@ def _apply_skyline_system_defaults(
         num_logs,
         used,
         tr119_override,
+        partial_profile_override,
     )
 
 
@@ -8063,6 +8101,11 @@ def estimate_skyline_productivity_cmd(
         "--tr119-treatment",
         help="Optional TR119 treatment (e.g., strip_cut, 70_retention, 65_retention) to scale output and show costs.",
     ),
+    partial_cut_profile: str | None = typer.Option(
+        None,
+        "--partial-cut-profile",
+        help=_PARTIAL_CUT_PROFILE_HELP,
+    ),
     manual_falling: bool | None = typer.Option(
         None,
         "--manual-falling/--no-manual-falling",
@@ -8205,6 +8248,7 @@ def estimate_skyline_productivity_cmd(
         "manual_falling_species": _parameter_supplied(ctx, "manual_falling_species"),
         "manual_falling_dbh_cm": _parameter_supplied(ctx, "manual_falling_dbh_cm"),
         "tr119_treatment": tr119_treatment is not None,
+        "partial_cut_profile": partial_cut_profile is not None,
     }
 
     (
@@ -8226,6 +8270,7 @@ def estimate_skyline_productivity_cmd(
         num_logs,
         skyline_defaults_used,
         tr119_override,
+        partial_cut_override,
     ) = _apply_skyline_system_defaults(
         system=selected_system,
         model=model,
@@ -8250,6 +8295,12 @@ def estimate_skyline_productivity_cmd(
         raise typer.BadParameter("--fncy12-variant is only valid when --model fncy12-tmy45.")
     if tr119_treatment is None and tr119_override is not None:
         tr119_treatment = tr119_override
+    if partial_cut_profile is None and partial_cut_override is not None:
+        partial_cut_profile = partial_cut_override
+    if tr119_treatment and partial_cut_profile:
+        raise typer.BadParameter(
+            "Cannot combine --tr119-treatment and --partial-cut-profile. Choose one partial-cut scaling method."
+        )
     manual_overrides = _manual_falling_overrides(selected_system)
     manual_defaults_used = False
     manual_falling_enabled = manual_falling
@@ -8315,6 +8366,9 @@ def estimate_skyline_productivity_cmd(
     telemetry_support_cat_d8_ratio = None
     telemetry_support_timberjack_ratio = None
     telemetry_fncy12_variant = None
+    telemetry_partial_profile_id = None
+    telemetry_partial_volume_multiplier = None
+    telemetry_partial_cost_multiplier = None
     tn258_limit_exceeded = False
     non_bc_warning = False
     if model is SkylineProductivityModel.LEE_UPHILL:
@@ -8996,6 +9050,7 @@ def estimate_skyline_productivity_cmd(
                         f"{manual_falling_summary['cost_per_m3_cad_2024']:.2f}",
                     )
                 )
+    partial_cut_profile_entry: PartialCutProfile | None = None
     if tr119_treatment:
         try:
             treatment = get_tr119_treatment(tr119_treatment)
@@ -9011,20 +9066,55 @@ def estimate_skyline_productivity_cmd(
         )
     else:
         tr119_cost_note = None
+    partial_cut_cost_note = None
+    if partial_cut_profile:
+        try:
+            partial_cut_profile_entry = get_partial_cut_profile(partial_cut_profile)
+        except KeyError as exc:
+            raise typer.BadParameter(str(exc))
+        volume_multiplier = partial_cut_profile_entry.volume_multiplier
+        if volume_multiplier is not None and volume_multiplier > 0:
+            value *= volume_multiplier
+        rows.append(("Partial-cut Profile", partial_cut_profile_entry.label))
+        rows.append(
+            (
+                "Partial-cut Volume Multiplier",
+                f"{volume_multiplier:.3f}" if volume_multiplier is not None else "–",
+            )
+        )
+        cost_multiplier = partial_cut_profile_entry.cost_multiplier
+        if cost_multiplier is not None:
+            rows.append(("Partial-cut Cost Multiplier", f"{cost_multiplier:.3f}"))
+            partial_cut_cost_note = (
+                f"Partial-cut profile {partial_cut_profile_entry.profile_id} cost multiplier ×{cost_multiplier:.3f}."
+            )
+        telemetry_partial_profile_id = partial_cut_profile_entry.profile_id
+        telemetry_partial_volume_multiplier = volume_multiplier
+        telemetry_partial_cost_multiplier = cost_multiplier
     rows.append(("Productivity (m³/PMH)", f"{value:.2f}"))
     _render_kv_table("Skyline Productivity", rows)
     if calibration_notes:
         for note in calibration_notes:
             console.print(f"[dim]{note}[/dim]")
+    if partial_cut_profile_entry and partial_cut_profile_entry.retention_summary:
+        console.print(f"[dim]{partial_cut_profile_entry.retention_summary}[/dim]")
     skyline_cost_role = _skyline_cost_role(model)
     if skyline_cost_role is not None:
         if show_costs:
             _render_machine_cost_summary(
                 skyline_cost_role,
                 label="Skyline Cost Reference",
+                cost_multiplier=(
+                    partial_cut_profile_entry.cost_multiplier if partial_cut_profile_entry else None
+                ),
+                cost_multiplier_label=(
+                    partial_cut_profile_entry.label if partial_cut_profile_entry else None
+                ),
             )
             if tr119_cost_note:
                 console.print(f"[dim]{tr119_cost_note}[/dim]")
+            if partial_cut_cost_note:
+                console.print(f"[dim]{partial_cut_cost_note}[/dim]")
     elif show_costs:
         console.print("[dim]No default skyline machine rate is published for this preset.[/dim]")
     if source_label:
@@ -9064,6 +9154,9 @@ def estimate_skyline_productivity_cmd(
             "cycle_minutes": cycle_minutes,
             "productivity_m3_per_pmh": value,
             "tr119_treatment": tr119_treatment,
+            "partial_cut_profile": telemetry_partial_profile_id,
+            "partial_cut_volume_multiplier": telemetry_partial_volume_multiplier,
+            "partial_cut_cost_multiplier": telemetry_partial_cost_multiplier,
             "source": source_label,
             "non_bc_source": non_bc_warning,
             "hi_skid_include_haul": hi_skid_include_haul

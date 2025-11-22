@@ -187,9 +187,11 @@ def test_cli_skyline_tr127_block5_defaults(tmp_path) -> None:
     )
     assert result.exit_code == 0
     assert "tr127-block5" in result.stdout
+    assert "Partial-cut Profile" in result.stdout
     payload = json.loads(telemetry_log.read_text(encoding="utf-8").strip())
     assert payload["num_logs"] == pytest.approx(3.0)
-    assert payload["tr119_treatment"] == "70_retention"
+    assert payload["partial_cut_profile"] == "sr109_green_tree"
+    assert payload["tr119_treatment"] is None
 
 
 def test_cli_skyline_tr125_show_costs() -> None:
@@ -209,6 +211,39 @@ def test_cli_skyline_tr125_show_costs() -> None:
     assert result.exit_code == 0
     assert "grapple_yarder_skyleadc40" in result.stdout
     assert "Default Rental Rate" in result.stdout
+
+
+def test_cli_skyline_partial_cut_profile_option(tmp_path) -> None:
+    telemetry_log = tmp_path / "partial.jsonl"
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "tr125-single-span",
+            "--slope-distance-m",
+            "250",
+            "--lateral-distance-m",
+            "30",
+            "--partial-cut-profile",
+            "sr109_shelterwood",
+            "--telemetry-log",
+            str(telemetry_log),
+        ],
+    )
+    assert result.exit_code == 0
+    assert "Partial-cut Profile" in result.stdout
+    base = estimate_cable_yarder_productivity_tr125_single_span(
+        slope_distance_m=250.0,
+        lateral_distance_m=30.0,
+        payload_m3=1.6,
+    )
+    scaled = base * 0.495
+    assert f"{scaled:.2f}" in result.stdout
+    payload = json.loads(telemetry_log.read_text(encoding="utf-8").strip())
+    assert payload["partial_cut_profile"] == "sr109_shelterwood"
+    assert payload["partial_cut_volume_multiplier"] == pytest.approx(0.495)
+    assert payload["partial_cut_cost_multiplier"] == pytest.approx(1.38)
 
 
 def test_cli_skyline_show_costs_missing_role() -> None:

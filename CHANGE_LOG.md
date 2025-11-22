@@ -1,5 +1,13 @@
 # Development Change Log
 
+# 2025-12-05 — Skyline partial-cut profiles
+- Transcribed the ADV11N17, ADV1N22 (Opening 6 group selection), TN199, SR-109 MASS shelterwood/patch/green-tree, and ADV9N4 interface-thinning tables into structured datasets (`data/reference/fpinnovations/*partial*.json`). Each file captures the published volume per shift, $/m³, trail coverage, and retention metadata so the skyline helper no longer relies solely on TR119 multipliers.
+- Introduced `data/reference/partial_cut_profiles.json`, a consolidated registry of volume/cost multipliers derived from the new datasets (plus the existing SR-109 trials). `fhops.reference.partial_cut_profiles` exposes typed loaders so downstream helpers can look up IDs such as `sr109_shelterwood`, `adv11n17_trial1`, or `tn199_partial_entry` without reopening the PDFs.
+- `fhops.dataset estimate-skyline` gained ``--partial-cut-profile``. Selecting a profile multiplies productivity by the published volume factor, annotates the telemetry/log output, and (when ``--show-costs`` is enabled) prints the CPI-aware rental rate adjusted by the matching cost multiplier. Tests cover both the manual flag and the harvest-system default path.
+- Skyline harvest systems now auto-apply the relevant profiles: ``cable_running_tr122_shelterwood`` uses `sr109_shelterwood`, while ``cable_partial_tr127_block1`` and ``block5`` pull the SR-109 patch-cut and green-tree multipliers. The overrides no longer depend on TR119 treatments, so datasets inherit the BC-specific penalties automatically.
+- Documentation updates: `docs/reference/harvest_systems.rst` calls out the new profile plumbing in the TR-122/TR-127 sections and adds a dedicated “Partial-cut profile registry” table listing each ID, source, and multiplier. The skyline cost section now links the CLI option back to the JSON registry.
+- Planning notes mark the skyline partial-cut backlog item as complete and describe the new automation so future iterations know how to extend the registry.
+
 # 2025-12-04 — ADV15N3/ADV4N7 support penalties
 - Encoded the ADV15N3 bulldozer efficiency study and ADV4N7 soil-compaction guidance as structured datasets
   (`data/reference/fpinnovations/adv15n3_support.json` and `adv4n7_compaction.json`). Each record captures the published fuel

@@ -1,0 +1,101 @@
+{
+  "source": {
+    "id": "SR109",
+    "title": "Montane Alternative Silvicultural Systems (MASS) – harvesting productivity and cost comparisons",
+    "publisher": "FERIC Special Report SR-109",
+    "publication_date": "1998-09",
+    "currency": "CAD_1995",
+    "site": "Interior cedar-hemlock zone near Adams Lake, BC; 1995–1996 MASS experiment with replicated clearcut, patch cut, green-tree retention, and shelterwood treatments.",
+    "notes": "Falling done manually; forwarding done with excavator-based 'serpentine' patterns plus tracked skidder cleanup."
+  },
+  "treatments": [
+    {
+      "id": "shelterwood",
+      "area_ha": 27.5,
+      "volume_m3": 14503,
+      "average_piece_volume_m3": 1.25,
+      "falling": {
+        "hours": 1069,
+        "productivity_m3_per_hour": 13.6,
+        "cost_per_hour": 59.14,
+        "cost_per_m3": 4.35
+      },
+      "forwarding": {
+        "hours": 646,
+        "productivity_m3_per_hour": 22.4,
+        "cost_per_hour": 125.00,
+        "cost_per_m3": 5.57,
+        "notes": "Excavator 1 worked between corridors; tracked skidder forwarded along shot corridors to roadside."
+      },
+      "total_cost_per_m3": 9.92,
+      "cost_multiplier_vs_clearcut": 1.38,
+      "notes": "Highest retention; extra corridor cleanup and tracked skidder relay increased cost ~61% over clearcut forwarding."
+    },
+    {
+      "id": "green_tree",
+      "area_ha": 27.3,
+      "volume_m3": 18425,
+      "average_piece_volume_m3": 1.12,
+      "falling": {
+        "hours": 1138,
+        "productivity_m3_per_hour": 16.2,
+        "cost_per_hour": 59.14,
+        "cost_per_m3": 3.65
+      },
+      "forwarding": {
+        "hours": 569,
+        "productivity_m3_per_hour": 32.4,
+        "cost_per_hour": 136.58,
+        "cost_per_m3": 4.22,
+        "notes": "Serpentine forwarding with excavators; tracked skidder assisted where logs were misaligned."
+      },
+      "total_cost_per_m3": 7.87,
+      "cost_multiplier_vs_clearcut": 1.09,
+      "notes": "Leave-tree clumps forced shorter passes (23 m average) and higher grapple/position time."
+    },
+    {
+      "id": "patch_cut",
+      "area_ha": 17.1,
+      "volume_m3": 11175,
+      "average_piece_volume_m3": 1.12,
+      "falling": {
+        "hours": 807,
+        "productivity_m3_per_hour": 13.8,
+        "cost_per_hour": 59.14,
+        "cost_per_m3": 4.29
+      },
+      "forwarding": {
+        "hours": 292,
+        "productivity_m3_per_hour": 38.3,
+        "cost_per_hour": 137.40,
+        "cost_per_m3": 3.59,
+        "notes": "Serpentine pattern allowed 27 m pass spacing; tracked skidder only used for training clean-up."
+      },
+      "total_cost_per_m3": 7.88,
+      "cost_multiplier_vs_clearcut": 1.10,
+      "notes": "Shorter forwarding distances but more complex layout kept total cost ~10% above clearcut baseline."
+    },
+    {
+      "id": "clearcut",
+      "area_ha": 69.1,
+      "volume_m3": 45360,
+      "average_piece_volume_m3": 1.15,
+      "falling": {
+        "hours": 2868,
+        "productivity_m3_per_hour": 15.8,
+        "cost_per_hour": 59.14,
+        "cost_per_m3": 3.74
+      },
+      "forwarding": {
+        "hours": 1001,
+        "productivity_m3_per_hour": 45.3,
+        "cost_per_hour": 156.20,
+        "cost_per_m3": 3.45,
+        "notes": "Excavators forwarded directly to roadside decks laid out for super-snorkel loading."
+      },
+      "total_cost_per_m3": 7.19,
+      "cost_multiplier_vs_clearcut": 1.00,
+      "notes": "Acts as the baseline for MASS comparisons; highest productivity due to unrestricted serpentine forwarding."
+    }
+  ]
+}

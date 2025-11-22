@@ -56,6 +56,15 @@ def test_system_productivity_overrides_tr127_block5() -> None:
     assert overrides["skyline_model"] == "tr127-block5"
     assert overrides["skyline_num_logs"] == pytest.approx(3.0)
     assert overrides["skyline_lateral_distance_m"] == pytest.approx(16.0)
+    assert overrides["partial_cut_profile"] == "sr109_green_tree"
+
+
+def test_system_productivity_overrides_tr127_block1_profile() -> None:
+    systems = default_system_registry()
+    system = systems["cable_partial_tr127_block1"]
+    overrides = system_productivity_overrides(system, "skyline_yarder")
+    assert overrides is not None
+    assert overrides["partial_cut_profile"] == "sr109_patch_cut"
 
 
 def test_system_productivity_overrides_cable_running_fncy12() -> None:

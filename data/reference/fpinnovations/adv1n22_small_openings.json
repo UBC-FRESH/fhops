@@ -1,0 +1,157 @@
+{
+  "source": {
+    "id": "ADV1N22",
+    "title": "Productivities and costs of harvesting small openings in the Cariboo Forest Region",
+    "publisher": "FERIC Advantage Series Vol. 1 No. 22",
+    "publication_date": "2000-06",
+    "currency": "CAD_1996",
+    "site": "Cornish Mountain (ESSFwk1) east of Quesnel, BC; winter 1998 operations with hand falling and cable skidding.",
+    "scope": "Six irregular openings (including one group-selection opening) with shift-level falling/skidding studies."
+  },
+  "openings": [
+    {
+      "id": "opening_1",
+      "treatment": "small_clearcut",
+      "area_ha": 9.8,
+      "volume_m3": 2610,
+      "volume_per_ha_m3": 266,
+      "contractor_id": 2,
+      "skidding_distance_m": 330,
+      "falling": {
+        "productive_hours": 92.5,
+        "productive_worker_hours": 92.5,
+        "productivity_m3_per_pwh": 28.2,
+        "productivity_m3_per_swh": 26.5,
+        "productivity_m3_per_8h_shift": 106,
+        "falling_cost_per_m3": 1.81
+      },
+      "skidding": {
+        "productive_machine_hours": 259.1,
+        "m3_per_pmh": 10.1,
+        "m3_per_smh": 9.0,
+        "m3_per_8h_shift": 72,
+        "cost_per_m3": 6.98
+      },
+      "notes": "Largest opening with single landing; adverse skidding and 700 m maximum pulls pushed costs higher."
+    },
+    {
+      "id": "opening_2",
+      "treatment": "small_clearcut",
+      "area_ha": 3.0,
+      "volume_m3": 1165,
+      "volume_per_ha_m3": 388,
+      "contractor_id": 1,
+      "skidding_distance_m": 75,
+      "falling": {
+        "productive_hours": 48.5,
+        "productivity_m3_per_pwh": 24.0,
+        "productivity_m3_per_swh": 22.2,
+        "productivity_m3_per_8h_shift": 178,
+        "falling_cost_per_m3": 2.17
+      },
+      "skidding": {
+        "productive_machine_hours": 59.7,
+        "m3_per_pmh": 19.5,
+        "m3_per_smh": 17.3,
+        "m3_per_8h_shift": 138,
+        "cost_per_m3": 3.79
+      },
+      "notes": "Short skid distances plus cold-snow conditions produced the lowest stump-to-landing cost ($5.96/m³)."
+    },
+    {
+      "id": "opening_3",
+      "treatment": "small_clearcut",
+      "area_ha": 2.0,
+      "volume_m3": 335,
+      "volume_per_ha_m3": 168,
+      "contractor_id": 1,
+      "skidding_distance_m": 55,
+      "falling": {
+        "productive_hours": 22.5,
+        "productivity_m3_per_pwh": 14.9,
+        "productivity_m3_per_swh": 14.0,
+        "productivity_m3_per_8h_shift": 112,
+        "falling_cost_per_m3": 3.44
+      },
+      "skidding": {
+        "productive_machine_hours": 23.6,
+        "m3_per_pmh": 14.2,
+        "m3_per_smh": 12.6,
+        "m3_per_8h_shift": 101,
+        "cost_per_m3": 5.19
+      },
+      "notes": "Lower volumes and irregular shape reduced productivity despite short pulls."
+    },
+    {
+      "id": "opening_4",
+      "treatment": "small_clearcut",
+      "area_ha": 3.1,
+      "volume_m3": 984,
+      "volume_per_ha_m3": 317,
+      "contractor_id": 1,
+      "skidding_distance_m": 45,
+      "falling": {
+        "productive_hours": 53.5,
+        "productivity_m3_per_pwh": 18.4,
+        "productivity_m3_per_swh": 17.3,
+        "productivity_m3_per_8h_shift": 138,
+        "falling_cost_per_m3": 2.83
+      },
+      "skidding": {
+        "productive_machine_hours": 56.1,
+        "m3_per_pmh": 17.5,
+        "m3_per_smh": 13.9,
+        "m3_per_8h_shift": 111,
+        "cost_per_m3": 4.72
+      },
+      "notes": "Processor limited by large Douglas-fir stems; partial adverse skidding kept costs mid-pack."
+    },
+    {
+      "id": "opening_5",
+      "treatment": "small_clearcut",
+      "area_ha": 2.5,
+      "volume_m3": 1016,
+      "volume_per_ha_m3": 406,
+      "contractor_id": 1,
+      "skidding_distance_m": 175,
+      "falling": {
+        "productive_hours": 60.0,
+        "productivity_m3_per_pwh": 16.9,
+        "productivity_m3_per_swh": 15.9,
+        "productivity_m3_per_8h_shift": 127,
+        "falling_cost_per_m3": 3.02
+      },
+      "skidding": {
+        "productive_machine_hours": 79.1,
+        "m3_per_pmh": 12.8,
+        "m3_per_smh": 11.0,
+        "m3_per_8h_shift": 88,
+        "cost_per_m3": 5.94
+      },
+      "notes": "Long skid distances and mixed stem sizes led to higher cycle times."
+    },
+    {
+      "id": "opening_6",
+      "treatment": "group_selection_plus_clearcut",
+      "area_ha": null,
+      "volume_m3": 1447,
+      "contractor_id": 1,
+      "skidding_distance_m": 50,
+      "falling": {
+        "productive_hours": 82.5,
+        "productivity_m3_per_pwh": 17.5,
+        "productivity_m3_per_swh": 16.6,
+        "productivity_m3_per_8h_shift": 133,
+        "falling_cost_per_m3": 2.89
+      },
+      "skidding": {
+        "productive_machine_hours": 106.4,
+        "m3_per_pmh": 13.6,
+        "m3_per_smh": 11.6,
+        "m3_per_8h_shift": 92,
+        "cost_per_m3": 5.65
+      },
+      "notes": "Seventeen group-selection patches plus adjacent clearcut; faller received daily retention guidance to satisfy visual-quality targets."
+    }
+  ]
+}

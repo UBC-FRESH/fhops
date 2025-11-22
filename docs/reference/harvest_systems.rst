@@ -119,11 +119,11 @@ Default Systems
   * - ``cable_partial_tr127_block1``
     - cable-standing skyline partial cut
     - hand/mech faller → standing skyline (TR127 Block 1) → landing processor → loader
-    - Provides the dual lateral-distance defaults (15 m + 6 m) and applies the TR119 65 % retention multiplier so block files automatically match the study.
+    - Provides the dual lateral-distance defaults (15 m + 6 m) and now applies the SR109 patch-cut penalty (volume ×0.846, cost ×1.10) via the built-in partial-cut profile.
   * - ``cable_partial_tr127_block5``
     - cable-standing skyline partial cut
     - hand/mech faller → standing skyline (TR127 Block 5) → landing processor → loader
-    - Sets 16 m lateral, 3 logs/turn, 1.6 m³ payload, and applies the TR119 70 % retention multiplier so block-specific warnings fire without manual flags.
+    - Sets 16 m lateral, 3 logs/turn, 1.6 m³ payload, and wires in the SR109 green-tree penalty (volume ×0.715, cost ×1.10) so telemetry logs the added cost/range limits automatically.
   * - ``helicopter``
     - helicopter
     - hand faller → helicopter longline → hand buck/processor → loader/water
@@ -726,10 +726,10 @@ Grapple harvest-system presets
      - ``tn147`` (Madill 009 highlead)
      - 5.5 m³ turns, 138 m average reach, ≈2.1 pcs/turn, manual falling defaults tuned to TN-147
      - `grapple_yarder_madill009` CPI-aware rate; CLI output also prints the 1989 $/m³ cost column from TN-147.
-   * - ``cable_running_tr122_extended`` / ``_shelterwood`` / ``_clearcut``
-     - ``tr122-extended`` | ``tr122-shelterwood`` | ``tr122-clearcut``
-     - 2.04/2.18/1.45 m³ turns, 104 m / 97 m / 106 m reach, observed pieces-per-cycle (2.2/3.2/2.6)
-     - Uses the generic ``grapple_yarder`` cost role; CLI prints the TR-122 yarder/loader labour breakdown so you still see the published $/m³ numbers.
+  * - ``cable_running_tr122_extended`` / ``_shelterwood`` / ``_clearcut``
+    - ``tr122-extended`` | ``tr122-shelterwood`` | ``tr122-clearcut``
+    - 2.04/2.18/1.45 m³ turns, 104 m / 97 m / 106 m reach, observed pieces-per-cycle (2.2/3.2/2.6)
+    - Uses the generic ``grapple_yarder`` cost role; the shelterwood preset now also applies the SR109 shelterwood penalty (volume ×0.495, cost ×1.38) via the partial-cut profile, while the extended/clearcut entries remain unchanged. CLI prints the TR-122 yarder/loader labour breakdown so you still see the published $/m³ numbers.
    * - ``cable_running_sr54``
      - ``sr54`` (Washington 118A running skyline regression)
      - 3.1 m³ turns, 82 m reach, ≈2.9 pcs/turn fed by the feller-buncher preset
@@ -969,6 +969,47 @@ can be audited end-to-end.
 If future FPInnovations payroll or utilisation logs surface (e.g., Jay-Vee/Bell Pole internal records) we can
 swap in the published minutes, but until then these ratios represent the best-available data and replace the
 older TN-157 proxy (0.25/0.14) throughout the skyline cost banner, telemetry, and harvest-system overrides.
+
+Partial-cut profile registry
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``fhops.dataset estimate-skyline`` now understands ``--partial-cut-profile <id>`` (and the skyline harvest systems
+listed earlier set the appropriate ID for you). Profiles live in ``data/reference/partial_cut_profiles.json`` and
+bundle the observed volume/cost multipliers from FPInnovations partial-cut trials so productivity, costing banners,
+and telemetry all flag the penalty without reopening the PDFs.
+
+.. list-table:: Available partial-cut profiles
+   :widths: 18 44 18 18
+   :header-rows: 1
+
+   * - Profile ID
+     - Source / description
+     - Volume multiplier
+     - Cost multiplier
+   * - ``sr109_patch_cut`` / ``sr109_green_tree`` / ``sr109_shelterwood``
+     - SR-109 MASS patch, green-tree, and shelterwood forwarding trials (excavator + tracked skidder relays)
+     - 0.846 / 0.715 / 0.495
+     - 1.10 / 1.10 / 1.38
+   * - ``adv11n17_trial1`` / ``trial2`` / ``trial3``
+     - Advantage 11 No. 17 partial-cut trials (motor-manual CTL, cable skidder full-tree, mechanised full-tree)
+     - 0.775 / 0.833 / 0.925
+     - 1.52 / 1.20 / 1.21
+   * - ``adv1n22_group_selection``
+     - Advantage 1 No. 22 group-selection opening (Barkerville Corridor small-opening program)
+     - 0.918
+     - 1.06
+   * - ``tn199_partial_entry``
+     - Quadra Island JD450G crawler winching through dispersed retention (12–15 % removal per entry)
+     - 0.177
+     - 2.14
+   * - ``adv9n4_interface_thinning``
+     - Alex Fraser Research Forest interface fuel-reduction thinning (tractor/skidder/ATV skidding + manual piling/burning)
+     - 0.012
+     - 27.0
+
+Profiles with neutral multipliers (e.g., ``adv11n17_trial4``) act as baselines and are omitted for brevity. Update the JSON
+file and re-run the CLI when new FPInnovations partial-cut datasets are digitised—the skyline helper picks up additions
+automatically.
 
 Road & Subgrade Construction References
 ---------------------------------------

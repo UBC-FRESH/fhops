@@ -1,0 +1,84 @@
+{
+  "profiles": [
+    {
+      "id": "sr109_shelterwood",
+      "label": "SR109 shelterwood corridors",
+      "volume_multiplier": 0.495,
+      "cost_multiplier": 1.38,
+      "retention_summary": "Two-pass shelterwood with 13–18 m leave strips; excavator forwarding between corridors then tracked skidder relay.",
+      "citation": "data/reference/fpinnovations/sr109_partial_cut_treatments.json#shelterwood"
+    },
+    {
+      "id": "sr109_green_tree",
+      "label": "SR109 green-tree retention (25%)",
+      "volume_multiplier": 0.715,
+      "cost_multiplier": 1.10,
+      "retention_summary": "Dispersed green-tree retention with serpentine forwarding; tracked skidder cleanup where stems misaligned.",
+      "citation": "data/reference/fpinnovations/sr109_partial_cut_treatments.json#green_tree"
+    },
+    {
+      "id": "sr109_patch_cut",
+      "label": "SR109 patch cut (0.25 ha)",
+      "volume_multiplier": 0.846,
+      "cost_multiplier": 1.10,
+      "retention_summary": "0.25 ha group removals; excavator serpentine forwarding with minimal cleanup.",
+      "citation": "data/reference/fpinnovations/sr109_partial_cut_treatments.json#patch_cut"
+    },
+    {
+      "id": "adv11n17_trial1",
+      "label": "ADV11N17 Trial 1 – motor-manual CTL (high retention)",
+      "volume_multiplier": 0.775,
+      "cost_multiplier": 1.52,
+      "retention_summary": "Hand faller + hoe-forwarder protecting dense understory; 3.3% trail coverage.",
+      "citation": "data/reference/fpinnovations/adv11n17_partial_harvest.json#trial1_motor_manual_ctl"
+    },
+    {
+      "id": "adv11n17_trial2",
+      "label": "ADV11N17 Trial 2 – motor-manual full-tree",
+      "volume_multiplier": 0.833,
+      "cost_multiplier": 1.20,
+      "retention_summary": "Chainsaw + cable skidder with moderate basal-area retention.",
+      "citation": "data/reference/fpinnovations/adv11n17_partial_harvest.json#trial2_motor_manual_full_tree"
+    },
+    {
+      "id": "adv11n17_trial3",
+      "label": "ADV11N17 Trial 3 – mechanized full-tree",
+      "volume_multiplier": 0.925,
+      "cost_multiplier": 1.21,
+      "retention_summary": "Feller-bunchers + grapple skidders; moderate retention with 18% trail coverage.",
+      "citation": "data/reference/fpinnovations/adv11n17_partial_harvest.json#trial3_mechanized_full_tree"
+    },
+    {
+      "id": "adv11n17_trial4",
+      "label": "ADV11N17 Trial 4 – mechanized CTL (production-focused)",
+      "volume_multiplier": 1.0,
+      "cost_multiplier": 1.0,
+      "retention_summary": "Low-retention benchmark (36% trail/road coverage); treated as ADV11N17 baseline.",
+      "citation": "data/reference/fpinnovations/adv11n17_partial_harvest.json#trial4_mechanized_ctl"
+    },
+    {
+      "id": "adv1n22_group_selection",
+      "label": "ADV1N22 Opening 6 – group selection + clearcut",
+      "volume_multiplier": 0.918,
+      "cost_multiplier": 1.06,
+      "retention_summary": "Seventeen group-selection pockets with snow-season cable skidding; compared to average small opening clearcuts.",
+      "citation": "data/reference/fpinnovations/adv1n22_small_openings.json#opening_6"
+    },
+    {
+      "id": "tn199_partial_entry",
+      "label": "TN199 Quadra Island partial entry (12–15% removal)",
+      "volume_multiplier": 0.177,
+      "cost_multiplier": 2.14,
+      "retention_summary": "Dispersed select cut with JD450G crawler winching individual trees to permanent skid roads; compared to SR109 clearcut baseline.",
+      "citation": "data/reference/fpinnovations/tn199_quadra_partial_cut.json"
+    },
+    {
+      "id": "adv9n4_interface_thinning",
+      "label": "ADV9N4 interface fuel-reduction thinning",
+      "volume_multiplier": 0.012,
+      "cost_multiplier": 27.0,
+      "retention_summary": "Urban-interface thinning from below with tractor/ATV skidding and intensive piling/burning.",
+      "citation": "data/reference/fpinnovations/adv9n4_fuel_reduction.json"
+    }
+  ]
+}

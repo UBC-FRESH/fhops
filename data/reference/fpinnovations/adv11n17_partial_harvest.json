@@ -1,0 +1,222 @@
+{
+  "source": {
+    "id": "ADV11N17",
+    "title": "Harvesting mountain pine beetle–killed pine while protecting the secondary structure: trials to support a partial harvesting strategy for addressing the mid-term timber supply",
+    "publisher": "FPInnovations (FERIC Advantage Series Vol. 11 No. 17)",
+    "publication_date": "2009-10",
+    "currency": "CAD_2006",
+    "summary": "Four partial-harvest trials near Prince George, BC (2006–2007) covering motor-manual CTL, motor-manual full-tree, mechanized full-tree, and mechanized CTL systems. Each trial reported stocking metrics (MTDFP), trail coverage, and stump-to-landing costs."
+  },
+  "trials": [
+    {
+      "id": "trial1_motor_manual_ctl",
+      "location": "Wansa Forest Service Road",
+      "area_ha": 21.5,
+      "harvest_window": "July–August 2006",
+      "harvest_method": "motor_manual_ctl",
+      "equipment": {
+        "felling": "Chainsaw (single operator alternating between saw, excavator, and forwarder)",
+        "extraction": [
+          "Komatsu PC75UU-2 excavator with modified grapple (hoe-forwarding)",
+          "Timberjack 1210 forwarder"
+        ],
+        "processing": "Chainsaw at stump",
+        "decking": "Forwarder at landing"
+      },
+      "pre_harvest_stand": {
+        "pine_percent": 30,
+        "spruce_percent": 39,
+        "subalpine_fir_percent": 13,
+        "douglas_fir_percent": 0,
+        "deciduous_percent": 18,
+        "average_tree_volume_m3": 0.7,
+        "bec": "SBSwk1",
+        "slope_percent_range": [
+          0,
+          10
+        ],
+        "slope_percent_average": 3
+      },
+      "harvest_output": {
+        "volume_m3": 1330,
+        "volume_per_ha_m3": 61.9
+      },
+      "mt_dfp": {
+        "pre": 0.09,
+        "post": 0.10,
+        "classification_post": "stocked"
+      },
+      "trail_stats": {
+        "average_trail_width_m": 3.5,
+        "total_trail_length_m": 2000,
+        "trail_area_percent": 3.3,
+        "exposed_mineral_soil_percent_of_block": 0.53
+      },
+      "costs": {
+        "harvest_cost_pmh_per_m3": 14.85,
+        "harvest_cost_smh_per_m3": 20.70
+      },
+      "notes": "Focused on protecting limited secondary structure; two landings and ~200 m forwarding distances increased CTL cycle times."
+    },
+    {
+      "id": "trial2_motor_manual_full_tree",
+      "location": "Huble Farm area",
+      "area_ha": 30.5,
+      "harvest_window": "August–September 2006",
+      "harvest_method": "motor_manual_full_tree",
+      "equipment": {
+        "felling": "Chainsaw (two fallers)",
+        "extraction": [
+          "Timberjack 540 cable skidder",
+          "Clark 667 cable skidder"
+        ],
+        "processing": "Chainsaw at landing",
+        "decking": "Skidder at landing"
+      },
+      "pre_harvest_stand": {
+        "pine_percent": 42,
+        "spruce_percent": 35,
+        "subalpine_fir_percent": 0,
+        "douglas_fir_percent": 0,
+        "deciduous_percent": 23,
+        "average_tree_volume_m3": 0.5,
+        "bec": "SBSmk1",
+        "slope_percent_range": [
+          0,
+          28
+        ],
+        "slope_percent_average": 4
+      },
+      "harvest_output": {
+        "volume_m3": 1800,
+        "volume_per_ha_m3": 59.0
+      },
+      "mt_dfp": {
+        "pre": 0.07,
+        "post": 0.20,
+        "classification_post": "stocked"
+      },
+      "trail_stats": {
+        "average_trail_width_m": 4.4,
+        "total_trail_length_m": 4744,
+        "trail_area_percent": 6.9,
+        "exposed_mineral_soil_percent_of_block": 0.32
+      },
+      "costs": {
+        "harvest_cost_smh_per_m3": 16.33
+      },
+      "notes": "Winching unlimbed stems into trails caused higher understory damage despite moderate retention targets."
+    },
+    {
+      "id": "trial3_mechanized_full_tree",
+      "location": "McEwan Lake area",
+      "area_ha": 19.9,
+      "harvest_window": "November 2006",
+      "harvest_method": "mechanized_full_tree",
+      "equipment": {
+        "felling": [
+          "Timberjack 618 feller-buncher",
+          "Timberjack 628 feller-buncher"
+        ],
+        "extraction": [
+          "Timberjack 660 grapple skidders (two units)"
+        ],
+        "processing": "Lim-mit 2300 stroke delimber on Link-Belt 4300 carrier",
+        "decking": "Komatsu PC250 loader"
+      },
+      "pre_harvest_stand": {
+        "pine_percent": 44,
+        "spruce_percent": 35,
+        "subalpine_fir_percent": 17,
+        "douglas_fir_percent": 1,
+        "deciduous_percent": 3,
+        "average_tree_volume_m3": 1.6,
+        "bec": "SBSwk1",
+        "slope_percent_range": [
+          0,
+          35
+        ],
+        "slope_percent_average": 9
+      },
+      "harvest_output": {
+        "volume_m3": 4746,
+        "volume_per_ha_m3": 238.5
+      },
+      "mt_dfp": {
+        "pre": 0.07,
+        "post": 0.30,
+        "classification_post": "partially_stocked"
+      },
+      "trail_stats": {
+        "average_trail_width_m": 4.7,
+        "total_trail_length_m": 7735,
+        "trail_area_percent": 18.3,
+        "exposed_mineral_soil_percent_of_block": 0.47
+      },
+      "costs": {
+        "harvest_cost_pmh_per_m3": 12.43,
+        "harvest_cost_smh_per_m3": 16.39
+      },
+      "notes": "Heavier pine component plus fully mechanized full-tree method increased trail density but maintained low mineral-soil exposure."
+    },
+    {
+      "id": "trial4_mechanized_ctl",
+      "location": "Crystal Lake area",
+      "area_ha": 29.0,
+      "harvest_window": "July 2007",
+      "harvest_method": "mechanized_ctl",
+      "equipment": {
+        "felling": [
+          "Madill 3200C feller-buncher",
+          "Madill 2250 feller-buncher",
+          "John Deere 903J feller-buncher"
+        ],
+        "extraction": [
+          "Valmet 890.2 forwarder",
+          "Tigercat 1765 forwarder",
+          "John Deere 1710 forwarder"
+        ],
+        "processing": [
+          "Hitachi 200 with Waratah head",
+          "Caterpillar 320C with Waratah head"
+        ],
+        "decking": "Forwarders at roadside"
+      },
+      "pre_harvest_stand": {
+        "pine_percent": 78,
+        "spruce_percent": 13,
+        "subalpine_fir_percent": 1,
+        "douglas_fir_percent": 4,
+        "deciduous_percent": 4,
+        "average_tree_volume_m3": 0.4,
+        "bec": "SBSmk1c",
+        "slope_percent_range": [
+          0,
+          26
+        ],
+        "slope_percent_average": 8
+      },
+      "harvest_output": {
+        "volume_m3": 5369,
+        "volume_per_ha_m3": 185.0
+      },
+      "mt_dfp": {
+        "pre": 0.40,
+        "post": 0.79,
+        "classification_post": "open"
+      },
+      "trail_stats": {
+        "average_trail_width_m": 5.2,
+        "total_trail_length_m": 15263,
+        "loop_road_length_m": 1986,
+        "trail_area_percent": 36.5,
+        "exposed_mineral_soil_percent_of_block": 7.1
+      },
+      "costs": {
+        "harvest_cost_pmh_per_m3": 11.50,
+        "harvest_cost_smh_per_m3": 13.60
+      },
+      "notes": "High pine proportion plus sandy soils required dispersed traffic and loop roads; prioritizing production led to significant residual loss and soil exposure."
+    }
+  ]
+}

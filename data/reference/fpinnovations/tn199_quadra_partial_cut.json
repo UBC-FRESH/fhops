@@ -1,0 +1,93 @@
+{
+  "source": {
+    "id": "TN199",
+    "title": "Partial cutting in a second-growth Douglas-fir stand in coastal British Columbia – productivity, costs, and soil impacts",
+    "publisher": "FERIC Technical Note TN-199",
+    "publication_date": "1993-07",
+    "currency": "CAD_1992",
+    "site": "33 ha block on Quadra Island (CWHxm2) operated October 1991–March 1992",
+    "prescription": "Multiple-entry partial cut removing 12–15% of stand volume per entry via pre-marked dispersed trees; true clearcut only in small root-rot pocket."
+  },
+  "stand_summary": {
+    "pre_harvest": {
+      "area_ha": 33.0,
+      "species_percent": {
+        "douglas_fir": 81,
+        "western_hemlock": 19
+      },
+      "volume_m3_per_ha": 700,
+      "merchantable_trees_per_ha": 917,
+      "mean_tree_volume_m3": 0.8,
+      "mean_dbh_cm": 30
+    },
+    "harvest": {
+      "volume_removed_m3_per_ha": 95,
+      "merchantable_trees_removed_per_ha": 45,
+      "mean_removed_tree_volume_m3": 2.1,
+      "mean_removed_dbh_cm": 47
+    },
+    "residual": {
+      "volume_m3_per_ha": 605,
+      "merchantable_trees_per_ha": 872,
+      "mean_tree_volume_m3": 0.7,
+      "mean_dbh_cm": 29,
+      "species_percent": {
+        "douglas_fir": 78,
+        "western_hemlock": 22
+      }
+    }
+  },
+  "operation": {
+    "crew": "Two-person crew (chainsaw faller + JD450G operator sharing JD540 rubber-tired skidder duty).",
+    "skidding_network": "4 m designated skid roads spaced ~100 m apart; JD450G permitted to travel off road network for dispersed retrieval; JD540 restricted to roads.",
+    "equipment": [
+      "Chainsaw (manual falling/bucking)",
+      "John Deere 450G crawler tractor with winch and chokers",
+      "John Deere 540 cable skidder (used intermittently for forwarding along roads)"
+    ],
+    "cycle_stats": {
+      "jd450g_cycle_time_min": 21.18,
+      "jd450g_logs_per_turn": 3,
+      "jd450g_volume_per_turn_m3": 2.6,
+      "jd450g_stand_distance_m": 20,
+      "jd450g_road_distance_m": 90
+    },
+    "productivity": {
+      "logs_per_pmh": {
+        "jd450g_skid_to_road": 10,
+        "jd450g_skid_to_landing": 9,
+        "jd540_forward_to_landing": 12
+      },
+      "m3_per_pmh": {
+        "jd450g_skid_to_road": 8,
+        "jd450g_skid_to_landing": 8,
+        "jd540_forward_to_landing": 10
+      },
+      "m3_per_shift_total": 48,
+      "jd450g_avg_shift_hours": 7.0,
+      "jd540_avg_shift_hours": 2.5,
+      "falling_avg_shift_hours": 5.6
+    }
+  },
+  "costs": {
+    "falling_and_bucking_cost_per_m3": 5.48,
+    "jd450g_skidding_cost_per_m3": 7.54,
+    "jd540_forwarding_cost_per_m3": 2.38,
+    "total_stump_to_landing_cost_per_m3": 15.40,
+    "avg_shift_costs": {
+      "jd450g": 362,
+      "jd540": 114,
+      "falling": 263
+    }
+  },
+  "soil_and_damage": {
+    "designated_skid_roads_width_m": 4.0,
+    "spacing_m": 100,
+    "disturbance_notes": "Soil bulk density significantly higher on designated skid roads than in lightly used dispersed trails; light/heavy dispersed traffic did not differ statistically at 0–20 cm depth.",
+    "residual_damage": {
+      "scarring_percent_of_residuals": 7.2,
+      "crown_loss_percent_of_residuals": 6.0
+    }
+  },
+  "usage_notes": "Dataset represents low-removal (≈14% volume) skyline-compatible partial cutting with CPI-aware costing. Use as a penalty reference when modelling dispersed retention prescriptions beyond the TR119 strip/70/65% presets."
+}

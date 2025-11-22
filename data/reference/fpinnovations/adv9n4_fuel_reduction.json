@@ -1,0 +1,115 @@
+{
+  "source": {
+    "id": "ADV9N4",
+    "title": "Managing forest fuels for community protection in the interior of British Columbia: productivities and costs of thinning from below",
+    "publisher": "FPInnovations Advantage Series Vol. 9 No. 4",
+    "publication_date": "2007-10",
+    "currency": "CAD_2005",
+    "site": "Knife Creek block (3.8 ha) adjacent to Green Valley Estates, south of Williams Lake, BC (IDFxm). Winter 2005 thinning-from-below fuel treatment."
+  },
+  "treatment": {
+    "objective": "Reduce ladder fuels and remove beetle-killed/danger trees while retaining saplings/poles for mule deer winter range.",
+    "volume_removed_m3": 58.7,
+    "volume_per_ha_m3": 15.5,
+    "piece_sorting": {
+      "large_sawlog_min_top_cm": 15,
+      "small_sawlog_top_cm_range": [
+        10,
+        15
+      ],
+      "min_log_length_m": 3.0
+    }
+  },
+  "phases": [
+    {
+      "name": "manual_falling",
+      "time_hours": 41.5,
+      "rate_per_hour": 50.0,
+      "cost_total": 2075,
+      "cost_per_ha": 546,
+      "share_of_time_percent": 19.2,
+      "notes": "Chainsaw falling with wedges/peavey; trees debarked at stump to limit saw dulling from road dust."
+    },
+    {
+      "name": "skidding_ford_tractor",
+      "time_hours": 75.5,
+      "rate_per_hour": 50.0,
+      "cost_total": 3775,
+      "cost_per_ha": 993,
+      "share_of_time_percent": 34.9,
+      "equipment": "Ford 1725 tractor with Farmi winch + custom grapple",
+      "notes": "Primary machine for decking/piling plus medium-piece skidding."
+    },
+    {
+      "name": "skidding_jd540",
+      "time_hours": 12.5,
+      "rate_per_hour": 70.0,
+      "cost_total": 875,
+      "cost_per_ha": 230,
+      "share_of_time_percent": 5.8,
+      "equipment": "John Deere 540E line skidder",
+      "notes": "Used for occasional heavy turns; 19.4 min average cycle (detailed timing)."
+    },
+    {
+      "name": "skidding_honda_atv",
+      "time_hours": 20.5,
+      "rate_per_hour": 37.5,
+      "cost_total": 769,
+      "cost_per_ha": 202,
+      "share_of_time_percent": 9.5,
+      "equipment": "Honda ATV with skidding arch",
+      "notes": "Focused on bundles of slash/non-merchantable material once manually re-piled."
+    },
+    {
+      "name": "manual_piling",
+      "time_hours": 62.0,
+      "rate_per_hour": 30.55,
+      "cost_total": 1894,
+      "cost_per_ha": 498,
+      "share_of_time_percent": 28.6,
+      "notes": "Crew raked/piled residual slash in-stand prior to burning."
+    },
+    {
+      "name": "burning_and_repiling",
+      "time_hours": 31.8,
+      "rate_per_hour": 46.67,
+      "cost_total": 2002,
+      "cost_per_ha": 527,
+      "share_of_time_percent": 2.1,
+      "notes": "Propane tiger torch + leaf blower ignition; burning delayed to spring for venting; includes mechanical re-pile with tractor."
+    }
+  ],
+  "skidding_cycle_stats": {
+    "honda_atv": {
+      "cycles_timed": 35,
+      "total_time_hours": 5.7,
+      "average_cycle_minutes": 8.7,
+      "average_distance_m": 230,
+      "notes": "Fast travel (~130 m/min) but extra time spotting loads increased maneuver share to 25%."
+    },
+    "john_deere_540": {
+      "cycles_timed": 8,
+      "total_time_hours": 5.7,
+      "average_cycle_minutes": 19.4,
+      "notes": "Handled large bunches; hook+winch comprised 34% of cycle."
+    },
+    "ford_tractor": {
+      "cycles_timed": 8,
+      "total_time_hours": 2.5,
+      "average_cycle_minutes": 11.1
+    }
+  },
+  "cost_summary": {
+    "total_cost_cad": 11390,
+    "total_cost_per_ha_cad": 2997,
+    "phase_breakdown_percent": {
+      "manual_falling": 18.2,
+      "tractor_skidding": 33.2,
+      "jd540_skidding": 7.7,
+      "atv_skidding": 6.8,
+      "manual_piling": 16.6,
+      "burning": 17.6
+    }
+  },
+  "usage_notes": "Represents low-volume fuel-reduction thinning where manual work and debris handling dominate costs. Use as partial-cut penalty reference when modelling interface treatments requiring extensive piling/burning and mixed skidding equipment."
+}
