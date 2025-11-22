@@ -33,14 +33,31 @@ Status: Draft — align updates with roadmap Phase 1/2 milestones.
 ## Tests & Benchmarks
 - [x] Extend unit/integration tests around the MIP builder.
 - [x] Add performance benchmarks (pytest markers) capturing solve durations and objective values.
-- [x] Introduce shift-indexed sets/variables (machines × blocks × shifts), update mobilisation/landing constraints, and retain compatibility with legacy day-only scenarios. *(MIP builder now consumes `Problem.shifts`; mobilisation, landing, locking, and sequencing constraints iterate over shift tuples; regression/locking unit tests refreshed.)*
-  - Include locking scenarios to ensure heuristics/MIP produce consistent results. *(MIP side complete; heuristic alignment pending.)*
+- [ ] Introduce shift-indexed sets/variables (machines × blocks × shifts), update mobilisation/landing constraints, and retain compatibility with legacy day-only scenarios.
+  - Add builder utilities that expand `(day, shift)` pairs based on `TimelineConfig` and synthesise a default `S1` shift when missing.
+  - Update mobilisation, landing, locking, and sequencing constraints to iterate across shift tuples, ensuring data contract + CLI toggles stay aligned.
+  - Include locking scenarios to ensure heuristics/MIP produce consistent results across day-only and shift-aware inputs (tests w/ regression fixtures).
 
 ## Documentation
 - [ ] Update Sphinx API docs for model modules.
 - [ ] Add workflow walkthrough detailing how constraints impact solutions.
   - Include instructions for schedule locking and objective toggles in docs/README.
 - Landing slack variables are now available when `ObjectiveWeights.landing_slack > 0`; heuristic mirrors penalty-based slack handling. Performance benchmarking still outstanding.
+
+### Shift-Based Scheduling Migration Checklist — 2025-11-09
+1. **Data Contract & Problem Formulation**
+   - Consume `TimelineConfig.shift_definitions` when building `Problem` objects; add helper to emit `(day, shift)` tuples as the canonical time set.
+   - Extend `ObjectiveWeights`/`MobilisationConfig` hooks so per-shift penalties can be attached later without refactoring variable domains again.
+2. **Variable & Constraint Updates**
+   - Re-index assignment binaries `x[m, b, d]` → `x[m, b, d, s]`, mobilisation transitions `y[m, prev, curr, d]` → `y[m, prev, curr, d, s]`, landing slack, and sequencing constraints.
+   - Optimise variable counts by skipping shifts where machines are unavailable (pre-filter via availability tensor).
+   - Add unit tests confirming day-aggregated production equals the sum over shifts and that blackout shifts zero out decision vars.
+3. **Solver Outputs & Interop**
+   - Update Pyomo-to-result adapters to emit shift-aware schedule records; heuristics should already plan in shifts once we migrate `_iter_moves`.
+   - Ensure CLI/export paths (playback, KPI, benchmark harness) pull shift-level data when present and gracefully degrade for day-only scenarios.
+4. **Validation & Benchmarks**
+   - Refresh regression fixtures to include both single-shift and multi-shift scenarios.
+   - Capture build/solve timing deltas before/after the change to document overhead and guide future decomposition work.
 
 ## Open Questions
 - Should we support alternative solvers (CBC, Gurobi) via extras?

@@ -32,6 +32,12 @@ Status: Draft — update as tasks progress.
 - [x] Draft how-to guide(s) for authoring scenarios and validating inputs. *(Quickstart + `docs/howto/data_contract.rst` cover authoring/validation workflows.)*
 - [x] Update README quickstart once new constraints land. *(README now references validation workflow and regression baseline sequencing checks.)*
 
+## Shift Calendar Enhancements — 2025-11-09
+- [ ] Extend `TimelineConfig` with required `shift_id`, `start_offset_hours`, and `duration_hours` fields (defaulting to a synthetic `S1` when absent) plus validation ensuring daily coverage.
+- [ ] Add optional `shift_templates` at the scenario level so authors can define reusable shift sets (e.g., day/night/weekend) and reference them per landing/system.
+- [ ] Update fixtures (`examples/`, `tests/data/`, regression scenarios) to exercise both multi-shift and single-shift layouts; document migration steps in `docs/howto/data_contract.rst`.
+- [ ] Coordinate with solver/evaluation plans so `schema_version` advances once shift-specific fields become mandatory.
+
 ## Open Questions
 - Should invalid references be fatal or downgraded to warnings with heuristic fixes? → **Fatal.** Failing fast keeps data authors honest and aligns with the loader/unit tests. We can revisit warning-level heuristics once an explicit repair pipeline exists.
 - How do we version the data contract as fields evolve (semver vs schema tags)? → **Schema tag + semver.** Every scenario declares `schema_version` (currently `1.0.0`). The loader rejects unsupported versions; changelog/docs will track migrations.

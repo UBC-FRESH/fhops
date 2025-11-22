@@ -212,4 +212,4 @@ examples/minitoy/out/
 .vscode
 .continue
 tmp/
-notes/coding-agent-conversation-log.md
+notes/coding-agent-conversation-log.txt

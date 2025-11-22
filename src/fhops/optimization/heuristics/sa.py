@@ -37,11 +37,29 @@ def _role_metadata(scenario):
             allowed[block.id] = None
 
     machine_roles = {machine.id: getattr(machine, "role", None) for machine in scenario.machines}
+    available_roles = {role for role in machine_roles.values() if role}
     machines_by_role: dict[str, list[str]] = {}
     for machine_id, role in machine_roles.items():
         if role is None:
             continue
         machines_by_role.setdefault(role, []).append(machine_id)
+    if available_roles:
+        for block_id, allowed_roles in list(allowed.items()):
+            if allowed_roles is None:
+                continue
+            filtered = {role for role in allowed_roles if role in available_roles}
+            allowed[block_id] = filtered or None
+        filtered_prereqs: dict[tuple[str, str], set[str]] = {}
+        for key, prereq_set in prereqs.items():
+            role = key[1]
+            if role not in available_roles:
+                continue
+            filtered = {req for req in prereq_set if req in available_roles}
+            filtered_prereqs[key] = filtered
+        prereqs = filtered_prereqs
+    else:
+        allowed = {block_id: None for block_id in allowed}
+        prereqs = {}
 
     return allowed, prereqs, machine_roles, machines_by_role
 

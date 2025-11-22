@@ -9,6 +9,12 @@ Status: Draft — roadmap Phase 3 owner document.
 - Expand KPI reporting (cost, utilisation, lateness, mobilisation spend) with configurable outputs (CSV, parquet, dashboards).
 - Integrate with Nemora outputs for joint scenario analysis.
 
+### Shift-Based Scheduling Alignment — 2025-11-09
+- **Playback inputs:** add adapters that consume shift-indexed solver outputs (Pyomo + heuristics) without requiring callers to downcast to day granularity. Until solver work lands, maintain compatibility shims but flag them for removal.
+- **Schema updates:** introduce explicit `shift_id` columns to `PlaybackRecord`, `ShiftSummary`, and CLI export schemas; document expectations in `docs/howto/evaluation.rst`.
+- **Fixtures & regression:** extend deterministic fixtures (minitoy, regression) to include multi-shift playback outputs so CI can confirm KPIs ignore work scheduled in blackout shifts.
+- **Docs & CLI:** update `fhops eval playback` help text plus quickstart snippets to describe the new shift flags/output files; highlight migration tips for day-only datasets.
+
 ## Work Items
 - [ ] Audit existing evaluation pipeline (`fhops/eval` → future `evaluation/playback`).
 - [ ] Design stochastic sampling API (RNG seeding, scenario ensembles).

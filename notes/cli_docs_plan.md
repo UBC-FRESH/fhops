@@ -22,6 +22,18 @@ Status: Draft — governs user-facing narrative and tooling upgrades.
 - [ ] CLI reference with command usage and sample invocations.
 - [ ] Contribution guide updates referencing planning artefacts.
 
+## Shift-Aware Documentation Punch List — 2025-11-09
+1. **CLI Reference**
+   - Expand `fhops solve-*` sections with examples showing multi-shift calendars (`--shift-profile`, `--timeline-file`), mobilisation interactions, and troubleshooting tips when shift IDs are missing.
+   - Document the forthcoming shift-aware playback exports (`fhops eval playback --shift-out`) and benchmark harness metrics.
+2. **How-to Guides**
+   - Update `docs/howto/quickstart.rst` and `docs/howto/data_contract.rst` with step-by-step instructions for defining shifts, including YAML snippets and fixture references.
+   - Add a short “Shift Schedules” how-to (or extend mobilisation guide) explaining blackout windows, night shifts, and their solver implications.
+3. **Release Notes & CHANGE_LOG hooks**
+   - Reserve a section in CHANGE_LOG entries once shift support lands so downstream users can track migration requirements.
+4. **Validation Aids**
+   - Provide sample CLI commands + expected outputs for shift-enabled scenarios to aid manual validation (e.g., comparing day vs shift KPI totals).
+
 ## Open Questions
 - Should we host examples as Jupyter notebooks alongside rendered HTML via nbsphinx?
 - How to version documentation in sync with releases vs development snapshots?

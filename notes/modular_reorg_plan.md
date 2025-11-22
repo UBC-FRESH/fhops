@@ -61,9 +61,35 @@ src/fhops/
 - Document each migration step in CHANGE_LOG and roadmap to avoid confusion during refactors.
 - Keep tests green between phases—introduce adapters/shim imports if necessary to avoid breaking downstream code.
 
-## Phase 2 Shift-Based Scheduling Initiative ✅
-- Shift-aware data contract (`TimelineConfig`, shift calendars, mobilisation schemas) ships in `fhops.scenario.contract`; loaders ingest timelines/blackouts/crew metadata with regression fixtures covering minimal/typical scenarios.
-- `Problem.shifts` now drives the Pyomo builder and heuristics, enforcing blackout windows and mobilisation constraints across `(day, shift)` tuples.
-- Playback, KPI aggregators, and exporters emit shift/day summaries; CLI plus telemetry workflows surface the new metrics (CSV/Parquet/Markdown).
-- Example scenarios and docs were refreshed to include shift calendars, and tests assert loader + solver behaviour.
-- Remaining related work is tracked under the geospatial intake and mobilisation/system-sequencing plans rather than this initiative.
+## Phase 2 Shift-Based Scheduling Refactor Plan
+
+### Goals
+- Treat **shift** as a first-class time index (in addition to day) from scenario ingest through solvers, playback, KPIs, and CLI outputs.
+- Preserve backward compatibility with day-only scenarios while encouraging authors to define named shifts per landing/system.
+- Provide regression coverage and documentation so future contributor work does not regress shift awareness.
+
+### Workstreams
+1. **Data Contract & Fixtures**
+   - Extend `TimelineConfig`/`ShiftDefinition` with explicit `shift_id`, `start_offset_hours`, and `duration_hours`.
+   - Add `shifts` metadata to `Scenario` (e.g., `scenario.shift_calendar`) plus validators guaranteeing shift coverage of each day, optional default shift templates, and horizon alignment.
+   - Update YAML/CSV fixtures (minitoy, med42, large84, regression set) to declare shifts; provide migration guidance for day-only scenarios.
+2. **Loader & Core Types**
+   - Teach `fhops.scenario.io.loaders` to emit `(day, shift_id)` availability matrices, synthesising a default single-shift calendar when absent.
+   - Introduce helper utilities to iterate `Problem.iter_shifts()` and to convert between day-major and shift-major tensors (will be consumed by solvers/playback).
+3. **Optimisation & Heuristics**
+   - Rebuild Pyomo variables/constraints (assignment, mobilisation transitions, landing capacity, locking, sequencing) on `(day, shift)` indices. Provide compatibility adapters that aggregate to day totals when exporting KPIs or legacy outputs.
+   - Update SA (and upcoming Tabu/ILS) neighbourhoods to operate on shift slots, including shift-aware locking, mobilisation penalties, and sequencing guards.
+   - Capture performance notes in `notes/mip_model_plan.md` once shift-indexing lands (variable explosion mitigation, tighten bounds via shift availability).
+4. **Playback, KPIs, Telemetry**
+   - Implement converters from solver outputs to shift-indexed schedule frames, feeding deterministic playback and KPI calculators.
+   - Ensure KPI exports clearly differentiate day vs shift totals, and extend telemetry records with shift counts to support tuning analysis.
+5. **CLI, Docs, and Examples**
+   - Add CLI flags/examples showing shift calendars (e.g., `fhops solve-mip --shifts day=1:shift=A/B`), update quickstart + data-contract how-to with step-by-step instructions.
+   - Provide troubleshooting guidance for missing/overlapping shifts and document migration steps for legacy datasets.
+6. **Testing & Validation**
+   - Expand regression fixtures covering multi-shift calendars (e.g., day shift + night shift) and ensure both MIP/SA respect blackout windows per shift.
+   - Property-based tests verifying that aggregated shift totals equal day totals; CLI smoke tests for shift-aware playback exports.
+
+### Dependencies
+- Coordinate tightly with `notes/mip_model_plan.md` (solver work), `notes/simulation_eval_plan.md` (playback/KPI alignment), and `notes/cli_docs_plan.md` (documentation + UX).
+- Continue logging each milestone in `CHANGE_LOG.md` and referencing the relevant roadmap bullet when a workstream is finished.
