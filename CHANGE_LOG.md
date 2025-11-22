@@ -18,6 +18,9 @@
   `--manual-falling-dbh-cm` so TN-98 cost/time outputs appear alongside skyline productivity. Harvest systems with `hand_faller`
   or `hand_or_mech_faller` jobs auto-apply their DBH/species defaults (e.g., `cable_micro_*` uses hemlock 32.5 cm, `cable_running`
   uses Douglas-fir 52.5 cm), and telemetry records the manual falling inputs/costs.
+- Created an ADV6N25 light-lift helicopter dataset (`data/reference/fpinnovations/adv6n25_helicopters.json`) plus CLI summary
+  (`fhops.dataset adv6n25-helicopters`) so planners can pull Lama vs. K-Max productivity/cost figures and the “what-if” scenarios
+  (in-woods manufacturing, single-pass K-Max) without reopening the PDF.
 - Added the TN-82 FMC FT-180 vs. John Deere 550 dataset (`data/reference/fpinnovations/tn82_ft180_jd550.json`) plus a CLI summary
   (`fhops.dataset tn82-ft180`) so steep-ground ground-based alternatives can be benchmarked without reopening the PDF.
 

@@ -29,6 +29,11 @@ from .tn98_handfalling import (
     load_tn98_dataset,
 )
 from .tn82_ft180 import TN82Dataset, TN82Machine, TN82AreaSummary, load_tn82_dataset
+from .adv6n25_helicopters import (
+    ADV6N25Dataset,
+    ADV6N25Helicopter,
+    load_adv6n25_dataset,
+)
 
 __all__ = [
     "Appendix5Stand",
@@ -59,4 +64,7 @@ __all__ = [
     "TN82Machine",
     "TN82AreaSummary",
     "load_tn82_dataset",
+    "ADV6N25Dataset",
+    "ADV6N25Helicopter",
+    "load_adv6n25_dataset",
 ]

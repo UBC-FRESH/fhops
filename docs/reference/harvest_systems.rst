@@ -802,6 +802,10 @@ Use ``fhops dataset tn82-ft180`` to compare the FMC FT-180 vs. John Deere 550 tr
 right-of-way). The command prints m³/PMH and per-shift stats for each site, making it easy to benchmark steep-slope ground
 alternatives alongside the skyline helpers.
 
+Use ``fhops dataset adv6n25-helicopters`` to review the ADV6N25 light-lift operation (Eurocopter Lama + K-1200 K-Max). The
+CLI prints productivity/cost rows for each helicopter and, with ``--show-alternatives``, the “in-woods manufacturing” and
+“single-pass K-Max” cost scenarios discussed in the report.
+
 CTL Harvester Productivity Models
 ---------------------------------
 

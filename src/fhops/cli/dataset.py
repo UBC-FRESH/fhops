@@ -194,6 +194,7 @@ from fhops.reference import (
     load_unbc_hoe_chucking_data,
     load_unbc_processing_costs,
     load_unbc_construction_costs,
+    load_adv6n25_dataset,
 )
 from fhops.productivity.cable_logging import HI_SKID_DEFAULTS
 from fhops.scenario.contract import Machine, SalvageProcessingMode, Scenario
@@ -7053,6 +7054,67 @@ def tn82_ft180_cmd(
     if dataset.source:
         console.print(
             f"[dim]Source: {dataset.source.get('title', 'TN-82')} (FERIC TN-82, Columbia Valley FMC FT-180 vs. JD 550 study).[/dim]"
+        )
+
+
+@dataset_app.command("adv6n25-helicopters")
+def adv6n25_helicopters_cmd(
+    show_alternatives: bool = typer.Option(
+        False, "--show-alternatives", help="Display the alternative scenario cost table."
+    )
+) -> None:
+    """Summarize ADV6N25 dual-helicopter productivity and costs."""
+
+    dataset = load_adv6n25_dataset()
+    site_desc = dataset.site.get("location", "Unknown site")
+    console.print(f"[bold]Site:[/bold] {site_desc}, {dataset.site.get('cutblock_area_ha')} ha")
+    table = Table(title="Helicopter yarding summary", header_style="bold cyan", expand=True)
+    table.add_column("Helicopter", style="bold")
+    table.add_column("Payload (lb)", justify="right")
+    table.add_column("m³/shift", justify="right")
+    table.add_column("m³/flight-hour", justify="right")
+    table.add_column("Volume (m³)", justify="right")
+    table.add_column("Cost $/m³", justify="right")
+    table.add_column("Cost $/flight-hour", justify="right")
+    table.add_column("Yarding shifts", justify="right")
+    for heli in dataset.helicopters:
+        display_name = heli.model.replace("_", " ").title()
+        table.add_row(
+            display_name,
+            f"{heli.rated_payload_lb:.0f}" if heli.rated_payload_lb else "—",
+            f"{heli.productivity_m3_per_shift:.0f}" if heli.productivity_m3_per_shift else "—",
+            f"{heli.productivity_m3_per_flight_hour:.1f}"
+            if heli.productivity_m3_per_flight_hour
+            else "—",
+            f"{heli.volume_logged_m3:.0f}" if heli.volume_logged_m3 else "—",
+            f"{heli.cost_per_m3_cad:.2f}" if heli.cost_per_m3_cad else "—",
+            f"{heli.hourly_cost_cad:.0f}" if heli.hourly_cost_cad else "—",
+            f"{heli.yarding_shifts:.0f}" if heli.yarding_shifts else "—",
+        )
+    console.print(table)
+    total_cost = dataset.total.get("cost_per_m3_cad")
+    if total_cost is not None:
+        console.print(f"[bold]Total cost:[/bold] {total_cost:.2f} $/m³")
+    if show_alternatives and dataset.alternative_scenarios:
+        alt_table = Table(
+            title="Alternative scenarios (estimated)",
+            header_style="bold",
+            expand=True,
+        )
+        alt_table.add_column("Scenario")
+        alt_table.add_column("Cost ($/m³)", justify="right")
+        alt_table.add_column("Δ vs. actual ($/m³)", justify="right")
+        for item in dataset.alternative_scenarios:
+            alt_table.add_row(
+                item.get("scenario", "alt"),
+                f"{item.get('estimated_cost_per_m3_cad', 0.0):.2f}",
+                f"{item.get('delta_vs_actual_cad', 0.0):+.2f}",
+            )
+        console.print(alt_table)
+    if dataset.source:
+        console.print(
+            "[dim]Source: "
+            f"{dataset.source.get('title', 'ADV6N25')} (Lama + K-1200 K-Max light-lift helicopter case study).[/dim]"
         )
 
 

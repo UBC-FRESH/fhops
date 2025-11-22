@@ -1,0 +1,91 @@
+{
+  "source": {
+    "id": "ADV6N25",
+    "title": "Helicopter logging with the Eurocopter SA-315B Lama and Kaman K-1200 K-Max: clearcut harvesting in the southern interior",
+    "publication_date": "2005-08",
+    "publisher": "FERIC",
+    "currency": "CAD_2005",
+    "notes": "Airlift Helilog case study north-west of Goldbridge/Lillooet; dual light-lift helicopters (Lama, K-Max) working 20 ha of small clearcut units in IDFdk2."
+  },
+  "site": {
+    "location": "Goldbridge (Cascades Forest District, BC)",
+    "ecozone": "IDFdk2",
+    "cutblock_area_ha": 20.0,
+    "merchantable_volume_m3_per_ha": 330.0,
+    "average_tree_volume_m3": 0.7,
+    "slope_percent": 75,
+    "average_flight_distance_m": [
+      165,
+      600
+    ],
+    "flight_path_slope_percent": [
+      26,
+      73
+    ]
+  },
+  "phases": {
+    "falling": {
+      "crew_size": "2–3 fallers",
+      "shifts": 52,
+      "shift_hours": 6.5,
+      "productivity_m3_per_shift": 102.1,
+      "cost_per_m3_cad": 5.89,
+      "notes": "Manual falling in deep snow; limited in-woods manufacturing. Two-pass falling for Lama vs. K-Max; fallers shuttled by helicopter for units served by Lama."
+    },
+    "loading": {
+      "equipment": "Hydraulic log loader (31 t)",
+      "shifts": 38,
+      "shift_hours": 12,
+      "productivity_m3_per_shift": 174.0,
+      "cost_per_m3_cad": 11.75,
+      "notes": "Single loader cleared/decked/loaded; landing congestion affected K-Max."
+    }
+  },
+  "helicopters": [
+    {
+      "model": "sa315b_lama",
+      "rated_payload_lb": 2500,
+      "longline_length_m": 60,
+      "turn_hook_weight_kg": 14,
+      "productivity_m3_per_shift": 126.0,
+      "flight_hours_per_shift": 5.0,
+      "productivity_m3_per_flight_hour": 25.1,
+      "volume_logged_m3": 1004.0,
+      "cost_per_m3_cad": 58.81,
+      "hourly_cost_cad": 946.85,
+      "yarding_shifts": 8,
+      "notes": "First-pass yarding on smaller stems. Yarding cost includes full crew + support; heavy snow added 8–10% non-revenue weight."
+    },
+    {
+      "model": "kmax_k1200",
+      "rated_payload_lb": 6000,
+      "longline_length_m": 45,
+      "turn_hook_weight_kg": 60,
+      "productivity_m3_per_shift": 287.0,
+      "flight_hours_per_shift": 5.9,
+      "productivity_m3_per_flight_hour": 48.6,
+      "volume_logged_m3": 4304.0,
+      "cost_per_m3_cad": 52.94,
+      "hourly_cost_cad": 1726.99,
+      "yarding_shifts": 15,
+      "notes": "Second-pass yarding of heavier stems after Lama; landing congestion due to single loader caused downtime."
+    }
+  ],
+  "total": {
+    "volume_m3": 5308.0,
+    "cost_per_m3_cad": 71.68,
+    "yarding_cost_per_m3_cad": 54.04
+  },
+  "alternative_scenarios": [
+    {
+      "scenario": "More in-woods manufacturing + Lama/K-Max two-pass",
+      "estimated_cost_per_m3_cad": 66.85,
+      "delta_vs_actual_cad": -4.83
+    },
+    {
+      "scenario": "In-woods manufacturing + single-pass K-Max",
+      "estimated_cost_per_m3_cad": 64.61,
+      "delta_vs_actual_cad": -7.07
+    }
+  ]
+}
