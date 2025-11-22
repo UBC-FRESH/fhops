@@ -1149,6 +1149,12 @@ SYSTEM_ROAD_DEFAULTS: dict[str, dict[str, object]] = {
         "include_mobilisation": True,
         "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
     },
+    "cable_running_tn157_combined": {
+        "machine_slug": "caterpillar_235_hydraulic_backhoe",
+        "road_length_m": 150.0,
+        "include_mobilisation": True,
+        "soil_profile_ids": list(_ROAD_SOIL_PROFILES),
+    },
     "cable_highlead_tn147": {
         "machine_slug": "caterpillar_235_hydraulic_backhoe",
         "road_length_m": 120.0,

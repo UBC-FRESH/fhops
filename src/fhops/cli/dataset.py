@@ -204,6 +204,7 @@ from fhops.reference import (
     load_unbc_processing_costs,
     load_unbc_construction_costs,
     load_adv6n25_dataset,
+    load_fncy12_dataset,
 )
 from fhops.productivity.cable_logging import HI_SKID_DEFAULTS
 from fhops.scenario.contract import Machine, RoadConstruction, SalvageProcessingMode, Scenario
@@ -217,10 +218,23 @@ from fhops.telemetry import append_jsonl
 from fhops.telemetry.machine_costs import build_machine_cost_snapshots
 from fhops.validation.ranges import validate_block_ranges
 
-_TMY45_SUPPORT_MACHINE_RATIOS = {
-    "cat_d8_smhr_per_yarder_smhr": 0.25,
-    "timberjack_450_smhr_per_yarder_smhr": 0.14,
-}
+def _get_tmy45_support_ratios() -> dict[str, float]:
+    """Return Cat D8 / Timberjack utilisation ratios per yarder SMH."""
+
+    dataset = load_fncy12_dataset()
+    cat_ratio = dataset.support_cat_d8_ratio
+    timber_ratio = dataset.support_timberjack_ratio
+    if cat_ratio is None or timber_ratio is None:
+        return {
+            "cat_d8_smhr_per_yarder_smhr": 0.25,
+            "timberjack_450_smhr_per_yarder_smhr": 0.14,
+        }
+    return {
+        "cat_d8_smhr_per_yarder_smhr": float(cat_ratio),
+        "timberjack_450_smhr_per_yarder_smhr": float(timber_ratio),
+    }
+
+
 _TN258_LATERAL_LIMIT_M = 30.0
 _TN258_MAX_SKYLINE_TENSION_KN = 147.0
 _TN98_SPECIES = ("cedar", "douglas_fir", "hemlock", "all_species")
@@ -8302,14 +8316,13 @@ def estimate_skyline_productivity_cmd(
                 f"{_TN258_LATERAL_LIMIT_M:.0f} m. Trim lateral distance or add supports before trusting the output."
             )
             console_warning = _append_warning(console_warning, tension_warning)
-        telemetry_support_cat_d8_ratio = _TMY45_SUPPORT_MACHINE_RATIOS[
-            "cat_d8_smhr_per_yarder_smhr"
-        ]
-        telemetry_support_timberjack_ratio = _TMY45_SUPPORT_MACHINE_RATIOS[
+        support_ratios = _get_tmy45_support_ratios()
+        telemetry_support_cat_d8_ratio = support_ratios["cat_d8_smhr_per_yarder_smhr"]
+        telemetry_support_timberjack_ratio = support_ratios[
             "timberjack_450_smhr_per_yarder_smhr"
         ]
         support_note = (
-            "[yellow]Support reminder:[/yellow] TN-157/TN-258 proxies bundle Cat D8 backspar standby "
+            "[yellow]Support reminder:[/yellow] FNCY12 crew data implies Cat D8 backspar standby "
             f"{telemetry_support_cat_d8_ratio:.2f} SMH/SMH and Timberjack 450 trail support "
             f"{telemetry_support_timberjack_ratio:.2f} SMH/SMH—override if your support plan differs."
         )
@@ -8364,14 +8377,13 @@ def estimate_skyline_productivity_cmd(
         source_label = (
             "FERIC FNCY-12 / TN-258 Thunderbird TMY45 with Mini-Mak II intermediate supports."
         )
-        telemetry_support_cat_d8_ratio = _TMY45_SUPPORT_MACHINE_RATIOS[
-            "cat_d8_smhr_per_yarder_smhr"
-        ]
-        telemetry_support_timberjack_ratio = _TMY45_SUPPORT_MACHINE_RATIOS[
+        support_ratios = _get_tmy45_support_ratios()
+        telemetry_support_cat_d8_ratio = support_ratios["cat_d8_smhr_per_yarder_smhr"]
+        telemetry_support_timberjack_ratio = support_ratios[
             "timberjack_450_smhr_per_yarder_smhr"
         ]
         support_note = (
-            "[yellow]Support reminder:[/yellow] TN-157/TN-258 proxies bundle Cat D8 backspar standby "
+            "[yellow]Support reminder:[/yellow] FNCY12 crew data implies Cat D8 backspar standby "
             f"{telemetry_support_cat_d8_ratio:.2f} SMH/SMH and Timberjack 450 trail support "
             f"{telemetry_support_timberjack_ratio:.2f} SMH/SMH—override if your support plan differs."
         )

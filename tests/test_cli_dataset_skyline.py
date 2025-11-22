@@ -21,8 +21,12 @@ from fhops.productivity import (
     estimate_tmy45_productivity_fncy12,
     Fncy12ProductivityVariant,
 )
+from fhops.reference import load_fncy12_dataset
 
 runner = CliRunner()
+_FNCY12_DATASET = load_fncy12_dataset()
+_FNCY12_CAT_RATIO = _FNCY12_DATASET.support_cat_d8_ratio or 0.25
+_FNCY12_TIMBERJACK_RATIO = _FNCY12_DATASET.support_timberjack_ratio or 0.14
 
 
 def test_cli_skyline_lee_uphill() -> None:
@@ -86,8 +90,10 @@ def test_cli_skyline_tr125_multi_warning_and_telemetry(tmp_path) -> None:
     assert "Support reminder" in result.stdout
     payload = json.loads(telemetry_log.read_text(encoding="utf-8").strip())
     assert payload["tn258_lateral_limit_exceeded"] is True
-    assert payload["support_cat_d8_smhr_per_yarder_smhr"] == pytest.approx(0.25)
-    assert payload["support_timberjack450_smhr_per_yarder_smhr"] == pytest.approx(0.14)
+    assert payload["support_cat_d8_smhr_per_yarder_smhr"] == pytest.approx(_FNCY12_CAT_RATIO)
+    assert payload["support_timberjack450_smhr_per_yarder_smhr"] == pytest.approx(
+        _FNCY12_TIMBERJACK_RATIO
+    )
     assert payload["non_bc_source"] is False
 
 
@@ -118,8 +124,10 @@ def test_cli_skyline_fncy12_variant_and_warning(tmp_path) -> None:
     payload = json.loads(telemetry_log.read_text(encoding="utf-8").strip())
     assert payload["tn258_lateral_limit_exceeded"] is True
     assert payload["fncy12_variant"] == "steady_state_no_fire"
-    assert payload["support_cat_d8_smhr_per_yarder_smhr"] == pytest.approx(0.25)
-    assert payload["support_timberjack450_smhr_per_yarder_smhr"] == pytest.approx(0.14)
+    assert payload["support_cat_d8_smhr_per_yarder_smhr"] == pytest.approx(_FNCY12_CAT_RATIO)
+    assert payload["support_timberjack450_smhr_per_yarder_smhr"] == pytest.approx(
+        _FNCY12_TIMBERJACK_RATIO
+    )
 
 
 def test_cli_skyline_harvest_system_fncy12_defaults() -> None:

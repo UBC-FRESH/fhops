@@ -113,20 +113,20 @@
   },
   "support_cost_proxies": {
     "cat_d8_backspar": {
-      "source": "FERIC TN-157 road-change study (Cypress 7280B + UH14 trail spar) blended with FNCY12 equipment list.",
-      "assumed_ratio_support_smh_per_yarder_smh": 0.25,
-      "ratio_method": "Average of TN-157 road-change minutes ÷ yarding minutes (0.2466) treated as Cat D8 backspar duty cycle.",
+      "source": "FERIC FNCY12 Table 3 crew comparison (TMY45 vs Skylead) scaled by the 23% support-area share and TN-157 backspar duty fraction (≈58%).",
+      "assumed_ratio_support_smh_per_yarder_smh": 0.3335,
+      "ratio_method": "Crew delta (5.5 vs 3.0 persons = 2.5 man-days) × support_area_fraction (0.23) × backspar_share (0.58) ⇒ 0.3335 yarder-SMH-equivalent of Cat D8 time per yarder SMH.",
       "cost_reference_role": "bulldozer_tr45",
       "cost_base_year_cad": 1979,
-      "notes": "Cat D8 (with winch) assumed to mirror the TR-45 D7G owning/operating split; CPI helper inflates 1979 CAD to target year."
+      "notes": "Treats the Cat D8 operator as the primary intermediate-support machine whenever supports are active; CPI helper inflates the TR-45 D7G rate."
     },
     "timberjack_450_trail_support": {
-      "source": "FERIC TN-157 road-change study (cases with heavy backspar moves) and FNCY12 support-equipment description.",
-      "assumed_ratio_support_smh_per_yarder_smh": 0.14,
-      "ratio_method": "Lower-quartile TN-157 road-change ÷ yarding ratio (0.137) used as Timberjack 450 standby allowance for landing cleanup and strawline assists.",
+      "source": "Same derivation as Cat D8: Table 3 crew delta scaled by support-area share with TN-157 non-backspar share (~42%) assigned to the Timberjack 450 helper.",
+      "assumed_ratio_support_smh_per_yarder_smh": 0.2415,
+      "ratio_method": "Crew delta (2.5 man-days) × support_area_fraction (0.23) × trail_support_share (0.42) ⇒ 0.2415 yarder-SMH-equivalent of Timberjack time per yarder SMH.",
       "cost_reference_role": "skidder_tr45",
       "cost_base_year_cad": 1979,
-      "notes": "Timberjack 450 grapple skidder treated as equivalent to the TR-45 grapple-skidder cost entry; CPI helper inflates to target year."
+      "notes": "Represents the Timberjack 450 grapple skidder trail-support allowance for landing cleanup and strawline assists."
     }
   },
   "support_reference_stats": {
