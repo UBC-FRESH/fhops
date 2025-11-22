@@ -19,6 +19,9 @@ SKYLINE_COST_PAIRS = [
     ("ledoux-skagit-highlead", "grapple_yarder_skagit_highlead"),
     ("ledoux-washington-208e", "grapple_yarder_washington_208e"),
     ("ledoux-tmy45", "grapple_yarder_tmy45_residue"),
+    ("tn147", "grapple_yarder_madill009"),
+    ("tn157", "grapple_yarder_cypress7280"),
+    ("adv5n28-clearcut", "grapple_yarder_adv5n28"),
 ]
 
 

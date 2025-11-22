@@ -826,6 +826,18 @@ rates.
      - FNG73 Hi-Skid short-yarding truck
      - ``skyline_hi_skid``
      - 1999 CAD attachment + operator (ADV2N62 wage). ``inspect-machine`` reports the CPI-adjusted rate.
+   * - ``tn147``
+     - TN-147 Madill 009 highlead skyline (coastal BC)
+     - ``grapple_yarder_madill009``
+     - 1991 CAD owning/operating split captured from the FERIC report; used whenever the TN147 helper runs.
+   * - ``tn157``
+     - TN-157 Cypress 7280B swing yarder + UH14 trail spar
+     - ``grapple_yarder_cypress7280``
+     - CPI-aware rate includes the trail-spar allowances; also reused by `mcneel-running` when modelling Cypress conversions.
+   * - ``adv5n28-clearcut`` / ``adv5n28-shelterwood``
+     - ADV5N28 Madill 071 skyline conversions (helicopter replacement)
+     - ``grapple_yarder_adv5n28``
+     - 2002 CAD Advantage owning/operating split with CPI adjustments; telemetry logs the skyline-vs-helicopter savings.
    * - ``ledoux-skagit-shotgun`` / ``ledoux-skagit-highlead`` / ``ledoux-washington-208e`` / ``ledoux-tmy45``
      - LeDoux (1984) residue skyline trials (Skagit BU-94, Washington 208E, Thunderbird TMY-45)
      - ``grapple_yarder_skagit_shotgun`` / ``grapple_yarder_skagit_highlead`` / ``grapple_yarder_washington_208e`` / ``grapple_yarder_tmy45_residue``
