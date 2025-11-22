@@ -1,0 +1,53 @@
+{
+  "source": {
+    "id": "ADV4N7",
+    "title": "Preventing Soil Compaction and Rutting in the Boreal Forest of Western Canada",
+    "author": "Brad J. Sutherland",
+    "publication_date": "2003-03",
+    "publisher": "FERIC / FPInnovations Advantage Vol. 4 No. 7",
+    "notes": "Practical handbook describing field cues, allowable passes, and mitigation steps for medium- and fine-textured soils that approach field capacity."
+  },
+  "assumptions": {
+    "compaction_depth_cm": 20,
+    "critical_aeration_porosity_percent": 10,
+    "passes_triggering_compaction": 3
+  },
+  "default_risk_id": "some",
+  "risk_levels": [
+    {
+      "id": "low",
+      "label": "Low risk (firm soils, dry or well frozen)",
+      "cost_multiplier": 1.0,
+      "load_reduction_percent": 0.0,
+      "max_passes_before_reassessment": 5,
+      "recommendations": [
+        "Operate normally but avoid obvious wet depressions and seepage zones.",
+        "Re-check conditions whenever slope position, species, or rainfall indicates wetter soil (ADV4N7 Table 3)."
+      ]
+    },
+    {
+      "id": "some",
+      "label": "Some risk (moist soils approaching field capacity)",
+      "cost_multiplier": 1.15,
+      "load_reduction_percent": 15.0,
+      "max_passes_before_reassessment": 3,
+      "recommendations": [
+        "Consult the supervisor about relocating to drier ground or coarser-textured soils.",
+        "Reduce machine traffic (≤3 passes) and decrease load size while minimizing turning (ADV4N7 Table 3, p.22).",
+        "Schedule skidding within two to three days of falling and limit bunch size when rain weakens soils (p.34)."
+      ]
+    },
+    {
+      "id": "high",
+      "label": "High risk (saturated soils / thawed frost <15 cm)",
+      "cost_multiplier": 1.4,
+      "load_reduction_percent": 35.0,
+      "max_passes_before_reassessment": 0,
+      "recommendations": [
+        "Relocate to drier or frozen ground whenever possible (Tables 3 & 4).",
+        "If work must continue, corduroy / slash mat the trail, operate at minimal loads, and plan immediate rehabilitation.",
+        "Confine travel to designated trails so only small areas require decompaction once soils strengthen again."
+      ]
+    }
+  ]
+}

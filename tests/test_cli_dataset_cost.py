@@ -53,7 +53,9 @@ def _build_dataset(tmp_path: Path) -> Path:
     return scenario_yaml
 
 
-def _build_dataset_with_road(tmp_path: Path, *, multiple: bool = False) -> Path:
+def _build_dataset_with_road(
+    tmp_path: Path, *, multiple: bool = False, slug: str = "caterpillar_235_hydraulic_backhoe"
+) -> Path:
     scenario_dir = tmp_path / "scenario_road"
     scenario_dir.mkdir(parents=True, exist_ok=True)
     _write(
@@ -79,7 +81,7 @@ def _build_dataset_with_road(tmp_path: Path, *, multiple: bool = False) -> Path:
     )
     road_rows = [
         "id,machine_slug,road_length_m,include_mobilisation,soil_profile_ids",
-        "RC1,caterpillar_235_hydraulic_backhoe,150,True,fnrb3_d7h|adv4n7_compaction",
+        f"RC1,{slug},150,True,fnrb3_d7h|adv4n7_compaction",
     ]
     if multiple:
         road_rows.append(
@@ -277,6 +279,8 @@ def test_estimate_cost_uses_scenario_road_defaults(tmp_path: Path) -> None:
     assert result.exit_code == 0, result.stdout
     assert "TR-28 Road Cost Estimate" in result.stdout
     assert "Soil Protection Profiles" in result.stdout
+    assert "Support penalty applied" in result.stdout
+    assert "Support penalty applied" in result.stdout
 
 
 def test_estimate_cost_requires_explicit_road_job_when_multiple(tmp_path: Path) -> None:
@@ -349,6 +353,54 @@ def test_estimate_cost_logs_telemetry_with_road_defaults(tmp_path: Path) -> None
     assert outputs["road"]["machine_slug"] == "caterpillar_235_hydraulic_backhoe"
     assert outputs["road"]["road_length_m"] == 150.0
     assert payload["inputs"]["road_job_id"] == "RC1"
+    penalties = outputs.get("road_penalties")
+    assert penalties is not None
+    assert penalties["compaction_risk"] == "some"
+
+
+def test_estimate_cost_applies_d8_tractor_penalty(tmp_path: Path) -> None:
+    scenario_yaml = _build_dataset_with_road(tmp_path, slug="caterpillar_d8h_bulldozer")
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-cost",
+            "--dataset",
+            str(scenario_yaml),
+            "--machine",
+            "Y1",
+            "--productivity",
+            "25",
+            "--utilisation",
+            "0.85",
+            "--road-compaction-risk",
+            "high",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "low-speed penalty" in result.stdout
+
+
+def test_estimate_cost_rejects_compaction_risk_without_profile() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-cost",
+            "--machine-role",
+            "grapple_skidder",
+            "--productivity",
+            "25",
+            "--utilisation",
+            "0.9",
+            "--road-machine",
+            "caterpillar_235_hydraulic_backhoe",
+            "--road-length-m",
+            "150",
+            "--road-compaction-risk",
+            "high",
+        ],
+    )
+    assert result.exit_code != 0
+    assert "Invalid value: --road-compaction-risk requires a road job" in result.stdout
 
 
 def test_estimate_cost_with_road_addon() -> None:

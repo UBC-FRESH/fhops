@@ -1,5 +1,20 @@
 # Development Change Log
 
+# 2025-12-04 — ADV15N3/ADV4N7 support penalties
+- Encoded the ADV15N3 bulldozer efficiency study and ADV4N7 soil-compaction guidance as structured datasets
+  (`data/reference/fpinnovations/adv15n3_support.json` and `adv4n7_compaction.json`). Each record captures the published fuel
+  curves, risk levels, and recommended mitigation steps so downstream helpers can apply the penalties without reopening the PDFs.
+- `fhops.reference.support_penalties` exposes typed loaders for the new datasets. Skyline/cable road defaults now call these loaders
+  when TR-28 machines are attached: ADV4N7’s default “some” risk multiplies the unit cost by 1.15 and the Cat D7R/D8H low-speed
+  penalty from ADV15N3 (≈1.16× litres/SMH) activates automatically for road jobs that use the D8 slug.
+- `fhops.dataset estimate-cost` gained a ``--road-compaction-risk`` override and now prints/telemeters a “Support penalty applied”
+  banner describing the compaction and tractor multipliers whenever the ADV4N7 profile is present. Telemetry JSON now includes a
+  ``road_penalties`` block so costing dashboards can reconcile the adjustments.
+- Added regression tests covering the new penalties (scenario + CLI road-add-on paths, telemetry logging, tractor-only cases) and
+  extended the failure-path coverage to ensure ``--road-compaction-risk`` errors when no ADV4N7 profile is attached.
+- Updated `docs/reference/harvest_systems.rst` (road/subgrade section) and `notes/reference/skyline_small_span_notes.md` to explain
+  the new automation, cite the JSON artefacts, and document how the multipliers were derived; `CHANGE_LOG.md` now records the feature.
+
 # 2025-12-01 — Grapple harvest-system presets
 - Added dedicated grapple harvest-system overrides for every digitised dataset: `default_system_registry()` now ships IDs for TN-147 (Madill 009 highlead), TN-157 (alias plus salvage), the three TR-122 Roberts Creek treatments, SR-54 (Washington 118A), TR-75 (bunched & hand-felled), the ADV5N28 skyline conversions, and the Thunderbird TMY45 FNCY12 case. Each preset pins the published turn volume/yarding distance/stems-per-turn, threads the appropriate manual-falling defaults, and keeps the ADV7N3 deck overrides so CLI calls auto-populate the helper inputs when you pass `--harvest-system-id`.
 - Updated the synthetic dataset tier mixes so the new grapple IDs actually appear in generated scenarios: small tiers now sprinkle in SR-54/TN-147/TN-75 corridors, while the medium/large tiers include the Roberts Creek options alongside the ADV5N28/FNCY12 presets. This keeps the telemetry/synthetic bundles aligned with the expanded harvest-system registry.

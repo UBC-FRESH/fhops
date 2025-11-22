@@ -795,19 +795,19 @@ into the regressions. Available models:
   but can be overridden; the CLI also prints the underlying cycle minutes so you can see the intermediate-support penalty.
   Pair these presets with ``inspect-machine --machine-role grapple_yarder_skyleadc40`` (FERIC TN-201 cost entry) when
   modelling Skylead corridors. FNCY12/TN-258 Thunderbird spans should reference
-  ``grapple_yarder_tmy45``—its operating column now bundles the LeDoux (1984) yarder cost *plus* proxy support-machine
-  surcharges (0.25 SMH Cat D8 backspar + 0.14 SMH Timberjack 450 trail support per productive yarder hour, calibrated with
-  FNCY12 Table 3 crew deltas and TR-45 machine-rate tables) so ``--show-costs`` reflects the extra gear those corridors
+  ``grapple_yarder_tmy45``—its operating column now bundles the LeDoux (1984) yarder cost *plus* the
+  FNCY12-derived support-machine surcharges (0.3335 SMH Cat D8 backspar + 0.2415 SMH Timberjack 450 trail support per
+  productive yarder hour, see :ref:`tn258_support_method`) so ``--show-costs`` reflects the extra gear those corridors
   require. Whenever lateral pulls exceed ~30 m or skyline tension approaches the 140 kN ceiling documented in TN-258,
   ``estimate-skyline-productivity`` now prints a TN-258 warning and logs the skyline/guyline ratios (data lives in
   ``data/reference/fpinnovations/fncy12_tmy45_mini_mak.json``) so analysts can flag hang-up risks alongside the costing
   output.
 * ``fncy12-tmy45`` – Thunderbird TMY45 + Mini-Mak II intermediate-support skyline (FNCY-12 / TN-258). The helper reports
   the observed shift output (default = steady-state months) divided by the 10 h shift to give m³/PMH and records the Cat D8 /
-  Timberjack support ratios derived from FNCY12 Tables 2–3 (2.5 extra workers per shift × 23 % support share × TN-157 backspar split ⇒ 0.3335/0.2415 SMH per yarder SMH). Use ``--fncy12-variant`` to swap between ``overall``,
-  ``steady_state``, or ``steady_state_no_fire`` averages, and keep ``--lateral-distance-m`` at or below 30 m if you want to
-  stay inside the measured tension envelope—lateral pulls beyond that trigger the TN-258 warning automatically and mark the
-  telemetry row so downstream costing knows hang-ups are likely.
+  Timberjack support ratios derived from FNCY12 Tables 2–3 (see :ref:`tn258_support_method` for the full derivation). Use
+  ``--fncy12-variant`` to swap between ``overall``, ``steady_state``, or ``steady_state_no_fire`` averages, and keep
+  ``--lateral-distance-m`` at or below 30 m if you want to stay inside the measured tension envelope—lateral pulls beyond
+  that trigger the TN-258 warning automatically and mark the telemetry row so downstream costing knows hang-ups are likely.
 * ``ledoux-skagit-shotgun`` / ``ledoux-skagit-highlead`` / ``ledoux-washington-208e`` / ``ledoux-tmy45`` – LeDoux (1984) residue yarding regressions (Willamette & Mt. Hood studies). Supply slope distance plus ``--merchantable-logs-per-turn``, ``--merchantable-volume-m3``, ``--residue-pieces-per-turn``, and ``--residue-volume-m3``. Outputs report total payload, cycle minutes, and CPI-adjusted 1984 USD cost references (see ``inspect-machine --machine-role grapple_yarder_skagit_shotgun|_highlead|_washington_208e|_tmy45_residue``). These models represent US residue trials—treat as comparative benchmarks rather than BC defaults.
 * ``micro-master`` – Model 9 Micro Master yarder regression (FERIC TN-54, 1982). Defaults assume 3.2 pieces per turn (0.46 m³/piece) and the observed 5.96 min cycle at the 70 m spans logged on Vancouver Island. Supply ``--slope-distance-m`` (and optionally ``--pieces-per-cycle``, ``--piece-volume-m3``, or ``--payload-m3``) to see the computed payload, cycle minutes, and productivity; useful for compact skyline/thinning setups where Madill/Cypress presets are overkill.
 * ``tr127-block1`` … ``tr127-block6`` – FPInnovations TR-127 block-specific tower-yarders. Blocks 1 & 3 require two
@@ -905,7 +905,7 @@ rates.
    * - ``fncy12-tmy45``
      - Thunderbird TMY45 + Mini-Mak II intermediate supports (FNCY12/TN258)
      - ``grapple_yarder_tmy45``
-     - 1992 CAD LeDoux-derived rate with Cat D8/Timberjack standby baked in (0.25/0.14 SMH). Telemetry logs the support ratios automatically.
+     - 1992 CAD LeDoux-derived rate with Cat D8/Timberjack standby baked in (0.3335/0.2415 SMH; see :ref:`tn258_support_method`). Telemetry logs the support ratios automatically.
    * - ``mcneel-running``
      - McNeel (2000) Madill 046 running skyline
      - ``grapple_yarder_cypress7280``
@@ -938,6 +938,37 @@ rates.
      - South Korea / US Pacific Northwest studies outside the FPInnovations catalog
      - —
      - Supply your own rate (or reuse ``grapple_yarder`` generic) when running costing workflows; these remain non-BC references.
+
+.. _tn258_support_method:
+
+TN-258 / FNCY12 support utilisation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The Thunderbird TMY45 intermediate-support study (FNCY12 + TN-258) is the only FPInnovations source that
+publishes both the month-by-month yarder SMH and the crew/man-day split needed to back-calculate support-machine
+utilisation. We take the 2.5 man-day delta between the Thunderbird and Skylead crews (Table 3), scale it by the
+23 % of the harvest area that required intermediate supports (Table 2), then split the resulting labour tax
+between the Cat D8 backspar and Timberjack 450 trail-support duties using the TN-157 backspar-share statistics
+(≈58 % backspar, ≈42 % trail support). The helper script ``scripts/fncy12_support_split.py`` reproduces the math
+from the structured dataset at ``data/reference/fpinnovations/fncy12_tmy45_mini_mak.json`` so costing workflows
+can be audited end-to-end.
+
+.. list-table:: Support ratios per productive yarder SMH
+   :widths: 28 18 18 36
+   :header-rows: 1
+
+   * - Preset / helper
+     - Cat D8 backspar
+     - Timberjack 450 trail support
+     - Notes / source
+   * - ``cable_running_fncy12`` / ``fncy12-tmy45`` / ``grapple_yarder_tmy45``
+     - 0.3335
+     - 0.2415
+     - Derived from FNCY12 Tables 2–3 plus TN-157 backspar-share stats; see ``data/reference/fpinnovations/fncy12_tmy45_mini_mak.json`` or rerun ``scripts/fncy12_support_split.py`` for the full calculation.
+
+If future FPInnovations payroll or utilisation logs surface (e.g., Jay-Vee/Bell Pole internal records) we can
+swap in the published minutes, but until then these ratios represent the best-available data and replace the
+older TN-157 proxy (0.25/0.14) throughout the skyline cost banner, telemetry, and harvest-system overrides.
 
 Road & Subgrade Construction References
 ---------------------------------------
@@ -978,6 +1009,14 @@ see exactly which compaction or ground-pressure constraints were assumed. Skylin
 road defaults for you: any block that references a preset listed in ``fhops.scheduling.systems.SYSTEM_ROAD_DEFAULTS`` causes the
 scenario (and the synthetic dataset bundles) to emit the matching ``road_construction`` row, so ``estimate-cost`` and telemetry
 immediately reflect the paired TR-28 machine, length, mobilisation flag, and soil-profile IDs without touching the CSVs.
+
+ADV4N7 and ADV15N3 inputs now drive automatic support penalties when those soil profiles are present. The default skyline road
+entries include ``adv4n7_compaction`` so ``fhops.dataset estimate-cost`` multiplies the TR-28 unit cost by **1.15** (“some” risk:
+reduce loads and limit passes to ≤3) and logs the source in telemetry. Select ``--road-compaction-risk low|some|high`` when you
+need to override the default, or remove the soil profile entirely if the block is on dry/frozen ground. Road jobs that reference
+``caterpillar_d8h_bulldozer`` now pull the ADV15N3 tractor-efficiency study: whenever compaction risk is ``some`` or ``high`` the CLI
+applies the Cat D7R low-speed penalty (≈1.16× fuel / SMH) and prints a “[Support penalty applied]” banner citing ADV4N7 + ADV15N3.
+Telemetry captures the compaction/tractor multipliers so downstream costing can see exactly why a scenario’s road add-on changed.
 
 Handfalling Cost Reference
 --------------------------

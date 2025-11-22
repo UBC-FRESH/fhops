@@ -1,0 +1,91 @@
+{
+  "source": {
+    "id": "ADV15N3",
+    "title": "Comparative Test of the Energy Efficiency of Three Different Bulldozer Models",
+    "authors": [
+      "Michel Schinck"
+    ],
+    "publication_date": "2014-03",
+    "publisher": "FPInnovations",
+    "notes": "Advantage Vol. 15 No. 3. Controlled test track (2.1 km per sequence, eight passes with half the laps pulling a 7.5 t sled) comparing Cat D7R mechanical, John Deere 950J hydrostatic, and Cat D7E diesel-electric drives."
+  },
+  "test_track": {
+    "sequence_minutes": 60.0,
+    "distance_km": 2.1,
+    "load_mass_kg": 7500,
+    "idle_minutes_per_sequence": 24.0,
+    "speeds": [
+      "low travel: deck building / heavy push",
+      "high travel: lighter grading / cleanup"
+    ]
+  },
+  "baseline_drive_id": "cat_d7r_mechanical",
+  "drives": [
+    {
+      "id": "cat_d7r_mechanical",
+      "label": "Caterpillar D7R (mechanical planetary transmission)",
+      "drive": "mechanical",
+      "net_power_hp": 230,
+      "high_speed": {
+        "avg_time_min": 49.22,
+        "avg_liters_per_hour": 22.14,
+        "avg_liters_per_km": 8.65
+      },
+      "low_speed": {
+        "avg_time_min": 63.18,
+        "avg_liters_per_hour": 25.78,
+        "avg_liters_per_km": 12.92
+      },
+      "fuel_intensity_vs_d7r_high_percent": 0.0,
+      "low_vs_high_penalty": 1.164,
+      "notes": [
+        "Acts as the baseline for 200+ hp support tractors still using mechanical drivetrains.",
+        "Low-speed work increases fuel burn by ~16% per hour relative to the high-speed grading sequence."
+      ]
+    },
+    {
+      "id": "jd_950j_hydrostatic",
+      "label": "John Deere 950J (dual-path hydrostatic)",
+      "drive": "hydrostatic",
+      "net_power_hp": 247,
+      "high_speed": {
+        "avg_time_min": 51.28,
+        "avg_liters_per_hour": 16.58,
+        "avg_liters_per_km": 6.75
+      },
+      "low_speed": {
+        "avg_time_min": 64.97,
+        "avg_liters_per_hour": 14.93,
+        "avg_liters_per_km": 7.70
+      },
+      "fuel_intensity_vs_d7r_high_percent": -25.0,
+      "low_vs_high_penalty": 0.901,
+      "notes": [
+        "Consumes ~25% less fuel per hour than the mechanical Cat D7R during high-speed grading.",
+        "Hydrostatic control keeps low-speed fuel use below the high-speed sequence (no penalty when throttled back)."
+      ]
+    },
+    {
+      "id": "cat_d7e_electric",
+      "label": "Caterpillar D7E (diesel-electric)",
+      "drive": "diesel-electric",
+      "net_power_hp": 235,
+      "high_speed": {
+        "avg_time_min": 50.54,
+        "avg_liters_per_hour": 16.05,
+        "avg_liters_per_km": 6.43
+      },
+      "low_speed": {
+        "avg_time_min": 61.29,
+        "avg_liters_per_hour": 12.38,
+        "avg_liters_per_km": 6.02
+      },
+      "fuel_intensity_vs_d7r_high_percent": -27.6,
+      "low_vs_high_penalty": 0.771,
+      "notes": [
+        "Electric drive delivers the lowest energy intensity (≈28% lower L/hr than the mechanical baseline during high-speed work).",
+        "Low-speed operation further reduces fuel burn, so no penalty applies when travelling slowly or working wet soils."
+      ]
+    }
+  ]
+}

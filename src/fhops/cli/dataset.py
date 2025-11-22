@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Iterable, Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
@@ -205,6 +205,12 @@ from fhops.reference import (
     load_unbc_construction_costs,
     load_adv6n25_dataset,
     load_fncy12_dataset,
+    adv15n3_baseline_drive_id,
+    adv15n3_drive_ids,
+    get_adv15n3_drive,
+    adv4n7_default_risk_id,
+    adv4n7_risk_ids,
+    get_adv4n7_risk,
 )
 from fhops.productivity.cable_logging import HI_SKID_DEFAULTS
 from fhops.scenario.contract import Machine, RoadConstruction, SalvageProcessingMode, Scenario
@@ -238,6 +244,11 @@ def _get_tmy45_support_ratios() -> dict[str, float]:
 _TN258_LATERAL_LIMIT_M = 30.0
 _TN258_MAX_SKYLINE_TENSION_KN = 147.0
 _TN98_SPECIES = ("cedar", "douglas_fir", "hemlock", "all_species")
+_ADV4N7_RISK_CHOICES = tuple(adv4n7_risk_ids())
+_DEFAULT_ADV4N7_RISK = adv4n7_default_risk_id()
+_TRACTOR_DRIVE_BY_ROAD_MACHINE = {
+    "caterpillar_d8h_bulldozer": adv15n3_baseline_drive_id(),
+}
 _AUBUCHON_SLOPE_M_RANGE = (304.8, 914.4)
 _AUBUCHON_LATERAL_M_RANGE = (15.24, 45.72)
 _AUBUCHON_LOGS_RANGE = (3.5, 6.0)
@@ -6903,6 +6914,11 @@ def estimate_cost_cmd(
         "--road-soil-profile",
         help="Soil profile ID (e.g., fnrb3_d7h). Repeat flag to include multiple profiles.",
     ),
+    road_compaction_risk: str | None = typer.Option(
+        None,
+        "--road-compaction-risk",
+        help="Override ADV4N7 compaction risk (low, some, high) when that soil profile is active.",
+    ),
     telemetry_log: Path | None = typer.Option(
         None,
         "--telemetry-log",
@@ -6991,6 +7007,10 @@ def estimate_cost_cmd(
     road_cost_estimate: TR28CostEstimate | None = None
     road_soil_profiles: list[SoilProfile] = []
     resolved_road_include: bool | None = None
+    compaction_risk: CompactionRisk | None = None
+    applied_compaction_risk_id: str | None = None
+    tractor_profile: TractorDriveEfficiency | None = None
+    road_penalty_summary: dict[str, object] | None = None
 
     if machine_role is not None:
         machine_entry = _resolve_machine_rate(machine_role)
@@ -7049,6 +7069,60 @@ def estimate_cost_cmd(
                 road_soil_profiles.append(get_soil_profile(profile_id))
             except KeyError as exc:
                 raise typer.BadParameter(str(exc)) from exc
+        adv4n7_present = any(profile.id == "adv4n7_compaction" for profile in road_soil_profiles)
+        normalized_risk: str | None = None
+        if road_compaction_risk:
+            normalized_risk = road_compaction_risk.strip().lower()
+            if normalized_risk not in _ADV4N7_RISK_CHOICES:
+                raise typer.BadParameter(
+                    f"--road-compaction-risk must be one of {', '.join(_ADV4N7_RISK_CHOICES)}."
+                )
+            if not adv4n7_present:
+                raise typer.BadParameter(
+                    "--road-compaction-risk requires a road job that references the ADV4N7 soil profile."
+                )
+        if adv4n7_present and normalized_risk is None:
+            normalized_risk = _DEFAULT_ADV4N7_RISK
+        if normalized_risk:
+            compaction_risk = get_adv4n7_risk(normalized_risk)
+            applied_compaction_risk_id = compaction_risk.id
+        compaction_multiplier = compaction_risk.cost_multiplier if compaction_risk else 1.0
+        tractor_multiplier = 1.0
+        if compaction_risk and compaction_risk.id != "low":
+            drive_id = _TRACTOR_DRIVE_BY_ROAD_MACHINE.get(resolved_machine.slug)
+            if drive_id:
+                tractor_profile = get_adv15n3_drive(drive_id)
+                tractor_multiplier = tractor_profile.low_vs_high_penalty
+        penalty_multiplier = compaction_multiplier * tractor_multiplier
+        if road_cost_estimate is not None and penalty_multiplier != 1.0:
+            adjusted_total_base = road_cost_estimate.total_cost_base_cad * penalty_multiplier
+            adjusted_total_target = road_cost_estimate.total_cost_target_cad * penalty_multiplier
+            adjusted_unit_base = (
+                road_cost_estimate.unit_cost_base_cad_per_m * penalty_multiplier
+            )
+            adjusted_unit_target = (
+                road_cost_estimate.unit_cost_target_cad_per_m * penalty_multiplier
+            )
+            adjusted_total_with_mob_base = adjusted_total_base + road_cost_estimate.mobilisation_cost_base_cad
+            adjusted_total_with_mob_target = (
+                adjusted_total_target + road_cost_estimate.mobilisation_cost_target_cad
+            )
+            road_cost_estimate = replace(
+                road_cost_estimate,
+                unit_cost_base_cad_per_m=adjusted_unit_base,
+                unit_cost_target_cad_per_m=adjusted_unit_target,
+                total_cost_base_cad=adjusted_total_base,
+                total_cost_target_cad=adjusted_total_target,
+                total_with_mobilisation_base_cad=adjusted_total_with_mob_base,
+                total_with_mobilisation_target_cad=adjusted_total_with_mob_target,
+            )
+            road_penalty_summary = {
+                "multiplier": penalty_multiplier,
+                "compaction_risk": compaction_risk.id if compaction_risk else None,
+                "compaction_multiplier": compaction_multiplier,
+                "tractor_drive": tractor_profile.id if tractor_profile else None,
+                "tractor_multiplier": tractor_multiplier,
+            }
 
     prod_info: dict[str, object]
     if productivity is None:
@@ -7139,6 +7213,7 @@ def estimate_cost_cmd(
         "road_length_m": road_length_m,
         "road_include_mobilisation": resolved_road_include,
         "road_soil_profile_ids": [profile.id for profile in road_soil_profiles] or None,
+        "road_compaction_risk": applied_compaction_risk_id,
     }
     telemetry_outputs: dict[str, object | None] = {
         "cost_per_m3": cost.cost_per_m3,
@@ -7166,8 +7241,10 @@ def estimate_cost_cmd(
             ]
             or None,
         }
+        telemetry_outputs["road_penalties"] = road_penalty_summary
     else:
         telemetry_outputs["road"] = None
+        telemetry_outputs["road_penalties"] = None
 
     rows: list[tuple[str, str]] = []
     if dataset_name is not None:
@@ -7242,6 +7319,20 @@ def estimate_cost_cmd(
                 "[yellow]Soil-protection reminder:[/yellow] FNRB3’s Cat D7H vs. D7G trial showed that wider undercarriages cut ground pressure "
                 "by 20–30% while boosting stripping/ditching productivity; ADV4N7 cautions that more than ~20% compacted area on moist soils "
                 "requires mitigation (slash mats, limited traffic)."
+            )
+        if road_penalty_summary:
+            penalty_bits: list[str] = []
+            if compaction_risk:
+                penalty_bits.append(
+                    f"{compaction_risk.label} ×{road_penalty_summary['compaction_multiplier']:.2f}"
+                )
+            if tractor_profile and road_penalty_summary.get("tractor_multiplier", 1.0) != 1.0:
+                penalty_bits.append(
+                    f"{tractor_profile.label} low-speed penalty ×{road_penalty_summary['tractor_multiplier']:.3f}"
+                )
+            penalty_text = " + ".join(penalty_bits) if penalty_bits else f"×{road_penalty_summary['multiplier']:.2f}"
+            console.print(
+                f"[yellow]Support penalty applied:[/yellow] {penalty_text} (sources: ADV4N7 & ADV15N3)."
             )
 
     if telemetry_log:

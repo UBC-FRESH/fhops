@@ -48,6 +48,16 @@ from .soil_protection import (
     get_soil_profiles,
     load_soil_profiles,
 )
+from .support_penalties import (
+    TractorDriveEfficiency,
+    CompactionRisk,
+    adv15n3_baseline_drive_id,
+    adv15n3_drive_ids,
+    get_adv15n3_drive,
+    adv4n7_default_risk_id,
+    adv4n7_risk_ids,
+    get_adv4n7_risk,
+)
 
 __all__ = [
     "Appendix5Stand",
@@ -91,4 +101,12 @@ __all__ = [
     "load_soil_profiles",
     "get_soil_profile",
     "get_soil_profiles",
+    "TractorDriveEfficiency",
+    "CompactionRisk",
+    "adv15n3_baseline_drive_id",
+    "adv15n3_drive_ids",
+    "get_adv15n3_drive",
+    "adv4n7_default_risk_id",
+    "adv4n7_risk_ids",
+    "get_adv4n7_risk",
 ]
