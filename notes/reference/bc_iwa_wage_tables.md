@@ -49,8 +49,17 @@ Key points:
 - `notes/reference/fpinnovations/ADV2N62.txt`: June 15 1999 IWA rates (southern interior) for loader-forwarder studies.
 - `notes/reference/fpinnovations/ADV1N40_madill071.json`: 1998 interior IWA wages for Madill 071 running skyline.
 
+### 1999 – Log-truck / Hi-Skid operator wage (ADV2N62, FNG73 Hi-Skid)
+
+Source: `notes/reference/fpinnovations/ADV2N62.txt` (June 15 1999 IWA wage bulletin referenced across Advantage Vol. 2 No. 62 and the FNG73 Field Note).
+
+- Log-truck or yarder-driver classification: **$24.01/h** base wage (southern interior, 1999).
+- Standard fringe: **+38 %** (pension, health, vacation, union dues) ⇒ **$33.13/SMH** fully burdened labour.
+- Used directly for the FNG73 Hi-Skid short-yard truck preset (`skyline_hi_skid` machine-rate entry) alongside an 8 L/h diesel allowance at $0.65/L and a 16 $/SMH maintenance bucket. Ownership column assumes a CAD 60 k attachment amortised over 5 years (1 200 SMH/yr, 10 % salvage, 8 % interest/insurance), keeping the **1999 CAD** base year explicit so CPI inflators can roll it forward.
+- When updating the Hi-Skid rate, reuse this wage/fringe combo unless a newer IWA schedule is cited; otherwise, inflate the 1999 labour component using StatCan M&E CPI to 2024 CAD before layering on scenario-specific adjustments.
+
 ### Outstanding wish list
 
 - Locate a **pre-1990 BC IWA wage card** for Thunderbird TMY-45 style crews (FNCY12/TN258) so the new `grapple_yarder_tmy45` rate (currently LeDoux 1984 USD costs scaled to a 5.5-person crew) can be validated or replaced with authentic payroll numbers.
 - Capture **residue vs. merchantable utilisation penalties** from BC sources (e.g., TR112 addenda, regional residue studies) to refine labour split when yarding waste wood.
-- Document a **CPI/FX trail** for each era (1979, 1989, 1994, 1997, 2002, 2004) so machine-rate inflation steps are reproducible without ad-hoc notes.
+- Document a **CPI/FX trail** for each era (1979, 1989, 1994, 1997, 1999, 2002, 2004) so machine-rate inflation steps are reproducible without ad-hoc notes.

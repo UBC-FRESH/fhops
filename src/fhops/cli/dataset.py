@@ -833,6 +833,18 @@ def _estimate_tn98_manual_falling(species: str, dbh_cm: float) -> dict[str, Any]
     fixed_minutes = float(dataset.time_distribution.get("fixed_time_minutes_per_tree") or 0.0)
     nearest = _closest_tn98_record(records, dbh_cm)
     total_minutes = cut_minutes + limb_minutes + fixed_minutes
+    currency = dataset.source.get("currency")
+    base_year: int | None = None
+    if isinstance(currency, str) and "_" in currency:
+        suffix = currency.split("_")[-1]
+        if suffix.isdigit():
+            base_year = int(suffix)
+    inflated_tree = (
+        inflate_value(cost_per_tree, base_year) if (cost_per_tree is not None and base_year) else None
+    )
+    inflated_m3 = (
+        inflate_value(cost_per_m3, base_year) if (cost_per_m3 is not None and base_year) else None
+    )
     return {
         "species": species,
         "dbh_cm": dbh_cm,
@@ -845,6 +857,9 @@ def _estimate_tn98_manual_falling(species: str, dbh_cm: float) -> dict[str, Any]
         "cost_per_m3_cad": cost_per_m3,
         "nearest_dbh_cm": nearest.dbh_cm if nearest else None,
         "nearest_tree_count": nearest.tree_count if nearest else None,
+        "cost_base_year": base_year,
+        "cost_per_tree_cad_2024": inflated_tree,
+        "cost_per_m3_cad_2024": inflated_m3,
     }
 
 
@@ -8189,17 +8204,31 @@ def estimate_skyline_productivity_cmd(
         if manual_falling_summary.get("cost_per_tree_cad") is not None:
             rows.append(
                 (
-                    "Manual Falling Cost ($/tree)",
+                    f"Manual Falling Cost ({manual_falling_summary.get('cost_base_year') or 'base'} CAD $/tree)",
                     f"{manual_falling_summary['cost_per_tree_cad']:.2f}",
                 )
             )
+            if manual_falling_summary.get("cost_per_tree_cad_2024") is not None:
+                rows.append(
+                    (
+                        "Manual Falling Cost (2024 CAD $/tree)",
+                        f"{manual_falling_summary['cost_per_tree_cad_2024']:.2f}",
+                    )
+                )
         if manual_falling_summary.get("cost_per_m3_cad") is not None:
             rows.append(
                 (
-                    "Manual Falling Cost ($/m³)",
+                    f"Manual Falling Cost ({manual_falling_summary.get('cost_base_year') or 'base'} CAD $/m³)",
                     f"{manual_falling_summary['cost_per_m3_cad']:.2f}",
                 )
             )
+            if manual_falling_summary.get("cost_per_m3_cad_2024") is not None:
+                rows.append(
+                    (
+                        "Manual Falling Cost (2024 CAD $/m³)",
+                        f"{manual_falling_summary['cost_per_m3_cad_2024']:.2f}",
+                    )
+                )
     if tr119_treatment:
         try:
             treatment = get_tr119_treatment(tr119_treatment)
@@ -8271,6 +8300,15 @@ def estimate_skyline_productivity_cmd(
             if manual_falling_summary
             else None,
             "manual_falling_cost_per_m3_cad": manual_falling_summary.get("cost_per_m3_cad")
+            if manual_falling_summary
+            else None,
+            "manual_falling_cost_base_year": manual_falling_summary.get("cost_base_year")
+            if manual_falling_summary
+            else None,
+            "manual_falling_cost_per_tree_cad_2024": manual_falling_summary.get("cost_per_tree_cad_2024")
+            if manual_falling_summary
+            else None,
+            "manual_falling_cost_per_m3_cad_2024": manual_falling_summary.get("cost_per_m3_cad_2024")
             if manual_falling_summary
             else None,
         }

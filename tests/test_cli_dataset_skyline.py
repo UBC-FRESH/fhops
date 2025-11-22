@@ -197,7 +197,7 @@ def test_cli_skyline_manual_falling_options() -> None:
     )
     assert result.exit_code == 0
     assert "Manual Falling Species" in result.stdout
-    assert "Manual Falling Cost ($/tree)" in result.stdout
+    assert "Manual Falling Cost (2024 CAD $/tree)" in result.stdout
 
 
 def test_cli_skyline_manual_falling_defaults_from_system() -> None:
