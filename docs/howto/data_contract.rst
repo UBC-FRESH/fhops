@@ -187,8 +187,22 @@ costing consistent across scenarios:
   components directly via::
 
       fhops dataset estimate-cost --machine-role feller_buncher \
-        --owning-rate 95 --operating-rate 120 --repair-rate 40 \
-        --productivity 30 --utilisation 0.8
+  --owning-rate 95 --operating-rate 120 --repair-rate 40 \
+  --productivity 30 --utilisation 0.8
+
+- When you also need a road/subgrade allowance, append the TR-28 helper directly to the same command:
+
+  .. code-block:: bash
+
+     fhops dataset estimate-cost --machine-role grapple_yarder \
+       --productivity 22 --utilisation 0.85 \
+       --road-machine caterpillar_235_hydraulic_backhoe --road-length-m 150
+
+  Supplying ``--road-machine`` (slug or name from ``fhops dataset tr28-subgrade``) together with
+  ``--road-length-m`` prints a CPI-adjusted “TR-28 Road Cost Estimate” table after the machine-cost
+  summary. Use ``--road-exclude-mobilisation`` when movement is covered elsewhere—the CLI warns in
+  either case and cites the soil-protection guidance from FNRB3 (Cat D7H vs. D7G trial) and ADV4N7
+  (compaction thresholds) so planners can keep the subgrade build aligned with the published limits.
 
 - Supplying ``--rental-rate`` bypasses the lookup for bespoke studies, but ``machines.csv`` rows
   should normally use the curated rates (or CLI recomputed totals) so costing/evaluation tools

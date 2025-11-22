@@ -6859,6 +6859,22 @@ def estimate_cost_cmd(
     ground_slope_sigma: float = typer.Option(2.0, help="Std dev slope", min=0.0),
     model: LahrsenModel = typer.Option(LahrsenModel.DAILY, case_sensitive=False),
     samples: int = typer.Option(5000, help="Monte Carlo samples (RV mode)", min=1),
+    road_machine: str | None = typer.Option(
+        None,
+        "--road-machine",
+        help="Optional TR-28 road-building machine slug/name to append subgrade costs (see `fhops dataset tr28-subgrade`).",
+    ),
+    road_length_m: float | None = typer.Option(
+        None,
+        "--road-length-m",
+        min=1.0,
+        help="Road/subgrade length (m) to pair with --road-machine when estimating additional costs.",
+    ),
+    road_include_mobilisation: bool = typer.Option(
+        True,
+        "--road-include-mobilisation/--road-exclude-mobilisation",
+        help="Include the TR-28 movement cost in the add-on road estimate.",
+    ),
 ):
     """Estimate $/m³ given rental rate, utilisation, and (optionally) Lahrsen stand inputs."""
 
@@ -6900,6 +6916,7 @@ def estimate_cost_cmd(
     rental_breakdown: dict[str, float] | None = None
     repair_reference_hours: int | None = None
     repair_usage_bucket: tuple[int, float] | None = None
+    road_cost_estimate: TR28CostEstimate | None = None
 
     if machine_role is not None:
         machine_entry = _resolve_machine_rate(machine_role)
@@ -6923,6 +6940,23 @@ def estimate_cost_cmd(
         raise typer.BadParameter(
             "Provide either --rental-rate or --machine-role (or use --dataset/--machine)."
         )
+
+    if road_machine is not None or road_length_m is not None:
+        if not road_machine or not road_length_m:
+            raise typer.BadParameter("--road-machine and --road-length-m must be provided together.")
+        resolved_machine = _resolve_tr28_machine(road_machine)
+        if resolved_machine is None:
+            raise typer.BadParameter(
+                f"Unknown road machine '{road_machine}'. Choose from: {', '.join(_tr28_machine_slugs())}"
+            )
+        try:
+            road_cost_estimate = estimate_tr28_road_cost(
+                resolved_machine,
+                road_length_m=road_length_m,
+                include_mobilisation=road_include_mobilisation,
+            )
+        except ValueError as exc:  # pragma: no cover - Typer handles messaging
+            raise typer.BadParameter(str(exc)) from exc
 
     prod_info: dict[str, object]
     if productivity is None:
@@ -7051,6 +7085,14 @@ def estimate_cost_cmd(
             console.print(
                 f"[dim]Repair/maintenance allowance derived from Advantage Vol. 4 No. 23 (usage class {repair_reference_hours / 1000:.0f}×1000 h).[/dim]"
             )
+    if road_cost_estimate:
+        console.print()
+        _render_tr28_road_cost(road_cost_estimate)
+        console.print(
+            "[yellow]Soil-protection reminder:[/yellow] FNRB3’s Cat D7H vs. D7G trial showed that wider undercarriages cut ground pressure by 20–30% "
+            "while boosting stripping/ditching productivity—match dozer choice to bearing capacity. ADV4N7’s compaction guidelines still apply: "
+            "maintain slash mats or restrict traffic when moist soils approach the 15–20% disturbance threshold."
+        )
 
 
 @dataset_app.command("appendix5-stands")

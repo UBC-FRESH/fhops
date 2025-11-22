@@ -204,3 +204,25 @@ def test_cli_estimate_road_cost() -> None:
     assert "Caterpillar 235 hydraulic backhoe" in result.stdout
     assert "Unit cost" in result.stdout
     assert "Mobilisation" in result.stdout
+
+
+def test_estimate_cost_with_road_addon() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-cost",
+            "--machine-role",
+            "grapple_skidder",
+            "--productivity",
+            "25",
+            "--utilisation",
+            "0.9",
+            "--road-machine",
+            "caterpillar_235_hydraulic_backhoe",
+            "--road-length-m",
+            "150",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "TR-28 Road Cost Estimate" in result.stdout
+    assert "Soil-protection reminder" in result.stdout
