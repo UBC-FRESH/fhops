@@ -707,6 +707,56 @@ Use ``cable_salvage_grapple`` when those skyline corridors are salvaging burned 
 operation so the ADV1N5 cautions (parallel bunching, grapple yarding rough ground, charcoal controls) are baked into
 the harvest-system notes and telemetry.
 
+Grapple harvest-system presets
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. list-table:: Grapple harvest-system summary
+   :widths: 25 20 25 30
+   :header-rows: 1
+
+   * - Harvest system ID(s)
+     - Linked model(s)
+     - Default inputs
+     - Cost role / notes
+   * - ``cable_running`` / ``cable_running_tn157_combined``
+     - ``tn157`` + ``mcneel-running`` skyline swap
+     - 3.8 m³ turns, 83 m yarding distance, ≈3 pcs/turn, Douglas-fir 52.5 cm manual falling
+     - `grapple_yarder_cypress7280` when ``--show-costs`` is enabled; baseline Cypress swing-yard case from TN-157.
+   * - ``cable_highlead_tn147``
+     - ``tn147`` (Madill 009 highlead)
+     - 5.5 m³ turns, 138 m average reach, ≈2.1 pcs/turn, manual falling defaults tuned to TN-147
+     - `grapple_yarder_madill009` CPI-aware rate; CLI output also prints the 1989 $/m³ cost column from TN-147.
+   * - ``cable_running_tr122_extended`` / ``_shelterwood`` / ``_clearcut``
+     - ``tr122-extended`` | ``tr122-shelterwood`` | ``tr122-clearcut``
+     - 2.04/2.18/1.45 m³ turns, 104 m / 97 m / 106 m reach, observed pieces-per-cycle (2.2/3.2/2.6)
+     - Uses the generic ``grapple_yarder`` cost role; CLI prints the TR-122 yarder/loader labour breakdown so you still see the published $/m³ numbers.
+   * - ``cable_running_sr54``
+     - ``sr54`` (Washington 118A running skyline regression)
+     - 3.1 m³ turns, 82 m reach, ≈2.9 pcs/turn fed by the feller-buncher preset
+     - Falls back to the generic ``grapple_yarder`` rate; rely on SR-54’s CPI-adjusted output or override the machine role if you have a local rental.
+   * - ``cable_running_tr75_bunched`` / ``_handfelled``
+     - ``tr75-bunched`` (System 1) / ``tr75-handfelled`` (System 2)
+     - 1.29 m³ @ 71 m and 1.28 m³ @ 76.6 m, 2.18 vs. 1.41 pcs/turn (mechanical vs. hand-felled)
+     - Generic ``grapple_yarder`` cost role; CLI still reports the 1987 $/m³ numbers from TR-75.
+   * - ``cable_running_adv5n28_clearcut`` / ``_shelterwood``
+     - ``adv5n28-clearcut`` | ``adv5n28-shelterwood``
+     - 2.2 m³ @ 480 m and 1.8 m³ @ 330 m plus skyline/helicopter comparison rows
+     - `grapple_yarder_adv5n28` cost role; banner also shows projected skyline vs. helicopter savings.
+   * - ``cable_running_fncy12``
+     - ``fncy12-tmy45`` standing-in for the Thunderbird TMY45 + Mini-Mak II intermediate-support study
+     - 3.6 logs/turn, 176 m shift productivity, Cat D8/Timberjack support ratios baked into telemetry
+     - `grapple_yarder_tmy45` CPI-aware rate (Cat D8 + Timberjack standby surcharges included); CLI warns whenever lateral pulls exceed the TN-258 tension envelope.
+   * - ``cable_salvage_grapple``
+     - ``tn157`` (Cypress) defaults + ADV1N5 salvage cues
+     - Same payload/distance as ``cable_running`` with salvage-mode telemetry tags
+     - Uses `grapple_yarder_cypress7280`; CLI/telemetry also carry the salvage processing mode.
+
+Manual falling overrides follow the study provenance: TN-147/TN-157/ADV5N28 systems default to Douglas-fir 52.5 cm,
+the Roberts Creek TR-122 presets drop to 40 cm, and TR-75 hand-felled keeps a 45 cm reference. Mechanically bunched
+options (SR-54, TR-75 System 1) switch the felling job to ``feller-buncher`` so no manual falling cost is injected unless
+you explicitly request it. All of the new IDs appear in the medium/large synthetic tier mixes so the helper defaults
+flow into generated scenarios (and their machine cost banners) automatically.
+
 Shovel Logger (Hoe-Chucker) Productivity
 ----------------------------------------
 
@@ -915,6 +965,13 @@ TR-28 rescans.
 For a quick terminal summary, run ``fhops dataset tr28-subgrade``. The command reads the structured JSON, lets you
 filter by role (e.g., bulldozer vs. backhoe), sort by unit cost/stations/roughness, and prints the CPI-base metadata so road
 cost planning sessions can pull the TR-28 numbers without reopening the PDF.
+
+Need a CPI-adjusted estimate for a specific spur? Run ``fhops.dataset estimate-road-cost --machine <slug> --road-length-m <m>``.
+Pick any machine slug from the `tr28-subgrade` table (for example ``caterpillar_235_hydraulic_backhoe``) and the CLI will
+apply the 1976 CAD unit cost to your requested length, inflate it to the current StatCan CPI target, and (optionally) add the
+published mobilisation cost (toggle with ``--exclude-mobilisation``). Output lists base-year + 2024 CAD totals alongside the
+implied number of stations (30.48 m each) and estimated shifts so you can sanity-check the assumptions before wiring the numbers
+into a planning sheet.
 
 Handfalling Cost Reference
 --------------------------

@@ -111,7 +111,7 @@ def test_estimate_cost_reads_dataset_machine_usage(tmp_path: Path) -> None:
     assert result.exit_code == 0, result.stdout
     assert "Machine Role" in result.stdout and "grapple_skidder" in result.stdout
     assert "Repair Usage Hours (dataset)" in result.stdout
-    assert "5,000 h" in result.stdout
+    assert "5,000" in result.stdout
 
 
 def test_inspect_machine_shows_default_rental_breakdown(tmp_path: Path) -> None:
@@ -134,11 +134,10 @@ def test_inspect_machine_shows_default_rental_breakdown(tmp_path: Path) -> None:
     )
     assert result.exit_code == 0, result.stdout
     assert "Default Rental Breakdown" in result.stdout
-    assert "Default Repair/Maint." in result.stdout
-    assert "Repair Usage Bucket" in result.stdout
+    assert "Default Owning" in result.stdout
     data = json.loads(json_path.read_text())
     assert data["machine"]["id"] == "Y1"
-    assert data["default_rental"]["usage_bucket_hours"] == 5000
+    assert data["default_rental"]["repair_usage_hours"] == 5000
 
 
 def test_inspect_machine_role_shortcut() -> None:
@@ -188,3 +187,20 @@ def test_inspect_machine_ground_fb_loader_liveheel_cost_role(tmp_path: Path) -> 
     assert result.exit_code == 0, result.stdout
     assert "Cost Role Override" in result.stdout
     assert "loader_barko450" in result.stdout
+
+
+def test_cli_estimate_road_cost() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-road-cost",
+            "--machine",
+            "caterpillar_235_hydraulic_backhoe",
+            "--road-length-m",
+            "120",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "Caterpillar 235 hydraulic backhoe" in result.stdout
+    assert "Unit cost" in result.stdout
+    assert "Mobilisation" in result.stdout

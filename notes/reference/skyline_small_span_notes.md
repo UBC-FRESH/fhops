@@ -91,6 +91,19 @@ Sources: `notes/reference/fpinnovations/FNCY12.pdf`, `notes/reference/fpinnovati
 - Costing status: `grapple_yarder_tmy45` now captures the owning/operating split by converting the LeDoux (1984) TMY-45 hourly charges from USD 1984 → CAD 1992 (StatCan Table 18-10-0005-01 CPI + vector v37426 FX), scaling the labour column to the FNCY12 5.5-person crew (vs. the nine-person residue trial), and amortising the CAD 33.5 k Mini-Mak II + skyline support jack bundle over five years (1 200 SMH/year) so the attachment lives in owning cost. Loader/chainsaw/radio allowances stay aligned with the LeDoux breakout and the Cat D8/Timberjack 450 proxies above are now bundled into the operating column (via the TR-45 bulldozer/skidder roles).
 - Remaining wish list: secure an authentic 1992 BC payroll/fuel/repair worksheet for the Thunderbird fleet plus any Jay-Vee Yarding accounting that allocates intermediate-support moves to the D8 vs. rigging crew. The TN258 manuscript does **not** publish intermediate-support setup/move timing or Cat D8/Timberjack utilisation minutes—only the tension envelopes—so revisit the 0.25/0.14 SMH proxies once better data surfaces.
 - Intermediate-support timing cross-check (2025‑11‑30): Re-read TN258 (pdftotext excerpt above) and confirmed it only reports static/dynamic line tensions (Tables 1–2) plus rigging geometry—no Cat D8/Timberjack utilisation, setup minutes, or per-support cycle timing. The proxy ratios already baked into `data/reference/fpinnovations/fncy12_tmy45_mini_mak.json` (`cat_d8` = 0.25 SMH/SMH, `timberjack_450` = 0.14 SMH/SMH) therefore remain the best-available placeholders, sourced from TN‑157 road-change÷yarding ratios. Keep the note here so future readers know TN258 cannot close that gap without external payroll logs.
+- TN157 support-ratio sanity check (2025‑12‑01): recomputed the TN157 road-change minutes ÷ yarding minutes for all seven cases to anchor the TN258 proxies. Ratios ranged 0.085–0.508 with a mean of 0.247 and median 0.224 (Q1 = 0.137, Q3 = 0.333). Backspar-specific work (Hitachi UH14) consumed ≈58 % of total road-change minutes overall, swinging from 5 % on the shortest corridors to 99 % on the longest partial cuts. These stats justify keeping the Cat D8 standby allowance at 0.25 SMH/SMH (matches the TN157 mean) and the Timberjack trail-support allowance near the lower-quartile 0.14 SMH/SMH. Reference table:
+
+  | Case | Yarding min | Road-change min | Ratio road/yard | Backspar share |
+  | --- | --- | --- | --- | --- |
+  | 1 | 455.6 | 38.9 | 0.085 | 0.08 |
+  | 2 | 412.2 | 92.4 | 0.224 | 0.05 |
+  | 3 | 392.0 | 199.1 | 0.508 | 0.58 |
+  | 4 | 764.0 | 254.6 | 0.333 | 0.33 |
+  | 5 | 1 277.5 | 175.1 | 0.137 | 0.73 |
+  | 6 | 544.5 | 141.9 | 0.261 | 0.86 |
+  | 7 | 924.7 | 164.4 | 0.178 | 0.99 |
+
+  (Backspar share = backspar_minutes ÷ (yarder_minutes + backspar_minutes) using the per-case `road_changes` block in `tn157_cypress7280b.json`.)
 
 ## TN82 – FMC FT-180 + JD 550 steep ground alternative (Canal Flats, 1983–84)
 

@@ -13,6 +13,7 @@ from typing import Any
 
 from click.core import ParameterSource
 import typer
+from rich import box
 from rich.console import Console
 from rich.table import Table
 
@@ -190,6 +191,8 @@ from fhops.reference import (
     load_adv2n21_treatments,
     load_appendix5_stands,
     load_tr28_machines,
+    TR28CostEstimate,
+    estimate_tr28_road_cost,
     load_tn98_dataset,
     load_tn82_dataset,
     TR28Machine,
@@ -763,6 +766,25 @@ def _normalize_tn147_case(case_id: str | None) -> str:
             f"TN147 case must be one of {', '.join(sorted(choices))}; received '{case_id}'."
         )
     return candidate
+
+
+def _tr28_machine_slugs() -> tuple[str, ...]:
+    return tuple(sorted(machine.slug for machine in load_tr28_machines()))
+
+
+def _resolve_tr28_machine(identifier: str) -> TR28Machine | None:
+    candidate = identifier.strip().lower()
+    slug_candidate = candidate.replace(" ", "_")
+    for machine in load_tr28_machines():
+        if candidate == machine.machine_name.lower() or slug_candidate == machine.slug:
+            return machine
+    return None
+
+
+def _format_currency(value: float | None) -> str:
+    if value is None:
+        return "—"
+    return f"${value:,.2f}"
 
 
 def _tn98_species_choices() -> tuple[str, ...]:
@@ -7381,6 +7403,103 @@ def list_tr28_subgrade_machines(
     )
 
 
+@dataset_app.command("estimate-road-cost")
+def estimate_road_cost(
+    machine: str = typer.Option(
+        ...,
+        "--machine",
+        help="TR-28 machine slug or full name (e.g., caterpillar_235_hydraulic_backhoe).",
+    ),
+    road_length_m: float = typer.Option(
+        ...,
+        "--road-length-m",
+        min=1.0,
+        help="Road/subgrade length in metres to build with the selected machine.",
+    ),
+    include_mobilisation: bool = typer.Option(
+        True,
+        "--include-mobilisation/--exclude-mobilisation",
+        help="Include the TR-28 movement cost (lowbed + machine relocation) in the total.",
+    ),
+):
+    """Estimate CPI-adjusted road/subgrade cost using TR-28 reference machines."""
+
+    resolved = _resolve_tr28_machine(machine)
+    if not resolved:
+        raise typer.BadParameter(
+            f"Unknown machine '{machine}'. Choose from: {', '.join(_tr28_machine_slugs())}"
+        )
+    try:
+        estimate = estimate_tr28_road_cost(
+            resolved,
+            road_length_m=road_length_m,
+            include_mobilisation=include_mobilisation,
+        )
+    except ValueError as exc:  # pragma: no cover - Typer surfaces message
+        raise typer.BadParameter(str(exc)) from exc
+    _render_tr28_road_cost(estimate)
+
+
+def _render_tr28_road_cost(estimate: TR28CostEstimate) -> None:
+    table = Table(title="TR-28 Road Cost Estimate", box=box.MINIMAL_DOUBLE_HEAD)
+    table.add_column("Metric", style="cyan")
+    table.add_column("Value", justify="right")
+    table.add_row("Machine", estimate.machine.machine_name)
+    table.add_row("Role", estimate.machine.role or "—")
+    table.add_row("Road length", f"{estimate.road_length_m:,.1f} m")
+    table.add_row("Stations (30.48 m)", f"{estimate.stations:,.2f}")
+    if estimate.shifts is not None:
+        table.add_row("Estimated shifts", f"{estimate.shifts:,.2f}")
+    else:
+        table.add_row("Estimated shifts", "—")
+    table.add_row(
+        f"Unit cost ({estimate.base_year} CAD $/m)",
+        f"{_format_currency(estimate.unit_cost_base_cad_per_m)} / m",
+    )
+    table.add_row(
+        f"Unit cost ({estimate.target_year} CAD $/m)",
+        f"{_format_currency(estimate.unit_cost_target_cad_per_m)} / m",
+    )
+    table.add_row(
+        f"Total ({estimate.base_year} CAD)",
+        _format_currency(estimate.total_cost_base_cad),
+    )
+    table.add_row(
+        f"Total ({estimate.target_year} CAD)",
+        _format_currency(estimate.total_cost_target_cad),
+    )
+    mob_label = (
+        "Mobilisation cost" if estimate.mobilisation_included else "Mobilisation cost (excluded)"
+    )
+    table.add_row(
+        f"{mob_label} ({estimate.base_year} CAD)",
+        _format_currency(estimate.mobilisation_cost_base_cad),
+    )
+    table.add_row(
+        f"{mob_label} ({estimate.target_year} CAD)",
+        _format_currency(estimate.mobilisation_cost_target_cad),
+    )
+    table.add_row(
+        f"Total incl. mobilisation ({estimate.base_year} CAD)",
+        _format_currency(estimate.total_with_mobilisation_base_cad),
+    )
+    table.add_row(
+        f"Total incl. mobilisation ({estimate.target_year} CAD)",
+        _format_currency(estimate.total_with_mobilisation_target_cad),
+    )
+    console.print(table)
+    mobilisation_note = (
+        "Mobilisation cost included."
+        if estimate.mobilisation_included
+        else "Mobilisation cost excluded (movement reported separately in TR-28)."
+    )
+    console.print(
+        f"[dim]Base currency: {estimate.base_year} CAD (FERIC TR-28). "
+        f"Values inflated to {estimate.target_year} CAD using StatCan CPI. "
+        f"{mobilisation_note} Stations assume 30.48 m (100 ft).[/dim]"
+    )
+
+
 @dataset_app.command("estimate-cable-skidding")
 def estimate_cable_skidding_cmd(
     model: CableSkiddingModel = typer.Option(CableSkiddingModel.UNVER_SPSS, case_sensitive=False),
@@ -8568,6 +8687,11 @@ def estimate_skyline_productivity_cmd(
         rows.append(("TR119 Volume Multiplier", f"{treatment.volume_multiplier:.3f}"))
         if treatment.yarding_total_cost_per_m3 is not None:
             rows.append(("TR119 Yarding Cost ($/m³)", f"{treatment.yarding_total_cost_per_m3:.2f}"))
+        tr119_cost_note = (
+            f"TR119 {treatment.treatment} multiplier applied to skyline cost (volume × {treatment.volume_multiplier:.3f})."
+        )
+    else:
+        tr119_cost_note = None
     rows.append(("Productivity (m³/PMH)", f"{value:.2f}"))
     _render_kv_table("Skyline Productivity", rows)
     if calibration_notes:
@@ -8575,7 +8699,13 @@ def estimate_skyline_productivity_cmd(
             console.print(f"[dim]{note}[/dim]")
     skyline_cost_role = _skyline_cost_role(model)
     if skyline_cost_role is not None:
-        _maybe_render_costs(show_costs, skyline_cost_role)
+        if show_costs:
+            _render_machine_cost_summary(
+                skyline_cost_role,
+                label="Skyline Cost Reference",
+            )
+            if tr119_cost_note:
+                console.print(f"[dim]{tr119_cost_note}[/dim]")
     elif show_costs:
         console.print("[dim]No default skyline machine rate is published for this preset.[/dim]")
     if source_label:

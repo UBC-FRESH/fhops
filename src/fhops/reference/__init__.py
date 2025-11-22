@@ -18,9 +18,12 @@ from .unbc_hoe_chucking import (
     load_unbc_construction_costs,
 )
 from .tr28_subgrade import (
+    TR28CostEstimate,
     TR28Machine,
+    estimate_tr28_road_cost,
     get_tr28_source_metadata,
     load_tr28_machines,
+    tr28_currency_year,
 )
 from .tn98_handfalling import (
     TN98HandfallingDataset,
@@ -59,8 +62,11 @@ __all__ = [
     "UNBCConstructionCost",
     "load_unbc_construction_costs",
     "TR28Machine",
+    "TR28CostEstimate",
     "load_tr28_machines",
     "get_tr28_source_metadata",
+    "estimate_tr28_road_cost",
+    "tr28_currency_year",
     "TN98HandfallingDataset",
     "TN98Regression",
     "TN98DiameterRecord",

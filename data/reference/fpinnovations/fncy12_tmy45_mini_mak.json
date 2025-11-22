@@ -129,6 +129,14 @@
       "notes": "Timberjack 450 grapple skidder treated as equivalent to the TR-45 grapple-skidder cost entry; CPI helper inflates to target year."
     }
   },
+  "support_reference_stats": {
+    "tn157_total_ratio_mean": 0.247,
+    "tn157_total_ratio_median": 0.224,
+    "tn157_total_ratio_q1": 0.137,
+    "tn157_total_ratio_q3": 0.333,
+    "tn157_backspar_share_mean": 0.579,
+    "tn157_cases_analyzed": 7
+  },
   "productivity": {
     "observation_period": "July–October 1992 (67.5 productive shifts including early shutdowns)",
     "volumes_m3_per_month": [

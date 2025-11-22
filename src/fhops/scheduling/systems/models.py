@@ -37,6 +37,52 @@ class HarvestSystem:
 
 def default_system_registry() -> Mapping[str, HarvestSystem]:
     """Return the default harvest system registry inspired by Jaffray (2025)."""
+
+    def _tn157_running(system_id: str, notes: str) -> HarvestSystem:
+        return HarvestSystem(
+            system_id=system_id,
+            environment="cable-running skyline",
+            notes=notes,
+            jobs=[
+                SystemJob(
+                    "felling",
+                    "hand_or_mech_faller",
+                    [],
+                    productivity_overrides={
+                        "manual_falling_enabled": True,
+                        "manual_falling_species": "douglas_fir",
+                        "manual_falling_dbh_cm": 52.5,
+                    },
+                ),
+                SystemJob(
+                    "primary_transport",
+                    "grapple_yarder",
+                    ["felling"],
+                    productivity_overrides={
+                        "skyline_model": "mcneel-running",
+                        "skyline_horizontal_distance_m": 280.0,
+                        "skyline_vertical_distance_m": 40.0,
+                        "skyline_pieces_per_cycle": 3.0,
+                        "skyline_piece_volume_m3": 1.8,
+                        "skyline_running_variant": "yarder_a",
+                        "grapple_yarder_model": "tn157",
+                        "grapple_yarder_tn157_case": "combined",
+                        "grapple_yarder_turn_volume_m3": 3.8,
+                        "grapple_yarder_yarding_distance_m": 83.0,
+                    },
+                ),
+                SystemJob(
+                    "processing",
+                    "roadside_processor",
+                    ["primary_transport"],
+                    productivity_overrides={
+                        "processor_model": "adv7n3",
+                        "processor_adv7n3_machine": "hyundai_210",
+                    },
+                ),
+                SystemJob("loading", "loader", ["processing"]),
+            ],
+        )
     return {
         "ground_fb_skid": HarvestSystem(
             system_id="ground_fb_skid",
@@ -401,19 +447,27 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
                 SystemJob("loading", "loader", ["processing"]),
             ],
         ),
-        "cable_running": HarvestSystem(
-            system_id="cable_running",
-            environment="cable-running skyline",
-            notes="Hand/mech fall → grapple yarder → landing processor/hand buck → loader.",
+        "cable_running": _tn157_running(
+            "cable_running",
+            "TN-157 combined (Cypress 7280B + UH14 backspar) defaults for running skyline corridors.",
+        ),
+        "cable_running_tn157_combined": _tn157_running(
+            "cable_running_tn157_combined",
+            "Explicit TN-157 combined preset (alias of cable_running) so datasets can reference the case directly.",
+        ),
+        "cable_highlead_tn147": HarvestSystem(
+            system_id="cable_highlead_tn147",
+            environment="cable-highlead skyline",
+            notes="TN-147 Madill 009 highlead cases (hand fall → highlead grapple → landing processor → loader).",
             jobs=[
                 SystemJob(
                     "felling",
-                    "hand_or_mech_faller",
+                    "hand_faller",
                     [],
                     productivity_overrides={
                         "manual_falling_enabled": True,
                         "manual_falling_species": "douglas_fir",
-                        "manual_falling_dbh_cm": 52.5,
+                        "manual_falling_dbh_cm": 50.0,
                     },
                 ),
                 SystemJob(
@@ -421,16 +475,11 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
                     "grapple_yarder",
                     ["felling"],
                     productivity_overrides={
-                        "skyline_model": "mcneel-running",
-                        "skyline_horizontal_distance_m": 280.0,
-                        "skyline_vertical_distance_m": 40.0,
-                        "skyline_pieces_per_cycle": 3.0,
-                        "skyline_piece_volume_m3": 1.8,
-                        "skyline_running_variant": "yarder_a",
-                        "grapple_yarder_model": "tn157",
-                        "grapple_yarder_tn157_case": "combined",
-                        "grapple_yarder_turn_volume_m3": 3.8,
-                        "grapple_yarder_yarding_distance_m": 83.0,
+                        "grapple_yarder_model": "tn147",
+                        "grapple_yarder_tn147_case": "combined",
+                        "grapple_yarder_turn_volume_m3": 5.48,
+                        "grapple_yarder_yarding_distance_m": 138.0,
+                        "grapple_yarder_stems_per_cycle": 2.1,
                     },
                 ),
                 SystemJob(
@@ -442,6 +491,96 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
                         "processor_adv7n3_machine": "hyundai_210",
                     },
                 ),
+                SystemJob("loading", "loader", ["processing"]),
+            ],
+        ),
+        "cable_running_tr122_extended": HarvestSystem(
+            system_id="cable_running_tr122_extended",
+            environment="cable-running skyline",
+            notes="TR-122 Roberts Creek extended-rotation treatment (SLH 78 running skyline).",
+            jobs=[
+                SystemJob(
+                    "felling",
+                    "hand_or_mech_faller",
+                    [],
+                    productivity_overrides={
+                        "manual_falling_enabled": True,
+                        "manual_falling_species": "douglas_fir",
+                        "manual_falling_dbh_cm": 40.0,
+                    },
+                ),
+                SystemJob(
+                    "primary_transport",
+                    "grapple_yarder",
+                    ["felling"],
+                    productivity_overrides={
+                        "grapple_yarder_model": "tr122-extended",
+                        "grapple_yarder_turn_volume_m3": 2.04,
+                        "grapple_yarder_yarding_distance_m": 104.0,
+                        "grapple_yarder_stems_per_cycle": 2.2,
+                    },
+                ),
+                SystemJob("processing", "roadside_processor", ["primary_transport"]),
+                SystemJob("loading", "loader", ["processing"]),
+            ],
+        ),
+        "cable_running_tr122_shelterwood": HarvestSystem(
+            system_id="cable_running_tr122_shelterwood",
+            environment="cable-running skyline",
+            notes="TR-122 Roberts Creek uniform shelterwood running skyline defaults.",
+            jobs=[
+                SystemJob(
+                    "felling",
+                    "hand_or_mech_faller",
+                    [],
+                    productivity_overrides={
+                        "manual_falling_enabled": True,
+                        "manual_falling_species": "douglas_fir",
+                        "manual_falling_dbh_cm": 40.0,
+                    },
+                ),
+                SystemJob(
+                    "primary_transport",
+                    "grapple_yarder",
+                    ["felling"],
+                    productivity_overrides={
+                        "grapple_yarder_model": "tr122-shelterwood",
+                        "grapple_yarder_turn_volume_m3": 2.18,
+                        "grapple_yarder_yarding_distance_m": 97.0,
+                        "grapple_yarder_stems_per_cycle": 3.2,
+                    },
+                ),
+                SystemJob("processing", "roadside_processor", ["primary_transport"]),
+                SystemJob("loading", "loader", ["processing"]),
+            ],
+        ),
+        "cable_running_tr122_clearcut": HarvestSystem(
+            system_id="cable_running_tr122_clearcut",
+            environment="cable-running skyline",
+            notes="TR-122 Roberts Creek clearcut (short 106 m spans, 1.45 m³ cycle volume).",
+            jobs=[
+                SystemJob(
+                    "felling",
+                    "hand_or_mech_faller",
+                    [],
+                    productivity_overrides={
+                        "manual_falling_enabled": True,
+                        "manual_falling_species": "douglas_fir",
+                        "manual_falling_dbh_cm": 40.0,
+                    },
+                ),
+                SystemJob(
+                    "primary_transport",
+                    "grapple_yarder",
+                    ["felling"],
+                    productivity_overrides={
+                        "grapple_yarder_model": "tr122-clearcut",
+                        "grapple_yarder_turn_volume_m3": 1.45,
+                        "grapple_yarder_yarding_distance_m": 106.0,
+                        "grapple_yarder_stems_per_cycle": 2.6,
+                    },
+                ),
+                SystemJob("processing", "roadside_processor", ["primary_transport"]),
                 SystemJob("loading", "loader", ["processing"]),
             ],
         ),
@@ -578,6 +717,102 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
                         "grapple_yarder_model": "adv5n28-shelterwood",
                         "grapple_yarder_turn_volume_m3": 1.8,
                         "grapple_yarder_yarding_distance_m": 330.0,
+                    },
+                ),
+                SystemJob(
+                    "processing",
+                    "roadside_processor",
+                    ["primary_transport"],
+                    productivity_overrides={
+                        "processor_model": "adv7n3",
+                        "processor_adv7n3_machine": "hyundai_210",
+                    },
+                ),
+                SystemJob("loading", "loader", ["processing"]),
+            ],
+        ),
+        "cable_running_sr54": HarvestSystem(
+            system_id="cable_running_sr54",
+            environment="cable-running skyline",
+            notes="SR-54 Washington 118A grapple yarder on mechanically bunched coastal second-growth.",
+            jobs=[
+                SystemJob("felling", "feller-buncher", []),
+                SystemJob(
+                    "primary_transport",
+                    "grapple_yarder",
+                    ["felling"],
+                    productivity_overrides={
+                        "grapple_yarder_model": "sr54",
+                        "grapple_yarder_turn_volume_m3": 3.1,
+                        "grapple_yarder_yarding_distance_m": 82.0,
+                        "grapple_yarder_stems_per_cycle": 2.9,
+                    },
+                ),
+                SystemJob(
+                    "processing",
+                    "roadside_processor",
+                    ["primary_transport"],
+                    productivity_overrides={
+                        "processor_model": "adv7n3",
+                        "processor_adv7n3_machine": "hyundai_210",
+                    },
+                ),
+                SystemJob("loading", "loader", ["processing"]),
+            ],
+        ),
+        "cable_running_tr75_bunched": HarvestSystem(
+            system_id="cable_running_tr75_bunched",
+            environment="cable-running skyline",
+            notes="TR-75 System 1 (mechanically felled/bunched Madill 084 + Hitachi UH14 backspar).",
+            jobs=[
+                SystemJob("felling", "feller-buncher", []),
+                SystemJob(
+                    "primary_transport",
+                    "grapple_yarder",
+                    ["felling"],
+                    productivity_overrides={
+                        "grapple_yarder_model": "tr75-bunched",
+                        "grapple_yarder_turn_volume_m3": 1.29,
+                        "grapple_yarder_yarding_distance_m": 71.0,
+                        "grapple_yarder_stems_per_cycle": 2.18,
+                    },
+                ),
+                SystemJob(
+                    "processing",
+                    "roadside_processor",
+                    ["primary_transport"],
+                    productivity_overrides={
+                        "processor_model": "adv7n3",
+                        "processor_adv7n3_machine": "hyundai_210",
+                    },
+                ),
+                SystemJob("loading", "loader", ["processing"]),
+            ],
+        ),
+        "cable_running_tr75_handfelled": HarvestSystem(
+            system_id="cable_running_tr75_handfelled",
+            environment="cable-running skyline",
+            notes="TR-75 System 2 (hand-felled second-growth yarded by Madill 084).",
+            jobs=[
+                SystemJob(
+                    "felling",
+                    "hand_faller",
+                    [],
+                    productivity_overrides={
+                        "manual_falling_enabled": True,
+                        "manual_falling_species": "douglas_fir",
+                        "manual_falling_dbh_cm": 45.0,
+                    },
+                ),
+                SystemJob(
+                    "primary_transport",
+                    "grapple_yarder",
+                    ["felling"],
+                    productivity_overrides={
+                        "grapple_yarder_model": "tr75-handfelled",
+                        "grapple_yarder_turn_volume_m3": 1.28,
+                        "grapple_yarder_yarding_distance_m": 76.6,
+                        "grapple_yarder_stems_per_cycle": 1.41,
                     },
                 ),
                 SystemJob(

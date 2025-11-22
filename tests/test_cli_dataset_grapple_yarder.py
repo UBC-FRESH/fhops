@@ -43,6 +43,22 @@ def test_cli_grapple_yarder_harvest_system_defaults() -> None:
     assert "Applied grapple-yarder defaults" in result.stdout
 
 
+def test_cli_grapple_yarder_harvest_system_tn147() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_yarder",
+            "--harvest-system-id",
+            "cable_highlead_tn147",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "Madill 009" in result.stdout
+    assert "Applied grapple-yarder defaults" in result.stdout
+
+
 def test_cli_grapple_yarder_tn147_case() -> None:
     result = runner.invoke(
         dataset_app,
@@ -128,6 +144,22 @@ def test_cli_grapple_yarder_tn157_show_costs_uses_cypress_rate() -> None:
     )
     assert result.exit_code == 0, result.stdout
     assert "grapple_yarder_cypress7280" in result.stdout
+
+
+def test_cli_grapple_yarder_harvest_system_tr122_shelterwood() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_yarder",
+            "--harvest-system-id",
+            "cable_running_tr122_shelterwood",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "Uniform Shelterwood" in result.stdout
+    assert "Applied grapple-yarder defaults" in result.stdout
 
 
 def test_cli_grapple_yarder_adv5n28_clearcut() -> None:
@@ -238,4 +270,36 @@ def test_cli_grapple_yarder_harvest_system_salvage() -> None:
     )
     assert result.exit_code == 0, result.stdout
     assert "Cypress 7280B" in result.stdout
+    assert "Applied grapple-yarder defaults" in result.stdout
+
+
+def test_cli_grapple_yarder_harvest_system_sr54() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_yarder",
+            "--harvest-system-id",
+            "cable_running_sr54",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "sr54" in result.stdout.lower()
+    assert "Applied grapple-yarder defaults" in result.stdout
+
+
+def test_cli_grapple_yarder_harvest_system_tr75_handfelled() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-productivity",
+            "--machine-role",
+            "grapple_yarder",
+            "--harvest-system-id",
+            "cable_running_tr75_handfelled",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "tr75-handfelled" in result.stdout
     assert "Applied grapple-yarder defaults" in result.stdout

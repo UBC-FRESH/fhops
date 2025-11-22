@@ -1,0 +1,3442 @@
+PRODUCTIVITY AND PROFITABILITY
+OF GRAPPLE YARDING BUNCHED
+B.C. COASTAL SECOND-GROWTH TIMBER
+by
+A.J. MacDonald*
+
+*Researcher
+Harvesting Operations Group
+Western Division
+
+FOREST ENGINEERING RESEARCH INSTITUTE OF CANADA
+1201-2112 West Broadway
+Vancouver, B.C.
+V6K 2C8
+
+October 1988
+FERIC Special Report No. SR-54
+
+This report is being released simultaneously by the
+Canadian Forestry Service as FRDA Report 048.
+
+Keywords:
+
+Cable logging, Skyline, Grapple yarders, Productivity
+Costs, Downtime, Economic analysis, Second growth,
+Washington 118A yarding crane
+
+ACKNOWLEDGEMENTS
+The author wishes to thank the personnel of MacMillan Bloedel
+Limited, Northwest Bay Division, for their assistance during this project and
+for reviewing the manuscript. Special thanks go to Nei l Marshall of FERIC for
+his assistance in data collection.
+
+AUTHOR
+
+Jack MacDonald graduated from the University of British Columbia Faculty of Forestry in
+1976. He joined British Columbia Forest Products
+Limited and worked as a field engineer on Vancouver
+Island until joining FERIC in 1986. He is a
+Researcher in the Harvesting Operations Group.
+
+ii
+
+TABLE OF CONTENTS
+PAGE
+ACKNOWLEDGEMENTS
+
+ii
+
+AUTHOR
+
+ii
+
+SUMMARY
+
+vi
+
+INTRODUCTION
+
+1
+
+STUDY APPROACH AND PROCEDURES
+
+1
+
+SITE AND SYSTEM DESCRIPTION
+
+2
+
+RESULTS AND DISCUSSION
+
+6
+
+1.
+
+Setting Layout
+
+6
+
+2.
+
+Shift Level Results
+
+1
+
+3.
+
+Detailed-Timing Results
+
+8
+
+4.
+
+Turn Size and Bunch Volume
+
+11
+
+5.
+
+Grapple Comparison
+
+14
+
+6.
+
+Work-Cycle Elements Regression Analysis
+
+16
+
+7.
+
+Model of Yarding Times
+
+17
+
+8.
+
+Marginal-Log Analysis
+
+19
+
+GRAPPLE YARDING HAND- FELLED VERSUS MECHANICALLY FELLED
+AND BUNCHED TIMBER
+
+21
+
+CONCLUSIONS
+
+23
+
+REFERENCES
+
+25
+
+iii
+
+LIST OF TABLES
+TABLE
+
+PAGE
+
+1
+
+Site Description
+
+3
+
+2
+
+Species and Grade Distribution Within the Study Block
+
+3
+
+3
+
+Shift-Level Time Distribution
+
+8
+
+4
+
+Summary of Maintenance
+
+9
+
+5
+
+Summary of Detailed-Timing Period
+
+9
+
+6
+
+Summary of Productive-Time Elements
+
+10
+
+7
+
+Minor Delays During Productive Time
+
+11
+
+8
+
+Summary of Grapples Used
+
+14
+
+9
+
+Regression Coefficients for Outhaul-Plus-Inhaul Times
+Versus Yarding Distance for Selected
+Turn-Volume Classes
+
+16
+
+10
+
+Predicted Yarding-Cycle Times
+
+18
+
+11
+
+Example of Marginal-Log Volume Calculations:
+Douglas-Fir J-Grade Logs
+
+21
+
+12
+
+Grapple-Yarding Comparison Between Hand-Felled and
+Mechanically Felled and Bunched Timber
+
+LIST OF FIGURES
+FIGURE
+
+PAGE
+
+A
+
+Large-Log Bunch:
+
+Week 1
+
+4
+
+B
+
+Small-Log Bunch:
+
+Week 2
+
+4
+
+C
+
+Washington 118A Yarding Crane
+
+5
+
+D
+
+Hitachi UH 171 Backspar
+
+5
+
+E
+
+Windrow of Yarded Stems
+
+6
+
+F
+
+Roadside Processing Equipment
+
+6
+
+G
+
+Setting Layout
+
+7
+
+H
+
+Number of Logs Per Turn:
+
+Weeks 1 and 2
+iv
+
+12
+
+FIGURE
+
+PAGE
+
+I
+
+Turn Volumes:
+
+Weeks 1 and 2
+
+12
+
+J
+
+Distribution of Bunch Volume
+
+13
+
+K
+
+Yarding Productivity Versus Bunch Volume for Grapple l :
+Delay and Moving Times Excluded
+
+14
+
+L
+
+Average Turn Volume Versus Bunch Volume
+
+15
+
+M
+
+Predicted Outhaul-Plus-Inhaul Times :
+Operator 1
+
+17
+
+N
+
+Predicted Element Times for a 3-m3 Turn
+
+18
+
+0
+
+Predicted Yarding Productivity Versus Bunch Volume for
+Grapple 1: Delay and Moving Times Included
+
+19
+
+LIST OF APPENDICES
+APPENDIX
+
+PAGE
+
+I
+
+Machine Costs
+
+26
+
+II
+
+Washington 188 Specifications
+
+27
+
+III
+
+Summary of Activities
+
+28
+
+IV
+
+Cycle Element Definitions
+
+29
+
+V
+
+Tree Scaling Summary
+
+30
+
+V
+
+SUMMARY
+
+As part of a series of studies on grapple-yarding techniques used in
+logging Coastal second-growth timber, the Canadian Forestry Service, under the
+Forest Resource Development Agreement (FRDA), contracted the Forest Engineering
+Research Institute of Canada (FERIC) to examine the productivity of grapple
+yarding mechanically felled and bunched timber. The study objectives were to
+examine the effect of bunching on yarder productivity and to determine the
+optimum bunch volume and marginal-log size. A Washington Model 118A yarding
+crane was monitored on a shift-level basis for five weeks and at a detailedtiming level for two weeks. The yarding crane averaged 62.1 m3 /PMH, or 414
+m3 /8-h shift over the study block. The average cost was $4.16/m3 • The study
+block was located approximately 10 km south of Parksville, B.C., and the stand
+was composed mainly of second-growth Douglas-fir.
+During the two-week detailed-timing period, individual stems were
+marked for identification, the bunch volumes and turn volume calculated, and the
+yarding times for turns and bunches recorded. When a grapple with a 270-cm
+opening was used, productivity increased as bunch volume increased for all observed bunches. For a 200-cm grapple, productivity was highest with 7-m3
+bunches. Compared to a previous study (MacDonald 1987), yarding bunches instead
+of individual logs increased the average log count from 1.2 to 2.9 logs per turn
+and the average turn volume from O. 9 to 3. l ml .
+The marginal-log volume was calculated using marginal economics analysis. The net value at roadside, and thus the marginal-log volume, was dependent
+on the handling methods used in subsequent phases such as processing and loading.
+When these costs were assumed to be piece-based, rather than volume-based, the
+net value at roadside was reduced for smaller stems and the change in marginallog volume was not proportional to the change in number of stems in the turn.
+For Douglas-fir J-grade logs yarded individually, the marginal-log volume was
+0.54 ml, and when yarded in bunches of four stems, the marginal-log volume was
+0.35 m3 • Based on these assumptions, 39% to 23% of the Douglas-fir J-grade logs
+were submarginal.
+The average turn time increased to 2.15 min from 1.25 min observed in
+the previous study. Move and rig time occupied 16% of total time and most of
+this time was for moving the guylines. Also, each yarding cycle had a long
+fixed time to tighten the lines and engage the interlock.
+
+vi
+
+INTRODUCTION
+Yarding cranes have played an increasingly important role in Coastal
+harvesting operations over the last 15 years, however, one of their shortcomings
+has been their inability to yard multiple-piece turns consistently. It has been
+demonstrated that yarding-crane cycle times are not closely related to turn
+volume, and that yarding cranes often have capacity to yard more volume per turn
+(Peterson 1987a). These two factors are especially important when yarding
+second-growth timber where the average tree size is small. The opportunity
+exists to increase turn size by yarding several pieces per turn. Mechanically
+falling and bunching the timber is one possible method of increasing the average
+number of pieces per turn and, therefore, the yarding crane's payload. Fellerbunchers are common in the Interior of British Columbia, but until recently they
+have not been commonly used on the Coast.
+The Canadian Forestry Service (CFS), under the Forest Resource Development Agreement (FRDA), contracted the Forest Engineering Research Institute of
+Canada (FERIC) to monitor the profitability of grapple yarding timber which had
+been mechanically felled and bunched. This report was prepared as a part of a
+series of studies on yarding techniques used in logging Coastal British Columbia
+second-growth timber. In the first study (MacDonald 1987), a yarding crane was
+monitored as it grapple yarded hand-felled second-growth timber. It was found
+that turn volume had the greatest influence on yarding profit, and that techniques should be developed to increase the turn volume and thereby increase
+yarding profitability. As used in this report, "yarding profitability" assumes
+that road construction, falling, ownership, and other costs are sunk costs, and
+have no bearing on decisions to be made in the subsequent phases. Other FERIC
+studies have also shown the effect of piece size, yarding distance, and falling
+techniques on grapple-yarding productivity (Peterson 1987b, 1987c, 1988). The
+objectives of this study were to examine the effect of bunching on yarding
+productivity and to determine the optimum bunch volume and marginal-log size.
+Data presented here were collected from a study area located near
+Parksville, B.C., on the east coast of Vancouver Island, in MacMillan Bloedel
+Limited's Northwest Bay Division. It was logged in February and March 1988 by
+company crews using a Washington 118A yarding crane. The stand consisted mainly
+of second-growth Douglas-fir, with minor amounts of pine, cedar, and other
+species.
+STUDY APPROACH AND PROCEDURES
+The study involved two levels of timing:
+detailed timing.
+
+shift-level timing and
+
+To collect shift-level timing data, a Model DSR Servis Recorder was
+mounted on the yarding crane, and a chart was produced for each shift showing
+productive and non-productive times. The operators identified each delay over
+10-min duration on the chart, provided an explanation of the cause of each delay,
+and recorded daily piece counts. Volume information was obtained from the
+company'.s production records.
+1
+
+Data were collected relating to both logs in bunches and logs in turns.
+For this study, bunches are defined as the groups of logs made by the fellerbuncher and turns are the groups of logs held at one time by the yarding grapple.
+The study was carried out over five weeks. Shift-level data were collected for 24 production shifts and, during two weeks of this period, more
+detailed information was collected on 1344 yarding turns. The yarding crane
+operated on the block for one week before the Servis Recorder was installed.
+For the detailed-timing study, cycle times were measured using electronic stopwatches. Minor delays (less than 10 min) were included in the machine
+cycle, and longer delays were excluded. Log-butt diameters were measured prior
+to yarding, and 10-cm diameter classes were marked on the logs to help determine
+average turn volumes. Yarding distances, number of yarded logs, and number of
+missed logs per turn were recorded. The angle of each bunch in relation to the
+yarding road, measured in 30-degree classes, was estimated. Turns were classified by type, i.e. whether all target logs were hooked or some were missed,
+whether it was the first or subsequent turn from a particular bunch, and whether
+a log slipped from the grapple or was broken during yarding.
+To help estimate turn volume, sample logs were scaled by a licenced
+scaler according to B.C. Ministry of Forests and Lands' standards. Logs were
+scaled either before or after yarding, depending on crew scheduling. Average
+log volumes were calculated by butt-diameter classes and applied to the log
+counts to calculate volumes per turn .
+The costs included in this report are based on current IWA wage rates
+and estimates of machine costs derived by FERIC from information supplied by
+equipment and supplies distributors. They are not the actual costs incurred by
+t he cooperating company, and costs such as supervision, overhead, and crew and
+machine transportation are not included. Interest costs are calculated for
+information (Appendix I), but are not included in the production costs within
+the report.
+SITE AND SYSTEM DESCRIPTION
+The study site was located on the east coast of Vancouver Island,
+approximately 10 km south of Parksville, B.C. The stand was established in
+approximately 1910. Table l shows a description of the site and Table 2 shows
+the species and grade distribution derived from the company production records.
+Arbutus trees were left at the roadside and were not scaled. The log grades
+shown are B.C. Ministry of Forests and Lands' statutory grades; common-usage
+log-grade definitions are included for information.
+The logging area was generally flat and uniform with boundaries determined by surrounding roads rather than by terrain features. With the exception
+of some small swampy areas, the soil was well drained and access for the fellerbuncher or mobile backspar was not restricted by soil-bearing capacity.
+
+2
+
+Site Description
+
+TABLE l.
+Cutting area
+- Study area
+- Total setting
+
+25.2 ha
+29.0 ha
+
+Average slope
+
+5%
+
+Terrain
+
+Flat
+
+Exposed rock
+
+None
+
+Underbrush
+
+Moderate
+
+Obstacles
+
+Nil
+
+Net volume/ha, as produced
+
+382 m3 /ha
+
+Piece size from scaled stems
+- Range
+- Average
+
+0 • 07 - 6 • 62 m3
+
+TABLE 2.
+
+1.12 m3
+
+Species and Grade Distribution
+Within the Study Blocka
+Grade %b
+
+Species
+
+% of study
+block
+
+C
+
+H
+
+I
+
+J
+
+X
+
+y
+
+3
+
+22
+
+14
+20
+15
+
+55
+65
+
+5
+
+1
+6
+
+71
+
+37
+
+46
+58
+64
+
+14
+16
+30
+
+Douglas-fir
+Cedar
+Hemlock
+Balsam
+Spruce
+Pine
+Alder
+
+97
+1
+<1
+<1
+<1
+
+<1
+
+-
+
+Total
+
+100
+
+3
+
+2
+
+7
+-
+
+21
+
+3
+
+14
+
+-
+
+55
+
+No
+grade
+
+-
+
+-
+
+52
+
+48
+
+100
+100
+100
+100
+100
+100
+100
+
+6
+
+l
+
+0
+
+100
+
+9
+
+23
+
+l
+
+12
+3
+
+-
+
+a Arbutus stems which had been yarded were neither loaded nor included in
+production records.
+b Grade definitions:
+C - Peeler
+H - Sawlog
+I - .Sawlog
+
+J - Small sawlog
+X - Low-grade sawlog
+Y - Pulp
+3
+
+Total
+
+Trees were mechanically felled by a contractor using a John Deere 793C
+feller-buncher with a Rotosaw falling head. Sterns were left tree-length for
+roadside processing except those over 60-crn butt diameter which were hand-felled
+and bucked into log lengths after the smaller trees had been felled. Company
+personnel marked internal boundary lines prior to falling to help the fellerbuncher operator fall the trees with butts facing the truck road. It was planned
+that the bunches should lie at approximately 45 degrees to the truck road to
+facilitate yarding, but study results showed that the log angle varied throughout
+the setting.
+The number of sterns in each bunch depended on tree size and distribution, and varied throughout the setting. In Week 1 of the two-week detailedtiming study, the average tree size was larger (Figure A), many trees were handfelled, and the highest stem count per bunch was about 10 stems. In Week 2, the
+average tree size was smaller (Figure B), and bunches with up to 23 sterns were
+observed.
+
+FIGURE A.
+
+Large-Log Bunch:
+
+Week 1.
+
+FIGURE B.
+
+Small-Log Bunch:
+
+Week 2.
+
+The feller-buncher cleared a path for the backspar through the felled
+timber by piling sterns parallel to the haul road on either side of its path. No
+attempt was made to pile them into bunches. When logging was in progress, the
+mobile backspar moved these logs once again from their original positions to
+facilitate yarding. FERIC observed that many turns from these piles were smaller
+than normal because of difficulty in hooking multiple pieces.
+Yarding was carried out with a 1978 Washington 118A yarding crane
+(Figure C) with a mobile backspar. The Washington 118A is a modified Washington
+118 (Phillips and Sauder 1978) in which the hydraulic interlock has been replaced
+with a mechanical interlock. The current equivalent is the Washington 188
+(Appendix II). Normal shift length was eight hours per day for five days per
+week. During most of the detailed-timing period, a Hitachi UH 171 (Figure D) was
+used for the backspar. However, during the latter part of Week 2 and the remainder of the shift-level study, a Caterpillar OSK bulldozer was used.
+
+4
+
+FIGURE C.
+
+Washington 118A Yarding Crane.
+
+FIGURED.
+
+Hitachi UH 171 Backspar.
+
+5
+
+The yarding crew consisted of a yarding engineer (Operator 1), a hooktender, a part-time landingrnan, and a trainee operator (Operator 2). The trainee
+operator was the sole operator for approximately 40% of the time, the regular
+operator for approximately 20%, and the two shared duties for approximately 40%
+of the study period. The regular operator had 10 years' experience on the
+Washington 118A, and FERIC considered him to be skilled and efficient. Although
+the second operator had some previous experience on the Washington 118A, he was
+considered to be a trainee operator during the study. His times have been
+included in the shift-level study, but excluded from some of the more detailed
+analyses. The hooktender aided with guyline moves as well as spotting logs and
+moving the backspar. The landingrnan was on-site for approximately three-quarters
+of the time, and he prepared guyline stumps and assisted with guyline moves.
+Stems were yarded to roadside and piled in windrows {Figure E) for
+subsequent processing. Windrows were up to 4 m high depending on stand density,
+stern size, and yarding distance. The stems were delirnbed and cut to length with
+a Hahn Harvester which was fed by an American 7220C cable log loader. Logs were
+loaded onto off-highway log trucks with a Caterpillar 225 hydraulic log loader
+(Figure F). Haul distance was approximately 2 km to the sortyard at Northwest
+Bay. During processing, logs were sorted into sawlogs and pulpwood. The sawlogs
+were further sorted and scaled at the sortyard. The pulpwood was weigh-scaled
+and then sent directly to a chipping facility at the sortyard.
+
+FIGURE E.
+
+Windrow of Yarded Stems.
+
+FIGURE F.
+
+Roadside Processing
+Equipment.
+
+RESULTS AND DISCUSSION
+1.
+
+Setting Layout
+
+In addition to the existing roads surrounding the area, new roads were
+constructed inside the logging area at approximately 250 to 300 m spacing
+(Figure G). In one area during Week 1, the original backspar trail was positioned below a small ridge and its location had to be changed. Since the slope
+
+6
+
+averaged approximately 5%, deflection was reduced at longer yarding distances
+(150-180 m) and the operators had to maintain high tension on the lines to keep
+the grapple clear of the ground. This made it more difficult to control the
+grapple during hookup. Minor slope variations (less than 5%) further reduced
+deflection in some places. The flat ground also made it difficult to raise
+heavy turns clear of the stumps, resulting in hangups and increased inhaul times.
+However, these were minor difficulties, and the overall setting layout was very
+good.
+
+0
+
+200
+
+100
+metres
+
+I
+
+--
+
+\This area
+\ included in
+\
+stu dy
+
+\\
+
+\
+
+( ......___
+
+I
+
+Road
+Back spar Trail
+Setting Boundary
+Detailed Timing Areas
+t/!1= Bunching Direction
+~ Yarding Direction
+
+FIGURE G.
+
+2.
+
+Setting Layout.
+
+Shift Level Results
+
+A Servis recorder, mounted on the yarding crane for 24 production
+shifts, showed that the average shift length was 7.8 hours (Table 3) and the
+actual yarding time averaged 5.2 hours per shift. Total production was 8778
+trees with an average volume of 1.10 ml /tree. The average production was 376
+trees, or 414 ml, per 8-hour shift . If the arbutus logs had been included in
+the total volume, these production rates would have increased slightly. Total
+machine time was about 187 hours. At an estimated cost of $211.07 per hour for
+yarder, backspar, and crew, average yarding cost was $4.08/m3 •
+Machine utilization was 83% during the study period. Yarding time
+represented 67% of the total time, moving and rigging occupied 16%, while nonmechanical delays (3%) and mechanical delays (14%) made up the remaining time.
+Further information on time distribution is in Appendix III and further discussion on moving time is in the detailed-timing section of this report.
+
+7
+
+,
+TABLE 3.
+
+Shift-Level Time Distribution
+
+Shifts with production
+
+Hours
+
+Percent
+
+Productive machine hours (PMH)
+Yarding time
+Other function
+Subtotal
+
+124.6
+30.8
+155.4
+
+67
+16
+83
+
+1. 7
+
+1
+2
+3
+
+Non-mechanical delay hours (NDH)
+Operational
+Organizational
+Subtotal
+
+-1..Jl
+4.7
+
+Mechanical delay hours (MDH)
+Wait mechanical
+Repairs
+Service
+Subtotal
+
+2.3
+19.4
+
+Scheduled machine hours (SMH)
+83.3%
+85.8%
+
+Machine utilization
+Mechanical availability
+Average stem size(m3 /tree)
+Production (m3 )
+Shifts with production
+Average shift length (h)
+
+1.10
+9620
+24
+7.78
+
+l
+
+~
+
+26.6
+
+10
+3
+14
+
+186.7
+--
+
+100
+
+(PMH/SMH)
+( (SMH-MDH) /SMH)
+
+Production (stems)
+Production/PMH (m3 /h)
+Production/PMH (stems/PMH)
+Production/8 hrs (m3 )
+
+8778
+62.1
+56.5
+414
+
+The mechanical downtime ratio (MDR), defined as the number of repair
+or service hours required for 100 productive machine hours, was 20.1 during this
+study (Table 4). In-shift repairs totalled 24.3 hours. Some lengthy in-shift
+repairs involved respooling the cables and repairing the grapple (8.9 h), repairing the air controls on the winch interlock (6.6 h), and adjusting the winch
+brakes (2.1 h). Out-of-shift r e pairs consisted of repairing the guyline fairl e ad (2 h) and track frame (5 h ). The crew felt that the Washington 118A's
+undercarriage was too light fo r the yarder and was the source of much downtime.
+3.
+
+Deta iled-Timing Results
+
+The detailed-timing study was completed in two weeks, although five
+weeks were required to complete the ent i re study. The operating conditions
+varied slightly from the first to the second week of the detailed-timing period.
+During Week 1, the average yarding distance was longer and the trees were larger;
+during Week 2, Operator 2 was working elsewhere. A swmnary of the detailedtiming results is shown in Table 5.
+8
+
+TABLE 4.
+
+Swmnary of Maintenance
+In-Shift
+
+Repairs to carrier
+Repairs to winch/lines/grapple
+Repair subtotal
+
+Hour
+
+MDRa
+
+Hour
+
+0.6
+18.8
+
+0.4
+
+5,0
+
+3.2
+
+5.6
+
+3.6
+
+12.1
+
+~
+
+-1..d
+
+20.8
+
+13.4
+
+19.4
+
+12.5
+
+7.0
+
+4.5
+
+26.4
+
+17.0
+
+4.9
+
+3.1
+
+o.o
+
+0.0
+
+4.9
+
+3.1
+
+--
+
+--
+
+--
+
+--
+
+--
+
+--
+
+24.3
+
+15.6
+
+-1..:..Q.
+
+~
+
+31.3
+
+20.l
+
+General service
+Total repair and service
+
+Total
+
+Out-of-Shift
+MDRa
+
+MDRa
+
+Hour
+
+a Mechanical Downtime Ratio - the number of repairs or service hours per
+100 productive machine hours.
+
+TABLE 5.
+
+Swmnary of Detailed-Timing Period
+Week 1
+
+I
+I
+
+I
+
+Week 2
+
+week 1 & 2
+
+Oper. la
+
+Combined
+
+Oper. la
+
+Oper. 2b
+
+Both
+
+Avg yarding distance (m)
+Max. yarding distance Cm)
+No. of turns
+No. of pieces
+Productive time (h)
+
+75
+180
+393
+825
+12. 8
+
+89
+180
+386
+766
+16.3
+
+82
+
+72
+
+77
+
+180
+779
+1591
+29.1
+
+140
+
+180
+134.4
+3930
+
+Pieces/turn
+Avg butt diameter (cm)
+Volume yarded (m3 )
+Avg volume/turn (ml )
+Turns/PMH
+Pieces/PMH
+Volume/PMH
+
+2.1
+35.2
+1144
+2.9
+30.7
+64.5
+89.4
+
+2.0
+38.8
+1235
+3.2
+23.7
+47.0
+75.8
+
+2.0
+36.9
+2379
+3.1
+26.8
+54.7
+81.8
+
+a Experienced operator.
+b Trainee operator.
+
+9
+
+565
+2339
+19.2
+
+48.3
+
+4.1
+
+2.9
+
+26.4
+
+1797
+3.2
+
+30.7
+4176
+3.1
+
+29.4
+
+27.8
+
+121.8
+93.6
+
+81.4
+86.5
+
+The productive time during the detailed-timing period was divided into
+work-cycle elements (Appendix IV), and the results are shown in Table 6. The
+portion of time spent in net yarding ranged from 59% to 67%, and averaged 63% of
+productive time. A further 26% to 33% of time was spent moving the yarding crane,
+backspar, or guylines, while 4% to 11% of productive time was ~pent in minor delays,
+The average turn time, including moves and minor delays, ranged from 1.95 to 2.54
+min per turn, and averaged 2.16 min for the 1344 turns which were timed.
+Both operators were timed during Week 1, and the benefit of experience is
+seen in the shorter cycle times for Operator 1. The difference is most apparent. in
+hook-up time, as might be expected, but differences also occurred in outhaul and
+inhaul times. The Washington 118A requires a specific sequence of actions to
+tighten the lines and engage the interlock, and the more experienced operator was
+able to perform those actions more quickly than the trainee operator.
+The move and rig times for the two operators in Week 1 are not directly
+comparable since the operators generally traded positions during yarder moves, and
+times were arbitrarily assigned to one of the operators. The move and rig time for
+Week 1 was shorter than for Week 2 for two reasons: the yarding distance was longer
+in Week 1 and moving time represented a smaller portion of total time, and, for one
+day in Week 1, the yarding crane remained stationary and the backspar moved in an
+arc to cover the yarding area.
+TABLE 6.
+
+Summary of Productive-Time Elements
+Percent
+
+Week 1
+Op. 1a Op. 2b Both
+
+Min/Turn
+
+.
+Week 2 Week:i 1 & 2
+
+Week 1
+
+We0tt 2
+
+WC<1k s 1 & 2
+
+Op. 1a
+
+Comb1ned
+
+Op. 1a
+
+Op. 2b
+
+Bot h
+
+Op. 1a
+
+Cqmblned
+
+15
+
+17
+18
+17
+
+0.35
+0.31
+0.33
+0.1 2
+0.1 2
+
+0.43
+0.51
+0.118
+0.15
+0.13
+
+0.40
+0.40
+0,43
+0.11
+0.13
+
+0.31
+0.31
+0.33
+0.12
+
+0.37
+0.39
+0.37
+0.13
+o. 11
+
+-
+
+Net yarding time
+OUthaul
+Hookup
+lnhaul
+Unhook
+Deck
+Subtotal
+
+1B
+16
+17
+6
+6
+
+17
+20
+19
+6
+5
+
+18
+18
+19
+
+18
+
+5
+
+6
+
+6
+
+6
+
+4
+
+5
+
+16
+
+o. o8
+
+-
+
+-
+
+-
+
+-
+
+-
+
+63
+
+67
+
+66
+
+59
+
+63
+
+1.23
+
+1,70
+
+1,48
+
+1. 21
+
+1.37
+
+5
+8
+
+2
+5
+3
+19
+
+3
+6
+4
+1ll
+
+3
+7
+
+3
+1
+3
+17
+
+0.10
+0.16
+
+0.05
+0.13
+0.08
+0.48
+
+0.07
+0.13
+0.09
+0.31
+
+0.06
+0.02
+0,45
+
+0.06
+0.15
+0.06
+0,37
+
+-
+
+-
+
+-
+
+-
+
+Hove-and-rig time
+Hove log:i
+
+Hove backspar
+Hove yarder
+Hove guy Une:i
+
+6
+
+1
+
+22
+
+0.11
+o. tll
+
+-
+
+-
+
+-
+
+-
+
+-
+
+-
+
+-
+
+26
+
+29
+
+27
+
+33
+
+30
+
+0.51
+
+0.74
+
+0.60
+
+0.67
+
+0.64
+
+Minor delay
+
+11
+
+4
+
+7
+
+8
+
+1
+
+0.21
+
+0.10
+
+0.16
+
+o. 16
+
+0.15
+
+Productive time
+
+100
+
+100
+
+100
+
+100
+
+100
+
+1.95
+
+2.54
+
+2.24
+
+2.04
+
+2. I 6
+
+Subtotal
+
+-
+
+7
+
+O~l II
+
+a Experienced operator.
+b trainee operator.
+
+10
+
+-
+
+-
+
+Overall, move and rig time represented 30% of productive time, and
+move guylines time accounted for most of that time. Time per guyline move
+averaged 23 min and 18 min for Weeks 1 and 2 respectively. The Washington
+118A had two guylines side-by-side in one guyline block, and a third in another
+block. The single guyline could be moved independently of the others, but the
+double guylines had to be moved together to keep their alignment correct. This
+doubled the amount of work and increased move times. Altering the blocks to
+allow each guyline to be moved independently would reduce move times.
+Minor delays occupied from 4 to 11% of productive time (Table 7). Of
+these, mechanical delays were the most common, followed by talking on the radio
+to the hooktender, waiting for the hooktender to move into position to spot
+logs, and waiting for the hooktender to check the yarding road. Lengthy
+miscellaneous delays in Week 2 included allowing traffic to pass the yarding
+crane.
+TABLE 7.
+
+Minor Delays During Productive Time
+
+Minor Delays
+
+Percent of Delays
+
+Mechanical
+Clear lines
+Wait for traffic or workers
+Check yarding road
+Talk on radio
+Visitors to work site
+Miscellaneous
+Change operator
+Start backspar
+Unknown
+Personal
+Total
+
+4.
+
+week 1
+
+Week 2
+
+32
+11
+
+25
+6
+
+10
+
+7
+
+9
+
+8
+
+8
+7
+
+16
+
+6
+5
+
+23
+
+5
+5
+
+6
+4
+2
+
+3
+
+-
+
+--2
+
+--
+
+100
+
+100
+
+Turn Size and Bunch Volume
+
+Table 5 shows the log counts averaged 2.0 and 4.1 logs per turn for
+Weeks 1 and 2 respectively, and further detail is provided in Figure H. For
+both weeks, turns with only one log were most common, although the proportion
+of turns with more than four logs was greater in Week 2. This resulted in its
+higher average number of logs per turn.
+
+11
+
+50
+(/)
+
+z
+
+a:
+
+:::,
+1-
+
+~ WEEK 1
+
+u.
+
+~ WEEK 2
+
+0
+
+~ 25
+<(
+
+1-
+
+z
+
+w
+
+(.)
+
+a:
+w
+
+a.
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+8
+
+9
+
+10 11 12 13 14 15 16 17
+
+NUMBER OF LOGS PER TURN
+
+FIGURE H.
+
+Number of Logs Per Turn:
+
+Weeks 1 and 2.
+
+Turn volumes were calculated by multiplying the log count in each
+butt-diameter class in the turn by the average volume for the butt-diameter
+class (Appendix V). For this analysis, arbutus logs were included in the log
+count and their volumes were calculated from the log volume of the same
+diameter class conifer log. Figure I shows the percentage of turns in each
+volume class.
+
+30
+(/)
+
+z
+
+a:
+
+WEEK 1
+
+:::,
+I-
+
+u. 20
+
+WEEK 2
+
+0
+
+w
+C,
+<(
+
+I-
+
+z
+
+w
+
+10
+
+(.)
+
+a:
+w
+
+a.
+
+0
+
+0.4
+
+12
+
+TURN VOLUME CLASS (m3)
+
+FIGURE I.
+
+Turn Volumes:
+12
+
+Weeks 1 and 2.
+
+Both weeks averaged 3.2 m1 per turn and had most turns in the 2-m3
+class, but Week 2 had more variation in turn volume. The higher proportion of
+1-m1 turns for Week 2 was offset by the higher proportion of 6-, 7-, and 8-m1
+turns. Without these large turns, the average turn volume would have been much
+smaller.
+When an entire bunch is yarded with one turn, productivity should
+increase as bunch volume increases, however, FERIC observed many turns where
+the yarding crane failed to hook the entire bunch on the first turn.
+Therefore, the data were examined to determine the effect of bunch volume and
+number of turns per bunch on productivity. Three different grapples were used
+during the study, and they will be discussed in detail later. The largest
+grapple was selected for bunch-volume analysis.
+The volumes of the original bunches were calculated and stratified
+into 1-m1 classes. A distribution of bunch volumes was plotted showing the
+percentage of each volume class yarded in one, two, or more turns (Figure J).
+The proportion of multiple-turn bunches increased as bunch volume increased,
+with a large increase at approximately 7 m1 • Only a small percentage of
+bunches over 8 m3 were yarded in one turn.
+
+0
+
+..... 15
+
+;;;.3 TURNS
+
+■ 2 TURNS
+■ SINGLE TURN
+
+~
+
+en
+w
+
+J:
+0
+
+z 10
+:,
+
+m
+LL
+
+0
+1-
+
+zw
+
+5
+
+0
+
+a:
+w
+Q.
+
+6
+
+9
+
+10 11 12 13 14 15
+
+BUNCH VOLUME CLASS (m3)
+
+FIGURE J.
+
+Distribution of Bunch Volume.
+
+The total yarding time, excluding minor delays and moving time, was
+calculated for each bunch, and the average gross productivity (m3 /h) was calculated for each bunch-volume class (Figure K) . The standard deviation of gross
+productivity is also shown. Productivity increased as bunch volume increased,
+although the trend for bunches larger than 10 m3 was not clear. There did not
+appear to be an optimum bunch size for this grapple . Since no delays were
+included in the calculations, the productivity levels shown in Figure K cannot
+be maintained over a typical operating period.
+13
+
+n•278
+Bars show ± 1 Standard Deviation
+
+400
+
+--...
+.r:
+
+(")
+
+E
+
+>>
+
+IIt) 200
+
+:J
+C
+
+0
+
+a:
+
+a.
+Cl)
+Cl)
+
+0
+
+a:
+
+FOR ALL YARDING DISTANCES
+
+C,
+
+0+--------,~------.---------,
+4
+
+0
+
+8
+
+12
+
+BUNCH VOLUME (m3)
+
+FIGURE K.
+
+5.
+
+Yarding Productivity Versus Bunch Volume for Grapple 1:
+Delay and Moving Times Excluded.
+
+Grapple Comparison
+
+Three different grapples were used during the study period; the company wanted to experiment with various grapples before purchasing one for a
+new yarding crane. The grapples had maximum opening sizes of 270, 230, and 200
+cm respectively. Table 8 shows the average bunch volumes and hook-up times for
+each of the three grapples. Single-log turns were not included in the summary.
+TABLE 8.
+
+Grapple
+number
+
+Summary of Grapples Useda
+Avg
+hook-up
+time
+
+Avg
+turn
+volume
+
+Avg
+bunch
+volume
+
+(min)
+
+(ml )
+
+(ffil )
+
+430
+
+0.37
+
+3.6
+
+5.7
+
+22
+
+40
+
+0.35
+
+3.7
+
+6.7
+
+92
+
+137
+
+0.35
+
+2.8
+
+4.2
+
+Maximum
+opening
+(cm)
+
+No. of
+bunches
+
+1
+
+270
+
+278
+
+2
+
+230
+
+3
+
+200
+
+No. of
+turns
+
+a Trainee operator excluded.
+14
+
+Note that Grapp1e 2 yarded only 22 bunches. The operators did not
+like the grapple's balance, and it was quickly replaced. Because of the small
+sample size, it was not included in further analysis.
+Figure L shows the average turn volume versus bunch volume for all
+bunches yarded by Grapples 1 and 3, and for multiple-turn bunches yarded by
+Grapple 1. Because some bunches were yarded with only one turn, a difference
+occurs between the two curves shown for Grapple 1 (approximately 0.5 to
+1.0 rn3 /turn). The turn volumes for all bunches for both grapples were about
+equal up to 7-m3 bunch volume, after which the turn volume for Grapple 3
+declined.
+
+o ALL BUNCHES
+}
+D MULTIPLE TURNS PER BUNCH
+a ALL BUNCHES - GRAPPLE 3
+
+GRAPPLE 1
+
+5
+
+,...
+(')
+
+.....E
+w
+
+4
+
+~
+
+::>
+_J
+
+0
+
+>
+z
+
+3
+
+C:
+
+::>
+I-
+
+2
+
+w
+C!J
+c(
+
+er
+w
+
+>
+
+c(
+
+8
+
+12
+
+BUNCH VOLUME (m3 )
+
+FIGURE L.
+
+Average Turn Volume Versus Bunch Volume.
+
+The difference in average turn volumes between Grapples 1 and 3 was
+caused by differences in average bunch volume. Grapple 1 had larger bunches and
+its average turn volume was larger. Grapple 3 was used when the bunch volume was
+smaller and its average turn volume was smaller. The smaller grapple's turn
+volume declined for larger bunches, which showed that its optimum bunch volume
+was 7 m3 • The average turn volume for Grapple 1 continued to increase as bunch
+volume increased above 7 m3 , which showed it had not yet reached its optimum
+bunch volume.
+Felling practices were not monitored during this study, and it is not
+known ho~ the operator determined individual bunch volumes, however, it appeared
+that the operator placed as many stems as possible in each bunch. In a similar
+15
+
+stand, it may not be practical to build bigger bunches without decreasing fellerbuncher productivity. Thus, if further study showed that yarding productivity
+could be increased with even larger bunches, the gains might be made only at the
+expense of decreased feller-buncher productivity.
+The operators preferred Grapple 1. They felt it was the more productive grapple, and it was used for the remainder of the study block. For simplicity, the following analysis will use only those turns yarded with Grapple 1.
+6.
+
+work-Cycle Elements Regression Analysis
+
+The various cycle elements were examined to determine if they were
+correlated with yarding distance or other parameters. No correlations were
+found between hook-up, unhook, or decking times and yarding distance, or
+between hook-up time and the log angle or the turn volwne. The average hook-up
+time showed some correlation with the number of logs per turn--it was minimized
+for five to seven logs per turn. Turns with fewer logs, which were often the
+second turn from a bunch, had increased hook-up times because the logs had been
+disturbed during the first hookup. And, for turns with more than seven logs,
+the operator took extra time to ensure all the logs were hooked. However, the
+correlation was slight and an average hook-up time will be used in the model
+for turn time.
+The best correlations were found between outhaul and inhaul times and
+yarding distance, and when outhaul and inhaul times were summed, the correlation coefficients increased. Volume appeared to have an effect on outhaulplus-inhaul times, so the data were classified by turn volume and analyzed
+separately for each volume class. Regression analysis using the least-squares
+method was used to fit equations to the outhaul-plus-inhaul times versus
+yarding distance (Table 9).
+TABLE 9.
+
+Regression Coefficients for Outhaul-Plus-Inhaul Times
+Versus Yarding Distance for Selected Turn-Volume Classesa
+Weeks 1 & 2
+Turn
+volume
+
+r2
+
+Constant
+
+Slope
+
+n
+
+(ml )
+
+0 -
+
+2
+
+0.60
+
+0.25
+
+0.00501
+
+2n
+
+2 -
+
+4
+
+0.70
+
+0,24
+
+0.00561
+
+334
+
+4 -
+
+6
+
+0.77
+
+0.19
+
+0.00662
+
+150
+
+6 -
+
+8
+
+0.57
+
+0 . 29
+
+0,00626
+
+64
+
+8 - 10
+
+0.64
+
+0 . 32
+
+0.00533
+
+19
+
+10 - 12
+
+0.93
+
+0 . 10
+
+0 . 00953
+
+5
+
+a Trainee operator excluded.
+
+16
+
+The regression coefficients were examined to determine if they had
+some pattern. No clear pattern was found for the regression constants and an
+average was used for all volume classes. However, the regression slopes
+generally increased as turn volumes increased and an equation was derived
+showing the regression slope as a function of turn volume. The final equation
+for outhaul-plus-inhaul is:
+Outhaul + Inhaul = 0.25 + d * (0.00455 + 0.00030 * V)
+where:
+
+Time is predicted in minutes
+Distance (d) is measured in metres
+Turn volume (v) is measured in cubic metres
+
+Figure M shows the predicted outhaul-plus-inhaul times for selected turn
+volumes.
+
+11
+
+......
+
+9
+
+.....E 1.5
+
+7
+5
+3
+
+C
+
+UJ
+~
+
+1-
+
+TURN
+VOLUME
+(m3)
+
+1
+
+..J
+
+::::,
+c(
+
+J:
+
+1.0
+
+z
+I
+
+(/J
+
+::::,
+..J
+
+a.
+I
+
+0.5
+
+..J
+
+::::,
+c(
+
+J:
+I-
+
+::,
+0
+
+0.O-t----------.,.-----------r--0
+
+100
+
+200
+
+YARDING DISTANCE (m)
+
+FIGURE M.
+7.
+
+Predicted Outhaul-Plus-Inhaul Times:
+
+Operator 1.
+
+Model of Yarding Times
+
+The shift-level and detailed-timing results were combined to make a
+model of yarding time for various distances and bunch volumes (Table 10). The
+moving and minor delay times were included for both operators, and the other
+element times were included for Operator 1. Figure N shows the predicted
+element times for the average turn volume during the detailed-timing period.
+17
+
+TABLE 10.
+
+Predicted Yarding-Cycle Timesa
+0.25
+0.56
+0.81
+0.64
+0.15
+1.60
+
+Outhaul and inhaul
+Hookup, unhook, and deck
+Yarding time
+Moves
+Minor delays
+Total turn time
+where:
+
++
+
+(0.00455 + 0.00030 v) d
+
++
+
+(0.00455 + 0.00030 V) d
+
++
+
+(0.00455 + 0.00030 v) d
+
+Yarding distance (d) is measured in metres
+Turn volume (v) is measured in cubic metres
+Time is predicted in minutes
+
+a Trainee operator excluded from yarding time.
+
+1\\.A€.
+1uf'-~
+
+3
+
+101 pr..\..
+\~\-\fl-\,)\..
+
+au''"' ft-U\.. &.
+
+......
+C:
+
+2
+
+E
+._,
+
+w
+
+ADD MOVES & MINOR DELAYS
+
+~
+
+I-
+
+1
+
+HOOKUP, UNHOOK, DECK
+
+0-t-----------,----------.
+0
+
+100
+
+200
+
+YARDING DISTANCE (m)
+
+FIGURE N.
+
+Predicted Element Times for a 3-m3 Turn.
+
+Using the model in Table 10, the machine utilization from Table 3, and
+the turn volwnes for all bunches for Grapple 1 in Figure L, the turn times
+were calculated for various bunch volwnes and yarding distances, and the net
+productivity per hour was calculated (Figure O). Larger bunches resulted in
+larger turn volumes, and larger turns affected productivity in two ways:
+1) more volume was delivered to roadside with each turn, and 2) cycle times
+were slightly increased. Figure o clearly shows that the negative influence of
+longer turn times was outweighed by the increase in volume delivered to the
+roadsi_de.
+18
+
+50 m*
+100 m
+
+100
+
+150 m
+
+>
+>
+
+I50
+
+l-
+
+o
+
+;:)
+
+0
+
+0
+
+*YARDING DISTANCE
+
+a:
+
+a.
+
+0-1----------------------...
+0
+e
+
+4
+
+12
+
+BUNCH VOLUME (m3 )
+
+FIGURE O.
+
+Predicted Yarding Productivity Versus Bunch Volume
+For Grapple 1: Delay and Moving Times Included.
+
+The three different yarding distances shown in Figure Oare examples
+of the actual distance to the punch, not the maximum yarding distance for the
+setting. The productivity for a setting where the boundary is 150 m from the
+roadside, for example, is the weighted average of all three curves; it would be
+incorrect to use only the curve for 150 m. Also, the curves include the
+average move and rig times for Weeks 1 and 2, when the average yarding distance
+was 77 m. If these curves are applied to another setting with a different
+average yarding distance, the move and rig times per turn must be adjusted to
+reflect the changing conditions.
+The difference between Figures Kand o is caused by delays and moving
+times. The gross productivity in Figure K ranges from 150-250 m3 /h for
+average-size bunches, and the net productivity in Figure oranges from 50-80
+m3 /h for the same size bunches.
+8.
+
+Marginal-Log Analysis
+
+The marginal-log volume is defined as the volume of a log for which
+the variable yarding cost is equal to the net value at roadside. The variable
+yarding cost excludes any sunk costs such as road construction, falling, and
+ownership costs, and the net value at roadside is the sales value of the log
+less any further costs which must be incurred. If yarding standards are determined according to marginal-log analysis, net income will be maximized regardless of the volume extracted from the setting because logs above the margin add
+to prof~t while logs below the margin reduce the profit. The first study in
+this series (MacDonald 1987) showed that when yarding hand-felled timber, the
+19
+
+marginal-log volume was dete:cmined by species, grade, and turn volume with tum
+volume having the greatest effect. In that study, the marginal-log volume for
+J-grade Douglas-fir logs was 0.59 ml , and 24-461 of the J-grade logs were
+submarginal.
+Knowing the marginal-log volume can help the operator or hooktender to
+decide whether or not to yard a particular log. However, some assumptions
+must be made regarding subsequent phases before the marginal-log volume can be
+dete:cmined. For example, some phase costs are more correctly applied on a per­
+piece basis (processing and loading), while others are applied on a per-cubic­
+metre basis (hauling). Therefore, a turn with one stem will have a different
+net value at roadside than another turn with the same volume in four sterns.
+As an example, the marginal-log volumes of one- and four-stem turns
+with Douglas-fir J-grade sterns are calculated under the following assumptions:
+- yarding time per turn is constant regardless of turn volume
+- each stem produces one log
+- each stem is processed and loaded individually
+- processing and loading costs are constant regardless of stem size
+- the production for each shift is 414 m3 , or 376 sterns (the average during
+the shift-level study period)
+- the market value is $41/m3 for Douglas-fir J-grade logs (Vancouver, B.C.,
+April 1988)
+- the combined stumpage and sales expense is 15% of market value.
+The net value at roadside, which depends on stem size, must be determined
+before the marginal-log value can be calculated, therefore, initial stem-size
+estimates must be made. For 0.54- and 0.35-ml stems, the net values at road­
+side are $12.19/ml and $4.73/m3 respectively (Table 11).
+The time/turn was the average turn time during the detailed-timing
+period, adjusted for utilization. The system variable cost was $153.40/h and
+the average cost per turn was $6.62. The marginal-turn volume is calculated by
+dividing the cost per turn by the net value at roadside, and the marginal-turn
+volume is divided by the number of logs per turn to calculate the marginal-log
+volume. Since the calculated volumes in Table 11 equal the initial estimates,
+they are the correct volumes. If they had been different, new tree-volume
+estimates would be made, and the process repeated.
+Appendix V shows the percentage of Douglas-fir J-grade stems which
+were smaller than selected volume-class boundaries for the scaled sterns. By
+interpolating this table, it is seen that 23% of the Douglas-fir J-grade sterns
+were smaller than 0.35 ml , or submarginal if yarded in bunches of four and 39%
+were smaller than 0.54 m3 , or submarginal if yarded individually.
+The marginal volume decreased as sterns were bunched. However, it did
+not decrease in the same ratio as the increase in number of stems, i.e. yarding
+four times the number of stems did not reduce the marginal volume by three­
+fourths because of piece-based costs such as processing and loading. FERIC did
+not monitor those phases during this study, so processing and loading rates
+were assumed to be equal to the yarding crane's production. If the production
+rate in each phase was different, the net value at roadside would change, and
+the marginal-log volume would change. Further calculations based on assump­
+tions.would be pointless, however, these calculations illustrate that bunching
+20
+
+reduces the marginal-log volume and that yarding profitability is influenced
+by other phases. The other phases must be designed to handle stems on a volume
+basis, rather than a piece basis, to maximize yarding profitability.
+TABLE 11.
+
+Example of Marginal-Log Volume Calculations:
+Douglas-Fir J-Grade Logs
+
+$/Shift
+
+$/Piece
+
+1500
+1250
+
+3.99
+3.32
+
+One-stem
+turn
+0.54 m3 /
+stem
+$Im'
+
+Four-stem
+turn
+0.35 m3 /
+stem
+$/m,
+
+7.38
+
+11.45
+9.54
+
+Calculation of net value
+at roadside
+Cost
+Processing
+Loading
+Hauling
+Sorting and booming
+Towing
+Stumpage and sales expense
+
+880
+
+6.15
+
+2.13
+6.00
+1.00
+6.15
+
+2.13
+6.00
+
+1.00
+6.15
+
+Total cost
+Market value
+
+28.81
+
+41.00
+
+36.27
+41.00
+
+Net value at roadside
+
+12 .19
+
+4.73
+
+$153.40
+
+$153.40
+
+2 . 59
+$6.62
+
+$6.62
+
+$12.19
+
+$4.73
+
+0.54
+
+1.40
+4
+
+Calculation of marginal-log volume
+Variable yarding cost ($/h)
+Time/turn (min)
+Cost/turn ($)
+Net value at roadside ($/m, )
+Marginal-turn volume (m,)
+Logs per turn
+Marginal-log volume (m')
+
+1
+0.54
+
+2.59
+
+0.35
+
+GRAPPLE YARDING HAND-FELLED VERSUS MECHANICALLY FELLED AND BUNCHED TIMBER
+The first study in this series monitored a Madill 122 yarding crane
+as it grapple yarded hand-felled second-growth timber (MacDonald 1987) . Some
+comparisons can be made between results even though the equipment used for the
+two studies was different (Table 12). Both settings were relatively flat and
+uniform, although the Madill 122 had the advantage of elevated roads which
+increased deflection and made hookup easier. The ·average yarding distance was
+equal for the two studies.
+21
+
+TABLE 12.
+
+Grapple-Yarding Comparison Between Hand-Felled and
+Mechanically Felled and Bunched Timber
+
+Hand felled
+
+Mechanically
+felled and
+bunched
+
+Madill 122
+
+Washington 118A
+
+343
+
+382
+
+Flat
+
+Flat
+
+Log-length
+
+Tree-length
+
+83.4
+
+83.3
+
+34.7
+
+62.1
+
+232
+
+414
+
+Pieces per PMH
+
+46.0
+
+56.5
+
+Piece average (ml)
+
+0.75
+
+1.10
+
+Yarding cost
+
+5.68
+
+4.08
+
+Yarding distance (m)
+
+77
+
+77
+
+Pieces per turn
+
+1.2
+
+2.9
+
+Volume per turn (ml)
+
+0.9
+
+3.1
+
+Net yarding time per turn (min)
+
+0.95
+
+1.37
+
+Average turn time (min)
+
+1.25
+
+2.16
+
+Move time per turn (min)
+
+0.16
+
+0.64
+
+Site and system
+Yarding crane
+Volume per ha
+
+(ml )
+
+Terrain
+Bucking specifications
+Shift-level results
+Utilization (%)
+Volume per PMH
+
+(ml)
+
+Volume per 8-hr shift
+
+(ml )
+
+($/ml)
+
+Detailed-timing results
+
+Both study areas were comprised of Douglas-fir timber of roughly
+equal age and size, although average piece size was reduced in the case of the
+Madill 122 because stems were bucked into logs before yarding. The Madill 122
+normally yarded single pieces with an average of 1.2 logs per turn, while the
+Washington llBA normally yarded bunches and averaged 2.9 logs per turn. The
+average turn volumes were 0.9 ml and 3.1 m3 respectively.
+Machine utilization during both studies was approximately 83%,
+although the Madill 122 spent 80% of its time yarding and 3% moving. The
+Washington 118 spent 67% of its time yarding and 16% moving. The machines
+22
+
+averaged 34.7 and 62.1 m3 /FMH, or 232 and 414 m3 /8-hr shift respectively.
+average yarding costs were $5.68 and $4.16/m3 •
+
+The
+
+The average turn time for the Madill 122 was 1.25 min and for the
+Washington 118A the turn time was 2.16 min; the net yarding times were 0.95 and
+1.37 min respectively. The Madill 122 was faster during both yarding and
+moving. The times for hookup, unhook, and deck were approximately equal, but
+the outhaul-plus-inhaul time for the Washington 118A was approximately double
+the time for the Madill 122 (0.74 versus 0,39 min). The regression models for
+outhaul-plus-inhaul showed the Washington 118A actually had the higher line
+speed, but it also had a long fixed time per turn to tighten the lines and
+engage the interlock. The long fixed time caused the Washington 118A to have
+the longer net yarding time.
+The average moving time for the Washington 118A was 0.64 compared to
+0.16 min per turn for the Madill 122. Fart of the difference is due to the
+yarding system; since the Washington 118A yarded more pieces per turn, there
+were fewer turns per setup, and the moving time per turn was increased. The
+remainder of the difference was caused by the guyline arrangement on the
+Washington 118A which increased the average time per guyline move.
+Although the Washington 118A was slower and more expensive to
+operate, the combined effect of tree-length yarding in bunches made it more
+productive and cost efficient than the Madill 122.
+CONCLUSIONS
+The Washington 118A averaged 62.1 ml /FMH, or 414 ml /8-hr shift over
+the study. The average yarding cost was $4.08/m3 • During the study period, it
+averaged 83.3% utilization and 85.8% availability. Average turn time varied
+from 1.95 to 2.54 min, including yarder and backspar moves and minor delays.
+Yarding bunches increased the average number of logs per turn compared
+to yarding hand-felled timber. During the two weeks of detailed-timing, the
+Washington 118A averaged 2.9 logs and 3.1 m3 per turn. The average log size was
+smaller during Week 2 than in Week 1, but a higher proportion of logs were
+bunched in Week 2 and the average turn volumes were equal.
+Three different grapples were used during the study, although one was
+used for a short time only. With the remaining two, the average turn volume and
+productivity increased as bunch size increased. Productivity for the larger
+grapple continued to increase for all bunches observed, but with the smaller
+grapple, turn volume was maximized when bunches were approximately 7 m3 • Further
+research is required to find the optimum bunch size for the larger grapple, as
+well as to document the effect of bunch size on the feller-buncher's productivity.
+Active yarding occupied only 63% of productive time. The remainder was
+divided between moving and minor delays. Most of the moving time was for moving
+guylines; the Washington 118A required two of its three guylines to be moved
+simulta~eously which doubled the amount of work. Modifications to the guyline
+blocks to allow independent guyline movement should reduce its moving times.
+23
+
+The best correlations for cycle elements were between yarding distance
+and turn volume and the sum of outhaul-plus-inhaul times. An equation was
+developed showing outhaul-plus-inhaul times as a function of yarding distance
+and turn volume. There was some correlation between the nwnber of logs in the
+turn and the hook-up time, but the correlation was slight, and an average hook-up
+time was used. The other cycle elements were not dependent on the parameters
+measured (log angle, bunch volume). A model of the total yarding time was
+developed which showed turn time as a function of yarding distance and turn
+volume. The predicted turn times for selected yarding distances were used to
+calculate productivity per hour.
+Marginal-log analysis showed that bunching stems reduced the marginallog volume. An example showed the marginal volume for J-grade Douglas-fir stems
+was 0.54 mi when yarded individually, and 0.35 m3 when yarded in bunches of four
+sterns. Since the net value at roadside, and thus the marginal-log volume, was
+dependent on handling methods in subsequent phases, the marginal volume could
+not be stated with as much certainty as in the first study in this series.
+However, the example showed that the marginal volume does not change in the same
+ratio as the nwnber of logs in the turn. Under the assumed conditions, 39% to
+23% of the Douglas-fir J-grade logs were submarginal.
+
+24
+
+REFERENCES
+MacDonald, Jack. 1987, Productivity and profitability of the Madill 122 when
+grapple yarding B.C. Coastal second-growth timber. FERIC Special Report
+No. SR-48. Vancouver, B.C. 35 p.
+Peterson, J.T. 1987a. Harvesting economics: Grapple yarding second-growth
+timber. FERIC Technical Report No. TR-75. 26 p.
+Peterson, J.T. 1987b. Comparison of three harvesting systems in a Coastal
+British Colwnbia second-growth stand. FERIC Technical Report No. TR-73.
+50 p.
+Peterson, J . T. 1987c. Effect of falling techniques on grapple yarding secondgrowth timber. FERIC Technical Note No. TN-107. 8 p.
+Peterson, J.T. 1988 . Harvesting economics: Two case studies of a Cypress
+7280B swing yarder. FERIC Technical Note No. TN-115. 20 p.
+Phillips, Eric J.; Sauder, Brent J. 1978. Evaluation of the Washington 118
+yarder . FERIC Technical Note No. TN- 22 . 17 p.
+
+25
+
+APPENDIX I
+
+Machine Costs
+
+Hitachi
+Back spar
+OWNERSHIP COSTS
+Purchase price - as equipped
+Purchase price - lines & rigging
+Sales tax
+Expected life (yr )
+Hours per year (h)
+Interest rate (I) S
+Insurance rate ( Ins) S
+
+$100 000
+
+Washington
+118A
+Yarding
+Crane
+
+6S
+10
+1500
+10
+1
+
+$812 500
+$37 000
+6S
+10
+1500
+10
+1
+
+Purchase price - after tax (P)
+Salvage value (S) ■ (0,2 • P)
+Average investment (AVI)•(P + S)/2
+Expected life (H)
+
+$106 000
+$21 200
+$63 600
+15 000
+
+$900 000
+$180 000
+$540 000
+15 000
+
+Loss in resale value ($/h)•(P-S)/H
+Interest ($/h)(I*AVI)/h
+Insurance ($/h)(Ins•AVI)/h
+
+$5,65
+$4.24
+$0.112
+
+$118.00
+$36.00
+$3.60
+
+Total ownership costs
+
+$10 .31
+
+$87 .60
+
+OPERATING AND REPAIR COSTS
+Fuel consumption (L/h)
+Fuel cost ($/L)
+Operating supply cost per year (0)
+Annual repair & maintenance cost (R)
+Operator & hooktender wage ($/h)
+Wage benefit loading (WBL) S
+
+10
+$0.40
+$1 500
+$10 000
+
+30
+$0,llQ
+$35 000
+$50 000
+$18 .13
+35
+
+Fuel cost• (L/h) 1 ($/L)
+Lube & oil cost (0.1 • fuel cost)
+Operating supply cost• (0/h)
+Repair & maintenance cost• (R/h)
+Gross labour cost
+
+$11.00
+$0.110
+$LOO
+$6.67
+$0.00
+
+$12.00
+$1.20
+$23,33
+$33,33
+$71 .117
+
+$12 . 07
+
+$1111 ,33
+
+$22,38
+
+$228 ,93
+
+Total operating and repair costs ($/h)
+OWNERSHIP AND OPERATING COSTS
+SYSTEM COST excluding interest
+SYSTEM VARIABLE COST excluding ownership
+
+$211. 07
+$153,40
+
+NOTES:
+Wage calculations
+
+Operator (includes WBL)
+Hooktender (includes WBL)
+Subtotal
+
+$211.118
+$211,48
+$ll8.96
+
+Operator and hooktender bon~s
+(0.7 h per 8 h@ 1. 5 wage rate)
+
+$
+
+6.l!3
+
+Landingman@ 75S utilization
+(Includes WBL)
+
+$16.08
+
+Total wages
+
+$71.117
+
+26
+
+APPENDIX II
+Washington 188 Specifications
+
+Machine Dimensions
+
+Engine Size
+
+12.0 m (39' 6")
+G - 16.4 m (53'8")
+J
+3.8 m (12' 6")
+K
+2.1 m (6' 9")
+p
+4.3 m (14'0")
+s
+5.9 m (19' 6")
+AA
+3.4 m (11'2")
+AG
+58 cm (l' 11")
+
+236 kW (318 hp)
+333 kW (450 hp)
+
+Washington 118 A
+Washington 188
+
+A
+
+LINE SPEEDS AND PULLS @ 850/o EFFICIENCY
+DRUMS
+
+MAIN
+
+FRONT
+
+HAULBACK
+
+STRAW
+
+GUYLINE
+
+Maximum Lina Pull, (LBS}
+Full
+Empty
+
+78,200
+11,200
+
+31,700
+42,300
+
+11,800
+25,000
+
+4,000
+14,300
+
+5,530
+
+Maximum Line Spead (FPM)
+Full
+Empty
+
+2,045
+1,840
+
+2,045
+1,NO
+
+3,270
+1,170
+
+7,450
+
+3,090
+
+211
+180
+
+2,010
+
+LINE CAPACITIES
+ORUMS
+L,no Capacity (FT-OIA)
+
+I
+
+MAIN
+
+I
+
+FRONT
+
+I
+
+HAULBACK
+
+I
+
+STRAWLINE
+
+l
+
+GUYLINES
+
+I
+
+2,300''4"
+
+I
+
+2,300''""
+
+I
+
+4,800''""
+
+I
+
+4,450''1t"
+
+T
+
+110'•1,•
+
+'.'
+• '
+
+7
+
+~ 1
+
+_J
+I
+
+COMPONENT WEIGHTS
+BOOM . .. .. • • • • • . • .. • • • • . . . . . • • • • • • • • • • • • • • • 6 900 lbs.
+"A . FRAME ................. , .. • • • .. • • • . . . . •
+6,500 lbs.
+MACH NERY PLATFORM •••••••••.. ·••• , . , • • 48,000 lbs.
+CARRIER, RUBBER TIRED •..•••••••. , , , • • • • 35,200 lbs.
+CRAWLER . . . . . • • • .. • .. .. • • • • • • • • • • • • • .. • • • • 38,500 lb1.
+FUEL, LINES ANO RIGGING COMPLETE.... 14,100 lbs.
+TOTAL ON-RUBBER TIRES ••••..••••••••••• 110,700 Iba.
+TOTAL ON CRAWLER ...................... 114,D0D Iba.
+
+-•'"'•-~~----
+
+----_
+-f _____
+
+~~=--=-~;,~-:. -
+
+"':..-_
+
+1··
+
+I
+
+27
+
+:r:-~"T"--·-,.,..~~
+
+<
+
+t
+
+APPENDIX III
+Summary of Activities
+Description
+
+Occurrences
+
+Hours
+
+Average
+(h)
+
+Productive time
+Prime function
+Move/rig within block
+Change grapple
+Non-mechanical delays
+Move auxiliary equipment
+Unexplained operational delay
+Operator on other activity
+Safety meeting
+
+90
+52
+
+124.59
+29.13
+
+3
+
+l. 72
+
+1.38
+0.56
+0.57
+
+l
+4
+
+0.50
+1.21
+2.50
+0.45
+
+0.50
+0.30
+2.50
+0.45
+
+2.28
+0.65
+5.99
+2.87
+1.30
+
+2.28
+
+1
+l
+
+Mechanical delays
+Wait for mechanics
+Hydraulic (unspecified) - carrier
+Cable/choker
+Grapple
+Fairlead
+Brakes - winch
+Air lines - interlock
+Air actuators - interlock
+Warm-up
+Daily service
+
+12
+9
+
+6.28
+2.89
+l. 98
+
+0.65
+2.00
+1.44
+0.65
+0.69
+0.29
+2.09
+0.24
+0.22
+
+Clock not running
+Meals
+
+23
+
+14 . 23
+
+0. 62
+
+out-of-shift repairs
+Undercarriage frame
+Fairlead
+
+l
+
+1
+
+5.00
+2.00
+
+2.00
+
+28
+
+l
+
+1
+3
+
+2
+2
+3
+1
+3
+
+2.06
+0.29
+
+5.00
+
+APPENDIX IV
+
+Cycle Element Definitions
+
+Begins
+
+Ends
+
+Outhaul
+
+When grapple starts travel
+away from yarder.
+
+When grapple stops at a
+target log.
+
+Hookup
+
+End of outhaul.
+
+When grapple begins to
+travel with one or more
+pieces.
+
+Inhaul
+
+End of hookup.
+
+When incoming turn stops
+above log deck.
+
+Unhook
+
+End of inhaul.
+
+When grapple has dropped
+the log and is free to
+commence next function.
+
+Deck
+
+When yarder grasps a log
+already in the log deck to
+straighten or re-pile the
+deck.
+
+When grapple starts travel
+away from log deck.
+
+Move yarder
+or guyline
+
+When grapple stops and crew
+prepares to move yarder or
+guylines.
+
+When machinery is in
+position to commence productive function.
+
+Move backspar
+or logs
+
+When grapple stops and crew
+prepares to move backspar or
+logs.
+
+When machinery is in
+position to commence productive function.
+
+Delay
+
+When a productive function
+is interrupted.
+
+When productive function
+recommences.
+
+Time element
+
+29
+
+APPENDIX V
+Tree Scaling Summary
+Volume by Butt-Diameter Classes
+Week 1
+Buttdiameter
+class
+(cm)
+
+10
+20
+30
+40
+50
+60
+70
+80
+
+All
+
+Week 2
+
+Avg
+volume
+(ml)
+
+Avg
+length
+
+0.13
+0.33
+0.90
+1.66
+2.39
+
+11.2
+
+(m)
+
+14. 9
+
+3.51
+
+20.6
+21.9
+20.7
+12. 8
+12.4
+
+4.79
+
+12.4
+
+1.54
+
+19.1
+
+2. 92
+
+Combined
+
+Avg
+volume
+(ml )
+
+Avg
+length
+
+Avg
+volume
+
+Avg
+length
+
+(m)
+
+(ml)
+
+(rn)
+
+0.11
+0.36
+0.87
+1.57
+2.08
+2. 77
+2.33
+
+10.2
+16.7
+22.2
+22.7
+18.6
+12.l
+8.00
+
+0.12
+0.35
+0.88
+1. 62
+2.32
+2.BB
+2. 92
+4.79
+
+10.3
+16.3
+21.4
+22.2
+20.3
+12.6
+10.2
+12. 4
+
+35
+238
+251
+113
+106
+47
+
+1.12
+
+18.8
+
+796
+
+0.78
+
+18.5
+
+Douglas-Fir J-Grade Trees Size Distributiona
+Upper class
+boundary
+(ml )
+
+Percent of trees
+less than
+class boundary
+
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1.0
+All
+
+10
+18
+26
+36
+43
+49
+55
+60
+66
+100
+
+a Sample Size 635 trees
+
+30
+
+No. of
+trees
+
+4
+
+2
+
+
