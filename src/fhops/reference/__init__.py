@@ -42,6 +42,14 @@ from .fncy12_tmy45 import (
     Fncy12MonthlyProductivity,
     load_fncy12_dataset,
 )
+from .helicopter_fpinnovations import (
+    HelicopterFPInnovationsDataset,
+    HelicopterOperation,
+    HelicopterSource,
+    get_default_helicopter_operation,
+    get_helicopter_operation,
+    load_helicopter_fpinnovations_dataset,
+)
 from .soil_protection import (
     SoilProfile,
     get_soil_profile,
@@ -102,6 +110,12 @@ __all__ = [
     "Fncy12Dataset",
     "Fncy12MonthlyProductivity",
     "load_fncy12_dataset",
+    "HelicopterFPInnovationsDataset",
+    "HelicopterOperation",
+    "HelicopterSource",
+    "load_helicopter_fpinnovations_dataset",
+    "get_helicopter_operation",
+    "get_default_helicopter_operation",
     "SoilProfile",
     "load_soil_profiles",
     "get_soil_profile",

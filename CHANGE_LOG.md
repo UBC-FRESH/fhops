@@ -1,5 +1,24 @@
 # Development Change Log
 
+# 2025-12-06 — FPInnovations helicopter presets & costing
+- Consolidated the ADV3/4/5/6 helicopter studies (plus the Kamov KA-32A pole-logging trial) into
+  `data/productivity/helicopter_fpinnovations.json`. Each preset now captures flight distance, turn timing, payload,
+  load factor, cost, and provenance metadata under a stable ID (e.g., `s64e_grapple_retention_adv5n13`). The new CLI helper
+  `fhops.dataset helicopter-fpinnovations` lists every preset (with `--operation-id` for detailed tables) so analysts can
+  browse the catalogue without reopening the PDFs.
+- Extended `fhops.dataset estimate-productivity --machine-role helicopter_longline` with a `--helicopter-preset` flag.
+  When omitted the command automatically applies the default preset for the chosen model; specifying an ID seeds the
+  flight distance, payload, load factor, weight→volume conversion, and delay minutes from the dataset. The banner +
+  telemetry now call out which preset supplied the defaults, and a new KA-32A option (`--helicopter-model ka32a`) joins the
+  existing Lama/K-Max/Bell 214B/S-64E choices.
+- Added CPI-aware machine-rate roles for every aircraft class (`helicopter_lama`, `_kmax`, `_bell214b`, `_ka32a`,
+  `_s64e_aircrane`) sourced directly from the FPInnovations Appendix-II cost tables. `--show-costs` and `inspect-machine`
+  now report the correct owning/operating split per helicopter instead of the generic placeholder, and the skyline docs list
+  the matching roles in the cost matrix.
+- Wired the preset plumbing into telemetry/docs/tests: CLI tests assert preset selection + cost banners, the dataset
+  inspection plan marks the helicopter backlog items complete, and `docs/reference/harvest_systems.rst` now references the
+  preset helper, the KA-32A model, and the new machine-rate entries.
+
 # 2025-12-05 — Skyline partial-cut profiles
 - Transcribed the ADV11N17, ADV1N22 (Opening 6 group selection), TN199, SR-109 MASS shelterwood/patch/green-tree, and ADV9N4 interface-thinning tables into structured datasets (`data/reference/fpinnovations/*partial*.json`). Each file captures the published volume per shift, $/m³, trail coverage, and retention metadata so the skyline helper no longer relies solely on TR119 multipliers.
 - Introduced `data/reference/partial_cut_profiles.json`, a consolidated registry of volume/cost multipliers derived from the new datasets (plus the existing SR-109 trials). `fhops.reference.partial_cut_profiles` exposes typed loaders so downstream helpers can look up IDs such as `sr109_shelterwood`, `adv11n17_trial1`, or `tn199_partial_entry` without reopening the PDFs.

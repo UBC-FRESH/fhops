@@ -206,6 +206,11 @@ from fhops.reference import (
     load_unbc_processing_costs,
     load_unbc_construction_costs,
     load_adv6n25_dataset,
+    HelicopterFPInnovationsDataset,
+    HelicopterOperation,
+    get_helicopter_operation,
+    get_default_helicopter_operation,
+    load_helicopter_fpinnovations_dataset,
     load_fncy12_dataset,
     load_partial_cut_profiles,
     adv15n3_baseline_drive_id,
@@ -385,6 +390,34 @@ def _append_grapple_yarder_telemetry(
                 preset_summary[key] = preset_meta[key]
         if preset_summary:
             payload["preset"] = preset_summary
+    append_jsonl(log_path, payload)
+
+
+def _append_helicopter_telemetry(
+    *,
+    log_path: Path,
+    model: HelicopterLonglineModel,
+    inputs: Mapping[str, Any],
+    result: HelicopterProductivityResult,
+    preset_id: str | None,
+    preset_source: str | None,
+) -> None:
+    payload: dict[str, Any] = {
+        "timestamp": datetime.now(tz=UTC).isoformat(),
+        "command": "dataset estimate-productivity",
+        "machine_role": ProductivityMachineRole.HELICOPTER_LONGLINE.value,
+        "helicopter_model": model.value,
+        "inputs": dict(inputs),
+        "outputs": {
+            "productivity_m3_per_pmh0": result.productivity_m3_per_pmh0,
+            "turns_per_pmh0": result.turns_per_pmh0,
+            "cycle_minutes": result.cycle_minutes,
+            "payload_m3": result.payload_m3,
+            "load_factor": result.load_factor,
+        },
+        "preset_id": preset_id,
+        "preset_source": preset_source,
+    }
     append_jsonl(log_path, payload)
 
 
@@ -647,6 +680,21 @@ def _derive_cost_role_override(
 
 def _grapple_yarder_cost_role(model: GrappleYarderModel) -> str:
     return _GRAPPLE_YARDER_COST_ROLES.get(model, "grapple_yarder")
+
+
+_HELICOPTER_COST_ROLES: dict[HelicopterLonglineModel, str] = {
+    HelicopterLonglineModel.S64E_AIRCRANE: "helicopter_s64e_aircrane",
+    HelicopterLonglineModel.BELL_214B: "helicopter_bell214b",
+    HelicopterLonglineModel.KMAX: "helicopter_kmax",
+    HelicopterLonglineModel.LAMA: "helicopter_lama",
+    HelicopterLonglineModel.KA32A: "helicopter_ka32a",
+}
+
+
+def _helicopter_cost_role(model: HelicopterLonglineModel) -> str:
+    return _HELICOPTER_COST_ROLES.get(
+        model, ProductivityMachineRole.HELICOPTER_LONGLINE.value
+    )
 
 
 def _machine_rate_roles_help() -> str:
@@ -3068,6 +3116,104 @@ def _apply_helicopter_system_defaults(
     )
 
 
+def _apply_helicopter_preset_defaults(
+    *,
+    model: HelicopterLonglineModel,
+    preset_id: str | None,
+    flight_distance_m: float | None,
+    payload_m3: float | None,
+    load_factor: float | None,
+    weight_to_volume_lb_per_m3: float | None,
+    delay_minutes: float,
+    user_supplied: Mapping[str, bool],
+) -> tuple[
+    float | None,
+    float | None,
+    float | None,
+    float | None,
+    float,
+    HelicopterOperation | None,
+    str | None,
+    bool,
+]:
+    resolved_id = preset_id
+    operation: HelicopterOperation | None = None
+    if preset_id:
+        try:
+            operation = get_helicopter_operation(preset_id)
+        except KeyError as exc:
+            raise ValueError(str(exc)) from exc
+        if operation.helicopter_model is not model:
+            raise ValueError(
+                f"Preset '{preset_id}' is tied to helicopter model "
+                f"'{operation.helicopter_model.value}', not '{model.value}'."
+            )
+    else:
+        operation = get_default_helicopter_operation(model)
+        if operation is not None:
+            resolved_id = operation.id
+    if operation is None:
+        return (
+            flight_distance_m,
+            payload_m3,
+            load_factor,
+            weight_to_volume_lb_per_m3,
+            delay_minutes,
+            None,
+            resolved_id,
+            False,
+        )
+    defaults_used = False
+
+    def maybe_apply(
+        current: float | None, attr: str, supplied_flag: str, allow_zero: bool = True
+    ) -> float | None:
+        nonlocal defaults_used
+        if user_supplied.get(supplied_flag, False):
+            return current
+        candidate = getattr(operation, attr)
+        if candidate is None:
+            return current
+        if not allow_zero and candidate == 0:
+            return current
+        defaults_used = True
+        return float(candidate)
+
+    flight_distance_m = maybe_apply(
+        flight_distance_m, "average_flight_distance_m", "helicopter_flight_distance_m"
+    )
+    payload_m3 = maybe_apply(
+        payload_m3, "payload_m3_per_turn", "helicopter_payload_m3", allow_zero=False
+    )
+    load_factor = maybe_apply(
+        load_factor, "load_factor", "helicopter_load_factor", allow_zero=False
+    )
+    weight_to_volume_lb_per_m3 = maybe_apply(
+        weight_to_volume_lb_per_m3,
+        "weight_to_volume_lb_per_m3",
+        "helicopter_weight_to_volume",
+        allow_zero=False,
+    )
+    delay_candidate = maybe_apply(
+        delay_minutes,
+        "additional_delay_minutes",
+        "helicopter_delay_minutes",
+        allow_zero=True,
+    )
+    if delay_candidate is not None:
+        delay_minutes = float(delay_candidate)
+    return (
+        flight_distance_m,
+        payload_m3,
+        load_factor,
+        weight_to_volume_lb_per_m3,
+        delay_minutes,
+        operation,
+        resolved_id,
+        defaults_used,
+    )
+
+
 def _apply_grapple_yarder_system_defaults(
     *,
     system: HarvestSystem | None,
@@ -5256,6 +5402,15 @@ def estimate_productivity_cmd(
         min=0.0,
         help="Additional minutes per cycle (e.g., hooktender waits, weather holds).",
     ),
+    helicopter_preset: str | None = typer.Option(
+        None,
+        "--helicopter-preset",
+        help=(
+            "FPInnovations preset ID to seed helicopter defaults "
+            "(see `fhops dataset helicopter-fpinnovations`). "
+            "Defaults per helicopter model when omitted."
+        ),
+    ),
     harvest_system_id: str | None = typer.Option(
         None,
         "--harvest-system-id",
@@ -6493,6 +6648,7 @@ def estimate_productivity_cmd(
             "helicopter_load_factor": _parameter_supplied(ctx, "helicopter_load_factor"),
             "helicopter_weight_to_volume": _parameter_supplied(ctx, "helicopter_weight_to_volume"),
             "helicopter_delay_minutes": _parameter_supplied(ctx, "helicopter_delay_minutes"),
+            "helicopter_preset": _parameter_supplied(ctx, "helicopter_preset"),
         }
         (
             helicopter_model,
@@ -6512,6 +6668,28 @@ def estimate_productivity_cmd(
             delay_minutes=helicopter_delay_minutes,
             user_supplied=heli_user_supplied,
         )
+        try:
+            (
+                helicopter_flight_distance_m,
+                helicopter_payload_m3,
+                helicopter_load_factor,
+                helicopter_weight_to_volume,
+                helicopter_delay_minutes,
+                helicopter_preset_operation,
+                resolved_helicopter_preset_id,
+                helicopter_preset_defaults_used,
+            ) = _apply_helicopter_preset_defaults(
+                model=helicopter_model,
+                preset_id=helicopter_preset,
+                flight_distance_m=helicopter_flight_distance_m,
+                payload_m3=helicopter_payload_m3,
+                load_factor=helicopter_load_factor,
+                weight_to_volume_lb_per_m3=helicopter_weight_to_volume,
+                delay_minutes=helicopter_delay_minutes,
+                user_supplied=heli_user_supplied,
+            )
+        except ValueError as exc:
+            raise typer.BadParameter(str(exc)) from exc
         if helicopter_flight_distance_m is None:
             raise typer.BadParameter(
                 "--helicopter-flight-distance-m is required for helicopter_longline role."
@@ -6529,7 +6707,40 @@ def estimate_productivity_cmd(
             console.print(
                 f"[dim]Applied helicopter defaults from harvest system '{selected_system.system_id}'.[/dim]"
             )
-        _maybe_render_costs(show_costs, ProductivityMachineRole.HELICOPTER_LONGLINE.value)
+        preset_source_title: str | None = None
+        if helicopter_preset_operation is not None:
+            dataset = load_helicopter_fpinnovations_dataset()
+            source = dataset.sources.get(helicopter_preset_operation.source_id)
+            preset_source_title = (
+                source.title if source and source.title else helicopter_preset_operation.source_id
+            )
+            if helicopter_preset_defaults_used or helicopter_preset is not None:
+                console.print(
+                    f"[dim]Preset '{helicopter_preset_operation.id}' ({preset_source_title}) "
+                    "seeded the helicopter defaults.[/dim]"
+                )
+        telemetry_inputs = {
+            "flight_distance_m": helicopter_flight_distance_m,
+            "payload_m3": helicopter_payload_m3,
+            "load_factor": helicopter_load_factor,
+            "weight_to_volume_lb_per_m3": helicopter_weight_to_volume,
+            "delay_minutes": helicopter_delay_minutes,
+            "harvest_system_id": selected_system.system_id if selected_system else None,
+            "harvest_system_defaults_used": helicopter_defaults_used,
+            "helicopter_preset_id": resolved_helicopter_preset_id,
+            "helicopter_preset_defaults_used": helicopter_preset_defaults_used,
+            "salvage_processing_mode": telemetry_salvage_mode,
+        }
+        if telemetry_log:
+            _append_helicopter_telemetry(
+                log_path=telemetry_log,
+                model=helicopter_model,
+                inputs=telemetry_inputs,
+                result=result,
+                preset_id=resolved_helicopter_preset_id,
+                preset_source=preset_source_title,
+            )
+        _maybe_render_costs(show_costs, _helicopter_cost_role(helicopter_model))
         return
 
     else:
@@ -7570,6 +7781,150 @@ def adv6n25_helicopters_cmd(
             "[dim]Source: "
             f"{dataset.source.get('title', 'ADV6N25')} (Lama + K-1200 K-Max light-lift helicopter case study).[/dim]"
         )
+
+
+def _helicopter_operation_source_label(
+    operation: HelicopterOperation, dataset: HelicopterFPInnovationsDataset
+) -> str:
+    source = dataset.sources.get(operation.source_id)
+    if source and source.title:
+        return source.title
+    return operation.source_id
+
+
+def _render_helicopter_operation_detail(
+    operation: HelicopterOperation,
+    dataset: HelicopterFPInnovationsDataset,
+    is_default: bool,
+) -> None:
+    rows = [
+        ("Preset ID", f"{operation.id}{' ★' if is_default else ''}"),
+        ("Model", operation.helicopter_model.value),
+        ("Configuration", operation.configuration or "—"),
+        ("Treatment", operation.treatment or "—"),
+        (
+            "Flight Distance (m)",
+            f"{operation.average_flight_distance_m:.0f}"
+            if operation.average_flight_distance_m
+            else "—",
+        ),
+        (
+            "Payload (m³)",
+            f"{operation.payload_m3_per_turn:.2f}" if operation.payload_m3_per_turn else "—",
+        ),
+        (
+            "Payload (kg)",
+            f"{operation.payload_kg_per_turn:.0f}" if operation.payload_kg_per_turn else "—",
+        ),
+        ("Load Factor", f"{operation.load_factor:.2f}" if operation.load_factor else "—"),
+        (
+            "m³/shift",
+            f"{operation.productivity_m3_per_shift:.1f}"
+            if operation.productivity_m3_per_shift
+            else "—",
+        ),
+        (
+            "m³/flight-hour",
+            f"{operation.productivity_m3_per_flight_hour:.1f}"
+            if operation.productivity_m3_per_flight_hour
+            else "—",
+        ),
+        (
+            "Turns/hour",
+            f"{operation.turns_per_flight_hour:.1f}" if operation.turns_per_flight_hour else "—",
+        ),
+        (
+            "Turn Time (min)",
+            f"{operation.turn_time_minutes:.2f}" if operation.turn_time_minutes else "—",
+        ),
+        ("Hourly Cost (base $)", f"{operation.hourly_cost_cad:.0f}" if operation.hourly_cost_cad else "—"),
+        (
+            "Cost Base Year",
+            str(operation.cost_base_year) if operation.cost_base_year is not None else "—",
+        ),
+        ("Cost ($/m³)", f"{operation.cost_per_m3_cad:.2f}" if operation.cost_per_m3_cad else "—"),
+        ("Source", _helicopter_operation_source_label(operation, dataset)),
+    ]
+    _render_kv_table("FPInnovations Helicopter Operation", rows)
+    if operation.notes:
+        console.print(f"[dim]{operation.notes}[/dim]")
+
+
+@dataset_app.command("helicopter-fpinnovations")
+def helicopter_fpinnovations_cmd(
+    model: HelicopterLonglineModel | None = typer.Option(
+        None,
+        "--model",
+        case_sensitive=False,
+        help="Filter presets by helicopter model.",
+    ),
+    operation_id: str | None = typer.Option(
+        None,
+        "--operation-id",
+        help="Show detailed metrics for a specific preset ID.",
+    ),
+) -> None:
+    """List FPInnovations helicopter presets (ADV3/4/5/6 series)."""
+
+    dataset = load_helicopter_fpinnovations_dataset()
+    if operation_id:
+        try:
+            operation = get_helicopter_operation(operation_id)
+        except KeyError as exc:
+            raise typer.BadParameter(str(exc)) from exc
+        is_default = dataset.defaults.get(operation.helicopter_model) == operation.id
+        _render_helicopter_operation_detail(operation, dataset, is_default)
+        return
+    table = Table(
+        title="FPInnovations helicopter presets",
+        header_style="bold",
+        expand=True,
+        box=box.SIMPLE_HEAVY,
+    )
+    table.add_column("Preset", style="bold")
+    table.add_column("Model")
+    table.add_column("Configuration")
+    table.add_column("Flight Dist (m)", justify="right")
+    table.add_column("Payload (m³)", justify="right")
+    table.add_column("m³/shift", justify="right")
+    table.add_column("Turns/hr", justify="right")
+    table.add_column("Load", justify="right")
+    table.add_column("Cost ($/m³)", justify="right")
+    table.add_column("Source")
+    rows_rendered = 0
+    for operation in dataset.operations:
+        if model and operation.helicopter_model is not model:
+            continue
+        default_marker = (
+            "★" if dataset.defaults.get(operation.helicopter_model) == operation.id else ""
+        )
+        table.add_row(
+            f"{operation.id}{default_marker}",
+            operation.helicopter_model.value,
+            operation.configuration or "—",
+            f"{operation.average_flight_distance_m:.0f}"
+            if operation.average_flight_distance_m
+            else "—",
+            f"{operation.payload_m3_per_turn:.2f}" if operation.payload_m3_per_turn else "—",
+            f"{operation.productivity_m3_per_shift:.1f}"
+            if operation.productivity_m3_per_shift
+            else "—",
+            f"{operation.turns_per_flight_hour:.1f}" if operation.turns_per_flight_hour else "—",
+            f"{operation.load_factor:.2f}" if operation.load_factor else "—",
+            f"{operation.cost_per_m3_cad:.2f}" if operation.cost_per_m3_cad else "—",
+            _helicopter_operation_source_label(operation, dataset),
+        )
+        rows_rendered += 1
+    if rows_rendered == 0:
+        if model:
+            console.print(f"[yellow]No presets found for model '{model.value}'.[/yellow]")
+        else:
+            console.print("[yellow]No helicopter presets found.[/yellow]")
+        return
+    console.print(table)
+    console.print(
+        "[dim]Use --operation-id <preset> for detailed timings/costs. Defaults per model are marked with ★.[/dim]"
+    )
 
 
 @dataset_app.command("tn98-handfalling")

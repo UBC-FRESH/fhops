@@ -831,9 +831,25 @@ into the regressions. Available models:
   only used 1–2 chokers per turn, so the helper now prints/telemeters calibration warnings whenever those values drift.
 
 Helicopter longline work still lives under ``fhops.dataset estimate-productivity --machine-role helicopter_longline``.
-Those helpers wrap FPInnovations Advantage/TR studies (Lama, K-Max, Bell 214B, S-64E) with ``--helicopter-model``,
-``--helicopter-flight-distance-m``, payload/load-factor overrides, and per-cycle delay minutes. Selecting
-``--harvest-system-id helicopter`` auto-loads a Bell 214B preset for quick estimates.
+Those helpers now read from ``data/productivity/helicopter_fpinnovations.json`` (ADV3/4/5/6 series) so each model has a
+reference preset plus a matching machine-rate role:
+
+* ``--helicopter-model`` accepts ``lama``, ``kmax``, ``bell214b``, ``ka32a`` (Kamov KA-32A pole logging), or
+  ``s64e_aircrane``. When ``--helicopter-preset`` is omitted, the CLI applies the default preset for that model
+  (marked with ★ in ``fhops.dataset helicopter-fpinnovations``); specify a preset ID (e.g.,
+  ``s64e_grapple_retention_adv5n13``) to seed the flight distance, payload, load-factor, weight→volume, and delay minutes
+  directly. The CLI and telemetry banner call out whichever preset supplied the defaults so downstream costing can audit
+  the assumption.
+* ``fhops.dataset helicopter-fpinnovations`` lists every preset, the observed m³/shift, turn times, and CPI metadata. Add
+  ``--operation-id <preset>`` to view the full cycle breakdown and scan notes without reopening the PDFs.
+* ``--show-costs`` now hooks into the CPI-aware helicopter machine-rate entries
+  (``helicopter_lama``/``_kmax``/``_bell214b``/``_ka32a``/``_s64e_aircrane``) so heavy/medium/light lift cost banners
+  cite the FPInnovations Appendix-II splits directly. ``inspect-machine --machine-role helicopter_s64e_aircrane`` (etc.)
+  surfaces the same rates outside the productivity helper.
+
+Selecting ``--harvest-system-id helicopter`` still applies the Bell 214B defaults, but the new preset plumbing means
+Mission-style Aircrane or KA-32A pole-logging runs can be reproduced without hand-entering the published flight
+distance/payload values.
 
 Every skyline model prints the assumed payload and m³/PMH0 result; the McNeel and Aubuchon helpers also show
 delay-free cycle minutes so you can see the impact of deflection, carriage height, lead angle, or extra chokers.

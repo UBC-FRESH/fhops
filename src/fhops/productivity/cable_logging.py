@@ -333,6 +333,7 @@ class HelicopterLonglineModel(str, Enum):
     KMAX = "kmax"
     BELL_214B = "bell214b"
     S64E_AIRCRANE = "s64e_aircrane"
+    KA32A = "ka32a"
 
 
 @dataclass(frozen=True)
@@ -385,6 +386,16 @@ _HELICOPTER_SPECS: dict[HelicopterLonglineModel, HelicopterSpec] = {
         unhook_minutes=0.28,
         fly_empty_speed_mps=23.5,
         fly_loaded_speed_mps=19.3,
+    ),
+    HelicopterLonglineModel.KA32A: HelicopterSpec(
+        model=HelicopterLonglineModel.KA32A,
+        rated_payload_kg=5_000.0,
+        default_load_factor=0.6,
+        weight_to_volume_kg_per_m3=2_787.0 * _LB_TO_KG,
+        hook_breakout_minutes=0.9,
+        unhook_minutes=0.46,
+        fly_empty_speed_mps=7.8,
+        fly_loaded_speed_mps=6.7,
     ),
     HelicopterLonglineModel.S64E_AIRCRANE: HelicopterSpec(
         model=HelicopterLonglineModel.S64E_AIRCRANE,
