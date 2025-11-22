@@ -10,3 +10,9 @@ Quick start:
   fhops solve-mip examples/large84/scenario.yaml --out examples/large84/out/mip_solution.csv
   fhops solve-heur examples/large84/scenario.yaml --out examples/large84/out/sa_solution.csv --iters 20000 --seed 1
   fhops evaluate examples/large84/scenario.yaml examples/large84/out/mip_solution.csv
+
+Harvest systems:
+- Like the medium scenario, ``data/blocks.csv`` omits ``harvest_system_id`` so you can switch between
+  ground, skyline, and helicopter chains. Use the IDs defined in ``docs/reference/harvest_systems.rst``
+  (e.g., ``ground_fb_loader_liveheel`` for interior grapple-skid blocks or ``cable_running_fncy12`` for
+  Thunderbird corridors) if you want to record assignments explicitly.

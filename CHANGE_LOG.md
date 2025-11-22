@@ -7,6 +7,7 @@
 - Authored `notes/sphinx-documentation.md`, a Phase 4 Sphinx coverage audit summarising current docs (how-tos, references, API pages) and capturing a TODO list for weak/missing sections ahead of release prep.
 - Expanded `docs/howto/heuristic_presets.rst` with solver-specific parameter guides (SA/ILS/Tabu), preset comparison workflow, and instructions for interpreting the `operators_stats` telemetry so the operator registry documentation now meets the Phase 4 audit goals.
 - Added a troubleshooting section to `docs/howto/mobilisation_geo.rst` covering CRS mismatches, zero-distance diagnostics, and med42/large84 walkthrough commands so users can validate mobilisation inputs and interpret KPI outputs when distances change.
+- Documented harvest-system cross-links: `docs/reference/harvest_systems.rst` now maps built-in scenarios to registry IDs, and the med42/large84/synthetic READMEs explain how to attach `harvest_system_id` columns when running experiments.
 
 # 2025-12-06 — Conversation log dedup helper
 - Added `scripts/dedup_conversation_log.py`, a windowed rolling-hash utility that reports duplicate multi-line chunks (default 32-line windows, 80-line minimum) and can rewrite `notes/coding-agent-conversation-log.txt` with the later copies removed. The script supports dry-run summaries, optional snippet previews, and an `--apply` flag for in-place cleanup so the long-form conversation notes no longer accumulate repeated headers when entire transcripts get pasted multiple times.

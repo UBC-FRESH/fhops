@@ -10,3 +10,9 @@ Quick start:
   fhops solve-mip examples/med42/scenario.yaml --out examples/med42/out/mip_solution.csv
   fhops solve-heur examples/med42/scenario.yaml --out examples/med42/out/sa_solution.csv --iters 8000 --seed 1
   fhops evaluate examples/med42/scenario.yaml examples/med42/out/mip_solution.csv
+
+Harvest systems:
+- Blocks ship without a ``harvest_system_id`` column so you can experiment with multiple chains. When you
+  need deterministic assignments, add the column to ``data/blocks.csv`` using IDs from
+  ``docs/reference/harvest_systems.rst`` (e.g., ``ground_fb_skid`` for grapple-skidder workflows or
+  ``cable_running`` for skyline blocks).

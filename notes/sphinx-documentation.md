@@ -70,7 +70,7 @@ FHOPS’ Sphinx tree lives under `docs/` and is published to Read the Docs via `
 [x] **Shift Templates & Road Tables** – `docs/howto/data_contract.rst` now documents multi-shift calendars, validation via `fhops validate`, and the `road_construction` CSV schema plus CLI guidance (2025-11-22).
 [x] **Heuristic Operator Registry Guide** – `docs/howto/heuristic_presets.rst` now covers SA/ILS/Tabu parameter knobs, preset comparisons, and `operators_stats` usage (2025-11-22).
 [x] **Mobilisation Troubleshooting** – `docs/howto/mobilisation_geo.rst` now documents CRS warnings, zero-distance diagnostics, and med42/large84 walkthroughs with KPI interpretation (2025-11-22).
-[ ] **Harvest System Cross-Links** – Update `docs/reference/harvest_systems.rst` and sample scenario READMEs to explicitly map scenario block IDs to reference tables.
+[x] **Harvest System Cross-Links** – `docs/reference/harvest_systems.rst` now includes a scenario map, and the med42/large84/synthetic READMEs explain how to tie blocks back to the registry (2025-11-22).
 [ ] **Thesis-Oriented Evaluation Tutorial** – Create a Chapter 2-focused guide showing how to run FHOPS on thesis datasets, map KPIs to literature review gaps, and interpret sequencing violations.
 [ ] **Telemetry Ops Runbook** – Document the upcoming weekly notebook workflow, telemetry storage maintenance (rotation, lock handling), and GitHub Pages verification steps.
 [ ] **API Narrative Guides** – Supplement autodoc pages with short prose sections and code snippets for key modules (scenario contract, MIP builder, playback API).

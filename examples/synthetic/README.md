@@ -15,6 +15,13 @@ Each bundle includes a ``scenario.yaml`` pointing at the CSV tables under ``data
 loaded directly with ``fhops.scenario.io.load_scenario``; the regression tests (`tests/test_synthetic_dataset.py`)
 exercise this path to ensure compatibility.
 
+Harvest systems
+---------------
+
+``data/blocks.csv`` includes a ``harvest_system_id`` column for every tier. The values map directly to the
+registry documented in ``docs/reference/harvest_systems.rst``. Filter the column (e.g.,
+``cut -d, -f14 data/blocks.csv | sort -u``) to see which systems are used before running solver tests.
+
 Columns & metadata
 ------------------
 

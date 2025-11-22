@@ -140,6 +140,37 @@ Using the Registry
 - Solvers: sequencing constraints in the MIP and heuristics consume the registry to enforce job
   ordering and machine-role feasibility. Violations surface through KPI outputs and CLI summaries.
 
+Scenario Cross-Links
+--------------------
+
+The sample datasets shipped in ``examples/`` reference these system IDs directly. Use the following
+map when you need to trace a block back to the registry table above:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 35 45
+
+   * - Scenario
+     - Where to inspect
+     - Notes
+   * - ``examples/synthetic/{small,medium,large}``
+     - ``data/blocks.csv`` (``harvest_system_id`` column) and ``README.md``
+     - Every synthetic bundle assigns an explicit system ID per block. The README describes the
+       terrain/prescription mix; look up the IDs in the table above to recover the associated job/role chain.
+   * - ``examples/med42`` / ``examples/large84``
+     - ``README.md`` and ``data/blocks.csv`` (terrain/prescription hints)
+     - These scenarios omit ``harvest_system_id`` in order to let researchers swap systems during experiments.
+       The README files call out the typical ground/cable combinations used in regression tests; add a column to
+       ``data/blocks.csv`` if you need deterministic system assignments.
+   * - ``examples/minitoy``
+     - README + CLI quickstart
+     - The toy dataset keeps a single ground-based workflow; tie blocks to ``ground_fb_skid`` or
+       ``ground_hand_shovel`` when testing sequencing logic.
+
+For any other dataset, run ``rg --no-heading 'harvest_system_id' path/to/blocks.csv`` to confirm whether
+the IDs are specified. When missing, edit ``blocks.csv`` or include a ``harvest_systems`` block inside
+``scenario.yaml`` so future contributors know which registry entries to reference.
+
 Extending Systems
 -----------------
 
