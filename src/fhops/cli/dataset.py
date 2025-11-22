@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from collections.abc import Iterable, Mapping
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import Enum
@@ -178,6 +178,7 @@ from fhops.productivity import (
 )
 from fhops.reference import (
     ADV2N21StandSnapshot,
+    TN98DiameterRecord,
     get_appendix5_profile,
     get_tr119_treatment,
     get_tr28_source_metadata,
@@ -186,6 +187,7 @@ from fhops.reference import (
     load_adv2n21_treatments,
     load_appendix5_stands,
     load_tr28_machines,
+    load_tn98_dataset,
     TR28Machine,
     load_unbc_hoe_chucking_data,
     load_unbc_processing_costs,
@@ -209,6 +211,7 @@ _TMY45_SUPPORT_MACHINE_RATIOS = {
 }
 _TN258_LATERAL_LIMIT_M = 30.0
 _TN258_MAX_SKYLINE_TENSION_KN = 147.0
+_TN98_SPECIES = ("cedar", "douglas_fir", "hemlock", "all_species")
 
 console = Console()
 dataset_app = typer.Typer(help="Inspect FHOPS datasets and bundled examples.")
@@ -736,6 +739,111 @@ def _normalize_tn147_case(case_id: str | None) -> str:
             f"TN147 case must be one of {', '.join(sorted(choices))}; received '{case_id}'."
         )
     return candidate
+
+
+def _tn98_species_choices() -> tuple[str, ...]:
+    return _TN98_SPECIES
+
+
+def _interpolate_tn98_value(
+    records: Sequence[TN98DiameterRecord], dbh_cm: float, attr: str
+) -> float | None:
+    candidates = [record for record in records if getattr(record, attr) is not None]
+    if not candidates:
+        return None
+    ordered = sorted(candidates, key=lambda record: record.dbh_cm)
+    if dbh_cm <= ordered[0].dbh_cm:
+        return getattr(ordered[0], attr)
+    if dbh_cm >= ordered[-1].dbh_cm:
+        return getattr(ordered[-1], attr)
+    lower = ordered[0]
+    for upper in ordered[1:]:
+        if dbh_cm <= upper.dbh_cm:
+            lower_value = getattr(lower, attr)
+            upper_value = getattr(upper, attr)
+            if lower_value is None:
+                return upper_value
+            if upper_value is None:
+                return lower_value
+            span = upper.dbh_cm - lower.dbh_cm
+            ratio = 0.0 if span == 0 else (dbh_cm - lower.dbh_cm) / span
+            return lower_value + ratio * (upper_value - lower_value)
+        lower = upper
+    return getattr(ordered[-1], attr)
+
+
+def _closest_tn98_record(
+    records: Sequence[TN98DiameterRecord], dbh_cm: float
+) -> TN98DiameterRecord | None:
+    if not records:
+        return None
+    return min(records, key=lambda record: abs(record.dbh_cm - dbh_cm))
+
+
+def _normalise_tn98_species_value(value: str) -> str:
+    candidate = value.strip().lower().replace("-", "_")
+    if candidate not in _TN98_SPECIES:
+        raise ValueError(
+            f"Unknown TN98 species '{value}'. Choose from {', '.join(_TN98_SPECIES)}."
+        )
+    return candidate
+
+
+def _coerce_bool(value: Any) -> bool | None:
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return bool(value)
+    text = str(value).strip().lower()
+    if text in {"1", "true", "yes", "on"}:
+        return True
+    if text in {"0", "false", "no", "off"}:
+        return False
+    raise ValueError(f"Cannot interpret boolean value from '{value}'.")
+
+
+def _manual_falling_overrides(system: HarvestSystem | None) -> dict[str, float | str] | None:
+    if system is None:
+        return None
+    overrides = system_productivity_overrides(system, "hand_faller")
+    if overrides:
+        return overrides
+    return system_productivity_overrides(system, "hand_or_mech_faller")
+
+
+def _estimate_tn98_manual_falling(species: str, dbh_cm: float) -> dict[str, Any]:
+    dataset = load_tn98_dataset()
+    regression = dataset.regressions.get(species) or dataset.regressions.get("all_species")
+    if regression is None:
+        raise ValueError(f"TN98 regression missing for species '{species}'.")
+    cut_minutes = max(
+        0.0, regression.intercept_minutes + regression.slope_minutes_per_cm * dbh_cm
+    )
+    records = dataset.per_diameter_class.get(species) or dataset.per_diameter_class.get(
+        "douglas_fir", ()
+    )
+    limb_minutes = _interpolate_tn98_value(records, dbh_cm, "limb_buck_minutes") or 0.0
+    volume_m3 = _interpolate_tn98_value(records, dbh_cm, "volume_m3")
+    cost_per_tree = _interpolate_tn98_value(records, dbh_cm, "cost_per_tree_cad")
+    cost_per_m3 = _interpolate_tn98_value(records, dbh_cm, "cost_per_m3_cad")
+    fixed_minutes = float(dataset.time_distribution.get("fixed_time_minutes_per_tree") or 0.0)
+    nearest = _closest_tn98_record(records, dbh_cm)
+    total_minutes = cut_minutes + limb_minutes + fixed_minutes
+    return {
+        "species": species,
+        "dbh_cm": dbh_cm,
+        "cut_minutes": cut_minutes,
+        "limb_minutes": limb_minutes,
+        "fixed_minutes": fixed_minutes,
+        "total_minutes": total_minutes,
+        "volume_m3": volume_m3,
+        "cost_per_tree_cad": cost_per_tree,
+        "cost_per_m3_cad": cost_per_m3,
+        "nearest_dbh_cm": nearest.dbh_cm if nearest else None,
+        "nearest_tree_count": nearest.tree_count if nearest else None,
+    }
 
 
 class SkylineProductivityModel(str, Enum):
@@ -6860,6 +6968,106 @@ def list_appendix5_stands(
     console.print(table)
 
 
+def _render_tn98_table(records: Sequence[TN98DiameterRecord]) -> None:
+    table = Table(title="TN98 per-diameter observations")
+    table.add_column("DBH (cm)", justify="right")
+    table.add_column("Trees", justify="right")
+    table.add_column("Cut (min)", justify="right")
+    table.add_column("Limb/Buck (min)", justify="right")
+    table.add_column("Volume (m³)", justify="right")
+    table.add_column("Cost/tree ($)", justify="right")
+    table.add_column("Cost/m³ ($)", justify="right")
+    for record in records:
+        table.add_row(
+            f"{record.dbh_cm:.1f}",
+            str(record.tree_count) if record.tree_count is not None else "—",
+            f"{record.cut_minutes:.2f}" if record.cut_minutes is not None else "—",
+            f"{record.limb_buck_minutes:.2f}" if record.limb_buck_minutes is not None else "—",
+            f"{record.volume_m3:.2f}" if record.volume_m3 is not None else "—",
+            f"{record.cost_per_tree_cad:.2f}" if record.cost_per_tree_cad is not None else "—",
+            f"{record.cost_per_m3_cad:.2f}" if record.cost_per_m3_cad is not None else "—",
+        )
+    console.print(table)
+
+
+@dataset_app.command("tn98-handfalling")
+def tn98_handfalling_cmd(
+    dbh_cm: float = typer.Option(
+        32.5,
+        "--dbh-cm",
+        min=5.0,
+        help="Diameter at breast height midpoint to evaluate (cm).",
+    ),
+    species: str = typer.Option(
+        "all_species",
+        "--species",
+        case_sensitive=False,
+        help=f"Species bucket ({', '.join(_tn98_species_choices())}).",
+    ),
+    show_table: bool = typer.Option(
+        False, "--show-table", help="Display the underlying TN98 per-diameter rows."
+    ),
+):
+    """Estimate handfalling cutting time & cost using TN-98 regressions."""
+
+    dataset = load_tn98_dataset()
+    species_key = species.lower()
+    if species_key not in _tn98_species_choices():
+        raise typer.BadParameter(
+            f"Unsupported species '{species}'. Choose from {', '.join(_tn98_species_choices())}."
+        )
+    regression = dataset.regressions.get(species_key) or dataset.regressions.get(
+        "all_species"
+    )
+    if regression is None:
+        raise typer.BadParameter("TN98 regressions missing for the requested species.")
+
+    predicted_cut = max(
+        0.0, regression.intercept_minutes + regression.slope_minutes_per_cm * dbh_cm
+    )
+    records = dataset.per_diameter_class.get(species_key) or dataset.per_diameter_class.get(
+        "all_species", ()
+    )
+    limb_minutes = _interpolate_tn98_value(records, dbh_cm, "limb_buck_minutes") or 0.0
+    cost_per_tree = _interpolate_tn98_value(records, dbh_cm, "cost_per_tree_cad")
+    cost_per_m3 = _interpolate_tn98_value(records, dbh_cm, "cost_per_m3_cad")
+    volume_m3 = _interpolate_tn98_value(records, dbh_cm, "volume_m3")
+    fixed_time = dataset.time_distribution.get("fixed_time_minutes_per_tree") or 0.0
+    total_minutes = predicted_cut + limb_minutes + fixed_time
+    nearest_record = _closest_tn98_record(records, dbh_cm)
+
+    rows = [
+        ("Species", species_key.replace("_", " ")),
+        ("DBH midpoint (cm)", f"{dbh_cm:.1f}"),
+        ("Cutting time (min)", f"{predicted_cut:.2f}"),
+        ("Limb/buck time (min)", f"{limb_minutes:.2f}"),
+        ("Fixed delay (min)", f"{fixed_time:.2f}"),
+        ("Estimated total minutes", f"{total_minutes:.2f}"),
+    ]
+    if cost_per_tree is not None:
+        rows.append(("Cost per tree (CAD)", f"{cost_per_tree:.2f}"))
+    if cost_per_m3 is not None:
+        rows.append(("Cost per m³ (CAD)", f"{cost_per_m3:.2f}"))
+    if volume_m3 is not None:
+        rows.append(("Interpolated volume (m³/tree)", f"{volume_m3:.2f}"))
+    if nearest_record:
+        rows.append(("Nearest observed DBH", f"{nearest_record.dbh_cm:.1f} cm"))
+        if nearest_record.tree_count is not None:
+            rows.append(("Observed trees in class", str(nearest_record.tree_count)))
+    _render_kv_table("TN98 handfalling estimate", rows)
+    console.print(
+        "[dim]Source: FERIC TN-98 (Peterson 1987). Labour base CAD 1985 with +35% fringe; "
+        "costs exclude travel/supervision.[/dim]"
+    )
+    if show_table:
+        if records:
+            _render_tn98_table(records)
+        else:
+            console.print(
+                "[yellow]No per-diameter table is available for this species in TN-98.[/yellow]"
+            )
+
+
 _TR28_SORT_FIELDS: tuple[str, ...] = ("case", "unit_cost", "stations", "roughness")
 
 
@@ -7187,6 +7395,25 @@ def estimate_skyline_productivity_cmd(
         "--tr119-treatment",
         help="Optional TR119 treatment (e.g., strip_cut, 70_retention, 65_retention) to scale output and show costs.",
     ),
+    manual_falling: bool | None = typer.Option(
+        None,
+        "--manual-falling/--no-manual-falling",
+        help="Include TN98 manual falling time/cost estimates ahead of skyline yarding (defaults to harvest system when present).",
+    ),
+    manual_falling_species: str | None = typer.Option(
+        None,
+        "--manual-falling-species",
+        case_sensitive=False,
+        help="TN98 species bucket (cedar, douglas_fir, hemlock, all_species). Defaults to harvest system or Douglas-fir.",
+        show_default=False,
+    ),
+    manual_falling_dbh_cm: float | None = typer.Option(
+        None,
+        "--manual-falling-dbh-cm",
+        min=5.0,
+        help="DBH midpoint (cm) for the TN98 manual falling estimate. Defaults to harvest system or 32.5 cm.",
+        show_default=False,
+    ),
     telemetry_log: Path | None = typer.Option(
         None,
         "--telemetry-log",
@@ -7201,6 +7428,12 @@ def estimate_skyline_productivity_cmd(
         raise typer.BadParameter("--payload-m3 must be > 0 when specified.")
     if hi_skid_include_haul and model is not SkylineProductivityModel.HI_SKID:
         raise typer.BadParameter("--hi-skid-include-haul is only valid when --model hi-skid.")
+    if (manual_falling_species is not None or manual_falling_dbh_cm is not None) and manual_falling is False:
+        raise typer.BadParameter(
+            "Cannot specify manual falling overrides when --no-manual-falling is set."
+        )
+    if manual_falling_species is not None or manual_falling_dbh_cm is not None:
+        manual_falling = True
 
     def _append_warning(existing: str | None, message: str) -> str:
         return f"{existing}\n{message}" if existing else message
@@ -7250,6 +7483,9 @@ def estimate_skyline_productivity_cmd(
         "merchantable_volume_m3": _parameter_supplied(ctx, "merchantable_volume_m3"),
         "residue_pieces_per_turn": _parameter_supplied(ctx, "residue_pieces_per_turn"),
         "residue_volume_m3": _parameter_supplied(ctx, "residue_volume_m3"),
+        "manual_falling": manual_falling is not None,
+        "manual_falling_species": _parameter_supplied(ctx, "manual_falling_species"),
+        "manual_falling_dbh_cm": _parameter_supplied(ctx, "manual_falling_dbh_cm"),
     }
 
     (
@@ -7280,6 +7516,50 @@ def estimate_skyline_productivity_cmd(
         chordslope_percent=chordslope_percent,
         user_supplied=user_supplied,
     )
+    manual_overrides = _manual_falling_overrides(selected_system)
+    manual_defaults_used = False
+    manual_falling_enabled = manual_falling
+    manual_species_value = manual_falling_species
+    manual_dbh_value = manual_falling_dbh_cm
+    if manual_overrides:
+        try:
+            override_enabled = _coerce_bool(manual_overrides.get("manual_falling_enabled"))
+        except ValueError as exc:
+            raise typer.BadParameter(str(exc))
+        if manual_falling_enabled is None and override_enabled is not None:
+            manual_falling_enabled = override_enabled
+            manual_defaults_used = override_enabled or manual_defaults_used
+        if manual_species_value is None and manual_overrides.get("manual_falling_species"):
+            manual_species_value = str(manual_overrides["manual_falling_species"])
+            manual_defaults_used = True
+        if manual_dbh_value is None and manual_overrides.get("manual_falling_dbh_cm") is not None:
+            try:
+                manual_dbh_value = float(manual_overrides["manual_falling_dbh_cm"])
+            except (TypeError, ValueError) as exc:  # pragma: no cover
+                raise typer.BadParameter(
+                    f"Invalid manual_falling_dbh_cm override: {manual_overrides.get('manual_falling_dbh_cm')}"
+                ) from exc
+            manual_defaults_used = True
+    if manual_falling_enabled is None:
+        manual_falling_enabled = False
+    manual_species_normalized: str | None = None
+    manual_falling_summary: dict[str, Any] | None = None
+    if manual_falling_enabled:
+        fallback_species = manual_species_value or "douglas_fir"
+        try:
+            manual_species_normalized = _normalise_tn98_species_value(fallback_species)
+        except ValueError as exc:
+            raise typer.BadParameter(str(exc))
+        manual_dbh = manual_dbh_value if manual_dbh_value is not None else 32.5
+        if manual_dbh <= 0:
+            raise typer.BadParameter("--manual-falling-dbh-cm must be > 0.")
+        try:
+            manual_falling_summary = _estimate_tn98_manual_falling(
+                manual_species_normalized, manual_dbh
+            )
+            manual_falling_summary["species_label"] = manual_species_normalized.replace("_", " ")
+        except ValueError as exc:
+            raise typer.BadParameter(str(exc))
 
     telemetry_payload_m3 = payload_m3
     source_label = None
@@ -7830,6 +8110,45 @@ def estimate_skyline_productivity_cmd(
         telemetry_chokers = chokers
     else:
         raise typer.BadParameter(f"Unsupported skyline model: {model}")
+    if manual_falling_summary:
+        cut = manual_falling_summary["cut_minutes"]
+        limb = manual_falling_summary["limb_minutes"]
+        fixed = manual_falling_summary["fixed_minutes"]
+        total = manual_falling_summary["total_minutes"]
+        rows.append(
+            (
+                "Manual Falling Species",
+                manual_falling_summary["species_label"].replace("_", " ").title(),
+            )
+        )
+        rows.append(("Manual Falling DBH (cm)", f"{manual_falling_summary['dbh_cm']:.1f}"))
+        rows.append(
+            (
+                "Manual Falling Time (min/tree)",
+                f"{total:.2f} (cut {cut:.2f} + limb {limb:.2f} + fixed {fixed:.2f})",
+            )
+        )
+        if manual_falling_summary.get("volume_m3") is not None:
+            rows.append(
+                (
+                    "Manual Falling Volume (m³/tree)",
+                    f"{manual_falling_summary['volume_m3']:.2f}",
+                )
+            )
+        if manual_falling_summary.get("cost_per_tree_cad") is not None:
+            rows.append(
+                (
+                    "Manual Falling Cost ($/tree)",
+                    f"{manual_falling_summary['cost_per_tree_cad']:.2f}",
+                )
+            )
+        if manual_falling_summary.get("cost_per_m3_cad") is not None:
+            rows.append(
+                (
+                    "Manual Falling Cost ($/m³)",
+                    f"{manual_falling_summary['cost_per_m3_cad']:.2f}",
+                )
+            )
     if tr119_treatment:
         try:
             treatment = get_tr119_treatment(tr119_treatment)
@@ -7849,6 +8168,10 @@ def estimate_skyline_productivity_cmd(
     if skyline_defaults_used and selected_system is not None:
         console.print(
             f"[dim]Applied productivity defaults from harvest system '{selected_system.system_id}'.[/dim]"
+        )
+    if manual_falling_summary and manual_defaults_used and selected_system is not None:
+        console.print(
+            f"[dim]Applied manual falling defaults from harvest system '{selected_system.system_id}'.[/dim]"
         )
     if telemetry_log:
         payload = {
@@ -7883,5 +8206,21 @@ def estimate_skyline_productivity_cmd(
             "support_cat_d8_smhr_per_yarder_smhr": telemetry_support_cat_d8_ratio,
             "support_timberjack450_smhr_per_yarder_smhr": telemetry_support_timberjack_ratio,
             "tn258_lateral_limit_exceeded": tn258_limit_exceeded,
+            "manual_falling": manual_falling_summary is not None,
+            "manual_falling_species": manual_falling_summary.get("species")
+            if manual_falling_summary
+            else None,
+            "manual_falling_dbh_cm": manual_falling_summary.get("dbh_cm")
+            if manual_falling_summary
+            else None,
+            "manual_falling_total_minutes": manual_falling_summary.get("total_minutes")
+            if manual_falling_summary
+            else None,
+            "manual_falling_cost_per_tree_cad": manual_falling_summary.get("cost_per_tree_cad")
+            if manual_falling_summary
+            else None,
+            "manual_falling_cost_per_m3_cad": manual_falling_summary.get("cost_per_m3_cad")
+            if manual_falling_summary
+            else None,
         }
         append_jsonl(telemetry_log, payload)

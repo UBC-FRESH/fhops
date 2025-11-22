@@ -8,6 +8,16 @@
   alongside the publication metadata so planners can pull roadbuilding references directly from FHOPS.
 - Updated `docs/reference/harvest_systems.rst` and the dataset inspection plan to point at the new command, marking the TR28
   “expose via CLI” backlog item as done while leaving the helper-design/FNRB3/ADV15N3 follow-ups queued.
+- Expanded the synthetic dataset tier mixes (`src/fhops/scenario/synthetic/generator.py`) so every tier now samples the full
+  `cable_micro_*` family plus Hi-Skid, ensuring the small-span skyline presets (TN173 + FNG73) appear in generated scenarios
+  with their built-in productivity overrides and skyline machine-rate references.
+- Digitised the TN-98 handfalling study into `data/reference/fpinnovations/tn98_handfalling.json`, exposed the data through
+  a new CLI helper (`fhops.dataset tn98-handfalling`) that interpolates cutting time, limbing delay, and cost-per-tree/m³ by
+  species/DBH, and documented the command in `docs/reference/harvest_systems.rst`.
+- Skyline CLI (`estimate-skyline-productivity`) now supports `--manual-falling`, `--manual-falling-species`, and
+  `--manual-falling-dbh-cm` so TN-98 cost/time outputs appear alongside skyline productivity. Harvest systems with `hand_faller`
+  or `hand_or_mech_faller` jobs auto-apply their DBH/species defaults (e.g., `cable_micro_*` uses hemlock 32.5 cm, `cable_running`
+  uses Douglas-fir 52.5 cm), and telemetry records the manual falling inputs/costs.
 
 # 2025-11-28 — Scenario salvage-mode threading
 - Added `Block.salvage_processing_mode` handling to the scenario contract end-to-end: CSV loaders now treat the column as an optional enum (blank/NaN entries are stripped), and the synthetic dataset generator records the new field whenever a salvage harvest system (`ground_salvage_grapple`, `cable_salvage_grapple`) is assigned to a block so bundles persist the ADV1N5 portable-mill vs. in-woods-chipping choice.

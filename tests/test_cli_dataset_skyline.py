@@ -177,6 +177,49 @@ def test_cli_skyline_mcneel_running() -> None:
     assert f"{expected:.2f}" in result.stdout
 
 
+def test_cli_skyline_manual_falling_options() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "tr125-single-span",
+            "--slope-distance-m",
+            "250",
+            "--lateral-distance-m",
+            "30",
+            "--manual-falling",
+            "--manual-falling-species",
+            "douglas_fir",
+            "--manual-falling-dbh-cm",
+            "32.5",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "Manual Falling Species" in result.stdout
+    assert "Manual Falling Cost ($/tree)" in result.stdout
+
+
+def test_cli_skyline_manual_falling_defaults_from_system() -> None:
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-skyline-productivity",
+            "--model",
+            "tn173-ecologger",
+            "--slope-distance-m",
+            "150",
+            "--lateral-distance-m",
+            "20",
+            "--harvest-system-id",
+            "cable_micro_ecologger",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "Manual Falling Species" in result.stdout
+    assert "Applied manual falling defaults from harvest system" in result.stdout
+
+
 def test_cli_skyline_tn173_ecologger() -> None:
     system = get_tn173_system("tn173_ecologger")
     result = runner.invoke(

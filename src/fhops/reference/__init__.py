@@ -22,6 +22,12 @@ from .tr28_subgrade import (
     get_tr28_source_metadata,
     load_tr28_machines,
 )
+from .tn98_handfalling import (
+    TN98HandfallingDataset,
+    TN98Regression,
+    TN98DiameterRecord,
+    load_tn98_dataset,
+)
 
 __all__ = [
     "Appendix5Stand",
@@ -44,4 +50,8 @@ __all__ = [
     "TR28Machine",
     "load_tr28_machines",
     "get_tr28_source_metadata",
+    "TN98HandfallingDataset",
+    "TN98Regression",
+    "TN98DiameterRecord",
+    "load_tn98_dataset",
 ]

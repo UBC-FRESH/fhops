@@ -786,6 +786,18 @@ For a quick terminal summary, run ``fhops dataset tr28-subgrade``. The command r
 filter by role (e.g., bulldozer vs. backhoe), sort by unit cost/stations/roughness, and prints the CPI-base metadata so road
 cost planning sessions can pull the TR-28 numbers without reopening the PDF.
 
+Handfalling Cost Reference
+--------------------------
+
+Manual falling productivity/costs now live in ``data/reference/fpinnovations/tn98_handfalling.json`` (FERIC TN-98, Peterson 1987).
+Use ``fhops dataset tn98-handfalling --species douglas_fir --dbh-cm 32.5`` to pull the regression-based cutting time, interpolated
+limbing delay, and cost-per-tree / cost-per-m³ for a given DBH class (defaults to the study’s “all species” regression).
+Add ``--show-table`` when you want to review the observed per-diameter rows before copying numbers into skyline costing sheets.
+``fhops.dataset estimate-skyline-productivity`` now accepts ``--manual-falling`` with optional ``--manual-falling-species`` and
+``--manual-falling-dbh-cm`` so TN-98 falling costs show up beside the skyline output. Harvest systems that include a hand-faller
+job auto-enable those settings (e.g., ``cable_micro_*`` presets default to hemlock @ 32.5 cm, ``cable_running`` presets default to
+Douglas-fir @ 52.5 cm) and print a reminder when the defaults kick in.
+
 CTL Harvester Productivity Models
 ---------------------------------
 

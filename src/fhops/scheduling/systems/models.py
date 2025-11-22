@@ -315,7 +315,16 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
             environment="cable-standing skyline",
             notes="Hand/mech fall → skyline yarder with chokers → landing processor/hand buck → loader.",
             jobs=[
-                SystemJob("felling", "hand_or_mech_faller", []),
+                SystemJob(
+                    "felling",
+                    "hand_or_mech_faller",
+                    [],
+                    productivity_overrides={
+                        "manual_falling_enabled": True,
+                        "manual_falling_species": "douglas_fir",
+                        "manual_falling_dbh_cm": 42.5,
+                    },
+                ),
                 SystemJob(
                     "primary_transport",
                     "skyline_yarder",
@@ -338,7 +347,16 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
             environment="cable-running skyline",
             notes="Hand/mech fall → grapple yarder → landing processor/hand buck → loader.",
             jobs=[
-                SystemJob("felling", "hand_or_mech_faller", []),
+                SystemJob(
+                    "felling",
+                    "hand_or_mech_faller",
+                    [],
+                    productivity_overrides={
+                        "manual_falling_enabled": True,
+                        "manual_falling_species": "douglas_fir",
+                        "manual_falling_dbh_cm": 52.5,
+                    },
+                ),
                 SystemJob(
                     "primary_transport",
                     "grapple_yarder",
@@ -373,7 +391,16 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
             environment="cable-running skyline",
             notes="ADV5N28 clearcut conversion (Madill 071 + motorized carriage replacing helicopter layout).",
             jobs=[
-                SystemJob("felling", "hand_or_mech_faller", []),
+                SystemJob(
+                    "felling",
+                    "hand_or_mech_faller",
+                    [],
+                    productivity_overrides={
+                        "manual_falling_enabled": True,
+                        "manual_falling_species": "douglas_fir",
+                        "manual_falling_dbh_cm": 52.5,
+                    },
+                ),
                 SystemJob(
                     "primary_transport",
                     "grapple_yarder",
@@ -407,7 +434,16 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
             environment="cable-running skyline",
             notes="ADV5N28 irregular-shelterwood conversion (long downhill spans through riparian corridors).",
             jobs=[
-                SystemJob("felling", "hand_or_mech_faller", []),
+                SystemJob(
+                    "felling",
+                    "hand_or_mech_faller",
+                    [],
+                    productivity_overrides={
+                        "manual_falling_enabled": True,
+                        "manual_falling_species": "douglas_fir",
+                        "manual_falling_dbh_cm": 42.5,
+                    },
+                ),
                 SystemJob(
                     "primary_transport",
                     "grapple_yarder",
@@ -441,7 +477,16 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
             environment="cable-short-span skyline",
             notes="TN173 RMS Ecologger uphill skyline (≈0.34 m³ pieces, 2.9 logs/turn, four-person crew).",
             jobs=[
-                SystemJob("felling", "hand_faller", []),
+                SystemJob(
+                    "felling",
+                    "hand_faller",
+                    [],
+                    productivity_overrides={
+                        "manual_falling_enabled": True,
+                        "manual_falling_species": "hemlock",
+                        "manual_falling_dbh_cm": 32.5,
+                    },
+                ),
                 SystemJob(
                     "primary_transport",
                     "skyline_ecologger_tn173",
@@ -462,7 +507,16 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
             environment="cable-short-span skyline",
             notes="TN173 Gabriel truck yarder (0.16 m³ pieces, skid-pan highlead, road-portable).",
             jobs=[
-                SystemJob("felling", "hand_faller", []),
+                SystemJob(
+                    "felling",
+                    "hand_faller",
+                    [],
+                    productivity_overrides={
+                        "manual_falling_enabled": True,
+                        "manual_falling_species": "hemlock",
+                        "manual_falling_dbh_cm": 32.5,
+                    },
+                ),
                 SystemJob(
                     "primary_transport",
                     "skyline_gabriel_tn173",
@@ -483,7 +537,16 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
             environment="cable-short-span skyline",
             notes="TN173 Christie tower yarder hot-yarding (0.49 m³ pieces, two-person crew).",
             jobs=[
-                SystemJob("felling", "hand_faller", []),
+                SystemJob(
+                    "felling",
+                    "hand_faller",
+                    [],
+                    productivity_overrides={
+                        "manual_falling_enabled": True,
+                        "manual_falling_species": "hemlock",
+                        "manual_falling_dbh_cm": 34.0,
+                    },
+                ),
                 SystemJob(
                     "primary_transport",
                     "skyline_christie_tn173",
@@ -504,7 +567,16 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
             environment="cable-short-span skyline",
             notes="TN173 Télétransporteur self-propelled carriage (0.21 m³ pieces, two-person chaser/faller crew).",
             jobs=[
-                SystemJob("felling", "hand_faller", []),
+                SystemJob(
+                    "felling",
+                    "hand_faller",
+                    [],
+                    productivity_overrides={
+                        "manual_falling_enabled": True,
+                        "manual_falling_species": "hemlock",
+                        "manual_falling_dbh_cm": 30.0,
+                    },
+                ),
                 SystemJob(
                     "primary_transport",
                     "skyline_teletransporteur_tn173",
@@ -525,7 +597,16 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
             environment="cable-short-span skyline",
             notes="TN173 Smith Timbermaster downhill skyline (0.54 m³ pieces, trailer tower).",
             jobs=[
-                SystemJob("felling", "hand_faller", []),
+                SystemJob(
+                    "felling",
+                    "hand_faller",
+                    [],
+                    productivity_overrides={
+                        "manual_falling_enabled": True,
+                        "manual_falling_species": "hemlock",
+                        "manual_falling_dbh_cm": 35.0,
+                    },
+                ),
                 SystemJob(
                     "primary_transport",
                     "skyline_timbermaster_tn173",
@@ -546,7 +627,16 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
             environment="cable-short-span skyline",
             notes="FERIC FNG73 Hi-Skid truck (100 m reach, self-loading/hauling).",
             jobs=[
-                SystemJob("felling", "hand_faller", []),
+                SystemJob(
+                    "felling",
+                    "hand_faller",
+                    [],
+                    productivity_overrides={
+                        "manual_falling_enabled": True,
+                        "manual_falling_species": "hemlock",
+                        "manual_falling_dbh_cm": 22.5,
+                    },
+                ),
                 SystemJob(
                     "primary_transport",
                     "skyline_hi_skid",
@@ -565,7 +655,16 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
             environment="cable-running salvage",
             notes="ADV1N5 salvage workflow for burned slopes (parallel bunching + grapple yarding, charcoal handling, portable mill prep).",
             jobs=[
-                SystemJob("felling", "hand_or_mech_faller", []),
+                SystemJob(
+                    "felling",
+                    "hand_or_mech_faller",
+                    [],
+                    productivity_overrides={
+                        "manual_falling_enabled": True,
+                        "manual_falling_species": "douglas_fir",
+                        "manual_falling_dbh_cm": 40.0,
+                    },
+                ),
                 SystemJob(
                     "primary_transport",
                     "grapple_yarder",
@@ -600,7 +699,16 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
             environment="helicopter",
             notes="Hand fallers → helicopter longline → landing/hand buck (or direct to water).",
             jobs=[
-                SystemJob("felling", "hand_faller", []),
+                SystemJob(
+                    "felling",
+                    "hand_faller",
+                    [],
+                    productivity_overrides={
+                        "manual_falling_enabled": True,
+                        "manual_falling_species": "cedar",
+                        "manual_falling_dbh_cm": 52.5,
+                    },
+                ),
                 SystemJob(
                     "primary_transport",
                     "helicopter_longline",
