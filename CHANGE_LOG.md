@@ -10,6 +10,7 @@
 - Documented harvest-system cross-links: `docs/reference/harvest_systems.rst` now maps built-in scenarios to registry IDs, and the med42/large84/synthetic READMEs explain how to attach `harvest_system_id` columns when running experiments.
 - Added `docs/howto/thesis_eval.rst`, a Chapter 2 evaluation playbook (dataset prep, solver runs, KPIs, benchmarking, synthesis) tied to Rosalia Jaffray’s MASc proposal so thesis experiments can cite a formal workflow.
 - Added `docs/howto/telemetry_ops.rst`, the telemetry operations runbook detailing weekly notebook runs, tuning/report automation, telemetry store maintenance, and GitHub Pages publication checks.
+- Enriched the API reference pages (`docs/api/fhops.{scenario,optimization,evaluation}.rst`) with narrative intros, usage snippets, and entry-point explanations so developers understand how to move from scenarios → MIP/heuristics → KPI evaluation without reading raw autodoc output.
 
 # 2025-12-06 — Conversation log dedup helper
 - Added `scripts/dedup_conversation_log.py`, a windowed rolling-hash utility that reports duplicate multi-line chunks (default 32-line windows, 80-line minimum) and can rewrite `notes/coding-agent-conversation-log.txt` with the later copies removed. The script supports dry-run summaries, optional snippet previews, and an `--apply` flag for in-place cleanup so the long-form conversation notes no longer accumulate repeated headers when entire transcripts get pasted multiple times.
