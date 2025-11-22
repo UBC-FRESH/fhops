@@ -1,0 +1,27 @@
+{
+  "profiles": [
+    {
+      "id": "fnrb3_d7h",
+      "title": "FNRB3 Cat D7H vs. D7G roadbuilding trial",
+      "source": "FNRB3.PDF",
+      "description": "1985 MacMillan Bloedel field evaluation comparing Cat D7H and D7G bulldozers for subgrade construction.",
+      "ground_pressure_multiplier": 0.8,
+      "productivity_gain_percent": 25.0,
+      "recommendations": [
+        "Prefer D7H (longer, wider undercarriage) when soils are soft or when the dozer doubles as a winch-assist anchor mover.",
+        "Expect ~20–30% higher stripping/ditching productivity vs. the D7G baseline alongside lower ground pressure."
+      ]
+    },
+    {
+      "id": "adv4n7_compaction",
+      "title": "ADV4N7 soil compaction thresholds",
+      "source": "ADV4N7.PDF",
+      "description": "FPInnovations ADV4N7 guidance on limiting soil disturbance during road and landing construction.",
+      "compaction_threshold_percent": 20.0,
+      "recommendations": [
+        "Maintain slash mats or corduroy when traffic would otherwise exceed ~20% compacted area on moist soils.",
+        "Delay construction or use low-ground-pressure equipment when soil moisture approaches field capacity."
+      ]
+    }
+  ]
+}

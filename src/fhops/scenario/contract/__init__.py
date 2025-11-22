@@ -9,6 +9,7 @@ from .models import (
     Machine,
     Problem,
     ProductionRate,
+    RoadConstruction,
     Scenario,
     SalvageProcessingMode,
 )
@@ -20,6 +21,7 @@ __all__ = [
     "Landing",
     "CalendarEntry",
     "ProductionRate",
+    "RoadConstruction",
     "Scenario",
     "Problem",
     "CrewAssignment",

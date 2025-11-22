@@ -53,6 +53,58 @@ def _build_dataset(tmp_path: Path) -> Path:
     return scenario_yaml
 
 
+def _build_dataset_with_road(tmp_path: Path, *, multiple: bool = False) -> Path:
+    scenario_dir = tmp_path / "scenario_road"
+    scenario_dir.mkdir(parents=True, exist_ok=True)
+    _write(
+        scenario_dir / "blocks.csv",
+        "id,landing_id,work_required\nB1,L1,5\n",
+    )
+    _write(
+        scenario_dir / "landings.csv",
+        "id,daily_capacity\nL1,1\n",
+    )
+    _write(
+        scenario_dir / "machines.csv",
+        "id,crew,daily_hours,operating_cost,role,repair_usage_hours\n"
+        "Y1,C1,24,0,grapple_skidder,5000\n",
+    )
+    _write(
+        scenario_dir / "calendar.csv",
+        "machine_id,day,available\nY1,1,1\n",
+    )
+    _write(
+        scenario_dir / "production_rates.csv",
+        "machine_id,block_id,rate\nY1,B1,2\n",
+    )
+    road_rows = [
+        "id,machine_slug,road_length_m,include_mobilisation,soil_profile_ids",
+        "RC1,caterpillar_235_hydraulic_backhoe,150,True,fnrb3_d7h|adv4n7_compaction",
+    ]
+    if multiple:
+        road_rows.append(
+            "RC2,american_750c_line_dipper_shovel,90,False,adv4n7_compaction"
+        )
+    _write(
+        scenario_dir / "road_construction.csv",
+        "\n".join(road_rows) + "\n",
+    )
+    scenario_yaml = scenario_dir / "scenario.yaml"
+    _write(
+        scenario_yaml,
+        "name: dataset-cost-road\n"
+        "num_days: 1\n"
+        "data:\n"
+        "  blocks: blocks.csv\n"
+        "  machines: machines.csv\n"
+        "  landings: landings.csv\n"
+        "  calendar: calendar.csv\n"
+        "  prod_rates: production_rates.csv\n"
+        "  road_construction: road_construction.csv\n",
+    )
+    return scenario_yaml
+
+
 def _build_loader_dataset(tmp_path: Path) -> Path:
     scenario_dir = tmp_path / "loader_scenario"
     _write(
@@ -206,6 +258,70 @@ def test_cli_estimate_road_cost() -> None:
     assert "Mobilisation" in result.stdout
 
 
+def test_estimate_cost_uses_scenario_road_defaults(tmp_path: Path) -> None:
+    scenario_yaml = _build_dataset_with_road(tmp_path)
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-cost",
+            "--dataset",
+            str(scenario_yaml),
+            "--machine",
+            "Y1",
+            "--productivity",
+            "25",
+            "--utilisation",
+            "0.85",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "TR-28 Road Cost Estimate" in result.stdout
+    assert "Soil Protection Profiles" in result.stdout
+
+
+def test_estimate_cost_requires_explicit_road_job_when_multiple(tmp_path: Path) -> None:
+    scenario_yaml = _build_dataset_with_road(tmp_path, multiple=True)
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-cost",
+            "--dataset",
+            str(scenario_yaml),
+            "--machine",
+            "Y1",
+            "--productivity",
+            "25",
+            "--utilisation",
+            "0.85",
+        ],
+    )
+    assert result.exit_code != 0
+    assert "road_construction" in result.stdout
+
+
+def test_estimate_cost_selects_named_road_job(tmp_path: Path) -> None:
+    scenario_yaml = _build_dataset_with_road(tmp_path, multiple=True)
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-cost",
+            "--dataset",
+            str(scenario_yaml),
+            "--machine",
+            "Y1",
+            "--productivity",
+            "25",
+            "--utilisation",
+            "0.85",
+            "--road-job-id",
+            "RC2",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "TR-28 Road Cost Estimate" in result.stdout
+    assert "90.0 m" in result.stdout
+
+
 def test_estimate_cost_with_road_addon() -> None:
     result = runner.invoke(
         dataset_app,
@@ -221,8 +337,10 @@ def test_estimate_cost_with_road_addon() -> None:
             "caterpillar_235_hydraulic_backhoe",
             "--road-length-m",
             "150",
+            "--road-soil-profile",
+            "adv4n7_compaction",
         ],
     )
     assert result.exit_code == 0, result.stdout
     assert "TR-28 Road Cost Estimate" in result.stdout
-    assert "Soil-protection reminder" in result.stdout
+    assert "Soil Protection Profiles" in result.stdout

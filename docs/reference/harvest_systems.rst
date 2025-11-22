@@ -971,7 +971,10 @@ Pick any machine slug from the `tr28-subgrade` table (for example ``caterpillar_
 apply the 1976 CAD unit cost to your requested length, inflate it to the current StatCan CPI target, and (optionally) add the
 published mobilisation cost (toggle with ``--exclude-mobilisation``). Output lists base-year + 2024 CAD totals alongside the
 implied number of stations (30.48 m each) and estimated shifts so you can sanity-check the assumptions before wiring the numbers
-into a planning sheet.
+into a planning sheet. When a scenario carries a ``road_construction`` table (id, TR-28 slug, length, mobilisation flag, soil profile
+IDs), ``fhops.dataset estimate-cost --dataset …`` will pull those defaults automatically (use ``--road-job-id`` if multiple entries
+exist) and print the structured FNRB3/ADV4N7 soil profiles defined in ``data/reference/soil_protection_profiles.json`` so planners
+see exactly which compaction or ground-pressure constraints were assumed.
 
 Handfalling Cost Reference
 --------------------------

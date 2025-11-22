@@ -202,7 +202,23 @@ costing consistent across scenarios:
   ``--road-length-m`` prints a CPI-adjusted “TR-28 Road Cost Estimate” table after the machine-cost
   summary. Use ``--road-exclude-mobilisation`` when movement is covered elsewhere—the CLI warns in
   either case and cites the soil-protection guidance from FNRB3 (Cat D7H vs. D7G trial) and ADV4N7
-  (compaction thresholds) so planners can keep the subgrade build aligned with the published limits.
+  (compaction thresholds). When the scenario already lists road jobs (see below), ``fhops.dataset estimate-cost
+  --dataset …`` auto-selects the only row or lets you pick via ``--road-job-id``; attach additional soil warnings by
+  referencing ``data/reference/soil_protection_profiles.json`` through ``--road-soil-profile`` (or via the CSV).
+
+- To keep road-building metadata alongside the rest of the scenario, add an optional ``road_construction`` table:
+
+  .. code-block:: text
+
+     id,machine_slug,road_length_m,include_mobilisation,soil_profile_ids
+     RC1,caterpillar_235_hydraulic_backhoe,150,True,fnrb3_d7h|adv4n7_compaction
+
+  Reference the file under ``data.road_construction`` in ``scenario.yaml``. Each row requires a unique ``id``, a TR-28 machine slug
+  (see ``fhops dataset tr28-subgrade``), the road/subgrade length in metres, and whether the published mobilisation charge should
+  be included by default. ``soil_profile_ids`` (pipe- or comma-separated) tie into ``data/reference/soil_protection_profiles.json``
+  so the CLI can print structured reminders (ground-pressure multipliers, compaction thresholds, recommended mitigation). When a
+  scenario contains exactly one row, ``estimate-cost --dataset ...`` pulls that entry automatically; specify ``--road-job-id RC1``
+  if multiple road jobs exist or pass ``--road-machine`` / ``--road-length-m`` to override everything from the command line.
 
 - Supplying ``--rental-rate`` bypasses the lookup for bespoke studies, but ``machines.csv`` rows
   should normally use the curated rates (or CLI recomputed totals) so costing/evaluation tools

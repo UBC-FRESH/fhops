@@ -42,6 +42,12 @@ from .fncy12_tmy45 import (
     Fncy12MonthlyProductivity,
     load_fncy12_dataset,
 )
+from .soil_protection import (
+    SoilProfile,
+    get_soil_profile,
+    get_soil_profiles,
+    load_soil_profiles,
+)
 
 __all__ = [
     "Appendix5Stand",
@@ -81,4 +87,8 @@ __all__ = [
     "Fncy12Dataset",
     "Fncy12MonthlyProductivity",
     "load_fncy12_dataset",
+    "SoilProfile",
+    "load_soil_profiles",
+    "get_soil_profile",
+    "get_soil_profiles",
 ]

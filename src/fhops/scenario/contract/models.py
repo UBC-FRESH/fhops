@@ -139,6 +139,37 @@ class Machine(BaseModel):
         return self
 
 
+class RoadConstruction(BaseModel):
+    id: str
+    machine_slug: str
+    road_length_m: float
+    include_mobilisation: bool = True
+    soil_profile_ids: list[str] | None = None
+    notes: str | None = None
+
+    @field_validator("id", "machine_slug")
+    @classmethod
+    def _not_blank(cls, value: str) -> str:
+        if not value or not value.strip():
+            raise ValueError("RoadConstruction id/machine_slug must be non-empty")
+        return value.strip()
+
+    @field_validator("road_length_m")
+    @classmethod
+    def _positive_length(cls, value: float) -> float:
+        if value <= 0:
+            raise ValueError("RoadConstruction.road_length_m must be > 0")
+        return value
+
+    @field_validator("soil_profile_ids")
+    @classmethod
+    def _normalise_profiles(cls, value: list[str] | None) -> list[str] | None:
+        if not value:
+            return None
+        cleaned = [profile.strip() for profile in value if profile and profile.strip()]
+        return cleaned or None
+
+
 class Landing(BaseModel):
     id: str
     daily_capacity: int = 2  # max machines concurrently working
@@ -232,6 +263,7 @@ class Scenario(BaseModel):
     crew_assignments: list[CrewAssignment] | None = None
     locked_assignments: list[ScheduleLock] | None = None
     objective_weights: ObjectiveWeights | None = None
+    road_construction: list[RoadConstruction] | None = None
 
     @field_validator("num_days")
     @classmethod
@@ -374,6 +406,14 @@ class Scenario(BaseModel):
                             raise ValueError(
                                 f"Locked assignment for machine {lock.machine_id} falls within blackout"
                             )
+        if self.road_construction:
+            seen_jobs: set[str] = set()
+            for entry in self.road_construction:
+                if entry.id in seen_jobs:
+                    raise ValueError(
+                        f"Duplicate road_construction id '{entry.id}'. IDs must be unique."
+                    )
+                seen_jobs.add(entry.id)
 
         return self
 
@@ -426,6 +466,7 @@ __all__ = [
     "Day",
     "Block",
     "Machine",
+    "RoadConstruction",
     "Landing",
     "CalendarEntry",
     "ShiftCalendarEntry",

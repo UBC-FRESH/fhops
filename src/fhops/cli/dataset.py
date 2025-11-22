@@ -186,12 +186,16 @@ from fhops.reference import (
     get_appendix5_profile,
     get_tr119_treatment,
     get_tr28_source_metadata,
+    get_soil_profile,
+    get_soil_profiles,
     adv2n21_cost_base_year,
     get_adv2n21_treatment,
     load_adv2n21_treatments,
     load_appendix5_stands,
     load_tr28_machines,
+    load_soil_profiles,
     TR28CostEstimate,
+    SoilProfile,
     estimate_tr28_road_cost,
     load_tn98_dataset,
     load_tn82_dataset,
@@ -202,7 +206,7 @@ from fhops.reference import (
     load_adv6n25_dataset,
 )
 from fhops.productivity.cable_logging import HI_SKID_DEFAULTS
-from fhops.scenario.contract import Machine, SalvageProcessingMode, Scenario
+from fhops.scenario.contract import Machine, RoadConstruction, SalvageProcessingMode, Scenario
 from fhops.scenario.io import load_scenario
 from fhops.scheduling.systems import (
     HarvestSystem,
@@ -6864,16 +6868,26 @@ def estimate_cost_cmd(
         "--road-machine",
         help="Optional TR-28 road-building machine slug/name to append subgrade costs (see `fhops dataset tr28-subgrade`).",
     ),
+    road_job_id: str | None = typer.Option(
+        None,
+        "--road-job-id",
+        help="Scenario road_construction entry to use when --dataset is supplied.",
+    ),
     road_length_m: float | None = typer.Option(
         None,
         "--road-length-m",
         min=1.0,
         help="Road/subgrade length (m) to pair with --road-machine when estimating additional costs.",
     ),
-    road_include_mobilisation: bool = typer.Option(
-        True,
+    road_include_mobilisation: bool | None = typer.Option(
+        None,
         "--road-include-mobilisation/--road-exclude-mobilisation",
         help="Include the TR-28 movement cost in the add-on road estimate.",
+    ),
+    road_soil_profile: list[str] | None = typer.Option(
+        None,
+        "--road-soil-profile",
+        help="Soil profile ID (e.g., fnrb3_d7h). Repeat flag to include multiple profiles.",
     ),
 ):
     """Estimate $/m³ given rental rate, utilisation, and (optionally) Lahrsen stand inputs."""
@@ -6890,7 +6904,10 @@ def estimate_cost_cmd(
 
     dataset_name: str | None = None
     dataset_path: Path | None = None
+    scenario: Scenario | None = None
     scenario_machine: Machine | None = None
+    scenario_road_entries: list[RoadConstruction] = []
+    selected_road_entry: RoadConstruction | None = None
     if dataset is not None or machine_id is not None:
         if dataset is None or machine_id is None:
             raise typer.BadParameter("--dataset and --machine must be provided together.")
@@ -6911,12 +6928,49 @@ def estimate_cost_cmd(
             usage_hours = scenario_machine.repair_usage_hours
         if rental_rate is None and machine_role is None and scenario_machine.operating_cost > 0:
             rental_rate = float(scenario_machine.operating_cost)
+        scenario_road_entries = list(scenario.road_construction or [])
+
+    if road_job_id and scenario is None:
+        raise typer.BadParameter("--road-job-id requires --dataset/--machine.")
+    if road_job_id:
+        selected_road_entry = next(
+            (entry for entry in scenario_road_entries if entry.id == road_job_id),
+            None,
+        )
+        if selected_road_entry is None:
+            options = ", ".join(entry.id for entry in scenario_road_entries) or "none"
+            raise typer.BadParameter(
+                f"Unknown road_construction id '{road_job_id}'. Available: {options}"
+            )
+    elif (
+        not road_machine
+        and road_length_m is None
+        and scenario_road_entries
+        and scenario is not None
+    ):
+        if len(scenario_road_entries) == 1:
+            selected_road_entry = scenario_road_entries[0]
+        else:
+            options = ", ".join(entry.id for entry in scenario_road_entries)
+            raise typer.BadParameter(
+                f"Scenario '{scenario.name}' has multiple road_construction entries "
+                f"({options}). Select one via --road-job-id or provide --road-machine/--road-length-m."
+            )
+
+    if selected_road_entry:
+        if not road_machine:
+            road_machine = selected_road_entry.machine_slug
+        if road_length_m is None:
+            road_length_m = selected_road_entry.road_length_m
+        if road_include_mobilisation is None:
+            road_include_mobilisation = selected_road_entry.include_mobilisation
 
     machine_entry: MachineRate | None = None
     rental_breakdown: dict[str, float] | None = None
     repair_reference_hours: int | None = None
     repair_usage_bucket: tuple[int, float] | None = None
     road_cost_estimate: TR28CostEstimate | None = None
+    road_soil_profiles: list[SoilProfile] = []
 
     if machine_role is not None:
         machine_entry = _resolve_machine_rate(machine_role)
@@ -6942,21 +6996,38 @@ def estimate_cost_cmd(
         )
 
     if road_machine is not None or road_length_m is not None:
-        if not road_machine or not road_length_m:
+        if not road_machine or road_length_m is None:
             raise typer.BadParameter("--road-machine and --road-length-m must be provided together.")
         resolved_machine = _resolve_tr28_machine(road_machine)
         if resolved_machine is None:
             raise typer.BadParameter(
                 f"Unknown road machine '{road_machine}'. Choose from: {', '.join(_tr28_machine_slugs())}"
             )
+        include_flag = (
+            road_include_mobilisation
+            if road_include_mobilisation is not None
+            else selected_road_entry.include_mobilisation
+            if selected_road_entry
+            else True
+        )
         try:
             road_cost_estimate = estimate_tr28_road_cost(
                 resolved_machine,
                 road_length_m=road_length_m,
-                include_mobilisation=road_include_mobilisation,
+                include_mobilisation=include_flag,
             )
         except ValueError as exc:  # pragma: no cover - Typer handles messaging
             raise typer.BadParameter(str(exc)) from exc
+        profile_ids = list(road_soil_profile or [])
+        if not profile_ids and selected_road_entry and selected_road_entry.soil_profile_ids:
+            profile_ids = list(selected_road_entry.soil_profile_ids)
+        if profile_ids:
+            load_soil_profiles()  # populate cache for clearer error below
+        for profile_id in profile_ids:
+            try:
+                road_soil_profiles.append(get_soil_profile(profile_id))
+            except KeyError as exc:
+                raise typer.BadParameter(str(exc)) from exc
 
     prod_info: dict[str, object]
     if productivity is None:
@@ -7087,12 +7158,18 @@ def estimate_cost_cmd(
             )
     if road_cost_estimate:
         console.print()
-        _render_tr28_road_cost(road_cost_estimate)
-        console.print(
-            "[yellow]Soil-protection reminder:[/yellow] FNRB3’s Cat D7H vs. D7G trial showed that wider undercarriages cut ground pressure by 20–30% "
-            "while boosting stripping/ditching productivity—match dozer choice to bearing capacity. ADV4N7’s compaction guidelines still apply: "
-            "maintain slash mats or restrict traffic when moist soils approach the 15–20% disturbance threshold."
-        )
+        _render_tr28_road_cost(road_cost_estimate, soil_profiles=road_soil_profiles)
+        if road_soil_profiles:
+            sources = ", ".join(sorted({profile.source for profile in road_soil_profiles}))
+            console.print(
+                f"[dim]Soil guidance sourced from {sources}. Profiles recorded for future automation.[/dim]"
+            )
+        else:
+            console.print(
+                "[yellow]Soil-protection reminder:[/yellow] FNRB3’s Cat D7H vs. D7G trial showed that wider undercarriages cut ground pressure "
+                "by 20–30% while boosting stripping/ditching productivity; ADV4N7 cautions that more than ~20% compacted area on moist soils "
+                "requires mitigation (slash mats, limited traffic)."
+            )
 
 
 @dataset_app.command("appendix5-stands")
@@ -7482,7 +7559,9 @@ def estimate_road_cost(
     _render_tr28_road_cost(estimate)
 
 
-def _render_tr28_road_cost(estimate: TR28CostEstimate) -> None:
+def _render_tr28_road_cost(
+    estimate: TR28CostEstimate, soil_profiles: Sequence[SoilProfile] | None = None
+) -> None:
     table = Table(title="TR-28 Road Cost Estimate", box=box.MINIMAL_DOUBLE_HEAD)
     table.add_column("Metric", style="cyan")
     table.add_column("Value", justify="right")
@@ -7540,6 +7619,31 @@ def _render_tr28_road_cost(estimate: TR28CostEstimate) -> None:
         f"Values inflated to {estimate.target_year} CAD using StatCan CPI. "
         f"{mobilisation_note} Stations assume 30.48 m (100 ft).[/dim]"
     )
+    if soil_profiles:
+        _render_soil_profiles_table(soil_profiles)
+
+
+def _render_soil_profiles_table(profiles: Sequence[SoilProfile]) -> None:
+    table = Table(title="Soil Protection Profiles", box=box.MINIMAL_DOUBLE_HEAD)
+    table.add_column("Profile", style="cyan")
+    table.add_column("Source")
+    table.add_column("Guidance")
+    for profile in profiles:
+        metrics: list[str] = []
+        if profile.ground_pressure_multiplier is not None:
+            metrics.append(f"Ground pressure ×{profile.ground_pressure_multiplier:.2f}")
+        if profile.productivity_gain_percent is not None:
+            metrics.append(f"Productivity +{profile.productivity_gain_percent:.0f}% vs. baseline")
+        if profile.compaction_threshold_percent is not None:
+            metrics.append(
+                f"Compaction threshold ≤{profile.compaction_threshold_percent:.0f}% of area"
+            )
+        guidance_parts = metrics + list(profile.recommendations)
+        guidance = guidance_parts[0] if guidance_parts else "—"
+        if len(guidance_parts) > 1:
+            guidance = "; ".join(guidance_parts)
+        table.add_row(profile.title, profile.source, guidance)
+    console.print(table)
 
 
 @dataset_app.command("estimate-cable-skidding")

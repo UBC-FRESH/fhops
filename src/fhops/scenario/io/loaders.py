@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import cast
 
@@ -19,6 +20,7 @@ from fhops.scenario.contract.models import (
     Machine,
     ObjectiveWeights,
     ProductionRate,
+    RoadConstruction,
     Scenario,
     ScheduleLock,
     ShiftCalendarEntry,
@@ -95,6 +97,26 @@ def _normalise_optional_block_fields(rows: list[dict[str, object]]) -> None:
                 row[field] = normalised
 
 
+def _normalise_road_rows(rows: list[dict[str, object]]) -> None:
+    for row in rows:
+        slug = _as_optional_string(row.get("machine_slug"))
+        if slug is None:
+            row.pop("machine_slug", None)
+        else:
+            row["machine_slug"] = slug
+        profiles_value = row.get("soil_profile_ids")
+        profiles_normalised = _as_optional_string(profiles_value)
+        if profiles_normalised is None:
+            row.pop("soil_profile_ids", None)
+            continue
+        parts = re.split(r"[|,]", profiles_normalised)
+        cleaned = [part.strip() for part in parts if part.strip()]
+        if cleaned:
+            row["soil_profile_ids"] = cleaned
+        else:
+            row.pop("soil_profile_ids", None)
+
+
 def load_scenario(yaml_path: str | Path) -> Scenario:
     base_path = Path(yaml_path).resolve()
     with base_path.open("r", encoding="utf-8") as handle:
@@ -123,6 +145,15 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
     rates = TypeAdapter(list[ProductionRate]).validate_python(
         read_csv(require("prod_rates")).to_dict("records")
     )
+    road_construction = None
+    if "road_construction" in data_section:
+        road_rows = read_csv(require("road_construction")).to_dict("records")
+        _normalise_road_rows(road_rows)
+        road_construction = TypeAdapter(list[RoadConstruction]).validate_python(road_rows)
+    elif "road_construction" in meta:
+        road_construction = TypeAdapter(list[RoadConstruction]).validate_python(
+            meta["road_construction"]
+        )
     shift_calendar = None
     if "shift_calendar" in data_section:
         shift_calendar = TypeAdapter(list[ShiftCalendarEntry]).validate_python(
@@ -144,6 +175,8 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
         shift_calendar=shift_calendar,
         production_rates=rates,
     )
+    if road_construction is not None:
+        scenario = scenario.model_copy(update={"road_construction": road_construction})
 
     mobilisation = None
     if "mobilisation" in meta:
