@@ -57,3 +57,40 @@ Tooling Notes
   2. Run ``fhops geo distances`` to generate the matrix.
   3. Drop the CSV alongside the scenario or set ``mobilisation.distance_csv`` explicitly.
   4. Calibrate machine-specific costs/thresholds using the benchmarking harness.
+
+Troubleshooting & Diagnostics
+-----------------------------
+
+**CRS mismatches**
+  If ``fhops geo distances`` prints distorted numbers (thousands of kilometres for nearby blocks),
+  ensure the GeoJSON uses a metre-based projected CRS. Convert ahead of time with GDAL:
+
+  .. code-block:: bash
+
+     ogr2ogr -t_srs EPSG:3005 minitoy_bc_albers.geojson minitoy_wgs84.geojson
+
+  The CLI accepts ``--crs EPSG:XXXX`` to override the auto-detected CRS when a file lacks metadata.
+  FHOPS warns when it encounters angular units; rerun the command after reprojecting.
+
+**Missing or zero distances**
+  When the matrix generator reports “missing `block_id`” check that every feature includes either an
+  ``id`` or ``properties.block_id`` matching ``blocks.csv``. Zero-distance entries usually mean the
+  polygons share identical centroids; add slight offsets or verify that the polygons are distinct.
+  The CLI produces a summary of duplicates (block pairs that collapse to 0 m) so you can confirm the
+  behaviour is expected (e.g., split landings) or adjust geometry.
+
+**Med42/Large84 walkthrough**
+  The bundled medium and large scenarios already contain GeoJSON and distance matrices:
+
+  .. code-block:: bash
+
+     fhops geo distances examples/med42/med42_blocks.geojson --out tmp/med42_distances.csv
+     fhops solve-mip examples/med42/scenario.yaml --out tmp/med42_mip.csv
+     fhops evaluate examples/med42/scenario.yaml tmp/med42_mip.csv | grep mobilisation_cost
+
+  Expect mobilisation spend to rise sharply when block pairs exceed the 1 km walk threshold; the KPI
+  output lists per-machine costs (``kpi_mobilisation_cost_by_machine``) so you can pinpoint which
+  harvesters are moving most. Repeat the same commands for ``examples/large84`` to validate the
+  larger dataset. If mobilisation spend stays at ``0`` even when distances are loaded, double-check
+  that each machine’s ``MobilisationConfig.machine_params`` specifies non-zero walk/move penalties
+  and that the CSV path matches the scenario slug (or is referenced explicitly).
