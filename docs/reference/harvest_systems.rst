@@ -797,14 +797,14 @@ into the regressions. Available models:
   modelling Skylead corridors. FNCY12/TN-258 Thunderbird spans should reference
   ``grapple_yarder_tmy45``—its operating column now bundles the LeDoux (1984) yarder cost *plus* proxy support-machine
   surcharges (0.25 SMH Cat D8 backspar + 0.14 SMH Timberjack 450 trail support per productive yarder hour, calibrated with
-  TN-157 road-change ratios and TR-45 machine-rate tables) so ``--show-costs`` reflects the extra gear those corridors
+  FNCY12 Table 3 crew deltas and TR-45 machine-rate tables) so ``--show-costs`` reflects the extra gear those corridors
   require. Whenever lateral pulls exceed ~30 m or skyline tension approaches the 140 kN ceiling documented in TN-258,
   ``estimate-skyline-productivity`` now prints a TN-258 warning and logs the skyline/guyline ratios (data lives in
   ``data/reference/fpinnovations/fncy12_tmy45_mini_mak.json``) so analysts can flag hang-up risks alongside the costing
   output.
 * ``fncy12-tmy45`` – Thunderbird TMY45 + Mini-Mak II intermediate-support skyline (FNCY-12 / TN-258). The helper reports
   the observed shift output (default = steady-state months) divided by the 10 h shift to give m³/PMH and records the Cat D8 /
-  Timberjack support ratios baked into ``grapple_yarder_tmy45``. Use ``--fncy12-variant`` to swap between ``overall``,
+  Timberjack support ratios derived from FNCY12 Tables 2–3 (2.5 extra workers per shift × 23 % support share × TN-157 backspar split ⇒ 0.3335/0.2415 SMH per yarder SMH). Use ``--fncy12-variant`` to swap between ``overall``,
   ``steady_state``, or ``steady_state_no_fire`` averages, and keep ``--lateral-distance-m`` at or below 30 m if you want to
   stay inside the measured tension envelope—lateral pulls beyond that trigger the TN-258 warning automatically and mark the
   telemetry row so downstream costing knows hang-ups are likely.
