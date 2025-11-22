@@ -1076,7 +1076,10 @@ reduce loads and limit passes to ≤3) and logs the source in telemetry. Select 
 need to override the default, or remove the soil profile entirely if the block is on dry/frozen ground. Road jobs that reference
 ``caterpillar_d8h_bulldozer`` now pull the ADV15N3 tractor-efficiency study: whenever compaction risk is ``some`` or ``high`` the CLI
 applies the Cat D7R low-speed penalty (≈1.16× fuel / SMH) and prints a “[Support penalty applied]” banner citing ADV4N7 + ADV15N3.
-Telemetry captures the compaction/tractor multipliers so downstream costing can see exactly why a scenario’s road add-on changed.
+Use ``--road-tractor-drive`` if you want to model the hydrostatic (John Deere 950J) or diesel-electric (Cat D7E) drives from ADV15N3;
+the helper applies the published fuel-intensity delta even when soils are firm and still honours the low-speed penalty whenever the
+ADV4N7 risk is “some” or “high”. Telemetry captures the compaction/tractor multipliers so downstream costing can see exactly why a
+scenario’s road add-on changed.
 
 Handfalling Cost Reference
 --------------------------

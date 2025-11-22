@@ -356,6 +356,7 @@ def test_estimate_cost_logs_telemetry_with_road_defaults(tmp_path: Path) -> None
     penalties = outputs.get("road_penalties")
     assert penalties is not None
     assert penalties["compaction_risk"] == "some"
+    assert penalties["tractor_label"] is None
 
 
 def test_estimate_cost_applies_d8_tractor_penalty(tmp_path: Path) -> None:
@@ -377,7 +378,52 @@ def test_estimate_cost_applies_d8_tractor_penalty(tmp_path: Path) -> None:
         ],
     )
     assert result.exit_code == 0, result.stdout
+    assert "Caterpillar D7R" in result.stdout
     assert "low-speed penalty" in result.stdout
+
+
+def test_estimate_cost_allows_manual_tractor_drive(tmp_path: Path) -> None:
+    scenario_yaml = _build_dataset_with_road(tmp_path, slug="caterpillar_d8h_bulldozer")
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-cost",
+            "--dataset",
+            str(scenario_yaml),
+            "--machine",
+            "Y1",
+            "--productivity",
+            "25",
+            "--utilisation",
+            "0.85",
+            "--road-tractor-drive",
+            "jd_950j_hydrostatic",
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+    assert "John Deere 950J" in result.stdout
+
+
+def test_estimate_cost_rejects_unknown_tractor_drive(tmp_path: Path) -> None:
+    scenario_yaml = _build_dataset_with_road(tmp_path)
+    result = runner.invoke(
+        dataset_app,
+        [
+            "estimate-cost",
+            "--dataset",
+            str(scenario_yaml),
+            "--machine",
+            "Y1",
+            "--productivity",
+            "25",
+            "--utilisation",
+            "0.85",
+            "--road-tractor-drive",
+            "invalid_drive",
+        ],
+    )
+    assert result.exit_code != 0
+    assert "road-tractor-drive" in result.stdout
 
 
 def test_estimate_cost_rejects_compaction_risk_without_profile() -> None:

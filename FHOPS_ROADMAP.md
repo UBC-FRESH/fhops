@@ -139,7 +139,7 @@ before proposing new work.
    - [x] Record TN285 / ADV5N9 / ADV2N21 scenario guidance (ghost trails, removal levels, trail reuse) in the planning docs so scenario authors know when productivity stays flat vs. when to adjust costs.
    - [x] Integrate the new helpers into dataset inspection CLI defaults and synthetic generator presets; refresh fixtures/tests that assume legacy productivity values (landing processor/loader coverage now fully wired, docs/tests refreshed).
    - [x] Keep `FHOPS_ROADMAP.md` and `notes/dataset_inspection_plan.md` in sync as additional FPInnovations regressions are ported.
-   - **Next focus:** with the TN258 monthly support split + Hi-Skid costing now baked into the datasets/machine rates, turn to the remaining skyline chores—ADV15N3/ADV4N7 penalty wiring in the cost helper and the November 2025 FPInnovations drop scan (TN122+/ADV salvage set) so the outstanding “new PDF” backlog can close without waiting for fresh references.
+   - **Next focus:** with the TN258 monthly support split, Hi-Skid costing, and ADV4N7/ADV15N3 penalties now wired directly into the cost helper, pivot to the November 2025 FPInnovations drop scan (TN122+/ADV salvage set) so the outstanding “new PDF” backlog can close without waiting for fresh references.
 
 ## Backlog & Ideas
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.

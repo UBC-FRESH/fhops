@@ -272,6 +272,16 @@ _DEFAULT_ADV4N7_RISK = adv4n7_default_risk_id()
 _TRACTOR_DRIVE_BY_ROAD_MACHINE = {
     "caterpillar_d8h_bulldozer": adv15n3_baseline_drive_id(),
 }
+_ADV15N3_DRIVE_CHOICES = adv15n3_drive_ids()
+if _ADV15N3_DRIVE_CHOICES:
+    _ADV15N3_DRIVE_HELP = (
+        "ADV15N3 tractor drive ID "
+        f"(options: {', '.join(_ADV15N3_DRIVE_CHOICES)}). Defaults to the road machine's mapping."
+    )
+else:  # pragma: no cover - defensive when dataset missing
+    _ADV15N3_DRIVE_HELP = (
+        "ADV15N3 tractor drive ID to override the default road-machine mapping."
+    )
 _AUBUCHON_SLOPE_M_RANGE = (304.8, 914.4)
 _AUBUCHON_LATERAL_M_RANGE = (15.24, 45.72)
 _AUBUCHON_LOGS_RANGE = (3.5, 6.0)
@@ -7168,6 +7178,11 @@ def estimate_cost_cmd(
         "--road-compaction-risk",
         help="Override ADV4N7 compaction risk (low, some, high) when that soil profile is active.",
     ),
+    road_tractor_drive: str | None = typer.Option(
+        None,
+        "--road-tractor-drive",
+        help=_ADV15N3_DRIVE_HELP,
+    ),
     telemetry_log: Path | None = typer.Option(
         None,
         "--telemetry-log",
@@ -7213,6 +7228,17 @@ def estimate_cost_cmd(
         if rental_rate is None and machine_role is None and scenario_machine.operating_cost > 0:
             rental_rate = float(scenario_machine.operating_cost)
         scenario_road_entries = list(scenario.road_construction or [])
+
+    tractor_drive_override: str | None = None
+    if road_tractor_drive is not None:
+        candidate = road_tractor_drive.strip()
+        if not candidate:
+            raise typer.BadParameter("--road-tractor-drive cannot be blank.")
+        if candidate not in _ADV15N3_DRIVE_CHOICES:
+            raise typer.BadParameter(
+                f"--road-tractor-drive must be one of {', '.join(_ADV15N3_DRIVE_CHOICES)}."
+            )
+        tractor_drive_override = candidate
 
     if road_job_id and scenario is None:
         raise typer.BadParameter("--road-job-id requires --dataset/--machine.")
@@ -7336,12 +7362,20 @@ def estimate_cost_cmd(
             compaction_risk = get_adv4n7_risk(normalized_risk)
             applied_compaction_risk_id = compaction_risk.id
         compaction_multiplier = compaction_risk.cost_multiplier if compaction_risk else 1.0
-        tractor_multiplier = 1.0
-        if compaction_risk and compaction_risk.id != "low":
-            drive_id = _TRACTOR_DRIVE_BY_ROAD_MACHINE.get(resolved_machine.slug)
-            if drive_id:
+        base_eff_multiplier = 1.0
+        tractor_low_speed_multiplier = 1.0
+        drive_id = tractor_drive_override or _TRACTOR_DRIVE_BY_ROAD_MACHINE.get(
+            resolved_machine.slug
+        )
+        if drive_id:
+            try:
                 tractor_profile = get_adv15n3_drive(drive_id)
-                tractor_multiplier = tractor_profile.low_vs_high_penalty
+            except KeyError as exc:  # pragma: no cover - validated earlier
+                raise typer.BadParameter(str(exc)) from exc
+            base_eff_multiplier += tractor_profile.fuel_savings_vs_baseline_percent / 100.0
+            if compaction_risk and compaction_risk.id != "low":
+                tractor_low_speed_multiplier = tractor_profile.low_vs_high_penalty
+        tractor_multiplier = base_eff_multiplier * tractor_low_speed_multiplier
         penalty_multiplier = compaction_multiplier * tractor_multiplier
         if road_cost_estimate is not None and penalty_multiplier != 1.0:
             adjusted_total_base = road_cost_estimate.total_cost_base_cad * penalty_multiplier
@@ -7370,6 +7404,9 @@ def estimate_cost_cmd(
                 "compaction_risk": compaction_risk.id if compaction_risk else None,
                 "compaction_multiplier": compaction_multiplier,
                 "tractor_drive": tractor_profile.id if tractor_profile else None,
+                "tractor_label": tractor_profile.label if tractor_profile else None,
+                "tractor_base_multiplier": base_eff_multiplier,
+                "tractor_low_speed_multiplier": tractor_low_speed_multiplier,
                 "tractor_multiplier": tractor_multiplier,
             }
 
@@ -7463,6 +7500,7 @@ def estimate_cost_cmd(
         "road_include_mobilisation": resolved_road_include,
         "road_soil_profile_ids": [profile.id for profile in road_soil_profiles] or None,
         "road_compaction_risk": applied_compaction_risk_id,
+        "road_tractor_drive_override": tractor_drive_override,
     }
     telemetry_outputs: dict[str, object | None] = {
         "cost_per_m3": cost.cost_per_m3,
@@ -7571,15 +7609,21 @@ def estimate_cost_cmd(
             )
         if road_penalty_summary:
             penalty_bits: list[str] = []
-            if compaction_risk:
-                penalty_bits.append(
-                    f"{compaction_risk.label} ×{road_penalty_summary['compaction_multiplier']:.2f}"
-                )
-            if tractor_profile and road_penalty_summary.get("tractor_multiplier", 1.0) != 1.0:
-                penalty_bits.append(
-                    f"{tractor_profile.label} low-speed penalty ×{road_penalty_summary['tractor_multiplier']:.3f}"
-                )
-            penalty_text = " + ".join(penalty_bits) if penalty_bits else f"×{road_penalty_summary['multiplier']:.2f}"
+            comp_mult = road_penalty_summary.get("compaction_multiplier", 1.0)
+            if compaction_risk and comp_mult != 1.0:
+                penalty_bits.append(f"{compaction_risk.label} ×{comp_mult:.2f}")
+            tractor_label = road_penalty_summary.get("tractor_label")
+            base_mult = road_penalty_summary.get("tractor_base_multiplier", 1.0)
+            low_speed_mult = road_penalty_summary.get("tractor_low_speed_multiplier", 1.0)
+            if tractor_label and base_mult != 1.0:
+                penalty_bits.append(f"{tractor_label} efficiency ×{base_mult:.2f}")
+            if tractor_label and low_speed_mult != 1.0:
+                penalty_bits.append(f"{tractor_label} low-speed penalty ×{low_speed_mult:.2f}")
+            penalty_text = (
+                " + ".join(penalty_bits)
+                if penalty_bits
+                else f"×{road_penalty_summary['multiplier']:.2f}"
+            )
             console.print(
                 f"[yellow]Support penalty applied:[/yellow] {penalty_text} (sources: ADV4N7 & ADV15N3)."
             )
