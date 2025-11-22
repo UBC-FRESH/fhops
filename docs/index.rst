@@ -25,6 +25,7 @@ ensembles.
    howto/thesis_eval
    howto/telemetry_tuning
    howto/telemetry_ops
+   howto/release_playbook
    howto/synthetic_datasets
    howto/system_sequencing
    howto/ils

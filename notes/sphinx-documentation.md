@@ -74,4 +74,4 @@ FHOPS’ Sphinx tree lives under `docs/` and is published to Read the Docs via `
 [x] **Thesis-Oriented Evaluation Tutorial** – `docs/howto/thesis_eval.rst` now walks through Chapter 2 case-study prep (validation, solver runs, KPIs, trade-off reporting) aligned with the Jaffray MASc proposal (2025-11-22).
 [x] **Telemetry Ops Runbook** – `docs/howto/telemetry_ops.rst` now covers weekly notebook runs, telemetry maintenance, and Pages publication checklists (2025-11-22).
 [x] **API Narrative Guides** – `docs/api/fhops.{scenario,optimization,evaluation}.rst` now include narrative intros + snippets covering Scenario→Problem usage, MIP builder entry points, and KPI evaluation (2025-11-22).
-[ ] **Release & Contribution Playbook** – Add a Sphinx page summarizing release steps (docs build, version bumps, changelog policy, PR templates) before Phase 4 public release.
+[x] **Release & Contribution Playbook** – `docs/howto/release_playbook.rst` now covers release prep, versioning, command suite, and PR expectations (2025-11-22).
