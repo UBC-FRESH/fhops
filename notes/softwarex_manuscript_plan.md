@@ -17,9 +17,12 @@
   - [x] Log insights/benchmarks from exemplar papers to inform quality gates.
   - [ ] Mirror the Jaffray MASc literature review (see `tmp/jaffray-rosalia-masc-proposal/`) into our BibTeX + outline so real forestry/OR papers anchor each section.
   - [ ] Coordinate with Rosalia Jaffray’s thesis deliverables so Chapter 2 (multi-case FHOPS deployment) remains novel; FHOPS SoftwareX paper should highlight the tooling while deferring detailed BC case-study analysis to her thesis timeline.
+- [x] Lock single-author ownership and correspondence details for submission materials.
+  - [x] Gregory Paradis is sole author and corresponding contact for FHOPS SoftwareX manuscript.
+  - [x] Use Faculty of Forestry, University of British Columbia affiliation and `gregory.paradis@ubc.ca` for all metadata (mirrors WS3 EI submission).
 
 ## Phase 0 – Planning (Now)
-- [ ] Capture requirements: Download the latest SoftwareX author instructions (PDF + any LaTeX/Word templates) into `docs/softwarex/reference/` and version them.
+- [x] Capture requirements: Download the latest SoftwareX author instructions (PDF + any LaTeX/Word templates) into `docs/softwarex/reference/` and version them.
   - [x] Confirm the most recent instruction set from Elsevier/SoftwareX site.
   - [x] Download PDF instructions plus LaTeX/Word templates.
   - [x] Store raw artifacts under `docs/softwarex/reference/` with README describing provenance.
@@ -28,32 +31,47 @@
   - [x] Curate candidate exemplar papers relevant to optimization frameworks.
   - [x] Download PDFs and save citation metadata (BibTeX/DOI) alongside each example.
   - [x] Write short benchmarking notes (strengths, structure cues, submission requirements) per exemplar.
-- [ ] Align scope: Define manuscript success criteria, key story beats, figures/tables to reuse from docs, and how content will feed into Sphinx Overview.
-  - [ ] Draft success criteria (acceptance goals, technical coverage, evaluation depth).
-  - [ ] List candidate figures/tables pulled from existing docs or experiments.
-  - [ ] Map each manuscript section to overlapping Sphinx content to avoid duplication.
-- [ ] Decide workflow tooling: Choose manuscript format (LaTeX vs. Markdown-to-PDF pipeline), bibliography management, and automation hooks (e.g., `make manuscript`).
+- [x] Align scope: Define manuscript success criteria, key story beats, figures/tables to reuse from docs, and how content will feed into Sphinx Overview.
+  - [x] Draft success criteria (acceptance goals, technical coverage, evaluation depth).
+  - [x] List candidate figures/tables pulled from existing docs or experiments.
+  - [x] Map each manuscript section to overlapping Sphinx content to avoid duplication.
+- [x] Decide workflow tooling: Choose manuscript format (LaTeX vs. Markdown-to-PDF pipeline), bibliography management, and automation hooks (e.g., `make manuscript`).
   - [x] Evaluate tooling options (LaTeX template vs. MyST/pandoc flow) against SoftwareX requirements (chose LaTeX/latexmk).
   - [x] Select bibliography tooling (BibTeX `references.bib`, seeded with exemplar + Jaffray references).
   - [x] Define automation commands/scripts for building manuscript artifacts (`Makefile` + `latexmk`).
-- [ ] Establish timeline & ownership: Turn phases into GitHub issues/milestones, map DRI(s), and set review checkpoints that align with FHOPS releases.
-  - [ ] Convert each phase into one or more GitHub issues with owners/due dates.
-  - [ ] Align manuscript milestones with FHOPS release cadence.
-  - [ ] Schedule recurring review checkpoints (internal review, doc sync, artifact verification).
+- [x] Establish timeline & ownership: Turn phases into GitHub issues/milestones, map DRI(s), and set review checkpoints that align with FHOPS releases.
+  - [x] Convert each phase into one or more GitHub issues with owners/due dates.
+    - [x] `GH-SWX-Phase0` – Planning wrap-up (DRI: Lead author, due 2025-11-23, status: complete in this commit).
+    - [x] `GH-SWX-Phase1` – Manuscript architecture & repo scaffolding (DRI: Lead author, support: Codex automation, due 2025-12-07, tied to FHOPS `v1.0.0-beta` prep).
+    - [x] `GH-SWX-Phase2` – Content drafting sprint covering Sections 1–3 (DRI: Lead author, support: Rosalia for literature cross-checks, due 2025-12-21).
+    - [x] `GH-SWX-Phase3` – Validation + artifact packaging (DRI: Lead author with Codex automation assist, reviewer: Lead author, due 2026-01-04, just ahead of FHOPS `v1.0.0-rc1`).
+    - [x] `GH-SWX-Phase4` – Internal review & iteration (DRI: Lead author, reviewers: Rosalia + FHOPS core, due 2026-01-18).
+    - [x] `GH-SWX-Phase5` – Submission prep & portal rehearsal (DRI: Lead author, due 2026-02-01, aligns with `v1.0.0` GA).
+    - [x] `GH-SWX-Phase6` – Post-submission tracking (DRI: Lead author until decision, then shared).
+  - [x] Align manuscript milestones with FHOPS release cadence.
+    - [x] Scaffolding (Phase1) completes before `v1.0.0-beta` branch cut so docs + manuscript share assets.
+    - [x] Drafting (Phase2) and validation (Phase3) line up with `v1.0.0-rc1`, ensuring benchmark scripts match release-candidate code.
+    - [x] Submission readiness (Phase4–5) lands just after `v1.0.0` GA so we can cite a stable tag in the manuscript/Zenodo deposit.
+  - [x] Schedule recurring review checkpoints (internal review, doc sync, artifact verification).
+    - [x] Weekly Monday FHOPS manuscript sync (30 min) for status + blockers through Phase5.
+    - [x] Bi-weekly Thursday artifact review (automation + benchmark verification) during Phases2–3.
+    - [x] Pre-submission editorial review 3 days before portal upload (Phase5) with Rosalia + FHOPS docs lead.
+
+> Phase 0 exit status (2025-11-23): Requirements captured, exemplar set curated, tooling decisions locked, and the timeline/ownership grid is now committed—ready to advance to Phase 1 tasks.
 
 ## Phase 1 – Manuscript Architecture & Repo Scaffolding
 - [ ] Stand up `docs/softwarex/manuscript/` with template files (main manuscript, supplementary material, metadata).
   - [x] Copy the selected SoftwareX template into the repo structure.
-  - [ ] Prepare placeholders for supplementary files and metadata tables.
+  - [x] Prepare placeholders for supplementary files and metadata tables.
   - [x] Add README describing how to compile and where outputs land.
 - [ ] Create a section-by-section outline that mirrors SoftwareX structure (Abstract, Software Metadata, etc.) and cross-reference planned FHOPS documentation tie-ins.
-  - [ ] List required sections per SoftwareX guidelines.
-  - [ ] For each section, note primary FHOPS content sources (code, docs, experiments).
-  - [ ] Highlight sections that need coordination with Sphinx to reuse text.
+  - [x] List required sections per SoftwareX guidelines.
+  - [x] For each section, note primary FHOPS content sources (code, docs, experiments).
+  - [x] Highlight sections that need coordination with Sphinx to reuse text.
 - [ ] Draft a mapping document showing what portions can be shared with Sphinx (e.g., Overview narrative, feature tables).
-  - [ ] Identify overlapping narrative components.
-  - [ ] Decide on shared include files or content fragments.
-  - [ ] Document synchronization process between manuscript and Sphinx.
+  - [x] Identify overlapping narrative components.
+  - [x] Decide on shared include files or content fragments.
+  - [x] Document synchronization process between manuscript and Sphinx (see `docs/softwarex/manuscript/sections/includes/README.md`).
 - [ ] Establish build scripts/notebooks for regenerating figures, tables, and performance benchmarks referenced in the paper.
   - [ ] Inventory required figures/tables and their data sources.
   - [ ] Create reproducible scripts/notebooks to regenerate each artifact.
@@ -166,12 +184,12 @@
 - [x] Add author instruction PDFs/templates and exemplar papers to the repo.
   - [x] Populate `docs/softwarex/reference/` with guideline/template files.
   - [x] Save exemplar PDFs plus notes in `docs/softwarex/reference/examples/`.
-- [ ] Flesh out the manuscript outline + repo scaffolding under `docs/softwarex/`.
+- [x] Flesh out the manuscript outline + repo scaffolding under `docs/softwarex/`.
   - [x] Create directory skeleton and placeholder files per Phase 1.
   - [x] Draft outline document referencing SoftwareX sections.
-- [ ] Break phases into actionable GitHub issues with owners and deadlines.
-  - [ ] Translate each checkbox (or logical grouping) into issue(s) with clear scope.
-  - [ ] Assign DRIs and add due dates/milestones to keep momentum.
+- [x] Break phases into actionable GitHub issues with owners and deadlines.
+  - [x] Translate each checkbox (or logical grouping) into issue(s) with clear scope (see Phase 0 timeline block above for the canonical mapping).
+  - [x] Assign DRIs and add due dates/milestones to keep momentum (captured per-issue with dates aligned to FHOPS release gates).
 
 ## Links and Notes
 - **Guide for Authors:** `docs/softwarex/reference/softwarex_guide_for_authors.html` (source: https://www.elsevier.com/journals/softwarex/2352-7110/guide-for-authors) – snapshot from Elsevier site for offline reference.
