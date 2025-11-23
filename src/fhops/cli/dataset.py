@@ -232,6 +232,7 @@ from fhops.telemetry import append_jsonl
 from fhops.telemetry.machine_costs import build_machine_cost_snapshots
 from fhops.validation.ranges import validate_block_ranges
 
+
 def _get_tmy45_support_ratios() -> dict[str, float]:
     """Return Cat D8 / Timberjack utilisation ratios per yarder SMH."""
 
@@ -256,9 +257,7 @@ try:
 except FileNotFoundError:
     _PARTIAL_CUT_PROFILE_CHOICES = ""
 if _PARTIAL_CUT_PROFILE_CHOICES:
-    _PARTIAL_CUT_PROFILE_HELP = (
-        f"Partial-cut profile ID (options: {_PARTIAL_CUT_PROFILE_CHOICES})."
-    )
+    _PARTIAL_CUT_PROFILE_HELP = f"Partial-cut profile ID (options: {_PARTIAL_CUT_PROFILE_CHOICES})."
 else:
     _PARTIAL_CUT_PROFILE_HELP = (
         "Partial-cut profile ID (see data/reference/partial_cut_profiles.json)."
@@ -279,9 +278,7 @@ if _ADV15N3_DRIVE_CHOICES:
         f"(options: {', '.join(_ADV15N3_DRIVE_CHOICES)}). Defaults to the road machine's mapping."
     )
 else:  # pragma: no cover - defensive when dataset missing
-    _ADV15N3_DRIVE_HELP = (
-        "ADV15N3 tractor drive ID to override the default road-machine mapping."
-    )
+    _ADV15N3_DRIVE_HELP = "ADV15N3 tractor drive ID to override the default road-machine mapping."
 _AUBUCHON_SLOPE_M_RANGE = (304.8, 914.4)
 _AUBUCHON_LATERAL_M_RANGE = (15.24, 45.72)
 _AUBUCHON_LOGS_RANGE = (3.5, 6.0)
@@ -721,9 +718,7 @@ _HELICOPTER_COST_ROLES: dict[HelicopterLonglineModel, str] = {
 
 def _helicopter_cost_role(model: HelicopterLonglineModel) -> str:
     """Return the machine-rate role that best represents the selected helicopter preset."""
-    return _HELICOPTER_COST_ROLES.get(
-        model, ProductivityMachineRole.HELICOPTER_LONGLINE.value
-    )
+    return _HELICOPTER_COST_ROLES.get(model, ProductivityMachineRole.HELICOPTER_LONGLINE.value)
 
 
 def _machine_rate_roles_help() -> str:
@@ -845,6 +840,7 @@ _GRAPPLE_YARDER_COST_ROLES: dict[GrappleYarderModel, str] = {
     GrappleYarderModel.ADV5N28_CLEARCUT: "grapple_yarder_adv5n28",
     GrappleYarderModel.ADV5N28_SHELTERWOOD: "grapple_yarder_adv5n28",
 }
+
 
 def _tn157_case_choices() -> tuple[str, ...]:
     """Return the valid TN157 case identifiers exposed by the productivity dataset."""
@@ -974,9 +970,7 @@ def _normalise_tn98_species_value(value: str) -> str:
     """Normalize user-provided TN98 species text to a supported identifier."""
     candidate = value.strip().lower().replace("-", "_")
     if candidate not in _TN98_SPECIES:
-        raise ValueError(
-            f"Unknown TN98 species '{value}'. Choose from {', '.join(_TN98_SPECIES)}."
-        )
+        raise ValueError(f"Unknown TN98 species '{value}'. Choose from {', '.join(_TN98_SPECIES)}.")
     return candidate
 
 
@@ -1012,9 +1006,7 @@ def _estimate_tn98_manual_falling(species: str, dbh_cm: float) -> dict[str, Any]
     regression = dataset.regressions.get(species) or dataset.regressions.get("all_species")
     if regression is None:
         raise ValueError(f"TN98 regression missing for species '{species}'.")
-    cut_minutes = max(
-        0.0, regression.intercept_minutes + regression.slope_minutes_per_cm * dbh_cm
-    )
+    cut_minutes = max(0.0, regression.intercept_minutes + regression.slope_minutes_per_cm * dbh_cm)
     records = dataset.per_diameter_class.get(species) or dataset.per_diameter_class.get(
         "douglas_fir", ()
     )
@@ -1032,7 +1024,9 @@ def _estimate_tn98_manual_falling(species: str, dbh_cm: float) -> dict[str, Any]
         if suffix.isdigit():
             base_year = int(suffix)
     inflated_tree = (
-        inflate_value(cost_per_tree, base_year) if (cost_per_tree is not None and base_year) else None
+        inflate_value(cost_per_tree, base_year)
+        if (cost_per_tree is not None and base_year)
+        else None
     )
     inflated_m3 = (
         inflate_value(cost_per_m3, base_year) if (cost_per_m3 is not None and base_year) else None
@@ -1397,7 +1391,7 @@ _FORWARDER_BRUSHWOOD_MODELS = {ForwarderBCModel.LAITILA_VAATAINEN_BRUSHWOOD}
 
 
 def _render_grapple_skidder_result(
-    result: SkidderProductivityResult | Mapping[str, object]
+    result: SkidderProductivityResult | Mapping[str, object],
 ) -> None:
     """Render grapple-skidder productivity outputs (Han et al. / ADV6N7) for CLI display."""
     if isinstance(result, SkidderProductivityResult):
@@ -2618,7 +2612,9 @@ def _apply_skidder_system_defaults(
         try:
             return float(override_value), True
         except (TypeError, ValueError) as exc:  # pragma: no cover
-            raise ValueError(f"Invalid grapple skidder override for '{key}': {override_value}") from exc
+            raise ValueError(
+                f"Invalid grapple skidder override for '{key}': {override_value}"
+            ) from exc
 
     adv6n7_payload_m3, changed = maybe_float_override(
         "skidder_adv6n7_payload_m3", adv6n7_payload_m3, "skidder_adv6n7_payload_m3"
@@ -3089,9 +3085,7 @@ def _apply_skyline_system_defaults(
         "skyline_lateral_distance2_m", lateral_distance_2_m, "lateral_distance_2_m", True
     )
     used |= changed
-    payload_m3, changed = maybe_float(
-        "skyline_payload_m3", payload_m3, "payload_m3", True
-    )
+    payload_m3, changed = maybe_float("skyline_payload_m3", payload_m3, "payload_m3", True)
     used |= changed
     num_logs, changed = maybe_float("skyline_num_logs", num_logs, "num_logs", True)
     used |= changed
@@ -3752,7 +3746,9 @@ def _evaluate_grapple_skidder_result(
         }
     if model is GrappleSkidderModel.ADV6N7:
         if extraction_distance_m is None:
-            raise typer.BadParameter("--skidder-extraction-distance is required for the ADV6N7 model.")
+            raise typer.BadParameter(
+                "--skidder-extraction-distance is required for the ADV6N7 model."
+            )
         try:
             return estimate_grapple_skidder_productivity_adv6n7(
                 skidding_distance_m=extraction_distance_m,
@@ -4387,17 +4383,20 @@ def _print_salvage_processing_guidance(
     if mode is SalvageProcessingMode.PORTABLE_MILL:
         console.print(
             "[dim]Salvage system '%s' in portable-mill mode: rough cants stay near the satellite yard, keeping "
-            "char-laden slabs onsite per ADV1N5. Remember to segregate chip furnish from dirty sorts before hauling." % system_id
+            "char-laden slabs onsite per ADV1N5. Remember to segregate chip furnish from dirty sorts before hauling."
+            % system_id
         )
     elif mode is SalvageProcessingMode.IN_WOODS_CHIPPING:
         console.print(
             "[dim]Salvage system '%s' in in-woods chipping mode: separate pulp logs at the stump, feed the portable "
-            "chip plant, screen fines, and truck chips directly so small charred stems never hit the mill deck." % system_id
+            "chip plant, screen fines, and truck chips directly so small charred stems never hit the mill deck."
+            % system_id
         )
     else:
         console.print(
             "[dim]Salvage system '%s' using standard mill flow. Apply the ADV1N5 checklist (raise top diameters, "
-            "buck out catfaces, double-ring debarkers, charcoal dust controls) before chips enter the regular furnish." % system_id
+            "buck out catfaces, double-ring debarkers, charcoal dust controls) before chips enter the regular furnish."
+            % system_id
         )
 
 
@@ -5767,18 +5766,10 @@ def estimate_productivity_cmd(
     if role == ProductivityMachineRole.GRAPPLE_SKIDDER.value:
         skidder_user_supplied = {
             "grapple_skidder_model": _parameter_supplied(ctx, "grapple_skidder_model"),
-            "skidder_extraction_distance": _parameter_supplied(
-                ctx, "skidder_extraction_distance"
-            ),
-            "skidder_adv6n7_decking_mode": _parameter_supplied(
-                ctx, "skidder_adv6n7_decking_mode"
-            ),
-            "skidder_adv6n7_payload_m3": _parameter_supplied(
-                ctx, "skidder_adv6n7_payload_m3"
-            ),
-            "skidder_adv6n7_utilisation": _parameter_supplied(
-                ctx, "skidder_adv6n7_utilisation"
-            ),
+            "skidder_extraction_distance": _parameter_supplied(ctx, "skidder_extraction_distance"),
+            "skidder_adv6n7_decking_mode": _parameter_supplied(ctx, "skidder_adv6n7_decking_mode"),
+            "skidder_adv6n7_payload_m3": _parameter_supplied(ctx, "skidder_adv6n7_payload_m3"),
+            "skidder_adv6n7_utilisation": _parameter_supplied(ctx, "skidder_adv6n7_utilisation"),
             "skidder_adv6n7_delay_minutes": _parameter_supplied(
                 ctx, "skidder_adv6n7_delay_minutes"
             ),
@@ -6086,8 +6077,12 @@ def estimate_productivity_cmd(
             "lateral_distance_m": grapple_lateral_distance_m,
             "stems_per_turn": grapple_stems_per_cycle,
             "in_cycle_delay_minutes": grapple_in_cycle_delay_minutes,
-            "tn157_case": grapple_tn157_case if grapple_yarder_model is GrappleYarderModel.TN157 else None,
-            "tn147_case": grapple_tn147_case if grapple_yarder_model is GrappleYarderModel.TN147 else None,
+            "tn157_case": grapple_tn157_case
+            if grapple_yarder_model is GrappleYarderModel.TN157
+            else None,
+            "tn147_case": grapple_tn147_case
+            if grapple_yarder_model is GrappleYarderModel.TN147
+            else None,
             "harvest_system_id": selected_system.system_id if selected_system else None,
             "harvest_system_defaults_used": grapple_defaults_used,
             "salvage_processing_mode": telemetry_salvage_mode,
@@ -7511,7 +7506,9 @@ def estimate_cost_cmd(
 
     if road_machine is not None or road_length_m is not None:
         if not road_machine or road_length_m is None:
-            raise typer.BadParameter("--road-machine and --road-length-m must be provided together.")
+            raise typer.BadParameter(
+                "--road-machine and --road-length-m must be provided together."
+            )
         resolved_machine = _resolve_tr28_machine(road_machine)
         if resolved_machine is None:
             raise typer.BadParameter(
@@ -7579,13 +7576,13 @@ def estimate_cost_cmd(
         if road_cost_estimate is not None and penalty_multiplier != 1.0:
             adjusted_total_base = road_cost_estimate.total_cost_base_cad * penalty_multiplier
             adjusted_total_target = road_cost_estimate.total_cost_target_cad * penalty_multiplier
-            adjusted_unit_base = (
-                road_cost_estimate.unit_cost_base_cad_per_m * penalty_multiplier
-            )
+            adjusted_unit_base = road_cost_estimate.unit_cost_base_cad_per_m * penalty_multiplier
             adjusted_unit_target = (
                 road_cost_estimate.unit_cost_target_cad_per_m * penalty_multiplier
             )
-            adjusted_total_with_mob_base = adjusted_total_base + road_cost_estimate.mobilisation_cost_base_cad
+            adjusted_total_with_mob_base = (
+                adjusted_total_base + road_cost_estimate.mobilisation_cost_base_cad
+            )
             adjusted_total_with_mob_target = (
                 adjusted_total_target + road_cost_estimate.mobilisation_cost_target_cad
             )
@@ -7919,7 +7916,7 @@ def _render_tn98_table(records: Sequence[TN98DiameterRecord]) -> None:
 
 @dataset_app.command("tn82-ft180")
 def tn82_ft180_cmd(
-    show_notes: bool = typer.Option(False, "--show-notes", help="Display the system-level notes.")
+    show_notes: bool = typer.Option(False, "--show-notes", help="Display the system-level notes."),
 ):
     """Summarize the TN82 FMC FT-180 vs. John Deere 550 productivity datasets."""
 
@@ -7950,8 +7947,12 @@ def tn82_ft180_cmd(
                 f"{area.volume_m3_per_shift:.1f}",
                 f"{area.trees_per_shift:.0f}",
                 f"{area.turns_per_shift:.1f}",
-                f"{area.productive_hours_percent:.1f}" if area.productive_hours_percent is not None else "—",
-                f"{area.availability_percent:.1f}" if area.availability_percent is not None else "—",
+                f"{area.productive_hours_percent:.1f}"
+                if area.productive_hours_percent is not None
+                else "—",
+                f"{area.availability_percent:.1f}"
+                if area.availability_percent is not None
+                else "—",
             )
         console.print(table)
         if machine.notes:
@@ -7970,7 +7971,7 @@ def tn82_ft180_cmd(
 def adv6n25_helicopters_cmd(
     show_alternatives: bool = typer.Option(
         False, "--show-alternatives", help="Display the alternative scenario cost table."
-    )
+    ),
 ) -> None:
     """Summarize ADV6N25 dual-helicopter productivity and costs."""
 
@@ -8083,7 +8084,10 @@ def _render_helicopter_operation_detail(
             "Turn Time (min)",
             f"{operation.turn_time_minutes:.2f}" if operation.turn_time_minutes else "—",
         ),
-        ("Hourly Cost (base $)", f"{operation.hourly_cost_cad:.0f}" if operation.hourly_cost_cad else "—"),
+        (
+            "Hourly Cost (base $)",
+            f"{operation.hourly_cost_cad:.0f}" if operation.hourly_cost_cad else "—",
+        ),
         (
             "Cost Base Year",
             str(operation.cost_base_year) if operation.cost_base_year is not None else "—",
@@ -8199,9 +8203,7 @@ def tn98_handfalling_cmd(
         raise typer.BadParameter(
             f"Unsupported species '{species}'. Choose from {', '.join(_tn98_species_choices())}."
         )
-    regression = dataset.regressions.get(species_key) or dataset.regressions.get(
-        "all_species"
-    )
+    regression = dataset.regressions.get(species_key) or dataset.regressions.get("all_species")
     if regression is None:
         raise typer.BadParameter("TN98 regressions missing for the requested species.")
 
@@ -8754,7 +8756,9 @@ def estimate_skyline_productivity_cmd(
         raise typer.BadParameter("--payload-m3 must be > 0 when specified.")
     if hi_skid_include_haul and model is not SkylineProductivityModel.HI_SKID:
         raise typer.BadParameter("--hi-skid-include-haul is only valid when --model hi-skid.")
-    if (manual_falling_species is not None or manual_falling_dbh_cm is not None) and manual_falling is False:
+    if (
+        manual_falling_species is not None or manual_falling_dbh_cm is not None
+    ) and manual_falling is False:
         raise typer.BadParameter(
             "Cannot specify manual falling overrides when --no-manual-falling is set."
         )
@@ -9067,9 +9071,7 @@ def estimate_skyline_productivity_cmd(
             console_warning = _append_warning(console_warning, tension_warning)
         support_ratios = _get_tmy45_support_ratios()
         telemetry_support_cat_d8_ratio = support_ratios["cat_d8_smhr_per_yarder_smhr"]
-        telemetry_support_timberjack_ratio = support_ratios[
-            "timberjack_450_smhr_per_yarder_smhr"
-        ]
+        telemetry_support_timberjack_ratio = support_ratios["timberjack_450_smhr_per_yarder_smhr"]
         support_note = (
             "[yellow]Support reminder:[/yellow] FNCY12 crew data implies Cat D8 backspar standby "
             f"{telemetry_support_cat_d8_ratio:.2f} SMH/SMH and Timberjack 450 trail support "
@@ -9128,9 +9130,7 @@ def estimate_skyline_productivity_cmd(
         )
         support_ratios = _get_tmy45_support_ratios()
         telemetry_support_cat_d8_ratio = support_ratios["cat_d8_smhr_per_yarder_smhr"]
-        telemetry_support_timberjack_ratio = support_ratios[
-            "timberjack_450_smhr_per_yarder_smhr"
-        ]
+        telemetry_support_timberjack_ratio = support_ratios["timberjack_450_smhr_per_yarder_smhr"]
         support_note = (
             "[yellow]Support reminder:[/yellow] FNCY12 crew data implies Cat D8 backspar standby "
             f"{telemetry_support_cat_d8_ratio:.2f} SMH/SMH and Timberjack 450 trail support "
@@ -9233,10 +9233,10 @@ def estimate_skyline_productivity_cmd(
             ("Merchantable Delay Component (min)", f"{merch_delay_minutes:.2f}"),
             ("Residue Delay Component (min)", f"{residue_delay_minutes:.2f}"),
         ]
-        source_label = "LeDoux (1984) residue yarding regressions (Willamette/Mt. Hood experimental trials)."
-        console_warning = (
-            "[yellow]Warning:[/yellow] LeDoux regressions are based on US residue logging (1984 USD); validate before using for BC skyline costing."
+        source_label = (
+            "LeDoux (1984) residue yarding regressions (Willamette/Mt. Hood experimental trials)."
         )
+        console_warning = "[yellow]Warning:[/yellow] LeDoux regressions are based on US residue logging (1984 USD); validate before using for BC skyline costing."
         non_bc_warning = True
         if residue_pieces_per_turn > 0 and residue_delay_minutes > merch_delay_minutes:
             residue_warning = (
@@ -9345,7 +9345,11 @@ def estimate_skyline_productivity_cmd(
         resolved_payload = (
             payload_m3
             if payload_m3 is not None
-            else (system.payload_m3 if system.payload_m3 is not None else resolved_pieces * resolved_piece_volume)
+            else (
+                system.payload_m3
+                if system.payload_m3 is not None
+                else resolved_pieces * resolved_piece_volume
+            )
         )
         cycle_minutes = system.cycle_minutes
         if cycle_minutes <= 0:
@@ -9364,9 +9368,7 @@ def estimate_skyline_productivity_cmd(
         if system.crew_size:
             rows.insert(2, ("Crew Size", f"{system.crew_size:.1f}"))
         if system.average_yarding_distance_m:
-            rows.append(
-                ("Observed Avg Distance (m)", f"{system.average_yarding_distance_m:.1f}")
-            )
+            rows.append(("Observed Avg Distance (m)", f"{system.average_yarding_distance_m:.1f}"))
         if system.yarding_distance_min_m is not None or system.yarding_distance_max_m is not None:
             min_label = (
                 f"{system.yarding_distance_min_m:.0f}"
@@ -9383,14 +9385,10 @@ def estimate_skyline_productivity_cmd(
             rows.append(("Observed Avg Slope (%)", f"{system.average_slope_percent:.1f}"))
         if system.slope_percent_min is not None or system.slope_percent_max is not None:
             min_slope = (
-                f"{system.slope_percent_min:.0f}"
-                if system.slope_percent_min is not None
-                else "–"
+                f"{system.slope_percent_min:.0f}" if system.slope_percent_min is not None else "–"
             )
             max_slope = (
-                f"{system.slope_percent_max:.0f}"
-                if system.slope_percent_max is not None
-                else "–"
+                f"{system.slope_percent_max:.0f}" if system.slope_percent_max is not None else "–"
             )
             rows.append(("Observed Slope Range (%)", f"{min_slope}–{max_slope}"))
         source_label = f"FERIC TN-173 (1991) {system.label} case study."
@@ -9665,9 +9663,7 @@ def estimate_skyline_productivity_cmd(
         rows.append(("TR119 Volume Multiplier", f"{treatment.volume_multiplier:.3f}"))
         if treatment.yarding_total_cost_per_m3 is not None:
             rows.append(("TR119 Yarding Cost ($/m³)", f"{treatment.yarding_total_cost_per_m3:.2f}"))
-        tr119_cost_note = (
-            f"TR119 {treatment.treatment} multiplier applied to skyline cost (volume × {treatment.volume_multiplier:.3f})."
-        )
+        tr119_cost_note = f"TR119 {treatment.treatment} multiplier applied to skyline cost (volume × {treatment.volume_multiplier:.3f})."
     else:
         tr119_cost_note = None
     partial_cut_cost_note = None
@@ -9689,9 +9685,7 @@ def estimate_skyline_productivity_cmd(
         cost_multiplier = partial_cut_profile_entry.cost_multiplier
         if cost_multiplier is not None:
             rows.append(("Partial-cut Cost Multiplier", f"{cost_multiplier:.3f}"))
-            partial_cut_cost_note = (
-                f"Partial-cut profile {partial_cut_profile_entry.profile_id} cost multiplier ×{cost_multiplier:.3f}."
-            )
+            partial_cut_cost_note = f"Partial-cut profile {partial_cut_profile_entry.profile_id} cost multiplier ×{cost_multiplier:.3f}."
         telemetry_partial_profile_id = partial_cut_profile_entry.profile_id
         telemetry_partial_volume_multiplier = volume_multiplier
         telemetry_partial_cost_multiplier = cost_multiplier
@@ -9789,10 +9783,14 @@ def estimate_skyline_productivity_cmd(
             "manual_falling_cost_base_year": manual_falling_summary.get("cost_base_year")
             if manual_falling_summary
             else None,
-            "manual_falling_cost_per_tree_cad_2024": manual_falling_summary.get("cost_per_tree_cad_2024")
+            "manual_falling_cost_per_tree_cad_2024": manual_falling_summary.get(
+                "cost_per_tree_cad_2024"
+            )
             if manual_falling_summary
             else None,
-            "manual_falling_cost_per_m3_cad_2024": manual_falling_summary.get("cost_per_m3_cad_2024")
+            "manual_falling_cost_per_m3_cad_2024": manual_falling_summary.get(
+                "cost_per_m3_cad_2024"
+            )
             if manual_falling_summary
             else None,
             "calibration_warnings": telemetry_calibration_flags or None,

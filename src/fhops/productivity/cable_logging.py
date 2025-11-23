@@ -693,7 +693,7 @@ def estimate_standing_skyline_turn_time_aubuchon1979(
     return (
         5.102
         + 0.970 * logs_per_turn
-        + 0.00000172 * (slope_distance_ft ** 2)
+        + 0.00000172 * (slope_distance_ft**2)
         + 0.031 * lateral_distance_ft
         - 0.194 * crew_size
     )
@@ -1120,6 +1120,7 @@ HI_SKID_DEFAULTS = {
     "max_distance_m": 100.0,
 }
 
+
 @dataclass(frozen=True)
 class TN173System:
     """
@@ -1202,8 +1203,7 @@ def _load_tn173_systems() -> Mapping[str, TN173System]:
             system_id=system_id,
             label=entry.get("name", entry.get("description", system_id)),
             operating_range_m=entry.get("operating_range_m"),
-            crew_size=labour.get("crew_size_operational")
-            or labour.get("crew_size_productive"),
+            crew_size=labour.get("crew_size_operational") or labour.get("crew_size_productive"),
             pieces_per_turn=float(avg_pieces) if avg_pieces is not None else None,
             piece_volume_m3=float(piece_volume) if piece_volume is not None else None,
             payload_m3=float(avg_turn_volume) if avg_turn_volume is not None else None,
@@ -1212,13 +1212,19 @@ def _load_tn173_systems() -> Mapping[str, TN173System]:
             average_yarding_distance_m=float(layout.get("average_yarding_distance_m", 0.0))
             if layout.get("average_yarding_distance_m") is not None
             else None,
-            yarding_distance_min_m=float(yarding_range[0]) if yarding_range[0] is not None else None,
-            yarding_distance_max_m=float(yarding_range[1]) if len(yarding_range) > 1 and yarding_range[1] is not None else None,
+            yarding_distance_min_m=float(yarding_range[0])
+            if yarding_range[0] is not None
+            else None,
+            yarding_distance_max_m=float(yarding_range[1])
+            if len(yarding_range) > 1 and yarding_range[1] is not None
+            else None,
             average_slope_percent=float(layout.get("average_slope_percent", 0.0))
             if layout.get("average_slope_percent") is not None
             else None,
             slope_percent_min=float(slope_range[0]) if slope_range[0] is not None else None,
-            slope_percent_max=float(slope_range[1]) if len(slope_range) > 1 and slope_range[1] is not None else None,
+            slope_percent_max=float(slope_range[1])
+            if len(slope_range) > 1 and slope_range[1] is not None
+            else None,
             notes=entry.get("notes"),
         )
     return systems
@@ -1260,7 +1266,9 @@ def get_tn173_system(system_id: str) -> TN173System:
     try:
         return systems[system_id]
     except KeyError as exc:
-        raise KeyError(f"Unknown TN173 system '{system_id}'. Available: {', '.join(sorted(systems))}") from exc
+        raise KeyError(
+            f"Unknown TN173 system '{system_id}'. Available: {', '.join(sorted(systems))}"
+        ) from exc
 
 
 def estimate_residue_cycle_time_ledoux_minutes(
@@ -1419,7 +1427,9 @@ def estimate_micro_master_productivity_m3_per_pmh(
         raise ValueError("Pieces per turn must be > 0 for the Micro Master regression")
     if resolved_piece_volume <= 0:
         raise ValueError("Piece volume must be > 0 for the Micro Master regression")
-    resolved_payload = payload_m3 if payload_m3 is not None else resolved_pieces * resolved_piece_volume
+    resolved_payload = (
+        payload_m3 if payload_m3 is not None else resolved_pieces * resolved_piece_volume
+    )
     if resolved_payload <= 0:
         raise ValueError("Payload must be > 0 for the Micro Master regression")
     cycle_minutes = estimate_micro_master_cycle_minutes(slope_distance_m=slope_distance_m)
@@ -1507,7 +1517,9 @@ def estimate_hi_skid_productivity_m3_per_pmh(
     overall_productivity = None
     if include_travel_minutes is not None and include_travel_minutes >= 0:
         resolved_load_volume = (
-            load_volume_m3 if load_volume_m3 is not None else HI_SKID_DEFAULTS["payload_per_load_m3"]
+            load_volume_m3
+            if load_volume_m3 is not None
+            else HI_SKID_DEFAULTS["payload_per_load_m3"]
         )
         if resolved_load_volume <= 0:
             raise ValueError("Load volume must be > 0 for Hi-Skid travel calculations")

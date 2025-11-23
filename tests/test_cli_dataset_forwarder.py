@@ -345,7 +345,10 @@ def test_cli_forwarder_harvest_system_adv1n12_defaults() -> None:
         extraction_distance_m=350.0,
     ).predicted_m3_per_pmh
     assert f"{expected:.2f}" in result.stdout
-    assert "Applied productivity defaults from harvest system 'thinning_adv1n12_forwarder'." in result.stdout
+    assert (
+        "Applied productivity defaults from harvest system 'thinning_adv1n12_forwarder'."
+        in result.stdout
+    )
 
 
 def test_cli_estimate_productivity_grapple_skidder_branch() -> None:
@@ -501,7 +504,10 @@ def test_cli_grapple_skidder_harvest_system_adv1n12_defaults() -> None:
     assert result.exit_code == 0
     expected = estimate_cable_skidder_productivity_adv1n12_full_tree(225.0)
     assert f"{expected:.2f}" in result.stdout
-    assert "Applied productivity defaults from harvest system 'thinning_adv1n12_fulltree'." in result.stdout
+    assert (
+        "Applied productivity defaults from harvest system 'thinning_adv1n12_fulltree'."
+        in result.stdout
+    )
 
 
 def test_cli_grapple_skidder_adv1n12_fulltree() -> None:

@@ -37,7 +37,9 @@ def test_han2018_whole_tree_cycle_time() -> None:
         empty_distance_m=160.0,
         loaded_distance_m=140.0,
     )
-    assert result.cycle_time_seconds == pytest.approx(25.125 + (1.881 * 18) + (0.632 * 160) + (0.477 * 140), rel=1e-9)
+    assert result.cycle_time_seconds == pytest.approx(
+        25.125 + (1.881 * 18) + (0.632 * 160) + (0.477 * 140), rel=1e-9
+    )
     assert result.predicted_m3_per_pmh > 0
 
 

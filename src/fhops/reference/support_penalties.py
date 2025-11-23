@@ -109,9 +109,7 @@ def load_adv4n7_compaction() -> tuple[str, Mapping[str, CompactionRisk]]:
             label=entry.get("label", risk_id.title()),
             cost_multiplier=float(entry.get("cost_multiplier", 1.0)),
             load_reduction_percent=float(entry.get("load_reduction_percent", 0.0)),
-            max_passes_before_reassessment=int(
-                entry.get("max_passes_before_reassessment", 0)
-            ),
+            max_passes_before_reassessment=int(entry.get("max_passes_before_reassessment", 0)),
             recommendations=tuple(entry.get("recommendations") or ()),
         )
     if not risks:

@@ -9,8 +9,7 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 _DATA_PATH = (
-    Path(__file__).resolve().parents[3]
-    / "data/reference/fpinnovations/adv6n25_helicopters.json"
+    Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/adv6n25_helicopters.json"
 )
 
 

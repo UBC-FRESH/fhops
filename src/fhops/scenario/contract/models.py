@@ -24,6 +24,7 @@ class ScheduleLock(BaseModel):
     day:
         One-indexed day within the planning horizon where the lock applies.
     """
+
     machine_id: str
     block_id: str
     day: Day
@@ -92,6 +93,7 @@ class Block(BaseModel):
     salvage_processing_mode:
         Enum describing downstream salvage processing (affects evaluation notes).
     """
+
     id: str
     landing_id: str
     work_required: float  # in 'work units' (e.g., machine-hours) to complete block
@@ -162,6 +164,7 @@ class Machine(BaseModel):
     repair_usage_hours:
         Optional cumulative repair hours that influences the rental-rate defaults.
     """
+
     id: str
     crew: str | None = None
     daily_hours: float = 24.0
@@ -223,6 +226,7 @@ class RoadConstruction(BaseModel):
     notes:
         Free-form comments surfaced in CLI summaries.
     """
+
     id: str
     machine_slug: str
     road_length_m: float
@@ -263,6 +267,7 @@ class Landing(BaseModel):
     daily_capacity:
         Maximum number of machines that can work on the landing concurrently per day.
     """
+
     id: str
     daily_capacity: int = 2  # max machines concurrently working
 
@@ -286,6 +291,7 @@ class CalendarEntry(BaseModel):
     available:
         Binary flag (1 available, 0 unavailable) controlling day-level assignment eligibility.
     """
+
     machine_id: str
     day: Day
     available: int = 1  # 1 available, 0 not available
@@ -319,6 +325,7 @@ class ShiftCalendarEntry(BaseModel):
     available:
         Binary flag (1 available, 0 unavailable) controlling shift-level assignment eligibility.
     """
+
     machine_id: str
     day: Day
     shift_id: str
@@ -358,6 +365,7 @@ class ProductionRate(BaseModel):
     rate:
         Work units produced per full shift/day assignment. Must be non-negative.
     """
+
     machine_id: str
     block_id: str
     rate: float  # work units per day if assigned (<= work_required/block)
@@ -421,6 +429,7 @@ class Scenario(BaseModel):
     The helper methods (``machine_ids()``, ``window_for()``, etc.) are convenience routines for the
     solver/evaluation layers and are intentionally lightweight so they can be used in tight loops.
     """
+
     name: str
     num_days: int
     schema_version: str = "1.0.0"
@@ -607,6 +616,7 @@ class ShiftInstance(BaseModel):
     shift_id:
         Shift label (string) matching the scenario's shift definitions.
     """
+
     day: Day
     shift_id: str
 
@@ -642,6 +652,7 @@ class Problem(BaseModel):
     Any code that builds Pyomo models or heuristic plans should accept a ``Problem`` rather than the
     raw ``Scenario`` to avoid recomputing shift/day metadata.
     """
+
     scenario: Scenario
     days: list[Day]
     shifts: list[ShiftInstance]
@@ -707,6 +718,7 @@ class GeoMetadata(BaseModel):
     notes:
         Free-form remarks shown in CLI inspectors and docs.
     """
+
     block_geojson: str | None = None
     landing_geojson: str | None = None
     crs: str | None = None
@@ -727,6 +739,7 @@ class CrewAssignment(BaseModel):
     notes:
         Additional metadata surfaced in telemetry exports.
     """
+
     crew_id: str
     machine_id: str
     primary_role: str | None = None

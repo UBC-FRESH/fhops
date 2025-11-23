@@ -116,16 +116,9 @@ def estimate_shovel_logger_productivity_sessions2006(
         raise ValueError("payload_per_swing_rehandle_m3 must be > 0")
 
     time_roadside = t0 * (y * density * z) / inputs.payload_per_swing_roadside_m3
-    time_initial = (
-        n * t1 * (y * density * z) / inputs.payload_per_swing_initial_m3
-    )
+    time_initial = n * t1 * (y * density * z) / inputs.payload_per_swing_initial_m3
     time_rehandle = (
-        0.5
-        * (n - 1)
-        * n
-        * t2
-        * (y * density * z)
-        / inputs.payload_per_swing_rehandle_m3
+        0.5 * (n - 1) * n * t2 * (y * density * z) / inputs.payload_per_swing_rehandle_m3
     )
 
     walk_time = (
@@ -143,9 +136,7 @@ def estimate_shovel_logger_productivity_sessions2006(
         raise ValueError("Derived payload per cycle must be > 0")
 
     productivity_per_minute = payload_per_cycle / total_minutes
-    predicted = (
-        productivity_per_minute * inputs.effective_minutes_per_hour
-    )
+    predicted = productivity_per_minute * inputs.effective_minutes_per_hour
     combined_multiplier = slope_multiplier * bunching_multiplier * custom_multiplier
     if combined_multiplier <= 0:
         raise ValueError("Combined multiplier must be > 0")

@@ -30,7 +30,5 @@ def test_tn173_system_loader() -> None:
 
 
 def test_hi_skid_matches_observed_rate() -> None:
-    productivity, _, _, _, _, _ = estimate_hi_skid_productivity_m3_per_pmh(
-        slope_distance_m=30.0
-    )
+    productivity, _, _, _, _, _ = estimate_hi_skid_productivity_m3_per_pmh(slope_distance_m=30.0)
     assert abs(productivity - 4.16) < 0.05

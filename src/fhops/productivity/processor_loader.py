@@ -969,6 +969,7 @@ class Labelle2019ProcessorProductivityResult:
 @dataclass(frozen=True)
 class _Labelle2019Polynomial:
     """Helper structure for Labelle et al. (2019) DBH polynomials."""
+
     intercept: float
     linear: float
     quadratic: float
@@ -1097,6 +1098,7 @@ class Labelle2016ProcessorProductivityResult:
     productivity_m3_per_pmh:
         Final m³/PMH after applying ``delay_multiplier`` (and optional bucking multipliers).
     """
+
     tree_form: Literal["acceptable", "unacceptable"]
     dbh_cm: float
     coefficient_a: float
@@ -1195,6 +1197,7 @@ class Labelle2017PolynomialProcessorResult:
     productivity_m3_per_pmh:
         Final m³/PMH after applying ``delay_multiplier`` (and optional auto bucking multipliers).
     """
+
     variant: str
     dbh_cm: float
     intercept: float
@@ -1231,6 +1234,7 @@ class Labelle2017PowerProcessorResult:
     productivity_m3_per_pmh:
         Final m³/PMH after applying ``delay_multiplier`` (and optional auto bucking multipliers).
     """
+
     variant: str
     dbh_cm: float
     coefficient: float
@@ -1367,6 +1371,7 @@ class Labelle2018ProcessorProductivityResult:
     productivity_m3_per_pmh:
         Final m³/PMH after applying utilisation and auto bucking multipliers.
     """
+
     variant: str
     dbh_cm: float
     intercept: float
@@ -1469,6 +1474,7 @@ class Labelle2019VolumeProcessorProductivityResult:
     productivity_m3_per_pmh:
         Final m³/PMH after applying utilisation and optional auto bucking multipliers.
     """
+
     species: Literal["spruce", "beech"]
     treatment: Literal["clear_cut", "selective_cut"]
     volume_m3: float
@@ -1485,6 +1491,7 @@ class Labelle2019VolumeProcessorProductivityResult:
 @dataclass(frozen=True)
 class _Labelle2019VolumePolynomial:
     """Helper container for the volume-based Labelle (2019) polynomials."""
+
     intercept: float
     linear: float
     quadratic: float
@@ -1639,6 +1646,7 @@ class LoaderForwarderProductivityResult:
     cycles_per_hour:
         Cycle rate implied by the regression.
     """
+
     piece_size_m3: float
     external_distance_m: float
     slope_percent: float
@@ -1736,6 +1744,7 @@ class ClambunkProductivityResult:
     productivity_m3_per_pmh:
         Final productivity (m³/PMH).
     """
+
     travel_empty_distance_m: float
     stems_per_cycle: float
     average_stem_volume_m3: float
@@ -1778,6 +1787,7 @@ class LoaderBarko450ProductivityResult:
     cost_base_year:
         Base year used for the cost figures.
     """
+
     scenario: str
     description: str
     avg_volume_per_shift_m3: float
@@ -1821,6 +1831,7 @@ class LoaderHotColdProductivityResult:
     cost_base_year:
         Base year for the cost figure.
     """
+
     mode: Literal["hot", "cold"]
     description: str
     utilisation_percent: float
@@ -1864,6 +1875,7 @@ class Hypro775ProcessorProductivityResult:
     cost_base_year:
         Base year for the cost figure.
     """
+
     description: str
     mean_cycle_time_seconds: float
     mean_logs_per_tree: float
@@ -1904,6 +1916,7 @@ class Spinelli2010ProcessorProductivityResult:
     notes:
         Additional notes from the publication.
     """
+
     operation: Literal["harvest", "process"]
     tree_volume_m3: float
     slope_percent: float
@@ -1950,6 +1963,7 @@ class Bertone2025ProcessorProductivityResult:
     notes:
         Additional notes or warnings from the study.
     """
+
     dbh_cm: float
     height_m: float
     logs_per_tree: float
@@ -1988,6 +2002,7 @@ class Borz2023ProcessorProductivityResult:
     notes:
         Additional notes pulled from the dataset.
     """
+
     tree_volume_m3: float | None
     efficiency_pmh_per_m3: float
     efficiency_smh_per_m3: float
@@ -2027,6 +2042,7 @@ class Nakagawa2010ProcessorProductivityResult:
     notes:
         Additional notes from the dataset.
     """
+
     dbh_cm: float | None
     piece_volume_m3: float | None
     model_used: Literal["dbh", "piece_volume"]
@@ -2624,6 +2640,7 @@ class LoaderAdv5N1ProductivityResult:
     notes:
         Study notes from Advantage Vol. 5 No. 1.
     """
+
     forwarding_distance_m: float
     slope_class: str
     payload_m3_per_cycle: float
@@ -2663,6 +2680,7 @@ class ADV5N6ProcessorProductivityResult:
     cost_base_year:
         Base year for the cost figures.
     """
+
     stem_source: str
     processing_mode: str
     description: str
@@ -2708,6 +2726,7 @@ class ADV7N3ProcessorProductivityResult:
     cost_base_year:
         Base year for the cost metric.
     """
+
     machine_id: str
     machine_label: str
     description: str
@@ -2765,6 +2784,7 @@ class TN103ProcessorProductivityResult:
     cost_base_year:
         Base year for cost metrics.
     """
+
     scenario: str
     description: str
     stem_source: str
@@ -2809,6 +2829,7 @@ class TN166ProcessorProductivityResult:
     notes:
         Additional notes.
     """
+
     scenario: str
     description: str
     stem_source: str
@@ -2856,6 +2877,7 @@ class TR87ProcessorProductivityResult:
     cost_base_year:
         Base year for the cost metric.
     """
+
     scenario: str
     description: str
     stem_source: str
@@ -2899,6 +2921,7 @@ class TR106ProcessorProductivityResult:
     cost_base_year:
         Base year for the cost figure.
     """
+
     scenario: str
     description: str
     machine: str
@@ -3041,7 +3064,9 @@ def estimate_processor_productivity_adv7n3(
     """
     dataset = _load_adv7n3_dataset()
     processors = {
-        str(entry["id"]).lower(): entry for entry in dataset.get("processors", []) if entry.get("id")
+        str(entry["id"]).lower(): entry
+        for entry in dataset.get("processors", [])
+        if entry.get("id")
     }
     normalized = machine.lower()
     payload = processors.get(normalized)

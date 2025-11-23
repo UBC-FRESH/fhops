@@ -121,7 +121,11 @@ class ADV6N7SkidderResult:
 
 
 _ADV6N7_PATH = (
-    Path(__file__).resolve().parents[3] / "data" / "reference" / "fpinnovations" / "adv6n7_caterpillar535b.json"
+    Path(__file__).resolve().parents[3]
+    / "data"
+    / "reference"
+    / "fpinnovations"
+    / "adv6n7_caterpillar535b.json"
 )
 
 
@@ -176,8 +180,12 @@ def get_adv6n7_metadata() -> ADV6N7Metadata:
         default_delay_minutes=float(defaults.get("delay_minutes", 0.12)),
         default_support_ratio=0.4,
         default_skidding_distance_m=float(defaults.get("skidding_distance_m", 85.0)),
-        skidder_hourly_cost_per_smh_cad_2004=float(skidder_costs.get("total_per_smh_cad_2004", 115.21)),
-        loader_hourly_cost_per_smh_cad_2004=float(loader_costs.get("total_per_smh_cad_2004", 144.46)),
+        skidder_hourly_cost_per_smh_cad_2004=float(
+            skidder_costs.get("total_per_smh_cad_2004", 115.21)
+        ),
+        loader_hourly_cost_per_smh_cad_2004=float(
+            loader_costs.get("total_per_smh_cad_2004", 144.46)
+        ),
         loader_forwarding_cost_per_m3_at_85m_cad_2004=float(
             (payload["costs"]["unit_costs"].get("loader_forwarding_per_m3_at_85m_cad_2004") or 0.0)
         )
@@ -307,7 +315,9 @@ def estimate_grapple_skidder_productivity_adv6n7(
     support_value: float | None = None
     if sr > 0:
         if decking_mode is ADV6N7DeckingMode.SKIDDER:
-            raise ValueError("Set --skidder-adv6n7-decking-mode to a supported option when using a support ratio.")
+            raise ValueError(
+                "Set --skidder-adv6n7-decking-mode to a supported option when using a support ratio."
+            )
         skidder_only_cycle = metadata.cycle_intercepts[ADV6N7DeckingMode.SKIDDER] + (
             metadata.cycle_distance_coeff * skidding_distance_m
         )
@@ -574,4 +584,6 @@ __all__ = [
     "estimate_cable_skidder_productivity_adv1n12_full_tree",
     "estimate_cable_skidder_productivity_adv1n12_two_phase",
 ]
-_SKIDDER_SPEED_PROFILE_PATH = Path(__file__).resolve().parents[3] / "data" / "reference" / "skidder_speed_zurita2025.json"
+_SKIDDER_SPEED_PROFILE_PATH = (
+    Path(__file__).resolve().parents[3] / "data" / "reference" / "skidder_speed_zurita2025.json"
+)

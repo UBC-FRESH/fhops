@@ -9,8 +9,7 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 _DATA_PATH = (
-    Path(__file__).resolve().parents[3]
-    / "data/reference/fpinnovations/tn98_handfalling.json"
+    Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/tn98_handfalling.json"
 )
 
 
@@ -53,9 +52,7 @@ def _load_raw_payload() -> Mapping[str, Any]:
         return json.load(handle)
 
 
-def _parse_regressions(
-    payload: Mapping[str, Any]
-) -> Mapping[str, TN98Regression]:
+def _parse_regressions(payload: Mapping[str, Any]) -> Mapping[str, TN98Regression]:
     regressions = {}
     raw = payload.get("cutting_time_regressions", {})
     for key, value in raw.items():
@@ -70,7 +67,7 @@ def _parse_regressions(
 
 
 def _parse_diameter_records(
-    payload: Mapping[str, Any]
+    payload: Mapping[str, Any],
 ) -> Mapping[str, Sequence[TN98DiameterRecord]]:
     result: dict[str, list[TN98DiameterRecord]] = {}
     raw = payload.get("per_diameter_class", {})

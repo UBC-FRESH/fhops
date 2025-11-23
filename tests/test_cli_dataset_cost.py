@@ -84,9 +84,7 @@ def _build_dataset_with_road(
         f"RC1,{slug},150,True,fnrb3_d7h|adv4n7_compaction",
     ]
     if multiple:
-        road_rows.append(
-            "RC2,american_750c_line_dipper_shovel,90,False,adv4n7_compaction"
-        )
+        road_rows.append("RC2,american_750c_line_dipper_shovel,90,False,adv4n7_compaction")
     _write(
         scenario_dir / "road_construction.csv",
         "\n".join(road_rows) + "\n",
@@ -119,8 +117,7 @@ def _build_loader_dataset(tmp_path: Path) -> Path:
     )
     _write(
         scenario_dir / "machines.csv",
-        "id,crew,daily_hours,operating_cost,role,repair_usage_hours\n"
-        "L1,C2,24,0,loader,8000\n",
+        "id,crew,daily_hours,operating_cost,role,repair_usage_hours\nL1,C2,24,0,loader,8000\n",
     )
     _write(
         scenario_dir / "calendar.csv",

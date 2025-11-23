@@ -45,7 +45,9 @@ def inflation_multiplier(from_year: int, to_year: int = TARGET_YEAR) -> float:
 
     cpi = _load_cpi_series()
     if from_year not in cpi:
-        raise ValueError(f"CPI data missing for year {from_year} (available {min(cpi)}-{max(cpi)}).")
+        raise ValueError(
+            f"CPI data missing for year {from_year} (available {min(cpi)}-{max(cpi)})."
+        )
     if to_year not in cpi:
         raise ValueError(f"CPI data missing for target year {to_year}.")
     return cpi[to_year] / cpi[from_year]

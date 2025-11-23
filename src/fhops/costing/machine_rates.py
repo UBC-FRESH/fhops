@@ -10,6 +10,7 @@ from functools import lru_cache
 from pathlib import Path
 
 from fhops.costing.inflation import TARGET_YEAR, inflate_value
+
 DATA_PATH = Path(__file__).resolve().parents[3] / "data/machine_rates.json"
 
 

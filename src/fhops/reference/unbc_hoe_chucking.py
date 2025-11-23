@@ -9,17 +9,11 @@ from pathlib import Path
 
 
 _HOE_DATA_PATH = (
-    Path(__file__).resolve().parents[3]
-    / "data"
-    / "reference"
-    / "unbc_hoe_chucking.json"
+    Path(__file__).resolve().parents[3] / "data" / "reference" / "unbc_hoe_chucking.json"
 )
 
 _PROC_DATA_PATH = (
-    Path(__file__).resolve().parents[3]
-    / "data"
-    / "reference"
-    / "unbc_processing_costs.json"
+    Path(__file__).resolve().parents[3] / "data" / "reference" / "unbc_processing_costs.json"
 )
 
 
@@ -104,10 +98,16 @@ def load_unbc_processing_costs() -> tuple[UNBCProcessingCostScenario, ...]:
             UNBCProcessingCostScenario(
                 harvesting_system=str(entry.get("harvesting_system", "")),
                 treatment=str(entry.get("treatment", "")),
-                layout_planning_cost_cad_per_m3=float(entry.get("layout_planning_cost_cad_per_m3", 0.0) or 0.0),
+                layout_planning_cost_cad_per_m3=float(
+                    entry.get("layout_planning_cost_cad_per_m3", 0.0) or 0.0
+                ),
                 felling_cost_cad_per_m3=float(entry.get("felling_cost_cad_per_m3", 0.0) or 0.0),
-                skidding_yarding_cost_cad_per_m3=float(entry.get("skidding_yarding_cost_cad_per_m3", 0.0) or 0.0),
-                processing_cost_cad_per_m3=float(entry.get("processing_cost_cad_per_m3", 0.0) or 0.0),
+                skidding_yarding_cost_cad_per_m3=float(
+                    entry.get("skidding_yarding_cost_cad_per_m3", 0.0) or 0.0
+                ),
+                processing_cost_cad_per_m3=float(
+                    entry.get("processing_cost_cad_per_m3", 0.0) or 0.0
+                ),
                 loading_cost_cad_per_m3=float(entry.get("loading_cost_cad_per_m3", 0.0) or 0.0),
                 total_cost_cad_per_m3=float(entry.get("total_cost_cad_per_m3", 0.0) or 0.0),
             )

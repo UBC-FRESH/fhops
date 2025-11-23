@@ -83,6 +83,7 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
                 SystemJob("loading", "loader", ["processing"]),
             ],
         )
+
     return {
         "ground_fb_skid": HarvestSystem(
             system_id="ground_fb_skid",

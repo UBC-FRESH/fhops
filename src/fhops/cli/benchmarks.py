@@ -52,6 +52,7 @@ class BenchmarkScenario:
     path:
         Filesystem path to the ``scenario.yaml`` bundle.
     """
+
     name: str
     path: Path
 

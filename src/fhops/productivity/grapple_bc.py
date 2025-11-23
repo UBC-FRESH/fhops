@@ -213,7 +213,8 @@ _TR122_PATH = (
     Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/tr122_swingyarder.json"
 )
 _ADV5N28_PATH = (
-    Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/adv5n28_skyline_conversion.json"
+    Path(__file__).resolve().parents[3]
+    / "data/reference/fpinnovations/adv5n28_skyline_conversion.json"
 )
 _ADV1N35_PATH = (
     Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/adv1n35_owren400.json"
@@ -272,24 +273,32 @@ def _load_tn157_cases() -> Mapping[str, TN157Case]:
         total_turns = sum(int(entry.get("total_turns", 0)) for entry in raw_entries)
         yarding_minutes = sum(float(entry.get("yarding_minutes", 0.0)) for entry in raw_entries)
         logs_per_shift = sum(int(entry.get("logs_per_shift_8h", 0)) for entry in raw_entries)
-        volume_per_shift = sum(float(entry.get("volume_per_shift_m3", 0.0)) for entry in raw_entries)
+        volume_per_shift = sum(
+            float(entry.get("volume_per_shift_m3", 0.0)) for entry in raw_entries
+        )
 
         def weighted(key: str, default: float = 0.0) -> float:
             """Helper to compute turn-weighted averages for combined TN157 stats."""
             values = {str(entry["id"]): float(entry.get(key, 0.0)) for entry in raw_entries}
-            weights = {str(entry["id"]): float(entry.get("total_turns", 0.0)) for entry in raw_entries}
+            weights = {
+                str(entry["id"]): float(entry.get("total_turns", 0.0)) for entry in raw_entries
+            }
             return _weighted_average(values, weights, default=default)
 
         avg_turn_volume = weighted("average_turn_volume_m3")
         avg_yarding_distance = weighted("average_yarding_distance_m")
         avg_logs_per_turn = weighted("logs_per_turn")
         avg_slope = _weighted_average(
-            {str(entry["id"]): float(entry.get("slope_percent_average", 0.0)) for entry in raw_entries},
+            {
+                str(entry["id"]): float(entry.get("slope_percent_average", 0.0))
+                for entry in raw_entries
+            },
             {str(entry["id"]): float(entry.get("yarding_minutes", 0.0)) for entry in raw_entries},
         )
         prod_weighted = (
             sum(
-                float(entry.get("m3_per_yarding_hour", 0.0)) * float(entry.get("yarding_minutes", 0.0))
+                float(entry.get("m3_per_yarding_hour", 0.0))
+                * float(entry.get("yarding_minutes", 0.0))
                 for entry in raw_entries
             )
             / yarding_minutes
@@ -298,7 +307,8 @@ def _load_tn157_cases() -> Mapping[str, TN157Case]:
         )
         logs_per_hour_weighted = (
             sum(
-                float(entry.get("logs_per_yarding_hour", 0.0)) * float(entry.get("yarding_minutes", 0.0))
+                float(entry.get("logs_per_yarding_hour", 0.0))
+                * float(entry.get("yarding_minutes", 0.0))
                 for entry in raw_entries
             )
             / yarding_minutes
@@ -307,7 +317,8 @@ def _load_tn157_cases() -> Mapping[str, TN157Case]:
         )
         cost_per_log = (
             sum(
-                float(entry.get("cost_per_log_cad_1991", 0.0)) * float(entry.get("logs_per_shift_8h", 0.0))
+                float(entry.get("cost_per_log_cad_1991", 0.0))
+                * float(entry.get("logs_per_shift_8h", 0.0))
                 for entry in raw_entries
             )
             / logs_per_shift
@@ -316,7 +327,8 @@ def _load_tn157_cases() -> Mapping[str, TN157Case]:
         )
         cost_per_m3 = (
             sum(
-                float(entry.get("cost_per_m3_cad_1991", 0.0)) * float(entry.get("volume_per_shift_m3", 0.0))
+                float(entry.get("cost_per_m3_cad_1991", 0.0))
+                * float(entry.get("volume_per_shift_m3", 0.0))
                 for entry in raw_entries
             )
             / volume_per_shift
@@ -487,7 +499,10 @@ def _load_tn147_cases() -> Mapping[str, TN147Case]:
             default=0.0,
         )
         avg_distance = _tn147_weighted_average(
-            {str(entry["id"]): float(entry.get("avg_yarding_distance_m") or 0.0) for entry in entries},
+            {
+                str(entry["id"]): float(entry.get("avg_yarding_distance_m") or 0.0)
+                for entry in entries
+            },
             total_turns,
             default=0.0,
         )
@@ -507,12 +522,18 @@ def _load_tn147_cases() -> Mapping[str, TN147Case]:
         }
 
         cost_per_m3 = _tn147_weighted_average(
-            {str(entry["id"]): float(entry.get("cost_per_m3_cad_1989") or 0.0) for entry in entries},
+            {
+                str(entry["id"]): float(entry.get("cost_per_m3_cad_1989") or 0.0)
+                for entry in entries
+            },
             volume_weights,
             default=0.0,
         )
         cost_per_log = _tn147_weighted_average(
-            {str(entry["id"]): float(entry.get("cost_per_log_cad_1989") or 0.0) for entry in entries},
+            {
+                str(entry["id"]): float(entry.get("cost_per_log_cad_1989") or 0.0)
+                for entry in entries
+            },
             log_weights,
             default=0.0,
         )
@@ -582,7 +603,9 @@ def get_tn147_case(case_id: str) -> TN147Case:
         normalized = "combined"
     cases = _load_tn147_cases()
     if normalized not in cases:
-        raise ValueError(f"Unknown TN147 case '{case_id}'. Valid options: {', '.join(sorted(cases))}.")
+        raise ValueError(
+            f"Unknown TN147 case '{case_id}'. Valid options: {', '.join(sorted(cases))}."
+        )
     case = cases[normalized]
     if normalized == "combined_turns":
         return cases["combined"]
@@ -660,8 +683,8 @@ def _load_tr122_treatments() -> Mapping[str, TR122Treatment]:
         cycle_info = cycle_data.get(treatment_id, {}).get("overall", {})
         yarding_distance = cycle_info.get("yarding_distance_m")
         if yarding_distance is None:
-            yarding_distance = cycle_data.get(treatment_id, {}).get("corridors", {}).get(
-                "yarding_distance_m"
+            yarding_distance = (
+                cycle_data.get(treatment_id, {}).get("corridors", {}).get("yarding_distance_m")
             )
         treatments[treatment_id] = TR122Treatment(
             treatment_id=treatment_id,
@@ -817,9 +840,7 @@ def _load_adv5n28_blocks() -> Mapping[str, ADV5N28Block]:
                 or 0.0
             ),
             logs_per_turn=float(
-                yarding.get("average_turn_pieces")
-                or yarding.get("average_logs_per_turn")
-                or 0.0
+                yarding.get("average_turn_pieces") or yarding.get("average_logs_per_turn") or 0.0
             ),
             productivity_m3_per_shift_8h=float(yarding.get("productivity_m3_per_shift_8h") or 0.0),
             productivity_m3_per_smh=float(yarding.get("productivity_m3_per_smh") or 0.0),
@@ -1007,9 +1028,15 @@ def estimate_grapple_yarder_productivity_adv1n35(
         raise ValueError("grapple_in_cycle_delay_minutes must be >= 0")
 
     metadata = get_adv1n35_metadata()
-    lateral = metadata.default_lateral_distance_m if lateral_distance_m is None else lateral_distance_m
+    lateral = (
+        metadata.default_lateral_distance_m if lateral_distance_m is None else lateral_distance_m
+    )
     stems = metadata.default_stems_per_turn if stems_per_turn is None else stems_per_turn
-    delay = metadata.default_in_cycle_delay_min if in_cycle_delay_minutes is None else in_cycle_delay_minutes
+    delay = (
+        metadata.default_in_cycle_delay_min
+        if in_cycle_delay_minutes is None
+        else in_cycle_delay_minutes
+    )
 
     cycle_time_min = (
         metadata.intercept
@@ -1086,7 +1113,9 @@ def get_adv1n40_metadata() -> ADV1N40Metadata:
         inhaul_distance_coeff=float(coeffs.get("inhaul_distance", 0.0)),
         hook_minutes=float(coeffs.get("hook_minutes", 0.0)),
         unhook_minutes=float(coeffs.get("unhook_minutes", 0.0)),
-        default_delay_minutes=float(payload["regressions"]["cycle_time"].get("delay_default_minutes", 0.0)),
+        default_delay_minutes=float(
+            payload["regressions"]["cycle_time"].get("delay_default_minutes", 0.0)
+        ),
         default_turn_volume_m3=float(defaults.get("turn_volume_m3", 2.9)),
         default_yarding_distance_m=float(defaults.get("yarding_distance_m", 103.0)),
         note=note,
@@ -1123,7 +1152,9 @@ def estimate_grapple_yarder_productivity_adv1n40(
         raise ValueError("in_cycle_delay_minutes must be >= 0")
 
     metadata = get_adv1n40_metadata()
-    delay = metadata.default_delay_minutes if in_cycle_delay_minutes is None else in_cycle_delay_minutes
+    delay = (
+        metadata.default_delay_minutes if in_cycle_delay_minutes is None else in_cycle_delay_minutes
+    )
 
     outhaul = metadata.outhaul_intercept + metadata.outhaul_distance_coeff * yarding_distance_m
     inhaul = metadata.inhaul_intercept + metadata.inhaul_distance_coeff * yarding_distance_m

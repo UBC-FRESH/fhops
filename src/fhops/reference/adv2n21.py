@@ -56,7 +56,9 @@ def _build_stand_snapshot(data: dict | None) -> ADV2N21StandSnapshot | None:
     if not data:
         return None
     return ADV2N21StandSnapshot(
-        merchantable_basal_area_m2_per_ha=_maybe_float(data.get("merchantable_basal_area_m2_per_ha")),
+        merchantable_basal_area_m2_per_ha=_maybe_float(
+            data.get("merchantable_basal_area_m2_per_ha")
+        ),
         live_trees_per_ha=_maybe_float(data.get("live_trees_per_ha")),
         dead_trees_per_ha=_maybe_float(data.get("dead_trees_per_ha")),
         total_trees_per_ha=_maybe_float(data.get("total_trees_per_ha")),

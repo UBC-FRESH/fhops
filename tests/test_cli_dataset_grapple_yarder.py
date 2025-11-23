@@ -24,7 +24,9 @@ def test_cli_grapple_yarder_sr54() -> None:
         ],
     )
     assert result.exit_code == 0
-    expected = estimate_grapple_yarder_productivity_sr54(turn_volume_m3=2.4, yarding_distance_m=180.0)
+    expected = estimate_grapple_yarder_productivity_sr54(
+        turn_volume_m3=2.4, yarding_distance_m=180.0
+    )
     assert f"{expected:.2f}" in result.stdout
 
 

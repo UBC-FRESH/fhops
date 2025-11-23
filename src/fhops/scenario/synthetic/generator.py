@@ -914,9 +914,9 @@ def generate_random_dataset(
             updated_blocks.append(block.model_copy(update=block_updates))
             blocks_records[idx]["harvest_system_id"] = system_id
             if system_id in salvage_system_ids:
-                blocks_records[idx][
-                    "salvage_processing_mode"
-                ] = SalvageProcessingMode.STANDARD_MILL.value
+                blocks_records[idx]["salvage_processing_mode"] = (
+                    SalvageProcessingMode.STANDARD_MILL.value
+                )
         scenario = scenario.model_copy(
             update={"blocks": updated_blocks, "harvest_systems": systems}
         )

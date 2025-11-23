@@ -49,10 +49,10 @@ def estimate_harvester_productivity_adv6n10(
 
     productivity = (
         50.2
-        * (inputs.stem_volume_m3 ** 0.68)
-        * (inputs.products_count ** -0.09)
-        * (inputs.stems_per_cycle ** 0.22)
-        * (inputs.mean_log_length_m ** 0.34)
+        * (inputs.stem_volume_m3**0.68)
+        * (inputs.products_count**-0.09)
+        * (inputs.stems_per_cycle**0.22)
+        * (inputs.mean_log_length_m**0.34)
     )
     if productivity <= 0:
         raise FHOPSValueError("Derived ADV6N10 harvester productivity must be > 0.")

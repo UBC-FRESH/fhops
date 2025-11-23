@@ -211,9 +211,7 @@ def estimate_forwarder_productivity_bc(
             "average_tree_volume_dm3": average_tree_volume_dm3,
             "forwarding_distance_m": forwarding_distance_m,
         }
-        missing_brushwood = [
-            name for name, value in required_brushwood.items() if value is None
-        ]
+        missing_brushwood = [name for name, value in required_brushwood.items() if value is None]
         if missing_brushwood:
             raise ValueError(
                 "Missing parameters for Laitila & Väätäinen (2020) model: "
@@ -224,9 +222,7 @@ def estimate_forwarder_productivity_bc(
         assert forwarding_distance_m is not None
 
         payload_value = 7.1 if harwarder_payload_m3 is None else harwarder_payload_m3
-        unloading_value = (
-            0.29 if grapple_load_unloading_m3 is None else grapple_load_unloading_m3
-        )
+        unloading_value = 0.29 if grapple_load_unloading_m3 is None else grapple_load_unloading_m3
         value = estimate_brushwood_harwarder_productivity(
             harvested_trees_per_ha=harvested_trees_per_ha,
             average_tree_volume_dm3=average_tree_volume_dm3,
@@ -251,7 +247,9 @@ def estimate_forwarder_productivity_bc(
     if model in (ForwarderBCModel.GHAFFARIYAN_SMALL, ForwarderBCModel.GHAFFARIYAN_LARGE):
         if extraction_distance_m is None:
             raise ValueError("extraction_distance_m is required for Ghaffariyan models")
-        multiplier = slope_factor if slope_factor is not None else alpaca_slope_multiplier(slope_class)
+        multiplier = (
+            slope_factor if slope_factor is not None else alpaca_slope_multiplier(slope_class)
+        )
         if multiplier <= 0:
             raise ValueError("slope_factor must be > 0")
         if model is ForwarderBCModel.GHAFFARIYAN_SMALL:
@@ -303,8 +301,7 @@ def estimate_forwarder_productivity_bc(
         missing_adv = [name for name, value in required_adv.items() if value is None]
         if missing_adv:
             raise ValueError(
-                "Missing parameters for ADV6N10 model: "
-                + ", ".join(sorted(missing_adv))
+                "Missing parameters for ADV6N10 model: " + ", ".join(sorted(missing_adv))
             )
         assert payload_m3 is not None
         assert mean_log_length_m is not None
@@ -427,7 +424,7 @@ def _estimate_forwarder_productivity_adv6n10(
     def _travel_time() -> float:
         return (
             1.11
-            * (travel_speed_m_per_min ** -0.935)
+            * (travel_speed_m_per_min**-0.935)
             * (products_per_trail**0.19)
             * (trail_length_m**1.016)
         )
