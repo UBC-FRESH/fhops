@@ -1,6 +1,8 @@
 # SoftwareX Manuscript Rollout Plan
 
 > **Planning Note:** Every task must use checkboxes and include subtasks/sub-subtasks as needed. Keep expanding items in-place as execution details emerge so we stay consistent with this structure.
+>
+> **Citation Guardrail:** Until Rosalia Jaffray’s thesis chapters are defended/public, only cite the submitted systematic review (“Jaffray, Coupland, Paradis, *Forest harvesting operational planning tools…*, submitted to IJFE 2025/10”) and the published papers it covers. Do **not** cite unreleased thesis chapters or drafts in the SoftwareX manuscript.
 
 ## Goals
 - [ ] Author a SoftwareX manuscript that showcases FHOPS and complements the existing Sphinx user guide (especially the Overview section).
@@ -86,6 +88,7 @@
   - [ ] **Costing demo:** Script (`scripts/run_costing_demo.py`) that runs `fhops dataset estimate-cost --show-costs --telemetry-log ...` on `med42`, capturing machine-rate breakdowns (CPI-adjusted owning/operating) and telemetry JSONL. Export CSV for inclusion in the manuscript.
   - [ ] **Synthetic scaling sweep:** Script (`scripts/run_synthetic_sweep.py`) that generates synthetic small/medium tiers (fixed RNG seeds), runs a single SA pass per tier, and plots runtime vs. scenario size (PDF) akin to GROMACS scaling charts.
   - [ ] **Documentation/export assets:** Script (`scripts/export_docs_assets.py`) that outputs tables used in the manuscript (harvest system registry excerpt, operator preset table) in CSV + LaTeX format for direct inclusion.
+    - [x] Render shared narrative snippets from Markdown → LaTeX/RST (integrated into `generate_assets.sh`).
 - [ ] Capture thesis alignment: Document touchpoints with `tmp/jaffray-rosalia-masc-proposal` / `tmp/jaffray-rosalia-masc-thesis` in `notes/thesis_alignment.md` and weave key citations into each section outline.
   - [ ] Explicitly list which FHOPS analytical content will be reserved for Jaffray Chapter 2 (two-to-three BC case studies answering the open questions from her intro/lit review).
   - [ ] Ensure the SoftwareX single-author paper focuses on platform architecture, reproducibility, and tooling; detailed BC case-study insights remain embargoed until Rosalia submits/publishes her thesis work.

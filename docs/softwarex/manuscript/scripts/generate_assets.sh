@@ -31,3 +31,6 @@ python -m fhops.cli.main "${bench_args[@]}"
 popd >/dev/null
 
 echo "[assets] Benchmarks ready. Summary CSV/JSON live under ${bench_dir}" >&2
+
+echo "[assets] Rendering shared manuscript/doc snippets" >&2
+python "${script_dir}/export_docs_assets.py" --repo-root "${repo_root}"
