@@ -5,6 +5,7 @@
 - Enriched the scenario contract models with NumPy-style `Attributes` sections covering units/validation semantics for every field, ensuring the generated API docs explain each Pydantic dataclass (`src/fhops/scenario/contract/models.py`).
 - Expanded the heuristic solver docstrings (SA/ILS/Tabu) with detailed parameter/return notes, telemetry context, and assignment schema descriptions so the optimisation API pages mirror the new CLI-level guidance (`src/fhops/optimization/heuristics/{sa,ils,tabu}.py`).
 - Documented the productivity/reference helpers most commonly surfaced via `fhops dataset estimate-productivity` (forwarder BC wrapper, ADV6N7/Han skidder models, Sessions & Boston shovel logger, Berry/Visser processor regressions). Each function now lists required units, optional multipliers, and citations; docs build stays warning-free via `sphinx-build -b html docs _build/html -W`.
+- Extended the same treatment to the cable logging + helicopter helpers (Ünver-Okan skidding, TR125/TR127 skyline, McNeel/Aubuchon/Kellogg standing skyline, FNCY12, LeDoux residue, Micro Master, Hi-Skid, helicopter longline). Every exported API entry under `src/fhops/productivity/cable_logging.py` now explains required inputs, units, and the underlying citation.
 - Updated `notes/sphinx-documentation.md` to log the docstring audit and keep the Phase 4 documentation backlog honest.
 - (No tests run — documentation-only changes.)
 
