@@ -3656,9 +3656,7 @@ def _forwarder_parameters(result: ForwarderBCResult) -> list[tuple[str, str]]:
         )
 
     if result.model in _FORWARDER_GHAFFARIYAN_MODELS:
-        extraction = params.get("extraction_distance_m")
         slope_class = params.get("slope_class")
-        slope_factor = params.get("slope_factor")
         rows.extend(
             [
                 ("Extraction Distance (m)", f"{_param_float('extraction_distance_m'):.1f}"),
