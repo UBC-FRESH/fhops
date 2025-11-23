@@ -1,3 +1,9 @@
+# 2025-11-24 — Release FHOPS v1.0.0-alpha2
+- Bumped `src/fhops/__version__` / `tests/test_import.py` to `1.0.0a2` and published the new release notes at `docs/releases/v1.0.0-alpha2.md`.
+- Captured the docstring mega-sweep (CLI datasets, heuristics, playback, productivity, costing) plus the new Typer CLI harness so the API docs and CLI help stay in sync for Rosalia’s thesis workflows.
+- Documented the changelog hook fixes (merge-parent detection + shallow-clone escape hatch) so the release process no longer stalls on GitHub’s synthetic merges.
+- Verification suite: `hatch run dev:suite`, `sphinx-build -b html docs docs/_build/html -W`, `pre-commit run --all-files`, and `HATCH_INDEX=pypi hatch publish`.
+
 # 2025-11-24 — Typer CLI runner + lint config hardening
 - Wrapped Typer’s CLI runner in `tests/cli.py` so pytest now reads a merged stdout/stderr stream with ANSI codes stripped, preventing the Rich error banners (introduced upstream in Typer 0.12/Click 8.3) from breaking assertions across the dataset CLI suites.
 - Added the `cli_text()` helper so tests that need the combined output can opt-in explicitly, while existing `result.stdout` checks keep working because the patched runner now backs stdout/output bytes with the merged text.
