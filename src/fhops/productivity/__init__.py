@@ -198,6 +198,7 @@ from .stoilov2021 import (
 )
 
 __all__ = [
+    "Fncy12ProductivityVariant",
     "LahrsenModel",
     "ProductivityEstimate",
     "ProductivityDistributionEstimate",
@@ -218,6 +219,8 @@ __all__ = [
     "estimate_cable_yarder_productivity_tr125_multi_span",
     "estimate_cable_yarder_cycle_time_tr127_minutes",
     "estimate_cable_yarder_productivity_tr127",
+    "estimate_micro_master_cycle_minutes",
+    "estimate_micro_master_productivity_m3_per_pmh",
     "estimate_residue_cycle_time_ledoux_minutes",
     "estimate_residue_productivity_ledoux_m3_per_pmh",
     "estimate_helicopter_longline_productivity",
@@ -229,6 +232,7 @@ __all__ = [
     "estimate_standing_skyline_productivity_kellogg1976",
     "estimate_running_skyline_cycle_time_mcneel2000_minutes",
     "estimate_running_skyline_productivity_mcneel2000",
+    "estimate_tmy45_productivity_fncy12",
     "running_skyline_variant_defaults",
     "estimate_harvester_productivity_adv6n10",
     "estimate_harvester_productivity_adv5n30",
@@ -282,6 +286,7 @@ __all__ = [
     "TR122Treatment",
     "ADV5N28Block",
     "ADV1N35Metadata",
+    "ADV1N40Metadata",
     "GrappleYarderInputs",
     "estimate_grapple_yarder_productivity",
     "ShovelLoggingParameters",
@@ -357,6 +362,7 @@ __all__ = [
     "get_skidder_speed_profile",
     "HelicopterLonglineModel",
     "HelicopterProductivityResult",
+    "ledoux_delay_component_minutes",
     "get_labelle_huss_automatic_bucking_adjustment",
     "BerryLogGradeStat",
     "get_berry_log_grade_stats",

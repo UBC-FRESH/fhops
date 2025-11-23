@@ -14,7 +14,6 @@ from fhops.productivity import (
     estimate_processor_productivity_nakagawa2010,
     estimate_processor_productivity_tn103,
     estimate_processor_productivity_tn166,
-    estimate_processor_productivity_tr87,
     estimate_processor_productivity_tr106,
     estimate_processor_productivity_visser2015,
     get_labelle_huss_automatic_bucking_adjustment,

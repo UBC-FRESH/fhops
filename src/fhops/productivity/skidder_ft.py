@@ -187,7 +187,7 @@ def get_adv6n7_metadata() -> ADV6N7Metadata:
             loader_costs.get("total_per_smh_cad_2004", 144.46)
         ),
         loader_forwarding_cost_per_m3_at_85m_cad_2004=float(
-            (payload["costs"]["unit_costs"].get("loader_forwarding_per_m3_at_85m_cad_2004") or 0.0)
+            payload["costs"]["unit_costs"].get("loader_forwarding_per_m3_at_85m_cad_2004") or 0.0
         )
         or None,
         distance_range_m=(float(range_payload[0]), float(range_payload[1])),

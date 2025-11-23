@@ -890,7 +890,7 @@ def estimate_tmy45_productivity_fncy12(
         ),
     }
     shift_m3 = variant_map.get(variant)
-    if not isinstance(shift_m3, (int, float)):
+    if not isinstance(shift_m3, int | float):
         raise ValueError(f"FNCY12 dataset missing shift output for variant '{variant.value}'.")
     shift_hours = dataset.shift_hours or 10.0
     productivity = float(shift_m3) / shift_hours

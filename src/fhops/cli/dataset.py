@@ -7,7 +7,7 @@ from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime
 from enum import Enum
-from functools import lru_cache
+from functools import cache
 from pathlib import Path
 from typing import Any
 
@@ -38,7 +38,6 @@ from fhops.productivity import (
     ADV2N26_DEFAULT_UTILISATION,
     ADV5N1_DEFAULT_PAYLOAD_M3,
     ADV5N1_DEFAULT_UTILISATION,
-    ADV1N35Metadata,
     ADV5N6ProcessorProductivityResult,
     ADV5N28Block,
     ADV6N7DeckingMode,
@@ -46,7 +45,6 @@ from fhops.productivity import (
     ADV6N10HarvesterInputs,
     ADV7N3ProcessorProductivityResult,
     ALPACASlopeClass,
-    BerryLogGradeStat,
     Bertone2025ProcessorProductivityResult,
     Borz2023ProcessorProductivityResult,
     ClambunkProductivityResult,
@@ -87,7 +85,6 @@ from fhops.productivity import (
     TR122Treatment,
     TrailSpacingPattern,
     VisserLogSortProductivityResult,
-    alpaca_slope_multiplier,
     estimate_cable_skidder_productivity_adv1n12_full_tree,
     estimate_cable_skidder_productivity_adv1n12_two_phase,
     estimate_cable_skidding_productivity_unver_robust,
@@ -108,13 +105,9 @@ from fhops.productivity import (
     estimate_grapple_skidder_productivity_han2018,
     estimate_grapple_yarder_productivity_adv1n35,
     estimate_grapple_yarder_productivity_adv1n40,
-    estimate_grapple_yarder_productivity_adv5n28,
     estimate_grapple_yarder_productivity_sr54,
-    estimate_grapple_yarder_productivity_tn147,
-    estimate_grapple_yarder_productivity_tn157,
     estimate_grapple_yarder_productivity_tr75_bunched,
     estimate_grapple_yarder_productivity_tr75_handfelled,
-    estimate_grapple_yarder_productivity_tr122,
     estimate_harvester_productivity_adv5n30,
     estimate_harvester_productivity_adv6n10,
     estimate_harvester_productivity_kellogg1994,
@@ -146,7 +139,6 @@ from fhops.productivity import (
     estimate_processor_productivity_visser2015,
     estimate_productivity,
     estimate_productivity_distribution,
-    estimate_residue_cycle_time_ledoux_minutes,
     estimate_residue_productivity_ledoux_m3_per_pmh,
     estimate_running_skyline_cycle_time_mcneel2000_minutes,
     estimate_running_skyline_productivity_mcneel2000,
@@ -161,7 +153,6 @@ from fhops.productivity import (
     get_adv1n35_metadata,
     get_adv1n40_metadata,
     get_adv5n28_block,
-    get_adv6n7_metadata,
     get_berry_log_grade_metadata,
     get_berry_log_grade_stats,
     get_labelle_huss_automatic_bucking_adjustment,
@@ -174,7 +165,6 @@ from fhops.productivity import (
     ledoux_delay_component_minutes,
     list_tn147_case_ids,
     list_tn157_case_ids,
-    list_tr122_treatment_ids,
     load_lahrsen_ranges,
     predict_berry2019_skid_effects,
     running_skyline_variant_defaults,
@@ -182,14 +172,15 @@ from fhops.productivity import (
 from fhops.productivity.cable_logging import HI_SKID_DEFAULTS
 from fhops.reference import (
     ADV2N21StandSnapshot,
+    CompactionRisk,
     HelicopterFPInnovationsDataset,
     HelicopterOperation,
     PartialCutProfile,
     SoilProfile,
-    TN82Dataset,
     TN98DiameterRecord,
     TR28CostEstimate,
     TR28Machine,
+    TractorDriveEfficiency,
     adv2n21_cost_base_year,
     adv4n7_default_risk_id,
     adv4n7_risk_ids,
@@ -204,7 +195,6 @@ from fhops.reference import (
     get_helicopter_operation,
     get_partial_cut_profile,
     get_soil_profile,
-    get_soil_profiles,
     get_tr28_source_metadata,
     get_tr119_treatment,
     load_adv2n21_treatments,
@@ -307,7 +297,7 @@ _LOADER_METADATA_PATH = (
 )
 
 
-@lru_cache(maxsize=None)
+@cache
 def _load_loader_model_metadata() -> dict[str, Any]:
     """Load the bundled loader preset metadata JSON so CLI commands can look up defaults."""
     try:
@@ -353,24 +343,24 @@ def _extract_preset_costs(meta: Mapping[str, Any] | None) -> dict[str, float] | 
     costs: dict[str, float] = {}
     base_year = meta.get("cost_base_year")
     cost_per_m3 = meta.get("cost_per_m3")
-    if base_year and isinstance(cost_per_m3, (int, float)):
+    if base_year and isinstance(cost_per_m3, int | float):
         costs["observed_cost_per_m3_cad_base"] = float(cost_per_m3)
         costs["observed_cost_per_m3_cad_2024"] = float(inflate_value(cost_per_m3, int(base_year)))
     cost_per_log = meta.get("cost_per_log")
-    if base_year and isinstance(cost_per_log, (int, float)):
+    if base_year and isinstance(cost_per_log, int | float):
         costs["observed_cost_per_log_cad_base"] = float(cost_per_log)
         costs["observed_cost_per_log_cad_2024"] = float(inflate_value(cost_per_log, int(base_year)))
     projected = meta.get("projected_cost_per_m3")
     projected_target = meta.get("projected_cost_per_m3_target")
-    if isinstance(projected, (int, float)):
+    if isinstance(projected, int | float):
         costs["projected_cost_per_m3_cad_base"] = float(projected)
-        if isinstance(projected_target, (int, float)):
+        if isinstance(projected_target, int | float):
             costs["projected_cost_per_m3_cad_2024"] = float(projected_target)
     heli = meta.get("helicopter_cost_per_m3")
     heli_target = meta.get("helicopter_cost_per_m3_target")
-    if isinstance(heli, (int, float)):
+    if isinstance(heli, int | float):
         costs["helicopter_cost_per_m3_cad_base"] = float(heli)
-        if isinstance(heli_target, (int, float)):
+        if isinstance(heli_target, int | float):
             costs["helicopter_cost_per_m3_cad_2024"] = float(heli_target)
     return costs or None
 
@@ -573,7 +563,7 @@ def _apply_loader_system_defaults(
             return current, False
         if isinstance(value, bool):
             return value, True
-        if isinstance(value, (int, float)):
+        if isinstance(value, int | float):
             return bool(value), True
         if isinstance(value, str):
             normalized = value.strip().lower()
@@ -980,7 +970,7 @@ def _coerce_bool(value: Any) -> bool | None:
         return None
     if isinstance(value, bool):
         return value
-    if isinstance(value, (int, float)):
+    if isinstance(value, int | float):
         return bool(value)
     text = str(value).strip().lower()
     if text in {"1", "true", "yes", "on"}:
@@ -2184,12 +2174,12 @@ def _render_processor_result(
         numeric_entries = [
             (name, value)
             for name, value in cycle.items()
-            if name != "total" and isinstance(value, (int, float))
+            if name != "total" and isinstance(value, int | float)
         ]
-        if numeric_entries or isinstance(cycle.get("total"), (int, float)):
+        if numeric_entries or isinstance(cycle.get("total"), int | float):
             prefix = "[dim]Cycle breakdown"
             total_value = cycle.get("total")
-            if isinstance(total_value, (int, float)):
+            if isinstance(total_value, int | float):
                 prefix = f"[dim]Cycle breakdown (avg {total_value:.2f} min)"
             suffix = ""
             if numeric_entries:
@@ -2449,11 +2439,11 @@ def _render_grapple_yarder_result(
         if label:
             rows.insert(1, ("Preset", str(label)))
         logs_per_turn = preset_meta.get("logs_per_turn")
-        if isinstance(logs_per_turn, (int, float)):
+        if isinstance(logs_per_turn, int | float):
             rows.append(("Logs/Turn", f"{float(logs_per_turn):.2f}"))
         base_year = int(preset_meta.get("cost_base_year", TARGET_YEAR))
         cost_per_m3 = preset_meta.get("cost_per_m3")
-        if isinstance(cost_per_m3, (int, float)):
+        if isinstance(cost_per_m3, int | float):
             rows.append((f"Observed Cost ({base_year} CAD $/m³)", f"{float(cost_per_m3):.2f}"))
             rows.append(
                 (
@@ -2462,7 +2452,7 @@ def _render_grapple_yarder_result(
                 )
             )
         cost_per_log = preset_meta.get("cost_per_log")
-        if isinstance(cost_per_log, (int, float)):
+        if isinstance(cost_per_log, int | float):
             rows.append((f"Observed Cost ({base_year} CAD $/log)", f"{float(cost_per_log):.2f}"))
             rows.append(
                 (
@@ -2576,7 +2566,7 @@ def _apply_skidder_system_defaults(
         except ValueError as exc:  # pragma: no cover - validated by CI
             raise ValueError(f"Unknown decking condition override: {value}") from exc
     value = overrides.get("skidder_productivity_multiplier")
-    if custom_multiplier is None and isinstance(value, (int, float)):
+    if custom_multiplier is None and isinstance(value, int | float):
         custom_multiplier = float(value)
         used = True
     value = overrides.get("skidder_speed_profile")
@@ -2588,7 +2578,7 @@ def _apply_skidder_system_defaults(
             raise ValueError(f"Unknown skidder speed profile override: {value}") from exc
     value = overrides.get("skidder_extraction_distance_m")
     if not user_supplied.get("skidder_extraction_distance", False) and isinstance(
-        value, (int, float)
+        value, int | float
     ):
         extraction_distance_m = float(value)
         used = True
@@ -2687,7 +2677,7 @@ def _apply_forwarder_system_defaults(
         except ValueError as exc:
             raise ValueError(f"Unknown forwarder model override: {value}") from exc
     value = overrides.get("forwarder_extraction_distance_m")
-    if not user_supplied.get("extraction_distance", False) and isinstance(value, (int, float)):
+    if not user_supplied.get("extraction_distance", False) and isinstance(value, int | float):
         extraction_distance_m = float(value)
         used = True
     return model, extraction_distance_m, used
@@ -2811,7 +2801,7 @@ def _apply_shovel_system_defaults(
     def coerce_float(value: object | None) -> float | None:
         if value is None:
             return None
-        if isinstance(value, (int, float)):
+        if isinstance(value, int | float):
             return float(value)
         try:
             return float(value)
@@ -3468,56 +3458,6 @@ def _apply_grapple_yarder_system_defaults(
         in_cycle_delay_minutes,
         tn157_case_value,
         tn147_case_value,
-        used,
-    )
-    used |= changed
-    crew_size, changed = maybe_float("skyline_crew_size", crew_size, "crew_size", True)
-    used |= changed
-    horizontal_distance_m, changed = maybe_float(
-        "skyline_horizontal_distance_m", horizontal_distance_m, "horizontal_distance_m", True
-    )
-    used |= changed
-    vertical_distance_m, changed = maybe_float(
-        "skyline_vertical_distance_m", vertical_distance_m, "vertical_distance_m", True
-    )
-    used |= changed
-    pieces_per_cycle, changed = maybe_float(
-        "skyline_pieces_per_cycle", pieces_per_cycle, "pieces_per_cycle", True
-    )
-    used |= changed
-    piece_volume_m3, changed = maybe_float(
-        "skyline_piece_volume_m3", piece_volume_m3, "piece_volume_m3", True
-    )
-    used |= changed
-    carriage_height_m, changed = maybe_float(
-        "skyline_carriage_height_m", carriage_height_m, "carriage_height_m", True
-    )
-    used |= changed
-    chordslope_percent, changed = maybe_float(
-        "skyline_chordslope_percent", chordslope_percent, "chordslope_percent", True
-    )
-    used |= changed
-
-    value = overrides.get("skyline_running_variant")
-    if value and not user_supplied.get("running_yarder_variant", False):
-        try:
-            running_variant = RunningSkylineVariant(value)
-            used = True
-        except ValueError as exc:
-            raise ValueError(f"Unknown running-skyline variant override '{value}'.") from exc
-
-    return (
-        model,
-        logs_per_turn,
-        average_log_volume_m3,
-        crew_size,
-        horizontal_distance_m,
-        vertical_distance_m,
-        pieces_per_cycle,
-        piece_volume_m3,
-        running_variant,
-        carriage_height_m,
-        chordslope_percent,
         used,
     )
 
@@ -4382,21 +4322,22 @@ def _print_salvage_processing_guidance(
     """Emit mode-specific guidance for the ADV1N5 salvage processing checklist."""
     if mode is SalvageProcessingMode.PORTABLE_MILL:
         console.print(
-            "[dim]Salvage system '%s' in portable-mill mode: rough cants stay near the satellite yard, keeping "
-            "char-laden slabs onsite per ADV1N5. Remember to segregate chip furnish from dirty sorts before hauling."
-            % system_id
+            "[dim]Salvage system "
+            f"'{system_id}' in portable-mill mode: rough cants stay near the satellite yard, keeping "
+            "char-laden slabs onsite per ADV1N5. Remember to segregate chip furnish from dirty sorts"
+            " before hauling."
         )
     elif mode is SalvageProcessingMode.IN_WOODS_CHIPPING:
         console.print(
-            "[dim]Salvage system '%s' in in-woods chipping mode: separate pulp logs at the stump, feed the portable "
+            "[dim]Salvage system "
+            f"'{system_id}' in in-woods chipping mode: separate pulp logs at the stump, feed the portable "
             "chip plant, screen fines, and truck chips directly so small charred stems never hit the mill deck."
-            % system_id
         )
     else:
         console.print(
-            "[dim]Salvage system '%s' using standard mill flow. Apply the ADV1N5 checklist (raise top diameters, "
+            "[dim]Salvage system "
+            f"'{system_id}' using standard mill flow. Apply the ADV1N5 checklist (raise top diameters, "
             "buck out catfaces, double-ring debarkers, charcoal dust controls) before chips enter the regular furnish."
-            % system_id
         )
 
 
@@ -6571,7 +6512,7 @@ def estimate_productivity_cmd(
             if predicted_prod is not None:
                 r2_text = berry_skid_prediction["productivity_r2"]
                 r2_fragment = (
-                    f"~R² {r2_text:.2f}" if isinstance(r2_text, (float, int)) else "weak fit"
+                    f"~R² {r2_text:.2f}" if isinstance(r2_text, float | int) else "weak fit"
                 )
                 console.print(
                     f"[dim]Skid-size productivity regression ({r2_fragment}) suggests ≈{predicted_prod:.1f} m³/PMH for this landing size (informational only).[/dim]"

@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
-from typing import Mapping, Sequence
 
 
 def _validate_inputs(turn_volume_m3: float, yarding_distance_m: float) -> None:
@@ -492,7 +492,6 @@ def _load_tn147_cases() -> Mapping[str, TN147Case]:
         total_turns = {
             str(entry["id"]): float(entry.get("total_turns") or 0.0) for entry in entries
         }
-        combined_turns = sum(total_turns.values())
         avg_turn_volume = _tn147_weighted_average(
             {str(entry["id"]): float(entry.get("avg_turn_volume_m3") or 0.0) for entry in entries},
             total_turns,

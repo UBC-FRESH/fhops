@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Mapping
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:  # pragma: no cover - import-time typing helper
     from fhops.productivity.cable_logging import HelicopterLonglineModel
@@ -32,7 +33,7 @@ class HelicopterOperation:
 
     id: str
     source_id: str
-    helicopter_model: "HelicopterLonglineModel"
+    helicopter_model: HelicopterLonglineModel
     configuration: str
     lift_class: str | None
     treatment: str | None
@@ -60,7 +61,7 @@ class HelicopterFPInnovationsDataset:
     """Container for the helicopter dataset plus helper lookup tables."""
 
     sources: Mapping[str, HelicopterSource]
-    defaults: Mapping["HelicopterLonglineModel", str]
+    defaults: Mapping[HelicopterLonglineModel, str]
     operations: tuple[HelicopterOperation, ...]
     operation_index: Mapping[str, HelicopterOperation]
 

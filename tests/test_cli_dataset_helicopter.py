@@ -3,7 +3,6 @@ from __future__ import annotations
 from typer.testing import CliRunner
 
 from fhops.cli.dataset import dataset_app
-from fhops.productivity import HelicopterLonglineModel
 
 runner = CliRunner()
 

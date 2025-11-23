@@ -289,7 +289,7 @@ def get_labelle_huss_automatic_bucking_adjustment() -> AutomaticBuckingAdjustmen
     revenue_delta = revenue.get("difference_eur_per_m3")
     revenue_delta_value = None if revenue_delta is None else float(revenue_delta)
     base_year = metadata.get("base_year")
-    base_year_value = int(base_year) if isinstance(base_year, (int, float)) else base_year
+    base_year_value = int(base_year) if isinstance(base_year, int | float) else base_year
     return AutomaticBuckingAdjustment(
         multiplier=multiplier,
         delta_m3_per_pmh=delta_m3,
@@ -646,7 +646,7 @@ def _get_visser_tables() -> tuple[
     currency = dataset.get("currency")
     base_year = dataset.get("base_year")
     value_reference = dataset.get("value_summary_piece_size_m3")
-    base_year_int = int(base_year) if isinstance(base_year, (int, float)) else None
+    base_year_int = int(base_year) if isinstance(base_year, int | float) else None
     return (
         by_sort_sorted,
         float(min_piece),
@@ -3222,7 +3222,7 @@ def estimate_processor_productivity_tn166(
     if isinstance(cycle_minutes, dict):
         cycle_dict = {}
         for key, value in cycle_minutes.items():
-            if isinstance(value, (int, float)):
+            if isinstance(value, int | float):
                 cycle_dict[key] = float(value)
             else:
                 cycle_dict[key] = value

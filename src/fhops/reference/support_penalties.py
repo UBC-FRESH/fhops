@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
-from typing import Mapping
 
 _DATA_ROOT = Path(__file__).resolve().parents[3] / "data/reference/fpinnovations"
 _ADV15N3_PATH = _DATA_ROOT / "adv15n3_support.json"
