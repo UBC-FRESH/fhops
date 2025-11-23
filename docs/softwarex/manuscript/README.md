@@ -34,7 +34,7 @@ make pdf    # or simply `make`
 make clean
 ```
 
-`scripts/generate_assets.sh` is currently a placeholder; wire FHOPS benchmark/plotting commands into that script so `make all` regenerates figures/tables before latexmk runs. `latexmk` will automatically run pdflatex/bibtex as needed. You’ll need a TeX Live installation that includes common packages (`latexmk`, `hyperref`, `lineno`, etc.). On Debian/Ubuntu, `sudo apt-get install texlive-full latexmk` is the quickest path; we can revisit a lighter scheme/tectonic later if build times become an issue.
+`scripts/generate_assets.sh` currently runs a lightweight FHOPS benchmark suite (minitoy + med42, SA-only) and drops the resulting CSV/JSON artifacts into `docs/softwarex/assets/data/benchmarks`. Extend that script with any additional datasets/plots as figures are finalised. `latexmk` will automatically run pdflatex/bibtex as needed. You’ll need a TeX Live installation that includes common packages (`latexmk`, `hyperref`, `lineno`, etc.). On Debian/Ubuntu, `sudo apt-get install texlive-full latexmk` is the quickest path; we can revisit a lighter scheme/tectonic later if build times become an issue.
 
 ## Planned workflow
 1. **Template adaptation:** `fhops-softx.tex` pulls the elsarticle class and `\input`s the files under `sections/`, with citations managed via `references.bib`. Section files are intended to be reusable (shared with Sphinx via includes later).

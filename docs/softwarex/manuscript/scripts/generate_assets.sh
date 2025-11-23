@@ -1,7 +1,33 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Placeholder for reproducible asset generation.
-# TODO: wire FHOPS benchmark commands + plotting scripts.
+# Resolve important directories
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="$(cd "${script_dir}/../../../.." && pwd)"
+assets_root="${repo_root}/docs/softwarex/assets"
+data_dir="${assets_root}/data"
+fig_dir="${assets_root}/figures"
+bench_dir="${data_dir}/benchmarks"
 
-echo "[assets] No asset-generation scripts defined yet. Skipping." >&2
+mkdir -p "${bench_dir}" "${fig_dir}" "${data_dir}"
+
+echo "[assets] Regenerating FHOPS benchmark summaries into ${bench_dir}" >&2
+rm -rf "${bench_dir}" && mkdir -p "${bench_dir}"
+
+bench_args=(
+  "bench"
+  "suite"
+  "--scenario" "examples/minitoy/scenario.yaml"
+  "--out-dir" "${bench_dir}"
+  "--telemetry-log" "${bench_dir}/telemetry.jsonl"
+  "--time-limit" "60"
+  "--sa-iters" "1000"
+  "--driver" "auto"
+  "--no-include-mip"
+)
+
+pushd "${repo_root}" >/dev/null
+python -m fhops.cli.main "${bench_args[@]}"
+popd >/dev/null
+
+echo "[assets] Benchmarks ready. Summary CSV/JSON live under ${bench_dir}" >&2

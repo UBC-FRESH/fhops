@@ -58,6 +58,16 @@
   - [ ] Inventory required figures/tables and their data sources.
   - [ ] Create reproducible scripts/notebooks to regenerate each artifact.
   - [ ] Integrate artifact generation into CI or a manual checklist.
+- [ ] Asset-generation plan:
+  - [ ] **Scenario ingest demo:** Script (`scripts/run_dataset_inspection.py`) that runs `fhops dataset inspect` on `examples/minitoy` + `examples/med42`, generates synthetic tier via `fhops synth generate`, and saves schema summaries / synthetic `scenario.yaml` under `docs/softwarex/assets/data/datasets/`. Mirrors PyLESA’s “code metadata” table.
+  - [ ] **Benchmark sweep (SA baseline):** Extend `scripts/generate_assets.sh` (already running SA on `minitoy`) to include `med42` + `synthetic-small`. Use `fhops bench suite --telemetry-log --compare-preset ...` so we capture CSV/JSON telemetry for each scenario. Goal: PyDDRBG-style benchmark manifest.
+  - [ ] **Solver comparison (SA vs. ILS vs. Tabu):** Add a script (or extend the benchmark script) that runs `fhops bench suite --include-ils --include-tabu` on `minitoy` + `med42`, producing tables comparing objective/runtime/KPIs per solver. Provide LaTeX table for manuscript.
+  - [ ] **Hyperparameter tuning harness:** Script (`scripts/run_tuner.py`) that launches short Optuna studies (e.g., 20 trials) per heuristic via `fhops bench tune` / `fhops.cli.profiles`. Export recommended parameter sets + tuner summaries (CSV/JSON). Explain why multiple tuners exist and how FHOPS suggests presets for new datasets.
+  - [ ] **Playback + KPI reporting:** Script (`scripts/run_playback_analysis.py`) that takes the best SA/ILS assignments, runs deterministic + stochastic playback (`fhops telemetry playback --stochastic`), computes day/shift KPIs, and exports CSV/PNG charts (utilisation, downtime). Similar to cashocs/GROMACS “robustness” sections.
+  - [ ] **Stochastic robustness tests:** As part of the playback script, run `fhops evaluation.run_stochastic_playback` across 50 simulations to produce variance/CI tables. Save figure (boxplot/histogram) showing KPI variability under perturbations.
+  - [ ] **Costing demo:** Script (`scripts/run_costing_demo.py`) that runs `fhops dataset estimate-cost --show-costs --telemetry-log ...` on `med42`, capturing machine-rate breakdowns (CPI-adjusted owning/operating) and telemetry JSONL. Export CSV for inclusion in the manuscript.
+  - [ ] **Synthetic scaling sweep:** Script (`scripts/run_synthetic_sweep.py`) that generates synthetic small/medium tiers (fixed RNG seeds), runs a single SA pass per tier, and plots runtime vs. scenario size (PDF) akin to GROMACS scaling charts.
+  - [ ] **Documentation/export assets:** Script (`scripts/export_docs_assets.py`) that outputs tables used in the manuscript (harvest system registry excerpt, operator preset table) in CSV + LaTeX format for direct inclusion.
 - [ ] Capture thesis alignment: Document touchpoints with `tmp/jaffray-rosalia-masc-proposal` / `tmp/jaffray-rosalia-masc-thesis` in `notes/thesis_alignment.md` and weave key citations into each section outline.
   - [ ] Explicitly list which FHOPS analytical content will be reserved for Jaffray Chapter 2 (two-to-three BC case studies answering the open questions from her intro/lit review).
   - [ ] Ensure the SoftwareX single-author paper focuses on platform architecture, reproducibility, and tooling; detailed BC case-study insights remain embargoed until Rosalia submits/publishes her thesis work.
@@ -172,6 +182,20 @@
 - **Submission Readiness Dashboard:** `notes/submission_readiness_dashboard.md` encodes the benchmark criteria and indicators reverse-engineered from the exemplar set.
 - **Reference Vault README:** `docs/softwarex/reference/README.md` records provenance (retrieval dates, source URLs) for the instruction snapshots, templates, Crossref dump, and exemplar PDFs.
 - **Thesis Alignment Notes:** `notes/thesis_alignment.md` (to be expanded) will map which FHOPS analyses stay in the SoftwareX paper vs. which BC case studies remain reserved for Rosalia Jaffray’s Chapter 2.
+
+---
+
+## FHOPS contribution focus (from Jaffray MASc review)
+We leverage Rosalia’s Chapter 1 literature review to stay aligned with the real gaps in forest-harvest planning software. Summarised themes:
+- **Open, reusable tooling:** Henkelman (1978), Weintraub & Bare (1996), Heinimann (2007), and later reviews show most models are one-off or closed. FHOPS’ scenario contract + solver + telemetry stack is our answer to this gap.
+- **Integrated, multi-problem workflows & reproducibility:** Existing papers often tackle isolated sub-problems and rarely publish scripts/telemetry. FHOPS provides a unified workflow (scenario → optimisation → evaluation) with reproducible CLI/API entry points. This is the core SoftwareX contribution.
+- **Real-world BC case studies:** Multiple BC-based deployments are still needed to answer the open questions Rosalia raised (e.g., how FHOPS behaves across ecological/operational contexts). FHOPS enables those studies, but we’ll reserve the detailed case-study content for her Chapter 2 so we don’t cannibalize her contributions.
+
+Real-world case studies & validation – The literature (and Rosalia’s conclusion) stresses the need for multiple BC-based case studies (small-scale tenures, skyline vs. ground-based, salvage corridors, etc.) to validate models against real operational data and answer questions like “How does the framework perform across different ecological/operational contexts?” FHOPS only partially fills this today: we provide the tooling, default harvest-system registry, and reference datasets, but we haven’t published deep BC case-study analyses yet. That’s exactly the “easy win” Rosalia’s Chapter 2 will deliver—deploy FHOPS on two or three BC case studies to answer those open questions. For the SoftwareX submission, we should state that FHOPS enables those studies but reserve the detailed results for Rosalia’s thesis/papers.
+
+So, alignment proposal:
+- SoftwareX paper focuses on the open-source platform, reproducible workflow, and exemplar-level benchmarks (small synthetic runs demonstrating capability).
+- Rosalia’s Chapter 2 (and any companion paper) retains the detailed BC case-study analysis (multi-case validation, policy insights, trade-off maps) so her thesis still delivers the “real-world deployment” contribution.
 
 ---
 
