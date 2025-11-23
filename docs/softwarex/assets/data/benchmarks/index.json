@@ -1,0 +1,25 @@
+{
+  "benchmarks": [
+    {
+      "slug": "med42",
+      "label": "Med42 reference scenario",
+      "summary": "med42/summary.json",
+      "telemetry": "med42/telemetry.jsonl",
+      "scenario": "/home/gep/projects/fhops/examples/med42/scenario.yaml"
+    },
+    {
+      "slug": "minitoy",
+      "label": "MiniToy reference scenario",
+      "summary": "minitoy/summary.json",
+      "telemetry": "minitoy/telemetry.jsonl",
+      "scenario": "/home/gep/projects/fhops/examples/minitoy/scenario.yaml"
+    },
+    {
+      "slug": "synthetic_small",
+      "label": "Synthetic tier (small)",
+      "summary": "synthetic_small/summary.json",
+      "telemetry": "synthetic_small/telemetry.jsonl",
+      "scenario": "/home/gep/projects/fhops/docs/softwarex/assets/data/datasets/synthetic_small/scenario.yaml"
+    }
+  ]
+}

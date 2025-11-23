@@ -12,29 +12,95 @@ dataset_dir="${data_dir}/datasets"
 
 mkdir -p "${bench_dir}" "${fig_dir}" "${data_dir}"
 
-echo "[assets] Regenerating FHOPS benchmark summaries into ${bench_dir}" >&2
-rm -rf "${bench_dir}" && mkdir -p "${bench_dir}"
-
-bench_args=(
-  "bench"
-  "suite"
-  "--scenario" "examples/minitoy/scenario.yaml"
-  "--out-dir" "${bench_dir}"
-  "--telemetry-log" "${bench_dir}/telemetry.jsonl"
-  "--time-limit" "60"
-  "--sa-iters" "1000"
-  "--driver" "auto"
-  "--no-include-mip"
-)
-
-pushd "${repo_root}" >/dev/null
-python -m fhops.cli.main "${bench_args[@]}"
-popd >/dev/null
-
-echo "[assets] Benchmarks ready. Summary CSV/JSON live under ${bench_dir}" >&2
-
 echo "[assets] Rendering shared manuscript/doc snippets" >&2
 python "${script_dir}/export_docs_assets.py" --repo-root "${repo_root}"
 
 echo "[assets] Summarizing datasets into ${dataset_dir}" >&2
 python "${script_dir}/run_dataset_inspection.py" --repo-root "${repo_root}" --out-dir "${dataset_dir}"
+
+synthetic_scenario="${dataset_dir}/synthetic_small/scenario.yaml"
+if [[ ! -f "${synthetic_scenario}" ]]; then
+  echo "[assets] ERROR: synthetic scenario not found at ${synthetic_scenario}" >&2
+  exit 1
+fi
+
+echo "[assets] Regenerating FHOPS benchmark summaries into ${bench_dir}" >&2
+rm -rf "${bench_dir}" && mkdir -p "${bench_dir}"
+
+scenario_specs=(
+  "${repo_root}/examples/minitoy/scenario.yaml|minitoy|MiniToy reference scenario"
+  "${repo_root}/examples/med42/scenario.yaml|med42|Med42 reference scenario"
+  "${synthetic_scenario}|synthetic_small|Synthetic tier (small)"
+)
+
+for spec in "${scenario_specs[@]}"; do
+  IFS="|" read -r scenario_path slug label <<< "${spec}"
+  if [[ ! -f "${scenario_path}" ]]; then
+    echo "[assets] WARN: skipping ${slug}; missing scenario ${scenario_path}" >&2
+    continue
+  fi
+
+  out_dir="${bench_dir}/${slug}"
+  rm -rf "${out_dir}"
+  mkdir -p "${out_dir}"
+
+  telemetry="${out_dir}/telemetry.jsonl"
+  printf "%s\n" "${label}" > "${out_dir}/label.txt"
+  printf "%s\n" "${scenario_path}" > "${out_dir}/scenario_path.txt"
+
+  echo "[assets] Running benchmark suite for ${slug} -> ${out_dir}" >&2
+  bench_args=(
+    "bench"
+    "suite"
+    "--scenario" "${scenario_path}"
+    "--out-dir" "${out_dir}"
+    "--telemetry-log" "${telemetry}"
+    "--time-limit" "180"
+    "--sa-iters" "2500"
+    "--driver" "auto"
+    "--no-include-mip"
+    "--include-ils"
+    "--ils-iters" "400"
+    "--include-tabu"
+    "--tabu-iters" "2500"
+    "--compare-preset" "diversify"
+    "--compare-preset" "mobilisation"
+  )
+
+  pushd "${repo_root}" >/dev/null
+  python -m fhops.cli.main "${bench_args[@]}"
+  popd >/dev/null
+done
+
+python - <<'PY' "${bench_dir}"
+import json
+import sys
+from pathlib import Path
+
+if len(sys.argv) < 2:
+    raise SystemExit("Bench directory argument missing.")
+bench_dir = Path(sys.argv[1])
+
+index = []
+for summary_path in sorted(bench_dir.glob("*/summary.json")):
+    parent = summary_path.parent
+    slug = parent.name
+    telemetry = parent / "telemetry.jsonl"
+    label_file = parent / "label.txt"
+    label = label_file.read_text(encoding="utf-8").strip() if label_file.exists() else slug
+    scenario_file = parent / "scenario_path.txt"
+    scenario_path = scenario_file.read_text(encoding="utf-8").strip() if scenario_file.exists() else ""
+    index.append(
+        {
+            "slug": slug,
+            "label": label,
+            "summary": str(summary_path.relative_to(bench_dir)),
+            "telemetry": str(telemetry.relative_to(bench_dir)) if telemetry.exists() else "",
+            "scenario": scenario_path,
+        }
+    )
+
+with (bench_dir / "index.json").open("w", encoding="utf-8") as fh:
+    json.dump({"benchmarks": index}, fh, indent=2)
+print(f"[assets] Wrote benchmark index with {len(index)} entries to {bench_dir/'index.json'}")
+PY

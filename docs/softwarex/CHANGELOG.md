@@ -17,3 +17,4 @@ Only changes that affect the SoftwareX planning/manuscript workspace are recorde
 - Added the first shared narrative (`motivation_story.md`) and included it in both the manuscript and `docs/overview.rst`, ensuring the docs and paper stay synchronized on the FHOPS motivation text.
 - Implemented `scripts/run_dataset_inspection.py`, which inspects `examples/minitoy`, `examples/med42`, and a freshly generated `synth --tier small` bundle; outputs JSON summaries + an index under `docs/softwarex/assets/data/datasets/`, and snapshots the synthetic scenario for reproducibility.
 - Updated the Phase 1 plan to reflect the completed scenario-ingest automation, keeping the assets checklist aligned with the new scripts.
+- Expanded `scripts/generate_assets.sh` so `make assets` now benchmarks `minitoy`, `med42`, and the synthetic tier across SA/ILS/Tabu (with compare presets) and writes per-scenario summaries/telemetry plus an aggregated `benchmarks/index.json`.
