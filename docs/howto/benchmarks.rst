@@ -85,36 +85,12 @@ The summary CSV/JSON records, per scenario/solver pair:
   - ``objective_gap_vs_best_heuristic`` shows how far each solver trails the top heuristic (negative values mean the solver beats the best heuristic, e.g., MIP).
   - ``runtime_ratio_vs_best_heuristic`` reports runtime multiples relative to the quickest heuristic winner.
 
-A shortened example:
+Shared KPI roll-up
+------------------
 
-.. list-table::
-   :header-rows: 1
-   :widths: 20 15 20 15 15 15
+.. include:: ../includes/softwarex/benchmark_kpis.rst
 
-   * - scenario
-     - solver
-     - solver_category
-     - objective
-     - objective_gap_vs_best_heuristic
-     - runtime_ratio_vs_best_heuristic
-   * - minitoy
-     - sa
-     - heuristic
-     - 15.5
-     - 0.0
-     - 1.0
-   * - minitoy
-     - tabu
-     - heuristic
-     - -21.5
-     - 37.0
-     - 0.1
-   * - minitoy
-     - ils
-     - heuristic
-     - 23.0
-     - -7.5
-     - 0.3
+.. include:: ../includes/softwarex/benchmark_kpis_notes.rst
 
 Interpretation tips:
 

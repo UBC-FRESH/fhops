@@ -20,3 +20,4 @@ Only changes that affect the SoftwareX planning/manuscript workspace are recorde
 - Expanded `scripts/generate_assets.sh` so `make assets` now benchmarks `minitoy`, `med42`, and the synthetic tier across SA/ILS/Tabu (with compare presets) and writes per-scenario summaries/telemetry plus an aggregated `benchmarks/index.json`.
 - Added a shared heuristic solver matrix/notes pair (`heuristics_matrix.csv`, `heuristics_notes.md`) that the exporter converts into LaTeX/RST so both the manuscript and `docs/howto/heuristic_presets.rst` present identical solver guidance.
 - Wired `scripts/run_tuner.py` into the asset pipeline so condensed tuning studies run via `scripts/run_tuning_benchmarks.py` and drop comparison/leaderboard/difficulty tables inside `docs/softwarex/assets/data/tuning/`.
+- Added `benchmark_kpis.csv` + `benchmark_kpis_notes.md` and wired them through the exporter so both the manuscript and `docs/howto/benchmarks.rst` can reuse the same SA/ILS/Tabu KPI table.
