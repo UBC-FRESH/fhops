@@ -2,4 +2,46 @@
 \section{Software description}
 \label{sec:software-description}
 
-Placeholder text describing FHOPS architecture, modules, and dependencies.
+\textbf{Overview.} FHOPS ships as a Python package backed by Typer-based CLI tooling and a data contract that keeps datasets, solver inputs, and telemetry consistent. The system breaks down into three layers:
+
+\begin{enumerate}
+  \item \textbf{Data ingest \& scenario contract} – schema + loaders that convert CSV/YAML datasets into typed \texttt{Scenario} objects.
+  \item \textbf{Optimisation services} – heuristics (SA/ILS/Tabu), MIP builder, and evaluation harness.
+  \item \textbf{Telemetry \& assets} – reproducible logging, benchmark scripts, figure/table generation.
+\end{enumerate}
+
+Each layer is consumable via API or CLI, mirroring the dual entry points emphasized in pycity\_scheduling and TSFEL.
+
+\subsection{Data ingest and scenario contract}
+\textbf{Components:}
+\begin{itemize}
+  \item \texttt{fhops.scenario.contract} – Pydantic models for blocks, corridors, harvest systems, road jobs.
+  \item CSV/Parquet loaders (\texttt{fhops.cli.dataset}) – generate scenarios from published datasets (TN-147, TR-122, etc.).
+  \item Synthetic dataset generator (\texttt{fhops.scenario.synthetic}) – reproducible randomised scenarios with stratified harvest-system mixes.
+\end{itemize}
+
+\textbf{Dependencies:} Pydantic, pandas, numpy.
+
+\textbf{Outputs:} Validated \texttt{Scenario} objects with metadata (harvest system IDs, road-construction tables) plus telemetry-ready manifests.
+
+\subsection{Optimisation services}
+\textbf{Components:}
+\begin{itemize}
+  \item Heuristics under \texttt{fhops.optimization.heuristics} (SA, ILS, Tabu) with Typer CLI entry points (\texttt{fhops.cli.benchmarks}).
+  \item MIP builder (\texttt{fhops.optimization.mip}) for shift-based scheduling when exact solutions are required.
+  \item Evaluation playback + KPI generation (\texttt{fhops.evaluation.playback}, \texttt{fhops.evaluation.metrics}).
+\end{itemize}
+
+\textbf{Dependencies:} numpy, scipy, OR-Tools/PuLP (MIP), Typer/Rich for CLI ergonomics.
+
+\textbf{Outputs:} Solver traces (JSON telemetry), CSV KPI summaries, and intermediate artifacts supporting reproducibility.
+
+\subsection{Telemetry, assets, and automation}
+\textbf{Components:}
+\begin{itemize}
+  \item Telemetry writer (\texttt{fhops.telemetry}) + CLI flags (e.g., \texttt{--telemetry-log}) recording inputs/outputs.
+  \item Asset pipelines (planned) under \texttt{docs/softwarex/assets/} for figures/tables shared with Sphinx and the manuscript.
+  \item Benchmark scripts (\texttt{fhops.cli.benchmarks run-suite}) orchestrating reproducible experiments for Section~\ref{sec:illustrative-example}.
+\end{itemize}
+
+\textbf{Automation:} Make targets in \texttt{docs/softwarex/manuscript/} run \texttt{latexmk}; future targets will execute benchmark scripts (\texttt{make manuscript-benchmarks}) prior to building so figures/tables remain in sync.
