@@ -2,11 +2,17 @@
 
 from __future__ import annotations
 
+import sys
+from collections.abc import Iterable
+from types import ModuleType
+
 import typer.testing as typer_testing
 
+OriginalCliRunner = typer_testing.CliRunner
 
-class StdoutCliRunner(typer_testing.CliRunner):
-    """CliRunner that mirrors stderr into stdout for older Click versions."""
+
+class StdoutCliRunner(OriginalCliRunner):
+    """CliRunner that mirrors stderr into stdout for Typer/Click>=8.1."""
 
     def invoke(self, *args, **kwargs):  # type: ignore[override]
         result = super().invoke(*args, **kwargs)
@@ -17,5 +23,18 @@ class StdoutCliRunner(typer_testing.CliRunner):
         return result
 
 
-# Ensure all tests importing `CliRunner` get the merged-stdout behavior.
+def _patch_existing_modules(modules: Iterable[ModuleType]) -> None:
+    """Swap any already-imported CliRunner references."""
+
+    for module in modules:
+        if module is None:
+            continue
+        runner = getattr(module, "CliRunner", None)
+        if runner is OriginalCliRunner:
+            setattr(module, "CliRunner", StdoutCliRunner)
+
+
+# Ensure all tests importing `CliRunner` get the merged-stdout behavior,
+# even if they imported typer.testing before this module executed.
 typer_testing.CliRunner = StdoutCliRunner
+_patch_existing_modules(sys.modules.values())
