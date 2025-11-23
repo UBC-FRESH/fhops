@@ -15,6 +15,35 @@ DATA_PATH = Path(__file__).resolve().parents[3] / "data/machine_rates.json"
 
 @dataclass(frozen=True)
 class MachineRate:
+    """
+    Canonical machine-rate entry inspired by FPInnovations OpCost worksheets.
+
+    Attributes
+    ----------
+    machine_name:
+        Display name (e.g., "TimberPro 620E Processor").
+    role:
+        Human-readable machine role prior to normalisation.
+    ownership_cost_per_smh, operating_cost_per_smh:
+        CPI-adjusted owning/operating components ($/SMH).
+    default_utilization:
+        Assumed utilisation fraction (0-1) used in simple costing calculators.
+    move_in_cost:
+        Mobilisation allowance in CAD.
+    source:
+        Citation or origin for the rate card.
+    notes:
+        Optional provenance or cautionary text surfaced in the CLI.
+    cost_base_year:
+        CPI base year used when the record was ingested.
+    repair_maintenance_cost_per_smh:
+        Optional FPInnovations repair allowance at the reference usage hours.
+    repair_maintenance_reference_hours:
+        Usage bucket (SMH) for the repair allowance.
+    repair_maintenance_usage_multipliers:
+        Mapping of usage-hour buckets → multipliers for scaling the repair allowance.
+    """
+
     machine_name: str
     role: str
     ownership_cost_per_smh: float
@@ -30,10 +59,26 @@ class MachineRate:
 
     @property
     def total_cost_per_smh(self) -> float:
+        """float: Convenience accessor returning owning + operating components ($/SMH)."""
+
         return self.ownership_cost_per_smh + self.operating_cost_per_smh
 
 
 def load_default_machine_rates() -> Sequence[MachineRate]:
+    """
+    Load and CPI-adjust the bundled ``data/machine_rates.json`` reference table.
+
+    Returns
+    -------
+    tuple[MachineRate, ...]
+        Machine rates keyed by role names (before normalisation).
+
+    Raises
+    ------
+    FileNotFoundError
+        If the JSON payload is missing (dev installs without ``git lfs`` often cause this).
+    """
+
     if not DATA_PATH.exists():
         raise FileNotFoundError(f"Missing machine rate data: {DATA_PATH}")
     with DATA_PATH.open(encoding="utf-8") as fh:
@@ -90,6 +135,21 @@ ROLE_SYNONYMS = {
 
 
 def normalize_machine_role(role: str | None) -> str | None:
+    """
+    Normalise a user-supplied role string into the keys used by ``machine_rates.json``.
+
+    Parameters
+    ----------
+    role:
+        Role label from the scenario or CLI (case-insensitive). ``None``/empty strings yield
+        ``None`` so callers can guard optional inputs.
+
+    Returns
+    -------
+    str | None
+        Snake-cased role slug (e.g., ``roadside_processor``) or ``None`` if the input was blank.
+    """
+
     if role is None:
         return None
     stripped = role.strip().lower()
@@ -103,7 +163,12 @@ def normalize_machine_role(role: str | None) -> str | None:
 
 @lru_cache(maxsize=1)
 def load_machine_rate_index() -> dict[str, MachineRate]:
-    """Return a cached mapping of normalised role → machine rate."""
+    """
+    Return a cached mapping of ``normalised_role`` → ``MachineRate``.
+
+    Normalisation folds similar roles together so helpers like processors or loaders can be looked
+    up with CLI-friendly aliases (see ``ROLE_SYNONYMS``).
+    """
 
     index: dict[str, MachineRate] = {}
     for rate in load_default_machine_rates():
@@ -113,7 +178,19 @@ def load_machine_rate_index() -> dict[str, MachineRate]:
 
 
 def get_machine_rate(role: str) -> MachineRate | None:
-    """Return the default machine rate entry for the supplied role (case-insensitive)."""
+    """
+    Return the default machine rate entry for the supplied role.
+
+    Parameters
+    ----------
+    role:
+        Human-readable role (case-insensitive). Values are normalised via ``normalize_machine_role``.
+
+    Returns
+    -------
+    MachineRate | None
+        Matched reference entry, or ``None`` when the role is unknown.
+    """
 
     normalised = normalize_machine_role(role)
     if normalised is None:
@@ -125,9 +202,20 @@ def select_usage_class_multiplier(
     machine_rate: MachineRate, usage_hours: int | None
 ) -> tuple[int, float] | None:
     """
-    Return the (usage_hours_bucket, multiplier) pair closest to the requested usage.
+    Return the maintenance multiplier closest to the requested cumulative usage.
 
-    Buckets come from FPInnovations Advantage Vol. 4 No. 23 Table 2 (5k-hour increments).
+    Parameters
+    ----------
+    machine_rate:
+        Reference machine entry including repair/maintenance lookup tables.
+    usage_hours:
+        Estimated machine age (SMH). ``None`` disables the lookup.
+
+    Returns
+    -------
+    tuple[int, float] | None
+        ``(bucket_hours, multiplier)`` pair taken from Advantage Vol. 4 No. 23, or ``None`` when
+        the machine lacks the table or no usage was supplied.
     """
 
     if usage_hours is None:
@@ -157,11 +245,19 @@ def compose_rental_rate(
     Parameters
     ----------
     machine_rate:
-        Source machine rate entry (owning + operating + optional repair/maintenance).
+        Source machine rate entry (owning + operating + optional repair/maintenance components).
     include_repair_maintenance:
-        Whether to include the repair/maintenance allowance from FPInnovations (default True).
+        Whether to include the repair/maintenance allowance (True by default).
     ownership_override, operating_override, repair_override:
-        Optional values that replace the corresponding component before totals are computed.
+        Optional component overrides (pre-CPI). When ``None`` the values from ``machine_rate`` are
+        used. ``repair_override`` beats ``usage_hours``.
+    usage_hours:
+        Approximate cumulative SMH used to select the repair multiplier bucket.
+
+    Returns
+    -------
+    tuple[float, dict[str, float]]
+        Rental rate per SMH and the raw component breakdown for auditability.
     """
 
     ownership = (

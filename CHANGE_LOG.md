@@ -668,3 +668,5 @@
 - Added CTL harvester regressions for ADV6N10 (sorting penalties), ADV5N30 (removal-level/brushing modifiers), and TN292 (tree-size/density curves) under `fhops.productivity.harvester_ctl`, exposed via `fhops dataset estimate-productivity --machine-role ctl_harvester`, and updated docs/tests.
 - Documented the available forwarder/harvester models, inputs, and applicability ranges in `docs/reference/harvest_systems.rst`, linking back to `notes/dataset_inspection_plan.md`.
 - Captured TN285/ADV5N9/ADV2N21 scenario guidance (trail spacing, removal levels, trail reuse) in the planning notes and aligned the roadmap with the new deliverables.
+- Expanded the costing API docstrings (`fhops.costing.inflation`, `machine_rates`, `machines`) with NumPy-style sections covering CPI helpers, machine-rate dataclasses, rental-rate composition, and Lahrsen-driven cost estimators so the Sphinx API reference surfaces units, defaults, and return schemas.
+- Codified the docstring expectations in `CODING_AGENT.md` and `CONTRIBUTING.md`, then ran `sphinx-build -b html docs _build/html -W` to confirm the new content renders cleanly before cleaning up `_build/`.

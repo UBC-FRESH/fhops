@@ -31,16 +31,19 @@ instead of suppressing them; escalate only if consensus is reached with maintain
   them under the relevant note.
 - Keep PR descriptions concise but linked to roadmap phases and note sections for traceability.
 - **Docstrings**:
-  - Every public module/class/function must have a descriptive docstring. Mirror the NumPy-style
-    pattern used elsewhere (summary paragraph, followed by ``Parameters`` / ``Returns`` /
-    ``Notes`` sections as needed). Include units, expected DataFrame schemas, and example snippets
-    when callers benefit from them.
-  - Module docstrings should explain *why* the module exists (e.g., CLI entry point, Pyomo builder,
-    playback adapter) so Sphinx can surface context above the API members.
-  - Treat docstrings as part of the contract: if a parameter is optional, document defaults and
-    side-effects; if a return value is structured (dict/DataFrame/dataclass), describe the schema.
-  - When updating or adding functionality, keep the docstrings in sync (they feed the rendered
-    API docs in ``docs/api/``).
+  - Every public module/class/function must have a descriptive docstring that follows the
+    project-wide NumPy style. Write a one-sentence summary line, then add ``Parameters`` /
+    ``Returns`` / ``Raises`` / ``Notes`` sections (omit empty sections). Always describe **every**
+    public argument with units, accepted ranges, defaults, and side-effects. When a parameter is a
+    mapping or dataclass, spell out the expected keys/fields.
+  - Module docstrings must explain *why* the module exists (e.g., CLI entry point, Pyomo builder,
+    playback adapter) and cite the datasets or publications behind productivity/costing helpers.
+  - Treat docstrings as part of the contract: describe return schemas for dataclasses, tuples,
+    DataFrames, and generators; call out deterministic vs stochastic behaviour; include short code
+    snippets when they clarify multi-step flows (scenario → optimiser → evaluator, etc.).
+  - When updating or adding functionality, keep docstrings, ``docs/api`` pages, and CLI reference
+    text in sync. Sphinx consumes these docstrings verbatim, so run ``sphinx-build -b html docs
+    _build/html -W`` after every docstring sweep.
 
 ## Release workflow (RC prep)
 - Packaging uses Hatch (mirroring the ws3 repo). Keep ``pyproject.toml`` / ``hatch.toml`` in sync
