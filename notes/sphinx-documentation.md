@@ -105,6 +105,6 @@ FHOPS’ Sphinx tree lives under `docs/` and is published to Read the Docs via `
     - [x] Document every result dataclass (`Attributes`, units, dataset citation) plus dataset loader helpers. *(2025-11-24: Coverage now includes AutomaticBuckingAdjustment, Berry stats, carrier profiles, Labelle/TN/ADV/TR result payloads, loader results, and newly documented dataset loaders.)*
     - [x] Expand estimator docstrings with input validation rules, default multipliers, and return payload semantics. *(2025-11-24: All processor/loader estimators now describe inputs/returns; future changes should maintain the pattern.)*
 - [ ] **Productivity core clean-up** – tackle cable logging validators, grapple presets, and CTL/forwarder helpers in one pass to eliminate the final blank autodoc sections; finish by re-running the Sphinx build noted above.
-    - [ ] Document cable logging validators/selector helpers (TR127/TN173) and expose applicability notes.
+    - [x] Document cable logging validators/selector helpers (TR127/TN173) and expose applicability notes *(2025-11-24: Added docstrings for `_validate_*`, `_running_skyline_variant`, `_helicopter_spec`, TR127 predictors/regressions/helpers, TN173 dataclasses/loaders, and helicopter payload utilities.)*
     - [ ] Fill gaps in CTL/forwarder modules (`eriksson2014`, `ghaffariyan2019`, `sessions2006`, `shovel_logger`) plus skidder internals.
     - [ ] Re-run `sphinx-build -b html docs _build/html -W` and snapshot coverage deltas in this note.

@@ -49,6 +49,7 @@ class Fncy12ProductivityResult:
 
 
 def _validate_inputs(log_volume_m3: float, route_slope_percent: float) -> None:
+    """Ensure log volume and slope inputs are positive before running regressions."""
     if log_volume_m3 <= 0:
         raise ValueError("log_volume_m3 must be > 0")
     if route_slope_percent <= 0:
@@ -103,6 +104,7 @@ def estimate_cable_skidding_productivity_unver_robust(
 
 
 def _profile_slope_percent(profile: str) -> float:
+    """Return slope (%) derived from an Appendix 5 profile record."""
     record = get_appendix5_profile(profile)
     slope = record.average_slope_percent
     if slope is None:
@@ -164,17 +166,20 @@ def _validate_positive(value: float, name: str) -> None:
 
 
 def _validate_non_negative(value: float, name: str) -> None:
+    """Validate that ``value`` is non-negative."""
     if value < 0:
         raise ValueError(f"{name} must be >= 0")
 
 
 def _m3_per_pmh(payload_m3: float, cycle_seconds: float) -> float:
+    """Convert payload (m³) and cycle seconds to m³ per productive machine hour."""
     _validate_positive(payload_m3, "payload_m3")
     _validate_positive(cycle_seconds, "cycle_seconds")
     return payload_m3 * (3600.0 / cycle_seconds)
 
 
 def _m3_per_pmh_from_minutes(payload_m3: float, cycle_minutes: float) -> float:
+    """Convert payload (m³) and cycle minutes to m³ per productive machine hour."""
     _validate_positive(payload_m3, "payload_m3")
     _validate_positive(cycle_minutes, "cycle_minutes")
     return payload_m3 * (60.0 / cycle_minutes)
@@ -329,6 +334,7 @@ def estimate_cable_yarder_productivity_tr125_multi_span(
 
 
 def _running_skyline_variant(key: str) -> dict[str, float]:
+    """Return running-skyline preset parameters (pieces/turn, volume, z1) by key."""
     normalized = key.lower()
     if normalized not in _RUNNING_SKYLINE_VARIANTS:
         allowed = ", ".join(sorted(_RUNNING_SKYLINE_VARIANTS))
@@ -457,10 +463,12 @@ class HelicopterSpec:
 
     @property
     def default_payload_kg(self) -> float:
+        """Return the default payload (kg) after applying the study's load factor."""
         return self.rated_payload_kg * self.default_load_factor
 
     @property
     def rated_payload_lb(self) -> float:
+        """Return the rated payload expressed in pounds."""
         return self.rated_payload_kg * _KG_TO_LB
 
 
@@ -538,6 +546,7 @@ class HelicopterProductivityResult:
 
 
 def _helicopter_spec(model: HelicopterLonglineModel) -> HelicopterSpec:
+    """Return the helicopter specification for a supported model."""
     try:
         return _HELICOPTER_SPECS[model]
     except KeyError as exc:
@@ -896,6 +905,8 @@ def estimate_tmy45_productivity_fncy12(
 
 @dataclass(frozen=True)
 class _TR127Predictor:
+    """Predictor metadata for TR-127 regressions (name, units, range, coefficient)."""
+
     name: str
     units: str
     value_range: tuple[float, float]
@@ -904,6 +915,8 @@ class _TR127Predictor:
 
 @dataclass(frozen=True)
 class _TR127Regression:
+    """TR-127 regression definition (block, intercept, predictor list)."""
+
     block: int
     description: str
     intercept_minutes: float
@@ -917,6 +930,7 @@ _TR127_REGRESSIONS_PATH = (
 
 @lru_cache(maxsize=1)
 def _load_tr127_models() -> Mapping[int, _TR127Regression]:
+    """Load TR-127 regression definitions (cached) from the bundled JSON dataset."""
     if not _TR127_REGRESSIONS_PATH.exists():
         raise FileNotFoundError(f"TR127 regression data not found: {_TR127_REGRESSIONS_PATH}")
     with _TR127_REGRESSIONS_PATH.open(encoding="utf-8") as fh:
@@ -948,6 +962,7 @@ def _ensure_tr127_inputs(
     num_logs: float | None,
     lateral_distance2_m: float | None = None,
 ) -> dict[str, float]:
+    """Validate and collect predictor inputs required for a TR-127 block regression."""
     model = _load_tr127_models().get(block)
     if model is None:
         raise ValueError(f"Unknown TR127 block: {block}")
@@ -975,6 +990,7 @@ def _ensure_tr127_inputs(
 
 
 def _warn_if_out_of_range(name: str, value: float, value_range: tuple[float, float]) -> None:
+    """Emit a warning when a predictor value falls outside its calibrated range."""
     lower, upper = value_range
     if (value < lower) or (value > upper):
         warnings.warn(
@@ -1106,6 +1122,33 @@ HI_SKID_DEFAULTS = {
 
 @dataclass(frozen=True)
 class TN173System:
+    """
+    FPInnovations TN-173 compact skyline system metadata.
+
+    Attributes
+    ----------
+    system_id:
+        Identifier from the bulletin.
+    label:
+        Display name for CLI/docs.
+    operating_range_m:
+        Recommended operating range (m).
+    crew_size:
+        Crew size used in the study.
+    pieces_per_turn, piece_volume_m3, payload_m3:
+        Payload descriptors per turn.
+    cycle_minutes:
+        Average cycle time (minutes).
+    productivity_m3_per_pmh:
+        Reported productivity (m³/PMH₀).
+    average_yarding_distance_m, yarding_distance_min_m, yarding_distance_max_m:
+        Yarding distance statistics (m).
+    average_slope_percent, slope_percent_min, slope_percent_max:
+        Slope statistics (%).
+    notes:
+        Additional notes for the system.
+    """
+
     system_id: str
     label: str
     operating_range_m: float | None
@@ -1131,6 +1174,7 @@ _TN173_PATH = (
 
 @lru_cache(maxsize=1)
 def _load_tn173_systems() -> Mapping[str, TN173System]:
+    """Load TN-173 skyline system metadata from the bundled JSON dataset."""
     if not _TN173_PATH.exists():
         raise FileNotFoundError(f"TN173 dataset not found: {_TN173_PATH}")
     with _TN173_PATH.open(encoding="utf-8") as fh:
@@ -1181,13 +1225,37 @@ def _load_tn173_systems() -> Mapping[str, TN173System]:
 
 
 def list_tn173_system_ids() -> tuple[str, ...]:
-    """Return the available TN173 skyline system identifiers."""
+    """
+    Return the available TN173 skyline system identifiers.
+
+    Returns
+    -------
+    tuple[str, ...]
+        Sorted tuple of system IDs.
+    """
     systems = _load_tn173_systems()
     return tuple(sorted(systems))
 
 
 def get_tn173_system(system_id: str) -> TN173System:
-    """Return metadata for a given TN173 skyline system."""
+    """
+    Return metadata for a given TN173 skyline system.
+
+    Parameters
+    ----------
+    system_id:
+        Identifier from :func:`list_tn173_system_ids`.
+
+    Returns
+    -------
+    TN173System
+        Dataclass containing payload, productivity, and range metadata.
+
+    Raises
+    ------
+    KeyError
+        If ``system_id`` is not present in the dataset.
+    """
     systems = _load_tn173_systems()
     try:
         return systems[system_id]
