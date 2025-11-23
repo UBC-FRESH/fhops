@@ -139,6 +139,7 @@ def playback_summary_metrics(shift_df: pd.DataFrame, day_df: pd.DataFrame) -> di
 
 
 def _write_parquet(df: pd.DataFrame, path: Path) -> None:
+    """Write a DataFrame to Parquet, ensuring either pyarrow or fastparquet is installed."""
     try:
         import pyarrow  # noqa: F401
     except ImportError:

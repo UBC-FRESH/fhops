@@ -14,6 +14,7 @@ __all__ = [
 
 
 def _default_downtime_config() -> DowntimeEventConfig:
+    """Return the default downtime sampling parameters used by SamplingConfig."""
     return DowntimeEventConfig(
         probability=0.15,
         mean_duration_hours=4.0,
@@ -22,6 +23,7 @@ def _default_downtime_config() -> DowntimeEventConfig:
 
 
 def _default_weather_config() -> WeatherEventConfig:
+    """Return the default weather-impact configuration (probabilities, severities)."""
     return WeatherEventConfig(
         day_probability=0.2,
         impact_window_days=1,
@@ -30,6 +32,7 @@ def _default_weather_config() -> WeatherEventConfig:
 
 
 def _default_landing_config() -> LandingShockConfig:
+    """Return the default landing shock parameters (probability, duration, multiplier)."""
     return LandingShockConfig(
         probability=0.1,
         capacity_multiplier_range=(0.4, 0.8),

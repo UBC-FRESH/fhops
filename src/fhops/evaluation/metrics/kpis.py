@@ -77,6 +77,7 @@ class KPIResult(Mapping[str, float | int | str]):
 
 
 def _system_metadata(pb: Problem):
+    """Return allowed machine roles, sequencing prereqs, and role lookup for each block."""
     sc = pb.scenario
     systems = sc.harvest_systems or {}
     allowed: dict[str, set[str] | None] = {}

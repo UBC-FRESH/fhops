@@ -232,6 +232,7 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
 
 
 def _system_metadata(pb: Problem):
+    """Return allowed roles/prereqs/machine roles for harvest-system sequencing checks."""
     scenario = pb.scenario
     systems = scenario.harvest_systems or {}
     allowed: dict[str, set[str] | None] = {}

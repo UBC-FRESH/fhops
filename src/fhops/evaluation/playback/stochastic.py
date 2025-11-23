@@ -157,6 +157,8 @@ class WeatherEvent:
 
 
 class LandingShockState(TypedDict):
+    """State tracked for each landing shock (duration, multiplier, remaining days)."""
+
     duration: int
     multiplier: float
     remaining: int
@@ -231,17 +233,22 @@ class LandingShockEvent:
 
 @dataclass(slots=True)
 class PlaybackSample:
+    """Container pairing a stochastic sample ID with its :class:`PlaybackResult`."""
+
     sample_id: int
     result: PlaybackResult
 
 
 @dataclass(slots=True)
 class EnsembleResult:
+    """Aggregate of the baseline deterministic playback plus stochastic samples."""
+
     base_result: PlaybackResult
     samples: list[PlaybackSample]
 
 
 def _default_events(config: SamplingConfig) -> list[PlaybackEvent]:
+    """Instantiate playback events based on the SamplingConfig toggles."""
     events: list[PlaybackEvent] = []
     if config.downtime.enabled:
         events.append(DowntimeEvent(config.downtime))
@@ -253,6 +260,7 @@ def _default_events(config: SamplingConfig) -> list[PlaybackEvent]:
 
 
 def _ensure_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Guarantee required columns (shift_id, assigned flag) exist on the assignments frame."""
     result = df.copy()
     if "shift_id" not in result.columns:
         result["shift_id"] = "S1"
@@ -262,6 +270,7 @@ def _ensure_columns(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _build_production_map(problem: Problem, assignments: pd.DataFrame) -> dict[Key, float]:
+    """Index baseline production by (machine, block, day, shift) for reuse by events."""
     records = assignments_to_records(problem, assignments)
     production_map: dict[Key, float] = {}
     for record in records:

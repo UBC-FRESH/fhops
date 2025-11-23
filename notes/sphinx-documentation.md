@@ -126,6 +126,7 @@ FHOPS’ Sphinx tree lives under `docs/` and is published to Read the Docs via `
     - [x] `_utils.py`: added docstrings for operator preset helpers.
     - [x] `cli/benchmarks.py`: documented `_resolve_scenarios` and `_record_metrics`.
     - [x] 2025-11-24: Completed the remaining CLI helpers (main/profiles/synthetic/telemetry) so KPI printers, bundle/tuning collectors, solver profile utilities, synthetic dataset generators, and telemetry reporters now expose NumPy-style Parameters/Returns docstrings. Confirmed via AST scan that no top-level helpers remain undocumented in these modules.
-- [ ] **Evaluation playback/docs** – cover `evaluation/playback/stochastic.py`, `adapters.py`, and metrics dataclasses, focusing on parameter/return schemas referenced in thesis workflows.
+- [x] **Evaluation playback/docs** – cover `evaluation/playback/stochastic.py`, `adapters.py`, and metrics dataclasses, focusing on parameter/return schemas referenced in thesis workflows.
+    - [x] 2025-11-24: Added docstrings for stochastic sampling events (`LandingShockState`, `_default_events`, `_build_production_map`), playback adapters/exporters, and KPI metadata helpers so Chapter 2 workflows now get full Parameters/Returns context across stochastic playback → KPI computation. AST scan confirms these modules are docstring-complete.
 - [ ] **Heuristics internals** – add docstrings to `optimization/heuristics/ils.py` and `heuristics/registry.py` classes/functions that appear in the tuning notes.
 - [ ] **Productivity stragglers** – finish docstrings for `kellogg_bettinger1994.py`, `laitila2020.py`, `stoilov2021.py` (and any other remaining `productivity/*.py` files flagged by the scan).
