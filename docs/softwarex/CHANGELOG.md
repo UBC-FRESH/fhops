@@ -24,3 +24,10 @@ Only changes that affect the SoftwareX planning/manuscript workspace are recorde
 - Added `scripts/run_playback_analysis.py` plus pipeline hooks that replay the best SA/ILS schedules (deterministic + stochastic) for minitoy, med42, and the synthetic tier, writing shift/day summaries + metrics under `docs/softwarex/assets/data/playback/` for manuscript robustness figures.
 - Added `scripts/run_costing_demo.py`, which exercises `fhops dataset estimate-cost` for representative med42 machines, logs telemetry JSONL, and emits `cost_summary.csv/json` under `docs/softwarex/assets/data/costing/` for the machine-rate discussion.
 - Added `scripts/run_synthetic_sweep.py` so we can regenerate synthetic small/medium/large tiers, benchmark SA runtimes, and capture `scaling_summary.csv/json` plus `runtime_vs_blocks.png` under `docs/softwarex/assets/data/scaling/`.
+
+## 2025-11-25 — PRISMA workflow figure wiring
+- Inserted the PRISMA-style workflow include (`\input{sections/includes/prisma_overview}`) into `sections/software_description.tex`, anchoring the architecture narrative around the same figure used in the WS3 EI manuscript pattern.
+- Created `docs/includes/softwarex/prisma_overview.rst`, an interim narrative-only include so the Sphinx Overview can cite the same pipeline until we export a PNG version of the diagram.
+- Updated `docs/overview.rst` to include the new snippet under an “Automation pipeline” section, keeping the user guide aligned with the manuscript narrative ahead of the future PNG/SVG export workflow.
+- Updated `docs/softwarex/manuscript/sections/includes/README.md` with maintenance notes for the PRISMA figure (package requirements, manual regeneration steps, future PNG workflow) and tracked the work inside `notes/softwarex_manuscript_plan.md`.
+- Expanded `notes/thesis_alignment.md` with explicit Chapter 2 case-study definitions (coastal skyline/tethered, interior community forest, salvage/MPB) plus checkpoint dates (dataset freeze, scenario cartridge export, solver alignment, KPI drafting, thesis submission) so we can reference a single source when validating SoftwareX scope boundaries.

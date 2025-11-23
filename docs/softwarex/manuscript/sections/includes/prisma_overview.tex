@@ -1,0 +1,38 @@
+\begin{figure}[t]
+  \centering
+  \prismaflowstart
+  % Inputs
+  \prismaflownode{in1}{below=of tc}{\textbf{Scenario contract}\\Blocks, machines, landings, calendar CSV + scenario YAML}{}
+  \prismaflownode{in2}{right=of in1}{\textbf{Reference \& synthetic datasets}\\`examples/*`, `run_dataset_inspection.py`}{}
+  \prismaflownode{in3}{right=of in2}{\textbf{Automation configs}\\Make targets, CI hooks, contribution rules}{}
+  \prismalabel{1.3*\mh}{in1.west}{Inputs}
+
+  % FHOPS core
+  \prismaflownode{core1}{below=of in2}{\textbf{Data ingestion}\\Validation, schema checks, synthetic tier generation}{in2}
+  \prismaflownode{core2}{below=of core1}{\textbf{Solver core}\\Pyomo MIP + SA/ILS/Tabu heuristics, tuning harness}{core1}
+  \prismaflownode{core3}{right=of core2}{\textbf{Evaluation + telemetry}\\Playback, KPI reporting, costing, scaling}{core2}
+  \prismalabel{1.3*\mh}{in1.west |- {$(core1)!0.5!(core2)$}}{FHOPS core}
+
+  % Asset exports
+  \prismaflownode{int1}{below=of core2}{\textbf{Automation assets}\\Benchmarks, tuning tables, playback summaries, cost + scaling data}{core2}
+  \prismaflownode{int2}{right=of int1}{\textbf{Shared snippets}\\Markdown/CSV includes $\rightarrow$ LaTeX+RST (`export\_docs\_assets.py`)}{core3}
+  \prismalabel{1.3*\mh}{in1.west |- int1}{Shared artifacts}
+
+  % Outputs
+  \prismaflownode{out1}{below=of int1}{\textbf{Outputs}\\SoftwareX manuscript, reproducible figures, Sphinx docs, submission bundle}{int1}
+  \prismalabel{1.3*\mh}{in1.west |- out1}{Outputs}
+
+  % Arrows
+  \prismaflowarrow{in1}{core1}
+  \prismaflowarrow{in2}{core1}
+  \prismaflowarrow{in3}{core1}
+  \prismaflowarrow{core1}{core2}
+  \prismaflowarrow{core2}{core3}
+  \prismaflowarrow{core2}{int1}
+  \prismaflowarrow{core3}{int2}
+  \prismaflowarrow{int1}{out1}
+  \prismaflowarrow{int2}{out1}
+  \prismaflowend
+  \caption{FHOPS SoftwareX automation pipeline. Inputs (scenario contract + curated datasets) feed the FHOPS core (validation, solver stack, evaluation tooling). Asset scripts emit shared tables/figures consumed by the manuscript, submission package, and Sphinx docs.}
+  \label{fig:fhops-prisma-overview}
+\end{figure}

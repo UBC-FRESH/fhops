@@ -26,5 +26,42 @@ Automation hook (Phase 1 deliverable): extend `docs/softwarex/manuscript/scripts
   - [x] Benchmark KPI table + notes now live in `benchmark_kpis.csv` + `benchmark_kpis_notes.md`.
 - [x] Update Sphinx `overview.rst` and `docs/templates/includes/` to ``.. include::`` the generated `.rst` snippets once available (see `docs/overview.rst` motivation section).
 - [ ] Add CI check (Phase 3) to confirm no drift between `.md` primaries and rendered assets.
+- [ ] PRISMA figure maintenance
+  - [x] Store the LaTeX source in `prisma_overview.tex` (requires the `prisma-flow-diagram` package, already added to `fhops-softx.tex` preamble).
+  - [x] Provide a docs include (`docs/includes/softwarex/prisma_overview.rst`) describing the same flow until we land an automated PNG export.
+  - [ ] Extend `export_docs_assets.py` (or a companion script) to emit a vector/PNG asset so Sphinx can embed the exact diagram.
+  - [ ] Update `docs/overview.rst` to include the exported figure once the PNG workflow exists.
+
+### PRISMA figure workflow (manual process for now)
+
+1. Source file: `prisma_overview.tex` (lives beside the other includes). It uses
+   `prisma-flow-diagram`, so the manuscript preamble (`fhops-softx.tex`) already loads that
+   package.
+2. To regenerate the PDF locally, run:
+
+   ```bash
+   cd docs/softwarex/manuscript
+   latexmk -lualatex -halt-on-error -interaction=nonstopmode \
+       -jobname=prisma_overview sections/includes/prisma_overview.tex
+   ```
+
+   This writes `sections/includes/prisma_overview.pdf` which we can commit or use as the
+   source for PNG/SVG exports.
+3. Until we automate PNG/SVG creation, note the manual conversion step (requires ImageMagick
+   or Ghostscript):
+
+   ```bash
+   magick -density 300 sections/includes/prisma_overview.pdf \
+       docs/softwarex/assets/figures/prisma_overview.png
+   ```
+
+   (Any subsequent automation should follow this naming/location convention so the docs can
+   include the raster asset.)
+4. After regenerating the diagram, run `make assets` to refresh any dependent snippets and
+   confirm the Sphinx include (`docs/includes/softwarex/prisma_overview.rst`) still reflects
+   the latest narrative/links.
+
+These steps should be replaced by a scripted workflow (Phase 1 remaining task), but having
+explicit manual instructions here prevents drift in the meantime.
 
 > Ownership: Lead author (Gregory Paradis). Automation support: Codex tasks under Phase 1 asset/export work.

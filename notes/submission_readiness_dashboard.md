@@ -27,7 +27,9 @@
 
 ### 2. Architecture & Workflow Visualization
 - [ ] Produce a single source-of-truth diagram (vector + PNG) explaining FHOPS architecture, optimisation workflow, and integration with docs.
-  - Must be cross-referenced in Sphinx Overview (TSFEL-style shared assets).
+  - [x] PRISMA-style LaTeX source wired into the manuscript (`sections/includes/prisma_overview.tex`) and referenced in Section~2.
+  - [x] Narrative include wired into Sphinx Overview via `docs/includes/softwarex/prisma_overview.rst`.
+  - [ ] PNG/SVG export workflow scripted so Sphinx can display the same visual asset.
 - [ ] Validate figure readability at journal column width (per SoftwareX instructions).
 - **Exemplar refs:** PyLESA Fig. 1 (pp. 2–3), pycity_scheduling Fig. 1 (coordination approach), MOOSE §1 architecture narrative.
 

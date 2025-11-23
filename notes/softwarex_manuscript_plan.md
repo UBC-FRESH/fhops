@@ -82,8 +82,17 @@
     - Cost summary (`docs/softwarex/assets/data/costing/cost_summary.{csv,json}`) → `run_costing_demo.py`.
     - Scaling plot/table (`docs/softwarex/assets/data/scaling/runtime_vs_blocks.png`, `scaling_summary.{csv,json}`) → `run_synthetic_sweep.py`.
     - Dataset index + summaries (`docs/softwarex/assets/data/datasets/index.json`, `*_summary.json`) → `run_dataset_inspection.py`.
+    - PRISMA-style FHOPS workflow diagrams (architecture + evaluation flow) → `manuscript/sections/includes/prisma_workflow.tex` (script TBD, but target is to mirror the WS3 EI diagram with upstream/downstream tiers: scenario ingest, solver core, evaluation/telemetry modules, submission artifacts). Consider hierarchical variants (full FHOPS stack + zoomed-in evaluation loop).
   - [ ] Create reproducible scripts/notebooks to regenerate each artifact.
   - [ ] Integrate artifact generation into CI or a manual checklist.
+- [ ] PRISMA-style diagram workflow (WS3 EI-inspired).
+  - [x] Draft `sections/includes/prisma_overview.tex` capturing scenario ingest → solver core → telemetry/export path with the `prisma-flow-diagram` package.
+    - [x] Reference the include inside `sections/software_description.tex` so the manuscript narrative now calls out Figure~\ref{fig:fhops-prisma-overview}.
+  - [ ] Mirror the figure in Sphinx via `docs/includes/softwarex/prisma_overview.rst` (and eventually an exported PNG) so both outputs stay aligned.
+    - [x] Add an interim narrative-only include (`docs/includes/softwarex/prisma_overview.rst`) so the docs reference the same pipeline until we export a PNG.
+    - [x] Hook the include into the Sphinx Overview page so the docs surface the same workflow description.
+    - [ ] Add a PNG/SVG export workflow so the visual matches the manuscript and can be embedded directly in Sphinx.
+  - [ ] Document update instructions (package requirements, `latexmk` hooks, future evaluation-loop variant) in `docs/softwarex/manuscript/sections/includes/README.md` and tag figure assets inside `notes/submission_readiness_dashboard.md`.
 - [ ] Asset-generation plan:
   - [x] **Scenario ingest demo:** Script (`scripts/run_dataset_inspection.py`) that inspects `examples/minitoy` + `examples/med42`, generates a fresh `synth generate --tier small` bundle, and emits schema summaries in `docs/softwarex/assets/data/datasets/`.
   - [x] **Benchmark sweep (SA baseline):** Extend `scripts/generate_assets.sh` (already running SA on `minitoy`) to include `med42` + `synthetic-small`. Use `fhops bench suite --telemetry-log --compare-preset ...` so we capture CSV/JSON telemetry for each scenario. Goal: PyDDRBG-style benchmark manifest.
@@ -97,7 +106,7 @@
     - [x] Share heuristic solver matrix + notes (`heuristics_matrix.csv` + `.md`) across manuscript + Sphinx via the exporter.
     - [x] Render shared narrative snippets from Markdown → LaTeX/RST (integrated into `generate_assets.sh`).
 - [ ] Capture thesis alignment: Document touchpoints with `tmp/jaffray-rosalia-masc-proposal` / `tmp/jaffray-rosalia-masc-thesis` in `notes/thesis_alignment.md` and weave key citations into each section outline.
-  - [ ] Explicitly list which FHOPS analytical content will be reserved for Jaffray Chapter 2 (two-to-three BC case studies answering the open questions from her intro/lit review).
+  - [x] Explicitly list which FHOPS analytical content will be reserved for Jaffray Chapter 2 (two-to-three BC case studies answering the open questions from her intro/lit review).
   - [ ] Ensure the SoftwareX single-author paper focuses on platform architecture, reproducibility, and tooling; detailed BC case-study insights remain embargoed until Rosalia submits/publishes her thesis work.
 
 ## Phase 2 – Content Drafting
@@ -191,12 +200,21 @@
   - [ ] Set reminders for periodic manuscript/doc alignment reviews.
 
 ## Immediate Next Actions
-- [x] Add author instruction PDFs/templates and exemplar papers to the repo.
-  - [x] Populate `docs/softwarex/reference/` with guideline/template files.
-  - [x] Save exemplar PDFs plus notes in `docs/softwarex/reference/examples/`.
-- [x] Flesh out the manuscript outline + repo scaffolding under `docs/softwarex/`.
-  - [x] Create directory skeleton and placeholder files per Phase 1.
-  - [x] Draft outline document referencing SoftwareX sections.
+- [ ] Wire the PRISMA overview figure into both outputs.
+  - [x] `\input{sections/includes/prisma_overview}` inside the Software Description narrative to visually anchor the workflow story.
+  - [ ] Confirm the matching `docs/includes/softwarex/prisma_overview.rst` renders in Sphinx (Overview page) and add instructions for refreshing it when the LaTeX diagram changes.
+    - [x] Land the interim narrative-only include so Sphinx can reference the same flow even before we have PNG exports.
+    - [x] Update the Sphinx overview to ``.. include::`` the snippet so readers see the workflow summary.
+    - [ ] Document the PNG/SVG export workflow (plus refresh instructions) once the automation is wired in.
+  - [x] Record figure provenance (pandoc-to-RST path, TeX package, manual regeneration steps) inside `docs/softwarex/manuscript/sections/includes/README.md` so future changes stay deterministic.
+- [ ] Kick off Phase 2 drafting for Sections 1–3 while the automation context is fresh.
+  - [ ] Use `notes/softwarex_exemplar_analysis.md` takeaways and the Jaffray systematic review references to outline the Intro and Software Metadata paragraphs.
+  - [ ] Draft the first pass of the Motivation/Contribution narrative (Section 1) using the shared snippets in `sections/includes/motivation_story.md`.
+  - [ ] Capture open questions / text debt in the local manuscript change log before each writing push so we can trace edits without touching the main FHOPS changelog.
+- [ ] Finalize reproducible asset documentation before the benchmark suite grows further.
+  - [ ] Expand `docs/softwarex/manuscript/README.md` with runtime expectations, environment variables (e.g., `FHOPS_ASSETS_FAST=1`), and troubleshooting tips for each script.
+  - [ ] Add a short manual checklist (until CI is ready) referencing the outputs each script must produce under `docs/softwarex/assets/`.
+  - [ ] Note telemetry/temporary files that stay ignored (e.g., `**/telemetry/steps/*.jsonl`) in the local `.gitignore` and confirm `submission_readiness_dashboard.md` points to the correct artifact directories.
 - [x] Break phases into actionable GitHub issues with owners and deadlines.
   - [x] Translate each checkbox (or logical grouping) into issue(s) with clear scope (see Phase 0 timeline block above for the canonical mapping).
   - [x] Assign DRIs and add due dates/milestones to keep momentum (captured per-issue with dates aligned to FHOPS release gates).

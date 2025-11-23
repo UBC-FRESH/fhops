@@ -18,6 +18,11 @@ Motivation
 
 .. include:: includes/softwarex/motivation_story.rst
 
+Automation pipeline
+-------------------
+
+.. include:: includes/softwarex/prisma_overview.rst
+
 Installation
 ------------
 
