@@ -10,6 +10,7 @@ from typing import Mapping, Sequence
 
 
 def _validate_inputs(turn_volume_m3: float, yarding_distance_m: float) -> None:
+    """Validate generic turn volume (m³) and yarding distance (m) inputs."""
     if turn_volume_m3 <= 0:
         raise ValueError("turn_volume_m3 must be > 0")
     if yarding_distance_m < 0:
@@ -36,6 +37,7 @@ def _minutes_per_turn_tr75(
     inhaul_intercept_min: float,
     inhaul_distance_coeff: float,
 ) -> float:
+    """Cycle time (minutes/turn) for TR-75 swing yarder regressions."""
     return (
         fixed_time_min
         + outhaul_intercept_min
@@ -46,7 +48,7 @@ def _minutes_per_turn_tr75(
 
 
 def _productivity(turn_volume_m3: float, cycle_time_min: float) -> float:
-    # Convert cycle time to hours and divide volume per turn.
+    """Convert turn volume (m³) and cycle time (minutes) to m³/PMH."""
     return 60.0 * turn_volume_m3 / cycle_time_min
 
 
@@ -110,6 +112,8 @@ __all__ = [
 
 @dataclass(frozen=True)
 class TN157Case:
+    """TN-157 Cypress 7280B case-study metrics (FPInnovations TN-157)."""
+
     case_id: str
     label: str
     falling_method: str
@@ -131,6 +135,7 @@ class TN157Case:
 
     @property
     def cycle_time_minutes(self) -> float:
+        """Average cycle time (minutes/turn) for the case."""
         if self.total_turns <= 0:
             return 0.0
         return self.yarding_minutes / self.total_turns
@@ -162,6 +167,7 @@ def _weighted_average(
     *,
     default: float = 0.0,
 ) -> float:
+    """Return weighted average of ``values`` keyed by the same IDs as ``weights``."""
     total_weight = sum(weights.values())
     if total_weight <= 0:
         return default
@@ -170,6 +176,7 @@ def _weighted_average(
 
 @lru_cache(maxsize=1)
 def _load_tn157_cases() -> Mapping[str, TN157Case]:
+    """Load TN-157 case studies (cached) from the bundled JSON dataset."""
     if not _TN157_PATH.exists():
         raise FileNotFoundError(f"TN157 dataset not found: {_TN157_PATH}")
     with _TN157_PATH.open(encoding="utf-8") as fh:
@@ -206,6 +213,7 @@ def _load_tn157_cases() -> Mapping[str, TN157Case]:
         volume_per_shift = sum(float(entry.get("volume_per_shift_m3", 0.0)) for entry in raw_entries)
 
         def weighted(key: str, default: float = 0.0) -> float:
+            """Helper to compute turn-weighted averages for combined TN157 stats."""
             values = {str(entry["id"]): float(entry.get(key, 0.0)) for entry in raw_entries}
             weights = {str(entry["id"]): float(entry.get("total_turns", 0.0)) for entry in raw_entries}
             return _weighted_average(values, weights, default=default)
@@ -277,6 +285,7 @@ def _load_tn157_cases() -> Mapping[str, TN157Case]:
 
 
 def list_tn157_case_ids() -> tuple[str, ...]:
+    """Return available TN-157 case IDs plus the pre-computed ``combined`` entry."""
     cases = _load_tn157_cases()
     numeric_ids = sorted((cid for cid in cases if cid.isdigit()), key=int)
     ordered = ["combined"] + [cid for cid in numeric_ids if cid != "combined"]
@@ -284,6 +293,7 @@ def list_tn157_case_ids() -> tuple[str, ...]:
 
 
 def get_tn157_case(case_id: str) -> TN157Case:
+    """Return a TN-157 case dataclass by identifier (defaults to ``combined``)."""
     normalized = (case_id or "combined").strip().lower()
     if normalized in {"", "combined", "avg", "average"}:
         normalized = "combined"
@@ -296,12 +306,15 @@ def get_tn157_case(case_id: str) -> TN157Case:
 
 
 def estimate_grapple_yarder_productivity_tn157(case_id: str = "combined") -> float:
+    """Look up the TN-157 case and return its m³/PMH productivity."""
     case = get_tn157_case(case_id)
     return case.productivity_m3_per_pmh
 
 
 @dataclass(frozen=True)
 class TN147Case:
+    """TN-147 Madill 009 highlead case-study metrics (FPInnovations TN-147)."""
+
     case_id: str
     label: str
     average_turn_volume_m3: float | None
@@ -315,12 +328,14 @@ class TN147Case:
 
     @property
     def productivity_m3_per_pmh(self) -> float:
+        """Productivity for the case (m³ per productive hour)."""
         return self.volume_per_shift_m3 / 8.0
 
 
 def _tn147_weighted_average(
     values: Mapping[str, float], weights: Mapping[str, float], default: float | None = None
 ) -> float | None:
+    """Weighted average helper used for TN147 combined rows."""
     total_weight = sum(weights.values())
     if total_weight <= 0:
         return default
@@ -329,6 +344,7 @@ def _tn147_weighted_average(
 
 @lru_cache(maxsize=1)
 def _load_tn147_cases() -> Mapping[str, TN147Case]:
+    """Load TN-147 case studies (cached) from the bundled JSON dataset."""
     if not _TN147_PATH.exists():
         raise FileNotFoundError(f"TN147 dataset not found: {_TN147_PATH}")
     with _TN147_PATH.open(encoding="utf-8") as fh:
@@ -417,12 +433,14 @@ def _load_tn147_cases() -> Mapping[str, TN147Case]:
 
 
 def list_tn147_case_ids() -> tuple[str, ...]:
+    """Return sorted TN-147 case IDs (including ``combined`` aggregates)."""
     cases = _load_tn147_cases()
     ordered = [cid for cid in cases if cid != "combined_turns"]
     return tuple(sorted(ordered, key=lambda cid: (cid != "combined", cid)))
 
 
 def get_tn147_case(case_id: str) -> TN147Case:
+    """Return TN-147 case metadata by identifier (fallback to ``combined``)."""
     normalized = (case_id or "combined").strip().lower()
     if normalized in {"", "combined"}:
         normalized = "combined"
@@ -436,12 +454,15 @@ def get_tn147_case(case_id: str) -> TN147Case:
 
 
 def estimate_grapple_yarder_productivity_tn147(case_id: str = "combined") -> float:
+    """Look up the TN-147 case study and return productivity (m³/PMH)."""
     case = get_tn147_case(case_id)
     return case.productivity_m3_per_pmh
 
 
 @dataclass(frozen=True)
 class TR122Treatment:
+    """TR-122 Roberts Creek swing-yarder treatment summary (cost + productivity)."""
+
     treatment_id: str
     label: str
     volume_per_shift_m3: float
@@ -462,11 +483,13 @@ class TR122Treatment:
 
     @property
     def productivity_m3_per_pmh(self) -> float:
+        """Productivity (m³/PMH) derived from the 8 h shift volume."""
         return self.volume_per_shift_m3 / 8.0
 
 
 @lru_cache(maxsize=1)
 def _load_tr122_treatments() -> Mapping[str, TR122Treatment]:
+    """Load TR-122 treatment metadata from the bundled JSON dataset."""
     if not _TR122_PATH.exists():
         raise FileNotFoundError(f"TR122 dataset not found: {_TR122_PATH}")
     with _TR122_PATH.open(encoding="utf-8") as fh:
@@ -505,10 +528,12 @@ def _load_tr122_treatments() -> Mapping[str, TR122Treatment]:
 
 
 def list_tr122_treatment_ids() -> tuple[str, ...]:
+    """Return available TR-122 treatment identifiers."""
     return tuple(sorted(_load_tr122_treatments()))
 
 
 def get_tr122_treatment(treatment_id: str) -> TR122Treatment:
+    """Return TR-122 treatment metadata by identifier."""
     treatments = _load_tr122_treatments()
     normalized = treatment_id.strip().lower()
     if normalized not in treatments:
@@ -519,12 +544,15 @@ def get_tr122_treatment(treatment_id: str) -> TR122Treatment:
 
 
 def estimate_grapple_yarder_productivity_tr122(treatment_id: str) -> float:
+    """Return the TR-122 treatment productivity (m³/PMH)."""
     treatment = get_tr122_treatment(treatment_id)
     return treatment.productivity_m3_per_pmh
 
 
 @dataclass(frozen=True)
 class ADV5N28Block:
+    """ADV5N28 skyline conversion block metadata (FPInnovations Advantage Vol. 5 No. 28)."""
+
     block_id: str
     label: str
     silviculture_system: str
@@ -547,6 +575,7 @@ class ADV5N28Block:
 
 
 def _maybe_float(value: object | None) -> float | None:
+    """Return float(value) when possible, otherwise ``None``."""
     if value is None:
         return None
     try:
@@ -557,6 +586,7 @@ def _maybe_float(value: object | None) -> float | None:
 
 @lru_cache(maxsize=1)
 def _load_adv5n28_blocks() -> Mapping[str, ADV5N28Block]:
+    """Load ADV5N28 skyline-conversion blocks from the bundled JSON dataset."""
     if not _ADV5N28_PATH.exists():
         raise FileNotFoundError(f"ADV5N28 dataset not found: {_ADV5N28_PATH}")
     with _ADV5N28_PATH.open(encoding="utf-8") as fh:
@@ -606,10 +636,12 @@ def _load_adv5n28_blocks() -> Mapping[str, ADV5N28Block]:
 
 
 def list_adv5n28_block_ids() -> tuple[str, ...]:
+    """Return sorted ADV5N28 block identifiers."""
     return tuple(sorted(_load_adv5n28_blocks()))
 
 
 def get_adv5n28_block(block_id: str) -> ADV5N28Block:
+    """Return ADV5N28 block metadata by identifier."""
     if not block_id:
         raise ValueError("Block identifier is required for ADV5N28 presets.")
     blocks = _load_adv5n28_blocks()
@@ -622,12 +654,15 @@ def get_adv5n28_block(block_id: str) -> ADV5N28Block:
 
 
 def estimate_grapple_yarder_productivity_adv5n28(block_id: str) -> float:
+    """Return the ADV5N28 block productivity (m³/PMH)."""
     block = get_adv5n28_block(block_id)
     return block.productivity_m3_per_pmh
 
 
 @dataclass(frozen=True)
 class ADV1N35Metadata:
+    """Cycle time/productivity coefficients for the ADV1N35 Owren 400 dataset."""
+
     intercept: float
     slope_distance_coeff: float
     lateral_distance_coeff: float
@@ -642,6 +677,7 @@ class ADV1N35Metadata:
 
 @lru_cache(maxsize=1)
 def get_adv1n35_metadata() -> ADV1N35Metadata:
+    """Return the cached ADV1N35 Owren 400 regression metadata."""
     if not _ADV1N35_PATH.exists():
         raise FileNotFoundError(f"ADV1N35 dataset not found: {_ADV1N35_PATH}")
     with _ADV1N35_PATH.open(encoding="utf-8") as fh:
@@ -703,6 +739,8 @@ def estimate_grapple_yarder_productivity_adv1n35(
 
 @dataclass(frozen=True)
 class ADV1N40Metadata:
+    """Cycle-time components for the ADV1N40 Madill 071 downhill skyline study."""
+
     outhaul_intercept: float
     outhaul_distance_coeff: float
     inhaul_intercept: float
@@ -717,6 +755,7 @@ class ADV1N40Metadata:
 
 @lru_cache(maxsize=1)
 def get_adv1n40_metadata() -> ADV1N40Metadata:
+    """Return cached ADV1N40 regression metadata."""
     if not _ADV1N40_PATH.exists():
         raise FileNotFoundError(f"ADV1N40 dataset not found: {_ADV1N40_PATH}")
     with _ADV1N40_PATH.open(encoding="utf-8") as fh:

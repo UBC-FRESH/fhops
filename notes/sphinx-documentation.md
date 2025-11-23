@@ -80,5 +80,18 @@ FHOPS’ Sphinx tree lives under `docs/` and is published to Read the Docs via `
     - [x] Scenario contract & IO: describe key dataclasses (`Scenario`, `Problem`, `MobilisationConfig`, loaders) with field semantics, examples, and validation notes *(2025-11-23: Pydantic models now expose `Attributes` sections covering units/validation rules).*
     - [x] Optimisation layer: expand docstrings for `fhops.optimization.mip.builder`, drivers, and heuristics (SA/ILS/Tabu), outlining inputs, constraints, and returns *(2025-11-23: heuristic drivers now describe operator knobs, telemetry payloads, and return schemas).*
     - [x] Evaluation: provide detail for playback, KPI calculators, exporters (parameters, expected DataFrame schemas, sample usage).
-    - [x] Productivity/reference modules: annotate public helpers with units, source references, and when to use each regression *(2025-11-23: cable logging + helicopter helpers now mirror the CLI docs, completing the productivity pass).* 
+    - [x] Productivity/reference modules: annotate public helpers with units, source references, and when to use each regression *(2025-11-23: forwarder, skidder, shovel logger, processor, cable logging, and helicopter helpers now mirror the CLI docs; remaining work limited to loaders/validators).* 
     - [ ] Regenerate Sphinx API docs after docstrings are fleshed out; ensure `docs/api/*.rst` pulls the new content.
+
+### Outstanding docstring gaps (2025-11-23 deep-dive)
+- **Productivity core**: `cable_logging.py` still lacks docstrings on internal validators (`_validate_inputs`, `_profile_slope_percent`, `_m3_per_pmh*`), helper selectors (`_running_skyline_variant`, `_helicopter_spec`), TR127 loader classes (`_TR127Predictor`, `_TR127Regression`, `_load_tr127_models`, `_ensure_tr127_inputs`, `_warn_if_out_of_range`), TN173 dataclass/loaders, and small helpers like `default_payload_kg` / `rated_payload_lb`. Export list already exposes these names via `__all__`, so autodoc shows blank slots.
+- **Grapple presets**: `grapple_bc.py` has almost no docstring coverage across TN157/TN147/TR122/ADV5N28 metadata, `list_*_ids`, and productivity functions (`estimate_grapple_yarder_productivity_*`). These feed the CLI feller-buncher/manual-felling workflows.
+- **Processor/loader suite**: `processor_loader.py` still missing docstrings for every dataset loader, dataclass, and helper (Berry/Labelle/ADV/TN/TR/loader cost estimates). This covers manual felling, processor costs, loader hot/cold modes, etc.
+- **CTL/harvester forwarders**: `eriksson2014.py`, `ghaffariyan2019.py`, `harvester_ctl.py`, `forwarder_bc.py` internal helpers, and validators in `sessions2006.py` & `shovel_logger.py` still lack docstrings.
+- **Skidder internals**: `_load_skidder_speed_profiles`, `_han2018_cycle_time_seconds`, `_segment_time` remain undocumented.
+- **Costing layer**: `costing/inflation.py`, `costing/machine_rates.py`, and `costing/machines.py` have zero docstrings on exported dataclasses (`MachineRate`, `MachineCostEstimate`) and functions (`load_default_machine_rates`, `estimate_unit_cost_from_stand`, etc.), so the costing API is blank in docs.
+
+### Next docstring tasks
+1. **Grapple BC module** – document TN157/TN147/TR122/ADV5N28 dataclasses, list/get helpers, and `estimate_grapple_yarder_productivity_*` functions (include units, source citations, payload defaults). Tack on docstrings for helper validators to avoid blank sections in autodoc.
+2. **Processor/loader module** – add top-level docstrings to dataset loaders, result dataclasses (Labelle, ADV, TN, TR sets), and CLI-facing estimators (processor/loader productivity + costing). Cover manual felling cost helpers, loader forwarder utilities, and Labelle polynomial entries.
+3. **Costing API** – docstring coverage for inflation helper, machine-rate dataclasses, machine-cost estimators, and any validators to ensure the costing reference page isn’t empty.
