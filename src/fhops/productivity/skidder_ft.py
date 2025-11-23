@@ -127,6 +127,7 @@ _ADV6N7_PATH = (
 
 @lru_cache(maxsize=1)
 def _load_skidder_speed_profiles() -> dict[str, dict[str, object]]:
+    """Load GNSS-derived skidder speed profiles for travel-time overrides."""
     try:
         data = json.loads(_SKIDDER_SPEED_PROFILE_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
@@ -341,6 +342,25 @@ def _han2018_cycle_time_seconds(
     loaded_distance_m: float,
     speed_profile: SkidderSpeedProfile | None = None,
 ) -> float:
+    """
+    Return delay-free cycle time (seconds) using Han et al. (2018) regressions.
+
+    Parameters
+    ----------
+    method:
+        Harvesting method (`lop_and_scatter` or `whole_tree`).
+    pieces_per_cycle:
+        Pieces handled per cycle. Must be > 0.
+    empty_distance_m, loaded_distance_m:
+        Empty/loaded travel distances (m). Must be ≥ 0.
+    speed_profile:
+        Optional GNSS-derived speed profile used to override the travel coefficients.
+
+    Returns
+    -------
+    float
+        Delay-free cycle time (seconds).
+    """
     if pieces_per_cycle <= 0:
         raise ValueError("pieces_per_cycle must be > 0")
     if empty_distance_m < 0 or loaded_distance_m < 0:
@@ -351,6 +371,7 @@ def _han2018_cycle_time_seconds(
         coefficient_seconds_per_m: float,
         profile_speed_kmh: float | None,
     ) -> float:
+        """Return segment time (seconds) using either GNSS speeds or regression coefficients."""
         if distance_m <= 0:
             return 0.0
         if profile_speed_kmh and profile_speed_kmh > 0:
