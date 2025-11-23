@@ -83,7 +83,7 @@
     - Scaling plot/table (`docs/softwarex/assets/data/scaling/runtime_vs_blocks.png`, `scaling_summary.{csv,json}`) → `run_synthetic_sweep.py`.
     - Dataset index + summaries (`docs/softwarex/assets/data/datasets/index.json`, `*_summary.json`) → `run_dataset_inspection.py`.
     - PRISMA-style FHOPS workflow diagrams (architecture + evaluation flow) → `manuscript/sections/includes/prisma_overview.tex` rendered via `scripts/render_prisma_diagram.py` (drives PDF/PNG assets for both manuscript + docs). Consider hierarchical variants (full FHOPS stack + zoomed-in evaluation loop).
-  - [ ] Create reproducible scripts/notebooks to regenerate each artifact.
+  - [x] Create reproducible scripts/notebooks to regenerate each artifact.
   - [ ] Integrate artifact generation into CI or a manual checklist.
 - [x] PRISMA-style diagram workflow (WS3 EI-inspired).
   - [x] Draft `sections/includes/prisma_overview.tex` capturing scenario ingest → solver core → telemetry/export path with the `prisma-flow-diagram` package.
@@ -211,10 +211,10 @@
   - [ ] Use `notes/softwarex_exemplar_analysis.md` takeaways and the Jaffray systematic review references to outline the Intro and Software Metadata paragraphs.
   - [ ] Draft the first pass of the Motivation/Contribution narrative (Section 1) using the shared snippets in `sections/includes/motivation_story.md`.
   - [ ] Capture open questions / text debt in the local manuscript change log before each writing push so we can trace edits without touching the main FHOPS changelog.
-- [ ] Finalize reproducible asset documentation before the benchmark suite grows further.
-  - [ ] Expand `docs/softwarex/manuscript/README.md` with runtime expectations, environment variables (e.g., `FHOPS_ASSETS_FAST=1`), and troubleshooting tips for each script.
-  - [ ] Add a short manual checklist (until CI is ready) referencing the outputs each script must produce under `docs/softwarex/assets/`.
-  - [ ] Note telemetry/temporary files that stay ignored (e.g., `**/telemetry/steps/*.jsonl`) in the local `.gitignore` and confirm `submission_readiness_dashboard.md` points to the correct artifact directories.
+- [x] Finalize reproducible asset documentation before the benchmark suite grows further.
+  - [x] Expand `docs/softwarex/manuscript/README.md` with runtime expectations, environment variables (e.g., `FHOPS_ASSETS_FAST=1`), and troubleshooting tips for each script.
+  - [x] Add a short manual checklist (until CI is ready) referencing the outputs each script must produce under `docs/softwarex/assets/`.
+  - [x] Note telemetry/temporary files that stay ignored (e.g., `**/telemetry/steps/*.jsonl`) in the local `.gitignore` and confirm `submission_readiness_dashboard.md` points to the correct artifact directories.
 - [x] Break phases into actionable GitHub issues with owners and deadlines.
   - [x] Translate each checkbox (or logical grouping) into issue(s) with clear scope (see Phase 0 timeline block above for the canonical mapping).
   - [x] Assign DRIs and add due dates/milestones to keep momentum (captured per-issue with dates aligned to FHOPS release gates).

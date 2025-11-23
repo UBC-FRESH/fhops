@@ -40,6 +40,7 @@
 - **Exemplar refs:** PyDDRBG §2 (benchmark generator + robust mean peak ratio), PyLESA §3 (district-heating sizing KPI plots).
 
 ### 4. Reproducibility & Automation
+- [x] Document manual reproduction pipeline (`make assets`, `FHOPS_ASSETS_FAST=1` quick checks, figure outputs) in `docs/softwarex/manuscript/README.md`.
 - [ ] Create `make manuscript-benchmarks` (or hatch task) that reruns all experiments; log hashes + runtimes.
 - [ ] Capture environment export (conda/pip + container digest) and store under docs/softwarex/reference/.
 - [ ] Add CI badge / log snippet proving at least one clean reproduction run (MOOSE-style evidence).

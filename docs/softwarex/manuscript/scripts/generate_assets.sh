@@ -2,6 +2,9 @@
 set -euo pipefail
 
 # Resolve important directories
+# Fast-mode flag (FHOPS_ASSETS_FAST=1 cuts runtimes for quick iteration)
+fast_mode="${FHOPS_ASSETS_FAST:-0}"
+
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "${script_dir}/../../../.." && pwd)"
 assets_root="${repo_root}/docs/softwarex/assets"
@@ -29,6 +32,18 @@ synthetic_scenario="${dataset_dir}/synthetic_small/scenario.yaml"
 if [[ ! -f "${synthetic_scenario}" ]]; then
   echo "[assets] ERROR: synthetic scenario not found at ${synthetic_scenario}" >&2
   exit 1
+fi
+
+bench_time_limit="180"
+sa_iters="2500"
+ils_iters="400"
+tabu_iters="2500"
+if [[ "${fast_mode}" == "1" ]]; then
+  bench_time_limit="90"
+  sa_iters="1200"
+  ils_iters="220"
+  tabu_iters="1400"
+  echo "[assets] FAST mode enabled (FHOPS_ASSETS_FAST=1): lighter benchmark budgets." >&2
 fi
 
 echo "[assets] Regenerating FHOPS benchmark summaries into ${bench_dir}" >&2
@@ -62,14 +77,14 @@ for spec in "${scenario_specs[@]}"; do
     "--scenario" "${scenario_path}"
     "--out-dir" "${out_dir}"
     "--telemetry-log" "${telemetry}"
-    "--time-limit" "180"
-    "--sa-iters" "2500"
+    "--time-limit" "${bench_time_limit}"
+    "--sa-iters" "${sa_iters}"
     "--driver" "auto"
     "--no-include-mip"
     "--include-ils"
-    "--ils-iters" "400"
+    "--ils-iters" "${ils_iters}"
     "--include-tabu"
-    "--tabu-iters" "2500"
+    "--tabu-iters" "${tabu_iters}"
     "--compare-preset" "diversify"
     "--compare-preset" "mobilisation"
   )
@@ -113,7 +128,11 @@ print(f"[assets] Wrote benchmark index with {len(index)} entries to {bench_dir/'
 PY
 
 echo "[assets] Running tuning harness into ${tuning_dir}" >&2
-python "${script_dir}/run_tuner.py" --repo-root "${repo_root}" --out-dir "${tuning_dir}"
+tuner_tier="short"
+if [[ "${fast_mode}" == "1" ]]; then
+  tuner_tier="micro"
+fi
+python "${script_dir}/run_tuner.py" --repo-root "${repo_root}" --out-dir "${tuning_dir}" --tier "${tuner_tier}"
 
 echo "[assets] Running playback analysis into ${playback_dir}" >&2
 python "${script_dir}/run_playback_analysis.py" --repo-root "${repo_root}" --out-dir "${playback_dir}"

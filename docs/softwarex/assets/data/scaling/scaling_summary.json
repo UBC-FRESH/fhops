@@ -5,7 +5,7 @@
     "machines": 2,
     "num_days": 6,
     "assignments": 5.0,
-    "runtime_s": 0.2502420470118522,
+    "runtime_s": 0.2498829909600317,
     "objective": 39.791
   },
   {
@@ -14,7 +14,7 @@
     "machines": 4,
     "num_days": 12,
     "assignments": 9.0,
-    "runtime_s": 0.4894984629936516,
+    "runtime_s": 0.5052363323047757,
     "objective": 91.368
   },
   {
@@ -23,7 +23,7 @@
     "machines": 6,
     "num_days": 18,
     "assignments": 16.0,
-    "runtime_s": 1.0330011891201138,
+    "runtime_s": 1.0284628877416253,
     "objective": 169.77700000000004
   }
 ]
