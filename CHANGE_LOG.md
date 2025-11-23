@@ -3,7 +3,7 @@
 - Added the `cli_text()` helper so tests that need the combined output can opt-in explicitly, while existing `result.stdout` checks keep working because the patched runner now backs stdout/output bytes with the merged text.
 - Taught mypy to ignore missing stubs for `typer.*` / `click.*` modules (via `pyproject.toml`) and limited the whitespace hooks to real source directories so CI no longer rewrites archived reference notes.
 - Let Ruff modernise the two maintenance scripts (`scripts/dedup_conversation_log.py`, `scripts/fncy12_support_split.py`) and trimmed stray whitespace in the machine costing plan, Hypercorn config, and the Sphinx planning log to keep the lint suite green.
-- Updated `scripts/check_changelog.sh` so the pre-commit hook now inspects every parent of a merge commit; CI’s auto-generated merge commits once again recognise the `CHANGE_LOG.md` entry and stop failing the changelog gate.
+- Updated `scripts/check_changelog.sh` so the pre-commit hook now inspects every parent of a merge commit; CI’s auto-generated merge commits (which run out of shallow clones) now detect the changelog edits and skip enforcement when no parent history is available.
 
 # 2025-11-24 — CLI dataset helper docstrings
 - Completed the docstring sweep across `src/fhops/cli/dataset.py`, covering the remaining dataset prompts, evaluators, telemetry renderers, and TR-28/TN-98 tables so the API docs now explain every CLI helper and validation path (forwarder/shovel logger/CTL evaluators, dataset resolvers, ADV2N21 summaries, road-cost renderers, soil-profile tables, etc.).
