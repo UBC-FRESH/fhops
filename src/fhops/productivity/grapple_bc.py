@@ -55,9 +55,26 @@ def _productivity(turn_volume_m3: float, cycle_time_min: float) -> float:
 def estimate_grapple_yarder_productivity_sr54(
     turn_volume_m3: float, yarding_distance_m: float
 ) -> float:
-    """Estimate productivity (m³/PMH) for Washington 118A yarder on mechanically bunched wood.
+    """
+    Estimate productivity (m³/PMH) for a Washington 118A skyline on mechanically bunched wood.
 
-    Derived from MacDonald (1988) SR-54, Table 9 and Table 10. Includes average move/minor delays.
+    Parameters
+    ----------
+    turn_volume_m3:
+        Cubic metres per turn (≈0.5–3.0 m³ in SR-54 Table 9). Must be > 0.
+    yarding_distance_m:
+        Uphill skyline distance (metres). Regression calibrated for roughly 30–300 m.
+
+    Returns
+    -------
+    float
+        Delay-free productivity expressed in cubic metres per productive machine hour (PMH₀).
+
+    Notes
+    -----
+    Based on MacDonald (1988) SR-54 Table 9 + Table 10 with the fixed 1.35 min move/minor-delay
+    allowance. Use with mechanically bunched second-growth cedar/hem-fir stands similar to the
+    study design.
     """
 
     _validate_inputs(turn_volume_m3, yarding_distance_m)
@@ -68,9 +85,20 @@ def estimate_grapple_yarder_productivity_sr54(
 def estimate_grapple_yarder_productivity_tr75_bunched(
     turn_volume_m3: float, yarding_distance_m: float
 ) -> float:
-    """Estimate productivity for Madill 084 swing yarder on mechanically bunched second-growth.
+    """
+    Estimate productivity for a Madill 084 swing yarder on mechanically bunched second-growth.
 
-    Regression coefficients from Peterson (1987) TR-75, Table 6.
+    Parameters
+    ----------
+    turn_volume_m3:
+        Cubic metres per turn pulled by the grapple (Peterson 1987 observed 1–3 m³).
+    yarding_distance_m:
+        Outhaul distance along the skyline (metres). Regression calibrated for 0–400 m.
+
+    Returns
+    -------
+    float
+        Productivity in m³/PMH₀ drawn from TR-75 Table 6 coefficients.
     """
 
     _validate_inputs(turn_volume_m3, yarding_distance_m)
@@ -88,7 +116,21 @@ def estimate_grapple_yarder_productivity_tr75_bunched(
 def estimate_grapple_yarder_productivity_tr75_handfelled(
     turn_volume_m3: float, yarding_distance_m: float
 ) -> float:
-    """Estimate productivity for Madill 084 swing yarder on hand-felled second-growth timber."""
+    """
+    Estimate productivity for a Madill 084 swing yarder on hand-felled second-growth.
+
+    Parameters
+    ----------
+    turn_volume_m3:
+        Cubic metres per turn (hand-felled timber; typically smaller than bunched).
+    yarding_distance_m:
+        Skyline distance in metres (0–400 m typical).
+
+    Returns
+    -------
+    float
+        Productivity in m³/PMH₀ using the hand-felled regression from TR-75 Table 6.
+    """
 
     _validate_inputs(turn_volume_m3, yarding_distance_m)
     cycle_time = _minutes_per_turn_tr75(
@@ -112,26 +154,46 @@ __all__ = [
 
 @dataclass(frozen=True)
 class TN157Case:
-    """TN-157 Cypress 7280B case-study metrics (FPInnovations TN-157)."""
+    """
+    FPInnovations TN-157 Cypress 7280B grapple yarder case-study metrics.
 
-    case_id: str
-    label: str
-    falling_method: str
-    stand_type: str
-    yarding_direction: str
-    slope_percent_average: float
-    average_turn_volume_m3: float
-    average_yarding_distance_m: float
-    logs_per_turn: float
-    yarding_minutes: float
-    total_turns: int
-    logs_per_shift: int
-    volume_per_shift_m3: float
-    productivity_m3_per_pmh: float
-    logs_per_yarding_hour: float
-    cost_per_log_cad_1991: float
-    cost_per_m3_cad_1991: float
-    cost_base_year: int = 1991
+    Attributes
+    ----------
+    case_id:
+        Identifier from the bulletin (``"1"``–``"7"`` or ``"combined"`` aggregate).
+    label:
+        Human-readable label used in CLI output.
+    falling_method:
+        `hand_felled`, `mechanically bunched`, etc.
+    stand_type:
+        Species/age mix description.
+    yarding_direction:
+        Uphill/downhill/mixed descriptor.
+    slope_percent_average:
+        Average slope (%) for the corridor mix.
+    average_turn_volume_m3:
+        Cubic metres per turn observed in the case study.
+    average_yarding_distance_m:
+        Slope distance from stump to landing (metres).
+    logs_per_turn:
+        Average log count per turn.
+    yarding_minutes:
+        Total productive minutes logged.
+    total_turns:
+        Number of turns observed.
+    logs_per_shift:
+        8 h output (logs per shift).
+    volume_per_shift_m3:
+        8 h volume output (m³ per shift).
+    productivity_m3_per_pmh:
+        Delay-free productivity (m³/PMH₀).
+    logs_per_yarding_hour:
+        Throughput in logs per PMH₀.
+    cost_per_log_cad_1991, cost_per_m3_cad_1991:
+        Cost metrics normalised to the 1991 CAD base year.
+    cost_base_year:
+        CPI base year for the costs (defaults to 1991).
+    """
 
     @property
     def cycle_time_minutes(self) -> float:
@@ -285,7 +347,14 @@ def _load_tn157_cases() -> Mapping[str, TN157Case]:
 
 
 def list_tn157_case_ids() -> tuple[str, ...]:
-    """Return available TN-157 case IDs plus the pre-computed ``combined`` entry."""
+    """
+    Return the available TN-157 case identifiers.
+
+    Returns
+    -------
+    tuple[str, ...]
+        Ordered tuple including ``"combined"`` plus the numeric case IDs present in the dataset.
+    """
     cases = _load_tn157_cases()
     numeric_ids = sorted((cid for cid in cases if cid.isdigit()), key=int)
     ordered = ["combined"] + [cid for cid in numeric_ids if cid != "combined"]
@@ -293,7 +362,25 @@ def list_tn157_case_ids() -> tuple[str, ...]:
 
 
 def get_tn157_case(case_id: str) -> TN157Case:
-    """Return a TN-157 case dataclass by identifier (defaults to ``combined``)."""
+    """
+    Return a TN-157 case dataclass by identifier.
+
+    Parameters
+    ----------
+    case_id:
+        Case label (`"1"`–`"7"`, `"combined"`, `"combined_turns"`, or `"Case 3"` style). ``None``/empty
+        strings default to the combined record.
+
+    Returns
+    -------
+    TN157Case
+        Dataclass with productivity, cost, and stand descriptors from TN-157.
+
+    Raises
+    ------
+    ValueError
+        If the identifier is not present in the dataset.
+    """
     normalized = (case_id or "combined").strip().lower()
     if normalized in {"", "combined", "avg", "average"}:
         normalized = "combined"
@@ -306,25 +393,49 @@ def get_tn157_case(case_id: str) -> TN157Case:
 
 
 def estimate_grapple_yarder_productivity_tn157(case_id: str = "combined") -> float:
-    """Look up the TN-157 case and return its m³/PMH productivity."""
+    """
+    Look up the TN-157 case study and return its productivity (m³/PMH₀).
+
+    Parameters
+    ----------
+    case_id:
+        Case identifier accepted by :func:`get_tn157_case`. Defaults to the combined average.
+
+    Returns
+    -------
+    float
+        Productivity in cubic metres per productive machine hour.
+    """
     case = get_tn157_case(case_id)
     return case.productivity_m3_per_pmh
 
 
 @dataclass(frozen=True)
 class TN147Case:
-    """TN-147 Madill 009 highlead case-study metrics (FPInnovations TN-147)."""
+    """
+    FPInnovations TN-147 Madill 009 highlead case-study metrics.
 
-    case_id: str
-    label: str
-    average_turn_volume_m3: float | None
-    average_yarding_distance_m: float | None
-    logs_per_turn: float | None
-    logs_per_shift_8h: float
-    volume_per_shift_m3: float
-    cost_per_log_cad_1989: float | None
-    cost_per_m3_cad_1989: float | None
-    cost_base_year: int = 1989
+    Attributes
+    ----------
+    case_id:
+        Identifier from the bulletin.
+    label:
+        Display label for CLI/Docs.
+    average_turn_volume_m3:
+        Mean payload (m³/turn); ``None`` if not recorded.
+    average_yarding_distance_m:
+        Mean slope distance (m); ``None`` if not recorded.
+    logs_per_turn:
+        Average log count per turn; ``None`` when absent.
+    logs_per_shift_8h:
+        Output per 8 h shift (logs).
+    volume_per_shift_m3:
+        Output per 8 h shift (m³).
+    cost_per_log_cad_1989, cost_per_m3_cad_1989:
+        Cost metrics normalised to 1989 CAD.
+    cost_base_year:
+        CPI base year (default 1989).
+    """
 
     @property
     def productivity_m3_per_pmh(self) -> float:
@@ -433,14 +544,39 @@ def _load_tn147_cases() -> Mapping[str, TN147Case]:
 
 
 def list_tn147_case_ids() -> tuple[str, ...]:
-    """Return sorted TN-147 case IDs (including ``combined`` aggregates)."""
+    """
+    Return the available TN-147 case identifiers.
+
+    Returns
+    -------
+    tuple[str, ...]
+        Tuple of case IDs. Includes ``"combined"`` (default aggregate) and excludes the internal
+        ``"combined_turns"`` helper used for weighting.
+    """
     cases = _load_tn147_cases()
     ordered = [cid for cid in cases if cid != "combined_turns"]
     return tuple(sorted(ordered, key=lambda cid: (cid != "combined", cid)))
 
 
 def get_tn147_case(case_id: str) -> TN147Case:
-    """Return TN-147 case metadata by identifier (fallback to ``combined``)."""
+    """
+    Return TN-147 case metadata by identifier.
+
+    Parameters
+    ----------
+    case_id:
+        Case identifier (numeric string or ``"combined"``). ``None``/empty defaults to ``"combined"``.
+
+    Returns
+    -------
+    TN147Case
+        Case dataclass with productivity and costing metrics.
+
+    Raises
+    ------
+    ValueError
+        If the identifier is not found in the dataset.
+    """
     normalized = (case_id or "combined").strip().lower()
     if normalized in {"", "combined"}:
         normalized = "combined"
@@ -454,32 +590,53 @@ def get_tn147_case(case_id: str) -> TN147Case:
 
 
 def estimate_grapple_yarder_productivity_tn147(case_id: str = "combined") -> float:
-    """Look up the TN-147 case study and return productivity (m³/PMH)."""
+    """
+    Look up the TN-147 case study and return productivity (m³/PMH₀).
+
+    Parameters
+    ----------
+    case_id:
+        Case identifier accepted by :func:`get_tn147_case`.
+
+    Returns
+    -------
+    float
+        Productivity in cubic metres per productive machine hour.
+    """
     case = get_tn147_case(case_id)
     return case.productivity_m3_per_pmh
 
 
 @dataclass(frozen=True)
 class TR122Treatment:
-    """TR-122 Roberts Creek swing-yarder treatment summary (cost + productivity)."""
+    """
+    FPInnovations TR-122 Roberts Creek swing-yarder treatment summary.
 
-    treatment_id: str
-    label: str
-    volume_per_shift_m3: float
-    yarder_production_hours: float
-    yarder_total_hours: float
-    loader_hours: float
-    avg_piece_m3: float
-    avg_pieces_per_cycle: float
-    cycle_volume_m3: float
-    yarding_distance_m: float | None
-    cycle_minutes: float | None
-    cost_total_per_m3_cad_1996: float
-    yarder_cost_per_m3_cad_1996: float
-    loader_cost_per_m3_cad_1996: float
-    yarding_labour_per_m3_cad_1996: float
-    loading_labour_per_m3_cad_1996: float
-    cost_base_year: int = 1996
+    Attributes
+    ----------
+    treatment_id:
+        Identifier such as ``"hill_crew_a"``.
+    label:
+        Human-readable label (title-cased ID by default).
+    volume_per_shift_m3:
+        8 h shift output (m³).
+    yarder_production_hours, yarder_total_hours:
+        Productive and total yarder hours recorded during the study.
+    loader_hours:
+        Loader utilisation (hours).
+    avg_piece_m3, avg_pieces_per_cycle, cycle_volume_m3:
+        Payload descriptors for each cycle.
+    yarding_distance_m:
+        Average yarding distance (m) from the cycle distribution, if available.
+    cycle_minutes:
+        Mean cycle time (minutes) derived from the distribution data.
+    cost_total_per_m3_cad_1996, yarder_cost_per_m3_cad_1996, loader_cost_per_m3_cad_1996:
+        Cost components normalised to 1996 CAD.
+    yarding_labour_per_m3_cad_1996, loading_labour_per_m3_cad_1996:
+        Labour cost breakdown (1996 CAD).
+    cost_base_year:
+        CPI base year (1996).
+    """
 
     @property
     def productivity_m3_per_pmh(self) -> float:
@@ -528,12 +685,36 @@ def _load_tr122_treatments() -> Mapping[str, TR122Treatment]:
 
 
 def list_tr122_treatment_ids() -> tuple[str, ...]:
-    """Return available TR-122 treatment identifiers."""
+    """
+    Return available TR-122 treatment identifiers.
+
+    Returns
+    -------
+    tuple[str, ...]
+        Sorted tuple of treatment IDs.
+    """
     return tuple(sorted(_load_tr122_treatments()))
 
 
 def get_tr122_treatment(treatment_id: str) -> TR122Treatment:
-    """Return TR-122 treatment metadata by identifier."""
+    """
+    Return TR-122 treatment metadata by identifier.
+
+    Parameters
+    ----------
+    treatment_id:
+        Identifier from :func:`list_tr122_treatment_ids`.
+
+    Returns
+    -------
+    TR122Treatment
+        Dataclass containing productivity/cost information.
+
+    Raises
+    ------
+    ValueError
+        If the identifier is unknown.
+    """
     treatments = _load_tr122_treatments()
     normalized = treatment_id.strip().lower()
     if normalized not in treatments:
@@ -544,34 +725,55 @@ def get_tr122_treatment(treatment_id: str) -> TR122Treatment:
 
 
 def estimate_grapple_yarder_productivity_tr122(treatment_id: str) -> float:
-    """Return the TR-122 treatment productivity (m³/PMH)."""
+    """
+    Return the TR-122 treatment productivity (m³/PMH₀).
+
+    Parameters
+    ----------
+    treatment_id:
+        Identifier accepted by :func:`get_tr122_treatment`.
+
+    Returns
+    -------
+    float
+        Productivity in m³/PMH₀.
+    """
     treatment = get_tr122_treatment(treatment_id)
     return treatment.productivity_m3_per_pmh
 
 
 @dataclass(frozen=True)
 class ADV5N28Block:
-    """ADV5N28 skyline conversion block metadata (FPInnovations Advantage Vol. 5 No. 28)."""
+    """
+    FPInnovations Advantage Vol. 5 No. 28 skyline-conversion block metadata.
 
-    block_id: str
-    label: str
-    silviculture_system: str
-    area_ha: float
-    net_volume_m3_per_ha: float
-    slope_percent_average: float
-    yarding_direction: str
-    average_turn_volume_m3: float
-    average_yarding_distance_m: float
-    logs_per_turn: float
-    productivity_m3_per_shift_8h: float
-    productivity_m3_per_smh: float
-    productivity_m3_per_pmh: float
-    productivity_m3_per_yarding_hour: float
-    cost_total_actual_per_m3_cad_2002: float
-    cost_total_estimated_per_m3_cad_2002: float | None
-    cost_helicopter_reference_per_m3_cad_2002: float | None
-    notes: tuple[str, ...]
-    cost_base_year: int = 2002
+    Attributes
+    ----------
+    block_id:
+        Identifier from the study.
+    label:
+        Display label (silviculture system or title-cased ID).
+    silviculture_system:
+        Treatment description (e.g., ``"uniform selection"``).
+    area_ha, net_volume_m3_per_ha:
+        Block size and net volume.
+    slope_percent_average:
+        Mean slope (%) across the block.
+    yarding_direction:
+        Uphill/downhill descriptor.
+    average_turn_volume_m3, average_yarding_distance_m, logs_per_turn:
+        Payload descriptors aggregated over the study.
+    productivity_m3_per_shift_8h, productivity_m3_per_smh, productivity_m3_per_pmh,
+    productivity_m3_per_yarding_hour:
+        Reported productivity metrics.
+    cost_total_actual_per_m3_cad_2002, cost_total_estimated_per_m3_cad_2002,
+    cost_helicopter_reference_per_m3_cad_2002:
+        Cost comparisons normalised to 2002 CAD (actual skyline, projected skyline, helicopter ref).
+    notes:
+        Tuple of free-form notes from the bulletin.
+    cost_base_year:
+        CPI base year (default 2002).
+    """
 
 
 def _maybe_float(value: object | None) -> float | None:
@@ -636,12 +838,36 @@ def _load_adv5n28_blocks() -> Mapping[str, ADV5N28Block]:
 
 
 def list_adv5n28_block_ids() -> tuple[str, ...]:
-    """Return sorted ADV5N28 block identifiers."""
+    """
+    Return sorted ADV5N28 block identifiers.
+
+    Returns
+    -------
+    tuple[str, ...]
+        Tuple of lowercase block IDs available in the dataset.
+    """
     return tuple(sorted(_load_adv5n28_blocks()))
 
 
 def get_adv5n28_block(block_id: str) -> ADV5N28Block:
-    """Return ADV5N28 block metadata by identifier."""
+    """
+    Return ADV5N28 block metadata by identifier.
+
+    Parameters
+    ----------
+    block_id:
+        Identifier from :func:`list_adv5n28_block_ids` (case-insensitive).
+
+    Returns
+    -------
+    ADV5N28Block
+        Block metadata including productivity and cost references.
+
+    Raises
+    ------
+    ValueError
+        If the identifier is missing or unknown.
+    """
     if not block_id:
         raise ValueError("Block identifier is required for ADV5N28 presets.")
     blocks = _load_adv5n28_blocks()
@@ -654,14 +880,41 @@ def get_adv5n28_block(block_id: str) -> ADV5N28Block:
 
 
 def estimate_grapple_yarder_productivity_adv5n28(block_id: str) -> float:
-    """Return the ADV5N28 block productivity (m³/PMH)."""
+    """
+    Return the ADV5N28 block productivity (m³/PMH₀).
+
+    Parameters
+    ----------
+    block_id:
+        Identifier accepted by :func:`get_adv5n28_block`.
+
+    Returns
+    -------
+    float
+        Productivity in m³ per PMH₀.
+    """
     block = get_adv5n28_block(block_id)
     return block.productivity_m3_per_pmh
 
 
 @dataclass(frozen=True)
 class ADV1N35Metadata:
-    """Cycle time/productivity coefficients for the ADV1N35 Owren 400 dataset."""
+    """
+    Cycle-time/productivity coefficients for the ADV1N35 Owren 400 dataset.
+
+    Attributes
+    ----------
+    intercept, slope_distance_coeff, lateral_distance_coeff, stems_coeff:
+        Regression coefficients from the FPInnovations Advantage Vol. 1 No. 35 study.
+    default_turn_volume_m3, default_stems_per_turn, default_lateral_distance_m:
+        Default payload parameters used when optional arguments are omitted.
+    default_in_cycle_delay_min:
+        Default in-cycle delay minutes appended to the regression.
+    utilisation:
+        Observed utilisation fraction applied when calculating PMH.
+    note:
+        Short citation or provenance string rendered in CLI output.
+    """
 
     intercept: float
     slope_distance_coeff: float
@@ -677,7 +930,19 @@ class ADV1N35Metadata:
 
 @lru_cache(maxsize=1)
 def get_adv1n35_metadata() -> ADV1N35Metadata:
-    """Return the cached ADV1N35 Owren 400 regression metadata."""
+    """
+    Return the cached ADV1N35 Owren 400 regression metadata.
+
+    Returns
+    -------
+    ADV1N35Metadata
+        Dataclass with regression coefficients and default payload assumptions.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the ADV1N35 dataset JSON is missing.
+    """
     if not _ADV1N35_PATH.exists():
         raise FileNotFoundError(f"ADV1N35 dataset not found: {_ADV1N35_PATH}")
     with _ADV1N35_PATH.open(encoding="utf-8") as fh:
@@ -710,7 +975,28 @@ def estimate_grapple_yarder_productivity_adv1n35(
     stems_per_turn: float | None = None,
     in_cycle_delay_minutes: float | None = None,
 ) -> float:
-    """Estimate productivity (m³/PMH) for the Owren 400 hydrostatic yarder (ADV1N35)."""
+    """
+    Estimate productivity (m³/PMH₀) for the Owren 400 hydrostatic yarder (ADV1N35).
+
+    Parameters
+    ----------
+    turn_volume_m3:
+        Payload volume per turn (m³). Must be > 0.
+    yarding_distance_m:
+        Slope distance from stump to landing (m). Must be ≥ 0.
+    lateral_distance_m:
+        Optional lateral distance (m). Defaults to the dataset average when ``None``.
+    stems_per_turn:
+        Optional stems per turn. Defaults to the dataset average when ``None``.
+    in_cycle_delay_minutes:
+        Optional minutes of hook/unhook delays to add to the regression. Defaults to the dataset
+        average when ``None``.
+
+    Returns
+    -------
+    float
+        Productivity in cubic metres per productive machine hour.
+    """
 
     _validate_inputs(turn_volume_m3, yarding_distance_m)
     if lateral_distance_m is not None and lateral_distance_m < 0:
@@ -739,7 +1025,22 @@ def estimate_grapple_yarder_productivity_adv1n35(
 
 @dataclass(frozen=True)
 class ADV1N40Metadata:
-    """Cycle-time components for the ADV1N40 Madill 071 downhill skyline study."""
+    """
+    Cycle-time components for the ADV1N40 Madill 071 downhill skyline study.
+
+    Attributes
+    ----------
+    outhaul_intercept, outhaul_distance_coeff, inhaul_intercept, inhaul_distance_coeff:
+        Regression coefficients describing skyline travel times.
+    hook_minutes, unhook_minutes:
+        Average hook/unhook times (minutes).
+    default_delay_minutes:
+        Default in-cycle delay appended to the regression.
+    default_turn_volume_m3, default_yarding_distance_m:
+        Default payload and distance values for CLI fallbacks.
+    note:
+        Citation rendered in CLI help.
+    """
 
     outhaul_intercept: float
     outhaul_distance_coeff: float
@@ -755,7 +1056,19 @@ class ADV1N40Metadata:
 
 @lru_cache(maxsize=1)
 def get_adv1n40_metadata() -> ADV1N40Metadata:
-    """Return cached ADV1N40 regression metadata."""
+    """
+    Return cached ADV1N40 regression metadata.
+
+    Returns
+    -------
+    ADV1N40Metadata
+        Dataclass containing skyline coefficients and defaults.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the ADV1N40 dataset JSON is missing.
+    """
     if not _ADV1N40_PATH.exists():
         raise FileNotFoundError(f"ADV1N40 dataset not found: {_ADV1N40_PATH}")
     with _ADV1N40_PATH.open(encoding="utf-8") as fh:
@@ -786,7 +1099,24 @@ def estimate_grapple_yarder_productivity_adv1n40(
     yarding_distance_m: float,
     in_cycle_delay_minutes: float | None = None,
 ) -> float:
-    """Estimate productivity (m³/PMH) for the Madill 071 downhill running/scab skyline (ADV1N40)."""
+    """
+    Estimate productivity (m³/PMH₀) for the Madill 071 downhill running/scab skyline (ADV1N40).
+
+    Parameters
+    ----------
+    turn_volume_m3:
+        Cubic metres per turn (must be > 0).
+    yarding_distance_m:
+        Slope distance (m). Must be ≥ 0.
+    in_cycle_delay_minutes:
+        Optional per-cycle delay minutes applied after the regression. Defaults to the dataset
+        average when ``None``.
+
+    Returns
+    -------
+    float
+        Productivity in cubic metres per PMH₀.
+    """
 
     _validate_inputs(turn_volume_m3, yarding_distance_m)
     if in_cycle_delay_minutes is not None and in_cycle_delay_minutes < 0:

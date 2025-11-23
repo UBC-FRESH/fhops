@@ -96,10 +96,10 @@ FHOPS’ Sphinx tree lives under `docs/` and is published to Read the Docs via `
 - `CONTRIBUTING.md` mirrors the same guidance so external collaborators see the exact docstring contract (per-argument coverage, return schemas, citations, and build verification).
 
 ### Next docstring tasks
-- [ ] **Grapple BC module** – document TN157/TN147/TR122/ADV5N28 dataclasses, list/get helpers, and `estimate_grapple_yarder_productivity_*` functions (include units, source citations, payload defaults). Tack on docstrings for helper validators to avoid blank sections in autodoc.
-    - [ ] Describe TN157/TN147/TR122/ADV5N28 metadata dataclasses (`Attributes` + sources/units).
-    - [ ] Add loader/helper docstrings (`list_*_ids`, `get_*`, `_validate_grapple_inputs`) describing return schemas.
-    - [ ] Expand `estimate_*` productivity helpers with parameter ranges, payload defaults, and KPI outputs, plus cite FPInnovations bulletins.
+- [x] **Grapple BC module** – document TN157/TN147/TR122/ADV5N28 dataclasses, list/get helpers, and `estimate_grapple_yarder_productivity_*` functions (include units, source citations, payload defaults). Tack on docstrings for helper validators to avoid blank sections in autodoc. *(2025-11-24: Added Attributes sections for all dataclasses, detailed Parameters/Returns for list/get helpers and estimator functions, plus source notes for SR-54, TR-75, TN157/147, TR122, ADV5N28, ADV1N35, and ADV1N40. Sphinx build pending after full productivity sweep.)*
+    - [x] Describe TN157/TN147/TR122/ADV5N28 metadata dataclasses (`Attributes` + sources/units).
+    - [x] Add loader/helper docstrings (`list_*_ids`, `get_*`, `_validate_inputs`) describing return schemas.
+    - [x] Expand `estimate_*` productivity helpers with parameter ranges, payload defaults, and KPI outputs, plus cite FPInnovations bulletins.
 - [ ] **Processor/loader module** – add top-level docstrings to dataset loaders, result dataclasses (Labelle, ADV, TN, TR sets), and CLI-facing estimators (processor/loader productivity + costing). Cover manual felling cost helpers, loader forwarder utilities, and Labelle polynomial entries.
     - [ ] Add module summary referencing Berry/Labelle datasets and CLI consumers.
     - [ ] Document every result dataclass (`Attributes`, units, dataset citation) plus dataset loader helpers.
