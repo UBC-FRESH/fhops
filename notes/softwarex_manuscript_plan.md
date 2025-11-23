@@ -11,10 +11,11 @@
   - [x] Define the subfolder layout (manuscript, reference, assets, submissions, automation).
   - [x] Wire up scripts or Make targets for building/checking manuscript assets.
   - [ ] Document contribution guidelines for manuscript files inside README.
-- [ ] Follow SoftwareX author instructions precisely and benchmark readiness using exemplar publications.
+- [ ] Follow SoftwareX author instructions precisely, benchmark readiness using exemplar publications, and integrate the Jaffray MASc literature review so citations lean on the broader forestry/OR canon.
   - [ ] Track the authoritative author guidelines version/date in repository metadata.
   - [ ] Maintain a checklist derived from instructions for ongoing compliance.
   - [x] Log insights/benchmarks from exemplar papers to inform quality gates.
+  - [ ] Mirror the Jaffray MASc literature review (see `tmp/jaffray-rosalia-masc-proposal/`) into our BibTeX + outline so real forestry/OR papers anchor each section.
 
 ## Phase 0 – Planning (Now)
 - [ ] Capture requirements: Download the latest SoftwareX author instructions (PDF + any LaTeX/Word templates) into `docs/softwarex/reference/` and version them.
@@ -31,9 +32,9 @@
   - [ ] List candidate figures/tables pulled from existing docs or experiments.
   - [ ] Map each manuscript section to overlapping Sphinx content to avoid duplication.
 - [ ] Decide workflow tooling: Choose manuscript format (LaTeX vs. Markdown-to-PDF pipeline), bibliography management, and automation hooks (e.g., `make manuscript`).
-  - [ ] Evaluate tooling options (LaTeX template vs. MyST/pandoc flow) against SoftwareX requirements.
-  - [ ] Select bibliography tooling (BibTeX, Zotero export, etc.) and storage location.
-  - [ ] Define automation commands/scripts for building and linting manuscript artifacts.
+  - [x] Evaluate tooling options (LaTeX template vs. MyST/pandoc flow) against SoftwareX requirements (chose LaTeX/latexmk).
+  - [x] Select bibliography tooling (BibTeX `references.bib`, seeded with exemplar + Jaffray references).
+  - [x] Define automation commands/scripts for building manuscript artifacts (`Makefile` + `latexmk`).
 - [ ] Establish timeline & ownership: Turn phases into GitHub issues/milestones, map DRI(s), and set review checkpoints that align with FHOPS releases.
   - [ ] Convert each phase into one or more GitHub issues with owners/due dates.
   - [ ] Align manuscript milestones with FHOPS release cadence.
@@ -56,6 +57,7 @@
   - [ ] Inventory required figures/tables and their data sources.
   - [ ] Create reproducible scripts/notebooks to regenerate each artifact.
   - [ ] Integrate artifact generation into CI or a manual checklist.
+- [ ] Capture thesis alignment: Document touchpoints with `tmp/jaffray-rosalia-masc-proposal` / `tmp/jaffray-rosalia-masc-thesis` in `notes/thesis_alignment.md` and weave key citations into each section outline.
 
 ## Phase 2 – Content Drafting
 - [ ] Produce first-pass text for each major section, incorporating FHOPS capabilities, unique contributions, and methodology.
