@@ -36,6 +36,15 @@ instead of suppressing them; escalate only if consensus is reached with maintain
     ``Returns`` / ``Raises`` / ``Notes`` sections (omit empty sections). Always describe **every**
     public argument with units, accepted ranges, defaults, and side-effects. When a parameter is a
     mapping or dataclass, spell out the expected keys/fields.
+  - Cite provenance (FERIC/FPInnovations study IDs, TN/TR numbers, academic publications) so the
+    rendered API docs explain where each regression originates. Note any assumptions (e.g., BC-only
+    slope envelopes, salvage-mode defaults, CPI base year).
+  - Detail return payloads: list dataclass attributes, tuple ordering, DataFrame schemas, and any
+    telemetry side effects. If a helper writes logs or mutates inputs, state it explicitly.
+  - Include short ``Examples`` snippets when the workflow spans multiple steps (scenario →
+    optimiser → evaluator) or when CLI helpers require a sequence of flags.
+  - When validation clamps or coerces inputs, document the rule (e.g., “payload multiplier is
+    clipped to > 0 and ≤ 1.0”). This keeps Sphinx readers aligned with the runtime behaviour.
   - Module docstrings must explain *why* the module exists (e.g., CLI entry point, Pyomo builder,
     playback adapter) and cite the datasets or publications behind productivity/costing helpers.
   - Treat docstrings as part of the contract: describe return schemas for dataclasses, tuples,
