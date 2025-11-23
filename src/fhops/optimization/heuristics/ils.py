@@ -135,33 +135,38 @@ def solve_ils(
 
     Parameters
     ----------
-    pb:
+    pb : fhops.scenario.contract.Problem
         Parsed problem definition containing the schedule context.
-    iters:
+    iters : int, default=50
         Number of ILS outer iterations (local search + perturbation cycles).
-    seed:
+    seed : int, default=42
         Seed used for deterministic RNG behaviour.
-    operators:
+    operators : list[str] | None
         Optional list of operator names to enable. Defaults to the registry defaults.
-    operator_weights:
+    operator_weights : dict[str, float] | None
         Optional weight overrides for registered operators.
-    batch_size:
+    batch_size : int | None
         Number of neighbours sampled per local search step (``None`` keeps sequential sampling).
-    max_workers:
+    max_workers : int | None
         Worker pool size for evaluating batched neighbours (``None`` keeps sequential evaluation).
-    perturbation_strength:
+    perturbation_strength : int, default=3
         Count of perturbation steps applied when diversification is required.
-    stall_limit:
+    stall_limit : int, default=10
         Non-improving iterations before triggering perturbation or hybrid restart.
-    hybrid_use_mip:
+    hybrid_use_mip : bool, default=False
         When ``True`` attempt a time-boxed MIP warm start once stalls exceed the limit.
-    hybrid_mip_time_limit:
+    hybrid_mip_time_limit : int, default=60
         Time limit (seconds) forwarded to the hybrid MIP warm start.
+    telemetry_log : str | pathlib.Path | None
+        Optional telemetry JSONL log capturing run metadata and (when configured) step logs.
+    telemetry_context : dict[str, Any] | None
+        Extra context appended to telemetry events (scenario info, tuner metadata, etc.).
 
     Returns
     -------
     dict
-        Dictionary containing objective value, assignment DataFrame, and telemetry metadata.
+        Dictionary mirroring :func:`solve_sa` with ``objective``, ``assignments`` DataFrame, and a
+        ``meta`` payload describing operator stats, iterations, and telemetry identifiers.
     """
 
     rng = _random.Random(seed)

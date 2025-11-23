@@ -446,26 +446,38 @@ def solve_sa(
 
     Parameters
     ----------
-    pb:
-        Parsed :class:`~fhops.scenario.contract.Problem` describing the scenario.
-    iters:
+    pb : fhops.scenario.contract.Problem
+        Parsed scenario context describing machines, blocks, and shifts.
+    iters : int, default=2000
         Number of annealing iterations. Higher values increase runtime and solution quality.
-    seed:
+    seed : int, default=42
         RNG seed used for deterministic runs.
-    operators:
+    operators : list[str] | None
         Optional list of operator names to enable (default: all registered operators).
-    operator_weights:
+    operator_weights : dict[str, float] | None
         Optional weight overrides for operators (values ``<= 0`` disable an operator).
-    batch_size:
+    batch_size : int | None
         When set, sample up to ``batch_size`` neighbour candidates per iteration.
         ``None`` or ``<= 1`` keeps the sequential single-candidate behaviour.
-    max_workers:
+    max_workers : int | None
         Maximum worker threads for evaluating batched neighbours. ``None``/``<=1`` keeps sequential scoring.
+    telemetry_log : str | pathlib.Path | None
+        Optional telemetry JSONL path. When provided, solver progress and final metrics are logged.
+    telemetry_context : dict[str, Any] | None
+        Additional context merged into telemetry records (scenario metadata, tuner info, etc.).
 
     Returns
     -------
     dict
-        Dictionary containing the best objective, assignments DataFrame, and telemetry metadata.
+        Dictionary with the following keys:
+
+        ``objective`` (float)
+            Best objective value achieved during the run (higher is better).
+        ``assignments`` (pandas.DataFrame)
+            Assignment matrix with columns ``machine_id, block_id, day, shift_id, assigned``.
+        ``meta`` (dict[str, Any])
+            Telemetry payload including ``operators`` weights, optional ``operators_stats``, and
+            bookkeeping such as ``proposals`` or ``telemetry_run_id``.
     """
     rng = _random.Random(seed)
     registry = OperatorRegistry.from_defaults()

@@ -1,5 +1,12 @@
 # Development Change Log
 
+# 2025-11-23 — API docstring audit + policy updates
+- Tightened the docstring policy in `CODING_AGENT.md` / `CONTRIBUTING.md` and re-applied it across the CLI command surface so every Typer entry point now documents parameters, telemetry side-effects, and emitted artifacts (`src/fhops/cli/main.py`, `src/fhops/cli/benchmarks.py`).
+- Enriched the scenario contract models with NumPy-style `Attributes` sections covering units/validation semantics for every field, ensuring the generated API docs explain each Pydantic dataclass (`src/fhops/scenario/contract/models.py`).
+- Expanded the heuristic solver docstrings (SA/ILS/Tabu) with detailed parameter/return notes, telemetry context, and assignment schema descriptions so the optimisation API pages mirror the new CLI-level guidance (`src/fhops/optimization/heuristics/{sa,ils,tabu}.py`).
+- Updated `notes/sphinx-documentation.md` to log the docstring audit and keep the Phase 4 documentation backlog honest.
+- (No tests run — documentation-only changes.)
+
 # 2025-11-22 — Prep v1.0.0-alpha1 release
 - Bumped package version to `1.0.0a1` (`src/fhops/__init__.py`, `tests/test_import.py`) so downstream tooling picks up the Phase 4-complete alpha release.
 - Added release notes at `docs/releases/v1.0.0-alpha1.md` summarising the documentation sweep, telemetry/runbook additions, and outstanding outreach work.

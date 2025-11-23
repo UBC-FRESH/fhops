@@ -129,4 +129,4 @@ Tips & References
 - Maintain a ``case_study/log.md`` file capturing every command, seed, and data edit (supports Chapter 2 audit trail).
 - Include small screenshots or plots (generated from ``case_study/bench/plots``) to visualise KPI movement.
 - Cite the proposal folders under ``tmp/jaffray-rosalia-masc-*`` when referencing scope and motivation.
-- Keep FHOPS docs updated (see :doc:`../sphinx-documentation` note) whenever new thesis-driven workflows appear.
+- Keep FHOPS docs updated (see ``notes/sphinx-documentation.md``) whenever new thesis-driven workflows appear.

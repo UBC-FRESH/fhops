@@ -329,7 +329,19 @@ def _collect_tuning_scenarios(
 
 @app.command()
 def validate(scenario: Path):
-    """Validate a scenario YAML and print summary."""
+    """Validate a scenario bundle and print an entity summary.
+
+    Parameters
+    ----------
+    scenario : pathlib.Path
+        Path to the ``scenario.yaml`` file or directory containing the FHOPS data bundle.
+
+    Notes
+    -----
+    The command loads the scenario via :func:`fhops.scenario.io.load_scenario`, instantiates a
+    :class:`fhops.scenario.contract.Problem`, and prints counts of days/blocks/machines/landings so
+    users can verify that parsing succeeded before attempting solver runs.
+    """
     sc = load_scenario(str(scenario))
     pb = Problem.from_scenario(sc)
     t = Table(title=f"Scenario: {sc.name}")
@@ -344,7 +356,20 @@ def validate(scenario: Path):
 
 @app.command()
 def build_mip(scenario: Path):
-    """Build the MIP and print basic stats (no solve)."""
+    """Build the MIP model without solving and print component counts.
+
+    Parameters
+    ----------
+    scenario : pathlib.Path
+        Scenario YAML path to load.
+
+    Notes
+    -----
+    This helper is useful for verifying that Pyomo/HiGHS dependencies are correctly installed and
+    for inspecting the size of the generated model (sets/variables/constraints) before committing to
+    a full solve.  It invokes :func:`fhops.optimization.mip.builder.build_model` and never calls a
+    solver.
+    """
     sc = load_scenario(str(scenario))
     pb = Problem.from_scenario(sc)
     try:
@@ -371,7 +396,27 @@ def solve_mip_cmd(
     ),
     debug: bool = typer.Option(False, "--debug", help="Verbose tracebacks & solver logs"),
 ):
-    """Solve with HiGHS (exact)."""
+    """Solve the scenario with the exact MIP and write assignments/KPIs.
+
+    Parameters
+    ----------
+    scenario : pathlib.Path
+        Scenario YAML path to load.
+    out : pathlib.Path
+        CSV destination for the assignment matrix (``machine_id, block_id, day, shift_id``).
+    time_limit : int, default=60
+        Solver wall-clock time limit in seconds.
+    driver : str, default="auto"
+        HiGHS driver backend (`auto`, `highs-appsi`, `highs-exec`, or Gurobi variants when licensed).
+    debug : bool, default=False
+        Enable verbose solver logging and rich tracebacks.
+
+    Notes
+    -----
+    The command streams a KPI summary to the console via :func:`fhops.evaluation.compute_kpis`.
+    The return value mirrors :func:`fhops.optimization.mip.solve_mip` (objective, assignments,
+    solver metadata) and is serialized through the CLI side-effects.
+    """
     if debug:
         _enable_rich_tracebacks()
         console.print(
@@ -469,7 +514,45 @@ def solve_heur_cmd(
         min=1,
     ),
 ):
-    """Solve with Simulated Annealing (heuristic)."""
+    """Solve the scenario with the simulated annealing heuristic and emit KPIs.
+
+    Parameters
+    ----------
+    scenario : pathlib.Path
+        Scenario YAML bundle to load.
+    out : pathlib.Path
+        CSV destination for heuristic assignments (``machine_id, block_id, day, shift_id``).
+    iters : int, default=2000
+        Number of annealing iterations to run per worker.
+    seed : int, default=42
+        RNG seed controlling reproducibility.
+    debug : bool, default=False
+        Emit verbose debug logs and enable rich tracebacks.
+    operator / operator_weight / operator_preset / profile :
+        CLI mirrors of :func:`fhops.optimization.heuristics.solve_sa` arguments. Use them to
+        restrict operators, override weights, or load saved solver profiles.
+    list_operator_presets / list_profiles : bool
+        Utility flags that print the registry/profile catalogues and exit.
+    show_operator_stats : bool
+        When ``True`` print the per-operator proposal/acceptance table produced by SA.
+    telemetry_log : pathlib.Path | None
+        When provided, append run metadata and optional step logs to JSONL files.
+    tier_label : str | None
+        Custom label forwarded to telemetry to distinguish experiment tiers/budgets.
+    kpi_mode : str, default="extended"
+        Controls verbosity of KPI summaries (``basic`` omits diagnostics).
+    batch_neighbours : int, default=1
+        Number of neighbour candidates sampled per iteration.
+    parallel_workers : int, default=1
+        Worker threads for evaluating batched candidates or multi-start orchestration.
+    multi_start : int, default=1
+        Number of SA instances to launch in parallel before selecting the best objective.
+
+    Notes
+    -----
+    The command persists assignments to ``--out``, prints KPI summaries using the requested mode,
+    and optionally records telemetry events so bench/tuning workflows can analyse solver health.
+    """
     if debug:
         _enable_rich_tracebacks()
         console.print(
@@ -753,7 +836,39 @@ def solve_ils_cmd(
         False, "--show-operator-stats", help="Print per-operator stats after solving."
     ),
 ):
-    """Solve with the Iterated Local Search heuristic."""
+    """Solve with the Iterated Local Search heuristic and emit KPI summaries.
+
+    Parameters
+    ----------
+    scenario : pathlib.Path
+        Scenario YAML bundle to load.
+    out : pathlib.Path
+        CSV destination for ILS assignments.
+    iters : int, default=250
+        Number of ILS outer iterations (perturbation + local search cycles).
+    seed : int, default=42
+        RNG seed for reproducible operator selection.
+    perturbation_strength / stall_limit / hybrid_use_mip / hybrid_mip_time_limit :
+        Direct mirrors of :func:`fhops.optimization.heuristics.solve_ils` arguments controlling
+        diversification and optional MIP warm starts.
+    operator / operator_weight / operator_preset / profile :
+        Controls which operators are active and allows profile presets to be merged.
+    list_operator_presets / list_profiles :
+        Convenience flags that print the catalogues then exit.
+    batch_neighbours / parallel_workers :
+        Tune the number of neighbours sampled per step and how many worker threads score them.
+    telemetry_log / tier_label :
+        Optional telemetry logging location plus a label to group runs in the dashboard.
+    kpi_mode : str, default="extended"
+        Toggle KPI verbosity (``basic`` omits detailed breakdowns).
+    show_operator_stats : bool
+        When ``True`` print proposal/acceptance metrics emitted by ``solve_ils``.
+
+    Notes
+    -----
+    Behaviour matches ``solve-heur`` aside from the iterative local search loop.  Assignments and
+    KPIs are written identically so results can be compared solver-to-solver.
+    """
     if list_profiles:
         console.print("Solver profiles:")
         console.print(format_profiles())
@@ -980,7 +1095,40 @@ def solve_tabu_cmd(
         False, "--show-operator-stats", help="Print per-operator stats."
     ),
 ):
-    """Solve with the Tabu Search heuristic."""
+    """Solve with the Tabu Search heuristic and emit KPI summaries.
+
+    Parameters
+    ----------
+    scenario : pathlib.Path
+        Scenario YAML bundle to load.
+    out : pathlib.Path
+        CSV destination for Tabu assignments.
+    iters : int, default=2000
+        Number of Tabu Search iterations to execute.
+    seed : int, default=42
+        RNG seed for reproducible neighbourhood sampling.
+    tabu_tenure : int, default=0
+        Override for tabu tenure (``0`` lets the solver auto-size it).
+    stall_limit : int, default=1_000_000
+        Max non-improving iterations before halting.
+    batch_neighbours / parallel_workers :
+        Control neighbourhood sampling volume and scoring concurrency.
+    operator / operator_weight / operator_preset / profile :
+        Operator registry controls mirroring :func:`fhops.optimization.heuristics.solve_tabu`.
+    list_operator_presets / list_profiles :
+        Print available presets/profiles before exiting.
+    telemetry_log / tier_label :
+        Optional telemetry logging destination and label for grouping experiments.
+    kpi_mode : str, default="extended"
+        KPI verbosity switch (``basic`` or ``extended``).
+    show_operator_stats : bool
+        When ``True`` print proposal/acceptance details produced by Tabu Search.
+
+    Notes
+    -----
+    Results are persisted to ``--out`` and summarised via the shared KPI printer so they can be
+    compared against SA/ILS/MIP runs.
+    """
     if list_profiles:
         console.print("Solver profiles:")
         console.print(format_profiles())
@@ -1145,7 +1293,22 @@ def evaluate(
         click_type=KPI_MODE,
     ),
 ):
-    """Evaluate a schedule CSV against the scenario."""
+    """Compute KPI summaries for a schedule CSV and print them to the console.
+
+    Parameters
+    ----------
+    scenario : pathlib.Path
+        Scenario YAML bundle to load.
+    assignments_csv : pathlib.Path
+        CSV containing ``machine_id, block_id, day, shift_id`` rows produced by a solver.
+    kpi_mode : str, default="extended"
+        Verbosity toggle for the KPI printer (``basic`` omits deep breakdowns).
+
+    Notes
+    -----
+    This is a fast wrapper around :func:`fhops.evaluation.compute_kpis` for users who only need
+    aggregated KPIs without the full playback/export pipeline.
+    """
     sc = load_scenario(str(scenario))
     pb = Problem.from_scenario(sc)
     df = pd.read_csv(str(assignments_csv))
@@ -1260,7 +1423,39 @@ def eval_playback(
         dir_okay=False,
     ),
 ):
-    """Run deterministic playback to produce shift/day summaries."""
+    """Run deterministic/stochastic playback to produce shift/day summaries.
+
+    Parameters
+    ----------
+    scenario : pathlib.Path
+        Scenario YAML bundle to load.
+    assignments_csv : pathlib.Path
+        Assignments CSV (same schema as solver outputs) to replay.
+    shift_out / day_out / shift_parquet / day_parquet :
+        Optional destinations for the exported playback summaries (CSV and/or Parquet).
+    include_idle : bool, default=False
+        Whether to emit idle rows for machine/shift slots with no work.
+    samples : int, default=1
+        Number of stochastic samples to run (``1`` keeps deterministic playback).
+    base_seed : int, default=123
+        RNG seed forwarded to stochastic playback.
+    downtime_probability / downtime_max_concurrent :
+        Parameters that control random downtime events.
+    weather_probability / weather_severity / weather_window :
+        Parameters that control weather impacts.
+    landing_probability / landing_multiplier_low / landing_multiplier_high / landing_duration :
+        Parameters for landing throughput shocks.
+    summary_md : pathlib.Path | None
+        Optional Markdown report destination.
+    telemetry_log : pathlib.Path | None
+        Optional telemetry JSONL log to capture playback runs.
+
+    Notes
+    -----
+    Use this command when you need shift/day tables, KPI exports, or stochastic playback for Monte
+    Carlo studies.  Deterministic playback is automatically selected when all stochastic knobs are
+    zeroed out.
+    """
 
     sc = load_scenario(str(scenario))
     machine_costs = _machine_cost_snapshot(sc)
@@ -1513,7 +1708,29 @@ def benchmark(
     driver: str = "auto",
     debug: bool = False,
 ):
-    """Run both MIP and SA, save both outputs, and print objectives."""
+    """Run both MIP and simulated annealing to compare objective quality.
+
+    Parameters
+    ----------
+    scenario : pathlib.Path
+        Scenario YAML bundle to load.
+    out_dir : pathlib.Path, default="bench_out"
+        Directory where solver outputs are stored (one CSV per solver).
+    time_limit : int, default=60
+        MIP wall-clock limit in seconds.
+    iters : int, default=5000
+        Simulated annealing iteration budget.
+    driver : str, default="auto"
+        MIP driver selection.
+    debug : bool, default=False
+        Enable verbose logging and rich tracebacks.
+
+    Notes
+    -----
+    This helper predates the richer ``fhops bench`` app but remains handy for quick smoke tests.  It
+    writes ``mip_solution.csv`` and ``sa_solution.csv`` under ``out_dir`` and prints KPI summaries
+    for both solvers.
+    """
     if debug:
         _enable_rich_tracebacks()
     sc = load_scenario(str(scenario))
@@ -1591,7 +1808,31 @@ def tune_random_cli(
         help="Optional label describing the budget tier for telemetry summaries.",
     ),
 ):
-    """Randomly sample simulated annealing configurations and record telemetry."""
+    """Randomly sample simulated annealing configurations and log telemetry.
+
+    Parameters
+    ----------
+    scenarios : list[pathlib.Path] | None
+        Explicit scenario YAML paths (repeatable). Can be omitted when using ``--bundle``.
+    bundle : list[str] | None
+        Scenario bundle aliases or ``alias=path`` overrides that expand to multiple scenarios.
+    telemetry_log : pathlib.Path
+        JSONL telemetry sink where each run (and optional tuner summary) is appended.
+    runs : int, default=3
+        Number of random operator configurations to evaluate per scenario.
+    iters : int, default=250
+        Simulated annealing iteration budget per sampled configuration.
+    base_seed : int, default=123
+        Seed controlling the RNG that draws per-run seeds/batch sizes/operator weights.
+    tier_label : str | None
+        Optional label forwarded to telemetry to distinguish experimentation budgets.
+
+    Notes
+    -----
+    Each sampled configuration records operator weights, batch size, objective, and references to
+    telemetry artefacts so downstream notebooks can triage winners.  The function prints a summary
+    table ordered by objective and persists a ``tuner_summary`` record when telemetry is enabled.
+    """
     scenario_files, bundle_map = _collect_tuning_scenarios(scenarios, bundle)
     if not scenario_files:
         console.print("[yellow]No scenarios resolved. Provide --bundle or explicit paths.[/]")
@@ -1807,7 +2048,33 @@ def tune_grid_cli(
         help="Optional label describing the budget tier for telemetry summaries.",
     ),
 ):
-    """Exhaustively evaluate a grid of operator presets and batch sizes."""
+    """Exhaustively evaluate a grid of operator presets and batch sizes.
+
+    Parameters
+    ----------
+    scenarios : list[pathlib.Path] | None
+        Scenario YAML paths (repeatable). Optional when ``--bundle`` is provided.
+    bundle : list[str] | None
+        Scenario bundle aliases or ``alias=path`` overrides to expand into multiple cases.
+    telemetry_log : pathlib.Path
+        JSONL telemetry sink for per-run metadata and tuner summaries.
+    batch_size : list[int]
+        Explicit batch sizes to evaluate (defaults to ``[1, 2, 3]`` when omitted).
+    preset : list[str]
+        Operator preset names to evaluate (defaults to ``balanced``, ``explore``, ``mobilisation``).
+    iters : int, default=250
+        Simulated annealing iteration budget per configuration.
+    seed : int, default=123
+        Base seed incremented deterministically across configurations for reproducibility.
+    tier_label : str | None
+        Optional telemetry label for grouping tuning campaigns.
+
+    Notes
+    -----
+    The command prints a table ordered by objective and writes telemetry records summarising each
+    configuration.  When telemetry logging is enabled, a ``tuner_summary`` record captures the best
+    objective per scenario.
+    """
     scenario_files, bundle_map = _collect_tuning_scenarios(scenarios, bundle)
     if not scenario_files:
         console.print("[yellow]No scenarios resolved. Provide --bundle or explicit paths.[/]")
@@ -2024,7 +2291,31 @@ def tune_bayes_cli(
         help="Optional label describing the budget tier for telemetry summaries.",
     ),
 ):
-    """Optimise SA hyperparameters with Bayesian/SMBO search (Optuna TPE)."""
+    """Optimise simulated annealing hyperparameters with Bayesian/SMBO search (Optuna TPE).
+
+    Parameters
+    ----------
+    scenarios : list[pathlib.Path] | None
+        Scenario YAML paths (repeatable). Optional when ``--bundle`` is provided.
+    bundle : list[str] | None
+        Scenario bundle aliases or ``alias=path`` overrides.
+    telemetry_log : pathlib.Path
+        JSONL telemetry sink capturing each Optuna trial plus a tuner summary.
+    trials : int, default=20
+        Number of Bayesian optimisation trials per scenario.
+    iters : int, default=250
+        Simulated annealing iteration budget per trial.
+    seed : int, default=123
+        Seed forwarded to the Optuna sampler and per-trial solver runs.
+    tier_label : str | None
+        Optional telemetry label describing the experiment budget/tier.
+
+    Notes
+    -----
+    Each Optuna trial samples operator weights and batch size, runs ``solve_sa``, and records the
+    resulting objective.  Results are summarised in a Rich table, the best trial is printed, and
+    telemetry consumers receive both per-trial events and a ``tuner_summary`` snapshot.
+    """
 
     scenario_files, bundle_map = _collect_tuning_scenarios(scenarios, bundle)
     if not scenario_files:

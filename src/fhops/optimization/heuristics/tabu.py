@@ -65,7 +65,40 @@ def solve_tabu(
     telemetry_log: str | Path | None = None,
     telemetry_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Run Tabu Search using the shared operator registry."""
+    """Run Tabu Search using the shared operator registry.
+
+    Parameters
+    ----------
+    pb : fhops.scenario.contract.Problem
+        Parsed scenario context describing machines, blocks, and shifts.
+    iters : int, default=2000
+        Number of Tabu Search iterations to execute.
+    seed : int, default=42
+        RNG seed that controls neighbourhood sampling and diversification.
+    operators : list[str] | None
+        Optional subset of operator names to enable (defaults to the registry defaults).
+    operator_weights : dict[str, float] | None
+        Weight overrides for operators. Values ``<= 0`` disable the operator.
+    batch_size : int | None
+        Number of neighbour candidates sampled per iteration (``None`` keeps sequential sampling).
+    max_workers : int | None
+        Worker threads for evaluating batched neighbours (``None`` keeps sequential evaluation).
+    tabu_tenure : int | None
+        Explicit tenure length. ``None`` auto-sizes the tabu queue based on machine count.
+    stall_limit : int, default=1_000_000
+        Max consecutive non-improving iterations before giving up.
+    telemetry_log : str | pathlib.Path | None
+        Optional telemetry JSONL path for recording solver progress and metrics.
+    telemetry_context : dict[str, Any] | None
+        Additional context appended to telemetry entries (scenario features, tuner metadata, etc.).
+
+    Returns
+    -------
+    dict
+        Dictionary with ``objective`` (float), ``assignments`` (pandas.DataFrame), and ``meta`` with
+        operator stats, acceptance counters, and optional ``telemetry_run_id``—matching the contract
+        exposed by :func:`solve_sa` / :func:`solve_ils`.
+    """
 
     rng = _random.Random(seed)
     registry = OperatorRegistry.from_defaults()

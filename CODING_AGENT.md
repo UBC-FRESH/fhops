@@ -30,6 +30,17 @@ instead of suppressing them; escalate only if consensus is reached with maintain
 - Guard against regressions with targeted tests; add fixtures/examples as needed and document
   them under the relevant note.
 - Keep PR descriptions concise but linked to roadmap phases and note sections for traceability.
+- **Docstrings**:
+  - Every public module/class/function must have a descriptive docstring. Mirror the NumPy-style
+    pattern used elsewhere (summary paragraph, followed by ``Parameters`` / ``Returns`` /
+    ``Notes`` sections as needed). Include units, expected DataFrame schemas, and example snippets
+    when callers benefit from them.
+  - Module docstrings should explain *why* the module exists (e.g., CLI entry point, Pyomo builder,
+    playback adapter) so Sphinx can surface context above the API members.
+  - Treat docstrings as part of the contract: if a parameter is optional, document defaults and
+    side-effects; if a return value is structured (dict/DataFrame/dataclass), describe the schema.
+  - When updating or adding functionality, keep the docstrings in sync (they feed the rendered
+    API docs in ``docs/api/``).
 
 ## Release workflow (RC prep)
 - Packaging uses Hatch (mirroring the ws3 repo). Keep ``pyproject.toml`` / ``hatch.toml`` in sync

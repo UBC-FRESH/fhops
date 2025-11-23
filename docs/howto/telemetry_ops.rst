@@ -9,6 +9,7 @@ Weekly Notebook Pipeline
 ------------------------
 
 1. **Schedule**
+
    - CI: primary workflows run on every push; the “full analytics” notebook suite should run at
      least **weekly** via a scheduled GitHub Actions workflow (e.g., Sunday 03:00 UTC) to keep
      stochastic KPIs fresh.
@@ -29,6 +30,7 @@ Weekly Notebook Pipeline
      execute at full sample counts. Record duration in the workflow logs.
 
 3. **Artefact handling**
+
    - CI stores ``analytics-notebooks`` (rendered HTML/MD) and ``telemetry-report`` (CSV/MD/HTML) as artifacts.
    - Weekly workflow should download the latest ``telemetry-report`` artifact, append it to
      ``docs/examples/analytics/data/tuner_reports/``, and re-run the history script (see below).
@@ -40,6 +42,7 @@ Telemetry Store Maintenance
 
 * **Location** – default telemetry directory: ``telemetry/`` (JSONL, SQLite, history snapshots).
 * **Rotation policy**
+
   - Keep the **latest 4 weeks** of JSONL/SQLite telemetry in the repo (rename older files to
     `.archive/` or move to long-term storage to prevent bloat).
   - Archive large step logs (``telemetry/steps/*.jsonl``) after generating summary reports.
@@ -53,6 +56,7 @@ Telemetry Store Maintenance
   Run weekly (after the full notebook workflow) to keep the SQLite store compact and healthy.
 
 * **Locks/contention**
+
   - Avoid simultaneous writes to the same JSONL/SQLite file (especially when running multiple tuning
     commands concurrently). Use separate ``--telemetry-log`` paths per developer or configure the CI
     job to serialize writes.
@@ -63,17 +67,20 @@ Automation Checklist
 --------------------
 
 1. **CI (per push)**
+
    - `fhops tune-grid` / `fhops tune-random` on smoke scenarios (minitoy, med42).
    - `fhops telemetry report` → `telemetry-report` artifact with `tuner_report.{csv,md}`, `history/`.
    - `scripts/analyze_tuner_reports.py --history-dir` to regenerate `history_summary.*` and `history_delta.*`.
 
 2. **Weekly full run**
+
    - Execute notebooks without `--light`.
    - Run the longer tuning bundles (e.g., `fhops tune-bayes --bundle synthetic --trials 6`).
    - Rebuild history charts and push to GitHub Pages.
    - Commit updated history CSV/MD files if the repo tracks canonical snapshots.
 
 3. **Manual interventions**
+
    - When telemetry schema fields change, update `scripts/analyze_tuner_reports.py` and rerun the
      history command so older snapshots stay compatible (document the migration in `CHANGE_LOG.md`).
    - If GitHub Pages fails to update, inspect the Pages workflow logs and check for large HTML files
