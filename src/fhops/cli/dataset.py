@@ -333,6 +333,7 @@ def _append_loader_telemetry(
     outputs: dict[str, Any],
     metadata: dict[str, Any] | None = None,
 ) -> None:
+    """Append a loader productivity telemetry record to the JSONL log path."""
     payload = {
         "timestamp": datetime.now(tz=UTC).isoformat(),
         "command": "dataset estimate-productivity",
@@ -382,6 +383,7 @@ def _append_grapple_yarder_telemetry(
     productivity_m3_per_pmh: float,
     preset_meta: Mapping[str, Any] | None,
 ) -> None:
+    """Append grapple-yarder productivity telemetry (including preset cost metadata)."""
     payload: dict[str, Any] = {
         "timestamp": datetime.now(tz=UTC).isoformat(),
         "command": "dataset estimate-productivity",
@@ -412,6 +414,7 @@ def _append_helicopter_telemetry(
     preset_id: str | None,
     preset_source: str | None,
 ) -> None:
+    """Append helicopter productivity telemetry along with preset/source metadata."""
     payload: dict[str, Any] = {
         "timestamp": datetime.now(tz=UTC).isoformat(),
         "command": "dataset estimate-productivity",
@@ -7935,6 +7938,7 @@ def _render_helicopter_operation_detail(
     dataset: HelicopterFPInnovationsDataset,
     is_default: bool,
 ) -> None:
+    """Render detailed FPInnovations helicopter preset metrics for the CLI."""
     rows = [
         ("Preset ID", f"{operation.id}{' ★' if is_default else ''}"),
         ("Model", operation.helicopter_model.value),
@@ -8651,7 +8655,8 @@ def estimate_skyline_productivity_cmd(
     if manual_falling_species is not None or manual_falling_dbh_cm is not None:
         manual_falling = True
 
-    def _append_warning(existing: str | None, message: str) -> str:
+def _append_warning(existing: str | None, message: str) -> str:
+    """Helper to concatenate CLI warning strings while preserving blank lines."""
         return f"{existing}\n{message}" if existing else message
 
     telemetry_calibration_flags: list[dict[str, Any]] = []
