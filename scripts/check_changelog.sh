@@ -9,7 +9,14 @@ if [ -n "$STAGED" ]; then
   fi
 else
   # When pre-commit runs with --all-files (e.g., in CI), nothing is staged.
-  if git show --name-only --pretty='' HEAD | grep -q '^CHANGE_LOG\.md$'; then
+  if PARENT=$(git rev-parse --verify HEAD^ 2>/dev/null); then
+    BASE=$(git merge-base HEAD "$PARENT")
+    DIFF_FILES=$(git diff --name-only "$BASE" HEAD)
+  else
+    DIFF_FILES=$(git show --name-only --pretty='' HEAD)
+  fi
+
+  if echo "$DIFF_FILES" | grep -q '^CHANGE_LOG\.md$'; then
     exit 0
   fi
 fi
