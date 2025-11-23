@@ -3010,6 +3010,19 @@ def _apply_skyline_system_defaults(
     used = False
     tr119_override: str | None = None
     partial_profile_override: str | None = None
+    resolved_logs_per_turn = logs_per_turn
+    resolved_average_log_volume_m3 = average_log_volume_m3
+    resolved_crew_size = crew_size
+    resolved_horizontal_distance_m = horizontal_distance_m
+    resolved_vertical_distance_m = vertical_distance_m
+    resolved_pieces_per_cycle = pieces_per_cycle
+    resolved_piece_volume_m3 = piece_volume_m3
+    resolved_carriage_height_m = carriage_height_m
+    resolved_chordslope_percent = chordslope_percent
+    resolved_lateral_distance_m = lateral_distance_m
+    resolved_lateral_distance_2_m = lateral_distance_2_m
+    resolved_payload_m3 = payload_m3
+    resolved_num_logs = num_logs
 
     def maybe_float(
         key: str, current: float | None, supplied_flag: str, allow_zero: bool = False
@@ -3033,51 +3046,69 @@ def _apply_skyline_system_defaults(
         except ValueError as exc:
             raise ValueError(f"Unknown skyline model override '{value}'.") from exc
 
-    logs_per_turn, changed = maybe_float(
-        "skyline_logs_per_turn", logs_per_turn, "logs_per_turn", True
+    resolved_logs_per_turn, changed = maybe_float(
+        "skyline_logs_per_turn", resolved_logs_per_turn, "logs_per_turn", True
     )
     used |= changed
-    average_log_volume_m3, changed = maybe_float(
-        "skyline_average_log_volume_m3", average_log_volume_m3, "average_log_volume_m3", True
+    resolved_average_log_volume_m3, changed = maybe_float(
+        "skyline_average_log_volume_m3",
+        resolved_average_log_volume_m3,
+        "average_log_volume_m3",
+        True,
     )
     used |= changed
-    crew_size, changed = maybe_float("skyline_crew_size", crew_size, "crew_size", True)
-    used |= changed
-    horizontal_distance_m, changed = maybe_float(
-        "skyline_horizontal_distance_m", horizontal_distance_m, "horizontal_distance_m", True
+    resolved_crew_size, changed = maybe_float(
+        "skyline_crew_size", resolved_crew_size, "crew_size", True
     )
     used |= changed
-    vertical_distance_m, changed = maybe_float(
-        "skyline_vertical_distance_m", vertical_distance_m, "vertical_distance_m", True
+    resolved_horizontal_distance_m, changed = maybe_float(
+        "skyline_horizontal_distance_m",
+        resolved_horizontal_distance_m,
+        "horizontal_distance_m",
+        True,
     )
     used |= changed
-    pieces_per_cycle, changed = maybe_float(
-        "skyline_pieces_per_cycle", pieces_per_cycle, "pieces_per_cycle", True
+    resolved_vertical_distance_m, changed = maybe_float(
+        "skyline_vertical_distance_m",
+        resolved_vertical_distance_m,
+        "vertical_distance_m",
+        True,
     )
     used |= changed
-    piece_volume_m3, changed = maybe_float(
-        "skyline_piece_volume_m3", piece_volume_m3, "piece_volume_m3", True
+    resolved_pieces_per_cycle, changed = maybe_float(
+        "skyline_pieces_per_cycle", resolved_pieces_per_cycle, "pieces_per_cycle", True
     )
     used |= changed
-    carriage_height_m, changed = maybe_float(
-        "skyline_carriage_height_m", carriage_height_m, "carriage_height_m", True
+    resolved_piece_volume_m3, changed = maybe_float(
+        "skyline_piece_volume_m3", resolved_piece_volume_m3, "piece_volume_m3", True
     )
     used |= changed
-    chordslope_percent, changed = maybe_float(
-        "skyline_chordslope_percent", chordslope_percent, "chordslope_percent", True
+    resolved_carriage_height_m, changed = maybe_float(
+        "skyline_carriage_height_m", resolved_carriage_height_m, "carriage_height_m", True
     )
     used |= changed
-    lateral_distance_m, changed = maybe_float(
-        "skyline_lateral_distance_m", lateral_distance_m, "lateral_distance_m", True
+    resolved_chordslope_percent, changed = maybe_float(
+        "skyline_chordslope_percent", resolved_chordslope_percent, "chordslope_percent", True
     )
     used |= changed
-    lateral_distance_2_m, changed = maybe_float(
-        "skyline_lateral_distance2_m", lateral_distance_2_m, "lateral_distance_2_m", True
+    resolved_lateral_distance_m, changed = maybe_float(
+        "skyline_lateral_distance_m", resolved_lateral_distance_m, "lateral_distance_m", True
     )
     used |= changed
-    payload_m3, changed = maybe_float("skyline_payload_m3", payload_m3, "payload_m3", True)
+    resolved_lateral_distance_2_m, changed = maybe_float(
+        "skyline_lateral_distance2_m",
+        resolved_lateral_distance_2_m,
+        "lateral_distance_2_m",
+        True,
+    )
     used |= changed
-    num_logs, changed = maybe_float("skyline_num_logs", num_logs, "num_logs", True)
+    resolved_payload_m3, changed = maybe_float(
+        "skyline_payload_m3", resolved_payload_m3, "payload_m3", True
+    )
+    used |= changed
+    resolved_num_logs, changed = maybe_float(
+        "skyline_num_logs", resolved_num_logs, "num_logs", True
+    )
     used |= changed
 
     value = overrides.get("skyline_running_variant")
@@ -3101,20 +3132,20 @@ def _apply_skyline_system_defaults(
     return (
         model,
         slope_distance_m,
-        lateral_distance_m,
-        lateral_distance_2_m,
-        logs_per_turn,
-        average_log_volume_m3,
-        crew_size,
-        horizontal_distance_m,
-        vertical_distance_m,
-        pieces_per_cycle,
-        piece_volume_m3,
+        resolved_lateral_distance_m,
+        resolved_lateral_distance_2_m,
+        resolved_logs_per_turn,
+        resolved_average_log_volume_m3,
+        resolved_crew_size,
+        resolved_horizontal_distance_m,
+        resolved_vertical_distance_m,
+        resolved_pieces_per_cycle,
+        resolved_piece_volume_m3,
         running_variant,
-        carriage_height_m,
-        chordslope_percent,
-        payload_m3,
-        num_logs,
+        resolved_carriage_height_m,
+        resolved_chordslope_percent,
+        resolved_payload_m3,
+        resolved_num_logs,
         used,
         tr119_override,
         partial_profile_override,
