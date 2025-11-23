@@ -33,6 +33,8 @@ TABU_DEFAULT_OPERATOR_WEIGHTS: dict[str, float] = {
 
 @dataclass(slots=True)
 class TabuConfig:
+    """Runtime Tabu settings (tenure length and stall tolerance)."""
+
     tenure: int
     stall_limit: int
 
@@ -41,6 +43,7 @@ def _diff_moves(
     current_plan: dict[str, dict[tuple[int, str], str | None]],
     candidate_plan: dict[str, dict[tuple[int, str], str | None]],
 ) -> tuple[tuple[str, int, str, str | None, str | None], ...]:
+    """Return a canonical list of move tuples describing differences between two plans."""
     moves: list[tuple[str, int, str, str | None, str | None]] = []
     for machine_id, assignments in candidate_plan.items():
         current_assignments = current_plan.get(machine_id, {})

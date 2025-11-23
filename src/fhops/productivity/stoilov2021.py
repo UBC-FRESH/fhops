@@ -4,6 +4,7 @@ from __future__ import annotations
 
 
 def _clip_non_negative(value: float) -> float:
+    """Clamp regression output to zero so productivity never returns negative values."""
     return value if value > 0 else 0.0
 
 

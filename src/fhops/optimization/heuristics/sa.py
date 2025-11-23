@@ -21,6 +21,7 @@ from fhops.telemetry import RunTelemetryLogger
 
 
 def _role_metadata(scenario):
+    """Return allowed roles, prerequisites, and machine-role mappings for a scenario."""
     systems = scenario.harvest_systems or {}
     allowed: dict[str, set[str] | None] = {}
     prereqs: dict[tuple[str, str], set[str]] = {}
@@ -65,6 +66,7 @@ def _role_metadata(scenario):
 
 
 def _blackout_map(scenario) -> set[tuple[str, int, str]]:
+    """Build a lookup of (machine, day, shift) tuples that are blacked out."""
     blackout: set[tuple[str, int, str]] = set()
     timeline = getattr(scenario, "timeline", None)
     if timeline and timeline.blackouts:
@@ -84,6 +86,7 @@ def _blackout_map(scenario) -> set[tuple[str, int, str]]:
 
 
 def _locked_map(scenario) -> dict[tuple[str, int], str]:
+    """Return locked assignments keyed by (machine, day)."""
     locks = getattr(scenario, "locked_assignments", None)
     if not locks:
         return {}
@@ -101,6 +104,7 @@ class Schedule:
 
 
 def _init_greedy(pb: Problem) -> Schedule:
+    """Construct an initial Schedule by greedily filling shifts with best-rate blocks."""
     sc = pb.scenario
     remaining = {block.id: block.work_required for block in sc.blocks}
     rate = {(r.machine_id, r.block_id): r.rate for r in sc.production_rates}
@@ -162,6 +166,7 @@ def _init_greedy(pb: Problem) -> Schedule:
 
 
 def _evaluate(pb: Problem, sched: Schedule) -> float:
+    """Score a schedule using production, mobilisation, transition, and slack penalties."""
     sc = pb.scenario
     remaining = {block.id: block.work_required for block in sc.blocks}
     rate = {(r.machine_id, r.block_id): r.rate for r in sc.production_rates}
@@ -302,6 +307,7 @@ def _neighbors(
     *,
     batch_size: int | None = None,
 ) -> list[Schedule]:
+    """Generate neighbour schedules via enabled operators with feasibility sanitization."""
     sc = pb.scenario
     if not sc.machines or not pb.shifts:
         return []
@@ -421,6 +427,7 @@ def _evaluate_candidates(
     candidates: list[Schedule],
     max_workers: int | None = None,
 ) -> list[tuple[Schedule, float]]:
+    """Evaluate candidate schedules, optionally in parallel, returning (schedule, score)."""
     if not candidates:
         return []
     if max_workers is None or max_workers <= 1 or len(candidates) == 1:

@@ -24,6 +24,7 @@ from fhops.telemetry import RunTelemetryLogger
 
 
 def _assignments_to_schedule(pb: Problem, assignments: pd.DataFrame) -> Schedule:
+    """Convert an assignments DataFrame into the internal Schedule plan structure."""
     shifts = [(shift.day, shift.shift_id) for shift in pb.shifts]
     plan: dict[str, dict[tuple[int, str], str | None]] = {
         machine.id: {(day, shift_id): None for (day, shift_id) in shifts}
@@ -62,6 +63,7 @@ def _perturb_schedule(
     strength: int,
     operator_stats: dict[str, dict[str, float]],
 ) -> Schedule:
+    """Apply a series of random operator moves to escape local optima."""
     current = schedule
     for _ in range(max(1, strength)):
         neighbours = _neighbors(
@@ -87,6 +89,7 @@ def _local_search(
     max_workers: int | None,
     operator_stats: dict[str, dict[str, float]],
 ) -> tuple[Schedule, float, bool, int]:
+    """Run local search until no improving neighbour is found."""
     current = schedule
     current_score = _evaluate(pb, current)
     improved = False

@@ -2,6 +2,8 @@
 - Completed the docstring sweep across `src/fhops/cli/dataset.py`, covering the remaining dataset prompts, evaluators, telemetry renderers, and TR-28/TN-98 tables so the API docs now explain every CLI helper and validation path (forwarder/shovel logger/CTL evaluators, dataset resolvers, ADV2N21 summaries, road-cost renderers, soil-profile tables, etc.).
 - Extended the docstring coverage to the ancillary CLI helpers (`src/fhops/cli/main.py`, `src/fhops/cli/profiles.py`, `src/fhops/cli/synthetic.py`, `src/fhops/cli/telemetry.py`) so KPI printers, bundle/tuning collectors, solver profile utilities, synthetic dataset generators, and telemetry reporters now provide detailed Parameters/Returns notes in the API reference.
 - Documented the stochastic playback stack (`src/fhops/evaluation/playback/{stochastic,events,adapters,exporters}.py`) plus KPI metadata helpers (`src/fhops/evaluation/metrics/kpis.py`) so Chapter 2 thesis workflows have complete event/config/metadata descriptions in the API docs.
+- Added docstrings to the heuristic internals (registry helpers, ILS perturb/local-search routines, SA neighbour/evaluation helpers, and Tabu config/move diff utilities) so tuning documentation and API references share a common, descriptive contract.
+- Closed the remaining productivity gaps by documenting the helper in `src/fhops/productivity/stoilov2021.py`, bringing every exported estimator in the productivity package up to the same NumPy-style standard.
 - Updated `notes/sphinx-documentation.md` to record the clean AST scan and close out the CLI dataset checklist item within the Phase 4 docstring plan.
 - Verified that the new docstrings render without warnings by running `sphinx-build -b html docs _build/html -W`.
 
