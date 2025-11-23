@@ -9,9 +9,10 @@
   - High-level synthetic/illustrative examples showing capability (no deep BC case studies).
   - Pointers to the open datasets/templates Rosalia will later use.
 - **Jaffray Chapter 2 (BC case studies):**
-  - Detailed deployment of FHOPS on 2–3 BC-based scenarios (e.g., skyline vs. ground-based, salvage corridors, small tenures).
+  - Detailed deployment of FHOPS on 2–3 BC-based scenarios (initial plan: one skyline corridor case, one ground-based community-forest block, one salvage/recovery scenario).
   - Analysis answering the “open questions” from the thesis intro/lit review (trade-off mapping, solution quality vs. operations context).
   - Policy/management discussion tied to real data (inventory, productivity, costs) from BC partners.
+  - Deliverables aligned with `tmp/jaffray-rosalia-masc-proposal` Table 1.1 (Ch.1 methodology + Ch.2 validation roadmap).
 
 ## Action Items
 - [ ] Keep Section 1 (Motivation) in the SoftwareX paper high-level; cite the thesis literature but avoid case-specific insights reserved for the thesis.
@@ -20,5 +21,5 @@
 - [ ] Update this note whenever the thesis plan shifts (e.g., if Rosalia adds/removes case studies).
 
 ## References
-- `tmp/jaffray-rosalia-masc-proposal/`
-- `tmp/jaffray-rosalia-masc-thesis/`
+- `tmp/jaffray-rosalia-masc-proposal/` (see Chapter 2 + Table 1.1 for case-study roadmap).
+- `tmp/jaffray-rosalia-masc-thesis/` (full thesis draft once Chapter 2 is written).
