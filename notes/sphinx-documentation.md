@@ -79,6 +79,6 @@ FHOPS’ Sphinx tree lives under `docs/` and is published to Read the Docs via `
     - [x] CLI modules: document command groups (`fhops.cli.main`, `benchmarks`, `dataset`, etc.) with purpose and usage hints.
     - [x] Scenario contract & IO: describe key dataclasses (`Scenario`, `Problem`, `MobilisationConfig`, loaders) with field semantics, examples, and validation notes.
     - [x] Optimisation layer: expand docstrings for `fhops.optimization.mip.builder`, drivers, and heuristics (SA/ILS/Tabu), outlining inputs, constraints, and returns.
-    - [ ] Evaluation: provide detail for playback, KPI calculators, exporters (parameters, expected DataFrame schemas, sample usage).
+    - [x] Evaluation: provide detail for playback, KPI calculators, exporters (parameters, expected DataFrame schemas, sample usage).
     - [ ] Productivity/reference modules: annotate public helpers with units, source references, and when to use each regression.
     - [ ] Regenerate Sphinx API docs after docstrings are fleshed out; ensure `docs/api/*.rst` pulls the new content.
