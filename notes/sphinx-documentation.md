@@ -80,5 +80,5 @@ FHOPS’ Sphinx tree lives under `docs/` and is published to Read the Docs via `
     - [x] Scenario contract & IO: describe key dataclasses (`Scenario`, `Problem`, `MobilisationConfig`, loaders) with field semantics, examples, and validation notes *(2025-11-23: Pydantic models now expose `Attributes` sections covering units/validation rules).*
     - [x] Optimisation layer: expand docstrings for `fhops.optimization.mip.builder`, drivers, and heuristics (SA/ILS/Tabu), outlining inputs, constraints, and returns *(2025-11-23: heuristic drivers now describe operator knobs, telemetry payloads, and return schemas).*
     - [x] Evaluation: provide detail for playback, KPI calculators, exporters (parameters, expected DataFrame schemas, sample usage).
-    - [ ] Productivity/reference modules: annotate public helpers with units, source references, and when to use each regression.
+    - [ ] Productivity/reference modules: annotate public helpers with units, source references, and when to use each regression *(2025-11-23: forwarder, grapple-skidder, shovel logger, and Berry/Visser processor helpers now include detailed parameter/return docstrings; remaining cable/helicopter presets still queued).* 
     - [ ] Regenerate Sphinx API docs after docstrings are fleshed out; ensure `docs/api/*.rst` pulls the new content.

@@ -589,6 +589,8 @@ def _inflate_cost(value: float | None, base_year: int | None) -> float | None:
 
 @dataclass(frozen=True)
 class ProcessorProductivityResult:
+    """Normalized output for harvester/processor regression helpers."""
+
     base_productivity_m3_per_pmh: float
     tree_form_multiplier: float
     crew_multiplier: float
@@ -609,6 +611,38 @@ def estimate_processor_productivity_berry2019(
     automatic_bucking_multiplier: float | None = None,
     carrier_profile: ProcessorCarrierProfile | None = None,
 ) -> ProcessorProductivityResult:
+    """Estimate processor productivity using Berry (2019) Kinleith NZ regressions.
+
+    Parameters
+    ----------
+    piece_size_m3 : float
+        Average piece volume per stem (m³). Used directly in the linear regression reported in the thesis.
+    tree_form_category : int, default=0
+        0 (good), 1 (poor), or 2 (bad) tree-form classes from Berry's emmeans table. Controls the tree
+        form multiplier.
+    crew_multiplier : float, default=1.0
+        Adjustment for operator/crew effects (e.g., Crew A ≈ 1.16, Crew C ≈ 0.75). Must be > 0.
+    delay_multiplier : float, default=_BERRY_DEFAULT_UTILISATION
+        Utilisation ratio applied after computing delay-free productivity (0 < value ≤ 1). Defaults to
+        0.91 per the study's short-delay observations.
+    automatic_bucking_multiplier : float, optional
+        Multiplier capturing log-optimiser benefits (Labelle & Huss 2007). Values ``> 0`` scale the
+        delay-free output.
+    carrier_profile : ProcessorCarrierProfile, optional
+        Optional carrier metadata (purpose-built vs excavator) providing predefined productivity ratios
+        and fuel/maintenance notes for CLI rendering.
+
+    Returns
+    -------
+    ProcessorProductivityResult
+        Dataclass summarising the base regression output, applied multipliers, and final m³/PMH (delay
+        adjusted). ``carrier_profile`` is echoed for downstream CLI formatting.
+
+    Notes
+    -----
+    Based on Berry's MASc thesis (2019) – Kinleith, NZ. Piece-size range is ≈0.2–1.2 m³ and the
+    regression is PMH₀. Apply your own utilisation if you operate outside the observed 91 % value.
+    """
     if piece_size_m3 <= 0:
         raise ValueError("piece_size_m3 must be > 0")
     if tree_form_category not in _TREE_FORM_PRODUCTIVITY_MULTIPLIERS:
@@ -649,6 +683,8 @@ def estimate_processor_productivity_berry2019(
 
 @dataclass(frozen=True)
 class VisserLogSortProductivityResult:
+    """Result payload for the Visser & Tolan (2015) log-sort study."""
+
     piece_size_m3: float
     log_sort_count: int
     delay_free_productivity_m3_per_pmh: float
@@ -670,6 +706,28 @@ def estimate_processor_productivity_visser2015(
     log_sort_count: int,
     delay_multiplier: float = 1.0,
 ) -> VisserLogSortProductivityResult:
+    """Apply the Visser & Tolan (2015) log-sort productivity curves.
+
+    Parameters
+    ----------
+    piece_size_m3 : float
+        Average log volume per piece (m³). Must lie within the 1–3 m³ calibration window.
+    log_sort_count : int
+        Number of simultaneous log sorts (5, 9, 12, or 15). Controls both productivity and value-per-PMH.
+    delay_multiplier : float, default=1.0
+        Utilisation factor (0 < value ≤ 1). ``1.0`` keeps the published delay-free PMH₀ outputs.
+
+    Returns
+    -------
+    VisserLogSortProductivityResult
+        Dataclass containing delay-free/observed productivity, relative change v. the 5-sort baseline,
+        and the published gross-value metrics (2014 USD).
+
+    Notes
+    -----
+    The function interpolates between the digitised curves shipped in ``data/productivity/visser2015``.
+    Supplying an out-of-range ``piece_size_m3`` raises ``ValueError`` with the supported range.
+    """
     if piece_size_m3 <= 0:
         raise ValueError("piece_size_m3 must be > 0")
     if delay_multiplier <= 0 or delay_multiplier > 1.0:

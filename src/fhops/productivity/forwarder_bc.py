@@ -1,4 +1,10 @@
-"""BC-focused forwarder productivity helpers built on existing regressions."""
+"""BC-focused forwarder productivity helpers built on existing regressions.
+
+The CLI exposes these helpers via ``fhops dataset estimate-productivity --machine-role forwarder``
+so users can pick a study (Ghaffariyan et al. 2019, Eriksson & Lindroos 2014, Advantage Vol. 6 No. 10,
+etc.) without memorising the underlying functions.  Docstrings here therefore double as the
+reference content surfaced in the Sphinx API docs.
+"""
 
 from __future__ import annotations
 
@@ -25,7 +31,24 @@ from fhops.productivity.laitila2020 import estimate_brushwood_harwarder_producti
 
 
 class ForwarderBCModel(str, Enum):
-    """Forwarder regressions that FHOPS exposes for BC planning."""
+    """Forwarder regressions wired into FHOPS' dataset helpers.
+
+    Each enum value corresponds to a published study or FPInnovations bulletin:
+
+    ``GHAFFARIYAN_SMALL`` / ``GHAFFARIYAN_LARGE``
+        14 t and 20 t thinning forwarders (Ghaffariyan et al. 2019). Requires extraction distance and
+        optional slope-class multipliers (APLACA).
+    ``KELLOGG_*``
+        Sawlog/pulpwood/mixed regressions from Kellogg & Bettinger (1994). Requires load type, trail
+        spacing inputs, and log lengths.
+    ``ADV6N10_SHORTWOOD`` / ``ADV1N12_SHORTWOOD``
+        Advantage Vol. 6 No. 10 and Vol. 1 No. 12 shortwood regressions used for BC coastal forwarders.
+    ``ERIKSSON_*``
+        Eriksson & Lindroos (2014) final-felling vs. thinning models (mean extraction distance, stem
+        size, and load capacity required).
+    ``LAITILA_VAATAINEN_BRUSHWOOD``
+        Brushwood harwarder regression from Laitila & Väätäinen (2020).
+    """
 
     GHAFFARIYAN_SMALL = "ghaffariyan-small"
     GHAFFARIYAN_LARGE = "ghaffariyan-large"
@@ -56,7 +79,22 @@ _BRUSHWOOD_MODELS = {ForwarderBCModel.LAITILA_VAATAINEN_BRUSHWOOD}
 
 @dataclass(frozen=True)
 class ForwarderBCResult:
-    """Result payload for BC forwarder helpers."""
+    """Result payload describing a forwarder productivity estimate.
+
+    Attributes
+    ----------
+    model:
+        Enum identifying which regression ran.
+    predicted_m3_per_pmh:
+        Productive machine hours (PMH) basis of the estimate (m³/PMH0 unless overridden).
+    pmh_basis:
+        Text describing the PMH convention (e.g., ``"PMH0"`` vs ``"PMH15"``).
+    reference:
+        Short citation (FPInnovations bulletin, journal, etc.).
+    parameters:
+        Echo of the inputs and defaults used when evaluating the regression. Useful for telemetry or
+        CLI output.
+    """
 
     model: ForwarderBCModel
     predicted_m3_per_pmh: float
@@ -89,7 +127,48 @@ def estimate_forwarder_productivity_bc(
     harwarder_payload_m3: float | None = None,
     grapple_load_unloading_m3: float | None = None,
 ) -> ForwarderBCResult:
-    """Evaluate one of the BC forwarder regressions with validation."""
+    """Evaluate one of the BC forwarder regressions with validation.
+
+    Parameters
+    ----------
+    model : ForwarderBCModel
+        Regression identifier (see :class:`ForwarderBCModel`). Determines which subset of parameters
+        must be supplied.
+    extraction_distance_m : float, optional
+        One-way extraction distance in metres. Required for the Ghaffariyan (2019) thinning models and
+        used when Laitila/Väätäinen defaults are absent.
+    slope_class : ALPACASlopeClass, default=ALPACASlopeClass.FLAT
+        Slope bin used when ``slope_factor`` is not provided (maps to ALPACA slope multipliers).
+    slope_factor : float, optional
+        Manual override for slope multipliers (values ``<= 0`` invalid). When provided this supersedes
+        ``slope_class``.
+    volume_per_load_m3, distance_out_m, travel_in_unit_m, distance_in_m, payload_m3, mean_log_length_m,
+    travel_speed_m_per_min, trail_length_m, products_per_trail :
+        Inputs consumed by the Kellogg & Bettinger (1994) regressions. Units mirror the paper
+        (metres, m³, pieces).
+    mean_extraction_distance_m, mean_stem_size_m3, load_capacity_m3 :
+        Required by Eriksson & Lindroos (2014). Distances in metres, volumes in cubic metres.
+    harvested_trees_per_ha, average_tree_volume_dm3, forwarding_distance_m, harwarder_payload_m3,
+    grapple_load_unloading_m3 :
+        Required by the Laitila & Väätäinen (2020) brushwood harwarder regression. Tree statistics are
+        expressed in trees per hectare and decimetres cubed.
+    mean_stem_size_m3, load_capacity_m3, mean_extraction_distance_m :
+        Used by the Advantage Vol. 6 No.10 / Vol. 1 No. 12 presets (payloads default to the published
+        values if omitted).
+
+    Returns
+    -------
+    ForwarderBCResult
+        Dataclass containing the predicted productivity (m³/PMH), PMH basis, short reference citation,
+        and the parameter bundle that fed the regression.
+
+    Notes
+    -----
+    * The helper enforces the mandatory inputs for each regression and raises ``ValueError`` when
+      required fields are missing.
+    * Units follow the original studies: metres, cubic metres, trees/ha, or decimetres³ as noted above.
+    * Optional utilisation or payload overrides fall back to the study's defaults when unspecified.
+    """
 
     if model in _ERIKSSON_MODELS:
         required_eriksson = {

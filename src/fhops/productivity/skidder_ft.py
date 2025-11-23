@@ -43,7 +43,25 @@ class ADV6N7DeckingMode(str, Enum):
 
 @dataclass(frozen=True)
 class SkidderProductivityResult:
-    """Payload returned by the grapple skidder helper."""
+    """Payload returned by the Han et al. (2018) grapple-skidder helper.
+
+    Attributes
+    ----------
+    method:
+        Harvesting method (lop-and-scatter vs whole-tree) used to select the regression.
+    cycle_time_seconds:
+        Delay-free cycle time derived from Table 6 (seconds).
+    payload_m3:
+        Payload per cycle (m³) computed from ``pieces_per_cycle`` and ``piece_volume_m3``.
+    predicted_m3_per_pmh:
+        Productivity in m³/PMH0 (multipliers applied).
+    pmh_basis:
+        PMH basis description (defaults to ``"PMH0"``).
+    reference:
+        Short citation string (defaults to ``"Han et al. 2018"``).
+    parameters:
+        Echo of the inputs and multipliers used. Helpful for telemetry tables and CLI logs.
+    """
 
     method: Han2018SkidderMethod
     cycle_time_seconds: float
@@ -56,6 +74,8 @@ class SkidderProductivityResult:
 
 @dataclass(frozen=True)
 class SkidderSpeedProfile:
+    """Median travel speeds derived from GNSS traces (Zurita & Borz 2025)."""
+
     key: str
     description: str
     empty_speed_kmh: float
@@ -65,6 +85,8 @@ class SkidderSpeedProfile:
 
 @dataclass(frozen=True)
 class ADV6N7Metadata:
+    """Static metadata parsed from FPInnovations ADV6N7 JSON."""
+
     cycle_distance_coeff: float
     cycle_intercepts: dict[ADV6N7DeckingMode, float]
     default_payload_m3: float
@@ -82,6 +104,8 @@ class ADV6N7Metadata:
 
 @dataclass(frozen=True)
 class ADV6N7SkidderResult:
+    """Structured response for the ADV6N7 Caterpillar 535B regression."""
+
     decking_mode: ADV6N7DeckingMode
     skidding_distance_m: float
     payload_m3: float
@@ -114,6 +138,7 @@ def _load_skidder_speed_profiles() -> dict[str, dict[str, object]]:
 
 @lru_cache(maxsize=1)
 def get_adv6n7_metadata() -> ADV6N7Metadata:
+    """Load and cache the ADV6N7 regression metadata from the bundled JSON file."""
     if not _ADV6N7_PATH.exists():
         raise FileNotFoundError(f"ADV6N7 dataset not found: {_ADV6N7_PATH}")
     payload = json.loads(_ADV6N7_PATH.read_text(encoding="utf-8"))
@@ -160,7 +185,11 @@ def get_adv6n7_metadata() -> ADV6N7Metadata:
         cost_base_year=2004,
         note=note,
     )
+
+
 def get_skidder_speed_profile(key: str) -> SkidderSpeedProfile:
+    """Return a GNSS-derived skidder speed profile by identifier."""
+
     payload = _load_skidder_speed_profiles().get(key)
     if payload is None:
         valid = ", ".join(sorted(_load_skidder_speed_profiles()))
@@ -217,7 +246,36 @@ def estimate_grapple_skidder_productivity_adv6n7(
     delay_minutes: float | None = None,
     support_ratio: float | None = None,
 ) -> ADV6N7SkidderResult:
-    """Estimate productivity/cost for the Caterpillar 535B grapple skidder (ADV6N7)."""
+    """Estimate Caterpillar 535B grapple-skidder productivity/costs (ADV6N7).
+
+    Parameters
+    ----------
+    skidding_distance_m : float
+        Corridor distance in metres used in the Advantage regression. Must be positive.
+    decking_mode : ADV6N7DeckingMode
+        Decking variant (skidder-only, skidder+loader, etc.) which selects the regression intercept.
+    payload_m3 : float, optional
+        Payload per cycle (m³). Defaults to the study's mean (≈7.7 m³) when omitted.
+    utilisation : float, optional
+        Utilisation ratio (0–1). Defaults to 0.85 from the report when omitted.
+    delay_minutes : float, optional
+        Additional minutes per cycle to reflect observed micro-delays (defaults to 0.12 min).
+    support_ratio : float, optional
+        Fraction (0–1) of cycles assisted by a loader. When provided and ``decking_mode`` is not
+        ``SKIDDER``, the helper reports the combined skidder+loader cost per cubic metre.
+
+    Returns
+    -------
+    ADV6N7SkidderResult
+        Dataclass summarising payloads, utilisation, cycle time, m³/PMH, and CPI-aware cost metrics
+        (2004 CAD baseline included).
+
+    Notes
+    -----
+    Based on FPInnovations Advantage Vol. 6 No. 7 (Caterpillar 535B supporting Englewood loader
+    forwarding). Costs remain in 2004 CAD—the CLI converts them to current dollars when rendering
+    cost tables.
+    """
 
     if skidding_distance_m <= 0:
         raise ValueError("Skidding distance must be > 0")
@@ -346,11 +404,43 @@ def estimate_grapple_skidder_productivity_han2018(
     custom_multiplier: float | None = None,
     speed_profile: SkidderSpeedProfile | None = None,
 ) -> SkidderProductivityResult:
-    """Estimate grapple-skidder productivity (m³/PMH0).
+    """Estimate grapple-skidder productivity (m³/PMH0) using Han et al. (2018).
 
-    ``pieces_per_cycle`` is interpreted as log count under lop-and-scatter and tree count under
-    whole-tree harvesting. ``piece_volume_m3`` should already reflect bucked log or whole-tree
-    volume in cubic metres.
+    Parameters
+    ----------
+    method : Han2018SkidderMethod
+        Harvesting method (lop-and-scatter or whole-tree). Determines which regression coefficients
+        are used and how ``pieces_per_cycle`` is interpreted (logs vs. whole trees).
+    pieces_per_cycle : float
+        Log or tree count handled per cycle. Must be positive.
+    piece_volume_m3 : float
+        Average volume per piece (m³). Multiply by ``pieces_per_cycle`` to obtain payload per cycle.
+    empty_distance_m : float
+        Empty travel distance (metres). Used in the regression's distance terms.
+    loaded_distance_m : float
+        Loaded travel distance (metres).
+    trail_pattern : TrailSpacingPattern, optional
+        Applies FPInnovations TN285 multipliers for narrow/ghost-trail spacing layouts.
+    decking_condition : DeckingCondition, optional
+        Applies ADV4N21 decking penalties when landings are constrained.
+    custom_multiplier : float, optional
+        User-defined multiplier (``> 0``) applied after the built-in modifiers.
+    speed_profile : SkidderSpeedProfile, optional
+        GNSS-derived empty/loaded speeds (Zurita & Borz 2025). Overrides regression distance
+        coefficients when supplied.
+
+    Returns
+    -------
+    SkidderProductivityResult
+        Dataclass containing cycle time (seconds), payload (m³), PMH basis, and a parameter echo
+        detailing which multipliers were applied.
+
+    Notes
+    -----
+    * ``pieces_per_cycle`` refers to logs for lop-and-scatter and whole trees for whole-tree
+      harvesting (matching Han et al. Table 6).
+    * Productivity is returned on a delay-free (PMH0) basis, so apply utilisation outside this helper
+      if needed.
     """
 
     if piece_volume_m3 <= 0:
