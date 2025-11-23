@@ -1,6 +1,6 @@
 # Sphinx Documentation Audit
 
-Date: 2025-11-24  
+Date: 2025-11-24
 Status: Complete – Phase 4 documentation audit closed with all tracked actions delivered.
 
 ## Overview
@@ -80,7 +80,7 @@ FHOPS’ Sphinx tree lives under `docs/` and is published to Read the Docs via `
     - [x] Scenario contract & IO: describe key dataclasses (`Scenario`, `Problem`, `MobilisationConfig`, loaders) with field semantics, examples, and validation notes *(2025-11-23: Pydantic models now expose `Attributes` sections covering units/validation rules).*
     - [x] Optimisation layer: expand docstrings for `fhops.optimization.mip.builder`, drivers, and heuristics (SA/ILS/Tabu), outlining inputs, constraints, and returns *(2025-11-23: heuristic drivers now describe operator knobs, telemetry payloads, and return schemas).*
     - [x] Evaluation: provide detail for playback, KPI calculators, exporters (parameters, expected DataFrame schemas, sample usage).
-    - [x] Productivity/reference modules: annotate public helpers with units, source references, and when to use each regression *(2025-11-23: forwarder, skidder, shovel logger, processor, cable logging, and helicopter helpers now mirror the CLI docs; remaining work limited to loaders/validators).* 
+    - [x] Productivity/reference modules: annotate public helpers with units, source references, and when to use each regression *(2025-11-23: forwarder, skidder, shovel logger, processor, cable logging, and helicopter helpers now mirror the CLI docs; remaining work limited to loaders/validators).*
     - [x] Regenerate Sphinx API docs after docstrings are fleshed out; ensure `docs/api/*.rst` pulls the new content *(2025-11-24: `sphinx-build -b html docs _build/html -W` ran clean after the costing pass).*
 
 ### Outstanding docstring gaps

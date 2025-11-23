@@ -1,3 +1,9 @@
+# 2025-11-24 — Typer CLI runner + lint config hardening
+- Wrapped Typer’s CLI runner in `tests/cli.py` so pytest now reads a merged stdout/stderr stream with ANSI codes stripped, preventing the Rich error banners (introduced upstream in Typer 0.12/Click 8.3) from breaking assertions across the dataset CLI suites.
+- Added the `cli_text()` helper so tests that need the combined output can opt-in explicitly, while existing `result.stdout` checks keep working because the patched runner now backs stdout/output bytes with the merged text.
+- Taught mypy to ignore missing stubs for `typer.*` / `click.*` modules (via `pyproject.toml`) and limited the whitespace hooks to real source directories so CI no longer rewrites archived reference notes.
+- Let Ruff modernise the two maintenance scripts (`scripts/dedup_conversation_log.py`, `scripts/fncy12_support_split.py`) and trimmed stray whitespace in the machine costing plan, Hypercorn config, and the Sphinx planning log to keep the lint suite green.
+
 # 2025-11-24 — CLI dataset helper docstrings
 - Completed the docstring sweep across `src/fhops/cli/dataset.py`, covering the remaining dataset prompts, evaluators, telemetry renderers, and TR-28/TN-98 tables so the API docs now explain every CLI helper and validation path (forwarder/shovel logger/CTL evaluators, dataset resolvers, ADV2N21 summaries, road-cost renderers, soil-profile tables, etc.).
 - Extended the docstring coverage to the ancillary CLI helpers (`src/fhops/cli/main.py`, `src/fhops/cli/profiles.py`, `src/fhops/cli/synthetic.py`, `src/fhops/cli/telemetry.py`) so KPI printers, bundle/tuning collectors, solver profile utilities, synthetic dataset generators, and telemetry reporters now provide detailed Parameters/Returns notes in the API reference.
