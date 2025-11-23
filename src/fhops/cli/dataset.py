@@ -1086,10 +1086,14 @@ _SKYLINE_COST_ROLES: dict[SkylineProductivityModel, str] = {
 
 
 def _skyline_cost_role(model: SkylineProductivityModel) -> str | None:
+    """Return the machine-rate role slug associated with the skyline productivity model."""
+
     return _SKYLINE_COST_ROLES.get(model)
 
 
 class RoadsideProcessorModel(str, Enum):
+    """Supported roadside processor regressions exposed through the CLI dataset helpers."""
+
     BERRY2019 = "berry2019"
     LABELLE2016 = "labelle2016"
     LABELLE2017 = "labelle2017"
@@ -1121,22 +1125,30 @@ _AUTOMATIC_BUCKING_SUPPORTED_MODELS = {
 
 
 class ADV5N6StemSource(str, Enum):
+    """Stem origin used by the ADV5N6 processor presets."""
+
     LOADER_FORWARDED = "loader_forwarded"
-    GRAPPLE_YARDED = "grapple_yarded"
+   GRAPPLE_YARDED = "grapple_yarded"
 
 
 class ADV5N6ProcessingMode(str, Enum):
+    """Processing deck modes for ADV5N6 coastal scenarios."""
+
     COLD = "cold"
     HOT = "hot"
     LOW_VOLUME = "low_volume"
 
 
 class ADV7N3Machine(str, Enum):
+    """ADV7N3 processor machines modelled in the dataset."""
+
     HYUNDAI_210 = "hyundai_210"
     JOHN_DEERE_892 = "john_deere_892"
 
 
 class TN103Scenario(str, Enum):
+    """TN-103 Caterpillar DL221 case-study scenarios."""
+
     AREA_A = "area_a_feller_bunched"
     AREA_B = "area_b_handfelled"
     COMBINED_OBSERVED = "combined_observed"
@@ -1144,6 +1156,8 @@ class TN103Scenario(str, Enum):
 
 
 class TR106Scenario(str, Enum):
+    """TR-106 lodgepole pine processor scenarios."""
+
     CASE1187_OCTNOV = "case1187_octnov"
     CASE1187_FEB = "case1187_feb"
     KP40_CAT225 = "kp40_caterpillar225"
@@ -1152,6 +1166,8 @@ class TR106Scenario(str, Enum):
 
 
 class TR87Scenario(str, Enum):
+    """TR-87 Timberjack TJ90 observe/test scenarios."""
+
     DAY_SHIFT = "tj90_day_shift"
     NIGHT_SHIFT = "tj90_night_shift"
     COMBINED_OBSERVED = "tj90_combined_observed"
@@ -1160,27 +1176,37 @@ class TR87Scenario(str, Enum):
 
 
 class TN166Scenario(str, Enum):
+    """TN-166 telescopic-boom processor scenarios."""
+
     GRAPPLE_YARDED = "grapple_yarded"
     RIGHT_OF_WAY = "right_of_way"
     MIXED_SHIFT = "mixed_shift"
 
 
 class LabelleProcessorSpecies(str, Enum):
+    """Species covered by the Labelle hardwood processor regressions."""
+
     SPRUCE = "spruce"
     BEECH = "beech"
 
 
 class LabelleProcessorTreatment(str, Enum):
+    """Silviculture treatments used in Labelle et al. studies."""
+
     CLEAR_CUT = "clear_cut"
     SELECTIVE_CUT = "selective_cut"
 
 
 class Labelle2016TreeForm(str, Enum):
+    """Tree-form classes from Labelle et al. (2016)."""
+
     ACCEPTABLE = "acceptable"
     UNACCEPTABLE = "unacceptable"
 
 
 class Labelle2017Variant(str, Enum):
+    """Polynomial/power variants published in Labelle et al. (2017)."""
+
     POLY1 = "poly1"
     POLY2 = "poly2"
     POWER1 = "power1"
@@ -1188,6 +1214,8 @@ class Labelle2017Variant(str, Enum):
 
 
 class Labelle2018Variant(str, Enum):
+    """Labelle et al. (2018) beech/spruce regression variants."""
+
     RW_POLY1 = "rw_poly1"
     RW_POLY2 = "rw_poly2"
     CT_POLY1 = "ct_poly1"
@@ -1195,22 +1223,30 @@ class Labelle2018Variant(str, Enum):
 
 
 class ProcessorCarrier(str, Enum):
+    """Carrier classes for processor regressions (purpose-built vs excavator)."""
+
     PURPOSE_BUILT = "purpose_built"
     EXCAVATOR = "excavator"
 
 
 class SpinelliOperation(str, Enum):
+    """Operation type for Spinelli et al. (2010) processors."""
+
     HARVEST = "harvest"
     PROCESS = "process"
 
 
 class SpinelliStandType(str, Enum):
+    """Stand types captured in the Spinelli et al. dataset."""
+
     FOREST = "forest"
     PLANTATION = "plantation"
     COPPICE = "coppice"
 
 
 class SpinelliCarrier(str, Enum):
+    """Carrier types used in Spinelli et al. (2010)."""
+
     PURPOSE_BUILT = "purpose_built"
     EXCAVATOR = "excavator"
     SPIDER = "spider"
@@ -1218,17 +1254,23 @@ class SpinelliCarrier(str, Enum):
 
 
 class SpinelliHead(str, Enum):
+    """Processor head types from Spinelli et al. (2010)."""
+
     ROLLER = "roller"
     STROKE = "stroke"
 
 
 class SpinelliSpecies(str, Enum):
+    """Species groups from Spinelli et al. (2010)."""
+
     CONIFER = "conifer"
     CHESTNUT_POPLAR = "chestnut_poplar"
     OTHER_HARDWOOD = "other_hardwood"
 
 
 class LoaderProductivityModel(str, Enum):
+    """Loader productivity presets available via the CLI dataset helper."""
+
     TN261 = "tn261"
     ADV2N26 = "adv2n26"
     ADV5N1 = "adv5n1"
@@ -1237,21 +1279,29 @@ class LoaderProductivityModel(str, Enum):
 
 
 class LoaderAdv5N1SlopeClass(str, Enum):
+    """Slope classes for the ADV5N1 loader-forwarder regression."""
+
     ZERO_TO_TEN = "0_10"
     ELEVEN_TO_THIRTY = "11_30"
 
 
 class LoaderBarkoScenario(str, Enum):
+    """Barko 450 loader scenarios bundled in the dataset."""
+
     GROUND_SKID_BLOCK = "ground_skid_block"
     CABLE_YARD_BLOCK = "cable_yard_block"
 
 
 class LoaderHotColdMode(str, Enum):
+    """Kizha et al. (2020) loader modes (hot vs cold yarding)."""
+
     HOT = "hot"
     COLD = "cold"
 
 
 class SkidderSpeedProfileOption(str, Enum):
+    """Speed profile presets for grapple skidder travel-time overrides."""
+
     LEGACY = "legacy"
     GNSS_SKIDDER = "gnss_skidder"
     GNSS_FARM_TRACTOR = "gnss_farm_tractor"
