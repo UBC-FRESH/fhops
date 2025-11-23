@@ -31,3 +31,9 @@ Only changes that affect the SoftwareX planning/manuscript workspace are recorde
 - Updated `docs/overview.rst` to include the new snippet under an “Automation pipeline” section, keeping the user guide aligned with the manuscript narrative ahead of the future PNG/SVG export workflow.
 - Updated `docs/softwarex/manuscript/sections/includes/README.md` with maintenance notes for the PRISMA figure (package requirements, manual regeneration steps, future PNG workflow) and tracked the work inside `notes/softwarex_manuscript_plan.md`.
 - Expanded `notes/thesis_alignment.md` with explicit Chapter 2 case-study definitions (coastal skyline/tethered, interior community forest, salvage/MPB) plus checkpoint dates (dataset freeze, scenario cartridge export, solver alignment, KPI drafting, thesis submission) so we can reference a single source when validating SoftwareX scope boundaries.
+
+## 2025-11-26 — PRISMA automation + shared figure embed
+- Rebuilt `prisma_overview.tex` using plain TikZ (no external packages) and added a standalone driver so the figure can compile independently of the manuscript.
+- Added `scripts/render_prisma_diagram.py` and wired it into `scripts/generate_assets.sh`; running `make assets` now regenerates `docs/softwarex/assets/figures/prisma_overview.(pdf|png)` automatically (SVG generated opportunistically when `pdf2svg` is installed).
+- Updated `docs/overview.rst` to embed the PNG alongside the narrative include, ensuring the user guide displays the exact same visual as the manuscript.
+- Documented the automated workflow in `docs/softwarex/manuscript/README.md` and `sections/includes/README.md`, and marked the Phase 1 PRISMA task complete inside `notes/softwarex_manuscript_plan.md` / `notes/submission_readiness_dashboard.md`.

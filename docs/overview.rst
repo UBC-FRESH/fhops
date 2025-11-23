@@ -21,6 +21,14 @@ Motivation
 Automation pipeline
 -------------------
 
+.. figure:: softwarex/assets/figures/prisma_overview.png
+   :alt: FHOPS SoftwareX automation pipeline
+   :align: center
+   :width: 85%
+
+   FHOPS automation pipeline generated from the manuscript TikZ source
+   (auto-regenerated via ``make assets``).
+
 .. include:: includes/softwarex/prisma_overview.rst
 
 Installation

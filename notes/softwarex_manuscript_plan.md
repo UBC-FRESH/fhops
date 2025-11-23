@@ -82,17 +82,17 @@
     - Cost summary (`docs/softwarex/assets/data/costing/cost_summary.{csv,json}`) → `run_costing_demo.py`.
     - Scaling plot/table (`docs/softwarex/assets/data/scaling/runtime_vs_blocks.png`, `scaling_summary.{csv,json}`) → `run_synthetic_sweep.py`.
     - Dataset index + summaries (`docs/softwarex/assets/data/datasets/index.json`, `*_summary.json`) → `run_dataset_inspection.py`.
-    - PRISMA-style FHOPS workflow diagrams (architecture + evaluation flow) → `manuscript/sections/includes/prisma_workflow.tex` (script TBD, but target is to mirror the WS3 EI diagram with upstream/downstream tiers: scenario ingest, solver core, evaluation/telemetry modules, submission artifacts). Consider hierarchical variants (full FHOPS stack + zoomed-in evaluation loop).
+    - PRISMA-style FHOPS workflow diagrams (architecture + evaluation flow) → `manuscript/sections/includes/prisma_overview.tex` rendered via `scripts/render_prisma_diagram.py` (drives PDF/PNG assets for both manuscript + docs). Consider hierarchical variants (full FHOPS stack + zoomed-in evaluation loop).
   - [ ] Create reproducible scripts/notebooks to regenerate each artifact.
   - [ ] Integrate artifact generation into CI or a manual checklist.
-- [ ] PRISMA-style diagram workflow (WS3 EI-inspired).
+- [x] PRISMA-style diagram workflow (WS3 EI-inspired).
   - [x] Draft `sections/includes/prisma_overview.tex` capturing scenario ingest → solver core → telemetry/export path with the `prisma-flow-diagram` package.
     - [x] Reference the include inside `sections/software_description.tex` so the manuscript narrative now calls out Figure~\ref{fig:fhops-prisma-overview}.
-  - [ ] Mirror the figure in Sphinx via `docs/includes/softwarex/prisma_overview.rst` (and eventually an exported PNG) so both outputs stay aligned.
+  - [x] Mirror the figure in Sphinx via `docs/includes/softwarex/prisma_overview.rst` (and eventually an exported PNG) so both outputs stay aligned.
     - [x] Add an interim narrative-only include (`docs/includes/softwarex/prisma_overview.rst`) so the docs reference the same pipeline until we export a PNG.
     - [x] Hook the include into the Sphinx Overview page so the docs surface the same workflow description.
-    - [ ] Add a PNG/SVG export workflow so the visual matches the manuscript and can be embedded directly in Sphinx.
-  - [ ] Document update instructions (package requirements, `latexmk` hooks, future evaluation-loop variant) in `docs/softwarex/manuscript/sections/includes/README.md` and tag figure assets inside `notes/submission_readiness_dashboard.md`.
+    - [x] Add a PNG export workflow so the visual matches the manuscript and can be embedded directly in Sphinx (SVG optional when `pdf2svg` is installed).
+  - [x] Document update instructions (package requirements, automation hooks) in `docs/softwarex/manuscript/sections/includes/README.md` and tag figure assets inside `notes/submission_readiness_dashboard.md`.
 - [ ] Asset-generation plan:
   - [x] **Scenario ingest demo:** Script (`scripts/run_dataset_inspection.py`) that inspects `examples/minitoy` + `examples/med42`, generates a fresh `synth generate --tier small` bundle, and emits schema summaries in `docs/softwarex/assets/data/datasets/`.
   - [x] **Benchmark sweep (SA baseline):** Extend `scripts/generate_assets.sh` (already running SA on `minitoy`) to include `med42` + `synthetic-small`. Use `fhops bench suite --telemetry-log --compare-preset ...` so we capture CSV/JSON telemetry for each scenario. Goal: PyDDRBG-style benchmark manifest.
@@ -200,13 +200,13 @@
   - [ ] Set reminders for periodic manuscript/doc alignment reviews.
 
 ## Immediate Next Actions
-- [ ] Wire the PRISMA overview figure into both outputs.
+- [x] Wire the PRISMA overview figure into both outputs.
   - [x] `\input{sections/includes/prisma_overview}` inside the Software Description narrative to visually anchor the workflow story.
-  - [ ] Confirm the matching `docs/includes/softwarex/prisma_overview.rst` renders in Sphinx (Overview page) and add instructions for refreshing it when the LaTeX diagram changes.
+  - [x] Confirm the matching `docs/includes/softwarex/prisma_overview.rst` renders in Sphinx (Overview page) and add instructions for refreshing it when the TikZ source changes.
     - [x] Land the interim narrative-only include so Sphinx can reference the same flow even before we have PNG exports.
-    - [x] Update the Sphinx overview to ``.. include::`` the snippet so readers see the workflow summary.
-    - [ ] Document the PNG/SVG export workflow (plus refresh instructions) once the automation is wired in.
-  - [x] Record figure provenance (pandoc-to-RST path, TeX package, manual regeneration steps) inside `docs/softwarex/manuscript/sections/includes/README.md` so future changes stay deterministic.
+    - [x] Update the Sphinx overview to ``.. include::`` the snippet so readers see the workflow summary, plus embed the auto-generated PNG.
+    - [x] Document the PNG export workflow (via `render_prisma_diagram.py` + `generate_assets.sh`) so refresh instructions live alongside the include metadata.
+  - [x] Record figure provenance inside `docs/softwarex/manuscript/sections/includes/README.md` so future changes stay deterministic.
 - [ ] Kick off Phase 2 drafting for Sections 1–3 while the automation context is fresh.
   - [ ] Use `notes/softwarex_exemplar_analysis.md` takeaways and the Jaffray systematic review references to outline the Intro and Software Metadata paragraphs.
   - [ ] Draft the first pass of the Motivation/Contribution narrative (Section 1) using the shared snippets in `sections/includes/motivation_story.md`.

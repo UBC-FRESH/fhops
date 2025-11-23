@@ -26,10 +26,10 @@
 - **Exemplar refs:** PyLESA pp. 1–2 for gap framing + metadata tables; cashocs §2 for structured “software update” narrative.
 
 ### 2. Architecture & Workflow Visualization
-- [ ] Produce a single source-of-truth diagram (vector + PNG) explaining FHOPS architecture, optimisation workflow, and integration with docs.
-  - [x] PRISMA-style LaTeX source wired into the manuscript (`sections/includes/prisma_overview.tex`) and referenced in Section~2.
+- [x] Produce a single source-of-truth diagram (vector + PNG) explaining FHOPS architecture, optimisation workflow, and integration with docs.
+  - [x] PRISMA-style TikZ source wired into the manuscript (`sections/includes/prisma_overview.tex`) and referenced in Section~2.
   - [x] Narrative include wired into Sphinx Overview via `docs/includes/softwarex/prisma_overview.rst`.
-  - [ ] PNG/SVG export workflow scripted so Sphinx can display the same visual asset.
+  - [x] PNG export workflow (`render_prisma_diagram.py` via `generate_assets.sh`) keeps `docs/softwarex/assets/figures/prisma_overview.(pdf|png)` fresh; SVG optional when `pdf2svg` is present.
 - [ ] Validate figure readability at journal column width (per SoftwareX instructions).
 - **Exemplar refs:** PyLESA Fig. 1 (pp. 2–3), pycity_scheduling Fig. 1 (coordination approach), MOOSE §1 architecture narrative.
 

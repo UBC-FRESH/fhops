@@ -32,36 +32,19 @@ Automation hook (Phase 1 deliverable): extend `docs/softwarex/manuscript/scripts
   - [ ] Extend `export_docs_assets.py` (or a companion script) to emit a vector/PNG asset so Sphinx can embed the exact diagram.
   - [ ] Update `docs/overview.rst` to include the exported figure once the PNG workflow exists.
 
-### PRISMA figure workflow (manual process for now)
+### PRISMA figure workflow (automated)
 
-1. Source file: `prisma_overview.tex` (lives beside the other includes). It uses
-   `prisma-flow-diagram`, so the manuscript preamble (`fhops-softx.tex`) already loads that
-   package.
-2. To regenerate the PDF locally, run:
-
-   ```bash
-   cd docs/softwarex/manuscript
-   latexmk -lualatex -halt-on-error -interaction=nonstopmode \
-       -jobname=prisma_overview sections/includes/prisma_overview.tex
-   ```
-
-   This writes `sections/includes/prisma_overview.pdf` which we can commit or use as the
-   source for PNG/SVG exports.
-3. Until we automate PNG/SVG creation, note the manual conversion step (requires ImageMagick
-   or Ghostscript):
-
-   ```bash
-   magick -density 300 sections/includes/prisma_overview.pdf \
-       docs/softwarex/assets/figures/prisma_overview.png
-   ```
-
-   (Any subsequent automation should follow this naming/location convention so the docs can
-   include the raster asset.)
-4. After regenerating the diagram, run `make assets` to refresh any dependent snippets and
-   confirm the Sphinx include (`docs/includes/softwarex/prisma_overview.rst`) still reflects
-   the latest narrative/links.
-
-These steps should be replaced by a scripted workflow (Phase 1 remaining task), but having
-explicit manual instructions here prevents drift in the meantime.
+1. Source file: `prisma_overview.tex` (TikZ-based, no external packages beyond
+   `tikz` + libraries). The standalone driver lives beside it as
+   `prisma_overview_standalone.tex`.
+2. `scripts/render_prisma_diagram.py` (invoked automatically by
+   `scripts/generate_assets.sh`) runs `latexmk` on the standalone file and emits
+   PDF + PNG (and SVG if `pdf2svg` is available) into
+   `docs/softwarex/assets/figures/`.
+3. The manuscript consumes the TikZ include directly, while Sphinx embeds the PNG via
+   `docs/overview.rst`. No manual ImageMagick steps are required—just run
+   `make assets` (or `scripts/generate_assets.sh`) after editing the TikZ file.
+4. If a new figure variant is added (e.g., zoomed evaluation loop) create a matching
+   standalone wrapper and register it inside the render script so automation stays in sync.
 
 > Ownership: Lead author (Gregory Paradis). Automation support: Codex tasks under Phase 1 asset/export work.

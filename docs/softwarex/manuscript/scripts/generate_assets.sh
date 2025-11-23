@@ -19,6 +19,9 @@ mkdir -p "${bench_dir}" "${fig_dir}" "${data_dir}"
 echo "[assets] Rendering shared manuscript/doc snippets" >&2
 python "${script_dir}/export_docs_assets.py" --repo-root "${repo_root}"
 
+echo "[assets] Rendering PRISMA workflow diagram" >&2
+python "${script_dir}/render_prisma_diagram.py" --repo-root "${repo_root}"
+
 echo "[assets] Summarizing datasets into ${dataset_dir}" >&2
 python "${script_dir}/run_dataset_inspection.py" --repo-root "${repo_root}" --out-dir "${dataset_dir}"
 
