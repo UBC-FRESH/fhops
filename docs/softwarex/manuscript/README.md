@@ -8,8 +8,9 @@ manuscript/
 ├── sections/                # Individual content files (LaTeX include snippets)
 ├── elsarticle/              # Stock CTAN elsarticle class + sample manuscript (unzipped 2025-11-23)
 ├── fhops-softx.tex          # Wrapper that stitches sections/includes together
-├── references.bib           # Manuscript BibTeX database (exemplar entries + FHOPS cites)
-├── Makefile                 # latexmk-based build entry point
+├── references.bib           # Manuscript BibTeX database (exemplar + forestry cites + FHOPS refs)
+├── scripts/                 # Asset-generation hooks (call FHOPS benchmarks etc.)
+├── Makefile                 # `make all` orchestrates assets + PDF build
 ├── README.md                # (this file) build + workflow notes
 └── build/ (generated)       # latexmk output directory (ignored)
 ```
@@ -20,17 +21,20 @@ manuscript/
 - Contents live under `elsarticle/`. Keep upstream files pristine; place FHOPS-specific adjustments (title page, macros, includes) in `sections/` or sibling files so we can diff against the CTAN baseline.
 
 ## Build workflow (`latexmk` + TeX Live)
-We use the standard TeX Live toolchain (preferred by SoftwareX) orchestrated through `latexmk`.
+We use the standard TeX Live toolchain (preferred by SoftwareX) orchestrated through `latexmk`. The Makefile also provides an `all` target so we can regenerate FHOPS assets + PDF in a single command.
 
 ```
-# Build PDF into build/fhops-softx.pdf
-make          # equivalent to `make default`
+# Rebuild everything (clean → assets → PDF)
+make all
+
+# Just build the PDF
+make pdf    # or simply `make`
 
 # Clean auxiliary files + build directory
 make clean
 ```
 
-`latexmk` will automatically run pdflatex/bibtex as needed. You’ll need a TeX Live installation that includes common packages (`latexmk`, `hyperref`, `lineno`, etc.). On Debian/Ubuntu, `sudo apt-get install texlive-full latexmk` is the quickest path; we can revisit a lighter scheme/tectonic later if build times become an issue.
+`scripts/generate_assets.sh` is currently a placeholder; wire FHOPS benchmark/plotting commands into that script so `make all` regenerates figures/tables before latexmk runs. `latexmk` will automatically run pdflatex/bibtex as needed. You’ll need a TeX Live installation that includes common packages (`latexmk`, `hyperref`, `lineno`, etc.). On Debian/Ubuntu, `sudo apt-get install texlive-full latexmk` is the quickest path; we can revisit a lighter scheme/tectonic later if build times become an issue.
 
 ## Planned workflow
 1. **Template adaptation:** `fhops-softx.tex` pulls the elsarticle class and `\input`s the files under `sections/`, with citations managed via `references.bib`. Section files are intended to be reusable (shared with Sphinx via includes later).
