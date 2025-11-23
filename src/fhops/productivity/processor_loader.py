@@ -8,9 +8,12 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal, cast
 
 from fhops.costing.inflation import inflate_value
+
+JSONDict = dict[str, Any]
+JSONDictMap = dict[str, JSONDict]
 
 _DATA_ROOT = Path(__file__).resolve().parents[3] / "data" / "productivity"
 _REFERENCE_ROOT = Path(__file__).resolve().parents[3] / "data" / "reference"
@@ -35,7 +38,7 @@ _CARRIER_PROFILE_PATH = _REFERENCE_ROOT / "processor_carrier_profiles.json"
 
 
 @lru_cache(maxsize=1)
-def _load_berry_dataset() -> dict[str, object]:
+def _load_berry_dataset() -> JSONDict:
     """Load the Berry (2019) skyline processor dataset from ``data/productivity``."""
     try:
         return json.loads(_BERRY_DATA_PATH.read_text(encoding="utf-8"))
@@ -44,7 +47,7 @@ def _load_berry_dataset() -> dict[str, object]:
 
 
 @lru_cache(maxsize=1)
-def _load_adv5n6_dataset() -> dict[str, object]:
+def _load_adv5n6_dataset() -> JSONDict:
     """Load the ADV5N6 (coastal BC) processor dataset."""
     try:
         return json.loads(_ADV5N6_DATA_PATH.read_text(encoding="utf-8"))
@@ -53,7 +56,7 @@ def _load_adv5n6_dataset() -> dict[str, object]:
 
 
 @lru_cache(maxsize=1)
-def _load_adv7n3_dataset() -> dict[str, object]:
+def _load_adv7n3_dataset() -> JSONDict:
     """Load the ADV7N3 processor dataset (Hyundai 210 vs JD 892)."""
     try:
         return json.loads(_ADV7N3_DATA_PATH.read_text(encoding="utf-8"))
@@ -62,7 +65,7 @@ def _load_adv7n3_dataset() -> dict[str, object]:
 
 
 @lru_cache(maxsize=1)
-def _load_tn166_dataset() -> dict[str, object]:
+def _load_tn166_dataset() -> JSONDict:
     """Load the TN-166 telescopic-boom processor dataset."""
     try:
         return json.loads(_TN166_DATA_PATH.read_text(encoding="utf-8"))
@@ -71,7 +74,7 @@ def _load_tn166_dataset() -> dict[str, object]:
 
 
 @lru_cache(maxsize=1)
-def _load_barko450_dataset() -> dict[str, object]:
+def _load_barko450_dataset() -> JSONDict:
     """Load the TN-46 Barko 450 loader dataset."""
     try:
         return json.loads(_BARKO450_DATA_PATH.read_text(encoding="utf-8"))
@@ -80,7 +83,7 @@ def _load_barko450_dataset() -> dict[str, object]:
 
 
 @lru_cache(maxsize=1)
-def _load_kizha2020_dataset() -> dict[str, object]:
+def _load_kizha2020_dataset() -> JSONDict:
     """Load the Kizha et al. (2020) loader dataset (hot vs cold yarding)."""
     try:
         return json.loads(_KIZHA2020_DATA_PATH.read_text(encoding="utf-8"))
@@ -91,7 +94,7 @@ def _load_kizha2020_dataset() -> dict[str, object]:
 
 
 @lru_cache(maxsize=1)
-def _load_hypro775_dataset() -> dict[str, object]:
+def _load_hypro775_dataset() -> JSONDict:
     """Load the HYPRO 775 tractor-processor dataset."""
     try:
         return json.loads(_HYPRO775_DATA_PATH.read_text(encoding="utf-8"))
@@ -100,7 +103,7 @@ def _load_hypro775_dataset() -> dict[str, object]:
 
 
 @lru_cache(maxsize=1)
-def _load_labelle_huss_dataset() -> dict[str, object]:
+def _load_labelle_huss_dataset() -> JSONDict:
     """Load the Labelle & Huß (2018) automatic bucking uplift dataset."""
     try:
         return json.loads(_LABELLE_HUSS_DATA_PATH.read_text(encoding="utf-8"))
@@ -111,7 +114,7 @@ def _load_labelle_huss_dataset() -> dict[str, object]:
 
 
 @lru_cache(maxsize=1)
-def _load_tn103_dataset() -> dict[str, object]:
+def _load_tn103_dataset() -> JSONDict:
     """Load the TN-103 Caterpillar DL221 processor dataset."""
     try:
         return json.loads(_TN103_DATA_PATH.read_text(encoding="utf-8"))
@@ -120,7 +123,7 @@ def _load_tn103_dataset() -> dict[str, object]:
 
 
 @lru_cache(maxsize=1)
-def _load_tr87_dataset() -> dict[str, object]:
+def _load_tr87_dataset() -> JSONDict:
     """Load the TR-87 Timberjack TJ90 processor dataset."""
     try:
         return json.loads(_TR87_DATA_PATH.read_text(encoding="utf-8"))
@@ -129,7 +132,7 @@ def _load_tr87_dataset() -> dict[str, object]:
 
 
 @lru_cache(maxsize=1)
-def _load_tr106_dataset() -> dict[str, object]:
+def _load_tr106_dataset() -> JSONDict:
     """Load the TR-106 lodgepole pine processor dataset."""
     try:
         return json.loads(_TR106_DATA_PATH.read_text(encoding="utf-8"))
@@ -138,7 +141,7 @@ def _load_tr106_dataset() -> dict[str, object]:
 
 
 @lru_cache(maxsize=1)
-def _load_visser_dataset() -> dict[str, object]:
+def _load_visser_dataset() -> JSONDict:
     """Load the Visser & Tolan (2015) processor dataset."""
     try:
         return json.loads(_VISSER2015_DATA_PATH.read_text(encoding="utf-8"))
@@ -149,7 +152,7 @@ def _load_visser_dataset() -> dict[str, object]:
 
 
 @lru_cache(maxsize=1)
-def _load_spinelli2010_dataset() -> dict[str, object]:
+def _load_spinelli2010_dataset() -> JSONDict:
     """Load the Spinelli et al. (2010) processor dataset."""
     try:
         return json.loads(_SPINELLI2010_DATA_PATH.read_text(encoding="utf-8"))
@@ -160,7 +163,7 @@ def _load_spinelli2010_dataset() -> dict[str, object]:
 
 
 @lru_cache(maxsize=1)
-def _load_bertone2025_dataset() -> dict[str, object]:
+def _load_bertone2025_dataset() -> JSONDict:
     """Load the Bertone & Manzone (2025) excavator-processor dataset."""
     try:
         return json.loads(_BERTONE2025_DATA_PATH.read_text(encoding="utf-8"))
@@ -171,10 +174,10 @@ def _load_bertone2025_dataset() -> dict[str, object]:
 
 
 @lru_cache(maxsize=1)
-def _load_borz2023_dataset() -> dict[str, object]:
+def _load_borz2023_dataset() -> JSONDict:
     """Load the Borz et al. (2023) Romanian processor dataset."""
     try:
-        return json.loads(_BORZ2023_DATA_PATH.read_text(encoding="utf-8"))
+        return cast(JSONDict, json.loads(_BORZ2023_DATA_PATH.read_text(encoding="utf-8")))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
         raise FileNotFoundError(
             f"Borz et al. (2023) landing processor data missing: {_BORZ2023_DATA_PATH}"
@@ -182,7 +185,7 @@ def _load_borz2023_dataset() -> dict[str, object]:
 
 
 @lru_cache(maxsize=1)
-def _load_nakagawa2010_dataset() -> dict[str, object]:
+def _load_nakagawa2010_dataset() -> JSONDict:
     """Load the Nakagawa et al. (2010) Japanese landing processor dataset."""
     try:
         return json.loads(_NAKAGAWA2010_DATA_PATH.read_text(encoding="utf-8"))
@@ -300,10 +303,10 @@ def get_labelle_huss_automatic_bucking_adjustment() -> AutomaticBuckingAdjustmen
 
 
 @lru_cache(maxsize=1)
-def _load_berry_log_grade_payload() -> dict[str, object]:
+def _load_berry_log_grade_payload() -> JSONDict:
     """Load Berry (2019) log grade emmeans for per-grade processing times."""
     try:
-        return json.loads(_BERRY_LOG_GRADES_PATH.read_text(encoding="utf-8"))
+        return cast(JSONDict, json.loads(_BERRY_LOG_GRADES_PATH.read_text(encoding="utf-8")))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
         raise FileNotFoundError(
             f"Berry (2019) log grade emmeans data missing: {_BERRY_LOG_GRADES_PATH}"
@@ -331,24 +334,29 @@ def get_berry_log_grade_stats() -> tuple[BerryLogGradeStat, ...]:
 
 
 @lru_cache(maxsize=1)
-def get_berry_log_grade_metadata() -> dict[str, object]:
+def get_berry_log_grade_metadata() -> JSONDict:
     """Return raw metadata payload for Berry (2019) log grade emmeans."""
     payload = _load_berry_log_grade_payload()
+    notes_field = payload.get("notes")
+    notes_tuple = tuple(str(note) for note in notes_field) if isinstance(notes_field, list) else ()
     return {
         "source": payload.get("source"),
         "description": payload.get("description"),
-        "notes": tuple(payload.get("notes" or [])),
+        "notes": notes_tuple,
     }
 
 
 @lru_cache(maxsize=1)
-def _load_carrier_profiles_raw() -> dict[str, dict[str, object]]:
+def _load_carrier_profiles_raw() -> JSONDictMap:
     """Load processor carrier profile metadata (purpose-built vs excavator)."""
     try:
-        data = json.loads(_CARRIER_PROFILE_PATH.read_text(encoding="utf-8"))
+        data = cast(JSONDict, json.loads(_CARRIER_PROFILE_PATH.read_text(encoding="utf-8")))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
         raise FileNotFoundError(f"Carrier profile data missing: {_CARRIER_PROFILE_PATH}") from exc
-    return data.get("carriers") or {}
+    carriers_raw = data.get("carriers")
+    if isinstance(carriers_raw, dict):
+        return cast(JSONDictMap, carriers_raw)
+    return {}
 
 
 def get_processor_carrier_profile(key: str) -> ProcessorCarrierProfile:
@@ -378,7 +386,7 @@ def get_processor_carrier_profile(key: str) -> ProcessorCarrierProfile:
     notes = payload.get("notes") or ()
     references = payload.get("references") or ()
 
-    def _coerce_float(value: object | None) -> float | None:
+    def _coerce_float(value: Any | None) -> float | None:
         if value is None:
             return None
         try:
@@ -499,12 +507,12 @@ def predict_berry2019_skid_effects(
 
 
 @lru_cache(maxsize=1)
-def _load_adv5n6_scenarios() -> dict[str, dict[str, object]]:
+def _load_adv5n6_scenarios() -> JSONDictMap:
     """Load ADV5N6 scenario definitions keyed by scenario name."""
     payload = _load_adv5n6_dataset()
     cost_meta = payload.get("costing") or {}
     base_year = cost_meta.get("base_year")
-    scenarios: dict[str, dict[str, object]] = {}
+    scenarios: JSONDictMap = {}
     for entry in payload.get("scenarios", []):
         scenario = dict(entry)
         scenario.setdefault("cost_base_year", base_year)
@@ -513,13 +521,13 @@ def _load_adv5n6_scenarios() -> dict[str, dict[str, object]]:
 
 
 @lru_cache(maxsize=1)
-def _load_tn103_scenarios() -> dict[str, dict[str, object]]:
+def _load_tn103_scenarios() -> JSONDictMap:
     """Load TN-103 line-processor scenario definitions."""
     payload = _load_tn103_dataset()
     defaults = payload.get("defaults") or {}
     cost_meta = payload.get("costing") or {}
     base_year = cost_meta.get("base_year")
-    scenarios: dict[str, dict[str, object]] = {}
+    scenarios: JSONDictMap = {}
     for entry in payload.get("scenarios", []):
         combined = {**defaults, **entry}
         combined.setdefault("cost_base_year", base_year)
@@ -528,7 +536,7 @@ def _load_tn103_scenarios() -> dict[str, dict[str, object]]:
 
 
 @lru_cache(maxsize=1)
-def _load_tn166_scenarios() -> dict[str, dict[str, object]]:
+def _load_tn166_scenarios() -> JSONDictMap:
     """Load TN-166 telescopic-boom scenario definitions."""
     payload = _load_tn166_dataset()
     defaults = payload.get("defaults") or {}
@@ -536,7 +544,7 @@ def _load_tn166_scenarios() -> dict[str, dict[str, object]]:
     accuracy = payload.get("accuracy")
     cost_meta = payload.get("costing") or {}
     base_year = cost_meta.get("base_year")
-    scenarios: dict[str, dict[str, object]] = {}
+    scenarios: JSONDictMap = {}
     for entry in payload.get("scenarios", []):
         combined = {**defaults, **entry}
         if cycle and "cycle_time_minutes" not in combined:
@@ -549,13 +557,13 @@ def _load_tn166_scenarios() -> dict[str, dict[str, object]]:
 
 
 @lru_cache(maxsize=1)
-def _load_barko450_scenarios() -> dict[str, dict[str, object]]:
+def _load_barko450_scenarios() -> JSONDictMap:
     """Load Barko 450 loader scenario definitions."""
     payload = _load_barko450_dataset()
     utilisation = payload.get("utilisation") or {}
     cost_meta = payload.get("costing") or {}
     base_year = cost_meta.get("base_year")
-    scenarios: dict[str, dict[str, object]] = {}
+    scenarios: JSONDictMap = {}
     for entry in payload.get("scenarios", []):
         combined = {**utilisation, **entry}
         combined.setdefault("cost_base_year", base_year)
@@ -564,13 +572,13 @@ def _load_barko450_scenarios() -> dict[str, dict[str, object]]:
 
 
 @lru_cache(maxsize=1)
-def _load_tr87_scenarios() -> dict[str, dict[str, object]]:
+def _load_tr87_scenarios() -> JSONDictMap:
     """Load TR-87 processor scenario definitions."""
     payload = _load_tr87_dataset()
     defaults = payload.get("defaults") or {}
     cost_meta = payload.get("costing") or {}
     base_year = cost_meta.get("base_year")
-    scenarios: dict[str, dict[str, object]] = {}
+    scenarios: JSONDictMap = {}
     for entry in payload.get("scenarios", []):
         combined = {**defaults, **entry}
         combined.setdefault("cost_base_year", base_year)
@@ -579,13 +587,13 @@ def _load_tr87_scenarios() -> dict[str, dict[str, object]]:
 
 
 @lru_cache(maxsize=1)
-def _load_tr106_scenarios() -> dict[str, dict[str, object]]:
+def _load_tr106_scenarios() -> JSONDictMap:
     """Load TR-106 processor scenario definitions."""
     payload = _load_tr106_dataset()
     defaults = payload.get("defaults") or {}
     cost_meta = payload.get("costing") or {}
     base_year = cost_meta.get("base_year")
-    scenarios: dict[str, dict[str, object]] = {}
+    scenarios: JSONDictMap = {}
     for entry in payload.get("scenarios", []):
         combined = {**defaults, **entry}
         combined.setdefault("cost_base_year", base_year)
@@ -1062,9 +1070,12 @@ def estimate_processor_productivity_labelle2019_dbh(
     delay_free *= auto_multiplier
     productivity = delay_free * delay_multiplier
 
+    species_literal = cast(Literal["spruce", "beech"], key[0])
+    treatment_literal = cast(Literal["clear_cut", "selective_cut"], key[1])
+
     return Labelle2019ProcessorProductivityResult(
-        species=key[0],
-        treatment=key[1],
+        species=species_literal,
+        treatment=treatment_literal,
         dbh_cm=dbh_cm,
         intercept=coeffs.intercept,
         linear=coeffs.linear,
@@ -1163,8 +1174,10 @@ def estimate_processor_productivity_labelle2016(
     delay_free *= auto_multiplier
     productivity = delay_free * delay_multiplier
 
+    tree_form_literal = cast(Literal["acceptable", "unacceptable"], key)
+
     return Labelle2016ProcessorProductivityResult(
-        tree_form=key,
+        tree_form=tree_form_literal,
         dbh_cm=dbh_cm,
         coefficient_a=coeff_a,
         exponent_b=exponent_b,
@@ -1588,9 +1601,12 @@ def estimate_processor_productivity_labelle2019_volume(
     delay_free *= auto_multiplier
     productivity = delay_free * delay_multiplier
 
+    species_literal = cast(Literal["spruce", "beech"], key[0])
+    treatment_literal = cast(Literal["clear_cut", "selective_cut"], key[1])
+
     return Labelle2019VolumeProcessorProductivityResult(
-        species=key[0],
-        treatment=key[1],
+        species=species_literal,
+        treatment=treatment_literal,
         volume_m3=volume_m3,
         intercept=coeffs.intercept,
         linear=coeffs.linear,
@@ -2053,7 +2069,7 @@ class Nakagawa2010ProcessorProductivityResult:
 
 
 @lru_cache(maxsize=1)
-def _load_hypro775_scenario() -> dict[str, object]:
+def _load_hypro775_scenario() -> JSONDict:
     payload = _load_hypro775_dataset()
     scenario = payload.get("scenario") or {}
     notes = tuple(str(n) for n in scenario.get("notes") or [])
@@ -2526,6 +2542,7 @@ def estimate_processor_productivity_nakagawa2010(
         model_used = "dbh"
     else:
         piece_model = models.get("piece_volume") or {}
+        assert piece_volume_m3 is not None
         coeff = float(piece_model.get("coefficient", 20.46) or 20.46)
         exponent = float(piece_model.get("exponent", 0.482) or 0.482)
         base_productivity = coeff * (piece_volume_m3**exponent)
@@ -3079,12 +3096,28 @@ def estimate_processor_productivity_adv7n3(
     def _float(value: object | None) -> float | None:
         if value is None:
             return None
-        return float(value)
+        if isinstance(value, (int, float)):
+            return float(value)
+        if isinstance(value, str):
+            stripped = value.strip()
+            if not stripped:
+                return None
+            return float(stripped)
+        return None
+
+    def _float_default(value: object | None, default: float = 0.0) -> float:
+        coerced = _float(value)
+        return coerced if coerced is not None else default
 
     def _float_mapping(mapping: Mapping[str, object] | None) -> Mapping[str, float] | None:
         if not mapping:
             return None
-        return {key: float(value) for key, value in mapping.items()}
+        result: dict[str, float] = {}
+        for key, value in mapping.items():
+            coerced = _float(value)
+            if coerced is not None:
+                result[key] = coerced
+        return result or None
 
     shift = payload.get("shift_summary") or {}
     detailed = payload.get("detailed_timing") or {}
@@ -3108,11 +3141,11 @@ def estimate_processor_productivity_adv7n3(
         machine_id=payload["id"],
         machine_label=payload.get("label", payload["id"]),
         description=payload.get("description", ""),
-        shift_productivity_m3_per_pmh=float(shift.get("productivity_m3_per_pmh") or 0.0),
-        shift_productivity_m3_per_smh=float(shift.get("productivity_m3_per_smh") or 0.0),
-        utilisation_percent=float(shift.get("utilisation_percent") or 0.0),
-        availability_percent=float(shift.get("availability_percent") or 0.0),
-        total_volume_m3=float(shift.get("total_volume_m3") or 0.0),
+        shift_productivity_m3_per_pmh=_float_default(shift.get("productivity_m3_per_pmh")),
+        shift_productivity_m3_per_smh=_float_default(shift.get("productivity_m3_per_smh")),
+        utilisation_percent=_float_default(shift.get("utilisation_percent")),
+        availability_percent=_float_default(shift.get("availability_percent")),
+        total_volume_m3=_float_default(shift.get("total_volume_m3")),
         detailed_productivity_m3_per_pmh=_float(detailed.get("productivity_m3_per_pmh")),
         detailed_stems_per_pmh=_float(detailed.get("stems_per_pmh")),
         detailed_avg_stem_volume_m3=_float(detailed.get("average_stem_volume_m3")),
@@ -3428,13 +3461,13 @@ def estimate_loader_productivity_barko450(
 
 
 @lru_cache(maxsize=1)
-def _load_kizha2020_scenarios() -> dict[str, dict[str, object]]:
+def _load_kizha2020_scenarios() -> JSONDictMap:
     payload = _load_kizha2020_dataset()
     cost_meta = payload.get("costing") or {}
     machine_rate = float(cost_meta.get("machine_rate_per_pmh", 0.0) or 0.0)
     currency = cost_meta.get("currency")
     base_year = cost_meta.get("base_year")
-    scenarios: dict[str, dict[str, object]] = {}
+    scenarios: JSONDictMap = {}
     for entry in payload.get("scenarios", []):
         mode = entry.get("mode")
         if not mode:
@@ -3487,8 +3520,10 @@ def estimate_loader_hot_cold_productivity(
     effective = machine_rate + delay_cost
 
     notes = payload.get("notes") or ()
+    mode_value = str(payload.get("mode", mode)).lower()
+    mode_literal = cast(Literal["hot", "cold"], mode_value)
     return LoaderHotColdProductivityResult(
-        mode=payload.get("mode", mode).lower(),  # type: ignore[arg-type]
+        mode=mode_literal,
         description=payload.get("description", ""),
         utilisation_percent=float(payload.get("utilisation_percent", 0.0) or 0.0),
         operational_delay_percent_of_total_time=float(

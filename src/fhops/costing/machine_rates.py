@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import re
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
@@ -88,25 +88,42 @@ def load_default_machine_rates() -> Sequence[MachineRate]:
     for entry in data:
         base_year = int(entry.get("cost_base_year", TARGET_YEAR))
 
-        def adjust(value: float | int | None) -> float:
-            if value is None:
+        def adjust(raw: float | int | None) -> float:
+            if raw is None:
                 return 0.0
-            return float(inflate_value(float(value), base_year))
+            base_value = float(raw)
+            inflated = inflate_value(base_value, base_year)
+            return float(inflated) if inflated is not None else base_value
+
+        ownership_raw = entry.get("ownership_cost_per_smh")
+        operating_raw = entry.get("operating_cost_per_smh")
+        default_utilisation_raw = entry.get("default_utilization")
+        repair_cost_raw = entry.get("repair_maintenance_cost_per_smh")
+        usage_raw = entry.get("repair_maintenance_usage_multipliers")
+        usage_multipliers = (
+            {int(k): float(v) for k, v in usage_raw.items()}
+            if isinstance(usage_raw, Mapping)
+            else None
+        )
 
         rates.append(
             MachineRate(
                 machine_name=entry["machine_name"],
                 role=entry["role"],
-                ownership_cost_per_smh=adjust(entry["ownership_cost_per_smh"]),
-                operating_cost_per_smh=adjust(entry["operating_cost_per_smh"]),
-                default_utilization=float(entry["default_utilization"]),
+                ownership_cost_per_smh=adjust(
+                    float(ownership_raw) if ownership_raw is not None else None
+                ),
+                operating_cost_per_smh=adjust(
+                    float(operating_raw) if operating_raw is not None else None
+                ),
+                default_utilization=float(default_utilisation_raw or 0.0),
                 move_in_cost=adjust(entry.get("move_in_cost", 0.0)),
                 source=entry.get("source", ""),
                 notes=entry.get("notes"),
                 cost_base_year=base_year,
                 repair_maintenance_cost_per_smh=(
-                    float(inflate_value(entry["repair_maintenance_cost_per_smh"], base_year))
-                    if entry.get("repair_maintenance_cost_per_smh") is not None
+                    inflate_value(float(repair_cost_raw), base_year)
+                    if repair_cost_raw is not None
                     else None
                 ),
                 repair_maintenance_reference_hours=(
@@ -114,14 +131,7 @@ def load_default_machine_rates() -> Sequence[MachineRate]:
                     if entry.get("repair_maintenance_reference_hours") is not None
                     else None
                 ),
-                repair_maintenance_usage_multipliers=(
-                    {
-                        int(k): float(v)
-                        for k, v in entry["repair_maintenance_usage_multipliers"].items()
-                    }
-                    if entry.get("repair_maintenance_usage_multipliers") is not None
-                    else None
-                ),
+                repair_maintenance_usage_multipliers=usage_multipliers,
             )
         )
     return tuple(rates)

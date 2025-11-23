@@ -517,12 +517,15 @@ class Scenario(BaseModel):
             if block.latest_finish is not None and block.latest_finish > self.num_days:
                 raise ValueError(f"Block {block.id} latest_finish exceeds num_days={self.num_days}")
 
-        for entry in self.calendar:
-            if entry.machine_id not in machine_ids:
-                raise ValueError(f"Calendar entry references unknown machine_id={entry.machine_id}")
-            if entry.day > self.num_days:
+        for calendar_entry in self.calendar:
+            if calendar_entry.machine_id not in machine_ids:
                 raise ValueError(
-                    f"Calendar entry day {entry.day} exceeds scenario horizon num_days={self.num_days}"
+                    f"Calendar entry references unknown machine_id={calendar_entry.machine_id}"
+                )
+            if calendar_entry.day > self.num_days:
+                raise ValueError(
+                    "Calendar entry day "
+                    f"{calendar_entry.day} exceeds scenario horizon num_days={self.num_days}"
                 )
 
         if self.shift_calendar:
@@ -596,12 +599,12 @@ class Scenario(BaseModel):
                             )
         if self.road_construction:
             seen_jobs: set[str] = set()
-            for entry in self.road_construction:
-                if entry.id in seen_jobs:
+            for road_job in self.road_construction:
+                if road_job.id in seen_jobs:
                     raise ValueError(
-                        f"Duplicate road_construction id '{entry.id}'. IDs must be unique."
+                        f"Duplicate road_construction id '{road_job.id}'. IDs must be unique."
                     )
-                seen_jobs.add(entry.id)
+                seen_jobs.add(road_job.id)
 
         return self
 

@@ -7,6 +7,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
+from typing import Any, cast
 
 
 def _validate_inputs(turn_volume_m3: float, yarding_distance_m: float) -> None:
@@ -195,6 +196,25 @@ class TN157Case:
         CPI base year for the costs (defaults to 1991).
     """
 
+    case_id: str
+    label: str
+    falling_method: str
+    stand_type: str
+    yarding_direction: str
+    slope_percent_average: float
+    average_turn_volume_m3: float
+    average_yarding_distance_m: float
+    logs_per_turn: float
+    yarding_minutes: float
+    total_turns: float
+    logs_per_shift: float
+    volume_per_shift_m3: float
+    productivity_m3_per_pmh: float
+    logs_per_yarding_hour: float
+    cost_per_log_cad_1991: float
+    cost_per_m3_cad_1991: float
+    cost_base_year: int = 1991
+
     @property
     def cycle_time_minutes(self) -> float:
         """Average cycle time (minutes/turn) for the case."""
@@ -243,11 +263,14 @@ def _load_tn157_cases() -> Mapping[str, TN157Case]:
     if not _TN157_PATH.exists():
         raise FileNotFoundError(f"TN157 dataset not found: {_TN157_PATH}")
     with _TN157_PATH.open(encoding="utf-8") as fh:
-        payload = json.load(fh)
+        payload = cast(dict[str, Any], json.load(fh))
 
     cases: dict[str, TN157Case] = {}
-    raw_entries = payload.get("case_studies", [])
-    for entry in raw_entries:
+    raw_entries = payload.get("case_studies") or []
+    entries: list[dict[str, Any]] = [
+        cast(dict[str, Any], entry) for entry in raw_entries if isinstance(entry, dict)
+    ]
+    for entry in entries:
         case_id = str(entry["id"])
         cases[case_id] = TN157Case(
             case_id=case_id,
@@ -269,37 +292,30 @@ def _load_tn157_cases() -> Mapping[str, TN157Case]:
             cost_per_m3_cad_1991=float(entry.get("cost_per_m3_cad_1991", 0.0)),
         )
 
-    if raw_entries:
-        total_turns = sum(int(entry.get("total_turns", 0)) for entry in raw_entries)
-        yarding_minutes = sum(float(entry.get("yarding_minutes", 0.0)) for entry in raw_entries)
-        logs_per_shift = sum(int(entry.get("logs_per_shift_8h", 0)) for entry in raw_entries)
-        volume_per_shift = sum(
-            float(entry.get("volume_per_shift_m3", 0.0)) for entry in raw_entries
-        )
+    if entries:
+        total_turns = sum(int(entry.get("total_turns", 0)) for entry in entries)
+        yarding_minutes = sum(float(entry.get("yarding_minutes", 0.0)) for entry in entries)
+        logs_per_shift = sum(int(entry.get("logs_per_shift_8h", 0)) for entry in entries)
+        volume_per_shift = sum(float(entry.get("volume_per_shift_m3", 0.0)) for entry in entries)
 
         def weighted(key: str, default: float = 0.0) -> float:
             """Helper to compute turn-weighted averages for combined TN157 stats."""
-            values = {str(entry["id"]): float(entry.get(key, 0.0)) for entry in raw_entries}
-            weights = {
-                str(entry["id"]): float(entry.get("total_turns", 0.0)) for entry in raw_entries
-            }
+            values = {str(entry["id"]): float(entry.get(key, 0.0)) for entry in entries}
+            weights = {str(entry["id"]): float(entry.get("total_turns", 0.0)) for entry in entries}
             return _weighted_average(values, weights, default=default)
 
         avg_turn_volume = weighted("average_turn_volume_m3")
         avg_yarding_distance = weighted("average_yarding_distance_m")
         avg_logs_per_turn = weighted("logs_per_turn")
         avg_slope = _weighted_average(
-            {
-                str(entry["id"]): float(entry.get("slope_percent_average", 0.0))
-                for entry in raw_entries
-            },
-            {str(entry["id"]): float(entry.get("yarding_minutes", 0.0)) for entry in raw_entries},
+            {str(entry["id"]): float(entry.get("slope_percent_average", 0.0)) for entry in entries},
+            {str(entry["id"]): float(entry.get("yarding_minutes", 0.0)) for entry in entries},
         )
         prod_weighted = (
             sum(
                 float(entry.get("m3_per_yarding_hour", 0.0))
                 * float(entry.get("yarding_minutes", 0.0))
-                for entry in raw_entries
+                for entry in entries
             )
             / yarding_minutes
             if yarding_minutes > 0
@@ -309,7 +325,7 @@ def _load_tn157_cases() -> Mapping[str, TN157Case]:
             sum(
                 float(entry.get("logs_per_yarding_hour", 0.0))
                 * float(entry.get("yarding_minutes", 0.0))
-                for entry in raw_entries
+                for entry in entries
             )
             / yarding_minutes
             if yarding_minutes > 0
@@ -319,7 +335,7 @@ def _load_tn157_cases() -> Mapping[str, TN157Case]:
             sum(
                 float(entry.get("cost_per_log_cad_1991", 0.0))
                 * float(entry.get("logs_per_shift_8h", 0.0))
-                for entry in raw_entries
+                for entry in entries
             )
             / logs_per_shift
             if logs_per_shift > 0
@@ -329,7 +345,7 @@ def _load_tn157_cases() -> Mapping[str, TN157Case]:
             sum(
                 float(entry.get("cost_per_m3_cad_1991", 0.0))
                 * float(entry.get("volume_per_shift_m3", 0.0))
-                for entry in raw_entries
+                for entry in entries
             )
             / volume_per_shift
             if volume_per_shift > 0
@@ -449,6 +465,17 @@ class TN147Case:
         CPI base year (default 1989).
     """
 
+    case_id: str
+    label: str
+    average_turn_volume_m3: float | None
+    average_yarding_distance_m: float | None
+    logs_per_turn: float | None
+    logs_per_shift_8h: float
+    volume_per_shift_m3: float
+    cost_per_log_cad_1989: float
+    cost_per_m3_cad_1989: float
+    cost_base_year: int = 1989
+
     @property
     def productivity_m3_per_pmh(self) -> float:
         """Productivity for the case (m³ per productive hour)."""
@@ -456,8 +483,8 @@ class TN147Case:
 
 
 def _tn147_weighted_average(
-    values: Mapping[str, float], weights: Mapping[str, float], default: float | None = None
-) -> float | None:
+    values: Mapping[str, float], weights: Mapping[str, float], default: float = 0.0
+) -> float:
     """Weighted average helper used for TN147 combined rows."""
     total_weight = sum(weights.values())
     if total_weight <= 0:
@@ -471,8 +498,11 @@ def _load_tn147_cases() -> Mapping[str, TN147Case]:
     if not _TN147_PATH.exists():
         raise FileNotFoundError(f"TN147 dataset not found: {_TN147_PATH}")
     with _TN147_PATH.open(encoding="utf-8") as fh:
-        payload = json.load(fh)
-    entries: Sequence[Mapping[str, object]] = payload.get("case_studies", [])
+        payload = cast(dict[str, Any], json.load(fh))
+    raw_entries = payload.get("case_studies") or []
+    entries: list[dict[str, Any]] = [
+        cast(dict[str, Any], entry) for entry in raw_entries if isinstance(entry, dict)
+    ]
     cases: dict[str, TN147Case] = {}
     for entry in entries:
         case_id = str(entry["id"])
@@ -660,6 +690,24 @@ class TR122Treatment:
         CPI base year (1996).
     """
 
+    treatment_id: str
+    label: str
+    volume_per_shift_m3: float
+    yarder_production_hours: float
+    yarder_total_hours: float
+    loader_hours: float
+    avg_piece_m3: float
+    avg_pieces_per_cycle: float
+    cycle_volume_m3: float
+    yarding_distance_m: float | None
+    cycle_minutes: float | None
+    cost_total_per_m3_cad_1996: float
+    yarder_cost_per_m3_cad_1996: float
+    loader_cost_per_m3_cad_1996: float
+    yarding_labour_per_m3_cad_1996: float
+    loading_labour_per_m3_cad_1996: float
+    cost_base_year: int = 1996
+
     @property
     def productivity_m3_per_pmh(self) -> float:
         """Productivity (m³/PMH) derived from the 8 h shift volume."""
@@ -672,10 +720,13 @@ def _load_tr122_treatments() -> Mapping[str, TR122Treatment]:
     if not _TR122_PATH.exists():
         raise FileNotFoundError(f"TR122 dataset not found: {_TR122_PATH}")
     with _TR122_PATH.open(encoding="utf-8") as fh:
-        payload = json.load(fh)
+        payload = cast(dict[str, Any], json.load(fh))
     treatments: dict[str, TR122Treatment] = {}
     cycle_data = payload.get("cycle_distribution", {})
-    for entry in payload.get("treatments", []):
+    for entry_obj in payload.get("treatments", []):
+        if not isinstance(entry_obj, dict):
+            continue
+        entry = cast(dict[str, Any], entry_obj)
         treatment_id = entry["id"]
         label = treatment_id.replace("_", " ").title()
         costs = entry.get("costs", {})
@@ -797,8 +848,28 @@ class ADV5N28Block:
         CPI base year (default 2002).
     """
 
+    block_id: str
+    label: str
+    silviculture_system: str
+    area_ha: float
+    net_volume_m3_per_ha: float
+    slope_percent_average: float
+    yarding_direction: str
+    average_turn_volume_m3: float
+    average_yarding_distance_m: float
+    logs_per_turn: float
+    productivity_m3_per_shift_8h: float
+    productivity_m3_per_smh: float
+    productivity_m3_per_pmh: float
+    productivity_m3_per_yarding_hour: float
+    cost_total_actual_per_m3_cad_2002: float
+    cost_total_estimated_per_m3_cad_2002: float | None
+    cost_helicopter_reference_per_m3_cad_2002: float | None
+    notes: tuple[str, ...]
+    cost_base_year: int = 2002
 
-def _maybe_float(value: object | None) -> float | None:
+
+def _maybe_float(value: Any | None) -> float | None:
     """Return float(value) when possible, otherwise ``None``."""
     if value is None:
         return None
@@ -814,16 +885,23 @@ def _load_adv5n28_blocks() -> Mapping[str, ADV5N28Block]:
     if not _ADV5N28_PATH.exists():
         raise FileNotFoundError(f"ADV5N28 dataset not found: {_ADV5N28_PATH}")
     with _ADV5N28_PATH.open(encoding="utf-8") as fh:
-        payload = json.load(fh)
+        payload = cast(dict[str, Any], json.load(fh))
 
     blocks: dict[str, ADV5N28Block] = {}
-    for entry in payload.get("blocks", []):
+    for entry_obj in payload.get("blocks", []):
+        if not isinstance(entry_obj, dict):
+            continue
+        entry = cast(dict[str, Any], entry_obj)
         block_id = entry.get("id")
         if not block_id:
             continue
-        yarding = entry.get("yarding", {}) or {}
-        costs = entry.get("costs_cad_2002_per_m3", {}) or {}
+        yarding = cast(dict[str, Any], entry.get("yarding") or {})
+        costs = cast(dict[str, Any], entry.get("costs_cad_2002_per_m3") or {})
         label = entry.get("silviculture_system") or block_id.replace("_", " ").title()
+        notes_payload = entry.get("notes") or []
+        notes: tuple[str, ...] = tuple(
+            str(note) for note in notes_payload if isinstance(note, (str, int, float))
+        )
         blocks[block_id.lower()] = ADV5N28Block(
             block_id=block_id,
             label=label,
@@ -852,7 +930,7 @@ def _load_adv5n28_blocks() -> Mapping[str, ADV5N28Block]:
             cost_helicopter_reference_per_m3_cad_2002=_maybe_float(
                 costs.get("local_helicopter_reference_total")
             ),
-            notes=tuple(entry.get("notes", [])),
+            notes=notes,
         )
     return blocks
 

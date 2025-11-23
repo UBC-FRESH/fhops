@@ -6,6 +6,7 @@ import json
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
+from typing import Any, cast
 
 _ADV2N21_PATH = (
     Path(__file__).resolve().parents[3]
@@ -46,10 +47,10 @@ class ADV2N21Treatment:
 
 
 @lru_cache(maxsize=1)
-def _load_adv2n21_payload() -> dict:
+def _load_adv2n21_payload() -> dict[str, Any]:
     if not _ADV2N21_PATH.exists():
         raise FileNotFoundError(f"ADV2N21 dataset missing: {_ADV2N21_PATH}")
-    return json.loads(_ADV2N21_PATH.read_text(encoding="utf-8"))
+    return cast(dict[str, Any], json.loads(_ADV2N21_PATH.read_text(encoding="utf-8")))
 
 
 def _build_stand_snapshot(data: dict | None) -> ADV2N21StandSnapshot | None:
@@ -71,7 +72,7 @@ def _build_stand_snapshot(data: dict | None) -> ADV2N21StandSnapshot | None:
     )
 
 
-def _maybe_float(value: object) -> float | None:
+def _maybe_float(value: Any) -> float | None:
     if value is None:
         return None
     try:
@@ -83,7 +84,13 @@ def _maybe_float(value: object) -> float | None:
 def load_adv2n21_treatments() -> tuple[ADV2N21Treatment, ...]:
     payload = _load_adv2n21_payload()
     treatments = []
-    for entry in payload.get("costs", {}).get("treatments", []):
+    costs_section = cast(dict[str, Any], payload.get("costs") or {})
+    cost_entries = costs_section.get("treatments") or []
+    for entry_obj in cost_entries:
+        if not isinstance(entry_obj, dict):
+            continue
+        entry = cast(dict[str, Any], entry_obj)
+        cost_value = _maybe_float(entry.get("cost_per_m3_cad"))
         treatments.append(
             ADV2N21Treatment(
                 id=str(entry["id"]),
@@ -91,9 +98,9 @@ def load_adv2n21_treatments() -> tuple[ADV2N21Treatment, ...]:
                 treatment_type=str(entry.get("treatment_type", "unknown")),
                 objective=str(entry.get("objective", "")),
                 area_ha=_maybe_float(entry.get("area_ha")),
-                cost_per_m3_cad_1997=float(entry["cost_per_m3_cad"]),
+                cost_per_m3_cad_1997=float(cost_value or 0.0),
                 cost_increase_percent_vs_clearcut1=float(
-                    entry.get("cost_increase_percent_vs_clearcut1", 0.0)
+                    _maybe_float(entry.get("cost_increase_percent_vs_clearcut1")) or 0.0
                 ),
                 site_limitations=str(entry.get("site_limitations", "")).strip(),
                 cppt_classification=entry.get("cppt_classification"),

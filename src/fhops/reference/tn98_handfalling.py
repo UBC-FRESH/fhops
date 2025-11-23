@@ -70,7 +70,7 @@ def _parse_regressions(payload: Mapping[str, Any]) -> Mapping[str, TN98Regressio
 def _parse_diameter_records(
     payload: Mapping[str, Any],
 ) -> Mapping[str, Sequence[TN98DiameterRecord]]:
-    result: dict[str, list[TN98DiameterRecord]] = {}
+    result: dict[str, tuple[TN98DiameterRecord, ...]] = {}
     raw = payload.get("per_diameter_class", {})
     for species, entries in raw.items():
         parsed: list[TN98DiameterRecord] = []

@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
 import pandas as pd
 import yaml
@@ -81,7 +81,7 @@ def _as_optional_string(value: object) -> str | None:
     if isinstance(value, str):
         stripped = value.strip()
         return stripped or None
-    if pd.isna(value):
+    if pd.isna(cast("Any", value)):
         return None
     return str(value)
 
@@ -155,7 +155,7 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
             raise FileNotFoundError(candidate)
         return candidate
 
-    blocks_raw = read_csv(require("blocks")).to_dict("records")
+    blocks_raw = cast(list[dict[str, object]], read_csv(require("blocks")).to_dict("records"))
     _normalise_optional_block_fields(blocks_raw)
     blocks = TypeAdapter(list[Block]).validate_python(blocks_raw)
     machines = TypeAdapter(list[Machine]).validate_python(
@@ -172,7 +172,9 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
     )
     road_construction = None
     if "road_construction" in data_section:
-        road_rows = read_csv(require("road_construction")).to_dict("records")
+        road_rows = cast(
+            list[dict[str, object]], read_csv(require("road_construction")).to_dict("records")
+        )
         _normalise_road_rows(road_rows)
         road_construction = TypeAdapter(list[RoadConstruction]).validate_python(road_rows)
     elif "road_construction" in meta:

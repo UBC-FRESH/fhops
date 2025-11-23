@@ -195,7 +195,7 @@ def estimate_forwarder_productivity_bc(
             )
             reference = "Eriksson & Lindroos 2014 (Thinning)"
 
-        params = {
+        params_eriksson: ForwarderParamDict = {
             "mean_extraction_distance_m": mean_extraction_distance_m,
             "mean_stem_size_m3": mean_stem_size_m3,
             "load_capacity_m3": load_capacity_m3,
@@ -204,7 +204,7 @@ def estimate_forwarder_productivity_bc(
             model=model,
             predicted_m3_per_pmh=value,
             reference=reference,
-            parameters=params,
+            parameters=params_eriksson,
         )
 
     if model in _BRUSHWOOD_MODELS:
@@ -232,7 +232,7 @@ def estimate_forwarder_productivity_bc(
             harwarder_payload_m3=payload_value,
             grapple_load_unloading_m3=unloading_value,
         )
-        params = {
+        params_brushwood: ForwarderParamDict = {
             "harvested_trees_per_ha": harvested_trees_per_ha,
             "average_tree_volume_dm3": average_tree_volume_dm3,
             "forwarding_distance_m": forwarding_distance_m,
@@ -243,7 +243,7 @@ def estimate_forwarder_productivity_bc(
             model=model,
             predicted_m3_per_pmh=value,
             reference="Laitila & Väätäinen 2020 (Brushwood Harwarder)",
-            parameters=params,
+            parameters=params_brushwood,
         )
 
     if model in (ForwarderBCModel.GHAFFARIYAN_SMALL, ForwarderBCModel.GHAFFARIYAN_LARGE):
@@ -266,7 +266,7 @@ def estimate_forwarder_productivity_bc(
                 slope_factor=multiplier,
             )
             reference = "Ghaffariyan et al. 2019 (20 t forwarder)"
-        params: dict[str, float | str] = {
+        params_ghaffariyan: ForwarderParamDict = {
             "extraction_distance_m": extraction_distance_m,
             "slope_class": slope_class.value,
             "slope_factor": multiplier,
@@ -275,7 +275,7 @@ def estimate_forwarder_productivity_bc(
             model=model,
             predicted_m3_per_pmh=value,
             reference=reference,
-            parameters=params,
+            parameters=params_ghaffariyan,
         )
 
     if model in _ADV1N12_MODELS:
@@ -284,12 +284,12 @@ def estimate_forwarder_productivity_bc(
         if extraction_distance_m <= 0:
             raise ValueError("extraction_distance_m must be > 0")
         value = 8.4438 * math.exp(-0.004 * extraction_distance_m)
-        params = {"extraction_distance_m": extraction_distance_m}
+        params_adv1n12: ForwarderParamDict = {"extraction_distance_m": extraction_distance_m}
         return ForwarderBCResult(
             model=model,
             predicted_m3_per_pmh=value,
             reference="FPInnovations Advantage Vol. 1 No. 12 (Valmet 646 shortwood forwarder)",
-            parameters=params,
+            parameters=params_adv1n12,
         )
 
     if model in _ADV6N10_MODELS:
@@ -318,7 +318,7 @@ def estimate_forwarder_productivity_bc(
             trail_length_m=trail_length_m,
             products_per_trail=products_per_trail,
         )
-        params = {
+        params_adv6n10: ForwarderParamDict = {
             "payload_m3": payload_m3,
             "mean_log_length_m": mean_log_length_m,
             "travel_speed_m_per_min": travel_speed_m_per_min,
@@ -329,7 +329,7 @@ def estimate_forwarder_productivity_bc(
             model=model,
             predicted_m3_per_pmh=value,
             reference="Gingras & Favreau 2005 (ADV6N10)",
-            parameters=params,
+            parameters=params_adv6n10,
         )
 
     required = {
@@ -356,7 +356,7 @@ def estimate_forwarder_productivity_bc(
         travel_in_unit_m=travel_in_unit_m,
         distance_in_m=distance_in_m,
     )
-    params = {
+    params_kellogg: ForwarderParamDict = {
         "load_type": load_type.value,
         "volume_per_load_m3": volume_per_load_m3,
         "distance_out_m": distance_out_m,
@@ -367,7 +367,7 @@ def estimate_forwarder_productivity_bc(
         model=model,
         predicted_m3_per_pmh=value,
         reference="Kellogg & Bettinger 1994 (FMG 910)",
-        parameters=params,
+        parameters=params_kellogg,
     )
 
 
@@ -449,3 +449,5 @@ __all__ = [
     "ForwarderBCResult",
     "estimate_forwarder_productivity_bc",
 ]
+# Shared parameter dict type for CLI echo payloads
+ForwarderParamDict = dict[str, float | str | bool]

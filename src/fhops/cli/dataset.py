@@ -9,7 +9,7 @@ from datetime import UTC, datetime
 from enum import Enum
 from functools import cache
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal, TypeVar, cast
 
 import typer
 from click.core import ParameterSource
@@ -256,6 +256,8 @@ else:
 _TN258_LATERAL_LIMIT_M = 30.0
 _TN258_MAX_SKYLINE_TENSION_KN = 147.0
 _TN98_SPECIES = ("cedar", "douglas_fir", "hemlock", "all_species")
+FloatValue = TypeVar("FloatValue", float, float | None)
+IntValue = TypeVar("IntValue", int, int | None)
 _ADV4N7_RISK_CHOICES = tuple(adv4n7_risk_ids())
 _DEFAULT_ADV4N7_RISK = adv4n7_default_risk_id()
 _TRACTOR_DRIVE_BY_ROAD_MACHINE = {
@@ -343,13 +345,17 @@ def _extract_preset_costs(meta: Mapping[str, Any] | None) -> dict[str, float] | 
     costs: dict[str, float] = {}
     base_year = meta.get("cost_base_year")
     cost_per_m3 = meta.get("cost_per_m3")
-    if base_year and isinstance(cost_per_m3, int | float):
+    if base_year and isinstance(cost_per_m3, (int, float)):
         costs["observed_cost_per_m3_cad_base"] = float(cost_per_m3)
-        costs["observed_cost_per_m3_cad_2024"] = float(inflate_value(cost_per_m3, int(base_year)))
+        inflated = inflate_value(float(cost_per_m3), int(base_year))
+        if inflated is not None:
+            costs["observed_cost_per_m3_cad_2024"] = float(inflated)
     cost_per_log = meta.get("cost_per_log")
-    if base_year and isinstance(cost_per_log, int | float):
+    if base_year and isinstance(cost_per_log, (int, float)):
         costs["observed_cost_per_log_cad_base"] = float(cost_per_log)
-        costs["observed_cost_per_log_cad_2024"] = float(inflate_value(cost_per_log, int(base_year)))
+        inflated_log = inflate_value(float(cost_per_log), int(base_year))
+        if inflated_log is not None:
+            costs["observed_cost_per_log_cad_2024"] = float(inflated_log)
     projected = meta.get("projected_cost_per_m3")
     projected_target = meta.get("projected_cost_per_m3_target")
     if isinstance(projected, int | float):
@@ -504,8 +510,8 @@ def _apply_loader_system_defaults(
             hot_cold_mode,
             False,
         )
-    overrides = system_productivity_overrides(system, ProductivityMachineRole.LOADER.value)
-    if not overrides:
+    overrides_raw = system_productivity_overrides(system, ProductivityMachineRole.LOADER.value)
+    if not overrides_raw:
         return (
             loader_model,
             piece_size_m3,
@@ -524,36 +530,31 @@ def _apply_loader_system_defaults(
             hot_cold_mode,
             False,
         )
+    overrides: dict[str, float | str] = dict(overrides_raw)
     used = False
 
     def maybe_float(
         key: str,
-        current: float | None,
+        current: FloatValue,
         supplied_flag: bool,
         *,
         allow_zero: bool = False,
         allow_negative: bool = False,
         max_value: float | None = None,
-    ) -> tuple[float | None, bool]:
+    ) -> tuple[FloatValue, bool]:
         if supplied_flag:
             return current, False
         value = overrides.get(key)
         if value is None:
             return current, False
-        try:
-            coerced = float(value)
-        except (TypeError, ValueError) as exc:  # pragma: no cover - defensive
-            raise ValueError(f"Invalid loader override for '{key}': {value}") from exc
-        if not allow_negative:
-            if allow_zero:
-                if coerced < 0:
-                    raise ValueError(f"Loader override '{key}' must be ≥ 0 (got {coerced}).")
-            else:
-                if coerced <= 0:
-                    raise ValueError(f"Loader override '{key}' must be > 0 (got {coerced}).")
-        if max_value is not None and coerced > max_value:
-            raise ValueError(f"Loader override '{key}' must be ≤ {max_value} (got {coerced}).")
-        return coerced, True
+        coerced = _coerce_float(
+            value,
+            allow_zero=allow_zero,
+            allow_negative=allow_negative,
+            max_value=max_value,
+            context=f"Loader override '{key}'",
+        )
+        return cast(FloatValue, coerced), True
 
     def maybe_bool(key: str, current: bool, supplied_flag: bool) -> tuple[bool, bool]:
         if supplied_flag:
@@ -563,7 +564,7 @@ def _apply_loader_system_defaults(
             return current, False
         if isinstance(value, bool):
             return value, True
-        if isinstance(value, int | float):
+        if isinstance(value, (int, float)):
             return bool(value), True
         if isinstance(value, str):
             normalized = value.strip().lower()
@@ -920,9 +921,11 @@ def _tn98_species_choices() -> tuple[str, ...]:
 
 
 def _interpolate_tn98_value(
-    records: Sequence[TN98DiameterRecord], dbh_cm: float, attr: str
+    records: Sequence[TN98DiameterRecord] | None, dbh_cm: float, attr: str
 ) -> float | None:
     """Interpolate a TN98 attribute across the observed DBH grid."""
+    if not records:
+        return None
     candidates = [record for record in records if getattr(record, attr) is not None]
     if not candidates:
         return None
@@ -948,7 +951,7 @@ def _interpolate_tn98_value(
 
 
 def _closest_tn98_record(
-    records: Sequence[TN98DiameterRecord], dbh_cm: float
+    records: Sequence[TN98DiameterRecord] | None, dbh_cm: float
 ) -> TN98DiameterRecord | None:
     """Return the TN98 per-diameter record closest to the requested DBH."""
     if not records:
@@ -964,13 +967,76 @@ def _normalise_tn98_species_value(value: str) -> str:
     return candidate
 
 
+def _coerce_float(
+    value: Any,
+    *,
+    allow_zero: bool = False,
+    allow_negative: bool = False,
+    max_value: float | None = None,
+    context: str = "value",
+) -> float:
+    """Convert CLI/text values into floats with domain validation."""
+    if isinstance(value, (int, float)):
+        coerced = float(value)
+    elif isinstance(value, str):
+        stripped = value.strip()
+        if not stripped:
+            raise ValueError(f"{context} must be numeric.")
+        coerced = float(stripped)
+    else:
+        raise ValueError(f"{context} must be numeric.")
+    if not allow_negative:
+        if allow_zero:
+            if coerced < 0:
+                raise ValueError(f"{context} must be ≥ 0 (got {coerced}).")
+        else:
+            if coerced <= 0:
+                raise ValueError(f"{context} must be > 0 (got {coerced}).")
+    if max_value is not None and coerced > max_value:
+        raise ValueError(f"{context} must be ≤ {max_value} (got {coerced}).")
+    return coerced
+
+
+def _coerce_int(
+    value: Any,
+    *,
+    allow_zero: bool = False,
+    allow_negative: bool = False,
+    context: str = "value",
+) -> int:
+    """Convert CLI/text values into integers with domain validation."""
+    if isinstance(value, bool):
+        coerced = int(value)
+    elif isinstance(value, int):
+        coerced = value
+    elif isinstance(value, float):
+        if not value.is_integer():
+            raise ValueError(f"{context} must be a whole number.")
+        coerced = int(value)
+    elif isinstance(value, str):
+        stripped = value.strip()
+        if not stripped:
+            raise ValueError(f"{context} must be an integer.")
+        coerced = int(stripped)
+    else:
+        raise ValueError(f"{context} must be an integer.")
+    if not allow_negative:
+        if allow_zero:
+            if coerced < 0:
+                raise ValueError(f"{context} must be ≥ 0 (got {coerced}).")
+        else:
+            if coerced <= 0:
+                raise ValueError(f"{context} must be > 0 (got {coerced}).")
+    return coerced
+
+
 def _coerce_bool(value: Any) -> bool | None:
     """Coerce CLI option text/numerics into boolean flags."""
     if value is None:
         return None
     if isinstance(value, bool):
         return value
-    if isinstance(value, int | float):
+    if isinstance(value, (int, float)):
         return bool(value)
     text = str(value).strip().lower()
     if text in {"1", "true", "yes", "on"}:
@@ -1380,9 +1446,7 @@ _FORWARDER_ERIKSSON_MODELS = {
 _FORWARDER_BRUSHWOOD_MODELS = {ForwarderBCModel.LAITILA_VAATAINEN_BRUSHWOOD}
 
 
-def _render_grapple_skidder_result(
-    result: SkidderProductivityResult | Mapping[str, object],
-) -> None:
+def _render_grapple_skidder_result(result: SkidderCLIResult) -> None:
     """Render grapple-skidder productivity outputs (Han et al. / ADV6N7) for CLI display."""
     if isinstance(result, SkidderProductivityResult):
         params = result.parameters
@@ -1465,11 +1529,21 @@ def _render_grapple_skidder_result(
         return
 
     model_label = str(result.get("model", "adv1n12")).replace("_", "-")
-    distance = float(result.get("extraction_distance_m") or 0.0)
+    distance_value = result.get("extraction_distance_m")
+    distance = (
+        _coerce_float(distance_value, allow_zero=True, context="extraction_distance_m")
+        if distance_value is not None
+        else 0.0
+    )
+    productivity = _coerce_float(
+        result["productivity_m3_per_pmh"],
+        allow_zero=True,
+        context="productivity_m3_per_pmh",
+    )
     rows = [
         ("Model", model_label),
         ("Extraction Distance (m)", f"{distance:.1f}"),
-        ("Predicted Productivity (m³/PMH)", f"{float(result['productivity_m3_per_pmh']):.2f}"),
+        ("Predicted Productivity (m³/PMH)", f"{productivity:.2f}"),
     ]
     _render_kv_table("Grapple Skidder Productivity Estimate", rows)
     note = result.get(
@@ -1525,25 +1599,30 @@ def _render_helicopter_result(result: HelicopterProductivityResult) -> None:
     )
 
 
-def _render_processor_result(
-    result: (
-        ProcessorProductivityResult
-        | VisserLogSortProductivityResult
-        | Labelle2016ProcessorProductivityResult
-        | Labelle2017PolynomialProcessorResult
-        | Labelle2017PowerProcessorResult
-        | Labelle2018ProcessorProductivityResult
-        | Labelle2019ProcessorProductivityResult
-        | Labelle2019VolumeProcessorProductivityResult
-        | ADV5N6ProcessorProductivityResult
-        | TN166ProcessorProductivityResult
-        | Hypro775ProcessorProductivityResult
-        | Spinelli2010ProcessorProductivityResult
-        | Bertone2025ProcessorProductivityResult
-        | Borz2023ProcessorProductivityResult
-        | Nakagawa2010ProcessorProductivityResult
-    ),
-) -> None:
+ProcessorCLIResult = (
+    ProcessorProductivityResult
+    | VisserLogSortProductivityResult
+    | Labelle2016ProcessorProductivityResult
+    | Labelle2017PolynomialProcessorResult
+    | Labelle2017PowerProcessorResult
+    | Labelle2018ProcessorProductivityResult
+    | Labelle2019ProcessorProductivityResult
+    | Labelle2019VolumeProcessorProductivityResult
+    | ADV5N6ProcessorProductivityResult
+    | ADV7N3ProcessorProductivityResult
+    | TN166ProcessorProductivityResult
+    | TN103ProcessorProductivityResult
+    | Hypro775ProcessorProductivityResult
+    | Spinelli2010ProcessorProductivityResult
+    | Bertone2025ProcessorProductivityResult
+    | Borz2023ProcessorProductivityResult
+    | Nakagawa2010ProcessorProductivityResult
+    | TR106ProcessorProductivityResult
+    | TR87ProcessorProductivityResult
+)
+
+
+def _render_processor_result(result: ProcessorCLIResult) -> None:
     """Render roadside processor productivity results (Berry/Labelle/ADV/TN, etc.) for CLI output."""
     if isinstance(result, ProcessorProductivityResult):
         rows = [
@@ -2174,7 +2253,7 @@ def _render_processor_result(
         numeric_entries = [
             (name, value)
             for name, value in cycle.items()
-            if name != "total" and isinstance(value, int | float)
+            if name != "total" and isinstance(value, (int, float))
         ]
         if numeric_entries or isinstance(cycle.get("total"), int | float):
             prefix = "[dim]Cycle breakdown"
@@ -2245,12 +2324,17 @@ def _maybe_render_costs(show_costs: bool, role: str) -> None:
         _render_machine_cost_summary(role)
 
 
-def _render_loader_result(
-    result: LoaderForwarderProductivityResult
+LoaderCLIResult = (
+    LoaderForwarderProductivityResult
     | ClambunkProductivityResult
     | LoaderAdv5N1ProductivityResult
-    | LoaderBarko450ProductivityResult,
-) -> None:
+    | LoaderBarko450ProductivityResult
+    | LoaderHotColdProductivityResult
+)
+SkidderCLIResult = SkidderProductivityResult | ADV6N7SkidderResult | Mapping[str, object]
+
+
+def _render_loader_result(result: LoaderCLIResult) -> None:
     """Render loader productivity/cost outputs for TN/ADV presets."""
     if isinstance(result, LoaderAdv5N1ProductivityResult):
         rows = [
@@ -2268,11 +2352,21 @@ def _render_loader_result(
         ]
         _render_kv_table("Loader-Forwarder Productivity Estimate", rows)
         metadata = _loader_model_metadata(LoaderProductivityModel.ADV5N1)
-        note = (
-            metadata.get("notes")[0]
-            if metadata and metadata.get("notes")
-            else "Regression digitised from FPInnovations ADV-5 No. 1 Figure 9 (payload 2.77 m³, utilisation 93%)."
-        )
+        note: str
+        if metadata:
+            notes = metadata.get("notes")
+            if isinstance(notes, Sequence) and notes:
+                note = str(notes[0])
+            else:
+                note = (
+                    "Regression digitised from FPInnovations ADV-5 No. 1 Figure 9 "
+                    "(payload 2.77 m³, utilisation 93%)."
+                )
+        else:
+            note = (
+                "Regression digitised from FPInnovations ADV-5 No. 1 Figure 9 "
+                "(payload 2.77 m³, utilisation 93%)."
+            )
         console.print(f"[dim]{note}[/dim]")
         return
     if isinstance(result, ClambunkProductivityResult):
@@ -2441,7 +2535,12 @@ def _render_grapple_yarder_result(
         logs_per_turn = preset_meta.get("logs_per_turn")
         if isinstance(logs_per_turn, int | float):
             rows.append(("Logs/Turn", f"{float(logs_per_turn):.2f}"))
-        base_year = int(preset_meta.get("cost_base_year", TARGET_YEAR))
+        base_year_value = preset_meta.get("cost_base_year")
+        base_year = (
+            _coerce_int(base_year_value, context="cost_base_year")
+            if base_year_value is not None
+            else TARGET_YEAR
+        )
         cost_per_m3 = preset_meta.get("cost_per_m3")
         if isinstance(cost_per_m3, int | float):
             rows.append((f"Observed Cost ({base_year} CAD $/m³)", f"{float(cost_per_m3):.2f}"))
@@ -2460,13 +2559,15 @@ def _render_grapple_yarder_result(
                     f"{inflate_value(float(cost_per_log), base_year):.2f}",
                 )
             )
-        extra_rows = preset_meta.get("extra_rows") or []
-        for label, value in extra_rows:
-            rows.append((label, value))
-        default_note = preset_meta.get(
-            "note",
-            "[dim]Observed productivity/cost preset.[/dim]",
-        )
+        extra_rows = preset_meta.get("extra_rows")
+        if isinstance(extra_rows, Iterable):
+            for label, value in extra_rows:
+                rows.append((str(label), value))
+        preset_note = preset_meta.get("note")
+        if isinstance(preset_note, str):
+            default_note = preset_note
+        else:
+            default_note = "[dim]Observed productivity/cost preset.[/dim]"
     _render_kv_table("Grapple Yarder Productivity Estimate", rows)
     console.print(note or default_note)
 
@@ -2527,8 +2628,8 @@ def _apply_skidder_system_defaults(
             adv6n7_support_ratio,
             False,
         )
-    overrides = system_productivity_overrides(system, ProductivityMachineRole.GRAPPLE_SKIDDER.value)
-    if not overrides:
+    overrides_raw = system_productivity_overrides(system, ProductivityMachineRole.GRAPPLE_SKIDDER.value)
+    if not overrides_raw:
         return (
             model,
             trail_pattern,
@@ -2543,6 +2644,7 @@ def _apply_skidder_system_defaults(
             adv6n7_support_ratio,
             False,
         )
+    overrides: dict[str, float | str] = dict(overrides_raw)
     used = False
     value = overrides.get("grapple_skidder_model")
     if value and not user_supplied.get("grapple_skidder_model", False):
@@ -2566,7 +2668,7 @@ def _apply_skidder_system_defaults(
         except ValueError as exc:  # pragma: no cover - validated by CI
             raise ValueError(f"Unknown decking condition override: {value}") from exc
     value = overrides.get("skidder_productivity_multiplier")
-    if custom_multiplier is None and isinstance(value, int | float):
+    if custom_multiplier is None and isinstance(value, (int, float)):
         custom_multiplier = float(value)
         used = True
     value = overrides.get("skidder_speed_profile")
@@ -2665,9 +2767,10 @@ def _apply_forwarder_system_defaults(
     """Merge forwarder CLI inputs with harvest-system overrides, returning the result + flag."""
     if system is None:
         return model, extraction_distance_m, False
-    overrides = system_productivity_overrides(system, ProductivityMachineRole.FORWARDER.value)
-    if not overrides:
+    overrides_raw = system_productivity_overrides(system, ProductivityMachineRole.FORWARDER.value)
+    if not overrides_raw:
         return model, extraction_distance_m, False
+    overrides: dict[str, float | str] = dict(overrides_raw)
     used = False
     value = overrides.get("forwarder_model")
     if value and not user_supplied.get("forwarder_model", False):
@@ -2677,7 +2780,7 @@ def _apply_forwarder_system_defaults(
         except ValueError as exc:
             raise ValueError(f"Unknown forwarder model override: {value}") from exc
     value = overrides.get("forwarder_extraction_distance_m")
-    if not user_supplied.get("extraction_distance", False) and isinstance(value, int | float):
+    if not user_supplied.get("extraction_distance", False) and isinstance(value, (int, float)):
         extraction_distance_m = float(value)
         used = True
     return model, extraction_distance_m, used
@@ -2693,11 +2796,12 @@ def _apply_processor_system_defaults(
     """Return processor model/ADV7N3 machine after applying harvest-system overrides."""
     if system is None:
         return processor_model, processor_adv7n3_machine, False
-    overrides = system_productivity_overrides(
+    overrides_raw = system_productivity_overrides(
         system, ProductivityMachineRole.ROADSIDE_PROCESSOR.value
     )
-    if not overrides:
+    if not overrides_raw:
         return processor_model, processor_adv7n3_machine, False
+    overrides: dict[str, float | str] = dict(overrides_raw)
     used = False
     value = overrides.get("processor_model")
     if value and not user_supplied.get("processor_model", False):
@@ -2751,6 +2855,9 @@ def _apply_shovel_system_defaults(
     float | None,
     float | None,
     float | None,
+    ShovelSlopeClass,
+    ShovelBunching,
+    float | None,
     bool,
 ]:
     """Resolve shovel logger parameters (Serpentine model) with harvest-system defaults."""
@@ -2775,8 +2882,8 @@ def _apply_shovel_system_defaults(
             custom_multiplier,
             False,
         )
-    overrides = system_productivity_overrides(system, ProductivityMachineRole.SHOVEL_LOGGER.value)
-    if not overrides:
+    overrides_raw = system_productivity_overrides(system, ProductivityMachineRole.SHOVEL_LOGGER.value)
+    if not overrides_raw:
         return (
             passes,
             swing_length_m,
@@ -2797,21 +2904,24 @@ def _apply_shovel_system_defaults(
             custom_multiplier,
             False,
         )
+    overrides: dict[str, float | str] = dict(overrides_raw)
 
     def coerce_float(value: object | None) -> float | None:
         if value is None:
             return None
-        if isinstance(value, int | float):
-            return float(value)
-        try:
-            return float(value)
-        except (TypeError, ValueError):  # pragma: no cover
-            raise ValueError(f"Invalid shovel override value: {value}")
+        return _coerce_float(
+            value,
+            allow_zero=True,
+            allow_negative=True,
+            context="shovel override",
+        )
 
     used = False
-    if passes is None and overrides.get("shovel_passes") is not None:
-        passes = int(float(overrides["shovel_passes"]))
-        used = True
+    if passes is None:
+        passes_override = overrides.get("shovel_passes")
+        if passes_override is not None:
+            passes = _coerce_int(passes_override, context="shovel_passes")
+            used = True
     if swing_length_m is None:
         swing_length_m = coerce_float(overrides.get("shovel_swing_length")) or swing_length_m
         used = used or overrides.get("shovel_swing_length") is not None
@@ -2887,7 +2997,12 @@ def _apply_shovel_system_defaults(
             raise ValueError(f"Unknown shovel bunching override: {bunch_value}") from exc
     custom_value = overrides.get("shovel_productivity_multiplier")
     if custom_multiplier is None and custom_value is not None:
-        custom_multiplier = float(custom_value)
+        custom_multiplier = _coerce_float(
+            custom_value,
+            allow_zero=False,
+            allow_negative=False,
+            context="shovel_productivity_multiplier",
+        )
         used = True
 
     return (
@@ -2940,7 +3055,6 @@ def _apply_skyline_system_defaults(
     float,
     float,
     float,
-    float,
     float | None,
     float | None,
     float | None,
@@ -2982,10 +3096,10 @@ def _apply_skyline_system_defaults(
             None,
             None,
         )
-    overrides = system_productivity_overrides(system, "skyline_yarder")
-    if not overrides:
-        overrides = system_productivity_overrides(system, "grapple_yarder")
-    if not overrides:
+    overrides_raw = system_productivity_overrides(system, "skyline_yarder")
+    if not overrides_raw:
+        overrides_raw = system_productivity_overrides(system, "grapple_yarder")
+    if not overrides_raw:
         return (
             model,
             slope_distance_m,
@@ -3007,6 +3121,7 @@ def _apply_skyline_system_defaults(
             None,
             None,
         )
+    overrides: dict[str, float | str] = dict(overrides_raw)
     used = False
     tr119_override: str | None = None
     partial_profile_override: str | None = None
@@ -3025,18 +3140,22 @@ def _apply_skyline_system_defaults(
     resolved_num_logs = num_logs
 
     def maybe_float(
-        key: str, current: float | None, supplied_flag: str, allow_zero: bool = False
-    ) -> tuple[float | None, bool]:
-        value = overrides.get(key)
-        if value is None or user_supplied.get(supplied_flag, False):
+        key: str, current: FloatValue, supplied_flag: str, allow_zero: bool = False
+    ) -> tuple[FloatValue, bool]:
+        if user_supplied.get(supplied_flag, False):
             return current, False
-        try:
-            coerced = float(value)
-        except (TypeError, ValueError) as exc:  # pragma: no cover - validated via plan
-            raise ValueError(f"Invalid skyline override for '{key}': {value}") from exc
+        value = overrides.get(key)
+        if value is None:
+            return current, False
+        coerced = _coerce_float(
+            value,
+            allow_zero=True,
+            allow_negative=True,
+            context=f"Skyline override '{key}'",
+        )
         if not allow_zero and coerced == 0:
             return current, False
-        return coerced, True
+        return cast(FloatValue, coerced), True
 
     value = overrides.get("skyline_model")
     if value and not user_supplied.get("model", False):
@@ -3187,10 +3306,10 @@ def _apply_helicopter_system_defaults(
             delay_minutes,
             False,
         )
-    overrides = system_productivity_overrides(
+    overrides_raw = system_productivity_overrides(
         system, ProductivityMachineRole.HELICOPTER_LONGLINE.value
     )
-    if not overrides:
+    if not overrides_raw:
         return (
             model,
             flight_distance_m,
@@ -3200,6 +3319,7 @@ def _apply_helicopter_system_defaults(
             delay_minutes,
             False,
         )
+    overrides: dict[str, float | str] = dict(overrides_raw)
     used = False
 
     value = overrides.get("helicopter_model")
@@ -3401,8 +3521,8 @@ def _apply_grapple_yarder_system_defaults(
             tn147_case,
             False,
         )
-    overrides = system_productivity_overrides(system, ProductivityMachineRole.GRAPPLE_YARDER.value)
-    if not overrides:
+    overrides_raw = system_productivity_overrides(system, ProductivityMachineRole.GRAPPLE_YARDER.value)
+    if not overrides_raw:
         return (
             model,
             turn_volume_m3,
@@ -3414,6 +3534,7 @@ def _apply_grapple_yarder_system_defaults(
             tn147_case,
             False,
         )
+    overrides: dict[str, float | str] = dict(overrides_raw)
     used = False
 
     value = overrides.get("grapple_yarder_model")
@@ -3512,36 +3633,51 @@ def _forwarder_parameters(result: ForwarderBCResult) -> list[tuple[str, str]]:
         ("Reference", result.reference or ""),
     ]
     params = result.parameters
+    def _param_float(
+        key: str,
+        *,
+        allow_negative: bool = False,
+    ) -> float:
+        raw = params.get(key)
+        if raw is None:
+            return 0.0
+        return _coerce_float(
+            raw,
+            allow_zero=True,
+            allow_negative=allow_negative,
+            context=f"forwarder parameter '{key}'",
+        )
+
     if result.model in _FORWARDER_GHAFFARIYAN_MODELS:
         extraction = params.get("extraction_distance_m")
         slope_class = params.get("slope_class")
         slope_factor = params.get("slope_factor")
         rows.extend(
             [
-                ("Extraction Distance (m)", f"{float(extraction):.1f}"),
+                ("Extraction Distance (m)", f"{_param_float('extraction_distance_m'):.1f}"),
                 ("Slope Class", str(slope_class)),
-                ("Slope Factor", f"{float(slope_factor):.2f}"),
+                ("Slope Factor", f"{_param_float('slope_factor', allow_negative=True):.2f}"),
             ]
         )
     elif result.model in _FORWARDER_ADV1N12_MODELS:
         rows.extend(
             [
-                ("Extraction Distance (m)", f"{float(params['extraction_distance_m']):.1f}"),
+                ("Extraction Distance (m)", f"{_param_float('extraction_distance_m'):.1f}"),
             ]
         )
     elif result.model in _FORWARDER_ADV6N10_MODELS:
         rows.extend(
             [
-                ("Payload per Trip (m³)", f"{float(params['payload_m3']):.2f}"),
-                ("Mean Log Length (m)", f"{float(params['mean_log_length_m']):.2f}"),
-                ("Trail Length (m)", f"{float(params['trail_length_m']):.1f}"),
+                ("Payload per Trip (m³)", f"{_param_float('payload_m3'):.2f}"),
+                ("Mean Log Length (m)", f"{_param_float('mean_log_length_m'):.2f}"),
+                ("Trail Length (m)", f"{_param_float('trail_length_m'):.1f}"),
                 (
                     "Travel Speed (m/min)",
-                    f"{float(params['travel_speed_m_per_min']):.1f}",
+                    f"{_param_float('travel_speed_m_per_min'):.1f}",
                 ),
                 (
                     "Products per Trail",
-                    f"{float(params['products_per_trail']):.2f}",
+                    f"{_param_float('products_per_trail'):.2f}",
                 ),
             ]
         )
@@ -3550,25 +3686,25 @@ def _forwarder_parameters(result: ForwarderBCResult) -> list[tuple[str, str]]:
             [
                 (
                     "Mean Extraction Distance (m)",
-                    f"{float(params['mean_extraction_distance_m']):.1f}",
+                    f"{_param_float('mean_extraction_distance_m'):.1f}",
                 ),
-                ("Mean Stem Size (m³)", f"{float(params['mean_stem_size_m3']):.3f}"),
-                ("Load Capacity (m³)", f"{float(params['load_capacity_m3']):.2f}"),
+                ("Mean Stem Size (m³)", f"{_param_float('mean_stem_size_m3'):.3f}"),
+                ("Load Capacity (m³)", f"{_param_float('load_capacity_m3'):.2f}"),
             ]
         )
     elif result.model in _FORWARDER_BRUSHWOOD_MODELS:
         rows.extend(
             [
-                ("Harvested Trees (/ha)", f"{float(params['harvested_trees_per_ha']):.0f}"),
+                ("Harvested Trees (/ha)", f"{_param_float('harvested_trees_per_ha'):.0f}"),
                 (
                     "Average Tree Volume (dm³)",
-                    f"{float(params['average_tree_volume_dm3']):.1f}",
+                    f"{_param_float('average_tree_volume_dm3'):.1f}",
                 ),
-                ("Forwarding Distance (m)", f"{float(params['forwarding_distance_m']):.1f}"),
-                ("Harwarder Payload (m³)", f"{float(params['harwarder_payload_m3']):.2f}"),
+                ("Forwarding Distance (m)", f"{_param_float('forwarding_distance_m'):.1f}"),
+                ("Harwarder Payload (m³)", f"{_param_float('harwarder_payload_m3'):.2f}"),
                 (
                     "Grapple Load (unloading, m³)",
-                    f"{float(params['grapple_load_unloading_m3']):.2f}",
+                    f"{_param_float('grapple_load_unloading_m3'):.2f}",
                 ),
             ]
         )
@@ -3576,10 +3712,10 @@ def _forwarder_parameters(result: ForwarderBCResult) -> list[tuple[str, str]]:
         rows.extend(
             [
                 ("Load Type", str(params.get("load_type", ""))),
-                ("Volume per Load (m³)", f"{float(params['volume_per_load_m3']):.2f}"),
-                ("Distance Out (m)", f"{float(params['distance_out_m']):.1f}"),
-                ("Travel In Unit (m)", f"{float(params['travel_in_unit_m']):.1f}"),
-                ("Distance In (m)", f"{float(params['distance_in_m']):.1f}"),
+                ("Volume per Load (m³)", f"{_param_float('volume_per_load_m3'):.2f}"),
+                ("Distance Out (m)", f"{_param_float('distance_out_m'):.1f}"),
+                ("Travel In Unit (m)", f"{_param_float('travel_in_unit_m'):.1f}"),
+                ("Distance In (m)", f"{_param_float('distance_in_m'):.1f}"),
             ]
         )
     rows.append(("Predicted Productivity (m³/PMH0)", f"{result.predicted_m3_per_pmh:.2f}"))
@@ -3687,7 +3823,7 @@ def _evaluate_grapple_skidder_result(
     adv6n7_utilisation: float | None,
     adv6n7_delay_minutes: float | None,
     adv6n7_support_ratio: float | None,
-) -> SkidderProductivityResult | Mapping[str, object]:
+) -> SkidderCLIResult:
     """Evaluate grapple-skidder productivity, covering ADV presets and Han et al. regressions."""
     if model in {
         GrappleSkidderModel.ADV1N12_FULLTREE,
@@ -3979,17 +4115,21 @@ def _evaluate_ctl_harvester_result(
             raise typer.BadParameter(
                 f"{', '.join(missing)} required when --machine-role {ProductivityMachineRole.CTL_HARVESTER.value} with ADV6N10 model."
             )
-        inputs = ADV6N10HarvesterInputs(
+        assert stem_volume is not None
+        assert products_count is not None
+        assert stems_per_cycle is not None
+        assert mean_log_length is not None
+        adv6n10_inputs = ADV6N10HarvesterInputs(
             stem_volume_m3=stem_volume,
             products_count=products_count,
             stems_per_cycle=stems_per_cycle,
             mean_log_length_m=mean_log_length,
         )
         try:
-            value = estimate_harvester_productivity_adv6n10(inputs)
+            value = estimate_harvester_productivity_adv6n10(adv6n10_inputs)
         except FHOPSValueError as exc:  # pragma: no cover - Typer surfaces error
             raise typer.BadParameter(str(exc)) from exc
-        return inputs, value
+        return adv6n10_inputs, value
     if model is CTLHarvesterModel.ADV5N30:
         if removal_fraction is None:
             raise typer.BadParameter("--ctl-removal-fraction required for ADV5N30 model.")
@@ -4011,16 +4151,18 @@ def _evaluate_ctl_harvester_result(
             raise typer.BadParameter(
                 f"{', '.join(missing)} required when --machine-role {ProductivityMachineRole.CTL_HARVESTER.value} with TN292 model."
             )
-        inputs = TN292HarvesterInputs(
+        assert stem_volume is not None
+        assert density is not None
+        tn292_inputs = TN292HarvesterInputs(
             stem_volume_m3=stem_volume,
             stand_density_per_ha=density,
             density_basis=density_basis,
         )
         try:
-            value = estimate_harvester_productivity_tn292(inputs)
+            value = estimate_harvester_productivity_tn292(tn292_inputs)
         except FHOPSValueError as exc:  # pragma: no cover
             raise typer.BadParameter(str(exc)) from exc
-        return inputs, value
+        return tn292_inputs, value
     if model is CTLHarvesterModel.KELLOGG1994:
         if dbh_cm is None:
             raise typer.BadParameter("--ctl-dbh-cm is required for Kellogg (1994) model.")
@@ -4241,8 +4383,10 @@ def _render_berry_log_grade_table() -> None:
         console.print(f"[dim]{description}[/dim]")
     if source:
         console.print(f"[dim]Source: {source}[/dim]")
-    for note in metadata.get("notes", ()):  # type: ignore[arg-type]
-        console.print(f"[dim]{note}[/dim]")
+    notes = metadata.get("notes")
+    if isinstance(notes, Sequence):
+        for note in notes:
+            console.print(f"[dim]{note}[/dim]")
 
 
 def _render_unbc_hoe_chucking_table() -> None:
@@ -4429,7 +4573,7 @@ def inspect_machine(
                     f"Unable to compose rental rate for role '{machine_role_override}'."
                 )
             rental_rate, breakdown = composed
-            payload = {
+            rate_payload = {
                 "machine_role": machine_role_override,
                 "machine_name": rate.machine_name,
                 "rental_rate_smh": rental_rate,
@@ -4439,7 +4583,7 @@ def inspect_machine(
                 "notes": rate.notes,
             }
             json_out.parent.mkdir(parents=True, exist_ok=True)
-            json_out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+            json_out.write_text(json.dumps(rate_payload, indent=2), encoding="utf-8")
         return
 
     dataset_name, scenario, path = _ensure_dataset(dataset, interactive)
@@ -4534,9 +4678,10 @@ def inspect_machine(
                     )
                     if hint:
                         cost_role_hint = hint
+                        overrides = job.productivity_overrides or {}
                         cost_role_note = (
                             f"[dim]Harvest system '{system_id}' pins loader_model="
-                            f"{job.productivity_overrides.get('loader_model')} so "
+                            f"{overrides.get('loader_model')} so "
                             f"machine-rate role '{hint}' is used for cost summaries.[/dim]"
                         )
         context_lines.append(("Harvest System", system_id))
@@ -4566,7 +4711,7 @@ def inspect_machine(
         "[yellow]* TODO: add derived statistics (utilisation, availability) once defined.[/yellow]"
     )
     if json_out is not None:
-        payload = {
+        payload: dict[str, Any] = {
             "dataset": dataset_name,
             "scenario_path": str(path),
             "machine": {
@@ -4580,7 +4725,8 @@ def inspect_machine(
             "default_rental": default_snapshot.to_dict(),
         }
         if cost_role_hint and cost_role_hint != selected_machine.role:
-            payload["machine"]["role_override"] = cost_role_hint
+            machine_payload = cast(dict[str, Any], payload["machine"])
+            machine_payload["role_override"] = cost_role_hint
         json_out.parent.mkdir(parents=True, exist_ok=True)
         json_out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
@@ -5689,7 +5835,7 @@ def estimate_productivity_cmd(
             extraction_distance_m=extraction_distance,
             user_supplied=forwarder_user_supplied,
         )
-        result = _evaluate_forwarder_result(
+        forwarder_result = _evaluate_forwarder_result(
             model=forwarder_model,
             extraction_distance=extraction_distance,
             slope_class=slope_class,
@@ -5712,7 +5858,7 @@ def estimate_productivity_cmd(
             harwarder_payload=harwarder_payload,
             grapple_load_unloading=grapple_load_unloading,
         )
-        _render_forwarder_result(result)
+        _render_forwarder_result(forwarder_result)
         if forwarder_defaults_used and selected_system is not None:
             console.print(
                 f"[dim]Applied productivity defaults from harvest system '{selected_system.system_id}'.[/dim]"
@@ -5785,7 +5931,7 @@ def estimate_productivity_cmd(
             and system_speed_profile is not SkidderSpeedProfileOption.LEGACY
         ):
             skidder_speed_profile_option = system_speed_profile
-        result = _evaluate_grapple_skidder_result(
+        skidder_result = _evaluate_grapple_skidder_result(
             model=grapple_skidder_model,
             pieces_per_cycle=skidder_pieces_per_cycle,
             piece_volume_m3=skidder_piece_volume,
@@ -5802,7 +5948,7 @@ def estimate_productivity_cmd(
             adv6n7_delay_minutes=skidder_adv6n7_delay_minutes,
             adv6n7_support_ratio=skidder_adv6n7_support_ratio,
         )
-        _render_grapple_skidder_result(result)
+        _render_grapple_skidder_result(skidder_result)
         if system_defaults_used and selected_system is not None:
             console.print(
                 f"[dim]Applied productivity defaults from harvest system '{selected_system.system_id}'.[/dim]"
@@ -5995,15 +6141,15 @@ def estimate_productivity_cmd(
                 raise typer.BadParameter(
                     "--grapple-yard-distance-m is required for the ADV1N35 model."
                 )
-            metadata = get_adv1n35_metadata()
+            adv1n35_metadata = get_adv1n35_metadata()
             if grapple_turn_volume_m3 is None:
-                grapple_turn_volume_m3 = metadata.default_turn_volume_m3
+                grapple_turn_volume_m3 = adv1n35_metadata.default_turn_volume_m3
             if grapple_lateral_distance_m is None:
-                grapple_lateral_distance_m = metadata.default_lateral_distance_m
+                grapple_lateral_distance_m = adv1n35_metadata.default_lateral_distance_m
             if grapple_stems_per_cycle is None:
-                grapple_stems_per_cycle = metadata.default_stems_per_turn
+                grapple_stems_per_cycle = adv1n35_metadata.default_stems_per_turn
             if grapple_in_cycle_delay_minutes is None:
-                grapple_in_cycle_delay_minutes = metadata.default_in_cycle_delay_min
+                grapple_in_cycle_delay_minutes = adv1n35_metadata.default_in_cycle_delay_min
             value = estimate_grapple_yarder_productivity_adv1n35(
                 turn_volume_m3=grapple_turn_volume_m3,
                 yarding_distance_m=grapple_yarding_distance_m,
@@ -6011,21 +6157,21 @@ def estimate_productivity_cmd(
                 stems_per_turn=grapple_stems_per_cycle,
                 in_cycle_delay_minutes=grapple_in_cycle_delay_minutes,
             )
-            preset_note = metadata.note
+            preset_note = adv1n35_metadata.note
         elif grapple_yarder_model is GrappleYarderModel.ADV1N40:
-            metadata = get_adv1n40_metadata()
+            adv1n40_metadata = get_adv1n40_metadata()
             if grapple_turn_volume_m3 is None:
-                grapple_turn_volume_m3 = metadata.default_turn_volume_m3
+                grapple_turn_volume_m3 = adv1n40_metadata.default_turn_volume_m3
             if grapple_yarding_distance_m is None:
-                grapple_yarding_distance_m = metadata.default_yarding_distance_m
+                grapple_yarding_distance_m = adv1n40_metadata.default_yarding_distance_m
             if grapple_in_cycle_delay_minutes is None:
-                grapple_in_cycle_delay_minutes = metadata.default_delay_minutes
+                grapple_in_cycle_delay_minutes = adv1n40_metadata.default_delay_minutes
             value = estimate_grapple_yarder_productivity_adv1n40(
                 turn_volume_m3=grapple_turn_volume_m3,
                 yarding_distance_m=grapple_yarding_distance_m,
                 in_cycle_delay_minutes=grapple_in_cycle_delay_minutes,
             )
-            preset_note = metadata.note
+            preset_note = adv1n40_metadata.note
             preset_meta = {
                 "label": "ADV1N40 Madill 071 (downhill running/scab)",
                 "cost_per_m3": 12.11,
@@ -6118,6 +6264,8 @@ def estimate_productivity_cmd(
             automatic_bucking_info = get_labelle_huss_automatic_bucking_adjustment()
             automatic_bucking_multiplier_value = automatic_bucking_info.multiplier
         processor_carrier_profile: ProcessorCarrierProfile | None = None
+        result_processor: ProcessorCLIResult
+
         if processor_model is RoadsideProcessorModel.BERRY2019:
             processor_carrier_profile = get_processor_carrier_profile(processor_carrier.value)
             if (
@@ -6285,8 +6433,13 @@ def estimate_productivity_cmd(
                 raise typer.BadParameter(
                     "--processor-species/--processor-treatment do not apply to ADV5N6."
                 )
-            stem_source_value = processor_stem_source.value
-            processing_mode_value = processor_adv5n6_processing_mode.value
+            stem_source_value = cast(
+                Literal["loader_forwarded", "grapple_yarded"], processor_stem_source.value
+            )
+            processing_mode_value = cast(
+                Literal["cold", "hot", "low_volume"],
+                processor_adv5n6_processing_mode.value,
+            )
             if (
                 stem_source_value == ADV5N6StemSource.LOADER_FORWARDED.value
                 and processing_mode_value != ADV5N6ProcessingMode.COLD.value
@@ -6511,14 +6664,14 @@ def estimate_productivity_cmd(
             )
             if automatic_bucking_info.revenue_delta_per_m3 is not None:
                 currency = automatic_bucking_info.currency or "EUR"
-                base_year = (
+                base_year_label = (
                     str(automatic_bucking_info.base_year)
                     if automatic_bucking_info.base_year is not None
                     else "2018"
                 )
                 console.print(
                     "[dim]Reference revenue delta: "
-                    f"+{automatic_bucking_info.revenue_delta_per_m3:.1f} {currency}/m³ ({base_year}).[/dim]"
+                    f"+{automatic_bucking_info.revenue_delta_per_m3:.1f} {currency}/m³ ({base_year_label}).[/dim]"
                 )
         _maybe_render_costs(show_costs, ProductivityMachineRole.ROADSIDE_PROCESSOR.value)
         if processor_defaults_used and selected_system is not None:
@@ -6621,6 +6774,9 @@ def estimate_productivity_cmd(
         )
         loader_metadata = _loader_model_metadata(loader_model)
         loader_cost_role = ProductivityMachineRole.LOADER.value
+        loader_result: LoaderCLIResult
+        loader_telemetry_inputs: dict[str, Any]
+        loader_telemetry_outputs: dict[str, Any]
         if loader_model is LoaderProductivityModel.TN261:
             if loader_piece_size_m3 is None:
                 raise typer.BadParameter(
@@ -6630,23 +6786,24 @@ def estimate_productivity_cmd(
                 raise typer.BadParameter(
                     "--loader-distance-m is required when --loader-model tn261."
                 )
-            loader_result = estimate_loader_forwarder_productivity_tn261(
+            tn261_result = estimate_loader_forwarder_productivity_tn261(
                 piece_size_m3=loader_piece_size_m3,
                 external_distance_m=loader_distance_m,
                 slope_percent=loader_slope_percent,
                 bunched=loader_bunched,
                 delay_multiplier=loader_delay_multiplier,
             )
-            telemetry_inputs = {
+            loader_result = tn261_result
+            loader_telemetry_inputs = {
                 "piece_size_m3": loader_piece_size_m3,
                 "distance_m": loader_distance_m,
                 "slope_percent": loader_slope_percent,
                 "bunched": loader_bunched,
                 "delay_multiplier": loader_delay_multiplier,
             }
-            telemetry_outputs = {
-                "delay_free_m3_per_pmh": loader_result.delay_free_productivity_m3_per_pmh,
-                "productivity_m3_per_pmh": loader_result.productivity_m3_per_pmh,
+            loader_telemetry_outputs = {
+                "delay_free_m3_per_pmh": tn261_result.delay_free_productivity_m3_per_pmh,
+                "productivity_m3_per_pmh": tn261_result.productivity_m3_per_pmh,
             }
         elif loader_model is LoaderProductivityModel.ADV2N26:
             utilisation_value = (
@@ -6654,24 +6811,25 @@ def estimate_productivity_cmd(
                 if loader_utilisation is not None
                 else ADV2N26_DEFAULT_UTILISATION
             )
-            loader_result = estimate_clambunk_productivity_adv2n26(
+            clambunk_result = estimate_clambunk_productivity_adv2n26(
                 travel_empty_distance_m=loader_travel_empty_m,
                 stems_per_cycle=loader_stems_per_cycle,
                 average_stem_volume_m3=loader_stem_volume_m3,
                 utilization=utilisation_value,
                 in_cycle_delay_minutes=loader_in_cycle_delay_minutes,
             )
-            telemetry_inputs = {
+            loader_result = clambunk_result
+            loader_telemetry_inputs = {
                 "travel_empty_m": loader_travel_empty_m,
                 "stems_per_cycle": loader_stems_per_cycle,
                 "average_stem_volume_m3": loader_stem_volume_m3,
                 "utilisation": utilisation_value,
                 "in_cycle_delay_minutes": loader_in_cycle_delay_minutes,
             }
-            telemetry_outputs = {
-                "delay_free_cycle_minutes": loader_result.delay_free_cycle_minutes,
-                "total_cycle_minutes": loader_result.total_cycle_minutes,
-                "productivity_m3_per_smh": loader_result.productivity_m3_per_smh,
+            loader_telemetry_outputs = {
+                "delay_free_cycle_minutes": clambunk_result.delay_free_cycle_minutes,
+                "total_cycle_minutes": clambunk_result.total_cycle_minutes,
+                "productivity_m3_per_smh": clambunk_result.productivity_m3_per_smh,
             }
         elif loader_model is LoaderProductivityModel.ADV5N1:
             if loader_distance_m is None:
@@ -6681,47 +6839,49 @@ def estimate_productivity_cmd(
             utilisation_value = (
                 loader_utilisation if loader_utilisation is not None else ADV5N1_DEFAULT_UTILISATION
             )
-            loader_result = estimate_loader_forwarder_productivity_adv5n1(
+            adv5n1_result = estimate_loader_forwarder_productivity_adv5n1(
                 forwarding_distance_m=loader_distance_m,
                 slope_class=loader_slope_class.value,
                 payload_m3_per_cycle=loader_payload_m3,
                 utilisation=utilisation_value,
             )
-            telemetry_inputs = {
+            loader_result = adv5n1_result
+            loader_telemetry_inputs = {
                 "forwarding_distance_m": loader_distance_m,
                 "slope_class": loader_slope_class.value,
                 "payload_m3_per_cycle": loader_payload_m3,
                 "utilisation": utilisation_value,
             }
-            telemetry_outputs = {
-                "cycle_time_minutes": loader_result.cycle_time_minutes,
-                "productivity_m3_per_smh": loader_result.productivity_m3_per_smh,
+            loader_telemetry_outputs = {
+                "cycle_time_minutes": adv5n1_result.cycle_time_minutes,
+                "productivity_m3_per_smh": adv5n1_result.productivity_m3_per_smh,
             }
         elif loader_model is LoaderProductivityModel.BARKO450:
-            result = estimate_loader_productivity_barko450(
+            barko_result = estimate_loader_productivity_barko450(
                 scenario=loader_barko_scenario.value,
                 utilisation_override=(
                     loader_utilisation if loader_user_supplied["loader_utilisation"] else None
                 ),
             )
-            telemetry_inputs = {
+            loader_telemetry_inputs = {
                 "scenario": loader_barko_scenario.value,
             }
-            telemetry_outputs = {
-                "avg_volume_per_shift_m3": result.avg_volume_per_shift_m3,
-                "utilisation_percent": result.utilisation_percent,
-                "availability_percent": result.availability_percent,
+            loader_telemetry_outputs = {
+                "avg_volume_per_shift_m3": barko_result.avg_volume_per_shift_m3,
+                "utilisation_percent": barko_result.utilisation_percent,
+                "availability_percent": barko_result.availability_percent,
             }
-            loader_result = result
+            loader_result = barko_result
             loader_cost_role = "loader_barko450"
         elif loader_model is LoaderProductivityModel.KIZHA2020:
-            loader_result = estimate_loader_hot_cold_productivity(mode=loader_hot_cold_mode.value)
-            telemetry_inputs = {
+            hot_cold_result = estimate_loader_hot_cold_productivity(mode=loader_hot_cold_mode.value)
+            loader_result = hot_cold_result
+            loader_telemetry_inputs = {
                 "mode": loader_hot_cold_mode.value,
             }
-            telemetry_outputs = {
-                "utilisation_percent": loader_result.utilisation_percent,
-                "operational_delay_percent": loader_result.operational_delay_percent_of_total_time,
+            loader_telemetry_outputs = {
+                "utilisation_percent": hot_cold_result.utilisation_percent,
+                "operational_delay_percent": hot_cold_result.operational_delay_percent_of_total_time,
             }
         else:  # pragma: no cover - defensive, all enums handled
             raise RuntimeError(f"Unhandled loader model {loader_model}")
@@ -6738,8 +6898,8 @@ def estimate_productivity_cmd(
             _append_loader_telemetry(
                 log_path=telemetry_log,
                 model=loader_model,
-                inputs=telemetry_inputs,
-                outputs=telemetry_outputs,
+                inputs=loader_telemetry_inputs,
+                outputs=loader_telemetry_outputs,
                 metadata=loader_metadata,
             )
         if loader_defaults_used and selected_system is not None:
@@ -6788,7 +6948,7 @@ def estimate_productivity_cmd(
             bunching=shovel_bunching,
             custom_multiplier=shovel_productivity_multiplier,
         )
-        result = _evaluate_shovel_logger_result(
+        shovel_result = _evaluate_shovel_logger_result(
             passes=shovel_passes,
             swing_length_m=shovel_swing_length,
             strip_length_m=shovel_strip_length,
@@ -6807,7 +6967,7 @@ def estimate_productivity_cmd(
             bunching=shovel_bunching_class,
             custom_multiplier=shovel_productivity_multiplier,
         )
-        _render_shovel_logger_result(result)
+        _render_shovel_logger_result(shovel_result)
         if shovel_defaults_used and selected_system is not None:
             console.print(
                 f"[dim]Applied shovel-logger defaults from harvest system '{selected_system.system_id}'.[/dim]"
@@ -6870,7 +7030,7 @@ def estimate_productivity_cmd(
             raise typer.BadParameter(
                 "--helicopter-flight-distance-m is required for helicopter_longline role."
             )
-        result = estimate_helicopter_longline_productivity(
+        helicopter_result = estimate_helicopter_longline_productivity(
             model=helicopter_model,
             flight_distance_m=helicopter_flight_distance_m,
             payload_m3=helicopter_payload_m3,
@@ -6878,15 +7038,15 @@ def estimate_productivity_cmd(
             weight_to_volume_lb_per_m3=helicopter_weight_to_volume,
             additional_delay_minutes=helicopter_delay_minutes,
         )
-        _render_helicopter_result(result)
+        _render_helicopter_result(helicopter_result)
         if helicopter_defaults_used and selected_system is not None:
             console.print(
                 f"[dim]Applied helicopter defaults from harvest system '{selected_system.system_id}'.[/dim]"
             )
         preset_source_title: str | None = None
         if helicopter_preset_operation is not None:
-            dataset = load_helicopter_fpinnovations_dataset()
-            source = dataset.sources.get(helicopter_preset_operation.source_id)
+            heli_dataset = load_helicopter_fpinnovations_dataset()
+            source = heli_dataset.sources.get(helicopter_preset_operation.source_id)
             preset_source_title = (
                 source.title if source and source.title else helicopter_preset_operation.source_id
             )
@@ -6912,106 +7072,86 @@ def estimate_productivity_cmd(
                 log_path=telemetry_log,
                 model=helicopter_model,
                 inputs=telemetry_inputs,
-                result=result,
+                result=helicopter_result,
                 preset_id=resolved_helicopter_preset_id,
                 preset_source=preset_source_title,
             )
         _maybe_render_costs(show_costs, _helicopter_cost_role(helicopter_model))
         return
 
-    else:
+    if role == ProductivityMachineRole.FELLER_BUNCHER.value:
+        missing: list[str] = []
+        if avg_stem_size is None:
+            missing.append("--avg-stem-size")
+        if volume_per_ha is None:
+            missing.append("--volume-per-ha")
+        if stem_density is None:
+            missing.append("--stem-density")
+        if ground_slope is None:
+            missing.append("--ground-slope")
+        if missing:
+            raise typer.BadParameter(
+                f"{', '.join(missing)} required when --machine-role {ProductivityMachineRole.FELLER_BUNCHER.value}."
+            )
+        assert avg_stem_size is not None
+        assert volume_per_ha is not None
+        assert stem_density is not None
+        assert ground_slope is not None
+
+        try:
+            result = estimate_productivity(
+                avg_stem_size=avg_stem_size,
+                volume_per_ha=volume_per_ha,
+                stem_density=stem_density,
+                ground_slope=ground_slope,
+                model=model,
+                validate_ranges=not allow_out_of_range,
+            )
+        except FHOPSValueError as exc:  # pragma: no cover - Typer surfaces error.
+            raise typer.BadParameter(str(exc)) from exc
+
         rows = [
-            ("Model", "labelle2019_volume"),
-            ("Species", result.species),
-            ("Treatment", result.treatment.replace("_", " ")),
-            ("Recovered Volume (m³)", f"{result.volume_m3:.3f}"),
-            (
-                "Polynomial",
-                f"{result.intercept:+.2f} + {result.linear:.2f}·V - {result.quadratic:.3f}·V^{result.exponent:.0f}",
-            ),
-            ("Sample Trees", str(result.sample_trees)),
-            (
-                "Delay-free Productivity (m³/PMH)",
-                f"{result.delay_free_productivity_m3_per_pmh:.2f}",
-            ),
-            ("Delay Multiplier", f"{result.delay_multiplier:.3f}"),
-            ("Productivity (m³/PMH)", f"{result.productivity_m3_per_pmh:.2f}"),
+            ("Model", result.model.value),
+            ("Average Stem Size (m³/stem)", f"{result.avg_stem_size:.3f}"),
+            ("Volume per Hectare (m³/ha)", f"{result.volume_per_ha:.1f}"),
+            ("Stem Density (trees/ha)", f"{result.stem_density:.1f}"),
+            ("Ground Slope (%)", f"{result.ground_slope:.1f}"),
+            ("Predicted Productivity (m³/PMH15)", f"{result.predicted_m3_per_pmh:.2f}"),
         ]
-        _render_kv_table("Roadside Processor Productivity Estimate", rows)
+        _render_kv_table(
+            "Lahrsen (2025) Feller-Buncher Productivity Estimate",
+            rows,
+        )
+        if result.out_of_range:
+            console.print("[red]Warning: inputs outside observed BC ranges:[/red]")
+            for msg in result.out_of_range:
+                console.print(f"  - {msg}")
+        range_table = Table(title="Observed Ranges (Lahrsen 2025)")
+        range_table.add_column("Variable", style="bold")
+        range_table.add_column("Min")
+        range_table.add_column("Max")
+        for label, key in [
+            ("Avg stem size (m³)", "avg_stem_size"),
+            ("Volume per ha (m³)", "volume_per_ha"),
+            ("Stem density (/ha)", "stem_density"),
+            ("Ground slope (%)", "ground_slope"),
+        ]:
+            bounds = result.ranges[key]
+            min_val = bounds.get("min")
+            max_val = bounds.get("max")
+            range_table.add_row(
+                label,
+                f"{min_val:.3f}" if min_val is not None else "—",
+                f"{max_val:.3f}" if max_val is not None else "—",
+            )
+        console.print(range_table)
         console.print(
-            "[dim]Labelle et al. (2019) hardwood volume regression (PMH₀); use --processor-delay-multiplier to apply utilisation when exporting beyond Bavaria.[/dim]"
+            "[dim]Coefficients sourced from Lahrsen, 2025 (UBC PhD) — whole-tree feller-buncher dataset.[/dim]"
         )
+        _maybe_render_costs(show_costs, ProductivityMachineRole.FELLER_BUNCHER.value)
+        return
 
-    missing: list[str] = []
-    if avg_stem_size is None:
-        missing.append("--avg-stem-size")
-    if volume_per_ha is None:
-        missing.append("--volume-per-ha")
-    if stem_density is None:
-        missing.append("--stem-density")
-    if ground_slope is None:
-        missing.append("--ground-slope")
-    if missing:
-        raise typer.BadParameter(
-            f"{', '.join(missing)} required when --machine-role {ProductivityMachineRole.FELLER_BUNCHER.value}."
-        )
-    assert avg_stem_size is not None
-    assert volume_per_ha is not None
-    assert stem_density is not None
-    assert ground_slope is not None
-
-    try:
-        result = estimate_productivity(
-            avg_stem_size=avg_stem_size,
-            volume_per_ha=volume_per_ha,
-            stem_density=stem_density,
-            ground_slope=ground_slope,
-            model=model,
-            validate_ranges=not allow_out_of_range,
-        )
-    except FHOPSValueError as exc:  # pragma: no cover - Typer surfaces error.
-        raise typer.BadParameter(str(exc)) from exc
-
-    rows = [
-        ("Model", result.model.value),
-        ("Average Stem Size (m³/stem)", f"{result.avg_stem_size:.3f}"),
-        ("Volume per Hectare (m³/ha)", f"{result.volume_per_ha:.1f}"),
-        ("Stem Density (trees/ha)", f"{result.stem_density:.1f}"),
-        ("Ground Slope (%)", f"{result.ground_slope:.1f}"),
-        ("Predicted Productivity (m³/PMH15)", f"{result.predicted_m3_per_pmh:.2f}"),
-    ]
-    _render_kv_table(
-        "Lahrsen (2025) Feller-Buncher Productivity Estimate",
-        rows,
-    )
-    if result.out_of_range:
-        console.print("[red]Warning: inputs outside observed BC ranges:[/red]")
-        for msg in result.out_of_range:
-            console.print(f"  - {msg}")
-    range_table = Table(title="Observed Ranges (Lahrsen 2025)")
-    range_table.add_column("Variable", style="bold")
-    range_table.add_column("Min")
-    range_table.add_column("Max")
-    for label, key in [
-        ("Avg stem size (m³)", "avg_stem_size"),
-        ("Volume per ha (m³)", "volume_per_ha"),
-        ("Stem density (/ha)", "stem_density"),
-        ("Ground slope (%)", "ground_slope"),
-    ]:
-        bounds = result.ranges[key]
-        min_val = bounds.get("min")
-        max_val = bounds.get("max")
-        range_table.add_row(
-            label,
-            f"{min_val:.3f}" if min_val is not None else "—",
-            f"{max_val:.3f}" if max_val is not None else "—",
-        )
-    console.print(range_table)
-    console.print(
-        "[dim]Coefficients sourced from Lahrsen, 2025 (UBC PhD) — whole-tree feller-buncher dataset.[/dim]"
-    )
-    _maybe_render_costs(show_costs, ProductivityMachineRole.FELLER_BUNCHER.value)
-    return
+    raise typer.BadParameter(f"Unsupported machine role '{role}'.")
 
 
 @dataset_app.command("estimate-productivity-rv")
@@ -8539,7 +8679,9 @@ def estimate_skyline_productivity_cmd(
         help="Optional second lateral distance input for TR127 blocks that require it.",
         show_default=False,
     ),
-    payload_m3: float = typer.Option(None, help="Payload per turn (m³). Defaults per source."),
+    payload_m3: float | None = typer.Option(
+        None, help="Payload per turn (m³). Defaults per source."
+    ),
     large_end_diameter_cm: float = typer.Option(
         34.0, min=1.0, help="Required for Lee downhill (cm).", show_default=False
     ),
@@ -8736,6 +8878,8 @@ def estimate_skyline_productivity_cmd(
         )
     if manual_falling_species is not None or manual_falling_dbh_cm is not None:
         manual_falling = True
+
+    console_warning: str | None = None
 
     def _append_warning(existing: str | None, message: str) -> str:
         """Helper to concatenate CLI warning strings while preserving blank lines."""
@@ -9051,18 +9195,18 @@ def estimate_skyline_productivity_cmd(
         )
         console_warning = _append_warning(console_warning, support_note)
     elif model in _TR127_MODEL_TO_BLOCK:
-        block_id = _TR127_MODEL_TO_BLOCK[model]
-        if block_id in (5, 6) and num_logs is None:
+        tr127_block_id = _TR127_MODEL_TO_BLOCK[model]
+        if tr127_block_id in (5, 6) and num_logs is None:
             raise typer.BadParameter("--num-logs is required for TR127 Block 5/6 models.")
         cycle_minutes = estimate_cable_yarder_cycle_time_tr127_minutes(
-            block=block_id,
+            block=tr127_block_id,
             slope_distance_m=slope_distance_m,
             lateral_distance_m=lateral_distance_m,
             num_logs=num_logs,
             lateral_distance2_m=lateral_distance_2_m,
         )
         value = estimate_cable_yarder_productivity_tr127(
-            block=block_id,
+            block=tr127_block_id,
             payload_m3=payload_m3 or 1.6,
             slope_distance_m=slope_distance_m,
             lateral_distance_m=lateral_distance_m,
@@ -9071,14 +9215,14 @@ def estimate_skyline_productivity_cmd(
         )
         rows = [
             ("Model", model.value),
-            ("Block", str(block_id)),
+            ("Block", str(tr127_block_id)),
             ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
             ("Lateral Distance (m)", f"{lateral_distance_m:.1f}"),
             ("Logs per Turn", f"{num_logs:.1f}" if num_logs is not None else "—"),
             ("Payload (m³)", f"{(payload_m3 or 1.6):.2f}"),
             ("Cycle Time (min)", f"{cycle_minutes:.2f}"),
         ]
-        source_label = f"FPInnovations TR-127 Block {block_id} regression (northwestern BC)."
+        source_label = f"FPInnovations TR-127 Block {tr127_block_id} regression (northwestern BC)."
     elif model is SkylineProductivityModel.FNCY12_TMY45:
         resolved_variant = fncy12_variant or Fncy12ProductivityVariant.STEADY_STATE
         fncy12_result = estimate_tmy45_productivity_fncy12(resolved_variant)
@@ -9298,42 +9442,42 @@ def estimate_skyline_productivity_cmd(
     elif model in _TN173_MODEL_TO_SYSTEM_ID:
         system_id = _TN173_MODEL_TO_SYSTEM_ID[model]
         system = get_tn173_system(system_id)
-        resolved_pieces = pieces_per_cycle or system.pieces_per_turn
-        if resolved_pieces is None or resolved_pieces <= 0:
+        tn173_pieces: float | None = pieces_per_cycle or system.pieces_per_turn
+        if tn173_pieces is None or tn173_pieces <= 0:
             raise typer.BadParameter(
                 "--pieces-per-cycle is required for TN173 presets when the dataset "
                 "entry does not declare a default pieces/turn."
             )
-        resolved_piece_volume = piece_volume_m3 or system.piece_volume_m3
-        if resolved_piece_volume is None:
-            if system.payload_m3 is not None and resolved_pieces > 0:
-                resolved_piece_volume = system.payload_m3 / resolved_pieces
-        if resolved_piece_volume is None or resolved_piece_volume <= 0:
+        tn173_piece_volume: float | None = piece_volume_m3 or system.piece_volume_m3
+        if tn173_piece_volume is None:
+            if system.payload_m3 is not None and tn173_pieces > 0:
+                tn173_piece_volume = system.payload_m3 / tn173_pieces
+        if tn173_piece_volume is None or tn173_piece_volume <= 0:
             raise typer.BadParameter(
                 "--piece-volume-m3 must be > 0 for TN173 presets when no dataset default exists."
             )
         if payload_m3 is not None and payload_m3 <= 0:
             raise typer.BadParameter("--payload-m3 must be > 0 for TN173 presets.")
-        resolved_payload = (
+        tn173_payload = (
             payload_m3
             if payload_m3 is not None
             else (
                 system.payload_m3
                 if system.payload_m3 is not None
-                else resolved_pieces * resolved_piece_volume
+                else tn173_pieces * tn173_piece_volume
             )
         )
         cycle_minutes = system.cycle_minutes
         if cycle_minutes <= 0:
             raise typer.BadParameter(f"TN173 system '{system_id}' is missing a valid cycle time.")
-        value = (resolved_payload * 60.0) / cycle_minutes
+        value = (tn173_payload * 60.0) / cycle_minutes
         rows = [
             ("Model", model.value),
             ("System", system.label),
             ("Slope Distance (m)", f"{slope_distance_m:.1f}"),
-            ("Pieces per Turn", f"{resolved_pieces:.2f}"),
-            ("Piece Volume (m³)", f"{resolved_piece_volume:.3f}"),
-            ("Payload (m³)", f"{resolved_payload:.2f}"),
+            ("Pieces per Turn", f"{tn173_pieces:.2f}"),
+            ("Piece Volume (m³)", f"{tn173_piece_volume:.3f}"),
+            ("Payload (m³)", f"{tn173_payload:.2f}"),
             ("Cycle Time (min)", f"{cycle_minutes:.2f}"),
             ("Recorded Productivity (m³/PMH)", f"{system.productivity_m3_per_pmh:.2f}"),
         ]
@@ -9385,9 +9529,9 @@ def estimate_skyline_productivity_cmd(
             )
         console_warning = "[yellow]Warning:[/yellow] " + " ".join(warning_parts)
         non_bc_warning = True
-        telemetry_payload_m3 = resolved_payload
-        telemetry_pieces = resolved_pieces
-        telemetry_piece_volume = resolved_piece_volume
+        telemetry_payload_m3 = tn173_payload
+        telemetry_pieces = tn173_pieces
+        telemetry_piece_volume = tn173_piece_volume
         telemetry_horizontal = slope_distance_m
     elif model is SkylineProductivityModel.AUBUCHON_STANDING:
         cycle_minutes = estimate_standing_skyline_turn_time_aubuchon1979(

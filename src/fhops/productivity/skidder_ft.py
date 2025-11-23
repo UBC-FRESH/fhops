@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from functools import lru_cache
 from pathlib import Path
+from typing import Any, cast
 
 
 class Han2018SkidderMethod(str, Enum):
@@ -130,15 +131,24 @@ _ADV6N7_PATH = (
 
 
 @lru_cache(maxsize=1)
-def _load_skidder_speed_profiles() -> dict[str, dict[str, object]]:
+def _load_skidder_speed_profiles() -> dict[str, dict[str, Any]]:
     """Load GNSS-derived skidder speed profiles for travel-time overrides."""
     try:
-        data = json.loads(_SKIDDER_SPEED_PROFILE_PATH.read_text(encoding="utf-8"))
+        data = cast(
+            dict[str, Any], json.loads(_SKIDDER_SPEED_PROFILE_PATH.read_text(encoding="utf-8"))
+        )
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
         raise FileNotFoundError(
             f"Skidder speed profile data missing: {_SKIDDER_SPEED_PROFILE_PATH}"
         ) from exc
-    return (data or {}).get("events") or {}
+    events = data.get("events")
+    if not isinstance(events, dict):
+        return {}
+    result: dict[str, dict[str, Any]] = {}
+    for key, value in events.items():
+        if isinstance(value, dict):
+            result[str(key)] = value
+    return result
 
 
 @lru_cache(maxsize=1)
@@ -146,9 +156,9 @@ def get_adv6n7_metadata() -> ADV6N7Metadata:
     """Load and cache the ADV6N7 regression metadata from the bundled JSON file."""
     if not _ADV6N7_PATH.exists():
         raise FileNotFoundError(f"ADV6N7 dataset not found: {_ADV6N7_PATH}")
-    payload = json.loads(_ADV6N7_PATH.read_text(encoding="utf-8"))
-    regressions = payload["regressions"]
-    cycle_entries: dict[str, dict[str, object]] = regressions["cycle_time"]["equations"]
+    payload = cast(dict[str, Any], json.loads(_ADV6N7_PATH.read_text(encoding="utf-8")))
+    regressions: dict[str, Any] = payload["regressions"]
+    cycle_entries: dict[str, dict[str, Any]] = regressions["cycle_time"]["equations"]
     intercepts: dict[ADV6N7DeckingMode, float] = {}
     distance_coeff = None
     mapping = {
@@ -203,18 +213,24 @@ def get_skidder_speed_profile(key: str) -> SkidderSpeedProfile:
     if payload is None:
         valid = ", ".join(sorted(_load_skidder_speed_profiles()))
         raise ValueError(f"Unknown skidder speed profile '{key}'. Valid: {valid}")
+    profile = payload
     description = "GNSS-derived speed profile"
     if key == "SK":
         description = "GNSS cable skidder median speeds (Zurita & Borz 2025)"
     elif key == "FT":
         description = "GNSS farm-tractor skidder median speeds (Zurita & Borz 2025)"
-    notes_payload = payload.get("notes") if isinstance(payload.get("notes"), list) else []
+    notes_field = profile.get("notes")
+    notes_payload = notes_field if isinstance(notes_field, list) else []
     notes = tuple(str(n) for n in notes_payload)
+    empty_section = profile.get("drive_empty_forest_road")
+    empty_speed = float(empty_section.get("median_kmh") or 0.0) if isinstance(empty_section, dict) else 0.0
+    loaded_section = profile.get("drive_loaded_forest_road")
+    loaded_speed = float(loaded_section.get("median_kmh") or 0.0) if isinstance(loaded_section, dict) else 0.0
     return SkidderSpeedProfile(
         key=key,
         description=description,
-        empty_speed_kmh=float((payload.get("drive_empty_forest_road") or {}).get("median_kmh")),
-        loaded_speed_kmh=float((payload.get("drive_loaded_forest_road") or {}).get("median_kmh")),
+        empty_speed_kmh=empty_speed,
+        loaded_speed_kmh=loaded_speed,
         notes=notes,
     )
 
