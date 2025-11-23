@@ -46,6 +46,11 @@ Telemetry Store Maintenance
   - Keep the **latest 4 weeks** of JSONL/SQLite telemetry in the repo (rename older files to
     `.archive/` or move to long-term storage to prevent bloat).
   - Archive large step logs (``telemetry/steps/*.jsonl``) after generating summary reports.
+
+  .. seealso::
+
+     :func:`fhops.cli.telemetry.prune` – CLI helper for trimming run logs and deleting aligned step files.
+
 * **Vacuum & integrity**
 
   .. code-block:: bash
@@ -85,6 +90,13 @@ Automation Checklist
      history command so older snapshots stay compatible (document the migration in `CHANGE_LOG.md`).
    - If GitHub Pages fails to update, inspect the Pages workflow logs and check for large HTML files
      (GitHub rejects >100 MB). Trim sample counts or compress images as needed.
+
+.. seealso::
+
+   :func:`fhops.cli.main.solve_heur_cmd`, :func:`fhops.cli.main.solve_ils_cmd`, and :func:`fhops.cli.main.solve_tabu_cmd` – solver entrypoints that emit ``--telemetry-log`` metadata used by this runbook.
+   :func:`fhops.cli.main.tune_random_cli`, :func:`fhops.cli.main.tune_grid_cli`, and :func:`fhops.cli.main.tune_bayes_cli` – tuning orchestrators responsible for the weekly telemetry bundles.
+   :func:`fhops.cli.benchmarks.bench_suite` – benchmarking command that feeds KPI comparisons into the telemetry store.
+   :func:`fhops.cli.telemetry.report` – generates CSV/Markdown summaries from ``telemetry/runs.sqlite`` for publication.
 
 Runbook Template (per week)
 ---------------------------
