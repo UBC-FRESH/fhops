@@ -8,6 +8,7 @@ manuscript/
 ├── sections/                # Individual content files (LaTeX include snippets)
 ├── elsarticle/              # Stock CTAN elsarticle class + sample manuscript (unzipped 2025-11-23)
 ├── fhops-softx.tex          # Wrapper that stitches sections/includes together
+├── references.bib           # Manuscript BibTeX database (exemplar entries + FHOPS cites)
 ├── Makefile                 # latexmk-based build entry point
 ├── README.md                # (this file) build + workflow notes
 └── build/ (generated)       # latexmk output directory (ignored)
@@ -32,7 +33,7 @@ make clean
 `latexmk` will automatically run pdflatex/bibtex as needed. You’ll need a TeX Live installation that includes common packages (`latexmk`, `hyperref`, `lineno`, etc.). On Debian/Ubuntu, `sudo apt-get install texlive-full latexmk` is the quickest path; we can revisit a lighter scheme/tectonic later if build times become an issue.
 
 ## Planned workflow
-1. **Template adaptation:** `fhops-softx.tex` pulls the elsarticle class and `\input`s the files under `sections/`. Section files are intended to be reusable (shared with Sphinx via includes later).
+1. **Template adaptation:** `fhops-softx.tex` pulls the elsarticle class and `\input`s the files under `sections/`, with citations managed via `references.bib`. Section files are intended to be reusable (shared with Sphinx via includes later).
 2. **Single-source content:** Draft prose in `sections/*.tex`. When content stabilises, we can symlink or otherwise share snippets with the Sphinx docs.
 3. **Automation hooks:** Once figure/table scripts exist, wire them into the Makefile (e.g., `make assets`) so `make` regenerates everything end-to-end before `latexmk` runs.
 
