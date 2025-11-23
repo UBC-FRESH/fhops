@@ -1,0 +1,3 @@
+crew_id,machine_id,primary_role,notes
+crew-1,M1,harvester,capabilities=forwarder
+crew-2,M2,forwarder,capabilities=forwarder

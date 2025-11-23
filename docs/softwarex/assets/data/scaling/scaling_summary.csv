@@ -1,0 +1,4 @@
+tier,blocks,machines,num_days,assignments,runtime_s,objective
+small,4,2,6,5.0,0.2502420470118522,39.791
+medium,8,4,12,9.0,0.4894984629936516,91.368
+large,16,6,18,16.0,1.0330011891201138,169.77700000000004

@@ -1,0 +1,105 @@
+name: synthetic-medium
+tier: medium
+seed: 202
+counts:
+  blocks: 8
+  machines: 4
+  landings: 2
+  calendar: 48
+  production_rates: 32
+terrain_counts:
+  rolling: 1
+  mixed: 6
+  steep: 1
+prescription_counts:
+  clearcut: 3
+  thinning: 5
+crew_capabilities:
+  crew-1:
+  - processor
+  crew-2:
+  - forwarder
+  crew-3:
+  - forwarder
+  - processor
+  crew-1-2:
+  - processor
+blackouts: []
+shifts_per_day: 1
+shift_hours: 8.07867878801654
+terrain_profile:
+  values:
+  - rolling
+  - mixed
+  - steep
+  weights:
+  - 0.2
+  - 0.6
+  - 0.2
+prescription_profile:
+  values:
+  - clearcut
+  - thinning
+  weights:
+  - 0.35
+  - 0.65
+system_mix:
+  ground_fb_skid: 0.15873015873015875
+  ctl: 0.15873015873015875
+  steep_tethered: 0.11904761904761904
+  cable_running: 0.11904761904761904
+  cable_running_fncy12: 0.03968253968253969
+  cable_highlead_tn147: 0.023809523809523808
+  cable_running_tr122_extended: 0.015873015873015872
+  cable_running_tr122_shelterwood: 0.015873015873015872
+  cable_running_tr122_clearcut: 0.015873015873015872
+  cable_micro_ecologger: 0.03968253968253969
+  cable_micro_gabriel: 0.03968253968253969
+  cable_micro_christie: 0.03968253968253969
+  cable_micro_teletransporteur: 0.03968253968253969
+  cable_micro_timbermaster: 0.03968253968253969
+  cable_micro_hi_skid: 0.03968253968253969
+  cable_running_sr54: 0.015873015873015872
+  cable_running_tr75_bunched: 0.015873015873015872
+  cable_running_tr75_handfelled: 0.015873015873015872
+  cable_standing_tr125_strip: 0.015873015873015872
+  cable_partial_tr127_block1: 0.015873015873015872
+  cable_partial_tr127_block5: 0.015873015873015872
+blackout_biases:
+- start_day: 8
+  end_day: 10
+  probability: 0.35
+  duration:
+  - 1
+  - 2
+sampling_config:
+  samples: 12
+  base_seed: 123
+  downtime:
+    enabled: true
+    seed_offset: 0
+    probability: 0.12
+    mean_duration_hours: 3.0
+    std_duration_hours: 1.0
+    max_concurrent: 1
+    target_machine_roles: null
+  weather:
+    enabled: true
+    seed_offset: 0
+    day_probability: 0.25
+    severity_levels:
+      light: 0.1
+      moderate: 0.6
+      severe: 0.4
+    correlated_days: true
+    impact_window_days: 2
+    affected_shifts: null
+  landing:
+    enabled: true
+    seed_offset: 0
+    probability: 0.18
+    capacity_multiplier_range:
+    - 0.45
+    - 0.75
+    duration_days: 2
+    target_landing_ids: null

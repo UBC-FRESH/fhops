@@ -12,6 +12,7 @@ dataset_dir="${data_dir}/datasets"
 tuning_dir="${data_dir}/tuning"
 playback_dir="${data_dir}/playback"
 cost_dir="${data_dir}/costing"
+scaling_dir="${data_dir}/scaling"
 
 mkdir -p "${bench_dir}" "${fig_dir}" "${data_dir}"
 
@@ -116,3 +117,6 @@ python "${script_dir}/run_playback_analysis.py" --repo-root "${repo_root}" --out
 
 echo "[assets] Running costing demo into ${cost_dir}" >&2
 python "${script_dir}/run_costing_demo.py" --repo-root "${repo_root}" --out-dir "${cost_dir}"
+
+echo "[assets] Running synthetic scaling sweep into ${scaling_dir}" >&2
+python "${script_dir}/run_synthetic_sweep.py" --repo-root "${repo_root}" --out-dir "${scaling_dir}"

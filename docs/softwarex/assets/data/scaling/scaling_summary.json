@@ -1,0 +1,29 @@
+[
+  {
+    "tier": "small",
+    "blocks": 4,
+    "machines": 2,
+    "num_days": 6,
+    "assignments": 5.0,
+    "runtime_s": 0.2502420470118522,
+    "objective": 39.791
+  },
+  {
+    "tier": "medium",
+    "blocks": 8,
+    "machines": 4,
+    "num_days": 12,
+    "assignments": 9.0,
+    "runtime_s": 0.4894984629936516,
+    "objective": 91.368
+  },
+  {
+    "tier": "large",
+    "blocks": 16,
+    "machines": 6,
+    "num_days": 18,
+    "assignments": 16.0,
+    "runtime_s": 1.0330011891201138,
+    "objective": 169.77700000000004
+  }
+]
