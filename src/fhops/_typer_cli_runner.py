@@ -2,52 +2,33 @@
 
 from __future__ import annotations
 
-import sys
-from collections.abc import Iterable
-from types import ModuleType
+from typing import Any, Callable, Type, cast
 
 _PATCH_FLAG = "_fhops_stdout_mirrored"
-
-
-def _iter_modules() -> Iterable[ModuleType]:
-    for module in sys.modules.values():
-        if isinstance(module, ModuleType):
-            yield module
-
-
-def _swap_in_module(
-    module: ModuleType, original: type, patched: type
-) -> None:  # pragma: no cover - tiny helper
-    candidate = getattr(module, "CliRunner", None)
-    if candidate is original:
-        setattr(module, "CliRunner", patched)
 
 
 def patch_typer_cli_runner() -> None:
     """Mirror stderr into stdout for typer.testing.CliRunner."""
 
     try:
-        import typer.testing as typer_testing  # type: ignore
+        import typer.testing as typer_testing
     except Exception:  # pragma: no cover - Typer missing in some toolchains
         return
 
-    current = getattr(typer_testing, "CliRunner", None)
-    if current is None or getattr(current, _PATCH_FLAG, False):
+    runner = getattr(typer_testing, "CliRunner", None)
+    if runner is None or getattr(runner, _PATCH_FLAG, False):
         return
 
-    original_runner = current
+    cli_runner_type = cast(Type[Any], runner)
+    original_invoke = cast(Callable[..., Any], cli_runner_type.invoke)
 
-    class StdoutCliRunner(original_runner):  # type: ignore[misc,valid-type]
-        _fhops_stdout_mirrored = True
+    def invoke_with_merged_stdout(self: Any, *args: Any, **kwargs: Any) -> Any:
+        result = original_invoke(self, *args, **kwargs)
+        stderr_bytes = getattr(result, "stderr_bytes", b"")
+        if stderr_bytes:
+            stdout_bytes = getattr(result, "stdout_bytes", b"")
+            result.stdout_bytes = stdout_bytes + stderr_bytes
+        return result
 
-        def invoke(self, *args, **kwargs):  # type: ignore[override]
-            result = super().invoke(*args, **kwargs)
-            stderr_bytes = getattr(result, "stderr_bytes", b"")
-            if stderr_bytes:
-                stdout_bytes = getattr(result, "stdout_bytes", b"")
-                result.stdout_bytes = stdout_bytes + stderr_bytes
-            return result
-
-    typer_testing.CliRunner = StdoutCliRunner
-    for module in _iter_modules():
-        _swap_in_module(module, original_runner, StdoutCliRunner)
+    setattr(cli_runner_type, "invoke", invoke_with_merged_stdout)
+    setattr(cli_runner_type, _PATCH_FLAG, True)
