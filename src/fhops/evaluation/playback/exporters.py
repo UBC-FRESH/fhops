@@ -28,7 +28,22 @@ def export_playback(
 ) -> dict[str, Any]:
     """Write playback summaries to the requested outputs.
 
-    Returns a dictionary containing summary metrics that can be fed into telemetry or logs.
+    Parameters
+    ----------
+    shift_df, day_df:
+        DataFrames produced by :func:`fhops.evaluation.playback.aggregates.shift_dataframe` and
+        :func:`day_dataframe`.
+    shift_csv, day_csv:
+        Optional paths for CSV exports.
+    shift_parquet, day_parquet:
+        Optional paths for Parquet exports (requires ``pyarrow`` or ``fastparquet``).
+    summary_md:
+        Optional Markdown summary export (produced via :func:`render_markdown_summary`).
+
+    Returns
+    -------
+    dict
+        Scalar metrics from :func:`playback_summary_metrics` (samples, total production, etc.).
     """
 
     metrics = playback_summary_metrics(shift_df, day_df)
@@ -57,6 +72,8 @@ def render_markdown_summary(
     day_df: pd.DataFrame,
     metrics: dict[str, Any] | None = None,
 ) -> str:
+    """Return a Markdown-formatted playback summary."""
+
     metrics = metrics or playback_summary_metrics(shift_df, day_df)
     lines = [
         "# Playback Summary",
@@ -101,6 +118,8 @@ def render_markdown_summary(
 
 
 def playback_summary_metrics(shift_df: pd.DataFrame, day_df: pd.DataFrame) -> dict[str, Any]:
+    """Compute scalar summary metrics (production, hours, mobilisation, utilisation)."""
+
     samples = int(day_df["sample_id"].nunique()) if "sample_id" in day_df.columns else 1
     total_production = float(day_df.get("production_units", pd.Series(dtype=float)).sum())
     total_hours = float(day_df.get("total_hours", pd.Series(dtype=float)).sum())
