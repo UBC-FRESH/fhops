@@ -178,6 +178,110 @@ To define custom systems, construct :class:`HarvestSystem` instances and supply 
 contract. When adding optional or parallel tasks, document the intended precedence explicitly and
 consider updating this reference alongside any new data files.
 
+Preset Usage Cheat Sheet
+------------------------
+
+Forwarder Productivity
+~~~~~~~~~~~~~~~~~~~~~~
+
+Use ``fhops dataset estimate-productivity --machine-role forwarder`` and select a model from
+:class:`fhops.productivity.forwarder_bc.ForwarderBCModel`. The CLI echoes the same arguments as
+:func:`fhops.productivity.forwarder_bc.estimate_forwarder_productivity_bc`; the docstring there lists all
+parameters and return fields. Pick a preset based on the stand context:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 45 20 15
+
+   * - ``--forwarder-model``
+     - When to use
+     - Key CLI options
+     - API reference
+   * - ``ghaffariyan-small`` / ``ghaffariyan-large``
+     - Plantation or thinning work with 14–20 t forwarders where distance and slope dominate cycle time.
+     - ``--extraction-distance``, ``--slope-class`` or ``--slope-factor``.
+     - :func:`fhops.productivity.forwarder_bc.estimate_forwarder_productivity_bc`
+   * - ``adv6n10-shortwood``
+     - Boreal multi-product sorting (ADV6N10) where payload, log length, and travel speed are known.
+     - ``--payload-per-trip``, ``--mean-log-length``, ``--trail-length``, ``--travel-speed``, ``--products-per-trail``.
+     - :class:`fhops.productivity.forwarder_bc.ADV6N10ShortwoodResult`
+   * - ``adv1n12-shortwood``
+     - Valmet 646 regression driven primarily by extraction distance (Advantage 1 No. 12).
+     - ``--extraction-distance`` only; slope handled via the preset.
+     - :class:`fhops.productivity.forwarder_bc.ADV1N12ShortwoodResult`
+   * - ``eriksson-final`` / ``eriksson-thinning``
+     - Swedish follow-up study with payload-driven productivity—use when you have stem size and load capacity data.
+     - ``--mean-extraction-distance``, ``--mean-stem-size``, ``--load-capacity``.
+     - :class:`fhops.productivity.forwarder_bc.ErikssonResult`
+
+Grapple Skidder & Shovel Logger Productivity
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``fhops dataset estimate-productivity --machine-role grapple_skidder`` wires directly into
+:func:`fhops.productivity.grapple_bc.estimate_grapple_skidder_productivity_adv6n7` and related helpers.
+Use these presets to shortcut tuning:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 43 20 15
+
+   * - ``--grapple-skidder-model``
+     - When to use
+     - Key CLI options
+     - API reference
+   * - ``adv6n7``
+     - FPInnovations ADV6N7 long-distance grapple skidding with optional decking/utilisation overrides.
+     - ``--skidder-extraction-distance``, ``--skidder-adv6n7-decking-mode``, payload/utilisation/delay overrides.
+     - :class:`fhops.productivity.ADV6N7SkidderResult`
+   * - ``han-whole-tree`` / ``han-lop-and-scatter``
+     - Han et al. (2018) beetle-kill salvage cycles where piece size and empty/loaded distances are known.
+     - ``--pieces-per-cycle``, ``--piece-volume-m3``, ``--skidder-empty-distance``, ``--skidder-loaded-distance``.
+     - :func:`fhops.productivity.grapple_bc.estimate_grapple_skidder_productivity_han2018`
+   * - ``adv1n12-fulltree`` / ``adv1n12-two-phase``
+     - Advantage 1N12 thinning presets (one- vs two-phase). Use when you only know extraction distance.
+     - ``--skidder-extraction-distance`` (other parameters default from the preset).
+     - :func:`fhops.productivity.estimate_cable_skidder_productivity_adv1n12_full_tree`
+   * - ``shovel-logger`` (serpentine)
+     - Sessions & Boston shovel-logging with directional slope/bunching multipliers.
+     - ``--shovel-passes`` plus swing/payload inputs; defaults come from :class:`fhops.productivity.ShovelLoggerSessions2006Inputs`.
+     - :func:`fhops.cli.dataset._evaluate_shovel_logger_result` (see CLI docstrings)
+
+Skyline & Helicopter Productivity
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Running skyline presets share parameters with the cable helpers inside
+:mod:`fhops.productivity.cable_logging`. The CLI docstrings now list every parameter, but a few quick
+rules help:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 43 20 15
+
+   * - Skyline model
+     - When to use
+     - Key CLI options
+     - API reference
+   * - ``tr125-single`` / ``tr125-multi``
+     - Skylead C40 single-span or intermediate-support operations (payload defaults to 1.6 m³).
+     - ``--slope-distance``, ``--lateral-distance`` (multi-span pulls TN258 lateral warnings automatically).
+     - :func:`fhops.productivity.estimate_cable_yarder_productivity_tr125_single_span`
+   * - ``tr127-block{1..6}``
+     - FPInnovations TR127 blocks with dual lateral distances and logs-per-turn requirements.
+     - ``--lateral-distance`` + ``--lateral-distance-2`` and (Blocks 5–6) ``--num-logs``.
+     - :func:`fhops.productivity.estimate_cable_yarder_productivity_tr127`
+   * - ``fncy12-tmy45``
+     - Thunderbird TMY45 with Mini-Mak II supports (pulls Cat D8/Timberjack ratios + TN258 envelopes).
+     - ``--fncy12-variant`` only; payload/shift hours come from :func:`fhops.productivity.estimate_tmy45_productivity_fncy12`.
+     - :func:`fhops.productivity.estimate_tmy45_productivity_fncy12`
+   * - ``hi-skid`` / ``tn173-*`` / ``adv5n28-*``
+     - Short-span skyline conversions (Hi-Skid truck, TN173 micro yarders, ADV5N28 helicopter-to-skyline upgrades).
+     - ``--pieces-per-cycle``, ``--piece-volume-m3``, optional ``--payload-m3`` (defaults seeded per system ID).
+     - :mod:`fhops.productivity.cable_logging` (see individual helper docstrings)
+
+For helicopter workflows, ``fhops dataset estimate-productivity --machine-role helicopter_longline`` maps
+directly to :func:`fhops.productivity.estimate_helicopter_longline_productivity`. Select a preset with
+``--helicopter-preset`` to seed the distances and payload weights documented in the helper docstring.
+
 Forwarder Productivity Models
 -----------------------------
 
