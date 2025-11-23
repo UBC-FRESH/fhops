@@ -1,3 +1,9 @@
+# 2025-11-24 — CLI dataset helper docstrings
+- Completed the docstring sweep across `src/fhops/cli/dataset.py`, covering the remaining dataset prompts, evaluators, telemetry renderers, and TR-28/TN-98 tables so the API docs now explain every CLI helper and validation path (forwarder/shovel logger/CTL evaluators, dataset resolvers, ADV2N21 summaries, road-cost renderers, soil-profile tables, etc.).
+- Extended the docstring coverage to the ancillary CLI helpers (`src/fhops/cli/main.py`, `src/fhops/cli/profiles.py`, `src/fhops/cli/synthetic.py`, `src/fhops/cli/telemetry.py`) so KPI printers, bundle/tuning collectors, solver profile utilities, synthetic dataset generators, and telemetry reporters now provide detailed Parameters/Returns notes in the API reference.
+- Updated `notes/sphinx-documentation.md` to record the clean AST scan and close out the CLI dataset checklist item within the Phase 4 docstring plan.
+- Verified that the new docstrings render without warnings by running `sphinx-build -b html docs _build/html -W`.
+
 # Development Change Log
 
 # 2025-11-23 — API docstring audit + policy updates

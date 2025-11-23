@@ -118,13 +118,14 @@ FHOPS’ Sphinx tree lives under `docs/` and is published to Read the Docs via `
 - **Remaining productivity stragglers** – modules like `kellogg_bettinger1994.py`, `laitila2020.py`, `stoilov2021.py` still need NumPy-style docstrings even though their wrappers are covered.
 
 ### Next docstring tasks
-- [ ] **CLI dataset module sweep** – add concise docstrings to exported enums, `_apply_*` default helpers, telemetry renderers, and validation utilities in `src/fhops/cli/dataset.py`.
+- [x] **CLI dataset module sweep** – add concise docstrings to exported enums, `_apply_*` default helpers, telemetry renderers, and validation utilities in `src/fhops/cli/dataset.py`.
     - [x] Enumerations covering ADV/TN/TR/Loader/Spinelli presets now describe their usage so CLI docs no longer show blank entries (2025-11-24).
     - [x] Documented the `_apply_*` default helpers and core telemetry renderers (`_render_*`, `_parameter_supplied`, `_maybe_render_costs`) so CLI output helpers now have minimal descriptions (2025-11-24).
-    - [ ] Cover remaining validation/telemetry helpers (`_render_helicopter_operation_detail`, `_render_tn98_table`, `_render_tr28_road_cost`, `_render_soil_profiles_table`, `_append_*` JSONL writers, etc.).
-- [ ] **CLI ancillary modules** – document `cli/_utils.py`, `cli/benchmarks.py`, `cli/main.py`, `cli/profiles.py`, `cli/synthetic.py`, and `cli/telemetry.py` helper functions/enums so the CLI API pages carry usable descriptions.
+    - [x] Covered the remaining validation/telemetry helpers (`_render_tn98_table`, `_render_tr28_road_cost`, `_render_soil_profiles_table`, `_resolve_dataset`, `_select_*`, `_render_adv2n21_stand`, etc.), including per-parameter docstrings for the shovel logger/CTL evaluators and dataset prompts. AST scan (2025-11-24) now reports zero top-level definitions without docstrings in `cli/dataset.py`.
+- [x] **CLI ancillary modules** – document `cli/_utils.py`, `cli/benchmarks.py`, `cli/main.py`, `cli/profiles.py`, `cli/synthetic.py`, and `cli/telemetry.py` helper functions/enums so the CLI API pages carry usable descriptions.
     - [x] `_utils.py`: added docstrings for operator preset helpers.
     - [x] `cli/benchmarks.py`: documented `_resolve_scenarios` and `_record_metrics`.
+    - [x] 2025-11-24: Completed the remaining CLI helpers (main/profiles/synthetic/telemetry) so KPI printers, bundle/tuning collectors, solver profile utilities, synthetic dataset generators, and telemetry reporters now expose NumPy-style Parameters/Returns docstrings. Confirmed via AST scan that no top-level helpers remain undocumented in these modules.
 - [ ] **Evaluation playback/docs** – cover `evaluation/playback/stochastic.py`, `adapters.py`, and metrics dataclasses, focusing on parameter/return schemas referenced in thesis workflows.
 - [ ] **Heuristics internals** – add docstrings to `optimization/heuristics/ils.py` and `heuristics/registry.py` classes/functions that appear in the tuning notes.
 - [ ] **Productivity stragglers** – finish docstrings for `kellogg_bettinger1994.py`, `laitila2020.py`, `stoilov2021.py` (and any other remaining `productivity/*.py` files flagged by the scan).

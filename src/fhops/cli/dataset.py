@@ -312,6 +312,7 @@ _LOADER_METADATA_PATH = (
 
 @lru_cache(maxsize=None)
 def _load_loader_model_metadata() -> dict[str, Any]:
+    """Load the bundled loader preset metadata JSON so CLI commands can look up defaults."""
     try:
         return json.loads(_LOADER_METADATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError:  # pragma: no cover - defensive
@@ -319,6 +320,7 @@ def _load_loader_model_metadata() -> dict[str, Any]:
 
 
 def _loader_model_metadata(model: LoaderProductivityModel | None) -> dict[str, Any] | None:
+    """Return the metadata blob for a loader model if it exists in the local registry."""
     if model is None:
         return None
     data = _load_loader_model_metadata()
@@ -348,6 +350,7 @@ def _append_loader_telemetry(
 
 
 def _extract_preset_costs(meta: Mapping[str, Any] | None) -> dict[str, float] | None:
+    """Normalize cost fields from preset metadata into CPI-adjusted dictionaries."""
     if not meta:
         return None
     costs: dict[str, float] = {}
@@ -689,6 +692,7 @@ def _apply_loader_system_defaults(
 def _derive_cost_role_override(
     machine_role: str | None, overrides: Mapping[str, float | str] | None
 ) -> str | None:
+    """Derive the explicit machine-rate role override supplied via harvest-system metadata."""
     if machine_role != "loader" or not overrides:
         return None
     model_value = overrides.get("loader_model")
@@ -702,6 +706,7 @@ def _derive_cost_role_override(
 
 
 def _grapple_yarder_cost_role(model: GrappleYarderModel) -> str:
+    """Map a grapple-yarder preset to the machine-rate role used for CPI lookups."""
     return _GRAPPLE_YARDER_COST_ROLES.get(model, "grapple_yarder")
 
 
@@ -715,17 +720,20 @@ _HELICOPTER_COST_ROLES: dict[HelicopterLonglineModel, str] = {
 
 
 def _helicopter_cost_role(model: HelicopterLonglineModel) -> str:
+    """Return the machine-rate role that best represents the selected helicopter preset."""
     return _HELICOPTER_COST_ROLES.get(
         model, ProductivityMachineRole.HELICOPTER_LONGLINE.value
     )
 
 
 def _machine_rate_roles_help() -> str:
+    """Generate a help string enumerating available machine-rate roles."""
     roles = ", ".join(sorted(load_machine_rate_index().keys()))
     return f"Available roles: {roles}"
 
 
 def _resolve_machine_rate(role: str) -> MachineRate:
+    """Fetch a machine-rate entry or raise a CLI-friendly error when it is missing."""
     rate = get_machine_rate(role)
     if rate is None:
         available = ", ".join(sorted(load_machine_rate_index().keys()))
@@ -735,6 +743,8 @@ def _resolve_machine_rate(role: str) -> MachineRate:
 
 @dataclass(frozen=True)
 class DatasetRef:
+    """Reference to a packaged scenario, storing the display name and relative path."""
+
     name: str
     path: Path
 
@@ -771,12 +781,16 @@ class ProductivityMachineRole(str, Enum):
 
 
 class ShovelSlopeClass(str, Enum):
+    """Slope direction buckets used by shovel logging presets."""
+
     DOWNHILL = "downhill"
     LEVEL = "level"
     UPHILL = "uphill"
 
 
 class ShovelBunching(str, Enum):
+    """Bunching assumptions for shovel logging datasets."""
+
     FELLER_BUNCHED = "feller_bunched"
     HAND_SCATTERED = "hand_scattered"
 
@@ -833,10 +847,12 @@ _GRAPPLE_YARDER_COST_ROLES: dict[GrappleYarderModel, str] = {
 }
 
 def _tn157_case_choices() -> tuple[str, ...]:
+    """Return the valid TN157 case identifiers exposed by the productivity dataset."""
     return list_tn157_case_ids()
 
 
 def _tn157_case_help_text() -> str:
+    """Build the CLI help text describing acceptable TN157 cases."""
     numeric = ", ".join(cid for cid in _tn157_case_choices() if cid != "combined")
     return (
         "TN157 case identifier (combined, "
@@ -846,6 +862,7 @@ def _tn157_case_help_text() -> str:
 
 
 def _normalize_tn157_case(case_id: str | None) -> str:
+    """Normalize user-supplied TN157 identifiers (case*, combined) to dataset keys."""
     candidate = (case_id or "combined").strip().lower()
     if candidate in {"", "combined", "avg", "average"}:
         return "combined"
@@ -860,10 +877,12 @@ def _normalize_tn157_case(case_id: str | None) -> str:
 
 
 def _tn147_case_choices() -> tuple[str, ...]:
+    """Return the valid TN147 case identifiers exposed by the dataset."""
     return list_tn147_case_ids()
 
 
 def _tn147_case_help_text() -> str:
+    """Build the CLI help string describing TN147 case identifiers."""
     numeric = ", ".join(cid for cid in _tn147_case_choices() if cid != "combined")
     return (
         "TN147 case identifier (combined, "
@@ -873,6 +892,7 @@ def _tn147_case_help_text() -> str:
 
 
 def _normalize_tn147_case(case_id: str | None) -> str:
+    """Normalize free-form TN147 case text (case#, avg, combined) for dataset lookup."""
     candidate = (case_id or "combined").strip().lower()
     if candidate in {"", "combined", "avg", "average"}:
         return "combined"
@@ -887,10 +907,12 @@ def _normalize_tn147_case(case_id: str | None) -> str:
 
 
 def _tr28_machine_slugs() -> tuple[str, ...]:
+    """Return the canonical machine slugs published in TR28 road construction dataset."""
     return tuple(sorted(machine.slug for machine in load_tr28_machines()))
 
 
 def _resolve_tr28_machine(identifier: str) -> TR28Machine | None:
+    """Resolve a TR28 machine by slug or display name, returning `None` when missing."""
     candidate = identifier.strip().lower()
     slug_candidate = candidate.replace(" ", "_")
     for machine in load_tr28_machines():
@@ -900,18 +922,21 @@ def _resolve_tr28_machine(identifier: str) -> TR28Machine | None:
 
 
 def _format_currency(value: float | None) -> str:
+    """Format a cost value for console output, handling missing data."""
     if value is None:
         return "—"
     return f"${value:,.2f}"
 
 
 def _tn98_species_choices() -> tuple[str, ...]:
+    """List the TN98 species keys supported by the manual falling dataset."""
     return _TN98_SPECIES
 
 
 def _interpolate_tn98_value(
     records: Sequence[TN98DiameterRecord], dbh_cm: float, attr: str
 ) -> float | None:
+    """Interpolate a TN98 attribute across the observed DBH grid."""
     candidates = [record for record in records if getattr(record, attr) is not None]
     if not candidates:
         return None
@@ -939,12 +964,14 @@ def _interpolate_tn98_value(
 def _closest_tn98_record(
     records: Sequence[TN98DiameterRecord], dbh_cm: float
 ) -> TN98DiameterRecord | None:
+    """Return the TN98 per-diameter record closest to the requested DBH."""
     if not records:
         return None
     return min(records, key=lambda record: abs(record.dbh_cm - dbh_cm))
 
 
 def _normalise_tn98_species_value(value: str) -> str:
+    """Normalize user-provided TN98 species text to a supported identifier."""
     candidate = value.strip().lower().replace("-", "_")
     if candidate not in _TN98_SPECIES:
         raise ValueError(
@@ -954,6 +981,7 @@ def _normalise_tn98_species_value(value: str) -> str:
 
 
 def _coerce_bool(value: Any) -> bool | None:
+    """Coerce CLI option text/numerics into boolean flags."""
     if value is None:
         return None
     if isinstance(value, bool):
@@ -969,6 +997,7 @@ def _coerce_bool(value: Any) -> bool | None:
 
 
 def _manual_falling_overrides(system: HarvestSystem | None) -> dict[str, float | str] | None:
+    """Extract manual falling overrides from the harvest-system registry entry."""
     if system is None:
         return None
     overrides = system_productivity_overrides(system, "hand_faller")
@@ -978,6 +1007,7 @@ def _manual_falling_overrides(system: HarvestSystem | None) -> dict[str, float |
 
 
 def _estimate_tn98_manual_falling(species: str, dbh_cm: float) -> dict[str, Any]:
+    """Return TN98 cutting/limbing times, volumes, and CPI-adjusted costs for a tree."""
     dataset = load_tn98_dataset()
     regression = dataset.regressions.get(species) or dataset.regressions.get("all_species")
     if regression is None:
@@ -1141,7 +1171,7 @@ class ADV5N6StemSource(str, Enum):
     """Stem origin used by the ADV5N6 processor presets."""
 
     LOADER_FORWARDED = "loader_forwarded"
-   GRAPPLE_YARDED = "grapple_yarded"
+    GRAPPLE_YARDED = "grapple_yarded"
 
 
 class ADV5N6ProcessingMode(str, Enum):
@@ -2458,6 +2488,7 @@ def _render_grapple_yarder_result(
 
 
 def _parameter_supplied(ctx: typer.Context, name: str) -> bool:
+    """Return True when a Typer option/argument was provided explicitly by the user."""
     if ctx is None:
         return False
     try:
@@ -2622,6 +2653,7 @@ def _apply_skidder_system_defaults(
 
 
 def _shovel_slope_multiplier(value: ShovelSlopeClass) -> float:
+    """Multiplier applied to shovel logger productivity based on direction of travel."""
     return {
         ShovelSlopeClass.DOWNHILL: 1.1,
         ShovelSlopeClass.LEVEL: 1.0,
@@ -2630,6 +2662,7 @@ def _shovel_slope_multiplier(value: ShovelSlopeClass) -> float:
 
 
 def _shovel_bunching_multiplier(value: ShovelBunching) -> float:
+    """Multiplier applied to shovel logger productivity depending on bunch quality."""
     return {
         ShovelBunching.FELLER_BUNCHED: 1.0,
         ShovelBunching.HAND_SCATTERED: 0.6,
@@ -3496,6 +3529,19 @@ def _apply_grapple_yarder_system_defaults(
 
 
 def _forwarder_parameters(result: ForwarderBCResult) -> list[tuple[str, str]]:
+    """Convert a forwarder productivity result into CLI-friendly `(label, value)` rows.
+
+    Parameters
+    ----------
+    result :
+        Payload returned by `estimate_forwarder_productivity_bc`, including the model
+        reference and parameter echo.
+
+    Returns
+    -------
+    list[tuple[str, str]]
+        Ordered tuples that `_render_kv_table` can print without additional formatting.
+    """
     rows: list[tuple[str, str]] = [
         ("Model", result.model.value),
         ("Reference", result.reference or ""),
@@ -3630,6 +3676,7 @@ def _evaluate_forwarder_result(
     harwarder_payload: float | None,
     grapple_load_unloading: float | None,
 ) -> ForwarderBCResult:
+    """Validate the CLI inputs and dispatch to the BC forwarder regressions."""
     try:
         return estimate_forwarder_productivity_bc(
             model=model,
@@ -3676,6 +3723,7 @@ def _evaluate_grapple_skidder_result(
     adv6n7_delay_minutes: float | None,
     adv6n7_support_ratio: float | None,
 ) -> SkidderProductivityResult | Mapping[str, object]:
+    """Evaluate grapple-skidder productivity, covering ADV presets and Han et al. regressions."""
     if model in {
         GrappleSkidderModel.ADV1N12_FULLTREE,
         GrappleSkidderModel.ADV1N12_TWO_PHASE,
@@ -3769,6 +3817,7 @@ def _evaluate_grapple_yarder_result(
     turn_volume_m3: float | None,
     yarding_distance_m: float | None,
 ) -> float:
+    """Validate grapple-yarder inputs and return cycle productivity for SR54/TR75 cases."""
     missing: list[str] = []
     if turn_volume_m3 is None:
         missing.append("--grapple-turn-volume-m3")
@@ -3816,6 +3865,36 @@ def _evaluate_shovel_logger_result(
     bunching: ShovelBunching,
     custom_multiplier: float | None,
 ) -> ShovelLoggerResult:
+    """Dispatch shovel-logger parameters through Sessions et al. (2006) regressions.
+
+    Parameters
+    ----------
+    passes : int, optional
+        Loading passes per strip (defaults to study mean when omitted).
+    swing_length_m, strip_length_m : float, optional
+        Horizontal swing reach and strip length in metres.
+    volume_per_ha_m3 : float, optional
+        Merchantable volume per hectare feeding the shovel logger.
+    swing_time_*_s : float, optional
+        Swing times (seconds) for roadside, initial placement, and rehandle phases.
+    payload_per_swing_*_m3 : float, optional
+        Payloads (cubic metres) associated with each swing phase.
+    travel_speed_*_kph : float, optional
+        Index/return/serpentine travel speeds from Sessions (2006).
+    effective_minutes_per_hour : float, optional
+        Allowable productive minutes per clock hour; defaults to 50 in the dataset.
+    slope_class : ShovelSlopeClass
+        Direction of travel modifier (downhill/level/uphill).
+    bunching : ShovelBunching
+        Whether wood is pre-bunched by feller or hand scattered.
+    custom_multiplier : float, optional
+        Additional productivity multiplier (e.g., empirical adjustment).
+
+    Returns
+    -------
+    ShovelLoggerResult
+        Fully calculated payload including per-phase cycle times and productivity.
+    """
     base = ShovelLoggerSessions2006Inputs().__dict__.copy()
 
     def _set_if(value: float | int | None, key: str) -> None:
@@ -3911,6 +3990,14 @@ def _evaluate_ctl_harvester_result(
     density_basis: str,
     dbh_cm: float | None,
 ) -> tuple[object, float]:
+    """Validate CTL harvester inputs and run the requested regression/preset.
+
+    Returns
+    -------
+    tuple
+        `(input_payload, productivity_m3_per_pmh)` so the CLI can echo both the
+        structured inputs and the computed productivity.
+    """
     if model is CTLHarvesterModel.ADV6N10:
         missing = []
         if stem_volume is None:
@@ -3989,6 +4076,7 @@ def _candidate_roots() -> list[Path]:
 
 
 def _resolve_known_dataset(ref: DatasetRef) -> Path:
+    """Resolve a bundled dataset reference to an absolute scenario path."""
     rel_path = ref.path
     candidates: list[Path] = []
     if rel_path.is_absolute():
@@ -4011,6 +4099,7 @@ def _resolve_known_dataset(ref: DatasetRef) -> Path:
 
 
 def _resolve_scenario_from_path(path: Path) -> Path:
+    """Resolve user-provided paths to a concrete scenario YAML file."""
     expanded = path.expanduser().resolve()
     if not expanded.exists():
         raise FileNotFoundError(expanded)
@@ -4029,6 +4118,7 @@ def _resolve_scenario_from_path(path: Path) -> Path:
 
 
 def _resolve_dataset(identifier: str) -> tuple[str, Path]:
+    """Return the dataset slug and scenario path for a bundled name or filesystem path."""
     key = identifier.strip()
     if not key:
         raise typer.BadParameter("Dataset identifier must be non-empty.")
@@ -4048,6 +4138,7 @@ def _resolve_dataset(identifier: str) -> tuple[str, Path]:
 
 
 def _prompt_choice(message: str, options: list[str]) -> str:
+    """Prompt the user to choose from a numbered list, raising on invalid selection."""
     if not options:
         raise typer.BadParameter("No options available to prompt.")
     for idx, option in enumerate(options, start=1):
@@ -4065,6 +4156,7 @@ def _prompt_choice(message: str, options: list[str]) -> str:
 
 
 def _ensure_dataset(identifier: str | None, interactive: bool) -> tuple[str, Scenario, Path]:
+    """Resolve a dataset identifier, optionally prompting when interactive mode is enabled."""
     dataset_id = identifier
     if dataset_id is None:
         if not interactive:
@@ -4078,12 +4170,14 @@ def _ensure_dataset(identifier: str | None, interactive: bool) -> tuple[str, Sce
 
 
 def _scenario_systems(scenario: Scenario) -> dict[str, HarvestSystem]:
+    """Return harvest systems published in the scenario, falling back to defaults."""
     return scenario.harvest_systems or dict(default_system_registry())
 
 
 def _select_system(
     scenario: Scenario, system_id: str | None, interactive: bool
 ) -> tuple[str, HarvestSystem] | None:
+    """Resolve a harvest system either from CLI flags or an interactive prompt."""
     systems = _scenario_systems(scenario)
     if not systems:
         return None
@@ -4103,6 +4197,7 @@ def _select_system(
 def _select_machine(
     scenario: Scenario, machine_id: str | None, interactive: bool, system: HarvestSystem | None
 ):
+    """Return the scenario machine selected via CLI flag or prompt, scoped to the system role."""
     machines = {machine.id: machine for machine in scenario.machines}
     if machine_id:
         machine = machines.get(machine_id)
@@ -4128,6 +4223,7 @@ def _select_machine(
 
 
 def _select_block(scenario: Scenario, block_id: str | None, interactive: bool):
+    """Return a block defined in the scenario, prompting when multiple candidates exist."""
     blocks = {block.id: block for block in scenario.blocks}
     if block_id:
         block = blocks.get(block_id)
@@ -4153,6 +4249,7 @@ def _render_kv_table(title: str, rows: Iterable[tuple[str, str]]) -> None:
 
 
 def _render_berry_log_grade_table() -> None:
+    """Render Berry (2019) log-grade cycle time statistics pulled from the dataset."""
     stats = get_berry_log_grade_stats()
     if not stats:
         console.print("[dim]No Berry (2019) log-grade statistics are available.[/dim]")
@@ -4182,6 +4279,7 @@ def _render_berry_log_grade_table() -> None:
 
 
 def _render_unbc_hoe_chucking_table() -> None:
+    """Print UNBC hoe-chucking productivity/cost metrics from Renzie (2006)."""
     scenarios = load_unbc_hoe_chucking_data()
     if not scenarios:
         console.print("[dim]No UNBC hoe-chucking data available.[/dim]")
@@ -4216,6 +4314,7 @@ def _render_unbc_hoe_chucking_table() -> None:
 
 
 def _render_unbc_processing_table() -> None:
+    """Print UNBC manual processing cost breakdowns for each harvesting system."""
     scenarios = load_unbc_processing_costs()
     if not scenarios:
         console.print("[dim]No UNBC processing cost data available.[/dim]")
@@ -4249,6 +4348,7 @@ def _render_unbc_processing_table() -> None:
 
 
 def _render_unbc_construction_table() -> None:
+    """Print UNBC skid-trail and landing construction costs (hours, rates, $/m³)."""
     scenarios = load_unbc_construction_costs()
     if not scenarios:
         return
@@ -4283,6 +4383,7 @@ def _print_salvage_processing_guidance(
     mode: SalvageProcessingMode,
     system_id: str,
 ) -> None:
+    """Emit mode-specific guidance for the ADV1N5 salvage processing checklist."""
     if mode is SalvageProcessingMode.PORTABLE_MILL:
         console.print(
             "[dim]Salvage system '%s' in portable-mill mode: rough cants stay near the satellite yard, keeping "
@@ -4651,6 +4752,7 @@ def adv2n21_summary_cmd(
 
 
 def _render_adv2n21_stand(title: str, snapshot: ADV2N21StandSnapshot) -> None:
+    """Render ADV2N21 stand metrics (pre/post) as a key/value table."""
     rows: list[tuple[str, str]] = []
     if snapshot.merchantable_basal_area_m2_per_ha is not None:
         rows.append(
@@ -7793,6 +7895,7 @@ def list_appendix5_stands(
 
 
 def _render_tn98_table(records: Sequence[TN98DiameterRecord]) -> None:
+    """Print the per-diameter TN98 manual falling table (time, cost, volume)."""
     table = Table(title="TN98 per-diameter observations")
     table.add_column("DBH (cm)", justify="right")
     table.add_column("Trees", justify="right")
@@ -7927,6 +8030,7 @@ def adv6n25_helicopters_cmd(
 def _helicopter_operation_source_label(
     operation: HelicopterOperation, dataset: HelicopterFPInnovationsDataset
 ) -> str:
+    """Resolve the displayable FPInnovations source label for a helicopter preset."""
     source = dataset.sources.get(operation.source_id)
     if source and source.title:
         return source.title
@@ -8272,6 +8376,7 @@ def estimate_road_cost(
 def _render_tr28_road_cost(
     estimate: TR28CostEstimate, soil_profiles: Sequence[SoilProfile] | None = None
 ) -> None:
+    """Display TR-28 road cost estimates, CPI adjustments, and optional soil notes."""
     table = Table(title="TR-28 Road Cost Estimate", box=box.MINIMAL_DOUBLE_HEAD)
     table.add_column("Metric", style="cyan")
     table.add_column("Value", justify="right")
@@ -8334,6 +8439,7 @@ def _render_tr28_road_cost(
 
 
 def _render_soil_profiles_table(profiles: Sequence[SoilProfile]) -> None:
+    """Render soil profile recommendations that pair with TR-28 road cost estimates."""
     table = Table(title="Soil Protection Profiles", box=box.MINIMAL_DOUBLE_HEAD)
     table.add_column("Profile", style="cyan")
     table.add_column("Source")
@@ -8655,8 +8761,8 @@ def estimate_skyline_productivity_cmd(
     if manual_falling_species is not None or manual_falling_dbh_cm is not None:
         manual_falling = True
 
-def _append_warning(existing: str | None, message: str) -> str:
-    """Helper to concatenate CLI warning strings while preserving blank lines."""
+    def _append_warning(existing: str | None, message: str) -> str:
+        """Helper to concatenate CLI warning strings while preserving blank lines."""
         return f"{existing}\n{message}" if existing else message
 
     telemetry_calibration_flags: list[dict[str, Any]] = []

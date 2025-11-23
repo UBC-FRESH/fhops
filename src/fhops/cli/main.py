@@ -109,12 +109,14 @@ def _enable_rich_tracebacks():
 
 
 def _ensure_kpi_dict(kpis: Any) -> dict[str, Any]:
+    """Normalize KPI payloads (dataclasses, pandas objects, dicts) into a plain dict."""
     if hasattr(kpis, "to_dict") and callable(kpis.to_dict):
         return dict(kpis.to_dict())
     return dict(kpis)
 
 
 def _format_metric_value(value: Any) -> Any:
+    """Format KPI values for console display, compressing JSON blobs and floats."""
     if isinstance(value, str):
         try:
             parsed = json.loads(value)
@@ -128,6 +130,15 @@ def _format_metric_value(value: Any) -> Any:
 
 
 def _print_kpi_summary(kpis: Any, mode: str = "extended") -> None:
+    """Pretty-print KPI sections for solver/evaluation commands.
+
+    Parameters
+    ----------
+    kpis : Any
+        Mapping or KPI dataclass returned by :func:`fhops.evaluation.compute_kpis`.
+    mode : str, default \"extended\"
+        Controls which KPI sections are printed (\"basic\" omits utilisation/downtime/weather blocks).
+    """
     mode = mode.lower()
     data = _ensure_kpi_dict(kpis)
     if not data:
@@ -204,10 +215,12 @@ def _print_kpi_summary(kpis: Any, mode: str = "extended") -> None:
 
 
 def _machine_cost_snapshot(sc) -> list[dict[str, Any]]:
+    """Return CPI-adjusted machine-cost snapshots for telemetry logging."""
     return [snapshot.to_dict() for snapshot in build_machine_cost_snapshots(sc.machines)]
 
 
 def _discover_scenarios_from_path(path: Path) -> list[Path]:
+    """Resolve a CLI path argument into one or more scenario YAML files."""
     expanded = path.expanduser()
     if not expanded.exists():
         raise typer.BadParameter(f"Scenario path not found: {path}")
@@ -232,6 +245,7 @@ def _discover_scenarios_from_path(path: Path) -> list[Path]:
 
 
 def _parse_bundle_spec(spec: str) -> tuple[str, str | None]:
+    """Split ``alias=target`` CLI bundle specs into the alias and optional target path."""
     if "=" not in spec:
         return spec, None
     alias, target = spec.split("=", 1)
@@ -245,6 +259,7 @@ def _parse_bundle_spec(spec: str) -> tuple[str, str | None]:
 
 
 def _resolve_bundle_from_path(alias: str, target_path: Path) -> list[tuple[str, str, Path]]:
+    """Return bundle members discovered beneath ``target_path`` (single path or directory)."""
     resolved = target_path.expanduser()
     if not resolved.exists():
         raise typer.BadParameter(f"Bundle target not found: {target_path}")
@@ -283,6 +298,7 @@ def _resolve_bundle_from_path(alias: str, target_path: Path) -> list[tuple[str, 
 
 
 def _resolve_bundle_spec(spec: str) -> list[tuple[str, str, Path]]:
+    """Expand a CLI bundle spec into ``(bundle_alias, member_name, scenario_path)`` tuples."""
     alias, target = _parse_bundle_spec(spec)
     normalized = alias.lower()
     if target is None and normalized in TUNING_BUNDLE_ALIASES:
@@ -299,6 +315,7 @@ def _collect_tuning_scenarios(
     scenario_args: Sequence[Path] | None,
     bundle_specs: Sequence[str] | None,
 ) -> tuple[list[Path], dict[Path, dict[str, str]]]:
+    """Collect explicit scenario paths and bundle members for tuning commands."""
     discovered: list[Path] = []
     bundle_map: dict[Path, dict[str, str]] = {}
 
