@@ -171,3 +171,18 @@
 - **Exemplar Analysis Log:** `notes/softwarex_exemplar_analysis.md` distills structure/readiness cues from each paper so we can trace requirements back to concrete SoftwareX examples.
 - **Submission Readiness Dashboard:** `notes/submission_readiness_dashboard.md` encodes the benchmark criteria and indicators reverse-engineered from the exemplar set.
 - **Reference Vault README:** `docs/softwarex/reference/README.md` records provenance (retrieval dates, source URLs) for the instruction snapshots, templates, Crossref dump, and exemplar PDFs.
+- **Thesis Alignment Notes:** `notes/thesis_alignment.md` (to be expanded) will map which FHOPS analyses stay in the SoftwareX paper vs. which BC case studies remain reserved for Rosalia Jaffray’s Chapter 2.
+
+---
+
+## FHOPS contribution focus (from Jaffray MASc review)
+We leverage Rosalia’s Chapter 1 literature review to stay aligned with the real gaps in forest-harvest planning software. Summarised themes:
+- **Open, reusable tooling:** Henkelman (1978), Weintraub & Bare (1996), Heinimann (2007), and later reviews show most models are one-off or closed. FHOPS’ scenario contract + solver + telemetry stack is our answer to this gap.
+- **Integrated, multi-problem workflows & reproducibility:** Existing papers often tackle isolated sub-problems and rarely publish scripts/telemetry. FHOPS provides a unified workflow (scenario → optimisation → evaluation) with reproducible CLI/API entry points. This is the core SoftwareX contribution.
+- **Real-world BC case studies:** Multiple BC-based deployments are still needed to answer the open questions Rosalia raised (e.g., how FHOPS behaves across ecological/operational contexts). FHOPS enables those studies, but we’ll reserve the detailed case-study content for her Chapter 2 so we don’t cannibalize her contributions.
+
+
+Real-world case studies & validation – The literature (and Rosalia’s conclusion) stresses the need for multiple BC-based case studies (small-scale tenures, skyline vs. ground-based, salvage corridors, etc.) to validate models against real operational data and answer questions like “How does the framework perform across different ecological/operational contexts?” FHOPS only partially fills this today: we provide the tooling, default harvest-system registry, and reference datasets, but we haven’t published deep BC case-study analyses yet. That’s exactly the “easy win” Rosalia’s Chapter 2 will deliver—deploy FHOPS on two or three BC case studies to answer those open questions. For the SoftwareX submission, we should state that FHOPS enables those studies but reserve the detailed results for Rosalia’s thesis/papers.
+So, alignment proposal:
+SoftwareX paper focuses on the open-source platform, reproducible workflow, and exemplar-level benchmarks (small synthetic runs demonstrating capability).
+Rosalia’s Chapter 2 (and any companion paper) retains the detailed BC case-study analysis (multi-case validation, policy insights, trade-off maps) so her thesis still delivers the “real-world deployment” contribution.
