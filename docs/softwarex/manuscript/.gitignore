@@ -1,0 +1,14 @@
+# Build artifacts
+build/
+
+# latexmk intermediates
+fhops-softx.aux
+fhops-softx.bbl
+fhops-softx.blg
+fhops-softx.fdb_latexmk
+fhops-softx.fls
+fhops-softx.log
+fhops-softx.out
+fhops-softx.pdf
+fhops-softx.synctex.gz
+fhops-softx.spl
