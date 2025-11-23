@@ -11,6 +11,7 @@ bench_dir="${data_dir}/benchmarks"
 dataset_dir="${data_dir}/datasets"
 tuning_dir="${data_dir}/tuning"
 playback_dir="${data_dir}/playback"
+cost_dir="${data_dir}/costing"
 
 mkdir -p "${bench_dir}" "${fig_dir}" "${data_dir}"
 
@@ -112,3 +113,6 @@ python "${script_dir}/run_tuner.py" --repo-root "${repo_root}" --out-dir "${tuni
 
 echo "[assets] Running playback analysis into ${playback_dir}" >&2
 python "${script_dir}/run_playback_analysis.py" --repo-root "${repo_root}" --out-dir "${playback_dir}"
+
+echo "[assets] Running costing demo into ${cost_dir}" >&2
+python "${script_dir}/run_costing_demo.py" --repo-root "${repo_root}" --out-dir "${cost_dir}"
