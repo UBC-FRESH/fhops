@@ -41,7 +41,7 @@
 
 ## Phase 1 – Manuscript Architecture & Repo Scaffolding
 - [ ] Stand up `docs/softwarex/manuscript/` with template files (main manuscript, supplementary material, metadata).
-  - [ ] Copy the selected SoftwareX template into the repo structure.
+  - [x] Copy the selected SoftwareX template into the repo structure.
   - [ ] Prepare placeholders for supplementary files and metadata tables.
   - [x] Add README describing how to compile and where outputs land.
 - [ ] Create a section-by-section outline that mirrors SoftwareX structure (Abstract, Software Metadata, etc.) and cross-reference planned FHOPS documentation tie-ins.
