@@ -5,15 +5,15 @@ import math
 import pytest
 
 from fhops.productivity.skidder_ft import (
+    ADV6N7DeckingMode,
+    DeckingCondition,
     Han2018SkidderMethod,
     TrailSpacingPattern,
-    DeckingCondition,
-    ADV6N7DeckingMode,
-    get_skidder_speed_profile,
-    estimate_grapple_skidder_productivity_han2018,
-    estimate_grapple_skidder_productivity_adv6n7,
     estimate_cable_skidder_productivity_adv1n12_full_tree,
     estimate_cable_skidder_productivity_adv1n12_two_phase,
+    estimate_grapple_skidder_productivity_adv6n7,
+    estimate_grapple_skidder_productivity_han2018,
+    get_skidder_speed_profile,
 )
 
 

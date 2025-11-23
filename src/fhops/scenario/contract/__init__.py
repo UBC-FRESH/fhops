@@ -10,8 +10,8 @@ from .models import (
     Problem,
     ProductionRate,
     RoadConstruction,
-    Scenario,
     SalvageProcessingMode,
+    Scenario,
 )
 
 __all__ = [

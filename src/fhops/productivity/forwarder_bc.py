@@ -8,10 +8,10 @@ reference content surfaced in the Sphinx API docs.
 
 from __future__ import annotations
 
+import math
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from enum import Enum
-import math
 
 from fhops.productivity.eriksson2014 import (
     estimate_forwarder_productivity_final_felling,
@@ -25,6 +25,8 @@ from fhops.productivity.ghaffariyan2019 import (
 )
 from fhops.productivity.kellogg_bettinger1994 import (
     LoadType as KelloggLoadType,
+)
+from fhops.productivity.kellogg_bettinger1994 import (
     estimate_forwarder_productivity_kellogg_bettinger,
 )
 from fhops.productivity.laitila2020 import estimate_brushwood_harwarder_productivity

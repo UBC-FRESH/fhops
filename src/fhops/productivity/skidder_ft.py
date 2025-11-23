@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
+import json
+import math
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import lru_cache
-import json
-import math
 from pathlib import Path
 
 

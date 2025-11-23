@@ -7,8 +7,8 @@ from fhops.productivity.harvester_ctl import (
     TN292HarvesterInputs,
     estimate_harvester_productivity_adv5n30,
     estimate_harvester_productivity_adv6n10,
-    estimate_harvester_productivity_tn292,
     estimate_harvester_productivity_kellogg1994,
+    estimate_harvester_productivity_tn292,
 )
 
 

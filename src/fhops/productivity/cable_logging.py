@@ -13,7 +13,6 @@ from pathlib import Path
 
 from fhops.reference import get_appendix5_profile, load_fncy12_dataset
 
-
 _FEET_PER_METER = 3.28084
 _CUBIC_FEET_PER_CUBIC_METER = 35.3146667
 _LB_TO_KG = 0.45359237

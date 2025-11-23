@@ -7,7 +7,6 @@ from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 
-
 _HOE_DATA_PATH = (
     Path(__file__).resolve().parents[3] / "data" / "reference" / "unbc_hoe_chucking.json"
 )
