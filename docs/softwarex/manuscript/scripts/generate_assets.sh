@@ -10,6 +10,7 @@ fig_dir="${assets_root}/figures"
 bench_dir="${data_dir}/benchmarks"
 dataset_dir="${data_dir}/datasets"
 tuning_dir="${data_dir}/tuning"
+playback_dir="${data_dir}/playback"
 
 mkdir -p "${bench_dir}" "${fig_dir}" "${data_dir}"
 
@@ -108,3 +109,6 @@ PY
 
 echo "[assets] Running tuning harness into ${tuning_dir}" >&2
 python "${script_dir}/run_tuner.py" --repo-root "${repo_root}" --out-dir "${tuning_dir}"
+
+echo "[assets] Running playback analysis into ${playback_dir}" >&2
+python "${script_dir}/run_playback_analysis.py" --repo-root "${repo_root}" --out-dir "${playback_dir}"

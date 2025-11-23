@@ -159,6 +159,9 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
+# SoftwareX manuscript generated assets
+docs/softwarex/assets/data/tuning/telemetry/steps/
+
 # Pyre type checker
 .pyre/
 
