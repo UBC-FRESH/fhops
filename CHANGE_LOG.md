@@ -1,5 +1,9 @@
 # Development Change Log
 
+# 2025-11-22 — Prep v1.0.0-alpha1 release
+- Bumped package version to `1.0.0a1` (`src/fhops/__init__.py`, `tests/test_import.py`) so downstream tooling picks up the Phase 4-complete alpha release.
+- Added release notes at `docs/releases/v1.0.0-alpha1.md` summarising the documentation sweep, telemetry/runbook additions, and outstanding outreach work.
+
 # 2025-11-22 — Shift-based scheduling refactor planning
 - Reopened the Phase 2 shift-based scheduling milestone in `FHOPS_ROADMAP.md` and added a detailed next-steps bullet so the roadmap reflects the pending shift refactor instead of marking it complete prematurely.
 - Captured the refactor plan in `notes/modular_reorg_plan.md` (goals, workstreams, dependencies) and pushed supporting punch lists into `notes/mip_model_plan.md`, `notes/data_contract_enhancements.md`, `notes/simulation_eval_plan.md`, and `notes/cli_docs_plan.md` so each owner document now describes how it will adopt shift-indexed data and solvers.

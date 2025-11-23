@@ -115,7 +115,7 @@ before proposing new work.
 ## Phase 4 — Release & Community Readiness
 - [x] Complete Sphinx documentation set (API, CLI, how-tos, examples) published to Read the Docs (`notes/sphinx-documentation.md`, `docs/howto/release_playbook.rst`, `docs/howto/telemetry_ops.rst`, `docs/howto/thesis_eval.rst`, API narrative guides).
 - [x] Finalise contribution guide, code of conduct alignment, and PR templates (see `docs/howto/release_playbook.rst`, `CONTRIBUTING.md`, `CODING_AGENT.md`).
-- [x] Versioned release notes and public roadmap updates (`docs/releases/v0.1.0.md`, `FHOPS_ROADMAP.md` current).
+- [x] Versioned release notes and public roadmap updates (`docs/releases/v1.0.0-alpha1.md`, `docs/releases/v0.1.0.md`, `FHOPS_ROADMAP.md` current).
 - [ ] Outreach plan (blog, seminars, partner briefings).
 
 ## Detailed Next Steps
