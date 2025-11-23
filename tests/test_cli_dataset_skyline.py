@@ -22,7 +22,7 @@ from fhops.productivity import (
 )
 from fhops.reference import load_fncy12_dataset
 
-from .cli import CliRunner
+from .cli import CliRunner, cli_text
 
 runner = CliRunner()
 _FNCY12_DATASET = load_fncy12_dataset()
@@ -722,7 +722,7 @@ def test_cli_skyline_ledoux_requires_inputs() -> None:
         ],
     )
     assert result.exit_code != 0
-    assert "merchantable-logs" in result.stdout.lower()
+    assert "merchantable-logs" in cli_text(result).lower()
 
 
 def test_cli_skyline_micro_master_defaults() -> None:

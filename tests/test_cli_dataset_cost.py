@@ -5,7 +5,7 @@ from pathlib import Path
 
 from fhops.cli.dataset import dataset_app
 
-from .cli import CliRunner
+from .cli import CliRunner, cli_text
 
 runner = CliRunner()
 
@@ -420,7 +420,7 @@ def test_estimate_cost_rejects_unknown_tractor_drive(tmp_path: Path) -> None:
         ],
     )
     assert result.exit_code != 0
-    assert "road-tractor-drive" in result.stdout
+    assert "road-tractor-drive" in cli_text(result)
 
 
 def test_estimate_cost_rejects_compaction_risk_without_profile() -> None:
@@ -443,7 +443,7 @@ def test_estimate_cost_rejects_compaction_risk_without_profile() -> None:
         ],
     )
     assert result.exit_code != 0
-    assert "Invalid value: --road-compaction-risk requires a road job" in result.stdout
+    assert "Invalid value: --road-compaction-risk requires a road job" in cli_text(result)
 
 
 def test_estimate_cost_with_road_addon() -> None:

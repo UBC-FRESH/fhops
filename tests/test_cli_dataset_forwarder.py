@@ -36,7 +36,7 @@ from fhops.scenario.contract import (
 )
 from fhops.scheduling.systems import default_system_registry
 
-from .cli import CliRunner
+from .cli import CliRunner, cli_text
 
 runner = CliRunner()
 
@@ -560,7 +560,7 @@ def test_cli_grapple_skidder_adv1n12_requires_distance() -> None:
         ],
     )
     assert result.exit_code != 0
-    assert "--skidder-extraction-distance" in result.stdout
+    assert "--skidder-extraction-distance" in cli_text(result)
 
 
 def test_cli_grapple_skidder_adv6n7_regression() -> None:

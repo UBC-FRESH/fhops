@@ -21,4 +21,21 @@ class CliRunner(_TyperCliRunner):
         return result
 
 
-__all__ = ["CliRunner"]
+def cli_text(result) -> str:
+    """Return combined CLI output (stdout + stderr) for assertions."""
+
+    chunks = []
+    stdout_text = result.stdout or ""
+    if stdout_text:
+        chunks.append(stdout_text)
+    if not stdout_text:
+        stdout_bytes = getattr(result, "stdout_bytes", b"")
+        if stdout_bytes:
+            chunks.append(stdout_bytes.decode("utf-8", errors="replace"))
+    stderr_bytes = getattr(result, "stderr_bytes", b"")
+    if stderr_bytes:
+        chunks.append(stderr_bytes.decode("utf-8", errors="replace"))
+    return "".join(chunks)
+
+
+__all__ = ["CliRunner", "cli_text"]
