@@ -75,7 +75,13 @@
   - [x] Decide on shared include files or content fragments.
   - [x] Document synchronization process between manuscript and Sphinx (see `docs/softwarex/manuscript/sections/includes/README.md`).
 - [ ] Establish build scripts/notebooks for regenerating figures, tables, and performance benchmarks referenced in the paper.
-  - [ ] Inventory required figures/tables and their data sources.
+  - [x] Inventory required figures/tables and their data sources.
+    - `benchmark_kpis.csv` / `benchmark_kpis_notes.md` → shared solver comparison table (source: `generate_assets.sh` → `fhops bench suite` runs under `docs/softwarex/assets/data/benchmarks/`).
+    - Tuning leaderboard/comparison (`docs/softwarex/assets/data/tuning/tuner_*.(csv|md)`) → `run_tuner.py` + `scripts/run_tuning_benchmarks.py`.
+    - Playback summaries (`docs/softwarex/assets/data/playback/**/shift.csv`, `day.csv`, `metrics.json`, `summary.md`) → `run_playback_analysis.py`.
+    - Cost summary (`docs/softwarex/assets/data/costing/cost_summary.{csv,json}`) → `run_costing_demo.py`.
+    - Scaling plot/table (`docs/softwarex/assets/data/scaling/runtime_vs_blocks.png`, `scaling_summary.{csv,json}`) → `run_synthetic_sweep.py`.
+    - Dataset index + summaries (`docs/softwarex/assets/data/datasets/index.json`, `*_summary.json`) → `run_dataset_inspection.py`.
   - [ ] Create reproducible scripts/notebooks to regenerate each artifact.
   - [ ] Integrate artifact generation into CI or a manual checklist.
 - [ ] Asset-generation plan:
