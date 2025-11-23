@@ -65,6 +65,8 @@ DEFAULT_SCENARIOS: tuple[BenchmarkScenario, ...] = (
 
 
 def _resolve_scenarios(user_paths: Sequence[Path] | None) -> list[BenchmarkScenario]:
+    """Coerce user-provided scenario paths into BenchmarkScenario objects (or fall back to defaults)."""
+
     if not user_paths:
         return list(DEFAULT_SCENARIOS)
 
@@ -87,6 +89,7 @@ def _record_metrics(
     operator_stats: Mapping[str, Mapping[str, float]] | None = None,
     machine_costs_summary: str | None = None,
 ) -> dict[str, object]:
+    """Serialise solver metrics (objective/KPIs/runtime) for the benchmark summary frame."""
     payload: dict[str, object] = {
         "scenario": scenario.name,
         "scenario_path": str(scenario.path),
