@@ -79,7 +79,7 @@
   - [ ] Create reproducible scripts/notebooks to regenerate each artifact.
   - [ ] Integrate artifact generation into CI or a manual checklist.
 - [ ] Asset-generation plan:
-  - [ ] **Scenario ingest demo:** Script (`scripts/run_dataset_inspection.py`) that runs `fhops dataset inspect` on `examples/minitoy` + `examples/med42`, generates synthetic tier via `fhops synth generate`, and saves schema summaries / synthetic `scenario.yaml` under `docs/softwarex/assets/data/datasets/`. Mirrors PyLESA’s “code metadata” table.
+  - [x] **Scenario ingest demo:** Script (`scripts/run_dataset_inspection.py`) that inspects `examples/minitoy` + `examples/med42`, generates a fresh `synth generate --tier small` bundle, and emits schema summaries in `docs/softwarex/assets/data/datasets/`.
   - [ ] **Benchmark sweep (SA baseline):** Extend `scripts/generate_assets.sh` (already running SA on `minitoy`) to include `med42` + `synthetic-small`. Use `fhops bench suite --telemetry-log --compare-preset ...` so we capture CSV/JSON telemetry for each scenario. Goal: PyDDRBG-style benchmark manifest.
   - [ ] **Solver comparison (SA vs. ILS vs. Tabu):** Add a script (or extend the benchmark script) that runs `fhops bench suite --include-ils --include-tabu` on `minitoy` + `med42`, producing tables comparing objective/runtime/KPIs per solver. Provide LaTeX table for manuscript.
   - [ ] **Hyperparameter tuning harness:** Script (`scripts/run_tuner.py`) that launches short Optuna studies (e.g., 20 trials) per heuristic via `fhops bench tune` / `fhops.cli.profiles`. Export recommended parameter sets + tuner summaries (CSV/JSON). Explain why multiple tuners exist and how FHOPS suggests presets for new datasets.

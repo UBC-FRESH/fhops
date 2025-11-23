@@ -1,8 +1,5 @@
 .. AUTO-GENERATED from motivation_story.md -- do not edit directly.
 
-FHOPS motivation narrative (source of truth)
-============================================
-
 Forest harvest-planning software still leans on bespoke, closed
 toolchains that make it hard for regulators, Indigenous governments, and
 researchers to audit models or extend them for emerging policy

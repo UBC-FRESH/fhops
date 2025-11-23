@@ -13,6 +13,11 @@ constructing, solving, and evaluating harvesting schedules. At its core FHOPS su
 The roadmap in :doc:`roadmap` and the notes under ``notes/`` guide ongoing development. Refer to
 :doc:`howto/quickstart` for a hands-on example.
 
+Motivation
+----------
+
+.. include:: includes/softwarex/motivation_story.rst
+
 Installation
 ------------
 

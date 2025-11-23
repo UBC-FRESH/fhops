@@ -1,5 +1,3 @@
-# FHOPS motivation narrative (source of truth)
-
 Forest harvest-planning software still leans on bespoke, closed toolchains that make it hard for regulators, Indigenous governments, and researchers to audit models or extend them for emerging policy questions. Jaffray et al. (2025, submitted to the *International Journal of Forest Engineering*) catalogue the recurring pain points: one-off solver integrations, weak telemetry, limited robustness testing, and siloed datasets that rarely ship with reproducible scripts. FHOPS exists to close those gaps for B.C. operations and comparable jurisdictions.
 
 The SoftwareX paper will highlight three gaps we actively address:

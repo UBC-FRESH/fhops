@@ -1,0 +1,73 @@
+{
+  "slug": "synthetic_small",
+  "label": "Synthetic tier: small",
+  "scenario_path": "/home/gep/projects/fhops/docs/softwarex/assets/data/datasets/synthetic_small/scenario.yaml",
+  "name": "synthetic-small",
+  "num_days": 6,
+  "start_date": null,
+  "schema_version": "1.0.0",
+  "objective_weights": {},
+  "tables": {
+    "blocks": {
+      "path": "/home/gep/projects/fhops/docs/softwarex/assets/data/datasets/synthetic_small/data/blocks.csv",
+      "row_count": 4,
+      "columns": [
+        "id",
+        "landing_id",
+        "work_required",
+        "earliest_start",
+        "latest_finish",
+        "avg_stem_size_m3",
+        "volume_per_ha_m3",
+        "volume_per_ha_m3_sigma",
+        "stem_density_per_ha",
+        "stem_density_per_ha_sigma",
+        "ground_slope_percent",
+        "terrain",
+        "prescription",
+        "harvest_system_id"
+      ]
+    },
+    "machines": {
+      "path": "/home/gep/projects/fhops/docs/softwarex/assets/data/datasets/synthetic_small/data/machines.csv",
+      "row_count": 2,
+      "columns": [
+        "id",
+        "role",
+        "crew",
+        "daily_hours",
+        "operating_cost"
+      ]
+    },
+    "landings": {
+      "path": "/home/gep/projects/fhops/docs/softwarex/assets/data/datasets/synthetic_small/data/landings.csv",
+      "row_count": 1,
+      "columns": [
+        "id",
+        "daily_capacity"
+      ]
+    },
+    "calendar": {
+      "path": "/home/gep/projects/fhops/docs/softwarex/assets/data/datasets/synthetic_small/data/calendar.csv",
+      "row_count": 12,
+      "columns": [
+        "machine_id",
+        "day",
+        "available"
+      ]
+    },
+    "prod_rates": {
+      "path": "/home/gep/projects/fhops/docs/softwarex/assets/data/datasets/synthetic_small/data/prod_rates.csv",
+      "row_count": 8,
+      "columns": [
+        "machine_id",
+        "block_id",
+        "rate"
+      ]
+    }
+  },
+  "machine_roles": {
+    "harvester": 1,
+    "forwarder": 1
+  }
+}
