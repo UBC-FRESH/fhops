@@ -84,7 +84,7 @@ FHOPS’ Sphinx tree lives under `docs/` and is published to Read the Docs via `
     - [x] Regenerate Sphinx API docs after docstrings are fleshed out; ensure `docs/api/*.rst` pulls the new content *(2025-11-24: `sphinx-build -b html docs _build/html -W` ran clean after the costing pass).*
 
 ### Outstanding docstring gaps
-Only low-usage costing helpers remain to be documented (machine-rate composition utilities, inflation helpers, aggregate costing references). Capture these in a follow-up sweep so the API pages covering costing/machine rates reference units and CPI assumptions.
+Remaining focus areas: optional dataset cookbook & release docs (see tasks below). Costing helpers now match the NumPy-style contract and cross-link to the reference guide.
 
 #### Docstring standards (2025-11-24 update)
 - `CODING_AGENT.md` now spells out the NumPy-style expectations (summary + Parameters/Returns/Raises/Notes, attribute listings for dataclasses, usage of snippets, cross-link obligations, and requirement to run `sphinx-build -b html docs _build/html -W` after sweep).
@@ -127,7 +127,7 @@ Only low-usage costing helpers remain to be documented (machine-rate composition
     - [x] 2025-11-24: Documented the registry helpers (`_clone_plan`, `_window_allows`, etc.), ILS helpers (`_assignments_to_schedule`, `_perturb_schedule`, `_local_search`), SA internals (role/blackout metadata, greedy init, evaluation, neighbour generation), and Tabu utilities (`TabuConfig`, `_diff_moves`). This closes the heuristics backlog and ensures tuning docs align with autodoc output.
 - [x] **Productivity stragglers** – finish docstrings for `kellogg_bettinger1994.py`, `laitila2020.py`, `stoilov2021.py` (and any other remaining `productivity/*.py` files flagged by the scan).
     - [x] 2025-11-24: Verified `kellogg_bettinger1994.py` / `laitila2020.py` already had complete coverage and added the missing helper docstring in `stoilov2021.py` so all productivity modules now expose Parameter/Returns notes for Sphinx.
-- [ ] **Costing & inflation helpers** – document `fhops.costing.machine_rates` derivation utilities, inflation helpers (`fhops.costing.inflation`), and CLI cost-report renderers so the costing reference sections expose parameter descriptions, CPI references, and return schemas.
-    - [ ] Add module/class/function docstrings for machine-rate composition helpers and CPI utilities (units, default CPI tables, expected inputs).
-    - [ ] Cross-link the new docstrings from `docs/reference/harvest_systems.rst` / cost matrices.
+- [x] **Costing & inflation helpers** – document `fhops.costing.machine_rates` derivation utilities, inflation helpers (`fhops.costing.inflation`), and CLI cost-report renderers so the costing reference sections expose parameter descriptions, CPI references, and return schemas. *(2025-11-24: Added detailed module docstrings for machine-rate/inflation helpers, documented telemetry cost snapshots, referenced the costing utilities from the harvest-systems guide, and reran `sphinx-build -b html docs _build/html -W`.)*
+    - [x] Add module/class/function docstrings for machine-rate composition helpers and CPI utilities (units, default CPI tables, expected inputs).
+    - [x] Cross-link the new docstrings from `docs/reference/harvest_systems.rst` / cost matrices.
 - [ ] **Optional dataset cookbook** – enhance `docs/reference/harvest_systems.rst` / how-to guides with short recipes for lesser-used datasets (e.g., `examples/med42/large84` costing add-ons, partial-cut datasets, road construction options). Tie into docstrings where possible so the roadmap reflects the remaining scope.

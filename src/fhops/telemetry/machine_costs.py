@@ -16,6 +16,32 @@ from fhops.costing.machine_rates import (
 
 @dataclass(frozen=True)
 class MachineCostSnapshot:
+    """
+    CPI-adjusted snapshot of a machine's cost profile for telemetry logging.
+
+    Attributes
+    ----------
+    machine_id:
+        Identifier taken from :class:`fhops.scenario.contract.models.Machine`.
+    role:
+        Normalised machine-role slug (e.g., ``forwarder``) used for rate lookups.
+    operating_cost:
+        Per-shift operating cost if the scenario explicitly specifies one (CAD/SMH).
+    repair_usage_hours:
+        Optional cumulative SMH used to select repair/maintenance multipliers.
+    rental_rate_smh:
+        Composed rental rate ($/SMH) calculated via
+        :func:`fhops.costing.machine_rates.compose_default_rental_rate_for_role`.
+    ownership, operating, repair_maintenance:
+        Individual rental-rate components ($/SMH). ``repair_maintenance`` is ``None`` when the
+        reference rate lacks data or the CLI omits the component.
+    usage_bucket_hours, usage_multiplier:
+        Advantage Vol. 4 No. 23 usage bucket and multiplier (if the machine rate defines one).
+    cost_base_year:
+        Original CPI base year for the rate card; populated from the machine payload or the default
+        rate entry.
+    """
+
     machine_id: str
     role: str | None
     operating_cost: float | None
@@ -29,6 +55,15 @@ class MachineCostSnapshot:
     cost_base_year: int | None = None
 
     def to_dict(self) -> dict[str, Any]:
+        """
+        Convert the snapshot into a JSON-serialisable dictionary.
+
+        Returns
+        -------
+        dict[str, Any]
+            Mapping of all attributes suitable for telemetry JSONL entries.
+        """
+
         return {
             "machine_id": self.machine_id,
             "role": self.role,
@@ -45,7 +80,20 @@ class MachineCostSnapshot:
 
 
 def build_machine_cost_snapshots(machines: Iterable[Any]) -> list[MachineCostSnapshot]:
-    """Return telemetry-friendly machine cost summaries."""
+    """
+    Materialise machine-cost snapshots for every machine in a scenario.
+
+    Parameters
+    ----------
+    machines:
+        Iterable of ``Machine`` model instances (or objects exposing ``id``/``role``/cost fields).
+
+    Returns
+    -------
+    list[MachineCostSnapshot]
+        CPI-adjusted cost records for telemetry logging and CLI summaries. Entries lacking machine
+        IDs are skipped.
+    """
 
     snapshots: list[MachineCostSnapshot] = []
     for machine in machines:
@@ -103,7 +151,20 @@ def build_machine_cost_snapshots(machines: Iterable[Any]) -> list[MachineCostSna
 
 
 def summarize_machine_costs(machine_costs: object) -> str:
-    """Return a human-readable summary of machine cost breakdowns."""
+    """
+    Generate a concise string summarising one or more machine cost entries.
+
+    Parameters
+    ----------
+    machine_costs:
+        List of dictionaries (such as :meth:`MachineCostSnapshot.to_dict`). Non-list values are
+        ignored.
+
+    Returns
+    -------
+    str
+        Pipe-delimited fragments (``role: own=..., op=..., rep=...``) ready for telemetry tables.
+    """
 
     if not isinstance(machine_costs, list):
         return ""

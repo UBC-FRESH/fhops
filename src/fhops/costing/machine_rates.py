@@ -1,4 +1,11 @@
-"""Machine rate loader for OpCost-style costing."""
+"""Machine-rate utilities backed by FPInnovations/FERIC OpCost data.
+
+The loader ingests ``data/machine_rates.json`` (derived from the FPInnovations OpCost worksheets),
+inflates every component to :data:`TARGET_YEAR` CAD via :func:`fhops.costing.inflation.inflate_value`,
+and provides helpers for looking up rates by role plus composing rental-rate breakdowns. CLI
+commands such as ``fhops dataset inspect-machine`` and ``fhops solve-*`` rely on these helpers when
+printing cost references or logging telemetry.
+"""
 
 from __future__ import annotations
 
@@ -77,7 +84,9 @@ def load_default_machine_rates() -> Sequence[MachineRate]:
     Raises
     ------
     FileNotFoundError
-        If the JSON payload is missing (dev installs without ``git lfs`` often cause this).
+        If the JSON payload is missing (dev installs without ``git lfs`` often cause this). The file
+        contains owning/operating/repair components expressed in historical CAD; every entry is
+        inflated to :data:`TARGET_YEAR` CAD so callers can compare rates across publications.
     """
 
     if not DATA_PATH.exists():
@@ -314,7 +323,24 @@ def compose_default_rental_rate_for_role(
     repair_override: float | None = None,
     usage_hours: int | None = None,
 ) -> tuple[float, dict[str, float]] | None:
-    """Compose the rental rate for a machine role directly from the defaults."""
+    """
+    Compose a rental-rate breakdown directly from the bundled machine-rate table.
+
+    Parameters
+    ----------
+    role:
+        Machine-role label recognised by :func:`normalize_machine_role`.
+    include_repair_maintenance, ownership_override, operating_override, repair_override, usage_hours :
+        Forwarded to :func:`compose_rental_rate`. Use overrides when you want to substitute custom
+        owning/operating components or force a specific repair allowance; ``usage_hours`` selects the
+        closest repair-bucket multiplier when the OpCost source includes Advantage Vol. 4 No. 23
+        usage tables.
+
+    Returns
+    -------
+    tuple[float, dict[str, float]] | None
+        ``(rental_rate_per_smh, breakdown)``. ``None`` indicates the role is unknown.
+    """
 
     rate = get_machine_rate(role)
     if rate is None:

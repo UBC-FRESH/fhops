@@ -518,6 +518,17 @@ regressions:
   * ``--processor-piece-size-m3`` – applies the alternative regression 20.46·V\ :sup:`0.482` (tree volume in m³).
   * ``--processor-delay-multiplier`` – optional utilisation factor so you can fold landing waits into the PMH₀ baseline (defaults to the global processor multiplier; set to ``1.0`` to stay delay-free).
   CLI output states which regression ran, prints the delay-free m³/PMH alongside your utilisation-adjusted result, and cites the Japanese thinning context so you can benchmark excavator-based landing processors handling ≈0.25 m³ stems.
+
+
+.. note::
+
+   All cost snippets in this reference (and in the CLI) call
+   :func:`fhops.costing.machine_rates.compose_default_rental_rate_for_role` to pull owning/operating/repair
+   components from the bundled OpCost tables, then inflate the totals to :data:`fhops.costing.inflation.TARGET_YEAR`
+   CAD via :func:`fhops.costing.inflation.inflate_value`. Telemetry summaries reuse
+   :func:`fhops.telemetry.machine_costs.build_machine_cost_snapshots` so KPI exports and reports print the same
+   numbers shown in the CLI ``--show-costs`` panels.
+
 * ``--processor-model visser2015`` – Visser & Tolan (2015) NZ cable-yarder landings (Cat 330DL +
   Waratah HTH626) comparing 5/9/12/15 log sorts. The helper interpolates the published piece-size
   curves (1–3 m³ stems) and reports both the delay-free m³/PMH and the delta versus the 5-sort baseline.
