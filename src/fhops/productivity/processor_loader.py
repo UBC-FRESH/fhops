@@ -36,6 +36,7 @@ _CARRIER_PROFILE_PATH = _REFERENCE_ROOT / "processor_carrier_profiles.json"
 
 @lru_cache(maxsize=1)
 def _load_berry_dataset() -> dict[str, object]:
+    """Load the Berry (2019) skyline processor dataset from ``data/productivity``."""
     try:
         return json.loads(_BERRY_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
@@ -44,6 +45,7 @@ def _load_berry_dataset() -> dict[str, object]:
 
 @lru_cache(maxsize=1)
 def _load_adv5n6_dataset() -> dict[str, object]:
+    """Load the ADV5N6 (coastal BC) processor dataset."""
     try:
         return json.loads(_ADV5N6_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
@@ -52,6 +54,7 @@ def _load_adv5n6_dataset() -> dict[str, object]:
 
 @lru_cache(maxsize=1)
 def _load_adv7n3_dataset() -> dict[str, object]:
+    """Load the ADV7N3 processor dataset (Hyundai 210 vs JD 892)."""
     try:
         return json.loads(_ADV7N3_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
@@ -60,6 +63,7 @@ def _load_adv7n3_dataset() -> dict[str, object]:
 
 @lru_cache(maxsize=1)
 def _load_tn166_dataset() -> dict[str, object]:
+    """Load the TN-166 telescopic-boom processor dataset."""
     try:
         return json.loads(_TN166_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
@@ -68,6 +72,7 @@ def _load_tn166_dataset() -> dict[str, object]:
 
 @lru_cache(maxsize=1)
 def _load_barko450_dataset() -> dict[str, object]:
+    """Load the TN-46 Barko 450 loader dataset."""
     try:
         return json.loads(_BARKO450_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
@@ -76,6 +81,7 @@ def _load_barko450_dataset() -> dict[str, object]:
 
 @lru_cache(maxsize=1)
 def _load_kizha2020_dataset() -> dict[str, object]:
+    """Load the Kizha et al. (2020) loader dataset (hot vs cold yarding)."""
     try:
         return json.loads(_KIZHA2020_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
@@ -86,6 +92,7 @@ def _load_kizha2020_dataset() -> dict[str, object]:
 
 @lru_cache(maxsize=1)
 def _load_hypro775_dataset() -> dict[str, object]:
+    """Load the HYPRO 775 tractor-processor dataset."""
     try:
         return json.loads(_HYPRO775_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
@@ -94,6 +101,7 @@ def _load_hypro775_dataset() -> dict[str, object]:
 
 @lru_cache(maxsize=1)
 def _load_labelle_huss_dataset() -> dict[str, object]:
+    """Load the Labelle & Huß (2018) automatic bucking uplift dataset."""
     try:
         return json.loads(_LABELLE_HUSS_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
@@ -104,6 +112,7 @@ def _load_labelle_huss_dataset() -> dict[str, object]:
 
 @lru_cache(maxsize=1)
 def _load_tn103_dataset() -> dict[str, object]:
+    """Load the TN-103 Caterpillar DL221 processor dataset."""
     try:
         return json.loads(_TN103_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
@@ -112,6 +121,7 @@ def _load_tn103_dataset() -> dict[str, object]:
 
 @lru_cache(maxsize=1)
 def _load_tr87_dataset() -> dict[str, object]:
+    """Load the TR-87 Timberjack TJ90 processor dataset."""
     try:
         return json.loads(_TR87_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
@@ -120,6 +130,7 @@ def _load_tr87_dataset() -> dict[str, object]:
 
 @lru_cache(maxsize=1)
 def _load_tr106_dataset() -> dict[str, object]:
+    """Load the TR-106 lodgepole pine processor dataset."""
     try:
         return json.loads(_TR106_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
@@ -128,6 +139,7 @@ def _load_tr106_dataset() -> dict[str, object]:
 
 @lru_cache(maxsize=1)
 def _load_visser_dataset() -> dict[str, object]:
+    """Load the Visser & Tolan (2015) processor dataset."""
     try:
         return json.loads(_VISSER2015_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
@@ -138,6 +150,7 @@ def _load_visser_dataset() -> dict[str, object]:
 
 @lru_cache(maxsize=1)
 def _load_spinelli2010_dataset() -> dict[str, object]:
+    """Load the Spinelli et al. (2010) processor dataset."""
     try:
         return json.loads(_SPINELLI2010_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
@@ -148,6 +161,7 @@ def _load_spinelli2010_dataset() -> dict[str, object]:
 
 @lru_cache(maxsize=1)
 def _load_bertone2025_dataset() -> dict[str, object]:
+    """Load the Bertone & Manzone (2025) excavator-processor dataset."""
     try:
         return json.loads(_BERTONE2025_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
@@ -158,6 +172,7 @@ def _load_bertone2025_dataset() -> dict[str, object]:
 
 @lru_cache(maxsize=1)
 def _load_borz2023_dataset() -> dict[str, object]:
+    """Load the Borz et al. (2023) Romanian processor dataset."""
     try:
         return json.loads(_BORZ2023_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
@@ -168,6 +183,7 @@ def _load_borz2023_dataset() -> dict[str, object]:
 
 @lru_cache(maxsize=1)
 def _load_nakagawa2010_dataset() -> dict[str, object]:
+    """Load the Nakagawa et al. (2010) Japanese landing processor dataset."""
     try:
         return json.loads(_NAKAGAWA2010_DATA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
@@ -178,6 +194,23 @@ def _load_nakagawa2010_dataset() -> dict[str, object]:
 
 @dataclass(frozen=True)
 class AutomaticBuckingAdjustment:
+    """
+    Effect of Labelle & Huß (2018) automatic bucking on processor productivity/revenue.
+
+    Attributes
+    ----------
+    multiplier:
+        Productivity multiplier applied to delay-free m³/PMH₀.
+    delta_m3_per_pmh:
+        Absolute uplift (m³/PMH₀) relative to the manual baseline.
+    revenue_delta_per_m3:
+        Additional revenue per m³ (currency specified by ``currency``). ``None`` if not reported.
+    currency:
+        Currency code used in the study (e.g., EUR).
+    base_year:
+        CPI base year for the revenue delta.
+    """
+
     multiplier: float
     delta_m3_per_pmh: float
     revenue_delta_per_m3: float | None
@@ -187,6 +220,19 @@ class AutomaticBuckingAdjustment:
 
 @dataclass(frozen=True)
 class BerryLogGradeStat:
+    """
+    Summary of Berry (2019) log grade emmeans (minutes per stem).
+
+    Attributes
+    ----------
+    grade:
+        Log grade label (A, B, etc.).
+    mean_minutes:
+        Mean processing time (minutes per stem).
+    lo_minutes, hi_minutes:
+        Lower/upper bounds (±2σ) for the time per stem.
+    """
+
     grade: str
     mean_minutes: float
     lo_minutes: float
@@ -195,6 +241,29 @@ class BerryLogGradeStat:
 
 @dataclass(frozen=True)
 class ProcessorCarrierProfile:
+    """
+    Metadata describing processor carriers (purpose-built vs excavator).
+
+    Attributes
+    ----------
+    key:
+        Identifier used by CLI helpers.
+    name, description:
+        Human-readable carrier name and description.
+    productivity_ratio:
+        Relative productivity multiplier vs the base profile.
+    default_delay_multiplier:
+        Optional utilisation multiplier applied to delay-free m³/PMH₀.
+    fuel_l_per_m3:
+        Litres per cubic metre consumed by the carrier (if available).
+    yarder_delay_percent:
+        Percent of yarder delay attributable to carrier waiting time.
+    notes, references:
+        Supplementary notes and citations.
+    nakagawa:
+        Optional Nakagawa (2010) regression coefficients for this carrier.
+    """
+
     key: str
     name: str
     description: str
@@ -209,6 +278,7 @@ class ProcessorCarrierProfile:
 
 @lru_cache(maxsize=1)
 def get_labelle_huss_automatic_bucking_adjustment() -> AutomaticBuckingAdjustment:
+    """Return the automatic bucking uplift (productivity + revenue) from Labelle & Huß (2018)."""
     data = _load_labelle_huss_dataset()
     productivity = (data.get("productivity") or {}).get("aggregate") or {}
     revenue = (data.get("revenue") or {}).get("aggregate") or {}
@@ -231,6 +301,7 @@ def get_labelle_huss_automatic_bucking_adjustment() -> AutomaticBuckingAdjustmen
 
 @lru_cache(maxsize=1)
 def _load_berry_log_grade_payload() -> dict[str, object]:
+    """Load Berry (2019) log grade emmeans for per-grade processing times."""
     try:
         return json.loads(_BERRY_LOG_GRADES_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
@@ -241,6 +312,7 @@ def _load_berry_log_grade_payload() -> dict[str, object]:
 
 @lru_cache(maxsize=1)
 def get_berry_log_grade_stats() -> tuple[BerryLogGradeStat, ...]:
+    """Return Berry (2019) log grade statistics (mean/±2σ minutes per stem)."""
     payload = _load_berry_log_grade_payload()
     grades = []
     for entry in payload.get("grades", []):
@@ -260,6 +332,7 @@ def get_berry_log_grade_stats() -> tuple[BerryLogGradeStat, ...]:
 
 @lru_cache(maxsize=1)
 def get_berry_log_grade_metadata() -> dict[str, object]:
+    """Return raw metadata payload for Berry (2019) log grade emmeans."""
     payload = _load_berry_log_grade_payload()
     return {
         "source": payload.get("source"),
@@ -270,6 +343,7 @@ def get_berry_log_grade_metadata() -> dict[str, object]:
 
 @lru_cache(maxsize=1)
 def _load_carrier_profiles_raw() -> dict[str, dict[str, object]]:
+    """Load processor carrier profile metadata (purpose-built vs excavator)."""
     try:
         data = json.loads(_CARRIER_PROFILE_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:  # pragma: no cover - configuration error
@@ -278,6 +352,24 @@ def _load_carrier_profiles_raw() -> dict[str, dict[str, object]]:
 
 
 def get_processor_carrier_profile(key: str) -> ProcessorCarrierProfile:
+    """
+    Return a processor carrier profile (purpose-built vs excavator) by key.
+
+    Parameters
+    ----------
+    key:
+        Carrier identifier as defined in ``processor_carrier_profiles.json``.
+
+    Returns
+    -------
+    ProcessorCarrierProfile
+        Dataclass with productivity ratios, utilisation defaults, and citation details.
+
+    Raises
+    ------
+    ValueError
+        If ``key`` is not present in the profile table.
+    """
     profiles = _load_carrier_profiles_raw()
     payload = profiles.get(key)
     if payload is None:
@@ -313,6 +405,7 @@ def get_processor_carrier_profile(key: str) -> ProcessorCarrierProfile:
 
 
 def _load_tree_form_productivity_multipliers() -> dict[int, float]:
+    """Load Berry (2019) tree-form multipliers (category → productivity scalar)."""
     data = _load_berry_dataset()
     tree_form = data.get("tree_form") or {}
     rel = tree_form.get("relative_processing_time")
@@ -329,6 +422,7 @@ def _load_tree_form_productivity_multipliers() -> dict[int, float]:
 
 
 def _load_piece_size_regression() -> tuple[float, float]:
+    """Load the Berry (2019) piece-size regression coefficients (slope/intercept)."""
     data = _load_berry_dataset()
     regression = data.get("piece_size_regression")
     if not regression:
@@ -341,6 +435,7 @@ def _load_piece_size_regression() -> tuple[float, float]:
 
 
 def _load_default_utilisation() -> float:
+    """Return the Berry (2019) default utilisation fraction (0–1)."""
     utilisation = _load_berry_dataset().get("utilisation") or {}
     percent = utilisation.get("utilisation_percent", 91.0)
     return float(percent) / 100.0
@@ -352,6 +447,7 @@ def _load_skid_size_models() -> tuple[
     float,
     tuple[float, float] | None,
 ]:
+    """Load Berry (2019) skid area delay/productivity models."""
     data = _load_berry_dataset()
     skid = data.get("skid_size")
     if not skid:
@@ -375,6 +471,7 @@ def _load_skid_size_models() -> tuple[
 def predict_berry2019_skid_effects(
     skid_area_m2: float,
 ) -> tuple[float, float | None, float, tuple[float, float] | None, float | None, float | None]:
+    """Predict skid-delay seconds and productivity deltas from Berry (2019) skid-yard trials."""
     if skid_area_m2 <= 0:
         raise ValueError("Skid area must be > 0.")
     delay_model, productivity_model, baseline_delay, area_range = _load_skid_size_models()
@@ -403,6 +500,7 @@ def predict_berry2019_skid_effects(
 
 @lru_cache(maxsize=1)
 def _load_adv5n6_scenarios() -> dict[str, dict[str, object]]:
+    """Load ADV5N6 scenario definitions keyed by scenario name."""
     payload = _load_adv5n6_dataset()
     cost_meta = payload.get("costing") or {}
     base_year = cost_meta.get("base_year")
@@ -416,6 +514,7 @@ def _load_adv5n6_scenarios() -> dict[str, dict[str, object]]:
 
 @lru_cache(maxsize=1)
 def _load_tn103_scenarios() -> dict[str, dict[str, object]]:
+    """Load TN-103 line-processor scenario definitions."""
     payload = _load_tn103_dataset()
     defaults = payload.get("defaults") or {}
     cost_meta = payload.get("costing") or {}
@@ -430,6 +529,7 @@ def _load_tn103_scenarios() -> dict[str, dict[str, object]]:
 
 @lru_cache(maxsize=1)
 def _load_tn166_scenarios() -> dict[str, dict[str, object]]:
+    """Load TN-166 telescopic-boom scenario definitions."""
     payload = _load_tn166_dataset()
     defaults = payload.get("defaults") or {}
     cycle = payload.get("cycle_time_minutes")
@@ -450,6 +550,7 @@ def _load_tn166_scenarios() -> dict[str, dict[str, object]]:
 
 @lru_cache(maxsize=1)
 def _load_barko450_scenarios() -> dict[str, dict[str, object]]:
+    """Load Barko 450 loader scenario definitions."""
     payload = _load_barko450_dataset()
     utilisation = payload.get("utilisation") or {}
     cost_meta = payload.get("costing") or {}
@@ -464,6 +565,7 @@ def _load_barko450_scenarios() -> dict[str, dict[str, object]]:
 
 @lru_cache(maxsize=1)
 def _load_tr87_scenarios() -> dict[str, dict[str, object]]:
+    """Load TR-87 processor scenario definitions."""
     payload = _load_tr87_dataset()
     defaults = payload.get("defaults") or {}
     cost_meta = payload.get("costing") or {}
@@ -478,6 +580,7 @@ def _load_tr87_scenarios() -> dict[str, dict[str, object]]:
 
 @lru_cache(maxsize=1)
 def _load_tr106_scenarios() -> dict[str, dict[str, object]]:
+    """Load TR-106 processor scenario definitions."""
     payload = _load_tr106_dataset()
     defaults = payload.get("defaults") or {}
     cost_meta = payload.get("costing") or {}
@@ -589,7 +692,26 @@ def _inflate_cost(value: float | None, base_year: int | None) -> float | None:
 
 @dataclass(frozen=True)
 class ProcessorProductivityResult:
-    """Normalized output for harvester/processor regression helpers."""
+    """
+    Normalized output for harvester/processor regression helpers.
+
+    Attributes
+    ----------
+    base_productivity_m3_per_pmh:
+        Delay-free productivity (m³/PMH₀) prior to multipliers.
+    tree_form_multiplier, crew_multiplier, delay_multiplier:
+        Multipliers applied to the base productivity.
+    delay_free_productivity_m3_per_pmh:
+        Post-multiplier delay-free productivity (before utilisation).
+    productivity_m3_per_pmh:
+        Final productivity after applying utilisation/delay multipliers.
+    piece_size_m3:
+        Piece size (m³) used for the regression.
+    tree_form_category:
+        Berry (2019) tree form category (0 good, 1 poor, 2 bad).
+    carrier_profile:
+        Optional :class:`ProcessorCarrierProfile` applied to the regression.
+    """
 
     base_productivity_m3_per_pmh: float
     tree_form_multiplier: float
@@ -683,7 +805,34 @@ def estimate_processor_productivity_berry2019(
 
 @dataclass(frozen=True)
 class VisserLogSortProductivityResult:
-    """Result payload for the Visser & Tolan (2015) log-sort study."""
+    """
+    Result payload for the Visser & Tolan (2015) log-sort study.
+
+    Attributes
+    ----------
+    piece_size_m3:
+        Average piece volume (m³) used in the regression.
+    log_sort_count:
+        Number of simultaneous log sorts.
+    delay_free_productivity_m3_per_pmh:
+        Predicted m³/PMH₀ from the study.
+    delay_multiplier:
+        Utilisation multiplier applied to produce ``productivity_m3_per_pmh``.
+    productivity_m3_per_pmh:
+        Final productivity after utilisation adjustments.
+    baseline_productivity_m3_per_pmh:
+        Published baseline used for relative comparisons.
+    relative_difference_percent:
+        Percentage difference vs the baseline.
+    gross_value_per_2m3, value_per_pmh:
+        Economic outputs from the study (may be ``None`` when not provided).
+    value_currency, value_base_year:
+        Currency/base year for the economic metrics.
+    value_reference_piece_size_m3:
+        Reference piece size used when computing the economic deltas.
+    notes:
+        Additional study notes.
+    """
 
     piece_size_m3: float
     log_sort_count: int
@@ -784,6 +933,27 @@ def estimate_processor_productivity_visser2015(
 
 @dataclass(frozen=True)
 class Labelle2019ProcessorProductivityResult:
+    """
+    Polynomial coefficients + outputs from Labelle et al. (2019) DBH-based regressions.
+
+    Attributes
+    ----------
+    species, treatment:
+        Species (spruce/beech) and silviculture treatment (clear_cut/selective_cut).
+    dbh_cm:
+        Diameter at breast height (cm).
+    intercept, linear, quadratic:
+        Polynomial coefficients describing delay-free productivity vs DBH.
+    sample_trees:
+        Sample size per species/treatment combination.
+    delay_multiplier:
+        Utilisation multiplier applied post regression.
+    delay_free_productivity_m3_per_pmh:
+        Delay-free m³/PMH₀ predicted by the polynomial (after optional auto bucking adjustments).
+    productivity_m3_per_pmh:
+        Final m³/PMH after applying ``delay_multiplier``.
+    """
+
     species: Literal["spruce", "beech"]
     treatment: Literal["clear_cut", "selective_cut"]
     dbh_cm: float
@@ -798,6 +968,7 @@ class Labelle2019ProcessorProductivityResult:
 
 @dataclass(frozen=True)
 class _Labelle2019Polynomial:
+    """Helper structure for Labelle et al. (2019) DBH polynomials."""
     intercept: float
     linear: float
     quadratic: float
@@ -845,13 +1016,26 @@ def estimate_processor_productivity_labelle2019_dbh(
     delay_multiplier: float = 1.0,
     automatic_bucking_multiplier: float | None = None,
 ) -> Labelle2019ProcessorProductivityResult:
-    """Labelle et al. (2019) Bavarian hardwood processor regressions (DBH polynomial).
+    """
+    Labelle et al. (2019) DBH-based processor regressions (spruce/beech, clear/selective cuts).
 
-    The underlying time-and-motion study covered a TimberPro 620-E with a LogMax 7000C
-    harvesting head working in large-diameter, hardwood-dominated stands (clear-cut and
-    selection-cut prescriptions). Output units are delay-free m³/PMH₀; the optional
-    ``delay_multiplier`` lets analysts enforce utilisation assumptions when wiring the
-    results into costing models.
+    Parameters
+    ----------
+    species:
+        ``"spruce"`` or ``"beech"``.
+    treatment:
+        ``"clear_cut"`` or ``"selective_cut"``.
+    dbh_cm:
+        Diameter at breast height (cm). Must be > 0.
+    delay_multiplier:
+        Utilisation multiplier (0,1], applied after delay-free productivity is calculated.
+    automatic_bucking_multiplier:
+        Optional multiplier (>0) representing automatic bucking productivity gains.
+
+    Returns
+    -------
+    Labelle2019ProcessorProductivityResult
+        Dataclass containing coefficients, delay-free productivity, and utilisation-adjusted output.
     """
 
     if dbh_cm <= 0:
@@ -893,6 +1077,26 @@ def estimate_processor_productivity_labelle2019_dbh(
 
 @dataclass(frozen=True)
 class Labelle2016ProcessorProductivityResult:
+    """
+    Result payload for Labelle et al. (2016) sugar maple processor regressions.
+
+    Attributes
+    ----------
+    tree_form:
+        Tree-form class (`"acceptable"` or `"unacceptable"`).
+    dbh_cm:
+        Diameter at breast height (cm) used in the regression.
+    coefficient_a, exponent_b:
+        Power-law coefficients from the publication.
+    sample_trees:
+        Number of trees used to calibrate the regression.
+    delay_multiplier:
+        Utilisation multiplier applied to delay-free productivity.
+    delay_free_productivity_m3_per_pmh:
+        Predicted m³/PMH₀ prior to utilisation adjustments.
+    productivity_m3_per_pmh:
+        Final m³/PMH after applying ``delay_multiplier`` (and optional bucking multipliers).
+    """
     tree_form: Literal["acceptable", "unacceptable"]
     dbh_cm: float
     coefficient_a: float
@@ -916,7 +1120,25 @@ def estimate_processor_productivity_labelle2016(
     delay_multiplier: float = 1.0,
     automatic_bucking_multiplier: float | None = None,
 ) -> Labelle2016ProcessorProductivityResult:
-    """Labelle et al. (2016) sugar maple processor regressions grouped by tree form."""
+    """
+    Labelle et al. (2016) sugar maple processor regressions grouped by tree form.
+
+    Parameters
+    ----------
+    tree_form:
+        ``"acceptable"`` or ``"unacceptable"`` (see publication Table 3).
+    dbh_cm:
+        Diameter at breast height (cm). Must be > 0.
+    delay_multiplier:
+        Utilisation multiplier (0,1].
+    automatic_bucking_multiplier:
+        Optional multiplier (>0) for automatic bucking uplift.
+
+    Returns
+    -------
+    Labelle2016ProcessorProductivityResult
+        Dataclass carrying power-law coefficients and productivity outputs.
+    """
 
     if dbh_cm <= 0:
         raise ValueError("dbh_cm must be > 0")
@@ -953,6 +1175,26 @@ def estimate_processor_productivity_labelle2016(
 
 @dataclass(frozen=True)
 class Labelle2017PolynomialProcessorResult:
+    """
+    Polynomial regression output for Labelle et al. (2017) excavator processors.
+
+    Attributes
+    ----------
+    variant:
+        Scenario label (e.g., ``"purpose_built"`` vs ``"excavator"``).
+    dbh_cm:
+        Diameter at breast height (cm).
+    intercept, linear, quadratic:
+        Polynomial coefficients for the delay-free productivity fit.
+    sample_trees:
+        Number of observations underpinning the regression.
+    delay_multiplier:
+        Utilisation multiplier applied after calculating delay-free productivity.
+    delay_free_productivity_m3_per_pmh:
+        m³/PMH₀ prior to utilisation adjustments.
+    productivity_m3_per_pmh:
+        Final m³/PMH after applying ``delay_multiplier`` (and optional auto bucking multipliers).
+    """
     variant: str
     dbh_cm: float
     intercept: float
@@ -969,6 +1211,26 @@ class Labelle2017PolynomialProcessorResult:
 
 @dataclass(frozen=True)
 class Labelle2017PowerProcessorResult:
+    """
+    Power-law regression output for Labelle et al. (2017) excavator processors.
+
+    Attributes
+    ----------
+    variant:
+        Scenario label for the regression.
+    dbh_cm:
+        Diameter at breast height (cm).
+    coefficient, exponent:
+        Power-law coefficients describing delay-free productivity.
+    sample_trees:
+        Number of trees measured in the study.
+    delay_multiplier:
+        Utilisation multiplier applied to the delay-free result.
+    delay_free_productivity_m3_per_pmh:
+        Predicted m³/PMH₀ before utilisation adjustments.
+    productivity_m3_per_pmh:
+        Final m³/PMH after applying ``delay_multiplier`` (and optional auto bucking multipliers).
+    """
     variant: str
     dbh_cm: float
     coefficient: float
@@ -999,7 +1261,25 @@ def estimate_processor_productivity_labelle2017(
     delay_multiplier: float = 1.0,
     automatic_bucking_multiplier: float | None = None,
 ) -> Labelle2017PolynomialProcessorResult | Labelle2017PowerProcessorResult:
-    """Labelle et al. (2017) hardwood processor regressions (power/polynomial DBH forms)."""
+    """
+    Labelle et al. (2017) excavator-based CTL processor regressions (polynomial or power-law).
+
+    Parameters
+    ----------
+    variant:
+        One of the supported regression variants (see `_LABELLE2017_MODELS`).
+    dbh_cm:
+        Diameter at breast height (cm). Must be > 0.
+    delay_multiplier:
+        Utilisation multiplier (0,1].
+    automatic_bucking_multiplier:
+        Optional multiplier (>0) for automatic bucking uplift.
+
+    Returns
+    -------
+    Labelle2017PolynomialProcessorResult | Labelle2017PowerProcessorResult
+        Dataclass containing coefficients and productivity values for the requested variant.
+    """
 
     if dbh_cm <= 0:
         raise ValueError("dbh_cm must be > 0")
@@ -1067,6 +1347,26 @@ def estimate_processor_productivity_labelle2017(
 
 @dataclass(frozen=True)
 class Labelle2018ProcessorProductivityResult:
+    """
+    Regression output for Labelle et al. (2018) Bavarian beech/spruce processors.
+
+    Attributes
+    ----------
+    variant:
+        Scenario label (rubber tired vs tracked, spruce vs beech).
+    dbh_cm:
+        Diameter at breast height (cm).
+    intercept, linear, quadratic:
+        Polynomial coefficients for delay-free productivity.
+    sample_trees:
+        Number of observations for the variant.
+    delay_multiplier:
+        Utilisation multiplier (0,1].
+    delay_free_productivity_m3_per_pmh:
+        Predicted m³/PMH₀ without utilisation adjustments.
+    productivity_m3_per_pmh:
+        Final m³/PMH after applying utilisation and auto bucking multipliers.
+    """
     variant: str
     dbh_cm: float
     intercept: float
@@ -1093,7 +1393,25 @@ def estimate_processor_productivity_labelle2018(
     delay_multiplier: float = 1.0,
     automatic_bucking_multiplier: float | None = None,
 ) -> Labelle2018ProcessorProductivityResult:
-    """Labelle et al. (2018) Bavarian hardwood processor regressions (DBH polynomial)."""
+    """
+    Labelle et al. (2018) Bavarian beech/spruce processor regressions (DBH polynomials).
+
+    Parameters
+    ----------
+    variant:
+        Regression key describing species and undercarriage type.
+    dbh_cm:
+        Diameter at breast height (cm). Must be > 0.
+    delay_multiplier:
+        Utilisation multiplier (0,1].
+    automatic_bucking_multiplier:
+        Optional multiplier (>0) for automatic bucking uplift.
+
+    Returns
+    -------
+    Labelle2018ProcessorProductivityResult
+        Regression coefficients plus productivity outputs for the variant.
+    """
 
     if dbh_cm <= 0:
         raise ValueError("dbh_cm must be > 0")
@@ -1131,6 +1449,26 @@ def estimate_processor_productivity_labelle2018(
 
 @dataclass(frozen=True)
 class Labelle2019VolumeProcessorProductivityResult:
+    """
+    Volume-keyed Labelle et al. (2019) regression outputs.
+
+    Attributes
+    ----------
+    species, treatment:
+        Species and silviculture treatment labels.
+    volume_m3:
+        Recovered volume per tree (m³).
+    intercept, linear, quadratic:
+        Polynomial coefficients keyed to volume (rather than DBH).
+    sample_trees:
+        Number of observations per combination.
+    delay_multiplier:
+        Utilisation multiplier applied after delay-free productivity is computed.
+    delay_free_productivity_m3_per_pmh:
+        Predicted m³/PMH₀ before utilisation adjustments.
+    productivity_m3_per_pmh:
+        Final m³/PMH after applying utilisation and optional auto bucking multipliers.
+    """
     species: Literal["spruce", "beech"]
     treatment: Literal["clear_cut", "selective_cut"]
     volume_m3: float
@@ -1146,6 +1484,7 @@ class Labelle2019VolumeProcessorProductivityResult:
 
 @dataclass(frozen=True)
 class _Labelle2019VolumePolynomial:
+    """Helper container for the volume-based Labelle (2019) polynomials."""
     intercept: float
     linear: float
     quadratic: float
@@ -1193,7 +1532,27 @@ def estimate_processor_productivity_labelle2019_volume(
     delay_multiplier: float = 1.0,
     automatic_bucking_multiplier: float | None = None,
 ) -> Labelle2019VolumeProcessorProductivityResult:
-    """Labelle et al. (2019) hardwood processor regressions keyed to recovered volume (m³/stem)."""
+    """
+    Labelle et al. (2019) volume-based processor regressions (spruce/beech treatments).
+
+    Parameters
+    ----------
+    species:
+        ``"spruce"`` or ``"beech"``.
+    treatment:
+        ``"clear_cut"`` or ``"selective_cut"``.
+    volume_m3:
+        Recovered volume per stem (m³). Must be > 0.
+    delay_multiplier:
+        Utilisation multiplier (0,1].
+    automatic_bucking_multiplier:
+        Optional multiplier (>0) for automatic bucking uplift.
+
+    Returns
+    -------
+    Labelle2019VolumeProcessorProductivityResult
+        Dataclass carrying coefficients and productivity outputs keyed to volume.
+    """
 
     if volume_m3 <= 0:
         raise ValueError("volume_m3 must be > 0")
@@ -1258,6 +1617,28 @@ _ADV5N1_COEFFICIENTS = {
 
 @dataclass(frozen=True)
 class LoaderForwarderProductivityResult:
+    """
+    Result payload for loader-forwarder productivity estimates (ADV5N1/TN261).
+
+    Attributes
+    ----------
+    piece_size_m3:
+        Average piece volume (m³).
+    external_distance_m:
+        External forwarding distance (m).
+    slope_percent:
+        Average slope (%) for the forwarding corridor.
+    delay_multiplier:
+        Utilisation fraction applied to delay-free productivity.
+    delay_free_productivity_m3_per_pmh:
+        m³/PMH₀ predicted by the regression.
+    productivity_m3_per_pmh:
+        Final productive m³/PMH (utilisation applied).
+    tonnes_per_cycle:
+        Payload mass (tonnes) per cycle when available.
+    cycles_per_hour:
+        Cycle rate implied by the regression.
+    """
     piece_size_m3: float
     external_distance_m: float
     slope_percent: float
@@ -1284,6 +1665,27 @@ def estimate_loader_forwarder_productivity_tn261(
     bunched: bool = True,
     delay_multiplier: float = 1.0,
 ) -> LoaderForwarderProductivityResult:
+    """
+    Estimate loader-forwarder productivity using TN-261 regressions.
+
+    Parameters
+    ----------
+    piece_size_m3:
+        Average payload volume per cycle (m³). Must be > 0.
+    external_distance_m:
+        External distance travelled by the loader-forwarder (m). Must be > 0.
+    slope_percent:
+        Average slope (%) along the forwarding trail. Used to apply the slope multiplier.
+    bunched:
+        ``True`` when wood is mechanically bunched (higher payload factor), ``False`` for hand-felled.
+    delay_multiplier:
+        Utilisation multiplier (0,1] applied to delay-free productivity.
+
+    Returns
+    -------
+    LoaderForwarderProductivityResult
+        Dataclass containing delay-free and utilisation-adjusted productivity plus multiplier details.
+    """
     if piece_size_m3 <= 0:
         raise ValueError("piece_size_m3 must be > 0")
     if external_distance_m <= 0:
@@ -1316,6 +1718,24 @@ def estimate_loader_forwarder_productivity_tn261(
 
 @dataclass(frozen=True)
 class ClambunkProductivityResult:
+    """
+    ADV2N26 clambunk/hoe-forwarding productivity result.
+
+    Attributes
+    ----------
+    travel_empty_distance_m:
+        Empty travel distance per cycle (m).
+    stems_per_cycle:
+        Average stems moved in each cycle.
+    average_stem_volume_m3:
+        Cubic metres per stem.
+    delay_free_productivity_m3_per_pmh:
+        Delay-free productivity (m³/PMH₀) from the regression.
+    utilisation:
+        Utilisation fraction applied to derive ``productivity_m3_per_pmh``.
+    productivity_m3_per_pmh:
+        Final productivity (m³/PMH).
+    """
     travel_empty_distance_m: float
     stems_per_cycle: float
     average_stem_volume_m3: float
@@ -1330,6 +1750,34 @@ class ClambunkProductivityResult:
 
 @dataclass(frozen=True)
 class LoaderBarko450ProductivityResult:
+    """
+    TN-46 Barko 450 loader productivity/cost result.
+
+    Attributes
+    ----------
+    scenario:
+        Scenario identifier from TN-46 dataset.
+    description:
+        Human-readable description of the block.
+    avg_volume_per_shift_m3:
+        Volume processed per 8 h shift.
+    avg_stems_per_shift:
+        Number of stems handled per shift.
+    utilisation:
+        Observed utilisation fraction.
+    productivity_m3_per_pmh:
+        Computed productivity (m³ per productive hour).
+    cost_per_m3_cad:
+        Loader cost per cubic metre (inflated to CAD 2024 when possible).
+    labour_cost_per_m3_cad:
+        Labour component per cubic metre.
+    fuel_l_per_shift:
+        Fuel consumption per shift.
+    notes:
+        Additional study notes.
+    cost_base_year:
+        Base year used for the cost figures.
+    """
     scenario: str
     description: str
     avg_volume_per_shift_m3: float
@@ -1349,6 +1797,30 @@ class LoaderBarko450ProductivityResult:
 
 @dataclass(frozen=True)
 class LoaderHotColdProductivityResult:
+    """
+    Loader hot vs cold yard productivity result (Kizha et al. 2020).
+
+    Attributes
+    ----------
+    mode:
+        ``"hot"`` or ``"cold"`` yarding mode.
+    description:
+        Scenario description.
+    utilisation_percent:
+        Utilisation percentage observed in the study.
+    delay_free_productivity_m3_per_pmh:
+        Delay-free productivity (m³/PMH₀).
+    productivity_m3_per_pmh:
+        Utilisation-adjusted productivity.
+    loader_hours:
+        Loader hours recorded per shift.
+    loader_cost_per_m3_cad:
+        Loader cost per cubic metre.
+    notes:
+        Additional notes from the publication.
+    cost_base_year:
+        Base year for the cost figure.
+    """
     mode: Literal["hot", "cold"]
     description: str
     utilisation_percent: float
@@ -1366,6 +1838,32 @@ class LoaderHotColdProductivityResult:
 
 @dataclass(frozen=True)
 class Hypro775ProcessorProductivityResult:
+    """
+    HYPRO 775 tractor-mounted processor regression result.
+
+    Attributes
+    ----------
+    description:
+        Scenario description (e.g., thinning vs final felling).
+    mean_cycle_time_seconds:
+        Observed mean cycle time.
+    mean_logs_per_tree:
+        Average logs processed per tree.
+    delay_free_productivity_m3_per_pmh:
+        Delay-free productivity (m³/PMH₀).
+    utilisation_percent:
+        Utilisation percentage applied to derive final productivity.
+    productivity_m3_per_pmh:
+        Final productivity (m³/PMH).
+    cost_per_m3_cad:
+        Cost per cubic metre (inflated to 2024 CAD when available).
+    fuel_l_per_m3:
+        Fuel consumption per cubic metre.
+    notes:
+        Study notes or caveats.
+    cost_base_year:
+        Base year for the cost figure.
+    """
     description: str
     mean_cycle_time_seconds: float
     mean_logs_per_tree: float
@@ -1384,6 +1882,28 @@ class Hypro775ProcessorProductivityResult:
 
 @dataclass(frozen=True)
 class Spinelli2010ProcessorProductivityResult:
+    """
+    Spinelli et al. (2010) CTL processor regression result.
+
+    Attributes
+    ----------
+    operation:
+        ``"harvest"`` or ``"process"`` operation type.
+    tree_volume_m3:
+        Tree volume (m³) used in the regression.
+    slope_percent:
+        Slope percentage for the study plot.
+    machine_power_kw:
+        Processor power (kW).
+    delay_multiplier:
+        Utilisation multiplier applied after the regression.
+    delay_free_productivity_m3_per_pmh:
+        Delay-free productivity (m³/PMH₀).
+    productivity_m3_per_pmh:
+        Utilisation-adjusted productivity.
+    notes:
+        Additional notes from the publication.
+    """
     operation: Literal["harvest", "process"]
     tree_volume_m3: float
     slope_percent: float
@@ -1408,6 +1928,28 @@ class Spinelli2010ProcessorProductivityResult:
 
 @dataclass(frozen=True)
 class Bertone2025ProcessorProductivityResult:
+    """
+    Bertone & Manzone (2025) excavator-processor regression result.
+
+    Attributes
+    ----------
+    dbh_cm:
+        Diameter at breast height (cm).
+    height_m:
+        Tree height (m).
+    logs_per_tree:
+        Average logs processed per tree.
+    tree_volume_m3:
+        Tree volume (m³).
+    delay_multiplier:
+        Utilisation multiplier applied post regression.
+    delay_free_productivity_m3_per_pmh:
+        Delay-free productivity (m³/PMH₀).
+    productivity_m3_per_pmh:
+        Utilisation-adjusted productivity.
+    notes:
+        Additional notes or warnings from the study.
+    """
     dbh_cm: float
     height_m: float
     logs_per_tree: float
@@ -1428,6 +1970,24 @@ class Bertone2025ProcessorProductivityResult:
 
 @dataclass(frozen=True)
 class Borz2023ProcessorProductivityResult:
+    """
+    Borz et al. (2023) processor regression result.
+
+    Attributes
+    ----------
+    tree_volume_m3:
+        Tree volume (m³) used in the regression (``None`` when unavailable).
+    efficiency_pmh_per_m3, efficiency_smh_per_m3:
+        Efficiency metrics reported in the study.
+    productivity_m3_per_pmh, productivity_m3_per_smh:
+        Productivity derived from the efficiency metrics.
+    cost_eur_per_m3:
+        Cost per cubic metre (EUR) at the study's base year.
+    cost_currency, cost_base_year:
+        Currency and base year for the cost figure.
+    notes:
+        Additional notes pulled from the dataset.
+    """
     tree_volume_m3: float | None
     efficiency_pmh_per_m3: float
     efficiency_smh_per_m3: float
@@ -1445,6 +2005,28 @@ class Borz2023ProcessorProductivityResult:
 
 @dataclass(frozen=True)
 class Nakagawa2010ProcessorProductivityResult:
+    """
+    Nakagawa et al. (2010) Hokkaido landing processor regression result.
+
+    Attributes
+    ----------
+    dbh_cm:
+        Diameter at breast height (cm) when the DBH model is used.
+    piece_volume_m3:
+        Piece volume (m³) when the piece-volume model is used.
+    model_used:
+        ``"dbh"`` or ``"piece_volume"`` depending on inputs.
+    delay_multiplier:
+        Utilisation multiplier applied to the delay-free productivity.
+    delay_free_productivity_m3_per_pmh:
+        Delay-free productivity (m³/PMH₀).
+    productivity_m3_per_pmh:
+        Utilisation-adjusted productivity.
+    utilisation_percent:
+        Utilisation percentage reported in the study.
+    notes:
+        Additional notes from the dataset.
+    """
     dbh_cm: float | None
     piece_volume_m3: float | None
     model_used: Literal["dbh", "piece_volume"]
@@ -1482,6 +2064,19 @@ def _load_hypro775_scenario() -> dict[str, object]:
 def estimate_processor_productivity_hypro775(
     *, delay_multiplier: float | None = None
 ) -> Hypro775ProcessorProductivityResult:
+    """
+    HYPRO 775 tractor-processor regression (Castro Pérez 2020 / Zurita Vintimilla 2021).
+
+    Parameters
+    ----------
+    delay_multiplier:
+        Optional utilisation multiplier (0,1]. Defaults to the study utilisation when ``None``.
+
+    Returns
+    -------
+    Hypro775ProcessorProductivityResult
+        Dataclass with cycle times, utilisation, fuel, and productivity metrics.
+    """
     data = _load_hypro775_scenario()
     base = data["delay_free_productivity_m3_per_pmh"]
     utilisation = data["utilisation_percent"] / 100.0
@@ -1608,6 +2203,35 @@ def estimate_processor_productivity_spinelli2010(
     removals_per_ha: float | None = None,
     residuals_per_ha: float | None = None,
 ) -> Spinelli2010ProcessorProductivityResult:
+    """
+    Spinelli et al. (2010) Italian CTL processor regressions (harvest vs landing).
+
+    Parameters
+    ----------
+    operation:
+        ``"harvest"`` or ``"process"``. Harvest mode requires removal/residual densities.
+    tree_volume_m3:
+        Tree volume (m³). Must be > 0.
+    slope_percent:
+        Slope (%) affecting cycle components. Negative values are clamped to 0.
+    machine_power_kw:
+        Processor power (kW). Must be > 0.
+    carrier_type:
+        Carrier class (`"tractor"`, `"spider"`, etc.).
+    head_type:
+        Harvester head type (`"stroke"` vs others).
+    species_group:
+        Species class (as defined in the study).
+    stand_type:
+        ``"forest"`` or other labels controlling brushing time.
+    removals_per_ha, residuals_per_ha:
+        Required when ``operation="harvest"`` to compute move/brush cycle elements.
+
+    Returns
+    -------
+    Spinelli2010ProcessorProductivityResult
+        Dataclass with delay-free and utilisation-adjusted productivity plus cycle breakdowns.
+    """
     if tree_volume_m3 <= 0:
         raise ValueError("tree_volume_m3 must be > 0.")
     if machine_power_kw <= 0:
@@ -1739,6 +2363,27 @@ def estimate_processor_productivity_bertone2025(
     tree_volume_m3: float,
     delay_multiplier: float | None = None,
 ) -> Bertone2025ProcessorProductivityResult:
+    """
+    Bertone & Manzone (2025) excavator processor regression (Italian Alps cable landings).
+
+    Parameters
+    ----------
+    dbh_cm:
+        Diameter at breast height (cm). Must be > 0.
+    height_m:
+        Tree height (m). Must be > 0.
+    logs_per_tree:
+        Average logs processed per tree. Must be > 0.
+    tree_volume_m3:
+        Tree volume (m³). Must be > 0.
+    delay_multiplier:
+        Optional utilisation multiplier (0,1]; defaults to the published delay fraction.
+
+    Returns
+    -------
+    Bertone2025ProcessorProductivityResult
+        Dataclass with cycle time, productivity, utilisation, fuel, and cost metrics.
+    """
     if dbh_cm <= 0 or height_m <= 0 or logs_per_tree <= 0 or tree_volume_m3 <= 0:
         raise ValueError("dbh_cm, height_m, logs_per_tree, and tree_volume_m3 must be > 0.")
     dataset = _load_bertone2025_dataset()
@@ -1782,6 +2427,19 @@ def estimate_processor_productivity_bertone2025(
 def estimate_processor_productivity_borz2023(
     *, tree_volume_m3: float | None = None
 ) -> Borz2023ProcessorProductivityResult:
+    """
+    Borz et al. (2023) Romanian landing processor productivity (harvester-as-processor).
+
+    Parameters
+    ----------
+    tree_volume_m3:
+        Optional average tree volume (m³) for reporting purposes (dataset values are fixed).
+
+    Returns
+    -------
+    Borz2023ProcessorProductivityResult
+        Dataclass containing efficiency, productivity, fuel, and cost metrics.
+    """
     dataset = _load_borz2023_dataset()
     metrics = dataset.get("metrics") or {}
     cost_base_year = metrics.get("cost_base_year")
@@ -1809,6 +2467,28 @@ def estimate_processor_productivity_nakagawa2010(
     piece_volume_m3: float | None = None,
     delay_multiplier: float = 1.0,
 ) -> Nakagawa2010ProcessorProductivityResult:
+    """
+    Nakagawa et al. (2010) excavator-processor regression (Hokkaido thinning).
+
+    Parameters
+    ----------
+    dbh_cm:
+        Diameter at breast height (cm). Provide either ``dbh_cm`` or ``piece_volume_m3``.
+    piece_volume_m3:
+        Piece volume (m³). Provide either this or ``dbh_cm``.
+    delay_multiplier:
+        Utilisation multiplier (0,1] applied to the delay-free result.
+
+    Returns
+    -------
+    Nakagawa2010ProcessorProductivityResult
+        Dataclass describing which model was used, productivity outputs, and study notes.
+
+    Raises
+    ------
+    ValueError
+        If neither (or both invalid) inputs are provided, or multiplier outside (0,1].
+    """
     if dbh_cm is None and piece_volume_m3 is None:
         raise ValueError("Provide either dbh_cm or piece_volume_m3 for the Nakagawa (2010) helper.")
     if dbh_cm is not None and dbh_cm <= 0:
@@ -1855,7 +2535,29 @@ def estimate_clambunk_productivity_adv2n26(
     utilization: float = ADV2N26_DEFAULT_UTILISATION,
     in_cycle_delay_minutes: float | None = None,
 ) -> ClambunkProductivityResult:
-    """ADV2N26 clambunk regression (Kosicki 2001, Equation 1 & 2, coastal BC)."""
+    """
+    Estimate clambunk/hoe-forwarder productivity using ADV2N26 regressions.
+
+    Parameters
+    ----------
+    travel_empty_distance_m:
+        Empty travel distance per cycle (m). Must be ≥ 0.
+    stems_per_cycle:
+        Stems transported per cycle. Must be > 0.
+    average_stem_volume_m3:
+        Average stem volume (m³). Defaults to ADV2N26 mean.
+    payload_m3_per_cycle:
+        Optional override for payload per cycle; when ``None`` it is derived from stems × volume.
+    utilization:
+        Utilisation fraction (0,1] applied to delay-free productivity.
+    in_cycle_delay_minutes:
+        Optional per-cycle delay minutes added to cycle time (defaults to dataset value).
+
+    Returns
+    -------
+    ClambunkProductivityResult
+        Dataclass with delay-free/utilisation-adjusted productivity and payload assumptions.
+    """
 
     if travel_empty_distance_m <= 0:
         raise ValueError("travel_empty_distance_m must be > 0")
@@ -1898,6 +2600,30 @@ def estimate_clambunk_productivity_adv2n26(
 
 @dataclass(frozen=True)
 class LoaderAdv5N1ProductivityResult:
+    """
+    ADV5N1 loader-forwarder regression result (distance/slope specific).
+
+    Attributes
+    ----------
+    forwarding_distance_m:
+        External forwarding distance (m).
+    slope_class:
+        Slope class key (e.g., ``"0_10"``).
+    payload_m3_per_cycle:
+        Payload per cycle (m³).
+    delay_free_productivity_m3_per_pmh:
+        Delay-free productivity from the regression.
+    delay_multiplier:
+        Utilisation factor applied post regression.
+    productivity_m3_per_pmh:
+        Utilisation-adjusted productivity.
+    pieces_per_cycle:
+        Pieces per cycle implied by the regression.
+    cycles_per_hour:
+        Cycle rate.
+    notes:
+        Study notes from Advantage Vol. 5 No. 1.
+    """
     forwarding_distance_m: float
     slope_class: str
     payload_m3_per_cycle: float
@@ -1911,6 +2637,32 @@ class LoaderAdv5N1ProductivityResult:
 
 @dataclass(frozen=True)
 class ADV5N6ProcessorProductivityResult:
+    """
+    ADV5N6 processor regression summary (hot/cold processing scenarios).
+
+    Attributes
+    ----------
+    stem_source:
+        ``"loader_forwarded"`` or ``"grapple_yarded"`` source.
+    processing_mode:
+        ``"cold"``, ``"hot"``, or ``"low_volume"``.
+    description:
+        Scenario description.
+    delay_free_productivity_m3_per_pmh:
+        Delay-free m³/PMH₀ from the regression.
+    utilisation_percent:
+        Utilisation percentage assumed in the scenario.
+    productivity_m3_per_pmh:
+        Utilisation-adjusted productivity.
+    cost_per_m3_cad:
+        Cost per cubic metre (inflated when a base year is provided).
+    loader_hours, processor_hours:
+        Hour allocations in the scenario.
+    notes:
+        Additional notes from the publication.
+    cost_base_year:
+        Base year for the cost figures.
+    """
     stem_source: str
     processing_mode: str
     description: str
@@ -1930,6 +2682,32 @@ class ADV5N6ProcessorProductivityResult:
 
 @dataclass(frozen=True)
 class ADV7N3ProcessorProductivityResult:
+    """
+    ADV7N3 Canfor Mackenzie processor/loader regression summary.
+
+    Attributes
+    ----------
+    machine_id:
+        Machine identifier (Hyundai 210 or JD 892).
+    machine_label:
+        Human-readable label.
+    description:
+        Scenario description.
+    delay_free_productivity_m3_per_pmh:
+        Delay-free productivity (m³/PMH₀).
+    utilisation_percent:
+        Utilisation percentage used to derive the final value.
+    productivity_m3_per_pmh:
+        Utilisation-adjusted productivity.
+    loader_hours, processor_hours:
+        Hours allocated to each machine.
+    cost_per_m3_cad:
+        Cost per cubic metre (inflated to current CAD when possible).
+    notes:
+        Additional notes or caveats.
+    cost_base_year:
+        Base year for the cost metric.
+    """
     machine_id: str
     machine_label: str
     description: str
@@ -1961,6 +2739,32 @@ class ADV7N3ProcessorProductivityResult:
 
 @dataclass(frozen=True)
 class TN103ProcessorProductivityResult:
+    """
+    TN-103 Caterpillar DL221 processor scenario summary.
+
+    Attributes
+    ----------
+    scenario:
+        Scenario name (e.g., ``"feller_bunched"``).
+    description:
+        Scenario description.
+    stem_source:
+        Source of stems (hand felled vs bunched).
+    delay_free_productivity_m3_per_pmh:
+        Delay-free productivity (m³/PMH₀).
+    utilisation_percent:
+        Utilisation percentage observed.
+    productivity_m3_per_pmh:
+        Utilisation-adjusted productivity.
+    cost_per_m3_cad:
+        Cost per cubic metre (inflated when base year provided).
+    loader_hours, processor_hours:
+        Time allocation per shift.
+    notes:
+        Scenario notes.
+    cost_base_year:
+        Base year for cost metrics.
+    """
     scenario: str
     description: str
     stem_source: str
@@ -1979,6 +2783,32 @@ class TN103ProcessorProductivityResult:
 
 @dataclass(frozen=True)
 class TN166ProcessorProductivityResult:
+    """
+    TN-166 telescopic-boom processor regression summary.
+
+    Attributes
+    ----------
+    scenario:
+        Scenario name.
+    description:
+        Description of the telescopic-boom workflow.
+    stem_source:
+        ``"grapple_yarded"``, ``"right_of_way"``, etc.
+    delay_free_productivity_m3_per_pmh:
+        Delay-free productivity (m³/PMH₀).
+    utilisation_percent:
+        Utilisation percentage.
+    productivity_m3_per_pmh:
+        Utilisation-adjusted productivity.
+    cost_per_m3_cad:
+        Cost per cubic metre (inflated to current CAD when possible).
+    accuracy_percent:
+        Model accuracy indicator from the bulletin.
+    cost_base_year:
+        Base year for the cost metric.
+    notes:
+        Additional notes.
+    """
     scenario: str
     description: str
     stem_source: str
@@ -2000,6 +2830,32 @@ class TN166ProcessorProductivityResult:
 
 @dataclass(frozen=True)
 class TR87ProcessorProductivityResult:
+    """
+    TR-87 processor scenario summary (day/night shifts, Timberjack TJ90).
+
+    Attributes
+    ----------
+    scenario:
+        Scenario name.
+    description:
+        Scenario description (day, night, wait-for-wood, etc.).
+    stem_source:
+        Stem source description.
+    delay_free_productivity_m3_per_pmh:
+        Delay-free productivity (m³/PMH₀).
+    utilisation_percent:
+        Utilisation percentage.
+    productivity_m3_per_pmh:
+        Utilisation-adjusted productivity.
+    cost_per_m3_cad:
+        Cost per cubic metre (inflated when possible).
+    machine_allocation_hours:
+        Mapping of machine → hours for the scenario.
+    notes:
+        Additional notes.
+    cost_base_year:
+        Base year for the cost metric.
+    """
     scenario: str
     description: str
     stem_source: str
@@ -2017,6 +2873,32 @@ class TR87ProcessorProductivityResult:
 
 @dataclass(frozen=True)
 class TR106ProcessorProductivityResult:
+    """
+    TR-106 lodgepole pine processor regression summary.
+
+    Attributes
+    ----------
+    scenario:
+        Scenario name, e.g., ``"kp40_case_1187"``.
+    description:
+        Scenario description.
+    machine:
+        Processor/machine description.
+    delay_free_productivity_m3_per_pmh:
+        Delay-free productivity (m³/PMH₀).
+    utilisation_percent:
+        Utilisation percentage used in the study.
+    productivity_m3_per_pmh:
+        Utilisation-adjusted productivity.
+    cost_per_m3_cad:
+        Cost per cubic metre (inflated when base year provided).
+    loader_hours, processor_hours:
+        Hours allocated per shift.
+    notes:
+        Additional notes.
+    cost_base_year:
+        Base year for the cost figure.
+    """
     scenario: str
     description: str
     machine: str
@@ -2075,6 +2957,22 @@ def estimate_processor_productivity_adv5n6(
     stem_source: Literal["loader_forwarded", "grapple_yarded"],
     processing_mode: Literal["cold", "hot", "low_volume"],
 ) -> ADV5N6ProcessorProductivityResult:
+    """
+    ADV5N6 processor regression (hot/cold/low-volume modes for coastal BC).
+
+    Parameters
+    ----------
+    stem_source:
+        ``"loader_forwarded"`` or ``"grapple_yarded"``. Loader-forwarded blocks only support
+        ``processing_mode="cold"``.
+    processing_mode:
+        ``"cold"``, ``"hot"``, or ``"low_volume"`` (grapple-yarded only).
+
+    Returns
+    -------
+    ADV5N6ProcessorProductivityResult
+        Dataclass with productivity, utilisation, and inflated cost metrics for the scenario.
+    """
     scenarios = _load_adv5n6_scenarios()
     if stem_source == "loader_forwarded":
         if processing_mode != "cold":
@@ -2128,6 +3026,19 @@ def estimate_processor_productivity_adv5n6(
 def estimate_processor_productivity_adv7n3(
     *, machine: Literal["hyundai_210", "john_deere_892"]
 ) -> ADV7N3ProcessorProductivityResult:
+    """
+    ADV7N3 Canfor Mackenzie processor regression (Hyundai 210 vs JD 892).
+
+    Parameters
+    ----------
+    machine:
+        ``"hyundai_210"`` or ``"john_deere_892"``.
+
+    Returns
+    -------
+    ADV7N3ProcessorProductivityResult
+        Dataclass with productivity, utilisation, loader-support, and cost metrics for the machine.
+    """
     dataset = _load_adv7n3_dataset()
     processors = {
         str(entry["id"]).lower(): entry for entry in dataset.get("processors", []) if entry.get("id")
@@ -2208,6 +3119,19 @@ def estimate_processor_productivity_tn103(
         "combined_high_util",
     ],
 ) -> TN103ProcessorProductivityResult:
+    """
+    TN-103 Caterpillar DL221 processor scenarios (feller-bunched vs hand-felled).
+
+    Parameters
+    ----------
+    scenario:
+        Scenario identifier as documented in TN-103 (area A/B, combined observed/high-util).
+
+    Returns
+    -------
+    TN103ProcessorProductivityResult
+        Dataclass containing utilisation, productivity, and cost metrics for the scenario.
+    """
     scenarios = _load_tn103_scenarios()
     payload = scenarios.get(scenario)
     if payload is None:
@@ -2244,6 +3168,19 @@ def estimate_processor_productivity_tn103(
 def estimate_processor_productivity_tn166(
     *, scenario: Literal["grapple_yarded", "right_of_way", "mixed_shift"]
 ) -> TN166ProcessorProductivityResult:
+    """
+    TN-166 telescopic-boom processor regression (mixed scenarios).
+
+    Parameters
+    ----------
+    scenario:
+        ``"grapple_yarded"``, ``"right_of_way"``, or ``"mixed_shift"``.
+
+    Returns
+    -------
+    TN166ProcessorProductivityResult
+        Dataclass with productivity, utilisation, and cost metrics.
+    """
     scenarios = _load_tn166_scenarios()
     payload = scenarios.get(scenario)
     if payload is None:
@@ -2298,6 +3235,19 @@ def estimate_processor_productivity_tr87(
         "tj90_both_processors_wait_adjusted",
     ],
 ) -> TR87ProcessorProductivityResult:
+    """
+    TR-87 processor regression (Timberjack TJ90 day/night + wait-for-wood).
+
+    Parameters
+    ----------
+    scenario:
+        Scenario identifier from TR-87 (day/night, combined, wait-adjusted).
+
+    Returns
+    -------
+    TR87ProcessorProductivityResult
+        Dataclass with productivity, utilisation, loader support, and cost metrics.
+    """
     scenarios = _load_tr87_scenarios()
     payload = scenarios.get(scenario)
     if payload is None:
@@ -2338,6 +3288,19 @@ def estimate_processor_productivity_tr106(
         "kp40_caterpillar_el180",
     ],
 ) -> TR106ProcessorProductivityResult:
+    """
+    TR-106 lodgepole pine processor regression (Case 1187 + Steyr KP40 variants).
+
+    Parameters
+    ----------
+    scenario:
+        Scenario identifier from the TR-106 dataset (Case vs KP40 combinations).
+
+    Returns
+    -------
+    TR106ProcessorProductivityResult
+        Dataclass with productivity, utilisation, and cost metrics for the scenario.
+    """
     scenarios = _load_tr106_scenarios()
     payload = scenarios.get(scenario)
     if payload is None:
@@ -2372,6 +3335,22 @@ def estimate_loader_productivity_barko450(
     scenario: Literal["ground_skid_block", "cable_yard_block"],
     utilisation_override: float | None = None,
 ) -> LoaderBarko450ProductivityResult:
+    """
+    Estimate Barko 450 heel-boom loader productivity/costs using TN-46 data.
+
+    Parameters
+    ----------
+    scenario:
+        ``"ground_skid_block"`` or ``"cable_yard_block"``.
+    utilisation_override:
+        Optional utilisation fraction (0,1] that replaces the study value. Costs and productivity
+        are scaled accordingly.
+
+    Returns
+    -------
+    LoaderBarko450ProductivityResult
+        Dataclass with productivity, utilisation, and inflated cost metrics for the scenario.
+    """
     scenarios = _load_barko450_scenarios()
     payload = scenarios.get(scenario)
     if payload is None:
@@ -2447,6 +3426,19 @@ def estimate_loader_hot_cold_productivity(
     *,
     mode: Literal["hot", "cold"],
 ) -> LoaderHotColdProductivityResult:
+    """
+    Estimate loader productivity for hot vs cold yards (Kizha et al. 2020).
+
+    Parameters
+    ----------
+    mode:
+        ``"hot"`` yard (swing/land immediately) or ``"cold"`` yard (deck and reload later).
+
+    Returns
+    -------
+    LoaderHotColdProductivityResult
+        Dataclass capturing utilisation, delay costs, and productivity metrics for the mode.
+    """
     scenarios = _load_kizha2020_scenarios()
     payload = scenarios.get(mode.lower())
     if payload is None:

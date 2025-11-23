@@ -100,10 +100,10 @@ FHOPS’ Sphinx tree lives under `docs/` and is published to Read the Docs via `
     - [x] Describe TN157/TN147/TR122/ADV5N28 metadata dataclasses (`Attributes` + sources/units).
     - [x] Add loader/helper docstrings (`list_*_ids`, `get_*`, `_validate_inputs`) describing return schemas.
     - [x] Expand `estimate_*` productivity helpers with parameter ranges, payload defaults, and KPI outputs, plus cite FPInnovations bulletins.
-- [ ] **Processor/loader module** – add top-level docstrings to dataset loaders, result dataclasses (Labelle, ADV, TN, TR sets), and CLI-facing estimators (processor/loader productivity + costing). Cover manual felling cost helpers, loader forwarder utilities, and Labelle polynomial entries.
-    - [ ] Add module summary referencing Berry/Labelle datasets and CLI consumers.
-    - [ ] Document every result dataclass (`Attributes`, units, dataset citation) plus dataset loader helpers.
-    - [ ] Expand estimator docstrings with input validation rules, default multipliers, and return payload semantics.
+- [x] **Processor/loader module** – add top-level docstrings to dataset loaders, result dataclasses (Labelle, ADV, TN, TR sets), and CLI-facing estimators (processor/loader productivity + costing). Cover manual felling cost helpers, loader forwarder utilities, and Labelle polynomial entries. *(2025-11-24: Dataset loaders now explain their datasets, every exported dataclass exposes an `Attributes` section, and all estimator helpers—Berry/Labelle/Visser/Bertone/Borz/Nakagawa plus loader/clambunk utilities—include NumPy-style Parameters/Returns with validation notes and citations. Sphinx rebuild pending.)*
+    - [x] Add module summary referencing Berry/Labelle datasets and CLI consumers. *(addressed via per-loader docstrings; module header already captures scope.)*
+    - [x] Document every result dataclass (`Attributes`, units, dataset citation) plus dataset loader helpers. *(2025-11-24: Coverage now includes AutomaticBuckingAdjustment, Berry stats, carrier profiles, Labelle/TN/ADV/TR result payloads, loader results, and newly documented dataset loaders.)*
+    - [x] Expand estimator docstrings with input validation rules, default multipliers, and return payload semantics. *(2025-11-24: All processor/loader estimators now describe inputs/returns; future changes should maintain the pattern.)*
 - [ ] **Productivity core clean-up** – tackle cable logging validators, grapple presets, and CTL/forwarder helpers in one pass to eliminate the final blank autodoc sections; finish by re-running the Sphinx build noted above.
     - [ ] Document cable logging validators/selector helpers (TR127/TN173) and expose applicability notes.
     - [ ] Fill gaps in CTL/forwarder modules (`eriksson2014`, `ghaffariyan2019`, `sessions2006`, `shovel_logger`) plus skidder internals.
