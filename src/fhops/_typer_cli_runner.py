@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable, Type, cast
+from collections.abc import Callable
+from typing import Any, cast
 
 _PATCH_FLAG = "_fhops_stdout_mirrored"
 
@@ -19,7 +20,7 @@ def patch_typer_cli_runner() -> None:
     if runner is None or getattr(runner, _PATCH_FLAG, False):
         return
 
-    cli_runner_type = cast(Type[Any], runner)
+    cli_runner_type = cast(type[Any], runner)
     original_invoke = cast(Callable[..., Any], cli_runner_type.invoke)
 
     def invoke_with_merged_stdout(self: Any, *args: Any, **kwargs: Any) -> Any:
