@@ -2628,7 +2628,9 @@ def _apply_skidder_system_defaults(
             adv6n7_support_ratio,
             False,
         )
-    overrides_raw = system_productivity_overrides(system, ProductivityMachineRole.GRAPPLE_SKIDDER.value)
+    overrides_raw = system_productivity_overrides(
+        system, ProductivityMachineRole.GRAPPLE_SKIDDER.value
+    )
     if not overrides_raw:
         return (
             model,
@@ -2882,7 +2884,9 @@ def _apply_shovel_system_defaults(
             custom_multiplier,
             False,
         )
-    overrides_raw = system_productivity_overrides(system, ProductivityMachineRole.SHOVEL_LOGGER.value)
+    overrides_raw = system_productivity_overrides(
+        system, ProductivityMachineRole.SHOVEL_LOGGER.value
+    )
     if not overrides_raw:
         return (
             passes,
@@ -3521,7 +3525,9 @@ def _apply_grapple_yarder_system_defaults(
             tn147_case,
             False,
         )
-    overrides_raw = system_productivity_overrides(system, ProductivityMachineRole.GRAPPLE_YARDER.value)
+    overrides_raw = system_productivity_overrides(
+        system, ProductivityMachineRole.GRAPPLE_YARDER.value
+    )
     if not overrides_raw:
         return (
             model,
@@ -3633,6 +3639,7 @@ def _forwarder_parameters(result: ForwarderBCResult) -> list[tuple[str, str]]:
         ("Reference", result.reference or ""),
     ]
     params = result.parameters
+
     def _param_float(
         key: str,
         *,

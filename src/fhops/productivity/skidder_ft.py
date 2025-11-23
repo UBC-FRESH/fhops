@@ -223,9 +223,13 @@ def get_skidder_speed_profile(key: str) -> SkidderSpeedProfile:
     notes_payload = notes_field if isinstance(notes_field, list) else []
     notes = tuple(str(n) for n in notes_payload)
     empty_section = profile.get("drive_empty_forest_road")
-    empty_speed = float(empty_section.get("median_kmh") or 0.0) if isinstance(empty_section, dict) else 0.0
+    empty_speed = (
+        float(empty_section.get("median_kmh") or 0.0) if isinstance(empty_section, dict) else 0.0
+    )
     loaded_section = profile.get("drive_loaded_forest_road")
-    loaded_speed = float(loaded_section.get("median_kmh") or 0.0) if isinstance(loaded_section, dict) else 0.0
+    loaded_speed = (
+        float(loaded_section.get("median_kmh") or 0.0) if isinstance(loaded_section, dict) else 0.0
+    )
     return SkidderSpeedProfile(
         key=key,
         description=description,
