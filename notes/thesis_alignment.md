@@ -1,23 +1,24 @@
-# Thesis Alignment Plan
+# Jaffray Thesis Alignment Checklist
 
-Date: 2025-11-07
-Status: Draft — ensures FHOPS stays aligned with Rosalia Jaffray’s MASc work.
+> Track how the SoftwareX manuscript (FHOPS platform paper) stays aligned with Rosalia Jaffray’s MASc thesis. Goal: publish FHOPS as a tooling/architecture paper without pre-empting the thesis’ Chapter 2 case-study contributions.
 
-## Objectives
-- Track touchpoints between FHOPS roadmap milestones and thesis deliverables.
-- Reference proposal/thesis documents located under `tmp/jaffray-rosalia-*`.
-- Document agreed assumptions, scope boundaries, and review cadences.
+## Ownership Split
+- **SoftwareX manuscript (FHOPS tooling):**
+  - Platform architecture (scenario contract, optimiser stack, telemetry).
+  - Reproducible workflow + benchmark scripts.
+  - High-level synthetic/illustrative examples showing capability (no deep BC case studies).
+  - Pointers to the open datasets/templates Rosalia will later use.
+- **Jaffray Chapter 2 (BC case studies):**
+  - Detailed deployment of FHOPS on 2–3 BC-based scenarios (e.g., skyline vs. ground-based, salvage corridors, small tenures).
+  - Analysis answering the “open questions” from the thesis intro/lit review (trade-off mapping, solution quality vs. operations context).
+  - Policy/management discussion tied to real data (inventory, productivity, costs) from BC partners.
 
-## Planned Actions
-- [ ] Establish regular sync checkpoints (e.g., bi-weekly) to reconcile FHOPS changes with thesis needs.
-- [ ] Log key thesis requirements (mobilisation modelling, shift scheduling, synthetic datasets) and map them to FHOPS notes/roadmap phases.
-- [ ] Capture dependency notes (e.g., when thesis experiments require specific FHOPS features or datasets).
+## Action Items
+- [ ] Keep Section 1 (Motivation) in the SoftwareX paper high-level; cite the thesis literature but avoid case-specific insights reserved for the thesis.
+- [ ] Limit Section 3 (Illustrative example) to synthetic or anonymised demos; reference forthcoming thesis work for real BC case studies.
+- [ ] Coordinate with Rosalia when planning figures/tables to ensure nothing conflicts with her Chapter 2 storyline.
+- [ ] Update this note whenever the thesis plan shifts (e.g., if Rosalia adds/removes case studies).
 
-## Artifacts & References
-- `tmp/jaffray-rosalia-masc-proposal`
-- `tmp/jaffray-rosalia-masc-thesis`
-- FHOPS roadmap (`FHOPS_ROADMAP.md`) and related notes.
-
-## Open Questions
-- How to surface thesis-driven deadlines in FHOPS releases?
-- Should thesis validation scenarios be formalised as part of the synthetic dataset plan?
+## References
+- `tmp/jaffray-rosalia-masc-proposal/`
+- `tmp/jaffray-rosalia-masc-thesis/`
