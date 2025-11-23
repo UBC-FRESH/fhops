@@ -22,6 +22,8 @@ Automation hook (Phase 1 deliverable): extend `docs/softwarex/manuscript/scripts
 
 - [x] Draft `motivation_story.md` (source-of-truth) keyed to Guide-for-Authors requirements; wire exporter to emit `.tex` + `.rst`.
 - [ ] Define template + script for table exports (heuristics, benchmark KPIs) so Sphinx and LaTeX stay in sync.
+  - [x] Heuristics solver matrix now lives in `heuristics_matrix.csv` + `heuristics_notes.md` and renders into TeX/RST.
+  - [ ] Benchmark KPI tables still pending.
 - [x] Update Sphinx `overview.rst` and `docs/templates/includes/` to ``.. include::`` the generated `.rst` snippets once available (see `docs/overview.rst` motivation section).
 - [ ] Add CI check (Phase 3) to confirm no drift between `.md` primaries and rendered assets.
 

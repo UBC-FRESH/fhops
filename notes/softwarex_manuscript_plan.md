@@ -88,6 +88,7 @@
   - [ ] **Costing demo:** Script (`scripts/run_costing_demo.py`) that runs `fhops dataset estimate-cost --show-costs --telemetry-log ...` on `med42`, capturing machine-rate breakdowns (CPI-adjusted owning/operating) and telemetry JSONL. Export CSV for inclusion in the manuscript.
   - [ ] **Synthetic scaling sweep:** Script (`scripts/run_synthetic_sweep.py`) that generates synthetic small/medium tiers (fixed RNG seeds), runs a single SA pass per tier, and plots runtime vs. scenario size (PDF) akin to GROMACS scaling charts.
   - [ ] **Documentation/export assets:** Script (`scripts/export_docs_assets.py`) that outputs tables used in the manuscript (harvest system registry excerpt, operator preset table) in CSV + LaTeX format for direct inclusion.
+    - [x] Share heuristic solver matrix + notes (`heuristics_matrix.csv` + `.md`) across manuscript + Sphinx via the exporter.
     - [x] Render shared narrative snippets from Markdown → LaTeX/RST (integrated into `generate_assets.sh`).
 - [ ] Capture thesis alignment: Document touchpoints with `tmp/jaffray-rosalia-masc-proposal` / `tmp/jaffray-rosalia-masc-thesis` in `notes/thesis_alignment.md` and weave key citations into each section outline.
   - [ ] Explicitly list which FHOPS analytical content will be reserved for Jaffray Chapter 2 (two-to-three BC case studies answering the open questions from her intro/lit review).
