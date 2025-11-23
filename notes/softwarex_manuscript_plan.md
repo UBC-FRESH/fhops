@@ -16,6 +16,7 @@
   - [ ] Maintain a checklist derived from instructions for ongoing compliance.
   - [x] Log insights/benchmarks from exemplar papers to inform quality gates.
   - [ ] Mirror the Jaffray MASc literature review (see `tmp/jaffray-rosalia-masc-proposal/`) into our BibTeX + outline so real forestry/OR papers anchor each section.
+  - [ ] Coordinate with Rosalia Jaffray’s thesis deliverables so Chapter 2 (multi-case FHOPS deployment) remains novel; FHOPS SoftwareX paper should highlight the tooling while deferring detailed BC case-study analysis to her thesis timeline.
 
 ## Phase 0 – Planning (Now)
 - [ ] Capture requirements: Download the latest SoftwareX author instructions (PDF + any LaTeX/Word templates) into `docs/softwarex/reference/` and version them.
@@ -58,6 +59,8 @@
   - [ ] Create reproducible scripts/notebooks to regenerate each artifact.
   - [ ] Integrate artifact generation into CI or a manual checklist.
 - [ ] Capture thesis alignment: Document touchpoints with `tmp/jaffray-rosalia-masc-proposal` / `tmp/jaffray-rosalia-masc-thesis` in `notes/thesis_alignment.md` and weave key citations into each section outline.
+  - [ ] Explicitly list which FHOPS analytical content will be reserved for Jaffray Chapter 2 (two-to-three BC case studies answering the open questions from her intro/lit review).
+  - [ ] Ensure the SoftwareX single-author paper focuses on platform architecture, reproducibility, and tooling; detailed BC case-study insights remain embargoed until Rosalia submits/publishes her thesis work.
 
 ## Phase 2 – Content Drafting
 - [ ] Produce first-pass text for each major section, incorporating FHOPS capabilities, unique contributions, and methodology.
