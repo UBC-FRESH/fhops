@@ -9,7 +9,7 @@
   - [ ] Capture reviewer-ready figures/tables list aligned with FHOPS differentiators.
 - [ ] Create a reusable `docs/softwarex/` subfolder that can eventually surface key manuscript content in the broader documentation set.
   - [x] Define the subfolder layout (manuscript, reference, assets, submissions, automation).
-  - [ ] Wire up scripts or Make targets for building/checking manuscript assets.
+  - [x] Wire up scripts or Make targets for building/checking manuscript assets.
   - [ ] Document contribution guidelines for manuscript files inside README.
 - [ ] Follow SoftwareX author instructions precisely and benchmark readiness using exemplar publications.
   - [ ] Track the authoritative author guidelines version/date in repository metadata.

@@ -19,6 +19,7 @@ This mirrors the canonical SoftwareX structure. Each section lists:
 | CRediT statement | Author contributions. | TBD once author list finalised. | TBD |
 | Acknowledgements / Funding | Include grant + institutional support. | FHOPS sponsor info. | TBD |
 | References | BibTeX file synced with Sphinx + README. | `manuscript/references.bib` (planned). | TBD |
+| Appendix / Supplementary (if needed) | Extra tables, dataset descriptions. | CLI output, telemetry tables. | TBD |
 
 ## Cross-linking with Sphinx
 - Shared narrative blocks (Overview, architecture descriptions) should live in `sections/includes/` so both the LaTeX manuscript and the Sphinx docs can reuse them.
