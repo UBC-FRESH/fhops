@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from typer.testing import CliRunner
-
 from fhops.cli.dataset import dataset_app
+from tests.cli import CliRunner
 
 runner = CliRunner()
 

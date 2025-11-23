@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import json
 
-from typer.testing import CliRunner
-
 from fhops.cli.dataset import dataset_app
 from fhops.productivity import (
     estimate_clambunk_productivity_adv2n26,
@@ -12,6 +10,7 @@ from fhops.productivity import (
     estimate_loader_hot_cold_productivity,
     estimate_loader_productivity_barko450,
 )
+from tests.cli import CliRunner
 
 runner = CliRunner()
 

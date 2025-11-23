@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typer.testing import CliRunner
-
 from fhops.cli.dataset import dataset_app
 from fhops.productivity import (
     estimate_processor_productivity_adv5n6,
@@ -19,6 +17,7 @@ from fhops.productivity import (
     get_labelle_huss_automatic_bucking_adjustment,
     get_processor_carrier_profile,
 )
+from tests.cli import CliRunner
 
 runner = CliRunner()
 

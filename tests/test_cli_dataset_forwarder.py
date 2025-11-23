@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from typer.testing import CliRunner
-
 from fhops.cli.dataset import dataset_app
 from fhops.productivity import (
     DeckingCondition,
@@ -37,6 +35,7 @@ from fhops.scenario.contract import (
     Scenario,
 )
 from fhops.scheduling.systems import default_system_registry
+from tests.cli import CliRunner
 
 runner = CliRunner()
 

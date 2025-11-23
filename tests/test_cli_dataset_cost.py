@@ -3,9 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from typer.testing import CliRunner
-
 from fhops.cli.dataset import dataset_app
+from tests.cli import CliRunner
 
 runner = CliRunner()
 

@@ -5,9 +5,9 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
-from typer.testing import CliRunner
 
 from fhops.cli.main import app
+from tests.cli import CliRunner
 
 runner = CliRunner()
 

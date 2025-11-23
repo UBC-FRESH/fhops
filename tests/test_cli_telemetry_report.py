@@ -3,9 +3,8 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
-from typer.testing import CliRunner
-
 from fhops.cli.main import app
+from tests.cli import CliRunner
 
 runner = CliRunner()
 
