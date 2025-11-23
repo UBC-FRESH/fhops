@@ -22,12 +22,25 @@ _ALPACA_SLOPE_MULTIPLIERS: dict[ALPACASlopeClass, float] = {
 
 
 def alpaca_slope_multiplier(slope_class: ALPACASlopeClass) -> float:
-    """Return the published slope multiplier for the provided bucket."""
+    """
+    Return the published slope multiplier for the provided bucket.
+
+    Parameters
+    ----------
+    slope_class:
+        Slope bucket enum from Ghaffariyan et al. (2019).
+
+    Returns
+    -------
+    float
+        Multiplier applied to delay-free productivity.
+    """
 
     return _ALPACA_SLOPE_MULTIPLIERS[slope_class]
 
 
 def _validate_inputs(extraction_distance_m: float, slope_factor: float) -> None:
+    """Guard against invalid forwarding distances or slope multipliers."""
     if extraction_distance_m <= 0:
         raise ValueError("extraction_distance_m must be > 0")
     if slope_factor <= 0:
@@ -39,12 +52,25 @@ def estimate_forwarder_productivity_small_forwarder_thinning(
     *,
     slope_factor: float = 1.0,
 ) -> float:
-    """Estimate productivity (m^3/PMH0) for a 14 t forwarder in thinning operations.
+    """
+    Estimate productivity (m³/PMH₀) for a 14 t forwarder in thinning operations.
 
     Implements Equation 2 from Ghaffariyan et al. (2019) where productivity is a log-linear
     function of forwarding distance for gentle slopes (<10%). An optional ``slope_factor``
-    allows the caller to apply the paper's slope penalties (e.g., multiply by 0.75 for 10–20%
-    slopes or 0.15 if following the literal “drops by 85%” statement).
+    allows callers to apply the paper's slope penalties (e.g., multiply by 0.75 for 10–20%
+    slopes or 0.15 when slopes exceed 20%).
+
+    Parameters
+    ----------
+    extraction_distance_m:
+        Mean forwarding distance (m). Must be > 0.
+    slope_factor:
+        Slope multiplier (>0). Defaults to 1 (flat ground).
+
+    Returns
+    -------
+    float
+        Delay-free productivity (m³/PMH₀).
     """
 
     _validate_inputs(extraction_distance_m, slope_factor)
@@ -61,10 +87,23 @@ def estimate_forwarder_productivity_large_forwarder_thinning(
     *,
     slope_factor: float = 1.0,
 ) -> float:
-    """Estimate productivity (m^3/PMH0) for a 20 t forwarder in thinning operations.
+    """
+    Estimate productivity (m³/PMH₀) for a 20 t forwarder in thinning operations.
 
     Implements Equation 3 from Ghaffariyan et al. (2019). ``slope_factor`` lets callers apply
     slope adjustments beyond the <10% baseline captured by the regression.
+
+    Parameters
+    ----------
+    extraction_distance_m:
+        Mean forwarding distance (m). Must be > 0.
+    slope_factor:
+        Multiplier (>0) capturing slope impact.
+
+    Returns
+    -------
+    float
+        Delay-free productivity (m³/PMH₀).
     """
 
     _validate_inputs(extraction_distance_m, slope_factor)

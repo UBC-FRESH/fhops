@@ -19,6 +19,23 @@ class _ForwarderModel:
     def predict(
         self, mean_extraction_distance_m: float, mean_stem_size_m3: float, load_capacity_m3: float
     ) -> float:
+        """
+        Predict forwarder productivity (m³/PMH₀) for the configured regression.
+
+        Parameters
+        ----------
+        mean_extraction_distance_m:
+            Mean forwarding distance (m). Must be > 0.
+        mean_stem_size_m3:
+            Mean stem size (m³). Must be > 0.
+        load_capacity_m3:
+            Payload capacity per trip (m³). Must be > 0.
+
+        Returns
+        -------
+        float
+            Delay-free productivity in cubic metres per productive machine hour.
+        """
         if mean_extraction_distance_m <= 0:
             raise ValueError("mean_extraction_distance_m must be > 0")
         if mean_stem_size_m3 <= 0:
@@ -66,7 +83,23 @@ def estimate_forwarder_productivity_final_felling(
     mean_stem_size_m3: float,
     load_capacity_m3: float,
 ) -> float:
-    """Estimate forwarder productivity (m^3/PMH) for final felling sites."""
+    """
+    Estimate forwarder productivity (m³/PMH₀) for final-felling stands.
+
+    Parameters
+    ----------
+    mean_extraction_distance_m:
+        Mean logging road extraction distance (m). Must be > 0.
+    mean_stem_size_m3:
+        Mean stem size (m³). Must be > 0.
+    load_capacity_m3:
+        Payload capacity (m³) per cycle. Must be > 0.
+
+    Returns
+    -------
+    float
+        Delay-free productivity in m³ per productive machine hour.
+    """
 
     return _FINAL_FELLING_MODEL.predict(
         mean_extraction_distance_m, mean_stem_size_m3, load_capacity_m3
@@ -78,7 +111,23 @@ def estimate_forwarder_productivity_thinning(
     mean_stem_size_m3: float,
     load_capacity_m3: float,
 ) -> float:
-    """Estimate forwarder productivity (m^3/PMH) for thinning sites."""
+    """
+    Estimate forwarder productivity (m³/PMH₀) for thinning sites.
+
+    Parameters
+    ----------
+    mean_extraction_distance_m:
+        Mean forwarding distance (m). Must be > 0.
+    mean_stem_size_m3:
+        Mean stem size (m³). Must be > 0.
+    load_capacity_m3:
+        Payload capacity (m³) per cycle. Must be > 0.
+
+    Returns
+    -------
+    float
+        Delay-free productivity in m³ per productive machine hour.
+    """
 
     return _THINNING_MODEL.predict(mean_extraction_distance_m, mean_stem_size_m3, load_capacity_m3)
 

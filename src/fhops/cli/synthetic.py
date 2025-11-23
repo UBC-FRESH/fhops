@@ -60,6 +60,7 @@ TIER_SEEDS: dict[str, int] = {
 
 
 def _parse_range(value: str) -> tuple[int, int]:
+    """Parse CLI range strings (``min:max``) into integer tuples."""
     try:
         lo, hi = value.split(":")
         return int(lo), int(hi)
@@ -68,6 +69,7 @@ def _parse_range(value: str) -> tuple[int, int]:
 
 
 def _load_config(path: Path) -> dict[str, Any]:
+    """Load a synthetic dataset config from YAML/JSON/TOML into a dictionary."""
     suffix = path.suffix.lower()
     if suffix in {".yaml", ".yml"}:
         return yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -84,6 +86,7 @@ def _merge_config(
     base: SyntheticDatasetConfig,
     overrides: dict[str, Any],
 ) -> SyntheticDatasetConfig:
+    """Apply overrides on top of a :class:`SyntheticDatasetConfig`, coercing ranges as needed."""
     data = asdict(base)
     for key, value in overrides.items():
         if key == "seed":
@@ -123,6 +126,7 @@ def _resolve_cli_overrides(
     shifts_per_day: int | None,
     machine_daily_hours: float | None,
 ) -> dict[str, Any]:
+    """Translate CLI override flags into a dict suitable for `_merge_config`."""
     overrides: dict[str, Any] = {}
     if blocks:
         overrides["num_blocks"] = blocks
@@ -140,6 +144,7 @@ def _resolve_cli_overrides(
 
 
 def _describe_metadata(metadata: dict[str, Any]) -> None:
+    """Pretty-print high-level statistics for a generated synthetic dataset."""
     console.print("[bold]Synthetic Dataset Summary[/bold]")
     console.print(f"Name: {metadata.get('name')}")
     console.print(f"Tier: {metadata.get('tier')}")
@@ -182,6 +187,7 @@ def _describe_metadata(metadata: dict[str, Any]) -> None:
 
 
 def _refresh_aggregate_metadata(base_dir: Path) -> None:
+    """Regenerate the aggregate `metadata.yaml` for examples/synthetic/* bundles."""
     aggregate: dict[str, Any] = {}
     for child in sorted(base_dir.iterdir()):
         if not child.is_dir():
@@ -203,6 +209,7 @@ def _refresh_aggregate_metadata(base_dir: Path) -> None:
 
 
 def _maybe_refresh_metadata(target_dir: Path) -> None:
+    """Refresh aggregate metadata when the generated dataset lives under examples/synthetic."""
     base_dir = Path("examples/synthetic").resolve()
     try:
         target_dir.resolve().relative_to(base_dir)
@@ -218,6 +225,7 @@ def _resolve_dataset_inputs(
     cli_overrides: dict[str, Any],
     seed: int | None,
 ) -> tuple[SyntheticDatasetConfig, int]:
+    """Resolve the final SyntheticDatasetConfig and RNG seed from tier/config/CLI inputs."""
     tier = (tier or "small").lower()
     if tier not in TIER_PRESETS and tier != "custom":
         raise typer.BadParameter(
@@ -270,6 +278,7 @@ def _generate_dataset(
     overwrite: bool,
     preview: bool,
 ) -> dict[str, Any]:
+    """Generate (and optionally persist) a synthetic dataset bundle."""
     merged_config, seed_value = _resolve_dataset_inputs(
         tier,
         config_path,
@@ -376,6 +385,7 @@ def generate_synthetic_dataset(
         help="Override daily hours assigned to each generated machine.",
     ),
 ):
+    """Generate a single synthetic dataset bundle using tier presets plus optional overrides."""
     cli_overrides = _resolve_cli_overrides(
         blocks, machines, landings, days, shifts_per_day, machine_daily_hours
     )
@@ -403,6 +413,7 @@ def generate_batch(
         False, "--preview", help="Preview metadata for all bundles without writing files."
     ),
 ) -> None:
+    """Generate multiple synthetic datasets based on a YAML/TOML/JSON batch plan."""
     payload = _load_config(plan)
     if not isinstance(payload, list):
         raise typer.BadParameter("Batch plan must be a list of bundle entries.")

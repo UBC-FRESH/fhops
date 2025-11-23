@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from fhops.reference import load_tr28_machines, estimate_tr28_road_cost
+from fhops.reference import estimate_tr28_road_cost, load_tr28_machines
 
 
 def _get_machine(slug: str):

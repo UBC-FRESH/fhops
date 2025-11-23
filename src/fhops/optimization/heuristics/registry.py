@@ -107,10 +107,12 @@ class OperatorRegistry:
 
 
 def _clone_plan(schedule: Schedule) -> dict[str, dict[tuple[int, str], str | None]]:
+    """Deep-copy the schedule plan so operators can mutate assignments safely."""
     return {machine: assignments.copy() for machine, assignments in schedule.plan.items()}
 
 
 def _locked_assignments(problem: Problem) -> dict[tuple[str, int], str]:
+    """Return a lookup of (machine, day) → block IDs that must remain fixed."""
     locks = getattr(problem.scenario, "locked_assignments", None)
     if not locks:
         return {}
@@ -118,18 +120,21 @@ def _locked_assignments(problem: Problem) -> dict[tuple[str, int], str]:
 
 
 def _production_rates(problem: Problem) -> dict[tuple[str, str], float]:
+    """Map (machine, block) pairs to their production rates."""
     return {
         (rate.machine_id, rate.block_id): rate.rate for rate in problem.scenario.production_rates
     }
 
 
 def _block_window(block_id: str, context: OperatorContext) -> tuple[int, int] | None:
+    """Return the allowable day window for a block, if block windows are configured."""
     if context.block_windows is None:
         return None
     return context.block_windows.get(block_id)
 
 
 def _window_allows(day: int, block_id: str, context: OperatorContext) -> bool:
+    """Check whether a block may be worked on the specified day."""
     window = _block_window(block_id, context)
     if window is None:
         return True
@@ -141,6 +146,7 @@ def _plan_equals(
     plan_a: dict[str, dict[tuple[int, str], str | None]],
     plan_b: dict[str, dict[tuple[int, str], str | None]],
 ) -> bool:
+    """Compare two machine→shift assignment maps for equality."""
     if plan_a.keys() != plan_b.keys():
         return False
     for machine in plan_a:

@@ -1,11 +1,17 @@
-"""BC-focused forwarder productivity helpers built on existing regressions."""
+"""BC-focused forwarder productivity helpers built on existing regressions.
+
+The CLI exposes these helpers via ``fhops dataset estimate-productivity --machine-role forwarder``
+so users can pick a study (Ghaffariyan et al. 2019, Eriksson & Lindroos 2014, Advantage Vol. 6 No. 10,
+etc.) without memorising the underlying functions.  Docstrings here therefore double as the
+reference content surfaced in the Sphinx API docs.
+"""
 
 from __future__ import annotations
 
+import math
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from enum import Enum
-import math
 
 from fhops.productivity.eriksson2014 import (
     estimate_forwarder_productivity_final_felling,
@@ -19,13 +25,32 @@ from fhops.productivity.ghaffariyan2019 import (
 )
 from fhops.productivity.kellogg_bettinger1994 import (
     LoadType as KelloggLoadType,
+)
+from fhops.productivity.kellogg_bettinger1994 import (
     estimate_forwarder_productivity_kellogg_bettinger,
 )
 from fhops.productivity.laitila2020 import estimate_brushwood_harwarder_productivity
 
 
 class ForwarderBCModel(str, Enum):
-    """Forwarder regressions that FHOPS exposes for BC planning."""
+    """Forwarder regressions wired into FHOPS' dataset helpers.
+
+    Each enum value corresponds to a published study or FPInnovations bulletin:
+
+    ``GHAFFARIYAN_SMALL`` / ``GHAFFARIYAN_LARGE``
+        14 t and 20 t thinning forwarders (Ghaffariyan et al. 2019). Requires extraction distance and
+        optional slope-class multipliers (APLACA).
+    ``KELLOGG_*``
+        Sawlog/pulpwood/mixed regressions from Kellogg & Bettinger (1994). Requires load type, trail
+        spacing inputs, and log lengths.
+    ``ADV6N10_SHORTWOOD`` / ``ADV1N12_SHORTWOOD``
+        Advantage Vol. 6 No. 10 and Vol. 1 No. 12 shortwood regressions used for BC coastal forwarders.
+    ``ERIKSSON_*``
+        Eriksson & Lindroos (2014) final-felling vs. thinning models (mean extraction distance, stem
+        size, and load capacity required).
+    ``LAITILA_VAATAINEN_BRUSHWOOD``
+        Brushwood harwarder regression from Laitila & Väätäinen (2020).
+    """
 
     GHAFFARIYAN_SMALL = "ghaffariyan-small"
     GHAFFARIYAN_LARGE = "ghaffariyan-large"
@@ -56,7 +81,22 @@ _BRUSHWOOD_MODELS = {ForwarderBCModel.LAITILA_VAATAINEN_BRUSHWOOD}
 
 @dataclass(frozen=True)
 class ForwarderBCResult:
-    """Result payload for BC forwarder helpers."""
+    """
+    Result payload describing a forwarder productivity estimate.
+
+    Attributes
+    ----------
+    model:
+        Enum identifying which regression ran.
+    predicted_m3_per_pmh:
+        Productive machine-hour productivity (m³/PMH₀ unless noted in ``pmh_basis``).
+    pmh_basis:
+        PMH convention (``"PMH0"``, ``"PMH15"``, etc.).
+    reference:
+        Short citation (FPInnovations bulletin, journal, etc.).
+    parameters:
+        Echo of the inputs/defaults used to evaluate the regression (for telemetry/CLI output).
+    """
 
     model: ForwarderBCModel
     predicted_m3_per_pmh: float
@@ -89,7 +129,40 @@ def estimate_forwarder_productivity_bc(
     harwarder_payload_m3: float | None = None,
     grapple_load_unloading_m3: float | None = None,
 ) -> ForwarderBCResult:
-    """Evaluate one of the BC forwarder regressions with validation."""
+    """
+    Evaluate one of the BC forwarder regressions with validation.
+
+    Parameters
+    ----------
+    model:
+        Regression identifier (see :class:`ForwarderBCModel`). Determines which parameter subset is
+        required.
+    extraction_distance_m:
+        One-way extraction distance (m). Required by the Ghaffariyan models and used as a default for
+        the ADV1N12 preset.
+    slope_class:
+        ALPACA slope class used when ``slope_factor`` is omitted.
+    slope_factor:
+        Optional slope multiplier (>0) overriding ``slope_class``.
+    volume_per_load_m3, distance_out_m, travel_in_unit_m, distance_in_m, payload_m3,
+    mean_log_length_m, travel_speed_m_per_min, trail_length_m, products_per_trail:
+        Inputs consumed by the Kellogg & Bettinger (1994) regressions (metres, m³, pieces).
+    mean_extraction_distance_m, mean_stem_size_m3, load_capacity_m3:
+        Required by the Eriksson & Lindroos (2014) models (metres, m³).
+    harvested_trees_per_ha, average_tree_volume_dm3, forwarding_distance_m, harwarder_payload_m3,
+    grapple_load_unloading_m3:
+        Required by the Laitila & Väätäinen (2020) brushwood regression (trees/ha, dm³).
+
+    Returns
+    -------
+    ForwarderBCResult
+        Result dataclass with predicted productivity (m³/PMH), PMH basis, reference, and parameters.
+
+    Raises
+    ------
+    ValueError
+        When required parameters for the selected model are missing or invalid.
+    """
 
     if model in _ERIKSSON_MODELS:
         required_eriksson = {
@@ -122,7 +195,7 @@ def estimate_forwarder_productivity_bc(
             )
             reference = "Eriksson & Lindroos 2014 (Thinning)"
 
-        params = {
+        params_eriksson: ForwarderParamDict = {
             "mean_extraction_distance_m": mean_extraction_distance_m,
             "mean_stem_size_m3": mean_stem_size_m3,
             "load_capacity_m3": load_capacity_m3,
@@ -131,7 +204,7 @@ def estimate_forwarder_productivity_bc(
             model=model,
             predicted_m3_per_pmh=value,
             reference=reference,
-            parameters=params,
+            parameters=params_eriksson,
         )
 
     if model in _BRUSHWOOD_MODELS:
@@ -140,9 +213,7 @@ def estimate_forwarder_productivity_bc(
             "average_tree_volume_dm3": average_tree_volume_dm3,
             "forwarding_distance_m": forwarding_distance_m,
         }
-        missing_brushwood = [
-            name for name, value in required_brushwood.items() if value is None
-        ]
+        missing_brushwood = [name for name, value in required_brushwood.items() if value is None]
         if missing_brushwood:
             raise ValueError(
                 "Missing parameters for Laitila & Väätäinen (2020) model: "
@@ -153,9 +224,7 @@ def estimate_forwarder_productivity_bc(
         assert forwarding_distance_m is not None
 
         payload_value = 7.1 if harwarder_payload_m3 is None else harwarder_payload_m3
-        unloading_value = (
-            0.29 if grapple_load_unloading_m3 is None else grapple_load_unloading_m3
-        )
+        unloading_value = 0.29 if grapple_load_unloading_m3 is None else grapple_load_unloading_m3
         value = estimate_brushwood_harwarder_productivity(
             harvested_trees_per_ha=harvested_trees_per_ha,
             average_tree_volume_dm3=average_tree_volume_dm3,
@@ -163,7 +232,7 @@ def estimate_forwarder_productivity_bc(
             harwarder_payload_m3=payload_value,
             grapple_load_unloading_m3=unloading_value,
         )
-        params = {
+        params_brushwood: ForwarderParamDict = {
             "harvested_trees_per_ha": harvested_trees_per_ha,
             "average_tree_volume_dm3": average_tree_volume_dm3,
             "forwarding_distance_m": forwarding_distance_m,
@@ -174,13 +243,15 @@ def estimate_forwarder_productivity_bc(
             model=model,
             predicted_m3_per_pmh=value,
             reference="Laitila & Väätäinen 2020 (Brushwood Harwarder)",
-            parameters=params,
+            parameters=params_brushwood,
         )
 
     if model in (ForwarderBCModel.GHAFFARIYAN_SMALL, ForwarderBCModel.GHAFFARIYAN_LARGE):
         if extraction_distance_m is None:
             raise ValueError("extraction_distance_m is required for Ghaffariyan models")
-        multiplier = slope_factor if slope_factor is not None else alpaca_slope_multiplier(slope_class)
+        multiplier = (
+            slope_factor if slope_factor is not None else alpaca_slope_multiplier(slope_class)
+        )
         if multiplier <= 0:
             raise ValueError("slope_factor must be > 0")
         if model is ForwarderBCModel.GHAFFARIYAN_SMALL:
@@ -195,7 +266,7 @@ def estimate_forwarder_productivity_bc(
                 slope_factor=multiplier,
             )
             reference = "Ghaffariyan et al. 2019 (20 t forwarder)"
-        params: dict[str, float | str] = {
+        params_ghaffariyan: ForwarderParamDict = {
             "extraction_distance_m": extraction_distance_m,
             "slope_class": slope_class.value,
             "slope_factor": multiplier,
@@ -204,7 +275,7 @@ def estimate_forwarder_productivity_bc(
             model=model,
             predicted_m3_per_pmh=value,
             reference=reference,
-            parameters=params,
+            parameters=params_ghaffariyan,
         )
 
     if model in _ADV1N12_MODELS:
@@ -213,12 +284,12 @@ def estimate_forwarder_productivity_bc(
         if extraction_distance_m <= 0:
             raise ValueError("extraction_distance_m must be > 0")
         value = 8.4438 * math.exp(-0.004 * extraction_distance_m)
-        params = {"extraction_distance_m": extraction_distance_m}
+        params_adv1n12: ForwarderParamDict = {"extraction_distance_m": extraction_distance_m}
         return ForwarderBCResult(
             model=model,
             predicted_m3_per_pmh=value,
             reference="FPInnovations Advantage Vol. 1 No. 12 (Valmet 646 shortwood forwarder)",
-            parameters=params,
+            parameters=params_adv1n12,
         )
 
     if model in _ADV6N10_MODELS:
@@ -232,8 +303,7 @@ def estimate_forwarder_productivity_bc(
         missing_adv = [name for name, value in required_adv.items() if value is None]
         if missing_adv:
             raise ValueError(
-                "Missing parameters for ADV6N10 model: "
-                + ", ".join(sorted(missing_adv))
+                "Missing parameters for ADV6N10 model: " + ", ".join(sorted(missing_adv))
             )
         assert payload_m3 is not None
         assert mean_log_length_m is not None
@@ -248,7 +318,7 @@ def estimate_forwarder_productivity_bc(
             trail_length_m=trail_length_m,
             products_per_trail=products_per_trail,
         )
-        params = {
+        params_adv6n10: ForwarderParamDict = {
             "payload_m3": payload_m3,
             "mean_log_length_m": mean_log_length_m,
             "travel_speed_m_per_min": travel_speed_m_per_min,
@@ -259,7 +329,7 @@ def estimate_forwarder_productivity_bc(
             model=model,
             predicted_m3_per_pmh=value,
             reference="Gingras & Favreau 2005 (ADV6N10)",
-            parameters=params,
+            parameters=params_adv6n10,
         )
 
     required = {
@@ -286,7 +356,7 @@ def estimate_forwarder_productivity_bc(
         travel_in_unit_m=travel_in_unit_m,
         distance_in_m=distance_in_m,
     )
-    params = {
+    params_kellogg: ForwarderParamDict = {
         "load_type": load_type.value,
         "volume_per_load_m3": volume_per_load_m3,
         "distance_out_m": distance_out_m,
@@ -297,7 +367,7 @@ def estimate_forwarder_productivity_bc(
         model=model,
         predicted_m3_per_pmh=value,
         reference="Kellogg & Bettinger 1994 (FMG 910)",
-        parameters=params,
+        parameters=params_kellogg,
     )
 
 
@@ -309,6 +379,27 @@ def _estimate_forwarder_productivity_adv6n10(
     trail_length_m: float,
     products_per_trail: float,
 ) -> float:
+    """
+    FPInnovations ADV6N10 regression for shortwood forwarders.
+
+    Parameters
+    ----------
+    payload_m3:
+        Payload per cycle (m³). Must be > 0.
+    mean_log_length_m:
+        Mean log length (m). Must be > 0.
+    travel_speed_m_per_min:
+        Travel speed (m/min). Must be > 0.
+    trail_length_m:
+        Trail length (m). Must be > 0.
+    products_per_trail:
+        Products per trail (logs). Must be > 0.
+
+    Returns
+    -------
+    float
+        Predicted productivity (m³/PMH₀).
+    """
     if payload_m3 <= 0:
         raise ValueError("payload_m3 must be > 0")
     if mean_log_length_m <= 0:
@@ -335,7 +426,7 @@ def _estimate_forwarder_productivity_adv6n10(
     def _travel_time() -> float:
         return (
             1.11
-            * (travel_speed_m_per_min ** -0.935)
+            * (travel_speed_m_per_min**-0.935)
             * (products_per_trail**0.19)
             * (trail_length_m**1.016)
         )
@@ -358,3 +449,5 @@ __all__ = [
     "ForwarderBCResult",
     "estimate_forwarder_productivity_bc",
 ]
+# Shared parameter dict type for CLI echo payloads
+ForwarderParamDict = dict[str, float | str | bool]

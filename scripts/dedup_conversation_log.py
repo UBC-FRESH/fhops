@@ -10,9 +10,9 @@ later copies removed.
 from __future__ import annotations
 
 import argparse
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable, List, Sequence
 
 
 @dataclass(frozen=True)
@@ -34,7 +34,7 @@ class DuplicateChunk:
 
 def detect_duplicate_chunks(
     lines: Sequence[str], window: int, min_lines: int
-) -> List[DuplicateChunk]:
+) -> list[DuplicateChunk]:
     """Return duplicate chunks found in ``lines`` using a rolling window."""
 
     if window < 1:
@@ -43,7 +43,7 @@ def detect_duplicate_chunks(
         min_lines = window
 
     seen: dict[tuple[str, ...], int] = {}
-    chunks: List[DuplicateChunk] = []
+    chunks: list[DuplicateChunk] = []
     i = 0
     skip_until = -1
 
@@ -94,10 +94,10 @@ def detect_duplicate_chunks(
     return chunks
 
 
-def remove_ranges(lines: Sequence[str], chunks: Iterable[DuplicateChunk]) -> List[str]:
+def remove_ranges(lines: Sequence[str], chunks: Iterable[DuplicateChunk]) -> list[str]:
     """Return ``lines`` without the duplicate ranges specified in ``chunks``."""
 
-    cleaned: List[str] = []
+    cleaned: list[str] = []
     chunk_iter = iter(sorted(chunks, key=lambda c: c.duplicate_start))
     current = next(chunk_iter, None)
 

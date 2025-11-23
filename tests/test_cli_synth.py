@@ -3,12 +3,13 @@ from __future__ import annotations
 from pathlib import Path
 
 import yaml
-from typer.testing import CliRunner
 
 from fhops.cli.main import app
 from fhops.cli.synthetic import (
     _refresh_aggregate_metadata,
 )
+
+from .cli import CliRunner
 
 runner = CliRunner()
 

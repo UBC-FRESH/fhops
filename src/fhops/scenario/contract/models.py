@@ -13,12 +13,38 @@ from fhops.scheduling.systems import HarvestSystem, default_system_registry
 
 
 class ScheduleLock(BaseModel):
+    """Immutable assignment of a machine to a block on a specific day.
+
+    Attributes
+    ----------
+    machine_id:
+        Identifier of the machine being locked (must exist in ``Scenario.machines``).
+    block_id:
+        Identifier of the block that must be worked during the lock.
+    day:
+        One-indexed day within the planning horizon where the lock applies.
+    """
+
     machine_id: str
     block_id: str
     day: Day
 
 
 class ObjectiveWeights(BaseModel):
+    """Scalar weights that tune the MIP objective components.
+
+    Attributes
+    ----------
+    production:
+        Multiplier for production (volume/work units). Defaults to 1.0.
+    mobilisation:
+        Multiplier for mobilisation costs estimated from transition binaries. Defaults to 1.0.
+    transitions:
+        Optional penalty on the count of machine transitions irrespective of mobilisation spend.
+    landing_slack:
+        Penalty on soft landing-capacity slack variables when `landing_capacity` is exceeded.
+    """
+
     production: float = 1.0
     mobilisation: float = 1.0
     transitions: float = 0.0
@@ -42,7 +68,31 @@ class SalvageProcessingMode(str, Enum):
 
 
 class Block(BaseModel):
-    """Harvest block metadata and scheduling window."""
+    """Harvest block metadata and scheduling window.
+
+    Attributes
+    ----------
+    id:
+        Unique block identifier (referenced by production rates and assignments).
+    landing_id:
+        Landing where wood is forwarded; constrains landing daily capacity.
+    work_required:
+        Total work units (machine-hours equivalent) necessary to complete the block.
+    earliest_start:
+        Optional earliest day (inclusive, 1-indexed) when the block can begin.
+    latest_finish:
+        Optional latest day (inclusive) when the block must finish.
+    harvest_system_id:
+        Optional harvest system definition that restricts machine roles per block.
+    avg_stem_size_m3 / volume_per_ha_m3 / volume_per_ha_m3_sigma:
+        Stand descriptors (cubic metres) surfaced in analytics and productivity lookups.
+    stem_density_per_ha / stem_density_per_ha_sigma:
+        Stems per hectare statistics used by some productivity models.
+    ground_slope_percent:
+        Mean slope (%) for the block — used by productivity heuristics and diagnostics.
+    salvage_processing_mode:
+        Enum describing downstream salvage processing (affects evaluation notes).
+    """
 
     id: str
     landing_id: str
@@ -96,6 +146,25 @@ class Block(BaseModel):
 
 
 class Machine(BaseModel):
+    """Machine definition (identifier, crew, availability, and costing metadata).
+
+    Attributes
+    ----------
+    id:
+        Unique machine identifier referenced throughout calendars/assignments.
+    crew:
+        Optional crew label for reporting/telemetry grouping.
+    daily_hours:
+        Maximum hours the machine can operate per day (defaults to 24).
+    operating_cost:
+        Cost per scheduled machine hour (SMH) expressed in scenario currency units.
+    role:
+        Optional machine role string (normalised via ``normalize_machine_role``) used by harvest
+        systems and rental-rate lookups.
+    repair_usage_hours:
+        Optional cumulative repair hours that influences the rental-rate defaults.
+    """
+
     id: str
     crew: str | None = None
     daily_hours: float = 24.0
@@ -140,6 +209,24 @@ class Machine(BaseModel):
 
 
 class RoadConstruction(BaseModel):
+    """Road/subgrade construction job describing TR-28 soil profiles and costing metadata.
+
+    Attributes
+    ----------
+    id:
+        Unique job identifier referenced in telemetry and costing exports.
+    machine_slug:
+        Machine rate slug (``tr28`` index) used to determine construction costs.
+    road_length_m:
+        Length of the road section (metres) to construct.
+    include_mobilisation:
+        When ``True``, mobilisation costs are included in the estimate.
+    soil_profile_ids:
+        Optional list of TR-28 soil profile identifiers associated with the job.
+    notes:
+        Free-form comments surfaced in CLI summaries.
+    """
+
     id: str
     machine_slug: str
     road_length_m: float
@@ -171,6 +258,16 @@ class RoadConstruction(BaseModel):
 
 
 class Landing(BaseModel):
+    """Landing metadata including per-day assignment capacity.
+
+    Attributes
+    ----------
+    id:
+        Landing identifier referenced by blocks and mobilisation logic.
+    daily_capacity:
+        Maximum number of machines that can work on the landing concurrently per day.
+    """
+
     id: str
     daily_capacity: int = 2  # max machines concurrently working
 
@@ -183,6 +280,18 @@ class Landing(BaseModel):
 
 
 class CalendarEntry(BaseModel):
+    """Day-level availability for a machine.
+
+    Attributes
+    ----------
+    machine_id:
+        Identifier of the machine whose availability is being set.
+    day:
+        One-indexed day number relative to the scenario horizon.
+    available:
+        Binary flag (1 available, 0 unavailable) controlling day-level assignment eligibility.
+    """
+
     machine_id: str
     day: Day
     available: int = 1  # 1 available, 0 not available
@@ -203,7 +312,19 @@ class CalendarEntry(BaseModel):
 
 
 class ShiftCalendarEntry(BaseModel):
-    """Machine availability at the shift granularity."""
+    """Machine availability at the shift granularity.
+
+    Attributes
+    ----------
+    machine_id:
+        Identifier of the machine whose shift availability is being declared.
+    day:
+        One-indexed day number where the shift entry applies.
+    shift_id:
+        Shift label (e.g., ``S1``, ``DAYS``, ``NIGHTS``) consistent with ``TimelineConfig``.
+    available:
+        Binary flag (1 available, 0 unavailable) controlling shift-level assignment eligibility.
+    """
 
     machine_id: str
     day: Day
@@ -233,6 +354,18 @@ class ShiftCalendarEntry(BaseModel):
 
 
 class ProductionRate(BaseModel):
+    """Per-day production rate measured in work units for a machine/block pair.
+
+    Attributes
+    ----------
+    machine_id:
+        Machine identifier (must exist in ``Scenario.machines``).
+    block_id:
+        Block identifier (must exist in ``Scenario.blocks``).
+    rate:
+        Work units produced per full shift/day assignment. Must be non-negative.
+    """
+
     machine_id: str
     block_id: str
     rate: float  # work units per day if assigned (<= work_required/block)
@@ -246,6 +379,57 @@ class ProductionRate(BaseModel):
 
 
 class Scenario(BaseModel):
+    """Top-level container for the FHOPS data contract.
+
+    The model mirrors the CSV/YAML inputs documented in ``docs/howto/data_contract.rst`` and is the
+    object returned by :func:`fhops.scenario.io.load_scenario`.  Only validated, horizon-bounded data
+    reaches this point, which means downstream solvers (MIP + heuristics) can rely on:
+
+    - every block referencing a known landing/harvest system,
+    - machine calendars/shift calendars never exceeding ``num_days``,
+    - mobilisation tables referencing existing blocks/machines, and
+    - optional extras (crew assignments, road construction, GeoJSON metadata) being present only when
+      fully specified.
+
+    Attributes
+    ----------
+    name:
+        Human-readable scenario label surfaced in CLI/Evaluation outputs.
+    num_days:
+        Planning horizon length (integer number of days).
+    schema_version:
+        Version of the input schema; used to guard loader compatibility.
+    start_date:
+        Optional ISO date string used for timestamped exports.
+    blocks / machines / landings:
+        Validated lists of the corresponding Pydantic models.
+    calendar / shift_calendar:
+        Availability tables. ``shift_calendar`` may be ``None`` for day-level scenarios.
+    production_rates:
+        Machine/block productivity table measured in work units per assignment.
+    timeline:
+        Optional :class:`~fhops.scheduling.timeline.models.TimelineConfig` describing shifts, blackout windows, etc.
+    mobilisation:
+        Optional :class:`~fhops.scheduling.mobilisation.MobilisationConfig` describing distances and per-machine parameters.
+    harvest_systems:
+        Optional registry mapping harvest-system IDs to :class:`~fhops.scheduling.systems.HarvestSystem` definitions.
+    geo:
+        Optional :class:`GeoMetadata` with GeoJSON lookups.
+    crew_assignments:
+        Optional list mapping crew IDs to machines for reporting/telemetry.
+    locked_assignments:
+        Optional list of :class:`ScheduleLock` entries that pin machines to blocks on specific days.
+    objective_weights:
+        Optional :class:`ObjectiveWeights` overriding default solver weights.
+    road_construction:
+        Optional list of :class:`RoadConstruction` entries used by telemetry/costing exports.
+
+    Notes
+    -----
+    The helper methods (``machine_ids()``, ``window_for()``, etc.) are convenience routines for the
+    solver/evaluation layers and are intentionally lightweight so they can be used in tight loops.
+    """
+
     name: str
     num_days: int
     schema_version: str = "1.0.0"
@@ -283,15 +467,19 @@ class Scenario(BaseModel):
         return value
 
     def machine_ids(self) -> list[str]:
+        """Return the list of machine identifiers defined in the scenario."""
         return [machine.id for machine in self.machines]
 
     def block_ids(self) -> list[str]:
+        """Return the list of block identifiers defined in the scenario."""
         return [block.id for block in self.blocks]
 
     def landing_ids(self) -> list[str]:
+        """Return the list of landing identifiers defined in the scenario."""
         return [landing.id for landing in self.landings]
 
     def window_for(self, block_id: str) -> tuple[int, int]:
+        """Return the inclusive (earliest, latest) day window for the target block."""
         block = next(b for b in self.blocks if b.id == block_id)
         earliest = block.earliest_start if block.earliest_start is not None else 1
         latest = block.latest_finish if block.latest_finish is not None else self.num_days
@@ -329,12 +517,15 @@ class Scenario(BaseModel):
             if block.latest_finish is not None and block.latest_finish > self.num_days:
                 raise ValueError(f"Block {block.id} latest_finish exceeds num_days={self.num_days}")
 
-        for entry in self.calendar:
-            if entry.machine_id not in machine_ids:
-                raise ValueError(f"Calendar entry references unknown machine_id={entry.machine_id}")
-            if entry.day > self.num_days:
+        for calendar_entry in self.calendar:
+            if calendar_entry.machine_id not in machine_ids:
                 raise ValueError(
-                    f"Calendar entry day {entry.day} exceeds scenario horizon num_days={self.num_days}"
+                    f"Calendar entry references unknown machine_id={calendar_entry.machine_id}"
+                )
+            if calendar_entry.day > self.num_days:
+                raise ValueError(
+                    "Calendar entry day "
+                    f"{calendar_entry.day} exceeds scenario horizon num_days={self.num_days}"
                 )
 
         if self.shift_calendar:
@@ -408,18 +599,26 @@ class Scenario(BaseModel):
                             )
         if self.road_construction:
             seen_jobs: set[str] = set()
-            for entry in self.road_construction:
-                if entry.id in seen_jobs:
+            for road_job in self.road_construction:
+                if road_job.id in seen_jobs:
                     raise ValueError(
-                        f"Duplicate road_construction id '{entry.id}'. IDs must be unique."
+                        f"Duplicate road_construction id '{road_job.id}'. IDs must be unique."
                     )
-                seen_jobs.add(entry.id)
+                seen_jobs.add(road_job.id)
 
         return self
 
 
 class ShiftInstance(BaseModel):
-    """Concrete shift slot identified by day and shift label."""
+    """Concrete shift slot identified by day and shift label.
+
+    Attributes
+    ----------
+    day:
+        One-indexed day number for the shift.
+    shift_id:
+        Shift label (string) matching the scenario's shift definitions.
+    """
 
     day: Day
     shift_id: str
@@ -433,6 +632,30 @@ class ShiftInstance(BaseModel):
 
 
 class Problem(BaseModel):
+    """Runtime representation of a scenario used by solvers.
+
+    ``Problem`` wraps a validated :class:`Scenario` and expands it into concrete ``days`` and
+    ``shifts`` so optimisation code can iterate over deterministic index sets without repeatedly
+    querying the Scenario.  ``Problem.from_scenario`` is the canonical constructor; it injects the
+    default harvest-system registry (when necessary) and synthesises single-shift calendars for
+    legacy day-indexed inputs.
+
+    Attributes
+    ----------
+    scenario:
+        Back-reference to the source :class:`Scenario`.
+    days:
+        List of integer day indices derived from ``scenario.num_days``.
+    shifts:
+        List of :class:`ShiftInstance` entries representing every (day, shift_id) slot the solver
+        should consider.
+
+    Notes
+    -----
+    Any code that builds Pyomo models or heuristic plans should accept a ``Problem`` rather than the
+    raw ``Scenario`` to avoid recomputing shift/day metadata.
+    """
+
     scenario: Scenario
     days: list[Day]
     shifts: list[ShiftInstance]
@@ -485,7 +708,19 @@ __all__ = [
 
 
 class GeoMetadata(BaseModel):
-    """Optional geospatial metadata locations and metadata."""
+    """Optional geospatial metadata references associated with a scenario.
+
+    Attributes
+    ----------
+    block_geojson:
+        Relative path to a GeoJSON FeatureCollection describing block polygons.
+    landing_geojson:
+        Relative path to a GeoJSON FeatureCollection describing landing/road locations.
+    crs:
+        Coordinate reference system string (e.g., ``EPSG:3005``) used when plotting.
+    notes:
+        Free-form remarks shown in CLI inspectors and docs.
+    """
 
     block_geojson: str | None = None
     landing_geojson: str | None = None
@@ -494,7 +729,19 @@ class GeoMetadata(BaseModel):
 
 
 class CrewAssignment(BaseModel):
-    """Optional mapping of crews to machines/roles."""
+    """Optional mapping of crews to machines/roles.
+
+    Attributes
+    ----------
+    crew_id:
+        Unique crew identifier.
+    machine_id:
+        Machine assigned to the crew.
+    primary_role:
+        Optional role label associated with the crew (e.g., fallers, processors).
+    notes:
+        Additional metadata surfaced in telemetry exports.
+    """
 
     crew_id: str
     machine_id: str

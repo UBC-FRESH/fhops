@@ -58,18 +58,18 @@ Default Systems
      - steep-slope mechanised
      - tethered harvester → tethered shovel/skidder → roadside processor → loader
      - Winch-assist equipment across the full sequence.
-  * - ``cable_standing``
-    - cable-standing skyline
-    - hand/mech faller → skyline yarder → landing processor/hand buck → loader
-    - Standing skyline with chokers feeding landing processing.
-  * - ``cable_standing_tr125_single``
-    - cable-standing skyline
-    - hand/mech faller → standing skyline (TR125 single span) → landing processor → loader
-    - Skylead C40 single-span defaults (1.6 m³ payload, 25 m lateral). Use when you want the TR125 helper and `grapple_yarder_skyleadc40` cost role.
-  * - ``cable_standing_tr125_strip``
-    - cable-standing skyline (intermediate supports)
-    - hand/mech faller → standing skyline (TR125 multi-span) → landing processor → loader
-    - Strip-cut defaults pulling the TR119 strip-cut treatment multiplier and setting lateral distance to 40 m (TN-258 warning auto-fires).
+   * - ``cable_standing``
+     - cable-standing skyline
+     - hand/mech faller → skyline yarder → landing processor/hand buck → loader
+     - Standing skyline with chokers feeding landing processing.
+   * - ``cable_standing_tr125_single``
+     - cable-standing skyline
+     - hand/mech faller → standing skyline (TR125 single span) → landing processor → loader
+     - Skylead C40 single-span defaults (1.6 m³ payload, 25 m lateral). Use when you want the TR125 helper and `grapple_yarder_skyleadc40` cost role.
+   * - ``cable_standing_tr125_strip``
+     - cable-standing skyline (intermediate supports)
+     - hand/mech faller → standing skyline (TR125 multi-span) → landing processor → loader
+     - Strip-cut defaults pulling the TR119 strip-cut treatment multiplier and setting lateral distance to 40 m (TN-258 warning auto-fires).
    * - ``cable_salvage_grapple``
      - cable-running salvage
      - hand/mech faller → grapple yarder → landing processor → loader
@@ -78,56 +78,56 @@ Default Systems
      - cable-running skyline
      - hand/mech faller → grapple yarder → landing processor/hand buck → loader
      - Grapple yarder variant with landing finishing.
-  * - ``cable_running_adv5n28_clearcut``
-    - cable-running skyline
-    - hand/mech faller → long-span skyline → landing processor/hand buck → loader
-    - ADV5N28 clearcut conversion (Madill 071 + Pow'-R Block replacing helicopter yarding).
-  * - ``cable_running_adv5n28_shelterwood``
-    - cable-running skyline
-    - hand/mech faller → long-span skyline → landing processor/hand buck → loader
-    - ADV5N28 irregular shelterwood conversion threading riparian corridors with full suspension.
-  * - ``cable_running_fncy12``
-    - cable-running skyline (intermediate supports)
-    - hand/mech faller → skyline yarder → landing processor/hand buck → loader
-    - Thunderbird TMY45 + Mini-Mak II preset (FNCY12/TN258). Selecting this system preloads the ``fncy12-tmy45`` helper so TN-258 lateral-distance warnings and Cat D8/Timberjack support ratios flow automatically.
-    - Cost reference: see the Skyline cost matrix below (``grapple_yarder_tmy45``).
-  * - ``cable_micro_ecologger``
-    - cable-short-span skyline
-    - hand faller → RMS Ecologger skyline → hand buck/processor → loader
-    - TN173 NB case study (2.9 logs/turn, 0.34 m³ pieces, four-person crew) for compact skyline corridors.
-  * - ``cable_micro_gabriel``
-    - cable-short-span skyline
-    - hand faller → Gabriel truck yarder → hand buck/processor → loader
-    - TN173 Stephenville prototype skid-pan yarder (0.16 m³ stems, road-portable) with chokers and manual processing.
-  * - ``cable_micro_christie``
-    - cable-short-span skyline
-    - hand faller → Christie tower yarder → hand buck/processor → loader
-    - TN173 Christie hot-yarding configuration (two-person crew, 0.49 m³ pieces) for patch cuts.
-  * - ``cable_micro_teletransporteur``
-    - cable-short-span skyline
-    - hand faller → Télétransporteur carriage → hand buck/processor → loader
-    - TN173 Télétransporteur downhill hot-yarding (0.21 m³ pieces, self-propelled carriage) for riparian buffers.
-  * - ``cable_micro_timbermaster``
-    - cable-short-span skyline
-    - hand faller → Smith Timbermaster skyline → hand buck/processor → loader
-    - TN173 Timbermaster downhill skyline (0.54 m³ pieces, trailer tower) for small shortwood corridors.
-  * - ``cable_micro_hi_skid``
-    - cable-short-span skyline
-    - hand faller → Hi-Skid yard/load/haul (direct to dump)
-    - FNG73 Hi-Skid short-yard truck (100 m reach, 12 m³ deck); use ``--model hi-skid`` and optionally ``--hi-skid-include-haul`` when this system is selected.
-    - Cost reference: ``skyline_hi_skid`` entry in the Skyline cost matrix.
-  * - ``cable_partial_tr127_block1``
-    - cable-standing skyline partial cut
-    - hand/mech faller → standing skyline (TR127 Block 1) → landing processor → loader
-    - Provides the dual lateral-distance defaults (15 m + 6 m) and now applies the SR109 patch-cut penalty (volume ×0.846, cost ×1.10) via the built-in partial-cut profile.
-  * - ``cable_partial_tr127_block5``
-    - cable-standing skyline partial cut
-    - hand/mech faller → standing skyline (TR127 Block 5) → landing processor → loader
-    - Sets 16 m lateral, 3 logs/turn, 1.6 m³ payload, and wires in the SR109 green-tree penalty (volume ×0.715, cost ×1.10) so telemetry logs the added cost/range limits automatically.
-  * - ``helicopter``
-    - helicopter
-    - hand faller → helicopter longline → hand buck/processor → loader/water
-    - Helicopter longline with on-landing processing or direct-to-water transfer.
+   * - ``cable_running_adv5n28_clearcut``
+     - cable-running skyline
+     - hand/mech faller → long-span skyline → landing processor/hand buck → loader
+     - ADV5N28 clearcut conversion (Madill 071 + Pow'-R Block replacing helicopter yarding).
+   * - ``cable_running_adv5n28_shelterwood``
+     - cable-running skyline
+     - hand/mech faller → long-span skyline → landing processor/hand buck → loader
+     - ADV5N28 irregular shelterwood conversion threading riparian corridors with full suspension.
+   * - ``cable_running_fncy12``
+     - cable-running skyline (intermediate supports)
+     - hand/mech faller → skyline yarder → landing processor/hand buck → loader
+     - Thunderbird TMY45 + Mini-Mak II preset (FNCY12/TN258). Selecting this system preloads the ``fncy12-tmy45`` helper so TN-258 lateral-distance warnings and Cat D8/Timberjack support ratios flow automatically.
+       Cost reference: see the Skyline cost matrix below (``grapple_yarder_tmy45``).
+   * - ``cable_micro_ecologger``
+     - cable-short-span skyline
+     - hand faller → RMS Ecologger skyline → hand buck/processor → loader
+     - TN173 NB case study (2.9 logs/turn, 0.34 m³ pieces, four-person crew) for compact skyline corridors.
+   * - ``cable_micro_gabriel``
+     - cable-short-span skyline
+     - hand faller → Gabriel truck yarder → hand buck/processor → loader
+     - TN173 Stephenville prototype skid-pan yarder (0.16 m³ stems, road-portable) with chokers and manual processing.
+   * - ``cable_micro_christie``
+     - cable-short-span skyline
+     - hand faller → Christie tower yarder → hand buck/processor → loader
+     - TN173 Christie hot-yarding configuration (two-person crew, 0.49 m³ pieces) for patch cuts.
+   * - ``cable_micro_teletransporteur``
+     - cable-short-span skyline
+     - hand faller → Télétransporteur carriage → hand buck/processor → loader
+     - TN173 Télétransporteur downhill hot-yarding (0.21 m³ pieces, self-propelled carriage) for riparian buffers.
+   * - ``cable_micro_timbermaster``
+     - cable-short-span skyline
+     - hand faller → Smith Timbermaster skyline → hand buck/processor → loader
+     - TN173 Timbermaster downhill skyline (0.54 m³ pieces, trailer tower) for small shortwood corridors.
+   * - ``cable_micro_hi_skid``
+     - cable-short-span skyline
+     - hand faller → Hi-Skid yard/load/haul (direct to dump)
+     - FNG73 Hi-Skid short-yard truck (100 m reach, 12 m³ deck); use ``--model hi-skid`` and optionally ``--hi-skid-include-haul`` when this system is selected.
+       Cost reference: ``skyline_hi_skid`` entry in the Skyline cost matrix.
+   * - ``cable_partial_tr127_block1``
+     - cable-standing skyline partial cut
+     - hand/mech faller → standing skyline (TR127 Block 1) → landing processor → loader
+     - Provides the dual lateral-distance defaults (15 m + 6 m) and now applies the SR109 patch-cut penalty (volume ×0.846, cost ×1.10) via the built-in partial-cut profile.
+   * - ``cable_partial_tr127_block5``
+     - cable-standing skyline partial cut
+     - hand/mech faller → standing skyline (TR127 Block 5) → landing processor → loader
+     - Sets 16 m lateral, 3 logs/turn, 1.6 m³ payload, and wires in the SR109 green-tree penalty (volume ×0.715, cost ×1.10) so telemetry logs the added cost/range limits automatically.
+   * - ``helicopter``
+     - helicopter
+     - hand faller → helicopter longline → hand buck/processor → loader/water
+     - Helicopter longline with on-landing processing or direct-to-water transfer.
 
 Using the Registry
 ------------------
@@ -177,6 +177,110 @@ Extending Systems
 To define custom systems, construct :class:`HarvestSystem` instances and supply them via the scenario
 contract. When adding optional or parallel tasks, document the intended precedence explicitly and
 consider updating this reference alongside any new data files.
+
+Preset Usage Cheat Sheet
+------------------------
+
+Forwarder Productivity
+~~~~~~~~~~~~~~~~~~~~~~
+
+Use ``fhops dataset estimate-productivity --machine-role forwarder`` and select a model from
+:class:`fhops.productivity.forwarder_bc.ForwarderBCModel`. The CLI echoes the same arguments as
+:func:`fhops.productivity.forwarder_bc.estimate_forwarder_productivity_bc`; the docstring there lists all
+parameters and return fields. Pick a preset based on the stand context:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 45 20 15
+
+   * - ``--forwarder-model``
+     - When to use
+     - Key CLI options
+     - API reference
+   * - ``ghaffariyan-small`` / ``ghaffariyan-large``
+     - Plantation or thinning work with 14–20 t forwarders where distance and slope dominate cycle time.
+     - ``--extraction-distance``, ``--slope-class`` or ``--slope-factor``.
+     - :func:`fhops.productivity.forwarder_bc.estimate_forwarder_productivity_bc`
+   * - ``adv6n10-shortwood``
+     - Boreal multi-product sorting (ADV6N10) where payload, log length, and travel speed are known.
+     - ``--payload-per-trip``, ``--mean-log-length``, ``--trail-length``, ``--travel-speed``, ``--products-per-trail``.
+     - :class:`fhops.productivity.forwarder_bc.ADV6N10ShortwoodResult`
+   * - ``adv1n12-shortwood``
+     - Valmet 646 regression driven primarily by extraction distance (Advantage 1 No. 12).
+     - ``--extraction-distance`` only; slope handled via the preset.
+     - :class:`fhops.productivity.forwarder_bc.ADV1N12ShortwoodResult`
+   * - ``eriksson-final`` / ``eriksson-thinning``
+     - Swedish follow-up study with payload-driven productivity—use when you have stem size and load capacity data.
+     - ``--mean-extraction-distance``, ``--mean-stem-size``, ``--load-capacity``.
+     - :class:`fhops.productivity.forwarder_bc.ErikssonResult`
+
+Grapple Skidder & Shovel Logger Productivity
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``fhops dataset estimate-productivity --machine-role grapple_skidder`` wires directly into
+:func:`fhops.productivity.grapple_bc.estimate_grapple_skidder_productivity_adv6n7` and related helpers.
+Use these presets to shortcut tuning:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 43 20 15
+
+   * - ``--grapple-skidder-model``
+     - When to use
+     - Key CLI options
+     - API reference
+   * - ``adv6n7``
+     - FPInnovations ADV6N7 long-distance grapple skidding with optional decking/utilisation overrides.
+     - ``--skidder-extraction-distance``, ``--skidder-adv6n7-decking-mode``, payload/utilisation/delay overrides.
+     - :class:`fhops.productivity.ADV6N7SkidderResult`
+   * - ``han-whole-tree`` / ``han-lop-and-scatter``
+     - Han et al. (2018) beetle-kill salvage cycles where piece size and empty/loaded distances are known.
+     - ``--pieces-per-cycle``, ``--piece-volume-m3``, ``--skidder-empty-distance``, ``--skidder-loaded-distance``.
+     - :func:`fhops.productivity.grapple_bc.estimate_grapple_skidder_productivity_han2018`
+   * - ``adv1n12-fulltree`` / ``adv1n12-two-phase``
+     - Advantage 1N12 thinning presets (one- vs two-phase). Use when you only know extraction distance.
+     - ``--skidder-extraction-distance`` (other parameters default from the preset).
+     - :func:`fhops.productivity.estimate_cable_skidder_productivity_adv1n12_full_tree`
+   * - ``shovel-logger`` (serpentine)
+     - Sessions & Boston shovel-logging with directional slope/bunching multipliers.
+     - ``--shovel-passes`` plus swing/payload inputs; defaults come from :class:`fhops.productivity.ShovelLoggerSessions2006Inputs`.
+     - :func:`fhops.cli.dataset._evaluate_shovel_logger_result` (see CLI docstrings)
+
+Skyline & Helicopter Productivity
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Running skyline presets share parameters with the cable helpers inside
+:mod:`fhops.productivity.cable_logging`. The CLI docstrings now list every parameter, but a few quick
+rules help:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 43 20 15
+
+   * - Skyline model
+     - When to use
+     - Key CLI options
+     - API reference
+   * - ``tr125-single`` / ``tr125-multi``
+     - Skylead C40 single-span or intermediate-support operations (payload defaults to 1.6 m³).
+     - ``--slope-distance``, ``--lateral-distance`` (multi-span pulls TN258 lateral warnings automatically).
+     - :func:`fhops.productivity.estimate_cable_yarder_productivity_tr125_single_span`
+   * - ``tr127-block{1..6}``
+     - FPInnovations TR127 blocks with dual lateral distances and logs-per-turn requirements.
+     - ``--lateral-distance`` + ``--lateral-distance-2`` and (Blocks 5–6) ``--num-logs``.
+     - :func:`fhops.productivity.estimate_cable_yarder_productivity_tr127`
+   * - ``fncy12-tmy45``
+     - Thunderbird TMY45 with Mini-Mak II supports (pulls Cat D8/Timberjack ratios + TN258 envelopes).
+     - ``--fncy12-variant`` only; payload/shift hours come from :func:`fhops.productivity.estimate_tmy45_productivity_fncy12`.
+     - :func:`fhops.productivity.estimate_tmy45_productivity_fncy12`
+   * - ``hi-skid`` / ``tn173-*`` / ``adv5n28-*``
+     - Short-span skyline conversions (Hi-Skid truck, TN173 micro yarders, ADV5N28 helicopter-to-skyline upgrades).
+     - ``--pieces-per-cycle``, ``--piece-volume-m3``, optional ``--payload-m3`` (defaults seeded per system ID).
+     - :mod:`fhops.productivity.cable_logging` (see individual helper docstrings)
+
+For helicopter workflows, ``fhops dataset estimate-productivity --machine-role helicopter_longline`` maps
+directly to :func:`fhops.productivity.estimate_helicopter_longline_productivity`. Select a preset with
+``--helicopter-preset`` to seed the distances and payload weights documented in the helper docstring.
 
 Forwarder Productivity Models
 -----------------------------
@@ -321,6 +425,7 @@ regressions:
   ``--processor-show-grade-stats``) dumps the digitised Appendix 13 emmeans table so you can see the
   per-grade mean ±2σ cycle times we extracted from the thesis image. Treat those values as qualitative
   cues only—they came from a screenshot, not a raw table.
+
   * ``--processor-piece-size-m3`` – average piece size per stem (m³). Delay-free productivity is
     computed via ``34.7 × piece_size + 11.3``.
   * ``--processor-tree-form`` – 0 (good), 1 (poor), 2 (bad). Tree-form penalties follow Berry’s
@@ -337,26 +442,33 @@ regressions:
     Figure 11 regression (≈2,600–3,700 m² range) to predict delay seconds per stem and, if you have not supplied
     ``--processor-delay-multiplier``, auto-scales utilisation to reflect the larger/smaller landing. The command
     also prints the predicted m³/PMH hint and warns when your skid area lies outside the study range.
+
 * ``--processor-model labelle2016`` – Labelle et al. (2016) sugar maple study (New Brunswick) grouped by tree form quality (acceptable vs. unacceptable). Outputs are PMH₀.
   * ``--processor-dbh-cm`` – diameter at breast height (cm).
   * ``--processor-labelle2016-form`` – ``acceptable`` or ``unacceptable`` form class (matches the NHRI tree-form groupings).
   * ``--processor-delay-multiplier`` – optional utilisation scaling.
+
 * ``--processor-model labelle2017`` – Labelle et al. (2017) excavator-based CTL processor regressions (New Brunswick hardwoods). Includes two cubic polynomials and two power-law fits.
   * ``--processor-dbh-cm`` – diameter at breast height (cm).
   * ``--processor-labelle2017-variant`` – ``poly1``, ``poly2``, ``power1``, or ``power2`` (mirrors Appendix 8 table). Use the polynomial variants for large sample sizes (338/365 trees) or the power-law variants when matching the smaller subsets (42/55 trees).
+
 * ``--processor-model labelle2018`` – Labelle et al. (2018) Bavarian beech/spruce study (Ponsse Bear + H8) with separate regressions for rubber-tired (rw) vs. tracked (ct) processors.
   * ``--processor-dbh-cm`` – diameter at breast height (cm).
   * ``--processor-labelle2018-variant`` – ``rw_poly1``, ``rw_poly2``, ``ct_poly1``, or ``ct_poly2`` (Appendix 8 Table). Outputs are PMH₀; apply utilisation as needed.
+
 * ``--processor-model labelle2019_dbh`` – Labelle et al. (2019) Bavarian hardwood case study
   (TimberPro 620-E + LogMax 7000C) using DBH polynomials per species/treatment. These regressions
   output delay-free PMH₀ productivity for large-diameter, hardwood-dominated stands (rare in BC but
   useful when deploying FHOPS abroad).
+
   * ``--processor-dbh-cm`` – diameter at breast height (cm).
   * ``--processor-species`` – ``spruce`` or ``beech`` (matching the reference plots).
   * ``--processor-treatment`` – ``clear_cut`` or ``selective_cut`` (group selection). Use
     ``--processor-delay-multiplier`` if you need to impose a local utilisation ratio.
+
 * ``--processor-model labelle2019_volume`` – same Bavarian dataset, but keyed to recovered tree volume
   (m³/stem). Accepts the same species/treatment flags plus:
+
   * ``--processor-volume-m3`` – recovered volume per stem (m³). The helper applies the
     ``a + b·V₆ − c·V₆²`` polynomials published in Appendix 8/9 and still reports PMH₀ outputs.
   * Continue using ``--processor-delay-multiplier`` for utilisation assumptions; CLI output reminds
@@ -406,9 +518,69 @@ regressions:
   * ``--processor-piece-size-m3`` – applies the alternative regression 20.46·V\ :sup:`0.482` (tree volume in m³).
   * ``--processor-delay-multiplier`` – optional utilisation factor so you can fold landing waits into the PMH₀ baseline (defaults to the global processor multiplier; set to ``1.0`` to stay delay-free).
   CLI output states which regression ran, prints the delay-free m³/PMH alongside your utilisation-adjusted result, and cites the Japanese thinning context so you can benchmark excavator-based landing processors handling ≈0.25 m³ stems.
+
+
+.. note::
+
+   All cost snippets in this reference (and in the CLI) call
+   :func:`fhops.costing.machine_rates.compose_default_rental_rate_for_role` to pull owning/operating/repair
+   components from the bundled OpCost tables, then inflate the totals to :data:`fhops.costing.inflation.TARGET_YEAR`
+   CAD via :func:`fhops.costing.inflation.inflate_value`. Telemetry summaries reuse
+   :func:`fhops.telemetry.machine_costs.build_machine_cost_snapshots` so KPI exports and reports print the same
+   numbers shown in the CLI ``--show-costs`` panels.
+
+Optional Dataset Cookbook
+-------------------------
+
+Use these quick recipes to exercise optional dataset columns and CLI helpers that accompany the bundled scenarios.
+
+Med42 / Large84 cost overlays
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Copy ``examples/med42`` or ``examples/large84`` into a fresh workspace and add ``harvest_system_id`` to
+  ``data/blocks.csv`` whenever you want deterministic system assignments. The IDs listed earlier in this guide align
+  with the CLI help surfaced by :func:`fhops.cli.dataset.inspect_machine`, so you can paste the table output directly
+  into a thesis appendix.
+- Run ``fhops dataset inspect-machine examples/med42/scenario.yaml --machine loader_1 --show-costs`` to print the CPI-adjusted
+  owning/operating/repair breakdown for any machine in the scenario. This command uses
+  :func:`fhops.telemetry.machine_costs.build_machine_cost_snapshots`, so solver telemetry and CLI output stay in sync.
+- Need a $/m³ estimate with local utilisation? ``fhops dataset estimate-cost --dataset examples/med42 --machine loader_1
+  --utilisation 0.85`` invokes :func:`fhops.cli.dataset.estimate_cost_cmd` to blend the rental-rate components with
+  utilisation (and optional Lahrsen inputs). Add ``--road-machine cat_d8h --road-length-m 250`` to include a TR-28
+  subgrade surcharge (see the road-construction recipe below).
+
+Partial-cut / mixed system assignments
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Partial-cut profiles live in :mod:`fhops.productivity.partial_cut_profiles` and can be referenced by adding a
+  ``partial_cut_profile`` column to ``data/blocks.csv``. The CLI echoes the chosen profile whenever you pass
+  ``--partial-cut-profile`` to :func:`fhops.cli.dataset.estimate_productivity_cmd`, making it easy to cite SR-109/SR-54
+  penalties in a report.
+- To reproduce the Block 5 patch-cut scenario from TR-127, call
+  ``fhops dataset estimate-productivity --machine-role grapple_yarder --model tr127-block5 --partial-cut-profile sr109_green``.
+  The helper prints the calibration warnings, dual lateral distances, and CPI-adjusted cost references described earlier.
+- Micro-yarders from TN173 follow the same pattern: set ``harvest_system_id=cable_micro_ecologger`` (or the other
+  micro presets) in your dataset and the CLI auto-selects the matching preset when running ``fhops dataset estimate-productivity``.
+
+Road construction add-ons
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- ``fhops dataset tr28-subgrade`` lists the Caterpillar/Poclain/American machines digitised from TR-28. Use
+  ``fhops dataset tr28-subgrade --detail`` to view cycle times, unit costs, and soil profile IDs before wiring them
+  into a scenario.
+- ``fhops dataset estimate-cost`` supports TR-28 surcharges through ``--road-machine`` / ``--road-length-m`` and the optional
+  ``--road-soil-profile`` flags. The command calls :func:`fhops.cli.dataset.estimate_cost_cmd`, which dispatches to
+  :func:`fhops.cli.dataset.estimate_tr28_road_cost` and prints the ADV4N7 compaction warnings so the full cost per cubic metre
+  stays transparent.
+- Scenarios can embed a ``road_construction`` table (see ``tests/fixtures/regression/road_construction.yaml``). When you pair
+  ``--dataset``/``--machine`` with ``fhops dataset estimate-cost``, the CLI automatically loads the matching road entry, applies
+  the correct machine slug, and surfaces the CPI-adjusted totals—ideal for med42/large84 experiments where you want to toggle
+  spur-road budgets without editing the CLI command each time.
+
 * ``--processor-model visser2015`` – Visser & Tolan (2015) NZ cable-yarder landings (Cat 330DL +
   Waratah HTH626) comparing 5/9/12/15 log sorts. The helper interpolates the published piece-size
   curves (1–3 m³ stems) and reports both the delay-free m³/PMH and the delta versus the 5-sort baseline.
+
   * ``--processor-piece-size-m3`` – mean stem volume per piece (must fall within the 1–3 m³ study
     range).
   * ``--processor-log-sorts`` – number of log sorts to cut (``5``, ``9``, ``12``, ``15``). CLI output
@@ -757,26 +929,32 @@ Grapple harvest-system presets
      - ``tn147`` (Madill 009 highlead)
      - 5.5 m³ turns, 138 m average reach, ≈2.1 pcs/turn, manual falling defaults tuned to TN-147
      - `grapple_yarder_madill009` CPI-aware rate; CLI output also prints the 1989 $/m³ cost column from TN-147.
-  * - ``cable_running_tr122_extended`` / ``_shelterwood`` / ``_clearcut``
-    - ``tr122-extended`` | ``tr122-shelterwood`` | ``tr122-clearcut``
-    - 2.04/2.18/1.45 m³ turns, 104 m / 97 m / 106 m reach, observed pieces-per-cycle (2.2/3.2/2.6)
-    - Uses the generic ``grapple_yarder`` cost role; the shelterwood preset now also applies the SR109 shelterwood penalty (volume ×0.495, cost ×1.38) via the partial-cut profile, while the extended/clearcut entries remain unchanged. CLI prints the TR-122 yarder/loader labour breakdown so you still see the published $/m³ numbers.
+
+   * - ``cable_running_tr122_extended`` / ``_shelterwood`` / ``_clearcut``
+     - ``tr122-extended`` | ``tr122-shelterwood`` | ``tr122-clearcut``
+     - 2.04/2.18/1.45 m³ turns, 104 m / 97 m / 106 m reach, observed pieces-per-cycle (2.2/3.2/2.6)
+     - Uses the generic ``grapple_yarder`` cost role; the shelterwood preset now also applies the SR109 shelterwood penalty (volume ×0.495, cost ×1.38) via the partial-cut profile, while the extended/clearcut entries remain unchanged. CLI prints the TR-122 yarder/loader labour breakdown so you still see the published $/m³ numbers.
+
    * - ``cable_running_sr54``
      - ``sr54`` (Washington 118A running skyline regression)
      - 3.1 m³ turns, 82 m reach, ≈2.9 pcs/turn fed by the feller-buncher preset
      - Falls back to the generic ``grapple_yarder`` rate; rely on SR-54’s CPI-adjusted output or override the machine role if you have a local rental.
+
    * - ``cable_running_tr75_bunched`` / ``_handfelled``
      - ``tr75-bunched`` (System 1) / ``tr75-handfelled`` (System 2)
      - 1.29 m³ @ 71 m and 1.28 m³ @ 76.6 m, 2.18 vs. 1.41 pcs/turn (mechanical vs. hand-felled)
      - Generic ``grapple_yarder`` cost role; CLI still reports the 1987 $/m³ numbers from TR-75.
+
    * - ``cable_running_adv5n28_clearcut`` / ``_shelterwood``
      - ``adv5n28-clearcut`` | ``adv5n28-shelterwood``
      - 2.2 m³ @ 480 m and 1.8 m³ @ 330 m plus skyline/helicopter comparison rows
      - `grapple_yarder_adv5n28` cost role; banner also shows projected skyline vs. helicopter savings.
+
    * - ``cable_running_fncy12``
      - ``fncy12-tmy45`` standing-in for the Thunderbird TMY45 + Mini-Mak II intermediate-support study
      - 3.6 logs/turn, 176 m shift productivity, Cat D8/Timberjack support ratios baked into telemetry
      - `grapple_yarder_tmy45` CPI-aware rate (Cat D8 + Timberjack standby surcharges included); CLI warns whenever lateral pulls exceed the TN-258 tension envelope.
+
    * - ``cable_salvage_grapple``
      - ``tn157`` (Cypress) defaults + ADV1N5 salvage cues
      - Same payload/distance as ``cable_running`` with salvage-mode telemetry tags

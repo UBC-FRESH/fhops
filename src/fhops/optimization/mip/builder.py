@@ -14,7 +14,36 @@ __all__ = ["build_model"]
 
 
 def build_model(pb: Problem) -> pyo.ConcreteModel:
-    """Build the core FHOPS MIP model (shift-indexed)."""
+    """Build the core FHOPS MIP model.
+
+    Parameters
+    ----------
+    pb:
+        :class:`fhops.scenario.contract.Problem` produced by ``Problem.from_scenario``.  The helper
+        must include the full shift list (``pb.shifts``) so the model can build the `(machine, block,
+        day, shift)` assignment tensor.
+
+    Returns
+    -------
+    pyomo.ConcreteModel
+        Fully constructed model containing decision variables for assignments/production, optional
+        transition binaries (when mobilisation or transition penalties are enabled), and the
+        objective/constraints described in the FHOPS roadmap.
+
+    Notes
+    -----
+    The builder purposely mirrors the documented objective weights:
+
+    * ``ObjectiveWeights.production`` – coefficient for total production.
+    * ``ObjectiveWeights.mobilisation`` – coefficient for mobilisation spend derived from transition
+      binaries.
+    * ``ObjectiveWeights.transitions`` – optional penalty for the number of transitions itself.
+    * ``ObjectiveWeights.landing_slack`` – enables soft landing-capacity violations using slack
+      variables.
+
+    Any change to this function should be reflected in ``docs/howto/thesis_eval.rst`` and the MIP
+    section of the API docs.
+    """
 
     sc = pb.scenario
 

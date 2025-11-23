@@ -173,14 +173,19 @@ def test_synthetic_bundle_writes_road_construction(tmp_path: Path):
         blackout_probability=0.0,
         system_mix={"cable_running": 1.0},
     )
-    bundle = generate_random_dataset(config, seed=5, systems={"cable_running": systems["cable_running"]})
+    bundle = generate_random_dataset(
+        config, seed=5, systems={"cable_running": systems["cable_running"]}
+    )
     out_dir = tmp_path / "synthetic_road"
     scenario_yaml = bundle.write(out_dir)
     road_csv = out_dir / "data" / "road_construction.csv"
     assert road_csv.exists()
     scenario = load_scenario(scenario_yaml)
     assert scenario.road_construction is not None
-    assert any(entry.machine_slug == "caterpillar_235_hydraulic_backhoe" for entry in scenario.road_construction)
+    assert any(
+        entry.machine_slug == "caterpillar_235_hydraulic_backhoe"
+        for entry in scenario.road_construction
+    )
 
 
 def test_tier_defaults_drive_blackouts_and_crews():

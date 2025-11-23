@@ -5,11 +5,11 @@ import math
 import pytest
 
 from fhops.productivity import ALPACASlopeClass
-from fhops.productivity.laitila2020 import estimate_brushwood_harwarder_productivity
 from fhops.productivity.forwarder_bc import (
     ForwarderBCModel,
     estimate_forwarder_productivity_bc,
 )
+from fhops.productivity.laitila2020 import estimate_brushwood_harwarder_productivity
 
 
 @pytest.mark.parametrize(

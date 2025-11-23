@@ -28,6 +28,29 @@ class ShovelLoggingParameters:
 
 @dataclass(frozen=True)
 class ShovelLoggingResult:
+    """
+    Result payload for the shovel logging productivity model.
+
+    Attributes
+    ----------
+    passes:
+        Number of shovel passes across the block.
+    road_spacing_m:
+        Optimal road spacing (m) for the scenario.
+    rack_length_m:
+        Rack length (m) implied by the optimisation.
+    daily_volume_tonnes:
+        Daily volume moved (t).
+    productivity_tonnes_per_pmh, productivity_m3_per_pmh:
+        Productivity metrics (tonnes/m³ per productive machine hour).
+    cost_per_tonne:
+        Cost per tonne (CAD) combining shovel + road costs.
+    daily_profit:
+        Daily profit (CAD) given the price assumptions (may be negative).
+    shovel_cost_per_day, road_cost_per_day:
+        Daily shovel and road costs (CAD).
+    """
+
     passes: int
     road_spacing_m: float
     rack_length_m: float
@@ -43,10 +66,23 @@ class ShovelLoggingResult:
 def estimate_shovel_logging_productivity(
     passes: int, params: ShovelLoggingParameters
 ) -> ShovelLoggingResult:
-    """Evaluate shovel logging productivity/costs for a given number of passes.
+    """
+    Evaluate shovel logging productivity/costs for a given number of passes.
 
-    The formulation follows Sessions & Boston (2006), "Optimization of Road Spacing for
-    Log Length Shovel Logging on Gentle Terrain" (International Journal of Forest Engineering 17(1)).
+    Implements Sessions & Boston (2006), *Optimization of Road Spacing for Log Length Shovel Logging
+    on Gentle Terrain* (International Journal of Forest Engineering 17(1)).
+
+    Parameters
+    ----------
+    passes:
+        Number of shovel passes across the block. Must be ≥ 1.
+    params:
+        Dataclass capturing swing lengths, walking speeds, costs, and density assumptions.
+
+    Returns
+    -------
+    ShovelLoggingResult
+        Dataclass containing productivity, cost, and profit metrics for the specified passes.
     """
 
     if passes < 1:

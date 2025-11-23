@@ -116,6 +116,7 @@ DEFAULT_PROFILES: dict[str, Profile] = {
 
 
 def get_profile(name: str) -> Profile:
+    """Return a built-in solver profile by name (case-insensitive)."""
     key = name.lower()
     if key not in DEFAULT_PROFILES:
         available = ", ".join(sorted(DEFAULT_PROFILES))
@@ -124,6 +125,7 @@ def get_profile(name: str) -> Profile:
 
 
 def list_profiles() -> tuple[Profile, ...]:
+    """List all built-in solver profiles sorted by name."""
     return tuple(DEFAULT_PROFILES[key] for key in sorted(DEFAULT_PROFILES))
 
 
@@ -193,6 +195,7 @@ def merge_profile_with_cli(
 
 
 def solver_config_has_settings(config: SolverConfig | None) -> bool:
+    """Return ``True`` when the config overrides any solver defaults."""
     if not config:
         return False
     if config.operator_presets:
@@ -211,6 +214,7 @@ def solver_config_has_settings(config: SolverConfig | None) -> bool:
 
 
 def combine_solver_configs(*configs: SolverConfig | None) -> SolverConfig | None:
+    """Merge multiple SolverConfig entries, giving precedence to later values."""
     filtered: list[SolverConfig] = [
         cfg for cfg in configs if cfg is not None and solver_config_has_settings(cfg)
     ]
@@ -248,6 +252,7 @@ def combine_solver_configs(*configs: SolverConfig | None) -> SolverConfig | None
 
 
 def format_profiles() -> str:
+    """Return a newline-separated summary of available solver profiles."""
     lines = []
     for profile in list_profiles():
         lines.append(f"{profile.name}: {profile.description}")

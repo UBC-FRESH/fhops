@@ -224,6 +224,15 @@ def _deep_merge(base: dict[str, object], updates: dict[str, object]) -> dict[str
     return result
 
 
+def _coerce_float(value: object | None, default: float = 0.0) -> float:
+    if value is None:
+        return default
+    try:
+        return float(cast(float | int | str, value))
+    except (TypeError, ValueError):
+        return default
+
+
 def _derive_road_construction_entries(blocks: Sequence[Block]) -> list[RoadConstruction]:
     entries: list[RoadConstruction] = []
     seen_systems: set[str] = set()
@@ -235,12 +244,14 @@ def _derive_road_construction_entries(blocks: Sequence[Block]) -> list[RoadConst
         if defaults is None:
             continue
         entry_id = str(defaults.get("id") or system_id)
-        machine_slug = str(defaults["machine_slug"])
-        road_length = float(defaults["road_length_m"])
+        machine_slug = str(defaults.get("machine_slug") or system_id)
+        road_length = _coerce_float(defaults.get("road_length_m"), 0.0)
         include_mobilisation = bool(defaults.get("include_mobilisation", True))
         soil_profiles = defaults.get("soil_profile_ids")
         soil_profile_ids = (
-            [str(profile) for profile in soil_profiles] if soil_profiles is not None else None
+            [str(profile) for profile in soil_profiles]
+            if isinstance(soil_profiles, Sequence) and not isinstance(soil_profiles, (str, bytes))
+            else None
         )
         notes_value = defaults.get("notes")
         notes = str(notes_value) if isinstance(notes_value, str) else None
@@ -914,9 +925,9 @@ def generate_random_dataset(
             updated_blocks.append(block.model_copy(update=block_updates))
             blocks_records[idx]["harvest_system_id"] = system_id
             if system_id in salvage_system_ids:
-                blocks_records[idx][
-                    "salvage_processing_mode"
-                ] = SalvageProcessingMode.STANDARD_MILL.value
+                blocks_records[idx]["salvage_processing_mode"] = (
+                    SalvageProcessingMode.STANDARD_MILL.value
+                )
         scenario = scenario.model_copy(
             update={"blocks": updated_blocks, "harvest_systems": systems}
         )

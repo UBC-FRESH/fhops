@@ -13,7 +13,6 @@ from pathlib import Path
 
 from fhops.reference import get_appendix5_profile, load_fncy12_dataset
 
-
 _FEET_PER_METER = 3.28084
 _CUBIC_FEET_PER_CUBIC_METER = 35.3146667
 _LB_TO_KG = 0.45359237
@@ -31,6 +30,8 @@ _TR125_LATERAL_RANGE = (0.0, 50.0)
 
 
 class Fncy12ProductivityVariant(str, Enum):
+    """Variants of the FNCY12 Thunderbird TMY45 productivity study."""
+
     OVERALL = "overall"
     STEADY_STATE = "steady_state"
     STEADY_STATE_NO_FIRE = "steady_state_no_fire"
@@ -38,6 +39,8 @@ class Fncy12ProductivityVariant(str, Enum):
 
 @dataclass(frozen=True)
 class Fncy12ProductivityResult:
+    """Summary of the FNCY12 productivity calculations."""
+
     variant: Fncy12ProductivityVariant
     shift_productivity_m3: float
     shift_hours: float
@@ -45,6 +48,7 @@ class Fncy12ProductivityResult:
 
 
 def _validate_inputs(log_volume_m3: float, route_slope_percent: float) -> None:
+    """Ensure log volume and slope inputs are positive before running regressions."""
     if log_volume_m3 <= 0:
         raise ValueError("log_volume_m3 must be > 0")
     if route_slope_percent <= 0:
@@ -54,7 +58,21 @@ def _validate_inputs(log_volume_m3: float, route_slope_percent: float) -> None:
 def estimate_cable_skidding_productivity_unver_spss(
     log_volume_m3: float, route_slope_percent: float
 ) -> float:
-    """Estimate productivity (m³/h) using the SPSS linear regression (Eq. 27)."""
+    """Estimate skyline-skidding productivity (m³/h) via Ünver & Okan (2020) SPSS regression.
+
+    Parameters
+    ----------
+    log_volume_m3 : float
+        Average log volume per turn (m³). Calibrated range ≈0.2–1.0 m³.
+    route_slope_percent : float
+        Uphill skyline slope (%). Positive values only; typical study range was 5–60 %.
+
+    Returns
+    -------
+    float
+        Predicted productivity in cubic metres per scheduled hour (delay-free). Values are clipped at
+        zero to avoid negative outputs when very steep slopes are supplied.
+    """
 
     _validate_inputs(log_volume_m3, route_slope_percent)
     value = 4.188 + 5.325 * log_volume_m3 - 2.392 * route_slope_percent / 100.0
@@ -64,7 +82,20 @@ def estimate_cable_skidding_productivity_unver_spss(
 def estimate_cable_skidding_productivity_unver_robust(
     log_volume_m3: float, route_slope_percent: float
 ) -> float:
-    """Estimate productivity (m³/h) using the robust regression (Eq. 28)."""
+    """Estimate skyline-skidding productivity (m³/h) using the robust Ünver & Okan fit.
+
+    Parameters
+    ----------
+    log_volume_m3 : float
+        Average log volume per turn (m³).
+    route_slope_percent : float
+        Skyline slope (%). Positive values only.
+
+    Returns
+    -------
+    float
+        Delay-free productivity in m³/h (clipped at zero for extreme slopes).
+    """
 
     _validate_inputs(log_volume_m3, route_slope_percent)
     value = 3.0940 + 5.5182 * log_volume_m3 - 1.3886 * route_slope_percent / 100.0
@@ -72,6 +103,7 @@ def estimate_cable_skidding_productivity_unver_robust(
 
 
 def _profile_slope_percent(profile: str) -> float:
+    """Return slope (%) derived from an Appendix 5 profile record."""
     record = get_appendix5_profile(profile)
     slope = record.average_slope_percent
     if slope is None:
@@ -84,7 +116,20 @@ def estimate_cable_skidding_productivity_unver_spss_profile(
     profile: str,
     log_volume_m3: float,
 ) -> float:
-    """Estimate productivity using a named Appendix 5 stand to supply slope (%)."""
+    """Profile-aware SPSS regression that derives slope (%) from Appendix 5 data.
+
+    Parameters
+    ----------
+    profile : str
+        Stand profile identifier recognised by :func:`fhops.reference.get_appendix5_profile`.
+    log_volume_m3 : float
+        Average log volume per turn (m³).
+
+    Returns
+    -------
+    float
+        Delay-free productivity in m³/h.
+    """
 
     slope = _profile_slope_percent(profile)
     return estimate_cable_skidding_productivity_unver_spss(log_volume_m3, slope)
@@ -95,7 +140,20 @@ def estimate_cable_skidding_productivity_unver_robust_profile(
     profile: str,
     log_volume_m3: float,
 ) -> float:
-    """Robust regression variant that derives slope (%) from an Appendix 5 stand."""
+    """Profile-aware robust regression for skyline skidding (Ünver & Okan 2020).
+
+    Parameters
+    ----------
+    profile : str
+        Appendix 5 stand identifier providing the route slope (%).
+    log_volume_m3 : float
+        Average log volume per turn (m³).
+
+    Returns
+    -------
+    float
+        Delay-free productivity in m³/h using the robust fit.
+    """
 
     slope = _profile_slope_percent(profile)
     return estimate_cable_skidding_productivity_unver_robust(log_volume_m3, slope)
@@ -107,17 +165,20 @@ def _validate_positive(value: float, name: str) -> None:
 
 
 def _validate_non_negative(value: float, name: str) -> None:
+    """Validate that ``value`` is non-negative."""
     if value < 0:
         raise ValueError(f"{name} must be >= 0")
 
 
 def _m3_per_pmh(payload_m3: float, cycle_seconds: float) -> float:
+    """Convert payload (m³) and cycle seconds to m³ per productive machine hour."""
     _validate_positive(payload_m3, "payload_m3")
     _validate_positive(cycle_seconds, "cycle_seconds")
     return payload_m3 * (3600.0 / cycle_seconds)
 
 
 def _m3_per_pmh_from_minutes(payload_m3: float, cycle_minutes: float) -> float:
+    """Convert payload (m³) and cycle minutes to m³ per productive machine hour."""
     _validate_positive(payload_m3, "payload_m3")
     _validate_positive(cycle_minutes, "cycle_minutes")
     return payload_m3 * (60.0 / cycle_minutes)
@@ -182,6 +243,15 @@ def estimate_cable_yarder_productivity_lee2018_downhill(
 def estimate_cable_yarder_cycle_time_tr125_single_span(
     *, slope_distance_m: float, lateral_distance_m: float
 ) -> float:
+    """Delay-free cycle time (minutes) for TR-125 single-span skyline yarding.
+
+    Parameters
+    ----------
+    slope_distance_m : float
+        Skyline slope distance (metres). Valid for 10–350 m.
+    lateral_distance_m : float
+        Lateral reach (metres). Valid for 0–50 m.
+    """
     _validate_positive(slope_distance_m, "slope_distance_m")
     _validate_positive(lateral_distance_m, "lateral_distance_m")
     _warn_if_out_of_range("slope_distance_m", slope_distance_m, _TR125_SINGLE_SLOPE_RANGE)
@@ -195,17 +265,16 @@ def estimate_cable_yarder_productivity_tr125_single_span(
     lateral_distance_m: float,
     payload_m3: float = 1.6,
 ) -> float:
-    """
-    Estimate productivity (m³/PMH) for single-span skyline yarding (TR-125 Eq. 1).
+    """Productivity (m³/PMH) for single-span skyline yarding (TR-125 Eq. 1).
 
     Parameters
     ----------
-    slope_distance_m:
-        Slope yarding distance (m). Regression calibrated for 10–350 m.
-    lateral_distance_m:
-        Lateral yarding distance (m). Regression calibrated for 0–50 m.
-    payload_m3:
-        Average payload per turn; TR-125 observed ≈1.6 m³ (3.4 logs × 0.47 m³/log).
+    slope_distance_m : float
+        Skyline slope distance (metres). Regression calibrated for 10–350 m.
+    lateral_distance_m : float
+        Lateral skyline distance (metres). Regression calibrated for 0–50 m.
+    payload_m3 : float, default=1.6
+        Payload per cycle (m³). Defaults to the TR-125 observation mean (~1.6 m³).
     """
 
     _validate_positive(slope_distance_m, "slope_distance_m")
@@ -220,6 +289,15 @@ def estimate_cable_yarder_productivity_tr125_single_span(
 def estimate_cable_yarder_cycle_time_tr125_multi_span(
     *, slope_distance_m: float, lateral_distance_m: float
 ) -> float:
+    """Delay-free cycle time (minutes) for TR-125 multi-span skyline yarding.
+
+    Parameters
+    ----------
+    slope_distance_m : float
+        Skyline slope distance (metres). Valid for 10–420 m.
+    lateral_distance_m : float
+        Lateral reach (metres). Valid for 0–50 m.
+    """
     _validate_positive(slope_distance_m, "slope_distance_m")
     _validate_positive(lateral_distance_m, "lateral_distance_m")
     _warn_if_out_of_range("slope_distance_m", slope_distance_m, _TR125_MULTI_SLOPE_RANGE)
@@ -233,17 +311,16 @@ def estimate_cable_yarder_productivity_tr125_multi_span(
     lateral_distance_m: float,
     payload_m3: float = 1.6,
 ) -> float:
-    """
-    Estimate productivity (m³/PMH) for multi-span skyline yarding (TR-125 Eq. 2).
+    """Productivity (m³/PMH) for multi-span skyline yarding (TR-125 Eq. 2).
 
     Parameters
     ----------
-    slope_distance_m:
-        Slope yarding distance (m). Regression calibrated for 10–420 m.
-    lateral_distance_m:
-        Lateral yarding distance (m). Regression calibrated for 0–50 m.
-    payload_m3:
-        Average payload per turn; TR-125 observed ≈1.6 m³.
+    slope_distance_m : float
+        Skyline slope distance (metres). Regression calibrated for 10–420 m.
+    lateral_distance_m : float
+        Lateral skyline distance (metres). Regression calibrated for 0–50 m.
+    payload_m3 : float, default=1.6
+        Payload per cycle (m³). Defaults to the TR-125 observation mean (~1.6 m³).
     """
 
     _validate_positive(slope_distance_m, "slope_distance_m")
@@ -256,6 +333,7 @@ def estimate_cable_yarder_productivity_tr125_multi_span(
 
 
 def _running_skyline_variant(key: str) -> dict[str, float]:
+    """Return running-skyline preset parameters (pieces/turn, volume, z1) by key."""
     normalized = key.lower()
     if normalized not in _RUNNING_SKYLINE_VARIANTS:
         allowed = ", ".join(sorted(_RUNNING_SKYLINE_VARIANTS))
@@ -271,11 +349,30 @@ def estimate_running_skyline_cycle_time_mcneel2000_minutes(
     pieces_per_cycle: float | None = None,
     yarder_variant: str = "yarder_a",
 ) -> float:
-    """
-    Estimate scheduled cycle time (minutes) for running skyline yarders (McNeel 2000).
+    """Scheduled cycle time (minutes) for running skyline yarders (McNeel 2000).
 
-    Source: McNeel, J.F. 2000. "Modeling Production of Longline Yarding Operations in
-    Coastal British Columbia" (Journal of Forest Engineering 11(1):29–38) Table 4.
+    Parameters
+    ----------
+    horizontal_distance_m : float
+        Horizontal skyline distance (metres).
+    lateral_distance_m : float
+        Average lateral yarding distance (metres). Non-negative.
+    vertical_distance_m : float
+        Vertical difference between landing and payload (metres). Non-negative.
+    pieces_per_cycle : float, optional
+        Pieces (logs) handled per cycle. Defaults to the selected variant mean.
+    yarder_variant : str, default="yarder_a"
+        Named variant from McNeel (2000) Table 4 (``yarder_a`` or ``yarder_b``).
+
+    Returns
+    -------
+    float
+        Scheduled cycle time in minutes.
+
+    References
+    ----------
+    McNeel, J.F. (2000). *Modeling Production of Longline Yarding Operations in Coastal British
+    Columbia*. Journal of Forest Engineering 11(1):29–38.
     """
 
     _validate_positive(horizontal_distance_m, "horizontal_distance_m")
@@ -306,11 +403,23 @@ def estimate_running_skyline_productivity_mcneel2000(
     piece_volume_m3: float | None = None,
     yarder_variant: str = "yarder_a",
 ) -> float:
-    """
-    Estimate running skyline productivity (m³/PMH0) using McNeel (2000) regression.
+    """Running skyline productivity (m³/PMH0) using McNeel (2000) regressions.
 
-    Parameters mirror Table 4 predictors: horizontal span, lateral yarding distance,
-    deflection (vertical distance), and pieces per turn.
+    Parameters
+    ----------
+    horizontal_distance_m, lateral_distance_m, vertical_distance_m : float
+        Predictor distances (metres) matching the cycle-time helper.
+    pieces_per_cycle : float, optional
+        Pieces (logs) hauled per cycle. Defaults to the selected variant's mean.
+    piece_volume_m3 : float, optional
+        Volume per piece (m³). Defaults to variant-specific values.
+    yarder_variant : str, default="yarder_a"
+        ``yarder_a`` or ``yarder_b`` from McNeel (2000) Table 4.
+
+    Returns
+    -------
+    float
+        Delay-free productivity in m³/PMH0.
     """
 
     variant = _running_skyline_variant(yarder_variant)
@@ -329,6 +438,8 @@ def estimate_running_skyline_productivity_mcneel2000(
 
 
 class HelicopterLonglineModel(str, Enum):
+    """Supported helicopter models used in FPInnovations longline studies."""
+
     LAMA = "lama"
     KMAX = "kmax"
     BELL_214B = "bell214b"
@@ -338,6 +449,8 @@ class HelicopterLonglineModel(str, Enum):
 
 @dataclass(frozen=True)
 class HelicopterSpec:
+    """Performance metadata for a helicopter longline configuration."""
+
     model: HelicopterLonglineModel
     rated_payload_kg: float
     default_load_factor: float
@@ -349,10 +462,12 @@ class HelicopterSpec:
 
     @property
     def default_payload_kg(self) -> float:
+        """Return the default payload (kg) after applying the study's load factor."""
         return self.rated_payload_kg * self.default_load_factor
 
     @property
     def rated_payload_lb(self) -> float:
+        """Return the rated payload expressed in pounds."""
         return self.rated_payload_kg * _KG_TO_LB
 
 
@@ -412,6 +527,8 @@ _HELICOPTER_SPECS: dict[HelicopterLonglineModel, HelicopterSpec] = {
 
 @dataclass(frozen=True)
 class HelicopterProductivityResult:
+    """Structured output for helicopter longline productivity estimates."""
+
     model: HelicopterLonglineModel
     flight_distance_m: float
     payload_m3: float
@@ -428,6 +545,7 @@ class HelicopterProductivityResult:
 
 
 def _helicopter_spec(model: HelicopterLonglineModel) -> HelicopterSpec:
+    """Return the helicopter specification for a supported model."""
     try:
         return _HELICOPTER_SPECS[model]
     except KeyError as exc:
@@ -443,7 +561,39 @@ def estimate_helicopter_longline_productivity(
     weight_to_volume_lb_per_m3: float | None = None,
     additional_delay_minutes: float = 0.0,
 ) -> HelicopterProductivityResult:
-    """Estimate helicopter longline productivity (m³/PMH0) using FPInnovations case studies."""
+    """Estimate helicopter longline productivity (m³/PMH0) using FPInnovations case studies.
+
+    Parameters
+    ----------
+    model : HelicopterLonglineModel
+        Aircraft preset (Lama, K-Max, Bell 214B, KA-32A, or S-64E Aircrane).
+    flight_distance_m : float
+        One-way flight distance between landing and drop site (metres). Must be > 0.
+    payload_m3 : float, optional
+        Explicit payload volume per turn (m³). When omitted, a payload is derived from the rated
+        payload and ``load_factor``.
+    load_factor : float, optional
+        Fraction of rated payload utilised (0 < factor ≤ 1). Defaults to the published value for the
+        chosen model.
+    weight_to_volume_lb_per_m3 : float, optional
+        Conversion from payload weight (lb) to volume (m³). Defaults to species-specific values
+        published in the FPInnovations studies; supply this when operating outside the default wood
+        density.
+    additional_delay_minutes : float, default=0.0
+        Extra minutes per cycle (landing congestion, hover delays, etc.) added on top of the published
+        hook/unhook times.
+
+    Returns
+    -------
+    HelicopterProductivityResult
+        Dataclass containing payload in m³/kg/lb, turns per hour, PMH0 productivity, and the aircraft
+        spec used for the calculation.
+
+    Notes
+    -----
+    The helper assumes symmetric empty/loaded flight paths of length ``flight_distance_m``. Use the
+    CLI wrappers if you need to feed telemetry or capture JSON outputs from case-study presets.
+    """
 
     if flight_distance_m <= 0:
         raise ValueError("flight_distance_m must be > 0")
@@ -511,11 +661,23 @@ def estimate_standing_skyline_turn_time_aubuchon1979(
     logs_per_turn: float,
     crew_size: float,
 ) -> float:
-    """Delay-free turn time (min) from Hensel et al. (1979) compiled by Aubuchon (1982).
+    """Delay-free turn time (minutes) from Hensel et al. (1979) / Aubuchon (1982).
 
-    Parameters use SI units for convenience but the regression was published in feet, so
-    conversions are applied internally. Valid for uphill Wyssen standing skyline trials
-    with slopes 45–75 %, 3.5–6 logs/turn, 1 000–3 000 ft slope distance, 50–150 ft lateral.
+    Parameters
+    ----------
+    slope_distance_m : float
+        Skyline slope distance (metres). Published range ≈300–900 m (converted from feet).
+    lateral_distance_m : float
+        Lateral reach (metres). Published range 15–45 m.
+    logs_per_turn : float
+        Number of logs per cycle (3.5–6 in the study).
+    crew_size : float
+        Crew size (persons) influencing setup time.
+
+    Notes
+    -----
+    The regression was published in imperial units; the helper converts to feet internally before
+    applying the coefficients.
     """
 
     if logs_per_turn <= 0:
@@ -530,7 +692,7 @@ def estimate_standing_skyline_turn_time_aubuchon1979(
     return (
         5.102
         + 0.970 * logs_per_turn
-        + 0.00000172 * (slope_distance_ft ** 2)
+        + 0.00000172 * (slope_distance_ft**2)
         + 0.031 * lateral_distance_ft
         - 0.194 * crew_size
     )
@@ -544,7 +706,24 @@ def estimate_standing_skyline_productivity_aubuchon1979(
     average_log_volume_m3: float,
     crew_size: float,
 ) -> float:
-    """Estimate standing skyline productivity (m³/PMH0) via Aubuchon (1982) tables."""
+    """Standing skyline productivity (m³/PMH0) via Aubuchon (1982).
+
+    Parameters
+    ----------
+    slope_distance_m, lateral_distance_m : float
+        Distances in metres passed to :func:`estimate_standing_skyline_turn_time_aubuchon1979`.
+    logs_per_turn : float
+        Logs per cycle.
+    average_log_volume_m3 : float
+        Mean volume per log (m³).
+    crew_size : float
+        Crew size (persons).
+
+    Returns
+    -------
+    float
+        Delay-free productivity in m³/PMH0.
+    """
 
     if average_log_volume_m3 <= 0:
         raise ValueError("average_log_volume_m3 must be > 0")
@@ -651,7 +830,21 @@ def estimate_standing_skyline_productivity_kellogg1976(
     average_log_volume_m3: float,
     chokers: float,
 ) -> float:
-    """Estimate standing skyline productivity (m³/PMH0) via Kellogg (1976) regression."""
+    """Standing skyline productivity (m³/PMH0) via Kellogg (1976) regression.
+
+    Parameters
+    ----------
+    slope_distance_m : float
+        Skyline slope distance (metres).
+    lead_angle_degrees : float
+        Lead angle (degrees).
+    logs_per_turn : float
+        Logs per cycle.
+    average_log_volume_m3 : float
+        Average log volume (m³).
+    chokers : float
+        Number of chokers used in the crew.
+    """
 
     turn_minutes = estimate_standing_skyline_turn_time_kellogg1976(
         slope_distance_m=slope_distance_m,
@@ -665,7 +858,7 @@ def estimate_standing_skyline_productivity_kellogg1976(
 
 
 def running_skyline_variant_defaults(yarder_variant: str) -> tuple[float, float]:
-    """Return (pieces_per_cycle, piece_volume_m3) defaults for the given variant."""
+    """Return the `(pieces_per_cycle, piece_volume_m3)` defaults for a McNeel variant."""
 
     variant = _running_skyline_variant(yarder_variant)
     return variant["pieces_per_cycle"], variant["piece_volume_m3"]
@@ -674,6 +867,19 @@ def running_skyline_variant_defaults(yarder_variant: str) -> tuple[float, float]
 def estimate_tmy45_productivity_fncy12(
     variant: Fncy12ProductivityVariant = Fncy12ProductivityVariant.STEADY_STATE,
 ) -> Fncy12ProductivityResult:
+    """Return TMY45 + Mini-Mak II productivity metrics from the FNCY12 dataset.
+
+    Parameters
+    ----------
+    variant : Fncy12ProductivityVariant, default=STEADY_STATE
+        Choice between overall average, steady-state average (last 3 months), or steady-state with fire
+        delays removed.
+
+    Returns
+    -------
+    Fncy12ProductivityResult
+        Dataclass containing shift-level productivity (m³), shift hours, and PMH0 output.
+    """
     dataset = load_fncy12_dataset()
     totals = dataset.productivity_totals or {}
     variant_map = {
@@ -684,7 +890,7 @@ def estimate_tmy45_productivity_fncy12(
         ),
     }
     shift_m3 = variant_map.get(variant)
-    if not isinstance(shift_m3, (int, float)):
+    if not isinstance(shift_m3, int | float):
         raise ValueError(f"FNCY12 dataset missing shift output for variant '{variant.value}'.")
     shift_hours = dataset.shift_hours or 10.0
     productivity = float(shift_m3) / shift_hours
@@ -698,6 +904,8 @@ def estimate_tmy45_productivity_fncy12(
 
 @dataclass(frozen=True)
 class _TR127Predictor:
+    """Predictor metadata for TR-127 regressions (name, units, range, coefficient)."""
+
     name: str
     units: str
     value_range: tuple[float, float]
@@ -706,6 +914,8 @@ class _TR127Predictor:
 
 @dataclass(frozen=True)
 class _TR127Regression:
+    """TR-127 regression definition (block, intercept, predictor list)."""
+
     block: int
     description: str
     intercept_minutes: float
@@ -719,6 +929,7 @@ _TR127_REGRESSIONS_PATH = (
 
 @lru_cache(maxsize=1)
 def _load_tr127_models() -> Mapping[int, _TR127Regression]:
+    """Load TR-127 regression definitions (cached) from the bundled JSON dataset."""
     if not _TR127_REGRESSIONS_PATH.exists():
         raise FileNotFoundError(f"TR127 regression data not found: {_TR127_REGRESSIONS_PATH}")
     with _TR127_REGRESSIONS_PATH.open(encoding="utf-8") as fh:
@@ -750,6 +961,7 @@ def _ensure_tr127_inputs(
     num_logs: float | None,
     lateral_distance2_m: float | None = None,
 ) -> dict[str, float]:
+    """Validate and collect predictor inputs required for a TR-127 block regression."""
     model = _load_tr127_models().get(block)
     if model is None:
         raise ValueError(f"Unknown TR127 block: {block}")
@@ -777,6 +989,7 @@ def _ensure_tr127_inputs(
 
 
 def _warn_if_out_of_range(name: str, value: float, value_range: tuple[float, float]) -> None:
+    """Emit a warning when a predictor value falls outside its calibrated range."""
     lower, upper = value_range
     if (value < lower) or (value > upper):
         warnings.warn(
@@ -794,16 +1007,15 @@ def estimate_cable_yarder_cycle_time_tr127_minutes(
     num_logs: float | None = None,
     lateral_distance2_m: float | None = None,
 ) -> float:
-    """
-    Estimate delay-free cycle time (minutes) using TR127 Appendix VII regressions.
+    """Delay-free cycle time (minutes) using TR127 Appendix VII regressions.
 
     Parameters
     ----------
-    block:
+    block : int
         Block identifier (1–6) corresponding to the published regression.
-    slope_distance_m, lateral_distance_m, num_logs:
+    slope_distance_m, lateral_distance_m, num_logs, lateral_distance2_m : float, optional
         Predictor values required by the chosen block model. Values outside the calibrated
-        range will emit warnings but still be evaluated.
+        range emit warnings but are still evaluated.
     """
 
     model = _load_tr127_models().get(block)
@@ -829,17 +1041,16 @@ def estimate_cable_yarder_productivity_tr127(
     num_logs: float | None = None,
     lateral_distance2_m: float | None = None,
 ) -> float:
-    """
-    Estimate TR127 skyline productivity (m³/PMH) using block-specific regressions.
+    """TR127 skyline productivity (m³/PMH) using block-specific regressions.
 
     Parameters
     ----------
-    block:
+    block : int
         Block identifier (1–6).
-    payload_m3:
-        Payload per turn. Defaults to 1.6 m³ when not specified in TR127.
-    slope_distance_m, lateral_distance_m, num_logs:
-        Predictors required by the chosen block. Supply only those listed in Appendix VII.
+    payload_m3 : float, default=1.6
+        Payload per turn (m³). Defaults to TR127's reported mean.
+    slope_distance_m, lateral_distance_m, num_logs, lateral_distance2_m : float, optional
+        Predictors forwarded to :func:`estimate_cable_yarder_cycle_time_tr127_minutes`.
     """
 
     cycle_minutes = estimate_cable_yarder_cycle_time_tr127_minutes(
@@ -908,8 +1119,36 @@ HI_SKID_DEFAULTS = {
     "max_distance_m": 100.0,
 }
 
+
 @dataclass(frozen=True)
 class TN173System:
+    """
+    FPInnovations TN-173 compact skyline system metadata.
+
+    Attributes
+    ----------
+    system_id:
+        Identifier from the bulletin.
+    label:
+        Display name for CLI/docs.
+    operating_range_m:
+        Recommended operating range (m).
+    crew_size:
+        Crew size used in the study.
+    pieces_per_turn, piece_volume_m3, payload_m3:
+        Payload descriptors per turn.
+    cycle_minutes:
+        Average cycle time (minutes).
+    productivity_m3_per_pmh:
+        Reported productivity (m³/PMH₀).
+    average_yarding_distance_m, yarding_distance_min_m, yarding_distance_max_m:
+        Yarding distance statistics (m).
+    average_slope_percent, slope_percent_min, slope_percent_max:
+        Slope statistics (%).
+    notes:
+        Additional notes for the system.
+    """
+
     system_id: str
     label: str
     operating_range_m: float | None
@@ -935,6 +1174,7 @@ _TN173_PATH = (
 
 @lru_cache(maxsize=1)
 def _load_tn173_systems() -> Mapping[str, TN173System]:
+    """Load TN-173 skyline system metadata from the bundled JSON dataset."""
     if not _TN173_PATH.exists():
         raise FileNotFoundError(f"TN173 dataset not found: {_TN173_PATH}")
     with _TN173_PATH.open(encoding="utf-8") as fh:
@@ -962,8 +1202,7 @@ def _load_tn173_systems() -> Mapping[str, TN173System]:
             system_id=system_id,
             label=entry.get("name", entry.get("description", system_id)),
             operating_range_m=entry.get("operating_range_m"),
-            crew_size=labour.get("crew_size_operational")
-            or labour.get("crew_size_productive"),
+            crew_size=labour.get("crew_size_operational") or labour.get("crew_size_productive"),
             pieces_per_turn=float(avg_pieces) if avg_pieces is not None else None,
             piece_volume_m3=float(piece_volume) if piece_volume is not None else None,
             payload_m3=float(avg_turn_volume) if avg_turn_volume is not None else None,
@@ -972,29 +1211,63 @@ def _load_tn173_systems() -> Mapping[str, TN173System]:
             average_yarding_distance_m=float(layout.get("average_yarding_distance_m", 0.0))
             if layout.get("average_yarding_distance_m") is not None
             else None,
-            yarding_distance_min_m=float(yarding_range[0]) if yarding_range[0] is not None else None,
-            yarding_distance_max_m=float(yarding_range[1]) if len(yarding_range) > 1 and yarding_range[1] is not None else None,
+            yarding_distance_min_m=float(yarding_range[0])
+            if yarding_range[0] is not None
+            else None,
+            yarding_distance_max_m=float(yarding_range[1])
+            if len(yarding_range) > 1 and yarding_range[1] is not None
+            else None,
             average_slope_percent=float(layout.get("average_slope_percent", 0.0))
             if layout.get("average_slope_percent") is not None
             else None,
             slope_percent_min=float(slope_range[0]) if slope_range[0] is not None else None,
-            slope_percent_max=float(slope_range[1]) if len(slope_range) > 1 and slope_range[1] is not None else None,
+            slope_percent_max=float(slope_range[1])
+            if len(slope_range) > 1 and slope_range[1] is not None
+            else None,
             notes=entry.get("notes"),
         )
     return systems
 
 
 def list_tn173_system_ids() -> tuple[str, ...]:
+    """
+    Return the available TN173 skyline system identifiers.
+
+    Returns
+    -------
+    tuple[str, ...]
+        Sorted tuple of system IDs.
+    """
     systems = _load_tn173_systems()
     return tuple(sorted(systems))
 
 
 def get_tn173_system(system_id: str) -> TN173System:
+    """
+    Return metadata for a given TN173 skyline system.
+
+    Parameters
+    ----------
+    system_id:
+        Identifier from :func:`list_tn173_system_ids`.
+
+    Returns
+    -------
+    TN173System
+        Dataclass containing payload, productivity, and range metadata.
+
+    Raises
+    ------
+    KeyError
+        If ``system_id`` is not present in the dataset.
+    """
     systems = _load_tn173_systems()
     try:
         return systems[system_id]
     except KeyError as exc:
-        raise KeyError(f"Unknown TN173 system '{system_id}'. Available: {', '.join(sorted(systems))}") from exc
+        raise KeyError(
+            f"Unknown TN173 system '{system_id}'. Available: {', '.join(sorted(systems))}"
+        ) from exc
 
 
 def estimate_residue_cycle_time_ledoux_minutes(
@@ -1006,6 +1279,23 @@ def estimate_residue_cycle_time_ledoux_minutes(
     residue_pieces_per_turn: float,
     residue_volume_m3: float,
 ) -> float:
+    """Cycle time (minutes) for residue yarding using LeDoux (1981) regressions.
+
+    Parameters
+    ----------
+    profile : str
+        One of ``skagit_shotgun``, ``skagit_highlead``, ``washington_208e``, ``tmy45``.
+    slope_distance_m : float
+        Uphill skyline slope distance (metres).
+    merchantable_logs_per_turn : float
+        Count of merchantable logs per cycle.
+    merchantable_volume_m3 : float
+        Merchantable volume per cycle (m³).
+    residue_pieces_per_turn : float
+        Residue pieces per cycle.
+    residue_volume_m3 : float
+        Residue volume per cycle (m³).
+    """
     coeffs = LEDOUX_COEFFICIENTS[profile]
     x1 = slope_distance_m * FT_PER_M
     x2 = merchantable_logs_per_turn
@@ -1032,6 +1322,13 @@ def estimate_residue_productivity_ledoux_m3_per_pmh(
     residue_pieces_per_turn: float,
     residue_volume_m3: float,
 ) -> tuple[float, float]:
+    """Residue and merchantable productivity (m³/PMH) using LeDoux regressions.
+
+    Returns
+    -------
+    tuple
+        ``(total_productivity_m3_per_pmh, cycle_minutes)``.
+    """
     cycle_minutes = estimate_residue_cycle_time_ledoux_minutes(
         profile=profile,
         slope_distance_m=slope_distance_m,
@@ -1055,7 +1352,7 @@ def ledoux_delay_component_minutes(
     residue_pieces_per_turn: float,
     residue_volume_m3: float,
 ) -> tuple[float, float]:
-    """Return delay contributions (minutes) attributed to merchantable vs residue payload."""
+    """Delay contributions (minutes) attributed to merchantable vs residue payload."""
 
     coeffs = LEDOUX_COEFFICIENTS[profile]
     x2 = merchantable_logs_per_turn
@@ -1074,7 +1371,19 @@ def estimate_micro_master_cycle_minutes(
     outhaul_speed_m_per_s: float = MICRO_MASTER_DEFAULTS["outhaul_speed_m_per_s"],
     inhaul_speed_m_per_s: float = MICRO_MASTER_DEFAULTS["inhaul_speed_m_per_s"],
 ) -> float:
-    """Return total minutes per turn for the Model 9 Micro Master yarder (FERIC TN-54)."""
+    """Total minutes per turn for the Model 9 Micro Master yarder (FERIC TN-54).
+
+    Parameters
+    ----------
+    slope_distance_m : float
+        Corridor distance (metres) between landing and stump.
+    constant_minutes : float, default=MICRO_MASTER_DEFAULTS["constant_minutes"]
+        Fixed time components per cycle (intercept from TN-54).
+    outhaul_speed_m_per_s : float, default=MICRO_MASTER_DEFAULTS["outhaul_speed_m_per_s"]
+        Line speed when travelling empty (m/s).
+    inhaul_speed_m_per_s : float, default=MICRO_MASTER_DEFAULTS["inhaul_speed_m_per_s"]
+        Line speed when hauling load (m/s).
+    """
 
     if slope_distance_m <= 0:
         raise ValueError("Slope distance must be > 0 for the Micro Master regression")
@@ -1091,7 +1400,25 @@ def estimate_micro_master_productivity_m3_per_pmh(
     pieces_per_turn: float | None = None,
     piece_volume_m3: float | None = None,
 ) -> tuple[float, float, float, float, float]:
-    """Return (productivity, cycle_minutes, pieces, piece_volume, payload)."""
+    """Productivity for the Model 9 Micro Master skyline (m³/PMH0).
+
+    Parameters
+    ----------
+    slope_distance_m : float
+        Corridor distance (metres).
+    payload_m3 : float, optional
+        Override payload per cycle (m³). When omitted the helper computes payload from
+        ``pieces_per_turn`` × ``piece_volume_m3``.
+    pieces_per_turn : float, optional
+        Logs per cycle; defaults to TN-54 mean when omitted.
+    piece_volume_m3 : float, optional
+        Volume per log (m³); defaults to TN-54 mean when omitted.
+
+    Returns
+    -------
+    tuple
+        ``(productivity_m3_per_pmh, cycle_minutes, pieces, piece_volume, payload_m3)`` for reporting.
+    """
 
     resolved_pieces = pieces_per_turn or MICRO_MASTER_DEFAULTS["pieces_per_turn"]
     resolved_piece_volume = piece_volume_m3 or MICRO_MASTER_DEFAULTS["piece_volume_m3"]
@@ -1099,7 +1426,9 @@ def estimate_micro_master_productivity_m3_per_pmh(
         raise ValueError("Pieces per turn must be > 0 for the Micro Master regression")
     if resolved_piece_volume <= 0:
         raise ValueError("Piece volume must be > 0 for the Micro Master regression")
-    resolved_payload = payload_m3 if payload_m3 is not None else resolved_pieces * resolved_piece_volume
+    resolved_payload = (
+        payload_m3 if payload_m3 is not None else resolved_pieces * resolved_piece_volume
+    )
     if resolved_payload <= 0:
         raise ValueError("Payload must be > 0 for the Micro Master regression")
     cycle_minutes = estimate_micro_master_cycle_minutes(slope_distance_m=slope_distance_m)
@@ -1113,7 +1442,17 @@ def estimate_hi_skid_cycle_minutes(
     constant_minutes: float = HI_SKID_DEFAULTS["constant_minutes"],
     line_speed_m_per_min: float = HI_SKID_DEFAULTS["line_speed_m_per_min"],
 ) -> float:
-    """Return minutes per yarding cycle for the Hi-Skid truck (FNG73)."""
+    """Minutes per yarding cycle for the Hi-Skid short-yard truck (FNG73).
+
+    Parameters
+    ----------
+    slope_distance_m : float
+        Yard/skid distance (metres) between landing and operational face.
+    constant_minutes : float
+        Fixed setup/hook time per cycle.
+    line_speed_m_per_min : float
+        Average line speed (metres/min) for both directions. Travel time assumes round trip.
+    """
 
     if slope_distance_m <= 0:
         raise ValueError("Slope distance must be > 0 for the Hi-Skid regression")
@@ -1132,11 +1471,30 @@ def estimate_hi_skid_productivity_m3_per_pmh(
     pieces_per_cycle: float | None = None,
     piece_volume_m3: float | None = None,
 ) -> tuple[float, float | None, float, float, float, float]:
-    """
-    Estimate yarding productivity for the Hi-Skid short-yard truck.
+    """Yarding productivity for the Hi-Skid short-yard truck (FNG73).
 
-    Returns (yarding_productivity_m3_per_pmh, overall_productivity_m3_per_pmh, cycle_minutes, pieces_per_cycle, piece_volume_m3, payload_per_cycle_m3)
-    where overall productivity includes travel/unloading when include_travel_minutes is provided.
+    Parameters
+    ----------
+    slope_distance_m : float
+        Yard/skid distance (metres).
+    include_travel_minutes : float, optional
+        End-to-end travel/unload minutes for a full truck haul. When provided, overall productivity
+        (including travel) is returned as the second element of the tuple.
+    load_volume_m3 : float, optional
+        Volume per truck load (m³) when calculating end-to-end productivity. Defaults to the FNG73
+        12 m³ deck.
+    payload_per_cycle_m3 : float, optional
+        Payload per yard cycle (m³). Defaults to pieces × piece volume when omitted.
+    pieces_per_cycle : float, optional
+        Pieces per cycle; defaults to TN-54 observations.
+    piece_volume_m3 : float, optional
+        Volume per piece (m³); defaults to TN-54 observations.
+
+    Returns
+    -------
+    tuple
+        ``(yarding_productivity, overall_productivity, cycle_minutes, pieces_per_cycle, piece_volume_m3, payload_per_cycle_m3)``.
+        ``overall_productivity`` is ``None`` when ``include_travel_minutes`` is omitted.
     """
 
     resolved_pieces = pieces_per_cycle or HI_SKID_DEFAULTS["pieces_per_cycle"]
@@ -1158,7 +1516,9 @@ def estimate_hi_skid_productivity_m3_per_pmh(
     overall_productivity = None
     if include_travel_minutes is not None and include_travel_minutes >= 0:
         resolved_load_volume = (
-            load_volume_m3 if load_volume_m3 is not None else HI_SKID_DEFAULTS["payload_per_load_m3"]
+            load_volume_m3
+            if load_volume_m3 is not None
+            else HI_SKID_DEFAULTS["payload_per_load_m3"]
         )
         if resolved_load_volume <= 0:
             raise ValueError("Load volume must be > 0 for Hi-Skid travel calculations")

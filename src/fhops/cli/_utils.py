@@ -116,6 +116,8 @@ def resolve_operator_presets(presets: Sequence[str] | None):
 
 
 def operator_preset_help() -> str:
+    """Return a short string describing available operator presets for Typer help."""
+
     return ", ".join(
         f"{name} ({OPERATOR_PRESET_DESCRIPTIONS.get(name, '').strip()})".strip()
         for name in sorted(OPERATOR_PRESETS)
@@ -123,6 +125,8 @@ def operator_preset_help() -> str:
 
 
 def format_operator_presets() -> str:
+    """Format the operator preset table used in CLI help/README snippets."""
+
     lines = []
     for name in sorted(OPERATOR_PRESETS):
         weights = ", ".join(f"{op}={val}" for op, val in OPERATOR_PRESETS[name].items())

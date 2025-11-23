@@ -4,10 +4,11 @@ import json
 from pathlib import Path
 
 import pytest
-from typer.testing import CliRunner
 
 from fhops.cli.main import app
 from fhops.cli.profiles import DEFAULT_PROFILES, get_profile, merge_profile_with_cli
+
+from .cli import CliRunner
 
 runner = CliRunner()
 

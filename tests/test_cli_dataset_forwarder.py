@@ -2,32 +2,30 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from typer.testing import CliRunner
-
 from fhops.cli.dataset import dataset_app
 from fhops.productivity import (
-    Han2018SkidderMethod,
-    TrailSpacingPattern,
     DeckingCondition,
+    Han2018SkidderMethod,
     KelloggLoadType,
-    estimate_grapple_skidder_productivity_han2018,
+    ShovelLoggerSessions2006Inputs,
+    TrailSpacingPattern,
     estimate_cable_skidder_productivity_adv1n12_full_tree,
     estimate_cable_skidder_productivity_adv1n12_two_phase,
-    get_skidder_speed_profile,
-    estimate_harvester_productivity_adv5n30,
-    estimate_harvester_productivity_adv6n10,
-    estimate_harvester_productivity_tn292,
-    estimate_harvester_productivity_kellogg1994,
     estimate_forwarder_productivity_kellogg_bettinger,
     estimate_forwarder_productivity_small_forwarder_thinning,
-    ShovelLoggerSessions2006Inputs,
+    estimate_grapple_skidder_productivity_han2018,
+    estimate_harvester_productivity_adv5n30,
+    estimate_harvester_productivity_adv6n10,
+    estimate_harvester_productivity_kellogg1994,
+    estimate_harvester_productivity_tn292,
     estimate_shovel_logger_productivity_sessions2006,
+    get_skidder_speed_profile,
 )
-from fhops.productivity.harvester_ctl import ADV6N10HarvesterInputs, TN292HarvesterInputs
 from fhops.productivity.forwarder_bc import (
     ForwarderBCModel,
     estimate_forwarder_productivity_bc,
 )
+from fhops.productivity.harvester_ctl import ADV6N10HarvesterInputs, TN292HarvesterInputs
 from fhops.scenario.contract import (
     Block,
     CalendarEntry,
@@ -37,6 +35,8 @@ from fhops.scenario.contract import (
     Scenario,
 )
 from fhops.scheduling.systems import default_system_registry
+
+from .cli import CliRunner, cli_text
 
 runner = CliRunner()
 
@@ -345,7 +345,10 @@ def test_cli_forwarder_harvest_system_adv1n12_defaults() -> None:
         extraction_distance_m=350.0,
     ).predicted_m3_per_pmh
     assert f"{expected:.2f}" in result.stdout
-    assert "Applied productivity defaults from harvest system 'thinning_adv1n12_forwarder'." in result.stdout
+    assert (
+        "Applied productivity defaults from harvest system 'thinning_adv1n12_forwarder'."
+        in result.stdout
+    )
 
 
 def test_cli_estimate_productivity_grapple_skidder_branch() -> None:
@@ -501,7 +504,10 @@ def test_cli_grapple_skidder_harvest_system_adv1n12_defaults() -> None:
     assert result.exit_code == 0
     expected = estimate_cable_skidder_productivity_adv1n12_full_tree(225.0)
     assert f"{expected:.2f}" in result.stdout
-    assert "Applied productivity defaults from harvest system 'thinning_adv1n12_fulltree'." in result.stdout
+    assert (
+        "Applied productivity defaults from harvest system 'thinning_adv1n12_fulltree'."
+        in result.stdout
+    )
 
 
 def test_cli_grapple_skidder_adv1n12_fulltree() -> None:
@@ -554,7 +560,7 @@ def test_cli_grapple_skidder_adv1n12_requires_distance() -> None:
         ],
     )
     assert result.exit_code != 0
-    assert "--skidder-extraction-distance" in result.stdout
+    assert "--skidder-extraction-distance" in cli_text(result)
 
 
 def test_cli_grapple_skidder_adv6n7_regression() -> None:

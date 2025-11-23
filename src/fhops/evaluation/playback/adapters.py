@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from collections.abc import Iterator
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import pandas as pd
 
@@ -232,6 +232,7 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
 
 
 def _system_metadata(pb: Problem):
+    """Return allowed roles/prereqs/machine roles for harvest-system sequencing checks."""
     scenario = pb.scenario
     systems = scenario.harvest_systems or {}
     allowed: dict[str, set[str] | None] = {}
@@ -240,8 +241,8 @@ def _system_metadata(pb: Problem):
         system = systems.get(block.harvest_system_id) if block.harvest_system_id else None
         if system:
             job_role = {job.name: job.machine_role for job in system.jobs}
-            allowed_roles = {job.machine_role for job in system.jobs}
-            allowed[block.id] = allowed_roles
+            allowed_roles_set = {job.machine_role for job in system.jobs if job.machine_role}
+            allowed[block.id] = allowed_roles_set
             for job in system.jobs:
                 prereq_roles = {job_role[name] for name in job.prerequisites if name in job_role}
                 prereqs[(block.id, job.machine_role)] = prereq_roles
@@ -249,12 +250,13 @@ def _system_metadata(pb: Problem):
             allowed[block.id] = None
 
     machine_roles = {machine.id: getattr(machine, "role", None) for machine in scenario.machines}
-    available_roles = {role for role in machine_roles.values() if role}
+    available_roles = {role for role in machine_roles.values() if isinstance(role, str)}
     if available_roles:
         for block_id, allowed_roles in list(allowed.items()):
             if allowed_roles is None:
                 continue
-            filtered = {role for role in allowed_roles if role in available_roles}
+            allowed_roles_set = cast(set[str], allowed_roles)
+            filtered = {role for role in allowed_roles_set if role in available_roles}
             allowed[block_id] = filtered or None
         filtered_prereqs: dict[tuple[str, str], set[str]] = {}
         for key, prereq_set in prereqs.items():

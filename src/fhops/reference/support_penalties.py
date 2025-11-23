@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
-from typing import Mapping
 
 _DATA_ROOT = Path(__file__).resolve().parents[3] / "data/reference/fpinnovations"
 _ADV15N3_PATH = _DATA_ROOT / "adv15n3_support.json"
@@ -109,9 +109,7 @@ def load_adv4n7_compaction() -> tuple[str, Mapping[str, CompactionRisk]]:
             label=entry.get("label", risk_id.title()),
             cost_multiplier=float(entry.get("cost_multiplier", 1.0)),
             load_reduction_percent=float(entry.get("load_reduction_percent", 0.0)),
-            max_passes_before_reassessment=int(
-                entry.get("max_passes_before_reassessment", 0)
-            ),
+            max_passes_before_reassessment=int(entry.get("max_passes_before_reassessment", 0)),
             recommendations=tuple(entry.get("recommendations") or ()),
         )
     if not risks:

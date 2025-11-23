@@ -4,10 +4,10 @@ import json
 import sqlite3
 from pathlib import Path
 
-from typer.testing import CliRunner
-
 from fhops.cli import main
 from fhops.cli.main import app
+
+from .cli import CliRunner
 
 runner = CliRunner()
 

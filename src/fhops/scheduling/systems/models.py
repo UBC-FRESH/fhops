@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Mapping
 
 from fhops.costing.machine_rates import normalize_machine_role
 from fhops.productivity.skidder_ft import DeckingCondition, TrailSpacingPattern
@@ -83,6 +82,7 @@ def default_system_registry() -> Mapping[str, HarvestSystem]:
                 SystemJob("loading", "loader", ["processing"]),
             ],
         )
+
     return {
         "ground_fb_skid": HarvestSystem(
             system_id="ground_fb_skid",

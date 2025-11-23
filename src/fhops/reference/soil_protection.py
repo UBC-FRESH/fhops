@@ -3,14 +3,12 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
-from typing import Mapping, Sequence
 
-_DATA_PATH = (
-    Path(__file__).resolve().parents[3] / "data/reference/soil_protection_profiles.json"
-)
+_DATA_PATH = Path(__file__).resolve().parents[3] / "data/reference/soil_protection_profiles.json"
 
 
 @dataclass(frozen=True)

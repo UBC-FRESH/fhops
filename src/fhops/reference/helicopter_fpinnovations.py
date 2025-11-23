@@ -3,17 +3,16 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Mapping
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:  # pragma: no cover - import-time typing helper
     from fhops.productivity.cable_logging import HelicopterLonglineModel
 
-_DATA_PATH = (
-    Path(__file__).resolve().parents[3] / "data/productivity/helicopter_fpinnovations.json"
-)
+_DATA_PATH = Path(__file__).resolve().parents[3] / "data/productivity/helicopter_fpinnovations.json"
 
 
 @dataclass(frozen=True)
@@ -34,7 +33,7 @@ class HelicopterOperation:
 
     id: str
     source_id: str
-    helicopter_model: "HelicopterLonglineModel"
+    helicopter_model: HelicopterLonglineModel
     configuration: str
     lift_class: str | None
     treatment: str | None
@@ -62,7 +61,7 @@ class HelicopterFPInnovationsDataset:
     """Container for the helicopter dataset plus helper lookup tables."""
 
     sources: Mapping[str, HelicopterSource]
-    defaults: Mapping["HelicopterLonglineModel", str]
+    defaults: Mapping[HelicopterLonglineModel, str]
     operations: tuple[HelicopterOperation, ...]
     operation_index: Mapping[str, HelicopterOperation]
 
@@ -105,9 +104,7 @@ def _parse_operation(entry: Mapping[str, Any]) -> HelicopterOperation:
         flight_hours_per_shift=_maybe_float(entry.get("flight_hours_per_shift")),
         average_flight_distance_m=_maybe_float(entry.get("average_flight_distance_m")),
         productivity_m3_per_shift=_maybe_float(entry.get("productivity_m3_per_shift")),
-        productivity_m3_per_flight_hour=_maybe_float(
-            entry.get("productivity_m3_per_flight_hour")
-        ),
+        productivity_m3_per_flight_hour=_maybe_float(entry.get("productivity_m3_per_flight_hour")),
         turns_per_flight_hour=_maybe_float(entry.get("turns_per_flight_hour")),
         turn_time_minutes=_maybe_float(entry.get("turn_time_minutes")),
         payload_kg_per_turn=_maybe_float(entry.get("payload_kg_per_turn")),

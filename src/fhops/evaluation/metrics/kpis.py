@@ -77,6 +77,7 @@ class KPIResult(Mapping[str, float | int | str]):
 
 
 def _system_metadata(pb: Problem):
+    """Return allowed machine roles, sequencing prereqs, and role lookup for each block."""
     sc = pb.scenario
     systems = sc.harvest_systems or {}
     allowed: dict[str, set[str] | None] = {}
@@ -115,7 +116,24 @@ def _system_metadata(pb: Problem):
 
 
 def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
-    """Compute production, mobilisation, utilisation, and sequencing KPIs from assignments."""
+    """Compute production, mobilisation, utilisation, and sequencing KPIs from assignments.
+
+    Parameters
+    ----------
+    pb:
+        Problem produced by ``Problem.from_scenario``; used to pull mobilisation configs,
+        production rates, and harvest-system sequencing metadata.
+    assignments:
+        DataFrame in the format emitted by solvers/playback adapters (must include ``machine_id``,
+        ``block_id``, ``day``; optional ``shift_id`` defaults to ``S1``).
+
+    Returns
+    -------
+    KPIResult
+        ``totals`` contains scalar KPIs (production, mobilisation cost, utilisation summaries, etc.).
+        Calendars are omitted by default; use ``fhops.evaluate`` CLI or ``PlaybackResult`` helpers when
+        you need the full shift/day tables alongside the scalar metrics.
+    """
 
     sc = pb.scenario
     rate = {(r.machine_id, r.block_id): r.rate for r in sc.production_rates}

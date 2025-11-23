@@ -19,6 +19,7 @@ telemetry_app = typer.Typer(
 
 
 def _read_run_lines(path: Path) -> Iterable[tuple[str, dict[str, object] | None]]:
+    """Yield raw JSONL lines plus parsed dicts (when possible) from a telemetry log."""
     with path.open("r", encoding="utf-8") as handle:
         for raw in handle:
             line = raw.rstrip("\n")
@@ -120,6 +121,7 @@ def prune(
 
 
 def _summarise_config(config: dict[str, object] | None) -> str:
+    """Format a concise textual summary of a tuning configuration."""
     if not config:
         return ""
     parts: list[str] = []
@@ -135,6 +137,8 @@ def _summarise_config(config: dict[str, object] | None) -> str:
 
 
 class _AggregateRecord(TypedDict):
+    """Accumulator used while grouping telemetry runs by (algorithm, scenario)."""
+
     algorithm: str
     scenario: str
     objectives: list[float]
@@ -147,6 +151,7 @@ class _AggregateRecord(TypedDict):
 
 
 def _collect_tuner_report(sqlite_path: Path) -> list[dict[str, object]]:
+    """Aggregate tuner performance stats from the SQLite telemetry store."""
     if not sqlite_path.exists():
         raise FileNotFoundError(f"Telemetry SQLite store not found: {sqlite_path}")
 
@@ -265,6 +270,7 @@ def _collect_tuner_report(sqlite_path: Path) -> list[dict[str, object]]:
 
 
 def _render_markdown(rows: list[dict[str, object]]) -> str:
+    """Render aggregated tuner rows into a Markdown table."""
     headers = [
         "Algorithm",
         "Scenario",

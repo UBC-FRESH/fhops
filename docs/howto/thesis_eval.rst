@@ -41,6 +41,10 @@ Pipeline Overview
    - Fix reported errors (missing references, shift IDs, schema version) before running solvers.
    - Use ``docs/howto/data_contract.rst`` if new columns/optional extras are required.
 
+   .. seealso::
+
+      :func:`fhops.cli.main.validate` – command reference for the scenario validator (includes all CLI options and schema checks).
+
 3. **Run Baseline Solvers**
 
    - **MIP (reference solution)**:
@@ -66,6 +70,10 @@ Pipeline Overview
 
    - Document runtime, objective values, and solver settings (Chapter 2 must highlight reproducibility).
 
+   .. seealso::
+
+      :func:`fhops.cli.main.solve_mip_cmd`, :func:`fhops.cli.main.solve_heur_cmd`, :func:`fhops.cli.main.solve_ils_cmd`, and :func:`fhops.cli.main.solve_tabu_cmd` – each CLI entrypoint documents the complete option set, telemetry hooks, and solver-specific notes.
+
 4. **Evaluate KPIs & Mobilisation Spend**
 
    .. code-block:: bash
@@ -84,6 +92,10 @@ Pipeline Overview
 
    - Repeat for heuristic schedules. Compare KPI deltas in a table (include convergence rationale).
 
+   .. seealso::
+
+      :func:`fhops.cli.main.evaluate` for KPI-only summaries and :func:`fhops.cli.main.eval_playback` for shift/day playback exports (deterministic or stochastic).
+
 5. **Benchmark Trade-offs**
 
    - Run the benchmark harness to quantify solver differences and generate plots:
@@ -101,6 +113,10 @@ Pipeline Overview
      * Objective gap vs best heuristic (evidence of improved solution quality).
      * Runtime ratios (feasibility for small-scale operators).
      * Operator telemetry (link back to mobilization-aware operators when discussing Chapter 1 needs).
+
+   .. seealso::
+
+      :func:`fhops.cli.benchmarks.bench_suite` – benchmark CLI helper that powers ``fhops bench suite``.
 
 6. **Synthesize Chapter 2 Materials**
 
@@ -129,4 +145,4 @@ Tips & References
 - Maintain a ``case_study/log.md`` file capturing every command, seed, and data edit (supports Chapter 2 audit trail).
 - Include small screenshots or plots (generated from ``case_study/bench/plots``) to visualise KPI movement.
 - Cite the proposal folders under ``tmp/jaffray-rosalia-masc-*`` when referencing scope and motivation.
-- Keep FHOPS docs updated (see :doc:`../sphinx-documentation` note) whenever new thesis-driven workflows appear.
+- Keep FHOPS docs updated (see ``notes/sphinx-documentation.md``) whenever new thesis-driven workflows appear.

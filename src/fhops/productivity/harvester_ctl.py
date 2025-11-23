@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-
 import math
+from dataclasses import dataclass
 
 from fhops.core.errors import FHOPSValueError
 
@@ -27,7 +26,20 @@ def _validate_positive(name: str, value: float) -> None:
 def estimate_harvester_productivity_adv6n10(
     inputs: ADV6N10HarvesterInputs,
 ) -> float:
-    """Estimate CTL harvester productivity (m³/PMH) using ADV6N10 regression."""
+    """
+    Estimate CTL harvester productivity (m³/PMH₀) using ADV6N10.
+
+    Parameters
+    ----------
+    inputs:
+        :class:`ADV6N10HarvesterInputs` dataclass containing stem volume (m³), product count,
+        stems per cycle, and mean log length (m). All values must be > 0.
+
+    Returns
+    -------
+    float
+        Delay-free productivity in cubic metres per productive machine hour.
+    """
 
     _validate_positive("stem_volume_m3", inputs.stem_volume_m3)
     _validate_positive("products_count", inputs.products_count)
@@ -36,10 +48,10 @@ def estimate_harvester_productivity_adv6n10(
 
     productivity = (
         50.2
-        * (inputs.stem_volume_m3 ** 0.68)
-        * (inputs.products_count ** -0.09)
-        * (inputs.stems_per_cycle ** 0.22)
-        * (inputs.mean_log_length_m ** 0.34)
+        * (inputs.stem_volume_m3**0.68)
+        * (inputs.products_count**-0.09)
+        * (inputs.stems_per_cycle**0.22)
+        * (inputs.mean_log_length_m**0.34)
     )
     if productivity <= 0:
         raise FHOPSValueError("Derived ADV6N10 harvester productivity must be > 0.")
@@ -56,7 +68,21 @@ _ADV5N30_POINTS = (
 def estimate_harvester_productivity_adv5n30(
     *, removal_fraction: float, brushed: bool = False
 ) -> float:
-    """Estimate harvester productivity for ADV5N30 removal levels (m³/PMH)."""
+    """
+    Estimate harvester productivity for ADV5N30 removal levels (m³/PMH₀).
+
+    Parameters
+    ----------
+    removal_fraction:
+        Fraction of stand removed (0.30–0.70 range in the bulletin). Must lie in (0, 1].
+    brushed:
+        ``True`` to apply the 21% brushing uplift noted in ADV5N30.
+
+    Returns
+    -------
+    float
+        Delay-free productivity in cubic metres per productive machine hour.
+    """
 
     if removal_fraction <= 0 or removal_fraction > 1:
         raise FHOPSValueError(
@@ -93,7 +119,20 @@ class TN292HarvesterInputs:
 
 
 def estimate_harvester_productivity_tn292(inputs: TN292HarvesterInputs) -> float:
-    """Estimate harvester productivity (m³/PMH) based on TN292 regressions."""
+    """
+    Estimate harvester productivity (m³/PMH₀) based on TN292 regressions.
+
+    Parameters
+    ----------
+    inputs:
+        :class:`TN292HarvesterInputs` dataclass containing stem volume (m³), stand density (trees/ha),
+        and density basis (``"pre"`` or ``"post"`` harvest). Values must fall within TN292 ranges.
+
+    Returns
+    -------
+    float
+        Productivity limited by the lesser of the stem-volume and stand-density components.
+    """
 
     _validate_positive("stem_volume_m3", inputs.stem_volume_m3)
     _validate_positive("stand_density_per_ha", inputs.stand_density_per_ha)
@@ -119,7 +158,19 @@ def estimate_harvester_productivity_tn292(inputs: TN292HarvesterInputs) -> float
 
 
 def estimate_harvester_productivity_kellogg1994(*, dbh_cm: float) -> float:
-    """Linear dbh → m³/PMH regression from Kellogg & Bettinger (1994)."""
+    """
+    Linear DBH → m³/PMH regression from Kellogg & Bettinger (1994).
+
+    Parameters
+    ----------
+    dbh_cm:
+        Diameter at breast height (cm). Must lie in the 10–50 cm calibration window.
+
+    Returns
+    -------
+    float
+        Predicted productivity (m³/PMH₀).
+    """
 
     _validate_positive("dbh_cm", dbh_cm)
     if dbh_cm < 10.0 or dbh_cm > 50.0:

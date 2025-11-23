@@ -1,4 +1,4 @@
-# http1 & http2 binding 
+# http1 & http2 binding
 bind = ["0.0.0.0:9810"]
 # http3 quick binding
 quick_bind = ["0.0.0.0:9810"]

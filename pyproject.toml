@@ -49,6 +49,11 @@ fhops = "fhops.cli.main:app"
 [tool.hatch.version]
 path = "src/fhops/__init__.py"
 
+[tool.hatch.build]
+exclude = [
+  "notes/**",
+]
+
 [tool.black]
 line-length = 100
 target-version = ["py311"]
@@ -80,8 +85,10 @@ module = [
   "geopandas",
   "shapely.*",
   "typer",
+  "typer.*",
   "rich.*",
   "click",
+  "click.*",
   "optuna.*",
   "numpy.*",
   "pyarrow.*",

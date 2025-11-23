@@ -7,7 +7,11 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class ShovelLoggerSessions2006Inputs:
-    """Parameter bundle mirroring the Sessions & Boston (2006) serpentine model."""
+    """Parameter bundle mirroring the Sessions & Boston (2006) serpentine model.
+
+    All distances are expressed in metres, swing times in seconds, payloads in cubic metres, and
+    travel speeds in km/h. The defaults match the interior BC case study used in the paper.
+    """
 
     passes: int = 4
     swing_length_m: float = 16.15
@@ -27,6 +31,8 @@ class ShovelLoggerSessions2006Inputs:
 
 @dataclass(frozen=True)
 class ShovelLoggerResult:
+    """Output of the Sessions & Boston (2006) shovel logger model."""
+
     predicted_m3_per_pmh: float
     cycle_minutes: float
     payload_m3_per_cycle: float
@@ -50,7 +56,34 @@ def estimate_shovel_logger_productivity_sessions2006(
     bunching_multiplier: float = 1.0,
     custom_multiplier: float = 1.0,
 ) -> ShovelLoggerResult:
-    """Estimate shovel logger productivity (m³/PMH0) using Sessions & Boston model."""
+    """Estimate shovel logger productivity (m³/PMH0) using Sessions & Boston (2006).
+
+    Parameters
+    ----------
+    inputs : ShovelLoggerSessions2006Inputs
+        Dataclass capturing the serpentine layout (passes, swing lengths, payloads, travel speeds,
+        effective minutes/hour, etc.). Defaults mirror the original paper.
+    slope_multiplier : float, default=1.0
+        Optional terrain adjustment (values ``<= 0`` are invalid). Use to encode uphill/downhill
+        penalties from FPInnovations field notes.
+    bunching_multiplier : float, default=1.0
+        Optional multiplier for hand-bunched vs. feller-bunched stems.
+    custom_multiplier : float, default=1.0
+        Extra scaling knob exposed via the CLI for ad‑hoc sensitivity tests.
+
+    Returns
+    -------
+    ShovelLoggerResult
+        Dataclass containing predicted productivity (m³/PMH0), cycle minutes, payload per cycle, pass
+        count, and a parameter echo dictionary.
+
+    Notes
+    -----
+    * Units match the original model: metres for swing/strip lengths, seconds for swing times, m³ for
+      payloads, km/h for travel speeds, and minutes/hour for effective time.
+    * Multipliers are combined multiplicatively (slope × bunching × custom) so passing ``0`` disables
+      the model.
+    """
 
     n = int(inputs.passes)
     if n < 1:
@@ -83,16 +116,9 @@ def estimate_shovel_logger_productivity_sessions2006(
         raise ValueError("payload_per_swing_rehandle_m3 must be > 0")
 
     time_roadside = t0 * (y * density * z) / inputs.payload_per_swing_roadside_m3
-    time_initial = (
-        n * t1 * (y * density * z) / inputs.payload_per_swing_initial_m3
-    )
+    time_initial = n * t1 * (y * density * z) / inputs.payload_per_swing_initial_m3
     time_rehandle = (
-        0.5
-        * (n - 1)
-        * n
-        * t2
-        * (y * density * z)
-        / inputs.payload_per_swing_rehandle_m3
+        0.5 * (n - 1) * n * t2 * (y * density * z) / inputs.payload_per_swing_rehandle_m3
     )
 
     walk_time = (
@@ -110,9 +136,7 @@ def estimate_shovel_logger_productivity_sessions2006(
         raise ValueError("Derived payload per cycle must be > 0")
 
     productivity_per_minute = payload_per_cycle / total_minutes
-    predicted = (
-        productivity_per_minute * inputs.effective_minutes_per_hour
-    )
+    predicted = productivity_per_minute * inputs.effective_minutes_per_hour
     combined_multiplier = slope_multiplier * bunching_multiplier * custom_multiplier
     if combined_multiplier <= 0:
         raise ValueError("Combined multiplier must be > 0")

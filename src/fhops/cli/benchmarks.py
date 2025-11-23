@@ -1,4 +1,10 @@
-"""Benchmark harness for FHOPS solvers."""
+"""Benchmark harness for FHOPS solvers.
+
+This module powers the ``fhops bench`` Typer app.  It orchestrates benchmark runs across the
+built-in sample scenarios (or user-provided bundles), persists solver assignments/KPIs, and emits
+summary CSV/JSON tables that can be plotted or ingested into telemetry dashboards.  The docstrings
+here intentionally mirror the CLI help text so the Sphinx API pages expose comparable guidance.
+"""
 
 from __future__ import annotations
 
@@ -37,6 +43,16 @@ console = Console()
 
 @dataclass(frozen=True)
 class BenchmarkScenario:
+    """Scenario path paired with a friendly label.
+
+    Attributes
+    ----------
+    name:
+        Identifier used in summary tables and telemetry rows.
+    path:
+        Filesystem path to the ``scenario.yaml`` bundle.
+    """
+
     name: str
     path: Path
 
@@ -50,6 +66,8 @@ DEFAULT_SCENARIOS: tuple[BenchmarkScenario, ...] = (
 
 
 def _resolve_scenarios(user_paths: Sequence[Path] | None) -> list[BenchmarkScenario]:
+    """Coerce user-provided scenario paths into BenchmarkScenario objects (or fall back to defaults)."""
+
     if not user_paths:
         return list(DEFAULT_SCENARIOS)
 
@@ -72,6 +90,7 @@ def _record_metrics(
     operator_stats: Mapping[str, Mapping[str, float]] | None = None,
     machine_costs_summary: str | None = None,
 ) -> dict[str, object]:
+    """Serialise solver metrics (objective/KPIs/runtime) for the benchmark summary frame."""
     payload: dict[str, object] = {
         "scenario": scenario.name,
         "scenario_path": str(scenario.path),
@@ -129,7 +148,89 @@ def run_benchmark_suite(
     preset_comparisons: Sequence[str] | None = None,
     profile: Profile | None = None,
 ) -> pd.DataFrame:
-    """Execute the benchmark suite and return the summary DataFrame."""
+    """Execute the benchmark suite and return the summary DataFrame.
+
+    Parameters
+    ----------
+    scenario_paths : Sequence[pathlib.Path] | None
+        Optional list of scenario YAML paths to benchmark. ``None`` defaults to the bundled
+        scenarios (minitoy → med42 → large84 → synthetic-small).
+    out_dir : pathlib.Path
+        Directory that will contain per-scenario outputs, summary CSV/JSON, telemetry logs, and
+        solver-specific assignment CSVs.
+    time_limit : int, default=1800
+        Time limit (seconds) for the MIP solve.
+    sa_iters : int, default=5000
+        Iteration budget for simulated annealing runs.
+    sa_seed : int, default=42
+        RNG seed for simulated annealing.
+    include_ils : bool, default=False
+        When ``True`` run Iterated Local Search in addition to SA/MIP.
+    ils_iters : int | None, default=None
+        Iteration budget per ILS run (falls back to ``sa_iters`` when ``None``).
+    ils_seed : int | None, default=None
+        RNG seed for ILS (falls back to ``sa_seed`` when ``None``).
+    ils_batch_neighbours : int, default=1
+        Number of neighbours sampled per ILS local-search step.
+    ils_workers : int, default=1
+        Thread pool size for evaluating batched ILS neighbours.
+    ils_perturbation_strength : int, default=3
+        Count of perturbation steps applied during diversification.
+    ils_stall_limit : int, default=10
+        Non-improving ILS iterations before forcing perturbation/restarter logic.
+    ils_hybrid_use_mip : bool, default=False
+        When ``True`` fire a short MIP warm start if ILS stalls persist.
+    ils_hybrid_mip_time_limit : int, default=60
+        Time limit (seconds) for the hybrid MIP warm start.
+    include_tabu : bool, default=False
+        When ``True`` include Tabu Search runs.
+    tabu_iters : int | None, default=None
+        Iteration budget for Tabu Search (falls back to ``sa_iters`` when ``None``).
+    tabu_seed : int | None, default=None
+        RNG seed for Tabu Search (falls back to ``sa_seed`` when ``None``).
+    tabu_tenure : int | None, default=None
+        Override for Tabu tenure (``None`` lets the solver auto-tune based on problem size).
+    tabu_stall_limit : int, default=200
+        Non-improving Tabu iterations before diversification.
+    tabu_batch_neighbours : int, default=1
+        Number of neighbours evaluated per Tabu iteration.
+    tabu_workers : int, default=1
+        Thread pool size for evaluating batched Tabu neighbours.
+    driver : str, default="auto"
+        MIP driver (``auto | highs-appsi | highs-exec | gurobi*``) passed to
+        :func:`fhops.optimization.mip.solve_mip`.
+    include_mip : bool, default=True
+        Toggle the exact MIP run (when ``False`` only heuristics are executed).
+    include_sa : bool, default=True
+        Toggle simulated annealing runs.
+    debug : bool, default=False
+        Enable additional solver logging (forwarded to :func:`solve_mip` and heuristics).
+    operators : Sequence[str] | None, default=None
+        Subset of SA operators to enable (defaults to registry defaults when ``None``).
+    operator_weights : Mapping[str, float] | None, default=None
+        Weight overrides for SA operators. Zero/negative values effectively disable the operator.
+    operator_presets : Sequence[str] | None, default=None
+        List of preset names to merge into the SA configuration (mirrors CLI ``--operator-preset``).
+    telemetry_log : pathlib.Path | None, default=None
+        Optional JSONL log file used to append run metadata per solver execution.
+    preset_comparisons : Sequence[str] | None, default=None
+        Additional SA presets to run for side-by-side comparisons (records carry ``preset_label``).
+    profile : fhops.cli.profiles.Profile | None, default=None
+        Optional solver profile object combining preset/operator/advanced overrides.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Summary table concatenating KPI/objective/runtime rows for every scenario/solver run.
+
+    Notes
+    -----
+    The function writes the following assets inside ``out_dir``:
+
+    * ``summary.csv`` and ``summary.json``: aggregated KPI/objective/runtime metrics.
+    * ``<scenario>/<solver>_assignments.csv``: per-solver assignment matrices.
+    * Optional telemetry JSONL entries (when ``telemetry_log`` is provided).
+    """
     scenarios = _resolve_scenarios(scenario_paths)
     if not scenarios:
         raise typer.BadParameter("No scenarios resolved for benchmarking.")
@@ -756,7 +857,14 @@ def bench_suite(
         help="Run additional SA passes for each preset and include them in the summary.",
     ),
 ):
-    """Run the full benchmark suite and emit summary CSV/JSON outputs."""
+    """Run the benchmark harness from the CLI and emit summary CSV/JSON artifacts.
+
+    This command is a thin CLI wrapper over :func:`run_benchmark_suite`.  All options map 1:1 to
+    keyword arguments on that helper so power users can either call the function from notebooks or
+    shell out through Typer.  Results are written under ``--out-dir`` (assignments per solver +
+    ``summary.csv``/``summary.json``), and any telemetry log provided with ``--telemetry-log`` is
+    appended with structured JSONL rows.
+    """
     weight_config: dict[str, float]
     if list_operator_presets:
         console.print("Operator presets:")

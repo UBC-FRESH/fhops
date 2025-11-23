@@ -24,6 +24,7 @@ from fhops.telemetry import RunTelemetryLogger
 
 
 def _assignments_to_schedule(pb: Problem, assignments: pd.DataFrame) -> Schedule:
+    """Convert an assignments DataFrame into the internal Schedule plan structure."""
     shifts = [(shift.day, shift.shift_id) for shift in pb.shifts]
     plan: dict[str, dict[tuple[int, str], str | None]] = {
         machine.id: {(day, shift_id): None for (day, shift_id) in shifts}
@@ -62,6 +63,7 @@ def _perturb_schedule(
     strength: int,
     operator_stats: dict[str, dict[str, float]],
 ) -> Schedule:
+    """Apply a series of random operator moves to escape local optima."""
     current = schedule
     for _ in range(max(1, strength)):
         neighbours = _neighbors(
@@ -87,6 +89,7 @@ def _local_search(
     max_workers: int | None,
     operator_stats: dict[str, dict[str, float]],
 ) -> tuple[Schedule, float, bool, int]:
+    """Run local search until no improving neighbour is found."""
     current = schedule
     current_score = _evaluate(pb, current)
     improved = False
@@ -135,33 +138,38 @@ def solve_ils(
 
     Parameters
     ----------
-    pb:
+    pb : fhops.scenario.contract.Problem
         Parsed problem definition containing the schedule context.
-    iters:
+    iters : int, default=50
         Number of ILS outer iterations (local search + perturbation cycles).
-    seed:
+    seed : int, default=42
         Seed used for deterministic RNG behaviour.
-    operators:
+    operators : list[str] | None
         Optional list of operator names to enable. Defaults to the registry defaults.
-    operator_weights:
+    operator_weights : dict[str, float] | None
         Optional weight overrides for registered operators.
-    batch_size:
+    batch_size : int | None
         Number of neighbours sampled per local search step (``None`` keeps sequential sampling).
-    max_workers:
+    max_workers : int | None
         Worker pool size for evaluating batched neighbours (``None`` keeps sequential evaluation).
-    perturbation_strength:
+    perturbation_strength : int, default=3
         Count of perturbation steps applied when diversification is required.
-    stall_limit:
+    stall_limit : int, default=10
         Non-improving iterations before triggering perturbation or hybrid restart.
-    hybrid_use_mip:
+    hybrid_use_mip : bool, default=False
         When ``True`` attempt a time-boxed MIP warm start once stalls exceed the limit.
-    hybrid_mip_time_limit:
+    hybrid_mip_time_limit : int, default=60
         Time limit (seconds) forwarded to the hybrid MIP warm start.
+    telemetry_log : str | pathlib.Path | None
+        Optional telemetry JSONL log capturing run metadata and (when configured) step logs.
+    telemetry_context : dict[str, Any] | None
+        Extra context appended to telemetry events (scenario info, tuner metadata, etc.).
 
     Returns
     -------
     dict
-        Dictionary containing objective value, assignment DataFrame, and telemetry metadata.
+        Dictionary mirroring :func:`solve_sa` with ``objective``, ``assignments`` DataFrame, and a
+        ``meta`` payload describing operator stats, iterations, and telemetry identifiers.
     """
 
     rng = _random.Random(seed)

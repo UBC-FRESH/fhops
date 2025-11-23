@@ -1,25 +1,24 @@
 from __future__ import annotations
 
-from typer.testing import CliRunner
-
 from fhops.cli.dataset import dataset_app
 from fhops.productivity import (
+    estimate_processor_productivity_adv5n6,
     estimate_processor_productivity_berry2019,
     estimate_processor_productivity_labelle2016,
     estimate_processor_productivity_labelle2017,
     estimate_processor_productivity_labelle2018,
     estimate_processor_productivity_labelle2019_dbh,
     estimate_processor_productivity_labelle2019_volume,
-    estimate_processor_productivity_adv5n6,
-    estimate_processor_productivity_tn103,
-    estimate_processor_productivity_tr106,
-    estimate_processor_productivity_tn166,
-    estimate_processor_productivity_tr87,
-    estimate_processor_productivity_visser2015,
     estimate_processor_productivity_nakagawa2010,
+    estimate_processor_productivity_tn103,
+    estimate_processor_productivity_tn166,
+    estimate_processor_productivity_tr106,
+    estimate_processor_productivity_visser2015,
     get_labelle_huss_automatic_bucking_adjustment,
     get_processor_carrier_profile,
 )
+
+from .cli import CliRunner, cli_text
 
 runner = CliRunner()
 
@@ -421,7 +420,8 @@ def test_cli_processor_nakagawa2010_requires_inputs() -> None:
         ],
     )
     assert result.exit_code != 0
-    assert "processor-piece-size-m3" in result.stdout or "processor-dbh-cm" in result.stdout
+    output = cli_text(result)
+    assert "processor-piece-size-m3" in output or "processor-dbh-cm" in output
 
 
 def test_cli_processor_visser2015_requires_log_sorts() -> None:
@@ -438,7 +438,7 @@ def test_cli_processor_visser2015_requires_log_sorts() -> None:
         ],
     )
     assert result.exit_code != 0
-    assert "processor-log-sorts" in result.stdout
+    assert "processor-log-sorts" in cli_text(result)
 
 
 def test_cli_processor_excavator_carrier() -> None:

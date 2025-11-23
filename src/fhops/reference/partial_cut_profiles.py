@@ -7,9 +7,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 
-DATA_PATH = (
-    Path(__file__).resolve().parents[3] / "data" / "reference" / "partial_cut_profiles.json"
-)
+DATA_PATH = Path(__file__).resolve().parents[3] / "data" / "reference" / "partial_cut_profiles.json"
 
 
 @dataclass(frozen=True)

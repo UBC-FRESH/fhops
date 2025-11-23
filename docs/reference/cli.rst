@@ -65,3 +65,47 @@ See :doc:`../howto/heuristic_presets` for an end-to-end walkthrough. Common CLI 
 
 The evaluation output should include `mobilisation_cost=6.0` and `sequencing_violation_count=0`
 if the regression baseline is satisfied.
+
+Dataset command cheat sheet
+---------------------------
+
+``fhops dataset estimate-productivity`` exposes every productivity preset that now carries detailed
+docstrings (see :mod:`fhops.cli.dataset`). Use the following guide to jump from the CLI role flag to
+the corresponding API surface:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 37 20 25
+
+   * - CLI ``--machine-role``
+     - When to pick it
+     - Key CLI options
+     - Docstring to consult
+   * - ``forwarder``
+     - Cut-to-length or shortwood workflows needing payload/distance regressions.
+     - ``--forwarder-model`` + payload/length inputs listed in the CLI help.
+     - :func:`fhops.productivity.forwarder_bc.estimate_forwarder_productivity_bc`
+   * - ``grapple_skidder``
+     - Full-tree or salvage skidding (ADV6N7, Han 2018, ADV1N12 presets).
+     - ``--grapple-skidder-model`` with extraction distance, payload, utilisation overrides as needed.
+     - :func:`fhops.productivity.grapple_bc.estimate_grapple_skidder_productivity_adv6n7`
+   * - ``grapple_yarder`` / ``skyline_yarder``
+     - Cable-running or standing skyline studies (TR125/127, FNCY12, TN173, Hi-Skid).
+     - ``--model`` plus the lateral/log-count options described in the skyline helper docstrings.
+     - :mod:`fhops.productivity.cable_logging`
+   * - ``loader`` / ``loader_forwarder``
+     - Loader-forwarder or Barko/Hypro presets (ADV5N1, ADV2N26, TN261, Barko 450).
+     - ``--loader-model`` with payload/utilisation/delay switches.
+     - :mod:`fhops.productivity.loader`
+   * - ``helicopter_longline``
+     - Longline or direct-to-water transfer flights with payload/delay modelling.
+     - ``--helicopter-model`` / ``--helicopter-preset`` plus distance/payload overrides.
+     - :func:`fhops.productivity.estimate_helicopter_longline_productivity`
+   * - ``shovel_logger``
+     - Sessions & Boston serpentine shovel logging.
+     - ``--shovel-*`` swing/payload options (defaults seeded by the preset).
+     - :func:`fhops.cli.dataset._evaluate_shovel_logger_result`
+
+Each function linked above now documents parameter units, accepted ranges, default templates, and the
+structure of the result dataclasses. Run ``sphinx-build -b html docs _build/html -W`` after adding
+new roles so these cross-references stay valid.

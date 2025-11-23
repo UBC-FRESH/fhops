@@ -3,11 +3,17 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Sequence
 
-DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "reference" / "fpinnovations" / "fncy12_tmy45_mini_mak.json"
+DATA_PATH = (
+    Path(__file__).resolve().parents[1]
+    / "data"
+    / "reference"
+    / "fpinnovations"
+    / "fncy12_tmy45_mini_mak.json"
+)
 
 
 @dataclass
@@ -72,7 +78,11 @@ def main() -> None:
     without_support = Bucket(months=[])
 
     for entry in months:
-        bucket = with_support if entry["month"] in {"August", "September", "October"} else without_support
+        bucket = (
+            with_support
+            if entry["month"] in {"August", "September", "October"}
+            else without_support
+        )
         bucket.add(
             month=entry["month"],
             shifts=float(entry["productive_shifts"]),

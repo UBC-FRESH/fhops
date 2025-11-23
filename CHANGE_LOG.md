@@ -1,8 +1,35 @@
+# 2025-11-24 — Typer CLI runner + lint config hardening
+- Wrapped Typer’s CLI runner in `tests/cli.py` so pytest now reads a merged stdout/stderr stream with ANSI codes stripped, preventing the Rich error banners (introduced upstream in Typer 0.12/Click 8.3) from breaking assertions across the dataset CLI suites.
+- Added the `cli_text()` helper so tests that need the combined output can opt-in explicitly, while existing `result.stdout` checks keep working because the patched runner now backs stdout/output bytes with the merged text.
+- Taught mypy to ignore missing stubs for `typer.*` / `click.*` modules (via `pyproject.toml`) and limited the whitespace hooks to real source directories so CI no longer rewrites archived reference notes.
+- Let Ruff modernise the two maintenance scripts (`scripts/dedup_conversation_log.py`, `scripts/fncy12_support_split.py`) and trimmed stray whitespace in the machine costing plan, Hypercorn config, and the Sphinx planning log to keep the lint suite green.
+- Updated `scripts/check_changelog.sh` so the pre-commit hook now inspects every parent of a merge commit; CI’s auto-generated merge commits (which run out of shallow clones) now detect the changelog edits and skip enforcement when no parent history is available.
+
+# 2025-11-24 — CLI dataset helper docstrings
+- Completed the docstring sweep across `src/fhops/cli/dataset.py`, covering the remaining dataset prompts, evaluators, telemetry renderers, and TR-28/TN-98 tables so the API docs now explain every CLI helper and validation path (forwarder/shovel logger/CTL evaluators, dataset resolvers, ADV2N21 summaries, road-cost renderers, soil-profile tables, etc.).
+- Extended the docstring coverage to the ancillary CLI helpers (`src/fhops/cli/main.py`, `src/fhops/cli/profiles.py`, `src/fhops/cli/synthetic.py`, `src/fhops/cli/telemetry.py`) so KPI printers, bundle/tuning collectors, solver profile utilities, synthetic dataset generators, and telemetry reporters now provide detailed Parameters/Returns notes in the API reference.
+- Documented the stochastic playback stack (`src/fhops/evaluation/playback/{stochastic,events,adapters,exporters}.py`) plus KPI metadata helpers (`src/fhops/evaluation/metrics/kpis.py`) so Chapter 2 thesis workflows have complete event/config/metadata descriptions in the API docs.
+- Added docstrings to the heuristic internals (registry helpers, ILS perturb/local-search routines, SA neighbour/evaluation helpers, and Tabu config/move diff utilities) so tuning documentation and API references share a common, descriptive contract.
+- Closed the remaining productivity gaps by documenting the helper in `src/fhops/productivity/stoilov2021.py`, bringing every exported estimator in the productivity package up to the same NumPy-style standard.
+- Updated `notes/sphinx-documentation.md` to record the clean AST scan and close out the CLI dataset checklist item within the Phase 4 docstring plan.
+- Verified that the new docstrings render without warnings by running `sphinx-build -b html docs _build/html -W`.
+
 # Development Change Log
+
+# 2025-11-23 — API docstring audit + policy updates
+- Tightened the docstring policy in `CODING_AGENT.md` / `CONTRIBUTING.md` and re-applied it across the CLI command surface so every Typer entry point now documents parameters, telemetry side-effects, and emitted artifacts (`src/fhops/cli/main.py`, `src/fhops/cli/benchmarks.py`).
+- Enriched the scenario contract models with NumPy-style `Attributes` sections covering units/validation semantics for every field, ensuring the generated API docs explain each Pydantic dataclass (`src/fhops/scenario/contract/models.py`).
+- Expanded the heuristic solver docstrings (SA/ILS/Tabu) with detailed parameter/return notes, telemetry context, and assignment schema descriptions so the optimisation API pages mirror the new CLI-level guidance (`src/fhops/optimization/heuristics/{sa,ils,tabu}.py`).
+- Documented the productivity/reference helpers most commonly surfaced via `fhops dataset estimate-productivity` (forwarder BC wrapper, ADV6N7/Han skidder models, Sessions & Boston shovel logger, Berry/Visser processor regressions). Each function now lists required units, optional multipliers, and citations; docs build stays warning-free via `sphinx-build -b html docs _build/html -W`.
+- Extended the same treatment to the cable logging + helicopter helpers (Ünver-Okan skidding, TR125/TR127 skyline, McNeel/Aubuchon/Kellogg standing skyline, FNCY12, LeDoux residue, Micro Master, Hi-Skid, helicopter longline). Every exported API entry under `src/fhops/productivity/cable_logging.py` now explains required inputs, units, and the underlying citation.
+- Updated `notes/sphinx-documentation.md` to log the docstring audit and keep the Phase 4 documentation backlog honest.
+- (No tests run — documentation-only changes.)
 
 # 2025-11-22 — Prep v1.0.0-alpha1 release
 - Bumped package version to `1.0.0a1` (`src/fhops/__init__.py`, `tests/test_import.py`) so downstream tooling picks up the Phase 4-complete alpha release.
 - Added release notes at `docs/releases/v1.0.0-alpha1.md` summarising the documentation sweep, telemetry/runbook additions, and outstanding outreach work.
+- Excluded the `notes/` directory from published artifacts via `[tool.hatch.build]` in `pyproject.toml` so private planning docs and large references never ship to PyPI.
+- Added narrative docstrings across CLI, scenario contract, loaders, and MIP builder modules to feed richer API docs (`feature/api-docstring-enhancements`).
 
 # 2025-11-22 — Shift-based scheduling refactor planning
 - Reopened the Phase 2 shift-based scheduling milestone in `FHOPS_ROADMAP.md` and added a detailed next-steps bullet so the roadmap reflects the pending shift refactor instead of marking it complete prematurely.
@@ -657,3 +684,11 @@
 - Added CTL harvester regressions for ADV6N10 (sorting penalties), ADV5N30 (removal-level/brushing modifiers), and TN292 (tree-size/density curves) under `fhops.productivity.harvester_ctl`, exposed via `fhops dataset estimate-productivity --machine-role ctl_harvester`, and updated docs/tests.
 - Documented the available forwarder/harvester models, inputs, and applicability ranges in `docs/reference/harvest_systems.rst`, linking back to `notes/dataset_inspection_plan.md`.
 - Captured TN285/ADV5N9/ADV2N21 scenario guidance (trail spacing, removal levels, trail reuse) in the planning notes and aligned the roadmap with the new deliverables.
+- Expanded the costing API docstrings (`fhops.costing.inflation`, `machine_rates`, `machines`) with NumPy-style sections covering CPI helpers, machine-rate dataclasses, rental-rate composition, and Lahrsen-driven cost estimators so the Sphinx API reference surfaces units, defaults, and return schemas.
+- Codified the docstring expectations in `CODING_AGENT.md` and `CONTRIBUTING.md`, then ran `sphinx-build -b html docs _build/html -W` to confirm the new content renders cleanly before cleaning up `_build/`.
+- Documented the Grapple BC presets (`fhops.productivity.grapple_bc`) with Attributes/Parameters/Returns sections for TN157/TN147/TR122/ADV5N28/ADV1N35/ADV1N40 dataclasses, list/get helpers, and `estimate_grapple_yarder_productivity_*` functions so API consumers see study ranges, units, and source citations directly in the Sphinx output; updated `notes/sphinx-documentation.md` to mark the task complete.
+- Annotated the processor/loader module (`fhops.productivity.processor_loader`) by documenting every dataset loader, result dataclass (Labelle/Berry/ADV/TN/TR suites, loader + clambunk outputs), and estimator helper with NumPy-style Parameters/Returns sections, covering Berry/Labelle/Visser/Spinelli/Bertone/Borz/Nakagawa plus loader productivity utilities so the API reference exposes units, ranges, and citations; planning notes updated to reflect the completed sweep (Sphinx rebuild queued with the next batch).
+- Cleaned up the cable logging module (`fhops.productivity.cable_logging`) by documenting internal validators, running-skyline selectors, helicopter specs/payload helpers, TR127 predictor/loader utilities, and TN173 dataclasses/list/get helpers so the remaining API blanks are filled with units, ranges, and applicability notes; recorded the progress in `notes/sphinx-documentation.md` under the productivity-core checklist.
+- Finished the CTL/forwarder docstring pass: Eriksson & Lindroos forwarder helpers, Ghaffariyan slope-adjusted regressions, Sessions shovel logging parameters/results, and Han et al. skidder internals (speed profiles, cycle-time helpers) now expose NumPy-style Parameters/Returns/Attributes sections, eliminating the final blank autodoc stubs for productivity-core helpers; planning note updated accordingly.
+- Documented the BC forwarder wrapper (`fhops.productivity.forwarder_bc`) with NumPy-style docstrings for `ForwarderBCResult`, the high-level dispatcher, and the ADV6N10 helper so CLI users see the required inputs (distance, payloads, slope multipliers) directly in the API reference; Sphinx rebuilt to capture the changes.
+- Added docstrings for all CLI dataset enums (ADV/TN/TR/Spinelli/Loader/Skidder families), `_apply_*` default-merging helpers, and key telemetry renderers (`_render_*`, `_parameter_supplied`, `_append_*`) so the API and Typer help now explain presets and the CLI output helpers; remaining CLI module work is tracked in `notes/sphinx-documentation.md`.

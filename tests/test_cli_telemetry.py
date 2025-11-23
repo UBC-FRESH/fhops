@@ -3,10 +3,10 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from typer.testing import CliRunner
-
 from fhops.cli.main import app
 from fhops.telemetry import append_jsonl, load_jsonl
+
+from .cli import CliRunner
 
 runner = CliRunner()
 

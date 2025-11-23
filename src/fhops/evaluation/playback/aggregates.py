@@ -62,6 +62,16 @@ def _summary_dataframe(
     *,
     columns: Sequence[str],
 ) -> pd.DataFrame:
+    """Convert a collection of ``ShiftSummary``/``DaySummary`` into a DataFrame.
+
+    Parameters
+    ----------
+    summaries:
+        Iterable of dataclass instances produced by playback.
+    columns:
+        Column ordering expected by the consumer (``SHIFT_SUMMARY_COLUMNS`` or
+        ``DAY_SUMMARY_COLUMNS``).
+    """
     if not summaries:
         return pd.DataFrame(columns=list(columns))
     rows = [asdict(summary) for summary in summaries]
@@ -70,14 +80,18 @@ def _summary_dataframe(
 
 
 def shift_dataframe(result: PlaybackResult) -> pd.DataFrame:
-    """Convert shift summaries into a DataFrame."""
+    """Return the shift-level playback summaries as a DataFrame.
 
+    Parameters
+    ----------
+    result:
+        :class:`PlaybackResult` returned by :func:`fhops.evaluation.playback.core.run_playback`.
+    """
     return _summary_dataframe(result.shift_summaries, columns=SHIFT_SUMMARY_COLUMNS)
 
 
 def day_dataframe(result: PlaybackResult) -> pd.DataFrame:
-    """Convert day summaries into a DataFrame."""
-
+    """Return the day-level playback summaries as a DataFrame."""
     return _summary_dataframe(result.day_summaries, columns=DAY_SUMMARY_COLUMNS)
 
 
@@ -86,7 +100,15 @@ def shift_dataframe_from_ensemble(
     *,
     include_base: bool = False,
 ) -> pd.DataFrame:
-    """Concatenate shift summaries from all samples (optional base)."""
+    """Concatenate shift summaries from a stochastic ensemble.
+
+    Parameters
+    ----------
+    ensemble:
+        Result of :func:`fhops.evaluation.playback.stochastic.run_stochastic_playback`.
+    include_base:
+        When ``True``, include the base deterministic result in addition to samples.
+    """
 
     frames: list[pd.DataFrame] = []
     if include_base:
@@ -104,7 +126,7 @@ def day_dataframe_from_ensemble(
     *,
     include_base: bool = False,
 ) -> pd.DataFrame:
-    """Concatenate day summaries from all samples (optional base)."""
+    """Concatenate day-level summaries from an ensemble."""
 
     frames: list[pd.DataFrame] = []
     if include_base:
@@ -118,7 +140,20 @@ def day_dataframe_from_ensemble(
 
 
 def machine_utilisation_summary(shift_df: pd.DataFrame) -> pd.DataFrame:
-    """Aggregate shift summaries into per-machine utilisation metrics."""
+    """Aggregate shift summaries into per-machine utilisation metrics.
+
+    Parameters
+    ----------
+    shift_df:
+        DataFrame produced by :func:`shift_dataframe` or ``*_from_ensemble``; must include
+        ``total_hours`` and ``available_hours`` columns.
+
+    Returns
+    -------
+    pandas.DataFrame
+        One row per ``(sample_id, machine_id)`` with total/available hours, utilisation ratio,
+        production, mobilisation cost, and constraint violation counts.
+    """
 
     if shift_df.empty:
         return pd.DataFrame(

@@ -3,14 +3,14 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Mapping, Sequence
+from typing import Any
 
 _DATA_PATH = (
-    Path(__file__).resolve().parents[3]
-    / "data/reference/fpinnovations/fncy12_tmy45_mini_mak.json"
+    Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/fncy12_tmy45_mini_mak.json"
 )
 
 
@@ -59,7 +59,7 @@ def _max_tension(entries: Sequence[Mapping[str, Any]]) -> float | None:
             "between_support_and_yarder",
         ):
             value = entry.get(key)
-            if isinstance(value, (int, float)):
+            if isinstance(value, int | float):
                 max_value = value if max_value is None else max(max_value, float(value))
     return max_value
 
@@ -69,7 +69,7 @@ def _support_ratio(payload: Mapping[str, Any], key: str) -> float | None:
     if not isinstance(section, Mapping):
         return None
     value = section.get("assumed_ratio_support_smh_per_yarder_smh")
-    return float(value) if isinstance(value, (int, float)) else None
+    return float(value) if isinstance(value, int | float) else None
 
 
 @lru_cache(maxsize=1)
@@ -85,13 +85,13 @@ def load_fncy12_dataset() -> Fncy12Dataset:
     )
     totals = productivity.get("totals", {})
     shift_hours = productivity.get("shift_hours")
-    shift_hours_value = float(shift_hours) if isinstance(shift_hours, (int, float)) else 10.0
+    shift_hours_value = float(shift_hours) if isinstance(shift_hours, int | float) else 10.0
     intermediate_supports = payload.get("intermediate_supports", {}) or {}
     operation = payload.get("operation", {}) or {}
     lateral_limit = intermediate_supports.get("lateral_limit_m") or operation.get(
         "lateral_yarding_limit_m"
     )
-    lateral_limit_value = float(lateral_limit) if isinstance(lateral_limit, (int, float)) else None
+    lateral_limit_value = float(lateral_limit) if isinstance(lateral_limit, int | float) else None
     tension_observations = payload.get("tension_observations", {})
     skyline_entries = tension_observations.get("skyline_kN", []) if tension_observations else []
     guyline_entries = tension_observations.get("guyline_kN", []) if tension_observations else []

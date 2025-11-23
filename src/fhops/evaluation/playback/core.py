@@ -167,7 +167,21 @@ def summarise_shifts(
     include_idle: bool = False,
     sample_id: int = 0,
 ) -> Iterator[ShiftSummary]:
-    """Aggregate playback records to machine/shift summaries."""
+    """Aggregate playback records to machine/shift summaries.
+
+    Parameters
+    ----------
+    records:
+        Iterator of :class:`PlaybackRecord` instances produced by ``assignments_to_records``.
+    availability_map:
+        Mapping ``(day, shift_id, machine_id) -> available_hours`` computed via
+        ``_compute_shift_availability``; used to seed summaries and compute utilisation ratios.
+    include_idle:
+        When ``True``, emit summaries for every availability entry even if no work occurred
+        (resulting in ``total_hours = 0`` but preserving the availability baseline).
+    sample_id:
+        Identifier propagated through stochastic playback so downstream aggregations can group rows.
+    """
 
     aggregates: dict[tuple[int, str, str], ShiftSummary] = {}
     seen: set[tuple[int, str, str]] = set()
@@ -234,7 +248,20 @@ def summarise_days(
     completed_by_day: dict[int, set[str]],
     sample_id: int = 0,
 ) -> Iterator[DaySummary]:
-    """Aggregate playback results to day-level summaries."""
+    """Aggregate playback results to day-level summaries.
+
+    Parameters
+    ----------
+    shift_summaries:
+        Iterable produced by :func:`summarise_shifts`.
+    availability_map:
+        Same map passed to ``summarise_shifts``; used to recover day-level availability totals.
+    completed_by_day:
+        Mapping ``day -> set(block_id)`` indicating which blocks completed on each day (consumed for
+        KPI reporting).
+    sample_id:
+        Propagated through stochastic playback.
+    """
 
     aggregates: dict[int, DaySummary] = {}
 

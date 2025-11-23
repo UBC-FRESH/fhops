@@ -384,7 +384,7 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
 
 - various types of skidders
 - hoe chuckers
-- any "modifier" models to capture terrain or bunch size or piece size or species or prescription (e.g., commerical thinning intensity versus clearcuts) or whatever 
+- any "modifier" models to capture terrain or bunch size or piece size or species or prescription (e.g., commerical thinning intensity versus clearcuts) or whatever
 
 ### CTL System Harvester productivity
 

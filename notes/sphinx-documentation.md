@@ -1,7 +1,7 @@
 # Sphinx Documentation Audit
 
-Date: 2025-11-22  
-Status: Draft – captures current coverage and gaps ahead of Phase 4 release prep.
+Date: 2025-11-24
+Status: Complete – Phase 4 documentation audit closed with all tracked actions delivered.
 
 ## Overview
 
@@ -75,3 +75,59 @@ FHOPS’ Sphinx tree lives under `docs/` and is published to Read the Docs via `
 [x] **Telemetry Ops Runbook** – `docs/howto/telemetry_ops.rst` now covers weekly notebook runs, telemetry maintenance, and Pages publication checklists (2025-11-22).
 [x] **API Narrative Guides** – `docs/api/fhops.{scenario,optimization,evaluation}.rst` now include narrative intros + snippets covering Scenario→Problem usage, MIP builder entry points, and KPI evaluation (2025-11-22).
 [x] **Release & Contribution Playbook** – `docs/howto/release_playbook.rst` now covers release prep, versioning, command suite, and PR expectations (2025-11-22).
+[x] **API Docstring Enhancements (feature/api-docstring-enhancements)** — add descriptive module/class/function docstrings across core packages to feed richer Sphinx API output.
+    - [x] CLI modules: document command groups (`fhops.cli.main`, `benchmarks`, `dataset`, etc.) with purpose and usage hints *(2025-11-23: refreshed Typer command docstrings to include per-parameter details, telemetry semantics, and output notes).*
+    - [x] Scenario contract & IO: describe key dataclasses (`Scenario`, `Problem`, `MobilisationConfig`, loaders) with field semantics, examples, and validation notes *(2025-11-23: Pydantic models now expose `Attributes` sections covering units/validation rules).*
+    - [x] Optimisation layer: expand docstrings for `fhops.optimization.mip.builder`, drivers, and heuristics (SA/ILS/Tabu), outlining inputs, constraints, and returns *(2025-11-23: heuristic drivers now describe operator knobs, telemetry payloads, and return schemas).*
+    - [x] Evaluation: provide detail for playback, KPI calculators, exporters (parameters, expected DataFrame schemas, sample usage).
+    - [x] Productivity/reference modules: annotate public helpers with units, source references, and when to use each regression *(2025-11-23: forwarder, skidder, shovel logger, processor, cable logging, and helicopter helpers now mirror the CLI docs; remaining work limited to loaders/validators).*
+    - [x] Regenerate Sphinx API docs after docstrings are fleshed out; ensure `docs/api/*.rst` pulls the new content *(2025-11-24: `sphinx-build -b html docs _build/html -W` ran clean after the costing pass).*
+
+### Outstanding docstring gaps
+Remaining focus areas: optional dataset cookbook & release docs (see tasks below). Costing helpers now match the NumPy-style contract and cross-link to the reference guide.
+
+#### Docstring standards (2025-11-24 update)
+- `CODING_AGENT.md` now spells out the NumPy-style expectations (summary + Parameters/Returns/Raises/Notes, attribute listings for dataclasses, usage of snippets, cross-link obligations, and requirement to run `sphinx-build -b html docs _build/html -W` after sweep).
+- `CONTRIBUTING.md` mirrors the same guidance so external collaborators see the exact docstring contract (per-argument coverage, return schemas, citations, and build verification).
+
+### Next docstring tasks
+- [x] **Grapple BC module** – document TN157/TN147/TR122/ADV5N28 dataclasses, list/get helpers, and `estimate_grapple_yarder_productivity_*` functions (include units, source citations, payload defaults). Tack on docstrings for helper validators to avoid blank sections in autodoc. *(2025-11-24: Added Attributes sections for all dataclasses, detailed Parameters/Returns for list/get helpers and estimator functions, plus source notes for SR-54, TR-75, TN157/147, TR122, ADV5N28, ADV1N35, and ADV1N40. Sphinx build pending after full productivity sweep.)*
+    - [x] Describe TN157/TN147/TR122/ADV5N28 metadata dataclasses (`Attributes` + sources/units).
+    - [x] Add loader/helper docstrings (`list_*_ids`, `get_*`, `_validate_inputs`) describing return schemas.
+    - [x] Expand `estimate_*` productivity helpers with parameter ranges, payload defaults, and KPI outputs, plus cite FPInnovations bulletins.
+- [x] **Processor/loader module** – add top-level docstrings to dataset loaders, result dataclasses (Labelle, ADV, TN, TR sets), and CLI-facing estimators (processor/loader productivity + costing). Cover manual felling cost helpers, loader forwarder utilities, and Labelle polynomial entries. *(2025-11-24: Dataset loaders now explain their datasets, every exported dataclass exposes an `Attributes` section, and all estimator helpers—Berry/Labelle/Visser/Bertone/Borz/Nakagawa plus loader/clambunk utilities—include NumPy-style Parameters/Returns with validation notes and citations. Sphinx rebuild pending.)*
+    - [x] Add module summary referencing Berry/Labelle datasets and CLI consumers. *(addressed via per-loader docstrings; module header already captures scope.)*
+    - [x] Document every result dataclass (`Attributes`, units, dataset citation) plus dataset loader helpers. *(2025-11-24: Coverage now includes AutomaticBuckingAdjustment, Berry stats, carrier profiles, Labelle/TN/ADV/TR result payloads, loader results, and newly documented dataset loaders.)*
+    - [x] Expand estimator docstrings with input validation rules, default multipliers, and return payload semantics. *(2025-11-24: All processor/loader estimators now describe inputs/returns; future changes should maintain the pattern.)*
+- [ ] **Productivity core clean-up** – tackle cable logging validators, grapple presets, and CTL/forwarder helpers in one pass to eliminate the final blank autodoc sections; finish by re-running the Sphinx build noted above. *(2025-11-24 status: productivity helpers complete; remaining work moves to CLI/evaluation/heuristics per scan below.)*
+    - [x] Document cable logging validators/selector helpers (TR127/TN173) and expose applicability notes *(2025-11-24: Added docstrings for `_validate_*`, `_running_skyline_variant`, `_helicopter_spec`, TR127 predictors/regressions/helpers, TN173 dataclasses/loaders, and helicopter payload utilities.)*
+    - [x] Fill gaps in CTL/forwarder modules (`eriksson2014`, `ghaffariyan2019`, `sessions2006`, `skidder_ft`) plus skidder internals *(2025-11-24: Added Attributes/Parameters coverage for the Eriksson/Lindroos, Ghaffariyan, and Sessions shovel logging helpers, documented Han et al. skidder internals—including `_load_skidder_speed_profiles`, `_han2018_cycle_time_seconds`, `_segment_time`—and refreshed the grapple-skidder/forwarder docstrings.)*
+    - [x] Re-run `sphinx-build -b html docs _build/html -W` and snapshot coverage deltas in this note *(2025-11-24: Build completed after CTL/skidder sweep; `_build/` removed.)*
+    - [x] Document the BC forwarder helper (`forwarder_bc.py`) detaching the remaining autodoc gaps *(2025-11-24: Added Attributes/Parameters docstrings for `ForwarderBCResult`, `estimate_forwarder_productivity_bc`, and the ADV6N10 helper; reran Sphinx.)*
+
+### New docstring gaps (AST scan 2025-11-24)
+- **CLI dataset surface (`src/fhops/cli/dataset.py`)** – numerous enums/helpers lack docstrings (`ForwarderBCModel` derivatives, `_apply_*_defaults`, `_render_*` telemetry helpers, etc.), causing blank Sphinx entries and harder-to-read CLI help. Prioritise short descriptions + parameter hints for anything surfaced via `fhops dataset`.
+- **CLI utilities (`cli/_utils.py`, `cli/benchmarks.py`, `cli/main.py`, `cli/profiles.py`, `cli/synthetic.py`, `cli/telemetry.py`)** – internal helpers and profiles enumerations remain undocumented (e.g., `_record_metrics`, `_collect_tuning_scenarios`, `_describe_metadata`), leaving the CLI reference sparse.
+- **Evaluation playback (`src/fhops/evaluation/**/*`)** – dataclasses/functions inside `playback/stochastic.py`, `playback/adapters.py`, and `metrics/kpis.py` still lack docstrings (e.g., `PlaybackSample.apply`, `_system_metadata`), so Chapter 2 API docs omit parameter descriptions.
+- **Optimization heuristics (`src/fhops/optimization/heuristics/*`)** – registry/ILS helpers (e.g., `OperatorRegistry.__init__`, `_local_search`, `_assignments_to_schedule`) remain undocumented despite being referenced in tuning docs.
+- **Remaining productivity stragglers** – modules like `kellogg_bettinger1994.py`, `laitila2020.py`, `stoilov2021.py` still need NumPy-style docstrings even though their wrappers are covered.
+
+### Next docstring tasks
+- [x] **CLI dataset module sweep** – add concise docstrings to exported enums, `_apply_*` default helpers, telemetry renderers, and validation utilities in `src/fhops/cli/dataset.py`.
+    - [x] Enumerations covering ADV/TN/TR/Loader/Spinelli presets now describe their usage so CLI docs no longer show blank entries (2025-11-24).
+    - [x] Documented the `_apply_*` default helpers and core telemetry renderers (`_render_*`, `_parameter_supplied`, `_maybe_render_costs`) so CLI output helpers now have minimal descriptions (2025-11-24).
+    - [x] Covered the remaining validation/telemetry helpers (`_render_tn98_table`, `_render_tr28_road_cost`, `_render_soil_profiles_table`, `_resolve_dataset`, `_select_*`, `_render_adv2n21_stand`, etc.), including per-parameter docstrings for the shovel logger/CTL evaluators and dataset prompts. AST scan (2025-11-24) now reports zero top-level definitions without docstrings in `cli/dataset.py`.
+- [x] **CLI ancillary modules** – document `cli/_utils.py`, `cli/benchmarks.py`, `cli/main.py`, `cli/profiles.py`, `cli/synthetic.py`, and `cli/telemetry.py` helper functions/enums so the CLI API pages carry usable descriptions.
+    - [x] `_utils.py`: added docstrings for operator preset helpers.
+    - [x] `cli/benchmarks.py`: documented `_resolve_scenarios` and `_record_metrics`.
+    - [x] 2025-11-24: Completed the remaining CLI helpers (main/profiles/synthetic/telemetry) so KPI printers, bundle/tuning collectors, solver profile utilities, synthetic dataset generators, and telemetry reporters now expose NumPy-style Parameters/Returns docstrings. Confirmed via AST scan that no top-level helpers remain undocumented in these modules.
+- [x] **Evaluation playback/docs** – cover `evaluation/playback/stochastic.py`, `adapters.py`, and metrics dataclasses, focusing on parameter/return schemas referenced in thesis workflows.
+    - [x] 2025-11-24: Added docstrings for stochastic sampling events (`LandingShockState`, `_default_events`, `_build_production_map`), playback adapters/exporters, and KPI metadata helpers so Chapter 2 workflows now get full Parameters/Returns context across stochastic playback → KPI computation. AST scan confirms these modules are docstring-complete.
+- [x] **Heuristics internals** – add docstrings to `optimization/heuristics/ils.py` and `heuristics/registry.py` classes/functions that appear in the tuning notes.
+    - [x] 2025-11-24: Documented the registry helpers (`_clone_plan`, `_window_allows`, etc.), ILS helpers (`_assignments_to_schedule`, `_perturb_schedule`, `_local_search`), SA internals (role/blackout metadata, greedy init, evaluation, neighbour generation), and Tabu utilities (`TabuConfig`, `_diff_moves`). This closes the heuristics backlog and ensures tuning docs align with autodoc output.
+- [x] **Productivity stragglers** – finish docstrings for `kellogg_bettinger1994.py`, `laitila2020.py`, `stoilov2021.py` (and any other remaining `productivity/*.py` files flagged by the scan).
+    - [x] 2025-11-24: Verified `kellogg_bettinger1994.py` / `laitila2020.py` already had complete coverage and added the missing helper docstring in `stoilov2021.py` so all productivity modules now expose Parameter/Returns notes for Sphinx.
+- [x] **Costing & inflation helpers** – document `fhops.costing.machine_rates` derivation utilities, inflation helpers (`fhops.costing.inflation`), and CLI cost-report renderers so the costing reference sections expose parameter descriptions, CPI references, and return schemas. *(2025-11-24: Added detailed module docstrings for machine-rate/inflation helpers, documented telemetry cost snapshots, referenced the costing utilities from the harvest-systems guide, and reran `sphinx-build -b html docs _build/html -W`.)*
+    - [x] Add module/class/function docstrings for machine-rate composition helpers and CPI utilities (units, default CPI tables, expected inputs).
+    - [x] Cross-link the new docstrings from `docs/reference/harvest_systems.rst` / cost matrices.
+- [x] **Optional dataset cookbook** – enhance `docs/reference/harvest_systems.rst` / how-to guides with short recipes for lesser-used datasets (e.g., `examples/med42/large84` costing add-ons, partial-cut datasets, road construction options). Tie into docstrings where possible so the roadmap reflects the remaining scope. *(2025-11-24: Added cookbook subsections covering med42/large84 cost overlays, partial-cut presets, and TR-28 road add-ons; references now point at the documented CLI helpers and `sphinx-build -b html docs _build/html -W` passes.)*
