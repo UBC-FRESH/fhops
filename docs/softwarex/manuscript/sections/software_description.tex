@@ -15,9 +15,10 @@ Each layer is consumable via API or CLI, mirroring the dual entry points emphasi
 \subsection{Data ingest and scenario contract}
 \textbf{Components:}
 \begin{itemize}
-  \item \texttt{fhops.scenario.contract} – Pydantic models for blocks, corridors, harvest systems, road jobs.
-  \item CSV/Parquet loaders (\texttt{fhops.cli.dataset}) – generate scenarios from published datasets (TN-147, TR-122, etc.).
+  \item \texttt{fhops.scenario.contract} – Pydantic models for blocks, corridors, harvest systems, road jobs (aligned with BC operational constraints described by \citet{lahrsen2022productivity} and \citet{becker2018lidar}).
+  \item CSV/Parquet loaders (\texttt{fhops.cli.dataset}) – generate scenarios from published datasets (TN-147 skyline corridors, TR-122 Roberts Creek blocks, community-forest bundles).
   \item Synthetic dataset generator (\texttt{fhops.scenario.synthetic}) – reproducible randomised scenarios with stratified harvest-system mixes.
+  \item Future hooks for Rosalia Jaffray’s Chapter 2 datasets (community forests, skyline corridors, salvage plans); these remain private until the thesis publishes but are wired into the loader interfaces.
 \end{itemize}
 
 \textbf{Dependencies:} Pydantic, pandas, numpy.
@@ -27,8 +28,8 @@ Each layer is consumable via API or CLI, mirroring the dual entry points emphasi
 \subsection{Optimisation services}
 \textbf{Components:}
 \begin{itemize}
-  \item Heuristics under \texttt{fhops.optimization.heuristics} (SA, ILS, Tabu) with Typer CLI entry points (\texttt{fhops.cli.benchmarks}).
-  \item MIP builder (\texttt{fhops.optimization.mip}) for shift-based scheduling when exact solutions are required.
+  \item Heuristics under \texttt{fhops.optimization.heuristics} (SA, ILS, Tabu) with Typer CLI entry points (\texttt{fhops.cli.benchmarks}). Productivity lookup tables embed empirical studies \cite{lahrsen2022productivity,becker2018lidar} so planners can attach LiDAR-derived corridor metrics or dealer-grade payload charts without reinventing coefficients.
+  \item MIP builder (\texttt{fhops.optimization.mip}) for shift-based scheduling when exact solutions are required (informed by formulations surveyed in \cite{paradis2018bilevel,nelson2003forestmodels}).
   \item Evaluation playback + KPI generation (\texttt{fhops.evaluation.playback}, \texttt{fhops.evaluation.metrics}).
 \end{itemize}
 
