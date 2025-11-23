@@ -120,7 +120,8 @@ FHOPS’ Sphinx tree lives under `docs/` and is published to Read the Docs via `
 ### Next docstring tasks
 - [ ] **CLI dataset module sweep** – add concise docstrings to exported enums, `_apply_*` default helpers, telemetry renderers, and validation utilities in `src/fhops/cli/dataset.py`.
     - [x] Enumerations covering ADV/TN/TR/Loader/Spinelli presets now describe their usage so CLI docs no longer show blank entries (2025-11-24).
-    - [ ] Document the `_apply_*` default helpers, telemetry renderers, and validation utilities that back the CLI output.
+    - [x] Documented the `_apply_*` default helpers and core telemetry renderers (`_render_*`, `_parameter_supplied`, `_maybe_render_costs`) so CLI output helpers now have minimal descriptions (2025-11-24).
+    - [ ] Cover remaining validation/telemetry helpers (`_render_helicopter_operation_detail`, `_render_tn98_table`, `_render_tr28_road_cost`, `_render_soil_profiles_table`, `_append_*` JSONL writers, etc.).
 - [ ] **CLI ancillary modules** – document `cli/_utils.py`, `cli/benchmarks.py`, `cli/main.py`, `cli/profiles.py`, `cli/synthetic.py`, and `cli/telemetry.py` helper functions/enums so the CLI API pages carry usable descriptions.
 - [ ] **Evaluation playback/docs** – cover `evaluation/playback/stochastic.py`, `adapters.py`, and metrics dataclasses, focusing on parameter/return schemas referenced in thesis workflows.
 - [ ] **Heuristics internals** – add docstrings to `optimization/heuristics/ils.py` and `heuristics/registry.py` classes/functions that appear in the tuning notes.

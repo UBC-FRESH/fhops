@@ -482,6 +482,16 @@ def _apply_loader_system_defaults(
     LoaderHotColdMode,
     bool,
 ]:
+    """
+    Merge loader inputs with harvest-system defaults, tracking whether overrides occurred.
+
+    Parameters mirror the CLI options (payload, distances, multipliers) alongside the
+    `loader_model_supplied` boolean flags so notebook/CLI callers can see when the harvest
+    system dictated a value. When no `system` is supplied the raw arguments are returned.
+
+    Returns a tuple containing the resolved inputs followed by a boolean indicating whether
+    any system overrides were applied.
+    """
     if system is None:
         return (
             loader_model,
@@ -1356,6 +1366,7 @@ _FORWARDER_BRUSHWOOD_MODELS = {ForwarderBCModel.LAITILA_VAATAINEN_BRUSHWOOD}
 def _render_grapple_skidder_result(
     result: SkidderProductivityResult | Mapping[str, object]
 ) -> None:
+    """Render grapple-skidder productivity outputs (Han et al. / ADV6N7) for CLI display."""
     if isinstance(result, SkidderProductivityResult):
         params = result.parameters
         rows = [
@@ -1452,6 +1463,7 @@ def _render_grapple_skidder_result(
 
 
 def _render_shovel_logger_result(result: ShovelLoggerResult) -> None:
+    """Render shovel logger (Sessions & Boston) productivity/cost summary for the CLI."""
     params = result.parameters
     rows = [
         ("Passes", str(result.passes)),
@@ -1469,6 +1481,7 @@ def _render_shovel_logger_result(result: ShovelLoggerResult) -> None:
 
 
 def _render_helicopter_result(result: HelicopterProductivityResult) -> None:
+    """Render helicopter longline productivity payloads/turns for CLI output."""
     rows = [
         ("Model", result.model.value.replace("_", "-")),
         ("Flight Distance (m)", f"{result.flight_distance_m:.1f}"),
@@ -1514,6 +1527,7 @@ def _render_processor_result(
         | Nakagawa2010ProcessorProductivityResult
     ),
 ) -> None:
+    """Render roadside processor productivity results (Berry/Labelle/ADV/TN, etc.) for CLI output."""
     if isinstance(result, ProcessorProductivityResult):
         rows = [
             ("Model", "berry2019"),
@@ -2175,6 +2189,7 @@ def _render_machine_cost_summary(
     cost_multiplier: float | None = None,
     cost_multiplier_label: str | None = None,
 ) -> None:
+    """Render the default machine-rate breakdown (owning/operating/repair) for the given role."""
     try:
         rate = _resolve_machine_rate(role)
     except typer.BadParameter:
@@ -2208,6 +2223,7 @@ def _render_machine_cost_summary(
 
 
 def _maybe_render_costs(show_costs: bool, role: str) -> None:
+    """Render the machine cost summary when `show_costs` is truthy."""
     if show_costs:
         _render_machine_cost_summary(role)
 
@@ -2218,6 +2234,7 @@ def _render_loader_result(
     | LoaderAdv5N1ProductivityResult
     | LoaderBarko450ProductivityResult,
 ) -> None:
+    """Render loader productivity/cost outputs for TN/ADV presets."""
     if isinstance(result, LoaderAdv5N1ProductivityResult):
         rows = [
             ("Model", "adv5n1"),
@@ -2383,6 +2400,7 @@ def _render_grapple_yarder_result(
     in_cycle_delay_minutes: float | None = None,
     note: str | None = None,
 ) -> None:
+    """Render grapple-yarder productivity metrics (payload, cycle, cost) for CLI output."""
     rows = [("Model", model.value)]
     if turn_volume_m3 is not None:
         rows.append(("Turn Volume (m³)", f"{turn_volume_m3:.2f}"))
@@ -2474,6 +2492,7 @@ def _apply_skidder_system_defaults(
     float | None,
     bool,
 ]:
+    """Resolve grapple-skidder inputs after applying harvest-system overrides (if any)."""
     speed_profile = SkidderSpeedProfileOption.LEGACY
     if system is None:
         return (
@@ -2621,6 +2640,7 @@ def _apply_forwarder_system_defaults(
     extraction_distance_m: float | None,
     user_supplied: Mapping[str, bool],
 ) -> tuple[ForwarderBCModel, float | None, bool]:
+    """Merge forwarder CLI inputs with harvest-system overrides, returning the result + flag."""
     if system is None:
         return model, extraction_distance_m, False
     overrides = system_productivity_overrides(system, ProductivityMachineRole.FORWARDER.value)
@@ -2648,6 +2668,7 @@ def _apply_processor_system_defaults(
     processor_adv7n3_machine: ADV7N3Machine,
     user_supplied: Mapping[str, bool],
 ) -> tuple[RoadsideProcessorModel, ADV7N3Machine, bool]:
+    """Return processor model/ADV7N3 machine after applying harvest-system overrides."""
     if system is None:
         return processor_model, processor_adv7n3_machine, False
     overrides = system_productivity_overrides(
@@ -2710,6 +2731,7 @@ def _apply_shovel_system_defaults(
     float | None,
     bool,
 ]:
+    """Resolve shovel logger parameters (Serpentine model) with harvest-system defaults."""
     if system is None:
         return (
             passes,
@@ -2910,6 +2932,12 @@ def _apply_skyline_system_defaults(
     str | None,
     str | None,
 ]:
+    """
+    Merge skyline/grapple-yarder CLI inputs with harvest-system overrides.
+
+    Returns the resolved values plus flags identifying whether overrides were used and any
+    TR-119/partial-cut profile overrides forced by the system.
+    """
     if system is None:
         return (
             model,
@@ -3092,6 +3120,12 @@ def _apply_helicopter_system_defaults(
     float,
     bool,
 ]:
+    """
+    Apply harvest-system overrides (if any) to helicopter productivity inputs.
+
+    Returns the resolved model, payload/distance/load-factor inputs, updated delay minutes,
+    and a boolean indicating whether system defaults were consumed.
+    """
     if system is None:
         return (
             model,
@@ -3196,6 +3230,12 @@ def _apply_helicopter_preset_defaults(
     str | None,
     bool,
 ]:
+    """
+    Apply preset defaults tied to a helicopter operation, respecting CLI overrides.
+
+    Returns the resolved payload/distance inputs, delay minutes, selected operation metadata,
+    preset ID, and a boolean noting whether defaults were used.
+    """
     resolved_id = preset_id
     operation: HelicopterOperation | None = None
     if preset_id:
@@ -3297,6 +3337,7 @@ def _apply_grapple_yarder_system_defaults(
     str,
     bool,
 ]:
+    """Merge grapple-yarder CLI inputs with harvest-system defaults and return overrides flag."""
     if system is None:
         return (
             model,
@@ -3532,6 +3573,7 @@ def _forwarder_parameters(result: ForwarderBCResult) -> list[tuple[str, str]]:
 
 
 def _render_forwarder_result(result: ForwarderBCResult) -> None:
+    """Render BC forwarder productivity estimates and associated parameter echo."""
     rows = _forwarder_parameters(result)
     _render_kv_table("Forwarder Productivity Estimate", rows)
     console.print("[dim]Values expressed in PMH0 (productive machine hours without delays).[/dim]")
@@ -3810,6 +3852,7 @@ def _evaluate_shovel_logger_result(
 def _render_ctl_harvester_result(
     model: CTLHarvesterModel, inputs: object, productivity: float
 ) -> None:
+    """Render CTL harvester productivity results (ADV/TN/Kellogg presets)."""
     rows: list[tuple[str, str]] = [("Model", model.value)]
     if model is CTLHarvesterModel.ADV6N10 and isinstance(inputs, ADV6N10HarvesterInputs):
         rows.extend(
@@ -4097,6 +4140,7 @@ def _select_block(scenario: Scenario, block_id: str | None, interactive: bool):
 
 
 def _render_kv_table(title: str, rows: Iterable[tuple[str, str]]) -> None:
+    """Utility to print a formatted key/value table with a title."""
     table = Table(title=title, show_header=False, expand=True)
     table.add_column("Field", style="bold cyan", no_wrap=True)
     table.add_column("Value", style="white")
