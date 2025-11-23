@@ -52,6 +52,13 @@ Release Preparation
 5. **Tag & Publish**
 
    - Once tests/docs pass, create a tag (e.g., ``git tag v0.1.0``) and push both branch + tag.
+   - Build artifacts with ``hatch build`` and upload using Twine (keeps PyPI auth simple):
+
+     .. code-block:: bash
+
+        hatch clean && hatch build
+        python -m twine upload -u __token__ -p 'pypi-…' dist/*
+
    - Draft GitHub release notes using the ``CHANGE_LOG.md`` entry; include highlights (features,
      docs, telemetry updates) and verification commands.
 

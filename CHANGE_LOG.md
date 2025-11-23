@@ -3,6 +3,7 @@
 - Captured the docstring mega-sweep (CLI datasets, heuristics, playback, productivity, costing) plus the new Typer CLI harness so the API docs and CLI help stay in sync for Rosalia’s thesis workflows.
 - Documented the changelog hook fixes (merge-parent detection + shallow-clone escape hatch) so the release process no longer stalls on GitHub’s synthetic merges.
 - Verification suite: `hatch run dev:suite`, `sphinx-build -b html docs docs/_build/html -W`, `pre-commit run --all-files`, and `HATCH_INDEX=pypi hatch publish`.
+- Published the PyPI artifacts via `python -m twine upload` (tokens behaved reliably there) and updated the release playbook / CODING_AGENT notes to prefer the Twine path after `hatch build`.
 
 # 2025-11-24 — Typer CLI runner + lint config hardening
 - Wrapped Typer’s CLI runner in `tests/cli.py` so pytest now reads a merged stdout/stderr stream with ANSI codes stripped, preventing the Rich error banners (introduced upstream in Typer 0.12/Click 8.3) from breaking assertions across the dataset CLI suites.
