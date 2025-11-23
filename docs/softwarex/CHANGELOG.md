@@ -9,3 +9,5 @@ Only changes that affect the SoftwareX planning/manuscript workspace are recorde
 - Expanded `notes/softwarex_exemplar_analysis.md` with takeaways + citation-ready cues for all nine exemplar papers to guide drafting and readiness criteria.
 - Downloaded the CTAN `elsarticle` template, extracted it into `docs/softwarex/manuscript/elsarticle/`, and updated the manuscript README to record the template snapshot plus next actions.
 - Added an initial `fhops-softx.tex` wrapper and a `Makefile` that runs `latexmk -pdf` into `build/`, establishing the traditional TeX Live toolchain for future drafts.
+- Added placeholder section includes under `docs/softwarex/manuscript/sections/` (`introduction.tex`, `software_description.tex`, etc.) plus highlights/abstract files, and rewired `fhops-softx.tex` to `\input` them so future drafting is modular.
+- Documented the latexmk workflow and TeX Live requirements in `docs/softwarex/manuscript/README.md`.

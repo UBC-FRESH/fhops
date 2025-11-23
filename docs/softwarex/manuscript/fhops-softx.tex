@@ -1,12 +1,13 @@
 % FHOPS SoftwareX manuscript (wrapper)
 \documentclass[preprint,review,12pt]{elsarticle}
 
-% Include standard packages here if needed (graphicx, amsmath, etc.)
 \usepackage{hyperref}
 \usepackage{lineno}
 \modulolinenumbers[5]
 
 \journal{SoftwareX}
+
+% Shared metadata macros will live here later
 
 \begin{document}
 
@@ -19,9 +20,9 @@
 
 \address[fhops]{FHOPS Team, Placeholder Organization}
 
-\begin{abstract}
-Placeholder abstract text.
-\end{abstract}
+\input{sections/highlights}
+
+\input{sections/abstract}
 
 \begin{keyword}
 FHOPS \sep SoftwareX \sep Optimization \sep Placeholder
@@ -29,23 +30,14 @@ FHOPS \sep SoftwareX \sep Optimization \sep Placeholder
 
 \end{frontmatter}
 
-\section{Introduction}
-Placeholder introduction text. (Section content will eventually use \input{sections/...}).
+\linenumbers
 
-\section{Software description}
-Placeholder description.
-
-\section{Illustrative example}
-Placeholder example.
-
-\section{Impact}
-Placeholder impact.
-
-\section{Conclusions}
-Placeholder conclusions.
-
-\section*{Acknowledgments}
-Placeholder acknowledgments.
+\input{sections/introduction}
+\input{sections/software_description}
+\input{sections/illustrative_example}
+\input{sections/impact}
+\input{sections/conclusions}
+\input{sections/acknowledgments}
 
 \bibliographystyle{elsarticle-num}
 \bibliography{references}
