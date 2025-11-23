@@ -4,7 +4,7 @@
     "scenario_path":"\/home\/gep\/projects\/fhops\/docs\/softwarex\/assets\/data\/datasets\/synthetic_small\/scenario.yaml",
     "solver":"sa",
     "objective":39.791,
-    "runtime_s":0.3135461989,
+    "runtime_s":0.3130408791,
     "assignments":5,
     "kpi_total_production":39.791,
     "kpi_completed_blocks":4.0,
@@ -45,7 +45,7 @@
     "solver_category":"heuristic",
     "best_heuristic_solver":"sa",
     "best_heuristic_objective":39.791,
-    "best_heuristic_runtime_s":0.3135461989,
+    "best_heuristic_runtime_s":0.3130408791,
     "objective_gap_vs_best_heuristic":0.0,
     "runtime_ratio_vs_best_heuristic":1.0
   },
@@ -54,7 +54,7 @@
     "scenario_path":"\/home\/gep\/projects\/fhops\/docs\/softwarex\/assets\/data\/datasets\/synthetic_small\/scenario.yaml",
     "solver":"sa",
     "objective":39.791,
-    "runtime_s":0.3072131439,
+    "runtime_s":0.311087477,
     "assignments":5,
     "kpi_total_production":39.791,
     "kpi_completed_blocks":4.0,
@@ -95,16 +95,16 @@
     "solver_category":"heuristic",
     "best_heuristic_solver":"sa",
     "best_heuristic_objective":39.791,
-    "best_heuristic_runtime_s":0.3135461989,
+    "best_heuristic_runtime_s":0.3130408791,
     "objective_gap_vs_best_heuristic":0.0,
-    "runtime_ratio_vs_best_heuristic":0.9798018442
+    "runtime_ratio_vs_best_heuristic":0.9937599138
   },
   {
     "scenario":"user-1",
     "scenario_path":"\/home\/gep\/projects\/fhops\/docs\/softwarex\/assets\/data\/datasets\/synthetic_small\/scenario.yaml",
     "solver":"sa",
     "objective":39.791,
-    "runtime_s":0.642640505,
+    "runtime_s":0.6438440732,
     "assignments":5,
     "kpi_total_production":39.791,
     "kpi_completed_blocks":4.0,
@@ -145,16 +145,16 @@
     "solver_category":"heuristic",
     "best_heuristic_solver":"sa",
     "best_heuristic_objective":39.791,
-    "best_heuristic_runtime_s":0.3135461989,
+    "best_heuristic_runtime_s":0.3130408791,
     "objective_gap_vs_best_heuristic":0.0,
-    "runtime_ratio_vs_best_heuristic":2.0495879308
+    "runtime_ratio_vs_best_heuristic":2.0567411996
   },
   {
     "scenario":"user-1",
     "scenario_path":"\/home\/gep\/projects\/fhops\/docs\/softwarex\/assets\/data\/datasets\/synthetic_small\/scenario.yaml",
     "solver":"ils",
     "objective":39.791,
-    "runtime_s":0.1304467428,
+    "runtime_s":0.1306962851,
     "assignments":5,
     "kpi_total_production":39.791,
     "kpi_completed_blocks":4.0,
@@ -195,16 +195,16 @@
     "solver_category":"heuristic",
     "best_heuristic_solver":"sa",
     "best_heuristic_objective":39.791,
-    "best_heuristic_runtime_s":0.3135461989,
+    "best_heuristic_runtime_s":0.3130408791,
     "objective_gap_vs_best_heuristic":0.0,
-    "runtime_ratio_vs_best_heuristic":0.4160367538
+    "runtime_ratio_vs_best_heuristic":0.4175054882
   },
   {
     "scenario":"user-1",
     "scenario_path":"\/home\/gep\/projects\/fhops\/docs\/softwarex\/assets\/data\/datasets\/synthetic_small\/scenario.yaml",
     "solver":"tabu",
     "objective":39.791,
-    "runtime_s":0.0469964421,
+    "runtime_s":0.0462829261,
     "assignments":5,
     "kpi_total_production":39.791,
     "kpi_completed_blocks":4.0,
@@ -245,8 +245,8 @@
     "solver_category":"heuristic",
     "best_heuristic_solver":"sa",
     "best_heuristic_objective":39.791,
-    "best_heuristic_runtime_s":0.3135461989,
+    "best_heuristic_runtime_s":0.3130408791,
     "objective_gap_vs_best_heuristic":0.0,
-    "runtime_ratio_vs_best_heuristic":0.1498868183
+    "runtime_ratio_vs_best_heuristic":0.1478494638
   }
 ]

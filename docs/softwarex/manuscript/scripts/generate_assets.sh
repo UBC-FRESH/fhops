@@ -9,6 +9,7 @@ data_dir="${assets_root}/data"
 fig_dir="${assets_root}/figures"
 bench_dir="${data_dir}/benchmarks"
 dataset_dir="${data_dir}/datasets"
+tuning_dir="${data_dir}/tuning"
 
 mkdir -p "${bench_dir}" "${fig_dir}" "${data_dir}"
 
@@ -104,3 +105,6 @@ with (bench_dir / "index.json").open("w", encoding="utf-8") as fh:
     json.dump({"benchmarks": index}, fh, indent=2)
 print(f"[assets] Wrote benchmark index with {len(index)} entries to {bench_dir/'index.json'}")
 PY
+
+echo "[assets] Running tuning harness into ${tuning_dir}" >&2
+python "${script_dir}/run_tuner.py" --repo-root "${repo_root}" --out-dir "${tuning_dir}"
