@@ -1,3 +1,13 @@
+"""Entry point for the `fhops` Typer CLI.
+
+This module wires together the top-level command group and the sub-apps (`bench`,
+`dataset`, `telemetry`, `geo`, `synth`) that ship with FHOPS.  It also exposes
+utility routines shared by the solver/evaluation commands (KPI summaries,
+scenario bundle helpers, telemetry logging, etc.).  Most users interact with
+FHOPS strictly through this CLI, so the docstrings here double as the canonical
+reference when the API docs are generated.
+"""
+
 from __future__ import annotations
 
 import json

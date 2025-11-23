@@ -34,6 +34,7 @@ __all__ = ["load_scenario", "read_csv"]
 
 
 def read_csv(path: Path) -> pd.DataFrame:
+    """Load a CSV file using pandas with UTF-8 defaults."""
     return pd.read_csv(path)
 
 
@@ -118,6 +119,30 @@ def _normalise_road_rows(rows: list[dict[str, object]]) -> None:
 
 
 def load_scenario(yaml_path: str | Path) -> Scenario:
+    """Load a Scenario from the YAML metadata + CSV bundle.
+
+    Parameters
+    ----------
+    yaml_path:
+        Path to the ``scenario.yaml`` file that references the component CSVs.
+
+    Returns
+    -------
+    Scenario
+        Fully validated Pydantic model ready to be converted into a
+        :class:`fhops.scenario.contract.Problem`.
+
+    Notes
+    -----
+    The loader performs several quality-of-life tasks that callers usually forget:
+
+    * normalises optional string columns (e.g., ``harvest_system_id`` blanks → ``None``),
+    * back-fills mobilisation distance matrices from ``*_block_distances.csv`` whenever present,
+    * accepts inline YAML overrides for optional tables (road construction, shift calendar, crew map),
+    * re-roots GeoJSON paths relative to the scenario directory, and
+    * ensures every optional extra (timeline, mobilisation config, objective weights) is copied into
+      the resulting Scenario instance.
+    """
     base_path = Path(yaml_path).resolve()
     with base_path.open("r", encoding="utf-8") as handle:
         meta = yaml.safe_load(handle)

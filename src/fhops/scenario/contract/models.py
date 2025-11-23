@@ -246,6 +246,21 @@ class ProductionRate(BaseModel):
 
 
 class Scenario(BaseModel):
+    """Top-level container for the FHOPS data contract.
+
+    The model mirrors the CSV/YAML inputs documented in ``docs/howto/data_contract.rst`` and is the
+    object returned by :func:`fhops.scenario.io.load_scenario`.  Only validated, horizon-bounded data
+    reaches this point, which means downstream solvers (MIP + heuristics) can rely on:
+
+    - every block referencing a known landing/harvest system,
+    - machine calendars/shift calendars never exceeding ``num_days``,
+    - mobilisation tables referencing existing blocks/machines, and
+    - optional extras (crew assignments, road construction, GeoJSON metadata) being present only when
+      fully specified.
+
+    The helper methods (``machine_ids()``, ``window_for()``, etc.) are convenience routines for the
+    solver/evaluation layers and are intentionally lightweight so they can be used in tight loops.
+    """
     name: str
     num_days: int
     schema_version: str = "1.0.0"
@@ -283,15 +298,19 @@ class Scenario(BaseModel):
         return value
 
     def machine_ids(self) -> list[str]:
+        """Return the list of machine identifiers defined in the scenario."""
         return [machine.id for machine in self.machines]
 
     def block_ids(self) -> list[str]:
+        """Return the list of block identifiers defined in the scenario."""
         return [block.id for block in self.blocks]
 
     def landing_ids(self) -> list[str]:
+        """Return the list of landing identifiers defined in the scenario."""
         return [landing.id for landing in self.landings]
 
     def window_for(self, block_id: str) -> tuple[int, int]:
+        """Return the inclusive (earliest, latest) day window for the target block."""
         block = next(b for b in self.blocks if b.id == block_id)
         earliest = block.earliest_start if block.earliest_start is not None else 1
         latest = block.latest_finish if block.latest_finish is not None else self.num_days
@@ -433,6 +452,15 @@ class ShiftInstance(BaseModel):
 
 
 class Problem(BaseModel):
+    """Runtime representation of a scenario used by solvers.
+
+    ``Problem`` wraps a validated :class:`Scenario` and expands it into concrete ``days`` and
+    ``shifts`` so optimisation code can iterate over deterministic index sets without repeatedly
+    querying the Scenario.  ``Problem.from_scenario`` is the canonical constructor; it injects the
+    default harvest-system registry (when necessary) and synthesises single-shift calendars for
+    legacy day-indexed inputs.  Any code that builds Pyomo models or heuristic plans should accept a
+    ``Problem`` rather than the raw ``Scenario``.
+    """
     scenario: Scenario
     days: list[Day]
     shifts: list[ShiftInstance]
