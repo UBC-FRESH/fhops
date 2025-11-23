@@ -79,21 +79,21 @@ _BRUSHWOOD_MODELS = {ForwarderBCModel.LAITILA_VAATAINEN_BRUSHWOOD}
 
 @dataclass(frozen=True)
 class ForwarderBCResult:
-    """Result payload describing a forwarder productivity estimate.
+    """
+    Result payload describing a forwarder productivity estimate.
 
     Attributes
     ----------
     model:
         Enum identifying which regression ran.
     predicted_m3_per_pmh:
-        Productive machine hours (PMH) basis of the estimate (m³/PMH0 unless overridden).
+        Productive machine-hour productivity (m³/PMH₀ unless noted in ``pmh_basis``).
     pmh_basis:
-        Text describing the PMH convention (e.g., ``"PMH0"`` vs ``"PMH15"``).
+        PMH convention (``"PMH0"``, ``"PMH15"``, etc.).
     reference:
         Short citation (FPInnovations bulletin, journal, etc.).
     parameters:
-        Echo of the inputs and defaults used when evaluating the regression. Useful for telemetry or
-        CLI output.
+        Echo of the inputs/defaults used to evaluate the regression (for telemetry/CLI output).
     """
 
     model: ForwarderBCModel
@@ -127,47 +127,39 @@ def estimate_forwarder_productivity_bc(
     harwarder_payload_m3: float | None = None,
     grapple_load_unloading_m3: float | None = None,
 ) -> ForwarderBCResult:
-    """Evaluate one of the BC forwarder regressions with validation.
+    """
+    Evaluate one of the BC forwarder regressions with validation.
 
     Parameters
     ----------
-    model : ForwarderBCModel
-        Regression identifier (see :class:`ForwarderBCModel`). Determines which subset of parameters
-        must be supplied.
-    extraction_distance_m : float, optional
-        One-way extraction distance in metres. Required for the Ghaffariyan (2019) thinning models and
-        used when Laitila/Väätäinen defaults are absent.
-    slope_class : ALPACASlopeClass, default=ALPACASlopeClass.FLAT
-        Slope bin used when ``slope_factor`` is not provided (maps to ALPACA slope multipliers).
-    slope_factor : float, optional
-        Manual override for slope multipliers (values ``<= 0`` invalid). When provided this supersedes
-        ``slope_class``.
-    volume_per_load_m3, distance_out_m, travel_in_unit_m, distance_in_m, payload_m3, mean_log_length_m,
-    travel_speed_m_per_min, trail_length_m, products_per_trail :
-        Inputs consumed by the Kellogg & Bettinger (1994) regressions. Units mirror the paper
-        (metres, m³, pieces).
-    mean_extraction_distance_m, mean_stem_size_m3, load_capacity_m3 :
-        Required by Eriksson & Lindroos (2014). Distances in metres, volumes in cubic metres.
+    model:
+        Regression identifier (see :class:`ForwarderBCModel`). Determines which parameter subset is
+        required.
+    extraction_distance_m:
+        One-way extraction distance (m). Required by the Ghaffariyan models and used as a default for
+        the ADV1N12 preset.
+    slope_class:
+        ALPACA slope class used when ``slope_factor`` is omitted.
+    slope_factor:
+        Optional slope multiplier (>0) overriding ``slope_class``.
+    volume_per_load_m3, distance_out_m, travel_in_unit_m, distance_in_m, payload_m3,
+    mean_log_length_m, travel_speed_m_per_min, trail_length_m, products_per_trail:
+        Inputs consumed by the Kellogg & Bettinger (1994) regressions (metres, m³, pieces).
+    mean_extraction_distance_m, mean_stem_size_m3, load_capacity_m3:
+        Required by the Eriksson & Lindroos (2014) models (metres, m³).
     harvested_trees_per_ha, average_tree_volume_dm3, forwarding_distance_m, harwarder_payload_m3,
-    grapple_load_unloading_m3 :
-        Required by the Laitila & Väätäinen (2020) brushwood harwarder regression. Tree statistics are
-        expressed in trees per hectare and decimetres cubed.
-    mean_stem_size_m3, load_capacity_m3, mean_extraction_distance_m :
-        Used by the Advantage Vol. 6 No.10 / Vol. 1 No. 12 presets (payloads default to the published
-        values if omitted).
+    grapple_load_unloading_m3:
+        Required by the Laitila & Väätäinen (2020) brushwood regression (trees/ha, dm³).
 
     Returns
     -------
     ForwarderBCResult
-        Dataclass containing the predicted productivity (m³/PMH), PMH basis, short reference citation,
-        and the parameter bundle that fed the regression.
+        Result dataclass with predicted productivity (m³/PMH), PMH basis, reference, and parameters.
 
-    Notes
-    -----
-    * The helper enforces the mandatory inputs for each regression and raises ``ValueError`` when
-      required fields are missing.
-    * Units follow the original studies: metres, cubic metres, trees/ha, or decimetres³ as noted above.
-    * Optional utilisation or payload overrides fall back to the study's defaults when unspecified.
+    Raises
+    ------
+    ValueError
+        When required parameters for the selected model are missing or invalid.
     """
 
     if model in _ERIKSSON_MODELS:
@@ -388,6 +380,27 @@ def _estimate_forwarder_productivity_adv6n10(
     trail_length_m: float,
     products_per_trail: float,
 ) -> float:
+    """
+    FPInnovations ADV6N10 regression for shortwood forwarders.
+
+    Parameters
+    ----------
+    payload_m3:
+        Payload per cycle (m³). Must be > 0.
+    mean_log_length_m:
+        Mean log length (m). Must be > 0.
+    travel_speed_m_per_min:
+        Travel speed (m/min). Must be > 0.
+    trail_length_m:
+        Trail length (m). Must be > 0.
+    products_per_trail:
+        Products per trail (logs). Must be > 0.
+
+    Returns
+    -------
+    float
+        Predicted productivity (m³/PMH₀).
+    """
     if payload_m3 <= 0:
         raise ValueError("payload_m3 must be > 0")
     if mean_log_length_m <= 0:
