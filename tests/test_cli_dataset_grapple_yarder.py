@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from fhops.cli.dataset import dataset_app
 from fhops.productivity import estimate_grapple_yarder_productivity_sr54
-from tests.cli import CliRunner
+
+from .cli import CliRunner
 
 runner = CliRunner()
 

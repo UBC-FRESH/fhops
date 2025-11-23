@@ -10,7 +10,8 @@ from fhops.productivity import (
     estimate_loader_hot_cold_productivity,
     estimate_loader_productivity_barko450,
 )
-from tests.cli import CliRunner
+
+from .cli import CliRunner
 
 runner = CliRunner()
 

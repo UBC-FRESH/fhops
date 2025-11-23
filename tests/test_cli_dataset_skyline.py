@@ -21,7 +21,8 @@ from fhops.productivity import (
     get_tn173_system,
 )
 from fhops.reference import load_fncy12_dataset
-from tests.cli import CliRunner
+
+from .cli import CliRunner
 
 runner = CliRunner()
 _FNCY12_DATASET = load_fncy12_dataset()

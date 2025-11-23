@@ -17,7 +17,8 @@ from fhops.productivity import (
     get_labelle_huss_automatic_bucking_adjustment,
     get_processor_carrier_profile,
 )
-from tests.cli import CliRunner
+
+from .cli import CliRunner
 
 runner = CliRunner()
 

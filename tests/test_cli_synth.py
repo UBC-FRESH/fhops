@@ -8,7 +8,8 @@ from fhops.cli.main import app
 from fhops.cli.synthetic import (
     _refresh_aggregate_metadata,
 )
-from tests.cli import CliRunner
+
+from .cli import CliRunner
 
 runner = CliRunner()
 

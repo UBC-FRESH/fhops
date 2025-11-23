@@ -4,7 +4,8 @@ import json
 from pathlib import Path
 
 from fhops.cli.dataset import dataset_app
-from tests.cli import CliRunner
+
+from .cli import CliRunner
 
 runner = CliRunner()
 

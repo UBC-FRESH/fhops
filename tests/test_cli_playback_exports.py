@@ -7,7 +7,8 @@ import pandas as pd
 import pytest
 
 from fhops.cli.main import app
-from tests.cli import CliRunner
+
+from .cli import CliRunner
 
 runner = CliRunner()
 

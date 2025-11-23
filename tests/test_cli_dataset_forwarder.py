@@ -35,7 +35,8 @@ from fhops.scenario.contract import (
     Scenario,
 )
 from fhops.scheduling.systems import default_system_registry
-from tests.cli import CliRunner
+
+from .cli import CliRunner
 
 runner = CliRunner()
 

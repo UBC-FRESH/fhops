@@ -6,7 +6,8 @@ from pathlib import Path
 
 from fhops.cli import main
 from fhops.cli.main import app
-from tests.cli import CliRunner
+
+from .cli import CliRunner
 
 runner = CliRunner()
 

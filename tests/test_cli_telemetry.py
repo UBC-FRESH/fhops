@@ -5,7 +5,8 @@ from pathlib import Path
 
 from fhops.cli.main import app
 from fhops.telemetry import append_jsonl, load_jsonl
-from tests.cli import CliRunner
+
+from .cli import CliRunner
 
 runner = CliRunner()
 
