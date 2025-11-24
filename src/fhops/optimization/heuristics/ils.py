@@ -313,7 +313,7 @@ def solve_ils(
                     best_gap=None,
                     runtime_seconds=time.perf_counter() - run_start,
                     acceptance_rate=None,
-                    restarts=perturbations + restarts,
+                    restarts=restarts,
                     current_objective=float(current_score),
                     rolling_objective=rolling_mean,
                     temperature=None,
