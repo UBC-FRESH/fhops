@@ -5,14 +5,14 @@
   \label{tab:code-metadata}
   \begin{tabular}{p{0.35\linewidth}p{0.55\linewidth}}
     \hline
-    Current code version & v1.0.0-alpha2 (FHOPS) \\
-    Permanent link to code/repository & https://github.com/UBC-FRESH/fhops (tag v1.0.0-alpha2) \\
+    Current code version & FHOPS v1.0.0-alpha2 \\
+    Permanent link to code/repository & \url{https://github.com/UBC-FRESH/fhops/tree/v1.0.0-alpha2} \\
     Legal Code License & MIT License \\
-    Computing platforms/requirements & Linux/macOS (x86\_64), Python $\ge$ 3.10, optional CUDA GPU for simulations \\
-    Installation requirements & `pip install fhops` (Hatch-managed dev env); optional extras `fhops[telemetry]` \\
-    Documentation link & https://fhops.readthedocs.io/ \\
-    Support email & gregory.paradis@ubc.ca \\
-    
+    Computing platforms/requirements & GNU/Linux (tested on Ubuntu 24.04), macOS 14.5, Windows 11 via WSL2; Python 3.10--3.12; optional CUDA GPU for stochastic playback batches \\
+    Installation requirements & \texttt{pip install fhops} (PyPI). Development workflow uses Hatch (\texttt{hatch run dev:suite}); HiGHS binaries vendor-supplied via PyPI wheels. \\
+    Documentation link & \url{https://fhops.readthedocs.io/} (versioned with the tagged release) \\
+    Reproducibility log & \texttt{docs/softwarex/assets/benchmark\_runs.log} records every \texttt{make manuscript-benchmarks} run (commit, runtime, SHA-256 hash). \\
+    Support contact & gregory.paradis@ubc.ca \\
     \hline
   \end{tabular}
 \end{table}

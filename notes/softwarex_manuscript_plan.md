@@ -114,8 +114,8 @@
   - [ ] Draft Abstract, Intro, and Software Metadata sections.
     - [x] Section~1 (Motivation \& significance) updated with Jaffray review context + contribution framing.
     - [x] Highlights + abstract drafted to emphasise the reproducible workflow and thesis alignment.
-    - [ ] Abstract outline aligned with exemplar structure (PyLESA/cashocs style).
-    - [ ] Software Metadata table narrative (Code metadata + current code version) first draft.
+    - [x] Abstract outline aligned with exemplar structure (PyLESA/cashocs style).
+    - [x] Software Metadata tables (code metadata + current code version) populated with release/licensing/reproducibility details.
   - [ ] Document Implementation/Architecture details referencing FHOPS internals.
   - [ ] Summarize Impact and Future Work narratives.
 - [ ] Generate required assets: architecture diagrams, workflow figures, tables summarizing problem classes, benchmark results.

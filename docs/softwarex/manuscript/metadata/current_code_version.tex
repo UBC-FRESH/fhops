@@ -5,13 +5,14 @@
   \label{tab:current-code-version}
   \begin{tabular}{p{0.35\linewidth}p{0.55\linewidth}}
     \hline
-    Software version & FHOPS v1.0.0-alpha2 (commit `main@HEAD` at submission) \\
-    Permanent link to executables/code & https://github.com/UBC-FRESH/fhops/releases/tag/v1.0.0-alpha2 \\
-    Operating systems & Ubuntu 24.04 LTS, macOS 14.5, Windows 11 (WSL2) \\
-    Dependencies & Python $\ge$ 3.10, Pyomo 6.7, HiGHS 1.8, NumPy/Pandas/SciPy, optional Gurobi 11.0 \\
-    Installation method & `pip install fhops` (PyPI) or Hatch dev env (`hatch run dev:suite`) \\
-    Build system & Hatch (`pyproject.toml`, PEP 517) \\
-    Continuous integration status & GitHub Actions (linux/macos/windows workflows) passing badge \\
+    Software version & FHOPS v1.0.0-alpha2 (commit \texttt{v1.0.0-alpha2}) \\
+    Permanent link to executables/code & \url{https://github.com/UBC-FRESH/fhops/releases/tag/v1.0.0-alpha2} (source archive + wheels) \\
+    Operating systems & Ubuntu 24.04 LTS, macOS 14.5 (Apple Silicon via Rosetta), Windows 11 (WSL2 Ubuntu image) \\
+    Dependencies & Python 3.10--3.12, Pyomo 6.7, HiGHS 1.8 (bundled), NumPy/Pandas/SciPy, Optuna 3.x for tuning; optional Gurobi 11.0 for lift-and-shift comparisons \\
+    Installation method & \texttt{pip install fhops} (PyPI) or Hatch-managed dev environment (\texttt{hatch run dev:suite}) \\
+    Build system & Hatch (PEP~517 backend defined in \texttt{pyproject.toml}) \\
+    Continuous integration & GitHub Actions (linux/macos/windows) badge: \url{https://github.com/UBC-FRESH/fhops/actions} \\
+    Reproducibility evidence & \texttt{make manuscript-benchmarks} regenerates all assets and logs hashes to \texttt{docs/softwarex/assets/benchmark\_runs.log} \\
     \hline
   \end{tabular}
 \end{table}
