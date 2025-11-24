@@ -6,14 +6,14 @@ To demonstrate how FHOPS’ ingest/solver/evaluation layers fit together we run 
 
 \begin{itemize}
   \item Two published reference scenarios (\texttt{examples/minitoy} and \texttt{examples/med42}) that mirror common BC operational contexts (ground-based vs. mixed skyline/tethered systems).
-  \item A synthetic three-tier scaling set generated via \texttt{fhops synth generate} (\texttt{docs/softwarex/assets/data/scaling/datasets/synthetic\_\{small,medium,large\}}) so reviewers can inspect runtime vs. problem size without relying on proprietary data.
+  \item A synthetic three-tier scaling set generated via \texttt{fhops synth generate out/synthetic\_\{small,medium,large\}} so readers can inspect runtime vs. problem size without relying on proprietary data.
   \item Companion tuning, playback, costing, and robustness analyses that mirror the automation pipeline described in Section~\ref{sec:software-description}.
 \end{itemize}
 
-All experiments are scripted: running \texttt{make manuscript-benchmarks} regenerates the datasets, solvers, tuning studies, playback KPIs, costing summaries, and scaling plots discussed below, and logs the run metadata (commit, runtime, SHA-256 digest) to \texttt{docs/softwarex/assets/benchmark\_runs.log}. We report the assets in situ so readers can inspect or re-run each step.
+All experiments use the standard FHOPS CLI/API sequence (scenario generation or ingestion, \texttt{fhops bench suite}, \texttt{scripts/run\_tuner.py}, \texttt{fhops playback}, \texttt{fhops dataset estimate-cost}, \texttt{scripts/run\_synthetic\_sweep.py}). Run metadata (commands, commit IDs, runtimes, SHA-256 digests) accompanies the tagged release so readers can rerun each step directly.
 
 \subsection{Benchmark suite (SA/ILS/Tabu)}
-We execute \texttt{fhops bench suite} across minitoy, med42, and synthetic-small scenarios with SA, ILS, and Tabu heuristics plus optional compare presets (\texttt{--compare-preset diversify --compare-preset mobilisation}). Each scenario directory under \texttt{docs/softwarex/assets/data/benchmarks/<scenario>/} contains:
+We execute \texttt{fhops bench suite} across minitoy, med42, and synthetic-small scenarios with SA, ILS, and Tabu heuristics plus optional compare presets (\texttt{--compare-preset diversify --compare-preset mobilisation}). Each run produces:
 \begin{itemize}
   \item \texttt{summary.(csv|json)} – objective, runtime, assignment count, solver metadata.
   \item \texttt{telemetry.jsonl} – per-iteration objective traces and operator weights.
@@ -28,7 +28,7 @@ The resulting manuscript table (Table~\ref{tab:benchmarks}) summarises solver pe
 \end{itemize}
 
 \subsection{Tuning highlights}
-The tuning harness (\texttt{docs/softwarex/manuscript/scripts/run\_tuner.py}) runs random/grid/Bayesian/ILS/Tabu studies on the same scenarios. Outputs live under \texttt{docs/softwarex/assets/data/tuning/}, including:
+The tuning harness (\texttt{scripts/run\_tuner.py}) runs random/grid/Bayesian/ILS/Tabu studies on the same scenarios. Outputs include:
 \begin{itemize}
   \item \texttt{tuner\_leaderboard*.csv} – best-performing configuration per scenario/tuner.
   \item \texttt{tuner\_comparison*.md} – markdown summaries highlighting operator weights, batch sizes, temperature schedules, and objective improvements.
@@ -38,20 +38,20 @@ The tuning harness (\texttt{docs/softwarex/manuscript/scripts/run\_tuner.py}) ru
 Table~\ref{tab:tuning} reports the salient numbers. For example, Bayesian optimisation pushes the minitoy objective from the SA default of 15.5 to 38.0 by emphasising move/swap proportions, while medium42’s best Bayesian trial reaches $-472.2$ (versus $-631.6$ default) by increasing mobilisation-shake weight and cooling more aggressively. The tuning reports also quantify runtime overheads (all sub-second on minitoy, $\approx$0.9 s on med42), giving readers a sense of the search cost.
 
 \subsection{Playback robustness and costing}
-For each scenario we replay the best SA/ILS assignments deterministically and stochastically (downtime/weather/landing shocks) using \texttt{scripts/run\_playback\_analysis.py}. Outputs (shift/day CSVs, markdown summaries, metrics JSON) land in \texttt{docs/softwarex/assets/data/playback/<scenario>/<solver>/<mode>/}. For med42, the deterministic SA replay averages 0.39 day-level utilisation with \$1{,}950 mobilisation cost (see \texttt{playback/med42/sa/deterministic/summary.md}), while the stochastic replay (50 samples) drops utilisation to 0.37 and accumulates \$96{,}000 mobilisation adjustments due to randomised congestion (\texttt{.../stochastic/summary.md}). These CSVs drive Figure~\ref{fig:playback} (boxplots of utilisation under shocks) and provide ready-made narratives about bottlenecks.
+For each scenario we replay the best SA/ILS assignments deterministically and stochastically (downtime/weather/landing shocks) using \texttt{fhops playback}. Outputs (shift/day CSVs, markdown summaries, metrics JSON) quantify day-level utilisation, downtime, and mobilisation cost so we can show, for example, med42’s deterministic SA replay averaging 0.39 utilisation with \$1{,}950 mobilisation cost versus the stochastic replay (50 samples) dropping utilisation to 0.37 while accumulating \$96{,}000 of congestion-induced mobilisation. These metrics drive Figure~\ref{fig:playback} (boxplots of utilisation under shocks).
 
-Costing summaries (\texttt{docs/softwarex/assets/data/costing/cost\_summary.(csv|json)}) generated via \texttt{scripts/run\_costing\_demo.py} complement the playback metrics by reporting owning/operating/repair rates per machine role. For example, the med42 feller-buncher carries a \$246.94/SMH rental rate (\$4.25 per m$^3$ at 64.6 m$^3$/PMH), while the grapple skidder runs \$173.70/SMH (\$2.99/m$^3$). These numbers let readers tie KPI swings back to financial impacts.
+Costing summaries generated via \texttt{fhops dataset estimate-cost} complement the playback metrics by reporting owning/operating/repair rates per machine role. For example, the med42 feller-buncher carries a \$246.94/SMH rental rate (\$4.25 per m$^3$ at 64.6 m$^3$/PMH), while the grapple skidder runs \$173.70/SMH (\$2.99/m$^3$). These numbers let readers tie KPI swings back to financial impacts.
 
 \subsection{Scaling sweep}
-Finally, \texttt{scripts/run\_synthetic\_sweep.py} generates synthetic tiers (small/medium/large) with fixed seeds, benchmarks SA with consistent iteration counts, and plots runtime vs. number of blocks (\texttt{docs/softwarex/assets/data/scaling/runtime\_vs\_blocks.png}). The accompanying CSV/JSON summarise blocks, machines, assignments, objectives, and runtime for each tier: small (4 blocks, runtime 0.25 s), medium (8 blocks, 0.50 s), large (16 blocks, 1.04 s). Figure~\ref{fig:scaling} reproduces this curve, providing the same \enquote{runtime vs. size} perspective seen in SoftwareX exemplars such as GROMACS.
+Finally, \texttt{scripts/run\_synthetic\_sweep.py} generates synthetic tiers (small/medium/large) with fixed seeds, benchmarks SA with consistent iteration counts, and plots runtime vs. number of blocks. The accompanying CSV/JSON summarise blocks, machines, assignments, objectives, and runtime for each tier: small (4 blocks, runtime 0.25 s), medium (8 blocks, 0.50 s), large (16 blocks, 1.04 s). Figure~\ref{fig:scaling} reproduces this curve, providing the same \enquote{runtime vs. size} perspective seen in SoftwareX exemplars such as GROMACS.
 
 \subsection{Figures and tables referenced}
 \begin{itemize}
-  \item \textbf{Table~1} – Solver performance summary for minitoy, med42, synthetic-small (derived from \texttt{benchmarks/*/summary.csv}).
-  \item \textbf{Table~2} – Tuning leaderboard (\texttt{tuning/tuner\_leaderboard.csv}) highlighting best configurations per scenario.
+  \item \textbf{Table~1} – Solver performance summary for minitoy, med42, synthetic-small (derived from the \texttt{fhops bench suite} outputs).
+  \item \textbf{Table~2} – Tuning leaderboard highlighting best configurations per scenario.
   \item \textbf{Figure~1} – PRISMA workflow (Section~\ref{sec:software-description}) for pipeline overview.
-  \item \textbf{Figure~2} – Runtime vs. blocks plot from \texttt{docs/softwarex/assets/data/scaling/runtime\_vs\_blocks.png}.
-  \item \textbf{Figure~3} – Playback robustness boxplots (generated from \texttt{playback/**/shift.csv}) showing utilisation variance under stochastic shocks.
+  \item \textbf{Figure~2} – Runtime vs. blocks plot from the synthetic sweep.
+  \item \textbf{Figure~3} – Playback robustness boxplots (generated from the utilisation metrics output by \texttt{fhops playback}) showing variance under stochastic shocks.
 \end{itemize}
 
-Each of these artifacts is regenerated verbatim by \texttt{make manuscript-benchmarks}, satisfying the SoftwareX reproducibility requirement and allowing reviewers to inspect the underlying CSV/JSON files.
+Each of these artifacts can be regenerated by rerunning the FHOPS CLI sequence described above, satisfying the SoftwareX reproducibility requirement and allowing reviewers to inspect the underlying CSV/JSON files bundled with the release.
