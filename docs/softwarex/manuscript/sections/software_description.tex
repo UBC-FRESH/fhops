@@ -79,15 +79,11 @@ which balances harvested volume against mobilisation costs (negative coefficient
 
 \textbf{Constraints.}
 \begin{align}
-  &\sum_{m \in M} \sum_{s \in S} x_{bms} \le 1 &&\forall b \in B
-    && \text{(each block harvested at most once)}, \label{eq:block-once}\\
-  &\sum_{b \in B} t_{bms}\,x_{bms} \le h_{ms} &&\forall m \in M, \forall s \in S
-    && \text{(machine/shift capacity)}, \label{eq:machine-capacity}\\
-  &\sum_{b \in B} a_{bl}\,x_{bms} \le y_{mls} &&\forall m \in M, \forall l \in L, \forall s \in S
-    && \text{(landing assignment activates mobilisation)}, \label{eq:landing-link}\\
-  &\sum_{l \in L} y_{mls} \le 1 &&\forall m \in M, \forall s \in S
-    && \text{(one landing per machine per shift)}, \label{eq:landing-per-shift}\\
-  &x_{bms}, y_{mls} \in \{0,1\} &&\forall b,m,l,s. \label{eq:integrality}
+  \sum_{m \in M} \sum_{s \in S} x_{bms} &\le 1 && \forall b \in B, && \text{(each block harvested at most once)}, \label{eq:block-once}\\
+  \sum_{b \in B} t_{bms}\,x_{bms} &\le h_{ms} && \forall m \in M, \forall s \in S, && \text{(machine/shift capacity)}, \label{eq:machine-capacity}\\
+  \sum_{b \in B} a_{bl}\,x_{bms} &\le y_{mls} && \forall m \in M, \forall l \in L, \forall s \in S, && \text{(landing assignment activates mobilisation)}, \label{eq:landing-link}\\
+  \sum_{l \in L} y_{mls} &\le 1 && \forall m \in M, \forall s \in S, && \text{(one landing per machine per shift)}, \label{eq:landing-per-shift}\\
+  x_{bms}, y_{mls} &\in \{0,1\} && \forall b \in B, \forall m \in M, \forall l \in L, \forall s \in S. && \label{eq:integrality}
 \end{align}
 
 Optional constraint families (road congestion, landing throughput, multi-day sequencing) are toggled via scenario flags and map to additional rows in the data contract. When FHOPS invokes the MIP builder, the CLI logs the extracted tensors ($t_{bms}$, $h_{ms}$, etc.) alongside the model statistics so auditors can verify that \eqref{eq:block-once}–\eqref{eq:integrality} correspond to the published scenario bundle.

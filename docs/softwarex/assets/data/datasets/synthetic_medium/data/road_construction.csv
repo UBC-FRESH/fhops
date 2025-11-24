@@ -1,0 +1,5 @@
+id,machine_slug,road_length_m,include_mobilisation,soil_profile_ids
+cable_running,caterpillar_235_hydraulic_backhoe,150.0,True,fnrb3_d7h|adv4n7_compaction
+cable_micro_teletransporteur,caterpillar_d8h_bulldozer,60.0,True,fnrb3_d7h|adv4n7_compaction
+cable_highlead_tn147,caterpillar_235_hydraulic_backhoe,120.0,True,fnrb3_d7h|adv4n7_compaction
+cable_micro_timbermaster,caterpillar_d8h_bulldozer,60.0,True,fnrb3_d7h|adv4n7_compaction

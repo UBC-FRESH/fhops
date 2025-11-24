@@ -5,7 +5,7 @@ counts:
   blocks: 8
   machines: 4
   landings: 2
-  calendar: 48
+  calendar: 448
   production_rates: 32
 terrain_counts:
   rolling: 1
@@ -24,9 +24,57 @@ crew_capabilities:
   - processor
   crew-1-2:
   - processor
-blackouts: []
-shifts_per_day: 1
-shift_hours: 8.07867878801654
+blackouts:
+- start_day: 9
+  end_day: 9
+  reason: synthetic-blackout
+- start_day: 17
+  end_day: 18
+  reason: synthetic-blackout
+- start_day: 19
+  end_day: 19
+  reason: synthetic-blackout
+- start_day: 26
+  end_day: 27
+  reason: synthetic-blackout
+- start_day: 37
+  end_day: 38
+  reason: synthetic-blackout
+- start_day: 40
+  end_day: 40
+  reason: synthetic-blackout
+- start_day: 41
+  end_day: 42
+  reason: synthetic-blackout
+- start_day: 45
+  end_day: 45
+  reason: synthetic-blackout
+- start_day: 48
+  end_day: 48
+  reason: synthetic-blackout
+- start_day: 52
+  end_day: 52
+  reason: synthetic-blackout
+- start_day: 53
+  end_day: 54
+  reason: synthetic-blackout
+- start_day: 61
+  end_day: 62
+  reason: synthetic-blackout
+- start_day: 77
+  end_day: 78
+  reason: synthetic-blackout
+- start_day: 85
+  end_day: 86
+  reason: synthetic-blackout
+- start_day: 88
+  end_day: 89
+  reason: synthetic-blackout
+- start_day: 96
+  end_day: 96
+  reason: synthetic-blackout
+shifts_per_day: 3
+shift_hours: 8.0
 terrain_profile:
   values:
   - rolling

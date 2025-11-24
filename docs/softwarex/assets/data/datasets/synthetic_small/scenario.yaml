@@ -1,5 +1,5 @@
 name: synthetic-small
-num_days: 6
+num_days: 112
 schema_version: 1.0.0
 data:
   blocks: data/blocks.csv
@@ -12,8 +12,8 @@ data:
 timeline:
   shifts:
   - name: S1
-    hours: 9.43844985990059
-    shifts_per_day: 1
+    hours: 8.0
+    shifts_per_day: 3
   blackouts: []
   days_per_week: 7
 harvest_systems:

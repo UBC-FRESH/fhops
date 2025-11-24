@@ -6,7 +6,7 @@ large:
     blocks: 16
     machines: 6
     landings: 3
-    calendar: 108
+    calendar: 672
     production_rates: 96
   terrain_counts:
     steep: 6
@@ -38,19 +38,61 @@ large:
     - processor
   blackouts:
   - start_day: 2
-    end_day: 4
+    end_day: 3
     reason: synthetic-blackout
-  - start_day: 6
-    end_day: 7
+  - start_day: 5
+    end_day: 6
     reason: synthetic-blackout
   - start_day: 12
     end_day: 14
     reason: synthetic-blackout
-  - start_day: 16
-    end_day: 18
+  - start_day: 18
+    end_day: 19
     reason: synthetic-blackout
-  shifts_per_day: 2
-  shift_hours: 8.816655211256588
+  - start_day: 20
+    end_day: 22
+    reason: synthetic-blackout
+  - start_day: 23
+    end_day: 24
+    reason: synthetic-blackout
+  - start_day: 26
+    end_day: 27
+    reason: synthetic-blackout
+  - start_day: 29
+    end_day: 31
+    reason: synthetic-blackout
+  - start_day: 35
+    end_day: 37
+    reason: synthetic-blackout
+  - start_day: 40
+    end_day: 42
+    reason: synthetic-blackout
+  - start_day: 43
+    end_day: 44
+    reason: synthetic-blackout
+  - start_day: 45
+    end_day: 47
+    reason: synthetic-blackout
+  - start_day: 49
+    end_day: 51
+    reason: synthetic-blackout
+  - start_day: 69
+    end_day: 71
+    reason: synthetic-blackout
+  - start_day: 76
+    end_day: 78
+    reason: synthetic-blackout
+  - start_day: 86
+    end_day: 88
+    reason: synthetic-blackout
+  - start_day: 99
+    end_day: 101
+    reason: synthetic-blackout
+  - start_day: 105
+    end_day: 107
+    reason: synthetic-blackout
+  shifts_per_day: 3
+  shift_hours: 8.0
   terrain_profile:
     values:
     - steep
@@ -134,7 +176,7 @@ large:
       - 0.7
       duration_days: 3
       target_landing_ids: null
-  num_days: 18
+  num_days: 112
 medium:
   name: synthetic-medium
   tier: medium
@@ -143,7 +185,7 @@ medium:
     blocks: 8
     machines: 4
     landings: 2
-    calendar: 48
+    calendar: 448
     production_rates: 32
   terrain_counts:
     rolling: 1
@@ -162,9 +204,57 @@ medium:
     - processor
     crew-1-2:
     - processor
-  blackouts: []
-  shifts_per_day: 1
-  shift_hours: 8.07867878801654
+  blackouts:
+  - start_day: 9
+    end_day: 9
+    reason: synthetic-blackout
+  - start_day: 17
+    end_day: 18
+    reason: synthetic-blackout
+  - start_day: 19
+    end_day: 19
+    reason: synthetic-blackout
+  - start_day: 26
+    end_day: 27
+    reason: synthetic-blackout
+  - start_day: 37
+    end_day: 38
+    reason: synthetic-blackout
+  - start_day: 40
+    end_day: 40
+    reason: synthetic-blackout
+  - start_day: 41
+    end_day: 42
+    reason: synthetic-blackout
+  - start_day: 45
+    end_day: 45
+    reason: synthetic-blackout
+  - start_day: 48
+    end_day: 48
+    reason: synthetic-blackout
+  - start_day: 52
+    end_day: 52
+    reason: synthetic-blackout
+  - start_day: 53
+    end_day: 54
+    reason: synthetic-blackout
+  - start_day: 61
+    end_day: 62
+    reason: synthetic-blackout
+  - start_day: 77
+    end_day: 78
+    reason: synthetic-blackout
+  - start_day: 85
+    end_day: 86
+    reason: synthetic-blackout
+  - start_day: 88
+    end_day: 89
+    reason: synthetic-blackout
+  - start_day: 96
+    end_day: 96
+    reason: synthetic-blackout
+  shifts_per_day: 3
+  shift_hours: 8.0
   terrain_profile:
     values:
     - rolling
@@ -241,7 +331,7 @@ medium:
       - 0.75
       duration_days: 2
       target_landing_ids: null
-  num_days: 12
+  num_days: 112
 small:
   name: synthetic-small
   tier: small
@@ -250,7 +340,7 @@ small:
     blocks: 4
     machines: 2
     landings: 1
-    calendar: 12
+    calendar: 224
     production_rates: 8
   terrain_counts:
     gentle: 4
@@ -263,8 +353,8 @@ small:
     crew-2:
     - forwarder
   blackouts: []
-  shifts_per_day: 1
-  shift_hours: 9.43844985990059
+  shifts_per_day: 3
+  shift_hours: 8.0
   terrain_profile:
     values:
     - gentle
@@ -323,4 +413,4 @@ small:
       - 0.8
       duration_days: 1
       target_landing_ids: null
-  num_days: 6
+  num_days: 112

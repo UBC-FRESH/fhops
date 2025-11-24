@@ -5,7 +5,7 @@ counts:
   blocks: 4
   machines: 2
   landings: 1
-  calendar: 12
+  calendar: 224
   production_rates: 8
 terrain_counts:
   gentle: 4
@@ -18,8 +18,8 @@ crew_capabilities:
   crew-2:
   - forwarder
 blackouts: []
-shifts_per_day: 1
-shift_hours: 9.43844985990059
+shifts_per_day: 3
+shift_hours: 8.0
 terrain_profile:
   values:
   - gentle

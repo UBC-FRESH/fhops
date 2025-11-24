@@ -1,5 +1,5 @@
 name: synthetic-small
-num_days: 6
+num_days: 112
 schema_version: 1.0.0
 data:
   blocks: data/blocks.csv
@@ -12,8 +12,8 @@ data:
 timeline:
   shifts:
   - name: S1
-    hours: 9.43844985990059
-    shifts_per_day: 1
+    hours: 8.0
+    shifts_per_day: 3
   blackouts: []
   days_per_week: 7
 harvest_systems:
@@ -574,6 +574,7 @@ harvest_systems:
         grapple_yarder_turn_volume_m3: 2.18
         grapple_yarder_yarding_distance_m: 97.0
         grapple_yarder_stems_per_cycle: 3.2
+        partial_cut_profile: sr109_shelterwood
     - name: processing
       machine_role: processor
       prerequisites:
@@ -635,7 +636,7 @@ harvest_systems:
         skyline_model: tr127-block1
         skyline_lateral_distance_m: 15.0
         skyline_lateral_distance2_m: 6.0
-        tr119_treatment: 65_retention
+        partial_cut_profile: sr109_patch_cut
     - name: processing
       machine_role: processor
       prerequisites:
@@ -668,7 +669,7 @@ harvest_systems:
         skyline_lateral_distance_m: 16.0
         skyline_num_logs: 3.0
         skyline_payload_m3: 1.6
-        tr119_treatment: 70_retention
+        partial_cut_profile: sr109_green_tree
     - name: processing
       machine_role: processor
       prerequisites:

@@ -20,10 +20,10 @@ pdf: $(PDF)
 
 $(PDF): $(TEX)
 	mkdir -p $(BUILD_DIR)
-	latexmk -pdf -interaction=nonstopmode -output-directory=$(BUILD_DIR) $(TEX)
+	latexmk -pdf -interaction=nonstopmode -output-directory=$(BUILD_DIR) -auxdir=$(BUILD_DIR) $(TEX)
 
 default: pdf
 
 clean:
-	latexmk -C -output-directory=$(BUILD_DIR)
+	latexmk -C -output-directory=$(BUILD_DIR) -auxdir=$(BUILD_DIR)
 	$(RM) -r $(BUILD_DIR)
