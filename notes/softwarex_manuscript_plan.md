@@ -215,6 +215,8 @@
   - [x] Use `notes/softwarex_exemplar_analysis.md` takeaways and the Jaffray systematic review references to outline the Intro and Software Metadata paragraphs.
   - [x] Draft the first pass of the Motivation/Contribution narrative (Section 1) using the shared snippets in `sections/includes/motivation_story.md`.
   - [x] Capture open questions / text debt in the local manuscript change log before each writing push so we can trace edits without touching the main FHOPS changelog. (See `notes/softwarex_manuscript_change_log.md`.)
+  - [x] Add metadata-context paragraph in the introduction referencing Tables~\ref{tab:code-metadata} and \ref{tab:current-code-version}.
+  - [x] Draft Section~5 (Conclusions) summarising FHOPS contributions and future work.
 - [x] Re-run heuristic benchmarks with realistic runtimes/iteration counts (see `notes/coding-agent-conversation-log.txt` discussion on MIP vs. heuristic time scale).
   - [x] Derive a target runtime per scenario by solving the MIP baseline (HiGHS) or reusing prior solver logs; heuristics must run within 0.1–10× of that wall clock.
   - [x] Update `scripts/generate_assets.sh` (or override via env vars) so SA ≥ 6 000 iterations, ILS ≥ 1 000 perturb/local-search cycles, Tabu stall/iteration budgets ≥ 10 000 and time limit ≥ 600 s for med42; keep fast-mode overrides documented.
