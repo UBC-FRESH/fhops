@@ -22,7 +22,7 @@ Figure~\ref{fig:fhops-prisma-overview} summarises the automation pipeline that u
   \item \texttt{fhops.scenario.contract} – Pydantic models for blocks, corridors, harvest systems, road jobs (aligned with BC operational constraints described by \citet{lahrsen2022productivity} and \citet{becker2018lidar}).
   \item CSV/Parquet loaders (\texttt{fhops.cli.dataset}) – generate scenarios from published datasets (TN-147 skyline corridors, TR-122 Roberts Creek blocks, community-forest bundles).
   \item Synthetic dataset generator (\texttt{fhops.scenario.synthetic}) – reproducible randomised scenarios with stratified harvest-system mixes.
-  \item Future hooks for Rosalia Jaffray’s Chapter 2 datasets (community forests, skyline corridors, salvage plans); these remain private until the thesis publishes but are wired into the loader interfaces.
+  \item Hooks for forthcoming BC validation datasets (community forests, skyline corridors, salvage plans) that remain private until their companion studies publish, ensuring the loader interfaces can ingest them without changes.
 \end{itemize}
 
 \textbf{Dependencies:} Pydantic, pandas, numpy.
