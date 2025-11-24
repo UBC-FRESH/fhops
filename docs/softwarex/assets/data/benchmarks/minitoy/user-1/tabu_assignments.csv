@@ -1,6 +1,4 @@
 machine_id,block_id,day,shift_id,assigned
-H1,B1,2,S1,1
-H1,B1,4,S1,1
-H1,B1,5,S1,1
+H1,B1,1,S1,1
+H2,B2,4,S1,1
 H1,B1,6,S1,1
-H2,B2,8,S1,1

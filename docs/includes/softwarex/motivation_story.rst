@@ -20,9 +20,9 @@ The SoftwareX paper will highlight three gaps we actively address:
 2. **Integrated workflow + automation.** Instead of the ad hoc
    “optimizer + spreadsheet” pattern flagged in the review, FHOPS
    provides deterministic solvers (Pyomo+HiGHS), SA/ILS/Tabu heuristics,
-   a turnkey tuning harness, and telemetry/playback tooling that runs
-   from ``make assets``. Every figure/table in the manuscript will be
-   regenerated from the same scripts users run locally.
+   a turnkey tuning harness, and telemetry/playback tooling that run
+   from the same CLI pipeline. Every figure/table in the manuscript will
+   be regenerated from the exact scripts users run locally.
 3. **Robust evaluation + extensibility.** FHOPS layers stochastic
    playback, stress testing, and cost models over the base scheduler so
    we can quantify solution stability before fielding new policies.

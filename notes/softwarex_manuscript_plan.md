@@ -216,9 +216,18 @@
   - [ ] Draft the first pass of the Motivation/Contribution narrative (Section 1) using the shared snippets in `sections/includes/motivation_story.md`.
   - [ ] Capture open questions / text debt in the local manuscript change log before each writing push so we can trace edits without touching the main FHOPS changelog.
 - [ ] Re-run heuristic benchmarks with realistic runtimes/iteration counts (see `notes/coding-agent-conversation-log.txt` discussion on MIP vs. heuristic time scale).
-  - [ ] Increase SA/ILS/Tabu budgets so solver time falls within roughly 0.1–10× the corresponding MIP solve (current Tabu runtime of 0.09 s is implausibly low for med42).
-  - [ ] Capture the updated telemetry/summary CSVs and ensure illustrative example tables reflect the longer convergence runs.
-  - [ ] Log the rerun details (commit, command, runtime) alongside the benchmark log for future traceability.
+  - [ ] Derive a target runtime per scenario by solving the MIP baseline (HiGHS) or reusing prior solver logs; heuristics must run within 0.1–10× of that wall clock.
+  - [ ] Update `scripts/generate_assets.sh` (or override via env vars) so SA ≥ 6 000 iterations, ILS ≥ 1 000 perturb/local-search cycles, Tabu stall/iteration budgets ≥ 10 000 and time limit ≥ 600 s for med42; keep fast-mode overrides documented.
+  - [ ] Execute `FHOPS_ASSETS_FAST=0 docs/softwarex/manuscript/scripts/generate_assets.sh` and append the run metadata (command, commit, start/end timestamps, runtimes) to `docs/softwarex/assets/benchmark_runs.log`.
+  - [ ] Spot-check telemetry to ensure Tabu no longer reports implausible 0.09 s runtimes and that production/utilisation KPIs improve relative to previous assets.
+- [ ] Convert refreshed benchmark/tuning data into manuscript-ready artifacts (Section 3).
+  - [ ] Build LaTeX tables for solver performance (Table~1) and tuning leaderboard (Table~2) by parsing the new `summary.csv` and `tuner_*.csv` files; store intermediates under `docs/softwarex/assets/data/tables/`.
+  - [ ] Regenerate Figure~2 (scaling curve) and Figure~3 (playback robustness) from the updated CSVs; ensure PNG/PDF exports meet 300 dpi and embed references in Section~\ref{sec:illustrative-example}.
+  - [ ] Update the narrative in Section 3 to quote the new objectives, runtimes, utilisation, and costing numbers, citing file paths for reproducibility.
+- [ ] Draft Section 4 (Impact/availability) while data context is fresh.
+  - [ ] Summarise adoption signals (GitHub stats, release cadence, documentation reach) and the BC thesis alignment plan.
+  - [ ] Reference forthcoming validation studies (Chapter 2 case studies) and explain how FHOPS enables them without duplicating results here.
+  - [ ] Tie the section back to reproducibility artefacts (Make targets/CLI flows, benchmark logs, dataset availability) so reviewers see the full traceability story.
 - [x] Finalize reproducible asset documentation before the benchmark suite grows further.
   - [x] Expand `docs/softwarex/manuscript/README.md` with runtime expectations, environment variables (e.g., `FHOPS_ASSETS_FAST=1`), and troubleshooting tips for each script.
   - [x] Add a short manual checklist (until CI is ready) referencing the outputs each script must produce under `docs/softwarex/assets/`.

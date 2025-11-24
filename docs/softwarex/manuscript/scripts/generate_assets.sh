@@ -35,15 +35,24 @@ if [[ ! -f "${synthetic_scenario}" ]]; then
   exit 1
 fi
 
-bench_time_limit="180"
-sa_iters="2500"
-ils_iters="400"
-tabu_iters="2500"
+default_time_limit="180"
+default_sa_iters="2500"
+default_ils_iters="400"
+default_tabu_iters="2500"
+default_ils_batch="1"
+default_tabu_batch="1"
+default_ils_workers="4"
+default_tabu_workers="4"
+
 if [[ "${fast_mode}" == "1" ]]; then
-  bench_time_limit="90"
-  sa_iters="1200"
-  ils_iters="220"
-  tabu_iters="1400"
+  default_time_limit="90"
+  default_sa_iters="1200"
+  default_ils_iters="220"
+  default_tabu_iters="1400"
+  default_ils_batch="1"
+  default_tabu_batch="1"
+  default_ils_workers="2"
+  default_tabu_workers="2"
   echo "[assets] FAST mode enabled (FHOPS_ASSETS_FAST=1): lighter benchmark budgets." >&2
 fi
 
@@ -56,6 +65,8 @@ scenario_specs=(
   "${synthetic_scenario}|synthetic_small|Synthetic tier (small)"
 )
 
+declare -a bench_pids=()
+
 for spec in "${scenario_specs[@]}"; do
   IFS="|" read -r scenario_path slug label <<< "${spec}"
   if [[ ! -f "${scenario_path}" ]]; then
@@ -63,36 +74,147 @@ for spec in "${scenario_specs[@]}"; do
     continue
   fi
 
-  out_dir="${bench_dir}/${slug}"
-  rm -rf "${out_dir}"
-  mkdir -p "${out_dir}"
+  (
+    out_dir="${bench_dir}/${slug}"
+    rm -rf "${out_dir}"
+    mkdir -p "${out_dir}"
 
-  telemetry="${out_dir}/telemetry.jsonl"
-  printf "%s\n" "${label}" > "${out_dir}/label.txt"
-  printf "%s\n" "${scenario_path}" > "${out_dir}/scenario_path.txt"
+    telemetry="${out_dir}/telemetry.jsonl"
+    printf "%s\n" "${label}" > "${out_dir}/label.txt"
+    printf "%s\n" "${scenario_path}" > "${out_dir}/scenario_path.txt"
 
-  echo "[assets] Running benchmark suite for ${slug} -> ${out_dir}" >&2
-  bench_args=(
-    "bench"
-    "suite"
-    "--scenario" "${scenario_path}"
-    "--out-dir" "${out_dir}"
-    "--telemetry-log" "${telemetry}"
-    "--time-limit" "${bench_time_limit}"
-    "--sa-iters" "${sa_iters}"
-    "--driver" "auto"
-    "--no-include-mip"
-    "--include-ils"
-    "--ils-iters" "${ils_iters}"
-    "--include-tabu"
-    "--tabu-iters" "${tabu_iters}"
-    "--compare-preset" "diversify"
-    "--compare-preset" "mobilisation"
-  )
+    case "${slug}" in
+      minitoy)
+        time_limit="${default_time_limit}"
+        sa_local="${default_sa_iters}"
+        ils_local="${default_ils_iters}"
+        tabu_local="${default_tabu_iters}"
+        ils_batch="${default_ils_batch}"
+        tabu_batch="${default_tabu_batch}"
+        ils_workers="${default_ils_workers}"
+        tabu_workers="${default_tabu_workers}"
+        if [[ "${fast_mode}" != "1" ]]; then
+          time_limit="900"
+          sa_local="8000"
+          ils_local="1500"
+          tabu_local="20000"
+          ils_batch="4"
+          tabu_batch="4"
+          ils_workers="12"
+          tabu_workers="12"
+        fi
+        ;;
+      med42)
+        time_limit="${default_time_limit}"
+        sa_local="${default_sa_iters}"
+        ils_local="${default_ils_iters}"
+        tabu_local="${default_tabu_iters}"
+        ils_batch="${default_ils_batch}"
+        tabu_batch="${default_tabu_batch}"
+        ils_workers="${default_ils_workers}"
+        tabu_workers="${default_tabu_workers}"
+        if [[ "${fast_mode}" != "1" ]]; then
+          time_limit="2400"
+          sa_local="20000"
+          ils_local="4000"
+          tabu_local="40000"
+          ils_batch="6"
+          tabu_batch="6"
+          ils_workers="24"
+          tabu_workers="24"
+        fi
+        ;;
+      synthetic_small)
+        time_limit="${default_time_limit}"
+        sa_local="${default_sa_iters}"
+        ils_local="${default_ils_iters}"
+        tabu_local="${default_tabu_iters}"
+        ils_batch="${default_ils_batch}"
+        tabu_batch="${default_tabu_batch}"
+        ils_workers="${default_ils_workers}"
+        tabu_workers="${default_tabu_workers}"
+        if [[ "${fast_mode}" != "1" ]]; then
+          time_limit="600"
+          sa_local="6000"
+          ils_local="1200"
+          tabu_local="15000"
+          ils_batch="4"
+          tabu_batch="4"
+          ils_workers="12"
+          tabu_workers="12"
+        fi
+        ;;
+      *)
+        time_limit="${default_time_limit}"
+        sa_local="${default_sa_iters}"
+        ils_local="${default_ils_iters}"
+        tabu_local="${default_tabu_iters}"
+        ils_batch="${default_ils_batch}"
+        tabu_batch="${default_tabu_batch}"
+        ils_workers="${default_ils_workers}"
+        tabu_workers="${default_tabu_workers}"
+        ;;
+    esac
 
-  pushd "${repo_root}" >/dev/null
-  python -m fhops.cli.main "${bench_args[@]}"
-  popd >/dev/null
+    if [[ "${fast_mode}" == "1" ]]; then
+      case "${slug}" in
+        minitoy)
+          time_limit="450"
+          sa_local="3000"
+          ils_local="600"
+          tabu_local="6000"
+          ;;
+        med42)
+          time_limit="900"
+          sa_local="6000"
+          ils_local="1200"
+          tabu_local="8000"
+          ;;
+        synthetic_small)
+          time_limit="300"
+          sa_local="2500"
+          ils_local="500"
+          tabu_local="4000"
+          ;;
+      esac
+    fi
+
+    echo "[assets] Running benchmark suite for ${slug} -> ${out_dir} (time=${time_limit}s, sa=${sa_local}, ils=${ils_local}, tabu=${tabu_local})" >&2
+    bench_args=(
+      "bench"
+      "suite"
+      "--scenario" "${scenario_path}"
+      "--out-dir" "${out_dir}"
+      "--telemetry-log" "${telemetry}"
+      "--time-limit" "${time_limit}"
+      "--sa-iters" "${sa_local}"
+      "--driver" "auto"
+      "--no-include-mip"
+      "--include-ils"
+      "--ils-iters" "${ils_local}"
+      "--ils-batch-neighbours" "${ils_batch}"
+      "--ils-workers" "${ils_workers}"
+      "--include-tabu"
+      "--tabu-iters" "${tabu_local}"
+      "--tabu-stall-limit" "${tabu_local}"
+      "--tabu-batch-neighbours" "${tabu_batch}"
+      "--tabu-workers" "${tabu_workers}"
+      "--compare-preset" "diversify"
+      "--compare-preset" "mobilisation"
+    )
+
+    pushd "${repo_root}" >/dev/null
+    python -m fhops.cli.main "${bench_args[@]}"
+    popd >/dev/null
+  ) &
+  bench_pids+=("$!")
+done
+
+for pid in "${bench_pids[@]}"; do
+  if ! wait "${pid}"; then
+    echo "[assets] ERROR: benchmark worker ${pid} failed" >&2
+    exit 1
+  fi
 done
 
 python - <<'PY' "${bench_dir}"
