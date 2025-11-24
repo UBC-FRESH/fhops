@@ -217,6 +217,8 @@ def solve_tabu(
         restarts = 0
         operator_stats: dict[str, dict[str, float]] = {}
         run_start = time.perf_counter()
+        workers_total = worker_arg if worker_arg and worker_arg > 1 else None
+        current_workers_busy: int | None = workers_total
 
         def emit_snapshot(iteration: int) -> None:
             nonlocal last_watch_best, last_emitted_step
@@ -257,6 +259,8 @@ def solve_tabu(
                     runtime_seconds=time.perf_counter() - run_start,
                     acceptance_rate=acceptance_rate,
                     restarts=restarts,
+                    workers_busy=current_workers_busy,
+                    workers_total=workers_total,
                     current_objective=float(current_score),
                     rolling_objective=rolling_mean,
                     temperature=None,
@@ -279,6 +283,8 @@ def solve_tabu(
             evaluations = _evaluate_candidates(pb, candidates, worker_arg)
             if not evaluations:
                 break
+            if workers_total:
+                current_workers_busy = min(workers_total, len(evaluations)) if evaluations else 0
 
             best_candidate_tuple: tuple[Any, ...] | None = None
             fallback_candidate_tuple: tuple[Any, ...] | None = None

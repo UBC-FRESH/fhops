@@ -581,6 +581,8 @@ def solve_sa(
     rolling_scores: deque[float] = deque(maxlen=window_size)
     acceptance_window: deque[int] = deque(maxlen=window_size)
     last_watch_best: float | None = None
+    workers_total = max_workers if max_workers and max_workers > 1 else None
+    current_workers_busy: int | None = workers_total
 
     with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
         current = _init_greedy(pb)
@@ -612,6 +614,8 @@ def solve_sa(
                 candidates,
                 max_workers=max_workers if batch_size and batch_size > 1 else None,
             )
+            if workers_total:
+                current_workers_busy = min(workers_total, len(evaluations)) if evaluations else 0
             for neighbor, neighbor_score in evaluations:
                 proposals += 1
                 delta = neighbor_score - current_score
@@ -682,6 +686,8 @@ def solve_sa(
                         runtime_seconds=time.perf_counter() - run_start,
                         acceptance_rate=acceptance_rate,
                         restarts=restarts,
+                        workers_busy=current_workers_busy,
+                        workers_total=workers_total,
                         current_objective=float(current_score),
                         rolling_objective=rolling_mean,
                         temperature=float(temperature),
@@ -734,6 +740,8 @@ def solve_sa(
                     runtime_seconds=time.perf_counter() - run_start,
                     acceptance_rate=acceptance_rate,
                     restarts=restarts,
+                    workers_busy=current_workers_busy,
+                    workers_total=workers_total,
                     current_objective=float(current_score),
                     rolling_objective=rolling_mean,
                     temperature=float(temperature),
