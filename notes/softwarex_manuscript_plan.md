@@ -215,6 +215,10 @@
   - [ ] Use `notes/softwarex_exemplar_analysis.md` takeaways and the Jaffray systematic review references to outline the Intro and Software Metadata paragraphs.
   - [ ] Draft the first pass of the Motivation/Contribution narrative (Section 1) using the shared snippets in `sections/includes/motivation_story.md`.
   - [ ] Capture open questions / text debt in the local manuscript change log before each writing push so we can trace edits without touching the main FHOPS changelog.
+- [ ] Re-run heuristic benchmarks with realistic runtimes/iteration counts (see `notes/coding-agent-conversation-log.txt` discussion on MIP vs. heuristic time scale).
+  - [ ] Increase SA/ILS/Tabu budgets so solver time falls within roughly 0.1–10× the corresponding MIP solve (current Tabu runtime of 0.09 s is implausibly low for med42).
+  - [ ] Capture the updated telemetry/summary CSVs and ensure illustrative example tables reflect the longer convergence runs.
+  - [ ] Log the rerun details (commit, command, runtime) alongside the benchmark log for future traceability.
 - [x] Finalize reproducible asset documentation before the benchmark suite grows further.
   - [x] Expand `docs/softwarex/manuscript/README.md` with runtime expectations, environment variables (e.g., `FHOPS_ASSETS_FAST=1`), and troubleshooting tips for each script.
   - [x] Add a short manual checklist (until CI is ready) referencing the outputs each script must produce under `docs/softwarex/assets/`.
