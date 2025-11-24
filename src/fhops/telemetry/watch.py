@@ -23,6 +23,11 @@ class Snapshot:
     restarts: int | None = None
     workers_busy: int | None = None
     workers_total: int | None = None
+    current_objective: float | None = None
+    rolling_objective: float | None = None
+    temperature: float | None = None
+    acceptance_rate_window: float | None = None
+    delta_objective: float | None = None
     timestamp: datetime = field(default_factory=datetime.utcnow)
     metadata: dict[str, str] = field(default_factory=dict)
 

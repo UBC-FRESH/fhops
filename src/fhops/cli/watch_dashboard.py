@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import threading
-import time
 from dataclasses import dataclass, field
 from typing import Dict, Tuple
 
@@ -38,6 +37,7 @@ class LiveWatch:
     def start(self) -> None:
         if self._live is not None:
             return
+        self._stop.clear()
         refresh = max(1, int(1 / max(self.config.refresh_interval, 0.1)))
         self._live = Live(self._render(), refresh_per_second=refresh, console=self.console)
         self._live.__enter__()
@@ -49,20 +49,28 @@ class LiveWatch:
         if self._thread:
             self._thread.join(timeout=1)
             self._thread = None
+        # Flush any remaining snapshots so short-lived runs still render a final state.
+        self._drain_once()
         if self._live:
             self._live.__exit__(None, None, None)
             self._live = None
 
     def _loop(self) -> None:
         while not self._stop.is_set():
-            updated = False
-            for snapshot in self._bus.drain():
-                key = (snapshot.scenario, snapshot.solver)
-                self._state[key] = snapshot
-                updated = True
-            if updated and self._live:
-                self._live.update(self._render())
-            time.sleep(self.config.refresh_interval)
+            self._drain_once()
+            # Wait for either the refresh interval to elapse or an explicit stop.
+            self._stop.wait(self.config.refresh_interval)
+        # One last drain after receiving the stop signal to capture final snapshots.
+        self._drain_once()
+
+    def _drain_once(self) -> None:
+        updated = False
+        for snapshot in self._bus.drain():
+            key = (snapshot.scenario, snapshot.solver)
+            self._state[key] = snapshot
+            updated = True
+        if updated and self._live:
+            self._live.update(self._render())
 
     def _render(self) -> Table:
         table = Table(title="FHOPS Heuristic Watch", expand=True)
@@ -70,10 +78,15 @@ class LiveWatch:
         table.add_column("Solver", style="magenta")
         table.add_column("Iter", justify="right")
         table.add_column("Progress", justify="right")
-        table.add_column("Objective", justify="right")
+        table.add_column("Best Z", justify="right")
+        table.add_column("Curr Z", justify="right")
+        table.add_column("Roll Z", justify="right")
+        table.add_column("Δbest", justify="right")
         table.add_column("Runtime (s)", justify="right")
+        table.add_column("Temp", justify="right")
         if self.config.include_acceptance_rate:
             table.add_column("Accept", justify="right")
+            table.add_column("Accept (win)", justify="right")
         if self.config.include_restarts:
             table.add_column("Restarts", justify="right")
         if self.config.include_workers:
@@ -86,6 +99,11 @@ class LiveWatch:
                 if snap.acceptance_rate is not None
                 else "-"
             )
+            accept_window = (
+                f"{snap.acceptance_rate_window*100:.1f}%"
+                if snap.acceptance_rate_window is not None
+                else "-"
+            )
             restarts = str(snap.restarts) if snap.restarts is not None else "-"
             workers = "-"
             if self.config.include_workers:
@@ -93,16 +111,37 @@ class LiveWatch:
                     workers = f"{snap.workers_busy}/{snap.workers_total}"
                 elif snap.workers_busy is not None:
                     workers = str(snap.workers_busy)
+            delta = (
+                f"{snap.delta_objective:+.3f}"
+                if snap.delta_objective is not None
+                else "-"
+            )
+            curr = (
+                f"{snap.current_objective:.3f}"
+                if snap.current_objective is not None
+                else "-"
+            )
+            rolling = (
+                f"{snap.rolling_objective:.3f}"
+                if snap.rolling_objective is not None
+                else "-"
+            )
+            temp = f"{snap.temperature:.3f}" if snap.temperature is not None else "-"
             row = [
                 scenario,
                 solver,
                 str(snap.iteration),
                 progress_str,
                 f"{snap.objective:.3f}",
+                curr,
+                rolling,
+                delta,
                 f"{snap.runtime_seconds:.1f}",
+                temp,
             ]
             if self.config.include_acceptance_rate:
                 row.append(accept)
+                row.append(accept_window)
             if self.config.include_restarts:
                 row.append(restarts)
             if self.config.include_workers:

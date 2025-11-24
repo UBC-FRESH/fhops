@@ -1,3 +1,14 @@
+# 2025-12-07 — Heuristic watch telemetry upgrades
+- Expanded the live watcher snapshot schema (`src/fhops/telemetry/watch.py`) to carry current/rolling objectives,
+  temperature, delta-best, and sliding-window acceptance so heuristic dashboards can show more than a static best score.
+- Updated the simulated annealing runner to compute those metrics per-iteration (rolling deques, windowed acceptance) and
+  stream them through the new snapshot fields, making long SA runs expose temperature decay and convergence trends
+  (`src/fhops/optimization/heuristics/sa.py`).
+- Refreshed the Rich dashboard layout to display best/curr/rolling Z, Δbest, runtime, temperature, and both cumulative
+  and windowed acceptance rates so users can watch heuristics cool down in real time (`src/fhops/cli/watch_dashboard.py`).
+- Logged the richer Phase 2 plan in `notes/cli_heuristic_upgrade_notes.md` so the upcoming ILS/Tabu instrumentation and
+  UI polish are tracked alongside the SA work.
+
 # 2025-11-24 — Heuristic benchmark reruns + asset pipeline scaling
 - Raised the manuscript asset pipeline budgets so SA/ILS/Tabu runs align with MIP-scale runtimes (e.g., med42 now spins SA for 20 000 iterations, ILS for 4 000, Tabu for 40 000 with 2 400 s limits) and wired `generate_assets.sh` to launch each scenario in parallel with higher batch sizes/worker counts (12–24 cores per heuristic). Tabu runtimes now sit in the hundreds of seconds instead of implausible sub-second plateaus (`docs/softwarex/manuscript/scripts/generate_assets.sh`).
 - Re-enabled `run_manuscript_benchmarks.sh` as an executable wrapper around the asset pipeline and logged the full rerun (fast_mode=0, duration ≈10 min, hash `92ceea7b…`) to `docs/softwarex/assets/benchmark_runs.log` so reviewers can trace the exact commit/runtime for this asset snapshot.

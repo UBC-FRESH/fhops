@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 import random as _random
 import time
-from collections import defaultdict
+from collections import defaultdict, deque
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import nullcontext
 from dataclasses import dataclass
@@ -562,6 +562,11 @@ def solve_sa(
     watch_scenario = watch_meta.get("scenario") or scenario_name or "unknown"
     watch_solver = watch_meta.get("solver") or "sa"
 
+    window_size = max(10, min(500, iters // 20 or 10))
+    rolling_scores: deque[float] = deque(maxlen=window_size)
+    acceptance_window: deque[int] = deque(maxlen=window_size)
+    last_watch_best: float | None = None
+
     with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
         current = _init_greedy(pb)
         current_score = _evaluate(pb, current)
@@ -620,24 +625,48 @@ def solve_sa(
                 current_score = _evaluate(pb, current)
                 restarts += 1
 
-                if watch_sink and (
-                    step == 1 or step == iters or (step % watch_interval_value == 0)
-                ):
-                    acceptance_rate = (accepted_moves / proposals) if proposals else None
-                    watch_sink(
-                        Snapshot(
-                            scenario=watch_scenario,
-                            solver=watch_solver,
-                            iteration=step,
-                            max_iterations=iters,
-                            objective=float(best_score),
-                            best_gap=None,
-                            runtime_seconds=time.perf_counter() - run_start,
-                            acceptance_rate=acceptance_rate,
-                            restarts=restarts,
-                            metadata=watch_meta,
-                        )
+            rolling_scores.append(float(current_score))
+            acceptance_window.append(1 if accepted else 0)
+
+            if watch_sink and (
+                step == 1 or step == iters or (step % watch_interval_value == 0)
+            ):
+                acceptance_rate = (accepted_moves / proposals) if proposals else None
+                rolling_mean = (
+                    float(sum(rolling_scores) / len(rolling_scores))
+                    if rolling_scores
+                    else float(current_score)
+                )
+                window_acceptance = (
+                    float(sum(acceptance_window) / len(acceptance_window))
+                    if acceptance_window
+                    else None
+                )
+                delta_objective = (
+                    float(best_score - last_watch_best)
+                    if last_watch_best is not None
+                    else 0.0
+                )
+                last_watch_best = float(best_score)
+                watch_sink(
+                    Snapshot(
+                        scenario=watch_scenario,
+                        solver=watch_solver,
+                        iteration=step,
+                        max_iterations=iters,
+                        objective=float(best_score),
+                        best_gap=None,
+                        runtime_seconds=time.perf_counter() - run_start,
+                        acceptance_rate=acceptance_rate,
+                        restarts=restarts,
+                        current_objective=float(current_score),
+                        rolling_objective=rolling_mean,
+                        temperature=float(temperature),
+                        acceptance_rate_window=window_acceptance,
+                        delta_objective=delta_objective,
+                        metadata=watch_meta,
                     )
+                )
 
         rows = []
         for machine_id, plan in best.plan.items():
@@ -655,6 +684,22 @@ def solve_sa(
         assignments = pd.DataFrame(rows).sort_values(["day", "shift_id", "machine_id", "block_id"])
         if watch_sink:
             acceptance_rate = (accepted_moves / proposals) if proposals else None
+            rolling_mean = (
+                float(sum(rolling_scores) / len(rolling_scores))
+                if rolling_scores
+                else float(current_score)
+            )
+            window_acceptance = (
+                float(sum(acceptance_window) / len(acceptance_window))
+                if acceptance_window
+                else None
+            )
+            delta_objective = (
+                float(best_score - last_watch_best)
+                if last_watch_best is not None
+                else 0.0
+            )
+            last_watch_best = float(best_score)
             watch_sink(
                 Snapshot(
                     scenario=watch_scenario,
@@ -666,6 +711,11 @@ def solve_sa(
                     runtime_seconds=time.perf_counter() - run_start,
                     acceptance_rate=acceptance_rate,
                     restarts=restarts,
+                    current_objective=float(current_score),
+                    rolling_objective=rolling_mean,
+                    temperature=float(temperature),
+                    acceptance_rate_window=window_acceptance,
+                    delta_objective=delta_objective,
                     metadata=watch_meta,
                 )
             )
