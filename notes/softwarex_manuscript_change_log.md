@@ -12,6 +12,7 @@ Track local manuscript edits/text debt without polluting the main project CHANGE
 - Expanded Section 2 automation notes with concrete command examples and asset destinations.
 - Rewrote Section 4 to highlight how FHOPS addresses Jaffray et al. gaps, emphasising BC focus today with extensibility for other regions/currencies later.
 - Section 5 now references the backlog in `notes/softwarex_manuscript_change_log.md` so future work is tied to an actionable list.
+- Added explicit CLI/source references after Tables~\ref{tab:benchmarks}--\ref{tab:tuning} and in the playback/costing paragraph so readers know which directories (\texttt{docs/softwarex/assets/...}) contain each artefact; noted CAD currency assumption and path to alternative machine-rate files.
 
 ---
 
