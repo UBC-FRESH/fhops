@@ -75,6 +75,7 @@
   - [ ] CLI integration tests (pytest) that run a small SA benchmark with `--watch` enabled but using Rich “console recorder” to verify text output contains live sections.
   - [ ] Smoke test for tuning harness watch mode (reduced budget) to ensure multiple concurrent trials render without crashing.
   - [x] Add regression coverage for ILS/Tabu watch mode hooks once instrumentation lands.
+  - [x] Add CLI smoke tests ensuring `solve-heur --watch` and `tune-random --watch` finish and emit the expected console text (even when TTY fallback warns).
 
 ### Phase 3 – Documentation & Support Material
 - [ ] **User docs**
