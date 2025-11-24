@@ -69,7 +69,7 @@
   - [x] Move the sparkline trend out of the main table (render below each row) to avoid column jitter and provide more horizontal resolution.
 - [ ] **Graceful teardown**
   - [x] Flush remaining snapshots on stop so short-lived runs still render a final state.
-  - [ ] Trap `KeyboardInterrupt` so the live display stops cleanly and the final snapshot is printed.
+  - [x] Trap `KeyboardInterrupt` so the live display stops cleanly and the final snapshot is printed (bench suite now wraps watch mode in a `try/finally`; other commands already run the watch context via `with` blocks).
   - [ ] Confirm telemetry logging + JSON outputs remain unchanged.
 - [ ] **Testing**
   - [ ] CLI integration tests (pytest) that run a small SA benchmark with `--watch` enabled but using Rich “console recorder” to verify text output contains live sections.
