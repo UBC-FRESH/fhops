@@ -10,7 +10,7 @@
   \item \textbf{Telemetry \& assets} – reproducible logging, benchmark scripts, figure/table generation.
 \end{enumerate}
 
-Each layer is consumable via API or CLI, mirroring the dual entry points emphasized in pycity\_scheduling, TSFEL, and contemporary forest-planning DSS (e.g., PRISM, multi-attribute spatial tools) \cite{nguyen2022prism,kuhmaier2010dss}.
+Each layer is consumable via API or CLI, mirroring the dual entry points emphasized in pycity\_scheduling, TSFEL, and contemporary forest-planning DSS (e.g., PRISM, multi-attribute spatial tools) \cite{nguyen2022prism,kuhmaier2010dss}. Internally the packages mirror this structure: scenario models sit under \texttt{fhops.scenario.contract} / \texttt{fhops.scenario.synthetic}, optimisation logic under \texttt{fhops.optimization} (heuristics and Pyomo builder), and evaluation/telemetry helpers under \texttt{fhops.evaluation} and \texttt{fhops.telemetry}. The CLI wrappers (\texttt{fhops.cli.*}) simply call these modules, so referencing a function in the manuscript maps 1:1 to a Python module path that downstream developers can import.
 
 Figure~\ref{fig:fhops-prisma-overview} summarises the automation pipeline that underpins this layered design. The PRISMA-style diagram follows the data from scenario contracts and curated datasets through FHOPS’ ingest, solver, tuning, and telemetry components, then out to benchmark/playback artefacts that readers can reproduce with the same CLI sequence. It visually reinforces that FHOPS treats reproducibility as part of the core platform rather than an add-on.
 

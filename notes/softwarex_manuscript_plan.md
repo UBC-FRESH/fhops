@@ -3,6 +3,12 @@
 > **Planning Note:** Every task must use checkboxes and include subtasks/sub-subtasks as needed. Keep expanding items in-place as execution details emerge so we stay consistent with this structure. Do **not** rerun `make manuscript-benchmarks` (or ask about it) until the pre-submission checklist at the end of Phase 5.
 >
 > **Citation Guardrail:** Until Rosalia Jaffray’s thesis chapters are defended/public, only cite the submitted systematic review (“Jaffray, Coupland, Paradis, *Forest harvesting operational planning tools…*, submitted to IJFE 2025/10”) and the published papers it covers. Do **not** cite unreleased thesis chapters or drafts in the SoftwareX manuscript.
+>
+> **Phase snapshot:**  
+> - [x] Phase 0 – Planning (requirements + exemplar analysis).  
+> - [x] Phase 1 – Manuscript architecture & repo scaffolding.  
+> - [ ] **Phase 2 – Content drafting (current focus; task blocks outlined below).**  
+> - [ ] Phases 3–5 – Validation, review, submission (queued; see later sections).
 
 ## Goals
 - [ ] Author a SoftwareX manuscript that showcases FHOPS and complements the existing Sphinx user guide (especially the Overview section).
@@ -109,27 +115,37 @@
   - [x] Explicitly list which FHOPS analytical content will be reserved for Jaffray Chapter 2 (two-to-three BC case studies answering the open questions from her intro/lit review).
   - [ ] Ensure the SoftwareX single-author paper focuses on platform architecture, reproducibility, and tooling; detailed BC case-study insights remain embargoed until Rosalia submits/publishes her thesis work.
 
-## Phase 2 – Content Drafting
+## Phase 2 – Content Drafting *(active phase)*
+
+> **Legend:** P2.x headings correspond to the unmet bullets reviewers should be able to find quickly. Checkboxes sit directly under each block so we can see what remains without scrolling the entire file.
+
+### P2.1 – First-pass narrative (per section)
 - [ ] Produce first-pass text for each major section, incorporating FHOPS capabilities, unique contributions, and methodology.
   - [ ] Draft Abstract, Intro, and Software Metadata sections.
     - [x] Section~1 (Motivation \& significance) updated with Jaffray review context + contribution framing.
     - [x] Highlights + abstract drafted to emphasise the reproducible workflow and thesis alignment.
     - [x] Abstract outline aligned with exemplar structure (PyLESA/cashocs style).
     - [x] Software Metadata tables (code metadata + current code version) populated with release/licensing/reproducibility details.
-  - [ ] Document Implementation/Architecture details referencing FHOPS internals.
-  - [ ] Summarize Impact and Future Work narratives.
+  - [x] Document Implementation/Architecture details referencing FHOPS internals (Section~\ref{sec:software-description} mentions module layout + CLI entry points).
+  - [ ] Summarize Impact and Future Work narratives (Sections~\ref{sec:impact} \& \ref{sec:conclusions}).
+
+### P2.2 – Asset + figure readiness
 - [ ] Generate required assets: architecture diagrams, workflow figures, tables summarizing problem classes, benchmark results.
-  - [ ] Update or design new diagrams highlighting FHOPS pipeline.
-  - [ ] Prepare performance/benchmark tables with accompanying captions.
-  - [ ] Validate figure resolution/format meets SoftwareX standards.
+  - [ ] Update or design new diagrams highlighting FHOPS pipeline (PRISMA + any additional workflow visuals).
+  - [ ] Prepare performance/benchmark tables with accompanying captions (ensure captions cite asset paths).
+  - [ ] Validate figure resolution/format meets SoftwareX standards (≥300 dpi PNG/PDF, proper sizing).
+
+### P2.3 – Reproducibility annotations
 - [ ] Capture reproducibility details (dataset descriptions, parameter choices, environment info) alongside manuscript text for later validation.
-  - [ ] Log datasets, solver settings, and hardware/software environments.
-  - [ ] Store experiment configuration files or references in repo.
-  - [ ] Tie each reproducibility note to a manuscript section for traceability.
+  - [ ] Log datasets, solver settings, and hardware/software environments (appendix or Section~\ref{sec:impact} note).
+  - [ ] Store experiment configuration files or references in repo (ensure scripts/configs live under `docs/softwarex/assets/**`).
+  - [ ] Tie each reproducibility note to a manuscript section for traceability (e.g., cite benchmark log path after Tables~\ref{tab:benchmarks}--\ref{tab:tuning}).
+
+### P2.4 – Shared snippets & Sphinx integration
 - [ ] Keep snippets modular so they can be embedded into Sphinx using includes or shared source files.
-  - [ ] Factor reusable text blocks into shared include files.
-  - [ ] Add guidance in Sphinx docs for pulling in manuscript excerpts.
-  - [ ] Test include flow to ensure formatting parity between outputs.
+  - [ ] Factor remaining reusable text blocks into shared include files (`sections/includes/`).
+  - [ ] Add guidance in Sphinx docs for pulling in manuscript excerpts (update `docs/includes/softwarex/README.md` or relevant how-to).
+  - [ ] Test include flow to ensure formatting parity between outputs (run `scripts/export_docs_assets.py` and spot-check in Sphinx).
 
 ## Phase 3 – Technical Validation & Artifact Packaging
 - [ ] Verify all experiments/benchmarks are scripted and reproducible (CI or documented commands).
