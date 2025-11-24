@@ -80,7 +80,7 @@
 ### Phase 3 – Documentation & Support Material
 - [ ] **User docs**
   - [x] Update `README.md` + `docs/howto/benchmarks.md` with a “Watching heuristics” section covering flags, sample output, and troubleshooting.
-  - [ ] Add an FAQ entry about disabling watch in non-interactive environments.
+  - [x] Add an FAQ entry about disabling watch in non-interactive environments.
 - [ ] **Manuscript/Sphinx snippets**
   - [ ] Capture a screenshot or short GIF of the Rich dashboard for both the SoftwareX manuscript and Sphinx docs (assets under `docs/softwarex/assets/figures/cli_watch_demo.{png,pdf}`).
 - [ ] **Tutorial notebook**

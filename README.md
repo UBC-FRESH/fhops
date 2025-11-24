@@ -170,3 +170,20 @@ Adjust `--watch-refresh <seconds>` (default 0.5 s) to trade off responsiveness
 When using `--parallel-workers` remember that scoring still uses Python threads today, so the table’s
 `workers` column reflects the requested worker count even though the GIL may limit true parallelism;
 for real multi-core use prefer `--parallel-multistart` or process-level orchestration.
+
+### FAQ – Watch Mode
+
+- **“Watch mode disabled: not running in an interactive terminal.”**  
+  The dashboard only renders when stdout is a TTY. Wrap the command with `script` (or run it inside a
+  terminal multiplexer) when you need both the live table and a log:
+
+  ```bash
+  script -q -c "fhops solve-heur ... --watch" /tmp/fhops_watch.log
+  ```
+
+  The TTY sees the dashboard, while the log captures the standard CLI output after the run.
+
+- **How can I record a screenshot/GIF?**  
+  Run a short command (e.g., `fhops solve-heur examples/minitoy/scenario.yaml --watch --iters 500`)
+  and use your preferred terminal recorder (`asciinema`, `ttystudio`, etc.). The sparkline now renders
+  below the main table so column widths stay stable while recording.
