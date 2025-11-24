@@ -14,6 +14,12 @@
 - Tuned simulated annealing by exposing the cooling rate and restart interval (CLI + benchmarks) so long runs cool
   slowly and restart only after substantial stalls; telemetry/meta now record the chosen parameters
   (`src/fhops/optimization/heuristics/sa.py`, `src/fhops/cli/{main,benchmarks}.py`).
+- Reworked the watch UI into common metric columns plus solver-specific detail rows (SA temperature/acceptance, ILS
+  perturbations, Tabu tenure) and moved the sparkline trend into its own panel to avoid table jitter
+  (`src/fhops/cli/watch_dashboard.py`).
+- Added Tabu diversification when stall limits are hit so long runs continue exploring, tracking real restart counts
+  in telemetry/watch metadata instead of the previous stall-based proxy (`src/fhops/optimization/heuristics/tabu.py`,
+  `src/fhops/cli/watch_dashboard.py`).
 - Logged the richer Phase 2 plan in `notes/cli_heuristic_upgrade_notes.md` so the upcoming ILS/Tabu instrumentation and
   UI polish are tracked alongside the SA work.
 

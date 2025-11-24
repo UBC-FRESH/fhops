@@ -5,7 +5,7 @@ from collections import deque
 from dataclasses import dataclass, field
 from typing import Deque, Dict, Tuple
 
-from rich.console import Console
+from rich.console import Console, Group
 from rich.live import Live
 from rich.table import Table
 
@@ -107,6 +107,44 @@ class LiveWatch:
             spark_chars.append(chars[idx])
         return "".join(spark_chars)
 
+    def _solver_details(self, snap: Snapshot) -> str:
+        solver = (snap.solver or "").lower()
+        parts: list[str] = []
+        if solver.startswith("sa"):
+            if snap.temperature is not None:
+                parts.append(f"T={snap.temperature:.3f}")
+            if snap.acceptance_rate is not None:
+                parts.append(f"Acc={snap.acceptance_rate*100:.1f}%")
+            if snap.acceptance_rate_window is not None:
+                parts.append(f"Win={snap.acceptance_rate_window*100:.1f}%")
+        elif solver.startswith("ils"):
+            metadata = snap.metadata or {}
+            stalls = metadata.get("stalls")
+            if stalls is not None:
+                parts.append(f"Stalls={stalls}")
+            perturb = metadata.get("perturbations")
+            if perturb is not None:
+                parts.append(f"Perturb={perturb}")
+            restarts = metadata.get("restarts")
+            if restarts is not None:
+                parts.append(f"Restarts={restarts}")
+        elif solver.startswith("tabu"):
+            metadata = snap.metadata or {}
+            tenure = metadata.get("tabu_tenure")
+            if tenure is not None:
+                parts.append(f"Tenure={tenure}")
+            stalls = metadata.get("stalls")
+            if stalls is not None:
+                parts.append(f"Stalls={stalls}")
+            restarts = metadata.get("restarts")
+            if restarts is not None:
+                parts.append(f"Restarts={restarts}")
+            if snap.acceptance_rate is not None:
+                parts.append(f"Acc={snap.acceptance_rate*100:.1f}%")
+            if snap.acceptance_rate_window is not None:
+                parts.append(f"Win={snap.acceptance_rate_window*100:.1f}%")
+        return " | ".join(parts)
+
     def _render(self) -> Table:
         table = Table(title="FHOPS Heuristic Watch", expand=True)
         table.add_column("Scenario", style="cyan")
@@ -117,29 +155,16 @@ class LiveWatch:
         table.add_column("Curr Z", justify="right")
         table.add_column("Roll Z", justify="right")
         table.add_column("Δbest", justify="right")
-        table.add_column("Trend", justify="right")
         table.add_column("Runtime (s)", justify="right")
-        table.add_column("Temp", justify="right")
-        if self.config.include_acceptance_rate:
-            table.add_column("Accept", justify="right")
-            table.add_column("Accept (win)", justify="right")
         if self.config.include_restarts:
             table.add_column("Restarts", justify="right")
         if self.config.include_workers:
             table.add_column("Workers", justify="right")
+
+        trend_rows: list[tuple[str, str, str, str]] = []
         for (scenario, solver), snap in sorted(self._state.items()):
             progress = snap.progress_ratio
             progress_str = f"{progress*100:.1f}%" if progress is not None else "?"
-            accept = (
-                f"{snap.acceptance_rate*100:.1f}%"
-                if snap.acceptance_rate is not None
-                else "-"
-            )
-            accept_window = (
-                f"{snap.acceptance_rate_window*100:.1f}%"
-                if snap.acceptance_rate_window is not None
-                else "-"
-            )
             restarts = str(snap.restarts) if snap.restarts is not None else "-"
             workers = "-"
             if self.config.include_workers:
@@ -162,7 +187,6 @@ class LiveWatch:
                 if snap.rolling_objective is not None
                 else "-"
             )
-            temp = f"{snap.temperature:.3f}" if snap.temperature is not None else "-"
             sparkline = self._sparkline((scenario, solver))
             row = [
                 scenario,
@@ -173,16 +197,22 @@ class LiveWatch:
                 curr,
                 rolling,
                 delta,
-                sparkline,
                 f"{snap.runtime_seconds:.1f}",
-                temp,
             ]
-            if self.config.include_acceptance_rate:
-                row.append(accept)
-                row.append(accept_window)
             if self.config.include_restarts:
                 row.append(restarts)
             if self.config.include_workers:
                 row.append(workers)
             table.add_row(*row)
-        return table
+            details = self._solver_details(snap)
+            trend_rows.append((scenario, solver, sparkline, details))
+
+        trend_table = Table(box=None, show_header=False, expand=True, padding=(0, 1))
+        trend_table.add_column("Scenario", style="dim", width=16, no_wrap=True)
+        trend_table.add_column("Solver", style="dim", width=8, no_wrap=True)
+        trend_table.add_column("Trend", style="green")
+        trend_table.add_column("Details", style="cyan")
+        for scenario, solver, sparkline, details in trend_rows:
+            trend_table.add_row(scenario, solver, sparkline or "-", details or "")
+
+        return Group(table, trend_table)

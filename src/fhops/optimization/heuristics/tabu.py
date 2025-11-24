@@ -214,6 +214,7 @@ def solve_tabu(
         proposals = 0
         improvements = 0
         stalls = 0
+        restarts = 0
         operator_stats: dict[str, dict[str, float]] = {}
         run_start = time.perf_counter()
 
@@ -243,6 +244,7 @@ def solve_tabu(
                 **watch_meta,
                 "stalls": str(stalls),
                 "tabu_tenure": str(tenure),
+                "restarts": str(restarts),
             }
             watch_sink(
                 Snapshot(
@@ -254,7 +256,7 @@ def solve_tabu(
                     best_gap=None,
                     runtime_seconds=time.perf_counter() - run_start,
                     acceptance_rate=acceptance_rate,
-                    restarts=stalls,
+                    restarts=restarts,
                     current_objective=float(current_score),
                     rolling_objective=rolling_mean,
                     temperature=None,
@@ -350,7 +352,13 @@ def solve_tabu(
                 emit_snapshot(step)
 
             if stalls >= stall_limit:
-                break
+                restarts += 1
+                stalls = 0
+                current = best
+                current_score = best_score
+                tabu_queue.clear()
+                tabu_set.clear()
+                continue
 
         if watch_sink and last_iteration and last_emitted_step != last_iteration:
             emit_snapshot(last_iteration)
@@ -377,6 +385,7 @@ def solve_tabu(
             "improvements": improvements,
             "stall_limit": stall_limit,
             "tabu_tenure": tenure,
+            "restarts": restarts,
             "operators": registry.weights(),
             "algorithm": "tabu",
         }

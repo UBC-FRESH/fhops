@@ -1182,6 +1182,17 @@ def solve_tabu_cmd(
         "--tier-label",
         help="Optional label describing the budget tier for telemetry summaries.",
     ),
+    watch: bool = typer.Option(
+        False,
+        "--watch/--no-watch",
+        help="Render a live dashboard showing heuristic progress.",
+    ),
+    watch_refresh: float = typer.Option(
+        0.5,
+        "--watch-refresh",
+        min=0.1,
+        help="Refresh interval for the live dashboard (seconds).",
+    ),
     kpi_mode: str = typer.Option(
         "extended",
         "--kpi-mode",
@@ -1221,6 +1232,8 @@ def solve_tabu_cmd(
         Enable and configure the live Rich dashboard during Tabu runs.
     kpi_mode : str, default="extended"
         KPI verbosity switch (``basic`` or ``extended``).
+    watch / watch_refresh :
+        Enable and configure the live Rich dashboard for Tabu runs.
     show_operator_stats : bool
         When ``True`` print proposal/acceptance details produced by Tabu Search.
 
@@ -1240,7 +1253,19 @@ def solve_tabu_cmd(
         raise typer.Exit()
 
     sc = load_scenario(str(scenario))
+    scenario_label = getattr(sc, "name", None) or scenario.stem
     machine_costs = _machine_cost_snapshot(sc)
+    watch_runner: LiveWatch | None = None
+    if watch:
+        if console.is_terminal:
+            watch_runner = LiveWatch(
+                WatchConfig(refresh_interval=watch_refresh), console=console
+            )
+            watch_runner.start()
+        else:
+            console.print(
+                "[yellow]Watch mode disabled: not running in an interactive terminal.[/]"
+            )
     pb = Problem.from_scenario(sc)
     try:
         weight_override = parse_operator_weights(operator_weight)

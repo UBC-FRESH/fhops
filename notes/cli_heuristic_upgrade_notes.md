@@ -56,10 +56,14 @@
   - [ ] Ensure multi-worker heuristics aggregate metrics (per-worker iter counts, acceptance rates) before emitting.
   - [x] Thread watch hooks through `solve_ils` and `solve_tabu`, including heuristic-specific metrics (perturbations, tabu tenure, stall counters) and expose the same dashboard via CLI + bench runners.
   - [x] Expose SA cooling rate and restart-interval knobs (solver + CLI + benchmarks) so long runs cool gradually instead of collapsing into hill-climbs.
+  - [x] Teach Tabu to diversify instead of exiting when stalls exceed the limit (clear tabu list, restart counters, propagate accurate restart telemetry/watch metrics).
+  - [x] Capture current best-performing ILS tuning baseline for med42: `iters=40_000`, `perturbation_strength=1`, `stall_limit=100`, single-threaded workers. These values keep restarts at zero and yield the observed 34.5 objective while the watcher trend remains stable. Keep this as a reference preset when refining Phase 2 heuristics.
 - [ ] **UI enhancements**
   - [x] Display both current objective and best-so-far so flat lines still show ongoing exploration.
   - [x] Add a lightweight “Z sparkline” (objective vs. iteration) per solver row using a rolling history so improvements are visible in real time.
   - [x] Surface solver internals: current temperature, rolling-window objective mean, sliding-window acceptance rate, and per-refresh improvement rate/delta so users can gauge convergence speed.
+  - [x] Refactor columns so shared metrics (scenario/solver/iter/best/curr/roll/runtime) stay consistent across solvers, while solver-specific data (e.g., SA temperature/acceptance, ILS perturbations, Tabu tenure/stalls) render in dedicated per-solver detail rows.
+  - [x] Move the sparkline trend out of the main table (render below each row) to avoid column jitter and provide more horizontal resolution.
 - [ ] **Graceful teardown**
   - [x] Flush remaining snapshots on stop so short-lived runs still render a final state.
   - [ ] Trap `KeyboardInterrupt` so the live display stops cleanly and the final snapshot is printed.
