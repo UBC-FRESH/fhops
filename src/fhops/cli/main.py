@@ -675,6 +675,13 @@ def solve_heur_cmd(
     }
     if resolved.extra_kwargs:
         sa_kwargs.update(resolved.extra_kwargs)
+    if watch_runner:
+        sa_kwargs["watch_sink"] = watch_runner.sink
+        sa_kwargs["watch_interval"] = max(1, iters // 200 or 1)
+        sa_kwargs["watch_metadata"] = {
+            "scenario": scenario_label,
+            "solver": "sa",
+        }
 
     runs_meta = None
     seed_used = seed
@@ -708,50 +715,54 @@ def solve_heur_cmd(
         sa_kwargs["telemetry_log"] = telemetry_log
         sa_kwargs["telemetry_context"] = base_telemetry_context
 
-    if multi_start > 1:
-        seeds, auto_presets = build_exploration_plan(multi_start, base_seed=seed)
-        if resolved.operators:
-            preset_plan: list[Sequence[str] | None] = [None for _ in range(multi_start)]
+    try:
+        if multi_start > 1:
+            seeds, auto_presets = build_exploration_plan(multi_start, base_seed=seed)
+            if resolved.operators:
+                preset_plan: list[Sequence[str] | None] = [None for _ in range(multi_start)]
+            else:
+                preset_plan = list(auto_presets)
+            try:
+                res_container = run_multi_start(
+                    pb,
+                    seeds=seeds,
+                    presets=preset_plan,
+                    max_workers=worker_arg,
+                    sa_kwargs=sa_kwargs,
+                    telemetry_log=telemetry_log,
+                    telemetry_context=base_telemetry_context,
+                )
+                res = res_container.best_result
+                runs_meta = res_container.runs_meta
+                best_meta = max(
+                    (meta for meta in runs_meta if meta.get("status") == "ok"),
+                    key=lambda meta: meta.get("objective", float("-inf")),
+                    default=None,
+                )
+                if best_meta:
+                    seed_value = best_meta.get("seed")
+                    if isinstance(seed_value, int):
+                        seed_used = seed_value
+                    elif isinstance(seed_value, str):
+                        try:
+                            seed_used = int(seed_value)
+                        except ValueError:
+                            pass
+            except Exception as exc:  # pragma: no cover - guardrail path
+                console.print(
+                    f"[yellow]Multi-start execution failed ({exc!r}); falling back to single run.[/]"
+                )
+                runs_meta = None
+                fallback_kwargs: dict[str, Any] = dict(sa_kwargs)
+                fallback_kwargs["seed"] = seed
+                res = solve_sa(pb, **fallback_kwargs)
         else:
-            preset_plan = list(auto_presets)
-        try:
-            res_container = run_multi_start(
-                pb,
-                seeds=seeds,
-                presets=preset_plan,
-                max_workers=worker_arg,
-                sa_kwargs=sa_kwargs,
-                telemetry_log=telemetry_log,
-                telemetry_context=base_telemetry_context,
-            )
-            res = res_container.best_result
-            runs_meta = res_container.runs_meta
-            best_meta = max(
-                (meta for meta in runs_meta if meta.get("status") == "ok"),
-                key=lambda meta: meta.get("objective", float("-inf")),
-                default=None,
-            )
-            if best_meta:
-                seed_value = best_meta.get("seed")
-                if isinstance(seed_value, int):
-                    seed_used = seed_value
-                elif isinstance(seed_value, str):
-                    try:
-                        seed_used = int(seed_value)
-                    except ValueError:
-                        pass
-        except Exception as exc:  # pragma: no cover - guardrail path
-            console.print(
-                f"[yellow]Multi-start execution failed ({exc!r}); falling back to single run.[/]"
-            )
-            runs_meta = None
-            fallback_kwargs: dict[str, Any] = dict(sa_kwargs)
-            fallback_kwargs["seed"] = seed
-            res = solve_sa(pb, **fallback_kwargs)
-    else:
-        single_run_kwargs: dict[str, Any] = dict(sa_kwargs)
-        single_run_kwargs["seed"] = seed
-        res = solve_sa(pb, **single_run_kwargs)
+            single_run_kwargs: dict[str, Any] = dict(sa_kwargs)
+            single_run_kwargs["seed"] = seed
+            res = solve_sa(pb, **single_run_kwargs)
+    finally:
+        if watch_runner:
+            watch_runner.stop()
     assignments = cast(pd.DataFrame, res["assignments"])
     objective = cast(float, res.get("objective", 0.0))
     meta = cast(dict[str, Any], res.get("meta", {}))
