@@ -6,6 +6,9 @@
   (`src/fhops/optimization/heuristics/sa.py`).
 - Refreshed the Rich dashboard layout to display best/curr/rolling Z, Δbest, runtime, temperature, and both cumulative
   and windowed acceptance rates so users can watch heuristics cool down in real time (`src/fhops/cli/watch_dashboard.py`).
+- Added matching watch emitters to ILS/Tabu (rolling means, stall counts, tenure metadata) and threaded the `--watch`
+  plumbing through the bench harness plus `fhops solve-ils`/`solve-tabu` commands so every heuristic can stream to the
+  dashboard (`src/fhops/optimization/heuristics/{ils,tabu}.py`, `src/fhops/cli/{benchmarks,main}.py`).
 - Logged the richer Phase 2 plan in `notes/cli_heuristic_upgrade_notes.md` so the upcoming ILS/Tabu instrumentation and
   UI polish are tracked alongside the SA work.
 

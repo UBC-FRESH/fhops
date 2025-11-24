@@ -507,6 +507,17 @@ def solve_heur_cmd(
         "--tier-label",
         help="Optional label describing the budget tier for telemetry summaries.",
     ),
+    watch: bool = typer.Option(
+        False,
+        "--watch/--no-watch",
+        help="Render a live dashboard showing heuristic progress.",
+    ),
+    watch_refresh: float = typer.Option(
+        0.5,
+        "--watch-refresh",
+        min=0.1,
+        help="Refresh interval for the live dashboard (seconds).",
+    ),
     kpi_mode: str = typer.Option(
         "extended",
         "--kpi-mode",
@@ -589,7 +600,19 @@ def solve_heur_cmd(
         raise typer.Exit()
 
     sc = load_scenario(str(scenario))
+    scenario_label = getattr(sc, "name", None) or scenario.stem
     machine_costs = _machine_cost_snapshot(sc)
+    watch_runner: LiveWatch | None = None
+    if watch:
+        if console.is_terminal:
+            watch_runner = LiveWatch(
+                WatchConfig(refresh_interval=watch_refresh), console=console
+            )
+            watch_runner.start()
+        else:
+            console.print(
+                "[yellow]Watch mode disabled: not running in an interactive terminal.[/]"
+            )
     pb = Problem.from_scenario(sc)
     try:
         weight_override = parse_operator_weights(operator_weight)
@@ -844,6 +867,17 @@ def solve_ils_cmd(
         "--tier-label",
         help="Optional label describing the budget tier for telemetry summaries.",
     ),
+    watch: bool = typer.Option(
+        False,
+        "--watch/--no-watch",
+        help="Render a live dashboard showing heuristic progress.",
+    ),
+    watch_refresh: float = typer.Option(
+        0.5,
+        "--watch-refresh",
+        min=0.1,
+        help="Refresh interval for the live dashboard (seconds).",
+    ),
     kpi_mode: str = typer.Option(
         "extended",
         "--kpi-mode",
@@ -878,6 +912,8 @@ def solve_ils_cmd(
         Tune the number of neighbours sampled per step and how many worker threads score them.
     telemetry_log / tier_label :
         Optional telemetry logging location plus a label to group runs in the dashboard.
+    watch / watch_refresh :
+        Enable and configure the live Rich dashboard for solver progress.
     kpi_mode : str, default="extended"
         Toggle KPI verbosity (``basic`` omits detailed breakdowns).
     show_operator_stats : bool
@@ -899,7 +935,19 @@ def solve_ils_cmd(
         raise typer.Exit()
 
     sc = load_scenario(str(scenario))
+    scenario_label = getattr(sc, "name", None) or scenario.stem
     machine_costs = _machine_cost_snapshot(sc)
+    watch_runner: LiveWatch | None = None
+    if watch:
+        if console.is_terminal:
+            watch_runner = LiveWatch(
+                WatchConfig(refresh_interval=watch_refresh), console=console
+            )
+            watch_runner.start()
+        else:
+            console.print(
+                "[yellow]Watch mode disabled: not running in an interactive terminal.[/]"
+            )
     pb = Problem.from_scenario(sc)
     try:
         weight_override = parse_operator_weights(operator_weight)
@@ -985,21 +1033,33 @@ def solve_ils_cmd(
     elif isinstance(existing_ctx, dict):
         extra_ils_kwargs["telemetry_context"] = existing_ctx
 
-    res = solve_ils(
-        pb,
-        iters=iters,
-        seed=seed,
-        operators=resolved.operators,
-        operator_weights=resolved.operator_weights or None,
-        batch_size=batch_arg,
-        max_workers=worker_arg,
-        perturbation_strength=perturbation_strength,
-        stall_limit=stall_limit,
-        hybrid_use_mip=hybrid_use_mip,
-        hybrid_mip_time_limit=hybrid_mip_time_limit,
-        **extra_ils_kwargs,
-        **telemetry_kwargs,
-    )
+    solver_kwargs: dict[str, Any] = {
+        "iters": iters,
+        "seed": seed,
+        "operators": resolved.operators,
+        "operator_weights": resolved.operator_weights or None,
+        "batch_size": batch_arg,
+        "max_workers": worker_arg,
+        "perturbation_strength": perturbation_strength,
+        "stall_limit": stall_limit,
+        "hybrid_use_mip": hybrid_use_mip,
+        "hybrid_mip_time_limit": hybrid_mip_time_limit,
+    }
+    solver_kwargs.update(extra_ils_kwargs)
+    solver_kwargs.update(telemetry_kwargs)
+    if watch_runner:
+        solver_kwargs["watch_sink"] = watch_runner.sink
+        solver_kwargs["watch_interval"] = max(1, iters // 50 or 1)
+        solver_kwargs["watch_metadata"] = {
+            "scenario": scenario_label,
+            "solver": "ils",
+        }
+
+    try:
+        res = solve_ils(pb, **solver_kwargs)
+    finally:
+        if watch_runner:
+            watch_runner.stop()
     assignments = cast(pd.DataFrame, res["assignments"])
     objective = cast(float, res.get("objective", 0.0))
 
@@ -1138,6 +1198,8 @@ def solve_tabu_cmd(
         Print available presets/profiles before exiting.
     telemetry_log / tier_label :
         Optional telemetry logging destination and label for grouping experiments.
+    watch / watch_refresh :
+        Enable and configure the live Rich dashboard during Tabu runs.
     kpi_mode : str, default="extended"
         KPI verbosity switch (``basic`` or ``extended``).
     show_operator_stats : bool
@@ -1236,19 +1298,31 @@ def solve_tabu_cmd(
     elif isinstance(existing_ctx, dict):
         profile_extra_kwargs["telemetry_context"] = existing_ctx
 
-    res = solve_tabu(
-        pb,
-        iters=iters,
-        seed=seed,
-        operators=resolved.operators,
-        operator_weights=resolved.operator_weights or None,
-        batch_size=batch_arg,
-        max_workers=worker_arg,
-        tabu_tenure=tenure,
-        stall_limit=stall_limit,
-        **profile_extra_kwargs,
-        **telemetry_kwargs,
-    )
+    solver_kwargs: dict[str, Any] = {
+        "iters": iters,
+        "seed": seed,
+        "operators": resolved.operators,
+        "operator_weights": resolved.operator_weights or None,
+        "batch_size": batch_arg,
+        "max_workers": worker_arg,
+        "tabu_tenure": tenure,
+        "stall_limit": stall_limit,
+    }
+    solver_kwargs.update(profile_extra_kwargs)
+    solver_kwargs.update(telemetry_kwargs)
+    if watch_runner:
+        solver_kwargs["watch_sink"] = watch_runner.sink
+        solver_kwargs["watch_interval"] = max(1, iters // 50 or 1)
+        solver_kwargs["watch_metadata"] = {
+            "scenario": scenario_label,
+            "solver": "tabu",
+        }
+
+    try:
+        res = solve_tabu(pb, **solver_kwargs)
+    finally:
+        if watch_runner:
+            watch_runner.stop()
     assignments = cast(pd.DataFrame, res["assignments"])
     objective = cast(float, res.get("objective", 0.0))
 
@@ -1869,14 +1943,12 @@ def tune_random_cli(
         raise typer.Exit(1)
 
     watch_runner: LiveWatch | None = None
-    if watch:
-        if console.is_terminal:
-            watch_runner = LiveWatch(
-                WatchConfig(refresh_interval=watch_refresh), console=console
-            )
-            watch_runner.start()
-        else:
-            console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")
+    if watch and console.is_terminal:
+        watch_runner = LiveWatch(
+            WatchConfig(refresh_interval=watch_refresh), console=console
+        )
+    elif watch and not console.is_terminal:
+        console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")
 
     rng = random.Random(base_seed)
     registry = OperatorRegistry.from_defaults()
@@ -1884,31 +1956,21 @@ def tune_random_cli(
 
     results: list[dict[str, Any]] = []
 
-    watch_runner: LiveWatch | None = None
-    if watch:
-        if console.is_terminal:
-            watch_runner = LiveWatch(
-                WatchConfig(refresh_interval=watch_refresh), console=console
-            )
-            watch_runner.start()
-        else:
-            console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")
-
-    try:
+    with (watch_runner or nullcontext()):
         for scenario_path in scenario_files:
             sc = load_scenario(str(scenario_path))
             pb = Problem.from_scenario(sc)
             scenario_resolved = scenario_path.resolve()
             bundle_meta = bundle_map.get(scenario_resolved)
             scenario_display = (
-            getattr(sc, "name", None) or scenario_path.parent.name or scenario_path.stem
-        )
-        if bundle_meta:
-            console.print(
-                f"[dim]Tuning {scenario_display} (bundle={bundle_meta['bundle']}, runs={runs})[/]"
+                getattr(sc, "name", None) or scenario_path.parent.name or scenario_path.stem
             )
-        else:
-            console.print(f"[dim]Tuning {scenario_display} ({runs} run(s))[/]")
+            if bundle_meta:
+                console.print(
+                    f"[dim]Tuning {scenario_display} (bundle={bundle_meta['bundle']}, runs={runs})[/]"
+                )
+            else:
+                console.print(f"[dim]Tuning {scenario_display} ({runs} run(s))[/]")
 
             for run_idx in range(runs):
                 run_seed = rng.randrange(1, 1_000_000_000)
@@ -1924,37 +1986,37 @@ def tune_random_cli(
                         "tuner_seed": base_seed,
                         "run_index": run_idx,
                         "batch_size_choice": batch_size_choice,
-                    "operator_count": weight_count,
-                }
-                if bundle_meta:
-                    telemetry_context["bundle"] = bundle_meta["bundle"]
-                    telemetry_context["bundle_member"] = bundle_meta.get(
-                        "bundle_member", scenario_display
-                    )
-                if tier_label:
-                    telemetry_context["tier"] = tier_label
-                tuner_meta_payload = {
-                    "algorithm": "random",
-                    "budget": {
-                        "runs_total": runs,
-                        "iters_per_run": iters,
-                        "tier": tier_label,
-                    },
-                    "config": {
-                        "batch_size": batch_size_choice,
                         "operator_count": weight_count,
-                        "operators": operator_weights,
-                    },
-                    "progress": {
-                        "run_index": run_idx + 1,
-                        "total_runs": runs,
-                    },
-                }
-                if bundle_meta:
-                    tuner_meta_payload["bundle"] = bundle_meta["bundle"]
-                    tuner_meta_payload["bundle_member"] = bundle_meta.get(
-                        "bundle_member", scenario_display
-                    )
+                    }
+                    if bundle_meta:
+                        telemetry_context["bundle"] = bundle_meta["bundle"]
+                        telemetry_context["bundle_member"] = bundle_meta.get(
+                            "bundle_member", scenario_display
+                        )
+                    if tier_label:
+                        telemetry_context["tier"] = tier_label
+                    tuner_meta_payload = {
+                        "algorithm": "random",
+                        "budget": {
+                            "runs_total": runs,
+                            "iters_per_run": iters,
+                            "tier": tier_label,
+                        },
+                        "config": {
+                            "batch_size": batch_size_choice,
+                            "operator_count": weight_count,
+                            "operators": operator_weights,
+                        },
+                        "progress": {
+                            "run_index": run_idx + 1,
+                            "total_runs": runs,
+                        },
+                    }
+                    if bundle_meta:
+                        tuner_meta_payload["bundle"] = bundle_meta["bundle"]
+                        tuner_meta_payload["bundle_member"] = bundle_meta.get(
+                            "bundle_member", scenario_display
+                        )
                     telemetry_kwargs = {
                         "telemetry_log": telemetry_log,
                         "telemetry_context": telemetry_context,
@@ -1984,22 +2046,22 @@ def tune_random_cli(
                     )
                     continue
 
-            results.append(
-                {
-                    "scenario": scenario_display,
-                    "scenario_key": (
-                        f"{bundle_meta['bundle']}:{bundle_meta.get('bundle_member', scenario_display)}"
-                        if bundle_meta
-                        else scenario_display
-                    ),
-                    "bundle": bundle_meta["bundle"] if bundle_meta else None,
-                    "objective": float(res.get("objective", 0.0)),
-                    "seed": run_seed,
-                    "batch_size": batch_size_choice,
-                    "operator_weights": operator_weights,
-                    "telemetry_run_id": res.get("meta", {}).get("telemetry_run_id"),
-                }
-            )
+                results.append(
+                    {
+                        "scenario": scenario_display,
+                        "scenario_key": (
+                            f"{bundle_meta['bundle']}:{bundle_meta.get('bundle_member', scenario_display)}"
+                            if bundle_meta
+                            else scenario_display
+                        ),
+                        "bundle": bundle_meta["bundle"] if bundle_meta else None,
+                        "objective": float(res.get("objective", 0.0)),
+                        "seed": run_seed,
+                        "batch_size": batch_size_choice,
+                        "operator_weights": operator_weights,
+                        "telemetry_run_id": res.get("meta", {}).get("telemetry_run_id"),
+                    }
+                )
 
     if not results:
         console.print("[yellow]Random tuner did not produce any successful runs.[/]")
@@ -2056,9 +2118,6 @@ def tune_random_cli(
             summary_record,
         )
         append_jsonl(telemetry_log, summary_record)
-    finally:
-        if watch_runner:
-            watch_runner.stop()
 
 
 @app.command("tune-grid")
@@ -2155,17 +2214,6 @@ def tune_grid_cli(
 
     batch_values = sorted(set(batch_size)) if batch_size else [1, 2, 3]
     preset_values = [name.lower() for name in (preset or ["balanced", "explore", "mobilisation"])]
-
-    watch_runner: LiveWatch | None = None
-    if watch:
-        if console.is_terminal:
-            watch_runner = LiveWatch(
-                WatchConfig(refresh_interval=watch_refresh), console=console
-            )
-            watch_runner.start()
-        else:
-            console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")
-
     for name in preset_values:
         if name not in OPERATOR_PRESETS:
             console.print(
@@ -2173,117 +2221,124 @@ def tune_grid_cli(
             )
             raise typer.Exit(1)
 
+    watch_runner: LiveWatch | None = None
+    if watch and console.is_terminal:
+        watch_runner = LiveWatch(
+            WatchConfig(refresh_interval=watch_refresh), console=console
+        )
+    elif watch and not console.is_terminal:
+        console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")
+
     results: list[dict[str, Any]] = []
     run_seed = seed
-    try:
+
+    with (watch_runner or nullcontext()):
         for scenario_path in scenario_files:
             sc = load_scenario(str(scenario_path))
-        pb = Problem.from_scenario(sc)
-        scenario_resolved = scenario_path.resolve()
-        bundle_meta = bundle_map.get(scenario_resolved)
-        scenario_display = (
-            getattr(sc, "name", None) or scenario_path.parent.name or scenario_path.stem
-        )
-        config_count = len(batch_values) * len(preset_values)
-        if bundle_meta:
-            console.print(
-                f"[dim]Grid tuning {scenario_display} (bundle={bundle_meta['bundle']}, configs={config_count})[/]"
+            pb = Problem.from_scenario(sc)
+            scenario_resolved = scenario_path.resolve()
+            bundle_meta = bundle_map.get(scenario_resolved)
+            scenario_display = (
+                getattr(sc, "name", None) or scenario_path.parent.name or scenario_path.stem
             )
-        else:
-            console.print(
-                f"[dim]Grid tuning {scenario_display} ({config_count} configuration(s))[/]"
-            )
-        config_counter = 0
-        for batch_choice in batch_values:
-            for preset_name in preset_values:
-                operator_weights = {
-                    key.lower(): float(value)
-                    for key, value in OPERATOR_PRESETS[preset_name].items()
-                }
-                telemetry_kwargs: dict[str, Any] = {}
-                if telemetry_log:
-                    telemetry_kwargs = {
-                        "telemetry_log": telemetry_log,
-                        "telemetry_context": {
-                            "source": "cli.tune-grid",
+            config_count = len(batch_values) * len(preset_values)
+            if bundle_meta:
+                console.print(
+                    f"[dim]Grid tuning {scenario_display} (bundle={bundle_meta['bundle']}, configs={config_count})[/]"
+                )
+            else:
+                console.print(
+                    f"[dim]Grid tuning {scenario_display} ({config_count} configuration(s))[/]"
+                )
+            config_counter = 0
+            for batch_choice in batch_values:
+                for preset_name in preset_values:
+                    operator_weights = {
+                        key.lower(): float(value)
+                        for key, value in OPERATOR_PRESETS[preset_name].items()
+                    }
+                    telemetry_kwargs: dict[str, Any] = {}
+                    if telemetry_log:
+                        telemetry_kwargs = {
+                            "telemetry_log": telemetry_log,
+                            "telemetry_context": {
+                                "source": "cli.tune-grid",
+                                "preset": preset_name,
+                                "batch_size": batch_choice,
+                                "grid_seed": run_seed,
+                            },
+                        }
+                        if bundle_meta:
+                            telemetry_kwargs["telemetry_context"]["bundle"] = bundle_meta["bundle"]
+                            telemetry_kwargs["telemetry_context"]["bundle_member"] = bundle_meta.get(
+                                "bundle_member", scenario_display
+                            )
+                        if tier_label:
+                            telemetry_kwargs["telemetry_context"]["tier"] = tier_label
+                        config_counter += 1
+                        tuner_meta_payload = {
+                            "algorithm": "grid",
+                            "budget": {
+                                "total_configs": config_count,
+                                "iters_per_config": iters,
+                                "tier": tier_label,
+                            },
+                            "config": {
+                                "preset": preset_name,
+                                "batch_size": batch_choice,
+                                "operators": operator_weights,
+                            },
+                            "progress": {
+                                "config_index": config_counter,
+                                "total_configs": config_count,
+                            },
+                        }
+                        if bundle_meta:
+                            tuner_meta_payload["bundle"] = bundle_meta["bundle"]
+                            tuner_meta_payload["bundle_member"] = bundle_meta.get(
+                                "bundle_member", scenario_display
+                            )
+                        telemetry_kwargs["telemetry_context"]["tuner_meta"] = tuner_meta_payload
+                    sa_kwargs: dict[str, Any] = {
+                        "iters": iters,
+                        "seed": run_seed,
+                        "batch_size": batch_choice if batch_choice > 1 else None,
+                        "operator_weights": operator_weights,
+                    }
+                    sa_kwargs.update(telemetry_kwargs)
+                    if watch_runner:
+                        sa_kwargs["watch_sink"] = watch_runner.sink
+                        sa_kwargs["watch_interval"] = max(1, iters // 200 or 1)
+                        sa_kwargs["watch_metadata"] = {
+                            "scenario": scenario_display,
+                            "solver": f"tune-grid[{preset_name}/{batch_choice}]",
+                        }
+                    try:
+                        res = solve_sa(pb, **sa_kwargs)
+                    except Exception as exc:  # pragma: no cover - defensive
+                        console.print(
+                            f"[yellow]Run failed for {scenario_path} (preset={preset_name}, batch={batch_choice}): {exc!r}[/]"
+                        )
+                        run_seed += 1
+                        continue
+
+                    results.append(
+                        {
+                            "scenario": scenario_display,
+                            "scenario_key": (
+                                f"{bundle_meta['bundle']}:{bundle_meta.get('bundle_member', scenario_display)}"
+                                if bundle_meta
+                                else scenario_display
+                            ),
+                            "bundle": bundle_meta["bundle"] if bundle_meta else None,
+                            "objective": float(res.get("objective", 0.0)),
                             "preset": preset_name,
                             "batch_size": batch_choice,
-                            "grid_seed": run_seed,
-                        },
-                    }
-                    if bundle_meta:
-                        telemetry_kwargs["telemetry_context"]["bundle"] = bundle_meta["bundle"]
-                        telemetry_kwargs["telemetry_context"]["bundle_member"] = bundle_meta.get(
-                            "bundle_member", scenario_display
-                        )
-                    if tier_label:
-                        telemetry_kwargs["telemetry_context"]["tier"] = tier_label
-                    config_counter += 1
-                    tuner_meta_payload = {
-                        "algorithm": "grid",
-                        "budget": {
-                            "total_configs": config_count,
-                            "iters_per_config": iters,
-                            "tier": tier_label,
-                        },
-                        "config": {
-                            "preset": preset_name,
-                            "batch_size": batch_choice,
-                            "operators": operator_weights,
-                        },
-                        "progress": {
-                            "config_index": config_counter,
-                            "total_configs": config_count,
-                        },
-                    }
-                    if bundle_meta:
-                        tuner_meta_payload["bundle"] = bundle_meta["bundle"]
-                        tuner_meta_payload["bundle_member"] = bundle_meta.get(
-                            "bundle_member", scenario_display
-                        )
-                    telemetry_kwargs["telemetry_context"]["tuner_meta"] = tuner_meta_payload
-                sa_kwargs: dict[str, Any] = {
-                    "iters": iters,
-                    "seed": run_seed,
-                    "batch_size": batch_choice if batch_choice > 1 else None,
-                    "operator_weights": operator_weights,
-                }
-                sa_kwargs.update(telemetry_kwargs)
-                if watch_runner:
-                    sa_kwargs["watch_sink"] = watch_runner.sink
-                    sa_kwargs["watch_interval"] = max(1, iters // 200 or 1)
-                    sa_kwargs["watch_metadata"] = {
-                        "scenario": scenario_display,
-                        "solver": f"tune-grid[{preset_name}/{batch_choice}]",
-                    }
-                try:
-                    res = solve_sa(pb, **sa_kwargs)
-                except Exception as exc:  # pragma: no cover - defensive
-                    console.print(
-                        f"[yellow]Run failed for {scenario_path} (preset={preset_name}, batch={batch_choice}): {exc!r}[/]"
+                            "seed": run_seed,
+                            "telemetry_run_id": res.get("meta", {}).get("telemetry_run_id"),
+                        }
                     )
                     run_seed += 1
-                    continue
-
-                results.append(
-                    {
-                        "scenario": scenario_display,
-                        "scenario_key": (
-                            f"{bundle_meta['bundle']}:{bundle_meta.get('bundle_member', scenario_display)}"
-                            if bundle_meta
-                            else scenario_display
-                        ),
-                        "bundle": bundle_meta["bundle"] if bundle_meta else None,
-                        "objective": float(res.get("objective", 0.0)),
-                        "preset": preset_name,
-                        "batch_size": batch_choice,
-                        "seed": run_seed,
-                        "telemetry_run_id": res.get("meta", {}).get("telemetry_run_id"),
-                    }
-                )
-                run_seed += 1
-
-    if not results:
         console.print("[yellow]Grid tuner did not produce any successful runs.[/]")
         return
 
@@ -2335,9 +2390,6 @@ def tune_grid_cli(
             summary_record,
         )
         append_jsonl(telemetry_log, summary_record)
-    finally:
-        if watch_runner:
-            watch_runner.stop()
 
 
 @app.command("tune-bayes")

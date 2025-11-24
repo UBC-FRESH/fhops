@@ -54,7 +54,7 @@
 - [ ] **Solver instrumentation**
   - [x] Update SA runner to emit snapshots at configurable cadence (ILS/Tabu pending).
   - [ ] Ensure multi-worker heuristics aggregate metrics (per-worker iter counts, acceptance rates) before emitting.
-  - [ ] Thread watch hooks through `solve_ils` and `solve_tabu`, including heuristic-specific metrics (perturbations, tabu tenure, stall counters).
+  - [x] Thread watch hooks through `solve_ils` and `solve_tabu`, including heuristic-specific metrics (perturbations, tabu tenure, stall counters) and expose the same dashboard via CLI + bench runners.
 - [ ] **UI enhancements**
   - [ ] Display both current objective and best-so-far so flat lines still show ongoing exploration.
   - [ ] Add a lightweight “Z sparkline” (objective vs. iteration) per solver row using a rolling history so improvements are visible in real time.

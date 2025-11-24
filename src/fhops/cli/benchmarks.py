@@ -481,22 +481,29 @@ def run_benchmark_suite(
 
             ils_run_iters = ils_iters if ils_iters is not None else sa_iters
             ils_run_seed = ils_seed if ils_seed is not None else sa_seed
+            ils_kwargs: dict[str, Any] = {
+                "iters": ils_run_iters,
+                "seed": ils_run_seed,
+                "operators": resolved_ils.operators,
+                "operator_weights": ils_weight_config,
+                "batch_size": ils_batch_arg,
+                "max_workers": ils_worker_arg,
+                "perturbation_strength": perturbation_strength_val,
+                "stall_limit": stall_limit_val,
+                "hybrid_use_mip": hybrid_use_mip_val,
+                "hybrid_mip_time_limit": hybrid_mip_time_limit_val,
+            }
+            ils_kwargs.update(ils_extra_kwargs)
+            if watch_sink:
+                ils_kwargs["watch_sink"] = watch_sink
+                ils_kwargs["watch_interval"] = max(1, ils_run_iters // 50 or 1)
+                ils_kwargs["watch_metadata"] = {
+                    "scenario": sc_name,
+                    "solver": "ils",
+                }
 
             start = time.perf_counter()
-            ils_res = solve_ils(
-                pb,
-                iters=ils_run_iters,
-                seed=ils_run_seed,
-                operators=resolved_ils.operators,
-                operator_weights=ils_weight_config,
-                batch_size=ils_batch_arg,
-                max_workers=ils_worker_arg,
-                perturbation_strength=perturbation_strength_val,
-                stall_limit=stall_limit_val,
-                hybrid_use_mip=hybrid_use_mip_val,
-                hybrid_mip_time_limit=hybrid_mip_time_limit_val,
-                **ils_extra_kwargs,
-            )
+            ils_res = solve_ils(pb, **ils_kwargs)
             ils_runtime = time.perf_counter() - start
             ils_assign = cast(pd.DataFrame, ils_res["assignments"]).copy()
             ils_assign.to_csv(scenario_out / "ils_assignments.csv", index=False)
@@ -588,20 +595,27 @@ def run_benchmark_suite(
 
             tabu_run_iters = tabu_iters if tabu_iters is not None else sa_iters
             tabu_run_seed = tabu_seed if tabu_seed is not None else sa_seed
+            tabu_kwargs: dict[str, Any] = {
+                "iters": tabu_run_iters,
+                "seed": tabu_run_seed,
+                "operators": resolved_tabu.operators,
+                "operator_weights": tabu_weight_config,
+                "batch_size": tabu_batch_arg,
+                "max_workers": tabu_worker_arg,
+                "tabu_tenure": tabu_tenure_val,
+                "stall_limit": tabu_stall_limit_val,
+            }
+            tabu_kwargs.update(tabu_extra_kwargs)
+            if watch_sink:
+                tabu_kwargs["watch_sink"] = watch_sink
+                tabu_kwargs["watch_interval"] = max(1, tabu_run_iters // 50 or 1)
+                tabu_kwargs["watch_metadata"] = {
+                    "scenario": sc_name,
+                    "solver": "tabu",
+                }
 
             start = time.perf_counter()
-            tabu_res = solve_tabu(
-                pb,
-                iters=tabu_run_iters,
-                seed=tabu_run_seed,
-                operators=resolved_tabu.operators,
-                operator_weights=tabu_weight_config,
-                batch_size=tabu_batch_arg,
-                max_workers=tabu_worker_arg,
-                tabu_tenure=tabu_tenure_val,
-                stall_limit=tabu_stall_limit_val,
-                **tabu_extra_kwargs,
-            )
+            tabu_res = solve_tabu(pb, **tabu_kwargs)
             tabu_runtime = time.perf_counter() - start
             tabu_assign = cast(pd.DataFrame, tabu_res["assignments"]).copy()
             tabu_assign.to_csv(scenario_out / "tabu_assignments.csv", index=False)

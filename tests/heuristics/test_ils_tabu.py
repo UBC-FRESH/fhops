@@ -73,3 +73,41 @@ def test_solve_tabu_writes_telemetry(tmp_path: Path):
     steps_path = res["meta"].get("telemetry_steps_path")
     assert steps_path
     assert Path(steps_path).exists()
+
+
+def test_solve_ils_watch_sink_emits_snapshots():
+    pb = _load_problem()
+    captured = []
+
+    def sink(snapshot):
+        captured.append(snapshot)
+
+    solve_ils(
+        pb,
+        iters=20,
+        seed=3,
+        watch_sink=sink,
+        watch_metadata={"scenario": "minitoy", "solver": "ils"},
+    )
+    assert captured, "ILS should emit snapshots when watch sink is provided"
+    assert captured[-1].solver == "ils"
+    assert captured[-1].current_objective is not None
+
+
+def test_solve_tabu_watch_sink_emits_snapshots():
+    pb = _load_problem()
+    captured = []
+
+    def sink(snapshot):
+        captured.append(snapshot)
+
+    solve_tabu(
+        pb,
+        iters=30,
+        seed=7,
+        watch_sink=sink,
+        watch_metadata={"scenario": "minitoy", "solver": "tabu"},
+    )
+    assert captured, "Tabu should emit snapshots when watch sink is provided"
+    assert captured[-1].solver == "tabu"
+    assert captured[-1].rolling_objective is not None
