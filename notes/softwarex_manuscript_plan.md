@@ -113,6 +113,7 @@
 - [ ] Produce first-pass text for each major section, incorporating FHOPS capabilities, unique contributions, and methodology.
   - [ ] Draft Abstract, Intro, and Software Metadata sections.
     - [x] Section~1 (Motivation \& significance) updated with Jaffray review context + contribution framing.
+    - [x] Highlights + abstract drafted to emphasise the reproducible workflow and thesis alignment.
     - [ ] Abstract outline aligned with exemplar structure (PyLESA/cashocs style).
     - [ ] Software Metadata table narrative (Code metadata + current code version) first draft.
   - [ ] Document Implementation/Architecture details referencing FHOPS internals.
