@@ -14,5 +14,5 @@ the manuscript:
    Tabu demonstrates the runtime floor (0.05 s) while SA presets show
    how mobilisation shakes affect runtime.
 
-These shared tables let us cite numbers in both the SoftwareX paper and
-the ``howto/benchmarks`` doc without copy/paste drift.
+These shared tables let us cite numbers in both the manuscript and the
+``howto/benchmarks`` doc without copy/paste drift.

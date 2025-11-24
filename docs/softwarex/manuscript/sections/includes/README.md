@@ -21,7 +21,7 @@ Automation hook (Phase 1 deliverable): extend `docs/softwarex/manuscript/scripts
 ## Action items
 
 - [x] Draft `motivation_story.md` (source-of-truth) keyed to Guide-for-Authors requirements; wire exporter to emit `.tex` + `.rst`.
-- [ ] Define template + script for table exports (heuristics, benchmark KPIs) so Sphinx and LaTeX stay in sync.
+- [x] Define template + script for table exports (heuristics, benchmark KPIs) so Sphinx and LaTeX stay in sync.
   - [x] Heuristics solver matrix now lives in `heuristics_matrix.csv` + `heuristics_notes.md` and renders into TeX/RST.
   - [x] Benchmark KPI table + notes now live in `benchmark_kpis.csv` + `benchmark_kpis_notes.md`.
 - [x] Update Sphinx `overview.rst` and `docs/templates/includes/` to ``.. include::`` the generated `.rst` snippets once available (see `docs/overview.rst` motivation section).
@@ -29,8 +29,8 @@ Automation hook (Phase 1 deliverable): extend `docs/softwarex/manuscript/scripts
 - [ ] PRISMA figure maintenance
   - [x] Store the LaTeX source in `prisma_overview.tex` (requires the `prisma-flow-diagram` package, already added to `fhops-softx.tex` preamble).
   - [x] Provide a docs include (`docs/includes/softwarex/prisma_overview.rst`) describing the same flow until we land an automated PNG export.
-  - [ ] Extend `export_docs_assets.py` (or a companion script) to emit a vector/PNG asset so Sphinx can embed the exact diagram.
-  - [ ] Update `docs/overview.rst` to include the exported figure once the PNG workflow exists.
+  - [x] Extend the automation to emit PDF/PNG/SVG assets (handled by `scripts/render_prisma_diagram.py`, invoked from `generate_assets.sh`).
+  - [x] Update `docs/overview.rst` to include the exported figure so the docs display the same image as the manuscript.
 
 ### PRISMA figure workflow (automated)
 

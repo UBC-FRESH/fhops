@@ -39,6 +39,11 @@ CLI Options
 * ``--include-mip`` / ``--include-sa`` — toggle individual solvers when running experiments.
 * ``--out-dir`` — destination for summary files (default: ``tmp/benchmarks``).
 
+Standard Manuscript Pipeline
+----------------------------
+
+.. include:: ../includes/softwarex/cli_pipeline.rst
+
 Optional Gurobi backend (Linux)
 -------------------------------
 

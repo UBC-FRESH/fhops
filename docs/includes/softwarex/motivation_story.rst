@@ -9,7 +9,7 @@ solver integrations, weak telemetry, limited robustness testing, and
 siloed datasets that rarely ship with reproducible scripts. FHOPS exists
 to close those gaps for B.C. operations and comparable jurisdictions.
 
-The SoftwareX paper will highlight three gaps we actively address:
+This paper highlights three gaps we actively address:
 
 1. **Open, reusable tooling.** FHOPS publishes its data contract, CLI,
    and solver implementations under MIT so other teams can ingest the

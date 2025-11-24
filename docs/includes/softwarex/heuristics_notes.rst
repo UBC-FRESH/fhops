@@ -1,6 +1,6 @@
 .. AUTO-GENERATED from heuristics_notes.md -- do not edit directly.
 
-FHOPS exposes the same metaheuristics the SoftwareX paper benchmarks:
+FHOPS exposes the same metaheuristics benchmarked in the manuscript:
 
 -  **Simulated annealing** remains the default baseline (``bench suite``
    uses it unless disabled). The manuscript cites both the balanced

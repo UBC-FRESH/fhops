@@ -7,6 +7,13 @@ Track local manuscript edits/text debt without polluting the main project CHANGE
 - **Metadata narrative.** Introduce the metadata tables in Section 1 or 2 (one paragraph explaining release/version, reproducibility log) so reviewers see context before Table refs.
 - **Impact metrics references.** Once GitHub/PyPI stats are pulled, add citations/links to show adoption numbers (stars, downloads) rather than qualitative statements.
 
+## 2025-11-27 – Phase 2 asset + reproducibility updates
+- Enforced 300 dpi PNG generation inside `scripts/render_prisma_diagram.py` (adds Pillow-backed DPI tagging even when ImageMagick is unavailable) and regenerated `docs/softwarex/assets/figures/prisma_overview.(pdf|png)`; assets now satisfy the SoftwareX resolution requirement.
+- Added a “Reproducibility log and environment” subsection to Section~3, tying every benchmark/tuning/playback artefact to its directory, the benchmark log (`docs/softwarex/assets/benchmark_runs.log`), and the recorded hardware/software context (72-core EPYC host, Ubuntu 24.04, Python 3.12.3, Pyomo 6.9.4, HiGHS 1.11.0, FHOPS 1.0.0a2).
+- Documented the shared snippet workflow for Sphinx consumers in `docs/includes/softwarex/README.md`, updated the includes README checklist, and re-ran `export_docs_assets.py` so `.tex`/`.rst` outputs stayed in sync.
+- Added a reusable CLI pipeline snippet (`sections/includes/cli_pipeline.md` → `.tex/.rst`) that Section~3 now `\input`s, and the same content is included in `docs/howto/benchmarks.rst` to keep manuscript + Sphinx instructions identical.
+- Phase 2 close-out checklist added to the planning doc: highlights/abstract/metadata re-proofed, `GH-SWX-Phase2` marked complete, Phase 3 validation/submission bundle/metadata tasks staged with concrete commands and directory requirements.
+
 ## 2025-11-24 – Section polish
 - Added CLI/asset-path references in Section 1 and Section 3 so every table/figure cites its source directory (e.g., `docs/softwarex/assets/data/benchmarks/<slug>/summary.csv`, `docs/softwarex/assets/data/tuning`).
 - Expanded Section 2 automation notes with concrete command examples and asset destinations.

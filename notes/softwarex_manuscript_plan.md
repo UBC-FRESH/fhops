@@ -131,31 +131,33 @@
 
 ### P2.2 – Asset + figure readiness
 - [ ] Generate required assets: architecture diagrams, workflow figures, tables summarizing problem classes, benchmark results.
-  - [ ] Update or design new diagrams highlighting FHOPS pipeline (PRISMA + any additional workflow visuals).
-  - [ ] Prepare performance/benchmark tables with accompanying captions (ensure captions cite asset paths).
-  - [ ] Validate figure resolution/format meets SoftwareX standards (≥300 dpi PNG/PDF, proper sizing).
+  - [x] Update or design new diagrams highlighting FHOPS pipeline (PRISMA TikZ source + regenerated 300 dpi PNG/PDF assets in `docs/softwarex/assets/figures/`).
+  - [x] Prepare performance/benchmark tables with accompanying captions (Tables~1–2 now reference the `docs/softwarex/assets/data/tables/` outputs).
+  - [x] Validate figure resolution/format meets SoftwareX standards (checked playback/scaling PNGs + PRISMA PNG for ≥300 dpi compliance).
 
 ### P2.3 – Reproducibility annotations
 - [ ] Capture reproducibility details (dataset descriptions, parameter choices, environment info) alongside manuscript text for later validation.
-  - [ ] Log datasets, solver settings, and hardware/software environments (appendix or Section~\ref{sec:impact} note).
-  - [ ] Store experiment configuration files or references in repo (ensure scripts/configs live under `docs/softwarex/assets/**`).
-  - [ ] Tie each reproducibility note to a manuscript section for traceability (e.g., cite benchmark log path after Tables~\ref{tab:benchmarks}--\ref{tab:tuning}).
+  - [x] Log datasets, solver settings, and hardware/software environments (new subsection in Section~\ref{sec:illustrative-example} details the benchmark log, hardware, and solver budgets).
+  - [x] Store experiment configuration files or references in repo (text now cites the scripted pipeline plus per-scenario summaries in `docs/softwarex/assets/data/**`).
+  - [x] Tie each reproducibility note to a manuscript section for traceability (Tables~1–2 captions + the new reproducibility paragraph link directly to asset directories and the benchmark log).
 
 ### P2.4 – Shared snippets & Sphinx integration
-- [ ] Keep snippets modular so they can be embedded into Sphinx using includes or shared source files.
-  - [ ] Factor remaining reusable text blocks into shared include files (`sections/includes/`).
-  - [ ] Add guidance in Sphinx docs for pulling in manuscript excerpts (update `docs/includes/softwarex/README.md` or relevant how-to).
-  - [ ] Test include flow to ensure formatting parity between outputs (run `scripts/export_docs_assets.py` and spot-check in Sphinx).
+- [x] Keep snippets modular so they can be embedded into Sphinx using includes or shared source files.
+  - [x] Factor remaining reusable text blocks into shared include files (`sections/includes/`).
+  - [x] Add guidance in Sphinx docs for pulling in manuscript excerpts (documented in `docs/includes/softwarex/README.md`).
+  - [x] Test include flow to ensure formatting parity between outputs (ran the exporter and confirmed `.tex`/`.rst` regeneration).
 
 ## Phase 3 – Technical Validation & Artifact Packaging
 - [ ] Verify all experiments/benchmarks are scripted and reproducible (CI or documented commands).
   - [ ] Audit experiment scripts for completeness and determinism.
   - [ ] Ensure datasets and environment specs are accessible or documented.
   - [ ] Execute dry-run reproductions and capture logs/results.
+  - [ ] **Validation checklist (staged):** \texttt{python docs/softwarex/manuscript/scripts/export\_docs\_assets.py}, \texttt{python docs/softwarex/manuscript/scripts/render\_prisma\_diagram.py}, \texttt{FHOPS\_ASSETS\_FAST=0 docs/softwarex/manuscript/scripts/generate\_assets.sh} (deferred until Phase 5 rerun), \texttt{python docs/softwarex/manuscript/scripts/run\_synthetic\_sweep.py} (spot-check), \texttt{make pdf}. Capture runtimes + SHA-256 hashes in \texttt{docs/softwarex/assets/benchmark\_runs.log} and record CI status (vale/latexmk lint TBD).
 - [ ] Assemble the companion artifact package (code pointers, sample data, notebooks) expected by SoftwareX.
   - [ ] Define the package structure and README per SoftwareX artifact policy.
   - [ ] Bundle minimal datasets or links required to run FHOPS demos.
   - [ ] Capture checksums and storage locations for future reference.
+  - [ ] **Submission bundle layout (staged):** \texttt{docs/softwarex/submissions/} should include (a) manuscript PDF + TeX sources, (b) metadata tables, (c) benchmark/tuning/playback CSV/JSON snapshots, (d) PRISMA figure exports, (e) README describing build commands + environment, (f) hash manifest referencing \texttt{docs/softwarex/assets/benchmark\_runs.log}.
 - [ ] Sync documentation assets: confirm figures/tables render correctly both in manuscript and Sphinx.
   - [ ] Test rendering pipeline for manuscript (PDF) and Sphinx (HTML/PDF).
   - [ ] Fix styling/resolution issues detected in either output.
@@ -164,6 +166,10 @@
   - [ ] Choose linting/QA tools applicable to chosen manuscript stack.
   - [ ] Integrate linting commands into CI or pre-commit hooks.
   - [ ] Track lint results and resolve outstanding warnings/errors.
+- [ ] Metadata/licensing readiness
+  - [ ] Confirm `docs/softwarex/reference/README.md` records the latest Guide-for-Authors snapshot and SoftwareX template provenance.
+  - [ ] Ensure dataset licences (e.g., `examples/minitoy`, `examples/med42`, synthetic tiers) are documented in the submission README and cross-referenced from `docs/softwarex/assets/data/datasets/index.json`.
+  - [ ] Verify the MIT licence + contributor guidelines cited in the manuscript match the `pyproject.toml`/`LICENSE` contents to avoid mismatches in the submission package.
 
 ## Phase 4 – Internal Review & Iteration
 - [ ] Conduct structured reviews (technical accuracy, narrative clarity, editorial polish) with the FHOPS team.
@@ -220,6 +226,14 @@
   - [ ] Set reminders for periodic manuscript/doc alignment reviews.
 
 ## Immediate Next Actions
+- [ ] Phase 2 close-out
+  - [x] Proof the highlights, abstract, and metadata tables for lingering typos/consistency issues before Phase 3 begins. *(2025-11-27 read-through complete; no edits required.)*
+  - [x] Tag `GH-SWX-Phase2` complete (and snapshot the repo state) so Phase 3 reproducibility tasks start from a known baseline. *(Issue updated + git state noted locally.)*
+  - [x] Stage Phase 3 tasking:
+    - [x] Draft the validation checklist (script reruns, expected runtimes, CI hooks). *(See Phase 3 verification bullets below.)*
+    - [x] Define the submission artefact bundle layout for `docs/softwarex/submissions/`. *(Structure captured under Phase 3 packaging tasks.)*
+    - [x] Identify any remaining dataset/licensing metadata gaps to close before packaging. *(Action items added under Phase 3 packaging + metadata bullets.)*
+  - [ ] Once the above is queued, start executing Phase 3 (CI/verifications + artefact packaging).
 - [x] Wire the PRISMA overview figure into both outputs.
   - [x] `\input{sections/includes/prisma_overview}` inside the Software Description narrative to visually anchor the workflow story.
   - [x] Confirm the matching `docs/includes/softwarex/prisma_overview.rst` renders in Sphinx (Overview page) and add instructions for refreshing it when the TikZ source changes.

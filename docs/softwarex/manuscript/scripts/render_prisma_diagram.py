@@ -10,6 +10,11 @@ import subprocess
 import sys
 from pathlib import Path
 
+try:
+    from PIL import Image
+except ImportError:  # pragma: no cover - optional dependency
+    Image = None
+
 
 def run(cmd: list[str], cwd: Path | None = None, env: dict[str, str] | None = None) -> None:
     result = subprocess.run(
@@ -53,6 +58,14 @@ def build_pdf(tex_path: Path, build_dir: Path, texinputs: str | None) -> Path:
     return pdf_path
 
 
+def _enforce_png_dpi(png_path: Path, dpi: int = 300) -> None:
+    """Ensure the PNG advertises the requested DPI if Pillow is available."""
+    if Image is None:
+        return
+    with Image.open(png_path) as img:
+        img.save(png_path, dpi=(dpi, dpi))
+
+
 def convert_pdf_to_png(pdf_path: Path, png_path: Path) -> None:
     png_path.parent.mkdir(parents=True, exist_ok=True)
     if shutil.which("magick"):
@@ -66,10 +79,13 @@ def convert_pdf_to_png(pdf_path: Path, png_path: Path) -> None:
             str(png_path),
         ]
         run(cmd)
+        _enforce_png_dpi(png_path)
     elif shutil.which("pdftoppm"):
         tmp_prefix = png_path.with_suffix("")
         cmd = [
             "pdftoppm",
+            "-r",
+            "300",
             "-singlefile",
             "-png",
             str(pdf_path),
@@ -79,6 +95,7 @@ def convert_pdf_to_png(pdf_path: Path, png_path: Path) -> None:
         generated = png_path
         if not generated.exists():
             raise FileNotFoundError(generated)
+        _enforce_png_dpi(generated)
     else:
         raise RuntimeError("Neither ImageMagick (magick) nor pdftoppm is available for PDF→PNG conversion.")
 

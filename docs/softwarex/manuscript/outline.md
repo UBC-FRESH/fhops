@@ -28,7 +28,7 @@ This mirrors the canonical SoftwareX structure. Each section lists:
 
 ## Guide for Authors anchors
 - **Highlights:** Max 85 characters per bullet, no citations, must focus on novelty, availability, and validation.
-- **Motivation (Section 1):** Explicitly tie to scientific problem + cite the state-of-the-art shortfalls; reviewers expect measurable gaps.
+- **Motivation (Section 1):** Explicitly tie to scientific problem + cite the state-of-the-art shortfalls; readers expect measurable gaps.
 - **Software description (Section 2):** Include architecture diagrams + usage instructions; document dependencies and performance considerations.
 - **Illustrative example (Section 3):** Needs dataset provenance, execution steps, and quantitative/qualitative results demonstrating the software.
 - **Impact (Section 4):** Provide adoption indicators (downloads, contributors, partner orgs) and explain who benefits.
