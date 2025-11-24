@@ -56,6 +56,7 @@ class WatchConfig:
     include_workers: bool = True
     include_restarts: bool = True
     include_acceptance_rate: bool = True
+    sparkline_points: int = 24
 
 
 # Default no-op sink used when watch mode is disabled.

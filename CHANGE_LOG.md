@@ -9,6 +9,8 @@
 - Added matching watch emitters to ILS/Tabu (rolling means, stall counts, tenure metadata) and threaded the `--watch`
   plumbing through the bench harness plus `fhops solve-ils`/`solve-tabu` commands so every heuristic can stream to the
   dashboard (`src/fhops/optimization/heuristics/{ils,tabu}.py`, `src/fhops/cli/{benchmarks,main}.py`).
+- Introduced an ASCII sparkline trend column in the Rich dashboard so objective improvements are visible at a glance,
+  powered by rolling history tracked per solver (`src/fhops/cli/watch_dashboard.py`, `fhops.telemetry.watch.WatchConfig`).
 - Logged the richer Phase 2 plan in `notes/cli_heuristic_upgrade_notes.md` so the upcoming ILS/Tabu instrumentation and
   UI polish are tracked alongside the SA work.
 
