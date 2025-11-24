@@ -39,6 +39,35 @@ CLI Options
 * ``--include-mip`` / ``--include-sa`` — toggle individual solvers when running experiments.
 * ``--out-dir`` — destination for summary files (default: ``tmp/benchmarks``).
 
+Watching heuristic progress
+---------------------------
+
+All heuristic entry points (``fhops solve-heur``, ``fhops solve-ils``, ``fhops solve-tabu``,
+``fhops tune-*``, and ``fhops bench suite``) accept ``--watch/--no-watch`` plus
+``--watch-refresh <seconds>``. When enabled, FHOPS renders a Rich dashboard showing the shared
+metrics (scenario, solver, iteration, best/current/rolling objective, runtime, restarts/workers) and
+a solver-specific detail row (SA temperature/acceptance, ILS perturbations, Tabu tenure).
+
+Example:
+
+.. code-block:: bash
+
+   fhops solve-heur examples/med42/scenario.yaml \\
+     --iters 200000 \\
+     --cooling-rate 0.99999 \\
+     --restart-interval 500 \\
+     --watch \\
+     --watch-refresh 0.5
+
+The dashboard refreshes only when stdout is an interactive terminal. CI runs or redirected output
+print a single warning (``Watch mode disabled: not running in an interactive terminal.``) and
+continue normally. Adjust ``--watch-refresh`` (default 0.5 s) to control update cadence.
+
+The ``workers`` column reports the requested parallel workers, but note that
+``--parallel-workers`` currently uses Python threads—batch scoring remains GIL-bound. For true
+multi-core utilisation, prefer ``--parallel-multistart`` or process-level orchestration until the
+scoring loop is parallelised.
+
 Standard Manuscript Pipeline
 ----------------------------
 

@@ -138,3 +138,35 @@ python scripts/run_tuning_benchmarks.py \
   --max-workers 8 \
 && column -t -s'|' tmp/demo-restarts/tuner_summary.md | sed 's/^/  /'
 ```
+
+## Watching heuristics (live dashboard)
+
+Most solver commands accept a `--watch/--no-watch` flag that renders a Rich dashboard while the run
+is in progress:
+
+```bash
+fhops solve-heur examples/med42/scenario.yaml \
+  --iters 200000 \
+  --cooling-rate 0.99999 \
+  --restart-interval 500 \
+  --watch \
+  --watch-refresh 0.5
+```
+
+The table shows shared metrics (scenario, solver, iteration, best/current/rolling objective,
+runtime, restarts/workers) while the line below it displays solver-specific details (e.g., SA
+temperature/acceptance, ILS perturbations, Tabu tenure). The dashboard refreshes only when FHOPS
+detects an interactive terminal; in CI/non-TTY contexts it emits a single warning
+(`Watch mode disabled: not running in an interactive terminal.`) and continues with the normal CLI
+output.
+
+The flag is available on:
+
+- `fhops solve-heur`, `fhops solve-ils`, `fhops solve-tabu`
+- `fhops tune-random`, `fhops tune-grid`, `fhops tune-bayes`
+- `fhops bench suite --watch`
+
+Adjust `--watch-refresh <seconds>` (default 0.5 s) to trade off responsiveness vs. terminal churn.
+When using `--parallel-workers` remember that scoring still uses Python threads today, so the table’s
+`workers` column reflects the requested worker count even though the GIL may limit true parallelism;
+for real multi-core use prefer `--parallel-multistart` or process-level orchestration.
