@@ -1,6 +1,6 @@
 # SoftwareX Manuscript Rollout Plan
 
-> **Planning Note:** Every task must use checkboxes and include subtasks/sub-subtasks as needed. Keep expanding items in-place as execution details emerge so we stay consistent with this structure.
+> **Planning Note:** Every task must use checkboxes and include subtasks/sub-subtasks as needed. Keep expanding items in-place as execution details emerge so we stay consistent with this structure. Do **not** rerun `make manuscript-benchmarks` (or ask about it) until the pre-submission checklist at the end of Phase 5.
 >
 > **Citation Guardrail:** Until Rosalia Jaffray’s thesis chapters are defended/public, only cite the submitted systematic review (“Jaffray, Coupland, Paradis, *Forest harvesting operational planning tools…*, submitted to IJFE 2025/10”) and the published papers it covers. Do **not** cite unreleased thesis chapters or drafts in the SoftwareX manuscript.
 
