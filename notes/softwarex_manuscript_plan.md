@@ -112,6 +112,9 @@
 ## Phase 2 – Content Drafting
 - [ ] Produce first-pass text for each major section, incorporating FHOPS capabilities, unique contributions, and methodology.
   - [ ] Draft Abstract, Intro, and Software Metadata sections.
+    - [x] Section~1 (Motivation \& significance) updated with Jaffray review context + contribution framing.
+    - [ ] Abstract outline aligned with exemplar structure (PyLESA/cashocs style).
+    - [ ] Software Metadata table narrative (Code metadata + current code version) first draft.
   - [ ] Document Implementation/Architecture details referencing FHOPS internals.
   - [ ] Summarize Impact and Future Work narratives.
 - [ ] Generate required assets: architecture diagrams, workflow figures, tables summarizing problem classes, benchmark results.
