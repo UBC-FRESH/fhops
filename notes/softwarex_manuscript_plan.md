@@ -222,8 +222,8 @@
   - [x] Spot-check telemetry to ensure Tabu no longer reports implausible 0.09 s runtimes and that production/utilisation KPIs improve relative to previous assets.
 - [ ] Convert refreshed benchmark/tuning data into manuscript-ready artifacts (Section 3).
   - [x] Build LaTeX tables for solver performance (Table~1) and tuning leaderboard (Table~2) by parsing the new `summary.csv` and `tuner_*.csv` files; store intermediates under `docs/softwarex/assets/data/tables/`.
-  - [ ] Regenerate Figure~2 (scaling curve) and Figure~3 (playback robustness) from the updated CSVs; ensure PNG/PDF exports meet 300 dpi and embed references in Section~\ref{sec:illustrative-example}.
-  - [ ] Update the narrative in Section 3 to quote the new objectives, runtimes, utilisation, and costing numbers, citing file paths for reproducibility.
+  - [x] Regenerate Figure~2 (scaling curve) and Figure~3 (playback robustness) from the updated CSVs; ensure PNG/PDF exports meet 300 dpi and embed references in Section~\ref{sec:illustrative-example}.
+  - [x] Update the narrative in Section~3 to quote the new objectives, runtimes, utilisation, and costing numbers, citing file paths for reproducibility.
 - [ ] Draft Section 4 (Impact/availability) while data context is fresh.
   - [ ] Summarise adoption signals (GitHub stats, release cadence, documentation reach) and the BC thesis alignment plan.
   - [ ] Reference forthcoming validation studies (Chapter 2 case studies) and explain how FHOPS enables them without duplicating results here.

@@ -177,7 +177,8 @@ def main() -> int:
     plt.grid(True, axis="both", linestyle="--", alpha=0.4)
     plt.tight_layout()
     plot_path = out_dir / "runtime_vs_blocks.png"
-    plt.savefig(plot_path, dpi=200)
+    plt.savefig(plot_path, dpi=300)
+    plt.savefig(plot_path.with_suffix(".pdf"))
     plt.close()
     print(f"[scaling] Wrote summary to {summary_path} and plot to {plot_path}")
     return 0

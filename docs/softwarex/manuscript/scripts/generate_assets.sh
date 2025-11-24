@@ -255,9 +255,14 @@ python "${script_dir}/run_tuner.py" --repo-root "${repo_root}" --out-dir "${tuni
 
 echo "[assets] Running playback analysis into ${playback_dir}" >&2
 python "${script_dir}/run_playback_analysis.py" --repo-root "${repo_root}" --out-dir "${playback_dir}"
+echo "[assets] Rendering playback robustness figure" >&2
+python "${script_dir}/plot_playback_variability.py" --repo-root "${repo_root}" --playback-dir "${playback_dir}" --out-path "${playback_dir}/utilisation_robustness.png"
 
 echo "[assets] Running costing demo into ${cost_dir}" >&2
 python "${script_dir}/run_costing_demo.py" --repo-root "${repo_root}" --out-dir "${cost_dir}"
 
 echo "[assets] Running synthetic scaling sweep into ${scaling_dir}" >&2
 python "${script_dir}/run_synthetic_sweep.py" --repo-root "${repo_root}" --out-dir "${scaling_dir}"
+
+echo "[assets] Building solver/tuning tables" >&2
+python "${script_dir}/build_tables.py" --repo-root "${repo_root}"
