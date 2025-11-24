@@ -220,6 +220,7 @@
   - [x] Update `scripts/generate_assets.sh` (or override via env vars) so SA ≥ 6 000 iterations, ILS ≥ 1 000 perturb/local-search cycles, Tabu stall/iteration budgets ≥ 10 000 and time limit ≥ 600 s for med42; keep fast-mode overrides documented.
   - [x] Execute `FHOPS_ASSETS_FAST=0 docs/softwarex/manuscript/scripts/generate_assets.sh` and append the run metadata (command, commit, start/end timestamps, runtimes) to `docs/softwarex/assets/benchmark_runs.log`.
   - [x] Spot-check telemetry to ensure Tabu no longer reports implausible 0.09 s runtimes and that production/utilisation KPIs improve relative to previous assets.
+  - [ ] Re-run \texttt{make manuscript-benchmarks} once more immediately before submission to capture the final artefact hash referenced in Section~4 (skip redundant runs mid-phase).
 - [ ] Convert refreshed benchmark/tuning data into manuscript-ready artifacts (Section 3).
   - [x] Build LaTeX tables for solver performance (Table~1) and tuning leaderboard (Table~2) by parsing the new `summary.csv` and `tuner_*.csv` files; store intermediates under `docs/softwarex/assets/data/tables/`.
   - [x] Regenerate Figure~2 (scaling curve) and Figure~3 (playback robustness) from the updated CSVs; ensure PNG/PDF exports meet 300 dpi and embed references in Section~\ref{sec:illustrative-example}.
