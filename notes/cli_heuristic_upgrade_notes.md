@@ -56,7 +56,8 @@
   - [ ] Ensure multi-worker heuristics aggregate metrics (per-worker iter counts, acceptance rates) before emitting.
   - [x] Thread watch hooks through `solve_ils` and `solve_tabu`, including heuristic-specific metrics (perturbations, tabu tenure, stall counters) and expose the same dashboard via CLI + bench runners.
   - [x] Expose SA cooling rate and restart-interval knobs (solver + CLI + benchmarks) so long runs cool gradually instead of collapsing into hill-climbs.
-  - [x] Teach Tabu to diversify instead of exiting when stalls exceed the limit (clear tabu list, restart counters, propagate accurate restart telemetry/watch metrics).
+- [x] Teach Tabu to diversify instead of exiting when stalls exceed the limit (clear tabu list, restart counters, propagate accurate restart telemetry/watch metrics).
+- [x] Regenerate the `med42` sample dataset so block areas fall within Lahrsen (2025) ranges (0.8–2.6 ha, 160–320 m³/ha) and rescale production/KPI fixtures accordingly.
   - [x] Capture current best-performing ILS tuning baseline for med42: `iters=40_000`, `perturbation_strength=1`, `stall_limit=100`, single-threaded workers. These values keep restarts at zero and yield the observed 34.5 objective while the watcher trend remains stable. Keep this as a reference preset when refining Phase 2 heuristics.
 - [ ] **UI enhancements**
   - [x] Display both current objective and best-so-far so flat lines still show ongoing exploration.

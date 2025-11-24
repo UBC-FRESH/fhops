@@ -20,6 +20,10 @@
 - Added Tabu diversification when stall limits are hit so long runs continue exploring, tracking real restart counts
   in telemetry/watch metadata instead of the previous stall-based proxy (`src/fhops/optimization/heuristics/tabu.py`,
   `src/fhops/cli/watch_dashboard.py`).
+- Regenerated the `examples/med42` dataset with Lahrsen-range block areas (0.8–2.6 ha) and densities plus proportionally
+  scaled production rates, then refreshed the med42 KPI/playback fixtures so regression tests reference the updated,
+  more realistic medium benchmark (`examples/med42/data/*.csv`, `tests/fixtures/kpi/*.json`,
+  `tests/fixtures/playback/med42_*`).
 - Logged the richer Phase 2 plan in `notes/cli_heuristic_upgrade_notes.md` so the upcoming ILS/Tabu instrumentation and
   UI polish are tracked alongside the SA work.
 

@@ -4,6 +4,9 @@
 - Calendar: Sundays off globally + 2 random down days per machine.
 - Production rates: per-day output when assigned; zeros represent incompatibilities.
 - Windows: each block has earliest_start and latest_finish within 1..42.
+- Stand metrics: block volumes now follow Lahrsen (2025) ranges with 0.8–2.6 ha areas,
+  160–320 m³/ha densities, and proportional production rates so med42 behaves like a medium-size BC
+  grapple-skidder operation.
 
 Quick start:
   fhops validate examples/med42/scenario.yaml
