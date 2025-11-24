@@ -2029,7 +2029,9 @@ def tune_random_cli(
 
             for run_idx in range(runs):
                 run_seed = rng.randrange(1, 1_000_000_000)
-                batch_size_choice = rng.choice([1, 2, 3])
+                batch_size_choice = rng.choice([1, 2, 3, 4, 5])
+                cooling_rate_choice = round(rng.uniform(0.995, 0.99999), 6)
+                restart_interval_choice = rng.choice([0, 100, 250, 500, 750, 1000, 1500])
                 weight_count = rng.randint(1, max(1, len(operator_names)))
                 selected_ops = rng.sample(operator_names, weight_count)
                 operator_weights = {name: round(rng.uniform(0.5, 1.5), 3) for name in selected_ops}
@@ -2061,6 +2063,8 @@ def tune_random_cli(
                             "batch_size": batch_size_choice,
                             "operator_count": weight_count,
                             "operators": operator_weights,
+                            "cooling_rate": cooling_rate_choice,
+                            "restart_interval": restart_interval_choice,
                         },
                         "progress": {
                             "run_index": run_idx + 1,
@@ -2083,6 +2087,10 @@ def tune_random_cli(
                     "seed": run_seed,
                     "batch_size": batch_size_choice if batch_size_choice > 1 else None,
                     "operator_weights": operator_weights,
+                    "cooling_rate": cooling_rate_choice,
+                    "restart_interval": (
+                        restart_interval_choice if restart_interval_choice > 0 else None
+                    ),
                 }
                 sa_kwargs.update(telemetry_kwargs)
                 if watch_runner:
@@ -2113,6 +2121,8 @@ def tune_random_cli(
                         "objective": float(res.get("objective", 0.0)),
                         "seed": run_seed,
                         "batch_size": batch_size_choice,
+                        "cooling_rate": cooling_rate_choice,
+                        "restart_interval": restart_interval_choice,
                         "operator_weights": operator_weights,
                         "telemetry_run_id": res.get("meta", {}).get("telemetry_run_id"),
                     }
@@ -2130,6 +2140,8 @@ def tune_random_cli(
     table.add_column("Objective", justify="right")
     table.add_column("Seed", justify="right")
     table.add_column("Batch", justify="right")
+    table.add_column("Cooling", justify="right")
+    table.add_column("Restart", justify="right")
     table.add_column("Operators")
 
     for entry in sorted(results, key=lambda item: item["objective"], reverse=True):
@@ -2146,6 +2158,8 @@ def tune_random_cli(
                 f"{entry['objective']:.3f}",
                 str(entry["seed"]),
                 str(entry["batch_size"]),
+                f"{entry['cooling_rate']:.6f}",
+                (str(entry["restart_interval"]) if entry["restart_interval"] else "auto"),
                 op_preview if len(op_preview) < 80 else op_preview[:77] + "...",
             ]
         )
