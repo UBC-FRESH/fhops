@@ -20,11 +20,11 @@ We execute \texttt{fhops bench suite} across minitoy, med42, and synthetic-small
   \item \texttt{label.txt} / \texttt{scenario\_path.txt} – provenance for reproducibility.
 \end{itemize}
 
-These feeds the manuscript’s benchmark table (Section~\ref{sec:illustrative-example}-Figure~1) summarising solver performance and runtime. For each scenario we highlight:
+The resulting manuscript table (Table~\ref{tab:benchmarks}) summarises solver performance and runtime. Highlights include:
 \begin{itemize}
-  \item MiniToy: SA achieves the best objective (15.5) with modest runtime (0.46 s), while Tabu converges fastest (0.09 s) but slightly worse objective (17.0). ILS serves as a stability reference.
-  \item Med42: SA’s default preset improves dispatch cost (objective $-631.6$) in $\approx$3 s, ILS finds $-1068.9$ solutions at longer runtimes, and Tabu provides diversification albeit with positive objectives on some runs. These figures illustrate the heuristics’ complementary strengths.
-  \item Synthetic tier: ensures the synthetic scaling suite uses identical deterministic seeds as the benchmark table.
+  \item \textbf{MiniToy} (\texttt{benchmarks/minitoy/summary.csv}): SA’s default preset reaches the best objective (15.5 production units) in $0.46\,$s with 17 assignments, while Tabu converges in $0.09\,$s but stops at 17.0 units. ILS provides a deterministic reference (objective 23.0, eight assignments). These runs showcase how users can choose between quality and turnaround time.
+  \item \textbf{Med42}: SA delivers $-631.6$ (lower is better due to cost objective) in roughly $3\,$s, whereas ILS drives the objective down to $-1068.9$ in $1.29\,$s by exploring a broader neighbourhood. Tabu, configured for diversification, finds positive objectives (18.7) that act as stress-test baselines. The benchmark CSVs also report utilisation ratios and mobilisation costs that feed Section~\ref{sec:impact}.
+  \item \textbf{Synthetic-small}: Provides a repeatable datapoint for the scaling suite (objective 39.79, runtime $0.25\,$s) so we can show trends without exposing proprietary datasets.
 \end{itemize}
 
 \subsection{Tuning highlights}
@@ -35,19 +35,15 @@ The tuning harness (\texttt{docs/softwarex/manuscript/scripts/run\_tuner.py}) ru
   \item \texttt{telemetry/runs.jsonl} – raw per-trial metrics for reproducibility.
 \end{itemize}
 
-We distil these into a table that shows, for example, Bayesian tuning improving minitoy SA from 15.5 to 38.0 (blocked objective for a maximisation variant) and medium42 SA from $-631$ to $\approx -472$ when emphasising mobilisation-shake operators.
+Table~\ref{tab:tuning} reports the salient numbers. For example, Bayesian optimisation pushes the minitoy objective from the SA default of 15.5 to 38.0 by emphasising move/swap proportions, while medium42’s best Bayesian trial reaches $-472.2$ (versus $-631.6$ default) by increasing mobilisation-shake weight and cooling more aggressively. The tuning reports also quantify runtime overheads (all sub-second on minitoy, $\approx$0.9 s on med42), giving readers a sense of the search cost.
 
 \subsection{Playback robustness and costing}
-For each scenario we replay the best SA/ILS assignments deterministically and stochastically (downtime/weather/landing shocks) using \texttt{scripts/run\_playback\_analysis.py}. Outputs (shift/day CSVs, markdown summaries, metrics JSON) land in \texttt{docs/softwarex/assets/data/playback/<scenario>/<solver>/<mode>/}. The manuscript references:
-\begin{itemize}
-  \item Boxplot-ready CSVs for utilisation and productivity, illustrating how stochastic shocks increase variance (particularly on med42’s skyline chains).
-  \item Markdown summaries that narrate bottlenecks (e.g., mobilisation-induced delays on med42 when landing congestion is simulated).
-\end{itemize}
+For each scenario we replay the best SA/ILS assignments deterministically and stochastically (downtime/weather/landing shocks) using \texttt{scripts/run\_playback\_analysis.py}. Outputs (shift/day CSVs, markdown summaries, metrics JSON) land in \texttt{docs/softwarex/assets/data/playback/<scenario>/<solver>/<mode>/}. For med42, the deterministic SA replay averages 0.39 day-level utilisation with \$1{,}950 mobilisation cost (see \texttt{playback/med42/sa/deterministic/summary.md}), while the stochastic replay (50 samples) drops utilisation to 0.37 and accumulates \$96{,}000 mobilisation adjustments due to randomised congestion (\texttt{.../stochastic/summary.md}). These CSVs drive Figure~\ref{fig:playback} (boxplots of utilisation under shocks) and provide ready-made narratives about bottlenecks.
 
-Costing summaries (\texttt{docs/softwarex/assets/data/costing/cost\_summary.(csv|json)}) generated via \texttt{scripts/run\_costing\_demo.py} complement the playback metrics by reporting owning/operating/repair costs per machine role, letting reviewers tie KPI shifts to cost impacts.
+Costing summaries (\texttt{docs/softwarex/assets/data/costing/cost\_summary.(csv|json)}) generated via \texttt{scripts/run\_costing\_demo.py} complement the playback metrics by reporting owning/operating/repair rates per machine role. For example, the med42 feller-buncher carries a \$246.94/SMH rental rate (\$4.25 per m$^3$ at 64.6 m$^3$/PMH), while the grapple skidder runs \$173.70/SMH (\$2.99/m$^3$). These numbers let readers tie KPI swings back to financial impacts.
 
 \subsection{Scaling sweep}
-Finally, \texttt{scripts/run\_synthetic\_sweep.py} generates synthetic tiers (small/medium/large) with fixed seeds, benchmarks SA with consistent iteration counts, and plots runtime vs. number of blocks (\texttt{docs/softwarex/assets/data/scaling/runtime\_vs\_blocks.png}). The accompanying CSV/JSON summarise blocks, machines, assignments, objectives, and runtime for each tier, enabling a scaling figure (Section~\ref{sec:illustrative-example}-Figure~2) comparable to SoftwareX exemplars such as GROMACS.
+Finally, \texttt{scripts/run\_synthetic\_sweep.py} generates synthetic tiers (small/medium/large) with fixed seeds, benchmarks SA with consistent iteration counts, and plots runtime vs. number of blocks (\texttt{docs/softwarex/assets/data/scaling/runtime\_vs\_blocks.png}). The accompanying CSV/JSON summarise blocks, machines, assignments, objectives, and runtime for each tier: small (4 blocks, runtime 0.25 s), medium (8 blocks, 0.50 s), large (16 blocks, 1.04 s). Figure~\ref{fig:scaling} reproduces this curve, providing the same \enquote{runtime vs. size} perspective seen in SoftwareX exemplars such as GROMACS.
 
 \subsection{Figures and tables referenced}
 \begin{itemize}
