@@ -19,7 +19,7 @@ Figure~\ref{fig:fhops-prisma-overview} summarises the automation pipeline that u
 \subsection{Data ingest and scenario contract}
 \textbf{Components.}
 \begin{itemize}
-  \item \texttt{fhops.scenario.contract} – Pydantic-based models encode blocks, machines, corridors, mobilisation jobs, and shift calendars. Each schema element enforces unit-checked payloads, terrain classes, prescription types, and per-shift KPI fields, following the BC-focused constraints described by \citet{lahrsen2022productivity} and \citet{becker2018lidar}.
+  \item \texttt{fhops.scenario.contract} – Pydantic-based models encode blocks, machines, corridors, mobilisation jobs, and shift calendars. Each schema element enforces unit-checked payloads, terrain classes, prescription types, and per-shift KPI fields, following the BC-focused constraints described by \cite{lahrsen2022productivity} and \cite{becker2018lidar}.
   \item Dataset loaders (\texttt{fhops.cli.dataset}) – convert CSV/YAML bundles (e.g., TN-147 skyline corridors, TR-122 Roberts Creek blocks, med42 reference dataset) into typed \texttt{Scenario} objects. The loader emits validation reports (e.g., `fhops dataset validate examples/minitoy/scenario.yaml`) and canonicalises IDs so solvers and playback routines can consume them deterministically.
   \item Synthetic generator (\texttt{fhops.scenario.synthetic}) – produces stratified scenarios (e.g., \texttt{fhops synth generate out/synthetic\_small --tier small --seed 101 --overwrite}) with configurable harvest-system mixes, blackout biases, and sample counts. These synthetic tiers underpin the scaling experiments and provide shareable exemplars when real datasets remain private.
   \item Hooks for forthcoming BC validation datasets (ground-based, skyline, tethered, and salvage systems). The interface already supports alternative block layouts and mobilisation constraints so companion studies can drop their data in without modifying FHOPS core.
@@ -42,11 +42,61 @@ Figure~\ref{fig:fhops-prisma-overview} summarises the automation pipeline that u
 
 \textbf{Outputs.} Each solver/tuning run produces a summary (objective, runtime, assignments), per-iteration telemetry, and optional playback/cost reports through the standard FHOPS CLI. Users control the destination via \texttt{--out-dir} and related flags—e.g., `fhops bench suite --scenario examples/med42/scenario.yaml --out-dir docs/softwarex/assets/data/benchmarks/med42 --telemetry-log ...`—so assets can be archived, compared, or re-ingested by downstream tools. These same artifacts underpin the illustrative example in Section~\ref{sec:illustrative-example}.
 
+\subsubsection*{Mixed-integer programming baseline}
+FHOPS’ deterministic core is a shift-based assignment model that captures production rewards, mobilisation penalties, landing capacity, and machine/shift calendars. The formulation is intentionally compact—reviewers can map each symbol to the data-contract fields in \texttt{Scenario.blocks}, \texttt{Scenario.machines}, \texttt{Scenario.landings}, and \texttt{Scenario.shifts}.
+
+\textbf{Sets and data.}
+\begin{itemize}
+  \item $B$ blocks, $M$ machines, $S$ shifts, $L$ landings.
+  \item $p_b$ – production reward (m$^3$ or value) for harvesting block $b$.
+  \item $c_{ml}$ – mobilisation cost for moving machine $m$ to landing $l$ (derived from the machine registry).
+  \item $t_{bms}$ – productive machine-hours required to harvest block $b$ with machine $m$ during shift $s$ (scenario productivity tables).
+  \item $h_{ms}$ – available machine-hours for $(m,s)$ after accounting for calendars and blackouts.
+  \item $a_{bl}$ – binary indicator that block $b$ is serviced from landing $l$.
+\end{itemize}
+
+\textbf{Decision variables.}
+\begin{align*}
+  x_{bms} &=
+    \begin{cases}
+      1 & \text{if block $b$ is harvested by machine $m$ in shift $s$,}\\
+      0 & \text{otherwise,}
+    \end{cases} \\
+  y_{mls} &=
+    \begin{cases}
+      1 & \text{if machine $m$ is staged at landing $l$ in shift $s$,}\\
+      0 & \text{otherwise.}
+    \end{cases}
+\end{align*}
+
+\textbf{Objective.}
+\begin{equation}
+  \max \sum_{b \in B} \sum_{m \in M} \sum_{s \in S} p_b \, x_{bms}
+       - \sum_{m \in M} \sum_{l \in L} \sum_{s \in S} c_{ml} \, y_{mls},
+  \label{eq:fhops-objective}
+\end{equation}
+which balances harvested volume against mobilisation costs (negative coefficients encode penalties when FHOPS is run in minimisation mode).
+
+\textbf{Constraints.}
+\begin{align}
+  &\sum_{m \in M} \sum_{s \in S} x_{bms} \le 1 &&\forall b \in B
+    && \text{(each block harvested at most once)}, \label{eq:block-once}\\
+  &\sum_{b \in B} t_{bms}\,x_{bms} \le h_{ms} &&\forall m \in M, \forall s \in S
+    && \text{(machine/shift capacity)}, \label{eq:machine-capacity}\\
+  &\sum_{b \in B} a_{bl}\,x_{bms} \le y_{mls} &&\forall m \in M, \forall l \in L, \forall s \in S
+    && \text{(landing assignment activates mobilisation)}, \label{eq:landing-link}\\
+  &\sum_{l \in L} y_{mls} \le 1 &&\forall m \in M, \forall s \in S
+    && \text{(one landing per machine per shift)}, \label{eq:landing-per-shift}\\
+  &x_{bms}, y_{mls} \in \{0,1\} &&\forall b,m,l,s. \label{eq:integrality}
+\end{align}
+
+Optional constraint families (road congestion, landing throughput, multi-day sequencing) are toggled via scenario flags and map to additional rows in the data contract. When FHOPS invokes the MIP builder, the CLI logs the extracted tensors ($t_{bms}$, $h_{ms}$, etc.) alongside the model statistics so auditors can verify that \eqref{eq:block-once}–\eqref{eq:integrality} correspond to the published scenario bundle.
+
 \subsection{Telemetry, assets, and automation}
 \textbf{Components.}
 \begin{itemize}
   \item Telemetry writer (\texttt{fhops.telemetry}) – centralised logging helpers emit structured JSONL records with scenario hashes, solver parameters, and metrics. CLI flags such as \texttt{--telemetry-log} or \texttt{--telemetry-s3-prefix} route logs to disk or external stores for audit and replay.
-  \item CLI exports – \texttt{fhops.cli.benchmarks}, \texttt{fhops.cli.playback}, and \texttt{fhops.cli.dataset} expose consistent \texttt{--out-dir} semantics so benchmarks, tuning studies, playback summaries, and costing reports can be regenerated on demand without bespoke scripting (e.g., `fhops playback --scenario ... --assignments docs/softwarex/assets/data/benchmarks/minitoy/user-1/sa_assignments.csv --out-dir docs/softwarex/assets/data/playback/minitoy/sa/deterministic`).
+  \item CLI exports – \texttt{fhops.cli.benchmarks}, \texttt{fhops.cli.playback}, and \texttt{fhops.cli.dataset} expose consistent \texttt{--out-dir} semantics so benchmarks, tuning studies, playback summaries, and costing reports can be regenerated on demand without bespoke scripting (e.g., `fhops playback --scenario ... --assignments docs/softwarex/assets/data/benchmarks/minitoy/user-1/sa\_assignments.csv --out-dir docs/softwarex/assets/data/playback/minitoy/sa/deterministic`).
   \item Shared automation surface – the same instrumentation that powers FHOPS’ documentation (heuristic matrices, motivation narrative, KPI tables) is available to users through versioned Markdown/CSV assets, ensuring manuscripts, reports, and operational dashboards quote the exact same figures.
   \item Workflow diagram – Figure~\ref{fig:fhops-prisma-overview} summarises how FHOPS ingests scenario contracts, applies solvers/tuners, and exports telemetry/playback artefacts so readers can see the end-to-end automation path that the CLI exposes.
 \end{itemize}

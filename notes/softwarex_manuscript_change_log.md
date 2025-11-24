@@ -13,6 +13,7 @@ Track local manuscript edits/text debt without polluting the main project CHANGE
 - Documented the shared snippet workflow for Sphinx consumers in `docs/includes/softwarex/README.md`, updated the includes README checklist, and re-ran `export_docs_assets.py` so `.tex`/`.rst` outputs stayed in sync.
 - Added a reusable CLI pipeline snippet (`sections/includes/cli_pipeline.md` → `.tex/.rst`) that Section~3 now `\input`s, and the same content is included in `docs/howto/benchmarks.rst` to keep manuscript + Sphinx instructions identical.
 - Phase 2 close-out checklist added to the planning doc: highlights/abstract/metadata re-proofed, `GH-SWX-Phase2` marked complete, Phase 3 validation/submission bundle/metadata tasks staged with concrete commands and directory requirements.
+- Section~\ref{sec:software-description} now includes the exact FHOPS MIP formulation (objective, decision variables, constraints, set/parameter definitions), satisfying the request to document the mathematical model reviewers will evaluate.
 
 ## 2025-11-24 – Section polish
 - Added CLI/asset-path references in Section 1 and Section 3 so every table/figure cites its source directory (e.g., `docs/softwarex/assets/data/benchmarks/<slug>/summary.csv`, `docs/softwarex/assets/data/tuning`).

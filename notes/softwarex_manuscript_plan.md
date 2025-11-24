@@ -128,6 +128,7 @@
     - [x] Software Metadata tables (code metadata + current code version) populated with release/licensing/reproducibility details.
   - [x] Document Implementation/Architecture details referencing FHOPS internals (Section~\ref{sec:software-description} mentions module layout + CLI entry points).
   - [x] Summarize Impact and Future Work narratives (Sections~\ref{sec:impact} \& \ref{sec:conclusions} rewritten to emphasise FHOPS potential + backlog references).
+  - [x] Add a mathematical formulation subsection describing the FHOPS MIP (decision variables, objective, constraints, and solver annotations) so the optimisation problem can be reviewed formally.
 
 ### P2.2 – Asset + figure readiness
 - [ ] Generate required assets: architecture diagrams, workflow figures, tables summarizing problem classes, benchmark results.
