@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 import random as _random
+import time
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import nullcontext
@@ -18,6 +19,7 @@ from fhops.optimization.heuristics.registry import OperatorContext, OperatorRegi
 from fhops.scenario.contract import Problem
 from fhops.scheduling.mobilisation import MachineMobilisation, build_distance_lookup
 from fhops.telemetry import RunTelemetryLogger
+from fhops.telemetry.watch import Snapshot, SnapshotSink
 
 
 def _role_metadata(scenario):
@@ -448,6 +450,9 @@ def solve_sa(
     max_workers: int | None = None,
     telemetry_log: str | Path | None = None,
     telemetry_context: dict[str, Any] | None = None,
+    watch_sink: SnapshotSink | None = None,
+    watch_interval: int | None = None,
+    watch_metadata: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     """Solve the scheduling problem with simulated annealing.
 
@@ -472,6 +477,14 @@ def solve_sa(
         Optional telemetry JSONL path. When provided, solver progress and final metrics are logged.
     telemetry_context : dict[str, Any] | None
         Additional context merged into telemetry records (scenario metadata, tuner info, etc.).
+    watch_sink : SnapshotSink | None, optional
+        Optional callback that receives :class:`fhops.telemetry.watch.Snapshot` updates for live
+        dashboards. When omitted, no live progress is emitted.
+    watch_interval : int | None, optional
+        Iteration interval between snapshot emissions. Defaults to ``max(1, iters / 200)`` when a
+        sink is provided.
+    watch_metadata : dict[str, str] | None
+        Additional metadata (e.g., scenario/solver labels) attached to each snapshot.
 
     Returns
     -------
@@ -544,6 +557,11 @@ def solve_sa(
             else None,
         )
 
+    watch_meta = dict(watch_metadata or {})
+    watch_interval_value = watch_interval or max(1, iters // 200 or 1)
+    watch_scenario = watch_meta.get("scenario") or scenario_name or "unknown"
+    watch_solver = watch_meta.get("solver") or "sa"
+
     with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
         current = _init_greedy(pb)
         current_score = _evaluate(pb, current)
@@ -557,6 +575,7 @@ def solve_sa(
         accepted_moves = 0
         restarts = 0
         operator_stats: dict[str, dict[str, float]] = {}
+        run_start = time.perf_counter()
         for step in range(1, iters + 1):
             accepted = False
             candidates = _neighbors(
@@ -601,6 +620,25 @@ def solve_sa(
                 current_score = _evaluate(pb, current)
                 restarts += 1
 
+                if watch_sink and (
+                    step == 1 or step == iters or (step % watch_interval_value == 0)
+                ):
+                    acceptance_rate = (accepted_moves / proposals) if proposals else None
+                    watch_sink(
+                        Snapshot(
+                            scenario=watch_scenario,
+                            solver=watch_solver,
+                            iteration=step,
+                            max_iterations=iters,
+                            objective=float(best_score),
+                            best_gap=None,
+                            runtime_seconds=time.perf_counter() - run_start,
+                            acceptance_rate=acceptance_rate,
+                            restarts=restarts,
+                            metadata=watch_meta,
+                        )
+                    )
+
         rows = []
         for machine_id, plan in best.plan.items():
             for (day, shift_id), block_id in plan.items():
@@ -615,6 +653,22 @@ def solve_sa(
                         }
                     )
         assignments = pd.DataFrame(rows).sort_values(["day", "shift_id", "machine_id", "block_id"])
+        if watch_sink:
+            acceptance_rate = (accepted_moves / proposals) if proposals else None
+            watch_sink(
+                Snapshot(
+                    scenario=watch_scenario,
+                    solver=watch_solver,
+                    iteration=iters,
+                    max_iterations=iters,
+                    objective=float(best_score),
+                    best_gap=None,
+                    runtime_seconds=time.perf_counter() - run_start,
+                    acceptance_rate=acceptance_rate,
+                    restarts=restarts,
+                    metadata=watch_meta,
+                )
+            )
         meta = {
             "initial_score": float(initial_score),
             "best_score": float(best_score),

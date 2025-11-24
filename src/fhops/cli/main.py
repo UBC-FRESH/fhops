@@ -38,6 +38,7 @@ from fhops.cli.geospatial import geospatial_app
 from fhops.cli.profiles import format_profiles, get_profile, merge_profile_with_cli
 from fhops.cli.synthetic import synth_app
 from fhops.cli.telemetry import telemetry_app
+from fhops.cli.watch_dashboard import LiveWatch
 from fhops.evaluation import (
     DaySummary,
     PlaybackConfig,
@@ -67,6 +68,7 @@ from fhops.scenario.io import load_scenario
 from fhops.telemetry import RunTelemetryLogger, append_jsonl
 from fhops.telemetry.machine_costs import build_machine_cost_snapshots
 from fhops.telemetry.sqlite_store import persist_tuner_summary
+from fhops.telemetry.watch import WatchConfig
 
 app = typer.Typer(add_completion=False, no_args_is_help=True)
 app.add_typer(geospatial_app, name="geo")
@@ -1824,6 +1826,17 @@ def tune_random_cli(
         "--tier-label",
         help="Optional label describing the budget tier for telemetry summaries.",
     ),
+    watch: bool = typer.Option(
+        False,
+        "--watch/--no-watch",
+        help="Render a live dashboard showing heuristic progress.",
+    ),
+    watch_refresh: float = typer.Option(
+        0.5,
+        "--watch-refresh",
+        min=0.1,
+        help="Refresh interval for the live dashboard (seconds).",
+    ),
 ):
     """Randomly sample simulated annealing configurations and log telemetry.
 
@@ -1855,18 +1868,39 @@ def tune_random_cli(
         console.print("[yellow]No scenarios resolved. Provide --bundle or explicit paths.[/]")
         raise typer.Exit(1)
 
+    watch_runner: LiveWatch | None = None
+    if watch:
+        if console.is_terminal:
+            watch_runner = LiveWatch(
+                WatchConfig(refresh_interval=watch_refresh), console=console
+            )
+            watch_runner.start()
+        else:
+            console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")
+
     rng = random.Random(base_seed)
     registry = OperatorRegistry.from_defaults()
     operator_names = list(registry.names())
 
     results: list[dict[str, Any]] = []
 
-    for scenario_path in scenario_files:
-        sc = load_scenario(str(scenario_path))
-        pb = Problem.from_scenario(sc)
-        scenario_resolved = scenario_path.resolve()
-        bundle_meta = bundle_map.get(scenario_resolved)
-        scenario_display = (
+    watch_runner: LiveWatch | None = None
+    if watch:
+        if console.is_terminal:
+            watch_runner = LiveWatch(
+                WatchConfig(refresh_interval=watch_refresh), console=console
+            )
+            watch_runner.start()
+        else:
+            console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")
+
+    try:
+        for scenario_path in scenario_files:
+            sc = load_scenario(str(scenario_path))
+            pb = Problem.from_scenario(sc)
+            scenario_resolved = scenario_path.resolve()
+            bundle_meta = bundle_map.get(scenario_resolved)
+            scenario_display = (
             getattr(sc, "name", None) or scenario_path.parent.name or scenario_path.stem
         )
         if bundle_meta:
@@ -1876,20 +1910,20 @@ def tune_random_cli(
         else:
             console.print(f"[dim]Tuning {scenario_display} ({runs} run(s))[/]")
 
-        for run_idx in range(runs):
-            run_seed = rng.randrange(1, 1_000_000_000)
-            batch_size_choice = rng.choice([1, 2, 3])
-            weight_count = rng.randint(1, max(1, len(operator_names)))
-            selected_ops = rng.sample(operator_names, weight_count)
-            operator_weights = {name: round(rng.uniform(0.5, 1.5), 3) for name in selected_ops}
+            for run_idx in range(runs):
+                run_seed = rng.randrange(1, 1_000_000_000)
+                batch_size_choice = rng.choice([1, 2, 3])
+                weight_count = rng.randint(1, max(1, len(operator_names)))
+                selected_ops = rng.sample(operator_names, weight_count)
+                operator_weights = {name: round(rng.uniform(0.5, 1.5), 3) for name in selected_ops}
 
-            telemetry_kwargs: dict[str, Any] = {}
-            if telemetry_log:
-                telemetry_context = {
-                    "source": "cli.tune-random",
-                    "tuner_seed": base_seed,
-                    "run_index": run_idx,
-                    "batch_size_choice": batch_size_choice,
+                telemetry_kwargs: dict[str, Any] = {}
+                if telemetry_log:
+                    telemetry_context = {
+                        "source": "cli.tune-random",
+                        "tuner_seed": base_seed,
+                        "run_index": run_idx,
+                        "batch_size_choice": batch_size_choice,
                     "operator_count": weight_count,
                 }
                 if bundle_meta:
@@ -1921,26 +1955,34 @@ def tune_random_cli(
                     tuner_meta_payload["bundle_member"] = bundle_meta.get(
                         "bundle_member", scenario_display
                     )
-                telemetry_kwargs = {
-                    "telemetry_log": telemetry_log,
-                    "telemetry_context": telemetry_context,
-                }
-                telemetry_kwargs["telemetry_context"]["tuner_meta"] = tuner_meta_payload
+                    telemetry_kwargs = {
+                        "telemetry_log": telemetry_log,
+                        "telemetry_context": telemetry_context,
+                    }
+                    telemetry_kwargs["telemetry_context"]["tuner_meta"] = tuner_meta_payload
 
-            try:
-                res = solve_sa(
-                    pb,
-                    iters=iters,
-                    seed=run_seed,
-                    batch_size=batch_size_choice if batch_size_choice > 1 else None,
-                    operator_weights=operator_weights,
-                    **telemetry_kwargs,
-                )
-            except Exception as exc:  # pragma: no cover - defensive
-                console.print(
-                    f"[yellow]Run failed for {scenario_path} (seed={run_seed}): {exc!r}[/]"
-                )
-                continue
+                sa_kwargs: dict[str, Any] = {
+                    "iters": iters,
+                    "seed": run_seed,
+                    "batch_size": batch_size_choice if batch_size_choice > 1 else None,
+                    "operator_weights": operator_weights,
+                }
+                sa_kwargs.update(telemetry_kwargs)
+                if watch_runner:
+                    sa_kwargs["watch_sink"] = watch_runner.sink
+                    sa_kwargs["watch_interval"] = max(1, iters // 200 or 1)
+                    sa_kwargs["watch_metadata"] = {
+                        "scenario": scenario_display,
+                        "solver": f"tune-random[{run_idx + 1}]",
+                    }
+
+                try:
+                    res = solve_sa(pb, **sa_kwargs)
+                except Exception as exc:  # pragma: no cover - defensive
+                    console.print(
+                        f"[yellow]Run failed for {scenario_path} (seed={run_seed}): {exc!r}[/]"
+                    )
+                    continue
 
             results.append(
                 {
@@ -2014,6 +2056,9 @@ def tune_random_cli(
             summary_record,
         )
         append_jsonl(telemetry_log, summary_record)
+    finally:
+        if watch_runner:
+            watch_runner.stop()
 
 
 @app.command("tune-grid")
@@ -2064,6 +2109,17 @@ def tune_grid_cli(
         "--tier-label",
         help="Optional label describing the budget tier for telemetry summaries.",
     ),
+    watch: bool = typer.Option(
+        False,
+        "--watch/--no-watch",
+        help="Render a live dashboard showing heuristic progress.",
+    ),
+    watch_refresh: float = typer.Option(
+        0.5,
+        "--watch-refresh",
+        min=0.1,
+        help="Refresh interval for the live dashboard (seconds).",
+    ),
 ):
     """Exhaustively evaluate a grid of operator presets and batch sizes.
 
@@ -2100,6 +2156,16 @@ def tune_grid_cli(
     batch_values = sorted(set(batch_size)) if batch_size else [1, 2, 3]
     preset_values = [name.lower() for name in (preset or ["balanced", "explore", "mobilisation"])]
 
+    watch_runner: LiveWatch | None = None
+    if watch:
+        if console.is_terminal:
+            watch_runner = LiveWatch(
+                WatchConfig(refresh_interval=watch_refresh), console=console
+            )
+            watch_runner.start()
+        else:
+            console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")
+
     for name in preset_values:
         if name not in OPERATOR_PRESETS:
             console.print(
@@ -2109,8 +2175,9 @@ def tune_grid_cli(
 
     results: list[dict[str, Any]] = []
     run_seed = seed
-    for scenario_path in scenario_files:
-        sc = load_scenario(str(scenario_path))
+    try:
+        for scenario_path in scenario_files:
+            sc = load_scenario(str(scenario_path))
         pb = Problem.from_scenario(sc)
         scenario_resolved = scenario_path.resolve()
         bundle_meta = bundle_map.get(scenario_resolved)
@@ -2175,15 +2242,22 @@ def tune_grid_cli(
                             "bundle_member", scenario_display
                         )
                     telemetry_kwargs["telemetry_context"]["tuner_meta"] = tuner_meta_payload
+                sa_kwargs: dict[str, Any] = {
+                    "iters": iters,
+                    "seed": run_seed,
+                    "batch_size": batch_choice if batch_choice > 1 else None,
+                    "operator_weights": operator_weights,
+                }
+                sa_kwargs.update(telemetry_kwargs)
+                if watch_runner:
+                    sa_kwargs["watch_sink"] = watch_runner.sink
+                    sa_kwargs["watch_interval"] = max(1, iters // 200 or 1)
+                    sa_kwargs["watch_metadata"] = {
+                        "scenario": scenario_display,
+                        "solver": f"tune-grid[{preset_name}/{batch_choice}]",
+                    }
                 try:
-                    res = solve_sa(
-                        pb,
-                        iters=iters,
-                        seed=run_seed,
-                        batch_size=batch_choice if batch_choice > 1 else None,
-                        operator_weights=operator_weights,
-                        **telemetry_kwargs,
-                    )
+                    res = solve_sa(pb, **sa_kwargs)
                 except Exception as exc:  # pragma: no cover - defensive
                     console.print(
                         f"[yellow]Run failed for {scenario_path} (preset={preset_name}, batch={batch_choice}): {exc!r}[/]"
@@ -2261,6 +2335,9 @@ def tune_grid_cli(
             summary_record,
         )
         append_jsonl(telemetry_log, summary_record)
+    finally:
+        if watch_runner:
+            watch_runner.stop()
 
 
 @app.command("tune-bayes")
@@ -2307,6 +2384,17 @@ def tune_bayes_cli(
         "--tier-label",
         help="Optional label describing the budget tier for telemetry summaries.",
     ),
+    watch: bool = typer.Option(
+        False,
+        "--watch/--no-watch",
+        help="Render a live dashboard showing heuristic progress.",
+    ),
+    watch_refresh: float = typer.Option(
+        0.5,
+        "--watch-refresh",
+        min=0.1,
+        help="Refresh interval for the live dashboard (seconds).",
+    ),
 ):
     """Optimise simulated annealing hyperparameters with Bayesian/SMBO search (Optuna TPE).
 
@@ -2338,6 +2426,16 @@ def tune_bayes_cli(
     if not scenario_files:
         console.print("[yellow]No scenarios resolved. Provide --bundle or explicit paths.[/]")
         raise typer.Exit(1)
+
+    watch_runner: LiveWatch | None = None
+    if watch:
+        if console.is_terminal:
+            watch_runner = LiveWatch(
+                WatchConfig(refresh_interval=watch_refresh), console=console
+            )
+            watch_runner.start()
+        else:
+            console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")
 
     optuna.logging.set_verbosity(optuna.logging.WARNING)
     operator_names = list(OperatorRegistry.from_defaults().names())
@@ -2407,15 +2505,22 @@ def tune_bayes_cli(
                         "bundle_member", scenario_display
                     )
                 telemetry_kwargs["telemetry_context"]["tuner_meta"] = tuner_meta_payload
+            sa_kwargs: dict[str, Any] = {
+                "iters": iters,
+                "seed": seed + trial.number,
+                "batch_size": batch_choice if batch_choice > 1 else None,
+                "operator_weights": operator_weights,
+            }
+            sa_kwargs.update(telemetry_kwargs)
+            if watch_runner:
+                sa_kwargs["watch_sink"] = watch_runner.sink
+                sa_kwargs["watch_interval"] = max(1, iters // 200 or 1)
+                sa_kwargs["watch_metadata"] = {
+                    "scenario": scenario_display,
+                    "solver": f"tune-bayes[{trial.number}]",
+                }
             try:
-                res = solve_sa(
-                    pb,
-                    iters=iters,
-                    seed=seed + trial.number,
-                    batch_size=batch_choice if batch_choice > 1 else None,
-                    operator_weights=operator_weights,
-                    **telemetry_kwargs,
-                )
+                res = solve_sa(pb, **sa_kwargs)
             except Exception as exc:  # pragma: no cover - defensive path
                 trial.set_user_attr("error", repr(exc))
                 raise optuna.exceptions.TrialPruned() from exc
@@ -2497,6 +2602,8 @@ def tune_bayes_cli(
                 summary_record,
             )
             append_jsonl(telemetry_log, summary_record)
+    if watch_runner:
+        watch_runner.stop()
 
 
 if __name__ == "__main__":

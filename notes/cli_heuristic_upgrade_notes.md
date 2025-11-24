@@ -41,17 +41,18 @@
   - [x] Define `WatchConfig` (refresh interval, render mode, quiet fallback).
 - [ ] **Rich Live prototype**
   - [x] Build a standalone script that tails an existing telemetry JSONL file and feeds rows into the watcher layout (simulate SA progress).
-  - [ ] Validate Rich refresh cadence, color palette, terminal width handling, and fallback text mode when `isatty` is false.
+  - [x] Validate Rich refresh cadence, color palette, terminal width handling, and fallback text mode when `isatty` is false.
 - [ ] **Testing hooks**
-  - [ ] Add unit tests for `Snapshot` serialization/deserialization and gap calculations.
-  - [ ] Create a regression fixture with synthetic telemetry to ensure the watcher summary math (best objective, runtime) matches expectations.
+  - [x] Add unit tests for `Snapshot` serialization/deserialization and gap calculations.
+  - [x] Create a regression fixture with synthetic telemetry to ensure the watcher summary math (best objective, runtime) matches expectations.
 
 ### Phase 2 – CLI Integration
 - [ ] **Flags & plumbing**
-  - [ ] Extend `fhops bench suite` and `fhops tuning run` Typer commands with `--watch/--no-watch` and `--watch-refresh`.
-  - [ ] Detect TTY capability; auto-disable watch when output is redirected.
+  - [x] Add `--watch/--no-watch` and `--watch-refresh` to `fhops bench suite`.
+  - [x] Mirror the watch flags on tuning commands (grid/random/bayes runners).
+  - [x] Detect TTY capability; auto-disable watch when output is redirected.
 - [ ] **Solver instrumentation**
-  - [ ] Update SA/ILS/Tabu runners to emit snapshots at configurable cadence (e.g., every `watch_interval_iters`, default derived from `max(1, iters/200)`).
+  - [x] Update SA runner to emit snapshots at configurable cadence (ILS/Tabu pending).
   - [ ] Ensure multi-worker heuristics aggregate metrics (per-worker iter counts, acceptance rates) before emitting.
 - [ ] **Graceful teardown**
   - [ ] Trap `KeyboardInterrupt` so the live display stops cleanly and the final snapshot is printed.

@@ -30,6 +30,7 @@ from fhops.cli.profiles import (
     get_profile,
     merge_profile_with_cli,
 )
+from fhops.cli.watch_dashboard import LiveWatch
 from fhops.evaluation import compute_kpis
 from fhops.optimization.heuristics import solve_ils, solve_sa, solve_tabu
 from fhops.optimization.mip import build_model, solve_mip
@@ -37,6 +38,7 @@ from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
 from fhops.telemetry import append_jsonl
 from fhops.telemetry.machine_costs import build_machine_cost_snapshots, summarize_machine_costs
+from fhops.telemetry.watch import WatchConfig
 
 console = Console()
 
@@ -147,6 +149,8 @@ def run_benchmark_suite(
     telemetry_log: Path | None = None,
     preset_comparisons: Sequence[str] | None = None,
     profile: Profile | None = None,
+    watch: bool = False,
+    watch_refresh: float = 0.5,
 ) -> pd.DataFrame:
     """Execute the benchmark suite and return the summary DataFrame.
 
@@ -217,6 +221,10 @@ def run_benchmark_suite(
         Additional SA presets to run for side-by-side comparisons (records carry ``preset_label``).
     profile : fhops.cli.profiles.Profile | None, default=None
         Optional solver profile object combining preset/operator/advanced overrides.
+    watch : bool, default=False
+        Enable live dashboard updates (requires interactive terminal).
+    watch_refresh : float, default=0.5
+        Refresh interval (seconds) for the live dashboard when ``watch`` is enabled.
 
     Returns
     -------
@@ -255,6 +263,18 @@ def run_benchmark_suite(
         else None
     )
 
+    watch_runner: LiveWatch | None = None
+    if watch:
+        if console.is_terminal:
+            watch_runner = LiveWatch(
+                WatchConfig(refresh_interval=watch_refresh), console=console
+            )
+            watch_runner.start()
+        else:
+            console.print(
+                "[yellow]Watch mode disabled: not running in an interactive terminal.[/]"
+            )
+
     for bench in scenarios:
         resolved_path = bench.path.expanduser()
         if not resolved_path.exists():
@@ -292,6 +312,9 @@ def run_benchmark_suite(
                     machine_costs_summary=machine_costs_summary,
                 )
             )
+
+        sc_name = getattr(sc, "name", bench.name)
+        watch_sink = watch_runner.sink if watch_runner else None
 
         override_weights = operator_weights or {}
         explicit_ops = [op.lower() for op in operators] if operators else []
@@ -341,6 +364,13 @@ def run_benchmark_suite(
                 }
                 if resolved_sa.extra_kwargs:
                     sa_kwargs.update(resolved_sa.extra_kwargs)
+                if watch_sink:
+                    sa_kwargs["watch_sink"] = watch_sink
+                    sa_kwargs["watch_interval"] = max(1, sa_iters // 200 or 1)
+                    sa_kwargs["watch_metadata"] = {
+                        "scenario": sc_name,
+                        "solver": f"sa[{preset_label}]" if preset_label else "sa",
+                    }
                 start = time.perf_counter()
                 sa_res = solve_sa(pb, **sa_kwargs)
                 sa_runtime = time.perf_counter() - start
@@ -627,6 +657,9 @@ def run_benchmark_suite(
                     record["profile_version"] = profile.version
                 append_jsonl(telemetry_log, record)
 
+    if watch_runner:
+        watch_runner.stop()
+
     summary = pd.DataFrame(rows)
     if not summary.empty:
         summary = summary.copy()
@@ -850,6 +883,17 @@ def bench_suite(
         writable=True,
         dir_okay=False,
     ),
+    watch: bool = typer.Option(
+        False,
+        "--watch/--no-watch",
+        help="Render a live dashboard showing heuristic progress.",
+    ),
+    watch_refresh: float = typer.Option(
+        0.5,
+        "--watch-refresh",
+        min=0.1,
+        help="Refresh interval for the live dashboard (seconds).",
+    ),
     compare_preset: list[str] | None = typer.Option(
         None,
         "--compare-preset",
@@ -917,4 +961,6 @@ def bench_suite(
         telemetry_log=telemetry_log,
         preset_comparisons=compare_preset,
         profile=profile_obj,
+        watch=watch,
+        watch_refresh=watch_refresh,
     )

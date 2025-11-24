@@ -5,7 +5,7 @@ from __future__ import annotations
 import queue
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Iterator, Protocol
+from typing import Dict, Iterable, Iterator, Protocol, Tuple
 
 
 @dataclass(slots=True)
@@ -85,3 +85,24 @@ class SnapshotBus:
                 yield self._queue.get_nowait()
             except queue.Empty:
                 break
+
+
+def summarize_snapshots(
+    snapshots: Iterable[Snapshot],
+) -> Dict[Tuple[str, str], Dict[str, float]]:
+    """Compute best objective and max runtime per (scenario, solver)."""
+
+    summary: Dict[Tuple[str, str], Dict[str, float]] = {}
+    for snap in snapshots:
+        key = (snap.scenario, snap.solver)
+        entry = summary.setdefault(
+            key,
+            {
+                "best_objective": snap.objective,
+                "runtime_seconds": snap.runtime_seconds,
+            },
+        )
+        if snap.objective < entry["best_objective"]:
+            entry["best_objective"] = snap.objective
+        entry["runtime_seconds"] = max(entry["runtime_seconds"], snap.runtime_seconds)
+    return summary
