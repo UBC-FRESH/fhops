@@ -211,7 +211,7 @@
     - [x] Update the Sphinx overview to ``.. include::`` the snippet so readers see the workflow summary, plus embed the auto-generated PNG.
     - [x] Document the PNG export workflow (via `render_prisma_diagram.py` + `generate_assets.sh`) so refresh instructions live alongside the include metadata.
   - [x] Record figure provenance inside `docs/softwarex/manuscript/sections/includes/README.md` so future changes stay deterministic.
-- [ ] Kick off Phase 2 drafting for Sections 1–3 while the automation context is fresh.
+- [x] Kick off Phase 2 drafting for Sections 1–3 while the automation context is fresh.
   - [x] Use `notes/softwarex_exemplar_analysis.md` takeaways and the Jaffray systematic review references to outline the Intro and Software Metadata paragraphs.
   - [x] Draft the first pass of the Motivation/Contribution narrative (Section 1) using the shared snippets in `sections/includes/motivation_story.md`.
   - [x] Capture open questions / text debt in the local manuscript change log before each writing push so we can trace edits without touching the main FHOPS changelog. (See `notes/softwarex_manuscript_change_log.md`.)
@@ -223,10 +223,11 @@
   - [x] Execute `FHOPS_ASSETS_FAST=0 docs/softwarex/manuscript/scripts/generate_assets.sh` and append the run metadata (command, commit, start/end timestamps, runtimes) to `docs/softwarex/assets/benchmark_runs.log`.
   - [x] Spot-check telemetry to ensure Tabu no longer reports implausible 0.09 s runtimes and that production/utilisation KPIs improve relative to previous assets.
   - [ ] Re-run \texttt{make manuscript-benchmarks} once more immediately before submission to capture the final artefact hash referenced in Section~4 (skip redundant runs mid-phase).
-- [ ] Convert refreshed benchmark/tuning data into manuscript-ready artifacts (Section 3).
+- [x] Convert refreshed benchmark/tuning data into manuscript-ready artifacts (Section 3).
   - [x] Build LaTeX tables for solver performance (Table~1) and tuning leaderboard (Table~2) by parsing the new `summary.csv` and `tuner_*.csv` files; store intermediates under `docs/softwarex/assets/data/tables/`.
   - [x] Regenerate Figure~2 (scaling curve) and Figure~3 (playback robustness) from the updated CSVs; ensure PNG/PDF exports meet 300 dpi and embed references in Section~\ref{sec:illustrative-example}.
   - [x] Update the narrative in Section~3 to quote the new objectives, runtimes, utilisation, and costing numbers, citing file paths for reproducibility.
+- [x] Verify metadata tables/README alignment and document reproducibility log location for future edits (see `docs/softwarex/manuscript/README.md`).
 - [x] Draft Section 4 (Impact/availability) while data context is fresh.
   - [x] Summarise adoption signals (GitHub stats, release cadence, documentation reach) and the BC validation roadmap.
   - [x] Reference forthcoming validation studies (Chapter 2 case studies) and explain how FHOPS enables them without duplicating results here.

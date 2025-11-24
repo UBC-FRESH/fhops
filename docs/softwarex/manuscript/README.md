@@ -63,6 +63,10 @@ If any directory is missing or stale, re-run `FHOPS_ASSETS_FAST=0 make assets` t
 - `make manuscript-benchmarks-fast` does the same but sets `FHOPS_ASSETS_FAST=1` for quick sanity checks.
 - Use these targets before major milestones or submissions so we have a reproducibility audit trail without forcing a full PDF build each time.
 
+## Metadata tables & reproducibility log
+- `metadata/code_metadata.tex` and `metadata/current_code_version.tex` store the journal-required tables (version, licence, supported platforms, installation method, benchmark log path). Update them whenever release naming, contact info, or reproducibility evidence changes.
+- The introduction references Tables~\ref{tab:code-metadata}–\ref{tab:current-code-version}, so keep those entries aligned with the text and the actual reproducibility log at `docs/softwarex/assets/benchmark_runs.log`.
+
 ## Planned workflow
 1. **Template adaptation:** `fhops-softx.tex` pulls the elsarticle class and `\input`s the files under `sections/`, with citations managed via `references.bib`. Section files are intended to be reusable (shared with Sphinx via includes later).
 2. **Single-source content:** Draft prose in `sections/*.tex`. When content stabilises, we can symlink or otherwise share snippets with the Sphinx docs.
