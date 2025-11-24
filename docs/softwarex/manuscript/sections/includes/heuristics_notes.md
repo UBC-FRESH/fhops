@@ -1,4 +1,4 @@
-FHOPS exposes the same metaheuristics the SoftwareX paper benchmarks:
+FHOPS exposes the same metaheuristics benchmarked in the manuscript:
 
 - **Simulated annealing** remains the default baseline (`bench suite` uses it unless disabled). The manuscript cites both the balanced preset (general-purpose) and the mobilisation preset (escapes landing-cap traps). Operator weights ship in `profiles.py`, so the exporter can surface them in the shared table.
 - **Iterated local search** is included to show deterministic improvement over SA in short horizons (e.g., minitoy). The solver piggybacks on SA assignments when `--include-ils` is passed, reinforcing that end-users can reuse telemetry outputs.

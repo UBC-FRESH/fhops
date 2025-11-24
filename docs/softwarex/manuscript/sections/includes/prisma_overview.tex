@@ -26,7 +26,7 @@
     \node[labelnode, left=0cm of int1.west] {Shared artifacts};
 
     % Final outputs
-    \node[wideblock, below=1.2cm of int1, text width=8cm] (out1) {\textbf{Outputs}\\SoftwareX manuscript, reproducible figures, Sphinx docs, submission bundle};
+    \node[wideblock, below=1.2cm of int1, text width=8cm] (out1) {\textbf{Outputs}\\Manuscript, reproducible figures, Sphinx docs, submission bundle};
     \node[labelnode, left=0cm of out1.west] {Outputs};
 
     % Connections
@@ -40,6 +40,6 @@
     \draw[arrow] (int1) -- (out1);
     \draw[arrow] (int2) -- (out1);
   \end{tikzpicture}
-  \caption{FHOPS SoftwareX automation pipeline. Inputs (scenario contract + curated datasets) feed the FHOPS core (validation, solver stack, evaluation tooling). Asset scripts emit shared tables/figures consumed by the manuscript, submission package, and Sphinx docs.}
+  \caption{FHOPS automation pipeline. Inputs (scenario contract + curated datasets) feed the FHOPS core (validation, solver stack, evaluation tooling). Asset scripts emit shared tables/figures consumed by the manuscript, submission package, and Sphinx docs.}
   \label{fig:fhops-prisma-overview}
 \end{figure}

@@ -1,6 +1,6 @@
-# Shared Include Plan (Sphinx ↔ SoftwareX Manuscript)
+# Shared Include Plan (Sphinx ↔ Manuscript)
 
-The `sections/includes/` directory hosts text blocks and table fragments that must stay identical between the SoftwareX LaTeX manuscript and the FHOPS Sphinx documentation. Source-of-truth will live here as Markdown/CSV, then export scripts will render:
+The `sections/includes/` directory hosts text blocks and table fragments that must stay identical between the LaTeX manuscript and the FHOPS Sphinx documentation. Source-of-truth will live here as Markdown/CSV, then export scripts will render:
 
 1. `*.tex` – pulled into `fhops-softx.tex` via `\input{sections/includes/...}`
 2. `*.rst` – included from the Sphinx tree via ``.. include::`` directives (or Copied into appropriate RST files during doc builds)

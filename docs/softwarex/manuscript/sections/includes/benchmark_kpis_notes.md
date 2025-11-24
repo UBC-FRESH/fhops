@@ -4,4 +4,4 @@ The KPI roll-up highlights three solver behaviours we plan to discuss in the man
 - **Med42**: The large production penalty showcases why we need heuristics beyond SA—only ILS hits the negative objective targets expected from contraction penalties. The mobilisation preset surfaces the landing-limited behaviour we outline in the narrative.
 - **Synthetic tier**: All solvers converge to the same objective, but Tabu demonstrates the runtime floor (0.05 s) while SA presets show how mobilisation shakes affect runtime.
 
-These shared tables let us cite numbers in both the SoftwareX paper and the `howto/benchmarks` doc without copy/paste drift.
+These shared tables let us cite numbers in both the manuscript and the `howto/benchmarks` doc without copy/paste drift.
