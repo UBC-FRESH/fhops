@@ -48,7 +48,7 @@ Figure~\ref{fig:fhops-prisma-overview} summarises the automation pipeline that u
   \item Telemetry writer (\texttt{fhops.telemetry}) – centralised logging helpers emit structured JSONL records with scenario hashes, solver parameters, and metrics. CLI flags such as \texttt{--telemetry-log} or \texttt{--telemetry-s3-prefix} route logs to disk or external stores for audit and replay.
   \item CLI exports – \texttt{fhops.cli.benchmarks}, \texttt{fhops.cli.playback}, and \texttt{fhops.cli.dataset} expose consistent \texttt{--out-dir} semantics so benchmarks, tuning studies, playback summaries, and costing reports can be regenerated on demand (e.g., \texttt{fhops bench suite --scenario ... --include-sa --out-dir bench/minitoy}).
   \item Shared text snippets – Source-of-truth Markdown/CSV assets live alongside the codebase and are converted into both LaTeX and RST fragments, ensuring the SoftwareX manuscript and FHOPS documentation reuse identical descriptions (e.g., motivation narrative, heuristic matrix).
-  \item Workflow diagram – The workflow figure (Figure~\ref{fig:fhops-prisma-overview}) is expressed in TikZ so any FHOPS user can recompile it from the public repository, mirroring the approach used in FHOPS’ documentation set.
+  \item Workflow diagram – Figure~\ref{fig:fhops-prisma-overview} summarises how FHOPS ingests scenario contracts, applies solvers/tuners, and exports telemetry/playback artefacts so readers can see the end-to-end automation path that the CLI exposes.
 \end{itemize}
 
 \textbf{Automation.} The manuscript Makefile exposes:
