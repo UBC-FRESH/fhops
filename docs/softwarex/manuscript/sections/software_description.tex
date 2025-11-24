@@ -40,22 +40,15 @@ Figure~\ref{fig:fhops-prisma-overview} summarises the automation pipeline that u
 
 \textbf{Dependencies.} numpy, scipy, Pyomo/HiGHS (exact solver), Typer/Rich for CLI ergonomics, Optuna for Bayesian tuning, pandas for CSV summaries.
 
-\textbf{Outputs.} For each scenario run, FHOPS writes:
-\begin{itemize}
-  \item \texttt{summary.(csv|json)} with objective, runtime, assignments, and solver metadata (stored under \texttt{docs/softwarex/assets/data/benchmarks/<scenario>/}).
-  \item \texttt{telemetry.jsonl} capturing per-iteration metrics, enabling external analysis or playback.
-  \item Tuning reports (leaderboards, comparison tables, per-trial telemetry) under \texttt{docs/softwarex/assets/data/tuning/}.
-  \item Stochastic playback CSV/Markdown summaries (\texttt{docs/softwarex/assets/data/playback/<scenario>/<solver>/<mode>/}) and cost breakdowns (\texttt{docs/softwarex/assets/data/costing/}).
-\end{itemize}
-These artifacts feed Section~\ref{sec:illustrative-example} directly and can be regenerated with \texttt{make manuscript-benchmarks}.
+\textbf{Outputs.} Each solver/tuning run produces a summary (objective, runtime, assignments), per-iteration telemetry, and optional playback/cost reports through the standard FHOPS CLI. Users control the destination via \texttt{--out-dir} and related flags, so assets can be archived, compared, or re-ingested by downstream tools. These same artifacts underpin the illustrative example in Section~\ref{sec:illustrative-example}.
 
 \subsection{Telemetry, assets, and automation}
 \textbf{Components.}
 \begin{itemize}
-  \item Telemetry writer (\texttt{fhops.telemetry}) – centralised logging helpers emit JSONL records with input scenario hash, solver parameters, metrics, and pseudo-random seeds. CLI flags such as \texttt{--telemetry-log} or \texttt{--telemetry-s3-prefix} control destinations.
-  \item Asset pipelines – \texttt{docs/softwarex/manuscript/scripts/generate_assets.sh} orchestrates dataset summaries, benchmark suites, tuning harness, playback KPI export, costing demo, scaling sweep, and shared snippet rendering. The dedicated \texttt{make manuscript-benchmarks} target wraps this script and appends run metadata (start time, commit, SHA-256 hash) to \texttt{docs/softwarex/assets/benchmark\_runs.log}.
-  \item Shared snippets – Markdown/CSV primaries in \texttt{sections/includes/} flow through \texttt{export\_docs\_assets.py} into LaTeX and RST outputs so the manuscript and Sphinx docs reuse identical prose/tables (e.g., motivation narrative, heuristic matrix, benchmark KPIs).
-  \item PRISMA diagram – \texttt{scripts/render\_prisma\_diagram.py} compiles the TikZ workflow into PDF/PNG assets under \texttt{docs/softwarex/assets/figures/}, used in both the manuscript and documentation.
+  \item Telemetry writer (\texttt{fhops.telemetry}) – centralised logging helpers emit structured JSONL records with scenario hashes, solver parameters, and metrics. CLI flags such as \texttt{--telemetry-log} or \texttt{--telemetry-s3-prefix} route logs to disk or external stores for audit and replay.
+  \item CLI exports – \texttt{fhops.cli.benchmarks}, \texttt{fhops.cli.playback}, and \texttt{fhops.cli.dataset} expose consistent \texttt{--out-dir} semantics so benchmarks, tuning studies, playback summaries, and costing reports can be regenerated on demand (e.g., \texttt{fhops bench suite --scenario ... --include-sa --out-dir bench/minitoy}).
+  \item Shared text snippets – Source-of-truth Markdown/CSV assets live alongside the codebase and are converted into both LaTeX and RST fragments, ensuring the SoftwareX manuscript and FHOPS documentation reuse identical descriptions (e.g., motivation narrative, heuristic matrix).
+  \item Workflow diagram – The workflow figure (Figure~\ref{fig:fhops-prisma-overview}) is expressed in TikZ so any FHOPS user can recompile it from the public repository, mirroring the approach used in FHOPS’ documentation set.
 \end{itemize}
 
 \textbf{Automation.} The manuscript Makefile exposes:
