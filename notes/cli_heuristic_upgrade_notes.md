@@ -55,6 +55,7 @@
   - [x] Update SA runner to emit snapshots at configurable cadence (ILS/Tabu pending).
   - [ ] Ensure multi-worker heuristics aggregate metrics (per-worker iter counts, acceptance rates) before emitting.
   - [x] Thread watch hooks through `solve_ils` and `solve_tabu`, including heuristic-specific metrics (perturbations, tabu tenure, stall counters) and expose the same dashboard via CLI + bench runners.
+  - [x] Expose SA cooling rate and restart-interval knobs (solver + CLI + benchmarks) so long runs cool gradually instead of collapsing into hill-climbs.
 - [ ] **UI enhancements**
   - [x] Display both current objective and best-so-far so flat lines still show ongoing exploration.
   - [x] Add a lightweight “Z sparkline” (objective vs. iteration) per solver row using a rolling history so improvements are visible in real time.

@@ -11,6 +11,9 @@
   dashboard (`src/fhops/optimization/heuristics/{ils,tabu}.py`, `src/fhops/cli/{benchmarks,main}.py`).
 - Introduced an ASCII sparkline trend column in the Rich dashboard so objective improvements are visible at a glance,
   powered by rolling history tracked per solver (`src/fhops/cli/watch_dashboard.py`, `fhops.telemetry.watch.WatchConfig`).
+- Tuned simulated annealing by exposing the cooling rate and restart interval (CLI + benchmarks) so long runs cool
+  slowly and restart only after substantial stalls; telemetry/meta now record the chosen parameters
+  (`src/fhops/optimization/heuristics/sa.py`, `src/fhops/cli/{main,benchmarks}.py`).
 - Logged the richer Phase 2 plan in `notes/cli_heuristic_upgrade_notes.md` so the upcoming ILS/Tabu instrumentation and
   UI polish are tracked alongside the SA work.
 

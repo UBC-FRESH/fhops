@@ -115,3 +115,17 @@ def test_solve_sa_writes_telemetry(tmp_path: Path):
     last_step = json.loads(step_lines[-1])
     assert last_step["record_type"] == "step"
     assert last_step["run_id"] == record["run_id"]
+
+
+def test_solve_sa_invalid_cooling_rate():
+    pb = _simple_problem()
+    with pytest.raises(ValueError):
+        solve_sa(pb, iters=50, seed=1, cooling_rate=1.5)
+
+
+def test_solve_sa_restart_interval_meta():
+    pb = _simple_problem()
+    res = solve_sa(pb, iters=50, seed=2, restart_interval=250)
+    meta = res["meta"]
+    assert meta["restart_interval"] == 250
+    assert meta["cooling_rate"] == pytest.approx(0.999)

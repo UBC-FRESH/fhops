@@ -123,6 +123,8 @@ def run_benchmark_suite(
     time_limit: int = 1800,
     sa_iters: int = 5000,
     sa_seed: int = 42,
+    sa_cooling_rate: float = 0.999,
+    sa_restart_interval: int | None = None,
     include_ils: bool = False,
     ils_iters: int | None = None,
     ils_seed: int | None = None,
@@ -168,6 +170,10 @@ def run_benchmark_suite(
         Iteration budget for simulated annealing runs.
     sa_seed : int, default=42
         RNG seed for simulated annealing.
+    sa_cooling_rate : float, default=0.999
+        Cooling rate multiplier (closer to 1 slows cooling).
+    sa_restart_interval : int | None, default=None
+        Non-accepting iteration interval before SA restarts (``None`` auto-scales with iters).
     include_ils : bool, default=False
         When ``True`` run Iterated Local Search in addition to SA/MIP.
     ils_iters : int | None, default=None
@@ -361,6 +367,8 @@ def run_benchmark_suite(
                     ),
                     "batch_size": resolved_sa.batch_neighbours,
                     "max_workers": resolved_sa.parallel_workers,
+                    "cooling_rate": sa_cooling_rate,
+                    "restart_interval": sa_restart_interval,
                 }
                 if resolved_sa.extra_kwargs:
                     sa_kwargs.update(resolved_sa.extra_kwargs)
@@ -837,6 +845,14 @@ def bench_suite(
     time_limit: int = typer.Option(1800, help="MIP time limit (seconds, default 30 minutes)"),
     sa_iters: int = typer.Option(5000, help="Simulated annealing iterations"),
     sa_seed: int = typer.Option(42, help="Simulated annealing RNG seed"),
+    sa_cooling_rate: float = typer.Option(
+        0.999, "--sa-cooling-rate", help="Simulated annealing cooling rate (0<rate<1)."
+    ),
+    sa_restart_interval: int = typer.Option(
+        0,
+        "--sa-restart-interval",
+        help="Non-accepting iterations before SA restarts (0=auto).",
+    ),
     include_ils: bool = typer.Option(False, help="Include Iterated Local Search in benchmarks"),
     ils_iters: int = typer.Option(250, help="Iterated Local Search iterations"),
     ils_seed: int = typer.Option(42, help="Iterated Local Search RNG seed"),
@@ -949,6 +965,8 @@ def bench_suite(
         time_limit=time_limit,
         sa_iters=sa_iters,
         sa_seed=sa_seed,
+        sa_cooling_rate=sa_cooling_rate,
+        sa_restart_interval=sa_restart_interval if sa_restart_interval > 0 else None,
         include_ils=include_ils,
         ils_iters=ils_iters,
         ils_seed=ils_seed,

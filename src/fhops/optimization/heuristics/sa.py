@@ -448,6 +448,8 @@ def solve_sa(
     operator_weights: dict[str, float] | None = None,
     batch_size: int | None = None,
     max_workers: int | None = None,
+    cooling_rate: float = 0.999,
+    restart_interval: int | None = None,
     telemetry_log: str | Path | None = None,
     telemetry_context: dict[str, Any] | None = None,
     watch_sink: SnapshotSink | None = None,
@@ -473,6 +475,11 @@ def solve_sa(
         ``None`` or ``<= 1`` keeps the sequential single-candidate behaviour.
     max_workers : int | None
         Maximum worker threads for evaluating batched neighbours. ``None``/``<=1`` keeps sequential scoring.
+    cooling_rate : float, default=0.999
+        Multiplicative cooling factor applied each iteration (0 < rate < 1). Larger values cool more slowly.
+    restart_interval : int | None, optional
+        Number of consecutive non-accepting iterations before restarting from the greedy seed. ``None`` auto-scales
+        to ``max(1000, iters / 5)``.
     telemetry_log : str | pathlib.Path | None
         Optional telemetry JSONL path. When provided, solver progress and final metrics are logged.
     telemetry_context : dict[str, Any] | None
@@ -519,10 +526,18 @@ def solve_sa(
             normalized_weights[available_names[key]] = weight
         registry.configure(normalized_weights)
 
+    if not 0 < cooling_rate < 1:
+        raise ValueError("cooling_rate must be between 0 and 1 (exclusive).")
+    restart_interval_value = (
+        restart_interval if restart_interval and restart_interval > 0 else max(1000, iters // 5 or 200)
+    )
+
     config_snapshot: dict[str, Any] = {
         "iters": iters,
         "batch_size": batch_size,
         "max_workers": max_workers,
+        "cooling_rate": cooling_rate,
+        "restart_interval": restart_interval_value,
         "operators": registry.weights(),
     }
     context_payload = dict(telemetry_context or {})
@@ -579,6 +594,7 @@ def solve_sa(
         proposals = 0
         accepted_moves = 0
         restarts = 0
+        stalled_steps = 0
         operator_stats: dict[str, dict[str, float]] = {}
         run_start = time.perf_counter()
         for step in range(1, iters + 1):
@@ -607,7 +623,7 @@ def solve_sa(
                     break
             if current_score > best_score:
                 best, best_score = current, current_score
-            temperature = temperature0 * (0.995**step)
+            temperature = max(temperature * cooling_rate, 1e-6)
             if run_logger and telemetry_logger and telemetry_logger.step_interval:
                 if step == 1 or step == iters or (step % telemetry_logger.step_interval == 0):
                     acceptance_rate = (accepted_moves / proposals) if proposals else 0.0
@@ -620,10 +636,17 @@ def solve_sa(
                         proposals=proposals,
                         accepted_moves=accepted_moves,
                     )
-            if not accepted and step % 100 == 0:
+            if accepted:
+                stalled_steps = 0
+            else:
+                stalled_steps += 1
+
+            if stalled_steps >= restart_interval_value:
                 current = _init_greedy(pb)
                 current_score = _evaluate(pb, current)
                 restarts += 1
+                stalled_steps = 0
+                temperature = temperature0
 
             rolling_scores.append(float(current_score))
             acceptance_window.append(1 if accepted else 0)
@@ -728,6 +751,8 @@ def solve_sa(
             "restarts": restarts,
             "iterations": iters,
             "temperature0": float(temperature0),
+             "cooling_rate": float(cooling_rate),
+             "restart_interval": int(restart_interval_value),
             "operators": registry.weights(),
         }
         if operator_stats:

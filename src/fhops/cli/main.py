@@ -507,6 +507,16 @@ def solve_heur_cmd(
         "--tier-label",
         help="Optional label describing the budget tier for telemetry summaries.",
     ),
+    cooling_rate: float = typer.Option(
+        0.999,
+        "--cooling-rate",
+        help="Simulated annealing cooling rate (0<rate<1; closer to 1 cools slower).",
+    ),
+    restart_interval: int = typer.Option(
+        0,
+        "--restart-interval",
+        help="Non-accepting iterations before SA restarts (0=auto).",
+    ),
     watch: bool = typer.Option(
         False,
         "--watch/--no-watch",
@@ -569,6 +579,10 @@ def solve_heur_cmd(
         When provided, append run metadata and optional step logs to JSONL files.
     tier_label : str | None
         Custom label forwarded to telemetry to distinguish experiment tiers/budgets.
+    cooling_rate : float, default=0.999
+        Cooling rate multiplier (higher = slower cooling).
+    restart_interval : int, default=0
+        Non-accepting-iteration interval before restarts (0 auto-scales with ``iters``).
     kpi_mode : str, default="extended"
         Controls verbosity of KPI summaries (``basic`` omits diagnostics).
     batch_neighbours : int, default=1
@@ -649,12 +663,15 @@ def solve_heur_cmd(
     worker_arg = parallel_workers if parallel_workers and parallel_workers > 1 else None
 
     resolved_weights = resolved.operator_weights if resolved.operator_weights else None
+    restart_value = restart_interval if restart_interval > 0 else None
     sa_kwargs: dict[str, Any] = {
         "iters": iters,
         "operators": resolved.operators,
         "operator_weights": resolved_weights,
         "batch_size": batch_arg,
         "max_workers": worker_arg,
+        "cooling_rate": cooling_rate,
+        "restart_interval": restart_value,
     }
     if resolved.extra_kwargs:
         sa_kwargs.update(resolved.extra_kwargs)
@@ -683,6 +700,8 @@ def solve_heur_cmd(
                 "batch_size": batch_arg,
                 "max_workers": worker_arg,
                 "parallel_multistart": multi_start,
+                "cooling_rate": cooling_rate,
+                "restart_interval": restart_value if restart_value is not None else "auto",
             },
         }
         base_telemetry_context["tuner_meta"] = tuner_meta_payload
