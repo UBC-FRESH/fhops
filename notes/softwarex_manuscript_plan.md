@@ -84,7 +84,7 @@
     - Dataset index + summaries (`docs/softwarex/assets/data/datasets/index.json`, `*_summary.json`) → `run_dataset_inspection.py`.
     - PRISMA-style FHOPS workflow diagrams (architecture + evaluation flow) → `manuscript/sections/includes/prisma_overview.tex` rendered via `scripts/render_prisma_diagram.py` (drives PDF/PNG assets for both manuscript + docs). Consider hierarchical variants (full FHOPS stack + zoomed-in evaluation loop).
   - [x] Create reproducible scripts/notebooks to regenerate each artifact.
-  - [ ] Integrate artifact generation into CI or a manual checklist.
+  - [x] Integrate artifact generation into CI or a manual checklist (`make manuscript-benchmarks` logs runs + hashes to `docs/softwarex/assets/benchmark_runs.log`; `manuscript-benchmarks-fast` mirrors the quick sanity check).
 - [x] PRISMA-style diagram workflow (WS3 EI-inspired).
   - [x] Draft `sections/includes/prisma_overview.tex` capturing scenario ingest → solver core → telemetry/export path with the `prisma-flow-diagram` package.
     - [x] Reference the include inside `sections/software_description.tex` so the manuscript narrative now calls out Figure~\ref{fig:fhops-prisma-overview}.

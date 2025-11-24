@@ -4,7 +4,7 @@
     "scenario_path":"\/home\/gep\/projects\/fhops\/docs\/softwarex\/assets\/data\/scaling\/datasets\/synthetic_small\/scenario.yaml",
     "solver":"sa",
     "objective":39.791,
-    "runtime_s":0.249882991,
+    "runtime_s":0.2549630259,
     "assignments":5,
     "kpi_total_production":39.791,
     "kpi_completed_blocks":4.0,
@@ -38,7 +38,7 @@
     "solver_category":"heuristic",
     "best_heuristic_solver":"sa",
     "best_heuristic_objective":39.791,
-    "best_heuristic_runtime_s":0.249882991,
+    "best_heuristic_runtime_s":0.2549630259,
     "objective_gap_vs_best_heuristic":0.0,
     "runtime_ratio_vs_best_heuristic":1.0
   }

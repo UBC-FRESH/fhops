@@ -4,6 +4,7 @@ set -euo pipefail
 # Resolve important directories
 # Fast-mode flag (FHOPS_ASSETS_FAST=1 cuts runtimes for quick iteration)
 fast_mode="${FHOPS_ASSETS_FAST:-0}"
+export FHOPS_ASSETS_FAST="${fast_mode}"
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "${script_dir}/../../../.." && pwd)"
@@ -128,11 +129,7 @@ print(f"[assets] Wrote benchmark index with {len(index)} entries to {bench_dir/'
 PY
 
 echo "[assets] Running tuning harness into ${tuning_dir}" >&2
-tuner_tier="short"
-if [[ "${fast_mode}" == "1" ]]; then
-  tuner_tier="micro"
-fi
-python "${script_dir}/run_tuner.py" --repo-root "${repo_root}" --out-dir "${tuning_dir}" --tier "${tuner_tier}"
+python "${script_dir}/run_tuner.py" --repo-root "${repo_root}" --out-dir "${tuning_dir}" --tier "short"
 
 echo "[assets] Running playback analysis into ${playback_dir}" >&2
 python "${script_dir}/run_playback_analysis.py" --repo-root "${repo_root}" --out-dir "${playback_dir}"

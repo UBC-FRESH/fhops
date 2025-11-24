@@ -4,7 +4,7 @@
     "scenario_path":"\/home\/gep\/projects\/fhops\/examples\/med42\/scenario.yaml",
     "solver":"sa",
     "objective":-631.573,
-    "runtime_s":3.1223273561,
+    "runtime_s":2.982332523,
     "assignments":106,
     "kpi_total_production":247.493,
     "kpi_completed_blocks":0.0,
@@ -43,16 +43,16 @@
     "solver_category":"heuristic",
     "best_heuristic_solver":"ils",
     "best_heuristic_objective":-1068.919,
-    "best_heuristic_runtime_s":1.3225436201,
+    "best_heuristic_runtime_s":1.2859930922,
     "objective_gap_vs_best_heuristic":437.346,
-    "runtime_ratio_vs_best_heuristic":2.3608501894
+    "runtime_ratio_vs_best_heuristic":2.319089069
   },
   {
     "scenario":"user-1",
     "scenario_path":"\/home\/gep\/projects\/fhops\/examples\/med42\/scenario.yaml",
     "solver":"sa",
     "objective":-631.573,
-    "runtime_s":3.0609679348,
+    "runtime_s":2.9803593103,
     "assignments":106,
     "kpi_total_production":247.493,
     "kpi_completed_blocks":0.0,
@@ -91,16 +91,16 @@
     "solver_category":"heuristic",
     "best_heuristic_solver":"ils",
     "best_heuristic_objective":-1068.919,
-    "best_heuristic_runtime_s":1.3225436201,
+    "best_heuristic_runtime_s":1.2859930922,
     "objective_gap_vs_best_heuristic":437.346,
-    "runtime_ratio_vs_best_heuristic":2.3144551818
+    "runtime_ratio_vs_best_heuristic":2.3175546807
   },
   {
     "scenario":"user-1",
     "scenario_path":"\/home\/gep\/projects\/fhops\/examples\/med42\/scenario.yaml",
     "solver":"sa",
     "objective":-176.113,
-    "runtime_s":12.6435373453,
+    "runtime_s":12.3732172949,
     "assignments":80,
     "kpi_total_production":198.887,
     "kpi_completed_blocks":0.0,
@@ -139,16 +139,16 @@
     "solver_category":"heuristic",
     "best_heuristic_solver":"ils",
     "best_heuristic_objective":-1068.919,
-    "best_heuristic_runtime_s":1.3225436201,
+    "best_heuristic_runtime_s":1.2859930922,
     "objective_gap_vs_best_heuristic":892.806,
-    "runtime_ratio_vs_best_heuristic":9.5600153771
+    "runtime_ratio_vs_best_heuristic":9.6215270282
   },
   {
     "scenario":"user-1",
     "scenario_path":"\/home\/gep\/projects\/fhops\/examples\/med42\/scenario.yaml",
     "solver":"ils",
     "objective":-1068.919,
-    "runtime_s":1.3225436201,
+    "runtime_s":1.2859930922,
     "assignments":122,
     "kpi_total_production":285.687,
     "kpi_completed_blocks":0.0,
@@ -187,7 +187,7 @@
     "solver_category":"heuristic",
     "best_heuristic_solver":"ils",
     "best_heuristic_objective":-1068.919,
-    "best_heuristic_runtime_s":1.3225436201,
+    "best_heuristic_runtime_s":1.2859930922,
     "objective_gap_vs_best_heuristic":0.0,
     "runtime_ratio_vs_best_heuristic":1.0
   },
@@ -196,7 +196,7 @@
     "scenario_path":"\/home\/gep\/projects\/fhops\/examples\/med42\/scenario.yaml",
     "solver":"tabu",
     "objective":18.716,
-    "runtime_s":2.8214223264,
+    "runtime_s":2.6729279328,
     "assignments":7,
     "kpi_total_production":18.716,
     "kpi_completed_blocks":0.0,
@@ -235,8 +235,8 @@
     "solver_category":"heuristic",
     "best_heuristic_solver":"ils",
     "best_heuristic_objective":-1068.919,
-    "best_heuristic_runtime_s":1.3225436201,
+    "best_heuristic_runtime_s":1.2859930922,
     "objective_gap_vs_best_heuristic":1087.635,
-    "runtime_ratio_vs_best_heuristic":2.133330261
+    "runtime_ratio_vs_best_heuristic":2.0784932275
   }
 ]

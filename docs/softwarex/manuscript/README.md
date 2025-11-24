@@ -57,6 +57,12 @@ Manual verification checklist (run after `make assets`):
 
 If any directory is missing or stale, re-run `FHOPS_ASSETS_FAST=0 make assets` to produce the canonical versions, then `make pdf` to rebuild the manuscript. `latexmk` will automatically run when the manuscript PDF is built. You’ll need a TeX Live installation that includes common packages (`latexmk`, `tikz`, `hyperref`, `lineno`, etc.). On Debian/Ubuntu, `sudo apt-get install texlive-full latexmk` is still the quickest path; we can revisit a lighter scheme/tectonic later if build times become an issue.
 
+### Benchmark-only runs & logging
+
+- `make manuscript-benchmarks` runs `scripts/run_manuscript_benchmarks.sh`, which in turn executes the full asset pipeline and appends a log entry (UTC start time, commit hash, runtime seconds, combined SHA-256 hash of `docs/softwarex/assets/**`) to `docs/softwarex/assets/benchmark_runs.log`.
+- `make manuscript-benchmarks-fast` does the same but sets `FHOPS_ASSETS_FAST=1` for quick sanity checks.
+- Use these targets before major milestones or submissions so we have a reproducibility audit trail without forcing a full PDF build each time.
+
 ## Planned workflow
 1. **Template adaptation:** `fhops-softx.tex` pulls the elsarticle class and `\input`s the files under `sections/`, with citations managed via `references.bib`. Section files are intended to be reusable (shared with Sphinx via includes later).
 2. **Single-source content:** Draft prose in `sections/*.tex`. When content stabilises, we can symlink or otherwise share snippets with the Sphinx docs.

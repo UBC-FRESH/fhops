@@ -41,7 +41,7 @@
 
 ### 4. Reproducibility & Automation
 - [x] Document manual reproduction pipeline (`make assets`, `FHOPS_ASSETS_FAST=1` quick checks, figure outputs) in `docs/softwarex/manuscript/README.md`.
-- [ ] Create `make manuscript-benchmarks` (or hatch task) that reruns all experiments; log hashes + runtimes.
+- [x] Create `make manuscript-benchmarks` (plus `manuscript-benchmarks-fast`) to rerun all experiments; each run appends duration + commit + SHA256 digest to `docs/softwarex/assets/benchmark_runs.log`.
 - [ ] Capture environment export (conda/pip + container digest) and store under docs/softwarex/reference/.
 - [ ] Add CI badge / log snippet proving at least one clean reproduction run (MOOSE-style evidence).
 - **Exemplar refs:** PyDDRBG §2.3 (evaluation metrics + scripts), cashocs §2 (release notes + automation), MOOSE §1 (parallel execution guarantees).

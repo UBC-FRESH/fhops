@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import subprocess
 import sys
+import os
 from pathlib import Path
 
 
@@ -57,6 +58,23 @@ def main() -> int:
         synthetic_scenario,
     ]
 
+    fast_mode = os.environ.get("FHOPS_ASSETS_FAST", "0") == "1"
+    random_iters = "200"
+    grid_iters = "200"
+    bayes_trials = "15"
+    bayes_iters = "200"
+    ils_iters = "220"
+    tabu_iters = "1500"
+
+    if fast_mode:
+        random_iters = "120"
+        grid_iters = "120"
+        bayes_trials = "8"
+        bayes_iters = "120"
+        ils_iters = "160"
+        tabu_iters = "900"
+        print("[tuning] FAST mode enabled for tuner budgets", flush=True)
+
     cmd: list[str] = [
         sys.executable,
         "scripts/run_tuning_benchmarks.py",
@@ -79,9 +97,9 @@ def main() -> int:
         "--random-runs",
         "2",
         "--random-iters",
-        "200",
+        random_iters,
         "--grid-iters",
-        "200",
+        grid_iters,
         "--grid-batch-size",
         "1",
         "--grid-batch-size",
@@ -91,17 +109,17 @@ def main() -> int:
         "--grid-preset",
         "explore",
         "--bayes-trials",
-        "15",
+        bayes_trials,
         "--bayes-iters",
-        "200",
+        bayes_iters,
         "--ils-runs",
         "1",
         "--ils-iters",
-        "220",
+        ils_iters,
         "--tabu-runs",
         "1",
         "--tabu-iters",
-        "1500",
+        tabu_iters,
     ]
 
     for scenario_path in scenarios:
