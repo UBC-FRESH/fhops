@@ -225,8 +225,8 @@
   - [x] Regenerate Figure~2 (scaling curve) and Figure~3 (playback robustness) from the updated CSVs; ensure PNG/PDF exports meet 300 dpi and embed references in Section~\ref{sec:illustrative-example}.
   - [x] Update the narrative in Section~3 to quote the new objectives, runtimes, utilisation, and costing numbers, citing file paths for reproducibility.
 - [ ] Draft Section 4 (Impact/availability) while data context is fresh.
-  - [ ] Summarise adoption signals (GitHub stats, release cadence, documentation reach) and the BC thesis alignment plan.
-  - [ ] Reference forthcoming validation studies (Chapter 2 case studies) and explain how FHOPS enables them without duplicating results here.
+  - [x] Summarise adoption signals (GitHub stats, release cadence, documentation reach) and the BC validation roadmap.
+  - [x] Reference forthcoming validation studies (Chapter 2 case studies) and explain how FHOPS enables them without duplicating results here.
   - [ ] Tie the section back to reproducibility artefacts (Make targets/CLI flows, benchmark logs, dataset availability) so reviewers see the full traceability story.
 - [x] Finalize reproducible asset documentation before the benchmark suite grows further.
   - [x] Expand `docs/softwarex/manuscript/README.md` with runtime expectations, environment variables (e.g., `FHOPS_ASSETS_FAST=1`), and troubleshooting tips for each script.
