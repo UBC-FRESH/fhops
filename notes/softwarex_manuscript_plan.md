@@ -212,8 +212,8 @@
     - [x] Document the PNG export workflow (via `render_prisma_diagram.py` + `generate_assets.sh`) so refresh instructions live alongside the include metadata.
   - [x] Record figure provenance inside `docs/softwarex/manuscript/sections/includes/README.md` so future changes stay deterministic.
 - [ ] Kick off Phase 2 drafting for Sections 1–3 while the automation context is fresh.
-  - [ ] Use `notes/softwarex_exemplar_analysis.md` takeaways and the Jaffray systematic review references to outline the Intro and Software Metadata paragraphs.
-  - [ ] Draft the first pass of the Motivation/Contribution narrative (Section 1) using the shared snippets in `sections/includes/motivation_story.md`.
+  - [x] Use `notes/softwarex_exemplar_analysis.md` takeaways and the Jaffray systematic review references to outline the Intro and Software Metadata paragraphs.
+  - [x] Draft the first pass of the Motivation/Contribution narrative (Section 1) using the shared snippets in `sections/includes/motivation_story.md`.
   - [ ] Capture open questions / text debt in the local manuscript change log before each writing push so we can trace edits without touching the main FHOPS changelog.
 - [x] Re-run heuristic benchmarks with realistic runtimes/iteration counts (see `notes/coding-agent-conversation-log.txt` discussion on MIP vs. heuristic time scale).
   - [x] Derive a target runtime per scenario by solving the MIP baseline (HiGHS) or reusing prior solver logs; heuristics must run within 0.1–10× of that wall clock.
