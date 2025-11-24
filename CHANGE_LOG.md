@@ -1,3 +1,9 @@
+# 2025-12-07 — SoftwareX manuscript tone corrections
+- Reframed Section 2 narrative so the PRISMA workflow, tuning harness, and telemetry stack emphasise FHOPS capabilities instead of repository plumbing; manuscript now describes reproducible CLI flows without citing Makefile/includes (`docs/softwarex/manuscript/sections/software_description.tex`).
+- Tightened Section 3 illustrative example to focus on datasets, solver behaviour, KPI outputs, and FHOPS commands; removed references to internal scripts/paths so the discussion reads like a peer-reviewed case study (`docs/softwarex/manuscript/sections/illustrative_example.tex`).
+- Updated the abstract, highlights, and shared motivation snippet to describe reproducibility via the FHOPS pipeline rather than Makefile targets, ensuring the manuscript keeps a reviewer-appropriate tone (`docs/softwarex/manuscript/sections/abstract.tex`, `.../highlights.tex`, `.../includes/motivation_story.{md,tex}`).
+- No automated tests run (manuscript prose-only edits).
+
 # 2025-11-24 — Release FHOPS v1.0.0-alpha2
 - Bumped `src/fhops/__version__` / `tests/test_import.py` to `1.0.0a2` and published the new release notes at `docs/releases/v1.0.0-alpha2.md`.
 - Captured the docstring mega-sweep (CLI datasets, heuristics, playback, productivity, costing) plus the new Typer CLI harness so the API docs and CLI help stay in sync for Rosalia’s thesis workflows.

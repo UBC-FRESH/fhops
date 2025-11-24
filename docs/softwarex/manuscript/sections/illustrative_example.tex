@@ -10,7 +10,7 @@ To demonstrate how FHOPS’ ingest/solver/evaluation layers fit together we run 
   \item Companion tuning, playback, costing, and robustness analyses that mirror the automation pipeline described in Section~\ref{sec:software-description}.
 \end{itemize}
 
-All experiments use the standard FHOPS CLI/API sequence (scenario generation or ingestion, \texttt{fhops bench suite}, \texttt{scripts/run\_tuner.py}, \texttt{fhops playback}, \texttt{fhops dataset estimate-cost}, \texttt{scripts/run\_synthetic\_sweep.py}). Run metadata (commands, commit IDs, runtimes, SHA-256 digests) accompanies the tagged release so readers can rerun each step directly.
+All experiments use the standard FHOPS CLI/API sequence: load or generate a scenario, run \texttt{fhops bench suite}, launch the bundled tuning harness, replay solutions with \texttt{fhops playback}, estimate costs with \texttt{fhops dataset estimate-cost}, and execute the synthetic scaling sweep utility. Run metadata (commands, commit IDs, runtimes, SHA-256 digests) accompanies the tagged release so readers can rerun each step directly.
 
 \subsection{Benchmark suite (SA/ILS/Tabu)}
 We execute \texttt{fhops bench suite} across minitoy, med42, and synthetic-small scenarios with SA, ILS, and Tabu heuristics plus optional compare presets (\texttt{--compare-preset diversify --compare-preset mobilisation}). Each run produces:
@@ -22,13 +22,13 @@ We execute \texttt{fhops bench suite} across minitoy, med42, and synthetic-small
 
 The resulting manuscript table (Table~\ref{tab:benchmarks}) summarises solver performance and runtime. Highlights include:
 \begin{itemize}
-  \item \textbf{MiniToy} (\texttt{benchmarks/minitoy/summary.csv}): SA’s default preset reaches the best objective (15.5 production units) in $0.46\,$s with 17 assignments, while Tabu converges in $0.09\,$s but stops at 17.0 units. ILS provides a deterministic reference (objective 23.0, eight assignments). These runs showcase how users can choose between quality and turnaround time.
+  \item \textbf{MiniToy}: SA’s default preset reaches the best objective (15.5 production units) in $0.46\,$s with 17 assignments, while Tabu converges in $0.09\,$s but stops at 17.0 units. ILS provides a deterministic reference (objective 23.0, eight assignments). These runs showcase how users can choose between quality and turnaround time.
   \item \textbf{Med42}: SA delivers $-631.6$ (lower is better due to cost objective) in roughly $3\,$s, whereas ILS drives the objective down to $-1068.9$ in $1.29\,$s by exploring a broader neighbourhood. Tabu, configured for diversification, finds positive objectives (18.7) that act as stress-test baselines. The benchmark CSVs also report utilisation ratios and mobilisation costs that feed Section~\ref{sec:impact}.
   \item \textbf{Synthetic-small}: Provides a repeatable datapoint for the scaling suite (objective 39.79, runtime $0.25\,$s) so we can show trends without exposing proprietary datasets.
 \end{itemize}
 
 \subsection{Tuning highlights}
-The tuning harness (\texttt{scripts/run\_tuner.py}) runs random/grid/Bayesian/ILS/Tabu studies on the same scenarios. Outputs include:
+The tuning harness runs random/grid/Bayesian/ILS/Tabu studies on the same scenarios. Outputs include:
 \begin{itemize}
   \item \texttt{tuner\_leaderboard*.csv} – best-performing configuration per scenario/tuner.
   \item \texttt{tuner\_comparison*.md} – markdown summaries highlighting operator weights, batch sizes, temperature schedules, and objective improvements.
@@ -43,7 +43,7 @@ For each scenario we replay the best SA/ILS assignments deterministically and st
 Costing summaries generated via \texttt{fhops dataset estimate-cost} complement the playback metrics by reporting owning/operating/repair rates per machine role. For example, the med42 feller-buncher carries a \$246.94/SMH rental rate (\$4.25 per m$^3$ at 64.6 m$^3$/PMH), while the grapple skidder runs \$173.70/SMH (\$2.99/m$^3$). These numbers let readers tie KPI swings back to financial impacts.
 
 \subsection{Scaling sweep}
-Finally, \texttt{scripts/run\_synthetic\_sweep.py} generates synthetic tiers (small/medium/large) with fixed seeds, benchmarks SA with consistent iteration counts, and plots runtime vs. number of blocks. The accompanying CSV/JSON summarise blocks, machines, assignments, objectives, and runtime for each tier: small (4 blocks, runtime 0.25 s), medium (8 blocks, 0.50 s), large (16 blocks, 1.04 s). Figure~\ref{fig:scaling} reproduces this curve, providing the same \enquote{runtime vs. size} perspective seen in SoftwareX exemplars such as GROMACS.
+Finally, the synthetic sweep utility generates small/medium/large tiers with fixed seeds, benchmarks SA with consistent iteration counts, and plots runtime vs. number of blocks. The accompanying CSV/JSON summarise blocks, machines, assignments, objectives, and runtime for each tier: small (4 blocks, runtime 0.25 s), medium (8 blocks, 0.50 s), large (16 blocks, 1.04 s). Figure~\ref{fig:scaling} reproduces this curve, providing the same \enquote{runtime vs. size} perspective seen in SoftwareX exemplars such as GROMACS.
 
 \subsection{Figures and tables referenced}
 \begin{itemize}
