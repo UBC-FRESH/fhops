@@ -7,6 +7,12 @@ Track local manuscript edits/text debt without polluting the main project CHANGE
 - **Metadata narrative.** Introduce the metadata tables in Section 1 or 2 (one paragraph explaining release/version, reproducibility log) so reviewers see context before Table refs.
 - **Impact metrics references.** Once GitHub/PyPI stats are pulled, add citations/links to show adoption numbers (stars, downloads) rather than qualitative statements.
 
+## 2025-11-24 – Section polish
+- Added CLI/asset-path references in Section 1 and Section 3 so every table/figure cites its source directory (e.g., `docs/softwarex/assets/data/benchmarks/<slug>/summary.csv`, `docs/softwarex/assets/data/tuning`).
+- Expanded Section 2 automation notes with concrete command examples and asset destinations.
+- Rewrote Section 4 to highlight how FHOPS addresses Jaffray et al. gaps, emphasising BC focus today with extensibility for other regions/currencies later.
+- Section 5 now references the backlog in `notes/softwarex_manuscript_change_log.md` so future work is tied to an actionable list.
+
 ---
 
 ## Imported entries from legacy manuscript CHANGELOG

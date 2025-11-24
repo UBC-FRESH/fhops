@@ -33,6 +33,7 @@ The resulting manuscript table (Table~\ref{tab:benchmarks}) summarises solver pe
   \label{tab:benchmarks}
   \input{../../assets/data/tables/solver_performance.tex}
 \end{table}
+Table~\ref{tab:benchmarks} is generated from \texttt{docs/softwarex/assets/data/tables/solver\_performance.(csv|tex)}, which in turn is derived from the \texttt{summary.csv} files stored under \texttt{docs/softwarex/assets/data/benchmarks/}. Inspecting those directories reveals the exact inputs the manuscript references.
 
 \subsection{Tuning highlights}
 The tuning harness runs random/grid/Bayesian/ILS/Tabu studies on the same scenarios. Outputs include:
@@ -50,11 +51,13 @@ Table~\ref{tab:tuning} reports the salient numbers. Bayesian optimisation pushes
   \label{tab:tuning}
   \input{../../assets/data/tables/tuning_leaderboard.tex}
 \end{table}
+Like the previous table, Table~\ref{tab:tuning} is sourced from \texttt{docs/softwarex/assets/data/tables/tuning\_leaderboard.(csv|tex)}, making it trivial to verify the numbers against the full tuning outputs in \texttt{docs/softwarex/assets/data/tuning/}.
 
 \subsection{Playback robustness and costing}
 For each scenario we replay the best SA/ILS assignments deterministically and across 50 stochastic samples (downtime/weather/landing shocks) using \texttt{fhops playback}. Outputs (shift/day CSVs, markdown summaries, metrics JSON) quantify utilisation, downtime, and mobilisation spend so we can, for example, show Med42’s deterministic SA replay averaging 0.35 utilisation with \$1.5k mobilisation cost versus the stochastic replay dropping to 0.33 utilisation while accumulating \$73k of congestion-induced mobilisation. Figure~\ref{fig:playback} visualises these utilisation deltas so reviewers can quickly see which solver/scenario pairs are most sensitive to shocks.
 
 Costing summaries generated via \texttt{fhops dataset estimate-cost} complement the playback metrics by reporting owning/operating/repair rates per machine role. For example, the med42 feller-buncher carries a \$246.94/SMH rental rate (\$4.25 per m$^3$ at 64.6 m$^3$/PMH), while the grapple skidder runs \$173.70/SMH (\$2.99/m$^3$). These numbers let readers tie KPI swings back to financial impacts.
+All of these artefacts are regenerated into \texttt{docs/softwarex/assets/data/playback/} and \texttt{docs/softwarex/assets/data/costing/}, so reviewers can open the CSV/Markdown files directly.
 
 \begin{figure}[t]
   \centering
