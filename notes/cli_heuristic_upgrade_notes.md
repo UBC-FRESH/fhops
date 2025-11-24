@@ -54,12 +54,19 @@
 - [ ] **Solver instrumentation**
   - [x] Update SA runner to emit snapshots at configurable cadence (ILS/Tabu pending).
   - [ ] Ensure multi-worker heuristics aggregate metrics (per-worker iter counts, acceptance rates) before emitting.
+  - [ ] Thread watch hooks through `solve_ils` and `solve_tabu`, including heuristic-specific metrics (perturbations, tabu tenure, stall counters).
+- [ ] **UI enhancements**
+  - [ ] Display both current objective and best-so-far so flat lines still show ongoing exploration.
+  - [ ] Add a lightweight “Z sparkline” (objective vs. iteration) per solver row using a rolling history so improvements are visible in real time.
+  - [ ] Surface solver internals: current temperature, rolling-window objective mean, sliding-window acceptance rate, and per-refresh improvement rate/delta so users can gauge convergence speed.
 - [ ] **Graceful teardown**
+  - [x] Flush remaining snapshots on stop so short-lived runs still render a final state.
   - [ ] Trap `KeyboardInterrupt` so the live display stops cleanly and the final snapshot is printed.
   - [ ] Confirm telemetry logging + JSON outputs remain unchanged.
 - [ ] **Testing**
   - [ ] CLI integration tests (pytest) that run a small SA benchmark with `--watch` enabled but using Rich “console recorder” to verify text output contains live sections.
   - [ ] Smoke test for tuning harness watch mode (reduced budget) to ensure multiple concurrent trials render without crashing.
+  - [ ] Add regression coverage for ILS/Tabu watch mode hooks once instrumentation lands.
 
 ### Phase 3 – Documentation & Support Material
 - [ ] **User docs**
