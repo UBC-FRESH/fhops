@@ -1,0 +1,4 @@
+Scenario,Tuner,Best Objective,Δ vs SA default,Mean Runtime (s),Key Settings
+MiniToy (ground-based),Bayes,38.00,22.50,0.09,"iters=200; operators=(block_insertion:0.9873701953006124, cross_exchange:0.851660580591656, mobilisation_shake:0.6245224459449306)"
+Med42 (mixed skyline/tethered),Ils,-988.61,630.37,0.71,
+Synthetic-small,Bayes,39.79,0.00,0.05,"batch_size=3; iters=200; operators=(block_insertion:1.1026295381657825, cross_exchange:1.4389379395711261, mobilisation_shake:0.8462129202489219)"
