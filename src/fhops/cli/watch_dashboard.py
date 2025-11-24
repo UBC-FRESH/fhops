@@ -133,9 +133,9 @@ class LiveWatch:
             tenure = metadata.get("tabu_tenure")
             if tenure is not None:
                 parts.append(f"Tenure={tenure}")
-            stalls = metadata.get("stalls")
-            if stalls is not None:
-                parts.append(f"Stalls={stalls}")
+            stall_counter = metadata.get("iterations_since_improvement") or metadata.get("stalls")
+            if stall_counter is not None:
+                parts.append(f"SinceImprove={stall_counter}")
             restarts = metadata.get("restarts")
             if restarts is not None:
                 parts.append(f"Restarts={restarts}")

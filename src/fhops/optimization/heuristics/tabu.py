@@ -242,7 +242,7 @@ def solve_tabu(
             last_emitted_step = iteration
             metadata = {
                 **watch_meta,
-                "stalls": str(stalls),
+                "iterations_since_improvement": str(stalls),
                 "tabu_tenure": str(tenure),
                 "restarts": str(restarts),
             }
