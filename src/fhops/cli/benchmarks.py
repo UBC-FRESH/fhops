@@ -272,14 +272,10 @@ def run_benchmark_suite(
     watch_runner: LiveWatch | None = None
     if watch:
         if console.is_terminal:
-            watch_runner = LiveWatch(
-                WatchConfig(refresh_interval=watch_refresh), console=console
-            )
+            watch_runner = LiveWatch(WatchConfig(refresh_interval=watch_refresh), console=console)
             watch_runner.start()
         else:
-            console.print(
-                "[yellow]Watch mode disabled: not running in an interactive terminal.[/]"
-            )
+            console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")
 
     def _run_benchmark_scenarios() -> None:
         for bench in scenarios:

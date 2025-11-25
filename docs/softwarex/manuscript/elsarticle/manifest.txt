@@ -36,7 +36,7 @@ elsarticle-num-names.bst
 
 elsarticle-template-harv.tex
   article template for a document with author-year citation
- 
+
 elsarticle-template-num.tex
   article template for a document with numbered citation
 
@@ -78,5 +78,3 @@ Auxiliary packages needed to generate pdf output from elsdoc.tex:
 
  rvdtx.sty
  pdfwidgets.sty
-
-

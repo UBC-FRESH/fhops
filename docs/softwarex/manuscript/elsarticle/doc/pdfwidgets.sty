@@ -2,10 +2,10 @@
 %% pdfwidgets.sty
 %%
 %% $Id: pdfwidgets.sty,v 1.2 2007-10-22 09:45:17 cvr Exp $
-%%    
+%%
 %% (c) C. V. Radhakrishnan <cvr@river-valley.org>
 %%
-%% This package may be distributed under the terms of the LaTeX Project 
+%% This package may be distributed under the terms of the LaTeX Project
 %% Public License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.0 or, at your option, any later version.
 %%
@@ -193,7 +193,7 @@
 %     \par\vskip.5\baselineskip
 %         plus 3pt minus 1pt
 				 }
-%%                                         
+%%
 %% include clippings from a pdf document:
 %% #1 => Optional argument for \includegraphics
 %% #2 => page number
@@ -237,7 +237,7 @@
 	 \noindent\begin{tikzpicture}
 	  \node[fill=blue!10,draw,shade,bottom color=brown!30,
 		      top color=white,shape=filledbox,
-		 inner sep=\the\Sep,text width=\Linewidth] (x) 
+		 inner sep=\the\Sep,text width=\Linewidth] (x)
 		 {\hspace*{\npskip}\box0} ;
  	  \end{tikzpicture}%
 		\vspace*{.0125\panelheight}
@@ -250,7 +250,7 @@
 \def\pdfButton#1#2{\begin{tikzpicture}
      \node[fill=blue!10,draw,shade,top color=blue!50,
 		       bottom color=white,shape=buttonbox,
-					 inner sep=2pt,text width=#1](x) 
+					 inner sep=2pt,text width=#1](x)
 					 {\parbox{#1}{\centering\Strut#2}}; \end{tikzpicture}}
 
 \def\vpanel{\def\@linkcolor{blue}%
@@ -277,11 +277,11 @@
       {\includegraphics[width=13mm]{els-logo.pdf}};
 			\end{tikzpicture}}\hfill
 %
-     \parbox[c][24mm][b]{145mm}%	
+     \parbox[c][24mm][b]{145mm}%
 	    {{\fontsize{30}{30}\selectfont\textsf{\color{white}elsarticle.cls}}
 			\quad{\fontsize{14}{14}\selectfont\sffamily\color{blue!50}
 			 A better way to format your submission}}
-    \end{minipage} 
+    \end{minipage}
 	 \hfill
 	 \begin{minipage}[c][\vpanelheight][b]{7.9cm}
 	  \sffamily\footnotesize
@@ -317,7 +317,7 @@
 		\noindent\begin{tikzpicture}
 	  \node[fill=blue!10,draw,shade,top color=white!10,
 		      bottom color=cyan!5,shape=quotedbox,
-		 inner sep=8pt,text width=.95\linewidth] (x) 
+		 inner sep=8pt,text width=.95\linewidth] (x)
 		 {\color{orange}\verbatiminput{tmp.tex}%
 		 \vspace*{-\baselineskip}%
 		 } ;
@@ -350,7 +350,7 @@
   {\@tempdima=#1
 	 \verbatimwrite{xx}}
 	{\endverbatimwrite
-	 \immediate\write18{echo 
+	 \immediate\write18{echo
 	 "\string\Clear\@@@lbr\the\@tempdima\@@@rbr\@@@lbr\@@@pcr">>mytool.tex^^J
 	   cat xx.tex >> mytool.tex ^^J
 		 echo "\@@@rbr" >> mytool.tex}}
@@ -374,10 +374,7 @@
 		   \hyperlink{page.\the\@tempcnta}{\tikz\node at(0,0)
 			 [past]{};}%
 			\fi\fi}%
-		\advance\@tempcnta 1 \let\printfill\,\repeat}}	
+		\advance\@tempcnta 1 \let\printfill\,\repeat}}
 
 
 \endinput
-
-
-

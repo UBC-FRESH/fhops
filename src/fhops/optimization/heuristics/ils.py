@@ -292,9 +292,7 @@ def solve_ils(
                 else None
             )
             delta_objective = (
-                float(best_score - last_watch_best)
-                if last_watch_best is not None
-                else 0.0
+                float(best_score - last_watch_best) if last_watch_best is not None else 0.0
             )
             last_watch_best = float(best_score)
             metadata = {
@@ -395,7 +393,6 @@ def solve_ils(
                 perturbations += 1
                 rolling_scores.append(float(current_score))
                 improvement_window.append(0)
-
 
         rows = []
         for machine_id, plan in best.plan.items():

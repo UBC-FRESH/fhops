@@ -201,9 +201,7 @@ def _extract_results(model: pyo.ConcreteModel) -> Mapping[str, object]:
                         }
                     )
     if rows:
-        assignments = pd.DataFrame(rows).sort_values(
-            ["day", "shift_id", "machine_id", "block_id"]
-        )
+        assignments = pd.DataFrame(rows).sort_values(["day", "shift_id", "machine_id", "block_id"])
     else:
         assignments = pd.DataFrame(
             columns=["machine_id", "block_id", "day", "shift_id", "assigned", "production"]

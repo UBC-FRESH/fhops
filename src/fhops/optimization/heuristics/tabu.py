@@ -236,9 +236,7 @@ def solve_tabu(
             )
             acceptance_rate = (improvements / proposals) if proposals else None
             delta_objective = (
-                float(best_score - last_watch_best)
-                if last_watch_best is not None
-                else 0.0
+                float(best_score - last_watch_best) if last_watch_best is not None else 0.0
             )
             last_watch_best = float(best_score)
             last_emitted_step = iteration
@@ -350,11 +348,7 @@ def solve_tabu(
                         accepted_moves=improvements,
                     )
 
-            if watch_sink and (
-                step == 1
-                or step == iters
-                or (step % watch_interval_value == 0)
-            ):
+            if watch_sink and (step == 1 or step == iters or (step % watch_interval_value == 0)):
                 emit_snapshot(step)
 
             if stalls >= stall_limit:

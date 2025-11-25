@@ -19,11 +19,11 @@ bundle.  The following are the main files available:
 - elsdoc.pdf, the user documentation
 - elsarticle-template-num.tex, template file for numerical citations
 - elsarticle-template-harv.tex, template file for name-year citations
-- elsarticle-template-num-names.tex, template file for numerical 
+- elsarticle-template-num-names.tex, template file for numerical
   citations + new natbib option.  Eg. Jones et al. [21]
 - elsarticle-num.bst, bibliographic style for numerical references
 - elsarticle-harv.bst, bibliographic style for name-year references
-- elsarticle-num-names.bst, bibliographic style for numerical 
+- elsarticle-num-names.bst, bibliographic style for numerical
   referencces + new natbib option for citations.
 
 To extract elsarticle.cls from *.dtx: latex elsarticle.ins

@@ -10,4 +10,3 @@ This file refines the root `AGENTS.md` guidelines for code under `src/fhops`.
   help in the same change set.
 - Tests live under `tests/`; prefer adding focused tests next to the area you
   touch instead of broad integration-only coverage.
-

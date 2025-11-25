@@ -71,7 +71,7 @@ scoring loop is parallelised.
 FAQ – Watch Mode
 ----------------
 
-* **“Watch mode disabled: not running in an interactive terminal.”**  
+* **“Watch mode disabled: not running in an interactive terminal.”**
   The dashboard renders only when stdout is a TTY. If you want both the live view and a log, wrap
   the command with ``script`` (or run inside tmux/screen) so the subprocess gets a pseudo-terminal::
 
@@ -79,7 +79,7 @@ FAQ – Watch Mode
 
   The terminal shows the dashboard; the log captures the CLI text emitted after completion.
 
-* **How do I capture a screenshot/GIF?**  
+* **How do I capture a screenshot/GIF?**
   Run a short watch-enabled command (e.g.,
   ``fhops solve-heur examples/minitoy/scenario.yaml --watch --iters 500``) and use a terminal
   recorder such as ``asciinema`` or ``ttystudio``. The sparkline now renders below the main table so

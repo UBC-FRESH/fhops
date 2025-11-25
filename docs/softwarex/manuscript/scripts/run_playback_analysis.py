@@ -6,8 +6,8 @@ from __future__ import annotations
 import argparse
 import json
 import subprocess
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 import pandas as pd
 
@@ -18,7 +18,10 @@ SCENARIOS = [
         "slug": "minitoy",
         "scenario": Path("examples/minitoy/scenario.yaml"),
         "solvers": [
-            ("ils", Path("docs/softwarex/assets/data/benchmarks/minitoy/user-1/ils_assignments.csv")),
+            (
+                "ils",
+                Path("docs/softwarex/assets/data/benchmarks/minitoy/user-1/ils_assignments.csv"),
+            ),
             ("sa", Path("docs/softwarex/assets/data/benchmarks/minitoy/user-1/sa_assignments.csv")),
         ],
     },
@@ -34,8 +37,18 @@ SCENARIOS = [
         "slug": "synthetic_small",
         "scenario": Path("docs/softwarex/assets/data/datasets/synthetic_small/scenario.yaml"),
         "solvers": [
-            ("ils", Path("docs/softwarex/assets/data/benchmarks/synthetic_small/user-1/ils_assignments.csv")),
-            ("sa", Path("docs/softwarex/assets/data/benchmarks/synthetic_small/user-1/sa_assignments.csv")),
+            (
+                "ils",
+                Path(
+                    "docs/softwarex/assets/data/benchmarks/synthetic_small/user-1/ils_assignments.csv"
+                ),
+            ),
+            (
+                "sa",
+                Path(
+                    "docs/softwarex/assets/data/benchmarks/synthetic_small/user-1/sa_assignments.csv"
+                ),
+            ),
         ],
     },
 ]

@@ -15,8 +15,8 @@ import argparse
 import csv
 import subprocess
 import sys
+from collections.abc import Iterable, Sequence
 from pathlib import Path
-from typing import Iterable, Sequence
 
 
 def run_pandoc(src: Path, target: Path, pandoc_format: str) -> None:
@@ -45,9 +45,7 @@ def convert_markdown(md_path: Path, rst_dir: Path) -> list[Path]:
 
     # LaTeX output sits next to the Markdown file.
     tex_path = md_path.with_suffix(".tex")
-    tex_header = "% AUTO-GENERATED from {} -- do not edit directly.\n".format(
-        md_path.name
-    )
+    tex_header = f"% AUTO-GENERATED from {md_path.name} -- do not edit directly.\n"
     run_pandoc(md_path, tex_path, "latex")
     tex_content = tex_path.read_text(encoding="utf-8")
     tex_path.write_text(tex_header + tex_content, encoding="utf-8")
@@ -56,11 +54,7 @@ def convert_markdown(md_path: Path, rst_dir: Path) -> list[Path]:
     # ReStructuredText output feeds Sphinx includes.
     rst_dir.mkdir(parents=True, exist_ok=True)
     rst_path = rst_dir / f"{md_path.stem}.rst"
-    rst_header = (
-        ".. AUTO-GENERATED from {} -- do not edit directly.\n\n".format(
-            md_path.name
-        )
-    )
+    rst_header = f".. AUTO-GENERATED from {md_path.name} -- do not edit directly.\n\n"
     run_pandoc(md_path, rst_path, "rst")
     rst_content = rst_path.read_text(encoding="utf-8")
     rst_path.write_text(rst_header + rst_content, encoding="utf-8")
@@ -143,20 +137,14 @@ def convert_csv(csv_path: Path, rst_dir: Path) -> list[Path]:
         rows = [row for row in reader]
 
     tex_path = csv_path.with_suffix(".tex")
-    tex_header = "% AUTO-GENERATED from {} -- do not edit directly.\n".format(
-        csv_path.name
-    )
+    tex_header = f"% AUTO-GENERATED from {csv_path.name} -- do not edit directly.\n"
     tex_content = render_csv_tex(headers, rows)
     tex_path.write_text(tex_header + tex_content, encoding="utf-8")
     generated.append(tex_path)
 
     rst_dir.mkdir(parents=True, exist_ok=True)
     rst_path = rst_dir / f"{csv_path.stem}.rst"
-    rst_header = (
-        ".. AUTO-GENERATED from {} -- do not edit directly.\n\n".format(
-            csv_path.name
-        )
-    )
+    rst_header = f".. AUTO-GENERATED from {csv_path.name} -- do not edit directly.\n\n"
     rst_content = render_csv_rst(headers, rows)
     rst_path.write_text(rst_header + rst_content, encoding="utf-8")
     generated.append(rst_path)
@@ -165,14 +153,11 @@ def convert_csv(csv_path: Path, rst_dir: Path) -> list[Path]:
 
 
 def find_csv_files(root: Path) -> Iterable[Path]:
-    for path in sorted(root.glob("*.csv")):
-        yield path
+    yield from sorted(root.glob("*.csv"))
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Render shared manuscript/doc snippets."
-    )
+    parser = argparse.ArgumentParser(description="Render shared manuscript/doc snippets.")
     parser.add_argument(
         "--repo-root",
         type=Path,
@@ -200,12 +185,7 @@ def main() -> int:
     includes_dir = (
         args.includes_dir
         if args.includes_dir is not None
-        else repo_root
-        / "docs"
-        / "softwarex"
-        / "manuscript"
-        / "sections"
-        / "includes"
+        else repo_root / "docs" / "softwarex" / "manuscript" / "sections" / "includes"
     ).resolve()
     rst_dir = (
         args.rst_out_dir

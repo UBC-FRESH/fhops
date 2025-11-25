@@ -173,7 +173,7 @@ for real multi-core use prefer `--parallel-multistart` or process-level orchestr
 
 ### FAQ – Watch Mode
 
-- **“Watch mode disabled: not running in an interactive terminal.”**  
+- **“Watch mode disabled: not running in an interactive terminal.”**
   The dashboard only renders when stdout is a TTY. Wrap the command with `script` (or run it inside a
   terminal multiplexer) when you need both the live table and a log:
 
@@ -183,7 +183,7 @@ for real multi-core use prefer `--parallel-multistart` or process-level orchestr
 
   The TTY sees the dashboard, while the log captures the standard CLI output after the run.
 
-- **How can I record a screenshot/GIF?**  
+- **How can I record a screenshot/GIF?**
   Run a short command (e.g., `fhops solve-heur examples/minitoy/scenario.yaml --watch --iters 500`)
   and use your preferred terminal recorder (`asciinema`, `ttystudio`, etc.). The sparkline now renders
   below the main table so column widths stay stable while recording.

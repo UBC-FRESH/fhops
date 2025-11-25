@@ -1,3 +1,24 @@
+# 2025-12-09 — med42 Lahrsen-balanced dataset refresh
+- Regenerated the `examples/med42` block table from Lahrsen (2025) daily/cutblock ranges using a
+  fixed random seed, sampling stem size, volume per hectare, and density within the documented
+  med42 bands (≈0.25–0.8 m³ stems, 160–320 m³/ha, 0.8–2.6 ha blocks). The refreshed bundle now
+  carries 120 blocks and ~50.7 k m³ of work instead of the legacy 20-block configuration
+  (`examples/med42/data/blocks.csv`).
+- Recomputed productivity rates for the single four-machine ground-based system directly from the
+  FHOPS regressions (Lahrsen 2025 feller-buncher, ADV6N7 grapple skidder, Berry 2019 processor,
+  TN-261 loader-forwarder) without the previous ~0.14× ad-hoc scaling. For each new block we
+  evaluated all four machines and accumulated required hours per machine; block generation stopped
+  once the bottleneck machine implied >80 days of work on the processor alone, making the
+  *combined* four-machine capacity over 42 days insufficient to finish every block. In practice,
+  `fhops solve-heur ... --iters 20000` now completes ≈115 of 120 blocks (total_production ≈48.1 k m³)
+  with all machines at 100 % utilisation, giving the heuristics a genuine trade-off to prioritise
+  higher-yield blocks within the fixed horizon (`examples/med42/data/prod_rates.csv`).
+- Updated the med42 README to reflect the single-crew, 120-block, Lahrsen-balanced configuration
+  and to document the new stand metric ranges and regression sources
+  (`examples/med42/README.md`).
+- Commands: `ruff format src tests`, `ruff check src tests`, `mypy src`, `pytest`,
+  `pre-commit run --all-files`, `sphinx-build -b html docs _build/html -W`.
+
 # 2025-12-08 — SA block completion + med42 capacity bump
 - Enforced the “finish the block before switching” policy inside the simulated annealing evaluator: the solver now tracks
   each machine’s active block, overrides any attempt to hop to a new job (or idle) while wood remains, and mutates the

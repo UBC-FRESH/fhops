@@ -4,10 +4,10 @@
 >
 > **Citation Guardrail:** Until Rosalia Jaffray’s thesis chapters are defended/public, only cite the submitted systematic review (“Jaffray, Coupland, Paradis, *Forest harvesting operational planning tools…*, submitted to IJFE 2025/10”) and the published papers it covers. Do **not** cite unreleased thesis chapters or drafts in the SoftwareX manuscript.
 >
-> **Phase snapshot:**  
-> - [x] Phase 0 – Planning (requirements + exemplar analysis).  
-> - [x] Phase 1 – Manuscript architecture & repo scaffolding.  
-> - [ ] **Phase 2 – Content drafting (current focus; task blocks outlined below).**  
+> **Phase snapshot:**
+> - [x] Phase 0 – Planning (requirements + exemplar analysis).
+> - [x] Phase 1 – Manuscript architecture & repo scaffolding.
+> - [ ] **Phase 2 – Content drafting (current focus; task blocks outlined below).**
 > - [ ] Phases 3–5 – Validation, review, submission (queued; see later sections).
 
 ## Goals

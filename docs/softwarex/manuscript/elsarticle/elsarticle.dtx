@@ -2,7 +2,7 @@
 %
 % Copyright (C) 2007-2025 by Elsevier Ltd
 % -----------------------------------------------
-% 
+%
 % This file may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
 % of this license or (at your option) any later version.
@@ -10,7 +10,7 @@
 %
 %    http://www.latex-project.org/lppl.txt
 %
-% and version 1.3 or later is part of all distributions of LaTeX 
+% and version 1.3 or later is part of all distributions of LaTeX
 % version 1999/12/01 or later.
 %
 % \fi
@@ -21,7 +21,7 @@
 % \iffalse
 %<*driver>
 \documentclass{ltxdoc}
-\EnableCrossrefs         
+\EnableCrossrefs
 \CodelineIndex
 \RecordChanges
 \usepackage{comment}
@@ -64,17 +64,17 @@
 %
 % \changes{v3.4}{2022/11/26}{A bug fix. Accented characters produced errors. So loaded fontenc package.}
 
-% \changes{v3.4a}{2024/12/02}{Removed the preprint submitted line as per the 
-%    instruction received on 22 Oct 2024 from Arun Shanmugam (ELS) with the subject line, 
+% \changes{v3.4a}{2024/12/02}{Removed the preprint submitted line as per the
+%    instruction received on 22 Oct 2024 from Arun Shanmugam (ELS) with the subject line,
 %    FW: Preprint sentence in EM submissions}
 %
-% \changes{v3.4b}{2025/01/09}{\string\global\string\bibsep=0pt commented out for all 
+% \changes{v3.4b}{2025/01/09}{\string\global\string\bibsep=0pt commented out for all
 %          models since it produced error for all \string\jtype options.}
 %
 % \GetFileInfo{elsarticle.dtx}
 %
 % \DoNotIndex{\newcommand,\newenvironment}
-% 
+%
 %
 % \title{The \textsf{elsarticle.cls} -- Implimentation}
 % \author{Elsevier Ltd}
@@ -87,14 +87,14 @@
 %
 %    \begin{macrocode}
 %<*class>
-%% 
-%% 
+%%
+%%
 %%
  \def\RCSfile{elsarticle}%
  \def\RCSversion{3.4c}%
  \def\RCSdate{2025/01/11}%
  \def\@shortjnl{\relax}
- \def\@journal{Elsevier Ltd} 
+ \def\@journal{Elsevier Ltd}
  \def\@company{Elsevier Ltd}
  \def\@issn{000-0000}
  \def\@shortjid{elsarticle}
@@ -180,7 +180,7 @@
 \LoadClass{article}
 \RequirePackage{graphicx}
 %    \end{macrocode}
-% 
+%
 % \section{Preamble}
 %
 %    \begin{macrocode}
@@ -522,7 +522,7 @@
        \keys_set:nn { stm / affiliation } { #2 }
       }
      \IfNoValueTF { #1 }
-      { 
+      {
         \csgappto{elsauthors}{%
           \par\vspace*{6pt}\noindent
           \bgroup\def\baselinestretch{1}%
@@ -534,7 +534,7 @@
           \gdef\authorsep{}
         \egroup}
       }
-      { 
+      {
         \csgappto{elsaddress}{
         \def\baselinestretch{1}%
         \refstepcounter{affn}
@@ -749,9 +749,9 @@
   \noindent\unskip\textbf{\@elsarticleabstitle} %*%
  \par\medskip\noindent\unskip\ignorespaces}
  {\egroup}
-   
+
 \newbox\elsarticlehighlightsbox
-\newbox\elsarticlegrabsbox  
+\newbox\elsarticlegrabsbox
 \def\@elsarticlehighlightstitle{Highlights}
 \def\@elsarticlegrabstitle{Graphical Abstract}
 \newif\ifelsprelimpagegrabs\global\elsprelimpagegrabsfalse
@@ -765,12 +765,12 @@
  \ifelsprelimpagehl\relax%
    \thispagestyle{empty}
    \unvbox\elsarticlehighlightsbox%
-   \pagebreak\clearpage%   
+   \pagebreak\clearpage%
    \setcounter{page}{1}%
  \fi%
 }
 \newenvironment{highlights}{%
-  \global\elsprelimpagehltrue%  
+  \global\elsprelimpagehltrue%
   \global\setbox\elsarticlehighlightsbox=\vbox\bgroup
   \hsize=\textwidth\def\baselinestretch{1}%
   \noindent\unskip{\Large\@elsarticlehighlightstitle}%*%
@@ -801,9 +801,9 @@
     \else%
       \elsprelimauthors%
     \fi%
-  \fi%  
+  \fi%
  \par\medskip\noindent\unskip\ignorespaces}
- {\egroup} 
+ {\egroup}
 
 \newbox\keybox
 \let\@elsarticlekwdtitle\@empty %*%
@@ -1100,7 +1100,7 @@
 \def\myfooterfont#1{\gdef\@myfooterfont{#1}}
 \myfooterfont{\footnotesize\itshape}
 %    \end{macrocode}
-%    
+%
 %\section{Headers/footers}
 %
 %    \begin{macrocode}
@@ -1120,7 +1120,7 @@
          \ifx\@elsarticlemyfooteralign\@elsarticlemyfooteralignright%
            {}\hfill\@elsarticlemyfooter%
 %% Removed the preprint submitted line as per the instruction
-%% received on 22 Oct 2024 from Arun Shanmugam (ELS) with the 
+%% received on 22 Oct 2024 from Arun Shanmugam (ELS) with the
 %% subject line "FW: Preprint sentence in EM submissions"
 %         \else%
 %               Preprint submitted to \ifx\@journal\@empty%
@@ -1534,4 +1534,3 @@
 %%
 %% End of file 'elsarticle.dtx'
 %%
-

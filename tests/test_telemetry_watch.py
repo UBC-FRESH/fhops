@@ -7,7 +7,6 @@ import pytest
 
 from fhops.telemetry.watch import Snapshot, SnapshotBus, summarize_snapshots
 
-
 FIXTURES = Path(__file__).parent / "fixtures"
 
 
@@ -24,7 +23,6 @@ def test_snapshot_progress_ratio():
     assert snap.progress_ratio == 0.5
 
 
-
 def test_snapshot_progress_ratio_none_when_max_missing():
     snap = Snapshot(
         scenario="foo",
@@ -36,7 +34,6 @@ def test_snapshot_progress_ratio_none_when_max_missing():
         runtime_seconds=1.0,
     )
     assert snap.progress_ratio is None
-
 
 
 def test_snapshotbus_sink_and_get():
@@ -53,7 +50,6 @@ def test_snapshotbus_sink_and_get():
     )
     sink(snap)
     assert bus.get(timeout=0.1) == snap
-
 
 
 def test_snapshotbus_drain_empty():
@@ -93,7 +89,9 @@ def _load_fixture_snapshots(name: str) -> list[Snapshot]:
                 scenario=record["scenario"],
                 solver=record["solver"],
                 iteration=int(record["iteration"]),
-                max_iterations=int(record.get("max_iterations")) if record.get("max_iterations") is not None else None,
+                max_iterations=int(record.get("max_iterations"))
+                if record.get("max_iterations") is not None
+                else None,
                 objective=float(record["objective"]),
                 best_gap=None,
                 runtime_seconds=float(record["runtime_seconds"]),

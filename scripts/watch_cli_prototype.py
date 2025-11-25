@@ -6,7 +6,6 @@ from __future__ import annotations
 import json
 import time
 from pathlib import Path
-from typing import Dict, Tuple
 
 import typer
 from rich.live import Live
@@ -66,7 +65,7 @@ def telemetry_to_snapshot(record: dict) -> Snapshot:
     )
 
 
-def render_dashboard(state: Dict[Tuple[str, str], Snapshot]) -> Table:
+def render_dashboard(state: dict[tuple[str, str], Snapshot]) -> Table:
     table = Table(title="FHOPS Heuristic Watch", expand=True)
     table.add_column("Scenario", style="cyan")
     table.add_column("Solver", style="magenta")
@@ -78,12 +77,8 @@ def render_dashboard(state: Dict[Tuple[str, str], Snapshot]) -> Table:
     table.add_column("Restarts", justify="right")
     for (scenario, solver), snap in sorted(state.items()):
         progress = snap.progress_ratio
-        progress_str = f"{progress*100:.1f}%" if progress is not None else "?"
-        accept = (
-            f"{snap.acceptance_rate*100:.1f}%"
-            if snap.acceptance_rate is not None
-            else "-"
-        )
+        progress_str = f"{progress * 100:.1f}%" if progress is not None else "?"
+        accept = f"{snap.acceptance_rate * 100:.1f}%" if snap.acceptance_rate is not None else "-"
         restarts = str(snap.restarts) if snap.restarts is not None else "-"
         table.add_row(
             scenario,
@@ -115,7 +110,7 @@ def replay(
 
     bus = SnapshotBus()
     sink = bus.sink()
-    state: Dict[Tuple[str, str], Snapshot] = {}
+    state: dict[tuple[str, str], Snapshot] = {}
     config = WatchConfig(refresh_interval=refresh)
 
     def update_state() -> None:

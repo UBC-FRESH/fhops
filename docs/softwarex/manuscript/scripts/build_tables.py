@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
@@ -140,7 +139,11 @@ def build_tuning_leaderboard_table(
         if comp_subset.empty:
             continue
         ascending = meta["sense"] == "minimize"
-        best_idx = comp_subset["best_objective"].idxmin() if ascending else comp_subset["best_objective"].idxmax()
+        best_idx = (
+            comp_subset["best_objective"].idxmin()
+            if ascending
+            else comp_subset["best_objective"].idxmax()
+        )
         best_row = comp_subset.loc[best_idx]
 
         delta = (

@@ -619,14 +619,10 @@ def solve_heur_cmd(
     watch_runner: LiveWatch | None = None
     if watch:
         if console.is_terminal:
-            watch_runner = LiveWatch(
-                WatchConfig(refresh_interval=watch_refresh), console=console
-            )
+            watch_runner = LiveWatch(WatchConfig(refresh_interval=watch_refresh), console=console)
             watch_runner.start()
         else:
-            console.print(
-                "[yellow]Watch mode disabled: not running in an interactive terminal.[/]"
-            )
+            console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")
     pb = Problem.from_scenario(sc)
     try:
         weight_override = parse_operator_weights(operator_weight)
@@ -970,14 +966,10 @@ def solve_ils_cmd(
     watch_runner: LiveWatch | None = None
     if watch:
         if console.is_terminal:
-            watch_runner = LiveWatch(
-                WatchConfig(refresh_interval=watch_refresh), console=console
-            )
+            watch_runner = LiveWatch(WatchConfig(refresh_interval=watch_refresh), console=console)
             watch_runner.start()
         else:
-            console.print(
-                "[yellow]Watch mode disabled: not running in an interactive terminal.[/]"
-            )
+            console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")
     pb = Problem.from_scenario(sc)
     try:
         weight_override = parse_operator_weights(operator_weight)
@@ -1269,14 +1261,10 @@ def solve_tabu_cmd(
     watch_runner: LiveWatch | None = None
     if watch:
         if console.is_terminal:
-            watch_runner = LiveWatch(
-                WatchConfig(refresh_interval=watch_refresh), console=console
-            )
+            watch_runner = LiveWatch(WatchConfig(refresh_interval=watch_refresh), console=console)
             watch_runner.start()
         else:
-            console.print(
-                "[yellow]Watch mode disabled: not running in an interactive terminal.[/]"
-            )
+            console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")
     pb = Problem.from_scenario(sc)
     try:
         weight_override = parse_operator_weights(operator_weight)
@@ -1999,9 +1987,7 @@ def tune_random_cli(
 
     watch_runner: LiveWatch | None = None
     if watch and console.is_terminal:
-        watch_runner = LiveWatch(
-            WatchConfig(refresh_interval=watch_refresh), console=console
-        )
+        watch_runner = LiveWatch(WatchConfig(refresh_interval=watch_refresh), console=console)
     elif watch and not console.is_terminal:
         console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")
 
@@ -2011,7 +1997,7 @@ def tune_random_cli(
 
     results: list[dict[str, Any]] = []
 
-    with (watch_runner or nullcontext()):
+    with watch_runner or nullcontext():
         for scenario_path in scenario_files:
             sc = load_scenario(str(scenario_path))
             pb = Problem.from_scenario(sc)
@@ -2292,16 +2278,14 @@ def tune_grid_cli(
 
     watch_runner: LiveWatch | None = None
     if watch and console.is_terminal:
-        watch_runner = LiveWatch(
-            WatchConfig(refresh_interval=watch_refresh), console=console
-        )
+        watch_runner = LiveWatch(WatchConfig(refresh_interval=watch_refresh), console=console)
     elif watch and not console.is_terminal:
         console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")
 
     results: list[dict[str, Any]] = []
     run_seed = seed
 
-    with (watch_runner or nullcontext()):
+    with watch_runner or nullcontext():
         for scenario_path in scenario_files:
             sc = load_scenario(str(scenario_path))
             pb = Problem.from_scenario(sc)
@@ -2339,8 +2323,8 @@ def tune_grid_cli(
                         }
                         if bundle_meta:
                             telemetry_kwargs["telemetry_context"]["bundle"] = bundle_meta["bundle"]
-                            telemetry_kwargs["telemetry_context"]["bundle_member"] = bundle_meta.get(
-                                "bundle_member", scenario_display
+                            telemetry_kwargs["telemetry_context"]["bundle_member"] = (
+                                bundle_meta.get("bundle_member", scenario_display)
                             )
                         if tier_label:
                             telemetry_kwargs["telemetry_context"]["tier"] = tier_label
@@ -2551,9 +2535,7 @@ def tune_bayes_cli(
     watch_runner: LiveWatch | None = None
     if watch:
         if console.is_terminal:
-            watch_runner = LiveWatch(
-                WatchConfig(refresh_interval=watch_refresh), console=console
-            )
+            watch_runner = LiveWatch(WatchConfig(refresh_interval=watch_refresh), console=console)
             watch_runner.start()
         else:
             console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")

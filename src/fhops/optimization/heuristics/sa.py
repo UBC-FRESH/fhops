@@ -21,6 +21,10 @@ from fhops.scheduling.mobilisation import MachineMobilisation, build_distance_lo
 from fhops.telemetry import RunTelemetryLogger
 from fhops.telemetry.watch import Snapshot, SnapshotSink
 
+BLOCK_COMPLETION_EPS = 1e-6
+PARTIAL_PRODUCTION_FRACTION = 0.1
+LEFTOVER_PENALTY_FACTOR = 5.0
+
 
 def _role_metadata(scenario):
     """Return allowed roles, prerequisites, and machine-role mappings for a scenario."""
@@ -127,28 +131,97 @@ def _init_greedy(pb: Problem) -> Schedule:
     )
     availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
 
-    shifts = [(shift.day, shift.shift_id) for shift in pb.shifts]
+    shifts = sorted(pb.shifts, key=lambda s: (s.day, s.shift_id))
+    shift_keys = [(shift.day, shift.shift_id) for shift in shifts]
     plan: dict[str, dict[tuple[int, str], str | None]] = {
-        machine.id: {(day, shift_id): None for day, shift_id in shifts} for machine in sc.machines
+        machine.id: {(day, shift_id): None for day, shift_id in shift_keys}
+        for machine in sc.machines
     }
 
-    for day, shift_id in shifts:
+    def assign(machine_id: str, day: int, shift_id: str, block_id: str | None) -> None:
+        plan[machine_id][(day, shift_id)] = block_id
+        if block_id is None:
+            return
+        production = min(rate.get((machine_id, block_id), 0.0), remaining[block_id])
+        remaining[block_id] = max(0.0, remaining[block_id] - production)
+
+    def best_slot_for(block_id: str) -> tuple[str, int, str] | None:
+        earliest, latest = windows[block_id]
+        best_slot: tuple[str, int, str] | None = None
+        best_rate = 0.0
         for machine in sc.machines:
+            role = machine_roles.get(machine.id)
+            allowed = allowed_roles.get(block_id)
+            if allowed is not None and (role is None or role not in allowed):
+                continue
+            for shift in shifts:
+                day, shift_id = shift.day, shift.shift_id
+                if day < earliest or day > latest:
+                    continue
+                if plan[machine.id][(day, shift_id)] is not None:
+                    continue
+                if shift_availability:
+                    if shift_availability.get((machine.id, day, shift_id), 1) == 0:
+                        continue
+                if availability.get((machine.id, day), 1) == 0:
+                    continue
+                if (machine.id, day, shift_id) in blackout:
+                    continue
+                r = rate.get((machine.id, block_id), 0.0)
+                if r <= 0:
+                    continue
+                if r > best_rate:
+                    best_rate = r
+                    best_slot = (machine.id, day, shift_id)
+        return best_slot
+
+    # Respect locked assignments up front.
+    for shift in shifts:
+        day, shift_id = shift.day, shift.shift_id
+        for machine in sc.machines:
+            lock_block = locked.get((machine.id, day))
+            if lock_block is None:
+                continue
+            assign(machine.id, day, shift_id, lock_block)
+
+    # Coverage pass: ensure every block is started if feasible.
+    blocks_by_window = sorted(
+        sc.blocks,
+        key=lambda blk: (*sc.window_for(blk.id), blk.id),
+    )
+    while True:
+        progress = False
+        for block in blocks_by_window:
+            block_id = block.id
+            if remaining[block_id] <= 1e-9:
+                continue
+            slot = best_slot_for(block_id)
+            if slot is None:
+                continue
+            assign(*slot, block_id)
+            progress = True
+        if not progress:
+            break
+
+    # Fill remaining slots greedily with best-rate assignments.
+    for shift in shifts:
+        day, shift_id = shift.day, shift.shift_id
+        for machine in sc.machines:
+            if plan[machine.id][(day, shift_id)] is not None:
+                continue
             if shift_availability:
                 if shift_availability.get((machine.id, day, shift_id), 1) == 0:
                     continue
             if availability.get((machine.id, day), 1) == 0:
                 continue
-            lock_key = (machine.id, day)
-            if lock_key in locked:
-                plan[machine.id][(day, shift_id)] = locked[lock_key]
-                continue
             if (machine.id, day, shift_id) in blackout:
                 continue
             candidates: list[tuple[float, str]] = []
             for block in sc.blocks:
+                if remaining[block.id] <= 1e-9:
+                    continue
                 earliest, latest = windows[block.id]
-                if day < earliest or day > latest or remaining[block.id] <= 1e-9:
+                if day < earliest or day > latest:
                     continue
                 allowed = allowed_roles.get(block.id)
                 role = machine_roles.get(machine.id)
@@ -160,10 +233,7 @@ def _init_greedy(pb: Problem) -> Schedule:
             if candidates:
                 candidates.sort(reverse=True)
                 _, best_block = candidates[0]
-                plan[machine.id][(day, shift_id)] = best_block
-                remaining[best_block] = max(
-                    0.0, remaining[best_block] - rate.get((machine.id, best_block), 0.0)
-                )
+                assign(machine.id, day, shift_id, best_block)
     return Schedule(plan=plan)
 
 
@@ -198,25 +268,49 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
     landing_slack_weight = weights.landing_slack if weights else 0.0
 
     production_total = 0.0
+    initial_work_required = {block.id: block.work_required for block in sc.blocks}
     mobilisation_total = 0.0
     transition_count = 0.0
     landing_slack_total = 0.0
     penalty = 0.0
 
     previous_block: dict[str, str | None] = {machine.id: None for machine in sc.machines}
+    unfinished_block: dict[str, str | None] = {machine.id: None for machine in sc.machines}
     role_cumulative: defaultdict[tuple[str, str], int] = defaultdict(int)
     shifts = sorted(pb.shifts, key=lambda s: (s.day, s.shift_id))
+
+    def select_alternate_block(machine_id: str, day: int, shift_id: str) -> str | None:
+        role = machine_roles.get(machine_id)
+        best_block: str | None = None
+        best_rate = 0.0
+        for block in sc.blocks:
+            remaining_work = remaining[block.id]
+            if remaining_work <= BLOCK_COMPLETION_EPS:
+                continue
+            earliest, latest = windows[block.id]
+            if day < earliest or day > latest:
+                continue
+            allowed = allowed_roles.get(block.id)
+            if allowed is not None and (role is None or role not in allowed):
+                continue
+            r = rate.get((machine_id, block.id), 0.0)
+            if r <= 0.0:
+                continue
+            if r > best_rate:
+                best_rate = r
+                best_block = block.id
+        return best_block
+
     for shift in shifts:
         day = shift.day
         shift_id = shift.shift_id
         used = {landing.id: 0 for landing in sc.landings}
         shift_role_counts: defaultdict[tuple[str, str], int] = defaultdict(int)
         for machine in sc.machines:
-            block_id = sched.plan[machine.id][(day, shift_id)]
-            if block_id is None:
-                if (machine.id, day) in locked:
-                    penalty += 1000.0
-                continue
+            planned_block = sched.plan[machine.id][(day, shift_id)]
+            block_id = planned_block
+            lock_key = (machine.id, day)
+
             shift_available = shift_availability.get((machine.id, day, shift_id), 1)
             day_available = availability.get((machine.id, day), 1)
             if shift_available == 0 or day_available == 0:
@@ -227,10 +321,26 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
                 penalty += 1000.0
                 previous_block[machine.id] = None
                 continue
-            if (machine.id, day) in locked and locked[(machine.id, day)] != block_id:
-                penalty += 1000.0
-                previous_block[machine.id] = None
+
+            locked_block = locked.get(lock_key)
+            if locked_block is not None:
+                if block_id is not None and block_id != locked_block:
+                    penalty += 1000.0
+                block_id = locked_block
+
+            active_block = unfinished_block[machine.id]
+            if active_block and remaining[active_block] <= BLOCK_COMPLETION_EPS:
+                active_block = None
+                unfinished_block[machine.id] = None
+
+            if active_block is not None:
+                if block_id is None or block_id != active_block:
+                    block_id = active_block
+
+            sched.plan[machine.id][(day, shift_id)] = block_id
+            if block_id is None:
                 continue
+
             allowed = allowed_roles.get(block_id)
             role: str | None = machine_roles.get(machine.id)
             if allowed is not None and (role is None or role not in allowed):
@@ -252,9 +362,16 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
                     continue
             earliest, latest = windows[block_id]
             if day < earliest or day > latest:
-                continue
+                block_id = select_alternate_block(machine.id, day, shift_id)
+                if block_id is None:
+                    continue
+                sched.plan[machine.id][(day, shift_id)] = block_id
             if remaining[block_id] <= 1e-9:
-                continue
+                alternate = select_alternate_block(machine.id, day, shift_id)
+                if alternate is None:
+                    continue
+                block_id = alternate
+                sched.plan[machine.id][(day, shift_id)] = block_id
             landing_id = landing_of[block_id]
             capacity = landing_cap[landing_id]
             next_usage = used[landing_id] + 1
@@ -269,6 +386,10 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
             prod = min(r, remaining[block_id])
             remaining[block_id] -= prod
             production_total += prod
+            if remaining[block_id] > BLOCK_COMPLETION_EPS:
+                unfinished_block[machine.id] = block_id
+            else:
+                unfinished_block[machine.id] = None
             params = mobil_params.get(machine.id)
             prev_blk = previous_block[machine.id]
             if params is not None and prev_blk is not None and block_id is not None:
@@ -292,7 +413,20 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
                 shift_role_counts[(block_id, role)] += 1
         for key, count in shift_role_counts.items():
             role_cumulative[key] += count
-    score = prod_weight * production_total
+    completion_bonus = sum(
+        initial_work_required[block_id]
+        for block_id, remaining_work in remaining.items()
+        if remaining_work <= BLOCK_COMPLETION_EPS
+    )
+    leftover_total = sum(
+        remaining_work
+        for remaining_work in remaining.values()
+        if remaining_work > BLOCK_COMPLETION_EPS
+    )
+    partial_weight = prod_weight * PARTIAL_PRODUCTION_FRACTION
+    score = (prod_weight * (completion_bonus - LEFTOVER_PENALTY_FACTOR * leftover_total)) + (
+        partial_weight * production_total
+    )
     score -= mobil_weight * mobilisation_total
     score -= transition_weight * transition_count
     score -= landing_slack_weight * landing_slack_total
@@ -529,7 +663,9 @@ def solve_sa(
     if not 0 < cooling_rate < 1:
         raise ValueError("cooling_rate must be between 0 and 1 (exclusive).")
     restart_interval_value = (
-        restart_interval if restart_interval and restart_interval > 0 else max(1000, iters // 5 or 200)
+        restart_interval
+        if restart_interval and restart_interval > 0
+        else max(1000, iters // 5 or 200)
     )
 
     config_snapshot: dict[str, Any] = {
@@ -630,13 +766,13 @@ def solve_sa(
             temperature = max(temperature * cooling_rate, 1e-6)
             if run_logger and telemetry_logger and telemetry_logger.step_interval:
                 if step == 1 or step == iters or (step % telemetry_logger.step_interval == 0):
-                    acceptance_rate = (accepted_moves / proposals) if proposals else 0.0
+                    acceptance_rate_log = (accepted_moves / proposals) if proposals else 0.0
                     run_logger.log_step(
                         step=step,
                         objective=float(current_score),
                         best_objective=float(best_score),
                         temperature=float(temperature),
-                        acceptance_rate=acceptance_rate,
+                        acceptance_rate=acceptance_rate_log,
                         proposals=proposals,
                         accepted_moves=accepted_moves,
                     )
@@ -655,10 +791,8 @@ def solve_sa(
             rolling_scores.append(float(current_score))
             acceptance_window.append(1 if accepted else 0)
 
-            if watch_sink and (
-                step == 1 or step == iters or (step % watch_interval_value == 0)
-            ):
-                acceptance_rate = (accepted_moves / proposals) if proposals else None
+            if watch_sink and (step == 1 or step == iters or (step % watch_interval_value == 0)):
+                acceptance_rate_watch = (accepted_moves / proposals) if proposals else None
                 rolling_mean = (
                     float(sum(rolling_scores) / len(rolling_scores))
                     if rolling_scores
@@ -670,9 +804,7 @@ def solve_sa(
                     else None
                 )
                 delta_objective = (
-                    float(best_score - last_watch_best)
-                    if last_watch_best is not None
-                    else 0.0
+                    float(best_score - last_watch_best) if last_watch_best is not None else 0.0
                 )
                 last_watch_best = float(best_score)
                 watch_sink(
@@ -684,7 +816,7 @@ def solve_sa(
                         objective=float(best_score),
                         best_gap=None,
                         runtime_seconds=time.perf_counter() - run_start,
-                        acceptance_rate=acceptance_rate,
+                        acceptance_rate=acceptance_rate_watch,
                         restarts=restarts,
                         workers_busy=current_workers_busy,
                         workers_total=workers_total,
@@ -712,7 +844,7 @@ def solve_sa(
                     )
         assignments = pd.DataFrame(rows).sort_values(["day", "shift_id", "machine_id", "block_id"])
         if watch_sink:
-            acceptance_rate = (accepted_moves / proposals) if proposals else None
+            acceptance_rate_watch = (accepted_moves / proposals) if proposals else None
             rolling_mean = (
                 float(sum(rolling_scores) / len(rolling_scores))
                 if rolling_scores
@@ -724,9 +856,7 @@ def solve_sa(
                 else None
             )
             delta_objective = (
-                float(best_score - last_watch_best)
-                if last_watch_best is not None
-                else 0.0
+                float(best_score - last_watch_best) if last_watch_best is not None else 0.0
             )
             last_watch_best = float(best_score)
             watch_sink(
@@ -738,7 +868,7 @@ def solve_sa(
                     objective=float(best_score),
                     best_gap=None,
                     runtime_seconds=time.perf_counter() - run_start,
-                    acceptance_rate=acceptance_rate,
+                    acceptance_rate=acceptance_rate_watch,
                     restarts=restarts,
                     workers_busy=current_workers_busy,
                     workers_total=workers_total,
@@ -759,8 +889,8 @@ def solve_sa(
             "restarts": restarts,
             "iterations": iters,
             "temperature0": float(temperature0),
-             "cooling_rate": float(cooling_rate),
-             "restart_interval": int(restart_interval_value),
+            "cooling_rate": float(cooling_rate),
+            "restart_interval": int(restart_interval_value),
             "operators": registry.weights(),
         }
         if operator_stats:

@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import queue
+from collections.abc import Iterable, Iterator
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Dict, Iterable, Iterator, Protocol, Tuple
+from typing import Protocol
 
 
 @dataclass(slots=True)
@@ -95,10 +96,10 @@ class SnapshotBus:
 
 def summarize_snapshots(
     snapshots: Iterable[Snapshot],
-) -> Dict[Tuple[str, str], Dict[str, float]]:
+) -> dict[tuple[str, str], dict[str, float]]:
     """Compute best objective and max runtime per (scenario, solver)."""
 
-    summary: Dict[Tuple[str, str], Dict[str, float]] = {}
+    summary: dict[tuple[str, str], dict[str, float]] = {}
     for snap in snapshots:
         key = (snap.scenario, snap.solver)
         entry = summary.setdefault(

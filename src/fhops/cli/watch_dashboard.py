@@ -3,7 +3,6 @@ from __future__ import annotations
 import threading
 from collections import deque
 from dataclasses import dataclass, field
-from typing import Deque, Dict, Tuple
 
 from rich.console import Console, Group
 from rich.live import Live
@@ -19,8 +18,8 @@ class LiveWatch:
 
     def __post_init__(self) -> None:
         self._bus = SnapshotBus()
-        self._state: Dict[Tuple[str, str], Snapshot] = {}
-        self._history: Dict[Tuple[str, str], Deque[float]] = {}
+        self._state: dict[tuple[str, str], Snapshot] = {}
+        self._history: dict[tuple[str, str], deque[float]] = {}
         self._stop = threading.Event()
         self._thread: threading.Thread | None = None
         self._live: Live | None = None
@@ -75,7 +74,7 @@ class LiveWatch:
         if updated and self._live:
             self._live.update(self._render())
 
-    def _record_history(self, key: Tuple[str, str], snapshot: Snapshot) -> None:
+    def _record_history(self, key: tuple[str, str], snapshot: Snapshot) -> None:
         value = (
             snapshot.current_objective
             if snapshot.current_objective is not None
@@ -83,12 +82,10 @@ class LiveWatch:
         )
         if value is None:
             return
-        history = self._history.setdefault(
-            key, deque(maxlen=max(5, self.config.sparkline_points))
-        )
+        history = self._history.setdefault(key, deque(maxlen=max(5, self.config.sparkline_points)))
         history.append(float(value))
 
-    def _sparkline(self, key: Tuple[str, str]) -> str:
+    def _sparkline(self, key: tuple[str, str]) -> str:
         history = self._history.get(key)
         if not history:
             return "-"
@@ -114,9 +111,9 @@ class LiveWatch:
             if snap.temperature is not None:
                 parts.append(f"T={snap.temperature:.3f}")
             if snap.acceptance_rate is not None:
-                parts.append(f"Acc={snap.acceptance_rate*100:.1f}%")
+                parts.append(f"Acc={snap.acceptance_rate * 100:.1f}%")
             if snap.acceptance_rate_window is not None:
-                parts.append(f"Win={snap.acceptance_rate_window*100:.1f}%")
+                parts.append(f"Win={snap.acceptance_rate_window * 100:.1f}%")
         elif solver.startswith("ils"):
             metadata = snap.metadata or {}
             stalls = metadata.get("stalls")
@@ -140,12 +137,12 @@ class LiveWatch:
             if restarts is not None:
                 parts.append(f"Restarts={restarts}")
             if snap.acceptance_rate is not None:
-                parts.append(f"Acc={snap.acceptance_rate*100:.1f}%")
+                parts.append(f"Acc={snap.acceptance_rate * 100:.1f}%")
             if snap.acceptance_rate_window is not None:
-                parts.append(f"Win={snap.acceptance_rate_window*100:.1f}%")
+                parts.append(f"Win={snap.acceptance_rate_window * 100:.1f}%")
         return " | ".join(parts)
 
-    def _render(self) -> Table:
+    def _render(self) -> Group:
         table = Table(title="FHOPS Heuristic Watch", expand=True)
         table.add_column("Scenario", style="cyan")
         table.add_column("Solver", style="magenta")
@@ -164,7 +161,7 @@ class LiveWatch:
         trend_rows: list[tuple[str, str, str, str]] = []
         for (scenario, solver), snap in sorted(self._state.items()):
             progress = snap.progress_ratio
-            progress_str = f"{progress*100:.1f}%" if progress is not None else "?"
+            progress_str = f"{progress * 100:.1f}%" if progress is not None else "?"
             restarts = str(snap.restarts) if snap.restarts is not None else "-"
             workers = "-"
             if self.config.include_workers:
@@ -172,21 +169,9 @@ class LiveWatch:
                     workers = f"{snap.workers_busy}/{snap.workers_total}"
                 elif snap.workers_busy is not None:
                     workers = str(snap.workers_busy)
-            delta = (
-                f"{snap.delta_objective:+.3f}"
-                if snap.delta_objective is not None
-                else "-"
-            )
-            curr = (
-                f"{snap.current_objective:.3f}"
-                if snap.current_objective is not None
-                else "-"
-            )
-            rolling = (
-                f"{snap.rolling_objective:.3f}"
-                if snap.rolling_objective is not None
-                else "-"
-            )
+            delta = f"{snap.delta_objective:+.3f}" if snap.delta_objective is not None else "-"
+            curr = f"{snap.current_objective:.3f}" if snap.current_objective is not None else "-"
+            rolling = f"{snap.rolling_objective:.3f}" if snap.rolling_objective is not None else "-"
             sparkline = self._sparkline((scenario, solver))
             row = [
                 scenario,

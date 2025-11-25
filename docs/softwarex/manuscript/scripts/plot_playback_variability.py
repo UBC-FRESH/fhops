@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
-from typing import Dict, List
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -55,7 +54,7 @@ def load_utilisation(day_csv: Path, mode: str) -> tuple[float, float]:
 
 
 def collect_metrics(playback_dir: Path) -> pd.DataFrame:
-    records: List[dict] = []
+    records: list[dict] = []
     for slug, label in SCENARIOS:
         for solver in SOLVERS:
             for mode in MODES:
@@ -125,9 +124,7 @@ def main() -> int:
         else repo_root / "docs" / "softwarex" / "assets" / "data" / "playback"
     ).resolve()
     out_path = (
-        args.out_path
-        if args.out_path is not None
-        else playback_dir / "utilisation_robustness.png"
+        args.out_path if args.out_path is not None else playback_dir / "utilisation_robustness.png"
     ).resolve()
     df = collect_metrics(playback_dir)
     plot(df, out_path)

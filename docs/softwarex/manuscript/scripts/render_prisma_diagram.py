@@ -26,9 +26,7 @@ def run(cmd: list[str], cwd: Path | None = None, env: dict[str, str] | None = No
         text=True,
     )
     if result.returncode != 0:
-        raise RuntimeError(
-            f"Command failed ({' '.join(cmd)}):\n{result.stdout}"
-        )
+        raise RuntimeError(f"Command failed ({' '.join(cmd)}):\n{result.stdout}")
 
 
 def build_pdf(tex_path: Path, build_dir: Path, texinputs: str | None) -> Path:
@@ -97,7 +95,9 @@ def convert_pdf_to_png(pdf_path: Path, png_path: Path) -> None:
             raise FileNotFoundError(generated)
         _enforce_png_dpi(generated)
     else:
-        raise RuntimeError("Neither ImageMagick (magick) nor pdftoppm is available for PDF→PNG conversion.")
+        raise RuntimeError(
+            "Neither ImageMagick (magick) nor pdftoppm is available for PDF→PNG conversion."
+        )
 
 
 def convert_pdf_to_svg(pdf_path: Path, svg_path: Path) -> None:

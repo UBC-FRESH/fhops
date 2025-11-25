@@ -6,4 +6,3 @@ be treated as the authoritative specification for profile names, defaults, and
 expected outputs.
 
 Status: draft (extracted from `notes/cli_profiles_plan.md`).
-
