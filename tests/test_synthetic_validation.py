@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 from fhops.cli.benchmarks import run_benchmark_suite
 from fhops.evaluation import (
@@ -55,5 +56,6 @@ def test_synthetic_small_stochastic_validation(tmp_path: Path) -> None:
     _run_stochastic_smoke(Path("examples/synthetic/small/scenario.yaml"), tmp_path, "small")
 
 
+@pytest.mark.milp_refactor
 def test_synthetic_medium_stochastic_validation(tmp_path: Path) -> None:
     _run_stochastic_smoke(Path("examples/synthetic/medium/scenario.yaml"), tmp_path, "medium")

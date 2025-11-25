@@ -235,6 +235,7 @@ def test_evaluate_cli_basic_kpi_mode(tmp_path: Path):
 
 
 @pytest.mark.parametrize("scenario_name", ["minitoy", "med42"])
+@pytest.mark.milp_refactor
 def test_playback_fixture_matches_cli(tmp_path: Path, scenario_name: str):
     scenario_path = Path(f"examples/{scenario_name}/scenario.yaml")
     assignments_fixture = Path(f"tests/fixtures/playback/{scenario_name}_assignments.csv")

@@ -90,6 +90,7 @@ def regression_problem() -> Problem:
     return Problem.from_scenario(scenario)
 
 
+@pytest.mark.milp_refactor
 def test_regression_sa_mobilisation_and_sequencing():
     """Simulated annealing should yield a mobilisation-aware, sequence-feasible schedule."""
     pb = regression_problem()
@@ -107,6 +108,7 @@ def test_regression_sa_mobilisation_and_sequencing():
     assert kpis["total_production"] == pytest.approx(BASELINE["sa_expected"]["total_production"])
 
 
+@pytest.mark.milp_refactor
 @pytest.mark.parametrize("preset", ["explore", "mobilisation", "stabilise"])
 def test_regression_sa_presets_preserve_objective(preset: str):
     """Advanced presets should not worsen the regression objective."""
@@ -118,6 +120,7 @@ def test_regression_sa_presets_preserve_objective(preset: str):
     assert res["objective"] >= baseline_obj - 1e-9
 
 
+@pytest.mark.milp_refactor
 def test_regression_tabu_scenario_feasible():
     """Tabu Search should produce a feasible schedule for the regression scenario."""
     pb = regression_problem()

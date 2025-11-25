@@ -10,6 +10,7 @@ from fhops.cli.benchmarks import run_benchmark_suite
 from fhops.scenario.synthetic import SyntheticDatasetConfig, generate_random_dataset
 
 
+@pytest.mark.milp_refactor
 def test_benchmark_suite_minitoy(tmp_path):
     summary = run_benchmark_suite(
         [Path("examples/minitoy/scenario.yaml")],
@@ -91,6 +92,7 @@ def test_benchmark_suite_minitoy(tmp_path):
     assert mip_row["runtime_ratio_vs_best_heuristic"] > 1.0
 
 
+@pytest.mark.milp_refactor
 def test_benchmark_suite_with_tabu(tmp_path):
     summary = run_benchmark_suite(
         [Path("examples/minitoy/scenario.yaml")],

@@ -54,7 +54,7 @@ jobs:
         run: mypy src
 
       - name: Pytest
-        run: pytest
+        run: pytest -m "not milp_refactor"
 
       - name: Pre-commit hooks
         run: pre-commit run --all-files

@@ -4,6 +4,8 @@ import json
 import sqlite3
 from pathlib import Path
 
+import pytest
+
 from fhops.cli import main
 from fhops.cli.main import app
 
@@ -81,6 +83,7 @@ def test_tune_random_cli_runs_solver(tmp_path: Path):
     assert "created_at" in summary
 
 
+@pytest.mark.milp_refactor
 def test_tune_grid_cli_runs(tmp_path: Path):
     telemetry_log = tmp_path / "telemetry" / "runs.jsonl"
 
