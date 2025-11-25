@@ -1,3 +1,38 @@
+# 2025-12-08 — SA block completion + med42 capacity bump
+- Enforced the “finish the block before switching” policy inside the simulated annealing evaluator: the solver now tracks
+  each machine’s active block, overrides any attempt to hop to a new job (or idle) while wood remains, and mutates the
+  underlying schedule so exported assignments/KPIs/telemetry reflect the repaired plan. This keeps KPI `completed_blocks`
+  meaningful and aligns the CLI outputs with the business rule without relying on post-hoc penalties
+  (`src/fhops/optimization/heuristics/sa.py`).
+- Expanded `examples/med42` with a third crew (H9–H12) plus matching mobilisation parameters, calendar availability, and
+  production-rate rows copied from the existing crews. The dataset now has slightly more capacity than the 8.9 k m³
+  workload, so heuristics can actually finish every block within the 42-day horizon without running utilisation at 100 %
+  (`examples/med42/data/{machines,calendar,prod_rates}.csv`, `examples/med42/scenario.yaml`).
+- Reweighted the simulated annealing objective so block completion earns the full production reward (bonus proportional
+  to each block’s volume) while partial progress only contributes a small fractional term; this nudges the solver toward
+  finishing blocks rather than endlessly grazing the highest-rate ones (`src/fhops/optimization/heuristics/sa.py`).
+- Penalised leftover volume (5× the remaining m³) and taught the SA evaluator to immediately reassign idle shifts to other
+  in-window blocks with remaining work; together with the multi-pass coverage seed this keeps machines chasing unfinished
+  blocks instead of idling once their current block completes (`src/fhops/optimization/heuristics/sa.py`).
+- Rebuilt the greedy seeding routine so it explicitly walks every block (earliest windows first), assigning the best
+  available machine/shift before falling back to the general “pick best rate per slot” fill. This guarantees that every
+  block enters the schedule immediately, giving the annealer a head start on full completion (`src/fhops/optimization/heuristics/sa.py`).
+- Regenerated `examples/med42/data/prod_rates.csv` using FHOPS productivity models (Lahrsen 2025 feller-bunchers, ADV6N7 grapple
+  skidders, Berry 2019 processors, TN-261 loader-forwarders) and scaled the resulting m³/PMH to the 24 h/3 shift horizon so
+  rate tables reflect the same empirical regressions exposed through the CLI (`examples/med42/data/prod_rates.csv`).
+- Collapsed med42 to a single four-machine system (H1–H4 only), restored the 42-day calendar for those machines,
+  and scaled block workloads upward (≈30% more volume, +5% avg stem size, −5% stem density) so the dataset remains
+  capacity-tight despite the empirical productivity rates (`examples/med42/data/{machines,calendar,blocks,prod_rates}.csv`).
+- Increased block areas again (work requirements ×1.8) so the total workload now sits above 20 k m³, forcing the single-system
+  med42 variant to remain under-capacitated even with the aggressive productivity presets
+  (`examples/med42/data/blocks.csv`).
+- Scaled the regression-derived productivity rates down to ~14 % of their original values so FHOPS’s Lahrsen/ADV6N7/TN-261
+  outputs land in realistic single-system ranges (≈6–9 m³/PMH) rather than 40–70 m³/PMH. The workload now barely fits within
+  42 days, giving heuristics a meaningful trade-off (`examples/med42/data/prod_rates.csv`).
+- Notes log the policy enforcement + capacity refresh so the CLI profile plan stays accurate
+  (`notes/cli_profiles_plan.md`).
+- Testing: `fhops solve-heur examples/med42/scenario.yaml --out tmp/med42_sa_smoke.csv --iters 500 --cooling-rate 0.9999 --restart-interval 50`.
+
 # 2025-12-07 — Heuristic watch telemetry upgrades
 - Expanded the live watcher snapshot schema (`src/fhops/telemetry/watch.py`) to carry current/rolling objectives,
   temperature, delta-best, and sliding-window acceptance so heuristic dashboards can show more than a static best score.
@@ -65,7 +100,7 @@
 # Development Change Log
 
 # 2025-11-23 — API docstring audit + policy updates
-- Tightened the docstring policy in `CODING_AGENT.md` / `CONTRIBUTING.md` and re-applied it across the CLI command surface so every Typer entry point now documents parameters, telemetry side-effects, and emitted artifacts (`src/fhops/cli/main.py`, `src/fhops/cli/benchmarks.py`).
+- Tightened the docstring policy in `AGENTS.md` / `CONTRIBUTING.md` and re-applied it across the CLI command surface so every Typer entry point now documents parameters, telemetry side-effects, and emitted artifacts (`src/fhops/cli/main.py`, `src/fhops/cli/benchmarks.py`).
 - Enriched the scenario contract models with NumPy-style `Attributes` sections covering units/validation semantics for every field, ensuring the generated API docs explain each Pydantic dataclass (`src/fhops/scenario/contract/models.py`).
 - Expanded the heuristic solver docstrings (SA/ILS/Tabu) with detailed parameter/return notes, telemetry context, and assignment schema descriptions so the optimisation API pages mirror the new CLI-level guidance (`src/fhops/optimization/heuristics/{sa,ils,tabu}.py`).
 - Documented the productivity/reference helpers most commonly surfaced via `fhops dataset estimate-productivity` (forwarder BC wrapper, ADV6N7/Han skidder models, Sessions & Boston shovel logger, Berry/Visser processor regressions). Each function now lists required units, optional multipliers, and citations; docs build stays warning-free via `sphinx-build -b html docs _build/html -W`.
@@ -80,7 +115,7 @@
 - Added narrative docstrings across CLI, scenario contract, loaders, and MIP builder modules to feed richer API docs (`feature/api-docstring-enhancements`).
 
 # 2025-11-22 — Shift-based scheduling refactor planning
-- Reopened the Phase 2 shift-based scheduling milestone in `FHOPS_ROADMAP.md` and added a detailed next-steps bullet so the roadmap reflects the pending shift refactor instead of marking it complete prematurely.
+- Reopened the Phase 2 shift-based scheduling milestone in `ROADMAP.md` and added a detailed next-steps bullet so the roadmap reflects the pending shift refactor instead of marking it complete prematurely.
 - Captured the refactor plan in `notes/modular_reorg_plan.md` (goals, workstreams, dependencies) and pushed supporting punch lists into `notes/mip_model_plan.md`, `notes/data_contract_enhancements.md`, `notes/simulation_eval_plan.md`, and `notes/cli_docs_plan.md` so each owner document now describes how it will adopt shift-indexed data and solvers.
 - Logged the new migration checklist (data contract updates, solver re-indexing, playback alignment, docs/fixtures) to guide the upcoming implementation work.
 - Authored `notes/sphinx-documentation.md`, a Phase 4 Sphinx coverage audit summarising current docs (how-tos, references, API pages) and capturing a TODO list for weak/missing sections ahead of release prep.
@@ -483,27 +518,27 @@
 - Refreshed `.pre-commit-config.yaml` (ruff v0.14.5, mypy v1.18.2, pre-commit-hooks v6.0.0) to eliminate the deprecated stage warning and keep local hooks aligned with upstream behavior.
 - Started the release candidate prep effort on branch `release-candidate-prep`: added
   `notes/release_candidate_prep.md`, updated the roadmap detailed next steps, and expanded
-  `CODING_AGENT.md` with Hatch-based release workflow guidance.
+  `AGENTS.md` with Hatch-based release workflow guidance.
 - Added `hatch.toml` with dev/release environments mirroring the CI cadence, ran `hatch build`
   to produce sdist/wheel artifacts, and smoke-tested the wheel in a fresh virtualenv via
   `fhops --help` and a minitoy validation run.
 - Switched project versioning to Hatch’s dynamic mode (`pyproject.toml` derives from
-  `src/fhops/__init__.__version__`), documented the bump workflow in `CODING_AGENT.md`, and
+  `src/fhops/__init__.__version__`), documented the bump workflow in `AGENTS.md`, and
   refreshed README/docs with pip/Hatch install instructions plus a draft of the RC release notes.
 - Ran the release candidate tuning sweep (`scripts/run_tuning_benchmarks.py --plan baseline-smoke`)
   and captured tuned vs. baseline improvements (`notes/release_tuning_results.md`). Best operator
   configurations per scenario/algorithm now live in `notes/release_tuned_presets.json` for reuse.
 - Added `.github/workflows/release-build.yml`, which runs `hatch run release:build` on tag pushes
-  and uploads the `dist/` artifacts; release instructions in `CODING_AGENT.md` now reference the
+  and uploads the `dist/` artifacts; release instructions in `AGENTS.md` now reference the
   automation. Added workflow comments clarifying that publishing still happens via manual twine
   steps documented in the release notes.
 - Documented TestPyPI/PyPI publishing cadence (hatch build + twine upload + smoke install) in
-  `notes/release_candidate_prep.md` and `CODING_AGENT.md`.
+  `notes/release_candidate_prep.md` and `AGENTS.md`.
 - Completed TestPyPI dry run: uploaded `fhops 0.0.2` via Hatch (`HATCH_INDEX=testpypi hatch publish`) and
   verified install in a fresh venv using `pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple fhops`.
 - Release docs now describe the Hatch-only publish flow (no manual Twine invocation).
 - CONTRIBUTING.md now references Hatch workflows (`hatch run dev:suite`, `hatch publish`) so
-  contributors follow the same release process outlined in CODING_AGENT.md.
+  contributors follow the same release process outlined in AGENTS.md.
 - Bumped package version to `0.1.0` in `src/fhops/__init__.py` ahead of the PyPI publish/tag.
 - Added quick-demo commands (tuning harness runs) to README/docs overview and highlighted tuned
   presets in the release notes draft.
@@ -639,8 +674,8 @@
 - Planned documentation work for heuristic presets/benchmark interpretation (see `notes/metaheuristic_roadmap.md` Plan – Documentation Updates) ahead of drafting the new how-to content.
 
 ## 2025-11-07 — Planning Framework Bootstrap
-- Established structured roadmap (`FHOPS_ROADMAP.md`) with phase tracking and detailed next steps.
-- Authored coding agent runbook (`CODING_AGENT.md`) aligning workflow commands with Nemora practices.
+- Established structured roadmap (`ROADMAP.md`) with phase tracking and detailed next steps.
+- Authored coding agent runbook (`AGENTS.md`) aligning workflow commands with Nemora practices.
 - Seeded notes directory, backlog tracker, and Sphinx/RTD scaffolding to mirror the Nemora planning stack.
 - Added `.readthedocs.yaml`, `docs/requirements.txt`, and a GitHub Actions workflow executing the full agent command suite.
 - Refined `.readthedocs.yaml` using the Nemora template while still installing project extras for doc builds.
@@ -733,7 +768,7 @@
 - Documented the available forwarder/harvester models, inputs, and applicability ranges in `docs/reference/harvest_systems.rst`, linking back to `notes/dataset_inspection_plan.md`.
 - Captured TN285/ADV5N9/ADV2N21 scenario guidance (trail spacing, removal levels, trail reuse) in the planning notes and aligned the roadmap with the new deliverables.
 - Expanded the costing API docstrings (`fhops.costing.inflation`, `machine_rates`, `machines`) with NumPy-style sections covering CPI helpers, machine-rate dataclasses, rental-rate composition, and Lahrsen-driven cost estimators so the Sphinx API reference surfaces units, defaults, and return schemas.
-- Codified the docstring expectations in `CODING_AGENT.md` and `CONTRIBUTING.md`, then ran `sphinx-build -b html docs _build/html -W` to confirm the new content renders cleanly before cleaning up `_build/`.
+- Codified the docstring expectations in `AGENTS.md` and `CONTRIBUTING.md`, then ran `sphinx-build -b html docs _build/html -W` to confirm the new content renders cleanly before cleaning up `_build/`.
 - Documented the Grapple BC presets (`fhops.productivity.grapple_bc`) with Attributes/Parameters/Returns sections for TN157/TN147/TR122/ADV5N28/ADV1N35/ADV1N40 dataclasses, list/get helpers, and `estimate_grapple_yarder_productivity_*` functions so API consumers see study ranges, units, and source citations directly in the Sphinx output; updated `notes/sphinx-documentation.md` to mark the task complete.
 - Annotated the processor/loader module (`fhops.productivity.processor_loader`) by documenting every dataset loader, result dataclass (Labelle/Berry/ADV/TN/TR suites, loader + clambunk outputs), and estimator helper with NumPy-style Parameters/Returns sections, covering Berry/Labelle/Visser/Spinelli/Bertone/Borz/Nakagawa plus loader productivity utilities so the API reference exposes units, ranges, and citations; planning notes updated to reflect the completed sweep (Sphinx rebuild queued with the next batch).
 - Cleaned up the cable logging module (`fhops.productivity.cable_logging`) by documenting internal validators, running-skyline selectors, helicopter specs/payload helpers, TR127 predictor/loader utilities, and TN173 dataclasses/list/get helpers so the remaining API blanks are filled with units, ranges, and applicability notes; recorded the progress in `notes/sphinx-documentation.md` under the productivity-core checklist.

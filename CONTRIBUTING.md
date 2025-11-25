@@ -7,7 +7,7 @@
 5. Use Hatch for release validation:
    - `hatch run dev:suite` to mirror the CI command cadence locally.
    - For release candidates, `hatch clean && hatch build` and `HATCH_INDEX=<index> hatch publish`
-     (see `CODING_AGENT.md` / `notes/release_candidate_prep.md` for the full checklist).
+     (see `AGENTS.md` / `notes/release_candidate_prep.md` for the full checklist).
 6. Document everything:
    - **Docstrings**: Every public module/class/function must ship a NumPy-style docstring with:
      1. A one-line summary in sentence case.

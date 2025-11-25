@@ -1,5 +1,10 @@
 # FHOPS CLI – Heuristic Monitor Upgrade Notes
 
+Status: In progress — CLI-facing behaviour and UX should be reflected in
+`docs/cli/heuristics.md` once stabilised. Treat this note as a scratchpad for
+implementation details and experiments; promote durable guidance to the docs
+when ready.
+
 ## Motivation
 - Current `fhops bench suite` runs are opaque until they finish; we only see results via `summary.(csv|json)` or telemetry files.
 - For long heuristic runs (SA/ILS/Tabu with large `iters` or multi-worker setups) we need real-time feedback to spot stalls, divergence, or budget issues.

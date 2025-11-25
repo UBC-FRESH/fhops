@@ -29,7 +29,7 @@
 - Capture product answers to the open questions above.
 - Design CLI UX + module layout once decisions land.
 - Define how the interactive prompt workflow will operate (prompt text, validation, escape hatches).
-- Hook into roadmap artifacts (e.g., `FHOPS_ROADMAP.md`) once scope is approved.
+- Hook into roadmap artifacts (e.g., `ROADMAP.md`) once scope is approved.
 
 ## Latest Progress
 Machine productivity & costing work now lives in `notes/machine_productivity_costing_plan.md`.

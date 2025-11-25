@@ -115,12 +115,12 @@ before proposing new work.
 ## Phase 4 — Release & Community Readiness
 - [x] Complete Sphinx documentation set (API, CLI, how-tos, examples) published to Read the Docs (`notes/sphinx-documentation.md`, `docs/howto/release_playbook.rst`, `docs/howto/telemetry_ops.rst`, `docs/howto/thesis_eval.rst`, API narrative guides).
   - 2025-11-24: Closed the Sphinx/docstring audit (feature/api-docstring-enhancements) — all CLI, evaluation, heuristics, and productivity modules now ship NumPy-style docstrings and Sphinx builds are warning-free.
-- [x] Finalise contribution guide, code of conduct alignment, and PR templates (see `docs/howto/release_playbook.rst`, `CONTRIBUTING.md`, `CODING_AGENT.md`).
-- [x] Versioned release notes and public roadmap updates (`docs/releases/v1.0.0-alpha1.md`, `docs/releases/v0.1.0.md`, `FHOPS_ROADMAP.md` current).
+- [x] Finalise contribution guide, code of conduct alignment, and PR templates (see `docs/howto/release_playbook.rst`, `CONTRIBUTING.md`, `AGENTS.md`).
+- [x] Versioned release notes and public roadmap updates (`docs/releases/v1.0.0-alpha1.md`, `docs/releases/v0.1.0.md`, `ROADMAP.md` current).
 - [ ] Outreach plan (blog, seminars, partner briefings).
 
 ## Detailed Next Steps
-1. **Release Candidate Prep (`notes/release_candidate_prep.md`, `CODING_AGENT.md`, `notes/cli_docs_plan.md`)**
+1. **Release Candidate Prep (`notes/release_candidate_prep.md`, `AGENTS.md`, `notes/cli_docs_plan.md`)**
    - Lock feature set, refresh install/docs, and draft release notes + Hatch-based packaging checklist ahead of the public milestone.
 2. **Metaheuristic Roadmap (`notes/metaheuristic_roadmap.md`)**
    - Prioritise SA refinements, operator registry work, and benchmarking comparisons with the new harness (including shift-aware neighbourhoods).
@@ -141,7 +141,7 @@ before proposing new work.
    - [x] Ship CTL harvester helpers (ADV6N10 regression + CLI, ADV5N30 removal/brushing modifiers, TN292 tree-size/density regression) and document applicability in the CLI/docs.
    - [x] Record TN285 / ADV5N9 / ADV2N21 scenario guidance (ghost trails, removal levels, trail reuse) in the planning docs so scenario authors know when productivity stays flat vs. when to adjust costs.
    - [x] Integrate the new helpers into dataset inspection CLI defaults and synthetic generator presets; refresh fixtures/tests that assume legacy productivity values (landing processor/loader coverage now fully wired, docs/tests refreshed).
-   - [x] Keep `FHOPS_ROADMAP.md` and `notes/dataset_inspection_plan.md` in sync as additional FPInnovations regressions are ported.
+   - [x] Keep `ROADMAP.md` and `notes/dataset_inspection_plan.md` in sync as additional FPInnovations regressions are ported.
    - **Next focus:** with the TN258 monthly support split, Hi-Skid costing, and ADV4N7/ADV15N3 penalties now wired directly into the cost helper, pivot to the November 2025 FPInnovations drop scan (TN122+/ADV salvage set) so the outstanding “new PDF” backlog can close without waiting for fresh references.
 
 ## Backlog & Ideas

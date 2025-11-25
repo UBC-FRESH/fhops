@@ -1,7 +1,9 @@
 # Coding Agent Operating Notes
 
 These notes govern day-to-day execution for Codex (and collaborators) working in FHOPS. Follow
-them for every milestone, feature branch, or pull request.
+them for every milestone, feature branch, or pull request. Treat this file as the root
+`AGENTS.md` for the repository: its guidance applies to all subdirectories unless a more
+specific `AGENTS.md` overrides or extends it.
 
 ## Command cadence (run before handing work back)
 1. `ruff format src tests`
@@ -15,7 +17,7 @@ Record the exact commands executed in the current `CHANGE_LOG.md` entry. Address
 instead of suppressing them; escalate only if consensus is reached with maintainers.
 
 ## Planning hygiene
-- Update `FHOPS_ROADMAP.md` phase checkboxes and "Detailed Next Steps" entries whenever work
+- Update `ROADMAP.md` phase checkboxes and "Detailed Next Steps" entries whenever work
   starts, pauses, or completes.
 - Keep the relevant note under `notes/` in sync with actionable tasks, tests, documentation, and
   open questions. Treat these as living documents—never let TODOs drift into memory.
@@ -78,3 +80,14 @@ instead of suppressing them; escalate only if consensus is reached with maintain
   it from the next changelog entry.
 - Use draft PRs or issue threads to capture design discussion; sync the outcome back into notes
   and the roadmap to keep the planning artefacts authoritative.
+
+## Starting a new Codex chat
+- Open this repository as the workspace and ensure `ROADMAP.md`, `AGENTS.md`,
+  and the relevant `notes/*.md` files for your task are present.
+- In a fresh chat, tell the agent: “We are working on the FHOPS project in this
+  workspace. Before making changes, read `AGENTS.md`, `ROADMAP.md`, and
+  `<selected-notes>`. Use those as the authoritative context.”
+- Keep individual chats scoped to a single roadmap item or closely related set
+  of tasks; when finished, append a short summary to
+  `notes/coding-agent-conversation-log.txt` and update the relevant note/roadmap
+  entries.

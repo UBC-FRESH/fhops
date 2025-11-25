@@ -365,7 +365,7 @@ Ad hoc notes (TODO: process these leads and pull into planning docs):
        - Expand data-contract/how-to sections with rental-rate workflow, machine costing helper usage, and CLI examples.
        - Add evaluation guide section on interpreting $/SMH vs. $/m³ outputs.
    3.3 Roadmap & Release Tracking
-       - Reflect the rollout stages in `FHOPS_ROADMAP.md` and release notes once milestones land.
+       - Reflect the rollout stages in `ROADMAP.md` and release notes once milestones land.
        - Define QA checkpoints (inspection CLI regression, cost-helper parity tests, doc updates) before public release.
 
 ## Proposed Next Steps
