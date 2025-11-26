@@ -8,6 +8,7 @@ def test_solve_mip_operational_cli(tmp_path):
     runner = CliRunner()
     out_path = tmp_path / "minitoy_operational.csv"
     bundle_path = tmp_path / "bundle.json"
+    telemetry_log = tmp_path / "telemetry.jsonl"
     result = runner.invoke(
         app,
         [
@@ -19,11 +20,14 @@ def test_solve_mip_operational_cli(tmp_path):
             "1",
             "--dump-bundle",
             str(bundle_path),
+            "--telemetry-log",
+            str(telemetry_log),
         ],
     )
     assert result.exit_code == 0, cli_text(result)
     assert out_path.exists()
     assert bundle_path.exists()
+    assert telemetry_log.exists()
 
     out_path2 = tmp_path / "minitoy_operational_bundle.csv"
     result_bundle = runner.invoke(

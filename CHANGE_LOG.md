@@ -14,6 +14,7 @@
 - `solve-mip-operational` also supports `--dump-bundle` / `--bundle-json` so bundles can be serialized to JSON and replayed without reloading the scenario. Saved a canonical minitoy bundle under tests/fixtures/milp/minitoy_operational_bundle.json for regression tests.
 - Operational MILP builder now enforces exact block balance via leftover slack variables and landing-capacity slack penalties so the `transitions`/`landing_slack` objective weights influence solutions (`src/fhops/model/milp/operational.py`). Filtered CI to run `pytest -m "not milp_refactor"` temporarily while the MIP backend is rebuilt, skipping heuristics/benchmark/playback regressions.
 - Added mobilisation-aware transition binaries/cost penalties plus bundle serialization so `solve-mip-operational` can dump/replay fully-specified bundles (`src/fhops/model/milp/data.py`, `src/fhops/model/milp/operational.py`, `tests/model/test_operational_milp.py`, `tests/model/test_operational_bundle_dump.py`).
+- `solve-mip-operational` now supports telemetry logging (`--telemetry-log`) and watch mode (`--watch`) matching the heuristics/benchmark commands; regression tests cover bundle dump/replay + telemetry output (`src/fhops/cli/main.py`, `tests/test_cli_operational_mip.py`, `docs/reference/cli.rst`).
 - Commands: `python scripts/rebuild_med42_dataset.py`, `ruff format scripts/rebuild_med42_dataset.py`,
   `ruff format src tests`, `ruff check src tests`, `mypy src`, `pytest`,
   `pre-commit run --all-files`, `sphinx-build -b html docs _build/html -W`.

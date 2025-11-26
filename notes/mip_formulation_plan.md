@@ -392,7 +392,7 @@ day×shift discrete time structure.
   - [x] Add `fhops solve-mip-operational` command that:
         - Accepts `--scenario` plus standard solver flags, supports ``--bundle-json`` for replay, and writes assignments identical to SA/Tabu outputs (optionally dumping the bundle via ``--dump-bundle``).
         - Prints KPI summaries when feasible schedules exist (reusing `compute_kpis`).
-        - Future work: add telemetry/watch plumbing once the solver stabilises.
+        - Added telemetry logging (`--telemetry-log`) and live watch snapshots (`--watch`) so runs mirror the heuristic UX, plus bundle dump/replay fixtures exercising the CLI and driver round-trips.
   - [ ] Create `tests/milp/test_operational.py`:
         - Tiny minitoy fixture → assert optimal objective/KPIs.
         - Compare MILP vs SA results for a seeded scenario (tolerances on KPIs).

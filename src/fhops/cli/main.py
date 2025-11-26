@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import random
+import time
 from collections.abc import Sequence
 from contextlib import nullcontext
 from datetime import UTC, datetime
@@ -70,7 +71,7 @@ from fhops.scenario.io import load_scenario
 from fhops.telemetry import RunTelemetryLogger, append_jsonl
 from fhops.telemetry.machine_costs import build_machine_cost_snapshots
 from fhops.telemetry.sqlite_store import persist_tuner_summary
-from fhops.telemetry.watch import WatchConfig
+from fhops.telemetry.watch import Snapshot, WatchConfig
 
 app = typer.Typer(add_completion=False, no_args_is_help=True)
 app.add_typer(geospatial_app, name="geo")
@@ -479,6 +480,21 @@ def solve_mip_operational_cmd(
         "--dump-bundle",
         help="Write the generated bundle to JSON before solving.",
     ),
+    telemetry_log: Path | None = typer.Option(
+        None,
+        "--telemetry-log",
+        help="Append run telemetry to a JSONL file (written alongside a .sqlite mirror).",
+        writable=True,
+        dir_okay=False,
+    ),
+    watch: bool = typer.Option(
+        False,
+        "--watch/--no-watch",
+        help="Stream solver progress to the console.",
+    ),
+    watch_refresh: float = typer.Option(
+        0.5, "--watch-refresh", help="Watch refresh interval in seconds."
+    ),
     debug: bool = typer.Option(False, "--debug", help="Verbose solver output/tracebacks."),
 ):
     """Solve the operational (day×shift) MILP prototype and emit assignments."""
@@ -494,42 +510,119 @@ def solve_mip_operational_cmd(
 
     pb: Problem | None = None
     bundle = None
+    scenario_label: str | None = None
+    scenario_path_str: str | None = None
     if scenario is not None:
         sc = load_scenario(str(scenario))
         pb = Problem.from_scenario(sc)
         bundle = build_operational_bundle(pb)
+        scenario_label = sc.name
+        scenario_path_str = str(scenario)
     elif bundle_json is not None:
         with bundle_json.open("r", encoding="utf-8") as handle:
             payload = json.load(handle)
         bundle = bundle_from_dict(payload)
-    else:
-        raise typer.BadParameter("Provide either a scenario path or --bundle-json.")
+        scenario_label = bundle_json.stem
+
+    if bundle is None:
+        raise typer.BadParameter("Failed to prepare operational bundle.")
 
     if dump_bundle is not None:
         dump_bundle.parent.mkdir(parents=True, exist_ok=True)
         dump_bundle.write_text(json.dumps(bundle_to_dict(bundle), indent=2), encoding="utf-8")
 
-    result = solve_operational_milp(
-        bundle,
-        solver=solver,
-        time_limit=time_limit,
-        gap=gap,
-        tee=debug,
-    )
-    assignments = cast(pd.DataFrame, result.get("assignments", pd.DataFrame()))
-    out.parent.mkdir(parents=True, exist_ok=True)
-    assignments.to_csv(str(out), index=False)
-    console.print(
-        f"Operational MILP solver_status={result.get('solver_status')} "
-        f"termination={result.get('termination_condition')} "
-        f"objective={result.get('objective')}"
-    )
-    console.print(f"Assignments written to {out}")
-    if not assignments.empty and pb is not None:
-        metrics = compute_kpis(pb, assignments)
-        _print_kpi_summary(metrics)
-    else:
-        console.print("[yellow]No feasible assignment returned or scenario missing; skipping KPI summary.[/]")
+    telemetry_logger: RunTelemetryLogger | None = None
+    if telemetry_log:
+        context_snapshot = {
+            "command": "solve-mip-operational",
+            "bundle_json": str(bundle_json) if bundle_json else None,
+        }
+        telemetry_logger = RunTelemetryLogger(
+            log_path=telemetry_log,
+            solver="milp-operational",
+            scenario=scenario_label,
+            scenario_path=scenario_path_str,
+            config={"solver": solver, "time_limit": time_limit, "gap": gap},
+            context=context_snapshot,
+            step_interval=None,
+        )
+
+    watch_runner: LiveWatch | None = None
+    if watch:
+        if console.is_terminal:
+            watch_runner = LiveWatch(WatchConfig(refresh_interval=watch_refresh), console=console)
+            watch_runner.start()
+        else:
+            console.print("[yellow]Watch mode requires an interactive terminal; disabling watch.[/]")
+
+    def emit_snapshot(iteration: int, objective_value: float, runtime_seconds: float) -> None:
+        if not watch_runner:
+            return
+        watch_runner.sink(
+            Snapshot(
+                scenario=scenario_label or (bundle_json.stem if bundle_json else "bundle"),
+                solver="milp-operational",
+                iteration=iteration,
+                max_iterations=1,
+                objective=objective_value,
+                best_gap=None,
+                runtime_seconds=runtime_seconds,
+            )
+        )
+
+    start_time = time.perf_counter()
+    assignments = pd.DataFrame()
+    objective_value = 0.0
+    metrics_obj = None
+    try:
+        with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
+            emit_snapshot(0, 0.0, 0.0)
+            result = solve_operational_milp(
+                bundle,
+                solver=solver,
+                time_limit=time_limit,
+                gap=gap,
+                tee=debug,
+            )
+            runtime_seconds = time.perf_counter() - start_time
+            objective_value = float(result.get("objective") or 0.0)
+            emit_snapshot(1, objective_value, runtime_seconds)
+            assignments = cast(pd.DataFrame, result.get("assignments", pd.DataFrame()))
+            out.parent.mkdir(parents=True, exist_ok=True)
+            assignments.to_csv(str(out), index=False)
+            console.print(
+                f"Operational MILP solver_status={result.get('solver_status')} "
+                f"termination={result.get('termination_condition')} "
+                f"objective={result.get('objective')}"
+            )
+            console.print(f"Assignments written to {out}")
+            if not assignments.empty and pb is not None:
+                metrics_obj = compute_kpis(pb, assignments)
+                _print_kpi_summary(metrics_obj)
+            else:
+                console.print(
+                    "[yellow]No feasible assignment returned or scenario missing; skipping KPI summary.[/]"
+                )
+            if telemetry_logger and run_logger:
+                metrics_payload = {
+                    "objective": objective_value,
+                    "production": float(result.get("production") or 0.0),
+                    "runtime_seconds": runtime_seconds,
+                }
+                extra_payload = {
+                    "solver_status": result.get("solver_status"),
+                    "termination_condition": result.get("termination_condition"),
+                }
+                kpi_payload = _ensure_kpi_dict(metrics_obj) if metrics_obj is not None else {}
+                run_logger.finalize(
+                    metrics=metrics_payload,
+                    extra=extra_payload,
+                    artifacts=[str(out)],
+                    kpis=kpi_payload,
+                )
+    finally:
+        if watch_runner:
+            watch_runner.stop()
 
 
 @app.command("solve-heur")
