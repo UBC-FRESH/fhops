@@ -375,6 +375,9 @@ day×shift discrete time structure.
         constraints, block balance equations, and a production-maximising objective.
   - [ ] Extend the builder with role-level staging variables, head-start buffers, loader batching,
         and multi-machine role coordination per the design bullet list below.
+        * [x] Implemented role compatibility filters, aggregated role production, inventory tracking,
+          loader batching variables, and optional head-start binaries (triggered when buffer_shifts > 0).
+        * [ ] Wire actual buffer parameters + multi-machine mobilisation costs once scenario inputs expose them.
 
 - [ ] **Build the Pyomo model and solver harness**
   - [ ] Add `fhops/model/milp/operational.py` with:

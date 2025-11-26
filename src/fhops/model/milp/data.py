@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 from fhops.scenario.contract import Problem
 from fhops.scenario.contract.models import ObjectiveWeights
-from fhops.scheduling.systems import HarvestSystem, default_system_registry
+from fhops.scheduling.systems import HarvestSystem, SystemJob, default_system_registry
 
 ShiftKey = tuple[int, str]
 MachineBlock = tuple[str, str]
@@ -24,6 +24,7 @@ class SystemRoleConfig:
     prerequisites: tuple[str, ...]
     upstream_roles: tuple[str, ...]
     buffer_shifts: float = 0.0
+    is_loader: bool = False
 
 
 @dataclass(frozen=True)
@@ -83,17 +84,17 @@ def build_operational_bundle(pb: Problem) -> OperationalMilpBundle:
             availability_shift[(entry.machine_id, entry.day, entry.shift_id)] = int(entry.available)
 
     objective_weights = sc.objective_weights or ObjectiveWeights()
-    systems = sc.harvest_systems or dict(default_system_registry())
-    system_configs = _build_system_configs(systems.values())
+    registry = sc.harvest_systems or dict(default_system_registry())
+    system_configs = _build_system_configs(registry.values())
 
-    default_system_id = next(iter(systems))
+    default_system_id = next(iter(system_configs))
     block_system: dict[str, str] = {}
     for block in sc.blocks:
         system_id = block.harvest_system_id or default_system_id
         if system_id not in system_configs:
-            # If the scenario references a system that is not present, fall back to default registry.
+            # fallback to default registry if scenario references unknown ID
             system_configs[system_id] = _build_system_configs(
-                [systems.get(system_id) or default_system_registry()[system_id]]
+                [registry.get(system_id) or default_system_registry()[system_id]]
             )[system_id]
         block_system[block.id] = system_id
 
@@ -118,20 +119,13 @@ def build_operational_bundle(pb: Problem) -> OperationalMilpBundle:
 
 
 def _build_system_configs(systems: Iterable[HarvestSystem]) -> dict[str, SystemConfig]:
-    """Derive role definitions for each harvest system."""
-
     configs: dict[str, SystemConfig] = {}
     for system in systems:
-        job_lookup: dict[str, SystemJobSnapshot] = {}
-        for job in system.jobs:
-            job_lookup[job.name] = SystemJobSnapshot(
-                job.name, job.machine_role, tuple(job.prerequisites)
-            )
-
         role_configs: list[SystemRoleConfig] = []
+        role_by_job: dict[str, str] = {job.name: job.machine_role for job in system.jobs}
         for job in system.jobs:
             upstream_roles = tuple(
-                job_lookup[prereq].role for prereq in job.prerequisites if prereq in job_lookup
+                role_by_job.get(prereq) for prereq in job.prerequisites if prereq in role_by_job
             )
             role_configs.append(
                 SystemRoleConfig(
@@ -140,9 +134,9 @@ def _build_system_configs(systems: Iterable[HarvestSystem]) -> dict[str, SystemC
                     prerequisites=tuple(job.prerequisites),
                     upstream_roles=upstream_roles,
                     buffer_shifts=0.0,
+                    is_loader=_is_loader_job(job),
                 )
             )
-
         configs[system.system_id] = SystemConfig(
             system_id=system.system_id,
             roles=tuple(role_configs),
@@ -151,13 +145,10 @@ def _build_system_configs(systems: Iterable[HarvestSystem]) -> dict[str, SystemC
     return configs
 
 
-@dataclass(frozen=True)
-class SystemJobSnapshot:
-    """Lightweight snapshot of a :class:`SystemJob` to simplify prerequisite lookups."""
-
-    name: str
-    role: str
-    prerequisites: tuple[str, ...]
+def _is_loader_job(job: SystemJob) -> bool:
+    role = job.machine_role or ""
+    name = job.name.lower()
+    return role == "loader" or "load" in name
 
 
 __all__ = [
