@@ -48,6 +48,8 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
     role_buffer_volume: dict[tuple[str, str], float] = {}
     role_capacity: dict[tuple[str, str], float] = {}
     loader_batch_volume: dict[tuple[str, str], float] = {}
+    mobilisation_params = bundle.mobilisation_params
+    mobilisation_distances = bundle.mobilisation_distances
 
     for block in blocks:
         system_id = block_system[block]
@@ -113,7 +115,9 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
         # machine not compatible with block/system role
         return mdl.x[mach, blk, (day, shift_id)] == 0
 
-    model.role_compatibility = pyo.Constraint(model.M, model.B, model.S, rule=role_compatibility_rule)
+    model.role_compatibility = pyo.Constraint(
+        model.M, model.B, model.S, rule=role_compatibility_rule
+    )
 
     # Production capacity per assignment
     def prod_cap_rule(mdl, mach, blk, day, shift_id):
@@ -144,6 +148,82 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
 
     model.role_prod_balance = pyo.Constraint(model.RB, model.S, rule=role_prod_balance_rule)
 
+    # Transition tracking for mobilisation penalties
+    transition_slots = [slot for slot in model.S if prev_shift_map.get(slot) is not None]
+    needs_transitions = bool(transition_slots)
+    mobilisation_expr = None
+    transition_expr = None
+    if needs_transitions:
+        model.S_transition = pyo.Set(initialize=transition_slots, dimen=2)
+        model.y = pyo.Var(model.M, model.B, model.B, model.S_transition, domain=pyo.Binary)
+
+        def _prev_match_rule(mdl, mach, prev_blk, curr_blk, day, shift_id):
+            prev_index = prev_shift_map[(day, shift_id)]
+            if prev_index is None:
+                return pyo.Constraint.Skip
+            prev_day, prev_shift = prev_index
+            return (
+                mdl.y[mach, prev_blk, curr_blk, (day, shift_id)]
+                <= mdl.x[mach, prev_blk, (prev_day, prev_shift)]
+            )
+
+        def _curr_match_rule(mdl, mach, prev_blk, curr_blk, day, shift_id):
+            return (
+                mdl.y[mach, prev_blk, curr_blk, (day, shift_id)]
+                <= mdl.x[mach, curr_blk, (day, shift_id)]
+            )
+
+        def _link_rule(mdl, mach, prev_blk, curr_blk, day, shift_id):
+            prev_index = prev_shift_map[(day, shift_id)]
+            if prev_index is None:
+                return pyo.Constraint.Skip
+            prev_day, prev_shift = prev_index
+            return mdl.y[mach, prev_blk, curr_blk, (day, shift_id)] >= (
+                mdl.x[mach, prev_blk, (prev_day, prev_shift)]
+                + mdl.x[mach, curr_blk, (day, shift_id)]
+                - 1
+            )
+
+        model.transition_prev = pyo.Constraint(
+            model.M, model.B, model.B, model.S_transition, rule=_prev_match_rule
+        )
+        model.transition_curr = pyo.Constraint(
+            model.M, model.B, model.B, model.S_transition, rule=_curr_match_rule
+        )
+        model.transition_link = pyo.Constraint(
+            model.M, model.B, model.B, model.S_transition, rule=_link_rule
+        )
+
+        def _mobil_cost(mach: str, prev_blk: str, curr_blk: str) -> float:
+            if prev_blk == curr_blk:
+                return 0.0
+            params = mobilisation_params.get(mach)
+            if not params:
+                return 0.0
+            distance = mobilisation_distances.get((prev_blk, curr_blk), 0.0)
+            cost = params["setup_cost"]
+            if distance <= params["walk_threshold_m"]:
+                cost += params["walk_cost_per_meter"] * distance
+            else:
+                cost += params["move_cost_flat"]
+            return cost
+
+        mobilisation_expr = sum(
+            _mobil_cost(mach, prev_blk, curr_blk)
+            * model.y[mach, prev_blk, curr_blk, (day, shift_id)]
+            for mach in model.M
+            for prev_blk in model.B
+            for curr_blk in model.B
+            for day, shift_id in model.S_transition
+        )
+        transition_expr = sum(
+            model.y[mach, prev_blk, curr_blk, (day, shift_id)]
+            for mach in model.M
+            for prev_blk in model.B
+            for curr_blk in model.B
+            for day, shift_id in model.S_transition
+        )
+
     # Inventory tracking (only for roles with upstream requirements)
     model.InventoryPairs = pyo.Set(initialize=inventory_pairs, dimen=2)
     model.inventory = pyo.Var(model.InventoryPairs, model.S, domain=pyo.NonNegativeReals)
@@ -154,7 +234,10 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
         prev_inventory = mdl.inventory[role, blk, prev_slot] if prev_slot else 0.0
         upstream_roles = role_upstream[(role, blk)]
         upstream_sum = sum(mdl.role_prod[up_role, blk, slot] for up_role in upstream_roles)
-        return mdl.inventory[role, blk, slot] == prev_inventory + upstream_sum - mdl.role_prod[role, blk, slot]
+        return (
+            mdl.inventory[role, blk, slot]
+            == prev_inventory + upstream_sum - mdl.role_prod[role, blk, slot]
+        )
 
     if inventory_pairs:
         model.inventory_balance = pyo.Constraint(
@@ -167,7 +250,10 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
         model.role_active = pyo.Var(model.ActivationPairs, model.S, domain=pyo.Binary)
 
         def activation_prod_rule(mdl, role, blk, day, shift_id):
-            return mdl.role_prod[role, blk, (day, shift_id)] <= cap * mdl.role_active[role, blk, (day, shift_id)]
+            return (
+                mdl.role_prod[role, blk, (day, shift_id)]
+                <= cap * mdl.role_active[role, blk, (day, shift_id)]
+            )
 
         def head_start_rule(mdl, role, blk, day, shift_id):
             slot = (day, shift_id)
@@ -178,14 +264,17 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
             buffer_volume = role_buffer_volume[(role, blk)]
             if buffer_volume <= 0:
                 return pyo.Constraint.Skip
-            return prev_inventory + upstream_sum + buffer_volume * (1 - mdl.role_active[role, blk, slot]) >= buffer_volume
+            return (
+                prev_inventory
+                + upstream_sum
+                + buffer_volume * (1 - mdl.role_active[role, blk, slot])
+                >= buffer_volume
+            )
 
         model.activation_prod = pyo.Constraint(
             model.ActivationPairs, model.S, rule=activation_prod_rule
         )
-        model.head_start = pyo.Constraint(
-            model.ActivationPairs, model.S, rule=head_start_rule
-        )
+        model.head_start = pyo.Constraint(model.ActivationPairs, model.S, rule=head_start_rule)
 
     # Loader batching constraints
     model.LoaderPairs = pyo.Set(initialize=loader_pairs, dimen=2)
@@ -194,7 +283,10 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
 
         def loader_batch_rule(mdl, role, blk, day, shift_id):
             batch = loader_batch_volume[(role, blk)]
-            return mdl.role_prod[role, blk, (day, shift_id)] == batch * mdl.loads[role, blk, (day, shift_id)]
+            return (
+                mdl.role_prod[role, blk, (day, shift_id)]
+                == batch * mdl.loads[role, blk, (day, shift_id)]
+            )
 
         model.loader_batch = pyo.Constraint(model.LoaderPairs, model.S, rule=loader_batch_rule)
 
@@ -232,8 +324,10 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
     model.landing_capacity = pyo.Constraint(model.Landing, model.D, rule=landing_capacity_rule)
 
     prod_weight = bundle.objective_weights.production
-    leftover_penalty = bundle.objective_weights.transitions
     landing_weight = bundle.objective_weights.landing_slack
+    mobilisation_weight = bundle.objective_weights.mobilisation
+    transition_weight = bundle.objective_weights.transitions
+    leftover_penalty = prod_weight
 
     obj_expr = prod_weight * sum(
         model.prod[mach, blk, slot] for mach in model.M for blk in model.B for slot in model.S
@@ -244,6 +338,10 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
         obj_expr -= landing_weight * sum(
             model.landing_slack[landing_id, day] for landing_id in model.Landing for day in model.D
         )
+    if mobilisation_expr is not None and mobilisation_weight:
+        obj_expr -= mobilisation_weight * mobilisation_expr
+    if transition_expr is not None and transition_weight:
+        obj_expr -= transition_weight * transition_expr
 
     model.objective = pyo.Objective(expr=obj_expr, sense=pyo.maximize)
 

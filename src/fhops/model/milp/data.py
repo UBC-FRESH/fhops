@@ -8,6 +8,7 @@ from typing import Any
 
 from fhops.scenario.contract import Problem
 from fhops.scenario.contract.models import ObjectiveWeights
+from fhops.scheduling.mobilisation import build_distance_lookup
 from fhops.scheduling.systems import HarvestSystem, SystemJob, default_system_registry
 
 ShiftKey = tuple[int, str]
@@ -58,6 +59,8 @@ class OperationalMilpBundle:
     objective_weights: ObjectiveWeights
     block_system: dict[str, str]
     systems: dict[str, SystemConfig]
+    mobilisation_params: dict[str, dict[str, float]]
+    mobilisation_distances: dict[tuple[str, str], float]
 
 
 def build_operational_bundle(pb: Problem) -> OperationalMilpBundle:
@@ -86,11 +89,22 @@ def build_operational_bundle(pb: Problem) -> OperationalMilpBundle:
             availability_shift[(entry.machine_id, entry.day, entry.shift_id)] = int(entry.available)
 
     objective_weights = sc.objective_weights or ObjectiveWeights()
+    mobilisation_params: dict[str, dict[str, float]] = {}
+    mobilisation_distances: dict[tuple[str, str], float] = {}
+    if sc.mobilisation:
+        mobilisation_distances = build_distance_lookup(sc.mobilisation)
+        for param in sc.mobilisation.machine_params:
+            mobilisation_params[param.machine_id] = {
+                "walk_cost_per_meter": param.walk_cost_per_meter,
+                "move_cost_flat": param.move_cost_flat,
+                "walk_threshold_m": param.walk_threshold_m,
+                "setup_cost": param.setup_cost,
+            }
     registry = sc.harvest_systems or dict(default_system_registry())
     system_configs = _build_system_configs(registry.values())
 
     default_system_id = next(iter(system_configs))
-    block_system: dict[str, str | None] = {}
+    block_system: dict[str, str] = {}
     for block in sc.blocks:
         system_id = block.harvest_system_id or default_system_id
         if system_id not in system_configs:
@@ -117,6 +131,8 @@ def build_operational_bundle(pb: Problem) -> OperationalMilpBundle:
         objective_weights=objective_weights,
         block_system=block_system,
         systems=system_configs,
+        mobilisation_params=mobilisation_params,
+        mobilisation_distances=mobilisation_distances,
     )
 
 
@@ -125,7 +141,9 @@ def _build_system_configs(systems: Iterable[HarvestSystem]) -> dict[str, SystemC
     for system in systems:
         role_configs: list[SystemRoleConfig] = []
         role_by_job: dict[str, str] = {job.name: job.machine_role for job in system.jobs}
-        role_counts = {role: max(1, int(count)) for role, count in (system.role_counts or {}).items()}
+        role_counts = {
+            role: max(1, int(count)) for role, count in (system.role_counts or {}).items()
+        }
         role_buffers = {
             role: float(value) for role, value in (system.role_headstart_shifts or {}).items()
         }
@@ -215,6 +233,11 @@ def bundle_to_dict(bundle: OperationalMilpBundle) -> dict[str, Any]:
             }
             for system_id, cfg in bundle.systems.items()
         },
+        "mobilisation_params": bundle.mobilisation_params,
+        "mobilisation_distances": [
+            {"prev_block": prev, "next_block": nxt, "distance": dist}
+            for (prev, nxt), dist in bundle.mobilisation_distances.items()
+        ],
     }
 
 
@@ -242,7 +265,9 @@ def bundle_from_dict(payload: Mapping[str, Any]) -> OperationalMilpBundle:
     systems = {
         system_id: SystemConfig(
             system_id=system_id,
-            loader_batch_volume_m3=float(system_data.get("loader_batch_volume_m3", DEFAULT_TRUCKLOAD_M3)),
+            loader_batch_volume_m3=float(
+                system_data.get("loader_batch_volume_m3", DEFAULT_TRUCKLOAD_M3)
+            ),
             roles=tuple(
                 SystemRoleConfig(
                     job_name=role_data["job_name"],
@@ -259,6 +284,20 @@ def bundle_from_dict(payload: Mapping[str, Any]) -> OperationalMilpBundle:
         for system_id, system_data in payload["systems"].items()
     }
 
+    mobilisation_distances = {
+        (entry["prev_block"], entry["next_block"]): float(entry["distance"])
+        for entry in payload.get("mobilisation_distances", [])
+    }
+    mobilisation_params = {
+        machine_id: {
+            "walk_cost_per_meter": values.get("walk_cost_per_meter", 0.0),
+            "move_cost_flat": values.get("move_cost_flat", 0.0),
+            "walk_threshold_m": values.get("walk_threshold_m", 0.0),
+            "setup_cost": values.get("setup_cost", 0.0),
+        }
+        for machine_id, values in payload.get("mobilisation_params", {}).items()
+    }
+
     return OperationalMilpBundle(
         machines=machines,
         blocks=blocks,
@@ -270,12 +309,11 @@ def bundle_from_dict(payload: Mapping[str, Any]) -> OperationalMilpBundle:
         },
         production_rates=production_rates,
         work_required={blk: float(value) for blk, value in payload["work_required"].items()},
-        windows={
-            blk: (window[0], window[1])
-            for blk, window in payload["windows"].items()
-        },
+        windows={blk: (window[0], window[1]) for blk, window in payload["windows"].items()},
         landing_for_block=dict(payload["landing_for_block"]),
-        landing_capacity={landing: int(cap) for landing, cap in payload["landing_capacity"].items()},
+        landing_capacity={
+            landing: int(cap) for landing, cap in payload["landing_capacity"].items()
+        },
         availability_day=availability_day,
         availability_shift=availability_shift,
         objective_weights=ObjectiveWeights(
@@ -286,6 +324,8 @@ def bundle_from_dict(payload: Mapping[str, Any]) -> OperationalMilpBundle:
         ),
         block_system=dict(payload["block_system"]),
         systems=systems,
+        mobilisation_params=mobilisation_params,
+        mobilisation_distances=mobilisation_distances,
     )
 
 

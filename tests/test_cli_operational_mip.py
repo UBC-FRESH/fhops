@@ -3,6 +3,7 @@ from tests.cli import CliRunner, cli_text
 
 FIXTURE_BUNDLE = "tests/fixtures/milp/minitoy_operational_bundle.json"
 
+
 def test_solve_mip_operational_cli(tmp_path):
     runner = CliRunner()
     out_path = tmp_path / "minitoy_operational.csv"

@@ -377,7 +377,7 @@ day×shift discrete time structure.
         and multi-machine role coordination per the design bullet list below.
         * [x] Implemented role compatibility filters, aggregated role production, inventory tracking,
           loader batching variables, and optional head-start binaries (triggered when buffer_shifts > 0).
-        * [ ] Wire actual buffer parameters + multi-machine mobilisation / leftover penalties once scenario inputs expose them, and add tests that validate these constraints on toy scenarios.
+        * [x] Wired system-level buffer counts, loader batch defaults, transition binaries, mobilisation cost penalties, and landing/leftover slack terms (tests cover bundle round-trips and mobilisation-aware builds). Remaining work: expose calibrated defaults + mobilisation-driven objective tuning via the scenario contract.
 
 - [ ] **Build the Pyomo model and solver harness**
   - [ ] Add `fhops/model/milp/operational.py` with:

@@ -2089,5 +2089,66 @@
         }
       ]
     }
-  }
+  },
+  "mobilisation_params": {
+    "H1": {
+      "walk_cost_per_meter": 0.015,
+      "move_cost_flat": 60.0,
+      "walk_threshold_m": 800.0,
+      "setup_cost": 10.0
+    },
+    "H2": {
+      "walk_cost_per_meter": 0.015,
+      "move_cost_flat": 55.0,
+      "walk_threshold_m": 800.0,
+      "setup_cost": 10.0
+    }
+  },
+  "mobilisation_distances": [
+    {
+      "prev_block": "B1",
+      "next_block": "B2",
+      "distance": 500.0
+    },
+    {
+      "prev_block": "B2",
+      "next_block": "B1",
+      "distance": 500.0
+    },
+    {
+      "prev_block": "B1",
+      "next_block": "B1",
+      "distance": 0.0
+    },
+    {
+      "prev_block": "B2",
+      "next_block": "B2",
+      "distance": 0.0
+    },
+    {
+      "prev_block": "B1",
+      "next_block": "B3",
+      "distance": 2000.0
+    },
+    {
+      "prev_block": "B3",
+      "next_block": "B1",
+      "distance": 2000.0
+    },
+    {
+      "prev_block": "B3",
+      "next_block": "B3",
+      "distance": 0.0
+    },
+    {
+      "prev_block": "B2",
+      "next_block": "B3",
+      "distance": 1500.0
+    },
+    {
+      "prev_block": "B3",
+      "next_block": "B2",
+      "distance": 1500.0
+    }
+  ]
 }

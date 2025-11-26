@@ -1,3 +1,5 @@
+from dataclasses import replace
+
 import pyomo.environ as pyo
 
 from fhops.model.milp.data import build_operational_bundle
@@ -35,3 +37,26 @@ def test_operational_model_has_production_limits() -> None:
     model.x[some_machine, some_block, some_slot].fix(1)
     model.prod[some_machine, some_block, some_slot].setub(rate)
     assert model.prod[some_machine, some_block, some_slot].ub == rate
+
+
+def test_operational_model_with_mobilisation_adds_transitions() -> None:
+    scenario = load_scenario("examples/minitoy/scenario.yaml")
+    problem = Problem.from_scenario(scenario)
+    bundle = build_operational_bundle(problem)
+    mobilisation_params = {
+        machine_id: {
+            "walk_cost_per_meter": 0.01,
+            "move_cost_flat": 100.0,
+            "walk_threshold_m": 200.0,
+            "setup_cost": 10.0,
+        }
+        for machine_id in bundle.machines
+    }
+    mobilisation_distances = {(blk, blk): 0.0 for blk in bundle.blocks}
+    mobil_bundle = replace(
+        bundle,
+        mobilisation_params=mobilisation_params,
+        mobilisation_distances=mobilisation_distances,
+    )
+    model = build_operational_model(mobil_bundle)
+    assert hasattr(model, "y")
