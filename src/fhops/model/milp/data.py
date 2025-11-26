@@ -88,7 +88,7 @@ def build_operational_bundle(pb: Problem) -> OperationalMilpBundle:
     system_configs = _build_system_configs(registry.values())
 
     default_system_id = next(iter(system_configs))
-    block_system: dict[str, str] = {}
+    block_system: dict[str, str | None] = {}
     for block in sc.blocks:
         system_id = block.harvest_system_id or default_system_id
         if system_id not in system_configs:
