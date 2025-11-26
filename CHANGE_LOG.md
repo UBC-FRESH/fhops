@@ -12,9 +12,7 @@
 - Added a `milp_refactor` pytest marker
 - Added `fhops solve-mip-operational`, a CLI wrapper around the new operational MILP bundle/driver so analysts can experiment with the day×shift model directly (`src/fhops/cli/main.py`).
 - `solve-mip-operational` also supports `--dump-bundle` / `--bundle-json` so bundles can be serialized to JSON and replayed without reloading the scenario. Saved a canonical minitoy bundle under tests/fixtures/milp/minitoy_operational_bundle.json for regression tests.
-- Operational MILP builder now enforces exact block balance via leftover slack variables and landing-capacity slack penalties so the `transitions`/`landing_slack` objective weights influence solutions (`src/fhops/model/milp/operational.py`).
-- Operational MILP builder now enforces exact block balance with leftover slack variables and landing-capacity slack penalties, so objective weights for transitions/landing_slack influence the solution (\`src/fhops/model/milp/operational.py\`). and filtered CI to run `pytest -m "not milp_refactor"`, temporarily
-  skipping the heuristics/benchmark/playback regression tests while we rebuild the MIP backend and refresh fixtures.
+- Operational MILP builder now enforces exact block balance via leftover slack variables and landing-capacity slack penalties so the `transitions`/`landing_slack` objective weights influence solutions (`src/fhops/model/milp/operational.py`). Filtered CI to run `pytest -m "not milp_refactor"` temporarily while the MIP backend is rebuilt, skipping heuristics/benchmark/playback regressions.
 - Commands: `python scripts/rebuild_med42_dataset.py`, `ruff format scripts/rebuild_med42_dataset.py`,
   `ruff format src tests`, `ruff check src tests`, `mypy src`, `pytest`,
   `pre-commit run --all-files`, `sphinx-build -b html docs _build/html -W`.
