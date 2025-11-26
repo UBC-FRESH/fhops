@@ -10,7 +10,8 @@
 - Updated `examples/med42/README.md` with the new block counts, volume shares, and generator
   instructions so users know how to refresh the dataset or tweak the target capacity ratio.
 - Added a `milp_refactor` pytest marker
-- Added `fhops solve-mip-operational`, a CLI wrapper around the new operational MILP bundle/driver so analysts can experiment with the day×shift model directly (`src/fhops/cli/main.py`). and filtered CI to run `pytest -m "not milp_refactor"`, temporarily
+- Added `fhops solve-mip-operational`, a CLI wrapper around the new operational MILP bundle/driver so analysts can experiment with the day×shift model directly (`src/fhops/cli/main.py`).
+- `solve-mip-operational` also supports `--dump-bundle` / `--bundle-json` so bundles can be serialized to JSON and replayed without reloading the scenario. and filtered CI to run `pytest -m "not milp_refactor"`, temporarily
   skipping the heuristics/benchmark/playback regression tests while we rebuild the MIP backend and refresh fixtures.
 - Commands: `python scripts/rebuild_med42_dataset.py`, `ruff format scripts/rebuild_med42_dataset.py`,
   `ruff format src tests`, `ruff check src tests`, `mypy src`, `pytest`,

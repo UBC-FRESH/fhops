@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
+from typing import Any
 
 from fhops.scenario.contract import Problem
 from fhops.scenario.contract.models import ObjectiveWeights
@@ -151,10 +152,136 @@ def _is_loader_job(job: SystemJob) -> bool:
     return role == "loader" or "load" in name
 
 
+def bundle_to_dict(bundle: OperationalMilpBundle) -> dict[str, Any]:
+    """Serialize an :class:`OperationalMilpBundle` into a JSON-friendly dict."""
+
+    return {
+        "machines": list(bundle.machines),
+        "blocks": list(bundle.blocks),
+        "days": list(bundle.days),
+        "shifts": [{"day": day, "shift_id": shift_id} for day, shift_id in bundle.shifts],
+        "machine_roles": bundle.machine_roles,
+        "machine_daily_hours": bundle.machine_daily_hours,
+        "production_rates": [
+            {"machine_id": m, "block_id": b, "rate": rate}
+            for (m, b), rate in bundle.production_rates.items()
+        ],
+        "work_required": bundle.work_required,
+        "windows": {blk: list(window) for blk, window in bundle.windows.items()},
+        "landing_for_block": bundle.landing_for_block,
+        "landing_capacity": bundle.landing_capacity,
+        "availability_day": [
+            {"machine_id": mach, "day": day, "available": available}
+            for (mach, day), available in bundle.availability_day.items()
+        ],
+        "availability_shift": [
+            {"machine_id": mach, "day": day, "shift_id": shift, "available": available}
+            for (mach, day, shift), available in bundle.availability_shift.items()
+        ],
+        "objective_weights": {
+            "production": bundle.objective_weights.production,
+            "mobilisation": bundle.objective_weights.mobilisation,
+            "transitions": bundle.objective_weights.transitions,
+            "landing_slack": bundle.objective_weights.landing_slack,
+        },
+        "block_system": bundle.block_system,
+        "systems": {
+            system_id: {
+                "system_id": cfg.system_id,
+                "loader_batch_volume_m3": cfg.loader_batch_volume_m3,
+                "roles": [
+                    {
+                        "job_name": role_cfg.job_name,
+                        "role": role_cfg.role,
+                        "prerequisites": list(role_cfg.prerequisites),
+                        "upstream_roles": list(role_cfg.upstream_roles),
+                        "buffer_shifts": role_cfg.buffer_shifts,
+                        "is_loader": role_cfg.is_loader,
+                    }
+                    for role_cfg in cfg.roles
+                ],
+            }
+            for system_id, cfg in bundle.systems.items()
+        },
+    }
+
+
+def bundle_from_dict(payload: Mapping[str, Any]) -> OperationalMilpBundle:
+    """Reconstruct an :class:`OperationalMilpBundle` from ``bundle_to_dict`` output."""
+
+    machines = tuple(payload["machines"])
+    blocks = tuple(payload["blocks"])
+    days = tuple(payload["days"])
+    shifts = tuple((entry["day"], entry["shift_id"]) for entry in payload["shifts"])
+
+    production_rates: dict[MachineBlock, float] = {
+        (entry["machine_id"], entry["block_id"]): float(entry["rate"])
+        for entry in payload["production_rates"]
+    }
+    availability_day = {
+        (entry["machine_id"], int(entry["day"])): int(entry["available"])
+        for entry in payload["availability_day"]
+    }
+    availability_shift = {
+        (entry["machine_id"], int(entry["day"]), entry["shift_id"]): int(entry["available"])
+        for entry in payload["availability_shift"]
+    }
+
+    systems = {
+        system_id: SystemConfig(
+            system_id=system_id,
+            loader_batch_volume_m3=float(system_data.get("loader_batch_volume_m3", DEFAULT_TRUCKLOAD_M3)),
+            roles=tuple(
+                SystemRoleConfig(
+                    job_name=role_data["job_name"],
+                    role=role_data["role"],
+                    prerequisites=tuple(role_data.get("prerequisites", [])),
+                    upstream_roles=tuple(role_data.get("upstream_roles", [])),
+                    buffer_shifts=float(role_data.get("buffer_shifts", 0.0)),
+                    is_loader=bool(role_data.get("is_loader", False)),
+                )
+                for role_data in system_data.get("roles", [])
+            ),
+        )
+        for system_id, system_data in payload["systems"].items()
+    }
+
+    return OperationalMilpBundle(
+        machines=machines,
+        blocks=blocks,
+        days=days,
+        shifts=shifts,
+        machine_roles=dict(payload["machine_roles"]),
+        machine_daily_hours={
+            mach: float(hours) for mach, hours in payload["machine_daily_hours"].items()
+        },
+        production_rates=production_rates,
+        work_required={blk: float(value) for blk, value in payload["work_required"].items()},
+        windows={
+            blk: (window[0], window[1])
+            for blk, window in payload["windows"].items()
+        },
+        landing_for_block=dict(payload["landing_for_block"]),
+        landing_capacity={landing: int(cap) for landing, cap in payload["landing_capacity"].items()},
+        availability_day=availability_day,
+        availability_shift=availability_shift,
+        objective_weights=ObjectiveWeights(
+            production=float(payload["objective_weights"]["production"]),
+            mobilisation=float(payload["objective_weights"]["mobilisation"]),
+            transitions=float(payload["objective_weights"]["transitions"]),
+            landing_slack=float(payload["objective_weights"]["landing_slack"]),
+        ),
+        block_system=dict(payload["block_system"]),
+        systems=systems,
+    )
+
+
 __all__ = [
     "OperationalMilpBundle",
     "SystemConfig",
     "SystemRoleConfig",
     "build_operational_bundle",
+    "bundle_to_dict",
+    "bundle_from_dict",
     "DEFAULT_TRUCKLOAD_M3",
 ]

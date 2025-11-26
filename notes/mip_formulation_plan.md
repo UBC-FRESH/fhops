@@ -390,7 +390,7 @@ day×shift discrete time structure.
 
 - [ ] **CLI integration and regression tests**
   - [x] Add `fhops solve-mip-operational` command that:
-        - Accepts `--scenario` plus standard solver flags and writes assignments identical to SA/Tabu outputs.
+        - Accepts `--scenario` plus standard solver flags, supports ``--bundle-json`` for replay, and writes assignments identical to SA/Tabu outputs (optionally dumping the bundle via ``--dump-bundle``).
         - Prints KPI summaries when feasible schedules exist (reusing `compute_kpis`).
         - Future work: add telemetry/watch plumbing once the solver stabilises.
   - [ ] Create `tests/milp/test_operational.py`:

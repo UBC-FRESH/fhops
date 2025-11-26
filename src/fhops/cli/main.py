@@ -54,7 +54,7 @@ from fhops.evaluation import (
     shift_dataframe,
     shift_dataframe_from_ensemble,
 )
-from fhops.model.milp.data import build_operational_bundle
+from fhops.model.milp.data import build_operational_bundle, bundle_from_dict, bundle_to_dict
 from fhops.model.milp.driver import solve_operational_milp
 from fhops.optimization.heuristics import (
     build_exploration_plan,
@@ -460,13 +460,25 @@ def solve_mip_cmd(
 
 @app.command("solve-mip-operational")
 def solve_mip_operational_cmd(
-    scenario: Path,
+    scenario: Path | None = typer.Argument(
+        None, help="Scenario YAML path (optional when --bundle-json is supplied)."
+    ),
     out: Path = typer.Option(..., "--out", help="Output CSV path"),
     solver: str = typer.Option("highs", help="MILP solver backend (default: highs)."),
     time_limit: int | None = typer.Option(
         None, "--time-limit", help="Optional wall-clock time limit (seconds)."
     ),
     gap: float | None = typer.Option(None, "--gap", help="Optional relative MIP gap target (0-1)."),
+    bundle_json: Path | None = typer.Option(
+        None,
+        "--bundle-json",
+        help="Load a serialized operational bundle (JSON) instead of building from the scenario.",
+    ),
+    dump_bundle: Path | None = typer.Option(
+        None,
+        "--dump-bundle",
+        help="Write the generated bundle to JSON before solving.",
+    ),
     debug: bool = typer.Option(False, "--debug", help="Verbose solver output/tracebacks."),
 ):
     """Solve the operational (day×shift) MILP prototype and emit assignments."""
@@ -474,12 +486,32 @@ def solve_mip_operational_cmd(
     if debug:
         _enable_rich_tracebacks()
         console.print(
-            f"[dim]types → scenario={type(scenario).__name__}, out={type(out).__name__}[/]"
+            f"[dim]scenario={scenario} bundle_json={bundle_json} out={type(out).__name__}[/]"
         )
 
-    sc = load_scenario(str(scenario))
-    pb = Problem.from_scenario(sc)
-    bundle = build_operational_bundle(pb)
+    if scenario is None and bundle_json is None:
+        raise typer.BadParameter("Provide either a scenario path or --bundle-json.")
+
+    pb: Problem | None = None
+    if scenario is not None:
+        sc = load_scenario(str(scenario))
+        pb = Problem.from_scenario(sc)
+        bundle = build_operational_bundle(pb)
+    elif bundle_json is not None:
+        bundle = None  # placeholder
+    else:
+        bundle = None
+
+    if bundle_json is not None:
+        with bundle_json.open("r", encoding="utf-8") as handle:
+            payload = json.load(handle)
+        bundle = bundle_from_dict(payload)
+    if bundle is None:
+        raise typer.BadParameter("Failed to prepare operational bundle.")
+
+    if dump_bundle is not None:
+        dump_bundle.parent.mkdir(parents=True, exist_ok=True)
+        dump_bundle.write_text(json.dumps(bundle_to_dict(bundle), indent=2), encoding="utf-8")
 
     result = solve_operational_milp(
         bundle,
@@ -497,11 +529,11 @@ def solve_mip_operational_cmd(
         f"objective={result.get('objective')}"
     )
     console.print(f"Assignments written to {out}")
-    if not assignments.empty:
+    if not assignments.empty and pb is not None:
         metrics = compute_kpis(pb, assignments)
         _print_kpi_summary(metrics)
     else:
-        console.print("[yellow]No feasible assignment returned; skipping KPI summary.[/]")
+        console.print("[yellow]No feasible assignment returned or scenario missing; skipping KPI summary.[/]")
 
 
 @app.command("solve-heur")

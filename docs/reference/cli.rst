@@ -22,6 +22,7 @@ Baseline usage:
 - ``fhops solve-mip tests/fixtures/regression/regression.yaml --out /tmp/regression_mip.csv``
 - ``fhops solve-mip examples/med42/scenario.yaml --driver gurobi --time-limit 600 --out tmp/med42_gurobi.csv`` — run the MIP with the Gurobi backend (requires installing ``fhops[gurobi]`` and configuring a licence).
 - ``fhops solve-mip-operational examples/minitoy/scenario.yaml --out tmp/minitoy_operational.csv --time-limit 60`` — run the day×shift operational MILP benchmark and emit assignments/KPIs for the minitoy scenario.
+  Use ``--dump-bundle foo.json`` to capture the serialized bundle for debugging, or ``--bundle-json foo.json`` to replay the solver without reloading the scenario.
 - ``fhops solve-heur tests/fixtures/regression/regression.yaml --out /tmp/regression_sa.csv``
 - ``fhops evaluate tests/fixtures/regression/regression.yaml --assignments tmp/regression_sa.csv --kpi-mode extended``
 - ``fhops eval playback --scenario tests/fixtures/regression/regression.yaml --assignments /tmp/regression_sa.csv --shift-out tmp/shift_summary.csv --day-out tmp/day_summary.csv``
