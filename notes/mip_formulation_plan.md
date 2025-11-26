@@ -385,8 +385,8 @@ day×shift discrete time structure.
         - Objective replicating SA scoring
           (`production - mobilisation_penalty - transition_penalty - landing_penalty
             - leftover_penalty`).
-  - [ ] Provide `solve_operational_milp(data, solver=highs, time_limit, gap)` returning
-        assignments DataFrame + KPI summary so downstream evaluation works unchanged.
+  - [x] Provide `solve_operational_milp(...)` in `fhops.model.milp.driver` so we can build the Pyomo model,
+        call HiGHS, and capture assignments/objectives in a regression-friendly format.
 
 - [ ] **CLI integration and regression tests**
   - [ ] Add `fhops solve-mip-operational` command that:
