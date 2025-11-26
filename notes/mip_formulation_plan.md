@@ -389,10 +389,10 @@ day×shift discrete time structure.
         call HiGHS, and capture assignments/objectives in a regression-friendly format.
 
 - [ ] **CLI integration and regression tests**
-  - [ ] Add `fhops solve-mip-operational` command that:
-        - Accepts `--scenario` (default), or `--bundle-json` for custom data.
-        - Emits `assignments.csv` identical in schema to SA/Tabu outputs.
-        - Streams telemetry/watch snapshots like the heuristics do.
+  - [x] Add `fhops solve-mip-operational` command that:
+        - Accepts `--scenario` plus standard solver flags and writes assignments identical to SA/Tabu outputs.
+        - Prints KPI summaries when feasible schedules exist (reusing `compute_kpis`).
+        - Future work: add telemetry/watch plumbing once the solver stabilises.
   - [ ] Create `tests/milp/test_operational.py`:
         - Tiny minitoy fixture → assert optimal objective/KPIs.
         - Compare MILP vs SA results for a seeded scenario (tolerances on KPIs).

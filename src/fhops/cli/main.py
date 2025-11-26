@@ -54,6 +54,8 @@ from fhops.evaluation import (
     shift_dataframe,
     shift_dataframe_from_ensemble,
 )
+from fhops.model.milp.data import build_operational_bundle
+from fhops.model.milp.driver import solve_operational_milp
 from fhops.optimization.heuristics import (
     build_exploration_plan,
     run_multi_start,
@@ -454,6 +456,52 @@ def solve_mip_cmd(
     console.print(f"Objective: {objective:.3f}. Saved to {out}")
     metrics = compute_kpis(pb, assignments)
     _print_kpi_summary(metrics)
+
+
+@app.command("solve-mip-operational")
+def solve_mip_operational_cmd(
+    scenario: Path,
+    out: Path = typer.Option(..., "--out", help="Output CSV path"),
+    solver: str = typer.Option("highs", help="MILP solver backend (default: highs)."),
+    time_limit: int | None = typer.Option(
+        None, "--time-limit", help="Optional wall-clock time limit (seconds)."
+    ),
+    gap: float | None = typer.Option(None, "--gap", help="Optional relative MIP gap target (0-1)."),
+    debug: bool = typer.Option(False, "--debug", help="Verbose solver output/tracebacks."),
+):
+    """Solve the operational (day×shift) MILP prototype and emit assignments."""
+
+    if debug:
+        _enable_rich_tracebacks()
+        console.print(
+            f"[dim]types → scenario={type(scenario).__name__}, out={type(out).__name__}[/]"
+        )
+
+    sc = load_scenario(str(scenario))
+    pb = Problem.from_scenario(sc)
+    bundle = build_operational_bundle(pb)
+
+    result = solve_operational_milp(
+        bundle,
+        solver=solver,
+        time_limit=time_limit,
+        gap=gap,
+        tee=debug,
+    )
+    assignments = cast(pd.DataFrame, result.get("assignments", pd.DataFrame()))
+    out.parent.mkdir(parents=True, exist_ok=True)
+    assignments.to_csv(str(out), index=False)
+    console.print(
+        f"Operational MILP solver_status={result.get('solver_status')} "
+        f"termination={result.get('termination_condition')} "
+        f"objective={result.get('objective')}"
+    )
+    console.print(f"Assignments written to {out}")
+    if not assignments.empty:
+        metrics = compute_kpis(pb, assignments)
+        _print_kpi_summary(metrics)
+    else:
+        console.print("[yellow]No feasible assignment returned; skipping KPI summary.[/]")
 
 
 @app.command("solve-heur")
