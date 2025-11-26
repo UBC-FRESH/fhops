@@ -1,24 +1,18 @@
 # 2025-12-09 — med42 Lahrsen-balanced dataset refresh
-- Regenerated the `examples/med42` block table from Lahrsen (2025) daily/cutblock ranges using a
-  fixed random seed, sampling stem size, volume per hectare, and density within the documented
-  med42 bands (≈0.25–0.8 m³ stems, 160–320 m³/ha, 0.8–2.6 ha blocks). The refreshed bundle now
-  carries 120 blocks and ~50.7 k m³ of work instead of the legacy 20-block configuration
-  (`examples/med42/data/blocks.csv`).
-- Recomputed productivity rates for the single four-machine ground-based system directly from the
-  FHOPS regressions (Lahrsen 2025 feller-buncher, ADV6N7 grapple skidder, Berry 2019 processor,
-  TN-261 loader-forwarder) without the previous ~0.14× ad-hoc scaling. For each new block we
-  evaluated all four machines and accumulated required hours per machine; block generation stopped
-  once the bottleneck machine implied >80 days of work on the processor alone, making the
-  *combined* four-machine capacity over 42 days insufficient to finish every block. In practice,
-  `fhops solve-heur ... --iters 20000` now completes ≈115 of 120 blocks (total_production ≈48.1 k m³)
-  with all machines at 100 % utilisation, giving the heuristics a genuine trade-off to prioritise
-  higher-yield blocks within the fixed horizon (`examples/med42/data/prod_rates.csv`).
-- Updated the med42 README to reflect the single-crew, 120-block, Lahrsen-balanced configuration
-  and to document the new stand metric ranges and regression sources
-  (`examples/med42/README.md`).
+- Added `scripts/rebuild_med42_dataset.py`, a deterministic generator that samples Lahrsen-range
+  stand metrics, enforces the “60 % of volume in ~20 ha blocks” rule, and stops once the processor
+  bottleneck exceeds the 42-day horizon. Running `python scripts/rebuild_med42_dataset.py` now
+  refreshes both `examples/med42/data/blocks.csv` and `examples/med42/data/prod_rates.csv`.
+- Regenerated the med42 block table into a 29-block mix (3 large 10–18 ha blocks plus 26 satellites
+  at 1.3–2.3 ha) totalling ≈22.5 k m³. The Lahrsen/ADV6N7/Berry/TN-261 productivity pipeline yields
+  per-day rates of 0.35–1.4 k m³, and the busiest machine (processor H3) now requires ≈46.3 days,
+  leaving the scenario slightly under-capacitated over the 42-day horizon.
+- Updated `examples/med42/README.md` with the new block counts, volume shares, and generator
+  instructions so users know how to refresh the dataset or tweak the target capacity ratio.
 - Added a `milp_refactor` pytest marker and filtered CI to run `pytest -m "not milp_refactor"`, temporarily
   skipping the heuristics/benchmark/playback regression tests while we rebuild the MIP backend and refresh fixtures.
-- Commands: `ruff format src tests`, `ruff check src tests`, `mypy src`, `pytest`,
+- Commands: `python scripts/rebuild_med42_dataset.py`, `ruff format scripts/rebuild_med42_dataset.py`,
+  `ruff format src tests`, `ruff check src tests`, `mypy src`, `pytest`,
   `pre-commit run --all-files`, `sphinx-build -b html docs _build/html -W`.
 
 # 2025-12-08 — SA block completion + med42 capacity bump

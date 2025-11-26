@@ -65,4 +65,3 @@ At this point, the SoftwareX workstream, heuristic debugging, dataset regenerati
 - Continuing to hang more work off this branch will make future review and bisecting painful.
 
 Merging back to `main` here gives us a clean, tested starting point. From there, I plan to open a new, tightly scoped branch focused on the **MILP reformulation plan** (implementing the operational MILP benchmark first, then layering in tactical and decomposition pieces as per `notes/mip_formulation_plan.md`).
-

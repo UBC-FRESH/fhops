@@ -323,3 +323,91 @@ decomposition schemes inspired by Frisk and Shabaev.
    - 4.2 Decide whether the complexity is justified for the intended FHOPS
      workflows (e.g., research vs production).
 
+## 4. Operational MILP rollout plan (shift × day grid)
+
+Plan for delivering the Section 3.1 operational MILP benchmark using the existing FHOPS
+day×shift discrete time structure.
+
+- [ ] **Define the MILP data interface**
+  - [ ] Extract a lightweight JSON/YAML bundle (`tmp/milp_bundle.json`) holding just the
+        pieces the MILP needs: blocks, machines, calendar, production rates, objective
+        weights, mobilisation parameters, landing capacities, locked assignments.
+  - [ ] Implement `fhops.model.milp.data.load_bundle(path)` returning a dataclass with
+        normalized arrays/mappings for `(machine, block, day, shift)` combinations.
+
+- [ ] **Formulate sets and variables on the shift grid**
+  - [ ] Sets: `M` machines, `B` blocks, `D` days, `S` shift IDs, `TS={(day, shift_id)}`.
+  - [ ] Binary assignment variable `x[m,b,t]` for machine m working block b at time slot t.
+  - [ ] Continuous production variable `prod[m,b,t]` (m³ per slot) bounded by
+        `rate[m,b] * x[m,b,t]`.
+  - [ ] Block completion indicator `complete[b]` and leftover volume `leftover[b]`.
+  - [ ] Optional transition/landing variables (`y`, `landing_slack`) mirroring the SA
+        penalty structure.
+  - [ ] Constraints:
+        - Machine availability: each `(m,t)` assigned to ≤1 block and zeroed if the calendar
+          marks the machine unavailable.
+        - Block balance: `Σ_{m,t} prod[m,b,t] + leftover[b] = work_required[b]`.
+        - Windows: forbid `x[m,b,t]` outside `[earliest_start[b], latest_finish[b]]`.
+        - Finish-the-block via either big-M “once started, stay until done” or cumulative
+          coverage constraints per block.
+
+- [ ] **Build the Pyomo model and solver harness**
+  - [ ] Add `fhops/model/milp/operational.py` with:
+        - Builder `build_operational_model(data)` assembling sets, vars, constraints.
+        - Objective replicating SA scoring
+          (`production - mobilisation_penalty - transition_penalty - landing_penalty
+            - leftover_penalty`).
+  - [ ] Provide `solve_operational_milp(data, solver=highs, time_limit, gap)` returning
+        assignments DataFrame + KPI summary so downstream evaluation works unchanged.
+
+- [ ] **CLI integration and regression tests**
+  - [ ] Add `fhops solve-mip-operational` command that:
+        - Accepts `--scenario` (default), or `--bundle-json` for custom data.
+        - Emits `assignments.csv` identical in schema to SA/Tabu outputs.
+        - Streams telemetry/watch snapshots like the heuristics do.
+  - [ ] Create `tests/milp/test_operational.py`:
+        - Tiny minitoy fixture → assert optimal objective/KPIs.
+        - Compare MILP vs SA results for a seeded scenario (tolerances on KPIs).
+  - [ ] Update `tests/test_regression_integration.py` to include the MILP solver once the
+        new objective scale/fixtures are in place.
+
+- [ ] **Documentation and changelog**
+  - [ ] Expand this note with any modeling trade-offs discovered during coding.
+  - [ ] Add README/docs snippets describing the operational MILP (inputs, limitations,
+        runtime expectations).
+  - [ ] Record completion in `CHANGE_LOG.md` before merging back to main.
+
+## 5. med42 dataset rebuild (20 ha block focus)
+
+Rework `examples/med42` so ≈60 % of the workload is carried by ~20 ha blocks at ~400 m³/ha
+(≈8 000 m³ per block) with the remainder in smaller satellites, while keeping the lone ground-based
+system slightly under-capacity (bottleneck days just above the 42-day horizon).
+
+- [x] **Define new block targets**
+  - Large blocks: sampled 10–18 ha (≈320–360 m³/ha) so each contributes ≈3.5–5.8 k m³.
+  - Satellites: sampled 1.3–2.3 ha (≈140–190 m³/ha) to supply 300–500 m³ filler blocks without
+    dragging the big-block volume share below 60 %.
+  - Final mix: 29 blocks total (3 large + 26 satellites) delivering 22.5 k m³ with a 65 % volume
+    share in the 20 ha class.
+
+- [x] **Consolidate blocks**
+  - Added `scripts/rebuild_med42_dataset.py` to deterministically regenerate the block table using a
+    fixed seed, Lahrsen-aligned stand metrics, and landing-aware window sampling.
+  - `python scripts/rebuild_med42_dataset.py` now refreshes `examples/med42/data/blocks.csv`
+    end-to-end (area, work, windows, sigmas).
+
+- [x] **Regenerate production rates and calendar/machines**
+  - `scripts/rebuild_med42_dataset.py` also recomputes `prod_rates.csv` directly from the FHOPS
+    helpers (Lahrsen feller-buncher, ADV6N7 skidder, Berry processor, TN-261 loader) and scales them
+    to the 24 h day.
+  - Calendar/machine files already model the single-system 42-day roster, so no changes required.
+
+- [ ] **Validate workload vs capacity**
+  - [ ] Run a quick `fhops solve-heur ... --iters 20000` to confirm heuristics now leave a couple of
+        blocks unfinished (processor bottleneck ≈46 days vs. 42-day horizon).
+  - [x] Update README/changelog with the new block counts, share, and generator instructions.
+
+- [ ] **Refresh fixtures/assets**
+  - [ ] Re-export med42 benchmark/playback/tuning assets (`docs/softwarex/assets/...`).
+  - [ ] Update tests/fixtures referencing med42 (playback CSVs, KPI snapshots) once the MILP
+        work is ready.
