@@ -183,10 +183,18 @@ reduced med42), so we can:
 **Top-level tasks:**
 
 1. **Define MILP data contract**
-   - 1.1 Identify the minimal subset of the FHOPS scenario contract required:
-     - Blocks: `id`, `work_required`, `earliest_start`, `latest_finish`,
-       `landing_id`, stand metrics (for productivity, if computed inside).
-     - Machines: `id`, `role`, `daily_hours`, `operating_cost`.
+    - 1.1 Identify the minimal subset of the FHOPS scenario contract required:
+    - Blocks: `id`, `work_required`, `earliest_start`, `latest_finish`,
+      `landing_id`, stand metrics (for productivity, if computed inside).
+      - Block-to-system assignments `system_id[b]` (or a default choice rule) so the MILP
+        knows which harvest system—and therefore which role order, buffers, and batch size—to
+        apply on each block.
+      - Machines: `id`, `role`, `daily_hours`, `operating_cost`.
+      - Harvest systems: ordered role list (e.g., feller → skidder → processor → loader),
+        per-role multiplicity (`count[h,r]` machines of role `r` assigned to system `h`),
+        head-start buffers `buffer_shifts[h, r_down]` (machine-shifts of upstream production
+        required before role `r_down` may begin), loader batch size `batch_volume[h]`
+        (defaults 30 m³ or 60 m³), and optional mobilisation overrides.
      - Calendar: `machine_id`, `day`, `available`.
      - Production rates: `machine_id`, `block_id`, `rate` (m³ per day/shift).
    - 1.2 Decide whether to treat shifts explicitly (day×shift) or aggregate to
@@ -202,6 +210,12 @@ reduced med42), so we can:
        block-completion flags.
      - Optional: start/finish time variables for blocks if we want Arora-style
        precedence structure later.
+     - Role-level staging variables:
+      - `stage[r,b,t] ≥ 0` to track the cumulative inventory (m³) available to
+        role `r` on block `b` by the end of slot `t`.
+      - `start_allowed[r,b,t] ∈ {0,1}` to linearise the “head-start” buffer when needed.
+     - Loader batch variables: integer `loads[h,b,t] ≥ 0` counting truckloads produced by
+       system `h` on block `b` during slot `t`.
    - 2.2 Constraints:
      - Machine capacity: each `m,t` works on at most one `b`, and only if
        calendar says available.
@@ -214,6 +228,26 @@ reduced med42), so we can:
        - If machine begins block `b` at `t`, then it must continue until
          `work_required[b]` is exhausted (can be modelled crudely with big‑M or
          via consecutive assignment constraints per block/machine).
+     - Role-level staging and buffers:
+       - Update staging inventory per slot:
+         `stage[r,b,t] = stage[r,b,t-1] + Σ_{m∈upstream(r)} prod[m,b,t] − Σ_{m∈role(r)} prod[m,b,t]`.
+        - Downstream production limited by staged volume:
+          `Σ_{m∈role(r)} prod[m,b,t] ≤ stage[r,b,t-1] / Δt`
+          or, with binary gating, impose
+          `stage[r,b,t-1] ≥ buffer_shifts[h,r] * shift_production[h,r] * start_allowed[r,b,t]`
+          and `x[m,b,t] ≤ start_allowed[r,b,t]` so machines cannot engage until the buffer is met.
+       - Buffers measured in machine-shifts: `shift_production[h,r] = Σ_{m∈role(r)} rate[m,b] / shifts_per_day`.
+         Balanced systems set `buffer_shifts[h,r]=0` so roles can start immediately once upstream
+         production is non-zero.
+     - Multiple machines per role:
+       - For each `(h,r)` ensure the aggregated assignment across the `count[h,r]` machines respects
+         capacity and staging. This lets, e.g., two skidders drain staged volume twice as fast
+         while still honouring head-start rules.
+     - Loader batching / trucking cadence:
+       - For each loader machine `m` belonging to system `h`, constrain
+         `prod[m,b,t] = batch_volume[h] * loads[h,b,t]`.
+       - Optionally add smoothness constraints such as `|loads[h,b,t] - loads[h,b,t-1]| ≤ ramp_limit`
+         to avoid bursty truck dispatching, or penalise deviations from a target loads-per-shift rate.
    - 2.3 Objective:
      - Maximise `Σ_b value[b] * completion[b] − penalty * leftover_volume[b]`.
      - Optionally include mobilisation cost approximations or soft penalties for
@@ -333,10 +367,12 @@ day×shift discrete time structure.
         pieces the MILP needs: blocks, machines, calendar, production rates, objective
         weights, mobilisation parameters, landing capacities, locked assignments.
   - [ ] Implement `fhops.model.milp.data.load_bundle(path)` returning a dataclass with
-        normalized arrays/mappings for `(machine, block, day, shift)` combinations.
+        normalized arrays/mappings for `(machine, block, day, shift)` combinations and
+        per-system metadata (machine-role multiplicity, head-start buffers, loader batch sizes).
 
 - [ ] **Formulate sets and variables on the shift grid**
   - [ ] Sets: `M` machines, `B` blocks, `D` days, `S` shift IDs, `TS={(day, shift_id)}`.
+        Include role-level groupings so a system can contribute multiple machines per role.
   - [ ] Binary assignment variable `x[m,b,t]` for machine m working block b at time slot t.
   - [ ] Continuous production variable `prod[m,b,t]` (m³ per slot) bounded by
         `rate[m,b] * x[m,b,t]`.
@@ -350,6 +386,16 @@ day×shift discrete time structure.
         - Windows: forbid `x[m,b,t]` outside `[earliest_start[b], latest_finish[b]]`.
         - Finish-the-block via either big-M “once started, stay until done” or cumulative
           coverage constraints per block.
+        - **Role staging / head-start buffers:** for each block/system, require downstream roles
+          to wait until the upstream cumulative production exceeds their configured buffer
+          (expressed in machine-shifts of work). For example, processors can start once feller
+          plus skidder production ≥ `buffer_shifts[system, processor] * Σ rate[processor]`.
+          Allow the buffer to be zero for perfectly balanced systems. Handle multi-machine roles
+          by aggregating upstream/downstream production across all machines of that role.
+        - **Loader batching:** enforce that loader production occurs in truckload-sized batches
+          (parameterised at the system level, e.g., 30 m³ for single bunk, 60 m³ for tandem).
+          Implement via integer variables counting truckloads per shift or by constraining
+          `prod[loader,b,t]` to be integer multiples of the batch volume to keep flow steady.
 
 - [ ] **Build the Pyomo model and solver harness**
   - [ ] Add `fhops/model/milp/operational.py` with:
@@ -376,6 +422,16 @@ day×shift discrete time structure.
   - [ ] Add README/docs snippets describing the operational MILP (inputs, limitations,
         runtime expectations).
   - [ ] Record completion in `CHANGE_LOG.md` before merging back to main.
+
+- [ ] **Open questions / parameter calibration**
+  - [ ] Derive reasonable default `buffer_shifts` per system role from the productivity models
+        (e.g., three skidder shifts ≈ 2 000 m³ staged) and expose CLI knobs so operators can tune them.
+  - [ ] Decide whether head-start buffers are block-specific (based on stand density) or purely
+        system-level; document how to override them in scenario input.
+  - [ ] Specify default loader batch sizes (single vs tandem) and whether mills impose per-day truck
+        cadence constraints that should appear in the MILP objective.
+  - [ ] Confirm how multi-machine roles interact with mobilisation penalties (e.g., moving both
+        skidders simultaneously vs sequential moves).
 
 ## 5. med42 dataset rebuild (20 ha block focus)
 
@@ -411,3 +467,18 @@ system slightly under-capacity (bottleneck days just above the 42-day horizon).
   - [ ] Re-export med42 benchmark/playback/tuning assets (`docs/softwarex/assets/...`).
   - [ ] Update tests/fixtures referencing med42 (playback CSVs, KPI snapshots) once the MILP
         work is ready.
+
+- [ ] **System rebalance + productivity tweaks**
+  - [ ] Regenerate the harvest system definition so med42 models a near-balanced crew:
+        2 feller-bunchers, 1 grapple skidder, 3 processors, and 3 loaders sharing the same
+        block roster. Allow multiple machines within a role to split across different blocks
+        whenever windows/head-start buffers make that advantageous for throughput.
+  - [ ] Update the generator script to estimate grapple-skidder productivity using an average
+        skidding distance derived from block area (assume square blocks and set distance to
+        half the inferred block width so we can approximate travel distances without a full
+        geometry model).
+  - [ ] Recompute `examples/med42/data/{machines,calendar,prod_rates}.csv` plus README docs to
+        reflect the balanced system, then rerun `fhops solve-heur` smoke tests to measure how the
+        extra processors/loaders change makespan/leftover volume.
+  - [ ] Capture the new rates/assumptions in the changelog and note any solver-behaviour updates
+        (e.g., whether heuristics are splitting processors across blocks as expected).
