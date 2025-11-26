@@ -362,40 +362,19 @@ decomposition schemes inspired by Frisk and Shabaev.
 Plan for delivering the Section 3.1 operational MILP benchmark using the existing FHOPS
 day×shift discrete time structure.
 
-- [ ] **Define the MILP data interface**
-  - [ ] Extract a lightweight JSON/YAML bundle (`tmp/milp_bundle.json`) holding just the
-        pieces the MILP needs: blocks, machines, calendar, production rates, objective
-        weights, mobilisation parameters, landing capacities, locked assignments.
-  - [ ] Implement `fhops.model.milp.data.load_bundle(path)` returning a dataclass with
-        normalized arrays/mappings for `(machine, block, day, shift)` combinations and
-        per-system metadata (machine-role multiplicity, head-start buffers, loader batch sizes).
+- [x] **Define the MILP data interface**
+  - [x] Extracted an in-memory bundle builder (`fhops.model.milp.data.build_operational_bundle`)
+        that captures machines, blocks, day×shift availability, production rates, landing links,
+        block→system mappings, and harvest system metadata ready for head-start/batching logic.
+  - [x] Added `OperationalMilpBundle`, `SystemConfig`, and `SystemRoleConfig` dataclasses plus a
+        regression test to keep the serialization stable (`tests/model/test_operational_bundle.py`).
 
 - [ ] **Formulate sets and variables on the shift grid**
-  - [ ] Sets: `M` machines, `B` blocks, `D` days, `S` shift IDs, `TS={(day, shift_id)}`.
-        Include role-level groupings so a system can contribute multiple machines per role.
-  - [ ] Binary assignment variable `x[m,b,t]` for machine m working block b at time slot t.
-  - [ ] Continuous production variable `prod[m,b,t]` (m³ per slot) bounded by
-        `rate[m,b] * x[m,b,t]`.
-  - [ ] Block completion indicator `complete[b]` and leftover volume `leftover[b]`.
-  - [ ] Optional transition/landing variables (`y`, `landing_slack`) mirroring the SA
-        penalty structure.
-  - [ ] Constraints:
-        - Machine availability: each `(m,t)` assigned to ≤1 block and zeroed if the calendar
-          marks the machine unavailable.
-        - Block balance: `Σ_{m,t} prod[m,b,t] + leftover[b] = work_required[b]`.
-        - Windows: forbid `x[m,b,t]` outside `[earliest_start[b], latest_finish[b]]`.
-        - Finish-the-block via either big-M “once started, stay until done” or cumulative
-          coverage constraints per block.
-        - **Role staging / head-start buffers:** for each block/system, require downstream roles
-          to wait until the upstream cumulative production exceeds their configured buffer
-          (expressed in machine-shifts of work). For example, processors can start once feller
-          plus skidder production ≥ `buffer_shifts[system, processor] * Σ rate[processor]`.
-          Allow the buffer to be zero for perfectly balanced systems. Handle multi-machine roles
-          by aggregating upstream/downstream production across all machines of that role.
-        - **Loader batching:** enforce that loader production occurs in truckload-sized batches
-          (parameterised at the system level, e.g., 30 m³ for single bunk, 60 m³ for tandem).
-          Implement via integer variables counting truckloads per shift or by constraining
-          `prod[loader,b,t]` to be integer multiples of the batch volume to keep flow steady.
+  - [x] Implemented an initial Pyomo builder (`fhops.model.milp.operational.build_operational_model`)
+        that instantiates the `M × B × S` tensor, machine-capacity / window / production-cap
+        constraints, block balance equations, and a production-maximising objective.
+  - [ ] Extend the builder with role-level staging variables, head-start buffers, loader batching,
+        and multi-machine role coordination per the design bullet list below.
 
 - [ ] **Build the Pyomo model and solver harness**
   - [ ] Add `fhops/model/milp/operational.py` with:
