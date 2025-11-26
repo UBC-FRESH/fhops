@@ -377,7 +377,7 @@ day×shift discrete time structure.
         and multi-machine role coordination per the design bullet list below.
         * [x] Implemented role compatibility filters, aggregated role production, inventory tracking,
           loader batching variables, and optional head-start binaries (triggered when buffer_shifts > 0).
-        * [ ] Wire actual buffer parameters + multi-machine mobilisation costs once scenario inputs expose them.
+        * [ ] Wire actual buffer parameters + multi-machine mobilisation / leftover penalties once scenario inputs expose them, and add tests that validate these constraints on toy scenarios.
 
 - [ ] **Build the Pyomo model and solver harness**
   - [ ] Add `fhops/model/milp/operational.py` with:
@@ -402,7 +402,7 @@ day×shift discrete time structure.
 - [ ] **Documentation and changelog**
   - [ ] Expand this note with any modeling trade-offs discovered during coding.
   - [ ] Add README/docs snippets describing the operational MILP (inputs, limitations,
-        runtime expectations).
+        runtime expectations) including the new bundle replay workflow.
   - [ ] Record completion in `CHANGE_LOG.md` before merging back to main.
 
 - [ ] **Open questions / parameter calibration**
@@ -414,6 +414,29 @@ day×shift discrete time structure.
         cadence constraints that should appear in the MILP objective.
   - [ ] Confirm how multi-machine roles interact with mobilisation penalties (e.g., moving both
         skidders simultaneously vs sequential moves).
+
+### Section 4 next actions
+
+1. **Bundle/schema enhancements**
+   - Add explicit `buffer_shifts`, loader batch volumes, and role multiplicity to the Scenario contract (or a sidecar JSON) so `build_operational_bundle` no longer relies on placeholders.
+   - Ensure `bundle_to_dict`/`bundle_from_dict` round-trip these parameters and add regression fixtures for dumped bundles.
+
+2. **Model refinements**
+   - Integrate mobilisation/transition penalties and landing slack variables so the objective mirrors SA/MIP scoring. Reuse the transition binary machinery from `fhops.optimization.mip.builder`.
+   - Add optional leftover volume slack to capture partial completion penalties.
+   - Expand unit tests (and a tiny Pyomo solve) to confirm the new constraints behave (e.g., mobilisation costs accrue when machines hop blocks).
+
+3. **Solver harness + telemetry**
+   - Extend `solve_operational_milp` to accept `driver="highs-exec"` and Gurobi variants, surface warm-start hooks, and emit telemetry records (objective trace, solver status).
+   - Hook `LiveWatch` into long-running MILP solves (even if only showing objective/kpi placeholders) so CLI parity with heuristics improves.
+
+4. **CLI & docs**
+   - Document the bundle replay workflow (`--dump-bundle` / `--bundle-json`) in `docs/howto/benchmarks.rst` and Sphinx CLI reference.
+   - Add a how-to describing when to use the operational MILP vs heuristics, expected runtimes, and data prerequisites.
+
+5. **Regression coverage**
+   - Implement `tests/milp/test_operational.py` comparing MILP vs SA on minitoy (objective, completed blocks).
+   - Add a `solve-mip-operational` entry to `tests/test_regression_integration.py` once med42 fixtures stabilize.
 
 ## 5. med42 dataset rebuild (20 ha block focus)
 

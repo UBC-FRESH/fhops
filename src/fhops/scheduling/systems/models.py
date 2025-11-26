@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from typing import Mapping
 
 from fhops.costing.machine_rates import normalize_machine_role
 from fhops.productivity.skidder_ft import DeckingCondition, TrailSpacingPattern
@@ -32,6 +33,9 @@ class HarvestSystem:
     jobs: Sequence[SystemJob]
     environment: str | None = None
     notes: str | None = None
+    role_counts: Mapping[str, int] | None = None
+    role_headstart_shifts: Mapping[str, float] | None = None
+    loader_batch_volume_m3: float | None = None
 
 
 def default_system_registry() -> Mapping[str, HarvestSystem]:

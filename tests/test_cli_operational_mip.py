@@ -1,6 +1,7 @@
 from fhops.cli.main import app
 from tests.cli import CliRunner, cli_text
 
+FIXTURE_BUNDLE = "tests/fixtures/milp/minitoy_operational_bundle.json"
 
 def test_solve_mip_operational_cli(tmp_path):
     runner = CliRunner()
@@ -29,7 +30,7 @@ def test_solve_mip_operational_cli(tmp_path):
         [
             "solve-mip-operational",
             "--bundle-json",
-            str(bundle_path),
+            FIXTURE_BUNDLE,
             "--out",
             str(out_path2),
             "--time-limit",

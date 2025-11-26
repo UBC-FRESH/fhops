@@ -493,21 +493,17 @@ def solve_mip_operational_cmd(
         raise typer.BadParameter("Provide either a scenario path or --bundle-json.")
 
     pb: Problem | None = None
+    bundle = None
     if scenario is not None:
         sc = load_scenario(str(scenario))
         pb = Problem.from_scenario(sc)
         bundle = build_operational_bundle(pb)
     elif bundle_json is not None:
-        bundle = None  # placeholder
-    else:
-        bundle = None
-
-    if bundle_json is not None:
         with bundle_json.open("r", encoding="utf-8") as handle:
             payload = json.load(handle)
         bundle = bundle_from_dict(payload)
-    if bundle is None:
-        raise typer.BadParameter("Failed to prepare operational bundle.")
+    else:
+        raise typer.BadParameter("Provide either a scenario path or --bundle-json.")
 
     if dump_bundle is not None:
         dump_bundle.parent.mkdir(parents=True, exist_ok=True)

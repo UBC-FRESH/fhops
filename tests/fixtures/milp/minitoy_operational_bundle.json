@@ -1,0 +1,2093 @@
+{
+  "machines": [
+    "H1",
+    "H2"
+  ],
+  "blocks": [
+    "B1",
+    "B2",
+    "B3"
+  ],
+  "days": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+  ],
+  "shifts": [
+    {
+      "day": 1,
+      "shift_id": "S1"
+    },
+    {
+      "day": 2,
+      "shift_id": "S1"
+    },
+    {
+      "day": 3,
+      "shift_id": "S1"
+    },
+    {
+      "day": 4,
+      "shift_id": "S1"
+    },
+    {
+      "day": 5,
+      "shift_id": "S1"
+    },
+    {
+      "day": 6,
+      "shift_id": "S1"
+    },
+    {
+      "day": 7,
+      "shift_id": "S1"
+    },
+    {
+      "day": 8,
+      "shift_id": "S1"
+    },
+    {
+      "day": 9,
+      "shift_id": "S1"
+    },
+    {
+      "day": 10,
+      "shift_id": "S1"
+    },
+    {
+      "day": 11,
+      "shift_id": "S1"
+    },
+    {
+      "day": 12,
+      "shift_id": "S1"
+    },
+    {
+      "day": 13,
+      "shift_id": "S1"
+    },
+    {
+      "day": 14,
+      "shift_id": "S1"
+    }
+  ],
+  "machine_roles": {
+    "H1": "feller_buncher",
+    "H2": "grapple_skidder"
+  },
+  "machine_daily_hours": {
+    "H1": 24.0,
+    "H2": 24.0
+  },
+  "production_rates": [
+    {
+      "machine_id": "H1",
+      "block_id": "B1",
+      "rate": 3.5
+    },
+    {
+      "machine_id": "H1",
+      "block_id": "B2",
+      "rate": 2.0
+    },
+    {
+      "machine_id": "H1",
+      "block_id": "B3",
+      "rate": 1.5
+    },
+    {
+      "machine_id": "H2",
+      "block_id": "B1",
+      "rate": 2.5
+    },
+    {
+      "machine_id": "H2",
+      "block_id": "B2",
+      "rate": 3.0
+    },
+    {
+      "machine_id": "H2",
+      "block_id": "B3",
+      "rate": 2.0
+    }
+  ],
+  "work_required": {
+    "B1": 20.0,
+    "B2": 18.0,
+    "B3": 16.0
+  },
+  "windows": {
+    "B1": [
+      1,
+      14
+    ],
+    "B2": [
+      1,
+      14
+    ],
+    "B3": [
+      3,
+      14
+    ]
+  },
+  "landing_for_block": {
+    "B1": "L1",
+    "B2": "L1",
+    "B3": "L2"
+  },
+  "landing_capacity": {
+    "L1": 2,
+    "L2": 1
+  },
+  "availability_day": [
+    {
+      "machine_id": "H1",
+      "day": 1,
+      "available": 1
+    },
+    {
+      "machine_id": "H1",
+      "day": 2,
+      "available": 1
+    },
+    {
+      "machine_id": "H1",
+      "day": 3,
+      "available": 0
+    },
+    {
+      "machine_id": "H1",
+      "day": 4,
+      "available": 1
+    },
+    {
+      "machine_id": "H1",
+      "day": 5,
+      "available": 1
+    },
+    {
+      "machine_id": "H1",
+      "day": 6,
+      "available": 1
+    },
+    {
+      "machine_id": "H1",
+      "day": 7,
+      "available": 1
+    },
+    {
+      "machine_id": "H1",
+      "day": 8,
+      "available": 1
+    },
+    {
+      "machine_id": "H1",
+      "day": 9,
+      "available": 1
+    },
+    {
+      "machine_id": "H1",
+      "day": 10,
+      "available": 1
+    },
+    {
+      "machine_id": "H1",
+      "day": 11,
+      "available": 1
+    },
+    {
+      "machine_id": "H1",
+      "day": 12,
+      "available": 1
+    },
+    {
+      "machine_id": "H1",
+      "day": 13,
+      "available": 1
+    },
+    {
+      "machine_id": "H1",
+      "day": 14,
+      "available": 1
+    },
+    {
+      "machine_id": "H2",
+      "day": 1,
+      "available": 1
+    },
+    {
+      "machine_id": "H2",
+      "day": 2,
+      "available": 1
+    },
+    {
+      "machine_id": "H2",
+      "day": 3,
+      "available": 1
+    },
+    {
+      "machine_id": "H2",
+      "day": 4,
+      "available": 1
+    },
+    {
+      "machine_id": "H2",
+      "day": 5,
+      "available": 1
+    },
+    {
+      "machine_id": "H2",
+      "day": 6,
+      "available": 1
+    },
+    {
+      "machine_id": "H2",
+      "day": 7,
+      "available": 1
+    },
+    {
+      "machine_id": "H2",
+      "day": 8,
+      "available": 1
+    },
+    {
+      "machine_id": "H2",
+      "day": 9,
+      "available": 1
+    },
+    {
+      "machine_id": "H2",
+      "day": 10,
+      "available": 1
+    },
+    {
+      "machine_id": "H2",
+      "day": 11,
+      "available": 1
+    },
+    {
+      "machine_id": "H2",
+      "day": 12,
+      "available": 1
+    },
+    {
+      "machine_id": "H2",
+      "day": 13,
+      "available": 1
+    },
+    {
+      "machine_id": "H2",
+      "day": 14,
+      "available": 1
+    }
+  ],
+  "availability_shift": [],
+  "objective_weights": {
+    "production": 1.0,
+    "mobilisation": 0.5,
+    "transitions": 0.0,
+    "landing_slack": 0.0
+  },
+  "block_system": {
+    "B1": "ground_fb_skid",
+    "B2": "ground_fb_skid",
+    "B3": "ground_fb_skid"
+  },
+  "systems": {
+    "ground_fb_skid": {
+      "system_id": "ground_fb_skid",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "feller_buncher",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "grapple_skidder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "feller_buncher"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "grapple_skidder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "ground_fb_loader_liveheel": {
+      "system_id": "ground_fb_loader_liveheel",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "feller_buncher",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "grapple_skidder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "feller_buncher"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "grapple_skidder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "ground_hand_shovel": {
+      "system_id": "ground_hand_shovel",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "shovel_logger",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "shovel_logger"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "ground_fb_shovel": {
+      "system_id": "ground_fb_shovel",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "feller_buncher",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "shovel_logger",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "feller_buncher"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "shovel_logger"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "ground_salvage_grapple": {
+      "system_id": "ground_salvage_grapple",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "feller_buncher",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "grapple_skidder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "feller_buncher"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "grapple_skidder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "thinning_adv1n12_forwarder": {
+      "system_id": "thinning_adv1n12_forwarder",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling_processing",
+          "role": "single_grip_harvester",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "forwarder",
+          "prerequisites": [
+            "felling_processing"
+          ],
+          "upstream_roles": [
+            "single_grip_harvester"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "forwarder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "thinning_adv1n12_fulltree": {
+      "system_id": "thinning_adv1n12_fulltree",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "grapple_skidder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "grapple_skidder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "ctl": {
+      "system_id": "ctl",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling_processing",
+          "role": "single_grip_harvester",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "forwarder",
+          "prerequisites": [
+            "felling_processing"
+          ],
+          "upstream_roles": [
+            "single_grip_harvester"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "forwarder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "steep_tethered": {
+      "system_id": "steep_tethered",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "tethered_harvester",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "tethered_shovel_or_skidder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "tethered_harvester"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "tethered_shovel_or_skidder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_standing": {
+      "system_id": "cable_standing",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_or_mech_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "skyline_yarder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_or_mech_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "skyline_yarder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_standing_tr125_single": {
+      "system_id": "cable_standing_tr125_single",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_or_mech_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "skyline_yarder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_or_mech_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "skyline_yarder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_standing_tr125_strip": {
+      "system_id": "cable_standing_tr125_strip",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_or_mech_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "skyline_yarder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_or_mech_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "skyline_yarder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_running": {
+      "system_id": "cable_running",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_or_mech_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "grapple_yarder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_or_mech_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "grapple_yarder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_running_tn157_combined": {
+      "system_id": "cable_running_tn157_combined",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_or_mech_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "grapple_yarder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_or_mech_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "grapple_yarder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_highlead_tn147": {
+      "system_id": "cable_highlead_tn147",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "grapple_yarder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "grapple_yarder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_running_tr122_extended": {
+      "system_id": "cable_running_tr122_extended",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_or_mech_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "grapple_yarder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_or_mech_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "grapple_yarder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_running_tr122_shelterwood": {
+      "system_id": "cable_running_tr122_shelterwood",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_or_mech_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "grapple_yarder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_or_mech_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "grapple_yarder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_running_tr122_clearcut": {
+      "system_id": "cable_running_tr122_clearcut",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_or_mech_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "grapple_yarder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_or_mech_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "grapple_yarder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_partial_tr127_block1": {
+      "system_id": "cable_partial_tr127_block1",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_or_mech_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "skyline_yarder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_or_mech_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "skyline_yarder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_partial_tr127_block5": {
+      "system_id": "cable_partial_tr127_block5",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_or_mech_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "skyline_yarder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_or_mech_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "skyline_yarder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_running_adv5n28_clearcut": {
+      "system_id": "cable_running_adv5n28_clearcut",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_or_mech_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "grapple_yarder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_or_mech_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "grapple_yarder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_running_adv5n28_shelterwood": {
+      "system_id": "cable_running_adv5n28_shelterwood",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_or_mech_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "grapple_yarder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_or_mech_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "grapple_yarder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_running_sr54": {
+      "system_id": "cable_running_sr54",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "feller_buncher",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "grapple_yarder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "feller_buncher"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "grapple_yarder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_running_tr75_bunched": {
+      "system_id": "cable_running_tr75_bunched",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "feller_buncher",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "grapple_yarder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "feller_buncher"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "grapple_yarder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_running_tr75_handfelled": {
+      "system_id": "cable_running_tr75_handfelled",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "grapple_yarder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "grapple_yarder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_running_fncy12": {
+      "system_id": "cable_running_fncy12",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_or_mech_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "skyline_yarder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_or_mech_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "skyline_yarder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_micro_ecologger": {
+      "system_id": "cable_micro_ecologger",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "skyline_ecologger_tn173",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "skyline_ecologger_tn173"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_micro_gabriel": {
+      "system_id": "cable_micro_gabriel",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "skyline_gabriel_tn173",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "skyline_gabriel_tn173"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_micro_christie": {
+      "system_id": "cable_micro_christie",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "skyline_christie_tn173",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "skyline_christie_tn173"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_micro_teletransporteur": {
+      "system_id": "cable_micro_teletransporteur",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "skyline_teletransporteur_tn173",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "skyline_teletransporteur_tn173"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_micro_timbermaster": {
+      "system_id": "cable_micro_timbermaster",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "skyline_timbermaster_tn173",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "skyline_timbermaster_tn173"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "cable_micro_hi_skid": {
+      "system_id": "cable_micro_hi_skid",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "skyline_hi_skid",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        }
+      ]
+    },
+    "cable_salvage_grapple": {
+      "system_id": "cable_salvage_grapple",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_or_mech_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "grapple_yarder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_or_mech_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "grapple_yarder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    },
+    "helicopter": {
+      "system_id": "helicopter",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "hand_faller",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "helicopter_longline",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "hand_faller"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "helicopter_longline"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 1
+        }
+      ]
+    }
+  }
+}

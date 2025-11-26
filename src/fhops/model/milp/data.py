@@ -26,6 +26,7 @@ class SystemRoleConfig:
     upstream_roles: tuple[str, ...]
     buffer_shifts: float = 0.0
     is_loader: bool = False
+    count: int = 1
 
 
 @dataclass(frozen=True)
@@ -124,6 +125,15 @@ def _build_system_configs(systems: Iterable[HarvestSystem]) -> dict[str, SystemC
     for system in systems:
         role_configs: list[SystemRoleConfig] = []
         role_by_job: dict[str, str] = {job.name: job.machine_role for job in system.jobs}
+        role_counts = {role: max(1, int(count)) for role, count in (system.role_counts or {}).items()}
+        role_buffers = {
+            role: float(value) for role, value in (system.role_headstart_shifts or {}).items()
+        }
+        loader_batch = (
+            float(system.loader_batch_volume_m3)
+            if system.loader_batch_volume_m3 is not None
+            else DEFAULT_TRUCKLOAD_M3
+        )
         for job in system.jobs:
             upstream_roles = tuple(
                 role_by_job.get(prereq) for prereq in job.prerequisites if prereq in role_by_job
@@ -134,14 +144,15 @@ def _build_system_configs(systems: Iterable[HarvestSystem]) -> dict[str, SystemC
                     role=job.machine_role,
                     prerequisites=tuple(job.prerequisites),
                     upstream_roles=upstream_roles,
-                    buffer_shifts=0.0,
+                    buffer_shifts=role_buffers.get(job.machine_role, 0.0),
                     is_loader=_is_loader_job(job),
+                    count=role_counts.get(job.machine_role, 1),
                 )
             )
         configs[system.system_id] = SystemConfig(
             system_id=system.system_id,
             roles=tuple(role_configs),
-            loader_batch_volume_m3=DEFAULT_TRUCKLOAD_M3,
+            loader_batch_volume_m3=loader_batch,
         )
     return configs
 
@@ -197,6 +208,7 @@ def bundle_to_dict(bundle: OperationalMilpBundle) -> dict[str, Any]:
                         "upstream_roles": list(role_cfg.upstream_roles),
                         "buffer_shifts": role_cfg.buffer_shifts,
                         "is_loader": role_cfg.is_loader,
+                        "count": role_cfg.count,
                     }
                     for role_cfg in cfg.roles
                 ],
@@ -239,6 +251,7 @@ def bundle_from_dict(payload: Mapping[str, Any]) -> OperationalMilpBundle:
                     upstream_roles=tuple(role_data.get("upstream_roles", [])),
                     buffer_shifts=float(role_data.get("buffer_shifts", 0.0)),
                     is_loader=bool(role_data.get("is_loader", False)),
+                    count=int(role_data.get("count", 1)),
                 )
                 for role_data in system_data.get("roles", [])
             ),
