@@ -1,0 +1,55 @@
+% FHOPS manuscript (SoftwareX submission wrapper)
+\documentclass[preprint,review,12pt]{elsarticle}
+
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{lineno}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta}
+\usepackage{booktabs}
+\modulolinenumbers[5]
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\journal{SoftwareX}
+
+% Shared metadata macros will live here later
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{FHOPS: a reproducible optimisation and benchmarking stack for forest harvest operations}
+
+\author[ubc]{Gregory Paradis\corref{cor1}}
+\cortext[cor1]{Corresponding author: gregory.paradis@ubc.ca}
+\address[ubc]{Faculty of Forestry, University of British Columbia, Canada}
+
+\input{sections/highlights}
+
+\input{sections/abstract}
+
+\begin{keyword}
+forest operations \sep optimisation \sep reproducibility \sep heuristics \sep Pyomo \sep telemetry
+\end{keyword}
+
+\input{metadata/code_metadata}
+\input{metadata/current_code_version}
+
+\end{frontmatter}
+
+\linenumbers
+
+\input{sections/introduction}
+\input{sections/software_description}
+\input{sections/illustrative_example}
+\input{sections/impact}
+\input{sections/conclusions}
+\input{sections/acknowledgments}
+
+\bibliographystyle{elsarticle-num}
+\bibliography{references}
+
+\end{document}

@@ -1,0 +1,177 @@
+name: synthetic-large
+tier: large
+seed: 303
+counts:
+  blocks: 16
+  machines: 6
+  landings: 3
+  calendar: 672
+  production_rates: 96
+terrain_counts:
+  steep: 6
+  snow: 3
+  mixed: 7
+prescription_counts:
+  variable_retention: 8
+  clearcut: 8
+crew_capabilities:
+  crew-1:
+  - forwarder
+  - grader
+  - harvester
+  crew-2:
+  - grader
+  - processor
+  crew-3:
+  - harvester
+  - processor
+  crew-4:
+  - grader
+  - harvester
+  crew-1-2:
+  - forwarder
+  - grader
+  - harvester
+  crew-2-2:
+  - grader
+  - processor
+blackouts:
+- start_day: 2
+  end_day: 3
+  reason: synthetic-blackout
+- start_day: 5
+  end_day: 6
+  reason: synthetic-blackout
+- start_day: 12
+  end_day: 14
+  reason: synthetic-blackout
+- start_day: 18
+  end_day: 19
+  reason: synthetic-blackout
+- start_day: 20
+  end_day: 22
+  reason: synthetic-blackout
+- start_day: 23
+  end_day: 24
+  reason: synthetic-blackout
+- start_day: 26
+  end_day: 27
+  reason: synthetic-blackout
+- start_day: 29
+  end_day: 31
+  reason: synthetic-blackout
+- start_day: 35
+  end_day: 37
+  reason: synthetic-blackout
+- start_day: 40
+  end_day: 42
+  reason: synthetic-blackout
+- start_day: 43
+  end_day: 44
+  reason: synthetic-blackout
+- start_day: 45
+  end_day: 47
+  reason: synthetic-blackout
+- start_day: 49
+  end_day: 51
+  reason: synthetic-blackout
+- start_day: 69
+  end_day: 71
+  reason: synthetic-blackout
+- start_day: 76
+  end_day: 78
+  reason: synthetic-blackout
+- start_day: 86
+  end_day: 88
+  reason: synthetic-blackout
+- start_day: 99
+  end_day: 101
+  reason: synthetic-blackout
+- start_day: 105
+  end_day: 107
+  reason: synthetic-blackout
+shifts_per_day: 3
+shift_hours: 8.0
+terrain_profile:
+  values:
+  - steep
+  - mixed
+  - snow
+  weights:
+  - 0.35
+  - 0.4
+  - 0.25
+prescription_profile:
+  values:
+  - clearcut
+  - variable_retention
+  weights:
+  - 0.5
+  - 0.5
+system_mix:
+  ground_fb_skid: 0.1487603305785124
+  ctl: 0.1487603305785124
+  steep_tethered: 0.09917355371900827
+  cable_running: 0.08264462809917356
+  cable_running_adv5n28_clearcut: 0.03305785123966942
+  cable_running_adv5n28_shelterwood: 0.03305785123966942
+  cable_running_fncy12: 0.04132231404958678
+  cable_highlead_tn147: 0.01652892561983471
+  cable_running_tr122_extended: 0.01652892561983471
+  cable_running_tr122_shelterwood: 0.01652892561983471
+  cable_running_tr122_clearcut: 0.01652892561983471
+  cable_micro_ecologger: 0.04132231404958678
+  cable_micro_gabriel: 0.04132231404958678
+  cable_micro_christie: 0.04132231404958678
+  cable_micro_teletransporteur: 0.04132231404958678
+  cable_micro_timbermaster: 0.04132231404958678
+  cable_micro_hi_skid: 0.04132231404958678
+  cable_running_sr54: 0.01652892561983471
+  cable_running_tr75_bunched: 0.01652892561983471
+  cable_running_tr75_handfelled: 0.01652892561983471
+  cable_standing_tr125_single: 0.01652892561983471
+  cable_standing_tr125_strip: 0.01652892561983471
+  cable_partial_tr127_block1: 0.008264462809917356
+  cable_partial_tr127_block5: 0.008264462809917356
+blackout_biases:
+- start_day: 5
+  end_day: 7
+  probability: 0.4
+  duration: &id001
+  - 2
+  - 3
+- start_day: 12
+  end_day: 14
+  probability: 0.35
+  duration: *id001
+sampling_config:
+  samples: 18
+  base_seed: 123
+  downtime:
+    enabled: true
+    seed_offset: 0
+    probability: 0.2
+    mean_duration_hours: 5.0
+    std_duration_hours: 2.0
+    max_concurrent: 2
+    target_machine_roles: null
+  weather:
+    enabled: true
+    seed_offset: 0
+    day_probability: 0.35
+    severity_levels:
+      light: 0.1
+      moderate: 0.4
+      severe: 0.6
+    correlated_days: true
+    impact_window_days: 3
+    affected_shifts: null
+  landing:
+    enabled: true
+    seed_offset: 0
+    probability: 0.25
+    capacity_multiplier_range:
+    - 0.35
+    - 0.7
+    duration_days: 3
+    target_landing_ids: null

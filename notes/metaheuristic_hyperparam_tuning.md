@@ -154,7 +154,7 @@ Guidelines:
 
 | Layer | Parameters / flags | Typical range / notes | Tier coverage |
 |-------|--------------------|------------------------|---------------|
-| **Simulated Annealing (`solve-heur`, `tune-random/grid/bayes`)** | `--iters`, `--temperature0`, `--cooling-rate` | Iteration horizon (short/medium/long tiers: 150/300/600). Initial temp 50–500, cooling 0.90–0.999. | All tiers |
+| **Simulated Annealing (`solve-heur`, `tune-random/grid/bayes`)** | `--iters`, `--temperature0`, `--cooling-rate`, `--restart-interval` | Iteration horizon (short/medium/long tiers: 150/300/600). Initial temp 50–500, cooling 0.90–0.999 (empirically, very slow cooling such as 0.99999 with aggressive restarts still progresses steadily and can run through 200 k iterations in ~4 min while continuing to make small/medium improvements). Random tuner now samples batch sizes 1–5, cooling rates 0.995–0.99999, and restart intervals {auto,100,…,1500} alongside operator weights. | All tiers |
 | | `--batch-neighbours`, `--parallel-workers` | Batch candidate sampling (1–5) with optional thread pool. | Grid presets iterate batch sizes; medium/long tiers allow worker pools. |
 | | `--operator`, `--operator-weight`, `--operator-preset` | Operator enable/weights; presets `balanced`, `explore`, `mobilisation`, `agentic`. | Grid enumerates preset×batch; random/Bayesian sample weight vectors. |
 | | `--multi-start`, profile extras (reheating, temperature schedules) | Multi-start count, seed progression, reheating frequency (via profiles). | Medium/long tiers may enable; Bayesian/agentic loops mutate through `tuner_meta`. |

@@ -1,0 +1,14 @@
+% AUTO-GENERATED from heuristics_matrix.csv -- do not edit directly.
+\begin{tabular}{|l|l|l|l|l|}
+  \hline
+  solver & default\_profile & search\_strategy & best\_for & tuning\_notes \\
+  \hline
+  Simulated Annealing (SA) & balanced & Probabilistic move/swap neighbourhood with cooling schedule & Small-to-medium bundles needing quick feasible schedules & Use --sa-iters 2500+ for med42; --compare-preset diversify exposes swap-heavy exploration, while mobilisation preset biases toward distance-aware moves \\
+  \hline
+  SA (mobilisation preset) & mobilisation & Adds mobilisation\_shake and higher landing penalties & Scenarios with tight landing caps or long walk thresholds & Pair with --compare-preset mobilisation plus lower --sa-iters to highlight mobilisation shake vs. default \\
+  \hline
+  Iterated Local Search (ILS) & ils\_default & Deterministic restart loop wrapping greedy local search & Fine-tuning SA solutions on bounded horizons (<=150 assignments) & Expose --include-ils with \textasciitilde{}400 iterations; set --ils-batch-neighbours 4 when CPU budget allows \\
+  \hline
+  Tabu Search & tabu\_default & Short-term memory over swap/move neighbourhood & High-mobility cases (synthetic tier) where aggressive diversification helps & --tabu-iters 2500 plus automatic tenure delivered best synthetic\_small runs; capture telemetry for objective trace \\
+  \hline
+\end{tabular}

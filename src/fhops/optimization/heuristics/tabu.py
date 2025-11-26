@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import random as _random
+import time
 from collections import deque
 from contextlib import nullcontext
 from dataclasses import dataclass
@@ -21,6 +22,7 @@ from fhops.optimization.heuristics.sa import (
 )
 from fhops.scenario.contract import Problem
 from fhops.telemetry import RunTelemetryLogger
+from fhops.telemetry.watch import Snapshot, SnapshotSink
 
 TABU_DEFAULT_OPERATOR_WEIGHTS: dict[str, float] = {
     "swap": 1.0,
@@ -67,6 +69,9 @@ def solve_tabu(
     stall_limit: int = 1_000_000,
     telemetry_log: str | Path | None = None,
     telemetry_context: dict[str, Any] | None = None,
+    watch_sink: SnapshotSink | None = None,
+    watch_interval: int | None = None,
+    watch_metadata: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     """Run Tabu Search using the shared operator registry.
 
@@ -94,6 +99,12 @@ def solve_tabu(
         Optional telemetry JSONL path for recording solver progress and metrics.
     telemetry_context : dict[str, Any] | None
         Additional context appended to telemetry entries (scenario features, tuner metadata, etc.).
+    watch_sink : SnapshotSink | None, optional
+        Optional callback receiving live :class:`fhops.telemetry.watch.Snapshot` updates.
+    watch_interval : int | None, optional
+        Emit watch updates every ``watch_interval`` iterations (defaults to ``iters / 20``).
+    watch_metadata : dict[str, str] | None
+        Metadata merged into each snapshot (scenario/solver labels, run IDs, etc.).
 
     Returns
     -------
@@ -173,12 +184,23 @@ def solve_tabu(
             else None,
         )
 
+    watch_meta = dict(watch_metadata or {})
+    watch_interval_value = watch_interval or max(1, iters // 20 or 1)
+    watch_scenario = watch_meta.get("scenario") or scenario_name or "unknown"
+    watch_solver = watch_meta.get("solver") or "tabu"
+    window_size = max(10, min(200, iters // 10 or 10))
+    rolling_scores: deque[float] = deque(maxlen=window_size)
+    improvement_window: deque[int] = deque(maxlen=window_size)
+    last_watch_best: float | None = None
+    last_emitted_step: int | None = None
+
     with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
         current = _init_greedy(pb)
         current_score = _evaluate(pb, current)
         initial_score = current_score
         best = current
         best_score = current_score
+        rolling_scores.append(float(current_score))
 
         tenure = tabu_tenure if tabu_tenure is not None else max(10, len(pb.scenario.machines))
         tabu_queue: deque[tuple[tuple[str, int, str, str | None, str | None], ...]] = deque(
@@ -192,8 +214,61 @@ def solve_tabu(
         proposals = 0
         improvements = 0
         stalls = 0
+        restarts = 0
         operator_stats: dict[str, dict[str, float]] = {}
+        run_start = time.perf_counter()
+        workers_total = worker_arg if worker_arg and worker_arg > 1 else None
+        current_workers_busy: int | None = workers_total
 
+        def emit_snapshot(iteration: int) -> None:
+            nonlocal last_watch_best, last_emitted_step
+            if not watch_sink:
+                return
+            rolling_mean = (
+                float(sum(rolling_scores) / len(rolling_scores))
+                if rolling_scores
+                else float(current_score)
+            )
+            window_acceptance = (
+                float(sum(improvement_window) / len(improvement_window))
+                if improvement_window
+                else None
+            )
+            acceptance_rate = (improvements / proposals) if proposals else None
+            delta_objective = (
+                float(best_score - last_watch_best) if last_watch_best is not None else 0.0
+            )
+            last_watch_best = float(best_score)
+            last_emitted_step = iteration
+            metadata = {
+                **watch_meta,
+                "iterations_since_improvement": str(stalls),
+                "tabu_tenure": str(tenure),
+                "restarts": str(restarts),
+            }
+            watch_sink(
+                Snapshot(
+                    scenario=watch_scenario,
+                    solver=watch_solver,
+                    iteration=iteration,
+                    max_iterations=iters,
+                    objective=float(best_score),
+                    best_gap=None,
+                    runtime_seconds=time.perf_counter() - run_start,
+                    acceptance_rate=acceptance_rate,
+                    restarts=restarts,
+                    workers_busy=current_workers_busy,
+                    workers_total=workers_total,
+                    current_objective=float(current_score),
+                    rolling_objective=rolling_mean,
+                    temperature=None,
+                    acceptance_rate_window=window_acceptance,
+                    delta_objective=delta_objective,
+                    metadata=metadata,
+                )
+            )
+
+        last_iteration = 0
         for step in range(1, iters + 1):
             candidates = _neighbors(
                 pb,
@@ -206,6 +281,8 @@ def solve_tabu(
             evaluations = _evaluate_candidates(pb, candidates, worker_arg)
             if not evaluations:
                 break
+            if workers_total:
+                current_workers_busy = min(workers_total, len(evaluations)) if evaluations else 0
 
             best_candidate_tuple: tuple[Any, ...] | None = None
             fallback_candidate_tuple: tuple[Any, ...] | None = None
@@ -232,6 +309,7 @@ def solve_tabu(
             candidate, score, move_sig = best_candidate_tuple
             current = candidate
             current_score = score
+            rolling_scores.append(float(current_score))
 
             if move_sig in tabu_set:
                 tabu_set.discard(move_sig)
@@ -245,13 +323,17 @@ def solve_tabu(
             tabu_queue.append(move_sig)
             tabu_set.add(move_sig)
 
+            best_improved = False
             if current_score > best_score:
                 best = current
                 best_score = current_score
                 stalls = 0
                 improvements += 1
+                best_improved = True
             else:
                 stalls += 1
+            improvement_window.append(1 if best_improved else 0)
+            last_iteration = step
 
             if run_logger and telemetry_logger and telemetry_logger.step_interval:
                 if step == 1 or step == iters or step % telemetry_logger.step_interval == 0:
@@ -266,8 +348,20 @@ def solve_tabu(
                         accepted_moves=improvements,
                     )
 
+            if watch_sink and (step == 1 or step == iters or (step % watch_interval_value == 0)):
+                emit_snapshot(step)
+
             if stalls >= stall_limit:
-                break
+                restarts += 1
+                stalls = 0
+                current = best
+                current_score = best_score
+                tabu_queue.clear()
+                tabu_set.clear()
+                continue
+
+        if watch_sink and last_iteration and last_emitted_step != last_iteration:
+            emit_snapshot(last_iteration)
 
         rows = []
         for machine_id, plan in best.plan.items():
@@ -291,6 +385,7 @@ def solve_tabu(
             "improvements": improvements,
             "stall_limit": stall_limit,
             "tabu_tenure": tenure,
+            "restarts": restarts,
             "operators": registry.weights(),
             "algorithm": "tabu",
         }

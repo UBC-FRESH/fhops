@@ -1,0 +1,17 @@
+machine_id,block_id,day,shift_id,assigned
+M5,B11,1,S1,1
+M1,B3,5,S1,1
+M2,B4,5,S1,1
+M3,B12,5,S1,1
+M5,B3,5,S1,1
+M3,B15,8,S1,1
+M4,B2,8,S1,1
+M5,B8,8,S1,1
+M6,B7,8,S1,1
+M2,B2,9,S1,1
+M3,B15,9,S1,1
+M5,B9,9,S1,1
+M2,B1,10,S1,1
+M3,B9,10,S1,1
+M4,B1,10,S1,1
+M5,B6,15,S1,1

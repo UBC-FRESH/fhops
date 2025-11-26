@@ -1,0 +1,6 @@
+day,shift_id,machine_id,machine_role,sample_id,production_units,total_hours,idle_hours,mobilisation_cost,sequencing_violations,blackout_conflicts,available_hours,utilisation_ratio,downtime_hours,downtime_events,weather_severity_total
+1,S1,M2,forwarder,0,8.319,9.43844985990059,0.0,0.0,0,0,9.43844985990059,1.0,0.0,0,0.0
+3,S1,M1,harvester,0,8.299,9.43844985990059,0.0,0.0,0,0,9.43844985990059,1.0,0.0,0,0.0
+3,S1,M2,forwarder,0,8.6,9.43844985990059,0.0,0.0,0,0,9.43844985990059,1.0,0.0,0,0.0
+4,S1,M1,harvester,0,9.948,9.43844985990059,0.0,0.0,0,0,9.43844985990059,1.0,0.0,0,0.0
+4,S1,M2,forwarder,0,4.625,9.43844985990059,0.0,0.0,0,0,9.43844985990059,1.0,0.0,0,0.0

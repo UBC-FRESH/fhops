@@ -1,0 +1,17 @@
+id,landing_id,work_required,earliest_start,latest_finish,avg_stem_size_m3,volume_per_ha_m3,volume_per_ha_m3_sigma,stem_density_per_ha,stem_density_per_ha_sigma,ground_slope_percent,terrain,prescription,harvest_system_id
+B1,L3,17.361,34,106,1.043,279.983,55.997,1888.033,377.607,10.833,steep,variable_retention,ctl
+B2,L3,17.837,21,73,0.125,639.719,127.944,2148.756,429.751,3.607,snow,variable_retention,cable_micro_gabriel
+B3,L2,15.476,106,106,0.704,300.493,60.099,1544.067,308.813,30.871,steep,variable_retention,cable_micro_timbermaster
+B4,L2,12.343,99,109,0.727,384.007,76.801,1704.071,340.814,28.507,mixed,clearcut,ctl
+B5,L1,13.126,16,104,1.058,286.063,57.213,2448.097,489.619,37.84,mixed,clearcut,cable_running_tr122_shelterwood
+B6,L2,7.658,38,38,0.66,125.911,25.182,562.598,112.52,22.583,mixed,clearcut,steep_tethered
+B7,L3,14.098,36,40,0.323,793.107,158.621,2989.279,597.856,10.625,mixed,variable_retention,steep_tethered
+B8,L1,8.584,20,40,0.441,521.819,104.364,346.298,69.26,24.452,mixed,clearcut,cable_running_adv5n28_shelterwood
+B9,L1,13.068,102,103,0.404,466.623,93.325,2795.716,559.143,35.651,steep,clearcut,cable_running_adv5n28_clearcut
+B10,L3,8.983,92,108,0.988,282.957,56.591,402.583,80.517,18.349,steep,variable_retention,cable_partial_tr127_block5
+B11,L3,17.047,68,83,0.776,553.209,110.642,2078.581,415.716,46.662,steep,clearcut,cable_running_adv5n28_shelterwood
+B12,L3,16.51,3,37,0.552,648.594,129.719,1186.594,237.319,30.882,steep,clearcut,cable_standing_tr125_single
+B13,L2,15.742,89,109,1.279,523.849,104.77,1588.022,317.604,28.012,snow,variable_retention,cable_running_fncy12
+B14,L1,15.445,94,105,0.824,805.767,161.153,403.904,80.781,35.113,snow,variable_retention,ctl
+B15,L1,13.724,64,74,1.039,538.989,107.798,1490.42,298.084,35.411,mixed,variable_retention,cable_micro_gabriel
+B16,L2,17.709,18,33,0.181,265.957,53.191,239.508,47.902,26.438,mixed,clearcut,steep_tethered

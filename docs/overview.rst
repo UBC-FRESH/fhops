@@ -13,6 +13,24 @@ constructing, solving, and evaluating harvesting schedules. At its core FHOPS su
 The roadmap in :doc:`roadmap` and the notes under ``notes/`` guide ongoing development. Refer to
 :doc:`howto/quickstart` for a hands-on example.
 
+Motivation
+----------
+
+.. include:: includes/softwarex/motivation_story.rst
+
+Automation pipeline
+-------------------
+
+.. figure:: softwarex/assets/figures/prisma_overview.png
+   :alt: FHOPS SoftwareX automation pipeline
+   :align: center
+   :width: 85%
+
+   FHOPS automation pipeline generated from the manuscript TikZ source
+   (auto-regenerated via ``make assets``).
+
+.. include:: includes/softwarex/prisma_overview.rst
+
 Installation
 ------------
 

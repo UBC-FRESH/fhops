@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import random as _random
+import time
+from collections import deque
 from contextlib import nullcontext
 from pathlib import Path
 from typing import Any, cast
@@ -21,6 +23,7 @@ from fhops.optimization.heuristics.sa import (
 from fhops.optimization.mip import solve_mip
 from fhops.scenario.contract import Problem
 from fhops.telemetry import RunTelemetryLogger
+from fhops.telemetry.watch import Snapshot, SnapshotSink
 
 
 def _assignments_to_schedule(pb: Problem, assignments: pd.DataFrame) -> Schedule:
@@ -133,6 +136,9 @@ def solve_ils(
     hybrid_mip_time_limit: int = 60,
     telemetry_log: str | Path | None = None,
     telemetry_context: dict[str, Any] | None = None,
+    watch_sink: SnapshotSink | None = None,
+    watch_interval: int | None = None,
+    watch_metadata: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     """Run Iterated Local Search (optionally with MIP warm starts).
 
@@ -164,6 +170,13 @@ def solve_ils(
         Optional telemetry JSONL log capturing run metadata and (when configured) step logs.
     telemetry_context : dict[str, Any] | None
         Extra context appended to telemetry events (scenario info, tuner metadata, etc.).
+    watch_sink : SnapshotSink | None, optional
+        Optional callback that consumes live :class:`fhops.telemetry.watch.Snapshot` updates for
+        dashboards.
+    watch_interval : int | None, optional
+        Emit snapshots every ``watch_interval`` outer iterations (defaults to ``iters / 20``).
+    watch_metadata : dict[str, str] | None
+        Extra metadata (scenario/solver labels) attached to snapshot payloads.
 
     Returns
     -------
@@ -240,18 +253,73 @@ def solve_ils(
             else None,
         )
 
+    watch_meta = dict(watch_metadata or {})
+    watch_interval_value = watch_interval or max(1, iters // 20 or 1)
+    watch_scenario = watch_meta.get("scenario") or scenario_name or "unknown"
+    watch_solver = watch_meta.get("solver") or "ils"
+    window_size = max(10, min(200, iters // 10 or 10))
+    rolling_scores: deque[float] = deque(maxlen=window_size)
+    improvement_window: deque[int] = deque(maxlen=window_size)
+    last_watch_best: float | None = None
+
     with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
         current = _init_greedy(pb)
         current_score = _evaluate(pb, current)
         best = current
         best_score = current_score
         initial_score = current_score
+        rolling_scores.append(float(current_score))
 
         stalls = 0
         perturbations = 0
         restarts = 0
         improvement_steps = 0
         operator_stats: dict[str, dict[str, float]] = {}
+        run_start = time.perf_counter()
+
+        def emit_snapshot(iteration: int) -> None:
+            nonlocal last_watch_best
+            if not watch_sink:
+                return
+            rolling_mean = (
+                float(sum(rolling_scores) / len(rolling_scores))
+                if rolling_scores
+                else float(current_score)
+            )
+            window_acceptance = (
+                float(sum(improvement_window) / len(improvement_window))
+                if improvement_window
+                else None
+            )
+            delta_objective = (
+                float(best_score - last_watch_best) if last_watch_best is not None else 0.0
+            )
+            last_watch_best = float(best_score)
+            metadata = {
+                **watch_meta,
+                "stalls": str(stalls),
+                "perturbations": str(perturbations),
+                "restarts": str(restarts),
+            }
+            watch_sink(
+                Snapshot(
+                    scenario=watch_scenario,
+                    solver=watch_solver,
+                    iteration=iteration,
+                    max_iterations=iters,
+                    objective=float(best_score),
+                    best_gap=None,
+                    runtime_seconds=time.perf_counter() - run_start,
+                    acceptance_rate=None,
+                    restarts=restarts,
+                    current_objective=float(current_score),
+                    rolling_objective=rolling_mean,
+                    temperature=None,
+                    acceptance_rate_window=window_acceptance,
+                    delta_objective=delta_objective,
+                    metadata=metadata,
+                )
+            )
 
         total_iterations = max(1, iters)
         for iteration in range(1, total_iterations + 1):
@@ -259,11 +327,15 @@ def solve_ils(
                 pb, current, registry, rng, batch_arg, worker_arg, operator_stats
             )
             improvement_steps += steps
+            rolling_scores.append(float(current_score))
+            best_improved = False
             if current_score > best_score:
                 best, best_score = current, current_score
                 stalls = 0
+                best_improved = True
             else:
                 stalls += 1
+            improvement_window.append(1 if best_improved else 0)
 
             if run_logger and telemetry_logger and telemetry_logger.step_interval:
                 if (
@@ -280,6 +352,13 @@ def solve_ils(
                         proposals=int(steps),
                         accepted_moves=int(steps if improved else 0),
                     )
+
+            if watch_sink and (
+                iteration == 1
+                or iteration == total_iterations
+                or (iteration % watch_interval_value == 0)
+            ):
+                emit_snapshot(iteration)
 
             if stalls >= stall_limit:
                 if hybrid_use_mip:
@@ -312,6 +391,8 @@ def solve_ils(
                 )
                 current_score = _evaluate(pb, current)
                 perturbations += 1
+                rolling_scores.append(float(current_score))
+                improvement_window.append(0)
 
         rows = []
         for machine_id, plan in best.plan.items():

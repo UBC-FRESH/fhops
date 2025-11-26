@@ -3,9 +3,9 @@ Contributing
 
 We welcome contributions! Before starting, review the planning artefacts in the repository root:
 
-- ``FHOPS_ROADMAP.md`` for phase-level priorities and status.
+- ``ROADMAP.md`` for phase-level priorities and status.
 - ``notes/`` directory for module-specific execution plans.
-- ``CODING_AGENT.md`` for required command cadence and documentation expectations.
+- ``AGENTS.md`` for required command cadence and documentation expectations.
 
 Key practices:
 

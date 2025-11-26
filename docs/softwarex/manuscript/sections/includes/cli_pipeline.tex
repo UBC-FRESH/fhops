@@ -1,0 +1,50 @@
+% AUTO-GENERATED from cli_pipeline.md -- do not edit directly.
+All experiments cited in the manuscript follow the same FHOPS CLI
+pipeline so readers can replay each stage without bespoke tooling:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Validate or snapshot scenarios.} Run
+  \texttt{fhops\ dataset\ validate\ \textless{}scenario.yaml\textgreater{}}
+  for each bundle (e.g., \texttt{examples/minitoy} and
+  \texttt{examples/med42}) and, when needed, snapshot synthetic tiers
+  via
+  \texttt{fhops\ synth\ generate\ out/synthetic\_\{small,medium,large\}}
+  with fixed RNG seeds.
+\item
+  \textbf{Benchmark solvers.} Invoke \texttt{fhops\ bench\ suite} with
+  explicit \texttt{-\/-scenario} and \texttt{-\/-out-dir} arguments (for
+  the manuscript:
+  \texttt{docs/softwarex/assets/data/benchmarks/\textless{}slug\textgreater{}/})
+  plus the desired heuristics (\texttt{-\/-include-ils},
+  \texttt{-\/-include-tabu}) and iteration budgets.
+\item
+  \textbf{Run the tuning harness.} Launch
+  \texttt{python\ docs/softwarex/manuscript/scripts/run\_tuning\_benchmarks.py}
+  (wrapped by \texttt{scripts/generate\_assets.sh}) to produce
+  leaderboard/comparison tables in
+  \texttt{docs/softwarex/assets/data/tuning/}.
+\item
+  \textbf{Replay schedules.} Call \texttt{fhops\ playback} on the best
+  SA/ILS assignments (deterministic and stochastic modes) so utilisation
+  and downtime metrics land under
+  \texttt{docs/softwarex/assets/data/playback/\textless{}scenario\textgreater{}/\textless{}solver\textgreater{}/\textless{}mode\textgreater{}/}.
+\item
+  \textbf{Estimate costs.} Execute
+  \texttt{fhops\ dataset\ estimate-cost} for each machine bundle to
+  capture owning/operating/repair totals in
+  \texttt{docs/softwarex/assets/data/costing/}.
+\item
+  \textbf{Synthetic scaling sweep.} Use
+  \texttt{python\ docs/softwarex/manuscript/scripts/run\_synthetic\_sweep.py}
+  to regenerate runtime-vs-size CSV/JSON + plots under
+  \texttt{docs/softwarex/assets/data/scaling/}.
+\end{enumerate}
+
+Each command appends its parameters, commit hash, runtime, and SHA-256
+digests to \texttt{docs/softwarex/assets/benchmark\_runs.log} (when run
+through \texttt{make\ manuscript-benchmarks} or
+\texttt{scripts/generate\_assets.sh}), providing a single provenance log
+for all artefacts.

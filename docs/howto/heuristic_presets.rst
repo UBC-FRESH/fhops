@@ -6,6 +6,13 @@ overrides, and opt-in features such as parallel evaluation, Iterated Local Searc
 Tabu Search. Use it alongside the CLI reference (:doc:`../reference/cli`) and benchmarking how-to
 (:doc:`benchmarks`) to design repeatable tuning workflows.
 
+Shared Solver Cheat Sheet
+-------------------------
+
+.. include:: ../includes/softwarex/heuristics_matrix.rst
+
+.. include:: ../includes/softwarex/heuristics_notes.rst
+
 Preset Overview
 ---------------
 

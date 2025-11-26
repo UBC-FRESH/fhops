@@ -200,7 +200,12 @@ def _extract_results(model: pyo.ConcreteModel) -> Mapping[str, object]:
                             "production": float(production),
                         }
                     )
-    assignments = pd.DataFrame(rows).sort_values(["day", "shift_id", "machine_id", "block_id"])
+    if rows:
+        assignments = pd.DataFrame(rows).sort_values(["day", "shift_id", "machine_id", "block_id"])
+    else:
+        assignments = pd.DataFrame(
+            columns=["machine_id", "block_id", "day", "shift_id", "assigned", "production"]
+        )
     objective = pyo.value(model.obj)
     return {"objective": objective, "assignments": assignments}
 

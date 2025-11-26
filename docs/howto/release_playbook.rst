@@ -10,7 +10,7 @@ Release Preparation
 
 1. **Audit Roadmap & Notes**
 
-   - Verify Phase checkpoints in ``FHOPS_ROADMAP.md`` and linked notes (``notes/*.md``) reflect the
+   - Verify Phase checkpoints in ``ROADMAP.md`` and linked notes (``notes/*.md``) reflect the
      state of the release (no unchecked items for completed work).
    - Update `notes/sphinx-documentation.md` to confirm documentation coverage or new TODOs.
 
@@ -36,7 +36,7 @@ Release Preparation
 
 4. **Testing**
 
-   - Run the required command suite (per ``CODING_AGENT.md``):
+- Run the required command suite (per ``AGENTS.md``):
 
      .. code-block:: bash
 
@@ -70,7 +70,7 @@ Every PR (internal or external) should meet the following criteria:
 1. **Planning Artefacts**
 
    - Link to the relevant roadmap item and note file (e.g.,
-     “See ``FHOPS_ROADMAP.md`` Phase 2: Metaheuristic Roadmap; working detail in ``notes/metaheuristic_roadmap.md``”).
+     “See ``ROADMAP.md`` Phase 2: Metaheuristic Roadmap; working detail in ``notes/metaheuristic_roadmap.md``”).
    - Update the note/roadmap when the PR discharges a task (checked boxes, status updates).
 
 2. **Changelog Requirement**

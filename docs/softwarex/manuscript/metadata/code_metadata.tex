@@ -1,0 +1,18 @@
+% Code metadata table (journal requirement)
+\begin{table}[ht]
+  \centering
+  \caption{Code metadata (reproducibility requirement)}
+  \label{tab:code-metadata}
+  \begin{tabular}{p{0.35\linewidth}p{0.55\linewidth}}
+    \hline
+    Current code version & FHOPS v1.0.0-beta1 (submission tag) \\
+    Permanent link to code/repository & \url{https://github.com/UBC-FRESH/fhops/tree/softwarex-manuscript} (will be tagged as \texttt{v1.0.0-beta1}) \\
+    Legal Code License & MIT License (OSI approved) \\
+    Computing platforms/requirements & GNU/Linux (Ubuntu 24.04 LTS CI target), macOS 14.5, Windows 11 via WSL2; Python 3.10--3.12; optional CUDA GPU for stochastic playback batches \\
+    Installation requirements & \texttt{pip install fhops} (PyPI). Development workflow uses Hatch (\texttt{hatch run dev:suite}); HiGHS binaries vendored via PyPI wheels. \\
+    Documentation link & \url{https://fhops.readthedocs.io/en/latest/} (versioned with each tag) \\
+    Reproducibility log & \texttt{docs/softwarex/assets/benchmark\_runs.log} records every \texttt{make manuscript-benchmarks} run (commit, runtime, SHA-256 hash); artefacts live under \texttt{docs/softwarex/assets/**}. \\
+    Support contact & gregory.paradis@ubc.ca (Faculty of Forestry, UBC) \\
+    \hline
+  \end{tabular}
+\end{table}

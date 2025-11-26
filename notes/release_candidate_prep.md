@@ -33,7 +33,7 @@ Status: Draft — drive the v0.x RC process.
    - [x] Store the tuned presets/operator weights for reuse in the release tag (see `notes/release_tuned_presets.json`).
 6. **Automation**
    - [x] Add GitHub Actions job template for ``hatch build`` verification (triggered on tags) — see `.github/workflows/release-build.yml`.
-   - [x] Prepare release checklist in ``CODING_AGENT.md`` (Hatch build/publish cadence documented under Release workflow).
+   - [x] Prepare release checklist in ``AGENTS.md`` (Hatch build/publish cadence documented under Release workflow).
 
 7. **Publishing (TestPyPI → PyPI)**
    - [x] Dry run using TestPyPI:
@@ -41,7 +41,7 @@ Status: Draft — drive the v0.x RC process.
      - ``HATCH_INDEX=testpypi hatch publish`` (requires ``HATCH_INDEX_TESTPYPI_AUTH`` or ``~/.pypirc``) ✅ 2025-11-15
      - ``python -m venv .venv-testpypi && . .venv-testpypi/bin/activate``
      - ``pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple fhops`` and run smoke commands (`fhops --help`, `fhops validate examples/minitoy/scenario.yaml`) ✅
-   - [x] Document environment variables/secrets: PyPI tokens stored via ``~/.pypirc`` or passed directly to ``twine upload`` (see CODING_AGENT.md Release workflow).
+   - [x] Document environment variables/secrets: PyPI tokens stored via ``~/.pypirc`` or passed directly to ``twine upload`` (see AGENTS.md Release workflow).
    - [ ] After TestPyPI validation, repeat for PyPI using Twine during the release tag: ``python -m twine upload -u __token__ -p 'pypi-…' dist/*``.
 
 ## References

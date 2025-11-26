@@ -1,0 +1,80 @@
+name: synthetic-small
+tier: small
+seed: 101
+counts:
+  blocks: 4
+  machines: 2
+  landings: 1
+  calendar: 224
+  production_rates: 8
+terrain_counts:
+  gentle: 4
+prescription_counts:
+  selection: 3
+  thinning: 1
+crew_capabilities:
+  crew-1:
+  - forwarder
+  crew-2:
+  - forwarder
+blackouts: []
+shifts_per_day: 3
+shift_hours: 8.0
+terrain_profile:
+  values:
+  - gentle
+  - mixed
+  weights:
+  - 0.7
+  - 0.3
+prescription_profile:
+  values:
+  - thinning
+  - selection
+  weights:
+  - 0.6
+  - 0.4
+system_mix:
+  ground_fb_skid: 0.2608695652173913
+  ctl: 0.2173913043478261
+  cable_highlead_tn147: 0.04347826086956522
+  cable_micro_ecologger: 0.13043478260869565
+  cable_micro_gabriel: 0.04347826086956522
+  cable_micro_christie: 0.04347826086956522
+  cable_micro_teletransporteur: 0.04347826086956522
+  cable_micro_timbermaster: 0.04347826086956522
+  cable_micro_hi_skid: 0.08695652173913045
+  cable_running_sr54: 0.04347826086956522
+  cable_running_tr75_bunched: 0.04347826086956522
+blackout_biases: []
+sampling_config:
+  samples: 6
+  base_seed: 123
+  downtime:
+    enabled: false
+    seed_offset: 0
+    probability: 0.0
+    mean_duration_hours: 4.0
+    std_duration_hours: 1.5
+    max_concurrent: null
+    target_machine_roles: null
+  weather:
+    enabled: false
+    seed_offset: 0
+    day_probability: 0.0
+    severity_levels:
+      light: 0.1
+      moderate: 0.3
+      severe: 0.6
+    correlated_days: true
+    impact_window_days: 1
+    affected_shifts: null
+  landing:
+    enabled: false
+    seed_offset: 0
+    probability: 0.0
+    capacity_multiplier_range:
+    - 0.4
+    - 0.8
+    duration_days: 1
+    target_landing_ids: null

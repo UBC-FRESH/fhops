@@ -1,0 +1,5 @@
+{"scenario": "synthetic-small", "solver": "sa", "iteration": 1, "max_iterations": 4, "objective": 100.0, "runtime_seconds": 0.5}
+{"scenario": "synthetic-small", "solver": "sa", "iteration": 3, "max_iterations": 4, "objective": 90.0, "runtime_seconds": 1.2}
+{"scenario": "synthetic-small", "solver": "sa", "iteration": 4, "max_iterations": 4, "objective": 95.0, "runtime_seconds": 1.8}
+{"scenario": "synthetic-medium", "solver": "ils", "iteration": 2, "max_iterations": 5, "objective": 50.0, "runtime_seconds": 0.7}
+{"scenario": "synthetic-medium", "solver": "ils", "iteration": 5, "max_iterations": 5, "objective": 45.0, "runtime_seconds": 2.5}

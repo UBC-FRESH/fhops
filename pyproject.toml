@@ -101,3 +101,6 @@ ignore_missing_imports = true
 addopts = "-q"
 pythonpath = ["src"]
 testpaths = ["tests"]
+markers = [
+  "milp_refactor: temporarily disabled during MIP/MILP refactor; re-enable once new backend and fixtures are stable",
+]

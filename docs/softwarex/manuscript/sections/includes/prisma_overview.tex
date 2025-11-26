@@ -1,0 +1,45 @@
+\begin{figure}[t]
+  \centering
+  \begin{tikzpicture}[
+    font=\footnotesize,
+    node distance=1.5cm,
+    block/.style={rectangle, rounded corners=2pt, draw=black!60, fill=blue!4, align=center, text width=3.4cm, inner sep=6pt},
+    wideblock/.style={block, text width=4.1cm},
+    arrow/.style={-Latex, thick},
+    labelnode/.style={font=\scriptsize\bfseries, anchor=west}
+  ]
+    % Inputs
+    \node[block] (in1) {\textbf{Scenario contract}\\Blocks, machines, landings, calendar CSV + scenario YAML};
+    \node[block, right=1.2cm of in1] (in2) {\textbf{Reference \& synthetic datasets}\\\texttt{examples/*}, \texttt{run\_dataset\_inspection.py}};
+    \node[block, right=1.2cm of in2] (in3) {\textbf{Automation configs}\\Make targets, CI hooks, contribution rules};
+    \node[labelnode, above left=0.1cm and -0.8cm of in1.west] {Inputs};
+
+    % Core
+    \node[block, below=1.3cm of in2] (core1) {\textbf{Data ingestion}\\Validation, schema checks, synthetic tier generation};
+    \node[block, below=1.2cm of core1] (core2) {\textbf{Solver core}\\Pyomo MIP + SA/ILS/Tabu + tuning harness};
+    \node[block, right=1.6cm of core2] (core3) {\textbf{Evaluation \& telemetry}\\Playback, KPIs, costing, scaling};
+    \node[labelnode, left=0cm of core1.west, align=left, yshift=0.6cm] {FHOPS core};
+
+    % Shared outputs
+    \node[wideblock, below=1.2cm of core2] (int1) {\textbf{Automation assets}\\Benchmarks, tuning tables, playback summaries, cost + scaling data};
+    \node[wideblock, right=1.6cm of int1] (int2) {\textbf{Shared snippets}\\Markdown/CSV includes $\rightarrow$ LaTeX/RST via \texttt{export\_docs\_assets.py}};
+    \node[labelnode, left=0cm of int1.west] {Shared artifacts};
+
+    % Final outputs
+    \node[wideblock, below=1.2cm of int1, text width=8cm] (out1) {\textbf{Outputs}\\Manuscript, reproducible figures, Sphinx docs, submission bundle};
+    \node[labelnode, left=0cm of out1.west] {Outputs};
+
+    % Connections
+    \draw[arrow] (in1) |- (core1);
+    \draw[arrow] (in2) -- (core1);
+    \draw[arrow] (in3) |- (core1);
+    \draw[arrow] (core1) -- (core2);
+    \draw[arrow] (core2) -- (core3);
+    \draw[arrow] (core2) -- (int1);
+    \draw[arrow] (core3) -- (int2);
+    \draw[arrow] (int1) -- (out1);
+    \draw[arrow] (int2) -- (out1);
+  \end{tikzpicture}
+  \caption{FHOPS automation pipeline. Inputs (scenario contract + curated datasets) feed the FHOPS core (validation, solver stack, evaluation tooling). Asset scripts emit shared tables/figures consumed by the manuscript, submission package, and Sphinx docs.}
+  \label{fig:fhops-prisma-overview}
+\end{figure}

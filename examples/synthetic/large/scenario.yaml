@@ -1,5 +1,5 @@
 name: synthetic-large
-num_days: 18
+num_days: 112
 schema_version: 1.0.0
 data:
   blocks: data/blocks.csv
@@ -12,20 +12,62 @@ data:
 timeline:
   shifts:
   - name: S1
-    hours: 8.816655211256588
-    shifts_per_day: 2
+    hours: 8.0
+    shifts_per_day: 3
   blackouts:
   - start_day: 2
-    end_day: 4
+    end_day: 3
     reason: synthetic-blackout
-  - start_day: 6
-    end_day: 7
+  - start_day: 5
+    end_day: 6
     reason: synthetic-blackout
   - start_day: 12
     end_day: 14
     reason: synthetic-blackout
-  - start_day: 16
-    end_day: 18
+  - start_day: 18
+    end_day: 19
+    reason: synthetic-blackout
+  - start_day: 20
+    end_day: 22
+    reason: synthetic-blackout
+  - start_day: 23
+    end_day: 24
+    reason: synthetic-blackout
+  - start_day: 26
+    end_day: 27
+    reason: synthetic-blackout
+  - start_day: 29
+    end_day: 31
+    reason: synthetic-blackout
+  - start_day: 35
+    end_day: 37
+    reason: synthetic-blackout
+  - start_day: 40
+    end_day: 42
+    reason: synthetic-blackout
+  - start_day: 43
+    end_day: 44
+    reason: synthetic-blackout
+  - start_day: 45
+    end_day: 47
+    reason: synthetic-blackout
+  - start_day: 49
+    end_day: 51
+    reason: synthetic-blackout
+  - start_day: 69
+    end_day: 71
+    reason: synthetic-blackout
+  - start_day: 76
+    end_day: 78
+    reason: synthetic-blackout
+  - start_day: 86
+    end_day: 88
+    reason: synthetic-blackout
+  - start_day: 99
+    end_day: 101
+    reason: synthetic-blackout
+  - start_day: 105
+    end_day: 107
     reason: synthetic-blackout
   days_per_week: 7
 harvest_systems:
@@ -586,6 +628,7 @@ harvest_systems:
         grapple_yarder_turn_volume_m3: 2.18
         grapple_yarder_yarding_distance_m: 97.0
         grapple_yarder_stems_per_cycle: 3.2
+        partial_cut_profile: sr109_shelterwood
     - name: processing
       machine_role: processor
       prerequisites:
@@ -647,7 +690,7 @@ harvest_systems:
         skyline_model: tr127-block1
         skyline_lateral_distance_m: 15.0
         skyline_lateral_distance2_m: 6.0
-        tr119_treatment: 65_retention
+        partial_cut_profile: sr109_patch_cut
     - name: processing
       machine_role: processor
       prerequisites:
@@ -680,7 +723,7 @@ harvest_systems:
         skyline_lateral_distance_m: 16.0
         skyline_num_logs: 3.0
         skyline_payload_m3: 1.6
-        tr119_treatment: 70_retention
+        partial_cut_profile: sr109_green_tree
     - name: processing
       machine_role: processor
       prerequisites:

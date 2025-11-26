@@ -176,6 +176,7 @@ def test_transition_weight_penalises_moves_mip():
     assert obj_val == pytest.approx(4.0 - 3.0 * 1.0)
 
 
+@pytest.mark.milp_refactor
 def test_transition_weight_penalises_moves_sa():
     scenario = _base_scenario().model_copy(
         update={
@@ -233,6 +234,7 @@ def test_landing_slack_penalty_mip():
     assert obj_val == pytest.approx(4.0 - 2.0 * 1.0)
 
 
+@pytest.mark.milp_refactor
 def test_landing_slack_penalty_sa():
     scenario = _base_scenario().model_copy(
         update={

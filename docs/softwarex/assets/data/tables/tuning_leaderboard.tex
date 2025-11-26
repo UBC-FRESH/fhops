@@ -1,0 +1,9 @@
+\begin{tabular}{llllll}
+\toprule
+Scenario & Tuner & Best Objective & $\Delta$ vs SA default & Mean Runtime (s) & Key Settings \\
+\midrule
+MiniToy (ground-based) & Bayes & 38.00 & 22.50 & 0.09 & 200 iterations; operator weights (block insertion 0.99, cross exchange 0.85, mobilisation shake 0.62) \\
+Med42 (mixed skyline/tethered) & ILS & -988.61 & 630.37 & 0.71 & Baseline ILS preset (4-neighbour batches, 4000 iterations) \\
+Synthetic-small & Bayes & 39.79 & 0.00 & 0.05 & Batch size 3; 200 iterations; operator weights (block insertion 1.10, cross exchange 1.44, mobilisation shake 0.85) \\
+\bottomrule
+\end{tabular}

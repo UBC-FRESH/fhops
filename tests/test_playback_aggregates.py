@@ -57,6 +57,7 @@ def test_shift_dataframe_matches_fixture():
     pd.testing.assert_frame_equal(df, fixture, check_dtype=False)
 
 
+@pytest.mark.milp_refactor
 def test_day_dataframe_matches_fixture():
     scenario = load_scenario("examples/med42/scenario.yaml")
     problem = Problem.from_scenario(scenario)

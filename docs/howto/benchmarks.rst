@@ -39,6 +39,57 @@ CLI Options
 * ``--include-mip`` / ``--include-sa`` — toggle individual solvers when running experiments.
 * ``--out-dir`` — destination for summary files (default: ``tmp/benchmarks``).
 
+Watching heuristic progress
+---------------------------
+
+All heuristic entry points (``fhops solve-heur``, ``fhops solve-ils``, ``fhops solve-tabu``,
+``fhops tune-*``, and ``fhops bench suite``) accept ``--watch/--no-watch`` plus
+``--watch-refresh <seconds>``. When enabled, FHOPS renders a Rich dashboard showing the shared
+metrics (scenario, solver, iteration, best/current/rolling objective, runtime, restarts/workers) and
+a solver-specific detail row (SA temperature/acceptance, ILS perturbations, Tabu tenure).
+
+Example:
+
+.. code-block:: bash
+
+   fhops solve-heur examples/med42/scenario.yaml \\
+     --iters 200000 \\
+     --cooling-rate 0.99999 \\
+     --restart-interval 500 \\
+     --watch \\
+     --watch-refresh 0.5
+
+The dashboard refreshes only when stdout is an interactive terminal. CI runs or redirected output
+print a single warning (``Watch mode disabled: not running in an interactive terminal.``) and
+continue normally. Adjust ``--watch-refresh`` (default 0.5 s) to control update cadence.
+
+The ``workers`` column reports the requested parallel workers, but note that
+``--parallel-workers`` currently uses Python threads—batch scoring remains GIL-bound. For true
+multi-core utilisation, prefer ``--parallel-multistart`` or process-level orchestration until the
+scoring loop is parallelised.
+
+FAQ – Watch Mode
+----------------
+
+* **“Watch mode disabled: not running in an interactive terminal.”**
+  The dashboard renders only when stdout is a TTY. If you want both the live view and a log, wrap
+  the command with ``script`` (or run inside tmux/screen) so the subprocess gets a pseudo-terminal::
+
+      script -q -c "fhops solve-heur ... --watch" /tmp/fhops_watch.log
+
+  The terminal shows the dashboard; the log captures the CLI text emitted after completion.
+
+* **How do I capture a screenshot/GIF?**
+  Run a short watch-enabled command (e.g.,
+  ``fhops solve-heur examples/minitoy/scenario.yaml --watch --iters 500``) and use a terminal
+  recorder such as ``asciinema`` or ``ttystudio``. The sparkline now renders below the main table so
+  column widths stay stable while recording.
+
+Standard Manuscript Pipeline
+----------------------------
+
+.. include:: ../includes/softwarex/cli_pipeline.rst
+
 Optional Gurobi backend (Linux)
 -------------------------------
 
@@ -85,36 +136,12 @@ The summary CSV/JSON records, per scenario/solver pair:
   - ``objective_gap_vs_best_heuristic`` shows how far each solver trails the top heuristic (negative values mean the solver beats the best heuristic, e.g., MIP).
   - ``runtime_ratio_vs_best_heuristic`` reports runtime multiples relative to the quickest heuristic winner.
 
-A shortened example:
+Shared KPI roll-up
+------------------
 
-.. list-table::
-   :header-rows: 1
-   :widths: 20 15 20 15 15 15
+.. include:: ../includes/softwarex/benchmark_kpis.rst
 
-   * - scenario
-     - solver
-     - solver_category
-     - objective
-     - objective_gap_vs_best_heuristic
-     - runtime_ratio_vs_best_heuristic
-   * - minitoy
-     - sa
-     - heuristic
-     - 15.5
-     - 0.0
-     - 1.0
-   * - minitoy
-     - tabu
-     - heuristic
-     - -21.5
-     - 37.0
-     - 0.1
-   * - minitoy
-     - ils
-     - heuristic
-     - 23.0
-     - -7.5
-     - 0.3
+.. include:: ../includes/softwarex/benchmark_kpis_notes.rst
 
 Interpretation tips:
 

@@ -1,0 +1,1532 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.1 20151215//EN" "JATS-journalpublishing1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" article-type="research-article" dtd-version="1.1" xml:lang="en">
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="publisher-id">forests</journal-id>
+      <journal-title-group>
+        <journal-title>Forests</journal-title>
+        <abbrev-journal-title abbrev-type="publisher">Forests</abbrev-journal-title>
+        <abbrev-journal-title abbrev-type="pubmed">Forests</abbrev-journal-title>
+      </journal-title-group>
+      <issn pub-type="epub">1999-4907</issn>
+      <publisher>
+        <publisher-name>MDPI</publisher-name>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="doi">10.3390/f10121110</article-id>
+      <article-id pub-id-type="publisher-id">forests-10-01110</article-id>
+      <article-categories>
+        <subj-group>
+          <subject>Article</subject>
+        </subj-group>
+      </article-categories>
+      <title-group>
+        <article-title>A Mathematical Model for the Integrated Optimization of Harvest and Transport Scheduling of Forest Products</article-title>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <contrib-id contrib-id-type="orcid" authenticated="true">https://orcid.org/0000-0001-6085-1040</contrib-id>
+          <name>
+            <surname>Santos</surname>
+            <given-names>Paulo Amaro Velloso Henriques dos</given-names>
+          </name>
+          <xref rid="af1-forests-10-01110" ref-type="aff">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Silva</surname>
+            <given-names>Arinei Carlos Lindbeck da</given-names>
+          </name>
+          <xref rid="af2-forests-10-01110" ref-type="aff">2</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Arce</surname>
+            <given-names>Julio Eduardo</given-names>
+          </name>
+          <xref rid="af3-forests-10-01110" ref-type="aff">3</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Augustynczik</surname>
+            <given-names>Andrey Lessa Derci</given-names>
+          </name>
+          <xref rid="af4-forests-10-01110" ref-type="aff">4</xref>
+          <xref rid="c1-forests-10-01110" ref-type="corresp">*</xref>
+        </contrib>
+      </contrib-group>
+      <aff id="af1-forests-10-01110"><label>1</label>Federal Institute of Santa Catarina, Campus Joinville, R. Pav&#xE3;o 1377, 89220-618 Joinville, Brazil; <email>pauloamaro.ifsc@gmail.com</email></aff>
+      <aff id="af2-forests-10-01110"><label>2</label>Department of Mathematics, Federal University of Paran&#xE1;, ACF Centro Polit&#xE9;cnico, Av. Cel. Francisco H. dos Santos 100, 81531-980 Curitiba, Brazil; <email>arineicls@gmail.com</email></aff>
+      <aff id="af3-forests-10-01110"><label>3</label>Department of Forest Sciences, Federal University of Paran&#xE1;, Campus Jardim Bot&#xE2;nico, Av. Loth&#xE1;rio Meissner 632, 80210-170 Curitiba, Brazil; <email>jarce@ufpr.br</email></aff>
+      <aff id="af4-forests-10-01110"><label>4</label>Faculty of Environment and Natural Resources, University of Freiburg, Tennenbacherstr 4, 79106 Freiburg im Breisgau, Germany</aff>
+      <author-notes>
+        <corresp id="c1-forests-10-01110"><label>*</label>Correspondence: <email>andrey.lessa@ife.uni-freiburg.de</email></corresp>
+      </author-notes>
+      <pub-date pub-type="epub">
+        <day>04</day>
+        <month>12</month>
+        <year>2019</year>
+      </pub-date>
+      <pub-date pub-type="collection">
+        <month>12</month>
+        <year>2019</year>
+      </pub-date>
+      <volume>10</volume>
+      <issue>12</issue>
+      <elocation-id>1110</elocation-id>
+      <history>
+        <date date-type="received">
+          <day>06</day>
+          <month>10</month>
+          <year>2019</year>
+        </date>
+        <date date-type="accepted">
+          <day>28</day>
+          <month>11</month>
+          <year>2019</year>
+        </date>
+      </history>
+      <permissions>
+        <copyright-statement>&#xA9; 2019 by the authors.</copyright-statement>
+        <copyright-year>2019</copyright-year>
+        <license license-type="open-access">
+          <license-p>Licensee MDPI, Basel, Switzerland. This article is an open access article distributed under the terms and conditions of the Creative Commons Attribution (CC BY) license (<ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link>).</license-p>
+        </license>
+      </permissions>
+      <abstract>
+        <p>The costs related to forest harvesting and wood transport are key to the economic viability of forest investments. These operations compose a major share of the total cost of wood production and thus need to be conducted in an efficient manner. In this paper, we propose a novel optimization model to tackle this issue and perform the daily and weekly plan of harvesting operations, in order to minimize the costs related to the machinery operation, movement, and wood transportation, subject to demand constraints. Our results show that transportation costs dominate the total cost of these operations. The model proposed is appropriate and can be effectively applied to optimize the operational planning of harvesting activities. Nevertheless, instances with a large number of stands may lead to a substantial increase in the complexity and computational burden. We conclude that operations research techniques can provide a solid basis for decision-making in harvest scheduling problems and increase the efficiency of forest management.</p>
+      </abstract>
+      <kwd-group>
+        <kwd>operational forest planning</kwd>
+        <kwd>forestry transportation</kwd>
+        <kwd>forestry economics</kwd>
+        <kwd>forest harvesting</kwd>
+      </kwd-group>
+    </article-meta>
+  </front>
+  <body>
+    <sec id="sec1-forests-10-01110" sec-type="intro">
+      <title>1. Introduction</title>
+      <p>Operational aspects of forest harvesting are among the main drivers of forest profitability and the sustainability of forest management [<xref ref-type="bibr" rid="B1-forests-10-01110">1</xref>]. Hence, harvesting operations demand adequate and careful planning, in order to optimally allocate the machinery on the field and fulfill forest management goals in an efficient manner. These operations also need to be harmonized with the wood transport from forest areas to demand centers, since transportation costs are responsible for a large share of the total cost of wood supply [<xref ref-type="bibr" rid="B2-forests-10-01110">2</xref>]. Therefore, finding optimized solutions that consider simultaneously the costs related to harvest and transportation is essential to build robust wood supply chains and maintain the profitability of forest investments.</p>
+      <p>The harmonization of harvesting operations and wood transport, however, is a nontrivial task. This involves costly operations and a large number of decisions to be made in short time spans, under limited resource availability. Operations research offers a unique framework to deal with problems of this nature and has been successfully applied in forest planning problems for more than five decades. The seminal papers dealing with the use of operations research techniques in forestry date back to the 1960s [<xref ref-type="bibr" rid="B3-forests-10-01110">3</xref>,<xref ref-type="bibr" rid="B4-forests-10-01110">4</xref>,<xref ref-type="bibr" rid="B5-forests-10-01110">5</xref>]. This research line grew in the following decades, with increasing number of applications in forest planning problems (e.g., [<xref ref-type="bibr" rid="B6-forests-10-01110">6</xref>,<xref ref-type="bibr" rid="B7-forests-10-01110">7</xref>,<xref ref-type="bibr" rid="B8-forests-10-01110">8</xref>,<xref ref-type="bibr" rid="B9-forests-10-01110">9</xref>]).</p>
+      <p>Forest planning problems may be distinguished in hierarchical levels, according to the operations and time span involved. Weintraub and Cholaky [<xref ref-type="bibr" rid="B10-forests-10-01110">10</xref>] classify such problems in strategic, tactical, and operational planning. According to Mitchell [<xref ref-type="bibr" rid="B11-forests-10-01110">11</xref>], the strategic planning level typically encompasses long-term decisions that span over more than one rotation period of the forest, e.g., the harvesting schedule, silvicultural operations, and land use. The tactical planning relates to midterm decisions that commonly span from 5 to 10 years, e.g., the planning of road building, the application of environmental constraints, and product usage. Finally, the operational planning deals with short-term decision making (daily and weekly plans), tackling decisions related to the allocation of harvesting machinery and products.</p>
+      <p>Since the 1990s, a substantial portion of the literature has focused on forest planning, particularly addressing problems at the strategic and tactical levels (e.g., [<xref ref-type="bibr" rid="B12-forests-10-01110">12</xref>,<xref ref-type="bibr" rid="B13-forests-10-01110">13</xref>,<xref ref-type="bibr" rid="B14-forests-10-01110">14</xref>]). The operational level, which encompasses the activities belonging to the harvest and transport of forest products, has seldom been addressed. A main reason for this gap can be attributed to the fact that operational-level problems are substantially more complex than problems belonging to the other two hierarchical levels. Moreover, it is important to note that optimization processes on this level should deliver solutions in a short computational time, as the operational level deals with monthly, weekly, and daily planning horizons.</p>
+      <p>According to R&#xF6;nnqvist et al. [<xref ref-type="bibr" rid="B15-forests-10-01110">15</xref>], the operational level involves multiple decision processes, such as harvesting, loading and distribution of logs, the transport of products harvested in the forest to the customers, and the allocation of machinery needed to perform these tasks. The same authors highlight that the increased access to different sources of information has led to the development of more detailed and complex models and constraints [<xref ref-type="bibr" rid="B15-forests-10-01110">15</xref>].</p>
+      <p>The scheduling of harvesting machinery across forest stands and the transport of wood to the demand centers are arguably the most important decisions at the operational level and are critical to the maintenance of the wood supply chain. These operations need to be conducted ideally with a minimal cost, while fulfilling the demand center&#x2019;s requirements for product delivery. Additionally, harvesting and transportation operations compose a major share of forest management costs, so a disruption in the wood supply may result in substantial opportunity costs at the demand centers.</p>
+      <p>Mixed integer linear problems (MILP) have been extensively used for scheduling problems in forestry and other environmental issues. Notably, applications include harvest scheduling, the integration of adjacency relationships, allocation of machinery in the wood industry, and food supply chains [<xref ref-type="bibr" rid="B16-forests-10-01110">16</xref>,<xref ref-type="bibr" rid="B17-forests-10-01110">17</xref>,<xref ref-type="bibr" rid="B18-forests-10-01110">18</xref>,<xref ref-type="bibr" rid="B19-forests-10-01110">19</xref>]. The majority of studies applying such approaches, however, focused only on producing harvest schedules that take into account spatial or stand-adjacency constraints.</p>
+      <p>Despite the large body of literature dealing with forest planning at strategic and tactical levels, models for the operational planning of forest harvesting are still largely missing. R&#xF6;nnqvist et al. [<xref ref-type="bibr" rid="B15-forests-10-01110">15</xref>] point to the fact that no work could be found to date addressing an integrated solution for the scheduling of the harvest and transport of forest products with a narrow planning horizon, with daily or weekly schedules. Given the importance of these activities to wood supply chain and forest profitability, adequate planning tools are urgently needed. Here, we tackle this issue and propose a novel pure integer linear problem (PILP) model to integrate the allocation of harvesting fronts on the field with the wood transport to the demand centers, hence considering operating, movement and transportation costs. In this sense, we consider the following research questions:<list list-type="bullet"><list-item><p>How can operational aspects of harvest scheduling and wood transportation be integrated into an optimized forest planning model?</p></list-item><list-item><p>What are the impacts of the model size on the processing times and the total cost of harvesting operations?</p></list-item></list></p>
+      <p>To answer the research questions, we developed a PILP model, to minimize the total harvesting costs, including operating, movement, and transportation costs under demand constraints. We randomly generated 13 problem instances with increasing size and complexity, using real data from pine and eucalypt forest plantations in Southern Brazil. We solved the optimization scenarios by using the software Gurobi (Gurobi Optimization, LLC., Beaverton, OR, USA) &#x2013; version 8.1.1 (2019), deriving the optimal machinery schedule and assessed the cost components related to the harvesting operations and the transportation to the demand centers.</p>
+    </sec>
+    <sec id="sec2-forests-10-01110">
+      <title>2. Materials and Methods</title>
+      <p>We build here a novel optimization model for the daily schedule of forest harvesting fronts across forest stands, in order to meet the daily demand for different products (timber assortments) at the demand centers, taking into account transportation costs (see <xref ref-type="fig" rid="forests-10-01110-f001">Figure 1</xref>). The harvesting equipment, in combination with the skidding equipment, typically composes a harvesting front (e.g., harvester + forwarder + loader or feller buncher + skidder + processor + loader combinations). We aimed to minimize the total cost of harvesting operations, including the harvesting operating cost, depending on the stands&#x2019; topographic and structural characteristics, the movement cost, i.e., the cost related to moving the machinery between forest stands and the cost related to the transportation of wood from stands to the demand centers. Thereby, we could find an optimal machinery schedule, in terms of where to allocate each harvesting front in each day of the planning horizon, in order to increase the economic efficiency of forest harvesting and transportation.</p>
+      <sec id="sec2dot1-forests-10-01110">
+        <title>2.1. Model Description</title>
+        <p>The model we develop here integrates two important and difficult decision problems, namely the schedule of harvesting fronts and the transport of forest products to the demand centers. To address these two problems and all the variables involved in the process, we constructed a PILP model. We describe the model in detail hereafter.</p>
+        <p>The unidimensional parameters in the model were as follows:
+		<list list-type="bullet"><list-item><p><inline-formula><mml:math id="mm1" display="block"><mml:semantics><mml:mi>T</mml:mi></mml:semantics></mml:math></inline-formula>&#x2014;Set of available stands;</p></list-item><list-item><p><inline-formula><mml:math id="mm2" display="block"><mml:semantics><mml:mi>F</mml:mi></mml:semantics></mml:math></inline-formula>&#x2014;Set of cutting fronts;</p></list-item><list-item><p><inline-formula><mml:math id="mm3" display="block"><mml:semantics><mml:mi>p</mml:mi></mml:semantics></mml:math></inline-formula>&#x2014;Set of possible products;</p></list-item><list-item><p><inline-formula><mml:math id="mm4" display="block"><mml:semantics><mml:mi mathvariant="normal">C</mml:mi></mml:semantics></mml:math></inline-formula>&#x2014;Set of demand centers;</p></list-item><list-item><p><inline-formula><mml:math id="mm5" display="block"><mml:semantics><mml:mrow><mml:mi>HP</mml:mi></mml:mrow></mml:semantics></mml:math></inline-formula>&#x2014;Planning Horizon;</p></list-item><list-item><p><inline-formula><mml:math id="mm6" display="block"><mml:semantics><mml:mi>&#x3C9;</mml:mi></mml:semantics></mml:math></inline-formula>&#x2014;Cost of transport for the forest products.</p></list-item></list></p>
+        <p>Based on these parameters, indices were defined to be used with the multidimensional parameters and variables in the model. They were as follows:
+		<list list-type="bullet"><list-item><p><inline-formula><mml:math id="mm7" display="block"><mml:semantics><mml:mi>t</mml:mi></mml:semantics></mml:math></inline-formula>&#x2014;Represents a stand belonging to <inline-formula><mml:math id="mm8" display="block"><mml:semantics><mml:mi>T</mml:mi></mml:semantics></mml:math></inline-formula>;</p></list-item><list-item><p><inline-formula><mml:math id="mm9" display="block"><mml:semantics><mml:mi>f</mml:mi></mml:semantics></mml:math></inline-formula>&#x2014;Represents a cutting front belonging to <inline-formula><mml:math id="mm10" display="block"><mml:semantics><mml:mi>F</mml:mi></mml:semantics></mml:math></inline-formula>;</p></list-item><list-item><p><inline-formula><mml:math id="mm11" display="block"><mml:semantics><mml:mi>p</mml:mi></mml:semantics></mml:math></inline-formula>&#x2014;Represents a product belonging to <inline-formula><mml:math id="mm12" display="block"><mml:semantics><mml:mi>P</mml:mi></mml:semantics></mml:math></inline-formula>;</p></list-item><list-item><p><inline-formula><mml:math id="mm13" display="block"><mml:semantics><mml:mi>c</mml:mi></mml:semantics></mml:math></inline-formula>&#x2014;Represents a demand center belonging to <inline-formula><mml:math id="mm14" display="block"><mml:semantics><mml:mi>C</mml:mi></mml:semantics></mml:math></inline-formula>;</p></list-item><list-item><p><inline-formula><mml:math id="mm15" display="block"><mml:semantics><mml:mi>d</mml:mi></mml:semantics></mml:math></inline-formula>&#x2014;Represents a harvest day, i.e., a day in which the harvesting front is operating in the stand.</p></list-item><list-item><p><inline-formula><mml:math id="mm16" display="block"><mml:semantics><mml:mi>&#x3B4;</mml:mi></mml:semantics></mml:math></inline-formula>&#x2014;Represents a day in the Planning Horizon, i.e., a potential candidate for a harvesting front to start harvesting a stand;</p></list-item></list></p>
+        <p>The input data of the model was as follows:
+		<list list-type="bullet"><list-item><p><inline-formula><mml:math id="mm17" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>&#x3BC;</mml:mi><mml:mi>f</mml:mi></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula>&#x2014;Movement cost for front <inline-formula><mml:math id="mm18" display="block"><mml:semantics><mml:mi>f</mml:mi></mml:semantics></mml:math></inline-formula> ($/km);</p></list-item><list-item><p><inline-formula><mml:math id="mm19" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>&#x3C6;</mml:mi><mml:mi>f</mml:mi></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula>&#x2014;Operation cost for front <inline-formula><mml:math id="mm20" display="block"><mml:semantics><mml:mi>f</mml:mi></mml:semantics></mml:math></inline-formula> ($/ha);</p></list-item><list-item><p><inline-formula><mml:math id="mm21" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>&#x3C4;</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>f</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula>&#x2014;Time needed for front <inline-formula><mml:math id="mm22" display="block"><mml:semantics><mml:mi>f</mml:mi></mml:semantics></mml:math></inline-formula> to harvest stand <inline-formula><mml:math id="mm23" display="block"><mml:semantics><mml:mi>t</mml:mi></mml:semantics></mml:math></inline-formula> (days);</p></list-item><list-item><p><inline-formula><mml:math id="mm24" display="block"><mml:semantics><mml:mrow><mml:mi>T</mml:mi><mml:mi>m</mml:mi><mml:mi>a</mml:mi><mml:mi>x</mml:mi></mml:mrow></mml:semantics></mml:math></inline-formula>&#x2014;Last day in which the harvest can be performed. This term is defined by assuming that a front <inline-formula><mml:math id="mm25" display="block"><mml:semantics><mml:mi>f</mml:mi></mml:semantics></mml:math></inline-formula> would start the harvest of stand <inline-formula><mml:math id="mm26" display="block"><mml:semantics><mml:mrow><mml:mi>t</mml:mi></mml:mrow></mml:semantics></mml:math></inline-formula> in the last day of the planning horizon, taking into account the time needed for the movement of harvesting front between stands;</p></list-item><list-item><p><inline-formula><mml:math id="mm27" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>&#x3C1;</mml:mi><mml:mrow><mml:msub><mml:mi>t</mml:mi><mml:mn>1</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>2</mml:mn></mml:msub></mml:mrow></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula>&#x2014;Distance between stands <inline-formula><mml:math id="mm28" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>t</mml:mi><mml:mn>1</mml:mn></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula> and <inline-formula><mml:math id="mm29" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>t</mml:mi><mml:mn>2</mml:mn></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula> (km);</p></list-item><list-item><p><inline-formula><mml:math id="mm30" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>&#x3C0;</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>c</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula>&#x2014;Distance between stand <inline-formula><mml:math id="mm31" display="block"><mml:semantics><mml:mi>t</mml:mi></mml:semantics></mml:math></inline-formula> and demand center <inline-formula><mml:math id="mm32" display="block"><mml:semantics><mml:mi>c</mml:mi></mml:semantics></mml:math></inline-formula> (km);</p></list-item><list-item><p><inline-formula><mml:math id="mm33" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>&#x3BB;</mml:mi><mml:mrow><mml:mi>c</mml:mi><mml:mo>,</mml:mo><mml:mi>p</mml:mi><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula>&#x2014;Daily demand for product <inline-formula><mml:math id="mm34" display="block"><mml:semantics><mml:mi>p</mml:mi></mml:semantics></mml:math></inline-formula> in demand center <inline-formula><mml:math id="mm35" display="block"><mml:semantics><mml:mi>c</mml:mi></mml:semantics></mml:math></inline-formula> (m<sup>3</sup>);</p></list-item><list-item><p><inline-formula><mml:math id="mm36" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>A</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi><mml:mo>,</mml:mo><mml:mi>d</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula>&#x2014;Area of <inline-formula><mml:math id="mm37" display="block"><mml:semantics><mml:mi>t</mml:mi></mml:semantics></mml:math></inline-formula> that front <inline-formula><mml:math id="mm38" display="block"><mml:semantics><mml:mi>f</mml:mi></mml:semantics></mml:math></inline-formula> will be able to harvest on day <inline-formula><mml:math id="mm39" display="block"><mml:semantics><mml:mi>d</mml:mi></mml:semantics></mml:math></inline-formula> if the harvesting starts at day <inline-formula><mml:math id="mm40" display="block"><mml:semantics><mml:mi>&#x3B4;</mml:mi></mml:semantics></mml:math></inline-formula> (ha);</p></list-item><list-item><p><inline-formula><mml:math id="mm41" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>&#x3B8;</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi><mml:mo>,</mml:mo><mml:mi>p</mml:mi><mml:mo>,</mml:mo><mml:mi>d</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula>&#x2014;Supply of product <inline-formula><mml:math id="mm42" display="block"><mml:semantics><mml:mi>p</mml:mi></mml:semantics></mml:math></inline-formula> in stand <inline-formula><mml:math id="mm43" display="block"><mml:semantics><mml:mi>t</mml:mi></mml:semantics></mml:math></inline-formula> which the front <inline-formula><mml:math id="mm44" display="block"><mml:semantics><mml:mi>f</mml:mi></mml:semantics></mml:math></inline-formula> will be able to harvest during day <inline-formula><mml:math id="mm45" display="block"><mml:semantics><mml:mi>d</mml:mi></mml:semantics></mml:math></inline-formula> if the harvesting starts on day <inline-formula><mml:math id="mm46" display="block"><mml:semantics><mml:mi>&#x3B4;</mml:mi></mml:semantics></mml:math></inline-formula> (m<sup>3</sup>/day).</p></list-item></list></p>
+        <p>The values of <inline-formula><mml:math id="mm47" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>&#x3BC;</mml:mi><mml:mi>f</mml:mi></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula> and <inline-formula><mml:math id="mm48" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>&#x3C6;</mml:mi><mml:mi>f</mml:mi></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula> are obtained via the definition of the harvesting fronts that will be operating throughout the PH. The productivities of these harvesting fronts were obtained by time and motion studies in the field. With the help of these pieces of information and the area of the stand, the values of <inline-formula><mml:math id="mm49" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>&#x3C4;</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>f</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula> and <inline-formula><mml:math id="mm50" display="block"><mml:semantics><mml:mrow><mml:mi>T</mml:mi><mml:mi>m</mml:mi><mml:mi>a</mml:mi><mml:mi>x</mml:mi></mml:mrow></mml:semantics></mml:math></inline-formula> are defined. The values of <inline-formula><mml:math id="mm51" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>&#x3C1;</mml:mi><mml:mrow><mml:msub><mml:mi>t</mml:mi><mml:mn>1</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>2</mml:mn></mml:msub></mml:mrow></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula> and <inline-formula><mml:math id="mm52" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>&#x3C0;</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>c</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula> are obtained in each scenario by the random allocation of stand centroids and the location of the demand center, while <inline-formula><mml:math id="mm53" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>&#x3BB;</mml:mi><mml:mrow><mml:mi>c</mml:mi><mml:mo>,</mml:mo><mml:mi>p</mml:mi><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula> are related to each demand center and based on real data collected by the students of the Federal University of Paran&#xE1;. Finally, we are able to derive the harvested area in each stand, depending the starting date and the productivity data, determining the values of <inline-formula><mml:math id="mm54" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>A</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi><mml:mo>,</mml:mo><mml:mi>d</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula> and <inline-formula><mml:math id="mm55" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>&#x3B8;</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi><mml:mo>,</mml:mo><mml:mi>d</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula>.</p>
+        <p>Finally, the set of variables is also required for the construction of the model:
+		<list list-type="bullet"><list-item><p><inline-formula><mml:math id="mm56" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>y</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula>&#x2014;Binary, has value 1 if front <inline-formula><mml:math id="mm57" display="block"><mml:semantics><mml:mi>f</mml:mi></mml:semantics></mml:math></inline-formula> starts the harvest of stand <inline-formula><mml:math id="mm58" display="block"><mml:semantics><mml:mi>t</mml:mi></mml:semantics></mml:math></inline-formula> on day <inline-formula><mml:math id="mm59" display="block"><mml:semantics><mml:mi>&#x3B4;</mml:mi></mml:semantics></mml:math></inline-formula>, 0 otherwise;</p></list-item><list-item><p><inline-formula><mml:math id="mm60" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>x</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>d</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula>&#x2014;Binary, has value 1 if front <inline-formula><mml:math id="mm61" display="block"><mml:semantics><mml:mi>f</mml:mi></mml:semantics></mml:math></inline-formula> is harvesting stand <inline-formula><mml:math id="mm62" display="block"><mml:semantics><mml:mi>t</mml:mi></mml:semantics></mml:math></inline-formula> on day <inline-formula><mml:math id="mm63" display="block"><mml:semantics><mml:mi>d</mml:mi></mml:semantics></mml:math></inline-formula>, with <inline-formula><mml:math id="mm64" display="block"><mml:semantics><mml:mrow><mml:mn>1</mml:mn><mml:mo>&#x2264;</mml:mo><mml:mi>d</mml:mi><mml:mo>&#x2264;</mml:mo><mml:mi>T</mml:mi><mml:mi>m</mml:mi><mml:mi>a</mml:mi><mml:mi>x</mml:mi></mml:mrow></mml:semantics></mml:math></inline-formula>, 0 otherwise;</p></list-item><list-item><p><inline-formula><mml:math id="mm65" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mo>&#x394;</mml:mo><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>1</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>2</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula>&#x2014;Binary, has value 1 if front <inline-formula><mml:math id="mm66" display="block"><mml:semantics><mml:mi>f</mml:mi></mml:semantics></mml:math></inline-formula> moved from stand <inline-formula><mml:math id="mm67" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>t</mml:mi><mml:mn>1</mml:mn></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula> to stand <inline-formula><mml:math id="mm68" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>t</mml:mi><mml:mn>2</mml:mn></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula> on day <inline-formula><mml:math id="mm69" display="block"><mml:semantics><mml:mi>&#x3B4;</mml:mi></mml:semantics></mml:math></inline-formula>, 0 otherwise.</p></list-item></list></p>
+        <p>Using the data and variables described previously, the following mathematical model was built in order to minimize the harvesting costs, taking into account operating, movement, and transportation costs. Moreover, we ensured that the demand for each product in each demand center was met along the planning horizon.
+        <disp-formula id="FD1-forests-10-01110"><label>(1)</label><mml:math id="mm70" display="block"><mml:semantics><mml:mrow><mml:mtable><mml:mtr><mml:mtd><mml:mrow><mml:mi>M</mml:mi><mml:mi>i</mml:mi><mml:mi>n</mml:mi><mml:mo>&#xA0;</mml:mo><mml:mo>&#xA0;</mml:mo><mml:mo>&#xA0;</mml:mo><mml:mo>&#xA0;</mml:mo><mml:mo>&#xA0;</mml:mo><mml:mi>Z</mml:mi><mml:mo>=</mml:mo><mml:msub><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>t</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>T</mml:mi></mml:mrow></mml:msub><mml:msub><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>p</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>P</mml:mi></mml:mrow></mml:msub><mml:msub><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>c</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>C</mml:mi></mml:mrow></mml:msub><mml:msubsup><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>&#x3B4;</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>H</mml:mi><mml:mi>P</mml:mi></mml:mrow></mml:msubsup><mml:msub><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>f</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>F</mml:mi></mml:mrow></mml:msub><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msub><mml:mi>y</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi></mml:mrow></mml:msub><mml:mo>&#xB7;</mml:mo><mml:msub><mml:mi>&#x3B8;</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi><mml:mo>,</mml:mo><mml:mi>p</mml:mi><mml:mo>,</mml:mo><mml:mi>d</mml:mi></mml:mrow></mml:msub><mml:mo>&#xB7;</mml:mo><mml:msub><mml:mi>&#x3C0;</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>c</mml:mi></mml:mrow></mml:msub><mml:mo>&#xB7;</mml:mo><mml:mi>&#x3C9;</mml:mi></mml:mrow><mml:mo>)</mml:mo></mml:mrow><mml:mo>&#xA0;</mml:mo><mml:mo>+</mml:mo><mml:mo>&#xA0;</mml:mo></mml:mrow></mml:mtd></mml:mtr><mml:mtr><mml:mtd><mml:mrow><mml:msub><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>f</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>F</mml:mi></mml:mrow></mml:msub><mml:msub><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>t</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>T</mml:mi></mml:mrow></mml:msub><mml:msubsup><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>d</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>T</mml:mi><mml:mi>m</mml:mi><mml:mi>a</mml:mi><mml:mi>x</mml:mi></mml:mrow></mml:msubsup><mml:msubsup><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>&#x3B4;</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>H</mml:mi><mml:mi>P</mml:mi></mml:mrow></mml:msubsup><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msub><mml:mi>y</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi></mml:mrow></mml:msub><mml:mo>&#xB7;</mml:mo><mml:msub><mml:mi>A</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi><mml:mo>,</mml:mo><mml:mi>d</mml:mi></mml:mrow></mml:msub><mml:mo>&#xB7;</mml:mo><mml:msub><mml:mi>&#x3C6;</mml:mi><mml:mi>f</mml:mi></mml:msub></mml:mrow><mml:mo>)</mml:mo></mml:mrow><mml:mo>+</mml:mo><mml:msub><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>f</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>F</mml:mi></mml:mrow></mml:msub><mml:msub><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:msub><mml:mi>t</mml:mi><mml:mn>1</mml:mn></mml:msub><mml:mo>&#x2208;</mml:mo><mml:mi>T</mml:mi></mml:mrow></mml:msub><mml:msub><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:msub><mml:mi>t</mml:mi><mml:mn>2</mml:mn></mml:msub><mml:mo>&#x2208;</mml:mo><mml:mi>T</mml:mi></mml:mrow></mml:msub><mml:msubsup><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>&#x3B4;</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>H</mml:mi><mml:mi>P</mml:mi></mml:mrow></mml:msubsup><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msub><mml:mi mathvariant="sans-serif">&#x394;</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>1</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>2</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi></mml:mrow></mml:msub><mml:mo>&#xB7;</mml:mo><mml:msub><mml:mi>&#x3C1;</mml:mi><mml:mrow><mml:msub><mml:mi>t</mml:mi><mml:mn>1</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>2</mml:mn></mml:msub></mml:mrow></mml:msub><mml:mo>&#xB7;</mml:mo><mml:msub><mml:mi>&#x3BC;</mml:mi><mml:mi>f</mml:mi></mml:msub></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow></mml:mtd></mml:mtr></mml:mtable></mml:mrow></mml:semantics></mml:math></disp-formula>
+        subject to:<disp-formula id="FD3-forests-10-01110"><label>(2)</label><mml:math id="mm72" display="block"><mml:semantics><mml:mrow><mml:mrow><mml:msub><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>f</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>F</mml:mi></mml:mrow></mml:msub><mml:msubsup><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>&#x3B4;</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>H</mml:mi><mml:mi>P</mml:mi></mml:mrow></mml:msubsup><mml:msub><mml:mi>y</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi></mml:mrow></mml:msub><mml:mo>&#x2264;</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mrow><mml:mi>t</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>T</mml:mi></mml:mrow></mml:mrow></mml:semantics></mml:math></disp-formula>
+        <disp-formula id="FD5-forests-10-01110"><label>(3)</label><mml:math id="mm74" display="block"><mml:semantics><mml:mrow><mml:mrow><mml:msub><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>t</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>T</mml:mi></mml:mrow></mml:msub><mml:msub><mml:mi>y</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msub><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#xA0;</mml:mo><mml:mrow><mml:mi>f</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>F</mml:mi></mml:mrow></mml:mrow></mml:semantics></mml:math></disp-formula>
+        <disp-formula id="FD7-forests-10-01110"><label>(4)</label><mml:math id="mm76" display="block"><mml:semantics><mml:mrow><mml:mrow><mml:msub><mml:mi>x</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msub><mml:mo>=</mml:mo><mml:msub><mml:mi>y</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msub></mml:mrow><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mrow><mml:mi>f</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>F</mml:mi><mml:mo>,</mml:mo><mml:mtext>&#xA0;</mml:mtext><mml:mi>t</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>T</mml:mi></mml:mrow></mml:mrow></mml:semantics></mml:math></disp-formula>
+        <disp-formula id="FD9-forests-10-01110"><label>(5)</label><mml:math id="mm78" display="block"><mml:semantics><mml:mrow><mml:mrow><mml:msub><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>t</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>T</mml:mi></mml:mrow></mml:msub><mml:msub><mml:mi>x</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>d</mml:mi></mml:mrow></mml:msub><mml:mo>&#x2264;</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#xA0;</mml:mo><mml:mrow><mml:mi>f</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>F</mml:mi><mml:mo>,</mml:mo><mml:mtext>&#xA0;</mml:mtext><mml:mn>1</mml:mn><mml:mo>&#x2264;</mml:mo><mml:mi>d</mml:mi><mml:mo>&#x2264;</mml:mo><mml:mi>T</mml:mi><mml:mi>m</mml:mi><mml:mi>a</mml:mi><mml:mi>x</mml:mi></mml:mrow></mml:mrow></mml:semantics></mml:math></disp-formula>
+        <disp-formula id="FD11-forests-10-01110"><label>(6)</label><mml:math id="mm80" display="block"><mml:semantics><mml:mrow><mml:mrow><mml:msub><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>f</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>F</mml:mi></mml:mrow></mml:msub><mml:msub><mml:mi>x</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>d</mml:mi></mml:mrow></mml:msub><mml:mo>&#x2264;</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#xA0;</mml:mo><mml:mrow><mml:mi>t</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>T</mml:mi><mml:mo>,</mml:mo><mml:mtext>&#xA0;</mml:mtext><mml:mn>1</mml:mn><mml:mo>&#x2264;</mml:mo><mml:mi>d</mml:mi><mml:mo>&#x2264;</mml:mo><mml:mi>T</mml:mi><mml:mi>m</mml:mi><mml:mi>a</mml:mi><mml:mi>x</mml:mi></mml:mrow></mml:mrow></mml:semantics></mml:math></disp-formula>
+        <disp-formula id="FD13-forests-10-01110"><label>(7)</label><mml:math id="mm82" display="block"><mml:semantics><mml:mrow><mml:mrow><mml:msub><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>t</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>T</mml:mi></mml:mrow></mml:msub><mml:msub><mml:mi>x</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>d</mml:mi></mml:mrow></mml:msub><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mrow><mml:mi>f</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>F</mml:mi><mml:mo>,</mml:mo><mml:mtext>&#xA0;</mml:mtext><mml:mn>1</mml:mn><mml:mo>&#x2264;</mml:mo><mml:mi>d</mml:mi><mml:mo>&#x2264;</mml:mo><mml:mi>H</mml:mi><mml:mi>P</mml:mi></mml:mrow></mml:mrow></mml:semantics></mml:math></disp-formula>
+        <disp-formula id="FD15-forests-10-01110"><label>(8)</label><mml:math id="mm84" display="block"><mml:semantics><mml:mrow><mml:mrow><mml:msub><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>t</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>T</mml:mi></mml:mrow></mml:msub><mml:msubsup><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>&#x3B4;</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>H</mml:mi><mml:mi>P</mml:mi></mml:mrow></mml:msubsup><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msub><mml:mi>y</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi></mml:mrow></mml:msub><mml:mo>&#xB7;</mml:mo><mml:msub><mml:mi>&#x3C4;</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>f</mml:mi></mml:mrow></mml:msub></mml:mrow><mml:mo>)</mml:mo></mml:mrow><mml:mo>&#x2264;</mml:mo><mml:mi>H</mml:mi><mml:mi>P</mml:mi></mml:mrow><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mrow><mml:mi>f</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>F</mml:mi></mml:mrow></mml:mrow></mml:semantics></mml:math></disp-formula>
+        <disp-formula id="FD17-forests-10-01110"><label>(9)</label><mml:math id="mm86" display="block"><mml:semantics><mml:mrow><mml:mrow><mml:msubsup><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>d</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>T</mml:mi><mml:mi>m</mml:mi><mml:mi>a</mml:mi><mml:mi>x</mml:mi></mml:mrow></mml:msubsup><mml:msub><mml:mi>x</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>d</mml:mi></mml:mrow></mml:msub><mml:mo>&#x2264;</mml:mo><mml:msub><mml:mi>&#x3C4;</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>f</mml:mi></mml:mrow></mml:msub></mml:mrow><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mrow><mml:mi>t</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>T</mml:mi><mml:mo>,</mml:mo><mml:mtext>&#xA0;</mml:mtext><mml:mi>f</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>F</mml:mi></mml:mrow></mml:mrow></mml:semantics></mml:math></disp-formula>
+        <disp-formula id="FD19-forests-10-01110"><label>(10)</label><mml:math id="mm88" display="block"><mml:semantics><mml:mrow><mml:mrow><mml:msubsup><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>d</mml:mi><mml:mo>=</mml:mo><mml:mi>&#x3B4;</mml:mi></mml:mrow><mml:mrow><mml:mi>&#x3B4;</mml:mi><mml:mo>+</mml:mo><mml:msub><mml:mi>&#x3C4;</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>f</mml:mi></mml:mrow></mml:msub><mml:mo>&#x2212;</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msubsup><mml:msub><mml:mi>x</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>d</mml:mi></mml:mrow></mml:msub><mml:mo>&#x2265;</mml:mo><mml:msub><mml:mi>y</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi></mml:mrow></mml:msub><mml:mo>&#xB7;</mml:mo><mml:msub><mml:mi>&#x3C4;</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>f</mml:mi></mml:mrow></mml:msub></mml:mrow><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mrow><mml:mrow><mml:mo>{</mml:mo><mml:mrow><mml:mtable columnalign="left"><mml:mtr columnalign="left"><mml:mtd columnalign="left"><mml:mrow><mml:mi>t</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>T</mml:mi><mml:mo>,</mml:mo><mml:mi>f</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>F</mml:mi></mml:mrow></mml:mtd></mml:mtr><mml:mtr columnalign="left"><mml:mtd columnalign="left"><mml:mrow><mml:mn>1</mml:mn><mml:mo>&#x2264;</mml:mo><mml:mi>&#x3B4;</mml:mi><mml:mo>&#x2264;</mml:mo><mml:mi>H</mml:mi><mml:mi>P</mml:mi></mml:mrow></mml:mtd></mml:mtr></mml:mtable></mml:mrow></mml:mrow></mml:mrow></mml:mrow></mml:semantics></mml:math></disp-formula>
+        <disp-formula id="FD21-forests-10-01110"><label>(11)</label><mml:math id="mm90" display="block"><mml:semantics><mml:mrow><mml:mrow><mml:msub><mml:mi>x</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>d</mml:mi></mml:mrow></mml:msub><mml:mo>&#x2265;</mml:mo><mml:msub><mml:mi>y</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi></mml:mrow></mml:msub></mml:mrow><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mrow><mml:mrow><mml:mo>{</mml:mo><mml:mrow><mml:mtable columnalign="left"><mml:mtr columnalign="left"><mml:mtd columnalign="left"><mml:mrow><mml:mi>f</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>F</mml:mi><mml:mo>,</mml:mo><mml:mtext>&#xA0;</mml:mtext><mml:mi>t</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>T</mml:mi><mml:mo>,</mml:mo><mml:mtext>&#xA0;</mml:mtext><mml:mn>1</mml:mn><mml:mo>&#x2264;</mml:mo><mml:mi>&#x3B4;</mml:mi><mml:mo>&#x2264;</mml:mo><mml:mi>H</mml:mi><mml:mi>P</mml:mi></mml:mrow></mml:mtd></mml:mtr><mml:mtr columnalign="left"><mml:mtd columnalign="left"><mml:mrow><mml:mi>&#x3B4;</mml:mi><mml:mo>&#x2264;</mml:mo><mml:mi>d</mml:mi><mml:mo>&#x2264;</mml:mo><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:mi>&#x3B4;</mml:mi><mml:mo>+</mml:mo><mml:msub><mml:mi>&#x3C4;</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>f</mml:mi></mml:mrow></mml:msub><mml:mo>&#x2212;</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow></mml:mtd></mml:mtr></mml:mtable></mml:mrow></mml:mrow></mml:mrow></mml:mrow></mml:semantics></mml:math></disp-formula>
+        <disp-formula id="FD23-forests-10-01110"><label>(12)</label><mml:math id="mm92" display="block"><mml:semantics><mml:mrow><mml:mrow><mml:msub><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>t</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>T</mml:mi></mml:mrow></mml:msub><mml:msub><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>f</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>F</mml:mi></mml:mrow></mml:msub><mml:msubsup><mml:mstyle mathsize="70%" displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>&#x3B4;</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>H</mml:mi><mml:mi>P</mml:mi></mml:mrow></mml:msubsup><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msub><mml:mi>y</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi></mml:mrow></mml:msub><mml:mo>&#xB7;</mml:mo><mml:msub><mml:mi>&#x3B8;</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi><mml:mo>,</mml:mo><mml:mi>p</mml:mi><mml:mo>,</mml:mo><mml:mi>d</mml:mi></mml:mrow></mml:msub></mml:mrow><mml:mo>)</mml:mo></mml:mrow><mml:mo>&#x2265;</mml:mo><mml:msub><mml:mi>&#x3BB;</mml:mi><mml:mrow><mml:mi>c</mml:mi><mml:mo>,</mml:mo><mml:mi>p</mml:mi><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi></mml:mrow></mml:msub></mml:mrow><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#xA0;</mml:mo><mml:mrow><mml:mrow><mml:mo>{</mml:mo><mml:mrow><mml:mtable columnalign="left"><mml:mtr columnalign="left"><mml:mtd columnalign="left"><mml:mrow><mml:mi>p</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>P</mml:mi><mml:mo>,</mml:mo><mml:mi>c</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>C</mml:mi></mml:mrow></mml:mtd></mml:mtr><mml:mtr columnalign="left"><mml:mtd columnalign="left"><mml:mrow><mml:mn>1</mml:mn><mml:mo>&#x2264;</mml:mo><mml:mi>d</mml:mi><mml:mo>&#x2264;</mml:mo><mml:mi>T</mml:mi><mml:mi>m</mml:mi><mml:mi>a</mml:mi><mml:mi>x</mml:mi></mml:mrow></mml:mtd></mml:mtr></mml:mtable></mml:mrow></mml:mrow></mml:mrow></mml:mrow></mml:semantics></mml:math></disp-formula>
+        <disp-formula id="FD25-forests-10-01110"><label>(13)</label><mml:math id="mm94" display="block"><mml:semantics><mml:mrow><mml:mrow><mml:msub><mml:mi mathvariant="sans-serif">&#x394;</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>1</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>2</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msub><mml:mo>=</mml:mo><mml:mn>0</mml:mn></mml:mrow><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#xA0;</mml:mo><mml:mrow><mml:mi>f</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>F</mml:mi><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>1</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>2</mml:mn></mml:msub><mml:mo>&#x2208;</mml:mo><mml:mi>T</mml:mi></mml:mrow></mml:mrow></mml:semantics></mml:math></disp-formula>
+        <disp-formula id="FD27-forests-10-01110"><label>(14)</label><mml:math id="mm96" display="block"><mml:semantics><mml:mrow><mml:mrow><mml:msub><mml:mi mathvariant="sans-serif">&#x394;</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>1</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>2</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi></mml:mrow></mml:msub><mml:mo>&#x2265;</mml:mo><mml:msub><mml:mi>x</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>2</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:mi>d</mml:mi></mml:mrow></mml:msub><mml:mo>+</mml:mo><mml:msub><mml:mi>x</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>1</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:mi>d</mml:mi><mml:mo>&#x2212;</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msub><mml:mo>&#x2212;</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mrow><mml:mrow><mml:mo>{</mml:mo><mml:mrow><mml:mtable columnalign="left"><mml:mtr columnalign="left"><mml:mtd columnalign="left"><mml:mrow><mml:mi>f</mml:mi><mml:mo>&#x2208;</mml:mo><mml:mi>F</mml:mi><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>1</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>2</mml:mn></mml:msub><mml:mo>&#x2208;</mml:mo><mml:mi>T</mml:mi></mml:mrow></mml:mtd></mml:mtr><mml:mtr columnalign="left"><mml:mtd columnalign="left"><mml:mrow><mml:mn>1</mml:mn><mml:mo>&#x2264;</mml:mo><mml:mi>&#x3B4;</mml:mi><mml:mo>&#x2264;</mml:mo><mml:mi>H</mml:mi><mml:mi>P</mml:mi></mml:mrow></mml:mtd></mml:mtr></mml:mtable></mml:mrow></mml:mrow></mml:mrow></mml:mrow></mml:semantics></mml:math></disp-formula>
+        <disp-formula id="FD29-forests-10-01110"><mml:math id="mm98" display="block"><mml:semantics><mml:mrow><mml:mrow><mml:msub><mml:mi>y</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi></mml:mrow></mml:msub><mml:mo>&#x2208;</mml:mo><mml:mrow><mml:mo>{</mml:mo><mml:mrow><mml:mn>0</mml:mn><mml:mo>,</mml:mo><mml:mtext>&#xA0;</mml:mtext><mml:mn>1</mml:mn></mml:mrow><mml:mo>}</mml:mo></mml:mrow><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo></mml:mrow><mml:mrow><mml:msub><mml:mi>x</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>d</mml:mi></mml:mrow></mml:msub><mml:mo>&#x2208;</mml:mo><mml:mrow><mml:mo>{</mml:mo><mml:mrow><mml:mn>0</mml:mn><mml:mo>,</mml:mo><mml:mtext>&#xA0;</mml:mtext><mml:mn>1</mml:mn></mml:mrow><mml:mo>}</mml:mo></mml:mrow></mml:mrow><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mrow><mml:msub><mml:mi mathvariant="sans-serif">&#x394;</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>1</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>2</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi></mml:mrow></mml:msub><mml:mo>&#x2208;</mml:mo><mml:mrow><mml:mo>{</mml:mo><mml:mrow><mml:mn>0</mml:mn><mml:mo>,</mml:mo><mml:mtext>&#xA0;</mml:mtext><mml:mn>1</mml:mn></mml:mrow><mml:mo>}</mml:mo></mml:mrow></mml:mrow></mml:mrow></mml:semantics></mml:math></disp-formula></p>
+        <p>The objective function, Equation (1), minimizes the total harvesting cost and is composed by three terms. The first one expresses the transportation cost of the harvested timber to the demand centers. The second term represents the operating cost of the harvesting machinery. Finally, the third term computes the movement cost of the machinery between stands along the planning horizon.</p>
+        <p>The constraint in Equation (2) guarantees that each stand will only be harvested once along the planning horizon. The constraints in Equations (3) and (4) ensure that each harvesting front starts harvesting a single stand on the first day of the planning horizon. The constraint in Equation (5) prevents a harvesting front from operating in more than one stand in a same day of the PH, i.e., the fronts operate in only one stand per day. The constraint in Equation (6) ensures that stands are harvested by only one harvesting front, i.e., two fronts do not operate simultaneously in a same stand.</p>
+        <p>The constraint in Equation (7) enforces that harvesting fronts will operate in every day of the planning horizon, and Equation (8) establishes the available operating time span for each harvesting front. The constraints in Equations (9)&#x2013;(11) guarantee that once a harvesting front starts harvesting a stand, it will operate in this same stand until it is completely harvested.</p>
+        <p>The constraint in Equation (12) ensures that the amount of product to be transported to the demand centers does not exceed the amount of product harvested on the stands and, simultaneously, meets the demand for each product in the demand centers.</p>
+        <p>Finally, the constraints represented by inequalities in Equations (13) and (14) activate the variable <inline-formula><mml:math id="mm101" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi mathvariant="sans-serif">&#x394;</mml:mi><mml:mrow><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>1</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>2</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula>, which describes the movement of the cutting fronts between the stands&#x2019; constraints in Equation (13) and establishes that no movement occurs at the starting day of the harvesting operation in a stand. The constraint in Equation (14) indicates if a harvesting front is moved from stand <inline-formula><mml:math id="mm102" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>t</mml:mi><mml:mn>1</mml:mn></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula> to stand <inline-formula><mml:math id="mm103" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>t</mml:mi><mml:mn>2</mml:mn></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula> in a given day of the PH.</p>
+      </sec>
+      <sec id="sec2dot2-forests-10-01110">
+        <title>2.2. Case Study</title>
+        <p>In order to test our novel approach, we constructed 13 problem instances with increasing levels of complexity (see <xref ref-type="table" rid="forests-10-01110-t001">Table 1</xref>). The scenarios tested were randomly generated, varying the number of harvesting fronts, products, and the planning horizon length. All scenarios considered two terrain types and one demand center. The terrain types defined the productivity of the harvesting fronts. Scenario 1 had 12 stands that produced a single assortment, and the terrain was distinguished in types 1 and 2. Two distinct cutting fronts were established for harvesting these stands, such that each front had distinct operating costs, movement costs, and productivities. The planning horizon was defined as 7 days, and the demand center maintained a constant daily demand for a single product.</p>
+        <p>Scenario 2 included 20 stands that produced up to three distinct forest (1, 2, or 3) products. Three distinct cutting fronts were defined to harvest the stands, such that each front had distinct operating costs, movement costs, and productivities. The planning horizon was defined as 7 days, and the demand center maintained a constant daily demand for each product. Scenario 3 applied the same parameters as scenario 2, but considered a 15-day planning horizon.</p>
+        <p>Scenarios 4 to 13 had 50 stands available for harvesting that produced up to three distinct forest products. Three distinct cutting fronts were defined to harvest the stands, such that each front had distinct operating costs, movement costs, and productivities. The planning horizon was defined as 15 days, and the demand center maintained a constant daily demand for each product. Moreover, scenario 4 displayed 186,753 variables, with 170,700 of those being integer (binary) variables, and 135,574 were constraints. The remaining scenarios (5 to 13) had 195,003 variables, of which 178,350 were integer (binary) variables, and 135,942 were constraints. Although scenarios 5 to 13 had the same dimensions, the costs, terrain characteristics, and demand-center locations were different, giving rise to different optimal allocations of the harvesting fronts.</p>
+        <p>We highlight that the scenarios were generated randomly, but based on real data. All parameters and data used in the scenarios were shared by students of the Forest Engineering Graduate School of the Federal University of Paran&#xE1;. The harvesting productivity parameters, namely <inline-formula><mml:math id="mm104" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>A</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi><mml:mo>,</mml:mo><mml:mi>d</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula> and <inline-formula><mml:math id="mm105" display="block"><mml:semantics><mml:mrow><mml:msub><mml:mi>&#x3B8;</mml:mi><mml:mrow><mml:mi>t</mml:mi><mml:mo>,</mml:mo><mml:mi>f</mml:mi><mml:mo>,</mml:mo><mml:mi>&#x3B4;</mml:mi><mml:mo>,</mml:mo><mml:mi>d</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:semantics></mml:math></inline-formula>, were assessed based on time and motion studies (e.g., [<xref ref-type="bibr" rid="B20-forests-10-01110">20</xref>]) conducted by the students. In this sense, the scenarios tested do not represent a particular forest area, but demonstrate how the model may be used in diverse forest planning problems for typical conditions of pine and eucalypt forest plantations in Southern Brazil. To develop the scenarios, we employed the tool developed in [<xref ref-type="bibr" rid="B21-forests-10-01110">21</xref>]. This tool generates forest-planning scenarios based on the total forest area, the topographic characteristics, and the number of demand centers in a given planning problem. The demand centers are randomly distributed inside the area. Subsequently, the specified number of stands is generated within a given radius of the demand centers and respecting minimum and maximum area limits. Finally, the stands are populated with a forest species, topographic conditions, harvesting conditions under high soil moisture, number of forest products, and the productive capacities for each product.</p>
+        <p>The proposed formulation was implemented by using the Visual Basic programming language on Microsoft Visual Studio Community 2013 software (Microsoft, Redmond, WA, USA)&#x2014;version 12.0.21005.1 REL (2013). The MILP models were solved with the software application Gurobi (Gurobi Optimization, LLC., Beaverton, OR, USA) &#x2014;version 8.1.1 (2019), using a computer with an Intel<sup>&#xAE;</sup> Core&#x2122; i7-4510U CPU @ 2.00 GHz processor and 8 GB of memory.</p>
+      </sec>
+    </sec>
+    <sec id="sec3-forests-10-01110" sec-type="results">
+      <title>3. Results</title>
+      <p>We perceived that a larger number of stands in the planning problem led to a substantial increase in the model size and complexity, cascading to the required solution time. This is a key feature of problems involving operational planning, since these need to be performed at a daily or weekly basis. For example, a planning problem involving 20 stands increased the number of variables and constraints in 339% and 456%, compared to a scenario composed by 12 stands. <xref ref-type="fig" rid="forests-10-01110-f002">Figure 2</xref> shows the optimization results, in terms of the objective function value and solution time, for all 13 scenarios tested. We noticed that the scenarios with 12 and 20 stands (1 and 2) could be quickly solved, showing processing times below 10 s. Additionally, the scenarios belonging to the same order of magnitude had distinct complexity and computational burden. Scenarios 5 to 13 had a similar number of variables and constraints, but the processing time ranged between 1.3 and 16.0 h.</p>
+      <p>The unitary costs of wood supply ranged from 17 to 89 $/m<sup>3</sup> in the scenarios tested, representing the variety of operational conditions for forest plantations in Southern Brazil. As expected, the average distance to the demand centers and the proportion of the less favorable terrain types in the scenarios were determinant to unitary production costs. An increase in either of these variables led to an increase in production costs. Additionally, the average stand area affected the solution, with lower costs in scenarios with larger average stand area. Taking into account the results of scenarios 5 to 13, the average distance to the demand centers and the proportion of the less favorable terrain types were capable to explain a large share of the total variation (adjusted R<sup>2</sup> = 0.75) in the unitary costs of production. Moreover, we perceived that there was an effect of the harvesting cost on the model solution time (R<sup>2</sup> = 0.56), indicating that model instances involving more challenging topographic conditions and larger operational costs become increasingly more complex.</p>
+      <p>The contribution of the different cost factors to the total cost of harvesting operations for selected scenarios is shown in <xref ref-type="table" rid="forests-10-01110-t002">Table 2</xref>. We noted that the transportation cost of forest products from the stands to the demand center was the dominant component of the total harvesting cost, amounting to more than 75% of the total ($30,320.5 and $16,304.8). The operating cost represented 13% of the total cost for scenario 5 and 10% for scenario 2, with a slighter higher contribution than the movement cost, which amounted to 12% and 11% of the total, respectively. <xref ref-type="fig" rid="forests-10-01110-f003">Figure 3</xref> illustrates the respective optimal solution for the same scenario, composed by 50 stands and a planning horizon of 15 days. Within this time span, each front completely harvested three stands, with differing operating times. The fronts were scheduled so that the three harvesting fronts were not moved between stands in a same day of the planning horizon, allowing a continuous supply of wood in the demand center. Additionally, the harvesting was prioritized in stands closer to the demand center (see <xref ref-type="fig" rid="forests-10-01110-f004">Figure 4</xref>), thus reducing the transportation costs related to the demand for different assortments and the total cost of harvesting operations (since this was the dominant cost component). Nevertheless, in the optimal scheduling in scenario 5, we found the displacement of harvesting front 1 to stand 3, at the end of the planning horizon, despite the long movement and transportation distances. This pattern was a result of the combination of favorable topographic conditions and the stock availability in this stand to meet the daily demand for the largest wood assortment.</p>
+    </sec>
+    <sec id="sec4-forests-10-01110" sec-type="discussion">
+      <title>4. Discussion</title>
+      <p>In this paper, we proposed a novel approach for the operational planning of forest harvesting. Our model aimed to minimize the total cost of harvesting activities, including operating, movement, and wood transportation costs, in the face of demand constraints required by demand centers. Our model allows for the optimal allocation of harvesting fronts across forest stands, at each day of the planning horizon, providing valuable information to forest planners, in order to increase the efficiency of these operations and promote forest profitability. Our results show that the model can be successfully applied to a series of forest conditions. The problem size and the processing time required for the solution, however, substantially grow with the number of stands and the length of the planning horizon considered.</p>
+      <p>The solution times obtained in the model instances considered here were dependent on the size of the problem generated, with up to a 19 h processing time for the most complex scenario. These values are compatible with forest planning problems at the strategic and tactical levels described in the literature. K&#xF6;nny&#x171; et al. [<xref ref-type="bibr" rid="B22-forests-10-01110">22</xref>] proposed a model for the creation of mature forest patches in an optimized harvest scheduling model and reported solution times ranging from 14 s to 6 h. Augustynczik et al. [<xref ref-type="bibr" rid="B1-forests-10-01110">1</xref>] reported solution times over 3 h for an integrated strategic and tactical forest planning model. T&#xF3;th et al. [<xref ref-type="bibr" rid="B23-forests-10-01110">23</xref>] obtained solution times up to 5.4 h in a strategic optimization model with adjacency constraints.</p>
+      <p>Our results suggest that the dominant cost of forest harvesting and transportation refers to the transportation costs to the demand centers, amounting to 75% of the total cost. We also observed that movement costs had a similar contribution to the operation costs related to the harvesting activities. This is in line with other studies analyzing the supply chain in the forest sector. Ralevic et al. [<xref ref-type="bibr" rid="B2-forests-10-01110">2</xref>] analyzed the operational costs related to the harvest and transport of logging residues for energy production purposes in Canada, and their results show that the transport to the demand centers is the dominant cost factor and represents over 45% of the total cost. Other studies report the transportation costs approaching 30% of the total costs of the wood supply chain (e.g., [<xref ref-type="bibr" rid="B24-forests-10-01110">24</xref>,<xref ref-type="bibr" rid="B25-forests-10-01110">25</xref>]). We can only speculate about the reasons for this behavior, but the higher contribution of transportation costs in our study may be related to the high efficiency of operations in our study area and the characteristics of the terrain and transport distances to the demand center.</p>
+      <p>Taking into account the substantial impacts of transportation component regarding the total cost of harvesting operations, alternatives to reduce transport and movement distances are required in order to increase the reliability of the supply chain. Our results show that harvesting may be centered in stands closer to the demand centers, whenever the assortment structure of the stands allow for the wood demand to be satisfied and the harvesting takes place within reasonable limits of the optimal thinning or rotation age of individual stands. Moreover, operational and tactical concerns related to harvesting activities need to be further integrated into strategic planning models (e.g., [<xref ref-type="bibr" rid="B1-forests-10-01110">1</xref>,<xref ref-type="bibr" rid="B26-forests-10-01110">26</xref>]). In particular, the aggregation of harvesting activities may exert a beneficial impact on the operational efficiency of harvesting operations and wood transport, since the same roads can be used to transport the production of several stands, and there is less displacement costs of trucks and machinery between harvesting fronts. The cost reduction obtained through clustering harvesting activities, however, needs to be weighed against the total economic loss associated with the formation of harvesting blocks.</p>
+      <p>We highlight that disruptions in the supply chain may result in large economic impacts on demand centers, due to the high opportunity costs related to processing plants. Harvesting activities and wood transport, however, are subject to a series of uncertainty sources that may disturb the wood supply, such as the climatic conditions, soil conditions, and fluctuations on the demand. Robust and stochastic optimization methods may be applied to cope with sources of uncertainty in the scheduling of harvesting operations [<xref ref-type="bibr" rid="B27-forests-10-01110">27</xref>]. Hence, models may include robustness criteria on the supply chain, such as the time-to-recovery [<xref ref-type="bibr" rid="B28-forests-10-01110">28</xref>] and time-to-survive, in order to create a supply chain that is less susceptible to disruptions.</p>
+      <p>The proposed mathematical model demonstrated effectiveness and enabled the differentiation of the components of the total cost, so that the work sequence of the cutting fronts and the costs involved in each part of the harvest and the transport of products could be understood. This information becomes crucial, especially considering that the harvesting operations work with tight deadlines and need constant update in a daily and weekly basis, due to uncertainty related to operating conditions (e.g., weather, machinery availability, and workforce availability). Given the flexibility of our model, these conditions can be seamlessly integrated and aid in the decision-making process.</p>
+      <p>The decision variables of our model were binary in nature, since we aimed to integrate operational aspects of forest harvesting and wood transport, allocating the harvesting machinery in a daily time step. We aimed to develop a model that could be handled with the application of commercial solvers (for the sake of applicability). Hence, we formulated the planning problem as a PILP model for the allocation of harvesting fronts (e.g., [<xref ref-type="bibr" rid="B29-forests-10-01110">29</xref>]). This can lead to a larger model, due to the creation of auxiliary variables to track if fronts are operating in a defined stand in a defined day of the planning horizon. However, PILP binary problems are notably easier to solve. A series of heuristics were proposed, such as binary cuts [<xref ref-type="bibr" rid="B30-forests-10-01110">30</xref>], and built into commercial solver to deal with this class of problems. Taking into account the large number of constraints and binary variables generated when the planning problem involves a large number of stands, heuristic solution methods may be required. These approaches can be applied to obtain reasonable solutions in a shorter processing time and deserve further investigation. Heuristic solution options may include, for example, simulated annealing and genetic algorithms, which have been applied in the past decades to a variety of forest strategic and tactical forest planning problems (e.g., [<xref ref-type="bibr" rid="B31-forests-10-01110">31</xref>,<xref ref-type="bibr" rid="B32-forests-10-01110">32</xref>,<xref ref-type="bibr" rid="B33-forests-10-01110">33</xref>,<xref ref-type="bibr" rid="B34-forests-10-01110">34</xref>]). Heuristic solutions can also be applied as a starting point for exact methods, which may improve the solution obtained. This may be particularly useful if exact methods require a long processing time to find good feasible solutions.</p>
+      <p>We included here demand constraints and the operational costs related to the harvesting activities. Although the costs of harvesting operations are the main driver of decision-making, sustainability aspects of forest harvesting have been increasingly receiving attention in the literature [<xref ref-type="bibr" rid="B35-forests-10-01110">35</xref>,<xref ref-type="bibr" rid="B36-forests-10-01110">36</xref>,<xref ref-type="bibr" rid="B37-forests-10-01110">37</xref>]. Therefore, extensions to our model may be considered in future studies, e.g., by integrating constraints related to soil protection (considering the water content in the soil and sensibility to compaction) and the emissions related to harvesting and transport operations into the planning model.</p>
+    </sec>
+    <sec id="sec5-forests-10-01110" sec-type="conclusions">
+      <title>5. Conclusions</title>
+      <p>Operational aspects of forest harvesting are determinant to forest profitability and essential to the maintenance of wood supply chains. The planning process of these operations, however, are inherently complex and involve a large number of decisions, in the face of resource limitations (e.g., the demand of production centers, number of available machines, and budget). Optimization methods can be used to successfully tackle such decision problems and aid decision-making regarding the schedule of forestry machinery across stands. The model developed here can be applied to allocate harvesting fronts to minimize harvesting and transportation costs in a variety of forest conditions; thereby, managers can better plan forest operations and efficiently achieve their goals.</p>
+    </sec>
+  </body>
+  <back>
+    <notes>
+      <title>Author Contributions</title>
+      <p>Conceptualization, P.A.V.H.d.S. and A.C.L.d.S.; methodology, P.A.V.H.d.S., A.C.L.d.S. and J.E.A.; software, P.A.V.H.d.S. and A.C.L.d.S; validation, P.A.V.H.d.S, A.C.L.d.S., J.E.A. and A.L.D.A.; formal analysis, P.A.V.H.d.S., A.C.L.d.S., J.E.A. and A.L.D.A.; investigation, P.A.V.H.d.S. and A.C.L.d.S.; resources, A.C.L.d.S and J.E.A.; writing&#x2014;original draft preparation, P.A.V.H.d.S. and A.L.D.A.; writing&#x2014;review and editing, P.A.V.H.d.S. and A.L.D.A.; supervision, A.C.L.d.S. and J.E.A.</p>
+    </notes>
+    <notes>
+      <title>Funding</title>
+      <p>The article processing charge was funded by the University of Freiburg in the funding programme Open Access Publishing.</p>
+    </notes>
+    <ack>
+      <title>Acknowledgments</title>
+      <p>This research benefited from the exchange platform provided by the SuFoRun project (Marie Sklodowska Curie Grant Agreement No. 691149).</p>
+    </ack>
+    <notes notes-type="COI-statement">
+      <title>Conflicts of Interest</title>
+      <p>The authors declare no conflicts of interest.</p>
+    </notes>
+    <ref-list>
+      <title>References</title>
+      <ref id="B1-forests-10-01110">
+        <label>1.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Augustynczik</surname>
+              <given-names>A.L.D.</given-names>
+            </name>
+            <name>
+              <surname>Arce</surname>
+              <given-names>J.E.</given-names>
+            </name>
+            <name>
+              <surname>da Silva</surname>
+              <given-names>A.C.L.</given-names>
+            </name>
+          </person-group>
+          <article-title>Aggregating forest harvesting activities in forest plantations through Integer Linear Programming and Goal Programming</article-title>
+          <source>J. For. Econ.</source>
+          <year>2016</year>
+          <volume>24</volume>
+          <fpage>72</fpage>
+          <lpage>81</lpage>
+          <pub-id pub-id-type="doi">10.1016/j.jfe.2016.06.002</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B2-forests-10-01110">
+        <label>2.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Ralevic</surname>
+              <given-names>P.</given-names>
+            </name>
+            <name>
+              <surname>Ryans</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Cormier</surname>
+              <given-names>D.</given-names>
+            </name>
+          </person-group>
+          <article-title>Assessing forest biomass for bioenergy: Operational challenges and cost considerations</article-title>
+          <source>For. Chron.</source>
+          <year>2010</year>
+          <volume>86</volume>
+          <fpage>43</fpage>
+          <lpage>50</lpage>
+          <pub-id pub-id-type="doi">10.5558/tfc86043-1</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B3-forests-10-01110">
+        <label>3.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Curtis</surname>
+              <given-names>F.H.</given-names>
+            </name>
+          </person-group>
+          <article-title>Linear programming the management of a forest property</article-title>
+          <source>J. For.</source>
+          <year>1962</year>
+          <volume>60</volume>
+          <fpage>611</fpage>
+          <lpage>616</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B4-forests-10-01110">
+        <label>4.</label>
+        <element-citation publication-type="gov">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Leak</surname>
+              <given-names>W.B.</given-names>
+            </name>
+          </person-group>
+          <source>Estimating Maximum Allowable Timber Yields by Linear Programming</source>
+          <gov>Res. Pap. NE-17</gov>
+          <publisher-name>US Department of Agriculture, Forest Service, Northeastern Forest Experiment Station</publisher-name>
+          <publisher-loc>Upper Darby, PA, USA</publisher-loc>
+          <year>1964</year>
+          <volume>Volume 17</volume>
+          <fpage>9</fpage>
+        </element-citation>
+      </ref>
+      <ref id="B5-forests-10-01110">
+        <label>5.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Nautiyal</surname>
+              <given-names>J.C.</given-names>
+            </name>
+            <name>
+              <surname>Pearse</surname>
+              <given-names>P.H.</given-names>
+            </name>
+          </person-group>
+          <article-title>Optimizing the conversion to sustained yield&#x2014;A programming solution</article-title>
+          <source>For. Sci.</source>
+          <year>1967</year>
+          <volume>13</volume>
+          <fpage>131</fpage>
+          <lpage>139</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B6-forests-10-01110">
+        <label>6.</label>
+        <element-citation publication-type="gov">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Navon</surname>
+              <given-names>D.I.</given-names>
+            </name>
+            <name>
+              <surname>Timber</surname>
+              <given-names>R.A.M.</given-names>
+            </name>
+          </person-group>
+          <source>A Long-Range Planning Method for Commercial Timber Lands under Multiple-Use Management</source>
+          <gov>Res. Paper PSW-RP-70</gov>
+          <publisher-name>US Department of Agriculture, Forest Service, Pacific Southwest Forest &amp; Range Experiment Station</publisher-name>
+          <publisher-loc>Berkeley, CA, USA</publisher-loc>
+          <year>1971</year>
+          <volume>Volume 70</volume>
+          <fpage>22</fpage>
+        </element-citation>
+      </ref>
+      <ref id="B7-forests-10-01110">
+        <label>7.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Ware</surname>
+              <given-names>G.O.</given-names>
+            </name>
+            <name>
+              <surname>Clutter</surname>
+              <given-names>J.L.</given-names>
+            </name>
+          </person-group>
+          <article-title>A mathematical programming system for the management of industrial forests</article-title>
+          <source>For. Sci.</source>
+          <year>1971</year>
+          <volume>17</volume>
+          <fpage>428</fpage>
+          <lpage>445</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B8-forests-10-01110">
+        <label>8.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Johnson</surname>
+              <given-names>K.N.</given-names>
+            </name>
+            <name>
+              <surname>Scheurman</surname>
+              <given-names>H.L.</given-names>
+            </name>
+          </person-group>
+          <article-title>Techniques for prescribing optimal timber harvest and investment under different objectives&#x2014;Discussion and synthesis</article-title>
+          <source>For. Sci.</source>
+          <year>1977</year>
+          <volume>23</volume>
+          <fpage>a0001</fpage>
+          <lpage>z0001</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B9-forests-10-01110">
+        <label>9.</label>
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Dykstra</surname>
+              <given-names>D.P.</given-names>
+            </name>
+          </person-group>
+          <source>Mathematical Programming for Natural Resource Management</source>
+          <publisher-name>McGraw-Hill Book Company</publisher-name>
+          <publisher-loc>New York, NY, USA</publisher-loc>
+          <year>1984</year>
+        </element-citation>
+      </ref>
+      <ref id="B10-forests-10-01110">
+        <label>10.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Weintraub</surname>
+              <given-names>A.</given-names>
+            </name>
+            <name>
+              <surname>Cholaky</surname>
+              <given-names>A.</given-names>
+            </name>
+          </person-group>
+          <article-title>A hierarchical approach to forest planning</article-title>
+          <source>For. Sci.</source>
+          <year>1991</year>
+          <volume>37</volume>
+          <fpage>439</fpage>
+          <lpage>460</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B11-forests-10-01110">
+        <label>11.</label>
+        <element-citation publication-type="thesis">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Mitchell</surname>
+              <given-names>S.A.</given-names>
+            </name>
+          </person-group>
+          <article-title>Operational Forest Harvest Scheduling Optimization: A Mathematical Model and Solution Strategy</article-title>
+          <source>Ph.D. Thesis</source>
+          <publisher-name>University of Auckland</publisher-name>
+          <publisher-loc>Auckland, New Zealand</publisher-loc>
+          <year>2004</year>
+        </element-citation>
+      </ref>
+      <ref id="B12-forests-10-01110">
+        <label>12.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Bont</surname>
+              <given-names>L.G.</given-names>
+            </name>
+            <name>
+              <surname>Fraefel</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Fischer</surname>
+              <given-names>C.</given-names>
+            </name>
+          </person-group>
+          <article-title>A Spatially Explicit Method to Assess the Economic Suitability of a Forest Road Network for Timber Harvest in Steep Terrain</article-title>
+          <source>Forests</source>
+          <year>2018</year>
+          <volume>9</volume>
+          <elocation-id>169</elocation-id>
+          <pub-id pub-id-type="doi">10.3390/f9040169</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B13-forests-10-01110">
+        <label>13.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>McDill</surname>
+              <given-names>M.E.</given-names>
+            </name>
+            <name>
+              <surname>Rebain</surname>
+              <given-names>S.A.</given-names>
+            </name>
+            <name>
+              <surname>Braze</surname>
+              <given-names>J.</given-names>
+            </name>
+          </person-group>
+          <article-title>Harvest scheduling with area-based adjacency constraints</article-title>
+          <source>For. Sci.</source>
+          <year>2002</year>
+          <volume>48</volume>
+          <fpage>631</fpage>
+          <lpage>642</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B14-forests-10-01110">
+        <label>14.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Yoshimoto</surname>
+              <given-names>A.</given-names>
+            </name>
+            <name>
+              <surname>Asante</surname>
+              <given-names>P.</given-names>
+            </name>
+          </person-group>
+          <article-title>A new optimization model for spatially constrained harvest scheduling under area restrictions through maximum flow problem</article-title>
+          <source>For. Sci.</source>
+          <year>2018</year>
+          <volume>64</volume>
+          <fpage>392</fpage>
+          <lpage>406</lpage>
+          <pub-id pub-id-type="doi">10.1093/forsci/fxy006</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B15-forests-10-01110">
+        <label>15.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>R&#xF6;nnqvist</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>D&#x2019;Amours</surname>
+              <given-names>S.</given-names>
+            </name>
+            <name>
+              <surname>Weintraub</surname>
+              <given-names>A.</given-names>
+            </name>
+            <name>
+              <surname>Jofre</surname>
+              <given-names>A.</given-names>
+            </name>
+            <name>
+              <surname>Gunn</surname>
+              <given-names>E.</given-names>
+            </name>
+            <name>
+              <surname>Haight</surname>
+              <given-names>R.G.</given-names>
+            </name>
+            <name>
+              <surname>Martell</surname>
+              <given-names>D.</given-names>
+            </name>
+            <name>
+              <surname>Murray</surname>
+              <given-names>A.T.</given-names>
+            </name>
+            <name>
+              <surname>Romero</surname>
+              <given-names>C.</given-names>
+            </name>
+          </person-group>
+          <article-title>Operations research challenges in forestry: 33 open problems</article-title>
+          <source>Ann. Oper. Res.</source>
+          <year>2015</year>
+          <volume>232</volume>
+          <fpage>11</fpage>
+          <lpage>40</lpage>
+          <pub-id pub-id-type="doi">10.1007/s10479-015-1907-4</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B16-forests-10-01110">
+        <label>16.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Gaudreault</surname>
+              <given-names>J.</given-names>
+            </name>
+            <name>
+              <surname>Forget</surname>
+              <given-names>P.</given-names>
+            </name>
+            <name>
+              <surname>Frayret</surname>
+              <given-names>J.</given-names>
+            </name>
+            <name>
+              <surname>Rousseau</surname>
+              <given-names>A.</given-names>
+            </name>
+            <name>
+              <surname>Lemieux</surname>
+              <given-names>S.</given-names>
+            </name>
+            <name>
+              <surname>D&#x2019;Amours</surname>
+              <given-names>S.</given-names>
+            </name>
+          </person-group>
+          <article-title>Distributed operations planning in the lumber supply chain: Models and Coordination</article-title>
+          <source>Int. J. Ind. Eng. Theory Appl. Pract.</source>
+          <year>2010</year>
+          <volume>17</volume>
+          <fpage>168</fpage>
+          <lpage>189</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B17-forests-10-01110">
+        <label>17.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Gomide</surname>
+              <given-names>L.R.</given-names>
+            </name>
+            <name>
+              <surname>Arce</surname>
+              <given-names>J.E.</given-names>
+            </name>
+            <name>
+              <surname>da Silva</surname>
+              <given-names>A.C.L.</given-names>
+            </name>
+          </person-group>
+          <article-title>Compara&#xE7;&#xE3;o entre a meta-heur&#xED;stica simulated annealing e a programa&#xE7;&#xE3;o linear inteira no agendamento da colheita florestal com restri&#xE7;&#xF5;es de adjac&#xEA;ncia</article-title>
+          <source>Ci&#xEA;ncia Florest.</source>
+          <year>2013</year>
+          <volume>23</volume>
+          <fpage>449</fpage>
+          <lpage>460</lpage>
+          <pub-id pub-id-type="doi">10.5902/198050989289</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B18-forests-10-01110">
+        <label>18.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Dong</surname>
+              <given-names>L.</given-names>
+            </name>
+            <name>
+              <surname>Bettinger</surname>
+              <given-names>P.</given-names>
+            </name>
+            <name>
+              <surname>Qin</surname>
+              <given-names>H.</given-names>
+            </name>
+            <name>
+              <surname>Liu</surname>
+              <given-names>Z.</given-names>
+            </name>
+          </person-group>
+          <article-title>Reflections on the number of independent solutions for forest spatial harvest scheduling problems: A case of simulated annealing</article-title>
+          <source>Silva Fenn.</source>
+          <year>2018</year>
+          <volume>52</volume>
+          <fpage>7803</fpage>
+          <pub-id pub-id-type="doi">10.14214/sf.7803</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B19-forests-10-01110">
+        <label>19.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Gonz&#xE1;lez-Hern&#xE1;ndez</surname>
+              <given-names>I.</given-names>
+            </name>
+            <name>
+              <surname>Granillo-Mac&#xED;as</surname>
+              <given-names>R.</given-names>
+            </name>
+            <name>
+              <surname>Mart&#xED;nez-Flores</surname>
+              <given-names>J.</given-names>
+            </name>
+            <name>
+              <surname>S&#xE1;nchez-Partida</surname>
+              <given-names>D.</given-names>
+            </name>
+            <name>
+              <surname>Gibaja-Romero</surname>
+              <given-names>D.</given-names>
+            </name>
+          </person-group>
+          <article-title>Hybrid model to design an agro-food distribution network considering the quality of the food</article-title>
+          <source>Int. J. Ind. Eng. Theory Appl. Pract.</source>
+          <year>2019</year>
+          <volume>26</volume>
+          <fpage>588</fpage>
+          <lpage>609</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B20-forests-10-01110">
+        <label>20.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Suchomel</surname>
+              <given-names>C.</given-names>
+            </name>
+            <name>
+              <surname>Becker</surname>
+              <given-names>G.</given-names>
+            </name>
+            <name>
+              <surname>Pyttel</surname>
+              <given-names>P.</given-names>
+            </name>
+          </person-group>
+          <article-title>Fully mechanized harvesting in aged oak coppice stands</article-title>
+          <source>For. Prod. J.</source>
+          <year>2011</year>
+          <volume>64</volume>
+          <fpage>290</fpage>
+          <lpage>296</lpage>
+          <pub-id pub-id-type="doi">10.13073/0015-7473-61.4.290</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B21-forests-10-01110">
+        <label>21.</label>
+        <element-citation publication-type="confproc">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Santos</surname>
+              <given-names>P.A.V.H.</given-names>
+            </name>
+            <name>
+              <surname>da Silva</surname>
+              <given-names>A.C.L.</given-names>
+            </name>
+            <name>
+              <surname>Arce</surname>
+              <given-names>J.E.</given-names>
+            </name>
+          </person-group>
+          <article-title>Uma ferramenta para constru&#xE7;&#xE3;o de Cen&#xE1;rios Florestais</article-title>
+          <source>Proceedings of the XVIII Latin-Iberoamerican Conference on Operations Research&#x2014;CLAIO</source>
+          <conf-loc>Santiago, Chile</conf-loc>
+          <conf-date>2&#x2013;6 October 2016</conf-date>
+          <comment>Sergio Maturana</comment>
+          <publisher-name>Instituto Chileno de Investigaci&#xF3;n Operativa (ICHIO)</publisher-name>
+          <publisher-loc>Santiago, Chile</publisher-loc>
+          <year>2016</year>
+          <fpage>819</fpage>
+          <lpage>826</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B22-forests-10-01110">
+        <label>22.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>K&#xF6;nny&#x171;</surname>
+              <given-names>N.</given-names>
+            </name>
+            <name>
+              <surname>T&#xF3;th</surname>
+              <given-names>S.F.</given-names>
+            </name>
+            <name>
+              <surname>McDill</surname>
+              <given-names>M.E.</given-names>
+            </name>
+            <name>
+              <surname>Rajasekaran</surname>
+              <given-names>B.</given-names>
+            </name>
+          </person-group>
+          <article-title>Temporal connectivity of mature patches in forest planning models</article-title>
+          <source>For. Sci.</source>
+          <year>2014</year>
+          <volume>60</volume>
+          <fpage>1089</fpage>
+          <lpage>1099</lpage>
+          <pub-id pub-id-type="doi">10.5849/forsci.12-112</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B23-forests-10-01110">
+        <label>23.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>T&#xF3;th</surname>
+              <given-names>S.F.</given-names>
+            </name>
+            <name>
+              <surname>McDill</surname>
+              <given-names>M.E.</given-names>
+            </name>
+            <name>
+              <surname>K&#xF6;nny&#xFC;</surname>
+              <given-names>N.</given-names>
+            </name>
+            <name>
+              <surname>George</surname>
+              <given-names>S.</given-names>
+            </name>
+          </person-group>
+          <article-title>Testing the use of lazy constraints in solving area-based adjacency formulations of harvest scheduling models</article-title>
+          <source>For. Sci.</source>
+          <year>2013</year>
+          <volume>59</volume>
+          <fpage>157</fpage>
+          <lpage>176</lpage>
+          <pub-id pub-id-type="doi">10.5849/forsci.11-040</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B24-forests-10-01110">
+        <label>24.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Ghaffariyan</surname>
+              <given-names>M.R.</given-names>
+            </name>
+            <name>
+              <surname>Naghdi</surname>
+              <given-names>R.</given-names>
+            </name>
+            <name>
+              <surname>Ghajar</surname>
+              <given-names>I.</given-names>
+            </name>
+            <name>
+              <surname>Nikooy</surname>
+              <given-names>M.</given-names>
+            </name>
+          </person-group>
+          <article-title>Time prediction models and cost evaluation of cut-to-length (CTL) harvesting method in a mountainous forest</article-title>
+          <source>Small-scale For.</source>
+          <year>2013</year>
+          <volume>12</volume>
+          <fpage>181</fpage>
+          <lpage>192</lpage>
+          <pub-id pub-id-type="doi">10.1007/s11842-012-9204-4</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B25-forests-10-01110">
+        <label>25.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Spinelli</surname>
+              <given-names>R.</given-names>
+            </name>
+            <name>
+              <surname>Schweier</surname>
+              <given-names>J.</given-names>
+            </name>
+            <name>
+              <surname>De Francesco</surname>
+              <given-names>F.</given-names>
+            </name>
+          </person-group>
+          <article-title>Harvesting techniques for non-industrial biomass plantations</article-title>
+          <source>Biosyst. Eng.</source>
+          <year>2012</year>
+          <volume>113</volume>
+          <fpage>319</fpage>
+          <lpage>324</lpage>
+          <pub-id pub-id-type="doi">10.1016/j.biosystemseng.2012.09.008</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B26-forests-10-01110">
+        <label>26.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Pascual</surname>
+              <given-names>A.</given-names>
+            </name>
+            <name>
+              <surname>Pukkala</surname>
+              <given-names>T.</given-names>
+            </name>
+            <name>
+              <surname>de Miguel</surname>
+              <given-names>S.</given-names>
+            </name>
+            <name>
+              <surname>Pesonen</surname>
+              <given-names>A.</given-names>
+            </name>
+            <name>
+              <surname>Packalen</surname>
+              <given-names>P.</given-names>
+            </name>
+          </person-group>
+          <article-title>Influence of size and shape of forest inventory units on the layout of harvest blocks in numerical forest planning</article-title>
+          <source>Eur. J. For. Res.</source>
+          <year>2019</year>
+          <volume>138</volume>
+          <fpage>111</fpage>
+          <lpage>123</lpage>
+          <pub-id pub-id-type="doi">10.1007/s10342-018-1157-5</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B27-forests-10-01110">
+        <label>27.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Veliz</surname>
+              <given-names>F.B.</given-names>
+            </name>
+            <name>
+              <surname>Watson</surname>
+              <given-names>J.P.</given-names>
+            </name>
+            <name>
+              <surname>Weintraub</surname>
+              <given-names>A.</given-names>
+            </name>
+            <name>
+              <surname>Wets</surname>
+              <given-names>R.J.B.</given-names>
+            </name>
+            <name>
+              <surname>Woodruff</surname>
+              <given-names>D.L.</given-names>
+            </name>
+          </person-group>
+          <article-title>Stochastic optimization models in forest planning: A progressive hedging solution approach</article-title>
+          <source>Ann. Oper. Res.</source>
+          <year>2015</year>
+          <volume>232</volume>
+          <fpage>259</fpage>
+          <lpage>274</lpage>
+          <pub-id pub-id-type="doi">10.1007/s10479-014-1608-4</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B28-forests-10-01110">
+        <label>28.</label>
+        <element-citation publication-type="confproc">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Lee</surname>
+              <given-names>A.J.</given-names>
+            </name>
+            <name>
+              <surname>Paul</surname>
+              <given-names>D.</given-names>
+            </name>
+            <name>
+              <surname>Yan</surname>
+              <given-names>W.J.</given-names>
+            </name>
+            <name>
+              <surname>Zhang</surname>
+              <given-names>A.N.</given-names>
+            </name>
+            <name>
+              <surname>Goh</surname>
+              <given-names>M.</given-names>
+            </name>
+          </person-group>
+          <article-title>A model for analysing a disrupted supply chain&#x2019;s time-to-recovery under uncertainty</article-title>
+          <source>Proceedings of the IEEE International Conference on Big Data (Big Data)</source>
+          <conf-loc>Boston, MA, USA</conf-loc>
+          <conf-date>11&#x2013;14 December 2017</conf-date>
+          <fpage>3242</fpage>
+          <lpage>3247</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B29-forests-10-01110">
+        <label>29.</label>
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Buongiorno</surname>
+              <given-names>J.</given-names>
+            </name>
+            <name>
+              <surname>Gilless</surname>
+              <given-names>J.K.</given-names>
+            </name>
+          </person-group>
+          <source>Decision Methods for Forest Resource Management</source>
+          <publisher-name>Academic Press</publisher-name>
+          <publisher-loc>Cambridge, MA, USA</publisher-loc>
+          <year>2003</year>
+        </element-citation>
+      </ref>
+      <ref id="B30-forests-10-01110">
+        <label>30.</label>
+        <element-citation publication-type="confproc">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Mezentsev</surname>
+              <given-names>Y.A.</given-names>
+            </name>
+          </person-group>
+          <article-title>Cut-and-Brach Method for Solving Linear Programming Problems with Boolean Variables</article-title>
+          <source>Proceedings of the DOOR 2016</source>
+          <conf-loc>Vladivostok, Russia</conf-loc>
+          <conf-date>19&#x2013;23 September 2016</conf-date>
+          <person-group person-group-type="editor">
+            <name>
+              <surname>Kononov</surname>
+              <given-names>A.</given-names>
+            </name>
+            <name>
+              <surname>Bykadorov</surname>
+              <given-names>I.</given-names>
+            </name>
+            <name>
+              <surname>Khamisov</surname>
+              <given-names>O.</given-names>
+            </name>
+            <name>
+              <surname>Davydov</surname>
+              <given-names>I.</given-names>
+            </name>
+            <name>
+              <surname>Kononova</surname>
+              <given-names>P.</given-names>
+            </name>
+          </person-group>
+          <comment>Supplementary Proceedings</comment>
+          <fpage>72</fpage>
+          <lpage>85</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B31-forests-10-01110">
+        <label>31.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Augustynczik</surname>
+              <given-names>A.L.D.</given-names>
+            </name>
+            <name>
+              <surname>Arce</surname>
+              <given-names>J.E.</given-names>
+            </name>
+            <name>
+              <surname>Yousefpour</surname>
+              <given-names>R.</given-names>
+            </name>
+            <name>
+              <surname>da Silva</surname>
+              <given-names>A.C.L.</given-names>
+            </name>
+          </person-group>
+          <article-title>Promoting harvesting stands connectivity and its economic implications in Brazilian forest plantations applying integer linear programming and simulated annealing</article-title>
+          <source>For. Policy Econ.</source>
+          <year>2016</year>
+          <volume>73</volume>
+          <fpage>120</fpage>
+          <lpage>129</lpage>
+          <pub-id pub-id-type="doi">10.1016/j.forpol.2016.09.007</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B32-forests-10-01110">
+        <label>32.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Borges</surname>
+              <given-names>P.</given-names>
+            </name>
+            <name>
+              <surname>Eid</surname>
+              <given-names>T.</given-names>
+            </name>
+            <name>
+              <surname>Bergseng</surname>
+              <given-names>E.</given-names>
+            </name>
+          </person-group>
+          <article-title>Applying simulated annealing using different methods for the neighborhood search in forest planning problems</article-title>
+          <source>Eur. J. Oper. Res.</source>
+          <year>2014</year>
+          <volume>233</volume>
+          <fpage>700</fpage>
+          <lpage>710</lpage>
+          <pub-id pub-id-type="doi">10.1016/j.ejor.2013.08.039</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B33-forests-10-01110">
+        <label>33.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Jin</surname>
+              <given-names>X.</given-names>
+            </name>
+            <name>
+              <surname>Pukkala</surname>
+              <given-names>T.</given-names>
+            </name>
+            <name>
+              <surname>Li</surname>
+              <given-names>F.</given-names>
+            </name>
+          </person-group>
+          <article-title>Fine-tuning heuristic methods for combinatorial optimization in forest planning</article-title>
+          <source>Eur. J. For. Res.</source>
+          <year>2016</year>
+          <volume>135</volume>
+          <fpage>765</fpage>
+          <lpage>779</lpage>
+          <pub-id pub-id-type="doi">10.1007/s10342-016-0971-x</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B34-forests-10-01110">
+        <label>34.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Fotakis</surname>
+              <given-names>D.G.</given-names>
+            </name>
+            <name>
+              <surname>Sidiropoulos</surname>
+              <given-names>E.</given-names>
+            </name>
+            <name>
+              <surname>Myronidis</surname>
+              <given-names>D.</given-names>
+            </name>
+            <name>
+              <surname>Ioannou</surname>
+              <given-names>K.</given-names>
+            </name>
+          </person-group>
+          <article-title>Spatial genetic algorithm for multi-objective forest planning</article-title>
+          <source>For. Policy Econ.</source>
+          <year>2012</year>
+          <volume>21</volume>
+          <fpage>12</fpage>
+          <lpage>19</lpage>
+          <pub-id pub-id-type="doi">10.1016/j.forpol.2012.04.002</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B35-forests-10-01110">
+        <label>35.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Stupak</surname>
+              <given-names>I.</given-names>
+            </name>
+            <name>
+              <surname>Lattimore</surname>
+              <given-names>B.</given-names>
+            </name>
+            <name>
+              <surname>Titus</surname>
+              <given-names>B.D.</given-names>
+            </name>
+            <name>
+              <surname>Smith</surname>
+              <given-names>C.T.</given-names>
+            </name>
+          </person-group>
+          <article-title>Criteria and indicators for sustainable forest fuel production and harvesting: A review of current standards for sustainable forest management</article-title>
+          <source>Biomass Bioenergy</source>
+          <year>2011</year>
+          <volume>35</volume>
+          <fpage>3287</fpage>
+          <lpage>3308</lpage>
+          <pub-id pub-id-type="doi">10.1016/j.biombioe.2010.11.032</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B36-forests-10-01110">
+        <label>36.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Abbas</surname>
+              <given-names>D.</given-names>
+            </name>
+            <name>
+              <surname>Current</surname>
+              <given-names>D.</given-names>
+            </name>
+            <name>
+              <surname>Phillips</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Rossman</surname>
+              <given-names>R.</given-names>
+            </name>
+            <name>
+              <surname>Hoganson</surname>
+              <given-names>H.</given-names>
+            </name>
+            <name>
+              <surname>Brooks</surname>
+              <given-names>K.N.</given-names>
+            </name>
+          </person-group>
+          <article-title>Guidelines for harvesting forest biomass for energy: A synthesis of environmental considerations</article-title>
+          <source>Biomass Bioenergy</source>
+          <year>2011</year>
+          <volume>35</volume>
+          <fpage>4538</fpage>
+          <lpage>4546</lpage>
+          <pub-id pub-id-type="doi">10.1016/j.biombioe.2011.06.029</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B37-forests-10-01110">
+        <label>37.</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Clarke</surname>
+              <given-names>N.</given-names>
+            </name>
+            <name>
+              <surname>Gundersen</surname>
+              <given-names>P.</given-names>
+            </name>
+            <name>
+              <surname>J&#xF6;nsson-Belyazid</surname>
+              <given-names>U.</given-names>
+            </name>
+            <name>
+              <surname>Kj&#xF8;naas</surname>
+              <given-names>O.J.</given-names>
+            </name>
+            <name>
+              <surname>Persson</surname>
+              <given-names>T.</given-names>
+            </name>
+            <name>
+              <surname>Sigurdsson</surname>
+              <given-names>B.D.</given-names>
+            </name>
+            <name>
+              <surname>Stupak</surname>
+              <given-names>I.</given-names>
+            </name>
+            <name>
+              <surname>Vesterdal</surname>
+              <given-names>L.</given-names>
+            </name>
+          </person-group>
+          <article-title>Influence of different tree-harvesting intensities on forest soil carbon stocks in boreal and northern temperate forest ecosystems</article-title>
+          <source>For. Ecol. Manag.</source>
+          <year>2015</year>
+          <volume>351</volume>
+          <fpage>9</fpage>
+          <lpage>19</lpage>
+          <pub-id pub-id-type="doi">10.1016/j.foreco.2015.04.034</pub-id>
+        </element-citation>
+      </ref>
+    </ref-list>
+    <sec sec-type="display-objects">
+      <title>Figures and Tables</title>
+      <fig id="forests-10-01110-f001" position="float">
+        <label>Figure 1</label>
+        <caption>
+          <p>Schematic description of the optimization problem.</p>
+        </caption>
+        <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="forests-10-01110-g001.tif"/>
+      </fig>
+      <fig id="forests-10-01110-f002" position="float">
+        <label>Figure 2</label>
+        <caption>
+          <p>Optimization results for the 13 scenarios tested, in terms of the objective function value (<bold>a</bold>), solution time (<bold>b</bold>), and harvested volume (<bold>c</bold>).</p>
+        </caption>
+        <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="forests-10-01110-g002.tif"/>
+      </fig>
+      <fig id="forests-10-01110-f003" position="float">
+        <label>Figure 3</label>
+        <caption>
+          <p>Optimal harvesting front scheduling for scenario 5, composed by 50 stands and a 15-day planning period. The sequence of harvested stands is indicated by S and the respective stand number.</p>
+        </caption>
+        <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="forests-10-01110-g003.tif"/>
+      </fig>
+      <fig id="forests-10-01110-f004" position="float">
+        <label>Figure 4</label>
+        <caption>
+          <p>Spatial configuration of the optimal solution for scenario 5.</p>
+        </caption>
+        <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="forests-10-01110-g004.tif"/>
+      </fig>
+      <table-wrap id="forests-10-01110-t001" position="float">
+        <object-id pub-id-type="pii">forests-10-01110-t001_Table 1</object-id>
+        <label>Table 1</label>
+        <caption>
+          <p>Scenarios tested in the analysis. PH stands for the number of days in the planning horizon. A1, A2, and A3 refer to the three different products (assortments) used in the model. T1 and T2 refer to the terrain types (1 and 2), Var. refers to the number of variables, Const. refers to the number of constraints and Tmax refers to the model parameter Tmax.</p>
+        </caption>
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Scenario</th>
+              <th rowspan="2" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Mean Area (ha)</th>
+              <th rowspan="2" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">PH (Days)</th>
+              <th rowspan="2" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Average Distance to Demand Center (km)</th>
+              <th colspan="2" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Stand Number (N)</th>
+              <th colspan="3" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Stock (m<sup>3</sup>)</th>
+              <th rowspan="2" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Var. (N)</th>
+              <th rowspan="2" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Const. (N)</th>
+              <th rowspan="2" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Tmax (N)</th>
+            </tr>
+            <tr>
+              <th align="center" valign="middle" style="border-bottom:solid thin">T1</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">T2</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">A1</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">A2</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">A3</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="center" valign="middle">1</td>
+              <td align="center" valign="middle">17.8</td>
+              <td align="center" valign="middle">7</td>
+              <td align="center" valign="middle">20.2</td>
+              <td align="center" valign="middle">4</td>
+              <td align="center" valign="middle">8</td>
+              <td align="center" valign="middle">1173</td>
+              <td align="center" valign="middle">-</td>
+              <td align="center" valign="middle">-</td>
+              <td align="center" valign="middle">4248</td>
+              <td align="center" valign="middle">2962</td>
+              <td align="center" valign="middle">14</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">2</td>
+              <td align="center" valign="middle">7.8</td>
+              <td align="center" valign="middle">7</td>
+              <td align="center" valign="middle">15.9</td>
+              <td align="center" valign="middle">7</td>
+              <td align="center" valign="middle">13</td>
+              <td align="center" valign="middle">1463</td>
+              <td align="center" valign="middle">424</td>
+              <td align="center" valign="middle">26</td>
+              <td align="center" valign="middle">19,380</td>
+              <td align="center" valign="middle">10,039</td>
+              <td align="center" valign="middle">16</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">3</td>
+              <td align="center" valign="middle">7.8</td>
+              <td align="center" valign="middle">15</td>
+              <td align="center" valign="middle">15.9</td>
+              <td align="center" valign="middle">7</td>
+              <td align="center" valign="middle">13</td>
+              <td align="center" valign="middle">1463</td>
+              <td align="center" valign="middle">424</td>
+              <td align="center" valign="middle">26</td>
+              <td align="center" valign="middle">29,940</td>
+              <td align="center" valign="middle">22,479</td>
+              <td align="center" valign="middle">24</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">4</td>
+              <td align="center" valign="middle">9.0</td>
+              <td align="center" valign="middle">15</td>
+              <td align="center" valign="middle">18.1</td>
+              <td align="center" valign="middle">29</td>
+              <td align="center" valign="middle">21</td>
+              <td align="center" valign="middle">3529</td>
+              <td align="center" valign="middle">959</td>
+              <td align="center" valign="middle">51</td>
+              <td align="center" valign="middle">170,700</td>
+              <td align="center" valign="middle">119,521</td>
+              <td align="center" valign="middle">23</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">5</td>
+              <td align="center" valign="middle">8.3</td>
+              <td align="center" valign="middle">15</td>
+              <td align="center" valign="middle">24.3</td>
+              <td align="center" valign="middle">22</td>
+              <td align="center" valign="middle">28</td>
+              <td align="center" valign="middle">3406</td>
+              <td align="center" valign="middle">852</td>
+              <td align="center" valign="middle">38</td>
+              <td align="center" valign="middle">178,350</td>
+              <td align="center" valign="middle">119,289</td>
+              <td align="center" valign="middle">24</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">6</td>
+              <td align="center" valign="middle">8.6</td>
+              <td align="center" valign="middle">15</td>
+              <td align="center" valign="middle">22.1</td>
+              <td align="center" valign="middle">26</td>
+              <td align="center" valign="middle">24</td>
+              <td align="center" valign="middle">3661</td>
+              <td align="center" valign="middle">1049</td>
+              <td align="center" valign="middle">64</td>
+              <td align="center" valign="middle">178,350</td>
+              <td align="center" valign="middle">119,349</td>
+              <td align="center" valign="middle">24</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">7</td>
+              <td align="center" valign="middle">9.8</td>
+              <td align="center" valign="middle">15</td>
+              <td align="center" valign="middle">15.2</td>
+              <td align="center" valign="middle">37</td>
+              <td align="center" valign="middle">13</td>
+              <td align="center" valign="middle">3554</td>
+              <td align="center" valign="middle">1013</td>
+              <td align="center" valign="middle">52</td>
+              <td align="center" valign="middle">178,350</td>
+              <td align="center" valign="middle">119,694</td>
+              <td align="center" valign="middle">24</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">8</td>
+              <td align="center" valign="middle">9.3</td>
+              <td align="center" valign="middle">15</td>
+              <td align="center" valign="middle">16.5</td>
+              <td align="center" valign="middle">23</td>
+              <td align="center" valign="middle">27</td>
+              <td align="center" valign="middle">3488</td>
+              <td align="center" valign="middle">913</td>
+              <td align="center" valign="middle">46</td>
+              <td align="center" valign="middle">178,350</td>
+              <td align="center" valign="middle">120,294</td>
+              <td align="center" valign="middle">24</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">9</td>
+              <td align="center" valign="middle">9.3</td>
+              <td align="center" valign="middle">15</td>
+              <td align="center" valign="middle">16.2</td>
+              <td align="center" valign="middle">22</td>
+              <td align="center" valign="middle">28</td>
+              <td align="center" valign="middle">3404</td>
+              <td align="center" valign="middle">878</td>
+              <td align="center" valign="middle">43</td>
+              <td align="center" valign="middle">178,350</td>
+              <td align="center" valign="middle">120,309</td>
+              <td align="center" valign="middle">24</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">10</td>
+              <td align="center" valign="middle">8.6</td>
+              <td align="center" valign="middle">15</td>
+              <td align="center" valign="middle">29.4</td>
+              <td align="center" valign="middle">31</td>
+              <td align="center" valign="middle">19</td>
+              <td align="center" valign="middle">3573</td>
+              <td align="center" valign="middle">956</td>
+              <td align="center" valign="middle">48</td>
+              <td align="center" valign="middle">178,350</td>
+              <td align="center" valign="middle">118,929</td>
+              <td align="center" valign="middle">24</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">11</td>
+              <td align="center" valign="middle">8.8</td>
+              <td align="center" valign="middle">15</td>
+              <td align="center" valign="middle">23.2</td>
+              <td align="center" valign="middle">15</td>
+              <td align="center" valign="middle">35</td>
+              <td align="center" valign="middle">3425</td>
+              <td align="center" valign="middle">879</td>
+              <td align="center" valign="middle">40</td>
+              <td align="center" valign="middle">178,350</td>
+              <td align="center" valign="middle">120,429</td>
+              <td align="center" valign="middle">24</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">12</td>
+              <td align="center" valign="middle">8.4</td>
+              <td align="center" valign="middle">15</td>
+              <td align="center" valign="middle">22.9</td>
+              <td align="center" valign="middle">3</td>
+              <td align="center" valign="middle">47</td>
+              <td align="center" valign="middle">3520</td>
+              <td align="center" valign="middle">1004</td>
+              <td align="center" valign="middle">57</td>
+              <td align="center" valign="middle">178,350</td>
+              <td align="center" valign="middle">120,849</td>
+              <td align="center" valign="middle">24</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">13</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">9.7</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">15</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">26.3</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">27</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">23</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">3577</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">960</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">51</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">178,350</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">120,234</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">24</td>
+            </tr>
+          </tbody>
+        </table>
+      </table-wrap>
+      <table-wrap id="forests-10-01110-t002" position="float">
+        <object-id pub-id-type="pii">forests-10-01110-t002_Table 2</object-id>
+        <label>Table 2</label>
+        <caption>
+          <p>Breakdown of the optimal solution for the scenario 5, composed by 50 stands and a 15-day planning period.</p>
+        </caption>
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Results</th>
+              <th colspan="2" align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin">Value ($)</th>
+            </tr>
+            <tr>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Scenario 2</th>
+              <th align="center" valign="middle" style="border-bottom:solid thin">Scenario 5</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="center" valign="middle">Total cost</td>
+              <td align="center" valign="middle">20,770.5</td>
+              <td align="center" valign="middle">40,427.3</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">Operating Cost</td>
+              <td align="center" valign="middle">2180.9</td>
+              <td align="center" valign="middle">5255.5</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">Cost of Movement</td>
+              <td align="center" valign="middle">2284.8</td>
+              <td align="center" valign="middle">4851.3</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">Cost of Transport</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">16,304.8</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">30,320.5</td>
+            </tr>
+            <tr>
+              <td rowspan="2" align="center" valign="middle" style="border-bottom:solid thin">Wood supply</td>
+              <td colspan="2" align="center" valign="middle">Volume harvested (m<sup>3</sup>)</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle" style="border-bottom:solid thin">499.0</td>
+              <td align="center" valign="middle" style="border-bottom:solid thin">938.4</td>
+            </tr>
+          </tbody>
+        </table>
+      </table-wrap>
+    </sec>
+  </back>
+</article>

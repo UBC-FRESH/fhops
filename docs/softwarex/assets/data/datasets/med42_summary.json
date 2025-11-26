@@ -1,0 +1,75 @@
+{
+  "slug": "med42",
+  "label": "FHOPS Med42 (examples/med42)",
+  "scenario_path": "/home/gep/projects/fhops/examples/med42/scenario.yaml",
+  "name": "FHOPS Medium42",
+  "num_days": 42,
+  "start_date": "2025-01-01",
+  "schema_version": "1.0.0",
+  "objective_weights": {
+    "production": 1.0,
+    "mobilisation": 0.5
+  },
+  "tables": {
+    "blocks": {
+      "path": "/home/gep/projects/fhops/examples/med42/data/blocks.csv",
+      "row_count": 20,
+      "columns": [
+        "id",
+        "landing_id",
+        "work_required",
+        "earliest_start",
+        "latest_finish",
+        "avg_stem_size_m3",
+        "volume_per_ha_m3",
+        "stem_density_per_ha",
+        "ground_slope_percent",
+        "volume_per_ha_m3_sigma",
+        "stem_density_per_ha_sigma"
+      ]
+    },
+    "machines": {
+      "path": "/home/gep/projects/fhops/examples/med42/data/machines.csv",
+      "row_count": 8,
+      "columns": [
+        "id",
+        "crew",
+        "daily_hours",
+        "operating_cost",
+        "role"
+      ]
+    },
+    "landings": {
+      "path": "/home/gep/projects/fhops/examples/med42/data/landings.csv",
+      "row_count": 4,
+      "columns": [
+        "id",
+        "daily_capacity"
+      ]
+    },
+    "calendar": {
+      "path": "/home/gep/projects/fhops/examples/med42/data/calendar.csv",
+      "row_count": 336,
+      "columns": [
+        "machine_id",
+        "day",
+        "available"
+      ]
+    },
+    "prod_rates": {
+      "path": "/home/gep/projects/fhops/examples/med42/data/prod_rates.csv",
+      "row_count": 160,
+      "columns": [
+        "machine_id",
+        "block_id",
+        "rate"
+      ]
+    }
+  },
+  "machine_roles": {
+    "feller_buncher": 2,
+    "grapple_skidder": 2,
+    "roadside_processor": 2,
+    "loader": 2
+  }
+}

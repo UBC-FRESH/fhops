@@ -70,3 +70,11 @@ def test_solve_tabu_respects_operators():
     assert weights.get("swap", 0.0) > 0
     assert weights.get("move", 0.0) >= 0
     assert weights.get("block_insertion", 0.0) == 0.0
+
+
+def test_solve_tabu_records_restarts_when_stalled():
+    pb = _problem()
+    result = solve_tabu(pb, iters=200, seed=3, stall_limit=1)
+    meta = result["meta"]
+    assert meta.get("restarts", 0) >= 1
+    assert meta.get("iterations") == 200

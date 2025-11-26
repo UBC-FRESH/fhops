@@ -3,6 +3,8 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
+import pytest
+
 from fhops.cli.main import app
 
 from .cli import CliRunner
@@ -10,6 +12,7 @@ from .cli import CliRunner
 runner = CliRunner()
 
 
+@pytest.mark.milp_refactor
 def test_telemetry_report_generates_outputs(tmp_path: Path):
     telemetry_log = tmp_path / "telemetry" / "runs.jsonl"
     sqlite_path = telemetry_log.with_suffix(".sqlite")

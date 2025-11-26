@@ -87,7 +87,7 @@ FHOPS’ Sphinx tree lives under `docs/` and is published to Read the Docs via `
 Remaining focus areas: optional dataset cookbook & release docs (see tasks below). Costing helpers now match the NumPy-style contract and cross-link to the reference guide.
 
 #### Docstring standards (2025-11-24 update)
-- `CODING_AGENT.md` now spells out the NumPy-style expectations (summary + Parameters/Returns/Raises/Notes, attribute listings for dataclasses, usage of snippets, cross-link obligations, and requirement to run `sphinx-build -b html docs _build/html -W` after sweep).
+- `AGENTS.md` now spells out the NumPy-style expectations (summary + Parameters/Returns/Raises/Notes, attribute listings for dataclasses, usage of snippets, cross-link obligations, and requirement to run `sphinx-build -b html docs _build/html -W` after sweep).
 - `CONTRIBUTING.md` mirrors the same guidance so external collaborators see the exact docstring contract (per-argument coverage, return schemas, citations, and build verification).
 
 ### Next docstring tasks
