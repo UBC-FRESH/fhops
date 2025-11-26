@@ -198,19 +198,27 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
 
         model.loader_batch = pyo.Constraint(model.LoaderPairs, model.S, rule=loader_batch_rule)
 
-    # Block balance ensures required work is met
+    # Block balance ensures required work is met (with leftover slack)
+    model.leftover = pyo.Var(model.B, domain=pyo.NonNegativeReals)
+
     def block_balance_rule(mdl, blk):
         total_prod = sum(mdl.prod[mach, blk, slot] for mach in mdl.M for slot in model.S)
-        return total_prod >= bundle.work_required[blk]
+        return total_prod + mdl.leftover[blk] == bundle.work_required[blk]
 
     model.block_balance = pyo.Constraint(model.B, rule=block_balance_rule)
 
-    # Landing capacity placeholder (counts assignments)
+    # Landing capacity with slack
+    landing_ids = list(bundle.landing_capacity.keys())
+    model.Landing = pyo.Set(initialize=landing_ids)
+    model.landing_slack = pyo.Var(model.Landing, model.D, domain=pyo.NonNegativeReals)
+
     def landing_capacity_rule(mdl, landing_id, day):
         capacity = bundle.landing_capacity.get(landing_id)
         if capacity is None:
             return pyo.Constraint.Skip
-        related_blocks = [blk for blk, landing in bundle.landing_for_block.items() if landing == landing_id]
+        related_blocks = [
+            blk for blk, landing in bundle.landing_for_block.items() if landing == landing_id
+        ]
         if not related_blocks:
             return pyo.Constraint.Skip
         expr = 0
@@ -219,17 +227,24 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
                 for shift_day, shift_label in model.S:
                     if shift_day == day:
                         expr += mdl.x[mach, blk, (shift_day, shift_label)]
-        return expr <= capacity * len(bundle.machines)
+        return expr <= capacity + mdl.landing_slack[landing_id, day]
 
-    model.landing_capacity = pyo.Constraint(
-        bundle.landing_capacity.keys(), model.D, rule=landing_capacity_rule
-    )
+    model.landing_capacity = pyo.Constraint(model.Landing, model.D, rule=landing_capacity_rule)
 
     prod_weight = bundle.objective_weights.production
-    model.objective = pyo.Objective(
-        expr=prod_weight
-        * sum(model.prod[mach, blk, slot] for mach in model.M for blk in model.B for slot in model.S),
-        sense=pyo.maximize,
+    leftover_penalty = bundle.objective_weights.transitions
+    landing_weight = bundle.objective_weights.landing_slack
+
+    obj_expr = prod_weight * sum(
+        model.prod[mach, blk, slot] for mach in model.M for blk in model.B for slot in model.S
     )
+    if leftover_penalty:
+        obj_expr -= leftover_penalty * sum(model.leftover[blk] for blk in model.B)
+    if landing_weight:
+        obj_expr -= landing_weight * sum(
+            model.landing_slack[landing_id, day] for landing_id in model.Landing for day in model.D
+        )
+
+    model.objective = pyo.Objective(expr=obj_expr, sense=pyo.maximize)
 
     return model
