@@ -187,7 +187,10 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
                 if prereqs:
                     role_key = (block_id, role)
                     required = seq_cumulative[role_key] + day_counts[role_key] + 1
-                    available = min(seq_cumulative[(block_id, prereq)] for prereq in prereqs)
+                    available = min(
+                        seq_cumulative[(block_id, prereq)] + day_counts[(block_id, prereq)]
+                        for prereq in prereqs
+                    )
                     if available < required:
                         violation_reason = "missing_prereq"
 

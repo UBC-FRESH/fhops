@@ -44,6 +44,7 @@ class BlockRecord:
 
     id: str
     landing_id: str
+    harvest_system_id: str | None
     work_required: float
     earliest_start: int
     latest_finish: int
@@ -73,6 +74,7 @@ class DatasetConfig:
     )
     landing_ids: tuple[str, ...] = DEFAULT_LANDINGS
     start_date: str = "2025-01-01"
+    harvest_system_id: str = "ground_fb_skid"
 
     def machine_sequence(self) -> list[str]:
         ordered_roles = ("feller_buncher", "grapple_skidder", "roadside_processor", "loader")
@@ -116,6 +118,7 @@ def _sample_block(
     num_days: int,
     landing_ids: Sequence[str],
     profiles: tuple[BlockProfile, ...],
+    harvest_system_id: str | None,
 ) -> tuple[BlockRecord, float, float]:
     profile = rng.choices(profiles, weights=[p.weight for p in profiles], k=1)[0]
     area = rng.uniform(*profile.area_range)
@@ -133,6 +136,7 @@ def _sample_block(
     record = BlockRecord(
         id=f"B{block_index + 1:02d}",
         landing_id=landing,
+        harvest_system_id=harvest_system_id,
         work_required=work_required,
         earliest_start=earliest,
         latest_finish=latest,
@@ -197,6 +201,7 @@ def _build_blocks(
     num_days: int,
     landing_ids: Sequence[str],
     profiles: tuple[BlockProfile, ...],
+    harvest_system_id: str | None,
 ) -> tuple[list[BlockRecord], dict[str, dict[str, float]]]:
     rng = random.Random(seed)
     blocks: list[BlockRecord] = []
@@ -208,6 +213,7 @@ def _build_blocks(
             num_days=num_days,
             landing_ids=landing_ids,
             profiles=profiles,
+            harvest_system_id=harvest_system_id,
         )
         blocks.append(block)
         rates[block.id] = _role_rates_for_block(
@@ -223,6 +229,7 @@ def _write_blocks(path: Path, blocks: Iterable[BlockRecord]) -> None:
     fieldnames = [
         "id",
         "landing_id",
+        "harvest_system_id",
         "work_required",
         "earliest_start",
         "latest_finish",
@@ -388,6 +395,7 @@ def rebuild_dataset(config: DatasetConfig, seed: int) -> None:
         num_days=config.num_days,
         landing_ids=config.landing_ids,
         profiles=config.block_profiles,
+        harvest_system_id=config.harvest_system_id,
     )
     _write_blocks(data_dir / "blocks.csv", blocks)
     _write_prod_rates(
