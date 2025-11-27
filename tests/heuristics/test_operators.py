@@ -8,7 +8,7 @@ from fhops.optimization.heuristics.registry import (
     MobilisationShakeOperator,
     OperatorRegistry,
 )
-from fhops.optimization.heuristics.sa import Schedule, _neighbors
+from fhops.optimization.heuristics.common import Schedule, generate_neighbors
 from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract import (
     Block,
@@ -64,7 +64,7 @@ def _run_operator(
     registry = OperatorRegistry.from_defaults([operator])
     rng = random.Random(rng_seed)
     ctx = build_operational_problem(pb)
-    return _neighbors(pb, schedule, registry, rng, {}, ctx)
+    return generate_neighbors(pb, schedule, registry, rng, {}, ctx)
 
 
 def test_block_insertion_respects_windows_and_availability():

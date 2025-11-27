@@ -12,14 +12,14 @@ from typing import Any, cast
 import pandas as pd
 
 from fhops.evaluation import compute_kpis
-from fhops.optimization.heuristics.registry import OperatorRegistry
-from fhops.optimization.heuristics.sa import (
+from fhops.optimization.heuristics.common import (
     Schedule,
-    _evaluate,
-    _evaluate_candidates,
-    _init_greedy,
-    _neighbors,
+    evaluate_candidates,
+    evaluate_schedule,
+    generate_neighbors,
+    init_greedy_schedule,
 )
+from fhops.optimization.heuristics.registry import OperatorRegistry
 from fhops.optimization.mip import solve_mip
 from fhops.optimization.operational_problem import OperationalProblem, build_operational_problem
 from fhops.scenario.contract import Problem
@@ -71,7 +71,7 @@ def _perturb_schedule(
     """Apply a series of random operator moves to escape local optima."""
     current = schedule
     for _ in range(max(1, strength)):
-        neighbours = _neighbors(
+        neighbours = generate_neighbors(
             pb,
             current,
             registry,
@@ -98,11 +98,11 @@ def _local_search(
 ) -> tuple[Schedule, float, bool, int]:
     """Run local search until no improving neighbour is found."""
     current = schedule
-    current_score = _evaluate(pb, current, ctx)
+    current_score = evaluate_schedule(pb, current, ctx)
     improved = False
     local_steps = 0
     while True:
-        candidates = _neighbors(
+        candidates = generate_neighbors(
             pb,
             current,
             registry,
@@ -111,7 +111,7 @@ def _local_search(
             ctx,
             batch_size=batch_size,
         )
-        evaluations = _evaluate_candidates(pb, candidates, ctx, max_workers)
+        evaluations = evaluate_candidates(pb, candidates, ctx, max_workers)
         if not evaluations:
             break
 
@@ -270,8 +270,8 @@ def solve_ils(
     ctx = build_operational_problem(pb)
 
     with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
-        current = _init_greedy(pb, ctx)
-        current_score = _evaluate(pb, current, ctx)
+        current = init_greedy_schedule(pb, ctx)
+        current_score = evaluate_schedule(pb, current, ctx)
         best = current
         best_score = current_score
         initial_score = current_score
@@ -375,7 +375,7 @@ def solve_ils(
                         )
                         assignments = cast(pd.DataFrame, mip_res["assignments"]).copy()
                         hybrid_schedule = _assignments_to_schedule(pb, assignments)
-                        hybrid_score = _evaluate(pb, hybrid_schedule, ctx)
+                        hybrid_score = evaluate_schedule(pb, hybrid_schedule, ctx)
                         if hybrid_score > best_score:
                             best, best_score = hybrid_schedule, hybrid_score
                             current = best
@@ -389,14 +389,14 @@ def solve_ils(
                 current = _perturb_schedule(
                     pb, current, registry, rng, ctx, perturbation_strength, operator_stats
                 )
-                current_score = _evaluate(pb, current, ctx)
+                current_score = evaluate_schedule(pb, current, ctx)
                 stalls = 0
                 perturbations += 1
             else:
                 current = _perturb_schedule(
                     pb, current, registry, rng, ctx, perturbation_strength, operator_stats
                 )
-                current_score = _evaluate(pb, current, ctx)
+                current_score = evaluate_schedule(pb, current, ctx)
                 perturbations += 1
                 rolling_scores.append(float(current_score))
                 improvement_window.append(0)

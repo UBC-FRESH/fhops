@@ -13,13 +13,13 @@ from typing import Any
 import pandas as pd
 
 from fhops.evaluation import compute_kpis
-from fhops.optimization.heuristics.registry import OperatorRegistry
-from fhops.optimization.heuristics.sa import (
-    _evaluate,
-    _evaluate_candidates,
-    _init_greedy,
-    _neighbors,
+from fhops.optimization.heuristics.common import (
+    evaluate_candidates,
+    evaluate_schedule,
+    generate_neighbors,
+    init_greedy_schedule,
 )
+from fhops.optimization.heuristics.registry import OperatorRegistry
 from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract import Problem
 from fhops.telemetry import RunTelemetryLogger
@@ -198,8 +198,8 @@ def solve_tabu(
     ctx = build_operational_problem(pb)
 
     with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
-        current = _init_greedy(pb, ctx)
-        current_score = _evaluate(pb, current, ctx)
+        current = init_greedy_schedule(pb, ctx)
+        current_score = evaluate_schedule(pb, current, ctx)
         initial_score = current_score
         best = current
         best_score = current_score
@@ -273,7 +273,7 @@ def solve_tabu(
 
         last_iteration = 0
         for step in range(1, iters + 1):
-            candidates = _neighbors(
+            candidates = generate_neighbors(
                 pb,
                 current,
                 registry,
@@ -282,7 +282,7 @@ def solve_tabu(
                 ctx,
                 batch_size=batch_arg,
             )
-            evaluations = _evaluate_candidates(pb, candidates, ctx, worker_arg)
+            evaluations = evaluate_candidates(pb, candidates, ctx, worker_arg)
             if not evaluations:
                 break
             if workers_total:

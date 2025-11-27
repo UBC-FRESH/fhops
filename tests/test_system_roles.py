@@ -1,6 +1,6 @@
 import pyomo.environ as pyo
 
-from fhops.optimization.heuristics.sa import Schedule, _evaluate
+from fhops.optimization.heuristics.common import Schedule, evaluate_schedule
 from fhops.optimization.mip.builder import build_model
 from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract.models import (
@@ -268,8 +268,8 @@ def test_sa_evaluator_penalises_out_of_order_assignments():
             },
         )
     )
-    bad_score = _evaluate(pb, bad_plan, ctx)
-    good_score = _evaluate(pb, good_plan, ctx)
+    bad_score = evaluate_schedule(pb, bad_plan, ctx)
+    good_score = evaluate_schedule(pb, good_plan, ctx)
     assert bad_score < good_score
 
 
@@ -483,6 +483,6 @@ def test_sa_evaluator_requires_all_prereqs_before_helicopter():
             },
         )
     )
-    bad_score = _evaluate(pb, incomplete_prereq_plan, ctx)
-    good_score = _evaluate(pb, complete_prereq_plan, ctx)
+    bad_score = evaluate_schedule(pb, incomplete_prereq_plan, ctx)
+    good_score = evaluate_schedule(pb, complete_prereq_plan, ctx)
     assert bad_score < good_score

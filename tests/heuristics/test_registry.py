@@ -6,7 +6,7 @@ import random
 
 from fhops.optimization.heuristics import OperatorContext, OperatorRegistry, Schedule
 from fhops.optimization.heuristics.registry import MoveOperator, SwapOperator
-from fhops.optimization.heuristics.sa import _neighbors
+from fhops.optimization.heuristics.common import generate_neighbors
 from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract import Problem, Scenario
 
@@ -66,7 +66,7 @@ def test_neighbors_batch_limit():
         rng=random,
     )
     ctx = build_operational_problem(context.problem)
-    neighbours = _neighbors(
+    neighbours = generate_neighbors(
         context.problem,
         context.schedule,
         registry,

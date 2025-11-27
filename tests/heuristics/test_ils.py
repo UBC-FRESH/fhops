@@ -4,6 +4,7 @@ import pandas as pd
 
 from fhops.optimization.heuristics import ils as ils_module
 from fhops.optimization.heuristics import solve_ils
+from fhops.optimization.heuristics.common import evaluate_schedule
 from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract import (
     Block,
@@ -103,5 +104,5 @@ def test_solve_ils_hybrid_invokes_mip(monkeypatch):
     assert calls["count"] >= 1
     assert result["meta"]["hybrid_used"] is True
     ctx = build_operational_problem(pb)
-    expected = ils_module._evaluate(pb, ils_module._assignments_to_schedule(pb, fres), ctx)
+    expected = evaluate_schedule(pb, ils_module._assignments_to_schedule(pb, fres), ctx)
     assert result["objective"] == expected

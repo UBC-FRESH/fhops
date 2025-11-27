@@ -2,7 +2,7 @@ import pyomo.environ as pyo
 import pytest
 
 from fhops.optimization.heuristics import solve_sa
-from fhops.optimization.heuristics.sa import Schedule, _evaluate
+from fhops.optimization.heuristics.common import Schedule, evaluate_schedule
 from fhops.optimization.mip.builder import build_model
 from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract.models import (
@@ -196,7 +196,7 @@ def test_transition_weight_penalises_moves_sa():
             "M2": {1: None, 2: None},
         },
     )
-    score = _evaluate(pb, Schedule(plan=plan), ctx)
+    score = evaluate_schedule(pb, Schedule(plan=plan), ctx)
     assert score == pytest.approx(2.4, abs=1e-6)
 
 
@@ -256,6 +256,6 @@ def test_landing_slack_penalty_sa():
             "M2": {1: "B2", 2: None},
         },
     )
-    score = _evaluate(pb, Schedule(plan=plan), ctx)
+    score = evaluate_schedule(pb, Schedule(plan=plan), ctx)
     # Two machines on one landing (capacity 1) -> slack 1 penalised
     assert score == pytest.approx(1.4, abs=1e-6)
