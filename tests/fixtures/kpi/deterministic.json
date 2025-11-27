@@ -28,5 +28,20 @@
     "utilisation_ratio_weighted_day": 0.555556,
     "makespan_day": 7,
     "makespan_shift": "S1"
+  },
+  "large84": {
+    "total_production": 125016.949665,
+    "completed_blocks": 40.0,
+    "mobilisation_cost": 21798.08,
+    "mobilisation_cost_by_machine": "{\"H1\": 1079.72, \"H10\": 1117.12, \"H11\": 1106.8, \"H12\": 1288.12, \"H13\": 1235.84, \"H14\": 1296.52, \"H15\": 953.56, \"H16\": 1293.16, \"H17\": 1177.56, \"H18\": 1120.24, \"H2\": 1232.0, \"H3\": 1310.92, \"H4\": 1340.16, \"H5\": 1179.96, \"H6\": 1517.64, \"H7\": 1133.44, \"H8\": 1005.36, \"H9\": 1409.96}",
+    "mobilisation_cost_by_landing": "{\"L1\": 5303.12, \"L2\": 5642.24, \"L3\": 6016.56, \"L4\": 4836.16}",
+    "utilisation_ratio_mean_shift": 1.0,
+    "utilisation_ratio_weighted_shift": 1.0,
+    "utilisation_ratio_by_machine": "{\"H1\": 1.0, \"H10\": 1.0, \"H11\": 1.0, \"H12\": 1.0, \"H13\": 1.0, \"H14\": 1.0, \"H15\": 1.0, \"H16\": 1.0, \"H17\": 1.0, \"H18\": 1.0, \"H2\": 1.0, \"H3\": 1.0, \"H4\": 1.0, \"H5\": 1.0, \"H6\": 1.0, \"H7\": 1.0, \"H8\": 1.0, \"H9\": 1.0}",
+    "utilisation_ratio_by_role": "{\"feller_buncher\": 1.0, \"grapple_skidder\": 1.0, \"loader\": 1.0, \"processor\": 1.0}",
+    "utilisation_ratio_mean_day": 0.34127,
+    "utilisation_ratio_weighted_day": 0.34127,
+    "makespan_day": 83,
+    "makespan_shift": "S1"
   }
 }
