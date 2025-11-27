@@ -5,6 +5,21 @@ This guide summarises the structured inputs FHOPS expects when authoring scenari
 builds on the ``examples/tiny7`` and ``tests/fixtures/regression`` assets and reflects
 recent extensions (mobilisation, geo metadata, crew assignments).
 
+Reference dataset generator
+---------------------------
+
+All bundled scenarios (``examples/{tiny7,small21,med42,large84}``) now originate from a single
+deterministic generator: ``scripts/rebuild_reference_datasets.py``. The script samples Lahrsen-style
+stand attributes, derives ADV6N7 skidding distances from block geometry, and emits the full CSV + YAML
+bundle (blocks, machines, calendar, production rates, landings, mobilisation distances, README). Run:
+
+.. code-block:: bash
+
+   python scripts/rebuild_reference_datasets.py tiny7        # or small21 / med42 / large84
+
+Use ``--seed`` to reproduce specific variants. Regenerate the dataset before updating docs/fixtures so
+the CSVs, README stats, and MILP bundles stay in sync across the ladder.
+
 Core Tables (CSV)
 -----------------
 
