@@ -16,6 +16,7 @@ def test_bundle_round_trip_dict() -> None:
     restored = bundle_from_dict(bundle_to_dict(bundle))
     assert restored == bundle
 
+
 def test_bundle_fixture_loads() -> None:
     payload = json.loads(FIXTURE_PATH.read_text(encoding="utf-8"))
     bundle = bundle_from_dict(payload)

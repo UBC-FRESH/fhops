@@ -11,6 +11,8 @@ from pyomo.opt import SolverFactory
 from fhops.model.milp.data import OperationalMilpBundle
 from fhops.model.milp.operational import build_operational_model
 
+ASSIGNMENT_COLUMNS = ["machine_id", "block_id", "day", "shift_id"]
+
 __all__ = ["solve_operational_milp"]
 
 
@@ -29,17 +31,18 @@ def solve_operational_milp(
         opt.options["time_limit"] = time_limit
     if gap is not None:
         opt.options["mipgap"] = gap
-    result = opt.solve(model, tee=tee, load_solutions=False)
-    status = result.solver.status
-    if str(status).lower() in {"optimal", "feasible"}:
-        _load_solution_values(model)
+    result = opt.solve(model, tee=tee, load_solutions=True)
+    status = str(result.solver.status).lower()
+    termination = str(result.solver.termination_condition).lower()
+    solved = termination in {"optimal", "feasible"} or status in {"optimal", "feasible"}
+    if solved:
         assignments = _extract_assignments(model)
         prod = sum(pyo.value(model.prod[idx]) for idx in model.prod)
     else:
-        assignments = pd.DataFrame()
+        assignments = pd.DataFrame(columns=ASSIGNMENT_COLUMNS)
         prod = 0.0
     return {
-        "objective": pyo.value(model.objective) if not assignments.empty else None,
+        "objective": pyo.value(model.objective) if solved else None,
         "production": prod,
         "assignments": assignments,
         "solver_status": str(result.solver.status),
@@ -49,7 +52,7 @@ def solve_operational_milp(
 
 def _extract_assignments(model: pyo.ConcreteModel) -> pd.DataFrame:
     rows: list[dict[str, object]] = []
-    for (machine_id, block_id, (day, shift_id)), var in model.x.items():
+    for (machine_id, block_id, day, shift_id), var in model.x.items():
         if pyo.value(var) >= 0.5:
             rows.append(
                 {
@@ -59,10 +62,6 @@ def _extract_assignments(model: pyo.ConcreteModel) -> pd.DataFrame:
                     "shift_id": shift_id,
                 }
             )
-    return pd.DataFrame(rows)
-
-
-def _load_solution_values(model):
-    for var in model.component_objects(pyo.Var):
-        for idx in var:
-            var[idx].value = pyo.value(var[idx])
+    if rows:
+        return pd.DataFrame(rows, columns=ASSIGNMENT_COLUMNS)
+    return pd.DataFrame(columns=ASSIGNMENT_COLUMNS)

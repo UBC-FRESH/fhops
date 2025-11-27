@@ -69,13 +69,23 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
             if cap <= 0:
                 cap = 1.0
             role_capacity[pair] = cap
-            buffer_volume = role_cfg.buffer_shifts * cap
+
+            upstream_capacity = 0.0
+            if role_cfg.upstream_roles:
+                for upstream_role in role_cfg.upstream_roles:
+                    for machine_id in role_to_machines.get(upstream_role, []):
+                        upstream_capacity += bundle.production_rates.get((machine_id, block), 0.0)
+
+            buffer_volume = 0.0
+            if role_cfg.buffer_shifts > 0 and role_cfg.upstream_roles:
+                reference_capacity = upstream_capacity if upstream_capacity > 0 else cap
+                buffer_volume = role_cfg.buffer_shifts * reference_capacity
             role_buffer_volume[pair] = buffer_volume
 
             if role_cfg.upstream_roles:
                 inventory_pairs.append(pair)
-            if buffer_volume > 0:
-                activation_pairs.append(pair)
+                if buffer_volume > 0:
+                    activation_pairs.append(pair)
             if role_cfg.is_loader:
                 loader_pairs.append(pair)
                 loader_batch_volume[pair] = system_cfg.loader_batch_volume_m3
@@ -245,11 +255,12 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
         )
 
     # Head-start buffers via activation binaries (only when buffer > 0)
-    model.ActivationPairs = pyo.Set(initialize=activation_pairs, dimen=2)
     if activation_pairs:
+        model.ActivationPairs = pyo.Set(initialize=activation_pairs, dimen=2)
         model.role_active = pyo.Var(model.ActivationPairs, model.S, domain=pyo.Binary)
 
         def activation_prod_rule(mdl, role, blk, day, shift_id):
+            cap = role_capacity[(role, blk)]
             return (
                 mdl.role_prod[role, blk, (day, shift_id)]
                 <= cap * mdl.role_active[role, blk, (day, shift_id)]
@@ -259,17 +270,10 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
             slot = (day, shift_id)
             prev_slot = prev_shift_map[slot]
             prev_inventory = mdl.inventory[role, blk, prev_slot] if prev_slot else 0.0
-            upstream_roles = role_upstream[(role, blk)]
-            upstream_sum = sum(mdl.role_prod[up_role, blk, slot] for up_role in upstream_roles)
             buffer_volume = role_buffer_volume[(role, blk)]
             if buffer_volume <= 0:
                 return pyo.Constraint.Skip
-            return (
-                prev_inventory
-                + upstream_sum
-                + buffer_volume * (1 - mdl.role_active[role, blk, slot])
-                >= buffer_volume
-            )
+            return prev_inventory >= buffer_volume * mdl.role_active[role, blk, slot]
 
         model.activation_prod = pyo.Constraint(
             model.ActivationPairs, model.S, rule=activation_prod_rule

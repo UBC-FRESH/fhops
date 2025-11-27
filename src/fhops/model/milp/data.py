@@ -81,12 +81,14 @@ def build_operational_bundle(pb: Problem) -> OperationalMilpBundle:
     landing_capacity = {landing.id: landing.daily_capacity for landing in sc.landings}
 
     availability_day: dict[tuple[str, int], int] = {}
-    for entry in sc.calendar:
-        availability_day[(entry.machine_id, entry.day)] = int(entry.available)
+    for day_entry in sc.calendar:
+        availability_day[(day_entry.machine_id, day_entry.day)] = int(day_entry.available)
     availability_shift: dict[tuple[str, int, str], int] = {}
     if sc.shift_calendar:
-        for entry in sc.shift_calendar:
-            availability_shift[(entry.machine_id, entry.day, entry.shift_id)] = int(entry.available)
+        for shift_entry in sc.shift_calendar:
+            availability_shift[(shift_entry.machine_id, shift_entry.day, shift_entry.shift_id)] = (
+                int(shift_entry.available)
+            )
 
     objective_weights = sc.objective_weights or ObjectiveWeights()
     mobilisation_params: dict[str, dict[str, float]] = {}
@@ -153,9 +155,12 @@ def _build_system_configs(systems: Iterable[HarvestSystem]) -> dict[str, SystemC
             else DEFAULT_TRUCKLOAD_M3
         )
         for job in system.jobs:
-            upstream_roles = tuple(
-                role_by_job.get(prereq) for prereq in job.prerequisites if prereq in role_by_job
-            )
+            upstream_list: list[str] = []
+            for prereq in job.prerequisites:
+                role_value = role_by_job.get(prereq)
+                if role_value:
+                    upstream_list.append(role_value)
+            upstream_roles = tuple(upstream_list)
             role_configs.append(
                 SystemRoleConfig(
                     job_name=job.name,

@@ -1,3 +1,10 @@
+# 2025-12-09 — Operational MILP buffer/batching fixes
+- Operational MILP builder now derives head-start buffers from upstream role capacity, enforces the wait using previous-shift inventory levels, and restricts loader production to integer truckloads; this touches `fhops.model.milp.operational` plus the bundle serializer (`fhops.model.milp.data`) so downstream consumers see the same buffer metadata.
+- `solve_operational_milp` now treats HiGHS “ok/optimal” terminations as success, loads solutions via Pyomo, and always returns a DataFrame with the canonical assignment columns; mobilisation/transition penalties now show up in watch/telemetry because the solver actually emits the assignments even when HiGHS only reports `status=ok`.
+- Added regression coverage for the head-start/loader batching behaviours (`tests/model/test_operational_milp.py`) so the new constraints stay wired while we finish the MIP bring-up; helpers build tiny deterministic scenarios to keep tests solver-light.
+- Planning note updated (Section 6.1) so the operational-MILP workstream tracks these completed subtasks before we move on to `tiny7` generation.
+- Commands: `ruff format src tests`, `ruff check src tests`, `mypy src`, `pytest` *(fails: benchmark harness minitoy suite, CLI playback med42 mobilisation diff, telemetry report CLI, tune-grid CLI run count, med42 deterministic/stochastic KPI fixtures, playback aggregates, SA/Tabu regression presets & mobilisation penalties, schedule-locking transition/landing slack penalties, synthetic medium stochastic smoke)*, `pre-commit run --all-files`, `sphinx-build -b html docs _build/html -W`.
+
 # 2025-12-09 — med42 Lahrsen-balanced dataset refresh
 - Added `scripts/rebuild_med42_dataset.py`, a deterministic generator that samples Lahrsen-range
   stand metrics, enforces the “60 % of volume in ~20 ha blocks” rule, and stops once the processor

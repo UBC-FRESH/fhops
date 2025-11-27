@@ -553,7 +553,9 @@ def solve_mip_operational_cmd(
             watch_runner = LiveWatch(WatchConfig(refresh_interval=watch_refresh), console=console)
             watch_runner.start()
         else:
-            console.print("[yellow]Watch mode requires an interactive terminal; disabling watch.[/]")
+            console.print(
+                "[yellow]Watch mode requires an interactive terminal; disabling watch.[/]"
+            )
 
     def emit_snapshot(iteration: int, objective_value: float, runtime_seconds: float) -> None:
         if not watch_runner:

@@ -487,3 +487,37 @@ system slightly under-capacity (bottleneck days just above the 42-day horizon).
         extra processors/loaders change makespan/leftover volume.
   - [ ] Capture the new rates/assumptions in the changelog and note any solver-behaviour updates
         (e.g., whether heuristics are splitting processors across blocks as expected).
+
+- [ ] **Scenario ladder rebuild**
+  - [ ] Remove the legacy `examples/minitoy` dataset (docs/tests) since it no longer matches the four-role system assumptions.
+  - [ ] Derive `small21` and `tiny7` variants from the med42 generator by truncating the horizon (21-day / 7-day) and subsampling blocks while keeping the single balanced system.
+- [ ] Derive `large84` by doubling the med42 block set/system count and extending the horizon to 84 days (two balanced systems, doubled workload).
+  - [ ] Ensure each dataset ships with deterministic `scripts/rebuild_*` entries (shared generator) plus README/KPI updates, then refresh CLI/docs/tests to reference the new ladder.
+
+## 6. Current priorities (operational focus – manuscript parked)
+
+Per 2025-12-07 sync, the SoftwareX/manuscript track is frozen until the
+operational MILP, dataset ladder, and heuristics all align with the
+Arora-style formulation. Immediate priorities:
+
+### 6.1 Operational MILP bring-up (exact solver first)
+- [ ] Finish the model feature set (role buffers, batching, mobilisation penalties, landing slack) and land the missing unit tests + regression harness so `solve-mip-operational` is trustworthy.
+  - [x] Head-start buffers now use upstream-role capacity and require previous-shift inventory, loader batching enforces truckload quanta, and regression tests cover both behaviours plus the driver replay path (`tests/model/test_operational_milp.py`, `fhops.model.milp.driver`).
+- [ ] Generate the `tiny7` scenario via the shared dataset builder and validate that HiGHS/CPLEX produce a “sane” optimal schedule (objective, completed blocks, mobilisation moves).
+- [ ] Once `tiny7` is green, scale the same checks to `small21` and `med42` before touching any heuristic code.
+- [ ] Capture calibration defaults (buffer_shifts, loader batch volumes, per-role productivity scaling) inside the scenario contract so both the MILP and future heuristics share identical parameters.
+
+### 6.2 Dataset ladder rebuild (shared generator, no heuristic tuning)
+- [ ] Finish the deterministic dataset generator that emits `tiny7`, `small21`, `med42`, and `large84` from a single configuration + seed (including machine rosters, landings, prod rates, calendar, mobilisations).
+- [ ] Delete `examples/minitoy` plus all docs/tests references; replace fixtures with the new ladder.
+- [ ] For each scenario, document the “slightly under-capacity” intent, run an operational MILP smoke test, and log KPIs in `CHANGE_LOG.md` / dataset README—skip SA/ILS/Tabu tuning until the heuristics are rebuilt.
+
+### 6.3 Heuristic refactor (post-MILP validation)
+- [ ] Design a shared “operational problem” module that exposes the same bundle/constraint structures to MILP and heuristics (roles, buffers, batching, mobilisation state).
+- [ ] Port SA, ILS, and Tabu to consume that module so all three heuristics reuse identical problem-definition code.
+- [ ] Extract the solver-agnostic neighbourhood/search logic into a standalone package candidate (generic metaheuristic core) so we can later target tactical MILPs, trucking, and future FLP bridges without rewriting operators.
+- [ ] After SA is running on the new primitives, replay the dataset ladder to ensure heuristic KPIs mirror the MILP objective within expected gaps; only then consider parameter tuning.
+
+### 6.4 Tactical MILP (queued after the above)
+- [ ] Keep the tactical-level MILP design on hold until the operational stack + heuristics settle; once ready, reuse the modular problem-definition layer to avoid duplicating code.
+- [ ] Document any tactical data requirements that surface during the operational refactor so we can extend the scenario contract cleanly when work resumes.
