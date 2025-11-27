@@ -21,6 +21,9 @@
 - Follow-on fixture refreshes:
   - Reran `fhops solve-mip-operational` + `fhops eval-playback` for `examples/med42`, updating the MILP bundle (`tests/fixtures/milp/med42_operational_bundle.json`), deterministic assignments, and playback CSV/Parquet outputs before recomputing the KPI snapshot embedded in `tests/fixtures/kpi/deterministic.json`.
   - Repeated the workflow for `examples/large84` (900 s / 10 % gap solve), adding new assignments/playback exports and a KPI entry so future regression tests can cover the doubled system. Full CLI playback export tests (`pytest tests/test_cli_playback_exports.py`) were rerun to confirm coverage.
+- Benchmarks & regression/test updates:
+  - Captured new SA baselines for the balanced `med42`/`large84` datasets (`tests/fixtures/benchmarks/med42_sa.json`, `tests/fixtures/benchmarks/large84_sa.json`) via `fhops bench suite`, then reran the CLI/telemetry/tuning tests so they no longer reference the removed Minitoy dataset.
+  - Refresh regression and stochastic fixtures: `tests/fixtures/kpi/stochastic.json` now reflects the med42 stochastic playback snapshot, and `tests/fixtures/regression/baseline.yaml` mirrors the current SA objective/mobilisation totals. Updated schedule-locking/tuning/synthetic smoke tests to align with the new scoring and playback behaviour, and re-ran the full cadence (`ruff format`, `ruff check`, `mypy`, `pytest`, `sphinx-build`) with all tests green.
 
 # 2025-12-09 — Operational MILP buffer/batching fixes
 - Operational MILP builder now derives head-start buffers from upstream role capacity, enforces the wait using previous-shift inventory levels, and restricts loader production to integer truckloads; this touches `fhops.model.milp.operational` plus the bundle serializer (`fhops.model.milp.data`) so downstream consumers see the same buffer metadata.

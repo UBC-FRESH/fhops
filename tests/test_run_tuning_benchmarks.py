@@ -101,7 +101,7 @@ def test_run_tuning_benchmarks_minimal(tmp_path: Path):
     assert baseline_diff_csv.exists()
 
     summary_text = summary_md.read_text(encoding="utf-8")
-    assert "Minitoy" in summary_text or "MiniToy" in summary_text
+    assert "FHOPS Tiny7" in summary_text
 
     comparison_text = comparison_md.read_text(encoding="utf-8")
     assert "scenario" in comparison_text.lower()

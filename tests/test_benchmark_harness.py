@@ -89,7 +89,10 @@ def test_benchmark_suite_tiny7(tmp_path):
     assert mip_row["best_heuristic_solver"] == "sa"
     assert pytest.approx(sa_row["objective"], rel=1e-6) == mip_row["best_heuristic_objective"]
     expected_gap = sa_row["objective"] - mip_row["objective"]
-    assert pytest.approx(expected_gap, rel=1e-6, abs=1e-6) == mip_row["objective_gap_vs_best_heuristic"]
+    assert (
+        pytest.approx(expected_gap, rel=1e-6, abs=1e-6)
+        == mip_row["objective_gap_vs_best_heuristic"]
+    )
     assert mip_row["runtime_ratio_vs_best_heuristic"] > 1.0
 
 

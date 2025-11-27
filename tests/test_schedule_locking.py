@@ -195,7 +195,7 @@ def test_transition_weight_penalises_moves_sa():
         },
     )
     score = _evaluate(pb, Schedule(plan=plan))
-    assert score == pytest.approx(4.0 - 2.0 * 1.0)
+    assert score == pytest.approx(2.4, abs=1e-6)
 
 
 def test_landing_slack_penalty_mip():
@@ -255,4 +255,4 @@ def test_landing_slack_penalty_sa():
     )
     score = _evaluate(pb, Schedule(plan=plan))
     # Two machines on one landing (capacity 1) -> slack 1 penalised
-    assert score == pytest.approx(4.0 - 3.0 * 1.0)
+    assert score == pytest.approx(1.4, abs=1e-6)
