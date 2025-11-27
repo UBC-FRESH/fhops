@@ -279,7 +279,9 @@ def _write_machines(path: Path, machines_by_role: dict[str, list[str]]) -> None:
                         "id": machine_id,
                         "crew": f"C{machine_id}",
                         "daily_hours": DAILY_HOURS,
-                        "operating_cost": round(defaults.get(role, 1000.0) * (0.95 + 0.1 * (idx - 1)), 2),
+                        "operating_cost": round(
+                            defaults.get(role, 1000.0) * (0.95 + 0.1 * (idx - 1)), 2
+                        ),
                         "role": role,
                     }
                 )
@@ -344,17 +346,15 @@ mobilisation:
   machine_params:
 {params}
 objective_weights:
-  production: {OBJECTIVE_WEIGHTS['production']}
-  mobilisation: {OBJECTIVE_WEIGHTS['mobilisation']}
+  production: {OBJECTIVE_WEIGHTS["production"]}
+  mobilisation: {OBJECTIVE_WEIGHTS["mobilisation"]}
 """
     path.write_text(content, encoding="utf-8")
 
 
 def _write_readme(path: Path, config: DatasetConfig, blocks: Sequence[BlockRecord]) -> None:
     total_work = sum(block.work_required for block in blocks)
-    large_blocks = sum(
-        1 for block in blocks if _estimate_area_from_block(block) >= 12.0
-    )
+    large_blocks = sum(1 for block in blocks if _estimate_area_from_block(block) >= 12.0)
     roster = ", ".join(f"{role}={len(ids)}" for role, ids in config.machines_by_role.items())
     readme = dedent(
         f"""

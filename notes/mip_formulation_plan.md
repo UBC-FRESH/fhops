@@ -482,7 +482,7 @@ system slightly under-capacity (bottleneck days just above the 42-day horizon).
   - [x] Update the generator script to estimate grapple-skidder productivity using an average
         skidding distance derived from block area (assume square blocks and set distance to
         half the inferred block width so we can approximate travel distances without a full
-        geometry model). (Implemented by `_estimate_skidding_distance` in `scripts/rebuild_reference_datasets.py`.) 
+        geometry model). (Implemented by `_estimate_skidding_distance` in `scripts/rebuild_reference_datasets.py`.)
   - [x] Recompute `examples/med42/data/{machines,calendar,prod_rates}.csv` plus README docs to
         reflect the balanced system, then rerun `fhops solve-heur` smoke tests to measure how the
         extra processors/loaders change makespan/leftover volume. (Docs/manuscript asset refresh pending once
@@ -512,6 +512,7 @@ Arora-style formulation. Immediate priorities:
   - `examples/small21` (21 days, 12 blocks) solved in 85 s at 5 % gap; objective 41 264.52 with 41 606 m³ production and all blocks finished.
   - `examples/med42` (42 days, 20 blocks) solved in 42 s at 5 % gap; objective 68 716.92 with 69 781 m³ production and all blocks finished.
   - `examples/large84` (84 days, 40 blocks, doubled system) solved in ≈8 min at 10 % gap; objective 125 016.95 with 125 017 m³ production and full completion. Mobilisation spend: 21 798.08; utilisation still 100 % at the shift level thanks to the balanced roster.
+- [ ] After the heuristic refactor lands, rerun the doc audit (README, data-contract guide, CLI references, SoftwareX assets) so the balanced ladder, new schedules, and heuristics are fully documented.
 - [ ] Capture calibration defaults (buffer_shifts, loader batch volumes, per-role productivity scaling) inside the scenario contract so both the MILP and future heuristics share identical parameters.
 - [ ] Capture calibration defaults (buffer_shifts, loader batch volumes, per-role productivity scaling) inside the scenario contract so both the MILP and future heuristics share identical parameters.
 
@@ -526,8 +527,11 @@ Arora-style formulation. Immediate priorities:
 - [ ] For each scenario, document the “slightly under-capacity” intent, run an operational MILP smoke test, and log KPIs in `CHANGE_LOG.md` / dataset README—skip SA/ILS/Tabu tuning until the heuristics are rebuilt.
 
 ### 6.3 Heuristic refactor (post-MILP validation)
-- [ ] Design a shared “operational problem” module that exposes the same bundle/constraint structures to MILP and heuristics (roles, buffers, batching, mobilisation state).
-- [ ] Port SA, ILS, and Tabu to consume that module so all three heuristics reuse identical problem-definition code.
+- [x] Design a shared “operational problem” module that exposes the same bundle/constraint structures to MILP and heuristics (roles, buffers, batching, mobilisation state).
+  - Added `src/fhops/optimization/operational_problem.py`, which wraps the operational MILP bundle, derives per-block role permissions/head-start metadata, caches availability/lock/blackout lookups, and exposes a sanitizer factory so every heuristic enforces the same feasibility rules as the MILP.
+- [x] Port SA, ILS, and Tabu to consume that module so all three heuristics reuse identical problem-definition code.
+  - `solve_sa` now builds the shared context once and threads it through `_init_greedy`, `_evaluate`, `_neighbors`, and `_evaluate_candidates`; ILS/Tabu reuse the same context for local search, perturbations, and evaluation, and the registry/unit tests were updated to pass the shared sanitizer.
+- [ ] Stamp `harvest_system_id` onto every block in the reference ladder so heuristics actually see the same system metadata as the MILP (and can honour buffers/loader batching in neighbour moves). This means extending `scripts/rebuild_reference_datasets.py`, regenerating the ladder, and refreshing the tiny7/small21/med42/large84 fixtures once the generator lands.
 - [ ] Extract the solver-agnostic neighbourhood/search logic into a standalone package candidate (generic metaheuristic core) so we can later target tactical MILPs, trucking, and future FLP bridges without rewriting operators.
 - [ ] After SA is running on the new primitives, replay the dataset ladder to ensure heuristic KPIs mirror the MILP objective within expected gaps; only then consider parameter tuning.
 

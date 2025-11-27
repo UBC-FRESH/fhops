@@ -20,6 +20,7 @@ from fhops.optimization.heuristics.sa import (
     _init_greedy,
     _neighbors,
 )
+from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract import Problem
 from fhops.telemetry import RunTelemetryLogger
 from fhops.telemetry.watch import Snapshot, SnapshotSink
@@ -194,9 +195,11 @@ def solve_tabu(
     last_watch_best: float | None = None
     last_emitted_step: int | None = None
 
+    ctx = build_operational_problem(pb)
+
     with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
-        current = _init_greedy(pb)
-        current_score = _evaluate(pb, current)
+        current = _init_greedy(pb, ctx)
+        current_score = _evaluate(pb, current, ctx)
         initial_score = current_score
         best = current
         best_score = current_score
@@ -276,9 +279,10 @@ def solve_tabu(
                 registry,
                 rng,
                 operator_stats,
+                ctx,
                 batch_size=batch_arg,
             )
-            evaluations = _evaluate_candidates(pb, candidates, worker_arg)
+            evaluations = _evaluate_candidates(pb, candidates, ctx, worker_arg)
             if not evaluations:
                 break
             if workers_total:

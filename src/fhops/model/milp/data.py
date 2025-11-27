@@ -104,16 +104,21 @@ def build_operational_bundle(pb: Problem) -> OperationalMilpBundle:
             }
     registry = sc.harvest_systems or dict(default_system_registry())
     system_configs = _build_system_configs(registry.values())
-
     default_system_id = next(iter(system_configs))
+    default_registry = dict(default_system_registry())
     block_system: dict[str, str] = {}
     for block in sc.blocks:
         system_id = block.harvest_system_id or default_system_id
         if system_id not in system_configs:
-            # fallback to default registry if scenario references unknown ID
-            system_configs[system_id] = _build_system_configs(
-                [registry.get(system_id) or default_system_registry()[system_id]]
-            )[system_id]
+            harvest_system = registry.get(system_id) or default_registry.get(system_id)
+            if harvest_system is not None:
+                system_configs[system_id] = _build_system_configs([harvest_system])[system_id]
+            else:
+                system_configs[system_id] = SystemConfig(
+                    system_id=system_id,
+                    roles=tuple(),
+                    loader_batch_volume_m3=DEFAULT_TRUCKLOAD_M3,
+                )
         block_system[block.id] = system_id
 
     return OperationalMilpBundle(

@@ -21,6 +21,7 @@ from fhops.optimization.heuristics.sa import (
     _neighbors,
 )
 from fhops.optimization.mip import solve_mip
+from fhops.optimization.operational_problem import OperationalProblem, build_operational_problem
 from fhops.scenario.contract import Problem
 from fhops.telemetry import RunTelemetryLogger
 from fhops.telemetry.watch import Snapshot, SnapshotSink
@@ -63,6 +64,7 @@ def _perturb_schedule(
     schedule: Schedule,
     registry: OperatorRegistry,
     rng: _random.Random,
+    ctx: OperationalProblem,
     strength: int,
     operator_stats: dict[str, dict[str, float]],
 ) -> Schedule:
@@ -75,6 +77,7 @@ def _perturb_schedule(
             registry,
             rng,
             operator_stats,
+            ctx,
             batch_size=1,
         )
         if not neighbours:
@@ -88,13 +91,14 @@ def _local_search(
     schedule: Schedule,
     registry: OperatorRegistry,
     rng: _random.Random,
+    ctx: OperationalProblem,
     batch_size: int | None,
     max_workers: int | None,
     operator_stats: dict[str, dict[str, float]],
 ) -> tuple[Schedule, float, bool, int]:
     """Run local search until no improving neighbour is found."""
     current = schedule
-    current_score = _evaluate(pb, current)
+    current_score = _evaluate(pb, current, ctx)
     improved = False
     local_steps = 0
     while True:
@@ -104,9 +108,10 @@ def _local_search(
             registry,
             rng,
             operator_stats,
+            ctx,
             batch_size=batch_size,
         )
-        evaluations = _evaluate_candidates(pb, candidates, max_workers)
+        evaluations = _evaluate_candidates(pb, candidates, ctx, max_workers)
         if not evaluations:
             break
 
@@ -262,9 +267,11 @@ def solve_ils(
     improvement_window: deque[int] = deque(maxlen=window_size)
     last_watch_best: float | None = None
 
+    ctx = build_operational_problem(pb)
+
     with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
-        current = _init_greedy(pb)
-        current_score = _evaluate(pb, current)
+        current = _init_greedy(pb, ctx)
+        current_score = _evaluate(pb, current, ctx)
         best = current
         best_score = current_score
         initial_score = current_score
@@ -324,7 +331,7 @@ def solve_ils(
         total_iterations = max(1, iters)
         for iteration in range(1, total_iterations + 1):
             current, current_score, improved, steps = _local_search(
-                pb, current, registry, rng, batch_arg, worker_arg, operator_stats
+                pb, current, registry, rng, ctx, batch_arg, worker_arg, operator_stats
             )
             improvement_steps += steps
             rolling_scores.append(float(current_score))
@@ -368,7 +375,7 @@ def solve_ils(
                         )
                         assignments = cast(pd.DataFrame, mip_res["assignments"]).copy()
                         hybrid_schedule = _assignments_to_schedule(pb, assignments)
-                        hybrid_score = _evaluate(pb, hybrid_schedule)
+                        hybrid_score = _evaluate(pb, hybrid_schedule, ctx)
                         if hybrid_score > best_score:
                             best, best_score = hybrid_schedule, hybrid_score
                             current = best
@@ -380,16 +387,16 @@ def solve_ils(
                         pass
                 current = best
                 current = _perturb_schedule(
-                    pb, current, registry, rng, perturbation_strength, operator_stats
+                    pb, current, registry, rng, ctx, perturbation_strength, operator_stats
                 )
-                current_score = _evaluate(pb, current)
+                current_score = _evaluate(pb, current, ctx)
                 stalls = 0
                 perturbations += 1
             else:
                 current = _perturb_schedule(
-                    pb, current, registry, rng, perturbation_strength, operator_stats
+                    pb, current, registry, rng, ctx, perturbation_strength, operator_stats
                 )
-                current_score = _evaluate(pb, current)
+                current_score = _evaluate(pb, current, ctx)
                 perturbations += 1
                 rolling_scores.append(float(current_score))
                 improvement_window.append(0)

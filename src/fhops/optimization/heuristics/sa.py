@@ -16,87 +16,18 @@ import pandas as pd
 
 from fhops.evaluation import compute_kpis
 from fhops.optimization.heuristics.registry import OperatorContext, OperatorRegistry
+from fhops.optimization.operational_problem import (
+    OperationalProblem,
+    build_operational_problem,
+)
 from fhops.scenario.contract import Problem
-from fhops.scheduling.mobilisation import MachineMobilisation, build_distance_lookup
+from fhops.scheduling.mobilisation import MachineMobilisation
 from fhops.telemetry import RunTelemetryLogger
 from fhops.telemetry.watch import Snapshot, SnapshotSink
 
 BLOCK_COMPLETION_EPS = 1e-6
 PARTIAL_PRODUCTION_FRACTION = 0.1
 LEFTOVER_PENALTY_FACTOR = 5.0
-
-
-def _role_metadata(scenario):
-    """Return allowed roles, prerequisites, and machine-role mappings for a scenario."""
-    systems = scenario.harvest_systems or {}
-    allowed: dict[str, set[str] | None] = {}
-    prereqs: dict[tuple[str, str], set[str]] = {}
-    for block in scenario.blocks:
-        system = systems.get(block.harvest_system_id) if block.harvest_system_id else None
-        if system:
-            job_role = {job.name: job.machine_role for job in system.jobs}
-            allowed_roles = {job.machine_role for job in system.jobs}
-            allowed[block.id] = allowed_roles
-            for job in system.jobs:
-                prereq_roles = {job_role[name] for name in job.prerequisites if name in job_role}
-                prereqs[(block.id, job.machine_role)] = prereq_roles
-        else:
-            allowed[block.id] = None
-
-    machine_roles = {machine.id: getattr(machine, "role", None) for machine in scenario.machines}
-    available_roles = {role for role in machine_roles.values() if role}
-    machines_by_role: dict[str, list[str]] = {}
-    for machine_id, role in machine_roles.items():
-        if role is None:
-            continue
-        machines_by_role.setdefault(role, []).append(machine_id)
-    if available_roles:
-        for block_id, allowed_roles in list(allowed.items()):
-            if allowed_roles is None:
-                continue
-            filtered = {role for role in allowed_roles if role in available_roles}
-            allowed[block_id] = filtered or None
-        filtered_prereqs: dict[tuple[str, str], set[str]] = {}
-        for key, prereq_set in prereqs.items():
-            role = key[1]
-            if role not in available_roles:
-                continue
-            filtered = {req for req in prereq_set if req in available_roles}
-            filtered_prereqs[key] = filtered
-        prereqs = filtered_prereqs
-    else:
-        allowed = {block_id: None for block_id in allowed}
-        prereqs = {}
-
-    return allowed, prereqs, machine_roles, machines_by_role
-
-
-def _blackout_map(scenario) -> set[tuple[str, int, str]]:
-    """Build a lookup of (machine, day, shift) tuples that are blacked out."""
-    blackout: set[tuple[str, int, str]] = set()
-    timeline = getattr(scenario, "timeline", None)
-    if timeline and timeline.blackouts:
-        for blackout_window in timeline.blackouts:
-            for day in range(blackout_window.start_day, blackout_window.end_day + 1):
-                for machine in scenario.machines:
-                    if scenario.shift_calendar:
-                        for entry in scenario.shift_calendar:
-                            if entry.machine_id == machine.id and entry.day == day:
-                                blackout.add((machine.id, day, entry.shift_id))
-                    elif timeline.shifts:
-                        for shift_def in timeline.shifts:
-                            blackout.add((machine.id, day, shift_def.name))
-                    else:
-                        blackout.add((machine.id, day, "S1"))
-    return blackout
-
-
-def _locked_map(scenario) -> dict[tuple[str, int], str]:
-    """Return locked assignments keyed by (machine, day)."""
-    locks = getattr(scenario, "locked_assignments", None)
-    if not locks:
-        return {}
-    return {(lock.machine_id, lock.day): lock.block_id for lock in locks}
 
 
 __all__ = ["Schedule", "solve_sa"]
@@ -109,27 +40,20 @@ class Schedule:
     plan: dict[str, dict[tuple[int, str], str | None]]
 
 
-def _init_greedy(pb: Problem) -> Schedule:
+def _init_greedy(pb: Problem, ctx: OperationalProblem) -> Schedule:
     """Construct an initial Schedule by greedily filling shifts with best-rate blocks."""
+
     sc = pb.scenario
-    remaining = {block.id: block.work_required for block in sc.blocks}
-    rate = {(r.machine_id, r.block_id): r.rate for r in sc.production_rates}
-    shift_availability = (
-        {(c.machine_id, c.day, c.shift_id): int(c.available) for c in sc.shift_calendar}
-        if sc.shift_calendar
-        else {}
-    )
-    availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
-    windows = {block_id: sc.window_for(block_id) for block_id in sc.block_ids()}
-    allowed_roles, prereq_roles, machine_roles, _ = _role_metadata(sc)
-    blackout = _blackout_map(sc)
-    locked = _locked_map(sc)
-    shift_availability = (
-        {(c.machine_id, c.day, c.shift_id): int(c.available) for c in sc.shift_calendar}
-        if sc.shift_calendar
-        else {}
-    )
-    availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
+    bundle = ctx.bundle
+    remaining = dict(bundle.work_required)
+    rate = bundle.production_rates
+    shift_availability = bundle.availability_shift
+    availability = bundle.availability_day
+    windows = bundle.windows
+    allowed_roles = ctx.allowed_roles
+    machine_roles = bundle.machine_roles
+    blackout = ctx.blackout_shifts
+    locked = ctx.locked_assignments
 
     shifts = sorted(pb.shifts, key=lambda s: (s.day, s.shift_id))
     shift_keys = [(shift.day, shift.shift_id) for shift in shifts]
@@ -149,10 +73,10 @@ def _init_greedy(pb: Problem) -> Schedule:
         earliest, latest = windows[block_id]
         best_slot: tuple[str, int, str] | None = None
         best_rate = 0.0
+        allowed = allowed_roles.get(block_id)
         for machine in sc.machines:
             role = machine_roles.get(machine.id)
-            allowed = allowed_roles.get(block_id)
-            if allowed is not None and (role is None or role not in allowed):
+            if allowed is not None and role is not None and role not in allowed:
                 continue
             for shift in shifts:
                 day, shift_id = shift.day, shift.shift_id
@@ -160,15 +84,14 @@ def _init_greedy(pb: Problem) -> Schedule:
                     continue
                 if plan[machine.id][(day, shift_id)] is not None:
                     continue
-                if shift_availability:
-                    if shift_availability.get((machine.id, day, shift_id), 1) == 0:
-                        continue
+                if shift_availability.get((machine.id, day, shift_id), 1) == 0:
+                    continue
                 if availability.get((machine.id, day), 1) == 0:
                     continue
                 if (machine.id, day, shift_id) in blackout:
                     continue
                 r = rate.get((machine.id, block_id), 0.0)
-                if r <= 0:
+                if r <= 0.0:
                     continue
                 if r > best_rate:
                     best_rate = r
@@ -209,9 +132,8 @@ def _init_greedy(pb: Problem) -> Schedule:
         for machine in sc.machines:
             if plan[machine.id][(day, shift_id)] is not None:
                 continue
-            if shift_availability:
-                if shift_availability.get((machine.id, day, shift_id), 1) == 0:
-                    continue
+            if shift_availability.get((machine.id, day, shift_id), 1) == 0:
+                continue
             if availability.get((machine.id, day), 1) == 0:
                 continue
             if (machine.id, day, shift_id) in blackout:
@@ -225,7 +147,7 @@ def _init_greedy(pb: Problem) -> Schedule:
                     continue
                 allowed = allowed_roles.get(block.id)
                 role = machine_roles.get(machine.id)
-                if allowed is not None and role not in allowed:
+                if allowed is not None and role is not None and role not in allowed:
                     continue
                 r = rate.get((machine.id, block.id), 0.0)
                 if r > 0:
@@ -237,38 +159,34 @@ def _init_greedy(pb: Problem) -> Schedule:
     return Schedule(plan=plan)
 
 
-def _evaluate(pb: Problem, sched: Schedule) -> float:
+def _evaluate(pb: Problem, sched: Schedule, ctx: OperationalProblem) -> float:
     """Score a schedule using production, mobilisation, transition, and slack penalties."""
     sc = pb.scenario
-    remaining = {block.id: block.work_required for block in sc.blocks}
-    rate = {(r.machine_id, r.block_id): r.rate for r in sc.production_rates}
-    windows = {block_id: sc.window_for(block_id) for block_id in sc.block_ids()}
-    landing_of = {block.id: block.landing_id for block in sc.blocks}
-    landing_cap = {landing.id: landing.daily_capacity for landing in sc.landings}
-    mobilisation = sc.mobilisation
-    mobil_params: dict[str, MachineMobilisation] = {}
-    distance_lookup = build_distance_lookup(mobilisation)
-    if mobilisation is not None:
-        mobil_params = {param.machine_id: param for param in mobilisation.machine_params}
+    bundle = ctx.bundle
+    remaining = dict(bundle.work_required)
+    rate = bundle.production_rates
+    windows = bundle.windows
+    landing_of = bundle.landing_for_block
+    landing_cap = bundle.landing_capacity
+    mobil_params: dict[str, MachineMobilisation] = dict(ctx.mobilisation_params)
+    distance_lookup = ctx.distance_lookup
 
-    allowed_roles, prereq_roles, machine_roles, _ = _role_metadata(sc)
-    blackout = _blackout_map(sc)
-    locked = _locked_map(sc)
-    shift_availability = (
-        {(c.machine_id, c.day, c.shift_id): int(c.available) for c in sc.shift_calendar}
-        if sc.shift_calendar
-        else {}
-    )
-    availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
+    allowed_roles = ctx.allowed_roles
+    prereq_roles = ctx.prereq_roles
+    machine_roles = bundle.machine_roles
+    blackout = ctx.blackout_shifts
+    locked = ctx.locked_assignments
+    shift_availability = bundle.availability_shift
+    availability = bundle.availability_day
 
-    weights = getattr(sc, "objective_weights", None)
-    prod_weight = weights.production if weights else 1.0
-    mobil_weight = weights.mobilisation if weights else 1.0
-    transition_weight = weights.transitions if weights else 0.0
-    landing_slack_weight = weights.landing_slack if weights else 0.0
+    weights = bundle.objective_weights
+    prod_weight = weights.production
+    mobil_weight = weights.mobilisation
+    transition_weight = weights.transitions
+    landing_slack_weight = weights.landing_slack
 
     production_total = 0.0
-    initial_work_required = {block.id: block.work_required for block in sc.blocks}
+    initial_work_required = dict(bundle.work_required)
     mobilisation_total = 0.0
     transition_count = 0.0
     landing_slack_total = 0.0
@@ -291,7 +209,7 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
             if day < earliest or day > latest:
                 continue
             allowed = allowed_roles.get(block.id)
-            if allowed is not None and (role is None or role not in allowed):
+            if allowed is not None and role is not None and role not in allowed:
                 continue
             r = rate.get((machine_id, block.id), 0.0)
             if r <= 0.0:
@@ -343,7 +261,7 @@ def _evaluate(pb: Problem, sched: Schedule) -> float:
 
             allowed = allowed_roles.get(block_id)
             role: str | None = machine_roles.get(machine.id)
-            if allowed is not None and (role is None or role not in allowed):
+            if allowed is not None and role is not None and role not in allowed:
                 penalty += 1000.0
                 previous_block[machine.id] = None
                 continue
@@ -440,6 +358,7 @@ def _neighbors(
     registry: OperatorRegistry,
     rng: _random.Random,
     operator_stats: dict[str, dict[str, float]],
+    ctx: OperationalProblem,
     *,
     batch_size: int | None = None,
 ) -> list[Schedule]:
@@ -447,55 +366,13 @@ def _neighbors(
     sc = pb.scenario
     if not sc.machines or not pb.shifts:
         return []
-    allowed_roles, _, machine_roles, _ = _role_metadata(sc)
-    blackout = _blackout_map(sc)
-    locked = _locked_map(sc)
-    shift_availability = (
-        {(c.machine_id, c.day, c.shift_id): int(c.available) for c in sc.shift_calendar}
-        if sc.shift_calendar
-        else {}
-    )
-    availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
-    landing_of = {block.id: block.landing_id for block in sc.blocks}
-    landing_cap = {landing.id: landing.daily_capacity for landing in sc.landings}
-    block_windows = {block.id: sc.window_for(block.id) for block in sc.blocks}
-    distance_lookup = build_distance_lookup(sc.mobilisation)
+    block_windows = ctx.bundle.windows
+    landing_cap = ctx.bundle.landing_capacity
+    landing_of = ctx.bundle.landing_for_block
+    distance_lookup = ctx.distance_lookup
 
     schedule_cls = sched.__class__
-
-    def sanitizer(candidate: Schedule) -> Schedule:
-        plan: dict[str, dict[tuple[int, str], str | None]] = {}
-        landing_usage: dict[tuple[int, str, str], int] = {}
-        for mach, assignments in candidate.plan.items():
-            role = machine_roles.get(mach)
-            plan[mach] = {}
-            for shift_key_iter, blk in assignments.items():
-                day_key = shift_key_iter[0]
-                allowed = allowed_roles.get(blk) if blk is not None else None
-                if (mach, day_key) in locked:
-                    plan[mach][shift_key_iter] = locked[(mach, day_key)]
-                    continue
-                shift_available = shift_availability.get((mach, day_key, shift_key_iter[1]), 1)
-                day_available = availability.get((mach, day_key), 1)
-                if blk is not None and (
-                    shift_available == 0
-                    or day_available == 0
-                    or (mach, day_key, shift_key_iter[1]) in blackout
-                    or (allowed is not None and role not in allowed)
-                ):
-                    plan[mach][shift_key_iter] = None
-                else:
-                    landing_id = landing_of.get(blk) if blk is not None else None
-                    if landing_id is not None:
-                        key = (day_key, shift_key_iter[1], landing_id)
-                        cap = landing_cap.get(landing_id, 0)
-                        current = landing_usage.get(key, 0)
-                        if cap > 0 and current >= cap:
-                            plan[mach][shift_key_iter] = None
-                            continue
-                        landing_usage[key] = current + 1
-                    plan[mach][shift_key_iter] = blk
-        return schedule_cls(plan=plan)
+    sanitizer = ctx.build_sanitizer(schedule_cls)
 
     context = OperatorContext(
         problem=pb,
@@ -561,16 +438,21 @@ def _neighbors(
 def _evaluate_candidates(
     pb: Problem,
     candidates: list[Schedule],
+    ctx: OperationalProblem,
     max_workers: int | None = None,
 ) -> list[tuple[Schedule, float]]:
     """Evaluate candidate schedules, optionally in parallel, returning (schedule, score)."""
     if not candidates:
         return []
     if max_workers is None or max_workers <= 1 or len(candidates) == 1:
-        return [(candidate, _evaluate(pb, candidate)) for candidate in candidates]
+        return [(candidate, _evaluate(pb, candidate, ctx)) for candidate in candidates]
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        scores = list(executor.map(lambda sched: _evaluate(pb, sched), candidates))
+
+        def _score(schedule: Schedule) -> float:
+            return _evaluate(pb, schedule, ctx)
+
+        scores = list(executor.map(_score, candidates))
     return list(zip(candidates, scores))
 
 
@@ -720,9 +602,11 @@ def solve_sa(
     workers_total = max_workers if max_workers and max_workers > 1 else None
     current_workers_busy: int | None = workers_total
 
+    ctx = build_operational_problem(pb)
+
     with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
-        current = _init_greedy(pb)
-        current_score = _evaluate(pb, current)
+        current = _init_greedy(pb, ctx)
+        current_score = _evaluate(pb, current, ctx)
         best = current
         best_score = current_score
 
@@ -743,11 +627,13 @@ def solve_sa(
                 registry,
                 rng,
                 operator_stats,
+                ctx,
                 batch_size=batch_size,
             )
             evaluations = _evaluate_candidates(
                 pb,
                 candidates,
+                ctx,
                 max_workers=max_workers if batch_size and batch_size > 1 else None,
             )
             if workers_total:
@@ -782,8 +668,8 @@ def solve_sa(
                 stalled_steps += 1
 
             if stalled_steps >= restart_interval_value:
-                current = _init_greedy(pb)
-                current_score = _evaluate(pb, current)
+                current = _init_greedy(pb, ctx)
+                current_score = _evaluate(pb, current, ctx)
                 restarts += 1
                 stalled_steps = 0
                 temperature = temperature0
@@ -829,7 +715,7 @@ def solve_sa(
                     )
                 )
 
-        rows = []
+        rows: list[dict[str, str | int]] = []
         for machine_id, plan in best.plan.items():
             for (day, shift_id), block_id in plan.items():
                 if block_id is not None:
@@ -842,7 +728,10 @@ def solve_sa(
                             "assigned": 1,
                         }
                     )
-        assignments = pd.DataFrame(rows).sort_values(["day", "shift_id", "machine_id", "block_id"])
+        assignment_columns = ["machine_id", "block_id", "day", "shift_id", "assigned"]
+        assignments = pd.DataFrame(rows, columns=assignment_columns)
+        if not assignments.empty:
+            assignments = assignments.sort_values(["day", "shift_id", "machine_id", "block_id"])
         if watch_sink:
             acceptance_rate_watch = (accepted_moves / proposals) if proposals else None
             rolling_mean = (
