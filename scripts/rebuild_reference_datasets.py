@@ -482,12 +482,7 @@ DATASET_CONFIGS = {
         label="Tiny7",
         num_days=7,
         num_blocks=9,
-        machines_by_role={
-            "feller_buncher": ["H1"],
-            "grapple_skidder": ["H2"],
-            "roadside_processor": ["H3"],
-            "loader": ["H4"],
-        },
+        machines_by_role=_med42_machine_roster(),
         block_profiles=SMALL_TIER_PROFILES,
     ),
     "small21": DatasetConfig(

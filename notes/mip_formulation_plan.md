@@ -506,8 +506,12 @@ Arora-style formulation. Immediate priorities:
 ### 6.1 Operational MILP bring-up (exact solver first)
 - [ ] Finish the model feature set (role buffers, batching, mobilisation penalties, landing slack) and land the missing unit tests + regression harness so `solve-mip-operational` is trustworthy.
   - [x] Head-start buffers now use upstream-role capacity and require previous-shift inventory, loader batching enforces truckload quanta, and regression tests cover both behaviours plus the driver replay path (`tests/model/test_operational_milp.py`, `fhops.model.milp.driver`).
-- [ ] Generate the `tiny7` scenario via the shared dataset builder and validate that HiGHS/CPLEX produce a “sane” optimal schedule (objective, completed blocks, mobilisation moves).
-- [ ] Once `tiny7` is green, scale the same checks to `small21` and `med42` before touching any heuristic code.
+- [x] Generate the `tiny7` scenario via the shared dataset builder and validate that HiGHS/CPLEX produce a “sane” optimal schedule (objective, completed blocks, mobilisation moves).
+  - 2025-12-10: HiGHS solved `examples/tiny7` with the balanced roster (2 FB, 1 GS, 3 processors, 3 loaders) in 19 s using a 2 % relative gap, delivering objective 11 803.71, 11 990 m³ production, and full completion of all 9 blocks. Mobilisation spend: 1 128.84.
+- [x] Once `tiny7` is green, scale the same checks to `small21` and `med42` before touching any heuristic code.
+  - `examples/small21` (21 days, 12 blocks) solved in 85 s at 5 % gap; objective 41 264.52 with 41 606 m³ production and all blocks finished.
+  - `examples/med42` (42 days, 20 blocks) solved in 42 s at 5 % gap; objective 68 716.92 with 69 781 m³ production and all blocks finished.
+- [ ] Capture calibration defaults (buffer_shifts, loader batch volumes, per-role productivity scaling) inside the scenario contract so both the MILP and future heuristics share identical parameters.
 - [ ] Capture calibration defaults (buffer_shifts, loader batch volumes, per-role productivity scaling) inside the scenario contract so both the MILP and future heuristics share identical parameters.
 
 ### 6.2 Dataset ladder rebuild (shared generator, no heuristic tuning)
@@ -515,7 +519,7 @@ Arora-style formulation. Immediate priorities:
   - [x] Introduced `scripts/rebuild_reference_datasets.py` with a first pass that deterministically regenerates the new `tiny7` scenario (blocks, prod rates, machines, calendar, landings, mobilisation distances, scenario YAML). Extend it to cover `small21`/`med42`/`large84` next.
   - [x] Refactored the generator around reusable `DatasetConfig`/`BlockProfile` scaffolding so landing/machine mixes, block distributions, and scenario metadata can be defined per dataset (sets us up to script `small21`/`med42`/`large84` without copy/paste).
   - [x] Extended the generator to emit `small21`/`med42`/`large84` with Lahrsen-style (60 % ≥12 ha) blocks, rescaled ADV6N7 skidding distance derived from block geometry, and multi-machine rosters (med42/small21 = 2 FB, 1 GS, 3 processors, 3 loaders; large84 doubles the system + horizon). README stats regenerate automatically alongside the scenario YAML/CSV bundle.
-  - [ ] Align the `tiny7` roster with the med42 system once we are ready to refresh all regression fixtures; it still ships as a single-crew smoke dataset for now.
+  - [x] Align the `tiny7` roster with the med42 system once we are ready to refresh all regression fixtures. Tiny7 now shares the same balanced crew (2 FB, 1 GS, 3 processors, 3 loaders) and the README captures the refreshed stats; fixture refresh will follow in a dedicated PR.
 - [ ] Delete `examples/minitoy` plus all docs/tests references; replace fixtures with the new ladder.
   - [x] Removed the `examples/minitoy` bundle, replaced CLI/tests/fixtures with `examples/tiny7`, and regenerated benchmark/KPI/playback/MILP fixtures so code/tests no longer rely on the legacy dataset. Documentation + manuscript assets still reference tiny7 and need follow-up edits.
 - [ ] For each scenario, document the “slightly under-capacity” intent, run an operational MILP smoke test, and log KPIs in `CHANGE_LOG.md` / dataset README—skip SA/ILS/Tabu tuning until the heuristics are rebuilt.

@@ -32,7 +32,7 @@
         },
         "machines": {
           "path": "/home/gep/projects/fhops/examples/tiny7/data/machines.csv",
-          "row_count": 4,
+          "row_count": 9,
           "columns": [
             "id",
             "crew",
@@ -51,7 +51,7 @@
         },
         "calendar": {
           "path": "/home/gep/projects/fhops/examples/tiny7/data/calendar.csv",
-          "row_count": 28,
+          "row_count": 63,
           "columns": [
             "machine_id",
             "day",
@@ -60,7 +60,7 @@
         },
         "prod_rates": {
           "path": "/home/gep/projects/fhops/examples/tiny7/data/prod_rates.csv",
-          "row_count": 36,
+          "row_count": 81,
           "columns": [
             "machine_id",
             "block_id",
@@ -69,10 +69,10 @@
         }
       },
       "machine_roles": {
-        "feller_buncher": 1,
+        "feller_buncher": 2,
         "grapple_skidder": 1,
-        "roadside_processor": 1,
-        "loader": 1
+        "roadside_processor": 3,
+        "loader": 3
       }
     },
     {

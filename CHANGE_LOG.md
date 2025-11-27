@@ -11,6 +11,11 @@
 - Updated the SoftwareX dataset inspection helper to cover the full ladder, reran it so `docs/softwarex/assets/data/datasets/{index,tiny7_summary,small21_summary,med42_summary,large84_summary}.json` mirror the new rosters, and refreshed the synthetic-small bundle along the way.
 - Commands: `python scripts/rebuild_reference_datasets.py tiny7`, `python scripts/rebuild_reference_datasets.py small21`, `python scripts/rebuild_reference_datasets.py med42`, `python scripts/rebuild_reference_datasets.py large84`, `python docs/softwarex/manuscript/scripts/run_dataset_inspection.py`.
 - Tests: not run (dataset regeneration in progress; fixtures/CI pending the broader ladder refresh).
+- Follow-up: aligned `examples/tiny7` with the balanced med42 roster (2 FB, 1 GS, 3 processors, 3 loaders), mapped the CLI `--gap` flag onto HiGHS’ `mip_rel_gap` option, and validated the ladder via `fhops solve-mip-operational`:
+  - tiny7 (`--gap 0.02 --time-limit 120`) → objective 11 803.71, production 11 990 m³, mobilisation 1 128.84.
+  - small21 (`--gap 0.05 --time-limit 300`) → objective 41 264.52, production 41 606 m³.
+  - med42 (`--gap 0.05 --time-limit 600`) → objective 68 716.92, production 69 781 m³.
+  These runs confirm the new ladder is MILP-feasible and that HiGHS now terminates cleanly once the requested relative gap is met.
 
 # 2025-12-09 — Operational MILP buffer/batching fixes
 - Operational MILP builder now derives head-start buffers from upstream role capacity, enforces the wait using previous-shift inventory levels, and restricts loader production to integer truckloads; this touches `fhops.model.milp.operational` plus the bundle serializer (`fhops.model.milp.data`) so downstream consumers see the same buffer metadata.
