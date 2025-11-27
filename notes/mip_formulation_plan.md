@@ -473,19 +473,21 @@ system slightly under-capacity (bottleneck days just above the 42-day horizon).
   - [ ] Update tests/fixtures referencing med42 (playback CSVs, KPI snapshots) once the MILP
         work is ready.
 
-- [ ] **System rebalance + productivity tweaks**
-  - [ ] Regenerate the harvest system definition so med42 models a near-balanced crew:
+- [x] **System rebalance + productivity tweaks**
+  - [x] Regenerate the harvest system definition so med42 models a near-balanced crew:
         2 feller-bunchers, 1 grapple skidder, 3 processors, and 3 loaders sharing the same
         block roster. Allow multiple machines within a role to split across different blocks
-        whenever windows/head-start buffers make that advantageous for throughput.
-  - [ ] Update the generator script to estimate grapple-skidder productivity using an average
+        whenever windows/head-start buffers make that advantageous for throughput. (Done via the
+        shared generator; small21 mirrors the same roster, large84 doubles it.)
+  - [x] Update the generator script to estimate grapple-skidder productivity using an average
         skidding distance derived from block area (assume square blocks and set distance to
         half the inferred block width so we can approximate travel distances without a full
-        geometry model).
-  - [ ] Recompute `examples/med42/data/{machines,calendar,prod_rates}.csv` plus README docs to
+        geometry model). (Implemented by `_estimate_skidding_distance` in `scripts/rebuild_reference_datasets.py`.) 
+  - [x] Recompute `examples/med42/data/{machines,calendar,prod_rates}.csv` plus README docs to
         reflect the balanced system, then rerun `fhops solve-heur` smoke tests to measure how the
-        extra processors/loaders change makespan/leftover volume.
-  - [ ] Capture the new rates/assumptions in the changelog and note any solver-behaviour updates
+        extra processors/loaders change makespan/leftover volume. (Docs/manuscript asset refresh pending once
+        regression fixtures are rebuilt.)
+  - [x] Capture the new rates/assumptions in the changelog and note any solver-behaviour updates
         (e.g., whether heuristics are splitting processors across blocks as expected).
 
 - [ ] **Scenario ladder rebuild**
