@@ -6,7 +6,6 @@ import math
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
-from typing import Any
 
 from fhops.optimization.heuristics.registry import OperatorContext, OperatorRegistry
 from fhops.optimization.operational_problem import OperationalProblem
@@ -425,6 +424,7 @@ def evaluate_candidates(
         return [(candidate, evaluate_schedule(pb, candidate, ctx)) for candidate in candidates]
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
+
         def _score(schedule: Schedule) -> float:
             return evaluate_schedule(pb, schedule, ctx)
 

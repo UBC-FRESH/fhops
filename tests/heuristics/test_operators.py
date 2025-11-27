@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import random
 
+from fhops.optimization.heuristics.common import Schedule, generate_neighbors
 from fhops.optimization.heuristics.registry import (
     BlockInsertionOperator,
     CrossExchangeOperator,
     MobilisationShakeOperator,
     OperatorRegistry,
 )
-from fhops.optimization.heuristics.common import Schedule, generate_neighbors
 from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract import (
     Block,
