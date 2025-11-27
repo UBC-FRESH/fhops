@@ -30,7 +30,7 @@
     },
     "machines": {
       "path": "/home/gep/projects/fhops/examples/med42/data/machines.csv",
-      "row_count": 8,
+      "row_count": 9,
       "columns": [
         "id",
         "crew",
@@ -49,7 +49,7 @@
     },
     "calendar": {
       "path": "/home/gep/projects/fhops/examples/med42/data/calendar.csv",
-      "row_count": 336,
+      "row_count": 378,
       "columns": [
         "machine_id",
         "day",
@@ -58,7 +58,7 @@
     },
     "prod_rates": {
       "path": "/home/gep/projects/fhops/examples/med42/data/prod_rates.csv",
-      "row_count": 160,
+      "row_count": 180,
       "columns": [
         "machine_id",
         "block_id",
@@ -68,8 +68,8 @@
   },
   "machine_roles": {
     "feller_buncher": 2,
-    "grapple_skidder": 2,
-    "roadside_processor": 2,
-    "loader": 2
+    "grapple_skidder": 1,
+    "roadside_processor": 3,
+    "loader": 3
   }
 }

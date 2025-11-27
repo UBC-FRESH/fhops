@@ -491,8 +491,8 @@ system slightly under-capacity (bottleneck days just above the 42-day horizon).
 - [ ] **Scenario ladder rebuild**
   - [x] Remove the legacy `examples/minitoy` dataset (docs/tests) since it no longer matches the four-role system assumptions.
   - [x] Scrub the docs/notes/manuscript references (and archived benchmark/playback assets) so guidance, assets, and tooling now point to `examples/tiny7` as the entry-level scenario.
-  - [ ] Derive `small21` and `tiny7` variants from the med42 generator by truncating the horizon (21-day / 7-day) and subsampling blocks while keeping the single balanced system.
-- [ ] Derive `large84` by doubling the med42 block set/system count and extending the horizon to 84 days (two balanced systems, doubled workload).
+  - [x] Derive `small21` and `tiny7` variants from the med42 generator by truncating the horizon (21-day / 7-day) and subsampling blocks while keeping the single balanced system. (Tiny7 remains the single-crew regression smoke test until we refresh all fixtures; small21 already uses the full balanced roster.)
+- [x] Derive `large84` by doubling the med42 block set/system count and extending the horizon to 84 days (two balanced systems, doubled workload).
   - [ ] Ensure each dataset ships with deterministic `scripts/rebuild_*` entries (shared generator) plus README/KPI updates, then refresh CLI/docs/tests to reference the new ladder.
 
 ## 6. Current priorities (operational focus – manuscript parked)
@@ -512,6 +512,8 @@ Arora-style formulation. Immediate priorities:
 - [ ] Finish the deterministic dataset generator that emits `tiny7`, `small21`, `med42`, and `large84` from a single configuration + seed (including machine rosters, landings, prod rates, calendar, mobilisations).
   - [x] Introduced `scripts/rebuild_reference_datasets.py` with a first pass that deterministically regenerates the new `tiny7` scenario (blocks, prod rates, machines, calendar, landings, mobilisation distances, scenario YAML). Extend it to cover `small21`/`med42`/`large84` next.
   - [x] Refactored the generator around reusable `DatasetConfig`/`BlockProfile` scaffolding so landing/machine mixes, block distributions, and scenario metadata can be defined per dataset (sets us up to script `small21`/`med42`/`large84` without copy/paste).
+  - [x] Extended the generator to emit `small21`/`med42`/`large84` with Lahrsen-style (60 % ≥12 ha) blocks, rescaled ADV6N7 skidding distance derived from block geometry, and multi-machine rosters (med42/small21 = 2 FB, 1 GS, 3 processors, 3 loaders; large84 doubles the system + horizon). README stats regenerate automatically alongside the scenario YAML/CSV bundle.
+  - [ ] Align the `tiny7` roster with the med42 system once we are ready to refresh all regression fixtures; it still ships as a single-crew smoke dataset for now.
 - [ ] Delete `examples/minitoy` plus all docs/tests references; replace fixtures with the new ladder.
   - [x] Removed the `examples/minitoy` bundle, replaced CLI/tests/fixtures with `examples/tiny7`, and regenerated benchmark/KPI/playback/MILP fixtures so code/tests no longer rely on the legacy dataset. Documentation + manuscript assets still reference tiny7 and need follow-up edits.
 - [ ] For each scenario, document the “slightly under-capacity” intent, run an operational MILP smoke test, and log KPIs in `CHANGE_LOG.md` / dataset README—skip SA/ILS/Tabu tuning until the heuristics are rebuilt.

@@ -5,6 +5,13 @@
 - Commands: `python - <<'PY' ...` *(git grep-driven minitoy→tiny7 replacement)*, `mv docs/softwarex/assets/data/benchmarks/minitoy docs/softwarex/assets/data/benchmarks/tiny7`, `mv docs/softwarex/assets/data/playback/minitoy docs/softwarex/assets/data/playback/tiny7`, `rm docs/softwarex/assets/data/tuning/telemetry/runs.sqlite`.
 - Tests: not run (docs/assets/notes only).
 
+# 2025-12-10 — Reference dataset ladder rebuild (phase 1)
+- Expanded `scripts/rebuild_reference_datasets.py` so it now drives the entire ladder (tiny7, small21, med42, large84) via reusable `DatasetConfig`/`BlockProfile` scaffolding, derives ADV6N7 skidding distance from each block’s inferred geometry (half the block width), and rewrites dataset READMEs with up-to-date block/volume/machine statistics. med42/small21 now share the 2 FB / 1 GS / 3 processor / 3 loader “balanced” system, while large84 doubles both horizon and machine roster.
+- Regenerated `examples/{tiny7,small21,med42,large84}` data bundles (blocks, machines, calendar, prod rates, mobilisation distances, README, scenario YAML) using the Lahrsen-aligned profiles so the total workload lands just above the available machine capacity. Skidding-productivity heuristics now honor the “half block width” approximation that was requested for ADV6N7.
+- Updated the SoftwareX dataset inspection helper to cover the full ladder, reran it so `docs/softwarex/assets/data/datasets/{index,tiny7_summary,small21_summary,med42_summary,large84_summary}.json` mirror the new rosters, and refreshed the synthetic-small bundle along the way.
+- Commands: `python scripts/rebuild_reference_datasets.py tiny7`, `python scripts/rebuild_reference_datasets.py small21`, `python scripts/rebuild_reference_datasets.py med42`, `python scripts/rebuild_reference_datasets.py large84`, `python docs/softwarex/manuscript/scripts/run_dataset_inspection.py`.
+- Tests: not run (dataset regeneration in progress; fixtures/CI pending the broader ladder refresh).
+
 # 2025-12-09 — Operational MILP buffer/batching fixes
 - Operational MILP builder now derives head-start buffers from upstream role capacity, enforces the wait using previous-shift inventory levels, and restricts loader production to integer truckloads; this touches `fhops.model.milp.operational` plus the bundle serializer (`fhops.model.milp.data`) so downstream consumers see the same buffer metadata.
 - `solve_operational_milp` now treats HiGHS “ok/optimal” terminations as success, loads solutions via Pyomo, and always returns a DataFrame with the canonical assignment columns; mobilisation/transition penalties now show up in watch/telemetry because the solver actually emits the assignments even when HiGHS only reports `status=ok`.

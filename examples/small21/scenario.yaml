@@ -7,29 +7,56 @@ data:
   landings: data/landings.csv
   calendar: data/calendar.csv
   prod_rates: data/prod_rates.csv
+  mobilisation_distances: small21_block_distances.csv
 mobilisation:
   default_walk_threshold_m: 900
+  distance_csv: small21_block_distances.csv
   machine_params:
-    - machine_id: H1
-      walk_cost_per_meter: 0.02
-      move_cost_flat: 320
-      walk_threshold_m: 850
-      setup_cost: 50
-    - machine_id: H2
-      walk_cost_per_meter: 0.02
-      move_cost_flat: 320
-      walk_threshold_m: 850
-      setup_cost: 50
-    - machine_id: H3
-      walk_cost_per_meter: 0.02
-      move_cost_flat: 320
-      walk_threshold_m: 850
-      setup_cost: 50
-    - machine_id: H4
-      walk_cost_per_meter: 0.02
-      move_cost_flat: 320
-      walk_threshold_m: 850
-      setup_cost: 50
+  - machine_id: H1
+    walk_cost_per_meter: 0.02
+    move_cost_flat: 320
+    walk_threshold_m: 850
+    setup_cost: 50
+  - machine_id: H2
+    walk_cost_per_meter: 0.02
+    move_cost_flat: 320
+    walk_threshold_m: 850
+    setup_cost: 50
+  - machine_id: H3
+    walk_cost_per_meter: 0.02
+    move_cost_flat: 320
+    walk_threshold_m: 850
+    setup_cost: 50
+  - machine_id: H4
+    walk_cost_per_meter: 0.02
+    move_cost_flat: 320
+    walk_threshold_m: 850
+    setup_cost: 50
+  - machine_id: H5
+    walk_cost_per_meter: 0.02
+    move_cost_flat: 320
+    walk_threshold_m: 850
+    setup_cost: 50
+  - machine_id: H6
+    walk_cost_per_meter: 0.02
+    move_cost_flat: 320
+    walk_threshold_m: 850
+    setup_cost: 50
+  - machine_id: H7
+    walk_cost_per_meter: 0.02
+    move_cost_flat: 320
+    walk_threshold_m: 850
+    setup_cost: 50
+  - machine_id: H8
+    walk_cost_per_meter: 0.02
+    move_cost_flat: 320
+    walk_threshold_m: 850
+    setup_cost: 50
+  - machine_id: H9
+    walk_cost_per_meter: 0.02
+    move_cost_flat: 320
+    walk_threshold_m: 850
+    setup_cost: 50
 objective_weights:
   production: 1.0
   mobilisation: 0.5

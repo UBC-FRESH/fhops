@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate canonical FHOPS reference datasets (currently Tiny7)."""
+"""Regenerate canonical FHOPS reference datasets (tiny7, small21, med42, large84)."""
 
 from __future__ import annotations
 
@@ -8,6 +8,7 @@ import csv
 import random
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
+from math import sqrt
 from pathlib import Path
 from textwrap import dedent
 
@@ -94,6 +95,20 @@ def _clamp(value: float, lo: float, hi: float) -> float:
     return max(lo, min(hi, value))
 
 
+def _estimate_area_from_block(block: BlockRecord) -> float:
+    if block.volume_per_ha_m3 <= 0:
+        return 0.0
+    return block.work_required / block.volume_per_ha_m3
+
+
+def _estimate_skidding_distance(area_ha: float, landing_idx: int) -> tuple[float, float]:
+    width_m = sqrt(max(area_ha, 0.01) * 10_000.0)
+    mean_skid = width_m / 2.0
+    distance = _clamp(mean_skid + landing_idx * 30.0 + 40.0, 120.0, 900.0)
+    loader_distance = _clamp(distance * 0.55, 80.0, 360.0)
+    return distance, loader_distance
+
+
 def _sample_block(
     rng: random.Random,
     *,
@@ -139,8 +154,7 @@ def _role_rates_for_block(
     landing_ids: Sequence[str],
 ) -> dict[str, float]:
     landing_idx = landing_ids.index(block.landing_id)
-    distance = _clamp(120.0 + area * 6.0 + landing_idx * 40.0, 120.0, 600.0)
-    loader_distance = _clamp(distance * 0.55, 80.0, 320.0)
+    distance, loader_distance = _estimate_skidding_distance(area, landing_idx)
 
     fb = estimate_productivity(
         avg_stem_size=block.avg_stem_size_m3,
@@ -336,14 +350,24 @@ objective_weights:
     path.write_text(content, encoding="utf-8")
 
 
-def _write_readme(path: Path, config: DatasetConfig) -> None:
+def _write_readme(path: Path, config: DatasetConfig, blocks: Sequence[BlockRecord]) -> None:
+    total_work = sum(block.work_required for block in blocks)
+    large_blocks = sum(
+        1 for block in blocks if _estimate_area_from_block(block) >= 12.0
+    )
+    roster = ", ".join(f"{role}={len(ids)}" for role, ids in config.machines_by_role.items())
     readme = dedent(
         f"""
         # FHOPS {config.label}
 
-        Synthetic scenario generated from Lahrsen-aligned stand attributes plus FHOPS productivity
-        regressions (Lahrsen harvesters, ADV6N7 grapple skidders, Berry 2019 processors, TN-261
-        loaders). Use the shared generator to refresh the bundle:
+        - Planning horizon: {config.num_days} days
+        - Blocks: {len(blocks)} (≈{total_work:,.0f} m³ total volume)
+        - Large-block share (≥12 ha): {large_blocks}/{len(blocks)}
+        - Machine roster: {roster}
+
+        Synthetic blocks follow Lahrsen-aligned stand attributes and FHOPS productivity regressions
+        (Lahrsen harvesters, ADV6N7 grapple skidders with area-derived skidding distance, Berry 2019
+        processors, TN-261 loaders). Regenerate the dataset with:
 
         ```
         python scripts/rebuild_reference_datasets.py {config.name} --seed 20251209
@@ -384,27 +408,73 @@ def rebuild_dataset(config: DatasetConfig, seed: int) -> None:
         distance_file=distance_file,
         machines=machine_sequence,
     )
-    _write_readme(scenario_dir / "README.md", config)
+    _write_readme(scenario_dir / "README.md", config, blocks)
 
 
-DEFAULT_PROFILES = (
+SMALL_TIER_PROFILES = (
     BlockProfile(
-        weight=0.65,
-        area_range=(9.0, 18.0),
-        avg_stem_range=(0.32, 0.6),
-        volume_per_ha_range=(320.0, 360.0),
+        weight=0.6,
+        area_range=(4.0, 10.0),
+        avg_stem_range=(0.26, 0.46),
+        volume_per_ha_range=(260.0, 340.0),
         slope_range=(6.0, 18.0),
         window_span=(3, 6),
     ),
     BlockProfile(
-        weight=0.35,
+        weight=0.4,
         area_range=(1.0, 4.0),
-        avg_stem_range=(0.12, 0.25),
-        volume_per_ha_range=(140.0, 210.0),
-        slope_range=(10.0, 25.0),
+        avg_stem_range=(0.16, 0.28),
+        volume_per_ha_range=(180.0, 260.0),
+        slope_range=(8.0, 24.0),
         window_span=(2, 4),
     ),
 )
+
+LADDER_PROFILES = (
+    BlockProfile(
+        weight=0.6,
+        area_range=(10.0, 24.0),
+        avg_stem_range=(0.32, 0.55),
+        volume_per_ha_range=(230.0, 310.0),
+        slope_range=(6.0, 16.0),
+        window_span=(5, 9),
+    ),
+    BlockProfile(
+        weight=0.25,
+        area_range=(4.0, 10.0),
+        avg_stem_range=(0.24, 0.38),
+        volume_per_ha_range=(210.0, 290.0),
+        slope_range=(8.0, 22.0),
+        window_span=(4, 7),
+    ),
+    BlockProfile(
+        weight=0.15,
+        area_range=(1.5, 3.5),
+        avg_stem_range=(0.15, 0.26),
+        volume_per_ha_range=(150.0, 210.0),
+        slope_range=(10.0, 25.0),
+        window_span=(3, 5),
+    ),
+)
+
+
+def _med42_machine_roster() -> dict[str, list[str]]:
+    return {
+        "feller_buncher": ["H1", "H2"],
+        "grapple_skidder": ["H3"],
+        "roadside_processor": ["H4", "H5", "H6"],
+        "loader": ["H7", "H8", "H9"],
+    }
+
+
+def _large84_machine_roster() -> dict[str, list[str]]:
+    return {
+        "feller_buncher": ["H1", "H2", "H3", "H4"],
+        "grapple_skidder": ["H5", "H6"],
+        "roadside_processor": ["H7", "H8", "H9", "H10", "H11", "H12"],
+        "loader": ["H13", "H14", "H15", "H16", "H17", "H18"],
+    }
+
 
 DATASET_CONFIGS = {
     "tiny7": DatasetConfig(
@@ -418,7 +488,31 @@ DATASET_CONFIGS = {
             "roadside_processor": ["H3"],
             "loader": ["H4"],
         },
-        block_profiles=DEFAULT_PROFILES,
+        block_profiles=SMALL_TIER_PROFILES,
+    ),
+    "small21": DatasetConfig(
+        name="small21",
+        label="Small21",
+        num_days=21,
+        num_blocks=12,
+        machines_by_role=_med42_machine_roster(),
+        block_profiles=LADDER_PROFILES,
+    ),
+    "med42": DatasetConfig(
+        name="med42",
+        label="Medium42",
+        num_days=42,
+        num_blocks=20,
+        machines_by_role=_med42_machine_roster(),
+        block_profiles=LADDER_PROFILES,
+    ),
+    "large84": DatasetConfig(
+        name="large84",
+        label="Large84",
+        num_days=84,
+        num_blocks=40,
+        machines_by_role=_large84_machine_roster(),
+        block_profiles=LADDER_PROFILES,
     ),
 }
 

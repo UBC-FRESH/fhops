@@ -1,9 +1,9 @@
 {
-  "slug": "tiny7",
-  "label": "FHOPS Tiny7 (examples/tiny7)",
-  "scenario_path": "/home/gep/projects/fhops/examples/tiny7/scenario.yaml",
-  "name": "FHOPS Tiny7",
-  "num_days": 7,
+  "slug": "small21",
+  "label": "FHOPS Small21 (examples/small21)",
+  "scenario_path": "/home/gep/projects/fhops/examples/small21/scenario.yaml",
+  "name": "FHOPS Small21",
+  "num_days": 21,
   "start_date": "2025-01-01",
   "schema_version": "1.0.0",
   "objective_weights": {
@@ -12,8 +12,8 @@
   },
   "tables": {
     "blocks": {
-      "path": "/home/gep/projects/fhops/examples/tiny7/data/blocks.csv",
-      "row_count": 9,
+      "path": "/home/gep/projects/fhops/examples/small21/data/blocks.csv",
+      "row_count": 12,
       "columns": [
         "id",
         "landing_id",
@@ -29,8 +29,8 @@
       ]
     },
     "machines": {
-      "path": "/home/gep/projects/fhops/examples/tiny7/data/machines.csv",
-      "row_count": 4,
+      "path": "/home/gep/projects/fhops/examples/small21/data/machines.csv",
+      "row_count": 9,
       "columns": [
         "id",
         "crew",
@@ -40,7 +40,7 @@
       ]
     },
     "landings": {
-      "path": "/home/gep/projects/fhops/examples/tiny7/data/landings.csv",
+      "path": "/home/gep/projects/fhops/examples/small21/data/landings.csv",
       "row_count": 4,
       "columns": [
         "id",
@@ -48,8 +48,8 @@
       ]
     },
     "calendar": {
-      "path": "/home/gep/projects/fhops/examples/tiny7/data/calendar.csv",
-      "row_count": 28,
+      "path": "/home/gep/projects/fhops/examples/small21/data/calendar.csv",
+      "row_count": 189,
       "columns": [
         "machine_id",
         "day",
@@ -57,8 +57,8 @@
       ]
     },
     "prod_rates": {
-      "path": "/home/gep/projects/fhops/examples/tiny7/data/prod_rates.csv",
-      "row_count": 36,
+      "path": "/home/gep/projects/fhops/examples/small21/data/prod_rates.csv",
+      "row_count": 108,
       "columns": [
         "machine_id",
         "block_id",
@@ -67,9 +67,9 @@
     }
   },
   "machine_roles": {
-    "feller_buncher": 1,
+    "feller_buncher": 2,
     "grapple_skidder": 1,
-    "roadside_processor": 1,
-    "loader": 1
+    "roadside_processor": 3,
+    "loader": 3
   }
 }
