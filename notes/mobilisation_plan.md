@@ -20,7 +20,7 @@ Status: Draft — pending modular reorganisation.
 
 ## Tests
 - [x] Fixture scenarios with known mobilisation costs (short vs long moves). *(See `tests/test_mobilisation.py`.)*
-- [x] Regression tests confirming solver outputs incorporate mobilisation charges. *(Harness smoke test asserts SA mobilisation cost baseline for minitoy.)*
+- [x] Regression tests confirming solver outputs incorporate mobilisation charges. *(Harness smoke test asserts SA mobilisation cost baseline for tiny7.)*
 - [x] Integration test covering GeoJSON ingest → distance matrix generation. *(See `tests/test_geospatial_distances.py`.)*
 
 ## Documentation

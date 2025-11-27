@@ -5,11 +5,11 @@
 | baseline:med42 | baseline | ils | -988.607 | -988.607 | 0.714 | -1009.735 |
 | baseline:med42 | baseline | random | -668.589 | -812.171 | 0.464 | -689.717 |
 | baseline:med42 | baseline | tabu | 21.128 | 21.128 | 2.121 | 0.000 |
-| baseline:minitoy | baseline | bayes | 38.000 | 11.667 | 0.093 | 0.000 |
-| baseline:minitoy | baseline | grid | 15.500 | 9.750 | 0.074 | -22.500 |
-| baseline:minitoy | baseline | ils | 10.500 | 10.500 | 0.129 | -27.500 |
-| baseline:minitoy | baseline | random | 35.500 | 17.125 | 0.082 | -2.500 |
-| baseline:minitoy | baseline | tabu | 16.500 | 16.500 | 0.074 | -21.500 |
+| baseline:tiny7 | baseline | bayes | 38.000 | 11.667 | 0.093 | 0.000 |
+| baseline:tiny7 | baseline | grid | 15.500 | 9.750 | 0.074 | -22.500 |
+| baseline:tiny7 | baseline | ils | 10.500 | 10.500 | 0.129 | -27.500 |
+| baseline:tiny7 | baseline | random | 35.500 | 17.125 | 0.082 | -2.500 |
+| baseline:tiny7 | baseline | tabu | 16.500 | 16.500 | 0.074 | -21.500 |
 | baseline:small21 | baseline | bayes | 9.075 | -35.833 | 0.240 | -3.577 |
 | baseline:small21 | baseline | grid | -11.228 | -25.395 | 0.172 | -23.880 |
 | baseline:small21 | baseline | ils | -117.863 | -117.863 | 0.300 | -130.515 |

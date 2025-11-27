@@ -1,7 +1,0 @@
-from_block,to_block,distance_m
-B1,B2,500.0
-B2,B1,500.0
-B1,B3,2000.0
-B3,B1,2000.0
-B2,B3,1500.0
-B3,B2,1500.0

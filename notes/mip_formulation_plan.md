@@ -174,7 +174,7 @@ wrap around FHOPS.
 ### 3.1 Operational MILP benchmark (Arora-style)
 
 **Goal:** Provide a Pyomo (or similar) MILP model that reproduces the FHOPS
-machine–block–day/shift schedule for small instances (e.g., minitoy or a
+machine–block–day/shift schedule for small instances (e.g., tiny7 or a
 reduced med42), so we can:
 
 - Validate heuristic schedules against an exact or near-exact optimum.
@@ -260,7 +260,7 @@ reduced med42), so we can:
      - Variable declarations and constraints mirrored from 2.x.
    - 3.2 Hook into CLI for a small command:
      - `fhops solve-milp-operational --scenario ... --tier small`.
-   - 3.3 Test on minitoy:
+   - 3.3 Test on tiny7:
      - Compare MILP solution KPIs vs heuristic `solve-heur` outputs for small
        iteration budgets.
 
@@ -394,7 +394,7 @@ day×shift discrete time structure.
         - Prints KPI summaries when feasible schedules exist (reusing `compute_kpis`).
         - Added telemetry logging (`--telemetry-log`) and live watch snapshots (`--watch`) so runs mirror the heuristic UX, plus bundle dump/replay fixtures exercising the CLI and driver round-trips.
   - [ ] Create `tests/milp/test_operational.py`:
-        - Tiny minitoy fixture → assert optimal objective/KPIs.
+        - Tiny tiny7 fixture → assert optimal objective/KPIs.
         - Compare MILP vs SA results for a seeded scenario (tolerances on KPIs).
   - [ ] Update `tests/test_regression_integration.py` to include the MILP solver once the
         new objective scale/fixtures are in place.
@@ -435,7 +435,7 @@ day×shift discrete time structure.
    - Add a how-to describing when to use the operational MILP vs heuristics, expected runtimes, and data prerequisites.
 
 5. **Regression coverage**
-   - Implement `tests/milp/test_operational.py` comparing MILP vs SA on minitoy (objective, completed blocks).
+   - Implement `tests/milp/test_operational.py` comparing MILP vs SA on tiny7 (objective, completed blocks).
    - Add a `solve-mip-operational` entry to `tests/test_regression_integration.py` once med42 fixtures stabilize.
 
 ## 5. med42 dataset rebuild (20 ha block focus)
@@ -489,7 +489,8 @@ system slightly under-capacity (bottleneck days just above the 42-day horizon).
         (e.g., whether heuristics are splitting processors across blocks as expected).
 
 - [ ] **Scenario ladder rebuild**
-  - [ ] Remove the legacy `examples/minitoy` dataset (docs/tests) since it no longer matches the four-role system assumptions.
+  - [x] Remove the legacy `examples/minitoy` dataset (docs/tests) since it no longer matches the four-role system assumptions.
+  - [x] Scrub the docs/notes/manuscript references (and archived benchmark/playback assets) so guidance, assets, and tooling now point to `examples/tiny7` as the entry-level scenario.
   - [ ] Derive `small21` and `tiny7` variants from the med42 generator by truncating the horizon (21-day / 7-day) and subsampling blocks while keeping the single balanced system.
 - [ ] Derive `large84` by doubling the med42 block set/system count and extending the horizon to 84 days (two balanced systems, doubled workload).
   - [ ] Ensure each dataset ships with deterministic `scripts/rebuild_*` entries (shared generator) plus README/KPI updates, then refresh CLI/docs/tests to reference the new ladder.
@@ -509,7 +510,10 @@ Arora-style formulation. Immediate priorities:
 
 ### 6.2 Dataset ladder rebuild (shared generator, no heuristic tuning)
 - [ ] Finish the deterministic dataset generator that emits `tiny7`, `small21`, `med42`, and `large84` from a single configuration + seed (including machine rosters, landings, prod rates, calendar, mobilisations).
+  - [x] Introduced `scripts/rebuild_reference_datasets.py` with a first pass that deterministically regenerates the new `tiny7` scenario (blocks, prod rates, machines, calendar, landings, mobilisation distances, scenario YAML). Extend it to cover `small21`/`med42`/`large84` next.
+  - [x] Refactored the generator around reusable `DatasetConfig`/`BlockProfile` scaffolding so landing/machine mixes, block distributions, and scenario metadata can be defined per dataset (sets us up to script `small21`/`med42`/`large84` without copy/paste).
 - [ ] Delete `examples/minitoy` plus all docs/tests references; replace fixtures with the new ladder.
+  - [x] Removed the `examples/minitoy` bundle, replaced CLI/tests/fixtures with `examples/tiny7`, and regenerated benchmark/KPI/playback/MILP fixtures so code/tests no longer rely on the legacy dataset. Documentation + manuscript assets still reference tiny7 and need follow-up edits.
 - [ ] For each scenario, document the “slightly under-capacity” intent, run an operational MILP smoke test, and log KPIs in `CHANGE_LOG.md` / dataset README—skip SA/ILS/Tabu tuning until the heuristics are rebuilt.
 
 ### 6.3 Heuristic refactor (post-MILP validation)

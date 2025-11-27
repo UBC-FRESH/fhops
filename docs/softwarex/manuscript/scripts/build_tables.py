@@ -11,11 +11,11 @@ import pandas as pd
 
 SCENARIOS = [
     {
-        "slug": "minitoy",
-        "label": "MiniToy (ground-based)",
+        "slug": "tiny7",
+        "label": "Tiny7 (ground-based)",
         "sense": "maximize",
-        "comparison_key": "baseline:minitoy",
-        "report_key": "FHOPS MiniToy",
+        "comparison_key": "baseline:tiny7",
+        "report_key": "FHOPS Tiny7",
     },
     {
         "slug": "med42",

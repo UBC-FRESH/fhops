@@ -24,7 +24,7 @@ def _total_production(playback_result) -> float:
 
 
 def test_downtime_event_zeroes_production():
-    problem, assignments = _load_problem_and_assignments("minitoy")
+    problem, assignments = _load_problem_and_assignments("tiny7")
     config = SamplingConfig(samples=1, base_seed=123)
     config.downtime.enabled = True
     config.downtime.probability = 1.0
@@ -37,7 +37,7 @@ def test_downtime_event_zeroes_production():
 
 
 def test_weather_event_scales_production():
-    problem, assignments = _load_problem_and_assignments("minitoy")
+    problem, assignments = _load_problem_and_assignments("tiny7")
     base_playback = run_playback(problem, assignments)
     base_total = _total_production(base_playback)
 
@@ -56,7 +56,7 @@ def test_weather_event_scales_production():
 @pytest.mark.parametrize("samples", [1, 3, 5])
 @pytest.mark.parametrize("seed", [0, 42, 1234])
 def test_stochastic_defaults_match_deterministic(samples: int, seed: int):
-    problem, assignments = _load_problem_and_assignments("minitoy")
+    problem, assignments = _load_problem_and_assignments("tiny7")
     base = run_playback(problem, assignments)
     base_total = _total_production(base)
 
@@ -76,7 +76,7 @@ def test_stochastic_defaults_match_deterministic(samples: int, seed: int):
 @pytest.mark.parametrize("downtime_prob", [0.1, 0.5])
 @pytest.mark.parametrize("weather_prob", [0.0, 0.3])
 def test_stochastic_production_bounds(downtime_prob: float, weather_prob: float):
-    problem, assignments = _load_problem_and_assignments("minitoy")
+    problem, assignments = _load_problem_and_assignments("tiny7")
     base = run_playback(problem, assignments)
     base_total = _total_production(base)
 

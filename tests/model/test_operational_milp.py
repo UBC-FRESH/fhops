@@ -19,8 +19,8 @@ from fhops.scenario.io.loaders import load_scenario
 from fhops.scheduling.systems import HarvestSystem, SystemJob
 
 
-def test_operational_model_builds_for_minitoy() -> None:
-    scenario = load_scenario("examples/minitoy/scenario.yaml")
+def test_operational_model_builds_for_tiny7() -> None:
+    scenario = load_scenario("examples/tiny7/scenario.yaml")
     problem = Problem.from_scenario(scenario)
     bundle = build_operational_bundle(problem)
 
@@ -32,7 +32,7 @@ def test_operational_model_builds_for_minitoy() -> None:
 
 
 def test_operational_model_has_production_limits() -> None:
-    scenario = load_scenario("examples/minitoy/scenario.yaml")
+    scenario = load_scenario("examples/tiny7/scenario.yaml")
     problem = Problem.from_scenario(scenario)
     bundle = build_operational_bundle(problem)
     model = build_operational_model(bundle)
@@ -51,7 +51,7 @@ def test_operational_model_has_production_limits() -> None:
 
 
 def test_operational_model_with_mobilisation_adds_transitions() -> None:
-    scenario = load_scenario("examples/minitoy/scenario.yaml")
+    scenario = load_scenario("examples/tiny7/scenario.yaml")
     problem = Problem.from_scenario(scenario)
     bundle = build_operational_bundle(problem)
     mobilisation_params = {

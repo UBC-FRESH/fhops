@@ -1,7 +1,7 @@
 Quickstart
 ==========
 
-The quickest way to explore FHOPS is with the bundled ``examples/minitoy`` scenario.
+The quickest way to explore FHOPS is with the bundled ``examples/tiny7`` scenario.
 
 Bootstrap Environment
 ---------------------
@@ -12,15 +12,15 @@ Bootstrap Environment
    source .venv/bin/activate
    pip install -e .[dev]
 
-Workbench: ``examples/minitoy``
+Workbench: ``examples/tiny7``
 --------------------------------
 
 .. code-block:: bash
 
-   fhops validate examples/minitoy/scenario.yaml
-   fhops solve-mip examples/minitoy/scenario.yaml --out examples/minitoy/out/mip_solution.csv
-   fhops solve-heur examples/minitoy/scenario.yaml --out examples/minitoy/out/sa_solution.csv
-   fhops evaluate examples/minitoy/scenario.yaml examples/minitoy/out/mip_solution.csv
+   fhops validate examples/tiny7/scenario.yaml
+   fhops solve-mip examples/tiny7/scenario.yaml --out examples/tiny7/out/mip_solution.csv
+   fhops solve-heur examples/tiny7/scenario.yaml --out examples/tiny7/out/sa_solution.csv
+   fhops evaluate examples/tiny7/scenario.yaml examples/tiny7/out/mip_solution.csv
 
 What those commands do:
 

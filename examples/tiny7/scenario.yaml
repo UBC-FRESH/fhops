@@ -1,0 +1,37 @@
+name: FHOPS Tiny7
+num_days: 7
+start_date: '2025-01-01'
+data:
+  blocks: data/blocks.csv
+  machines: data/machines.csv
+  landings: data/landings.csv
+  calendar: data/calendar.csv
+  prod_rates: data/prod_rates.csv
+  mobilisation_distances: tiny7_block_distances.csv
+mobilisation:
+  default_walk_threshold_m: 900
+  distance_csv: tiny7_block_distances.csv
+  machine_params:
+  - machine_id: H1
+    walk_cost_per_meter: 0.02
+    move_cost_flat: 320
+    walk_threshold_m: 850
+    setup_cost: 50
+  - machine_id: H2
+    walk_cost_per_meter: 0.02
+    move_cost_flat: 320
+    walk_threshold_m: 850
+    setup_cost: 50
+  - machine_id: H3
+    walk_cost_per_meter: 0.02
+    move_cost_flat: 320
+    walk_threshold_m: 850
+    setup_cost: 50
+  - machine_id: H4
+    walk_cost_per_meter: 0.02
+    move_cost_flat: 320
+    walk_threshold_m: 850
+    setup_cost: 50
+objective_weights:
+  production: 1.0
+  mobilisation: 0.5

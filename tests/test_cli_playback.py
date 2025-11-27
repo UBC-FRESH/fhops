@@ -234,7 +234,7 @@ def test_evaluate_cli_basic_kpi_mode(tmp_path: Path):
     assert "Weather" not in stdout
 
 
-@pytest.mark.parametrize("scenario_name", ["minitoy", "med42"])
+@pytest.mark.parametrize("scenario_name", ["tiny7", "med42"])
 @pytest.mark.milp_refactor
 def test_playback_fixture_matches_cli(tmp_path: Path, scenario_name: str):
     scenario_path = Path(f"examples/{scenario_name}/scenario.yaml")

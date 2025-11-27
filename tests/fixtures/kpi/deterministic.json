@@ -14,19 +14,19 @@
     "utilisation_ratio_weighted_day": 0.438406,
     "utilisation_ratio_weighted_shift": 1.0
   },
-  "minitoy": {
-    "completed_blocks": 3.0,
-    "makespan_day": 14,
+  "tiny7": {
+    "completed_blocks": 7.0,
+    "makespan_day": 7,
     "makespan_shift": "S1",
-    "mobilisation_cost": 335.0,
-    "mobilisation_cost_by_landing": "{\"L1\": 135.0, \"L2\": 200.0}",
-    "mobilisation_cost_by_machine": "{\"H1\": 140.0, \"H2\": 195.0}",
-    "total_production": 54.0,
-    "utilisation_ratio_by_machine": "{\"H1\": 1.0, \"H2\": 1.0}",
-    "utilisation_ratio_by_role": "{\"feller_buncher\": 1.0, \"grapple_skidder\": 1.0}",
-    "utilisation_ratio_mean_day": 0.785714,
+    "mobilisation_cost": 270.76,
+    "mobilisation_cost_by_landing": "{\"L1\": 108.88, \"L2\": 107.92, \"L3\": 53.96}",
+    "mobilisation_cost_by_machine": "{\"H1\": 53.96, \"H2\": 108.64, \"H4\": 108.16}",
+    "total_production": 23274.404024,
+    "utilisation_ratio_by_machine": "{\"H1\": 1.0, \"H2\": 1.0, \"H3\": 1.0, \"H4\": 1.0}",
+    "utilisation_ratio_by_role": "{\"feller_buncher\": 1.0, \"grapple_skidder\": 1.0, \"loader\": 1.0, \"processor\": 1.0}",
+    "utilisation_ratio_mean_day": 0.928571,
     "utilisation_ratio_mean_shift": 1.0,
-    "utilisation_ratio_weighted_day": 0.777778,
+    "utilisation_ratio_weighted_day": 0.928571,
     "utilisation_ratio_weighted_shift": 1.0
   }
 }

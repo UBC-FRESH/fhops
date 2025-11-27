@@ -12,7 +12,7 @@ Status: Draft — roadmap Phase 3 owner document.
 ### Shift-Based Scheduling Alignment — 2025-11-09
 - **Playback inputs:** add adapters that consume shift-indexed solver outputs (Pyomo + heuristics) without requiring callers to downcast to day granularity. Until solver work lands, maintain compatibility shims but flag them for removal.
 - **Schema updates:** introduce explicit `shift_id` columns to `PlaybackRecord`, `ShiftSummary`, and CLI export schemas; document expectations in `docs/howto/evaluation.rst`.
-- **Fixtures & regression:** extend deterministic fixtures (minitoy, regression) to include multi-shift playback outputs so CI can confirm KPIs ignore work scheduled in blackout shifts.
+- **Fixtures & regression:** extend deterministic fixtures (tiny7, regression) to include multi-shift playback outputs so CI can confirm KPIs ignore work scheduled in blackout shifts.
 - **Docs & CLI:** update `fhops eval playback` help text plus quickstart snippets to describe the new shift flags/output files; highlight migration tips for day-only datasets.
 
 ## Work Items
@@ -59,7 +59,7 @@ Status: Draft — roadmap Phase 3 owner document.
   - Add quickstart snippet demonstrating CLI usage + notebook-friendly Pandas interop.
   - Provide aggregation recipe showing how to summarise per-machine/per-day stats for KPI expansion modules.
 - **Testing & validation**
-  - Regression fixtures: deterministic playback for `examples/minitoy` and regression scenario; assert shift/day outputs and mobilisation tagging.
+  - Regression fixtures: deterministic playback for `examples/tiny7` and regression scenario; assert shift/day outputs and mobilisation tagging.
   - Property-based tests ensuring aggregation across shifts equals day totals and respects blackout windows (no work counted inside blackout).
   - CLI smoke test invoking `fhops eval playback` with synthetic assignments verifying file emission + console summary.
 - **Open decisions**
@@ -78,9 +78,9 @@ Status: Draft — roadmap Phase 3 owner document.
   - [x] Markdown summary generation (`--summary-md`).
   - [x] Refactor serialization paths so CLI, telemetry, and automation share a single helper to avoid duplication (see `playback/exporters.py`; telemetry integration now wired via `--telemetry-log`).
 - **Benchmark validation & fixtures**
-  - [x] Capture deterministic fixtures for minitoy/med42 (CSV).
+  - [x] Capture deterministic fixtures for tiny7/med42 (CSV).
   - [x] Capture matching Parquet fixtures (or generate on the fly) and add regression tests diffing CLI exports vs. stored schema.
-  - [x] Ensure CI runs a smoke covering CSV + Parquet + Markdown outputs for minitoy/med42/regression scenarios (see `tests/test_cli_playback_exports.py`).
+  - [x] Ensure CI runs a smoke covering CSV + Parquet + Markdown outputs for tiny7/med42/regression scenarios (see `tests/test_cli_playback_exports.py`).
 - **Documentation**
   - [x] Add quickstart snippet to `docs/howto/evaluation.rst` demonstrating command → Parquet → Pandas load, including utilisation interpretation.
   - [x] Document aggregation helpers for KPI contributors.
@@ -119,7 +119,7 @@ Status: Draft — roadmap Phase 3 owner document.
     - Added initial coverage in `tests/test_stochastic_playback.py` for downtime, weather, and landing shocks.
   - Property-based tests ensuring deterministic playback equivalence when events are disabled (`samples=1`, no events).
     - Added regression/property checks ensuring base playback is recovered when probabilities are zero and sample production stays within deterministic bounds.
-  - Performance smoke to confirm ensemble scaling (e.g., 20 samples on minitoy executes within target wall time).
+  - Performance smoke to confirm ensemble scaling (e.g., 20 samples on tiny7 executes within target wall time).
 - **Open questions**
   - Do we require parallel execution support out of the gate (thread/process pools)?
   - How to surface user-defined stochastic events (plugin entry points or config-driven expressions)?
@@ -141,7 +141,7 @@ Status: Draft — roadmap Phase 3 owner document.
     - [x] Add per-landing mobilisation breakdowns.
     - [x] Introduce weather/downtime cost estimates (average production loss) based on playback downtime and weather signals.
 - [x] Add regression fixtures and property-based checks confirming KPI ranges per scenario tier.
-    - [x] Update minitoy/med42 expected outputs to include utilisation/makespan baselines.
+    - [x] Update tiny7/med42 expected outputs to include utilisation/makespan baselines.
     - [x] Add property checks ensuring utilisation stays in `[0, 1]` and makespan spans the latest productive day.
     - [x] Capture deterministic/stochastic KPI snapshots in `tests/fixtures/kpi/` for regression comparison.
   - [x] Wire KPIs into CLI reporting with configurable profiles and smoke tests.
@@ -169,7 +169,7 @@ c
 
 ## Phase 2 Kickoff (2025-11-XX)
 - **Objective:** Establish a repeatable harness that measures MIP + SA performance across the
-  bundled scenarios (`examples/minitoy`, `examples/med42`, `examples/large84`) and captures
+  bundled scenarios (`examples/tiny7`, `examples/med42`, `examples/large84`) and captures
   core metrics (build/solve time, objective components, KPI outputs).
 - **Deliverables:**
   1. CLI/automation entry-point (e.g., `fhops bench`) running the benchmark suite.
@@ -186,5 +186,5 @@ c
 - [x] Scaffold harness script/module with CLI integration.
 - [x] Implement JSON/CSV result emission + optional baseline fixture.
 - [x] Add documentation section describing usage.
-- [x] Add pytest smoke (marked `benchmark`) for minitoy harness run.
+- [x] Add pytest smoke (marked `benchmark`) for tiny7 harness run.
 - [x] Update roadmap + changelog upon completion.

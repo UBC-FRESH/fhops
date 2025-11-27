@@ -162,7 +162,7 @@ map when you need to trace a block back to the registry table above:
      - These scenarios omit ``harvest_system_id`` in order to let researchers swap systems during experiments.
        The README files call out the typical ground/cable combinations used in regression tests; add a column to
        ``data/blocks.csv`` if you need deterministic system assignments.
-   * - ``examples/minitoy``
+   * - ``examples/tiny7``
      - README + CLI quickstart
      - The toy dataset keeps a single ground-based workflow; tie blocks to ``ground_fb_skid`` or
        ``ground_hand_shovel`` when testing sequencing logic.

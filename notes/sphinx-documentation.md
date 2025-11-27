@@ -10,8 +10,8 @@ FHOPS’ Sphinx tree lives under `docs/` and is published to Read the Docs via `
 | Section | Path(s) | Coverage Notes |
 | --- | --- | --- |
 | Landing & Navigation | `docs/index.rst` | Links to overview, quickstart, how-tos, API, CLI reference, and analytics notebooks. |
-| Overview | `docs/overview.rst` | High-level intro + “Baseline Workflows” section referencing minitoy/regression fixtures and roadmap alignment. |
-| Quickstart | `docs/howto/quickstart.rst` | End-to-end minitoy walkthrough (validate → solve-mip/heur → evaluate) plus regression baseline KPI table. |
+| Overview | `docs/overview.rst` | High-level intro + “Baseline Workflows” section referencing tiny7/regression fixtures and roadmap alignment. |
+| Quickstart | `docs/howto/quickstart.rst` | End-to-end tiny7 walkthrough (validate → solve-mip/heur → evaluate) plus regression baseline KPI table. |
 | Data Contract | `docs/howto/data_contract.rst` | Schema tables, CSV/YAML descriptions, validation workflow, GeoJSON ingestion guide, sample fixtures. |
 | Mobilisation & Geo | `docs/howto/mobilisation_geo.rst` | GeoJSON ingestion, `fhops geo distances`, mobilisation config examples, KPI interpretation. |
 | Benchmarks | `docs/howto/benchmarks.rst` | Harness usage, options, output interpretation, plotting helper. |

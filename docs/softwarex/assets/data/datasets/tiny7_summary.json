@@ -1,8 +1,8 @@
 {
-  "slug": "minitoy",
-  "label": "FHOPS MiniToy (examples/minitoy)",
-  "scenario_path": "/home/gep/projects/fhops/examples/minitoy/scenario.yaml",
-  "name": "FHOPS MiniToy",
+  "slug": "tiny7",
+  "label": "FHOPS Tiny7 (examples/tiny7)",
+  "scenario_path": "/home/gep/projects/fhops/examples/tiny7/scenario.yaml",
+  "name": "FHOPS Tiny7",
   "num_days": 14,
   "start_date": "2025-01-01",
   "schema_version": "1.0.0",
@@ -12,7 +12,7 @@
   },
   "tables": {
     "blocks": {
-      "path": "/home/gep/projects/fhops/examples/minitoy/data/blocks.csv",
+      "path": "/home/gep/projects/fhops/examples/tiny7/data/blocks.csv",
       "row_count": 3,
       "columns": [
         "id",
@@ -29,7 +29,7 @@
       ]
     },
     "machines": {
-      "path": "/home/gep/projects/fhops/examples/minitoy/data/machines.csv",
+      "path": "/home/gep/projects/fhops/examples/tiny7/data/machines.csv",
       "row_count": 2,
       "columns": [
         "id",
@@ -40,7 +40,7 @@
       ]
     },
     "landings": {
-      "path": "/home/gep/projects/fhops/examples/minitoy/data/landings.csv",
+      "path": "/home/gep/projects/fhops/examples/tiny7/data/landings.csv",
       "row_count": 2,
       "columns": [
         "id",
@@ -48,7 +48,7 @@
       ]
     },
     "calendar": {
-      "path": "/home/gep/projects/fhops/examples/minitoy/data/calendar.csv",
+      "path": "/home/gep/projects/fhops/examples/tiny7/data/calendar.csv",
       "row_count": 28,
       "columns": [
         "machine_id",
@@ -57,7 +57,7 @@
       ]
     },
     "prod_rates": {
-      "path": "/home/gep/projects/fhops/examples/minitoy/data/prod_rates.csv",
+      "path": "/home/gep/projects/fhops/examples/tiny7/data/prod_rates.csv",
       "row_count": 6,
       "columns": [
         "machine_id",

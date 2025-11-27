@@ -1,19 +1,19 @@
 from fhops.cli.main import app
 from tests.cli import CliRunner, cli_text
 
-FIXTURE_BUNDLE = "tests/fixtures/milp/minitoy_operational_bundle.json"
+FIXTURE_BUNDLE = "tests/fixtures/milp/tiny7_operational_bundle.json"
 
 
 def test_solve_mip_operational_cli(tmp_path):
     runner = CliRunner()
-    out_path = tmp_path / "minitoy_operational.csv"
+    out_path = tmp_path / "tiny7_operational.csv"
     bundle_path = tmp_path / "bundle.json"
     telemetry_log = tmp_path / "telemetry.jsonl"
     result = runner.invoke(
         app,
         [
             "solve-mip-operational",
-            "examples/minitoy/scenario.yaml",
+            "examples/tiny7/scenario.yaml",
             "--out",
             str(out_path),
             "--time-limit",
@@ -29,7 +29,7 @@ def test_solve_mip_operational_cli(tmp_path):
     assert bundle_path.exists()
     assert telemetry_log.exists()
 
-    out_path2 = tmp_path / "minitoy_operational_bundle.csv"
+    out_path2 = tmp_path / "tiny7_operational_bundle.csv"
     result_bundle = runner.invoke(
         app,
         [

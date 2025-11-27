@@ -21,7 +21,7 @@ Baseline usage:
 
 - ``fhops solve-mip tests/fixtures/regression/regression.yaml --out /tmp/regression_mip.csv``
 - ``fhops solve-mip examples/med42/scenario.yaml --driver gurobi --time-limit 600 --out tmp/med42_gurobi.csv`` — run the MIP with the Gurobi backend (requires installing ``fhops[gurobi]`` and configuring a licence).
-- ``fhops solve-mip-operational examples/minitoy/scenario.yaml --out tmp/minitoy_operational.csv --time-limit 60`` — run the day×shift operational MILP benchmark and emit assignments/KPIs for the minitoy scenario.
+- ``fhops solve-mip-operational examples/tiny7/scenario.yaml --out tmp/tiny7_operational.csv --time-limit 60`` — run the day×shift operational MILP benchmark and emit assignments/KPIs for the tiny7 scenario.
   Use ``--dump-bundle foo.json`` to capture the serialized bundle for debugging, or ``--bundle-json foo.json`` to replay the solver without reloading the scenario. Telemetry/logging hooks mirror the heuristics (``--telemetry-log`` for JSONL records, ``--watch`` for a live snapshot even though the run is single-shot).
 - ``fhops solve-heur tests/fixtures/regression/regression.yaml --out /tmp/regression_sa.csv``
 - ``fhops evaluate tests/fixtures/regression/regression.yaml --assignments tmp/regression_sa.csv --kpi-mode extended``
@@ -30,7 +30,7 @@ Baseline usage:
 - ``fhops eval playback ... --landing-prob 0.3 --landing-mult-min 0.3 --landing-mult-max 0.7 --landing-duration 2`` — simulate landing congestion shocks that temporarily reduce throughput.
 - ``fhops eval playback ... --shift-parquet tmp/shift.parquet --day-parquet tmp/day.parquet --summary-md tmp/playback.md`` — export Parquet files and a Markdown summary alongside the CSV outputs.
   See :doc:`../howto/evaluation` for a full end-to-end example.
-- ``fhops bench suite --scenario examples/minitoy/scenario.yaml --out-dir tmp/benchmarks``
+- ``fhops bench suite --scenario examples/tiny7/scenario.yaml --out-dir tmp/benchmarks``
 - ``fhops synth generate tmp/custom_bundle --tier medium --seed 777 --blocks 10:12`` — create a synthetic scenario bundle using the medium preset with a custom block range; add ``--preview`` to inspect metadata without writing files.
 - ``fhops synth batch plans/synthetic.yaml --overwrite`` — process several bundles in one call using a YAML/TOML/JSON plan (each entry supports the same fields as `generate`), refreshing metadata automatically when writing to ``examples/synthetic``.
 

@@ -5,12 +5,12 @@ Status: Draft — scaffolding notebooks that surface deterministic and stochasti
 
 ## Objectives
 - Provide executed notebooks that demonstrate schedule playback, KPI diagnostics, and what-if analysis.
-- Showcase both deterministic and stochastic tooling using lightweight scenarios (minitoy + synthetic bundles).
+- Showcase both deterministic and stochastic tooling using lightweight scenarios (tiny7 + synthetic bundles).
 - Reuse shared plotting/utility code so notebooks stay consistent and easy to maintain.
 
 ## Notebook Targets
 1. **Playback & KPI Walkthrough (deterministic)**
-   - Scenario: `examples/minitoy/scenario.yaml`
+   - Scenario: `examples/tiny7/scenario.yaml`
    - Story beats:
      - Load scenario + assignments, run deterministic playback.
      - Visualise shift/day tables, highlight key KPI outputs.

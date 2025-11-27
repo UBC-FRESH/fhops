@@ -73,7 +73,7 @@ Automation Checklist
 
 1. **CI (per push)**
 
-   - `fhops tune-grid` / `fhops tune-random` on smoke scenarios (minitoy, med42).
+   - `fhops tune-grid` / `fhops tune-random` on smoke scenarios (tiny7, med42).
    - `fhops telemetry report` → `telemetry-report` artifact with `tuner_report.{csv,md}`, `history/`.
    - `scripts/analyze_tuner_reports.py --history-dir` to regenerate `history_summary.*` and `history_delta.*`.
 

@@ -11,9 +11,9 @@ from fhops.scenario.synthetic import SyntheticDatasetConfig, generate_random_dat
 
 
 @pytest.mark.milp_refactor
-def test_benchmark_suite_minitoy(tmp_path):
+def test_benchmark_suite_tiny7(tmp_path):
     summary = run_benchmark_suite(
-        [Path("examples/minitoy/scenario.yaml")],
+        [Path("examples/tiny7/scenario.yaml")],
         tmp_path,
         time_limit=10,
         sa_iters=200,
@@ -42,7 +42,7 @@ def test_benchmark_suite_minitoy(tmp_path):
     ]:
         assert column in loaded.columns
 
-    baseline_path = Path("tests/fixtures/benchmarks/minitoy_sa.json")
+    baseline_path = Path("tests/fixtures/benchmarks/tiny7_sa.json")
     baseline = json.loads(baseline_path.read_text())
     sa_row = summary[summary["solver"] == "sa"].iloc[0].to_dict()
     mip_row = summary[summary["solver"] == "mip"].iloc[0].to_dict()
@@ -95,7 +95,7 @@ def test_benchmark_suite_minitoy(tmp_path):
 @pytest.mark.milp_refactor
 def test_benchmark_suite_with_tabu(tmp_path):
     summary = run_benchmark_suite(
-        [Path("examples/minitoy/scenario.yaml")],
+        [Path("examples/tiny7/scenario.yaml")],
         tmp_path,
         time_limit=10,
         sa_iters=200,
@@ -116,7 +116,7 @@ def test_benchmark_suite_with_tabu(tmp_path):
 
 def test_benchmark_suite_preset_comparison(tmp_path):
     summary = run_benchmark_suite(
-        [Path("examples/minitoy/scenario.yaml")],
+        [Path("examples/tiny7/scenario.yaml")],
         tmp_path,
         time_limit=10,
         sa_iters=200,

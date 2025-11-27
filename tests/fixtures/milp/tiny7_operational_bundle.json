@@ -1,12 +1,20 @@
 {
   "machines": [
     "H1",
-    "H2"
+    "H2",
+    "H3",
+    "H4"
   ],
   "blocks": [
-    "B1",
-    "B2",
-    "B3"
+    "B01",
+    "B02",
+    "B03",
+    "B04",
+    "B05",
+    "B06",
+    "B07",
+    "B08",
+    "B09"
   ],
   "days": [
     1,
@@ -15,14 +23,7 @@
     4,
     5,
     6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    12,
-    13,
-    14
+    7
   ],
   "shifts": [
     {
@@ -52,103 +53,267 @@
     {
       "day": 7,
       "shift_id": "S1"
-    },
-    {
-      "day": 8,
-      "shift_id": "S1"
-    },
-    {
-      "day": 9,
-      "shift_id": "S1"
-    },
-    {
-      "day": 10,
-      "shift_id": "S1"
-    },
-    {
-      "day": 11,
-      "shift_id": "S1"
-    },
-    {
-      "day": 12,
-      "shift_id": "S1"
-    },
-    {
-      "day": 13,
-      "shift_id": "S1"
-    },
-    {
-      "day": 14,
-      "shift_id": "S1"
     }
   ],
   "machine_roles": {
     "H1": "feller_buncher",
-    "H2": "grapple_skidder"
+    "H2": "grapple_skidder",
+    "H3": "processor",
+    "H4": "loader"
   },
   "machine_daily_hours": {
     "H1": 24.0,
-    "H2": 24.0
+    "H2": 24.0,
+    "H3": 24.0,
+    "H4": 24.0
   },
   "production_rates": [
     {
       "machine_id": "H1",
-      "block_id": "B1",
-      "rate": 3.5
+      "block_id": "B01",
+      "rate": 1467.212006
+    },
+    {
+      "machine_id": "H2",
+      "block_id": "B01",
+      "rate": 1340.81862
+    },
+    {
+      "machine_id": "H3",
+      "block_id": "B01",
+      "rate": 665.694756
+    },
+    {
+      "machine_id": "H4",
+      "block_id": "B01",
+      "rate": 952.196851
     },
     {
       "machine_id": "H1",
-      "block_id": "B2",
-      "rate": 2.0
+      "block_id": "B02",
+      "rate": 1325.548106
+    },
+    {
+      "machine_id": "H2",
+      "block_id": "B02",
+      "rate": 1183.569141
+    },
+    {
+      "machine_id": "H3",
+      "block_id": "B02",
+      "rate": 648.853099
+    },
+    {
+      "machine_id": "H4",
+      "block_id": "B02",
+      "rate": 811.748696
     },
     {
       "machine_id": "H1",
-      "block_id": "B3",
-      "rate": 1.5
+      "block_id": "B03",
+      "rate": 562.253629
     },
     {
       "machine_id": "H2",
-      "block_id": "B1",
-      "rate": 2.5
+      "block_id": "B03",
+      "rate": 1297.290982
+    },
+    {
+      "machine_id": "H3",
+      "block_id": "B03",
+      "rate": 368.088604
+    },
+    {
+      "machine_id": "H4",
+      "block_id": "B03",
+      "rate": 527.136466
+    },
+    {
+      "machine_id": "H1",
+      "block_id": "B04",
+      "rate": 739.999599
     },
     {
       "machine_id": "H2",
-      "block_id": "B2",
-      "rate": 3.0
+      "block_id": "B04",
+      "rate": 1179.17973
+    },
+    {
+      "machine_id": "H3",
+      "block_id": "B04",
+      "rate": 433.105142
+    },
+    {
+      "machine_id": "H4",
+      "block_id": "B04",
+      "rate": 592.661941
+    },
+    {
+      "machine_id": "H1",
+      "block_id": "B05",
+      "rate": 1358.154729
     },
     {
       "machine_id": "H2",
-      "block_id": "B3",
-      "rate": 2.0
+      "block_id": "B05",
+      "rate": 1277.599042
+    },
+    {
+      "machine_id": "H3",
+      "block_id": "B05",
+      "rate": 653.766228
+    },
+    {
+      "machine_id": "H4",
+      "block_id": "B05",
+      "rate": 881.205937
+    },
+    {
+      "machine_id": "H1",
+      "block_id": "B06",
+      "rate": 1136.796408
+    },
+    {
+      "machine_id": "H2",
+      "block_id": "B06",
+      "rate": 1212.802913
+    },
+    {
+      "machine_id": "H3",
+      "block_id": "B06",
+      "rate": 490.545473
+    },
+    {
+      "machine_id": "H4",
+      "block_id": "B06",
+      "rate": 682.288831
+    },
+    {
+      "machine_id": "H1",
+      "block_id": "B07",
+      "rate": 1506.707213
+    },
+    {
+      "machine_id": "H2",
+      "block_id": "B07",
+      "rate": 1145.763809
+    },
+    {
+      "machine_id": "H3",
+      "block_id": "B07",
+      "rate": 687.778446
+    },
+    {
+      "machine_id": "H4",
+      "block_id": "B07",
+      "rate": 836.753351
+    },
+    {
+      "machine_id": "H1",
+      "block_id": "B08",
+      "rate": 794.639593
+    },
+    {
+      "machine_id": "H2",
+      "block_id": "B08",
+      "rate": 1153.960785
+    },
+    {
+      "machine_id": "H3",
+      "block_id": "B08",
+      "rate": 399.161887
+    },
+    {
+      "machine_id": "H4",
+      "block_id": "B08",
+      "rate": 547.711344
+    },
+    {
+      "machine_id": "H1",
+      "block_id": "B09",
+      "rate": 728.861503
+    },
+    {
+      "machine_id": "H2",
+      "block_id": "B09",
+      "rate": 1728.239444
+    },
+    {
+      "machine_id": "H3",
+      "block_id": "B09",
+      "rate": 378.809879
+    },
+    {
+      "machine_id": "H4",
+      "block_id": "B09",
+      "rate": 710.013518
     }
   ],
   "work_required": {
-    "B1": 20.0,
-    "B2": 18.0,
-    "B3": 16.0
+    "B01": 4606.612953,
+    "B02": 4705.891642,
+    "B03": 444.100149,
+    "B04": 221.532276,
+    "B05": 5373.229489,
+    "B06": 4232.761401,
+    "B07": 3339.62298,
+    "B08": 470.732799,
+    "B09": 572.18541
   },
   "windows": {
-    "B1": [
+    "B01": [
       1,
-      14
+      6
     ],
-    "B2": [
+    "B02": [
       1,
-      14
+      7
     ],
-    "B3": [
+    "B03": [
+      1,
+      5
+    ],
+    "B04": [
+      2,
+      5
+    ],
+    "B05": [
+      2,
+      7
+    ],
+    "B06": [
       3,
-      14
+      7
+    ],
+    "B07": [
+      1,
+      5
+    ],
+    "B08": [
+      2,
+      5
+    ],
+    "B09": [
+      3,
+      5
     ]
   },
   "landing_for_block": {
-    "B1": "L1",
-    "B2": "L1",
-    "B3": "L2"
+    "B01": "L1",
+    "B02": "L2",
+    "B03": "L3",
+    "B04": "L4",
+    "B05": "L1",
+    "B06": "L2",
+    "B07": "L3",
+    "B08": "L4",
+    "B09": "L1"
   },
   "landing_capacity": {
     "L1": 2,
-    "L2": 1
+    "L2": 3,
+    "L3": 2,
+    "L4": 3
   },
   "availability_day": [
     {
@@ -164,7 +329,7 @@
     {
       "machine_id": "H1",
       "day": 3,
-      "available": 0
+      "available": 1
     },
     {
       "machine_id": "H1",
@@ -184,41 +349,6 @@
     {
       "machine_id": "H1",
       "day": 7,
-      "available": 1
-    },
-    {
-      "machine_id": "H1",
-      "day": 8,
-      "available": 1
-    },
-    {
-      "machine_id": "H1",
-      "day": 9,
-      "available": 1
-    },
-    {
-      "machine_id": "H1",
-      "day": 10,
-      "available": 1
-    },
-    {
-      "machine_id": "H1",
-      "day": 11,
-      "available": 1
-    },
-    {
-      "machine_id": "H1",
-      "day": 12,
-      "available": 1
-    },
-    {
-      "machine_id": "H1",
-      "day": 13,
-      "available": 1
-    },
-    {
-      "machine_id": "H1",
-      "day": 14,
       "available": 1
     },
     {
@@ -257,38 +387,73 @@
       "available": 1
     },
     {
-      "machine_id": "H2",
-      "day": 8,
+      "machine_id": "H3",
+      "day": 1,
       "available": 1
     },
     {
-      "machine_id": "H2",
-      "day": 9,
+      "machine_id": "H3",
+      "day": 2,
       "available": 1
     },
     {
-      "machine_id": "H2",
-      "day": 10,
+      "machine_id": "H3",
+      "day": 3,
       "available": 1
     },
     {
-      "machine_id": "H2",
-      "day": 11,
+      "machine_id": "H3",
+      "day": 4,
       "available": 1
     },
     {
-      "machine_id": "H2",
-      "day": 12,
+      "machine_id": "H3",
+      "day": 5,
       "available": 1
     },
     {
-      "machine_id": "H2",
-      "day": 13,
+      "machine_id": "H3",
+      "day": 6,
       "available": 1
     },
     {
-      "machine_id": "H2",
-      "day": 14,
+      "machine_id": "H3",
+      "day": 7,
+      "available": 1
+    },
+    {
+      "machine_id": "H4",
+      "day": 1,
+      "available": 1
+    },
+    {
+      "machine_id": "H4",
+      "day": 2,
+      "available": 1
+    },
+    {
+      "machine_id": "H4",
+      "day": 3,
+      "available": 1
+    },
+    {
+      "machine_id": "H4",
+      "day": 4,
+      "available": 1
+    },
+    {
+      "machine_id": "H4",
+      "day": 5,
+      "available": 1
+    },
+    {
+      "machine_id": "H4",
+      "day": 6,
+      "available": 1
+    },
+    {
+      "machine_id": "H4",
+      "day": 7,
       "available": 1
     }
   ],
@@ -300,9 +465,15 @@
     "landing_slack": 0.0
   },
   "block_system": {
-    "B1": "ground_fb_skid",
-    "B2": "ground_fb_skid",
-    "B3": "ground_fb_skid"
+    "B01": "ground_fb_skid",
+    "B02": "ground_fb_skid",
+    "B03": "ground_fb_skid",
+    "B04": "ground_fb_skid",
+    "B05": "ground_fb_skid",
+    "B06": "ground_fb_skid",
+    "B07": "ground_fb_skid",
+    "B08": "ground_fb_skid",
+    "B09": "ground_fb_skid"
   },
   "systems": {
     "ground_fb_skid": {
@@ -2092,63 +2263,435 @@
   },
   "mobilisation_params": {
     "H1": {
-      "walk_cost_per_meter": 0.015,
-      "move_cost_flat": 60.0,
-      "walk_threshold_m": 800.0,
-      "setup_cost": 10.0
+      "walk_cost_per_meter": 0.02,
+      "move_cost_flat": 320.0,
+      "walk_threshold_m": 850.0,
+      "setup_cost": 50.0
     },
     "H2": {
-      "walk_cost_per_meter": 0.015,
-      "move_cost_flat": 55.0,
-      "walk_threshold_m": 800.0,
-      "setup_cost": 10.0
+      "walk_cost_per_meter": 0.02,
+      "move_cost_flat": 320.0,
+      "walk_threshold_m": 850.0,
+      "setup_cost": 50.0
+    },
+    "H3": {
+      "walk_cost_per_meter": 0.02,
+      "move_cost_flat": 320.0,
+      "walk_threshold_m": 850.0,
+      "setup_cost": 50.0
+    },
+    "H4": {
+      "walk_cost_per_meter": 0.02,
+      "move_cost_flat": 320.0,
+      "walk_threshold_m": 850.0,
+      "setup_cost": 50.0
     }
   },
   "mobilisation_distances": [
     {
-      "prev_block": "B1",
-      "next_block": "B2",
-      "distance": 500.0
+      "prev_block": "B01",
+      "next_block": "B02",
+      "distance": 162.0
     },
     {
-      "prev_block": "B2",
-      "next_block": "B1",
-      "distance": 500.0
+      "prev_block": "B02",
+      "next_block": "B01",
+      "distance": 162.0
     },
     {
-      "prev_block": "B1",
-      "next_block": "B1",
+      "prev_block": "B01",
+      "next_block": "B01",
       "distance": 0.0
     },
     {
-      "prev_block": "B2",
-      "next_block": "B2",
+      "prev_block": "B02",
+      "next_block": "B02",
       "distance": 0.0
     },
     {
-      "prev_block": "B1",
-      "next_block": "B3",
-      "distance": 2000.0
+      "prev_block": "B01",
+      "next_block": "B03",
+      "distance": 174.0
     },
     {
-      "prev_block": "B3",
-      "next_block": "B1",
-      "distance": 2000.0
+      "prev_block": "B03",
+      "next_block": "B01",
+      "distance": 174.0
     },
     {
-      "prev_block": "B3",
-      "next_block": "B3",
+      "prev_block": "B03",
+      "next_block": "B03",
       "distance": 0.0
     },
     {
-      "prev_block": "B2",
-      "next_block": "B3",
-      "distance": 1500.0
+      "prev_block": "B01",
+      "next_block": "B04",
+      "distance": 186.0
     },
     {
-      "prev_block": "B3",
-      "next_block": "B2",
-      "distance": 1500.0
+      "prev_block": "B04",
+      "next_block": "B01",
+      "distance": 186.0
+    },
+    {
+      "prev_block": "B04",
+      "next_block": "B04",
+      "distance": 0.0
+    },
+    {
+      "prev_block": "B01",
+      "next_block": "B05",
+      "distance": 198.0
+    },
+    {
+      "prev_block": "B05",
+      "next_block": "B01",
+      "distance": 198.0
+    },
+    {
+      "prev_block": "B05",
+      "next_block": "B05",
+      "distance": 0.0
+    },
+    {
+      "prev_block": "B01",
+      "next_block": "B06",
+      "distance": 210.0
+    },
+    {
+      "prev_block": "B06",
+      "next_block": "B01",
+      "distance": 210.0
+    },
+    {
+      "prev_block": "B06",
+      "next_block": "B06",
+      "distance": 0.0
+    },
+    {
+      "prev_block": "B01",
+      "next_block": "B07",
+      "distance": 222.0
+    },
+    {
+      "prev_block": "B07",
+      "next_block": "B01",
+      "distance": 222.0
+    },
+    {
+      "prev_block": "B07",
+      "next_block": "B07",
+      "distance": 0.0
+    },
+    {
+      "prev_block": "B01",
+      "next_block": "B08",
+      "distance": 234.0
+    },
+    {
+      "prev_block": "B08",
+      "next_block": "B01",
+      "distance": 234.0
+    },
+    {
+      "prev_block": "B08",
+      "next_block": "B08",
+      "distance": 0.0
+    },
+    {
+      "prev_block": "B01",
+      "next_block": "B09",
+      "distance": 246.0
+    },
+    {
+      "prev_block": "B09",
+      "next_block": "B01",
+      "distance": 246.0
+    },
+    {
+      "prev_block": "B09",
+      "next_block": "B09",
+      "distance": 0.0
+    },
+    {
+      "prev_block": "B02",
+      "next_block": "B03",
+      "distance": 162.0
+    },
+    {
+      "prev_block": "B03",
+      "next_block": "B02",
+      "distance": 162.0
+    },
+    {
+      "prev_block": "B02",
+      "next_block": "B04",
+      "distance": 174.0
+    },
+    {
+      "prev_block": "B04",
+      "next_block": "B02",
+      "distance": 174.0
+    },
+    {
+      "prev_block": "B02",
+      "next_block": "B05",
+      "distance": 186.0
+    },
+    {
+      "prev_block": "B05",
+      "next_block": "B02",
+      "distance": 186.0
+    },
+    {
+      "prev_block": "B02",
+      "next_block": "B06",
+      "distance": 198.0
+    },
+    {
+      "prev_block": "B06",
+      "next_block": "B02",
+      "distance": 198.0
+    },
+    {
+      "prev_block": "B02",
+      "next_block": "B07",
+      "distance": 210.0
+    },
+    {
+      "prev_block": "B07",
+      "next_block": "B02",
+      "distance": 210.0
+    },
+    {
+      "prev_block": "B02",
+      "next_block": "B08",
+      "distance": 222.0
+    },
+    {
+      "prev_block": "B08",
+      "next_block": "B02",
+      "distance": 222.0
+    },
+    {
+      "prev_block": "B02",
+      "next_block": "B09",
+      "distance": 234.0
+    },
+    {
+      "prev_block": "B09",
+      "next_block": "B02",
+      "distance": 234.0
+    },
+    {
+      "prev_block": "B03",
+      "next_block": "B04",
+      "distance": 162.0
+    },
+    {
+      "prev_block": "B04",
+      "next_block": "B03",
+      "distance": 162.0
+    },
+    {
+      "prev_block": "B03",
+      "next_block": "B05",
+      "distance": 174.0
+    },
+    {
+      "prev_block": "B05",
+      "next_block": "B03",
+      "distance": 174.0
+    },
+    {
+      "prev_block": "B03",
+      "next_block": "B06",
+      "distance": 186.0
+    },
+    {
+      "prev_block": "B06",
+      "next_block": "B03",
+      "distance": 186.0
+    },
+    {
+      "prev_block": "B03",
+      "next_block": "B07",
+      "distance": 198.0
+    },
+    {
+      "prev_block": "B07",
+      "next_block": "B03",
+      "distance": 198.0
+    },
+    {
+      "prev_block": "B03",
+      "next_block": "B08",
+      "distance": 210.0
+    },
+    {
+      "prev_block": "B08",
+      "next_block": "B03",
+      "distance": 210.0
+    },
+    {
+      "prev_block": "B03",
+      "next_block": "B09",
+      "distance": 222.0
+    },
+    {
+      "prev_block": "B09",
+      "next_block": "B03",
+      "distance": 222.0
+    },
+    {
+      "prev_block": "B04",
+      "next_block": "B05",
+      "distance": 162.0
+    },
+    {
+      "prev_block": "B05",
+      "next_block": "B04",
+      "distance": 162.0
+    },
+    {
+      "prev_block": "B04",
+      "next_block": "B06",
+      "distance": 174.0
+    },
+    {
+      "prev_block": "B06",
+      "next_block": "B04",
+      "distance": 174.0
+    },
+    {
+      "prev_block": "B04",
+      "next_block": "B07",
+      "distance": 186.0
+    },
+    {
+      "prev_block": "B07",
+      "next_block": "B04",
+      "distance": 186.0
+    },
+    {
+      "prev_block": "B04",
+      "next_block": "B08",
+      "distance": 198.0
+    },
+    {
+      "prev_block": "B08",
+      "next_block": "B04",
+      "distance": 198.0
+    },
+    {
+      "prev_block": "B04",
+      "next_block": "B09",
+      "distance": 210.0
+    },
+    {
+      "prev_block": "B09",
+      "next_block": "B04",
+      "distance": 210.0
+    },
+    {
+      "prev_block": "B05",
+      "next_block": "B06",
+      "distance": 162.0
+    },
+    {
+      "prev_block": "B06",
+      "next_block": "B05",
+      "distance": 162.0
+    },
+    {
+      "prev_block": "B05",
+      "next_block": "B07",
+      "distance": 174.0
+    },
+    {
+      "prev_block": "B07",
+      "next_block": "B05",
+      "distance": 174.0
+    },
+    {
+      "prev_block": "B05",
+      "next_block": "B08",
+      "distance": 186.0
+    },
+    {
+      "prev_block": "B08",
+      "next_block": "B05",
+      "distance": 186.0
+    },
+    {
+      "prev_block": "B05",
+      "next_block": "B09",
+      "distance": 198.0
+    },
+    {
+      "prev_block": "B09",
+      "next_block": "B05",
+      "distance": 198.0
+    },
+    {
+      "prev_block": "B06",
+      "next_block": "B07",
+      "distance": 162.0
+    },
+    {
+      "prev_block": "B07",
+      "next_block": "B06",
+      "distance": 162.0
+    },
+    {
+      "prev_block": "B06",
+      "next_block": "B08",
+      "distance": 174.0
+    },
+    {
+      "prev_block": "B08",
+      "next_block": "B06",
+      "distance": 174.0
+    },
+    {
+      "prev_block": "B06",
+      "next_block": "B09",
+      "distance": 186.0
+    },
+    {
+      "prev_block": "B09",
+      "next_block": "B06",
+      "distance": 186.0
+    },
+    {
+      "prev_block": "B07",
+      "next_block": "B08",
+      "distance": 162.0
+    },
+    {
+      "prev_block": "B08",
+      "next_block": "B07",
+      "distance": 162.0
+    },
+    {
+      "prev_block": "B07",
+      "next_block": "B09",
+      "distance": 174.0
+    },
+    {
+      "prev_block": "B09",
+      "next_block": "B07",
+      "distance": 174.0
+    },
+    {
+      "prev_block": "B08",
+      "next_block": "B09",
+      "distance": 162.0
+    },
+    {
+      "prev_block": "B09",
+      "next_block": "B08",
+      "distance": 162.0
     }
   ]
 }

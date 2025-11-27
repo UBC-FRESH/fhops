@@ -4,7 +4,7 @@ from fhops.scenario.io.loaders import load_scenario
 
 
 def test_build_operational_bundle_basic_sets() -> None:
-    scenario = load_scenario("examples/minitoy/scenario.yaml")
+    scenario = load_scenario("examples/tiny7/scenario.yaml")
     problem = Problem.from_scenario(scenario)
 
     bundle = build_operational_bundle(problem)

@@ -10,8 +10,8 @@ Basic Usage
 
 .. code-block:: bash
 
-    fhops solve-ils examples/minitoy/scenario.yaml \
-        --out tmp/minitoy_ils.csv \
+    fhops solve-ils examples/tiny7/scenario.yaml \
+        --out tmp/tiny7_ils.csv \
         --iters 250 --perturbation-strength 3 --stall-limit 10 \
         --batch-neighbours 4 --parallel-workers 4 \
         --telemetry-log tmp/ils_runs.jsonl
@@ -46,6 +46,6 @@ Benchmarks
 ----------
 
 ``fhops bench suite --include-ils`` emits additional ``ils`` rows alongside SA/Tabu/MIP results.
-Current runs (minitoy/med42/large84, 250 iterations) show ILS closing small gaps faster than Tabu
+Current runs (tiny7/med42/large84, 250 iterations) show ILS closing small gaps faster than Tabu
 while remaining slightly behind SA. The solver stays opt-in until we complete the hybrid warm-start
 investigation documented in ``notes/metaheuristic_roadmap.md``.

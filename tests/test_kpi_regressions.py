@@ -23,7 +23,7 @@ DETERMINISTIC_FIXTURE = FIXTURE_DIR / "deterministic.json"
 STOCHASTIC_FIXTURE = FIXTURE_DIR / "stochastic.json"
 
 
-@pytest.mark.parametrize("scenario_name", ["minitoy", "med42"])
+@pytest.mark.parametrize("scenario_name", ["tiny7", "med42"])
 @pytest.mark.milp_refactor
 def test_kpi_deterministic_snapshot(scenario_name: str) -> None:
     fixture_data = json.loads(DETERMINISTIC_FIXTURE.read_text(encoding="utf-8"))[scenario_name]

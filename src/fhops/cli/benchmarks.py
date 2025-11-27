@@ -60,7 +60,7 @@ class BenchmarkScenario:
 
 
 DEFAULT_SCENARIOS: tuple[BenchmarkScenario, ...] = (
-    BenchmarkScenario("minitoy", Path("examples/minitoy/scenario.yaml")),
+    BenchmarkScenario("tiny7", Path("examples/tiny7/scenario.yaml")),
     BenchmarkScenario("med42", Path("examples/med42/scenario.yaml")),
     BenchmarkScenario("large84", Path("examples/large84/scenario.yaml")),
     BenchmarkScenario("synthetic-small", Path("examples/synthetic/small/scenario.yaml")),
@@ -160,7 +160,7 @@ def run_benchmark_suite(
     ----------
     scenario_paths : Sequence[pathlib.Path] | None
         Optional list of scenario YAML paths to benchmark. ``None`` defaults to the bundled
-        scenarios (minitoy → med42 → large84 → synthetic-small).
+        scenarios (tiny7 → med42 → large84 → synthetic-small).
     out_dir : pathlib.Path
         Directory that will contain per-scenario outputs, summary CSV/JSON, telemetry logs, and
         solver-specific assignment CSVs.

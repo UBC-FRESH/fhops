@@ -2,7 +2,7 @@ Data Contract Guide
 ===================
 
 This guide summarises the structured inputs FHOPS expects when authoring scenarios. It
-builds on the ``examples/minitoy`` and ``tests/fixtures/regression`` assets and reflects
+builds on the ``examples/tiny7`` and ``tests/fixtures/regression`` assets and reflects
 recent extensions (mobilisation, geo metadata, crew assignments).
 
 Core Tables (CSV)
@@ -139,7 +139,7 @@ Run ``fhops validate`` to confirm the calendar files and shift labels line up be
 
 .. code-block:: bash
 
-   fhops validate examples/minitoy/scenario.yaml
+   fhops validate examples/tiny7/scenario.yaml
 
 The CLI surfaces precise validation errors (missing columns, bad shift IDs, horizon overruns)
 so you can correct the dataset without spelunking through Pydantic stack traces.

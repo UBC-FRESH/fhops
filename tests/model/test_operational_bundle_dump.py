@@ -5,11 +5,11 @@ from fhops.model.milp.data import build_operational_bundle, bundle_from_dict, bu
 from fhops.scenario.contract import Problem
 from fhops.scenario.io.loaders import load_scenario
 
-FIXTURE_PATH = Path("tests/fixtures/milp/minitoy_operational_bundle.json")
+FIXTURE_PATH = Path("tests/fixtures/milp/tiny7_operational_bundle.json")
 
 
 def test_bundle_round_trip_dict() -> None:
-    scenario = load_scenario("examples/minitoy/scenario.yaml")
+    scenario = load_scenario("examples/tiny7/scenario.yaml")
     problem = Problem.from_scenario(scenario)
     bundle = build_operational_bundle(problem)
 

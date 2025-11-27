@@ -15,14 +15,14 @@ from fhops.evaluation.playback.exporters import playback_summary_metrics
 
 SCENARIOS = [
     {
-        "slug": "minitoy",
-        "scenario": Path("examples/minitoy/scenario.yaml"),
+        "slug": "tiny7",
+        "scenario": Path("examples/tiny7/scenario.yaml"),
         "solvers": [
             (
                 "ils",
-                Path("docs/softwarex/assets/data/benchmarks/minitoy/user-1/ils_assignments.csv"),
+                Path("docs/softwarex/assets/data/benchmarks/tiny7/user-1/ils_assignments.csv"),
             ),
-            ("sa", Path("docs/softwarex/assets/data/benchmarks/minitoy/user-1/sa_assignments.csv")),
+            ("sa", Path("docs/softwarex/assets/data/benchmarks/tiny7/user-1/sa_assignments.csv")),
         ],
     },
     {

@@ -10,7 +10,7 @@ from fhops.scenario.io.loaders import load_scenario
 
 
 def _load_problem() -> Problem:
-    scenario = load_scenario("examples/minitoy/scenario.yaml")
+    scenario = load_scenario("examples/tiny7/scenario.yaml")
     return Problem.from_scenario(scenario)
 
 
@@ -27,7 +27,7 @@ def test_solve_ils_writes_telemetry(tmp_path: Path):
         iters=10,
         seed=11,
         telemetry_log=telemetry_path,
-        telemetry_context={"scenario_path": "examples/minitoy/scenario.yaml"},
+        telemetry_context={"scenario_path": "examples/tiny7/scenario.yaml"},
     )
     assert telemetry_path.exists()
     assert "kpi_totals" in res["meta"]
@@ -55,7 +55,7 @@ def test_solve_tabu_writes_telemetry(tmp_path: Path):
         iters=15,
         seed=5,
         telemetry_log=telemetry_path,
-        telemetry_context={"scenario_path": "examples/minitoy/scenario.yaml"},
+        telemetry_context={"scenario_path": "examples/tiny7/scenario.yaml"},
     )
     assert telemetry_path.exists()
     assert "kpi_totals" in res["meta"]
@@ -87,7 +87,7 @@ def test_solve_ils_watch_sink_emits_snapshots():
         iters=20,
         seed=3,
         watch_sink=sink,
-        watch_metadata={"scenario": "minitoy", "solver": "ils"},
+        watch_metadata={"scenario": "tiny7", "solver": "ils"},
     )
     assert captured, "ILS should emit snapshots when watch sink is provided"
     assert captured[-1].solver == "ils"
@@ -106,7 +106,7 @@ def test_solve_tabu_watch_sink_emits_snapshots():
         iters=30,
         seed=7,
         watch_sink=sink,
-        watch_metadata={"scenario": "minitoy", "solver": "tabu"},
+        watch_metadata={"scenario": "tiny7", "solver": "tabu"},
     )
     assert captured, "Tabu should emit snapshots when watch sink is provided"
     assert captured[-1].solver == "tabu"

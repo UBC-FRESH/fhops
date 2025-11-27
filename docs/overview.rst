@@ -64,7 +64,7 @@ Baseline Workflows
 
 Two canonical scenarios ship with FHOPS:
 
-- ``examples/minitoy`` — minimal CSV/YAML inputs illustrating the scenario contract.
+- ``examples/tiny7`` — minimal CSV/YAML inputs illustrating the scenario contract.
 - ``tests/fixtures/regression`` — deterministic fixture covering mobilisation, machine
   blackouts, and harvest-system sequencing with baseline KPI/objective values.
 

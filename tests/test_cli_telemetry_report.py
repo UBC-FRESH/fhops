@@ -21,7 +21,7 @@ def test_telemetry_report_generates_outputs(tmp_path: Path):
         app,
         [
             "tune-random",
-            "examples/minitoy/scenario.yaml",
+            "examples/tiny7/scenario.yaml",
             "--telemetry-log",
             str(telemetry_log),
             "--runs",
@@ -36,7 +36,7 @@ def test_telemetry_report_generates_outputs(tmp_path: Path):
         app,
         [
             "tune-grid",
-            "examples/minitoy/scenario.yaml",
+            "examples/tiny7/scenario.yaml",
             "--telemetry-log",
             str(telemetry_log),
             "--batch-size",
@@ -55,7 +55,7 @@ def test_telemetry_report_generates_outputs(tmp_path: Path):
         app,
         [
             "tune-bayes",
-            "examples/minitoy/scenario.yaml",
+            "examples/tiny7/scenario.yaml",
             "--telemetry-log",
             str(telemetry_log),
             "--trials",

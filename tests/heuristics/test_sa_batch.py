@@ -79,7 +79,7 @@ def test_evaluate_candidates_empty():
 
 
 def test_solve_sa_writes_telemetry(tmp_path: Path):
-    scenario_path = Path("examples/minitoy/scenario.yaml")
+    scenario_path = Path("examples/tiny7/scenario.yaml")
     scenario = load_scenario(scenario_path)
     pb = Problem.from_scenario(scenario)
     log_path = tmp_path / "runs.jsonl"

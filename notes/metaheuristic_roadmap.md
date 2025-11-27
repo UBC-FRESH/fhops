@@ -17,7 +17,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [ ] Investigate hybrid approaches (MIP warm start + heuristic refinement).
 
 ## Testing & Evaluation
-- [x] Create benchmark suite capturing objective value vs runtime for standard scenarios (minitoy/med42/large84 via `fhops bench suite`).
+- [x] Create benchmark suite capturing objective value vs runtime for standard scenarios (tiny7/med42/large84 via `fhops bench suite`).
 - [ ] Add stochastic regression tests with fixed seeds.
 - [ ] Consider property-based tests for invariants (e.g., feasibility of generated schedules).
 
@@ -35,11 +35,11 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] **Neighbourhoods:** port swap/move operators to iterate over shift indices, maintaining feasibility (machine capacity, landing caps, mobilisation cooldowns). *(Neighbour sanitisation now enforces shift availability and blackout checks; benchmark fixtures updated for new SA behaviour.)*
 - [x] **Objective evaluation:** refactor `_evaluate` to score shift-by-shift, mirroring the shift-indexed mobilisation penalties, transition weights, and landing slack terms used in the MIP. *(Evaluation now respects shift-specific availability, blackout penalties, landing slack, and mobilisation transitions using `(machine, day, shift)` keys.)*
 - [x] **CLI & benchmarking:** ensure `solve-sa` and the benchmark harness emit shift-aware assignment tables/metrics aligned with KPIs. *(Solver exports already carry `shift_id`; CLI/docs updated to highlight the column and locking tests assert shift-level fixes.)*
-- [x] **Tests/regressions:** refresh SA-specific unit/integration tests and regression baselines to confirm parity with the shift-indexed MIP outputs. *(Regression harness now asserts shift-aware assignments and updated acceptance metrics; minitoy fixture refreshed.)*
+- [x] **Tests/regressions:** refresh SA-specific unit/integration tests and regression baselines to confirm parity with the shift-indexed MIP outputs. *(Regression harness now asserts shift-aware assignments and updated acceptance metrics; tiny7 fixture refreshed.)*
 
 ## Metaheuristic Expansion (next milestones)
 - [x] **Operator registry scaffold:** create a registry for heuristic operators (swap, move, insert, mobilisation-aware shake) with enable/weight flags surfaced via `solve-heur` and benchmark CLI options. Implement telemetry hooks for acceptance counts per operator.
-- [x] **Advanced neighbourhoods:** add shift-aware block insertion (machine ↔ shift reassignment), cross-machine exchange, and mobilisation-sensitive diversification moves. Benchmark each operator on minitoy/med42/large84 to establish performance impacts.
+- [x] **Advanced neighbourhoods:** add shift-aware block insertion (machine ↔ shift reassignment), cross-machine exchange, and mobilisation-sensitive diversification moves. Benchmark each operator on tiny7/med42/large84 to establish performance impacts.
 - [x] **SA parallel execution (opt-in):** deliver multi-start orchestration, batched neighbour evaluation, CLI/config integration, and profiling/documentation for the new knobs.
 - [x] **Tabu Search prototype:** implement a Tabu neighbourhood on top of the registry (tabu tenure, aspiration criteria) and compare results against SA in the benchmarking harness. *(Prototype available via `fhops solve-tabu` and `fhops bench suite --include-tabu`; keep Tabu opt-in until future tuning narrows the SA performance gap.)*
 - [x] **ILS / Hybrid solver:** design an Iterated Local Search or MIP warm-start hybrid using the registry operators. Document configuration defaults and add harness support for hybrid runs. *(ILS CLI/docs/telemetry live; regression + benchmark suite captured in `tmp/bench_ils`; solver remains opt-in pending further tuning.)*
@@ -116,8 +116,8 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 
 ###### Subtasks – Testing & Benchmarks (ILS/Hybrid)
 - [x] Unit tests covering perturbation behaviour, restart logic, and feasibility checks.
-- [x] Regression tests on minitoy scenario ensuring feasibility and consistent objective. *(`pytest tests/test_regression_integration.py`)*
-- [x] Benchmark runs (minitoy/med42/large84) comparing SA, Tabu, and ILS/Hybrid; record telemetry/decision notes. *(See `tmp/bench_ils/summary.{csv,json}` — SA remains strongest on all scenarios; ILS trails SA but beats Tabu on quality while staying sub-second on minitoy/med42.)*
+- [x] Regression tests on tiny7 scenario ensuring feasibility and consistent objective. *(`pytest tests/test_regression_integration.py`)*
+- [x] Benchmark runs (tiny7/med42/large84) comparing SA, Tabu, and ILS/Hybrid; record telemetry/decision notes. *(See `tmp/bench_ils/summary.{csv,json}` — SA remains strongest on all scenarios; ILS trails SA but beats Tabu on quality while staying sub-second on tiny7/med42.)*
 
 ###### Subtasks – Documentation (ILS/Hybrid)
 - [x] Update CLI reference and telemetry docs with new solver options/fields.
@@ -137,7 +137,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
   * Add a short narrative in `docs/reference/cli.rst` (bench section) describing how to enable multi-solver comparisons and where to find the artefacts. *(CLI reference now calls out the combined `--include-ils/--include-tabu` mode and comparison columns.)*
 - [x] Add regression tests/fixtures to lock in the enhanced reporting.
   * Extend `tests/test_benchmark_harness.py` to assert that comparison fields appear when multiple solvers are included. *(Tests cover SA+MIP, SA+Tabu, and preset comparison paths.)*
-  * Include a fixture with predetermined solver metrics to keep the comparison calculations stable across refactors. *(Existing minitoy fixture continues to anchor numeric expectations; no new fixture needed at this stage.)*
+  * Include a fixture with predetermined solver metrics to keep the comparison calculations stable across refactors. *(Existing tiny7 fixture continues to anchor numeric expectations; no new fixture needed at this stage.)*
 
 ### Subtasks for Operator Registry Scaffold
 1. **Registry data model**
@@ -191,7 +191,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] **Per-operator counters:** track proposals/acceptances per operator within `solve_sa` and surface them in the returned `meta["operators_stats"]` object.
 - [x] **Benchmark aggregation:** extend `_record_metrics` to persist operator stats (e.g., proposals, acceptance rate) into summary outputs/CSV for SA runs.
 - [x] **CLI display:** optionally print a concise operator stats table in `solve-heur` when `--debug` or a new `--show-operator-stats` flag is used.
-- [x] **Tests:** add unit/integration coverage verifying counters increment correctly (e.g., deterministic neighbour selection, smoke test via minitoy benchmark).
+- [x] **Tests:** add unit/integration coverage verifying counters increment correctly (e.g., deterministic neighbour selection, smoke test via tiny7 benchmark).
 - [x] **Documentation:** document telemetry fields in CLI reference and roadmap, highlighting how to interpret operator statistics during tuning sessions.
 - [x] **Persistent telemetry log:** design a structured log (e.g., newline-delimited JSON or SQLite) keyed by scenario/operator config capturing run metadata (seed, iterations, operator stats, acceptance rate, objective). Provide a helper to append entries and document the schema for future ML/DL hyperparameter tuning workflows.
 
@@ -206,7 +206,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 - [x] **Design & interfaces:** define new operators (block insertion, cross-machine exchange, mobilisation-aware shake), specifying preconditions, behaviour, and additional context needed (e.g., distance lookups).
 - [x] **Implementation:** add operator classes that reuse the shared sanitizer, register them with default weights, and ensure plan cloning stays efficient.
 - [x] **Weighting & presets:** set sensible defaults, expose new presets (e.g., `explore`, `mobilisation`), and update CLI docs/config helpers.
-- [x] **Benchmark evaluation:** compare baseline vs. extended operator sets across minitoy/med42/large84, capturing telemetry and summarising outcomes in notes/changelog. *(Raised default MIP timeout to 1800 s so large84 runs complete without manual overrides.)*
+- [x] **Benchmark evaluation:** compare baseline vs. extended operator sets across tiny7/med42/large84, capturing telemetry and summarising outcomes in notes/changelog. *(Raised default MIP timeout to 1800 s so large84 runs complete without manual overrides.)*
 - [x] **Testing & regression:** expand unit/regression coverage to exercise new operators (window constraints, mobilisation penalties, lock handling).
 
 #### Parallelisation ideas (sidebar)
@@ -236,7 +236,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
   * Add CLI flag to route per-run logs to separate directory when desired (e.g., `--multi-start-log-dir`).
 
 - [x] Profile memory/CPU usage to confirm batch evaluation scales without overwhelming system resources.
-  * Benchmarked minitoy/med42 (`iters=500`) and minitoy/med42/large84 (`iters=2000`) across `batch_size` in {None,4} and `max_workers` in {None,4}; CSVs stored at `tmp/sa_batch_profile.csv` and `tmp/sa_batch_profile_long.csv`.
+  * Benchmarked tiny7/med42 (`iters=500`) and tiny7/med42/large84 (`iters=2000`) across `batch_size` in {None,4} and `max_workers` in {None,4}; CSVs stored at `tmp/sa_batch_profile.csv` and `tmp/sa_batch_profile_long.csv`.
   * Threaded evaluation consistently added 5–6x overhead without objective gains; recommend keeping `max_workers=None` as default and adding guardrails to fall back automatically when parallel speedup is not observed.
 
 ###### Subtasks – CLI/config integration (parallel)
@@ -246,7 +246,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 
 ###### Subtasks – Testing & benchmarks (parallel)
 - [x] Add unit/integration tests verifying identical results when `workers=1` (parity with single-thread path). *(See `tests/heuristics/test_sa_batch.py::test_solve_sa_batch_matches_single`.)*
-- [x] Benchmark minitoy/med42/large84 with parallel options (record speedups/objective differences). *(Profiles captured in `tmp/sa_batch_profile.csv` and `tmp/sa_batch_profile_long.csv`.)*
+- [x] Benchmark tiny7/med42/large84 with parallel options (record speedups/objective differences). *(Profiles captured in `tmp/sa_batch_profile.csv` and `tmp/sa_batch_profile_long.csv`.)*
 - [x] Document findings in roadmap/changelog and decide on default stance after evaluation. *(Threaded evaluation shows 5–6× overhead, so defaults remain sequential with parallel options opt-in.)*
 
 ##### Plan – Advanced neighbourhoods: Design & interfaces
@@ -337,10 +337,10 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
   * [x] Update benchmark summary output to include preset name, operator weights, and acceptance stats.
   * [x] Ensure JSONL telemetry captures preset context for downstream analysis.
 - [x] Analyse telemetry JSONL to quantify improvements/changes; summarise findings in notes and changelog entries.
-  * [x] Collect benchmark runs with `--compare-preset` (default vs explore/mobilisation/stabilise) across sample scenarios. *(`fhops bench suite --sa-iters 1000` on minitoy and med42; med42 run skipped MIP via `--no-include-mip` to keep runtime manageable.)*
-  * [x] Parse summary/telemetry outputs to extract objective gaps, runtime changes, and operator acceptance stats. *(Default vs explore/mobilisation reduced objective gap on minitoy from 41 → 22, med42 objective improved from -677 → -268 while runtime grew ~4×; acceptance remained 1.0 for all operators given current sanitizer behaviour.)*
+  * [x] Collect benchmark runs with `--compare-preset` (default vs explore/mobilisation/stabilise) across sample scenarios. *(`fhops bench suite --sa-iters 1000` on tiny7 and med42; med42 run skipped MIP via `--no-include-mip` to keep runtime manageable.)*
+  * [x] Parse summary/telemetry outputs to extract objective gaps, runtime changes, and operator acceptance stats. *(Default vs explore/mobilisation reduced objective gap on tiny7 from 41 → 22, med42 objective improved from -677 → -268 while runtime grew ~4×; acceptance remained 1.0 for all operators given current sanitizer behaviour.)*
   * [x] Summarise findings in this document and note any recommended default adjustments; update changelog if changes warranted. *(Advanced presets offer better objective quality at higher runtime—recommend keeping default weights as-is, treating `explore`/`mobilisation` as opt-in for diversification. No changelog update beyond benchmark tooling entry.)*
-- [x] Decide on default inclusion of new operators based on benchmark evidence. *(Keep current default swap/move weights: diversification presets improve objective quality but add 2–4× runtime on minitoy/med42; retain opt-in presets until further tuning or adaptive switching is available.)*
+- [x] Decide on default inclusion of new operators based on benchmark evidence. *(Keep current default swap/move weights: diversification presets improve objective quality but add 2–4× runtime on tiny7/med42; retain opt-in presets until further tuning or adaptive switching is available.)*
 
 ##### Plan – Advanced neighbourhoods: Testing & regression
 - [x] Add unit tests verifying each operator respects availability, windows, locks, and mobilisation rules. *(Implemented in `tests/heuristics/test_operators.py` covering window constraints, machine capability filters, schedule locks, and mobilisation spacing.)*
@@ -351,7 +351,7 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 ##### Plan – Tabu Search Prototype
 - [x] Algorithm design: define neighbourhood moves, tabu tenure strategy, aspiration criteria, and scoring alignment with SA.
 - [x] Implementation: build `fhops.optimization.heuristics.tabu` module (builder, solver entrypoint, CLI integration).
-- [x] Testing & benchmarks: unit tests for tabu mechanics, regression comparison against SA, benchmarking on sample scenarios. *(Tabu remains opt-in after comparing against SA on minitoy/med42/large84.)*
+- [x] Testing & benchmarks: unit tests for tabu mechanics, regression comparison against SA, benchmarking on sample scenarios. *(Tabu remains opt-in after comparing against SA on tiny7/med42/large84.)*
 - [x] Documentation: CLI documentation, roadmap updates, and how-to section for configuring Tabu Search.
 
 ###### Subtasks – Tabu Algorithm Design
@@ -375,8 +375,8 @@ Status: Draft — baseline SA exists; expansion pending Phase 2.
 
 ###### Subtasks – Testing & Benchmarks (Tabu)
 - [x] Unit tests covering tabu list behaviour, aspiration, and feasibility checks.
-- [x] Regression tests ensuring baseline objective matches expectations on minitoy scenario.
-- [x] Benchmark runs (minitoy/med42/large84) comparing SA vs Tabu; capture telemetry for roadmap notes. *(Results in `tmp/tabu_bench/summary.csv` show Tabu worse than SA across scenarios; keep solver experimental.)*
+- [x] Regression tests ensuring baseline objective matches expectations on tiny7 scenario.
+- [x] Benchmark runs (tiny7/med42/large84) comparing SA vs Tabu; capture telemetry for roadmap notes. *(Results in `tmp/tabu_bench/summary.csv` show Tabu worse than SA across scenarios; keep solver experimental.)*
 
 ###### Subtasks – Documentation (Tabu)
 - [x] Update CLI reference and telemetry docs with Tabu-specific fields/options.

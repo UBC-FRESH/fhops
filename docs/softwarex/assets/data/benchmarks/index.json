@@ -8,11 +8,11 @@
       "scenario": "/home/gep/projects/fhops/examples/med42/scenario.yaml"
     },
     {
-      "slug": "minitoy",
-      "label": "MiniToy reference scenario",
-      "summary": "minitoy/summary.json",
-      "telemetry": "minitoy/telemetry.jsonl",
-      "scenario": "/home/gep/projects/fhops/examples/minitoy/scenario.yaml"
+      "slug": "tiny7",
+      "label": "Tiny7 reference scenario",
+      "summary": "tiny7/summary.json",
+      "telemetry": "tiny7/telemetry.jsonl",
+      "scenario": "/home/gep/projects/fhops/examples/tiny7/scenario.yaml"
     },
     {
       "slug": "synthetic_small",

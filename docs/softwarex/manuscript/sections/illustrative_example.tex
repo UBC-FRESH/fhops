@@ -5,7 +5,7 @@
 To demonstrate how FHOPS’ ingest/solver/evaluation layers fit together we run a reproducible benchmark suite encompassing:
 
 \begin{itemize}
-  \item Two published reference scenarios (\texttt{examples/minitoy} and \texttt{examples/med42}) that mirror common BC operational contexts (ground-based vs. mixed skyline/tethered systems).
+  \item Two published reference scenarios (\texttt{examples/tiny7} and \texttt{examples/med42}) that mirror common BC operational contexts (ground-based vs. mixed skyline/tethered systems).
   \item A synthetic three-tier scaling set generated via \texttt{fhops synth generate out/synthetic\_\{small,medium,large\}} so readers can inspect runtime vs. problem size without relying on proprietary data.
   \item Companion tuning, playback, costing, and robustness analyses that mirror the automation pipeline described in Section~\ref{sec:software-description}.
 \end{itemize}
@@ -13,7 +13,7 @@ To demonstrate how FHOPS’ ingest/solver/evaluation layers fit together we run 
 \input{sections/includes/cli_pipeline}
 
 \subsection{Benchmark suite (SA/ILS/Tabu)}
-We execute \texttt{fhops bench suite} across minitoy, med42, and synthetic-small scenarios with SA, ILS, and Tabu heuristics plus optional compare presets (\texttt{--compare-preset diversify --compare-preset mobilisation}). Each run produces:
+We execute \texttt{fhops bench suite} across tiny7, med42, and synthetic-small scenarios with SA, ILS, and Tabu heuristics plus optional compare presets (\texttt{--compare-preset diversify --compare-preset mobilisation}). Each run produces:
 \begin{itemize}
   \item \texttt{summary.(csv|json)} – objective, runtime, assignment count, solver metadata.
   \item \texttt{telemetry.jsonl} – per-iteration objective traces and operator weights.
@@ -22,7 +22,7 @@ We execute \texttt{fhops bench suite} across minitoy, med42, and synthetic-small
 
 The resulting manuscript table (Table~\ref{tab:benchmarks}) summarises solver performance and runtime. Highlights include:
 \begin{itemize}
-  \item \textbf{MiniToy}: SA’s default preset reaches 15.5 production units in $1.45\,$s with 17 assignments, ILS improves the objective to 23.0 in $2.75\,$s with eight assignments, and Tabu’s diversification run now requires $22\,$s (objective 10.0, three assignments) rather than terminating instantly.
+  \item \textbf{Tiny7}: SA’s default preset reaches 15.5 production units in $1.45\,$s with 17 assignments, ILS improves the objective to 23.0 in $2.75\,$s with eight assignments, and Tabu’s diversification run now requires $22\,$s (objective 10.0, three assignments) rather than terminating instantly.
   \item \textbf{Med42}: ILS produces the best cost ($-547.8$) in roughly $38\,$s by completing 103 assignments, while SA offers a faster but weaker baseline ($-358.2$ in $23\,$s). Tabu remains a stress-test run (objective $18.7$) but now consumes $332\,$s, sitting comfortably within the desired MIP-scale runtime envelope.
   \item \textbf{Synthetic-small}: Serves as the deterministic scaling anchor (objective 39.79 across all heuristics) with runtimes between $0.7$ and $12\,$s, providing readers a fully shareable benchmark to validate solver behaviour.
 \end{itemize}
@@ -43,7 +43,7 @@ The tuning harness runs random/grid/Bayesian/ILS/Tabu studies on the same scenar
   \item \texttt{telemetry/runs.jsonl} – raw per-trial metrics for reproducibility.
 \end{itemize}
 
-Table~\ref{tab:tuning} reports the salient numbers. Bayesian optimisation pushes MiniToy from the SA default (15.5) to 38.0 units by emphasising block insertion and cross-exchange moves, while Med42’s best Bayesian trial reaches $-472.2$ by leaning on mobilisation-shake operators. For the tougher Med42 scenario the ILS-based tuner still wins overall (objective $-988.6$) and does so with sub-second runtimes, showing that FHOPS’ tuning harness enables rapid solver comparisons even on large problems.
+Table~\ref{tab:tuning} reports the salient numbers. Bayesian optimisation pushes Tiny7 from the SA default (15.5) to 38.0 units by emphasising block insertion and cross-exchange moves, while Med42’s best Bayesian trial reaches $-472.2$ by leaning on mobilisation-shake operators. For the tougher Med42 scenario the ILS-based tuner still wins overall (objective $-988.6$) and does so with sub-second runtimes, showing that FHOPS’ tuning harness enables rapid solver comparisons even on large problems.
 
 \begin{table}[t]
   \centering
@@ -78,7 +78,7 @@ Finally, the synthetic sweep utility generates small/medium/large tiers with fix
 
 \subsection{Figures and tables referenced}
 \begin{itemize}
-  \item \textbf{Table~1} – Solver performance summary for minitoy, med42, synthetic-small (derived from the \texttt{fhops bench suite} outputs).
+  \item \textbf{Table~1} – Solver performance summary for tiny7, med42, synthetic-small (derived from the \texttt{fhops bench suite} outputs).
   \item \textbf{Table~2} – Tuning leaderboard highlighting best configurations per scenario.
   \item \textbf{Figure~1} – PRISMA workflow (Section~\ref{sec:software-description}) for pipeline overview.
   \item \textbf{Figure~2} – Runtime vs. blocks plot from the synthetic sweep.

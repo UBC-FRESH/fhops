@@ -736,7 +736,7 @@ class DatasetRef:
 
 
 KNOWN_DATASETS: dict[str, DatasetRef] = {
-    "minitoy": DatasetRef("minitoy", Path("examples/minitoy/scenario.yaml")),
+    "tiny7": DatasetRef("tiny7", Path("examples/tiny7/scenario.yaml")),
     "small21": DatasetRef("small21", Path("examples/small21/scenario.yaml")),
     "med42": DatasetRef("med42", Path("examples/med42/scenario.yaml")),
     "large84": DatasetRef("large84", Path("examples/large84/scenario.yaml")),
@@ -4527,7 +4527,7 @@ def inspect_machine(
         None,
         "--dataset",
         "-d",
-        help="Dataset name (e.g., minitoy) or path to scenario/dataset folder.",
+        help="Dataset name (e.g., tiny7) or path to scenario/dataset folder.",
     ),
     system: str | None = typer.Option(
         None, "--system", "-s", help="Harvest system ID to focus on (prompts if omitted)."
@@ -4742,7 +4742,7 @@ def inspect_block(
         None,
         "--dataset",
         "-d",
-        help="Dataset name (e.g., minitoy) or path to scenario/dataset folder.",
+        help="Dataset name (e.g., tiny7) or path to scenario/dataset folder.",
     ),
     block: str | None = typer.Option(
         None, "--block", "-b", help="Block ID to inspect (prompts if omitted)."

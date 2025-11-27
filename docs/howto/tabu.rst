@@ -8,8 +8,8 @@ Basic Usage
 
 .. code-block:: bash
 
-    fhops solve-tabu examples/minitoy/scenario.yaml \
-        --out tmp/minitoy_tabu.csv \
+    fhops solve-tabu examples/tiny7/scenario.yaml \
+        --out tmp/tiny7_tabu.csv \
         --iters 2000 --tabu-tenure 20 --stall-limit 300 \
         --batch-neighbours 4 --parallel-workers 4 \
         --telemetry-log tmp/tabu_runs.jsonl
@@ -33,4 +33,4 @@ Telemetry records mirror SA entries but add ``tabu_tenure`` and ``stall_limit`` 
 Benchmarks
 ----------
 
-Refer to ``tmp/tabu_bench/summary.csv`` (generated via ``fhops bench suite --include-tabu``) and ``tmp/sa_batch_profile_long.csv`` for the latest profiling data. In current runs (minitoy/med42/large84, 500 iterations) Tabu lags behind SA, so the solver remains opt-in until further tuning.
+Refer to ``tmp/tabu_bench/summary.csv`` (generated via ``fhops bench suite --include-tabu``) and ``tmp/sa_batch_profile_long.csv`` for the latest profiling data. In current runs (tiny7/med42/large84, 500 iterations) Tabu lags behind SA, so the solver remains opt-in until further tuning.

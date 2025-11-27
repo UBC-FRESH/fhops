@@ -23,12 +23,12 @@ SQLite database alongside it.
 
    mkdir -p tmp/tuner-demo
 
-   fhops tune-random examples/minitoy/scenario.yaml \
+   fhops tune-random examples/tiny7/scenario.yaml \
        --runs 2 \
        --iters 150 \
        --telemetry-log tmp/tuner-demo/runs.jsonl
 
-   fhops tune-grid examples/minitoy/scenario.yaml \
+   fhops tune-grid examples/tiny7/scenario.yaml \
        --batch-size 1 \
        --batch-size 2 \
        --preset balanced \
@@ -36,13 +36,13 @@ SQLite database alongside it.
        --iters 150 \
        --telemetry-log tmp/tuner-demo/runs.jsonl
 
-   fhops tune-bayes examples/minitoy/scenario.yaml \
+   fhops tune-bayes examples/tiny7/scenario.yaml \
        --trials 3 \
        --iters 150 \
        --telemetry-log tmp/tuner-demo/runs.jsonl
 
 You can now supply **scenario bundles** instead of individual paths. The built-in
-aliases ``baseline`` (minitoy + med42), ``synthetic`` (small/medium/large tiers),
+aliases ``baseline`` (tiny7 + med42), ``synthetic`` (small/medium/large tiers),
 and the tier-specific aliases (``synthetic-small`` etc.) expand to their component
 scenarios. Point the tuning commands at a bundle with ``--bundle``:
 
@@ -90,7 +90,7 @@ allowance (and FPInnovations usage bucket) applied during the best run. When
 the KPI layer detects a non-default FPInnovations bucket (``repair_usage_hours``
 ≠ 10 000 h) the new ``repair_usage_alert`` column calls it out, and the CLI
 prints a warning summarising which scenarios/algorithms deviated. Continuous
-integration executes this pipeline for **minitoy** and **med42** so the
+integration executes this pipeline for **tiny7** and **med42** so the
 published artefacts already contain multiple scenarios.
 
 Add ``--out-summary-csv`` / ``--out-summary-markdown`` to emit a per-scenario
@@ -108,9 +108,9 @@ Markdown table (``tmp/tuner-demo/tuner_report.md``) for a short sweep:
 
    | Algorithm | Scenario | Best Objective | Mean Objective | Runs | Summary Best | Configurations |
    | --- | --- | --- | --- | --- | --- | --- |
-   | bayes | FHOPS MiniToy | 8.125 | 8.125 | 1 | 8.125 | 3 |
-   | grid | FHOPS MiniToy | 7.750 | 7.438 | 4 | 7.750 | 4 |
-   | random | FHOPS MiniToy | 7.375 | 6.812 | 2 | 7.375 | 2 |
+   | bayes | FHOPS Tiny7 | 8.125 | 8.125 | 1 | 8.125 | 3 |
+   | grid | FHOPS Tiny7 | 7.750 | 7.438 | 4 | 7.750 | 4 |
+   | random | FHOPS Tiny7 | 7.375 | 6.812 | 2 | 7.375 | 2 |
 
 Step 3 – Iterate
 ----------------
@@ -165,7 +165,7 @@ hours, weather severity, utilisation ratios) they appear as additional columns i
 the history summary. The optional Altair chart highlights objective trends at a
 glance.
 
-Continuous integration already copies the minitoy smoke sweep into the
+Continuous integration already copies the tiny7 smoke sweep into the
 ``history/`` subdirectory of the ``telemetry-report`` artifact using UTC
 timestamps, so you can download successive runs and feed them directly to the
 history command. The workflow also generates ``history_summary.{csv,md,html}``
@@ -199,7 +199,7 @@ Example command:
    :align: center
 
    Sample telemetry history derived from the committed demo data. Actual CI
-   artefacts contain the latest minitoy and med42 measurements.
+   artefacts contain the latest tiny7 and med42 measurements.
 
 The delta outputs are versioned alongside the HTML chart. When CI finishes it
 emits ``history_delta.{csv,md}`` (and any optional PNG/HTML charts you request),
@@ -384,7 +384,7 @@ Use ``--plan`` to reuse the curated budgets across bundles:
      - Default tiers
      - Tier overrides (random / grid / bayes)
    * - ``baseline-smoke``
-     - ``examples/minitoy`` + ``examples/med42``
+     - ``examples/tiny7`` + ``examples/med42``
      - ``short``
      - ``3 × 250 iters`` / ``(balanced, explore) × batch {1,2} × 250`` / ``30 trials × 250``
    * - ``synthetic-smoke``
@@ -552,10 +552,10 @@ Bundle Aliases
 The tuning commands accept ``--bundle`` to expand a manifest of scenarios. FHOPS ships
 the following aliases:
 
-* ``baseline`` → ``examples/minitoy/scenario.yaml`` and ``examples/med42/scenario.yaml``
+* ``baseline`` → ``examples/tiny7/scenario.yaml`` and ``examples/med42/scenario.yaml``
 * ``synthetic`` → the ``small``, ``medium``, and ``large`` synthetic tiers
 * ``synthetic-small`` / ``synthetic-medium`` / ``synthetic-large`` → individual synthetic tiers
-* ``minitoy`` / ``med42`` / ``large84`` → convenience handles for the built-in evaluation set
+* ``tiny7`` / ``med42`` / ``large84`` → convenience handles for the built-in evaluation set
 
 Aliases are case-insensitive and you can specify multiple ``--bundle`` flags in a single
 command. For custom bundles, pass ``alias=/path/to/metadata.yaml`` (or the directory
@@ -569,7 +569,7 @@ history/delta tooling aware of the scenario family without changing existing rep
 CI Automation
 -------------
 
-The main CI workflow runs a nightly smoke sweep on ``examples/minitoy`` and
+The main CI workflow runs a nightly smoke sweep on ``examples/tiny7`` and
 uploads ``tmp/ci-telemetry/tuner_report.{csv,md}`` as build artefacts. Use those
 artefacts as a baseline when evaluating new heuristics or tuning strategies.
 

@@ -17,7 +17,7 @@ Example:
    from fhops.optimization.mip import solve_mip
    from fhops.evaluation import compute_kpis
 
-   scenario = load_scenario("examples/minitoy/scenario.yaml")
+   scenario = load_scenario("examples/tiny7/scenario.yaml")
    problem = Problem.from_scenario(scenario)
    mip_res = solve_mip(problem, time_limit=60)
    kpis = compute_kpis(problem, mip_res["assignments"])
