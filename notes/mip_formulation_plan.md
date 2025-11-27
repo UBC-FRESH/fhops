@@ -508,9 +508,10 @@ Arora-style formulation. Immediate priorities:
   - [x] Head-start buffers now use upstream-role capacity and require previous-shift inventory, loader batching enforces truckload quanta, and regression tests cover both behaviours plus the driver replay path (`tests/model/test_operational_milp.py`, `fhops.model.milp.driver`).
 - [x] Generate the `tiny7` scenario via the shared dataset builder and validate that HiGHS/CPLEX produce a “sane” optimal schedule (objective, completed blocks, mobilisation moves).
   - 2025-12-10: HiGHS solved `examples/tiny7` with the balanced roster (2 FB, 1 GS, 3 processors, 3 loaders) in 19 s using a 2 % relative gap, delivering objective 11 803.71, 11 990 m³ production, and full completion of all 9 blocks. Mobilisation spend: 1 128.84.
-- [x] Once `tiny7` is green, scale the same checks to `small21` and `med42` before touching any heuristic code.
+- [x] Once `tiny7` is green, scale the same checks to `small21`, `med42`, and `large84` before touching any heuristic code.
   - `examples/small21` (21 days, 12 blocks) solved in 85 s at 5 % gap; objective 41 264.52 with 41 606 m³ production and all blocks finished.
   - `examples/med42` (42 days, 20 blocks) solved in 42 s at 5 % gap; objective 68 716.92 with 69 781 m³ production and all blocks finished.
+  - `examples/large84` (84 days, 40 blocks, doubled system) solved in ≈8 min at 10 % gap; objective 125 016.95 with 125 017 m³ production and full completion. Mobilisation spend: 21 798.08; utilisation still 100 % at the shift level thanks to the balanced roster.
 - [ ] Capture calibration defaults (buffer_shifts, loader batch volumes, per-role productivity scaling) inside the scenario contract so both the MILP and future heuristics share identical parameters.
 - [ ] Capture calibration defaults (buffer_shifts, loader batch volumes, per-role productivity scaling) inside the scenario contract so both the MILP and future heuristics share identical parameters.
 

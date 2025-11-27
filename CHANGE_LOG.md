@@ -15,6 +15,7 @@
   - tiny7 (`--gap 0.02 --time-limit 120`) → objective 11 803.71, production 11 990 m³, mobilisation 1 128.84.
   - small21 (`--gap 0.05 --time-limit 300`) → objective 41 264.52, production 41 606 m³.
   - med42 (`--gap 0.05 --time-limit 600`) → objective 68 716.92, production 69 781 m³.
+  - large84 (`--gap 0.10 --time-limit 900`) → objective 125 016.95, production 125 017 m³ after ~8 min HiGHS runtime.
   These runs confirm the new ladder is MILP-feasible and that HiGHS now terminates cleanly once the requested relative gap is met.
 
 # 2025-12-09 — Operational MILP buffer/batching fixes
