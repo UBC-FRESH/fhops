@@ -17,6 +17,7 @@
       "columns": [
         "id",
         "landing_id",
+        "harvest_system_id",
         "work_required",
         "earliest_start",
         "latest_finish",
