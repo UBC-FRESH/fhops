@@ -496,6 +496,7 @@ system slightly under-capacity (bottleneck days just above the 42-day horizon).
   - [x] Derive `small21` and `tiny7` variants from the med42 generator by truncating the horizon (21-day / 7-day) and subsampling blocks while keeping the single balanced system. (Tiny7 remains the single-crew regression smoke test until we refresh all fixtures; small21 already uses the full balanced roster.)
 - [x] Derive `large84` by doubling the med42 block set/system count and extending the horizon to 84 days (two balanced systems, doubled workload).
   - [ ] Ensure each dataset ships with deterministic `scripts/rebuild_*` entries (shared generator) plus README/KPI updates, then refresh CLI/docs/tests to reference the new ladder.
+- [x] 2025-12-10 refresh run: rebuilt the entire ladder via `scripts/rebuild_reference_datasets.py tiny7|small21|med42|large84 --seed 20251209`, regenerated the dataset summaries (`run_dataset_inspection.py`), solved the operational MILP for tiny7/med42/large84 with the current gap/limit presets to refresh `tests/fixtures/playback/*` (assignments + shift/day CSV+Parquet), recomputed deterministic & stochastic KPI snapshots, rewrote the operational bundle fixtures, and captured new SA benchmark rows from `fhops bench suite` (tiny7: `--time-limit 120 --sa-iters 200`, med42: `--time-limit 600 --sa-iters 500`, large84: `--time-limit 900 --sa-iters 500`). Full `pytest` run stayed green after the updates.
 
 ## 6. Current priorities (operational focus – manuscript parked)
 
