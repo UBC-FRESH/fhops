@@ -97,9 +97,9 @@ class OperatorRegistry:
             operators = (
                 SwapOperator(),
                 MoveOperator(),
-                BlockInsertionOperator(weight=0.0),
-                CrossExchangeOperator(weight=0.0),
-                MobilisationShakeOperator(weight=0.0),
+                BlockInsertionOperator(weight=0.6),
+                CrossExchangeOperator(weight=0.6),
+                MobilisationShakeOperator(weight=0.2),
             )
         for op in operators:
             registry.register(op)

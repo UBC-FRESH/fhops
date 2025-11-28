@@ -8,9 +8,9 @@ OPERATOR_PRESETS: dict[str, dict[str, float]] = {
     "balanced": {
         "swap": 1.0,
         "move": 1.0,
-        "block_insertion": 0.0,
-        "cross_exchange": 0.0,
-        "mobilisation_shake": 0.0,
+        "block_insertion": 0.6,
+        "cross_exchange": 0.6,
+        "mobilisation_shake": 0.2,
     },
     "swap-only": {
         "swap": 1.0,
@@ -64,7 +64,7 @@ OPERATOR_PRESETS: dict[str, dict[str, float]] = {
 }
 
 OPERATOR_PRESET_DESCRIPTIONS: dict[str, str] = {
-    "balanced": "Default swap/move weights (1.0 each).",
+    "balanced": "Default mix enables block insertion/cross-exchange with a moderate mobilisation shake.",
     "swap-only": "Disable move and rely solely on swap moves.",
     "move-only": "Disable swap and allow only move operations.",
     "swap-heavy": "Bias toward swap moves while keeping move available.",

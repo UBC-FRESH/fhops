@@ -177,26 +177,51 @@ def evaluate_schedule(pb: Problem, sched: Schedule, ctx: OperationalProblem) -> 
     role_cumulative: defaultdict[tuple[str, str], int] = defaultdict(int)
     shifts = sorted(pb.shifts, key=lambda s: (s.day, s.shift_id))
 
-    def select_alternate_block(machine_id: str, day: int, shift_id: str) -> str | None:
+    def assigned_blocks_snapshot() -> set[str]:
+        return {
+            block_id
+            for machine_plan in sched.plan.values()
+            for block_id in machine_plan.values()
+            if block_id is not None
+        }
+
+    def select_alternate_block(
+        machine_id: str,
+        day: int,
+        shift_id: str,
+        excluded: set[str] | None = None,
+    ) -> str | None:
         role = machine_roles.get(machine_id)
         best_block: str | None = None
         best_rate = 0.0
+        assigned_now = assigned_blocks_snapshot()
+        unassigned_candidates: list[str] = []
+        fallback_candidates: list[str] = []
         for block in sc.blocks:
-            remaining_work = remaining[block.id]
+            block_id = block.id
+            if excluded and block_id in excluded:
+                continue
+            remaining_work = remaining[block_id]
             if remaining_work <= BLOCK_COMPLETION_EPS:
                 continue
-            earliest, latest = windows[block.id]
+            earliest, latest = windows[block_id]
             if day < earliest or day > latest:
                 continue
-            allowed = allowed_roles.get(block.id)
+            allowed = allowed_roles.get(block_id)
             if allowed is not None and role is not None and role not in allowed:
                 continue
-            r = rate.get((machine_id, block.id), 0.0)
+            r = rate.get((machine_id, block_id), 0.0)
             if r <= 0.0:
                 continue
-            if r > best_rate:
-                best_rate = r
-                best_block = block.id
+            target_list = (
+                unassigned_candidates if block_id not in assigned_now else fallback_candidates
+            )
+            target_list.append((r, block_id))
+        candidate_pool = unassigned_candidates or fallback_candidates
+        if not candidate_pool:
+            return None
+        candidate_pool.sort(reverse=True, key=lambda item: item[0])
+        _, best_block = candidate_pool[0]
         return best_block
 
     for shift in shifts:
@@ -236,37 +261,72 @@ def evaluate_schedule(pb: Problem, sched: Schedule, ctx: OperationalProblem) -> 
                     block_id = active_block
 
             sched.plan[machine.id][(day, shift_id)] = block_id
+            attempted_blocks: set[str] = set()
+            while True:
+                auto_selected = False
+                if block_id is None:
+                    block_id = select_alternate_block(
+                        machine.id, day, shift_id, excluded=attempted_blocks
+                    )
+                    if block_id is None:
+                        break
+                    sched.plan[machine.id][(day, shift_id)] = block_id
+                    auto_selected = True
+
+                allowed = allowed_roles.get(block_id)
+                role: str | None = machine_roles.get(machine.id)
+                if allowed is not None and role is not None and role not in allowed:
+                    if auto_selected:
+                        attempted_blocks.add(block_id)
+                        block_id = None
+                        continue
+                    penalty += 1000.0
+                    previous_block[machine.id] = None
+                    block_id = None
+                    break
+                prereq_set = prereq_roles.get((block_id, role)) if role is not None else None
+                if prereq_set:
+                    assert role is not None
+                    role_key = (block_id, role)
+                    available_units = min(
+                        role_cumulative[(block_id, prereq)] for prereq in prereq_set
+                    )
+                    required_units = role_cumulative[role_key] + shift_role_counts[role_key] + 1
+                    if required_units > available_units:
+                        if auto_selected:
+                            attempted_blocks.add(block_id)
+                            block_id = None
+                            continue
+                        penalty += 1000.0
+                        previous_block[machine.id] = block_id
+                        block_id = None
+                        break
+                earliest, latest = windows[block_id]
+                if day < earliest or day > latest:
+                    attempted_blocks.add(block_id)
+                    block_id = select_alternate_block(
+                        machine.id, day, shift_id, excluded=attempted_blocks
+                    )
+                    if block_id is None:
+                        break
+                    sched.plan[machine.id][(day, shift_id)] = block_id
+                    auto_selected = True
+                    continue
+                if remaining[block_id] <= 1e-9:
+                    attempted_blocks.add(block_id)
+                    alternate = select_alternate_block(
+                        machine.id, day, shift_id, excluded=attempted_blocks
+                    )
+                    if alternate is None:
+                        break
+                    block_id = alternate
+                    sched.plan[machine.id][(day, shift_id)] = block_id
+                    auto_selected = True
+                    continue
+                break
+
             if block_id is None:
                 continue
-
-            allowed = allowed_roles.get(block_id)
-            role: str | None = machine_roles.get(machine.id)
-            if allowed is not None and role is not None and role not in allowed:
-                penalty += 1000.0
-                previous_block[machine.id] = None
-                continue
-            prereq_set = prereq_roles.get((block_id, role)) if role is not None else None
-            if prereq_set:
-                assert role is not None
-                role_key = (block_id, role)
-                available_units = min(role_cumulative[(block_id, prereq)] for prereq in prereq_set)
-                required_units = role_cumulative[role_key] + shift_role_counts[role_key] + 1
-                if required_units > available_units:
-                    penalty += 1000.0
-                    previous_block[machine.id] = block_id
-                    continue
-            earliest, latest = windows[block_id]
-            if day < earliest or day > latest:
-                block_id = select_alternate_block(machine.id, day, shift_id)
-                if block_id is None:
-                    continue
-                sched.plan[machine.id][(day, shift_id)] = block_id
-            if remaining[block_id] <= 1e-9:
-                alternate = select_alternate_block(machine.id, day, shift_id)
-                if alternate is None:
-                    continue
-                block_id = alternate
-                sched.plan[machine.id][(day, shift_id)] = block_id
             landing_id = landing_of[block_id]
             capacity = landing_cap[landing_id]
             next_usage = used[landing_id] + 1
