@@ -345,13 +345,13 @@ def _extract_preset_costs(meta: Mapping[str, Any] | None) -> dict[str, float] | 
     costs: dict[str, float] = {}
     base_year = meta.get("cost_base_year")
     cost_per_m3 = meta.get("cost_per_m3")
-    if base_year and isinstance(cost_per_m3, (int, float)):
+    if base_year and isinstance(cost_per_m3, int | float):
         costs["observed_cost_per_m3_cad_base"] = float(cost_per_m3)
         inflated = inflate_value(float(cost_per_m3), int(base_year))
         if inflated is not None:
             costs["observed_cost_per_m3_cad_2024"] = float(inflated)
     cost_per_log = meta.get("cost_per_log")
-    if base_year and isinstance(cost_per_log, (int, float)):
+    if base_year and isinstance(cost_per_log, int | float):
         costs["observed_cost_per_log_cad_base"] = float(cost_per_log)
         inflated_log = inflate_value(float(cost_per_log), int(base_year))
         if inflated_log is not None:
@@ -564,7 +564,7 @@ def _apply_loader_system_defaults(
             return current, False
         if isinstance(value, bool):
             return value, True
-        if isinstance(value, (int, float)):
+        if isinstance(value, int | float):
             return bool(value), True
         if isinstance(value, str):
             normalized = value.strip().lower()
@@ -976,7 +976,7 @@ def _coerce_float(
     context: str = "value",
 ) -> float:
     """Convert CLI/text values into floats with domain validation."""
-    if isinstance(value, (int, float)):
+    if isinstance(value, int | float):
         coerced = float(value)
     elif isinstance(value, str):
         stripped = value.strip()
@@ -1036,7 +1036,7 @@ def _coerce_bool(value: Any) -> bool | None:
         return None
     if isinstance(value, bool):
         return value
-    if isinstance(value, (int, float)):
+    if isinstance(value, int | float):
         return bool(value)
     text = str(value).strip().lower()
     if text in {"1", "true", "yes", "on"}:
@@ -2253,7 +2253,7 @@ def _render_processor_result(result: ProcessorCLIResult) -> None:
         numeric_entries = [
             (name, value)
             for name, value in cycle.items()
-            if name != "total" and isinstance(value, (int, float))
+            if name != "total" and isinstance(value, int | float)
         ]
         if numeric_entries or isinstance(cycle.get("total"), int | float):
             prefix = "[dim]Cycle breakdown"
@@ -2670,7 +2670,7 @@ def _apply_skidder_system_defaults(
         except ValueError as exc:  # pragma: no cover - validated by CI
             raise ValueError(f"Unknown decking condition override: {value}") from exc
     value = overrides.get("skidder_productivity_multiplier")
-    if custom_multiplier is None and isinstance(value, (int, float)):
+    if custom_multiplier is None and isinstance(value, int | float):
         custom_multiplier = float(value)
         used = True
     value = overrides.get("skidder_speed_profile")
@@ -2782,7 +2782,7 @@ def _apply_forwarder_system_defaults(
         except ValueError as exc:
             raise ValueError(f"Unknown forwarder model override: {value}") from exc
     value = overrides.get("forwarder_extraction_distance_m")
-    if not user_supplied.get("extraction_distance", False) and isinstance(value, (int, float)):
+    if not user_supplied.get("extraction_distance", False) and isinstance(value, int | float):
         extraction_distance_m = float(value)
         used = True
     return model, extraction_distance_m, used

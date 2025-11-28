@@ -1,3 +1,29 @@
+# 2025-12-12 — Sequencing blocker triage
+- Captured the current state of the sequencing regression: heuristics only schedule the first role in each system, so SA stalls immediately (~1.2 k objective on tiny7) while downstream KPIs/playback still assume the older per-block inventory rules. Documented the issue and queued follow-up work in `notes/mip_formulation_plan.md` so we can introduce per-role work queues, repair logic, and matching playback/KPI staging before refreshing fixtures.
+- Updated the dataset CLI helpers to satisfy Ruff’s new `UP038` rule by switching every `isinstance(..., (int, float))` check to the modern union syntax (`int | float`), keeping the linter green while we focus on the sequencing fix.
+- Commands executed for this work:
+  - `fhops solve-heur examples/tiny7/scenario.yaml --out tmp/tiny7_sa_smoke.csv --iters 2000`
+  - `ruff check src tests`
+  - `mypy src`
+  - `pytest` *(fails: sequencing logic still per-block, so regression suite reports KPI/playback mismatches and benchmark gaps)*
+
+# 2025-12-11 — Heuristic sequencing enforcement groundwork
+- Augmented `OperationalProblem` with loader metadata so heuristics now know each block’s loader batch requirement and role multiplicity. The shared evaluator uses that bundle to maintain staged inventories per block/role, preventing downstream machines from consuming wood before upstream production actually exists.
+- Tightened `fhops.optimization.heuristics.common` so `_repair_schedule_cover_blocks` reassigns surplus shifts (without inventing new work), `_evaluate` enforces buffer/batch rules via staged volume, and the new `coverage_injection` operator explicitly injects high-deficit blocks into neighbour generation. `OperatorRegistry.from_defaults` enables the operator across SA/ILS/Tabu, giving the solvers a way to rebalance coverage when the calendar is saturated.
+- Rewired playback + KPI tooling to reuse the same staging logic: `assignments_to_records` and `compute_kpis` now consume `OperationalProblem`, so CLI/DOC tests finally agree with the stricter feasibility checks. Deterministic/stochastic KPI snapshots, playback CSV/Parquet fixtures, and the tiny7 benchmark baseline were regenerated accordingly.
+- Commands executed for this work:
+  - `fhops eval-playback examples/tiny7/scenario.yaml --assignments tests/fixtures/playback/tiny7_assignments.csv --shift-out tests/fixtures/playback/tiny7_shift.csv --day-out tests/fixtures/playback/tiny7_day.csv --shift-parquet tests/fixtures/playback/tiny7_shift.parquet --day-parquet tests/fixtures/playback/tiny7_day.parquet`
+  - `fhops eval-playback examples/med42/scenario.yaml --assignments tests/fixtures/playback/med42_assignments.csv --shift-out tests/fixtures/playback/med42_shift.csv --day-out tests/fixtures/playback/med42_day.csv --shift-parquet tests/fixtures/playback/med42_shift.parquet --day-parquet tests/fixtures/playback/med42_day.parquet`
+  - `python - <<'PY' ...` *(update deterministic KPI fixture via `compute_kpis` for tiny7/med42/large84)*
+  - `python - <<'PY' ...` *(refresh stochastic KPI snapshot with `run_stochastic_playback` for med42)*
+  - `fhops bench suite --scenario examples/tiny7/scenario.yaml --time-limit 120 --sa-iters 200 --out-dir tmp/bench_tiny7_fixture`
+  - `ruff format src tests`
+  - `ruff check src tests`
+  - `mypy src`
+  - `pytest`
+  - `pre-commit run --all-files`
+  - `sphinx-build -b html docs _build/html -W`
+
 # 2025-12-10 — Heuristic operational bundle unification
 - Added `src/fhops/optimization/operational_problem.py`, a shared context builder that reuses the operational MILP bundle (role metadata, buffers, mobilisation/blackout/availability maps) and exposes a common sanitizer for all heuristics. This removes the duplicated scenario parsing in SA/ILS/Tabu and guarantees that solver scoring now mirrors the MILP rules.
 - Refactored `solve_sa`, `solve_ils`, and `solve_tabu` to build that shared context once per solve, threaded it through `_init_greedy`, `_evaluate`, `_neighbors`, perturbation/local-search helpers, and the registry-driven tests. Fixtures that call `_evaluate` were updated to pass the new context parameter, and the heuristic batch/CLI tests now run against the shared metadata.
