@@ -1,7 +1,7 @@
 {
   "shift_rows": 234,
   "day_rows": 126,
-  "production_units_sum": 94632.976658,
+  "production_units_sum": 60510.417657,
   "total_hours_sum": 5616.0,
   "utilisation_ratio_mean_shift": 1.0,
   "utilisation_ratio_weighted_shift": 1.0,
@@ -16,5 +16,5 @@
   "downtime_production_loss_est": 0.0,
   "weather_severity_total": 36.4,
   "weather_hours_est": 873.6,
-  "weather_production_loss_est": 14720.685258
+  "weather_production_loss_est": 9412.731636
 }

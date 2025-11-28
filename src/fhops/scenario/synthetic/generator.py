@@ -250,7 +250,7 @@ def _derive_road_construction_entries(blocks: Sequence[Block]) -> list[RoadConst
         soil_profiles = defaults.get("soil_profile_ids")
         soil_profile_ids = (
             [str(profile) for profile in soil_profiles]
-            if isinstance(soil_profiles, Sequence) and not isinstance(soil_profiles, (str, bytes))
+            if isinstance(soil_profiles, Sequence) and not isinstance(soil_profiles, str | bytes)
             else None
         )
         notes_value = defaults.get("notes")

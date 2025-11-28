@@ -3096,7 +3096,7 @@ def estimate_processor_productivity_adv7n3(
     def _float(value: object | None) -> float | None:
         if value is None:
             return None
-        if isinstance(value, (int, float)):
+        if isinstance(value, int | float):
             return float(value)
         if isinstance(value, str):
             stripped = value.strip()

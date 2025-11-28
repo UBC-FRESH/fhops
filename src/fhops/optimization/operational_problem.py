@@ -36,6 +36,9 @@ class OperationalProblem:
     mobilisation_params: Mapping[str, MachineMobilisation]
     distance_lookup: Mapping[tuple[str, str], float]
     blocks_with_explicit_system: frozenset[str]
+    role_headstarts: Mapping[tuple[str, str], float]
+    loader_batch_volume: Mapping[str, float]
+    loader_roles: frozenset[tuple[str, str]]
 
     def build_sanitizer(self, schedule_cls: type[Schedule]) -> Sanitizer:
         """Return a schedule sanitizer enforcing locks, availability, and landing caps."""
@@ -98,13 +101,19 @@ def build_operational_problem(pb: Problem) -> OperationalProblem:
 
     bundle = build_operational_bundle(pb)
     explicit_blocks = frozenset(block.id for block in pb.scenario.blocks if block.harvest_system_id)
-    allowed_roles, prereq_roles, machines_by_role = _derive_role_metadata(bundle, explicit_blocks)
+    (
+        allowed_roles,
+        prereq_roles,
+        machines_by_role,
+        headstarts,
+    ) = _derive_role_metadata(bundle, explicit_blocks)
     blackout = _build_blackout_shifts(pb)
     locked = _build_locked_assignments(pb)
     mobilisation_params = _build_mobilisation_params(pb)
     distance_lookup = bundle.mobilisation_distances or build_distance_lookup(
         pb.scenario.mobilisation
     )
+    loader_batch_volume, loader_roles = _build_loader_metadata(bundle)
     return OperationalProblem(
         problem=pb,
         bundle=bundle,
@@ -116,6 +125,9 @@ def build_operational_problem(pb: Problem) -> OperationalProblem:
         mobilisation_params=mobilisation_params,
         distance_lookup=distance_lookup,
         blocks_with_explicit_system=explicit_blocks,
+        role_headstarts=headstarts,
+        loader_batch_volume=loader_batch_volume,
+        loader_roles=loader_roles,
     )
 
 
@@ -126,9 +138,11 @@ def _derive_role_metadata(
     dict[str, frozenset[str] | None],
     dict[tuple[str, str], frozenset[str]],
     dict[str, tuple[str, ...]],
+    dict[tuple[str, str], float],
 ]:
     allowed_roles: dict[str, frozenset[str] | None] = {}
     prereq_roles: dict[tuple[str, str], frozenset[str]] = {}
+    headstart_shifts: dict[tuple[str, str], float] = {}
     machine_roles = bundle.machine_roles
     available_roles = {role for role in machine_roles.values() if role}
     machines_by_role: dict[str, list[str]] = {}
@@ -158,13 +172,33 @@ def _derive_role_metadata(
             prereqs = tuple(
                 upstream for upstream in role_cfg.upstream_roles if upstream in available_roles
             )
+            buffer_value = role_cfg.buffer_shifts or (1.0 if role_cfg.upstream_roles else 0.0)
+            if buffer_value > 0:
+                headstart_shifts[(block_id, role)] = buffer_value
             if prereqs:
                 prereq_roles[(block_id, role)] = frozenset(prereqs)
 
     machines_by_role_tuple = {
         role: tuple(sorted(machine_ids)) for role, machine_ids in machines_by_role.items()
     }
-    return allowed_roles, prereq_roles, machines_by_role_tuple
+    return allowed_roles, prereq_roles, machines_by_role_tuple, headstart_shifts
+
+
+def _build_loader_metadata(
+    bundle: OperationalMilpBundle,
+) -> tuple[dict[str, float], frozenset[tuple[str, str]]]:
+    loader_batch: dict[str, float] = {}
+    loader_roles: set[tuple[str, str]] = set()
+    systems = bundle.systems
+    for block_id, system_id in bundle.block_system.items():
+        system = systems.get(system_id)
+        if system is None:
+            continue
+        loader_batch[block_id] = system.loader_batch_volume_m3
+        for role_cfg in system.roles:
+            if role_cfg.is_loader and role_cfg.role:
+                loader_roles.add((block_id, role_cfg.role))
+    return loader_batch, frozenset(loader_roles)
 
 
 def _build_blackout_shifts(pb: Problem) -> frozenset[tuple[str, int, str]]:

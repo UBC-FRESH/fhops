@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections import defaultdict
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
 from itertools import combinations
@@ -98,6 +99,7 @@ class OperatorRegistry:
                 SwapOperator(),
                 MoveOperator(),
                 BlockInsertionOperator(weight=0.6),
+                CoverageInjectionOperator(weight=0.5),
                 CrossExchangeOperator(weight=0.6),
                 MobilisationShakeOperator(weight=0.2),
             )
@@ -285,6 +287,86 @@ class BlockInsertionOperator:
         return None
 
 
+class CoverageInjectionOperator:
+    """Inject high-deficit blocks into candidate shifts to boost coverage."""
+
+    name: str = "coverage_injection"
+    weight: float
+
+    def __init__(self, weight: float = 0.0) -> None:
+        self.weight = weight
+
+    def apply(self, context: OperatorContext) -> Schedule | None:
+        schedule = context.schedule
+        pb = context.problem
+        production = _production_rates(pb)
+        work_required = {block.id: block.work_required for block in pb.scenario.blocks}
+        locks = _locked_assignments(pb)
+        capacities: defaultdict[str, float] = defaultdict(float)
+        assignments: defaultdict[str, list[tuple[str, tuple[int, str]]]] = defaultdict(list)
+        idle_slots: list[tuple[str, tuple[int, str]]] = []
+
+        for machine_id, machine_plan in schedule.plan.items():
+            for shift_key, block_id in machine_plan.items():
+                if block_id is None:
+                    idle_slots.append((machine_id, shift_key))
+                    continue
+                rate_value = production.get((machine_id, block_id), 0.0)
+                if rate_value <= 0.0:
+                    idle_slots.append((machine_id, shift_key))
+                    continue
+                capacities[block_id] += rate_value
+                assignments[block_id].append((machine_id, shift_key))
+
+        deficits = {
+            block_id: required - capacities.get(block_id, 0.0)
+            for block_id, required in work_required.items()
+            if required - capacities.get(block_id, 0.0) > CAPACITY_EPS
+        }
+        if not deficits:
+            return None
+        target_block = max(deficits.items(), key=lambda item: item[1])[0]
+
+        candidate_slots: list[tuple[float, str, tuple[int, str]]] = []
+        rng = context.rng
+
+        def _maybe_add_slot(machine_id: str, shift_key: tuple[int, str]) -> None:
+            locked_block = locks.get((machine_id, shift_key[0]))
+            if locked_block is not None and locked_block != target_block:
+                return
+            if not _window_allows(shift_key[0], target_block, context):
+                return
+            rate_value = production.get((machine_id, target_block), 0.0)
+            if rate_value <= 0.0:
+                return
+            candidate_slots.append((rate_value, machine_id, shift_key))
+
+        for machine_id, shift_key in idle_slots:
+            _maybe_add_slot(machine_id, shift_key)
+        for block_id, entries in assignments.items():
+            surplus = capacities.get(block_id, 0.0) - work_required.get(block_id, 0.0)
+            if surplus <= CAPACITY_EPS:
+                continue
+            for machine_id, shift_key in entries:
+                _maybe_add_slot(machine_id, shift_key)
+
+        if not candidate_slots:
+            return None
+        rng.shuffle(candidate_slots)
+        candidate_slots.sort(key=lambda item: item[0], reverse=True)
+        _, machine_id, shift_key = candidate_slots[0]
+        new_plan = _clone_plan(schedule)
+        new_plan[machine_id] = new_plan[machine_id].copy()
+        new_plan[machine_id][shift_key] = target_block
+        schedule_cls = schedule.__class__
+        candidate = context.sanitizer(schedule_cls(plan=new_plan))
+        if _plan_equals(candidate.plan, schedule.plan):
+            return None
+        if candidate.plan.get(machine_id, {}).get(shift_key) != target_block:
+            return None
+        return candidate
+
+
 class CrossExchangeOperator:
     """Exchange two assignments across machines/shifts to rebalance workload."""
 
@@ -423,6 +505,8 @@ __all__ = [
     "SwapOperator",
     "MoveOperator",
     "BlockInsertionOperator",
+    "CoverageInjectionOperator",
     "CrossExchangeOperator",
     "MobilisationShakeOperator",
 ]
+CAPACITY_EPS = 1e-6
