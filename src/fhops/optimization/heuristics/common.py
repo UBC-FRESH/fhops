@@ -177,28 +177,27 @@ def evaluate_schedule(pb: Problem, sched: Schedule, ctx: OperationalProblem) -> 
     role_cumulative: defaultdict[tuple[str, str], int] = defaultdict(int)
     shifts = sorted(pb.shifts, key=lambda s: (s.day, s.shift_id))
 
-    def assigned_blocks_snapshot() -> set[str]:
-        return {
-            block_id
-            for machine_plan in sched.plan.values()
-            for block_id in machine_plan.values()
-            if block_id is not None
-        }
+    machine_block_order: dict[str, tuple[str, ...]] = {}
+    for machine in sc.machines:
+        ordered = sorted(
+            (
+                (block.id, rate.get((machine.id, block.id), 0.0))
+                for block in sc.blocks
+                if rate.get((machine.id, block.id), 0.0) > 0.0
+            ),
+            key=lambda item: item[1],
+            reverse=True,
+        )
+        machine_block_order[machine.id] = tuple(block_id for block_id, _ in ordered)
 
     def select_alternate_block(
-        machine_id: str,
-        day: int,
-        shift_id: str,
-        excluded: set[str] | None = None,
+        machine_id: str, day: int, shift_id: str, excluded: set[str] | None = None
     ) -> str | None:
         role = machine_roles.get(machine_id)
         best_block: str | None = None
         best_rate = 0.0
-        assigned_now = assigned_blocks_snapshot()
-        unassigned_candidates: list[str] = []
-        fallback_candidates: list[str] = []
-        for block in sc.blocks:
-            block_id = block.id
+        best_unstarted: tuple[float, str] | None = None
+        for block_id in machine_block_order.get(machine_id, ()):
             if excluded and block_id in excluded:
                 continue
             remaining_work = remaining[block_id]
@@ -213,15 +212,15 @@ def evaluate_schedule(pb: Problem, sched: Schedule, ctx: OperationalProblem) -> 
             r = rate.get((machine_id, block_id), 0.0)
             if r <= 0.0:
                 continue
-            target_list = (
-                unassigned_candidates if block_id not in assigned_now else fallback_candidates
-            )
-            target_list.append((r, block_id))
-        candidate_pool = unassigned_candidates or fallback_candidates
-        if not candidate_pool:
-            return None
-        candidate_pool.sort(reverse=True, key=lambda item: item[0])
-        _, best_block = candidate_pool[0]
+            if math.isclose(remaining_work, initial_work_required[block_id], rel_tol=0.0, abs_tol=1e-9):
+                if best_unstarted is None or r > best_unstarted[0]:
+                    best_unstarted = (r, block_id)
+                    continue
+            if r > best_rate:
+                best_rate = r
+                best_block = block_id
+        if best_unstarted is not None:
+            return best_unstarted[1]
         return best_block
 
     for shift in shifts:
