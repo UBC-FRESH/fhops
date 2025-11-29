@@ -1,3 +1,30 @@
+# 2025-12-13 — Operational MILP loader staging parity
+- Added `assigned`/`production` columns to the operational MILP assignments writer so playback/KPI tooling consumes the actual per-machine shift production instead of re-deriving rates, eliminating false sequencing deficits.
+- Bumped loader head-start buffers to the truck batch volume, introduced assignment/activation coupling for all buffered roles, and tightened the inventory guard so loaders (and any buffered role) cannot be assigned until the staged volume satisfies the buffer requirement; reran tiny7/med42 MILP solves under `--sequencing-debug` to confirm the schedules are now sequencing-clean.
+- Replayed SA heuristics on tiny7/med42 after the constraint changes to verify they still emit sequencing-feasible schedules (objectives now reflect the stricter staging rules), and documented the cascading fixture/regression deltas for follow-up work.
+- Trimmed the tiny7 reference dataset to two blocks (~4.95 k m³) via `scripts/rebuild_reference_datasets.py tiny7 --seed 20251209` so the single-system roster can actually finish the workload within 7 days; MILP now reports `completed_blocks=2` with zero sequencing violations, while SA stays feasible but still carries higher mobilisation costs (to be tuned later).
+- Commands executed for this work:
+  - `.venv/bin/fhops solve-mip-operational examples/tiny7/scenario.yaml --out tmp/tiny7_mip_seq.csv --time-limit 120 --gap 0.05 --sequencing-debug`
+  - `.venv/bin/fhops solve-mip-operational examples/med42/scenario.yaml --out tmp/med42_mip_seq.csv --time-limit 600 --gap 0.05 --sequencing-debug`
+  - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --out tmp/tiny7_sa_seq.csv --iters 2000 --cooling-rate 0.9999 --profile explore --sequencing-debug`
+  - `.venv/bin/fhops solve-heur examples/med42/scenario.yaml --out tmp/med42_sa_seq.csv --iters 2000 --cooling-rate 0.9999 --profile explore --sequencing-debug`
+  - `.venv/bin/fhops eval-playback examples/tiny7/scenario.yaml --assignments tests/fixtures/playback/tiny7_assignments.csv --shift-out tests/fixtures/playback/tiny7_shift.csv --day-out tests/fixtures/playback/tiny7_day.csv --shift-parquet tests/fixtures/playback/tiny7_shift.parquet --day-parquet tests/fixtures/playback/tiny7_day.parquet`
+  - `.venv/bin/fhops eval-playback examples/med42/scenario.yaml --assignments tests/fixtures/playback/med42_assignments.csv --shift-out tests/fixtures/playback/med42_shift.csv --day-out tests/fixtures/playback/med42_day.csv --shift-parquet tests/fixtures/playback/med42_shift.parquet --day-parquet tests/fixtures/playback/med42_day.parquet`
+  - `python - <<'PY' ...` *(regenerate deterministic KPI snapshots for tiny7/med42 via `compute_kpis`)*
+  - `python - <<'PY' ...` *(refresh the med42 stochastic KPI snapshot via `run_stochastic_playback`)*
+  - `python - <<'PY' ...` *(re-run `fhops bench suite` for tiny7 with `include_mip=True` and update `tests/fixtures/benchmarks/tiny7_sa.json`)*
+  - `.venv/bin/pytest tests/test_kpi_regressions.py`
+  - `.venv/bin/pytest tests/test_cli_playback.py tests/test_playback_aggregates.py`
+  - `.venv/bin/pytest tests/test_regression_integration.py`
+  - `.venv/bin/pytest tests/test_schedule_locking.py tests/test_system_roles.py`
+  - `.venv/bin/pytest tests/test_benchmark_harness.py`
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pre-commit run --all-files`
+  - `.venv/bin/pip install -r docs/requirements.txt`
+  - `.venv/bin/sphinx-build -b html docs docs/_build/html -W`
+
 # 2025-12-11 — Playback/KPI sequencing parity
 - Taught the operational bundle + sequencing tracker about per-role demand/terminal roles so heuristics, playback, and KPI logic all consume the same staged-inventory rules (block volume now decrements only when loaders finish, head-start buffers apply everywhere, and `evaluate_schedule` no longer “auto-completes” downstream roles). `_repair_schedule_cover_blocks` and `init_greedy_schedule` now reassign idle shifts per `(block, role)` demand so evaluation always starts from a sanity-checked plan.
 - Rewrote `compute_kpis` to drive `run_playback` instead of duplicating the sequencing math; the KPI totals, utilisation ordering, and sequencing violation counts now match the CLI/watch output bit-for-bit.

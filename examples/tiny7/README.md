@@ -1,8 +1,8 @@
 # FHOPS Tiny7
 
 - Planning horizon: 7 days
-- Blocks: 9 (≈11,990 m³ total volume)
-- Large-block share (≥12 ha): 0/9
+- Blocks: 2 (≈4,115 m³ total volume)
+- Large-block share (≥12 ha): 0/2
 - Machine roster: feller_buncher=2, grapple_skidder=1, roadside_processor=3, loader=3
 
 Synthetic blocks follow Lahrsen-aligned stand attributes and FHOPS productivity regressions

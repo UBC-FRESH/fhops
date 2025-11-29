@@ -7,6 +7,7 @@ data:
   landings: data/landings.csv
   calendar: data/calendar.csv
   prod_rates: data/prod_rates.csv
+  harvest_systems: data/harvest_systems.yaml
   mobilisation_distances: tiny7_block_distances.csv
 mobilisation:
   default_walk_threshold_m: 900

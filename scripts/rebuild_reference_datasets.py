@@ -12,6 +12,8 @@ from math import sqrt
 from pathlib import Path
 from textwrap import dedent
 
+import yaml
+
 from fhops.productivity import (
     ADV6N7DeckingMode,
     LahrsenModel,
@@ -75,6 +77,16 @@ class DatasetConfig:
     landing_ids: tuple[str, ...] = DEFAULT_LANDINGS
     start_date: str = "2025-01-01"
     harvest_system_id: str = "ground_fb_skid"
+    system_jobs: tuple[tuple[str, str, tuple[str, ...]], ...] = (
+        ("felling", "feller_buncher", ()),
+        ("primary_transport", "grapple_skidder", ("felling",)),
+        ("processing", "roadside_processor", ("primary_transport",)),
+        ("loading", "loader", ("processing",)),
+    )
+    role_headstart_shifts: dict[str, float] = field(
+        default_factory=lambda: {"roadside_processor": 0.0, "loader": 0.0}
+    )
+    loader_batch_volume_m3: float = 30.0
 
     def machine_sequence(self) -> list[str]:
         ordered_roles = ("feller_buncher", "grapple_skidder", "roadside_processor", "loader")
@@ -346,6 +358,7 @@ data:
   landings: data/landings.csv
   calendar: data/calendar.csv
   prod_rates: data/prod_rates.csv
+  harvest_systems: data/harvest_systems.yaml
   mobilisation_distances: {distance_file}
 mobilisation:
   default_walk_threshold_m: 900
@@ -384,6 +397,29 @@ def _write_readme(path: Path, config: DatasetConfig, blocks: Sequence[BlockRecor
     path.write_text(readme + "\n", encoding="utf-8")
 
 
+def _write_harvest_systems_yaml(path: Path, config: DatasetConfig) -> None:
+    role_counts = {role: len(ids) for role, ids in config.machines_by_role.items()}
+    jobs = [
+        {
+            "name": job_name,
+            "machine_role": machine_role,
+            "prerequisites": list(prereqs),
+        }
+        for job_name, machine_role, prereqs in config.system_jobs
+    ]
+    payload = {
+        config.harvest_system_id: {
+            "system_id": config.harvest_system_id,
+            "loader_batch_volume_m3": config.loader_batch_volume_m3,
+            "role_headstart_shifts": dict(config.role_headstart_shifts),
+            "role_counts": role_counts,
+            "jobs": jobs,
+        }
+    }
+    with path.open("w", encoding="utf-8") as handle:
+        yaml.safe_dump(payload, handle, sort_keys=False)
+
+
 def rebuild_dataset(config: DatasetConfig, seed: int) -> None:
     scenario_dir = Path("examples") / config.name
     data_dir = scenario_dir / "data"
@@ -408,6 +444,7 @@ def rebuild_dataset(config: DatasetConfig, seed: int) -> None:
     machine_sequence = config.machine_sequence()
     _write_calendar(data_dir / "calendar.csv", machine_sequence, num_days=config.num_days)
     _write_landings(data_dir / "landings.csv", config.landing_capacities)
+    _write_harvest_systems_yaml(data_dir / "harvest_systems.yaml", config)
     distance_file = f"{config.name}_block_distances.csv"
     _write_distance_table(scenario_dir / distance_file, [block.id for block in blocks])
     _write_scenario_yaml(
@@ -489,7 +526,7 @@ DATASET_CONFIGS = {
         name="tiny7",
         label="Tiny7",
         num_days=7,
-        num_blocks=9,
+        num_blocks=2,
         machines_by_role=_med42_machine_roster(),
         block_profiles=SMALL_TIER_PROFILES,
     ),
