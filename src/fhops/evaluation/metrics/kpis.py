@@ -33,6 +33,7 @@ class KPIResult(Mapping[str, float | int | str]):
     totals: dict[str, float | int | str] = field(default_factory=dict)
     shift_calendar: pd.DataFrame | None = None
     day_calendar: pd.DataFrame | None = None
+    sequencing_debug: dict[str, object] | None = None
 
     SHIFT_COLUMNS: ClassVar[tuple[str, ...]] = tuple(SHIFT_SUMMARY_COLUMNS)
     DAY_COLUMNS: ClassVar[tuple[str, ...]] = tuple(DAY_SUMMARY_COLUMNS)
@@ -81,7 +82,6 @@ class KPIResult(Mapping[str, float | int | str]):
             shift_calendar=shift_calendar if shift_calendar is not None else self.shift_calendar,
             day_calendar=day_calendar if day_calendar is not None else self.day_calendar,
         )
-
 
 
 def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
@@ -235,4 +235,9 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
                 }
             )
 
-    return KPIResult(totals=result, shift_calendar=shift_df, day_calendar=day_df)
+    return KPIResult(
+        totals=result,
+        shift_calendar=shift_df,
+        day_calendar=day_df,
+        sequencing_debug=playback_result.sequencing_debug,
+    )

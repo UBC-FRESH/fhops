@@ -30,6 +30,7 @@ class SequencingTracker:
     debug: bool = False
     remaining_work: dict[str, float] = field(init=False)
     role_inventory: defaultdict[tuple[str, str], float] = field(init=False)
+    role_inventory_today: defaultdict[tuple[str, str], float] = field(init=False)
     role_remaining: dict[tuple[str, str], float] = field(init=False)
     role_counts_total: defaultdict[tuple[str, str], int] = field(init=False)
     role_counts_day: defaultdict[tuple[str, str], int] = field(init=False)
@@ -45,6 +46,7 @@ class SequencingTracker:
     def __post_init__(self) -> None:
         self.remaining_work = dict(self.ctx.bundle.work_required)
         self.role_inventory = defaultdict(float)
+        self.role_inventory_today = defaultdict(float)
         self.role_remaining = dict(self.ctx.role_work_required)
         self.role_counts_total = defaultdict(int)
         self.role_counts_day = defaultdict(int)
@@ -55,6 +57,9 @@ class SequencingTracker:
         if self._current_day is None or day == self._current_day:
             self._current_day = day
             return
+        for key, volume in self.role_inventory_today.items():
+            self.role_inventory[key] += volume
+        self.role_inventory_today.clear()
         for key, count in self.role_counts_day.items():
             self.role_counts_total[key] += count
         self.role_counts_day.clear()
@@ -67,6 +72,10 @@ class SequencingTracker:
             for key, count in self.role_counts_day.items():
                 self.role_counts_total[key] += count
             self.role_counts_day.clear()
+        if self.role_inventory_today:
+            for key, volume in self.role_inventory_today.items():
+                self.role_inventory[key] += volume
+            self.role_inventory_today.clear()
 
     def process(
         self,
@@ -99,25 +108,11 @@ class SequencingTracker:
         if prereq_set:
             assert role is not None
             role_key = (block_id, role)
-            available_units = min(
-                self.role_counts_total[(block_id, prereq)] for prereq in prereq_set
-            )
-            required_units = self.role_counts_total[role_key] + self.role_counts_day[role_key] + 1
-            if available_units < required_units:
-                violation_reason = violation_reason or "missing_prereq"
-                self._record_violation(
-                    block_id,
-                    role,
-                    "missing_prereq",
-                    day,
-                    {
-                        "available_units": float(available_units),
-                        "required_units": float(required_units),
-                        "deficit": float(required_units - available_units),
-                    },
-                )
             buffer = role_headstarts.get((block_id, role), 0.0)
             if buffer > 0.0:
+                available_units = min(
+                    self.role_counts_total[(block_id, prereq)] for prereq in prereq_set
+                )
                 required_buffer = self.role_counts_total[role_key] + buffer
                 if available_units + 1e-9 < required_buffer:
                     violation_reason = violation_reason or "missing_prereq"
@@ -178,7 +173,7 @@ class SequencingTracker:
                 )
 
         if explicit_block and role is not None:
-            self.role_inventory[(block_id, role)] += production_units
+            self.role_inventory_today[(block_id, role)] += production_units
 
         if role is not None:
             self.role_counts_day[(block_id, role)] += 1

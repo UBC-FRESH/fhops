@@ -77,7 +77,9 @@ class ForceLoaderOperator:
     weight = 1.0
 
     def apply(self, context):
-        plan = {machine: assignments.copy() for machine, assignments in context.schedule.plan.items()}
+        plan = {
+            machine: assignments.copy() for machine, assignments in context.schedule.plan.items()
+        }
         loader_plan = plan.get("L1")
         if not loader_plan:
             return None
@@ -385,9 +387,7 @@ def test_generate_neighbors_defers_downstream_roles():
     neighbors = _run_operator(pb, schedule, ForceLoaderOperator())
     assert neighbors
     repaired = neighbors[0]
-    loader_assignments = [
-        day for (day, _), block in repaired.plan["L1"].items() if block == "B1"
-    ]
+    loader_assignments = [day for (day, _), block in repaired.plan["L1"].items() if block == "B1"]
     if loader_assignments:
         assert min(loader_assignments) >= 3
     else:

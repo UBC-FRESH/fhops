@@ -1,7 +1,7 @@
 sa_expected:
-  objective: -997.2
-  total_production: 8.0
-  mobilisation_cost: 6.0
+  objective: -1003.9
+  total_production: 16.0
+  mobilisation_cost: 13.5
 reference_assignments:
 - machine_id: F1
   block_id: B1
@@ -11,5 +11,15 @@ reference_assignments:
 - machine_id: F1
   block_id: B2
   day: 2
+  shift_id: S1
+  assigned: 1
+- machine_id: P1
+  block_id: B1
+  day: 2
+  shift_id: S1
+  assigned: 1
+- machine_id: P1
+  block_id: B2
+  day: 3
   shift_id: S1
   assigned: 1

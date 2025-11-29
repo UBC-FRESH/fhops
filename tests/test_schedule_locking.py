@@ -197,7 +197,9 @@ def test_transition_weight_penalises_moves_sa():
         },
     )
     score = evaluate_schedule(pb, Schedule(plan=plan), ctx)
-    assert score == pytest.approx(2.4, abs=1e-6)
+    # With loader buffers and multi-pass coverage repair, this plan now incurs two
+    # transition penalties (one per role) before production takes place.
+    assert score == pytest.approx(4.4, abs=1e-6)
 
 
 def test_landing_slack_penalty_mip():

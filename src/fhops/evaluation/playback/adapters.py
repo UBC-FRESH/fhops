@@ -11,7 +11,12 @@ import pandas as pd
 from fhops.scenario.contract import Problem
 from fhops.scheduling.mobilisation import build_distance_lookup
 
-from ..sequencing import build_role_order_lookup, build_role_priority, build_sequencing_tracker
+from ..sequencing import (
+    SequencingTracker,
+    build_role_order_lookup,
+    build_role_priority,
+    build_sequencing_tracker,
+)
 from .core import PlaybackRecord
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -207,4 +212,15 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
             )
         tracker.finalize()
 
-    return iter_records()
+    class RecordIterator:
+        def __init__(self, iterator: Iterator[PlaybackRecord], tracker: SequencingTracker) -> None:
+            self._iterator = iterator
+            self.sequencing_tracker = tracker
+
+        def __iter__(self) -> RecordIterator:
+            return self
+
+        def __next__(self) -> PlaybackRecord:
+            return next(self._iterator)
+
+    return RecordIterator(iter_records(), tracker)

@@ -48,8 +48,26 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
     role_buffer_volume: dict[tuple[str, str], float] = {}
     role_capacity: dict[tuple[str, str], float] = {}
     loader_batch_volume: dict[tuple[str, str], float] = {}
+    block_terminal_roles: dict[str, tuple[str, ...]] = {}
+    terminal_pairs: list[tuple[str, str]] = []
     mobilisation_params = bundle.mobilisation_params
     mobilisation_distances = bundle.mobilisation_distances
+
+    system_terminal_roles: dict[str, tuple[str, ...]] = {}
+    for system in system_configs.values():
+        downstream: dict[str, set[str]] = defaultdict(set)
+        for role_cfg in system.roles:
+            role_name = role_cfg.role
+            if not role_name:
+                continue
+            for upstream in role_cfg.upstream_roles:
+                downstream[upstream].add(role_name)
+        terminal_roles = tuple(
+            role_cfg.role
+            for role_cfg in system.roles
+            if role_cfg.role and not downstream.get(role_cfg.role)
+        )
+        system_terminal_roles[system.system_id] = terminal_roles
 
     for block in blocks:
         system_id = block_system[block]
@@ -80,6 +98,8 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
             if role_cfg.buffer_shifts > 0 and role_cfg.upstream_roles:
                 reference_capacity = upstream_capacity if upstream_capacity > 0 else cap
                 buffer_volume = role_cfg.buffer_shifts * reference_capacity
+            if role_cfg.is_loader and role_cfg.upstream_roles:
+                buffer_volume = max(buffer_volume, system_cfg.loader_batch_volume_m3)
             role_buffer_volume[pair] = buffer_volume
 
             if role_cfg.upstream_roles:
@@ -93,6 +113,11 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
                 loader_batch_volume[pair] = system_cfg.loader_batch_volume_m3
 
         block_roles[block] = tuple(roles_for_block)
+        terminal_for_block = tuple(
+            role for role in system_terminal_roles.get(system_id, ()) if role in roles_for_block
+        )
+        block_terminal_roles[block] = terminal_for_block
+        terminal_pairs.extend((role, block) for role in terminal_for_block)
 
     window_lookup = bundle.windows
     availability_day = bundle.availability_day
@@ -236,22 +261,41 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
 
     # Inventory tracking (only for roles with upstream requirements)
     model.InventoryPairs = pyo.Set(initialize=inventory_pairs, dimen=2)
+    model.inventory_start = pyo.Var(model.InventoryPairs, model.S, domain=pyo.NonNegativeReals)
     model.inventory = pyo.Var(model.InventoryPairs, model.S, domain=pyo.NonNegativeReals)
+
+    def inventory_start_rule(mdl, role, blk, day, shift_id):
+        slot = (day, shift_id)
+        prev_slot = prev_shift_map[slot]
+        if prev_slot is None:
+            return mdl.inventory_start[role, blk, slot] == 0.0
+        return mdl.inventory_start[role, blk, slot] == mdl.inventory[role, blk, prev_slot]
 
     def inventory_balance_rule(mdl, role, blk, day, shift_id):
         slot = (day, shift_id)
-        prev_slot = prev_shift_map[slot]
-        prev_inventory = mdl.inventory[role, blk, prev_slot] if prev_slot else 0.0
         upstream_roles = role_upstream[(role, blk)]
         upstream_sum = sum(mdl.role_prod[up_role, blk, slot] for up_role in upstream_roles)
         return (
             mdl.inventory[role, blk, slot]
-            == prev_inventory + upstream_sum - mdl.role_prod[role, blk, slot]
+            == mdl.inventory_start[role, blk, slot] + upstream_sum - mdl.role_prod[role, blk, slot]
         )
 
     if inventory_pairs:
+        model.inventory_start_eq = pyo.Constraint(
+            model.InventoryPairs, model.S, rule=inventory_start_rule
+        )
         model.inventory_balance = pyo.Constraint(
             model.InventoryPairs, model.S, rule=inventory_balance_rule
+        )
+
+        def downstream_inventory_guard_rule(mdl, role, blk, day, shift_id):
+            return (
+                mdl.role_prod[role, blk, (day, shift_id)]
+                <= mdl.inventory_start[role, blk, (day, shift_id)]
+            )
+
+        model.inventory_guard = pyo.Constraint(
+            model.InventoryPairs, model.S, rule=downstream_inventory_guard_rule
         )
 
     # Head-start buffers via activation binaries (only when buffer > 0)
@@ -280,25 +324,63 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
         )
         model.head_start = pyo.Constraint(model.ActivationPairs, model.S, rule=head_start_rule)
 
+        def activation_assignment_upper_rule(mdl, role, blk, day, shift_id):
+            machines_for_role = role_to_machines.get(role, [])
+            if not machines_for_role:
+                return mdl.role_active[role, blk, (day, shift_id)] == 0
+            return (
+                sum(mdl.x[mach, blk, (day, shift_id)] for mach in machines_for_role)
+                <= len(machines_for_role) * mdl.role_active[role, blk, (day, shift_id)]
+            )
+
+        def activation_assignment_lower_rule(mdl, role, blk, day, shift_id):
+            machines_for_role = role_to_machines.get(role, [])
+            if not machines_for_role:
+                return mdl.role_active[role, blk, (day, shift_id)] == 0
+            return mdl.role_active[role, blk, (day, shift_id)] <= sum(
+                mdl.x[mach, blk, (day, shift_id)] for mach in machines_for_role
+            )
+
+        model.role_active_upper = pyo.Constraint(
+            model.ActivationPairs, model.S, rule=activation_assignment_upper_rule
+        )
+        model.role_active_lower = pyo.Constraint(
+            model.ActivationPairs, model.S, rule=activation_assignment_lower_rule
+        )
+
     # Loader batching constraints
     model.LoaderPairs = pyo.Set(initialize=loader_pairs, dimen=2)
     if loader_pairs:
         model.loads = pyo.Var(model.LoaderPairs, model.S, domain=pyo.NonNegativeIntegers)
+        model.loader_partial = pyo.Var(model.LoaderPairs, model.S, domain=pyo.NonNegativeReals)
 
         def loader_batch_rule(mdl, role, blk, day, shift_id):
             batch = loader_batch_volume[(role, blk)]
-            return (
-                mdl.role_prod[role, blk, (day, shift_id)]
-                == batch * mdl.loads[role, blk, (day, shift_id)]
+            return mdl.role_prod[role, blk, (day, shift_id)] == (
+                batch * mdl.loads[role, blk, (day, shift_id)]
+                + mdl.loader_partial[role, blk, (day, shift_id)]
             )
 
+        def loader_partial_cap_rule(mdl, role, blk, day, shift_id):
+            batch = loader_batch_volume[(role, blk)]
+            return mdl.loader_partial[role, blk, (day, shift_id)] <= batch
+
         model.loader_batch = pyo.Constraint(model.LoaderPairs, model.S, rule=loader_batch_rule)
+        model.loader_partial_cap = pyo.Constraint(
+            model.LoaderPairs, model.S, rule=loader_partial_cap_rule
+        )
 
     # Block balance ensures required work is met (with leftover slack)
     model.leftover = pyo.Var(model.B, domain=pyo.NonNegativeReals)
 
     def block_balance_rule(mdl, blk):
-        total_prod = sum(mdl.prod[mach, blk, slot] for mach in mdl.M for slot in model.S)
+        terminal_roles = block_terminal_roles.get(blk, ())
+        if terminal_roles:
+            total_prod = sum(
+                mdl.role_prod[role, blk, slot] for role in terminal_roles for slot in model.S
+            )
+        else:
+            total_prod = sum(mdl.prod[mach, blk, slot] for mach in mdl.M for slot in model.S)
         return total_prod + mdl.leftover[blk] == bundle.work_required[blk]
 
     model.block_balance = pyo.Constraint(model.B, rule=block_balance_rule)
@@ -333,9 +415,14 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
     transition_weight = bundle.objective_weights.transitions
     leftover_penalty = prod_weight
 
-    obj_expr = prod_weight * sum(
-        model.prod[mach, blk, slot] for mach in model.M for blk in model.B for slot in model.S
-    )
+    if terminal_pairs:
+        obj_expr = prod_weight * sum(
+            model.role_prod[role, blk, slot] for role, blk in terminal_pairs for slot in model.S
+        )
+    else:
+        obj_expr = prod_weight * sum(
+            model.prod[mach, blk, slot] for mach in model.M for blk in model.B for slot in model.S
+        )
     if leftover_penalty:
         obj_expr -= leftover_penalty * sum(model.leftover[blk] for blk in model.B)
     if landing_weight:

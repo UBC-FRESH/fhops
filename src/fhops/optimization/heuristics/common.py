@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
+import json
 import math
 from collections import defaultdict
+from collections.abc import Mapping
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
-import json
-from typing import Any, Mapping
+from typing import Any
 
 from fhops.evaluation.sequencing import SequencingTracker, build_role_priority
 from fhops.optimization.heuristics.registry import OperatorContext, OperatorRegistry
@@ -67,6 +68,7 @@ def _repair_schedule_cover_blocks(
     )
 
     role_inventory_estimate: defaultdict[tuple[str, str], float] = defaultdict(float)
+    role_inventory_today: defaultdict[tuple[str, str], float] = defaultdict(float)
     current_day: int | None = None
     role_counts_total: defaultdict[tuple[str, str], int] = defaultdict(int)
     role_counts_day: defaultdict[tuple[str, str], int] = defaultdict(int)
@@ -98,7 +100,9 @@ def _repair_schedule_cover_blocks(
         prereqs = prereq_roles.get((block_id, role))
         if not prereqs:
             return True
-        available_volume = min(role_inventory_estimate[(block_id, upstream)] for upstream in prereqs)
+        available_volume = min(
+            role_inventory_estimate[(block_id, upstream)] for upstream in prereqs
+        )
         loader_requirement = 0.0
         if (block_id, role) in ctx.loader_roles:
             loader_requirement = min(
@@ -131,6 +135,9 @@ def _repair_schedule_cover_blocks(
             return
         if day == current_day:
             return
+        for key, volume in role_inventory_today.items():
+            role_inventory_estimate[key] += volume
+        role_inventory_today.clear()
         for key, count in role_counts_day.items():
             role_counts_total[key] += count
         role_counts_day.clear()
@@ -154,7 +161,7 @@ def _repair_schedule_cover_blocks(
                     role_inventory_estimate[key] = max(
                         0.0, role_inventory_estimate.get(key, 0.0) - production
                     )
-            role_inventory_estimate[(block_id, role)] += production
+            role_inventory_today[(block_id, role)] += production
             if (block_id, role) in role_remaining:
                 role_remaining[(block_id, role)] = max(
                     0.0, role_remaining[(block_id, role)] - production
@@ -165,9 +172,7 @@ def _repair_schedule_cover_blocks(
                 )
             role_counts_day[(block_id, role)] += 1
         else:
-            block_remaining[block_id] = max(
-                0.0, block_remaining.get(block_id, 0.0) - production
-            )
+            block_remaining[block_id] = max(0.0, block_remaining.get(block_id, 0.0) - production)
 
     def slot_is_valid(
         machine_id: str,
@@ -208,7 +213,11 @@ def _repair_schedule_cover_blocks(
         for block_id, remaining in block_remaining.items():
             if remaining <= BLOCK_COMPLETION_EPS:
                 continue
-            if role is not None and (block_id, role) in role_remaining and block_id in explicit_blocks:
+            if (
+                role is not None
+                and (block_id, role) in role_remaining
+                and block_id in explicit_blocks
+            ):
                 continue
             demand.append((block_id, remaining))
         demand.sort(key=lambda item: item[1], reverse=True)
@@ -270,6 +279,7 @@ def _repair_schedule_cover_blocks(
 
     if not fill_voids:
         return
+
 
 def init_greedy_schedule(pb: Problem, ctx: OperationalProblem) -> Schedule:
     """Construct an initial Schedule by greedily filling shifts with best-rate blocks."""
@@ -425,7 +435,6 @@ def init_greedy_schedule(pb: Problem, ctx: OperationalProblem) -> Schedule:
     return Schedule(plan=plan)
 
 
-
 def evaluate_schedule(
     pb: Problem,
     sched: Schedule,
@@ -478,7 +487,10 @@ def evaluate_schedule(
             block_id = sched.plan[machine.id][(day, shift_id)]
             lock_key = (machine.id, day)
 
-            if shift_availability.get((machine.id, day, shift_id), 1) == 0 or availability.get((machine.id, day), 1) == 0:
+            if (
+                shift_availability.get((machine.id, day, shift_id), 1) == 0
+                or availability.get((machine.id, day), 1) == 0
+            ):
                 penalty += 1000.0
                 previous_block[machine.id] = None
                 continue
@@ -562,9 +574,9 @@ def evaluate_schedule(
         if remaining_work > BLOCK_COMPLETION_EPS
     )
     partial_weight = weights.production * PARTIAL_PRODUCTION_FRACTION
-    score = (
-        weights.production * (completion_bonus - LEFTOVER_PENALTY_FACTOR * leftover_total)
-    ) + (partial_weight * production_total)
+    score = (weights.production * (completion_bonus - LEFTOVER_PENALTY_FACTOR * leftover_total)) + (
+        partial_weight * production_total
+    )
     score -= weights.mobilisation * mobilisation_total
     score -= weights.transitions * transition_count
     score -= weights.landing_slack * landing_slack_total
@@ -630,6 +642,7 @@ def build_watch_metadata_from_debug(stats: Mapping[str, Any] | None) -> dict[str
     if breakdown:
         meta["seq_violation_breakdown"] = json.dumps(breakdown, sort_keys=True)
     return meta
+
 
 def generate_neighbors(
     pb: Problem,

@@ -268,9 +268,14 @@ def test_sa_evaluator_penalises_out_of_order_assignments():
             },
         )
     )
-    bad_score = evaluate_schedule(pb, bad_plan, ctx)
-    good_score = evaluate_schedule(pb, good_plan, ctx)
-    assert bad_score < good_score
+    evaluate_schedule(pb, bad_plan, ctx)
+    evaluate_schedule(pb, good_plan, ctx)
+    # The evaluator now repairs schedules before scoring. Verify that the bad plan
+    # was rewritten to respect role order (processor waits until the feller
+    # produces volume).
+    assert bad_plan.plan["P1"][(1, "S1")] is None
+    assert bad_plan.plan["P1"][(2, "S1")] == "B1"
+    assert bad_plan.plan["F1"][(1, "S1")] == "B1"
 
 
 def test_cable_system_enforces_multi_stage_sequence():
@@ -483,6 +488,10 @@ def test_sa_evaluator_requires_all_prereqs_before_helicopter():
             },
         )
     )
-    bad_score = evaluate_schedule(pb, incomplete_prereq_plan, ctx)
-    good_score = evaluate_schedule(pb, complete_prereq_plan, ctx)
-    assert bad_score < good_score
+    evaluate_schedule(pb, incomplete_prereq_plan, ctx)
+    evaluate_schedule(pb, complete_prereq_plan, ctx)
+    # Repair logic should reschedule the helicopter until both upstream roles
+    # (fallers + hook tenders) have produced staged wood.
+    assert incomplete_prereq_plan.plan["C1"][(1, "S1")] is None
+    assert incomplete_prereq_plan.plan["C1"][(2, "S1")] == "B1"
+    assert incomplete_prereq_plan.plan["H1"][(1, "S1")] == "B1"

@@ -61,10 +61,7 @@ def test_repair_defers_downstream_roles_until_prereqs_completed():
     pb = _build_problem()
     ctx = build_operational_problem(pb)
     shift_keys = [(shift.day, shift.shift_id) for shift in pb.shifts]
-    plan = {
-        machine.id: {key: None for key in shift_keys}
-        for machine in pb.scenario.machines
-    }
+    plan = {machine.id: {key: None for key in shift_keys} for machine in pb.scenario.machines}
     schedule = Schedule(plan=plan)
 
     common._repair_schedule_cover_blocks(pb, schedule, ctx)

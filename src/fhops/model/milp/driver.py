@@ -11,7 +11,14 @@ from pyomo.opt import SolverFactory
 from fhops.model.milp.data import OperationalMilpBundle
 from fhops.model.milp.operational import build_operational_model
 
-ASSIGNMENT_COLUMNS = ["machine_id", "block_id", "day", "shift_id"]
+ASSIGNMENT_COLUMNS = [
+    "machine_id",
+    "block_id",
+    "day",
+    "shift_id",
+    "assigned",
+    "production",
+]
 
 __all__ = ["solve_operational_milp"]
 
@@ -55,13 +62,17 @@ def solve_operational_milp(
 def _extract_assignments(model: pyo.ConcreteModel) -> pd.DataFrame:
     rows: list[dict[str, object]] = []
     for (machine_id, block_id, day, shift_id), var in model.x.items():
-        if pyo.value(var) >= 0.5:
+        assigned_value = pyo.value(var)
+        production_value = pyo.value(model.prod[machine_id, block_id, (day, shift_id)])
+        if assigned_value > 0.5 or production_value > 1e-6:
             rows.append(
                 {
                     "machine_id": machine_id,
                     "block_id": block_id,
-                    "day": day,
+                    "day": int(day),
                     "shift_id": shift_id,
+                    "assigned": int(assigned_value > 0.5),
+                    "production": float(production_value),
                 }
             )
     if rows:

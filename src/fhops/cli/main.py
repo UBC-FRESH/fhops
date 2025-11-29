@@ -219,6 +219,42 @@ def _print_kpi_summary(kpis: Any, mode: str = "extended") -> None:
         )
 
 
+def _print_sequencing_debug(stats: dict[str, Any] | None) -> None:
+    """Render sequencing diagnostics (first violation, backlog stats) if available."""
+
+    if not stats:
+        console.print("[dim]Sequencing diagnostics unavailable.[/]")
+        return
+    violation_count = int(stats.get("sequencing_violation_count", 0) or 0)
+    if violation_count == 0:
+        console.print("[green]Sequencing clean: no violations detected.[/]")
+        return
+    first_role = stats.get("sequencing_first_violation_role") or "unknown"
+    first_block = stats.get("sequencing_first_violation_block") or "?"
+    first_day = stats.get("sequencing_first_violation_day")
+    first_reason = stats.get("sequencing_first_violation_reason") or "missing_prereq"
+    deficit = (
+        stats.get("sequencing_first_violation_headstart_deficit")
+        or stats.get("sequencing_first_violation_deficit")
+        or stats.get("sequencing_first_violation_required_volume")
+    )
+    parts = [
+        f"violations={violation_count}",
+        f"first_role={first_role}",
+        f"block={first_block}",
+        f"day={first_day if first_day is not None else '?'}",
+        f"reason={first_reason}",
+    ]
+    if deficit is not None:
+        parts.append(f"deficit={deficit}")
+    breakdown = stats.get("sequencing_violation_breakdown")
+    if isinstance(breakdown, dict) and breakdown:
+        parts.append(
+            "breakdown=" + ", ".join(f"{key}={value}" for key, value in sorted(breakdown.items()))
+        )
+    console.print("[yellow]Sequencing diagnostics:[/]", " | ".join(str(p) for p in parts))
+
+
 def _machine_cost_snapshot(sc) -> list[dict[str, Any]]:
     """Return CPI-adjusted machine-cost snapshots for telemetry logging."""
     return [snapshot.to_dict() for snapshot in build_machine_cost_snapshots(sc.machines)]
@@ -417,6 +453,11 @@ def solve_mip_cmd(
         help="MIP driver: auto|highs-appsi|highs-exec|gurobi|gurobi-appsi|gurobi-direct",
     ),
     debug: bool = typer.Option(False, "--debug", help="Verbose tracebacks & solver logs"),
+    sequencing_debug: bool = typer.Option(
+        False,
+        "--sequencing-debug/--no-sequencing-debug",
+        help="Print sequencing diagnostics (first violation, backlog deficits).",
+    ),
 ):
     """Solve the scenario with the exact MIP and write assignments/KPIs.
 
@@ -457,6 +498,8 @@ def solve_mip_cmd(
     console.print(f"Objective: {objective:.3f}. Saved to {out}")
     metrics = compute_kpis(pb, assignments)
     _print_kpi_summary(metrics)
+    if sequencing_debug:
+        _print_sequencing_debug(getattr(metrics, "sequencing_debug", None))
 
 
 @app.command("solve-mip-operational")
@@ -496,6 +539,11 @@ def solve_mip_operational_cmd(
         0.5, "--watch-refresh", help="Watch refresh interval in seconds."
     ),
     debug: bool = typer.Option(False, "--debug", help="Verbose solver output/tracebacks."),
+    sequencing_debug: bool = typer.Option(
+        False,
+        "--sequencing-debug/--no-sequencing-debug",
+        help="Print sequencing diagnostics (first violation, backlog deficits).",
+    ),
 ):
     """Solve the operational (day×shift) MILP prototype and emit assignments."""
 
@@ -601,6 +649,8 @@ def solve_mip_operational_cmd(
             if not assignments.empty and pb is not None:
                 metrics_obj = compute_kpis(pb, assignments)
                 _print_kpi_summary(metrics_obj)
+                if sequencing_debug:
+                    _print_sequencing_debug(getattr(metrics_obj, "sequencing_debug", None))
             else:
                 console.print(
                     "[yellow]No feasible assignment returned or scenario missing; skipping KPI summary.[/]"
@@ -703,6 +753,11 @@ def solve_heur_cmd(
         False,
         "--watch-debug/--no-watch-debug",
         help="Include sequencing debug metadata in watch output (adds evaluation overhead).",
+    ),
+    sequencing_debug: bool = typer.Option(
+        False,
+        "--sequencing-debug/--no-sequencing-debug",
+        help="Print sequencing diagnostics (first violation details) after KPIs.",
     ),
     kpi_mode: str = typer.Option(
         "extended",
@@ -948,6 +1003,8 @@ def solve_heur_cmd(
     console.print(f"Objective (heuristic): {objective:.3f}. Saved to {out}")
     metrics = compute_kpis(pb, assignments)
     _print_kpi_summary(metrics, mode=kpi_mode)
+    if sequencing_debug:
+        _print_sequencing_debug(getattr(metrics, "sequencing_debug", None))
     operators_meta = cast(dict[str, float], meta.get("operators", {}))
     if operators_meta:
         console.print(f"Operators: {operators_meta}")
@@ -1095,6 +1152,11 @@ def solve_ils_cmd(
     ),
     show_operator_stats: bool = typer.Option(
         False, "--show-operator-stats", help="Print per-operator stats after solving."
+    ),
+    sequencing_debug: bool = typer.Option(
+        False,
+        "--sequencing-debug/--no-sequencing-debug",
+        help="Print sequencing diagnostics (first violation details) after KPIs.",
     ),
 ):
     """Solve with the Iterated Local Search heuristic and emit KPI summaries.
@@ -1273,6 +1335,8 @@ def solve_ils_cmd(
     console.print(f"Objective (ils): {objective:.3f}. Saved to {out}")
     metrics = compute_kpis(pb, assignments)
     _print_kpi_summary(metrics, mode=kpi_mode)
+    if sequencing_debug:
+        _print_sequencing_debug(getattr(metrics, "sequencing_debug", None))
     meta = cast(dict[str, Any], res.get("meta", {}))
     if selected_profile:
         meta["profile"] = selected_profile.name
@@ -1379,6 +1443,11 @@ def solve_tabu_cmd(
         min=0.1,
         help="Refresh interval for the live dashboard (seconds).",
     ),
+    watch_debug: bool = typer.Option(
+        False,
+        "--watch-debug/--no-watch-debug",
+        help="Include sequencing debug metadata in watch output (adds evaluation overhead).",
+    ),
     kpi_mode: str = typer.Option(
         "extended",
         "--kpi-mode",
@@ -1388,6 +1457,11 @@ def solve_tabu_cmd(
     ),
     show_operator_stats: bool = typer.Option(
         False, "--show-operator-stats", help="Print per-operator stats."
+    ),
+    sequencing_debug: bool = typer.Option(
+        False,
+        "--sequencing-debug/--no-sequencing-debug",
+        help="Print sequencing diagnostics (first violation details) after KPIs.",
     ),
 ):
     """Solve with the Tabu Search heuristic and emit KPI summaries.
@@ -1558,6 +1632,8 @@ def solve_tabu_cmd(
     console.print(f"Objective (tabu): {objective:.3f}. Saved to {out}")
     metrics = compute_kpis(pb, assignments)
     _print_kpi_summary(metrics, mode=kpi_mode)
+    if sequencing_debug:
+        _print_sequencing_debug(getattr(metrics, "sequencing_debug", None))
     meta = cast(dict[str, Any], res.get("meta", {}))
     if selected_profile:
         meta["profile"] = selected_profile.name
