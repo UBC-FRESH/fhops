@@ -1,3 +1,14 @@
+# 2025-12-11 — Playback/KPI sequencing parity
+- Taught the operational bundle + sequencing tracker about per-role demand/terminal roles so heuristics, playback, and KPI logic all consume the same staged-inventory rules (block volume now decrements only when loaders finish, head-start buffers apply everywhere, and `evaluate_schedule` no longer “auto-completes” downstream roles). `_repair_schedule_cover_blocks` and `init_greedy_schedule` now reassign idle shifts per `(block, role)` demand so evaluation always starts from a sanity-checked plan.
+- Rewrote `compute_kpis` to drive `run_playback` instead of duplicating the sequencing math; the KPI totals, utilisation ordering, and sequencing violation counts now match the CLI/watch output bit-for-bit.
+- Regenerated the deterministic KPI snapshots plus the tiny7/med42 playback CSV+Parquet fixtures using the new sequencing logic, then re-recorded the stochastic KPI snapshot so the regression suite can adopt the updated totals.
+- Commands executed for this work:
+  - `fhops eval-playback examples/tiny7/scenario.yaml --assignments tests/fixtures/playback/tiny7_assignments.csv --shift-out tests/fixtures/playback/tiny7_shift.csv --day-out tests/fixtures/playback/tiny7_day.csv --shift-parquet tests/fixtures/playback/tiny7_shift.parquet --day-parquet tests/fixtures/playback/tiny7_day.parquet`
+  - `fhops eval-playback examples/med42/scenario.yaml --assignments tests/fixtures/playback/med42_assignments.csv --shift-out tests/fixtures/playback/med42_shift.csv --day-out tests/fixtures/playback/med42_day.csv --shift-parquet tests/fixtures/playback/med42_shift.parquet --day-parquet tests/fixtures/playback/med42_day.parquet`
+  - `python - <<'PY' ...` *(recompute deterministic KPI fixture for tiny7/med42 via `compute_kpis`)*
+  - `python - <<'PY' ...` *(refresh stochastic KPI snapshot via `run_stochastic_playback`)*
+  - `pytest tests/test_cli_playback.py tests/test_kpi_regressions.py tests/test_playback_aggregates.py`
+
 # 2025-12-12 — Sequencing blocker triage
 - Captured the current state of the sequencing regression: heuristics only schedule the first role in each system, so SA stalls immediately (~1.2 k objective on tiny7) while downstream KPIs/playback still assume the older per-block inventory rules. Documented the issue and queued follow-up work in `notes/mip_formulation_plan.md` so we can introduce per-role work queues, repair logic, and matching playback/KPI staging before refreshing fixtures.
 - Updated the dataset CLI helpers to satisfy Ruff’s new `UP038` rule by switching every `isinstance(..., (int, float))` check to the modern union syntax (`int | float`), keeping the linter green while we focus on the sequencing fix.

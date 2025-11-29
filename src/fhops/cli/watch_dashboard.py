@@ -107,6 +107,22 @@ class LiveWatch:
     def _solver_details(self, snap: Snapshot) -> str:
         solver = (snap.solver or "").lower()
         parts: list[str] = []
+        metadata = snap.metadata or {}
+
+        def _append_seq(parts_list: list[str]) -> None:
+            seq_role = metadata.get("seq_first_role")
+            seq_reason = metadata.get("seq_first_reason")
+            seq_count = metadata.get("seq_violation_count")
+            seq_status = metadata.get("seq_status")
+            if seq_count is not None:
+                parts_list.append(f"Viol={seq_count}")
+            if seq_role:
+                detail = seq_reason if seq_reason and seq_reason != "missing_prereq" else ""
+                label = f"{seq_role}:{detail}" if detail else seq_role
+                parts_list.append(f"Seq={label}")
+            elif seq_status == "clean":
+                parts_list.append("Seq=clean")
+
         if solver.startswith("sa"):
             if snap.temperature is not None:
                 parts.append(f"T={snap.temperature:.3f}")
@@ -114,8 +130,8 @@ class LiveWatch:
                 parts.append(f"Acc={snap.acceptance_rate * 100:.1f}%")
             if snap.acceptance_rate_window is not None:
                 parts.append(f"Win={snap.acceptance_rate_window * 100:.1f}%")
+            _append_seq(parts)
         elif solver.startswith("ils"):
-            metadata = snap.metadata or {}
             stalls = metadata.get("stalls")
             if stalls is not None:
                 parts.append(f"Stalls={stalls}")
@@ -125,8 +141,8 @@ class LiveWatch:
             restarts = metadata.get("restarts")
             if restarts is not None:
                 parts.append(f"Restarts={restarts}")
+            _append_seq(parts)
         elif solver.startswith("tabu"):
-            metadata = snap.metadata or {}
             tenure = metadata.get("tabu_tenure")
             if tenure is not None:
                 parts.append(f"Tenure={tenure}")
@@ -140,6 +156,7 @@ class LiveWatch:
                 parts.append(f"Acc={snap.acceptance_rate * 100:.1f}%")
             if snap.acceptance_rate_window is not None:
                 parts.append(f"Win={snap.acceptance_rate_window * 100:.1f}%")
+            _append_seq(parts)
         return " | ".join(parts)
 
     def _render(self) -> Group:

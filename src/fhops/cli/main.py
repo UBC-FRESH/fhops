@@ -699,6 +699,11 @@ def solve_heur_cmd(
         min=0.1,
         help="Refresh interval for the live dashboard (seconds).",
     ),
+    watch_debug: bool = typer.Option(
+        False,
+        "--watch-debug/--no-watch-debug",
+        help="Include sequencing debug metadata in watch output (adds evaluation overhead).",
+    ),
     kpi_mode: str = typer.Option(
         "extended",
         "--kpi-mode",
@@ -839,6 +844,7 @@ def solve_heur_cmd(
         "max_workers": worker_arg,
         "cooling_rate": cooling_rate,
         "restart_interval": restart_value,
+        "watch_debug": watch_debug,
     }
     if resolved.extra_kwargs:
         sa_kwargs.update(resolved.extra_kwargs)
@@ -1075,6 +1081,11 @@ def solve_ils_cmd(
         min=0.1,
         help="Refresh interval for the live dashboard (seconds).",
     ),
+    watch_debug: bool = typer.Option(
+        False,
+        "--watch-debug/--no-watch-debug",
+        help="Include sequencing debug metadata in watch output (adds evaluation overhead).",
+    ),
     kpi_mode: str = typer.Option(
         "extended",
         "--kpi-mode",
@@ -1237,6 +1248,7 @@ def solve_ils_cmd(
         "stall_limit": stall_limit,
         "hybrid_use_mip": hybrid_use_mip,
         "hybrid_mip_time_limit": hybrid_mip_time_limit,
+        "watch_debug": watch_debug,
     }
     solver_kwargs.update(extra_ils_kwargs)
     solver_kwargs.update(telemetry_kwargs)
@@ -1521,6 +1533,7 @@ def solve_tabu_cmd(
         "max_workers": worker_arg,
         "tabu_tenure": tenure,
         "stall_limit": stall_limit,
+        "watch_debug": watch_debug,
     }
     solver_kwargs.update(profile_extra_kwargs)
     solver_kwargs.update(telemetry_kwargs)

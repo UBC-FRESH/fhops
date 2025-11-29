@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from collections import defaultdict
+from collections import Counter, defaultdict
 from dataclasses import dataclass, field
+from typing import Any
 
 from fhops.optimization.operational_problem import OperationalProblem, build_operational_problem
 from fhops.scenario.contract import Problem
@@ -26,19 +27,29 @@ class SequencingTracker:
     """Tracks staged volume and sequencing feasibility as playback iterates."""
 
     ctx: OperationalProblem
+    debug: bool = False
     remaining_work: dict[str, float] = field(init=False)
     role_inventory: defaultdict[tuple[str, str], float] = field(init=False)
+    role_remaining: dict[tuple[str, str], float] = field(init=False)
     role_counts_total: defaultdict[tuple[str, str], int] = field(init=False)
     role_counts_day: defaultdict[tuple[str, str], int] = field(init=False)
     completed_blocks: set[str] = field(init=False)
+    debug_violation_counts: Counter[str] = field(init=False)
+    debug_first_violation_role: str | None = field(default=None, init=False)
+    debug_first_violation_reason: str | None = field(default=None, init=False)
+    debug_first_violation_block: str | None = field(default=None, init=False)
+    debug_first_violation_day: int | None = field(default=None, init=False)
+    debug_first_violation_detail: dict[str, Any] | None = field(default=None, init=False)
     _current_day: int | None = field(default=None, init=False)
 
     def __post_init__(self) -> None:
         self.remaining_work = dict(self.ctx.bundle.work_required)
         self.role_inventory = defaultdict(float)
+        self.role_remaining = dict(self.ctx.role_work_required)
         self.role_counts_total = defaultdict(int)
         self.role_counts_day = defaultdict(int)
         self.completed_blocks = set()
+        self.debug_violation_counts = Counter()
 
     def _roll_day(self, day: int) -> None:
         if self._current_day is None or day == self._current_day:
@@ -94,14 +105,44 @@ class SequencingTracker:
             required_units = self.role_counts_total[role_key] + self.role_counts_day[role_key] + 1
             if available_units < required_units:
                 violation_reason = violation_reason or "missing_prereq"
+                self._record_violation(
+                    block_id,
+                    role,
+                    "missing_prereq",
+                    day,
+                    {
+                        "available_units": float(available_units),
+                        "required_units": float(required_units),
+                        "deficit": float(required_units - available_units),
+                    },
+                )
             buffer = role_headstarts.get((block_id, role), 0.0)
             if buffer > 0.0:
                 required_buffer = self.role_counts_total[role_key] + buffer
                 if available_units + 1e-9 < required_buffer:
                     violation_reason = violation_reason or "missing_prereq"
+                    self._record_violation(
+                        block_id,
+                        role,
+                        "missing_prereq",
+                        day,
+                        {
+                            "available_units": float(available_units),
+                            "buffer_requirement": float(required_buffer),
+                            "headstart_deficit": float(required_buffer - available_units),
+                            "reason": "headstart",
+                        },
+                    )
 
         production_units = max(proposed_production, 0.0)
         explicit_block = block_id in self.ctx.blocks_with_explicit_system
+        target_key = (block_id, role) if role is not None else None
+        target_remaining = self.remaining_work.get(block_id, 0.0)
+        if target_key and target_key in self.role_remaining:
+            target_remaining = min(
+                target_remaining, self.role_remaining.get(target_key, target_remaining)
+            )
+        production_units = min(production_units, target_remaining)
 
         if prereq_set and explicit_block:
             available_volume = min(
@@ -118,6 +159,17 @@ class SequencingTracker:
                 required_volume = max(required_volume, loader_requirement)
             if available_volume + 1e-9 < required_volume:
                 violation_reason = violation_reason or "missing_prereq"
+                self._record_violation(
+                    block_id,
+                    role,
+                    "missing_prereq",
+                    day,
+                    {
+                        "available_volume": float(available_volume),
+                        "required_volume": float(required_volume),
+                        "reason": "inventory",
+                    },
+                )
             production_units = min(production_units, available_volume)
             for upstream_role in prereq_set:
                 key = (block_id, upstream_role)
@@ -131,10 +183,16 @@ class SequencingTracker:
         if role is not None:
             self.role_counts_day[(block_id, role)] += 1
 
-        if block_id in self.remaining_work:
-            self.remaining_work[block_id] = max(
-                0.0, self.remaining_work[block_id] - production_units
+        if target_key and target_key in self.role_remaining:
+            self.role_remaining[target_key] = max(
+                0.0, self.role_remaining[target_key] - production_units
             )
+
+        if self._is_terminal_role(block_id, role) or not target_key:
+            if block_id in self.remaining_work:
+                self.remaining_work[block_id] = max(
+                    0.0, self.remaining_work[block_id] - production_units
+                )
         block_completed = False
         if (
             block_id in self.remaining_work
@@ -150,6 +208,74 @@ class SequencingTracker:
             violation_reason=violation_reason,
             block_completed=block_completed,
         )
+
+    def _record_violation(
+        self,
+        block_id: str,
+        role: str | None,
+        reason: str,
+        day: int,
+        detail: dict[str, Any] | None = None,
+    ) -> None:
+        self.debug_violation_counts[reason] += 1
+        if self.debug_first_violation_reason is not None:
+            return
+        self.debug_first_violation_reason = reason
+        self.debug_first_violation_role = role
+        self.debug_first_violation_block = block_id
+        self.debug_first_violation_day = day
+        if detail:
+            self.debug_first_violation_detail = dict(detail)
+
+    def debug_snapshot(self) -> dict[str, Any]:
+        """Aggregate sequencing debug metrics for watch/telemetry surfaces."""
+
+        stats: dict[str, Any] = {}
+        violation_total = int(sum(self.debug_violation_counts.values()))
+        stats["sequencing_violation_count"] = violation_total
+        if self.debug_violation_counts:
+            stats["sequencing_violation_breakdown"] = dict(self.debug_violation_counts)
+        if self.debug_first_violation_role:
+            stats["sequencing_first_violation_role"] = self.debug_first_violation_role
+        if self.debug_first_violation_reason:
+            stats["sequencing_first_violation_reason"] = self.debug_first_violation_reason
+        if self.debug_first_violation_block:
+            stats["sequencing_first_violation_block"] = self.debug_first_violation_block
+        if self.debug_first_violation_day is not None:
+            stats["sequencing_first_violation_day"] = self.debug_first_violation_day
+        if self.debug_first_violation_detail:
+            for key, value in self.debug_first_violation_detail.items():
+                stats[f"sequencing_first_violation_{key}"] = value
+        role_inventory_totals: dict[str, float] = defaultdict(float)
+        for (block, role), volume in self.role_inventory.items():
+            if role:
+                role_inventory_totals[role] += float(volume)
+        if role_inventory_totals:
+            stats["role_inventory_totals"] = dict(sorted(role_inventory_totals.items()))
+        role_remaining_totals: dict[str, float] = defaultdict(float)
+        for (block, role), remaining in self.role_remaining.items():
+            if role:
+                role_remaining_totals[role] += float(remaining)
+        if role_remaining_totals:
+            stats["role_remaining_totals"] = dict(sorted(role_remaining_totals.items()))
+        stats["completed_blocks"] = len(self.completed_blocks)
+        stats["remaining_work_total"] = sum(self.remaining_work.values())
+        if violation_total == 0:
+            stats["sequencing_status"] = "clean"
+        return stats
+
+    def _is_terminal_role(self, block_id: str, role: str | None) -> bool:
+        if block_id not in self.ctx.blocks_with_explicit_system:
+            return True
+        if role is None:
+            return True
+        system_id = self.ctx.bundle.block_system.get(block_id)
+        if system_id is None:
+            return True
+        terminal = self.ctx.terminal_roles.get(system_id)
+        if not terminal:
+            return True
+        return role in terminal
 
 
 def build_sequencing_tracker(problem: Problem) -> SequencingTracker:

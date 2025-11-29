@@ -14,8 +14,10 @@ import pandas as pd
 from fhops.evaluation import compute_kpis
 from fhops.optimization.heuristics.common import (
     Schedule,
+    build_watch_metadata_from_debug,
     evaluate_candidates,
     evaluate_schedule,
+    evaluate_schedule_with_debug,
     generate_neighbors,
     init_greedy_schedule,
 )
@@ -144,6 +146,7 @@ def solve_ils(
     watch_sink: SnapshotSink | None = None,
     watch_interval: int | None = None,
     watch_metadata: dict[str, str] | None = None,
+    watch_debug: bool = False,
 ) -> dict[str, Any]:
     """Run Iterated Local Search (optionally with MIP warm starts).
 
@@ -182,6 +185,8 @@ def solve_ils(
         Emit snapshots every ``watch_interval`` outer iterations (defaults to ``iters / 20``).
     watch_metadata : dict[str, str] | None
         Extra metadata (scenario/solver labels) attached to snapshot payloads.
+    watch_debug : bool, default=False
+        When ``True`` capture sequencing debug stats for watch snapshots (minor overhead).
 
     Returns
     -------
@@ -268,12 +273,26 @@ def solve_ils(
     last_watch_best: float | None = None
 
     ctx = build_operational_problem(pb)
+    debug_capture = bool(watch_debug and watch_sink)
+
+    def _score_schedule(
+        schedule: Schedule,
+        *,
+        capture: bool | None = None,
+    ) -> tuple[float, dict[str, Any] | None]:
+        """Evaluate a schedule and optionally capture sequencing debug statistics."""
+
+        flag = debug_capture if capture is None else capture
+        if flag:
+            return evaluate_schedule_with_debug(pb, schedule, ctx, capture_debug=True)
+        return evaluate_schedule(pb, schedule, ctx), None
 
     with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
         current = init_greedy_schedule(pb, ctx)
-        current_score = evaluate_schedule(pb, current, ctx)
+        current_score, current_debug_stats = _score_schedule(current)
         best = current
         best_score = current_score
+        best_debug_stats = dict(current_debug_stats) if current_debug_stats else None
         initial_score = current_score
         rolling_scores.append(float(current_score))
 
@@ -308,6 +327,8 @@ def solve_ils(
                 "perturbations": str(perturbations),
                 "restarts": str(restarts),
             }
+            if debug_capture:
+                metadata.update(build_watch_metadata_from_debug(current_debug_stats))
             watch_sink(
                 Snapshot(
                     scenario=watch_scenario,
@@ -333,11 +354,16 @@ def solve_ils(
             current, current_score, improved, steps = _local_search(
                 pb, current, registry, rng, ctx, batch_arg, worker_arg, operator_stats
             )
+            if debug_capture:
+                current_score, current_debug_stats = _score_schedule(current, capture=True)
+            else:
+                current_debug_stats = None
             improvement_steps += steps
             rolling_scores.append(float(current_score))
             best_improved = False
             if current_score > best_score:
                 best, best_score = current, current_score
+                best_debug_stats = dict(current_debug_stats) if current_debug_stats else None
                 stalls = 0
                 best_improved = True
             else:
@@ -375,11 +401,17 @@ def solve_ils(
                         )
                         assignments = cast(pd.DataFrame, mip_res["assignments"]).copy()
                         hybrid_schedule = _assignments_to_schedule(pb, assignments)
-                        hybrid_score = evaluate_schedule(pb, hybrid_schedule, ctx)
+                        hybrid_score, hybrid_debug = _score_schedule(
+                            hybrid_schedule, capture=debug_capture
+                        )
                         if hybrid_score > best_score:
                             best, best_score = hybrid_schedule, hybrid_score
+                            best_debug_stats = dict(hybrid_debug) if hybrid_debug else None
                             current = best
                             current_score = best_score
+                            current_debug_stats = (
+                                dict(best_debug_stats) if best_debug_stats else None
+                            )
                             stalls = 0
                             restarts += 1
                             continue
@@ -389,14 +421,14 @@ def solve_ils(
                 current = _perturb_schedule(
                     pb, current, registry, rng, ctx, perturbation_strength, operator_stats
                 )
-                current_score = evaluate_schedule(pb, current, ctx)
+                current_score, current_debug_stats = _score_schedule(current)
                 stalls = 0
                 perturbations += 1
             else:
                 current = _perturb_schedule(
                     pb, current, registry, rng, ctx, perturbation_strength, operator_stats
                 )
-                current_score = evaluate_schedule(pb, current, ctx)
+                current_score, current_debug_stats = _score_schedule(current)
                 perturbations += 1
                 rolling_scores.append(float(current_score))
                 improvement_window.append(0)

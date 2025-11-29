@@ -14,8 +14,11 @@ import pandas as pd
 
 from fhops.evaluation import compute_kpis
 from fhops.optimization.heuristics.common import (
+    Schedule,
+    build_watch_metadata_from_debug,
     evaluate_candidates,
     evaluate_schedule,
+    evaluate_schedule_with_debug,
     generate_neighbors,
     init_greedy_schedule,
 )
@@ -73,6 +76,7 @@ def solve_tabu(
     watch_sink: SnapshotSink | None = None,
     watch_interval: int | None = None,
     watch_metadata: dict[str, str] | None = None,
+    watch_debug: bool = False,
 ) -> dict[str, Any]:
     """Run Tabu Search using the shared operator registry.
 
@@ -106,6 +110,8 @@ def solve_tabu(
         Emit watch updates every ``watch_interval`` iterations (defaults to ``iters / 20``).
     watch_metadata : dict[str, str] | None
         Metadata merged into each snapshot (scenario/solver labels, run IDs, etc.).
+    watch_debug : bool, default=False
+        When ``True`` include sequencing debug metadata in watch output (adds evaluation overhead).
 
     Returns
     -------
@@ -196,13 +202,25 @@ def solve_tabu(
     last_emitted_step: int | None = None
 
     ctx = build_operational_problem(pb)
+    debug_capture = bool(watch_debug and watch_sink)
+
+    def _score_schedule(
+        schedule: Schedule,
+        *,
+        capture: bool | None = None,
+    ) -> tuple[float, dict[str, Any] | None]:
+        flag = debug_capture if capture is None else capture
+        if flag:
+            return evaluate_schedule_with_debug(pb, schedule, ctx, capture_debug=True)
+        return evaluate_schedule(pb, schedule, ctx), None
 
     with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
         current = init_greedy_schedule(pb, ctx)
-        current_score = evaluate_schedule(pb, current, ctx)
+        current_score, current_debug_stats = _score_schedule(current)
         initial_score = current_score
         best = current
         best_score = current_score
+        best_debug_stats = dict(current_debug_stats) if current_debug_stats else None
         rolling_scores.append(float(current_score))
 
         tenure = tabu_tenure if tabu_tenure is not None else max(10, len(pb.scenario.machines))
@@ -249,6 +267,8 @@ def solve_tabu(
                 "tabu_tenure": str(tenure),
                 "restarts": str(restarts),
             }
+            if debug_capture:
+                metadata.update(build_watch_metadata_from_debug(current_debug_stats))
             watch_sink(
                 Snapshot(
                     scenario=watch_scenario,
@@ -313,6 +333,10 @@ def solve_tabu(
             candidate, score, move_sig = best_candidate_tuple
             current = candidate
             current_score = score
+            if debug_capture:
+                current_score, current_debug_stats = _score_schedule(current, capture=True)
+            else:
+                current_debug_stats = None
             rolling_scores.append(float(current_score))
 
             if move_sig in tabu_set:
@@ -331,6 +355,7 @@ def solve_tabu(
             if current_score > best_score:
                 best = current
                 best_score = current_score
+                best_debug_stats = dict(current_debug_stats) if current_debug_stats else None
                 stalls = 0
                 improvements += 1
                 best_improved = True
@@ -360,6 +385,7 @@ def solve_tabu(
                 stalls = 0
                 current = best
                 current_score = best_score
+                current_debug_stats = dict(best_debug_stats) if best_debug_stats else None
                 tabu_queue.clear()
                 tabu_set.clear()
                 continue

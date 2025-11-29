@@ -6,6 +6,7 @@ from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from typing import Any
 
+from fhops.costing.machine_rates import normalize_machine_role
 from fhops.scenario.contract import Problem
 from fhops.scenario.contract.models import ObjectiveWeights
 from fhops.scheduling.mobilisation import build_distance_lookup
@@ -152,7 +153,8 @@ def _build_system_configs(systems: Iterable[HarvestSystem]) -> dict[str, SystemC
             role: max(1, int(count)) for role, count in (system.role_counts or {}).items()
         }
         role_buffers = {
-            role: float(value) for role, value in (system.role_headstart_shifts or {}).items()
+            (normalize_machine_role(role) or role): float(value)
+            for role, value in (system.role_headstart_shifts or {}).items()
         }
         loader_batch = (
             float(system.loader_batch_volume_m3)

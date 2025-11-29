@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections import defaultdict
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
@@ -39,6 +40,8 @@ class OperationalProblem:
     role_headstarts: Mapping[tuple[str, str], float]
     loader_batch_volume: Mapping[str, float]
     loader_roles: frozenset[tuple[str, str]]
+    role_work_required: Mapping[tuple[str, str], float]
+    terminal_roles: Mapping[str, frozenset[str]]
 
     def build_sanitizer(self, schedule_cls: type[Schedule]) -> Sanitizer:
         """Return a schedule sanitizer enforcing locks, availability, and landing caps."""
@@ -106,6 +109,8 @@ def build_operational_problem(pb: Problem) -> OperationalProblem:
         prereq_roles,
         machines_by_role,
         headstarts,
+        role_work_required,
+        terminal_roles,
     ) = _derive_role_metadata(bundle, explicit_blocks)
     blackout = _build_blackout_shifts(pb)
     locked = _build_locked_assignments(pb)
@@ -128,6 +133,8 @@ def build_operational_problem(pb: Problem) -> OperationalProblem:
         role_headstarts=headstarts,
         loader_batch_volume=loader_batch_volume,
         loader_roles=loader_roles,
+        role_work_required=role_work_required,
+        terminal_roles=terminal_roles,
     )
 
 
@@ -139,10 +146,14 @@ def _derive_role_metadata(
     dict[tuple[str, str], frozenset[str]],
     dict[str, tuple[str, ...]],
     dict[tuple[str, str], float],
+    dict[tuple[str, str], float],
+    dict[str, frozenset[str]],
 ]:
     allowed_roles: dict[str, frozenset[str] | None] = {}
     prereq_roles: dict[tuple[str, str], frozenset[str]] = {}
     headstart_shifts: dict[tuple[str, str], float] = {}
+    role_work_required: dict[tuple[str, str], float] = {}
+    system_terminal_roles: dict[str, frozenset[str]] = {}
     machine_roles = bundle.machine_roles
     available_roles = {role for role in machine_roles.values() if role}
     machines_by_role: dict[str, list[str]] = {}
@@ -172,16 +183,40 @@ def _derive_role_metadata(
             prereqs = tuple(
                 upstream for upstream in role_cfg.upstream_roles if upstream in available_roles
             )
-            buffer_value = role_cfg.buffer_shifts or (1.0 if role_cfg.upstream_roles else 0.0)
+            buffer_value = role_cfg.buffer_shifts or 0.0
             if buffer_value > 0:
                 headstart_shifts[(block_id, role)] = buffer_value
             if prereqs:
                 prereq_roles[(block_id, role)] = frozenset(prereqs)
+            if block_id in explicit_blocks:
+                role_work_required[(block_id, role)] = bundle.work_required.get(block_id, 0.0)
 
     machines_by_role_tuple = {
         role: tuple(sorted(machine_ids)) for role, machine_ids in machines_by_role.items()
     }
-    return allowed_roles, prereq_roles, machines_by_role_tuple, headstart_shifts
+    for system in bundle.systems.values():
+        downstream: dict[str, set[str]] = defaultdict(set)
+        for role_cfg in system.roles:
+            role = role_cfg.role
+            if not role:
+                continue
+            for upstream in role_cfg.upstream_roles:
+                downstream[upstream].add(role)
+        terminal = {
+            role_cfg.role
+            for role_cfg in system.roles
+            if role_cfg.role and not downstream.get(role_cfg.role)
+        }
+        system_terminal_roles[system.system_id] = frozenset(terminal)
+
+    return (
+        allowed_roles,
+        prereq_roles,
+        machines_by_role_tuple,
+        headstart_shifts,
+        role_work_required,
+        system_terminal_roles,
+    )
 
 
 def _build_loader_metadata(
