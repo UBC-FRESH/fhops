@@ -386,28 +386,35 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
     model.block_balance = pyo.Constraint(model.B, rule=block_balance_rule)
 
     # Landing capacity with slack
-    landing_ids = list(bundle.landing_capacity.keys())
-    model.Landing = pyo.Set(initialize=landing_ids)
-    model.landing_slack = pyo.Var(model.Landing, model.D, domain=pyo.NonNegativeReals)
+    landing_ids = sorted(
+        {
+            landing
+            for landing in bundle.landing_for_block.values()
+            if landing in bundle.landing_capacity
+        }
+    )
+    if landing_ids:
+        model.Landing = pyo.Set(initialize=landing_ids)
+        model.landing_slack = pyo.Var(model.Landing, model.D, domain=pyo.NonNegativeReals)
 
-    def landing_capacity_rule(mdl, landing_id, day):
-        capacity = bundle.landing_capacity.get(landing_id)
-        if capacity is None:
-            return pyo.Constraint.Skip
-        related_blocks = [
-            blk for blk, landing in bundle.landing_for_block.items() if landing == landing_id
-        ]
-        if not related_blocks:
-            return pyo.Constraint.Skip
-        expr = 0
-        for blk in related_blocks:
-            for mach in mdl.M:
-                for shift_day, shift_label in model.S:
-                    if shift_day == day:
-                        expr += mdl.x[mach, blk, (shift_day, shift_label)]
-        return expr <= capacity + mdl.landing_slack[landing_id, day]
+        def landing_capacity_rule(mdl, landing_id, day):
+            capacity = bundle.landing_capacity.get(landing_id)
+            if capacity is None:
+                return pyo.Constraint.Skip
+            related_blocks = [
+                blk for blk, landing in bundle.landing_for_block.items() if landing == landing_id
+            ]
+            if not related_blocks:
+                return pyo.Constraint.Skip
+            expr = 0
+            for blk in related_blocks:
+                for mach in mdl.M:
+                    for shift_day, shift_label in model.S:
+                        if shift_day == day:
+                            expr += mdl.x[mach, blk, (shift_day, shift_label)]
+            return expr <= capacity + mdl.landing_slack[landing_id, day]
 
-    model.landing_capacity = pyo.Constraint(model.Landing, model.D, rule=landing_capacity_rule)
+        model.landing_capacity = pyo.Constraint(model.Landing, model.D, rule=landing_capacity_rule)
 
     prod_weight = bundle.objective_weights.production
     landing_weight = bundle.objective_weights.landing_slack

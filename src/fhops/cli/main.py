@@ -152,7 +152,14 @@ def _print_kpi_summary(kpis: Any, mode: str = "extended") -> None:
     sections: list[tuple[str, list[str]]] = [
         (
             "Production",
-            ["total_production", "completed_blocks", "makespan_day", "makespan_shift"],
+            [
+                "total_production",
+                "staged_production",
+                "remaining_work_total",
+                "completed_blocks",
+                "makespan_day",
+                "makespan_shift",
+            ],
         ),
         (
             "Mobilisation",

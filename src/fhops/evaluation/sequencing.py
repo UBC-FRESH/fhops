@@ -42,6 +42,7 @@ class SequencingTracker:
     debug_first_violation_day: int | None = field(default=None, init=False)
     debug_first_violation_detail: dict[str, Any] | None = field(default=None, init=False)
     _current_day: int | None = field(default=None, init=False)
+    delivered_total: float = field(init=False)
 
     def __post_init__(self) -> None:
         self.remaining_work = dict(self.ctx.bundle.work_required)
@@ -52,6 +53,7 @@ class SequencingTracker:
         self.role_counts_day = defaultdict(int)
         self.completed_blocks = set()
         self.debug_violation_counts = Counter()
+        self.delivered_total = 0.0
 
     def _roll_day(self, day: int) -> None:
         if self._current_day is None or day == self._current_day:
@@ -178,6 +180,16 @@ class SequencingTracker:
         if role is not None:
             self.role_counts_day[(block_id, role)] += 1
 
+        deliverable = False
+        if block_id not in self.ctx.blocks_with_explicit_system:
+            deliverable = True
+        elif role is None:
+            deliverable = True
+        elif self._is_terminal_role(block_id, role):
+            deliverable = True
+        if deliverable and production_units > 0:
+            self.delivered_total += production_units
+
         if target_key and target_key in self.role_remaining:
             self.role_remaining[target_key] = max(
                 0.0, self.role_remaining[target_key] - production_units
@@ -255,6 +267,7 @@ class SequencingTracker:
             stats["role_remaining_totals"] = dict(sorted(role_remaining_totals.items()))
         stats["completed_blocks"] = len(self.completed_blocks)
         stats["remaining_work_total"] = sum(self.remaining_work.values())
+        stats["delivered_total"] = float(self.delivered_total)
         if violation_total == 0:
             stats["sequencing_status"] = "clean"
         return stats

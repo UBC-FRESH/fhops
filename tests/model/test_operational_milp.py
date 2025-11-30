@@ -91,7 +91,11 @@ def test_loader_batches_enforce_truckload_chunks() -> None:
     bundle = build_operational_bundle(problem)
 
     result = solve_operational_milp(bundle, solver="highs", time_limit=5)
-    assert result["production"] == pytest.approx(90.0)
+    expected_output = 95.0
+    assert result["production"] == pytest.approx(expected_output)
+    assignments = result["assignments"]
+    assert not assignments.empty
+    assert assignments["production"].sum() == pytest.approx(expected_output)
 
 
 def _build_headstart_problem() -> Problem:

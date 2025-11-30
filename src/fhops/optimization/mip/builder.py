@@ -230,16 +230,18 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     for block in sc.blocks:
         blocks_by_landing[block.landing_id].append(block.id)
 
-    model.L = pyo.Set(initialize=list(landing_capacity.keys()))
+    landing_ids = sorted(blocks_by_landing.keys())
+    model.L = pyo.Set(initialize=landing_ids)
 
     if enable_landing_slack:
         model.landing_slack = pyo.Var(model.L, model.S, domain=pyo.NonNegativeReals)
 
         def landing_cap_rule(mdl, landing_id, day, shift_id):
+            block_ids = blocks_by_landing.get(landing_id, [])
+            if not block_ids or len(mdl.M) == 0:
+                return pyo.Constraint.Skip
             assignments = sum(
-                mdl.x[mach, blk, (day, shift_id)]
-                for mach in model.M
-                for blk in blocks_by_landing.get(landing_id, [])
+                mdl.x[mach, blk, (day, shift_id)] for mach in model.M for blk in block_ids
             )
             capacity = landing_capacity.get(landing_id, 0)
             return assignments <= capacity + mdl.landing_slack[landing_id, (day, shift_id)]
@@ -252,10 +254,11 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     else:
 
         def landing_cap_rule(mdl, landing_id, day, shift_id):
+            block_ids = blocks_by_landing.get(landing_id, [])
+            if not block_ids or len(mdl.M) == 0:
+                return pyo.Constraint.Skip
             assignments = sum(
-                mdl.x[mach, blk, (day, shift_id)]
-                for mach in model.M
-                for blk in blocks_by_landing.get(landing_id, [])
+                mdl.x[mach, blk, (day, shift_id)] for mach in model.M for blk in block_ids
             )
             capacity = landing_capacity.get(landing_id, 0)
             return assignments <= capacity
