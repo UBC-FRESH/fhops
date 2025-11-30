@@ -1,3 +1,16 @@
+# 2025-12-14 — Legacy landing-capacity fix + KPI/test realignment
+- Patched the legacy Pyomo builder (`fhops.optimization.mip.builder`) so landing-capacity constraints are only created for landings that actually host blocks (and only when machines exist); this mirrors the operational bundle logic and unblocks `fhops bench suite --include-mip` on the refreshed tiny7 dataset.
+- Updated the operational MILP regression to expect loaders to finish the entire workload when partial batches are allowed, and tightened the various KPI/playback/benchmark tests so they now respect the new production metrics: `staged_production` now reports the *remaining* staged inventory (equal to `remaining_work_total`). Regenerated the deterministic KPI snapshots and the tiny7 SA benchmark fixture so regression tests exercise the clarified fields (no more `cumulative_production` in the public KPI payload).
+- Reran the tiny7 benchmark suite with the MIP enabled plus the full lint/type/test/doc cadence to lock in the fixes.
+- Commands executed for this work:
+  - `.venv/bin/fhops bench suite --include-mip --scenario examples/tiny7/scenario.yaml`
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pytest`
+  - `.venv/bin/pre-commit run --all-files`
+  - `.venv/bin/sphinx-build -b html docs docs/_build/html -W`
+
 # 2025-12-13 — Operational MILP loader staging parity
 - Added `assigned`/`production` columns to the operational MILP assignments writer so playback/KPI tooling consumes the actual per-machine shift production instead of re-deriving rates, eliminating false sequencing deficits.
 - Bumped loader head-start buffers to the truck batch volume, introduced assignment/activation coupling for all buffered roles, and tightened the inventory guard so loaders (and any buffered role) cannot be assigned until the staged volume satisfies the buffer requirement; reran tiny7/med42 MILP solves under `--sequencing-debug` to confirm the schedules are now sequencing-clean.

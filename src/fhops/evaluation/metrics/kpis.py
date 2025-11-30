@@ -91,10 +91,13 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
     shift_df = shift_dataframe(playback_result)
     day_df = day_dataframe(playback_result)
 
+    delivered_total = getattr(playback_result, "delivered_total", None)
+    remaining_work_total = getattr(playback_result, "remaining_work_total", None)
+
     mobilisation_cost = 0.0
     mobilisation_by_machine: dict[str, float] = defaultdict(float)
     mobilisation_by_landing: dict[str, float] = defaultdict(float)
-    total_prod = 0.0
+    fallback_prod = 0.0
     completed_blocks: set[str] = set()
     seq_violation_events = 0
     seq_violation_blocks: set[str] = set()
@@ -103,7 +106,7 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
 
     for record in playback_result.records:
         production = float(record.production_units or 0.0)
-        total_prod += production
+        fallback_prod += production
         if record.mobilisation_cost:
             cost = float(record.mobilisation_cost)
             mobilisation_cost += cost
@@ -121,10 +124,16 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
             seq_reason_counts[str(violation)] += 1
 
     sc = pb.scenario
+    if delivered_total is None:
+        delivered_total = fallback_prod
     result: dict[str, float | int | str] = {
-        "total_production": total_prod,
+        "total_production": float(delivered_total),
         "completed_blocks": float(len(completed_blocks)),
     }
+    if remaining_work_total is not None:
+        staged_volume = float(remaining_work_total)
+        result["staged_production"] = staged_volume
+        result["remaining_work_total"] = staged_volume
     if mobilisation_cost > 0:
         result["mobilisation_cost"] = mobilisation_cost
         result["mobilisation_cost_by_machine"] = json.dumps(
@@ -190,7 +199,9 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
     result.update(makespan_metrics)
 
     total_hours_recorded = float(shift_df.get("total_hours", pd.Series(dtype=float)).sum())
-    avg_production_rate = (total_prod / total_hours_recorded) if total_hours_recorded > 0 else 0.0
+    avg_production_rate = (
+        delivered_total / total_hours_recorded if total_hours_recorded > 0 else 0.0
+    )
 
     if "downtime_hours" in shift_df.columns:
         total_downtime_hours = float(shift_df["downtime_hours"].sum())

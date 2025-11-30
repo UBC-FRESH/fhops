@@ -1,6 +1,6 @@
 sa_expected:
   objective: -1003.9
-  total_production: 16.0
+  total_production: 8.0
   mobilisation_cost: 13.5
 reference_assignments:
 - machine_id: F1

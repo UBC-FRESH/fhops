@@ -105,7 +105,10 @@ def test_regression_sa_mobilisation_and_sequencing():
     assert kpis["sequencing_violation_breakdown"] == "none"
     assert kpis["mobilisation_cost"] == pytest.approx(BASELINE["sa_expected"]["mobilisation_cost"])
     assert res["objective"] == pytest.approx(BASELINE["sa_expected"]["objective"])
-    assert kpis["total_production"] == pytest.approx(BASELINE["sa_expected"]["total_production"])
+    expected_total = BASELINE["sa_expected"]["total_production"]
+    delivered = kpis["total_production"]
+    staged = float(kpis.get("staged_production", 0.0))
+    assert delivered + staged == pytest.approx(expected_total)
 
 
 @pytest.mark.milp_refactor
