@@ -30,6 +30,23 @@ from fhops.telemetry.watch import Snapshot, SnapshotSink
 
 __all__ = ["Schedule", "solve_sa"]
 
+AUTO_MOBILISATION_BLOCK_THRESHOLD = 30
+AUTO_MOBILISATION_DAY_THRESHOLD = 30
+AUTO_MOBILISATION_WEIGHTS = {
+    "swap": 0.8,
+    "move": 0.8,
+    "block_insertion": 0.4,
+    "cross_exchange": 0.4,
+    "mobilisation_shake": 1.2,
+}
+
+
+def _should_enable_mobilisation_profile(pb: Problem) -> bool:
+    scenario = pb.scenario
+    num_blocks = len(getattr(scenario, "blocks", []) or [])
+    num_days = getattr(scenario, "num_days", 0) or 0
+    return num_blocks >= AUTO_MOBILISATION_BLOCK_THRESHOLD or num_days >= AUTO_MOBILISATION_DAY_THRESHOLD
+
 
 def solve_sa(
     pb: Problem,
@@ -103,6 +120,7 @@ def solve_sa(
     rng = _random.Random(seed)
     registry = OperatorRegistry.from_defaults()
     available_names = {name.lower(): name for name in registry.names()}
+    auto_profile_applied = False
     if operators:
         desired = {name.lower() for name in operators}
         unknown = desired - set(available_names.keys())
@@ -119,6 +137,9 @@ def solve_sa(
                 raise ValueError(f"Unknown operator '{name}' in weights configuration")
             normalized_weights[available_names[key]] = weight
         registry.configure(normalized_weights)
+    if not operators and not operator_weights and _should_enable_mobilisation_profile(pb):
+        registry.configure({name: AUTO_MOBILISATION_WEIGHTS[name] for name in AUTO_MOBILISATION_WEIGHTS})
+        auto_profile_applied = True
 
     if not 0 < cooling_rate < 1:
         raise ValueError("cooling_rate must be between 0 and 1 (exclusive).")
@@ -136,6 +157,8 @@ def solve_sa(
         "restart_interval": restart_interval_value,
         "operators": registry.weights(),
     }
+    if auto_profile_applied:
+        config_snapshot["auto_profile"] = "mobilisation"
     context_payload = dict(telemetry_context or {})
     step_interval = context_payload.pop("step_interval", 100)
     tuner_meta = context_payload.pop("tuner_meta", None)

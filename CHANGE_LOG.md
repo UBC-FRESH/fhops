@@ -6,6 +6,8 @@
   - `.venv/bin/ruff check src tests`
   - `.venv/bin/mypy src`
   - `.venv/bin/pytest`
+- Softened the leftover penalty factor to 1.0, auto-apply the mobilisation operator preset when scenarios exceed 30 blocks/days (unless callers override operators), and threaded staged/delivered volume into the watch metadata so live dashboards surface feasibility progress.
+- Regenerated the tiny7 SA benchmark fixture with the auto-mobilisation defaults (`fhops bench suite --include-mip --scenario examples/tiny7/scenario.yaml --sa-iters 200 --time-limit 10`).
 
 # 2025-12-14 — Legacy landing-capacity fix + KPI/test realignment
 - Patched the legacy Pyomo builder (`fhops.optimization.mip.builder`) so landing-capacity constraints are only created for landings that actually host blocks (and only when machines exist); this mirrors the operational bundle logic and unblocks `fhops bench suite --include-mip` on the refreshed tiny7 dataset.

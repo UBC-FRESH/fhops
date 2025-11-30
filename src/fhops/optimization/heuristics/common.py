@@ -16,7 +16,7 @@ from fhops.optimization.operational_problem import OperationalProblem
 from fhops.scenario.contract import Problem
 
 BLOCK_COMPLETION_EPS = 1e-6
-LEFTOVER_PENALTY_FACTOR = 5.0
+LEFTOVER_PENALTY_FACTOR = 1.0
 
 
 @dataclass(slots=True)
@@ -626,6 +626,15 @@ def build_watch_metadata_from_debug(stats: Mapping[str, Any] | None) -> dict[str
         deficit = stats.get("sequencing_first_violation_deficit")
     if deficit is not None:
         meta["seq_first_deficit"] = f"{float(deficit):.3f}"
+    remaining_total = stats.get("remaining_work_total")
+    if remaining_total is not None:
+        meta["staged_volume_m3"] = f"{float(remaining_total):.2f}"
+    delivered_total = stats.get("delivered_total")
+    if delivered_total is not None:
+        meta["delivered_volume_m3"] = f"{float(delivered_total):.2f}"
+    completed_blocks = stats.get("completed_blocks")
+    if completed_blocks is not None:
+        meta["completed_blocks"] = str(int(completed_blocks))
     breakdown = stats.get("sequencing_violation_breakdown")
     if breakdown:
         meta["seq_violation_breakdown"] = json.dumps(breakdown, sort_keys=True)

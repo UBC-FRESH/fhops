@@ -109,6 +109,28 @@ class LiveWatch:
         parts: list[str] = []
         metadata = snap.metadata or {}
 
+        def _append_volume(parts_list: list[str]) -> None:
+            delivered = metadata.get("delivered_volume_m3")
+            staged = metadata.get("staged_volume_m3")
+            blocks = metadata.get("completed_blocks")
+            volume_bits: list[str] = []
+            if delivered is not None:
+                try:
+                    delivered_value = float(delivered)
+                    volume_bits.append(f"Del={delivered_value:.0f} m³")
+                except (TypeError, ValueError):
+                    volume_bits.append(f"Del={delivered}")
+            if staged is not None:
+                try:
+                    staged_value = float(staged)
+                    volume_bits.append(f"Stg={staged_value:.0f} m³")
+                except (TypeError, ValueError):
+                    volume_bits.append(f"Stg={staged}")
+            if blocks is not None:
+                volume_bits.append(f"Blocks={blocks}")
+            if volume_bits:
+                parts_list.append(" | ".join(volume_bits))
+
         def _append_seq(parts_list: list[str]) -> None:
             seq_role = metadata.get("seq_first_role")
             seq_reason = metadata.get("seq_first_reason")
@@ -131,6 +153,7 @@ class LiveWatch:
             if snap.acceptance_rate_window is not None:
                 parts.append(f"Win={snap.acceptance_rate_window * 100:.1f}%")
             _append_seq(parts)
+            _append_volume(parts)
         elif solver.startswith("ils"):
             stalls = metadata.get("stalls")
             if stalls is not None:
@@ -142,6 +165,7 @@ class LiveWatch:
             if restarts is not None:
                 parts.append(f"Restarts={restarts}")
             _append_seq(parts)
+            _append_volume(parts)
         elif solver.startswith("tabu"):
             tenure = metadata.get("tabu_tenure")
             if tenure is not None:
@@ -157,6 +181,7 @@ class LiveWatch:
             if snap.acceptance_rate_window is not None:
                 parts.append(f"Win={snap.acceptance_rate_window * 100:.1f}%")
             _append_seq(parts)
+            _append_volume(parts)
         return " | ".join(parts)
 
     def _render(self) -> Group:
