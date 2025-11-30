@@ -496,11 +496,29 @@ system slightly under-capacity (bottleneck days just above the 42-day horizon).
   - [x] Derive `small21` and `tiny7` variants from the med42 generator by truncating the horizon (21-day / 7-day) and subsampling blocks while keeping the single balanced system. (Tiny7 remains the single-crew regression smoke test until we refresh all fixtures; small21 already uses the full balanced roster.)
 - [x] Derive `large84` by doubling the med42 block set/system count and extending the horizon to 84 days (two balanced systems, doubled workload).
   - [ ] Ensure each dataset ships with deterministic `scripts/rebuild_*` entries (shared generator) plus README/KPI updates, then refresh CLI/docs/tests to reference the new ladder.
-- [x] 2025-12-10 refresh run: rebuilt the entire ladder via `scripts/rebuild_reference_datasets.py tiny7|small21|med42|large84 --seed 20251209`, regenerated the dataset summaries (`run_dataset_inspection.py`), solved the operational MILP for tiny7/med42/large84 with the current gap/limit presets to refresh `tests/fixtures/playback/*` (assignments + shift/day CSV+Parquet), recomputed deterministic & stochastic KPI snapshots, rewrote the operational bundle fixtures, and captured new SA benchmark rows from `fhops bench suite` (tiny7: `--time-limit 120 --sa-iters 200`, med42: `--time-limit 600 --sa-iters 500`, large84: `--time-limit 900 --sa-iters 500`). Full `pytest` run stayed green after the updates.
+- [x] 2025-11-30 refresh run: rebuilt the entire ladder via `scripts/rebuild_reference_datasets.py tiny7|small21|med42|large84 --seed 20251209`, regenerated the dataset summaries (`run_dataset_inspection.py`), solved the operational MILP for tiny7/med42/large84 with the current gap/limit presets to refresh `tests/fixtures/playback/*` (assignments + shift/day CSV+Parquet), recomputed deterministic & stochastic KPI snapshots, rewrote the operational bundle fixtures, and captured new SA benchmark rows from `fhops bench suite` (tiny7: `--time-limit 120 --sa-iters 200`, med42: `--time-limit 600 --sa-iters 500`, large84: `--time-limit 900 --sa-iters 500`). Full `pytest` run stayed green after the updates.
+- [x] 2025-11-30 workload trim: updated `scripts/rebuild_reference_datasets.py` so small21/med42/large84 use the tiny7 block profiles and scaled block counts (6/12/24) before regenerating each dataset with seed 20251209. Goal: keep per-system workload roughly constant as horizon grows so MIP/heuristic scaling tests are meaningful.
+- [x] 2025-11-30 delivery-only scoring benchmarks (`.venv/bin/fhops bench suite --include-mip --scenario examples/tiny7/scenario.yaml --scenario examples/small21/scenario.yaml --scenario examples/med42/scenario.yaml --scenario examples/large84/scenario.yaml --out-dir tmp/benchmarks_delivery_full --time-limit 600 --sa-iters 500`):
+  - **Tiny7:** MILP 4 114.84 (0.18 s); SA 1 928.50 (2.0 s). Both finish 2/2 blocks; SA keeps mobilisation cost low by idling spare machines.
+  - **Small21 (trimmed workload):** MILP 8 904.15 (1.7 s); SA −766.39 (5.5 s). Heuristics now deliver ~8.1 k m³ (≈90 % of workload) with only ~900 m³ staged when the horizon ends.
+  - **Med42 (trimmed workload):** MILP 14 343.14 (15 s); SA −3 612.53 (11.8 s). Heuristics deliver ≈12.4 k m³ and leave ≈1.9 k m³ staged; still negative but far closer to capacity.
+  - **Large84 (trimmed workload, double system):** MILP 37 121.58 (≈265 s); SA −41 033.36 (59 s). SA delivers ≈34 k m³ and leaves ≈3 k m³ staged; tuning should now be able to close most of the remaining gap.
+- [x] 2025-12-20 delivery-only tuning sweep (`.venv/bin/fhops bench suite ... --time-limit 900 --sa-iters 20000 --sa-cooling-rate 0.99995 --sa-restart-interval 2000 --operator-preset mobilisation --include-ils --ils-iters 750 --ils-perturbation-strength 6 --ils-stall-limit 25 --include-tabu --tabu-iters 15000 --tabu-tenure 200` per scenario; large84 solvers were executed individually to bypass the 30‑minute CLI timeout). Results captured under `tmp/benchmarks_delivery_tuned/*`:
+  - **Tiny7:** MILP 4 114.84 (0.18 s). SA holds at 1 928.50 despite 20 k iters, while ILS/Tabu climb to 3 715.54 in 5.5 s/60 s respectively. All heuristics finish both blocks with zero staged wood; the SA score remains depressed because it never escapes the mobilisation-light seed.
+  - **Small21:** MILP 8 904.15 (1.97 s). SA/ILS/Tabu converge to −701.44 with ≈8.48 k m³ delivered, 0.43 k m³ staged, and 1.6 k mobilisation spend; longer SA runs only improve acceptance (~98 %) without lifting the objective. Runtime: SA 213 s, ILS 12.9 s, Tabu 162 s.
+  - **Med42:** MILP 14 343.14 (14.4 s). All heuristics remain stuck at −3 612.52 while delivering 9.10 k m³ and staging 5.25 k m³ (zero sequencing issues). SA needed ~470 s for 20 k iters, ILS finished in 28.6 s, Tabu in 357 s; raising the iteration budget did not rescue the score because the leftover penalty dominates once loaders idle near the horizon.
+  - **Large84:** MILP 37 121.58 (258.7 s; minor sequencing violation due to fully staged terminal loads). SA (15 k iters, 0.99995 cooling, 2 000 restart) and ILS settle at −41 033.36 with 34.4 k m³ delivered, 2.69 k m³ staged (~18/24 blocks completed), and 10.32 k mobilisation cost; Tabu matches (+2.64 objective points) in 1 195 s. SA required the full 1 768 s budget, so future sweeps need either GPU-free batching or a reduced iteration target. KPIs validated via `fhops evaluate ... --assignments tmp/benchmarks_delivery_tuned/large84/user-1/*.csv`.
+  - Follow-ups:
+      - Re-tune SA/ILS/Tabu for medium/large tiers (slower cooling, higher restart intervals, mobilisation-heavy presets, larger iteration budgets).
+      - Consider scaling the leftover penalty or adding staged-volume telemetry thresholds so watch output highlights when heuristics stall.
+- [ ] Large-scenario tuning plan:
+  - **SA:** test `--cooling-rate 0.99995`, `--restart-interval 2000`, and mobilisation preset by default on med42/large84; increase `--iters` to ≥20 000 and log staged volume via `--watch-debug`.
+  - **ILS/Tabu:** mirror mobilisation preset and extend perturbation/tabu-tenure values; ensure coverage injection stays enabled to keep loaders fed.
+  - **Benchmarks:** rerun `fhops bench suite` after tuning and compare staged volume + mobilisation costs against MILP to verify progress.
 
 ## 6. Current priorities (operational focus – manuscript parked)
 
-Per 2025-12-07 sync, the SoftwareX/manuscript track is frozen until the
+Per 2025-11-30 sync, the SoftwareX/manuscript track is frozen until the
 operational MILP, dataset ladder, and heuristics all align with the
 Arora-style formulation. Immediate priorities:
 
@@ -508,7 +526,7 @@ Arora-style formulation. Immediate priorities:
 - [ ] Finish the model feature set (role buffers, batching, mobilisation penalties, landing slack) and land the missing unit tests + regression harness so `solve-mip-operational` is trustworthy.
   - [x] Head-start buffers now use upstream-role capacity and require previous-shift inventory, loader batching enforces truckload quanta, and regression tests cover both behaviours plus the driver replay path (`tests/model/test_operational_milp.py`, `fhops.model.milp.driver`).
 - [x] Generate the `tiny7` scenario via the shared dataset builder and validate that HiGHS/CPLEX produce a “sane” optimal schedule (objective, completed blocks, mobilisation moves).
-  - 2025-12-10: HiGHS solved `examples/tiny7` with the balanced roster (2 FB, 1 GS, 3 processors, 3 loaders) in 19 s using a 2 % relative gap, delivering objective 11 803.71, 11 990 m³ production, and full completion of all 9 blocks. Mobilisation spend: 1 128.84.
+  - 2025-11-30: HiGHS solved `examples/tiny7` with the balanced roster (2 FB, 1 GS, 3 processors, 3 loaders) in 19 s using a 2 % relative gap, delivering objective 11 803.71, 11 990 m³ production, and full completion of all 9 blocks. Mobilisation spend: 1 128.84.
 - [x] Once `tiny7` is green, scale the same checks to `small21`, `med42`, and `large84` before touching any heuristic code.
   - `examples/small21` (21 days, 12 blocks) solved in 85 s at 5 % gap; objective 41 264.52 with 41 606 m³ production and all blocks finished.
   - `examples/med42` (42 days, 20 blocks) solved in 42 s at 5 % gap; objective 68 716.92 with 69 781 m³ production and all blocks finished.
@@ -532,7 +550,7 @@ Arora-style formulation. Immediate priorities:
   - Added `src/fhops/optimization/operational_problem.py`, which wraps the operational MILP bundle, derives per-block role permissions/head-start metadata, caches availability/lock/blackout lookups, and exposes a sanitizer factory so every heuristic enforces the same feasibility rules as the MILP.
 - [x] Port SA, ILS, and Tabu to consume that module so all three heuristics reuse identical problem-definition code.
   - `solve_sa` now builds the shared context once and threads it through `_init_greedy`, `_evaluate`, `_neighbors`, and `_evaluate_candidates`; ILS/Tabu reuse the same context for local search, perturbations, and evaluation, and the registry/unit tests were updated to pass the shared sanitizer.
-  - 2025-12-10: Finished wiring SA/ILS/Tabu into the shared helper implementations in `fhops.optimization.heuristics.common` so all three solvers now call the exact same greedy seed, evaluator, neighbour generator, and candidate scorer. Left lightweight wrapper aliases in SA/ILS to keep legacy tests working, reran `pytest tests/heuristics`, and spot-checked `fhops bench suite --scenario examples/tiny7/scenario.yaml --include-sa --include-ils --include-tabu --sa-iters 200 --ils-iters 10 --tabu-iters 200 --time-limit 30 --out-dir tmp/bench_tiny7_refactor` to confirm the refactor preserved behaviour.
+  - 2025-11-30: Finished wiring SA/ILS/Tabu into the shared helper implementations in `fhops.optimization.heuristics.common` so all three solvers now call the exact same greedy seed, evaluator, neighbour generator, and candidate scorer. Left lightweight wrapper aliases in SA/ILS to keep legacy tests working, reran `pytest tests/heuristics`, and spot-checked `fhops bench suite --scenario examples/tiny7/scenario.yaml --include-sa --include-ils --include-tabu --sa-iters 200 --ils-iters 10 --tabu-iters 200 --time-limit 30 --out-dir tmp/bench_tiny7_refactor` to confirm the refactor preserved behaviour.
   - [x] Follow-up: cleared the remaining test imports (`tests/heuristics/test_ils.py`, `tests/heuristics/test_operators.py`, `tests/heuristics/test_registry.py`, `tests/test_system_roles.py`, `tests/test_schedule_locking.py`) so they now use `evaluate_schedule` / `generate_neighbors` from `heuristics.common`. The compatibility wrappers in SA/ILS were removed, and the heuristic/regression suite (`pytest tests/heuristics` + `fhops bench suite ...`) was re-run to confirm behaviour is unchanged.
 - [x] Stamp `harvest_system_id` onto every block in the reference ladder so heuristics actually see the same system metadata as the MILP (and can honour buffers/loader batching in neighbour moves). `scripts/rebuild_reference_datasets.py` now writes the column and the four ladder datasets (`examples/{tiny7,small21,med42,large84}/data/blocks.csv`) were updated in-place with `ground_fb_skid`, so heuristics inherit the default system buffers without relying on implicit fallbacks.
 - [x] Refresh deterministic fixtures once sequencing metadata is wired through: reran `fhops eval-playback` for tiny7/med42 (CSV+Parquet), recomputed deterministic KPI snapshots, and rebuilt the tiny7 SA benchmark JSON so tests exercise the post-refactor objectives/gaps. `run_benchmark_suite` now picks the *max* objective when labelling the “best heuristic” and reports positive gaps for exact solvers.
@@ -541,16 +559,16 @@ Arora-style formulation. Immediate priorities:
   - [x] Rework `evaluate_schedule` so it debits staged inventory per role, enforces head-start buffers via the same bookkeeping, and only decrements block-level `remaining_work` when loaders finish (or when a block has no explicit system). This should make the “bad vs good” sequencing unit tests fail/pass deterministically and keep the heuristics from self-healing infeasible plans during scoring.
 - [x] Mirror the staged-inventory changes inside playback/KPI aggregation (`assignments_to_records` + `compute_kpis`) so sequencing violation counts, staged production, and completed-volume tallies all reference the same logic.
   - [ ] Once the evaluator/repair/watch paths align, refresh the regression assets: rerun `fhops solve-heur` smoke tests (tiny7/med42 short iters), update the benchmark JSON summaries, regenerate KPI/playback fixtures, and capture the new command cadence in the changelog. *(Playback + KPI fixtures refreshed; need new benchmark baselines once heuristics stabilise.)*
-- [x] Enforce loader buffers directly in the MILP by treating `loader_batch_volume` as the minimum staged inventory, wiring `role_active` binaries to machine assignments, and emitting per-shift production so playback/KPIs see the throttled volumes; tiny7/med42 MILP runs (and matching SA smoke tests) now report zero sequencing violations under `--sequencing-debug` (2025-12-13).
+- [x] Enforce loader buffers directly in the MILP by treating `loader_batch_volume` as the minimum staged inventory, wiring `role_active` binaries to machine assignments, and emitting per-shift production so playback/KPIs see the throttled volumes; tiny7/med42 MILP runs (and matching SA smoke tests) now report zero sequencing violations under `--sequencing-debug` (2025-11-30).
 - [x] Trimmed the `tiny7` workload to two blocks (~4,950 m³) via `scripts/rebuild_reference_datasets.py tiny7 --seed 20251209` so the single-system roster can actually finish everything inside 7 days. MILP now reports `completed_blocks=2` with sequencing-clean schedules.
 - [ ] SA mobilisation tuning: current SA runs finish both tiny7 blocks but spend ~800 vs. the MILP’s ~480 mobilisation cost because loaders bounce around unnecessarily. Once the MILP changes settle, revisit SA operator weights/repair logic so it prefers stationary patterns after blocks complete.
-- [ ] **Queued sequencing tasks (2025-11-29)**
+- [ ] **Queued sequencing tasks (2025-11-30)**
   - [ ] Harden `_repair_schedule_cover_blocks` so downstream machines skip blocks until upstream role demand is satisfied for that day/shift, and add targeted unit coverage that reproduces the current “loader starts too early” issue.
   - [ ] Instrument `SequencingTracker`/`evaluate_schedule` with debug counters for staged volume vs. consumption so SA/ILS/Tabu watch output can flag which role first violates head-start buffers; enable the flag via `--watch-debug`.
   - [ ] Wire the same staged-inventory logic into `generate_neighbors` sanitization to prevent operator moves that overbook downstream roles or landings, then add regression checks in `tests/heuristics/test_operators.py`.
   - [ ] Re-run short SA/ILS/Tabu smoke tests on `examples/tiny7` and `examples/med42` (e.g., `--iters 2000 --profile explore`) and capture KPI snapshots proving zero sequencing violations; attach the command list to `CHANGE_LOG.md`.
   - [ ] Regenerate `tests/fixtures/benchmarks/*.json` once the heuristics can routinely hit feasible solutions, ensuring the recorded objectives are non-negative and within 5 % of the operational MILP baseline.
-- [ ] **Fixture + regression refresh for loader buffers (2025-12-13)**
+- [ ] **Fixture + regression refresh for loader buffers (2025-11-30)**
   - [ ] Re-run deterministic playback exports for tiny7/med42 (`fhops eval-playback ... --shift-out --day-out --shift-parquet --day-parquet`) using the new MILP assignments so sequencing counters match the tightened loader staging.
   - [ ] Recompute deterministic/stochastic KPI snapshots (`tests/fixtures/kpi/*.json`) via `compute_kpis` / `run_stochastic_playback` so regression tests lock onto the new violation totals.
   - [ ] Refresh benchmark suite fixtures (`tests/fixtures/benchmarks/tiny7_sa.json` etc.) by rerunning `fhops bench suite` with the updated heuristics, ensuring objectives and “best heuristic” labels reflect non-negative scores under the stricter evaluator.
@@ -562,3 +580,34 @@ Arora-style formulation. Immediate priorities:
 ### 6.4 Tactical MILP (queued after the above)
 - [ ] Keep the tactical-level MILP design on hold until the operational stack + heuristics settle; once ready, reuse the modular problem-definition layer to avoid duplicating code.
 - [ ] Document any tactical data requirements that surface during the operational refactor so we can extend the scenario contract cleanly when work resumes.
+
+
+#### 6.3.1 Heuristic performance fix (2025-12-20)
+
+**Observed bottlenecks**
+- *Per-iteration cost explodes with scale.* `evaluate_schedule` walks every machine × shift, rebuilds staged inventory, and recomputes mobilisation/landing penalties from scratch. Large84 = 16 machines × 252 shifts ≈ 4 000 slots, so even one candidate costs ~100 ms; 20 k iterations → 30 min runtime.
+- *Operators touch the entire plan.* Each move deep-copies the full schedule, `_repair_schedule_cover_blocks` rescans before/after, and block insertion / cross exchange / coverage injection iterate over almost every machine-shift pair to find a viable target.
+- *Single-candidate sampling.* Batch size = 1 by default, so every iteration repeats the full repair + score pipeline for just one neighbour; there is no amortisation.
+- *Objective discourages exploration.* The greedy seed already delivers ≈34.4 k m³ with 2.7 k m³ staged. With leftover weight = 1.0 and mobilisation penalties high, any move that temporarily increases staged volume is rejected, so SA/ILS/Tabu acceptance stays near zero and the score never improves beyond the initial greedy plan.
+
+**Remediation plan**
+1. **Cheaper moves**
+   - Cache staged inventory, mobilisation history, and landing usage so scoring updates only the slots touched by a move.
+   - Replace dict-of-dicts schedules with mutable arrays + undo records to avoid whole-plan copies.
+   - Constrain operator search scopes by pre-indexing feasible slots per block and sampling a limited window (`k` random targets) instead of scanning all machines/shift combinations.
+   - Enable small `batch_size` (e.g., 4) with thread-pool scoring to reuse expensive bookkeeping per iteration.
+2. **Better exploration**
+   - Scale leftover penalty by workload fraction or apply scenario-specific weights (e.g., ≤0.2 for large84) so short-lived staging spikes are tolerable.
+   - Tie mobilisation penalties to staged-volume trends (decay costs when leftovers shrink) so the solver is rewarded for progress rather than punished for movement.
+   - Add diversification triggers (stalled iterations ⇒ block rotation, seed injection from partial MILP, or enforced mobilisation shake) so `_repair_schedule_cover_blocks` does not snap everything back to the greedy seed.
+3. **Instrumentation**
+   - Emit per-iteration metrics: acceptance rate, `_repair_schedule` time, `_evaluate_schedule` time, operator proposal/accept counts, staged-volume deltas.
+   - Track staged-volume trajectories and mobilisation spend over time to validate that changes actually reduce leftovers even when the objective lags.
+
+**Task queue**
+- [ ] Profile SA/ILS/Tabu on large84 with `cProfile` to capture time spent in neighbour generation vs. scoring vs. repair.
+- [ ] Prototype an incremental schedule representation (array-backed plan + cached per-role inventory/mobilisation stats) and swap `_repair_schedule_cover_blocks` to operate on diffs.
+- [ ] Implement bounded sampling for heavy operators (block insertion, cross exchange, coverage injection) and add configuration knobs for per-operator candidate budgets.
+- [ ] Add optional `batch_size` + `max_workers` defaults to SA/ILS/Tabu and surface them through CLI presets so large scenarios evaluate multiple neighbours per iteration.
+- [ ] Introduce scenario-scaled leftover weights and mobilisation-decay rules; document them in the scenario contract and update `evaluate_schedule`.
+- [ ] Extend telemetry/watch output with per-iteration timing + staged-volume traces; persist the same info to JSONL for offline analysis.

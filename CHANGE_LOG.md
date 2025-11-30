@@ -1,3 +1,24 @@
+# 2025-12-20 — Scenario ladder workload rebalance
+- Regenerated the `small21`, `med42`, and `large84` bundles with the tiny7 block profile and scaled block counts (6/12/24) so each tier now carries roughly the same per-system workload; READMEs, block tables, prod rates, and distance matrices now reflect the trimmed volumes and mobilisations.
+- Commands executed for this work:
+  - `.venv/bin/python scripts/rebuild_reference_datasets.py small21 --seed 20251209`
+  - `.venv/bin/python scripts/rebuild_reference_datasets.py med42 --seed 20251209`
+  - `.venv/bin/python scripts/rebuild_reference_datasets.py large84 --seed 20251209`
+- Reran the delivery-only benchmark sweep with the tuned heuristic presets (SA 20 k iters, cooling 0.99995, restart 2 000, mobilisation preset; ILS 750 iters; Tabu 15 k). tiny7/small21/med42 ran via full-suite invocations, while large84 solvers were issued individually to dodge the 30‑minute CLI timeout; KPI validation for the large tier used `fhops evaluate` on the emitted assignments.
+- Commands executed for this work:
+  - `.venv/bin/fhops bench suite --scenario examples/tiny7/scenario.yaml --out-dir tmp/benchmarks_delivery_tuned/tiny7 --time-limit 900 --sa-iters 20000 --sa-cooling-rate 0.99995 --sa-restart-interval 2000 --operator-preset mobilisation --include-ils --ils-iters 750 --ils-perturbation-strength 6 --ils-stall-limit 25 --include-tabu --tabu-iters 15000 --tabu-tenure 200`
+  - `.venv/bin/fhops bench suite --scenario examples/small21/scenario.yaml --out-dir tmp/benchmarks_delivery_tuned/small21 --time-limit 900 --sa-iters 20000 --sa-cooling-rate 0.99995 --sa-restart-interval 2000 --operator-preset mobilisation --include-ils --ils-iters 750 --ils-perturbation-strength 6 --ils-stall-limit 25 --include-tabu --tabu-iters 15000 --tabu-tenure 200`
+  - `.venv/bin/fhops bench suite --scenario examples/med42/scenario.yaml --out-dir tmp/benchmarks_delivery_tuned/med42 --time-limit 900 --sa-iters 20000 --sa-cooling-rate 0.99995 --sa-restart-interval 2000 --operator-preset mobilisation --include-ils --ils-iters 750 --ils-perturbation-strength 6 --ils-stall-limit 25 --include-tabu --tabu-iters 15000 --tabu-tenure 200`
+  - `.venv/bin/fhops bench suite --scenario examples/large84/scenario.yaml --out-dir tmp/benchmarks_delivery_tuned/large84 --time-limit 900 --sa-iters 15000 --sa-cooling-rate 0.99995 --sa-restart-interval 2000 --operator-preset mobilisation --no-include-ils --no-include-tabu --no-include-mip`
+  - `.venv/bin/fhops bench suite --scenario examples/large84/scenario.yaml --out-dir tmp/benchmarks_delivery_tuned/large84 --include-ils --ils-iters 750 --ils-perturbation-strength 6 --ils-stall-limit 25 --no-include-sa --no-include-tabu --no-include-mip`
+  - `.venv/bin/fhops bench suite --scenario examples/large84/scenario.yaml --out-dir tmp/benchmarks_delivery_tuned/large84 --include-tabu --tabu-iters 10000 --tabu-tenure 200 --no-include-sa --no-include-ils --no-include-mip`
+  - `.venv/bin/fhops bench suite --scenario examples/large84/scenario.yaml --out-dir tmp/benchmarks_delivery_tuned/large84 --include-mip --time-limit 900 --no-include-sa --no-include-ils --no-include-tabu`
+  - `.venv/bin/fhops evaluate examples/large84/scenario.yaml --assignments tmp/benchmarks_delivery_tuned/large84/user-1/sa_assignments_mobilisation.csv`
+  - `.venv/bin/fhops evaluate examples/large84/scenario.yaml --assignments tmp/benchmarks_delivery_tuned/large84/user-1/ils_assignments.csv`
+  - `.venv/bin/fhops evaluate examples/large84/scenario.yaml --assignments tmp/benchmarks_delivery_tuned/large84/user-1/tabu_assignments.csv`
+  - `.venv/bin/fhops evaluate examples/large84/scenario.yaml --assignments tmp/benchmarks_delivery_tuned/large84/user-1/mip_assignments.csv`
+- Captured the heuristic performance bottlenecks (per-iteration cost, operator scans, objective stagnation) and queued remediation tasks inside `notes/mip_formulation_plan.md` so profiling + optimisation work has a concrete checklist.
+
 # 2025-12-15 — Heuristic scoring realigned with loader delivery
 - Reworked `evaluate_schedule` so SA/ILS/Tabu objectives reward only delivered loader production (`tracker.delivered_total`) while penalising staged leftovers, landing slack, transitions, and mobilisation directly. This removes the old per-role “partial production” bonus that double-counted upstream work.
 - Updated the tiny7 benchmark fixture, regression baseline, and schedule-locking tests so they reflect the new scoring scale (tiny7 SA objective ≈1 929, regression SA/Tabu objective ≈-1005.5, landing/transition unit tests now assert the loader-based totals).
