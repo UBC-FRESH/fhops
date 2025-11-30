@@ -16,7 +16,6 @@ from fhops.optimization.operational_problem import OperationalProblem
 from fhops.scenario.contract import Problem
 
 BLOCK_COMPLETION_EPS = 1e-6
-PARTIAL_PRODUCTION_FRACTION = 0.1
 LEFTOVER_PENALTY_FACTOR = 5.0
 
 
@@ -462,8 +461,6 @@ def evaluate_schedule(
 
     weights = bundle.objective_weights
 
-    production_total = 0.0
-    initial_work_required = dict(bundle.work_required)
     mobilisation_total = 0.0
     transition_count = 0.0
     landing_slack_total = 0.0
@@ -539,7 +536,6 @@ def evaluate_schedule(
                         continue
                     landing_slack_total += excess
 
-            production_total += sequencing.production_units
             if sequencing.production_units <= BLOCK_COMPLETION_EPS:
                 previous_block[machine.id] = block_id
                 continue
@@ -563,20 +559,13 @@ def evaluate_schedule(
             previous_block[machine.id] = block_id
 
     tracker.finalize()
-    completion_bonus = sum(
-        initial_work_required[block_id]
-        for block_id, remaining_work in tracker.remaining_work.items()
-        if remaining_work <= BLOCK_COMPLETION_EPS
-    )
+    delivered_total = tracker.delivered_total
     leftover_total = sum(
         remaining_work
         for remaining_work in tracker.remaining_work.values()
         if remaining_work > BLOCK_COMPLETION_EPS
     )
-    partial_weight = weights.production * PARTIAL_PRODUCTION_FRACTION
-    score = (weights.production * (completion_bonus - LEFTOVER_PENALTY_FACTOR * leftover_total)) + (
-        partial_weight * production_total
-    )
+    score = weights.production * (delivered_total - LEFTOVER_PENALTY_FACTOR * leftover_total)
     score -= weights.mobilisation * mobilisation_total
     score -= weights.transitions * transition_count
     score -= weights.landing_slack * landing_slack_total
@@ -585,8 +574,7 @@ def evaluate_schedule(
         debug_stats = tracker.debug_snapshot()
         debug_stats.update(
             {
-                "production_total": production_total,
-                "completion_bonus": completion_bonus,
+                "delivered_total": delivered_total,
                 "leftover_total": leftover_total,
                 "landing_slack_total": landing_slack_total,
                 "penalty_total": penalty,

@@ -1,3 +1,12 @@
+# 2025-12-15 — Heuristic scoring realigned with loader delivery
+- Reworked `evaluate_schedule` so SA/ILS/Tabu objectives reward only delivered loader production (`tracker.delivered_total`) while penalising staged leftovers, landing slack, transitions, and mobilisation directly. This removes the old per-role “partial production” bonus that double-counted upstream work.
+- Updated the tiny7 benchmark fixture, regression baseline, and schedule-locking tests so they reflect the new scoring scale (tiny7 SA objective ≈1 929, regression SA/Tabu objective ≈-1005.5, landing/transition unit tests now assert the loader-based totals).
+- Commands executed for this work:
+  - `.venv/bin/fhops bench suite --include-mip --scenario examples/tiny7/scenario.yaml --sa-iters 200 --time-limit 10`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pytest`
+
 # 2025-12-14 — Legacy landing-capacity fix + KPI/test realignment
 - Patched the legacy Pyomo builder (`fhops.optimization.mip.builder`) so landing-capacity constraints are only created for landings that actually host blocks (and only when machines exist); this mirrors the operational bundle logic and unblocks `fhops bench suite --include-mip` on the refreshed tiny7 dataset.
 - Updated the operational MILP regression to expect loaders to finish the entire workload when partial batches are allowed, and tightened the various KPI/playback/benchmark tests so they now respect the new production metrics: `staged_production` now reports the *remaining* staged inventory (equal to `remaining_work_total`). Regenerated the deterministic KPI snapshots and the tiny7 SA benchmark fixture so regression tests exercise the clarified fields (no more `cumulative_production` in the public KPI payload).
