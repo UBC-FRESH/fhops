@@ -18,6 +18,36 @@
   - `.venv/bin/fhops evaluate examples/large84/scenario.yaml --assignments tmp/benchmarks_delivery_tuned/large84/user-1/tabu_assignments.csv`
   - `.venv/bin/fhops evaluate examples/large84/scenario.yaml --assignments tmp/benchmarks_delivery_tuned/large84/user-1/mip_assignments.csv`
 - Captured the heuristic performance bottlenecks (per-iteration cost, operator scans, objective stagnation) and queued remediation tasks inside `notes/mip_formulation_plan.md` so profiling + optimisation work has a concrete checklist.
+- Commands executed for this profiling pass:
+  - `.venv/bin/python -m cProfile -o tmp/profile_sa_large84.prof -m fhops.cli.main solve-heur examples/large84/scenario.yaml --iters 200 --operator-preset mobilisation --out tmp/sa_profile.csv`
+  - `.venv/bin/python -m cProfile -o tmp/profile_ils_large84.prof -m fhops.cli.main solve-ils examples/large84/scenario.yaml --iters 200 --operator-preset mobilisation --out tmp/ils_profile.csv`
+  - `.venv/bin/python -m cProfile -o tmp/profile_tabu_large84.prof -m fhops.cli.main solve-tabu examples/large84/scenario.yaml --iters 200 --operator-preset mobilisation --out tmp/tabu_profile.csv`
+- Reworked neighbour generation to skip the redundant `_repair_schedule_cover_blocks` pass (candidates are now repaired only once during scoring), yielding ~10 % faster SA iterations on large84. Verified with a follow-up profiling run and a tiny7 smoke test.
+- Commands executed for this change:
+  - `.venv/bin/python -m cProfile -o tmp/profile_sa_large84_no_pre_repair.prof -m fhops.cli.main solve-heur examples/large84/scenario.yaml --iters 200 --operator-preset mobilisation --out tmp/sa_profile2.csv`
+  - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_sa_smoke.csv`
+- Updated all neighbourhood operators so they only deep-copy the machines they mutate (instead of cloning the entire plan), reducing per-neighbour overhead and preparing for array-backed schedule storage.
+- Commands executed for this verification:
+  - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_sa_smoke.csv`
+- Cached the shift order/index inside `OperationalProblem` and rewrote the greedy seed, repair loop, and evaluator to reuse it, eliminating per-call `sorted(pb.shifts, …)` overhead and inching toward per-shift state caches.
+- Commands executed:
+  - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_sa_smoke.csv`
+- Extended `Schedule` with a dense per-machine shift matrix plus helper routines to keep plan/matrix in sync; `_repair_schedule_cover_blocks` and `init_greedy_schedule` now update both representations, so future operator work can mutate O(1) entries instead of rebuilding dicts.
+- Commands executed:
+  - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_sa_smoke.csv`
+  - `.venv/bin/fhops solve-ils examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_ils_smoke.csv`
+- Repaired the remaining-work cache wiring so `init_greedy_schedule` seeds the block/role caches, `_repair_schedule_cover_blocks` reuses those dictionaries instead of spinning new ones every pass, and the tiny7 smoke tests run without the previous `NameError`.
+- Commands executed:
+  - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_sa_smoke.csv`
+  - `.venv/bin/fhops solve-ils examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_ils_smoke.csv`
+- Refactored the operator registry around the new array-backed schedules: `OperatorContext` now carries shift metadata, `_clone_schedule` returns full plan+matrix copies, and every operator (`swap`, `move`, `block_insertion`, `coverage_injection`, `cross_exchange`, `mobilisation_shake`) writes through `_set_slot`, so candidates stay in sync without extra repairs.
+- Commands executed:
+  - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_sa_smoke.csv`
+  - `.venv/bin/fhops solve-ils examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_ils_smoke.csv`
+- Added per-machine mobilisation caches and dirty tracking: schedule updates now flag affected machines, `_ensure_mobilisation_stats` recomputes only those rows, and `evaluate_schedule` reuses cached mobilisation/transition totals rather than recalculating them inside the shift loop.
+- Commands executed:
+  - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_sa_smoke.csv`
+  - `.venv/bin/fhops solve-ils examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_ils_smoke.csv`
 
 # 2025-12-15 — Heuristic scoring realigned with loader delivery
 - Reworked `evaluate_schedule` so SA/ILS/Tabu objectives reward only delivered loader production (`tracker.delivered_total`) while penalising staged leftovers, landing slack, transitions, and mobilisation directly. This removes the old per-role “partial production” bonus that double-counted upstream work.

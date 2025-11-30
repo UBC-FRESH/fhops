@@ -31,7 +31,10 @@ from fhops.telemetry.watch import Snapshot, SnapshotSink
 
 def _assignments_to_schedule(pb: Problem, assignments: pd.DataFrame) -> Schedule:
     """Convert an assignments DataFrame into the internal Schedule plan structure."""
-    shifts = [(shift.day, shift.shift_id) for shift in pb.shifts]
+    shifts = [
+        (shift.day, shift.shift_id)
+        for shift in sorted(pb.shifts, key=lambda s: (s.day, s.shift_id))
+    ]
     plan: dict[str, dict[tuple[int, str], str | None]] = {
         machine.id: {(day, shift_id): None for (day, shift_id) in shifts}
         for machine in pb.scenario.machines
@@ -58,7 +61,10 @@ def _assignments_to_schedule(pb: Problem, assignments: pd.DataFrame) -> Schedule
         block_id = cast(str | None, block_raw if block_raw is not None else None)
         if machine_id in plan:
             plan[machine_id][(day_value, shift_id)] = block_id
-    return Schedule(plan=plan)
+    matrix = {
+        machine.id: [plan[machine.id][key] for key in shifts] for machine in pb.scenario.machines
+    }
+    return Schedule(plan=plan, matrix=matrix)
 
 
 def _perturb_schedule(

@@ -605,7 +605,17 @@ Arora-style formulation. Immediate priorities:
    - Track staged-volume trajectories and mobilisation spend over time to validate that changes actually reduce leftovers even when the objective lags.
 
 **Task queue**
-- [ ] Profile SA/ILS/Tabu on large84 with `cProfile` to capture time spent in neighbour generation vs. scoring vs. repair.
+- [x] Profile SA/ILS/Tabu on large84 with `cProfile` to capture time spent in neighbour generation vs. scoring vs. repair.
+  - SA (200 iters, mobilisation preset): 56.8 s total; `evaluate_schedule` 41.1 s (72 %), `_repair_schedule_cover_blocks` 40.7 s (72 %), `pending_blocks_for`/`select_block` 29 s/17 s. >1 M calls into block-selection helpers, 0 accepted moves. After removing the redundant pre-evaluation repair call, runtime drops to 50.4 s and `_repair_schedule_cover_blocks` shrinks to 34.6 s (only the evaluation-time repairs remain).
+  - ILS (200 iters): 83.5 s total; `_local_search` spends 67 s with 1.5 k `evaluate_schedule` calls (60 s) plus 3.2 k repair passes. 2 M+ hits on `pending_blocks_for`.
+  - Tabu (200 iters): 57.6 s total with the same evaluate/repair split as SA.
+  - Takeaway: ~70 % runtime is tied up in whole-plan repair + scoring; operator logic itself <2 s, so incremental plan/score caching is the highest leverage fix.
+- [x] Reduce plan-cloning overhead so operators only copy the machines they mutate (swap/move/block insertion/etc.), cutting per-neighbour copying from O(#machines) to O(#touched-machines) and prepping the codebase for array-backed plans.
+- [x] Cache shift ordering/index inside `OperationalProblem` and refactor the greedy seed, repair loop, and evaluator to reuse it (no more per-call `sorted(pb.shifts)`), shaving a few more seconds from SA/ILS/Tabu runs and paving the way for per-shift state caches.
+- [x] Add array-backed schedule storage: `Schedule` now carries a dense per-machine shift matrix, `_repair_schedule_cover_blocks`/`init_greedy_schedule` keep plan + matrix in sync, and helper routines (`_ensure_machine_matrix`, `_set_assignment`) let future operators work directly on arrays with O(1) slot updates.
+- [x] Wire the operator registry into the same array-backed helpers: `OperatorContext` now carries `shift_keys`/`shift_index`, `_clone_schedule` returns full Schedule clones (plan + matrix), and all operators (`swap`, `move`, `block_insertion`, `coverage_injection`, `cross_exchange`, `mobilisation_shake`) mutate schedules through `_set_slot`, ensuring matrix/dict parity without extra repairs.
+- [x] Introduce per-machine mobilisation caches (`MobilisationStats`) so `_repair_schedule_cover_blocks` marks machines dirty, `_ensure_mobilisation_stats` recomputes only the touched rows, and `evaluate_schedule` reuses the cached mobilisation/transition totals instead of re-deriving them inside the shift loop.
+- [x] Consolidate block/role remaining caches: `init_greedy_schedule` seeds the shared dictionaries, `_repair_schedule_cover_blocks` now reuses and refreshes them in place, and the NameErrors from the half-integrated cache work are gone—paving the way for incremental staged-volume bookkeeping.
 - [ ] Prototype an incremental schedule representation (array-backed plan + cached per-role inventory/mobilisation stats) and swap `_repair_schedule_cover_blocks` to operate on diffs.
 - [ ] Implement bounded sampling for heavy operators (block insertion, cross exchange, coverage injection) and add configuration knobs for per-operator candidate budgets.
 - [ ] Add optional `batch_size` + `max_workers` defaults to SA/ILS/Tabu and surface them through CLI presets so large scenarios evaluate multiple neighbours per iteration.

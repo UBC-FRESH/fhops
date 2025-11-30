@@ -42,6 +42,8 @@ class OperationalProblem:
     loader_roles: frozenset[tuple[str, str]]
     role_work_required: Mapping[tuple[str, str], float]
     terminal_roles: Mapping[str, frozenset[str]]
+    shift_keys: tuple[tuple[int, str], ...]
+    shift_index: Mapping[tuple[int, str], int]
 
     def build_sanitizer(self, schedule_cls: type[Schedule]) -> Sanitizer:
         """Return a schedule sanitizer enforcing locks, availability, and landing caps."""
@@ -119,6 +121,11 @@ def build_operational_problem(pb: Problem) -> OperationalProblem:
         pb.scenario.mobilisation
     )
     loader_batch_volume, loader_roles = _build_loader_metadata(bundle)
+    shift_keys = tuple(
+        (shift.day, shift.shift_id)
+        for shift in sorted(pb.shifts, key=lambda s: (s.day, s.shift_id))
+    )
+    shift_index = {key: idx for idx, key in enumerate(shift_keys)}
     return OperationalProblem(
         problem=pb,
         bundle=bundle,
@@ -135,6 +142,8 @@ def build_operational_problem(pb: Problem) -> OperationalProblem:
         loader_roles=loader_roles,
         role_work_required=role_work_required,
         terminal_roles=terminal_roles,
+        shift_keys=shift_keys,
+        shift_index=shift_index,
     )
 
 

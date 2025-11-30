@@ -7,7 +7,7 @@ import math
 from collections import defaultdict
 from collections.abc import Mapping
 from concurrent.futures import ThreadPoolExecutor
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 from fhops.evaluation.sequencing import SequencingTracker, build_role_priority
@@ -21,9 +21,116 @@ LEFTOVER_PENALTY_FACTOR = 1.0
 
 @dataclass(slots=True)
 class Schedule:
-    """Machine assignment plan keyed by machine/(day, shift_id)."""
+    """Machine assignment plan storing both dict and array views."""
 
     plan: dict[str, dict[tuple[int, str], str | None]]
+    matrix: dict[str, list[str | None]] = field(default_factory=dict)
+    mobilisation_cache: dict[str, MobilisationStats] = field(default_factory=dict)
+    dirty_machines: set[str] = field(default_factory=set)
+    block_remaining_cache: dict[str, float] | None = None
+    role_remaining_cache: dict[tuple[str, str], float] | None = None
+
+
+@dataclass(slots=True)
+class MobilisationStats:
+    """Per-machine mobilisation bookkeeping."""
+
+    cost: float = 0.0
+    transitions: float = 0.0
+
+
+def _ensure_machine_matrix(
+    schedule: Schedule, machine_id: str, ctx: OperationalProblem
+) -> list[str | None]:
+    """Return (and lazily build) the dense shift array for a machine."""
+
+    row = schedule.matrix.get(machine_id)
+    if row is not None and len(row) == len(ctx.shift_keys):
+        return row
+    assignments = schedule.plan.setdefault(machine_id, {})
+    row = [assignments.get(key) for key in ctx.shift_keys]
+    schedule.matrix[machine_id] = row
+    return row
+
+
+def _set_assignment(
+    schedule: Schedule,
+    machine_id: str,
+    day: int,
+    shift_id: str,
+    block_id: str | None,
+    ctx: OperationalProblem,
+) -> None:
+    """Keep plan + matrix in sync for a single slot update."""
+
+    schedule.plan.setdefault(machine_id, {})[(day, shift_id)] = block_id
+    row = _ensure_machine_matrix(schedule, machine_id, ctx)
+    row[ctx.shift_index[(day, shift_id)]] = block_id
+    schedule.dirty_machines.add(machine_id)
+
+
+def _build_matrix(
+    plan: Mapping[str, Mapping[tuple[int, str], str | None]], ctx: OperationalProblem
+) -> dict[str, list[str | None]]:
+    """Materialize the dense matrix view from the plan."""
+
+    return {
+        machine_id: [assignments.get(key) for key in ctx.shift_keys]
+        for machine_id, assignments in plan.items()
+    }
+
+
+def _ensure_work_caches(schedule: Schedule, ctx: OperationalProblem) -> None:
+    """Materialize block/role remaining caches if missing."""
+
+    if schedule.block_remaining_cache is None:
+        schedule.block_remaining_cache = dict(ctx.bundle.work_required)
+    if schedule.role_remaining_cache is None:
+        schedule.role_remaining_cache = dict(ctx.role_work_required)
+
+
+def _recompute_mobilisation_for(
+    schedule: Schedule,
+    machine_id: str,
+    ctx: OperationalProblem,
+) -> None:
+    """Recompute mobilisation stats for a single machine."""
+
+    params = ctx.mobilisation_params.get(machine_id)
+    row = _ensure_machine_matrix(schedule, machine_id, ctx)
+    distance_lookup = ctx.distance_lookup
+    cost = 0.0
+    transitions = 0.0
+    prev_block: str | None = None
+    for block_id in row:
+        if block_id is None:
+            continue
+        if prev_block is None:
+            prev_block = block_id
+            continue
+        if block_id == prev_block:
+            continue
+        transitions += 1.0
+        if params is not None:
+            distance = distance_lookup.get((prev_block, block_id), 0.0)
+            move_cost = params.setup_cost
+            if distance <= params.walk_threshold_m:
+                move_cost += params.walk_cost_per_meter * distance
+            else:
+                move_cost += params.move_cost_flat
+            cost += move_cost
+        prev_block = block_id
+    schedule.mobilisation_cache[machine_id] = MobilisationStats(cost=cost, transitions=transitions)
+    schedule.dirty_machines.discard(machine_id)
+
+
+def _ensure_mobilisation_stats(schedule: Schedule, ctx: OperationalProblem) -> None:
+    """Ensure mobilisation cache entries exist for all machines (recomputing dirty ones)."""
+
+    if not schedule.mobilisation_cache and not schedule.dirty_machines:
+        schedule.dirty_machines = set(schedule.plan.keys())
+    for machine_id in list(schedule.dirty_machines):
+        _recompute_mobilisation_for(schedule, machine_id, ctx)
 
 
 def _repair_schedule_cover_blocks(
@@ -44,22 +151,32 @@ def _repair_schedule_cover_blocks(
     availability = bundle.availability_day
     blackout = ctx.blackout_shifts
     locked = ctx.locked_assignments
-    role_remaining = dict(ctx.role_work_required)
-    block_remaining = dict(bundle.work_required)
+    _ensure_work_caches(sched, ctx)
+    block_remaining = sched.block_remaining_cache
+    role_remaining = sched.role_remaining_cache
+    assert block_remaining is not None
+    assert role_remaining is not None
+    block_remaining.clear()
+    block_remaining.update(bundle.work_required)
+    role_remaining.clear()
+    role_remaining.update(ctx.role_work_required)
     block_system = bundle.block_system
     explicit_blocks = ctx.blocks_with_explicit_system
     prereq_roles = ctx.prereq_roles
     role_headstarts = ctx.role_headstarts
     role_priority = build_role_priority(ctx)
 
-    shifts = sorted(pb.shifts, key=lambda s: (s.day, s.shift_id))
-    shift_keys = [(shift.day, shift.shift_id) for shift in shifts]
+    shift_keys = ctx.shift_keys
 
     plan = sched.plan
     for machine in sc.machines:
         machine_plan = plan.setdefault(machine.id, {})
         for key in shift_keys:
             machine_plan.setdefault(key, None)
+        _ensure_machine_matrix(sched, machine.id, ctx)
+
+    def set_assignment(machine_id: str, day: int, shift_id: str, block_id: str | None) -> None:
+        _set_assignment(sched, machine_id, day, shift_id, block_id, ctx)
 
     ordered_machines = sorted(
         sc.machines,
@@ -246,15 +363,15 @@ def _repair_schedule_cover_blocks(
             locked_slot = lock_block is not None
             if locked_slot:
                 block_id = lock_block
-                machine_plan[slot_key] = block_id
+                set_assignment(machine.id, day, shift_id, block_id)
             if shift_availability.get((machine.id, day, shift_id), 1) == 0:
-                machine_plan[slot_key] = None
+                set_assignment(machine.id, day, shift_id, None)
                 continue
             if availability.get((machine.id, day), 1) == 0:
-                machine_plan[slot_key] = None
+                set_assignment(machine.id, day, shift_id, None)
                 continue
             if (machine.id, day, shift_id) in blackout:
-                machine_plan[slot_key] = None
+                set_assignment(machine.id, day, shift_id, None)
                 continue
             if block_id is not None:
                 if not slot_is_valid(
@@ -265,13 +382,13 @@ def _repair_schedule_cover_blocks(
                     enforce_prereq=not locked_slot,
                 ):
                     block_id = None
-                    machine_plan[slot_key] = None
+                    set_assignment(machine.id, day, shift_id, None)
             if block_id is None and fill_voids:
                 candidate = select_block(machine.id, day, shift_id, role)
                 if candidate is None:
-                    machine_plan[slot_key] = None
+                    set_assignment(machine.id, day, shift_id, None)
                     continue
-                machine_plan[slot_key] = candidate
+                set_assignment(machine.id, day, shift_id, candidate)
                 block_id = candidate
             if block_id is not None:
                 record_assignment(machine.id, block_id)
@@ -285,8 +402,6 @@ def init_greedy_schedule(pb: Problem, ctx: OperationalProblem) -> Schedule:
 
     sc = pb.scenario
     bundle = ctx.bundle
-    remaining = dict(bundle.work_required)
-    role_remaining = dict(ctx.role_work_required)
     rate = bundle.production_rates
     shift_availability = bundle.availability_shift
     availability = bundle.availability_day
@@ -297,6 +412,8 @@ def init_greedy_schedule(pb: Problem, ctx: OperationalProblem) -> Schedule:
     locked = ctx.locked_assignments
     block_system = bundle.block_system
     explicit_blocks = ctx.blocks_with_explicit_system
+    block_remaining = dict(bundle.work_required)
+    role_remaining = dict(ctx.role_work_required)
 
     def _is_terminal(block_id: str, role: str | None) -> bool:
         if block_id not in explicit_blocks:
@@ -314,17 +431,20 @@ def init_greedy_schedule(pb: Problem, ctx: OperationalProblem) -> Schedule:
     def _role_demand(block_id: str, role: str | None) -> float:
         if block_id in explicit_blocks and role is not None:
             return role_remaining.get((block_id, role), 0.0)
-        return remaining.get(block_id, 0.0)
+        return block_remaining.get(block_id, 0.0)
 
-    shifts = sorted(pb.shifts, key=lambda s: (s.day, s.shift_id))
-    shift_keys = [(shift.day, shift.shift_id) for shift in shifts]
+    shift_keys = ctx.shift_keys
     plan: dict[str, dict[tuple[int, str], str | None]] = {
         machine.id: {(day, shift_id): None for day, shift_id in shift_keys}
         for machine in sc.machines
     }
+    matrix_rows: dict[str, list[str | None]] = {
+        machine.id: [None for _ in ctx.shift_keys] for machine in sc.machines
+    }
 
     def assign(machine_id: str, day: int, shift_id: str, block_id: str | None) -> None:
         plan[machine_id][(day, shift_id)] = block_id
+        matrix_rows[machine_id][ctx.shift_index[(day, shift_id)]] = block_id
         if block_id is None:
             return
         role = machine_roles.get(machine_id)
@@ -337,10 +457,10 @@ def init_greedy_schedule(pb: Problem, ctx: OperationalProblem) -> Schedule:
                 0.0, role_remaining[(block_id, role)] - production
             )
             if _is_terminal(block_id, role):
-                remaining[block_id] = max(0.0, remaining[block_id] - production)
+                block_remaining[block_id] = max(0.0, block_remaining[block_id] - production)
         else:
-            production = min(base_rate, remaining[block_id])
-            remaining[block_id] = max(0.0, remaining[block_id] - production)
+            production = min(base_rate, block_remaining[block_id])
+            block_remaining[block_id] = max(0.0, block_remaining[block_id] - production)
 
     def best_slot_for(block_id: str) -> tuple[str, int, str] | None:
         earliest, latest = windows[block_id]
@@ -353,8 +473,7 @@ def init_greedy_schedule(pb: Problem, ctx: OperationalProblem) -> Schedule:
                 continue
             if _role_demand(block_id, role) <= BLOCK_COMPLETION_EPS:
                 continue
-            for shift in shifts:
-                day, shift_id = shift.day, shift.shift_id
+            for day, shift_id in shift_keys:
                 if day < earliest or day > latest:
                     continue
                 if plan[machine.id][(day, shift_id)] is not None:
@@ -371,11 +490,11 @@ def init_greedy_schedule(pb: Problem, ctx: OperationalProblem) -> Schedule:
                 if r > best_rate:
                     best_rate = r
                     best_slot = (machine.id, day, shift_id)
+                    break
         return best_slot
 
     # Respect locked assignments up front.
-    for shift in shifts:
-        day, shift_id = shift.day, shift.shift_id
+    for day, shift_id in shift_keys:
         for machine in sc.machines:
             lock_block = locked.get((machine.id, day))
             if lock_block is None:
@@ -402,8 +521,7 @@ def init_greedy_schedule(pb: Problem, ctx: OperationalProblem) -> Schedule:
             break
 
     # Fill remaining slots greedily with best-rate assignments.
-    for shift in shifts:
-        day, shift_id = shift.day, shift.shift_id
+    for day, shift_id in shift_keys:
         for machine in sc.machines:
             if plan[machine.id][(day, shift_id)] is not None:
                 continue
@@ -416,7 +534,11 @@ def init_greedy_schedule(pb: Problem, ctx: OperationalProblem) -> Schedule:
             candidates: list[tuple[float, str]] = []
             for block in sc.blocks:
                 role = machine_roles.get(machine.id)
-                if _role_demand(block.id, role) <= BLOCK_COMPLETION_EPS:
+                if role is not None:
+                    demand = role_remaining.get((block.id, role), 0.0)
+                else:
+                    demand = block_remaining.get(block.id, 0.0)
+                if demand <= BLOCK_COMPLETION_EPS:
                     continue
                 earliest, latest = windows[block.id]
                 if day < earliest or day > latest:
@@ -431,7 +553,12 @@ def init_greedy_schedule(pb: Problem, ctx: OperationalProblem) -> Schedule:
                 candidates.sort(reverse=True)
                 _, best_block = candidates[0]
                 assign(machine.id, day, shift_id, best_block)
-    return Schedule(plan=plan)
+    schedule = Schedule(plan=plan, matrix=matrix_rows)
+    schedule.block_remaining_cache = dict(block_remaining)
+    schedule.role_remaining_cache = dict(role_remaining)
+    schedule.dirty_machines = set(plan.keys())
+    _ensure_mobilisation_stats(schedule, ctx)
+    return schedule
 
 
 def evaluate_schedule(
@@ -450,9 +577,6 @@ def evaluate_schedule(
     windows = bundle.windows
     landing_of = bundle.landing_for_block
     landing_cap = bundle.landing_capacity
-    mobil_params = dict(ctx.mobilisation_params)
-    distance_lookup = ctx.distance_lookup
-
     allowed_roles = ctx.allowed_roles
     blackout = ctx.blackout_shifts
     locked = ctx.locked_assignments
@@ -461,13 +585,13 @@ def evaluate_schedule(
 
     weights = bundle.objective_weights
 
-    mobilisation_total = 0.0
-    transition_count = 0.0
+    _ensure_mobilisation_stats(sched, ctx)
+    mobilisation_total = sum(stats.cost for stats in sched.mobilisation_cache.values())
+    transition_count = sum(stats.transitions for stats in sched.mobilisation_cache.values())
     landing_slack_total = 0.0
     penalty = 0.0
 
     previous_block: dict[str, str | None] = {machine.id: None for machine in sc.machines}
-    shifts = sorted(pb.shifts, key=lambda s: (s.day, s.shift_id))
     tracker = SequencingTracker(ctx, debug=bool(debug))
 
     role_priority = build_role_priority(ctx)
@@ -476,9 +600,7 @@ def evaluate_schedule(
         key=lambda m: (role_priority.get(bundle.machine_roles.get(m.id) or "", 999), m.id),
     )
 
-    for shift in shifts:
-        day = shift.day
-        shift_id = shift.shift_id
+    for day, shift_id in ctx.shift_keys:
         used = {landing.id: 0 for landing in sc.landings}
         for machine in ordered_machines:
             block_id = sched.plan[machine.id][(day, shift_id)]
@@ -539,22 +661,6 @@ def evaluate_schedule(
             if sequencing.production_units <= BLOCK_COMPLETION_EPS:
                 previous_block[machine.id] = block_id
                 continue
-
-            params = mobil_params.get(machine.id)
-            prev_blk = previous_block[machine.id]
-            if params is not None and prev_blk is not None and block_id is not None:
-                if block_id != prev_blk:
-                    distance = distance_lookup.get((prev_blk, block_id), 0.0)
-                    cost = params.setup_cost
-                    if distance <= params.walk_threshold_m:
-                        cost += params.walk_cost_per_meter * distance
-                    else:
-                        cost += params.move_cost_flat
-                    mobilisation_total += cost
-                    transition_count += 1.0
-            else:
-                if prev_blk is not None and block_id != prev_blk:
-                    transition_count += 1.0
 
             previous_block[machine.id] = block_id
 
@@ -669,6 +775,8 @@ def generate_neighbors(
         schedule=sched,
         sanitizer=sanitizer,
         rng=rng,
+        shift_keys=ctx.shift_keys,
+        shift_index=ctx.shift_index,
         distance_lookup=distance_lookup,
         block_windows=block_windows,
         landing_capacity=landing_cap,
@@ -715,7 +823,6 @@ def generate_neighbors(
 
         candidate = operator.apply(context)
         if candidate is not None:
-            _repair_schedule_cover_blocks(pb, candidate, ctx, fill_voids=False)
             neighbours.append(candidate)
             stats["accepted"] += 1.0
             if limit is not None and len(neighbours) >= limit:

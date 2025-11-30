@@ -45,7 +45,10 @@ def _should_enable_mobilisation_profile(pb: Problem) -> bool:
     scenario = pb.scenario
     num_blocks = len(getattr(scenario, "blocks", []) or [])
     num_days = getattr(scenario, "num_days", 0) or 0
-    return num_blocks >= AUTO_MOBILISATION_BLOCK_THRESHOLD or num_days >= AUTO_MOBILISATION_DAY_THRESHOLD
+    return (
+        num_blocks >= AUTO_MOBILISATION_BLOCK_THRESHOLD
+        or num_days >= AUTO_MOBILISATION_DAY_THRESHOLD
+    )
 
 
 def solve_sa(
@@ -138,7 +141,9 @@ def solve_sa(
             normalized_weights[available_names[key]] = weight
         registry.configure(normalized_weights)
     if not operators and not operator_weights and _should_enable_mobilisation_profile(pb):
-        registry.configure({name: AUTO_MOBILISATION_WEIGHTS[name] for name in AUTO_MOBILISATION_WEIGHTS})
+        registry.configure(
+            {name: AUTO_MOBILISATION_WEIGHTS[name] for name in AUTO_MOBILISATION_WEIGHTS}
+        )
         auto_profile_applied = True
 
     if not 0 < cooling_rate < 1:

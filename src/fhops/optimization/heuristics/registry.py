@@ -30,6 +30,8 @@ class OperatorContext:
     schedule: Schedule
     sanitizer: Sanitizer
     rng: Random
+    shift_keys: tuple[tuple[int, str], ...]
+    shift_index: Mapping[tuple[int, str], int]
     distance_lookup: Mapping[tuple[str, str], float] | None = None
     block_windows: Mapping[str, tuple[int, int]] | None = None
     landing_capacity: Mapping[str, int] | None = None
@@ -108,9 +110,62 @@ class OperatorRegistry:
         return registry
 
 
-def _clone_plan(schedule: Schedule) -> dict[str, dict[tuple[int, str], str | None]]:
-    """Deep-copy the schedule plan so operators can mutate assignments safely."""
-    return {machine: assignments.copy() for machine, assignments in schedule.plan.items()}
+def _clone_schedule(
+    context: OperatorContext,
+    machines_to_copy: set[str] | None = None,
+) -> Schedule:
+    """Clone schedule plan/matrix, copying only the machines that will be mutated when provided."""
+
+    schedule = context.schedule
+    shift_keys = context.shift_keys
+    if not machines_to_copy:
+        plan = {machine: assignments.copy() for machine, assignments in schedule.plan.items()}
+        matrix = {
+            machine: row[:] if row is not None else [plan[machine].get(key) for key in shift_keys]
+            for machine, row in schedule.matrix.items()
+        }
+        for machine in plan:
+            matrix.setdefault(machine, [plan[machine].get(key) for key in shift_keys])
+        clone = schedule.__class__(plan=plan, matrix=matrix)
+        clone.mobilisation_cache = {}
+        for machine, stats in schedule.mobilisation_cache.items():
+            if stats is None:
+                continue
+            clone.mobilisation_cache[machine] = stats.__class__(stats.cost, stats.transitions)
+        clone.dirty_machines = set(schedule.dirty_machines)
+        return clone
+
+    plan = schedule.plan.copy()
+    matrix = schedule.matrix.copy()
+    for machine in machines_to_copy:
+        assignments = schedule.plan.get(machine, {})
+        plan[machine] = assignments.copy()
+        row = schedule.matrix.get(machine)
+        if row is None or len(row) != len(shift_keys):
+            row = [assignments.get(key) for key in shift_keys]
+        else:
+            row = row[:]
+        matrix[machine] = row
+    clone = schedule.__class__(plan=plan, matrix=matrix)
+    clone.mobilisation_cache = dict(schedule.mobilisation_cache)
+    for machine in machines_to_copy:
+        clone.mobilisation_cache.pop(machine, None)
+    clone.dirty_machines = set(schedule.dirty_machines).union(machines_to_copy)
+    return clone
+
+
+def _set_slot(
+    context: OperatorContext,
+    schedule: Schedule,
+    machine_id: str,
+    shift_key: tuple[int, str],
+    block_id: str | None,
+) -> None:
+    """Set a single machine/shift assignment on the cloned schedule."""
+
+    schedule.plan.setdefault(machine_id, {})[shift_key] = block_id
+    row = schedule.matrix.setdefault(machine_id, [None] * len(context.shift_keys))
+    row[context.shift_index[shift_key]] = block_id
 
 
 def _locked_assignments(problem: Problem) -> dict[tuple[str, int], str]:
@@ -171,7 +226,7 @@ class SwapOperator:
         machines = [machine.id for machine in problem.scenario.machines]
         if len(machines) < 2:
             return None
-        shifts = [(s.day, s.shift_id) for s in problem.shifts]
+        shifts = context.shift_keys
         if not shifts:
             return None
         rng = context.rng
@@ -180,16 +235,12 @@ class SwapOperator:
             machine_pair = rng.sample(machines, k=2)
         except ValueError:
             return None
-        new_plan = _clone_plan(context.schedule)
         m1, m2 = machine_pair
-        new_plan[m1] = new_plan[m1].copy()
-        new_plan[m2] = new_plan[m2].copy()
-        new_plan[m1][shift_key], new_plan[m2][shift_key] = (
-            new_plan[m2][shift_key],
-            new_plan[m1][shift_key],
-        )
-        schedule_cls = context.schedule.__class__
-        candidate = schedule_cls(plan=new_plan)
+        candidate = _clone_schedule(context, {m1, m2})
+        val1 = candidate.plan[m1].get(shift_key)
+        val2 = candidate.plan[m2].get(shift_key)
+        _set_slot(context, candidate, m1, shift_key, val2)
+        _set_slot(context, candidate, m2, shift_key, val1)
         return context.sanitizer(candidate)
 
 
@@ -216,12 +267,10 @@ class MoveOperator:
             from_shift, to_shift = rng.sample(shift_keys, k=2)
         else:
             from_shift = to_shift = shift_keys[0]
-        new_plan = _clone_plan(schedule)
-        new_plan[machine] = new_plan[machine].copy()
-        new_plan[machine][to_shift] = new_plan[machine][from_shift]
-        new_plan[machine][from_shift] = None
-        schedule_cls = schedule.__class__
-        candidate = schedule_cls(plan=new_plan)
+        candidate = _clone_schedule(context, {machine})
+        value = candidate.plan[machine].get(from_shift)
+        _set_slot(context, candidate, machine, to_shift, value)
+        _set_slot(context, candidate, machine, from_shift, None)
         return context.sanitizer(candidate)
 
 
@@ -252,7 +301,7 @@ class BlockInsertionOperator:
         if not assignments:
             return None
         rng.shuffle(assignments)
-        shifts = [(shift.day, shift.shift_id) for shift in pb.shifts]
+        shifts = context.shift_keys
         if not shifts:
             return None
         for machine_src, shift_src, block_id in assignments:
@@ -272,13 +321,10 @@ class BlockInsertionOperator:
                     candidate_targets.append((machine_tgt, (shift_day, shift_id)))
             rng.shuffle(candidate_targets)
             for machine_tgt, shift_tgt in candidate_targets:
-                new_plan = _clone_plan(schedule)
-                new_plan[machine_src] = new_plan[machine_src].copy()
-                new_plan[machine_src][shift_src] = None
-                new_plan[machine_tgt] = new_plan[machine_tgt].copy()
-                new_plan[machine_tgt][shift_tgt] = block_id
-                schedule_cls = schedule.__class__
-                candidate = context.sanitizer(schedule_cls(plan=new_plan))
+                candidate = _clone_schedule(context, {machine_src, machine_tgt})
+                _set_slot(context, candidate, machine_src, shift_src, None)
+                _set_slot(context, candidate, machine_tgt, shift_tgt, block_id)
+                candidate = context.sanitizer(candidate)
                 if _plan_equals(candidate.plan, schedule.plan):
                     continue
                 if candidate.plan.get(machine_tgt, {}).get(shift_tgt) != block_id:
@@ -355,11 +401,9 @@ class CoverageInjectionOperator:
         rng.shuffle(candidate_slots)
         candidate_slots.sort(key=lambda item: item[0], reverse=True)
         _, machine_id, shift_key = candidate_slots[0]
-        new_plan = _clone_plan(schedule)
-        new_plan[machine_id] = new_plan[machine_id].copy()
-        new_plan[machine_id][shift_key] = target_block
-        schedule_cls = schedule.__class__
-        candidate = context.sanitizer(schedule_cls(plan=new_plan))
+        candidate = _clone_schedule(context, {machine_id})
+        _set_slot(context, candidate, machine_id, shift_key, target_block)
+        candidate = context.sanitizer(candidate)
         if _plan_equals(candidate.plan, schedule.plan):
             return None
         if candidate.plan.get(machine_id, {}).get(shift_key) != target_block:
@@ -408,13 +452,10 @@ class CrossExchangeOperator:
                 continue
             if not _window_allows(shift_b[0], block_a, context):
                 continue
-            new_plan = _clone_plan(schedule)
-            new_plan[machine_a] = new_plan[machine_a].copy()
-            new_plan[machine_b] = new_plan[machine_b].copy()
-            new_plan[machine_a][shift_a] = block_b
-            new_plan[machine_b][shift_b] = block_a
-            schedule_cls = schedule.__class__
-            candidate = context.sanitizer(schedule_cls(plan=new_plan))
+            candidate = _clone_schedule(context, {machine_a, machine_b})
+            _set_slot(context, candidate, machine_a, shift_a, block_b)
+            _set_slot(context, candidate, machine_b, shift_b, block_a)
+            candidate = context.sanitizer(candidate)
             if _plan_equals(candidate.plan, schedule.plan):
                 continue
             if candidate.plan.get(machine_a, {}).get(shift_a) != block_b:
@@ -482,13 +523,10 @@ class MobilisationShakeOperator:
             rng.shuffle(candidate_targets)
             candidate_targets.sort(key=lambda item: (item[0], item[1]), reverse=True)
             for _, _, machine_tgt, shift_tgt in candidate_targets:
-                new_plan = _clone_plan(schedule)
-                new_plan[machine_src] = new_plan[machine_src].copy()
-                new_plan[machine_src][shift_src] = None
-                new_plan[machine_tgt] = new_plan[machine_tgt].copy()
-                new_plan[machine_tgt][shift_tgt] = block_id
-                schedule_cls = schedule.__class__
-                candidate = context.sanitizer(schedule_cls(plan=new_plan))
+                candidate = _clone_schedule(context, {machine_src, machine_tgt})
+                _set_slot(context, candidate, machine_src, shift_src, None)
+                _set_slot(context, candidate, machine_tgt, shift_tgt, block_id)
+                candidate = context.sanitizer(candidate)
                 if _plan_equals(candidate.plan, schedule.plan):
                     continue
                 if candidate.plan.get(machine_tgt, {}).get(shift_tgt) != block_id:
