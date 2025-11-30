@@ -28,6 +28,10 @@ def _dummy_schedule() -> Schedule:
     return Schedule(plan={})
 
 
+def _context_kwargs() -> dict:
+    return {"shift_keys": tuple(), "shift_index": {}}
+
+
 def test_registry_defaults_expose_swap_and_move():
     registry = OperatorRegistry.from_defaults()
     names = {op.name for op in registry.enabled()}
@@ -50,6 +54,7 @@ def test_enabled_iterator_uses_sanitizer_context():
         schedule=_dummy_schedule(),
         sanitizer=lambda schedule: schedule,
         rng=random,
+        **_context_kwargs(),
     )
     for operator in registry.enabled():
         result = operator.apply(context)
@@ -64,6 +69,7 @@ def test_neighbors_batch_limit():
         schedule=_dummy_schedule(),
         sanitizer=lambda schedule: schedule,
         rng=random,
+        **_context_kwargs(),
     )
     ctx = build_operational_problem(context.problem)
     neighbours = generate_neighbors(

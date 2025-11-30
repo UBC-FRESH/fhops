@@ -103,10 +103,16 @@ def _local_search(
     batch_size: int | None,
     max_workers: int | None,
     operator_stats: dict[str, dict[str, float]],
+    use_local_repairs: bool,
 ) -> tuple[Schedule, float, bool, int]:
     """Run local search until no improving neighbour is found."""
     current = schedule
-    current_score = evaluate_schedule(pb, current, ctx)
+    current_score = evaluate_schedule(
+        pb,
+        current,
+        ctx,
+        limit_repairs_to_dirty=use_local_repairs,
+    )
     improved = False
     local_steps = 0
     while True:
@@ -119,7 +125,13 @@ def _local_search(
             ctx,
             batch_size=batch_size,
         )
-        evaluations = evaluate_candidates(pb, candidates, ctx, max_workers)
+        evaluations = evaluate_candidates(
+            pb,
+            candidates,
+            ctx,
+            max_workers,
+            limit_repairs_to_dirty=use_local_repairs,
+        )
         if not evaluations:
             break
 
@@ -153,6 +165,7 @@ def solve_ils(
     watch_interval: int | None = None,
     watch_metadata: dict[str, str] | None = None,
     watch_debug: bool = False,
+    use_local_repairs: bool = False,
 ) -> dict[str, Any]:
     """Run Iterated Local Search (optionally with MIP warm starts).
 
@@ -193,6 +206,9 @@ def solve_ils(
         Extra metadata (scenario/solver labels) attached to snapshot payloads.
     watch_debug : bool, default=False
         When ``True`` capture sequencing debug stats for watch snapshots (minor overhead).
+    use_local_repairs : bool, default=False
+        Limit repairs to dirty slots while scoring candidates. Final schedules are always
+        re-scored with a full repair before returning results.
 
     Returns
     -------
@@ -280,6 +296,7 @@ def solve_ils(
 
     ctx = build_operational_problem(pb)
     debug_capture = bool(watch_debug and watch_sink)
+    local_repairs = bool(use_local_repairs)
 
     def _score_schedule(
         schedule: Schedule,
@@ -290,8 +307,19 @@ def solve_ils(
 
         flag = debug_capture if capture is None else capture
         if flag:
-            return evaluate_schedule_with_debug(pb, schedule, ctx, capture_debug=True)
-        return evaluate_schedule(pb, schedule, ctx), None
+            return evaluate_schedule_with_debug(
+                pb,
+                schedule,
+                ctx,
+                capture_debug=True,
+                limit_repairs_to_dirty=local_repairs,
+            )
+        return evaluate_schedule(
+            pb,
+            schedule,
+            ctx,
+            limit_repairs_to_dirty=local_repairs,
+        ), None
 
     with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
         current = init_greedy_schedule(pb, ctx)
@@ -358,7 +386,15 @@ def solve_ils(
         total_iterations = max(1, iters)
         for iteration in range(1, total_iterations + 1):
             current, current_score, improved, steps = _local_search(
-                pb, current, registry, rng, ctx, batch_arg, worker_arg, operator_stats
+                pb,
+                current,
+                registry,
+                rng,
+                ctx,
+                batch_arg,
+                worker_arg,
+                operator_stats,
+                local_repairs,
             )
             if debug_capture:
                 current_score, current_debug_stats = _score_schedule(current, capture=True)
@@ -438,6 +474,19 @@ def solve_ils(
                 perturbations += 1
                 rolling_scores.append(float(current_score))
                 improvement_window.append(0)
+
+        if local_repairs:
+            if debug_capture:
+                best_score, best_debug_stats = evaluate_schedule_with_debug(
+                    pb,
+                    best,
+                    ctx,
+                    capture_debug=True,
+                    limit_repairs_to_dirty=False,
+                )
+            else:
+                best_score = evaluate_schedule(pb, best, ctx, limit_repairs_to_dirty=False)
+            current_score = evaluate_schedule(pb, current, ctx, limit_repairs_to_dirty=False)
 
         rows = []
         for machine_id, plan in best.plan.items():

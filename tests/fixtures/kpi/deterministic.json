@@ -22,25 +22,25 @@
     "sequencing_violation_count": 0
   },
   "med42": {
-    "remaining_work_total": 63150.519176,
+    "remaining_work_total": 12267.787724,
     "sequencing_violation_days": 0,
     "utilisation_ratio_weighted_day": 0.304233,
-    "completed_blocks": 0.0,
+    "completed_blocks": 1.0,
     "utilisation_ratio_mean_shift": 1.0,
     "sequencing_violation_blocks": 0,
-    "total_production": 6630.0,
+    "total_production": 2075.348509,
     "sequencing_violation_breakdown": "none",
     "utilisation_ratio_by_role": "{\"feller_buncher\": 1.0, \"grapple_skidder\": 1.0, \"processor\": 1.0, \"loader\": 1.0}",
-    "mobilisation_cost_by_machine": "{\"H1\": 716.36, \"H2\": 822.12, \"H3\": 714.2, \"H4\": 440.32, \"H5\": 496.44, \"H6\": 382.28, \"H7\": 440.8, \"H8\": 279.4, \"H9\": 275.8}",
-    "mobilisation_cost": 4567.72,
+    "mobilisation_cost_by_machine": "{\"H1\": 664.52, \"H2\": 774.24, \"H3\": 659.12, \"H4\": 409.12, \"H5\": 457.44, \"H6\": 358.16, \"H7\": 419.2, \"H8\": 260.08, \"H9\": 260.08}",
+    "mobilisation_cost": 4261.96,
     "utilisation_ratio_mean_day": 0.304233,
-    "sequencing_clean_blocks": 20,
+    "sequencing_clean_blocks": 12,
     "makespan_shift": "S1",
     "makespan_day": 42,
     "utilisation_ratio_weighted_shift": 1.0,
-    "mobilisation_cost_by_landing": "{\"L1\": 1376.84, \"L2\": 612.04, \"L3\": 1422.64, \"L4\": 1156.2}",
+    "mobilisation_cost_by_landing": "{\"L1\": 836.24, \"L2\": 312.6, \"L3\": 773.16, \"L4\": 639.96}",
     "utilisation_ratio_by_machine": "{\"H1\": 1.0, \"H2\": 1.0, \"H3\": 1.0, \"H4\": 1.0, \"H5\": 1.0, \"H6\": 1.0, \"H7\": 1.0, \"H8\": 1.0, \"H9\": 1.0}",
-    "staged_production": 63150.519176,
+    "staged_production": 12267.787724,
     "sequencing_violation_count": 0
   }
 }

@@ -41,6 +41,32 @@ AUTO_MOBILISATION_WEIGHTS = {
 }
 
 
+def _clone_plan(
+    plan: dict[str, dict[tuple[int, str], str | None]],
+) -> dict[str, dict[tuple[int, str], str | None]]:
+    """Deep-copy a machine/shift assignment plan."""
+
+    return {machine_id: assignments.copy() for machine_id, assignments in plan.items()}
+
+
+def _assignment_delta(
+    baseline: dict[str, dict[tuple[int, str], str | None]],
+    candidate: dict[str, dict[tuple[int, str], str | None]],
+) -> int:
+    """Count slots whose block assignment changed between two plans."""
+
+    diff = 0
+    machines = set(baseline.keys()) | set(candidate.keys())
+    for machine_id in machines:
+        base_slots = baseline.get(machine_id, {})
+        cand_slots = candidate.get(machine_id, {})
+        slots = set(base_slots.keys()) | set(cand_slots.keys())
+        for slot in slots:
+            if base_slots.get(slot) != cand_slots.get(slot):
+                diff += 1
+    return diff
+
+
 def _should_enable_mobilisation_profile(pb: Problem) -> bool:
     scenario = pb.scenario
     num_blocks = len(getattr(scenario, "blocks", []) or [])
@@ -67,6 +93,7 @@ def solve_sa(
     watch_interval: int | None = None,
     watch_metadata: dict[str, str] | None = None,
     watch_debug: bool = False,
+    use_local_repairs: bool = False,
 ) -> dict[str, Any]:
     """Solve the scheduling problem with simulated annealing.
 
@@ -106,6 +133,9 @@ def solve_sa(
         Additional metadata (e.g., scenario/solver labels) attached to each snapshot.
     watch_debug : bool, default=False
         When ``True`` capture sequencing debug stats for watch snapshots (adds overhead).
+    use_local_repairs : bool, default=False
+        When ``True`` repairs only the slots touched by a candidate before scoring. The
+        final schedule is always re-scored with a full repair before reporting.
 
     Returns
     -------
@@ -210,6 +240,7 @@ def solve_sa(
 
     ctx = build_operational_problem(pb)
     debug_capture = bool(watch_debug and watch_sink)
+    local_repairs = bool(use_local_repairs)
 
     def _score_schedule(
         schedule: Schedule,
@@ -220,8 +251,19 @@ def solve_sa(
 
         flag = debug_capture if capture is None else capture
         if flag:
-            return evaluate_schedule_with_debug(pb, schedule, ctx, capture_debug=True)
-        return evaluate_schedule(pb, schedule, ctx), None
+            return evaluate_schedule_with_debug(
+                pb,
+                schedule,
+                ctx,
+                capture_debug=True,
+                limit_repairs_to_dirty=local_repairs,
+            )
+        return evaluate_schedule(
+            pb,
+            schedule,
+            ctx,
+            limit_repairs_to_dirty=local_repairs,
+        ), None
 
     with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
         current = init_greedy_schedule(pb, ctx)
@@ -229,6 +271,9 @@ def solve_sa(
         best = current
         best_score = current_score
         best_debug_stats = dict(current_debug_stats) if current_debug_stats else None
+        initial_plan = _clone_plan(current.plan)
+        assignment_slots_total = sum(len(assignments) for assignments in initial_plan.values())
+        best_assignment_delta = 0
 
         temperature0 = max(1.0, best_score / 10.0)
         temperature = temperature0
@@ -255,6 +300,7 @@ def solve_sa(
                 candidates,
                 ctx,
                 max_workers=max_workers if batch_size and batch_size > 1 else None,
+                limit_repairs_to_dirty=local_repairs,
             )
             if workers_total:
                 current_workers_busy = min(workers_total, len(evaluations)) if evaluations else 0
@@ -274,6 +320,7 @@ def solve_sa(
             if current_score > best_score:
                 best, best_score = current, current_score
                 best_debug_stats = dict(current_debug_stats) if current_debug_stats else None
+                best_assignment_delta = _assignment_delta(initial_plan, best.plan)
             temperature = max(temperature * cooling_rate, 1e-6)
             if run_logger and telemetry_logger and telemetry_logger.step_interval:
                 if step == 1 or step == iters or (step % telemetry_logger.step_interval == 0):
@@ -321,6 +368,9 @@ def solve_sa(
                 metadata = dict(watch_meta)
                 if debug_capture:
                     metadata.update(build_watch_metadata_from_debug(current_debug_stats))
+                metadata.setdefault("greedy_objective", f"{initial_score:.3f}")
+                metadata.setdefault("obj_delta_vs_initial", f"{best_score - initial_score:.3f}")
+                metadata.setdefault("assignment_delta_slots", str(best_assignment_delta))
                 watch_sink(
                     Snapshot(
                         scenario=watch_scenario,
@@ -342,6 +392,20 @@ def solve_sa(
                         metadata=metadata,
                     )
                 )
+
+        # Re-score the best schedule with a full repair pass for final reporting.
+        if local_repairs:
+            if debug_capture:
+                best_score, best_debug_stats = evaluate_schedule_with_debug(
+                    pb,
+                    best,
+                    ctx,
+                    capture_debug=True,
+                    limit_repairs_to_dirty=False,
+                )
+            else:
+                best_score = evaluate_schedule(pb, best, ctx, limit_repairs_to_dirty=False)
+            current_score = evaluate_schedule(pb, current, ctx, limit_repairs_to_dirty=False)
 
         rows: list[dict[str, str | int]] = []
         for machine_id, plan in best.plan.items():
@@ -379,6 +443,9 @@ def solve_sa(
             metadata = dict(watch_meta)
             if debug_capture:
                 metadata.update(build_watch_metadata_from_debug(best_debug_stats))
+            metadata.setdefault("greedy_objective", f"{initial_score:.3f}")
+            metadata.setdefault("obj_delta_vs_initial", f"{best_score - initial_score:.3f}")
+            metadata.setdefault("assignment_delta_slots", str(best_assignment_delta))
             watch_sink(
                 Snapshot(
                     scenario=watch_scenario,
@@ -413,6 +480,14 @@ def solve_sa(
             "restart_interval": int(restart_interval_value),
             "operators": registry.weights(),
         }
+        meta.update(
+            {
+                "greedy_objective": float(initial_score),
+                "best_delta_vs_greedy": float(best_score - initial_score),
+                "assignment_delta_slots": int(best_assignment_delta),
+                "assignment_total_slots": int(assignment_slots_total),
+            }
+        )
         if operator_stats:
             meta["operators_stats"] = {
                 name: {
@@ -447,6 +522,7 @@ def solve_sa(
                 metrics={
                     "objective": float(best_score),
                     "initial_score": float(initial_score),
+                    "objective_delta_vs_initial": float(best_score - initial_score),
                     "acceptance_rate": meta["acceptance_rate"],
                     **numeric_kpis,
                 },
@@ -457,6 +533,7 @@ def solve_sa(
                     "accepted_moves": accepted_moves,
                     "temperature0": float(temperature0),
                     "operators": registry.weights(),
+                    "assignment_delta_slots": int(best_assignment_delta),
                 },
                 kpis=kpi_totals,
                 tuner_meta=tuner_meta,

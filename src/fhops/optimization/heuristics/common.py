@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import math
+from bisect import insort
 from collections import defaultdict
 from collections.abc import Mapping
 from concurrent.futures import ThreadPoolExecutor
@@ -29,6 +30,9 @@ class Schedule:
     dirty_machines: set[str] = field(default_factory=set)
     block_remaining_cache: dict[str, float] | None = None
     role_remaining_cache: dict[tuple[str, str], float] | None = None
+    dirty_blocks: set[str] = field(default_factory=set)
+    block_slots: dict[str, list[tuple[int, str]]] = field(default_factory=dict)
+    dirty_slots: set[tuple[str, int, str]] = field(default_factory=set)
 
 
 @dataclass(slots=True)
@@ -53,6 +57,23 @@ def _ensure_machine_matrix(
     return row
 
 
+def _ensure_block_slots(schedule: Schedule, ctx: OperationalProblem) -> None:
+    """Populate block-to-slot ordering if it has not been built yet."""
+
+    if schedule.block_slots:
+        return
+    slots: dict[str, list[tuple[int, str]]] = {}
+    for machine_id, assignments in schedule.plan.items():
+        for key, block_id in assignments.items():
+            if block_id is None:
+                continue
+            shift_idx = ctx.shift_index[key]
+            slots.setdefault(block_id, []).append((shift_idx, machine_id))
+    for entries in slots.values():
+        entries.sort()
+    schedule.block_slots = slots
+
+
 def _set_assignment(
     schedule: Schedule,
     machine_id: str,
@@ -60,12 +81,39 @@ def _set_assignment(
     shift_id: str,
     block_id: str | None,
     ctx: OperationalProblem,
+    *,
+    mark_dirty: bool = True,
 ) -> None:
     """Keep plan + matrix in sync for a single slot update."""
 
-    schedule.plan.setdefault(machine_id, {})[(day, shift_id)] = block_id
+    _ensure_block_slots(schedule, ctx)
+    assignments = schedule.plan.setdefault(machine_id, {})
+    key = (day, shift_id)
+    old_block = assignments.get(key)
+    if old_block == block_id:
+        return
+    assignments[key] = block_id
     row = _ensure_machine_matrix(schedule, machine_id, ctx)
-    row[ctx.shift_index[(day, shift_id)]] = block_id
+    shift_idx = ctx.shift_index[key]
+    row[shift_idx] = block_id
+    if old_block is not None:
+        entries = schedule.block_slots.get(old_block)
+        if entries is not None:
+            try:
+                entries.remove((shift_idx, machine_id))
+            except ValueError:
+                pass
+            if not entries:
+                schedule.block_slots.pop(old_block, None)
+    if block_id is not None:
+        entries = schedule.block_slots.setdefault(block_id, [])
+        insort(entries, (shift_idx, machine_id))
+    if mark_dirty:
+        if old_block and old_block != block_id:
+            schedule.dirty_blocks.add(old_block)
+        if block_id and block_id != old_block:
+            schedule.dirty_blocks.add(block_id)
+        schedule.dirty_slots.add((machine_id, day, shift_id))
     schedule.dirty_machines.add(machine_id)
 
 
@@ -78,15 +126,6 @@ def _build_matrix(
         machine_id: [assignments.get(key) for key in ctx.shift_keys]
         for machine_id, assignments in plan.items()
     }
-
-
-def _ensure_work_caches(schedule: Schedule, ctx: OperationalProblem) -> None:
-    """Materialize block/role remaining caches if missing."""
-
-    if schedule.block_remaining_cache is None:
-        schedule.block_remaining_cache = dict(ctx.bundle.work_required)
-    if schedule.role_remaining_cache is None:
-        schedule.role_remaining_cache = dict(ctx.role_work_required)
 
 
 def _recompute_mobilisation_for(
@@ -139,6 +178,7 @@ def _repair_schedule_cover_blocks(
     ctx: OperationalProblem,
     *,
     fill_voids: bool = True,
+    limit_to_dirty_slots: bool = False,
 ) -> None:
     """Fill empty/invalid shifts with high-demand blocks per role."""
 
@@ -151,15 +191,11 @@ def _repair_schedule_cover_blocks(
     availability = bundle.availability_day
     blackout = ctx.blackout_shifts
     locked = ctx.locked_assignments
-    _ensure_work_caches(sched, ctx)
-    block_remaining = sched.block_remaining_cache
-    role_remaining = sched.role_remaining_cache
-    assert block_remaining is not None
-    assert role_remaining is not None
-    block_remaining.clear()
-    block_remaining.update(bundle.work_required)
-    role_remaining.clear()
-    role_remaining.update(ctx.role_work_required)
+    # Always rebuild remaining-work caches so repairs start from the full demand baseline.
+    block_remaining = dict(ctx.bundle.work_required)
+    role_remaining = dict(ctx.role_work_required)
+    sched.block_remaining_cache = block_remaining
+    sched.role_remaining_cache = role_remaining
     block_system = bundle.block_system
     explicit_blocks = ctx.blocks_with_explicit_system
     prereq_roles = ctx.prereq_roles
@@ -174,13 +210,44 @@ def _repair_schedule_cover_blocks(
         for key in shift_keys:
             machine_plan.setdefault(key, None)
         _ensure_machine_matrix(sched, machine.id, ctx)
+    _ensure_block_slots(sched, ctx)
+
+    dirty_blocks = (
+        set(sched.dirty_blocks) if sched.dirty_blocks else set(bundle.work_required.keys())
+    )
+    if not dirty_blocks:
+        return
 
     def set_assignment(machine_id: str, day: int, shift_id: str, block_id: str | None) -> None:
-        _set_assignment(sched, machine_id, day, shift_id, block_id, ctx)
+        _set_assignment(sched, machine_id, day, shift_id, block_id, ctx, mark_dirty=False)
 
-    ordered_machines = sorted(
-        sc.machines,
-        key=lambda m: (role_priority.get(machine_roles.get(m.id) or "", 999), m.id),
+    block_machine_index: defaultdict[str, set[str]] = defaultdict(set)
+    for (machine_id, block_id), rate_value in rate.items():
+        if rate_value > 0.0:
+            block_machine_index[block_id].add(machine_id)
+
+    machines_to_visit: set[str] = set()
+    if not limit_to_dirty_slots:
+        machines_to_visit = set(plan.keys())
+    else:
+        for block_id in dirty_blocks:
+            machines_to_visit.update(block_machine_index.get(block_id, ()))
+            for _, machine_id in sched.block_slots.get(block_id, []):
+                machines_to_visit.add(machine_id)
+        if not machines_to_visit:
+            machines_to_visit = set(plan.keys())
+    dirty_slots: set[tuple[str, int, str]] = set()
+    if limit_to_dirty_slots:
+        dirty_slots.update(sched.dirty_slots)
+        for block_id in dirty_blocks:
+            for shift_idx, machine_id in sched.block_slots.get(block_id, []):
+                day_slot, shift_slot = shift_keys[shift_idx]
+                dirty_slots.add((machine_id, day_slot, shift_slot))
+    processed_slots: set[tuple[str, int, str]] = set()
+
+    ordered_machines = [machine for machine in sc.machines if machine.id in machines_to_visit]
+    ordered_machines.sort(
+        key=lambda m: (role_priority.get(machine_roles.get(m.id) or "", 999), m.id)
     )
 
     role_inventory_estimate: defaultdict[tuple[str, str], float] = defaultdict(float)
@@ -324,10 +391,16 @@ def _repair_schedule_cover_blocks(
         demand: list[tuple[str, float]] = []
         if role is not None:
             for (block_id, role_name), remaining in role_remaining.items():
-                if role_name == role and remaining > BLOCK_COMPLETION_EPS:
+                if (
+                    role_name == role
+                    and remaining > BLOCK_COMPLETION_EPS
+                    and block_id in dirty_blocks
+                ):
                     demand.append((block_id, remaining))
         for block_id, remaining in block_remaining.items():
             if remaining <= BLOCK_COMPLETION_EPS:
+                continue
+            if block_id not in dirty_blocks:
                 continue
             if (
                 role is not None
@@ -358,12 +431,23 @@ def _repair_schedule_cover_blocks(
             role = machine_roles.get(machine.id)
             slot_key = (day, shift_id)
             machine_plan = plan[machine.id]
-            block_id = machine_plan.get(slot_key)
+            slot_block: str | None = machine_plan.get(slot_key)
+            slot_dirty = (
+                (machine.id, day, shift_id) in dirty_slots if limit_to_dirty_slots else True
+            )
             lock_block = locked.get((machine.id, day))
             locked_slot = lock_block is not None
             if locked_slot:
-                block_id = lock_block
-                set_assignment(machine.id, day, shift_id, block_id)
+                slot_block = lock_block
+                set_assignment(machine.id, day, shift_id, slot_block)
+            if (
+                limit_to_dirty_slots
+                and not locked_slot
+                and slot_block is not None
+                and slot_block not in dirty_blocks
+            ):
+                record_assignment(machine.id, slot_block)
+                continue
             if shift_availability.get((machine.id, day, shift_id), 1) == 0:
                 set_assignment(machine.id, day, shift_id, None)
                 continue
@@ -373,27 +457,41 @@ def _repair_schedule_cover_blocks(
             if (machine.id, day, shift_id) in blackout:
                 set_assignment(machine.id, day, shift_id, None)
                 continue
-            if block_id is not None:
+            if slot_block is not None and slot_block not in dirty_blocks and not locked_slot:
+                continue
+            if slot_block is not None:
                 if not slot_is_valid(
                     machine.id,
                     day,
-                    block_id,
+                    slot_block,
                     role,
                     enforce_prereq=not locked_slot,
                 ):
-                    block_id = None
+                    slot_block = None
                     set_assignment(machine.id, day, shift_id, None)
-            if block_id is None and fill_voids:
+                    slot_dirty = True
+            if slot_block is None and fill_voids:
+                if limit_to_dirty_slots and not slot_dirty:
+                    continue
                 candidate = select_block(machine.id, day, shift_id, role)
                 if candidate is None:
                     set_assignment(machine.id, day, shift_id, None)
                     continue
                 set_assignment(machine.id, day, shift_id, candidate)
-                block_id = candidate
-            if block_id is not None:
-                record_assignment(machine.id, block_id)
+                slot_block = candidate
+            if slot_block is not None:
+                record_assignment(machine.id, slot_block)
+            if limit_to_dirty_slots:
+                processed_slots.add((machine.id, day, shift_id))
 
+    sched.dirty_blocks.difference_update(dirty_blocks)
+    if limit_to_dirty_slots:
+        if processed_slots:
+            sched.dirty_slots.difference_update(processed_slots)
+    else:
+        sched.dirty_slots.clear()
     if not fill_voids:
+        sched.dirty_blocks.clear()
         return
 
 
@@ -554,6 +652,7 @@ def init_greedy_schedule(pb: Problem, ctx: OperationalProblem) -> Schedule:
                 _, best_block = candidates[0]
                 assign(machine.id, day, shift_id, best_block)
     schedule = Schedule(plan=plan, matrix=matrix_rows)
+    _ensure_block_slots(schedule, ctx)
     schedule.block_remaining_cache = dict(block_remaining)
     schedule.role_remaining_cache = dict(role_remaining)
     schedule.dirty_machines = set(plan.keys())
@@ -566,10 +665,17 @@ def evaluate_schedule(
     sched: Schedule,
     ctx: OperationalProblem,
     debug: dict[str, Any] | None = None,
+    *,
+    limit_repairs_to_dirty: bool = False,
 ) -> float:
     """Score a schedule using production, mobilisation, transition, and slack penalties."""
 
-    _repair_schedule_cover_blocks(pb, sched, ctx)
+    _repair_schedule_cover_blocks(
+        pb,
+        sched,
+        ctx,
+        limit_to_dirty_slots=limit_repairs_to_dirty,
+    )
 
     sc = pb.scenario
     bundle = ctx.bundle
@@ -695,11 +801,19 @@ def evaluate_schedule_with_debug(
     sched: Schedule,
     ctx: OperationalProblem,
     capture_debug: bool,
+    *,
+    limit_repairs_to_dirty: bool = False,
 ) -> tuple[float, dict[str, Any] | None]:
     """Evaluate a schedule and optionally capture sequencing debug statistics."""
 
     debug_map: dict[str, Any] | None = {} if capture_debug else None
-    score = evaluate_schedule(pb, sched, ctx, debug=debug_map)
+    score = evaluate_schedule(
+        pb,
+        sched,
+        ctx,
+        debug=debug_map,
+        limit_repairs_to_dirty=limit_repairs_to_dirty,
+    )
     return score, debug_map
 
 
@@ -823,6 +937,7 @@ def generate_neighbors(
 
         candidate = operator.apply(context)
         if candidate is not None:
+            _repair_schedule_cover_blocks(pb, candidate, ctx, fill_voids=False)
             neighbours.append(candidate)
             stats["accepted"] += 1.0
             if limit is not None and len(neighbours) >= limit:
@@ -838,18 +953,33 @@ def evaluate_candidates(
     candidates: list[Schedule],
     ctx: OperationalProblem,
     max_workers: int | None = None,
+    *,
+    limit_repairs_to_dirty: bool = False,
 ) -> list[tuple[Schedule, float]]:
     """Evaluate candidate schedules, optionally in parallel, returning (schedule, score)."""
 
     if not candidates:
         return []
     if max_workers is None or max_workers <= 1 or len(candidates) == 1:
-        return [(candidate, evaluate_schedule(pb, candidate, ctx)) for candidate in candidates]
+        return [
+            (
+                candidate,
+                evaluate_schedule(
+                    pb,
+                    candidate,
+                    ctx,
+                    limit_repairs_to_dirty=limit_repairs_to_dirty,
+                ),
+            )
+            for candidate in candidates
+        ]
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
 
         def _score(schedule: Schedule) -> float:
-            return evaluate_schedule(pb, schedule, ctx)
+            return evaluate_schedule(
+                pb, schedule, ctx, limit_repairs_to_dirty=limit_repairs_to_dirty
+            )
 
         scores = list(executor.map(_score, candidates))
     return list(zip(candidates, scores))

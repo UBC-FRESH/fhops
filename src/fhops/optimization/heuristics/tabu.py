@@ -77,6 +77,7 @@ def solve_tabu(
     watch_interval: int | None = None,
     watch_metadata: dict[str, str] | None = None,
     watch_debug: bool = False,
+    use_local_repairs: bool = False,
 ) -> dict[str, Any]:
     """Run Tabu Search using the shared operator registry.
 
@@ -112,6 +113,9 @@ def solve_tabu(
         Metadata merged into each snapshot (scenario/solver labels, run IDs, etc.).
     watch_debug : bool, default=False
         When ``True`` include sequencing debug metadata in watch output (adds evaluation overhead).
+    use_local_repairs : bool, default=False
+        Enable dirty-slot repairs while scoring neighbours. The final plan is always re-evaluated
+        with a full repair before reporting.
 
     Returns
     -------
@@ -203,6 +207,7 @@ def solve_tabu(
 
     ctx = build_operational_problem(pb)
     debug_capture = bool(watch_debug and watch_sink)
+    local_repairs = bool(use_local_repairs)
 
     def _score_schedule(
         schedule: Schedule,
@@ -211,8 +216,14 @@ def solve_tabu(
     ) -> tuple[float, dict[str, Any] | None]:
         flag = debug_capture if capture is None else capture
         if flag:
-            return evaluate_schedule_with_debug(pb, schedule, ctx, capture_debug=True)
-        return evaluate_schedule(pb, schedule, ctx), None
+            return evaluate_schedule_with_debug(
+                pb,
+                schedule,
+                ctx,
+                capture_debug=True,
+                limit_repairs_to_dirty=True,
+            )
+        return evaluate_schedule(pb, schedule, ctx, limit_repairs_to_dirty=True), None
 
     with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
         current = init_greedy_schedule(pb, ctx)
@@ -302,7 +313,13 @@ def solve_tabu(
                 ctx,
                 batch_size=batch_arg,
             )
-            evaluations = evaluate_candidates(pb, candidates, ctx, worker_arg)
+            evaluations = evaluate_candidates(
+                pb,
+                candidates,
+                ctx,
+                worker_arg,
+                limit_repairs_to_dirty=local_repairs,
+            )
             if not evaluations:
                 break
             if workers_total:
@@ -392,6 +409,31 @@ def solve_tabu(
 
         if watch_sink and last_iteration and last_emitted_step != last_iteration:
             emit_snapshot(last_iteration)
+
+        if debug_capture:
+            best_score, best_debug_stats = evaluate_schedule_with_debug(
+                pb,
+                best,
+                ctx,
+                capture_debug=True,
+                limit_repairs_to_dirty=False,
+            )
+        else:
+            best_score = evaluate_schedule(pb, best, ctx, limit_repairs_to_dirty=False)
+        current_score = evaluate_schedule(pb, current, ctx, limit_repairs_to_dirty=False)
+
+        if local_repairs:
+            if debug_capture:
+                best_score, best_debug_stats = evaluate_schedule_with_debug(
+                    pb,
+                    best,
+                    ctx,
+                    capture_debug=True,
+                    limit_repairs_to_dirty=False,
+                )
+            else:
+                best_score = evaluate_schedule(pb, best, ctx, limit_repairs_to_dirty=False)
+            current_score = evaluate_schedule(pb, current, ctx, limit_repairs_to_dirty=False)
 
         rows = []
         for machine_id, plan in best.plan.items():

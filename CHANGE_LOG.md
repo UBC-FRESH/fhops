@@ -1,3 +1,15 @@
+# 2025-11-30 — Incremental repair + fixture refresh
+- Rebuilt `_repair_schedule_cover_blocks` so each pass rebuilds the block/role demand dictionaries (fixing the zero-demand bug), keeps the original shift sweep with dirty-set filtering, and teaches `generate_neighbors` to sanitize candidates with `fill_voids=False` (drop infeasible loader slots without undoing operator moves). Heuristic smoke tests (tiny7 SA/ILS/Tabu) now produce stable objectives (SA ≈2061) while loader repairs remain incremental.
+- Refreshed downstream assets to reflect the new staged-volume semantics: `tests/fixtures/benchmarks/tiny7_sa.json`, med42 playback CSV/Parquet exports, deterministic and stochastic KPI snapshots, and the regression baseline (`tests/fixtures/regression/baseline.yaml`, SA objective ≈−999.5). CLI playback, KPI regression, and benchmark tests now assert against the leaner med42 footprint (≈12.3 k m³ staged vs. 63 k m³).
+- Commands executed:
+  - `ruff format src tests`
+  - `ruff check src tests`
+  - `mypy src`
+  - `pytest`
+  - `pre-commit run --all-files`
+  - `sphinx-build -b html docs _build/html -W`
+- Added dirty-slot tracking plus a feature-flagged “local repair” mode for heuristics: `_set_assignment` and operator clones now record the exact (machine, day, shift) slots touched, `_repair_schedule_cover_blocks` can replay just those slots, and `solve_sa`/`solve_ils`/`solve_tabu` accept `use_local_repairs=True` to score neighbours without rebuilding the whole plan. Final schedules are still re-scored with a full repair before reporting, so existing behaviour stays intact while we experiment with incremental scoring. Commands: `ruff format src tests`; `ruff check src tests`; `mypy src`; `pytest`.
+
 # 2025-12-20 — Scenario ladder workload rebalance
 - Regenerated the `small21`, `med42`, and `large84` bundles with the tiny7 block profile and scaled block counts (6/12/24) so each tier now carries roughly the same per-system workload; READMEs, block tables, prod rates, and distance matrices now reflect the trimmed volumes and mobilisations.
 - Commands executed for this work:
@@ -46,6 +58,24 @@
   - `.venv/bin/fhops solve-ils examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_ils_smoke.csv`
 - Added per-machine mobilisation caches and dirty tracking: schedule updates now flag affected machines, `_ensure_mobilisation_stats` recomputes only those rows, and `evaluate_schedule` reuses cached mobilisation/transition totals rather than recalculating them inside the shift loop.
 - Commands executed:
+  - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_sa_smoke.csv`
+  - `.venv/bin/fhops solve-ils examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_ils_smoke.csv`
+- Added block-level dirty tracking so `_repair_schedule_cover_blocks` only replays blocks touched by operator moves, avoiding full-plan repairs when individual blocks are mutated.
+- Commands executed:
+  - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_sa_smoke.csv`
+  - `.venv/bin/fhops solve-ils examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_ils_smoke.csv`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+- Introduced a block-slot index on `Schedule` so each block now keeps an ordered list of `(shift_idx, machine_id)` assignments; `_set_assignment` and all registry operators maintain the index, setting us up for block-scoped repairs.
+- Commands executed:
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_sa_smoke.csv`
+  - `.venv/bin/fhops solve-ils examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_ils_smoke.csv`
+- Limited `_repair_schedule_cover_blocks` to dirty blocks by skipping untouched ones in both the sanitization and fill passes, so we no longer redo feasibility work for clean blocks after each operator move.
+- Commands executed:
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
   - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_sa_smoke.csv`
   - `.venv/bin/fhops solve-ils examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_ils_smoke.csv`
 

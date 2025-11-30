@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from bisect import insort
 from collections import defaultdict
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
@@ -133,6 +134,10 @@ def _clone_schedule(
                 continue
             clone.mobilisation_cache[machine] = stats.__class__(stats.cost, stats.transitions)
         clone.dirty_machines = set(schedule.dirty_machines)
+        clone.block_slots = {
+            block: entries.copy() for block, entries in schedule.block_slots.items()
+        }
+        clone.dirty_slots = set(schedule.dirty_slots)
         return clone
 
     plan = schedule.plan.copy()
@@ -151,6 +156,8 @@ def _clone_schedule(
     for machine in machines_to_copy:
         clone.mobilisation_cache.pop(machine, None)
     clone.dirty_machines = set(schedule.dirty_machines).union(machines_to_copy)
+    clone.block_slots = {block: entries.copy() for block, entries in schedule.block_slots.items()}
+    clone.dirty_slots = set(schedule.dirty_slots)
     return clone
 
 
@@ -163,9 +170,32 @@ def _set_slot(
 ) -> None:
     """Set a single machine/shift assignment on the cloned schedule."""
 
-    schedule.plan.setdefault(machine_id, {})[shift_key] = block_id
+    assignments = schedule.plan.setdefault(machine_id, {})
+    old_block = assignments.get(shift_key)
+    if old_block == block_id:
+        return
+    assignments[shift_key] = block_id
     row = schedule.matrix.setdefault(machine_id, [None] * len(context.shift_keys))
-    row[context.shift_index[shift_key]] = block_id
+    shift_idx = context.shift_index[shift_key]
+    row[shift_idx] = block_id
+    slots = schedule.block_slots
+    if slots:
+        if old_block:
+            entries = slots.get(old_block)
+            if entries is not None:
+                try:
+                    entries.remove((shift_idx, machine_id))
+                except ValueError:
+                    pass
+                if not entries:
+                    slots.pop(old_block, None)
+        if block_id:
+            insort(slots.setdefault(block_id, []), (shift_idx, machine_id))
+    if block_id and block_id != old_block:
+        schedule.dirty_blocks.add(block_id)
+    if old_block and old_block != block_id:
+        schedule.dirty_blocks.add(old_block)
+    schedule.dirty_slots.add((machine_id, shift_key[0], shift_key[1]))
 
 
 def _locked_assignments(problem: Problem) -> dict[tuple[str, int], str]:
