@@ -102,7 +102,7 @@ Recent helpers enable richer metadata:
      production: 1.0
      mobilisation: 0.5
      transitions: 2.0
-     landing_slack: 3.0
+     landing_surplus: 3.0
 
 This configuration maximises production while penalising moves between blocks and soft landing
 capacity violations. Setting a weight to ``0`` reverts to the default hard behaviour.

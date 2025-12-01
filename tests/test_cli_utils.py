@@ -35,7 +35,7 @@ def test_parse_operator_weights_non_numeric():
 
 def test_parse_objective_weight_overrides_success():
     result = parse_objective_weight_overrides(["mobilisation=0.2", "landing=0"])
-    assert result == {"mobilisation": 0.2, "landing_slack": 0.0}
+    assert result == {"mobilisation": 0.2, "landing_surplus": 0.0}
 
 
 def test_parse_objective_weight_overrides_empty():

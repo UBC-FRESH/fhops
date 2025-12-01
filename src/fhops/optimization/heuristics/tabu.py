@@ -124,7 +124,7 @@ def solve_tabu(
         with a full repair before reporting.
     objective_weight_overrides : dict[str, float] | None, optional
         Override scenario objective weights (keys: ``production``, ``mobilisation``, ``transitions``,
-        ``landing_slack``). ``None`` keeps scenario defaults, but Tiny7/Small21 auto-apply a reduced
+        ``landing_surplus``). ``None`` keeps scenario defaults, but Tiny7/Small21 auto-apply a reduced
         mobilisation weight to encourage exploration.
     milp_objective : float | None, optional
         Reference MILP objective for reporting the current gap (best - MILP) in watch telemetry and

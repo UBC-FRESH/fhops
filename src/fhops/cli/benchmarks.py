@@ -916,7 +916,7 @@ def bench_suite(
         "--objective-weight",
         help=(
             "Override objective weights via name=value (production|mobilisation|transitions|"
-            "landing_slack). Repeatable."
+            "landing_surplus). Repeatable."
         ),
     ),
     operator_preset: list[str] | None = typer.Option(

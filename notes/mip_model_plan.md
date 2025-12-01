@@ -42,7 +42,7 @@ Status: Draft — align updates with roadmap Phase 1/2 milestones.
 - [ ] Update Sphinx API docs for model modules.
 - [ ] Add workflow walkthrough detailing how constraints impact solutions.
   - Include instructions for schedule locking and objective toggles in docs/README.
-- Landing slack variables are now available when `ObjectiveWeights.landing_slack > 0`; heuristic mirrors penalty-based slack handling. Performance benchmarking still outstanding.
+- Landing slack variables are now available when `ObjectiveWeights.landing_surplus > 0`; heuristic mirrors penalty-based slack handling. Performance benchmarking still outstanding.
 
 ### Shift-Based Scheduling Migration Checklist — 2025-11-09
 1. **Data Contract & Problem Formulation**

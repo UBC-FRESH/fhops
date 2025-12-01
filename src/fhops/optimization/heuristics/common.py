@@ -23,13 +23,13 @@ AUTO_OBJECTIVE_WEIGHT_OVERRIDES: dict[str, dict[str, float]] = {
         "production": 1.0,
         "mobilisation": 0.2,
         "transitions": 0.1,
-        "landing_slack": 0.05,
+        "landing_surplus": 0.05,
     },
     "FHOPS Small21": {
         "production": 1.0,
         "mobilisation": 0.2,
         "transitions": 0.1,
-        "landing_slack": 0.05,
+        "landing_surplus": 0.05,
     },
 }
 
@@ -862,7 +862,7 @@ def evaluate_schedule(
     _ensure_mobilisation_stats(sched, ctx)
     mobilisation_total = sum(stats.cost for stats in sched.mobilisation_cache.values())
     transition_count = sum(stats.transitions for stats in sched.mobilisation_cache.values())
-    landing_slack_total = 0.0
+    landing_surplus_total = 0.0
     penalty = 0.0
 
     previous_block: dict[str, str | None] = {machine.id: None for machine in sc.machines}
@@ -927,10 +927,10 @@ def evaluate_schedule(
                 capacity = max(landing_cap.get(landing_id, 0), 0)
                 excess = max(0, used[landing_id] - capacity)
                 if excess > 0:
-                    if weights.landing_slack == 0.0:
+                    if weights.landing_surplus == 0.0:
                         penalty += 1000.0
                         continue
-                    landing_slack_total += excess
+                    landing_surplus_total += excess
 
             if sequencing.production_units <= BLOCK_COMPLETION_EPS:
                 previous_block[machine.id] = block_id
@@ -948,12 +948,12 @@ def evaluate_schedule(
     score = weights.production * (delivered_total - LEFTOVER_PENALTY_FACTOR * leftover_total)
     score -= weights.mobilisation * mobilisation_total
     score -= weights.transitions * transition_count
-    score -= weights.landing_slack * landing_slack_total
+    score -= weights.landing_surplus * landing_surplus_total
     score -= penalty
     watch_stats: dict[str, Any] = {
         "delivered_total": delivered_total,
         "leftover_total": leftover_total,
-        "landing_slack_total": landing_slack_total,
+        "landing_surplus_total": landing_surplus_total,
         "penalty_total": penalty,
     }
     if repair_stats:

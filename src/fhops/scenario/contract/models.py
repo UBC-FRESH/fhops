@@ -41,16 +41,16 @@ class ObjectiveWeights(BaseModel):
         Multiplier for mobilisation costs estimated from transition binaries. Defaults to 1.0.
     transitions:
         Optional penalty on the count of machine transitions irrespective of mobilisation spend.
-    landing_slack:
+    landing_surplus:
         Penalty on soft landing-capacity slack variables when `landing_capacity` is exceeded.
     """
 
     production: float = 1.0
     mobilisation: float = 1.0
     transitions: float = 0.0
-    landing_slack: float = 0.0
+    landing_surplus: float = 0.0
 
-    @field_validator("production", "mobilisation", "transitions", "landing_slack")
+    @field_validator("production", "mobilisation", "transitions", "landing_surplus")
     @classmethod
     def _non_negative(cls, value: float) -> float:
         if value < 0:

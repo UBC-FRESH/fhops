@@ -877,7 +877,7 @@
     "production": 1.0,
     "mobilisation": 0.5,
     "transitions": 0.0,
-    "landing_slack": 0.0
+    "landing_surplus": 0.0
   },
   "block_system": {
     "B01": "ground_fb_skid",

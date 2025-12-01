@@ -395,7 +395,7 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
     )
     if landing_ids:
         model.Landing = pyo.Set(initialize=landing_ids)
-        model.landing_slack = pyo.Var(model.Landing, model.D, domain=pyo.NonNegativeReals)
+        model.landing_surplus = pyo.Var(model.Landing, model.D, domain=pyo.NonNegativeReals)
 
         def landing_capacity_rule(mdl, landing_id, day):
             capacity = bundle.landing_capacity.get(landing_id)
@@ -412,12 +412,12 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
                     for shift_day, shift_label in model.S:
                         if shift_day == day:
                             expr += mdl.x[mach, blk, (shift_day, shift_label)]
-            return expr <= capacity + mdl.landing_slack[landing_id, day]
+            return expr <= capacity + mdl.landing_surplus[landing_id, day]
 
         model.landing_capacity = pyo.Constraint(model.Landing, model.D, rule=landing_capacity_rule)
 
     prod_weight = bundle.objective_weights.production
-    landing_weight = bundle.objective_weights.landing_slack
+    landing_weight = bundle.objective_weights.landing_surplus
     mobilisation_weight = bundle.objective_weights.mobilisation
     transition_weight = bundle.objective_weights.transitions
     leftover_penalty = prod_weight
@@ -434,7 +434,7 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
         obj_expr -= leftover_penalty * sum(model.leftover[blk] for blk in model.B)
     if landing_weight:
         obj_expr -= landing_weight * sum(
-            model.landing_slack[landing_id, day] for landing_id in model.Landing for day in model.D
+            model.landing_surplus[landing_id, day] for landing_id in model.Landing for day in model.D
         )
     if mobilisation_expr is not None and mobilisation_weight:
         obj_expr -= mobilisation_weight * mobilisation_expr

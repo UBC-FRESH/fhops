@@ -655,7 +655,7 @@ Arora-style formulation. Immediate priorities:
 Here’s exactly where we stand on the subsection you called out, plus the focused work plan to finish it:
 Objective Tuning + Presets
 Already in place: resolve_objective_weight_overrides + CLI flags mean SA/ILS/Tabu accept explicit overrides, and we auto-detect Tiny7/Small21 to drop mobilisation weight to 0.2 (see AUTO_OBJECTIVE_WEIGHT_OVERRIDES in src/fhops/optimization/heuristics/common.py).
-Still to do: extend that mapping so Tiny7/Small21 also set transitions=0.1, landing_slack=0.05 while keeping production at 1.0; surface the same overrides when a user picks the mobilisation-oriented presets (--preset explore|mobilisation) so behaviour is consistent.
+Still to do: extend that mapping so Tiny7/Small21 also set transitions=0.1, landing_surplus=0.05 while keeping production at 1.0; surface the same overrides when a user picks the mobilisation-oriented presets (--preset explore|mobilisation) so behaviour is consistent.
 Tests/docs: add a small preset fixture (e.g., tests/fixtures/presets/tiny7_explore.yaml) plus a regression in tests/heuristics/test_sa_batch.py that calls fhops solve-heur via Click runner or directly exercises build_operational_problem to ensure the preset yields deterministic objective weights. Update CLI docs/change log accordingly.
 Search Diversification
 Tiny7 bounded sampling: implement an auto-config hook (probably alongside the existing profile auto-detect) that sets batch_size=4 and max_workers=4 when the scenario name is Tiny7 (unless the user overrides). Tune the watch/telemetry output to show the new batch settings.

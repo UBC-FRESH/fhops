@@ -223,12 +223,12 @@ def test_transition_weight_penalises_moves_sa():
     assert score == pytest.approx(4.0, abs=1e-6)
 
 
-def test_landing_slack_penalty_mip():
+def test_landing_surplus_penalty_mip():
     scenario = _base_scenario().model_copy(
         update={
             "landings": [Landing(id="L1", daily_capacity=1)],
             "objective_weights": ObjectiveWeights(
-                production=1.0, mobilisation=0.0, landing_slack=2.0
+                production=1.0, mobilisation=0.0, landing_surplus=2.0
             ),
             "mobilisation": None,
         }
@@ -250,22 +250,22 @@ def test_landing_slack_penalty_mip():
             for day, shift_id in model.S:
                 if (day, shift_id) != shift1:
                     model.prod[mach, blk, (day, shift_id)].value = 0.0
-    if hasattr(model, "landing_slack"):
+    if hasattr(model, "landing_surplus"):
         for landing_id in model.L:
             for day, shift_id in model.S:
-                model.landing_slack[landing_id, (day, shift_id)].value = 0.0
-        model.landing_slack["L1", shift1].value = 1.0
+                model.landing_surplus[landing_id, (day, shift_id)].value = 0.0
+        model.landing_surplus["L1", shift1].value = 1.0
     obj_val = pyo.value(model.obj.expr)
     assert obj_val == pytest.approx(4.0 - 2.0 * 1.0)
 
 
 @pytest.mark.milp_refactor
-def test_landing_slack_penalty_sa():
+def test_landing_surplus_penalty_sa():
     scenario = _base_scenario().model_copy(
         update={
             "landings": [Landing(id="L1", daily_capacity=1)],
             "objective_weights": ObjectiveWeights(
-                production=1.0, mobilisation=0.0, landing_slack=3.0
+                production=1.0, mobilisation=0.0, landing_surplus=3.0
             ),
             "mobilisation": None,
         }

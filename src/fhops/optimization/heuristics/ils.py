@@ -218,7 +218,7 @@ def solve_ils(
         re-scored with a full repair before returning results.
     objective_weight_overrides : dict[str, float] | None, optional
         Override scenario objective weights (keys: ``production``, ``mobilisation``, ``transitions``,
-        ``landing_slack``). ``None`` keeps scenario defaults, but Tiny7/Small21 auto-apply a reduced
+        ``landing_surplus``). ``None`` keeps scenario defaults, but Tiny7/Small21 auto-apply a reduced
         mobilisation weight while we debug heuristic acceptance.
     milp_objective : float | None, optional
         Reference MILP objective used to report the current gap (best - MILP) in watch/telemetry

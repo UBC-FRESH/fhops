@@ -152,7 +152,7 @@ def solve_sa(
         final schedule is always re-scored with a full repair before reporting.
     objective_weight_overrides : dict[str, float] | None, optional
         Override scenario objective weights (keys: ``production``, ``mobilisation``, ``transitions``,
-        ``landing_slack``). ``None`` keeps scenario defaults, but Tiny7/Small21 scenarios auto-apply
+        ``landing_surplus``). ``None`` keeps scenario defaults, but Tiny7/Small21 scenarios auto-apply
         a reduced mobilisation weight to encourage exploration.
     milp_objective : float | None, optional
         Reference MILP objective used for gap reporting (best - MILP) in watch/telemetry output.

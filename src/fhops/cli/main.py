@@ -709,7 +709,7 @@ def solve_heur_cmd(
         "--objective-weight",
         help=(
             "Override objective weights via name=value (production|mobilisation|transitions|"
-            "landing_slack). Repeatable."
+            "landing_surplus). Repeatable."
         ),
     ),
     operator_preset: list[str] | None = typer.Option(
@@ -1121,7 +1121,7 @@ def solve_ils_cmd(
         "--objective-weight",
         help=(
             "Override objective weights via name=value (production|mobilisation|transitions|"
-            "landing_slack). Repeatable."
+            "landing_surplus). Repeatable."
         ),
     ),
     operator_preset: list[str] | None = typer.Option(
@@ -1466,7 +1466,7 @@ def solve_tabu_cmd(
         "--objective-weight",
         help=(
             "Override objective weights via name=value (production|mobilisation|transitions|"
-            "landing_slack). Repeatable."
+            "landing_surplus). Repeatable."
         ),
     ),
     operator_preset: list[str] | None = typer.Option(

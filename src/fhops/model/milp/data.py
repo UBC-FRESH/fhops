@@ -223,7 +223,7 @@ def bundle_to_dict(bundle: OperationalMilpBundle) -> dict[str, Any]:
             "production": bundle.objective_weights.production,
             "mobilisation": bundle.objective_weights.mobilisation,
             "transitions": bundle.objective_weights.transitions,
-            "landing_slack": bundle.objective_weights.landing_slack,
+            "landing_surplus": bundle.objective_weights.landing_surplus,
         },
         "block_system": bundle.block_system,
         "systems": {
@@ -332,7 +332,7 @@ def bundle_from_dict(payload: Mapping[str, Any]) -> OperationalMilpBundle:
             production=float(payload["objective_weights"]["production"]),
             mobilisation=float(payload["objective_weights"]["mobilisation"]),
             transitions=float(payload["objective_weights"]["transitions"]),
-            landing_slack=float(payload["objective_weights"]["landing_slack"]),
+            landing_surplus=float(payload["objective_weights"]["landing_surplus"]),
         ),
         block_system=dict(payload["block_system"]),
         systems=systems,

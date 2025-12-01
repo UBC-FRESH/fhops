@@ -71,9 +71,9 @@ _OBJECTIVE_WEIGHT_ALIASES: dict[str, str] = {
     "mobilize": "mobilisation",
     "transitions": "transitions",
     "transition": "transitions",
-    "landing_slack": "landing_slack",
-    "landing-slack": "landing_slack",
-    "landing": "landing_slack",
+    "landing_surplus": "landing_surplus",
+    "landing-slack": "landing_surplus",
+    "landing": "landing_surplus",
 }
 
 OPERATOR_PRESET_DESCRIPTIONS: dict[str, str] = {
@@ -117,7 +117,7 @@ def parse_objective_weight_overrides(weight_args: Sequence[str] | None) -> dict[
     if not weight_args:
         return overrides
 
-    valid = {"production", "mobilisation", "transitions", "landing_slack"}
+    valid = {"production", "mobilisation", "transitions", "landing_surplus"}
     for arg in weight_args:
         if "=" not in arg:
             raise ValueError(f"Objective weight must be in name=value format (got '{arg}')")
