@@ -87,6 +87,7 @@ class DatasetConfig:
         default_factory=lambda: {"roadside_processor": 0.0, "loader": 0.0}
     )
     loader_batch_volume_m3: float = 30.0
+    work_scale: float = 1.0
 
     def machine_sequence(self) -> list[str]:
         ordered_roles = ("feller_buncher", "grapple_skidder", "roadside_processor", "loader")
@@ -131,6 +132,7 @@ def _sample_block(
     landing_ids: Sequence[str],
     profiles: tuple[BlockProfile, ...],
     harvest_system_id: str | None,
+    work_scale: float,
 ) -> tuple[BlockRecord, float, float]:
     profile = rng.choices(profiles, weights=[p.weight for p in profiles], k=1)[0]
     area = rng.uniform(*profile.area_range)
@@ -140,9 +142,12 @@ def _sample_block(
     window_span = rng.randint(*profile.window_span)
 
     stem_density = volume_per_ha / avg_stem
-    work_required = round(area * volume_per_ha, 6)
-    earliest = rng.randint(1, max(1, num_days - window_span))
-    latest = min(num_days, earliest + window_span)
+    work_required = round(area * volume_per_ha * work_scale, 6)
+    # All reference datasets keep blocks available for the full horizon so the
+    # scheduling problem focuses on sequencing and mobilisation rather than
+    # blackout windows.
+    earliest = 1
+    latest = num_days
     landing = landing_ids[block_index % len(landing_ids)]
 
     record = BlockRecord(
@@ -214,6 +219,7 @@ def _build_blocks(
     landing_ids: Sequence[str],
     profiles: tuple[BlockProfile, ...],
     harvest_system_id: str | None,
+    work_scale: float,
 ) -> tuple[list[BlockRecord], dict[str, dict[str, float]]]:
     rng = random.Random(seed)
     blocks: list[BlockRecord] = []
@@ -226,6 +232,7 @@ def _build_blocks(
             landing_ids=landing_ids,
             profiles=profiles,
             harvest_system_id=harvest_system_id,
+            work_scale=work_scale,
         )
         blocks.append(block)
         rates[block.id] = _role_rates_for_block(
@@ -432,6 +439,7 @@ def rebuild_dataset(config: DatasetConfig, seed: int) -> None:
         landing_ids=config.landing_ids,
         profiles=config.block_profiles,
         harvest_system_id=config.harvest_system_id,
+        work_scale=config.work_scale,
     )
     _write_blocks(data_dir / "blocks.csv", blocks)
     _write_prod_rates(
@@ -537,6 +545,7 @@ DATASET_CONFIGS = {
         num_blocks=6,
         machines_by_role=_med42_machine_roster(),
         block_profiles=SMALL_TIER_PROFILES,
+        work_scale=0.8,
     ),
     "med42": DatasetConfig(
         name="med42",
@@ -545,6 +554,7 @@ DATASET_CONFIGS = {
         num_blocks=12,
         machines_by_role=_med42_machine_roster(),
         block_profiles=SMALL_TIER_PROFILES,
+        work_scale=0.85,
     ),
     "large84": DatasetConfig(
         name="large84",

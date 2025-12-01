@@ -19,8 +19,18 @@ from fhops.scenario.contract import Problem
 BLOCK_COMPLETION_EPS = 1e-6
 LEFTOVER_PENALTY_FACTOR = 1.0
 AUTO_OBJECTIVE_WEIGHT_OVERRIDES: dict[str, dict[str, float]] = {
-    "FHOPS Tiny7": {"mobilisation": 0.2},
-    "FHOPS Small21": {"mobilisation": 0.2},
+    "FHOPS Tiny7": {
+        "production": 1.0,
+        "mobilisation": 0.2,
+        "transitions": 0.1,
+        "landing_slack": 0.05,
+    },
+    "FHOPS Small21": {
+        "production": 1.0,
+        "mobilisation": 0.2,
+        "transitions": 0.1,
+        "landing_slack": 0.05,
+    },
 }
 
 

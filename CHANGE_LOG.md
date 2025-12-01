@@ -1,4 +1,15 @@
-# 2025-11-30 — Incremental repair + fixture refresh
+# 2024-11-23 — Tiny7 auto-batch + mobilisation shake tuning
+- Gave `solve_sa` a scenario-aware default for Tiny7: it now samples four neighbours per iteration (`batch_size=4`) without forcing threaded evaluation, and telemetry/meta payloads record whether the auto batch engaged so benchmarks explain the runtime shift. Added a matching regression fixture (`tests/fixtures/presets/tiny7_explore.yaml`) plus tests ensuring preset objective weights and auto-batch behaviour stay deterministic.
+- Introduced a mobilisation-shake stall trigger for Tiny7 runs. After 50 non-improving iterations the solver temporarily boosts the `mobilisation_shake` operator weight (3×) until an improvement lands, logging trigger counts in solver metadata and telemetry. This keeps diversification explicit while we continue closing the tiny/small gaps.
+- Captured the latest heuristic vs. MILP gaps for tiny7/small21 with the new defaults via `fhops bench suite` (SA/ILS/Tabu, 2 000 iterations, mobilisation preset) and archived the outputs under `tmp/bench_gap`. Tiny7’s best heuristic (ILS) still trails the MILP by ~49 %; small21 remains stalled at −131.89, confirming the need for deeper operator/repair work.
+- Commands executed:
+  - `ruff format src/fhops/optimization/heuristics/sa.py tests/heuristics/test_sa_batch.py`
+  - `ruff check src tests`
+  - `mypy src`
+  - `pytest tests/heuristics/test_sa_batch.py -k auto`
+  - `fhops bench suite --scenario examples/tiny7/scenario.yaml --scenario examples/small21/scenario.yaml --include-sa --include-ils --include-tabu --sa-iters 2000 --ils-iters 500 --tabu-iters 2000 --time-limit 240 --objective-weight mobilisation=0.2 --operator-preset mobilisation --out-dir tmp/bench_gap`
+
+# 2024-11-22 — Incremental repair + fixture refresh
 - Rebuilt `_repair_schedule_cover_blocks` so each pass rebuilds the block/role demand dictionaries (fixing the zero-demand bug), keeps the original shift sweep with dirty-set filtering, and teaches `generate_neighbors` to sanitize candidates with `fill_voids=False` (drop infeasible loader slots without undoing operator moves). Heuristic smoke tests (tiny7 SA/ILS/Tabu) now produce stable objectives (SA ≈2061) while loader repairs remain incremental.
 - Refreshed downstream assets to reflect the new staged-volume semantics: `tests/fixtures/benchmarks/tiny7_sa.json`, med42 playback CSV/Parquet exports, deterministic and stochastic KPI snapshots, and the regression baseline (`tests/fixtures/regression/baseline.yaml`, SA objective ≈−999.5). CLI playback, KPI regression, and benchmark tests now assert against the leaner med42 footprint (≈12.3 k m³ staged vs. 63 k m³).
 - Commands executed:

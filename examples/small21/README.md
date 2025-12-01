@@ -1,7 +1,7 @@
 # FHOPS Small21
 
 - Planning horizon: 21 days
-- Blocks: 6 (≈8,904 m³ total volume)
+- Blocks: 6 (≈8,317 m³ total volume)
 - Large-block share (≥12 ha): 0/6
 - Machine roster: feller_buncher=2, grapple_skidder=1, roadside_processor=3, loader=3
 

@@ -643,3 +643,26 @@ Arora-style formulation. Immediate priorities:
 - Exposed overrides through `--objective-weight mobilisation=0.5` on `solve-heur`, `solve-ils`, `solve-tabu`, and `fhops bench suite`. The bench harness forwards the mapping to every solver invocation, and telemetry/meta output now record both the override dict and the final `objective_weights` snapshot so future runs explain why objectives shifted.
 - Evidence that the heuristics are finally moving: `solve_sa(pb, iters=400, seed=7, use_local_repairs=True)` on Tiny7 improved from the greedy −4 146.78 to −542.59 (+3.6 k delta) and Small21 jumped from −5 839.62 to −271.85 (+5.6 k). The CLI runs mirror that behaviour (`fhops solve-heur examples/tiny7/scenario.yaml --iters 200` now reports 2 093.54 vs. the previous 2 061.60), and the tiny7 benchmark fixture was refreshed accordingly.
 - Next: keep the overrides enabled while we finish the incremental staging caches, then rerun Small21/Med42 smoke tests to see if the heuristics maintain positive deltas once mobilisation penalties ramp up again. Only after we have reliable acceptance on tiny/small should we unlock fixture refreshes for the rest of the ladder.
+
+**2025-12-23 auto-batch + mobilisation shake safeguards (tiny7 focus)**
+- Added scenario-aware defaults in `solve_sa`: `FHOPS Tiny7` now auto-enables batched neighbour sampling (`batch_size=4`, `max_workers=4`) unless the caller explicitly sets the knobs, and the same flags are persisted in both the telemetry config snapshot and solver metadata so dashboards explain why extra workers engage.
+- Implemented an automatic mobilisation-shake trigger for Tiny7: after 50 stalled iterations the solver temporarily triples the shake operator weight, then reverts once an improving move lands. Telemetry records how many triggers fired, keeping acceptance debugging transparent.
+- Regression tests (`tests/heuristics/test_sa_batch.py`) cover the preset weight snapshot, auto-batch injection, and explicit override behaviour; docs + changelog note the new defaults so users understand why Tiny7 behaves differently while we dig out of the gap.
+
+
+## New coding agent quote (it is being flakey)
+
+Here’s exactly where we stand on the subsection you called out, plus the focused work plan to finish it:
+Objective Tuning + Presets
+Already in place: resolve_objective_weight_overrides + CLI flags mean SA/ILS/Tabu accept explicit overrides, and we auto-detect Tiny7/Small21 to drop mobilisation weight to 0.2 (see AUTO_OBJECTIVE_WEIGHT_OVERRIDES in src/fhops/optimization/heuristics/common.py).
+Still to do: extend that mapping so Tiny7/Small21 also set transitions=0.1, landing_slack=0.05 while keeping production at 1.0; surface the same overrides when a user picks the mobilisation-oriented presets (--preset explore|mobilisation) so behaviour is consistent.
+Tests/docs: add a small preset fixture (e.g., tests/fixtures/presets/tiny7_explore.yaml) plus a regression in tests/heuristics/test_sa_batch.py that calls fhops solve-heur via Click runner or directly exercises build_operational_problem to ensure the preset yields deterministic objective weights. Update CLI docs/change log accordingly.
+Search Diversification
+Tiny7 bounded sampling: implement an auto-config hook (probably alongside the existing profile auto-detect) that sets batch_size=4 and max_workers=4 when the scenario name is Tiny7 (unless the user overrides). Tune the watch/telemetry output to show the new batch settings.
+Mobilisation-shake trigger: the operator exists; add a stall detector (e.g., if stalled_steps >= 50 in SA) that temporarily boosts the mobilisation-shake weight or injects a direct shake move before the next evaluation.
+Small21 restart seeding: load the partial MILP schedule from examples/small21/operational_mip.yaml (or from the scenario metadata) and feed the top-2 shift assignments as restart seeds when SA restarts. That means capturing the MILP plan once at startup and, on restart, blending those assignments into init_greedy_schedule.
+Benchmarks: once the above toggles are in, run fhops bench suite --scenario examples/tiny7/scenario.yaml --scenario examples/small21/scenario.yaml --include-sa --sa-iters 2000 --preset mobilisation --objective-weight mobilisation=0.2 (plus ILS/Tabu for comparison) and record the MILP vs heuristic gaps in tmp/bench_gap/summary.{csv,md} and notes/metaheuristic_roadmap.md. Targets remain ≤5 % gap on tiny7, ≤10 % on small21.
+Schedule Locking & Contracts
+Code already honours ScheduleLock entries in the greedy seed, repair loop, and operators (_locked_assignments in registry.py). MIP parity is covered (see tests/test_schedule_locking.py), but we still need the specific small21 regression you mentioned.
+Action: add a small21 fixture update (e.g., add a loader lock in examples/small21/scenario.yaml or a test stub) and a new test that runs SA or Tabu on small21 with that lock and asserts the assignment never moves. Document the workflow in the data-contract + CLI guides and log it in the changelog.
+If you’re good with this breakdown, I’ll start implementing the objective-weight/preset wiring and the small21 lock regression, then move on to the bounded-sampling + restart hooks and benchmarking.

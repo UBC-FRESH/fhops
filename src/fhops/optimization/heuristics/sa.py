@@ -44,6 +44,14 @@ AUTO_MOBILISATION_WEIGHTS = {
     "mobilisation_shake": 1.2,
 }
 
+AUTO_BATCH_CONFIG: dict[str, int] = {
+    "FHOPS Tiny7": 4,
+}
+
+AUTO_SHAKE_CONFIG: dict[str, dict[str, float]] = {
+    "FHOPS Tiny7": {"threshold": 50.0, "boost_factor": 3.0},
+}
+
 
 def _clone_plan(
     plan: dict[str, dict[tuple[int, str], str | None]],
@@ -201,6 +209,19 @@ def solve_sa(
     if resolved_weight_overrides is not None:
         resolved_weight_overrides = dict(resolved_weight_overrides)
 
+    context_payload = dict(telemetry_context or {})
+    step_interval = context_payload.pop("step_interval", 100)
+    tuner_meta = context_payload.pop("tuner_meta", None)
+    scenario_name = getattr(pb.scenario, "name", None)
+    scenario_path = context_payload.pop("scenario_path", None)
+
+    auto_batch_applied = False
+    if scenario_name:
+        auto_batch = AUTO_BATCH_CONFIG.get(scenario_name)
+        if auto_batch and batch_size is None:
+            batch_size = auto_batch
+            auto_batch_applied = True
+
     config_snapshot: dict[str, Any] = {
         "iters": iters,
         "batch_size": batch_size,
@@ -215,11 +236,23 @@ def solve_sa(
         config_snapshot["objective_weight_overrides"] = resolved_weight_overrides
     if auto_profile_applied:
         config_snapshot["auto_profile"] = "mobilisation"
-    context_payload = dict(telemetry_context or {})
-    step_interval = context_payload.pop("step_interval", 100)
-    tuner_meta = context_payload.pop("tuner_meta", None)
-    scenario_name = getattr(pb.scenario, "name", None)
-    scenario_path = context_payload.pop("scenario_path", None)
+    if auto_batch_applied:
+        config_snapshot["auto_batch_applied"] = True
+
+    shake_settings = AUTO_SHAKE_CONFIG.get(scenario_name)
+    mobilisation_shake_default = registry.weights().get("mobilisation_shake", 0.0)
+    shake_threshold = (
+        float(shake_settings["threshold"])
+        if shake_settings and mobilisation_shake_default > 0
+        else None
+    )
+    shake_boost_factor = float(shake_settings["boost_factor"]) if shake_settings else 1.0
+    shake_boosted = False
+    shake_trigger_count = 0
+
+    if shake_threshold is not None:
+        config_snapshot["auto_shake_threshold"] = shake_threshold
+        config_snapshot["auto_shake_boost_factor"] = shake_boost_factor
 
     telemetry_logger: RunTelemetryLogger | None = None
     if telemetry_log:
@@ -363,6 +396,16 @@ def solve_sa(
             else:
                 stalled_steps += 1
 
+            if shake_threshold is not None:
+                if stalled_steps >= shake_threshold and not shake_boosted:
+                    boost_value = mobilisation_shake_default * shake_boost_factor
+                    registry.configure({"mobilisation_shake": boost_value})
+                    shake_boosted = True
+                    shake_trigger_count += 1
+                elif shake_boosted and stalled_steps == 0:
+                    registry.configure({"mobilisation_shake": mobilisation_shake_default})
+                    shake_boosted = False
+
             if stalled_steps >= restart_interval_value:
                 current = init_greedy_schedule(pb, ctx)
                 current_score, current_debug_stats = _score_schedule(current)
@@ -501,6 +544,10 @@ def solve_sa(
                     metadata=metadata,
                 )
             )
+        if shake_boosted and shake_threshold is not None:
+            registry.configure({"mobilisation_shake": mobilisation_shake_default})
+            shake_boosted = False
+
         meta = {
             "initial_score": float(initial_score),
             "best_score": float(best_score),
@@ -513,6 +560,10 @@ def solve_sa(
             "cooling_rate": float(cooling_rate),
             "restart_interval": int(restart_interval_value),
             "operators": registry.weights(),
+            "batch_size": batch_size,
+            "max_workers": max_workers,
+            "auto_batch_applied": auto_batch_applied,
+            "auto_shake_triggers": shake_trigger_count if shake_threshold is not None else 0,
         }
         if milp_objective is not None:
             meta["milp_objective"] = float(milp_objective)

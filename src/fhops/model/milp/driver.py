@@ -37,9 +37,10 @@ def solve_operational_milp(
     if time_limit is not None:
         opt.options["time_limit"] = time_limit
     if gap is not None:
-        # Different solvers expect different gap parameter names; set the common ones
+        # Different solvers expect different gap parameter names.
         opt.options["mipgap"] = gap  # Gurobi/CPLEX-style
-        opt.options["mip_rel_gap"] = gap  # HiGHS-style
+        if solver.lower() not in {"gurobi", "cplex"}:
+            opt.options["mip_rel_gap"] = gap  # HiGHS-style
     result = opt.solve(model, tee=tee, load_solutions=True)
     status = str(result.solver.status).lower()
     termination = str(result.solver.termination_condition).lower()

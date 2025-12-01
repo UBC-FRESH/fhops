@@ -1,3 +1,3 @@
 id,landing_id,harvest_system_id,work_required,earliest_start,latest_finish,avg_stem_size_m3,volume_per_ha_m3,stem_density_per_ha,ground_slope_percent,volume_per_ha_m3_sigma,stem_density_per_ha_sigma
-B01,L1,ground_fb_skid,2007.912755,1,6,0.426252,269.025614,631.14204,6.48,53.805123,126.228408
-B02,L2,ground_fb_skid,2106.923915,1,7,0.410379,281.44595,685.81977,17.77,56.28919,137.163954
+B01,L1,ground_fb_skid,2007.912755,1,7,0.426252,269.025614,631.14204,6.48,53.805123,126.228408
+B02,L2,ground_fb_skid,2577.725043,1,7,0.372366,330.508329,887.590698,10.6,66.101666,177.51814

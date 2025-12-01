@@ -1,6 +1,8 @@
 import pyomo.environ as pyo
 import pytest
 
+from pathlib import Path
+
 from fhops.optimization.heuristics import solve_sa
 from fhops.optimization.heuristics.common import Schedule, evaluate_schedule
 from fhops.optimization.mip.builder import build_model
@@ -21,6 +23,7 @@ from fhops.scheduling.mobilisation import (
     MachineMobilisation,
     MobilisationConfig,
 )
+from fhops.scenario.io.loaders import load_scenario
 
 
 def _shift_tuple(pb: Problem, day: int, shift_id: str | None = None) -> tuple[int, str]:
@@ -94,6 +97,23 @@ def test_sa_respects_locked_assignments():
         & (assignments["shift_id"] == day_shift[1])
     ]
     assert locked_rows.iloc[0]["block_id"] == "B2"
+
+
+def test_small21_schedule_lock_is_preserved():
+    scenario_path = Path("examples/small21/scenario.yaml")
+    scenario = load_scenario(scenario_path)
+    lock = ScheduleLock(machine_id="H4", block_id="B04", day=1)
+    scenario.locked_assignments = [lock]
+    pb = Problem.from_scenario(scenario)
+    res = solve_sa(pb, iters=25, seed=11)
+    assignments = res["assignments"]
+    locked_rows = assignments[
+        (assignments["machine_id"] == lock.machine_id)
+        & (assignments["day"] == lock.day)
+        & (assignments["assigned"] == 1)
+    ]
+    assert not locked_rows.empty
+    assert set(locked_rows["block_id"]) == {lock.block_id}
 
 
 def test_objective_weights_adjust_mobilisation_penalty():
