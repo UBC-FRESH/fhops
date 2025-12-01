@@ -31,6 +31,7 @@ from fhops.cli._utils import (
     OPERATOR_PRESETS,
     format_operator_presets,
     operator_preset_help,
+    parse_objective_weight_overrides,
     parse_operator_weights,
 )
 from fhops.cli.benchmarks import benchmark_app
@@ -703,6 +704,14 @@ def solve_heur_cmd(
         "-w",
         help="Set operator weight as name=value (e.g., --operator-weight swap=2). Repeatable.",
     ),
+    objective_weight: list[str] | None = typer.Option(
+        None,
+        "--objective-weight",
+        help=(
+            "Override objective weights via name=value (production|mobilisation|transitions|"
+            "landing_slack). Repeatable."
+        ),
+    ),
     operator_preset: list[str] | None = typer.Option(
         None,
         "--operator-preset",
@@ -806,9 +815,9 @@ def solve_heur_cmd(
         RNG seed controlling reproducibility.
     debug : bool, default=False
         Emit verbose debug logs and enable rich tracebacks.
-    operator / operator_weight / operator_preset / profile :
+    operator / operator_weight / objective_weight / operator_preset / profile :
         CLI mirrors of :func:`fhops.optimization.heuristics.solve_sa` arguments. Use them to
-        restrict operators, override weights, or load saved solver profiles.
+        restrict operators, override heuristic or objective weights, or load saved solver profiles.
     list_operator_presets / list_profiles : bool
         Utility flags that print the registry/profile catalogues and exit.
     show_operator_stats : bool
@@ -863,7 +872,12 @@ def solve_heur_cmd(
             console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")
     pb = Problem.from_scenario(sc)
     try:
-        weight_override = parse_operator_weights(operator_weight)
+        operator_weight_override = parse_operator_weights(operator_weight)
+    except ValueError as exc:  # pragma: no cover - CLI validation
+        raise typer.BadParameter(str(exc)) from exc
+
+    try:
+        objective_weight_override = parse_objective_weight_overrides(objective_weight)
     except ValueError as exc:  # pragma: no cover - CLI validation
         raise typer.BadParameter(str(exc)) from exc
 
@@ -879,7 +893,7 @@ def solve_heur_cmd(
     resolved = merge_profile_with_cli(
         selected_profile.sa if selected_profile else None,
         operator_preset,
-        weight_override,
+        operator_weight_override,
         explicit_ops,
         batch_neighbours,
         parallel_workers,
@@ -907,6 +921,9 @@ def solve_heur_cmd(
         "cooling_rate": cooling_rate,
         "restart_interval": restart_value,
         "watch_debug": watch_debug,
+        "objective_weight_overrides": (
+            objective_weight_override if objective_weight_override else None
+        ),
     }
     if resolved.extra_kwargs:
         sa_kwargs.update(resolved.extra_kwargs)
@@ -1093,6 +1110,14 @@ def solve_ils_cmd(
         "-w",
         help="Set operator weight via name=value (repeatable).",
     ),
+    objective_weight: list[str] | None = typer.Option(
+        None,
+        "--objective-weight",
+        help=(
+            "Override objective weights via name=value (production|mobilisation|transitions|"
+            "landing_slack). Repeatable."
+        ),
+    ),
     operator_preset: list[str] | None = typer.Option(
         None,
         "--operator-preset",
@@ -1181,8 +1206,9 @@ def solve_ils_cmd(
     perturbation_strength / stall_limit / hybrid_use_mip / hybrid_mip_time_limit :
         Direct mirrors of :func:`fhops.optimization.heuristics.solve_ils` arguments controlling
         diversification and optional MIP warm starts.
-    operator / operator_weight / operator_preset / profile :
-        Controls which operators are active and allows profile presets to be merged.
+    operator / operator_weight / objective_weight / operator_preset / profile :
+        Controls which operators are active, overrides heuristic/objective weights, and allows
+        profile presets to be merged.
     list_operator_presets / list_profiles :
         Convenience flags that print the catalogues then exit.
     batch_neighbours / parallel_workers :
@@ -1223,7 +1249,12 @@ def solve_ils_cmd(
             console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")
     pb = Problem.from_scenario(sc)
     try:
-        weight_override = parse_operator_weights(operator_weight)
+        operator_weight_override = parse_operator_weights(operator_weight)
+    except ValueError as exc:  # pragma: no cover - CLI validation
+        raise typer.BadParameter(str(exc)) from exc
+
+    try:
+        objective_weight_override = parse_objective_weight_overrides(objective_weight)
     except ValueError as exc:  # pragma: no cover - CLI validation
         raise typer.BadParameter(str(exc)) from exc
 
@@ -1239,7 +1270,7 @@ def solve_ils_cmd(
     resolved = merge_profile_with_cli(
         selected_profile.ils if selected_profile else None,
         operator_preset,
-        weight_override,
+        operator_weight_override,
         explicit_ops,
         batch_neighbours,
         parallel_workers,
@@ -1318,6 +1349,9 @@ def solve_ils_cmd(
         "hybrid_use_mip": hybrid_use_mip,
         "hybrid_mip_time_limit": hybrid_mip_time_limit,
         "watch_debug": watch_debug,
+        "objective_weight_overrides": (
+            objective_weight_override if objective_weight_override else None
+        ),
     }
     solver_kwargs.update(extra_ils_kwargs)
     solver_kwargs.update(telemetry_kwargs)
@@ -1410,6 +1444,14 @@ def solve_tabu_cmd(
     operator_weight: list[str] | None = typer.Option(
         None, "--operator-weight", "-w", help="Set operator weight as name=value (repeatable)."
     ),
+    objective_weight: list[str] | None = typer.Option(
+        None,
+        "--objective-weight",
+        help=(
+            "Override objective weights via name=value (production|mobilisation|transitions|"
+            "landing_slack). Repeatable."
+        ),
+    ),
     operator_preset: list[str] | None = typer.Option(
         None,
         "--operator-preset",
@@ -1489,8 +1531,9 @@ def solve_tabu_cmd(
         Max non-improving iterations before halting.
     batch_neighbours / parallel_workers :
         Control neighbourhood sampling volume and scoring concurrency.
-    operator / operator_weight / operator_preset / profile :
-        Operator registry controls mirroring :func:`fhops.optimization.heuristics.solve_tabu`.
+    operator / operator_weight / objective_weight / operator_preset / profile :
+        Operator registry controls mirroring :func:`fhops.optimization.heuristics.solve_tabu` and
+        optional objective-weight overrides.
     list_operator_presets / list_profiles :
         Print available presets/profiles before exiting.
     telemetry_log / tier_label :
@@ -1531,7 +1574,12 @@ def solve_tabu_cmd(
             console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")
     pb = Problem.from_scenario(sc)
     try:
-        weight_override = parse_operator_weights(operator_weight)
+        operator_weight_override = parse_operator_weights(operator_weight)
+    except ValueError as exc:  # pragma: no cover - CLI validation
+        raise typer.BadParameter(str(exc)) from exc
+
+    try:
+        objective_weight_override = parse_objective_weight_overrides(objective_weight)
     except ValueError as exc:  # pragma: no cover - CLI validation
         raise typer.BadParameter(str(exc)) from exc
 
@@ -1547,7 +1595,7 @@ def solve_tabu_cmd(
     resolved = merge_profile_with_cli(
         selected_profile.tabu if selected_profile else None,
         operator_preset,
-        weight_override,
+        operator_weight_override,
         explicit_ops,
         batch_neighbours,
         parallel_workers,
@@ -1615,6 +1663,9 @@ def solve_tabu_cmd(
         "tabu_tenure": tenure,
         "stall_limit": stall_limit,
         "watch_debug": watch_debug,
+        "objective_weight_overrides": (
+            objective_weight_override if objective_weight_override else None
+        ),
     }
     solver_kwargs.update(profile_extra_kwargs)
     solver_kwargs.update(telemetry_kwargs)

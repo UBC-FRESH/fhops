@@ -6,6 +6,7 @@ from fhops.cli._utils import (
     OPERATOR_PRESETS,
     format_operator_presets,
     operator_preset_help,
+    parse_objective_weight_overrides,
     parse_operator_weights,
     resolve_operator_presets,
 )
@@ -30,6 +31,26 @@ def test_parse_operator_weights_invalid_format(value):
 def test_parse_operator_weights_non_numeric():
     with pytest.raises(ValueError):
         parse_operator_weights(["swap=abc"])
+
+
+def test_parse_objective_weight_overrides_success():
+    result = parse_objective_weight_overrides(["mobilisation=0.2", "landing=0"])
+    assert result == {"mobilisation": 0.2, "landing_slack": 0.0}
+
+
+def test_parse_objective_weight_overrides_empty():
+    assert parse_objective_weight_overrides(None) == {}
+    assert parse_objective_weight_overrides([]) == {}
+
+
+def test_parse_objective_weight_overrides_invalid_key():
+    with pytest.raises(ValueError):
+        parse_objective_weight_overrides(["unknown=1.0"])
+
+
+def test_parse_objective_weight_overrides_non_numeric():
+    with pytest.raises(ValueError):
+        parse_objective_weight_overrides(["production=fast"])
 
 
 @pytest.mark.parametrize("preset", list(OPERATOR_PRESETS))

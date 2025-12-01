@@ -79,6 +79,17 @@
   - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_sa_smoke.csv`
   - `.venv/bin/fhops solve-ils examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_ils_smoke.csv`
 
+# 2025-12-21 — Objective-weight overrides + CLI plumbing
+- Added `resolve_objective_weight_overrides` + `override_objective_weights`, updated SA/ILS/Tabu to rebuild their `OperationalProblem` with either scenario defaults (Tiny7/Small21 now auto-scale mobilisation weight to 0.2) or explicit overrides, and surfaced the knob via `--objective-weight mobilisation=0.2` on `solve-heur`, `solve-ils`, `solve-tabu`, and `fhops bench suite`. Telemetry/meta payloads now include both the requested overrides and the final `objective_weights` snapshot.
+- Refreshed `tests/fixtures/benchmarks/tiny7_sa.json` after the lighter mobilisation penalty pushed the SA benchmark objective to 2 093.54 (prev. 2 061.60). Programmatic runs confirm the heuristics finally move beyond the greedy plan on the small ladders: Tiny7 jumps from −4 146.78 → −542.59 (+3.6 k) and Small21 from −5 839.62 → −271.85 (+5.6 k) with `solve_sa(..., use_local_repairs=True)`.
+- Commands executed:
+  - `ruff format src tests`
+  - `ruff check src tests`
+  - `mypy src`
+  - `pytest`
+  - `pre-commit run --all-files`
+  - `sphinx-build -b html docs _build/html -W`
+
 # 2025-12-15 — Heuristic scoring realigned with loader delivery
 - Reworked `evaluate_schedule` so SA/ILS/Tabu objectives reward only delivered loader production (`tracker.delivered_total`) while penalising staged leftovers, landing slack, transitions, and mobilisation directly. This removes the old per-role “partial production” bonus that double-counted upstream work.
 - Updated the tiny7 benchmark fixture, regression baseline, and schedule-locking tests so they reflect the new scoring scale (tiny7 SA objective ≈1 929, regression SA/Tabu objective ≈-1005.5, landing/transition unit tests now assert the loader-based totals).

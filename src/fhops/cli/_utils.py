@@ -63,6 +63,19 @@ OPERATOR_PRESETS: dict[str, dict[str, float]] = {
     },
 }
 
+_OBJECTIVE_WEIGHT_ALIASES: dict[str, str] = {
+    "production": "production",
+    "prod": "production",
+    "mobilisation": "mobilisation",
+    "mobilization": "mobilisation",
+    "mobilize": "mobilisation",
+    "transitions": "transitions",
+    "transition": "transitions",
+    "landing_slack": "landing_slack",
+    "landing-slack": "landing_slack",
+    "landing": "landing_slack",
+}
+
 OPERATOR_PRESET_DESCRIPTIONS: dict[str, str] = {
     "balanced": "Default mix enables block insertion/cross-exchange with a moderate mobilisation shake.",
     "swap-only": "Disable move and rely solely on swap moves.",
@@ -95,6 +108,33 @@ def parse_operator_weights(weight_args: Sequence[str] | None) -> dict[str, float
             ) from exc
         weights[name.lower()] = value
     return weights
+
+
+def parse_objective_weight_overrides(weight_args: Sequence[str] | None) -> dict[str, float]:
+    """Parse objective weight overrides in ``name=value`` format."""
+
+    overrides: dict[str, float] = {}
+    if not weight_args:
+        return overrides
+
+    valid = {"production", "mobilisation", "transitions", "landing_slack"}
+    for arg in weight_args:
+        if "=" not in arg:
+            raise ValueError(f"Objective weight must be in name=value format (got '{arg}')")
+        raw_name, raw_value = arg.split("=", 1)
+        key = raw_name.strip().lower()
+        canonical = _OBJECTIVE_WEIGHT_ALIASES.get(key)
+        if canonical is None or canonical not in valid:
+            allowed = ", ".join(sorted(valid))
+            raise ValueError(f"Unknown objective weight '{raw_name}'. Allowed keys: {allowed}.")
+        try:
+            value = float(raw_value)
+        except ValueError as exc:
+            raise ValueError(
+                f"Objective weight for '{raw_name}' must be numeric (got '{raw_value}')"
+            ) from exc
+        overrides[canonical] = value
+    return overrides
 
 
 def resolve_operator_presets(presets: Sequence[str] | None):
@@ -137,6 +177,7 @@ def format_operator_presets() -> str:
 
 __all__ = [
     "parse_operator_weights",
+    "parse_objective_weight_overrides",
     "resolve_operator_presets",
     "operator_preset_help",
     "format_operator_presets",

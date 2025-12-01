@@ -21,9 +21,13 @@ from fhops.optimization.heuristics.common import (
     evaluate_schedule_with_debug,
     generate_neighbors,
     init_greedy_schedule,
+    resolve_objective_weight_overrides,
 )
 from fhops.optimization.heuristics.registry import OperatorRegistry
-from fhops.optimization.operational_problem import build_operational_problem
+from fhops.optimization.operational_problem import (
+    build_operational_problem,
+    override_objective_weights,
+)
 from fhops.scenario.contract import Problem
 from fhops.telemetry import RunTelemetryLogger
 from fhops.telemetry.watch import Snapshot, SnapshotSink
@@ -78,6 +82,7 @@ def solve_tabu(
     watch_metadata: dict[str, str] | None = None,
     watch_debug: bool = False,
     use_local_repairs: bool = False,
+    objective_weight_overrides: dict[str, float] | None = None,
 ) -> dict[str, Any]:
     """Run Tabu Search using the shared operator registry.
 
@@ -116,6 +121,10 @@ def solve_tabu(
     use_local_repairs : bool, default=False
         Enable dirty-slot repairs while scoring neighbours. The final plan is always re-evaluated
         with a full repair before reporting.
+    objective_weight_overrides : dict[str, float] | None, optional
+        Override scenario objective weights (keys: ``production``, ``mobilisation``, ``transitions``,
+        ``landing_slack``). ``None`` keeps scenario defaults, but Tiny7/Small21 auto-apply a reduced
+        mobilisation weight to encourage exploration.
 
     Returns
     -------
@@ -152,6 +161,10 @@ def solve_tabu(
             normalized[available[key]] = weight
         registry.configure(normalized)
 
+    resolved_weight_overrides = resolve_objective_weight_overrides(pb, objective_weight_overrides)
+    if resolved_weight_overrides is not None:
+        resolved_weight_overrides = dict(resolved_weight_overrides)
+
     config_snapshot = {
         "iters": iters,
         "batch_size": batch_size,
@@ -160,6 +173,8 @@ def solve_tabu(
         "stall_limit": stall_limit,
         "operators": registry.weights(),
     }
+    if resolved_weight_overrides:
+        config_snapshot["objective_weight_overrides"] = resolved_weight_overrides
     context_payload = dict(telemetry_context or {})
     scenario = pb.scenario
     timeline = getattr(scenario, "timeline", None)
@@ -206,8 +221,11 @@ def solve_tabu(
     last_emitted_step: int | None = None
 
     ctx = build_operational_problem(pb)
+    if resolved_weight_overrides:
+        ctx = override_objective_weights(ctx, resolved_weight_overrides)
     debug_capture = bool(watch_debug and watch_sink)
     local_repairs = bool(use_local_repairs)
+    objective_weights_snapshot = ctx.bundle.objective_weights.model_dump()
 
     def _score_schedule(
         schedule: Schedule,
@@ -461,6 +479,9 @@ def solve_tabu(
             "operators": registry.weights(),
             "algorithm": "tabu",
         }
+        if resolved_weight_overrides:
+            meta["objective_weight_overrides"] = resolved_weight_overrides
+        meta["objective_weights"] = objective_weights_snapshot
         if operator_stats:
             meta["operators_stats"] = operator_stats
 

@@ -22,7 +22,12 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
-from fhops.cli._utils import format_operator_presets, operator_preset_help, parse_operator_weights
+from fhops.cli._utils import (
+    format_operator_presets,
+    operator_preset_help,
+    parse_objective_weight_overrides,
+    parse_operator_weights,
+)
 from fhops.cli.profiles import (
     Profile,
     combine_solver_configs,
@@ -148,6 +153,7 @@ def run_benchmark_suite(
     operators: Sequence[str] | None = None,
     operator_weights: Mapping[str, float] | None = None,
     operator_presets: Sequence[str] | None = None,
+    objective_weight_overrides: Mapping[str, float] | None = None,
     telemetry_log: Path | None = None,
     preset_comparisons: Sequence[str] | None = None,
     profile: Profile | None = None,
@@ -221,6 +227,8 @@ def run_benchmark_suite(
         Weight overrides for SA operators. Zero/negative values effectively disable the operator.
     operator_presets : Sequence[str] | None, default=None
         List of preset names to merge into the SA configuration (mirrors CLI ``--operator-preset``).
+    objective_weight_overrides : Mapping[str, float] | None, default=None
+        Optional objective weight overrides forwarded to SA/ILS/Tabu runs.
     telemetry_log : pathlib.Path | None, default=None
         Optional JSONL log file used to append run metadata per solver execution.
     preset_comparisons : Sequence[str] | None, default=None
@@ -366,6 +374,7 @@ def run_benchmark_suite(
                         "max_workers": resolved_sa.parallel_workers,
                         "cooling_rate": sa_cooling_rate,
                         "restart_interval": sa_restart_interval,
+                        "objective_weight_overrides": objective_weight_overrides,
                     }
                     if resolved_sa.extra_kwargs:
                         sa_kwargs.update(resolved_sa.extra_kwargs)
@@ -497,6 +506,7 @@ def run_benchmark_suite(
                     "stall_limit": stall_limit_val,
                     "hybrid_use_mip": hybrid_use_mip_val,
                     "hybrid_mip_time_limit": hybrid_mip_time_limit_val,
+                    "objective_weight_overrides": objective_weight_overrides,
                 }
                 ils_kwargs.update(ils_extra_kwargs)
                 if watch_sink:
@@ -609,6 +619,7 @@ def run_benchmark_suite(
                     "max_workers": tabu_worker_arg,
                     "tabu_tenure": tabu_tenure_val,
                     "stall_limit": tabu_stall_limit_val,
+                    "objective_weight_overrides": objective_weight_overrides,
                 }
                 tabu_kwargs.update(tabu_extra_kwargs)
                 if watch_sink:
@@ -889,6 +900,14 @@ def bench_suite(
         "-w",
         help="Set SA operator weight as name=value (repeatable).",
     ),
+    objective_weight: list[str] | None = typer.Option(
+        None,
+        "--objective-weight",
+        help=(
+            "Override objective weights via name=value (production|mobilisation|transitions|"
+            "landing_slack). Repeatable."
+        ),
+    ),
     operator_preset: list[str] | None = typer.Option(
         None,
         "--operator-preset",
@@ -949,6 +968,11 @@ def bench_suite(
         weight_config = parse_operator_weights(operator_weight)
     except ValueError as exc:  # pragma: no cover - CLI validation
         raise typer.BadParameter(str(exc)) from exc
+
+    try:
+        objective_weight_override = parse_objective_weight_overrides(objective_weight)
+    except ValueError as exc:  # pragma: no cover - CLI validation
+        raise typer.BadParameter(str(exc)) from exc
     if list_profiles:
         console.print("Solver profiles:")
         console.print(format_profiles())
@@ -995,4 +1019,7 @@ def bench_suite(
         profile=profile_obj,
         watch=watch,
         watch_refresh=watch_refresh,
+        objective_weight_overrides=(
+            objective_weight_override if objective_weight_override else None
+        ),
     )

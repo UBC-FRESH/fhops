@@ -21,9 +21,13 @@ from fhops.optimization.heuristics.common import (
     evaluate_schedule_with_debug,
     generate_neighbors,
     init_greedy_schedule,
+    resolve_objective_weight_overrides,
 )
 from fhops.optimization.heuristics.registry import OperatorRegistry
-from fhops.optimization.operational_problem import build_operational_problem
+from fhops.optimization.operational_problem import (
+    build_operational_problem,
+    override_objective_weights,
+)
 from fhops.scenario.contract import Problem
 from fhops.telemetry import RunTelemetryLogger
 from fhops.telemetry.watch import Snapshot, SnapshotSink
@@ -94,6 +98,7 @@ def solve_sa(
     watch_metadata: dict[str, str] | None = None,
     watch_debug: bool = False,
     use_local_repairs: bool = False,
+    objective_weight_overrides: dict[str, float] | None = None,
 ) -> dict[str, Any]:
     """Solve the scheduling problem with simulated annealing.
 
@@ -136,6 +141,10 @@ def solve_sa(
     use_local_repairs : bool, default=False
         When ``True`` repairs only the slots touched by a candidate before scoring. The
         final schedule is always re-scored with a full repair before reporting.
+    objective_weight_overrides : dict[str, float] | None, optional
+        Override scenario objective weights (keys: ``production``, ``mobilisation``, ``transitions``,
+        ``landing_slack``). ``None`` keeps scenario defaults, but Tiny7/Small21 scenarios auto-apply
+        a reduced mobilisation weight to encourage exploration.
 
     Returns
     -------
@@ -184,6 +193,10 @@ def solve_sa(
         else max(1000, iters // 5 or 200)
     )
 
+    resolved_weight_overrides = resolve_objective_weight_overrides(pb, objective_weight_overrides)
+    if resolved_weight_overrides is not None:
+        resolved_weight_overrides = dict(resolved_weight_overrides)
+
     config_snapshot: dict[str, Any] = {
         "iters": iters,
         "batch_size": batch_size,
@@ -192,6 +205,8 @@ def solve_sa(
         "restart_interval": restart_interval_value,
         "operators": registry.weights(),
     }
+    if resolved_weight_overrides:
+        config_snapshot["objective_weight_overrides"] = resolved_weight_overrides
     if auto_profile_applied:
         config_snapshot["auto_profile"] = "mobilisation"
     context_payload = dict(telemetry_context or {})
@@ -239,8 +254,11 @@ def solve_sa(
     current_workers_busy: int | None = workers_total
 
     ctx = build_operational_problem(pb)
+    if resolved_weight_overrides:
+        ctx = override_objective_weights(ctx, resolved_weight_overrides)
     debug_capture = bool(watch_debug and watch_sink)
     local_repairs = bool(use_local_repairs)
+    objective_weights_snapshot = ctx.bundle.objective_weights.model_dump()
 
     def _score_schedule(
         schedule: Schedule,
@@ -480,6 +498,9 @@ def solve_sa(
             "restart_interval": int(restart_interval_value),
             "operators": registry.weights(),
         }
+        if resolved_weight_overrides:
+            meta["objective_weight_overrides"] = resolved_weight_overrides
+        meta["objective_weights"] = objective_weights_snapshot
         meta.update(
             {
                 "greedy_objective": float(initial_score),

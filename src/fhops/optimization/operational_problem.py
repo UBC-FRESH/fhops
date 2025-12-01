@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections import defaultdict
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
+from dataclasses import replace as dc_replace
 from typing import TYPE_CHECKING
 
 from fhops.model.milp.data import OperationalMilpBundle, build_operational_bundle
@@ -145,6 +146,19 @@ def build_operational_problem(pb: Problem) -> OperationalProblem:
         shift_keys=shift_keys,
         shift_index=shift_index,
     )
+
+
+def override_objective_weights(
+    ctx: OperationalProblem,
+    overrides: Mapping[str, float],
+) -> OperationalProblem:
+    """Return a copy of ``ctx`` with objective weights updated per the overrides."""
+
+    if not overrides:
+        return ctx
+    new_weights = ctx.bundle.objective_weights.model_copy(update=dict(overrides))
+    new_bundle = dc_replace(ctx.bundle, objective_weights=new_weights)
+    return dc_replace(ctx, bundle=new_bundle)
 
 
 def _derive_role_metadata(

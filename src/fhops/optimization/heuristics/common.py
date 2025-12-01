@@ -18,6 +18,24 @@ from fhops.scenario.contract import Problem
 
 BLOCK_COMPLETION_EPS = 1e-6
 LEFTOVER_PENALTY_FACTOR = 1.0
+AUTO_OBJECTIVE_WEIGHT_OVERRIDES: dict[str, dict[str, float]] = {
+    "FHOPS Tiny7": {"mobilisation": 0.2},
+    "FHOPS Small21": {"mobilisation": 0.2},
+}
+
+
+def resolve_objective_weight_overrides(
+    pb: Problem,
+    overrides: dict[str, float] | None,
+) -> dict[str, float] | None:
+    """Return explicit overrides or scenario-specific defaults for objective weights."""
+
+    if overrides is not None:
+        return overrides
+    scenario_name = getattr(pb.scenario, "name", None)
+    if scenario_name:
+        return AUTO_OBJECTIVE_WEIGHT_OVERRIDES.get(scenario_name)
+    return None
 
 
 @dataclass(slots=True)
