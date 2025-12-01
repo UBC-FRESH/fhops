@@ -347,9 +347,11 @@ def _repair_schedule_cover_blocks(
     slots_visited = 0
 
     if limit_to_dirty_slots and slots_to_process:
-        shift_iteration = sorted(slots_to_process.keys(), key=lambda key: ctx.shift_index[key])
+        shift_iteration: list[tuple[int, str]] = sorted(
+            slots_to_process.keys(), key=lambda key: ctx.shift_index[key]
+        )
     else:
-        shift_iteration = shift_keys
+        shift_iteration = list(shift_keys)
 
     ordered_machines = [machine for machine in sc.machines if machine.id in machines_to_visit]
     ordered_machines.sort(

@@ -169,7 +169,7 @@ def solve_tabu(
     if resolved_weight_overrides is not None:
         resolved_weight_overrides = dict(resolved_weight_overrides)
 
-    config_snapshot = {
+    config_snapshot: dict[str, Any] = {
         "iters": iters,
         "batch_size": batch_size,
         "max_workers": max_workers,
