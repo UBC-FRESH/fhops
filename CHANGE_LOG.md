@@ -1,3 +1,11 @@
+# 2025-12-01 — MILP sequencing consumes shared loader metadata
+- `apply_system_sequencing_constraints` now accepts the shared `OperationalProblem` context built in `fhops.optimization.operational_problem`; the Pyomo builder threads this context through so role filters, prereq sequencing, and loader batch buffers reuse the exact same `allowed_roles`, `prereq_roles`, and `(block, loader_role)` metadata that heuristics already consume. Loader-buffer constraints therefore activate on large84 (and future scenarios) instead of silently no-oping.
+- Defaulted the `model.prod` decision variables to `initialize=0.0` and expanded the sequencing unit tests to set explicit per-machine production whenever they toggle assignments, ensuring Pyomo expressions evaluate without requiring a solver run. Added helpers to reset assignments/production between assertions so the tests now exercise real staged-volume scenarios (processor-before-feller violations, multi-stage cable chains, helicopter prerequisites).
+- Commands executed:
+  - `.venv/bin/pytest tests/test_system_roles.py`
+  - `.venv/bin/pytest tests/test_mobilisation.py`
+  - `.venv/bin/pytest tests/test_schedule_locking.py`
+
 # 2024-11-23 — Tiny7 auto-batch + mobilisation shake tuning
 - Gave `solve_sa` a scenario-aware default for Tiny7: it now samples four neighbours per iteration (`batch_size=4`) without forcing threaded evaluation, and telemetry/meta payloads record whether the auto batch engaged so benchmarks explain the runtime shift. Added a matching regression fixture (`tests/fixtures/presets/tiny7_explore.yaml`) plus tests ensuring preset objective weights and auto-batch behaviour stay deterministic.
 - Introduced a mobilisation-shake stall trigger for Tiny7 runs. After 50 non-improving iterations the solver temporarily boosts the `mobilisation_shake` operator weight (3×) until an improvement lands, logging trigger counts in solver metadata and telemetry. This keeps diversification explicit while we continue closing the tiny/small gaps.

@@ -7,6 +7,7 @@ from collections import defaultdict
 import pyomo.environ as pyo
 
 from fhops.optimization.mip.constraints.system_sequencing import apply_system_sequencing_constraints
+from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract import Problem
 from fhops.scheduling.mobilisation import MachineMobilisation, build_distance_lookup
 
@@ -46,6 +47,7 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     """
 
     sc = pb.scenario
+    system_ctx = build_operational_problem(pb)
 
     machines = [machine.id for machine in sc.machines]
     blocks = [block.id for block in sc.blocks]
@@ -93,7 +95,13 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
         return 1 if earliest <= day <= latest else 0
 
     model.x = pyo.Var(model.M, model.B, model.S, domain=pyo.Binary)
-    model.prod = pyo.Var(model.M, model.B, model.S, domain=pyo.NonNegativeReals)
+    model.prod = pyo.Var(
+        model.M,
+        model.B,
+        model.S,
+        domain=pyo.NonNegativeReals,
+        initialize=0.0,
+    )
 
     production_expr = sum(
         model.prod[mach, blk, (day, shift_id)]
@@ -274,7 +282,7 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
         obj_expr -= landing_surplus_weight * landing_surplus_expr
     model.obj = pyo.Objective(expr=obj_expr, sense=pyo.maximize)
 
-    apply_system_sequencing_constraints(model, pb, shift_tuples)
+    apply_system_sequencing_constraints(model, pb, shift_tuples, system_ctx=system_ctx)
 
     for lock in locked_assignments:
         for day, shift_id in model.S:

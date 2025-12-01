@@ -563,6 +563,7 @@ DATASET_CONFIGS = {
         num_blocks=24,
         machines_by_role=_large84_machine_roster(),
         block_profiles=SMALL_TIER_PROFILES,
+        work_scale=0.75,
     ),
 }
 

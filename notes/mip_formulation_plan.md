@@ -643,6 +643,7 @@ Arora-style formulation. Immediate priorities:
 - Exposed overrides through `--objective-weight mobilisation=0.5` on `solve-heur`, `solve-ils`, `solve-tabu`, and `fhops bench suite`. The bench harness forwards the mapping to every solver invocation, and telemetry/meta output now record both the override dict and the final `objective_weights` snapshot so future runs explain why objectives shifted.
 - Evidence that the heuristics are finally moving: `solve_sa(pb, iters=400, seed=7, use_local_repairs=True)` on Tiny7 improved from the greedy −4 146.78 to −542.59 (+3.6 k delta) and Small21 jumped from −5 839.62 to −271.85 (+5.6 k). The CLI runs mirror that behaviour (`fhops solve-heur examples/tiny7/scenario.yaml --iters 200` now reports 2 093.54 vs. the previous 2 061.60), and the tiny7 benchmark fixture was refreshed accordingly.
 - Next: keep the overrides enabled while we finish the incremental staging caches, then rerun Small21/Med42 smoke tests to see if the heuristics maintain positive deltas once mobilisation penalties ramp up again. Only after we have reliable acceptance on tiny/small should we unlock fixture refreshes for the rest of the ladder.
+- Next: apply the same “make it feasible” pass to `examples/large84` (scale block workloads, keep full-horizon windows, confirm MILP sequencing is enforced) so the entire dataset ladder (tiny/small/med/large) provides trustworthy MILP baselines.
 
 **2025-12-23 auto-batch + mobilisation shake safeguards (tiny7 focus)**
 - Added scenario-aware defaults in `solve_sa`: `FHOPS Tiny7` now auto-enables batched neighbour sampling (`batch_size=4`, `max_workers=4`) unless the caller explicitly sets the knobs, and the same flags are persisted in both the telemetry config snapshot and solver metadata so dashboards explain why extra workers engage.
@@ -666,3 +667,37 @@ Schedule Locking & Contracts
 Code already honours ScheduleLock entries in the greedy seed, repair loop, and operators (_locked_assignments in registry.py). MIP parity is covered (see tests/test_schedule_locking.py), but we still need the specific small21 regression you mentioned.
 Action: add a small21 fixture update (e.g., add a loader lock in examples/small21/scenario.yaml or a test stub) and a new test that runs SA or Tabu on small21 with that lock and asserts the assignment never moves. Document the workflow in the data-contract + CLI guides and log it in the changelog.
 If you’re good with this breakdown, I’ll start implementing the objective-weight/preset wiring and the small21 lock regression, then move on to the bounded-sampling + restart hooks and benchmarking.
+
+## TODO – Large84 Sequencing Enforcement
+- [ ] Extend `apply_system_sequencing_constraints` with loader metadata (role counts + batch volumes) so constraints can be built from scenario data. *Subtasks:* expose loader-role counts, loader batch volumes, and upstream role mapping inside the helper.
+- [ ] Add cumulative buffer constraints so loader production up to a shift is bounded by upstream production minus the loader batch requirement (mirroring `SequencingTracker`). *Subtasks:* derive ordered shift prefixes, build Pyomo constraints per `(block, loader_role, prereq_role)` triple, reuse existing `prod` variables.
+- [ ] Re-run the `large84` MILP (Gurobi, `--gap=0.01`, generous time-limit) and confirm sequencing violations drop to zero; if infeasible, tweak `work_scale` slightly. *Subtasks:* execute solve, inspect KPI summary, iterate on scaling only if needed.
+- [ ] Add a regression test that runs `solve_mip-operational` on the large84 bundle, feeds assignments through `SequencingTracker`, and asserts `sequencing_violation_count == 0`. *Subtasks:* add bundle fixture if needed, integrate tracker call in a new pytest.
+
+## 7. Large84 sequencing parity plan (2025-12-01)
+
+- [x] **Loader metadata plumbing (Pyomo layer)**
+  - [x] Thread `loader_roles`, `loader_batch_volume`, and upstream role ordering from `OperationalProblem` into `apply_system_sequencing_constraints` via the existing `system_ctx`.
+  - [x] Add helper accessors so each block/system pair exposes `(upstream_role, loader_role, batch_volume, head_start_shifts)` without recomputing inside the constraint builder. *(Solved by reusing `OperationalProblem.allowed_roles`, `prereq_roles`, and `loader_batch_volume` instead of rebuilding them locally.)*
+  - [x] Capture these metadata fields inside the MILP bundle snapshot so unit tests / regression fixtures can assert we are building constraints with the right parameters. *(Already available via `OperationalMilpBundle`; constraint builder now consumes the shared context directly.)*
+
+- [ ] **Prefix-balance constraints (SequencingTracker parity)**
+  - [ ] Build ordered shift indices per machine/role (reuse `shift_keys` + `shift_index`) so the MILP can reference per-shift production prefixes without re-sorting.
+  - [ ] Introduce cumulative variables or expressions (e.g., `prod_prefix[block, role, t]`) that sum `prod` up to shift `t`; enforce `loader_prefix ≤ upstream_prefix − batch_volume` for every `(block, loader_role, upstream_role, shift)` combination once the head-start window opens.
+  - [ ] Include landing-level staging where relevant by ensuring total loader draws cannot exceed upstream deliveries at the landing, mirroring the evaluator’s `SequencingTracker` logic.
+  - [ ] Gate all new constraints behind the sequencing flag so we can still debug/disable them on pathological datasets.
+
+- [ ] **Solver validation + dataset tuning**
+  - [ ] Run `fhops solve-mip-operational examples/large84/scenario.yaml --solver gurobi --time-limit 900 --gap 0.01 --sequencing-debug` and record runtime, objective, and sequencing counters.
+  - [ ] If the model declares infeasible, adjust `work_scale` (start at −2 %) in `scripts/rebuild_reference_datasets.py`, regenerate large84, and retry until Gurobi reports 0 violations with all blocks complete inside 84 days.
+  - [ ] Capture the successful command sequence + KPI deltas in `CHANGE_LOG.md` and `notes/metaheuristic_roadmap.md` so future runs know which configuration produced the clean baseline.
+
+- [ ] **Regression guardrail**
+  - [ ] Add `tests/mip/test_large84_sequencing.py` (or extend the existing MILP test module) to call the operational solver on large84, parse the CSV assignments into `SequencingTracker`, and assert `sequencing_violation_count == 0`.
+  - [ ] Stub/memoize the solver output so the test can run with a shortened horizon or cached fixture (e.g., ship a trimmed large84 instance) if runtime exceeds CI limits.
+  - [ ] Extend the regression harness to fail fast when `solve-mip-operational` emits any sequencing warnings, ensuring future MILP edits keep the parity intact.
+
+- [ ] **Documentation + follow-on tasks**
+  - [ ] Update this planning note, `notes/metaheuristic_roadmap.md`, and the large84 README with the new sequencing constraints, mentioning loader prefix caps and any dataset rescale we performed.
+  - [ ] Re-run the heuristic smoke (`fhops solve-heur ... --iters 200 --preset mobilisation`) on large84 and record the new MILP vs heuristic gap so maintainers can see the restored benchmark.
+  - [ ] Queue the next steps (objective tweaks, landing-surplus telemetry) once the sequencing fix is merged so we keep pressure on heuristics rather than chasing MILP parity bugs.

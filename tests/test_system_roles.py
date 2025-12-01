@@ -35,6 +35,17 @@ def _plan_from_days(pb: Problem, mapping: dict[str, dict[int, str | None]]) -> d
     }
 
 
+def _reset_assignments(model):
+    for var in model.x.values():
+        var.value = 0
+    for var in model.prod.values():
+        var.value = 0
+
+
+def _set_prod(model, machine_id: str, block_id: str, shift_key: tuple[int, str], value: float):
+    model.prod[machine_id, block_id, shift_key].value = value
+
+
 def test_role_constraints_restrict_assignments():
     system = HarvestSystem(
         system_id="forward_only",
@@ -150,9 +161,9 @@ def test_sequencing_blocks_without_prior_work():
     pb = Problem.from_scenario(scenario)
     model = build_model(pb)
     shift_key = _shift_key(pb, 1)
-    for var in model.x.values():
-        var.value = 0
+    _reset_assignments(model)
     model.x["M2", "B1", shift_key].value = 1
+    _set_prod(model, "M2", "B1", shift_key, 5.0)
     con = model.system_sequencing["B1", "processor", "feller", *shift_key]
     lhs = pyo.value(con.body)
     rhs = pyo.value(con.upper)
@@ -199,10 +210,11 @@ def test_sequencing_allows_roles_after_prereqs_complete():
     model = build_model(pb)
     fel_shift = _shift_key(pb, 1)
     proc_shift = _shift_key(pb, 2)
-    for var in model.x.values():
-        var.value = 0
+    _reset_assignments(model)
     model.x["M1", "B1", fel_shift].value = 1
+    _set_prod(model, "M1", "B1", fel_shift, 5.0)
     model.x["M2", "B1", proc_shift].value = 1
+    _set_prod(model, "M2", "B1", proc_shift, 5.0)
     con = model.system_sequencing["B1", "processor", "feller", *proc_shift]
     lhs = pyo.value(con.body)
     rhs = pyo.value(con.upper)
@@ -326,22 +338,24 @@ def test_cable_system_enforces_multi_stage_sequence():
     )
     pb = Problem.from_scenario(scenario)
     model = build_model(pb)
-    for var in model.x.values():
-        var.value = 0
+    _reset_assignments(model)
     shift1 = _shift_key(pb, 1)
     shift2 = _shift_key(pb, 2)
     shift3 = _shift_key(pb, 3)
     model.x["Y1", "B1", shift1].value = 1
+    _set_prod(model, "Y1", "B1", shift1, 5.0)
     con = model.system_sequencing["B1", "yarder", "faller", *shift1]
     assert pyo.value(con.body) > pyo.value(con.upper)
 
-    for var in model.x.values():
-        var.value = 0
+    _reset_assignments(model)
     model.x["F1", "B1", shift1].value = 1
+    _set_prod(model, "F1", "B1", shift1, 5.0)
     model.x["Y1", "B1", shift2].value = 1
+    _set_prod(model, "Y1", "B1", shift2, 5.0)
     con = model.system_sequencing["B1", "yarder", "faller", *shift2]
     assert pyo.value(con.body) <= pyo.value(con.upper)
     model.x["P1", "B1", shift3].value = 1
+    _set_prod(model, "P1", "B1", shift3, 5.0)
     con = model.system_sequencing["B1", "processor", "yarder", *shift3]
     assert pyo.value(con.body) <= pyo.value(con.upper)
 
@@ -396,22 +410,25 @@ def test_helicopter_system_requires_all_prerequisites():
     pb = Problem.from_scenario(scenario)
     model = build_model(pb)
 
-    for var in model.x.values():
-        var.value = 0
+    _reset_assignments(model)
     shift1 = _shift_key(pb, 1)
     shift2 = _shift_key(pb, 2)
     model.x["F1", "B1", shift1].value = 1
+    _set_prod(model, "F1", "B1", shift1, 5.0)
     model.x["C1", "B1", shift2].value = 1
+    _set_prod(model, "C1", "B1", shift2, 5.0)
     con_faller = model.system_sequencing["B1", "helicopter", "faller", *shift2]
     con_hook = model.system_sequencing["B1", "helicopter", "hook_tender", *shift2]
     assert pyo.value(con_faller.body) <= pyo.value(con_faller.upper)
     assert pyo.value(con_hook.body) > pyo.value(con_hook.upper)
 
-    for var in model.x.values():
-        var.value = 0
+    _reset_assignments(model)
     model.x["F1", "B1", shift1].value = 1
+    _set_prod(model, "F1", "B1", shift1, 5.0)
     model.x["H1", "B1", shift1].value = 1
+    _set_prod(model, "H1", "B1", shift1, 5.0)
     model.x["C1", "B1", shift2].value = 1
+    _set_prod(model, "C1", "B1", shift2, 5.0)
     con_faller = model.system_sequencing["B1", "helicopter", "faller", *shift2]
     con_hook = model.system_sequencing["B1", "helicopter", "hook_tender", *shift2]
     assert pyo.value(con_faller.body) <= pyo.value(con_faller.upper)

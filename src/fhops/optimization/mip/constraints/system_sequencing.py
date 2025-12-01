@@ -2,16 +2,20 @@
 
 from __future__ import annotations
 
-from collections import defaultdict
-
 import pyomo.environ as pyo
 
-from fhops.costing.machine_rates import normalize_machine_role
+from fhops.optimization.operational_problem import (
+    OperationalProblem,
+    build_operational_problem,
+)
 from fhops.scenario.contract import Problem
 
 
 def apply_system_sequencing_constraints(
-    model: pyo.ConcreteModel, pb: Problem, shift_sequence: list[tuple[int, str]]
+    model: pyo.ConcreteModel,
+    pb: Problem,
+    shift_sequence: list[tuple[int, str]],
+    system_ctx: OperationalProblem | None = None,
 ) -> None:
     """Attach role filters and precedence constraints derived from harvest systems."""
 
@@ -20,29 +24,16 @@ def apply_system_sequencing_constraints(
     if not systems:
         return
 
-    allowed_roles: dict[str, set[str] | None] = {}
-    prereq_roles: dict[tuple[str, str], set[str]] = {}
+    ctx = system_ctx or build_operational_problem(pb)
 
-    for block in scenario.blocks:
-        system = systems.get(block.harvest_system_id) if block.harvest_system_id else None
-        if not system:
-            allowed_roles[block.id] = None
-            continue
-        job_roles = {job.name: job.machine_role for job in system.jobs}
-        allowed_roles[block.id] = {job.machine_role for job in system.jobs}
-        for job in system.jobs:
-            prereq = {job_roles[name] for name in job.prerequisites if name in job_roles}
-            prereq_roles[(block.id, job.machine_role)] = prereq
-
-    machine_roles = {
-        machine.id: normalize_machine_role(getattr(machine, "role", None))
-        for machine in scenario.machines
+    allowed_roles = ctx.allowed_roles
+    prereq_roles = ctx.prereq_roles
+    machine_roles = ctx.bundle.machine_roles
+    machines_by_role = {
+        role: list(machine_ids)
+        for role, machine_ids in ctx.machines_by_role.items()
+        if role and machine_ids
     }
-    machines_by_role: dict[str, list[str]] = defaultdict(list)
-    for machine_id, role in machine_roles.items():
-        if role is not None:
-            machines_by_role[role].append(machine_id)
-
     if not machines_by_role:
         return
 
@@ -71,30 +62,64 @@ def apply_system_sequencing_constraints(
     prereq_index = [
         (blk, role, prereq) for (blk, role), prereqs in prereq_roles.items() for prereq in prereqs
     ]
-    if prereq_index:
-        model.system_sequencing_index = pyo.Set(initialize=prereq_index, dimen=3)
+    if not prereq_index:
+        return
 
-        def sequencing_rule(mdl, blk, role, prereq, day, shift_id):
-            machines_role = machines_by_role.get(role)
-            prereq_machines = machines_by_role.get(prereq)
-            if not machines_role or not prereq_machines:
-                return pyo.Constraint.Skip
-            shift_key = (day, shift_id)
-            lhs = sum(
-                mdl.x[mach, blk, s]
-                for mach in machines_role
-                for s in shifts_up_to.get(shift_key, [])
-            )
-            rhs = sum(
-                mdl.x[mach, blk, s]
-                for mach in prereq_machines
-                for s in shifts_before.get(shift_key, [])
-            )
-            return lhs <= rhs
+    model.system_sequencing_index = pyo.Set(initialize=prereq_index, dimen=3)
 
-        model.system_sequencing = pyo.Constraint(
-            model.system_sequencing_index, model.S, rule=sequencing_rule
+    def sequencing_rule(mdl, blk, role, prereq, day, shift_id):
+        machines_role = machines_by_role.get(role)
+        prereq_machines = machines_by_role.get(prereq)
+        if not machines_role or not prereq_machines:
+            return pyo.Constraint.Skip
+        shift_key = (day, shift_id)
+        lhs = sum(
+            mdl.prod[mach, blk, s] for mach in machines_role for s in shifts_up_to.get(shift_key, [])
         )
+        rhs = sum(
+            mdl.prod[mach, blk, s]
+            for mach in prereq_machines
+            for s in shifts_before.get(shift_key, [])
+        )
+        return lhs <= rhs
+
+    model.system_sequencing = pyo.Constraint(
+        model.system_sequencing_index, model.S, rule=sequencing_rule
+    )
+
+    loader_roles = ctx.loader_roles
+    loader_batches = ctx.loader_batch_volume
+    loader_index = [
+        (blk, role, prereq)
+        for (blk, role), prereqs in prereq_roles.items()
+        if (blk, role) in loader_roles
+        for prereq in prereqs
+    ]
+    if not loader_index:
+        return
+
+    model.system_loader_index = pyo.Set(initialize=loader_index, dimen=3)
+
+    def loader_buffer_rule(mdl, blk, role, prereq, day, shift_id):
+        machines_role = machines_by_role.get(role)
+        prereq_machines = machines_by_role.get(prereq)
+        if not machines_role or not prereq_machines:
+            return pyo.Constraint.Skip
+        shift_key = (day, shift_id)
+        lhs = sum(
+            mdl.prod[mach, blk, s] for mach in machines_role for s in shifts_up_to.get(shift_key, [])
+        )
+        rhs = sum(
+            mdl.prod[mach, blk, s]
+            for mach in prereq_machines
+            for s in shifts_before.get(shift_key, [])
+        )
+        buffer = loader_batches.get(blk, 0.0)
+        return lhs <= rhs - buffer
+
+    model.system_loader_buffer = pyo.Constraint(
+        model.system_loader_index, model.S, rule=loader_buffer_rule
+    )
 
 
 __all__ = ["apply_system_sequencing_constraints"]
