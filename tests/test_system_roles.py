@@ -506,6 +506,69 @@ def test_headstart_constraints_block_downstream_roles_until_buffer_met():
     assert pyo.value(con.body) <= 0
 
 
+def test_landing_loader_constraint_enforces_shared_staging():
+    system = HarvestSystem(
+        system_id="ground_sequence",
+        jobs=[
+            SystemJob(name="felling", machine_role="feller", prerequisites=[]),
+            SystemJob(name="processing", machine_role="processor", prerequisites=["felling"]),
+            SystemJob(name="loading", machine_role="loader", prerequisites=["processing"]),
+        ],
+    )
+    scenario = Scenario(
+        name="landing-shared",
+        num_days=1,
+        blocks=[
+            Block(
+                id="B1",
+                landing_id="L1",
+                work_required=10.0,
+                earliest_start=1,
+                latest_finish=1,
+                harvest_system_id="ground_sequence",
+            ),
+            Block(
+                id="B2",
+                landing_id="L1",
+                work_required=10.0,
+                earliest_start=1,
+                latest_finish=1,
+                harvest_system_id="ground_sequence",
+            ),
+        ],
+        machines=[
+            Machine(id="F1", role="feller"),
+            Machine(id="P1", role="processor"),
+            Machine(id="L1M", role="loader"),
+        ],
+        landings=[Landing(id="L1", daily_capacity=2)],
+        calendar=[
+            CalendarEntry(machine_id="F1", day=1, available=1),
+            CalendarEntry(machine_id="P1", day=1, available=1),
+            CalendarEntry(machine_id="L1M", day=1, available=1),
+        ],
+        production_rates=[
+            ProductionRate(machine_id="F1", block_id="B1", rate=5.0),
+            ProductionRate(machine_id="F1", block_id="B2", rate=5.0),
+            ProductionRate(machine_id="P1", block_id="B1", rate=5.0),
+            ProductionRate(machine_id="P1", block_id="B2", rate=5.0),
+            ProductionRate(machine_id="L1M", block_id="B1", rate=5.0),
+            ProductionRate(machine_id="L1M", block_id="B2", rate=5.0),
+        ],
+        harvest_systems={"ground_sequence": system},
+    )
+    pb = Problem.from_scenario(scenario)
+    model = build_model(pb)
+    shift = _shift_key(pb, 1)
+
+    _reset_assignments(model)
+    model.x["L1M", "B1", shift].value = 1
+    _set_prod(model, "L1M", "B1", shift, 5.0)
+
+    con = model.landing_loader_sequencing["L1", "loader", "processor", *shift]
+    assert pyo.value(con.body) > 0
+
+
 def test_sa_evaluator_requires_all_prereqs_before_helicopter():
     system = HarvestSystem(
         system_id="heli_sequence",

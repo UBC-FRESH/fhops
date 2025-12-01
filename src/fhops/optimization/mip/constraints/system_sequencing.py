@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections import defaultdict
+
 import pyomo.environ as pyo
 
 from fhops.optimization.operational_problem import (
@@ -16,8 +18,12 @@ def apply_system_sequencing_constraints(
     pb: Problem,
     shift_sequence: list[tuple[int, str]],
     system_ctx: OperationalProblem | None = None,
+    sequencing_enabled: bool = True,
 ) -> None:
     """Attach role filters and precedence constraints derived from harvest systems."""
+
+    if not sequencing_enabled:
+        return
 
     scenario = pb.scenario
     systems = scenario.harvest_systems or {}
@@ -91,6 +97,7 @@ def apply_system_sequencing_constraints(
 
     loader_roles = ctx.loader_roles
     loader_batches = ctx.loader_batch_volume
+    landing_for_block = ctx.bundle.landing_for_block
     loader_index = [
         (blk, role, prereq)
         for (blk, role), prereqs in prereq_roles.items()
@@ -231,6 +238,57 @@ def apply_system_sequencing_constraints(
 
         model.loader_batch_activation = pyo.Constraint(
             model.loader_activation_index, rule=loader_batch_rule
+        )
+
+    landing_blocks: dict[str, list[str]] = defaultdict(list)
+    for blk, landing_id in landing_for_block.items():
+        if landing_id is not None:
+            landing_blocks[landing_id].append(blk)
+
+    landing_loader_prereqs: dict[tuple[str, str], set[str]] = {}
+    for blk, role in loader_roles:
+        landing_id = landing_for_block.get(blk)
+        if not landing_id:
+            continue
+        prereqs = prereq_roles.get((blk, role))
+        if not prereqs:
+            continue
+        key = (landing_id, role)
+        landing_loader_prereqs.setdefault(key, set()).update(prereqs)
+
+    landing_loader_index = [
+        (landing_id, role, prereq)
+        for (landing_id, role), prereqs in landing_loader_prereqs.items()
+        for prereq in prereqs
+    ]
+    if landing_loader_index:
+        model.landing_loader_index = pyo.Set(initialize=landing_loader_index, dimen=3)
+
+        def landing_loader_rule(mdl, landing_id, role, prereq, day, shift_id):
+            loader_blocks = landing_blocks.get(landing_id, [])
+            if not loader_blocks:
+                return pyo.Constraint.Skip
+            loader_machines = machines_by_role.get(role)
+            prereq_machines = machines_by_role.get(prereq)
+            if not loader_machines or not prereq_machines:
+                return pyo.Constraint.Skip
+            shift_key = (day, shift_id)
+            lhs = sum(
+                mdl.prod[mach, blk, s]
+                for blk in loader_blocks
+                for mach in loader_machines
+                for s in shifts_up_to.get(shift_key, [])
+            )
+            rhs = sum(
+                mdl.prod[mach, blk, s]
+                for blk in loader_blocks
+                for mach in prereq_machines
+                for s in shifts_before.get(shift_key, [])
+            )
+            return lhs <= rhs
+
+        model.landing_loader_sequencing = pyo.Constraint(
+            model.landing_loader_index, model.S, rule=landing_loader_rule
         )
 
 

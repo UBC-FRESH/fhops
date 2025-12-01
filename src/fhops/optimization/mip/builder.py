@@ -282,7 +282,14 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
         obj_expr -= landing_surplus_weight * landing_surplus_expr
     model.obj = pyo.Objective(expr=obj_expr, sense=pyo.maximize)
 
-    apply_system_sequencing_constraints(model, pb, shift_tuples, system_ctx=system_ctx)
+    sequencing_enabled = getattr(sc, "enforce_sequencing", True)
+    apply_system_sequencing_constraints(
+        model,
+        pb,
+        shift_tuples,
+        system_ctx=system_ctx,
+        sequencing_enabled=sequencing_enabled,
+    )
 
     for lock in locked_assignments:
         for day, shift_id in model.S:
