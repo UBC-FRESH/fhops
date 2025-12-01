@@ -299,6 +299,7 @@ def run_benchmark_suite(
             scenario_out = out_dir / bench.name
             scenario_out.mkdir(parents=True, exist_ok=True)
 
+            scenario_mip_objective: float | None = None
             if include_mip:
                 build_start = time.perf_counter()
                 # Use builder explicitly to measure build time; solve_mip will rebuild but cost is small.
@@ -310,6 +311,7 @@ def run_benchmark_suite(
                 mip_runtime = time.perf_counter() - start
                 mip_assign = cast(pd.DataFrame, mip_res["assignments"]).copy()
                 mip_assign.to_csv(scenario_out / "mip_assignments.csv", index=False)
+                scenario_mip_objective = cast(float, mip_res.get("objective", 0.0))
                 mip_kpis = compute_kpis(pb, mip_assign)
                 rows.append(
                     _record_metrics(
@@ -375,6 +377,7 @@ def run_benchmark_suite(
                         "cooling_rate": sa_cooling_rate,
                         "restart_interval": sa_restart_interval,
                         "objective_weight_overrides": objective_weight_overrides,
+                        "milp_objective": scenario_mip_objective,
                     }
                     if resolved_sa.extra_kwargs:
                         sa_kwargs.update(resolved_sa.extra_kwargs)
@@ -450,6 +453,8 @@ def run_benchmark_suite(
                             "preset_label": preset_label,
                             "machine_costs": machine_cost_dicts,
                         }
+                        if scenario_mip_objective is not None:
+                            log_record["milp_objective"] = float(scenario_mip_objective)
                         if profile:
                             log_record["profile"] = profile.name
                             log_record["profile_version"] = profile.version
@@ -507,6 +512,7 @@ def run_benchmark_suite(
                     "hybrid_use_mip": hybrid_use_mip_val,
                     "hybrid_mip_time_limit": hybrid_mip_time_limit_val,
                     "objective_weight_overrides": objective_weight_overrides,
+                    "milp_objective": scenario_mip_objective,
                 }
                 ils_kwargs.update(ils_extra_kwargs)
                 if watch_sink:
@@ -574,6 +580,8 @@ def run_benchmark_suite(
                         "hybrid_mip_time_limit": hybrid_mip_time_limit_val,
                         "machine_costs": machine_cost_dicts,
                     }
+                    if scenario_mip_objective is not None:
+                        record["milp_objective"] = float(scenario_mip_objective)
                     if profile:
                         record["profile"] = profile.name
                         record["profile_version"] = profile.version
@@ -620,6 +628,7 @@ def run_benchmark_suite(
                     "tabu_tenure": tabu_tenure_val,
                     "stall_limit": tabu_stall_limit_val,
                     "objective_weight_overrides": objective_weight_overrides,
+                    "milp_objective": scenario_mip_objective,
                 }
                 tabu_kwargs.update(tabu_extra_kwargs)
                 if watch_sink:
@@ -682,6 +691,8 @@ def run_benchmark_suite(
                         "tabu_stall_limit": tabu_stall_limit_val,
                         "machine_costs": machine_cost_dicts,
                     }
+                    if scenario_mip_objective is not None:
+                        record["milp_objective"] = float(scenario_mip_objective)
                     if profile:
                         record["profile"] = profile.name
                         record["profile_version"] = profile.version

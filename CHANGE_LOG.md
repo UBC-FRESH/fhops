@@ -10,7 +10,7 @@
   - `sphinx-build -b html docs _build/html -W`
 - Added dirty-slot tracking plus a feature-flagged “local repair” mode for heuristics: `_set_assignment` and operator clones now record the exact (machine, day, shift) slots touched, `_repair_schedule_cover_blocks` can replay just those slots, and `solve_sa`/`solve_ils`/`solve_tabu` accept `use_local_repairs=True` to score neighbours without rebuilding the whole plan. Final schedules are still re-scored with a full repair before reporting, so existing behaviour stays intact while we experiment with incremental scoring. Commands: `ruff format src tests`; `ruff check src tests`; `mypy src`; `pytest`.
 
-# 2025-12-20 — Scenario ladder workload rebalance
+# 2025-11-30 — Scenario ladder workload rebalance
 - Regenerated the `small21`, `med42`, and `large84` bundles with the tiny7 block profile and scaled block counts (6/12/24) so each tier now carries roughly the same per-system workload; READMEs, block tables, prod rates, and distance matrices now reflect the trimmed volumes and mobilisations.
 - Commands executed for this work:
   - `.venv/bin/python scripts/rebuild_reference_datasets.py small21 --seed 20251209`
@@ -90,7 +90,7 @@
   - `pre-commit run --all-files`
   - `sphinx-build -b html docs _build/html -W`
 
-# 2025-12-15 — Heuristic scoring realigned with loader delivery
+# 2025-11-30 — Heuristic scoring realigned with loader delivery
 - Reworked `evaluate_schedule` so SA/ILS/Tabu objectives reward only delivered loader production (`tracker.delivered_total`) while penalising staged leftovers, landing slack, transitions, and mobilisation directly. This removes the old per-role “partial production” bonus that double-counted upstream work.
 - Updated the tiny7 benchmark fixture, regression baseline, and schedule-locking tests so they reflect the new scoring scale (tiny7 SA objective ≈1 929, regression SA/Tabu objective ≈-1005.5, landing/transition unit tests now assert the loader-based totals).
 - Commands executed for this work:
@@ -101,7 +101,7 @@
 - Softened the leftover penalty factor to 1.0, auto-apply the mobilisation operator preset when scenarios exceed 30 blocks/days (unless callers override operators), and threaded staged/delivered volume into the watch metadata so live dashboards surface feasibility progress.
 - Regenerated the tiny7 SA benchmark fixture with the auto-mobilisation defaults (`fhops bench suite --include-mip --scenario examples/tiny7/scenario.yaml --sa-iters 200 --time-limit 10`).
 
-# 2025-12-14 — Legacy landing-capacity fix + KPI/test realignment
+# 2025-11-30 — Legacy landing-capacity fix + KPI/test realignment
 - Patched the legacy Pyomo builder (`fhops.optimization.mip.builder`) so landing-capacity constraints are only created for landings that actually host blocks (and only when machines exist); this mirrors the operational bundle logic and unblocks `fhops bench suite --include-mip` on the refreshed tiny7 dataset.
 - Updated the operational MILP regression to expect loaders to finish the entire workload when partial batches are allowed, and tightened the various KPI/playback/benchmark tests so they now respect the new production metrics: `staged_production` now reports the *remaining* staged inventory (equal to `remaining_work_total`). Regenerated the deterministic KPI snapshots and the tiny7 SA benchmark fixture so regression tests exercise the clarified fields (no more `cumulative_production` in the public KPI payload).
 - Reran the tiny7 benchmark suite with the MIP enabled plus the full lint/type/test/doc cadence to lock in the fixes.
@@ -114,7 +114,7 @@
   - `.venv/bin/pre-commit run --all-files`
   - `.venv/bin/sphinx-build -b html docs docs/_build/html -W`
 
-# 2025-12-13 — Operational MILP loader staging parity
+# 2025-11-30 — Operational MILP loader staging parity
 - Added `assigned`/`production` columns to the operational MILP assignments writer so playback/KPI tooling consumes the actual per-machine shift production instead of re-deriving rates, eliminating false sequencing deficits.
 - Bumped loader head-start buffers to the truck batch volume, introduced assignment/activation coupling for all buffered roles, and tightened the inventory guard so loaders (and any buffered role) cannot be assigned until the staged volume satisfies the buffer requirement; reran tiny7/med42 MILP solves under `--sequencing-debug` to confirm the schedules are now sequencing-clean.
 - Replayed SA heuristics on tiny7/med42 after the constraint changes to verify they still emit sequencing-feasible schedules (objectives now reflect the stricter staging rules), and documented the cascading fixture/regression deltas for follow-up work.
@@ -141,7 +141,7 @@
   - `.venv/bin/pip install -r docs/requirements.txt`
   - `.venv/bin/sphinx-build -b html docs docs/_build/html -W`
 
-# 2025-12-11 — Playback/KPI sequencing parity
+# 2025-11-30 — Playback/KPI sequencing parity
 - Taught the operational bundle + sequencing tracker about per-role demand/terminal roles so heuristics, playback, and KPI logic all consume the same staged-inventory rules (block volume now decrements only when loaders finish, head-start buffers apply everywhere, and `evaluate_schedule` no longer “auto-completes” downstream roles). `_repair_schedule_cover_blocks` and `init_greedy_schedule` now reassign idle shifts per `(block, role)` demand so evaluation always starts from a sanity-checked plan.
 - Rewrote `compute_kpis` to drive `run_playback` instead of duplicating the sequencing math; the KPI totals, utilisation ordering, and sequencing violation counts now match the CLI/watch output bit-for-bit.
 - Regenerated the deterministic KPI snapshots plus the tiny7/med42 playback CSV+Parquet fixtures using the new sequencing logic, then re-recorded the stochastic KPI snapshot so the regression suite can adopt the updated totals.
@@ -152,7 +152,7 @@
   - `python - <<'PY' ...` *(refresh stochastic KPI snapshot via `run_stochastic_playback`)*
   - `pytest tests/test_cli_playback.py tests/test_kpi_regressions.py tests/test_playback_aggregates.py`
 
-# 2025-12-12 — Sequencing blocker triage
+# 2025-11-30 — Sequencing blocker triage
 - Captured the current state of the sequencing regression: heuristics only schedule the first role in each system, so SA stalls immediately (~1.2 k objective on tiny7) while downstream KPIs/playback still assume the older per-block inventory rules. Documented the issue and queued follow-up work in `notes/mip_formulation_plan.md` so we can introduce per-role work queues, repair logic, and matching playback/KPI staging before refreshing fixtures.
 - Updated the dataset CLI helpers to satisfy Ruff’s new `UP038` rule by switching every `isinstance(..., (int, float))` check to the modern union syntax (`int | float`), keeping the linter green while we focus on the sequencing fix.
 - Commands executed for this work:
@@ -161,7 +161,7 @@
   - `mypy src`
   - `pytest` *(fails: sequencing logic still per-block, so regression suite reports KPI/playback mismatches and benchmark gaps)*
 
-# 2025-12-11 — Heuristic sequencing enforcement groundwork
+# 2025-11-30 — Heuristic sequencing enforcement groundwork
 - Augmented `OperationalProblem` with loader metadata so heuristics now know each block’s loader batch requirement and role multiplicity. The shared evaluator uses that bundle to maintain staged inventories per block/role, preventing downstream machines from consuming wood before upstream production actually exists.
 - Tightened `fhops.optimization.heuristics.common` so `_repair_schedule_cover_blocks` reassigns surplus shifts (without inventing new work), `_evaluate` enforces buffer/batch rules via staged volume, and the new `coverage_injection` operator explicitly injects high-deficit blocks into neighbour generation. `OperatorRegistry.from_defaults` enables the operator across SA/ILS/Tabu, giving the solvers a way to rebalance coverage when the calendar is saturated.
 - Rewired playback + KPI tooling to reuse the same staging logic: `assignments_to_records` and `compute_kpis` now consume `OperationalProblem`, so CLI/DOC tests finally agree with the stricter feasibility checks. Deterministic/stochastic KPI snapshots, playback CSV/Parquet fixtures, and the tiny7 benchmark baseline were regenerated accordingly.
@@ -178,7 +178,7 @@
   - `pre-commit run --all-files`
   - `sphinx-build -b html docs _build/html -W`
 
-# 2025-12-10 — Heuristic operational bundle unification
+# 2025-11-30 — Heuristic operational bundle unification
 - Added `src/fhops/optimization/operational_problem.py`, a shared context builder that reuses the operational MILP bundle (role metadata, buffers, mobilisation/blackout/availability maps) and exposes a common sanitizer for all heuristics. This removes the duplicated scenario parsing in SA/ILS/Tabu and guarantees that solver scoring now mirrors the MILP rules.
 - Refactored `solve_sa`, `solve_ils`, and `solve_tabu` to build that shared context once per solve, threaded it through `_init_greedy`, `_evaluate`, `_neighbors`, perturbation/local-search helpers, and the registry-driven tests. Fixtures that call `_evaluate` were updated to pass the new context parameter, and the heuristic batch/CLI tests now run against the shared metadata.
 - Taught the MILP bundle builder to fall back to the grounded Lahrsen harvest system when scenarios omit `harvest_system_id`, while still letting heuristics treat such blocks as “no role filter” so legacy datasets keep working. Tiny7 benchmark runs once again match the stored SA fixture (objective ≈13 055) instead of the under-utilised 6 k plateau that surfaced during the refactor.
@@ -201,14 +201,14 @@
 - Regenerated the tiny7/med42 deterministic KPI snapshots plus the playback shift/day fixtures after wiring the sequencing metadata through both compute paths (KPI and playback). Refreshing the tiny7 SA benchmark fixture (`fhops bench suite ...`) now records the 6.26 k post-refactor objective, and the CLI benchmark summary uses `idxmax`/positive gaps so “best heuristic” again points at the highest objective solver.
 - Commands: `ruff format src tests`, `ruff check src tests`, `mypy src`, `pytest`, `pre-commit run --all-files`, `sphinx-build -b html docs _build/html -W`.
 
-# 2025-12-10 — Tiny7 documentation/asset scrub
+# 2025-11-30 — Tiny7 documentation/asset scrub
 - Replaced every lingering documentation/note/manuscript reference to `examples/minitoy` with `examples/tiny7`, so Sphinx guides, planning notes, and CLI help snippets reflect the dataset that actually exists in-tree. This touched the how-to/reference RST set, roadmap/notes, and SoftwareX planning docs.
 - Renamed the archived manuscript/analytics assets from `minitoy` → `tiny7` (benchmark summaries, playback CSV/MD snapshots, telemetry samples) and updated the associated indexes so future manuscript work can be re-run without broken paths. Removed the stale tuning `runs.sqlite` artefact while we are parked on manuscript duties.
 - Updated the dataset ladder plan (`notes/mip_formulation_plan.md`) to record that `examples/minitoy` is gone and that all guidance/assets now point at the reproducible `tiny7` scenario generated via `scripts/rebuild_reference_datasets.py`.
 - Commands: `python - <<'PY' ...` *(git grep-driven minitoy→tiny7 replacement)*, `mv docs/softwarex/assets/data/benchmarks/minitoy docs/softwarex/assets/data/benchmarks/tiny7`, `mv docs/softwarex/assets/data/playback/minitoy docs/softwarex/assets/data/playback/tiny7`, `rm docs/softwarex/assets/data/tuning/telemetry/runs.sqlite`.
 - Tests: not run (docs/assets/notes only).
 
-# 2025-12-10 — Reference dataset ladder rebuild (phase 1)
+# 2025-11-30— Reference dataset ladder rebuild (phase 1)
 - Expanded `scripts/rebuild_reference_datasets.py` so it now drives the entire ladder (tiny7, small21, med42, large84) via reusable `DatasetConfig`/`BlockProfile` scaffolding, derives ADV6N7 skidding distance from each block’s inferred geometry (half the block width), and rewrites dataset READMEs with up-to-date block/volume/machine statistics. med42/small21 now share the 2 FB / 1 GS / 3 processor / 3 loader “balanced” system, while large84 doubles both horizon and machine roster.
 - Regenerated `examples/{tiny7,small21,med42,large84}` data bundles (blocks, machines, calendar, prod rates, mobilisation distances, README, scenario YAML) using the Lahrsen-aligned profiles so the total workload lands just above the available machine capacity. Skidding-productivity heuristics now honor the “half block width” approximation that was requested for ADV6N7.
 - Updated the SoftwareX dataset inspection helper to cover the full ladder, reran it so `docs/softwarex/assets/data/datasets/{index,tiny7_summary,small21_summary,med42_summary,large84_summary}.json` mirror the new rosters, and refreshed the synthetic-small bundle along the way.
@@ -229,7 +229,7 @@
   - Captured new SA baselines for the balanced `med42`/`large84` datasets (`tests/fixtures/benchmarks/med42_sa.json`, `tests/fixtures/benchmarks/large84_sa.json`) via `fhops bench suite`, then reran the CLI/telemetry/tuning tests so they no longer reference the removed Minitoy dataset.
   - Refresh regression and stochastic fixtures: `tests/fixtures/kpi/stochastic.json` now reflects the med42 stochastic playback snapshot, and `tests/fixtures/regression/baseline.yaml` mirrors the current SA objective/mobilisation totals. Updated schedule-locking/tuning/synthetic smoke tests to align with the new scoring and playback behaviour, and re-ran the full cadence (`ruff format`, `ruff check`, `mypy`, `pytest`, `sphinx-build`) with all tests green.
 
-# 2025-12-09 — Operational MILP buffer/batching fixes
+# 2025-11-30 — Operational MILP buffer/batching fixes
 - Operational MILP builder now derives head-start buffers from upstream role capacity, enforces the wait using previous-shift inventory levels, and restricts loader production to integer truckloads; this touches `fhops.model.milp.operational` plus the bundle serializer (`fhops.model.milp.data`) so downstream consumers see the same buffer metadata.
 - `solve_operational_milp` now treats HiGHS “ok/optimal” terminations as success, loads solutions via Pyomo, and always returns a DataFrame with the canonical assignment columns; mobilisation/transition penalties now show up in watch/telemetry because the solver actually emits the assignments even when HiGHS only reports `status=ok`.
 - Added regression coverage for the head-start/loader batching behaviours (`tests/model/test_operational_milp.py`) so the new constraints stay wired while we finish the MIP bring-up; helpers build tiny deterministic scenarios to keep tests solver-light.
@@ -238,7 +238,7 @@
 - Removed the `examples/minitoy` bundle from the tree, regenerated all CLI/tests/fixtures/benchmarks/KPI snapshots against `examples/tiny7`, and updated the tuning/bundle aliases so future work builds on the new scenario. (Docs/manuscript assets still reference minitoy and will be refreshed separately.)
 - Commands: `python scripts/rebuild_reference_datasets.py tiny7`, `ruff format src tests`, `ruff check src tests`, `mypy src`, `pytest` *(fails: benchmark harness minitoy suite, CLI playback med42 mobilisation diff, telemetry report CLI, tune-grid CLI run count, med42 deterministic/stochastic KPI fixtures, playback aggregates, SA/Tabu regression presets & mobilisation penalties, schedule-locking transition/landing slack penalties, synthetic medium stochastic smoke)*, `pre-commit run --all-files`, `sphinx-build -b html docs _build/html -W`.
 
-# 2025-12-09 — med42 Lahrsen-balanced dataset refresh
+# 2025-11-30 — med42 Lahrsen-balanced dataset refresh
 - Added `scripts/rebuild_med42_dataset.py`, a deterministic generator that samples Lahrsen-range
   stand metrics, enforces the “60 % of volume in ~20 ha blocks” rule, and stops once the processor
   bottleneck exceeds the 42-day horizon. Running `python scripts/rebuild_med42_dataset.py` now
@@ -259,7 +259,7 @@
   `ruff format src tests`, `ruff check src tests`, `mypy src`, `pytest`,
   `pre-commit run --all-files`, `sphinx-build -b html docs _build/html -W`.
 
-# 2025-12-08 — SA block completion + med42 capacity bump
+# 2025-11-30 — SA block completion + med42 capacity bump
 - Enforced the “finish the block before switching” policy inside the simulated annealing evaluator: the solver now tracks
   each machine’s active block, overrides any attempt to hop to a new job (or idle) while wood remains, and mutates the
   underlying schedule so exported assignments/KPIs/telemetry reflect the repaired plan. This keeps KPI `completed_blocks`
@@ -294,7 +294,7 @@
   (`notes/cli_profiles_plan.md`).
 - Testing: `fhops solve-heur examples/med42/scenario.yaml --out tmp/med42_sa_smoke.csv --iters 500 --cooling-rate 0.9999 --restart-interval 50`.
 
-# 2025-12-07 — Heuristic watch telemetry upgrades
+# 2025-11-30 — Heuristic watch telemetry upgrades
 - Expanded the live watcher snapshot schema (`src/fhops/telemetry/watch.py`) to carry current/rolling objectives,
   temperature, delta-best, and sliding-window acceptance so heuristic dashboards can show more than a static best score.
 - Updated the simulated annealing runner to compute those metrics per-iteration (rolling deques, windowed acceptance) and
@@ -329,7 +329,7 @@
 - Regenerated every manuscript asset—benchmark summaries/telemetry, tuning leaderboards, playback robustness CSV/Markdown, costing demo, synthetic scaling plot, and shared snippets—so Section 3 tables/figures can cite realistic runtimes/objectives (see `docs/softwarex/assets/data/**`, `docs/softwarex/assets/figures/prisma_overview.pdf`).
 - Added `docs/softwarex/manuscript/scripts/build_tables.py` to synthesize solver-performance and tuning-leaderboard tables (CSV + LaTeX) directly from the refreshed assets, keeping Table~1/2 source-of-truth files under `docs/softwarex/assets/data/tables/`.
 
-# 2025-12-07 — SoftwareX manuscript tone corrections
+# 2025-11-24 — SoftwareX manuscript tone corrections
 - Reframed Section 2 narrative so the PRISMA workflow, tuning harness, and telemetry stack emphasise FHOPS capabilities instead of repository plumbing; manuscript now describes reproducible CLI flows without citing Makefile/includes (`docs/softwarex/manuscript/sections/software_description.tex`).
 - Tightened Section 3 illustrative example to focus on datasets, solver behaviour, KPI outputs, and FHOPS commands; removed references to internal scripts/paths so the discussion reads like a peer-reviewed case study (`docs/softwarex/manuscript/sections/illustrative_example.tex`).
 - Updated the abstract, highlights, and shared motivation snippet to describe reproducibility via the FHOPS pipeline rather than Makefile targets, ensuring the manuscript keeps a reviewer-appropriate tone (`docs/softwarex/manuscript/sections/abstract.tex`, `.../highlights.tex`, `.../includes/motivation_story.{md,tex}`).
@@ -388,11 +388,11 @@
 - Enriched the API reference pages (`docs/api/fhops.{scenario,optimization,evaluation}.rst`) with narrative intros, usage snippets, and entry-point explanations so developers understand how to move from scenarios → MIP/heuristics → KPI evaluation without reading raw autodoc output.
 - Added `docs/howto/release_playbook.rst`, a release/contribution runbook covering roadmap alignment, versioning, command suite, changelog policy, and PR expectations ahead of Phase 4 releases.
 
-# 2025-12-06 — Conversation log dedup helper
+# 2025-11-22 — Conversation log dedup helper
 - Added `scripts/dedup_conversation_log.py`, a windowed rolling-hash utility that reports duplicate multi-line chunks (default 32-line windows, 80-line minimum) and can rewrite `notes/coding-agent-conversation-log.txt` with the later copies removed. The script supports dry-run summaries, optional snippet previews, and an `--apply` flag for in-place cleanup so the long-form conversation notes no longer accumulate repeated headers when entire transcripts get pasted multiple times.
 - Verified the helper against the current log with `python scripts/dedup_conversation_log.py notes/coding-agent-conversation-log.txt --window 32 --min-lines 80` (dry run); no duplicates were detected in the present file state, confirming the new guard can be run safely before future cleanups.
 
-# 2025-12-06 — FPInnovations helicopter presets & costing
+# 2025-11-22 — FPInnovations helicopter presets & costing
 - Consolidated the ADV3/4/5/6 helicopter studies (plus the Kamov KA-32A pole-logging trial) into
   `data/productivity/helicopter_fpinnovations.json`. Each preset now captures flight distance, turn timing, payload,
   load factor, cost, and provenance metadata under a stable ID (e.g., `s64e_grapple_retention_adv5n13`). The new CLI helper
@@ -411,7 +411,7 @@
   inspection plan marks the helicopter backlog items complete, and `docs/reference/harvest_systems.rst` now references the
   preset helper, the KA-32A model, and the new machine-rate entries.
 
-# 2025-12-05 — Skyline partial-cut profiles
+# 2025-11-22 — Skyline partial-cut profiles
 - Transcribed the ADV11N17, ADV1N22 (Opening 6 group selection), TN199, SR-109 MASS shelterwood/patch/green-tree, and ADV9N4 interface-thinning tables into structured datasets (`data/reference/fpinnovations/*partial*.json`). Each file captures the published volume per shift, $/m³, trail coverage, and retention metadata so the skyline helper no longer relies solely on TR119 multipliers.
 - Introduced `data/reference/partial_cut_profiles.json`, a consolidated registry of volume/cost multipliers derived from the new datasets (plus the existing SR-109 trials). `fhops.reference.partial_cut_profiles` exposes typed loaders so downstream helpers can look up IDs such as `sr109_shelterwood`, `adv11n17_trial1`, or `tn199_partial_entry` without reopening the PDFs.
 - `fhops.dataset estimate-skyline` gained ``--partial-cut-profile``. Selecting a profile multiplies productivity by the published volume factor, annotates the telemetry/log output, and (when ``--show-costs`` is enabled) prints the CPI-aware rental rate adjusted by the matching cost multiplier. Tests cover both the manual flag and the harvest-system default path.
@@ -419,7 +419,7 @@
 - Documentation updates: `docs/reference/harvest_systems.rst` calls out the new profile plumbing in the TR-122/TR-127 sections and adds a dedicated “Partial-cut profile registry” table listing each ID, source, and multiplier. The skyline cost section now links the CLI option back to the JSON registry.
 - Planning notes mark the skyline partial-cut backlog item as complete and describe the new automation so future iterations know how to extend the registry.
 
-# 2025-12-04 — ADV15N3/ADV4N7 support penalties
+# 2025-11-22 — ADV15N3/ADV4N7 support penalties
 - Encoded the ADV15N3 bulldozer efficiency study and ADV4N7 soil-compaction guidance as structured datasets
   (`data/reference/fpinnovations/adv15n3_support.json` and `adv4n7_compaction.json`). Each record captures the published fuel
   curves, risk levels, and recommended mitigation steps so downstream helpers can apply the penalties without reopening the PDFs.
@@ -434,7 +434,7 @@
 - Updated `docs/reference/harvest_systems.rst` (road/subgrade section) and `notes/reference/skyline_small_span_notes.md` to explain
   the new automation, cite the JSON artefacts, and document how the multipliers were derived; `CHANGE_LOG.md` now records the feature.
 
-# 2025-12-01 — Grapple harvest-system presets
+# 2025-11-22 — Grapple harvest-system presets
 - Added dedicated grapple harvest-system overrides for every digitised dataset: `default_system_registry()` now ships IDs for TN-147 (Madill 009 highlead), TN-157 (alias plus salvage), the three TR-122 Roberts Creek treatments, SR-54 (Washington 118A), TR-75 (bunched & hand-felled), the ADV5N28 skyline conversions, and the Thunderbird TMY45 FNCY12 case. Each preset pins the published turn volume/yarding distance/stems-per-turn, threads the appropriate manual-falling defaults, and keeps the ADV7N3 deck overrides so CLI calls auto-populate the helper inputs when you pass `--harvest-system-id`.
 - Updated the synthetic dataset tier mixes so the new grapple IDs actually appear in generated scenarios: small tiers now sprinkle in SR-54/TN-147/TN-75 corridors, while the medium/large tiers include the Roberts Creek options alongside the ADV5N28/FNCY12 presets. This keeps the telemetry/synthetic bundles aligned with the expanded harvest-system registry.
 - Refreshed `docs/reference/harvest_systems.rst` with a grapple-specific table that maps each harvest-system ID to its helper, default payload/distance, and the CPI-aware cost role (`grapple_yarder_madill009`, `grapple_yarder_cypress7280`, `grapple_yarder_adv5n28`, `grapple_yarder_tmy45`, or the generic fallback when the publication only supplies $/m³). The narrative also calls out when the CLI prints the original FPInnovations per-m³ costs even if no dedicated machine-rate entry exists.
@@ -449,7 +449,7 @@
 - Restored the grapple-skidder repair/maintenance allowance and usage multipliers in `data/machine_rates.json` (Advantage Vol. 4 No. 23, scaled to the 1999 CAD Appendix 1 base year) so `inspect-machine`, `--show-costs`, and the costing tests can recover the proper FPInnovations usage-class adjustments.
 - Derived authentic support-machine utilisation for the FNCY12/TN258 Thunderbird TMY45 preset: `scripts/fncy12_support_split.py` now quantifies July (no supports) vs. Aug–Oct (supports) productivity and converts the Table 3 crew delta (2.5 extra workers) into Cat D8/Timberjack SMH ratios (0.3335/0.2415 per yarder SMH). `data/reference/fpinnovations/fncy12_tmy45_mini_mak.json` records those ratios, the skyline CLI pulls them dynamically (retiring the old TN-157 proxies), telemetry logs the inferred allowances, and `docs/reference/skyline_small_span_notes.md` documents the derivation.
 
-# 2025-11-30 — TR28 road-cost reference surfacing
+# 2025-11-22 — TR28 road-cost reference surfacing
 - Added a dedicated TR-28 helper (`fhops.reference.tr28_subgrade`) that parses `data/reference/fpinnovations/tr28_subgrade_machines.json`
   into typed records so future road-cost presets can reuse the movement/cycle/cost/roughness values without reopening the PDF.
 - Introduced `fhops.dataset tr28-subgrade`, a CLI summary that filters/sorts the TR-28 machines (Cat 235 backhoe, D8H dozer,
@@ -473,7 +473,7 @@
 - Added the TN-82 FMC FT-180 vs. John Deere 550 dataset (`data/reference/fpinnovations/tn82_ft180_jd550.json`) plus a CLI summary
   (`fhops.dataset tn82-ft180`) so steep-ground ground-based alternatives can be benchmarked without reopening the PDF.
 
-# 2025-11-28 — Scenario salvage-mode threading
+# 2025-11-22 — Scenario salvage-mode threading
 - Added `Block.salvage_processing_mode` handling to the scenario contract end-to-end: CSV loaders now treat the column as an optional enum (blank/NaN entries are stripped), and the synthetic dataset generator records the new field whenever a salvage harvest system (`ground_salvage_grapple`, `cable_salvage_grapple`) is assigned to a block so bundles persist the ADV1N5 portable-mill vs. in-woods-chipping choice.
 - Updated docs (`docs/howto/data_contract.rst`, `docs/reference/harvest_systems.rst`) so the scenario data contract explicitly calls out the new column and clarifies how to thread it through CLI calls/telemetry.
 - Extended the synthetic scenario tests to lock in the behaviour: salvage-enabled `generate_with_systems` invocations now assert that `STANDARD_MILL` is the default, and `generate_random_dataset` smoketests confirm the CSV/Scenario/loader path round-trips the enum without dropping the value.
@@ -496,7 +496,7 @@
 - Extended the LeDoux skyline CLI outputs with merchantable vs. residue delay components (minutes/turn) and an automatic warning whenever residue pieces drive more delay than merchantable logs, so salvage-heavy scenarios are flagged without manual spreadsheet work.
 - Added the compact Model 9 Micro Master skyline preset (`--model micro-master`) based on FERIC TN-54: the CLI now prints pieces-per-turn/payload/cycle metadata, honours `--pieces-per-cycle` / `--piece-volume-m3` / `--payload-m3` overrides, and reports productivity via the new helper (`estimate_micro_master_productivity_m3_per_pmh`). Docs/tests reference the preset so analysts can model small-span thinning yarders without resorting to Madill/Cypress surrogates.
 
-# 2025-11-27 — ADV1N12 forwarder/skidder integration
+# 2025-11-22 — ADV1N12 forwarder/skidder integration
 - Digitised the Advantage Vol. 1 No. 12 extraction-distance curves into `data/productivity/forwarder_skidder_adv1n12.json`
   (Valmet 646 forwarder plus Timberjack 240 skidder in both integrated and two-phase thinning systems) so the coefficients
   and study metadata live alongside the other FPInnovations datasets.
@@ -549,7 +549,7 @@
   toggle portable-mill vs. in-woods chipping vs. standard mill reminders directly from the CLI. Docs, planning notes,
   and CLI tests now reference the dedicated salvage presets alongside the new toggle.
 
-# 2025-11-26 — ADV7N3 processor/loader presets
+# 2025-11-22 — ADV7N3 processor/loader presets
 - Digitised the ADV7N3 summer short-log processor study into `data/productivity/processor_adv7n3.json`
   (Hyundai 210LC/Waratah 620 vs. John Deere 892/Waratah 624) including shift-level utilisation,
   detailed timing, loader task distributions, and the processor/loader/system cost splits (2004 CAD).

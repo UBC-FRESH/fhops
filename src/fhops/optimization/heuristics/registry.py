@@ -138,6 +138,20 @@ def _clone_schedule(
             block: entries.copy() for block, entries in schedule.block_slots.items()
         }
         clone.dirty_slots = set(schedule.dirty_slots)
+        if schedule.block_remaining_cache is not None:
+            clone.block_remaining_cache = dict(schedule.block_remaining_cache)
+        if schedule.role_remaining_cache is not None:
+            clone.role_remaining_cache = dict(schedule.role_remaining_cache)
+        if schedule.slot_production:
+            clone.slot_production = {
+                key: value.__class__(
+                    block_id=value.block_id,
+                    role=value.role,
+                    block_volume=value.block_volume,
+                    role_volume=value.role_volume,
+                )
+                for key, value in schedule.slot_production.items()
+            }
         return clone
 
     plan = schedule.plan.copy()
@@ -158,6 +172,20 @@ def _clone_schedule(
     clone.dirty_machines = set(schedule.dirty_machines).union(machines_to_copy)
     clone.block_slots = {block: entries.copy() for block, entries in schedule.block_slots.items()}
     clone.dirty_slots = set(schedule.dirty_slots)
+    if schedule.block_remaining_cache is not None:
+        clone.block_remaining_cache = dict(schedule.block_remaining_cache)
+    if schedule.role_remaining_cache is not None:
+        clone.role_remaining_cache = dict(schedule.role_remaining_cache)
+    if schedule.slot_production:
+        clone.slot_production = {
+            key: value.__class__(
+                block_id=value.block_id,
+                role=value.role,
+                block_volume=value.block_volume,
+                role_volume=value.role_volume,
+            )
+            for key, value in schedule.slot_production.items()
+        }
     return clone
 
 

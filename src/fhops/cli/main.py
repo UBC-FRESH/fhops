@@ -754,6 +754,11 @@ def solve_heur_cmd(
         "--restart-interval",
         help="Non-accepting iterations before SA restarts (0=auto).",
     ),
+    milp_objective: float | None = typer.Option(
+        None,
+        "--milp-objective",
+        help="Reference MILP objective for gap reporting in watch/telemetry output.",
+    ),
     watch: bool = typer.Option(
         False,
         "--watch/--no-watch",
@@ -924,6 +929,7 @@ def solve_heur_cmd(
         "objective_weight_overrides": (
             objective_weight_override if objective_weight_override else None
         ),
+        "milp_objective": milp_objective,
     }
     if resolved.extra_kwargs:
         sa_kwargs.update(resolved.extra_kwargs)
@@ -1147,6 +1153,11 @@ def solve_ils_cmd(
         help="Worker threads for batched neighbour evaluation (1 keeps sequential scoring).",
         min=1,
     ),
+    milp_objective: float | None = typer.Option(
+        None,
+        "--milp-objective",
+        help="Reference MILP objective for gap reporting in watch/telemetry output.",
+    ),
     telemetry_log: Path | None = typer.Option(
         None,
         "--telemetry-log",
@@ -1352,6 +1363,7 @@ def solve_ils_cmd(
         "objective_weight_overrides": (
             objective_weight_override if objective_weight_override else None
         ),
+        "milp_objective": milp_objective,
     }
     solver_kwargs.update(extra_ils_kwargs)
     solver_kwargs.update(telemetry_kwargs)
@@ -1437,6 +1449,11 @@ def solve_tabu_cmd(
     ),
     parallel_workers: int = typer.Option(
         1, "--parallel-workers", help="Threads for scoring batched neighbours."
+    ),
+    milp_objective: float | None = typer.Option(
+        None,
+        "--milp-objective",
+        help="Reference MILP objective for gap reporting in watch/telemetry output.",
     ),
     operator: list[str] | None = typer.Option(
         None, "--operator", "-o", help="Enable specific operators (repeatable)."
@@ -1666,6 +1683,7 @@ def solve_tabu_cmd(
         "objective_weight_overrides": (
             objective_weight_override if objective_weight_override else None
         ),
+        "milp_objective": milp_objective,
     }
     solver_kwargs.update(profile_extra_kwargs)
     solver_kwargs.update(telemetry_kwargs)

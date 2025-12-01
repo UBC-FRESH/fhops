@@ -83,6 +83,7 @@ def solve_tabu(
     watch_debug: bool = False,
     use_local_repairs: bool = False,
     objective_weight_overrides: dict[str, float] | None = None,
+    milp_objective: float | None = None,
 ) -> dict[str, Any]:
     """Run Tabu Search using the shared operator registry.
 
@@ -125,6 +126,9 @@ def solve_tabu(
         Override scenario objective weights (keys: ``production``, ``mobilisation``, ``transitions``,
         ``landing_slack``). ``None`` keeps scenario defaults, but Tiny7/Small21 auto-apply a reduced
         mobilisation weight to encourage exploration.
+    milp_objective : float | None, optional
+        Reference MILP objective for reporting the current gap (best - MILP) in watch telemetry and
+        result metadata. ``None`` skips gap reporting.
 
     Returns
     -------
@@ -173,6 +177,8 @@ def solve_tabu(
         "stall_limit": stall_limit,
         "operators": registry.weights(),
     }
+    if milp_objective is not None:
+        config_snapshot["milp_objective"] = float(milp_objective)
     if resolved_weight_overrides:
         config_snapshot["objective_weight_overrides"] = resolved_weight_overrides
     context_payload = dict(telemetry_context or {})
@@ -298,6 +304,11 @@ def solve_tabu(
             }
             if debug_capture:
                 metadata.update(build_watch_metadata_from_debug(current_debug_stats))
+            elif getattr(current, "watch_stats", None):
+                metadata.update(build_watch_metadata_from_debug(current.watch_stats))
+            if milp_objective is not None:
+                metadata["milp_objective"] = f"{milp_objective:.3f}"
+                metadata["milp_gap"] = f"{best_score - milp_objective:.3f}"
             watch_sink(
                 Snapshot(
                     scenario=watch_scenario,
@@ -479,6 +490,9 @@ def solve_tabu(
             "operators": registry.weights(),
             "algorithm": "tabu",
         }
+        if milp_objective is not None:
+            meta["milp_objective"] = float(milp_objective)
+            meta["milp_gap"] = float(best_score - milp_objective)
         if resolved_weight_overrides:
             meta["objective_weight_overrides"] = resolved_weight_overrides
         meta["objective_weights"] = objective_weights_snapshot
@@ -507,6 +521,14 @@ def solve_tabu(
                 metrics={
                     "objective": float(best_score),
                     "initial_score": float(initial_score),
+                    **(
+                        {
+                            "milp_objective": float(milp_objective),
+                            "milp_gap": float(best_score - milp_objective),
+                        }
+                        if milp_objective is not None
+                        else {}
+                    ),
                     **numeric_kpis,
                 },
                 extra={

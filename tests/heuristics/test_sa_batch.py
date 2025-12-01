@@ -129,3 +129,11 @@ def test_solve_sa_restart_interval_meta():
     meta = res["meta"]
     assert meta["restart_interval"] == 250
     assert meta["cooling_rate"] == pytest.approx(0.999)
+
+
+def test_solve_sa_reports_milp_gap():
+    pb = _simple_problem()
+    res = solve_sa(pb, iters=5, seed=3, milp_objective=100.0)
+    meta = res["meta"]
+    assert meta["milp_objective"] == pytest.approx(100.0)
+    assert "milp_gap" in meta

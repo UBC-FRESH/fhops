@@ -99,6 +99,7 @@ def solve_sa(
     watch_debug: bool = False,
     use_local_repairs: bool = False,
     objective_weight_overrides: dict[str, float] | None = None,
+    milp_objective: float | None = None,
 ) -> dict[str, Any]:
     """Solve the scheduling problem with simulated annealing.
 
@@ -145,6 +146,9 @@ def solve_sa(
         Override scenario objective weights (keys: ``production``, ``mobilisation``, ``transitions``,
         ``landing_slack``). ``None`` keeps scenario defaults, but Tiny7/Small21 scenarios auto-apply
         a reduced mobilisation weight to encourage exploration.
+    milp_objective : float | None, optional
+        Reference MILP objective used for gap reporting (best - MILP) in watch/telemetry output.
+        ``None`` skips gap metrics.
 
     Returns
     -------
@@ -205,6 +209,8 @@ def solve_sa(
         "restart_interval": restart_interval_value,
         "operators": registry.weights(),
     }
+    if milp_objective is not None:
+        config_snapshot["milp_objective"] = float(milp_objective)
     if resolved_weight_overrides:
         config_snapshot["objective_weight_overrides"] = resolved_weight_overrides
     if auto_profile_applied:
@@ -386,9 +392,14 @@ def solve_sa(
                 metadata = dict(watch_meta)
                 if debug_capture:
                     metadata.update(build_watch_metadata_from_debug(current_debug_stats))
+                elif getattr(current, "watch_stats", None):
+                    metadata.update(build_watch_metadata_from_debug(current.watch_stats))
                 metadata.setdefault("greedy_objective", f"{initial_score:.3f}")
                 metadata.setdefault("obj_delta_vs_initial", f"{best_score - initial_score:.3f}")
                 metadata.setdefault("assignment_delta_slots", str(best_assignment_delta))
+                if milp_objective is not None:
+                    metadata["milp_objective"] = f"{milp_objective:.3f}"
+                    metadata["milp_gap"] = f"{best_score - milp_objective:.3f}"
                 watch_sink(
                     Snapshot(
                         scenario=watch_scenario,
@@ -461,9 +472,14 @@ def solve_sa(
             metadata = dict(watch_meta)
             if debug_capture:
                 metadata.update(build_watch_metadata_from_debug(best_debug_stats))
+            elif getattr(best, "watch_stats", None):
+                metadata.update(build_watch_metadata_from_debug(best.watch_stats))
             metadata.setdefault("greedy_objective", f"{initial_score:.3f}")
             metadata.setdefault("obj_delta_vs_initial", f"{best_score - initial_score:.3f}")
             metadata.setdefault("assignment_delta_slots", str(best_assignment_delta))
+            if milp_objective is not None:
+                metadata["milp_objective"] = f"{milp_objective:.3f}"
+                metadata["milp_gap"] = f"{best_score - milp_objective:.3f}"
             watch_sink(
                 Snapshot(
                     scenario=watch_scenario,
@@ -498,6 +514,9 @@ def solve_sa(
             "restart_interval": int(restart_interval_value),
             "operators": registry.weights(),
         }
+        if milp_objective is not None:
+            meta["milp_objective"] = float(milp_objective)
+            meta["milp_gap"] = float(best_score - milp_objective)
         if resolved_weight_overrides:
             meta["objective_weight_overrides"] = resolved_weight_overrides
         meta["objective_weights"] = objective_weights_snapshot
@@ -545,6 +564,14 @@ def solve_sa(
                     "initial_score": float(initial_score),
                     "objective_delta_vs_initial": float(best_score - initial_score),
                     "acceptance_rate": meta["acceptance_rate"],
+                    **(
+                        {
+                            "milp_objective": float(milp_objective),
+                            "milp_gap": float(best_score - milp_objective),
+                        }
+                        if milp_objective is not None
+                        else {}
+                    ),
                     **numeric_kpis,
                 },
                 extra={
