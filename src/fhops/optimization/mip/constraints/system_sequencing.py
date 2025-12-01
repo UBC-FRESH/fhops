@@ -63,9 +63,11 @@ def apply_system_sequencing_constraints(
 
     shifts_up_to: dict[tuple[int, str], list[tuple[int, str]]] = {}
     shifts_before: dict[tuple[int, str], list[tuple[int, str]]] = {}
+    prev_shift_map: dict[tuple[int, str], tuple[int, str] | None] = {}
     for idx, shift in enumerate(ordered_shifts):
         shifts_up_to[shift] = ordered_shifts[: idx + 1]
         shifts_before[shift] = ordered_shifts[:idx]
+        prev_shift_map[shift] = ordered_shifts[idx - 1] if idx > 0 else None
 
     prereq_index = [
         (blk, role, prereq) for (blk, role), prereqs in prereq_roles.items() for prereq in prereqs
@@ -241,9 +243,24 @@ def apply_system_sequencing_constraints(
         )
 
     landing_blocks: dict[str, list[str]] = defaultdict(list)
+    landing_loader_roles: dict[str, set[str]] = defaultdict(set)
+    landing_loader_upstream: dict[str, set[str]] = defaultdict(set)
+    block_loader_roles: dict[str, set[str]] = defaultdict(set)
+    block_loader_upstream: dict[str, set[str]] = defaultdict(set)
+
     for blk, landing_id in landing_for_block.items():
         if landing_id is not None:
             landing_blocks[landing_id].append(blk)
+    for blk, role in loader_roles:
+        landing_id = landing_for_block.get(blk)
+        if not landing_id:
+            continue
+        landing_loader_roles[landing_id].add(role)
+        prereqs = prereq_roles.get((blk, role))
+        if prereqs:
+            landing_loader_upstream[landing_id].update(prereqs)
+            block_loader_upstream[blk].update(prereqs)
+        block_loader_roles[blk].add(role)
 
     landing_loader_prereqs: dict[tuple[str, str], set[str]] = {}
     for blk, role in loader_roles:
@@ -257,38 +274,82 @@ def apply_system_sequencing_constraints(
         landing_loader_prereqs.setdefault(key, set()).update(prereqs)
 
     landing_loader_index = [
-        (landing_id, role, prereq)
-        for (landing_id, role), prereqs in landing_loader_prereqs.items()
-        for prereq in prereqs
+        (landing_id, day, shift_id)
+        for landing_id in landing_loader_roles.keys()
+        for day, shift_id in ordered_shifts
     ]
     if landing_loader_index:
         model.landing_loader_index = pyo.Set(initialize=landing_loader_index, dimen=3)
 
-        def landing_loader_rule(mdl, landing_id, role, prereq, day, shift_id):
+        def landing_loader_rule(mdl, landing_id, day, shift_id):
             loader_blocks = landing_blocks.get(landing_id, [])
-            if not loader_blocks:
+            loader_role_set = landing_loader_roles.get(landing_id, set())
+            upstream_role_set = landing_loader_upstream.get(landing_id, set())
+            if not loader_blocks or not loader_role_set or not upstream_role_set:
                 return pyo.Constraint.Skip
-            loader_machines = machines_by_role.get(role)
-            prereq_machines = machines_by_role.get(prereq)
-            if not loader_machines or not prereq_machines:
+            loader_machines = [
+                mach
+                for role in loader_role_set
+                for mach in machines_by_role.get(role, [])
+            ]
+            upstream_machines = [
+                mach
+                for role in upstream_role_set
+                for mach in machines_by_role.get(role, [])
+            ]
+            if not loader_machines or not upstream_machines:
                 return pyo.Constraint.Skip
             shift_key = (day, shift_id)
+            upto = shifts_up_to.get(shift_key, [])
+            if not upto:
+                return pyo.Constraint.Skip
             lhs = sum(
                 mdl.prod[mach, blk, s]
                 for blk in loader_blocks
                 for mach in loader_machines
-                for s in shifts_up_to.get(shift_key, [])
+                for s in upto
             )
             rhs = sum(
                 mdl.prod[mach, blk, s]
                 for blk in loader_blocks
-                for mach in prereq_machines
-                for s in shifts_before.get(shift_key, [])
+                for mach in upstream_machines
+                for s in upto
             )
             return lhs <= rhs
 
         model.landing_loader_sequencing = pyo.Constraint(
-            model.landing_loader_index, model.S, rule=landing_loader_rule
+            model.landing_loader_index, rule=landing_loader_rule
+        )
+    if block_loader_roles:
+        model.block_inventory_blocks = pyo.Set(initialize=sorted(block_loader_roles.keys()))
+        model.block_inventory = pyo.Var(
+            model.block_inventory_blocks, model.S, domain=pyo.NonNegativeReals
+        )
+
+        def block_inventory_rule(mdl, blk, day, shift_id):
+            if blk not in block_loader_roles:
+                return pyo.Constraint.Skip
+            loader_role_set = block_loader_roles.get(blk, set())
+            upstream_role_set = block_loader_upstream.get(blk, set())
+            shift_key = (day, shift_id)
+            prev_shift = prev_shift_map.get(shift_key)
+            prev_inventory = (
+                mdl.block_inventory[blk, prev_shift] if prev_shift is not None else 0.0
+            )
+            upstream = sum(
+                mdl.prod[mach, blk, shift_key]
+                for role in upstream_role_set
+                for mach in machines_by_role.get(role, [])
+            )
+            loader = sum(
+                mdl.prod[mach, blk, shift_key]
+                for role in loader_role_set
+                for mach in machines_by_role.get(role, [])
+            )
+            return mdl.block_inventory[blk, shift_key] == prev_inventory + upstream - loader
+
+        model.block_inventory_balance = pyo.Constraint(
+            model.block_inventory_blocks, model.S, rule=block_inventory_rule
         )
 
 

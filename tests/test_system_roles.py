@@ -565,8 +565,11 @@ def test_landing_loader_constraint_enforces_shared_staging():
     model.x["L1M", "B1", shift].value = 1
     _set_prod(model, "L1M", "B1", shift, 5.0)
 
-    con = model.landing_loader_sequencing["L1", "loader", "processor", *shift]
+    model.block_inventory["B1", shift].value = 0
+    con = model.block_inventory_balance["B1", *shift]
     assert pyo.value(con.body) > 0
+    landing_con = model.landing_loader_sequencing["L1", *shift]
+    assert pyo.value(landing_con.body) > 0
 
 
 def test_sa_evaluator_requires_all_prereqs_before_helicopter():
