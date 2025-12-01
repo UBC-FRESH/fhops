@@ -686,6 +686,8 @@ If you’re good with this breakdown, I’ll start implementing the objective-we
   - [x] Introduce cumulative variables or expressions (e.g., `prod_prefix[block, role, t]`) that sum `prod` up to shift `t`; enforce `loader_prefix ≤ upstream_prefix − batch_volume` for every `(block, loader_role, upstream_role, shift)` combination once the head-start window opens. *(Loader buffer constraints now reuse the shared prefix ordering, and the new headstart guard uses per-role activation binaries to mirror SequencingTracker’s “counts before current shift” check.)*
   - [ ] Include landing-level staging where relevant by ensuring total loader draws cannot exceed upstream deliveries at the landing, mirroring the evaluator’s `SequencingTracker` logic.
   - [ ] Gate all new constraints behind the sequencing flag so we can still debug/disable them on pathological datasets.
+  - [x] Track per-block inventory so net staged volume equals cumulative upstream minus loader draws, and reference those inventories in block/landing loader constraints to prevent double-counting staged wood.
+  - [ ] Landing-level staging still has a residual 30 m³ deficit on large84 (block B07 day 24). Documented the gap; plan to either tighten inventory linkage (subtract loader usage per landing) or accept it as a known limitation in the regression.
 
 - [ ] **Solver validation + dataset tuning**
   - [ ] Run `fhops solve-mip-operational examples/large84/scenario.yaml --solver gurobi --time-limit 900 --gap 0.01 --sequencing-debug` and record runtime, objective, and sequencing counters.
