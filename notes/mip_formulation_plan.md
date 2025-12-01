@@ -682,8 +682,8 @@ If you’re good with this breakdown, I’ll start implementing the objective-we
   - [x] Capture these metadata fields inside the MILP bundle snapshot so unit tests / regression fixtures can assert we are building constraints with the right parameters. *(Already available via `OperationalMilpBundle`; constraint builder now consumes the shared context directly.)*
 
 - [ ] **Prefix-balance constraints (SequencingTracker parity)**
-  - [ ] Build ordered shift indices per machine/role (reuse `shift_keys` + `shift_index`) so the MILP can reference per-shift production prefixes without re-sorting.
-  - [ ] Introduce cumulative variables or expressions (e.g., `prod_prefix[block, role, t]`) that sum `prod` up to shift `t`; enforce `loader_prefix ≤ upstream_prefix − batch_volume` for every `(block, loader_role, upstream_role, shift)` combination once the head-start window opens.
+  - [x] Build ordered shift indices per machine/role (reuse `shift_keys` + `shift_index`) so the MILP can reference per-shift production prefixes without re-sorting. *(`apply_system_sequencing_constraints` now consumes the precomputed `ctx.shift_keys` ordering when building prefix sets.)*
+  - [x] Introduce cumulative variables or expressions (e.g., `prod_prefix[block, role, t]`) that sum `prod` up to shift `t`; enforce `loader_prefix ≤ upstream_prefix − batch_volume` for every `(block, loader_role, upstream_role, shift)` combination once the head-start window opens. *(Loader buffer constraints now reuse the shared prefix ordering, and the new headstart guard uses per-role activation binaries to mirror SequencingTracker’s “counts before current shift” check.)*
   - [ ] Include landing-level staging where relevant by ensuring total loader draws cannot exceed upstream deliveries at the landing, mirroring the evaluator’s `SequencingTracker` logic.
   - [ ] Gate all new constraints behind the sequencing flag so we can still debug/disable them on pathological datasets.
 

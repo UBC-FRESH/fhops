@@ -46,6 +46,19 @@ def _set_prod(model, machine_id: str, block_id: str, shift_key: tuple[int, str],
     model.prod[machine_id, block_id, shift_key].value = value
 
 
+def _set_headstart_flag(
+    model,
+    block_id: str,
+    role: str,
+    shift_key: tuple[int, str],
+    value: int,
+) -> None:
+    if hasattr(model, "role_active"):
+        key = (block_id, role, shift_key[0], shift_key[1])
+        if key in model.role_active:
+            model.role_active[key].value = value
+
+
 def test_role_constraints_restrict_assignments():
     system = HarvestSystem(
         system_id="forward_only",
@@ -433,6 +446,64 @@ def test_helicopter_system_requires_all_prerequisites():
     con_hook = model.system_sequencing["B1", "helicopter", "hook_tender", *shift2]
     assert pyo.value(con_faller.body) <= pyo.value(con_faller.upper)
     assert pyo.value(con_hook.body) <= pyo.value(con_hook.upper)
+
+
+def test_headstart_constraints_block_downstream_roles_until_buffer_met():
+    system = HarvestSystem(
+        system_id="buffered_sequence",
+        jobs=[
+            SystemJob(name="felling", machine_role="feller", prerequisites=[]),
+            SystemJob(name="processing", machine_role="processor", prerequisites=["felling"]),
+        ],
+        role_headstart_shifts={"processor": 1.0},
+    )
+    scenario = Scenario(
+        name="headstart-seq",
+        num_days=2,
+        blocks=[
+            Block(
+                id="B1",
+                landing_id="L1",
+                work_required=10.0,
+                earliest_start=1,
+                latest_finish=2,
+                harvest_system_id="buffered_sequence",
+            )
+        ],
+        machines=[
+            Machine(id="M1", role="feller"),
+            Machine(id="M2", role="processor"),
+        ],
+        landings=[Landing(id="L1", daily_capacity=1)],
+        calendar=[
+            CalendarEntry(machine_id="M1", day=1, available=1),
+            CalendarEntry(machine_id="M2", day=1, available=1),
+            CalendarEntry(machine_id="M1", day=2, available=1),
+            CalendarEntry(machine_id="M2", day=2, available=1),
+        ],
+        production_rates=[
+            ProductionRate(machine_id="M1", block_id="B1", rate=5.0),
+            ProductionRate(machine_id="M2", block_id="B1", rate=5.0),
+        ],
+        harvest_systems={"buffered_sequence": system},
+    )
+    pb = Problem.from_scenario(scenario)
+    model = build_model(pb)
+    shift_day1 = _shift_key(pb, 1)
+    shift_day2 = _shift_key(pb, 2)
+
+    _reset_assignments(model)
+    model.x["M2", "B1", shift_day1].value = 1
+    _set_headstart_flag(model, "B1", "processor", shift_day1, 1)
+    con = model.system_headstart["B1", "processor", "feller", *shift_day1]
+    assert pyo.value(con.body) > 0
+
+    _reset_assignments(model)
+    model.x["M1", "B1", shift_day1].value = 1
+    model.x["M2", "B1", shift_day2].value = 1
+    _set_headstart_flag(model, "B1", "processor", shift_day2, 1)
+    con = model.system_headstart["B1", "processor", "feller", *shift_day2]
+    assert pyo.value(con.body) <= 0
 
 
 def test_sa_evaluator_requires_all_prereqs_before_helicopter():

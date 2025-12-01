@@ -49,7 +49,9 @@ def apply_system_sequencing_constraints(
 
     model.role_filter = pyo.Constraint(model.M, model.B, model.S, rule=role_constraint_rule)
 
-    ordered_shifts = list(shift_sequence)
+    ordered_shifts = list(getattr(ctx, "shift_keys", ()))
+    if not ordered_shifts:
+        ordered_shifts = list(shift_sequence)
     if not ordered_shifts:
         return
 
@@ -95,31 +97,141 @@ def apply_system_sequencing_constraints(
         if (blk, role) in loader_roles
         for prereq in prereqs
     ]
-    if not loader_index:
-        return
+    if loader_index:
+        model.system_loader_index = pyo.Set(initialize=loader_index, dimen=3)
 
-    model.system_loader_index = pyo.Set(initialize=loader_index, dimen=3)
+        def loader_buffer_rule(mdl, blk, role, prereq, day, shift_id):
+            machines_role = machines_by_role.get(role)
+            prereq_machines = machines_by_role.get(prereq)
+            if not machines_role or not prereq_machines:
+                return pyo.Constraint.Skip
+            shift_key = (day, shift_id)
+            lhs = sum(
+                mdl.prod[mach, blk, s]
+                for mach in machines_role
+                for s in shifts_up_to.get(shift_key, [])
+            )
+            rhs = sum(
+                mdl.prod[mach, blk, s]
+                for mach in prereq_machines
+                for s in shifts_before.get(shift_key, [])
+            )
+            buffer = loader_batches.get(blk, 0.0)
+            return lhs <= rhs - buffer
 
-    def loader_buffer_rule(mdl, blk, role, prereq, day, shift_id):
-        machines_role = machines_by_role.get(role)
-        prereq_machines = machines_by_role.get(prereq)
-        if not machines_role or not prereq_machines:
-            return pyo.Constraint.Skip
-        shift_key = (day, shift_id)
-        lhs = sum(
-            mdl.prod[mach, blk, s] for mach in machines_role for s in shifts_up_to.get(shift_key, [])
+        model.system_loader_buffer = pyo.Constraint(
+            model.system_loader_index, model.S, rule=loader_buffer_rule
         )
-        rhs = sum(
-            mdl.prod[mach, blk, s]
-            for mach in prereq_machines
-            for s in shifts_before.get(shift_key, [])
-        )
-        buffer = loader_batches.get(blk, 0.0)
-        return lhs <= rhs - buffer
 
-    model.system_loader_buffer = pyo.Constraint(
-        model.system_loader_index, model.S, rule=loader_buffer_rule
-    )
+    headstart_buffers = {key: value for key, value in ctx.role_headstarts.items() if value > 0.0}
+    activation_roles = set(loader_roles) | set(headstart_buffers.keys())
+
+    role_active_defined = False
+    if activation_roles:
+        activation_index = [
+            (blk, role, day, shift_id)
+            for blk, role in activation_roles
+            for day, shift_id in ordered_shifts
+        ]
+        model.role_activation_index = pyo.Set(initialize=activation_index, dimen=4)
+        model.role_active = pyo.Var(model.role_activation_index, domain=pyo.Binary, initialize=0)
+        role_active_defined = True
+
+        lb_index = [
+            (blk, role, mach, day, shift_id)
+            for blk, role in activation_roles
+            for mach in machines_by_role.get(role, [])
+            for day, shift_id in ordered_shifts
+        ]
+        if lb_index:
+            model.role_activation_lb_index = pyo.Set(initialize=lb_index, dimen=5)
+
+            def role_activation_lb_rule(mdl, blk, role, mach, day, shift_id):
+                return mdl.role_active[blk, role, day, shift_id] >= mdl.x[mach, blk, (day, shift_id)]
+
+            model.role_activation_lb = pyo.Constraint(
+                model.role_activation_lb_index, rule=role_activation_lb_rule
+            )
+
+        def role_activation_ub_rule(mdl, blk, role, day, shift_id):
+            machines_role = machines_by_role.get(role)
+            if not machines_role:
+                return pyo.Constraint.Skip
+            return mdl.role_active[blk, role, day, shift_id] <= sum(
+                mdl.x[mach, blk, (day, shift_id)] for mach in machines_role
+            )
+
+        model.role_activation_ub = pyo.Constraint(
+            model.role_activation_index, rule=role_activation_ub_rule
+        )
+
+    headstart_index = [
+        (blk, role, prereq)
+        for (blk, role), buffer in headstart_buffers.items()
+        if buffer > 0.0
+        for prereq in prereq_roles.get((blk, role), ())
+    ]
+    if headstart_index:
+        model.system_headstart_index = pyo.Set(initialize=headstart_index, dimen=3)
+
+        def headstart_rule(mdl, blk, role, prereq, day, shift_id):
+            machines_role = machines_by_role.get(role)
+            prereq_machines = machines_by_role.get(prereq)
+            if not machines_role or not prereq_machines:
+                return pyo.Constraint.Skip
+            shift_key = (day, shift_id)
+            buffer = headstart_buffers.get((blk, role), 0.0)
+            if buffer <= 0.0:
+                return pyo.Constraint.Skip
+            before = shifts_before.get(shift_key, [])
+            if not before:
+                return sum(mdl.x[mach, blk, (day, shift_id)] for mach in machines_role) == 0
+            lhs = sum(
+                mdl.x[mach, blk, s]
+                for mach in machines_role
+                for s in before
+            )
+            rhs = sum(
+                mdl.x[mach, blk, s]
+                for mach in prereq_machines
+                for s in before
+            )
+            return lhs + buffer <= rhs
+
+        model.system_headstart = pyo.Constraint(
+            model.system_headstart_index, model.S, rule=headstart_rule
+        )
+
+    if role_active_defined and loader_roles:
+        loader_activation_index = [
+            (blk, role, day, shift_id)
+            for blk, role in loader_roles
+            for day, shift_id in ordered_shifts
+        ]
+        model.loader_activation_index = pyo.Set(initialize=loader_activation_index, dimen=4)
+
+        def loader_batch_rule(mdl, blk, role, day, shift_id):
+            buffer = loader_batches.get(blk, 0.0)
+            if buffer <= 0.0:
+                return pyo.Constraint.Skip
+            prereq_set = prereq_roles.get((blk, role))
+            if not prereq_set:
+                return pyo.Constraint.Skip
+            shift_key = (day, shift_id)
+            before = shifts_before.get(shift_key, [])
+            if not before:
+                return mdl.role_active[blk, role, day, shift_id] == 0
+            rhs = sum(
+                mdl.prod[mach, blk, s]
+                for prereq_role in prereq_set
+                for mach in machines_by_role.get(prereq_role, [])
+                for s in before
+            )
+            return buffer * mdl.role_active[blk, role, day, shift_id] <= rhs
+
+        model.loader_batch_activation = pyo.Constraint(
+            model.loader_activation_index, rule=loader_batch_rule
+        )
 
 
 __all__ = ["apply_system_sequencing_constraints"]
