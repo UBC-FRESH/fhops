@@ -543,7 +543,7 @@ DATASET_CONFIGS = {
         num_blocks=6,
         machines_by_role=_med42_machine_roster(),
         block_profiles=SMALL_TIER_PROFILES,
-        work_scale=0.8,
+        work_scale=2.1,
     ),
     "med42": DatasetConfig(
         name="med42",
@@ -552,16 +552,16 @@ DATASET_CONFIGS = {
         num_blocks=12,
         machines_by_role=_med42_machine_roster(),
         block_profiles=SMALL_TIER_PROFILES,
-        work_scale=0.85,
+        work_scale=2.45,
     ),
     "large84": DatasetConfig(
         name="large84",
         label="Large84",
         num_days=84,
-        num_blocks=24,
+        num_blocks=48,
         machines_by_role=_large84_machine_roster(),
         block_profiles=SMALL_TIER_PROFILES,
-        work_scale=0.75,
+        work_scale=5.8,
     ),
 }
 

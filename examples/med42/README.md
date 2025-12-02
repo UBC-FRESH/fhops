@@ -1,8 +1,8 @@
 # FHOPS Medium42
 
 - Planning horizon: 42 days
-- Blocks: 12 (≈15,419 m³ total volume)
-- Large-block share (≥12 ha): 0/12
+- Blocks: 12 (≈38,193 m³ total volume)
+- Large-block share (≥12 ha): 6/12
 - Machine roster: feller_buncher=2, grapple_skidder=1, roadside_processor=3, loader=3
 
 Synthetic blocks follow Lahrsen-aligned stand attributes and FHOPS productivity regressions
