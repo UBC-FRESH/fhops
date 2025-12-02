@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from typing import Any
 
 import pandas as pd
@@ -29,6 +30,7 @@ def solve_operational_milp(
     time_limit: int | None = None,
     gap: float | None = None,
     tee: bool = False,
+    solver_options: Mapping[str, object] | None = None,
 ) -> dict[str, Any]:
     """Solve the operational MILP given a prepared bundle."""
 
@@ -41,6 +43,9 @@ def solve_operational_milp(
         opt.options["mipgap"] = gap  # Gurobi/CPLEX-style
         if solver.lower() not in {"gurobi", "cplex"}:
             opt.options["mip_rel_gap"] = gap  # HiGHS-style
+    if solver_options:
+        for key, value in solver_options.items():
+            opt.options[str(key)] = value
     result = opt.solve(model, tee=tee, load_solutions=True)
     status = str(result.solver.status).lower()
     termination = str(result.solver.termination_condition).lower()

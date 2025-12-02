@@ -118,7 +118,43 @@ def _ensure_kpi_dict(kpis: Any) -> dict[str, Any]:
     """Normalize KPI payloads (dataclasses, pandas objects, dicts) into a plain dict."""
     if hasattr(kpis, "to_dict") and callable(kpis.to_dict):
         return dict(kpis.to_dict())
-    return dict(kpis)
+    return dict(kpis or {})
+
+
+def _coerce_solver_option_value(raw_value: str) -> object:
+    """Attempt to coerce solver option values into bool/int/float; fallback to string."""
+
+    value = raw_value.strip()
+    if not value:
+        return ""
+    lowered = value.lower()
+    if lowered in {"true", "false"}:
+        return lowered == "true"
+    try:
+        return int(value)
+    except ValueError:
+        pass
+    try:
+        return float(value)
+    except ValueError:
+        return value
+
+
+def _parse_solver_options(option_args: Sequence[str] | None) -> dict[str, object]:
+    """Parse ``name=value`` solver options supplied via the CLI."""
+
+    parsed: dict[str, object] = {}
+    if not option_args:
+        return parsed
+    for entry in option_args:
+        if "=" not in entry:
+            raise typer.BadParameter(f"Solver options must be key=value (got '{entry}')")
+        key, raw_value = entry.split("=", 1)
+        key = key.strip()
+        if not key:
+            raise typer.BadParameter(f"Solver option missing name in '{entry}'")
+        parsed[key] = _coerce_solver_option_value(raw_value)
+    return parsed
 
 
 def _format_metric_value(value: Any) -> Any:
@@ -521,6 +557,11 @@ def solve_mip_operational_cmd(
         None, "--time-limit", help="Optional wall-clock time limit (seconds)."
     ),
     gap: float | None = typer.Option(None, "--gap", help="Optional relative MIP gap target (0-1)."),
+    solver_option: list[str] | None = typer.Option(
+        None,
+        "--solver-option",
+        help="Repeatable name=value pairs forwarded to the MILP solver (e.g., --solver-option Threads=4).",
+    ),
     bundle_json: Path | None = typer.Option(
         None,
         "--bundle-json",
@@ -564,6 +605,8 @@ def solve_mip_operational_cmd(
     if scenario is None and bundle_json is None:
         raise typer.BadParameter("Provide either a scenario path or --bundle-json.")
 
+    parsed_solver_options = _parse_solver_options(solver_option)
+
     pb: Problem | None = None
     bundle = None
     scenario_label: str | None = None
@@ -598,7 +641,12 @@ def solve_mip_operational_cmd(
             solver="milp-operational",
             scenario=scenario_label,
             scenario_path=scenario_path_str,
-            config={"solver": solver, "time_limit": time_limit, "gap": gap},
+            config={
+                "solver": solver,
+                "time_limit": time_limit,
+                "gap": gap,
+                "solver_options": parsed_solver_options or None,
+            },
             context=context_snapshot,
             step_interval=None,
         )
@@ -641,6 +689,7 @@ def solve_mip_operational_cmd(
                 time_limit=time_limit,
                 gap=gap,
                 tee=debug,
+                solver_options=parsed_solver_options or None,
             )
             runtime_seconds = time.perf_counter() - start_time
             objective_value = float(result.get("objective") or 0.0)
