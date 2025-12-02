@@ -94,6 +94,9 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
     delivered_total = getattr(playback_result, "delivered_total", None)
     remaining_work_total = getattr(playback_result, "remaining_work_total", None)
 
+    sc = pb.scenario
+    total_required = sum(block.work_required for block in sc.blocks)
+
     mobilisation_cost = 0.0
     mobilisation_by_machine: dict[str, float] = defaultdict(float)
     mobilisation_by_landing: dict[str, float] = defaultdict(float)
@@ -123,7 +126,6 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
             seq_violation_days.add((record.block_id, record.day))
             seq_reason_counts[str(violation)] += 1
 
-    sc = pb.scenario
     if delivered_total is None:
         delivered_total = fallback_prod
     result: dict[str, float | int | str] = {
@@ -132,8 +134,16 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
     }
     if remaining_work_total is not None:
         staged_volume = float(remaining_work_total)
+        residual = float(total_required - float(delivered_total))
+        if residual >= 0 and abs(staged_volume - residual) <= 1e-6:
+            staged_volume = residual
+        if abs(staged_volume) <= 1e-6:
+            staged_volume = 0.0
         result["staged_production"] = staged_volume
         result["remaining_work_total"] = staged_volume
+        adjusted_total = float(total_required) - staged_volume
+        if adjusted_total >= 0:
+            result["total_production"] = adjusted_total
     if mobilisation_cost > 0:
         result["mobilisation_cost"] = mobilisation_cost
         result["mobilisation_cost_by_machine"] = json.dumps(

@@ -4,9 +4,8 @@ import json
 import sqlite3
 from pathlib import Path
 
-import yaml
-
 import pytest
+import yaml
 
 from fhops.cli._utils import resolve_operator_presets
 from fhops.optimization.heuristics import solve_sa

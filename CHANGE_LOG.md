@@ -1,3 +1,39 @@
+# 2025-12-02 — Benchmark harness uses the operational MILP path
+- `fhops.cli.benchmarks.run_benchmark_suite` now builds the operational bundle and calls `solve_operational_milp` whenever `include_mip=True`, so the CLI, tests, and telemetry all exercise the same MILP plumbing. Legacy `--driver` aliases map onto solver candidates (`auto` ⇒ Gurobi→HiGHS fallback), and the summary rows now persist the chosen solver plus solver/termination status.
+- Re-enabled the tiny7 benchmark regression so it checks both SA and MIP rows: `tests/test_benchmark_harness.py::test_benchmark_suite_tiny7` now asserts the `mip_assignments.csv` dump exists, verifies the “exact” solver category, and ensures the summary gap columns stay consistent with the recorded objective.
+- Removed the unused `window_span` sample from `scripts/rebuild_reference_datasets.py` so the pre-commit Ruff gate stops flagging dead assignments while we work through the remaining dataset refresh tasks.
+- Restored the missing preset fixture at `tests/fixtures/presets/tiny7_explore.yaml` so the SA preset regression can read a real scenario/preset/expected-weight bundle again; the test now proves the explore preset pins mobilisation/transitions/landing weights deterministically.
+- Regenerated the SA benchmark fixtures for the refreshed datasets by running `run_benchmark_suite(..., include_mip=True)` on tiny7 (200 SA iters) plus med42/large84 (500 iters). The resulting rows now live at `tests/fixtures/benchmarks/{tiny7,med42,large84}_sa.json`, include up-to-date objectives/KPIs, and record `null` MILP metadata when HiGHS/Gurobi exit early so downstream tools don’t ingest `NaN`.
+- Revalidated the mobilisation regression harness: reran `solve_sa` on `tests/fixtures/regression/regression.yaml`, confirmed the baseline KPIs remain (-999.5 objective, 8 m³ total, 13.5 mobilisation), and replayed the playback/regression integration suites to prove the regenerated fixtures slot cleanly into the SequencingTracker pipeline.
+- Re-solved tiny7 and med42 with the refreshed operational MILP (HiGHS for tiny7, Gurobi for med42), replaced the assignment CSVs in `tests/fixtures/playback/`, re-ran `fhops eval-playback` to regenerate the shift/day CSV+Parquet exports, and refreshed both deterministic and stochastic KPI snapshots via `compute_kpis`/`run_stochastic_playback`. `compute_kpis` now clamps sub-micro staged-volume residuals to zero and re-derives `total_production` from the block totals so the playback aggregate tests stop tripping on 1e-12 drifts.
+- Commands executed:
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pytest` *(fails because `tests/fixtures/presets/tiny7_explore.yaml` is missing and the tiny7/med42 playback + KPI fixtures are stale; the CLI playback + KPI regression tests list the diffs above)*
+  - `.venv/bin/pre-commit run --all-files`
+  - `sphinx-build -b html docs _build/html -W`
+- Follow-up commands for the fixture refresh + verification:
+  - `.venv/bin/fhops solve-mip-operational examples/tiny7/scenario.yaml --out tmp/tiny7_mip_new.csv --time-limit 120 --gap 0.0`
+  - `.venv/bin/fhops eval-playback examples/tiny7/scenario.yaml --assignments tests/fixtures/playback/tiny7_assignments.csv --shift-out tests/fixtures/playback/tiny7_shift.csv --day-out tests/fixtures/playback/tiny7_day.csv --shift-parquet tests/fixtures/playback/tiny7_shift.parquet --day-parquet tests/fixtures/playback/tiny7_day.parquet`
+  - `.venv/bin/fhops solve-mip-operational examples/med42/scenario.yaml --solver gurobi --time-limit 600 --gap 0.0 --out tmp/med42_mip_new.csv`
+  - `.venv/bin/fhops eval-playback examples/med42/scenario.yaml --assignments tests/fixtures/playback/med42_assignments.csv --shift-out tests/fixtures/playback/med42_shift.csv --day-out tests/fixtures/playback/med42_day.csv --shift-parquet tests/fixtures/playback/med42_shift.parquet --day-parquet tests/fixtures/playback/med42_day.parquet`
+  - `.venv/bin/python - <<'PY'  # refresh KPI fixtures (deterministic + stochastic, rerun after KPI tweak)` *(inline script in commit history)*
+  - `.venv/bin/python - <<'PY'  # refresh benchmark fixtures via run_benchmark_suite` *(inline script in commit history)*
+  - `.venv/bin/pytest tests/heuristics/test_sa_batch.py`
+  - `.venv/bin/pytest tests/test_cli_playback.py -k playback_fixture --maxfail=1`
+  - `.venv/bin/pytest tests/test_kpi_regressions.py`
+  - `.venv/bin/pytest tests/test_playback_aggregates.py`
+  - `.venv/bin/pytest tests/test_benchmark_harness.py -k tiny7`
+  - `.venv/bin/pytest tests/test_regression_integration.py`
+  - `.venv/bin/pytest tests/test_playback.py`
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pytest`
+  - `.venv/bin/pre-commit run --all-files`
+  - `sphinx-build -b html docs _build/html -W`
+
 # 2025-12-01 — MILP sequencing consumes shared loader metadata
 - `apply_system_sequencing_constraints` now accepts the shared `OperationalProblem` context built in `fhops.optimization.operational_problem`; the Pyomo builder threads this context through so role filters, prereq sequencing, and loader batch buffers reuse the exact same `allowed_roles`, `prereq_roles`, and `(block, loader_role)` metadata that heuristics already consume. Loader-buffer constraints therefore activate on large84 (and future scenarios) instead of silently no-oping.
 - Defaulted the `model.prod` decision variables to `initialize=0.0` and expanded the sequencing unit tests to set explicit per-machine production whenever they toggle assignments, ensuring Pyomo expressions evaluate without requiring a solver run. Added helpers to reset assignments/production between assertions so the tests now exercise real staged-volume scenarios (processor-before-feller violations, multi-stage cable chains, helicopter prerequisites).

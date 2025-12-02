@@ -1,6 +1,5 @@
 import pandas as pd
 import pytest
-
 from typer.testing import CliRunner
 
 from fhops.cli.main import app

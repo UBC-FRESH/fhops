@@ -434,7 +434,9 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
         obj_expr -= leftover_penalty * sum(model.leftover[blk] for blk in model.B)
     if landing_weight:
         obj_expr -= landing_weight * sum(
-            model.landing_surplus[landing_id, day] for landing_id in model.Landing for day in model.D
+            model.landing_surplus[landing_id, day]
+            for landing_id in model.Landing
+            for day in model.D
         )
     if mobilisation_expr is not None and mobilisation_weight:
         obj_expr -= mobilisation_weight * mobilisation_expr

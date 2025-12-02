@@ -37,8 +37,9 @@ from fhops.cli.profiles import (
 )
 from fhops.cli.watch_dashboard import LiveWatch
 from fhops.evaluation import compute_kpis
+from fhops.model.milp.data import build_operational_bundle
+from fhops.model.milp.driver import solve_operational_milp
 from fhops.optimization.heuristics import solve_ils, solve_sa, solve_tabu
-from fhops.optimization.mip import build_model, solve_mip
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
 from fhops.telemetry import append_jsonl
@@ -82,6 +83,21 @@ def _resolve_scenarios(user_paths: Sequence[Path] | None) -> list[BenchmarkScena
     for idx, scenario_path in enumerate(user_paths, start=1):
         scenarios.append(BenchmarkScenario(f"user-{idx}", scenario_path))
     return scenarios
+
+
+def _operational_solver_candidates(driver: str | None) -> tuple[str, ...]:
+    """Return the ordered solver names to try for the operational MILP benchmark run."""
+
+    if not driver:
+        return ("highs",)
+    driver_clean = driver.strip().lower()
+    if driver_clean in {"auto", "default"}:
+        return ("gurobi", "highs")
+    if "gurobi" in driver_clean:
+        return ("gurobi",)
+    if "highs" in driver_clean or driver_clean in {"exec", "appsi"}:
+        return ("highs",)
+    return (driver_clean,)
 
 
 def _record_metrics(
@@ -146,7 +162,7 @@ def run_benchmark_suite(
     tabu_stall_limit: int = 200,
     tabu_batch_neighbours: int = 1,
     tabu_workers: int = 1,
-    driver: str = "auto",
+    driver: str = "highs",
     include_mip: bool = True,
     include_sa: bool = True,
     debug: bool = False,
@@ -212,9 +228,10 @@ def run_benchmark_suite(
         Number of neighbours evaluated per Tabu iteration.
     tabu_workers : int, default=1
         Thread pool size for evaluating batched Tabu neighbours.
-    driver : str, default="auto"
-        MIP driver (``auto | highs-appsi | highs-exec | gurobi*``) passed to
-        :func:`fhops.optimization.mip.solve_mip`.
+    driver : str, default="highs"
+        Operational MILP solver alias (``highs | gurobi | auto``) passed to
+        :func:`fhops.model.milp.driver.solve_operational_milp`. ``auto`` tries Gurobi first (when
+        available) before falling back to HiGHS.
     include_mip : bool, default=True
         Toggle the exact MIP run (when ``False`` only heuristics are executed).
     include_sa : bool, default=True
@@ -302,26 +319,68 @@ def run_benchmark_suite(
             scenario_mip_objective: float | None = None
             if include_mip:
                 build_start = time.perf_counter()
-                # Use builder explicitly to measure build time; solve_mip will rebuild but cost is small.
-                build_model(pb)
+                bundle = build_operational_bundle(pb)
                 build_time = time.perf_counter() - build_start
-
-                start = time.perf_counter()
-                mip_res = solve_mip(pb, time_limit=time_limit, driver=driver, debug=debug)
-                mip_runtime = time.perf_counter() - start
+                solver_candidates = _operational_solver_candidates(driver)
+                mip_res: Mapping[str, object] | None = None
+                chosen_solver: str | None = None
+                mip_runtime = 0.0
+                last_error: Exception | None = None
+                for solver_name in solver_candidates:
+                    start = time.perf_counter()
+                    try:
+                        mip_res = solve_operational_milp(
+                            bundle,
+                            solver=solver_name,
+                            time_limit=time_limit,
+                            tee=bool(debug),
+                        )
+                        mip_runtime = time.perf_counter() - start
+                        chosen_solver = solver_name
+                        break
+                    except Exception as exc:  # pragma: no cover - exercised via fallback
+                        mip_runtime = time.perf_counter() - start
+                        last_error = exc
+                        if debug:
+                            console.print(
+                                f"[yellow]Operational MILP solver '{solver_name}' failed: {exc}[/]"
+                            )
+                        continue
+                if mip_res is None:
+                    raise RuntimeError(
+                        f"Operational MILP solve failed for {bench.path} (driver={driver})."
+                    ) from last_error
                 mip_assign = cast(pd.DataFrame, mip_res["assignments"]).copy()
                 mip_assign.to_csv(scenario_out / "mip_assignments.csv", index=False)
-                scenario_mip_objective = cast(float, mip_res.get("objective", 0.0))
+                objective_val = mip_res.get("objective")
+                scenario_mip_objective = (
+                    float(objective_val) if isinstance(objective_val, int | float) else None
+                )
                 mip_kpis = compute_kpis(pb, mip_assign)
+                extra_payload: dict[str, object] = {
+                    "build_time_s": build_time,
+                }
+                if chosen_solver:
+                    extra_payload["mip_solver"] = chosen_solver
+                solver_status = mip_res.get("solver_status")
+                if solver_status is not None:
+                    extra_payload["solver_status"] = solver_status
+                termination = mip_res.get("termination_condition")
+                if termination is not None:
+                    extra_payload["termination_condition"] = termination
                 rows.append(
                     _record_metrics(
                         scenario=bench,
                         solver="mip",
-                        objective=cast(float, mip_res.get("objective", 0.0)),
+                        objective=(
+                            scenario_mip_objective
+                            if scenario_mip_objective is not None
+                            else float("nan")
+                        ),
                         assignments=mip_assign,
                         kpis=mip_kpis,
                         runtime_s=mip_runtime,
-                        extra={"build_time_s": build_time},
+                        extra=extra_payload,
                         machine_costs_summary=machine_costs_summary,
                     )
                 )
@@ -895,7 +954,7 @@ def bench_suite(
     tabu_stall_limit: int = typer.Option(200, help="Tabu stall limit"),
     tabu_batch_neighbours: int = typer.Option(1, help="Neighbours sampled per Tabu iteration"),
     tabu_workers: int = typer.Option(1, help="Worker threads for Tabu batched evaluation"),
-    driver: str = typer.Option("auto", help="HiGHS driver: auto|appsi|exec"),
+    driver: str = typer.Option("highs", help="Operational MILP solver alias (auto|highs|gurobi)"),
     include_mip: bool = typer.Option(True, help="Include MIP solver in benchmarks"),
     include_sa: bool = typer.Option(True, help="Include simulated annealing in benchmarks"),
     debug: bool = typer.Option(False, help="Forward debug flag to solvers"),

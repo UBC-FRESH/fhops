@@ -239,7 +239,7 @@ def solve_sa(
     if auto_batch_applied:
         config_snapshot["auto_batch_applied"] = True
 
-    shake_settings = AUTO_SHAKE_CONFIG.get(scenario_name)
+    shake_settings = AUTO_SHAKE_CONFIG.get(scenario_name) if scenario_name else None
     mobilisation_shake_default = registry.weights().get("mobilisation_shake", 0.0)
     shake_threshold = (
         float(shake_settings["threshold"])

@@ -1,7 +1,7 @@
+from pathlib import Path
+
 import pyomo.environ as pyo
 import pytest
-
-from pathlib import Path
 
 from fhops.optimization.heuristics import solve_sa
 from fhops.optimization.heuristics.common import Schedule, evaluate_schedule
@@ -18,12 +18,12 @@ from fhops.scenario.contract.models import (
     Scenario,
     ScheduleLock,
 )
+from fhops.scenario.io.loaders import load_scenario
 from fhops.scheduling.mobilisation import (
     BlockDistance,
     MachineMobilisation,
     MobilisationConfig,
 )
-from fhops.scenario.io.loaders import load_scenario
 
 
 def _shift_tuple(pb: Problem, day: int, shift_id: str | None = None) -> tuple[int, str]:

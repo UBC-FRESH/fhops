@@ -139,8 +139,6 @@ def _sample_block(
     avg_stem = rng.uniform(*profile.avg_stem_range)
     volume_per_ha = rng.uniform(*profile.volume_per_ha_range)
     slope = rng.uniform(*profile.slope_range)
-    window_span = rng.randint(*profile.window_span)
-
     stem_density = volume_per_ha / avg_stem
     work_required = round(area * volume_per_ha * work_scale, 6)
     # All reference datasets keep blocks available for the full horizon so the
