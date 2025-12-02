@@ -587,6 +587,14 @@ def solve_mip_operational_cmd(
     watch_refresh: float = typer.Option(
         0.5, "--watch-refresh", help="Watch refresh interval in seconds."
     ),
+    incumbent: Path | None = typer.Option(
+        None,
+        "--incumbent",
+        help=(
+            "Assignments CSV (e.g., from solve-heur) used to seed the MILP as a warm start. "
+            "Columns must include machine_id, block_id, day, shift_id."
+        ),
+    ),
     debug: bool = typer.Option(False, "--debug", help="Verbose solver output/tracebacks."),
     sequencing_debug: bool = typer.Option(
         False,
@@ -630,11 +638,21 @@ def solve_mip_operational_cmd(
         dump_bundle.parent.mkdir(parents=True, exist_ok=True)
         dump_bundle.write_text(json.dumps(bundle_to_dict(bundle), indent=2), encoding="utf-8")
 
+    incumbent_assignments: pd.DataFrame | None = None
+    if incumbent is not None:
+        try:
+            incumbent_assignments = pd.read_csv(incumbent)
+            if incumbent_assignments.empty:
+                incumbent_assignments = None
+        except Exception as exc:  # pragma: no cover - I/O guardrail
+            raise typer.BadParameter(f"Failed to read incumbent CSV: {exc}") from exc
+
     telemetry_logger: RunTelemetryLogger | None = None
     if telemetry_log:
         context_snapshot = {
             "command": "solve-mip-operational",
             "bundle_json": str(bundle_json) if bundle_json else None,
+            "incumbent_csv": str(incumbent) if incumbent else None,
         }
         telemetry_logger = RunTelemetryLogger(
             log_path=telemetry_log,
@@ -683,14 +701,18 @@ def solve_mip_operational_cmd(
     try:
         with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
             emit_snapshot(0, 0.0, 0.0)
-            result = solve_operational_milp(
-                bundle,
-                solver=solver,
-                time_limit=time_limit,
-                gap=gap,
-                tee=debug,
-                solver_options=parsed_solver_options or None,
-            )
+            try:
+                result = solve_operational_milp(
+                    bundle,
+                    solver=solver,
+                    time_limit=time_limit,
+                    gap=gap,
+                    tee=debug,
+                    solver_options=parsed_solver_options or None,
+                    incumbent_assignments=incumbent_assignments,
+                )
+            except ValueError as exc:
+                raise typer.BadParameter(str(exc)) from exc
             runtime_seconds = time.perf_counter() - start_time
             objective_value = float(result.get("objective") or 0.0)
             emit_snapshot(1, objective_value, runtime_seconds)

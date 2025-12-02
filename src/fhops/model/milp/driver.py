@@ -31,10 +31,14 @@ def solve_operational_milp(
     gap: float | None = None,
     tee: bool = False,
     solver_options: Mapping[str, object] | None = None,
+    incumbent_assignments: pd.DataFrame | None = None,
 ) -> dict[str, Any]:
     """Solve the operational MILP given a prepared bundle."""
 
     model = build_operational_model(bundle)
+    if incumbent_assignments is not None:
+        _apply_incumbent_start(model, incumbent_assignments)
+
     opt = SolverFactory(solver)
     if time_limit is not None:
         opt.options["time_limit"] = time_limit
@@ -84,3 +88,68 @@ def _extract_assignments(model: pyo.ConcreteModel) -> pd.DataFrame:
     if rows:
         return pd.DataFrame(rows, columns=ASSIGNMENT_COLUMNS)
     return pd.DataFrame(columns=ASSIGNMENT_COLUMNS)
+
+
+def _apply_incumbent_start(
+    model: pyo.ConcreteModel, assignments: pd.DataFrame | None
+) -> int:
+    """Populate variable starting values from an incumbent assignment matrix."""
+
+    if assignments is None or assignments.empty:
+        return 0
+
+    required = {"machine_id", "block_id", "day", "shift_id"}
+    missing = required - set(assignments.columns)
+    if missing:
+        raise ValueError(
+            "Incumbent assignments missing required columns: "
+            + ", ".join(sorted(missing))
+        )
+
+    seeded = 0
+    has_assigned = "assigned" in assignments.columns
+    has_production = "production" in assignments.columns
+
+    for row in assignments.itertuples(index=False):
+        machine_id = getattr(row, "machine_id")
+        block_id = getattr(row, "block_id")
+        day_value = getattr(row, "day")
+        shift_value = getattr(row, "shift_id")
+
+        try:
+            day = int(day_value)
+        except (TypeError, ValueError):
+            continue
+        shift_id = str(shift_value)
+        index = (machine_id, block_id, day, shift_id)
+        if index not in model.x:
+            continue
+
+        assigned_val = 1.0
+        if has_assigned:
+            assigned_raw = getattr(row, "assigned")
+            if pd.notna(assigned_raw):
+                try:
+                    assigned_val = float(assigned_raw)
+                except (TypeError, ValueError):
+                    assigned_val = 1.0
+        if assigned_val <= 0:
+            continue
+
+        model.x[index].set_value(1.0)
+        model.x[index].stale = False
+        seeded += 1
+
+        if has_production:
+            prod_raw = getattr(row, "production")
+            if pd.notna(prod_raw):
+                try:
+                    prod_val = float(prod_raw)
+                except (TypeError, ValueError):
+                    continue
+                prod_index = (machine_id, block_id, day, shift_id)
+                if prod_index in model.prod:
+                    model.prod[prod_index].set_value(prod_val)
+                    model.prod[prod_index].stale = False
+
+    return seeded

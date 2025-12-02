@@ -4,6 +4,7 @@
 - Removed the unused `window_span` sample from `scripts/rebuild_reference_datasets.py` so the pre-commit Ruff gate stops flagging dead assignments while we work through the remaining dataset refresh tasks.
 - Restored the missing preset fixture at `tests/fixtures/presets/tiny7_explore.yaml` so the SA preset regression can read a real scenario/preset/expected-weight bundle again; the test now proves the explore preset pins mobilisation/transitions/landing weights deterministically.
 - Added `--solver-option name=value` to `fhops solve-mip-operational`, forwarding arbitrary Pyomo solver parameters (e.g., `--solver-option Threads=8`) to Gurobi/HiGHS. The flag feeds through `solve_operational_milp`, so future callers (benchmarks, notebooks) can reuse the same plumbing.
+- `fhops solve-mip-operational` now accepts `--incumbent assignments.csv`, seeding the operational MILP with a heuristic schedule (machine/block/day/shift rows). The driver maps those rows onto the Pyomo binaries/production variables before invoking HiGHS/Gurobi, so med42 runs can skip the initial “find a feasible plan” ramp-up. The helper enforces the required columns, supports optional `production` values, and the CLI/docs/tests were updated to cover the new workflow.
 - Regenerated the SA benchmark fixtures for the refreshed datasets by running `run_benchmark_suite(..., include_mip=True)` on tiny7 (200 SA iters) plus med42/large84 (500 iters). The resulting rows now live at `tests/fixtures/benchmarks/{tiny7,med42,large84}_sa.json`, include up-to-date objectives/KPIs, and record `null` MILP metadata when HiGHS/Gurobi exit early so downstream tools don’t ingest `NaN`.
 - Revalidated the mobilisation regression harness: reran `solve_sa` on `tests/fixtures/regression/regression.yaml`, confirmed the baseline KPIs remain (-999.5 objective, 8 m³ total, 13.5 mobilisation), and replayed the playback/regression integration suites to prove the regenerated fixtures slot cleanly into the SequencingTracker pipeline.
 - Re-solved tiny7 and med42 with the refreshed operational MILP (HiGHS for tiny7, Gurobi for med42), replaced the assignment CSVs in `tests/fixtures/playback/`, re-ran `fhops eval-playback` to regenerate the shift/day CSV+Parquet exports, and refreshed both deterministic and stochastic KPI snapshots via `compute_kpis`/`run_stochastic_playback`. `compute_kpis` now clamps sub-micro staged-volume residuals to zero and re-derives `total_production` from the block totals so the playback aggregate tests stop tripping on 1e-12 drifts.
@@ -28,6 +29,7 @@
   - `.venv/bin/pytest tests/test_benchmark_harness.py -k tiny7`
   - `.venv/bin/pytest tests/test_regression_integration.py`
   - `.venv/bin/pytest tests/test_playback.py`
+  - `.venv/bin/pytest tests/test_cli_operational_mip.py tests/model/test_operational_driver.py`
   - `.venv/bin/ruff format src tests`
   - `.venv/bin/ruff check src tests`
   - `.venv/bin/mypy src`

@@ -9,19 +9,32 @@
 
 ## Plan
 
-### [ ] 1. Capture baseline solver diagnostics
+### [x] 1. Capture baseline solver diagnostics
 - [x] 1.1 Run med42 with `--debug --solver-option LogFile=med42_default.log --solver-option Threads=<current> --solver-option TimeLimit=600` (gap unset) to gather a Gurobi log (root presolve stats, early nodes). Stop once enough log info is captured if it hasn’t terminated. *(Completed: med42_default.log shows presolve cuts it to 55 k×56 k, incumbent rises to 37.4 k with 2.1 % gap after ~590 s.)*
-- [ ] 1.2 Extract model statistics (variables, constraints, binaries) for tiny/small/med/large via the build step (`--debug`) to quantify the jump in size.
-- [ ] 1.3 Identify whether Gurobi ever finds an incumbent on med42 at default settings and how quickly, using log timestamps (check med42_default.log for heuristics vs B&B timing).
+- [x] 1.2 Extract model statistics (variables, constraints, binaries) for tiny/small/med/large via the build step (`--debug`) to quantify the jump in size. *(Done 2025-12-02 via `fhops solve-mip-operational … --debug --solver-option TimeLimit=<short>` with Gurobi: see table below.)*
+- [x] 1.3 Identify whether Gurobi ever finds an incumbent on med42 at default settings and how quickly, using log timestamps (check med42_default.log for heuristics vs B&B timing). *(The 120 s run hits the first positive incumbent at ~10 s (≈7 k objective) and climbs to 36.2 k by 93 s, but the best bound stays at 38.2 k so ~5.4 % gap remains when the time limit fires. Appending these timings to the notes below for future tuning.)*
 
-### [ ] 2. Budgeted option sweep
-- [ ] 2.1 Run med42 with staged options (`TimeLimit`, `MIPGap`, `Threads`, `Presolve`, `Heuristics`) and log objective/gap/runtime for each combination to map the time-vs-gap curve.
-- [ ] 2.2 Repeat for small21 and large84 (short time limits) to understand scaling and choose sensible defaults per tier.
-- [ ] 2.3 Document the “inflection point” (e.g., gap ≤5 % in ≤20 min) and recommend default CLI settings (`--gap 0.05`, `--solver-option TimeLimit=1800`, etc.).
+| Scenario | Rows | Cols | Nonzeros | Integer / binary vars | Presolve result | 120 s status (Threads=36) |
+| --- | --- | --- | --- | --- | --- | --- |
+| tiny7 | 1 119 | 666 | 2 780 | 370 / 356 | 248×242, solved at root | Optimal in 0.05 s |
+| small21 | 23 247 | 10 476 | 56 766 | 7 866 / 7 740 | 6 984×7 260 | Time limit at 60 s with 0.17 % gap |
+| med42 | 174 078 | 68 940 | 417 444 | 58 680 / 58 176 | 55 251×56 784 | Time limit at 120 s with 5.37 % gap (best incumbent 36 247) |
+| large84 | 10 477 608 | 3 640 128 | 24 663 936 | 3 522 816 / 3 518 784 | Presolve only trims 151 938 rows + 65 376 cols before hitting time limit | No nodes explored within 120 s; only heuristic incumbent (−374 703) |
 
-### [ ] 3. Warm starts / incumbent injection
-- [ ] 3.1 Add support for feeding heuristic assignments as a MIP start (e.g., `--incumbent assignments.csv`) by populating Pyomo `x`/`prod` with the heuristic plan before calling Gurobi.
-- [ ] 3.2 Evaluate whether a good incumbent shrinks runtime or improves gap quality, especially when combined with a modest `TimeLimit`.
+Key observations:
+- Problem size explodes roughly ×150 (rows) and ×340 (columns) between small21 and large84, which explains why the current Pyomo-to-Gurobi bridge barely finishes presolve on large84 before the 120 s limit triggers. Any tractable workflow for large84 will need either a decomposed model or aggressive presolve/time budgets.
+- Med42’s incumbent behaviour is “fast but shallow”: the root heuristics deliver a decent solution (~7 k) within 10 s and continue improving to 36 k without exploring any B&B nodes, yet the LP bound moves slowly. Further runtime is spent squeezing gap via cutting planes rather than branching. This reinforces the need for better warm starts (Plan §2) and explicit time/gap budgets (Plan §3) so users can stop once the incumbent plateaus.
+- Large84 currently runs with a single active thread during presolve despite `Threads=36`. Gurobi drops to one thread when the LP formulation is too large for multi-threaded presolve, so splitting the problem or switching formulations may be mandatory if we want meaningful progress before the time limit.
+
+### [ ] 2. Heuristic warm starts (prereq for sweeps)
+- [x] 2.1 Add support for feeding heuristic assignments as a MIP start (e.g., `--incumbent assignments.csv`) by mapping the CSV produced by `fhops solve-heur ... --out` onto Pyomo `x`/`prod` before invoking Gurobi. *(Done via `solve_operational_milp(..., incumbent_assignments=...)`; CLI exposes `--incumbent`, and docs/tests confirm the workflow.)*
+- [ ] 2.2 Run back-to-back med42 solves (no start vs greedy start vs 60 s SA start) with identical solver budgets to quantify incumbent quality, gap trajectory, and runtime impact.
+- [ ] 2.3 Document the warm-start behaviour (limitations, required CSV schema) in the notes/CLI docs so sweeps can assume access to a seeded incumbent.
+
+### [ ] 3. Budgeted option sweep
+- [ ] 3.1 Run med42 with staged options (`TimeLimit`, `MIPGap`, `Threads`, `Presolve`, `Heuristics`, with/without warm starts) and log objective/gap/runtime for each combination to map the time-vs-gap curve.
+- [ ] 3.2 Repeat for small21 and large84 (short time limits) to understand scaling and choose sensible defaults per tier.
+- [ ] 3.3 Document the “inflection point” (e.g., gap ≤5 % in ≤20 min) and recommend default CLI settings (`--gap 0.05`, `--solver-option TimeLimit=1800`, etc.).
 
 ### [ ] 4. Model tuning / decomposition
 - [ ] 4.1 Investigate whether certain constraint families (landing inventory, mobilisation) make the LP relaxation weak; consider strengthening cuts or relaxing non-critical constraints.

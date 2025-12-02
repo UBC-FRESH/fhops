@@ -132,8 +132,8 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
             return availability_shift[(machine_id, day, shift_id)] == 1
         return availability_day.get((machine_id, day), 1) == 1
 
-    model.x = pyo.Var(model.M, model.B, model.S, domain=pyo.Binary)
-    model.prod = pyo.Var(model.M, model.B, model.S, domain=pyo.NonNegativeReals)
+    model.x = pyo.Var(model.M, model.B, model.S, domain=pyo.Binary, initialize=0)
+    model.prod = pyo.Var(model.M, model.B, model.S, domain=pyo.NonNegativeReals, initialize=0)
 
     # Machine capacity & compatibility
     def machine_capacity_rule(mdl, mach, day, shift_id):
